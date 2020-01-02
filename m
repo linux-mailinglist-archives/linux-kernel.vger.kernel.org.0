@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F48612F153
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:59:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2836C12F146
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:59:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbgABW7l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:59:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54064 "EHLO mail.kernel.org"
+        id S1726089AbgABWOW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:14:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727797AbgABWN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:13:57 -0500
+        id S1727361AbgABWOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:14:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8EF522525;
-        Thu,  2 Jan 2020 22:13:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65B6D24125;
+        Thu,  2 Jan 2020 22:14:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003237;
-        bh=YhmOiMled1/G2x2INpuYgJq0C1R/wZfIFZZcOdQCIao=;
+        s=default; t=1578003258;
+        bh=YKzmLDGM+26DWt1qYfbrH6yMPu9ZkjIK/pFyMAkhQ98=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pG3Qt/y1UdCIMkgDAjLxaCXpCZqXNmM7gTY1Mo1Co5J3BfvXRRMkDXZZ2POTCrpXs
-         E/FfAA3VhvNa6ru9Zx/CvlUikadUHRc7kAmrras7DoJj1/03T+9RuOywLmW9LK4ujo
-         bxELBjGrQMt58vLHw/3KMmRsKcuPS9AUt0hJjXa4=
+        b=DHHbvCbkQVHGCJcbPanFkJ/R8UGqI7QGH+qCh/7rNahU+Z5D474zhA4JV346+wXxR
+         vW9GH2p/efvyjQ+JWZFmF4On9Fh8Cc9E85XIavHRat5PBy7QQOWfaSVB3bHsuBQozO
+         kX8/1b6ZqbPoIs88MhuvPRVTHaCFGuC4sEbPR34M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Jan Stancek <jstancek@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 059/191] iomap: fix return value of iomap_dio_bio_actor on 32bit systems
-Date:   Thu,  2 Jan 2020 23:05:41 +0100
-Message-Id: <20200102215836.298398377@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Sven Van Asbroeck <TheSven73@gmail.com>
+Subject: [PATCH 5.4 060/191] Input: ili210x - handle errors from input_mt_init_slots()
+Date:   Thu,  2 Jan 2020 23:05:42 +0100
+Message-Id: <20200102215836.397291369@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
 References: <20200102215829.911231638@linuxfoundation.org>
@@ -46,59 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Stancek <jstancek@redhat.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-[ Upstream commit e9f930ac88a8936ccc2d021110c98810cf5aa810 ]
+[ Upstream commit 43f06a4c639de8ee89fc348a9a3ecd70320a04dd ]
 
-Naresh reported LTP diotest4 failing for 32bit x86 and arm -next
-kernels on ext4. Same problem exists in 5.4-rc7 on xfs.
+input_mt_init_slots() may fail and we need to handle such failures.
 
-The failure comes down to:
-  openat(AT_FDCWD, "testdata-4.5918", O_RDWR|O_DIRECT) = 4
-  mmap2(NULL, 4096, PROT_READ, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7f7b000
-  read(4, 0xb7f7b000, 4096)              = 0 // expects -EFAULT
-
-Problem is conversion at iomap_dio_bio_actor() return. Ternary
-operator has a return type and an attempt is made to convert each
-of operands to the type of the other. In this case "ret" (int)
-is converted to type of "copied" (unsigned long). Both have size
-of 4 bytes:
-    size_t copied = 0;
-    int ret = -14;
-    long long actor_ret = copied ? copied : ret;
-
-    On x86_64: actor_ret == -14;
-    On x86   : actor_ret == 4294967282
-
-Replace ternary operator with 2 return statements to avoid this
-unwanted conversion.
-
-Fixes: 4721a6010990 ("iomap: dio data corruption and spurious errors when pipes fill")
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Signed-off-by: Jan Stancek <jstancek@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Tested-by: Adam Ford <aford173@gmail.com> #imx6q-logicpd
+Tested-by: Sven Van Asbroeck <TheSven73@gmail.com> # ILI2118A variant
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/iomap/direct-io.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/input/touchscreen/ili210x.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index fd46ec83cb04..7b5f76efef02 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -318,7 +318,9 @@ zero_tail:
- 		if (pad)
- 			iomap_dio_zero(dio, iomap, pos, fs_block_size - pad);
- 	}
--	return copied ? copied : ret;
-+	if (copied)
-+		return copied;
-+	return ret;
- }
+diff --git a/drivers/input/touchscreen/ili210x.c b/drivers/input/touchscreen/ili210x.c
+index e9006407c9bc..f4ebdab06280 100644
+--- a/drivers/input/touchscreen/ili210x.c
++++ b/drivers/input/touchscreen/ili210x.c
+@@ -334,7 +334,12 @@ static int ili210x_i2c_probe(struct i2c_client *client,
+ 	input_set_abs_params(input, ABS_MT_POSITION_X, 0, 0xffff, 0, 0);
+ 	input_set_abs_params(input, ABS_MT_POSITION_Y, 0, 0xffff, 0, 0);
+ 	touchscreen_parse_properties(input, true, &priv->prop);
+-	input_mt_init_slots(input, priv->max_touches, INPUT_MT_DIRECT);
++
++	error = input_mt_init_slots(input, priv->max_touches, INPUT_MT_DIRECT);
++	if (error) {
++		dev_err(dev, "Unable to set up slots, err: %d\n", error);
++		return error;
++	}
  
- static loff_t
+ 	error = devm_add_action(dev, ili210x_cancel_work, priv);
+ 	if (error)
 -- 
 2.20.1
 
