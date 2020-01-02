@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5D7512F099
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:54:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABBC212EE25
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:35:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729421AbgABWyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:54:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39864 "EHLO mail.kernel.org"
+        id S1730858AbgABWfi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:35:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727834AbgABWVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:21:11 -0500
+        id S1730831AbgABWfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:35:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18C4C21582;
-        Thu,  2 Jan 2020 22:21:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C7E324125;
+        Thu,  2 Jan 2020 22:35:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003670;
-        bh=sXMuB2CZO8zNQEWG2MGhBwus/l8bV2Pqvf5j3FHDyFo=;
+        s=default; t=1578004535;
+        bh=twsMTWPCsq5+qV0UwWBnntm8VncSuO+3MdQFIGqZbI4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p5VY9EtI36NMevM1T8vRWOzsyardD+AdtU9dChMGwi5Jy3MT/gXPV1e4kjiiJoOA4
-         rNFYqhCSaGNdfgEzcNl11MChIifiXoKYcTlny6xXo8H/r+xaPirFzHwxMrWrbHNkWP
-         a/U4uBvG2hM+JfzypDy/QcjLSo8kD6PRbqmVnGAY=
+        b=XEuoWEPlmclAbpfoqSU3fCGXjX71HTOkrT36tU9+yeYYFnG4pofMDYZUuyWAsxSIp
+         peeHf9gOfyvK0W1NRPiHc4wQFbq/gQdbYE/K021eDJKu+UyKgf9OcBrk3WodQaptro
+         bpZchPUGM8uuKkqfB4XcBwrgddbhw/BZYjmJIPjQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 048/114] libnvdimm/btt: fix variable rc set but not used
+Subject: [PATCH 4.4 047/137] perf probe: Skip end-of-sequence and non statement lines
 Date:   Thu,  2 Jan 2020 23:07:00 +0100
-Message-Id: <20200102220033.933129789@linuxfoundation.org>
+Message-Id: <20200102220552.932587304@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,48 +46,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 4e24e37d5313edca8b4ab86f240c046c731e28d6 ]
+[ Upstream commit f4d99bdfd124823a81878b44b5e8750b97f73902 ]
 
-drivers/nvdimm/btt.c: In function 'btt_read_pg':
-drivers/nvdimm/btt.c:1264:8: warning: variable 'rc' set but not used
-[-Wunused-but-set-variable]
-    int rc;
-        ^~
+Skip end-of-sequence and non-statement lines while walking through lines
+list.
 
-Add a ratelimited message in case a storm of errors is encountered.
+The "end-of-sequence" line information means:
 
-Fixes: d9b83c756953 ("libnvdimm, btt: rework error clearing")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
-Link: https://lore.kernel.org/r/1572530719-32161-1-git-send-email-cai@lca.pw
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+ "the current address is that of the first byte after the
+  end of a sequence of target machine instructions."
+ (DWARF version 4 spec 6.2.2)
+
+This actually means out of scope and we can not probe on it.
+
+On the other hand, the statement lines (is_stmt) means:
+
+ "the current instruction is a recommended breakpoint location.
+  A recommended breakpoint location is intended to “represent”
+  a line, a statement and/or a semantically distinct subpart
+  of a statement."
+
+ (DWARF version 4 spec 6.2.2)
+
+So, non-statement line info also should be skipped.
+
+These can reduce unneeded probe points and also avoid an error.
+
+E.g. without this patch:
+
+  # perf probe -a "clear_tasks_mm_cpumask:1"
+  Added new events:
+    probe:clear_tasks_mm_cpumask (on clear_tasks_mm_cpumask:1)
+    probe:clear_tasks_mm_cpumask_1 (on clear_tasks_mm_cpumask:1)
+    probe:clear_tasks_mm_cpumask_2 (on clear_tasks_mm_cpumask:1)
+    probe:clear_tasks_mm_cpumask_3 (on clear_tasks_mm_cpumask:1)
+    probe:clear_tasks_mm_cpumask_4 (on clear_tasks_mm_cpumask:1)
+
+  You can now use it in all perf tools, such as:
+
+  	perf record -e probe:clear_tasks_mm_cpumask_4 -aR sleep 1
+
+  #
+
+This puts 5 probes on one line, but acutally it's not inlined function.
+This is because there are many non statement instructions at the
+function prologue.
+
+With this patch:
+
+  # perf probe -a "clear_tasks_mm_cpumask:1"
+  Added new event:
+    probe:clear_tasks_mm_cpumask (on clear_tasks_mm_cpumask:1)
+
+  You can now use it in all perf tools, such as:
+
+  	perf record -e probe:clear_tasks_mm_cpumask -aR sleep 1
+
+  #
+
+Now perf-probe skips unneeded addresses.
+
+Committer testing:
+
+Slightly different results, but similar:
+
+Before:
+
+  # uname -a
+  Linux quaco 5.3.8-200.fc30.x86_64 #1 SMP Tue Oct 29 14:46:22 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
+  #
+  # perf probe -a "clear_tasks_mm_cpumask:1"
+  Added new events:
+    probe:clear_tasks_mm_cpumask (on clear_tasks_mm_cpumask:1)
+    probe:clear_tasks_mm_cpumask_1 (on clear_tasks_mm_cpumask:1)
+    probe:clear_tasks_mm_cpumask_2 (on clear_tasks_mm_cpumask:1)
+
+  You can now use it in all perf tools, such as:
+
+  	perf record -e probe:clear_tasks_mm_cpumask_2 -aR sleep 1
+
+  #
+
+After:
+
+  # perf probe -a "clear_tasks_mm_cpumask:1"
+  Added new event:
+    probe:clear_tasks_mm_cpumask (on clear_tasks_mm_cpumask:1)
+
+  You can now use it in all perf tools, such as:
+
+  	perf record -e probe:clear_tasks_mm_cpumask -aR sleep 1
+
+  # perf probe -l
+    probe:clear_tasks_mm_cpumask (on clear_tasks_mm_cpumask@kernel/cpu.c)
+  #
+
+Fixes: 4cc9cec636e7 ("perf probe: Introduce lines walker interface")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: http://lore.kernel.org/lkml/157241936090.32002.12156347518596111660.stgit@devnote2
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvdimm/btt.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ tools/perf/util/dwarf-aux.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/nvdimm/btt.c b/drivers/nvdimm/btt.c
-index 0360c015f658..75ae2c508a04 100644
---- a/drivers/nvdimm/btt.c
-+++ b/drivers/nvdimm/btt.c
-@@ -1260,11 +1260,11 @@ static int btt_read_pg(struct btt *btt, struct bio_integrity_payload *bip,
+diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
+index 6851f1d0e253..8d6eaaab4739 100644
+--- a/tools/perf/util/dwarf-aux.c
++++ b/tools/perf/util/dwarf-aux.c
+@@ -746,6 +746,7 @@ int die_walk_lines(Dwarf_Die *rt_die, line_walk_callback_t callback, void *data)
+ 	int decl = 0, inl;
+ 	Dwarf_Die die_mem, *cu_die;
+ 	size_t nlines, i;
++	bool flag;
  
- 		ret = btt_data_read(arena, page, off, postmap, cur_len);
- 		if (ret) {
--			int rc;
--
- 			/* Media error - set the e_flag */
--			rc = btt_map_write(arena, premap, postmap, 0, 1,
--				NVDIMM_IO_ATOMIC);
-+			if (btt_map_write(arena, premap, postmap, 0, 1, NVDIMM_IO_ATOMIC))
-+				dev_warn_ratelimited(to_dev(arena),
-+					"Error persistently tracking bad blocks at %#x\n",
-+					premap);
- 			goto out_rtt;
+ 	/* Get the CU die */
+ 	if (dwarf_tag(rt_die) != DW_TAG_compile_unit) {
+@@ -776,6 +777,12 @@ int die_walk_lines(Dwarf_Die *rt_die, line_walk_callback_t callback, void *data)
+ 				  "Possible error in debuginfo.\n");
+ 			continue;
  		}
- 
++		/* Skip end-of-sequence */
++		if (dwarf_lineendsequence(line, &flag) != 0 || flag)
++			continue;
++		/* Skip Non statement line-info */
++		if (dwarf_linebeginstatement(line, &flag) != 0 || !flag)
++			continue;
+ 		/* Filter lines based on address */
+ 		if (rt_die != cu_die) {
+ 			/*
 -- 
 2.20.1
 
