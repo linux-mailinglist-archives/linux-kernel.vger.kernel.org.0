@@ -2,131 +2,289 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73D3E12E4A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 10:56:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66E5012E49C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 10:54:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728008AbgABJ4t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 04:56:49 -0500
-Received: from mout.web.de ([212.227.15.3]:43771 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727958AbgABJ4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 04:56:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1577958988;
-        bh=iYNtL+PxRcjkSdwffxObOQWfik3XnwPkM/jokKb2k64=;
-        h=X-UI-Sender-Class:Cc:References:Subject:To:From:Date:In-Reply-To;
-        b=hnlrjCeUewfTxZ0+mDadBOEXO8uOTw3pGBExpsc1S5XDHh/Tl4IwrTiaCu5BMF9um
-         JKJpmY4xu3T8G7tKq+uFVNTL71+vICYIA9fcX0S7Nz0fMsrqxK4t1Zy6Hq45k4Vzx2
-         mibn4C4rZmPx0Bsr8Sn045sXdGE1cLIAPJCnVoFc=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.133.119.207]) by smtp.web.de (mrweb002
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0LyE3J-1jpS4v0B7N-015dbc; Thu, 02
- Jan 2020 10:56:28 +0100
-Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Daniel Wagner <dwagner@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linkinjeon@gmail.com
-References: <20191220062419.23516-11-namjae.jeon@samsung.com>
-Subject: Re: [PATCH v8 10/13] exfat: add nls operations
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <bc11e593-7943-cf78-917d-57318f0b5fe1@web.de>
-Date:   Thu, 2 Jan 2020 10:56:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1727990AbgABJyi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 04:54:38 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:40798 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727958AbgABJyh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 04:54:37 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0029sV8p101183;
+        Thu, 2 Jan 2020 03:54:31 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1577958872;
+        bh=VEjOziF1DMpoAGWv4sePuJ9MJbI0BtpFi+zfGK4xmQU=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=oTWf5/5s4n/4Pc+tUdb5tEdOI6a4uDtzj/U1USTQAkz2Yfmc9D6VCeiPpD0GygpeZ
+         f5fjmmIiEpMgIQdM3/cBx+LbinMC/fJyomttbbMV7eeq9lFeV4AYZ8LqDRwlSu3ul3
+         YaYTAFCW5/FsTcsT/E4UQyvbrf0rKWV5T9gQYyVc=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0029sVF8039711
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 2 Jan 2020 03:54:31 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 2 Jan
+ 2020 03:54:31 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 2 Jan 2020 03:54:31 -0600
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0029sSRa111415;
+        Thu, 2 Jan 2020 03:54:29 -0600
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Swapnil Kashinath Jakhade <sjakhade@cadence.com>,
+        Roger Quadros <rogerq@ti.com>, Jyri Sarha <jsarha@ti.com>
+CC:     <devicetree@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v5 13/14] dt-bindings: phy: Document WIZ (SERDES wrapper) bindings
+Date:   Thu, 2 Jan 2020 15:26:31 +0530
+Message-ID: <20200102095631.1165-1-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191216095712.13266-14-kishon@ti.com>
+References: <20191216095712.13266-14-kishon@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20191220062419.23516-11-namjae.jeon@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jzAARglS6ZCwAjXLcRsWKgvPRmlf6zFPEfU32J1kZlLu20GCXl0
- RWpn/fGE5lHZfbhvOUf8EHKlb3FbO8zVlpHJslyhFTCjlf4KE2Z8pCkbNRMXMNqD3ylIVuv
- E/0sqEszJE0QQU1+StDfjlePB7mat7A6j9jZHDc03jd6fOdna6Ijb7as2U4DJPvM31YyrLo
- Z7rZtL7cGBY3scIkGvB2A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Pd0Yd2Z24Wg=:pkLudLv58veIKI0BymPb/b
- gLY2g1832kzU+AG+SqOy6U+QnMNtyk2GCxeg+ruds5UxqPC9EgRnaEdH9SgJimdvCu7NLYwwF
- rFHDVD0PGUIoCUrxBEXRR8AWtbQiM9y/3Sgbl9ygqqlhdMn9WVIiuG4skCy4A5Em3mRWh38Mp
- mFgkm9HO0pdc3FwHcrq/IBj9xttDIUg2OqbNXQ1AbbyFbC7B0yJJVGIW+lWjcv/MjU6s9Bfev
- aNEM49lG2C7U+orbAaYH9/7P8ZGKl8jRx96Btx21SXD882rt4L5jkCE/Ehpk8vYx/8oA1+slP
- HqwMOE6VdIHVpB1cnFficfvyvZB/I8KEiZkeDmObz4fmJXPBcEFy6tiRKI5L3RJMvTYIGmzuv
- uw1izqB5N55iO78f+urUGcqSlxYRYffHSmzE9DrBO4lva/6Xa2V1vUqsm2m2WUHFX3EddXYTt
- Ag4AscxMiJn6/hzide9HqrdPWsG6USLJIYjS9RsvuBJBhkv30yUYDmyamjIYD7RjQ0OPC671M
- 2BwHrlO+ow0+lJ3iVX4LCZCff14rs4tg2oj9Kaf8EUASbdKJysJGpVHQxBVZ4AA4EYrnVvJa5
- I9ogzGYADEyWiwtgqDgkc68qDgWtJADV/l9EkIIzVSwW6696b5Jc4vp3h3C5FWz9kts6c03A1
- HNeP5ago9846haYaMjr0wpcXAp70tcWO+qTvjsMlm7gFnQ4T9TlawhYLBaoFiJAg1yHSdBl3K
- YX6sQ2y+OsbnCuNnQ6kelgPPdm3HSRzh4ML4qjyUq91xm/aOwcGLdDjGfp6kSowHHN0TJHE92
- kMFczPFeRRYtAN8siD4VrSIrp5rZ2OJAtR38ajh6jy/f3/rL/1n5hTxqq+KZwZtbzxRnAAT2g
- M049/xcXnD255jwn8DiIOziHTX3gUOzs92OY28mEgoyRHGEgqiG2bRPnIrbsF/Ulc7CsJ6xBj
- SipTs6t0utrFdl5JhuPt1gpmA2SnQXFI2ZUAcq9Uwj90lE0Qz6gM1Oa2OUKkblUu+V4GDT9zK
- O4C6kdRfo/BbBLxyZqG02VrqfusVQSOydgWRlRsnTrwaNkQrPj2/UlnHscDE3raTivzMta6Em
- AXgiL7ZXntXAXPC7XTn6yeU9juAz2aXNw/6O1XKNLp23HQ4GLMHxAbXhGxXy46VxnaMOx1Uqg
- 0Md9rH4e1Iktcd3VU74OIyvVqfqvHZAlyAdPbYO6BOiQQANtSKxKtFuwuptp/KygTINnrRBZd
- +mcFePNSv6VLc10bD/sr+lIWBH/aghEAlrpf3a1DzZrP6sYrvo2gHfzgtb+g=
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=E2=80=A6
-> +++ b/fs/exfat/nls.c
-=E2=80=A6
-> +static int exfat_load_upcase_table(struct super_block *sb,
-> +		sector_t sector, unsigned long long num_sectors,
-> +		unsigned int utbl_checksum)
-> +{
-=E2=80=A6
+Add DT binding documentation for WIZ (SERDES wrapper). WIZ is *NOT* a
+PHY but a wrapper used to configure some of the input signals to the
+SERDES. It is used with both Sierra(16G) and Torrent(10G) serdes.
 
-Do you care for the clarification of remaining software development concer=
-ns
-(also for this function implementation)?
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+[jsarha@ti.com: Add separate compatible for Sierra(16G) and Torrent(10G)
+ SERDES]
+Signed-off-by: Jyri Sarha <jsarha@ti.com>
+---
+Changes from v4:
+*) Fixed the indentation as suggested by Rob v4
 
-Regards,
-Markus
+ .../bindings/phy/ti,phy-j721e-wiz.yaml        | 204 ++++++++++++++++++
+ 1 file changed, 204 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
+
+diff --git a/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
+new file mode 100644
+index 000000000000..e010ea46b88d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
+@@ -0,0 +1,204 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/phy/ti,phy-j721e-wiz.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: TI J721E WIZ (SERDES Wrapper)
++
++maintainers:
++  - Kishon Vijay Abraham I <kishon@ti.com>
++
++properties:
++  compatible:
++    enum:
++      - ti,j721e-wiz-16g
++      - ti,j721e-wiz-10g
++
++  power-domains:
++    maxItems: 1
++
++  clocks:
++    maxItems: 3
++    description: clock-specifier to represent input to the WIZ
++
++  clock-names:
++    items:
++      - const: fck
++      - const: core_ref_clk
++      - const: ext_ref_clk
++
++  num-lanes:
++    minimum: 1
++    maximum: 4
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 1
++
++  "#reset-cells":
++    const: 1
++
++  ranges: true
++
++  assigned-clocks:
++    maxItems: 2
++
++  assigned-clock-parents:
++    maxItems: 2
++
++patternProperties:
++  "^pll[0|1]-refclk$":
++    type: object
++    description: |
++      WIZ node should have subnodes for each of the PLLs present in
++      the SERDES.
++    properties:
++      clocks:
++        maxItems: 2
++        description: Phandle to clock nodes representing the two inputs to PLL.
++
++      "#clock-cells":
++        const: 0
++
++      assigned-clocks:
++        maxItems: 1
++
++      assigned-clock-parents:
++        maxItems: 1
++
++    required:
++      - clocks
++      - "#clock-cells"
++      - assigned-clocks
++      - assigned-clock-parents
++
++  "^cmn-refclk1?-dig-div$":
++    type: object
++    description:
++      WIZ node should have subnodes for each of the PMA common refclock
++      provided by the SERDES.
++    properties:
++      clocks:
++        maxItems: 1
++        description: Phandle to the clock node representing the input to the
++          divider clock.
++
++      "#clock-cells":
++        const: 0
++
++    required:
++      - clocks
++      - "#clock-cells"
++
++  "^refclk-dig$":
++    type: object
++    description: |
++      WIZ node should have subnode for refclk_dig to select the reference
++      clock source for the reference clock used in the PHY and PMA digital
++      logic.
++    properties:
++      clocks:
++        maxItems: 4
++        description: Phandle to four clock nodes representing the inputs to
++          refclk_dig
++
++      "#clock-cells":
++        const: 0
++
++      assigned-clocks:
++        maxItems: 1
++
++      assigned-clock-parents:
++        maxItems: 1
++
++    required:
++      - clocks
++      - "#clock-cells"
++      - assigned-clocks
++      - assigned-clock-parents
++
++  "^serdes@[0-9a-f]+$":
++    type: object
++    description: |
++      WIZ node should have '1' subnode for the SERDES. It could be either
++      Sierra SERDES or Torrent SERDES. Sierra SERDES should follow the
++      bindings specified in
++      Documentation/devicetree/bindings/phy/phy-cadence-sierra.txt
++      Torrent SERDES should follow the bindings specified in
++      Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
++
++required:
++  - compatible
++  - power-domains
++  - clocks
++  - clock-names
++  - num-lanes
++  - "#address-cells"
++  - "#size-cells"
++  - "#reset-cells"
++  - ranges
++
++examples:
++  - |
++    #include <dt-bindings/soc/ti,sci_pm_domain.h>
++
++    wiz@5000000 {
++           compatible = "ti,j721e-wiz-16g";
++           #address-cells = <1>;
++           #size-cells = <1>;
++           power-domains = <&k3_pds 292 TI_SCI_PD_EXCLUSIVE>;
++           clocks = <&k3_clks 292 5>, <&k3_clks 292 11>, <&dummy_cmn_refclk>;
++           clock-names = "fck", "core_ref_clk", "ext_ref_clk";
++           assigned-clocks = <&k3_clks 292 11>, <&k3_clks 292 0>;
++           assigned-clock-parents = <&k3_clks 292 15>, <&k3_clks 292 4>;
++           num-lanes = <2>;
++           #reset-cells = <1>;
++           ranges = <0x5000000 0x0 0x5000000 0x10000>;
++
++           pll0-refclk {
++                  clocks = <&k3_clks 293 13>, <&dummy_cmn_refclk>;
++                  #clock-cells = <0>;
++                  assigned-clocks = <&wiz1_pll0_refclk>;
++                  assigned-clock-parents = <&k3_clks 293 13>;
++           };
++
++           pll1-refclk {
++                  clocks = <&k3_clks 293 0>, <&dummy_cmn_refclk1>;
++                  #clock-cells = <0>;
++                  assigned-clocks = <&wiz1_pll1_refclk>;
++                  assigned-clock-parents = <&k3_clks 293 0>;
++           };
++
++           cmn-refclk-dig-div {
++                  clocks = <&wiz1_refclk_dig>;
++                  #clock-cells = <0>;
++           };
++
++           cmn-refclk1-dig-div {
++                  clocks = <&wiz1_pll1_refclk>;
++                  #clock-cells = <0>;
++           };
++
++           refclk-dig {
++                  clocks = <&k3_clks 292 11>, <&k3_clks 292 0>, <&dummy_cmn_refclk>, <&dummy_cmn_refclk1>;
++                  #clock-cells = <0>;
++                  assigned-clocks = <&wiz0_refclk_dig>;
++                  assigned-clock-parents = <&k3_clks 292 11>;
++           };
++
++           serdes@5000000 {
++                  compatible = "cdns,ti,sierra-phy-t0";
++                  reg-names = "serdes";
++                  reg = <0x5000000 0x10000>;
++                  #address-cells = <1>;
++                  #size-cells = <0>;
++                  resets = <&serdes_wiz0 0>;
++                  reset-names = "sierra_reset";
++                  clocks = <&wiz0_cmn_refclk_dig_div>, <&wiz0_cmn_refclk1_dig_div>;
++                  clock-names = "cmn_refclk_dig_div", "cmn_refclk1_dig_div";
++           };
++    };
+-- 
+2.17.1
+
