@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1525412F0B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:55:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE71612EF7B
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:46:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728862AbgABWyq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:54:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37774 "EHLO mail.kernel.org"
+        id S1729863AbgABWaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:30:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728434AbgABWUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:20:23 -0500
+        id S1730152AbgABWaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:30:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FDD521D7D;
-        Thu,  2 Jan 2020 22:20:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BBB3222C3;
+        Thu,  2 Jan 2020 22:30:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003622;
-        bh=gv28rBkTL9o0vnvk0kKvbqmyiblnHuCUs4CfzVZgSCc=;
+        s=default; t=1578004214;
+        bh=gUN+kAnWfc1ZcNtrlOl182rF7UiZMNBamdOsPlYao0k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=slR8EJOojIvkVaPFWB2wbKzoFWDLaDgcLliUIWZPBmxY3kLNNK7cbGmtUSkmq9H6j
-         M9OECdG35xJdvCQqYtFeMtv3VJ81E6aBmJsVpd1RWorYcDYRqNt0vkErFrC9ztqRTa
-         wCWKdtjJ1Cs9CByN/rVdEvGnLKt1hzNCcZjOucSM=
+        b=vlSSIgn1vnH1NxDsHCQ8Cz7NkK2N9bBshOL2r7jG2yTL0vXPc7/zRxgf+KSF59R9q
+         CnTgh/R6oTSYHu+rYQ9bsr1Vx39TC3QMqzA4JNGFH3yqObAJQb0d4+d1J+/EaWR9aK
+         XnIDrw6ayerSyVTeyqB18xZNlH6ceqISTIfzTxgE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jinke Fan <fanjinke@hygon.cn>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 045/114] HID: quirks: Add quirk for HP MSU1465 PIXART OEM mouse
+        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.9 086/171] Revert "mmc: sdhci: Fix incorrect switch to HS mode"
 Date:   Thu,  2 Jan 2020 23:06:57 +0100
-Message-Id: <20200102220033.622873989@linuxfoundation.org>
+Message-Id: <20200102220558.950964515@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,63 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jinke Fan <fanjinke@hygon.cn>
+From: Faiz Abbas <faiz_abbas@ti.com>
 
-[ Upstream commit f1a0094cbbe97a5f8aca7bdc64bfe43ac9dc6879 ]
+commit 07bcc411567cb96f9d1fc84fff8d387118a2920d upstream.
 
-The PixArt OEM mouse disconnets/reconnects every minute on
-Linux. All contents of dmesg are repetitive:
+This reverts commit c894e33ddc1910e14d6f2a2016f60ab613fd8b37.
 
-[ 1465.810014] usb 1-2.2: USB disconnect, device number 20
-[ 1467.431509] usb 1-2.2: new low-speed USB device number 21 using xhci_hcd
-[ 1467.654982] usb 1-2.2: New USB device found, idVendor=03f0,idProduct=1f4a, bcdDevice= 1.00
-[ 1467.654985] usb 1-2.2: New USB device strings: Mfr=1, Product=2,SerialNumber=0
-[ 1467.654987] usb 1-2.2: Product: HP USB Optical Mouse
-[ 1467.654988] usb 1-2.2: Manufacturer: PixArt
-[ 1467.699722] input: PixArt HP USB Optical Mouse as /devices/pci0000:00/0000:00:07.1/0000:05:00.3/usb1/1-2/1-2.2/1-2.2:1.0/0003:03F0:1F4A.0012/input/input19
-[ 1467.700124] hid-generic 0003:03F0:1F4A.0012: input,hidraw0: USB HID v1.11 Mouse [PixArt HP USB Optical Mouse] on usb-0000:05:00.3-2.2/input0
+This commit aims to treat SD High speed and SDR25 as the same while
+setting UHS Timings in HOST_CONTROL2 which leads to failures with some
+SD cards in AM65x. Revert this commit.
 
-So add HID_QUIRK_ALWAYS_POLL for this one as well.
-Test the patch, the mouse is no longer disconnected and there are no
-duplicate logs in dmesg.
+The issue this commit was trying to fix can be implemented in a platform
+specific callback instead of common sdhci code.
 
-Reference:
-https://github.com/sriemer/fix-linux-mouse
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Link: https://lore.kernel.org/r/20191128110422.25917-1-faiz_abbas@ti.com
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Jinke Fan <fanjinke@hygon.cn>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-ids.h    | 1 +
- drivers/hid/hid-quirks.c | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/mmc/host/sdhci.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 02c263a4c083..1949d6fca53e 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -563,6 +563,7 @@
- #define USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_094A	0x094a
- #define USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_0941	0x0941
- #define USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_0641	0x0641
-+#define USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_1f4a	0x1f4a
- 
- #define USB_VENDOR_ID_HUION		0x256c
- #define USB_DEVICE_ID_HUION_TABLET	0x006e
-diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
-index a407fd2399ff..57d6fe9ed416 100644
---- a/drivers/hid/hid-quirks.c
-+++ b/drivers/hid/hid-quirks.c
-@@ -96,6 +96,7 @@ static const struct hid_device_id hid_quirks[] = {
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_094A), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_0941), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_0641), HID_QUIRK_ALWAYS_POLL },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_1f4a), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_IDEACOM, USB_DEVICE_ID_IDEACOM_IDC6680), HID_QUIRK_MULTI_INPUT },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_INNOMEDIA, USB_DEVICE_ID_INNEX_GENESIS_ATARI), HID_QUIRK_MULTI_INPUT },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_KYE, USB_DEVICE_ID_KYE_EASYPEN_M610X), HID_QUIRK_MULTI_INPUT },
--- 
-2.20.1
-
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1557,9 +1557,7 @@ void sdhci_set_uhs_signaling(struct sdhc
+ 		ctrl_2 |= SDHCI_CTRL_UHS_SDR104;
+ 	else if (timing == MMC_TIMING_UHS_SDR12)
+ 		ctrl_2 |= SDHCI_CTRL_UHS_SDR12;
+-	else if (timing == MMC_TIMING_SD_HS ||
+-		 timing == MMC_TIMING_MMC_HS ||
+-		 timing == MMC_TIMING_UHS_SDR25)
++	else if (timing == MMC_TIMING_UHS_SDR25)
+ 		ctrl_2 |= SDHCI_CTRL_UHS_SDR25;
+ 	else if (timing == MMC_TIMING_UHS_SDR50)
+ 		ctrl_2 |= SDHCI_CTRL_UHS_SDR50;
 
 
