@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72A4612EE38
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:36:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6C3E12EE35
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:36:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730911AbgABWgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:36:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46710 "EHLO mail.kernel.org"
+        id S1730920AbgABWgM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:36:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730899AbgABWgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:36:07 -0500
+        id S1730362AbgABWgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:36:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 405B920863;
-        Thu,  2 Jan 2020 22:36:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F04F20866;
+        Thu,  2 Jan 2020 22:36:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004566;
-        bh=p7bx/iD+rCzGI/0M9/xMq3g1/19HHaOl80YIcp5EvN0=;
+        s=default; t=1578004569;
+        bh=lhoQuyIkfheikLtVGHSgIcS2VxeCYOxZooRUI3X0+M8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fDFAc6xACRxb8x2KZyRJxzUJ8/ybc4OwCj1vxJO0F/CobiCfz1Kr6H8EMozm4BO1o
-         FjEZKy6rPzGhQvMnt512jG+9IjYrkYPL6NehMdOvhKH64iZ+bFnvEvJIjpEtd7t2EX
-         aOvcdR6zfvoJKKUPseVylpFQGGntf14mKsG+klCs=
+        b=Wy2qyjWmZ0t1C09qyby3GhFnmBTffgiZ3itjkKf/gRHVpqBejQdoonW/8OyZdg41I
+         aCWjebkMzjTyrM8bLPER9n9Ahkw4QSq/AvNqfub2myqIlnxOYK5bw0yPUiRNXtnzEM
+         qCKaAwgi1lPF/aZYQarUVBYzcJqhew9LWGhdPqZ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 061/137] fbtft: Make sure string is NULL terminated
-Date:   Thu,  2 Jan 2020 23:07:14 +0100
-Message-Id: <20200102220554.697963357@linuxfoundation.org>
+Subject: [PATCH 4.4 062/137] crypto: sun4i-ss - Fix 64-bit size_t warnings on sun4i-ss-hash.c
+Date:   Thu,  2 Jan 2020 23:07:15 +0100
+Message-Id: <20200102220554.834811726@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
 References: <20200102220546.618583146@linuxfoundation.org>
@@ -44,41 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Corentin Labbe <clabbe.montjoie@gmail.com>
 
-[ Upstream commit 21f585480deb4bcf0d92b08879c35d066dfee030 ]
+[ Upstream commit a7126603d46fe8f01aeedf589e071c6aaa6c6c39 ]
 
-New GCC warns about inappropriate use of strncpy():
+If you try to compile this driver on a 64-bit platform then you
+will get warnings because it mixes size_t with unsigned int which
+only works on 32-bit.
 
-drivers/staging/fbtft/fbtft-core.c: In function ‘fbtft_framebuffer_alloc’:
-drivers/staging/fbtft/fbtft-core.c:665:2: warning: ‘strncpy’ specified bound 16 equals destination size [-Wstringop-truncation]
-  665 |  strncpy(info->fix.id, dev->driver->name, 16);
-      |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Later on the copy is being used with the assumption to be NULL terminated.
-Make sure string is NULL terminated by switching to snprintf().
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Link: https://lore.kernel.org/r/20191120095716.26628-1-andriy.shevchenko@linux.intel.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This patch fixes all of the warnings on sun4i-ss-hash.c.
+Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/fbtft/fbtft-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/sunxi-ss/sun4i-ss-hash.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/fbtft/fbtft-core.c b/drivers/staging/fbtft/fbtft-core.c
-index 15937e0ef4d9..36bf71989637 100644
---- a/drivers/staging/fbtft/fbtft-core.c
-+++ b/drivers/staging/fbtft/fbtft-core.c
-@@ -765,7 +765,7 @@ struct fb_info *fbtft_framebuffer_alloc(struct fbtft_display *display,
- 	fbdefio->deferred_io =     fbtft_deferred_io;
- 	fb_deferred_io_init(info);
- 
--	strncpy(info->fix.id, dev->driver->name, 16);
-+	snprintf(info->fix.id, sizeof(info->fix.id), "%s", dev->driver->name);
- 	info->fix.type =           FB_TYPE_PACKED_PIXELS;
- 	info->fix.visual =         FB_VISUAL_TRUECOLOR;
- 	info->fix.xpanstep =	   0;
+diff --git a/drivers/crypto/sunxi-ss/sun4i-ss-hash.c b/drivers/crypto/sunxi-ss/sun4i-ss-hash.c
+index ff8031498809..bff3cbd05c0a 100644
+--- a/drivers/crypto/sunxi-ss/sun4i-ss-hash.c
++++ b/drivers/crypto/sunxi-ss/sun4i-ss-hash.c
+@@ -245,8 +245,8 @@ int sun4i_hash_update(struct ahash_request *areq)
+ 			 */
+ 			while (op->len < 64 && i < end) {
+ 				/* how many bytes we can read from current SG */
+-				in_r = min3(mi.length - in_i, end - i,
+-					    64 - op->len);
++				in_r = min(end - i, 64 - op->len);
++				in_r = min_t(size_t, mi.length - in_i, in_r);
+ 				memcpy(op->buf + op->len, mi.addr + in_i, in_r);
+ 				op->len += in_r;
+ 				i += in_r;
+@@ -266,8 +266,8 @@ int sun4i_hash_update(struct ahash_request *areq)
+ 		}
+ 		if (mi.length - in_i > 3 && i < end) {
+ 			/* how many bytes we can read from current SG */
+-			in_r = min3(mi.length - in_i, areq->nbytes - i,
+-				    ((mi.length - in_i) / 4) * 4);
++			in_r = min_t(size_t, mi.length - in_i, areq->nbytes - i);
++			in_r = min_t(size_t, ((mi.length - in_i) / 4) * 4, in_r);
+ 			/* how many bytes we can write in the device*/
+ 			todo = min3((u32)(end - i) / 4, rx_cnt, (u32)in_r / 4);
+ 			writesl(ss->base + SS_RXFIFO, mi.addr + in_i, todo);
+@@ -289,8 +289,8 @@ int sun4i_hash_update(struct ahash_request *areq)
+ 	if ((areq->nbytes - i) < 64) {
+ 		while (i < areq->nbytes && in_i < mi.length && op->len < 64) {
+ 			/* how many bytes we can read from current SG */
+-			in_r = min3(mi.length - in_i, areq->nbytes - i,
+-				    64 - op->len);
++			in_r = min(areq->nbytes - i, 64 - op->len);
++			in_r = min_t(size_t, mi.length - in_i, in_r);
+ 			memcpy(op->buf + op->len, mi.addr + in_i, in_r);
+ 			op->len += in_r;
+ 			i += in_r;
 -- 
 2.20.1
 
