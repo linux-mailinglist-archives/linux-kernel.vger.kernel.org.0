@@ -2,95 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BE2E12EAB5
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 20:59:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D063212EABB
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 21:01:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728616AbgABT7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 14:59:20 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:34537 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728297AbgABT7T (ORCPT
+        id S1728631AbgABUBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 15:01:08 -0500
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:40746 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728296AbgABUBH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 14:59:19 -0500
-Received: from mail-qt1-f170.google.com ([209.85.160.170]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MkEdF-1jTL8m3e4f-00kifh; Thu, 02 Jan 2020 20:59:18 +0100
-Received: by mail-qt1-f170.google.com with SMTP id w47so35440883qtk.4;
-        Thu, 02 Jan 2020 11:59:17 -0800 (PST)
-X-Gm-Message-State: APjAAAVsBkAL9t3XXzrBewL9njKi9g/4l3eoCPegtzBRQx6OTpGh8MCw
-        Z9kvLn96VbHIb/s66fsshFr97oRBaMdNmavfU68=
-X-Google-Smtp-Source: APXvYqyMexwubr905g8IFy5rPyKxmy5F8mo4h/FyF5+Eh+Q+KNUhRdx6WKOpGs5LIKlENSVsLmNfAAn4pjNodXYNVLY=
-X-Received: by 2002:ac8:47d3:: with SMTP id d19mr60247574qtr.142.1577995156713;
- Thu, 02 Jan 2020 11:59:16 -0800 (PST)
-MIME-Version: 1.0
-References: <20200102172413.654385-1-amanieu@gmail.com> <20200102172413.654385-2-amanieu@gmail.com>
- <20200102175011.q7afo45nc2togtfh@wittgenstein> <CAK8P3a3a88e=hkzYG5mj=NuVQWMtyougkKzBznnn2y9ZoZfEGg@mail.gmail.com>
- <CA+y5pbTwsN6dUWQ+hAWpuo4c7418GV1RdpmKFiJW+cEu+ibGJw@mail.gmail.com>
-In-Reply-To: <CA+y5pbTwsN6dUWQ+hAWpuo4c7418GV1RdpmKFiJW+cEu+ibGJw@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 2 Jan 2020 20:59:00 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2nqRkEnkLD8she+d34UhP=FNWSZXf_47dM4+g-eZMJNw@mail.gmail.com>
-Message-ID: <CAK8P3a2nqRkEnkLD8she+d34UhP=FNWSZXf_47dM4+g-eZMJNw@mail.gmail.com>
-Subject: Re: [PATCH 1/7] arm64: Move __ARCH_WANT_SYS_CLONE3 definition to uapi headers
-To:     "Amanieu d'Antras" <amanieu@gmail.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        "# 3.4.x" <stable@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+        Thu, 2 Jan 2020 15:01:07 -0500
+Received: by mail-pg1-f201.google.com with SMTP id 4so5696497pgn.7
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 12:01:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=ARkancjaecOwC52/MajrESx5s7dn0KQR9/fZNXj0j2I=;
+        b=jrdCSWCAWMNVE2OQRwzwzBb1NiikjCcGyKsZU4lGK8svAU5cjJtAnQm3RXt8DwKFA+
+         nZjBozmagfuOFOd8DsEZblCmgYF/slGhlRx1y5enDV/Aj+OrY6EnpfE5TLV3FGG06OFu
+         SEV4OaQ5/7qf7WY9DM54QE2UmsROV20rR8RkMB0baMbTTASt4RwkLLYUROZLDcp8btNz
+         6jE9zXUHkCMDIVevDesxEAQpynYI0gPQJiO11noUpmkgTxMZWVGoa4jg21m+LLLnhp3o
+         QonYYmEdmtnP0kWU5u4HLmXw3JdRkABeARDXTkw2pgddhljcHtkw8UVTswcNQBRCbUIg
+         9cfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=ARkancjaecOwC52/MajrESx5s7dn0KQR9/fZNXj0j2I=;
+        b=NhMokTzt5NmeiaqMXsoHmTDtplcUuUwtPrxjwWkqfIOLhnZKPeVUJH+E3EK0VBgywJ
+         qxh2EnQ4+gLoO/dDZw2/F7rhmVgkpV1p9atasLTPGnatgQnoY9Vi/4SpGMrhtGDNCBck
+         flJxZ15z97FtY9PB2XETe/7T87bMGt9CZa7oMNnsON8W86KpETDsmcPZcC/nUrmvWX6o
+         icAfRSkgFCkl6FhiC2E5pTnpx3RqXm1z9YHuifnF5UgE9vu7hBfwubCZ9qUHkLSFERes
+         3riXGIHNQrbdw9/uLwFDg716SxFzMztyjFUsgKHkM0ryV6hBCnMowSyrQe0QJpPQcwut
+         +3Kg==
+X-Gm-Message-State: APjAAAUWXNC3cxXh/hvsrFBYOMaRbwE83QMhDfZk8BE9ydmSd5olj6OU
+        c5R5vUCOQ33URfydODHZf7MwQWSa/G4+4+w=
+X-Google-Smtp-Source: APXvYqyIxOm6ba5eyO4OWWh7SR/elLe8fAPwip68Y6Gqul2zz00OiLehK8VMD0eVg5mjR5fHaBBJL46CoXBT64w=
+X-Received: by 2002:a63:6507:: with SMTP id z7mr93919801pgb.322.1577995265520;
+ Thu, 02 Jan 2020 12:01:05 -0800 (PST)
+Date:   Thu,  2 Jan 2020 12:00:50 -0800
+Message-Id: <20200102200052.51182-1-semenzato@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
+Subject: [PATCH v2 0/2] clarify limitations of hibernation
+From:   Luigi Semenzato <semenzato@google.com>
+To:     linux-pm@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, rafael@kernel.org, gpike@google.com,
+        Luigi Semenzato <semenzato@google.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:NAAa5NIq97OLTmzk7+wkiIlV6ntMsnPKSy62Uh3QFCN6mYMVhEc
- tiUyCwjtpDQ/7vNFvwwxZjo3QSbOSlq7KvOmx2M4FMbT489oKS41a1uFukF1HZUzD3EIa9D
- bUYgCFrqmdWKSJVOcD+7mG/GpFKlwdHz2vz/co9v17WpOVQV/BR6k3JvcS2uutbROPtlMFO
- mTzd2Ovb9jpxCkrid+mBw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:VSMufNLHaao=:BSnmp30yY7PTpPxyySYwWw
- qx3y5ojoOmRKCGwNEwpNszm0yHjYCcc+g7MSr5p2Y0J0rMNVL+CFLhXCynKYSiRe+k2TkuenX
- TQkcvA3FHgQPE1CXOFKfG+OLSk5NPm2n4Gy0OTVztS3pvOgZuy5MkjMNVLsZpFUzQ0h1tlJY0
- BHE/0DHTMepOH062AjjWvC3+Gyju4hp5JlUb7xyAn6DEzvd6g80y/vQCPeCIimjgsbTRNky7h
- nSXM3RZxMuurWJTyU5XCEJYFgFkLgdCnjhbCYIC1bNTOCtjvJmfoRovfKz/lHvrwKiUQ6kYVR
- 4EAE12V5//qvQUH30D1gDcGdAV0ia7NpIXQiL+eCL5bG2v9sr506xUU9Y9S7kg9tjalhy+z7E
- o6keq+GkaIJZzNhPhTpdmFv4d9s6nHhGuBnJRt10a6IJ3eWEWCUtL/tNtFostrFAb8A8rBvn5
- 5N0gT0QosjbUSQ7/Ul40XEMr6tl/8EnaBETz3jq6bCXx/wgX2o/zHe/d96LtVCLi1IeI+qHue
- EcnG4d+KEkPvUD2PqE0Gus4rTmKsV56lnMfDp2autGqGlcw6SqYZEmX7GH5Uatc2OdSjPhLpv
- jdDBeox9gVbaBUDH7xqHz7AvIECGOWomyvbCEl/VzR4usBp+NPZezuzMIcHdv0nu6bIU3RlTB
- 8520lU6BhGIkjZovDHb0WMl0BqMJ7t8/EQS6adIsDkg62Zb8etZ1ig9vlCEtWecYeiT92ajqC
- 6MRVoGfgFSoCrfWU1mSmO343xJYkhUDn4xkK6baEEuLN5InlmCmF9u/V3jRFh/NbNYyBWJCCB
- kptQJK+o+x8jn0VSTr4B1VJvPVGfcaFnl1KsRoA17uPTosB3wT4MlDnwPqfpaj0FiSh967Zvg
- bW9NSgZaVDiGef75sDng==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 2, 2020 at 8:33 PM Amanieu d'Antras <amanieu@gmail.com> wrote:
->
-> On Thu, Jan 2, 2020 at 8:25 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Thu, Jan 2, 2020 at 6:50 PM Christian Brauner
-> > <christian.brauner@ubuntu.com> wrote:
-> > > On Thu, Jan 02, 2020 at 06:24:07PM +0100, Amanieu d'Antras wrote:
-> > > > Previously this was only defined in the internal headers which
-> > > > resulted in __NR_clone3 not being defined in the user headers.
-> > > >
-> > > > Signed-off-by: Amanieu d'Antras <amanieu@gmail.com>
-> > > > Cc: linux-arm-kernel@lists.infradead.org
-> > > > Cc: <stable@vger.kernel.org> # 5.3.x
-> > > > ---
-> > > >  arch/arm64/include/asm/unistd.h      | 1 -
-> > > >  arch/arm64/include/uapi/asm/unistd.h | 1 +
-> > > >  2 files changed, 1 insertion(+), 1 deletion(-)
-> >
-> > Good catch, this is clearly needed, but please make the patch change
-> > every copy of asm/unistd.h that defines this, not just the arm64 one.
->
-> Actually __ARCH_WANT_SYS_CLONE3 only needs to be in the uapi headers
-> for architectures that use the asm-generic/unistd.h header, which uses
-> it to guard the definition of __NR_clone3. Architectures not using the
-> asm-generic header don't need this define to export __NR_clone3. The
-> only other architecture with clone3 that uses the asm-generic header
-> is riscv, which already defines __ARCH_WANT_SYS_CLONE3 in the uapi
-> headers.
+These patches aim to make it clearer under which circumstances
+hibernation will function as expected.  They include one documentation
+change, and one change which logs more information on failure to
+enter hibernation.
 
-Ah, of course. The patch looks fine to me then.
+Luigi Semenzato (2):
+  Documentation: clarify limitations of hibernation
+  pm: add more logging on hibernation failure
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+ Documentation/admin-guide/pm/sleep-states.rst | 12 +++++++++++-
+ kernel/power/snapshot.c                       | 18 ++++++++++++------
+ 2 files changed, 23 insertions(+), 7 deletions(-)
+
+-- 
+2.24.1.735.g03f4e72817-goog
+
