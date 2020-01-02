@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9E9112F179
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:00:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E99412F16F
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:00:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727969AbgABXAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 18:00:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51802 "EHLO mail.kernel.org"
+        id S1727141AbgABWMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:12:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727498AbgABWMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:12:34 -0500
+        id S1727534AbgABWMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:12:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E005121D7D;
-        Thu,  2 Jan 2020 22:12:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F35421582;
+        Thu,  2 Jan 2020 22:12:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003153;
-        bh=r3pZeP9IeRuVmMfAsl/FdeSCsHqM9bwXH8Ql28UUO9w=;
+        s=default; t=1578003160;
+        bh=/YUthY9vE9Z0PtWMgd0UlmOKUFE+2Y8/i6JHRz80FYA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dAJKzAZGZHu4XgJ0YyBk2ee/SucuOt649iHmD5j3UZ5Jut2NGyVrs4rPDaYaxRGac
-         NYU10MHOjsH11ZVsd0n9jHIZYmEy9Q7o5zY8gtY4C0DaohZt15SxjTMvbZkrDcM4X8
-         Z3JIivt08GsM6Wp9NkKj70WTlJdO+RKLKF0DryDY=
+        b=q+zSZisJlAPYeoQpR7KJ3jL58U5VKngrOd2DcKZ3VX0w2a/arm5gAEcpkFk0oI8gO
+         QpqzEJAtNsBJvybj5zZj+cjMfLxxiEacDnbR43jZAS/UfdNAe//56ifS6DJ4d1srOV
+         u7CrHkllDprGqfVx0HZgKkylKsmRl9xNAWt9A27E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        Jan Kara <jack@suse.cz>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        Theodore Tso <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 042/191] ext4: update direct I/O read lock pattern for IOCB_NOWAIT
-Date:   Thu,  2 Jan 2020 23:05:24 +0100
-Message-Id: <20200102215834.457865761@linuxfoundation.org>
+        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Hannes Reinecke <hare@suse.com>,
+        Douglas Gilbert <dgilbert@interlog.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 045/191] scsi: tracing: Fix handling of TRANSFER LENGTH == 0 for READ(6) and WRITE(6)
+Date:   Thu,  2 Jan 2020 23:05:27 +0100
+Message-Id: <20200102215834.738714064@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
 References: <20200102215829.911231638@linuxfoundation.org>
@@ -46,45 +47,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+From: Bart Van Assche <bvanassche@acm.org>
 
-[ Upstream commit 548feebec7e93e58b647dba70b3303dcb569c914 ]
+[ Upstream commit f6b8540f40201bff91062dd64db8e29e4ddaaa9d ]
 
-This patch updates the lock pattern in ext4_direct_IO_read() to not
-block on inode lock in cases of IOCB_NOWAIT direct I/O reads. The
-locking condition implemented here is similar to that of 942491c9e6d6
-("xfs: fix AIM7 regression").
+According to SBC-2 a TRANSFER LENGTH field of zero means that 256 logical
+blocks must be transferred. Make the SCSI tracing code follow SBC-2.
 
-Fixes: 16c54688592c ("ext4: Allow parallel DIO reads")
-Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
-Link: https://lore.kernel.org/r/c5d5e759f91747359fbd2c6f9a36240cf75ad79f.1572949325.git.mbobrowski@mbobrowski.org
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Fixes: bf8162354233 ("[SCSI] add scsi trace core functions and put trace points")
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Douglas Gilbert <dgilbert@interlog.com>
+Link: https://lore.kernel.org/r/20191105215553.185018-1-bvanassche@acm.org
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/inode.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/scsi/scsi_trace.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 53134e4509b8..b10aa115eade 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3836,7 +3836,13 @@ static ssize_t ext4_direct_IO_read(struct kiocb *iocb, struct iov_iter *iter)
- 	 * writes & truncates and since we take care of writing back page cache,
- 	 * we are protected against page writeback as well.
- 	 */
--	inode_lock_shared(inode);
-+	if (iocb->ki_flags & IOCB_NOWAIT) {
-+		if (!inode_trylock_shared(inode))
-+			return -EAGAIN;
-+	} else {
-+		inode_lock_shared(inode);
-+	}
-+
- 	ret = filemap_write_and_wait_range(mapping, iocb->ki_pos,
- 					   iocb->ki_pos + count - 1);
- 	if (ret)
+diff --git a/drivers/scsi/scsi_trace.c b/drivers/scsi/scsi_trace.c
+index 0f17e7dac1b0..07a2425ffa2c 100644
+--- a/drivers/scsi/scsi_trace.c
++++ b/drivers/scsi/scsi_trace.c
+@@ -18,15 +18,18 @@ static const char *
+ scsi_trace_rw6(struct trace_seq *p, unsigned char *cdb, int len)
+ {
+ 	const char *ret = trace_seq_buffer_ptr(p);
+-	sector_t lba = 0, txlen = 0;
++	u32 lba = 0, txlen;
+ 
+ 	lba |= ((cdb[1] & 0x1F) << 16);
+ 	lba |=  (cdb[2] << 8);
+ 	lba |=   cdb[3];
+-	txlen = cdb[4];
++	/*
++	 * From SBC-2: a TRANSFER LENGTH field set to zero specifies that 256
++	 * logical blocks shall be read (READ(6)) or written (WRITE(6)).
++	 */
++	txlen = cdb[4] ? cdb[4] : 256;
+ 
+-	trace_seq_printf(p, "lba=%llu txlen=%llu",
+-			 (unsigned long long)lba, (unsigned long long)txlen);
++	trace_seq_printf(p, "lba=%u txlen=%u", lba, txlen);
+ 	trace_seq_putc(p, 0);
+ 
+ 	return ret;
 -- 
 2.20.1
 
