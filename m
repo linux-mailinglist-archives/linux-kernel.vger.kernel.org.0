@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C35C112EE7C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:40:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3378412EDF5
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:33:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731376AbgABWi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:38:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53696 "EHLO mail.kernel.org"
+        id S1730595AbgABWdp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:33:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730998AbgABWiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:38:52 -0500
+        id S1730571AbgABWdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:33:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F00D722B48;
-        Thu,  2 Jan 2020 22:38:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0717820863;
+        Thu,  2 Jan 2020 22:33:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004731;
-        bh=Ty0n/R4nCrM8KnO4jFTWTV5N+ViGu4ynNPmcZnP2paY=;
+        s=default; t=1578004421;
+        bh=qmmnHUe5+pnegRU3TsxrWEtEKlgPYo5jMYTKL5BZvn0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HY8e8aNzLSZweommQltSrcfmRjO1j0zyVVa8lwc7SLqPU6LA0mPHt4hsc475ehvWc
-         erUUJkJf7F1+RPKJ/d5QQ1Oumkztclcx1Qw9EESKmjZhYk7y3dm+JMJSjQtuOpD6WL
-         hvlI0CIAMUU8zUTiUAl8an6IV86vtfUbZPV9lSGc=
+        b=iMhc5oYw2mEeUoend/g520aenC1pwPeOsEgw++0aifNUZAutHNujaWzdnUJLGuSwQ
+         nZmq4LE34ov+Mq83/cTLZnXcIBdkFmsk2olgsxzSlpO32N/sK9Y68MMmMDUhL1lndP
+         pqktSDrnqFzPt033jl/GSnvPJqfms0WeZVPxb258=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo L. F. Walbon" <gwalbon@linux.ibm.com>,
-        "Mauro S. M. Rodrigues" <maurosr@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 112/137] powerpc/security: Fix wrong message when RFI Flush is disable
+        syzbot+b3028ac3933f5c466389@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 154/171] ALSA: hda - Downgrade error message for single-cmd fallback
 Date:   Thu,  2 Jan 2020 23:08:05 +0100
-Message-Id: <20200102220602.235210317@linuxfoundation.org>
+Message-Id: <20200102220608.198290743@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,93 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo L. F. Walbon <gwalbon@linux.ibm.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 4e706af3cd8e1d0503c25332b30cad33c97ed442 ]
+[ Upstream commit 475feec0c41ad71cb7d02f0310e56256606b57c5 ]
 
-The issue was showing "Mitigation" message via sysfs whatever the
-state of "RFI Flush", but it should show "Vulnerable" when it is
-disabled.
+We made the error message for the CORB/RIRB communication clearer by
+upgrading to dev_WARN() so that user can notice better.  But this
+struck us like a boomerang: now it caught syzbot and reported back as
+a fatal issue although it's not really any too serious bug that worth
+for stopping the whole system.
 
-If you have "L1D private" feature enabled and not "RFI Flush" you are
-vulnerable to meltdown attacks.
+OK, OK, let's be softy, downgrade it to the standard dev_err() again.
 
-"RFI Flush" is the key feature to mitigate the meltdown whatever the
-"L1D private" state.
-
-SEC_FTR_L1D_THREAD_PRIV is a feature for Power9 only.
-
-So the message should be as the truth table shows:
-
-  CPU | L1D private | RFI Flush |                sysfs
-  ----|-------------|-----------|-------------------------------------
-   P9 |    False    |   False   | Vulnerable
-   P9 |    False    |   True    | Mitigation: RFI Flush
-   P9 |    True     |   False   | Vulnerable: L1D private per thread
-   P9 |    True     |   True    | Mitigation: RFI Flush, L1D private per thread
-   P8 |    False    |   False   | Vulnerable
-   P8 |    False    |   True    | Mitigation: RFI Flush
-
-Output before this fix:
-  # cat /sys/devices/system/cpu/vulnerabilities/meltdown
-  Mitigation: RFI Flush, L1D private per thread
-  # echo 0 > /sys/kernel/debug/powerpc/rfi_flush
-  # cat /sys/devices/system/cpu/vulnerabilities/meltdown
-  Mitigation: L1D private per thread
-
-Output after fix:
-  # cat /sys/devices/system/cpu/vulnerabilities/meltdown
-  Mitigation: RFI Flush, L1D private per thread
-  # echo 0 > /sys/kernel/debug/powerpc/rfi_flush
-  # cat /sys/devices/system/cpu/vulnerabilities/meltdown
-  Vulnerable: L1D private per thread
-
-Signed-off-by: Gustavo L. F. Walbon <gwalbon@linux.ibm.com>
-Signed-off-by: Mauro S. M. Rodrigues <maurosr@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190502210907.42375-1-gwalbon@linux.ibm.com
+Fixes: dd65f7e19c69 ("ALSA: hda - Show the fatal CORB/RIRB error more clearly")
+Reported-by: syzbot+b3028ac3933f5c466389@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/r/20191216151224.30013-1-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/security.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ sound/pci/hda/hda_controller.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/security.c b/arch/powerpc/kernel/security.c
-index fc5c49046aa7..45778c83038f 100644
---- a/arch/powerpc/kernel/security.c
-+++ b/arch/powerpc/kernel/security.c
-@@ -135,26 +135,22 @@ ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, cha
- 
- 	thread_priv = security_ftr_enabled(SEC_FTR_L1D_THREAD_PRIV);
- 
--	if (rfi_flush || thread_priv) {
-+	if (rfi_flush) {
- 		struct seq_buf s;
- 		seq_buf_init(&s, buf, PAGE_SIZE - 1);
- 
--		seq_buf_printf(&s, "Mitigation: ");
--
--		if (rfi_flush)
--			seq_buf_printf(&s, "RFI Flush");
--
--		if (rfi_flush && thread_priv)
--			seq_buf_printf(&s, ", ");
--
-+		seq_buf_printf(&s, "Mitigation: RFI Flush");
- 		if (thread_priv)
--			seq_buf_printf(&s, "L1D private per thread");
-+			seq_buf_printf(&s, ", L1D private per thread");
- 
- 		seq_buf_printf(&s, "\n");
- 
- 		return s.len;
+diff --git a/sound/pci/hda/hda_controller.c b/sound/pci/hda/hda_controller.c
+index c5e82329348b..bd0e4710d15d 100644
+--- a/sound/pci/hda/hda_controller.c
++++ b/sound/pci/hda/hda_controller.c
+@@ -872,7 +872,7 @@ static int azx_rirb_get_response(struct hdac_bus *bus, unsigned int addr,
+ 		return -EAGAIN; /* give a chance to retry */
  	}
  
-+	if (thread_priv)
-+		return sprintf(buf, "Vulnerable: L1D private per thread\n");
-+
- 	if (!security_ftr_enabled(SEC_FTR_L1D_FLUSH_HV) &&
- 	    !security_ftr_enabled(SEC_FTR_L1D_FLUSH_PR))
- 		return sprintf(buf, "Not affected\n");
+-	dev_WARN(chip->card->dev,
++	dev_err(chip->card->dev,
+ 		"azx_get_response timeout, switching to single_cmd mode: last cmd=0x%08x\n",
+ 		bus->last_cmd[addr]);
+ 	chip->single_cmd = 1;
 -- 
 2.20.1
 
