@@ -2,163 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70D0A12EB8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 22:56:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEB0712EB98
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 22:58:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725943AbgABV4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 16:56:44 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44274 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbgABV4n (ORCPT
+        id S1726194AbgABV6N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 16:58:13 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:34258 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbgABV6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 16:56:43 -0500
-Received: by mail-ed1-f67.google.com with SMTP id bx28so40211936edb.11
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 13:56:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cde1eNYPYWBeixXF9Crl73naFTdC9XUc+bxs2WxX/lM=;
-        b=Ly2dIZSjXAeT8HtYtSJPJ6Dv+s6dXYs9cq+ty9XkFuwhuCPAt0dcGdngKwFOADERqW
-         EqUAxLsqsRyfzHyRk9l/QXvHehHwQ/NbJWRtZXKdpg2T0PHdxdEhzJ49HRuaMjbIoxTF
-         H0ROzyubSkRLemwerWJUR7m344eUULGXFMTCIIv78nEJjPu9CzT4caheipD6jT3Cc/yz
-         vkIqMb6o6D9tkHeC2grYLJLWxu9Y8zLwE55fwtpJRG+H3/8wrlWGlqsstpU5xfd77R7i
-         gcxZN0EjVstI7eIDIbWcWuDKp0thvZgqGM8ypCCd95NINQgywbdZNcbGIipuI5HKZg/w
-         6pcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cde1eNYPYWBeixXF9Crl73naFTdC9XUc+bxs2WxX/lM=;
-        b=QoitkCQlzxJEwVIQabNDDnhXr3wt64XZZMPslEu8t7DSgGKgHqHo0JhJrj2my0OrUC
-         auD7PCeOQ7SuxyHy74GVF4gOAGvdCpeKOcRtqCEml7gSijvLAhRnfNH1kk2Y8t1ZJJYn
-         Rz4uKXpPBfg2d4OSlDXICdd07xKWLHIhsjIH3qfl7JSa/nkqUinL5QFCGKjheLGeKQZ4
-         YFoqwpay91bxNc2+BfUwOXkeILOvwkL6nhsK9EsShn/T/akYwkq+0rmaphJUCm6cEgI4
-         7YdW49xNP5ohF6WjEOetRaKyG8aht/v99SfO6Ri8VELBnB0hrzsEo/1wrrRudnSTzVkC
-         bdog==
-X-Gm-Message-State: APjAAAWT02GSoNx3mYwzkVDfsYuxJrQWt2I7/3Id9vpAX6Ua3htAto/c
-        QFfPdAuBDm5dBlu5gDNASgX2biRhOBdw4DrLN0s=
-X-Google-Smtp-Source: APXvYqwszQmG5zo+Ugher7yDwGkywdm1jEouad63DKJoLaUyJrV0nf0YqW1DT1mZwUkIrcO6BdfkZhcAVaayLzk9Se8=
-X-Received: by 2002:a17:906:1a50:: with SMTP id j16mr84941948ejf.106.1578002201411;
- Thu, 02 Jan 2020 13:56:41 -0800 (PST)
+        Thu, 2 Jan 2020 16:58:08 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 002LsRxn088500;
+        Thu, 2 Jan 2020 21:57:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
+ bh=c9CiFIyiVXzLlpT9+lnQQn3z7fPJn3E86zFXm4+hGo8=;
+ b=l27tJV/1FLn856+Rp/OjZkzDW2jl7hotIb6XEilTNAo7KS7Rl39jaLx7IT3t5WgPzclf
+ ZDGYMC/EgYCPjcwv1xhButdkXpUrfNMjVCX+99Kmg0aMg7pviO73tTWHYWxLqZFL16kV
+ qxRYuaEwynUH+0BjB5fty3tIp/E4Ge6H2nsdSJWv28D5YVtPPtwIio8wHWudjFJyC8xz
+ X+2Xl3m92k3NSGsQncZqrFDMttmje6oOGXnpjtj+bt4OXUwp+mEIm7aJW+Vkn9uj3EHB
+ EWRA8bAlyfC4yIaFEPKoFSI6tFW/5spkqoPiUMqgIViXzZ/EhCZ31U1al+HsD89MLpqM Hw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2x5ypqsku0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Jan 2020 21:57:57 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 002LmiPw101439;
+        Thu, 2 Jan 2020 21:57:56 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2x9jm6n3tw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Jan 2020 21:57:56 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 002LvtAF000910;
+        Thu, 2 Jan 2020 21:57:55 GMT
+Received: from localhost (/10.145.178.64)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 02 Jan 2020 13:57:55 -0800
+Date:   Thu, 2 Jan 2020 13:57:54 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL
+Message-ID: <20200102215754.GA1508646@magnolia>
+References: <20191228143651.bjb4sjirn2q3xup4@pali>
+ <517472d1-c686-2f18-4e0b-000cda7e88c7@redhat.com>
+ <20200101181054.GB191637@mit.edu>
+ <20200101183920.imncit5sllj46c22@pali>
 MIME-Version: 1.0
-References: <20191227173707.20413-1-martin.blumenstingl@googlemail.com>
- <20191227173707.20413-2-martin.blumenstingl@googlemail.com>
- <dd38ff5c-6a14-bb6a-4df5-d706f99234e9@arm.com> <CAFBinCDs3a8TJcQKgHUkDvssMR6Y2Kys38p50P0q=2KOiDTNHg@mail.gmail.com>
- <fe45f4f8-8c67-ded2-90bf-8d5fd6874876@arm.com> <CAFBinCByzLLdVTL0v=eC-TbZQnwnDY7cBLf4jyWq7N4PA1rr+A@mail.gmail.com>
- <ff2bdd26-3c34-63db-beb5-8f7c9fc7e790@arm.com> <CAFBinCAgzHJQpcf1WVQPkNXOq1ziXp7nx=ZAU9_2-VzA9hg-Yw@mail.gmail.com>
- <629205c8-68c5-5895-d926-75984110dd49@arm.com>
-In-Reply-To: <629205c8-68c5-5895-d926-75984110dd49@arm.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 2 Jan 2020 22:56:30 +0100
-Message-ID: <CAFBinCATAwR3RvA3dBkJ4B97tecBTE58=A-OeTKvWhwhodZemA@mail.gmail.com>
-Subject: Re: [RFC v2 1/1] drm/lima: Add optional devfreq support
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     yuq825@gmail.com, dri-devel@lists.freedesktop.org, robh@kernel.org,
-        tomeu.vizoso@collabora.com, airlied@linux.ie,
-        linux-kernel@vger.kernel.org, steven.price@arm.com,
-        linux-rockchip@lists.infradead.org, wens@csie.org,
-        alyssa.rosenzweig@collabora.com, daniel@ffwll.ch,
-        linux-amlogic@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200101183920.imncit5sllj46c22@pali>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9488 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001020176
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9488 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001020177
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+On Wed, Jan 01, 2020 at 07:39:20PM +0100, Pali Rohár wrote:
+> On Wednesday 01 January 2020 13:10:54 Theodore Y. Ts'o wrote:
+> > On Tue, Dec 31, 2019 at 04:54:18PM -0600, Eric Sandeen wrote:
+> > > > Because I was not able to find any documentation for it, what is format
+> > > > of passed buffer... null-term string? fixed-length? and in which
+> > > > encoding? utf-8? latin1? utf-16? or filesystem dependent?
+> > > 
+> > > It simply copies the bits from the memory location you pass in, it knows
+> > > nothing of encodings.
+> > > 
+> > > For the most part it's up to the filesystem's own utilities to do any
+> > > interpretation of the resulting bits on disk, null-terminating maximal-length
+> > > label strings, etc.
+> > 
+> > I'm not sure this is going to be the best API design choice.  The
+> > blkid library interprets the on disk format for each file syustem
+> > knowing what is the "native" format for that particular file system.
+> > This is mainly an issue only for the non-Linux file systems; for the
+> > Linux file system, the party line has historically been that we don't
+> > get involved with character encoding, but in practice, what that has
+> > evolved into is that userspace has standardized on UTF-8, and that's
+> > what we pass into the kernel from userspace by convention.
+> > 
+> > But the problem is that if the goal is to make FS_IOC_GETFSLABEL and
+> > FS_IOC_SETFSLABEL work without the calling program knowing what file
+> > system type a particular pathname happens to be, then it would be
+> > easist for the userspace program if it can expect that it can always
+> > pass in a null-terminated UTF-8 string, and get back a null-terminated
+> > UTF-8.  I bet that in practice, that is what most userspace programs
+> > are going to be do anyway, since it works that way for all other file
+> > system syscalls.
 
-On Wed, Jan 1, 2020 at 1:55 PM Robin Murphy <robin.murphy@arm.com> wrote:
->
-> On 2019-12-31 4:47 pm, Martin Blumenstingl wrote:
-> > Hi Robin,
-> >
-> > On Tue, Dec 31, 2019 at 5:40 PM Robin Murphy <robin.murphy@arm.com> wrote:
-> >>
-> >> On 2019-12-31 2:17 pm, Martin Blumenstingl wrote:
-> >>> Hi Robin,
-> >>>
-> >>> On Mon, Dec 30, 2019 at 1:47 AM Robin Murphy <robin.murphy@arm.com> wrote:
-> >>>>
-> >>>> On 2019-12-29 11:19 pm, Martin Blumenstingl wrote:
-> >>>>> Hi Robin,
-> >>>>>
-> >>>>> On Sun, Dec 29, 2019 at 11:58 PM Robin Murphy <robin.murphy@arm.com> wrote:
-> >>>>>>
-> >>>>>> Hi Martin,
-> >>>>>>
-> >>>>>> On 2019-12-27 5:37 pm, Martin Blumenstingl wrote:
-> >>>>>>> Most platforms with a Mali-400 or Mali-450 GPU also have support for
-> >>>>>>> changing the GPU clock frequency. Add devfreq support so the GPU clock
-> >>>>>>> rate is updated based on the actual GPU usage when the
-> >>>>>>> "operating-points-v2" property is present in the board.dts.
-> >>>>>>>
-> >>>>>>> The actual devfreq code is taken from panfrost_devfreq.c and modified so
-> >>>>>>> it matches what the lima hardware needs:
-> >>>>>>> - a call to dev_pm_opp_set_clkname() during initialization because there
-> >>>>>>>       are two clocks on Mali-4x0 IPs. "core" is the one that actually clocks
-> >>>>>>>       the GPU so we need to control it using devfreq.
-> >>>>>>> - locking when reading or writing the devfreq statistics because (unlike
-> >>>>>>>       than panfrost) we have multiple PP and GP IRQs which may finish jobs
-> >>>>>>>       concurrently.
-> >>>>>>
-> >>>>>> I gave this a quick try on my RK3328, and the clock scaling indeed kicks
-> >>>>>> in nicely on the glmark2 scenes that struggle, however something appears
-> >>>>>> to be missing in terms of regulator association, as the appropriate OPP
-> >>>>>> voltages aren't reflected in the GPU supply (fortunately the initial
-> >>>>>> voltage seems close enough to that of the highest OPP not to cause major
-> >>>>>> problems, on my box at least). With panfrost on RK3399 I do see the
-> >>>>>> supply voltage scaling accordingly, but I don't know my way around
-> >>>>>> devfreq well enough to know what matters in the difference :/
-> >>>>> first of all: thank you for trying this out! :-)
-> >>>>>
-> >>>>> does your kernel include commit 221bc77914cbcc ("drm/panfrost: Use
-> >>>>> generic code for devfreq") for your panfrost test?
-> >>>>> if I understand the devfreq API correct then I suspect with that
-> >>>>> commit panfrost also won't change the voltage anymore.
-> >>>>
-> >>>> Oh, you're quite right - I was already considering that change as
-> >>>> ancient history, but indeed it's only in 5.5-rc, while that board is
-> >>>> still on 5.4.y release kernels. No wonder I couldn't make sense of how
-> >>>> the (current) code could possibly be working :)
-> >>>>
-> >>>> I'll try the latest -rc kernel tomorrow to confirm (now that PCIe is
-> >>>> hopefully fixed), but I'm already fairly confident you've called it
-> >>>> correctly.
-> >>> I just tested it with the lima driver (by undervolting the GPU by
-> >>> 0.05V) and it seems that dev_pm_opp_set_regulators is really needed.
-> >>> I'll fix this in the next version of this patch and also submit a fix
-> >>> for panfrost (I won't be able to test that though, so help is
-> >>> appreciated in terms of testing :))
-> >>
-> >> Yeah, I started hacking something up for panfrost yesterday, but at the
-> >> point of realising the core OPP code wants refactoring to actually
-> >> handle optional regulators without spewing errors, decided that was
-> >> crossing the line into "work" and thus could wait until next week :D
-> > I'm not sure what you mean, dev_pm_opp_set_regulators uses
-> > regulator_get_optional.
-> > doesn't that mean that it is optional already?
->
-> Indeed it does call regulator_get_optional(), but it then goes on to
-> treat the absence of a supposedly-optional regulator as a hard failure.
-> It doesn't seem very useful having a nice abstracted interface if users
-> still end up have to dance around and duplicate half the parsing in
-> order to work out whether it's worth calling or not - far better IMO if
-> it could just successfully set/put zero regulators in the cases where
-> the OPPs are behind a firmware/mailbox DVFS interface rather than
-> explicit in-kernel clock/regulator control.
-thank you for the explanation
-I'll experience this case on newer Amlogic SoCs where regulators are
-hidden behind SCPI firmware. so far I have only tested the case
-without OPP-table on those SoCs.
+"Null terminated sequence of bytes*" is more or less what xfsprogs do,
+and it looks like btrfs does that as well.
 
-> That said, given that I think the current lima/panfrost users should all
-> be relatively simple with either 0 or 1 regulator, you could probably
-> just special-case -ENODEV and accept a spurious error message sometimes
-> for the sake of an immediate fix, then we can make general improvements
-> to the interface separately afterwards.
-OK, I'll be working on this next week again
-if you get to fix panfrost earlier then please Cc me so we don't duplicate work
+(* with the idiotic exception that if the label is exactly 256 bytes long
+then the array is not required to have a null terminator, because btrfs
+encoded that quirk of their ondisk format into the API. <grumble>)
+
+So for VFAT, I think you can use the same code that does the name
+encoding transformations for iocharset= to handle labels, right?
+
+> > So for a file system which is a non-Linux-native file system, if it
+> > happens to store the its label using utf-16, or some other
+> > Windows-system-silliness, it would work a lot better if it assumed
+> > that it was passed in utf-8, and stored in the the Windows file system
+> > using whatever crazy encoding Windows wants to use.  Otherwise, why
+> > bother uplifting the ioctl to one which is file system independent, if
+> > the paramters are defined to be file system *dependent*?
+> 
+> Exactly. In another email I wrote that for those non-Linux-native
+> filesystem could be used encoding specified in iocharset= mount
+> parameter. I think it is better as usage of one fixing encoding (e.g.
+> UTF-8) if other filesystem strings are propagated to userspace in other
+> encoding (as specified by iocharset=).
+
+I'm confused by this statement... but I think we're saying the same
+thing?
+
+--D
+
+> 
+> -- 
+> Pali Rohár
+> pali.rohar@gmail.com
 
 
-Martin
