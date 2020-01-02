@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5822112F110
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:58:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D51712EDAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:31:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728385AbgABW5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:57:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58456 "EHLO mail.kernel.org"
+        id S1730175AbgABWac (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:30:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728251AbgABWQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:16:30 -0500
+        id S1730166AbgABWa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:30:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 415EB2253D;
-        Thu,  2 Jan 2020 22:16:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2E7A20863;
+        Thu,  2 Jan 2020 22:30:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003389;
-        bh=Xk40KDWVWsPOKOokp67z71ab0hlRYtFhXoaXhmZD3qk=;
+        s=default; t=1578004229;
+        bh=HlWtydBh50Mj0Uo1Xv9uPwtA+4j6QdPpT+cdBwzapbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GJZDE+6FzapLEeYJmxINdocROjhYw4vn0V6zlSzUz7he8LakTGmG9sZd43r5MXF1c
-         9+IuNY01pHWXr9Y5BK0U16djTY8I07foa+aXKdef/20in+hh71xAjtsik6OxYabJ6I
-         q0DlZnAdyL/MyVQV57/47qcWR8FXd3VEW4Kr5o8w=
+        b=g9za3oYUW4s83tTAiIpOSp06nvI7JmxkjFTaqD2fRGQQX/U2GFPoyNtmK677XxLgN
+         wN3iP/m1F8PV9WM7BHZfyKWWXkmKwXKh+EdmeQgwvOoxrL8n+13aC2cfudYAmCcBpp
+         rqPPIAsaxBY7/WL/OaPwjEOx6H6dcVKQJ27g3B3I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 140/191] net: add a READ_ONCE() in skb_peek_tail()
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 091/171] btrfs: abort transaction after failed inode updates in create_subvol
 Date:   Thu,  2 Jan 2020 23:07:02 +0100
-Message-Id: <20200102215844.576028808@linuxfoundation.org>
+Message-Id: <20200102220559.733480218@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,90 +46,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit f8cc62ca3e660ae3fdaee533b1d554297cd2ae82 upstream.
+[ Upstream commit c7e54b5102bf3614cadb9ca32d7be73bad6cecf0 ]
 
-skb_peek_tail() can be used without protection of a lock,
-as spotted by KCSAN [1]
+We can just abort the transaction here, and in fact do that for every
+other failure in this function except these two cases.
 
-In order to avoid load-stearing, add a READ_ONCE()
-
-Note that the corresponding WRITE_ONCE() are already there.
-
-[1]
-BUG: KCSAN: data-race in sk_wait_data / skb_queue_tail
-
-read to 0xffff8880b36a4118 of 8 bytes by task 20426 on cpu 1:
- skb_peek_tail include/linux/skbuff.h:1784 [inline]
- sk_wait_data+0x15b/0x250 net/core/sock.c:2477
- kcm_wait_data+0x112/0x1f0 net/kcm/kcmsock.c:1103
- kcm_recvmsg+0xac/0x320 net/kcm/kcmsock.c:1130
- sock_recvmsg_nosec net/socket.c:871 [inline]
- sock_recvmsg net/socket.c:889 [inline]
- sock_recvmsg+0x92/0xb0 net/socket.c:885
- ___sys_recvmsg+0x1a0/0x3e0 net/socket.c:2480
- do_recvmmsg+0x19a/0x5c0 net/socket.c:2601
- __sys_recvmmsg+0x1ef/0x200 net/socket.c:2680
- __do_sys_recvmmsg net/socket.c:2703 [inline]
- __se_sys_recvmmsg net/socket.c:2696 [inline]
- __x64_sys_recvmmsg+0x89/0xb0 net/socket.c:2696
- do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-write to 0xffff8880b36a4118 of 8 bytes by task 451 on cpu 0:
- __skb_insert include/linux/skbuff.h:1852 [inline]
- __skb_queue_before include/linux/skbuff.h:1958 [inline]
- __skb_queue_tail include/linux/skbuff.h:1991 [inline]
- skb_queue_tail+0x7e/0xc0 net/core/skbuff.c:3145
- kcm_queue_rcv_skb+0x202/0x310 net/kcm/kcmsock.c:206
- kcm_rcv_strparser+0x74/0x4b0 net/kcm/kcmsock.c:370
- __strp_recv+0x348/0xf50 net/strparser/strparser.c:309
- strp_recv+0x84/0xa0 net/strparser/strparser.c:343
- tcp_read_sock+0x174/0x5c0 net/ipv4/tcp.c:1639
- strp_read_sock+0xd4/0x140 net/strparser/strparser.c:366
- do_strp_work net/strparser/strparser.c:414 [inline]
- strp_work+0x9a/0xe0 net/strparser/strparser.c:423
- process_one_work+0x3d4/0x890 kernel/workqueue.c:2269
- worker_thread+0xa0/0x800 kernel/workqueue.c:2415
- kthread+0x1d4/0x200 drivers/block/aoe/aoecmd.c:1253
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:352
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 PID: 451 Comm: kworker/u4:3 Not tainted 5.4.0-rc3+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: kstrp strp_work
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/skbuff.h |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/btrfs/ioctl.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -1795,7 +1795,7 @@ static inline struct sk_buff *skb_peek_n
-  */
- static inline struct sk_buff *skb_peek_tail(const struct sk_buff_head *list_)
- {
--	struct sk_buff *skb = list_->prev;
-+	struct sk_buff *skb = READ_ONCE(list_->prev);
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index a67143c579aa..eefe103c65da 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -610,12 +610,18 @@ static noinline int create_subvol(struct inode *dir,
  
- 	if (skb == (struct sk_buff *)list_)
- 		skb = NULL;
-@@ -1861,7 +1861,9 @@ static inline void __skb_insert(struct s
- 				struct sk_buff *prev, struct sk_buff *next,
- 				struct sk_buff_head *list)
- {
--	/* see skb_queue_empty_lockless() for the opposite READ_ONCE() */
-+	/* See skb_queue_empty_lockless() and skb_peek_tail()
-+	 * for the opposite READ_ONCE()
-+	 */
- 	WRITE_ONCE(newsk->next, next);
- 	WRITE_ONCE(newsk->prev, prev);
- 	WRITE_ONCE(next->prev, newsk);
+ 	btrfs_i_size_write(dir, dir->i_size + namelen * 2);
+ 	ret = btrfs_update_inode(trans, root, dir);
+-	BUG_ON(ret);
++	if (ret) {
++		btrfs_abort_transaction(trans, ret);
++		goto fail;
++	}
+ 
+ 	ret = btrfs_add_root_ref(trans, root->fs_info->tree_root,
+ 				 objectid, root->root_key.objectid,
+ 				 btrfs_ino(dir), index, name, namelen);
+-	BUG_ON(ret);
++	if (ret) {
++		btrfs_abort_transaction(trans, ret);
++		goto fail;
++	}
+ 
+ 	ret = btrfs_uuid_tree_add(trans, root->fs_info->uuid_root,
+ 				  root_item->uuid, BTRFS_UUID_KEY_SUBVOL,
+-- 
+2.20.1
+
 
 
