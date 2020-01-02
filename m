@@ -2,78 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25A5212E220
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 05:03:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A719C12E1FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 05:00:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbgABECy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Jan 2020 23:02:54 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:58893 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727678AbgABEC2 (ORCPT
+        id S1727626AbgABEA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Jan 2020 23:00:28 -0500
+Received: from mailgw-01.dd24.net ([193.46.215.41]:34700 "EHLO
+        mailgw-01.dd24.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727509AbgABEA1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Jan 2020 23:02:28 -0500
-X-UUID: c707de124cc84e62ae9f749908226e92-20200102
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=CHGceQaZldNmJOPJuuVE4l31jpGrqbuoYHiYnxUymyE=;
-        b=jWe499hW4ia5fQGmDm4F7wfq1DLeGhj1sC+jeF6op4z+3140ueuHxC8epybb/K5wLJqqNXXIRZTwda4MUoCSnp5ygMegDAFujg88Lc/y/IPJobggnoJiuO2XHHF1Mf5F3vSB+NhQHlZX7UalrhsrKakB2HOkleSGo2KtqbKzBF4=;
-X-UUID: c707de124cc84e62ae9f749908226e92-20200102
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
-        (envelope-from <yongqiang.niu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1326444654; Thu, 02 Jan 2020 12:02:24 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 2 Jan 2020 12:01:57 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 2 Jan 2020 12:01:42 +0800
-From:   Yongqiang Niu <yongqiang.niu@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v6, 11/14] drm/mediatek: add connection from DITHER0 to DSI0
-Date:   Thu, 2 Jan 2020 12:00:21 +0800
-Message-ID: <1577937624-14313-12-git-send-email-yongqiang.niu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1577937624-14313-1-git-send-email-yongqiang.niu@mediatek.com>
-References: <1577937624-14313-1-git-send-email-yongqiang.niu@mediatek.com>
+        Wed, 1 Jan 2020 23:00:27 -0500
+Received: from mailpolicy-01.live.igb.homer.key-systems.net (mailpolicy-01.live.igb.homer.key-systems.net [192.168.1.26])
+        by mailgw-01.dd24.net (Postfix) with ESMTP id CA0145FD57
+        for <linux-kernel@vger.kernel.org>; Thu,  2 Jan 2020 04:00:25 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at
+        mailpolicy-01.live.igb.homer.key-systems.net
+Received: from smtp.dd24.net ([192.168.1.35])
+        by mailpolicy-01.live.igb.homer.key-systems.net (mailpolicy-01.live.igb.homer.key-systems.net [192.168.1.25]) (amavisd-new, port 10235)
+        with ESMTP id UtgI8krSE1cV for <linux-kernel@vger.kernel.org>;
+        Thu,  2 Jan 2020 04:00:23 +0000 (UTC)
+Received: from heisenberg.fritz.box (ppp-88-217-46-247.dynamic.mnet-online.de [88.217.46.247])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp.dd24.net (Postfix) with ESMTPSA
+        for <linux-kernel@vger.kernel.org>; Thu,  2 Jan 2020 04:00:23 +0000 (UTC)
+Message-ID: <43b7eef5560ede5ad2973964f68d9e6beba63a91.camel@scientia.net>
+Subject: Re: from 5.2->5.3 lets the system run at considerably higher
+ temperatures
+From:   Christoph Anton Mitterer <calestyo@scientia.net>
+To:     linux-kernel@vger.kernel.org
+Date:   Thu, 02 Jan 2020 05:00:22 +0100
+In-Reply-To: <d05aba2742ae42783788c954e2a380e7fcb10830.camel@scientia.net>
+References: <d05aba2742ae42783788c954e2a380e7fcb10830.camel@scientia.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-2+b1 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhpcyBwYXRjaCBhZGQgY29ubmVjdGlvbiBmcm9tIERJVEhFUjAgdG8gRFNJMA0KDQpTaWduZWQt
-b2ZmLWJ5OiBZb25ncWlhbmcgTml1IDx5b25ncWlhbmcubml1QG1lZGlhdGVrLmNvbT4NClJldmll
-d2VkLWJ5OiBDSyBIdSA8Y2suaHVAbWVkaWF0ZWsuY29tPg0KLS0tDQogZHJpdmVycy9ncHUvZHJt
-L21lZGlhdGVrL210a19kcm1fZGRwLmMgfCA1ICsrKysrDQogMSBmaWxlIGNoYW5nZWQsIDUgaW5z
-ZXJ0aW9ucygrKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19k
-cm1fZGRwLmMgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kZHAuYw0KaW5kZXgg
-MmIxMGQyZC4uNGNjNDMyZCAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9t
-dGtfZHJtX2RkcC5jDQorKysgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kZHAu
-Yw0KQEAgLTM1LDEwICszNSwxMiBAQA0KIA0KICNkZWZpbmUgTVQ4MTgzX0RJU1BfT1ZMMF8yTF9N
-T1VUX0VOCQkweGYwNA0KICNkZWZpbmUgTVQ4MTgzX0RJU1BfT1ZMMV8yTF9NT1VUX0VOCQkweGYw
-OA0KKyNkZWZpbmUgTVQ4MTgzX0RJU1BfRElUSEVSMF9NT1VUX0VOCQkweGYwYw0KICNkZWZpbmUg
-TVQ4MTgzX0RJU1BfUEFUSDBfU0VMX0lOCQkweGYyNA0KIA0KICNkZWZpbmUgT1ZMMF8yTF9NT1VU
-X0VOX0RJU1BfUEFUSDAJCQlCSVQoMCkNCiAjZGVmaW5lIE9WTDFfMkxfTU9VVF9FTl9SRE1BMQkJ
-CQlCSVQoNCkNCisjZGVmaW5lIERJVEhFUjBfTU9VVF9JTl9EU0kwCQkJCUJJVCgwKQ0KICNkZWZp
-bmUgRElTUF9QQVRIMF9TRUxfSU5fT1ZMMF8yTAkJCTB4MQ0KIA0KICNkZWZpbmUgTVQyNzAxX0RJ
-U1BfTVVURVgwX01PRDAJCQkweDJjDQpAQCAtMzI0LDYgKzMyNiw5IEBAIHN0YXRpYyB1bnNpZ25l
-ZCBpbnQgbXRrX2RkcF9tb3V0X2VuKGNvbnN0IHN0cnVjdCBtdGtfbW1zeXNfcmVnX2RhdGEgKmRh
-dGEsDQogCQkgICBuZXh0ID09IEREUF9DT01QT05FTlRfUkRNQTEpIHsNCiAJCSphZGRyID0gTVQ4
-MTgzX0RJU1BfT1ZMMV8yTF9NT1VUX0VOOw0KIAkJdmFsdWUgPSBPVkwxXzJMX01PVVRfRU5fUkRN
-QTE7DQorCX0gZWxzZSBpZiAoY3VyID09IEREUF9DT01QT05FTlRfRElUSEVSICYmIG5leHQgPT0g
-RERQX0NPTVBPTkVOVF9EU0kwKSB7DQorCQkqYWRkciA9IE1UODE4M19ESVNQX0RJVEhFUjBfTU9V
-VF9FTjsNCisJCXZhbHVlID0gRElUSEVSMF9NT1VUX0lOX0RTSTA7DQogCX0gZWxzZSB7DQogCQl2
-YWx1ZSA9IDA7DQogCX0NCi0tIA0KMS44LjEuMS5kaXJ0eQ0K
+Hey again.
+
+Just checked with 5.4.6 and the problem as described previously still
+exists.
+
+And effectively idle system runs at ~75 °C even when just typing some
+text or switching some windows.
+Only if doing really absolutely nothing for a long time it may (but not
+always) go down to ~65 °C, which is still 5-10°C more than having the
+very same system (same software running, etc.) with a 5.2 kernel.
+
+top still shows basically nothing.
+
+I still suspect it could be somehow graphics related:
+- when I switch from the desktop environment to the kernel console,
+temperatures quickly go to ~60°C (which is more close to what's the
+case with 5.2)
+
+- When doing some video playback, temperatures just explode (which
+they' don't with 5.2, of course they rise there as well).
+So when playing a video like mpv --vo=vaapi, CPU goes quickly to 90°C
+an more (and even when stopping playback, it stays at 80°C for
+minutes).
+Actually, sometimes (but not always) it was much better with --vo=xv.
+
+The CPU is a Intel(R) Core(TM) i7-7600U CPU @ 2.80GHz, with HD Graphics
+620 (Kaby Lake GT2).
+
+
+Thanks,
+Chris.
+
+
+
+Any ideas on what to do or how to somehow debug this?
+
+Cheers,
+Chris.
+
+
+On Mon, 2019-12-16 at 16:15 +0100, Christoph Anton Mitterer wrote:
+> Hey.
+> 
+> Since I've upgraded from kernel 5.2 to 5.3 my system runs a
+> considerably higher temperatures (like 10°C or more).
+> This happens even when it's effectively idle (top shows basically
+> nothing).
+> Downgrading again to 5.2 and high temperatures go away.
+> 
+> I did some more detailed description here:
+> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=945055
+> but really have no clue where to start debugging.
+> 
+> It could be that it's somehow graphics related, as when I switch away
+> from X/Cinnamon to the virtual console, temperatures decrease
+> considerably.
+> 
+> 
+> Anyone else seeing something similar or having some idea how to track
+> this down?
+> 
+> 
+> Thanks,
+> Chris.
 
