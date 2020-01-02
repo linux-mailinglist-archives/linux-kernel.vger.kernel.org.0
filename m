@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76AB312F0BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:55:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C307B12EF0B
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:43:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728541AbgABWzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:55:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35750 "EHLO mail.kernel.org"
+        id S1729618AbgABWnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:43:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728605AbgABWTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:19:30 -0500
+        id S1730448AbgABWeu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:34:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6304421582;
-        Thu,  2 Jan 2020 22:19:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FEA021D7D;
+        Thu,  2 Jan 2020 22:34:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003569;
-        bh=L+Pr4KaWWePHS/ARhpT5PkchyA1n1K5Ej5ew12Jliww=;
+        s=default; t=1578004489;
+        bh=ZrwQ83k2aTL8LzkE183Uob+o+Ng/2LLLoRPFd35PebA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o/ft4bX7L7RVi4y7wd05LR96gXl4p02jChd8DWZnDUShhSfgcwp6YHzQ60z9xg7Qz
-         AlqGw1B7VCES7rZYJdrRt6yPKKpXiBSs6VM0ahlsV6DaMuHVzta527PKDO2t5ZjcKh
-         uZ+B4dLMTNZ6YdheR6g3WtwW0Cs/r9df3ReRVaY0=
+        b=BNX1wNmQ83NYMquCuBgcpU+/+jIDVWzTQGgUXBh0wlfih37AaRjijiATJ5Y39/+b/
+         ivbLD4vcBhVwTvM9B88otHBBO7T1o2RXpwWBi3epo/+xlzXX4o4eggZI95EeXJAnH6
+         82IJzBFR5Etua4snfIM3nDyz+8IwhpuRzJz8j2lo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lee Duncan <lduncan@suse.com>,
-        Mike Christie <mchristi@redhat.com>,
-        David Disseldorp <ddiss@suse.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Connor Kuehl <connor.kuehl@canonical.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 009/114] scsi: target: compare full CHAP_A Algorithm strings
+Subject: [PATCH 4.4 008/137] staging: rtl8188eu: fix possible null dereference
 Date:   Thu,  2 Jan 2020 23:06:21 +0100
-Message-Id: <20200102220030.096331221@linuxfoundation.org>
+Message-Id: <20200102220547.771963647@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,51 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Disseldorp <ddiss@suse.de>
+From: Connor Kuehl <connor.kuehl@canonical.com>
 
-[ Upstream commit 9cef2a7955f2754257a7cddedec16edae7b587d0 ]
+[ Upstream commit 228241944a48113470d3c3b46c88ba7fbe0a274b ]
 
-RFC 2307 states:
+Inside a nested 'else' block at the beginning of this function is a
+call that assigns 'psta' to the return value of 'rtw_get_stainfo()'.
+If 'rtw_get_stainfo()' returns NULL and the flow of control reaches
+the 'else if' where 'psta' is dereferenced, then we will dereference
+a NULL pointer.
 
-  For CHAP [RFC1994], in the first step, the initiator MUST send:
+Fix this by checking if 'psta' is not NULL before reading its
+'psta->qos_option' data member.
 
-      CHAP_A=<A1,A2...>
+Addresses-Coverity: ("Dereference null return value")
 
-   Where A1,A2... are proposed algorithms, in order of preference.
-...
-   For the Algorithm, as stated in [RFC1994], one value is required to
-   be implemented:
-
-       5     (CHAP with MD5)
-
-LIO currently checks for this value by only comparing a single byte in
-the tokenized Algorithm string, which means that any value starting with
-a '5' (e.g. "55") is interpreted as "CHAP with MD5". Fix this by
-comparing the entire tokenized string.
-
-Reviewed-by: Lee Duncan <lduncan@suse.com>
-Reviewed-by: Mike Christie <mchristi@redhat.com>
-Signed-off-by: David Disseldorp <ddiss@suse.de>
-Link: https://lore.kernel.org/r/20190912095547.22427-2-ddiss@suse.de
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
+Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Link: https://lore.kernel.org/r/20190926150317.5894-1-connor.kuehl@canonical.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/target/iscsi/iscsi_target_auth.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8188eu/core/rtw_xmit.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/target/iscsi/iscsi_target_auth.c b/drivers/target/iscsi/iscsi_target_auth.c
-index e2fa3a3bc81d..b6bf605fa5c1 100644
---- a/drivers/target/iscsi/iscsi_target_auth.c
-+++ b/drivers/target/iscsi/iscsi_target_auth.c
-@@ -78,7 +78,7 @@ static int chap_check_algorithm(const char *a_str)
- 		if (!token)
- 			goto out;
+diff --git a/drivers/staging/rtl8188eu/core/rtw_xmit.c b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+index cabb810369bd..c6bf8933648d 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_xmit.c
++++ b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+@@ -822,7 +822,7 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
+ 			memcpy(pwlanhdr->addr2, get_bssid(pmlmepriv), ETH_ALEN);
+ 			memcpy(pwlanhdr->addr3, pattrib->src, ETH_ALEN);
  
--		if (!strncmp(token, "5", 1)) {
-+		if (!strcmp(token, "5")) {
- 			pr_debug("Selected MD5 Algorithm\n");
- 			kfree(orig);
- 			return CHAP_DIGEST_MD5;
+-			if (psta->qos_option)
++			if (psta && psta->qos_option)
+ 				qos_option = true;
+ 		} else if (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) ||
+ 			   check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE)) {
+@@ -830,7 +830,7 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
+ 			memcpy(pwlanhdr->addr2, pattrib->src, ETH_ALEN);
+ 			memcpy(pwlanhdr->addr3, get_bssid(pmlmepriv), ETH_ALEN);
+ 
+-			if (psta->qos_option)
++			if (psta && psta->qos_option)
+ 				qos_option = true;
+ 		} else {
+ 			RT_TRACE(_module_rtl871x_xmit_c_, _drv_err_, ("fw_state:%x is not allowed to xmit frame\n", get_fwstate(pmlmepriv)));
 -- 
 2.20.1
 
