@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C3C912E262
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 05:31:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F079612E267
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 05:31:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbgABEbU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Jan 2020 23:31:20 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:34987 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727707AbgABEbQ (ORCPT
+        id S1727675AbgABEbi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Jan 2020 23:31:38 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:41285 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727706AbgABEbR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Jan 2020 23:31:16 -0500
-Received: by mail-qt1-f194.google.com with SMTP id e12so34036397qto.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Jan 2020 20:31:15 -0800 (PST)
+        Wed, 1 Jan 2020 23:31:17 -0500
+Received: by mail-qk1-f193.google.com with SMTP id x129so30605151qke.8
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Jan 2020 20:31:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8lcbTjb7RzesPV6CyvOVYzseKqx/51O78xcB0b8zyM4=;
-        b=V8zECAIjfVG9QXYOgy3fd57wSQNnu3Dpg7aF9l32xTQI2UI7jXSuerYm4yoar5F+dO
-         Bk5UxfQ+aFfwor7+2zohugcsLK3X4IawQn09qlnbM9h2LK3GmKmnuhrhOGBniHx1Kw9P
-         KGBaHQTQpEHsbURG/vCmgZUa9ar5S5uz2CpOmoqjLaAHAEz6bOv7W57pmmJm4TTRVR5H
-         YvWGFP+2aS40FU+q/XGBN+gKENHCH8nhxnjUYNLGRkfjbUkipM1loKo2TmczQESs5fBk
-         J6eJg0196wL1KLcNXjmOes6q5HOpJV0RaR/MP31Ln+iOYT9aphc+UlyR860f8TY+ap4t
-         4auw==
+        bh=NpqU1xm4hNnjdFhU/EPerrQR3O04pAhofn4iqB3IAtI=;
+        b=CiaY/Y2hjcuthGEwrWBX+bmJHvKILURe9wtlPJrITUCg0xeuX2/TmXxehxHIZ/6xTb
+         2ovevQjXdTegn8zqGWPJ2AbmhQAs3aOPIXn13Fej1lYtl3J0nB2wdlJkMIp0p4FIvPEZ
+         kyzE/Iii8OTo4IFpVZA6MJSkYcvdnYW6M/K4n4tT/ZiybWisM+1U8u1rN1NP4QmLkr/5
+         zXWipEAdgpjeUwSTsEDz0o1MZCH+0sqjBxhZhn5KF4axitUBANp44Yeojzu8N8ySEcxR
+         GIMODnOeZA2STR8zicpHuC/Rej3nA1uUSK6ffxiUCxIh/So6enUOodz+1IMh4AuxFu0f
+         VlIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8lcbTjb7RzesPV6CyvOVYzseKqx/51O78xcB0b8zyM4=;
-        b=kivniEIRdA+V+THtaEVPCq7/aD73rOCsoKUhmsLIB5KxTLHDXfqdG6tao+qj4J8sjf
-         5Fb53CKVvF/1DLaL8mMNLsDluM+YhoSYcRFySapFWui1JdSAjMqa++uNti+7iu3K7xBg
-         JA2uIVcGPr6lP9U9uK2zLdQXFZWrJmQU9vjGUWUNaEwefWkTRFuaQgNLjBplYrw1B+dS
-         vwgzqXEqdzh0xeAHEV6ry+KK5HZVDMRXIYgknkf7+lhJm2sji+BL+DUoxPBWbrcCibSh
-         dPhQ2FUJd/E6rv2GTGx9ru8ToZyeiLJcjpck9LvgouScVqiO8DhpFBY9YxHGsORUuSGh
-         Edwg==
-X-Gm-Message-State: APjAAAXkSfzTp4xrYuVoDkTBNOttZMNV7mp3sa258tFFTTPiDw4DeiL5
-        haouY5PeJ/BXS6XdQNSNBhI=
-X-Google-Smtp-Source: APXvYqyV5UGjoUi1BUJDGXNhJn5lyXbZlbC/mhFHY7L+JXoBAV5q1zGuli6SCiHpscR0zb2SAxXiWg==
-X-Received: by 2002:ac8:3490:: with SMTP id w16mr57578435qtb.56.1577939475199;
-        Wed, 01 Jan 2020 20:31:15 -0800 (PST)
+        bh=NpqU1xm4hNnjdFhU/EPerrQR3O04pAhofn4iqB3IAtI=;
+        b=g9SnY8eZmgQ43Zr1AcWi1MQueSx4VDXcFtn6t67QWXzJZgkuN7Zf/iquYumvSUtVtx
+         3khqfRA3tnWr3WrqL0QP85RCMrPCa43RyVgO4nJtSUjGBoAGBPUl/PIYey6oNgPJ83Rg
+         l6zNpOWEauPHmfmMAI7Wi+KVtZdreO18zTWRxiiBLBuKT1ca5UVDHfszX72eN+B5wHRT
+         eXrRXezgHzgyQ2Rvw8fKoVWwckKu6XJGtYVe7eHesLtWF5zimNpwFg4u6Td6BrON4tAT
+         sfU4uELOsqyVQR46U1uvZ36BNEAe9XUOopAc7vWWoHgiaod52ELkoG0x9qa47kARdB03
+         5IVg==
+X-Gm-Message-State: APjAAAVBz1QlkKTszI6Dku0MFRAf9fR1ExLD0Ip7BetXe8rRCT81dEXQ
+        AwGOz7sYlBu7c8uWGGmQT5k=
+X-Google-Smtp-Source: APXvYqxMDHpnokX5Mmv3Dv0kJCX0f2DYioVB7RYrbPHVjtWJ7/yj1LNN138aVEuAm5XrA/NnSGIeSA==
+X-Received: by 2002:a37:7b43:: with SMTP id w64mr64699250qkc.203.1577939476511;
+        Wed, 01 Jan 2020 20:31:16 -0800 (PST)
 Received: from yury-thinkpad.dhcp.amer.jpmchase.net ([2604:2000:4185:2300:b196:4884:e960:2cb8])
-        by smtp.gmail.com with ESMTPSA id 16sm14876857qkj.77.2020.01.01.20.31.14
+        by smtp.gmail.com with ESMTPSA id 16sm14876857qkj.77.2020.01.01.20.31.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jan 2020 20:31:14 -0800 (PST)
+        Wed, 01 Jan 2020 20:31:16 -0800 (PST)
 From:   Yury Norov <yury.norov@gmail.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -65,9 +65,9 @@ To:     Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org
 Cc:     Yury Norov <yury.norov@gmail.com>, Jens Axboe <axboe@kernel.dk>,
         Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 3/7] lib: add test for bitmap_parse()
-Date:   Wed,  1 Jan 2020 20:30:27 -0800
-Message-Id: <20200102043031.30357-4-yury.norov@gmail.com>
+Subject: [PATCH 4/7] lib: make bitmap_parse_user a wrapper on bitmap_parse
+Date:   Wed,  1 Jan 2020 20:30:28 -0800
+Message-Id: <20200102043031.30357-5-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200102043031.30357-1-yury.norov@gmail.com>
 References: <20200102043031.30357-1-yury.norov@gmail.com>
@@ -80,141 +80,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From Yury Norov <yury.norov@gmail.com>
 
-The test is derived from bitmap_parselist()
-NO_LEN is reserved for use in following patches.
+Currently we parse user data byte after byte which leads to
+overcomplicating of parsing algorithm. There are no performance
+critical users of bitmap_parse_user(), and so we can duplicate
+user data to kernel buffer and simply call bitmap_parselist().
+This rework lets us unify and simplify bitmap_parse() and
+bitmap_parse_user(), which is done in the following patch.
 
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Yury Norov <yury.norov@gmail.com>
 ---
- lib/test_bitmap.c | 94 ++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 93 insertions(+), 1 deletion(-)
+ lib/bitmap.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
-index e14a15ac250b4..830c9b195e405 100644
---- a/lib/test_bitmap.c
-+++ b/lib/test_bitmap.c
-@@ -294,7 +294,8 @@ static void __init test_replace(void)
- 	expect_eq_bitmap(bmap, exp3_1_0, nbits);
- }
- 
--#define PARSE_TIME 0x1
-+#define PARSE_TIME	0x1
-+#define NO_LEN		0x2
- 
- struct test_bitmap_parselist{
- 	const int errno;
-@@ -400,6 +401,85 @@ static void __init __test_bitmap_parselist(int is_user)
- 	}
- }
- 
-+static const unsigned long parse_test[] __initconst = {
-+	BITMAP_FROM_U64(0),
-+	BITMAP_FROM_U64(1),
-+	BITMAP_FROM_U64(0xdeadbeef),
-+	BITMAP_FROM_U64(0x100000000ULL),
-+};
-+
-+static const unsigned long parse_test2[] __initconst = {
-+	BITMAP_FROM_U64(0x100000000ULL), BITMAP_FROM_U64(0xdeadbeef),
-+	BITMAP_FROM_U64(0x100000000ULL), BITMAP_FROM_U64(0xbaadf00ddeadbeef),
-+	BITMAP_FROM_U64(0x100000000ULL), BITMAP_FROM_U64(0x0badf00ddeadbeef),
-+};
-+
-+static const struct test_bitmap_parselist parse_tests[] __initconst = {
-+	{0, "0",			&parse_test[0 * step], 32, 0},
-+	{0, "1",			&parse_test[1 * step], 32, 0},
-+	{0, "deadbeef",			&parse_test[2 * step], 32, 0},
-+	{0, "1,0",			&parse_test[3 * step], 33, 0},
-+
-+	{0, "deadbeef,1,0",		&parse_test2[0 * 2 * step], 96, 0},
-+	{0, "baadf00d,deadbeef,1,0",	&parse_test2[1 * 2 * step], 128, 0},
-+	{0, "badf00d,deadbeef,1,0",	&parse_test2[2 * 2 * step], 124, 0},
-+
-+	{-EINVAL,    "goodfood,deadbeef,1,0",	NULL, 128, 0},
-+	{-EOVERFLOW, "3,0",			NULL, 33, 0},
-+	{-EOVERFLOW, "123badf00d,deadbeef,1,0",	NULL, 128, 0},
-+	{-EOVERFLOW, "badf00d,deadbeef,1,0",	NULL, 90, 0},
-+	{-EOVERFLOW, "fbadf00d,deadbeef,1,0",	NULL, 95, 0},
-+	{-EOVERFLOW, "badf00d,deadbeef,1,0",	NULL, 100, 0},
-+};
-+
-+static void __init __test_bitmap_parse(int is_user)
-+{
-+	int i;
-+	int err;
-+	ktime_t time;
-+	DECLARE_BITMAP(bmap, 2048);
-+	char *mode = is_user ? "_user"  : "";
-+
-+	for (i = 0; i < ARRAY_SIZE(parse_tests); i++) {
-+		struct test_bitmap_parselist test = parse_tests[i];
-+
-+		if (is_user) {
-+			size_t len = strlen(test.in);
-+			mm_segment_t orig_fs = get_fs();
-+
-+			set_fs(KERNEL_DS);
-+			time = ktime_get();
-+			err = bitmap_parse_user(test.in, len, bmap, test.nbits);
-+			time = ktime_get() - time;
-+			set_fs(orig_fs);
-+		} else {
-+			size_t len = test.flags & NO_LEN ?
-+				UINT_MAX : strlen(test.in);
-+			time = ktime_get();
-+			err = bitmap_parse(test.in, len, bmap, test.nbits);
-+			time = ktime_get() - time;
-+		}
-+
-+		if (err != test.errno) {
-+			pr_err("parse%s: %d: input is %s, errno is %d, expected %d\n",
-+					mode, i, test.in, err, test.errno);
-+			continue;
-+		}
-+
-+		if (!err && test.expected
-+			 && !__bitmap_equal(bmap, test.expected, test.nbits)) {
-+			pr_err("parse%s: %d: input is %s, result is 0x%lx, expected 0x%lx\n",
-+					mode, i, test.in, bmap[0],
-+					*test.expected);
-+			continue;
-+		}
-+
-+		if (test.flags & PARSE_TIME)
-+			pr_err("parse%s: %d: input is '%s' OK, Time: %llu\n",
-+					mode, i, test.in, time);
-+	}
-+}
-+
- static void __init test_bitmap_parselist(void)
+diff --git a/lib/bitmap.c b/lib/bitmap.c
+index 4250519d7d1c5..b9ac2d42b99e1 100644
+--- a/lib/bitmap.c
++++ b/lib/bitmap.c
+@@ -464,22 +464,22 @@ EXPORT_SYMBOL(__bitmap_parse);
+  *    then it must be terminated with a \0.
+  * @maskp: pointer to bitmap array that will contain result.
+  * @nmaskbits: size of bitmap, in bits.
+- *
+- * Wrapper for __bitmap_parse(), providing it with user buffer.
+- *
+- * We cannot have this as an inline function in bitmap.h because it needs
+- * linux/uaccess.h to get the access_ok() declaration and this causes
+- * cyclic dependencies.
+  */
+ int bitmap_parse_user(const char __user *ubuf,
+ 			unsigned int ulen, unsigned long *maskp,
+ 			int nmaskbits)
  {
- 	__test_bitmap_parselist(0);
-@@ -410,6 +490,16 @@ static void __init test_bitmap_parselist_user(void)
- 	__test_bitmap_parselist(1);
+-	if (!access_ok(ubuf, ulen))
+-		return -EFAULT;
+-	return __bitmap_parse((const char __force *)ubuf,
+-				ulen, 1, maskp, nmaskbits);
++	char *buf;
++	int ret;
+ 
++	buf = memdup_user_nul(ubuf, ulen);
++	if (IS_ERR(buf))
++		return PTR_ERR(buf);
++
++	ret = bitmap_parse(buf, ulen, maskp, nmaskbits);
++
++	kfree(buf);
++	return ret;
  }
+ EXPORT_SYMBOL(bitmap_parse_user);
  
-+static void __init test_bitmap_parse(void)
-+{
-+	__test_bitmap_parse(0);
-+}
-+
-+static void __init test_bitmap_parse_user(void)
-+{
-+	__test_bitmap_parse(1);
-+}
-+
- #define EXP1_IN_BITS	(sizeof(exp1) * 8)
- 
- static void __init test_bitmap_arr32(void)
-@@ -515,6 +605,8 @@ static void __init selftest(void)
- 	test_copy();
- 	test_replace();
- 	test_bitmap_arr32();
-+	test_bitmap_parse();
-+	test_bitmap_parse_user();
- 	test_bitmap_parselist();
- 	test_bitmap_parselist_user();
- 	test_mem_optimisations();
 -- 
 2.20.1
 
