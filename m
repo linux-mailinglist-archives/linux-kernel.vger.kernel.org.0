@@ -2,98 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A864E12E946
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 18:24:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA5B312E953
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 18:24:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727952AbgABRY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 12:24:29 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55580 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727880AbgABRYX (ORCPT
+        id S1728100AbgABRYu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 12:24:50 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:38392 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727854AbgABRYt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 12:24:23 -0500
-Received: by mail-wm1-f68.google.com with SMTP id q9so6190248wmj.5;
-        Thu, 02 Jan 2020 09:24:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Vn6xY74ZAHf5UXr9SkY5xfMygu9Z5Gc/im6mstwFvf0=;
-        b=h4rz0FNbsGFBoCp9A74wHTOndORuPQ0li2XYGekvUA2OyINJgjgFUX3YhOPQCGJt30
-         uoDbXxwA5mLFlnFeecPALaEQQD8T4qunF9Yc1KjfEvMDJL7hTMIf3E/VRiP992QN67MD
-         rlSd8QmM9osfSfYjZacCchY15eUB6uTTR+uSzII+0b/CdK0AShMgWeZmUc7pAtW0puGu
-         UgddoyEoxt0eu6NB/4TWmLQIU8pc29ZXZtUAZQJdj3IYJKOot0dVySR5AWfntF1aWDlp
-         YiEVFzxiHI/4mDqmoOkYYekatoYgjaYaz/KHSXYa4Q/p7zpBzs/jJ4ksC+tt10GVr3t9
-         apSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Vn6xY74ZAHf5UXr9SkY5xfMygu9Z5Gc/im6mstwFvf0=;
-        b=pLWy5ojzukBgteMpl/OU9ceIc++52M2Fs+CzOuuukmSEEKUMp4rAjkwHvgZjTn07Hl
-         2yURQO5P68NHEHDfI/scOsTO3wGWtstG1dmEI7ZxhZRO+U5FuRIAsVpX+72nD1JvscZl
-         cqKdKkBau8tmQxjGqpQg3i+0e4ozuPqsW20MyGP+YfAhT90TAGR/34thk+mlajyASlQ7
-         PrgHh2mNWV9YEo4z/e+bDUvTM+U0HOu3x0aJC/unvP7aMAUw7rDHYO7yoYJf5Tmm2Teq
-         czElzigYVMyenrQJ3fsV93KkT4+F1xYaJ1cqOA/SYF/kTunELGdHfOTRlq5M//cOe6cO
-         LFXw==
-X-Gm-Message-State: APjAAAXxzjPKwUtALPdb4DXX7Usm5Npa8a+qb0c2RVsMt+09NUM8DEv1
-        3bkjZNhWIv2LNJb1AZ5vxiVaQ79peVZ6rh3T
-X-Google-Smtp-Source: APXvYqwyb8nu0nKF/2GxMONQB6130c1fK0CNWOm9EaQnistFdiJE9rEtJTHx+J++25XZoJEDS/g8AQ==
-X-Received: by 2002:a1c:964f:: with SMTP id y76mr15063961wmd.62.1577985862154;
-        Thu, 02 Jan 2020 09:24:22 -0800 (PST)
-Received: from amanieu-laptop.home ([2a01:cb19:8051:6200:3fe7:84:7f3:e713])
-        by smtp.gmail.com with ESMTPSA id z21sm9480328wml.5.2020.01.02.09.24.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 09:24:21 -0800 (PST)
-From:   Amanieu d'Antras <amanieu@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Christian Brauner <christian@brauner.io>, stable@vger.kernel.org,
-        Amanieu d'Antras <amanieu@gmail.com>
-Subject: [PATCH 7/7] clone3: ensure copy_thread_tls is implemented
-Date:   Thu,  2 Jan 2020 18:24:13 +0100
-Message-Id: <20200102172413.654385-8-amanieu@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102172413.654385-1-amanieu@gmail.com>
-References: <20200102172413.654385-1-amanieu@gmail.com>
+        Thu, 2 Jan 2020 12:24:49 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 002HOjcV107718;
+        Thu, 2 Jan 2020 11:24:45 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1577985885;
+        bh=8R/7KD37mImOhVgbKAz0f8LBJAniQTDmWoNz9vkICO4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=LVK/VFNlHysZTiwj4MxJWX7GiaY/O/2/J7bF6bJ8WCgKBkjumOrc4RwxFk8y+50Xf
+         CLzvXJ8sLZItg0MoRrxJZf3zn7TO4AqLmdiid6SuTJcG4uSio7YX5jABLnPPUspb+Y
+         8PX98D9Ka2WvGBtXNsaozYjTv+eT4YofEdY63L78=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 002HOjVU021141
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 2 Jan 2020 11:24:45 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 2 Jan
+ 2020 11:24:45 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 2 Jan 2020 11:24:45 -0600
+Received: from [10.250.65.50] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 002HOieR098162;
+        Thu, 2 Jan 2020 11:24:44 -0600
+Subject: Re: [PATCH v3 2/4] ARM: OMAP2+: Introduce check for OP-TEE in
+ omap_secure_init()
+To:     Tony Lindgren <tony@atomide.com>
+CC:     Lokesh Vutla <lokeshvutla@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20191230185004.32279-1-afd@ti.com>
+ <20191230185004.32279-3-afd@ti.com>
+ <b4773b91-9893-830d-7b1b-b63eb4077cf7@ti.com>
+ <d7d6f381-be00-3072-0510-a18b736987e7@ti.com>
+ <20200102171403.GC16702@atomide.com>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <d9dddbe0-f5c3-1413-8b27-d19e8e07f755@ti.com>
+Date:   Thu, 2 Jan 2020 12:24:39 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200102171403.GC16702@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-copy_thread implementations handle CLONE_SETTLS by reading the TLS
-value from the registers containing the syscall arguments for
-clone. This doesn't work with clone3 since the TLS value is passed
-in clone_args instead.
+On 1/2/20 12:14 PM, Tony Lindgren wrote:
+> * Andrew F. Davis <afd@ti.com> [191231 14:16]:
+>> On 12/31/19 1:32 AM, Lokesh Vutla wrote:
+>>> This doesn't guarantee that optee driver is probed successfully or firmware
+>>> installed correctly. Isn't there a better way to detect? Doesn't tee core layer
+>>> exposes anything?
+>>
+>> We don't actually need the kernel-side OP-TEE driver at all here, we are
+>> making raw SMCCC calls which get handled by OP-TEE using platform
+>> specific code then emulates the function previously handled by ROM[0]
+>> and execution is returned. No driver involved for these types of calls.
+>>
+>> U-Boot will not add this node to the DT unless OP-TEE is installed
+>> correctly, but you are right that is no perfect guarantee. OP-TEE's
+>> kernel driver does do a handshake to verify it is working but this is
+>> not exposed outside of that driver and happens *way* too late for our
+>> uses here. Plus as above, we don't need the OP-TEE driver at all and we
+>> should boot the same without it even enabled.
+>>
+>> So my opinion is that if DT says OP-TEE is installed, but it is not,
+>> then that is a misconfiguration and we usually just have to trust DT for
+>> most things. If DT is wrong here then the only thing that happens is
+>> this call safely fails, a message is printed informing the user of the
+>> problem, and kernel keeps booting (although probably not stable given we
+>> need these calls for important system configuration).
+> 
+> OK, please add comments to omap_optee_init_check(), it's not obvious
+> to anybody not dealing with optee directly.
+> 
 
-Signed-off-by: Amanieu d'Antras <amanieu@gmail.com>
-Cc: <stable@vger.kernel.org> # 5.3.x
----
- kernel/fork.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 2508a4f238a3..080809560072 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2578,6 +2578,16 @@ SYSCALL_DEFINE5(clone, unsigned long, clone_flags, unsigned long, newsp,
- #endif
- 
- #ifdef __ARCH_WANT_SYS_CLONE3
-+
-+/*
-+ * copy_thread implementations handle CLONE_SETTLS by reading the TLS value from
-+ * the registers containing the syscall arguments for clone. This doesn't work
-+ * with clone3 since the TLS value is passed in clone_args instead.
-+ */
-+#ifndef CONFIG_HAVE_COPY_THREAD_TLS
-+#error clone3 requires copy_thread_tls support in arch
-+#endif
-+
- noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
- 					      struct clone_args __user *uargs,
- 					      size_t usize)
--- 
-2.24.1
+Okay, will add this comment and the one suggested by Lokesh for v4.
 
+Andrew
+
+
+> Regards,
+> 
+> Tony
+> 
