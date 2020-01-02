@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68D8D12EDB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:31:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BF8F12F0B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:55:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730087AbgABWay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:30:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35244 "EHLO mail.kernel.org"
+        id S1727940AbgABWUA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:20:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730019AbgABWav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:30:51 -0500
+        id S1728691AbgABWT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:19:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C02820863;
-        Thu,  2 Jan 2020 22:30:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD79421582;
+        Thu,  2 Jan 2020 22:19:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004251;
-        bh=obYcbybQK0iRzuQodJ35Y2/yu1p1+C2bxabYBA70L0c=;
+        s=default; t=1578003596;
+        bh=kZcTL9tAJMrBdan8lMVYHcwWVatpSIctS3+lsaHzVEM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MfwnlQQOvgNIh0qLMZiGXcxFfLSZQloPPa9ljjmIri81y5sZqGmJrhQfl9yQ/E2go
-         gY1TeVDl0fcNsu27R1a3NJ+Zj/F1wPXipZxVhRAuRnGNtH4l63Uuur2o8x0jxUnaA1
-         dYvXc+MRHUOyT7WqFdYUA0pqZRAOgbQ9bNsV9axw=
+        b=1sy9OUFpJHZcvtulbaG8ENhc9OTUol+cmQ7sLyw6etY+Cc2grOMrllNk+skVC0nOm
+         rvZ+o8YwhxUte1lYeXR2veQhRt2pBgHchi1DSp5E4oa+J/GwqkknIqd+wnxYe+JlLR
+         SdCGw5MydKRJT2bjNDJxwruacph5oHmUbUblsqQU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
-        Omar Sandoval <osandov@fb.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 075/171] btrfs: dont prematurely free work in end_workqueue_fn()
-Date:   Thu,  2 Jan 2020 23:06:46 +0100
-Message-Id: <20200102220557.382989729@linuxfoundation.org>
+Subject: [PATCH 4.19 035/114] PCI: rpaphp: Fix up pointer to first drc-info entry
+Date:   Thu,  2 Jan 2020 23:06:47 +0100
+Message-Id: <20200102220032.630670712@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,52 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Omar Sandoval <osandov@fb.com>
+From: Tyrel Datwyler <tyreld@linux.ibm.com>
 
-[ Upstream commit 9be490f1e15c34193b1aae17da58e14dd9f55a95 ]
+[ Upstream commit 9723c25f99aff0451cfe6392e1b9fdd99d0bf9f0 ]
 
-Currently, end_workqueue_fn() frees the end_io_wq entry (which embeds
-the work item) and then calls bio_endio(). This is another potential
-instance of the bug in "btrfs: don't prematurely free work in
-run_ordered_work()".
+The first entry of the ibm,drc-info property is an int encoded count
+of the number of drc-info entries that follow. The "value" pointer
+returned by of_prop_next_u32() is still pointing at the this value
+when we call of_read_drc_info_cell(), but the helper function
+expects that value to be pointing at the first element of an entry.
 
-In particular, the endio call may depend on other work items. For
-example, btrfs_end_dio_bio() can call btrfs_subio_endio_read() ->
-__btrfs_correct_data_nocsum() -> dio_read_error() ->
-submit_dio_repair_bio(), which submits a bio that is also completed
-through a end_workqueue_fn() work item. However,
-__btrfs_correct_data_nocsum() waits for the newly submitted bio to
-complete, thus it depends on another work item.
+Fix up by incrementing the "value" pointer to point at the first
+element of the first drc-info entry prior.
 
-This example currently usually works because we use different workqueue
-helper functions for BTRFS_WQ_ENDIO_DATA and BTRFS_WQ_ENDIO_DIO_REPAIR.
-However, it may deadlock with stacked filesystems and is fragile
-overall. The proper fix is to free the work item at the very end of the
-work function, so let's do that.
-
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Tyrel Datwyler <tyreld@linux.ibm.com>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/1573449697-5448-5-git-send-email-tyreld@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/disk-io.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/hotplug/rpaphp_core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 9d3352fe8dc9..b37519241eb1 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -1712,8 +1712,8 @@ static void end_workqueue_fn(struct btrfs_work *work)
- 	bio->bi_error = end_io_wq->error;
- 	bio->bi_private = end_io_wq->private;
- 	bio->bi_end_io = end_io_wq->end_io;
--	kmem_cache_free(btrfs_end_io_wq_cache, end_io_wq);
- 	bio_endio(bio);
-+	kmem_cache_free(btrfs_end_io_wq_cache, end_io_wq);
- }
+diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
+index cc860c5f7d26..f56004243591 100644
+--- a/drivers/pci/hotplug/rpaphp_core.c
++++ b/drivers/pci/hotplug/rpaphp_core.c
+@@ -239,6 +239,8 @@ static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
+ 	value = of_prop_next_u32(info, NULL, &entries);
+ 	if (!value)
+ 		return -EINVAL;
++	else
++		value++;
  
- static int cleaner_kthread(void *arg)
+ 	for (j = 0; j < entries; j++) {
+ 		of_read_drc_info_cell(&info, &value, &drc);
 -- 
 2.20.1
 
