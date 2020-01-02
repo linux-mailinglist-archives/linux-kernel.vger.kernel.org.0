@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFB2312ED16
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:24:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A5C112EC51
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:17:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729412AbgABWYs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:24:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49042 "EHLO mail.kernel.org"
+        id S1728152AbgABWRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:17:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729302AbgABWYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:24:43 -0500
+        id S1727523AbgABWRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:17:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD1BF22525;
-        Thu,  2 Jan 2020 22:24:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1CFE22314;
+        Thu,  2 Jan 2020 22:17:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003882;
-        bh=rQyn/dukZa52J32/ZHdpEc/Ep4F9wGgPq1o6z9Vhpgo=;
+        s=default; t=1578003435;
+        bh=JtLYn0MtFvBnueObwatmpR2LIRFiEG+lTAFO9J5RQyo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jH03mk0HZKUzK1CjOAzc68ch8TXUOw2XsWP8+Vzs8TEtfDhgfUAX6DRaaZ9SrpdW3
-         j9pjWDb+yyZSHIaQ3dPD62Rtq9XP83bJAnlyRLnbdwVHnG5qPI5JBO4aP536i1EDLI
-         OoVf6Eh6dCHrb56+5Ua5eNE48q5mqAsW1WEoubBY=
+        b=2ZI+8sYJCq/LlVYZAHRP83PZJeMX1oSkUPRtOdtl41srGOQK9/MyW4SegSJ/EuSOG
+         HsuCsgdVQMUyXJ//0tpCjDE0H4H2lP399iON84wM/aVocRG1OdqJQLRidB6Tcs+V+e
+         1H1U5xoDwCNOjL79eFVdbNjrS7nnqJn1H0H5kOUE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 39/91] scsi: NCR5380: Add disconnect_mask module parameter
-Date:   Thu,  2 Jan 2020 23:07:21 +0100
-Message-Id: <20200102220433.555468797@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 160/191] bnxt_en: Return error if FW returns more data than dump length
+Date:   Thu,  2 Jan 2020 23:07:22 +0100
+Message-Id: <20200102215846.529500465@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
-References: <20200102220356.856162165@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +45,144 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
 
-[ Upstream commit 0b7a223552d455bcfba6fb9cfc5eef2b5fce1491 ]
+[ Upstream commit c74751f4c39232c31214ec6a3bc1c7e62f5c728b ]
 
-Add a module parameter to inhibit disconnect/reselect for individual
-targets. This gains compatibility with Aztec PowerMonster SCSI/SATA
-adapters with buggy firmware. (No fix is available from the vendor.)
+If any change happened in the configuration of VF in VM while
+collecting live dump, there could be a race and firmware can return
+more data than allocated dump length. Fix it by keeping track of
+the accumulated core dump length copied so far and abort the copy
+with error code if the next chunk of core dump will exceed the
+original dump length.
 
-Apparently these adapters pass-through the product/vendor of the attached
-SATA device. Since they can't be identified from the response to an INQUIRY
-command, a device blacklist flag won't work.
-
-Cc: Michael Schmitz <schmitzmic@gmail.com>
-Link: https://lore.kernel.org/r/993b17545990f31f9fa5a98202b51102a68e7594.1573875417.git.fthain@telegraphics.com.au
-Reviewed-and-tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 6c5657d085ae ("bnxt_en: Add support for ethtool get dump.")
+Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/NCR5380.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c |   38 +++++++++++++++++-----
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h |    4 ++
+ 2 files changed, 34 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
-index 21377ac71168..79b0b4eece19 100644
---- a/drivers/scsi/NCR5380.c
-+++ b/drivers/scsi/NCR5380.c
-@@ -129,6 +129,9 @@
- #define NCR5380_release_dma_irq(x)
- #endif
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+@@ -3064,8 +3064,15 @@ static int bnxt_hwrm_dbg_dma_data(struct
+ 			}
+ 		}
  
-+static unsigned int disconnect_mask = ~0;
-+module_param(disconnect_mask, int, 0444);
+-		if (info->dest_buf)
+-			memcpy(info->dest_buf + off, dma_buf, len);
++		if (info->dest_buf) {
++			if ((info->seg_start + off + len) <=
++			    BNXT_COREDUMP_BUF_LEN(info->buf_len)) {
++				memcpy(info->dest_buf + off, dma_buf, len);
++			} else {
++				rc = -ENOBUFS;
++				break;
++			}
++		}
+ 
+ 		if (cmn_req->req_type ==
+ 				cpu_to_le16(HWRM_DBG_COREDUMP_RETRIEVE))
+@@ -3119,7 +3126,7 @@ static int bnxt_hwrm_dbg_coredump_initia
+ 
+ static int bnxt_hwrm_dbg_coredump_retrieve(struct bnxt *bp, u16 component_id,
+ 					   u16 segment_id, u32 *seg_len,
+-					   void *buf, u32 offset)
++					   void *buf, u32 buf_len, u32 offset)
+ {
+ 	struct hwrm_dbg_coredump_retrieve_input req = {0};
+ 	struct bnxt_hwrm_dbg_dma_info info = {NULL};
+@@ -3134,8 +3141,11 @@ static int bnxt_hwrm_dbg_coredump_retrie
+ 				seq_no);
+ 	info.data_len_off = offsetof(struct hwrm_dbg_coredump_retrieve_output,
+ 				     data_len);
+-	if (buf)
++	if (buf) {
+ 		info.dest_buf = buf + offset;
++		info.buf_len = buf_len;
++		info.seg_start = offset;
++	}
+ 
+ 	rc = bnxt_hwrm_dbg_dma_data(bp, &req, sizeof(req), &info);
+ 	if (!rc)
+@@ -3225,14 +3235,17 @@ bnxt_fill_coredump_record(struct bnxt *b
+ static int bnxt_get_coredump(struct bnxt *bp, void *buf, u32 *dump_len)
+ {
+ 	u32 ver_get_resp_len = sizeof(struct hwrm_ver_get_output);
++	u32 offset = 0, seg_hdr_len, seg_record_len, buf_len = 0;
+ 	struct coredump_segment_record *seg_record = NULL;
+-	u32 offset = 0, seg_hdr_len, seg_record_len;
+ 	struct bnxt_coredump_segment_hdr seg_hdr;
+ 	struct bnxt_coredump coredump = {NULL};
+ 	time64_t start_time;
+ 	u16 start_utc;
+ 	int rc = 0, i;
+ 
++	if (buf)
++		buf_len = *dump_len;
 +
- static int do_abort(struct Scsi_Host *);
- static void do_reset(struct Scsi_Host *);
- static void bus_reset_cleanup(struct Scsi_Host *);
-@@ -946,7 +949,8 @@ static bool NCR5380_select(struct Scsi_Host *instance, struct scsi_cmnd *cmd)
- 	int err;
- 	bool ret = true;
- 	bool can_disconnect = instance->irq != NO_IRQ &&
--			      cmd->cmnd[0] != REQUEST_SENSE;
-+			      cmd->cmnd[0] != REQUEST_SENSE &&
-+			      (disconnect_mask & BIT(scmd_id(cmd)));
+ 	start_time = ktime_get_real_seconds();
+ 	start_utc = sys_tz.tz_minuteswest * 60;
+ 	seg_hdr_len = sizeof(seg_hdr);
+@@ -3265,6 +3278,12 @@ static int bnxt_get_coredump(struct bnxt
+ 		u32 duration = 0, seg_len = 0;
+ 		unsigned long start, end;
  
- 	NCR5380_dprint(NDEBUG_ARBITRATION, instance);
- 	dsprintk(NDEBUG_ARBITRATION, instance, "starting arbitration, id = %d\n",
--- 
-2.20.1
-
++		if (buf && ((offset + seg_hdr_len) >
++			    BNXT_COREDUMP_BUF_LEN(buf_len))) {
++			rc = -ENOBUFS;
++			goto err;
++		}
++
+ 		start = jiffies;
+ 
+ 		rc = bnxt_hwrm_dbg_coredump_initiate(bp, comp_id, seg_id);
+@@ -3277,9 +3296,11 @@ static int bnxt_get_coredump(struct bnxt
+ 
+ 		/* Write segment data into the buffer */
+ 		rc = bnxt_hwrm_dbg_coredump_retrieve(bp, comp_id, seg_id,
+-						     &seg_len, buf,
++						     &seg_len, buf, buf_len,
+ 						     offset + seg_hdr_len);
+-		if (rc)
++		if (rc && rc == -ENOBUFS)
++			goto err;
++		else if (rc)
+ 			netdev_err(bp->dev,
+ 				   "Failed to retrieve coredump for seg = %d\n",
+ 				   seg_record->segment_id);
+@@ -3309,7 +3330,8 @@ err:
+ 					  rc);
+ 	kfree(coredump.data);
+ 	*dump_len += sizeof(struct bnxt_coredump_record);
+-
++	if (rc == -ENOBUFS)
++		netdev_err(bp->dev, "Firmware returned large coredump buffer");
+ 	return rc;
+ }
+ 
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h
+@@ -31,6 +31,8 @@ struct bnxt_coredump {
+ 	u16		total_segs;
+ };
+ 
++#define BNXT_COREDUMP_BUF_LEN(len) ((len) - sizeof(struct bnxt_coredump_record))
++
+ struct bnxt_hwrm_dbg_dma_info {
+ 	void *dest_buf;
+ 	int dest_buf_size;
+@@ -38,6 +40,8 @@ struct bnxt_hwrm_dbg_dma_info {
+ 	u16 seq_off;
+ 	u16 data_len_off;
+ 	u16 segs;
++	u32 seg_start;
++	u32 buf_len;
+ };
+ 
+ struct hwrm_dbg_cmn_input {
 
 
