@@ -2,100 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E633612E3A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 09:09:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA4C412E3B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 09:15:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbgABIJe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 03:09:34 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:53653 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727714AbgABIJc (ORCPT
+        id S1727801AbgABIPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 03:15:05 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:50424 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727714AbgABIPF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 03:09:32 -0500
-X-Originating-IP: 82.61.57.109
-Received: from uno.localdomain (host109-57-dynamic.61-82-r.retail.telecomitalia.it [82.61.57.109])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id E0168240002;
-        Thu,  2 Jan 2020 08:09:28 +0000 (UTC)
-Date:   Thu, 2 Jan 2020 09:11:39 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     kernel-janitors@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/16] media: mt9v111: constify copied structure
-Message-ID: <20200102081139.omdtomdecbbl4l42@uno.localdomain>
-References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
- <1577864614-5543-7-git-send-email-Julia.Lawall@inria.fr>
+        Thu, 2 Jan 2020 03:15:05 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=wenyang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0TmarSI6_1577952893;
+Received: from localhost(mailfrom:wenyang@linux.alibaba.com fp:SMTPD_---0TmarSI6_1577952893)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 02 Jan 2020 16:15:02 +0800
+From:   Wen Yang <wenyang@linux.alibaba.com>
+To:     Andrew Morton <akpm@linux-foundation.org>, Qian Cai <cai@lca.pw>
+Cc:     xlpang@linux.alibaba.com, Wen Yang <wenyang@linux.alibaba.com>,
+        Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] use div64_ul() instead of div_u64() if the divisor is unsigned long 
+Date:   Thu,  2 Jan 2020 16:14:39 +0800
+Message-Id: <20200102081442.8273-1-wenyang@linux.alibaba.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cyu25jnciggoxa63"
-Content-Disposition: inline
-In-Reply-To: <1577864614-5543-7-git-send-email-Julia.Lawall@inria.fr>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We were first inspired by commit b0ab99e7736a
+("sched: Fix possible divide by zero in avg_atom () calculation"),
+then refer to the recently analyzed mm code,
+we found this suspicious place.
+ 201                 if (min) {
+ 202                         min *= this_bw;
+ 203                         do_div(min, tot_bw);
+ 204                 }
 
---cyu25jnciggoxa63
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+And we also disassembled and confirmed it:
+/usr/src/debug/kernel-4.9.168-016.ali3000/linux-4.9.168-016.ali3000.alios7.x86_64/mm/page-writeback.c: 201
+0xffffffff811c37da <__wb_calc_thresh+234>:      xor    %r10d,%r10d
+0xffffffff811c37dd <__wb_calc_thresh+237>:      test   %rax,%rax
+0xffffffff811c37e0 <__wb_calc_thresh+240>:      je 0xffffffff811c3800 <__wb_calc_thresh+272>
+/usr/src/debug/kernel-4.9.168-016.ali3000/linux-4.9.168-016.ali3000.alios7.x86_64/mm/page-writeback.c: 202
+0xffffffff811c37e2 <__wb_calc_thresh+242>:      imul   %r8,%rax
+/usr/src/debug/kernel-4.9.168-016.ali3000/linux-4.9.168-016.ali3000.alios7.x86_64/mm/page-writeback.c: 203
+0xffffffff811c37e6 <__wb_calc_thresh+246>:      mov    %r9d,%r10d    ---> truncates it to 32 bits here
+0xffffffff811c37e9 <__wb_calc_thresh+249>:      xor    %edx,%edx
+0xffffffff811c37eb <__wb_calc_thresh+251>:      div    %r10
+0xffffffff811c37ee <__wb_calc_thresh+254>:      imul   %rbx,%rax
+0xffffffff811c37f2 <__wb_calc_thresh+258>:      shr    $0x2,%rax
+0xffffffff811c37f6 <__wb_calc_thresh+262>:      mul    %rcx
+0xffffffff811c37f9 <__wb_calc_thresh+265>:      shr    $0x2,%rdx
+0xffffffff811c37fd <__wb_calc_thresh+269>:      mov    %rdx,%r10
 
-Hi Julia,
-   thanks for the patch
+This series use div64_ul() instead of div_u64() if the divisor
+is unsigned long, to avoid truncation to 32-bit on 64-bit platforms.
 
-On Wed, Jan 01, 2020 at 08:43:24AM +0100, Julia Lawall wrote:
-> The mt9v111_def_fmt structure is only copied into another structure,
-> so make it const.
->
-> The opportunity for this change was found using Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Qian Cai <cai@lca.pw>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
 
-Acked-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Wen Yang (3):
+  mm/page-writeback.c: avoid potential division by zero in
+    wb_min_max_ratio()
+  mm/page-writeback.c: use div64_ul() for u64-by-unsigned-long divide
+  mm/page-writeback.c: improve arithmetic divisions
 
-Thanks
-   j
+ mm/page-writeback.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
->
-> ---
->  drivers/media/i2c/mt9v111.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/media/i2c/mt9v111.c b/drivers/media/i2c/mt9v111.c
-> index bb41bea950ac..61ae6a0d5679 100644
-> --- a/drivers/media/i2c/mt9v111.c
-> +++ b/drivers/media/i2c/mt9v111.c
-> @@ -103,7 +103,7 @@
->  #define MT9V111_MAX_CLKIN				27000000
->
->  /* The default sensor configuration at startup time. */
-> -static struct v4l2_mbus_framefmt mt9v111_def_fmt = {
-> +static const struct v4l2_mbus_framefmt mt9v111_def_fmt = {
->  	.width		= 640,
->  	.height		= 480,
->  	.code		= MEDIA_BUS_FMT_UYVY8_2X8,
->
+-- 
+1.8.3.1
 
---cyu25jnciggoxa63
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl4NpbsACgkQcjQGjxah
-VjxWAw/7BXbE2ajrCEdQEVdH+Mvd31VIHw+dUwHxWlz68PxEH4fwHbZmTdNX3AJ4
-lXqW/E/YpeuKv/4PkuKdU5Sm6mrIC4AoEU0Mxkac9ih1Zhr1xTNudhgmoeytOrH3
-vcA5Qx+3feHHvebZ8gZWAOaRnSo0C1YAOgW0Yy9lGFY40suxHABQ8h37Mss2hh/Q
-0IZTa/nQIUUzNDFvJM2lxrm3Di8z9yqFFVrmiVZKbPuUc+t6LjqlB9LrX7X2NJny
-JQLBM6jHmZ7/WJjZDGc5asREk0LP19VgfOgeibW+EjQ1FwPVnsg1K6KY0RcZ3wtW
-qXwSa/6yeYXJFxX3igNhLgrTzy+lzMedKnijf/g4A0XjA9rOzjW6qpZQAIEybFvb
-5YQuIScZ83ZG0Hlkfus1rMrHhccRv6aXIjVc4dre/1Dr+iFWCEgDLsPC+iOdXqxC
-UrSejcypZBx/kMs+F6sgAdeyxKhwYaKnX+mNZbTodMPffSrdSPdc8JpgXeEMPQtQ
-T+VbHJ+ZP4U9Ey8QzWbMV6SJa3g923kBN2BY1hU8f7vpStM8H/w/Yz5AEkLLjJS7
-jWtuy3ad+CHh5i0ud47cS5iXXsVJZCoFe/fpZKFIUJHexX4PBXYNA4j1sLDALLt/
-zrU0yg/3adK03trBxx2JOheLIgx2uq/U/Ys+pQ27NeSjZoZPWa8=
-=xj3Z
------END PGP SIGNATURE-----
-
---cyu25jnciggoxa63--
