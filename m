@@ -2,41 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 000CC12EE1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:35:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF5A012F113
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:58:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730800AbgABWfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:35:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44712 "EHLO mail.kernel.org"
+        id S1727438AbgABWQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:16:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730778AbgABWfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:35:12 -0500
+        id S1727528AbgABWQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:16:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 215A720866;
-        Thu,  2 Jan 2020 22:35:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E26F72253D;
+        Thu,  2 Jan 2020 22:16:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004511;
-        bh=+YjcYkDj2yiD9m6qHDqjHMTxC16tBLn4mcmA1+IBmBs=;
+        s=default; t=1578003363;
+        bh=kxFz/ZBpzvwU5N3uVVg+4xNcT/Td854SHiUieOo7OK4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y3FVrzD5ZTYBPOJi2f8gfBjgJtHvhAS//b2lJ3OybthFbXcGTmsU3Db//NaPSwUBQ
-         V/mWajMynbKau6jdWod/4A8/WHv/NEl6qh+A2Mo8lAhZpHhl1rD61geKnZHkghZp01
-         kw6JS6a+Apdg6B8zE6BIdOljDc1AT7npIroncezQ=
+        b=QfXD031gdlsvADsc6I6zQCqcej/lj3rt9rMu7oGTZX95a2mNClUVyndGpBEjqxAuB
+         By38tW9yPN6sxLJyZwWRO1PaoIK0VyXWgFo96Iv/JzLI2ihxqe4e3yQ0OBdmMN2MRw
+         c1pLWSEBp+L9+13dysnAeMU0Gtu6G5tc8Gy658FI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 038/137] perf probe: Fix to find range-only function instance
-Date:   Thu,  2 Jan 2020 23:06:51 +0100
-Message-Id: <20200102220551.761090623@linuxfoundation.org>
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Parth Shah <parth@linux.ibm.com>,
+        Ihor Pasichnyk <Ihor.Pasichnyk@ibm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Phil Auld <pauld@redhat.com>,
+        Vaidyanathan Srinivasan <svaidy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.4 130/191] Revert "powerpc/vcpu: Assume dedicated processors as non-preempt"
+Date:   Thu,  2 Jan 2020 23:06:52 +0100
+Message-Id: <20200102215843.634744563@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,50 +51,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-[ Upstream commit b77afa1f810f37bd8a36cb1318178dfe2d7af6b6 ]
+This reverts commit 8332dbe5157a0056d8ab409957dfa89930066d87 which is
+commit 14c73bd344da60abaf7da3ea2e7733ddda35bbac upstream.
 
-Fix die_is_func_instance() to find range-only function instance.
+It breaks the build.
 
-In some case, a function instance can be made without any low PC or
-entry PC, but only with address ranges by optimization.  (e.g. cold text
-partially in "text.unlikely" section) To find such function instance, we
-have to check the range attribute too.
-
-Fixes: e1ecbbc3fa83 ("perf probe: Fix to handle optimized not-inlined functions")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lore.kernel.org/lkml/157190835669.1859.8368628035930950596.stgit@devnote2
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Parth Shah <parth@linux.ibm.com>
+Cc: Ihor Pasichnyk <Ihor.Pasichnyk@ibm.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: Phil Auld <pauld@redhat.com>
+Cc: Vaidyanathan Srinivasan <svaidy@linux.ibm.com>
+Cc: Parth Shah <parth@linux.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/dwarf-aux.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/powerpc/include/asm/spinlock.h    |    4 +---
+ arch/powerpc/platforms/pseries/setup.c |    7 -------
+ 2 files changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
-index a509aa8433a1..af78d6fc8d12 100644
---- a/tools/perf/util/dwarf-aux.c
-+++ b/tools/perf/util/dwarf-aux.c
-@@ -304,10 +304,14 @@ bool die_is_func_def(Dwarf_Die *dw_die)
- bool die_is_func_instance(Dwarf_Die *dw_die)
- {
- 	Dwarf_Addr tmp;
-+	Dwarf_Attribute attr_mem;
+--- a/arch/powerpc/include/asm/spinlock.h
++++ b/arch/powerpc/include/asm/spinlock.h
+@@ -36,12 +36,10 @@
+ #endif
  
- 	/* Actually gcc optimizes non-inline as like as inlined */
--	return !dwarf_func_inline(dw_die) && dwarf_entrypc(dw_die, &tmp) == 0;
-+	return !dwarf_func_inline(dw_die) &&
-+	       (dwarf_entrypc(dw_die, &tmp) == 0 ||
-+		dwarf_attr(dw_die, DW_AT_ranges, &attr_mem) != NULL);
+ #ifdef CONFIG_PPC_PSERIES
+-DECLARE_STATIC_KEY_FALSE(shared_processor);
+-
+ #define vcpu_is_preempted vcpu_is_preempted
+ static inline bool vcpu_is_preempted(int cpu)
+ {
+-	if (!static_branch_unlikely(&shared_processor))
++	if (!firmware_has_feature(FW_FEATURE_SPLPAR))
+ 		return false;
+ 	return !!(be32_to_cpu(lppaca_of(cpu).yield_count) & 1);
  }
-+
- /**
-  * die_get_data_member_location - Get the data-member offset
-  * @mb_die: a DIE of a member of a data structure
--- 
-2.20.1
-
+--- a/arch/powerpc/platforms/pseries/setup.c
++++ b/arch/powerpc/platforms/pseries/setup.c
+@@ -74,9 +74,6 @@
+ #include "pseries.h"
+ #include "../../../../drivers/pci/pci.h"
+ 
+-DEFINE_STATIC_KEY_FALSE(shared_processor);
+-EXPORT_SYMBOL_GPL(shared_processor);
+-
+ int CMO_PrPSP = -1;
+ int CMO_SecPSP = -1;
+ unsigned long CMO_PageSize = (ASM_CONST(1) << IOMMU_PAGE_SHIFT_4K);
+@@ -761,10 +758,6 @@ static void __init pSeries_setup_arch(vo
+ 
+ 	if (firmware_has_feature(FW_FEATURE_LPAR)) {
+ 		vpa_init(boot_cpuid);
+-
+-		if (lppaca_shared_proc(get_lppaca()))
+-			static_branch_enable(&shared_processor);
+-
+ 		ppc_md.power_save = pseries_lpar_idle;
+ 		ppc_md.enable_pmcs = pseries_lpar_enable_pmcs;
+ #ifdef CONFIG_PCI_IOV
 
 
