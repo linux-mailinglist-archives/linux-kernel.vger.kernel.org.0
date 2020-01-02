@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D34C12EDBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:32:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD3BF12EE3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:36:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728352AbgABWbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:31:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36054 "EHLO mail.kernel.org"
+        id S1730969AbgABWgi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:36:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730252AbgABWbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:31:10 -0500
+        id S1730940AbgABWgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:36:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAD9520866;
-        Thu,  2 Jan 2020 22:31:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 163AE21D7D;
+        Thu,  2 Jan 2020 22:36:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004270;
-        bh=5+zLHn7HrkoGk5mRtLllbP3/vp81iPVrTS2zV/XIP4w=;
+        s=default; t=1578004583;
+        bh=kl004tIylIy2HeVOharYYJ5vMSraklAz5CHA3QF/Qis=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d6VKee3KApmmxXb2q/MuCApYyok0+O/XoHdL269OQgi070Lc5IjUjXx40aWGUjqgi
-         wLo7PHjrs6tuDjHpEIUoD5FQFlk5zXRbdTo0lvxAVse0UmcQLRi9DTV4ziPhAHVMJ7
-         FVGe1aQPW1qGxiwbbN0X4pTqSHmw1oKpKOioNuQc=
+        b=aUQ8TfKBAfEPidlHDPd/GxO/lGECgfvBaDWIuaV7C8f61VTcj5zQZG/Wh7lwQaejS
+         SO0WpCdjkG6P/bDNLCUKCxByEsKp643zzqW62dzBhnnGlcfmJyLdQZ/EOlr8LBm830
+         xi7PPlNJK4OAKmyst7yGJzKOXfNuVgH78/52pQkE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yangbo Lu <yangbo.lu@nxp.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.9 109/171] mmc: sdhci-of-esdhc: fix P2020 errata handling
-Date:   Thu,  2 Jan 2020 23:07:20 +0100
-Message-Id: <20200102220602.269257119@linuxfoundation.org>
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 068/137] btrfs: do not call synchronize_srcu() in inode_tree_del
+Date:   Thu,  2 Jan 2020 23:07:21 +0100
+Message-Id: <20200102220555.698776544@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,47 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangbo Lu <yangbo.lu@nxp.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit fe0acab448f68c3146235afe03fb932e242ec94c upstream.
+[ Upstream commit f72ff01df9cf5db25c76674cac16605992d15467 ]
 
-Two previous patches introduced below quirks for P2020 platforms.
-- SDHCI_QUIRK_RESET_AFTER_REQUEST
-- SDHCI_QUIRK_BROKEN_TIMEOUT_VAL
+Testing with the new fsstress uncovered a pretty nasty deadlock with
+lookup and snapshot deletion.
 
-The patches made a mistake to add them in quirks2 of sdhci_host
-structure, while they were defined for quirks.
-	host->quirks2 |= SDHCI_QUIRK_RESET_AFTER_REQUEST;
-	host->quirks2 |= SDHCI_QUIRK_BROKEN_TIMEOUT_VAL;
+Process A
+unlink
+ -> final iput
+   -> inode_tree_del
+     -> synchronize_srcu(subvol_srcu)
 
-This patch is to fix them.
-	host->quirks |= SDHCI_QUIRK_RESET_AFTER_REQUEST;
-	host->quirks |= SDHCI_QUIRK_BROKEN_TIMEOUT_VAL;
+Process B
+btrfs_lookup  <- srcu_read_lock() acquired here
+  -> btrfs_iget
+    -> find inode that has I_FREEING set
+      -> __wait_on_freeing_inode()
 
-Fixes: 05cb6b2a66fa ("mmc: sdhci-of-esdhc: add erratum eSDHC-A001 and A-008358 support")
-Fixes: a46e42712596 ("mmc: sdhci-of-esdhc: add erratum eSDHC5 support")
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20191216031842.40068-1-yangbo.lu@nxp.com
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+We're holding the srcu_read_lock() while doing the iget in order to make
+sure our fs root doesn't go away, and then we are waiting for the inode
+to finish freeing.  However because the free'ing process is doing a
+synchronize_srcu() we deadlock.
 
+Fix this by dropping the synchronize_srcu() in inode_tree_del().  We
+don't need people to stop accessing the fs root at this point, we're
+only adding our empty root to the dead roots list.
+
+A larger much more invasive fix is forthcoming to address how we deal
+with fs roots, but this fixes the immediate problem.
+
+Fixes: 76dda93c6ae2 ("Btrfs: add snapshot/subvolume destroy ioctl")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci-of-esdhc.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/btrfs/inode.c | 1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/mmc/host/sdhci-of-esdhc.c
-+++ b/drivers/mmc/host/sdhci-of-esdhc.c
-@@ -637,8 +637,8 @@ static int sdhci_esdhc_probe(struct plat
- 		host->quirks &= ~SDHCI_QUIRK_NO_BUSY_IRQ;
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 383717ccecc7..548e9cd1a337 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -5506,7 +5506,6 @@ static void inode_tree_del(struct inode *inode)
+ 	spin_unlock(&root->inode_lock);
  
- 	if (of_find_compatible_node(NULL, NULL, "fsl,p2020-esdhc")) {
--		host->quirks2 |= SDHCI_QUIRK_RESET_AFTER_REQUEST;
--		host->quirks2 |= SDHCI_QUIRK_BROKEN_TIMEOUT_VAL;
-+		host->quirks |= SDHCI_QUIRK_RESET_AFTER_REQUEST;
-+		host->quirks |= SDHCI_QUIRK_BROKEN_TIMEOUT_VAL;
- 	}
- 
- 	if (of_device_is_compatible(np, "fsl,p5040-esdhc") ||
+ 	if (empty && btrfs_root_refs(&root->root_item) == 0) {
+-		synchronize_srcu(&root->fs_info->subvol_srcu);
+ 		spin_lock(&root->inode_lock);
+ 		empty = RB_EMPTY_ROOT(&root->inode_tree);
+ 		spin_unlock(&root->inode_lock);
+-- 
+2.20.1
+
 
 
