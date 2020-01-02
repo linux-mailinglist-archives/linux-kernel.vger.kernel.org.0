@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CF5E12EC77
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:19:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAC1F12ED44
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:26:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbgABWSt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:18:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34236 "EHLO mail.kernel.org"
+        id S1729069AbgABW0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:26:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728474AbgABWSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:18:44 -0500
+        id S1729643AbgABW02 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:26:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B055D2253D;
-        Thu,  2 Jan 2020 22:18:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B752222525;
+        Thu,  2 Jan 2020 22:26:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003524;
-        bh=TiQKsBH6qvvSVNlJLrbTeIM1B76u/SMbKkb611bLAdY=;
+        s=default; t=1578003988;
+        bh=Axm9hXdZ97HQ91q0zUCS0GRR7u5ItH7c2RXBxanXijs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vmFkZBhdCnsUMRBhY8QlRG0RlVJTImvjV+ekEHeQd38xCKYi/65FbLKrMiHlW6Idt
-         CpYxcnlKWfm3DNaSHMz9tuc7XTbJOKCH0Af5mNKpJnkCXh5n1mfHUNJrjGDAB8FU5N
-         DXRjDDhP4f4luPFHLnK7Igj80nAaQwW74TJSqR7U=
+        b=D30CqjnZep3Do/DJs2ktYgrlOaJnDffqAvCAUNNmpZBULt4rwUXUbsdhDvriLZrrk
+         Yj4uA6Y5Z+e+AZ0tMEG4aacx4s/+ZnZGuXv5AxJ0ec0EubgvdQmYICmz12d2/5MqW9
+         fHqHk9whDyRcpIuaFJihFCu7fTap2iaiF3W9SKZo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 5.4 177/191] gtp: fix wrong condition in gtp_genl_dump_pdp()
+        stable@vger.kernel.org, Marco Oliverio <marco.oliverio@tanaza.com>,
+        Rocco Folino <rocco.folino@tanaza.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 57/91] netfilter: nf_queue: enqueue skbs with NULL dst
 Date:   Thu,  2 Jan 2020 23:07:39 +0100
-Message-Id: <20200102215848.247649694@linuxfoundation.org>
+Message-Id: <20200102220439.473724376@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
+References: <20200102220356.856162165@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,102 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Marco Oliverio <marco.oliverio@tanaza.com>
 
-[ Upstream commit 94a6d9fb88df43f92d943c32b84ce398d50bf49f ]
+[ Upstream commit 0b9173f4688dfa7c5d723426be1d979c24ce3d51 ]
 
-gtp_genl_dump_pdp() is ->dumpit() callback of GTP module and it is used
-to dump pdp contexts. it would be re-executed because of dump packet size.
+Bridge packets that are forwarded have skb->dst == NULL and get
+dropped by the check introduced by
+b60a77386b1d4868f72f6353d35dabe5fbe981f2 (net: make skb_dst_force
+return true when dst is refcounted).
 
-If dump packet size is too big, it saves current dump pointer
-(gtp interface pointer, bucket, TID value) then it restarts dump from
-last pointer.
-Current GTP code allows adding zero TID pdp context but dump code
-ignores zero TID value. So, last dump pointer will not be found.
+To fix this we check skb_dst() before skb_dst_force(), so we don't
+drop skb packet with dst == NULL. This holds also for skb at the
+PRE_ROUTING hook so we remove the second check.
 
-In addition, this patch adds missing rcu_read_lock() in
-gtp_genl_dump_pdp().
-
-Fixes: 459aa660eb1d ("gtp: add initial driver for datapath of GPRS Tunneling Protocol (GTP-U)")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: b60a77386b1d ("net: make skb_dst_force return true when dst is refcounted")
+Signed-off-by: Marco Oliverio <marco.oliverio@tanaza.com>
+Signed-off-by: Rocco Folino <rocco.folino@tanaza.com>
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/gtp.c |   36 +++++++++++++++++++-----------------
- 1 file changed, 19 insertions(+), 17 deletions(-)
+ net/netfilter/nf_queue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/gtp.c
-+++ b/drivers/net/gtp.c
-@@ -38,7 +38,6 @@ struct pdp_ctx {
- 	struct hlist_node	hlist_addr;
- 
- 	union {
--		u64		tid;
- 		struct {
- 			u64	tid;
- 			u16	flow;
-@@ -1232,43 +1231,46 @@ static int gtp_genl_dump_pdp(struct sk_b
- 				struct netlink_callback *cb)
- {
- 	struct gtp_dev *last_gtp = (struct gtp_dev *)cb->args[2], *gtp;
-+	int i, j, bucket = cb->args[0], skip = cb->args[1];
- 	struct net *net = sock_net(skb->sk);
--	struct gtp_net *gn = net_generic(net, gtp_net_id);
--	unsigned long tid = cb->args[1];
--	int i, k = cb->args[0], ret;
- 	struct pdp_ctx *pctx;
-+	struct gtp_net *gn;
-+
-+	gn = net_generic(net, gtp_net_id);
- 
- 	if (cb->args[4])
- 		return 0;
- 
-+	rcu_read_lock();
- 	list_for_each_entry_rcu(gtp, &gn->gtp_dev_list, list) {
- 		if (last_gtp && last_gtp != gtp)
- 			continue;
- 		else
- 			last_gtp = NULL;
- 
--		for (i = k; i < gtp->hash_size; i++) {
--			hlist_for_each_entry_rcu(pctx, &gtp->tid_hash[i], hlist_tid) {
--				if (tid && tid != pctx->u.tid)
--					continue;
--				else
--					tid = 0;
--
--				ret = gtp_genl_fill_info(skb,
--							 NETLINK_CB(cb->skb).portid,
--							 cb->nlh->nlmsg_seq,
--							 cb->nlh->nlmsg_type, pctx);
--				if (ret < 0) {
-+		for (i = bucket; i < gtp->hash_size; i++) {
-+			j = 0;
-+			hlist_for_each_entry_rcu(pctx, &gtp->tid_hash[i],
-+						 hlist_tid) {
-+				if (j >= skip &&
-+				    gtp_genl_fill_info(skb,
-+					    NETLINK_CB(cb->skb).portid,
-+					    cb->nlh->nlmsg_seq,
-+					    cb->nlh->nlmsg_type, pctx)) {
- 					cb->args[0] = i;
--					cb->args[1] = pctx->u.tid;
-+					cb->args[1] = j;
- 					cb->args[2] = (unsigned long)gtp;
- 					goto out;
- 				}
-+				j++;
- 			}
-+			skip = 0;
- 		}
-+		bucket = 0;
+diff --git a/net/netfilter/nf_queue.c b/net/netfilter/nf_queue.c
+index 37efcc1c8887..b06ef4c62522 100644
+--- a/net/netfilter/nf_queue.c
++++ b/net/netfilter/nf_queue.c
+@@ -138,7 +138,7 @@ static int __nf_queue(struct sk_buff *skb, const struct nf_hook_state *state,
+ 		goto err;
  	}
- 	cb->args[4] = 1;
- out:
-+	rcu_read_unlock();
- 	return skb->len;
- }
  
+-	if (!skb_dst_force(skb) && state->hook != NF_INET_PRE_ROUTING) {
++	if (skb_dst(skb) && !skb_dst_force(skb)) {
+ 		status = -ENETDOWN;
+ 		goto err;
+ 	}
+-- 
+2.20.1
+
 
 
