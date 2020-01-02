@@ -2,99 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BB7412E74F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 15:40:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5447912E756
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 15:41:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728547AbgABOkk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 09:40:40 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:45550 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728487AbgABOkk (ORCPT
+        id S1728575AbgABOky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 09:40:54 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39573 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728425AbgABOkx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 09:40:40 -0500
-Received: by mail-qk1-f194.google.com with SMTP id x1so31444507qkl.12
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 06:40:39 -0800 (PST)
+        Thu, 2 Jan 2020 09:40:53 -0500
+Received: by mail-lj1-f194.google.com with SMTP id l2so40907202lja.6;
+        Thu, 02 Jan 2020 06:40:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=DGe5OlDzWlqaVOrB7Zwlh1mtOAyD3QJSI6DfeRmdd5k=;
-        b=BHxa5KqcV3bY9bqXDPPBeTDxgXlOSIg3eZlCv5+8eXv7DKHyDRDCbga3P2+nPGWDNo
-         V9a38WKoh38ZnB3IsipG25VNHdSSDyYYJvgX9tQ2lk8Od6yVSlK6Ep+WMJ2QebHmL64Z
-         6u5veFm1jNjvuzoOee7d1AUkXXY8yyToP25h/mTTFuwoQ+rlqF0Ds2id4wXw3VCsYpfl
-         9C4/EwVxAwRM3XW8Yb/AqSntDFdrNa9chF+kNFj5TJw3QSgqlpegNmGdN/F7g2MBtqxX
-         Z7uwsAtNbb3cQk+t3LMaq0n222n9zmfRAwmn2J6XUZGUyCBtlfcDRc6RIv4KbkA1x+jg
-         4gQQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YTVCjk10X6IDkXlg3Lj964r6euM3rxVqLQ0GPKfUCcY=;
+        b=AP5XweqgaDQb81JEDXXKrNOcYIEC2i4tvtdZSUGy93+DHN8A7ffo9TybljSB9VJ4j3
+         oZiC3JWlslj+PMJ13KpRrBZjp0emO2GobVqk+FEpnz5lFn8yuNZ+jFhEbwIMK73UeZB1
+         P0WN+b7kW6c8faslew/p/cfGYho0JQNrarwEKGJFRRB9bBNHI9/9YGZXVqzP1gMLeQQC
+         uwtOqNfEhpzbW6cUHtOSJ+bIzsO+UIoGEBAAxhZSmD/mI0CykOjgaCZixZZlYtfdKQ4T
+         iFUw53maeqLsVUL3PHWSSunz0Dv4NC0WQxDaawkoHV6HvLHzG0qBidaxdKLFxkN+F3YC
+         IR2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=DGe5OlDzWlqaVOrB7Zwlh1mtOAyD3QJSI6DfeRmdd5k=;
-        b=U4NUka6X+eLZtwmp6IztixEgTkAbLGzdciSh5KaAh/QBwWpMSZFzZLM/8sAk5o06vM
-         3ub6GIAa9coxT5BrIui37SRbbd9N9JPR6ZpxCTUfCUURkzn8Uej7stJ/np9V4/svLVYN
-         jjEyCRfOmZwlZlGyRjwzgpgrOSQObhPAa5GqXFHVJU++RkIiHCBNG5q981kMdnyjsuxb
-         m8iKs9uJ0AV5dJHwhCCDCmBOKcWwavAI5lyOvqKmLZ1F0mF6Vlk2hxgNa4QwWlVllCQv
-         hilOHqM78klQ9mirQkHYNRbAUiTu/Amg+qcJrLUeAiRGUpMQFHxyufyquellRnzRGO6e
-         2/tg==
-X-Gm-Message-State: APjAAAXUR4sd7dNRHz6tdo/zadMa80AJ29/+RsWt78nAselfP4kJ02Mb
-        Dxtbu+ay386ovioID0oV2GXKcg==
-X-Google-Smtp-Source: APXvYqzJgUKF2RBWq7RlhzMqIT+klK9xeFrF5vbdVvSPMqJXnEq7qG4n1GzgObMyY9774TL7ld4Rhg==
-X-Received: by 2002:a37:7d01:: with SMTP id y1mr68731773qkc.452.1577976039330;
-        Thu, 02 Jan 2020 06:40:39 -0800 (PST)
-Received: from [192.168.1.169] (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
-        by smtp.gmail.com with ESMTPSA id e21sm15132735qkm.55.2020.01.02.06.40.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Jan 2020 06:40:38 -0800 (PST)
-Subject: Re: [Patch v6 1/7] sched/pelt.c: Add support to track thermal
- pressure
-To:     Ionela Voinescu <ionela.voinescu@arm.com>
-References: <1576123908-12105-1-git-send-email-thara.gopinath@linaro.org>
- <1576123908-12105-2-git-send-email-thara.gopinath@linaro.org>
- <20191223175620.GE31446@arm.com>
-Cc:     mingo@redhat.com, peterz@infradead.org, vincent.guittot@linaro.org,
-        rui.zhang@intel.com, qperret@google.com, daniel.lezcano@linaro.org,
-        viresh.kumar@linaro.org, linux-kernel@vger.kernel.org,
-        amit.kachhap@gmail.com, javi.merino@kernel.org,
-        amit.kucheria@verdurent.com
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-Message-ID: <5E0E00E5.2000801@linaro.org>
-Date:   Thu, 2 Jan 2020 09:40:37 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YTVCjk10X6IDkXlg3Lj964r6euM3rxVqLQ0GPKfUCcY=;
+        b=LDuOcCxuIzJfZfPczf0dw4MAMxSmY8cy+2o79sBX1ERxzauk7Arga1GNQDMYqV8xJC
+         jHSFxqu8nhYMIeSpl1QKsUc/BypJtUQD0nc4gR3AuXjFjJBRbskhvSYU2kIumnSIa98R
+         jw6p9wcywLai6Vv4Bny0KS7zzJ37MIZDxBoJhl3V+A5KAr2FcGxVVODVugTBp9XKYs9Z
+         OQCl3CfhB/Kn5pJCzfVBaZJgOnTN2sh1Z/faJb0NTgtt9API0MPCco5Fm6TIphxcqY4M
+         nn8lg/jbhHiIyD/qYjqYzlRvguu5dvZcgsC8XknkUiToAKV74qN4bhi2yZoTJ7ohQ4Sj
+         fV8w==
+X-Gm-Message-State: APjAAAXQMfUwgsT+mXc7VcLE0VR6TczStRajVrtvWbBcelMdRiVfkcMy
+        N01fvBmjEyZcLgEuM+Id3UPxKcs1
+X-Google-Smtp-Source: APXvYqxW/kfrNuZymj/mH11dgfiJX4D4dMU5VfflYEafTsK943BzpUc401lim/Fq7EUQMnVZaeZkrg==
+X-Received: by 2002:a2e:88c5:: with SMTP id a5mr49355528ljk.201.1577976050485;
+        Thu, 02 Jan 2020 06:40:50 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id g15sm18239966ljl.10.2020.01.02.06.40.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Jan 2020 06:40:49 -0800 (PST)
+Subject: Re: [PATCH v3 13/16] usb: phy: tegra: Keep CPU interrupts enabled
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191228203358.23490-1-digetx@gmail.com>
+ <20191228203358.23490-14-digetx@gmail.com>
+ <20191230203648.GA24135@qmqm.qmqm.pl>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ad1a2b09-12b0-112e-1556-6faf6a01c330@gmail.com>
+Date:   Thu, 2 Jan 2020 17:40:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20191223175620.GE31446@arm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20191230203648.GA24135@qmqm.qmqm.pl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/23/2019 12:56 PM, Ionela Voinescu wrote:
-> On Wednesday 11 Dec 2019 at 23:11:42 (-0500), Thara Gopinath wrote:
+30.12.2019 23:36, Michał Mirosław пишет:
+> On Sat, Dec 28, 2019 at 11:33:55PM +0300, Dmitry Osipenko wrote:
+>> There is no good reason for disabling of CPU interrupts in order to
+>> protect the utmip_pad_count modification.
+> 
+> Since there are sleeping functions called outside of the locked sections,
+> this should be a mutex instead. OTOH if the spin_lock is to protect register
+> write against IRQ handler, then the patch is wrong.
+> 
 > [...]
->> diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
->> index afff644..c74226d 100644
->> --- a/kernel/sched/pelt.h
->> +++ b/kernel/sched/pelt.h
->> @@ -6,6 +6,7 @@ int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se
->>  int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq);
->>  int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
->>  int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
->> +int update_thermal_load_avg(u64 now, struct rq *rq, u64 capacity);
->>
-> 
-> I know a lot of people have come with suggestions for this name, but how
-> about update_th_rq_load_avg :)? Only if you're in the mood to change it
-> again.
-Hi!
-I am rebasing! So will rename!
-> 
-> Regards,
-> Ionela.
-> 
+>> -	spin_unlock_irqrestore(&utmip_pad_lock, flags);
+>> +	spin_unlock(&utmip_pad_lock);
+>>  
+>>  	clk_disable_unprepare(phy->pad_clk);
 
+Hello Michał,
 
--- 
-Warm Regards
-Thara
+This spinlock isn't for protecting from the IRQ handler, it's used
+solely to protect modification of the registers that are shared by all
+USB controllers.
+
+It's possible to use mutex instead of spinlock here, but it doesn't
+bring any benefits because mutex is more useful when protected code
+could block for a long time due to sleep or whatever, while spinlock is
+much more efficient when protected code doesn't sleep and takes no more
+than dozens microseconds to execute (which is the case here).
+
+In this particular case of the Tegra USB PHY driver, the chance of
+getting a block on taking the utmip_pad_lock is zero unless USB
+controller drivers will start to use asynchronous probing. So this patch
+does a very minor clean-up change and nothing more.
