@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07D3512EC9F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:20:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8EBD12EC30
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:16:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728428AbgABWUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:20:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37402 "EHLO mail.kernel.org"
+        id S1726121AbgABWQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:16:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728759AbgABWUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:20:14 -0500
+        id S1727382AbgABWQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:16:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AABFE21D7D;
-        Thu,  2 Jan 2020 22:20:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D40622314;
+        Thu,  2 Jan 2020 22:16:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003613;
-        bh=EGk06uEtlaOlIchCjhWbgXwvwWKYus/CodtgW5E8gAE=;
+        s=default; t=1578003365;
+        bh=P+qkyBskgrpDviv0YM89VHDOIOtINogWuFid//yjjY4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z/PjGiGNxrrlEJlx7l2qNGghipRG7yGCk0wIylRJvl00fODBXck859rPHZPni5xhe
-         xsc5MpClH1OHQMvmKCirHTRck0xXXPSyL3QjFmPccfXSfFuSj91D6fJEaLyUILi/aI
-         cAGA9oDNxbze8aNwSpNGm1vP4fbvEcCCxKh5bGso=
+        b=fXv8hgjHwgMIpkwzAD47F5VbKEw7x5jYMDzxH7R9irMZq9h7QePjBkVNEuviUnLjp
+         CsSscIuqEudxj6gXLabeX5sUJ/OCYNE4BfuPZ+TYWXqJSFVi4MfeeFKbD+y47rMA/W
+         PgByUldkTcs6zu2sFgmPmAFQXCGV2B24hWp4BVeg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo L. F. Walbon" <gwalbon@linux.ibm.com>,
-        "Mauro S. M. Rodrigues" <maurosr@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        syzbot+9a1bc632e78a1a98488b@syzkaller.appspotmail.com,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 041/114] powerpc/security: Fix wrong message when RFI Flush is disable
+Subject: [PATCH 5.4 131/191] sctp: fix err handling of stream initialization
 Date:   Thu,  2 Jan 2020 23:06:53 +0100
-Message-Id: <20200102220033.248962869@linuxfoundation.org>
+Message-Id: <20200102215843.731264631@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,93 +46,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo L. F. Walbon <gwalbon@linux.ibm.com>
+From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 
-[ Upstream commit 4e706af3cd8e1d0503c25332b30cad33c97ed442 ]
+[ Upstream commit 61d5d4062876e21331c3d0ba4b02dbd50c06a658 ]
 
-The issue was showing "Mitigation" message via sysfs whatever the
-state of "RFI Flush", but it should show "Vulnerable" when it is
-disabled.
+The fix on 951c6db954a1 fixed the issued reported there but introduced
+another. When the allocation fails within sctp_stream_init() it is
+okay/necessary to free the genradix. But it is also called when adding
+new streams, from sctp_send_add_streams() and
+sctp_process_strreset_addstrm_in() and in those situations it cannot
+just free the genradix because by then it is a fully operational
+association.
 
-If you have "L1D private" feature enabled and not "RFI Flush" you are
-vulnerable to meltdown attacks.
+The fix here then is to only free the genradix in sctp_stream_init()
+and on those other call sites  move on with what it already had and let
+the subsequent error handling to handle it.
 
-"RFI Flush" is the key feature to mitigate the meltdown whatever the
-"L1D private" state.
+Tested with the reproducers from this report and the previous one,
+with lksctp-tools and sctp-tests.
 
-SEC_FTR_L1D_THREAD_PRIV is a feature for Power9 only.
-
-So the message should be as the truth table shows:
-
-  CPU | L1D private | RFI Flush |                sysfs
-  ----|-------------|-----------|-------------------------------------
-   P9 |    False    |   False   | Vulnerable
-   P9 |    False    |   True    | Mitigation: RFI Flush
-   P9 |    True     |   False   | Vulnerable: L1D private per thread
-   P9 |    True     |   True    | Mitigation: RFI Flush, L1D private per thread
-   P8 |    False    |   False   | Vulnerable
-   P8 |    False    |   True    | Mitigation: RFI Flush
-
-Output before this fix:
-  # cat /sys/devices/system/cpu/vulnerabilities/meltdown
-  Mitigation: RFI Flush, L1D private per thread
-  # echo 0 > /sys/kernel/debug/powerpc/rfi_flush
-  # cat /sys/devices/system/cpu/vulnerabilities/meltdown
-  Mitigation: L1D private per thread
-
-Output after fix:
-  # cat /sys/devices/system/cpu/vulnerabilities/meltdown
-  Mitigation: RFI Flush, L1D private per thread
-  # echo 0 > /sys/kernel/debug/powerpc/rfi_flush
-  # cat /sys/devices/system/cpu/vulnerabilities/meltdown
-  Vulnerable: L1D private per thread
-
-Signed-off-by: Gustavo L. F. Walbon <gwalbon@linux.ibm.com>
-Signed-off-by: Mauro S. M. Rodrigues <maurosr@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190502210907.42375-1-gwalbon@linux.ibm.com
+Reported-by: syzbot+9a1bc632e78a1a98488b@syzkaller.appspotmail.com
+Fixes: 951c6db954a1 ("sctp: fix memleak on err handling of stream initialization")
+Signed-off-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/security.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ net/sctp/stream.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/arch/powerpc/kernel/security.c b/arch/powerpc/kernel/security.c
-index a4354c4f6bc5..6a3dde9587cc 100644
---- a/arch/powerpc/kernel/security.c
-+++ b/arch/powerpc/kernel/security.c
-@@ -134,26 +134,22 @@ ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, cha
+diff --git a/net/sctp/stream.c b/net/sctp/stream.c
+index 6a30392068a0..c1a100d2fed3 100644
+--- a/net/sctp/stream.c
++++ b/net/sctp/stream.c
+@@ -84,10 +84,8 @@ static int sctp_stream_alloc_out(struct sctp_stream *stream, __u16 outcnt,
+ 		return 0;
  
- 	thread_priv = security_ftr_enabled(SEC_FTR_L1D_THREAD_PRIV);
+ 	ret = genradix_prealloc(&stream->out, outcnt, gfp);
+-	if (ret) {
+-		genradix_free(&stream->out);
++	if (ret)
+ 		return ret;
+-	}
  
--	if (rfi_flush || thread_priv) {
-+	if (rfi_flush) {
- 		struct seq_buf s;
- 		seq_buf_init(&s, buf, PAGE_SIZE - 1);
+ 	stream->outcnt = outcnt;
+ 	return 0;
+@@ -102,10 +100,8 @@ static int sctp_stream_alloc_in(struct sctp_stream *stream, __u16 incnt,
+ 		return 0;
  
--		seq_buf_printf(&s, "Mitigation: ");
--
--		if (rfi_flush)
--			seq_buf_printf(&s, "RFI Flush");
--
--		if (rfi_flush && thread_priv)
--			seq_buf_printf(&s, ", ");
--
-+		seq_buf_printf(&s, "Mitigation: RFI Flush");
- 		if (thread_priv)
--			seq_buf_printf(&s, "L1D private per thread");
-+			seq_buf_printf(&s, ", L1D private per thread");
+ 	ret = genradix_prealloc(&stream->in, incnt, gfp);
+-	if (ret) {
+-		genradix_free(&stream->in);
++	if (ret)
+ 		return ret;
+-	}
  
- 		seq_buf_printf(&s, "\n");
+ 	stream->incnt = incnt;
+ 	return 0;
+@@ -123,7 +119,7 @@ int sctp_stream_init(struct sctp_stream *stream, __u16 outcnt, __u16 incnt,
+ 	 * a new one with new outcnt to save memory if needed.
+ 	 */
+ 	if (outcnt == stream->outcnt)
+-		goto in;
++		goto handle_in;
  
- 		return s.len;
- 	}
+ 	/* Filter out chunks queued on streams that won't exist anymore */
+ 	sched->unsched_all(stream);
+@@ -132,24 +128,28 @@ int sctp_stream_init(struct sctp_stream *stream, __u16 outcnt, __u16 incnt,
  
-+	if (thread_priv)
-+		return sprintf(buf, "Vulnerable: L1D private per thread\n");
+ 	ret = sctp_stream_alloc_out(stream, outcnt, gfp);
+ 	if (ret)
+-		goto out;
++		goto out_err;
+ 
+ 	for (i = 0; i < stream->outcnt; i++)
+ 		SCTP_SO(stream, i)->state = SCTP_STREAM_OPEN;
+ 
+-in:
++handle_in:
+ 	sctp_stream_interleave_init(stream);
+ 	if (!incnt)
+ 		goto out;
+ 
+ 	ret = sctp_stream_alloc_in(stream, incnt, gfp);
+-	if (ret) {
+-		sched->free(stream);
+-		genradix_free(&stream->out);
+-		stream->outcnt = 0;
+-		goto out;
+-	}
++	if (ret)
++		goto in_err;
 +
- 	if (!security_ftr_enabled(SEC_FTR_L1D_FLUSH_HV) &&
- 	    !security_ftr_enabled(SEC_FTR_L1D_FLUSH_PR))
- 		return sprintf(buf, "Not affected\n");
++	goto out;
+ 
++in_err:
++	sched->free(stream);
++	genradix_free(&stream->in);
++out_err:
++	genradix_free(&stream->out);
++	stream->outcnt = 0;
+ out:
+ 	return ret;
+ }
 -- 
 2.20.1
 
