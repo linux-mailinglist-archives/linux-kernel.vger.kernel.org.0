@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D182E12EC15
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:15:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ED1712ED84
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:29:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbgABWPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:15:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55882 "EHLO mail.kernel.org"
+        id S1730006AbgABW3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:29:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727156AbgABWPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:15:12 -0500
+        id S1729998AbgABW3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:29:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9A7A21582;
-        Thu,  2 Jan 2020 22:15:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85A59222C3;
+        Thu,  2 Jan 2020 22:29:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003311;
-        bh=Ntjc8Wl3a9ScWfKbBQt5/x2fazMxvzR850E7vCqoHKQ=;
+        s=default; t=1578004148;
+        bh=z6WFD0WMIResXl7oTN1KLXrpZ05xZGgbg35GLx1c91k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N6Ek2+yuMSwCBhnF1fr5Cvq8dJqpVseNyGS9RVzakPbm+gVJm7Mnbl14DlGnSh5d1
-         JxdDToZa2Tqx04mgWixwt0hYUz2vBaWYR0Wc9AXfbnWG++VBIK4pDCBYXj6cuCxn3l
-         iVKV7+WCYvtT3+6aBER1bOHLIycExPebxF52GdZ4=
+        b=PLJ2R4UTbWtozjqK1yxd4VqB1WOgOEPIYxwpW6IX0Am69xGabbuz9Qhy9+LPqeBqX
+         Mt5dN9Zb7LGQl0sSQGfFdIXEQUK2udiqU5Lzk77zELL2rIhLSCCk/NkeDjETQ351X9
+         /wVNtIwNzEKgROrOyLW4GKQ3WRierQ5l3RprmK/w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Axtens <dja@axtens.net>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 107/191] powerpc: Dont add -mabi= flags when building with Clang
+Subject: [PATCH 4.9 058/171] perf probe: Return a better scope DIE if there is no best scope
 Date:   Thu,  2 Jan 2020 23:06:29 +0100
-Message-Id: <20200102215841.382299263@linuxfoundation.org>
+Message-Id: <20200102220554.960823161@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,95 +48,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 465bfd9c44dea6b55962b5788a23ac87a467c923 ]
+[ Upstream commit c701636aeec4c173208697d68da6e4271125564b ]
 
-When building pseries_defconfig, building vdso32 errors out:
+Make find_best_scope() returns innermost DIE at given address if there
+is no best matched scope DIE. Since Gcc sometimes generates intuitively
+strange line info which is out of inlined function address range, we
+need this fixup.
 
-  error: unknown target ABI 'elfv1'
+Without this, sometimes perf probe failed to probe on a line inside an
+inlined function:
 
-This happens because -m32 in clang changes the target to 32-bit,
-which does not allow the ABI to be changed.
+  # perf probe -D ksys_open:3
+  Failed to find scope of probe point.
+    Error: Failed to add events.
 
-Commit 4dc831aa8813 ("powerpc: Fix compiling a BE kernel with a
-powerpc64le toolchain") added these flags to fix building big endian
-kernels with a little endian GCC.
+With this fix, 'perf probe' can probe it:
 
-Clang doesn't need -mabi because the target triple controls the
-default value. -mlittle-endian and -mbig-endian manipulate the triple
-into either powerpc64-* or powerpc64le-*, which properly sets the
-default ABI.
+  # perf probe -D ksys_open:3
+  p:probe/ksys_open _text+25707308
+  p:probe/ksys_open_1 _text+25710596
+  p:probe/ksys_open_2 _text+25711114
+  p:probe/ksys_open_3 _text+25711343
+  p:probe/ksys_open_4 _text+25714058
+  p:probe/ksys_open_5 _text+2819653
+  p:probe/ksys_open_6 _text+2819701
 
-Adding a debug print out in the PPC64TargetInfo constructor after line
-383 above shows this:
-
-  $ echo | ./clang -E --target=powerpc64-linux -mbig-endian -o /dev/null -
-  Default ABI: elfv1
-
-  $ echo | ./clang -E --target=powerpc64-linux -mlittle-endian -o /dev/null -
-  Default ABI: elfv2
-
-  $ echo | ./clang -E --target=powerpc64le-linux -mbig-endian -o /dev/null -
-  Default ABI: elfv1
-
-  $ echo | ./clang -E --target=powerpc64le-linux -mlittle-endian -o /dev/null -
-  Default ABI: elfv2
-
-Don't specify -mabi when building with clang to avoid the build error
-with -m32 and not change any code generation.
-
--mcall-aixdesc is not an implemented flag in clang so it can be safely
-excluded as well, see commit 238abecde8ad ("powerpc: Don't use gcc
-specific options on clang").
-
-pseries_defconfig successfully builds after this patch and
-powernv_defconfig and ppc44x_defconfig don't regress.
-
-Reviewed-by: Daniel Axtens <dja@axtens.net>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-[mpe: Trim clang links in change log]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191119045712.39633-2-natechancellor@gmail.com
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Link: http://lore.kernel.org/lkml/157291300887.19771.14936015360963292236.stgit@devnote2
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/Makefile | 4 ++++
- 1 file changed, 4 insertions(+)
+ tools/perf/util/probe-finder.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-index 83522c9fc7b6..37ac731a556b 100644
---- a/arch/powerpc/Makefile
-+++ b/arch/powerpc/Makefile
-@@ -91,11 +91,13 @@ MULTIPLEWORD	:= -mmultiple
- endif
+diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
+index 440f0a92ade6..6ca804a01cf9 100644
+--- a/tools/perf/util/probe-finder.c
++++ b/tools/perf/util/probe-finder.c
+@@ -764,6 +764,16 @@ static int find_best_scope_cb(Dwarf_Die *fn_die, void *data)
+ 	return 0;
+ }
  
- ifdef CONFIG_PPC64
-+ifndef CONFIG_CC_IS_CLANG
- cflags-$(CONFIG_CPU_BIG_ENDIAN)		+= $(call cc-option,-mabi=elfv1)
- cflags-$(CONFIG_CPU_BIG_ENDIAN)		+= $(call cc-option,-mcall-aixdesc)
- aflags-$(CONFIG_CPU_BIG_ENDIAN)		+= $(call cc-option,-mabi=elfv1)
- aflags-$(CONFIG_CPU_LITTLE_ENDIAN)	+= -mabi=elfv2
- endif
-+endif
++/* Return innermost DIE */
++static int find_inner_scope_cb(Dwarf_Die *fn_die, void *data)
++{
++	struct find_scope_param *fsp = data;
++
++	memcpy(fsp->die_mem, fn_die, sizeof(Dwarf_Die));
++	fsp->found = true;
++	return 1;
++}
++
+ /* Find an appropriate scope fits to given conditions */
+ static Dwarf_Die *find_best_scope(struct probe_finder *pf, Dwarf_Die *die_mem)
+ {
+@@ -775,8 +785,13 @@ static Dwarf_Die *find_best_scope(struct probe_finder *pf, Dwarf_Die *die_mem)
+ 		.die_mem = die_mem,
+ 		.found = false,
+ 	};
++	int ret;
  
- ifndef CONFIG_CC_IS_CLANG
-   cflags-$(CONFIG_CPU_LITTLE_ENDIAN)	+= -mno-strict-align
-@@ -141,6 +143,7 @@ endif
- endif
+-	cu_walk_functions_at(&pf->cu_die, pf->addr, find_best_scope_cb, &fsp);
++	ret = cu_walk_functions_at(&pf->cu_die, pf->addr, find_best_scope_cb,
++				   &fsp);
++	if (!ret && !fsp.found)
++		cu_walk_functions_at(&pf->cu_die, pf->addr,
++				     find_inner_scope_cb, &fsp);
  
- CFLAGS-$(CONFIG_PPC64)	:= $(call cc-option,-mtraceback=no)
-+ifndef CONFIG_CC_IS_CLANG
- ifdef CONFIG_CPU_LITTLE_ENDIAN
- CFLAGS-$(CONFIG_PPC64)	+= $(call cc-option,-mabi=elfv2,$(call cc-option,-mcall-aixdesc))
- AFLAGS-$(CONFIG_PPC64)	+= $(call cc-option,-mabi=elfv2)
-@@ -149,6 +152,7 @@ CFLAGS-$(CONFIG_PPC64)	+= $(call cc-option,-mabi=elfv1)
- CFLAGS-$(CONFIG_PPC64)	+= $(call cc-option,-mcall-aixdesc)
- AFLAGS-$(CONFIG_PPC64)	+= $(call cc-option,-mabi=elfv1)
- endif
-+endif
- CFLAGS-$(CONFIG_PPC64)	+= $(call cc-option,-mcmodel=medium,$(call cc-option,-mminimal-toc))
- CFLAGS-$(CONFIG_PPC64)	+= $(call cc-option,-mno-pointers-to-nested-functions)
- 
+ 	return fsp.found ? die_mem : NULL;
+ }
 -- 
 2.20.1
 
