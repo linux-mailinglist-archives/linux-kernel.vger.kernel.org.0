@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F1C012EC1D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:15:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D31A712ECA5
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:20:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbgABWPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:15:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56220 "EHLO mail.kernel.org"
+        id S1728812AbgABWUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:20:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727134AbgABWPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:15:24 -0500
+        id S1728609AbgABWUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:20:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A178C24649;
-        Thu,  2 Jan 2020 22:15:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DF4C24653;
+        Thu,  2 Jan 2020 22:20:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003323;
-        bh=P3a/ZEkweCnG571B9JxdD9lRevBt7k9vKFOiEEnafLg=;
+        s=default; t=1578003630;
+        bh=pd/wt+YcBDprBLzmbtoE6qnAlsY3BlzyUlRVgKeZAZ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VYny6OlfeiX0VvqWuYEYiKca7ub+mtW8iCbxidyCY6bacKZjgQVYL5y79+Ekis+do
-         oUN+STMaEqUfr/f3prTSAhFdR9UUDPC6lmoRz/zbewf1wdBXbyk9qYFW0B9pHqbQs3
-         r60PGbDpxZe6UmWzvfSj+HkrjCHZLd6dWvlkqz84=
+        b=YrBFqGCrzXVnE9SUxMLFGVPuzL7bNS+izcJBWpe8C5EMuXo8S234ciThkAweXmKXW
+         MtnQbUH9RVFDm6L+UOgFLABEvilhnpQ8cTYZI9L+4WD1nDAc12pOGKUFC1xFAAqeUn
+         JflJd2PR1XQRx/S1cqOnGA8eZ5vO8XoRbquV6UZM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Erhard Furtner <erhard_f@mailbox.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Tyrel Datwyler <tyreld@linux.ibm.com>,
-        Rob Herring <robh@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 112/191] of: unittest: fix memory leak in attach_node_and_children
+        stable@vger.kernel.org,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Jan Kara <jack@suse.cz>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Theodore Tso <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 022/114] ext4: update direct I/O read lock pattern for IOCB_NOWAIT
 Date:   Thu,  2 Jan 2020 23:06:34 +0100
-Message-Id: <20200102215841.878154675@linuxfoundation.org>
+Message-Id: <20200102220031.395561173@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Erhard Furtner <erhard_f@mailbox.org>
+From: Matthew Bobrowski <mbobrowski@mbobrowski.org>
 
-[ Upstream commit 2aacace6dbbb6b6ce4e177e6c7ea901f389c0472 ]
+[ Upstream commit 548feebec7e93e58b647dba70b3303dcb569c914 ]
 
-In attach_node_and_children memory is allocated for full_name via
-kasprintf. If the condition of the 1st if is not met the function
-returns early without freeing the memory. Add a kfree() to fix that.
+This patch updates the lock pattern in ext4_direct_IO_read() to not
+block on inode lock in cases of IOCB_NOWAIT direct I/O reads. The
+locking condition implemented here is similar to that of 942491c9e6d6
+("xfs: fix AIM7 regression").
 
-This has been detected with kmemleak:
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=205327
-
-It looks like the leak was introduced by this commit:
-Fixes: 5babefb7f7ab ("of: unittest: allow base devicetree to have symbol metadata")
-
-Signed-off-by: Erhard Furtner <erhard_f@mailbox.org>
-Reviewed-by: Michael Ellerman <mpe@ellerman.id.au>
-Reviewed-by: Tyrel Datwyler <tyreld@linux.ibm.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Fixes: 16c54688592c ("ext4: Allow parallel DIO reads")
+Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
+Link: https://lore.kernel.org/r/c5d5e759f91747359fbd2c6f9a36240cf75ad79f.1572949325.git.mbobrowski@mbobrowski.org
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/of/unittest.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/ext4/inode.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index 92e895d86458..ca7823eef2b4 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -1146,8 +1146,10 @@ static void attach_node_and_children(struct device_node *np)
- 	full_name = kasprintf(GFP_KERNEL, "%pOF", np);
- 
- 	if (!strcmp(full_name, "/__local_fixups__") ||
--	    !strcmp(full_name, "/__fixups__"))
-+	    !strcmp(full_name, "/__fixups__")) {
-+		kfree(full_name);
- 		return;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 215802cbc42b..00d0c4b8fa30 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3848,7 +3848,13 @@ static ssize_t ext4_direct_IO_read(struct kiocb *iocb, struct iov_iter *iter)
+ 	 * writes & truncates and since we take care of writing back page cache,
+ 	 * we are protected against page writeback as well.
+ 	 */
+-	inode_lock_shared(inode);
++	if (iocb->ki_flags & IOCB_NOWAIT) {
++		if (!inode_trylock_shared(inode))
++			return -EAGAIN;
++	} else {
++		inode_lock_shared(inode);
 +	}
- 
- 	dup = of_find_node_by_path(full_name);
- 	kfree(full_name);
++
+ 	ret = filemap_write_and_wait_range(mapping, iocb->ki_pos,
+ 					   iocb->ki_pos + count - 1);
+ 	if (ret)
 -- 
 2.20.1
 
