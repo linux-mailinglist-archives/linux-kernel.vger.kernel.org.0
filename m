@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97C5812F167
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:00:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F7FA12EFE6
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:50:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbgABXAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 18:00:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53198 "EHLO mail.kernel.org"
+        id S1730170AbgABWtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:49:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727379AbgABWN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:13:26 -0500
+        id S1728936AbgABW1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:27:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F4512253D;
-        Thu,  2 Jan 2020 22:13:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34D9B21835;
+        Thu,  2 Jan 2020 22:27:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003206;
-        bh=4X3EMyJ0yJG6dcvF3YVvO9otDvVgBRj4flXFT3gicCQ=;
+        s=default; t=1578004038;
+        bh=eBj3zebOOUYoWjFTVIh6KdupIP+SGfAub9H2UCBOmD4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U5Hm7LgyowJIw9aJSBS2D0KXaz13pqz1pTC4ZbL892gyikYYDn8g71FfYT1+fgxTh
-         dWoA3mByAwVuJIiaKfXZRRQJbmpb4Ph+ijU0OaOplTI++4n6w85lfDAyy7cQBA256m
-         IfwM4H7uueNJIY5TeFZJhszdA4TN6oIHqGYjr0KM=
+        b=vhaaypLDEiAJzsln0560BtK4ivnmUxUTyQZLSapnzc87dx1ecT0SE3Ov2wxSsJsi7
+         qZZXYXbZmdCOiCVIZ/1qerLkjLCPW0oiP+BOiXfhqutE+gUkK/9ZmssWAOGelFWm2T
+         9aDplqybHxlB+PvIX3i8YZMFxXCwcVT4Q9MhHaKo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pavel Modilaynen <pavel.modilaynen@axis.com>,
-        Rob Herring <robh@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 038/191] dtc: Use pkg-config to locate libyaml
-Date:   Thu,  2 Jan 2020 23:05:20 +0100
-Message-Id: <20200102215834.015953905@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.9 003/171] btrfs: handle ENOENT in btrfs_uuid_tree_iterate
+Date:   Thu,  2 Jan 2020 23:05:34 +0100
+Message-Id: <20200102220547.376342956@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Modilaynen <pavel.modilaynen@axis.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-[ Upstream commit 067c650c456e758f933aaf87a202f841d34be269 ]
+commit 714cd3e8cba6841220dce9063a7388a81de03825 upstream.
 
-Using Makefile's wildcard with absolute path to detect
-the presence of libyaml results in false-positive
-detection when cross-compiling e.g. in yocto environment.
-The latter results in build error:
-| scripts/dtc/yamltree.o: In function `yaml_propval_int':
-| yamltree.c: undefined reference to `yaml_sequence_start_event_initialize'
-| yamltree.c: undefined reference to `yaml_emitter_emit'
-| yamltree.c: undefined reference to `yaml_scalar_event_initialize'
-...
-Use pkg-config to locate libyaml to address this scenario.
+If we get an -ENOENT back from btrfs_uuid_iter_rem when iterating the
+uuid tree we'll just continue and do btrfs_next_item().  However we've
+done a btrfs_release_path() at this point and no longer have a valid
+path.  So increment the key and go back and do a normal search.
 
-Signed-off-by: Pavel Modilaynen <pavel.modilaynen@axis.com>
-[robh: silence stderr]
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- scripts/dtc/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/btrfs/uuid-tree.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/scripts/dtc/Makefile b/scripts/dtc/Makefile
-index 82160808765c..b5a5b1c548c9 100644
---- a/scripts/dtc/Makefile
-+++ b/scripts/dtc/Makefile
-@@ -11,7 +11,7 @@ dtc-objs	+= dtc-lexer.lex.o dtc-parser.tab.o
- # Source files need to get at the userspace version of libfdt_env.h to compile
- HOST_EXTRACFLAGS := -I $(srctree)/$(src)/libfdt
- 
--ifeq ($(wildcard /usr/include/yaml.h),)
-+ifeq ($(shell pkg-config --exists yaml-0.1 2>/dev/null && echo yes),)
- ifneq ($(CHECK_DTBS),)
- $(error dtc needs libyaml for DT schema validation support. \
- 	Install the necessary libyaml development package.)
-@@ -19,7 +19,7 @@ endif
- HOST_EXTRACFLAGS += -DNO_YAML
- else
- dtc-objs	+= yamltree.o
--HOSTLDLIBS_dtc	:= -lyaml
-+HOSTLDLIBS_dtc	:= $(shell pkg-config yaml-0.1 --libs)
- endif
- 
- # Generated files need one more search path to include headers in source tree
--- 
-2.20.1
-
+--- a/fs/btrfs/uuid-tree.c
++++ b/fs/btrfs/uuid-tree.c
+@@ -335,6 +335,8 @@ again_search_slot:
+ 				}
+ 				if (ret < 0 && ret != -ENOENT)
+ 					goto out;
++				key.offset++;
++				goto again_search_slot;
+ 			}
+ 			item_size -= sizeof(subid_le);
+ 			offset += sizeof(subid_le);
 
 
