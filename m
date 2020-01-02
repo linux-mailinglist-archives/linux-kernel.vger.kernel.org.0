@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2D5512EFE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:50:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EF0F12EDFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:34:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730447AbgABWtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:49:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54988 "EHLO mail.kernel.org"
+        id S1730665AbgABWeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:34:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729692AbgABW1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:27:02 -0500
+        id S1730656AbgABWd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:33:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 573F120863;
-        Thu,  2 Jan 2020 22:27:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1F4521835;
+        Thu,  2 Jan 2020 22:33:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004021;
-        bh=U91LhnmEMjYOi3Oo29SjooxKMkH9Z6LjFhSMF75SUDg=;
+        s=default; t=1578004438;
+        bh=wHnw8R9D/vIZJMcB9KbBnwqbOybaDX89LuAdC0wee5o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MCQzyw1zKBmshPE9QeGzrrjAuPXsTB4AU1DdMil/INMW+bq+rqYHow+x1d68tS2Dq
-         G5179up3ci+Zj45Y9xJ2GV2denk4CGcleuH9jiSglSzZheMlx8DJbmAD1mjvGzPuIg
-         8Q5Mw1auNAddMbzU4rufhS+cgKcuD/t7X6Z+qyms=
+        b=fbft+5xTA7F8L8z2Q6R2rJWY8qrXgCL5biSa6lJvHq4jAZlIYB0K9Q41k2aJkSe6R
+         73Y4gi6NWJmcnG59CsnJYFjdg64toAkajvkxaqCbq+dIi0ShhoLGv9UIR+YuADPm2x
+         t6vdyPCi4fufuGyzu3jZKJ2jAIlmQw/6zgh5VmCg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 4.14 89/91] gtp: fix wrong condition in gtp_genl_dump_pdp()
-Date:   Thu,  2 Jan 2020 23:08:11 +0100
-Message-Id: <20200102220453.112109771@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 161/171] net: icmp: fix data-race in cmp_global_allow()
+Date:   Thu,  2 Jan 2020 23:08:12 +0100
+Message-Id: <20200102220609.205812496@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
-References: <20200102220356.856162165@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,102 +44,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 94a6d9fb88df43f92d943c32b84ce398d50bf49f ]
+commit bbab7ef235031f6733b5429ae7877bfa22339712 upstream.
 
-gtp_genl_dump_pdp() is ->dumpit() callback of GTP module and it is used
-to dump pdp contexts. it would be re-executed because of dump packet size.
+This code reads two global variables without protection
+of a lock. We need READ_ONCE()/WRITE_ONCE() pairs to
+avoid load/store-tearing and better document the intent.
 
-If dump packet size is too big, it saves current dump pointer
-(gtp interface pointer, bucket, TID value) then it restarts dump from
-last pointer.
-Current GTP code allows adding zero TID pdp context but dump code
-ignores zero TID value. So, last dump pointer will not be found.
+KCSAN reported :
+BUG: KCSAN: data-race in icmp_global_allow / icmp_global_allow
 
-In addition, this patch adds missing rcu_read_lock() in
-gtp_genl_dump_pdp().
+read to 0xffffffff861a8014 of 4 bytes by task 11201 on cpu 0:
+ icmp_global_allow+0x36/0x1b0 net/ipv4/icmp.c:254
+ icmpv6_global_allow net/ipv6/icmp.c:184 [inline]
+ icmpv6_global_allow net/ipv6/icmp.c:179 [inline]
+ icmp6_send+0x493/0x1140 net/ipv6/icmp.c:514
+ icmpv6_send+0x71/0xb0 net/ipv6/ip6_icmp.c:43
+ ip6_link_failure+0x43/0x180 net/ipv6/route.c:2640
+ dst_link_failure include/net/dst.h:419 [inline]
+ vti_xmit net/ipv4/ip_vti.c:243 [inline]
+ vti_tunnel_xmit+0x27f/0xa50 net/ipv4/ip_vti.c:279
+ __netdev_start_xmit include/linux/netdevice.h:4420 [inline]
+ netdev_start_xmit include/linux/netdevice.h:4434 [inline]
+ xmit_one net/core/dev.c:3280 [inline]
+ dev_hard_start_xmit+0xef/0x430 net/core/dev.c:3296
+ __dev_queue_xmit+0x14c9/0x1b60 net/core/dev.c:3873
+ dev_queue_xmit+0x21/0x30 net/core/dev.c:3906
+ neigh_direct_output+0x1f/0x30 net/core/neighbour.c:1530
+ neigh_output include/net/neighbour.h:511 [inline]
+ ip6_finish_output2+0x7a6/0xec0 net/ipv6/ip6_output.c:116
+ __ip6_finish_output net/ipv6/ip6_output.c:142 [inline]
+ __ip6_finish_output+0x2d7/0x330 net/ipv6/ip6_output.c:127
+ ip6_finish_output+0x41/0x160 net/ipv6/ip6_output.c:152
+ NF_HOOK_COND include/linux/netfilter.h:294 [inline]
+ ip6_output+0xf2/0x280 net/ipv6/ip6_output.c:175
+ dst_output include/net/dst.h:436 [inline]
+ ip6_local_out+0x74/0x90 net/ipv6/output_core.c:179
 
-Fixes: 459aa660eb1d ("gtp: add initial driver for datapath of GPRS Tunneling Protocol (GTP-U)")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+write to 0xffffffff861a8014 of 4 bytes by task 11183 on cpu 1:
+ icmp_global_allow+0x174/0x1b0 net/ipv4/icmp.c:272
+ icmpv6_global_allow net/ipv6/icmp.c:184 [inline]
+ icmpv6_global_allow net/ipv6/icmp.c:179 [inline]
+ icmp6_send+0x493/0x1140 net/ipv6/icmp.c:514
+ icmpv6_send+0x71/0xb0 net/ipv6/ip6_icmp.c:43
+ ip6_link_failure+0x43/0x180 net/ipv6/route.c:2640
+ dst_link_failure include/net/dst.h:419 [inline]
+ vti_xmit net/ipv4/ip_vti.c:243 [inline]
+ vti_tunnel_xmit+0x27f/0xa50 net/ipv4/ip_vti.c:279
+ __netdev_start_xmit include/linux/netdevice.h:4420 [inline]
+ netdev_start_xmit include/linux/netdevice.h:4434 [inline]
+ xmit_one net/core/dev.c:3280 [inline]
+ dev_hard_start_xmit+0xef/0x430 net/core/dev.c:3296
+ __dev_queue_xmit+0x14c9/0x1b60 net/core/dev.c:3873
+ dev_queue_xmit+0x21/0x30 net/core/dev.c:3906
+ neigh_direct_output+0x1f/0x30 net/core/neighbour.c:1530
+ neigh_output include/net/neighbour.h:511 [inline]
+ ip6_finish_output2+0x7a6/0xec0 net/ipv6/ip6_output.c:116
+ __ip6_finish_output net/ipv6/ip6_output.c:142 [inline]
+ __ip6_finish_output+0x2d7/0x330 net/ipv6/ip6_output.c:127
+ ip6_finish_output+0x41/0x160 net/ipv6/ip6_output.c:152
+ NF_HOOK_COND include/linux/netfilter.h:294 [inline]
+ ip6_output+0xf2/0x280 net/ipv6/ip6_output.c:175
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 PID: 11183 Comm: syz-executor.2 Not tainted 5.4.0-rc3+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+
+Fixes: 4cdf507d5452 ("icmp: add a global rate limitation")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/gtp.c |   36 +++++++++++++++++++-----------------
- 1 file changed, 19 insertions(+), 17 deletions(-)
 
---- a/drivers/net/gtp.c
-+++ b/drivers/net/gtp.c
-@@ -42,7 +42,6 @@ struct pdp_ctx {
- 	struct hlist_node	hlist_addr;
+---
+ net/ipv4/icmp.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+--- a/net/ipv4/icmp.c
++++ b/net/ipv4/icmp.c
+@@ -256,10 +256,11 @@ bool icmp_global_allow(void)
+ 	bool rc = false;
  
- 	union {
--		u64		tid;
- 		struct {
- 			u64	tid;
- 			u16	flow;
-@@ -1247,43 +1246,46 @@ static int gtp_genl_dump_pdp(struct sk_b
- 				struct netlink_callback *cb)
- {
- 	struct gtp_dev *last_gtp = (struct gtp_dev *)cb->args[2], *gtp;
-+	int i, j, bucket = cb->args[0], skip = cb->args[1];
- 	struct net *net = sock_net(skb->sk);
--	struct gtp_net *gn = net_generic(net, gtp_net_id);
--	unsigned long tid = cb->args[1];
--	int i, k = cb->args[0], ret;
- 	struct pdp_ctx *pctx;
-+	struct gtp_net *gn;
-+
-+	gn = net_generic(net, gtp_net_id);
- 
- 	if (cb->args[4])
- 		return 0;
- 
-+	rcu_read_lock();
- 	list_for_each_entry_rcu(gtp, &gn->gtp_dev_list, list) {
- 		if (last_gtp && last_gtp != gtp)
- 			continue;
- 		else
- 			last_gtp = NULL;
- 
--		for (i = k; i < gtp->hash_size; i++) {
--			hlist_for_each_entry_rcu(pctx, &gtp->tid_hash[i], hlist_tid) {
--				if (tid && tid != pctx->u.tid)
--					continue;
--				else
--					tid = 0;
--
--				ret = gtp_genl_fill_info(skb,
--							 NETLINK_CB(cb->skb).portid,
--							 cb->nlh->nlmsg_seq,
--							 cb->nlh->nlmsg_type, pctx);
--				if (ret < 0) {
-+		for (i = bucket; i < gtp->hash_size; i++) {
-+			j = 0;
-+			hlist_for_each_entry_rcu(pctx, &gtp->tid_hash[i],
-+						 hlist_tid) {
-+				if (j >= skip &&
-+				    gtp_genl_fill_info(skb,
-+					    NETLINK_CB(cb->skb).portid,
-+					    cb->nlh->nlmsg_seq,
-+					    cb->nlh->nlmsg_type, pctx)) {
- 					cb->args[0] = i;
--					cb->args[1] = pctx->u.tid;
-+					cb->args[1] = j;
- 					cb->args[2] = (unsigned long)gtp;
- 					goto out;
- 				}
-+				j++;
- 			}
-+			skip = 0;
- 		}
-+		bucket = 0;
+ 	/* Check if token bucket is empty and cannot be refilled
+-	 * without taking the spinlock.
++	 * without taking the spinlock. The READ_ONCE() are paired
++	 * with the following WRITE_ONCE() in this same function.
+ 	 */
+-	if (!icmp_global.credit) {
+-		delta = min_t(u32, now - icmp_global.stamp, HZ);
++	if (!READ_ONCE(icmp_global.credit)) {
++		delta = min_t(u32, now - READ_ONCE(icmp_global.stamp), HZ);
+ 		if (delta < HZ / 50)
+ 			return false;
  	}
- 	cb->args[4] = 1;
- out:
-+	rcu_read_unlock();
- 	return skb->len;
+@@ -269,14 +270,14 @@ bool icmp_global_allow(void)
+ 	if (delta >= HZ / 50) {
+ 		incr = sysctl_icmp_msgs_per_sec * delta / HZ ;
+ 		if (incr)
+-			icmp_global.stamp = now;
++			WRITE_ONCE(icmp_global.stamp, now);
+ 	}
+ 	credit = min_t(u32, icmp_global.credit + incr, sysctl_icmp_msgs_burst);
+ 	if (credit) {
+ 		credit--;
+ 		rc = true;
+ 	}
+-	icmp_global.credit = credit;
++	WRITE_ONCE(icmp_global.credit, credit);
+ 	spin_unlock(&icmp_global.lock);
+ 	return rc;
  }
- 
 
 
