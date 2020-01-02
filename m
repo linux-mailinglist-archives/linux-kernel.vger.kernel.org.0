@@ -2,73 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5661012E93A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 18:21:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3FFD12E940
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 18:24:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727830AbgABRVA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 12:21:00 -0500
-Received: from mga12.intel.com ([192.55.52.136]:20085 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbgABRU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 12:20:59 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2020 09:20:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,387,1571727600"; 
-   d="scan'208";a="216043280"
-Received: from krominsx-mobl.ger.corp.intel.com (HELO localhost) ([10.252.21.64])
-  by fmsmga007.fm.intel.com with ESMTP; 02 Jan 2020 09:20:55 -0800
-Date:   Thu, 2 Jan 2020 19:20:53 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Christian Bundy <christianbundy@fraction.io>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        stable-commits@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Patch "tpm_tis: reserve chip for duration of tpm_tis_core_init"
- has been added to the 5.4-stable tree
-Message-ID: <20200102171922.GA20989@linux.intel.com>
-References: <CAPcyv4jfpOX85GWgNTyugWksU=e-j=RhU_fcrcHBo4GMZ8_bhw@mail.gmail.com>
- <c6ce34b130210d2d1330fc4079d6d82bd74dcef1.camel@linux.intel.com>
- <50217a688ffa56cf5f150ffd358daba2a88cad48.camel@linux.intel.com>
- <20191228151526.GA6971@linux.intel.com>
- <CAPcyv4i_frm8jZeknniPexp8AAmGsaq0_DHegmL4XZHQi1ThxA@mail.gmail.com>
- <CAPcyv4iyQeXBWvp8V_UPBsOk29cfmTVZGYrrDgyYYqzsQvTjNA@mail.gmail.com>
- <2c4a80e0d30bf1dfe89c6e3469d1dbfb008275fa.camel@linux.intel.com>
- <20191231010256.kymv4shwmx5jcmey@cantor>
- <20191231155944.GA4790@linux.intel.com>
- <be07a1e4-c290-4185-8c23-d97050279564@www.fastmail.com>
+        id S1727815AbgABRYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 12:24:19 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36733 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbgABRYT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 12:24:19 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z3so39988152wru.3;
+        Thu, 02 Jan 2020 09:24:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oT3hhuKEy1N1K2d4A4PsoHJRo9+URBufhVuCLWM6bzw=;
+        b=QuSqXTEXIxeUMLl8R+laSW67tiLhNbeohp3pNJA75mf96ttImwA6EK8syRQn/+i3Ad
+         Ajw/QLQtYlDgxkCDwQ7+Dz7Zs/RYi7MrTd4mLwT7twNeLC9P4jIny42HKJSxj6AULbr1
+         G3aa0HXV6cV4fVQM2OjOZ/fypkhO+ij4bEEujivVh6ltuQA1ngzbC6wxKg0HJL3q3Bwj
+         N0j2e+r/zR65NeII2z+ECQ09gFsMJHVpQGxF9Mio4QjuhwyANw0sqvnSZzHMGizTv56I
+         hYckUJZxCC7yGPFpjvnLpgcFfPhqLCt5VsUnFEwG+vXbKevPtukC3j7l1ilJi4oc+sNt
+         OCTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oT3hhuKEy1N1K2d4A4PsoHJRo9+URBufhVuCLWM6bzw=;
+        b=NhQhYKCSc9ziGmIIDW0oHBPGKEeEOxzabSpcrnG0RRfw+QpD80UK/vIKO0MYqrY05P
+         FasVblX0vvnK3DHJ3hKtsuMB5AD3uIJ32RZ2oXV5HCFMnDZHlmR6FT1fvnU9tlqZWL/M
+         SS/K2jTmXWkKB6+YFBkyhbVlWpNdLBCFD9hfUx1XLlVcoOQA87kqZsWSDPnm6lUvG+O3
+         k1p7W51Dt+QnzF7nxriSQYaHiq9gmeQoZByL+fhNd8po9FuMaHbJTIFr5bWRiErWPzMK
+         yZ2eB9Og3R0J4u3y/buZQ5Cw78j86bk6xY02saiEfegXtVKDu0vdn2en40voqLSaSy5x
+         GeYw==
+X-Gm-Message-State: APjAAAWyZNPWCvQMuI3bGD+PpODJwKg0xhX/13xvn4VnQfFrJ8JcdZgE
+        6DrMvmcfOZUTaMJSZgHB4yvcHN33xmHZyA==
+X-Google-Smtp-Source: APXvYqxYc0JThE1koPwI21OmnUi0PS6X/0fzwxo7hEIxk9sQ65279fNq++1prhUC8qwnvJZ8+bpFjA==
+X-Received: by 2002:a5d:610a:: with SMTP id v10mr85459799wrt.267.1577985856338;
+        Thu, 02 Jan 2020 09:24:16 -0800 (PST)
+Received: from amanieu-laptop.home ([2a01:cb19:8051:6200:3fe7:84:7f3:e713])
+        by smtp.gmail.com with ESMTPSA id z21sm9480328wml.5.2020.01.02.09.24.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jan 2020 09:24:15 -0800 (PST)
+From:   Amanieu d'Antras <amanieu@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Christian Brauner <christian@brauner.io>, stable@vger.kernel.org,
+        Amanieu d'Antras <amanieu@gmail.com>
+Subject: [PATCH 0/7] Fix CLONE_SETTLS with clone3
+Date:   Thu,  2 Jan 2020 18:24:06 +0100
+Message-Id: <20200102172413.654385-1-amanieu@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <be07a1e4-c290-4185-8c23-d97050279564@www.fastmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 31, 2019 at 11:47:37AM -0800, Christian Bundy wrote:
-> > Christian, were you having any issues with interrupts? You system was going
-> > into this code as well.
-> 
-> Unfortunately I'm now unable to test, sorry for the trouble. I replaced my BIOS
-> with UEFI firmware and the problem has disappeared. Please let me know if there
-> is anything else I can do to help.
-> 
-> Christian
+The clone3 syscall is currently broken when used with CLONE_SETTLS on all
+architectures that don't have an implementation of copy_thread_tls. The old
+copy_thread function handles CLONE_SETTLS by reading the new TLS value from
+pt_regs containing the clone syscall parameters. Since clone3 passes the TLS
+value in clone_args, this results in the TLS register being initialized to a
+garbage value.
 
-Takashi wrote yesterday [*]:
+This patch series implements copy_thread_tls on all architectures that currently
+define __ARCH_WANT_SYS_CLONE3 and adds a compile-time check to ensure that any
+architecture that enables clone3 in the future also implements copy_thread_tls.
 
-"I'm building a test kernel package based on 5.5-rc4 with Jarkko's revert
-patches"
+I have also included a minor fix for the arm64 uapi headers which caused
+__NR_clone3 to be missing from the exported user headers.
 
-[*] https://bugzilla.kernel.org/show_bug.cgi?id=205935
+I have only tested this on arm64, but the copy_thread_tls implementations for
+the various architectures are fairly straightforward.
 
-/Jarkko
+Amanieu d'Antras (7):
+  arm64: Move __ARCH_WANT_SYS_CLONE3 definition to uapi headers
+  arm64: Implement copy_thread_tls
+  arm: Implement copy_thread_tls
+  parisc: Implement copy_thread_tls
+  riscv: Implement copy_thread_tls
+  xtensa: Implement copy_thread_tls
+  clone3: ensure copy_thread_tls is implemented
+
+ arch/arm/Kconfig                     |  1 +
+ arch/arm/kernel/process.c            |  6 +++---
+ arch/arm64/Kconfig                   |  1 +
+ arch/arm64/include/asm/unistd.h      |  1 -
+ arch/arm64/include/uapi/asm/unistd.h |  1 +
+ arch/arm64/kernel/process.c          | 10 +++++-----
+ arch/parisc/Kconfig                  |  1 +
+ arch/parisc/kernel/process.c         |  8 ++++----
+ arch/riscv/Kconfig                   |  1 +
+ arch/riscv/kernel/process.c          |  6 +++---
+ arch/xtensa/Kconfig                  |  1 +
+ arch/xtensa/kernel/process.c         |  8 ++++----
+ kernel/fork.c                        | 10 ++++++++++
+ 13 files changed, 35 insertions(+), 20 deletions(-)
+
+-- 
+2.24.1
+
