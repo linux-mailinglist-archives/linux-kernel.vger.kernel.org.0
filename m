@@ -2,29 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BEA212E188
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 02:49:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77CA212E18B
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 02:51:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727571AbgABBta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Jan 2020 20:49:30 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8656 "EHLO huawei.com"
+        id S1727588AbgABBvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Jan 2020 20:51:40 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:53984 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725895AbgABBt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Jan 2020 20:49:29 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 0E475EF1EAB605045B9A;
-        Thu,  2 Jan 2020 09:49:27 +0800 (CST)
+        id S1725895AbgABBvj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Jan 2020 20:51:39 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 3D352BF1F07AC17C3AF6;
+        Thu,  2 Jan 2020 09:51:37 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 2 Jan 2020 09:49:18 +0800
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 2 Jan 2020 09:51:29 +0800
 From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <martin.petersen@oracle.com>, <jejb@linux.ibm.com>,
-        <suganath-prabu.subramani@broadcom.com>
+To:     <martin.petersen@oracle.com>, <jejb@linux.ibm.com>
 CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <chenzhou10@huawei.com>
-Subject: [PATCH next] scsi: mpt3sas: remove call to memset after dma_alloc_coherent
-Date:   Thu, 2 Jan 2020 09:45:26 +0800
-Message-ID: <20200102014526.139275-1-chenzhou10@huawei.com>
+Subject: [PATCH next] scsi: pmcraid: replace dma_pool_alloc + memset with dma_pool_zalloc
+Date:   Thu, 2 Jan 2020 09:47:38 +0800
+Message-ID: <20200102014738.139575-1-chenzhou10@huawei.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
@@ -36,26 +35,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Function dma_alloc_coherent use in ioc -> request already zeroes out
-memory, so memset is not needed.
+Use dma_pool_zalloc rather than dma_pool_alloc followed by memset with 0.
 
 Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
 ---
- drivers/scsi/mpt3sas/mpt3sas_base.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/scsi/pmcraid.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
-index 45fd8df..663dd4d 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -5090,7 +5090,6 @@ _base_allocate_memory_pools(struct MPT3SAS_ADAPTER *ioc)
- 		_base_release_memory_pools(ioc);
- 		goto retry_allocation;
- 	}
--	memset(ioc->request, 0, sz);
+diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
+index 7eb88fe..aa9ae2a 100644
+--- a/drivers/scsi/pmcraid.c
++++ b/drivers/scsi/pmcraid.c
+@@ -4652,7 +4652,7 @@ static int pmcraid_allocate_control_blocks(struct pmcraid_instance *pinstance)
  
- 	if (retry_sz)
- 		ioc_err(ioc, "request pool: dma_alloc_coherent succeed: hba_depth(%d), chains_per_io(%d), frame_sz(%d), total(%d kb)\n",
+ 	for (i = 0; i < PMCRAID_MAX_CMD; i++) {
+ 		pinstance->cmd_list[i]->ioa_cb =
+-			dma_pool_alloc(
++			dma_pool_zalloc(
+ 				pinstance->control_pool,
+ 				GFP_KERNEL,
+ 				&(pinstance->cmd_list[i]->ioa_cb_bus_addr));
+@@ -4661,8 +4661,6 @@ static int pmcraid_allocate_control_blocks(struct pmcraid_instance *pinstance)
+ 			pmcraid_release_control_blocks(pinstance, i);
+ 			return -ENOMEM;
+ 		}
+-		memset(pinstance->cmd_list[i]->ioa_cb, 0,
+-			sizeof(struct pmcraid_control_block));
+ 	}
+ 	return 0;
+ }
 -- 
 2.7.4
 
