@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EE2812EEBB
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:41:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D03912F042
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:52:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731275AbgABWiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:38:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51406 "EHLO mail.kernel.org"
+        id S1729130AbgABWX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:23:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730880AbgABWiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:38:02 -0500
+        id S1729239AbgABWXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:23:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 430DD20863;
-        Thu,  2 Jan 2020 22:38:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 331B921835;
+        Thu,  2 Jan 2020 22:23:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004681;
-        bh=fHxR6C7OqNi0ftmc0Q2dWb7WLoPSSTDn/Z/2G4v/5uk=;
+        s=default; t=1578003802;
+        bh=TCNtj8JLZts8V49Z1W+5EOba1+rRErBBd94PFw8z4Rs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ilEI+U5622iiw8kovbLjx4UTdhFH/bYEXmKLp1HPOQWy6VSprGSRjp/y6czc6elKQ
-         igZ4OYafGTGu6AruVpdiSSuhLwqW/FTVp58OuxshYTM7fHqtAglPD6SczocS9iSfVB
-         TWIsdClNNrLin2v4w4bZNwWqN3ZS+8ERNUWta77c=
+        b=tKyIIeMBH9v8A6K83Fp6kRc+4EpNeW/Lv1Xtd3HBTvC5rrGXVpXQmbgNrY4/GuQNq
+         1ZeRqZpLeXvDMzwVpHIdUxkcac6Mnk/ymcBxnApSPsRjPWTSfJzE3pRAP6REcFUjo5
+         MJBpznBVlvcLoveZpzED7eVP4C5vopQNNWfuec94=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 108/137] fs/quota: handle overflows of sysctl fs.quota.* and report as unsigned long
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+Subject: [PATCH 4.19 109/114] gtp: fix wrong condition in gtp_genl_dump_pdp()
 Date:   Thu,  2 Jan 2020 23:08:01 +0100
-Message-Id: <20200102220601.703297133@linuxfoundation.org>
+Message-Id: <20200102220040.127179483@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,147 +43,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit 6fcbcec9cfc7b3c6a2c1f1a23ebacedff7073e0a ]
+[ Upstream commit 94a6d9fb88df43f92d943c32b84ce398d50bf49f ]
 
-Quota statistics counted as 64-bit per-cpu counter. Reading sums per-cpu
-fractions as signed 64-bit int, filters negative values and then reports
-lower half as signed 32-bit int.
+gtp_genl_dump_pdp() is ->dumpit() callback of GTP module and it is used
+to dump pdp contexts. it would be re-executed because of dump packet size.
 
-Result may looks like:
+If dump packet size is too big, it saves current dump pointer
+(gtp interface pointer, bucket, TID value) then it restarts dump from
+last pointer.
+Current GTP code allows adding zero TID pdp context but dump code
+ignores zero TID value. So, last dump pointer will not be found.
 
-fs.quota.allocated_dquots = 22327
-fs.quota.cache_hits = -489852115
-fs.quota.drops = -487288718
-fs.quota.free_dquots = 22083
-fs.quota.lookups = -486883485
-fs.quota.reads = 22327
-fs.quota.syncs = 335064
-fs.quota.writes = 3088689
+In addition, this patch adds missing rcu_read_lock() in
+gtp_genl_dump_pdp().
 
-Values bigger than 2^31-1 reported as negative.
-
-All counters except "allocated_dquots" and "free_dquots" are monotonic,
-thus they should be reported as is without filtering negative values.
-
-Kernel doesn't have generic helper for 64-bit sysctl yet,
-let's use at least unsigned long.
-
-Link: https://lore.kernel.org/r/157337934693.2078.9842146413181153727.stgit@buzz
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 459aa660eb1d ("gtp: add initial driver for datapath of GPRS Tunneling Protocol (GTP-U)")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/quota/dquot.c      | 29 +++++++++++++++++------------
- include/linux/quota.h |  2 +-
- 2 files changed, 18 insertions(+), 13 deletions(-)
+ drivers/net/gtp.c |   36 +++++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 17 deletions(-)
 
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index 7430cb0e21a7..b7d5e254792c 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -2783,68 +2783,73 @@ EXPORT_SYMBOL(dquot_quotactl_sysfile_ops);
- static int do_proc_dqstats(struct ctl_table *table, int write,
- 		     void __user *buffer, size_t *lenp, loff_t *ppos)
- {
--	unsigned int type = (int *)table->data - dqstats.stat;
-+	unsigned int type = (unsigned long *)table->data - dqstats.stat;
-+	s64 value = percpu_counter_sum(&dqstats.counter[type]);
-+
-+	/* Filter negative values for non-monotonic counters */
-+	if (value < 0 && (type == DQST_ALLOC_DQUOTS ||
-+			  type == DQST_FREE_DQUOTS))
-+		value = 0;
+--- a/drivers/net/gtp.c
++++ b/drivers/net/gtp.c
+@@ -42,7 +42,6 @@ struct pdp_ctx {
+ 	struct hlist_node	hlist_addr;
  
- 	/* Update global table */
--	dqstats.stat[type] =
--			percpu_counter_sum_positive(&dqstats.counter[type]);
--	return proc_dointvec(table, write, buffer, lenp, ppos);
-+	dqstats.stat[type] = value;
-+	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
+ 	union {
+-		u64		tid;
+ 		struct {
+ 			u64	tid;
+ 			u16	flow;
+@@ -1249,43 +1248,46 @@ static int gtp_genl_dump_pdp(struct sk_b
+ 				struct netlink_callback *cb)
+ {
+ 	struct gtp_dev *last_gtp = (struct gtp_dev *)cb->args[2], *gtp;
++	int i, j, bucket = cb->args[0], skip = cb->args[1];
+ 	struct net *net = sock_net(skb->sk);
+-	struct gtp_net *gn = net_generic(net, gtp_net_id);
+-	unsigned long tid = cb->args[1];
+-	int i, k = cb->args[0], ret;
+ 	struct pdp_ctx *pctx;
++	struct gtp_net *gn;
++
++	gn = net_generic(net, gtp_net_id);
+ 
+ 	if (cb->args[4])
+ 		return 0;
+ 
++	rcu_read_lock();
+ 	list_for_each_entry_rcu(gtp, &gn->gtp_dev_list, list) {
+ 		if (last_gtp && last_gtp != gtp)
+ 			continue;
+ 		else
+ 			last_gtp = NULL;
+ 
+-		for (i = k; i < gtp->hash_size; i++) {
+-			hlist_for_each_entry_rcu(pctx, &gtp->tid_hash[i], hlist_tid) {
+-				if (tid && tid != pctx->u.tid)
+-					continue;
+-				else
+-					tid = 0;
+-
+-				ret = gtp_genl_fill_info(skb,
+-							 NETLINK_CB(cb->skb).portid,
+-							 cb->nlh->nlmsg_seq,
+-							 cb->nlh->nlmsg_type, pctx);
+-				if (ret < 0) {
++		for (i = bucket; i < gtp->hash_size; i++) {
++			j = 0;
++			hlist_for_each_entry_rcu(pctx, &gtp->tid_hash[i],
++						 hlist_tid) {
++				if (j >= skip &&
++				    gtp_genl_fill_info(skb,
++					    NETLINK_CB(cb->skb).portid,
++					    cb->nlh->nlmsg_seq,
++					    cb->nlh->nlmsg_type, pctx)) {
+ 					cb->args[0] = i;
+-					cb->args[1] = pctx->u.tid;
++					cb->args[1] = j;
+ 					cb->args[2] = (unsigned long)gtp;
+ 					goto out;
+ 				}
++				j++;
+ 			}
++			skip = 0;
+ 		}
++		bucket = 0;
+ 	}
+ 	cb->args[4] = 1;
+ out:
++	rcu_read_unlock();
+ 	return skb->len;
  }
  
- static struct ctl_table fs_dqstats_table[] = {
- 	{
- 		.procname	= "lookups",
- 		.data		= &dqstats.stat[DQST_LOOKUPS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "drops",
- 		.data		= &dqstats.stat[DQST_DROPS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "reads",
- 		.data		= &dqstats.stat[DQST_READS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "writes",
- 		.data		= &dqstats.stat[DQST_WRITES],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "cache_hits",
- 		.data		= &dqstats.stat[DQST_CACHE_HITS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "allocated_dquots",
- 		.data		= &dqstats.stat[DQST_ALLOC_DQUOTS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "free_dquots",
- 		.data		= &dqstats.stat[DQST_FREE_DQUOTS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "syncs",
- 		.data		= &dqstats.stat[DQST_SYNCS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
-diff --git a/include/linux/quota.h b/include/linux/quota.h
-index b2505acfd3c0..b34412df1542 100644
---- a/include/linux/quota.h
-+++ b/include/linux/quota.h
-@@ -253,7 +253,7 @@ enum {
- };
- 
- struct dqstats {
--	int stat[_DQST_DQSTAT_LAST];
-+	unsigned long stat[_DQST_DQSTAT_LAST];
- 	struct percpu_counter counter[_DQST_DQSTAT_LAST];
- };
- 
--- 
-2.20.1
-
 
 
