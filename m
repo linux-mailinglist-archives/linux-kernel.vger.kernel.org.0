@@ -2,136 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE3C412EEAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:41:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0045012EEBF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:41:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730173AbgABWhr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:37:47 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37419 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730361AbgABWhl (ORCPT
+        id S1729097AbgABWkn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:40:43 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:49204 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731100AbgABWkl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:37:41 -0500
-Received: by mail-lf1-f68.google.com with SMTP id b15so30820994lfc.4
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 14:37:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=gPjJeWXnNhdhuyrN4rnVEjPZPr3F3grtCBDBToSL6MQ=;
-        b=VN1m3k3mss/IpKFej7Yu077C/zaVEijkhwGWopOsVPqUhfb7Jw20FeL6IFVIWg9ugW
-         dOIOiv959ISKPurghfm6gOZHVuOz5KehNNClEWjHiTMRWoMcjeoc0c+g6FwKU7OE1q1E
-         732qF2zeKGhWTUZiGSAY4DJPr5henTXxQhk+qVPlOptdGvwUQ9Y+HmgSq334ieFLzGhb
-         z6KZV9Q7kOW2yR8HsKc7BFwZ1jdaC24VK5o7MuopvqfigD1kSz4IFX9odk3UFMZU8jqn
-         e8Z7kIY5JEybBkNqdj4zixkEPDlWtjihJTz9rCi/8bt1OsX+oFLSAqeIrsKGwo1EHCfk
-         ew4A==
-X-Gm-Message-State: APjAAAWwsvin5vuF6p9CD8y+w/zp8DBfkWX9uBg6FEjB3e9Cs4fAQQ64
-        wEM4Uf0Q2t4SUOxPE7WVPZ52Llkz0hM=
-X-Google-Smtp-Source: APXvYqw51FvPsbsJ4Sel7Sof1TcLE7FHXdL3ouvAhjDi8UYyCRqc5Q3L0AflixutewJq5H8cKks1FA==
-X-Received: by 2002:a19:86d7:: with SMTP id i206mr46455348lfd.119.1578004659080;
-        Thu, 02 Jan 2020 14:37:39 -0800 (PST)
-Received: from [192.168.42.103] ([213.87.155.29])
-        by smtp.gmail.com with ESMTPSA id r125sm23871305lff.70.2020.01.02.14.37.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Jan 2020 14:37:38 -0800 (PST)
-Reply-To: alex.popov@linux.com
-Subject: Re: [PATCH v1 1/1] lkdtm/stackleak: Make the stack erasing test more
- verbose
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, notify@kernel.org
-References: <20191219145416.435508-1-alex.popov@linux.com>
- <201912301034.5C04DC89@keescook>
- <5bde4de0-875c-536b-67ec-eafebb8b9ab1@linux.com>
- <201912301443.9B8F6CA6@keescook>
- <aae20dfa-4a55-9aaf-d2f9-3c83ed905f2e@linux.com>
- <202001021402.EDBC5114D@keescook>
-From:   Alexander Popov <alex.popov@linux.com>
-Autocrypt: addr=alex.popov@linux.com; prefer-encrypt=mutual; keydata=
- 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
- j3lCqPk=
-Message-ID: <81af2068-c78a-843e-56fa-8e60fe6e92f3@linux.com>
-Date:   Fri, 3 Jan 2020 01:37:37 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Thu, 2 Jan 2020 17:40:41 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 002MeGkW130610;
+        Thu, 2 Jan 2020 16:40:16 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578004816;
+        bh=iY+CXAjnnmWi7PKkKhPCb/3kqbYV4sgylNQyJliTwSQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ZEu5qqMSCYzSWdRn2BzeiF7A2pIrxP7uPHhY4vpBT+fqVlGJhFnY79n9h/Xygw/mS
+         atGBU+RR5Stpn4c0pShXenNyX5NZ12ghl0L2w18MI3kbgKkHdS+MXe3HpG8+T8U73/
+         6AnAChozzAJps4rrVOLKXu6lR6aQJ6OS3VTvLGGY=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 002MeGcB014864
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 2 Jan 2020 16:40:16 -0600
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 2 Jan
+ 2020 16:40:16 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 2 Jan 2020 16:40:16 -0600
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 002MeGRU042981;
+        Thu, 2 Jan 2020 16:40:16 -0600
+Subject: Re: [PATCH 3/3] iommu: Enable compile testing for some of drivers
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        kbuild test robot <lkp@intel.com>
+CC:     <kbuild-all@lists.01.org>, Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Tero Kristo <t-kristo@ti.com>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
+References: <20191230172619.17814-3-krzk@kernel.org>
+ <201912311551.tBrb3BhH%lkp@intel.com> <20191231080722.GA6804@pi3>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <923b1f2f-2b5c-8b6e-6083-243beae09777@ti.com>
+Date:   Thu, 2 Jan 2020 16:40:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <202001021402.EDBC5114D@keescook>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20191231080722.GA6804@pi3>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03.01.2020 01:03, Kees Cook wrote:
-> On Thu, Jan 02, 2020 at 02:26:39AM +0300, Alexander Popov wrote:
->> On 31.12.2019 01:46, Kees Cook wrote:
->>> On Tue, Dec 31, 2019 at 01:20:24AM +0300, Alexander Popov wrote:
->>>> On 30.12.2019 21:37, Kees Cook wrote:
->>>>> Hi! I try to keep the "success" conditions for LKDTM tests to be a
->>>>> system exception, so doing "BUG" on a failure is actually against the
->>>>> design. So, really, a test harness needs to know to check dmesg for the
->>>>> results here. It almost looks like this check shouldn't live in LKDTM,
->>>>> but since it feels like other LKDTM tests, I'm happy to keep it there
->>>>> for now.
->>>>
->>>> Do you mean that you will apply this patch?
->>>
->>> Sorry for my confusing reply! I meant that I don't want to apply the
->>> patch, but I'm find to leave the stackleak check in LKDTM.
+Hi Krzysztof,
+
+On 12/31/19 2:07 AM, Krzysztof Kozlowski wrote:
+> On Tue, Dec 31, 2019 at 03:43:39PM +0800, kbuild test robot wrote:
+>> Hi Krzysztof,
 >>
->> Kees, I think I see a solution.
+>> I love your patch! Perhaps something to improve:
 >>
->> Would you agree if I use dump_stack() instead of BUG() in case of test failure?
->> That would provide enough info for debugging and would NOT break your design.
+>> [auto build test WARNING on iommu/next]
+>> [also build test WARNING on v5.5-rc4]
+>> [if your patch is applied to the wrong git tree, please drop us a note to help
+>> improve the system. BTW, we also suggest to use '--base' option to specify the
+>> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+>>
+>> url:    https://github.com/0day-ci/linux/commits/Krzysztof-Kozlowski/iommu-omap-Fix-pointer-cast-Wpointer-to-int-cast-warnings-on-64-bit/20191231-022212
+>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git next
+>> config: ia64-allmodconfig (attached as .config)
+>> compiler: ia64-linux-gcc (GCC) 7.5.0
+>> reproduce:
+>>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>>         chmod +x ~/bin/make.cross
+>>         # save the attached .config to linux build tree
+>>         GCC_VERSION=7.5.0 make.cross ARCH=ia64 
+>>
+>> If you fix the issue, kindly add following tag
+>> Reported-by: kbuild test robot <lkp@intel.com>
 > 
-> I would be fine with that, yes! :)
+> I saw it already while compile testing my patch. I must admit that I
+> could not find easy/fast fix for it.  Probably the
+> omap_iommu_translate() helper should be made 64-bit friendly but this
+> obfuscates the code. 
 
-Thank you! I'll send the v2 shortly.
+>The driver and hardware supports only 32-bit addresses.
 
-Best regards,
-Alexander
+Yeah, is there a reason why you are trying to enable the build for the
+OMAP IOMMU driver on 64-bit platforms or other architectures - the IP
+and driver is only ever used on ARMv7 platforms, and it should already
+be available for COMPILE_TEST on those.
+
+regards
+Suman
+
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+>>
+>> All warnings (new ones prefixed by >>):
+>>
+>>    In file included from drivers/iommu/omap-iommu.c:33:0:
+>>    drivers/iommu/omap-iommu.c: In function 'omap_iommu_iova_to_phys':
+>>>> drivers/iommu/omap-iopgtable.h:44:21: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+>>     #define IOPTE_MASK  (~(IOPTE_SIZE - 1))
+>>                         ^
+>>>> drivers/iommu/omap-iommu.c:1641:41: note: in expansion of macro 'IOPTE_MASK'
+>>        ret = omap_iommu_translate(*pte, da, IOPTE_MASK);
+>>                                             ^~~~~~~~~~
+>>    drivers/iommu/omap-iopgtable.h:51:23: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+>>     #define IOLARGE_MASK  (~(IOLARGE_SIZE - 1))
+>>                           ^
+>>>> drivers/iommu/omap-iommu.c:1643:41: note: in expansion of macro 'IOLARGE_MASK'
+>>        ret = omap_iommu_translate(*pte, da, IOLARGE_MASK);
+>>                                             ^~~~~~~~~~~~
+>>    drivers/iommu/omap-iopgtable.h:27:25: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+>>     #define IOSECTION_MASK  (~(IOSECTION_SIZE - 1))
+>>                             ^
+>>>> drivers/iommu/omap-iommu.c:1649:41: note: in expansion of macro 'IOSECTION_MASK'
+>>        ret = omap_iommu_translate(*pgd, da, IOSECTION_MASK);
+>>                                             ^~~~~~~~~~~~~~
+>>    drivers/iommu/omap-iopgtable.h:34:23: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+>>     #define IOSUPER_MASK  (~(IOSUPER_SIZE - 1))
+>>                           ^
+>>>> drivers/iommu/omap-iommu.c:1651:41: note: in expansion of macro 'IOSUPER_MASK'
+>>        ret = omap_iommu_translate(*pgd, da, IOSUPER_MASK);
+>>                                             ^~~~~~~~~~~~
+>>
+>> vim +44 drivers/iommu/omap-iopgtable.h
+>>
+>> 97ec7d585b33bb arch/arm/plat-omap/iopgtable.h Hiroshi DOYU 2010-02-15  38  
+>> 97ec7d585b33bb arch/arm/plat-omap/iopgtable.h Hiroshi DOYU 2010-02-15  39  /*
+>> 97ec7d585b33bb arch/arm/plat-omap/iopgtable.h Hiroshi DOYU 2010-02-15  40   * "small page" address mask and size definitions.
+>> 97ec7d585b33bb arch/arm/plat-omap/iopgtable.h Hiroshi DOYU 2010-02-15  41   */
+>> a9dcad5e375800 arch/arm/plat-omap/iopgtable.h Hiroshi DOYU 2009-01-26  42  #define IOPTE_SHIFT		12
+>> 5ff98fa68c88d7 drivers/iommu/omap-iopgtable.h Suman Anna   2015-07-20  43  #define IOPTE_SIZE		BIT(IOPTE_SHIFT)
+>> a9dcad5e375800 arch/arm/plat-omap/iopgtable.h Hiroshi DOYU 2009-01-26 @44  #define IOPTE_MASK		(~(IOPTE_SIZE - 1))
+>> a9dcad5e375800 arch/arm/plat-omap/iopgtable.h Hiroshi DOYU 2009-01-26  45  
+>>
+>> :::::: The code at line 44 was first introduced by commit
+>> :::::: a9dcad5e375800fcb07f7617dba23b3aade8f09d omap iommu: tlb and pagetable primitives
+>>
+>> :::::: TO: Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
+>> :::::: CC: Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
+>>
+>> ---
+>> 0-DAY kernel test infrastructure                 Open Source Technology Center
+>> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
+> 
+> 
+
