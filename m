@@ -2,109 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A719C12E1FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 05:00:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 080EF12E20D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 05:02:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727626AbgABEA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Jan 2020 23:00:28 -0500
-Received: from mailgw-01.dd24.net ([193.46.215.41]:34700 "EHLO
-        mailgw-01.dd24.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727509AbgABEA1 (ORCPT
+        id S1727723AbgABECd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Jan 2020 23:02:33 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:23623 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727702AbgABECa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Jan 2020 23:00:27 -0500
-Received: from mailpolicy-01.live.igb.homer.key-systems.net (mailpolicy-01.live.igb.homer.key-systems.net [192.168.1.26])
-        by mailgw-01.dd24.net (Postfix) with ESMTP id CA0145FD57
-        for <linux-kernel@vger.kernel.org>; Thu,  2 Jan 2020 04:00:25 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at
-        mailpolicy-01.live.igb.homer.key-systems.net
-Received: from smtp.dd24.net ([192.168.1.35])
-        by mailpolicy-01.live.igb.homer.key-systems.net (mailpolicy-01.live.igb.homer.key-systems.net [192.168.1.25]) (amavisd-new, port 10235)
-        with ESMTP id UtgI8krSE1cV for <linux-kernel@vger.kernel.org>;
-        Thu,  2 Jan 2020 04:00:23 +0000 (UTC)
-Received: from heisenberg.fritz.box (ppp-88-217-46-247.dynamic.mnet-online.de [88.217.46.247])
-        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp.dd24.net (Postfix) with ESMTPSA
-        for <linux-kernel@vger.kernel.org>; Thu,  2 Jan 2020 04:00:23 +0000 (UTC)
-Message-ID: <43b7eef5560ede5ad2973964f68d9e6beba63a91.camel@scientia.net>
-Subject: Re: from 5.2->5.3 lets the system run at considerably higher
- temperatures
-From:   Christoph Anton Mitterer <calestyo@scientia.net>
-To:     linux-kernel@vger.kernel.org
-Date:   Thu, 02 Jan 2020 05:00:22 +0100
-In-Reply-To: <d05aba2742ae42783788c954e2a380e7fcb10830.camel@scientia.net>
-References: <d05aba2742ae42783788c954e2a380e7fcb10830.camel@scientia.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2+b1 
+        Wed, 1 Jan 2020 23:02:30 -0500
+X-UUID: f4ee4422570048928cb8cbdb3b504102-20200102
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=9DYCbTrem5/AkJY7I3DAUVJg+oiJpqgHNPhBGcMeelc=;
+        b=Mho9ETVTDsXc6QRqawp7ckYG/1HiSuCHKpPQTiugvhJVnR+F2UMutkrzKmyraQfkPbcESOSCwaMolgBPWz+uIfcnsPcXaU/1UHQtKvbHVTFcmbawCsK4b8QKXTH/LqGlUKcGcxbjaNZ5xY1VFoVOh2i6ufFsiSlDQtan2zCW0Ns=;
+X-UUID: f4ee4422570048928cb8cbdb3b504102-20200102
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <yongqiang.niu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1248995143; Thu, 02 Jan 2020 12:02:25 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 2 Jan 2020 12:01:54 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 2 Jan 2020 12:01:43 +0800
+From:   Yongqiang Niu <yongqiang.niu@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yongqiang Niu <yongqiang.niu@mediatek.com>
+Subject: [PATCH v6, 12/14] drm/mediatek: add connection from RDMA0 to DSI0
+Date:   Thu, 2 Jan 2020 12:00:22 +0800
+Message-ID: <1577937624-14313-13-git-send-email-yongqiang.niu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
+In-Reply-To: <1577937624-14313-1-git-send-email-yongqiang.niu@mediatek.com>
+References: <1577937624-14313-1-git-send-email-yongqiang.niu@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey again.
-
-Just checked with 5.4.6 and the problem as described previously still
-exists.
-
-And effectively idle system runs at ~75 °C even when just typing some
-text or switching some windows.
-Only if doing really absolutely nothing for a long time it may (but not
-always) go down to ~65 °C, which is still 5-10°C more than having the
-very same system (same software running, etc.) with a 5.2 kernel.
-
-top still shows basically nothing.
-
-I still suspect it could be somehow graphics related:
-- when I switch from the desktop environment to the kernel console,
-temperatures quickly go to ~60°C (which is more close to what's the
-case with 5.2)
-
-- When doing some video playback, temperatures just explode (which
-they' don't with 5.2, of course they rise there as well).
-So when playing a video like mpv --vo=vaapi, CPU goes quickly to 90°C
-an more (and even when stopping playback, it stays at 80°C for
-minutes).
-Actually, sometimes (but not always) it was much better with --vo=xv.
-
-The CPU is a Intel(R) Core(TM) i7-7600U CPU @ 2.80GHz, with HD Graphics
-620 (Kaby Lake GT2).
-
-
-Thanks,
-Chris.
-
-
-
-Any ideas on what to do or how to somehow debug this?
-
-Cheers,
-Chris.
-
-
-On Mon, 2019-12-16 at 16:15 +0100, Christoph Anton Mitterer wrote:
-> Hey.
-> 
-> Since I've upgraded from kernel 5.2 to 5.3 my system runs a
-> considerably higher temperatures (like 10°C or more).
-> This happens even when it's effectively idle (top shows basically
-> nothing).
-> Downgrading again to 5.2 and high temperatures go away.
-> 
-> I did some more detailed description here:
-> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=945055
-> but really have no clue where to start debugging.
-> 
-> It could be that it's somehow graphics related, as when I switch away
-> from X/Cinnamon to the virtual console, temperatures decrease
-> considerably.
-> 
-> 
-> Anyone else seeing something similar or having some idea how to track
-> this down?
-> 
-> 
-> Thanks,
-> Chris.
+VGhpcyBwYXRjaCBhZGQgY29ubmVjdGlvbiBmcm9tIFJETUEwIHRvIERTSTANCg0KU2lnbmVkLW9m
+Zi1ieTogWW9uZ3FpYW5nIE5pdSA8eW9uZ3FpYW5nLm5pdUBtZWRpYXRlay5jb20+DQpSZXZpZXdl
+ZC1ieTogQ0sgSHUgPGNrLmh1QG1lZGlhdGVrLmNvbT4NCi0tLQ0KIGRyaXZlcnMvZ3B1L2RybS9t
+ZWRpYXRlay9tdGtfZHJtX2RkcC5jIHwgNCArKysrDQogMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0
+aW9ucygrKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1f
+ZGRwLmMgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kZHAuYw0KaW5kZXggNGNj
+NDMyZC4uNjhkYzA2MCAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtf
+ZHJtX2RkcC5jDQorKysgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kZHAuYw0K
+QEAgLTQyLDYgKzQyLDcgQEANCiAjZGVmaW5lIE9WTDFfMkxfTU9VVF9FTl9SRE1BMQkJCQlCSVQo
+NCkNCiAjZGVmaW5lIERJVEhFUjBfTU9VVF9JTl9EU0kwCQkJCUJJVCgwKQ0KICNkZWZpbmUgRElT
+UF9QQVRIMF9TRUxfSU5fT1ZMMF8yTAkJCTB4MQ0KKyNkZWZpbmUgRFNJMF9TRUxfSU5fUkRNQTAJ
+CQkJMHgxDQogDQogI2RlZmluZSBNVDI3MDFfRElTUF9NVVRFWDBfTU9EMAkJCTB4MmMNCiAjZGVm
+aW5lIE1UMjcwMV9ESVNQX01VVEVYMF9TT0YwCQkJMHgzMA0KQEAgLTM5OCw2ICszOTksOSBAQCBz
+dGF0aWMgdW5zaWduZWQgaW50IG10a19kZHBfc2VsX2luKGNvbnN0IHN0cnVjdCBtdGtfbW1zeXNf
+cmVnX2RhdGEgKmRhdGEsDQogCQkgICAgIG5leHQgPT0gRERQX0NPTVBPTkVOVF9SRE1BMCkgew0K
+IAkJKmFkZHIgPSBNVDgxODNfRElTUF9QQVRIMF9TRUxfSU47DQogCQl2YWx1ZSA9IERJU1BfUEFU
+SDBfU0VMX0lOX09WTDBfMkw7DQorCX0gZWxzZSBpZiAoY3VyID09IEREUF9DT01QT05FTlRfUkRN
+QTAgJiYgbmV4dCA9PSBERFBfQ09NUE9ORU5UX0RTSTApIHsNCisJCSphZGRyID0gZGF0YS0+ZHNp
+MF9zZWxfaW47DQorCQl2YWx1ZSA9IERTSTBfU0VMX0lOX1JETUEwOw0KIAl9IGVsc2Ugew0KIAkJ
+dmFsdWUgPSAwOw0KIAl9DQotLSANCjEuOC4xLjEuZGlydHkNCg==
 
