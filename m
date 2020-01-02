@@ -2,176 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18D4D12F4C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 07:58:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA23C12F4CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 08:00:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbgACG5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 01:57:52 -0500
-Received: from mail-lf1-f48.google.com ([209.85.167.48]:35666 "EHLO
-        mail-lf1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbgACG5w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 01:57:52 -0500
-Received: by mail-lf1-f48.google.com with SMTP id 15so31315052lfr.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 22:57:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=cI5dJ5uXWY3xWZKUs3Uuw1PY+H/R9kRSLoYee4iD0CA=;
-        b=UTv3levrXIbAc8/TmHr64J63WvrchvvnUspsP0fTM9g7Qt+9/1xcHCjL/M8000dkoa
-         1aDaEDm6QZ+QTZv7v+lxCEPZCGIHJVJdNkAYGzAaq8cknzX62Vhum0QQsZFGdofPnrk2
-         OPVbhN7IFqFgrYHkSc9lpVPo2Z4VUFAskr9jHgaO7TaFC/nZ8ErgGFA3Y4rDU1VdnO+P
-         cBVlvluMAiDK2NyRlGbuePygzf2m1qm/SBivylaHgPu+jMNE/8NSUEjFQYIjrAaAspiV
-         n+iIl6Ppns+Fvsccx1yy6yj+xDtd62yr+9s84EMLlOSZ1AHJ9DisEav1hLFz7q0W81sU
-         JLog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=cI5dJ5uXWY3xWZKUs3Uuw1PY+H/R9kRSLoYee4iD0CA=;
-        b=pg+jGySGzs2angvQxP4e9lU95NPV2K3gu+hvz9nm+ab1KtUr+RIv6sTYdW52T7Lfyn
-         hRSLjCfp9RNtTcSMVHDUubQUAvyDQwgNcr7NRF7mfiZ83ZNX2GTGhiZpuwvUSiiejUF2
-         FELTwz3VFKbwiccvARUemdzKJ/+eAvAWKS1IKg7RLr3BE5VaqdPI/FFKY1Sw3oefoqPM
-         gaoDfESIUNdRLQXOGoP+s93Po6x04YIrmQC3bDOAmnJbUOhwPGehvMcbLi/i5dnH/bmh
-         kfzqQ78e97Aw8SPvg9xmgNtOLixenNw6ZmBot2c1CFEN5OhkFaxl8HfdQOpIzXn/Qq5l
-         FCjQ==
-X-Gm-Message-State: APjAAAXl5HO2PD1laQ6WeWCvVUgTJUKJANYcj/G9TFDVw1I5WuNgbcTn
-        y2jpRtfFF6BbEsM61Zj3TewUd/6wQOnFl9PoSlkMPfsv
-X-Google-Smtp-Source: APXvYqzjCIUYUsR5o17WTHsEmmfTw5WkUqsWP/dnDkeb7hw35ENaG7dNVEir1uySAHb8khcwPQWO15buVSi1oNXU51E=
-X-Received: by 2002:ac2:5975:: with SMTP id h21mr48175706lfp.165.1578034669925;
- Thu, 02 Jan 2020 22:57:49 -0800 (PST)
+        id S1727306AbgACHA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 02:00:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46672 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725972AbgACHA3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 02:00:29 -0500
+Received: from localhost (unknown [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DB0B22B48;
+        Fri,  3 Jan 2020 07:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578034828;
+        bh=htnSJ2v1c60OdUCi+bDcxmkv0NSoIt1JIHoxcJ+ELQI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=zA10VrS+XslhhyKFs+fhyhKJuTRhcHk9Cnb46wza+qL5eFqaKTOoWLhgwnSLfKicm
+         7eNapXNuLbkOkwYbpkr3kJBX1tfdh71skxGkwa1Nz04tAQaW3qwutsv164ci+gskb4
+         1E6F9F3duTM7hTa56vJojAZKYZuTcBrfK2FCC+/g=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Benoit Parrot <bparrot@ti.com>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 018/171] media: i2c: ov2659: Fix missing 720p register config
+Date:   Thu,  2 Jan 2020 23:05:49 +0100
+Message-Id: <20200102220549.514102980@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Fri, 3 Jan 2020 16:57:38 +1000
-Message-ID: <CAPM=9twLL0KL7zS4hwH=TgcuwVqJCpvUB276+GzkhQaa_B2vHg@mail.gmail.com>
-Subject: [git pull] drm fixes for 5.5-rc5
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+From: Benoit Parrot <bparrot@ti.com>
 
-New Years fixes! Mostly amdgpu with a light smattering of arm
-graphics, and two AGP warning fixes.
+[ Upstream commit 9d669fbfca20e6035ead814e55d9ef1a6b500540 ]
 
-Quiet as expected, hopefully we don't get a post holiday rush.
+The initial registers sequence is only loaded at probe
+time. Afterward only the resolution and format specific
+register are modified. Care must be taken to make sure
+registers modified by one resolution setting are reverted
+back when another resolution is programmed.
 
-Dave.
+This was not done properly for the 720p case.
 
-drm-fixes-2020-01-03:
-drm fixes for 5.5-rc5
+Signed-off-by: Benoit Parrot <bparrot@ti.com>
+Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/i2c/ov2659.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-agp:
-- two unused variable removed
+diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
+index 49196afd15a8..ade3c48e2e0c 100644
+--- a/drivers/media/i2c/ov2659.c
++++ b/drivers/media/i2c/ov2659.c
+@@ -419,10 +419,14 @@ static struct sensor_register ov2659_720p[] = {
+ 	{ REG_TIMING_YINC, 0x11 },
+ 	{ REG_TIMING_VERT_FORMAT, 0x80 },
+ 	{ REG_TIMING_HORIZ_FORMAT, 0x00 },
++	{ 0x370a, 0x12 },
+ 	{ 0x3a03, 0xe8 },
+ 	{ 0x3a09, 0x6f },
+ 	{ 0x3a0b, 0x5d },
+ 	{ 0x3a15, 0x9a },
++	{ REG_VFIFO_READ_START_H, 0x00 },
++	{ REG_VFIFO_READ_START_L, 0x80 },
++	{ REG_ISP_CTRL02, 0x00 },
+ 	{ REG_NULL, 0x00 },
+ };
+ 
+-- 
+2.20.1
 
-amdgpu:
-- ATPX regression fix
-- SMU metrics table locking fixes
-- gfxoff fix for raven
-- RLC firmware loading stability fix
 
-mediatek:
-- external display fix
-- dsi timing fix
 
-sun4i:
-- Fix double-free in connector/encoder cleanup (Stefan)
-
-maildp:
-- Make vtable static (Ben)
-The following changes since commit fd6988496e79a6a4bdb514a4655d2920209eb85d:
-
-  Linux 5.5-rc4 (2019-12-29 15:29:16 -0800)
-
-are available in the Git repository at:
-
-  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2020-01-03
-
-for you to fetch changes up to a6204fc7b83cbe3398f61cf1742b09f66f0ae220:
-
-  agp: remove unused variable arqsz in agp_3_5_enable() (2020-01-03
-16:08:05 +1000)
-
-----------------------------------------------------------------
-drm fixes for 5.5-rc5
-
-agp:
-- two unused variable removed
-
-amdgpu:
-- ATPX regression fix
-- SMU metrics table locking fixes
-- gfxoff fix for raven
-- RLC firmware loading stability fix
-
-mediatek:
-- external display fix
-- dsi timing fix
-
-sun4i:
-- Fix double-free in connector/encoder cleanup (Stefan)
-
-maildp:
-- Make vtable static (Ben)
-
-----------------------------------------------------------------
-Alex Deucher (5):
-      Revert "drm/amdgpu: simplify ATPX detection"
-      drm/amdgpu/smu: add metrics table lock
-      drm/amdgpu/smu: add metrics table lock for arcturus (v2)
-      drm/amdgpu/smu: add metrics table lock for navi (v2)
-      drm/amdgpu/smu: add metrics table lock for vega20 (v2)
-
-Ben Dooks (Codethink) (1):
-      drm/arm/mali: make malidp_mw_connector_helper_funcs static
-
-Dave Airlie (3):
-      Merge tag 'mediatek-drm-fixes-5.5' of
-https://github.com/ckhu-mediatek/linux.git-tags into drm-fixes
-      Merge tag 'drm-misc-fixes-2019-12-31' of
-git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
-      Merge tag 'amd-drm-fixes-5.5-2020-01-01' of
-git://people.freedesktop.org/~agd5f/linux into drm-fixes
-
-Evan Quan (1):
-      drm/amdgpu: correct RLC firmwares loading sequence
-
-Jitao Shi (1):
-      drm/mediatek: reduce the hbp and hfp for phy timing
-
-Pi-Hsun Shih (1):
-      drm/mediatek: Check return value of mtk_drm_ddp_comp_for_plane.
-
-Stefan Mavrodiev (1):
-      drm/sun4i: hdmi: Remove duplicate cleanup calls
-
-Yongqiang Niu (1):
-      drm/mediatek: Fix can't get component for external display plane.
-
-Yunfeng Ye (2):
-      agp: remove unused variable mcapndx
-      agp: remove unused variable arqsz in agp_3_5_enable()
-
-changzhu (1):
-      drm/amdgpu: enable gfxoff for raven1 refresh
-
- drivers/char/agp/isoch.c                         |  9 +---
- drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c | 12 ++++-
- drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c          |  2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h        |  2 +-
- drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c            | 15 ++----
- drivers/gpu/drm/amd/powerplay/amdgpu_smu.c       |  1 +
- drivers/gpu/drm/amd/powerplay/arcturus_ppt.c     |  3 ++
- drivers/gpu/drm/amd/powerplay/inc/amdgpu_smu.h   |  1 +
- drivers/gpu/drm/amd/powerplay/navi10_ppt.c       |  3 ++
- drivers/gpu/drm/amd/powerplay/vega20_ppt.c       |  3 ++
- drivers/gpu/drm/arm/malidp_mw.c                  |  2 +-
- drivers/gpu/drm/mediatek/mtk_drm_crtc.c          | 18 ++++---
- drivers/gpu/drm/mediatek/mtk_dsi.c               | 67 ++++++++++++++----------
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c           |  2 -
- 14 files changed, 80 insertions(+), 60 deletions(-)
