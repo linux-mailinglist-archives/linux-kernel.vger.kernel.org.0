@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C68212EBC3
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:12:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DEB112EBC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:12:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbgABWL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:11:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50580 "EHLO mail.kernel.org"
+        id S1727367AbgABWME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:12:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727264AbgABWLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:11:55 -0500
+        id S1727323AbgABWL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:11:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AB70222C3;
-        Thu,  2 Jan 2020 22:11:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9915F22525;
+        Thu,  2 Jan 2020 22:11:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003114;
-        bh=Ul5qKL0qB3yThJxQQ0qEQpOIR8Eucc/E4MFyWrE4Poo=;
+        s=default; t=1578003117;
+        bh=dMcV83CY2sqhLoex5DJnJluwMpbZ7vzTK2T0DgtjQIQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MpYYdnVb61SRYnEma/PwbdAOfsQQ+1W/NQzmc8Wyxzw+QgG51wVhb3sHbmt5gXMjF
-         TV+vEPDbpeHve7xfqW0ZifjmAEYCOCRPlTf1IrVOQM57LBj6wshnGr94fWBUApBp5z
-         ORiEMLkNrjxmhrnhiyNumYtZHLHxJ6RBCUDhG73g=
+        b=yyr6xzfApAVAAo2dym1HhQ0Zl/L6DdT7SMEVa9mQrJAg3F5mdjhZuNhBHrFk6jKWF
+         z/Jo9y8Jo6EzOYY9F3idvubshZZojBKAqYEUrOp3L9+nT29v17D6CCfH6Iger0zu3y
+         4v02J5LdHvdyJqPdBDS7BHl/Tjw2LFTF+ufQE/Nk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        Matthias Fend <Matthias.Fend@wolfvision.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 025/191] powerpc/pseries: Dont fail hash page table insert for bolted mapping
-Date:   Thu,  2 Jan 2020 23:05:07 +0100
-Message-Id: <20200102215832.650130058@linuxfoundation.org>
+Subject: [PATCH 5.4 026/191] Input: st1232 - do not reset the chip too early
+Date:   Thu,  2 Jan 2020 23:05:08 +0100
+Message-Id: <20200102215832.776121397@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
 References: <20200102215829.911231638@linuxfoundation.org>
@@ -45,65 +45,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-[ Upstream commit 75838a3290cd4ebbd1f567f310ba04b6ef017ce4 ]
+[ Upstream commit efd7bb08a762d4f6322054c6824bd942971ac563 ]
 
-If the hypervisor returned H_PTEG_FULL for H_ENTER hcall, retry a hash page table
-insert by removing a random entry from the group.
+We should not be putting the chip into reset while interrupts are enabled
+and ISR may be running. Fix this by installing a custom devm action and
+powering off the device/resetting GPIO line from there. This ensures proper
+ordering.
 
-After some runtime, it is very well possible to find all the 8 hash page table
-entry slot in the hpte group used for mapping. Don't fail a bolted entry insert
-in that case. With Storage class memory a user can find this error easily since
-a namespace enable/disable is equivalent to memory add/remove.
-
-This results in failures as reported below:
-
-$ ndctl create-namespace -r region1 -t pmem -m devdax -a 65536 -s 100M
-libndctl: ndctl_dax_enable: dax1.3: failed to enable
-  Error: namespace1.2: failed to enable
-
-failed to create namespace: No such device or address
-
-In kernel log we find the details as below:
-
-Unable to create mapping for hot added memory 0xc000042006000000..0xc00004200d000000: -1
-dax_pmem: probe of dax1.3 failed with error -14
-
-This indicates that we failed to create a bolted hash table entry for direct-map
-address backing the namespace.
-
-We also observe failures such that not all namespaces will be enabled with
-ndctl enable-namespace all command.
-
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191024093542.29777-2-aneesh.kumar@linux.ibm.com
+Tested-by: Matthias Fend <Matthias.Fend@wolfvision.net>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/mm/book3s64/hash_utils.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/input/touchscreen/st1232.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/arch/powerpc/mm/book3s64/hash_utils.c b/arch/powerpc/mm/book3s64/hash_utils.c
-index 6c123760164e..6e5a769ebcb8 100644
---- a/arch/powerpc/mm/book3s64/hash_utils.c
-+++ b/arch/powerpc/mm/book3s64/hash_utils.c
-@@ -294,7 +294,14 @@ int htab_bolt_mapping(unsigned long vstart, unsigned long vend,
- 		ret = mmu_hash_ops.hpte_insert(hpteg, vpn, paddr, tprot,
- 					       HPTE_V_BOLTED, psize, psize,
- 					       ssize);
--
-+		if (ret == -1) {
-+			/* Try to remove a non bolted entry */
-+			ret = mmu_hash_ops.hpte_remove(hpteg);
-+			if (ret != -1)
-+				ret = mmu_hash_ops.hpte_insert(hpteg, vpn, paddr, tprot,
-+							       HPTE_V_BOLTED, psize, psize,
-+							       ssize);
-+		}
- 		if (ret < 0)
- 			break;
+diff --git a/drivers/input/touchscreen/st1232.c b/drivers/input/touchscreen/st1232.c
+index 1139714e72e2..1c5f8875cb79 100644
+--- a/drivers/input/touchscreen/st1232.c
++++ b/drivers/input/touchscreen/st1232.c
+@@ -149,6 +149,11 @@ static void st1232_ts_power(struct st1232_ts_data *ts, bool poweron)
+ 		gpiod_set_value_cansleep(ts->reset_gpio, !poweron);
+ }
  
++static void st1232_ts_power_off(void *data)
++{
++	st1232_ts_power(data, false);
++}
++
+ static const struct st_chip_info st1232_chip_info = {
+ 	.have_z		= true,
+ 	.max_x		= 0x31f, /* 800 - 1 */
+@@ -229,6 +234,13 @@ static int st1232_ts_probe(struct i2c_client *client,
+ 
+ 	st1232_ts_power(ts, true);
+ 
++	error = devm_add_action_or_reset(&client->dev, st1232_ts_power_off, ts);
++	if (error) {
++		dev_err(&client->dev,
++			"Failed to install power off action: %d\n", error);
++		return error;
++	}
++
+ 	input_dev->name = "st1232-touchscreen";
+ 	input_dev->id.bustype = BUS_I2C;
+ 	input_dev->dev.parent = &client->dev;
+@@ -271,15 +283,6 @@ static int st1232_ts_probe(struct i2c_client *client,
+ 	return 0;
+ }
+ 
+-static int st1232_ts_remove(struct i2c_client *client)
+-{
+-	struct st1232_ts_data *ts = i2c_get_clientdata(client);
+-
+-	st1232_ts_power(ts, false);
+-
+-	return 0;
+-}
+-
+ static int __maybe_unused st1232_ts_suspend(struct device *dev)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+@@ -329,7 +332,6 @@ MODULE_DEVICE_TABLE(of, st1232_ts_dt_ids);
+ 
+ static struct i2c_driver st1232_ts_driver = {
+ 	.probe		= st1232_ts_probe,
+-	.remove		= st1232_ts_remove,
+ 	.id_table	= st1232_ts_id,
+ 	.driver = {
+ 		.name	= ST1232_TS_NAME,
 -- 
 2.20.1
 
