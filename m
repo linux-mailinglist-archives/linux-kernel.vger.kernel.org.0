@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3B4B12ECB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:21:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B41A112ED28
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:25:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728947AbgABWVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:21:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39582 "EHLO mail.kernel.org"
+        id S1729092AbgABWZd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:25:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728931AbgABWVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:21:03 -0500
+        id S1729385AbgABWZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:25:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6FC021582;
-        Thu,  2 Jan 2020 22:21:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98F3E21835;
+        Thu,  2 Jan 2020 22:25:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003663;
-        bh=IMSOtqcwaP6UlIqYmPsM13lnT/jot8oLkrsfRUmghbg=;
+        s=default; t=1578003930;
+        bh=42svHtPePhZ3NPfCRd1BuRx+WDO2c67EMHgqhIkSdes=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sPoP68wSNv3TPcxrz0YtV6+MFhpfCkgOgQ0P0pVX3MchcJ1eYhtbGWvzkZCEIGJc1
-         XdbTICVQ74SGTyaFy3MNSUG55x45bUYXtIjNinjvRpaeasK61T7PTJ6FTq0+lz2xvF
-         L9TqbxOO8jbhzg0Eu5TLLt8eifw18SBWnq1bIx+M=
+        b=dQ3jQ3wUJPonTepyQlCzrxnNG/uTfRQ2rpCj3PM2yen29CxageVGrHKqtmjHAMRhq
+         tZSA+l9VSSzzrEXk3OWD/VmQ3Mgzh2yIxQ42ZehQBgprbQlrqvGBnf1DMwBuR4fcsD
+         rtJSqtaET6xsavn8qWDrFNysdBWrw6JTLrFKwZjE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, linux-scsi@vger.kernel.org,
-        =?UTF-8?q?Diego=20Elio=20Petten=C3=B2?= <flameeyes@flameeyes.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 063/114] cdrom: respect device capabilities during opening action
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 33/91] HID: logitech-hidpp: Silence intermittent get_battery_capacity errors
 Date:   Thu,  2 Jan 2020 23:07:15 +0100
-Message-Id: <20200102220035.429538902@linuxfoundation.org>
+Message-Id: <20200102220431.637952568@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
+References: <20200102220356.856162165@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,64 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Diego Elio Pettenò <flameeyes@flameeyes.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 366ba7c71ef77c08d06b18ad61b26e2df7352338 ]
+[ Upstream commit 61005d65b6c7dcf61c19516e6ebe5acc02d2cdda ]
 
-Reading the TOC only works if the device can play audio, otherwise
-these commands fail (and possibly bring the device to an unhealthy
-state.)
+My Logitech M185 (PID:4038) 2.4 GHz wireless HID++ mouse is causing
+intermittent errors like these in the log:
 
-Similarly, cdrom_mmc3_profile() should only be called if the device
-supports generic packet commands.
+[11091.034857] logitech-hidpp-device 0003:046D:4038.0006: hidpp20_batterylevel_get_battery_capacity: received protocol error 0x09
+[12388.031260] logitech-hidpp-device 0003:046D:4038.0006: hidpp20_batterylevel_get_battery_capacity: received protocol error 0x09
+[16613.718543] logitech-hidpp-device 0003:046D:4038.0006: hidpp20_batterylevel_get_battery_capacity: received protocol error 0x09
+[23529.938728] logitech-hidpp-device 0003:046D:4038.0006: hidpp20_batterylevel_get_battery_capacity: received protocol error 0x09
 
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-scsi@vger.kernel.org
-Signed-off-by: Diego Elio Pettenò <flameeyes@flameeyes.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+We are already silencing error-code 0x09 (HIDPP_ERROR_RESOURCE_ERROR)
+errors in other places, lets do the same in
+hidpp20_batterylevel_get_battery_capacity to remove these harmless,
+but scary looking errors from the dmesg output.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cdrom/cdrom.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/hid/hid-logitech-hidpp.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-index 933268b8d6a5..d3947388a3ef 100644
---- a/drivers/cdrom/cdrom.c
-+++ b/drivers/cdrom/cdrom.c
-@@ -996,6 +996,12 @@ static void cdrom_count_tracks(struct cdrom_device_info *cdi, tracktype *tracks)
- 	tracks->xa = 0;
- 	tracks->error = 0;
- 	cd_dbg(CD_COUNT_TRACKS, "entering cdrom_count_tracks\n");
-+
-+	if (!CDROM_CAN(CDC_PLAY_AUDIO)) {
-+		tracks->error = CDS_NO_INFO;
-+		return;
-+	}
-+
- 	/* Grab the TOC header so we can see how many tracks there are */
- 	ret = cdi->ops->audio_ioctl(cdi, CDROMREADTOCHDR, &header);
- 	if (ret) {
-@@ -1162,7 +1168,8 @@ int cdrom_open(struct cdrom_device_info *cdi, struct block_device *bdev,
- 		ret = open_for_data(cdi);
- 		if (ret)
- 			goto err;
--		cdrom_mmc3_profile(cdi);
-+		if (CDROM_CAN(CDC_GENERIC_PACKET))
-+			cdrom_mmc3_profile(cdi);
- 		if (mode & FMODE_WRITE) {
- 			ret = -EROFS;
- 			if (cdrom_open_write(cdi))
-@@ -2882,6 +2889,9 @@ int cdrom_get_last_written(struct cdrom_device_info *cdi, long *last_written)
- 	   it doesn't give enough information or fails. then we return
- 	   the toc contents. */
- use_toc:
-+	if (!CDROM_CAN(CDC_PLAY_AUDIO))
-+		return -ENOSYS;
-+
- 	toc.cdte_format = CDROM_MSF;
- 	toc.cdte_track = CDROM_LEADOUT;
- 	if ((ret = cdi->ops->audio_ioctl(cdi, CDROMREADTOCENTRY, &toc)))
+diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
+index 4706fb852eaf..6ad776b4711b 100644
+--- a/drivers/hid/hid-logitech-hidpp.c
++++ b/drivers/hid/hid-logitech-hidpp.c
+@@ -978,6 +978,9 @@ static int hidpp20_batterylevel_get_battery_capacity(struct hidpp_device *hidpp,
+ 	ret = hidpp_send_fap_command_sync(hidpp, feature_index,
+ 					  CMD_BATTERY_LEVEL_STATUS_GET_BATTERY_LEVEL_STATUS,
+ 					  NULL, 0, &response);
++	/* Ignore these intermittent errors */
++	if (ret == HIDPP_ERROR_RESOURCE_ERROR)
++		return -EIO;
+ 	if (ret > 0) {
+ 		hid_err(hidpp->hid_dev, "%s: received protocol error 0x%02x\n",
+ 			__func__, ret);
 -- 
 2.20.1
 
