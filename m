@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EF0F12EDFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:34:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F9DF12EE97
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:40:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730665AbgABWeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:34:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41942 "EHLO mail.kernel.org"
+        id S1728462AbgABWjc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:39:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730656AbgABWd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:33:59 -0500
+        id S1731201AbgABWj1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:39:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1F4521835;
-        Thu,  2 Jan 2020 22:33:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCE73217F4;
+        Thu,  2 Jan 2020 22:39:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004438;
-        bh=wHnw8R9D/vIZJMcB9KbBnwqbOybaDX89LuAdC0wee5o=;
+        s=default; t=1578004767;
+        bh=rmBM8hCrQCClvasxTyLfIr9x/PvBxvVO+DVsv6jXjdw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fbft+5xTA7F8L8z2Q6R2rJWY8qrXgCL5biSa6lJvHq4jAZlIYB0K9Q41k2aJkSe6R
-         73Y4gi6NWJmcnG59CsnJYFjdg64toAkajvkxaqCbq+dIi0ShhoLGv9UIR+YuADPm2x
-         t6vdyPCi4fufuGyzu3jZKJ2jAIlmQw/6zgh5VmCg=
+        b=KiR5E5pWOxDBr5F94YSVUdx59h+lE0RQgAZw5GbCGUF+j0xeK/5ON6/0cQNscrQgr
+         rkLeFOYsAqB8zgnOOZditO0liCDRpIPuR98GzP0BKN5cf7iwmCXBrhWZOcwq98cEuO
+         AWAB9xpHjao1i/CuMYOUV3dfiucoBWtnPmD+MdkQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 161/171] net: icmp: fix data-race in cmp_global_allow()
+        stable@vger.kernel.org, Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Michael Walle <michael@walle.cc>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 119/137] gpio: mpc8xxx: Dont overwrite default irq_set_type callback
 Date:   Thu,  2 Jan 2020 23:08:12 +0100
-Message-Id: <20200102220609.205812496@linuxfoundation.org>
+Message-Id: <20200102220603.140332024@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,116 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
 
-commit bbab7ef235031f6733b5429ae7877bfa22339712 upstream.
+[ Upstream commit 4e50573f39229d5e9c985fa3b4923a8b29619ade ]
 
-This code reads two global variables without protection
-of a lock. We need READ_ONCE()/WRITE_ONCE() pairs to
-avoid load/store-tearing and better document the intent.
+The per-SoC devtype structures can contain their own callbacks that
+overwrite mpc8xxx_gpio_devtype_default.
 
-KCSAN reported :
-BUG: KCSAN: data-race in icmp_global_allow / icmp_global_allow
+The clear intention is that mpc8xxx_irq_set_type is used in case the SoC
+does not specify a more specific callback. But what happens is that if
+the SoC doesn't specify one, its .irq_set_type is de-facto NULL, and
+this overwrites mpc8xxx_irq_set_type to a no-op. This means that the
+following SoCs are affected:
 
-read to 0xffffffff861a8014 of 4 bytes by task 11201 on cpu 0:
- icmp_global_allow+0x36/0x1b0 net/ipv4/icmp.c:254
- icmpv6_global_allow net/ipv6/icmp.c:184 [inline]
- icmpv6_global_allow net/ipv6/icmp.c:179 [inline]
- icmp6_send+0x493/0x1140 net/ipv6/icmp.c:514
- icmpv6_send+0x71/0xb0 net/ipv6/ip6_icmp.c:43
- ip6_link_failure+0x43/0x180 net/ipv6/route.c:2640
- dst_link_failure include/net/dst.h:419 [inline]
- vti_xmit net/ipv4/ip_vti.c:243 [inline]
- vti_tunnel_xmit+0x27f/0xa50 net/ipv4/ip_vti.c:279
- __netdev_start_xmit include/linux/netdevice.h:4420 [inline]
- netdev_start_xmit include/linux/netdevice.h:4434 [inline]
- xmit_one net/core/dev.c:3280 [inline]
- dev_hard_start_xmit+0xef/0x430 net/core/dev.c:3296
- __dev_queue_xmit+0x14c9/0x1b60 net/core/dev.c:3873
- dev_queue_xmit+0x21/0x30 net/core/dev.c:3906
- neigh_direct_output+0x1f/0x30 net/core/neighbour.c:1530
- neigh_output include/net/neighbour.h:511 [inline]
- ip6_finish_output2+0x7a6/0xec0 net/ipv6/ip6_output.c:116
- __ip6_finish_output net/ipv6/ip6_output.c:142 [inline]
- __ip6_finish_output+0x2d7/0x330 net/ipv6/ip6_output.c:127
- ip6_finish_output+0x41/0x160 net/ipv6/ip6_output.c:152
- NF_HOOK_COND include/linux/netfilter.h:294 [inline]
- ip6_output+0xf2/0x280 net/ipv6/ip6_output.c:175
- dst_output include/net/dst.h:436 [inline]
- ip6_local_out+0x74/0x90 net/ipv6/output_core.c:179
+- fsl,mpc8572-gpio
+- fsl,ls1028a-gpio
+- fsl,ls1088a-gpio
 
-write to 0xffffffff861a8014 of 4 bytes by task 11183 on cpu 1:
- icmp_global_allow+0x174/0x1b0 net/ipv4/icmp.c:272
- icmpv6_global_allow net/ipv6/icmp.c:184 [inline]
- icmpv6_global_allow net/ipv6/icmp.c:179 [inline]
- icmp6_send+0x493/0x1140 net/ipv6/icmp.c:514
- icmpv6_send+0x71/0xb0 net/ipv6/ip6_icmp.c:43
- ip6_link_failure+0x43/0x180 net/ipv6/route.c:2640
- dst_link_failure include/net/dst.h:419 [inline]
- vti_xmit net/ipv4/ip_vti.c:243 [inline]
- vti_tunnel_xmit+0x27f/0xa50 net/ipv4/ip_vti.c:279
- __netdev_start_xmit include/linux/netdevice.h:4420 [inline]
- netdev_start_xmit include/linux/netdevice.h:4434 [inline]
- xmit_one net/core/dev.c:3280 [inline]
- dev_hard_start_xmit+0xef/0x430 net/core/dev.c:3296
- __dev_queue_xmit+0x14c9/0x1b60 net/core/dev.c:3873
- dev_queue_xmit+0x21/0x30 net/core/dev.c:3906
- neigh_direct_output+0x1f/0x30 net/core/neighbour.c:1530
- neigh_output include/net/neighbour.h:511 [inline]
- ip6_finish_output2+0x7a6/0xec0 net/ipv6/ip6_output.c:116
- __ip6_finish_output net/ipv6/ip6_output.c:142 [inline]
- __ip6_finish_output+0x2d7/0x330 net/ipv6/ip6_output.c:127
- ip6_finish_output+0x41/0x160 net/ipv6/ip6_output.c:152
- NF_HOOK_COND include/linux/netfilter.h:294 [inline]
- ip6_output+0xf2/0x280 net/ipv6/ip6_output.c:175
+On these boards, the irq_set_type does exactly nothing, and the GPIO
+controller keeps its GPICR register in the hardware-default state. On
+the LS1028A, that is ACTIVE_BOTH, which means 2 interrupts are raised
+even if the IRQ client requests LEVEL_HIGH. Another implication is that
+the IRQs are not checked (e.g. level-triggered interrupts are not
+rejected, although they are not supported).
 
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 PID: 11183 Comm: syz-executor.2 Not tainted 5.4.0-rc3+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-
-Fixes: 4cdf507d5452 ("icmp: add a global rate limitation")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 82e39b0d8566 ("gpio: mpc8xxx: handle differences between incarnations at a single place")
+Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Link: https://lore.kernel.org/r/20191115125551.31061-1-olteanv@gmail.com
+Tested-by: Michael Walle <michael@walle.cc>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/icmp.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-mpc8xxx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/ipv4/icmp.c
-+++ b/net/ipv4/icmp.c
-@@ -256,10 +256,11 @@ bool icmp_global_allow(void)
- 	bool rc = false;
- 
- 	/* Check if token bucket is empty and cannot be refilled
--	 * without taking the spinlock.
-+	 * without taking the spinlock. The READ_ONCE() are paired
-+	 * with the following WRITE_ONCE() in this same function.
+diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+index 9e02cb6afb0b..ce6e15167d0b 100644
+--- a/drivers/gpio/gpio-mpc8xxx.c
++++ b/drivers/gpio/gpio-mpc8xxx.c
+@@ -409,7 +409,8 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+ 	 * It's assumed that only a single type of gpio controller is available
+ 	 * on the current machine, so overwriting global data is fine.
  	 */
--	if (!icmp_global.credit) {
--		delta = min_t(u32, now - icmp_global.stamp, HZ);
-+	if (!READ_ONCE(icmp_global.credit)) {
-+		delta = min_t(u32, now - READ_ONCE(icmp_global.stamp), HZ);
- 		if (delta < HZ / 50)
- 			return false;
- 	}
-@@ -269,14 +270,14 @@ bool icmp_global_allow(void)
- 	if (delta >= HZ / 50) {
- 		incr = sysctl_icmp_msgs_per_sec * delta / HZ ;
- 		if (incr)
--			icmp_global.stamp = now;
-+			WRITE_ONCE(icmp_global.stamp, now);
- 	}
- 	credit = min_t(u32, icmp_global.credit + incr, sysctl_icmp_msgs_burst);
- 	if (credit) {
- 		credit--;
- 		rc = true;
- 	}
--	icmp_global.credit = credit;
-+	WRITE_ONCE(icmp_global.credit, credit);
- 	spin_unlock(&icmp_global.lock);
- 	return rc;
- }
+-	mpc8xxx_irq_chip.irq_set_type = devtype->irq_set_type;
++	if (devtype->irq_set_type)
++		mpc8xxx_irq_chip.irq_set_type = devtype->irq_set_type;
+ 
+ 	gc->direction_output = devtype->gpio_dir_out ?: mpc8xxx_gpio_dir_out;
+ 	gc->get = devtype->gpio_get ?: mpc8xxx_gpio_get;
+-- 
+2.20.1
+
 
 
