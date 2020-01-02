@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9573212EDF8
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:34:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76E6F12EE8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:40:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730457AbgABWdv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:33:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41648 "EHLO mail.kernel.org"
+        id S1731457AbgABWjW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:39:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730202AbgABWdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:33:49 -0500
+        id S1731177AbgABWjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:39:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B03E20863;
-        Thu,  2 Jan 2020 22:33:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6E72217F4;
+        Thu,  2 Jan 2020 22:39:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004428;
-        bh=JZ80ThWIog+FolcMXpSKaik1yjlU0edrlPqLSvayDvM=;
+        s=default; t=1578004760;
+        bh=+O2zlRv2fKp69OE2+WSiH7GwneOvEM7wrJNwqYSuv3c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UT2I0mtu5neknr9COdlZfwBMPGwGOAGsgZJYOGUqCEE4tRLQjh60VnNLk17P20AC3
-         QIvfm2+a7208bPW9RjCFib888oYSqFK22dRVI24Rhl1CvgADuVRnhU5Hn3zDNq3rEL
-         bWM9nQ1VNzJ70mAXD1Ah2rfEiRNXquOyxwb6R4SY=
+        b=dmXaZgTjq9O0nOpsuZT8Om1g6e8Ev3fEJPAAgY37bjhQ0+/I6a8oiuTzuY4y0htXt
+         DVsotmYSr0NsSVQiOCahnlqfqRYyhR+0Rxy4FNT/MBoEWURGE0l4OXrJ6U4f2HylhR
+         brr1n/PCfVmP1ooxROFu8O1/PQGkn0qLjJ6dFARM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+3031f712c7ad5dd4d926@syzkaller.appspotmail.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Siddharth Chandrasekaran <csiddharth@vmware.com>
-Subject: [PATCH 4.9 157/171] filldir[64]: remove WARN_ON_ONCE() for bad directory entries
-Date:   Thu,  2 Jan 2020 23:08:08 +0100
-Message-Id: <20200102220608.584364685@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org, Andreas Dilger <adilger@dilger.ca>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 116/137] ext4: work around deleting a file with i_nlink == 0 safely
+Date:   Thu,  2 Jan 2020 23:08:09 +0100
+Message-Id: <20200102220602.757575928@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit b9959c7a347d6adbb558fba7e36e9fef3cba3b07 upstream.
+[ Upstream commit c7df4a1ecb8579838ec8c56b2bb6a6716e974f37 ]
 
-This was always meant to be a temporary thing, just for testing and to
-see if it actually ever triggered.
+If the file system is corrupted such that a file's i_links_count is
+too small, then it's possible that when unlinking that file, i_nlink
+will already be zero.  Previously we were working around this kind of
+corruption by forcing i_nlink to one; but we were doing this before
+trying to delete the directory entry --- and if the file system is
+corrupted enough that ext4_delete_entry() fails, then we exit with
+i_nlink elevated, and this causes the orphan inode list handling to be
+FUBAR'ed, such that when we unmount the file system, the orphan inode
+list can get corrupted.
 
-The only thing that reported it was syzbot doing disk image fuzzing, and
-then that warning is expected.  So let's just remove it before -rc4,
-because the extra sanity testing should probably go to -stable, but we
-don't want the warning to do so.
+A better way to fix this is to simply skip trying to call drop_nlink()
+if i_nlink is already zero, thus moving the check to the place where
+it makes the most sense.
 
-Reported-by: syzbot+3031f712c7ad5dd4d926@syzkaller.appspotmail.com
-Fixes: 8a23eb804ca4 ("Make filldir[64]() verify the directory entry filename is valid")
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Siddharth Chandrasekaran <csiddharth@vmware.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+https://bugzilla.kernel.org/show_bug.cgi?id=205433
 
+Link: https://lore.kernel.org/r/20191112032903.8828-1-tytso@mit.edu
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/readdir.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ext4/namei.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
---- a/fs/readdir.c
-+++ b/fs/readdir.c
-@@ -90,9 +90,9 @@ EXPORT_SYMBOL(iterate_dir);
-  */
- static int verify_dirent_name(const char *name, int len)
- {
--	if (WARN_ON_ONCE(!len))
-+	if (!len)
- 		return -EIO;
--	if (WARN_ON_ONCE(memchr(name, '/', len)))
-+	if (memchr(name, '/', len))
- 		return -EIO;
- 	return 0;
- }
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index aa08e129149d..712bf332e394 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -3040,18 +3040,17 @@ static int ext4_unlink(struct inode *dir, struct dentry *dentry)
+ 	if (IS_DIRSYNC(dir))
+ 		ext4_handle_sync(handle);
+ 
+-	if (inode->i_nlink == 0) {
+-		ext4_warning_inode(inode, "Deleting file '%.*s' with no links",
+-				   dentry->d_name.len, dentry->d_name.name);
+-		set_nlink(inode, 1);
+-	}
+ 	retval = ext4_delete_entry(handle, dir, de, bh);
+ 	if (retval)
+ 		goto end_unlink;
+ 	dir->i_ctime = dir->i_mtime = ext4_current_time(dir);
+ 	ext4_update_dx_flag(dir);
+ 	ext4_mark_inode_dirty(handle, dir);
+-	drop_nlink(inode);
++	if (inode->i_nlink == 0)
++		ext4_warning_inode(inode, "Deleting file '%.*s' with no links",
++				   dentry->d_name.len, dentry->d_name.name);
++	else
++		drop_nlink(inode);
+ 	if (!inode->i_nlink)
+ 		ext4_orphan_add(handle, inode);
+ 	inode->i_ctime = ext4_current_time(inode);
+-- 
+2.20.1
+
 
 
