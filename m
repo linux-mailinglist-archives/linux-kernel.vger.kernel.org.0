@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 100BE12ED2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:25:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADDB012ECD4
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:22:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729558AbgABWZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:25:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51606 "EHLO mail.kernel.org"
+        id S1727382AbgABWWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:22:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729023AbgABWZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:25:42 -0500
+        id S1729131AbgABWWU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:22:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A2A62253D;
-        Thu,  2 Jan 2020 22:25:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB75321D7D;
+        Thu,  2 Jan 2020 22:22:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003941;
-        bh=cAXW1ArC2h5cxAmqua/9/NNnDaRZDLuYbmOudVCJqjQ=;
+        s=default; t=1578003740;
+        bh=QCKbD5lsG3y8EzqeBjyyj/2nvanhz5ueWZviiPgGRrQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z+TW9DeN+GD2JJlE4pJ1kT3K/FCch4tpqPWHVxcIfN4kdkBVnw7VRuRL026errXiy
-         ipUFDwbbEzlOytw+sqhW76zKOs/jaa2mOgbZCEahCAB0lLy6TpopeuX0m4w9GO5M51
-         2TUp0FePd40dIVkMYtuLKw5E4l1zLr3JCfgpc2BY=
+        b=ViRX9ZtQbRDdVCmKFZCeA6oOxUj9ZMC/7UFLU1qXnGGxcizZ4/UXYxOss0ljht4Py
+         42aArmlIqJex4N4W2aliOtD6o+10Ln7hIvGDkKGrymQswnyfamwiypnDIOCVq7F3UH
+         B/9PYr6YhUCjCApraTTp/VwhuGQX/6dak0YELhRA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+f68108fed972453a0ad4@syzkaller.appspotmail.com,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.14 64/91] netfilter: ebtables: compat: reject all padding in matches/watchers
+        stable@vger.kernel.org, Cambda Zhu <cambda@linux.alibaba.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 094/114] tcp: Fix highest_sack and highest_sack_seq
 Date:   Thu,  2 Jan 2020 23:07:46 +0100
-Message-Id: <20200102220442.509364885@linuxfoundation.org>
+Message-Id: <20200102220038.629285760@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
-References: <20200102220356.856162165@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,138 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Cambda Zhu <cambda@linux.alibaba.com>
 
-commit e608f631f0ba5f1fc5ee2e260a3a35d13107cbfe upstream.
+[ Upstream commit 853697504de043ff0bfd815bd3a64de1dce73dc7 ]
 
-syzbot reported following splat:
+>From commit 50895b9de1d3 ("tcp: highest_sack fix"), the logic about
+setting tp->highest_sack to the head of the send queue was removed.
+Of course the logic is error prone, but it is logical. Before we
+remove the pointer to the highest sack skb and use the seq instead,
+we need to set tp->highest_sack to NULL when there is no skb after
+the last sack, and then replace NULL with the real skb when new skb
+inserted into the rtx queue, because the NULL means the highest sack
+seq is tp->snd_nxt. If tp->highest_sack is NULL and new data sent,
+the next ACK with sack option will increase tp->reordering unexpectedly.
 
-BUG: KASAN: vmalloc-out-of-bounds in size_entry_mwt net/bridge/netfilter/ebtables.c:2063 [inline]
-BUG: KASAN: vmalloc-out-of-bounds in compat_copy_entries+0x128b/0x1380 net/bridge/netfilter/ebtables.c:2155
-Read of size 4 at addr ffffc900004461f4 by task syz-executor267/7937
+This patch sets tp->highest_sack to the tail of the rtx queue if
+it's NULL and new data is sent. The patch keeps the rule that the
+highest_sack can only be maintained by sack processing, except for
+this only case.
 
-CPU: 1 PID: 7937 Comm: syz-executor267 Not tainted 5.5.0-rc1-syzkaller #0
- size_entry_mwt net/bridge/netfilter/ebtables.c:2063 [inline]
- compat_copy_entries+0x128b/0x1380 net/bridge/netfilter/ebtables.c:2155
- compat_do_replace+0x344/0x720 net/bridge/netfilter/ebtables.c:2249
- compat_do_ebt_set_ctl+0x22f/0x27e net/bridge/netfilter/ebtables.c:2333
- [..]
-
-Because padding isn't considered during computation of ->buf_user_offset,
-"total" is decremented by fewer bytes than it should.
-
-Therefore, the first part of
-
-if (*total < sizeof(*entry) || entry->next_offset < sizeof(*entry))
-
-will pass, -- it should not have.  This causes oob access:
-entry->next_offset is past the vmalloced size.
-
-Reject padding and check that computed user offset (sum of ebt_entry
-structure plus all individual matches/watchers/targets) is same
-value that userspace gave us as the offset of the next entry.
-
-Reported-by: syzbot+f68108fed972453a0ad4@syzkaller.appspotmail.com
-Fixes: 81e675c227ec ("netfilter: ebtables: add CONFIG_COMPAT support")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 50895b9de1d3 ("tcp: highest_sack fix")
+Signed-off-by: Cambda Zhu <cambda@linux.alibaba.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/bridge/netfilter/ebtables.c |   33 ++++++++++++++++-----------------
- 1 file changed, 16 insertions(+), 17 deletions(-)
+ net/ipv4/tcp_output.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -1876,7 +1876,7 @@ static int ebt_buf_count(struct ebt_entr
- }
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -60,6 +60,9 @@ static void tcp_event_new_data_sent(stru
+ 	__skb_unlink(skb, &sk->sk_write_queue);
+ 	tcp_rbtree_insert(&sk->tcp_rtx_queue, skb);
  
- static int ebt_buf_add(struct ebt_entries_buf_state *state,
--		       void *data, unsigned int sz)
-+		       const void *data, unsigned int sz)
- {
- 	if (state->buf_kern_start == NULL)
- 		goto count_only;
-@@ -1910,7 +1910,7 @@ enum compat_mwt {
- 	EBT_COMPAT_TARGET,
- };
- 
--static int compat_mtw_from_user(struct compat_ebt_entry_mwt *mwt,
-+static int compat_mtw_from_user(const struct compat_ebt_entry_mwt *mwt,
- 				enum compat_mwt compat_mwt,
- 				struct ebt_entries_buf_state *state,
- 				const unsigned char *base)
-@@ -1986,22 +1986,23 @@ static int compat_mtw_from_user(struct c
- /* return size of all matches, watchers or target, including necessary
-  * alignment and padding.
-  */
--static int ebt_size_mwt(struct compat_ebt_entry_mwt *match32,
-+static int ebt_size_mwt(const struct compat_ebt_entry_mwt *match32,
- 			unsigned int size_left, enum compat_mwt type,
- 			struct ebt_entries_buf_state *state, const void *base)
- {
-+	const char *buf = (const char *)match32;
- 	int growth = 0;
--	char *buf;
- 
- 	if (size_left == 0)
- 		return 0;
- 
--	buf = (char *) match32;
--
--	while (size_left >= sizeof(*match32)) {
-+	do {
- 		struct ebt_entry_match *match_kern;
- 		int ret;
- 
-+		if (size_left < sizeof(*match32))
-+			return -EINVAL;
++	if (tp->highest_sack == NULL)
++		tp->highest_sack = skb;
 +
- 		match_kern = (struct ebt_entry_match *) state->buf_kern_start;
- 		if (match_kern) {
- 			char *tmp;
-@@ -2038,22 +2039,18 @@ static int ebt_size_mwt(struct compat_eb
- 		if (match_kern)
- 			match_kern->match_size = ret;
- 
--		/* rule should have no remaining data after target */
--		if (type == EBT_COMPAT_TARGET && size_left)
--			return -EINVAL;
--
- 		match32 = (struct compat_ebt_entry_mwt *) buf;
--	}
-+	} while (size_left);
- 
- 	return growth;
- }
- 
- /* called for all ebt_entry structures. */
--static int size_entry_mwt(struct ebt_entry *entry, const unsigned char *base,
-+static int size_entry_mwt(const struct ebt_entry *entry, const unsigned char *base,
- 			  unsigned int *total,
- 			  struct ebt_entries_buf_state *state)
- {
--	unsigned int i, j, startoff, new_offset = 0;
-+	unsigned int i, j, startoff, next_expected_off, new_offset = 0;
- 	/* stores match/watchers/targets & offset of next struct ebt_entry: */
- 	unsigned int offsets[4];
- 	unsigned int *offsets_update = NULL;
-@@ -2140,11 +2137,13 @@ static int size_entry_mwt(struct ebt_ent
- 			return ret;
- 	}
- 
--	startoff = state->buf_user_offset - startoff;
-+	next_expected_off = state->buf_user_offset - startoff;
-+	if (next_expected_off != entry->next_offset)
-+		return -EINVAL;
- 
--	if (WARN_ON(*total < startoff))
-+	if (*total < entry->next_offset)
- 		return -EINVAL;
--	*total -= startoff;
-+	*total -= entry->next_offset;
- 	return 0;
- }
- 
+ 	tp->packets_out += tcp_skb_pcount(skb);
+ 	if (!prior_packets || icsk->icsk_pending == ICSK_TIME_LOSS_PROBE)
+ 		tcp_rearm_rto(sk);
 
 
