@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 169EF12EC5B
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:17:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3CFA12ED21
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:25:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbgABWRm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:17:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60246 "EHLO mail.kernel.org"
+        id S1729483AbgABWZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:25:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728365AbgABWRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:17:37 -0500
+        id S1729366AbgABWZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:25:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 801AF227BF;
-        Thu,  2 Jan 2020 22:17:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1E7C21835;
+        Thu,  2 Jan 2020 22:25:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003457;
-        bh=AT2WhW5MQNZ6Kd2PuTjD5TTU9q9gqdrKbc7+j7RSLoE=;
+        s=default; t=1578003911;
+        bh=S48A1bbrwIfmVbypVRzcNi+uBBmowvay75XPI3v0jFU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=czXFKUXinBqJaiBfCfRejAD6cDt8fdQV10CTmOnoIS10XOGe4SFpJxNxpZfid+iFz
-         XtFCf/Wv+FvfCgSmdm79WPxVAkcpj1XdmGLBT9G5FimpTZ0s+SJjbJ/YPwU85GfxxP
-         RNknWeZaq/aEmUIR6bp2eTzf1pV83fi0a2i0aSsk=
+        b=Jss8o0Cs4vjOBpiNU3C/Z5QB7IcgS8cC1PnlmoTOw3PC7tQ9kfYcbCm0IADiyzfd8
+         Gzr2fIcI6rarb2SzQD4qsGrWhUCR4zABXdTCAWMCsw0RlCaA1keVyn/lAuH/E/K5Gc
+         MnaZFwlLCiyUdDjuvYH96bgJUohTb52fW6ESnUeA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
-        Guillaume Nault <gnault@redhat.com>,
-        David Ahern <dsahern@gmail.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 168/191] ip6_gre: do not confirm neighbor when do pmtu update
-Date:   Thu,  2 Jan 2020 23:07:30 +0100
-Message-Id: <20200102215847.311928164@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Rob Herring <robh@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 50/91] libfdt: define INT32_MAX and UINT32_MAX in libfdt_env.h
+Date:   Thu,  2 Jan 2020 23:07:32 +0100
+Message-Id: <20200102220436.967770872@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
+References: <20200102220356.856162165@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,47 +44,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit 675d76ad0ad5bf41c9a129772ef0aba8f57ea9a7 ]
+[ Upstream commit a8de1304b7df30e3a14f2a8b9709bb4ff31a0385 ]
 
-When we do ipv6 gre pmtu update, we will also do neigh confirm currently.
-This will cause the neigh cache be refreshed and set to REACHABLE before
-xmit.
+The DTC v1.5.1 added references to (U)INT32_MAX.
 
-But if the remote mac address changed, e.g. device is deleted and recreated,
-we will not able to notice this and still use the old mac address as the neigh
-cache is REACHABLE.
+This is no problem for user-space programs since <stdint.h> defines
+(U)INT32_MAX along with (u)int32_t.
 
-Fix this by disable neigh confirm when do pmtu update
+For the kernel space, libfdt_env.h needs to be adjusted before we
+pull in the changes.
 
-v5: No change.
-v4: No change.
-v3: Do not remove dst_confirm_neigh, but add a new bool parameter in
-    dst_ops.update_pmtu to control whether we should do neighbor confirm.
-    Also split the big patch to small ones for each area.
-v2: Remove dst_confirm_neigh in __ip6_rt_update_pmtu.
+In the kernel, we usually use s/u32 instead of (u)int32_t for the
+fixed-width types.
 
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Reviewed-by: Guillaume Nault <gnault@redhat.com>
-Acked-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Accordingly, we already have S/U32_MAX for their max values.
+So, we should not add (U)INT32_MAX to <linux/limits.h> any more.
+
+Instead, add them to the in-kernel libfdt_env.h to compile the
+latest libfdt.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/ip6_gre.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/compressed/libfdt_env.h | 4 +++-
+ arch/powerpc/boot/libfdt_env.h        | 2 ++
+ include/linux/libfdt_env.h            | 3 +++
+ 3 files changed, 8 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -1040,7 +1040,7 @@ static netdev_tx_t ip6erspan_tunnel_xmit
+diff --git a/arch/arm/boot/compressed/libfdt_env.h b/arch/arm/boot/compressed/libfdt_env.h
+index b36c0289a308..6a0f1f524466 100644
+--- a/arch/arm/boot/compressed/libfdt_env.h
++++ b/arch/arm/boot/compressed/libfdt_env.h
+@@ -2,11 +2,13 @@
+ #ifndef _ARM_LIBFDT_ENV_H
+ #define _ARM_LIBFDT_ENV_H
  
- 	/* TooBig packet may have updated dst->dev's mtu */
- 	if (!t->parms.collect_md && dst && dst_mtu(dst) > dst->dev->mtu)
--		dst->ops->update_pmtu(dst, NULL, skb, dst->dev->mtu, true);
-+		dst->ops->update_pmtu(dst, NULL, skb, dst->dev->mtu, false);
++#include <linux/limits.h>
+ #include <linux/types.h>
+ #include <linux/string.h>
+ #include <asm/byteorder.h>
  
- 	err = ip6_tnl_xmit(skb, dev, dsfield, &fl6, encap_limit, &mtu,
- 			   NEXTHDR_GRE);
+-#define INT_MAX			((int)(~0U>>1))
++#define INT32_MAX	S32_MAX
++#define UINT32_MAX	U32_MAX
+ 
+ typedef __be16 fdt16_t;
+ typedef __be32 fdt32_t;
+diff --git a/arch/powerpc/boot/libfdt_env.h b/arch/powerpc/boot/libfdt_env.h
+index 39155d3b2cef..ac5d3c947e04 100644
+--- a/arch/powerpc/boot/libfdt_env.h
++++ b/arch/powerpc/boot/libfdt_env.h
+@@ -6,6 +6,8 @@
+ #include <string.h>
+ 
+ #define INT_MAX			((int)(~0U>>1))
++#define UINT32_MAX		((u32)~0U)
++#define INT32_MAX		((s32)(UINT32_MAX >> 1))
+ 
+ #include "of.h"
+ 
+diff --git a/include/linux/libfdt_env.h b/include/linux/libfdt_env.h
+index 1aa707ab19bb..8b54c591678e 100644
+--- a/include/linux/libfdt_env.h
++++ b/include/linux/libfdt_env.h
+@@ -7,6 +7,9 @@
+ 
+ #include <asm/byteorder.h>
+ 
++#define INT32_MAX	S32_MAX
++#define UINT32_MAX	U32_MAX
++
+ typedef __be16 fdt16_t;
+ typedef __be32 fdt32_t;
+ typedef __be64 fdt64_t;
+-- 
+2.20.1
+
 
 
