@@ -2,40 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DACC512F0C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:55:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4E5212EF0D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:43:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728594AbgABWT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:19:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35500 "EHLO mail.kernel.org"
+        id S1730725AbgABWeq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:34:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728579AbgABWTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:19:23 -0500
+        id S1730713AbgABWen (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:34:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3181D2253D;
-        Thu,  2 Jan 2020 22:19:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37B01222C3;
+        Thu,  2 Jan 2020 22:34:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003562;
-        bh=kBs+PGhfDJoXp+X0PDY6anu/CdS5IPxlDl/7I/nC9Gc=;
+        s=default; t=1578004482;
+        bh=TZt9TgbZFdaBw2bUpn+icelLm5SELcw/ulBioatx4Cs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JJ4zJKISzQXgq/c4ezEoYfIY6MN41Y85gmYSrakBvjbrbpUB1p4ENku4WbMbRAvqh
-         XUzPCwijd0VLk8CV8WRFzWR4Un4PVmzvKps1bKK18thcAYVp2f2p0Q4hb6P96HQJr+
-         ilPYOJfflNxCDREiW1w0fwONj3CE/xfqqd33X8sc=
+        b=IchDlXu6HHsKbR2ggaC0JxI/lNDyBjLtfYMYmEEWxKvg1DQZDuy5LIuGiP9N0RHRT
+         Ep7yxEQnUUYq334CZ1ZW/2C64+6A17X2R6IW5X7J+tFg3Eil71s/pQpbHWV5dLzot8
+         MZ3DvGeXUPxE++kKKEY3ZHb80ZxUafXyivoMco8Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ezequiel Garcia <ezequiel@collabora.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 006/114] iommu: rockchip: Free domain on .domain_free
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Todd Previte <tprevite@gmail.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, Sean Paul <seanpaul@chromium.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 005/137] drm: mst: Fix query_payload ack reply struct
 Date:   Thu,  2 Jan 2020 23:06:18 +0100
-Message-Id: <20200102220029.805232190@linuxfoundation.org>
+Message-Id: <20200102220547.330497623@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,62 +50,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ezequiel Garcia <ezequiel@collabora.com>
+From: Sean Paul <seanpaul@chromium.org>
 
-[ Upstream commit 42bb97b80f2e3bf592e3e99d109b67309aa1b30e ]
+[ Upstream commit 268de6530aa18fe5773062367fd119f0045f6e88 ]
 
-IOMMU domain resource life is well-defined, managed
-by .domain_alloc and .domain_free.
+Spec says[1] Allocated_PBN is 16 bits
 
-Therefore, domain-specific resources shouldn't be tied to
-the device life, but instead to its domain.
+[1]- DisplayPort 1.2 Spec, Section 2.11.9.8, Table 2-98
 
-Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: ad7f8a1f9ced ("drm/helper: add Displayport multi-stream helper (v0.6)")
+Cc: Lyude Paul <lyude@redhat.com>
+Cc: Todd Previte <tprevite@gmail.com>
+Cc: Dave Airlie <airlied@redhat.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Sean Paul <sean@poorly.run>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org
+Reviewed-by: Lyude Paul <lyude@redhat.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190829165223.129662-1-sean@poorly.run
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/rockchip-iommu.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ include/drm/drm_dp_mst_helper.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-index ad3e2b97469e..140b287e886c 100644
---- a/drivers/iommu/rockchip-iommu.c
-+++ b/drivers/iommu/rockchip-iommu.c
-@@ -977,13 +977,13 @@ static struct iommu_domain *rk_iommu_domain_alloc(unsigned type)
- 	if (!dma_dev)
- 		return NULL;
+diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
+index f356f9716474..674472ac067a 100644
+--- a/include/drm/drm_dp_mst_helper.h
++++ b/include/drm/drm_dp_mst_helper.h
+@@ -303,7 +303,7 @@ struct drm_dp_resource_status_notify {
  
--	rk_domain = devm_kzalloc(dma_dev, sizeof(*rk_domain), GFP_KERNEL);
-+	rk_domain = kzalloc(sizeof(*rk_domain), GFP_KERNEL);
- 	if (!rk_domain)
- 		return NULL;
+ struct drm_dp_query_payload_ack_reply {
+ 	u8 port_number;
+-	u8 allocated_pbn;
++	u16 allocated_pbn;
+ };
  
- 	if (type == IOMMU_DOMAIN_DMA &&
- 	    iommu_get_dma_cookie(&rk_domain->domain))
--		return NULL;
-+		goto err_free_domain;
- 
- 	/*
- 	 * rk32xx iommus use a 2 level pagetable.
-@@ -1018,6 +1018,8 @@ err_free_dt:
- err_put_cookie:
- 	if (type == IOMMU_DOMAIN_DMA)
- 		iommu_put_dma_cookie(&rk_domain->domain);
-+err_free_domain:
-+	kfree(rk_domain);
- 
- 	return NULL;
- }
-@@ -1046,6 +1048,7 @@ static void rk_iommu_domain_free(struct iommu_domain *domain)
- 
- 	if (domain->type == IOMMU_DOMAIN_DMA)
- 		iommu_put_dma_cookie(&rk_domain->domain);
-+	kfree(rk_domain);
- }
- 
- static int rk_iommu_add_device(struct device *dev)
+ struct drm_dp_sideband_msg_req_body {
 -- 
 2.20.1
 
