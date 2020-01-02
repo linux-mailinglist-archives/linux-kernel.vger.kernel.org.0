@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15EA912EEE6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:42:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDB8212F074
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:53:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731290AbgABWmJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:42:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47866 "EHLO mail.kernel.org"
+        id S1729043AbgABWVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:21:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730563AbgABWgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:36:32 -0500
+        id S1729032AbgABWVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:21:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4574421835;
-        Thu,  2 Jan 2020 22:36:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D29C324649;
+        Thu,  2 Jan 2020 22:21:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004590;
-        bh=f160mG0OuevRzBxd7nlx3AVqJfgARLe47fn1vVaGqu4=;
+        s=default; t=1578003699;
+        bh=X0HoWFRX0aHvr5DB4mtrAuXGQysX0wHdE3DBP5LEEOk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q8vcJXSAL5hDrr6BTMresijOUNVm9fai7PGptMBrGMqT4EHXfJit+xJJ+X3l3b/Tc
-         nXf0GtlpEFUxpw6L7DsIXjAvwnFqY8usG7VH4dCg0BJATfGr/3XXRpu16UVcbCw221
-         wI6iTEZ3iKpNyGpQfkYRpWfs73o9RTzwgOHkHKEI=
+        b=D9x7kpkR8GE9wjrBGmksq9ydGkkJTpbhkybiwujruu6igaFIZCuJbqLDnNvXFvsXC
+         OPallHBnxb42HxVHZKam6uKrJ+7C2ZVivYc1yp6CQN0FFci0NzQnpQnnWAVoJPy3mg
+         0HBJk2tsO0UW6QWrD9YgvRLawWeDe1OSuLsXXNQQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Maurizio Lombardi <mlombard@redhat.com>,
+        Douglas Gilbert <dgilbert@interlog.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 053/137] spi: pxa2xx: Add missed security checks
+Subject: [PATCH 4.19 054/114] scsi: scsi_debug: num_tgts must be >= 0
 Date:   Thu,  2 Jan 2020 23:07:06 +0100
-Message-Id: <20200102220553.652840941@linuxfoundation.org>
+Message-Id: <20200102220034.493876476@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Maurizio Lombardi <mlombard@redhat.com>
 
-[ Upstream commit 5eb263ef08b5014cfc2539a838f39d2fd3531423 ]
+[ Upstream commit aa5334c4f3014940f11bf876e919c956abef4089 ]
 
-pxa2xx_spi_init_pdata misses checks for devm_clk_get and
-platform_get_irq.
-Add checks for them to fix the bugs.
+Passing the parameter "num_tgts=-1" will start an infinite loop that
+exhausts the system memory
 
-Since ssp->clk and ssp->irq are used in probe, they are mandatory here.
-So we cannot use _optional() for devm_clk_get and platform_get_irq.
-
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Link: https://lore.kernel.org/r/20191109080943.30428-1-hslester96@gmail.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Link: https://lore.kernel.org/r/20191115163727.24626-1-mlombard@redhat.com
+Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
+Acked-by: Douglas Gilbert <dgilbert@interlog.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-pxa2xx.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/scsi/scsi_debug.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
-index 193aa3da5033..96ed01cb6489 100644
---- a/drivers/spi/spi-pxa2xx.c
-+++ b/drivers/spi/spi-pxa2xx.c
-@@ -1425,7 +1425,13 @@ pxa2xx_spi_init_pdata(struct platform_device *pdev)
+diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+index 65305b3848bc..a1dbae806fde 100644
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@ -5351,6 +5351,11 @@ static int __init scsi_debug_init(void)
+ 		return -EINVAL;
  	}
  
- 	ssp->clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(ssp->clk))
-+		return NULL;
++	if (sdebug_num_tgts < 0) {
++		pr_err("num_tgts must be >= 0\n");
++		return -EINVAL;
++	}
 +
- 	ssp->irq = platform_get_irq(pdev, 0);
-+	if (ssp->irq < 0)
-+		return NULL;
-+
- 	ssp->type = type;
- 	ssp->pdev = pdev;
- 	ssp->port_id = pxa2xx_spi_get_port_id(adev);
+ 	if (sdebug_guard > 1) {
+ 		pr_err("guard must be 0 or 1\n");
+ 		return -EINVAL;
 -- 
 2.20.1
 
