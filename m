@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3CFA12ED21
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:25:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D875F12ECDF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:23:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729483AbgABWZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:25:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50214 "EHLO mail.kernel.org"
+        id S1729192AbgABWWy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:22:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729366AbgABWZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:25:11 -0500
+        id S1727186AbgABWWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:22:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1E7C21835;
-        Thu,  2 Jan 2020 22:25:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C2562253D;
+        Thu,  2 Jan 2020 22:22:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003911;
-        bh=S48A1bbrwIfmVbypVRzcNi+uBBmowvay75XPI3v0jFU=;
+        s=default; t=1578003769;
+        bh=1BVvi37lXMsIZ8ASqwOJJQCpfuPGpO64HBQr7CaM3MM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jss8o0Cs4vjOBpiNU3C/Z5QB7IcgS8cC1PnlmoTOw3PC7tQ9kfYcbCm0IADiyzfd8
-         Gzr2fIcI6rarb2SzQD4qsGrWhUCR4zABXdTCAWMCsw0RlCaA1keVyn/lAuH/E/K5Gc
-         MnaZFwlLCiyUdDjuvYH96bgJUohTb52fW6ESnUeA=
+        b=atpULbxOrYY+pZR0DMRNpncUdOI7GE//lUOs8tmIQ0bU/Vt3I1OEFKQ/S5vScNE17
+         HfDD29zUkTKLHPxVGBu7Y3aYbwb7eFFtRsmWvbHF97XyO1UDLwIld7vdzyoM+EeTW2
+         9zUHyiW4bxwTaW8kV06eT57Nm1CcqgRf0lXTE2uM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Rob Herring <robh@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 50/91] libfdt: define INT32_MAX and UINT32_MAX in libfdt_env.h
+        stable@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jann Horn <jannh@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Siddharth Chandrasekaran <csiddharth@vmware.com>
+Subject: [PATCH 4.19 080/114] Make filldir[64]() verify the directory entry filename is valid
 Date:   Thu,  2 Jan 2020 23:07:32 +0100
-Message-Id: <20200102220436.967770872@linuxfoundation.org>
+Message-Id: <20200102220037.169044480@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
-References: <20200102220356.856162165@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,84 +46,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit a8de1304b7df30e3a14f2a8b9709bb4ff31a0385 ]
+commit 8a23eb804ca4f2be909e372cf5a9e7b30ae476cd upstream.
 
-The DTC v1.5.1 added references to (U)INT32_MAX.
+This has been discussed several times, and now filesystem people are
+talking about doing it individually at the filesystem layer, so head
+that off at the pass and just do it in getdents{64}().
 
-This is no problem for user-space programs since <stdint.h> defines
-(U)INT32_MAX along with (u)int32_t.
+This is partially based on a patch by Jann Horn, but checks for NUL
+bytes as well, and somewhat simplified.
 
-For the kernel space, libfdt_env.h needs to be adjusted before we
-pull in the changes.
+There's also commentary about how it might be better if invalid names
+due to filesystem corruption don't cause an immediate failure, but only
+an error at the end of the readdir(), so that people can still see the
+filenames that are ok.
 
-In the kernel, we usually use s/u32 instead of (u)int32_t for the
-fixed-width types.
+There's also been discussion about just how much POSIX strictly speaking
+requires this since it's about filesystem corruption.  It's really more
+"protect user space from bad behavior" as pointed out by Jann.  But
+since Eric Biederman looked up the POSIX wording, here it is for context:
 
-Accordingly, we already have S/U32_MAX for their max values.
-So, we should not add (U)INT32_MAX to <linux/limits.h> any more.
+ "From readdir:
 
-Instead, add them to the in-kernel libfdt_env.h to compile the
-latest libfdt.
+   The readdir() function shall return a pointer to a structure
+   representing the directory entry at the current position in the
+   directory stream specified by the argument dirp, and position the
+   directory stream at the next entry. It shall return a null pointer
+   upon reaching the end of the directory stream. The structure dirent
+   defined in the <dirent.h> header describes a directory entry.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+  From definitions:
+
+   3.129 Directory Entry (or Link)
+
+   An object that associates a filename with a file. Several directory
+   entries can associate names with the same file.
+
+  ...
+
+   3.169 Filename
+
+   A name consisting of 1 to {NAME_MAX} bytes used to name a file. The
+   characters composing the name may be selected from the set of all
+   character values excluding the slash character and the null byte. The
+   filenames dot and dot-dot have special meaning. A filename is
+   sometimes referred to as a 'pathname component'."
+
+Note that I didn't bother adding the checks to any legacy interfaces
+that nobody uses.
+
+Also note that if this ends up being noticeable as a performance
+regression, we can fix that to do a much more optimized model that
+checks for both NUL and '/' at the same time one word at a time.
+
+We haven't really tended to optimize 'memchr()', and it only checks for
+one pattern at a time anyway, and we really _should_ check for NUL too
+(but see the comment about "soft errors" in the code about why it
+currently only checks for '/')
+
+See the CONFIG_DCACHE_WORD_ACCESS case of hash_name() for how the name
+lookup code looks for pathname terminating characters in parallel.
+
+Link: https://lore.kernel.org/lkml/20190118161440.220134-2-jannh@google.com/
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Jann Horn <jannh@google.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Siddharth Chandrasekaran <csiddharth@vmware.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/boot/compressed/libfdt_env.h | 4 +++-
- arch/powerpc/boot/libfdt_env.h        | 2 ++
- include/linux/libfdt_env.h            | 3 +++
- 3 files changed, 8 insertions(+), 1 deletion(-)
+ fs/readdir.c |   40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/arch/arm/boot/compressed/libfdt_env.h b/arch/arm/boot/compressed/libfdt_env.h
-index b36c0289a308..6a0f1f524466 100644
---- a/arch/arm/boot/compressed/libfdt_env.h
-+++ b/arch/arm/boot/compressed/libfdt_env.h
-@@ -2,11 +2,13 @@
- #ifndef _ARM_LIBFDT_ENV_H
- #define _ARM_LIBFDT_ENV_H
+--- a/fs/readdir.c
++++ b/fs/readdir.c
+@@ -65,6 +65,40 @@ out:
+ EXPORT_SYMBOL(iterate_dir);
  
-+#include <linux/limits.h>
- #include <linux/types.h>
- #include <linux/string.h>
- #include <asm/byteorder.h>
- 
--#define INT_MAX			((int)(~0U>>1))
-+#define INT32_MAX	S32_MAX
-+#define UINT32_MAX	U32_MAX
- 
- typedef __be16 fdt16_t;
- typedef __be32 fdt32_t;
-diff --git a/arch/powerpc/boot/libfdt_env.h b/arch/powerpc/boot/libfdt_env.h
-index 39155d3b2cef..ac5d3c947e04 100644
---- a/arch/powerpc/boot/libfdt_env.h
-+++ b/arch/powerpc/boot/libfdt_env.h
-@@ -6,6 +6,8 @@
- #include <string.h>
- 
- #define INT_MAX			((int)(~0U>>1))
-+#define UINT32_MAX		((u32)~0U)
-+#define INT32_MAX		((s32)(UINT32_MAX >> 1))
- 
- #include "of.h"
- 
-diff --git a/include/linux/libfdt_env.h b/include/linux/libfdt_env.h
-index 1aa707ab19bb..8b54c591678e 100644
---- a/include/linux/libfdt_env.h
-+++ b/include/linux/libfdt_env.h
-@@ -7,6 +7,9 @@
- 
- #include <asm/byteorder.h>
- 
-+#define INT32_MAX	S32_MAX
-+#define UINT32_MAX	U32_MAX
+ /*
++ * POSIX says that a dirent name cannot contain NULL or a '/'.
++ *
++ * It's not 100% clear what we should really do in this case.
++ * The filesystem is clearly corrupted, but returning a hard
++ * error means that you now don't see any of the other names
++ * either, so that isn't a perfect alternative.
++ *
++ * And if you return an error, what error do you use? Several
++ * filesystems seem to have decided on EUCLEAN being the error
++ * code for EFSCORRUPTED, and that may be the error to use. Or
++ * just EIO, which is perhaps more obvious to users.
++ *
++ * In order to see the other file names in the directory, the
++ * caller might want to make this a "soft" error: skip the
++ * entry, and return the error at the end instead.
++ *
++ * Note that this should likely do a "memchr(name, 0, len)"
++ * check too, since that would be filesystem corruption as
++ * well. However, that case can't actually confuse user space,
++ * which has to do a strlen() on the name anyway to find the
++ * filename length, and the above "soft error" worry means
++ * that it's probably better left alone until we have that
++ * issue clarified.
++ */
++static int verify_dirent_name(const char *name, int len)
++{
++	if (WARN_ON_ONCE(!len))
++		return -EIO;
++	if (WARN_ON_ONCE(memchr(name, '/', len)))
++		return -EIO;
++	return 0;
++}
 +
- typedef __be16 fdt16_t;
- typedef __be32 fdt32_t;
- typedef __be64 fdt64_t;
--- 
-2.20.1
-
++/*
+  * Traditional linux readdir() handling..
+  *
+  * "count=1" is a special case, meaning that the buffer is one
+@@ -173,6 +207,9 @@ static int filldir(struct dir_context *c
+ 	int reclen = ALIGN(offsetof(struct linux_dirent, d_name) + namlen + 2,
+ 		sizeof(long));
+ 
++	buf->error = verify_dirent_name(name, namlen);
++	if (unlikely(buf->error))
++		return buf->error;
+ 	buf->error = -EINVAL;	/* only used if we fail.. */
+ 	if (reclen > buf->count)
+ 		return -EINVAL;
+@@ -259,6 +296,9 @@ static int filldir64(struct dir_context
+ 	int reclen = ALIGN(offsetof(struct linux_dirent64, d_name) + namlen + 1,
+ 		sizeof(u64));
+ 
++	buf->error = verify_dirent_name(name, namlen);
++	if (unlikely(buf->error))
++		return buf->error;
+ 	buf->error = -EINVAL;	/* only used if we fail.. */
+ 	if (reclen > buf->count)
+ 		return -EINVAL;
 
 
