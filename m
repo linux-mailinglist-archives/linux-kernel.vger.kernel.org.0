@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB42B12ED66
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:28:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC39912EBF8
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:14:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729821AbgABW2A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:28:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57080 "EHLO mail.kernel.org"
+        id S1727815AbgABWOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:14:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729804AbgABW15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:27:57 -0500
+        id S1727486AbgABWOA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:14:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB78020866;
-        Thu,  2 Jan 2020 22:27:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22FDE22B48;
+        Thu,  2 Jan 2020 22:13:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004077;
-        bh=FXLWGfb+mUAqSMXTCRBzIGJizba0Ms/m50Fos2BtZL4=;
+        s=default; t=1578003239;
+        bh=dugGQh+eRwzgWQhTrmU1/HMjtDc/HVySpNxi+iizGws=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mDXHouV3d+iUU+TEWRypRKvp8hSLRMPOg1QN8fPpnbIvRHVV5/kwrtjMKPeMVVasU
-         kNO/n3aTZIAMFqSPUSTN1DmEoMHC5QTJ0RgzoM2QmzAtrq3KlGaPQi4oWnTUqeEKJ3
-         vcc/GdjLjyPvZl6XEoSxzOzUGjNrLt/iYyvCCFOw=
+        b=jOBxelNwJyKzjDbxMu2/hJvATlGjN5XYFR/WNx9C1nVWRSmrGvUsNN3k0MqYlHF8c
+         aqBd+8UJrWGUYcnhgUJHWoyFlju7dxBM2j5xGLHsCKM3lltukaj9/YWt/gEbTjEj6k
+         4z0ro8N7uxXpruJPOr8qG/JQCzxYv7QLyimJxDNg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benoit Parrot <bparrot@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 028/171] media: ti-vpe: vpe: fix a v4l2-compliance warning about invalid pixel format
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 077/191] HID: logitech-hidpp: Silence intermittent get_battery_capacity errors
 Date:   Thu,  2 Jan 2020 23:05:59 +0100
-Message-Id: <20200102220550.958914081@linuxfoundation.org>
+Message-Id: <20200102215838.172022489@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,79 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benoit Parrot <bparrot@ti.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 06bec72b250b2cb3ba96fa45c2b8e0fb83745517 ]
+[ Upstream commit 61005d65b6c7dcf61c19516e6ebe5acc02d2cdda ]
 
-v4l2-compliance warns with this message:
+My Logitech M185 (PID:4038) 2.4 GHz wireless HID++ mouse is causing
+intermittent errors like these in the log:
 
-   warn: v4l2-test-formats.cpp(717): \
- 	TRY_FMT cannot handle an invalid pixelformat.
-   warn: v4l2-test-formats.cpp(718): \
- 	This may or may not be a problem. For more information see:
-   warn: v4l2-test-formats.cpp(719): \
- 	http://www.mail-archive.com/linux-media@vger.kernel.org/msg56550.html
-	...
-   test VIDIOC_TRY_FMT: FAIL
+[11091.034857] logitech-hidpp-device 0003:046D:4038.0006: hidpp20_batterylevel_get_battery_capacity: received protocol error 0x09
+[12388.031260] logitech-hidpp-device 0003:046D:4038.0006: hidpp20_batterylevel_get_battery_capacity: received protocol error 0x09
+[16613.718543] logitech-hidpp-device 0003:046D:4038.0006: hidpp20_batterylevel_get_battery_capacity: received protocol error 0x09
+[23529.938728] logitech-hidpp-device 0003:046D:4038.0006: hidpp20_batterylevel_get_battery_capacity: received protocol error 0x09
 
-We need to make sure that the returns a valid pixel format in all
-instance. Based on the v4l2 framework convention drivers must return a
-valid pixel format when the requested pixel format is either invalid or
-not supported.
+We are already silencing error-code 0x09 (HIDPP_ERROR_RESOURCE_ERROR)
+errors in other places, lets do the same in
+hidpp20_batterylevel_get_battery_capacity to remove these harmless,
+but scary looking errors from the dmesg output.
 
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/ti-vpe/vpe.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/hid/hid-logitech-hidpp.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
-index 0189f7f7cb03..da308fa6561f 100644
---- a/drivers/media/platform/ti-vpe/vpe.c
-+++ b/drivers/media/platform/ti-vpe/vpe.c
-@@ -330,20 +330,25 @@ enum {
- };
- 
- /* find our format description corresponding to the passed v4l2_format */
--static struct vpe_fmt *find_format(struct v4l2_format *f)
-+static struct vpe_fmt *__find_format(u32 fourcc)
- {
- 	struct vpe_fmt *fmt;
- 	unsigned int k;
- 
- 	for (k = 0; k < ARRAY_SIZE(vpe_formats); k++) {
- 		fmt = &vpe_formats[k];
--		if (fmt->fourcc == f->fmt.pix.pixelformat)
-+		if (fmt->fourcc == fourcc)
- 			return fmt;
- 	}
- 
- 	return NULL;
- }
- 
-+static struct vpe_fmt *find_format(struct v4l2_format *f)
-+{
-+	return __find_format(f->fmt.pix.pixelformat);
-+}
-+
- /*
-  * there is one vpe_dev structure in the driver, it is shared by
-  * all instances.
-@@ -1433,9 +1438,9 @@ static int __vpe_try_fmt(struct vpe_ctx *ctx, struct v4l2_format *f,
- 	int i, depth, depth_bytes;
- 
- 	if (!fmt || !(fmt->types & type)) {
--		vpe_err(ctx->dev, "Fourcc format (0x%08x) invalid.\n",
-+		vpe_dbg(ctx->dev, "Fourcc format (0x%08x) invalid.\n",
- 			pix->pixelformat);
--		return -EINVAL;
-+		fmt = __find_format(V4L2_PIX_FMT_YUYV);
- 	}
- 
- 	if (pix->field != V4L2_FIELD_NONE && pix->field != V4L2_FIELD_ALTERNATE)
+diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
+index 8e91e2f06cb4..cd9193078525 100644
+--- a/drivers/hid/hid-logitech-hidpp.c
++++ b/drivers/hid/hid-logitech-hidpp.c
+@@ -1102,6 +1102,9 @@ static int hidpp20_batterylevel_get_battery_capacity(struct hidpp_device *hidpp,
+ 	ret = hidpp_send_fap_command_sync(hidpp, feature_index,
+ 					  CMD_BATTERY_LEVEL_STATUS_GET_BATTERY_LEVEL_STATUS,
+ 					  NULL, 0, &response);
++	/* Ignore these intermittent errors */
++	if (ret == HIDPP_ERROR_RESOURCE_ERROR)
++		return -EIO;
+ 	if (ret > 0) {
+ 		hid_err(hidpp->hid_dev, "%s: received protocol error 0x%02x\n",
+ 			__func__, ret);
 -- 
 2.20.1
 
