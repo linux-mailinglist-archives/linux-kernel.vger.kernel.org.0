@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EA3112EF39
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:46:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57AF512EED6
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:41:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730316AbgABWbm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:31:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36968 "EHLO mail.kernel.org"
+        id S1731001AbgABWgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:36:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730301AbgABWbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:31:37 -0500
+        id S1730991AbgABWgr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:36:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67E7C22525;
-        Thu,  2 Jan 2020 22:31:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03FBE20863;
+        Thu,  2 Jan 2020 22:36:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004296;
-        bh=6sjVKtc0kCiTiKhyKbAVxJ2gWded0kH98fqjv3yB+zQ=;
+        s=default; t=1578004607;
+        bh=aWwajad3FFOd5MGX83mrg5evnt4kXJ3VwXi8MagwZ7E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YuaTbVsjXX9lQPq5RDEV9KeYacHOCmTVAeGiOOF2xWrAdmx1LvW6Y7OJ/9Gh48euS
-         bzclT4bExozu7aMsTuKjOkgEj1+W18MEmGbvqCDgHJQAyTbfxiwWhrM9RX9khf4hza
-         sxivDzuIry8Nm3AU2eQaKwGOt8EbUG9GoxioRQz4=
+        b=bY+9jX+4TQRyLrFHUHYOcTgn/wxGyO7HpgouOHjzI6fnjfcwCAYnXfnw/dKIEPW8J
+         4qfd2rX42zqCNIaJHvB03NI5D35avANdjVl4XZofgBBISTpTjQEEplIfO1WFiZ+Syf
+         BHm6+y6OMfHvLHJYmpu8BYbZYgNWfDGT6W+Jx5k4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 119/171] powerpc/pseries: Dont fail hash page table insert for bolted mapping
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 077/137] net: nfc: nci: fix a possible sleep-in-atomic-context bug in nci_uart_tty_receive()
 Date:   Thu,  2 Jan 2020 23:07:30 +0100
-Message-Id: <20200102220603.584558473@linuxfoundation.org>
+Message-Id: <20200102220557.086899682@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,67 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 75838a3290cd4ebbd1f567f310ba04b6ef017ce4 ]
+[ Upstream commit b7ac893652cafadcf669f78452329727e4e255cc ]
 
-If the hypervisor returned H_PTEG_FULL for H_ENTER hcall, retry a hash page table
-insert by removing a random entry from the group.
+The kernel may sleep while holding a spinlock.
+The function call path (from bottom to top) in Linux 4.19 is:
 
-After some runtime, it is very well possible to find all the 8 hash page table
-entry slot in the hpte group used for mapping. Don't fail a bolted entry insert
-in that case. With Storage class memory a user can find this error easily since
-a namespace enable/disable is equivalent to memory add/remove.
+net/nfc/nci/uart.c, 349:
+	nci_skb_alloc in nci_uart_default_recv_buf
+net/nfc/nci/uart.c, 255:
+	(FUNC_PTR)nci_uart_default_recv_buf in nci_uart_tty_receive
+net/nfc/nci/uart.c, 254:
+	spin_lock in nci_uart_tty_receive
 
-This results in failures as reported below:
+nci_skb_alloc(GFP_KERNEL) can sleep at runtime.
+(FUNC_PTR) means a function pointer is called.
 
-$ ndctl create-namespace -r region1 -t pmem -m devdax -a 65536 -s 100M
-libndctl: ndctl_dax_enable: dax1.3: failed to enable
-  Error: namespace1.2: failed to enable
+To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC for
+nci_skb_alloc().
 
-failed to create namespace: No such device or address
+This bug is found by a static analysis tool STCheck written by myself.
 
-In kernel log we find the details as below:
-
-Unable to create mapping for hot added memory 0xc000042006000000..0xc00004200d000000: -1
-dax_pmem: probe of dax1.3 failed with error -14
-
-This indicates that we failed to create a bolted hash table entry for direct-map
-address backing the namespace.
-
-We also observe failures such that not all namespaces will be enabled with
-ndctl enable-namespace all command.
-
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191024093542.29777-2-aneesh.kumar@linux.ibm.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/mm/hash_utils_64.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ net/nfc/nci/uart.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/mm/hash_utils_64.c b/arch/powerpc/mm/hash_utils_64.c
-index bd666287c5ed..de1d8cdd2991 100644
---- a/arch/powerpc/mm/hash_utils_64.c
-+++ b/arch/powerpc/mm/hash_utils_64.c
-@@ -289,7 +289,14 @@ int htab_bolt_mapping(unsigned long vstart, unsigned long vend,
- 		ret = mmu_hash_ops.hpte_insert(hpteg, vpn, paddr, tprot,
- 					       HPTE_V_BOLTED, psize, psize,
- 					       ssize);
--
-+		if (ret == -1) {
-+			/* Try to remove a non bolted entry */
-+			ret = mmu_hash_ops.hpte_remove(hpteg);
-+			if (ret != -1)
-+				ret = mmu_hash_ops.hpte_insert(hpteg, vpn, paddr, tprot,
-+							       HPTE_V_BOLTED, psize, psize,
-+							       ssize);
-+		}
- 		if (ret < 0)
- 			break;
- 
--- 
-2.20.1
-
+--- a/net/nfc/nci/uart.c
++++ b/net/nfc/nci/uart.c
+@@ -355,7 +355,7 @@ static int nci_uart_default_recv_buf(str
+ 			nu->rx_packet_len = -1;
+ 			nu->rx_skb = nci_skb_alloc(nu->ndev,
+ 						   NCI_MAX_PACKET_SIZE,
+-						   GFP_KERNEL);
++						   GFP_ATOMIC);
+ 			if (!nu->rx_skb)
+ 				return -ENOMEM;
+ 		}
 
 
