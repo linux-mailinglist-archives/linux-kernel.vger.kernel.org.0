@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0F7212F0C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:55:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 148F512F143
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:59:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728587AbgABWTY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:19:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35442 "EHLO mail.kernel.org"
+        id S1728513AbgABW7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:59:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728574AbgABWTV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:19:21 -0500
+        id S1727948AbgABWOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:14:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6AB721582;
-        Thu,  2 Jan 2020 22:19:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F60E21D7D;
+        Thu,  2 Jan 2020 22:14:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003560;
-        bh=l4Rh4lLq40MIpr85MoMhUIi1rERQOkwAm72pRm+hrCI=;
+        s=default; t=1578003282;
+        bh=rvBKXNL2zspQZcX54WvZYh3lHndspUwQyuz6IcZK5+U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dXqfFoydh4nSjVQW7Pg8p2UMM5k7giB0DhC1HcvZ8lFgaxr8gWpIXOKsqW170YtKU
-         0YBu0oHN8R8OAQVLBQoHzBTNs+OPBi2drVNF1sJ+tTeXZo+TISS503PrfayDXXXZgI
-         cuMHy4g5anuXx5PQdi2/T8w9L/+bP2/50zHS96TU=
+        b=q8ki3vhRs3l0HpqlUbkSObj13hpA9NRgpInDCpWBabHCOEOKTepPF22/EJE3RTZHu
+         zaWHmv2/eW/TmoPd4W0kgZbYQGLf5EuzX7CalQuOLoSGabb6JbShJ3U5EzNlNWgK7/
+         HdDwz+5sMoNNrhtOAeKuTrH0dl5EbWe9cy0ys1Xk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Omer Shpigelman <oshpigelman@habana.ai>,
+        Oded Gabbay <oded.gabbay@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 005/114] f2fs: fix to update time in lazytime mode
-Date:   Thu,  2 Jan 2020 23:06:17 +0100
-Message-Id: <20200102220029.687778806@linuxfoundation.org>
+Subject: [PATCH 5.4 096/191] habanalabs: skip VA block list update in reset flow
+Date:   Thu,  2 Jan 2020 23:06:18 +0100
+Message-Id: <20200102215840.195594801@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,102 +44,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Omer Shpigelman <oshpigelman@habana.ai>
 
-[ Upstream commit fe1897eaa6646f5a64a4cee0e6473ed9887d324b ]
+[ Upstream commit 71c5e55e7c077fa17c42fbda91a8d14322825c44 ]
 
-generic/018 reports an inconsistent status of atime, the
-testcase is as below:
-- open file with O_SYNC
-- write file to construct fraged space
-- calc md5 of file
-- record {a,c,m}time
-- defrag file --- do nothing
-- umount & mount
-- check {a,c,m}time
+Reduce context close time by skipping the VA block free list update in
+order to avoid hard reset with open contexts.
+Reset with open contexts can potentially lead to a kernel crash as the
+generic pool of the MMU hops is destroyed while it is not empty because
+some unmap operations are not done.
+The commit affect mainly when running on simulator.
 
-The root cause is, as f2fs enables lazytime by default, atime
-update will dirty vfs inode, rather than dirtying f2fs inode (by set
-with FI_DIRTY_INODE), so later f2fs_write_inode() called from VFS will
-fail to update inode page due to our skip:
-
-f2fs_write_inode()
-	if (is_inode_flag_set(inode, FI_DIRTY_INODE))
-		return 0;
-
-So eventually, after evict(), we lose last atime for ever.
-
-To fix this issue, we need to check whether {a,c,m,cr}time is
-consistent in between inode cache and inode page, and only skip
-f2fs_update_inode() if f2fs inode is not dirty and time is
-consistent as well.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
+Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h  | 23 +++++++++++++++--------
- fs/f2fs/inode.c |  6 +++++-
- 2 files changed, 20 insertions(+), 9 deletions(-)
+ drivers/misc/habanalabs/memory.c | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 34e48bcf5087..72d154e71bb5 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2578,6 +2578,20 @@ static inline void clear_file(struct inode *inode, int type)
- 	f2fs_mark_inode_dirty_sync(inode, true);
- }
- 
-+static inline bool f2fs_is_time_consistent(struct inode *inode)
-+{
-+	if (!timespec64_equal(F2FS_I(inode)->i_disk_time, &inode->i_atime))
-+		return false;
-+	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 1, &inode->i_ctime))
-+		return false;
-+	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 2, &inode->i_mtime))
-+		return false;
-+	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 3,
-+						&F2FS_I(inode)->i_crtime))
-+		return false;
-+	return true;
-+}
-+
- static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
+index 365fb0cb8dff..22566b75ca50 100644
+--- a/drivers/misc/habanalabs/memory.c
++++ b/drivers/misc/habanalabs/memory.c
+@@ -965,17 +965,19 @@ init_page_pack_err:
+  *
+  * @ctx                 : current context
+  * @vaddr               : device virtual address to unmap
++ * @ctx_free            : true if in context free flow, false otherwise.
+  *
+  * This function does the following:
+  * - Unmap the physical pages related to the given virtual address
+  * - return the device virtual block to the virtual block list
+  */
+-static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr)
++static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr, bool ctx_free)
  {
- 	bool ret;
-@@ -2595,14 +2609,7 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
- 			i_size_read(inode) & ~PAGE_MASK)
- 		return false;
+ 	struct hl_device *hdev = ctx->hdev;
+ 	struct hl_vm_phys_pg_pack *phys_pg_pack = NULL;
+ 	struct hl_vm_hash_node *hnode = NULL;
+ 	struct hl_userptr *userptr = NULL;
++	struct hl_va_range *va_range;
+ 	enum vm_type_t *vm_type;
+ 	u64 next_vaddr, i;
+ 	u32 page_size;
+@@ -1003,6 +1005,7 @@ static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr)
  
--	if (!timespec64_equal(F2FS_I(inode)->i_disk_time, &inode->i_atime))
--		return false;
--	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 1, &inode->i_ctime))
--		return false;
--	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 2, &inode->i_mtime))
--		return false;
--	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 3,
--						&F2FS_I(inode)->i_crtime))
-+	if (!f2fs_is_time_consistent(inode))
- 		return false;
+ 	if (*vm_type == VM_TYPE_USERPTR) {
+ 		is_userptr = true;
++		va_range = &ctx->host_va_range;
+ 		userptr = hnode->ptr;
+ 		rc = init_phys_pg_pack_from_userptr(ctx, userptr,
+ 				&phys_pg_pack);
+@@ -1014,6 +1017,7 @@ static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr)
+ 		}
+ 	} else if (*vm_type == VM_TYPE_PHYS_PACK) {
+ 		is_userptr = false;
++		va_range = &ctx->dram_va_range;
+ 		phys_pg_pack = hnode->ptr;
+ 	} else {
+ 		dev_warn(hdev->dev,
+@@ -1052,12 +1056,18 @@ static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr)
  
- 	down_read(&F2FS_I(inode)->i_sem);
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 540d45759621..a01be7d8db86 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -614,7 +614,11 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
- 			inode->i_ino == F2FS_META_INO(sbi))
- 		return 0;
+ 	mutex_unlock(&ctx->mmu_lock);
  
--	if (!is_inode_flag_set(inode, FI_DIRTY_INODE))
+-	if (add_va_block(hdev,
+-			is_userptr ? &ctx->host_va_range : &ctx->dram_va_range,
+-			vaddr,
+-			vaddr + phys_pg_pack->total_size - 1))
+-		dev_warn(hdev->dev, "add va block failed for vaddr: 0x%llx\n",
+-				vaddr);
 +	/*
-+	 * atime could be updated without dirtying f2fs inode in lazytime mode
++	 * No point in maintaining the free VA block list if the context is
++	 * closing as the list will be freed anyway
 +	 */
-+	if (f2fs_is_time_consistent(inode) &&
-+		!is_inode_flag_set(inode, FI_DIRTY_INODE))
- 		return 0;
++	if (!ctx_free) {
++		rc = add_va_block(hdev, va_range, vaddr,
++					vaddr + phys_pg_pack->total_size - 1);
++		if (rc)
++			dev_warn(hdev->dev,
++					"add va block failed for vaddr: 0x%llx\n",
++					vaddr);
++	}
  
- 	/*
+ 	atomic_dec(&phys_pg_pack->mapping_cnt);
+ 	kfree(hnode);
+@@ -1189,8 +1199,8 @@ int hl_mem_ioctl(struct hl_fpriv *hpriv, void *data)
+ 		break;
+ 
+ 	case HL_MEM_OP_UNMAP:
+-		rc = unmap_device_va(ctx,
+-				args->in.unmap.device_virt_addr);
++		rc = unmap_device_va(ctx, args->in.unmap.device_virt_addr,
++					false);
+ 		break;
+ 
+ 	default:
+@@ -1620,7 +1630,7 @@ void hl_vm_ctx_fini(struct hl_ctx *ctx)
+ 		dev_dbg(hdev->dev,
+ 			"hl_mem_hash_node of vaddr 0x%llx of asid %d is still alive\n",
+ 			hnode->vaddr, ctx->asid);
+-		unmap_device_va(ctx, hnode->vaddr);
++		unmap_device_va(ctx, hnode->vaddr, true);
+ 	}
+ 
+ 	spin_lock(&vm->idr_lock);
 -- 
 2.20.1
 
