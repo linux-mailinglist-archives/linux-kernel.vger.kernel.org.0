@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F04612EC14
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:15:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 237D812ED82
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:29:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbgABWPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:15:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55766 "EHLO mail.kernel.org"
+        id S1729999AbgABW3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:29:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727708AbgABWPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:15:07 -0500
+        id S1729825AbgABW3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:29:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC83B21582;
-        Thu,  2 Jan 2020 22:15:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE1C920863;
+        Thu,  2 Jan 2020 22:29:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003306;
-        bh=ZS+WlfIB8lLIxCH46STt3Cd5ZX9t2dJe7rAyLDNHfUk=;
+        s=default; t=1578004143;
+        bh=u7o2lvfqaHuw8UnRD3nluPvVco34XB/WAfOwsSkrP0I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qeRFAyyQGcLf7UOk6zpFBiYnRuTKkLOIjpcVkBZSDqyoaVZ8LGc7RBfdCWhsG2KBo
-         MQKJJUXavTM+wbRBJl0ImE2vMDWH1HC8PySjsxaqEzsWNS1x5fJvTUGPsgFxTw8QkL
-         gQ4RPxSEX//O5zTF8QW/o6wsFg33BgQZPzAKPUrM=
+        b=ydcLv6Yw+rirkbcloNJTwS4IDtwb5mzserCPR/c9UWyJYcasxgPAD6mjc7n4Rcagi
+         pHMngOf539DuM0ap2yhq83O+Hn5DQyf0fCq74IdSVmrioNjBIKRfIsf3514DQC8NZ+
+         /jOdUbsStzInV7rAmQzPixiYG3bi8Quvu5LupC5A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 105/191] drm/amdgpu: Call find_vma under mmap_sem
+Subject: [PATCH 4.9 056/171] perf probe: Fix to probe a function which has no entry pc
 Date:   Thu,  2 Jan 2020 23:06:27 +0100
-Message-Id: <20200102215841.191558239@linuxfoundation.org>
+Message-Id: <20200102220554.716543606@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,120 +47,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit a9ae8731e6e52829a935d81a65d7f925cb95dbac ]
+[ Upstream commit 5d16dbcc311d91267ddb45c6da4f187be320ecee ]
 
-find_vma() must be called under the mmap_sem, reorganize this code to
-do the vma check after entering the lock.
+Fix 'perf probe' to probe a function which has no entry pc or low pc but
+only has ranges attribute.
 
-Further, fix the unlocked use of struct task_struct's mm, instead use
-the mm from hmm_mirror which has an active mm_grab. Also the mm_grab
-must be converted to a mm_get before acquiring mmap_sem or calling
-find_vma().
+probe_point_search_cb() uses dwarf_entrypc() to get the probe address,
+but that doesn't work for the function DIE which has only ranges
+attribute. Use die_entrypc() instead.
 
-Fixes: 66c45500bfdc ("drm/amdgpu: use new HMM APIs and helpers")
-Fixes: 0919195f2b0d ("drm/amdgpu: Enable amdgpu_ttm_tt_get_user_pages in worker threads")
-Link: https://lore.kernel.org/r/20191112202231.3856-11-jgg@ziepe.ca
-Acked-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Reviewed-by: Philip Yang <Philip.Yang@amd.com>
-Tested-by: Philip Yang <Philip.Yang@amd.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Without this fix:
+
+  # perf probe -k ../build-x86_64/vmlinux -D clear_tasks_mm_cpumask:0
+  Probe point 'clear_tasks_mm_cpumask' not found.
+    Error: Failed to add events.
+
+With this:
+
+  # perf probe -k ../build-x86_64/vmlinux -D clear_tasks_mm_cpumask:0
+  p:probe/clear_tasks_mm_cpumask clear_tasks_mm_cpumask+0
+
+Committer testing:
+
+Before:
+
+  [root@quaco ~]# perf probe clear_tasks_mm_cpumask:0
+  Probe point 'clear_tasks_mm_cpumask' not found.
+    Error: Failed to add events.
+  [root@quaco ~]#
+
+After:
+
+  [root@quaco ~]# perf probe clear_tasks_mm_cpumask:0
+  Added new event:
+    probe:clear_tasks_mm_cpumask (on clear_tasks_mm_cpumask)
+
+  You can now use it in all perf tools, such as:
+
+  	perf record -e probe:clear_tasks_mm_cpumask -aR sleep 1
+
+  [root@quaco ~]#
+
+Using it with 'perf trace':
+
+  [root@quaco ~]# perf trace -e probe:clear_tasks_mm_cpumask
+
+Doesn't seem to be used in x86_64:
+
+  $ find . -name "*.c" | xargs grep clear_tasks_mm_cpumask
+  ./kernel/cpu.c: * clear_tasks_mm_cpumask - Safely clear tasks' mm_cpumask for a CPU
+  ./kernel/cpu.c:void clear_tasks_mm_cpumask(int cpu)
+  ./arch/xtensa/kernel/smp.c:	clear_tasks_mm_cpumask(cpu);
+  ./arch/csky/kernel/smp.c:	clear_tasks_mm_cpumask(cpu);
+  ./arch/sh/kernel/smp.c:	clear_tasks_mm_cpumask(cpu);
+  ./arch/arm/kernel/smp.c:	clear_tasks_mm_cpumask(cpu);
+  ./arch/powerpc/mm/nohash/mmu_context.c:	clear_tasks_mm_cpumask(cpu);
+  $ find . -name "*.h" | xargs grep clear_tasks_mm_cpumask
+  ./include/linux/cpu.h:void clear_tasks_mm_cpumask(int cpu);
+  $ find . -name "*.S" | xargs grep clear_tasks_mm_cpumask
+  $
+
+Fixes: e1ecbbc3fa83 ("perf probe: Fix to handle optimized not-inlined functions")
+Reported-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: http://lore.kernel.org/lkml/157199319438.8075.4695576954550638618.stgit@devnote2
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 37 ++++++++++++++-----------
- 1 file changed, 21 insertions(+), 16 deletions(-)
+ tools/perf/util/probe-finder.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-index dff41d0a85fe..c0e41f1f0c23 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-@@ -35,6 +35,7 @@
- #include <linux/hmm.h>
- #include <linux/pagemap.h>
- #include <linux/sched/task.h>
-+#include <linux/sched/mm.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
- #include <linux/swap.h>
-@@ -788,7 +789,7 @@ int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo, struct page **pages)
- 	struct hmm_mirror *mirror = bo->mn ? &bo->mn->mirror : NULL;
- 	struct ttm_tt *ttm = bo->tbo.ttm;
- 	struct amdgpu_ttm_tt *gtt = (void *)ttm;
--	struct mm_struct *mm = gtt->usertask->mm;
-+	struct mm_struct *mm;
- 	unsigned long start = gtt->userptr;
- 	struct vm_area_struct *vma;
- 	struct hmm_range *range;
-@@ -796,25 +797,14 @@ int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo, struct page **pages)
- 	uint64_t *pfns;
- 	int r = 0;
- 
--	if (!mm) /* Happens during process shutdown */
--		return -ESRCH;
--
- 	if (unlikely(!mirror)) {
- 		DRM_DEBUG_DRIVER("Failed to get hmm_mirror\n");
--		r = -EFAULT;
--		goto out;
-+		return -EFAULT;
- 	}
- 
--	vma = find_vma(mm, start);
--	if (unlikely(!vma || start < vma->vm_start)) {
--		r = -EFAULT;
--		goto out;
--	}
--	if (unlikely((gtt->userflags & AMDGPU_GEM_USERPTR_ANONONLY) &&
--		vma->vm_file)) {
--		r = -EPERM;
--		goto out;
--	}
-+	mm = mirror->hmm->mmu_notifier.mm;
-+	if (!mmget_not_zero(mm)) /* Happens during process shutdown */
-+		return -ESRCH;
- 
- 	range = kzalloc(sizeof(*range), GFP_KERNEL);
- 	if (unlikely(!range)) {
-@@ -847,6 +837,17 @@ int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo, struct page **pages)
- 	hmm_range_wait_until_valid(range, HMM_RANGE_DEFAULT_TIMEOUT);
- 
- 	down_read(&mm->mmap_sem);
-+	vma = find_vma(mm, start);
-+	if (unlikely(!vma || start < vma->vm_start)) {
-+		r = -EFAULT;
-+		goto out_unlock;
-+	}
-+	if (unlikely((gtt->userflags & AMDGPU_GEM_USERPTR_ANONONLY) &&
-+		vma->vm_file)) {
-+		r = -EPERM;
-+		goto out_unlock;
-+	}
-+
- 	r = hmm_range_fault(range, 0);
- 	up_read(&mm->mmap_sem);
- 
-@@ -865,15 +866,19 @@ int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo, struct page **pages)
- 	}
- 
- 	gtt->range = range;
-+	mmput(mm);
- 
- 	return 0;
- 
-+out_unlock:
-+	up_read(&mm->mmap_sem);
- out_free_pfns:
- 	hmm_range_unregister(range);
- 	kvfree(pfns);
- out_free_ranges:
- 	kfree(range);
- out:
-+	mmput(mm);
- 	return r;
- }
- 
+diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
+index 9fc6fedcfa1a..cfc2e1e7cca4 100644
+--- a/tools/perf/util/probe-finder.c
++++ b/tools/perf/util/probe-finder.c
+@@ -1002,7 +1002,7 @@ static int probe_point_search_cb(Dwarf_Die *sp_die, void *data)
+ 		param->retval = find_probe_point_by_line(pf);
+ 	} else if (die_is_func_instance(sp_die)) {
+ 		/* Instances always have the entry address */
+-		dwarf_entrypc(sp_die, &pf->addr);
++		die_entrypc(sp_die, &pf->addr);
+ 		/* But in some case the entry address is 0 */
+ 		if (pf->addr == 0) {
+ 			pr_debug("%s has no entry PC. Skipped\n",
 -- 
 2.20.1
 
