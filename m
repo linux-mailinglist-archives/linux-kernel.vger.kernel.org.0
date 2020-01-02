@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE36612F0F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:57:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50CE612F061
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:53:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728927AbgABW5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:57:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59924 "EHLO mail.kernel.org"
+        id S1728963AbgABWWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:22:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726781AbgABWR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:17:28 -0500
+        id S1729102AbgABWWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:22:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E83DD21582;
-        Thu,  2 Jan 2020 22:17:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 501D3227BF;
+        Thu,  2 Jan 2020 22:22:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003447;
-        bh=slQbVtF+GXopB5WGJzRj5aJidD4gfzmVZdsJhf0mx5U=;
+        s=default; t=1578003732;
+        bh=SMEJehBrbJjrA45F280FcI6aUeAE4KdjaoDeYzWp3+0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P0ti6p/eT353ZMm6/p4QRDSL5ksY2pJu0xeZjQSorK4DbLd9Jj+F6sNZpVkXhgEh+
-         Fzo+DOSLJLGdZTHrkPP0ZHSVDKvmEAWiVg87EF5L0qLU9i94Fds4LmUYAL044bdZyP
-         OoanVHYYOzsSneupRos3yRFn/wt0/sV5gakHzwbM=
+        b=YumHkAEo0smUq3IAGrV2tITj/44sV/lRKNnJaRCYG50mJ3QRYI1J/80fEhYQMLef1
+         C5NL6E5r7OSPz4sM15HedZbz4hVlXK1S9Sd9SVYpnpesBXH0s7pNAPA0qb6PF3oe++
+         iu5EEisWVcVOxLEtgjqN5BLW2M8wXi9b4kbjlkbA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 164/191] bnxt_en: Add missing devlink health reporters for VFs.
+        "=?UTF-8?q?Jan=20H . =20Sch=C3=B6nherr?=" <jschoenh@amazon.de>,
+        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
+        Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 074/114] x86/mce: Fix possibly incorrect severity calculation on AMD
 Date:   Thu,  2 Jan 2020 23:07:26 +0100
-Message-Id: <20200102215846.940065716@linuxfoundation.org>
+Message-Id: <20200102220036.554952288@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,110 +49,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+From: Jan H. Schönherr <jschoenh@amazon.de>
 
-[ Upstream commit 7e334fc8003c7a38372cc98e7be6082670a47d29 ]
+[ Upstream commit a3a57ddad061acc90bef39635caf2b2330ce8f21 ]
 
-The VF driver also needs to create the health reporters since
-VFs are also involved in firmware reset and recovery.  Modify
-bnxt_dl_register() and bnxt_dl_unregister() so that they can
-be called by the VFs to register/unregister devlink.  Only the PF
-will register the devlink parameters.  With devlink registered,
-we can now create the health reporters on the VFs.
+The function mce_severity_amd_smca() requires m->bank to be initialized
+for correct operation. Fix the one case, where mce_severity() is called
+without doing so.
 
-Fixes: 6763c779c2d8 ("bnxt_en: Add new FW devlink_health_reporter")
-Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 6bda529ec42e ("x86/mce: Grade uncorrected errors for SMCA-enabled systems")
+Fixes: d28af26faa0b ("x86/MCE: Initialize mce.bank in the case of a fatal error in mce_no_way_out()")
+Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Tony Luck <tony.luck@intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: <stable@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Link: https://lkml.kernel.org/r/20191210000733.17979-4-jschoenh@amazon.de
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c         |   13 ++++--------
- drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c |   23 ++++++++++++++++------
- 2 files changed, 22 insertions(+), 14 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -11343,12 +11343,11 @@ static void bnxt_remove_one(struct pci_d
- 	struct net_device *dev = pci_get_drvdata(pdev);
- 	struct bnxt *bp = netdev_priv(dev);
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index 87ed8462a5c7..1f69b12d5bb8 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -812,8 +812,8 @@ static int mce_no_way_out(struct mce *m, char **msg, unsigned long *validp,
+ 		if (quirk_no_way_out)
+ 			quirk_no_way_out(i, m, regs);
  
--	if (BNXT_PF(bp)) {
-+	if (BNXT_PF(bp))
- 		bnxt_sriov_disable(bp);
--		bnxt_dl_fw_reporters_destroy(bp, true);
--		bnxt_dl_unregister(bp);
--	}
- 
-+	bnxt_dl_fw_reporters_destroy(bp, true);
-+	bnxt_dl_unregister(bp);
- 	pci_disable_pcie_error_reporting(pdev);
- 	unregister_netdev(dev);
- 	bnxt_shutdown_tc(bp);
-@@ -11844,10 +11843,8 @@ static int bnxt_init_one(struct pci_dev
- 	if (rc)
- 		goto init_err_cleanup_tc;
- 
--	if (BNXT_PF(bp)) {
--		bnxt_dl_register(bp);
--		bnxt_dl_fw_reporters_create(bp);
--	}
-+	bnxt_dl_register(bp);
-+	bnxt_dl_fw_reporters_create(bp);
- 
- 	netdev_info(dev, "%s found at mem %lx, node addr %pM\n",
- 		    board_info[ent->driver_data].name,
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
-@@ -226,6 +226,8 @@ static const struct devlink_ops bnxt_dl_
- #endif /* CONFIG_BNXT_SRIOV */
- };
- 
-+static const struct devlink_ops bnxt_vf_dl_ops;
-+
- enum bnxt_dl_param_id {
- 	BNXT_DEVLINK_PARAM_ID_BASE = DEVLINK_PARAM_GENERIC_ID_MAX,
- 	BNXT_DEVLINK_PARAM_ID_GRE_VER_CHECK,
-@@ -439,7 +441,10 @@ int bnxt_dl_register(struct bnxt *bp)
- 		return -ENOTSUPP;
- 	}
- 
--	dl = devlink_alloc(&bnxt_dl_ops, sizeof(struct bnxt_dl));
-+	if (BNXT_PF(bp))
-+		dl = devlink_alloc(&bnxt_dl_ops, sizeof(struct bnxt_dl));
-+	else
-+		dl = devlink_alloc(&bnxt_vf_dl_ops, sizeof(struct bnxt_dl));
- 	if (!dl) {
- 		netdev_warn(bp->dev, "devlink_alloc failed");
- 		return -ENOMEM;
-@@ -458,6 +463,9 @@ int bnxt_dl_register(struct bnxt *bp)
- 		goto err_dl_free;
- 	}
- 
-+	if (!BNXT_PF(bp))
-+		return 0;
-+
- 	rc = devlink_params_register(dl, bnxt_dl_params,
- 				     ARRAY_SIZE(bnxt_dl_params));
- 	if (rc) {
-@@ -507,11 +515,14 @@ void bnxt_dl_unregister(struct bnxt *bp)
- 	if (!dl)
- 		return;
- 
--	devlink_port_params_unregister(&bp->dl_port, bnxt_dl_port_params,
--				       ARRAY_SIZE(bnxt_dl_port_params));
--	devlink_port_unregister(&bp->dl_port);
--	devlink_params_unregister(dl, bnxt_dl_params,
--				  ARRAY_SIZE(bnxt_dl_params));
-+	if (BNXT_PF(bp)) {
-+		devlink_port_params_unregister(&bp->dl_port,
-+					       bnxt_dl_port_params,
-+					       ARRAY_SIZE(bnxt_dl_port_params));
-+		devlink_port_unregister(&bp->dl_port);
-+		devlink_params_unregister(dl, bnxt_dl_params,
-+					  ARRAY_SIZE(bnxt_dl_params));
-+	}
- 	devlink_unregister(dl);
- 	devlink_free(dl);
- }
++		m->bank = i;
+ 		if (mce_severity(m, mca_cfg.tolerant, &tmp, true) >= MCE_PANIC_SEVERITY) {
+-			m->bank = i;
+ 			mce_read_aux(m, i);
+ 			*msg = tmp;
+ 			return 1;
+-- 
+2.20.1
+
 
 
