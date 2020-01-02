@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3C3812EDD6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:32:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6E7D12EEC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:41:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730278AbgABWc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:32:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38410 "EHLO mail.kernel.org"
+        id S1731239AbgABWlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:41:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730381AbgABWcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:32:18 -0500
+        id S1731086AbgABWh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:37:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2616E20863;
-        Thu,  2 Jan 2020 22:32:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8007820866;
+        Thu,  2 Jan 2020 22:37:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004337;
-        bh=xNSEdAdZMhuEyPznqcBxej7cv6OZJtbEd/4xG0/VEDo=;
+        s=default; t=1578004648;
+        bh=oAKlgiLASENKMc8vSC96bQbrxPcQYChYFw69i5cC5YA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZpKU3Zr8O5WnKdJ7PU9FqnTxOc9fCWXVi6oeJYo7IZ4LaWYb6MlZudED1it1+0Yir
-         SRcY8oEIFM84LAyuZR8zdqC52WlWCPviPAue0PzFGw8gbBjaqMLd787Xdg+te1zArs
-         IM/jFWxs1gwr+Zw+BrhnkrELX80BsijzruE8UXR0=
+        b=pYoQZW+YxcEsEQTULL8JABI71mlcB0ofTupSeKYudWknYzNbCcOOVdCkTR6p8PsTE
+         mwFCy3kS8PDdGyKhdl1XHQFUew80wE4lcT+Jbdi0Dk4iaF5dKPjnmx9NjxB9r2WZ/t
+         23OO5X2oFUNa+5IqGo5oLJ2KO47/xLluzLnmSj+Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <jsmart2021@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 137/171] clk: pxa: fix one of the pxa RTC clocks
+Subject: [PATCH 4.4 095/137] scsi: lpfc: Fix SLI3 hba in loop mode not discovering devices
 Date:   Thu,  2 Jan 2020 23:07:48 +0100
-Message-Id: <20200102220606.103780074@linuxfoundation.org>
+Message-Id: <20200102220559.762033259@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robert Jarzmik <robert.jarzmik@free.fr>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit 46acbcb4849b2ca2e6e975e7c8130c1d61c8fd0c ]
+[ Upstream commit feff8b3d84d3d9570f893b4d83e5eab6693d6a52 ]
 
-The pxa27x platforms have a single IP with 2 drivers, sa1100-rtc and
-rtc-pxa drivers.
+When operating in private loop mode, PLOGI exchanges are racing and the
+driver tries to abort it's PLOGI. But the PLOGI abort ends up terminating
+the login with the other end causing the other end to abort its PLOGI as
+well. Discovery never fully completes.
 
-A previous patch fixed the sa1100-rtc case, but the pxa-rtc wasn't
-fixed. This patch completes the previous one.
+Fix by disabling the PLOGI abort when private loop and letting the state
+machine play out.
 
-Fixes: 8b6d10345e16 ("clk: pxa: add missing pxa27x clocks for Irda and sa1100-rtc")
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Link: https://lkml.kernel.org/r/20191026194420.11918-1-robert.jarzmik@free.fr
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Link: https://lore.kernel.org/r/20191018211832.7917-5-jsmart2021@gmail.com
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/pxa/clk-pxa27x.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/lpfc/lpfc_nportdisc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
-index c40b1804f58c..bb556f9bbeda 100644
---- a/drivers/clk/pxa/clk-pxa27x.c
-+++ b/drivers/clk/pxa/clk-pxa27x.c
-@@ -362,6 +362,7 @@ struct dummy_clk {
- };
- static struct dummy_clk dummy_clks[] __initdata = {
- 	DUMMY_CLK(NULL, "pxa27x-gpio", "osc_32_768khz"),
-+	DUMMY_CLK(NULL, "pxa-rtc", "osc_32_768khz"),
- 	DUMMY_CLK(NULL, "sa1100-rtc", "osc_32_768khz"),
- 	DUMMY_CLK("UARTCLK", "pxa2xx-ir", "STUART"),
- };
+diff --git a/drivers/scsi/lpfc/lpfc_nportdisc.c b/drivers/scsi/lpfc/lpfc_nportdisc.c
+index 3a4613f9fb9f..6aa0698925da 100644
+--- a/drivers/scsi/lpfc/lpfc_nportdisc.c
++++ b/drivers/scsi/lpfc/lpfc_nportdisc.c
+@@ -454,8 +454,10 @@ lpfc_rcv_plogi(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
+ 	 * single discovery thread, this will cause a huge delay in
+ 	 * discovery. Also this will cause multiple state machines
+ 	 * running in parallel for this node.
++	 * This only applies to a fabric environment.
+ 	 */
+-	if (ndlp->nlp_state == NLP_STE_PLOGI_ISSUE) {
++	if ((ndlp->nlp_state == NLP_STE_PLOGI_ISSUE) &&
++	    (vport->fc_flag & FC_FABRIC)) {
+ 		/* software abort outstanding PLOGI */
+ 		lpfc_els_abort(phba, ndlp);
+ 	}
 -- 
 2.20.1
 
