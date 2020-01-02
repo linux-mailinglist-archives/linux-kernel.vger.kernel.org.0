@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5DEE12F163
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:00:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 992D612F142
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:59:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727642AbgABWNM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:13:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52750 "EHLO mail.kernel.org"
+        id S1727613AbgABWOk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:14:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727629AbgABWNK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:13:10 -0500
+        id S1727931AbgABWOg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:14:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E72B522B48;
-        Thu,  2 Jan 2020 22:13:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDD9721D7D;
+        Thu,  2 Jan 2020 22:14:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003189;
-        bh=rlPLsKuQkErBRFGYfur2piTSMcHBnT5b215Uu37LWqg=;
+        s=default; t=1578003275;
+        bh=so39Ko76CscwU0RY7P3cb4mHUdASxpwyjcuzILbe+Rs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FfWULzZRqXxIKQt4QQQTU7Hb4muJxMeYA2AQ1DGhtmStDBjhdCJuZw0jxPVkBlOFO
-         /qYnrEU4DqHjJ0XyZm5tz11swUaF6qMgI7rO5/I80fpZXdeAYqvPZU2k6fkYtiukpv
-         fE8S0ZKK5DY8SoAqwDoTV/fsI2bU2FcIA/6JkknI=
+        b=h9rB8JOBJFRusT+6HZcPrUSndMhDBwzri2rJggm/fiyeeGAeaZPXx8b5eNlJKmQJ2
+         T/PKzqUwn2v7u1Hr4eJjwXBobfkmihbLA5PRcU4zP6+DrNcdirmLvMqKm3vC7w5xgG
+         JA4Be+oDdt+em7sFNcNqlJnrGy8iBpwKZGzsBtms=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 056/191] fs/quota: handle overflows of sysctl fs.quota.* and report as unsigned long
-Date:   Thu,  2 Jan 2020 23:05:38 +0100
-Message-Id: <20200102215835.919091259@linuxfoundation.org>
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Will Deacon <will@kernel.org>, Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 057/191] iommu/arm-smmu-v3: Dont display an error when IRQ lines are missing
+Date:   Thu,  2 Jan 2020 23:05:39 +0100
+Message-Id: <20200102215836.018899179@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
 References: <20200102215829.911231638@linuxfoundation.org>
@@ -44,145 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Jean-Philippe Brucker <jean-philippe@linaro.org>
 
-[ Upstream commit 6fcbcec9cfc7b3c6a2c1f1a23ebacedff7073e0a ]
+[ Upstream commit f7aff1a93f52047739af31072de0ad8d149641f3 ]
 
-Quota statistics counted as 64-bit per-cpu counter. Reading sums per-cpu
-fractions as signed 64-bit int, filters negative values and then reports
-lower half as signed 32-bit int.
+Since commit 7723f4c5ecdb ("driver core: platform: Add an error message
+to platform_get_irq*()"), platform_get_irq_byname() displays an error
+when the IRQ isn't found. Since the SMMUv3 driver uses that function to
+query which interrupt method is available, the message is now displayed
+during boot for any SMMUv3 that doesn't implement the combined
+interrupt, or that implements MSIs.
 
-Result may looks like:
+[   20.700337] arm-smmu-v3 arm-smmu-v3.7.auto: IRQ combined not found
+[   20.706508] arm-smmu-v3 arm-smmu-v3.7.auto: IRQ eventq not found
+[   20.712503] arm-smmu-v3 arm-smmu-v3.7.auto: IRQ priq not found
+[   20.718325] arm-smmu-v3 arm-smmu-v3.7.auto: IRQ gerror not found
 
-fs.quota.allocated_dquots = 22327
-fs.quota.cache_hits = -489852115
-fs.quota.drops = -487288718
-fs.quota.free_dquots = 22083
-fs.quota.lookups = -486883485
-fs.quota.reads = 22327
-fs.quota.syncs = 335064
-fs.quota.writes = 3088689
+Use platform_get_irq_byname_optional() to avoid displaying a spurious
+error.
 
-Values bigger than 2^31-1 reported as negative.
-
-All counters except "allocated_dquots" and "free_dquots" are monotonic,
-thus they should be reported as is without filtering negative values.
-
-Kernel doesn't have generic helper for 64-bit sysctl yet,
-let's use at least unsigned long.
-
-Link: https://lore.kernel.org/r/157337934693.2078.9842146413181153727.stgit@buzz
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Fixes: 7723f4c5ecdb ("driver core: platform: Add an error message to platform_get_irq*()")
+Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
+Acked-by: Will Deacon <will@kernel.org>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/quota/dquot.c      | 29 +++++++++++++++++------------
- include/linux/quota.h |  2 +-
- 2 files changed, 18 insertions(+), 13 deletions(-)
+ drivers/iommu/arm-smmu-v3.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index 7f0b39da5022..9b96243de081 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -2861,68 +2861,73 @@ EXPORT_SYMBOL(dquot_quotactl_sysfile_ops);
- static int do_proc_dqstats(struct ctl_table *table, int write,
- 		     void __user *buffer, size_t *lenp, loff_t *ppos)
- {
--	unsigned int type = (int *)table->data - dqstats.stat;
-+	unsigned int type = (unsigned long *)table->data - dqstats.stat;
-+	s64 value = percpu_counter_sum(&dqstats.counter[type]);
-+
-+	/* Filter negative values for non-monotonic counters */
-+	if (value < 0 && (type == DQST_ALLOC_DQUOTS ||
-+			  type == DQST_FREE_DQUOTS))
-+		value = 0;
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index 8da93e730d6f..ed90361b84dc 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -3611,19 +3611,19 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
  
- 	/* Update global table */
--	dqstats.stat[type] =
--			percpu_counter_sum_positive(&dqstats.counter[type]);
--	return proc_dointvec(table, write, buffer, lenp, ppos);
-+	dqstats.stat[type] = value;
-+	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
- }
+ 	/* Interrupt lines */
  
- static struct ctl_table fs_dqstats_table[] = {
- 	{
- 		.procname	= "lookups",
- 		.data		= &dqstats.stat[DQST_LOOKUPS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "drops",
- 		.data		= &dqstats.stat[DQST_DROPS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "reads",
- 		.data		= &dqstats.stat[DQST_READS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "writes",
- 		.data		= &dqstats.stat[DQST_WRITES],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "cache_hits",
- 		.data		= &dqstats.stat[DQST_CACHE_HITS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "allocated_dquots",
- 		.data		= &dqstats.stat[DQST_ALLOC_DQUOTS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "free_dquots",
- 		.data		= &dqstats.stat[DQST_FREE_DQUOTS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "syncs",
- 		.data		= &dqstats.stat[DQST_SYNCS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
-diff --git a/include/linux/quota.h b/include/linux/quota.h
-index f32dd270b8e3..27aab84fcbaa 100644
---- a/include/linux/quota.h
-+++ b/include/linux/quota.h
-@@ -263,7 +263,7 @@ enum {
- };
+-	irq = platform_get_irq_byname(pdev, "combined");
++	irq = platform_get_irq_byname_optional(pdev, "combined");
+ 	if (irq > 0)
+ 		smmu->combined_irq = irq;
+ 	else {
+-		irq = platform_get_irq_byname(pdev, "eventq");
++		irq = platform_get_irq_byname_optional(pdev, "eventq");
+ 		if (irq > 0)
+ 			smmu->evtq.q.irq = irq;
  
- struct dqstats {
--	int stat[_DQST_DQSTAT_LAST];
-+	unsigned long stat[_DQST_DQSTAT_LAST];
- 	struct percpu_counter counter[_DQST_DQSTAT_LAST];
- };
+-		irq = platform_get_irq_byname(pdev, "priq");
++		irq = platform_get_irq_byname_optional(pdev, "priq");
+ 		if (irq > 0)
+ 			smmu->priq.q.irq = irq;
  
+-		irq = platform_get_irq_byname(pdev, "gerror");
++		irq = platform_get_irq_byname_optional(pdev, "gerror");
+ 		if (irq > 0)
+ 			smmu->gerr_irq = irq;
+ 	}
 -- 
 2.20.1
 
