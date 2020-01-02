@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2836C12F146
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:59:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E31CE12F000
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:50:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726089AbgABWOW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:14:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54532 "EHLO mail.kernel.org"
+        id S1731242AbgABWuH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:50:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727361AbgABWOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:14:19 -0500
+        id S1729865AbgABW2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:28:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65B6D24125;
-        Thu,  2 Jan 2020 22:14:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55E7421835;
+        Thu,  2 Jan 2020 22:28:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003258;
-        bh=YKzmLDGM+26DWt1qYfbrH6yMPu9ZkjIK/pFyMAkhQ98=;
+        s=default; t=1578004112;
+        bh=6Tuvfzl21dPhhQ2yEBOKLmtI8zfTzqA+KXrdixlBrRQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DHHbvCbkQVHGCJcbPanFkJ/R8UGqI7QGH+qCh/7rNahU+Z5D474zhA4JV346+wXxR
-         vW9GH2p/efvyjQ+JWZFmF4On9Fh8Cc9E85XIavHRat5PBy7QQOWfaSVB3bHsuBQozO
-         kX8/1b6ZqbPoIs88MhuvPRVTHaCFGuC4sEbPR34M=
+        b=y437PWggEdXJHu0mrPUGq1DNTVs3c7VHs/zONnntesQxNGEeQ4Fp5MX46hn46UMsS
+         d9Dp8/GTU1vEWlx+rhT2N7OmfW9Dz8l8uwH1mgA8gavxeGqdWHFxAWGL6u3TzMc95d
+         f0Lx+dPoyodWk84GiTTU77wcp9vWtcU9XHTQjKiU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Sven Van Asbroeck <TheSven73@gmail.com>
-Subject: [PATCH 5.4 060/191] Input: ili210x - handle errors from input_mt_init_slots()
-Date:   Thu,  2 Jan 2020 23:05:42 +0100
-Message-Id: <20200102215836.397291369@linuxfoundation.org>
+        stable@vger.kernel.org, Max Gurtovoy <maxg@mellanox.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 015/171] IB/iser: bound protection_sg size by data_sg size
+Date:   Thu,  2 Jan 2020 23:05:46 +0100
+Message-Id: <20200102220549.107132967@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,38 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Max Gurtovoy <maxg@mellanox.com>
 
-[ Upstream commit 43f06a4c639de8ee89fc348a9a3ecd70320a04dd ]
+[ Upstream commit 7718cf03c3ce4b6ebd90107643ccd01c952a1fce ]
 
-input_mt_init_slots() may fail and we need to handle such failures.
+In case we don't set the sg_prot_tablesize, the scsi layer assign the
+default size (65535 entries). We should limit this size since we should
+take into consideration the underlaying device capability. This cap is
+considered when calculating the sg_tablesize. Otherwise, for example,
+we can get that /sys/block/sdb/queue/max_segments is 128 and
+/sys/block/sdb/queue/max_integrity_segments is 65535.
 
-Tested-by: Adam Ford <aford173@gmail.com> #imx6q-logicpd
-Tested-by: Sven Van Asbroeck <TheSven73@gmail.com> # ILI2118A variant
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Link: https://lore.kernel.org/r/1569359027-10987-1-git-send-email-maxg@mellanox.com
+Signed-off-by: Max Gurtovoy <maxg@mellanox.com>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/touchscreen/ili210x.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/infiniband/ulp/iser/iscsi_iser.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/input/touchscreen/ili210x.c b/drivers/input/touchscreen/ili210x.c
-index e9006407c9bc..f4ebdab06280 100644
---- a/drivers/input/touchscreen/ili210x.c
-+++ b/drivers/input/touchscreen/ili210x.c
-@@ -334,7 +334,12 @@ static int ili210x_i2c_probe(struct i2c_client *client,
- 	input_set_abs_params(input, ABS_MT_POSITION_X, 0, 0xffff, 0, 0);
- 	input_set_abs_params(input, ABS_MT_POSITION_Y, 0, 0xffff, 0, 0);
- 	touchscreen_parse_properties(input, true, &priv->prop);
--	input_mt_init_slots(input, priv->max_touches, INPUT_MT_DIRECT);
-+
-+	error = input_mt_init_slots(input, priv->max_touches, INPUT_MT_DIRECT);
-+	if (error) {
-+		dev_err(dev, "Unable to set up slots, err: %d\n", error);
-+		return error;
-+	}
+diff --git a/drivers/infiniband/ulp/iser/iscsi_iser.c b/drivers/infiniband/ulp/iser/iscsi_iser.c
+index e46e2b095c18..fdf5179a81c1 100644
+--- a/drivers/infiniband/ulp/iser/iscsi_iser.c
++++ b/drivers/infiniband/ulp/iser/iscsi_iser.c
+@@ -649,6 +649,7 @@ iscsi_iser_session_create(struct iscsi_endpoint *ep,
+ 		if (ib_conn->pi_support) {
+ 			u32 sig_caps = ib_conn->device->ib_device->attrs.sig_prot_cap;
  
- 	error = devm_add_action(dev, ili210x_cancel_work, priv);
- 	if (error)
++			shost->sg_prot_tablesize = shost->sg_tablesize;
+ 			scsi_host_set_prot(shost, iser_dif_prot_caps(sig_caps));
+ 			scsi_host_set_guard(shost, SHOST_DIX_GUARD_IP |
+ 						   SHOST_DIX_GUARD_CRC);
 -- 
 2.20.1
 
