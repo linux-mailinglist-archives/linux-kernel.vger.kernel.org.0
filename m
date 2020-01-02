@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 342F312EC8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:19:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 754B212EC40
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:16:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728651AbgABWTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:19:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36176 "EHLO mail.kernel.org"
+        id S1728290AbgABWQn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:16:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727944AbgABWTm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:19:42 -0500
+        id S1728282AbgABWQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:16:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AB2121582;
-        Thu,  2 Jan 2020 22:19:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCD2F21582;
+        Thu,  2 Jan 2020 22:16:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003581;
-        bh=mhhFsvZD7JJ4GBURdn8QBsD1PYSlO46h7vMKzJUHME0=;
+        s=default; t=1578003399;
+        bh=70aTdiQgJsFIJCW4mqmXNycIive18GHAshoWKj+6q18=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B5XQwFE7b4OVHlTHjFn/YQpb4R0xZUd8ekzPfPj0dGRSAOjtmDAsmxHUAJZyLF70Y
-         jJghbntW0XbSNl3qbseF/HC6gHI9zbQB03ck0ckXiekrkiSTHUfZOASsTvA2I4xm/Q
-         aBs6GDGUfRYyEVXky9FbgCs1nLl1dJUyG+NtNGbA=
+        b=IheE8AvifDFTdXJvS7181Au0de7jz4sJ1lUYjpSNPWHsYohsM0iw3joAH8pWeevoX
+         zgOi6lZHluZsCXmXNSXtLwzQWU0Mo6hArkZAy5uPOJsQAQcz7P1k49cEZoOS1ILXrB
+         H48Brb8jwQotYG3lBMj1k+wmOAI8zvPy9xTjU/bU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 029/114] clk: clk-gpio: propagate rate change to parent
+Subject: [PATCH 5.4 119/191] mailbox: imx: Clear the right interrupts at shutdown
 Date:   Thu,  2 Jan 2020 23:06:41 +0100
-Message-Id: <20200102220032.059523763@linuxfoundation.org>
+Message-Id: <20200102215842.592971839@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,47 +47,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Hennerich <michael.hennerich@analog.com>
+From: Daniel Baluta <daniel.baluta@nxp.com>
 
-[ Upstream commit fc59462c5ce60da119568fac325c92fc6b7c6175 ]
+[ Upstream commit 5f0af07e89199ac51cdd4f25bc303bdc703f4e9c ]
 
-For an external clock source, which is gated via a GPIO, the
-rate change should typically be propagated to the parent clock.
+Make sure to only clear enabled interrupts keeping count
+of the connection type.
 
-The situation where we are requiring this propagation, is when an
-external clock is connected to override an internal clock (which typically
-has a fixed rate). The external clock can have a different rate than the
-internal one, and may also be variable, thus requiring the rate
-propagation.
-
-This rate change wasn't propagated until now, and it's unclear about cases
-where this shouldn't be propagated. Thus, it's unclear whether this is
-fixing a bug, or extending the current driver behavior. Also, it's unsure
-about whether this may break any existing setups; in the case that it does,
-a device-tree property may be added to disable this flag.
-
-Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Link: https://lkml.kernel.org/r/20191108071718.17985-1-alexandru.ardelean@analog.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Suggested-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk-gpio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mailbox/imx-mailbox.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index 40af4fbab4d2..af9cc00d2d92 100644
---- a/drivers/clk/clk-gpio.c
-+++ b/drivers/clk/clk-gpio.c
-@@ -248,7 +248,7 @@ static int gpio_clk_driver_probe(struct platform_device *pdev)
- 	else
- 		clk = clk_register_gpio_gate(&pdev->dev, node->name,
- 				parent_names ?  parent_names[0] : NULL, gpiod,
--				0);
-+				CLK_SET_RATE_PARENT);
- 	if (IS_ERR(clk))
- 		return PTR_ERR(clk);
+diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
+index 9f74dee1a58c..d28bbd47ff88 100644
+--- a/drivers/mailbox/imx-mailbox.c
++++ b/drivers/mailbox/imx-mailbox.c
+@@ -217,8 +217,19 @@ static void imx_mu_shutdown(struct mbox_chan *chan)
+ 	if (cp->type == IMX_MU_TYPE_TXDB)
+ 		tasklet_kill(&cp->txdb_tasklet);
  
+-	imx_mu_xcr_rmw(priv, 0, IMX_MU_xCR_TIEn(cp->idx) |
+-		       IMX_MU_xCR_RIEn(cp->idx) | IMX_MU_xCR_GIEn(cp->idx));
++	switch (cp->type) {
++	case IMX_MU_TYPE_TX:
++		imx_mu_xcr_rmw(priv, 0, IMX_MU_xCR_TIEn(cp->idx));
++		break;
++	case IMX_MU_TYPE_RX:
++		imx_mu_xcr_rmw(priv, 0, IMX_MU_xCR_RIEn(cp->idx));
++		break;
++	case IMX_MU_TYPE_RXDB:
++		imx_mu_xcr_rmw(priv, 0, IMX_MU_xCR_GIEn(cp->idx));
++		break;
++	default:
++		break;
++	}
+ 
+ 	free_irq(priv->irq, chan);
+ }
 -- 
 2.20.1
 
