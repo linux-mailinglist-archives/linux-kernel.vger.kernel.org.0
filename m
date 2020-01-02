@@ -2,41 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C20812EFC7
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:49:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D834412EDFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:34:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729651AbgABW0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:26:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53598 "EHLO mail.kernel.org"
+        id S1730670AbgABWeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:34:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729635AbgABW0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:26:23 -0500
+        id S1730434AbgABWeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:34:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D06222253D;
-        Thu,  2 Jan 2020 22:26:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3011E20863;
+        Thu,  2 Jan 2020 22:34:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003983;
-        bh=4cj++FVsf3T8jdjkxRESByTCeCSbAi1bhmBHuAKL6Lc=;
+        s=default; t=1578004440;
+        bh=fW9Gz4rN4vuGWaB4xKKJYFcn8j7Hz++IV5tpiplwfIU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BsIiuMt7CLTnLQj5NPfW5EefK9sMCfQtTipMme2uaIEnOIp/a0gX36U0nXYbPljJD
-         l547u+TQXQihJtmjXV9zqzOfZ9MjlAWs68+8avyJVOS1WUzqYB4AOv6K8C9uk0rhkV
-         Oz7L4fpMRQ6y4XeSnQkTlR6hINcjrPOf1nb6cews=
+        b=LNgvP6wwQjaNJ+4hf1vh+qrGgSLn2THms5pT8RDhNrj09GTwvX8m+n0H6anxfHw/7
+         7EbajV4egoaFNz2nJd5XSww4ndDt7mrpwdOMkPUNp/F9COb01gQG+f9u0TDTELItjJ
+         Gx5666Y+SJ89O1hcctf/0VAyDvJy1eg0StBA4Qt0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
-        Guillaume Nault <gnault@redhat.com>,
-        David Ahern <dsahern@gmail.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 80/91] ip6_gre: do not confirm neighbor when do pmtu update
-Date:   Thu,  2 Jan 2020 23:08:02 +0100
-Message-Id: <20200102220449.619515237@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "=?UTF-8?q?Jan=20H . =20Sch=C3=B6nherr?=" <jschoenh@amazon.de>,
+        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
+        Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 152/171] x86/mce: Fix possibly incorrect severity calculation on AMD
+Date:   Thu,  2 Jan 2020 23:08:03 +0100
+Message-Id: <20200102220607.986637001@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
-References: <20200102220356.856162165@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,47 +49,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Jan H. Schönherr <jschoenh@amazon.de>
 
-[ Upstream commit 675d76ad0ad5bf41c9a129772ef0aba8f57ea9a7 ]
+[ Upstream commit a3a57ddad061acc90bef39635caf2b2330ce8f21 ]
 
-When we do ipv6 gre pmtu update, we will also do neigh confirm currently.
-This will cause the neigh cache be refreshed and set to REACHABLE before
-xmit.
+The function mce_severity_amd_smca() requires m->bank to be initialized
+for correct operation. Fix the one case, where mce_severity() is called
+without doing so.
 
-But if the remote mac address changed, e.g. device is deleted and recreated,
-we will not able to notice this and still use the old mac address as the neigh
-cache is REACHABLE.
-
-Fix this by disable neigh confirm when do pmtu update
-
-v5: No change.
-v4: No change.
-v3: Do not remove dst_confirm_neigh, but add a new bool parameter in
-    dst_ops.update_pmtu to control whether we should do neighbor confirm.
-    Also split the big patch to small ones for each area.
-v2: Remove dst_confirm_neigh in __ip6_rt_update_pmtu.
-
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Reviewed-by: Guillaume Nault <gnault@redhat.com>
-Acked-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 6bda529ec42e ("x86/mce: Grade uncorrected errors for SMCA-enabled systems")
+Fixes: d28af26faa0b ("x86/MCE: Initialize mce.bank in the case of a fatal error in mce_no_way_out()")
+Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Tony Luck <tony.luck@intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: <stable@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Link: https://lkml.kernel.org/r/20191210000733.17979-4-jschoenh@amazon.de
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/ip6_gre.c |    2 +-
+ arch/x86/kernel/cpu/mcheck/mce.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -527,7 +527,7 @@ static netdev_tx_t __gre6_xmit(struct sk
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index d3b2c5b25c9c..07188a012492 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -782,8 +782,8 @@ static int mce_no_way_out(struct mce *m, char **msg, unsigned long *validp,
+ 		if (quirk_no_way_out)
+ 			quirk_no_way_out(i, m, regs);
  
- 	/* TooBig packet may have updated dst->dev's mtu */
- 	if (dst && dst_mtu(dst) > dst->dev->mtu)
--		dst->ops->update_pmtu(dst, NULL, skb, dst->dev->mtu, true);
-+		dst->ops->update_pmtu(dst, NULL, skb, dst->dev->mtu, false);
- 
- 	return ip6_tnl_xmit(skb, dev, dsfield, fl6, encap_limit, pmtu,
- 			    NEXTHDR_GRE);
++		m->bank = i;
+ 		if (mce_severity(m, mca_cfg.tolerant, &tmp, true) >= MCE_PANIC_SEVERITY) {
+-			m->bank = i;
+ 			mce_read_aux(m, i);
+ 			*msg = tmp;
+ 			return 1;
+-- 
+2.20.1
+
 
 
