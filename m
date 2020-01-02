@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31ABF12ED5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:28:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 331CE12EBEC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:14:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727907AbgABW1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:27:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56090 "EHLO mail.kernel.org"
+        id S1727723AbgABWNg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:13:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729750AbgABW1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:27:30 -0500
+        id S1727386AbgABWNb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:13:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F276B227BF;
-        Thu,  2 Jan 2020 22:27:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64EAB22525;
+        Thu,  2 Jan 2020 22:13:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004050;
-        bh=zlLzjBEkrsdur7g63bERQIU76+VaQjQpuLBcs9wb7hU=;
+        s=default; t=1578003210;
+        bh=mBhPzEHMmHjCJxgZUXZTiGKdQ5QQBIVVgNcKfxVzItY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ACJVMcIwS4+Xg0gaY9jfrrVYyVogpgf1t7pwgWS7jgePKzDw021ApnCYqcRsswHFG
-         a1MHp58Lh/biwTFRn/R8gy/RWW97eE8/iiST/84Nx3EQVyddRrAZ1u0pCGjtmYK50j
-         YcdtBa3IVTpxc5yRlMybRthiHRe6NuF0MmUkChtE=
+        b=cK4CpP93ruPJV5OKVWq1KTsitsKZakI+fPVramxBzaag1d/sbFrqDIeZcJ534STfy
+         ea8R0sofhQubPgw6tyc24m2aY68E1Ywg31xUSx4Ocmq9Ogp9oNde5r/i2D8sEfJ1tW
+         ZWveliDtVj4uwmhXIxzZh4sv7aRUJ0LHD4fb2sVQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Masney <masneyb@onstation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
+        stable@vger.kernel.org, Alain Volmat <alain.volmat@st.com>,
+        Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 008/171] drm/bridge: analogix-anx78xx: silence -EPROBE_DEFER warnings
-Date:   Thu,  2 Jan 2020 23:05:39 +0100
-Message-Id: <20200102220548.078950092@linuxfoundation.org>
+Subject: [PATCH 5.4 058/191] i2c: stm32f7: fix & reorder remove & probe error handling
+Date:   Thu,  2 Jan 2020 23:05:40 +0100
+Message-Id: <20200102215836.171338610@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +45,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Masney <masneyb@onstation.org>
+From: Alain Volmat <alain.volmat@st.com>
 
-[ Upstream commit 2708e876272d89bbbff811d12834adbeef85f022 ]
+[ Upstream commit 53aaaa5d9b1e95eb40e877fbffa6f964a8394bb7 ]
 
-Silence two warning messages that occur due to -EPROBE_DEFER errors to
-help cleanup the system boot log.
+Add missing dma channels free calls in case of error during probe
+and reorder the remove function so that dma channels are freed after
+the i2c adapter is deleted.
+Overall, reorder the remove function so that probe error handling order
+and remove function order are same.
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190815004854.19860-4-masneyb@onstation.org
+Fixes: 7ecc8cfde553 ("i2c: i2c-stm32f7: Add DMA support")
+Signed-off-by: Alain Volmat <alain.volmat@st.com>
+Reviewed-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/analogix-anx78xx.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-stm32f7.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix-anx78xx.c
-index a2a82366a771..eb97e88a103c 100644
---- a/drivers/gpu/drm/bridge/analogix-anx78xx.c
-+++ b/drivers/gpu/drm/bridge/analogix-anx78xx.c
-@@ -725,7 +725,9 @@ static int anx78xx_init_pdata(struct anx78xx *anx78xx)
- 	/* 1.0V digital core power regulator  */
- 	pdata->dvdd10 = devm_regulator_get(dev, "dvdd10");
- 	if (IS_ERR(pdata->dvdd10)) {
--		DRM_ERROR("DVDD10 regulator not found\n");
-+		if (PTR_ERR(pdata->dvdd10) != -EPROBE_DEFER)
-+			DRM_ERROR("DVDD10 regulator not found\n");
-+
- 		return PTR_ERR(pdata->dvdd10);
- 	}
+diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
+index b24e7b937f21..84cfed17ff4f 100644
+--- a/drivers/i2c/busses/i2c-stm32f7.c
++++ b/drivers/i2c/busses/i2c-stm32f7.c
+@@ -1985,6 +1985,11 @@ pm_disable:
+ 	pm_runtime_set_suspended(i2c_dev->dev);
+ 	pm_runtime_dont_use_autosuspend(i2c_dev->dev);
  
-@@ -1344,7 +1346,9 @@ static int anx78xx_i2c_probe(struct i2c_client *client,
- 
- 	err = anx78xx_init_pdata(anx78xx);
- 	if (err) {
--		DRM_ERROR("Failed to initialize pdata: %d\n", err);
-+		if (err != -EPROBE_DEFER)
-+			DRM_ERROR("Failed to initialize pdata: %d\n", err);
++	if (i2c_dev->dma) {
++		stm32_i2c_dma_free(i2c_dev->dma);
++		i2c_dev->dma = NULL;
++	}
 +
- 		return err;
- 	}
+ clk_free:
+ 	clk_disable_unprepare(i2c_dev->clk);
+ 
+@@ -1995,21 +2000,21 @@ static int stm32f7_i2c_remove(struct platform_device *pdev)
+ {
+ 	struct stm32f7_i2c_dev *i2c_dev = platform_get_drvdata(pdev);
+ 
+-	if (i2c_dev->dma) {
+-		stm32_i2c_dma_free(i2c_dev->dma);
+-		i2c_dev->dma = NULL;
+-	}
+-
+ 	i2c_del_adapter(&i2c_dev->adap);
+ 	pm_runtime_get_sync(i2c_dev->dev);
+ 
+-	clk_disable_unprepare(i2c_dev->clk);
+-
+ 	pm_runtime_put_noidle(i2c_dev->dev);
+ 	pm_runtime_disable(i2c_dev->dev);
+ 	pm_runtime_set_suspended(i2c_dev->dev);
+ 	pm_runtime_dont_use_autosuspend(i2c_dev->dev);
+ 
++	if (i2c_dev->dma) {
++		stm32_i2c_dma_free(i2c_dev->dma);
++		i2c_dev->dma = NULL;
++	}
++
++	clk_disable_unprepare(i2c_dev->clk);
++
+ 	return 0;
+ }
  
 -- 
 2.20.1
