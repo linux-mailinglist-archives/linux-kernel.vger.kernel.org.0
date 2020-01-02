@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35CFE12EC86
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:19:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 585E312ED91
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:29:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbgABWTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:19:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35382 "EHLO mail.kernel.org"
+        id S1730085AbgABW3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:29:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728561AbgABWTS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:19:18 -0500
+        id S1729763AbgABW3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:29:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 657CE2253D;
-        Thu,  2 Jan 2020 22:19:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F51C21835;
+        Thu,  2 Jan 2020 22:29:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003557;
-        bh=EApTYeRH2Cr8keKqlpvLgFcZh+liKY7UrhwfJ9NWNkw=;
+        s=default; t=1578004179;
+        bh=MvCa2z4IbcYYzFMqERVrXJWC8cppStZn4lCDgcHEnIc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J5Gddy6mfB1OQOw2jX4HD6uybEiFlgoM0gY8qE3HME6MURSUNcRx9VKsjwujxpEod
-         Lf9VYKr2syxvReyr37tncQEYfFf9fOvOM6GXfRLmzkh2rsLbBQw2vq5u/XBDz5MEis
-         AN0VnvyJGP3OhbzyZVR6RC9xseZV7rAFrn/64dMw=
+        b=lYp9poZWCto7FfunQr8qdfxP7UDm63qiYDKup4alF6Nzb9jPrPYYFBIQ5OnIIY39f
+         NAenziga1SLkOZ72F6ZtQ0uQNqiYkRtM+PWyBtK4h5kZBm8GCnbbAkD64Sv9nZGej6
+         9SEKgNPpl1Wpd9flGAOe9fDZYd8G5mTABgtx3yes=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Evan Green <evgreen@chromium.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org, Manish Chopra <manishc@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 004/114] Input: atmel_mxt_ts - disable IRQ across suspend
-Date:   Thu,  2 Jan 2020 23:06:16 +0100
-Message-Id: <20200102220029.594867572@linuxfoundation.org>
+Subject: [PATCH 4.9 046/171] bnx2x: Fix PF-VF communication over multi-cos queues.
+Date:   Thu,  2 Jan 2020 23:06:17 +0100
+Message-Id: <20200102220553.349350125@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Evan Green <evgreen@chromium.org>
+From: Manish Chopra <manishc@marvell.com>
 
-[ Upstream commit 463fa44eec2fef50d111ed0199cf593235065c04 ]
+[ Upstream commit dc5a3d79c345871439ffe72550b604fcde9770e1 ]
 
-Across suspend and resume, we are seeing error messages like the following:
+PF driver doesn't enable tx-switching for all cos queues/clients,
+which causes packets drop from PF to VF. Fix this by enabling
+tx-switching on all cos queues/clients.
 
-atmel_mxt_ts i2c-PRP0001:00: __mxt_read_reg: i2c transfer failed (-121)
-atmel_mxt_ts i2c-PRP0001:00: Failed to read T44 and T5 (-121)
-
-This occurs because the driver leaves its IRQ enabled. Upon resume, there
-is an IRQ pending, but the interrupt is serviced before both the driver and
-the underlying I2C bus have been resumed. This causes EREMOTEIO errors.
-
-Disable the IRQ in suspend, and re-enable it on resume. If there are cases
-where the driver enters suspend with interrupts disabled, that's a bug we
-should fix separately.
-
-Signed-off-by: Evan Green <evgreen@chromium.org>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Manish Chopra <manishc@marvell.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/touchscreen/atmel_mxt_ts.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../net/ethernet/broadcom/bnx2x/bnx2x_sriov.c    | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index a7ace07e179e..e8f98de60df3 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -3162,6 +3162,8 @@ static int __maybe_unused mxt_suspend(struct device *dev)
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
+index c6e059119b22..e8a09d0afe1c 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
+@@ -2376,15 +2376,21 @@ static int bnx2x_set_pf_tx_switching(struct bnx2x *bp, bool enable)
+ 	/* send the ramrod on all the queues of the PF */
+ 	for_each_eth_queue(bp, i) {
+ 		struct bnx2x_fastpath *fp = &bp->fp[i];
++		int tx_idx;
  
- 	mutex_unlock(&input_dev->mutex);
+ 		/* Set the appropriate Queue object */
+ 		q_params.q_obj = &bnx2x_sp_obj(bp, fp).q_obj;
  
-+	disable_irq(data->irq);
+-		/* Update the Queue state */
+-		rc = bnx2x_queue_state_change(bp, &q_params);
+-		if (rc) {
+-			BNX2X_ERR("Failed to configure Tx switching\n");
+-			return rc;
++		for (tx_idx = FIRST_TX_COS_INDEX;
++		     tx_idx < fp->max_cos; tx_idx++) {
++			q_params.params.update.cid_index = tx_idx;
 +
- 	return 0;
- }
++			/* Update the Queue state */
++			rc = bnx2x_queue_state_change(bp, &q_params);
++			if (rc) {
++				BNX2X_ERR("Failed to configure Tx switching\n");
++				return rc;
++			}
+ 		}
+ 	}
  
-@@ -3174,6 +3176,8 @@ static int __maybe_unused mxt_resume(struct device *dev)
- 	if (!input_dev)
- 		return 0;
- 
-+	enable_irq(data->irq);
-+
- 	mutex_lock(&input_dev->mutex);
- 
- 	if (input_dev->users)
 -- 
 2.20.1
 
