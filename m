@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 110E712ED4B
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:26:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0A1912ECD2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:22:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729675AbgABW0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:26:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54154 "EHLO mail.kernel.org"
+        id S1729125AbgABWWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:22:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729288AbgABW0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:26:39 -0500
+        id S1727532AbgABWWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:22:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7291521835;
-        Thu,  2 Jan 2020 22:26:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE48C21D7D;
+        Thu,  2 Jan 2020 22:22:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003997;
-        bh=XU+L9MywMi+FuVALhfcEQuNH1T/ECJ7Mw+ayI+uevUM=;
+        s=default; t=1578003735;
+        bh=9N5Do3eHMPg3N2LbGNZ8XxcUabmcnKwWjINHbtRGIks=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kBGF3dM2y3tYf6QFBli5niK8eOEWkE/3SG6c4z2VGmhmC+WNm6cFPQR+YhbzY3ABA
-         Wd1iZ/zDIe6njbfyjT5B+xJBTaH64PvcDZWQfThFkUkds8S6E110Ja6u91unAMuQae
-         YxrHxkP01OnwqF0PbwxW+V/LbP49w0Sf/XbOmlnY=
+        b=losBAUmAa45ehbKG0PGIm2M501Yfm+a4Cnu9XHkaMZ935ZVEmojbw2fbqqw9Y5Hvm
+         dB1DoklQ+ulgqewouNbFcPJWdHZWv+9scdbJmlldv7yy+4ECdQ8WXnIJN9ljmvCu6d
+         4oU2qVAdaUS4c+E01Z5qE8iecGLCLKD/4MTvT0P8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jann Horn <jannh@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Siddharth Chandrasekaran <csiddharth@vmware.com>
-Subject: [PATCH 4.14 61/91] Make filldir[64]() verify the directory entry filename is valid
-Date:   Thu,  2 Jan 2020 23:07:43 +0100
-Message-Id: <20200102220441.328937805@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 092/114] net: stmmac: dwmac-meson8b: Fix the RGMII TX delay on Meson8b/8m2 SoCs
+Date:   Thu,  2 Jan 2020 23:07:44 +0100
+Message-Id: <20200102220038.435278242@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
-References: <20200102220356.856162165@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,142 +45,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-commit 8a23eb804ca4f2be909e372cf5a9e7b30ae476cd upstream.
+[ Upstream commit bd6f48546b9cb7a785344fc78058c420923d7ed8 ]
 
-This has been discussed several times, and now filesystem people are
-talking about doing it individually at the filesystem layer, so head
-that off at the pass and just do it in getdents{64}().
+GXBB and newer SoCs use the fixed FCLK_DIV2 (1GHz) clock as input for
+the m250_sel clock. Meson8b and Meson8m2 use MPLL2 instead, whose rate
+can be adjusted at runtime.
 
-This is partially based on a patch by Jann Horn, but checks for NUL
-bytes as well, and somewhat simplified.
+So far we have been running MPLL2 with ~250MHz (and the internal
+m250_div with value 1), which worked enough that we could transfer data
+with an TX delay of 4ns. Unfortunately there is high packet loss with
+an RGMII PHY when transferring data (receiving data works fine though).
+Odroid-C1's u-boot is running with a TX delay of only 2ns as well as
+the internal m250_div set to 2 - no lost (TX) packets can be observed
+with that setting in u-boot.
 
-There's also commentary about how it might be better if invalid names
-due to filesystem corruption don't cause an immediate failure, but only
-an error at the end of the readdir(), so that people can still see the
-filenames that are ok.
+Manual testing has shown that the TX packet loss goes away when using
+the following settings in Linux (the vendor kernel uses the same
+settings):
+- MPLL2 clock set to ~500MHz
+- m250_div set to 2
+- TX delay set to 2ns on the MAC side
 
-There's also been discussion about just how much POSIX strictly speaking
-requires this since it's about filesystem corruption.  It's really more
-"protect user space from bad behavior" as pointed out by Jann.  But
-since Eric Biederman looked up the POSIX wording, here it is for context:
+Update the m250_div divider settings to only accept dividers greater or
+equal 2 to fix the TX delay generated by the MAC.
 
- "From readdir:
+iperf3 results before the change:
+[ ID] Interval           Transfer     Bitrate         Retr
+[  5]   0.00-10.00  sec   182 MBytes   153 Mbits/sec  514      sender
+[  5]   0.00-10.00  sec   182 MBytes   152 Mbits/sec           receiver
 
-   The readdir() function shall return a pointer to a structure
-   representing the directory entry at the current position in the
-   directory stream specified by the argument dirp, and position the
-   directory stream at the next entry. It shall return a null pointer
-   upon reaching the end of the directory stream. The structure dirent
-   defined in the <dirent.h> header describes a directory entry.
+iperf3 results after the change (including an updated TX delay of 2ns):
+[ ID] Interval           Transfer     Bitrate         Retr  Cwnd
+[  5]   0.00-10.00  sec   927 MBytes   778 Mbits/sec    0      sender
+[  5]   0.00-10.01  sec   927 MBytes   777 Mbits/sec           receiver
 
-  From definitions:
-
-   3.129 Directory Entry (or Link)
-
-   An object that associates a filename with a file. Several directory
-   entries can associate names with the same file.
-
-  ...
-
-   3.169 Filename
-
-   A name consisting of 1 to {NAME_MAX} bytes used to name a file. The
-   characters composing the name may be selected from the set of all
-   character values excluding the slash character and the null byte. The
-   filenames dot and dot-dot have special meaning. A filename is
-   sometimes referred to as a 'pathname component'."
-
-Note that I didn't bother adding the checks to any legacy interfaces
-that nobody uses.
-
-Also note that if this ends up being noticeable as a performance
-regression, we can fix that to do a much more optimized model that
-checks for both NUL and '/' at the same time one word at a time.
-
-We haven't really tended to optimize 'memchr()', and it only checks for
-one pattern at a time anyway, and we really _should_ check for NUL too
-(but see the comment about "soft errors" in the code about why it
-currently only checks for '/')
-
-See the CONFIG_DCACHE_WORD_ACCESS case of hash_name() for how the name
-lookup code looks for pathname terminating characters in parallel.
-
-Link: https://lore.kernel.org/lkml/20190118161440.220134-2-jannh@google.com/
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Jann Horn <jannh@google.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Siddharth Chandrasekaran <csiddharth@vmware.com>
+Fixes: 4f6a71b84e1afd ("net: stmmac: dwmac-meson8b: fix internal RGMII clock configuration")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/readdir.c |   40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c |   14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/fs/readdir.c
-+++ b/fs/readdir.c
-@@ -66,6 +66,40 @@ out:
- EXPORT_SYMBOL(iterate_dir);
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+@@ -118,6 +118,14 @@ static int meson8b_init_rgmii_tx_clk(str
+ 	struct device *dev = dwmac->dev;
+ 	const char *parent_name, *mux_parent_names[MUX_CLK_NUM_PARENTS];
+ 	struct meson8b_dwmac_clk_configs *clk_configs;
++	static const struct clk_div_table div_table[] = {
++		{ .div = 2, .val = 2, },
++		{ .div = 3, .val = 3, },
++		{ .div = 4, .val = 4, },
++		{ .div = 5, .val = 5, },
++		{ .div = 6, .val = 6, },
++		{ .div = 7, .val = 7, },
++	};
  
- /*
-+ * POSIX says that a dirent name cannot contain NULL or a '/'.
-+ *
-+ * It's not 100% clear what we should really do in this case.
-+ * The filesystem is clearly corrupted, but returning a hard
-+ * error means that you now don't see any of the other names
-+ * either, so that isn't a perfect alternative.
-+ *
-+ * And if you return an error, what error do you use? Several
-+ * filesystems seem to have decided on EUCLEAN being the error
-+ * code for EFSCORRUPTED, and that may be the error to use. Or
-+ * just EIO, which is perhaps more obvious to users.
-+ *
-+ * In order to see the other file names in the directory, the
-+ * caller might want to make this a "soft" error: skip the
-+ * entry, and return the error at the end instead.
-+ *
-+ * Note that this should likely do a "memchr(name, 0, len)"
-+ * check too, since that would be filesystem corruption as
-+ * well. However, that case can't actually confuse user space,
-+ * which has to do a strlen() on the name anyway to find the
-+ * filename length, and the above "soft error" worry means
-+ * that it's probably better left alone until we have that
-+ * issue clarified.
-+ */
-+static int verify_dirent_name(const char *name, int len)
-+{
-+	if (WARN_ON_ONCE(!len))
-+		return -EIO;
-+	if (WARN_ON_ONCE(memchr(name, '/', len)))
-+		return -EIO;
-+	return 0;
-+}
-+
-+/*
-  * Traditional linux readdir() handling..
-  *
-  * "count=1" is a special case, meaning that the buffer is one
-@@ -174,6 +208,9 @@ static int filldir(struct dir_context *c
- 	int reclen = ALIGN(offsetof(struct linux_dirent, d_name) + namlen + 2,
- 		sizeof(long));
- 
-+	buf->error = verify_dirent_name(name, namlen);
-+	if (unlikely(buf->error))
-+		return buf->error;
- 	buf->error = -EINVAL;	/* only used if we fail.. */
- 	if (reclen > buf->count)
- 		return -EINVAL;
-@@ -260,6 +297,9 @@ static int filldir64(struct dir_context
- 	int reclen = ALIGN(offsetof(struct linux_dirent64, d_name) + namlen + 1,
- 		sizeof(u64));
- 
-+	buf->error = verify_dirent_name(name, namlen);
-+	if (unlikely(buf->error))
-+		return buf->error;
- 	buf->error = -EINVAL;	/* only used if we fail.. */
- 	if (reclen > buf->count)
- 		return -EINVAL;
+ 	clk_configs = devm_kzalloc(dev, sizeof(*clk_configs), GFP_KERNEL);
+ 	if (!clk_configs)
+@@ -152,9 +160,9 @@ static int meson8b_init_rgmii_tx_clk(str
+ 	clk_configs->m250_div.reg = dwmac->regs + PRG_ETH0;
+ 	clk_configs->m250_div.shift = PRG_ETH0_CLK_M250_DIV_SHIFT;
+ 	clk_configs->m250_div.width = PRG_ETH0_CLK_M250_DIV_WIDTH;
+-	clk_configs->m250_div.flags = CLK_DIVIDER_ONE_BASED |
+-				CLK_DIVIDER_ALLOW_ZERO |
+-				CLK_DIVIDER_ROUND_CLOSEST;
++	clk_configs->m250_div.table = div_table;
++	clk_configs->m250_div.flags = CLK_DIVIDER_ALLOW_ZERO |
++				      CLK_DIVIDER_ROUND_CLOSEST;
+ 	clk = meson8b_dwmac_register_clk(dwmac, "m250_div", &parent_name, 1,
+ 					 &clk_divider_ops,
+ 					 &clk_configs->m250_div.hw);
 
 
