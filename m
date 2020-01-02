@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 148F512F143
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:59:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DACC512F0C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:55:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728513AbgABW7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:59:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55116 "EHLO mail.kernel.org"
+        id S1728594AbgABWT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:19:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727948AbgABWOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:14:43 -0500
+        id S1728579AbgABWTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:19:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F60E21D7D;
-        Thu,  2 Jan 2020 22:14:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3181D2253D;
+        Thu,  2 Jan 2020 22:19:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003282;
-        bh=rvBKXNL2zspQZcX54WvZYh3lHndspUwQyuz6IcZK5+U=;
+        s=default; t=1578003562;
+        bh=kBs+PGhfDJoXp+X0PDY6anu/CdS5IPxlDl/7I/nC9Gc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q8ki3vhRs3l0HpqlUbkSObj13hpA9NRgpInDCpWBabHCOEOKTepPF22/EJE3RTZHu
-         zaWHmv2/eW/TmoPd4W0kgZbYQGLf5EuzX7CalQuOLoSGabb6JbShJ3U5EzNlNWgK7/
-         HdDwz+5sMoNNrhtOAeKuTrH0dl5EbWe9cy0ys1Xk=
+        b=JJ4zJKISzQXgq/c4ezEoYfIY6MN41Y85gmYSrakBvjbrbpUB1p4ENku4WbMbRAvqh
+         XUzPCwijd0VLk8CV8WRFzWR4Un4PVmzvKps1bKK18thcAYVp2f2p0Q4hb6P96HQJr+
+         ilPYOJfflNxCDREiW1w0fwONj3CE/xfqqd33X8sc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Omer Shpigelman <oshpigelman@habana.ai>,
-        Oded Gabbay <oded.gabbay@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 096/191] habanalabs: skip VA block list update in reset flow
+        stable@vger.kernel.org, Ezequiel Garcia <ezequiel@collabora.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 006/114] iommu: rockchip: Free domain on .domain_free
 Date:   Thu,  2 Jan 2020 23:06:18 +0100
-Message-Id: <20200102215840.195594801@linuxfoundation.org>
+Message-Id: <20200102220029.805232190@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,111 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Omer Shpigelman <oshpigelman@habana.ai>
+From: Ezequiel Garcia <ezequiel@collabora.com>
 
-[ Upstream commit 71c5e55e7c077fa17c42fbda91a8d14322825c44 ]
+[ Upstream commit 42bb97b80f2e3bf592e3e99d109b67309aa1b30e ]
 
-Reduce context close time by skipping the VA block free list update in
-order to avoid hard reset with open contexts.
-Reset with open contexts can potentially lead to a kernel crash as the
-generic pool of the MMU hops is destroyed while it is not empty because
-some unmap operations are not done.
-The commit affect mainly when running on simulator.
+IOMMU domain resource life is well-defined, managed
+by .domain_alloc and .domain_free.
 
-Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
-Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+Therefore, domain-specific resources shouldn't be tied to
+the device life, but instead to its domain.
+
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Acked-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/habanalabs/memory.c | 30 ++++++++++++++++++++----------
- 1 file changed, 20 insertions(+), 10 deletions(-)
+ drivers/iommu/rockchip-iommu.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
-index 365fb0cb8dff..22566b75ca50 100644
---- a/drivers/misc/habanalabs/memory.c
-+++ b/drivers/misc/habanalabs/memory.c
-@@ -965,17 +965,19 @@ init_page_pack_err:
-  *
-  * @ctx                 : current context
-  * @vaddr               : device virtual address to unmap
-+ * @ctx_free            : true if in context free flow, false otherwise.
-  *
-  * This function does the following:
-  * - Unmap the physical pages related to the given virtual address
-  * - return the device virtual block to the virtual block list
-  */
--static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr)
-+static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr, bool ctx_free)
- {
- 	struct hl_device *hdev = ctx->hdev;
- 	struct hl_vm_phys_pg_pack *phys_pg_pack = NULL;
- 	struct hl_vm_hash_node *hnode = NULL;
- 	struct hl_userptr *userptr = NULL;
-+	struct hl_va_range *va_range;
- 	enum vm_type_t *vm_type;
- 	u64 next_vaddr, i;
- 	u32 page_size;
-@@ -1003,6 +1005,7 @@ static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr)
+diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
+index ad3e2b97469e..140b287e886c 100644
+--- a/drivers/iommu/rockchip-iommu.c
++++ b/drivers/iommu/rockchip-iommu.c
+@@ -977,13 +977,13 @@ static struct iommu_domain *rk_iommu_domain_alloc(unsigned type)
+ 	if (!dma_dev)
+ 		return NULL;
  
- 	if (*vm_type == VM_TYPE_USERPTR) {
- 		is_userptr = true;
-+		va_range = &ctx->host_va_range;
- 		userptr = hnode->ptr;
- 		rc = init_phys_pg_pack_from_userptr(ctx, userptr,
- 				&phys_pg_pack);
-@@ -1014,6 +1017,7 @@ static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr)
- 		}
- 	} else if (*vm_type == VM_TYPE_PHYS_PACK) {
- 		is_userptr = false;
-+		va_range = &ctx->dram_va_range;
- 		phys_pg_pack = hnode->ptr;
- 	} else {
- 		dev_warn(hdev->dev,
-@@ -1052,12 +1056,18 @@ static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr)
+-	rk_domain = devm_kzalloc(dma_dev, sizeof(*rk_domain), GFP_KERNEL);
++	rk_domain = kzalloc(sizeof(*rk_domain), GFP_KERNEL);
+ 	if (!rk_domain)
+ 		return NULL;
  
- 	mutex_unlock(&ctx->mmu_lock);
+ 	if (type == IOMMU_DOMAIN_DMA &&
+ 	    iommu_get_dma_cookie(&rk_domain->domain))
+-		return NULL;
++		goto err_free_domain;
  
--	if (add_va_block(hdev,
--			is_userptr ? &ctx->host_va_range : &ctx->dram_va_range,
--			vaddr,
--			vaddr + phys_pg_pack->total_size - 1))
--		dev_warn(hdev->dev, "add va block failed for vaddr: 0x%llx\n",
--				vaddr);
-+	/*
-+	 * No point in maintaining the free VA block list if the context is
-+	 * closing as the list will be freed anyway
-+	 */
-+	if (!ctx_free) {
-+		rc = add_va_block(hdev, va_range, vaddr,
-+					vaddr + phys_pg_pack->total_size - 1);
-+		if (rc)
-+			dev_warn(hdev->dev,
-+					"add va block failed for vaddr: 0x%llx\n",
-+					vaddr);
-+	}
+ 	/*
+ 	 * rk32xx iommus use a 2 level pagetable.
+@@ -1018,6 +1018,8 @@ err_free_dt:
+ err_put_cookie:
+ 	if (type == IOMMU_DOMAIN_DMA)
+ 		iommu_put_dma_cookie(&rk_domain->domain);
++err_free_domain:
++	kfree(rk_domain);
  
- 	atomic_dec(&phys_pg_pack->mapping_cnt);
- 	kfree(hnode);
-@@ -1189,8 +1199,8 @@ int hl_mem_ioctl(struct hl_fpriv *hpriv, void *data)
- 		break;
+ 	return NULL;
+ }
+@@ -1046,6 +1048,7 @@ static void rk_iommu_domain_free(struct iommu_domain *domain)
  
- 	case HL_MEM_OP_UNMAP:
--		rc = unmap_device_va(ctx,
--				args->in.unmap.device_virt_addr);
-+		rc = unmap_device_va(ctx, args->in.unmap.device_virt_addr,
-+					false);
- 		break;
+ 	if (domain->type == IOMMU_DOMAIN_DMA)
+ 		iommu_put_dma_cookie(&rk_domain->domain);
++	kfree(rk_domain);
+ }
  
- 	default:
-@@ -1620,7 +1630,7 @@ void hl_vm_ctx_fini(struct hl_ctx *ctx)
- 		dev_dbg(hdev->dev,
- 			"hl_mem_hash_node of vaddr 0x%llx of asid %d is still alive\n",
- 			hnode->vaddr, ctx->asid);
--		unmap_device_va(ctx, hnode->vaddr);
-+		unmap_device_va(ctx, hnode->vaddr, true);
- 	}
- 
- 	spin_lock(&vm->idr_lock);
+ static int rk_iommu_add_device(struct device *dev)
 -- 
 2.20.1
 
