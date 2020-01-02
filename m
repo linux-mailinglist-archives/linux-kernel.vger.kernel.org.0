@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE1E112EC52
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:17:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C43812EC5D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:19:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728347AbgABWRW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:17:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59700 "EHLO mail.kernel.org"
+        id S1728223AbgABWRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:17:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726781AbgABWRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:17:18 -0500
+        id S1728112AbgABWRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:17:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CBCF227BF;
-        Thu,  2 Jan 2020 22:17:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B22B21582;
+        Thu,  2 Jan 2020 22:17:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003437;
-        bh=vGEiSPzPvuEHzZI+F9IqVYZ3YL+4aIjczUHdbVUGx8g=;
+        s=default; t=1578003461;
+        bh=cDGxvQ6VaN64SpWCnKdSQZiZKTB9gPZsUPK1SbMRtkc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gsxLaqif0RXDmT0zzCDGZbaLch1dkaPMDkrwAfZpcmpiuAcMznMoRlxhbnVltqDda
-         ALIRhQ9d7fM23GEKl5ltZtm6LI9CWESOl56aEaYUbwmfSbdIGmyxJyKd/MLBm3nrdQ
-         pYEB9dzQ5/o9g3CqrnA58CG4c8UNJP1a6o+YQjvc=
+        b=CTpqaWOJ8DgZv5dypiPatNiT5Ae+fx0Dn+wikmJdgEAz6m/FTyCoxnEPI1jObwl5Y
+         KEkh8Xds2tdajJlEQOdx9htnaqPzWSYb6Rzn0qwCsifLqo+mBUIbsz9llBUIYkc6oA
+         70+AC8/45q60riHyBi39k3VRmUhHqQJgEE2bncds=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
-        James Morris <jmorris@namei.org>
-Subject: [PATCH 5.4 143/191] tomoyo: Dont use nifty names on sockets.
-Date:   Thu,  2 Jan 2020 23:07:05 +0100
-Message-Id: <20200102215844.863867281@linuxfoundation.org>
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.4 144/191] uaccess: disallow > INT_MAX copy sizes
+Date:   Thu,  2 Jan 2020 23:07:06 +0100
+Message-Id: <20200102215844.953035794@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
 References: <20200102215829.911231638@linuxfoundation.org>
@@ -45,80 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Kees Cook <keescook@chromium.org>
 
-commit 6f7c41374b62fd80bbd8aae3536c43688c54d95e upstream.
+commit 6d13de1489b6bf539695f96d945de3860e6d5e17 upstream.
 
-syzbot is reporting that use of SOCKET_I()->sk from open() can result in
-use after free problem [1], for socket's inode is still reachable via
-/proc/pid/fd/n despite destruction of SOCKET_I()->sk already completed.
+As we've done with VFS, string operations, etc, reject usercopy sizes
+larger than INT_MAX, which would be nice to have for catching bugs
+related to size calculation overflows[1].
 
-At first I thought that this race condition applies to only open/getattr
-permission checks. But James Morris has pointed out that there are more
-permission checks where this race condition applies to. Thus, get rid of
-tomoyo_get_socket_name() instead of conditionally bypassing permission
-checks on sockets. As a side effect of this patch,
-"socket:[family=\$:type=\$:protocol=\$]" in the policy files has to be
-rewritten to "socket:[\$]".
+This adds 10 bytes to x86_64 defconfig text and 1980 bytes to the data
+section:
 
-[1] https://syzkaller.appspot.com/bug?id=73d590010454403d55164cca23bd0565b1eb3b74
+     text    data     bss     dec     hex filename
+  19691167        5134320 1646664 26472151        193eed7 vmlinux.before
+  19691177        5136300 1646664 26474141        193f69d vmlinux.after
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>
-Reported-by: James Morris <jmorris@namei.org>
+[1] https://marc.info/?l=linux-s390&m=156631939010493&w=2
+
+Link: http://lkml.kernel.org/r/201908251612.F9902D7A@keescook
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/tomoyo/realpath.c |   32 +-------------------------------
- 1 file changed, 1 insertion(+), 31 deletions(-)
+ include/linux/thread_info.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/security/tomoyo/realpath.c
-+++ b/security/tomoyo/realpath.c
-@@ -218,31 +218,6 @@ out:
+--- a/include/linux/thread_info.h
++++ b/include/linux/thread_info.h
+@@ -147,6 +147,8 @@ check_copy_size(const void *addr, size_t
+ 			__bad_copy_to();
+ 		return false;
+ 	}
++	if (WARN_ON_ONCE(bytes > INT_MAX))
++		return false;
+ 	check_object_size(addr, bytes, is_source);
+ 	return true;
  }
- 
- /**
-- * tomoyo_get_socket_name - Get the name of a socket.
-- *
-- * @path:   Pointer to "struct path".
-- * @buffer: Pointer to buffer to return value in.
-- * @buflen: Sizeof @buffer.
-- *
-- * Returns the buffer.
-- */
--static char *tomoyo_get_socket_name(const struct path *path, char * const buffer,
--				    const int buflen)
--{
--	struct inode *inode = d_backing_inode(path->dentry);
--	struct socket *sock = inode ? SOCKET_I(inode) : NULL;
--	struct sock *sk = sock ? sock->sk : NULL;
--
--	if (sk) {
--		snprintf(buffer, buflen, "socket:[family=%u:type=%u:protocol=%u]",
--			 sk->sk_family, sk->sk_type, sk->sk_protocol);
--	} else {
--		snprintf(buffer, buflen, "socket:[unknown]");
--	}
--	return buffer;
--}
--
--/**
-  * tomoyo_realpath_from_path - Returns realpath(3) of the given pathname but ignores chroot'ed root.
-  *
-  * @path: Pointer to "struct path".
-@@ -279,12 +254,7 @@ char *tomoyo_realpath_from_path(const st
- 			break;
- 		/* To make sure that pos is '\0' terminated. */
- 		buf[buf_len - 1] = '\0';
--		/* Get better name for socket. */
--		if (sb->s_magic == SOCKFS_MAGIC) {
--			pos = tomoyo_get_socket_name(path, buf, buf_len - 1);
--			goto encode;
--		}
--		/* For "pipe:[\$]". */
-+		/* For "pipe:[\$]" and "socket:[\$]". */
- 		if (dentry->d_op && dentry->d_op->d_dname) {
- 			pos = dentry->d_op->d_dname(dentry, buf, buf_len - 1);
- 			goto encode;
 
 
