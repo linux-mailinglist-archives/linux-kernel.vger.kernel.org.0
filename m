@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAC1F12ED44
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:26:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DBA412ED46
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:26:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729069AbgABW0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:26:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53796 "EHLO mail.kernel.org"
+        id S1728436AbgABW0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:26:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729643AbgABW02 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:26:28 -0500
+        id S1729652AbgABW0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:26:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B752222525;
-        Thu,  2 Jan 2020 22:26:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B12D222C3;
+        Thu,  2 Jan 2020 22:26:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003988;
-        bh=Axm9hXdZ97HQ91q0zUCS0GRR7u5ItH7c2RXBxanXijs=;
+        s=default; t=1578003990;
+        bh=jAIf3CT/v5lg8WB6/KwtNml/dKqKx7WIzBVB3nUMhVI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D30CqjnZep3Do/DJs2ktYgrlOaJnDffqAvCAUNNmpZBULt4rwUXUbsdhDvriLZrrk
-         Yj4uA6Y5Z+e+AZ0tMEG4aacx4s/+ZnZGuXv5AxJ0ec0EubgvdQmYICmz12d2/5MqW9
-         fHqHk9whDyRcpIuaFJihFCu7fTap2iaiF3W9SKZo=
+        b=0JczxWfZqkgu1tbRlr7yOpWITHMn5JMKTCQo9ciKe6/KuX7TTlLNTypmoq8KVkPk+
+         sUDe++7Oj9dmIZTbIq2PZe+MkGAW7y8B/ifg45v2SXpWlFw4da2h9ey385uxuWKYSE
+         Q4fQZyxDPiHgTbcFEaTOB4HYP9wy39NpLkc1f5ss=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marco Oliverio <marco.oliverio@tanaza.com>,
-        Rocco Folino <rocco.folino@tanaza.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 57/91] netfilter: nf_queue: enqueue skbs with NULL dst
-Date:   Thu,  2 Jan 2020 23:07:39 +0100
-Message-Id: <20200102220439.473724376@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+b3028ac3933f5c466389@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 58/91] ALSA: hda - Downgrade error message for single-cmd fallback
+Date:   Thu,  2 Jan 2020 23:07:40 +0100
+Message-Id: <20200102220439.850142478@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
 References: <20200102220356.856162165@linuxfoundation.org>
@@ -46,42 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marco Oliverio <marco.oliverio@tanaza.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 0b9173f4688dfa7c5d723426be1d979c24ce3d51 ]
+[ Upstream commit 475feec0c41ad71cb7d02f0310e56256606b57c5 ]
 
-Bridge packets that are forwarded have skb->dst == NULL and get
-dropped by the check introduced by
-b60a77386b1d4868f72f6353d35dabe5fbe981f2 (net: make skb_dst_force
-return true when dst is refcounted).
+We made the error message for the CORB/RIRB communication clearer by
+upgrading to dev_WARN() so that user can notice better.  But this
+struck us like a boomerang: now it caught syzbot and reported back as
+a fatal issue although it's not really any too serious bug that worth
+for stopping the whole system.
 
-To fix this we check skb_dst() before skb_dst_force(), so we don't
-drop skb packet with dst == NULL. This holds also for skb at the
-PRE_ROUTING hook so we remove the second check.
+OK, OK, let's be softy, downgrade it to the standard dev_err() again.
 
-Fixes: b60a77386b1d ("net: make skb_dst_force return true when dst is refcounted")
-Signed-off-by: Marco Oliverio <marco.oliverio@tanaza.com>
-Signed-off-by: Rocco Folino <rocco.folino@tanaza.com>
-Acked-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: dd65f7e19c69 ("ALSA: hda - Show the fatal CORB/RIRB error more clearly")
+Reported-by: syzbot+b3028ac3933f5c466389@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/r/20191216151224.30013-1-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_queue.c | 2 +-
+ sound/pci/hda/hda_controller.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/netfilter/nf_queue.c b/net/netfilter/nf_queue.c
-index 37efcc1c8887..b06ef4c62522 100644
---- a/net/netfilter/nf_queue.c
-+++ b/net/netfilter/nf_queue.c
-@@ -138,7 +138,7 @@ static int __nf_queue(struct sk_buff *skb, const struct nf_hook_state *state,
- 		goto err;
+diff --git a/sound/pci/hda/hda_controller.c b/sound/pci/hda/hda_controller.c
+index 8fcb421193e0..fa261b27d858 100644
+--- a/sound/pci/hda/hda_controller.c
++++ b/sound/pci/hda/hda_controller.c
+@@ -883,7 +883,7 @@ static int azx_rirb_get_response(struct hdac_bus *bus, unsigned int addr,
+ 		return -EAGAIN; /* give a chance to retry */
  	}
  
--	if (!skb_dst_force(skb) && state->hook != NF_INET_PRE_ROUTING) {
-+	if (skb_dst(skb) && !skb_dst_force(skb)) {
- 		status = -ENETDOWN;
- 		goto err;
- 	}
+-	dev_WARN(chip->card->dev,
++	dev_err(chip->card->dev,
+ 		"azx_get_response timeout, switching to single_cmd mode: last cmd=0x%08x\n",
+ 		bus->last_cmd[addr]);
+ 	chip->single_cmd = 1;
 -- 
 2.20.1
 
