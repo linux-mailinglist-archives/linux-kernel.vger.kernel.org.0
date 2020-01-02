@@ -2,150 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ED5412F0DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:56:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63A2312F17F
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:01:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729036AbgABW4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:56:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39234 "EHLO mail.kernel.org"
+        id S1727417AbgABWML (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:12:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728955AbgABW4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:56:08 -0500
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727374AbgABWME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:12:04 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA3EE2467C;
-        Thu,  2 Jan 2020 22:56:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA90521835;
+        Thu,  2 Jan 2020 22:12:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578005766;
-        bh=6Koeg/QpSh6SN7IsDtUD1Yw/jN4FQfOCYYp5OlkQg8k=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=BJyGrgJRAyAcMthsOmMVJk2/d9roLzBD5KeGqfyxfbX3KtZmnnxHXX0pyJ8akcsha
-         K/iFSGYit7euv46SOim83yGJFkSBYf8D90gScmaaJtUv+dQKRJYtoCVXIxkXtGp8sR
-         GDbQ6bO22fdQJ5Wf9rmFtnvZeSvKb4mLF6EU8dZs=
-Received: by mail-qt1-f173.google.com with SMTP id e5so35708757qtm.6;
-        Thu, 02 Jan 2020 14:56:06 -0800 (PST)
-X-Gm-Message-State: APjAAAVKxjipXn0TO2rT+3qC8pmu+bnvQkMyWNSBpDwg/Uc+lLB5jr5G
-        CWSio0aYWg3he0dfFCGJa9kYg0hXo9uTWv6Lrw==
-X-Google-Smtp-Source: APXvYqwAbFfNGIM/JC1KIxuEbN03VDUjC5JsTAOv7Mn+H2Fs2ofR3ekjqd4fT38uPCQz6qNQ3qPQ9Hc0j9LyLmDrH44=
-X-Received: by 2002:aed:2344:: with SMTP id i4mr63466799qtc.136.1578005765768;
- Thu, 02 Jan 2020 14:56:05 -0800 (PST)
+        s=default; t=1578003124;
+        bh=OiT+WmO8Wve8OpONx14Vr1EhdbL7GD6nrzUZul1vrqI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MNs+1GK2nRusvrsf8pjcC1VFBMmQb3mY0Ms5dlXdQJFXBViTu9FUIJQxugKYatmah
+         qiSiacvGUa8mizNkzgazgLgVKu7MetK+8zpKpeuBrVYwbB8JIwwFr81tsO9Xyno8XN
+         LxNRDmnTUyYISxWyzkJ089955vhlrUhhkFe5oaiM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <jsmart2021@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 003/191] scsi: lpfc: Fix spinlock_irq issues in lpfc_els_flush_cmd()
+Date:   Thu,  2 Jan 2020 23:04:45 +0100
+Message-Id: <20200102215830.223956798@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-References: <20191213084748.11210-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20191213084748.11210-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAL_JsqLSYroDZGWksJJ=E+01X=3Tji4+GmK8s3i+d2BJphqiLQ@mail.gmail.com>
- <CA+V-a8uKBuVUQvkoJ9pJYX97Qy3JazTyLCy-2T35gOX77AP8vg@mail.gmail.com>
- <20191219233129.GA5484@bogus> <CA+V-a8vjwqkH5rYsy_rsHF93d91izsaEwmFXNpYqk3_=_Asd2g@mail.gmail.com>
-In-Reply-To: <CA+V-a8vjwqkH5rYsy_rsHF93d91izsaEwmFXNpYqk3_=_Asd2g@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 2 Jan 2020 15:55:53 -0700
-X-Gmail-Original-Message-ID: <CAL_JsqJPPuWaOZytWfFy+kwju0tMb2qRN5Ji-Leq2wZdbne_ig@mail.gmail.com>
-Message-ID: <CAL_JsqJPPuWaOZytWfFy+kwju0tMb2qRN5Ji-Leq2wZdbne_ig@mail.gmail.com>
-Subject: Re: [v2 3/6] of: address: add support to parse PCI outbound-ranges
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        PCI <linux-pci@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Murray <andrew.murray@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Tom Joseph <tjoseph@cadence.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 2, 2020 at 1:44 AM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
->
-> Hi Rob,
->
-> On Thu, Dec 19, 2019 at 11:31 PM Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Mon, Dec 16, 2019 at 08:49:23AM +0000, Lad, Prabhakar wrote:
-> > > Hi Rob,
-> > >
-> > > Thank you for the review.
-> > >
-> > > On Fri, Dec 13, 2019 at 8:37 PM Rob Herring <robh+dt@kernel.org> wrote:
-> > > >
-> > > > On Fri, Dec 13, 2019 at 2:48 AM Lad Prabhakar
-> > > > <prabhakar.csengg@gmail.com> wrote:
-> > > > >
-> > > > > From: "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > >
-> > > > > this patch adds support to parse PCI outbound-ranges, the
-> > > > > outbound-regions are similar to pci ranges except it doesn't
-> > > > > have pci address, below is the format for bar-ranges:
-> > > > >
-> > > > > outbound-ranges = <flags upper32_cpuaddr lower32_cpuaddr
-> > > > >                    upper32_size lower32_size>;
-> > > >
-> > > > You can't just make up a new ranges property. Especially one that
-> > > > doesn't follow how 'ranges' works. We already have 'dma-ranges' to
-> > > > translate device to memory addresses.
-> > > >
-> > > > Explain the problem or feature you need, not the solution you came up
-> > > > with. Why do you need this and other endpoint bindings haven't?
-> > > >
-> > > rcar SoC's supports multiple outbound region for mapping the PCI address
-> > > locally to the system. This lead to discussion where there exist controllers
-> > > which support regions for high/low priority transfer and similarly regions
-> > > for large/small memory allocations, as a result a new ranges property was
-> > > added, where we can specify the flags which would indicate how the outbound
-> > > region can be used during requests.
-> >
-> > What are the flags?
->
-> below are the flags which were discussed in first version of the
-> series, but since the driver is
-> currently using just PCI_EPC_WINDOW_FLAG_NON_MULTI_ALLOC flag I'll be
-> dropping them in
-> next version (suggested by Kishon) and rest will be added as and when
-> required by the driver.
->
->  * @PCI_EPC_WINDOW_FLAG_MULTI_ALLOC: Indicates multiple chunks of memory can be
->  *                                  allocated from same window
->  * @PCI_EPC_WINDOW_FLAG_NON_MULTI_ALLOC: Indicates only single memory allocation
->  *                                      is possible on the window
->  * @PCI_EPC_WINDOW_FLAG_LARGE_ALLOC: Window is used for large memory allocation
->  * @PCI_EPC_WINDOW_FLAG_SMALL_ALLOC: Window is used for small memory allocation
->  * @PCI_EPC_WINDOW_FLAG_HIGH_PRI_ALLOC: Window is used for high priority data
->  *                                     transfers
->  * @PCI_EPC_WINDOW_FLAG_LOW_PRI_ALLOC: Window is used for low priority data
->  *                                    transfers
+From: James Smart <jsmart2021@gmail.com>
 
-Looks like configuration or policy, not something that belongs in DT.
-Coupling driver features and DT changes is not good for ABI compatible
-changes either.
+[ Upstream commit d38b4a527fe898f859f74a3a43d4308f48ac7855 ]
 
-I'm hesitant to accept any PCI endpoint binding additions because they
-don't seem to be completely thought out in terms of supporting
-different usecases.
+While reviewing the CT behavior, issues with spinlock_irq were seen. The
+driver should be using spinlock_irqsave/irqrestore in the els flush
+routine.
 
-Rob
+Changed to spinlock_irqsave/irqrestore.
+
+Link: https://lore.kernel.org/r/20190922035906.10977-15-jsmart2021@gmail.com
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/scsi/lpfc/lpfc_els.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
+index d5303994bfd6..0052b341587d 100644
+--- a/drivers/scsi/lpfc/lpfc_els.c
++++ b/drivers/scsi/lpfc/lpfc_els.c
+@@ -7986,20 +7986,22 @@ lpfc_els_flush_cmd(struct lpfc_vport *vport)
+ 	struct lpfc_sli_ring *pring;
+ 	struct lpfc_iocbq *tmp_iocb, *piocb;
+ 	IOCB_t *cmd = NULL;
++	unsigned long iflags = 0;
+ 
+ 	lpfc_fabric_abort_vport(vport);
++
+ 	/*
+ 	 * For SLI3, only the hbalock is required.  But SLI4 needs to coordinate
+ 	 * with the ring insert operation.  Because lpfc_sli_issue_abort_iotag
+ 	 * ultimately grabs the ring_lock, the driver must splice the list into
+ 	 * a working list and release the locks before calling the abort.
+ 	 */
+-	spin_lock_irq(&phba->hbalock);
++	spin_lock_irqsave(&phba->hbalock, iflags);
+ 	pring = lpfc_phba_elsring(phba);
+ 
+ 	/* Bail out if we've no ELS wq, like in PCI error recovery case. */
+ 	if (unlikely(!pring)) {
+-		spin_unlock_irq(&phba->hbalock);
++		spin_unlock_irqrestore(&phba->hbalock, iflags);
+ 		return;
+ 	}
+ 
+@@ -8037,21 +8039,21 @@ lpfc_els_flush_cmd(struct lpfc_vport *vport)
+ 
+ 	if (phba->sli_rev == LPFC_SLI_REV4)
+ 		spin_unlock(&pring->ring_lock);
+-	spin_unlock_irq(&phba->hbalock);
++	spin_unlock_irqrestore(&phba->hbalock, iflags);
+ 
+ 	/* Abort each txcmpl iocb on aborted list and remove the dlist links. */
+ 	list_for_each_entry_safe(piocb, tmp_iocb, &abort_list, dlist) {
+-		spin_lock_irq(&phba->hbalock);
++		spin_lock_irqsave(&phba->hbalock, iflags);
+ 		list_del_init(&piocb->dlist);
+ 		lpfc_sli_issue_abort_iotag(phba, pring, piocb);
+-		spin_unlock_irq(&phba->hbalock);
++		spin_unlock_irqrestore(&phba->hbalock, iflags);
+ 	}
+ 	if (!list_empty(&abort_list))
+ 		lpfc_printf_vlog(vport, KERN_ERR, LOG_ELS,
+ 				 "3387 abort list for txq not empty\n");
+ 	INIT_LIST_HEAD(&abort_list);
+ 
+-	spin_lock_irq(&phba->hbalock);
++	spin_lock_irqsave(&phba->hbalock, iflags);
+ 	if (phba->sli_rev == LPFC_SLI_REV4)
+ 		spin_lock(&pring->ring_lock);
+ 
+@@ -8091,7 +8093,7 @@ lpfc_els_flush_cmd(struct lpfc_vport *vport)
+ 
+ 	if (phba->sli_rev == LPFC_SLI_REV4)
+ 		spin_unlock(&pring->ring_lock);
+-	spin_unlock_irq(&phba->hbalock);
++	spin_unlock_irqrestore(&phba->hbalock, iflags);
+ 
+ 	/* Cancel all the IOCBs from the completions list */
+ 	lpfc_sli_cancel_iocbs(phba, &abort_list,
+-- 
+2.20.1
+
+
+
