@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3669312EF57
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:46:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08CCB12EF50
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:46:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728656AbgABWon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:44:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39842 "EHLO mail.kernel.org"
+        id S1730483AbgABWdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:33:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730336AbgABWc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:32:56 -0500
+        id S1730271AbgABWc6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:32:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52C3021835;
-        Thu,  2 Jan 2020 22:32:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0C8F20863;
+        Thu,  2 Jan 2020 22:32:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004375;
-        bh=+74P8MMxOQETzEH5GZB2WhF2h8TPvZSqXVt137Hd8dw=;
+        s=default; t=1578004378;
+        bh=b7tHW2NgMvOXfFf/n69XBqciRQFVnxAxVAbvvoN6EXU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=heINmV/TlMJl7lYHcgZoRBH1oe6zPjVltCJyMYl31xnIiGdBpOI7FzOpAYl4TZOXK
-         yrrRkEifr1Q69V1GVdOU5onqbSTW3n2PU/6/2aoyvh8CQgMOwzAF5b1AHp2frZqtQA
-         3KvxykM+wy0jzVjB/KTDwmG4NsYhvjM+PVzPApAk=
+        b=oR1kY6UUFyYoMVrDDMSaBUAi3pC+YLnonX5/93SO8Wp70jpyZG16Yn4jMH5+8QeiV
+         sQ1MMbR0Bs5+bb0c3xQ+opF2vIm7dc1lSIPY4a4j5edcNtiFiR73379R4tH9I6n9rm
+         g6PXuK9Pkq7+dW0LJPGweMX934Bhylkdm483XEuI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 127/171] clk: qcom: Allow constant ratio freq tables for rcg
-Date:   Thu,  2 Jan 2020 23:07:38 +0100
-Message-Id: <20200102220604.670497536@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 128/171] irqchip/irq-bcm7038-l1: Enable parent IRQ if necessary
+Date:   Thu,  2 Jan 2020 23:07:39 +0100
+Message-Id: <20200102220604.799769799@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
 References: <20200102220546.960200039@linuxfoundation.org>
@@ -44,62 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit efd164b5520afd6fb2883b68e0d408a7de29c491 ]
+[ Upstream commit 27eebb60357ed5aa6659442f92907c0f7368d6ae ]
 
-Some RCGs (the gfx_3d_src_clk in msm8998 for example) are basically just
-some constant ratio from the input across the entire frequency range.  It
-would be great if we could specify the frequency table as a single entry
-constant ratio instead of a long list, ie:
+If the 'brcm,irq-can-wake' property is specified, make sure we also
+enable the corresponding parent interrupt we are attached to.
 
-	{ .src = P_GPUPLL0_OUT_EVEN, .pre_div = 3 },
-        { }
-
-So, lets support that.
-
-We need to fix a corner case in qcom_find_freq() where if the freq table
-is non-null, but has no frequencies, we end up returning an "entry" before
-the table array, which is bad.  Then, we need ignore the freq from the
-table, and instead base everything on the requested freq.
-
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Link: https://lkml.kernel.org/r/20191031185715.15504-1-jeffrey.l.hugo@gmail.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/20191024201415.23454-4-f.fainelli@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/clk-rcg2.c | 2 ++
- drivers/clk/qcom/common.c   | 3 +++
- 2 files changed, 5 insertions(+)
+ drivers/irqchip/irq-bcm7038-l1.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index a071bba8018c..0ae1b0a66eb5 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -196,6 +196,8 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw,
- 	p = clk_hw_get_parent_by_index(hw, index);
- 	if (clk_flags & CLK_SET_RATE_PARENT) {
- 		if (f->pre_div) {
-+			if (!rate)
-+				rate = req->rate;
- 			rate /= 2;
- 			rate *= f->pre_div + 1;
- 		}
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index fffcbaf0fba7..f89a9f0aa606 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -37,6 +37,9 @@ struct freq_tbl *qcom_find_freq(const struct freq_tbl *f, unsigned long rate)
- 	if (!f)
- 		return NULL;
- 
-+	if (!f->freq)
-+		return f;
+diff --git a/drivers/irqchip/irq-bcm7038-l1.c b/drivers/irqchip/irq-bcm7038-l1.c
+index 6e24facebb46..a571d9c6e42a 100644
+--- a/drivers/irqchip/irq-bcm7038-l1.c
++++ b/drivers/irqchip/irq-bcm7038-l1.c
+@@ -282,6 +282,10 @@ static int __init bcm7038_l1_init_one(struct device_node *dn,
+ 		pr_err("failed to map parent interrupt %d\n", parent_irq);
+ 		return -EINVAL;
+ 	}
 +
- 	for (; f->freq; f++)
- 		if (rate <= f->freq)
- 			return f;
++	if (of_property_read_bool(dn, "brcm,irq-can-wake"))
++		enable_irq_wake(parent_irq);
++
+ 	irq_set_chained_handler_and_data(parent_irq, bcm7038_l1_irq_handle,
+ 					 intc);
+ 
 -- 
 2.20.1
 
