@@ -2,154 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9099812EAF6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 21:58:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B22DA12EB2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 22:18:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725916AbgABU6C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 15:58:02 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33097 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbgABU6B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 15:58:01 -0500
-Received: by mail-pl1-f196.google.com with SMTP id c13so18271170pls.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 12:58:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=z7uC44Oc18ogP4OWB3WNFZwzRSBSoy1k7HBWtdwE8fA=;
-        b=JsNErjk57TLzLekTAMi+u1tOjxdWFRum7WeAJHfQfCWI6HiRPLEhsyaBJRIkqcKhwI
-         5N1i+XRLxrK414tYy5J4YcfhB4y+d8u8yKSI87iOCVIcmvVsdqzy1JAZ5Qh8j8LkEBA/
-         K4fSCr8i6klwM4mLEYCf+Voh5Upglfzcm3aYBWQKPVcK2Qu7JjCm5myQDLR/WOlLNHfU
-         DMRYFntzqhXZqRM1V0aXfa9l8Y9oQi+i+9lpSR9dAnkzkmg3Hb9sdrdaGWiuQU80H8gm
-         DM3pYAk9NPBmaRYF0+zqpe+rjmpDZ5vIu6HWn3qtSuBRIqGghibp/TnPy8JRYD9xvZeH
-         s2yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z7uC44Oc18ogP4OWB3WNFZwzRSBSoy1k7HBWtdwE8fA=;
-        b=T20PfLXpIH9c9UzgmWPbGg0FXosB/daVpLDSqP/vwYeFeeB8CvpbfHqvAtpqrH2mjw
-         VBBNEG9xtcO8CyDSoFOoiu0zH0ndtfWgCtvwQNHnFAekOWRVAG1DBekzudDvLJPTbyPp
-         ajbnwL+mz6Pbic6LT34l5Zsu+EIl6uJ3tXWIIwsM/YfQWQX0EfGxJ7SLia5S9Tu0xtxe
-         Z8VdEqXUTy/p9TfR36r/1MDKPIP/iFqoiBLUDza8nVYpykZnoWsZ/2ZE5ayhANC7GZ95
-         VjwbNmXGNvbQ2xQQBuUU24vqHiSAGI2xwgIoFLQktADPaenp/i2ujrrALOToQnmdEbDN
-         vNaA==
-X-Gm-Message-State: APjAAAV+Af5qfuDmbaePUnHzjjV8wmddOOFZdPfLHX34cIi273vvQZs4
-        wRKE40Xsr6Jv1b8+f0S3nGMHrw==
-X-Google-Smtp-Source: APXvYqxh595qK4nZVB6EAkAq+RZs+ImBx7ezIU9NnHSyFGp1aQZBBUantfvrW7qXuXykQ+z4/i/9Mw==
-X-Received: by 2002:a17:90a:3945:: with SMTP id n5mr21913490pjf.34.1577998680994;
-        Thu, 02 Jan 2020 12:58:00 -0800 (PST)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id a28sm64401061pfh.119.2020.01.02.12.57.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 12:58:00 -0800 (PST)
-Date:   Thu, 2 Jan 2020 12:57:57 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     srinivas.kandagatla@linaro.org, robh+dt@kernel.org,
-        tsoni@codeaurora.org, agross@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] soc: qcom: apr: Add avs/audio tracking
- functionality
-Message-ID: <20200102205757.GH988120@minitux>
-References: <20191230050008.8143-1-sibis@codeaurora.org>
- <20191230050008.8143-4-sibis@codeaurora.org>
+        id S1726004AbgABVS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 16:18:26 -0500
+Received: from mga14.intel.com ([192.55.52.115]:59540 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725783AbgABVS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 16:18:26 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2020 13:18:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,388,1571727600"; 
+   d="scan'208";a="224819822"
+Received: from ybabin-mobl1.amr.corp.intel.com (HELO [10.252.139.105]) ([10.252.139.105])
+  by fmsmga001.fm.intel.com with ESMTP; 02 Jan 2020 13:18:24 -0800
+Subject: Re: [alsa-devel] [PATCH v5 08/17] soundwire: add initial definitions
+ for sdw_master_device
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jank@cadence.com, srinivas.kandagatla@linaro.org,
+        slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20191217210314.20410-1-pierre-louis.bossart@linux.intel.com>
+ <20191217210314.20410-9-pierre-louis.bossart@linux.intel.com>
+ <20191227071433.GL3006@vkoul-mobl>
+ <1922c494-4641-8c40-192d-758b21014fbc@linux.intel.com>
+ <20191228120930.GR3006@vkoul-mobl>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <820dbbcd-1401-4382-f5a2-9cdba1d6fcd5@linux.intel.com>
+Date:   Thu, 2 Jan 2020 11:36:40 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191230050008.8143-4-sibis@codeaurora.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191228120930.GR3006@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 29 Dec 21:00 PST 2019, Sibi Sankar wrote:
-> diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
-[..]
-> -static void of_register_apr_devices(struct device *dev)
-> +static void of_apr_add_pd_lookups(struct device *dev)
->  {
-> +	const char *service_name, *service_path;
->  	struct apr *apr = dev_get_drvdata(dev);
->  	struct device_node *node;
-> +	int ret;
-> +
-> +	for_each_child_of_node(dev->of_node, node) {
-> +		ret = of_property_read_string_index(node, "qcom,protection-domain",
-> +						    0, &service_name);
-> +		if (ret < 0)
-> +			continue;
 
-While this implies that the qcom,protection-domain property is
-missing...
+>>>> A parent (such as the Intel audio controller) would use sdw_md_add()
+>>>> to create the device, passing a driver as a parameter. The
+>>>> sdw_md_release() would be called when put_device() is invoked by the
+>>>> parent. We use the shortcut 'md' for 'master device' to avoid very
+>>>> long function names.
+>>>
+>>> I agree we should not have long name :) but md does not sound great. Can
+>>> we drop the device and use sdw_slave and sdw_master for devices and
+>>> append _driver when we are talking about drivers...
+>>>
+>>> we dont use sd for slave and imo this would gel well with existing names
+>>
+>> In SoundWire parlance, both 'Slave' and 'Master' are 'Devices', so yes we do
+>> in the standard talk about 'Slave Devices' and 'Master Devices'.
+>>
+>> Then we have Linux 'Devices' which can be used for both.
+>>
+>> If we use 'sdw_slave', would we be referring to the actual physical part or
+>> the Linux device?
+>>
+>> FWIW the Greybus example used 'Host Device' and 'hd' as shortcut.
+> 
+> But this messes up consistency in the naming of sdw objects. I am all for
+> it, if we do sd for slave and name all structs and APIs accordingly. The key
+> is consistency!
+> 
+> So it needs to be sd/md and so on or sdw_slave and sdw_master and so
+> on... not a mix of both
 
-> +
-> +		ret = of_property_read_string_index(node, "qcom,protection-domain",
-> +						    1, &service_path);
-> +		if (ret < 0)
-> +			continue;
 
-...this would imply that it's there but the format is wrong. I think you
-should log this and propagate the error.
+Well the problem is that the existing code took a shortcut and only 
+modeled the slave part, e.g.
 
-> +
-> +		ret = pdr_add_lookup(&apr->pdr, service_name, service_path);
-> +		if (ret && ret != -EALREADY)
-> +			dev_err(dev, "pdr add lookup failed: %d\n", ret);
+struct sdw_slave *slave = dev_to_sdw_dev(dev);
 
-So we have a DT that denotes that PDR is required, but we failed to
-register a lookup (for some reason). That would imply that apr is not
-going to work. I think you should propagate this and make apr_probe()
-fail to make this obvious.
+so now it's difficult to add 'sdw_slave_device' and 'sdw_master_device' 
+without quite a few changes.
 
-> +	}
-> +}
-> +
-> +static void of_register_apr_devices(struct device *dev, const char *svc_path)
-> +{
-> +	struct apr *apr = dev_get_drvdata(dev);
-> +	struct device_node *node;
-> +	const char *service_path;
-> +	int ret;
->  
->  	for_each_child_of_node(dev->of_node, node) {
->  		struct apr_device_id id = { {0} };
+Would this work for you if we used the following names:
 
-I think you should add a comment here describing what's actually going
-on. Something along the lines of:
+sdw_slave (legacy shortcut for sdw_slave_device, which could be removed 
+in a a future cleanup if desired).
+sdw_slave_driver
+sdw_master_device
+sdw_master_driver
 
-/*
- * This function is called with svc_path NULL during apr_probe(), in
- * which case we register any apr devices without a
- * qcom,protection-domain specified.
- *
- * Then as the protection domains becomes available (if applicable) this
- * function is again called, but with svc_path representing the service
- * becoming available. In this case we register any apr devices with a
- * matching qcom,protection-domain.
- */
+and all the 'md' replaced by the full 'master_device'.
 
->  
-> +		ret = of_property_read_string_index(node, "qcom,protection-domain",
-> +						    1, &service_path);
-> +		if (svc_path) {
-> +			/* skip APR services that are PD independent */
-> +			if (ret)
-> +				continue;
-> +
-> +			/* skip APR services whose PD paths don't match */
-> +			if (strcmp(service_path, svc_path))
-> +				continue;
-> +		} else {
-> +			/* skip APR services whose PD lookups are registered */
-> +			if (ret == 0)
-> +				continue;
-> +		}
-> +
-
-Regards,
-Bjorn
