@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEB9D12EE46
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:37:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8D8912EF73
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:46:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731033AbgABWg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:36:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48752 "EHLO mail.kernel.org"
+        id S1730227AbgABWqW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:46:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731025AbgABWg5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:36:57 -0500
+        id S1730226AbgABWbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:31:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DF9921835;
-        Thu,  2 Jan 2020 22:36:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F5D520863;
+        Thu,  2 Jan 2020 22:30:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004617;
-        bh=0Dblhok8bPA/sWIxPAeAa083kIyZzTF6dnuS/BlAs2U=;
+        s=default; t=1578004260;
+        bh=iT8ha0g8v8WDWsKNDeVxAqM6YfuJogpdYejcBs+bGI8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fIn+25JbsvRMj6MfssXjArT0WTqB+F7I56l1Y0Fm3dK1EP/PDymZpC7efkazEuZfT
-         NMfdnw3DG47U09qHYFkygNVynbtQVElh8O5AdEtoCr0Hr5WU68hTKvNRcIUgPIVnh+
-         AogLFgD8C2LxutB2VCIWUhOxvR/wDBL0ODU1xw28=
+        b=f4YYhI2FXWujTFBzM64OH2ZT2PhUIyzvy+Ktn0ihCcav8itKz+ZysCTj0iP/oYSI1
+         TzXAJ3UPzurZoDZooPxNl0kxNr2J+tFNQY0tP0hhFqLglT43P2/Wx6ZZIXhelICBxI
+         rzypfTlgQhwIG5B5A7HJLx99OuadmhfupW2gsoks=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 055/137] parport: load lowlevel driver if ports not found
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 097/171] net: nfc: nci: fix a possible sleep-in-atomic-context bug in nci_uart_tty_receive()
 Date:   Thu,  2 Jan 2020 23:07:08 +0100
-Message-Id: <20200102220553.948985356@linuxfoundation.org>
+Message-Id: <20200102220600.726195922@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,72 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 231ec2f24dad18d021b361045bbd618ba62a274e ]
+[ Upstream commit b7ac893652cafadcf669f78452329727e4e255cc ]
 
-Usually all the distro will load the parport low level driver as part
-of their initialization. But we can get into a situation where all the
-parallel port drivers are built as module and we unload all the modules
-at a later time. Then if we just do "modprobe parport" it will only
-load the parport module and will not load the low level driver which
-will actually register the ports. So, check the bus if there is any
-parport registered, if not, load the low level driver.
+The kernel may sleep while holding a spinlock.
+The function call path (from bottom to top) in Linux 4.19 is:
 
-We can get into the above situation with all distro but only Suse has
-setup the alias for "parport_lowlevel" and so it only works in Suse.
-Users of Debian based distro will need to load the lowlevel module
-manually.
+net/nfc/nci/uart.c, 349:
+	nci_skb_alloc in nci_uart_default_recv_buf
+net/nfc/nci/uart.c, 255:
+	(FUNC_PTR)nci_uart_default_recv_buf in nci_uart_tty_receive
+net/nfc/nci/uart.c, 254:
+	spin_lock in nci_uart_tty_receive
 
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Link: https://lore.kernel.org/r/20191016144540.18810-3-sudipm.mukherjee@gmail.com
+nci_skb_alloc(GFP_KERNEL) can sleep at runtime.
+(FUNC_PTR) means a function pointer is called.
+
+To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC for
+nci_skb_alloc().
+
+This bug is found by a static analysis tool STCheck written by myself.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/parport/share.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ net/nfc/nci/uart.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/parport/share.c b/drivers/parport/share.c
-index f26af0214ab3..3be1f4a041d4 100644
---- a/drivers/parport/share.c
-+++ b/drivers/parport/share.c
-@@ -228,6 +228,18 @@ static int port_check(struct device *dev, void *dev_drv)
- 	return 0;
- }
- 
-+/*
-+ * Iterates through all the devices connected to the bus and return 1
-+ * if the device is a parallel port.
-+ */
-+
-+static int port_detect(struct device *dev, void *dev_drv)
-+{
-+	if (is_parport(dev))
-+		return 1;
-+	return 0;
-+}
-+
- /**
-  *	parport_register_driver - register a parallel port device driver
-  *	@drv: structure describing the driver
-@@ -280,6 +292,15 @@ int __parport_register_driver(struct parport_driver *drv, struct module *owner,
- 		if (ret)
- 			return ret;
- 
-+		/*
-+		 * check if bus has any parallel port registered, if
-+		 * none is found then load the lowlevel driver.
-+		 */
-+		ret = bus_for_each_dev(&parport_bus_type, NULL, NULL,
-+				       port_detect);
-+		if (!ret)
-+			get_lowlevel_driver();
-+
- 		mutex_lock(&registration_lock);
- 		if (drv->match_port)
- 			bus_for_each_dev(&parport_bus_type, NULL, drv,
--- 
-2.20.1
-
+--- a/net/nfc/nci/uart.c
++++ b/net/nfc/nci/uart.c
+@@ -348,7 +348,7 @@ static int nci_uart_default_recv_buf(str
+ 			nu->rx_packet_len = -1;
+ 			nu->rx_skb = nci_skb_alloc(nu->ndev,
+ 						   NCI_MAX_PACKET_SIZE,
+-						   GFP_KERNEL);
++						   GFP_ATOMIC);
+ 			if (!nu->rx_skb)
+ 				return -ENOMEM;
+ 		}
 
 
