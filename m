@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 105BE12EF04
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:43:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 875B612F0B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:55:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731341AbgABWnA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:43:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45018 "EHLO mail.kernel.org"
+        id S1729100AbgABWyv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:54:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729062AbgABWfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:35:22 -0500
+        id S1728287AbgABWUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:20:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C604E20863;
-        Thu,  2 Jan 2020 22:35:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E32692253D;
+        Thu,  2 Jan 2020 22:20:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004521;
-        bh=Nv6XiNZITsliWRdQc4rFMkKdM/QxaNweNuuNEPunRHs=;
+        s=default; t=1578003620;
+        bh=X+Do8u5S6VNWIX901s2stI315wdsbjiGl6J8hVjzR6A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zhoGM7Ag8hrW6Dk2lYXOCsF4UbbS8yLhf50+DwSo2SStEv5eI0FGY/ESftwiQub8O
-         Fx2oqZumkOpFagQVwXuIFbufHVNr+7pT6XkqxhXfcdPiE80R0eFLnFmq7EdNT1zIf5
-         op3A3t3oMwDmqOh9VI/ReZsUCjY+7yeeR5qTMKbg=
+        b=kyPrkMmWqLvNC/AVRakl0cvVPcOpizbFeR0/cF+FvCVKSvgfkSuGMs8ox39fz/Dbi
+         ZTfdJ7NMpVxUyeg+bZ0SJY8Z7UuDhdFnTrVMjafzXpeURPesCbZxLpOj0QpEbvB6dX
+         wwvGgQYW5om0ECh114vGVIFaVc0OxIEySxnCYDcc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 042/137] perf probe: Fix to show ranges of variables in functions without entry_pc
-Date:   Thu,  2 Jan 2020 23:06:55 +0100
-Message-Id: <20200102220552.279420485@linuxfoundation.org>
+        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 044/114] bcache: at least try to shrink 1 node in bch_mca_scan()
+Date:   Thu,  2 Jan 2020 23:06:56 +0100
+Message-Id: <20200102220033.534038277@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,95 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Coly Li <colyli@suse.de>
 
-[ Upstream commit af04dd2f8ebaa8fbd46f698714acbf43da14da45 ]
+[ Upstream commit 9fcc34b1a6dd4b8e5337e2b6ef45e428897eca6b ]
 
-Fix to show ranges of variables (--range and --vars option) in functions
-which DIE has only ranges but no entry_pc attribute.
+In bch_mca_scan(), the number of shrinking btree node is calculated
+by code like this,
+	unsigned long nr = sc->nr_to_scan;
 
-Without this fix:
+        nr /= c->btree_pages;
+        nr = min_t(unsigned long, nr, mca_can_free(c));
+variable sc->nr_to_scan is number of objects (here is bcache B+tree
+nodes' number) to shrink, and pointer variable sc is sent from memory
+management code as parametr of a callback.
 
-  # perf probe --range -V clear_tasks_mm_cpumask
-  Available variables at clear_tasks_mm_cpumask
-  	@<clear_tasks_mm_cpumask+0>
-  		(No matched variables)
+If sc->nr_to_scan is smaller than c->btree_pages, after the above
+calculation, variable 'nr' will be 0 and nothing will be shrunk. It is
+frequeently observed that only 1 or 2 is set to sc->nr_to_scan and make
+nr to be zero. Then bch_mca_scan() will do nothing more then acquiring
+and releasing mutex c->bucket_lock.
 
-With this fix:
+This patch checkes whether nr is 0 after the above calculation, if 0
+is the result then set 1 to variable 'n'. Then at least bch_mca_scan()
+will try to shrink a single B+tree node.
 
-  # perf probe --range -V clear_tasks_mm_cpumask
-  Available variables at clear_tasks_mm_cpumask
-	@<clear_tasks_mm_cpumask+0>
-		[VAL]	int	cpu	@<clear_tasks_mm_cpumask+[0-35,317-317,2052-2059]>
-
-Committer testing:
-
-Before:
-
-  [root@quaco ~]# perf probe --range -V clear_tasks_mm_cpumask
-  Available variables at clear_tasks_mm_cpumask
-          @<clear_tasks_mm_cpumask+0>
-                  (No matched variables)
-  [root@quaco ~]#
-
-After:
-
-  [root@quaco ~]# perf probe --range -V clear_tasks_mm_cpumask
-  Available variables at clear_tasks_mm_cpumask
-          @<clear_tasks_mm_cpumask+0>
-                  [VAL]   int     cpu     @<clear_tasks_mm_cpumask+[0-23,23-105,105-106,106-106,1843-1850,1850-1862]>
-  [root@quaco ~]#
-
-Using it:
-
-  [root@quaco ~]# perf probe clear_tasks_mm_cpumask cpu
-  Added new event:
-    probe:clear_tasks_mm_cpumask (on clear_tasks_mm_cpumask with cpu)
-
-  You can now use it in all perf tools, such as:
-
-  	perf record -e probe:clear_tasks_mm_cpumask -aR sleep 1
-
-  [root@quaco ~]# perf probe -l
-    probe:clear_tasks_mm_cpumask (on clear_tasks_mm_cpumask@kernel/cpu.c with cpu)
-  [root@quaco ~]#
-  [root@quaco ~]# perf trace -e probe:*cpumask
-  ^C[root@quaco ~]#
-
-Fixes: 349e8d261131 ("perf probe: Add --range option to show a variable's location range")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lore.kernel.org/lkml/157199323018.8075.8179744380479673672.stgit@devnote2
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/dwarf-aux.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/md/bcache/btree.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
-index ef6fa620a426..ed7777ed4d38 100644
---- a/tools/perf/util/dwarf-aux.c
-+++ b/tools/perf/util/dwarf-aux.c
-@@ -989,7 +989,7 @@ static int die_get_var_innermost_scope(Dwarf_Die *sp_die, Dwarf_Die *vr_die,
- 	bool first = true;
- 	const char *name;
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 45f684689c35..bb40bd66a10e 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -713,6 +713,8 @@ static unsigned long bch_mca_scan(struct shrinker *shrink,
+ 	 * IO can always make forward progress:
+ 	 */
+ 	nr /= c->btree_pages;
++	if (nr == 0)
++		nr = 1;
+ 	nr = min_t(unsigned long, nr, mca_can_free(c));
  
--	ret = dwarf_entrypc(sp_die, &entry);
-+	ret = die_entrypc(sp_die, &entry);
- 	if (ret)
- 		return ret;
- 
-@@ -1050,7 +1050,7 @@ int die_get_var_range(Dwarf_Die *sp_die, Dwarf_Die *vr_die, struct strbuf *buf)
- 	bool first = true;
- 	const char *name;
- 
--	ret = dwarf_entrypc(sp_die, &entry);
-+	ret = die_entrypc(sp_die, &entry);
- 	if (ret)
- 		return ret;
- 
+ 	i = 0;
 -- 
 2.20.1
 
