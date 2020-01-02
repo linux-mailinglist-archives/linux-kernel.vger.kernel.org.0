@@ -2,87 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DBEC12EA4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 20:22:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A0D612EA50
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 20:25:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbgABTWy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 14:22:54 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:36309 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727989AbgABTWy (ORCPT
+        id S1728320AbgABTZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 14:25:52 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:49243 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727951AbgABTZv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 14:22:54 -0500
-Received: by mail-qk1-f194.google.com with SMTP id a203so32491027qkc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 11:22:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maine.edu; s=google;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=79zMLHtVC8xs2RALirflwpQq5tYiUVAhO2rVoiGE7aQ=;
-        b=Fj90E7Xrg7UIIOshQt+/7b8UWs93Fl4Ty9jh3sOXmr3Njz5CMuipkdCaDqdycn4S2V
-         grswIkrOntOtjjUwGZuOJlp2QdJyGMANs2uKmgqrfUGD8CROlm5neqQeV7USsAHio35Q
-         zfoVVJTUX1crQojZHf/r9EyfdpHGY9WPByQ1M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=79zMLHtVC8xs2RALirflwpQq5tYiUVAhO2rVoiGE7aQ=;
-        b=FqTfkEAmTEHq4ZzKsMsIxn43o7ObDTmp5qurpcF1z9PRHU3GWwojKRUrsgRt3dAeyd
-         EEgCwXjywzPHmFPaG2Kxn51aYgplfXs2xNbwm4XkDeo78Fsz+GJFf9qbVPv4wr3XXFqm
-         FP7nqxY1iA/1itdG0FCc5o54cAdx1URve2zQ48DAR9l1TDOWv4EDRnYK7n49MTF8Uvyu
-         3yrnKw7X+Q1W9hpYSdzPEn1KoKzsm+CtKOP+xxagFldzTRWPLnv+L5q8Pw0KwuUlemAh
-         Wa2jYQdTOv/Rk4oLzdjP506e7CxKYySWxEMOCVnNO2VcQ59KAb5us1b8qt2U7OW841Bo
-         mbFg==
-X-Gm-Message-State: APjAAAVyF8qW2VGv3DTFVCfehSbn5cy9cSVyykpZS8hoMtFPILRjPACg
-        5oNPxG3ZYj6hsQn8Px/OUrJIDRS82CY=
-X-Google-Smtp-Source: APXvYqyN43NJDeYwEB+a6cY1qrCyvp6ADY9/wy2AlNTQvPM45PU9X08mtxGnArWV5fVF4LtNRzCFcg==
-X-Received: by 2002:a05:620a:166a:: with SMTP id d10mr67568449qko.37.1577992973148;
-        Thu, 02 Jan 2020 11:22:53 -0800 (PST)
-Received: from macbook-air (weaver.eece.maine.edu. [130.111.218.23])
-        by smtp.gmail.com with ESMTPSA id r66sm15305288qkd.125.2020.01.02.11.22.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 11:22:50 -0800 (PST)
-From:   Vince Weaver <vincent.weaver@maine.edu>
-X-Google-Original-From: Vince Weaver <vince@maine.edu>
-Date:   Thu, 2 Jan 2020 14:22:47 -0500 (EST)
-X-X-Sender: vince@macbook-air
-To:     linux-kernel@vger.kernel.org
-cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [perf] perf_event_open() sometimes returning 0
-In-Reply-To: <alpine.DEB.2.21.2001021349390.11372@macbook-air>
-Message-ID: <alpine.DEB.2.21.2001021418590.11372@macbook-air>
-References: <alpine.DEB.2.21.2001021349390.11372@macbook-air>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 2 Jan 2020 14:25:51 -0500
+Received: from mail-qt1-f174.google.com ([209.85.160.174]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1Mo7eX-1jXDHB0gfb-00pbmX; Thu, 02 Jan 2020 20:25:50 +0100
+Received: by mail-qt1-f174.google.com with SMTP id t3so35345745qtr.11;
+        Thu, 02 Jan 2020 11:25:49 -0800 (PST)
+X-Gm-Message-State: APjAAAVO9w1i2ylXUgZFUyIU4lmjrb2RQCORC3fA88ekW/YCh70h4JAA
+        89b48pg8DGrKtn2T+QmB9HdpYCpihJuxMV0Z3+E=
+X-Google-Smtp-Source: APXvYqzNOUcAjBgOm/nzWYpzz4pDGlCxDb5jInGBEYDjpXkYEXeZpOmcxv95mHE+PF1z0cHjwhWvI+pXUUl/cP5++xQ=
+X-Received: by 2002:ac8:3a27:: with SMTP id w36mr60002412qte.204.1577993148979;
+ Thu, 02 Jan 2020 11:25:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20200102172413.654385-1-amanieu@gmail.com> <20200102172413.654385-2-amanieu@gmail.com>
+ <20200102175011.q7afo45nc2togtfh@wittgenstein>
+In-Reply-To: <20200102175011.q7afo45nc2togtfh@wittgenstein>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 2 Jan 2020 20:25:32 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3a88e=hkzYG5mj=NuVQWMtyougkKzBznnn2y9ZoZfEGg@mail.gmail.com>
+Message-ID: <CAK8P3a3a88e=hkzYG5mj=NuVQWMtyougkKzBznnn2y9ZoZfEGg@mail.gmail.com>
+Subject: Re: [PATCH 1/7] arm64: Move __ARCH_WANT_SYS_CLONE3 definition to uapi headers
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     "Amanieu d'Antras" <amanieu@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        "# 3.4.x" <stable@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:uikzFKKOz5sh1PuuLdZ0BYZtO7xoi7M+CglaD7a7dwgHy6df+Bg
+ qlj/WiO1r4ddKGMkGhzQHo7IWadHxuA7YGVrvxgcERLH9cDW0Gnw3puGsUnn4HqKbMW5/nk
+ h8V64aOFGoSYVTokbVCj2KzXtra7Y+JiaU8RG2hQXbpnbRezts34O5D23d22A4G+pg96ATG
+ bXvTFU3nZtUnQoVhMU8Sg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:DQG0maNFftM=:+ICCGXpV5oD9XLji2cGSa+
+ jBYlQR/vkGy20epc/v18K1ol0shcoGtWmAteiaGv1RS9Ci7cQ2x7hhkS8ZqyWz9bfEoZDThf+
+ wdNlUfeqmXB9ecFpIbv5bNSjL5Fc57wWvPIfBwxrDhvsvs60HNosUHpXPLbYOSPWWhecN9r+0
+ E3JeCUeyibixHzZxTlg3idVBVTmI6urd9TTT36QGibdvViqbiaPW1OZ3+TS5+25bRMpgo/mi5
+ LV91m1ERNyu9wr8/a/VcdtWrPJHHma8sMemfZ1AK0TXYUhhDpOkW9clKMgg5JJuUK4o5WTSub
+ D7Naae0PxK/Jk2oVM3NKjyyb4ATvjOcx4Wt1Gj3sN2uMW81v9PqMDazamb66HTHuJ5895xy8d
+ DD8eWst9HuaH52ysHTOns9gwk2DVNsvYJDtrlfG3GE5zy5ID1feZGaiOiB3VocnK/V//2Sb15
+ /5lJuepP3x650RLZoEN5f3XedEeQUHULWtPyVBl7bXbQQnX9/n7Dt5lsel8z4dARdkGzArqYh
+ 1+eRkOjBYyw7AKp9LChm5tGyqjt7xTE4eovPQlpIDW58+HdyRkheyVEr0MdXH9kqhoHiB5UqE
+ zoSSedimS6mpk1yFMyshviq965pFZ/gXu2l8W+dsLw8HOgZvSOZEAvGlskKBKB3ozqu5M1S3i
+ uX3JJh5XbMeuvK4Kns9lO74Gzvgx6sJpWucdesyUcOxmGNXGz6YnuslaGL9ohJtCf2rwM5PSE
+ 5OkTb6M5l4xqF14UUx0nJEBQOhocEosu6Lww7q5GUsNaSJ6LoRT1Ysgk65K/ATpm9oA964/Dk
+ litVE1VuqWXSCzEBsxSOzaPXl1W/USdaL44adu0Gt2O99Be0t5XNG9v1uVNmy3HcLGnlw7Ilq
+ qSGbyg/LOUzL3lNmqQZA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2 Jan 2020, Vince Weaver wrote:
+On Thu, Jan 2, 2020 at 6:50 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+> On Thu, Jan 02, 2020 at 06:24:07PM +0100, Amanieu d'Antras wrote:
+> > Previously this was only defined in the internal headers which
+> > resulted in __NR_clone3 not being defined in the user headers.
+> >
+> > Signed-off-by: Amanieu d'Antras <amanieu@gmail.com>
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: <stable@vger.kernel.org> # 5.3.x
+> > ---
+> >  arch/arm64/include/asm/unistd.h      | 1 -
+> >  arch/arm64/include/uapi/asm/unistd.h | 1 +
+> >  2 files changed, 1 insertion(+), 1 deletion(-)
 
-> so I was tracking down some odd behavior in the perf_fuzzer which turns 
-> out to be because perf_even_open() sometimes returns 0 (indicating a file 
-> descriptor of 0) even though as far as I can tell stdin is still open.
+Good catch, this is clearly needed, but please make the patch change
+every copy of asm/unistd.h that defines this, not just the arm64 one.
 
-error is triggered if aux_sample_size has non-zero value.
-
-seems to be this line in kernel/events/core.c:
-
-
- if (perf_need_aux_event(event) && !perf_get_aux_event(event, group_leader))
-                goto err_locked;
-
-
-(note, err is never set)
-
-
-Vince
-
+       Arnd
