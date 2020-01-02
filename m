@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF79912EBC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:12:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B37512EBCF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:12:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbgABWMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:12:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50736 "EHLO mail.kernel.org"
+        id S1726204AbgABWMa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:12:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726170AbgABWMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:12:00 -0500
+        id S1726099AbgABWMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:12:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07E5221582;
-        Thu,  2 Jan 2020 22:11:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4109A21D7D;
+        Thu,  2 Jan 2020 22:12:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003119;
-        bh=IdDUBqAqVgl8ZMFxB7Nj1Rorr+DJaeIFP02b/wDQi2Q=;
+        s=default; t=1578003143;
+        bh=YquLg6jkYweR4AX4GUs+bFzHa07A3GIOUgATF3V/FIs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e9H3S7Uev4aF5ExXamBa/EdMH5yx6tGxaZ2ayMTVxIwDKZpyj9YMqDaTllubGBw13
-         LDNirvTCSMbDAY6fQF98FjaPJCi1Jdq7uv31Xyenv+45nr2XzGnoQsQKDLhgTdg9gv
-         pAO1/ocgfk5hmU2JduQuGF1yyN2yx13sgKYebsmE=
+        b=VHaqIl2wu1VA3Q8Vy2iwuUoz18/huzNxL6yuCnuKS0d08IY6y8OkOlYnbD0vdJK7h
+         wTlHC0sbKrCu0Ekjc5EpGXpNwGLHMryEGcDRbn+Ra5a2NW+m9SizraOVu1Ze8QlneY
+         T6JLH1m2Yu8KrqX5Un9C0OsshFN096qkfQrRLXCE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 027/191] selftests/powerpc: Fixup clobbers for TM tests
-Date:   Thu,  2 Jan 2020 23:05:09 +0100
-Message-Id: <20200102215832.881707221@linuxfoundation.org>
+        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 030/191] dma-mapping: Add vmap checks to dma_map_single()
+Date:   Thu,  2 Jan 2020 23:05:12 +0100
+Message-Id: <20200102215833.205799110@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
 References: <20200102215829.911231638@linuxfoundation.org>
@@ -43,99 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Kees Cook <keescook@chromium.org>
 
-[ Upstream commit a02cbc7ffe529ed58b6bbe54652104fc2c88bd77 ]
+[ Upstream commit 4544b9f25e70eae9f70a243de0cc802aa5c8cb69 ]
 
-Some of our TM (Transactional Memory) tests, list "r1" (the stack
-pointer) as a clobbered register.
+As we've seen from USB and other areas[1], we need to always do runtime
+checks for DMA operating on memory regions that might be remapped. This
+adds vmap checks (similar to those already in USB but missing in other
+places) into dma_map_single() so all callers benefit from the checking.
 
-GCC >= 9 doesn't accept this, and the build breaks:
+[1] https://git.kernel.org/linus/3840c5b78803b2b6cc1ff820100a74a092c40cbb
 
-  ptrace-tm-spd-tar.c: In function 'tm_spd_tar':
-  ptrace-tm-spd-tar.c:31:2: error: listing the stack pointer register 'r1' in a clobber list is deprecated [-Werror=deprecated]
-     31 |  asm __volatile__(
-        |  ^~~
-  ptrace-tm-spd-tar.c:31:2: note: the value of the stack pointer after an 'asm' statement must be the same as it was before the statement
-
-We do have some fairly large inline asm blocks in these tests, and
-some of them do change the value of r1. However they should all return
-to C with the value in r1 restored, so I think it's legitimate to say
-r1 is not clobbered.
-
-As Segher points out, the r1 clobbers may have been added because of
-the use of `or 1,1,1`, however that doesn't actually clobber r1.
-
-Segher also points out that some of these tests do clobber LR, because
-they call functions, and that is not listed in the clobbers, so add
-that where appropriate.
-
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191029095324.14669-1-mpe@ellerman.id.au
+Suggested-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+[hch: fixed the printk message]
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-tar.c | 2 +-
- tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-vsx.c | 4 ++--
- tools/testing/selftests/powerpc/ptrace/ptrace-tm-tar.c     | 2 +-
- tools/testing/selftests/powerpc/ptrace/ptrace-tm-vsx.c     | 4 ++--
- 4 files changed, 6 insertions(+), 6 deletions(-)
+ include/linux/dma-mapping.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-tar.c b/tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-tar.c
-index 25e23e73c72e..2ecfa1158e2b 100644
---- a/tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-tar.c
-+++ b/tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-tar.c
-@@ -73,7 +73,7 @@ trans:
- 		[sprn_texasr]"i"(SPRN_TEXASR), [tar_1]"i"(TAR_1),
- 		[dscr_1]"i"(DSCR_1), [tar_2]"i"(TAR_2), [dscr_2]"i"(DSCR_2),
- 		[tar_3]"i"(TAR_3), [dscr_3]"i"(DSCR_3)
--		: "memory", "r0", "r1", "r3", "r4", "r5", "r6"
-+		: "memory", "r0", "r3", "r4", "r5", "r6", "lr"
- 		);
- 
- 	/* TM failed, analyse */
-diff --git a/tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-vsx.c b/tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-vsx.c
-index f603fe5a445b..6f7fb51f0809 100644
---- a/tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-vsx.c
-+++ b/tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-vsx.c
-@@ -74,8 +74,8 @@ trans:
- 		"3: ;"
- 		: [res] "=r" (result), [texasr] "=r" (texasr)
- 		: [sprn_texasr] "i"  (SPRN_TEXASR)
--		: "memory", "r0", "r1", "r3", "r4",
--		"r7", "r8", "r9", "r10", "r11"
-+		: "memory", "r0", "r3", "r4",
-+		  "r7", "r8", "r9", "r10", "r11", "lr"
- 		);
- 
- 	if (result) {
-diff --git a/tools/testing/selftests/powerpc/ptrace/ptrace-tm-tar.c b/tools/testing/selftests/powerpc/ptrace/ptrace-tm-tar.c
-index e0d37f07bdeb..46ef378a15ec 100644
---- a/tools/testing/selftests/powerpc/ptrace/ptrace-tm-tar.c
-+++ b/tools/testing/selftests/powerpc/ptrace/ptrace-tm-tar.c
-@@ -62,7 +62,7 @@ trans:
- 		[sprn_ppr]"i"(SPRN_PPR), [sprn_texasr]"i"(SPRN_TEXASR),
- 		[tar_1]"i"(TAR_1), [dscr_1]"i"(DSCR_1), [tar_2]"i"(TAR_2),
- 		[dscr_2]"i"(DSCR_2), [cptr1] "b" (&cptr[1])
--		: "memory", "r0", "r1", "r3", "r4", "r5", "r6"
-+		: "memory", "r0", "r3", "r4", "r5", "r6"
- 		);
- 
- 	/* TM failed, analyse */
-diff --git a/tools/testing/selftests/powerpc/ptrace/ptrace-tm-vsx.c b/tools/testing/selftests/powerpc/ptrace/ptrace-tm-vsx.c
-index 8027457b97b7..70ca01234f79 100644
---- a/tools/testing/selftests/powerpc/ptrace/ptrace-tm-vsx.c
-+++ b/tools/testing/selftests/powerpc/ptrace/ptrace-tm-vsx.c
-@@ -62,8 +62,8 @@ trans:
- 		"3: ;"
- 		: [res] "=r" (result), [texasr] "=r" (texasr)
- 		: [sprn_texasr] "i"  (SPRN_TEXASR), [cptr1] "b" (&cptr[1])
--		: "memory", "r0", "r1", "r3", "r4",
--		"r7", "r8", "r9", "r10", "r11"
-+		: "memory", "r0", "r3", "r4",
-+		  "r7", "r8", "r9", "r10", "r11", "lr"
- 		);
- 
- 	if (result) {
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index 4a1c4fca475a..0aad641d662c 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -583,6 +583,10 @@ static inline unsigned long dma_get_merge_boundary(struct device *dev)
+ static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
+ 		size_t size, enum dma_data_direction dir, unsigned long attrs)
+ {
++	/* DMA must never operate on areas that might be remapped. */
++	if (dev_WARN_ONCE(dev, is_vmalloc_addr(ptr),
++			  "rejecting DMA map of vmalloc memory\n"))
++		return DMA_MAPPING_ERROR;
+ 	debug_dma_map_single(dev, ptr, size);
+ 	return dma_map_page_attrs(dev, virt_to_page(ptr), offset_in_page(ptr),
+ 			size, dir, attrs);
 -- 
 2.20.1
 
