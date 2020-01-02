@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5706C12EBFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:14:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47E9112EBFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:15:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbgABWOM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:14:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54316 "EHLO mail.kernel.org"
+        id S1727325AbgABWOS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:14:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727848AbgABWOJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:14:09 -0500
+        id S1727862AbgABWOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:14:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC24721D7D;
-        Thu,  2 Jan 2020 22:14:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8491221D7D;
+        Thu,  2 Jan 2020 22:14:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003249;
-        bh=bsY3+57MQY04MgAMVlcxdWYcdhiuZlVcMnl6sNsU96E=;
+        s=default; t=1578003254;
+        bh=YD5Qd+d9+AvbAi/KPYotBzxb9IG9TQDX7dJEYehuDCs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I47J7YfRI3tj+uifXXZVZ97QVxHvTNUuvcSeL2S6KfkCELHOewf7TUWx7/knvg+mG
-         /TzjrYGduuq9lKQekcsWSFV3weLIv5IkijrGkNAym+7TPdrFJ9fEZspy6CbgHBsUuT
-         EaprSJYF1RVKOGaLBtvXwmWRjExYHFP1V0kCJebQ=
+        b=T429RGus5MCafrAUlLRxkyAXQLgpFDhPn0qpKYy4v9lFY/p+g/tBwAmYz5nBWiHTz
+         q2TSoXBZxFgU0jk99wgeiXwxay54t8XbwG0rfMvyffy1SgRBEkzW8i5nTRQ7OVLGxY
+         VpYnr9Zaxbz5TRL5bxvsEW9aGweErfwwGirpZg+4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Bla=C5=BE=20Hrastnik?= <blaz@mxxn.io>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        stable@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 081/191] HID: Improve Windows Precision Touchpad detection.
-Date:   Thu,  2 Jan 2020 23:06:03 +0100
-Message-Id: <20200102215838.592071110@linuxfoundation.org>
+Subject: [PATCH 5.4 083/191] watchdog: imx7ulp: Fix reboot hang
+Date:   Thu,  2 Jan 2020 23:06:05 +0100
+Message-Id: <20200102215838.833496463@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
 References: <20200102215829.911231638@linuxfoundation.org>
@@ -45,63 +45,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Blaž Hrastnik <blaz@mxxn.io>
+From: Fabio Estevam <festevam@gmail.com>
 
-[ Upstream commit 2dbc6f113acd74c66b04bf49fb027efd830b1c5a ]
+[ Upstream commit 6083ab7b2f3f25022e2e8f4c42f14a8521f47873 ]
 
-Per Microsoft spec, usage 0xC5 (page 0xFF) returns a blob containing
-data used to verify the touchpad as a Windows Precision Touchpad.
+The following hang is observed when a 'reboot' command is issued:
 
-   0x85, REPORTID_PTPHQA,    //    REPORT_ID (PTPHQA)
-    0x09, 0xC5,              //    USAGE (Vendor Usage 0xC5)
-    0x15, 0x00,              //    LOGICAL_MINIMUM (0)
-    0x26, 0xff, 0x00,        //    LOGICAL_MAXIMUM (0xff)
-    0x75, 0x08,              //    REPORT_SIZE (8)
-    0x96, 0x00, 0x01,        //    REPORT_COUNT (0x100 (256))
-    0xb1, 0x02,              //    FEATURE (Data,Var,Abs)
+# reboot
+# Stopping network: OK
+Stopping klogd: OK
+Stopping syslogd: OK
+umount: devtmpfs busy - remounted read-only
+[    8.612079] EXT4-fs (mmcblk0p2): re-mounted. Opts: (null)
+The system is going down NOW!
+Sent SIGTERM to all processes
+Sent SIGKILL to all processes
+Requesting system reboot
+[   10.694753] reboot: Restarting system
+[   11.699008] Reboot failed -- System halted
 
-However, some devices, namely Microsoft's Surface line of products
-instead implement a "segmented device certification report" (usage 0xC6)
-which returns the same report, but in smaller chunks.
+Fix this problem by adding a .restart ops member.
 
-    0x06, 0x00, 0xff,        //     USAGE_PAGE (Vendor Defined)
-    0x85, REPORTID_PTPHQA,   //     REPORT_ID (PTPHQA)
-    0x09, 0xC6,              //     USAGE (Vendor usage for segment #)
-    0x25, 0x08,              //     LOGICAL_MAXIMUM (8)
-    0x75, 0x08,              //     REPORT_SIZE (8)
-    0x95, 0x01,              //     REPORT_COUNT (1)
-    0xb1, 0x02,              //     FEATURE (Data,Var,Abs)
-    0x09, 0xC7,              //     USAGE (Vendor Usage)
-    0x26, 0xff, 0x00,        //     LOGICAL_MAXIMUM (0xff)
-    0x95, 0x20,              //     REPORT_COUNT (32)
-    0xb1, 0x02,              //     FEATURE (Data,Var,Abs)
-
-By expanding Win8 touchpad detection to also look for the segmented
-report, all Surface touchpads are now properly recognized by
-hid-multitouch.
-
-Signed-off-by: Blaž Hrastnik <blaz@mxxn.io>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Fixes: 41b630f41bf7 ("watchdog: Add i.MX7ULP watchdog support")
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20191029174037.25381-1-festevam@gmail.com
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/watchdog/imx7ulp_wdt.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 2fa3587d974f..e0b241bd3070 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -781,6 +781,10 @@ static void hid_scan_feature_usage(struct hid_parser *parser, u32 usage)
- 	if (usage == 0xff0000c5 && parser->global.report_count == 256 &&
- 	    parser->global.report_size == 8)
- 		parser->scan_flags |= HID_SCAN_FLAG_MT_WIN_8;
-+
-+	if (usage == 0xff0000c6 && parser->global.report_count == 1 &&
-+	    parser->global.report_size == 8)
-+		parser->scan_flags |= HID_SCAN_FLAG_MT_WIN_8;
+diff --git a/drivers/watchdog/imx7ulp_wdt.c b/drivers/watchdog/imx7ulp_wdt.c
+index 5ce51026989a..ba5d535a6db2 100644
+--- a/drivers/watchdog/imx7ulp_wdt.c
++++ b/drivers/watchdog/imx7ulp_wdt.c
+@@ -106,12 +106,28 @@ static int imx7ulp_wdt_set_timeout(struct watchdog_device *wdog,
+ 	return 0;
  }
  
- static void hid_scan_collection(struct hid_parser *parser, unsigned type)
++static int imx7ulp_wdt_restart(struct watchdog_device *wdog,
++			       unsigned long action, void *data)
++{
++	struct imx7ulp_wdt_device *wdt = watchdog_get_drvdata(wdog);
++
++	imx7ulp_wdt_enable(wdt->base, true);
++	imx7ulp_wdt_set_timeout(&wdt->wdd, 1);
++
++	/* wait for wdog to fire */
++	while (true)
++		;
++
++	return NOTIFY_DONE;
++}
++
+ static const struct watchdog_ops imx7ulp_wdt_ops = {
+ 	.owner = THIS_MODULE,
+ 	.start = imx7ulp_wdt_start,
+ 	.stop  = imx7ulp_wdt_stop,
+ 	.ping  = imx7ulp_wdt_ping,
+ 	.set_timeout = imx7ulp_wdt_set_timeout,
++	.restart = imx7ulp_wdt_restart,
+ };
+ 
+ static const struct watchdog_info imx7ulp_wdt_info = {
 -- 
 2.20.1
 
