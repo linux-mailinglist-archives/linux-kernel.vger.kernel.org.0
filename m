@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74CBA12EC42
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:16:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A359612EC90
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:19:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728296AbgABWQr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:16:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58788 "EHLO mail.kernel.org"
+        id S1728471AbgABWTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:19:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728040AbgABWQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:16:42 -0500
+        id S1728643AbgABWTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:19:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 306BC22314;
-        Thu,  2 Jan 2020 22:16:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DED4B21582;
+        Thu,  2 Jan 2020 22:19:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003401;
-        bh=s5hrIeR/stKztvZ6petLntQp/eDSvEeUVZssIHzRhHg=;
+        s=default; t=1578003584;
+        bh=Yk8x8eTau5ScQxzOP2srPKLsisx7NM06WxgqcIoEg7c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LbNQlq4rhZF5+h49bwfCyKpn9U+U67YwvvXIbzUfT+JNdPGzMqNjlhxNeNnSXj9E0
-         zNhw2QZRRfGb4BK0NXznZjPql0RZvTcCDNW7evEKJdiSptePKNXsXrr0jtthnJRZeH
-         w7gOKokrW49jk5vdlIPVaXR+rFo35AWpOiqvPdpI=
+        b=EteX+psPyzFGyXkYmH469pP6kcQvuy+eQ7MaEXuPyxAa2vyB5nYejofBy34will9C
+         NN7DNhsZUyqDddq/Ejb6HEa5aGwLzR65tprKAnWFd5kAoJ32F1gGQzOf/zgIY/m7O+
+         77PagGft9kYE5tji2bFCAxGMEfTmsGAYVx/b/JeY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Rob Herring <robh@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 120/191] libfdt: define INT32_MAX and UINT32_MAX in libfdt_env.h
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 030/114] irqchip/irq-bcm7038-l1: Enable parent IRQ if necessary
 Date:   Thu,  2 Jan 2020 23:06:42 +0100
-Message-Id: <20200102215842.682677028@linuxfoundation.org>
+Message-Id: <20200102220032.146449215@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,82 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit a8de1304b7df30e3a14f2a8b9709bb4ff31a0385 ]
+[ Upstream commit 27eebb60357ed5aa6659442f92907c0f7368d6ae ]
 
-The DTC v1.5.1 added references to (U)INT32_MAX.
+If the 'brcm,irq-can-wake' property is specified, make sure we also
+enable the corresponding parent interrupt we are attached to.
 
-This is no problem for user-space programs since <stdint.h> defines
-(U)INT32_MAX along with (u)int32_t.
-
-For the kernel space, libfdt_env.h needs to be adjusted before we
-pull in the changes.
-
-In the kernel, we usually use s/u32 instead of (u)int32_t for the
-fixed-width types.
-
-Accordingly, we already have S/U32_MAX for their max values.
-So, we should not add (U)INT32_MAX to <linux/limits.h> any more.
-
-Instead, add them to the in-kernel libfdt_env.h to compile the
-latest libfdt.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/20191024201415.23454-4-f.fainelli@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/compressed/libfdt_env.h | 4 +++-
- arch/powerpc/boot/libfdt_env.h        | 2 ++
- include/linux/libfdt_env.h            | 3 +++
- 3 files changed, 8 insertions(+), 1 deletion(-)
+ drivers/irqchip/irq-bcm7038-l1.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/compressed/libfdt_env.h b/arch/arm/boot/compressed/libfdt_env.h
-index b36c0289a308..6a0f1f524466 100644
---- a/arch/arm/boot/compressed/libfdt_env.h
-+++ b/arch/arm/boot/compressed/libfdt_env.h
-@@ -2,11 +2,13 @@
- #ifndef _ARM_LIBFDT_ENV_H
- #define _ARM_LIBFDT_ENV_H
- 
-+#include <linux/limits.h>
- #include <linux/types.h>
- #include <linux/string.h>
- #include <asm/byteorder.h>
- 
--#define INT_MAX			((int)(~0U>>1))
-+#define INT32_MAX	S32_MAX
-+#define UINT32_MAX	U32_MAX
- 
- typedef __be16 fdt16_t;
- typedef __be32 fdt32_t;
-diff --git a/arch/powerpc/boot/libfdt_env.h b/arch/powerpc/boot/libfdt_env.h
-index 2abc8e83b95e..9757d4f6331e 100644
---- a/arch/powerpc/boot/libfdt_env.h
-+++ b/arch/powerpc/boot/libfdt_env.h
-@@ -6,6 +6,8 @@
- #include <string.h>
- 
- #define INT_MAX			((int)(~0U>>1))
-+#define UINT32_MAX		((u32)~0U)
-+#define INT32_MAX		((s32)(UINT32_MAX >> 1))
- 
- #include "of.h"
- 
-diff --git a/include/linux/libfdt_env.h b/include/linux/libfdt_env.h
-index edb0f0c30904..1adf54aad2df 100644
---- a/include/linux/libfdt_env.h
-+++ b/include/linux/libfdt_env.h
-@@ -7,6 +7,9 @@
- 
- #include <asm/byteorder.h>
- 
-+#define INT32_MAX	S32_MAX
-+#define UINT32_MAX	U32_MAX
+diff --git a/drivers/irqchip/irq-bcm7038-l1.c b/drivers/irqchip/irq-bcm7038-l1.c
+index 0f6e30e9009d..f53dfc5aa7c5 100644
+--- a/drivers/irqchip/irq-bcm7038-l1.c
++++ b/drivers/irqchip/irq-bcm7038-l1.c
+@@ -284,6 +284,10 @@ static int __init bcm7038_l1_init_one(struct device_node *dn,
+ 		pr_err("failed to map parent interrupt %d\n", parent_irq);
+ 		return -EINVAL;
+ 	}
 +
- typedef __be16 fdt16_t;
- typedef __be32 fdt32_t;
- typedef __be64 fdt64_t;
++	if (of_property_read_bool(dn, "brcm,irq-can-wake"))
++		enable_irq_wake(parent_irq);
++
+ 	irq_set_chained_handler_and_data(parent_irq, bcm7038_l1_irq_handle,
+ 					 intc);
+ 
 -- 
 2.20.1
 
