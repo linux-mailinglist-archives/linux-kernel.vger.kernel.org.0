@@ -2,110 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67B9312E6B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 14:26:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D562B12E6CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 14:28:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbgABN0Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 08:26:24 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:56837 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728405AbgABN0X (ORCPT
+        id S1728408AbgABN2v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 08:28:51 -0500
+Received: from s3.sipsolutions.net ([144.76.43.62]:57490 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728323AbgABN2u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 08:26:23 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1in0UQ-0002De-UR; Thu, 02 Jan 2020 14:26:14 +0100
-Message-ID: <4a3c80a0b616d54c5d4b465688034e19694c18c0.camel@pengutronix.de>
-Subject: Re: [PATCH v2 2/2] remoteproc: mss: q6v5-mss: Add modem support on
- SC7180
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Sibi Sankar <sibis@codeaurora.org>, bjorn.andersson@linaro.org
-Cc:     ohad@wizery.com, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        agross@kernel.org
-Date:   Thu, 02 Jan 2020 14:26:14 +0100
-In-Reply-To: <20191219054506.20565-3-sibis@codeaurora.org>
-References: <20191219054506.20565-1-sibis@codeaurora.org>
-         <20191219054506.20565-3-sibis@codeaurora.org>
+        Thu, 2 Jan 2020 08:28:50 -0500
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.92.3)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1in0Wl-005R8Q-C2; Thu, 02 Jan 2020 14:28:39 +0100
+Message-ID: <1762437703fd150bb535ee488c78c830f107a531.camel@sipsolutions.net>
+Subject: Re: PROBLEM: Wireless networking goes down on Acer C720P Chromebook
+ (bisected)
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Stephen Oberholtzer <stevie@qrpff.net>, toke@redhat.com
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 02 Jan 2020 14:28:35 +0100
+In-Reply-To: <CAD_xR9eDL+9jzjYxPXJjS7U58ypCPWHYzrk0C3_vt-w26FZeAQ@mail.gmail.com> (sfid-20200101_015805_066597_5A8428D1)
+References: <CAD_xR9eDL+9jzjYxPXJjS7U58ypCPWHYzrk0C3_vt-w26FZeAQ@mail.gmail.com>
+         (sfid-20200101_015805_066597_5A8428D1)
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-12-19 at 11:15 +0530, Sibi Sankar wrote:
-> Add the out of reset sequence support for modem sub-system on SC7180
-> SoCs. It requires access to an additional halt nav register to put
-> the modem back into reset.
+On Tue, 2019-12-31 at 19:49 -0500, Stephen Oberholtzer wrote:
+> Wireless networking goes down on Acer C720P Chromebook (bisected)
 > 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  drivers/remoteproc/qcom_q6v5_mss.c | 199 ++++++++++++++++++++++++++++-
->  1 file changed, 198 insertions(+), 1 deletion(-)
+> Culprit: 7a89233a ("mac80211: Use Airtime-based Queue Limits (AQL) on
+> packet dequeue")
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index 164fc2a53ef11..51f451311f5fc 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-[...]
-> @@ -396,6 +409,18 @@ static int q6v5_reset_assert(struct q6v5 *qproc)
->  		reset_control_assert(qproc->pdc_reset);
->  		ret = reset_control_reset(qproc->mss_restart);
->  		reset_control_deassert(qproc->pdc_reset);
-> +	} else if (qproc->has_halt_nav) {
-> +		/* SWAR using CONN_BOX_SPARE_0 for pipeline glitch issue */
-> +		reset_control_assert(qproc->pdc_reset);
-> +		regmap_update_bits(qproc->conn_map, qproc->conn_box,
-> +				   BIT(0), BIT(0));
-> +		regmap_update_bits(qproc->halt_nav_map, qproc->halt_nav,
-> +				   NAV_AXI_HALTREQ_BIT, 0);
-> +		reset_control_assert(qproc->mss_restart);
-> +		reset_control_deassert(qproc->pdc_reset);
-> +		regmap_update_bits(qproc->conn_map, qproc->conn_box,
-> +				   BIT(0), 0);
-> +		ret = reset_control_deassert(qproc->mss_restart);
->  	} else {
->  		ret = reset_control_assert(qproc->mss_restart);
->  	}
+> I found that the newest kernel (5.4) displayed a curious issue on my
+> Acer C720P Chromebook: shortly after bringing networking up, all
+> connections would suddenly fail.  I discovered that I could
+> consistently reproduce the issue by ssh'ing into the machine and
+> running 'dmesg' -- on a non-working kernel; I would get partial
+> output, and then the connection would completely hang. This was so
+> consistent, in fact, that I was able to leverage it to automate the
+> process from 'git bisect run'.
+> 
+> KEYWORDS: c720p, chromebook, wireless, networking, mac80211
+> 
+> KERNEL: any kernel containing commit 7a89233a ("mac80211: Use
+> Airtime-based Queue Limits (AQL) on packet dequeue")
+> 
+> I find this bit in the offending commit's message suspicious:
+> 
+> > This patch does *not* include any mechanism to wake a throttled TXQ again,
+> > on the assumption that this will happen anyway as a side effect of whatever
+> >  freed the skb (most commonly a TX completion).
+> 
+> Methinks this assumption is not a fully valid one.
 
-Without knowing anything about the hardware this does look a bit weird,
-but I assume there is a good reason for every step.
+I think I found at least one hole in this, but IIRC (it was before my
+vacation, sorry) it was pretty unlikely to actually happen. Perhaps
+there are more though.
 
-Is the function name still describing its behaviour correctly, or would
-it make sense to rename q6v5_reset_assert/deassert to something else?
+https://lore.kernel.org/r/b14519e81b6d2335bd0cb7dcf074f0d1a4eec707.camel@sipsolutions.net
 
-[...]
-> @@ -667,6 +742,39 @@ static void q6v5proc_halt_axi_port(struct q6v5 *qproc,
->  	regmap_write(halt_map, offset + AXI_HALTREQ_REG, 0);
->  }
->  
-> +static void q6v5proc_halt_nav_axi_port(struct q6v5 *qproc,
-> +				       struct regmap *halt_map,
-> +				       u32 offset)
-> +{
-[...]
-> +	/* Wait for halt ack*/
-> +	timeout = jiffies + msecs_to_jiffies(HALT_ACK_TIMEOUT_MS);
-> +	for (;;) {
-> +		ret = regmap_read(halt_map, offset, &val);
-> +		if (ret || (val & NAV_AXI_HALTACK_BIT) ||
-> +		    time_after(jiffies, timeout))
-> +			break;
-> +
-> +		udelay(5);
-> +	}
 
-This does look like a candidate for using regmap_read_poll_timeout().
+> I'll be happy to test any patches. If you need some printk calls, just
+> tell me where to put 'em.
 
-regards
-Philipp
+Do you get any output at all? Like a WARN_ON() for an underflow, or
+something?
+
+johannes
 
