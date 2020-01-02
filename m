@@ -2,40 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C2ED12F011
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:51:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2649F12F070
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:53:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729332AbgABWYz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:24:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49320 "EHLO mail.kernel.org"
+        id S1728887AbgABWVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:21:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729415AbgABWYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:24:50 -0500
+        id S1729047AbgABWVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:21:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E7E820863;
-        Thu,  2 Jan 2020 22:24:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E58AF21835;
+        Thu,  2 Jan 2020 22:21:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003889;
-        bh=Zk9ABkDXXe03L68NxMgDu7zvSMfOH8F34C8GBBfkVu4=;
+        s=default; t=1578003706;
+        bh=U5GgqEyn+KoZCexv7j0LgkAynPcyqk8Rd4HfTxE53UA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a9nvv4pwC7vd0f4GhwvYB8m2C1/NMNM2SLW1CcPaYzji1sTSrCQ25CA4OGDwucdNb
-         MAEunwBA0KvKOZFWZf1YEQ+V5U6IymGLgBE8ze9Kov9FcaowzjeDKG+9mKm7NN/pns
-         9eJx+Y/cqWriC8USATDc68RykiFA8tHunAzSWqQY=
+        b=IIMQM9w+BoqzxYMrMUqhNCe8D+9Anzr5CglvIlJ2keV1Ek+coj3nibCBqRI/yBLWo
+         OdzAYreOjfIz3rGRT8viq/X0Y0ZpWEwuZfnksJ/U544DVTYK7LTEX2TQUsrA3hSIJS
+         35SeIpToutTwd3HEU+MVuOeid4mSXiVmrUUC60gk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Michael Walle <michael@walle.cc>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 42/91] gpio: mpc8xxx: Dont overwrite default irq_set_type callback
-Date:   Thu,  2 Jan 2020 23:07:24 +0100
-Message-Id: <20200102220434.142310879@linuxfoundation.org>
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Parth Shah <parth@linux.ibm.com>,
+        Ihor Pasichnyk <Ihor.Pasichnyk@ibm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Phil Auld <pauld@redhat.com>,
+        Vaidyanathan Srinivasan <svaidy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.19 073/114] Revert "powerpc/vcpu: Assume dedicated processors as non-preempt"
+Date:   Thu,  2 Jan 2020 23:07:25 +0100
+Message-Id: <20200102220036.470720283@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
-References: <20200102220356.856162165@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,56 +51,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-[ Upstream commit 4e50573f39229d5e9c985fa3b4923a8b29619ade ]
+This reverts commit 4ba32bdbd8c66d9c7822aea8dcf4e51410df84a8 which is
+commit 14c73bd344da60abaf7da3ea2e7733ddda35bbac upstream.
 
-The per-SoC devtype structures can contain their own callbacks that
-overwrite mpc8xxx_gpio_devtype_default.
+It breaks the build.
 
-The clear intention is that mpc8xxx_irq_set_type is used in case the SoC
-does not specify a more specific callback. But what happens is that if
-the SoC doesn't specify one, its .irq_set_type is de-facto NULL, and
-this overwrites mpc8xxx_irq_set_type to a no-op. This means that the
-following SoCs are affected:
-
-- fsl,mpc8572-gpio
-- fsl,ls1028a-gpio
-- fsl,ls1088a-gpio
-
-On these boards, the irq_set_type does exactly nothing, and the GPIO
-controller keeps its GPICR register in the hardware-default state. On
-the LS1028A, that is ACTIVE_BOTH, which means 2 interrupts are raised
-even if the IRQ client requests LEVEL_HIGH. Another implication is that
-the IRQs are not checked (e.g. level-triggered interrupts are not
-rejected, although they are not supported).
-
-Fixes: 82e39b0d8566 ("gpio: mpc8xxx: handle differences between incarnations at a single place")
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-Link: https://lore.kernel.org/r/20191115125551.31061-1-olteanv@gmail.com
-Tested-by: Michael Walle <michael@walle.cc>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Parth Shah <parth@linux.ibm.com>
+Cc: Ihor Pasichnyk <Ihor.Pasichnyk@ibm.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: Phil Auld <pauld@redhat.com>
+Cc: Vaidyanathan Srinivasan <svaidy@linux.ibm.com>
+Cc: Parth Shah <parth@linux.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpio-mpc8xxx.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/powerpc/include/asm/spinlock.h    |    4 +---
+ arch/powerpc/platforms/pseries/setup.c |    7 -------
+ 2 files changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index 8c93dec498fa..e7783b852d69 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -337,7 +337,8 @@ static int mpc8xxx_probe(struct platform_device *pdev)
- 	 * It's assumed that only a single type of gpio controller is available
- 	 * on the current machine, so overwriting global data is fine.
- 	 */
--	mpc8xxx_irq_chip.irq_set_type = devtype->irq_set_type;
-+	if (devtype->irq_set_type)
-+		mpc8xxx_irq_chip.irq_set_type = devtype->irq_set_type;
+--- a/arch/powerpc/include/asm/spinlock.h
++++ b/arch/powerpc/include/asm/spinlock.h
+@@ -53,12 +53,10 @@
+ #endif
  
- 	if (devtype->gpio_dir_out)
- 		gc->direction_output = devtype->gpio_dir_out;
--- 
-2.20.1
-
+ #ifdef CONFIG_PPC_PSERIES
+-DECLARE_STATIC_KEY_FALSE(shared_processor);
+-
+ #define vcpu_is_preempted vcpu_is_preempted
+ static inline bool vcpu_is_preempted(int cpu)
+ {
+-	if (!static_branch_unlikely(&shared_processor))
++	if (!firmware_has_feature(FW_FEATURE_SPLPAR))
+ 		return false;
+ 	return !!(be32_to_cpu(lppaca_of(cpu).yield_count) & 1);
+ }
+--- a/arch/powerpc/platforms/pseries/setup.c
++++ b/arch/powerpc/platforms/pseries/setup.c
+@@ -75,9 +75,6 @@
+ #include "pseries.h"
+ #include "../../../../drivers/pci/pci.h"
+ 
+-DEFINE_STATIC_KEY_FALSE(shared_processor);
+-EXPORT_SYMBOL_GPL(shared_processor);
+-
+ int CMO_PrPSP = -1;
+ int CMO_SecPSP = -1;
+ unsigned long CMO_PageSize = (ASM_CONST(1) << IOMMU_PAGE_SHIFT_4K);
+@@ -764,10 +761,6 @@ static void __init pSeries_setup_arch(vo
+ 
+ 	if (firmware_has_feature(FW_FEATURE_LPAR)) {
+ 		vpa_init(boot_cpuid);
+-
+-		if (lppaca_shared_proc(get_lppaca()))
+-			static_branch_enable(&shared_processor);
+-
+ 		ppc_md.power_save = pseries_lpar_idle;
+ 		ppc_md.enable_pmcs = pseries_lpar_enable_pmcs;
+ #ifdef CONFIG_PCI_IOV
 
 
