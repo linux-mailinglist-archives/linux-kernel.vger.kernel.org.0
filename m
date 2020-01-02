@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81E7212F079
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:54:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9CFD12EDA3
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:30:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727730AbgABWUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:20:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38776 "EHLO mail.kernel.org"
+        id S1729894AbgABWaZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:30:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728864AbgABWUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:20:44 -0500
+        id S1729882AbgABWaX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:30:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D90F624650;
-        Thu,  2 Jan 2020 22:20:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D9A92253D;
+        Thu,  2 Jan 2020 22:30:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003644;
-        bh=ep9gLDaU4fQuW4s5VjCKlb/xQtq90DV88lZZIOURVh0=;
+        s=default; t=1578004222;
+        bh=p/VQ5XvFfXoxpzlYbitgprfWPKotHqsZENTAFtN7H3U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uTSPwpC6T12g8zgK1Qtb098eeyviwPbE0lIx4R6YeBt+4JpoJ9g9UHtffclnfg2ZD
-         cWCU5pfVUMI+ZsluNq8hsdV7uCab4NE9MdMn0qihjsaJvQaIvh9kQjNpzz8+IX5lJx
-         uaZ0R/kB7j0JodoogVyla4u5sg0mwQ3zp2VMC0a4=
+        b=ye/nl9lOep10zxofr4r00Lr2mx3CSii1k3chEcY1jhNzQ+gOImrPVsjzo0jvL89E2
+         wASTuzmH9ChV14/hY/mGlIIUsl7og5JCE7ysSFhWNh6IlNZ+v8/hAp65ToBtZKjU4f
+         uDbVnvVPohqUOmivjEiA5WLCILrk704LKyZa0iXs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 047/114] ARM: 8937/1: spectre-v2: remove Brahma-B53 from hardening
+Subject: [PATCH 4.9 088/171] btrfs: dont double lock the subvol_sem for rename exchange
 Date:   Thu,  2 Jan 2020 23:06:59 +0100
-Message-Id: <20200102220033.831569340@linuxfoundation.org>
+Message-Id: <20200102220559.262428738@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Doug Berger <opendmb@gmail.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-[ Upstream commit 4ae5061a19b550dfe25397843427ed2ebab16b16 ]
+[ Upstream commit 943eb3bf25f4a7b745dd799e031be276aa104d82 ]
 
-When the default processor handling was added to the function
-cpu_v7_spectre_init() it only excluded other ARM implemented processor
-cores. The Broadcom Brahma B53 core is not implemented by ARM so it
-ended up falling through into the set of processors that attempt to use
-the ARM_SMCCC_ARCH_WORKAROUND_1 service to harden the branch predictor.
+If we're rename exchanging two subvols we'll try to lock this lock
+twice, which is bad.  Just lock once if either of the ino's are subvols.
 
-Since this workaround is not necessary for the Brahma-B53 this commit
-explicitly checks for it and prevents it from applying a branch
-predictor hardening workaround.
-
-Fixes: 10115105cb3a ("ARM: spectre-v2: add firmware based hardening")
-Signed-off-by: Doug Berger <opendmb@gmail.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fixes: cdd1fedf8261 ("btrfs: add support for RENAME_EXCHANGE and RENAME_WHITEOUT")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/proc-v7-bugs.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/btrfs/inode.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mm/proc-v7-bugs.c b/arch/arm/mm/proc-v7-bugs.c
-index 9a07916af8dd..a6554fdb56c5 100644
---- a/arch/arm/mm/proc-v7-bugs.c
-+++ b/arch/arm/mm/proc-v7-bugs.c
-@@ -65,6 +65,9 @@ static void cpu_v7_spectre_init(void)
- 		break;
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 80937c5ca477..bb8863958ac0 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -9597,9 +9597,8 @@ static int btrfs_rename_exchange(struct inode *old_dir,
+ 		return -EXDEV;
  
- #ifdef CONFIG_ARM_PSCI
-+	case ARM_CPU_PART_BRAHMA_B53:
-+		/* Requires no workaround */
-+		break;
- 	default:
- 		/* Other ARM CPUs require no workaround */
- 		if (read_cpuid_implementor() == ARM_CPU_IMP_ARM)
+ 	/* close the race window with snapshot create/destroy ioctl */
+-	if (old_ino == BTRFS_FIRST_FREE_OBJECTID)
+-		down_read(&root->fs_info->subvol_sem);
+-	if (new_ino == BTRFS_FIRST_FREE_OBJECTID)
++	if (old_ino == BTRFS_FIRST_FREE_OBJECTID ||
++	    new_ino == BTRFS_FIRST_FREE_OBJECTID)
+ 		down_read(&dest->fs_info->subvol_sem);
+ 
+ 	/*
+@@ -9785,9 +9784,8 @@ static int btrfs_rename_exchange(struct inode *old_dir,
+ 	ret2 = btrfs_end_transaction(trans, root);
+ 	ret = ret ? ret : ret2;
+ out_notrans:
+-	if (new_ino == BTRFS_FIRST_FREE_OBJECTID)
+-		up_read(&dest->fs_info->subvol_sem);
+-	if (old_ino == BTRFS_FIRST_FREE_OBJECTID)
++	if (new_ino == BTRFS_FIRST_FREE_OBJECTID ||
++	    old_ino == BTRFS_FIRST_FREE_OBJECTID)
+ 		up_read(&root->fs_info->subvol_sem);
+ 
+ 	return ret;
 -- 
 2.20.1
 
