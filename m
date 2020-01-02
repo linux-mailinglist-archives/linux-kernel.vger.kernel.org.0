@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27E3A12F121
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:58:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3D9E12EE08
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:34:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728073AbgABWP2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:15:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56134 "EHLO mail.kernel.org"
+        id S1730601AbgABWef (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:34:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727753AbgABWPV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:15:21 -0500
+        id S1730583AbgABWee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:34:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42D2D2253D;
-        Thu,  2 Jan 2020 22:15:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B10A722314;
+        Thu,  2 Jan 2020 22:34:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003320;
-        bh=bf552ruxuUI7QMhE+xOcCycft/fZFhLHYKX/xrzuPmA=;
+        s=default; t=1578004473;
+        bh=BloFgXpPaLhMZbOca3zw/Acezw0jJYPeAReQ1OWmrlo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g0poRwovI7Yk+FB+le99PAE/5iGkyNaerp0d1Gqc4zcaRPGZYDKanwZtiTS7DJZa+
-         gRaOGvvqp3jqnuBuSEqIYevLT1eiX4G/wMeXHYNdJcMYwe+roodHWU2rxFF6FOek5m
-         2oMJR1jfcJF1viz5AeBE5bwIMvT3jinfQLdjBrSk=
+        b=OqhvwJSpZz6NapTPVKI+y/9YCHNMJEkNRmMFZyvT8fKFOhtwDJ3KSBneKMFeehEtH
+         2HJF4Iv1OsV1h5nZJCKXAT5no+DMsPAB57KvlVjo+lUj94gsiI7C432K4qbo8OLyjZ
+         pF0G0A162tM7hjHxzrHE+UoUFvYBTbeQq9Of2qTI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+0d818c0d39399188f393@syzkaller.appspotmail.com,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 111/191] io_uring: io_allocate_scq_urings() should return a sane state
-Date:   Thu,  2 Jan 2020 23:06:33 +0100
-Message-Id: <20200102215841.790190941@linuxfoundation.org>
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 021/137] mwifiex: pcie: Fix memory leak in mwifiex_pcie_init_evt_ring
+Date:   Thu,  2 Jan 2020 23:06:34 +0100
+Message-Id: <20200102220549.534498494@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +46,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-[ Upstream commit eb065d301e8c83643367bdb0898becc364046bda ]
+[ Upstream commit d10dcb615c8e29d403a24d35f8310a7a53e3050c ]
 
-We currently rely on the ring destroy on cleaning things up in case of
-failure, but io_allocate_scq_urings() can leave things half initialized
-if only parts of it fails.
+In mwifiex_pcie_init_evt_ring, a new skb is allocated which should be
+released if mwifiex_map_pci_memory() fails. The release for skb and
+card->evtbd_ring_vbase is added.
 
-Be nice and return with either everything setup in success, or return an
-error with things nicely cleaned up.
-
-Reported-by: syzbot+0d818c0d39399188f393@syzkaller.appspotmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 0732484b47b5 ("mwifiex: separate ring initialization and ring creation routines")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Acked-by: Ganapathi Bhat <gbhat@marvell.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/io_uring.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/net/wireless/mwifiex/pcie.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a340147387ec..74e786578c77 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3773,12 +3773,18 @@ static int io_allocate_scq_urings(struct io_ring_ctx *ctx,
- 	ctx->cq_entries = rings->cq_ring_entries;
+diff --git a/drivers/net/wireless/mwifiex/pcie.c b/drivers/net/wireless/mwifiex/pcie.c
+index 268e50ba88a5..4c0a65692899 100644
+--- a/drivers/net/wireless/mwifiex/pcie.c
++++ b/drivers/net/wireless/mwifiex/pcie.c
+@@ -577,8 +577,11 @@ static int mwifiex_pcie_init_evt_ring(struct mwifiex_adapter *adapter)
+ 		skb_put(skb, MAX_EVENT_SIZE);
  
- 	size = array_size(sizeof(struct io_uring_sqe), p->sq_entries);
--	if (size == SIZE_MAX)
-+	if (size == SIZE_MAX) {
-+		io_mem_free(ctx->rings);
-+		ctx->rings = NULL;
- 		return -EOVERFLOW;
-+	}
+ 		if (mwifiex_map_pci_memory(adapter, skb, MAX_EVENT_SIZE,
+-					   PCI_DMA_FROMDEVICE))
++					   PCI_DMA_FROMDEVICE)) {
++			kfree_skb(skb);
++			kfree(card->evtbd_ring_vbase);
+ 			return -1;
++		}
  
- 	ctx->sq_sqes = io_mem_alloc(size);
--	if (!ctx->sq_sqes)
-+	if (!ctx->sq_sqes) {
-+		io_mem_free(ctx->rings);
-+		ctx->rings = NULL;
- 		return -ENOMEM;
-+	}
+ 		buf_pa = MWIFIEX_SKB_DMA_ADDR(skb);
  
- 	return 0;
- }
 -- 
 2.20.1
 
