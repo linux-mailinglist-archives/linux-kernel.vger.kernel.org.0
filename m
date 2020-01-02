@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DFCF12EDD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:32:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0327812F0E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:56:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbgABWcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:32:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38618 "EHLO mail.kernel.org"
+        id S1728778AbgABW41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:56:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730162AbgABWcX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:32:23 -0500
+        id S1728326AbgABWSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:18:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E650C20866;
-        Thu,  2 Jan 2020 22:32:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3360721582;
+        Thu,  2 Jan 2020 22:18:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004342;
-        bh=iHda5XgKGbk3pId6NVo3JQZl350sef0Tb2WL7hX3Jk4=;
+        s=default; t=1578003502;
+        bh=IQQjTn2rQUrfNOk9A8Gln9nVWGLvN0dhB7+ltGEOMN0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q9Gv/LaPWb3slG258LKYhFUfK6sTx8VxwBGc21WaDALSE+QuIXbk/BPYAnbZxuHx4
-         jiJ0iM8biU0U+KE/Et1fMjIUOau3soP8tNtNv1VxmjOD1M0XEk5JaE4LZzyCi66jzt
-         J4Y3IDFSzHWMSQ77WZviRzAv6NqDLMtRPcis6uL0=
+        b=Fcfs9A5kNqCkCnV5FUuBOgkS/0PEqUWLkoZw07M/HZfV9aNOraDhrf0rEf4rX14cM
+         8il1c80dnYYAeaQHAvm1oC0T7MpKLA4jxBmWbreEoTmGaZsd1T7GzT/0dVSqOzbvK5
+         FnCNY6a7QI4L4jW2PhMGKcwQreQHxspm+qdyUqy8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Bla=C5=BE=20Hrastnik?= <blaz@mxxn.io>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 139/171] HID: Improve Windows Precision Touchpad detection.
+        stable@vger.kernel.org, Netanel Belgazal <netanel@amazon.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 188/191] net: ena: fix napi handler misbehavior when the napi budget is zero
 Date:   Thu,  2 Jan 2020 23:07:50 +0100
-Message-Id: <20200102220606.386475352@linuxfoundation.org>
+Message-Id: <20200102215849.750363784@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,65 +43,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Blaž Hrastnik <blaz@mxxn.io>
+From: Netanel Belgazal <netanel@amazon.com>
 
-[ Upstream commit 2dbc6f113acd74c66b04bf49fb027efd830b1c5a ]
+[ Upstream commit 24dee0c7478d1a1e00abdf5625b7f921467325dc ]
 
-Per Microsoft spec, usage 0xC5 (page 0xFF) returns a blob containing
-data used to verify the touchpad as a Windows Precision Touchpad.
+In netpoll the napi handler could be called with budget equal to zero.
+Current ENA napi handler doesn't take that into consideration.
 
-   0x85, REPORTID_PTPHQA,    //    REPORT_ID (PTPHQA)
-    0x09, 0xC5,              //    USAGE (Vendor Usage 0xC5)
-    0x15, 0x00,              //    LOGICAL_MINIMUM (0)
-    0x26, 0xff, 0x00,        //    LOGICAL_MAXIMUM (0xff)
-    0x75, 0x08,              //    REPORT_SIZE (8)
-    0x96, 0x00, 0x01,        //    REPORT_COUNT (0x100 (256))
-    0xb1, 0x02,              //    FEATURE (Data,Var,Abs)
+The napi handler handles Rx packets in a do-while loop.
+Currently, the budget check happens only after decrementing the
+budget, therefore the napi handler, in rare cases, could run over
+MAX_INT packets.
 
-However, some devices, namely Microsoft's Surface line of products
-instead implement a "segmented device certification report" (usage 0xC6)
-which returns the same report, but in smaller chunks.
+In addition to that, this moves all budget related variables to int
+calculation and stop mixing u32 to avoid ambiguity
 
-    0x06, 0x00, 0xff,        //     USAGE_PAGE (Vendor Defined)
-    0x85, REPORTID_PTPHQA,   //     REPORT_ID (PTPHQA)
-    0x09, 0xC6,              //     USAGE (Vendor usage for segment #)
-    0x25, 0x08,              //     LOGICAL_MAXIMUM (8)
-    0x75, 0x08,              //     REPORT_SIZE (8)
-    0x95, 0x01,              //     REPORT_COUNT (1)
-    0xb1, 0x02,              //     FEATURE (Data,Var,Abs)
-    0x09, 0xC7,              //     USAGE (Vendor Usage)
-    0x26, 0xff, 0x00,        //     LOGICAL_MAXIMUM (0xff)
-    0x95, 0x20,              //     REPORT_COUNT (32)
-    0xb1, 0x02,              //     FEATURE (Data,Var,Abs)
-
-By expanding Win8 touchpad detection to also look for the segmented
-report, all Surface touchpads are now properly recognized by
-hid-multitouch.
-
-Signed-off-by: Blaž Hrastnik <blaz@mxxn.io>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
+Signed-off-by: Netanel Belgazal <netanel@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hid/hid-core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/amazon/ena/ena_netdev.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 42d1b350afd2..c89eb3c3965c 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -761,6 +761,10 @@ static void hid_scan_feature_usage(struct hid_parser *parser, u32 usage)
- 	if (usage == 0xff0000c5 && parser->global.report_count == 256 &&
- 	    parser->global.report_size == 8)
- 		parser->scan_flags |= HID_SCAN_FLAG_MT_WIN_8;
-+
-+	if (usage == 0xff0000c6 && parser->global.report_count == 1 &&
-+	    parser->global.report_size == 8)
-+		parser->scan_flags |= HID_SCAN_FLAG_MT_WIN_8;
- }
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+@@ -1238,8 +1238,8 @@ static int ena_io_poll(struct napi_struc
+ 	struct ena_napi *ena_napi = container_of(napi, struct ena_napi, napi);
+ 	struct ena_ring *tx_ring, *rx_ring;
  
- static void hid_scan_collection(struct hid_parser *parser, unsigned type)
--- 
-2.20.1
-
+-	u32 tx_work_done;
+-	u32 rx_work_done;
++	int tx_work_done;
++	int rx_work_done = 0;
+ 	int tx_budget;
+ 	int napi_comp_call = 0;
+ 	int ret;
+@@ -1256,7 +1256,11 @@ static int ena_io_poll(struct napi_struc
+ 	}
+ 
+ 	tx_work_done = ena_clean_tx_irq(tx_ring, tx_budget);
+-	rx_work_done = ena_clean_rx_irq(rx_ring, napi, budget);
++	/* On netpoll the budget is zero and the handler should only clean the
++	 * tx completions.
++	 */
++	if (likely(budget))
++		rx_work_done = ena_clean_rx_irq(rx_ring, napi, budget);
+ 
+ 	/* If the device is about to reset or down, avoid unmask
+ 	 * the interrupt and return 0 so NAPI won't reschedule
 
 
