@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEE2C12EDE3
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:33:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F4C312F05B
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:53:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730492AbgABWdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:33:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40008 "EHLO mail.kernel.org"
+        id S1726136AbgABWWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:22:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730293AbgABWdB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:33:01 -0500
+        id S1729086AbgABWWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:22:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21D4921835;
-        Thu,  2 Jan 2020 22:32:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B695B222C3;
+        Thu,  2 Jan 2020 22:22:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004380;
-        bh=zl+jMEazS06IPnXQz5OhOUWOzZlmwFDhJDIcf0gR+Mc=;
+        s=default; t=1578003723;
+        bh=VOUT318r59RAxhuHzAdS0CGGtsryt1VTz1lPfrvr2xY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W8rP6bczm0KymD0QBoWEWKMV8Jx51SGFtQAyUFcAKC6VLsnZn3Sug2CxgUEuXbYNW
-         XfLTrNwSN13QqAXWj7w9uu5bvWefngeBj+WzoQkY07jHgvhqFQQF68HfQXKY2iviDr
-         +PGT0mKdrS8CBgcblN0n5y4dEs+2PN1+Hb8m8qNI=
+        b=KP4YzfLC0EsiAI1PoeXEk/Az1uTEOZrVfaVBht04qQLQ3yVLGjIcoCVg/ORTudAjk
+         iDStDJiBepGjQMfBgwtgJ2eSp7Q6A7Zl6KFWTSS5WWuRm2lqGGPA/AAAJfLki/KRvJ
+         AwrlicvyzFsDUU5A+Zq/gssq2OuDCF/hjcDxcrAI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 129/171] irqchip: ingenic: Error out if IRQ domain creation failed
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 088/114] net: icmp: fix data-race in cmp_global_allow()
 Date:   Thu,  2 Jan 2020 23:07:40 +0100
-Message-Id: <20200102220604.928531249@linuxfoundation.org>
+Message-Id: <20200102220038.083133999@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,59 +44,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 52ecc87642f273a599c9913b29fd179c13de457b ]
+commit bbab7ef235031f6733b5429ae7877bfa22339712 upstream.
 
-If we cannot create the IRQ domain, the driver should fail to probe
-instead of succeeding with just a warning message.
+This code reads two global variables without protection
+of a lock. We need READ_ONCE()/WRITE_ONCE() pairs to
+avoid load/store-tearing and better document the intent.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/1570015525-27018-3-git-send-email-zhouyanjie@zoho.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+KCSAN reported :
+BUG: KCSAN: data-race in icmp_global_allow / icmp_global_allow
+
+read to 0xffffffff861a8014 of 4 bytes by task 11201 on cpu 0:
+ icmp_global_allow+0x36/0x1b0 net/ipv4/icmp.c:254
+ icmpv6_global_allow net/ipv6/icmp.c:184 [inline]
+ icmpv6_global_allow net/ipv6/icmp.c:179 [inline]
+ icmp6_send+0x493/0x1140 net/ipv6/icmp.c:514
+ icmpv6_send+0x71/0xb0 net/ipv6/ip6_icmp.c:43
+ ip6_link_failure+0x43/0x180 net/ipv6/route.c:2640
+ dst_link_failure include/net/dst.h:419 [inline]
+ vti_xmit net/ipv4/ip_vti.c:243 [inline]
+ vti_tunnel_xmit+0x27f/0xa50 net/ipv4/ip_vti.c:279
+ __netdev_start_xmit include/linux/netdevice.h:4420 [inline]
+ netdev_start_xmit include/linux/netdevice.h:4434 [inline]
+ xmit_one net/core/dev.c:3280 [inline]
+ dev_hard_start_xmit+0xef/0x430 net/core/dev.c:3296
+ __dev_queue_xmit+0x14c9/0x1b60 net/core/dev.c:3873
+ dev_queue_xmit+0x21/0x30 net/core/dev.c:3906
+ neigh_direct_output+0x1f/0x30 net/core/neighbour.c:1530
+ neigh_output include/net/neighbour.h:511 [inline]
+ ip6_finish_output2+0x7a6/0xec0 net/ipv6/ip6_output.c:116
+ __ip6_finish_output net/ipv6/ip6_output.c:142 [inline]
+ __ip6_finish_output+0x2d7/0x330 net/ipv6/ip6_output.c:127
+ ip6_finish_output+0x41/0x160 net/ipv6/ip6_output.c:152
+ NF_HOOK_COND include/linux/netfilter.h:294 [inline]
+ ip6_output+0xf2/0x280 net/ipv6/ip6_output.c:175
+ dst_output include/net/dst.h:436 [inline]
+ ip6_local_out+0x74/0x90 net/ipv6/output_core.c:179
+
+write to 0xffffffff861a8014 of 4 bytes by task 11183 on cpu 1:
+ icmp_global_allow+0x174/0x1b0 net/ipv4/icmp.c:272
+ icmpv6_global_allow net/ipv6/icmp.c:184 [inline]
+ icmpv6_global_allow net/ipv6/icmp.c:179 [inline]
+ icmp6_send+0x493/0x1140 net/ipv6/icmp.c:514
+ icmpv6_send+0x71/0xb0 net/ipv6/ip6_icmp.c:43
+ ip6_link_failure+0x43/0x180 net/ipv6/route.c:2640
+ dst_link_failure include/net/dst.h:419 [inline]
+ vti_xmit net/ipv4/ip_vti.c:243 [inline]
+ vti_tunnel_xmit+0x27f/0xa50 net/ipv4/ip_vti.c:279
+ __netdev_start_xmit include/linux/netdevice.h:4420 [inline]
+ netdev_start_xmit include/linux/netdevice.h:4434 [inline]
+ xmit_one net/core/dev.c:3280 [inline]
+ dev_hard_start_xmit+0xef/0x430 net/core/dev.c:3296
+ __dev_queue_xmit+0x14c9/0x1b60 net/core/dev.c:3873
+ dev_queue_xmit+0x21/0x30 net/core/dev.c:3906
+ neigh_direct_output+0x1f/0x30 net/core/neighbour.c:1530
+ neigh_output include/net/neighbour.h:511 [inline]
+ ip6_finish_output2+0x7a6/0xec0 net/ipv6/ip6_output.c:116
+ __ip6_finish_output net/ipv6/ip6_output.c:142 [inline]
+ __ip6_finish_output+0x2d7/0x330 net/ipv6/ip6_output.c:127
+ ip6_finish_output+0x41/0x160 net/ipv6/ip6_output.c:152
+ NF_HOOK_COND include/linux/netfilter.h:294 [inline]
+ ip6_output+0xf2/0x280 net/ipv6/ip6_output.c:175
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 PID: 11183 Comm: syz-executor.2 Not tainted 5.4.0-rc3+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+
+Fixes: 4cdf507d5452 ("icmp: add a global rate limitation")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/irqchip/irq-ingenic.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ net/ipv4/icmp.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/irqchip/irq-ingenic.c b/drivers/irqchip/irq-ingenic.c
-index fc5953dea509..b2e16dca76a6 100644
---- a/drivers/irqchip/irq-ingenic.c
-+++ b/drivers/irqchip/irq-ingenic.c
-@@ -117,6 +117,14 @@ static int __init ingenic_intc_of_init(struct device_node *node,
- 		goto out_unmap_irq;
+--- a/net/ipv4/icmp.c
++++ b/net/ipv4/icmp.c
+@@ -254,10 +254,11 @@ bool icmp_global_allow(void)
+ 	bool rc = false;
+ 
+ 	/* Check if token bucket is empty and cannot be refilled
+-	 * without taking the spinlock.
++	 * without taking the spinlock. The READ_ONCE() are paired
++	 * with the following WRITE_ONCE() in this same function.
+ 	 */
+-	if (!icmp_global.credit) {
+-		delta = min_t(u32, now - icmp_global.stamp, HZ);
++	if (!READ_ONCE(icmp_global.credit)) {
++		delta = min_t(u32, now - READ_ONCE(icmp_global.stamp), HZ);
+ 		if (delta < HZ / 50)
+ 			return false;
  	}
- 
-+	domain = irq_domain_add_legacy(node, num_chips * 32,
-+				       JZ4740_IRQ_BASE, 0,
-+				       &irq_domain_simple_ops, NULL);
-+	if (!domain) {
-+		err = -ENOMEM;
-+		goto out_unmap_base;
-+	}
-+
- 	for (i = 0; i < num_chips; i++) {
- 		/* Mask all irqs */
- 		writel(0xffffffff, intc->base + (i * CHIP_SIZE) +
-@@ -143,14 +151,11 @@ static int __init ingenic_intc_of_init(struct device_node *node,
- 				       IRQ_NOPROBE | IRQ_LEVEL);
+@@ -267,14 +268,14 @@ bool icmp_global_allow(void)
+ 	if (delta >= HZ / 50) {
+ 		incr = sysctl_icmp_msgs_per_sec * delta / HZ ;
+ 		if (incr)
+-			icmp_global.stamp = now;
++			WRITE_ONCE(icmp_global.stamp, now);
  	}
- 
--	domain = irq_domain_add_legacy(node, num_chips * 32, JZ4740_IRQ_BASE, 0,
--				       &irq_domain_simple_ops, NULL);
--	if (!domain)
--		pr_warn("unable to register IRQ domain\n");
--
- 	setup_irq(parent_irq, &intc_cascade_action);
- 	return 0;
- 
-+out_unmap_base:
-+	iounmap(intc->base);
- out_unmap_irq:
- 	irq_dispose_mapping(parent_irq);
- out_free:
--- 
-2.20.1
-
+ 	credit = min_t(u32, icmp_global.credit + incr, sysctl_icmp_msgs_burst);
+ 	if (credit) {
+ 		credit--;
+ 		rc = true;
+ 	}
+-	icmp_global.credit = credit;
++	WRITE_ONCE(icmp_global.credit, credit);
+ 	spin_unlock(&icmp_global.lock);
+ 	return rc;
+ }
 
 
