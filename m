@@ -2,112 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61D3C12F174
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:00:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFA8712F19B
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:05:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbgABXAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 18:00:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52648 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727226AbgABWNF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:13:05 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F6D721D7D;
-        Thu,  2 Jan 2020 22:13:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003184;
-        bh=PBHb5ijfB+T3bwG+9x4hokUpoUPYGrSirFzfyZnrxJY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BZT+rDLKybt1uOAMNvSI0/2gZfPqfatkYhUewVfcTTnvR4zPtcYjLxGc1XjCkVQrE
-         LMWryoQW80m6MBL/7spyXRCy/Wd3ItNVw/9TZ2qXfqiHJp8C8VkdchCHFQLsMaeRQ0
-         bnUYzTCRw6TBah1lM+J4eeazru/ZuhM8X64Luack=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 054/191] dma-direct: check for overflows on 32 bit DMA addresses
-Date:   Thu,  2 Jan 2020 23:05:36 +0100
-Message-Id: <20200102215835.696014868@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1726292AbgABXFU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 18:05:20 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38644 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbgABXFU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 18:05:20 -0500
+Received: by mail-pf1-f193.google.com with SMTP id x185so22717752pfc.5;
+        Thu, 02 Jan 2020 15:05:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ryxK0mpRSxESJVWZudLQb/s67AYldpkB0jSH1Eh1Afw=;
+        b=aLeDg29p2KmC/fcmH39b5xWwftAl2vmN2tDI78IvgZ6okRJ5LBdipUUBwbatq4qlgJ
+         1aNDo7E/8HYOiiwV6+iY3XlcZ4+tTrQPKH8kXppZaAs3ViSizlVTHQn32A7F8pYo+yxP
+         7A9EUxHltGR3cLoMw0+gZWuVT8IuAQRyLXPVAI68sXpVdu+2Vu+mhE03ChwzjPXC7+na
+         MEXkHYURiJrTFz6joKR56JNB71mt0ISgWE+/4JTflb7xdoPcHHxPz8HZlnkmsLBKhftm
+         F7hlGnTQ90SgE6yzVUUsjaSHYcqHCccfHHNZH2Sc+18odqiYAX2nq3ilFvlob1N+JY8V
+         W3/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ryxK0mpRSxESJVWZudLQb/s67AYldpkB0jSH1Eh1Afw=;
+        b=bPzJwnVa0lSw92x1NdO+RLDoesLU5auKqwh5/YB5XZmDJPZ/6tgRKIg6tTYx0Am73v
+         LaRBdS4OOCZiK7YWpeTCRg5WrHRMOd6YJiioCst3sAsidY2cIHCAvGlJCYBL/fKWvdtZ
+         N6kCN6eHEyX5z3G8Kh/1kVfLdAbXW524HkxkaUf7nEWHX5h6J7gsaURKTPFlXw29Msa0
+         w2xF3CJR+dSQMNF4Ju1MJn2ZNvIyEZv2CxGDjdIsCLp60x48V3l+JiS08dBTUirgwwyy
+         XbDc9nO1+eoLiLPADQLg2WbGUaoW0HvxepJfC6lSKqWXdyBwFtGpM6UiIyJPSvRbEG1i
+         VoFw==
+X-Gm-Message-State: APjAAAVL22iarJ8n2E78YyFhAWg308560eXQ05Rot9cSTbemJLmlm2bP
+        OERM1h+yjhaDYIDOS8GgObM=
+X-Google-Smtp-Source: APXvYqzRWoUbS3Y9gTmH/CRnK1CzA1PLL56ZbDydCwBi6vJWZQmBQydnOJ6BNg36lSEJWkP6r4NRZw==
+X-Received: by 2002:aa7:968d:: with SMTP id f13mr88709714pfk.67.1578006319882;
+        Thu, 02 Jan 2020 15:05:19 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id q15sm60886561pgi.55.2020.01.02.15.05.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 02 Jan 2020 15:05:19 -0800 (PST)
+Date:   Thu, 2 Jan 2020 15:05:18 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 00/91] 4.14.162-stable review
+Message-ID: <20200102230518.GA1087@roeck-us.net>
+References: <20200102220356.856162165@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+On Thu, Jan 02, 2020 at 11:06:42PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.162 release.
+> There are 91 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 04 Jan 2020 22:01:54 +0000.
+> Anything received after that time might be too late.
+> 
 
-[ Upstream commit b12d66278dd627cbe1ea7c000aa4715aaf8830c8 ]
+drivers/pci/switch/switchtec.c: In function 'ioctl_event_summary':
+drivers/pci/switch/switchtec.c:901:18: error: implicit declaration of function 'readq'; did you mean 'readl'?
 
-As seen on the new Raspberry Pi 4 and sta2x11's DMA implementation it is
-possible for a device configured with 32 bit DMA addresses and a partial
-DMA mapping located at the end of the address space to overflow. It
-happens when a higher physical address, not DMAable, is translated to
-it's DMA counterpart.
+The problem also affects v4.19.y. Seen with various 32-bit builds,
+including i386:allmodconfig and arm:allmodconfig.
 
-For example the Raspberry Pi 4, configurable up to 4 GB of memory, has
-an interconnect capable of addressing the lower 1 GB of physical memory
-with a DMA offset of 0xc0000000. It transpires that, any attempt to
-translate physical addresses higher than the first GB will result in an
-overflow which dma_capable() can't detect as it only checks for
-addresses bigger then the maximum allowed DMA address.
+The backport replaces ioread64 with readq, which may not have been
+such a good idea.
 
-Fix this by verifying in dma_capable() if the DMA address range provided
-is at any point lower than the minimum possible DMA address on the bus.
-
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- include/linux/dma-direct.h | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
-index adf993a3bd58..6a18a97b76a8 100644
---- a/include/linux/dma-direct.h
-+++ b/include/linux/dma-direct.h
-@@ -3,8 +3,11 @@
- #define _LINUX_DMA_DIRECT_H 1
- 
- #include <linux/dma-mapping.h>
-+#include <linux/memblock.h> /* for min_low_pfn */
- #include <linux/mem_encrypt.h>
- 
-+static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr);
-+
- #ifdef CONFIG_ARCH_HAS_PHYS_TO_DMA
- #include <asm/dma-direct.h>
- #else
-@@ -24,11 +27,16 @@ static inline phys_addr_t __dma_to_phys(struct device *dev, dma_addr_t dev_addr)
- 
- static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t size)
- {
-+	dma_addr_t end = addr + size - 1;
-+
- 	if (!dev->dma_mask)
- 		return false;
- 
--	return addr + size - 1 <=
--		min_not_zero(*dev->dma_mask, dev->bus_dma_mask);
-+	if (!IS_ENABLED(CONFIG_ARCH_DMA_ADDR_T_64BIT) &&
-+	    min(addr, end) < phys_to_dma(dev, PFN_PHYS(min_low_pfn)))
-+		return false;
-+
-+	return end <= min_not_zero(*dev->dma_mask, dev->bus_dma_mask);
- }
- #endif /* !CONFIG_ARCH_HAS_PHYS_TO_DMA */
- 
--- 
-2.20.1
-
-
-
+Guenter
