@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A36812F17D
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:01:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3D7612F184
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:02:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728279AbgABXAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 18:00:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51280 "EHLO mail.kernel.org"
+        id S1726240AbgABWLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:11:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727442AbgABWMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:12:17 -0500
+        id S1725872AbgABWLT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:11:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E098221835;
-        Thu,  2 Jan 2020 22:12:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3768D21835;
+        Thu,  2 Jan 2020 22:11:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003136;
-        bh=3CZRpoCYbEuB7Sm43TDfe1oKWGuVqkSm8Cgi9hPRVvY=;
+        s=default; t=1578003078;
+        bh=nEmCH8FIOJvwpG1CKDyvod+lwXCSTiUJilMAN/cIPWU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JDe/BcE5Pv/KKbBVRHeg53QgRMoRhJIthjdTItdUc/gh7IedhNe5b2jR3EdnDr1gp
-         Lz8wNcXRITXDyGey+e4nAxNCB0mLqTFPYZZucBoavWwB+j0I+GJssDWLqYlfp/7u5y
-         8A3vjJEKLiW/KuBzAMo8rB5667w+bn/+EIf1AOeA=
+        b=ElmgKwIADB5ScfEw8ZoMLWAFdek1rSdTZ685hXg0Tl0dI73AEbayEJ352Ay+PQbDJ
+         XeSzuyG8VaF/vK5J5/EvgYGqVbFKdZEaQKTP2e9dzNhJR7omELSTjnHU8ohVOGiZCP
+         Am2O5p4OzCBd79odJeSoRvO+s135ReCMa3VX/t+M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 008/191] gpio: mxc: Only get the second IRQ when there is more than one IRQ
-Date:   Thu,  2 Jan 2020 23:04:50 +0100
-Message-Id: <20200102215830.678377647@linuxfoundation.org>
+Subject: [PATCH 5.4 011/191] f2fs: fix to update time in lazytime mode
+Date:   Thu,  2 Jan 2020 23:04:53 +0100
+Message-Id: <20200102215830.944028838@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
 References: <20200102215829.911231638@linuxfoundation.org>
@@ -44,61 +44,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit c8f3d144004dd3f471ffd414690d15a005e4acd6 ]
+[ Upstream commit fe1897eaa6646f5a64a4cee0e6473ed9887d324b ]
 
-On some of i.MX SoCs like i.MX8QXP, there is ONLY one IRQ for each
-GPIO bank, so it is better to check the IRQ count before getting
-second IRQ to avoid below error message during probe:
+generic/018 reports an inconsistent status of atime, the
+testcase is as below:
+- open file with O_SYNC
+- write file to construct fraged space
+- calc md5 of file
+- record {a,c,m}time
+- defrag file --- do nothing
+- umount & mount
+- check {a,c,m}time
 
-[    1.070908] gpio-mxc 5d080000.gpio: IRQ index 1 not found
-[    1.077420] gpio-mxc 5d090000.gpio: IRQ index 1 not found
-[    1.083766] gpio-mxc 5d0a0000.gpio: IRQ index 1 not found
-[    1.090122] gpio-mxc 5d0b0000.gpio: IRQ index 1 not found
-[    1.096470] gpio-mxc 5d0c0000.gpio: IRQ index 1 not found
-[    1.102804] gpio-mxc 5d0d0000.gpio: IRQ index 1 not found
-[    1.109144] gpio-mxc 5d0e0000.gpio: IRQ index 1 not found
-[    1.115475] gpio-mxc 5d0f0000.gpio: IRQ index 1 not found
+The root cause is, as f2fs enables lazytime by default, atime
+update will dirty vfs inode, rather than dirtying f2fs inode (by set
+with FI_DIRTY_INODE), so later f2fs_write_inode() called from VFS will
+fail to update inode page due to our skip:
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+f2fs_write_inode()
+	if (is_inode_flag_set(inode, FI_DIRTY_INODE))
+		return 0;
+
+So eventually, after evict(), we lose last atime for ever.
+
+To fix this issue, we need to check whether {a,c,m,cr}time is
+consistent in between inode cache and inode page, and only skip
+f2fs_update_inode() if f2fs inode is not dirty and time is
+consistent as well.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-mxc.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ fs/f2fs/f2fs.h  | 23 +++++++++++++++--------
+ fs/f2fs/inode.c |  6 +++++-
+ 2 files changed, 20 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 7907a8755866..c77d474185f3 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -411,6 +411,7 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
- 	struct mxc_gpio_port *port;
-+	int irq_count;
- 	int irq_base;
- 	int err;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 4024790028aa..f078cd20dab8 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2704,6 +2704,20 @@ static inline void clear_file(struct inode *inode, int type)
+ 	f2fs_mark_inode_dirty_sync(inode, true);
+ }
  
-@@ -426,9 +427,15 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- 	if (IS_ERR(port->base))
- 		return PTR_ERR(port->base);
- 
--	port->irq_high = platform_get_irq(pdev, 1);
--	if (port->irq_high < 0)
--		port->irq_high = 0;
-+	irq_count = platform_irq_count(pdev);
-+	if (irq_count < 0)
-+		return irq_count;
++static inline bool f2fs_is_time_consistent(struct inode *inode)
++{
++	if (!timespec64_equal(F2FS_I(inode)->i_disk_time, &inode->i_atime))
++		return false;
++	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 1, &inode->i_ctime))
++		return false;
++	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 2, &inode->i_mtime))
++		return false;
++	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 3,
++						&F2FS_I(inode)->i_crtime))
++		return false;
++	return true;
++}
 +
-+	if (irq_count > 1) {
-+		port->irq_high = platform_get_irq(pdev, 1);
-+		if (port->irq_high < 0)
-+			port->irq_high = 0;
-+	}
+ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+ {
+ 	bool ret;
+@@ -2721,14 +2735,7 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+ 			i_size_read(inode) & ~PAGE_MASK)
+ 		return false;
  
- 	port->irq = platform_get_irq(pdev, 0);
- 	if (port->irq < 0)
+-	if (!timespec64_equal(F2FS_I(inode)->i_disk_time, &inode->i_atime))
+-		return false;
+-	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 1, &inode->i_ctime))
+-		return false;
+-	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 2, &inode->i_mtime))
+-		return false;
+-	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 3,
+-						&F2FS_I(inode)->i_crtime))
++	if (!f2fs_is_time_consistent(inode))
+ 		return false;
+ 
+ 	down_read(&F2FS_I(inode)->i_sem);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index db4fec30c30d..386ad54c13c3 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -615,7 +615,11 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
+ 			inode->i_ino == F2FS_META_INO(sbi))
+ 		return 0;
+ 
+-	if (!is_inode_flag_set(inode, FI_DIRTY_INODE))
++	/*
++	 * atime could be updated without dirtying f2fs inode in lazytime mode
++	 */
++	if (f2fs_is_time_consistent(inode) &&
++		!is_inode_flag_set(inode, FI_DIRTY_INODE))
+ 		return 0;
+ 
+ 	if (!f2fs_is_checkpoint_ready(sbi))
 -- 
 2.20.1
 
