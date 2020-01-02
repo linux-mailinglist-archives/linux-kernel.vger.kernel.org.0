@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50B3112E261
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 05:31:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FEEB12E266
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 05:31:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbgABEbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Jan 2020 23:31:18 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:36466 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726234AbgABEbN (ORCPT
+        id S1727722AbgABEbR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Jan 2020 23:31:17 -0500
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:38937 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727706AbgABEbP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Jan 2020 23:31:13 -0500
-Received: by mail-qk1-f195.google.com with SMTP id a203so30980396qkc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Jan 2020 20:31:13 -0800 (PST)
+        Wed, 1 Jan 2020 23:31:15 -0500
+Received: by mail-qv1-f67.google.com with SMTP id y8so14621241qvk.6
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Jan 2020 20:31:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0nfaGL95TSLRjcQiyh+M/l9sx3mjoZwVjo6SVlE9q9g=;
-        b=bbYGDZ2OO5TkZc92tmgGGxF8AI+AcCFZhtMMZcTgkmPiDwajj0VBrxEwYCkP9umzrl
-         4liUBxcpK6mBy7wEMvU8jqPgijwTVUtLX7UHOZk/fvSKZP9pUDXWvUO7OLBAGB8fJ5KX
-         PbUYYp3ZUgXEGwGOhpQBmwIn6uGPLSKfDIdeBwyNL6QcbiGt7dw7GXwHOxv6WL4RzNa0
-         3n5qSRPe28gBmtkpvBkuVhb9x+m5oL7dIIh0UYdgpOTxwpQzSkPyvUOgPv0hvZ+IaydF
-         YHtJlDNaJ56ju2wgMHtxpNreAYEZsVgz/SRway2zrTNZv5pPOvpcDYwWx5sardIrShPZ
-         GBMw==
+        bh=lr/CRIb3WCPvkvNHOSIItQps2qBcOEYnNrElWW5KHfc=;
+        b=qaW4BGa1AoUwUnlQsjObUfkDcR25ot+NuHTvWENBBqh38xzH+cEeFSiDNibFGIRwzW
+         tZiKLQNwRJPxit1y+vJZrjDN2S//IRUrYTNP8KNk3pOmd8nzeT+q3KXdh1wXp1CkYkUn
+         J/yTaiewGUhnvYkA3oh5vHVfPY4MfStTXMTYvZLWO/Ztm9GwXj/09ELpy5ij5817m7WR
+         KqImYmNVRjMCkSvTE8mNqzLI3Se7NuBA9UwseCPkEdKVk3PFOtaIrbTnwAXnke5FMjmj
+         GXI7jv17hk1/G9+/eJ5JiLOsDr+CBk1lPq7BFQuIaoVQLFtSMq1gCvAsFoo7ybLenn9Z
+         XFVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0nfaGL95TSLRjcQiyh+M/l9sx3mjoZwVjo6SVlE9q9g=;
-        b=COGj1qRVbd7mChva5FpgWom1LJBcL6YFKmAbYlNOdEAwcNe8nY2Gj2+ehGxUaBiYsu
-         ua4ybmptCzxVLDcqIqG+AgsnYUZwJgx+zB0/biOweE7tXjFuWg/F7aaspe0wa2C4xCf+
-         gxqTNNrSc1khneYbZmd7ASLbGsxhhzRx0CxuHXKCytlMSi16Cxe3aicw5GiILidZ/DHC
-         uYCQGvG/O8ypytArsDNWOxZGSbtf7yC7n6xf3RCPfWsbNA5XEThVB4I+DOVMiiAgeCLu
-         jTO6P1KRyPi4DTVWODDYUrrnoIeoaraxSKfW1aRbTM9sATRxr5LCXaY72kldBRdkdr7N
-         FhHQ==
-X-Gm-Message-State: APjAAAX33OESJctzEhy2I2wmZcKe4m9wXFNZeTaRDdFUoFu3r465M3zc
-        Arh6hxcQ/ckvX7Pof9zsQlo=
-X-Google-Smtp-Source: APXvYqxeKoEPY6pna6RGzne+nlhUOD16tgrnkRa+/X+oxHXNVofKJdgKx4uef299yFz9669tGaUAJg==
-X-Received: by 2002:a37:a54b:: with SMTP id o72mr64747916qke.313.1577939472692;
-        Wed, 01 Jan 2020 20:31:12 -0800 (PST)
+        bh=lr/CRIb3WCPvkvNHOSIItQps2qBcOEYnNrElWW5KHfc=;
+        b=frgYQOPXvSFqZRXFT58/83UupJlhNRZRGJsTBW5zO69u91Ljr9yUQY7jPTJ9XebG/P
+         VuURlN3ZT4Cyj2sSNaefeVnZH8aikhdokHcOkQ39crrlkTRaFkimYLj27iI4463+hM2O
+         /8Hz5Hl03beGagFq/cBx4GaTGSkR5Lw4X/EmzwfETVYO61bmHIJslPsTHs7CIZYK0hRs
+         XCJcJ6m+Ro7XxpEVSD1fhBKe5vUNtj+S+A5XD1VAvKbsaWd0SUDKKKC2ykoj7G0WSXiT
+         BWNdT9HFdY4vv1mXwI0wZes1RYQyxhiBzXnJdYftxNrsik+jK+2wLcsXDo9CKCi+pGcb
+         c8Tg==
+X-Gm-Message-State: APjAAAWzvJZoPDI7SvYEy4xjikxUbJhQIARviBif40Sqfgf2CADK3Xel
+        qo2ZBvQdIfVLLFa2NJLxAFnycpwX7DA=
+X-Google-Smtp-Source: APXvYqzQ3HsIrYdTo+atQwUNSR3hHAKIbJNYDl9uTQ+iKKsr1Oqp+J6gKYo7gSBiTAfXIy8Y7XkO6w==
+X-Received: by 2002:ad4:53a5:: with SMTP id j5mr60186037qvv.239.1577939474014;
+        Wed, 01 Jan 2020 20:31:14 -0800 (PST)
 Received: from yury-thinkpad.dhcp.amer.jpmchase.net ([2604:2000:4185:2300:b196:4884:e960:2cb8])
-        by smtp.gmail.com with ESMTPSA id 16sm14876857qkj.77.2020.01.01.20.31.11
+        by smtp.gmail.com with ESMTPSA id 16sm14876857qkj.77.2020.01.01.20.31.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jan 2020 20:31:12 -0800 (PST)
+        Wed, 01 Jan 2020 20:31:13 -0800 (PST)
 From:   Yury Norov <yury.norov@gmail.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -65,9 +65,9 @@ To:     Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org
 Cc:     Yury Norov <yury.norov@gmail.com>, Jens Axboe <axboe@kernel.dk>,
         Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 1/7] lib/string: add strnchrnul()
-Date:   Wed,  1 Jan 2020 20:30:25 -0800
-Message-Id: <20200102043031.30357-2-yury.norov@gmail.com>
+Subject: [PATCH 2/7] bitops: more BITS_TO_* macros
+Date:   Wed,  1 Jan 2020 20:30:26 -0800
+Message-Id: <20200102043031.30357-3-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200102043031.30357-1-yury.norov@gmail.com>
 References: <20200102043031.30357-1-yury.norov@gmail.com>
@@ -80,55 +80,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From Yury Norov <yury.norov@gmail.com>
 
-New function works like strchrnul() with a length limited strings.
+Introduce BITS_TO_U64, BITS_TO_U32 and BITS_TO_BYTES as they are handy
+in the following patches (BITS_TO_U32 specifically). Reimplement tools/
+version of the macros according to the kernel implementation.
+
+Also fix indentation for BITS_PER_TYPE definition.
 
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Yury Norov <yury.norov@gmail.com>
 ---
- include/linux/string.h |  1 +
- lib/string.c           | 17 +++++++++++++++++
- 2 files changed, 18 insertions(+)
+ include/linux/bitops.h       | 5 ++++-
+ tools/include/linux/bitops.h | 9 +++++----
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 6b0e950701d02..3b8e8b12dd37c 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -107,6 +107,7 @@ extern char * strchr(const char *,int);
- #ifndef __HAVE_ARCH_STRCHRNUL
- extern char * strchrnul(const char *,int);
- #endif
-+extern char * strnchrnul(const char *, size_t, int);
- #ifndef __HAVE_ARCH_STRNCHR
- extern char * strnchr(const char *, size_t, int);
- #endif
-diff --git a/lib/string.c b/lib/string.c
-index 08ec58cc673b5..f607b967d9785 100644
---- a/lib/string.c
-+++ b/lib/string.c
-@@ -434,6 +434,23 @@ char *strchrnul(const char *s, int c)
- EXPORT_SYMBOL(strchrnul);
+diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+index e479067c202c9..47f54b459c264 100644
+--- a/include/linux/bitops.h
++++ b/include/linux/bitops.h
+@@ -11,8 +11,11 @@
+ #  define aligned_byte_mask(n) (~0xffUL << (BITS_PER_LONG - 8 - 8*(n)))
  #endif
  
-+/**
-+ * strnchrnul - Find and return a character in a length limited string,
-+ * or end of string
-+ * @s: The string to be searched
-+ * @count: The number of characters to be searched
-+ * @c: The character to search for
-+ *
-+ * Returns pointer to the first occurrence of 'c' in s. If c is not found,
-+ * then return a pointer to the last character of the string.
-+ */
-+char *strnchrnul(const char *s, size_t count, int c)
-+{
-+	while (count-- && *s && *s != (char)c)
-+		s++;
-+	return (char *)s;
-+}
-+
- #ifndef __HAVE_ARCH_STRRCHR
- /**
-  * strrchr - Find the last occurrence of a character in a string
+-#define BITS_PER_TYPE(type) (sizeof(type) * BITS_PER_BYTE)
++#define BITS_PER_TYPE(type)	(sizeof(type) * BITS_PER_BYTE)
+ #define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
++#define BITS_TO_U64(nr)		DIV_ROUND_UP(nr, BITS_PER_TYPE(u64))
++#define BITS_TO_U32(nr)		DIV_ROUND_UP(nr, BITS_PER_TYPE(u32))
++#define BITS_TO_BYTES(nr)	DIV_ROUND_UP(nr, BITS_PER_TYPE(char))
+ 
+ extern unsigned int __sw_hweight8(unsigned int w);
+ extern unsigned int __sw_hweight16(unsigned int w);
+diff --git a/tools/include/linux/bitops.h b/tools/include/linux/bitops.h
+index 140c8362f1139..5fca38fe1ba83 100644
+--- a/tools/include/linux/bitops.h
++++ b/tools/include/linux/bitops.h
+@@ -14,10 +14,11 @@
+ #include <linux/bits.h>
+ #include <linux/compiler.h>
+ 
+-#define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
+-#define BITS_TO_U64(nr)		DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(u64))
+-#define BITS_TO_U32(nr)		DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(u32))
+-#define BITS_TO_BYTES(nr)	DIV_ROUND_UP(nr, BITS_PER_BYTE)
++#define BITS_PER_TYPE(type)	(sizeof(type) * BITS_PER_BYTE)
++#define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
++#define BITS_TO_U64(nr)		DIV_ROUND_UP(nr, BITS_PER_TYPE(u64))
++#define BITS_TO_U32(nr)		DIV_ROUND_UP(nr, BITS_PER_TYPE(u32))
++#define BITS_TO_BYTES(nr)	DIV_ROUND_UP(nr, BITS_PER_TYPE(char))
+ 
+ extern unsigned int __sw_hweight8(unsigned int w);
+ extern unsigned int __sw_hweight16(unsigned int w);
 -- 
 2.20.1
 
