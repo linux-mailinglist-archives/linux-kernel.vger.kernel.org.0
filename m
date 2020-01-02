@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20AD112EFD5
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:49:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5DEE12F163
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:00:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbgABW1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:27:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55650 "EHLO mail.kernel.org"
+        id S1727642AbgABWNM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:13:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729291AbgABW1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:27:21 -0500
+        id S1727629AbgABWNK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:13:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F91E20863;
-        Thu,  2 Jan 2020 22:27:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E72B522B48;
+        Thu,  2 Jan 2020 22:13:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004041;
-        bh=wQT4xWXNIzsEabQI1mSrwFFkt4xowQeeU7x6mRr+IQY=;
+        s=default; t=1578003189;
+        bh=rlPLsKuQkErBRFGYfur2piTSMcHBnT5b215Uu37LWqg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zYzUHfOhb3qRe6z+avFrsVJvUe+s8Vgee1eTxOuwW1+1MXrcdef8HoKHiGC+B3V48
-         awP8niVAcVL8ypFv6F1USw7dEQX2j5rEfrWk0VcSQ32QEwSi69njbi1xwh2OoVECkG
-         R/JL0JL2J4EqYOeKS5JVlvUjy98B0PCYRT8PVX5E=
+        b=FfWULzZRqXxIKQt4QQQTU7Hb4muJxMeYA2AQ1DGhtmStDBjhdCJuZw0jxPVkBlOFO
+         /qYnrEU4DqHjJ0XyZm5tz11swUaF6qMgI7rO5/I80fpZXdeAYqvPZU2k6fkYtiukpv
+         fE8S0ZKK5DY8SoAqwDoTV/fsI2bU2FcIA/6JkknI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lionel Koenig <lionel.koenig@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 004/171] ALSA: pcm: Avoid possible info leaks from PCM stream buffers
-Date:   Thu,  2 Jan 2020 23:05:35 +0100
-Message-Id: <20200102220547.519128833@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 056/191] fs/quota: handle overflows of sysctl fs.quota.* and report as unsigned long
+Date:   Thu,  2 Jan 2020 23:05:38 +0100
+Message-Id: <20200102215835.919091259@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,43 +44,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-commit add9d56d7b3781532208afbff5509d7382fb6efe upstream.
+[ Upstream commit 6fcbcec9cfc7b3c6a2c1f1a23ebacedff7073e0a ]
 
-The current PCM code doesn't initialize explicitly the buffers
-allocated for PCM streams, hence it might leak some uninitialized
-kernel data or previous stream contents by mmapping or reading the
-buffer before actually starting the stream.
+Quota statistics counted as 64-bit per-cpu counter. Reading sums per-cpu
+fractions as signed 64-bit int, filters negative values and then reports
+lower half as signed 32-bit int.
 
-Since this is a common problem, this patch simply adds the clearance
-of the buffer data at hw_params callback.  Although this does only
-zero-clear no matter which format is used, which doesn't mean the
-silence for some formats, but it should be OK because the intention is
-just to clear the previous data on the buffer.
+Result may looks like:
 
-Reported-by: Lionel Koenig <lionel.koenig@gmail.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191211155742.3213-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+fs.quota.allocated_dquots = 22327
+fs.quota.cache_hits = -489852115
+fs.quota.drops = -487288718
+fs.quota.free_dquots = 22083
+fs.quota.lookups = -486883485
+fs.quota.reads = 22327
+fs.quota.syncs = 335064
+fs.quota.writes = 3088689
 
+Values bigger than 2^31-1 reported as negative.
+
+All counters except "allocated_dquots" and "free_dquots" are monotonic,
+thus they should be reported as is without filtering negative values.
+
+Kernel doesn't have generic helper for 64-bit sysctl yet,
+let's use at least unsigned long.
+
+Link: https://lore.kernel.org/r/157337934693.2078.9842146413181153727.stgit@buzz
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/core/pcm_native.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ fs/quota/dquot.c      | 29 +++++++++++++++++------------
+ include/linux/quota.h |  2 +-
+ 2 files changed, 18 insertions(+), 13 deletions(-)
 
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -587,6 +587,10 @@ static int snd_pcm_hw_params(struct snd_
- 	while (runtime->boundary * 2 <= LONG_MAX - runtime->buffer_size)
- 		runtime->boundary *= 2;
- 
-+	/* clear the buffer for avoiding possible kernel info leaks */
-+	if (runtime->dma_area)
-+		memset(runtime->dma_area, 0, runtime->dma_bytes);
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index 7f0b39da5022..9b96243de081 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -2861,68 +2861,73 @@ EXPORT_SYMBOL(dquot_quotactl_sysfile_ops);
+ static int do_proc_dqstats(struct ctl_table *table, int write,
+ 		     void __user *buffer, size_t *lenp, loff_t *ppos)
+ {
+-	unsigned int type = (int *)table->data - dqstats.stat;
++	unsigned int type = (unsigned long *)table->data - dqstats.stat;
++	s64 value = percpu_counter_sum(&dqstats.counter[type]);
 +
- 	snd_pcm_timer_resolution_change(substream);
- 	snd_pcm_set_state(substream, SNDRV_PCM_STATE_SETUP);
++	/* Filter negative values for non-monotonic counters */
++	if (value < 0 && (type == DQST_ALLOC_DQUOTS ||
++			  type == DQST_FREE_DQUOTS))
++		value = 0;
  
+ 	/* Update global table */
+-	dqstats.stat[type] =
+-			percpu_counter_sum_positive(&dqstats.counter[type]);
+-	return proc_dointvec(table, write, buffer, lenp, ppos);
++	dqstats.stat[type] = value;
++	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
+ }
+ 
+ static struct ctl_table fs_dqstats_table[] = {
+ 	{
+ 		.procname	= "lookups",
+ 		.data		= &dqstats.stat[DQST_LOOKUPS],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+ 		.proc_handler	= do_proc_dqstats,
+ 	},
+ 	{
+ 		.procname	= "drops",
+ 		.data		= &dqstats.stat[DQST_DROPS],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+ 		.proc_handler	= do_proc_dqstats,
+ 	},
+ 	{
+ 		.procname	= "reads",
+ 		.data		= &dqstats.stat[DQST_READS],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+ 		.proc_handler	= do_proc_dqstats,
+ 	},
+ 	{
+ 		.procname	= "writes",
+ 		.data		= &dqstats.stat[DQST_WRITES],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+ 		.proc_handler	= do_proc_dqstats,
+ 	},
+ 	{
+ 		.procname	= "cache_hits",
+ 		.data		= &dqstats.stat[DQST_CACHE_HITS],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+ 		.proc_handler	= do_proc_dqstats,
+ 	},
+ 	{
+ 		.procname	= "allocated_dquots",
+ 		.data		= &dqstats.stat[DQST_ALLOC_DQUOTS],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+ 		.proc_handler	= do_proc_dqstats,
+ 	},
+ 	{
+ 		.procname	= "free_dquots",
+ 		.data		= &dqstats.stat[DQST_FREE_DQUOTS],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+ 		.proc_handler	= do_proc_dqstats,
+ 	},
+ 	{
+ 		.procname	= "syncs",
+ 		.data		= &dqstats.stat[DQST_SYNCS],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+ 		.proc_handler	= do_proc_dqstats,
+ 	},
+diff --git a/include/linux/quota.h b/include/linux/quota.h
+index f32dd270b8e3..27aab84fcbaa 100644
+--- a/include/linux/quota.h
++++ b/include/linux/quota.h
+@@ -263,7 +263,7 @@ enum {
+ };
+ 
+ struct dqstats {
+-	int stat[_DQST_DQSTAT_LAST];
++	unsigned long stat[_DQST_DQSTAT_LAST];
+ 	struct percpu_counter counter[_DQST_DQSTAT_LAST];
+ };
+ 
+-- 
+2.20.1
+
 
 
