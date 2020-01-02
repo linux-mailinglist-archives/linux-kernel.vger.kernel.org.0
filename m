@@ -2,174 +2,383 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8201412E7AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 15:59:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92F6812E7BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 16:01:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728688AbgABO7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 09:59:42 -0500
-Received: from mail-io1-f43.google.com ([209.85.166.43]:33115 "EHLO
-        mail-io1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728544AbgABO7m (ORCPT
+        id S1728685AbgABPBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 10:01:49 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:43503 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728571AbgABPBt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 09:59:42 -0500
-Received: by mail-io1-f43.google.com with SMTP id z8so38508344ioh.0;
-        Thu, 02 Jan 2020 06:59:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SbJOwHXw4vfZE5TxEI4aCOOsbnyKNkt4sp9tT+NxXPQ=;
-        b=W45FbXt0jdFw5R4/KptHImueplu6OsOwANUlORGQJ9H4rKCjCmmhZVbgaPSdpcH6/8
-         Bx4Np0c0ishKn7k6cx6ibQVdpRHuf/1+w0kzCpD3DUpL1RiIt+qx5XqAK8Sblkr0M2+M
-         POqksZ11t5S91ZqLM6JBpkvyTcI+URPU45h9jfyuqtlCKhcVFyr8Y219a6CmwksEGgsP
-         rJBnHykcc2DBcLILKsf6Fx7M+cQZrZoboXjz2g0eZBEYbUBnAXUKIBKTyrMVtY7rj5Nc
-         go0guGQwUwNX+3N6ZF2ef/2lzIopry5CiGT3pFVc/HiTVyiKwR1zp/6Ttqd9haqE10CC
-         ZTjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SbJOwHXw4vfZE5TxEI4aCOOsbnyKNkt4sp9tT+NxXPQ=;
-        b=ENgq7qJ/9eJv6SrpEPEunLurTI3zrPeCd9pJfd1DQ+4dHqFO7JtHeoKLTjqz6IsrRR
-         azEXKpV/l1OG3OVf61TDtzrYXO19awGvtPPSLF93Gg+IGbPEq3SPgBXGaEMz1ktjmFmZ
-         FH22dsi1wN1rcTqpika5MENIzTzyHIPFIEmffa46Scb1E+0Q9AN75uBgXgkl7nw99enF
-         Z6ghqkO8XH8PP0u4OztvdWRZBZl74xUrbysvgowMYFb6feWBN1KvsGPeYPmeB2NFMLKk
-         P7epzR6EQPv6uuCokvqKF8dZ8obuIjeocwImg9IVvrUTRyDBra6DXDKypsImHiWCMbLL
-         MfNA==
-X-Gm-Message-State: APjAAAWmThjmTG3A4i3ZMs8IipA+TeaEGeIKbUOGJhhf/cojemhkZfE+
-        Z4VrNeS4Lt0RoiID4RGOH7Ynzj6KpCyH3GXRhEI=
-X-Google-Smtp-Source: APXvYqwtnVBhFgvdrLrZmgps62Q2fDKSg8rKuzc/RCagPcGTllYeU98rOhGq5p4TeUZHZ757HhKg19VgJpFiLmxhLdE=
-X-Received: by 2002:a5e:a614:: with SMTP id q20mr46610554ioi.36.1577977181127;
- Thu, 02 Jan 2020 06:59:41 -0800 (PST)
+        Thu, 2 Jan 2020 10:01:49 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MgNMV-1jNDHv2yNj-00huQe; Thu, 02 Jan 2020 15:58:36 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Hannes Reinecke <hare@suse.de>, Martin Wilck <mwilck@suse.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 06/22] compat_ioctl: move CDROM_SEND_PACKET handling into scsi
+Date:   Thu,  2 Jan 2020 15:55:24 +0100
+Message-Id: <20200102145552.1853992-7-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20200102145552.1853992-1-arnd@arndb.de>
+References: <20200102145552.1853992-1-arnd@arndb.de>
 MIME-Version: 1.0
-References: <CABXGCsODr3tMpQxJ_nhWQQg5WGakFt4Yu5B8ev6ErOkc+zv9kA@mail.gmail.com>
- <20200101141748.GA191637@mit.edu> <CABXGCsOv26W6aqB5WPMe-mEynmwy55DTfTeL5Dg9vRq6+Y6WvA@mail.gmail.com>
- <CABXGCsNkzPrjqMRaWpssorxzhMLWBvLeSw9BpKYr_DW4LJQECQ@mail.gmail.com>
- <20200102110817.ahqaqidw3ztw3kax@10.255.255.10> <CABXGCsNkm3VuzO60WBCi4VJmDnO=DmprQ1P=dd0FcW2-+dGc0w@mail.gmail.com>
- <20200102131434.tky2hquki23laqqo@10.255.255.10>
-In-Reply-To: <20200102131434.tky2hquki23laqqo@10.255.255.10>
-From:   Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date:   Thu, 2 Jan 2020 20:00:20 +0500
-Message-ID: <CABXGCsMV1GRiqrXCQGHqvpBiendU3mG36h0YoG=4nw6spZHq=w@mail.gmail.com>
-Subject: Re: [bugreport] "hwclock -w" reset time instead of setting the right time
-To:     Karel Zak <kzak@redhat.com>
-Cc:     util-linux@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:T0MtbbbNn4rNNb/Anyk65rw4LDZWytRlnVScu4W2i/Dg0nz4nlW
+ pMqNaQCjZ7zhJDlD/BvC2guey0iURPwYaDKlZWmNNwucLt7t2s7CWwdnaJXO0qXRTJHUkir
+ x+Wl2nqYmfKUrxFP/2/yeZYCEi+g4MYySOSGeyK7It38/Oz9W/WLrx7VsWCXCR4s6w/uQZ3
+ xbj1olaPsNfgXVf40KEHA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:xQDwJs3SNtw=:Ne6Q6kaaP4dZ0JUaNyZ3ZQ
+ uiWUxURhTQxVkBo5lzD1fieHmGc5cG97RTyD0UDseP3tMra1DZKJGxMYfeCOMsH+PDt6q8kda
+ dFjMxQ9EoiQK5I+8X+KjsXL1USg7TdDg34sN69L91oaKOBs6olqzre2AeQhviL+6jZ0+HgiX8
+ 6aIRXOlqCmVRK4ysQWqgmmss0WUhRtPVv9kQ54U0Ce/3S5SF2wAVwwz1N8fVLKrpwWw1kr7d8
+ dAfgbRenlw0EUtg/tbDox6jMAtV9G2d7pL+yOZEo9CP/kxgMNZOdxk8FvwqCRBnsTGqspj3yc
+ Qbv759INyyYhk7Kl0tjNqpOC6UmjeVex885Fyb6r2QxbomASej4g62F+lWg9VGcnEBewhPO3i
+ QYveh9IG2dMTLSEPIqh8SFtLGOVG6SSA0lHv9cThoCDGXGQYAH/DPwdr5EErVwidCB0YojgdI
+ eoYnfe52syeSyqkGWhPIg6Z2TrINcWWkWXJ/xsQ+65DKlFrGzD29geIs2Hytv7deVFWpwb+dZ
+ t1VNNtovQuvSidVN/i37unQVZ/NhuSaTF+1jz73qZjqAz/GMknGDpaDDIeX4gPUpccnt6AEbY
+ 66l66Dl8QkpP03Yk/SAMy2NjTdlNH4hJ3/b8qPPMTdmBWzT+DeROOq3/R/Jb+ZCARSoATOqVk
+ YrDRYpz2ymfyVSHHHWZr+KceNcroJU52y3ExDnPj6UpdZVO9tKHcvx6VkpYxJimMSWHB9wXhS
+ ZJsyNpAZx1cq3aZ7tiV+NNJRLQlOBioNwjXQApvoaVqxU/T2VhtGWUPQcvOUIGRxNlGFDlxj0
+ wdY3dfJOO4W0ej9yD5d6OgKo3g1aTh85nCt8b8k6BixJOWmca2aOh62RpKI90Hd+qJND1szYX
+ iW77BYAmhF4uMmdXJYlg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2 Jan 2020 at 18:14, Karel Zak <kzak@redhat.com> wrote:
->
-> At first glance it seems hwclock works as expected, I do not see
-> anything wrong in the output.
->
-> > Demonstration: https://youtu.be/Yx27IH2opEc
->
-> What is hw time before reboot? Can you verify that hwclock reset the
-> clock? (or is it system reboot?)
->
->     # hwclock -w -v
->     # hwclock -v
->
-> Do you see anything interesting in dmesg output before reboot and after
-> hwclock -w?
->
->
+There is only one implementation of this ioctl, so move the handling out
+of the common block layer code into the place where it's actually needed.
 
-Yes, before reboot all look like good:
+It also gets called indirectly through pktcdvd, which needs to be aware
+of this change.
 
-[root@localhost ~]# hwclock -v
-hwclock from util-linux 2.35-rc1-20-63f8
-System Time: 1577977370.909455
-Trying to open: /dev/rtc0
-Using the rtc interface to the clock.
-Last drift adjustment done at 1577973311 seconds after 1969
-Last calibration done at 1577973311 seconds after 1969
-Hardware clock is on UTC time
-Assuming hardware clock is kept in UTC time.
-Waiting for clock tick...
-...got clock tick
-Time read from Hardware Clock: 2020/01/02 15:02:52
-Hw clock time : 2020/01/02 15:02:52 = 1577977372 seconds since 1969
-Time since last adjustment is 4061 seconds
-Calculated Hardware Clock drift is 0.000000 seconds
-2020-01-02 20:02:51.077494+05:00
+As I noticed, the old implementation of the compat handler failed to
+convert the structure on the way out, so the updated fields never got
+written back to user space. This is either not important, or it has
+never worked and should be fixed now.
 
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ block/compat_ioctl.c    |  47 +---------
+ block/scsi_ioctl.c      | 185 ++++++++++++++++++++++++++++------------
+ drivers/block/pktcdvd.c |   6 +-
+ 3 files changed, 135 insertions(+), 103 deletions(-)
 
-[root@localhost ~]# hwclock -w -v
-hwclock from util-linux 2.35-rc1-20-63f8
-System Time: 1577977383.789039
-Trying to open: /dev/rtc0
-Using the rtc interface to the clock.
-Last drift adjustment done at 1577973311 seconds after 1969
-Last calibration done at 1577973311 seconds after 1969
-Hardware clock is on UTC time
-Assuming hardware clock is kept in UTC time.
-RTC type: 'rtc_cmos'
-Using delay: 0.500000 seconds
-missed it - 1577977383.789405 is too far past 1577977383.500000
-(0.289405 > 0.001000)
-1577977384.500000 is close enough to 1577977384.500000 (0.000000 < 0.002000)
-Set RTC to 1577977384 (1577977383 + 1; refsystime = 1577977383.000000)
-Setting Hardware Clock to 15:03:04 = 1577977384 seconds since 1969
-ioctl(RTC_SET_TIME) was successful.
-Not adjusting drift factor because the --update-drift option was not used.
-New /etc/adjtime data:
-0.000000 1577977383 0.000000
-1577977383
-UTC
+diff --git a/block/compat_ioctl.c b/block/compat_ioctl.c
+index 3ed7a0f144a9..e34203f7d1cf 100644
+--- a/block/compat_ioctl.c
++++ b/block/compat_ioctl.c
+@@ -103,18 +103,6 @@ struct compat_cdrom_read_audio {
+ 	compat_caddr_t		buf;
+ };
+ 
+-struct compat_cdrom_generic_command {
+-	unsigned char	cmd[CDROM_PACKET_SIZE];
+-	compat_caddr_t	buffer;
+-	compat_uint_t	buflen;
+-	compat_int_t	stat;
+-	compat_caddr_t	sense;
+-	unsigned char	data_direction;
+-	compat_int_t	quiet;
+-	compat_int_t	timeout;
+-	compat_caddr_t	reserved[1];
+-};
+-
+ static int compat_cdrom_read_audio(struct block_device *bdev, fmode_t mode,
+ 		unsigned int cmd, unsigned long arg)
+ {
+@@ -142,38 +130,6 @@ static int compat_cdrom_read_audio(struct block_device *bdev, fmode_t mode,
+ 			(unsigned long)cdread_audio);
+ }
+ 
+-static int compat_cdrom_generic_command(struct block_device *bdev, fmode_t mode,
+-		unsigned int cmd, unsigned long arg)
+-{
+-	struct cdrom_generic_command __user *cgc;
+-	struct compat_cdrom_generic_command __user *cgc32;
+-	u32 data;
+-	unsigned char dir;
+-	int itmp;
+-
+-	cgc = compat_alloc_user_space(sizeof(*cgc));
+-	cgc32 = compat_ptr(arg);
+-
+-	if (copy_in_user(&cgc->cmd, &cgc32->cmd, sizeof(cgc->cmd)) ||
+-	    get_user(data, &cgc32->buffer) ||
+-	    put_user(compat_ptr(data), &cgc->buffer) ||
+-	    copy_in_user(&cgc->buflen, &cgc32->buflen,
+-			 (sizeof(unsigned int) + sizeof(int))) ||
+-	    get_user(data, &cgc32->sense) ||
+-	    put_user(compat_ptr(data), &cgc->sense) ||
+-	    get_user(dir, &cgc32->data_direction) ||
+-	    put_user(dir, &cgc->data_direction) ||
+-	    get_user(itmp, &cgc32->quiet) ||
+-	    put_user(itmp, &cgc->quiet) ||
+-	    get_user(itmp, &cgc32->timeout) ||
+-	    put_user(itmp, &cgc->timeout) ||
+-	    get_user(data, &cgc32->reserved[0]) ||
+-	    put_user(compat_ptr(data), &cgc->reserved[0]))
+-		return -EFAULT;
+-
+-	return __blkdev_driver_ioctl(bdev, mode, cmd, (unsigned long)cgc);
+-}
+-
+ struct compat_blkpg_ioctl_arg {
+ 	compat_int_t op;
+ 	compat_int_t flags;
+@@ -225,8 +181,6 @@ static int compat_blkdev_driver_ioctl(struct block_device *bdev, fmode_t mode,
+ 		return compat_hdio_ioctl(bdev, mode, cmd, arg);
+ 	case CDROMREADAUDIO:
+ 		return compat_cdrom_read_audio(bdev, mode, cmd, arg);
+-	case CDROM_SEND_PACKET:
+-		return compat_cdrom_generic_command(bdev, mode, cmd, arg);
+ 
+ 	/*
+ 	 * No handler required for the ones below, we just need to
+@@ -264,6 +218,7 @@ static int compat_blkdev_driver_ioctl(struct block_device *bdev, fmode_t mode,
+ 	case CDROM_DISC_STATUS:
+ 	case CDROM_CHANGER_NSLOTS:
+ 	case CDROM_GET_CAPABILITY:
++	case CDROM_SEND_PACKET:
+ 	/* Ignore cdrom.h about these next 5 ioctls, they absolutely do
+ 	 * not take a struct cdrom_read, instead they take a struct cdrom_msf
+ 	 * which is compatible.
+diff --git a/block/scsi_ioctl.c b/block/scsi_ioctl.c
+index b61dbf4d8443..b4e73d5dd5c2 100644
+--- a/block/scsi_ioctl.c
++++ b/block/scsi_ioctl.c
+@@ -639,6 +639,136 @@ int get_sg_io_hdr(struct sg_io_hdr *hdr, const void __user *argp)
+ }
+ EXPORT_SYMBOL(get_sg_io_hdr);
+ 
++#ifdef CONFIG_COMPAT
++struct compat_cdrom_generic_command {
++	unsigned char	cmd[CDROM_PACKET_SIZE];
++	compat_caddr_t	buffer;
++	compat_uint_t	buflen;
++	compat_int_t	stat;
++	compat_caddr_t	sense;
++	unsigned char	data_direction;
++	compat_int_t	quiet;
++	compat_int_t	timeout;
++	compat_caddr_t	reserved[1];
++};
++#endif
++
++static int scsi_get_cdrom_generic_arg(struct cdrom_generic_command *cgc,
++				      const void __user *arg)
++{
++#ifdef CONFIG_COMPAT
++	if (in_compat_syscall()) {
++		struct compat_cdrom_generic_command cgc32;
++
++		if (copy_from_user(&cgc32, arg, sizeof(cgc32)))
++			return -EFAULT;
++
++		*cgc = (struct cdrom_generic_command) {
++			.buffer		= compat_ptr(cgc32.buffer),
++			.buflen		= cgc32.buflen,
++			.stat		= cgc32.stat,
++			.sense		= compat_ptr(cgc32.sense),
++			.data_direction	= cgc32.data_direction,
++			.quiet		= cgc32.quiet,
++			.timeout	= cgc32.timeout,
++			.reserved[0]	= compat_ptr(cgc32.reserved[0]),
++		};
++		memcpy(&cgc->cmd, &cgc32.cmd, CDROM_PACKET_SIZE);
++		return 0;
++	}
++#endif
++	if (copy_from_user(cgc, arg, sizeof(*cgc)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static int scsi_put_cdrom_generic_arg(const struct cdrom_generic_command *cgc,
++				      void __user *arg)
++{
++#ifdef CONFIG_COMPAT
++	if (in_compat_syscall()) {
++		struct compat_cdrom_generic_command cgc32 = {
++			.buffer		= (uintptr_t)(cgc->buffer),
++			.buflen		= cgc->buflen,
++			.stat		= cgc->stat,
++			.sense		= (uintptr_t)(cgc->sense),
++			.data_direction	= cgc->data_direction,
++			.quiet		= cgc->quiet,
++			.timeout	= cgc->timeout,
++			.reserved[0]	= (uintptr_t)(cgc->reserved[0]),
++		};
++		memcpy(&cgc32.cmd, &cgc->cmd, CDROM_PACKET_SIZE);
++
++		if (copy_to_user(arg, &cgc32, sizeof(cgc32)))
++			return -EFAULT;
++
++		return 0;
++	}
++#endif
++	if (copy_to_user(arg, cgc, sizeof(*cgc)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static int scsi_cdrom_send_packet(struct request_queue *q,
++				  struct gendisk *bd_disk,
++				  fmode_t mode, void __user *arg)
++{
++	struct cdrom_generic_command cgc;
++	struct sg_io_hdr hdr;
++	int err;
++
++	err = scsi_get_cdrom_generic_arg(&cgc, arg);
++	if (err)
++		return err;
++
++	cgc.timeout = clock_t_to_jiffies(cgc.timeout);
++	memset(&hdr, 0, sizeof(hdr));
++	hdr.interface_id = 'S';
++	hdr.cmd_len = sizeof(cgc.cmd);
++	hdr.dxfer_len = cgc.buflen;
++	switch (cgc.data_direction) {
++		case CGC_DATA_UNKNOWN:
++			hdr.dxfer_direction = SG_DXFER_UNKNOWN;
++			break;
++		case CGC_DATA_WRITE:
++			hdr.dxfer_direction = SG_DXFER_TO_DEV;
++			break;
++		case CGC_DATA_READ:
++			hdr.dxfer_direction = SG_DXFER_FROM_DEV;
++			break;
++		case CGC_DATA_NONE:
++			hdr.dxfer_direction = SG_DXFER_NONE;
++			break;
++		default:
++			return -EINVAL;
++	}
++
++	hdr.dxferp = cgc.buffer;
++	hdr.sbp = cgc.sense;
++	if (hdr.sbp)
++		hdr.mx_sb_len = sizeof(struct request_sense);
++	hdr.timeout = jiffies_to_msecs(cgc.timeout);
++	hdr.cmdp = ((struct cdrom_generic_command __user*) arg)->cmd;
++	hdr.cmd_len = sizeof(cgc.cmd);
++
++	err = sg_io(q, bd_disk, &hdr, mode);
++	if (err == -EFAULT)
++		return -EFAULT;
++
++	if (hdr.status)
++		return -EIO;
++
++	cgc.stat = err;
++	cgc.buflen = hdr.resid;
++	if (scsi_put_cdrom_generic_arg(&cgc, arg))
++		return -EFAULT;
++
++	return err;
++}
++
+ int scsi_cmd_ioctl(struct request_queue *q, struct gendisk *bd_disk, fmode_t mode,
+ 		   unsigned int cmd, void __user *arg)
+ {
+@@ -689,60 +819,9 @@ int scsi_cmd_ioctl(struct request_queue *q, struct gendisk *bd_disk, fmode_t mod
+ 				err = -EFAULT;
+ 			break;
+ 		}
+-		case CDROM_SEND_PACKET: {
+-			struct cdrom_generic_command cgc;
+-			struct sg_io_hdr hdr;
+-
+-			err = -EFAULT;
+-			if (copy_from_user(&cgc, arg, sizeof(cgc)))
+-				break;
+-			cgc.timeout = clock_t_to_jiffies(cgc.timeout);
+-			memset(&hdr, 0, sizeof(hdr));
+-			hdr.interface_id = 'S';
+-			hdr.cmd_len = sizeof(cgc.cmd);
+-			hdr.dxfer_len = cgc.buflen;
+-			err = 0;
+-			switch (cgc.data_direction) {
+-				case CGC_DATA_UNKNOWN:
+-					hdr.dxfer_direction = SG_DXFER_UNKNOWN;
+-					break;
+-				case CGC_DATA_WRITE:
+-					hdr.dxfer_direction = SG_DXFER_TO_DEV;
+-					break;
+-				case CGC_DATA_READ:
+-					hdr.dxfer_direction = SG_DXFER_FROM_DEV;
+-					break;
+-				case CGC_DATA_NONE:
+-					hdr.dxfer_direction = SG_DXFER_NONE;
+-					break;
+-				default:
+-					err = -EINVAL;
+-			}
+-			if (err)
+-				break;
+-
+-			hdr.dxferp = cgc.buffer;
+-			hdr.sbp = cgc.sense;
+-			if (hdr.sbp)
+-				hdr.mx_sb_len = sizeof(struct request_sense);
+-			hdr.timeout = jiffies_to_msecs(cgc.timeout);
+-			hdr.cmdp = ((struct cdrom_generic_command __user*) arg)->cmd;
+-			hdr.cmd_len = sizeof(cgc.cmd);
+-
+-			err = sg_io(q, bd_disk, &hdr, mode);
+-			if (err == -EFAULT)
+-				break;
+-
+-			if (hdr.status)
+-				err = -EIO;
+-
+-			cgc.stat = err;
+-			cgc.buflen = hdr.resid;
+-			if (copy_to_user(arg, &cgc, sizeof(cgc)))
+-				err = -EFAULT;
+-
++		case CDROM_SEND_PACKET:
++			err = scsi_cdrom_send_packet(q, bd_disk, mode, arg);
+ 			break;
+-		}
+ 
+ 		/*
+ 		 * old junk scsi send command ioctl
+diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+index 861fc65a1b75..ab4d3be4b646 100644
+--- a/drivers/block/pktcdvd.c
++++ b/drivers/block/pktcdvd.c
+@@ -2671,15 +2671,13 @@ static int pkt_compat_ioctl(struct block_device *bdev, fmode_t mode, unsigned in
+ 	case CDROMEJECT:
+ 	case CDROMMULTISESSION:
+ 	case CDROMREADTOCENTRY:
++	case CDROM_SEND_PACKET: /* compat mode handled in scsi_cmd_ioctl */
+ 	case SCSI_IOCTL_SEND_COMMAND:
+ 		return pkt_ioctl(bdev, mode, cmd, (unsigned long)compat_ptr(arg));
+ 
+-
+ 	/* FIXME: no handler so far */
+-	case CDROM_LAST_WRITTEN:
+-	/* handled in compat_blkdev_driver_ioctl */
+-	case CDROM_SEND_PACKET:
+ 	default:
++	case CDROM_LAST_WRITTEN:
+ 		return -ENOIOCTLCMD;
+ 	}
+ }
+-- 
+2.20.0
 
-
-[root@localhost ~]# hwclock -v
-hwclock from util-linux 2.35-rc1-20-63f8
-System Time: 1577977389.540630
-Trying to open: /dev/rtc0
-Using the rtc interface to the clock.
-Last drift adjustment done at 1577977383 seconds after 1969
-Last calibration done at 1577977383 seconds after 1969
-Hardware clock is on UTC time
-Assuming hardware clock is kept in UTC time.
-Waiting for clock tick...
-...got clock tick
-Time read from Hardware Clock: 2020/01/02 15:03:10
-Hw clock time : 2020/01/02 15:03:10 = 1577977390 seconds since 1969
-Time since last adjustment is 7 seconds
-Calculated Hardware Clock drift is 0.000000 seconds
-2020-01-02 20:03:09.718222+05:00
-
-But after reboot, the hwtime is reset:
-
-=== Reboot ===
-
-
-[root@localhost ~]# hwclock -v
-hwclock from util-linux 2.35-rc1-20-63f8
-System Time: 1576407103.342223
-Trying to open: /dev/rtc0
-Using the rtc interface to the clock.
-Last drift adjustment done at 1577977383 seconds after 1969
-Last calibration done at 1577977383 seconds after 1969
-Hardware clock is on UTC time
-Assuming hardware clock is kept in UTC time.
-Waiting for clock tick...
-...got clock tick
-Time read from Hardware Clock: 2019/01/01 00:05:31
-Hw clock time : 2019/01/01 00:05:31 = 1546301131 seconds since 1969
-Time since last adjustment is -31676252 seconds
-Calculated Hardware Clock drift is 0.000000 seconds
-2019-01-01 05:05:30.170661+05:00
-
-[root@localhost ~]# date
-Sun 15 Dec 2019 03:52:01 PM +05
-
-
-Demonstration: https://youtu.be/X0w2hbAmKmM
-
-
---
-Best Regards,
-Mike Gavrilov.
