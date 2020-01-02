@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9CFD12EDA3
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:30:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0452612EEF9
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:42:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729894AbgABWaZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:30:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34052 "EHLO mail.kernel.org"
+        id S1731219AbgABWmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:42:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729882AbgABWaX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:30:23 -0500
+        id S1730835AbgABWfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:35:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D9A92253D;
-        Thu,  2 Jan 2020 22:30:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D063920863;
+        Thu,  2 Jan 2020 22:35:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004222;
-        bh=p/VQ5XvFfXoxpzlYbitgprfWPKotHqsZENTAFtN7H3U=;
+        s=default; t=1578004533;
+        bh=Lu/ZTgUSr4vXlL6FAJcrMZtok1ksT4m1zI6WN6EUk/g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ye/nl9lOep10zxofr4r00Lr2mx3CSii1k3chEcY1jhNzQ+gOImrPVsjzo0jvL89E2
-         wASTuzmH9ChV14/hY/mGlIIUsl7og5JCE7ysSFhWNh6IlNZ+v8/hAp65ToBtZKjU4f
-         uDbVnvVPohqUOmivjEiA5WLCILrk704LKyZa0iXs=
+        b=g51SyVrkXdW93sHHO6vliqqrDeN08IFDedIVZJ6N8M8IzyNzXQgJqNHPjJUAH33ew
+         wZF8UCpGfrykGmI6gpVMrWTpGQmLB+B6e/CM6R4mToPiNV+sH3l21WBX0sTW248qym
+         gC7yRFD1n1iZbntkkQq26JqnJBR4PYaMB9wzb+tI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 088/171] btrfs: dont double lock the subvol_sem for rename exchange
+Subject: [PATCH 4.4 046/137] perf probe: Fix to show calling lines of inlined functions
 Date:   Thu,  2 Jan 2020 23:06:59 +0100
-Message-Id: <20200102220559.262428738@linuxfoundation.org>
+Message-Id: <20200102220552.778892681@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,51 +46,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 943eb3bf25f4a7b745dd799e031be276aa104d82 ]
+[ Upstream commit 86c0bf8539e7f46d91bd105e55eda96e0064caef ]
 
-If we're rename exchanging two subvols we'll try to lock this lock
-twice, which is bad.  Just lock once if either of the ino's are subvols.
+Fix to show calling lines of inlined functions (where an inline function
+is called).
 
-Fixes: cdd1fedf8261 ("btrfs: add support for RENAME_EXCHANGE and RENAME_WHITEOUT")
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+die_walk_lines() filtered out the lines inside inlined functions based
+on the address. However this also filtered out the lines which call
+those inlined functions from the target function.
+
+To solve this issue, check the call_file and call_line attributes and do
+not filter out if it matches to the line information.
+
+Without this fix, perf probe -L doesn't show some lines correctly.
+(don't see the lines after 17)
+
+  # perf probe -L vfs_read
+  <vfs_read@/home/mhiramat/ksrc/linux/fs/read_write.c:0>
+        0  ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
+        1  {
+        2         ssize_t ret;
+
+        4         if (!(file->f_mode & FMODE_READ))
+                          return -EBADF;
+        6         if (!(file->f_mode & FMODE_CAN_READ))
+                          return -EINVAL;
+        8         if (unlikely(!access_ok(buf, count)))
+                          return -EFAULT;
+
+       11         ret = rw_verify_area(READ, file, pos, count);
+       12         if (!ret) {
+       13                 if (count > MAX_RW_COUNT)
+                                  count =  MAX_RW_COUNT;
+       15                 ret = __vfs_read(file, buf, count, pos);
+       16                 if (ret > 0) {
+                                  fsnotify_access(file);
+                                  add_rchar(current, ret);
+                          }
+
+With this fix:
+
+  # perf probe -L vfs_read
+  <vfs_read@/home/mhiramat/ksrc/linux/fs/read_write.c:0>
+        0  ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
+        1  {
+        2         ssize_t ret;
+
+        4         if (!(file->f_mode & FMODE_READ))
+                          return -EBADF;
+        6         if (!(file->f_mode & FMODE_CAN_READ))
+                          return -EINVAL;
+        8         if (unlikely(!access_ok(buf, count)))
+                          return -EFAULT;
+
+       11         ret = rw_verify_area(READ, file, pos, count);
+       12         if (!ret) {
+       13                 if (count > MAX_RW_COUNT)
+                                  count =  MAX_RW_COUNT;
+       15                 ret = __vfs_read(file, buf, count, pos);
+       16                 if (ret > 0) {
+       17                         fsnotify_access(file);
+       18                         add_rchar(current, ret);
+                          }
+       20                 inc_syscr(current);
+                  }
+
+Fixes: 4cc9cec636e7 ("perf probe: Introduce lines walker interface")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: http://lore.kernel.org/lkml/157241937995.32002.17899884017011512577.stgit@devnote2
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/inode.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ tools/perf/util/dwarf-aux.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 80937c5ca477..bb8863958ac0 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -9597,9 +9597,8 @@ static int btrfs_rename_exchange(struct inode *old_dir,
- 		return -EXDEV;
+diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
+index 5f32fed5eeb3..6851f1d0e253 100644
+--- a/tools/perf/util/dwarf-aux.c
++++ b/tools/perf/util/dwarf-aux.c
+@@ -741,7 +741,7 @@ int die_walk_lines(Dwarf_Die *rt_die, line_walk_callback_t callback, void *data)
+ 	Dwarf_Lines *lines;
+ 	Dwarf_Line *line;
+ 	Dwarf_Addr addr;
+-	const char *fname, *decf = NULL;
++	const char *fname, *decf = NULL, *inf = NULL;
+ 	int lineno, ret = 0;
+ 	int decl = 0, inl;
+ 	Dwarf_Die die_mem, *cu_die;
+@@ -785,13 +785,21 @@ int die_walk_lines(Dwarf_Die *rt_die, line_walk_callback_t callback, void *data)
+ 			 */
+ 			if (!dwarf_haspc(rt_die, addr))
+ 				continue;
++
+ 			if (die_find_inlinefunc(rt_die, addr, &die_mem)) {
++				/* Call-site check */
++				inf = die_get_call_file(&die_mem);
++				if ((inf && !strcmp(inf, decf)) &&
++				    die_get_call_lineno(&die_mem) == lineno)
++					goto found;
++
+ 				dwarf_decl_line(&die_mem, &inl);
+ 				if (inl != decl ||
+ 				    decf != dwarf_decl_file(&die_mem))
+ 					continue;
+ 			}
+ 		}
++found:
+ 		/* Get source line */
+ 		fname = dwarf_linesrc(line, NULL, NULL);
  
- 	/* close the race window with snapshot create/destroy ioctl */
--	if (old_ino == BTRFS_FIRST_FREE_OBJECTID)
--		down_read(&root->fs_info->subvol_sem);
--	if (new_ino == BTRFS_FIRST_FREE_OBJECTID)
-+	if (old_ino == BTRFS_FIRST_FREE_OBJECTID ||
-+	    new_ino == BTRFS_FIRST_FREE_OBJECTID)
- 		down_read(&dest->fs_info->subvol_sem);
- 
- 	/*
-@@ -9785,9 +9784,8 @@ static int btrfs_rename_exchange(struct inode *old_dir,
- 	ret2 = btrfs_end_transaction(trans, root);
- 	ret = ret ? ret : ret2;
- out_notrans:
--	if (new_ino == BTRFS_FIRST_FREE_OBJECTID)
--		up_read(&dest->fs_info->subvol_sem);
--	if (old_ino == BTRFS_FIRST_FREE_OBJECTID)
-+	if (new_ino == BTRFS_FIRST_FREE_OBJECTID ||
-+	    old_ino == BTRFS_FIRST_FREE_OBJECTID)
- 		up_read(&root->fs_info->subvol_sem);
- 
- 	return ret;
 -- 
 2.20.1
 
