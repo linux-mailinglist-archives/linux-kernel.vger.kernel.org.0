@@ -2,40 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BFFE12EF87
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:46:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47E4312EFBE
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:48:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730155AbgABWaQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:30:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57640 "EHLO mail.kernel.org"
+        id S1730161AbgABWsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:48:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729842AbgABW2L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:28:11 -0500
+        id S1729941AbgABW20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:28:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F29B420863;
-        Thu,  2 Jan 2020 22:28:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B04321835;
+        Thu,  2 Jan 2020 22:28:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004091;
-        bh=Blq+AMHt6HxK/xGxK6KR5EtA3cLwMX+jQ//LJF6rJwc=;
+        s=default; t=1578004105;
+        bh=d4fAy5rDX6QwqHSUYhcNoWbFNfPiR5H9GxDDuECfseo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vwoj0oldSebcL8K5n34Nsxmwo1ZV7gQIH44I6uOgipfu/Z8IyRju7JIG14v7zTPVc
-         ulvsZRIjmshN7wSZyp9i4eaCh2pE5SCWc7oCskFRir6vJWPG/grDMn9VSIcboPS5g4
-         2D2EJqJEKN6Upuu+BcJ6TWTewvXyRKqEFoUy+17c=
+        b=SrGpp6FPlmIdL7M2DIKqGP2m7euEWhE6XYOXRTG9cAjkg1mYUtyeBSlkHbbaj8fnP
+         nDIlQffdnV3vBHInsgTjHy1v1+5ftANkiDaZysbu2o/zppgRcB7S7fE+jpCk3NGtIo
+         /rxo96vH+/Rwb2X3XWu3WMs0rTgIFe3Sasr5QqaM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 033/171] perf test: Report failure for mmap events
-Date:   Thu,  2 Jan 2020 23:06:04 +0100
-Message-Id: <20200102220551.587940572@linuxfoundation.org>
+Subject: [PATCH 4.9 039/171] drm/gma500: fix memory disclosures due to uninitialized bytes
+Date:   Thu,  2 Jan 2020 23:06:10 +0100
+Message-Id: <20200102220552.426035377@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
 References: <20200102220546.960200039@linuxfoundation.org>
@@ -48,41 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leo Yan <leo.yan@linaro.org>
+From: Kangjie Lu <kjlu@umn.edu>
 
-[ Upstream commit 6add129c5d9210ada25217abc130df0b7096ee02 ]
+[ Upstream commit ec3b7b6eb8c90b52f61adff11b6db7a8db34de19 ]
 
-When fail to mmap events in task exit case, it misses to set 'err' to
--1; thus the testing will not report failure for it.
+"clock" may be copied to "best_clock". Initializing best_clock
+is not sufficient. The fix initializes clock as well to avoid
+memory disclosures and informaiton leaks.
 
-This patch sets 'err' to -1 when fails to mmap events, thus Perf tool
-can report correct result.
-
-Fixes: d723a55096b8 ("perf test: Add test case for checking number of EXIT events")
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lore.kernel.org/lkml/20191011091942.29841-1-leo.yan@linaro.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20191018044150.1899-1-kjlu@umn.edu
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/task-exit.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/gma500/oaktrail_crtc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/tests/task-exit.c b/tools/perf/tests/task-exit.c
-index b0d005d295a9..de2ddfe0f7c3 100644
---- a/tools/perf/tests/task-exit.c
-+++ b/tools/perf/tests/task-exit.c
-@@ -98,6 +98,7 @@ int test__task_exit(int subtest __maybe_unused)
- 	if (perf_evlist__mmap(evlist, 128, true) < 0) {
- 		pr_debug("failed to mmap events: %d (%s)\n", errno,
- 			 str_error_r(errno, sbuf, sizeof(sbuf)));
-+		err = -1;
- 		goto out_delete_evlist;
- 	}
+diff --git a/drivers/gpu/drm/gma500/oaktrail_crtc.c b/drivers/gpu/drm/gma500/oaktrail_crtc.c
+index da9fd34b9550..caa6da02206a 100644
+--- a/drivers/gpu/drm/gma500/oaktrail_crtc.c
++++ b/drivers/gpu/drm/gma500/oaktrail_crtc.c
+@@ -139,6 +139,7 @@ static bool mrst_sdvo_find_best_pll(const struct gma_limit_t *limit,
+ 	s32 freq_error, min_error = 100000;
  
+ 	memset(best_clock, 0, sizeof(*best_clock));
++	memset(&clock, 0, sizeof(clock));
+ 
+ 	for (clock.m = limit->m.min; clock.m <= limit->m.max; clock.m++) {
+ 		for (clock.n = limit->n.min; clock.n <= limit->n.max;
+@@ -195,6 +196,7 @@ static bool mrst_lvds_find_best_pll(const struct gma_limit_t *limit,
+ 	int err = target;
+ 
+ 	memset(best_clock, 0, sizeof(*best_clock));
++	memset(&clock, 0, sizeof(clock));
+ 
+ 	for (clock.m = limit->m.min; clock.m <= limit->m.max; clock.m++) {
+ 		for (clock.p1 = limit->p1.min; clock.p1 <= limit->p1.max;
 -- 
 2.20.1
 
