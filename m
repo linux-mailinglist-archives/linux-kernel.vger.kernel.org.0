@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43BFC12ECAD
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:20:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDDCB12ED85
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:29:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728866AbgABWUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:20:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38646 "EHLO mail.kernel.org"
+        id S1730014AbgABW3P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:29:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728852AbgABWUm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:20:42 -0500
+        id S1729995AbgABW3L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:29:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C92A2253D;
-        Thu,  2 Jan 2020 22:20:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E528920866;
+        Thu,  2 Jan 2020 22:29:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003641;
-        bh=8VqzkoxjJLB3l5GP5JBQCAJeVpBqdl9yDEo2CnjKTCU=;
+        s=default; t=1578004150;
+        bh=wKqnt0/C+VVp3lrC3xePDo9k5+y1KhGxmXUtKxm83TY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T0SgWwUP2QDCCq+VF9+XwvkOFAuLy6trnoTXmXm82OqAcSdZo/OF+cAP1wtE5SlRd
-         TH09pPgYGH6foHCs+HtsuzPWPlN/QUA7nnG81zDldfLHBDfTEpfTKNCThjPbutOY0S
-         XiAJBd9BUzSHfJEKrEKCDoNq2CecrYvMUAuzbc5A=
+        b=LOOOw8jmA94U8EWsZfM4AkJjYh5G0lz6C6QGEtAY1PBJZh+QtGGXkqVzUU23keX1/
+         Y2rOMKH4ZhW9gZc77/aRdnYT+7puyT8tCBCjt0jBQ/C7+YH+D6apryg4mHPL8EyOmk
+         9SwzKreQ97HIQveSVoKX0VIQDGqJb1vhu0pZmnoA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 017/114] leds: lm3692x: Handle failure to probe the regulator
-Date:   Thu,  2 Jan 2020 23:06:29 +0100
-Message-Id: <20200102220030.874892409@linuxfoundation.org>
+Subject: [PATCH 4.9 059/171] perf probe: Fix to show calling lines of inlined functions
+Date:   Thu,  2 Jan 2020 23:06:30 +0100
+Message-Id: <20200102220555.093184715@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +46,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guido Günther <agx@sigxcpu.org>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 396128d2ffcba6e1954cfdc9a89293ff79cbfd7c ]
+[ Upstream commit 86c0bf8539e7f46d91bd105e55eda96e0064caef ]
 
-Instead use devm_regulator_get_optional since the regulator
-is optional and check for errors.
+Fix to show calling lines of inlined functions (where an inline function
+is called).
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Reviewed-by: Dan Murphy <dmurphy@ti.com>
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
+die_walk_lines() filtered out the lines inside inlined functions based
+on the address. However this also filtered out the lines which call
+those inlined functions from the target function.
+
+To solve this issue, check the call_file and call_line attributes and do
+not filter out if it matches to the line information.
+
+Without this fix, perf probe -L doesn't show some lines correctly.
+(don't see the lines after 17)
+
+  # perf probe -L vfs_read
+  <vfs_read@/home/mhiramat/ksrc/linux/fs/read_write.c:0>
+        0  ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
+        1  {
+        2         ssize_t ret;
+
+        4         if (!(file->f_mode & FMODE_READ))
+                          return -EBADF;
+        6         if (!(file->f_mode & FMODE_CAN_READ))
+                          return -EINVAL;
+        8         if (unlikely(!access_ok(buf, count)))
+                          return -EFAULT;
+
+       11         ret = rw_verify_area(READ, file, pos, count);
+       12         if (!ret) {
+       13                 if (count > MAX_RW_COUNT)
+                                  count =  MAX_RW_COUNT;
+       15                 ret = __vfs_read(file, buf, count, pos);
+       16                 if (ret > 0) {
+                                  fsnotify_access(file);
+                                  add_rchar(current, ret);
+                          }
+
+With this fix:
+
+  # perf probe -L vfs_read
+  <vfs_read@/home/mhiramat/ksrc/linux/fs/read_write.c:0>
+        0  ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
+        1  {
+        2         ssize_t ret;
+
+        4         if (!(file->f_mode & FMODE_READ))
+                          return -EBADF;
+        6         if (!(file->f_mode & FMODE_CAN_READ))
+                          return -EINVAL;
+        8         if (unlikely(!access_ok(buf, count)))
+                          return -EFAULT;
+
+       11         ret = rw_verify_area(READ, file, pos, count);
+       12         if (!ret) {
+       13                 if (count > MAX_RW_COUNT)
+                                  count =  MAX_RW_COUNT;
+       15                 ret = __vfs_read(file, buf, count, pos);
+       16                 if (ret > 0) {
+       17                         fsnotify_access(file);
+       18                         add_rchar(current, ret);
+                          }
+       20                 inc_syscr(current);
+                  }
+
+Fixes: 4cc9cec636e7 ("perf probe: Introduce lines walker interface")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: http://lore.kernel.org/lkml/157241937995.32002.17899884017011512577.stgit@devnote2
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/leds/leds-lm3692x.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ tools/perf/util/dwarf-aux.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-index 4f413a7c5f05..d79a66a73169 100644
---- a/drivers/leds/leds-lm3692x.c
-+++ b/drivers/leds/leds-lm3692x.c
-@@ -337,9 +337,18 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
- 		return ret;
- 	}
+diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
+index 3aea343c7179..41bfb4c977d0 100644
+--- a/tools/perf/util/dwarf-aux.c
++++ b/tools/perf/util/dwarf-aux.c
+@@ -765,7 +765,7 @@ int die_walk_lines(Dwarf_Die *rt_die, line_walk_callback_t callback, void *data)
+ 	Dwarf_Lines *lines;
+ 	Dwarf_Line *line;
+ 	Dwarf_Addr addr;
+-	const char *fname, *decf = NULL;
++	const char *fname, *decf = NULL, *inf = NULL;
+ 	int lineno, ret = 0;
+ 	int decl = 0, inl;
+ 	Dwarf_Die die_mem, *cu_die;
+@@ -809,13 +809,21 @@ int die_walk_lines(Dwarf_Die *rt_die, line_walk_callback_t callback, void *data)
+ 			 */
+ 			if (!dwarf_haspc(rt_die, addr))
+ 				continue;
++
+ 			if (die_find_inlinefunc(rt_die, addr, &die_mem)) {
++				/* Call-site check */
++				inf = die_get_call_file(&die_mem);
++				if ((inf && !strcmp(inf, decf)) &&
++				    die_get_call_lineno(&die_mem) == lineno)
++					goto found;
++
+ 				dwarf_decl_line(&die_mem, &inl);
+ 				if (inl != decl ||
+ 				    decf != dwarf_decl_file(&die_mem))
+ 					continue;
+ 			}
+ 		}
++found:
+ 		/* Get source line */
+ 		fname = dwarf_linesrc(line, NULL, NULL);
  
--	led->regulator = devm_regulator_get(&led->client->dev, "vled");
--	if (IS_ERR(led->regulator))
-+	led->regulator = devm_regulator_get_optional(&led->client->dev, "vled");
-+	if (IS_ERR(led->regulator)) {
-+		ret = PTR_ERR(led->regulator);
-+		if (ret != -ENODEV) {
-+			if (ret != -EPROBE_DEFER)
-+				dev_err(&led->client->dev,
-+					"Failed to get vled regulator: %d\n",
-+					ret);
-+			return ret;
-+		}
- 		led->regulator = NULL;
-+	}
- 
- 	child = device_get_next_child_node(&led->client->dev, child);
- 	if (!child) {
 -- 
 2.20.1
 
