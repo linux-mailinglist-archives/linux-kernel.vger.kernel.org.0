@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0327812F0E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:56:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D380212EF5F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:46:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728778AbgABW41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:56:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33582 "EHLO mail.kernel.org"
+        id S1730803AbgABWpR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:45:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728326AbgABWSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:18:23 -0500
+        id S1730409AbgABWcZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:32:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3360721582;
-        Thu,  2 Jan 2020 22:18:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59307222C3;
+        Thu,  2 Jan 2020 22:32:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003502;
-        bh=IQQjTn2rQUrfNOk9A8Gln9nVWGLvN0dhB7+ltGEOMN0=;
+        s=default; t=1578004344;
+        bh=QVQNXYhm774xEJ0esdujKP+OZHgv/yx5eUykMewmE/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fcfs9A5kNqCkCnV5FUuBOgkS/0PEqUWLkoZw07M/HZfV9aNOraDhrf0rEf4rX14cM
-         8il1c80dnYYAeaQHAvm1oC0T7MpKLA4jxBmWbreEoTmGaZsd1T7GzT/0dVSqOzbvK5
-         FnCNY6a7QI4L4jW2PhMGKcwQreQHxspm+qdyUqy8=
+        b=XD4QRki4isF9c9yxpr/3VIg1wWtQlzRggTGA2MaxEAAUT2B+PYSc0Ym2d06xecokS
+         Kj5RFGTuLjCxe4cLQuxqEOaendq2tJGDaqx2IfQ/5kDW2O3HQY8ubj8G/mrCIMDPKb
+         jTb3K6Nsk6EAmgM+R9axrlOE7BtoioIpEDNwjB6Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Netanel Belgazal <netanel@amazon.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 188/191] net: ena: fix napi handler misbehavior when the napi budget is zero
-Date:   Thu,  2 Jan 2020 23:07:50 +0100
-Message-Id: <20200102215849.750363784@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org, Andreas Dilger <adilger@dilger.ca>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 140/171] ext4: work around deleting a file with i_nlink == 0 safely
+Date:   Thu,  2 Jan 2020 23:07:51 +0100
+Message-Id: <20200102220606.559791102@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,54 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Netanel Belgazal <netanel@amazon.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit 24dee0c7478d1a1e00abdf5625b7f921467325dc ]
+[ Upstream commit c7df4a1ecb8579838ec8c56b2bb6a6716e974f37 ]
 
-In netpoll the napi handler could be called with budget equal to zero.
-Current ENA napi handler doesn't take that into consideration.
+If the file system is corrupted such that a file's i_links_count is
+too small, then it's possible that when unlinking that file, i_nlink
+will already be zero.  Previously we were working around this kind of
+corruption by forcing i_nlink to one; but we were doing this before
+trying to delete the directory entry --- and if the file system is
+corrupted enough that ext4_delete_entry() fails, then we exit with
+i_nlink elevated, and this causes the orphan inode list handling to be
+FUBAR'ed, such that when we unmount the file system, the orphan inode
+list can get corrupted.
 
-The napi handler handles Rx packets in a do-while loop.
-Currently, the budget check happens only after decrementing the
-budget, therefore the napi handler, in rare cases, could run over
-MAX_INT packets.
+A better way to fix this is to simply skip trying to call drop_nlink()
+if i_nlink is already zero, thus moving the check to the place where
+it makes the most sense.
 
-In addition to that, this moves all budget related variables to int
-calculation and stop mixing u32 to avoid ambiguity
+https://bugzilla.kernel.org/show_bug.cgi?id=205433
 
-Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
-Signed-off-by: Netanel Belgazal <netanel@amazon.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: https://lore.kernel.org/r/20191112032903.8828-1-tytso@mit.edu
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_netdev.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ fs/ext4/namei.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-@@ -1238,8 +1238,8 @@ static int ena_io_poll(struct napi_struc
- 	struct ena_napi *ena_napi = container_of(napi, struct ena_napi, napi);
- 	struct ena_ring *tx_ring, *rx_ring;
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 6608cc01a3db..f0ce535d514c 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -3082,18 +3082,17 @@ static int ext4_unlink(struct inode *dir, struct dentry *dentry)
+ 	if (IS_DIRSYNC(dir))
+ 		ext4_handle_sync(handle);
  
--	u32 tx_work_done;
--	u32 rx_work_done;
-+	int tx_work_done;
-+	int rx_work_done = 0;
- 	int tx_budget;
- 	int napi_comp_call = 0;
- 	int ret;
-@@ -1256,7 +1256,11 @@ static int ena_io_poll(struct napi_struc
- 	}
- 
- 	tx_work_done = ena_clean_tx_irq(tx_ring, tx_budget);
--	rx_work_done = ena_clean_rx_irq(rx_ring, napi, budget);
-+	/* On netpoll the budget is zero and the handler should only clean the
-+	 * tx completions.
-+	 */
-+	if (likely(budget))
-+		rx_work_done = ena_clean_rx_irq(rx_ring, napi, budget);
- 
- 	/* If the device is about to reset or down, avoid unmask
- 	 * the interrupt and return 0 so NAPI won't reschedule
+-	if (inode->i_nlink == 0) {
+-		ext4_warning_inode(inode, "Deleting file '%.*s' with no links",
+-				   dentry->d_name.len, dentry->d_name.name);
+-		set_nlink(inode, 1);
+-	}
+ 	retval = ext4_delete_entry(handle, dir, de, bh);
+ 	if (retval)
+ 		goto end_unlink;
+ 	dir->i_ctime = dir->i_mtime = ext4_current_time(dir);
+ 	ext4_update_dx_flag(dir);
+ 	ext4_mark_inode_dirty(handle, dir);
+-	drop_nlink(inode);
++	if (inode->i_nlink == 0)
++		ext4_warning_inode(inode, "Deleting file '%.*s' with no links",
++				   dentry->d_name.len, dentry->d_name.name);
++	else
++		drop_nlink(inode);
+ 	if (!inode->i_nlink)
+ 		ext4_orphan_add(handle, inode);
+ 	inode->i_ctime = ext4_current_time(inode);
+-- 
+2.20.1
+
 
 
