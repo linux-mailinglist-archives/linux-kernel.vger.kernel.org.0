@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6F1E12F0C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:55:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 488DD12F11E
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:58:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbgABWzg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:55:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35280 "EHLO mail.kernel.org"
+        id S1728116AbgABWPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:15:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727984AbgABWTQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:19:16 -0500
+        id S1727619AbgABWPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:15:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9A4721582;
-        Thu,  2 Jan 2020 22:19:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E39421582;
+        Thu,  2 Jan 2020 22:15:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003555;
-        bh=74cpfdnC7BOd4P/CKjKU2kcevS4tDVGdeld1VI1x+cE=;
+        s=default; t=1578003337;
+        bh=ktJKEAWXUTLyrY2sUZUuhp1aL/UNRx+omAdTUxPO6FU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QqykDcEs6Mr4mK4M2SR0ggwkISc2memowZxkFsFdxiKiESECNrdTdINbOVLW6lZ1r
-         f4/A3GLUd14r2bUT2Y8W70Kc8Wuke3XYZph+VE0J9ALh+ctkr97AiVwLV51lu0HMou
-         XbW/bgG1gSl9S+79G8/elAkrK0/6aHQaluTQudZ4=
+        b=inDgMfTpM2dmtunPhQ+T1e41PmJo2xvfa4n75AIiFQA5gT2EdpvRP4dIw5CQg+pyE
+         bPsqEe+ygXrXawTDemIk56lDCo9m6ORr2t/1JHUFvaPJN2iqR5/Yp302NCjNkEC4RX
+         npI3F1RQ8bD8tdbHDN1Y/oTCLh8106/APEYGGIZ8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <jsmart2021@gmail.com>,
+        stable@vger.kernel.org, Anatol Pomazau <anatol@google.com>,
+        Frank Mayhar <fmayhar@google.com>,
+        Bharath Ravi <rbharath@google.com>,
+        Khazhimsel Kumykov <khazhy@google.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Lee Duncan <lduncan@suse.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 003/114] scsi: lpfc: Fix locking on mailbox command completion
+Subject: [PATCH 5.4 093/191] scsi: iscsi: Dont send data to unbound connection
 Date:   Thu,  2 Jan 2020 23:06:15 +0100
-Message-Id: <20200102220029.510009370@linuxfoundation.org>
+Message-Id: <20200102215839.879507921@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,66 +49,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+From: Anatol Pomazau <anatol@google.com>
 
-[ Upstream commit 07b8582430370097238b589f4e24da7613ca6dd3 ]
+[ Upstream commit 238191d65d7217982d69e21c1d623616da34b281 ]
 
-Symptoms were seen of the driver not having valid data for mailbox
-commands. After debugging, the following sequence was found:
+If a faulty initiator fails to bind the socket to the iSCSI connection
+before emitting a command, for instance, a subsequent send_pdu, it will
+crash the kernel due to a null pointer dereference in sock_sendmsg(), as
+shown in the log below.  This patch makes sure the bind succeeded before
+trying to use the socket.
 
-The driver maintains a port-wide pointer of the mailbox command that is
-currently in execution. Once finished, the port-wide pointer is cleared
-(done in lpfc_sli4_mq_release()). The next mailbox command issued will set
-the next pointer and so on.
+BUG: kernel NULL pointer dereference, address: 0000000000000018
+ #PF: supervisor read access in kernel mode
+ #PF: error_code(0x0000) - not-present page
+PGD 0 P4D 0
+Oops: 0000 [#1] SMP PTI
+CPU: 3 PID: 7 Comm: kworker/u8:0 Not tainted 5.4.0-rc2.iscsi+ #13
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
+[   24.158246] Workqueue: iscsi_q_0 iscsi_xmitworker
+[   24.158883] RIP: 0010:apparmor_socket_sendmsg+0x5/0x20
+[...]
+[   24.161739] RSP: 0018:ffffab6440043ca0 EFLAGS: 00010282
+[   24.162400] RAX: ffffffff891c1c00 RBX: ffffffff89d53968 RCX: 0000000000000001
+[   24.163253] RDX: 0000000000000030 RSI: ffffab6440043d00 RDI: 0000000000000000
+[   24.164104] RBP: 0000000000000030 R08: 0000000000000030 R09: 0000000000000030
+[   24.165166] R10: ffffffff893e66a0 R11: 0000000000000018 R12: ffffab6440043d00
+[   24.166038] R13: 0000000000000000 R14: 0000000000000000 R15: ffff9d5575a62e90
+[   24.166919] FS:  0000000000000000(0000) GS:ffff9d557db80000(0000) knlGS:0000000000000000
+[   24.167890] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   24.168587] CR2: 0000000000000018 CR3: 000000007a838000 CR4: 00000000000006e0
+[   24.169451] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   24.170320] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   24.171214] Call Trace:
+[   24.171537]  security_socket_sendmsg+0x3a/0x50
+[   24.172079]  sock_sendmsg+0x16/0x60
+[   24.172506]  iscsi_sw_tcp_xmit_segment+0x77/0x120
+[   24.173076]  iscsi_sw_tcp_pdu_xmit+0x58/0x170
+[   24.173604]  ? iscsi_dbg_trace+0x63/0x80
+[   24.174087]  iscsi_tcp_task_xmit+0x101/0x280
+[   24.174666]  iscsi_xmit_task+0x83/0x110
+[   24.175206]  iscsi_xmitworker+0x57/0x380
+[   24.175757]  ? __schedule+0x2a2/0x700
+[   24.176273]  process_one_work+0x1b5/0x360
+[   24.176837]  worker_thread+0x50/0x3c0
+[   24.177353]  kthread+0xf9/0x130
+[   24.177799]  ? process_one_work+0x360/0x360
+[   24.178401]  ? kthread_park+0x90/0x90
+[   24.178915]  ret_from_fork+0x35/0x40
+[   24.179421] Modules linked in:
+[   24.179856] CR2: 0000000000000018
+[   24.180327] ---[ end trace b4b7674b6df5f480 ]---
 
-The mailbox response data is only copied if there is a valid port-wide
-pointer.
-
-In the failing case, it was seen that a new mailbox command was being
-attempted in parallel with the completion.  The parallel path was seeing
-the mailbox no long in use (flag check under lock) and thus set the port
-pointer.  The completion path had cleared the active flag under lock, but
-had not touched the port pointer.  The port pointer is cleared after the
-lock is released. In this case, the completion path cleared the just-set
-value by the parallel path.
-
-Fix by making the calls that clear mbox state/port pointer while under
-lock.  Also slightly cleaned up the error path.
-
-Link: https://lore.kernel.org/r/20190922035906.10977-8-jsmart2021@gmail.com
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Anatol Pomazau <anatol@google.com>
+Co-developed-by: Frank Mayhar <fmayhar@google.com>
+Signed-off-by: Frank Mayhar <fmayhar@google.com>
+Co-developed-by: Bharath Ravi <rbharath@google.com>
+Signed-off-by: Bharath Ravi <rbharath@google.com>
+Co-developed-by: Khazhimsel Kumykov <khazhy@google.com>
+Signed-off-by: Khazhimsel Kumykov <khazhy@google.com>
+Co-developed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Reviewed-by: Lee Duncan <lduncan@suse.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_sli.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/scsi/iscsi_tcp.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
-index f459fd62e493..bd555f886d27 100644
---- a/drivers/scsi/lpfc/lpfc_sli.c
-+++ b/drivers/scsi/lpfc/lpfc_sli.c
-@@ -12928,13 +12928,19 @@ send_current_mbox:
- 	phba->sli.sli_flag &= ~LPFC_SLI_MBOX_ACTIVE;
- 	/* Setting active mailbox pointer need to be in sync to flag clear */
- 	phba->sli.mbox_active = NULL;
-+	if (bf_get(lpfc_trailer_consumed, mcqe))
-+		lpfc_sli4_mq_release(phba->sli4_hba.mbx_wq);
- 	spin_unlock_irqrestore(&phba->hbalock, iflags);
- 	/* Wake up worker thread to post the next pending mailbox command */
- 	lpfc_worker_wake_up(phba);
-+	return workposted;
-+
- out_no_mqe_complete:
-+	spin_lock_irqsave(&phba->hbalock, iflags);
- 	if (bf_get(lpfc_trailer_consumed, mcqe))
- 		lpfc_sli4_mq_release(phba->sli4_hba.mbx_wq);
--	return workposted;
-+	spin_unlock_irqrestore(&phba->hbalock, iflags);
-+	return false;
- }
+diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
+index 7bedbe877704..0bc63a7ab41c 100644
+--- a/drivers/scsi/iscsi_tcp.c
++++ b/drivers/scsi/iscsi_tcp.c
+@@ -369,8 +369,16 @@ static int iscsi_sw_tcp_pdu_xmit(struct iscsi_task *task)
+ {
+ 	struct iscsi_conn *conn = task->conn;
+ 	unsigned int noreclaim_flag;
++	struct iscsi_tcp_conn *tcp_conn = conn->dd_data;
++	struct iscsi_sw_tcp_conn *tcp_sw_conn = tcp_conn->dd_data;
+ 	int rc = 0;
  
- /**
++	if (!tcp_sw_conn->sock) {
++		iscsi_conn_printk(KERN_ERR, conn,
++				  "Transport not bound to socket!\n");
++		return -EINVAL;
++	}
++
+ 	noreclaim_flag = memalloc_noreclaim_save();
+ 
+ 	while (iscsi_sw_tcp_xmit_qlen(conn)) {
 -- 
 2.20.1
 
