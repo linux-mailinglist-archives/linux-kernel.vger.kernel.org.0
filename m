@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E021712EDA0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:30:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B917612EC32
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:16:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730146AbgABWaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:30:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33620 "EHLO mail.kernel.org"
+        id S1728215AbgABWQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:16:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730138AbgABWaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:30:11 -0500
+        id S1728203AbgABWQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:16:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A44ED222C3;
-        Thu,  2 Jan 2020 22:30:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7777821582;
+        Thu,  2 Jan 2020 22:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004210;
-        bh=jP6KN6XiXG5xNENjBcemcMG4vu/MV2NrrgYH7HFgZ+8=;
+        s=default; t=1578003372;
+        bh=BnANX2H2bx29XOoQujs2DDUAJ+FIpRaK3fhFyXIVyA0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2aRfdZXr1iSqC4eMyceDFEi/C2wL/X1JyHewzNGbStX55xaCiacqWzV1JxCTM//sC
-         e6mJcoY99rOQFTvW4vq0Fk4ASOhYO6sYRZtY4lyslCawUKZpA8NsMAxSBYZ13Ee9vq
-         1dpHiMeZ2pqhGMuKAuscdiXsJh7ubkZaMmH0Qgqw=
+        b=dWCKOar+r+tqnxyqDeJVYnoPG9KShgmNEzNoz3QwZ30qG5FohLpee2b15Ys2/FBIJ
+         uaEpRWDmbFJv0hYqv+fxgJTlt/x+HXwOU/NvhpJC9FoC7UFZvfWpCurmLLkRUfbh3l
+         24GyAMYzlVjnuPLncno14sZj1q1E7SuuiZ5D9D9A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 084/171] net: phy: initialise phydev speed and duplex sanely
+        stable@vger.kernel.org, Anders Kaseorg <andersk@mit.edu>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.4 133/191] Revert "iwlwifi: assign directly to iwl_trans->cfg in QuZ detection"
 Date:   Thu,  2 Jan 2020 23:06:55 +0100
-Message-Id: <20200102220558.639058050@linuxfoundation.org>
+Message-Id: <20200102215843.940860373@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Anders Kaseorg <andersk@mit.edu>
 
-[ Upstream commit a5d66f810061e2dd70fb7a108dcd14e535bc639f ]
+commit db5cce1afc8d2475d2c1c37c2a8267dd0e151526 upstream.
 
-When a phydev is created, the speed and duplex are set to zero and
--1 respectively, rather than using the predefined SPEED_UNKNOWN and
-DUPLEX_UNKNOWN constants.
+This reverts commit 968dcfb4905245dc64d65312c0d17692fa087b99.
 
-There is a window at initialisation time where we may report link
-down using the 0/-1 values.  Tidy this up and use the predefined
-constants, so debug doesn't complain with:
+Both that commit and commit 809805a820c6445f7a701ded24fdc6bbc841d1e4
+attempted to fix the same bug (dead assignments to the local variable
+cfg), but they did so in incompatible ways. When they were both merged,
+independently of each other, the combination actually caused the bug to
+reappear, leading to a firmware crash on boot for some cards.
 
-"Unsupported (update phy-core.c)/Unsupported (update phy-core.c)"
+https://bugzilla.kernel.org/show_bug.cgi?id=205719
 
-when the speed and duplex settings are printed.
+Signed-off-by: Anders Kaseorg <andersk@mit.edu>
+Acked-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/phy_device.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/pcie/drv.c |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 5c2c72b1ef8b..3289fd910c4a 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -324,8 +324,8 @@ struct phy_device *phy_device_create(struct mii_bus *bus, int addr, int phy_id,
- 	mdiodev->device_free = phy_mdio_device_free;
- 	mdiodev->device_remove = phy_mdio_device_remove;
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
+@@ -1111,18 +1111,18 @@ static int iwl_pci_probe(struct pci_dev
  
--	dev->speed = 0;
--	dev->duplex = -1;
-+	dev->speed = SPEED_UNKNOWN;
-+	dev->duplex = DUPLEX_UNKNOWN;
- 	dev->pause = 0;
- 	dev->asym_pause = 0;
- 	dev->link = 1;
--- 
-2.20.1
-
+ 	/* same thing for QuZ... */
+ 	if (iwl_trans->hw_rev == CSR_HW_REV_TYPE_QUZ) {
+-		if (iwl_trans->cfg == &iwl_ax101_cfg_qu_hr)
+-			iwl_trans->cfg = &iwl_ax101_cfg_quz_hr;
+-		else if (iwl_trans->cfg == &iwl_ax201_cfg_qu_hr)
+-			iwl_trans->cfg = &iwl_ax201_cfg_quz_hr;
+-		else if (iwl_trans->cfg == &iwl9461_2ac_cfg_qu_b0_jf_b0)
+-			iwl_trans->cfg = &iwl9461_2ac_cfg_quz_a0_jf_b0_soc;
+-		else if (iwl_trans->cfg == &iwl9462_2ac_cfg_qu_b0_jf_b0)
+-			iwl_trans->cfg = &iwl9462_2ac_cfg_quz_a0_jf_b0_soc;
+-		else if (iwl_trans->cfg == &iwl9560_2ac_cfg_qu_b0_jf_b0)
+-			iwl_trans->cfg = &iwl9560_2ac_cfg_quz_a0_jf_b0_soc;
+-		else if (iwl_trans->cfg == &iwl9560_2ac_160_cfg_qu_b0_jf_b0)
+-			iwl_trans->cfg = &iwl9560_2ac_160_cfg_quz_a0_jf_b0_soc;
++		if (cfg == &iwl_ax101_cfg_qu_hr)
++			cfg = &iwl_ax101_cfg_quz_hr;
++		else if (cfg == &iwl_ax201_cfg_qu_hr)
++			cfg = &iwl_ax201_cfg_quz_hr;
++		else if (cfg == &iwl9461_2ac_cfg_qu_b0_jf_b0)
++			cfg = &iwl9461_2ac_cfg_quz_a0_jf_b0_soc;
++		else if (cfg == &iwl9462_2ac_cfg_qu_b0_jf_b0)
++			cfg = &iwl9462_2ac_cfg_quz_a0_jf_b0_soc;
++		else if (cfg == &iwl9560_2ac_cfg_qu_b0_jf_b0)
++			cfg = &iwl9560_2ac_cfg_quz_a0_jf_b0_soc;
++		else if (cfg == &iwl9560_2ac_160_cfg_qu_b0_jf_b0)
++			cfg = &iwl9560_2ac_160_cfg_quz_a0_jf_b0_soc;
+ 	}
+ 
+ #endif
 
 
