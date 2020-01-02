@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3F6012EE65
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:38:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB79112EFF2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:50:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731228AbgABWiS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:38:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51990 "EHLO mail.kernel.org"
+        id S1730931AbgABWti (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:49:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731193AbgABWiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:38:16 -0500
+        id S1728966AbgABW0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:26:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 781E220863;
-        Thu,  2 Jan 2020 22:38:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B1FC21835;
+        Thu,  2 Jan 2020 22:26:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004695;
-        bh=WDMCCQ5lRqNdoSDb5C9ugWuysJjA9Xq8qi7dfFA45vM=;
+        s=default; t=1578003993;
+        bh=p4Mv2ibaTAv66XQ1VweCtPx1o/WJgXnt76oOV1RZJfk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MLTAY2i3bPgo9h2S+6PWlKI0xQhuucVcNkyZ2d8LhZUOunWcLybjHYXojvv0pGkzS
-         l0ZYwpxxtQ2fGRoS3+k7znHKP+RFj/cvd0G63VYfdgWeglmV+3aUmVL7b24jkxqRIx
-         WuDdAqksb4IMUBXjP+9EPPZBjo24SrMLOPtitJ2U=
+        b=kPszwXN/X6BmK0QmhRuOAFHEHURzvYJ0ki1+u1O4GTQBheTQU1Flw5koY+I0y8juH
+         x3ksBYY2Tst2BVISR4pSMFOVORFWN6C4bmGHTOB00XcTkX51gsqeka/sbyL00L4DA6
+         p+0smA+UK6GArxMAF1YYYESdClkDXzKhD2/EbT/4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.4 087/137] powerpc/irq: fix stack overflow verification
-Date:   Thu,  2 Jan 2020 23:07:40 +0100
-Message-Id: <20200102220558.412954036@linuxfoundation.org>
+        stable@vger.kernel.org, Jay Vosburgh <jay.vosburgh@canonical.com>,
+        Mahesh Bandewar <maheshb@google.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 59/91] bonding: fix active-backup transition after link failure
+Date:   Thu,  2 Jan 2020 23:07:41 +0100
+Message-Id: <20200102220440.474630212@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
+References: <20200102220356.856162165@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,50 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Mahesh Bandewar <maheshb@google.com>
 
-commit 099bc4812f09155da77eeb960a983470249c9ce1 upstream.
+[ Upstream commit 5d485ed88d48f8101a2067348e267c0aaf4ed486 ]
 
-Before commit 0366a1c70b89 ("powerpc/irq: Run softirqs off the top of
-the irq stack"), check_stack_overflow() was called by do_IRQ(), before
-switching to the irq stack.
-In that commit, do_IRQ() was renamed __do_irq(), and is now executing
-on the irq stack, so check_stack_overflow() has just become almost
-useless.
+After the recent fix in commit 1899bb325149 ("bonding: fix state
+transition issue in link monitoring"), the active-backup mode with
+miimon initially come-up fine but after a link-failure, both members
+transition into backup state.
 
-Move check_stack_overflow() call in do_IRQ() to do the check while
-still on the current stack.
+Following steps to reproduce the scenario (eth1 and eth2 are the
+slaves of the bond):
 
-Fixes: 0366a1c70b89 ("powerpc/irq: Run softirqs off the top of the irq stack")
-Cc: stable@vger.kernel.org
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/e033aa8116ab12b7ca9a9c75189ad0741e3b9b5f.1575872340.git.christophe.leroy@c-s.fr
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    ip link set eth1 up
+    ip link set eth2 down
+    sleep 1
+    ip link set eth2 up
+    ip link set eth1 down
+    cat /sys/class/net/eth1/bonding_slave/state
+    cat /sys/class/net/eth2/bonding_slave/state
 
+Fixes: 1899bb325149 ("bonding: fix state transition issue in link monitoring")
+CC: Jay Vosburgh <jay.vosburgh@canonical.com>
+Signed-off-by: Mahesh Bandewar <maheshb@google.com>
+Acked-by: Jay Vosburgh <jay.vosburgh@canonical.com>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/irq.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/bonding/bond_main.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/arch/powerpc/kernel/irq.c
-+++ b/arch/powerpc/kernel/irq.c
-@@ -484,8 +484,6 @@ void __do_irq(struct pt_regs *regs)
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index 5f6602cb191f..fef599eb822b 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -2186,9 +2186,6 @@ static void bond_miimon_commit(struct bonding *bond)
+ 			} else if (BOND_MODE(bond) != BOND_MODE_ACTIVEBACKUP) {
+ 				/* make it immediately active */
+ 				bond_set_active_slave(slave);
+-			} else if (slave != primary) {
+-				/* prevent it from being the active one */
+-				bond_set_backup_slave(slave);
+ 			}
  
- 	trace_irq_entry(regs);
- 
--	check_stack_overflow();
--
- 	/*
- 	 * Query the platform PIC for the interrupt & ack it.
- 	 *
-@@ -517,6 +515,8 @@ void do_IRQ(struct pt_regs *regs)
- 	irqtp = hardirq_ctx[raw_smp_processor_id()];
- 	sirqtp = softirq_ctx[raw_smp_processor_id()];
- 
-+	check_stack_overflow();
-+
- 	/* Already there ? */
- 	if (unlikely(curtp == irqtp || curtp == sirqtp)) {
- 		__do_irq(regs);
+ 			netdev_info(bond->dev, "link status definitely up for interface %s, %u Mbps %s duplex\n",
+-- 
+2.20.1
+
 
 
