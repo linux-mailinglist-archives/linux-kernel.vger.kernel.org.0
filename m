@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D681C12F007
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:51:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 779F012EDAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:31:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729372AbgABWYL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:24:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47564 "EHLO mail.kernel.org"
+        id S1730193AbgABWam (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:30:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729355AbgABWYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:24:06 -0500
+        id S1729864AbgABWag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:30:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5A1A20863;
-        Thu,  2 Jan 2020 22:24:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1324F21D7D;
+        Thu,  2 Jan 2020 22:30:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003846;
-        bh=zl+jMEazS06IPnXQz5OhOUWOzZlmwFDhJDIcf0gR+Mc=;
+        s=default; t=1578004236;
+        bh=UlIrjS1VdleJiidbkoDs/wX9bcdlxfb/lXPxLMDuuM4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FWxQTy+0gf8AYgwnTtKGJAI1pxUBHCChReNLL1Ft6Jrl+sGrDvFuBaPCyXRdlvGaf
-         9BkV8NuWP9QI1D7TguSvY25hlqq9s2Og4N9MN9fghz7VGc+t4tES9FVDD+VT9q+J4J
-         3L8nSgmW53oHW8aSFuHzCh84AnrBjwATFiPd6Hi0=
+        b=xnJn1kGfDWDl/9PsW6a9BiIHO+5p6doVMKJLYMa5OFgpcb5SJ0YRaYNbZHgL610np
+         JB5A/gCE2BhnnXZlpVpowQBlGmhn3vTw9MwXxA3NBTaD3EQHQD+oav6arpzqDtbc+F
+         Ql0dT5JGlnct6BxqgxHgqM0coJfvOwN0ydgM1RFw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 23/91] irqchip: ingenic: Error out if IRQ domain creation failed
+        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 094/171] fjes: fix missed check in fjes_acpi_add
 Date:   Thu,  2 Jan 2020 23:07:05 +0100
-Message-Id: <20200102220423.870611413@linuxfoundation.org>
+Message-Id: <20200102220600.231348306@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
-References: <20200102220356.856162165@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,59 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-[ Upstream commit 52ecc87642f273a599c9913b29fd179c13de457b ]
+[ Upstream commit a288f105a03a7e0e629a8da2b31f34ebf0343ee2 ]
 
-If we cannot create the IRQ domain, the driver should fail to probe
-instead of succeeding with just a warning message.
+fjes_acpi_add() misses a check for platform_device_register_simple().
+Add a check to fix it.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/1570015525-27018-3-git-send-email-zhouyanjie@zoho.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 658d439b2292 ("fjes: Introduce FUJITSU Extended Socket Network Device driver")
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/irqchip/irq-ingenic.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/net/fjes/fjes_main.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/irqchip/irq-ingenic.c b/drivers/irqchip/irq-ingenic.c
-index fc5953dea509..b2e16dca76a6 100644
---- a/drivers/irqchip/irq-ingenic.c
-+++ b/drivers/irqchip/irq-ingenic.c
-@@ -117,6 +117,14 @@ static int __init ingenic_intc_of_init(struct device_node *node,
- 		goto out_unmap_irq;
- 	}
- 
-+	domain = irq_domain_add_legacy(node, num_chips * 32,
-+				       JZ4740_IRQ_BASE, 0,
-+				       &irq_domain_simple_ops, NULL);
-+	if (!domain) {
-+		err = -ENOMEM;
-+		goto out_unmap_base;
-+	}
+--- a/drivers/net/fjes/fjes_main.c
++++ b/drivers/net/fjes/fjes_main.c
+@@ -148,6 +148,9 @@ static int fjes_acpi_add(struct acpi_dev
+ 	/* create platform_device */
+ 	plat_dev = platform_device_register_simple(DRV_NAME, 0, fjes_resource,
+ 						   ARRAY_SIZE(fjes_resource));
++	if (IS_ERR(plat_dev))
++		return PTR_ERR(plat_dev);
 +
- 	for (i = 0; i < num_chips; i++) {
- 		/* Mask all irqs */
- 		writel(0xffffffff, intc->base + (i * CHIP_SIZE) +
-@@ -143,14 +151,11 @@ static int __init ingenic_intc_of_init(struct device_node *node,
- 				       IRQ_NOPROBE | IRQ_LEVEL);
- 	}
+ 	device->driver_data = plat_dev;
  
--	domain = irq_domain_add_legacy(node, num_chips * 32, JZ4740_IRQ_BASE, 0,
--				       &irq_domain_simple_ops, NULL);
--	if (!domain)
--		pr_warn("unable to register IRQ domain\n");
--
- 	setup_irq(parent_irq, &intc_cascade_action);
  	return 0;
- 
-+out_unmap_base:
-+	iounmap(intc->base);
- out_unmap_irq:
- 	irq_dispose_mapping(parent_irq);
- out_free:
--- 
-2.20.1
-
 
 
