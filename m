@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1165612F0CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:55:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9018D12EF65
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:46:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728815AbgABWzw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:55:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34452 "EHLO mail.kernel.org"
+        id S1730546AbgABWpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:45:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728077AbgABWSv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:18:51 -0500
+        id S1730312AbgABWbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:31:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCE112253D;
-        Thu,  2 Jan 2020 22:18:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BF5521D7D;
+        Thu,  2 Jan 2020 22:31:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003531;
-        bh=tgF6Sbt5iFtppaBm3Np8pjSbN/00wXiEhv1ndWcJCWI=;
+        s=default; t=1578004301;
+        bh=kWYJw8yz98cDlxYMDB+WRSgLhd+BiUXxFTIFTO0ALxg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mNjDa/thaUCn6h2RjiVGgYjM6yFlHs6KuiEXtSLADUorwF3Vi1TqHrIW8kavQYgNp
-         DBalCkJz674fDm9jTzESq8aPPDHI1LRg2f7qpZkdbjId1xDCOHsGpwkLJanYekHWWK
-         gP3uSpQ6xntcf9wZP3iPyasg8UnGLZ4XLIJ/diPo=
+        b=LKhdi/rZuLUIrlhzWg8eYyCuBtml9o8yyb/IMyY+IuOdyV6x35N1qKf+CL5LvdDl7
+         ijRgX0wPnK0spEmbCTP9XR851kQKxtEHWqh3evLWXw8If0dwWpJ87Pg//C/GCU3WvD
+         sTRfkQTuGKqDBFAgQXlrruKcJdOfHuImdJyRxT8g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guillaume Nault <gnault@redhat.com>,
-        David Ahern <dsahern@gmail.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 170/191] net/dst: add new function skb_dst_update_pmtu_no_confirm
+        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 121/171] clocksource/drivers/asm9260: Add a check for of_clk_get
 Date:   Thu,  2 Jan 2020 23:07:32 +0100
-Message-Id: <20200102215847.522437349@linuxfoundation.org>
+Message-Id: <20200102220603.868172548@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-[ Upstream commit 07dc35c6e3cc3c001915d05f5bf21f80a39a0970 ]
+[ Upstream commit 6e001f6a4cc73cd06fc7b8c633bc4906c33dd8ad ]
 
-Add a new function skb_dst_update_pmtu_no_confirm() for callers who need
-update pmtu but should not do neighbor confirm.
+asm9260_timer_init misses a check for of_clk_get.
+Add a check for it and print errors like other clocksource drivers.
 
-v5: No change.
-v4: No change.
-v3: Do not remove dst_confirm_neigh, but add a new bool parameter in
-    dst_ops.update_pmtu to control whether we should do neighbor confirm.
-    Also split the big patch to small ones for each area.
-v2: Remove dst_confirm_neigh in __ip6_rt_update_pmtu.
-
-Reviewed-by: Guillaume Nault <gnault@redhat.com>
-Acked-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Link: https://lore.kernel.org/r/20191016124330.22211-1-hslester96@gmail.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/dst.h |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/clocksource/asm9260_timer.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/include/net/dst.h
-+++ b/include/net/dst.h
-@@ -519,6 +519,15 @@ static inline void skb_dst_update_pmtu(s
- 		dst->ops->update_pmtu(dst, NULL, skb, mtu, true);
- }
+diff --git a/drivers/clocksource/asm9260_timer.c b/drivers/clocksource/asm9260_timer.c
+index 1ba871b7fe11..e5717807c00a 100644
+--- a/drivers/clocksource/asm9260_timer.c
++++ b/drivers/clocksource/asm9260_timer.c
+@@ -198,6 +198,10 @@ static int __init asm9260_timer_init(struct device_node *np)
+ 	}
  
-+/* update dst pmtu but not do neighbor confirm */
-+static inline void skb_dst_update_pmtu_no_confirm(struct sk_buff *skb, u32 mtu)
-+{
-+	struct dst_entry *dst = skb_dst(skb);
-+
-+	if (dst && dst->ops->update_pmtu)
-+		dst->ops->update_pmtu(dst, NULL, skb, mtu, false);
-+}
-+
- static inline void skb_tunnel_check_pmtu(struct sk_buff *skb,
- 					 struct dst_entry *encap_dst,
- 					 int headroom)
+ 	clk = of_clk_get(np, 0);
++	if (IS_ERR(clk)) {
++		pr_err("Failed to get clk!\n");
++		return PTR_ERR(clk);
++	}
+ 
+ 	ret = clk_prepare_enable(clk);
+ 	if (ret) {
+-- 
+2.20.1
+
 
 
