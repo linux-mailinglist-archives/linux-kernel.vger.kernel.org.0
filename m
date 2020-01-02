@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 339DF12EC47
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:17:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FD0112EC49
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:17:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbgABWQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:16:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59154 "EHLO mail.kernel.org"
+        id S1727939AbgABWRD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:17:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728307AbgABWQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:16:57 -0500
+        id S1727905AbgABWQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:16:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9928A22314;
-        Thu,  2 Jan 2020 22:16:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00069227BF;
+        Thu,  2 Jan 2020 22:16:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003416;
-        bh=ILr2F9ip7yp2gDwdnnyebGeo5o25gwVP7tX0p4pr8Ns=;
+        s=default; t=1578003418;
+        bh=/GNAuNFE5e987/ISVIjYsKkE1UFI+Kx0wFE1vVGjSA0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jygHwWe2N8153czd3lMQAEnknPpaHHx/QZzis93VOSJjpT1NTCl1RmvFMUShwtRTd
-         JDxwdv70ZaIWR/gdfEVZx+1oQK33tPGun9eFgVUCl9NSrm5dgl6Q+ANvKhxBvfONET
-         rovguTHbNhanqAIpin00Xw9YTVBLQ9uYnxo7itsQ=
+        b=uay4+HsLjWkVjZcBfMFFLdZxT7OK2ioOaUo58VS92fmPfkPVe7DxuKAk3d29znTTJ
+         2siwinEvLnMB/Wt0jFDfB85znkxtgLGq7D8rckg+Lvuhw9yh3Fot7ykr0LHaAe1/jv
+         UnQewgK7/0O2rMkjwvlUe5kVlLQTUbVxPyV7B/Y0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
-        Vlad Buslov <vladbu@mellanox.com>,
-        Davide Caratti <dcaratti@redhat.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 152/191] net/sched: add delete_empty() to filters and use it in cls_flower
-Date:   Thu,  2 Jan 2020 23:07:14 +0100
-Message-Id: <20200102215845.743336018@linuxfoundation.org>
+Subject: [PATCH 5.4 153/191] net_sched: sch_fq: properly set sk->sk_pacing_status
+Date:   Thu,  2 Jan 2020 23:07:15 +0100
+Message-Id: <20200102215845.838130304@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
 References: <20200102215829.911231638@linuxfoundation.org>
@@ -45,152 +45,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit a5b72a083da197b493c7ed1e5730d62d3199f7d6 ]
+[ Upstream commit bb3d0b8bf5be61ab1d6f472c43cbf34de17e796b ]
 
-Revert "net/sched: cls_u32: fix refcount leak in the error path of
-u32_change()", and fix the u32 refcount leak in a more generic way that
-preserves the semantic of rule dumping.
-On tc filters that don't support lockless insertion/removal, there is no
-need to guard against concurrent insertion when a removal is in progress.
-Therefore, for most of them we can avoid a full walk() when deleting, and
-just decrease the refcount, like it was done on older Linux kernels.
-This fixes situations where walk() was wrongly detecting a non-empty
-filter, like it happened with cls_u32 in the error path of change(), thus
-leading to failures in the following tdc selftests:
+If fq_classify() recycles a struct fq_flow because
+a socket structure has been reallocated, we do not
+set sk->sk_pacing_status immediately, but later if the
+flow becomes detached.
 
- 6aa7: (filter, u32) Add/Replace u32 with source match and invalid indev
- 6658: (filter, u32) Add/Replace u32 with custom hash table and invalid handle
- 74c2: (filter, u32) Add/Replace u32 filter with invalid hash table id
+This means that any flow requiring pacing (BBR, or SO_MAX_PACING_RATE)
+might fallback to TCP internal pacing, which requires a per-socket
+high resolution timer, and therefore more cpu cycles.
 
-On cls_flower, and on (future) lockless filters, this check is necessary:
-move all the check_empty() logic in a callback so that each filter
-can have its own implementation. For cls_flower, it's sufficient to check
-if no IDRs have been allocated.
-
-This reverts commit 275c44aa194b7159d1191817b20e076f55f0e620.
-
-Changes since v1:
- - document the need for delete_empty() when TCF_PROTO_OPS_DOIT_UNLOCKED
-   is used, thanks to Vlad Buslov
- - implement delete_empty() without doing fl_walk(), thanks to Vlad Buslov
- - squash revert and new fix in a single patch, to be nice with bisect
-   tests that run tdc on u32 filter, thanks to Dave Miller
-
-Fixes: 275c44aa194b ("net/sched: cls_u32: fix refcount leak in the error path of u32_change()")
-Fixes: 6676d5e416ee ("net: sched: set dedicated tcf_walker flag when tp is empty")
-Suggested-by: Jamal Hadi Salim <jhs@mojatatu.com>
-Suggested-by: Vlad Buslov <vladbu@mellanox.com>
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Reviewed-by: Vlad Buslov <vladbu@mellanox.com>
-Tested-by: Jamal Hadi Salim <jhs@mojatatu.com>
-Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
+Fixes: 218af599fa63 ("tcp: internal implementation for pacing")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Soheil Hassas Yeganeh <soheil@google.com>
+Cc: Neal Cardwell <ncardwell@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/sch_generic.h |    5 +++++
- net/sched/cls_api.c       |   31 +++++--------------------------
- net/sched/cls_flower.c    |   12 ++++++++++++
- 3 files changed, 22 insertions(+), 26 deletions(-)
+ net/sched/sch_fq.c |   17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
---- a/include/net/sch_generic.h
-+++ b/include/net/sch_generic.h
-@@ -308,6 +308,7 @@ struct tcf_proto_ops {
- 	int			(*delete)(struct tcf_proto *tp, void *arg,
- 					  bool *last, bool rtnl_held,
- 					  struct netlink_ext_ack *);
-+	bool			(*delete_empty)(struct tcf_proto *tp);
- 	void			(*walk)(struct tcf_proto *tp,
- 					struct tcf_walker *arg, bool rtnl_held);
- 	int			(*reoffload)(struct tcf_proto *tp, bool add,
-@@ -336,6 +337,10 @@ struct tcf_proto_ops {
- 	int			flags;
- };
+--- a/net/sched/sch_fq.c
++++ b/net/sched/sch_fq.c
+@@ -301,6 +301,9 @@ static struct fq_flow *fq_classify(struc
+ 				     f->socket_hash != sk->sk_hash)) {
+ 				f->credit = q->initial_quantum;
+ 				f->socket_hash = sk->sk_hash;
++				if (q->rate_enable)
++					smp_store_release(&sk->sk_pacing_status,
++							  SK_PACING_FQ);
+ 				if (fq_flow_is_throttled(f))
+ 					fq_flow_unset_throttled(q, f);
+ 				f->time_next_packet = 0ULL;
+@@ -322,8 +325,12 @@ static struct fq_flow *fq_classify(struc
  
-+/* Classifiers setting TCF_PROTO_OPS_DOIT_UNLOCKED in tcf_proto_ops->flags
-+ * are expected to implement tcf_proto_ops->delete_empty(), otherwise race
-+ * conditions can occur when filters are inserted/deleted simultaneously.
-+ */
- enum tcf_proto_ops_flags {
- 	TCF_PROTO_OPS_DOIT_UNLOCKED = 1,
- };
---- a/net/sched/cls_api.c
-+++ b/net/sched/cls_api.c
-@@ -308,33 +308,12 @@ static void tcf_proto_put(struct tcf_pro
- 		tcf_proto_destroy(tp, rtnl_held, true, extack);
- }
+ 	fq_flow_set_detached(f);
+ 	f->sk = sk;
+-	if (skb->sk == sk)
++	if (skb->sk == sk) {
+ 		f->socket_hash = sk->sk_hash;
++		if (q->rate_enable)
++			smp_store_release(&sk->sk_pacing_status,
++					  SK_PACING_FQ);
++	}
+ 	f->credit = q->initial_quantum;
  
--static int walker_check_empty(struct tcf_proto *tp, void *fh,
--			      struct tcf_walker *arg)
-+static bool tcf_proto_check_delete(struct tcf_proto *tp)
- {
--	if (fh) {
--		arg->nonempty = true;
--		return -1;
--	}
--	return 0;
--}
+ 	rb_link_node(&f->fq_node, parent, p);
+@@ -428,17 +435,9 @@ static int fq_enqueue(struct sk_buff *sk
+ 	f->qlen++;
+ 	qdisc_qstats_backlog_inc(sch, skb);
+ 	if (fq_flow_is_detached(f)) {
+-		struct sock *sk = skb->sk;
 -
--static bool tcf_proto_is_empty(struct tcf_proto *tp, bool rtnl_held)
--{
--	struct tcf_walker walker = { .fn = walker_check_empty, };
--
--	if (tp->ops->walk) {
--		tp->ops->walk(tp, &walker, rtnl_held);
--		return !walker.nonempty;
--	}
--	return true;
--}
-+	if (tp->ops->delete_empty)
-+		return tp->ops->delete_empty(tp);
- 
--static bool tcf_proto_check_delete(struct tcf_proto *tp, bool rtnl_held)
--{
--	spin_lock(&tp->lock);
--	if (tcf_proto_is_empty(tp, rtnl_held))
--		tp->deleting = true;
--	spin_unlock(&tp->lock);
-+	tp->deleting = true;
- 	return tp->deleting;
- }
- 
-@@ -1751,7 +1730,7 @@ static void tcf_chain_tp_delete_empty(st
- 	 * concurrently.
- 	 * Mark tp for deletion if it is empty.
- 	 */
--	if (!tp_iter || !tcf_proto_check_delete(tp, rtnl_held)) {
-+	if (!tp_iter || !tcf_proto_check_delete(tp)) {
- 		mutex_unlock(&chain->filter_chain_lock);
- 		return;
+ 		fq_flow_add_tail(&q->new_flows, f);
+ 		if (time_after(jiffies, f->age + q->flow_refill_delay))
+ 			f->credit = max_t(u32, f->credit, q->quantum);
+-		if (sk && q->rate_enable) {
+-			if (unlikely(smp_load_acquire(&sk->sk_pacing_status) !=
+-				     SK_PACING_FQ))
+-				smp_store_release(&sk->sk_pacing_status,
+-						  SK_PACING_FQ);
+-		}
+ 		q->inactive_flows--;
  	}
---- a/net/sched/cls_flower.c
-+++ b/net/sched/cls_flower.c
-@@ -2519,6 +2519,17 @@ static void fl_bind_class(void *fh, u32
- 		f->res.class = cl;
- }
  
-+static bool fl_delete_empty(struct tcf_proto *tp)
-+{
-+	struct cls_fl_head *head = fl_head_dereference(tp);
-+
-+	spin_lock(&tp->lock);
-+	tp->deleting = idr_is_empty(&head->handle_idr);
-+	spin_unlock(&tp->lock);
-+
-+	return tp->deleting;
-+}
-+
- static struct tcf_proto_ops cls_fl_ops __read_mostly = {
- 	.kind		= "flower",
- 	.classify	= fl_classify,
-@@ -2528,6 +2539,7 @@ static struct tcf_proto_ops cls_fl_ops _
- 	.put		= fl_put,
- 	.change		= fl_change,
- 	.delete		= fl_delete,
-+	.delete_empty	= fl_delete_empty,
- 	.walk		= fl_walk,
- 	.reoffload	= fl_reoffload,
- 	.hw_add		= fl_hw_add,
 
 
