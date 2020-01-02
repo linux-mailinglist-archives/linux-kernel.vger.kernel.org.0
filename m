@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0A1912ECD2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:22:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E60C12ED49
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:26:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729125AbgABWWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:22:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42536 "EHLO mail.kernel.org"
+        id S1729547AbgABW0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:26:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727532AbgABWWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:22:16 -0500
+        id S1729545AbgABW0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:26:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE48C21D7D;
-        Thu,  2 Jan 2020 22:22:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D19A724649;
+        Thu,  2 Jan 2020 22:26:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003735;
-        bh=9N5Do3eHMPg3N2LbGNZ8XxcUabmcnKwWjINHbtRGIks=;
+        s=default; t=1578004000;
+        bh=acmRMlViayMjg+TGBcAMp3fREFhCF9WtXzdHfgDleL0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=losBAUmAa45ehbKG0PGIm2M501Yfm+a4Cnu9XHkaMZ935ZVEmojbw2fbqqw9Y5Hvm
-         dB1DoklQ+ulgqewouNbFcPJWdHZWv+9scdbJmlldv7yy+4ECdQ8WXnIJN9ljmvCu6d
-         4oU2qVAdaUS4c+E01Z5qE8iecGLCLKD/4MTvT0P8=
+        b=AVc5KjLMxk6POJwQ/LEZetWqh0NTX8uXnpN4C+nYvbRTlNC6hx+u2KzF9PsfY1tXS
+         HMUQev0X23YVE57E5i6J2XmoGuhtK7oEpALsgojgclwmM1QS4snhd2wZVcHf9QnDz6
+         jgy9cW4/OY6Vo/Mc05dkUY8yo5pUz4dGmTFE2hP4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 092/114] net: stmmac: dwmac-meson8b: Fix the RGMII TX delay on Meson8b/8m2 SoCs
+        syzbot+3031f712c7ad5dd4d926@syzkaller.appspotmail.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Siddharth Chandrasekaran <csiddharth@vmware.com>
+Subject: [PATCH 4.14 62/91] filldir[64]: remove WARN_ON_ONCE() for bad directory entries
 Date:   Thu,  2 Jan 2020 23:07:44 +0100
-Message-Id: <20200102220038.435278242@linuxfoundation.org>
+Message-Id: <20200102220441.560177243@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
+References: <20200102220356.856162165@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,80 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit bd6f48546b9cb7a785344fc78058c420923d7ed8 ]
+commit b9959c7a347d6adbb558fba7e36e9fef3cba3b07 upstream.
 
-GXBB and newer SoCs use the fixed FCLK_DIV2 (1GHz) clock as input for
-the m250_sel clock. Meson8b and Meson8m2 use MPLL2 instead, whose rate
-can be adjusted at runtime.
+This was always meant to be a temporary thing, just for testing and to
+see if it actually ever triggered.
 
-So far we have been running MPLL2 with ~250MHz (and the internal
-m250_div with value 1), which worked enough that we could transfer data
-with an TX delay of 4ns. Unfortunately there is high packet loss with
-an RGMII PHY when transferring data (receiving data works fine though).
-Odroid-C1's u-boot is running with a TX delay of only 2ns as well as
-the internal m250_div set to 2 - no lost (TX) packets can be observed
-with that setting in u-boot.
+The only thing that reported it was syzbot doing disk image fuzzing, and
+then that warning is expected.  So let's just remove it before -rc4,
+because the extra sanity testing should probably go to -stable, but we
+don't want the warning to do so.
 
-Manual testing has shown that the TX packet loss goes away when using
-the following settings in Linux (the vendor kernel uses the same
-settings):
-- MPLL2 clock set to ~500MHz
-- m250_div set to 2
-- TX delay set to 2ns on the MAC side
-
-Update the m250_div divider settings to only accept dividers greater or
-equal 2 to fix the TX delay generated by the MAC.
-
-iperf3 results before the change:
-[ ID] Interval           Transfer     Bitrate         Retr
-[  5]   0.00-10.00  sec   182 MBytes   153 Mbits/sec  514      sender
-[  5]   0.00-10.00  sec   182 MBytes   152 Mbits/sec           receiver
-
-iperf3 results after the change (including an updated TX delay of 2ns):
-[ ID] Interval           Transfer     Bitrate         Retr  Cwnd
-[  5]   0.00-10.00  sec   927 MBytes   778 Mbits/sec    0      sender
-[  5]   0.00-10.01  sec   927 MBytes   777 Mbits/sec           receiver
-
-Fixes: 4f6a71b84e1afd ("net: stmmac: dwmac-meson8b: fix internal RGMII clock configuration")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: syzbot+3031f712c7ad5dd4d926@syzkaller.appspotmail.com
+Fixes: 8a23eb804ca4 ("Make filldir[64]() verify the directory entry filename is valid")
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Siddharth Chandrasekaran <csiddharth@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-@@ -118,6 +118,14 @@ static int meson8b_init_rgmii_tx_clk(str
- 	struct device *dev = dwmac->dev;
- 	const char *parent_name, *mux_parent_names[MUX_CLK_NUM_PARENTS];
- 	struct meson8b_dwmac_clk_configs *clk_configs;
-+	static const struct clk_div_table div_table[] = {
-+		{ .div = 2, .val = 2, },
-+		{ .div = 3, .val = 3, },
-+		{ .div = 4, .val = 4, },
-+		{ .div = 5, .val = 5, },
-+		{ .div = 6, .val = 6, },
-+		{ .div = 7, .val = 7, },
-+	};
- 
- 	clk_configs = devm_kzalloc(dev, sizeof(*clk_configs), GFP_KERNEL);
- 	if (!clk_configs)
-@@ -152,9 +160,9 @@ static int meson8b_init_rgmii_tx_clk(str
- 	clk_configs->m250_div.reg = dwmac->regs + PRG_ETH0;
- 	clk_configs->m250_div.shift = PRG_ETH0_CLK_M250_DIV_SHIFT;
- 	clk_configs->m250_div.width = PRG_ETH0_CLK_M250_DIV_WIDTH;
--	clk_configs->m250_div.flags = CLK_DIVIDER_ONE_BASED |
--				CLK_DIVIDER_ALLOW_ZERO |
--				CLK_DIVIDER_ROUND_CLOSEST;
-+	clk_configs->m250_div.table = div_table;
-+	clk_configs->m250_div.flags = CLK_DIVIDER_ALLOW_ZERO |
-+				      CLK_DIVIDER_ROUND_CLOSEST;
- 	clk = meson8b_dwmac_register_clk(dwmac, "m250_div", &parent_name, 1,
- 					 &clk_divider_ops,
- 					 &clk_configs->m250_div.hw);
+---
+ fs/readdir.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/fs/readdir.c
++++ b/fs/readdir.c
+@@ -92,9 +92,9 @@ EXPORT_SYMBOL(iterate_dir);
+  */
+ static int verify_dirent_name(const char *name, int len)
+ {
+-	if (WARN_ON_ONCE(!len))
++	if (!len)
+ 		return -EIO;
+-	if (WARN_ON_ONCE(memchr(name, '/', len)))
++	if (memchr(name, '/', len))
+ 		return -EIO;
+ 	return 0;
+ }
 
 
