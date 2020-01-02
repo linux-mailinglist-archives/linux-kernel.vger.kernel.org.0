@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FE6F12F0D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:56:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 823E712EEBE
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:41:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbgABWSo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:18:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34094 "EHLO mail.kernel.org"
+        id S1731192AbgABWkk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:40:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727904AbgABWSk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:18:40 -0500
+        id S1731273AbgABWiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:38:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF72D21582;
-        Thu,  2 Jan 2020 22:18:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5AE9217F4;
+        Thu,  2 Jan 2020 22:38:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003519;
-        bh=GT98iZjKaCrHRL5l1UxVJ9CxZ/AVP+iKA7RnFMB2bIw=;
+        s=default; t=1578004691;
+        bh=DrMkQubWzL8TRWQ6BdEhxtUI4bDasxnhwOZ4Cpj6aeM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HyDAOvDar9bR3PwR6lvpChoL+GZgp8jrjznT30+BXLKjGMBhCVHz6hzLAA2zfJZAh
-         /LJ6pHj9n6afZJxQwoT4cBZdpY6vb/XtjWEWYsXRwoWvF1tByljsLG4D2p5KYtcNAf
-         z/c/0QJ7utcrQAxE0IM3y2wDpw80UV5vA9VcWUSs=
+        b=vqC7JMZD52O50zOqq0F5QKnZzv9WRZHsKMxc+VbzKyD+DnQMllsEV2Fz40e+BegwD
+         dbP0i9HiAcdlVIw5SOAt1XQW8JSTabTqMUjiw8NojS/MNASzAb/cprAtjTA7bukQu0
+         Yzj9nfLrUzprfbWETc7toXH8MWdsC+qt9QRobZzo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 175/191] net: dsa: sja1105: Reconcile the meaning of TPID and TPID2 for E/T and P/Q/R/S
-Date:   Thu,  2 Jan 2020 23:07:37 +0100
-Message-Id: <20200102215848.054114222@linuxfoundation.org>
+        stable@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>
+Subject: [PATCH 4.4 085/137] staging: comedi: gsc_hpdi: check dma_alloc_coherent() return value
+Date:   Thu,  2 Jan 2020 23:07:38 +0100
+Message-Id: <20200102220558.121434781@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,90 +42,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Oltean <olteanv@gmail.com>
+From: Ian Abbott <abbotti@mev.co.uk>
 
-[ Upstream commit 54fa49ee88138756df0fcf867cb1849904710a8c ]
+commit ab42b48f32d4c766420c3499ee9c0289b7028182 upstream.
 
-For first-generation switches (SJA1105E and SJA1105T):
-- TPID means C-Tag (typically 0x8100)
-- TPID2 means S-Tag (typically 0x88A8)
+The "auto-attach" handler function `gsc_hpdi_auto_attach()` calls
+`dma_alloc_coherent()` in a loop to allocate some DMA data buffers, and
+also calls it to allocate a buffer for a DMA descriptor chain.  However,
+it does not check the return value of any of these calls.  Change
+`gsc_hpdi_auto_attach()` to return `-ENOMEM` if any of these
+`dma_alloc_coherent()` calls fail.  This will result in the comedi core
+calling the "detach" handler `gsc_hpdi_detach()` as part of the
+clean-up, which will call `gsc_hpdi_free_dma()` to free any allocated
+DMA coherent memory buffers.
 
-While for the second generation switches (SJA1105P, SJA1105Q, SJA1105R,
-SJA1105S) it is the other way around:
-- TPID means S-Tag (typically 0x88A8)
-- TPID2 means C-Tag (typically 0x8100)
-
-In other words, E/T tags untagged traffic with TPID, and P/Q/R/S with
-TPID2.
-
-So the patch mentioned below fixed VLAN filtering for P/Q/R/S, but broke
-it for E/T.
-
-We strive for a common code path for all switches in the family, so just
-lie in the static config packing functions that TPID and TPID2 are at
-swapped bit offsets than they actually are, for P/Q/R/S. This will make
-both switches understand TPID to be ETH_P_8021Q and TPID2 to be
-ETH_P_8021AD. The meaning from the original E/T was chosen over P/Q/R/S
-because E/T is actually the one with public documentation available
-(UM10944.pdf).
-
-Fixes: f9a1a7646c0d ("net: dsa: sja1105: Reverse TPID and TPID2")
-Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: <stable@vger.kernel.org> #4.6+
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+Link: https://lore.kernel.org/r/20191216110823.216237-1-abbotti@mev.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/dsa/sja1105/sja1105_main.c          |    8 ++++----
- drivers/net/dsa/sja1105/sja1105_static_config.c |    7 +++++--
- 2 files changed, 9 insertions(+), 6 deletions(-)
 
---- a/drivers/net/dsa/sja1105/sja1105_main.c
-+++ b/drivers/net/dsa/sja1105/sja1105_main.c
-@@ -1560,8 +1560,8 @@ static int sja1105_vlan_filtering(struct
- 
- 	if (enabled) {
- 		/* Enable VLAN filtering. */
--		tpid  = ETH_P_8021AD;
--		tpid2 = ETH_P_8021Q;
-+		tpid  = ETH_P_8021Q;
-+		tpid2 = ETH_P_8021AD;
- 	} else {
- 		/* Disable VLAN filtering. */
- 		tpid  = ETH_P_SJA1105;
-@@ -1570,9 +1570,9 @@ static int sja1105_vlan_filtering(struct
- 
- 	table = &priv->static_config.tables[BLK_IDX_GENERAL_PARAMS];
- 	general_params = table->entries;
--	/* EtherType used to identify outer tagged (S-tag) VLAN traffic */
--	general_params->tpid = tpid;
- 	/* EtherType used to identify inner tagged (C-tag) VLAN traffic */
-+	general_params->tpid = tpid;
-+	/* EtherType used to identify outer tagged (S-tag) VLAN traffic */
- 	general_params->tpid2 = tpid2;
- 	/* When VLAN filtering is on, we need to at least be able to
- 	 * decode management traffic through the "backup plan".
---- a/drivers/net/dsa/sja1105/sja1105_static_config.c
-+++ b/drivers/net/dsa/sja1105/sja1105_static_config.c
-@@ -142,6 +142,9 @@ static size_t sja1105et_general_params_e
- 	return size;
- }
- 
-+/* TPID and TPID2 are intentionally reversed so that semantic
-+ * compatibility with E/T is kept.
-+ */
- static size_t
- sja1105pqrs_general_params_entry_packing(void *buf, void *entry_ptr,
- 					 enum packing_op op)
-@@ -166,9 +169,9 @@ sja1105pqrs_general_params_entry_packing
- 	sja1105_packing(buf, &entry->mirr_port,   141, 139, size, op);
- 	sja1105_packing(buf, &entry->vlmarker,    138, 107, size, op);
- 	sja1105_packing(buf, &entry->vlmask,      106,  75, size, op);
--	sja1105_packing(buf, &entry->tpid,         74,  59, size, op);
-+	sja1105_packing(buf, &entry->tpid2,        74,  59, size, op);
- 	sja1105_packing(buf, &entry->ignore2stf,   58,  58, size, op);
--	sja1105_packing(buf, &entry->tpid2,        57,  42, size, op);
-+	sja1105_packing(buf, &entry->tpid,         57,  42, size, op);
- 	sja1105_packing(buf, &entry->queue_ts,     41,  41, size, op);
- 	sja1105_packing(buf, &entry->egrmirrvid,   40,  29, size, op);
- 	sja1105_packing(buf, &entry->egrmirrpcp,   28,  26, size, op);
+---
+ drivers/staging/comedi/drivers/gsc_hpdi.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+--- a/drivers/staging/comedi/drivers/gsc_hpdi.c
++++ b/drivers/staging/comedi/drivers/gsc_hpdi.c
+@@ -632,12 +632,22 @@ static int gsc_hpdi_auto_attach(struct c
+ 		devpriv->dio_buffer[i] =
+ 		    pci_alloc_consistent(pcidev, DMA_BUFFER_SIZE,
+ 					 &devpriv->dio_buffer_phys_addr[i]);
++		if (!devpriv->dio_buffer[i]) {
++			dev_warn(dev->class_dev,
++				 "failed to allocate DMA buffer\n");
++			return -ENOMEM;
++		}
+ 	}
+ 	/* allocate dma descriptors */
+ 	devpriv->dma_desc = pci_alloc_consistent(pcidev,
+ 						 sizeof(struct plx_dma_desc) *
+ 						 NUM_DMA_DESCRIPTORS,
+ 						 &devpriv->dma_desc_phys_addr);
++	if (!devpriv->dma_desc) {
++		dev_warn(dev->class_dev,
++			 "failed to allocate DMA descriptors\n");
++		return -ENOMEM;
++	}
+ 	if (devpriv->dma_desc_phys_addr & 0xf) {
+ 		dev_warn(dev->class_dev,
+ 			 " dma descriptors not quad-word aligned (bug)\n");
 
 
