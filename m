@@ -2,152 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C305212E6F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 14:53:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FEA212E6F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 14:55:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728431AbgABNx4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 08:53:56 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34952 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728342AbgABNxz (ORCPT
+        id S1728481AbgABNzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 08:55:05 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37896 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728342AbgABNzF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 08:53:55 -0500
-Received: by mail-wm1-f65.google.com with SMTP id p17so5721278wmb.0;
-        Thu, 02 Jan 2020 05:53:53 -0800 (PST)
+        Thu, 2 Jan 2020 08:55:05 -0500
+Received: by mail-wm1-f67.google.com with SMTP id u2so5700477wmc.3;
+        Thu, 02 Jan 2020 05:55:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=UWP8T2dSY7on4bhuJvvJczYvJx5ExaoKE13WYmlRLaE=;
-        b=BpAs5Ymn625eA/7UDL2mngUe6FHCqNi1N5DPpTwF++MjAalqhYw13VZ121XTxdW3bc
-         k8XUmRiv8I/FedSc6Z4suNRUXX70I53CVZXDmBIbOaN3+WvwJfRqxu7CJTqxlJQOsX5w
-         oKyuAo9tHeP2XALMiOaRJIyKsgirGl96iFYh7ACCMujtTGqKdCQC48ImRJ7UsqB4u5EY
-         QxpwwRl5coiAMuozQqicMQxMsvRhOk5KPvqUUulgtNY3GOZoKevSI3F2UMdYeZs/y4u8
-         CvHPtK7IZk6u9KQbPqjOuZ5w6eiaHGTfIdy8WzjjtuOZ6viGLVL30rkCth30aDrWxMX2
-         QlAg==
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Umw3KabgQc+joAVZVI/kqZfdiIRA+6g2g4xfLJJZ/Ts=;
+        b=W6MKeho9eQynkeDso8Ap8avMGZoSiEZy9PoRcCXamHEpKXKVXeb7UhSzOMr259Bp7d
+         mhf27AUh3BZkAdcmB2YdYYSuBiqE+/cKgmcSNsHgmmKoR7kAfdj+HaE78jc/45raO0h3
+         bW6yKE+KXVRlEWiBTVftfape34T3lSwfTvNvi0fzy4VuUKFi4ZwFeXzfuhR+LmpSRj3I
+         j34XadXGgRwyxLIrI6cvGRwFts0h9rpEJmlpt1+dWtReAiszQAT4fyIFeEtkOCE3H+4s
+         EjVy4SohDJp5rGoXovhyQVDoLQU0A6+LhVe+ZZC1CHe4eavB/IU8vm6hTLhFIXhv/FAG
+         50pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=UWP8T2dSY7on4bhuJvvJczYvJx5ExaoKE13WYmlRLaE=;
-        b=dmh+oSGhA+dWujlajUY8HMRwoW+akNUJQ6VvdPPI0QUjSH9EKRPQbItGVlNdueMz2V
-         NCuxQoL13TA6LmAm2FjKrVyEYO+ImAW1Z1HR3NKhawGnwU2/AQDtloCNav7i8dlXnGyc
-         IByiLM7fIRBtaFMVXV8CQD/jkM+ynCEohwFyqN1Ap4al73ST+SJLrNozcbl2dI78LBKs
-         wXCEEOGkm3odDIIXYPn85ROUiRutGwMTIY5tIkw0u8XwH9pJnLVD+McGVDCtxkdrZU2W
-         I+hUCHsEwkcSeK3uyyzGmtsGRkLZP1hY0BaO/9y/JdcMAZXrD3GmQ+ZvVs8G/54UT4Zq
-         0YfQ==
-X-Gm-Message-State: APjAAAUMKEttCUSmxcW4V9uV74v2ZTV3WMVzqbfFOU2zJXdZwWr4zuLi
-        k/9TtMJEOd2feH2Sv4d+wD3OZFxXsog=
-X-Google-Smtp-Source: APXvYqxufgSY0u9Yp9j7987C/5ccAx6l5mQEkU9dAfV0VueShs93vukz+XU6wUh2h1CSSgsoa0ZKlw==
-X-Received: by 2002:a1c:4d18:: with SMTP id o24mr14415612wmh.35.1577973232941;
-        Thu, 02 Jan 2020 05:53:52 -0800 (PST)
-Received: from localhost.localdomain ([46.216.160.87])
-        by smtp.gmail.com with ESMTPSA id a184sm8755176wmf.29.2020.01.02.05.53.52
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Umw3KabgQc+joAVZVI/kqZfdiIRA+6g2g4xfLJJZ/Ts=;
+        b=COVQZHEj3aIHia5BN/yIuFV4gZpgTsd6nwhkvQcz2DN2r+i9ZGaNekM6tzXOdCluH8
+         06Aq09cHUUuPB/q81Xe8qc1jaSShk9oFNC5KQ2I4TZYpRPWfHKbgy2IBrJR1alOMG6LH
+         gwzVH0v56SYhSmj49b9th6QdDcw6xJfFaEUA0sUNkfHwtd6eHjVPHk6CcFEINE5ELAeX
+         K8Q87q13r/UJ2cOOfOD8y+SQIUoU4zD4RhnRw+CSkVqzpL5ut7JdV34/CEKIKvtCVMjx
+         rDCEul4dPrm2yyJ9GCfcSpeeLSBfvQnkZYioKo7ge3yY7WTa0Mo+QBkgk7cgib7mXI77
+         a6NQ==
+X-Gm-Message-State: APjAAAX+1WB2tLpAVT35YfSYOJ07gpRq3K+KVkgr+lTEZiHKzbAdrK9T
+        OUVNML0G8m17+34/VSdBqC8=
+X-Google-Smtp-Source: APXvYqzH+bnnP2wiom274iCBMvTz7vSwKEfteTZgsf9jqEkx9QNftRRR/QFV7K1ZUpOcajGbx9Acag==
+X-Received: by 2002:a1c:2786:: with SMTP id n128mr14851523wmn.47.1577973303893;
+        Thu, 02 Jan 2020 05:55:03 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id i16sm8689698wmb.36.2020.01.02.05.55.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 05:53:52 -0800 (PST)
-Received: from [127.0.0.1] (helo=jeknote.loshitsa1.net)
-        by localhost.localdomain with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <jekhor@gmail.com>)
-        id 1in0v8-00055Z-WC; Thu, 02 Jan 2020 16:53:51 +0300
-Date:   Thu, 2 Jan 2020 16:53:35 +0300
-From:   Yauhen Kharuzhy <jekhor@gmail.com>
-To:     linux-pm@vger.kernel.org
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] power: supply: bq25890_charger: Add support of
- BQ25892 and BQ25896 chips
-Message-ID: <20200102135335.GA13218@jeknote.loshitsa1.net>
-References: <20200101224627.12093-1-jekhor@gmail.com>
+        Thu, 02 Jan 2020 05:55:03 -0800 (PST)
+Date:   Thu, 2 Jan 2020 14:55:02 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        sj1557.seo@samsung.com, linkinjeon@gmail.com
+Subject: Re: [PATCH v9 10/13] exfat: add nls operations
+Message-ID: <20200102135502.hkey7z45gnprinpp@pali>
+References: <20200102082036.29643-1-namjae.jeon@samsung.com>
+ <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com>
+ <20200102082036.29643-11-namjae.jeon@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200101224627.12093-1-jekhor@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200102082036.29643-11-namjae.jeon@samsung.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 02, 2020 at 01:46:25AM +0300, Yauhen Kharuzhy wrote:
-> Support BQ25892 and BQ25896 chips by this driver. They shared one chip
-> ID 0, so distinquish them by device revisions (2 for 25896 and 1 for
-> 25892).
+On Thursday 02 January 2020 16:20:33 Namjae Jeon wrote:
+> This adds the implementation of nls operations for exfat.
 > 
-> Signed-off-by: Yauhen Kharuzhy <jekhor@gmail.com>
+> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
 > ---
->  drivers/power/supply/bq25890_charger.c | 97 ++++++++++++++++++++------
->  1 file changed, 76 insertions(+), 21 deletions(-)
+>  fs/exfat/nls.c | 809 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 809 insertions(+)
+>  create mode 100644 fs/exfat/nls.c
 > 
-> diff --git a/drivers/power/supply/bq25890_charger.c b/drivers/power/supply/bq25890_charger.c
-> index 9d1ec8d677de..a3dcd4eb1287 100644
-> --- a/drivers/power/supply/bq25890_charger.c
-> +++ b/drivers/power/supply/bq25890_charger.c
-> @@ -25,12 +25,20 @@
->  #define BQ25895_ID			7
->  #define BQ25896_ID			0
->  
-> +enum bq25890_chip_version {
-> +	BQ25890,
-> +	BQ25892,
-> +	BQ25895,
-> +	BQ25896,
-> +};
-> +
-...
-> +static int bq25890_get_chip_version(struct bq25890_device *bq)
-> +{
-> +	int id, rev;
-> +
-> +	id = bq25890_field_read(bq, F_PN);
-> +	if (id < 0) {
-> +		dev_err(bq->dev, "Cannot read chip ID.\n");
-> +		return id;
-> +	}
-> +
-> +	rev = bq25890_field_read(bq, F_DEV_REV);
-> +	if (rev < 0) {
-> +		dev_err(bq->dev, "Cannot read chip revision.\n");
-> +		return id;
-> +	}
-> +
-> +	switch (id) {
-> +	case BQ25890_ID:
-> +		bq->chip_version = BQ25890;
-> +		break;
-> +
-> +	/* BQ25892 and BQ25896 share same ID 0 */
-> +	case BQ25896_ID:
-> +		switch (rev) {
-> +		case 0:
-Sorry, typo here: should be 2 for 25896, I will fix this in v2.
+> diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
+> new file mode 100644
+> index 000000000000..af52328e28ff
+> --- /dev/null
+> +++ b/fs/exfat/nls.c
 
-> +			bq->chip_version = BQ25896;
-> +			break;
-> +		case 1:
-> +			bq->chip_version = BQ25892;
-> +			break;
-> +		default:
-> +			dev_err(bq->dev,
-> +				"Unknown device revision %d, assume BQ25892\n",
-> +				rev);
-> +			bq->chip_version = BQ25892;
-> +		}
-> +		break;
-> +
-> +	case BQ25895_ID:
-> +		bq->chip_version = BQ25895;
-> +		break;
-> +
-> +	default:
-> +		dev_err(bq->dev, "Unknown chip ID %d\n", id);
-> +		return -ENODEV;
-> +	}
-> +
-> +	return 0;
-> +}
 ...
+
+> +int exfat_nls_uni16s_to_vfsname(struct super_block *sb,
+> +		struct exfat_uni_name *uniname, unsigned char *p_cstring,
+> +		int buflen)
+> +{
+> +	if (EXFAT_SB(sb)->options.utf8)
+> +		return __exfat_nls_utf16s_to_vfsname(sb, uniname, p_cstring,
+> +				buflen);
+> +	return __exfat_nls_uni16s_to_vfsname(sb, uniname, p_cstring, buflen);
+> +}
+
+Hello, I'm looking at this function and basically it do nothing.
+Or was it supposed that this function should do something more for UTF-8
+encoding?
+
+There is one if- statement, but in both branches is executed exactly
+same code.
+
+And executed function just pass same arguments as current callee
+function.
+
+So calls to exfat_nls_uni16s_to_vfsname() can be replaced by direct
+calls to __exfat_nls_uni16s_to_vfsname().
+
+Or maybe better, rename __exfat_nls_uni16s_to_vfsname() function to
+exfat_nls_uni16s_to_vfsname().
+
+> +int exfat_nls_vfsname_to_uni16s(struct super_block *sb,
+> +		const unsigned char *p_cstring, const int len,
+> +		struct exfat_uni_name *uniname, int *p_lossy)
+> +{
+> +	if (EXFAT_SB(sb)->options.utf8)
+> +		return __exfat_nls_vfsname_to_utf16s(sb, p_cstring, len,
+> +				uniname, p_lossy);
+> +	return __exfat_nls_vfsname_to_uni16s(sb, p_cstring, len, uniname,
+> +			p_lossy);
+> +}
+
+And same for this function.
 
 -- 
-Yauhen Kharuzhy
+Pali Rohár
+pali.rohar@gmail.com
