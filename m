@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F0E512F107
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:57:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2020F12EECC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:41:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729090AbgABW5b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:57:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59114 "EHLO mail.kernel.org"
+        id S1731060AbgABWhM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:37:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727228AbgABWQy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:16:54 -0500
+        id S1731048AbgABWhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:37:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35D6522314;
-        Thu,  2 Jan 2020 22:16:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6837C22314;
+        Thu,  2 Jan 2020 22:37:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003413;
-        bh=BqX7q04+FN+mZ1t824BNPAXjx17/+bgB/b3nPi663bg=;
+        s=default; t=1578004628;
+        bh=7yEOn4Jd5O+dOTLP0g3C1EaU2y36JagguQ6im/ODAfw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YcJVoj2+7xSCN3KiBomGdMq+t9bXPsQJPRgygLSLHQeofYAdXypToMUb0gp9FB/YW
-         4wFILAfLJe8/XGUfznAPMhEsqYQu758LVXPd3AE+h5b+nDcCDtLtWvNo/IKxjf1tWA
-         URTaKe0AJecvNAURXFyRVDVAZLEV0YRXSQNAIEZk=
+        b=y0g3hstXhYYbdj0IqHBD/s81uX1BCVwPZoTRpsW5nIUzUHZPah74dJLZ2A+86r7dp
+         y3ivVXEewa+Lwl1uS+Ex/PwGW3RvBLYp77SW81+v7bL4ugXLiIZb+fueZ8fU+HmRE4
+         3ie5Hco0ega9gXk2xzzw9xVO8UPNnyo5HFxmWccA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shmulik Ladkani <sladkani@proofpoint.com>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 151/191] net/sched: act_mirred: Pull mac prior redir to non mac_header_xmit device
+        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 060/137] iwlwifi: check kasprintf() return value
 Date:   Thu,  2 Jan 2020 23:07:13 +0100
-Message-Id: <20200102215845.650407157@linuxfoundation.org>
+Message-Id: <20200102220554.581199875@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,87 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shmulik Ladkani <sladkani@proofpoint.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-[ Upstream commit 70cf3dc7313207816255b9acb0dffb19dae78144 ]
+[ Upstream commit 5974fbb5e10b018fdbe3c3b81cb4cc54e1105ab9 ]
 
-There's no skb_pull performed when a mirred action is set at egress of a
-mac device, with a target device/action that expects skb->data to point
-at the network header.
+kasprintf() can fail, we should check the return value.
 
-As a result, either the target device is errornously given an skb with
-data pointing to the mac (egress case), or the net stack receives the
-skb with data pointing to the mac (ingress case).
-
-E.g:
- # tc qdisc add dev eth9 root handle 1: prio
- # tc filter add dev eth9 parent 1: prio 9 protocol ip handle 9 basic \
-   action mirred egress redirect dev tun0
-
- (tun0 is a tun device. result: tun0 errornously gets the eth header
-  instead of the iph)
-
-Revise the push/pull logic of tcf_mirred_act() to not rely on the
-skb_at_tc_ingress() vs tcf_mirred_act_wants_ingress() comparison, as it
-does not cover all "pull" cases.
-
-Instead, calculate whether the required action on the target device
-requires the data to point at the network header, and compare this to
-whether skb->data points to network header - and make the push/pull
-adjustments as necessary.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Shmulik Ladkani <sladkani@proofpoint.com>
-Tested-by: Jamal Hadi Salim <jhs@mojatatu.com>
-Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 5ed540aecc2a ("iwlwifi: use mac80211 throughput trigger")
+Fixes: 8ca151b568b6 ("iwlwifi: add the MVM driver")
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sched/act_mirred.c |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ drivers/net/wireless/iwlwifi/dvm/led.c | 3 +++
+ drivers/net/wireless/iwlwifi/mvm/led.c | 3 +++
+ 2 files changed, 6 insertions(+)
 
---- a/net/sched/act_mirred.c
-+++ b/net/sched/act_mirred.c
-@@ -219,8 +219,10 @@ static int tcf_mirred_act(struct sk_buff
- 	bool use_reinsert;
- 	bool want_ingress;
- 	bool is_redirect;
-+	bool expects_nh;
- 	int m_eaction;
- 	int mac_len;
-+	bool at_nh;
+diff --git a/drivers/net/wireless/iwlwifi/dvm/led.c b/drivers/net/wireless/iwlwifi/dvm/led.c
+index ca4d6692cc4e..47e5fa70483d 100644
+--- a/drivers/net/wireless/iwlwifi/dvm/led.c
++++ b/drivers/net/wireless/iwlwifi/dvm/led.c
+@@ -184,6 +184,9 @@ void iwl_leds_init(struct iwl_priv *priv)
  
- 	rec_level = __this_cpu_inc_return(mirred_rec_level);
- 	if (unlikely(rec_level > MIRRED_RECURSION_LIMIT)) {
-@@ -261,19 +263,19 @@ static int tcf_mirred_act(struct sk_buff
- 			goto out;
- 	}
- 
--	/* If action's target direction differs than filter's direction,
--	 * and devices expect a mac header on xmit, then mac push/pull is
--	 * needed.
--	 */
- 	want_ingress = tcf_mirred_act_wants_ingress(m_eaction);
--	if (skb_at_tc_ingress(skb) != want_ingress && m_mac_header_xmit) {
--		if (!skb_at_tc_ingress(skb)) {
--			/* caught at egress, act ingress: pull mac */
--			mac_len = skb_network_header(skb) - skb_mac_header(skb);
+ 	priv->led.name = kasprintf(GFP_KERNEL, "%s-led",
+ 				   wiphy_name(priv->hw->wiphy));
++	if (!priv->led.name)
++		return;
 +
-+	expects_nh = want_ingress || !m_mac_header_xmit;
-+	at_nh = skb->data == skb_network_header(skb);
-+	if (at_nh != expects_nh) {
-+		mac_len = skb_at_tc_ingress(skb) ? skb->mac_len :
-+			  skb_network_header(skb) - skb_mac_header(skb);
-+		if (expects_nh) {
-+			/* target device/action expect data at nh */
- 			skb_pull_rcsum(skb2, mac_len);
- 		} else {
--			/* caught at ingress, act egress: push mac */
--			skb_push_rcsum(skb2, skb->mac_len);
-+			/* target device/action expect data at mac */
-+			skb_push_rcsum(skb2, mac_len);
- 		}
- 	}
+ 	priv->led.brightness_set = iwl_led_brightness_set;
+ 	priv->led.blink_set = iwl_led_blink_set;
+ 	priv->led.max_brightness = 1;
+diff --git a/drivers/net/wireless/iwlwifi/mvm/led.c b/drivers/net/wireless/iwlwifi/mvm/led.c
+index e3b3cf4dbd77..948be43e4d26 100644
+--- a/drivers/net/wireless/iwlwifi/mvm/led.c
++++ b/drivers/net/wireless/iwlwifi/mvm/led.c
+@@ -109,6 +109,9 @@ int iwl_mvm_leds_init(struct iwl_mvm *mvm)
  
+ 	mvm->led.name = kasprintf(GFP_KERNEL, "%s-led",
+ 				   wiphy_name(mvm->hw->wiphy));
++	if (!mvm->led.name)
++		return -ENOMEM;
++
+ 	mvm->led.brightness_set = iwl_led_brightness_set;
+ 	mvm->led.max_brightness = 1;
+ 
+-- 
+2.20.1
+
 
 
