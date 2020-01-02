@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D984212EE01
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:34:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 790E812F13D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:59:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730686AbgABWeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:34:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42340 "EHLO mail.kernel.org"
+        id S1728562AbgABW7A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:59:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730676AbgABWeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:34:08 -0500
+        id S1727980AbgABWO7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:14:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6716522525;
-        Thu,  2 Jan 2020 22:34:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1C11227BF;
+        Thu,  2 Jan 2020 22:14:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004447;
-        bh=WuOTrhe1MT5gXBM21AyMAoDkO+ydPyhQwQulNz828aA=;
+        s=default; t=1578003299;
+        bh=lIgnPbZoi6opNBmtNTCpIV0Nr11jwcGg5uA+Bg96oEQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oYO6DMnsrRZ17sYXYVydWbycEyPxQgQexROdr2PpMxW8RlaiOKbzoLP6AsI67Z7K/
-         unnMdYl4fRatVD8A4fBngamGjrOFnUfaoZ/hSEFE/7HxZ3K396uAQ4nqrhKqc0Zbho
-         W9HfbHJ5zX+Sa2SMF4v5f7iea6sDg5wzE5hQTJu8=
+        b=LpR9S7hMa5lacvlprLCcNElzhFCzXVrq/hGN2QnYLIMc5u28BgcJRt2Xb7RlpmwJQ
+         M8KV/V6Q3fTYqXO7zz23RYk0HPORtZiKTLA9JlWVOMlP65ggCaOKJkHQ2aMF+vLQ4P
+         b4X4HWHa8+mP9qzeDHORK+E9+kxY8ClolZJluSHk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benoit Parrot <bparrot@ti.com>,
-        Lad Prabhakar <prabhakar.csengg@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Dexuan Cui <decui@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 011/137] media: am437x-vpfe: Setting STD to current value is not an error
-Date:   Thu,  2 Jan 2020 23:06:24 +0100
-Message-Id: <20200102220548.272324246@linuxfoundation.org>
+Subject: [PATCH 5.4 103/191] Drivers: hv: vmbus: Fix crash handler reset of Hyper-V synic
+Date:   Thu,  2 Jan 2020 23:06:25 +0100
+Message-Id: <20200102215840.970579601@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,38 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benoit Parrot <bparrot@ti.com>
+From: Michael Kelley <mikelley@microsoft.com>
 
-[ Upstream commit 13aa21cfe92ce9ebb51824029d89f19c33f81419 ]
+[ Upstream commit 7a1323b5dfe44a9013a2cc56ef2973034a00bf88 ]
 
-VIDIOC_S_STD should not return an error if the value is identical
-to the current one.
-This error was highlighted by the v4l2-compliance test.
+The crash handler calls hv_synic_cleanup() to shutdown the
+Hyper-V synthetic interrupt controller.  But if the CPU
+that calls hv_synic_cleanup() has a VMbus channel interrupt
+assigned to it (which is likely the case in smaller VM sizes),
+hv_synic_cleanup() returns an error and the synthetic
+interrupt controller isn't shutdown.  While the lack of
+being shutdown hasn't caused a known problem, it still
+should be fixed for highest reliability.
 
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
-Acked-by: Lad Prabhakar <prabhakar.csengg@gmail.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+So directly call hv_synic_disable_regs() instead of
+hv_synic_cleanup(), which ensures that the synic is always
+shutdown.
+
+Signed-off-by: Michael Kelley <mikelley@microsoft.com>
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Dexuan Cui <decui@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/am437x/am437x-vpfe.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/hv/vmbus_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
-index 572bc043b62d..36add3c463f7 100644
---- a/drivers/media/platform/am437x/am437x-vpfe.c
-+++ b/drivers/media/platform/am437x/am437x-vpfe.c
-@@ -1847,6 +1847,10 @@ static int vpfe_s_std(struct file *file, void *priv, v4l2_std_id std_id)
- 	if (!(sdinfo->inputs[0].capabilities & V4L2_IN_CAP_STD))
- 		return -ENODATA;
+diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+index 53a60c81e220..05ead1735c6e 100644
+--- a/drivers/hv/vmbus_drv.c
++++ b/drivers/hv/vmbus_drv.c
+@@ -2308,7 +2308,7 @@ static void hv_crash_handler(struct pt_regs *regs)
+ 	vmbus_connection.conn_state = DISCONNECTED;
+ 	cpu = smp_processor_id();
+ 	hv_stimer_cleanup(cpu);
+-	hv_synic_cleanup(cpu);
++	hv_synic_disable_regs(cpu);
+ 	hyperv_cleanup();
+ };
  
-+	/* if trying to set the same std then nothing to do */
-+	if (vpfe_standards[vpfe->std_index].std_id == std_id)
-+		return 0;
-+
- 	/* If streaming is started, return error */
- 	if (vb2_is_busy(&vpfe->buffer_queue)) {
- 		vpfe_err(vpfe, "%s device busy\n", __func__);
 -- 
 2.20.1
 
