@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B763312EC85
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:19:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62C4412ED86
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:29:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbgABWTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:19:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35190 "EHLO mail.kernel.org"
+        id S1730024AbgABW3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:29:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728547AbgABWTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:19:13 -0500
+        id S1730016AbgABW3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:29:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89B3E24125;
-        Thu,  2 Jan 2020 22:19:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B511720866;
+        Thu,  2 Jan 2020 22:29:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003553;
-        bh=3LLXqVPAbNNSxxYw6vlTk3Pi34z2P5dGy620IRkNt7Y=;
+        s=default; t=1578004155;
+        bh=G/KGI2r1TX/pDBDWot5iUMRh0RMyBTapVRqE/teSHkQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hGVDIkfE8Bh4pkTqPk2hSvLvQ2AkirTtz1MaN4GIlSvIPx7z7Ql85BSyOjjB1yd4f
-         mF5uEb7O5G0Ik2eVhubwL6x16Z9XJwtKoyHy0+IdhVQFKyzUBuWuyF0kqGa0rowQaR
-         s41Y/9OoFiLdgPKvzv44JzGWYCXRyWSOlabObpog=
+        b=pmBwAiin0JU1aBnHmJVmrXQqojqMw0edylvCU04lw7YHba2n4o3Igjk6MctzrqVKF
+         b7rOpbExOy9N82OKMRbZTbWc1P9vjpeQyaEsz/2VFQOOlFYaafb80KgzSLR427Yk0O
+         869klqbxG/D94EVGmN72RtKYdm28UjiopkRdJX9Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 002/114] scsi: mpt3sas: Fix clear pending bit in ioctl status
+        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 043/171] libata: Ensure ata_port probe has completed before detach
 Date:   Thu,  2 Jan 2020 23:06:14 +0100
-Message-Id: <20200102220029.416969030@linuxfoundation.org>
+Message-Id: <20200102220552.910630176@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +43,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+From: John Garry <john.garry@huawei.com>
 
-[ Upstream commit 782b281883caf70289ba6a186af29441a117d23e ]
+[ Upstream commit 130f4caf145c3562108b245a576db30b916199d2 ]
 
-When user issues diag register command from application with required size,
-and if driver unable to allocate the memory, then it will fail the register
-command. While failing the register command, driver is not currently
-clearing MPT3_CMD_PENDING bit in ctl_cmds.status variable which was set
-before trying to allocate the memory. As this bit is set, subsequent
-register command will be failed with BUSY status even when user wants to
-register the trace buffer will less memory.
+With CONFIG_DEBUG_TEST_DRIVER_REMOVE set, we may find the following WARN:
 
-Clear MPT3_CMD_PENDING bit in ctl_cmds.status before returning the diag
-register command with no memory status.
+[   23.452574] ------------[ cut here ]------------
+[   23.457190] WARNING: CPU: 59 PID: 1 at drivers/ata/libata-core.c:6676 ata_host_detach+0x15c/0x168
+[   23.466047] Modules linked in:
+[   23.469092] CPU: 59 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc1-00010-g5b83fd27752b-dirty #296
+[   23.477776] Hardware name: Huawei D06 /D06, BIOS Hisilicon D06 UEFI RC0 - V1.16.01 03/15/2019
+[   23.486286] pstate: a0c00009 (NzCv daif +PAN +UAO)
+[   23.491065] pc : ata_host_detach+0x15c/0x168
+[   23.495322] lr : ata_host_detach+0x88/0x168
+[   23.499491] sp : ffff800011cabb50
+[   23.502792] x29: ffff800011cabb50 x28: 0000000000000007
+[   23.508091] x27: ffff80001137f068 x26: ffff8000112c0c28
+[   23.513390] x25: 0000000000003848 x24: ffff0023ea185300
+[   23.518689] x23: 0000000000000001 x22: 00000000000014c0
+[   23.523987] x21: 0000000000013740 x20: ffff0023bdc20000
+[   23.529286] x19: 0000000000000000 x18: 0000000000000004
+[   23.534584] x17: 0000000000000001 x16: 00000000000000f0
+[   23.539883] x15: ffff0023eac13790 x14: ffff0023eb76c408
+[   23.545181] x13: 0000000000000000 x12: ffff0023eac13790
+[   23.550480] x11: ffff0023eb76c228 x10: 0000000000000000
+[   23.555779] x9 : ffff0023eac13798 x8 : 0000000040000000
+[   23.561077] x7 : 0000000000000002 x6 : 0000000000000001
+[   23.566376] x5 : 0000000000000002 x4 : 0000000000000000
+[   23.571674] x3 : ffff0023bf08a0bc x2 : 0000000000000000
+[   23.576972] x1 : 3099674201f72700 x0 : 0000000000400284
+[   23.582272] Call trace:
+[   23.584706]  ata_host_detach+0x15c/0x168
+[   23.588616]  ata_pci_remove_one+0x10/0x18
+[   23.592615]  ahci_remove_one+0x20/0x40
+[   23.596356]  pci_device_remove+0x3c/0xe0
+[   23.600267]  really_probe+0xdc/0x3e0
+[   23.603830]  driver_probe_device+0x58/0x100
+[   23.608000]  device_driver_attach+0x6c/0x90
+[   23.612169]  __driver_attach+0x84/0xc8
+[   23.615908]  bus_for_each_dev+0x74/0xc8
+[   23.619730]  driver_attach+0x20/0x28
+[   23.623292]  bus_add_driver+0x148/0x1f0
+[   23.627115]  driver_register+0x60/0x110
+[   23.630938]  __pci_register_driver+0x40/0x48
+[   23.635199]  ahci_pci_driver_init+0x20/0x28
+[   23.639372]  do_one_initcall+0x5c/0x1b0
+[   23.643199]  kernel_init_freeable+0x1a4/0x24c
+[   23.647546]  kernel_init+0x10/0x108
+[   23.651023]  ret_from_fork+0x10/0x18
+[   23.654590] ---[ end trace 634a14b675b71c13 ]---
 
-Link: https://lore.kernel.org/r/1568379890-18347-4-git-send-email-sreekanth.reddy@broadcom.com
-Signed-off-by: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+With KASAN also enabled, we may also get many use-after-free reports.
+
+The issue is that when CONFIG_DEBUG_TEST_DRIVER_REMOVE is set, we may
+attempt to detach the ata_port before it has been probed.
+
+This is because the ata_ports are async probed, meaning that there is no
+guarantee that the ata_port has probed prior to detach. When the ata_port
+does probe in this scenario, we get all sorts of issues as the detach may
+have already happened.
+
+Fix by ensuring synchronisation with async_synchronize_full(). We could
+alternatively use the cookie returned from the ata_port probe
+async_schedule() call, but that means managing the cookie, so more
+complicated.
+
+Signed-off-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/mpt3sas/mpt3sas_ctl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/ata/libata-core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-index 5e8c059ce2c9..07345016fd9c 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-@@ -1597,7 +1597,8 @@ _ctl_diag_register_2(struct MPT3SAS_ADAPTER *ioc,
- 			    " for diag buffers, requested size(%d)\n",
- 			    ioc->name, __func__, request_data_sz);
- 			mpt3sas_base_free_smid(ioc, smid);
--			return -ENOMEM;
-+			rc = -ENOMEM;
-+			goto out;
- 		}
- 		ioc->diag_buffer[buffer_type] = request_data;
- 		ioc->diag_buffer_sz[buffer_type] = request_data_sz;
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index da1a987c622a..b1582f161171 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -6550,6 +6550,9 @@ void ata_host_detach(struct ata_host *host)
+ {
+ 	int i;
+ 
++	/* Ensure ata_port probe has completed */
++	async_synchronize_full();
++
+ 	for (i = 0; i < host->n_ports; i++)
+ 		ata_port_detach(host->ports[i]);
+ 
 -- 
 2.20.1
 
