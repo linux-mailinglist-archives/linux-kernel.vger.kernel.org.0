@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14F5812EF41
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:46:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEEB512EFCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:49:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730383AbgABWcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:32:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38112 "EHLO mail.kernel.org"
+        id S1729562AbgABW0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:26:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730370AbgABWcL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:32:11 -0500
+        id S1729662AbgABW0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:26:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3E06227BF;
-        Thu,  2 Jan 2020 22:32:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E9CB222C3;
+        Thu,  2 Jan 2020 22:26:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004330;
-        bh=DgE2YruiqIrozhteqtBVmjlDK5quw31v2tGDG7oUILw=;
+        s=default; t=1578004002;
+        bh=Q/AXxm1gYiJzDMbgBmkkAKfLz3atIiIbLGydQgSASCg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y+5Qn+/pSUkvGk8Wsbhp6o144oUm4BvtxkA/W4otcDFohK7diZBPojL0kTv5xfLYX
-         NBloobcSzSnYsTr8uTc7KqkpNNsus9R5yiQmuvLQXlN4GoJki/yHkzrbK8n216C54f
-         eizbEF8Ij/H/SxxT/bXLS7dJirWCzBylQ6TVxQIc=
+        b=WjRUhz1v9jxcuHtY4jjpw6mq4ZMFfNy7Gj8spSxzlRxR28YdcHZs0ho8s/18Dvyy3
+         XVCggVpE7JLxm2qRsU/yAEeNFA4ytEHMtiYo5X5GyUxpcyxSeGn6w7KQNk5wB19Z91
+         a8zdZZoWpOIZnTmbT1spnv+5S1HF3RHLIjbOztM8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 134/171] powerpc/pseries/cmm: Implement release() function for sysfs device
+        stable@vger.kernel.org, Doug Meyer <dmeyer@gigaio.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kelvin Cao <Kelvin.Cao@microchip.com>
+Subject: [PATCH 4.14 63/91] PCI/switchtec: Read all 64 bits of part_event_bitmap
 Date:   Thu,  2 Jan 2020 23:07:45 +0100
-Message-Id: <20200102220605.613718505@linuxfoundation.org>
+Message-Id: <20200102220441.848980103@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
+References: <20200102220356.856162165@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Hildenbrand <david@redhat.com>
+From: Logan Gunthorpe <logang@deltatee.com>
 
-[ Upstream commit 7d8212747435c534c8d564fbef4541a463c976ff ]
+commit 6acdf7e19b37cb3a9258603d0eab315079c19c5e upstream.
 
-When unloading the module, one gets
-  ------------[ cut here ]------------
-  Device 'cmm0' does not have a release() function, it is broken and must be fixed. See Documentation/kobject.txt.
-  WARNING: CPU: 0 PID: 19308 at drivers/base/core.c:1244 .device_release+0xcc/0xf0
-  ...
+The part_event_bitmap register is 64 bits wide, so read it with ioread64()
+instead of the 32-bit ioread32().
 
-We only have one static fake device. There is nothing to do when
-releasing the device (via cmm_exit()).
+Fixes: 52eabba5bcdb ("switchtec: Add IOCTLs to the Switchtec driver")
+Link: https://lore.kernel.org/r/20190910195833.3891-1-logang@deltatee.com
+Reported-by: Doug Meyer <dmeyer@gigaio.com>
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: stable@vger.kernel.org	# v4.12+
+Cc: Kelvin Cao <Kelvin.Cao@microchip.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191031142933.10779-2-david@redhat.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- arch/powerpc/platforms/pseries/cmm.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/pci/switch/switchtec.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/platforms/pseries/cmm.c b/arch/powerpc/platforms/pseries/cmm.c
-index 66e7227469b8..b5ff5ee3e39c 100644
---- a/arch/powerpc/platforms/pseries/cmm.c
-+++ b/arch/powerpc/platforms/pseries/cmm.c
-@@ -391,6 +391,10 @@ static struct bus_type cmm_subsys = {
- 	.dev_name = "cmm",
- };
+--- a/drivers/pci/switch/switchtec.c
++++ b/drivers/pci/switch/switchtec.c
+@@ -898,7 +898,7 @@ static int ioctl_event_summary(struct sw
+ 	u32 reg;
  
-+static void cmm_release_device(struct device *dev)
-+{
-+}
-+
- /**
-  * cmm_sysfs_register - Register with sysfs
-  *
-@@ -406,6 +410,7 @@ static int cmm_sysfs_register(struct device *dev)
+ 	s.global = ioread32(&stdev->mmio_sw_event->global_summary);
+-	s.part_bitmap = ioread32(&stdev->mmio_sw_event->part_event_bitmap);
++	s.part_bitmap = readq(&stdev->mmio_sw_event->part_event_bitmap);
+ 	s.local_part = ioread32(&stdev->mmio_part_cfg->part_event_summary);
  
- 	dev->id = 0;
- 	dev->bus = &cmm_subsys;
-+	dev->release = cmm_release_device;
- 
- 	if ((rc = device_register(dev)))
- 		goto subsys_unregister;
--- 
-2.20.1
-
+ 	for (i = 0; i < stdev->partition_count; i++) {
 
 
