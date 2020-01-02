@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56C3E12EC92
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:19:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCC1112EC44
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:16:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728671AbgABWTu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:19:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36324 "EHLO mail.kernel.org"
+        id S1728302AbgABWQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:16:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728657AbgABWTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:19:47 -0500
+        id S1727823AbgABWQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:16:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 489AB21582;
-        Thu,  2 Jan 2020 22:19:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F8AA21582;
+        Thu,  2 Jan 2020 22:16:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003586;
-        bh=AFNVl8nrgOrO2tqw7CjSzHBMngU35vBQOYU2AwsBhrk=;
+        s=default; t=1578003404;
+        bh=xe3Z79I60jJdx7YuK/c1laM9GG6/6JpZJqjcyjGH+IQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BZtjUkK5SItZ1f+Dcqfc7MxigmmT7nRATkSF2Ut7qPC2/wOYedyDtLHLqf0R5Js+B
-         QVScHDn0rdkcfglkYAKhiR8YYouZVtxEBhJ739C/Vsen8Eeyw59nUVa70qYDBDOVS6
-         MlQhAiUUTYTQ2BprC/bEOo60Lup1Dh5JE2NRyc6M=
+        b=i3PH4OTfxiIF/WCuBt/pmEsLHsgSL3nO5P9Lyvzy5NMEZFHWUVvX/m+hyF+hss036
+         1adPTU/LIKfLagmjbL4NH5Cv25BmmtX0MQZiNL2/qQjLkoD7iUXrv2Mmcb14Ma3PJ5
+         UNSC6K+FTFpRlWQ9fxdYUEnFzv5xMD0xIjkGnkzs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 031/114] irqchip: ingenic: Error out if IRQ domain creation failed
+        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 121/191] s390/unwind: filter out unreliable bogus %r14
 Date:   Thu,  2 Jan 2020 23:06:43 +0100
-Message-Id: <20200102220032.233364107@linuxfoundation.org>
+Message-Id: <20200102215842.770802524@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,57 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-[ Upstream commit 52ecc87642f273a599c9913b29fd179c13de457b ]
+[ Upstream commit bf018ee644897d7982e1b8dd8b15e97db6e1a4da ]
 
-If we cannot create the IRQ domain, the driver should fail to probe
-instead of succeeding with just a warning message.
+Currently unwinder unconditionally returns %r14 from the first frame
+pointed by %r15 from pt_regs. A task could be interrupted when a function
+already allocated this frame (if it needs it) for its callees or to
+store local variables. In that case this frame would contain random
+values from stack or values stored there by a callee. As we are only
+interested in %r14 to get potential return address, skip bogus return
+addresses which doesn't belong to kernel text.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/1570015525-27018-3-git-send-email-zhouyanjie@zoho.com
+This helps to avoid duplicating filtering logic in unwider users, most
+of which use unwind_get_return_address() and would choke on bogus 0
+address returned by it otherwise.
+
+Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/irqchip/irq-ingenic.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ arch/s390/kernel/unwind_bc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/irqchip/irq-ingenic.c b/drivers/irqchip/irq-ingenic.c
-index 2ff08986b536..be6923abf9a4 100644
---- a/drivers/irqchip/irq-ingenic.c
-+++ b/drivers/irqchip/irq-ingenic.c
-@@ -117,6 +117,14 @@ static int __init ingenic_intc_of_init(struct device_node *node,
- 		goto out_unmap_irq;
- 	}
- 
-+	domain = irq_domain_add_legacy(node, num_chips * 32,
-+				       JZ4740_IRQ_BASE, 0,
-+				       &irq_domain_simple_ops, NULL);
-+	if (!domain) {
-+		err = -ENOMEM;
-+		goto out_unmap_base;
-+	}
-+
- 	for (i = 0; i < num_chips; i++) {
- 		/* Mask all irqs */
- 		writel(0xffffffff, intc->base + (i * CHIP_SIZE) +
-@@ -143,14 +151,11 @@ static int __init ingenic_intc_of_init(struct device_node *node,
- 				       IRQ_NOPROBE | IRQ_LEVEL);
- 	}
- 
--	domain = irq_domain_add_legacy(node, num_chips * 32, JZ4740_IRQ_BASE, 0,
--				       &irq_domain_simple_ops, NULL);
--	if (!domain)
--		pr_warn("unable to register IRQ domain\n");
--
- 	setup_irq(parent_irq, &intc_cascade_action);
- 	return 0;
- 
-+out_unmap_base:
-+	iounmap(intc->base);
- out_unmap_irq:
- 	irq_dispose_mapping(parent_irq);
- out_free:
+diff --git a/arch/s390/kernel/unwind_bc.c b/arch/s390/kernel/unwind_bc.c
+index a8204f952315..6e609b13c0ce 100644
+--- a/arch/s390/kernel/unwind_bc.c
++++ b/arch/s390/kernel/unwind_bc.c
+@@ -60,6 +60,11 @@ bool unwind_next_frame(struct unwind_state *state)
+ 		ip = READ_ONCE_NOCHECK(sf->gprs[8]);
+ 		reliable = false;
+ 		regs = NULL;
++		if (!__kernel_text_address(ip)) {
++			/* skip bogus %r14 */
++			state->regs = NULL;
++			return unwind_next_frame(state);
++		}
+ 	} else {
+ 		sf = (struct stack_frame *) state->sp;
+ 		sp = READ_ONCE_NOCHECK(sf->back_chain);
 -- 
 2.20.1
 
