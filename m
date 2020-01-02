@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2DCC12EC16
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:15:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD5D312EC97
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:20:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728045AbgABWPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:15:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55950 "EHLO mail.kernel.org"
+        id S1728733AbgABWUC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:20:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728021AbgABWPO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:15:14 -0500
+        id S1728718AbgABWUB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:20:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C72E2253D;
-        Thu,  2 Jan 2020 22:15:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9253E22525;
+        Thu,  2 Jan 2020 22:20:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003313;
-        bh=V0fFlgsZEjywMSvwazLJJImMQhrXkl4rvnE6M1h6jak=;
+        s=default; t=1578003601;
+        bh=TWVBE6ZH+zWuFWama4+85rMhPVw+P4FoSC8lH2pdYuU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CLvMV+ljIDWD/fXdbe4Z3/1oXzt/BSKZHQwC7MZ3mW43rkKqzDZ0nOVtKfPQKqux9
-         0r6p2f7IgNp6vD6WfO/L+KXlQh9mYqVPWGcjiN4yoNVkbgLk6b/QJtMszANlZqoSN5
-         oJqd0knzEfzX10xuEnR8cJAnJXUdrYwKRzhQoggE=
+        b=dZEDuSIWJBSRQlw+rIDif06twFOCUZpUSqPhy3oLtA3gi88F8q1NEciRglhPFLtBi
+         qlkw3jM9E071dYOdcD57lgljfttcsKG2JpI36rnefQCraGdWMQTAO/UjQ6xzut75Z4
+         ypk1aaUwC0xbkA226Xe/NQe4K0Vy0jsKKkpDo4L4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chengguang Xu <cgxu519@mykernel.net>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 108/191] f2fs: choose hardlimit when softlimit is larger than hardlimit in f2fs_statfs_project()
-Date:   Thu,  2 Jan 2020 23:06:30 +0100
-Message-Id: <20200102215841.487559565@linuxfoundation.org>
+Subject: [PATCH 4.19 019/114] clocksource/drivers/timer-of: Use unique device name instead of timer
+Date:   Thu,  2 Jan 2020 23:06:31 +0100
+Message-Id: <20200102220031.064182128@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,89 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chengguang Xu <cgxu519@mykernel.net>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 909110c060f22e65756659ec6fa957ae75777e00 ]
+[ Upstream commit 4411464d6f8b5e5759637235a6f2b2a85c2be0f1 ]
 
-Setting softlimit larger than hardlimit seems meaningless
-for disk quota but currently it is allowed. In this case,
-there may be a bit of comfusion for users when they run
-df comamnd to directory which has project quota.
+If a hardware-specific driver does not provide a name, the timer-of core
+falls back to device_node.name.  Due to generic DT node naming policies,
+that name is almost always "timer", and thus doesn't identify the actual
+timer used.
 
-For example, we set 20M softlimit and 10M hardlimit of
-block usage limit for project quota of test_dir(project id 123).
+Fix this by using device_node.full_name instead, which includes the unit
+addrees.
 
-[root@hades f2fs]# repquota -P -a
-*** Report for project quotas on device /dev/nvme0n1p8
-Block grace time: 7days; Inode grace time: 7days
-Block limits File limits
-Project used soft hard grace used soft hard grace
-----------------------------------------------------------------------
-0 -- 4 0 0 1 0 0
-123 +- 10248 20480 10240 2 0 0
+Example impact on /proc/timer_list:
 
-The result of df command as below:
+    -Clock Event Device: timer
+    +Clock Event Device: timer@fcfec400
 
-[root@hades f2fs]# df -h /mnt/f2fs/test
-Filesystem Size Used Avail Use% Mounted on
-/dev/nvme0n1p8 20M 11M 10M 51% /mnt/f2fs
-
-Even though it looks like there is another 10M free space to use,
-if we write new data to diretory test(inherit project id),
-the write will fail with errno(-EDQUOT).
-
-After this patch, the df result looks like below.
-
-[root@hades f2fs]# df -h /mnt/f2fs/test
-Filesystem Size Used Avail Use% Mounted on
-/dev/nvme0n1p8 10M 10M 0 100% /mnt/f2fs
-
-Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Link: https://lore.kernel.org/r/20191016144747.29538-3-geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/super.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ drivers/clocksource/timer-of.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1443cee15863..a2af155567b8 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1213,9 +1213,13 @@ static int f2fs_statfs_project(struct super_block *sb,
- 		return PTR_ERR(dquot);
- 	spin_lock(&dquot->dq_dqb_lock);
- 
--	limit = (dquot->dq_dqb.dqb_bsoftlimit ?
--		 dquot->dq_dqb.dqb_bsoftlimit :
--		 dquot->dq_dqb.dqb_bhardlimit) >> sb->s_blocksize_bits;
-+	limit = 0;
-+	if (dquot->dq_dqb.dqb_bsoftlimit)
-+		limit = dquot->dq_dqb.dqb_bsoftlimit;
-+	if (dquot->dq_dqb.dqb_bhardlimit &&
-+			(!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
-+		limit = dquot->dq_dqb.dqb_bhardlimit;
-+
- 	if (limit && buf->f_blocks > limit) {
- 		curblock = dquot->dq_dqb.dqb_curspace >> sb->s_blocksize_bits;
- 		buf->f_blocks = limit;
-@@ -1224,9 +1228,13 @@ static int f2fs_statfs_project(struct super_block *sb,
- 			 (buf->f_blocks - curblock) : 0;
+diff --git a/drivers/clocksource/timer-of.c b/drivers/clocksource/timer-of.c
+index 06ed88a2a8a0..6e2cb3693ed8 100644
+--- a/drivers/clocksource/timer-of.c
++++ b/drivers/clocksource/timer-of.c
+@@ -199,7 +199,7 @@ int __init timer_of_init(struct device_node *np, struct timer_of *to)
  	}
  
--	limit = dquot->dq_dqb.dqb_isoftlimit ?
--		dquot->dq_dqb.dqb_isoftlimit :
--		dquot->dq_dqb.dqb_ihardlimit;
-+	limit = 0;
-+	if (dquot->dq_dqb.dqb_isoftlimit)
-+		limit = dquot->dq_dqb.dqb_isoftlimit;
-+	if (dquot->dq_dqb.dqb_ihardlimit &&
-+			(!limit || dquot->dq_dqb.dqb_ihardlimit < limit))
-+		limit = dquot->dq_dqb.dqb_ihardlimit;
-+
- 	if (limit && buf->f_files > limit) {
- 		buf->f_files = limit;
- 		buf->f_ffree =
+ 	if (!to->clkevt.name)
+-		to->clkevt.name = np->name;
++		to->clkevt.name = np->full_name;
+ 
+ 	to->np = np;
+ 
 -- 
 2.20.1
 
