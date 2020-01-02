@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08CCB12EF50
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:46:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D977312EEA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:40:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730483AbgABWdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:33:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39926 "EHLO mail.kernel.org"
+        id S1731196AbgABWiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:38:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730271AbgABWc6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:32:58 -0500
+        id S1731281AbgABWiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:38:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0C8F20863;
-        Thu,  2 Jan 2020 22:32:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10E22222C3;
+        Thu,  2 Jan 2020 22:38:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004378;
-        bh=b7tHW2NgMvOXfFf/n69XBqciRQFVnxAxVAbvvoN6EXU=;
+        s=default; t=1578004693;
+        bh=srK+AwUov53SvNhhGdeEi7tX841wok/s60+s1aXhuaE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oR1kY6UUFyYoMVrDDMSaBUAi3pC+YLnonX5/93SO8Wp70jpyZG16Yn4jMH5+8QeiV
-         sQ1MMbR0Bs5+bb0c3xQ+opF2vIm7dc1lSIPY4a4j5edcNtiFiR73379R4tH9I6n9rm
-         g6PXuK9Pkq7+dW0LJPGweMX934Bhylkdm483XEuI=
+        b=vlBwve8irORoQVtd7C5ZqOOU8gtHprZcIP3JZizjBm3e7OCzHkz4HfSdJVxLLTCAx
+         MNoQBdlSMFidkiAhGz3wVwMfLrvBvkPsTop86FRqYH7JQBBGuNOvo8igQxLrFibDHf
+         untPmMuqbybm3ehzbag2Kzcq32K0HAw0jCFUDDek=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 128/171] irqchip/irq-bcm7038-l1: Enable parent IRQ if necessary
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.4 086/137] ext4: check for directory entries too close to block end
 Date:   Thu,  2 Jan 2020 23:07:39 +0100
-Message-Id: <20200102220604.799769799@linuxfoundation.org>
+Message-Id: <20200102220558.244529402@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,38 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Jan Kara <jack@suse.cz>
 
-[ Upstream commit 27eebb60357ed5aa6659442f92907c0f7368d6ae ]
+commit 109ba779d6cca2d519c5dd624a3276d03e21948e upstream.
 
-If the 'brcm,irq-can-wake' property is specified, make sure we also
-enable the corresponding parent interrupt we are attached to.
+ext4_check_dir_entry() currently does not catch a case when a directory
+entry ends so close to the block end that the header of the next
+directory entry would not fit in the remaining space. This can lead to
+directory iteration code trying to access address beyond end of current
+buffer head leading to oops.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20191024201415.23454-4-f.fainelli@gmail.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+CC: stable@vger.kernel.org
+Signed-off-by: Jan Kara <jack@suse.cz>
+Link: https://lore.kernel.org/r/20191202170213.4761-3-jack@suse.cz
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/irqchip/irq-bcm7038-l1.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/ext4/dir.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/irqchip/irq-bcm7038-l1.c b/drivers/irqchip/irq-bcm7038-l1.c
-index 6e24facebb46..a571d9c6e42a 100644
---- a/drivers/irqchip/irq-bcm7038-l1.c
-+++ b/drivers/irqchip/irq-bcm7038-l1.c
-@@ -282,6 +282,10 @@ static int __init bcm7038_l1_init_one(struct device_node *dn,
- 		pr_err("failed to map parent interrupt %d\n", parent_irq);
- 		return -EINVAL;
- 	}
-+
-+	if (of_property_read_bool(dn, "brcm,irq-can-wake"))
-+		enable_irq_wake(parent_irq);
-+
- 	irq_set_chained_handler_and_data(parent_irq, bcm7038_l1_irq_handle,
- 					 intc);
- 
--- 
-2.20.1
-
+--- a/fs/ext4/dir.c
++++ b/fs/ext4/dir.c
+@@ -75,6 +75,11 @@ int __ext4_check_dir_entry(const char *f
+ 		error_msg = "rec_len is too small for name_len";
+ 	else if (unlikely(((char *) de - buf) + rlen > size))
+ 		error_msg = "directory entry overrun";
++	else if (unlikely(((char *) de - buf) + rlen >
++			  size - EXT4_DIR_REC_LEN(1) &&
++			  ((char *) de - buf) + rlen != size)) {
++		error_msg = "directory entry too close to block end";
++	}
+ 	else if (unlikely(le32_to_cpu(de->inode) >
+ 			le32_to_cpu(EXT4_SB(dir->i_sb)->s_es->s_inodes_count)))
+ 		error_msg = "inode out of bounds";
 
 
