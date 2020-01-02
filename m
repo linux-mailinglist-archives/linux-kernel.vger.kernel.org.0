@@ -2,69 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E36112E33A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 08:05:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D556B12E344
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 08:20:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbgABHFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 02:05:22 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34093 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbgABHFV (ORCPT
+        id S1726488AbgABHUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 02:20:22 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33399 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726078AbgABHUV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 02:05:21 -0500
-Received: by mail-lf1-f66.google.com with SMTP id l18so21119792lfc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Jan 2020 23:05:20 -0800 (PST)
+        Thu, 2 Jan 2020 02:20:21 -0500
+Received: by mail-pl1-f195.google.com with SMTP id c13so17513404pls.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Jan 2020 23:20:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=DK3+eW5DzORIn3P37jfI+LVuJR6LGq8WBycD0bO5TNg=;
-        b=Gs9CRaoFIHAJbHysU7YIH1hYSPQeS7UW6646M0081+mQGgC7O5dWUTCDjqMOjXzuZW
-         gYf7iN872jevmvVz7F7ecY0hc78ZxxBJ5kszNjwt3E6DGlWq2cPb6S4zqL5qVveXL2zV
-         PUJsfrwavcuZSmAGOd2oK5eBYSieSm13gjkBJCSSzwwHKu+3H8lquzwJuJ+LjAUF+iN+
-         TYzM1eleWSw/diqm/Hx3nsuYGN+wL590Pwafz7rky9be78WIFIzlPagz2GMrLihyk8RH
-         vT2+9GKi5ej8AkhjetYbh+11AjcyJKEmElqkUB0gojpHeZLNeWSSgu1lQ7s8TcJG4zMD
-         gGfg==
+        h=from:to:cc:subject:date:message-id;
+        bh=cml0t0YxNWYg8r++2sRcks91RdsbKE44NnA5x7kzm6c=;
+        b=uSztRpVzjvC5aOabIn3Spd6tDWwuuS93WV+yqGSbHeB264lTwkTUCXoCoxUJYlWrYR
+         gGVRqNiojlZY8tk3TNbSCZV0f4r2RWly6T0sD7YhBey1MiBKXoiZa4kkBJ2Y6iufhlhi
+         E7YiCit2Vu/7/6ne7eD7kPz33RtMl6zWiTZ22E2BhtMvcTBizJp+PrPKoGi1xQ9sUnGu
+         iyLLbzhDkhe0J3LBMlfs7y+F/NO945x/89TiAcKqq+tZAaplM3N+tLR1k3zaknCUJMDt
+         scZo6BbZ+aRPHznBOOSYoWhl4kcdhP2oTj56FHHRmfDrjbrQSMm278ncqDEWz3h4Liaq
+         wv9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=DK3+eW5DzORIn3P37jfI+LVuJR6LGq8WBycD0bO5TNg=;
-        b=WrBbzVMBd1M8OLF4+F+7NHQleFcrhj0g/CrpaXvo8ddb3ujzdz67R6Zbno2RCb1BXV
-         68QdX6wRUeBbe7+xatcLj6JBBATxHKzrYxSFnqPmUZMzfUcaT+/bNXfuXjxD7YaDfIwA
-         975x3ZlR47rcPmPWimwVpxWFZ7dWBf88KosLNvZziaFePqU6z6/JPlimKW/Lx8QoQfWa
-         WbKR106MgcBheCmbavuOGIr+emYrWL/XEyXIv9jlqyJzbBBBMcD2NwbYVdmI3oRMdYxg
-         j2AxyuGZocuW6y4yttYi4JFxhQHx841vbsynEPtAnknXRoeNEXpPbflqADmfRkJmzPuF
-         xBlg==
-X-Gm-Message-State: APjAAAXr9fWEuolvx2pC3MRWdFY+Hgl10uRDlz0t5fAUtJSuyqszCDJ6
-        fvXU045tr+N8l1qNCEubwNXZyDXT63XAlieWxmg=
-X-Google-Smtp-Source: APXvYqzbCTFEhj+hAfCKtJn9LFwmTPtaVTsTbwNzQ2e9LyirBbh51RBgfq5bJRJqt+xMZ5nxyuSUJW2hAYF/hu5MSys=
-X-Received: by 2002:a19:f619:: with SMTP id x25mr44882585lfe.146.1577948719719;
- Wed, 01 Jan 2020 23:05:19 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a05:6504:5f7:0:0:0:0 with HTTP; Wed, 1 Jan 2020 23:05:19
- -0800 (PST)
-Reply-To: markbill@planetmail.com
-From:   "Mr. Mark Bill" <johnson0paul8@gmail.com>
-Date:   Thu, 2 Jan 2020 08:05:19 +0100
-Message-ID: <CAGT6c6s1hhHG5J5MCzbGofj+ubmBtKCoGLUYAnYVsMcXkCMumg@mail.gmail.com>
-Subject: Thanks and wish to hera frpom you
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=cml0t0YxNWYg8r++2sRcks91RdsbKE44NnA5x7kzm6c=;
+        b=kGEfL4g+PmZNjfPIuazc75gTHEeGEWzQJ2ang0OlCkf7eGw/xR7qpVIb4JzC3Hq96o
+         xLCUnXrbB1cqvDIWZ+B+cHIG8C8kqYXAaPbLi+3B+HxDrZtH9mNifn1XzPLlmCqnPOQs
+         H1Aet0109OscB0Y4QEumM6QX/OU+TbVntDQrXy+wVJ6hElukYTvxz8MhYNH59MM+4mu/
+         lOTkx0x+bFDIJwjoScHkr7qpH4UJ5XaVFNSaMD/JQwRkLwzBk3BLCLDDSHCVvAlOulY2
+         zArCUcyhIcDbXxCsaPWKlH7gydqWp21LlghX7+nTQ7fXktUD/9kfmJMBpNFhI6x3iDQv
+         9pfw==
+X-Gm-Message-State: APjAAAUoBrXnC5vT5TwrIuu3yX77mUotb7i3F3dKhzAc6i2xUhotZmVr
+        QMYLqxRWINGxEi11F8thMxQ=
+X-Google-Smtp-Source: APXvYqzYKl5dMWeu8PSI5P1FF0ESSw1IDdqOUFg5t4QsETD7lPP7YvZNO5y3XrX5fsWOR+dvNBgyJA==
+X-Received: by 2002:a17:90a:8c8c:: with SMTP id b12mr18163092pjo.119.1577949621334;
+        Wed, 01 Jan 2020 23:20:21 -0800 (PST)
+Received: from localhost ([43.224.245.179])
+        by smtp.gmail.com with ESMTPSA id m6sm9525644pjv.23.2020.01.01.23.20.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Jan 2020 23:20:20 -0800 (PST)
+From:   Junyong Sun <sunjy516@gmail.com>
+X-Google-Original-From: Junyong Sun <sunjunyong@xiaomi.com>
+To:     rostedt@goodmis.org, mingo@redhat.com, akpm@linux-foundation.org,
+        joel@joelfernandes.org, changbin.du@intel.com,
+        timmurray@google.com, sunjunyong@xiaomi.com
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] mm, tracing: Print symbol name for kmem_alloc_node call_site events
+Date:   Thu,  2 Jan 2020 15:19:28 +0800
+Message-Id: <1577949568-4518-1-git-send-email-sunjunyong@xiaomi.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, I am Mark Bill from Chicago city and my wife is from Mexico,
-after going through the internet i saw a lot about your country in
-items of investment  i decided to search for someone who can help and
-advice me on what my only son can invest in your country
+print the call_site ip of kmem_alloc_node using '%pS' to improve
+the readability of raw slab trace points.
 
-Moreover, all i need is for my son to be happy before three months the
-doctor gave me because i have cancer, i will like to know in which
-area my son can invest with $4.2 million dollars in your country and i
-will give you his whatsapp and will like you to see his face on video
-call to build more trust in this my investment proposal
+Signed-off-by: Junyong Sun <sunjunyong@xiaomi.com>
+---
+ include/trace/events/kmem.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks and wish to hear from you
-Mark Bill
+diff --git a/include/trace/events/kmem.h b/include/trace/events/kmem.h
+index ad7e642b..f65b1f6 100644
+--- a/include/trace/events/kmem.h
++++ b/include/trace/events/kmem.h
+@@ -88,8 +88,8 @@ DECLARE_EVENT_CLASS(kmem_alloc_node,
+ 		__entry->node		= node;
+ 	),
+ 
+-	TP_printk("call_site=%lx ptr=%p bytes_req=%zu bytes_alloc=%zu gfp_flags=%s node=%d",
+-		__entry->call_site,
++	TP_printk("call_site=%pS ptr=%p bytes_req=%zu bytes_alloc=%zu gfp_flags=%s node=%d",
++		(void *)__entry->call_site,
+ 		__entry->ptr,
+ 		__entry->bytes_req,
+ 		__entry->bytes_alloc,
+-- 
+2.7.4
+
