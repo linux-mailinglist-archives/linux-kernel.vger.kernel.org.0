@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DB9A12F12C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:58:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A3AA12EE07
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:34:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbgABWPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:15:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56064 "EHLO mail.kernel.org"
+        id S1730561AbgABWea (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:34:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728049AbgABWPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:15:19 -0500
+        id S1730553AbgABWe0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:34:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0ABF227BF;
-        Thu,  2 Jan 2020 22:15:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82CFD22314;
+        Thu,  2 Jan 2020 22:34:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003318;
-        bh=7XcAk6WwlPZiHwrNeSvnm56FOXEsLlHpDvmdPRl2cqQ=;
+        s=default; t=1578004466;
+        bh=v+sBa/xxyGzswd17kVX3xJtyhp1J6BAJkLBzf24+sL4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BUVTtNJPk/Iy3ZQAfl20yvepQSdT2c8CeuSIG+XyNWpYXXe9JbjmTHs6CLEmU+qB/
-         6oxPa553Y3nfJRmy3l4+gt33kA0uLwZmavAwjI/aLrBMUP/ZVRKq6Mp7qEwhB+a9Xy
-         /5WWPo8gii2E7e/TmwsFktoCxDNJQWEfTK+NI73U=
+        b=ItnnZFG6aYukOkbjy6zt0w7gBvjZupozQIkCZ9OF8wyX6bnto++xadUZTgHJdsxmp
+         1UK3gz/TEsWjTVLK2tEG8w8POqNuO6VdCP9Ne4IS0XVsR0kiGxuLhPod3SKlxr982y
+         ycO6NDezT9jX8Mn9FuSHmiS1UfpolLl8IwlVTTn0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Richard Weinberger <richard@nod.at>,
+        stable@vger.kernel.org, Yang Yingliang <yangyingliang@huawei.com>,
+        Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 110/191] um: virtio: Keep reading on -EAGAIN
+Subject: [PATCH 4.4 019/137] media: flexcop-usb: fix NULL-ptr deref in flexcop_usb_transfer_init()
 Date:   Thu,  2 Jan 2020 23:06:32 +0100
-Message-Id: <20200102215841.663236426@linuxfoundation.org>
+Message-Id: <20200102220549.256718896@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,92 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Yang Yingliang <yangyingliang@huawei.com>
 
-[ Upstream commit 7e60746005573a06149cdee7acedf428906f3a59 ]
+[ Upstream commit 649cd16c438f51d4cd777e71ca1f47f6e0c5e65d ]
 
-When we get an interrupt from the socket getting readable,
-and start reading, there's a possibility for a race. This
-depends on the implementation of the device, but e.g. with
-qemu's libvhost-user, we can see:
+If usb_set_interface() failed, iface->cur_altsetting will
+not be assigned and it will be used in flexcop_usb_transfer_init()
+It may lead a NULL pointer dereference.
 
- device                 virtio_uml
----------------------------------------
-  write header
-                         get interrupt
-                         read header
-                         read body -> returns -EAGAIN
-  write body
+Check usb_set_interface() return value in flexcop_usb_init()
+and return failed to avoid using this NULL pointer.
 
-The -EAGAIN return is because the socket is non-blocking,
-and then this leads us to abandon this message.
-
-In fact, we've already read the header, so when the get
-another signal/interrupt for the body, we again read it
-as though it's a new message header, and also abandon it
-for the same reason (wrong size etc.)
-
-This essentially breaks things, and if that message was
-one that required a response, it leads to a deadlock as
-the device is waiting for the response but we'll never
-reply.
-
-Fix this by spinning on -EAGAIN as well when we read the
-message body. We need to handle -EAGAIN as "no message"
-while reading the header, since we share an interrupt.
-
-Note that this situation is highly unlikely to occur in
-normal usage, since there will be very few messages and
-only in the startup phase. With the inband call feature
-this does tend to happen (eventually) though.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/um/drivers/virtio_uml.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/media/usb/b2c2/flexcop-usb.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/um/drivers/virtio_uml.c b/arch/um/drivers/virtio_uml.c
-index fc8c52cff5aa..c5643a59a8c7 100644
---- a/arch/um/drivers/virtio_uml.c
-+++ b/arch/um/drivers/virtio_uml.c
-@@ -83,7 +83,7 @@ static int full_sendmsg_fds(int fd, const void *buf, unsigned int len,
- 	return 0;
- }
- 
--static int full_read(int fd, void *buf, int len)
-+static int full_read(int fd, void *buf, int len, bool abortable)
+diff --git a/drivers/media/usb/b2c2/flexcop-usb.c b/drivers/media/usb/b2c2/flexcop-usb.c
+index 83d3a5cf272f..932fa31e0624 100644
+--- a/drivers/media/usb/b2c2/flexcop-usb.c
++++ b/drivers/media/usb/b2c2/flexcop-usb.c
+@@ -474,7 +474,13 @@ urb_error:
+ static int flexcop_usb_init(struct flexcop_usb *fc_usb)
  {
- 	int rc;
- 
-@@ -93,7 +93,7 @@ static int full_read(int fd, void *buf, int len)
- 			buf += rc;
- 			len -= rc;
- 		}
--	} while (len && (rc > 0 || rc == -EINTR));
-+	} while (len && (rc > 0 || rc == -EINTR || (!abortable && rc == -EAGAIN)));
- 
- 	if (rc < 0)
- 		return rc;
-@@ -104,7 +104,7 @@ static int full_read(int fd, void *buf, int len)
- 
- static int vhost_user_recv_header(int fd, struct vhost_user_msg *msg)
- {
--	return full_read(fd, msg, sizeof(msg->header));
-+	return full_read(fd, msg, sizeof(msg->header), true);
- }
- 
- static int vhost_user_recv(int fd, struct vhost_user_msg *msg,
-@@ -118,7 +118,7 @@ static int vhost_user_recv(int fd, struct vhost_user_msg *msg,
- 	size = msg->header.size;
- 	if (size > max_payload_size)
- 		return -EPROTO;
--	return full_read(fd, &msg->payload, size);
-+	return full_read(fd, &msg->payload, size, false);
- }
- 
- static int vhost_user_recv_resp(struct virtio_uml_device *vu_dev,
+ 	/* use the alternate setting with the larges buffer */
+-	usb_set_interface(fc_usb->udev,0,1);
++	int ret = usb_set_interface(fc_usb->udev, 0, 1);
++
++	if (ret) {
++		err("set interface failed.");
++		return ret;
++	}
++
+ 	switch (fc_usb->udev->speed) {
+ 	case USB_SPEED_LOW:
+ 		err("cannot handle USB speed because it is too slow.");
 -- 
 2.20.1
 
