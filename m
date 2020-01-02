@@ -2,180 +2,461 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29E6312F43F
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 06:29:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 523A612F45D
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 06:45:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbgACF3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 00:29:02 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:10519 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726180AbgACF3C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 00:29:02 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1578029341; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=QGQ3D1GyNhd0LAoBVLxbTbXL6/9pOn4Pwzlj2/BukcY=;
- b=oxebzTLgZP9G6nl8Dx2hE0b3ch/Lh5ga69ChYyRMvNIPEl17ALMdC5cvWgFwqGhuO8F2sFTV
- VrW23NQxQW2sc0lx64efwnXq8lhslIKN8C7IuM3sOCjVWkBk9Q7rlu9R1BOveozZllvqBE1P
- 7/ZExnRqa5+lTZmYvV+0TAecRHY=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e0ed11b.7fbab6fd77a0-smtp-out-n01;
- Fri, 03 Jan 2020 05:28:59 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id C551EC447A5; Fri,  3 Jan 2020 05:28:59 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7B4A2C433CB;
-        Fri,  3 Jan 2020 05:28:58 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 03 Jan 2020 13:28:58 +0800
-From:   Can Guo <cang@codeaurora.org>
-To:     Stanley Chu <stanley.chu@mediatek.com>
-Cc:     martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-        andy.teng@mediatek.com, jejb@linux.ibm.com,
-        chun-hung.wu@mediatek.com, kuohong.wang@mediatek.com,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        asutoshd@codeaurora.org, avri.altman@wdc.com,
-        linux-mediatek@lists.infradead.org, peter.wang@mediatek.com,
-        linux-scsi-owner@vger.kernel.org, subhashj@codeaurora.org,
-        alim.akhtar@samsung.com, beanhuo@micron.com,
-        pedrom.sousa@synopsys.com, bvanassche@acm.org,
-        linux-arm-kernel@lists.infradead.org, matthias.bgg@gmail.com,
-        ron.hsu@mediatek.com, cc.chou@mediatek.com
-Subject: Re: [PATCH v1 1/2] scsi: ufs: set device as default active power mode
- during initialization only
-In-Reply-To: <4888afd46a9065b7f298a5de039426c9@codeaurora.org>
-References: <1577693546-7598-1-git-send-email-stanley.chu@mediatek.com>
- <1577693546-7598-2-git-send-email-stanley.chu@mediatek.com>
- <fd129b859c013852bd80f60a36425757@codeaurora.org>
- <1577754469.13164.5.camel@mtkswgap22>
- <836772092daffd8283a97d633e59fc34@codeaurora.org>
- <1577766179.13164.24.camel@mtkswgap22>
- <1577778290.13164.45.camel@mtkswgap22>
- <44393ed9ff3ba9878bae838307e7eec0@codeaurora.org>
- <1577947124.13164.75.camel@mtkswgap22>
- <4888afd46a9065b7f298a5de039426c9@codeaurora.org>
-Message-ID: <e13011fd858cf3ec0258c4b7ac914973@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+        id S1727256AbgACFpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 00:45:51 -0500
+Received: from mga14.intel.com ([192.55.52.115]:47443 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725916AbgACFpu (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 00:45:50 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2020 21:45:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,389,1571727600"; 
+   d="scan'208";a="222072147"
+Received: from kbl.sh.intel.com ([10.239.159.163])
+  by orsmga003.jf.intel.com with ESMTP; 02 Jan 2020 21:45:47 -0800
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH 1/2] perf util: Refactor block info to reduce tight coupling with report
+Date:   Fri,  3 Jan 2020 06:19:58 +0800
+Message-Id: <20200102221959.20283-1-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-01-03 09:51, Can Guo wrote:
-> On 2020-01-02 14:38, Stanley Chu wrote:
->> Hi Can,
->> 
->> On Tue, 2019-12-31 at 16:35 +0800, Can Guo wrote:
->> 
->>> Hi Stanley,
->>> 
->>> I missed this mail before I hit send. In current code, as per my
->>> understanding,
->>> UFS device's power state should be Active after ufshcd_link_startup()
->>> returns.
->>> If I am wrong, please feel free to correct me.
->>> 
->> 
->> Yes, this assumption of ufshcd_probe_hba() is true so I will drop this
->> patch.
->> Thanks for remind.
->> 
->>> Due to you are almost trying to revert commit 7caf489b99a42a, I am 
->>> just
->>> wondering
->>> if you encounter failure/error caused by it.
->> 
->> Yes, we actually have some doubts from the commit message of "scsi: 
->> ufs:
->> issue link startup 2 times if device isn't active"
->> 
->> If we configured system suspend as device=PowerDown/Link=LinkDown 
->> mode,
->> during resume, the 1st link startup will be successful, and after that
->> device could be accessed normally so it shall be already in Active 
->> power
->> mode. We did not find devices which need twice linkup for normal work.
->> 
->> And because the 1st linkup is OK, the forced 2nd linkup by commit 
->> "scsi:
->> ufs: issue link startup 2 times if device isn't active" leads to link
->> lost and finally the 3rd linkup is made again by retry mechanism in
->> ufshcd_link_startup() and be successful. So a linkup performance issue
->> is introduced here: We actually need one-time linkup only but finally
->> got 3 linkup operations.
->> 
->> According to the UFS spec, all reset types (including POR and Host
->> UniPro Warm Reset which both may happen in above configurations) other
->> than LU reset, UFS device power mode shall return to Sleep mode or
->> Active mode depending on bInitPowerMode, by default, it's Active mode.
->> 
->> So we are curious that why enforcing twice linkup is necessary here?
->> Could you kindly help us clarify this?
->> 
->> If anything wrong in above description, please feel free to correct 
->> me.
->> 
-> 
-> Hi Stanley,
-> 
-> Above description is correct. The reason why the UFS device becomes
-> Active after the 1st link startup in your experiment is due to you
-> set spm_lvl to 5, during system suspend, UFS device is powered down.
-> When resume kicks start, the UFS device is power cycled once.
-> 
-> Moreover, if you set rpm_lvl to 5, during runtime suspend, if bkops is
-> enabled, the UFS device will not be powered off, meaning when runtime
-> resume kicks start, the UFS device is not power cycled, in this case,
-> we need 3 times of link startup.
-> 
-> Does above explain?
-> 
-> Thanks,
-> 
-> Can Guo.
-> 
+We have already implemented some block-info functions.
+But these functions are tightly coupled with perf-report, it's
+not good for reusing by other builtins (i.e. perf-diff).
 
-Hi Stanley,
+This patch refactors the functions, structures and definitions
+to make them to be more flexible for other builtins.
 
-Sorry, typo before. I meant if set rpm_lvl/spm_lvl to 5, during suspend,
-if is_lu_power_on_wp is set, the UFS device will not be fully powered 
-off
-(only VCC is down), meaning when resume kicks start, the UFS device is 
-not
-power cycled, in this case, we need 3 times of link startup.
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+---
+ tools/perf/builtin-diff.c    |  17 -----
+ tools/perf/builtin-report.c  |  25 +++++--
+ tools/perf/util/block-info.c | 128 +++++++++++++++++++++++++----------
+ tools/perf/util/block-info.h |  28 +++++---
+ 4 files changed, 129 insertions(+), 69 deletions(-)
 
-Regards,
+diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
+index f8b6ae557d8b..5ff1e21082cb 100644
+--- a/tools/perf/builtin-diff.c
++++ b/tools/perf/builtin-diff.c
+@@ -572,23 +572,6 @@ static void init_block_hist(struct block_hist *bh)
+ 	bh->valid = true;
+ }
+ 
+-static int block_pair_cmp(struct hist_entry *a, struct hist_entry *b)
+-{
+-	struct block_info *bi_a = a->block_info;
+-	struct block_info *bi_b = b->block_info;
+-	int cmp;
+-
+-	if (!bi_a->sym || !bi_b->sym)
+-		return -1;
+-
+-	cmp = strcmp(bi_a->sym->name, bi_b->sym->name);
+-
+-	if ((!cmp) && (bi_a->start == bi_b->start) && (bi_a->end == bi_b->end))
+-		return 0;
+-
+-	return -1;
+-}
+-
+ static struct hist_entry *get_block_pair(struct hist_entry *he,
+ 					 struct hists *hists_pair)
+ {
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index de988589d99b..638229bf7a08 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -104,6 +104,7 @@ struct report {
+ 	bool			symbol_ipc;
+ 	bool			total_cycles_mode;
+ 	struct block_report	*block_reports;
++	int			nr_block_reports;
+ };
+ 
+ static int report__config(const char *var, const char *value, void *cb)
+@@ -503,7 +504,7 @@ static int perf_evlist__tui_block_hists_browse(struct evlist *evlist,
+ 		ret = report__browse_block_hists(&rep->block_reports[i++].hist,
+ 						 rep->min_percent, pos,
+ 						 &rep->session->header.env,
+-						 &rep->annotation_opts);
++						 &rep->annotation_opts, true);
+ 		if (ret != 0)
+ 			return ret;
+ 	}
+@@ -536,7 +537,7 @@ static int perf_evlist__tty_browse_hists(struct evlist *evlist,
+ 		if (rep->total_cycles_mode) {
+ 			report__browse_block_hists(&rep->block_reports[i++].hist,
+ 						   rep->min_percent, pos,
+-						   NULL, NULL);
++						   NULL, NULL, true);
+ 			continue;
+ 		}
+ 
+@@ -966,8 +967,19 @@ static int __cmd_report(struct report *rep)
+ 	report__output_resort(rep);
+ 
+ 	if (rep->total_cycles_mode) {
++		int block_hpps[6] = {
++			PERF_HPP__BLOCK_TOTAL_CYCLES_PCT,
++			PERF_HPP__BLOCK_LBR_CYCLES,
++			PERF_HPP__BLOCK_CYCLES_PCT,
++			PERF_HPP__BLOCK_AVG_CYCLES,
++			PERF_HPP__BLOCK_RANGE,
++			PERF_HPP__BLOCK_DSO,
++		};
++
+ 		rep->block_reports = block_info__create_report(session->evlist,
+-							       rep->total_cycles);
++							       rep->total_cycles,
++							       block_hpps, 6,
++							       &rep->nr_block_reports);
+ 		if (!rep->block_reports)
+ 			return -1;
+ 	}
+@@ -1543,8 +1555,11 @@ int cmd_report(int argc, const char **argv)
+ 		zfree(&report.ptime_range);
+ 	}
+ 
+-	if (report.block_reports)
+-		zfree(&report.block_reports);
++	if (report.block_reports) {
++		block_info__free_report(report.block_reports,
++					report.nr_block_reports);
++		report.block_reports = NULL;
++	}
+ 
+ 	zstd_fini(&(session->zstd_data));
+ 	perf_session__delete(session);
+diff --git a/tools/perf/util/block-info.c b/tools/perf/util/block-info.c
+index c4b030bf6ec2..55ccff2e0d5d 100644
+--- a/tools/perf/util/block-info.c
++++ b/tools/perf/util/block-info.c
+@@ -12,35 +12,36 @@
+ #include "evlist.h"
+ #include "hist.h"
+ #include "ui/browsers/hists.h"
++#include "debug.h"
+ 
+ static struct block_header_column {
+ 	const char *name;
+ 	int width;
+-} block_columns[PERF_HPP_REPORT__BLOCK_MAX_INDEX] = {
+-	[PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_PCT] = {
++} block_columns[PERF_HPP__BLOCK_MAX_INDEX] = {
++	[PERF_HPP__BLOCK_TOTAL_CYCLES_PCT] = {
+ 		.name = "Sampled Cycles%",
+ 		.width = 15,
+ 	},
+-	[PERF_HPP_REPORT__BLOCK_LBR_CYCLES] = {
++	[PERF_HPP__BLOCK_LBR_CYCLES] = {
+ 		.name = "Sampled Cycles",
+ 		.width = 14,
+ 	},
+-	[PERF_HPP_REPORT__BLOCK_CYCLES_PCT] = {
++	[PERF_HPP__BLOCK_CYCLES_PCT] = {
+ 		.name = "Avg Cycles%",
+ 		.width = 11,
+ 	},
+-	[PERF_HPP_REPORT__BLOCK_AVG_CYCLES] = {
++	[PERF_HPP__BLOCK_AVG_CYCLES] = {
+ 		.name = "Avg Cycles",
+ 		.width = 10,
+ 	},
+-	[PERF_HPP_REPORT__BLOCK_RANGE] = {
++	[PERF_HPP__BLOCK_RANGE] = {
+ 		.name = "[Program Block Range]",
+ 		.width = 70,
+ 	},
+-	[PERF_HPP_REPORT__BLOCK_DSO] = {
++	[PERF_HPP__BLOCK_DSO] = {
+ 		.name = "Shared Object",
+ 		.width = 20,
+-	}
++	},
+ };
+ 
+ struct block_info *block_info__get(struct block_info *bi)
+@@ -328,7 +329,7 @@ static void init_block_header(struct block_fmt *block_fmt)
+ {
+ 	struct perf_hpp_fmt *fmt = &block_fmt->fmt;
+ 
+-	BUG_ON(block_fmt->idx >= PERF_HPP_REPORT__BLOCK_MAX_INDEX);
++	BUG_ON(block_fmt->idx >= PERF_HPP__BLOCK_MAX_INDEX);
+ 
+ 	block_fmt->header = block_columns[block_fmt->idx].name;
+ 	block_fmt->width = block_columns[block_fmt->idx].width;
+@@ -347,24 +348,24 @@ static void hpp_register(struct block_fmt *block_fmt, int idx,
+ 	INIT_LIST_HEAD(&fmt->sort_list);
+ 
+ 	switch (idx) {
+-	case PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_PCT:
++	case PERF_HPP__BLOCK_TOTAL_CYCLES_PCT:
+ 		fmt->entry = block_total_cycles_pct_entry;
+ 		fmt->cmp = block_info__cmp;
+ 		fmt->sort = block_total_cycles_pct_sort;
+ 		break;
+-	case PERF_HPP_REPORT__BLOCK_LBR_CYCLES:
++	case PERF_HPP__BLOCK_LBR_CYCLES:
+ 		fmt->entry = block_cycles_lbr_entry;
+ 		break;
+-	case PERF_HPP_REPORT__BLOCK_CYCLES_PCT:
++	case PERF_HPP__BLOCK_CYCLES_PCT:
+ 		fmt->entry = block_cycles_pct_entry;
+ 		break;
+-	case PERF_HPP_REPORT__BLOCK_AVG_CYCLES:
++	case PERF_HPP__BLOCK_AVG_CYCLES:
+ 		fmt->entry = block_avg_cycles_entry;
+ 		break;
+-	case PERF_HPP_REPORT__BLOCK_RANGE:
++	case PERF_HPP__BLOCK_RANGE:
+ 		fmt->entry = block_range_entry;
+ 		break;
+-	case PERF_HPP_REPORT__BLOCK_DSO:
++	case PERF_HPP__BLOCK_DSO:
+ 		fmt->entry = block_dso_entry;
+ 		break;
+ 	default:
+@@ -376,33 +377,42 @@ static void hpp_register(struct block_fmt *block_fmt, int idx,
+ }
+ 
+ static void register_block_columns(struct perf_hpp_list *hpp_list,
+-				   struct block_fmt *block_fmts)
++				   struct block_fmt *block_fmts,
++				   int *block_hpps, int nr_hpps)
+ {
+-	for (int i = 0; i < PERF_HPP_REPORT__BLOCK_MAX_INDEX; i++)
+-		hpp_register(&block_fmts[i], i, hpp_list);
++	for (int i = 0; i < nr_hpps; i++)
++		hpp_register(&block_fmts[i], block_hpps[i], hpp_list);
+ }
+ 
+-static void init_block_hist(struct block_hist *bh, struct block_fmt *block_fmts)
++static void init_block_hist(struct block_hist *bh, struct block_fmt *block_fmts,
++			    int *block_hpps, int nr_hpps)
+ {
+ 	__hists__init(&bh->block_hists, &bh->block_list);
+ 	perf_hpp_list__init(&bh->block_list);
+ 	bh->block_list.nr_header_lines = 1;
+ 
+-	register_block_columns(&bh->block_list, block_fmts);
++	register_block_columns(&bh->block_list, block_fmts,
++			       block_hpps, nr_hpps);
+ 
+-	perf_hpp_list__register_sort_field(&bh->block_list,
+-		&block_fmts[PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_PCT].fmt);
++	/* Sort by the first fmt */
++	perf_hpp_list__register_sort_field(&bh->block_list, &block_fmts[0].fmt);
+ }
+ 
+-static void process_block_report(struct hists *hists,
+-				 struct block_report *block_report,
+-				 u64 total_cycles)
++static int process_block_report(struct hists *hists,
++				struct block_report *block_report,
++				u64 total_cycles, int *block_hpps,
++				int nr_hpps)
+ {
+ 	struct rb_node *next = rb_first_cached(&hists->entries);
+ 	struct block_hist *bh = &block_report->hist;
+ 	struct hist_entry *he;
+ 
+-	init_block_hist(bh, block_report->fmts);
++	block_report->fmts = calloc(nr_hpps, sizeof(struct block_fmt));
++	if (!block_report->fmts)
++		return -1;
++
++	block_report->nr_fmts = nr_hpps;
++	init_block_hist(bh, block_report->fmts, block_hpps, nr_hpps);
+ 
+ 	while (next) {
+ 		he = rb_entry(next, struct hist_entry, rb_node);
+@@ -411,16 +421,19 @@ static void process_block_report(struct hists *hists,
+ 		next = rb_next(&he->rb_node);
+ 	}
+ 
+-	for (int i = 0; i < PERF_HPP_REPORT__BLOCK_MAX_INDEX; i++) {
++	for (int i = 0; i < nr_hpps; i++) {
+ 		block_report->fmts[i].total_cycles = total_cycles;
+ 		block_report->fmts[i].block_cycles = block_report->cycles;
+ 	}
+ 
+ 	hists__output_resort(&bh->block_hists, NULL);
++	return 0;
+ }
+ 
+ struct block_report *block_info__create_report(struct evlist *evlist,
+-					       u64 total_cycles)
++					       u64 total_cycles,
++					       int *block_hpps, int nr_hpps,
++					       int *nr_reps)
+ {
+ 	struct block_report *block_reports;
+ 	int nr_hists = evlist->core.nr_entries, i = 0;
+@@ -433,16 +446,40 @@ struct block_report *block_info__create_report(struct evlist *evlist,
+ 	evlist__for_each_entry(evlist, pos) {
+ 		struct hists *hists = evsel__hists(pos);
+ 
+-		process_block_report(hists, &block_reports[i], total_cycles);
++		process_block_report(hists, &block_reports[i], total_cycles,
++				     block_hpps, nr_hpps);
+ 		i++;
+ 	}
+ 
++	*nr_reps = nr_hists;
+ 	return block_reports;
+ }
+ 
++float block_info__total_cycles_percent(struct hist_entry *he)
++{
++	struct block_info *bi = he->block_info;
++
++	if (bi->total_cycles)
++		return bi->cycles * 100.0 / bi->total_cycles;
++
++	return 0.0;
++}
++
++void block_info__free_report(struct block_report *reps, int nr_reps)
++{
++	for (int i = 0; i < nr_reps; i++) {
++		hists__delete_entries(&reps[i].hist.block_hists);
++		if (reps[i].fmts)
++			free(reps[i].fmts);
++	}
++
++	free(reps);
++}
++
+ int report__browse_block_hists(struct block_hist *bh, float min_percent,
+ 			       struct evsel *evsel, struct perf_env *env,
+-			       struct annotation_options *annotation_opts)
++			       struct annotation_options *annotation_opts,
++			       bool release)
+ {
+ 	int ret;
+ 
+@@ -451,13 +488,17 @@ int report__browse_block_hists(struct block_hist *bh, float min_percent,
+ 		symbol_conf.report_individual_block = true;
+ 		hists__fprintf(&bh->block_hists, true, 0, 0, min_percent,
+ 			       stdout, true);
+-		hists__delete_entries(&bh->block_hists);
++		if (release)
++			hists__delete_entries(&bh->block_hists);
++
+ 		return 0;
+ 	case 1:
+ 		symbol_conf.report_individual_block = true;
+ 		ret = block_hists_tui_browse(bh, evsel, min_percent,
+ 					     env, annotation_opts);
+-		hists__delete_entries(&bh->block_hists);
++		if (release)
++			hists__delete_entries(&bh->block_hists);
++
+ 		return ret;
+ 	default:
+ 		return -1;
+@@ -466,12 +507,25 @@ int report__browse_block_hists(struct block_hist *bh, float min_percent,
+ 	return 0;
+ }
+ 
+-float block_info__total_cycles_percent(struct hist_entry *he)
++int block_pair_cmp(struct hist_entry *pair, struct hist_entry *he)
+ {
+-	struct block_info *bi = he->block_info;
++	struct block_info *bi_p = pair->block_info;
++	struct block_info *bi_h = he->block_info;
++	struct map_symbol *ms_p = &pair->ms;
++	struct map_symbol *ms_h = &he->ms;
++	int cmp;
+ 
+-	if (bi->total_cycles)
+-		return bi->cycles * 100.0 / bi->total_cycles;
++	if (!ms_p->map || !ms_p->map->dso || !ms_p->sym ||
++	    !ms_h->map || !ms_h->map->dso || !ms_h->sym) {
++		return -1;
++	}
+ 
+-	return 0.0;
++	cmp = strcmp(ms_p->sym->name, ms_h->sym->name);
++	if (cmp)
++		return -1;
++
++	if ((bi_p->start == bi_h->start) && (bi_p->end == bi_h->end))
++		return 0;
++
++	return -1;
+ }
+diff --git a/tools/perf/util/block-info.h b/tools/perf/util/block-info.h
+index bef0d75e9819..b59b778422f3 100644
+--- a/tools/perf/util/block-info.h
++++ b/tools/perf/util/block-info.h
+@@ -32,19 +32,20 @@ struct block_fmt {
+ };
+ 
+ enum {
+-	PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_PCT,
+-	PERF_HPP_REPORT__BLOCK_LBR_CYCLES,
+-	PERF_HPP_REPORT__BLOCK_CYCLES_PCT,
+-	PERF_HPP_REPORT__BLOCK_AVG_CYCLES,
+-	PERF_HPP_REPORT__BLOCK_RANGE,
+-	PERF_HPP_REPORT__BLOCK_DSO,
+-	PERF_HPP_REPORT__BLOCK_MAX_INDEX
++	PERF_HPP__BLOCK_TOTAL_CYCLES_PCT,
++	PERF_HPP__BLOCK_LBR_CYCLES,
++	PERF_HPP__BLOCK_CYCLES_PCT,
++	PERF_HPP__BLOCK_AVG_CYCLES,
++	PERF_HPP__BLOCK_RANGE,
++	PERF_HPP__BLOCK_DSO,
++	PERF_HPP__BLOCK_MAX_INDEX
+ };
+ 
+ struct block_report {
+ 	struct block_hist	hist;
+ 	u64			cycles;
+-	struct block_fmt	fmts[PERF_HPP_REPORT__BLOCK_MAX_INDEX];
++	struct block_fmt	*fmts;
++	int			nr_fmts;
+ };
+ 
+ struct block_hist;
+@@ -68,12 +69,19 @@ int block_info__process_sym(struct hist_entry *he, struct block_hist *bh,
+ 			    u64 *block_cycles_aggr, u64 total_cycles);
+ 
+ struct block_report *block_info__create_report(struct evlist *evlist,
+-					       u64 total_cycles);
++					       u64 total_cycles,
++					       int *block_hpps, int nr_hpps,
++					       int *nr_reps);
++
++void block_info__free_report(struct block_report *reps, int nr_reps);
+ 
+ int report__browse_block_hists(struct block_hist *bh, float min_percent,
+ 			       struct evsel *evsel, struct perf_env *env,
+-			       struct annotation_options *annotation_opts);
++			       struct annotation_options *annotation_opts,
++			       bool release);
+ 
+ float block_info__total_cycles_percent(struct hist_entry *he);
+ 
++int block_pair_cmp(struct hist_entry *pair, struct hist_entry *he);
++
+ #endif /* __PERF_BLOCK_H */
+-- 
+2.17.1
 
-Can Guo.
-
->>> 
->>> Happy new year to you too!
->>> 
->>> Thanks,
->>> 
->>> Can Guo
->> 
->> Thanks,
->> 
->> Stanley
->> 
->>> 
->>> _______________________________________________
->>> Linux-mediatek mailing list
->>> Linux-mediatek@lists.infradead.org
->>> http://lists.infradead.org/mailman/listinfo/linux-mediatek
