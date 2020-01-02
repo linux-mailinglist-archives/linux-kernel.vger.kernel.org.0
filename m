@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8654012F170
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:00:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C225C12F177
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:00:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbgABWMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:12:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52024 "EHLO mail.kernel.org"
+        id S1728449AbgABXAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 18:00:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726667AbgABWMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:12:43 -0500
+        id S1727546AbgABWMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:12:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86F9521D7D;
-        Thu,  2 Jan 2020 22:12:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CCDA21D7D;
+        Thu,  2 Jan 2020 22:12:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003163;
-        bh=zbbxOC3U+xaCh2dQifsmwgKsgtAVBpm/EUuz1h7kG/M=;
+        s=default; t=1578003167;
+        bh=3BVHwPE4q8n26a1d46lsR7hjc6VGVHopFCYsWip+P9g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WhfVoDBcJ8QTLyRo2Pe0LFz01554CEEuPPW/DHoCx2aXB3T3nU7qlgvPOVXQLnpzC
-         Nr8y/Np7QTcvGSI/q9jqI8n9qGd3Z2RDigbr7jfMg57JF0jt+jE7T11ggBhNjRsksj
-         RmfP/zr82qq8YEyewISbyCbHGru6A4zpYjRQEwtA=
+        b=zGygS2LMuXUGzaJ/thsnnlABPhg7LoHa7zuQYhXcSLQVXBKrpexGFbJ2vNZW7Vxbn
+         VfogloyCXbq80iP+p2Idj2nZpe5dGrQNQquPrMvo67lb8vnYPu9yvo7UgJZEZrOsBF
+         m4EhkijVkp09kEMjMsyWI+DV9O02xa62uKMBA4zk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <jsmart2021@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 046/191] scsi: lpfc: Fix unexpected error messages during RSCN handling
-Date:   Thu,  2 Jan 2020 23:05:28 +0100
-Message-Id: <20200102215834.851129628@linuxfoundation.org>
+Subject: [PATCH 5.4 048/191] f2fs: fix to update dirs i_pino during cross_rename
+Date:   Thu,  2 Jan 2020 23:05:30 +0100
+Message-Id: <20200102215835.050600027@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
 References: <20200102215829.911231638@linuxfoundation.org>
@@ -45,89 +45,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 2332e6e475b016e2026763f51333f84e2e6c57a3 ]
+[ Upstream commit 2a60637f06ac94869b2e630eaf837110d39bf291 ]
 
-During heavy RCN activity and log_verbose = 0 we see these messages:
+As Eric reported:
 
-  2754 PRLI failure DID:521245 Status:x9/xb2c00, data: x0
-  0231 RSCN timeout Data: x0 x3
-  0230 Unexpected timeout, hba link state x5
+RENAME_EXCHANGE support was just added to fsstress in xfstests:
 
-This is due to delayed RSCN activity.
+	commit 65dfd40a97b6bbbd2a22538977bab355c5bc0f06
+	Author: kaixuxia <xiakaixu1987@gmail.com>
+	Date:   Thu Oct 31 14:41:48 2019 +0800
 
-Correct by avoiding the timeout thus the messages by restarting the
-discovery timeout whenever an rscn is received.
+	    fsstress: add EXCHANGE renameat2 support
 
-Filter PRLI responses such that severity depends on whether expected for
-the configuration or not. For example, PRLI errors on a fabric will be
-informational (they are expected), but Point-to-Point errors are not
-necessarily expected so they are raised to an error level.
+This is causing xfstest generic/579 to fail due to fsck.f2fs reporting errors.
+I'm not sure what the problem is, but it still happens even with all the
+fs-verity stuff in the test commented out, so that the test just runs fsstress.
 
-Link: https://lore.kernel.org/r/20191105005708.7399-5-jsmart2021@gmail.com
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <jsmart2021@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+generic/579 23s ... 	[10:02:25]
+[    7.745370] run fstests generic/579 at 2019-11-04 10:02:25
+_check_generic_filesystem: filesystem on /dev/vdc is inconsistent
+(see /results/f2fs/results-default/generic/579.full for details)
+ [10:02:47]
+Ran: generic/579
+Failures: generic/579
+Failed 1 of 1 tests
+Xunit report: /results/f2fs/results-default/result.xml
+
+Here's the contents of 579.full:
+
+_check_generic_filesystem: filesystem on /dev/vdc is inconsistent
+*** fsck.f2fs output ***
+[ASSERT] (__chk_dots_dentries:1378)  --> Bad inode number[0x24] for '..', parent parent ino is [0xd10]
+
+The root cause is that we forgot to update directory's i_pino during
+cross_rename, fix it.
+
+Fixes: 32f9bc25cbda0 ("f2fs: support ->rename2()")
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Tested-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_els.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+ fs/f2fs/namei.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-index f293b48616ae..4794a58deaf3 100644
---- a/drivers/scsi/lpfc/lpfc_els.c
-+++ b/drivers/scsi/lpfc/lpfc_els.c
-@@ -2236,6 +2236,7 @@ lpfc_cmpl_els_prli(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
- 	struct Scsi_Host  *shost = lpfc_shost_from_vport(vport);
- 	IOCB_t *irsp;
- 	struct lpfc_nodelist *ndlp;
-+	char *mode;
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 4faf06e8bf89..a1c507b0b4ac 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -981,7 +981,8 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	if (!old_dir_entry || whiteout)
+ 		file_lost_pino(old_inode);
+ 	else
+-		F2FS_I(old_inode)->i_pino = new_dir->i_ino;
++		/* adjust dir's i_pino to pass fsck check */
++		f2fs_i_pino_write(old_inode, new_dir->i_ino);
+ 	up_write(&F2FS_I(old_inode)->i_sem);
  
- 	/* we pass cmdiocb to state machine which needs rspiocb as well */
- 	cmdiocb->context_un.rsp_iocb = rspiocb;
-@@ -2273,8 +2274,17 @@ lpfc_cmpl_els_prli(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
- 			goto out;
- 		}
+ 	old_inode->i_ctime = current_time(old_inode);
+@@ -1141,7 +1142,11 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	f2fs_set_link(old_dir, old_entry, old_page, new_inode);
  
-+		/* If we don't send GFT_ID to Fabric, a PRLI error
-+		 * could be expected.
-+		 */
-+		if ((vport->fc_flag & FC_FABRIC) ||
-+		    (vport->cfg_enable_fc4_type != LPFC_ENABLE_BOTH))
-+			mode = KERN_ERR;
-+		else
-+			mode = KERN_INFO;
-+
- 		/* PRLI failed */
--		lpfc_printf_vlog(vport, KERN_ERR, LOG_ELS,
-+		lpfc_printf_vlog(vport, mode, LOG_ELS,
- 				 "2754 PRLI failure DID:%06X Status:x%x/x%x, "
- 				 "data: x%x\n",
- 				 ndlp->nlp_DID, irsp->ulpStatus,
-@@ -6455,7 +6465,7 @@ lpfc_els_rcv_rscn(struct lpfc_vport *vport, struct lpfc_iocbq *cmdiocb,
- 	uint32_t payload_len, length, nportid, *cmd;
- 	int rscn_cnt;
- 	int rscn_id = 0, hba_id = 0;
--	int i;
-+	int i, tmo;
+ 	down_write(&F2FS_I(old_inode)->i_sem);
+-	file_lost_pino(old_inode);
++	if (!old_dir_entry)
++		file_lost_pino(old_inode);
++	else
++		/* adjust dir's i_pino to pass fsck check */
++		f2fs_i_pino_write(old_inode, new_dir->i_ino);
+ 	up_write(&F2FS_I(old_inode)->i_sem);
  
- 	pcmd = (struct lpfc_dmabuf *) cmdiocb->context2;
- 	lp = (uint32_t *) pcmd->virt;
-@@ -6561,6 +6571,13 @@ lpfc_els_rcv_rscn(struct lpfc_vport *vport, struct lpfc_iocbq *cmdiocb,
+ 	old_dir->i_ctime = current_time(old_dir);
+@@ -1156,7 +1161,11 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	f2fs_set_link(new_dir, new_entry, new_page, old_inode);
  
- 		spin_lock_irq(shost->host_lock);
- 		vport->fc_flag |= FC_RSCN_DEFERRED;
-+
-+		/* Restart disctmo if its already running */
-+		if (vport->fc_flag & FC_DISC_TMO) {
-+			tmo = ((phba->fc_ratov * 3) + 3);
-+			mod_timer(&vport->fc_disctmo,
-+				  jiffies + msecs_to_jiffies(1000 * tmo));
-+		}
- 		if ((rscn_cnt < FC_MAX_HOLD_RSCN) &&
- 		    !(vport->fc_flag & FC_RSCN_DISCOVERY)) {
- 			vport->fc_flag |= FC_RSCN_MODE;
+ 	down_write(&F2FS_I(new_inode)->i_sem);
+-	file_lost_pino(new_inode);
++	if (!new_dir_entry)
++		file_lost_pino(new_inode);
++	else
++		/* adjust dir's i_pino to pass fsck check */
++		f2fs_i_pino_write(new_inode, old_dir->i_ino);
+ 	up_write(&F2FS_I(new_inode)->i_sem);
+ 
+ 	new_dir->i_ctime = current_time(new_dir);
 -- 
 2.20.1
 
