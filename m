@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D35612F006
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:51:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CF0412F08D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:54:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729363AbgABWYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:24:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47492 "EHLO mail.kernel.org"
+        id S1729031AbgABWVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:21:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727146AbgABWYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:24:04 -0500
+        id S1729007AbgABWVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:21:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65DF020863;
-        Thu,  2 Jan 2020 22:24:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1023624649;
+        Thu,  2 Jan 2020 22:21:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003843;
-        bh=MmRPBlMnhKW6DpiBocnLu/7EwcduG+5H3+C5QqgQRzs=;
+        s=default; t=1578003694;
+        bh=8hnfwAge4CXRgad8fJNs6mBzSH+LB7Z0uK9OB6+f7JY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J9vjcOCXqa3DsvFPuGCB3Ubo7Xkuzy6EaaYa+AxXudOb2n8eDN17HGZuX+9OxqfkQ
-         y2tnU39WTkQPnb0yNOKwFUjey9jKpJHuWPCmF7UUK5ygmrizDuCJwey6+qibpJMDcj
-         YZBat53JPC2clkDIzgi7GFheCimnoDB5T8EU0glU=
+        b=xLI8sBI2rLBKIiDJ2ako7MPJ8bhGHfuDoHAfN4AG7uWLpk+Sth0Q7MxF5qE6MUZNX
+         43BEqgLvbDis+Fb8k4Goya6f7+TN2nH1z7m12cEbXXYj5ws85AAFpSOIzrNLyVcaBq
+         V6WJjDyJvb+tYhbvH8uUdZDA+p5RLKbg0rekfK8w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 22/91] irqchip/irq-bcm7038-l1: Enable parent IRQ if necessary
+        stable@vger.kernel.org, Jack Wang <jinpu.wang@cloud.ionos.com>,
+        peter chang <dpf@google.com>,
+        Deepak Ukey <deepak.ukey@microchip.com>,
+        Viswas G <Viswas.G@microchip.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 052/114] scsi: pm80xx: Fix for SATA device discovery
 Date:   Thu,  2 Jan 2020 23:07:04 +0100
-Message-Id: <20200102220423.626428808@linuxfoundation.org>
+Message-Id: <20200102220034.309965324@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
-References: <20200102220356.856162165@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,36 +47,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: peter chang <dpf@google.com>
 
-[ Upstream commit 27eebb60357ed5aa6659442f92907c0f7368d6ae ]
+[ Upstream commit ce21c63ee995b7a8b7b81245f2cee521f8c3c220 ]
 
-If the 'brcm,irq-can-wake' property is specified, make sure we also
-enable the corresponding parent interrupt we are attached to.
+Driver was missing complete() call in mpi_sata_completion which result in
+SATA abort error handling timing out. That causes the device to be left in
+the in_recovery state so subsequent commands sent to the device fail and
+the OS removes access to it.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20191024201415.23454-4-f.fainelli@gmail.com
+Link: https://lore.kernel.org/r/20191114100910.6153-2-deepak.ukey@microchip.com
+Acked-by: Jack Wang <jinpu.wang@cloud.ionos.com>
+Signed-off-by: peter chang <dpf@google.com>
+Signed-off-by: Deepak Ukey <deepak.ukey@microchip.com>
+Signed-off-by: Viswas G <Viswas.G@microchip.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/irqchip/irq-bcm7038-l1.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/scsi/pm8001/pm80xx_hwi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/irqchip/irq-bcm7038-l1.c b/drivers/irqchip/irq-bcm7038-l1.c
-index 0b9a8b709abf..b32988cac80c 100644
---- a/drivers/irqchip/irq-bcm7038-l1.c
-+++ b/drivers/irqchip/irq-bcm7038-l1.c
-@@ -284,6 +284,10 @@ static int __init bcm7038_l1_init_one(struct device_node *dn,
- 		pr_err("failed to map parent interrupt %d\n", parent_irq);
- 		return -EINVAL;
- 	}
-+
-+	if (of_property_read_bool(dn, "brcm,irq-can-wake"))
-+		enable_irq_wake(parent_irq);
-+
- 	irq_set_chained_handler_and_data(parent_irq, bcm7038_l1_irq_handle,
- 					 intc);
- 
+diff --git a/drivers/scsi/pm8001/pm80xx_hwi.c b/drivers/scsi/pm8001/pm80xx_hwi.c
+index 5021aed87f33..8627feb80261 100644
+--- a/drivers/scsi/pm8001/pm80xx_hwi.c
++++ b/drivers/scsi/pm8001/pm80xx_hwi.c
+@@ -2382,6 +2382,8 @@ mpi_sata_completion(struct pm8001_hba_info *pm8001_ha, void *piomb)
+ 			pm8001_printk("task 0x%p done with io_status 0x%x"
+ 			" resp 0x%x stat 0x%x but aborted by upper layer!\n",
+ 			t, status, ts->resp, ts->stat));
++		if (t->slow_task)
++			complete(&t->slow_task->completion);
+ 		pm8001_ccb_task_free(pm8001_ha, t, ccb, tag);
+ 	} else {
+ 		spin_unlock_irqrestore(&t->task_state_lock, flags);
 -- 
 2.20.1
 
