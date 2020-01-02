@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C89812EEDF
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:42:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BF2A12EDBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:32:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729008AbgABWgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:36:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47772 "EHLO mail.kernel.org"
+        id S1730281AbgABWbY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:31:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730589AbgABWg2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:36:28 -0500
+        id S1727846AbgABWbU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:31:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD57A22B48;
-        Thu,  2 Jan 2020 22:36:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F52B222C3;
+        Thu,  2 Jan 2020 22:31:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004588;
-        bh=TrO/k8D3SWblGwhilHgaV+gXgyn2/xwQq4SJqBiDUd0=;
+        s=default; t=1578004279;
+        bh=TthwAfsmb6SPtuYip6NvVbiF8b4sspXkblSL4VdWqDg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sh1KyxVRUE9dRGt2jOslYOEorxnRixETp7kZZyYnalHMeby5boxJvX6jolQnfnomj
-         hL6yK2kOcXcgJ0HrMoPVdVwRSMLmF7gssvZxd711sp975+Pv/SNEWj/zx1lU5o8cD3
-         zgsyLV2h0nySkysDSwIIKYCUiAt9+zpZuHvOfw4A=
+        b=irPeTtinYuN6T/SmUnGAD/enC1br4o95ci9bW8I+sORIVcAgB2AhK4mjHMyWdZVuj
+         9IXWEwLP0JdPd+oPwweOOemCQXsZvmA8UQlf6eZFrHPnnzduic0fzYgOaXy8/8uwzT
+         ig3BJg0qowa1ai5Njie+ZPfd9feztsTvTtB2Burk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Evan Green <evgreen@chromium.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 070/137] btrfs: abort transaction after failed inode updates in create_subvol
-Date:   Thu,  2 Jan 2020 23:07:23 +0100
-Message-Id: <20200102220555.988675827@linuxfoundation.org>
+Subject: [PATCH 4.9 113/171] Input: atmel_mxt_ts - disable IRQ across suspend
+Date:   Thu,  2 Jan 2020 23:07:24 +0100
+Message-Id: <20200102220602.820154792@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,49 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Evan Green <evgreen@chromium.org>
 
-[ Upstream commit c7e54b5102bf3614cadb9ca32d7be73bad6cecf0 ]
+[ Upstream commit 463fa44eec2fef50d111ed0199cf593235065c04 ]
 
-We can just abort the transaction here, and in fact do that for every
-other failure in this function except these two cases.
+Across suspend and resume, we are seeing error messages like the following:
 
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+atmel_mxt_ts i2c-PRP0001:00: __mxt_read_reg: i2c transfer failed (-121)
+atmel_mxt_ts i2c-PRP0001:00: Failed to read T44 and T5 (-121)
+
+This occurs because the driver leaves its IRQ enabled. Upon resume, there
+is an IRQ pending, but the interrupt is serviced before both the driver and
+the underlying I2C bus have been resumed. This causes EREMOTEIO errors.
+
+Disable the IRQ in suspend, and re-enable it on resume. If there are cases
+where the driver enters suspend with interrupts disabled, that's a bug we
+should fix separately.
+
+Signed-off-by: Evan Green <evgreen@chromium.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/ioctl.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/input/touchscreen/atmel_mxt_ts.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 3379490ce54d..119b1c5c279b 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -594,12 +594,18 @@ static noinline int create_subvol(struct inode *dir,
+diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+index c2fb0236a47c..8d871fcb7912 100644
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -3206,6 +3206,8 @@ static int __maybe_unused mxt_suspend(struct device *dev)
  
- 	btrfs_i_size_write(dir, dir->i_size + namelen * 2);
- 	ret = btrfs_update_inode(trans, root, dir);
--	BUG_ON(ret);
-+	if (ret) {
-+		btrfs_abort_transaction(trans, root, ret);
-+		goto fail;
-+	}
+ 	mutex_unlock(&input_dev->mutex);
  
- 	ret = btrfs_add_root_ref(trans, root->fs_info->tree_root,
- 				 objectid, root->root_key.objectid,
- 				 btrfs_ino(dir), index, name, namelen);
--	BUG_ON(ret);
-+	if (ret) {
-+		btrfs_abort_transaction(trans, root, ret);
-+		goto fail;
-+	}
++	disable_irq(data->irq);
++
+ 	return 0;
+ }
  
- 	ret = btrfs_uuid_tree_add(trans, root->fs_info->uuid_root,
- 				  root_item.uuid, BTRFS_UUID_KEY_SUBVOL,
+@@ -3218,6 +3220,8 @@ static int __maybe_unused mxt_resume(struct device *dev)
+ 	if (!input_dev)
+ 		return 0;
+ 
++	enable_irq(data->irq);
++
+ 	mutex_lock(&input_dev->mutex);
+ 
+ 	if (input_dev->users)
 -- 
 2.20.1
 
