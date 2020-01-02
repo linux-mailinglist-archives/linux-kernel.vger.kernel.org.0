@@ -2,92 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AFBC12EF2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:44:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6384B12EFB7
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:48:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730016AbgABWoN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:44:13 -0500
-Received: from mail-ot1-f44.google.com ([209.85.210.44]:39285 "EHLO
-        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729648AbgABWoL (ORCPT
+        id S1731224AbgABWsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:48:13 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42097 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731214AbgABWsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:44:11 -0500
-Received: by mail-ot1-f44.google.com with SMTP id 77so58836981oty.6;
-        Thu, 02 Jan 2020 14:44:11 -0800 (PST)
+        Thu, 2 Jan 2020 17:48:10 -0500
+Received: by mail-ed1-f66.google.com with SMTP id e10so40337240edv.9;
+        Thu, 02 Jan 2020 14:48:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=4UPLplmo5AOYVGqcjtpqI2E26h8IabatP5llWHkVEeo=;
-        b=AADIQQKSbx9mp65JscmKBxpR/0JaqscxGCSncyebyIfSDz1kdN6R6h8nbqhET796Dy
-         sM6c7h4ATffbD9uCsnCu+zMwCkEd5fl9w5L5qhRMaGnoTNfJZlSkwDK1PDguSXRx4zfq
-         T1R46eGsOTeSAwe2IIi5glKFv64W6gSBgOHaWthXgZxc51XBUDS46DcnDHzLiLBcJKpK
-         8Xf6q+6VkEMlaBgzWipPynZ9yHP1/9m6Tv7WpQgM5MA01v4252gIwsLkqmVZBoQoRcO0
-         K7jZ/jC93/aEv/DfT3eUyyGCtuId/mWMlTc+fvP3OjpJtEekLqZRo5/HJ+WITn0ipA0F
-         xB8A==
+        bh=FxDVgAWCt/FxweqZJ9ECXtjAagQu09sD0MoBdlNxryg=;
+        b=LZENSqWA7RVFQddHBKJZYPDG2/cwJ5/SRNHmORY6N0r2a9n46mzde3B6/50GhghXJ0
+         uh7+1ZGWPkTWY1KTpkEjbTZ74Hw6i2gL+YWZ3WqAA9r2mEUIzBF6Ttoao/2P9jmgHGOE
+         1WNlkVX6Kv2+xEqdpzhLiILQynLl9RMPf8kBPW0kgLIf/CDJhOeI8F0K5R3MAN2V3KQD
+         wha2jJ2G9h83MvVJWgu9wht/zKW5KGK9GsHAzutAqSkhU3wgTQeMyoutDg7QhjO3Ji1c
+         U3wr52sY9R9bfb0Yei7zIrXN4ES+L7+KSaoBW2nIztlDWgGarEISWH48RosfnAuYoZqd
+         GKXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=4UPLplmo5AOYVGqcjtpqI2E26h8IabatP5llWHkVEeo=;
-        b=LEDy9crY7arN/2cZQOpzsYbOQyMiZvW6ZFMksDsFqOud/zcyyWNsunlxIOrrOehFQg
-         a82EBYrFoWzULjDV9IRDwhNDrlPvRh5hynrmL398YrykFxpn3eukXCitlsodi0zV5Ikn
-         TQudHa8uyJQ2O/LSlmV7Jh+t6HfrMMwm/aBu1fYeE0bHLp6Pnzk7AJEqRCKCgdsp9erW
-         PwLGzPjc5t/zAVlcK0LJrzcQ+5NGb9KgSUzSC4PkD7aMwtpzSTvazXZpTb369Q00wUWw
-         R3zkkupP36G72H90UuFUDGXkMQMybHRl6wk+GsHUna3Uyfya+X6NPBzMezq1rLxjR9hU
-         abdA==
-X-Gm-Message-State: APjAAAUr1NcwPAUP9UCtEuYToLFYs0R1ZBeA1RwrYbo10GlHcAGb6poJ
-        t6WeHETuIAEctF8vZYfZ3U3HcZKdo+TztiFbgcw=
-X-Google-Smtp-Source: APXvYqwB9iEM7ZbeZGoKl9mZU5Op4kRYRl8Y6bsc7G1ZKimVF+NO5DgS7HD7lcUOx9nfnwLJ5dxNMgDpTjqrZeKeWuc=
-X-Received: by 2002:a05:6830:1e37:: with SMTP id t23mr9310819otr.16.1578005050928;
- Thu, 02 Jan 2020 14:44:10 -0800 (PST)
+        bh=FxDVgAWCt/FxweqZJ9ECXtjAagQu09sD0MoBdlNxryg=;
+        b=TgAvYHfhI4yn2I23fNpxPHzcBl2dDC4BK4zclErlIir9K+ew+JtU2Vax6B3sPa49rd
+         NYzel33Chtx5fiWnZsJCOWrVLcmt5JDpVPPvIgkO6n0c+5JWz3CH4ps0NvroIfT5bIgc
+         2yfJwgXPESw1AbRrjPTlz0IINmyU/TRVCY/JAcE4bR5s9kgSrPKcKEcAME0d/oF9+OvF
+         WSkxzjVTrznwnOr6mlJqJMOv0IOCNliw8L+WsNAzxjTXjSbH5dCu+9O4uM79lJ0wrLLN
+         grmxaC9s60JvbYD4Ua5W/gm8+Z3HnEKkE+Kl4YgrLyBc5lE4ganuFz9O5XAMh1v13XZg
+         jSkA==
+X-Gm-Message-State: APjAAAVgvpxSXY4Cy8kM9NRa2pOGAdEJRpN+jEbcRznlTseTKpoEyUGi
+        slIHwsi7nIfT4VD0MUmuYEZtdaVEkluoNF/mTj0=
+X-Google-Smtp-Source: APXvYqzODZU0xZFkiQbV2oHfKdWv2Gs85kBFpFSsOl9X7Khg89bfVon2QfK8B95R1BbTnQxJrnue+OzlbfWN8xx3r4g=
+X-Received: by 2002:a17:907:11cc:: with SMTP id va12mr91018831ejb.164.1578005288253;
+ Thu, 02 Jan 2020 14:48:08 -0800 (PST)
 MIME-Version: 1.0
-References: <20200102122004.216c85da@gandalf.local.home>
-In-Reply-To: <20200102122004.216c85da@gandalf.local.home>
-From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Date:   Thu, 2 Jan 2020 22:43:34 +0000
-Message-ID: <CADVatmO8mvhtgZ=CNv8uxhVkh2nqg5bjCLzTxyA9UDerRox8Ug@mail.gmail.com>
-Subject: Re: [RFC] tools lib traceevent: How to do library versioning being in
- the Linux kernel source?
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20191227014208.7189-1-olteanv@gmail.com> <20200102.134952.739616655559887645.davem@davemloft.net>
+In-Reply-To: <20200102.134952.739616655559887645.davem@davemloft.net>
+From:   Vladimir Oltean <olteanv@gmail.com>
+Date:   Fri, 3 Jan 2020 00:47:57 +0200
+Message-ID: <CA+h21horyGwqBTyBSVDRSSOSAPr_3i1dvz40=qKQMD_Nddtk3Q@mail.gmail.com>
+Subject: Re: [PATCH net-next 0/2] Improvements to the DSA deferred xmit
+To:     David Miller <davem@davemloft.net>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, netdev <netdev@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 2, 2020 at 5:20 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+Hi David,
+
+On Thu, 2 Jan 2020 at 23:49, David Miller <davem@davemloft.net> wrote:
 >
-> First, I hope everyone had a Happy New Year!
-
-Happy New Year to you too.
-
+> Two comments about this patch series, I think it needs more work:
 >
-> Next, Sudip has been working to get the libtraceevent library into
-> Debian. As this has been happening, I've been working at how to get all
-> the projects that use this, to use the library installed on the system
-> if it does exist. I'm hoping that once it's in Debian, the other
-> distros will follow suit.
 
-I have sent you another patch for libtraceevent. And, assuming that
-you will not have any objection to that patch libtraceevent has been
-merged in Debian and is now available in Debian Sid releases. Thanks
-to Ben for all his suggestion and help.
+Thanks for looking at this series.
 
-The packages are at:
-https://packages.debian.org/unstable/libtraceevent1
-https://packages.debian.org/unstable/libtraceevent-dev
-https://packages.debian.org/unstable/libtraceevent1-plugin
+> 1) This adds the thread and the xmit queue but not code that actually
+>    uses it.  You really have to provide the support code in the driver
+>    at the same time you add the new facitlity so we can actually see
+>    how it'll be used.
+>
 
+There is no API change here. There was, and still is, a single caller
+of dsa_defer_xmit in the kernel, from net/dsa/tag_sja1105.c:
 
--- 
-Regards
-Sudip
+    if (unlikely(sja1105_is_link_local(skb)))
+        return dsa_defer_xmit(skb, netdev);
+
+The whole difference is that what used to be a schedule_work() in that
+function is now a kthread_queue_work() call.
+
+> 2) Patch #1 talks about a tradeoff.  Replacing the CB initialization of
+>    the field skb_get().  But this skb_get() is an atomic operation and
+>    thus much more expensive for users of the deferred xmit scheme.
+>
+
+Ok, I'll admit I hadn't considered the exact penalty introduced by
+skb_get, but I think it is a matter of proportions.
+Worst case I expect no more than 64 packets per second to be
+transmitted using the deferred xmit mechanism: there are 4 switch
+ports, PTP runs with a sync interval of 1/8 seconds, and the STP hello
+timer is 2 seconds. So, not a lot of traffic.
+On the other hand, clearing the deferred_xmit bool from the skb->cb is
+something that everybody else (including this driver for "normal"
+traffic) needs to do at line rate, just for the above 64 packets per
+second (in the worst case) to be possible.
+
+> Thanks.
+
+Regards,
+-Vladimir
