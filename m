@@ -2,45 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F93712ECC1
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:21:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FF7012EC54
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:17:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728997AbgABWVa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:21:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40470 "EHLO mail.kernel.org"
+        id S1728352AbgABWR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:17:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728752AbgABWVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:21:25 -0500
+        id S1726781AbgABWRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:17:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4ED6224125;
-        Thu,  2 Jan 2020 22:21:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 226A821582;
+        Thu,  2 Jan 2020 22:17:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003684;
-        bh=HrTVBqJGvBqiSddNJgGarJ2BT+eOP7XFbllL+9PsWnw=;
+        s=default; t=1578003442;
+        bh=Ac/b8JjHYpaB7AAxoLz8MCMO6ze4YNLhZJNc5ivWTcs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EbMovZjbhnFlu0eRV43NAnxB+oDzTBVReW5lA7A9if77Vga5/K7TrjXHM+7D8q/ky
-         NAse5r+Jf0tyPoqcISuhRMHY9KedweZFs76oop0kkRoz4xj7HnKi3acdoQLcs9XH96
-         DyVirMWmsNngpOC0KqzkTP7xz2u2UUfYAcskl7oY=
+        b=088qDKWLk5KuTJbufA4Qd+G6ePzhW0ivLM8tar4esGSqIOKKrt7+sakUEkIsngbp/
+         MmECyDgcH/JEk/9XKU2ziGPqOOJwV++YePXunYuuTToqgEAHIxVuJO/xh9JQTlQnK9
+         VWmYv1mWNd1WzzHDp00s/RKYo3PHJzZVbbPfFPE8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
-        Chris Down <chris@chrisdown.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 071/114] kernel: sysctl: make drop_caches write-only
-Date:   Thu,  2 Jan 2020 23:07:23 +0100
-Message-Id: <20200102220036.228967185@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 162/191] bnxt_en: Remove unnecessary NULL checks for fw_health
+Date:   Thu,  2 Jan 2020 23:07:24 +0100
+Message-Id: <20200102215846.738549087@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,53 +45,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Weiner <hannes@cmpxchg.org>
+From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
 
-[ Upstream commit 204cb79ad42f015312a5bbd7012d09c93d9b46fb ]
+[ Upstream commit 0797c10d2d1fa0d6f14612404781b348fc757c3e ]
 
-Currently, the drop_caches proc file and sysctl read back the last value
-written, suggesting this is somehow a stateful setting instead of a
-one-time command.  Make it write-only, like e.g.  compact_memory.
+After fixing the allocation of bp->fw_health in the previous patch,
+the driver will not go through the fw reset and recovery code paths
+if bp->fw_health allocation fails.  So we can now remove the
+unnecessary NULL checks.
 
-While mitigating a VM problem at scale in our fleet, there was confusion
-about whether writing to this file will permanently switch the kernel into
-a non-caching mode.  This influences the decision making in a tense
-situation, where tens of people are trying to fix tens of thousands of
-affected machines: Do we need a rollback strategy?  What are the
-performance implications of operating in a non-caching state for several
-days?  It also caused confusion when the kernel team said we may need to
-write the file several times to make sure it's effective ("But it already
-reads back 3?").
-
-Link: http://lkml.kernel.org/r/20191031221602.9375-1-hannes@cmpxchg.org
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-Acked-by: Chris Down <chris@chrisdown.name>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: David Hildenbrand <david@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Alexey Dobriyan <adobriyan@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/sysctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c         |    6 ++----
+ drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c |    6 +-----
+ 2 files changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index f8576509c7be..4c4fd4339d33 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1411,7 +1411,7 @@ static struct ctl_table vm_table[] = {
- 		.procname	= "drop_caches",
- 		.data		= &sysctl_drop_caches,
- 		.maxlen		= sizeof(int),
--		.mode		= 0644,
-+		.mode		= 0200,
- 		.proc_handler	= drop_caches_sysctl_handler,
- 		.extra1		= &one,
- 		.extra2		= &four,
--- 
-2.20.1
-
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -9953,8 +9953,7 @@ static void bnxt_fw_health_check(struct
+ 	struct bnxt_fw_health *fw_health = bp->fw_health;
+ 	u32 val;
+ 
+-	if (!fw_health || !fw_health->enabled ||
+-	    test_bit(BNXT_STATE_IN_FW_RESET, &bp->state))
++	if (!fw_health->enabled || test_bit(BNXT_STATE_IN_FW_RESET, &bp->state))
+ 		return;
+ 
+ 	if (fw_health->tmr_counter) {
+@@ -10697,8 +10696,7 @@ static void bnxt_fw_reset_task(struct wo
+ 		bnxt_queue_fw_reset_work(bp, bp->fw_reset_min_dsecs * HZ / 10);
+ 		return;
+ 	case BNXT_FW_RESET_STATE_ENABLE_DEV:
+-		if (test_bit(BNXT_STATE_FW_FATAL_COND, &bp->state) &&
+-		    bp->fw_health) {
++		if (test_bit(BNXT_STATE_FW_FATAL_COND, &bp->state)) {
+ 			u32 val;
+ 
+ 			val = bnxt_fw_health_readl(bp,
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
+@@ -19,11 +19,10 @@ static int bnxt_fw_reporter_diagnose(str
+ 				     struct devlink_fmsg *fmsg)
+ {
+ 	struct bnxt *bp = devlink_health_reporter_priv(reporter);
+-	struct bnxt_fw_health *health = bp->fw_health;
+ 	u32 val, health_status;
+ 	int rc;
+ 
+-	if (!health || test_bit(BNXT_STATE_IN_FW_RESET, &bp->state))
++	if (test_bit(BNXT_STATE_IN_FW_RESET, &bp->state))
+ 		return 0;
+ 
+ 	val = bnxt_fw_health_readl(bp, BNXT_FW_HEALTH_REG);
+@@ -162,9 +161,6 @@ void bnxt_devlink_health_report(struct b
+ 	struct bnxt_fw_health *fw_health = bp->fw_health;
+ 	struct bnxt_fw_reporter_ctx fw_reporter_ctx;
+ 
+-	if (!fw_health)
+-		return;
+-
+ 	fw_reporter_ctx.sp_event = event;
+ 	switch (event) {
+ 	case BNXT_FW_RESET_NOTIFY_SP_EVENT:
 
 
