@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7805D12EDA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:31:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA7B912EE27
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:35:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730002AbgABWa2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:30:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34168 "EHLO mail.kernel.org"
+        id S1730864AbgABWfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:35:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729899AbgABWaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:30:25 -0500
+        id S1730658AbgABWfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:35:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9EA220863;
-        Thu,  2 Jan 2020 22:30:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B05D20863;
+        Thu,  2 Jan 2020 22:35:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004224;
-        bh=m5jp6toHKvY6DICKeFo4tapw/949r6gZ/yCWEKg4VJw=;
+        s=default; t=1578004538;
+        bh=/mpjo9GtSVF0JqQWMjKN3FUVwZ7JiXVEZcdh8LhQQUk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2bQ3BXDR4LWA2BFtmzyfuTqnhUDfBgVUjkMR9v9o6vMARSO2zWCakPA4mrFqx62NT
-         SPjGtwlXbNF9Xk3eFyddst0kFe3zYO11usjSfyC0hpcaRHB8Wta/93ePuI9YGNMNfd
-         i4w7UmakKt1WPqY8iBM9FnCxcMw1OuS/XMnHQ3J0=
+        b=iS2snx1y0sgob1lQfclrO4jStRn1coKrCK8ARCGmrr3CzdNJ3eofmhKqo78IxpGvc
+         HLT2iV2oeLGsNLccSbqBWk+feU6+5G7j3kJJ20b048FzZZVDWWUXCHzeHUka8ZNZzN
+         zMoIDVqB3Jhbtu9L4y/eF03k4VzN7EpFVNncQmj0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 089/171] btrfs: do not call synchronize_srcu() in inode_tree_del
-Date:   Thu,  2 Jan 2020 23:07:00 +0100
-Message-Id: <20200102220559.438935083@linuxfoundation.org>
+Subject: [PATCH 4.4 048/137] perf probe: Filter out instances except for inlined subroutine and subprogram
+Date:   Thu,  2 Jan 2020 23:07:01 +0100
+Message-Id: <20200102220553.054410292@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +46,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit f72ff01df9cf5db25c76674cac16605992d15467 ]
+[ Upstream commit da6cb952a89efe24bb76c4971370d485737a2d85 ]
 
-Testing with the new fsstress uncovered a pretty nasty deadlock with
-lookup and snapshot deletion.
+Filter out instances except for inlined_subroutine and subprogram DIE in
+die_walk_instances() and die_is_func_instance().
 
-Process A
-unlink
- -> final iput
-   -> inode_tree_del
-     -> synchronize_srcu(subvol_srcu)
+This fixes an issue that perf probe sets some probes on calling address
+instead of a target function itself.
 
-Process B
-btrfs_lookup  <- srcu_read_lock() acquired here
-  -> btrfs_iget
-    -> find inode that has I_FREEING set
-      -> __wait_on_freeing_inode()
+When perf probe walks on instances of an abstruct origin (a kind of
+function prototype of inlined function), die_walk_instances() can also
+pass a GNU_call_site (a GNU extension for call site) to callback. Since
+it is not an inlined instance of target function, we have to filter out
+when searching a probe point.
 
-We're holding the srcu_read_lock() while doing the iget in order to make
-sure our fs root doesn't go away, and then we are waiting for the inode
-to finish freeing.  However because the free'ing process is doing a
-synchronize_srcu() we deadlock.
+Without this patch, perf probe sets probes on call site address too.This
+can happen on some function which is marked "inlined", but has actual
+symbol. (I'm not sure why GCC mark it "inlined"):
 
-Fix this by dropping the synchronize_srcu() in inode_tree_del().  We
-don't need people to stop accessing the fs root at this point, we're
-only adding our empty root to the dead roots list.
+  # perf probe -D vfs_read
+  p:probe/vfs_read _text+2500017
+  p:probe/vfs_read_1 _text+2499468
+  p:probe/vfs_read_2 _text+2499563
+  p:probe/vfs_read_3 _text+2498876
+  p:probe/vfs_read_4 _text+2498512
+  p:probe/vfs_read_5 _text+2498627
 
-A larger much more invasive fix is forthcoming to address how we deal
-with fs roots, but this fixes the immediate problem.
+With this patch:
 
-Fixes: 76dda93c6ae2 ("Btrfs: add snapshot/subvolume destroy ioctl")
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Slightly different results, similar tho:
+
+  # perf probe -D vfs_read
+  p:probe/vfs_read _text+2498512
+
+Committer testing:
+
+  # uname -a
+  Linux quaco 5.3.8-200.fc30.x86_64 #1 SMP Tue Oct 29 14:46:22 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
+
+Before:
+
+  # perf probe -D vfs_read
+  p:probe/vfs_read _text+3131557
+  p:probe/vfs_read_1 _text+3130975
+  p:probe/vfs_read_2 _text+3131047
+  p:probe/vfs_read_3 _text+3130380
+  p:probe/vfs_read_4 _text+3130000
+  # uname -a
+  Linux quaco 5.3.8-200.fc30.x86_64 #1 SMP Tue Oct 29 14:46:22 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
+  #
+
+After:
+
+  # perf probe -D vfs_read
+  p:probe/vfs_read _text+3130000
+  #
+
+Fixes: db0d2c6420ee ("perf probe: Search concrete out-of-line instances")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: http://lore.kernel.org/lkml/157241937063.32002.11024544873990816590.stgit@devnote2
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/inode.c | 1 -
- 1 file changed, 1 deletion(-)
+ tools/perf/util/dwarf-aux.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index bb8863958ac0..250c8403ec67 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -5576,7 +5576,6 @@ static void inode_tree_del(struct inode *inode)
- 	spin_unlock(&root->inode_lock);
+diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
+index 8d6eaaab4739..388c9dcba976 100644
+--- a/tools/perf/util/dwarf-aux.c
++++ b/tools/perf/util/dwarf-aux.c
+@@ -298,18 +298,22 @@ bool die_is_func_def(Dwarf_Die *dw_die)
+  * @dw_die: a DIE
+  *
+  * Ensure that this DIE is an instance (which has an entry address).
+- * This returns true if @dw_die is a function instance. If not, you need to
+- * call die_walk_instances() to find actual instances.
++ * This returns true if @dw_die is a function instance. If not, the @dw_die
++ * must be a prototype. You can use die_walk_instances() to find actual
++ * instances.
+  **/
+ bool die_is_func_instance(Dwarf_Die *dw_die)
+ {
+ 	Dwarf_Addr tmp;
+ 	Dwarf_Attribute attr_mem;
++	int tag = dwarf_tag(dw_die);
  
- 	if (empty && btrfs_root_refs(&root->root_item) == 0) {
--		synchronize_srcu(&root->fs_info->subvol_srcu);
- 		spin_lock(&root->inode_lock);
- 		empty = RB_EMPTY_ROOT(&root->inode_tree);
- 		spin_unlock(&root->inode_lock);
+-	/* Actually gcc optimizes non-inline as like as inlined */
+-	return !dwarf_func_inline(dw_die) &&
+-	       (dwarf_entrypc(dw_die, &tmp) == 0 ||
+-		dwarf_attr(dw_die, DW_AT_ranges, &attr_mem) != NULL);
++	if (tag != DW_TAG_subprogram &&
++	    tag != DW_TAG_inlined_subroutine)
++		return false;
++
++	return dwarf_entrypc(dw_die, &tmp) == 0 ||
++		dwarf_attr(dw_die, DW_AT_ranges, &attr_mem) != NULL;
+ }
+ 
+ /**
+@@ -588,6 +592,9 @@ static int __die_walk_instances_cb(Dwarf_Die *inst, void *data)
+ 	Dwarf_Die *origin;
+ 	int tmp;
+ 
++	if (!die_is_func_instance(inst))
++		return DIE_FIND_CB_CONTINUE;
++
+ 	attr = dwarf_attr(inst, DW_AT_abstract_origin, &attr_mem);
+ 	if (attr == NULL)
+ 		return DIE_FIND_CB_CONTINUE;
 -- 
 2.20.1
 
