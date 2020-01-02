@@ -2,166 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0045012EEBF
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:41:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26E7212EF02
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:43:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729097AbgABWkn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:40:43 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:49204 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731100AbgABWkl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:40:41 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 002MeGkW130610;
-        Thu, 2 Jan 2020 16:40:16 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578004816;
-        bh=iY+CXAjnnmWi7PKkKhPCb/3kqbYV4sgylNQyJliTwSQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ZEu5qqMSCYzSWdRn2BzeiF7A2pIrxP7uPHhY4vpBT+fqVlGJhFnY79n9h/Xygw/mS
-         atGBU+RR5Stpn4c0pShXenNyX5NZ12ghl0L2w18MI3kbgKkHdS+MXe3HpG8+T8U73/
-         6AnAChozzAJps4rrVOLKXu6lR6aQJ6OS3VTvLGGY=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 002MeGcB014864
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 2 Jan 2020 16:40:16 -0600
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 2 Jan
- 2020 16:40:16 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 2 Jan 2020 16:40:16 -0600
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 002MeGRU042981;
-        Thu, 2 Jan 2020 16:40:16 -0600
-Subject: Re: [PATCH 3/3] iommu: Enable compile testing for some of drivers
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        kbuild test robot <lkp@intel.com>
-CC:     <kbuild-all@lists.01.org>, Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Tero Kristo <t-kristo@ti.com>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
-References: <20191230172619.17814-3-krzk@kernel.org>
- <201912311551.tBrb3BhH%lkp@intel.com> <20191231080722.GA6804@pi3>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <923b1f2f-2b5c-8b6e-6083-243beae09777@ti.com>
-Date:   Thu, 2 Jan 2020 16:40:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1731337AbgABWmv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:42:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38442 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730957AbgABWmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:42:45 -0500
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75157222C3;
+        Thu,  2 Jan 2020 22:42:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578004964;
+        bh=X1sDydLqSX2i4y9/WNq55HXF+1lcahFGVi3B3JmDeCE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=u7Tl+fXnDkklH/8QPf1heNJVzkOJ3TaUcSY9VoqunoijYHfPC40fXtDmCAIEZOfGH
+         UT7ccdfQEQrCPns7STxeE3O8NMhJKJCAwsVBVtihW0+DDjp0SXo4+UCEX0O2kWb04S
+         pP2xETmMH+P+54UFb0Ws5HkduJ1Ewrss6SqZuZNs=
+Received: by mail-qk1-f169.google.com with SMTP id t129so32487319qke.10;
+        Thu, 02 Jan 2020 14:42:44 -0800 (PST)
+X-Gm-Message-State: APjAAAWwKL+VUZ+/7s7nOTVBO0lvFQ/eKPWTJmy2MBeIXFum9bpf1l+X
+        4OVEtcj6Yai7JTqRPXmipBDXq/KEQHQREM9boA==
+X-Google-Smtp-Source: APXvYqwHjJixw+g5oo7LgzM37cf5twPti8tRxdrwCGh+tDfV93Rz9uc+7Jw8lKgm9/CqOO54nJLkoJK64EKW6TgtHaM=
+X-Received: by 2002:a05:620a:135b:: with SMTP id c27mr63515899qkl.119.1578004963560;
+ Thu, 02 Jan 2020 14:42:43 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191231080722.GA6804@pi3>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20191216121932.22967-1-zhang.lyra@gmail.com> <20191216121932.22967-4-zhang.lyra@gmail.com>
+ <20191226185623.GA4463@bogus> <CAAfSe-vL4S-w4JVzevPYxb=LNqGQEn6quM54AjPHZUe6Gw3WTg@mail.gmail.com>
+In-Reply-To: <CAAfSe-vL4S-w4JVzevPYxb=LNqGQEn6quM54AjPHZUe6Gw3WTg@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 2 Jan 2020 15:42:23 -0700
+X-Gmail-Original-Message-ID: <CAL_JsqKu5KwogNzr2wjtDFjWLH1cLOLBi0FK5ZZipdKS-MWVMQ@mail.gmail.com>
+Message-ID: <CAL_JsqKu5KwogNzr2wjtDFjWLH1cLOLBi0FK5ZZipdKS-MWVMQ@mail.gmail.com>
+Subject: Re: [PATCH V2 3/6] dt-bindings: clk: sprd: add bindings for sc9863a
+ clock controller
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
+On Mon, Dec 30, 2019 at 8:07 PM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+>
+> On Fri, 27 Dec 2019 at 02:56, Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Mon, Dec 16, 2019 at 08:19:29PM +0800, Chunyan Zhang wrote:
+> > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > >
+> > > add a new bindings to describe sc9863a clock compatible string.
+> > >
+> > > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > > ---
+> > >  .../bindings/clock/sprd,sc9863a-clk.yaml      | 77 +++++++++++++++++++
+> > >  1 file changed, 77 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
+> > > new file mode 100644
+> > > index 000000000000..881f0a0287e5
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
+> > > @@ -0,0 +1,77 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +# Copyright 2019 Unisoc Inc.
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: "http://devicetree.org/schemas/clock/sprd,sc9863a-clk.yaml#"
+> > > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> > > +
+> > > +title: SC9863A Clock Control Unit Device Tree Bindings
+> > > +
+> > > +maintainers:
+> > > +  - Orson Zhai <orsonzhai@gmail.com>
+> > > +  - Baolin Wang <baolin.wang7@gmail.com>
+> > > +  - Chunyan Zhang <zhang.lyra@gmail.com>
+> > > +
+> > > +properties:
+> > > +  "#clock-cells":
+> > > +    const: 1
+> > > +
+> > > +  compatible :
+> > > +    enum:
+> > > +      - sprd,sc9863a-ap-clk
+> > > +      - sprd,sc9863a-pmu-gate
+> > > +      - sprd,sc9863a-pll
+> > > +      - sprd,sc9863a-mpll
+> > > +      - sprd,sc9863a-rpll
+> > > +      - sprd,sc9863a-dpll
+> > > +      - sprd,sc9863a-aon-clk
+> > > +      - sprd,sc9863a-apahb-gate
+> > > +      - sprd,sc9863a-aonapb-gate
+> > > +      - sprd,sc9863a-mm-gate
+> > > +      - sprd,sc9863a-mm-clk
+> > > +      - sprd,sc9863a-vspahb-gate
+> > > +      - sprd,sc9863a-apapb-gate
+> >
+> > These will probably need to be split to separate schemas for the reasons
+> > below...
+> >
+> > > +
+> > > +  clocks:
+> > > +    description: |
+> > > +      The input parent clock(s) phandle for this clock, only list fixed
+> > > +      clocks which are decleared in devicetree.
+> >
+> > typo.
+> >
+> > You need to define how many clocks.
+>
+> Ok, will add a define of maxItems.
+>
+> >
+> > > +
+> > > +  clock-names:
+> > > +    description: |
+> > > +      Clock name strings used for driver to reference.
+> >
+> > You need to list out the names.
+> >
+> > > +
+> > > +  reg:
+> > > +    description: |
+> > > +      Contain the registers base address and length. It must be configured
+> > > +      only if no 'sprd,syscon' under the node.
+> > > +
+> > > +  sprd,syscon:
+> > > +    $ref: '/schemas/types.yaml#/definitions/phandle'
+> > > +    description: |
+> > > +      The phandle to the syscon which is in the same address area with
+> > > +      the clock, and so we can get regmap for the clocks from the
+> > > +      syscon device.
+> >
+> > It is preferred to make the clock node a child of the syscon and then
+> > you don't need this property.
+>
+> According to the hardware topology, any clocks are not belonged to
+> syscon, like described here, this phandle is only used to get virtual
+> map address for clocks which have the same phsical address base with
+> one syscon.
+>
+> In the past, clocks were defined like below:
+>     apahb_gate: apahb-gate {
+>       compatible = "sprd,sc9863a-apahb-gate";
+>       reg = <0 0x20e00000 0 0x1000>;
+>       #clock-cells = <1>;
+>     };
+>
+> And there was also a syscon which had the same base address like below:
+> ap_ahb_regs: syscon@20e00000 {
+> compatible = "sprd,sc9863a-glbregs", "syscon";
+> reg = <0 0x20e00000 0 0x4000>;
+> };
+>
+> To avoid one phsical address was remapped more than one time, I think
+> using the mapped address by syscon directly would be better.
+> Any other suggestions are very appreciated.
 
-On 12/31/19 2:07 AM, Krzysztof Kozlowski wrote:
-> On Tue, Dec 31, 2019 at 03:43:39PM +0800, kbuild test robot wrote:
->> Hi Krzysztof,
->>
->> I love your patch! Perhaps something to improve:
->>
->> [auto build test WARNING on iommu/next]
->> [also build test WARNING on v5.5-rc4]
->> [if your patch is applied to the wrong git tree, please drop us a note to help
->> improve the system. BTW, we also suggest to use '--base' option to specify the
->> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
->>
->> url:    https://github.com/0day-ci/linux/commits/Krzysztof-Kozlowski/iommu-omap-Fix-pointer-cast-Wpointer-to-int-cast-warnings-on-64-bit/20191231-022212
->> base:   https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git next
->> config: ia64-allmodconfig (attached as .config)
->> compiler: ia64-linux-gcc (GCC) 7.5.0
->> reproduce:
->>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>         chmod +x ~/bin/make.cross
->>         # save the attached .config to linux build tree
->>         GCC_VERSION=7.5.0 make.cross ARCH=ia64 
->>
->> If you fix the issue, kindly add following tag
->> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> I saw it already while compile testing my patch. I must admit that I
-> could not find easy/fast fix for it.  Probably the
-> omap_iommu_translate() helper should be made 64-bit friendly but this
-> obfuscates the code. 
+I'm only suggesting you change the location of the node and get the
+syscon by getting the parent node. IOW, do this:
 
->The driver and hardware supports only 32-bit addresses.
+ap_ahb_regs: syscon@20e00000 {
+    compatible = "sprd,sc9863a-glbregs", "syscon";
+    reg = <0 0x20e00000 0 0x4000>;
 
-Yeah, is there a reason why you are trying to enable the build for the
-OMAP IOMMU driver on 64-bit platforms or other architectures - the IP
-and driver is only ever used on ARMv7 platforms, and it should already
-be available for COMPILE_TEST on those.
+    apahb_gate: apahb-gate {
+        compatible = "sprd,sc9863a-apahb-gate";
+        #clock-cells = <1>;
+    };
+};
 
-regards
-Suman
+Now, if there is a sub range of registers for the clocks that are
+contiguous, then apahb-gate should have a 'reg' property too (and
+ranges in the parent). Linux will not use that, but it's a more
+complete description of the h/w.
 
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
->>
->> All warnings (new ones prefixed by >>):
->>
->>    In file included from drivers/iommu/omap-iommu.c:33:0:
->>    drivers/iommu/omap-iommu.c: In function 'omap_iommu_iova_to_phys':
->>>> drivers/iommu/omap-iopgtable.h:44:21: warning: large integer implicitly truncated to unsigned type [-Woverflow]
->>     #define IOPTE_MASK  (~(IOPTE_SIZE - 1))
->>                         ^
->>>> drivers/iommu/omap-iommu.c:1641:41: note: in expansion of macro 'IOPTE_MASK'
->>        ret = omap_iommu_translate(*pte, da, IOPTE_MASK);
->>                                             ^~~~~~~~~~
->>    drivers/iommu/omap-iopgtable.h:51:23: warning: large integer implicitly truncated to unsigned type [-Woverflow]
->>     #define IOLARGE_MASK  (~(IOLARGE_SIZE - 1))
->>                           ^
->>>> drivers/iommu/omap-iommu.c:1643:41: note: in expansion of macro 'IOLARGE_MASK'
->>        ret = omap_iommu_translate(*pte, da, IOLARGE_MASK);
->>                                             ^~~~~~~~~~~~
->>    drivers/iommu/omap-iopgtable.h:27:25: warning: large integer implicitly truncated to unsigned type [-Woverflow]
->>     #define IOSECTION_MASK  (~(IOSECTION_SIZE - 1))
->>                             ^
->>>> drivers/iommu/omap-iommu.c:1649:41: note: in expansion of macro 'IOSECTION_MASK'
->>        ret = omap_iommu_translate(*pgd, da, IOSECTION_MASK);
->>                                             ^~~~~~~~~~~~~~
->>    drivers/iommu/omap-iopgtable.h:34:23: warning: large integer implicitly truncated to unsigned type [-Woverflow]
->>     #define IOSUPER_MASK  (~(IOSUPER_SIZE - 1))
->>                           ^
->>>> drivers/iommu/omap-iommu.c:1651:41: note: in expansion of macro 'IOSUPER_MASK'
->>        ret = omap_iommu_translate(*pgd, da, IOSUPER_MASK);
->>                                             ^~~~~~~~~~~~
->>
->> vim +44 drivers/iommu/omap-iopgtable.h
->>
->> 97ec7d585b33bb arch/arm/plat-omap/iopgtable.h Hiroshi DOYU 2010-02-15  38  
->> 97ec7d585b33bb arch/arm/plat-omap/iopgtable.h Hiroshi DOYU 2010-02-15  39  /*
->> 97ec7d585b33bb arch/arm/plat-omap/iopgtable.h Hiroshi DOYU 2010-02-15  40   * "small page" address mask and size definitions.
->> 97ec7d585b33bb arch/arm/plat-omap/iopgtable.h Hiroshi DOYU 2010-02-15  41   */
->> a9dcad5e375800 arch/arm/plat-omap/iopgtable.h Hiroshi DOYU 2009-01-26  42  #define IOPTE_SHIFT		12
->> 5ff98fa68c88d7 drivers/iommu/omap-iopgtable.h Suman Anna   2015-07-20  43  #define IOPTE_SIZE		BIT(IOPTE_SHIFT)
->> a9dcad5e375800 arch/arm/plat-omap/iopgtable.h Hiroshi DOYU 2009-01-26 @44  #define IOPTE_MASK		(~(IOPTE_SIZE - 1))
->> a9dcad5e375800 arch/arm/plat-omap/iopgtable.h Hiroshi DOYU 2009-01-26  45  
->>
->> :::::: The code at line 44 was first introduced by commit
->> :::::: a9dcad5e375800fcb07f7617dba23b3aade8f09d omap iommu: tlb and pagetable primitives
->>
->> :::::: TO: Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
->> :::::: CC: Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
->>
->> ---
->> 0-DAY kernel test infrastructure                 Open Source Technology Center
->> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
-> 
-> 
-
+Rob
