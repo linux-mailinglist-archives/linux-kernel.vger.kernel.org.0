@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7B1D12F18A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:02:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB30112F193
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:02:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbgABWLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:11:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49582 "EHLO mail.kernel.org"
+        id S1727272AbgABWLt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:11:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726702AbgABWL2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:11:28 -0500
+        id S1727235AbgABWLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:11:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B279721D7D;
-        Thu,  2 Jan 2020 22:11:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3F2F222C3;
+        Thu,  2 Jan 2020 22:11:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003088;
-        bh=0hcivgfnIPv5RFLLByzSdVuZjO4Jod2h9/haKpKzhhc=;
+        s=default; t=1578003105;
+        bh=tYm3aqCesI3PojqQoVdUhf49OnoIHyzn8jigXUMc0+k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fYxp7PwOH58ffwkpX0nP9OvjU0yE5ZY0lD8NG0pm6DktjEo96AtVQ71lRZljrMkKi
-         s+r3/so4nrtOT8VtgVs19C28yealB/DIhOcxKHRg8A3nRqV8+cjcGxLXW2pzGSETf5
-         /Jo1dl9SJFIgDgl7OYxTbHZpP5Nlk/3uWBSl4a/E=
+        b=LP06R4aIozClFDkthGfqDewKGxxD52j5B2LncP0I2gxYtVcu1n3ntoaY1ExIJqAF4
+         x5a6/GP+CKt5OE+rFokD18OKJ97ZhPYyMWJSer84gctQwmY8nrPGaQfocZkH4ALJDw
+         cTylcbGAlAjp/2UrABYV2w4p9kKm+SywEj30+Jx8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ezequiel Garcia <ezequiel@collabora.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 015/191] iommu: rockchip: Free domain on .domain_free
-Date:   Thu,  2 Jan 2020 23:04:57 +0100
-Message-Id: <20200102215831.389395073@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 021/191] scsi: csiostor: Dont enable IRQs too early
+Date:   Thu,  2 Jan 2020 23:05:03 +0100
+Message-Id: <20200102215832.181386893@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
 References: <20200102215829.911231638@linuxfoundation.org>
@@ -45,62 +44,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ezequiel Garcia <ezequiel@collabora.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 42bb97b80f2e3bf592e3e99d109b67309aa1b30e ]
+[ Upstream commit d6c9b31ac3064fbedf8961f120a4c117daa59932 ]
 
-IOMMU domain resource life is well-defined, managed
-by .domain_alloc and .domain_free.
+These are called with IRQs disabled from csio_mgmt_tmo_handler() so we
+can't call spin_unlock_irq() or it will enable IRQs prematurely.
 
-Therefore, domain-specific resources shouldn't be tied to
-the device life, but instead to its domain.
-
-Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: a3667aaed569 ("[SCSI] csiostor: Chelsio FCoE offload driver")
+Link: https://lore.kernel.org/r/20191019085913.GA14245@mwanda
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/rockchip-iommu.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/scsi/csiostor/csio_lnode.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-index 4dcbf68dfda4..0df091934361 100644
---- a/drivers/iommu/rockchip-iommu.c
-+++ b/drivers/iommu/rockchip-iommu.c
-@@ -980,13 +980,13 @@ static struct iommu_domain *rk_iommu_domain_alloc(unsigned type)
- 	if (!dma_dev)
- 		return NULL;
+diff --git a/drivers/scsi/csiostor/csio_lnode.c b/drivers/scsi/csiostor/csio_lnode.c
+index 66e58f0a75dc..23cbe4cda760 100644
+--- a/drivers/scsi/csiostor/csio_lnode.c
++++ b/drivers/scsi/csiostor/csio_lnode.c
+@@ -301,6 +301,7 @@ csio_ln_fdmi_rhba_cbfn(struct csio_hw *hw, struct csio_ioreq *fdmi_req)
+ 	struct fc_fdmi_port_name *port_name;
+ 	uint8_t buf[64];
+ 	uint8_t *fc4_type;
++	unsigned long flags;
  
--	rk_domain = devm_kzalloc(dma_dev, sizeof(*rk_domain), GFP_KERNEL);
-+	rk_domain = kzalloc(sizeof(*rk_domain), GFP_KERNEL);
- 	if (!rk_domain)
- 		return NULL;
+ 	if (fdmi_req->wr_status != FW_SUCCESS) {
+ 		csio_ln_dbg(ln, "WR error:%x in processing fdmi rhba cmd\n",
+@@ -385,13 +386,13 @@ csio_ln_fdmi_rhba_cbfn(struct csio_hw *hw, struct csio_ioreq *fdmi_req)
+ 	len = (uint32_t)(pld - (uint8_t *)cmd);
  
- 	if (type == IOMMU_DOMAIN_DMA &&
- 	    iommu_get_dma_cookie(&rk_domain->domain))
--		return NULL;
-+		goto err_free_domain;
- 
- 	/*
- 	 * rk32xx iommus use a 2 level pagetable.
-@@ -1021,6 +1021,8 @@ err_free_dt:
- err_put_cookie:
- 	if (type == IOMMU_DOMAIN_DMA)
- 		iommu_put_dma_cookie(&rk_domain->domain);
-+err_free_domain:
-+	kfree(rk_domain);
- 
- 	return NULL;
- }
-@@ -1049,6 +1051,7 @@ static void rk_iommu_domain_free(struct iommu_domain *domain)
- 
- 	if (domain->type == IOMMU_DOMAIN_DMA)
- 		iommu_put_dma_cookie(&rk_domain->domain);
-+	kfree(rk_domain);
+ 	/* Submit FDMI RPA request */
+-	spin_lock_irq(&hw->lock);
++	spin_lock_irqsave(&hw->lock, flags);
+ 	if (csio_ln_mgmt_submit_req(fdmi_req, csio_ln_fdmi_done,
+ 				FCOE_CT, &fdmi_req->dma_buf, len)) {
+ 		CSIO_INC_STATS(ln, n_fdmi_err);
+ 		csio_ln_dbg(ln, "Failed to issue fdmi rpa req\n");
+ 	}
+-	spin_unlock_irq(&hw->lock);
++	spin_unlock_irqrestore(&hw->lock, flags);
  }
  
- static int rk_iommu_add_device(struct device *dev)
+ /*
+@@ -412,6 +413,7 @@ csio_ln_fdmi_dprt_cbfn(struct csio_hw *hw, struct csio_ioreq *fdmi_req)
+ 	struct fc_fdmi_rpl *reg_pl;
+ 	struct fs_fdmi_attrs *attrib_blk;
+ 	uint8_t buf[64];
++	unsigned long flags;
+ 
+ 	if (fdmi_req->wr_status != FW_SUCCESS) {
+ 		csio_ln_dbg(ln, "WR error:%x in processing fdmi dprt cmd\n",
+@@ -491,13 +493,13 @@ csio_ln_fdmi_dprt_cbfn(struct csio_hw *hw, struct csio_ioreq *fdmi_req)
+ 	attrib_blk->numattrs = htonl(numattrs);
+ 
+ 	/* Submit FDMI RHBA request */
+-	spin_lock_irq(&hw->lock);
++	spin_lock_irqsave(&hw->lock, flags);
+ 	if (csio_ln_mgmt_submit_req(fdmi_req, csio_ln_fdmi_rhba_cbfn,
+ 				FCOE_CT, &fdmi_req->dma_buf, len)) {
+ 		CSIO_INC_STATS(ln, n_fdmi_err);
+ 		csio_ln_dbg(ln, "Failed to issue fdmi rhba req\n");
+ 	}
+-	spin_unlock_irq(&hw->lock);
++	spin_unlock_irqrestore(&hw->lock, flags);
+ }
+ 
+ /*
+@@ -512,6 +514,7 @@ csio_ln_fdmi_dhba_cbfn(struct csio_hw *hw, struct csio_ioreq *fdmi_req)
+ 	void *cmd;
+ 	struct fc_fdmi_port_name *port_name;
+ 	uint32_t len;
++	unsigned long flags;
+ 
+ 	if (fdmi_req->wr_status != FW_SUCCESS) {
+ 		csio_ln_dbg(ln, "WR error:%x in processing fdmi dhba cmd\n",
+@@ -542,13 +545,13 @@ csio_ln_fdmi_dhba_cbfn(struct csio_hw *hw, struct csio_ioreq *fdmi_req)
+ 	len += sizeof(*port_name);
+ 
+ 	/* Submit FDMI request */
+-	spin_lock_irq(&hw->lock);
++	spin_lock_irqsave(&hw->lock, flags);
+ 	if (csio_ln_mgmt_submit_req(fdmi_req, csio_ln_fdmi_dprt_cbfn,
+ 				FCOE_CT, &fdmi_req->dma_buf, len)) {
+ 		CSIO_INC_STATS(ln, n_fdmi_err);
+ 		csio_ln_dbg(ln, "Failed to issue fdmi dprt req\n");
+ 	}
+-	spin_unlock_irq(&hw->lock);
++	spin_unlock_irqrestore(&hw->lock, flags);
+ }
+ 
+ /**
 -- 
 2.20.1
 
