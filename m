@@ -2,327 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 027D712E287
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 06:15:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F14112E299
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 06:20:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbgABFPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 00:15:31 -0500
-Received: from mga12.intel.com ([192.55.52.136]:45047 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727734AbgABFP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 00:15:27 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Jan 2020 21:15:26 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,385,1571727600"; 
-   d="scan'208";a="369236632"
-Received: from unknown (HELO local-michael-cet-test.sh.intel.com) ([10.239.159.128])
-  by orsmga004.jf.intel.com with ESMTP; 01 Jan 2020 21:15:24 -0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, jmattson@google.com,
-        sean.j.christopherson@intel.com
-Cc:     yu.c.zhang@linux.intel.com, alazar@bitdefender.com,
-        edwin.zhai@intel.com, Yang Weijiang <weijiang.yang@intel.com>
-Subject: [RESEND PATCH v10 10/10] kvm: selftests: selftest for Sub-Page protection
-Date:   Thu,  2 Jan 2020 13:19:04 +0800
-Message-Id: <20200102051904.32090-11-weijiang.yang@intel.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20200102051904.32090-1-weijiang.yang@intel.com>
-References: <20200102051904.32090-1-weijiang.yang@intel.com>
+        id S1726081AbgABFUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 00:20:50 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:25182 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725837AbgABFUu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 00:20:50 -0500
+X-UUID: 3dd4fa7883af4e82ba5e339fd024637f-20200102
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=DQRcORIL+y+2fbFtjCrmMv7xI1mVBRbKuBSAG37pM1Y=;
+        b=gUb1sMn7gQ+j225mIw/ITYAHS89tZrVNqK4ac2jCSXJSdP70i84SFL8CZa2iNS2yaj2EYbeLvxq8SKhHbUeH7I5EMB6SAA88E5bsN9NlrNFD68XLmVVGpbADKP12qpODbcl/nH7xUxJAIG1X3pgIl1xc/dS9xMqppGg+77u/g7E=;
+X-UUID: 3dd4fa7883af4e82ba5e339fd024637f-20200102
+Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1601091587; Thu, 02 Jan 2020 13:20:41 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 2 Jan 2020 13:20:11 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 2 Jan 2020 13:20:44 +0800
+Message-ID: <1577942440.24650.5.camel@mtksdaap41>
+Subject: Re: [PATCH v6, 13/14] drm/mediatek: add fifo_size into rdma private
+ data
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Yongqiang Niu <yongqiang.niu@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "David Airlie" <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Thu, 2 Jan 2020 13:20:40 +0800
+In-Reply-To: <1577937624-14313-14-git-send-email-yongqiang.niu@mediatek.com>
+References: <1577937624-14313-1-git-send-email-yongqiang.niu@mediatek.com>
+         <1577937624-14313-14-git-send-email-yongqiang.niu@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+X-TM-SNTS-SMTP: 3B5184720FA311207A262842885CAD4A65345CC110507E138B456F27E95088672000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sub-Page Permission(SPP) is to protect finer granularity subpages
-(128Byte each) within a 4KB page. It's not enabled in KVM by default,
-the test first initializes the SPP runtime environment with
-KVM_ENABLE_CAP ioctl, then sets protection with KVM_SUBPAGES_SET_ACCESS
-for the target guest page, check permissions with KVM_SUBPAGES_GET_ACCESS
-to make sure they are set as expected.
-
-Two steps in guest code to very whether SPP is working:
-1) protect all 128byte subpages, write data to each subpage
-to see if SPP induced EPT violation happening. 2)unprotect all
-subpages, again write data to each subpage to see if SPP still
-works or not.
-
-Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
----
- tools/testing/selftests/kvm/Makefile          |   2 +-
- tools/testing/selftests/kvm/lib/kvm_util.c    |   1 +
- tools/testing/selftests/kvm/x86_64/spp_test.c | 234 ++++++++++++++++++
- 3 files changed, 236 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/kvm/x86_64/spp_test.c
-
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index 3138a916574a..48582b7d1963 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -29,7 +29,7 @@ TEST_GEN_PROGS_x86_64 += x86_64/xss_msr_test
- TEST_GEN_PROGS_x86_64 += clear_dirty_log_test
- TEST_GEN_PROGS_x86_64 += dirty_log_test
- TEST_GEN_PROGS_x86_64 += kvm_create_max_vcpus
--
-+TEST_GEN_PROGS_x86_64 += x86_64/spp_test
- TEST_GEN_PROGS_aarch64 += clear_dirty_log_test
- TEST_GEN_PROGS_aarch64 += dirty_log_test
- TEST_GEN_PROGS_aarch64 += kvm_create_max_vcpus
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 41cf45416060..bc0a25f4276b 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -1486,6 +1486,7 @@ static struct exit_reason {
- 	{KVM_EXIT_UNKNOWN, "UNKNOWN"},
- 	{KVM_EXIT_EXCEPTION, "EXCEPTION"},
- 	{KVM_EXIT_IO, "IO"},
-+	{KVM_EXIT_SPP, "SPP"},
- 	{KVM_EXIT_HYPERCALL, "HYPERCALL"},
- 	{KVM_EXIT_DEBUG, "DEBUG"},
- 	{KVM_EXIT_HLT, "HLT"},
-diff --git a/tools/testing/selftests/kvm/x86_64/spp_test.c b/tools/testing/selftests/kvm/x86_64/spp_test.c
-new file mode 100644
-index 000000000000..2e83ff60768b
---- /dev/null
-+++ b/tools/testing/selftests/kvm/x86_64/spp_test.c
-@@ -0,0 +1,234 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Sub-Page Permission test
-+ *
-+ * Copyright (C) 2019, Intel Corp.
-+ *
-+ */
-+
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+
-+#include "test_util.h"
-+#include "kvm_util.h"
-+#include "processor.h"
-+#include "../../lib/kvm_util_internal.h"
-+#include "linux/kvm.h"
-+
-+#define VCPU_ID           1
-+#define PAGE_SIZE         (4096)
-+#define SPP_GUARD_SIZE    (16 * PAGE_SIZE)
-+#define SPP_GUARD_MEMSLOT (1)
-+#define SPP_GUARD_PAGES   (SPP_GUARD_SIZE / PAGE_SIZE)
-+#define SPP_GUARD_GPA      0x10000000
-+
-+#define SUBPAGE_ACCESS_DEFAULT   (0x0)
-+#define SUBPAGE_ACCESS_FULL      (0xFFFFFFFF)
-+#define START_SPP_VM_ADDR        (0x700000)
-+#define SUBPAGE_SIZE             (128)
-+
-+vm_vaddr_t vspp_start;
-+vm_paddr_t pspp_start;
-+
-+void guest_code(void)
-+{
-+	uint8_t *iterator = (uint8_t *)vspp_start;
-+	int count;
-+
-+	GUEST_SYNC(1);
-+	/*
-+	 * expect EPT violation induced by SPP in each interation since
-+	 * the full page is protected by SPP.
-+	 */
-+	for (count = 0; count < PAGE_SIZE / SUBPAGE_SIZE; count++) {
-+		*(uint32_t *)(iterator) = 0x99;
-+		iterator += SUBPAGE_SIZE;
-+	}
-+	GUEST_SYNC(2);
-+	iterator = (uint8_t *)vspp_start;
-+
-+	/*
-+	 * don't expect EPT violation happen since SPP is disabled
-+	 * for the page
-+	 */
-+	for (count = 0; count < PAGE_SIZE / SUBPAGE_SIZE; count++) {
-+		*(uint32_t *)(iterator) = 0x99;
-+		iterator += SUBPAGE_SIZE;
-+	}
-+}
-+
-+void prepare_test(struct kvm_vm **g_vm, struct kvm_run **g_run)
-+{
-+	void *spp_hva;
-+	struct kvm_vm *vm;
-+	struct kvm_run *run;
-+	/* Create VM, SPP is only valid for 4KB page mode */
-+	*g_vm = vm_create_default(VCPU_ID, 0, guest_code);
-+	vm = *g_vm;
-+
-+	*g_run = vcpu_state(vm, VCPU_ID);
-+	run = *g_run;
-+
-+	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS, SPP_GUARD_GPA,
-+				    SPP_GUARD_MEMSLOT, SPP_GUARD_PAGES, 0);
-+
-+	pspp_start = vm_phy_pages_alloc(vm, 1, SPP_GUARD_GPA,
-+					SPP_GUARD_MEMSLOT);
-+
-+	memset(addr_gpa2hva(vm, SPP_GUARD_GPA), 0x0, PAGE_SIZE);
-+
-+	virt_map(vm, START_SPP_VM_ADDR, SPP_GUARD_GPA, PAGE_SIZE, 0);
-+
-+	vspp_start = vm_vaddr_alloc(vm, PAGE_SIZE, START_SPP_VM_ADDR,
-+				    SPP_GUARD_MEMSLOT, 0);
-+
-+	spp_hva = addr_gva2hva(vm, vspp_start);
-+
-+	pspp_start = addr_hva2gpa(vm, spp_hva);
-+
-+	printf("SPP protected zone: size = %d, gva = 0x%lx, gpa = 0x%lx, "
-+	       "hva = 0x%p\n", PAGE_SIZE, vspp_start, pspp_start, spp_hva);
-+
-+	/* make sure the virtual address is visible to VM. */
-+	sync_global_to_guest(vm, vspp_start);
-+
-+	vcpu_run(vm, VCPU_ID);
-+
-+	TEST_ASSERT(run->exit_reason == KVM_EXIT_IO,
-+		    "exit reason: %u (%s),\n", run->exit_reason,
-+		     exit_reason_str(run->exit_reason));
-+}
-+
-+void setup_spp(struct kvm_vm *vm)
-+{
-+	struct kvm_enable_cap cap;
-+	int ret = 0;
-+	struct kvm_subpage *sp;
-+	int len;
-+	memset(&cap, 0, sizeof(cap));
-+	cap.cap = KVM_CAP_X86_SPP;
-+	cap.flags = 0;
-+
-+	/* initialize the SPP runtime environment.*/
-+	ret = ioctl(vm->fd, KVM_ENABLE_CAP, &cap);
-+	TEST_ASSERT(ret == 0, "KVM_CAP_X86_SPP failed.");
-+	len = sizeof(*sp) + sizeof(__u32);
-+	printf("SPP initialized successfully.\n");
-+
-+	sp = malloc(len);
-+	TEST_ASSERT(sp > 0, "Low memory 1!");
-+	memset(sp, 0, len);
-+	/* set up SPP protection for the page. */
-+	sp->npages = 1;
-+	sp->gfn_base = pspp_start >> 12;
-+	sp->access_map[0] = SUBPAGE_ACCESS_DEFAULT;
-+	ret = ioctl(vm->fd, KVM_SUBPAGES_SET_ACCESS, sp);
-+
-+	TEST_ASSERT(ret == 1, "KVM_SUBPAGES_SET_ACCESS failed. ret = 0x%x, "
-+		    "gfn_base = 0x%llx\n", ret, sp->gfn_base);
-+	printf("set spp protection info: gfn = 0x%llx, access = 0x%x, "
-+	       "npages = %d\n", sp->gfn_base, sp->access_map[0],
-+	       sp->npages);
-+
-+	memset(sp, 0, len);
-+	/* make sure the SPP permission bits are actully set as expected. */
-+	sp->npages = 1;
-+	sp->gfn_base = pspp_start >> 12;
-+
-+	ret = ioctl(vm->fd, KVM_SUBPAGES_GET_ACCESS, sp);
-+
-+	TEST_ASSERT(ret == 1, "KVM_SUBPAGES_GET_ACCESS failed.");
-+
-+	TEST_ASSERT(sp->access_map[0] == SUBPAGE_ACCESS_DEFAULT,
-+		    "subpage access didn't match.");
-+	printf("get spp protection info: gfn = 0x%llx, access = 0x%x, "
-+	       "npages = %d\n", sp->gfn_base,
-+	       sp->access_map[0], sp->npages);
-+
-+	free(sp);
-+	printf("got matched subpage permission vector.\n");
-+	printf("expect VM exits caused by SPP below.\n");
-+}
-+
-+void unset_spp(struct kvm_vm *vm)
-+{
-+	struct kvm_subpage *sp;
-+	int len;
-+
-+	len = sizeof(*sp) + sizeof(__u32);
-+	sp = malloc(len);
-+	TEST_ASSERT(sp > 0, "Low memory 2!");
-+	memset(sp, 0, len);
-+
-+	/* now unprotect the SPP to the page.*/
-+	sp->npages = 1;
-+	sp->gfn_base = pspp_start >> 12;
-+	sp->access_map[0] = SUBPAGE_ACCESS_FULL;
-+	ioctl(vm->fd, KVM_SUBPAGES_SET_ACCESS, sp);
-+
-+	printf("unset SPP protection at gfn: 0x%llx\n", sp->gfn_base);
-+	printf("expect NO VM exits caused by SPP below.\n");
-+	free(sp);
-+}
-+
-+#define TEST_SYNC_FIELDS   KVM_SYNC_X86_REGS
-+
-+void run_test(struct kvm_vm *vm, struct kvm_run *run)
-+{
-+	int loop;
-+	int ept_fault = 0;
-+	struct kvm_regs regs;
-+
-+	run->kvm_valid_regs = TEST_SYNC_FIELDS;
-+	vcpu_run(vm, VCPU_ID);
-+
-+	for (loop = 0; loop < PAGE_SIZE / SUBPAGE_SIZE; loop++) {
-+		/*
-+		 * if everything goes correctly, should get VM exit
-+		 * with KVM_EXIT_SPP.
-+		 */
-+		TEST_ASSERT(run->exit_reason == KVM_EXIT_SPP,
-+			    "exit reason: %u (%s),\n", run->exit_reason,
-+			    exit_reason_str(run->exit_reason));
-+		printf("%d - exit reason: %s\n", loop + 1,
-+		       exit_reason_str(run->exit_reason));
-+		ept_fault++;
-+
-+		vcpu_regs_get(vm, VCPU_ID, &regs);
-+
-+		run->s.regs.regs.rip += run->spp.ins_len;
-+
-+		run->kvm_valid_regs = TEST_SYNC_FIELDS;
-+		run->kvm_dirty_regs = KVM_SYNC_X86_REGS;
-+
-+		vcpu_run(vm, VCPU_ID);
-+	}
-+
-+	printf("total EPT violation count: %d\n", ept_fault);
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	struct kvm_vm *vm;
-+	struct kvm_run *run;
-+
-+	prepare_test(&vm, &run);
-+
-+	setup_spp(vm);
-+
-+	run_test(vm, run);
-+
-+	unset_spp(vm);
-+
-+	vcpu_run(vm, VCPU_ID);
-+
-+	printf("completed SPP test successfully!\n");
-+
-+	kvm_vm_free(vm);
-+
-+	return 0;
-+}
-+
--- 
-2.17.2
+SGksIFlvbmdxaWFuZzoNCg0KT24gVGh1LCAyMDIwLTAxLTAyIGF0IDEyOjAwICswODAwLCBZb25n
+cWlhbmcgTml1IHdyb3RlOg0KPiB0aGUgZmlmbyBzaXplIG9mIHJkbWEgaW4gbXQ4MTgzIGlzIGRp
+ZmZlcmVudC4NCj4gcmRtYTAgZmlmbyBzaXplIGlzIDVrDQo+IHJkbWExIGZpZm8gc2l6ZSBpcyAy
+aw0KPiANCj4gU2lnbmVkLW9mZi1ieTogWW9uZ3FpYW5nIE5pdSA8eW9uZ3FpYW5nLm5pdUBtZWRp
+YXRlay5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kaXNwX3Jk
+bWEuYyB8IDIxICsrKysrKysrKysrKysrKysrKysrLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIwIGlu
+c2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+dS9kcm0vbWVkaWF0ZWsvbXRrX2Rpc3BfcmRtYS5jIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVr
+L210a19kaXNwX3JkbWEuYw0KPiBpbmRleCA0MDVhZmVmLi42OTE0ODBiIDEwMDY0NA0KPiAtLS0g
+YS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2Rpc3BfcmRtYS5jDQo+ICsrKyBiL2RyaXZl
+cnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZGlzcF9yZG1hLmMNCj4gQEAgLTYyLDYgKzYyLDcgQEAg
+c3RydWN0IG10a19kaXNwX3JkbWEgew0KPiAgCXN0cnVjdCBtdGtfZGRwX2NvbXAJCWRkcF9jb21w
+Ow0KPiAgCXN0cnVjdCBkcm1fY3J0YwkJCSpjcnRjOw0KPiAgCWNvbnN0IHN0cnVjdCBtdGtfZGlz
+cF9yZG1hX2RhdGEJKmRhdGE7DQo+ICsJdTMyCQkJCWZpZm9fc2l6ZTsNCj4gIH07DQo+ICANCj4g
+IHN0YXRpYyBpbmxpbmUgc3RydWN0IG10a19kaXNwX3JkbWEgKmNvbXBfdG9fcmRtYShzdHJ1Y3Qg
+bXRrX2RkcF9jb21wICpjb21wKQ0KPiBAQCAtMTMwLDEwICsxMzEsMTYgQEAgc3RhdGljIHZvaWQg
+bXRrX3JkbWFfY29uZmlnKHN0cnVjdCBtdGtfZGRwX2NvbXAgKmNvbXAsIHVuc2lnbmVkIGludCB3
+aWR0aCwNCj4gIAl1bnNpZ25lZCBpbnQgdGhyZXNob2xkOw0KPiAgCXVuc2lnbmVkIGludCByZWc7
+DQo+ICAJc3RydWN0IG10a19kaXNwX3JkbWEgKnJkbWEgPSBjb21wX3RvX3JkbWEoY29tcCk7DQo+
+ICsJdTMyIHJkbWFfZmlmb19zaXplOw0KPiAgDQo+ICAJcmRtYV91cGRhdGVfYml0cyhjb21wLCBE
+SVNQX1JFR19SRE1BX1NJWkVfQ09OXzAsIDB4ZmZmLCB3aWR0aCk7DQo+ICAJcmRtYV91cGRhdGVf
+Yml0cyhjb21wLCBESVNQX1JFR19SRE1BX1NJWkVfQ09OXzEsIDB4ZmZmZmYsIGhlaWdodCk7DQo+
+ICANCj4gKwlpZiAocmRtYS0+Zmlmb19zaXplKQ0KPiArCQlyZG1hX2ZpZm9fc2l6ZSA9IHJkbWEt
+PmZpZm9fc2l6ZTsNCj4gKwllbHNlDQo+ICsJCXJkbWFfZmlmb19zaXplID0gUkRNQV9GSUZPX1NJ
+WkUocmRtYSk7DQo+ICsNCj4gIAkvKg0KPiAgCSAqIEVuYWJsZSBGSUZPIHVuZGVyZmxvdyBzaW5j
+ZSBEU0kgYW5kIERQSSBjYW4ndCBiZSBibG9ja2VkLg0KPiAgCSAqIEtlZXAgdGhlIEZJRk8gcHNl
+dWRvIHNpemUgcmVzZXQgZGVmYXVsdCBvZiA4IEtpQi4gU2V0IHRoZQ0KPiBAQCAtMTQyLDcgKzE0
+OSw3IEBAIHN0YXRpYyB2b2lkIG10a19yZG1hX2NvbmZpZyhzdHJ1Y3QgbXRrX2RkcF9jb21wICpj
+b21wLCB1bnNpZ25lZCBpbnQgd2lkdGgsDQo+ICAJICovDQo+ICAJdGhyZXNob2xkID0gd2lkdGgg
+KiBoZWlnaHQgKiB2cmVmcmVzaCAqIDQgKiA3IC8gMTAwMDAwMDsNCj4gIAlyZWcgPSBSRE1BX0ZJ
+Rk9fVU5ERVJGTE9XX0VOIHwNCj4gLQkgICAgICBSRE1BX0ZJRk9fUFNFVURPX1NJWkUoUkRNQV9G
+SUZPX1NJWkUocmRtYSkpIHwNCj4gKwkgICAgICBSRE1BX0ZJRk9fUFNFVURPX1NJWkUocmRtYV9m
+aWZvX3NpemUpIHwNCj4gIAkgICAgICBSRE1BX09VVFBVVF9WQUxJRF9GSUZPX1RIUkVTSE9MRCh0
+aHJlc2hvbGQpOw0KPiAgCXdyaXRlbChyZWcsIGNvbXAtPnJlZ3MgKyBESVNQX1JFR19SRE1BX0ZJ
+Rk9fQ09OKTsNCj4gIH0NCj4gQEAgLTI4NCw2ICsyOTEsMTggQEAgc3RhdGljIGludCBtdGtfZGlz
+cF9yZG1hX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJCXJldHVybiBj
+b21wX2lkOw0KPiAgCX0NCj4gIA0KPiArCWlmIChvZl9maW5kX3Byb3BlcnR5KGRldi0+b2Zfbm9k
+ZSwgIm1lZGlhdGVrLHJkbWFfZmlmb19zaXplIiwgJnJldCkpIHsNCg0KIm1lZGlhdGVrLHJkbWFf
+Zmlmb19zaXplIiBkb2VzIG5vdCBleGlzdHMgaW4gYmluZGluZyBkb2N1bWVudC4NCg0KPiArCQly
+ZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMihkZXYtPm9mX25vZGUsDQo+ICsJCQkJCSAgICJtZWRp
+YXRlayxyZG1hX2ZpZm9fc2l6ZSIsDQo+ICsJCQkJCSAgICZwcml2LT5maWZvX3NpemUpOw0KPiAr
+CQlpZiAocmV0KSB7DQo+ICsJCQlkZXZfZXJyKGRldiwgIkZhaWxlZCB0byBnZXQgcmRtYSBmaWZv
+IHNpemVcbiIpOw0KPiArCQkJcmV0dXJuIHJldDsNCj4gKwkJfQ0KPiArDQo+ICsJCXByaXYtPmZp
+Zm9fc2l6ZSAqPSBTWl8xSzsNCg0KV2h5IG5vdCBkZWZpbmUgZmlmb19zaXplIGluICdieXRlcycg
+Pw0KDQpSZWdhcmRzLA0KQ0sNCg0KPiArCX0NCj4gKw0KPiAgCXJldCA9IG10a19kZHBfY29tcF9p
+bml0KGRldiwgZGV2LT5vZl9ub2RlLCAmcHJpdi0+ZGRwX2NvbXAsIGNvbXBfaWQsDQo+ICAJCQkJ
+Jm10a19kaXNwX3JkbWFfZnVuY3MpOw0KPiAgCWlmIChyZXQpIHsNCg0K
 
