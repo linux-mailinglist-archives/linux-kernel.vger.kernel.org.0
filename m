@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A790C12F048
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:52:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9125312EF5A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:46:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729575AbgABWwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:52:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45016 "EHLO mail.kernel.org"
+        id S1729891AbgABWo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:44:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727944AbgABWXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:23:15 -0500
+        id S1730245AbgABWco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:32:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBA3220863;
-        Thu,  2 Jan 2020 22:23:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D914222C3;
+        Thu,  2 Jan 2020 22:32:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003795;
-        bh=Q44C4gQ8BTkRax/mfAigimfuYjNy/Gv3YYDqor7x0Mk=;
+        s=default; t=1578004364;
+        bh=FB4OyriQdA+Htga/NPJmTLlaQnnALLwAf2sj5wOz2Sg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=onMwDCbMbf2jykKjDzfFqtz+ew3/do30DRr5nwotVqNAGPjr7+S3RBzq+LaUPcgJx
-         ML9PGc6el1Em0H8J0SRe3A6js/eVBxunbW5Ul71pFMWjU5V0zW63WD1b8InqtJ+sgL
-         Z8VKAW/LsxlBbvQxQnWbKJNz15RKhEJJCmEViORM=
+        b=oE+/FfFZMzjWjTbCurpoQ/jZJvqK/BL5FOh5FimzNxBY673WvyMMOzdV7YzA349vI
+         lTfwGcI3Wfhl5LtyFHbvQwcQ5/V5y/euxWHxVSXrUj5Umgz+zqLYvbzZFE7SSr/l4e
+         uChmqBnvOv1zxEAXJE6ol+N4UzxfGxVtrEPZpfAs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Auhagen <sven.auhagen@voleatech.de>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 4.19 106/114] net: marvell: mvpp2: phylink requires the link interrupt
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 147/171] perf regs: Make perf_reg_name() return "unknown" instead of NULL
 Date:   Thu,  2 Jan 2020 23:07:58 +0100
-Message-Id: <20200102220039.850727167@linuxfoundation.org>
+Message-Id: <20200102220607.520424176@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,51 +46,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit f3f2364ea14d1cf6bf966542f31eadcf178f1577 ]
+[ Upstream commit 5b596e0ff0e1852197d4c82d3314db5e43126bf7 ]
 
-phylink requires the MAC to report when its link status changes when
-operating in inband modes.  Failure to report link status changes
-means that phylink has no idea when the link events happen, which
-results in either the network interface's carrier remaining up or
-remaining permanently down.
+To avoid breaking the build on arches where this is not wired up, at
+least all the other features should be made available and when using
+this specific routine, the "unknown" should point the user/developer to
+the need to wire this up on this particular hardware architecture.
 
-For example, with a fiber module, if the interface is brought up and
-link is initially established, taking the link down at the far end
-will cut the optical power.  The SFP module's LOS asserts, we
-deactivate the link, and the network interface reports no carrier.
+Detected in a container mipsel debian cross build environment, where it
+shows up as:
 
-When the far end is brought back up, the SFP module's LOS deasserts,
-but the MAC may be slower to establish link.  If this happens (which
-in my tests is a certainty) then phylink never hears that the MAC
-has established link with the far end, and the network interface is
-stuck reporting no carrier.  This means the interface is
-non-functional.
+  In file included from /usr/mipsel-linux-gnu/include/stdio.h:867,
+                   from /git/linux/tools/perf/lib/include/perf/cpumap.h:6,
+                   from util/session.c:13:
+  In function 'printf',
+      inlined from 'regs_dump__printf' at util/session.c:1103:3,
+      inlined from 'regs__printf' at util/session.c:1131:2:
+  /usr/mipsel-linux-gnu/include/bits/stdio2.h:107:10: error: '%-5s' directive argument is null [-Werror=format-overflow=]
+    107 |   return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Avoiding the link interrupt when we have phylink is basically not
-an option, so remove the !port->phylink from the test.
+cross compiler details:
 
-Fixes: 4bb043262878 ("net: mvpp2: phylink support")
-Tested-by: Sven Auhagen <sven.auhagen@voleatech.de>
-Tested-by: Antoine Tenart <antoine.tenart@bootlin.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  mipsel-linux-gnu-gcc (Debian 9.2.1-8) 9.2.1 20190909
+
+Also on mips64:
+
+  In file included from /usr/mips64-linux-gnuabi64/include/stdio.h:867,
+                   from /git/linux/tools/perf/lib/include/perf/cpumap.h:6,
+                   from util/session.c:13:
+  In function 'printf',
+      inlined from 'regs_dump__printf' at util/session.c:1103:3,
+      inlined from 'regs__printf' at util/session.c:1131:2,
+      inlined from 'regs_user__printf' at util/session.c:1139:3,
+      inlined from 'dump_sample' at util/session.c:1246:3,
+      inlined from 'machines__deliver_event' at util/session.c:1421:3:
+  /usr/mips64-linux-gnuabi64/include/bits/stdio2.h:107:10: error: '%-5s' directive argument is null [-Werror=format-overflow=]
+    107 |   return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  In function 'printf',
+      inlined from 'regs_dump__printf' at util/session.c:1103:3,
+      inlined from 'regs__printf' at util/session.c:1131:2,
+      inlined from 'regs_intr__printf' at util/session.c:1147:3,
+      inlined from 'dump_sample' at util/session.c:1249:3,
+      inlined from 'machines__deliver_event' at util/session.c:1421:3:
+  /usr/mips64-linux-gnuabi64/include/bits/stdio2.h:107:10: error: '%-5s' directive argument is null [-Werror=format-overflow=]
+    107 |   return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+cross compiler details:
+
+  mips64-linux-gnuabi64-gcc (Debian 9.2.1-8) 9.2.1 20190909
+
+Fixes: 2bcd355b71da ("perf tools: Add interface to arch registers sets")
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-95wjyv4o65nuaeweq31t7l1s@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c |    2 +-
+ tools/perf/util/perf_regs.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -3341,7 +3341,7 @@ static int mvpp2_open(struct net_device
- 		valid = true;
- 	}
+diff --git a/tools/perf/util/perf_regs.h b/tools/perf/util/perf_regs.h
+index 679d6e493962..e6324397b295 100644
+--- a/tools/perf/util/perf_regs.h
++++ b/tools/perf/util/perf_regs.h
+@@ -26,7 +26,7 @@ int perf_reg_value(u64 *valp, struct regs_dump *regs, int id);
  
--	if (priv->hw_version == MVPP22 && port->link_irq && !port->phylink) {
-+	if (priv->hw_version == MVPP22 && port->link_irq) {
- 		err = request_irq(port->link_irq, mvpp2_link_status_isr, 0,
- 				  dev->name, port);
- 		if (err) {
+ static inline const char *perf_reg_name(int id __maybe_unused)
+ {
+-	return NULL;
++	return "unknown";
+ }
+ 
+ static inline int perf_reg_value(u64 *valp __maybe_unused,
+-- 
+2.20.1
+
 
 
