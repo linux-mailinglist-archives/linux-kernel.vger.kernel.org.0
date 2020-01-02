@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A25C12EEF7
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:42:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B170112F108
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:57:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730992AbgABWmi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:42:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45718 "EHLO mail.kernel.org"
+        id S1729195AbgABW5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:57:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730658AbgABWfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:35:43 -0500
+        id S1728303AbgABWQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:16:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6877422314;
-        Thu,  2 Jan 2020 22:35:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7B6821582;
+        Thu,  2 Jan 2020 22:16:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004542;
-        bh=PomQWtk5Aqk0M4fjZ4wvcJhhd57S9AsXiAXyEeCOMK0=;
+        s=default; t=1578003411;
+        bh=/Fasbs0VlKabB4MPfOuNtzOBDcH0DoDP+7XE16/9fFg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ex3VTBAEV/HEPNJzjLU70SFDn6k6+d6ijjGUqYixf6F+UVwmJvh3jgbTMm1rnCPlC
-         uX/7vO/IUR3PsgLVIFdueparq/N/MUoOYqSFZT7FU+n+3b5fknWMT+X/VepHM1VTGC
-         LX8XAiN8ryJuoaaN8JAMG2ZZ4ZQCrgJhzT32z/qE=
+        b=ZNZ9ZDHst44A/RjuBH3IYugVctIbZrTOMeGSXWwMuGvUVqA3T4FURZR3y4+QOwwr7
+         aM/USSfT2OYqyiUdE9tDxjG0SJfqiOGFaHK/OZStWq86UAC0w6qlunUMn+hcHPx9lW
+         gMCs6rE0asvK9IcS/YuQHvOTH2wK8mbQeE8fBDvA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Isely <isely@pobox.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 050/137] media: pvrusb2: Fix oops on tear-down when radio support is not present
-Date:   Thu,  2 Jan 2020 23:07:03 +0100
-Message-Id: <20200102220553.306302974@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 5.4 142/191] hrtimer: Annotate lockless access to timer->state
+Date:   Thu,  2 Jan 2020 23:07:04 +0100
+Message-Id: <20200102215844.776889091@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,59 +44,160 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Isely <isely@pobox.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 7f404ae9cf2a285f73b3c18ab9303d54b7a3d8e1 ]
+commit 56144737e67329c9aaed15f942d46a6302e2e3d8 upstream.
 
-In some device configurations there's no radio or radio support in the
-driver.  That's OK, as the driver sets itself up accordingly.  However
-on tear-down in these caes it's still trying to tear down radio
-related context when there isn't anything there, leading to
-dereferences through a null pointer and chaos follows.
+syzbot reported various data-race caused by hrtimer_is_queued() reading
+timer->state. A READ_ONCE() is required there to silence the warning.
 
-How this bug survived unfixed for 11 years in the pvrusb2 driver is a
-mystery to me.
+Also add the corresponding WRITE_ONCE() when timer->state is set.
 
-[hverkuil: fix two checkpatch warnings]
+In remove_hrtimer() the hrtimer_is_queued() helper is open coded to avoid
+loading timer->state twice.
 
-Signed-off-by: Mike Isely <isely@pobox.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+KCSAN reported these cases:
+
+BUG: KCSAN: data-race in __remove_hrtimer / tcp_pacing_check
+
+write to 0xffff8880b2a7d388 of 1 bytes by interrupt on cpu 0:
+ __remove_hrtimer+0x52/0x130 kernel/time/hrtimer.c:991
+ __run_hrtimer kernel/time/hrtimer.c:1496 [inline]
+ __hrtimer_run_queues+0x250/0x600 kernel/time/hrtimer.c:1576
+ hrtimer_run_softirq+0x10e/0x150 kernel/time/hrtimer.c:1593
+ __do_softirq+0x115/0x33f kernel/softirq.c:292
+ run_ksoftirqd+0x46/0x60 kernel/softirq.c:603
+ smpboot_thread_fn+0x37d/0x4a0 kernel/smpboot.c:165
+ kthread+0x1d4/0x200 drivers/block/aoe/aoecmd.c:1253
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:352
+
+read to 0xffff8880b2a7d388 of 1 bytes by task 24652 on cpu 1:
+ tcp_pacing_check net/ipv4/tcp_output.c:2235 [inline]
+ tcp_pacing_check+0xba/0x130 net/ipv4/tcp_output.c:2225
+ tcp_xmit_retransmit_queue+0x32c/0x5a0 net/ipv4/tcp_output.c:3044
+ tcp_xmit_recovery+0x7c/0x120 net/ipv4/tcp_input.c:3558
+ tcp_ack+0x17b6/0x3170 net/ipv4/tcp_input.c:3717
+ tcp_rcv_established+0x37e/0xf50 net/ipv4/tcp_input.c:5696
+ tcp_v4_do_rcv+0x381/0x4e0 net/ipv4/tcp_ipv4.c:1561
+ sk_backlog_rcv include/net/sock.h:945 [inline]
+ __release_sock+0x135/0x1e0 net/core/sock.c:2435
+ release_sock+0x61/0x160 net/core/sock.c:2951
+ sk_stream_wait_memory+0x3d7/0x7c0 net/core/stream.c:145
+ tcp_sendmsg_locked+0xb47/0x1f30 net/ipv4/tcp.c:1393
+ tcp_sendmsg+0x39/0x60 net/ipv4/tcp.c:1434
+ inet_sendmsg+0x6d/0x90 net/ipv4/af_inet.c:807
+ sock_sendmsg_nosec net/socket.c:637 [inline]
+ sock_sendmsg+0x9f/0xc0 net/socket.c:657
+
+BUG: KCSAN: data-race in __remove_hrtimer / __tcp_ack_snd_check
+
+write to 0xffff8880a3a65588 of 1 bytes by interrupt on cpu 0:
+ __remove_hrtimer+0x52/0x130 kernel/time/hrtimer.c:991
+ __run_hrtimer kernel/time/hrtimer.c:1496 [inline]
+ __hrtimer_run_queues+0x250/0x600 kernel/time/hrtimer.c:1576
+ hrtimer_run_softirq+0x10e/0x150 kernel/time/hrtimer.c:1593
+ __do_softirq+0x115/0x33f kernel/softirq.c:292
+ invoke_softirq kernel/softirq.c:373 [inline]
+ irq_exit+0xbb/0xe0 kernel/softirq.c:413
+ exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+ smp_apic_timer_interrupt+0xe6/0x280 arch/x86/kernel/apic/apic.c:1137
+ apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:830
+
+read to 0xffff8880a3a65588 of 1 bytes by task 22891 on cpu 1:
+ __tcp_ack_snd_check+0x415/0x4f0 net/ipv4/tcp_input.c:5265
+ tcp_ack_snd_check net/ipv4/tcp_input.c:5287 [inline]
+ tcp_rcv_established+0x750/0xf50 net/ipv4/tcp_input.c:5708
+ tcp_v4_do_rcv+0x381/0x4e0 net/ipv4/tcp_ipv4.c:1561
+ sk_backlog_rcv include/net/sock.h:945 [inline]
+ __release_sock+0x135/0x1e0 net/core/sock.c:2435
+ release_sock+0x61/0x160 net/core/sock.c:2951
+ sk_stream_wait_memory+0x3d7/0x7c0 net/core/stream.c:145
+ tcp_sendmsg_locked+0xb47/0x1f30 net/ipv4/tcp.c:1393
+ tcp_sendmsg+0x39/0x60 net/ipv4/tcp.c:1434
+ inet_sendmsg+0x6d/0x90 net/ipv4/af_inet.c:807
+ sock_sendmsg_nosec net/socket.c:637 [inline]
+ sock_sendmsg+0x9f/0xc0 net/socket.c:657
+ __sys_sendto+0x21f/0x320 net/socket.c:1952
+ __do_sys_sendto net/socket.c:1964 [inline]
+ __se_sys_sendto net/socket.c:1960 [inline]
+ __x64_sys_sendto+0x89/0xb0 net/socket.c:1960
+ do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 PID: 24652 Comm: syz-executor.3 Not tainted 5.4.0-rc3+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+
+[ tglx: Added comments ]
+
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20191106174804.74723-1-edumazet@google.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/media/usb/pvrusb2/pvrusb2-v4l2.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ include/linux/hrtimer.h |   14 ++++++++++----
+ kernel/time/hrtimer.c   |   11 +++++++----
+ 2 files changed, 17 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c b/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c
-index 1c5f85bf7ed4..2d6195e9a195 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c
-@@ -886,8 +886,12 @@ static void pvr2_v4l2_internal_check(struct pvr2_channel *chp)
- 	pvr2_v4l2_dev_disassociate_parent(vp->dev_video);
- 	pvr2_v4l2_dev_disassociate_parent(vp->dev_radio);
- 	if (!list_empty(&vp->dev_video->devbase.fh_list) ||
--	    !list_empty(&vp->dev_radio->devbase.fh_list))
-+	    (vp->dev_radio &&
-+	     !list_empty(&vp->dev_radio->devbase.fh_list))) {
-+		pvr2_trace(PVR2_TRACE_STRUCT,
-+			   "pvr2_v4l2 internal_check exit-empty id=%p", vp);
- 		return;
-+	}
- 	pvr2_v4l2_destroy_no_lock(vp);
+--- a/include/linux/hrtimer.h
++++ b/include/linux/hrtimer.h
+@@ -456,12 +456,18 @@ extern u64 hrtimer_next_event_without(co
+ 
+ extern bool hrtimer_active(const struct hrtimer *timer);
+ 
+-/*
+- * Helper function to check, whether the timer is on one of the queues
++/**
++ * hrtimer_is_queued = check, whether the timer is on one of the queues
++ * @timer:	Timer to check
++ *
++ * Returns: True if the timer is queued, false otherwise
++ *
++ * The function can be used lockless, but it gives only a current snapshot.
+  */
+-static inline int hrtimer_is_queued(struct hrtimer *timer)
++static inline bool hrtimer_is_queued(struct hrtimer *timer)
+ {
+-	return timer->state & HRTIMER_STATE_ENQUEUED;
++	/* The READ_ONCE pairs with the update functions of timer->state */
++	return !!(READ_ONCE(timer->state) & HRTIMER_STATE_ENQUEUED);
  }
  
-@@ -961,7 +965,8 @@ static int pvr2_v4l2_release(struct file *file)
- 	kfree(fhp);
- 	if (vp->channel.mc_head->disconnect_flag &&
- 	    list_empty(&vp->dev_video->devbase.fh_list) &&
--	    list_empty(&vp->dev_radio->devbase.fh_list)) {
-+	    (!vp->dev_radio ||
-+	     list_empty(&vp->dev_radio->devbase.fh_list))) {
- 		pvr2_v4l2_destroy_no_lock(vp);
- 	}
- 	return 0;
--- 
-2.20.1
-
+ /*
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -966,7 +966,8 @@ static int enqueue_hrtimer(struct hrtime
+ 
+ 	base->cpu_base->active_bases |= 1 << base->index;
+ 
+-	timer->state = HRTIMER_STATE_ENQUEUED;
++	/* Pairs with the lockless read in hrtimer_is_queued() */
++	WRITE_ONCE(timer->state, HRTIMER_STATE_ENQUEUED);
+ 
+ 	return timerqueue_add(&base->active, &timer->node);
+ }
+@@ -988,7 +989,8 @@ static void __remove_hrtimer(struct hrti
+ 	struct hrtimer_cpu_base *cpu_base = base->cpu_base;
+ 	u8 state = timer->state;
+ 
+-	timer->state = newstate;
++	/* Pairs with the lockless read in hrtimer_is_queued() */
++	WRITE_ONCE(timer->state, newstate);
+ 	if (!(state & HRTIMER_STATE_ENQUEUED))
+ 		return;
+ 
+@@ -1013,8 +1015,9 @@ static void __remove_hrtimer(struct hrti
+ static inline int
+ remove_hrtimer(struct hrtimer *timer, struct hrtimer_clock_base *base, bool restart)
+ {
+-	if (hrtimer_is_queued(timer)) {
+-		u8 state = timer->state;
++	u8 state = timer->state;
++
++	if (state & HRTIMER_STATE_ENQUEUED) {
+ 		int reprogram;
+ 
+ 		/*
 
 
