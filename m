@@ -2,157 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1427F12E319
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 07:36:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17AC112E320
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 07:38:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727728AbgABGgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 01:36:52 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:60603 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727599AbgABGgi (ORCPT
+        id S1726528AbgABGiw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 01:38:52 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:56751 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725788AbgABGiw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 01:36:38 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 453FC22243;
-        Thu,  2 Jan 2020 01:36:37 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Thu, 02 Jan 2020 01:36:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=zxPdAkBputxnF
-        mY5pVDOtjLOR8UJ/5300HQ4rXzRbxo=; b=itbbQleIjC1yzOo16qRh0AnAfa9PP
-        xH9CvXXhakO1/iIY+PdhRAdJhsuLxoPgU3jiCqHHi7Y/oMbnq100cT6j1/Lv6EUZ
-        CPKXmm5rpiRSrD9BF8AnINwR9CLhV2W73i692BBZGMg8dV6q273R3hhb8Nb6M6+i
-        PQssMIoEjbPCeA8FSag30GC+H4KxG7w2TPYyhSqw+7xitF79FbYGwKhNfyYA2eDR
-        9IGJsTxN15/MFplge0V9GJj5+jlZ1P792S1cRozex+NfPPI9/ZF8Xt+QEqUe0dZg
-        rSKgvqP0JoyLUS4YmS8EnktSB+obGlhKfe++PLqmW+i60ffQPYlC2nzgw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=zxPdAkBputxnFmY5pVDOtjLOR8UJ/5300HQ4rXzRbxo=; b=Coku/YPW
-        PcC/nqmMvas+nc+2UKx2sRy2pSymoikmrWJajPn4x9mJJ5wLIZT3zDUF4aOjIAIM
-        rpOnShcy779UbjsvHLnWV6waBsWXZ9f5Lc1LAoZHZOS4dYq4fN3wSfZ5wIaxZ7d2
-        N3d5xKHTMfjnz+9J4R3AJSDV6kI6Zl0UyzSCEMb5LpxMQqkCGPPqlDWgCaX3Zv5q
-        ygJRK7Se/+N1joMK2g1BZqQ979O7IY599G8OsUDuXy9gUeVV6/buu6GbyD//gO+i
-        uJOM5qc87LE7QBUWUwYbGhffv535BuL1DJkTyokwkuYd5rBo8QU0JaAWx55KO5N5
-        XeZdJtgbkQPjvw==
-X-ME-Sender: <xms:dY8NXt_yvePXxtX7hrbQrrCbGgwz7SFDD0cts1zwErMfUIjWOaupmg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdegtddgledvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
-    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucfkph
-    epjedtrddufeehrddugeekrdduhedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghm
-    uhgvlhesshhhohhllhgrnhgurdhorhhgnecuvehluhhsthgvrhfuihiivgepvd
-X-ME-Proxy: <xmx:dY8NXiI2Uxve7un1f5PUIbPW2R7eYp0NE7_fLCSpOru9L8uYMBKYhw>
-    <xmx:dY8NXqwITCmuxGl6ZWDqJ0HRrOzhMys81ASxqa5nRN-gNGjh68kXKw>
-    <xmx:dY8NXt0ITGIH44c5T30SfdN_UG08h4eVrhu0I77Mhnrh2xJHIk1p0g>
-    <xmx:dY8NXk4tMozwV4hDLIGXFShmVN5wITz4gJVGHLu9mqdDPB38rlfQ_A>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id B5DF08005B;
-        Thu,  2 Jan 2020 01:36:36 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Chen-Yu Tsai <wens@csie.org>, Sebastian Reichel <sre@kernel.org>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 7/7] power: supply: axp20x_usb_power: Only poll while offline
-Date:   Thu,  2 Jan 2020 00:36:33 -0600
-Message-Id: <20200102063633.65388-7-samuel@sholland.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200102063633.65388-1-samuel@sholland.org>
-References: <20200102063633.65388-1-samuel@sholland.org>
+        Thu, 2 Jan 2020 01:38:52 -0500
+X-UUID: d0ef305adcd9465cb3f179a9a6b233e0-20200102
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=EY8CHJ1MOwpTVq0/F8e5ITYSow6Z2y2qYGrDALgu+g0=;
+        b=pJXkWvF37dqw5HMuhYArqf40LDfY6vEeWuJv+6ij/MSLg4rCvjnOYACql3gZWmbFBPpxGhzMQ05Xs8LfANxbX8hIGahW42esE5XHwspiatuUM/0vyxW/2ox/jcKFz2WOPy4798wqBx/YPXUyq/gfzeljK/wB41Qx8+X+dD0ZYSM=;
+X-UUID: d0ef305adcd9465cb3f179a9a6b233e0-20200102
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1107668345; Thu, 02 Jan 2020 14:38:46 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 2 Jan 2020 14:37:59 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 2 Jan 2020 14:38:03 +0800
+Message-ID: <1577947124.13164.75.camel@mtkswgap22>
+Subject: Re: [PATCH v1 1/2] scsi: ufs: set device as default active power
+ mode during initialization only
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     Can Guo <cang@codeaurora.org>
+CC:     <martin.petersen@oracle.com>, <linux-scsi@vger.kernel.org>,
+        <andy.teng@mediatek.com>, <jejb@linux.ibm.com>,
+        <chun-hung.wu@mediatek.com>, <kuohong.wang@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        <asutoshd@codeaurora.org>, <avri.altman@wdc.com>,
+        <linux-mediatek@lists.infradead.org>, <peter.wang@mediatek.com>,
+        <linux-scsi-owner@vger.kernel.org>, <subhashj@codeaurora.org>,
+        <alim.akhtar@samsung.com>, <beanhuo@micron.com>,
+        <pedrom.sousa@synopsys.com>, <bvanassche@acm.org>,
+        <linux-arm-kernel@lists.infradead.org>, <matthias.bgg@gmail.com>,
+        <ron.hsu@mediatek.com>, <cc.chou@mediatek.com>
+Date:   Thu, 2 Jan 2020 14:38:44 +0800
+In-Reply-To: <44393ed9ff3ba9878bae838307e7eec0@codeaurora.org>
+References: <1577693546-7598-1-git-send-email-stanley.chu@mediatek.com>
+         <1577693546-7598-2-git-send-email-stanley.chu@mediatek.com>
+         <fd129b859c013852bd80f60a36425757@codeaurora.org>
+         <1577754469.13164.5.camel@mtkswgap22>
+         <836772092daffd8283a97d633e59fc34@codeaurora.org>
+         <1577766179.13164.24.camel@mtkswgap22>
+         <1577778290.13164.45.camel@mtkswgap22>
+         <44393ed9ff3ba9878bae838307e7eec0@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TM-SNTS-SMTP: 6DF2DA8F51F0E1171061F223F8110C3970D122A74F33AAB3D5F7588FEE5DB6412000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Investigation on the AXP803 shows that VBUS_PLUGIN/VBUS_REMOVAL IRQs are
-triggered on the rising/falling edge of AXP20X_PWR_STATUS_VBUS_USED. The
-reason IRQs do not arrive while N_VBUSEN/DRIVEVBUS is high is because
-AXP20X_PWR_STATUS_VBUS_USED also never goes high.
-
-This also means that if VBUS is online, a VBUS_REMOVAL IRQ is received
-immediately on setting N_VBUSEN/DRIVEVBUS high (and VBUS_PLUGIN shortly
-after it is set back low). This was also verified to be the case when
-manually offlining VBUS through AXP20X_VBUS_PATH_SELECT.
-
-Therefore, as long as VBUS is online, a present->absent transition
-necessarily implies an online->offline transition. This will cause an
-IRQ, and so there is no need to poll.
-
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
- drivers/power/supply/axp20x_usb_power.c | 35 ++++++++++++++++++-------
- 1 file changed, 26 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/power/supply/axp20x_usb_power.c b/drivers/power/supply/axp20x_usb_power.c
-index 16062b2c7ea8..0993ea03f303 100644
---- a/drivers/power/supply/axp20x_usb_power.c
-+++ b/drivers/power/supply/axp20x_usb_power.c
-@@ -67,16 +67,39 @@ struct axp20x_usb_power {
- 	struct iio_channel *vbus_i;
- 	struct delayed_work vbus_detect;
- 	unsigned int old_status;
-+	bool online;
- 	unsigned int num_irqs;
- 	unsigned int irqs[];
- };
- 
-+static bool axp20x_usb_vbus_needs_polling(struct axp20x_usb_power *power)
-+{
-+	/*
-+	 * Polling is only necessary while VBUS is offline. While online, a
-+	 * present->absent transition implies an online->offline transition
-+	 * and will triger the VBUS_REMOVAL IRQ.
-+	 */
-+	if (power->axp20x_id >= AXP221_ID && !power->online)
-+		return true;
-+
-+	return false;
-+}
-+
- static irqreturn_t axp20x_usb_power_irq(int irq, void *devid)
- {
- 	struct axp20x_usb_power *power = devid;
- 
-+	/*
-+	 * VBUS_PLUGIN/VBUS_REMOVAL are triggered on transitions of
-+	 * AXP20X_PWR_STATUS_VBUS_USED.
-+	 */
-+	power->online = irq == power->irqs[0];
-+
- 	power_supply_changed(power->supply);
- 
-+	if (axp20x_usb_vbus_needs_polling(power))
-+		mod_delayed_work(system_wq, &power->vbus_detect, DEBOUNCE_TIME);
-+
- 	return IRQ_HANDLED;
- }
- 
-@@ -96,17 +119,11 @@ static void axp20x_usb_power_poll_vbus(struct work_struct *work)
- 		power_supply_changed(power->supply);
- 
- 	power->old_status = val;
-+	power->online = val & AXP20X_PWR_STATUS_VBUS_USED;
- 
- out:
--	mod_delayed_work(system_wq, &power->vbus_detect, DEBOUNCE_TIME);
--}
--
--static bool axp20x_usb_vbus_needs_polling(struct axp20x_usb_power *power)
--{
--	if (power->axp20x_id >= AXP221_ID)
--		return true;
--
--	return false;
-+	if (axp20x_usb_vbus_needs_polling(power))
-+		mod_delayed_work(system_wq, &power->vbus_detect, DEBOUNCE_TIME);
- }
- 
- static int axp20x_get_current_max(struct axp20x_usb_power *power, int *val)
--- 
-2.23.0
+SGkgQ2FuLA0KDQpPbiBUdWUsIDIwMTktMTItMzEgYXQgMTY6MzUgKzA4MDAsIENhbiBHdW8gd3Jv
+dGU6DQoNCj4gSGkgU3RhbmxleSwNCj4gDQo+IEkgbWlzc2VkIHRoaXMgbWFpbCBiZWZvcmUgSSBo
+aXQgc2VuZC4gSW4gY3VycmVudCBjb2RlLCBhcyBwZXIgbXkgDQo+IHVuZGVyc3RhbmRpbmcsDQo+
+IFVGUyBkZXZpY2UncyBwb3dlciBzdGF0ZSBzaG91bGQgYmUgQWN0aXZlIGFmdGVyIHVmc2hjZF9s
+aW5rX3N0YXJ0dXAoKSANCj4gcmV0dXJucy4NCj4gSWYgSSBhbSB3cm9uZywgcGxlYXNlIGZlZWwg
+ZnJlZSB0byBjb3JyZWN0IG1lLg0KPiANCg0KWWVzLCB0aGlzIGFzc3VtcHRpb24gb2YgdWZzaGNk
+X3Byb2JlX2hiYSgpIGlzIHRydWUgc28gSSB3aWxsIGRyb3AgdGhpcw0KcGF0Y2guDQpUaGFua3Mg
+Zm9yIHJlbWluZC4NCg0KPiBEdWUgdG8geW91IGFyZSBhbG1vc3QgdHJ5aW5nIHRvIHJldmVydCBj
+b21taXQgN2NhZjQ4OWI5OWE0MmEsIEkgYW0ganVzdCANCj4gd29uZGVyaW5nDQo+IGlmIHlvdSBl
+bmNvdW50ZXIgZmFpbHVyZS9lcnJvciBjYXVzZWQgYnkgaXQuDQoNClllcywgd2UgYWN0dWFsbHkg
+aGF2ZSBzb21lIGRvdWJ0cyBmcm9tIHRoZSBjb21taXQgbWVzc2FnZSBvZiAic2NzaTogdWZzOg0K
+aXNzdWUgbGluayBzdGFydHVwIDIgdGltZXMgaWYgZGV2aWNlIGlzbid0IGFjdGl2ZSINCg0KSWYg
+d2UgY29uZmlndXJlZCBzeXN0ZW0gc3VzcGVuZCBhcyBkZXZpY2U9UG93ZXJEb3duL0xpbms9TGlu
+a0Rvd24gbW9kZSwNCmR1cmluZyByZXN1bWUsIHRoZSAxc3QgbGluayBzdGFydHVwIHdpbGwgYmUg
+c3VjY2Vzc2Z1bCwgYW5kIGFmdGVyIHRoYXQNCmRldmljZSBjb3VsZCBiZSBhY2Nlc3NlZCBub3Jt
+YWxseSBzbyBpdCBzaGFsbCBiZSBhbHJlYWR5IGluIEFjdGl2ZSBwb3dlcg0KbW9kZS4gV2UgZGlk
+IG5vdCBmaW5kIGRldmljZXMgd2hpY2ggbmVlZCB0d2ljZSBsaW5rdXAgZm9yIG5vcm1hbCB3b3Jr
+Lg0KDQpBbmQgYmVjYXVzZSB0aGUgMXN0IGxpbmt1cCBpcyBPSywgdGhlIGZvcmNlZCAybmQgbGlu
+a3VwIGJ5IGNvbW1pdCAic2NzaToNCnVmczogaXNzdWUgbGluayBzdGFydHVwIDIgdGltZXMgaWYg
+ZGV2aWNlIGlzbid0IGFjdGl2ZSIgbGVhZHMgdG8gbGluaw0KbG9zdCBhbmQgZmluYWxseSB0aGUg
+M3JkIGxpbmt1cCBpcyBtYWRlIGFnYWluIGJ5IHJldHJ5IG1lY2hhbmlzbSBpbg0KdWZzaGNkX2xp
+bmtfc3RhcnR1cCgpIGFuZCBiZSBzdWNjZXNzZnVsLiBTbyBhIGxpbmt1cCBwZXJmb3JtYW5jZSBp
+c3N1ZQ0KaXMgaW50cm9kdWNlZCBoZXJlOiBXZSBhY3R1YWxseSBuZWVkIG9uZS10aW1lIGxpbmt1
+cCBvbmx5IGJ1dCBmaW5hbGx5DQpnb3QgMyBsaW5rdXAgb3BlcmF0aW9ucy4NCg0KQWNjb3JkaW5n
+IHRvIHRoZSBVRlMgc3BlYywgYWxsIHJlc2V0IHR5cGVzIChpbmNsdWRpbmcgUE9SIGFuZCBIb3N0
+DQpVbmlQcm8gV2FybSBSZXNldCB3aGljaCBib3RoIG1heSBoYXBwZW4gaW4gYWJvdmUgY29uZmln
+dXJhdGlvbnMpIG90aGVyDQp0aGFuIExVIHJlc2V0LCBVRlMgZGV2aWNlIHBvd2VyIG1vZGUgc2hh
+bGwgcmV0dXJuIHRvIFNsZWVwIG1vZGUgb3INCkFjdGl2ZSBtb2RlIGRlcGVuZGluZyBvbiBiSW5p
+dFBvd2VyTW9kZSwgYnkgZGVmYXVsdCwgaXQncyBBY3RpdmUgbW9kZS4NCg0KU28gd2UgYXJlIGN1
+cmlvdXMgdGhhdCB3aHkgZW5mb3JjaW5nIHR3aWNlIGxpbmt1cCBpcyBuZWNlc3NhcnkgaGVyZT8N
+CkNvdWxkIHlvdSBraW5kbHkgaGVscCB1cyBjbGFyaWZ5IHRoaXM/DQoNCklmIGFueXRoaW5nIHdy
+b25nIGluIGFib3ZlIGRlc2NyaXB0aW9uLCBwbGVhc2UgZmVlbCBmcmVlIHRvIGNvcnJlY3QgbWUu
+DQoNCj4gDQo+IEhhcHB5IG5ldyB5ZWFyIHRvIHlvdSB0b28hDQo+IA0KPiBUaGFua3MsDQo+IA0K
+PiBDYW4gR3VvDQoNClRoYW5rcywNCg0KU3RhbmxleQ0KDQo+IA0KPiBfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KPiBMaW51eC1tZWRpYXRlayBtYWlsaW5n
+IGxpc3QNCj4gTGludXgtbWVkaWF0ZWtAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiBodHRwOi8vbGlz
+dHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LW1lZGlhdGVrDQoNCg==
 
