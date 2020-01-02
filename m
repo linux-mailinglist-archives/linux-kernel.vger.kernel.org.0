@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B54A12F181
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:01:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E0E212F172
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:00:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbgABWMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:12:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50812 "EHLO mail.kernel.org"
+        id S1727571AbgABWMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:12:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52264 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727359AbgABWMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:12:02 -0500
+        id S1727564AbgABWMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:12:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6403121D7D;
-        Thu,  2 Jan 2020 22:12:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3CD022314;
+        Thu,  2 Jan 2020 22:12:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003121;
-        bh=9W+wVeIj4gzjo7OC+82Ir9bWxU7VyprffJUpHoKcAcU=;
+        s=default; t=1578003170;
+        bh=wxDmdhcUnbBX2CZ0XmoLV4M6pajezQlYetqQyaL8R+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lVOFqnu/ky3Rc4TCMwAD4ZNaCYVUFqcBTnAd3/1sFVE16RHG+OzyAvYNnUG6Xx/9T
-         8osDLMGZRxYZ2GUhGesGYJ5viAN9hN3qjreMcCDZJxRTTbMbGyjFdWgCtjGBzu9yWE
-         rncQqXIqg7oN/J0FsPxpJED4W5gG7JtWHjQFiK+g=
+        b=JkwOrmEz5BA5zCIi+kh6LPvXY7V0rZbd9B6USlyEkOYXic3Qu9898S2aSCfbamDfq
+         c/4pDzK6FC3YrI1CyCsDGV821RJlhVdsVbVvcKrIZssS4Hfzt12rEEpZnRP51ypgTy
+         JoqcrDKV7hvyrgD7Tp5bkRVABNB+VKuBacGekkk0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 028/191] powerpc/tools: Dont quote $objdump in scripts
-Date:   Thu,  2 Jan 2020 23:05:10 +0100
-Message-Id: <20200102215832.984539186@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Daniele Alessandrelli <daniele.alessandrelli@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 031/191] dma-mapping: fix handling of dma-ranges for reserved memory (again)
+Date:   Thu,  2 Jan 2020 23:05:13 +0100
+Message-Id: <20200102215833.327867167@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
 References: <20200102215829.911231638@linuxfoundation.org>
@@ -43,65 +46,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Vladimir Murzin <vladimir.murzin@arm.com>
 
-[ Upstream commit e44ff9ea8f4c8a90c82f7b85bd4f5e497c841960 ]
+[ Upstream commit a445e940ea686fc60475564009821010eb213be3 ]
 
-Some of our scripts are passed $objdump and then call it as
-"$objdump". This doesn't work if it contains spaces because we're
-using ccache, for example you get errors such as:
+Daniele reported that issue previously fixed in c41f9ea998f3
+("drivers: dma-coherent: Account dma_pfn_offset when used with device
+tree") reappear shortly after 43fc509c3efb ("dma-coherent: introduce
+interface for default DMA pool") where fix was accidentally dropped.
 
-  ./arch/powerpc/tools/relocs_check.sh: line 48: ccache ppc64le-objdump: No such file or directory
-  ./arch/powerpc/tools/unrel_branch_check.sh: line 26: ccache ppc64le-objdump: No such file or directory
+Lets put fix back in place and respect dma-ranges for reserved memory.
 
-Fix it by not quoting the string when we expand it, allowing the shell
-to do the right thing for us.
+Fixes: 43fc509c3efb ("dma-coherent: introduce interface for default DMA pool")
 
-Fixes: a71aa05e1416 ("powerpc: Convert relocs_check to a shell script using grep")
-Fixes: 4ea80652dc75 ("powerpc/64s: Tool to flag direct branches from unrelocated interrupt vectors")
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191024004730.32135-1-mpe@ellerman.id.au
+Reported-by: Daniele Alessandrelli <daniele.alessandrelli@gmail.com>
+Tested-by: Daniele Alessandrelli <daniele.alessandrelli@gmail.com>
+Tested-by: Alexandre Torgue <alexandre.torgue@st.com>
+Signed-off-by: Vladimir Murzin <vladimir.murzin@arm.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/tools/relocs_check.sh       | 2 +-
- arch/powerpc/tools/unrel_branch_check.sh | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/mm/dma-mapping-nommu.c |  2 +-
+ include/linux/dma-mapping.h     |  4 ++--
+ kernel/dma/coherent.c           | 16 +++++++++-------
+ 3 files changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/arch/powerpc/tools/relocs_check.sh b/arch/powerpc/tools/relocs_check.sh
-index 2b4e959caa36..7b9fe0a567cf 100755
---- a/arch/powerpc/tools/relocs_check.sh
-+++ b/arch/powerpc/tools/relocs_check.sh
-@@ -20,7 +20,7 @@ objdump="$1"
- vmlinux="$2"
+diff --git a/arch/arm/mm/dma-mapping-nommu.c b/arch/arm/mm/dma-mapping-nommu.c
+index db9247898300..287ef898a55e 100644
+--- a/arch/arm/mm/dma-mapping-nommu.c
++++ b/arch/arm/mm/dma-mapping-nommu.c
+@@ -35,7 +35,7 @@ static void *arm_nommu_dma_alloc(struct device *dev, size_t size,
+ 				 unsigned long attrs)
  
- bad_relocs=$(
--"$objdump" -R "$vmlinux" |
-+$objdump -R "$vmlinux" |
- 	# Only look at relocation lines.
- 	grep -E '\<R_' |
- 	# These relocations are okay
-diff --git a/arch/powerpc/tools/unrel_branch_check.sh b/arch/powerpc/tools/unrel_branch_check.sh
-index 1e972df3107e..77114755dc6f 100755
---- a/arch/powerpc/tools/unrel_branch_check.sh
-+++ b/arch/powerpc/tools/unrel_branch_check.sh
-@@ -18,14 +18,14 @@ vmlinux="$2"
- #__end_interrupts should be located within the first 64K
+ {
+-	void *ret = dma_alloc_from_global_coherent(size, dma_handle);
++	void *ret = dma_alloc_from_global_coherent(dev, size, dma_handle);
  
- end_intr=0x$(
--"$objdump" -R "$vmlinux" -d --start-address=0xc000000000000000		\
-+$objdump -R "$vmlinux" -d --start-address=0xc000000000000000           \
- 		 --stop-address=0xc000000000010000 |
- grep '\<__end_interrupts>:' |
- awk '{print $1}'
- )
+ 	/*
+ 	 * dma_alloc_from_global_coherent() may fail because:
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index 0aad641d662c..4d450672b7d6 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -162,7 +162,7 @@ int dma_release_from_dev_coherent(struct device *dev, int order, void *vaddr);
+ int dma_mmap_from_dev_coherent(struct device *dev, struct vm_area_struct *vma,
+ 			    void *cpu_addr, size_t size, int *ret);
  
- BRANCHES=$(
--"$objdump" -R "$vmlinux" -D --start-address=0xc000000000000000		\
-+$objdump -R "$vmlinux" -D --start-address=0xc000000000000000           \
- 		--stop-address=${end_intr} |
- grep -e "^c[0-9a-f]*:[[:space:]]*\([0-9a-f][0-9a-f][[:space:]]\)\{4\}[[:space:]]*b" |
- grep -v '\<__start_initialization_multiplatform>' |
+-void *dma_alloc_from_global_coherent(ssize_t size, dma_addr_t *dma_handle);
++void *dma_alloc_from_global_coherent(struct device *dev, ssize_t size, dma_addr_t *dma_handle);
+ int dma_release_from_global_coherent(int order, void *vaddr);
+ int dma_mmap_from_global_coherent(struct vm_area_struct *vma, void *cpu_addr,
+ 				  size_t size, int *ret);
+@@ -172,7 +172,7 @@ int dma_mmap_from_global_coherent(struct vm_area_struct *vma, void *cpu_addr,
+ #define dma_release_from_dev_coherent(dev, order, vaddr) (0)
+ #define dma_mmap_from_dev_coherent(dev, vma, vaddr, order, ret) (0)
+ 
+-static inline void *dma_alloc_from_global_coherent(ssize_t size,
++static inline void *dma_alloc_from_global_coherent(struct device *dev, ssize_t size,
+ 						   dma_addr_t *dma_handle)
+ {
+ 	return NULL;
+diff --git a/kernel/dma/coherent.c b/kernel/dma/coherent.c
+index 545e3869b0e3..551b0eb7028a 100644
+--- a/kernel/dma/coherent.c
++++ b/kernel/dma/coherent.c
+@@ -123,8 +123,9 @@ int dma_declare_coherent_memory(struct device *dev, phys_addr_t phys_addr,
+ 	return ret;
+ }
+ 
+-static void *__dma_alloc_from_coherent(struct dma_coherent_mem *mem,
+-		ssize_t size, dma_addr_t *dma_handle)
++static void *__dma_alloc_from_coherent(struct device *dev,
++				       struct dma_coherent_mem *mem,
++				       ssize_t size, dma_addr_t *dma_handle)
+ {
+ 	int order = get_order(size);
+ 	unsigned long flags;
+@@ -143,7 +144,7 @@ static void *__dma_alloc_from_coherent(struct dma_coherent_mem *mem,
+ 	/*
+ 	 * Memory was found in the coherent area.
+ 	 */
+-	*dma_handle = mem->device_base + (pageno << PAGE_SHIFT);
++	*dma_handle = dma_get_device_base(dev, mem) + (pageno << PAGE_SHIFT);
+ 	ret = mem->virt_base + (pageno << PAGE_SHIFT);
+ 	spin_unlock_irqrestore(&mem->spinlock, flags);
+ 	memset(ret, 0, size);
+@@ -175,17 +176,18 @@ int dma_alloc_from_dev_coherent(struct device *dev, ssize_t size,
+ 	if (!mem)
+ 		return 0;
+ 
+-	*ret = __dma_alloc_from_coherent(mem, size, dma_handle);
++	*ret = __dma_alloc_from_coherent(dev, mem, size, dma_handle);
+ 	return 1;
+ }
+ 
+-void *dma_alloc_from_global_coherent(ssize_t size, dma_addr_t *dma_handle)
++void *dma_alloc_from_global_coherent(struct device *dev, ssize_t size,
++				     dma_addr_t *dma_handle)
+ {
+ 	if (!dma_coherent_default_memory)
+ 		return NULL;
+ 
+-	return __dma_alloc_from_coherent(dma_coherent_default_memory, size,
+-			dma_handle);
++	return __dma_alloc_from_coherent(dev, dma_coherent_default_memory, size,
++					 dma_handle);
+ }
+ 
+ static int __dma_release_from_coherent(struct dma_coherent_mem *mem,
 -- 
 2.20.1
 
