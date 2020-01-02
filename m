@@ -2,45 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A062312F027
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:51:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B752C12EE5C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:37:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbgABWug (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:50:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50532 "EHLO mail.kernel.org"
+        id S1730965AbgABWho (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:37:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728356AbgABWZS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:25:18 -0500
+        id S1731103AbgABWhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:37:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F99721835;
-        Thu,  2 Jan 2020 22:25:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93B4020863;
+        Thu,  2 Jan 2020 22:37:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003918;
-        bh=jBDoo+A/HTVXUC3Ugi9COLtzSfQPnNZY8ECqr33cvlY=;
+        s=default; t=1578004660;
+        bh=eRSMkoQmHJfQsGIgeNGeeDD/XC6HM12laJvD/wmZqF0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xkZgcR5DMcbF1gjNzUZRwNA6Y7BcMp358yVL7ISDDRw6RGSH3hAm5srHtULOM75cj
-         QhMoPF3ZAMIBqFG+mCnZCyQCzlo5a3i14If0WOtfChcuzfHTf43TSJxMI8G5Cx/2Gc
-         AXEYi8m2fWZQgR9tiMvVkpgdJh9XQ89SGRFCpUTY=
+        b=HAJkaeu7PxcI6jKGPU38LxTtwMUqTvCsbT5fYUqGkZaqb0RYCnJhD8TvKVnPfT6ue
+         xza148T2eedL0pxkY9SiiKwZOySV3sMgDEqYIkmyBs/44/UjQr8fIAeLyhKMLUhISx
+         WswpVGLrVwRKdkxCiRKxpwN8vndwhciiNf7qYyuU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
-        Chris Down <chris@chrisdown.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 53/91] kernel: sysctl: make drop_caches write-only
+        stable@vger.kernel.org,
+        =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= 
+        <marmarek@invisiblethingslab.com>,
+        Suwan Kim <suwan.kim027@gmail.com>,
+        Shuah Khan <skhan@linuxfoundation.org>
+Subject: [PATCH 4.4 082/137] usbip: Fix error path of vhci_recv_ret_submit()
 Date:   Thu,  2 Jan 2020 23:07:35 +0100
-Message-Id: <20200102220437.874321828@linuxfoundation.org>
+Message-Id: <20200102220557.745590718@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
-References: <20200102220356.856162165@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,53 +46,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Weiner <hannes@cmpxchg.org>
+From: Suwan Kim <suwan.kim027@gmail.com>
 
-[ Upstream commit 204cb79ad42f015312a5bbd7012d09c93d9b46fb ]
+commit aabb5b833872524eaf28f52187e5987984982264 upstream.
 
-Currently, the drop_caches proc file and sysctl read back the last value
-written, suggesting this is somehow a stateful setting instead of a
-one-time command.  Make it write-only, like e.g.  compact_memory.
+If a transaction error happens in vhci_recv_ret_submit(), event
+handler closes connection and changes port status to kick hub_event.
+Then hub tries to flush the endpoint URBs, but that causes infinite
+loop between usb_hub_flush_endpoint() and vhci_urb_dequeue() because
+"vhci_priv" in vhci_urb_dequeue() was already released by
+vhci_recv_ret_submit() before a transmission error occurred. Thus,
+vhci_urb_dequeue() terminates early and usb_hub_flush_endpoint()
+continuously calls vhci_urb_dequeue().
 
-While mitigating a VM problem at scale in our fleet, there was confusion
-about whether writing to this file will permanently switch the kernel into
-a non-caching mode.  This influences the decision making in a tense
-situation, where tens of people are trying to fix tens of thousands of
-affected machines: Do we need a rollback strategy?  What are the
-performance implications of operating in a non-caching state for several
-days?  It also caused confusion when the kernel team said we may need to
-write the file several times to make sure it's effective ("But it already
-reads back 3?").
+The root cause of this issue is that vhci_recv_ret_submit()
+terminates early without giving back URB when transaction error
+occurs in vhci_recv_ret_submit(). That causes the error URB to still
+be linked at endpoint list without “vhci_priv".
 
-Link: http://lkml.kernel.org/r/20191031221602.9375-1-hannes@cmpxchg.org
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-Acked-by: Chris Down <chris@chrisdown.name>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: David Hildenbrand <david@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Alexey Dobriyan <adobriyan@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+So, in the case of transaction error in vhci_recv_ret_submit(),
+unlink URB from the endpoint, insert proper error code in
+urb->status and give back URB.
+
+Reported-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+Tested-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+Signed-off-by: Suwan Kim <suwan.kim027@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+Link: https://lore.kernel.org/r/20191213023055.19933-3-suwan.kim027@gmail.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- kernel/sysctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/usbip/vhci_rx.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index cfc2c0d1369a..74fc3a9d1923 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1397,7 +1397,7 @@ static struct ctl_table vm_table[] = {
- 		.procname	= "drop_caches",
- 		.data		= &sysctl_drop_caches,
- 		.maxlen		= sizeof(int),
--		.mode		= 0644,
-+		.mode		= 0200,
- 		.proc_handler	= drop_caches_sysctl_handler,
- 		.extra1		= &one,
- 		.extra2		= &four,
--- 
-2.20.1
-
+--- a/drivers/usb/usbip/vhci_rx.c
++++ b/drivers/usb/usbip/vhci_rx.c
+@@ -89,16 +89,21 @@ static void vhci_recv_ret_submit(struct
+ 	usbip_pack_pdu(pdu, urb, USBIP_RET_SUBMIT, 0);
+ 
+ 	/* recv transfer buffer */
+-	if (usbip_recv_xbuff(ud, urb) < 0)
+-		return;
++	if (usbip_recv_xbuff(ud, urb) < 0) {
++		urb->status = -EPROTO;
++		goto error;
++	}
+ 
+ 	/* recv iso_packet_descriptor */
+-	if (usbip_recv_iso(ud, urb) < 0)
+-		return;
++	if (usbip_recv_iso(ud, urb) < 0) {
++		urb->status = -EPROTO;
++		goto error;
++	}
+ 
+ 	/* restore the padding in iso packets */
+ 	usbip_pad_iso(ud, urb);
+ 
++error:
+ 	if (usbip_dbg_flag_vhci_rx)
+ 		usbip_dump_urb(urb);
+ 
 
 
