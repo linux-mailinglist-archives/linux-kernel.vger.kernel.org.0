@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F9DF12EE97
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:40:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C120F12EE6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:38:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728462AbgABWjc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:39:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55778 "EHLO mail.kernel.org"
+        id S1730950AbgABWic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:38:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731201AbgABWj1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:39:27 -0500
+        id S1731068AbgABWi2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:38:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCE73217F4;
-        Thu,  2 Jan 2020 22:39:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FD5E21835;
+        Thu,  2 Jan 2020 22:38:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004767;
-        bh=rmBM8hCrQCClvasxTyLfIr9x/PvBxvVO+DVsv6jXjdw=;
+        s=default; t=1578004707;
+        bh=iiHkmAn0HtFSe8vyac2ZShkvyJ3Zx8AZ6ZfZB2ZrOSk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KiR5E5pWOxDBr5F94YSVUdx59h+lE0RQgAZw5GbCGUF+j0xeK/5ON6/0cQNscrQgr
-         rkLeFOYsAqB8zgnOOZditO0liCDRpIPuR98GzP0BKN5cf7iwmCXBrhWZOcwq98cEuO
-         AWAB9xpHjao1i/CuMYOUV3dfiucoBWtnPmD+MdkQ=
+        b=ODhYxHSYRffB8xSyYkKB06oz1qMqytRSbjW/TqZ26h7wOpLcQxlXiU1jdfpwPphz0
+         gXcK2coBsaVPnU4X0I2uykcq6OwOw024iSJc7shay6NVfV0MItrX1U2iG9MBCO/4Hh
+         6Bf4C51fxnJuSCU97Zb1idl0TbH5hJdRgSNfX9PI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Michael Walle <michael@walle.cc>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 119/137] gpio: mpc8xxx: Dont overwrite default irq_set_type callback
-Date:   Thu,  2 Jan 2020 23:08:12 +0100
-Message-Id: <20200102220603.140332024@linuxfoundation.org>
+Subject: [PATCH 4.4 120/137] scripts/kallsyms: fix definitely-lost memory leak
+Date:   Thu,  2 Jan 2020 23:08:13 +0100
+Message-Id: <20200102220603.292723951@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
 References: <20200102220546.618583146@linuxfoundation.org>
@@ -45,54 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit 4e50573f39229d5e9c985fa3b4923a8b29619ade ]
+[ Upstream commit 21915eca088dc271c970e8351290e83d938114ac ]
 
-The per-SoC devtype structures can contain their own callbacks that
-overwrite mpc8xxx_gpio_devtype_default.
+build_initial_tok_table() overwrites unused sym_entry to shrink the
+table size. Before the entry is overwritten, table[i].sym must be freed
+since it is malloc'ed data.
 
-The clear intention is that mpc8xxx_irq_set_type is used in case the SoC
-does not specify a more specific callback. But what happens is that if
-the SoC doesn't specify one, its .irq_set_type is de-facto NULL, and
-this overwrites mpc8xxx_irq_set_type to a no-op. This means that the
-following SoCs are affected:
+This fixes the 'definitely lost' report from valgrind. I ran valgrind
+against x86_64_defconfig of v5.4-rc8 kernel, and here is the summary:
 
-- fsl,mpc8572-gpio
-- fsl,ls1028a-gpio
-- fsl,ls1088a-gpio
+[Before the fix]
 
-On these boards, the irq_set_type does exactly nothing, and the GPIO
-controller keeps its GPICR register in the hardware-default state. On
-the LS1028A, that is ACTIVE_BOTH, which means 2 interrupts are raised
-even if the IRQ client requests LEVEL_HIGH. Another implication is that
-the IRQs are not checked (e.g. level-triggered interrupts are not
-rejected, although they are not supported).
+  LEAK SUMMARY:
+     definitely lost: 53,184 bytes in 2,874 blocks
 
-Fixes: 82e39b0d8566 ("gpio: mpc8xxx: handle differences between incarnations at a single place")
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-Link: https://lore.kernel.org/r/20191115125551.31061-1-olteanv@gmail.com
-Tested-by: Michael Walle <michael@walle.cc>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+[After the fix]
+
+  LEAK SUMMARY:
+     definitely lost: 0 bytes in 0 blocks
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-mpc8xxx.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ scripts/kallsyms.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index 9e02cb6afb0b..ce6e15167d0b 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -409,7 +409,8 @@ static int mpc8xxx_probe(struct platform_device *pdev)
- 	 * It's assumed that only a single type of gpio controller is available
- 	 * on the current machine, so overwriting global data is fine.
- 	 */
--	mpc8xxx_irq_chip.irq_set_type = devtype->irq_set_type;
-+	if (devtype->irq_set_type)
-+		mpc8xxx_irq_chip.irq_set_type = devtype->irq_set_type;
- 
- 	gc->direction_output = devtype->gpio_dir_out ?: mpc8xxx_gpio_dir_out;
- 	gc->get = devtype->gpio_get ?: mpc8xxx_gpio_get;
+diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
+index d117c68d1607..b92b704e7ace 100644
+--- a/scripts/kallsyms.c
++++ b/scripts/kallsyms.c
+@@ -455,6 +455,8 @@ static void build_initial_tok_table(void)
+ 				table[pos] = table[i];
+ 			learn_symbol(table[pos].sym, table[pos].len);
+ 			pos++;
++		} else {
++			free(table[i].sym);
+ 		}
+ 	}
+ 	table_cnt = pos;
 -- 
 2.20.1
 
