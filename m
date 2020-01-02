@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A844112EC04
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:15:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC56012ED75
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:28:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727917AbgABWO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:14:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54636 "EHLO mail.kernel.org"
+        id S1729719AbgABW2f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:28:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726148AbgABWOY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:14:24 -0500
+        id S1729670AbgABW2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:28:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C3BC2253D;
-        Thu,  2 Jan 2020 22:14:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E65642464E;
+        Thu,  2 Jan 2020 22:28:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003263;
-        bh=TkUG4d7OxeRxkXf03YFswXFkgNGW4fJrKL15eMH3sOU=;
+        s=default; t=1578004110;
+        bh=JmWdkvsqbTXLiuAcRrK4BVTSN7ED4satjx6b3f6/RAA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fvDgBrgjcBjqRXUwU3c+8iHJR/y2bOlv2gV77XyLxyu0+AeZCuuszB5g/z4qJEIp4
-         31kYN6LYHhVW2/PJpSy6ReozPEOCyooORVJzdLQs9QAvdt2+XgxIiF32tK1UwtkmAo
-         tlMq0aoAEy5CxFgc3qIkH/Z5pwEOW8zLf9rIA35s=
+        b=Cb2vvpjQGgP71RxxtHMAUiH85NKCSc30G9qEr3g2QKs+w2GcXgNDt9PHAa5vAZYs6
+         bc4qQtxO2zmOGGZXvLclr4W0MEGL4Sjx6upiB4tJZ8EEbdNluM30gOtcilrHK0DdGc
+         66vMCa0/f1uGszuR+UY3J5+/pAv2sX6o8HKR/XtQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kars de Jong <jongk@linux-m68k.org>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Allen Pais <allen.pais@oracle.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 062/191] scsi: zorro_esp: Limit DMA transfers to 65536 bytes (except on Fastlane)
-Date:   Thu,  2 Jan 2020 23:05:44 +0100
-Message-Id: <20200102215836.612045187@linuxfoundation.org>
+Subject: [PATCH 4.9 014/171] libertas: fix a potential NULL pointer dereference
+Date:   Thu,  2 Jan 2020 23:05:45 +0100
+Message-Id: <20200102220548.982792915@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,67 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kars de Jong <jongk@linux-m68k.org>
+From: Allen Pais <allen.pais@oracle.com>
 
-[ Upstream commit 02f7e9f351a9de95577eafdc3bd413ed1c3b589f ]
+[ Upstream commit 7da413a18583baaf35dd4a8eb414fa410367d7f2 ]
 
-When using this driver on a Blizzard 1260, there were failures whenever DMA
-transfers from the SCSI bus to memory of 65535 bytes were followed by a DMA
-transfer of 1 byte. This caused the byte at offset 65535 to be overwritten
-with 0xff. The Blizzard hardware can't handle single byte DMA transfers.
+alloc_workqueue is not checked for errors and as a result,
+a potential NULL dereference could occur.
 
-Besides this issue, limiting the DMA length to something that is not a
-multiple of the page size is very inefficient on most file systems.
-
-It seems this limit was chosen because the DMA transfer counter of the ESP
-by default is 16 bits wide, thus limiting the length to 65535 bytes.
-However, the value 0 means 65536 bytes, which is handled by the ESP and the
-Blizzard just fine. It is also the default maximum used by esp_scsi when
-drivers don't provide their own dma_length_limit() function.
-
-The limit of 65536 bytes can be used by all boards except the Fastlane. The
-old driver used a limit of 65532 bytes (0xfffc), which is reintroduced in
-this patch.
-
-Fixes: b7ded0e8b0d1 ("scsi: zorro_esp: Limit DMA transfers to 65535 bytes")
-Link: https://lore.kernel.org/r/20191112175523.23145-1-jongk@linux-m68k.org
-Signed-off-by: Kars de Jong <jongk@linux-m68k.org>
-Reviewed-by: Finn Thain <fthain@telegraphics.com.au>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Allen Pais <allen.pais@oracle.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/zorro_esp.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/net/wireless/marvell/libertas/if_sdio.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/scsi/zorro_esp.c b/drivers/scsi/zorro_esp.c
-index ca8e3abeb2c7..a23a8e5794f5 100644
---- a/drivers/scsi/zorro_esp.c
-+++ b/drivers/scsi/zorro_esp.c
-@@ -218,7 +218,14 @@ static int fastlane_esp_irq_pending(struct esp *esp)
- static u32 zorro_esp_dma_length_limit(struct esp *esp, u32 dma_addr,
- 					u32 dma_len)
- {
--	return dma_len > 0xFFFF ? 0xFFFF : dma_len;
-+	return dma_len > (1U << 16) ? (1U << 16) : dma_len;
-+}
-+
-+static u32 fastlane_esp_dma_length_limit(struct esp *esp, u32 dma_addr,
-+					u32 dma_len)
-+{
-+	/* The old driver used 0xfffc as limit, so do that here too */
-+	return dma_len > 0xfffc ? 0xfffc : dma_len;
- }
+diff --git a/drivers/net/wireless/marvell/libertas/if_sdio.c b/drivers/net/wireless/marvell/libertas/if_sdio.c
+index 06a57c708992..44da911c9a1a 100644
+--- a/drivers/net/wireless/marvell/libertas/if_sdio.c
++++ b/drivers/net/wireless/marvell/libertas/if_sdio.c
+@@ -1229,6 +1229,10 @@ static int if_sdio_probe(struct sdio_func *func,
  
- static void zorro_esp_reset_dma(struct esp *esp)
-@@ -604,7 +611,7 @@ static const struct esp_driver_ops fastlane_esp_ops = {
- 	.esp_write8		= zorro_esp_write8,
- 	.esp_read8		= zorro_esp_read8,
- 	.irq_pending		= fastlane_esp_irq_pending,
--	.dma_length_limit	= zorro_esp_dma_length_limit,
-+	.dma_length_limit	= fastlane_esp_dma_length_limit,
- 	.reset_dma		= zorro_esp_reset_dma,
- 	.dma_drain		= zorro_esp_dma_drain,
- 	.dma_invalidate		= fastlane_esp_dma_invalidate,
+ 	spin_lock_init(&card->lock);
+ 	card->workqueue = alloc_workqueue("libertas_sdio", WQ_MEM_RECLAIM, 0);
++	if (unlikely(!card->workqueue)) {
++		ret = -ENOMEM;
++		goto err_queue;
++	}
+ 	INIT_WORK(&card->packet_worker, if_sdio_host_to_card_worker);
+ 	init_waitqueue_head(&card->pwron_waitq);
+ 
+@@ -1282,6 +1286,7 @@ err_activate_card:
+ 	lbs_remove_card(priv);
+ free:
+ 	destroy_workqueue(card->workqueue);
++err_queue:
+ 	while (card->packets) {
+ 		packet = card->packets;
+ 		card->packets = card->packets->next;
 -- 
 2.20.1
 
