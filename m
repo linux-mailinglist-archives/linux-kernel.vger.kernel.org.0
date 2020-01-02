@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22C1212F050
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:52:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E48F912EF47
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:46:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729877AbgABWwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:52:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44122 "EHLO mail.kernel.org"
+        id S1730183AbgABWcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:32:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729195AbgABWW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:22:56 -0500
+        id S1729907AbgABWch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:32:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5A8A20863;
-        Thu,  2 Jan 2020 22:22:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7291D22314;
+        Thu,  2 Jan 2020 22:32:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003776;
-        bh=m+bg6XXI3F0uyLMsrHSQ2CbN2ECiRxioO839FmuczGU=;
+        s=default; t=1578004356;
+        bh=zmhLVLYo7AmsgDCb5HUMzyyEhu2cun8hHrTua1I/Ek0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oi5oaZsuMeOep39GqyGArcIR7/95qQdnjf/f2DOujBw5a2rAWbZWzDSdJ2fI4hMvT
-         ol96nbRoM/4NN3zezjquRa9u001BhbcOSqy6W53zxTh4SS5tkyf0e3LqjtJEhgQ61V
-         /ZWgbvg7RwFlzuCSRe4/Yi7k8QPzf7JJSI05Dg6A=
+        b=Sl7dGwuLLVM6Yg/cehXJDaRIp4HtDCp6i2XWJFK95t4sw2FwP6BXb9v2pLidl0k2z
+         FJzcMLj2tgNT7WWA8+pGazPTBNuyG4ciCCLoMoujg4n0bKtwlKBSl4JbT+OTjweYfq
+         VAimulfdmksnGlJPhzVO7t0WhlynngdV0skP7Bac=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guillaume Nault <gnault@redhat.com>,
-        David Ahern <dsahern@gmail.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 102/114] vti: do not confirm neighbor when do pmtu update
-Date:   Thu,  2 Jan 2020 23:07:54 +0100
-Message-Id: <20200102220039.477125871@linuxfoundation.org>
+        stable@vger.kernel.org, Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Michael Walle <michael@walle.cc>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 144/171] gpio: mpc8xxx: Dont overwrite default irq_set_type callback
+Date:   Thu,  2 Jan 2020 23:07:55 +0100
+Message-Id: <20200102220607.157038496@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,55 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
 
-[ Upstream commit 8247a79efa2f28b44329f363272550c1738377de ]
+[ Upstream commit 4e50573f39229d5e9c985fa3b4923a8b29619ade ]
 
-When do IPv6 tunnel PMTU update and calls __ip6_rt_update_pmtu() in the end,
-we should not call dst_confirm_neigh() as there is no two-way communication.
+The per-SoC devtype structures can contain their own callbacks that
+overwrite mpc8xxx_gpio_devtype_default.
 
-Although vti and vti6 are immune to this problem because they are IFF_NOARP
-interfaces, as Guillaume pointed. There is still no sense to confirm neighbour
-here.
+The clear intention is that mpc8xxx_irq_set_type is used in case the SoC
+does not specify a more specific callback. But what happens is that if
+the SoC doesn't specify one, its .irq_set_type is de-facto NULL, and
+this overwrites mpc8xxx_irq_set_type to a no-op. This means that the
+following SoCs are affected:
 
-v5: Update commit description.
-v4: No change.
-v3: Do not remove dst_confirm_neigh, but add a new bool parameter in
-    dst_ops.update_pmtu to control whether we should do neighbor confirm.
-    Also split the big patch to small ones for each area.
-v2: Remove dst_confirm_neigh in __ip6_rt_update_pmtu.
+- fsl,mpc8572-gpio
+- fsl,ls1028a-gpio
+- fsl,ls1088a-gpio
 
-Reviewed-by: Guillaume Nault <gnault@redhat.com>
-Acked-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On these boards, the irq_set_type does exactly nothing, and the GPIO
+controller keeps its GPICR register in the hardware-default state. On
+the LS1028A, that is ACTIVE_BOTH, which means 2 interrupts are raised
+even if the IRQ client requests LEVEL_HIGH. Another implication is that
+the IRQs are not checked (e.g. level-triggered interrupts are not
+rejected, although they are not supported).
+
+Fixes: 82e39b0d8566 ("gpio: mpc8xxx: handle differences between incarnations at a single place")
+Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Link: https://lore.kernel.org/r/20191115125551.31061-1-olteanv@gmail.com
+Tested-by: Michael Walle <michael@walle.cc>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/ip_vti.c  |    2 +-
- net/ipv6/ip6_vti.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-mpc8xxx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/ipv4/ip_vti.c
-+++ b/net/ipv4/ip_vti.c
-@@ -235,7 +235,7 @@ static netdev_tx_t vti_xmit(struct sk_bu
+diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+index 793518a30afe..bd777687233b 100644
+--- a/drivers/gpio/gpio-mpc8xxx.c
++++ b/drivers/gpio/gpio-mpc8xxx.c
+@@ -337,7 +337,8 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+ 	 * It's assumed that only a single type of gpio controller is available
+ 	 * on the current machine, so overwriting global data is fine.
+ 	 */
+-	mpc8xxx_irq_chip.irq_set_type = devtype->irq_set_type;
++	if (devtype->irq_set_type)
++		mpc8xxx_irq_chip.irq_set_type = devtype->irq_set_type;
  
- 	mtu = dst_mtu(dst);
- 	if (skb->len > mtu) {
--		skb_dst_update_pmtu(skb, mtu);
-+		skb_dst_update_pmtu_no_confirm(skb, mtu);
- 		if (skb->protocol == htons(ETH_P_IP)) {
- 			icmp_send(skb, ICMP_DEST_UNREACH, ICMP_FRAG_NEEDED,
- 				  htonl(mtu));
---- a/net/ipv6/ip6_vti.c
-+++ b/net/ipv6/ip6_vti.c
-@@ -483,7 +483,7 @@ vti6_xmit(struct sk_buff *skb, struct ne
- 
- 	mtu = dst_mtu(dst);
- 	if (skb->len > mtu) {
--		skb_dst_update_pmtu(skb, mtu);
-+		skb_dst_update_pmtu_no_confirm(skb, mtu);
- 
- 		if (skb->protocol == htons(ETH_P_IPV6)) {
- 			if (mtu < IPV6_MIN_MTU)
+ 	if (devtype->gpio_dir_out)
+ 		gc->direction_output = devtype->gpio_dir_out;
+-- 
+2.20.1
+
 
 
