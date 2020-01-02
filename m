@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9D1E12EF5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:46:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 190CB12EDD9
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:32:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730756AbgABWpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:45:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38798 "EHLO mail.kernel.org"
+        id S1729851AbgABWcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:32:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730417AbgABWc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:32:27 -0500
+        id S1730423AbgABWca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:32:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BADEC20866;
-        Thu,  2 Jan 2020 22:32:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C347222C3;
+        Thu,  2 Jan 2020 22:32:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004347;
-        bh=+zrt2PfYOEuMTQxgmUYYfno+qL18+KOj8WYPPz4YJmk=;
+        s=default; t=1578004349;
+        bh=lpVUCKrMKkCEh6k0qqlmPg17HY6gk5Rz8TVwfI1sY7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oblRzrpGsWHg6YakEeLYyAkQoSEK7yppO9DlPvQoOqajs02M19bDvaxTa8hzGkq1u
-         BsppBwi7WNOpn9SjXVP2utJjA1w9JmfYGZdGNT3TBvGqUQZCzPf5DaHyFDtFh7C+8R
-         Zqm1ArXsFNYh3OvCk80Fi0H4qpnjvOt6hcPvyYTk=
+        b=WMpJEj88Nk15/P3NTCo7sFtookKrbUUfk/wTt92TZQ1OxB5p1uy3QdKvysvRujhrR
+         5XiUrtWO0drtn3uB9NjOs4CVB5OATE4XuoF1BbTd6XhQMD7OaXe6caDEXl6hAvv6kQ
+         oU5ddZZgH+qxkOp4Es5YLNzLi4AT1nmJfkWYQOLM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jack Wang <jinpu.wang@cloud.ionos.com>,
-        peter chang <dpf@google.com>,
-        Deepak Ukey <deepak.ukey@microchip.com>,
-        Viswas G <Viswas.G@microchip.com>,
+        stable@vger.kernel.org, Maurizio Lombardi <mlombard@redhat.com>,
+        Douglas Gilbert <dgilbert@interlog.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 141/171] scsi: pm80xx: Fix for SATA device discovery
-Date:   Thu,  2 Jan 2020 23:07:52 +0100
-Message-Id: <20200102220606.740133097@linuxfoundation.org>
+Subject: [PATCH 4.9 142/171] scsi: scsi_debug: num_tgts must be >= 0
+Date:   Thu,  2 Jan 2020 23:07:53 +0100
+Message-Id: <20200102220606.879645270@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
 References: <20200102220546.960200039@linuxfoundation.org>
@@ -47,39 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: peter chang <dpf@google.com>
+From: Maurizio Lombardi <mlombard@redhat.com>
 
-[ Upstream commit ce21c63ee995b7a8b7b81245f2cee521f8c3c220 ]
+[ Upstream commit aa5334c4f3014940f11bf876e919c956abef4089 ]
 
-Driver was missing complete() call in mpi_sata_completion which result in
-SATA abort error handling timing out. That causes the device to be left in
-the in_recovery state so subsequent commands sent to the device fail and
-the OS removes access to it.
+Passing the parameter "num_tgts=-1" will start an infinite loop that
+exhausts the system memory
 
-Link: https://lore.kernel.org/r/20191114100910.6153-2-deepak.ukey@microchip.com
-Acked-by: Jack Wang <jinpu.wang@cloud.ionos.com>
-Signed-off-by: peter chang <dpf@google.com>
-Signed-off-by: Deepak Ukey <deepak.ukey@microchip.com>
-Signed-off-by: Viswas G <Viswas.G@microchip.com>
+Link: https://lore.kernel.org/r/20191115163727.24626-1-mlombard@redhat.com
+Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
+Acked-by: Douglas Gilbert <dgilbert@interlog.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/pm8001/pm80xx_hwi.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/scsi_debug.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/scsi/pm8001/pm80xx_hwi.c b/drivers/scsi/pm8001/pm80xx_hwi.c
-index 9edd61c063a1..df5f0bc29587 100644
---- a/drivers/scsi/pm8001/pm80xx_hwi.c
-+++ b/drivers/scsi/pm8001/pm80xx_hwi.c
-@@ -2368,6 +2368,8 @@ mpi_sata_completion(struct pm8001_hba_info *pm8001_ha, void *piomb)
- 			pm8001_printk("task 0x%p done with io_status 0x%x"
- 			" resp 0x%x stat 0x%x but aborted by upper layer!\n",
- 			t, status, ts->resp, ts->stat));
-+		if (t->slow_task)
-+			complete(&t->slow_task->completion);
- 		pm8001_ccb_task_free(pm8001_ha, t, ccb, tag);
- 	} else {
- 		spin_unlock_irqrestore(&t->task_state_lock, flags);
+diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+index 2b0e61557317..d7118d3767c3 100644
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@ -4953,6 +4953,11 @@ static int __init scsi_debug_init(void)
+ 		return -EINVAL;
+ 	}
+ 
++	if (sdebug_num_tgts < 0) {
++		pr_err("num_tgts must be >= 0\n");
++		return -EINVAL;
++	}
++
+ 	if (sdebug_guard > 1) {
+ 		pr_err("guard must be 0 or 1\n");
+ 		return -EINVAL;
 -- 
 2.20.1
 
