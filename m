@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3683312ECBF
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:21:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FFD012ED19
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:24:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbgABWV1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:21:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40370 "EHLO mail.kernel.org"
+        id S1729419AbgABWYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:24:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728341AbgABWVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:21:23 -0500
+        id S1729320AbgABWYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:24:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12EFF2253D;
-        Thu,  2 Jan 2020 22:21:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF53D21D7D;
+        Thu,  2 Jan 2020 22:24:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003682;
-        bh=dRUxQmiTazbrVsjjmAMxwSYiCkunN4KSxORzQPmk5gY=;
+        s=default; t=1578003887;
+        bh=qh1ZjbpQqJXce57QBIt4LomOS+X+j+/MrvEC2Z88UDM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0N2nn3m6ZAnZ4CY+2vdrZi93JyfXnceiAECTJjwslFugHd+VfKXEMnHZ03aB/1B5k
-         6BteG1iHPwgM9QrESBOhww8mK2BsjRjshkE3zDljwV5kkSSF//qGm+1Aq7TzmjftJQ
-         Zqk17rAScyqo3donphc4F+sfu00DGTu64ei+nJZM=
+        b=Dxh+V6+WweXx3lLZlL8fEkPJAx2PhTD63QrjQb+huU1W0wuZtO9AraPYBMhshKSPZ
+         w01st4BtZVNPjbEm5w/xiHI6C08VXvze+MMqpmagyD8zIFATOkLWN9T8z/Xewe/xWV
+         uQVupev/cIad7QWa1Z1oV/ziJs70VqoOcU8XkAQs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
+        stable@vger.kernel.org, Mike Christie <mchristi@redhat.com>,
+        Roman Bolshakov <r.bolshakov@yadro.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 070/114] mailbox: imx: Fix Tx doorbell shutdown path
-Date:   Thu,  2 Jan 2020 23:07:22 +0100
-Message-Id: <20200102220036.133311996@linuxfoundation.org>
+Subject: [PATCH 4.14 41/91] scsi: target: iscsi: Wait for all commands to finish before freeing a session
+Date:   Thu,  2 Jan 2020 23:07:23 +0100
+Message-Id: <20200102220433.952672991@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
+References: <20200102220356.856162165@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,77 +46,141 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Baluta <daniel.baluta@nxp.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-[ Upstream commit bf159d151a0b844be28882f39e316b5800acaa2b ]
+[ Upstream commit e9d3009cb936bd0faf0719f68d98ad8afb1e613b ]
 
-Tx doorbell is handled by txdb_tasklet and doesn't
-have an associated IRQ.
+The iSCSI target driver is the only target driver that does not wait for
+ongoing commands to finish before freeing a session. Make the iSCSI target
+driver wait for ongoing commands to finish before freeing a session. This
+patch fixes the following KASAN complaint:
 
-Anyhow, imx_mu_shutdown ignores this and tries to
-free an IRQ that wasn't requested for Tx DB resulting
-in the following warning:
+BUG: KASAN: use-after-free in __lock_acquire+0xb1a/0x2710
+Read of size 8 at addr ffff8881154eca70 by task kworker/0:2/247
 
-[    1.967644] Trying to free already-free IRQ 26
-[    1.972108] WARNING: CPU: 2 PID: 157 at kernel/irq/manage.c:1708 __free_irq+0xc0/0x358
-[    1.980024] Modules linked in:
-[    1.983088] CPU: 2 PID: 157 Comm: kworker/2:1 Tainted: G
-[    1.993524] Hardware name: Freescale i.MX8QXP MEK (DT)
-[    1.998668] Workqueue: events deferred_probe_work_func
-[    2.003812] pstate: 60000085 (nZCv daIf -PAN -UAO)
-[    2.008607] pc : __free_irq+0xc0/0x358
-[    2.012364] lr : __free_irq+0xc0/0x358
-[    2.016111] sp : ffff00001179b7e0
-[    2.019422] x29: ffff00001179b7e0 x28: 0000000000000018
-[    2.024736] x27: ffff000011233000 x26: 0000000000000004
-[    2.030053] x25: 000000000000001a x24: ffff80083bec74d4
-[    2.035369] x23: 0000000000000000 x22: ffff80083bec7588
-[    2.040686] x21: ffff80083b1fe8d8 x20: ffff80083bec7400
-[    2.046003] x19: 0000000000000000 x18: ffffffffffffffff
-[    2.051320] x17: 0000000000000000 x16: 0000000000000000
-[    2.056637] x15: ffff0000111296c8 x14: ffff00009179b517
-[    2.061953] x13: ffff00001179b525 x12: ffff000011142000
-[    2.067270] x11: ffff000011129f20 x10: ffff0000105da970
-[    2.072587] x9 : 00000000ffffffd0 x8 : 0000000000000194
-[    2.077903] x7 : 612065657266206f x6 : ffff0000111e7b09
-[    2.083220] x5 : 0000000000000003 x4 : 0000000000000000
-[    2.088537] x3 : 0000000000000000 x2 : 00000000ffffffff
-[    2.093854] x1 : 28b70f0a2b60a500 x0 : 0000000000000000
-[    2.099173] Call trace:
-[    2.101618]  __free_irq+0xc0/0x358
-[    2.105021]  free_irq+0x38/0x98
-[    2.108170]  imx_mu_shutdown+0x90/0xb0
-[    2.111921]  mbox_free_channel.part.2+0x24/0xb8
-[    2.116453]  mbox_free_channel+0x18/0x28
+CPU: 0 PID: 247 Comm: kworker/0:2 Not tainted 5.4.0-rc1-dbg+ #6
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
+Workqueue: target_completion target_complete_ok_work [target_core_mod]
+Call Trace:
+ dump_stack+0x8a/0xd6
+ print_address_description.constprop.0+0x40/0x60
+ __kasan_report.cold+0x1b/0x33
+ kasan_report+0x16/0x20
+ __asan_load8+0x58/0x90
+ __lock_acquire+0xb1a/0x2710
+ lock_acquire+0xd3/0x200
+ _raw_spin_lock_irqsave+0x43/0x60
+ target_release_cmd_kref+0x162/0x7f0 [target_core_mod]
+ target_put_sess_cmd+0x2e/0x40 [target_core_mod]
+ lio_check_stop_free+0x12/0x20 [iscsi_target_mod]
+ transport_cmd_check_stop_to_fabric+0xd8/0xe0 [target_core_mod]
+ target_complete_ok_work+0x1b0/0x790 [target_core_mod]
+ process_one_work+0x549/0xa40
+ worker_thread+0x7a/0x5d0
+ kthread+0x1bc/0x210
+ ret_from_fork+0x24/0x30
 
-This bug is present from the beginning of times.
+Allocated by task 889:
+ save_stack+0x23/0x90
+ __kasan_kmalloc.constprop.0+0xcf/0xe0
+ kasan_slab_alloc+0x12/0x20
+ kmem_cache_alloc+0xf6/0x360
+ transport_alloc_session+0x29/0x80 [target_core_mod]
+ iscsi_target_login_thread+0xcd6/0x18f0 [iscsi_target_mod]
+ kthread+0x1bc/0x210
+ ret_from_fork+0x24/0x30
 
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
+Freed by task 1025:
+ save_stack+0x23/0x90
+ __kasan_slab_free+0x13a/0x190
+ kasan_slab_free+0x12/0x20
+ kmem_cache_free+0x146/0x400
+ transport_free_session+0x179/0x2f0 [target_core_mod]
+ transport_deregister_session+0x130/0x180 [target_core_mod]
+ iscsit_close_session+0x12c/0x350 [iscsi_target_mod]
+ iscsit_logout_post_handler+0x136/0x380 [iscsi_target_mod]
+ iscsit_response_queue+0x8de/0xbe0 [iscsi_target_mod]
+ iscsi_target_tx_thread+0x27f/0x370 [iscsi_target_mod]
+ kthread+0x1bc/0x210
+ ret_from_fork+0x24/0x30
+
+The buggy address belongs to the object at ffff8881154ec9c0
+ which belongs to the cache se_sess_cache of size 352
+The buggy address is located 176 bytes inside of
+ 352-byte region [ffff8881154ec9c0, ffff8881154ecb20)
+The buggy address belongs to the page:
+page:ffffea0004553b00 refcount:1 mapcount:0 mapping:ffff888101755400 index:0x0 compound_mapcount: 0
+flags: 0x2fff000000010200(slab|head)
+raw: 2fff000000010200 dead000000000100 dead000000000122 ffff888101755400
+raw: 0000000000000000 0000000080130013 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8881154ec900: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff8881154ec980: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+>ffff8881154eca00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                             ^
+ ffff8881154eca80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8881154ecb00: fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc
+
+Cc: Mike Christie <mchristi@redhat.com>
+Link: https://lore.kernel.org/r/20191113220508.198257-3-bvanassche@acm.org
+Reviewed-by: Roman Bolshakov <r.bolshakov@yadro.com>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mailbox/imx-mailbox.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/target/iscsi/iscsi_target.c | 10 ++++++++--
+ include/scsi/iscsi_proto.h          |  1 +
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
-index 363d35d5e49d..2f47023cab2b 100644
---- a/drivers/mailbox/imx-mailbox.c
-+++ b/drivers/mailbox/imx-mailbox.c
-@@ -214,8 +214,10 @@ static void imx_mu_shutdown(struct mbox_chan *chan)
- 	struct imx_mu_priv *priv = to_imx_mu_priv(chan->mbox);
- 	struct imx_mu_con_priv *cp = chan->con_priv;
+diff --git a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
+index fb7bd422e2e1..21ce92ee1652 100644
+--- a/drivers/target/iscsi/iscsi_target.c
++++ b/drivers/target/iscsi/iscsi_target.c
+@@ -1158,7 +1158,9 @@ int iscsit_setup_scsi_cmd(struct iscsi_conn *conn, struct iscsi_cmd *cmd,
+ 		hdr->cmdsn, be32_to_cpu(hdr->data_length), payload_length,
+ 		conn->cid);
  
--	if (cp->type == IMX_MU_TYPE_TXDB)
-+	if (cp->type == IMX_MU_TYPE_TXDB) {
- 		tasklet_kill(&cp->txdb_tasklet);
-+		return;
-+	}
+-	target_get_sess_cmd(&cmd->se_cmd, true);
++	if (target_get_sess_cmd(&cmd->se_cmd, true) < 0)
++		return iscsit_add_reject_cmd(cmd,
++				ISCSI_REASON_WAITING_FOR_LOGOUT, buf);
  
- 	imx_mu_xcr_rmw(priv, 0,
- 		   IMX_MU_xCR_TIEn(cp->idx) | IMX_MU_xCR_RIEn(cp->idx));
+ 	cmd->sense_reason = transport_lookup_cmd_lun(&cmd->se_cmd,
+ 						     scsilun_to_int(&hdr->lun));
+@@ -2004,7 +2006,9 @@ iscsit_handle_task_mgt_cmd(struct iscsi_conn *conn, struct iscsi_cmd *cmd,
+ 			      conn->sess->se_sess, 0, DMA_NONE,
+ 			      TCM_SIMPLE_TAG, cmd->sense_buffer + 2);
+ 
+-	target_get_sess_cmd(&cmd->se_cmd, true);
++	if (target_get_sess_cmd(&cmd->se_cmd, true) < 0)
++		return iscsit_add_reject_cmd(cmd,
++				ISCSI_REASON_WAITING_FOR_LOGOUT, buf);
+ 
+ 	/*
+ 	 * TASK_REASSIGN for ERL=2 / connection stays inside of
+@@ -4236,6 +4240,8 @@ int iscsit_close_connection(
+ 	 * must wait until they have completed.
+ 	 */
+ 	iscsit_check_conn_usage_count(conn);
++	target_sess_cmd_list_set_waiting(sess->se_sess);
++	target_wait_for_sess_cmds(sess->se_sess);
+ 
+ 	ahash_request_free(conn->conn_tx_hash);
+ 	if (conn->conn_rx_hash) {
+diff --git a/include/scsi/iscsi_proto.h b/include/scsi/iscsi_proto.h
+index df156f1d50b2..f0a01a54bd15 100644
+--- a/include/scsi/iscsi_proto.h
++++ b/include/scsi/iscsi_proto.h
+@@ -638,6 +638,7 @@ struct iscsi_reject {
+ #define ISCSI_REASON_BOOKMARK_INVALID	9
+ #define ISCSI_REASON_BOOKMARK_NO_RESOURCES	10
+ #define ISCSI_REASON_NEGOTIATION_RESET	11
++#define ISCSI_REASON_WAITING_FOR_LOGOUT	12
+ 
+ /* Max. number of Key=Value pairs in a text message */
+ #define MAX_KEY_VALUE_PAIRS	8192
 -- 
 2.20.1
 
