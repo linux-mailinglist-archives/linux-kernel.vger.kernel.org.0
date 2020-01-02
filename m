@@ -2,142 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB26312E448
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 10:14:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4086F12E44D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 10:16:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727927AbgABJON (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 04:14:13 -0500
-Received: from mga09.intel.com ([134.134.136.24]:25527 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727801AbgABJON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 04:14:13 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2020 01:14:12 -0800
-X-IronPort-AV: E=Sophos;i="5.69,386,1571727600"; 
-   d="scan'208";a="214099775"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2020 01:14:09 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] drm/i915/dsi: Init panel-enable GPIO to low when the LCD is initially off (v2)
-In-Reply-To: <20191216205122.1850923-4-hdegoede@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20191216205122.1850923-1-hdegoede@redhat.com> <20191216205122.1850923-4-hdegoede@redhat.com>
-Date:   Thu, 02 Jan 2020 11:14:06 +0200
-Message-ID: <871rsiuso1.fsf@intel.com>
+        id S1727936AbgABJQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 04:16:40 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:51495 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727801AbgABJQk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 04:16:40 -0500
+Received: from mail-qk1-f169.google.com ([209.85.222.169]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MkYsS-1jS1dI3AVS-00m3Fa; Thu, 02 Jan 2020 10:16:38 +0100
+Received: by mail-qk1-f169.google.com with SMTP id x1so30899538qkl.12;
+        Thu, 02 Jan 2020 01:16:38 -0800 (PST)
+X-Gm-Message-State: APjAAAVE+QGBgSsRMYZdQs3GkXukEqfChK4/SNI6JC7Pyim5mPbnqp64
+        6Ig4gIIelL0mldKHY49XArAdnmWqfM7inAR3vz8=
+X-Google-Smtp-Source: APXvYqzMxAfesvRBpiHh6fMW9hbkTamYEsxggVtcBYfvoLFG1XW+BpjsplaAZxvnXIkYQDC1Hncybh1OmV1yUVGvmqA=
+X-Received: by 2002:a05:620a:cef:: with SMTP id c15mr50280055qkj.352.1577956597546;
+ Thu, 02 Jan 2020 01:16:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20191218163954.296726-1-arnd@arndb.de> <20191218163954.296726-2-arnd@arndb.de>
+ <20191224084514.GC1739@infradead.org>
+In-Reply-To: <20191224084514.GC1739@infradead.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 2 Jan 2020 10:16:21 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2ANKoV1DhJMUuAr0qKW7HgRvz9LM2yLkSVWP9Rn-LUhA@mail.gmail.com>
+Message-ID: <CAK8P3a2ANKoV1DhJMUuAr0qKW7HgRvz9LM2yLkSVWP9Rn-LUhA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] xfs: disallow broken ioctls without compat-32-bit-time
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Allison Collins <allison.henderson@oracle.com>,
+        Jan Kara <jack@suse.cz>, Eric Sandeen <sandeen@sandeen.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:8KdMv8fjCvWywy7uq+aXkHWXOq4F2qLM4ZJM7SojuBoJ6JbM70e
+ UpI1ZP0enlB4QrVPFQFEsFwt7UPgjc6moR1swgX/S4p1sFynGZl8du/pdOAOPG67alNaiUB
+ akEwabmA9Jz80bg/U+sOSHFLl/XTTIbEhzN00IuRdo1a1TzqryZ5yYp9cudTks8pct2oz7A
+ JvbJmIbncwdDNXnwUGq/w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:T6fbHrRGgNs=:w60Y7IiRHBBsAikCNZQU3S
+ xL5DHroytE978MsWi+3If2C7aK/R693I79kzvV3fzJViNASASp9BmQ/Hz4rcXfUvaCjKf4zH9
+ okmOn5XNJtFXbyJFdH3O1HIAvFJUsxbGuMaAIkdlfU2CqcE9lXjnR8PfhcTU0JrcoJNjt28vj
+ Fwg1XWpuoqUIiTINVSxAmUs3cewAxHGrEyMgqUkgN3XIiF6PujkUKjLsd67RwBfezN6TzDK5G
+ XAkKoA3D7xyN63fBEQm5vJwsY40pyabiHSu+0Kcd2MQIWiEtHO/rxzoRGa068HQ7VoJKx210Y
+ XFPYCWeimhUhSx9J3q/Op7MswRT7/f799/iponz1tEnXZXwkOn6GEyaMgeLXwPLjopCXLyOik
+ t7z+mqqoIyscxsdBjf/+/0oqQoDd5DnojHS4+nHf2igN06LusrlN5g2Z3n69j81si6Bkri5fx
+ 2ieUZgMWJ+//49OgQH5h/Mbdocq2PFAv4d/BLSZA7j1xw9GMnXomN+KXLi7/nqrcbDFH0MUJJ
+ qLFbGkD1tAgamxzBC30bfH3Or/zlKrmMdPOLC5wJFJBmlFrBdkXACq1utwOAfxuVrxkWtZapF
+ ZsK9V8Mkg4prZAY5EpJfmI66JMMrizY7i2sHa7M/32ltSXIWn24yXRl5se0DSPGwB5eb8HV3V
+ 5Fjrt9+obUunUCldTA92Q6BVp1e/hbKAi3PIbNP08X3QvS/9ofY1UPIVBJ07E9YMptDy0f6T0
+ uZhFW+FcP+qL+Ht8Hp6gKEbPlYJ/IbR1Wy/+J7r4YAzwD8zCj0DZl6ULWnFtUhHwVdT65inXE
+ a6NMZL3t1U0ZzNCCPd7+qHZRvN/qG4X76g7uF4tJzHqy1ThYCgPAx1Wia6O/Hzg3CWGZJ5G45
+ QW/B+6g3gxIPKDQh2Mpw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Dec 2019, Hans de Goede <hdegoede@redhat.com> wrote:
-> When the LCD has not been turned on by the firmware/GOP, because e.g. the
-> device was booted with an external monitor connected over HDMI, we should
-> not turn on the panel-enable GPIO when we request it.
+On Tue, Dec 24, 2019 at 9:45 AM Christoph Hellwig <hch@infradead.org> wrote:
+> On Wed, Dec 18, 2019 at 05:39:29PM +0100, Arnd Bergmann wrote:
+> > +/* disallow y2038-unsafe ioctls with CONFIG_COMPAT_32BIT_TIME=n */
+> > +static bool xfs_have_compat_bstat_time32(unsigned int cmd)
+> > +{
+> > +     if (IS_ENABLED(CONFIG_COMPAT_32BIT_TIME))
+> > +             return true;
+> > +
+> > +     if (IS_ENABLED(CONFIG_64BIT) && !in_compat_syscall())
+> > +             return true;
+> > +
+> > +     if (cmd == XFS_IOC_FSBULKSTAT_SINGLE ||
+> > +         cmd == XFS_IOC_FSBULKSTAT ||
+> > +         cmd == XFS_IOC_SWAPEXT)
+> > +             return false;
+> > +
+> > +     return true;
 >
-> Turning on the panel-enable GPIO when we request it, means we turn it on
-> too early in the init-sequence, which causes some panels to not correctly
-> light up.
+> I think the check for the individual command belongs into the callers,
+> which laves us with:
 >
-> This commits adds a panel_is_on parameter to intel_dsi_vbt_gpio_init()
-> and makes intel_dsi_vbt_gpio_init() set the initial GPIO value accordingly.
+> static inline bool have_time32(void)
+> {
+>         return IS_ENABLED(CONFIG_COMPAT_32BIT_TIME) ||
+>                 (IS_ENABLED(CONFIG_64BIT) && !in_compat_syscall());
+> }
 >
-> This fixes the panel not lighting up on a Thundersoft TST168 tablet when
-> booted with an external monitor connected over HDMI.
->
-> Changes in v2:
-> - Call intel_dsi_get_hw_state() to check if the panel is on instead of
->   relying on the current_mode pointer
->
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
->  drivers/gpu/drm/i915/display/intel_dsi.h     | 2 +-
->  drivers/gpu/drm/i915/display/intel_dsi_vbt.c | 7 +++----
->  drivers/gpu/drm/i915/display/vlv_dsi.c       | 4 +++-
->  3 files changed, 7 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/display/intel_dsi.h b/drivers/gpu/drm/i915/display/intel_dsi.h
-> index de7e51cd3460..675771ea91aa 100644
-> --- a/drivers/gpu/drm/i915/display/intel_dsi.h
-> +++ b/drivers/gpu/drm/i915/display/intel_dsi.h
-> @@ -203,7 +203,7 @@ void bxt_dsi_reset_clocks(struct intel_encoder *encoder, enum port port);
->  
->  /* intel_dsi_vbt.c */
->  bool intel_dsi_vbt_init(struct intel_dsi *intel_dsi, u16 panel_id);
-> -void intel_dsi_vbt_gpio_init(struct intel_dsi *intel_dsi);
-> +void intel_dsi_vbt_gpio_init(struct intel_dsi *intel_dsi, bool panel_is_on);
->  void intel_dsi_vbt_gpio_cleanup(struct intel_dsi *intel_dsi);
->  void intel_dsi_vbt_exec_sequence(struct intel_dsi *intel_dsi,
->  				 enum mipi_seq seq_id);
-> diff --git a/drivers/gpu/drm/i915/display/intel_dsi_vbt.c b/drivers/gpu/drm/i915/display/intel_dsi_vbt.c
-> index 8be7d6c507aa..4210f449553e 100644
-> --- a/drivers/gpu/drm/i915/display/intel_dsi_vbt.c
-> +++ b/drivers/gpu/drm/i915/display/intel_dsi_vbt.c
-> @@ -688,17 +688,16 @@ bool intel_dsi_vbt_init(struct intel_dsi *intel_dsi, u16 panel_id)
->   * On some BYT/CHT devs some sequences are incomplete and we need to manually
->   * control some GPIOs.
->   */
-> -void intel_dsi_vbt_gpio_init(struct intel_dsi *intel_dsi)
-> +void intel_dsi_vbt_gpio_init(struct intel_dsi *intel_dsi, bool panel_is_on)
->  {
->  	struct drm_device *dev = intel_dsi->base.base.dev;
->  	struct drm_i915_private *dev_priv = to_i915(dev);
->  	struct mipi_config *mipi_config = dev_priv->vbt.dsi.config;
-> +	enum gpiod_flags flags = panel_is_on ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
->  
->  	if ((IS_VALLEYVIEW(dev_priv) || IS_CHERRYVIEW(dev_priv)) &&
->  	    mipi_config->pwm_blc == PPS_BLC_PMIC) {
-> -		intel_dsi->gpio_panel =
-> -			gpiod_get(dev->dev, "panel", GPIOD_OUT_HIGH);
-> -
-> +		intel_dsi->gpio_panel = gpiod_get(dev->dev, "panel", flags);
->  		if (IS_ERR(intel_dsi->gpio_panel)) {
->  			DRM_ERROR("Failed to own gpio for panel control\n");
->  			intel_dsi->gpio_panel = NULL;
-> diff --git a/drivers/gpu/drm/i915/display/vlv_dsi.c b/drivers/gpu/drm/i915/display/vlv_dsi.c
-> index c1edd8857af0..d0efee09c593 100644
-> --- a/drivers/gpu/drm/i915/display/vlv_dsi.c
-> +++ b/drivers/gpu/drm/i915/display/vlv_dsi.c
-> @@ -1759,6 +1759,7 @@ void vlv_dsi_init(struct drm_i915_private *dev_priv)
->  	struct drm_connector *connector;
->  	struct drm_display_mode *current_mode, *fixed_mode;
->  	enum port port;
-> +	enum pipe pipe;
->  
->  	DRM_DEBUG_KMS("\n");
->  
-> @@ -1857,7 +1858,8 @@ void vlv_dsi_init(struct drm_i915_private *dev_priv)
->  
->  	vlv_dphy_param_init(intel_dsi);
->  
-> -	intel_dsi_vbt_gpio_init(intel_dsi);
-> +	intel_dsi_vbt_gpio_init(intel_dsi,
-> +				intel_dsi_get_hw_state(intel_encoder, &pipe));
+> and that looks like it should be in a generic helper somewhere.
 
-Feels a bit scary to call into the hooks before everything is
-initialized, but this seems safe. Fingers crossed.
+Yes, makes sense.
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+I was going for something XFS specific here because XFS is unique in the
+kernel in completely deprecating a set of ioctl commands (replacing
+the old interface with a v5) rather than allowing the user space to be
+compiled with 64-bit time_t.
 
+If we add a global helper for this, I'd be tempted to also stick a
+WARN_RATELIMIT() in there to give users a better indication of
+what broke after disabling CONFIG_COMPAT_32BIT_TIME.
 
->  
->  	drm_connector_init(dev, connector, &intel_dsi_connector_funcs,
->  			   DRM_MODE_CONNECTOR_DSI);
+The same warning would make sense in the system calls, but then
+we have to decide which combinations we want to allow being
+configured at runtime or compile-time.
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+a) unmodified behavior
+b) just warn but allow
+c) no warning but disallow
+d) warn and disallow
+
+> >       if (XFS_FORCED_SHUTDOWN(mp))
+> >               return -EIO;
+> >
+> > @@ -1815,6 +1836,11 @@ xfs_ioc_swapext(
+> >       struct fd       f, tmp;
+> >       int             error = 0;
+> >
+> > +     if (!xfs_have_compat_bstat_time32(XFS_IOC_SWAPEXT)) {
+> > +             error = -EINVAL;
+> > +             goto out;
+> > +     }
+>
+> And for this one we just have one cmd anyway.  But I actually still
+> disagree with the old_time check for this one entirely, as voiced on
+> one of the last iterations.  For swapext the time stamp really is
+> only used as a generation counter, so overflows are entirely harmless.
+
+Sorry I missed that comment earlier. I've had a fresh look now, but
+I think we still need to deprecate XFS_IOC_SWAPEXT and add a
+v5 version of it, since the comparison will fail as soon as the range
+of the inode timestamps is extended beyond 2038, otherwise the
+comparison will always be false, or require comparing the truncated
+time values which would add yet another representation.
+
+       Arnd
