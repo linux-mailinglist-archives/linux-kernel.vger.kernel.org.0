@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AF8112ED79
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:28:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 251CC12EBEE
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:14:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729946AbgABW2q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:28:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58922 "EHLO mail.kernel.org"
+        id S1727747AbgABWNk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:13:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729751AbgABW2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:28:44 -0500
+        id S1727428AbgABWNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:13:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74FD920863;
-        Thu,  2 Jan 2020 22:28:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CC7521D7D;
+        Thu,  2 Jan 2020 22:13:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004123;
-        bh=dpgVr1QVj+B+LzMWGayZ6JEGYI7stkUsUlNTDoGhtTw=;
+        s=default; t=1578003218;
+        bh=FfGRDsOa077Vrq/0aEEXxJBym2aW9dkpdNIfmIGUXtg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0O751zAgl7YQs/LYFwSS5M/USUw/8jKMDGnteMF4lrKyg1dtlLBBlQSZLtn/dWMlQ
-         b7SQa+IYEBfzd21EfsBkxlhqwBI2ZwXLICVyT42hJ+ugyHJe7JZlkFfNwPRopzRnT+
-         DPxbzvPdCgBqrPXoHXrPEpnJc1Z+bL3opQc+kjZI=
+        b=dChddzFOzPe5sJFL6YqiTK0BdIm6xLOS7h95vcAoUGSvbLV/M5rmTMYmwdSvsdVoY
+         12Nw6itxlacOoh9PUh2OfOoDThamdawXp1rIt3iBd3d55bvGz4PPyi//xpGqyGKSyF
+         xRv0qfjYvqeOX1NOpapnmsAkIoseeBOMg2OGi6vU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
+        "Gustavo L. F. Walbon" <gwalbon@linux.ibm.com>,
+        "Mauro S. M. Rodrigues" <maurosr@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 020/171] tools/power/cpupower: Fix initializer override in hsw_ext_cstates
+Subject: [PATCH 5.4 069/191] powerpc/security: Fix wrong message when RFI Flush is disable
 Date:   Thu,  2 Jan 2020 23:05:51 +0100
-Message-Id: <20200102220549.839553799@linuxfoundation.org>
+Message-Id: <20200102215837.338429804@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,61 +46,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Gustavo L. F. Walbon <gwalbon@linux.ibm.com>
 
-[ Upstream commit 7e5705c635ecfccde559ebbbe1eaf05b5cc60529 ]
+[ Upstream commit 4e706af3cd8e1d0503c25332b30cad33c97ed442 ]
 
-When building cpupower with clang, the following warning appears:
+The issue was showing "Mitigation" message via sysfs whatever the
+state of "RFI Flush", but it should show "Vulnerable" when it is
+disabled.
 
- utils/idle_monitor/hsw_ext_idle.c:42:16: warning: initializer overrides
- prior initialization of this subobject [-Winitializer-overrides]
-                 .desc                   = N_("Processor Package C2"),
-                                              ^~~~~~~~~~~~~~~~~~~~~~
- ./utils/helpers/helpers.h:25:33: note: expanded from macro 'N_'
- #define N_(String) gettext_noop(String)
-                                 ^~~~~~
- ./utils/helpers/helpers.h:23:30: note: expanded from macro
- 'gettext_noop'
- #define gettext_noop(String) String
-                              ^~~~~~
- utils/idle_monitor/hsw_ext_idle.c:41:16: note: previous initialization
- is here
-                 .desc                   = N_("Processor Package C9"),
-                                              ^~~~~~~~~~~~~~~~~~~~~~
- ./utils/helpers/helpers.h:25:33: note: expanded from macro 'N_'
- #define N_(String) gettext_noop(String)
-                                 ^~~~~~
- ./utils/helpers/helpers.h:23:30: note: expanded from macro
- 'gettext_noop'
- #define gettext_noop(String) String
-                             ^~~~~~
- 1 warning generated.
+If you have "L1D private" feature enabled and not "RFI Flush" you are
+vulnerable to meltdown attacks.
 
-This appears to be a copy and paste or merge mistake because the name
-and id fields both have PC9 in them, not PC2. Remove the second
-assignment to fix the warning.
+"RFI Flush" is the key feature to mitigate the meltdown whatever the
+"L1D private" state.
 
-Fixes: 7ee767b69b68 ("cpupower: Add Haswell family 0x45 specific idle monitor to show PC8,9,10 states")
-Link: https://github.com/ClangBuiltLinux/linux/issues/718
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+SEC_FTR_L1D_THREAD_PRIV is a feature for Power9 only.
+
+So the message should be as the truth table shows:
+
+  CPU | L1D private | RFI Flush |                sysfs
+  ----|-------------|-----------|-------------------------------------
+   P9 |    False    |   False   | Vulnerable
+   P9 |    False    |   True    | Mitigation: RFI Flush
+   P9 |    True     |   False   | Vulnerable: L1D private per thread
+   P9 |    True     |   True    | Mitigation: RFI Flush, L1D private per thread
+   P8 |    False    |   False   | Vulnerable
+   P8 |    False    |   True    | Mitigation: RFI Flush
+
+Output before this fix:
+  # cat /sys/devices/system/cpu/vulnerabilities/meltdown
+  Mitigation: RFI Flush, L1D private per thread
+  # echo 0 > /sys/kernel/debug/powerpc/rfi_flush
+  # cat /sys/devices/system/cpu/vulnerabilities/meltdown
+  Mitigation: L1D private per thread
+
+Output after fix:
+  # cat /sys/devices/system/cpu/vulnerabilities/meltdown
+  Mitigation: RFI Flush, L1D private per thread
+  # echo 0 > /sys/kernel/debug/powerpc/rfi_flush
+  # cat /sys/devices/system/cpu/vulnerabilities/meltdown
+  Vulnerable: L1D private per thread
+
+Signed-off-by: Gustavo L. F. Walbon <gwalbon@linux.ibm.com>
+Signed-off-by: Mauro S. M. Rodrigues <maurosr@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190502210907.42375-1-gwalbon@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/power/cpupower/utils/idle_monitor/hsw_ext_idle.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/powerpc/kernel/security.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/tools/power/cpupower/utils/idle_monitor/hsw_ext_idle.c b/tools/power/cpupower/utils/idle_monitor/hsw_ext_idle.c
-index ebeaba6571a3..475e18e04318 100644
---- a/tools/power/cpupower/utils/idle_monitor/hsw_ext_idle.c
-+++ b/tools/power/cpupower/utils/idle_monitor/hsw_ext_idle.c
-@@ -40,7 +40,6 @@ static cstate_t hsw_ext_cstates[HSW_EXT_CSTATE_COUNT] = {
- 	{
- 		.name			= "PC9",
- 		.desc			= N_("Processor Package C9"),
--		.desc			= N_("Processor Package C2"),
- 		.id			= PC9,
- 		.range			= RANGE_PACKAGE,
- 		.get_count_percent	= hsw_ext_get_count_percent,
+diff --git a/arch/powerpc/kernel/security.c b/arch/powerpc/kernel/security.c
+index 298a2e3ad6f4..d341b464f23c 100644
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -142,26 +142,22 @@ ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, cha
+ 
+ 	thread_priv = security_ftr_enabled(SEC_FTR_L1D_THREAD_PRIV);
+ 
+-	if (rfi_flush || thread_priv) {
++	if (rfi_flush) {
+ 		struct seq_buf s;
+ 		seq_buf_init(&s, buf, PAGE_SIZE - 1);
+ 
+-		seq_buf_printf(&s, "Mitigation: ");
+-
+-		if (rfi_flush)
+-			seq_buf_printf(&s, "RFI Flush");
+-
+-		if (rfi_flush && thread_priv)
+-			seq_buf_printf(&s, ", ");
+-
++		seq_buf_printf(&s, "Mitigation: RFI Flush");
+ 		if (thread_priv)
+-			seq_buf_printf(&s, "L1D private per thread");
++			seq_buf_printf(&s, ", L1D private per thread");
+ 
+ 		seq_buf_printf(&s, "\n");
+ 
+ 		return s.len;
+ 	}
+ 
++	if (thread_priv)
++		return sprintf(buf, "Vulnerable: L1D private per thread\n");
++
+ 	if (!security_ftr_enabled(SEC_FTR_L1D_FLUSH_HV) &&
+ 	    !security_ftr_enabled(SEC_FTR_L1D_FLUSH_PR))
+ 		return sprintf(buf, "Not affected\n");
 -- 
 2.20.1
 
