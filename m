@@ -2,239 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F13612E3FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 09:46:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FDB212E403
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 09:48:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbgABIql (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 03:46:41 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46750 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727756AbgABIqk (ORCPT
+        id S1727880AbgABIsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 03:48:14 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37927 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727757AbgABIsO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 03:46:40 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z7so38428706wrl.13
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 00:46:39 -0800 (PST)
+        Thu, 2 Jan 2020 03:48:14 -0500
+Received: by mail-ot1-f66.google.com with SMTP id d7so51705596otf.5;
+        Thu, 02 Jan 2020 00:48:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=J4BV4xVxmbRJ/r05rBs0QYCjejbH9ewz1c2yLbanQBw=;
-        b=BCROBod9j1yy6ajGa+uGcRO+X7a2oqm4ydiMzZwtcBr9thqmJoeDeB8vBmZ8hG0bas
-         pRPAAfyxHm4lV8LwRhEx8jE7sUssEq5x7jyXSEWyaeVjbx6ftoR15mx1tVsz9zBJPr7c
-         XKAtOPTAmr9rL8LaoS6MAbOmkxPCkurDhm33TvQuGx+C4zXTRjiHvzEgka/uTyIuQRQZ
-         4okHxCZsuUbIzRcY+45HcNOTYwAZ9GKO2r45tzSpjwejmSI5KqXeACQ7w61v6Pvkr5HN
-         sAcbzQvhK41LfV8r0fmaOsCu/wE88cGOus0huQH7AwGLIQ5s63Vl1ClDEY5SRBvILAPv
-         CzOg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lYK3JQAmW07FRU5GuNZTgBOd+vjFiils6tG0VLmuyGE=;
+        b=XvrNbulzxprjJqi8RpScnA140KqOgH0A3KIwDYeZHKhtNqXpKqoIH3DkDmMCVQ4mUL
+         UwesBRnFDTc16aXYRWU9fFLStptClVcntJFNz6OyMjwF05UXavP3leAtsROoVh410vm+
+         jUwytle5bVp/DrZEhUKPxt7VGX15m/li3nhKMCPQHhUUfTMLo4HrwFfUuHyhLRmPJosc
+         ZVN+FIUAGNI58UFohnNWgK+pW61uPy/3SkM8oE8zY+MwPijr+Ibg7angTkInKzlKJqfa
+         UB5p84iBYkGvBSTVKgL5bpv2MgeEExqeZUGno4Xaoq9OwJaoN+NtTQiaOofpO6zyJYpl
+         4DsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=J4BV4xVxmbRJ/r05rBs0QYCjejbH9ewz1c2yLbanQBw=;
-        b=b/2uJVVszw6Kq0TAeRgOmP0pidpgRsTXcwSAPbyaL5KxTthHXck9WFUJr2aqPGglNV
-         bvEp38Jcw0ybk1E1TwaKb47YpbLmn8V0WwKh6FJjhf59ThAUVz9Y6hgmqhC4I8EGaEJ1
-         gqsFNKacUPJlJbhAnCtZyDVWeMu16CpSoKOJX86uq0y4P5hbB/iSXeMlI2UyLXrfAx55
-         NnqZShW3+guloinqzu6uViEW3f/AbRKnMep5bbPBKgWh0oZmtnhuGEfmMppET8G139+M
-         sg4IWq2igyHR1n4JGNZEV8h/Xk/Ft+Cz5GwHbAZNjSuxuip+Ph0VhNRb/peWNALeOv+Z
-         Pgwg==
-X-Gm-Message-State: APjAAAW/9FcGWn4fro1ISi02MPd+yKhaqMBB1JZs3kReTPn7nGG/ubC/
-        /UApEmxInwSDBEBC76YI3huLGw==
-X-Google-Smtp-Source: APXvYqwSDKoiB5ra6drQsoyYVfGcpU9ytlL7NbMzlMJbbOVavFr5G0msLQo7wTmzibB98v+znbhMpQ==
-X-Received: by 2002:a5d:68c5:: with SMTP id p5mr83053200wrw.193.1577954798497;
-        Thu, 02 Jan 2020 00:46:38 -0800 (PST)
-Received: from dell ([2.27.35.135])
-        by smtp.gmail.com with ESMTPSA id g2sm54686011wrw.76.2020.01.02.00.46.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 00:46:37 -0800 (PST)
-Date:   Thu, 2 Jan 2020 08:46:50 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Gene Chen <gene.chen.richtek@gmail.com>
-Cc:     matthias.bgg@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        gene_chen@richtek.com, Wilma.Wu@mediatek.com,
-        shufan_lee@richtek.com, cy_huang@richtek.com
-Subject: Re: [PATCH v6] mfd: mt6360: add pmic mt6360 driver
-Message-ID: <20200102084650.GA22390@dell>
-References: <20191225014148.19082-1-gene.chen.richtek@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lYK3JQAmW07FRU5GuNZTgBOd+vjFiils6tG0VLmuyGE=;
+        b=ZQJ5XERqKOsE6PBlyf4fn+oUgSy18oD4/lCAZ7FkaLqy/4xf7DqL24c5KGhfLEPeEI
+         pYCVqpqndrHqQQ4Aja+Q6Su+voHcPL1Jpp+RJdnqUKGOXv0ECmRojDjWvmU/CdvFD8BS
+         jAqi1HuHGJ0aSqIsaNiF9gXJ+PD371Ue6xBmeMCEfKQqbJjeT+U0eM4TNEClUdeUMoh7
+         BMb+EWppXnvZU896LYdY6PCegsR/fnlPmM9hRFY5XahtHdRoHWnNLXDbBR8ovsbf+GGM
+         y9t74z1csZvLCMOTTVhu0zxptnEw2hLGwdXh4TO47RlgppCEEDNt7bhaIc/vPAJ6Ywnm
+         IeNg==
+X-Gm-Message-State: APjAAAU2uebq3i4Wcz6805ZKdpsDJJG8ZUJzM9lPpX4r/CfU0UBg1uCs
+        NIdb79qFbpEPQbOjsViEc4ToDt9FIWLoMeRZo0k=
+X-Google-Smtp-Source: APXvYqxeuKbXHxGtyzku07WE9C0N/ua7Tl5Z8JOlkhllIuUswqzYTzv/m5bf/QtdXNVE3v+FavUIVxFQjdB8xF8hNl8=
+X-Received: by 2002:a05:6830:1188:: with SMTP id u8mr91290992otq.274.1577954893533;
+ Thu, 02 Jan 2020 00:48:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191225014148.19082-1-gene.chen.richtek@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191213084748.11210-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20191213084748.11210-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <20191219233525.GA9478@bogus>
+In-Reply-To: <20191219233525.GA9478@bogus>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Thu, 2 Jan 2020 08:47:47 +0000
+Message-ID: <CA+V-a8vO_3P3vDFVuKLJAK7v99E7qKVAei0Kmba8tKist7mAaw@mail.gmail.com>
+Subject: Re: [v2 4/6] dt-bindings: PCI: rcar: Add bindings for R-Car PCIe
+ endpoint controller
+To:     Rob Herring <robh@kernel.org>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Murray <andrew.murray@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Tom Joseph <tjoseph@cadence.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Dec 2019, Gene Chen wrote:
+Hi Rob,
 
-> From: Gene Chen <gene_chen@richtek.com>
-> 
-> Add mfd driver for mt6360 pmic chip include
-> Battery Charger/USB_PD/Flash LED/RGB LED/LDO/Buck
-> 
-> Signed-off-by: Gene Chen <gene_chen@richtek.com
-> ---
->  drivers/mfd/Kconfig                |  12 +
->  drivers/mfd/Makefile               |   1 +
->  drivers/mfd/mt6360-core.c          | 426 +++++++++++++++++++++++++++++
->  include/linux/mfd/mt6360-private.h | 217 +++++++++++++++
->  include/linux/mfd/mt6360.h         |  32 +++
->  5 files changed, 688 insertions(+)
->  create mode 100644 drivers/mfd/mt6360-core.c
->  create mode 100644 include/linux/mfd/mt6360-private.h
->  create mode 100644 include/linux/mfd/mt6360.h
-> 
-> changelogs between v1 & v2
-> - include missing header file
-> 
-> changelogs between v2 & v3
-> - add changelogs
-> 
-> changelogs between v3 & v4
-> - fix Kconfig description
-> - replace mt6360_pmu_info with mt6360_pmu_data
-> - replace probe with probe_new
-> - remove unnecessary irq_chip variable
-> - remove annotation
-> - replace MT6360_MFD_CELL with OF_MFD_CELL
-> 
-> changelogs between v4 & v5
-> - remove unnecessary parse dt function
-> - use devm_i2c_new_dummy_device
-> - add base-commit message
-> 
-> changelogs between v5 & v6
-> - review return value
-> - remove i2c id_table
-> - use GPL license v2
-> 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 420900852166..e6df91d55405 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -856,6 +856,18 @@ config MFD_MAX8998
->  	  additional drivers must be enabled in order to use the functionality
->  	  of the device.
->  
-> +config MFD_MT6360
-> +	tristate "Mediatek MT6360 SubPMIC"
-> +	select MFD_CORE
-> +	select REGMAP_I2C
-> +	select REGMAP_IRQ
-> +	depends on I2C
-> +	help
-> +	  Say Y here to enable MT6360 PMU/PMIC/LDO functional support.
-> +	  PMU part includes Charger, Flashlight, RGB LED
-> +	  PMIC part includes 2-channel BUCKs and 2-channel LDOs
-> +	  LDO part includes 4-channel LDOs
-> +
->  config MFD_MT6397
->  	tristate "MediaTek MT6397 PMIC Support"
->  	select MFD_CORE
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index aed99f08739f..f5f80d75ee53 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -237,6 +237,7 @@ obj-$(CONFIG_INTEL_SOC_PMIC)	+= intel-soc-pmic.o
->  obj-$(CONFIG_INTEL_SOC_PMIC_BXTWC)	+= intel_soc_pmic_bxtwc.o
->  obj-$(CONFIG_INTEL_SOC_PMIC_CHTWC)	+= intel_soc_pmic_chtwc.o
->  obj-$(CONFIG_INTEL_SOC_PMIC_CHTDC_TI)	+= intel_soc_pmic_chtdc_ti.o
-> +obj-$(CONFIG_MFD_MT6360)	+= mt6360-core.o
->  mt6397-objs	:= mt6397-core.o mt6397-irq.o
->  obj-$(CONFIG_MFD_MT6397)	+= mt6397.o
->  obj-$(CONFIG_INTEL_SOC_PMIC_MRFLD)	+= intel_soc_pmic_mrfld.o
-> diff --git a/drivers/mfd/mt6360-core.c b/drivers/mfd/mt6360-core.c
-> new file mode 100644
-> index 000000000000..f6d43b6dad4e
-> --- /dev/null
-> +++ b/drivers/mfd/mt6360-core.c
-> @@ -0,0 +1,426 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2019 MediaTek Inc.
+Thank you for the review.
 
-No author?
+On Thu, Dec 19, 2019 at 11:35 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Fri, Dec 13, 2019 at 08:47:46AM +0000, Lad Prabhakar wrote:
+> > From: "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > This patch adds the bindings for the R-Car PCIe endpoint driver.
+> >
+> > Signed-off-by: Lad, Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  .../devicetree/bindings/pci/rcar-pci-ep.txt        | 37 ++++++++++++++++++++++
+> >  1 file changed, 37 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pci/rcar-pci-ep.txt
+>
+> Please make this a DT schema.
+>
+sure will do.
 
-> + */
-> +
-> +#include <linux/i2c.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/module.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/version.h>
-> +
-> +#include <linux/mfd/mt6360.h>
-> +#include <linux/mfd/mt6360-private.h>
+> >
+> > diff --git a/Documentation/devicetree/bindings/pci/rcar-pci-ep.txt b/Documentation/devicetree/bindings/pci/rcar-pci-ep.txt
+> > new file mode 100644
+> > index 0000000..7f0a97e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pci/rcar-pci-ep.txt
+> > @@ -0,0 +1,37 @@
+> > +* Renesas R-Car PCIe Endpoint Controller DT description
+> > +
+> > +Required properties:
+> > +         "renesas,pcie-ep-r8a774c0" for the R8A774C0 SoC;
+>
+> Normal ordering is: renesas,r8a774c0-pcie-ep
+>
+> > +         "renesas,pcie-ep-rcar-gen3" for a generic R-Car Gen3 or
+> > +                                  RZ/G2 compatible device.
+> > +
+> > +         When compatible with the generic version, nodes must list the
+> > +         SoC-specific version corresponding to the platform first
+> > +         followed by the generic version.
+> > +
+> > +- reg: base address and length of the PCIe controller registers.
+> > +- outbound-ranges: outbound windows base address and length including the flags.
+> > +- resets: Must contain phandles to PCIe-related reset lines exposed by IP block
+>
+> How many?
+>
+should be one.
 
-[...]
+> > +- clocks: from common clock binding: clock specifiers for the PCIe controller
+> > +      clock.
+> > +- clock-names: from common clock binding: should be "pcie".
+> > +
+> > +Optional Property:
+> > +- max-functions: Maximum number of functions that can be configured (default 1).
+> > +
+> > +Example:
+> > +
+> > +SoC-specific DT Entry:
+> > +
+> > +     pcie_ep: pcie_ep@fe000000 {
+>
+> pcie-ep@
+>
+will fix that.
 
-> +#define MT6360_REGMAP_IRQ_REG(_irq_evt)		\
-> +	REGMAP_IRQ_REG(_irq_evt, (_irq_evt) / 8, BIT((_irq_evt) % 8))
+Cheers,
+--Prabhakar
 
-No need to roll your own macros for this.  I think
-REGMAP_IRQ_REG_LINE() is what you're looking for.
-
-> +static const struct regmap_irq mt6360_pmu_irqs[] =  {
-
-	REGMAP_IRQ_REG_LINE(MT6360_CHG_TREG_EVT, 8),
-
-... etc.
-
-> +	MT6360_REGMAP_IRQ_REG(MT6360_CHG_TREG_EVT),
-> +	MT6360_REGMAP_IRQ_REG(MT6360_CHG_AICR_EVT),
-
-[...]
-
-> +	MT6360_REGMAP_IRQ_REG(MT6360_LDO7_PGB_EVT),
-> +};
-
-[...]
-
-> diff --git a/include/linux/mfd/mt6360-private.h b/include/linux/mfd/mt6360-private.h
-> new file mode 100644
-> index 000000000000..d542652f4de0
-> --- /dev/null
-> +++ b/include/linux/mfd/mt6360-private.h
-
-As there are only appropriately namespaced macros in here, I would
-move them to the normal header file and dispose of this one.
-
-> @@ -0,0 +1,217 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2019 MediaTek Inc.
-> + */
-> +
-> +#ifndef __MT6360_PRIVATE_H__
-> +#define __MT6360_PRIVATE_H__
-> +
-> +/* PMU register defininition */
-> +#define MT6360_PMU_DEV_INFO			(0x00)
-> +#define MT6360_PMU_CORE_CTRL1			(0x01)
-
-[...]
-
-> +#define MT6360_PMU_LDO_MASK2			(0xFF)
-> +#define MT6360_PMU_MAXREG			(MT6360_PMU_LDO_MASK2)
-> +
-> +/* MT6360_PMU_IRQ_SET */
-> +#define MT6360_PMU_IRQ_REGNUM	(MT6360_PMU_LDO_IRQ2 - MT6360_PMU_CHG_IRQ1 + 1)
-> +#define MT6360_IRQ_RETRIG	BIT(2)
-> +
-> +#define CHIP_VEN_MASK				(0xF0)
-> +#define CHIP_VEN_MT6360				(0x50)
-> +#define CHIP_REV_MASK				(0x0F)
-> +
-> +#endif /* __MT6360_PRIVATE_H__ */
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> > +             compatible = "renesas,pcie-ep-r8a774c0", "renesas,pcie-rcar-gen2";
+> > +             reg = <0 0xfe000000 0 0x80000>;
+> > +             outbound-ranges = <0xa 0x0 0xfe100000 0 0x000100000
+> > +                                0xa 0x0 0xfe200000 0 0x000200000
+> > +                                0x6 0x0 0x30000000 0 0x008000000
+> > +                                0x6 0x0 0x38000000 0 0x008000000>;
+> > +             clocks = <&cpg CPG_MOD 319>;
+> > +             clock-names = "pcie";
+> > +             power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+> > +             resets = <&cpg 319>;
+> > +     };
+> > --
+> > 2.7.4
+> >
