@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5092512ED1E
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:25:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6718F12EC63
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:19:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729459AbgABWZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:25:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49714 "EHLO mail.kernel.org"
+        id S1728021AbgABWR5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:17:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729423AbgABWY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:24:59 -0500
+        id S1727791AbgABWRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:17:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FDC820866;
-        Thu,  2 Jan 2020 22:24:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4753921582;
+        Thu,  2 Jan 2020 22:17:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003899;
-        bh=xr71axG7fP6rNJ4rTQI9mf+5CR7DcYp/gTj+bO2IvyM=;
+        s=default; t=1578003473;
+        bh=BLy635XSDMjIwwCgJN1nQvdDhCKHwCkK84/xj2G/bII=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ExF6wlPT/7racJBPx7Cv8igiO60MJv/9KPisToCAAlO6aYbpjAfKecwAJv5L47pML
-         jna0zQJimrz+W2qMoJ9PyAU3cZ1AI7JCYV9r7DL/GwsrFwz6k3u26HVBQfu6LLS81S
-         Sh6KrmTi+59dPu9I7lZ6Nt4KW0HJuQdiG/Qf5cII=
+        b=E0eIb4Qb5A8jCdrEbfBe2YIpsBJo7JgLHNTOYMbmAGT0eA8dTOvoRlVKkgh9TVtZc
+         Nwk9EomDUznPZDnfHfSGU5g31f4Yl1wtaJDUwVSloljM4Wg01Nu/eburRFsngImJ3k
+         zUxSXsexCf1Z+Z1Bvkab0PNAxXwF/exp28X9DxeY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 28/91] powerpc/pseries/cmm: Implement release() function for sysfs device
-Date:   Thu,  2 Jan 2020 23:07:10 +0100
-Message-Id: <20200102220429.373947751@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Vladyslav Tarasiuk <vladyslavt@mellanox.com>,
+        Aya Levin <ayal@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 149/191] net/mlxfw: Fix out-of-memory error in mfa2 flash burning
+Date:   Thu,  2 Jan 2020 23:07:11 +0100
+Message-Id: <20200102215845.457450510@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
-References: <20200102220356.856162165@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +47,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Hildenbrand <david@redhat.com>
+From: Vladyslav Tarasiuk <vladyslavt@mellanox.com>
 
-[ Upstream commit 7d8212747435c534c8d564fbef4541a463c976ff ]
+[ Upstream commit a5bcd72e054aabb93ddc51ed8cde36a5bfc50271 ]
 
-When unloading the module, one gets
-  ------------[ cut here ]------------
-  Device 'cmm0' does not have a release() function, it is broken and must be fixed. See Documentation/kobject.txt.
-  WARNING: CPU: 0 PID: 19308 at drivers/base/core.c:1244 .device_release+0xcc/0xf0
-  ...
+The burning process requires to perform internal allocations of large
+chunks of memory. This memory doesn't need to be contiguous and can be
+safely allocated by vzalloc() instead of kzalloc(). This patch changes
+such allocation to avoid possible out-of-memory failure.
 
-We only have one static fake device. There is nothing to do when
-releasing the device (via cmm_exit()).
-
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191031142933.10779-2-david@redhat.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 410ed13cae39 ("Add the mlxfw module for Mellanox firmware flash process")
+Signed-off-by: Vladyslav Tarasiuk <vladyslavt@mellanox.com>
+Reviewed-by: Aya Levin <ayal@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Tested-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/pseries/cmm.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/mellanox/mlxfw/mlxfw_mfa2.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/platforms/pseries/cmm.c b/arch/powerpc/platforms/pseries/cmm.c
-index 4ac419c7eb4c..25224c9e1dc0 100644
---- a/arch/powerpc/platforms/pseries/cmm.c
-+++ b/arch/powerpc/platforms/pseries/cmm.c
-@@ -425,6 +425,10 @@ static struct bus_type cmm_subsys = {
- 	.dev_name = "cmm",
- };
+--- a/drivers/net/ethernet/mellanox/mlxfw/mlxfw_mfa2.c
++++ b/drivers/net/ethernet/mellanox/mlxfw/mlxfw_mfa2.c
+@@ -6,6 +6,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/netlink.h>
++#include <linux/vmalloc.h>
+ #include <linux/xz.h>
+ #include "mlxfw_mfa2.h"
+ #include "mlxfw_mfa2_file.h"
+@@ -548,7 +549,7 @@ mlxfw_mfa2_file_component_get(const stru
+ 	comp_size = be32_to_cpu(comp->size);
+ 	comp_buf_size = comp_size + mlxfw_mfa2_comp_magic_len;
  
-+static void cmm_release_device(struct device *dev)
-+{
-+}
-+
- /**
-  * cmm_sysfs_register - Register with sysfs
-  *
-@@ -440,6 +444,7 @@ static int cmm_sysfs_register(struct device *dev)
+-	comp_data = kmalloc(sizeof(*comp_data) + comp_buf_size, GFP_KERNEL);
++	comp_data = vzalloc(sizeof(*comp_data) + comp_buf_size);
+ 	if (!comp_data)
+ 		return ERR_PTR(-ENOMEM);
+ 	comp_data->comp.data_size = comp_size;
+@@ -570,7 +571,7 @@ mlxfw_mfa2_file_component_get(const stru
+ 	comp_data->comp.data = comp_data->buff + mlxfw_mfa2_comp_magic_len;
+ 	return &comp_data->comp;
+ err_out:
+-	kfree(comp_data);
++	vfree(comp_data);
+ 	return ERR_PTR(err);
+ }
  
- 	dev->id = 0;
- 	dev->bus = &cmm_subsys;
-+	dev->release = cmm_release_device;
+@@ -579,7 +580,7 @@ void mlxfw_mfa2_file_component_put(struc
+ 	const struct mlxfw_mfa2_comp_data *comp_data;
  
- 	if ((rc = device_register(dev)))
- 		goto subsys_unregister;
--- 
-2.20.1
-
+ 	comp_data = container_of(comp, struct mlxfw_mfa2_comp_data, comp);
+-	kfree(comp_data);
++	vfree(comp_data);
+ }
+ 
+ void mlxfw_mfa2_file_fini(struct mlxfw_mfa2_file *mfa2_file)
 
 
