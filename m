@@ -2,45 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94DB312ED2D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:25:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84ACD12ECB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:21:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729551AbgABWZk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:25:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51338 "EHLO mail.kernel.org"
+        id S1728889AbgABWUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:20:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729258AbgABWZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:25:38 -0500
+        id S1728228AbgABWUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:20:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF21A222C3;
-        Thu,  2 Jan 2020 22:25:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5062020866;
+        Thu,  2 Jan 2020 22:20:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003937;
-        bh=S06nD4+InRMS/mrn6P6TDwIwbqOvVhfwerr3OLNfmvM=;
+        s=default; t=1578003646;
+        bh=jOOzvq5ORcSHs/dfITV3t/TYLOXAFsVSdo+42xIWT94=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fgJ0KebxwSIjDOuX2T/4SaWOHNM/6Vn1xCysheh0hssu0xfagIcff/NpLnhev/dGG
-         WNt2Zd7MRa0MAHHIhEaRUy1PCSG6wFR1NftlH17v1aazGXdh6lhqroWGnmJK19ujPM
-         P7nuOF3/TyCWLchnU8GYgzNgd4fyGqopPcRIywiE=
+        b=D6jFCDLghlJw2LrFpkzPtUTVekx4ZeUlok/gJ+dgjf3+uSq5cV3QLVPjblRBI8jrI
+         CtU8a/Naqhb68mT9DWbT+wibeCJeDZ/JOPZItdovJMEmoG9UCxZbWx2xRso5MsxEJT
+         hf8uHlWRPFpCWx64Xv44Bm7rnQTSgVtWfEn5UENc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        coverity-bot <keescook+coverity-bot@chromium.org>,
-        James Bottomley <James.Bottomley@SteelEye.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-next@vger.kernel.org, "Ewan D . Milne" <emilne@redhat.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <jsmart2021@gmail.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Anatol Pomazau <anatol@google.com>,
+        Frank Mayhar <fmayhar@google.com>,
+        Bharath Ravi <rbharath@google.com>,
+        Khazhimsel Kumykov <khazhy@google.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Lee Duncan <lduncan@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 26/91] scsi: lpfc: fix: Coverity: lpfc_cmpl_els_rsp(): Null pointer dereferences
+Subject: [PATCH 4.19 056/114] scsi: iscsi: Dont send data to unbound connection
 Date:   Thu,  2 Jan 2020 23:07:08 +0100
-Message-Id: <20200102220426.562383744@linuxfoundation.org>
+Message-Id: <20200102220034.705851515@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
-References: <20200102220356.856162165@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,64 +49,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+From: Anatol Pomazau <anatol@google.com>
 
-[ Upstream commit 6c6d59e0fe5b86cf273d6d744a6a9768c4ecc756 ]
+[ Upstream commit 238191d65d7217982d69e21c1d623616da34b281 ]
 
-Coverity reported the following:
+If a faulty initiator fails to bind the socket to the iSCSI connection
+before emitting a command, for instance, a subsequent send_pdu, it will
+crash the kernel due to a null pointer dereference in sock_sendmsg(), as
+shown in the log below.  This patch makes sure the bind succeeded before
+trying to use the socket.
 
-*** CID 101747:  Null pointer dereferences  (FORWARD_NULL)
-/drivers/scsi/lpfc/lpfc_els.c: 4439 in lpfc_cmpl_els_rsp()
-4433     			kfree(mp);
-4434     		}
-4435     		mempool_free(mbox, phba->mbox_mem_pool);
-4436     	}
-4437     out:
-4438     	if (ndlp && NLP_CHK_NODE_ACT(ndlp)) {
-vvv     CID 101747:  Null pointer dereferences  (FORWARD_NULL)
-vvv     Dereferencing null pointer "shost".
-4439     		spin_lock_irq(shost->host_lock);
-4440     		ndlp->nlp_flag &= ~(NLP_ACC_REGLOGIN | NLP_RM_DFLT_RPI);
-4441     		spin_unlock_irq(shost->host_lock);
-4442
-4443     		/* If the node is not being used by another discovery thread,
-4444     		 * and we are sending a reject, we are done with it.
+BUG: kernel NULL pointer dereference, address: 0000000000000018
+ #PF: supervisor read access in kernel mode
+ #PF: error_code(0x0000) - not-present page
+PGD 0 P4D 0
+Oops: 0000 [#1] SMP PTI
+CPU: 3 PID: 7 Comm: kworker/u8:0 Not tainted 5.4.0-rc2.iscsi+ #13
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
+[   24.158246] Workqueue: iscsi_q_0 iscsi_xmitworker
+[   24.158883] RIP: 0010:apparmor_socket_sendmsg+0x5/0x20
+[...]
+[   24.161739] RSP: 0018:ffffab6440043ca0 EFLAGS: 00010282
+[   24.162400] RAX: ffffffff891c1c00 RBX: ffffffff89d53968 RCX: 0000000000000001
+[   24.163253] RDX: 0000000000000030 RSI: ffffab6440043d00 RDI: 0000000000000000
+[   24.164104] RBP: 0000000000000030 R08: 0000000000000030 R09: 0000000000000030
+[   24.165166] R10: ffffffff893e66a0 R11: 0000000000000018 R12: ffffab6440043d00
+[   24.166038] R13: 0000000000000000 R14: 0000000000000000 R15: ffff9d5575a62e90
+[   24.166919] FS:  0000000000000000(0000) GS:ffff9d557db80000(0000) knlGS:0000000000000000
+[   24.167890] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   24.168587] CR2: 0000000000000018 CR3: 000000007a838000 CR4: 00000000000006e0
+[   24.169451] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   24.170320] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   24.171214] Call Trace:
+[   24.171537]  security_socket_sendmsg+0x3a/0x50
+[   24.172079]  sock_sendmsg+0x16/0x60
+[   24.172506]  iscsi_sw_tcp_xmit_segment+0x77/0x120
+[   24.173076]  iscsi_sw_tcp_pdu_xmit+0x58/0x170
+[   24.173604]  ? iscsi_dbg_trace+0x63/0x80
+[   24.174087]  iscsi_tcp_task_xmit+0x101/0x280
+[   24.174666]  iscsi_xmit_task+0x83/0x110
+[   24.175206]  iscsi_xmitworker+0x57/0x380
+[   24.175757]  ? __schedule+0x2a2/0x700
+[   24.176273]  process_one_work+0x1b5/0x360
+[   24.176837]  worker_thread+0x50/0x3c0
+[   24.177353]  kthread+0xf9/0x130
+[   24.177799]  ? process_one_work+0x360/0x360
+[   24.178401]  ? kthread_park+0x90/0x90
+[   24.178915]  ret_from_fork+0x35/0x40
+[   24.179421] Modules linked in:
+[   24.179856] CR2: 0000000000000018
+[   24.180327] ---[ end trace b4b7674b6df5f480 ]---
 
-Fix by adding a check for non-null shost in line 4438.
-The scenario when shost is set to null is when ndlp is null.
-As such, the ndlp check present was sufficient. But better safe
-than sorry so add the shost check.
-
-Reported-by: coverity-bot <keescook+coverity-bot@chromium.org>
-Addresses-Coverity-ID: 101747 ("Null pointer dereferences")
-Fixes: 2e0fef85e098 ("[SCSI] lpfc: NPIV: split ports")
-
-CC: James Bottomley <James.Bottomley@SteelEye.com>
-CC: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-CC: linux-next@vger.kernel.org
-Link: https://lore.kernel.org/r/20191111230401.12958-3-jsmart2021@gmail.com
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Anatol Pomazau <anatol@google.com>
+Co-developed-by: Frank Mayhar <fmayhar@google.com>
+Signed-off-by: Frank Mayhar <fmayhar@google.com>
+Co-developed-by: Bharath Ravi <rbharath@google.com>
+Signed-off-by: Bharath Ravi <rbharath@google.com>
+Co-developed-by: Khazhimsel Kumykov <khazhy@google.com>
+Signed-off-by: Khazhimsel Kumykov <khazhy@google.com>
+Co-developed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Reviewed-by: Lee Duncan <lduncan@suse.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_els.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/iscsi_tcp.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-index c851fd14ff3e..4c84c2ae1112 100644
---- a/drivers/scsi/lpfc/lpfc_els.c
-+++ b/drivers/scsi/lpfc/lpfc_els.c
-@@ -4102,7 +4102,7 @@ lpfc_cmpl_els_rsp(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
- 		mempool_free(mbox, phba->mbox_mem_pool);
- 	}
- out:
--	if (ndlp && NLP_CHK_NODE_ACT(ndlp)) {
-+	if (ndlp && NLP_CHK_NODE_ACT(ndlp) && shost) {
- 		spin_lock_irq(shost->host_lock);
- 		ndlp->nlp_flag &= ~(NLP_ACC_REGLOGIN | NLP_RM_DFLT_RPI);
- 		spin_unlock_irq(shost->host_lock);
+diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
+index 23354f206533..55181d28291e 100644
+--- a/drivers/scsi/iscsi_tcp.c
++++ b/drivers/scsi/iscsi_tcp.c
+@@ -374,8 +374,16 @@ static int iscsi_sw_tcp_pdu_xmit(struct iscsi_task *task)
+ {
+ 	struct iscsi_conn *conn = task->conn;
+ 	unsigned int noreclaim_flag;
++	struct iscsi_tcp_conn *tcp_conn = conn->dd_data;
++	struct iscsi_sw_tcp_conn *tcp_sw_conn = tcp_conn->dd_data;
+ 	int rc = 0;
+ 
++	if (!tcp_sw_conn->sock) {
++		iscsi_conn_printk(KERN_ERR, conn,
++				  "Transport not bound to socket!\n");
++		return -EINVAL;
++	}
++
+ 	noreclaim_flag = memalloc_noreclaim_save();
+ 
+ 	while (iscsi_sw_tcp_xmit_qlen(conn)) {
 -- 
 2.20.1
 
