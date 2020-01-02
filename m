@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C23C012EEFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:43:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4901B12EF89
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:47:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730580AbgABWfc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:35:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45254 "EHLO mail.kernel.org"
+        id S1730194AbgABWq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:46:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730827AbgABWf3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:35:29 -0500
+        id S1730159AbgABWaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:30:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3ECD20866;
-        Thu,  2 Jan 2020 22:35:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C73BB20866;
+        Thu,  2 Jan 2020 22:30:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004528;
-        bh=scHw81928gop1ZE0UAGcwRdBbSOsWLPj8/dTEaxSuqs=;
+        s=default; t=1578004217;
+        bh=6PslxsGFM8GmDCPcHcO1XH1CDGwLw8rZ1Fnlb6vRZfI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=klT/jN53FssTM3tM9MFuuS1fzsePiTpfrwD4D8rg7lAkb8PvE0972uGbE0DpENYTa
-         CohicJ1r077obL7NvaR3P2pfVP250WcfHWnyzEyN4fYlPXTFVrglSTmCQ9Bqeboaa1
-         B7OdsdhWT5bK2kVH23bmeSOVFxHTUoGTbRB/kKvY=
+        b=WcIWDY9iASKIfCQVqWjbePmfPPDCOVGrFN9s0TIUVFLDBy+pv/EQxPeH71290zBmI
+         get0G/QxOoFoy7VyLbxUo5/tPuzMEan1DggO0iOIRYv7L5R3qFh3u05jHr9LFdWGVM
+         u5XUxy8o7lUMcvO/Z1skwx72qpThKG7Da/g/n8ZU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
+        stable@vger.kernel.org, Henry Lin <henryl@nvidia.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 044/137] perf probe: Skip overlapped location on searching variables
-Date:   Thu,  2 Jan 2020 23:06:57 +0100
-Message-Id: <20200102220552.511521256@linuxfoundation.org>
+Subject: [PATCH 4.9 087/171] usb: xhci: Fix build warning seen with CONFIG_PM=n
+Date:   Thu,  2 Jan 2020 23:06:58 +0100
+Message-Id: <20200102220559.111326486@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,102 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit dee36a2abb67c175265d49b9a8c7dfa564463d9a ]
+[ Upstream commit 6056a0f8ede27b296d10ef46f7f677cc9d715371 ]
 
-Since debuginfo__find_probes() callback function can be called with  the
-location which already passed, the callback function must filter out
-such overlapped locations.
+The following build warning is seen if CONFIG_PM is disabled.
 
-add_probe_trace_event() has already done it by commit 1a375ae7659a
-("perf probe: Skip same probe address for a given line"), but
-add_available_vars() doesn't. Thus perf probe -v shows same address
-repeatedly as below:
+drivers/usb/host/xhci-pci.c:498:13: warning:
+	unused function 'xhci_pci_shutdown'
 
-  # perf probe -V vfs_read:18
-  Available variables at vfs_read:18
-          @<vfs_read+217>
-                  char*   buf
-                  loff_t* pos
-                  ssize_t ret
-                  struct file*    file
-          @<vfs_read+217>
-                  char*   buf
-                  loff_t* pos
-                  ssize_t ret
-                  struct file*    file
-          @<vfs_read+226>
-                  char*   buf
-                  loff_t* pos
-                  ssize_t ret
-                  struct file*    file
-
-With this fix, perf probe -V shows it correctly:
-
-  # perf probe -V vfs_read:18
-  Available variables at vfs_read:18
-          @<vfs_read+217>
-                  char*   buf
-                  loff_t* pos
-                  ssize_t ret
-                  struct file*    file
-          @<vfs_read+226>
-                  char*   buf
-                  loff_t* pos
-                  ssize_t ret
-                  struct file*    file
-
-Fixes: cf6eb489e5c0 ("perf probe: Show accessible local variables")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lore.kernel.org/lkml/157241938927.32002.4026859017790562751.stgit@devnote2
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: f2c710f7dca8 ("usb: xhci: only set D3hot for pci device")
+Cc: Henry Lin <henryl@nvidia.com>
+Cc: stable@vger.kernel.org	# all stable releases with f2c710f7dca8
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Link: https://lore.kernel.org/r/20191218011911.6907-1-linux@roeck-us.net
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/probe-finder.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/usb/host/xhci-pci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-index 28a0f37b05c0..d917f83e8e85 100644
---- a/tools/perf/util/probe-finder.c
-+++ b/tools/perf/util/probe-finder.c
-@@ -1331,6 +1331,18 @@ static int collect_variables_cb(Dwarf_Die *die_mem, void *data)
- 		return DIE_FIND_CB_SIBLING;
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index 99bef8518fd2..aec6b20262e9 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -468,7 +468,6 @@ static int xhci_pci_resume(struct usb_hcd *hcd, bool hibernated)
+ 	retval = xhci_resume(xhci, hibernated);
+ 	return retval;
  }
+-#endif /* CONFIG_PM */
  
-+static bool available_var_finder_overlap(struct available_var_finder *af)
-+{
-+	int i;
-+
-+	for (i = 0; i < af->nvls; i++) {
-+		if (af->pf.addr == af->vls[i].point.address)
-+			return true;
-+	}
-+	return false;
-+
-+}
-+
- /* Add a found vars into available variables list */
- static int add_available_vars(Dwarf_Die *sc_die, struct probe_finder *pf)
+ static void xhci_pci_shutdown(struct usb_hcd *hcd)
  {
-@@ -1341,6 +1353,14 @@ static int add_available_vars(Dwarf_Die *sc_die, struct probe_finder *pf)
- 	Dwarf_Die die_mem;
- 	int ret;
+@@ -481,6 +480,7 @@ static void xhci_pci_shutdown(struct usb_hcd *hcd)
+ 	if (xhci->quirks & XHCI_SPURIOUS_WAKEUP)
+ 		pci_set_power_state(pdev, PCI_D3hot);
+ }
++#endif /* CONFIG_PM */
  
-+	/*
-+	 * For some reason (e.g. different column assigned to same address),
-+	 * this callback can be called with the address which already passed.
-+	 * Ignore it first.
-+	 */
-+	if (available_var_finder_overlap(af))
-+		return 0;
-+
- 	/* Check number of tevs */
- 	if (af->nvls == af->max_vls) {
- 		pr_warning("Too many( > %d) probe point found.\n", af->max_vls);
+ /*-------------------------------------------------------------------------*/
+ 
 -- 
 2.20.1
 
