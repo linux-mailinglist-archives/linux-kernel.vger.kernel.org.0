@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1E7912F06D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:53:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A594612F0D4
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:56:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729463AbgABWxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:53:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42000 "EHLO mail.kernel.org"
+        id S1728928AbgABWz6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:55:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728900AbgABWWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:22:01 -0500
+        id S1728234AbgABWSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:18:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55EDF21D7D;
-        Thu,  2 Jan 2020 22:22:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1917B2253D;
+        Thu,  2 Jan 2020 22:18:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003720;
-        bh=SnAi6VEACjZDWMUoyeTrwQIOw1723Hj6hxFM5ieZ0pY=;
+        s=default; t=1578003526;
+        bh=jkeFTtf4Zp47zVtKtE+iaHCA9aRYTcKmzpJUTSdGcoY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n0sm7HAQYHUbRTKgd429zW0giPM5tD7XYT0pHvakHDKob8+qN9eH12OaH/QxK4lFc
-         JTBuePUvX6U/V7ardP/nqDDt1QW+HycS3oN9iRyuKB9jrm6wIwh+6P6OuWK8qZ58P3
-         7ax+yMaNYgwyj0GBLImAa4sdjoCmDA5juNEllc6k=
+        b=1DWxOc0nOhldEA6xxaitAy++VpWhrbExFBp0wXkYnpCo2TH7HkuVFcoA4ZXxyFOPw
+         uCVrMaGps6gCbJ3F+YepM/nF9dZBHR2Tgud4CNahNFCOxhJg/+y1D+LKLeGBt929Y7
+         4eRFTknMtPesULUj7QlRYg1Vul1fjLFZDGVbDy2E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 087/114] net: add a READ_ONCE() in skb_peek_tail()
-Date:   Thu,  2 Jan 2020 23:07:39 +0100
-Message-Id: <20200102220037.973859160@linuxfoundation.org>
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+Subject: [PATCH 5.4 178/191] gtp: avoid zero size hashtable
+Date:   Thu,  2 Jan 2020 23:07:40 +0100
+Message-Id: <20200102215848.339891688@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,90 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-commit f8cc62ca3e660ae3fdaee533b1d554297cd2ae82 upstream.
+[ Upstream commit 6a902c0f31993ab02e1b6ea7085002b9c9083b6a ]
 
-skb_peek_tail() can be used without protection of a lock,
-as spotted by KCSAN [1]
+GTP default hashtable size is 1024 and userspace could set specific
+hashtable size with IFLA_GTP_PDP_HASHSIZE. If hashtable size is set to 0
+from userspace,  hashtable will not work and panic will occur.
 
-In order to avoid load-stearing, add a READ_ONCE()
-
-Note that the corresponding WRITE_ONCE() are already there.
-
-[1]
-BUG: KCSAN: data-race in sk_wait_data / skb_queue_tail
-
-read to 0xffff8880b36a4118 of 8 bytes by task 20426 on cpu 1:
- skb_peek_tail include/linux/skbuff.h:1784 [inline]
- sk_wait_data+0x15b/0x250 net/core/sock.c:2477
- kcm_wait_data+0x112/0x1f0 net/kcm/kcmsock.c:1103
- kcm_recvmsg+0xac/0x320 net/kcm/kcmsock.c:1130
- sock_recvmsg_nosec net/socket.c:871 [inline]
- sock_recvmsg net/socket.c:889 [inline]
- sock_recvmsg+0x92/0xb0 net/socket.c:885
- ___sys_recvmsg+0x1a0/0x3e0 net/socket.c:2480
- do_recvmmsg+0x19a/0x5c0 net/socket.c:2601
- __sys_recvmmsg+0x1ef/0x200 net/socket.c:2680
- __do_sys_recvmmsg net/socket.c:2703 [inline]
- __se_sys_recvmmsg net/socket.c:2696 [inline]
- __x64_sys_recvmmsg+0x89/0xb0 net/socket.c:2696
- do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-write to 0xffff8880b36a4118 of 8 bytes by task 451 on cpu 0:
- __skb_insert include/linux/skbuff.h:1852 [inline]
- __skb_queue_before include/linux/skbuff.h:1958 [inline]
- __skb_queue_tail include/linux/skbuff.h:1991 [inline]
- skb_queue_tail+0x7e/0xc0 net/core/skbuff.c:3145
- kcm_queue_rcv_skb+0x202/0x310 net/kcm/kcmsock.c:206
- kcm_rcv_strparser+0x74/0x4b0 net/kcm/kcmsock.c:370
- __strp_recv+0x348/0xf50 net/strparser/strparser.c:309
- strp_recv+0x84/0xa0 net/strparser/strparser.c:343
- tcp_read_sock+0x174/0x5c0 net/ipv4/tcp.c:1639
- strp_read_sock+0xd4/0x140 net/strparser/strparser.c:366
- do_strp_work net/strparser/strparser.c:414 [inline]
- strp_work+0x9a/0xe0 net/strparser/strparser.c:423
- process_one_work+0x3d4/0x890 kernel/workqueue.c:2269
- worker_thread+0xa0/0x800 kernel/workqueue.c:2415
- kthread+0x1d4/0x200 drivers/block/aoe/aoecmd.c:1253
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:352
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 PID: 451 Comm: kworker/u4:3 Not tainted 5.4.0-rc3+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: kstrp strp_work
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 459aa660eb1d ("gtp: add initial driver for datapath of GPRS Tunneling Protocol (GTP-U)")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- include/linux/skbuff.h |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/gtp.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -1669,7 +1669,7 @@ static inline struct sk_buff *skb_peek_n
-  */
- static inline struct sk_buff *skb_peek_tail(const struct sk_buff_head *list_)
- {
--	struct sk_buff *skb = list_->prev;
-+	struct sk_buff *skb = READ_ONCE(list_->prev);
+--- a/drivers/net/gtp.c
++++ b/drivers/net/gtp.c
+@@ -660,10 +660,13 @@ static int gtp_newlink(struct net *src_n
+ 	if (err < 0)
+ 		return err;
  
- 	if (skb == (struct sk_buff *)list_)
- 		skb = NULL;
-@@ -1737,7 +1737,9 @@ static inline void __skb_insert(struct s
- 				struct sk_buff *prev, struct sk_buff *next,
- 				struct sk_buff_head *list)
- {
--	/* see skb_queue_empty_lockless() for the opposite READ_ONCE() */
-+	/* See skb_queue_empty_lockless() and skb_peek_tail()
-+	 * for the opposite READ_ONCE()
-+	 */
- 	WRITE_ONCE(newsk->next, next);
- 	WRITE_ONCE(newsk->prev, prev);
- 	WRITE_ONCE(next->prev, newsk);
+-	if (!data[IFLA_GTP_PDP_HASHSIZE])
++	if (!data[IFLA_GTP_PDP_HASHSIZE]) {
+ 		hashsize = 1024;
+-	else
++	} else {
+ 		hashsize = nla_get_u32(data[IFLA_GTP_PDP_HASHSIZE]);
++		if (!hashsize)
++			hashsize = 1024;
++	}
+ 
+ 	err = gtp_hashtable_new(gtp, hashsize);
+ 	if (err < 0)
 
 
