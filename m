@@ -2,312 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC50212E74D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 15:39:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D81F12E752
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 15:40:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728532AbgABOjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 09:39:23 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34256 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728425AbgABOjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 09:39:22 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 9E6A2AD03;
-        Thu,  2 Jan 2020 14:39:19 +0000 (UTC)
-Subject: Re: [RFC 02/11] soc: Add Realtek chip info driver for RTD1195 and
- RTD1295
-To:     James Tai <james.tai@realtek.com>,
-        "linux-realtek-soc@lists.infradead.org" 
-        <linux-realtek-soc@lists.infradead.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20191103013645.9856-1-afaerber@suse.de>
- <20191103013645.9856-3-afaerber@suse.de>
- <93eeece5be0640488096f20a9beb3d1d@realtek.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Organization: SUSE Software Solutions Germany GmbH
-Message-ID: <5792d721-cd67-5e19-dac2-1310894ef7c2@suse.de>
-Date:   Thu, 2 Jan 2020 15:39:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1728563AbgABOks (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 09:40:48 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:55305 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728425AbgABOkr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 09:40:47 -0500
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1in1eU-0001Bb-7h; Thu, 02 Jan 2020 15:40:42 +0100
+Received: from [IPv6:2a03:f580:87bc:d400:c097:3b50:f886:b2e] (unknown [IPv6:2a03:f580:87bc:d400:c097:3b50:f886:b2e])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256
+         client-signature RSA-PSS (4096 bits) client-digest SHA256)
+        (Client CN "mkl@blackshift.org", Issuer "StartCom Class 1 Client CA" (not verified))
+        (Authenticated sender: mkl@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id 2224D49A1EE;
+        Thu,  2 Jan 2020 14:40:41 +0000 (UTC)
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20191210163204.28225-1-dmurphy@ti.com>
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mkl@pengutronix.de; prefer-encrypt=mutual; keydata=
+ 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
+Subject: Re: [PATCH v2] can: tcan4x5x: Turn on the power before parsing the
+ config
+Message-ID: <a59d4384-9cb9-baaa-e5f4-1e2111e295c9@pengutronix.de>
+Date:   Thu, 2 Jan 2020 15:40:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <93eeece5be0640488096f20a9beb3d1d@realtek.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191210163204.28225-1-dmurphy@ti.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="0KU4DLo8SwRpHjvSqkuatOgkkGHa7Ksz3"
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 02.01.20 um 15:29 schrieb James Tai:
-> Add Stanley Chang for review.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--0KU4DLo8SwRpHjvSqkuatOgkkGHa7Ksz3
+Content-Type: multipart/mixed; boundary="0eQF700mEiUNKSVyqGioPj8OHXiNmWw4A";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Dan Murphy <dmurphy@ti.com>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Message-ID: <a59d4384-9cb9-baaa-e5f4-1e2111e295c9@pengutronix.de>
+Subject: Re: [PATCH v2] can: tcan4x5x: Turn on the power before parsing the
+ config
+References: <20191210163204.28225-1-dmurphy@ti.com>
+In-Reply-To: <20191210163204.28225-1-dmurphy@ti.com>
 
-Did you forget to CC him?
+--0eQF700mEiUNKSVyqGioPj8OHXiNmWw4A
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
-Note that this series needs updates once we apply my syscon patches.
+On 12/10/19 5:32 PM, Dan Murphy wrote:
+> The parse config function now performs action on the device either
+> reading or writing and a reset.
 
-> 
->> Add a soc bus driver to print chip model and revision details.
->>
->> Revisions from downstream drivers/soc/realtek/rtd{119x,129x}/rtk_chip.c.
->>
->> Signed-off-by: Andreas Färber <afaerber@suse.de>
->> ---
->>   Naming: What to call the family vs. soc_id?
->>
->>   drivers/soc/Kconfig          |   1 +
->>   drivers/soc/Makefile         |   1 +
->>   drivers/soc/realtek/Kconfig  |  13 ++++
->>   drivers/soc/realtek/Makefile |   2 +
->>   drivers/soc/realtek/chip.c   | 164
->> +++++++++++++++++++++++++++++++++++++++++++
->>   5 files changed, 181 insertions(+)
->>   create mode 100644 drivers/soc/realtek/Kconfig  create mode 100644
->> drivers/soc/realtek/Makefile  create mode 100644 drivers/soc/realtek/chip.c
->>
->> diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig index
->> 833e04a7835c..06ae9d97321c 100644
->> --- a/drivers/soc/Kconfig
->> +++ b/drivers/soc/Kconfig
->> @@ -11,6 +11,7 @@ source "drivers/soc/imx/Kconfig"
->>   source "drivers/soc/ixp4xx/Kconfig"
->>   source "drivers/soc/mediatek/Kconfig"
->>   source "drivers/soc/qcom/Kconfig"
->> +source "drivers/soc/realtek/Kconfig"
->>   source "drivers/soc/renesas/Kconfig"
->>   source "drivers/soc/rockchip/Kconfig"
->>   source "drivers/soc/samsung/Kconfig"
->> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile index
->> 2ec355003524..1d55d838a342 100644
->> --- a/drivers/soc/Makefile
->> +++ b/drivers/soc/Makefile
->> @@ -17,6 +17,7 @@ obj-$(CONFIG_SOC_XWAY)		+= lantiq/
->>   obj-y				+= mediatek/
->>   obj-y				+= amlogic/
->>   obj-y				+= qcom/
->> +obj-y				+= realtek/
->>   obj-y				+= renesas/
->>   obj-$(CONFIG_ARCH_ROCKCHIP)	+= rockchip/
->>   obj-$(CONFIG_SOC_SAMSUNG)	+= samsung/
->> diff --git a/drivers/soc/realtek/Kconfig b/drivers/soc/realtek/Kconfig new file
->> mode 100644 index 000000000000..be75c1889c61
->> --- /dev/null
->> +++ b/drivers/soc/realtek/Kconfig
->> @@ -0,0 +1,13 @@
->> +# SPDX-License-Identifier: GPL-2.0-or-later if ARCH_REALTEK ||
->> +COMPILE_TEST
->> +
->> +config REALTEK_SOC
->> +	tristate "Realtek chip info"
->> +	default ARCH_REALTEK
->> +	select SOC_BUS
->> +	help
->> +	  Say 'y' here to enable support for SoC info on Realtek RTD1195 and
->> +	  RTD1295 SoC families.
->> +	  If unsure, say 'n'.
->> +
->> +endif
->> diff --git a/drivers/soc/realtek/Makefile b/drivers/soc/realtek/Makefile new
->> file mode 100644 index 000000000000..49900273905b
->> --- /dev/null
->> +++ b/drivers/soc/realtek/Makefile
->> @@ -0,0 +1,2 @@
->> +# SPDX-License-Identifier: GPL-2.0-or-later
->> +obj-$(CONFIG_REALTEK_SOC) += chip.o
->> diff --git a/drivers/soc/realtek/chip.c b/drivers/soc/realtek/chip.c new file
->> mode 100644 index 000000000000..9d13422e9936
->> --- /dev/null
->> +++ b/drivers/soc/realtek/chip.c
->> @@ -0,0 +1,164 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +/*
->> + * Realtek System-on-Chip info
->> + *
->> + * Copyright (c) 2017-2019 Andreas Färber  */
->> +
->> +#include <linux/io.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/slab.h>
->> +#include <linux/sys_soc.h>
->> +
->> +#define REG_CHIP_ID	0x0
->> +#define REG_CHIP_REV	0x4
->> +
->> +struct rtd_soc_revision {
->> +	const char *name;
->> +	u32 chip_rev;
->> +};
->> +
->> +static const struct rtd_soc_revision rtd1195_revisions[] = {
->> +	{ "A", 0x00000000 },
->> +	{ "B", 0x00010000 },
->> +	{ "C", 0x00020000 },
->> +	{ "D", 0x00030000 },
->> +	{ }
->> +};
->> +
->> +static const struct rtd_soc_revision rtd1295_revisions[] = {
->> +	{ "A00", 0x00000000 },
->> +	{ "A01", 0x00010000 },
->> +	{ "B00", 0x00020000 },
->> +	{ "B01", 0x00030000 },
->> +	{ }
->> +};
+BTW n+1:
+Why is the function called parse_config? I don't see any parsing going on=
+=2E
 
-I believe the lower 16 bits are reserved, so we should only be comparing 
-the upper 16.
+Please add it directly to the tcan4x5x_can_probe() function.
 
->> +
->> +struct rtd_soc {
->> +	u32 chip_id;
->> +	const char *family;
->> +	const char *(*get_name)(struct device *dev, const struct rtd_soc *s);
->> +	const struct rtd_soc_revision *revisions;
->> +	const char *codename;
->> +};
->> +
->> +static const char *default_name(struct device *dev, const struct
->> +rtd_soc *s) {
->> +	return s->family;
->> +}
->> +
->> +static const struct rtd_soc rtd_soc_families[] = {
->> +	{ 0x00006329, "RTD1195", default_name, rtd1195_revisions, "Phoenix" },
->> +	{ 0x00006421, "RTD1295", default_name, rtd1295_revisions, "Kylin" },
->> +};
-
-Similarly here I believe the upper 16 bits are reserved, so we should 
-only be comparing the lower 16, which should make it easier to stay 
-within 80 characters per line.
-
-Regards,
-Andreas
-
->> +
->> +static const struct rtd_soc *rtd_soc_by_chip_id(u32 chip_id) {
->> +	int i;
->> +
->> +	for (i = 0; i < ARRAY_SIZE(rtd_soc_families); i++) {
->> +		const struct rtd_soc *family = &rtd_soc_families[i];
->> +
->> +		if (family->chip_id == chip_id)
->> +			return family;
->> +	}
->> +	return NULL;
->> +}
->> +
->> +static const char *rtd_soc_rev(const struct rtd_soc *family, u32
->> +chip_rev) {
->> +	if (family) {
->> +		const struct rtd_soc_revision *rev = family->revisions;
->> +
->> +		while (rev && rev->name) {
->> +			if (rev->chip_rev == chip_rev)
->> +				return rev->name;
->> +			rev++;
->> +		}
->> +	}
->> +	return "unknown";
->> +}
->> +
->> +static int rtd_soc_probe(struct platform_device *pdev) {
->> +	const struct rtd_soc *s;
->> +	struct soc_device_attribute *soc_dev_attr;
->> +	struct soc_device *soc_dev;
->> +	struct device_node *node;
->> +	void __iomem *base;
->> +	u32 chip_id, chip_rev;
->> +
->> +	base = of_iomap(pdev->dev.of_node, 0);
->> +	if (!base)
->> +		return -ENODEV;
->> +
->> +	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
->> +	if (!soc_dev_attr)
->> +		return -ENOMEM;
->> +
->> +	chip_id  = readl_relaxed(base + REG_CHIP_ID);
->> +	chip_rev = readl_relaxed(base + REG_CHIP_REV);
->> +
->> +	node = of_find_node_by_path("/");
->> +	of_property_read_string(node, "model", &soc_dev_attr->machine);
->> +	of_node_put(node);
->> +
->> +	s = rtd_soc_by_chip_id(chip_id);
->> +
->> +	soc_dev_attr->family = kasprintf(GFP_KERNEL, "Realtek %s",
->> +		(s && s->codename) ? s->codename :
->> +		((s && s->family) ? s->family : "Digital Home Center"));
->> +
->> +	if (likely(s && s->get_name))
->> +		soc_dev_attr->soc_id = s->get_name(&pdev->dev, s);
->> +	else
->> +		soc_dev_attr->soc_id = "unknown";
->> +
->> +	soc_dev_attr->revision = rtd_soc_rev(s, chip_rev);
->> +
->> +	soc_dev = soc_device_register(soc_dev_attr);
->> +	if (IS_ERR(soc_dev)) {
->> +		kfree(soc_dev_attr->family);
->> +		kfree(soc_dev_attr);
->> +		return PTR_ERR(soc_dev);
->> +	}
->> +
->> +	platform_set_drvdata(pdev, soc_dev);
->> +
->> +	dev_info(soc_device_to_device(soc_dev),
->> +		"%s %s (0x%08x) rev %s (0x%08x) detected\n",
->> +		soc_dev_attr->family, soc_dev_attr->soc_id, chip_id,
->> +		soc_dev_attr->revision, chip_rev);
->> +
->> +	return 0;
->> +}
->> +
->> +static int rtd_soc_remove(struct platform_device *pdev) {
->> +	struct soc_device *soc_dev = platform_get_drvdata(pdev);
->> +
->> +	soc_device_unregister(soc_dev);
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct of_device_id rtd_soc_dt_ids[] = {
->> +	 { .compatible = "realtek,rtd1195-chip" },
->> +	 { }
->> +};
->> +
->> +static struct platform_driver rtd_soc_driver = {
->> +	.probe = rtd_soc_probe,
->> +	.remove = rtd_soc_remove,
->> +	.driver = {
->> +		.name = "rtd1195-soc",
->> +		.of_match_table	= rtd_soc_dt_ids,
->> +	},
->> +};
->> +module_platform_driver(rtd_soc_driver);
->> +
->> +MODULE_DESCRIPTION("Realtek SoC identification");
->> +MODULE_LICENSE("GPL");
->> --
->> 2.16.4
->>
->>
->> _______________________________________________
->> linux-realtek-soc mailing list
->> linux-realtek-soc@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-realtek-soc
->>
->> ------Please consider the environment before printing this e-mail.
+Marc
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde           |
+Embedded Linux                   | https://www.pengutronix.de  |
+Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
 
 
--- 
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer
-HRB 36809 (AG Nürnberg)
+--0eQF700mEiUNKSVyqGioPj8OHXiNmWw4A--
+
+--0KU4DLo8SwRpHjvSqkuatOgkkGHa7Ksz3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEmvEkXzgOfc881GuFWsYho5HknSAFAl4OAOQACgkQWsYho5Hk
+nSCsXggAs4T5UKkkEcJzPQRv5NjpqncQ4dQpvNmXevnS+1syYyvrOf3ZIW5rA5ke
+8mpmvsGotKjKQ4W+oVA4nY5S0xlIT2AuQFlx5aQAOkcxgEinb6qzyx1N+tXAPftT
+Q4dqRJXZFqEvWSIUqMryrGa7Iq85ZkDM08TGjDcxm+/lA/5UHevCv7ULEb5W6/qo
+C/XwTSnS0LprV40VCSG1i67RCVNJGLJLmWvjTZ9jgQq+90g/tHqCdWRQznsTBnIO
+zwTVuNGti9183PIMMUtI88IkWTKqif547lrbxJQs7HBGPbAKBqX/4k3OUJzRUMoh
+86AC2wQbYrF5erohGcTfGZgQyoX1Fg==
+=83Gt
+-----END PGP SIGNATURE-----
+
+--0KU4DLo8SwRpHjvSqkuatOgkkGHa7Ksz3--
