@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4883412F135
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:58:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D984212EE01
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:34:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbgABWPC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:15:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55474 "EHLO mail.kernel.org"
+        id S1730686AbgABWeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:34:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727989AbgABWO5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:14:57 -0500
+        id S1730676AbgABWeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:34:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57DB8227BF;
-        Thu,  2 Jan 2020 22:14:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6716522525;
+        Thu,  2 Jan 2020 22:34:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003296;
-        bh=kk9yOZTwuv8VYKJ05BvJm+gyiXuuNdCaC8RdEZ+r5Sw=;
+        s=default; t=1578004447;
+        bh=WuOTrhe1MT5gXBM21AyMAoDkO+ydPyhQwQulNz828aA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AuMeN+0rAU5tkdPvfkjiaUPViYF5Qgqb6h8zrV4QST2X7pY5mAfmJBL81A5HcCO57
-         5MNs5sh8KgIO62KjNFd7QRE7oO/mX/7pb/mbNlcSxyuXRB5XWiqRWKv3O6tIv+gFzn
-         23x+5Penk5M3Lgc6sEPCt1N6JNq689k5XuYl/1XE=
+        b=oYO6DMnsrRZ17sYXYVydWbycEyPxQgQexROdr2PpMxW8RlaiOKbzoLP6AsI67Z7K/
+         unnMdYl4fRatVD8A4fBngamGjrOFnUfaoZ/hSEFE/7HxZ3K396uAQ4nqrhKqc0Zbho
+         W9HfbHJ5zX+Sa2SMF4v5f7iea6sDg5wzE5hQTJu8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, Benoit Parrot <bparrot@ti.com>,
+        Lad Prabhakar <prabhakar.csengg@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 102/191] tools/power/x86/intel-speed-select: Ignore missing config level
+Subject: [PATCH 4.4 011/137] media: am437x-vpfe: Setting STD to current value is not an error
 Date:   Thu,  2 Jan 2020 23:06:24 +0100
-Message-Id: <20200102215840.854346558@linuxfoundation.org>
+Message-Id: <20200102220548.272324246@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,75 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+From: Benoit Parrot <bparrot@ti.com>
 
-[ Upstream commit 20183ccd3e4d01d23b0a01fe9f3ee73fbae312fa ]
+[ Upstream commit 13aa21cfe92ce9ebb51824029d89f19c33f81419 ]
 
-It is possible that certain config levels are not available, even
-if the max level includes the level. There can be missing levels in
-some platforms. So ignore the level when called for information dump
-for all levels and fail if specifically ask for the missing level.
+VIDIOC_S_STD should not return an error if the value is identical
+to the current one.
+This error was highlighted by the v4l2-compliance test.
 
-Here the changes is to continue reading information about other levels
-even if we fail to get information for the current level. But use the
-"processed" flag to indicate the failure. When the "processed" flag is
-not set, don't dump information about that level.
-
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Benoit Parrot <bparrot@ti.com>
+Acked-by: Lad Prabhakar <prabhakar.csengg@gmail.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/power/x86/intel-speed-select/isst-core.c    | 8 ++++----
- tools/power/x86/intel-speed-select/isst-display.c | 3 ++-
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ drivers/media/platform/am437x/am437x-vpfe.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/power/x86/intel-speed-select/isst-core.c b/tools/power/x86/intel-speed-select/isst-core.c
-index 6dee5332c9d3..fde3f9cefc6d 100644
---- a/tools/power/x86/intel-speed-select/isst-core.c
-+++ b/tools/power/x86/intel-speed-select/isst-core.c
-@@ -553,7 +553,6 @@ int isst_get_process_ctdp(int cpu, int tdp_level, struct isst_pkg_ctdp *pkg_dev)
- 			     i);
- 		ctdp_level = &pkg_dev->ctdp_level[i];
+diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
+index 572bc043b62d..36add3c463f7 100644
+--- a/drivers/media/platform/am437x/am437x-vpfe.c
++++ b/drivers/media/platform/am437x/am437x-vpfe.c
+@@ -1847,6 +1847,10 @@ static int vpfe_s_std(struct file *file, void *priv, v4l2_std_id std_id)
+ 	if (!(sdinfo->inputs[0].capabilities & V4L2_IN_CAP_STD))
+ 		return -ENODATA;
  
--		ctdp_level->processed = 1;
- 		ctdp_level->level = i;
- 		ctdp_level->control_cpu = cpu;
- 		ctdp_level->pkg_id = get_physical_package_id(cpu);
-@@ -561,7 +560,10 @@ int isst_get_process_ctdp(int cpu, int tdp_level, struct isst_pkg_ctdp *pkg_dev)
- 
- 		ret = isst_get_ctdp_control(cpu, i, ctdp_level);
- 		if (ret)
--			return ret;
-+			continue;
++	/* if trying to set the same std then nothing to do */
++	if (vpfe_standards[vpfe->std_index].std_id == std_id)
++		return 0;
 +
-+		pkg_dev->processed = 1;
-+		ctdp_level->processed = 1;
- 
- 		ret = isst_get_tdp_info(cpu, i, ctdp_level);
- 		if (ret)
-@@ -614,8 +616,6 @@ int isst_get_process_ctdp(int cpu, int tdp_level, struct isst_pkg_ctdp *pkg_dev)
- 		}
- 	}
- 
--	pkg_dev->processed = 1;
--
- 	return 0;
- }
- 
-diff --git a/tools/power/x86/intel-speed-select/isst-display.c b/tools/power/x86/intel-speed-select/isst-display.c
-index 40346d534f78..b11575c3e886 100644
---- a/tools/power/x86/intel-speed-select/isst-display.c
-+++ b/tools/power/x86/intel-speed-select/isst-display.c
-@@ -314,7 +314,8 @@ void isst_ctdp_display_information(int cpu, FILE *outf, int tdp_level,
- 	char value[256];
- 	int i, base_level = 1;
- 
--	print_package_info(cpu, outf);
-+	if (pkg_dev->processed)
-+		print_package_info(cpu, outf);
- 
- 	for (i = 0; i <= pkg_dev->levels; ++i) {
- 		struct isst_pkg_ctdp_level_info *ctdp_level;
+ 	/* If streaming is started, return error */
+ 	if (vb2_is_busy(&vpfe->buffer_queue)) {
+ 		vpfe_err(vpfe, "%s device busy\n", __func__);
 -- 
 2.20.1
 
