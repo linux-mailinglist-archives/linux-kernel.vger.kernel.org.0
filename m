@@ -2,156 +2,301 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 112C112E5B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 12:30:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F047712E5B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 12:30:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbgABLaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 06:30:05 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:37954 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728135AbgABLaE (ORCPT
+        id S1728262AbgABLav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 06:30:51 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:36758 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728216AbgABLav (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 06:30:04 -0500
-Received: by mail-ot1-f68.google.com with SMTP id d7so52245302otf.5;
-        Thu, 02 Jan 2020 03:30:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=zsUL2C0WaaJc/RKLuim/CUrfNo1Iw2tHL4HfNNGKlGQ=;
-        b=DI7nFGHOQf6wsy/Ujxwg6jXNd66N92P1l1ay1EWZ94nVNSjECeIyLwYQNIXYdkY89M
-         plyTW9zXm+f2WPmwzN6KUAA12p+gE/HlMPEprAEBHpJOsGCGWq6ntnjEZnyK4C/6bfaG
-         fl/sjOVHJ+xEp0o4CT0+Frs67gBY9HcZp26dhjexvxnnCTfGtaDkpXj4wOmSvo64Q7J6
-         9m053YlV9MpzdJDaC107jepOpSYCa28GcJuG+tbiMpfdC2By/a75ieQKKL9/BLTHiVn7
-         emjN7zuXQuOnNEgY4p5LTbIUWb1PpHjgV7DuxtOee7o9EgPWe6DSregQUHPIb+X9N5RB
-         VC+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=zsUL2C0WaaJc/RKLuim/CUrfNo1Iw2tHL4HfNNGKlGQ=;
-        b=fIfExfR3Yyq7Iofp5VVRXBGafuJrvieoCSGHqs+Yvh29jKxuN2nLuPEZu1KnyuDrfm
-         mQ2SyqU5QPbdxNoSJ+HCoPoL8q5v71Hhtc3s7Rek2QYb9JSMopfrnZVXp/Ar1kpsUztS
-         OpAH+HGa/3HohLIa9kpPANIdi3DjzWAalQ2e3X8L7l4OZQ/DGkoYVwczjvLv/J0ULi4n
-         tLY311fR30wFVpLgE2F3hep5HYwLppC2BgV3drFw3XANHlF7c1ViVQlOVVuUcGeVQE+R
-         ZleDYYmkX4kwsMor8333uIvnINGd4Iz5LNIz0mD3ZjlySSwRpDJ/se2SFLKdEQY/wkMP
-         6kUg==
-X-Gm-Message-State: APjAAAUx/nkPJ69v6iyLssJM3wgYr2Kag/X9cAjacsv9D5sZXRCw6Vy8
-        5zzkDDLyvEmwXUcbSSoAsm7Nhd9NT1nWrulF9FU=
-X-Google-Smtp-Source: APXvYqx8NQX+ydY+eeNDp28dUg9R1svX91x1kJ14OwQoZoSrATITd1jR8fbXt5whBGr7Ll3uhqkiyuU/GUqUX5oZEKM=
-X-Received: by 2002:a05:6830:1141:: with SMTP id x1mr17726618otq.120.1577964603627;
- Thu, 02 Jan 2020 03:30:03 -0800 (PST)
+        Thu, 2 Jan 2020 06:30:51 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1577964650; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: References: Cc: To:
+ Subject: From: Sender; bh=SFlajEkHLlsUVLHVfmv2Qoe32uvgEMBTV5xvUKZ1oKY=;
+ b=MQSREi7iEsYAi1U1W+LdvA8/5I1dGWJPu2Ram2A4TnxrHoBsQwa7xJGf7EOsRGJYb+hL+S1k
+ pSyvyNqyBnUPkR4SvtRiI+aYqxWnYG9vsYw335BShiIlawJWMDT1093d8UhkEuXgOp/9ZdkG
+ y5e7Rry+G9DtnnCvyEyYBCpnt4s=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e0dd469.7fe1663a2810-smtp-out-n03;
+ Thu, 02 Jan 2020 11:30:49 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 31423C447A5; Thu,  2 Jan 2020 11:30:48 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [10.206.25.108] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vbadigan)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 46D09C447A9;
+        Thu,  2 Jan 2020 11:30:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 46D09C447A9
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
+From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+Subject: Re: [PATCH V1] mmc: sdhci-msm: Add CQHCI support for sdhci-msm
+To:     Adrian Hunter <adrian.hunter@intel.com>, ulf.hansson@linaro.org,
+        agross@kernel.org
+Cc:     asutoshd@codeaurora.org, stummala@codeaurora.org,
+        sayalil@codeaurora.org, cang@codeaurora.org,
+        rampraka@codeaurora.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Ritesh Harjani <riteshh@codeaurora.org>
+References: <1576586233-28443-1-git-send-email-vbadigan@codeaurora.org>
+ <1c6a6749-68c3-ee16-2c1b-e7534dee4791@intel.com>
+Message-ID: <9720d5fe-1bb0-8a88-1373-935a9abdb9e0@codeaurora.org>
+Date:   Thu, 2 Jan 2020 17:00:35 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Received: by 2002:a8a:87:0:0:0:0:0 with HTTP; Thu, 2 Jan 2020 03:30:03 -0800 (PST)
-In-Reply-To: <20200102091902.tk374bxohvj33prz@pali>
-References: <20200102082036.29643-1-namjae.jeon@samsung.com>
- <CGME20200102082406epcas1p268f260d90213bdaabee25a7518f86625@epcas1p2.samsung.com>
- <20200102082036.29643-10-namjae.jeon@samsung.com> <20200102091902.tk374bxohvj33prz@pali>
-From:   Namjae Jeon <linkinjeon@gmail.com>
-Date:   Thu, 2 Jan 2020 20:30:03 +0900
-Message-ID: <CAKYAXd_9XOWtcLYk-+gg636rFCYjLgHzrP5orR3XjXGMpTKWLA@mail.gmail.com>
-Subject: Re: [PATCH v9 09/13] exfat: add misc operations
-To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1c6a6749-68c3-ee16-2c1b-e7534dee4791@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2020-01-02 18:19 GMT+09:00, Pali Roh=C3=A1r <pali.rohar@gmail.com>:
-> On Thursday 02 January 2020 16:20:32 Namjae Jeon wrote:
->> This adds the implementation of misc operations for exfat.
+
+On 12/20/2019 7:29 PM, Adrian Hunter wrote:
+> On 17/12/19 2:37 pm, Veerabhadrarao Badiganti wrote:
+>> From: Ritesh Harjani<riteshh@codeaurora.org>
 >>
->> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
->> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+>> This adds CQHCI support for sdhci-msm platforms.
+>>
+>> Signed-off-by: Ritesh Harjani<riteshh@codeaurora.org>
+>> Signed-off-by: Veerabhadrarao Badiganti<vbadigan@codeaurora.org>
+>>
 >> ---
->>  fs/exfat/misc.c | 253 ++++++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 253 insertions(+)
->>  create mode 100644 fs/exfat/misc.c
+>> This patch is based on RFC patch
+>> https://lkml.org/lkml/2017/8/30/313
 >>
->> diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
->> new file mode 100644
->> index 000000000000..7f533bcb3b3f
->> --- /dev/null
->> +++ b/fs/exfat/misc.c
->
-> ...
->
->> +/* <linux/time.h> externs sys_tz
->> + * extern struct timezone sys_tz;
->> + */
->> +#define UNIX_SECS_1980    315532800L
+>> Changes since RFC:
+>> 	- Updated settings so that TDLBA won't get reset when
+>> 	  CQE is enabled.
+>> 	- Removed new compatible string and moved to supports-cqe
+>> 	  dt flag to identify CQE support.
+>> 	- Incorporated review comments.
+>>
+>> Tested on: qcs404, sc7180
+>> ---
+>>   drivers/mmc/host/sdhci-msm.c | 115 ++++++++++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 114 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+>> index 3d0bb5e..a4e3507 100644
+>> --- a/drivers/mmc/host/sdhci-msm.c
+>> +++ b/drivers/mmc/host/sdhci-msm.c
+>> @@ -15,6 +15,7 @@
+>>   #include <linux/regulator/consumer.h>
+>>   
+>>   #include "sdhci-pltfm.h"
+>> +#include "cqhci.h"
+>>   
+>>   #define CORE_MCI_VERSION		0x50
+>>   #define CORE_VERSION_MAJOR_SHIFT	28
+>> @@ -122,6 +123,10 @@
+>>   #define msm_host_writel(msm_host, val, host, offset) \
+>>   	msm_host->var_ops->msm_writel_relaxed(val, host, offset)
+>>   
+>> +/* CQHCI vendor specific registers */
+>> +#define CQHCI_VENDOR_CFG1	0xA00
+>> +#define DISABLE_RST_ON_CMDQ_EN	(0x3 << 13)
 >> +
->> +#if BITS_PER_LONG =3D=3D 64
->> +#define UNIX_SECS_2108    4354819200L
->> +#endif
->
-> ...
->
->> +#define TIMEZONE_CUR_OFFSET()	((sys_tz.tz_minuteswest / (-15)) & 0x7F)
->> +/* Convert linear UNIX date to a FAT time/date pair. */
->> +void exfat_time_unix2fat(struct exfat_sb_info *sbi, struct timespec64
->> *ts,
->> +		struct exfat_date_time *tp)
+>>   struct sdhci_msm_offset {
+>>   	u32 core_hc_mode;
+>>   	u32 core_mci_data_cnt;
+>> @@ -1567,6 +1572,109 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+>>   	__sdhci_msm_set_clock(host, clock);
+>>   }
+>>   
+>> +/*****************************************************************************\
+>> + *                                                                           *
+>> + * MSM Command Queue Engine (CQE)                                            *
+>> + *                                                                           *
+>> +\*****************************************************************************/
+>> +
+>> +static u32 sdhci_msm_cqe_irq(struct sdhci_host *host, u32 intmask)
 >> +{
->> +	time_t second =3D ts->tv_sec;
->> +	time_t day, month, year;
->> +	time_t ld; /* leap day */
->
-> Question for other maintainers: Has kernel code already time_t defined
-> as 64bit? Or it is still just 32bit and 32bit systems and some time64_t
-> needs to be used? I remember that there was discussion about these
-> problems, but do not know if it was changed/fixed or not... Just a
-> pointer for possible Y2038 problem. As "ts" is of type timespec64, but
-> "second" of type time_t.
-My bad, I will change it with time64_t.
->
+>> +	int cmd_error = 0;
+>> +	int data_error = 0;
 >> +
->> +	/* Treats as local time with proper time */
->> +	second -=3D sys_tz.tz_minuteswest * SECS_PER_MIN;
->> +	tp->timezone.valid =3D 1;
->> +	tp->timezone.off =3D TIMEZONE_CUR_OFFSET();
+>> +	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>> +		return intmask;
 >> +
->> +	/* Jan 1 GMT 00:00:00 1980. But what about another time zone? */
->> +	if (second < UNIX_SECS_1980) {
->> +		tp->second  =3D 0;
->> +		tp->minute  =3D 0;
->> +		tp->hour =3D 0;
->> +		tp->day  =3D 1;
->> +		tp->month  =3D 1;
->> +		tp->year =3D 0;
->> +		return;
+>> +	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+>> +	return 0;
+>> +}
+>> +
+>> +void sdhci_msm_cqe_disable(struct mmc_host *mmc, bool recovery)
+>> +{
+>> +	struct sdhci_host *host = mmc_priv(mmc);
+>> +	unsigned long flags;
+>> +	u32 ctrl;
+>> +
+>> +	/*
+>> +	 * When CQE is halted, the legacy SDHCI path operates only
+>> +	 * on 128bit descriptors in 64bit mode.
+>> +	 */
+>> +	if (host->flags & SDHCI_USE_64_BIT_DMA)
+>> +		host->desc_sz = 16;
+> The adma_table_sz depends on desc_sz, so it cannot be changed here.
+> If you do something like below, then you can set desc_sz before calling
+> sdhci_setup_host()
+>
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index f4540f9892ce..f1d3b70ff769 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -3825,9 +3825,10 @@ int sdhci_setup_host(struct sdhci_host *host)
+>   		void *buf;
+>   
+>   		if (host->flags & SDHCI_USE_64_BIT_DMA) {
+> +			if (!host->desc_sz)
+> +				host->desc_sz = SDHCI_ADMA2_64_DESC_SZ(host);
+>   			host->adma_table_sz = host->adma_table_cnt *
+> -					      SDHCI_ADMA2_64_DESC_SZ(host);
+> -			host->desc_sz = SDHCI_ADMA2_64_DESC_SZ(host);
+> +					      host->desc_sz;
+>   		} else {
+>   			host->adma_table_sz = host->adma_table_cnt *
+>   					      SDHCI_ADMA2_32_DESC_SZ;
+
+Thanks Adrian for the suggestion. I will add this change.
+
+But even with this change, still i will have to override 'host->desc_sz' 
+variable since qcom sdhci controller expects/operates-on
+
+12-byte descriptor as long was CQE is not enabled. When CQE is enabled, 
+it operates only on 16-bype descriptors (even when CQE is halted).
+
+If i fix "host->desc_sz" to 16 then all the data transfer commands 
+during card initialization (till CQE is enabled) would fail.
+
+I may have to update as below:
+
+     host->desc_sz = 16;
+
+     sdhci_add_host()  ;
+
+    host->desc_sz = 12;
+
+And then cqhci_host_ops->enable() -> host->desc_sz = 16;
+
+Please let me know if this is fine or if you have any other suggestion 
+to support this limitation of qcom controller w.r.t ADMA descriptors 
+with CQE.
+
+>> +
+>> +	spin_lock_irqsave(&host->lock, flags);
+>> +
+>> +	/*
+>> +	 * During CQE operation command complete bit gets latched.
+>> +	 * So s/w should clear command complete interrupt status when CQE is
+>> +	 * halted. Otherwise unexpected SDCHI legacy interrupt gets
+>> +	 * triggered when CQE is halted.
+>> +	 */
+>> +	ctrl = sdhci_readl(host, SDHCI_INT_ENABLE);
+>> +	ctrl |= SDHCI_INT_RESPONSE;
+>> +	sdhci_writel(host,  ctrl, SDHCI_INT_ENABLE);
+>> +	sdhci_writel(host, SDHCI_INT_RESPONSE, SDHCI_INT_STATUS);
+>> +
+>> +	spin_unlock_irqrestore(&host->lock, flags);
+>> +
+>> +	sdhci_cqe_disable(mmc, recovery);
+>> +}
+>> +
+>> +static const struct cqhci_host_ops sdhci_msm_cqhci_ops = {
+>> +	.enable		= sdhci_cqe_enable,
+>> +	.disable	= sdhci_msm_cqe_disable,
+>> +};
+>> +
+>> +static int sdhci_msm_cqe_add_host(struct sdhci_host *host,
+>> +				struct platform_device *pdev)
+>> +{
+>> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+>> +	struct cqhci_host *cq_host;
+>> +	bool dma64;
+>> +	int ret;
+>> +
+>> +	ret = sdhci_setup_host(host);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	cq_host = cqhci_pltfm_init(pdev);
+>> +	if (IS_ERR(cq_host)) {
+>> +		ret = PTR_ERR(cq_host);
+>> +		dev_err(&pdev->dev, "cqhci-pltfm init: failed: %d\n", ret);
+>> +		goto cleanup;
 >> +	}
 >> +
->> +	if (second >=3D UNIX_SECS_2108) {
->
-> Hello, this code cause compile errors on 32bit systems as UNIX_SECS_2108
-> macro is not defined when BITS_PER_LONG =3D=3D 32.
->
-> Value 4354819200 really cannot fit into 32bit signed integer, so you
-> should use 64bit signed integer. I would suggest to define this macro
-> value via LL not just L suffix (and it would work on both 32 and 64bit)
-Okay.
->
->   #define UNIX_SECS_2108    4354819200LL
->
->> +		tp->second  =3D 59;
->> +		tp->minute  =3D 59;
->> +		tp->hour =3D 23;
->> +		tp->day  =3D 31;
->> +		tp->month  =3D 12;
->> +		tp->year =3D 127;
->> +		return;
+>> +	msm_host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
+>> +	cq_host->ops = &sdhci_msm_cqhci_ops;
+>> +
+>> +	dma64 = host->flags & SDHCI_USE_64_BIT_DMA;
+>> +
+>> +	ret = cqhci_init(cq_host, host->mmc, dma64);
+>> +	if (ret) {
+>> +		dev_err(&pdev->dev, "%s: CQE init: failed (%d)\n",
+>> +				mmc_hostname(host->mmc), ret);
+>> +		goto cleanup;
 >> +	}
-Okay, I will check it.
-Thanks for your review!
->
-> --
-> Pali Roh=C3=A1r
-> pali.rohar@gmail.com
->
+>> +
+>> +	/* Disable cqe reset due to cqe enable signal */
+>> +	cqhci_writel(cq_host, cqhci_readl(cq_host, CQHCI_VENDOR_CFG1) |
+>> +		       DISABLE_RST_ON_CMDQ_EN, CQHCI_VENDOR_CFG1);
+>> +
+>> +	ret = __sdhci_add_host(host);
+>> +	if (ret)
+>> +		goto cleanup;
+>> +
+>> +	dev_info(&pdev->dev, "%s: CQE init: success\n",
+>> +			mmc_hostname(host->mmc));
+>> +	return ret;
+>> +
+>> +cleanup:
+>> +	sdhci_cleanup_host(host);
+>> +	return ret;
+>> +}
+>> +
+>>   /*
+>>    * Platform specific register write functions. This is so that, if any
+>>    * register write needs to be followed up by platform specific actions,
+>> @@ -1731,6 +1839,7 @@ static void sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
+>>   	.set_uhs_signaling = sdhci_msm_set_uhs_signaling,
+>>   	.write_w = sdhci_msm_writew,
+>>   	.write_b = sdhci_msm_writeb,
+>> +	.irq	= sdhci_msm_cqe_irq,
+>>   };
+>>   
+>>   static const struct sdhci_pltfm_data sdhci_msm_pdata = {
+>> @@ -1754,6 +1863,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+>>   	u8 core_major;
+>>   	const struct sdhci_msm_offset *msm_offset;
+>>   	const struct sdhci_msm_variant_info *var_info;
+>> +	struct device_node *node = pdev->dev.of_node;
+>>   
+>>   	host = sdhci_pltfm_init(pdev, &sdhci_msm_pdata, sizeof(*msm_host));
+>>   	if (IS_ERR(host))
+>> @@ -1952,7 +2062,10 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+>>   	pm_runtime_use_autosuspend(&pdev->dev);
+>>   
+>>   	host->mmc_host_ops.execute_tuning = sdhci_msm_execute_tuning;
+>> -	ret = sdhci_add_host(host);
+>> +	if (of_property_read_bool(node, "supports-cqe"))
+>> +		ret = sdhci_msm_cqe_add_host(host, pdev);
+>> +	else
+>> +		ret = sdhci_add_host(host);
+>>   	if (ret)
+>>   		goto pm_runtime_disable;
+>>   	sdhci_msm_set_regulator_caps(msm_host);
+>>
