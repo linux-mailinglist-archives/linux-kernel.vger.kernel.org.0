@@ -2,46 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2649F12F070
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:53:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D20FF12EF6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:46:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbgABWVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:21:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41386 "EHLO mail.kernel.org"
+        id S1730500AbgABWqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:46:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729047AbgABWVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:21:47 -0500
+        id S1730276AbgABWbW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:31:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E58AF21835;
-        Thu,  2 Jan 2020 22:21:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2D13222C3;
+        Thu,  2 Jan 2020 22:31:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003706;
-        bh=U5GgqEyn+KoZCexv7j0LgkAynPcyqk8Rd4HfTxE53UA=;
+        s=default; t=1578004282;
+        bh=aynnZg1Zp9sJfa60R+Dxa0s0biQO2MN521u2guWaLWY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IIMQM9w+BoqzxYMrMUqhNCe8D+9Anzr5CglvIlJ2keV1Ek+coj3nibCBqRI/yBLWo
-         OdzAYreOjfIz3rGRT8viq/X0Y0ZpWEwuZfnksJ/U544DVTYK7LTEX2TQUsrA3hSIJS
-         35SeIpToutTwd3HEU+MVuOeid4mSXiVmrUUC60gk=
+        b=elPd0c7Y1C42A2BxAIJTIhAuTGWmeWFqy5qG/9PAmor7yt0phheWfS9jwre0T1Q3M
+         0S35nGtu0fhAnYaH/Al0wNjURu8YU4jHxpwD5ccOLLMdgHMBmrivutFL3tsDa2cOdS
+         X9p5nrgKFAeDbIW97zxoWg/fa01xNOAa7Tj6Y8Cs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Parth Shah <parth@linux.ibm.com>,
-        Ihor Pasichnyk <Ihor.Pasichnyk@ibm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Waiman Long <longman@redhat.com>,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Phil Auld <pauld@redhat.com>,
-        Vaidyanathan Srinivasan <svaidy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.19 073/114] Revert "powerpc/vcpu: Assume dedicated processors as non-preempt"
+        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 114/171] iommu/tegra-smmu: Fix page tables in > 4 GiB memory
 Date:   Thu,  2 Jan 2020 23:07:25 +0100
-Message-Id: <20200102220036.470720283@linuxfoundation.org>
+Message-Id: <20200102220602.935641330@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,68 +43,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Thierry Reding <treding@nvidia.com>
 
-This reverts commit 4ba32bdbd8c66d9c7822aea8dcf4e51410df84a8 which is
-commit 14c73bd344da60abaf7da3ea2e7733ddda35bbac upstream.
+[ Upstream commit 96d3ab802e4930a29a33934373157d6dff1b2c7e ]
 
-It breaks the build.
+Page tables that reside in physical memory beyond the 4 GiB boundary are
+currently not working properly. The reason is that when the physical
+address for page directory entries is read, it gets truncated at 32 bits
+and can cause crashes when passing that address to the DMA API.
 
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Parth Shah <parth@linux.ibm.com>
-Cc: Ihor Pasichnyk <Ihor.Pasichnyk@ibm.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
-Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: Phil Auld <pauld@redhat.com>
-Cc: Vaidyanathan Srinivasan <svaidy@linux.ibm.com>
-Cc: Parth Shah <parth@linux.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fix this by first casting the PDE value to a dma_addr_t and then using
+the page frame number mask for the SMMU instance to mask out the invalid
+bits, which are typically used for mapping attributes, etc.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/include/asm/spinlock.h    |    4 +---
- arch/powerpc/platforms/pseries/setup.c |    7 -------
- 2 files changed, 1 insertion(+), 10 deletions(-)
+ drivers/iommu/tegra-smmu.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/arch/powerpc/include/asm/spinlock.h
-+++ b/arch/powerpc/include/asm/spinlock.h
-@@ -53,12 +53,10 @@
- #endif
- 
- #ifdef CONFIG_PPC_PSERIES
--DECLARE_STATIC_KEY_FALSE(shared_processor);
--
- #define vcpu_is_preempted vcpu_is_preempted
- static inline bool vcpu_is_preempted(int cpu)
- {
--	if (!static_branch_unlikely(&shared_processor))
-+	if (!firmware_has_feature(FW_FEATURE_SPLPAR))
- 		return false;
- 	return !!(be32_to_cpu(lppaca_of(cpu).yield_count) & 1);
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index c4eb293b1524..04cec050e42b 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -153,9 +153,9 @@ static bool smmu_dma_addr_valid(struct tegra_smmu *smmu, dma_addr_t addr)
+ 	return (addr & smmu->pfn_mask) == addr;
  }
---- a/arch/powerpc/platforms/pseries/setup.c
-+++ b/arch/powerpc/platforms/pseries/setup.c
-@@ -75,9 +75,6 @@
- #include "pseries.h"
- #include "../../../../drivers/pci/pci.h"
  
--DEFINE_STATIC_KEY_FALSE(shared_processor);
--EXPORT_SYMBOL_GPL(shared_processor);
--
- int CMO_PrPSP = -1;
- int CMO_SecPSP = -1;
- unsigned long CMO_PageSize = (ASM_CONST(1) << IOMMU_PAGE_SHIFT_4K);
-@@ -764,10 +761,6 @@ static void __init pSeries_setup_arch(vo
+-static dma_addr_t smmu_pde_to_dma(u32 pde)
++static dma_addr_t smmu_pde_to_dma(struct tegra_smmu *smmu, u32 pde)
+ {
+-	return pde << 12;
++	return (dma_addr_t)(pde & smmu->pfn_mask) << 12;
+ }
  
- 	if (firmware_has_feature(FW_FEATURE_LPAR)) {
- 		vpa_init(boot_cpuid);
--
--		if (lppaca_shared_proc(get_lppaca()))
--			static_branch_enable(&shared_processor);
--
- 		ppc_md.power_save = pseries_lpar_idle;
- 		ppc_md.enable_pmcs = pseries_lpar_enable_pmcs;
- #ifdef CONFIG_PCI_IOV
+ static void smmu_flush_ptc_all(struct tegra_smmu *smmu)
+@@ -540,6 +540,7 @@ static u32 *tegra_smmu_pte_lookup(struct tegra_smmu_as *as, unsigned long iova,
+ 				  dma_addr_t *dmap)
+ {
+ 	unsigned int pd_index = iova_pd_index(iova);
++	struct tegra_smmu *smmu = as->smmu;
+ 	struct page *pt_page;
+ 	u32 *pd;
+ 
+@@ -548,7 +549,7 @@ static u32 *tegra_smmu_pte_lookup(struct tegra_smmu_as *as, unsigned long iova,
+ 		return NULL;
+ 
+ 	pd = page_address(as->pd);
+-	*dmap = smmu_pde_to_dma(pd[pd_index]);
++	*dmap = smmu_pde_to_dma(smmu, pd[pd_index]);
+ 
+ 	return tegra_smmu_pte_offset(pt_page, iova);
+ }
+@@ -590,7 +591,7 @@ static u32 *as_get_pte(struct tegra_smmu_as *as, dma_addr_t iova,
+ 	} else {
+ 		u32 *pd = page_address(as->pd);
+ 
+-		*dmap = smmu_pde_to_dma(pd[pde]);
++		*dmap = smmu_pde_to_dma(smmu, pd[pde]);
+ 	}
+ 
+ 	return tegra_smmu_pte_offset(as->pts[pde], iova);
+@@ -615,7 +616,7 @@ static void tegra_smmu_pte_put_use(struct tegra_smmu_as *as, unsigned long iova)
+ 	if (--as->count[pde] == 0) {
+ 		struct tegra_smmu *smmu = as->smmu;
+ 		u32 *pd = page_address(as->pd);
+-		dma_addr_t pte_dma = smmu_pde_to_dma(pd[pde]);
++		dma_addr_t pte_dma = smmu_pde_to_dma(smmu, pd[pde]);
+ 
+ 		tegra_smmu_set_pde(as, iova, 0);
+ 
+-- 
+2.20.1
+
 
 
