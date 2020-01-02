@@ -2,87 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31EA112E7B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 16:00:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38D2212E7BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 16:01:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728676AbgABPAh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 10:00:37 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:60753 "EHLO
+        id S1728662AbgABPBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 10:01:42 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:35147 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728571AbgABPAh (ORCPT
+        with ESMTP id S1728571AbgABPBl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 10:00:37 -0500
+        Thu, 2 Jan 2020 10:01:41 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MF3Y8-1iy5eq3Xmi-00FPMR; Thu, 02 Jan 2020 16:00:16 +0100
+ 1MrPyJ-1jYEoj3ART-00oSvc; Thu, 02 Jan 2020 16:00:38 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
-        FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>,
-        Jens Axboe <axboe@kernel.dk>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Benjamin Block <bblock@linux.ibm.com>,
-        linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.com>,
+        Martin Wilck <mwilck@suse.com>,
+        Amol Surati <suratiamol@gmail.com>, linux-ide@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 11/22] compat_ioctl: bsg: add handler
-Date:   Thu,  2 Jan 2020 15:55:29 +0100
-Message-Id: <20200102145552.1853992-12-arnd@arndb.de>
+Subject: [PATCH v3 12/22] compat_ioctl: ide: floppy: add handler
+Date:   Thu,  2 Jan 2020 15:55:30 +0100
+Message-Id: <20200102145552.1853992-13-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20200102145552.1853992-1-arnd@arndb.de>
 References: <20200102145552.1853992-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:/v9BoeMw07nWpYw7u0vnyk6+iF7B9Ivx59/dmMOCA43quUma0Cb
- LvLgvdr6nk111g9XSXmi72uMA3v10UdDlFT1nwsCVEGt5vo6q0GP3uEay7CQEp+2Bjxbbej
- b5IDipv+F8eqFr46BmUUI2g8OckLtnPOxuymbLTcB38VCY3+aEVgccCWvTzb1jacfZOgcrF
- Bu9ksi0IpGAWcsPQAVeWA==
+X-Provags-ID: V03:K1:PpFBLdgmMhPS8ohTpLjgVgR48oR0XOCUBItZhe4AT+xbR/Z1a2P
+ tOr70kI+XNqVktlBmCJCRAC0t4kgNfRUShbGiTabC8AJY1kNDlrV9jR2dyprHVvETZyPu9o
+ ZJxX344gvTkx0ZlPzneHfYkA0Qlf4nsy8ysQUyX9BeSBXQ/qvKwUhpyjRGJJ6mgRBYep3q/
+ b5dmCICcpaPeigK/V3yKQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:iJ1ciBf4Kro=:ulm3L4FFhXfpjGZ9FP2kXX
- GRP7BlD+CAPrLeiwd3yqbkPYqdhqc0xp7s0sA3FbN/gmBxw+t+lTsy/SJYTXKsrrhpByqoheF
- XNkLZkrdKF6VahgIPO4Wlv0JyZd4JbZnebYEPEyTVylSSP44jdggR60kll84/R92BiVUaGhfP
- 7H3f+mUkQeJZCo2uisJ9yL3khr7rM0mTRCPX0KzL3okPkjic6cWKN+EVU1EBs9c/fFYlHlBJZ
- R1Ol1e6FWQ2Ka/WINrAq3xpWSapauRQhPdFu3rcc98lfbXV2KYo5W+dn3OW0c38QMnu4gLPnz
- WxIRqTa2QgZgW2p4PMCdxQSKKLKIXvixbeHzbz/TZ8fjZqMgZXVVqE3J7PbYyf1wNdDLdlfFl
- IOee34z5uqxwApJ39i9waQVotAfHaZvgSDZxqjqzfyADFiW+c45Yz76ZD/SnQsWSuI8owcjLJ
- Ihq3f4J5ezbpzkzR1SFk/3DDNLbZlfQLpWWbMaHkh+bIvcn331kmD3GRjQtNXf/mrMXQEgb1S
- GMHSGRGFBW2hwQbOU+icy4JZSEIcIgdLCNXax3Nv0oFO0mgSq5BkfRLE1V6tkKiI/2CN4zU+M
- 7OIwKWiL9L2dcDDGRoH1dxkGjADNbVzSiuvPF4kyrVPWzO1zRzTmcVNoi5kK9BTKHOBJmnZKW
- AjZhcEvjyWQhAheRoL/Njj3+miFC/SDyoPIUMJX7bBKkUPxmdAQ8G6z12cfJsnXTU46ZTYeQz
- i5n6UaK6gDbVwv2vV7h+A/sWUzVobF/7R9vBjZcrlv9ztJQNApCXQTJNXR0FU1jZDluas4CtG
- f8PUD3qzSi6YAo/UhTqUVLk2r0jUy/SuDyt7eGYrQFXd+2n3PAW01OzGuVpmqkysmw3U5Pt1R
- /AZ4VVxCvjfMJEIpNo4g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5RxWy8LIVGo=:GvElw8pEl/9N4GkxpgjMXj
+ IVnffGDzbcQjHuV1iuFtBO5yXoPah459tyQyTgXkdo9jqSTxhMMONNM7ZYrRiDr9+Sv+JROke
+ H3S5HtBLZc7rG/sYckHk5sCfJ64Uk0O5auhRcVNBHuPbQyuDDNRkG0GK25QHUYLeOcPb+wuPg
+ vjozaItY9XbRl2RCWnVKOHSZ8Voj5qecb2hQcIVTQecgdVQo004l9gSA70S80Fa+L+uosydyL
+ msnV7IqB0N5Xrq4tWMRjzb1qYw/6l1RSdAcPEmE4slbogWBd9+W9eiOiLC9+hXtZ3gd68O5g9
+ bM9gWyaa9LkiaeKrS704tDGSN3sE2GYEDoBXNDfwQ9ewruEkz/tVXRJx4O7mZjg6/CRCO1/q3
+ zqYtw2Sdb+zkMwAnrGi7o97qVLisxk6M+6PjPgzLg/USyrAO+7Ftzo6OBAxHCR44Wt5giofI8
+ ZHRFKPOM1Axh59370WMyZpGv+X2oBDTdrjx5/8zMfDUt2X99xbxa3zZq/S563bCC1Ivl3SD3V
+ zBuaZnnTwRhlMMfFxoCCymAI++IMFVWm5g691ANirPDKQSMCEQZLy+2LAtfzP2vdKODgBWDYx
+ t6lwdsBjwpjEmm7J4wbbWaBxv8w7LuALQ+pcDieNjEyv9pBx9MpLBjfAUrbd0zfTGU665O4pk
+ iWWniBlS7h2/oKVTIdlkZXm6uKeHt5m28RIHj9vJMD+AMjIUGcX7EwrFxwfgu39zfW/NmDMj3
+ xbQBuJhMsPOqGbm0ybegCQOGhNKYLQVLLFU6Su5LwckOvYXUITbHnBMzJLG9yM//2I0/KHa5v
+ LvBnEg7i4BKBlu6QpRNoOF5Kl9Fj5b/TBNoeg9PU+giDPRF8BONAGD9/LXhHJF2sHT/S3hPWL
+ x2D3qEaPKuFT16Ii06gA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-bsg_ioctl() calls into scsi_cmd_ioctl() for a couple of generic commands
-and relies on fs/compat_ioctl.c to handle it correctly in compat mode.
-
-Adding a private compat_ioctl() handler avoids that round-trip and lets
-us get rid of the generic emulation once this is done.
-
-Note that bsg implements an SG_IO command that is different from the
-other drivers and does not need emulation.
+Rather than relying on fs/compat_ioctl.c, this adds support
+for a compat_ioctl() callback in the ide-floppy driver directly,
+which lets it translate the scsi commands.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- block/bsg.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/ide/ide-floppy.c       |  4 ++++
+ drivers/ide/ide-floppy.h       |  2 ++
+ drivers/ide/ide-floppy_ioctl.c | 36 ++++++++++++++++++++++++++++++++++
+ drivers/ide/ide-gd.c           | 17 ++++++++++++++++
+ include/linux/ide.h            |  2 ++
+ 5 files changed, 61 insertions(+)
 
-diff --git a/block/bsg.c b/block/bsg.c
-index 833c44b3d458..d7bae94b64d9 100644
---- a/block/bsg.c
-+++ b/block/bsg.c
-@@ -382,6 +382,7 @@ static const struct file_operations bsg_fops = {
- 	.open		=	bsg_open,
- 	.release	=	bsg_release,
- 	.unlocked_ioctl	=	bsg_ioctl,
-+	.compat_ioctl	=	compat_ptr_ioctl,
- 	.owner		=	THIS_MODULE,
- 	.llseek		=	default_llseek,
+diff --git a/drivers/ide/ide-floppy.c b/drivers/ide/ide-floppy.c
+index 1ea2f9e82bf8..1fe1f9d37a51 100644
+--- a/drivers/ide/ide-floppy.c
++++ b/drivers/ide/ide-floppy.c
+@@ -19,6 +19,7 @@
+ #include <linux/types.h>
+ #include <linux/string.h>
+ #include <linux/kernel.h>
++#include <linux/compat.h>
+ #include <linux/delay.h>
+ #include <linux/timer.h>
+ #include <linux/mm.h>
+@@ -546,4 +547,7 @@ const struct ide_disk_ops ide_atapi_disk_ops = {
+ 	.set_doorlock	= ide_set_media_lock,
+ 	.do_request	= ide_floppy_do_request,
+ 	.ioctl		= ide_floppy_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl	= ide_floppy_compat_ioctl,
++#endif
  };
+diff --git a/drivers/ide/ide-floppy.h b/drivers/ide/ide-floppy.h
+index 13c9b4b6d75e..8505a5f58f4e 100644
+--- a/drivers/ide/ide-floppy.h
++++ b/drivers/ide/ide-floppy.h
+@@ -26,6 +26,8 @@ void ide_floppy_create_read_capacity_cmd(struct ide_atapi_pc *);
+ /* ide-floppy_ioctl.c */
+ int ide_floppy_ioctl(ide_drive_t *, struct block_device *, fmode_t,
+ 		     unsigned int, unsigned long);
++int ide_floppy_compat_ioctl(ide_drive_t *, struct block_device *, fmode_t,
++			    unsigned int, unsigned long);
+ 
+ #ifdef CONFIG_IDE_PROC_FS
+ /* ide-floppy_proc.c */
+diff --git a/drivers/ide/ide-floppy_ioctl.c b/drivers/ide/ide-floppy_ioctl.c
+index 40a2ebe34e1d..4fd70f804d6f 100644
+--- a/drivers/ide/ide-floppy_ioctl.c
++++ b/drivers/ide/ide-floppy_ioctl.c
+@@ -5,6 +5,7 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/ide.h>
++#include <linux/compat.h>
+ #include <linux/cdrom.h>
+ #include <linux/mutex.h>
+ 
+@@ -302,3 +303,38 @@ int ide_floppy_ioctl(ide_drive_t *drive, struct block_device *bdev,
+ 	mutex_unlock(&ide_floppy_ioctl_mutex);
+ 	return err;
+ }
++
++#ifdef CONFIG_COMPAT
++int ide_floppy_compat_ioctl(ide_drive_t *drive, struct block_device *bdev,
++			    fmode_t mode, unsigned int cmd, unsigned long arg)
++{
++	struct ide_atapi_pc pc;
++	void __user *argp = compat_ptr(arg);
++	int err;
++
++	mutex_lock(&ide_floppy_ioctl_mutex);
++	if (cmd == CDROMEJECT || cmd == CDROM_LOCKDOOR) {
++		err = ide_floppy_lockdoor(drive, &pc, arg, cmd);
++		goto out;
++	}
++
++	err = ide_floppy_format_ioctl(drive, &pc, mode, cmd, argp);
++	if (err != -ENOTTY)
++		goto out;
++
++	/*
++	 * skip SCSI_IOCTL_SEND_COMMAND (deprecated)
++	 * and CDROM_SEND_PACKET (legacy) ioctls
++	 */
++	if (cmd != CDROM_SEND_PACKET && cmd != SCSI_IOCTL_SEND_COMMAND)
++		err = scsi_cmd_blk_ioctl(bdev, mode, cmd, argp);
++
++	/*
++	 * there is no generic_ide_compat_ioctl(), that is handled
++	 * through compat_blkdev_ioctl().
++	 */
++out:
++	mutex_unlock(&ide_floppy_ioctl_mutex);
++	return err;
++}
++#endif
+diff --git a/drivers/ide/ide-gd.c b/drivers/ide/ide-gd.c
+index dba9ad5c97b3..1bb99b556393 100644
+--- a/drivers/ide/ide-gd.c
++++ b/drivers/ide/ide-gd.c
+@@ -341,11 +341,28 @@ static int ide_gd_ioctl(struct block_device *bdev, fmode_t mode,
+ 	return drive->disk_ops->ioctl(drive, bdev, mode, cmd, arg);
+ }
+ 
++#ifdef CONFIG_COMPAT
++static int ide_gd_compat_ioctl(struct block_device *bdev, fmode_t mode,
++			       unsigned int cmd, unsigned long arg)
++{
++	struct ide_disk_obj *idkp = ide_drv_g(bdev->bd_disk, ide_disk_obj);
++	ide_drive_t *drive = idkp->drive;
++
++	if (!drive->disk_ops->compat_ioctl)
++		return -ENOIOCTLCMD;
++
++	return drive->disk_ops->compat_ioctl(drive, bdev, mode, cmd, arg);
++}
++#endif
++
+ static const struct block_device_operations ide_gd_ops = {
+ 	.owner			= THIS_MODULE,
+ 	.open			= ide_gd_unlocked_open,
+ 	.release		= ide_gd_release,
+ 	.ioctl			= ide_gd_ioctl,
++#ifdef CONFIG_COMPAT
++	.ioctl			= ide_gd_compat_ioctl,
++#endif
+ 	.getgeo			= ide_gd_getgeo,
+ 	.check_events		= ide_gd_check_events,
+ 	.unlock_native_capacity	= ide_gd_unlock_native_capacity,
+diff --git a/include/linux/ide.h b/include/linux/ide.h
+index 46b771d6999e..06dae6438557 100644
+--- a/include/linux/ide.h
++++ b/include/linux/ide.h
+@@ -413,6 +413,8 @@ struct ide_disk_ops {
+ 				      sector_t);
+ 	int		(*ioctl)(struct ide_drive_s *, struct block_device *,
+ 				 fmode_t, unsigned int, unsigned long);
++	int		(*compat_ioctl)(struct ide_drive_s *, struct block_device *,
++					fmode_t, unsigned int, unsigned long);
+ };
+ 
+ /* ATAPI device flags */
 -- 
 2.20.0
 
