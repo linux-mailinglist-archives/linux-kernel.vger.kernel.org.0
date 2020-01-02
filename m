@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCC1112EC44
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:16:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C627A12EC93
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:19:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728302AbgABWQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:16:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58832 "EHLO mail.kernel.org"
+        id S1728682AbgABWTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:19:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727823AbgABWQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:16:44 -0500
+        id S1728665AbgABWTt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:19:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F8AA21582;
-        Thu,  2 Jan 2020 22:16:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A558622B48;
+        Thu,  2 Jan 2020 22:19:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003404;
-        bh=xe3Z79I60jJdx7YuK/c1laM9GG6/6JpZJqjcyjGH+IQ=;
+        s=default; t=1578003589;
+        bh=4oyLsrmYWoS4GjZR0IN8IUt5EC2eJlOpBX7eJQplCFo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i3PH4OTfxiIF/WCuBt/pmEsLHsgSL3nO5P9Lyvzy5NMEZFHWUVvX/m+hyF+hss036
-         1adPTU/LIKfLagmjbL4NH5Cv25BmmtX0MQZiNL2/qQjLkoD7iUXrv2Mmcb14Ma3PJ5
-         UNSC6K+FTFpRlWQ9fxdYUEnFzv5xMD0xIjkGnkzs=
+        b=nbWrLSWm/7XVzHg1D0uvebFcZEGYKDzFum7navWh0A2CLgw6kizdim7LySerQgS/O
+         kk/pfpip8ZcG30SaXPjl2wEnT1vy+cSWd694Dw2tKFZ1IN/VYevI1Fm/PIDVjuSqZi
+         +GQ2LQnLljlmH8C9A2pJT78/c+uwi3f89S+BxEnw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
+        stable@vger.kernel.org, Barry Song <Baohua.Song@csr.com>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 121/191] s390/unwind: filter out unreliable bogus %r14
-Date:   Thu,  2 Jan 2020 23:06:43 +0100
-Message-Id: <20200102215842.770802524@linuxfoundation.org>
+Subject: [PATCH 4.19 032/114] mfd: mfd-core: Honour Device Trees request to disable a child-device
+Date:   Thu,  2 Jan 2020 23:06:44 +0100
+Message-Id: <20200102220032.331065471@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +47,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Gorbik <gor@linux.ibm.com>
+From: Lee Jones <lee.jones@linaro.org>
 
-[ Upstream commit bf018ee644897d7982e1b8dd8b15e97db6e1a4da ]
+[ Upstream commit 6b5c350648b857047b47acf74a57087ad27d6183 ]
 
-Currently unwinder unconditionally returns %r14 from the first frame
-pointed by %r15 from pt_regs. A task could be interrupted when a function
-already allocated this frame (if it needs it) for its callees or to
-store local variables. In that case this frame would contain random
-values from stack or values stored there by a callee. As we are only
-interested in %r14 to get potential return address, skip bogus return
-addresses which doesn't belong to kernel text.
+Until now, MFD has assumed all child devices passed to it (via
+mfd_cells) are to be registered. It does not take into account
+requests from Device Tree and the like to disable child devices
+on a per-platform basis.
 
-This helps to avoid duplicating filtering logic in unwider users, most
-of which use unwind_get_return_address() and would choke on bogus 0
-address returned by it otherwise.
+Well now it does.
 
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Link: https://www.spinics.net/lists/arm-kernel/msg366309.html
+Link: https://lkml.org/lkml/2019/8/22/1350
+
+Reported-by: Barry Song <Baohua.Song@csr.com>
+Reported-by: Stephan Gerhold <stephan@gerhold.net>
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Tested-by: Stephan Gerhold <stephan@gerhold.net>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kernel/unwind_bc.c | 5 +++++
+ drivers/mfd/mfd-core.c | 5 +++++
  1 file changed, 5 insertions(+)
 
-diff --git a/arch/s390/kernel/unwind_bc.c b/arch/s390/kernel/unwind_bc.c
-index a8204f952315..6e609b13c0ce 100644
---- a/arch/s390/kernel/unwind_bc.c
-+++ b/arch/s390/kernel/unwind_bc.c
-@@ -60,6 +60,11 @@ bool unwind_next_frame(struct unwind_state *state)
- 		ip = READ_ONCE_NOCHECK(sf->gprs[8]);
- 		reliable = false;
- 		regs = NULL;
-+		if (!__kernel_text_address(ip)) {
-+			/* skip bogus %r14 */
-+			state->regs = NULL;
-+			return unwind_next_frame(state);
-+		}
- 	} else {
- 		sf = (struct stack_frame *) state->sp;
- 		sp = READ_ONCE_NOCHECK(sf->back_chain);
+diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
+index 182973df1aed..99a9c5c56ea9 100644
+--- a/drivers/mfd/mfd-core.c
++++ b/drivers/mfd/mfd-core.c
+@@ -178,6 +178,11 @@ static int mfd_add_device(struct device *parent, int id,
+ 	if (parent->of_node && cell->of_compatible) {
+ 		for_each_child_of_node(parent->of_node, np) {
+ 			if (of_device_is_compatible(np, cell->of_compatible)) {
++				if (!of_device_is_available(np)) {
++					/* Ignore disabled devices error free */
++					ret = 0;
++					goto fail_alias;
++				}
+ 				pdev->dev.of_node = np;
+ 				pdev->dev.fwnode = &np->fwnode;
+ 				break;
 -- 
 2.20.1
 
