@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA34712ED73
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:28:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C30B12EC0C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:15:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729753AbgABW2b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:28:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57970 "EHLO mail.kernel.org"
+        id S1727949AbgABWOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:14:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729931AbgABW2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:28:21 -0500
+        id S1727937AbgABWOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:14:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77C5922525;
-        Thu,  2 Jan 2020 22:28:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 750D121D7D;
+        Thu,  2 Jan 2020 22:14:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004100;
-        bh=5HZd+angLuBfQ7Vz9rgI+/1dGFQl1b/EuLaDifaVf1U=;
+        s=default; t=1578003277;
+        bh=y39XHn13WKrb3P2w/HCNKsTKr5QrxtrqjPkgUGvJwbU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PII6lmwF6C0HSECY+DxPSQ+L7yzvOKnnFU+1OBoiLkacTbRU5BLuUPZUUHrXJl97O
-         wnU7vaoTV3E9kX96oN1/WTkkmqipJcfIw6FaJ9Rz7gtX+Cz704WjJhk39q9jFqgNaH
-         eWPkxs3hYXAviyxRphYl2AuTj/OBRbzeRIxiYX9U=
+        b=R4KxmqRGmAw4aPgAHyZhawTxSKNC8n0tvTFBTLt4sl/9VBg2FUO3bV3kkBcNTKluz
+         y4jXiO/YlXJiHCm/+G9dJscX8gsY2OZdep9R37fZUO+QTohLpW4WHpQOHeyb3ndJ+r
+         B4j2BHxCTBAJyic9cDzQp97AUSOXrvibVbwQsokA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 037/171] Bluetooth: hci_core: fix init for HCI_USER_CHANNEL
+Subject: [PATCH 5.4 086/191] powerpc/fixmap: Use __fix_to_virt() instead of fix_to_virt()
 Date:   Thu,  2 Jan 2020 23:06:08 +0100
-Message-Id: <20200102220552.181592808@linuxfoundation.org>
+Message-Id: <20200102215839.149918121@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,50 +44,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mattijs Korpershoek <mkorpershoek@baylibre.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit eb8c101e28496888a0dcfe16ab86a1bee369e820 ]
+[ Upstream commit 77693a5fb57be4606a6024ec8e3076f9499b906b ]
 
-During the setup() stage, HCI device drivers expect the chip to
-acknowledge its setup() completion via vendor specific frames.
+Modify back __set_fixmap() to using __fix_to_virt() instead
+of fix_to_virt() otherwise the following happens because it
+seems GCC doesn't see idx as a builtin const.
 
-If userspace opens() such HCI device in HCI_USER_CHANNEL [1] mode,
-the vendor specific frames are never tranmitted to the driver, as
-they are filtered in hci_rx_work().
+  CC      mm/early_ioremap.o
+In file included from ./include/linux/kernel.h:11:0,
+                 from mm/early_ioremap.c:11:
+In function ‘fix_to_virt’,
+    inlined from ‘__set_fixmap’ at ./arch/powerpc/include/asm/fixmap.h:87:2,
+    inlined from ‘__early_ioremap’ at mm/early_ioremap.c:156:4:
+./include/linux/compiler.h:350:38: error: call to ‘__compiletime_assert_32’ declared with attribute error: BUILD_BUG_ON failed: idx >= __end_of_fixed_addresses
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+                                      ^
+./include/linux/compiler.h:331:4: note: in definition of macro ‘__compiletime_assert’
+    prefix ## suffix();    \
+    ^
+./include/linux/compiler.h:350:2: note: in expansion of macro ‘_compiletime_assert’
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+  ^
+./include/linux/build_bug.h:39:37: note: in expansion of macro ‘compiletime_assert’
+ #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                     ^
+./include/linux/build_bug.h:50:2: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
+  BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+  ^
+./include/asm-generic/fixmap.h:32:2: note: in expansion of macro ‘BUILD_BUG_ON’
+  BUILD_BUG_ON(idx >= __end_of_fixed_addresses);
+  ^
 
-Allow HCI devices which operate in HCI_USER_CHANNEL mode to receive
-frames if the HCI device is is HCI_INIT state.
-
-[1] https://www.spinics.net/lists/linux-bluetooth/msg37345.html
-
-Fixes: 23500189d7e0 ("Bluetooth: Introduce new HCI socket channel for user operation")
-Signed-off-by: Mattijs Korpershoek <mkorpershoek@baylibre.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Fixes: 4cfac2f9c7f1 ("powerpc/mm: Simplify __set_fixmap()")
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/f4984c615f90caa3277775a68849afeea846850d.1568295907.git.christophe.leroy@c-s.fr
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bluetooth/hci_core.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/powerpc/include/asm/fixmap.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-index 4bd72d2fe415..a70b078ceb3c 100644
---- a/net/bluetooth/hci_core.c
-+++ b/net/bluetooth/hci_core.c
-@@ -4180,7 +4180,14 @@ static void hci_rx_work(struct work_struct *work)
- 			hci_send_to_sock(hdev, skb);
- 		}
+diff --git a/arch/powerpc/include/asm/fixmap.h b/arch/powerpc/include/asm/fixmap.h
+index 0cfc365d814b..722289a1d000 100644
+--- a/arch/powerpc/include/asm/fixmap.h
++++ b/arch/powerpc/include/asm/fixmap.h
+@@ -77,7 +77,12 @@ enum fixed_addresses {
+ static inline void __set_fixmap(enum fixed_addresses idx,
+ 				phys_addr_t phys, pgprot_t flags)
+ {
+-	map_kernel_page(fix_to_virt(idx), phys, flags);
++	if (__builtin_constant_p(idx))
++		BUILD_BUG_ON(idx >= __end_of_fixed_addresses);
++	else if (WARN_ON(idx >= __end_of_fixed_addresses))
++		return;
++
++	map_kernel_page(__fix_to_virt(idx), phys, flags);
+ }
  
--		if (hci_dev_test_flag(hdev, HCI_USER_CHANNEL)) {
-+		/* If the device has been opened in HCI_USER_CHANNEL,
-+		 * the userspace has exclusive access to device.
-+		 * When device is HCI_INIT, we still need to process
-+		 * the data packets to the driver in order
-+		 * to complete its setup().
-+		 */
-+		if (hci_dev_test_flag(hdev, HCI_USER_CHANNEL) &&
-+		    !test_bit(HCI_INIT, &hdev->flags)) {
- 			kfree_skb(skb);
- 			continue;
- 		}
+ #endif /* !__ASSEMBLY__ */
 -- 
 2.20.1
 
