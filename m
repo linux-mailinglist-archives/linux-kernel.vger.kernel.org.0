@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66F3312EFDC
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:49:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57A9412EFDE
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:49:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729211AbgABW1y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:27:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56848 "EHLO mail.kernel.org"
+        id S1729684AbgABW15 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:27:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729792AbgABW1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:27:50 -0500
+        id S1729796AbgABW1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:27:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BEF424655;
-        Thu,  2 Jan 2020 22:27:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0ADA8227BF;
+        Thu,  2 Jan 2020 22:27:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004070;
-        bh=HM4HqT+sxDYOSt3Q42xbmdyGDugVbU3qXxQ/fcXO5ko=;
+        s=default; t=1578004072;
+        bh=av8gZuq+0abHRu6UaGoeAMPxv9tgYdnnG/MRCOMyuMU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nO3YctKydOw6uaovGU3xLEQ0NuTTq9TALtgP4vJfKtY4lwNDOVcbu151+2FB7U6FG
-         IEvAMN0qma8AcUuj5Y0Fk7BTqROGhVIV3MbPzzP7/lDL2LIsKtxmSGZcF3GCJZP94y
-         AMzRTw4IvCzui/r+WPILOerDThIzQT9Aajz3dpFo=
+        b=QdFnmCFrjbBkI76WjynojZbQSPQ5QH5b0ZxTNbA8VGett6ty2ZVN96UUf6taWkBIA
+         rINaFYtn+iASfLaj1dCcdKn9QyulkGIbQtoSpwM3YRl6u26RnPrEWyNYLuqOwSGvR0
+         5Qt5kxGr6txOI2JWqFgQAHqjYTSzaTr+3bKyk6LM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, "Daniel T. Lee" <danieltimlee@gmail.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 025/171] media: cec-funcs.h: add status_req checks
-Date:   Thu,  2 Jan 2020 23:05:56 +0100
-Message-Id: <20200102220550.589281994@linuxfoundation.org>
+Subject: [PATCH 4.9 026/171] samples: pktgen: fix proc_cmd command result check logic
+Date:   Thu,  2 Jan 2020 23:05:57 +0100
+Message-Id: <20200102220550.722169004@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
 References: <20200102220546.960200039@linuxfoundation.org>
@@ -44,52 +45,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Daniel T. Lee <danieltimlee@gmail.com>
 
-[ Upstream commit 9b211f9c5a0b67afc435b86f75d78273b97db1c5 ]
+[ Upstream commit 3cad8f911575191fb3b81d8ed0e061e30f922223 ]
 
-The CEC_MSG_GIVE_DECK_STATUS and CEC_MSG_GIVE_TUNER_DEVICE_STATUS commands
-both have a status_req argument: ON, OFF, ONCE. If ON or ONCE, then the
-follower will reply with a STATUS message. Either once or whenever the
-status changes (status_req == ON).
+Currently, proc_cmd is used to dispatch command to 'pg_ctrl', 'pg_thread',
+'pg_set'. proc_cmd is designed to check command result with grep the
+"Result:", but this might fail since this string is only shown in
+'pg_thread' and 'pg_set'.
 
-If status_req == OFF, then it will stop sending continuous status updates,
-but the follower will *not* send a STATUS message in that case.
+This commit fixes this logic by grep-ing the "Result:" string only when
+the command is not for 'pg_ctrl'.
 
-This means that if status_req == OFF, then msg->reply should be 0 as well
-since no reply is expected in that case.
+For clarity of an execution flow, 'errexit' flag has been set.
 
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To cleanup pktgen on exit, trap has been added for EXIT signal.
+
+Signed-off-by: Daniel T. Lee <danieltimlee@gmail.com>
+Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/cec-funcs.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ samples/pktgen/functions.sh | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/cec-funcs.h b/include/linux/cec-funcs.h
-index 138bbf721e70..a844749a2855 100644
---- a/include/linux/cec-funcs.h
-+++ b/include/linux/cec-funcs.h
-@@ -956,7 +956,8 @@ static inline void cec_msg_give_deck_status(struct cec_msg *msg,
- 	msg->len = 3;
- 	msg->msg[1] = CEC_MSG_GIVE_DECK_STATUS;
- 	msg->msg[2] = status_req;
--	msg->reply = reply ? CEC_MSG_DECK_STATUS : 0;
-+	msg->reply = (reply && status_req != CEC_OP_STATUS_REQ_OFF) ?
-+				CEC_MSG_DECK_STATUS : 0;
+diff --git a/samples/pktgen/functions.sh b/samples/pktgen/functions.sh
+index 205e4cde4601..065a7e296ee3 100644
+--- a/samples/pktgen/functions.sh
++++ b/samples/pktgen/functions.sh
+@@ -5,6 +5,8 @@
+ # Author: Jesper Dangaaard Brouer
+ # License: GPL
+ 
++set -o errexit
++
+ ## -- General shell logging cmds --
+ function err() {
+     local exitcode=$1
+@@ -58,6 +60,7 @@ function pg_set() {
+ function proc_cmd() {
+     local result
+     local proc_file=$1
++    local status=0
+     # after shift, the remaining args are contained in $@
+     shift
+     local proc_ctrl=${PROC_DIR}/$proc_file
+@@ -73,13 +76,13 @@ function proc_cmd() {
+ 	echo "cmd: $@ > $proc_ctrl"
+     fi
+     # Quoting of "$@" is important for space expansion
+-    echo "$@" > "$proc_ctrl"
+-    local status=$?
++    echo "$@" > "$proc_ctrl" || status=$?
+ 
+-    result=$(grep "Result: OK:" $proc_ctrl)
+-    # Due to pgctrl, cannot use exit code $? from grep
+-    if [[ "$result" == "" ]]; then
+-	grep "Result:" $proc_ctrl >&2
++    if [[ "$proc_file" != "pgctrl" ]]; then
++        result=$(grep "Result: OK:" $proc_ctrl) || true
++        if [[ "$result" == "" ]]; then
++            grep "Result:" $proc_ctrl >&2
++        fi
+     fi
+     if (( $status != 0 )); then
+ 	err 5 "Write error($status) occurred cmd: \"$@ > $proc_ctrl\""
+@@ -105,6 +108,8 @@ function pgset() {
+     fi
  }
  
- static inline void cec_ops_give_deck_status(const struct cec_msg *msg,
-@@ -1060,7 +1061,8 @@ static inline void cec_msg_give_tuner_device_status(struct cec_msg *msg,
- 	msg->len = 3;
- 	msg->msg[1] = CEC_MSG_GIVE_TUNER_DEVICE_STATUS;
- 	msg->msg[2] = status_req;
--	msg->reply = reply ? CEC_MSG_TUNER_DEVICE_STATUS : 0;
-+	msg->reply = (reply && status_req != CEC_OP_STATUS_REQ_OFF) ?
-+				CEC_MSG_TUNER_DEVICE_STATUS : 0;
- }
++[[ $EUID -eq 0 ]] && trap 'pg_ctrl "reset"' EXIT
++
+ ## -- General shell tricks --
  
- static inline void cec_ops_give_tuner_device_status(const struct cec_msg *msg,
+ function root_check_run_with_sudo() {
 -- 
 2.20.1
 
