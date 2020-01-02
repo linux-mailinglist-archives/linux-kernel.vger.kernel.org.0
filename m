@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1D2312F10A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:57:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E873612F038
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:52:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbgABWQa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:16:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58330 "EHLO mail.kernel.org"
+        id S1729068AbgABWXz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:23:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727788AbgABWQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:16:26 -0500
+        id S1728564AbgABWXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:23:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 844902253D;
-        Thu,  2 Jan 2020 22:16:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2971B20863;
+        Thu,  2 Jan 2020 22:23:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003385;
-        bh=PYvFAs/LwRcSGbUX8HfwaeFqGfzKvVQu4P/0YcvhXnQ=;
+        s=default; t=1578003831;
+        bh=yzxD6HKKw68W+50LlaU+rd6VsjAH0kcFO5/v4j3i8bw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WxehBlj6BKTF8SRFs8wnEdYNFWjgX/sXtfkyhw0Rc/gWpIp4cmNiu7wb7D/8P19bD
-         A9XJzW2WgvG5VwRVK1npJKScFWYkygVjvLdyBmR+YB360Xyr0lmFt+M4r7onM8P0I3
-         cHZDaLVIpqmQBJfwOl2wSLBmbzcR9Pt5tLGOo7ow=
+        b=eFZPfZ4uOaQ82aeZYnCEXO1jK5pob7I+XJm6RJNKXPhJiBir7JWbJfW5ItHxj2dfT
+         lzrjE9Mywk+lXHGkENZxeN+SHS2M+HCSG0KlQuftfSGHTwxmGuLkw0rcCKR2EO2LFV
+         GOLCfvWG9FiGb7BkrJxqrM1nYyYwuZnPSNorZzoU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 5.4 138/191] netfilter: bridge: make sure to pull arp header in br_nf_forward_arp()
+        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Hannes Reinecke <hare@suse.com>,
+        Douglas Gilbert <dgilbert@interlog.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 18/91] scsi: tracing: Fix handling of TRANSFER LENGTH == 0 for READ(6) and WRITE(6)
 Date:   Thu,  2 Jan 2020 23:07:00 +0100
-Message-Id: <20200102215844.392653871@linuxfoundation.org>
+Message-Id: <20200102220417.770985468@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
+References: <20200102220356.856162165@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,110 +47,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit 5604285839aaedfb23ebe297799c6e558939334d upstream.
+[ Upstream commit f6b8540f40201bff91062dd64db8e29e4ddaaa9d ]
 
-syzbot is kind enough to remind us we need to call skb_may_pull()
+According to SBC-2 a TRANSFER LENGTH field of zero means that 256 logical
+blocks must be transferred. Make the SCSI tracing code follow SBC-2.
 
-BUG: KMSAN: uninit-value in br_nf_forward_arp+0xe61/0x1230 net/bridge/br_netfilter_hooks.c:665
-CPU: 1 PID: 11631 Comm: syz-executor.1 Not tainted 5.4.0-rc8-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1c9/0x220 lib/dump_stack.c:118
- kmsan_report+0x128/0x220 mm/kmsan/kmsan_report.c:108
- __msan_warning+0x64/0xc0 mm/kmsan/kmsan_instr.c:245
- br_nf_forward_arp+0xe61/0x1230 net/bridge/br_netfilter_hooks.c:665
- nf_hook_entry_hookfn include/linux/netfilter.h:135 [inline]
- nf_hook_slow+0x18b/0x3f0 net/netfilter/core.c:512
- nf_hook include/linux/netfilter.h:260 [inline]
- NF_HOOK include/linux/netfilter.h:303 [inline]
- __br_forward+0x78f/0xe30 net/bridge/br_forward.c:109
- br_flood+0xef0/0xfe0 net/bridge/br_forward.c:234
- br_handle_frame_finish+0x1a77/0x1c20 net/bridge/br_input.c:162
- nf_hook_bridge_pre net/bridge/br_input.c:245 [inline]
- br_handle_frame+0xfb6/0x1eb0 net/bridge/br_input.c:348
- __netif_receive_skb_core+0x20b9/0x51a0 net/core/dev.c:4830
- __netif_receive_skb_one_core net/core/dev.c:4927 [inline]
- __netif_receive_skb net/core/dev.c:5043 [inline]
- process_backlog+0x610/0x13c0 net/core/dev.c:5874
- napi_poll net/core/dev.c:6311 [inline]
- net_rx_action+0x7a6/0x1aa0 net/core/dev.c:6379
- __do_softirq+0x4a1/0x83a kernel/softirq.c:293
- do_softirq_own_stack+0x49/0x80 arch/x86/entry/entry_64.S:1091
- </IRQ>
- do_softirq kernel/softirq.c:338 [inline]
- __local_bh_enable_ip+0x184/0x1d0 kernel/softirq.c:190
- local_bh_enable+0x36/0x40 include/linux/bottom_half.h:32
- rcu_read_unlock_bh include/linux/rcupdate.h:688 [inline]
- __dev_queue_xmit+0x38e8/0x4200 net/core/dev.c:3819
- dev_queue_xmit+0x4b/0x60 net/core/dev.c:3825
- packet_snd net/packet/af_packet.c:2959 [inline]
- packet_sendmsg+0x8234/0x9100 net/packet/af_packet.c:2984
- sock_sendmsg_nosec net/socket.c:637 [inline]
- sock_sendmsg net/socket.c:657 [inline]
- __sys_sendto+0xc44/0xc70 net/socket.c:1952
- __do_sys_sendto net/socket.c:1964 [inline]
- __se_sys_sendto+0x107/0x130 net/socket.c:1960
- __x64_sys_sendto+0x6e/0x90 net/socket.c:1960
- do_syscall_64+0xb6/0x160 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45a679
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f0a3c9e5c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 000000000045a679
-RDX: 000000000000000e RSI: 0000000020000200 RDI: 0000000000000003
-RBP: 000000000075bf20 R08: 00000000200000c0 R09: 0000000000000014
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f0a3c9e66d4
-R13: 00000000004c8ec1 R14: 00000000004dfe28 R15: 00000000ffffffff
-
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:149 [inline]
- kmsan_internal_poison_shadow+0x5c/0x110 mm/kmsan/kmsan.c:132
- kmsan_slab_alloc+0x97/0x100 mm/kmsan/kmsan_hooks.c:86
- slab_alloc_node mm/slub.c:2773 [inline]
- __kmalloc_node_track_caller+0xe27/0x11a0 mm/slub.c:4381
- __kmalloc_reserve net/core/skbuff.c:141 [inline]
- __alloc_skb+0x306/0xa10 net/core/skbuff.c:209
- alloc_skb include/linux/skbuff.h:1049 [inline]
- alloc_skb_with_frags+0x18c/0xa80 net/core/skbuff.c:5662
- sock_alloc_send_pskb+0xafd/0x10a0 net/core/sock.c:2244
- packet_alloc_skb net/packet/af_packet.c:2807 [inline]
- packet_snd net/packet/af_packet.c:2902 [inline]
- packet_sendmsg+0x63a6/0x9100 net/packet/af_packet.c:2984
- sock_sendmsg_nosec net/socket.c:637 [inline]
- sock_sendmsg net/socket.c:657 [inline]
- __sys_sendto+0xc44/0xc70 net/socket.c:1952
- __do_sys_sendto net/socket.c:1964 [inline]
- __se_sys_sendto+0x107/0x130 net/socket.c:1960
- __x64_sys_sendto+0x6e/0x90 net/socket.c:1960
- do_syscall_64+0xb6/0x160 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fixes: c4e70a87d975 ("netfilter: bridge: rename br_netfilter.c to br_netfilter_hooks.c")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Reviewed-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: bf8162354233 ("[SCSI] add scsi trace core functions and put trace points")
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Douglas Gilbert <dgilbert@interlog.com>
+Link: https://lore.kernel.org/r/20191105215553.185018-1-bvanassche@acm.org
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bridge/br_netfilter_hooks.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/scsi_trace.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/net/bridge/br_netfilter_hooks.c
-+++ b/net/bridge/br_netfilter_hooks.c
-@@ -662,6 +662,9 @@ static unsigned int br_nf_forward_arp(vo
- 		nf_bridge_pull_encap_header(skb);
- 	}
+diff --git a/drivers/scsi/scsi_trace.c b/drivers/scsi/scsi_trace.c
+index 0ff083bbf5b1..617a60737590 100644
+--- a/drivers/scsi/scsi_trace.c
++++ b/drivers/scsi/scsi_trace.c
+@@ -30,15 +30,18 @@ static const char *
+ scsi_trace_rw6(struct trace_seq *p, unsigned char *cdb, int len)
+ {
+ 	const char *ret = trace_seq_buffer_ptr(p);
+-	sector_t lba = 0, txlen = 0;
++	u32 lba = 0, txlen;
  
-+	if (unlikely(!pskb_may_pull(skb, sizeof(struct arphdr))))
-+		return NF_DROP;
-+
- 	if (arp_hdr(skb)->ar_pln != 4) {
- 		if (is_vlan_arp(skb, state->net))
- 			nf_bridge_push_encap_header(skb);
+ 	lba |= ((cdb[1] & 0x1F) << 16);
+ 	lba |=  (cdb[2] << 8);
+ 	lba |=   cdb[3];
+-	txlen = cdb[4];
++	/*
++	 * From SBC-2: a TRANSFER LENGTH field set to zero specifies that 256
++	 * logical blocks shall be read (READ(6)) or written (WRITE(6)).
++	 */
++	txlen = cdb[4] ? cdb[4] : 256;
+ 
+-	trace_seq_printf(p, "lba=%llu txlen=%llu",
+-			 (unsigned long long)lba, (unsigned long long)txlen);
++	trace_seq_printf(p, "lba=%u txlen=%u", lba, txlen);
+ 	trace_seq_putc(p, 0);
+ 
+ 	return ret;
+-- 
+2.20.1
+
 
 
