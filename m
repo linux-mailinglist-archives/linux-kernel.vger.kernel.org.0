@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F079612E267
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 05:31:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46BE112E264
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 05:31:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbgABEbi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Jan 2020 23:31:38 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:41285 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727706AbgABEbR (ORCPT
+        id S1727773AbgABEb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Jan 2020 23:31:28 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:42078 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727731AbgABEbT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Jan 2020 23:31:17 -0500
-Received: by mail-qk1-f193.google.com with SMTP id x129so30605151qke.8
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Jan 2020 20:31:17 -0800 (PST)
+        Wed, 1 Jan 2020 23:31:19 -0500
+Received: by mail-qv1-f68.google.com with SMTP id dc14so14607761qvb.9
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Jan 2020 20:31:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=NpqU1xm4hNnjdFhU/EPerrQR3O04pAhofn4iqB3IAtI=;
-        b=CiaY/Y2hjcuthGEwrWBX+bmJHvKILURe9wtlPJrITUCg0xeuX2/TmXxehxHIZ/6xTb
-         2ovevQjXdTegn8zqGWPJ2AbmhQAs3aOPIXn13Fej1lYtl3J0nB2wdlJkMIp0p4FIvPEZ
-         kyzE/Iii8OTo4IFpVZA6MJSkYcvdnYW6M/K4n4tT/ZiybWisM+1U8u1rN1NP4QmLkr/5
-         zXWipEAdgpjeUwSTsEDz0o1MZCH+0sqjBxhZhn5KF4axitUBANp44Yeojzu8N8ySEcxR
-         GIMODnOeZA2STR8zicpHuC/Rej3nA1uUSK6ffxiUCxIh/So6enUOodz+1IMh4AuxFu0f
-         VlIg==
+        bh=Sb6aiHd6T3tirofdsYcXGM6uu2TNQA+PVNItyVMdtRI=;
+        b=awN66HLXM5AQwZnBzVh1GWDk+Y8NSLycldayE8eNtnKEakB65HNUYlK689KZmw8k3h
+         ihSYp3Bsi74uIN7l2HJAHQ4/1njhbkWOpnDi59YYvxrAjtkpDHpI+Ij+dn/EQFgOmW4Y
+         +O+73bE/U0D3zkKMEsCyuh916MHO7ATp67r6Zcy4s8/RD5W/rZjj0wQYGbjKpGgDsQom
+         aV8lgRHn2zdhko3MpPwAgX89IlUjEFgUCKE8hfbpEJqOCgzVF+7N/sbd+V0ZgHTb2QHN
+         XPgQPCB9qrN8RezBZeDCaWfj7ZKxi0sSE2jS2oSFki0axJUmMsKL9GTVD5xN09JdM90K
+         2Ziw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=NpqU1xm4hNnjdFhU/EPerrQR3O04pAhofn4iqB3IAtI=;
-        b=g9SnY8eZmgQ43Zr1AcWi1MQueSx4VDXcFtn6t67QWXzJZgkuN7Zf/iquYumvSUtVtx
-         3khqfRA3tnWr3WrqL0QP85RCMrPCa43RyVgO4nJtSUjGBoAGBPUl/PIYey6oNgPJ83Rg
-         l6zNpOWEauPHmfmMAI7Wi+KVtZdreO18zTWRxiiBLBuKT1ca5UVDHfszX72eN+B5wHRT
-         eXrRXezgHzgyQ2Rvw8fKoVWwckKu6XJGtYVe7eHesLtWF5zimNpwFg4u6Td6BrON4tAT
-         sfU4uELOsqyVQR46U1uvZ36BNEAe9XUOopAc7vWWoHgiaod52ELkoG0x9qa47kARdB03
-         5IVg==
-X-Gm-Message-State: APjAAAVBz1QlkKTszI6Dku0MFRAf9fR1ExLD0Ip7BetXe8rRCT81dEXQ
-        AwGOz7sYlBu7c8uWGGmQT5k=
-X-Google-Smtp-Source: APXvYqxMDHpnokX5Mmv3Dv0kJCX0f2DYioVB7RYrbPHVjtWJ7/yj1LNN138aVEuAm5XrA/NnSGIeSA==
-X-Received: by 2002:a37:7b43:: with SMTP id w64mr64699250qkc.203.1577939476511;
-        Wed, 01 Jan 2020 20:31:16 -0800 (PST)
+        bh=Sb6aiHd6T3tirofdsYcXGM6uu2TNQA+PVNItyVMdtRI=;
+        b=S9YaCqn82qrDQjmUDmER9aogOeuX+E5qs/O44FqwhxgI8waYlRuxk8idGd0CLfmdfj
+         JkxCRuBz9geIHuLcUIlhquZVCVqHvpXVM1oUHJ4ZIF/dg/SbmixRuJVdWZS9Dqeb2mLj
+         BrfUR5l47u15OTA/VPu9JG2uRw334y2gmmbT20vlHQlqoQU4R42eeTVc7fSBBU6opzua
+         qOXLlJu35tCngoOtUJ4nthQzmdN6H01TmplItyC8hjlEiwlSMZCWX604XAqnSbLqDSME
+         20gp9nDvMGJvL0SsLNhaBu9B3OhG4HOzssrx40CDxgC4LXlVLeOgZz1rrIFYkigGkFiT
+         +T6w==
+X-Gm-Message-State: APjAAAWBIiqePseADDHqcDZAykFTh4pWnsQzHRE8vbSmMMTPBuABUHoy
+        xFgZnRJEiNmQv4FfZo/HVMU=
+X-Google-Smtp-Source: APXvYqyjAKZdISaNUUi8ABbnG6IZB7ir8GCHDMAyKiZblZcjtBPn8tinrg0ndGFj+sq+sHF+y7+UUA==
+X-Received: by 2002:a0c:b025:: with SMTP id k34mr61244900qvc.170.1577939477900;
+        Wed, 01 Jan 2020 20:31:17 -0800 (PST)
 Received: from yury-thinkpad.dhcp.amer.jpmchase.net ([2604:2000:4185:2300:b196:4884:e960:2cb8])
-        by smtp.gmail.com with ESMTPSA id 16sm14876857qkj.77.2020.01.01.20.31.15
+        by smtp.gmail.com with ESMTPSA id 16sm14876857qkj.77.2020.01.01.20.31.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jan 2020 20:31:16 -0800 (PST)
+        Wed, 01 Jan 2020 20:31:17 -0800 (PST)
 From:   Yury Norov <yury.norov@gmail.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -65,9 +65,9 @@ To:     Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org
 Cc:     Yury Norov <yury.norov@gmail.com>, Jens Axboe <axboe@kernel.dk>,
         Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4/7] lib: make bitmap_parse_user a wrapper on bitmap_parse
-Date:   Wed,  1 Jan 2020 20:30:28 -0800
-Message-Id: <20200102043031.30357-5-yury.norov@gmail.com>
+Subject: [PATCH 5/7] lib: rework bitmap_parse()
+Date:   Wed,  1 Jan 2020 20:30:29 -0800
+Message-Id: <20200102043031.30357-6-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200102043031.30357-1-yury.norov@gmail.com>
 References: <20200102043031.30357-1-yury.norov@gmail.com>
@@ -80,56 +80,258 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From Yury Norov <yury.norov@gmail.com>
 
-Currently we parse user data byte after byte which leads to
-overcomplicating of parsing algorithm. There are no performance
-critical users of bitmap_parse_user(), and so we can duplicate
-user data to kernel buffer and simply call bitmap_parselist().
-This rework lets us unify and simplify bitmap_parse() and
-bitmap_parse_user(), which is done in the following patch.
+bitmap_parse() is ineffective and full of opaque variables and opencoded
+parts. It leads to hard understanding and usage of it. This rework
+includes:
+ - remove bitmap_shift_left() call from the cycle. Now it makes the
+   complexity of the algorithm as O(nbits^2). In the suggested approach
+   the input string is parsed in reverse direction, so no shifts needed;
+ - relax requirement on a single comma and no white spaces between chunks.
+   It is considered useful in scripting, and it aligns with
+   bitmap_parselist();
+ - split bitmap_parse() to small readable helpers;
+ - make an explicit calculation of the end of input line at the
+   beginning, so users of the bitmap_parse() won't bother doing this.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Yury Norov <yury.norov@gmail.com>
 ---
- lib/bitmap.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ include/linux/bitmap.h |   8 +-
+ lib/bitmap.c           | 175 +++++++++++++++++++----------------------
+ 2 files changed, 84 insertions(+), 99 deletions(-)
 
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index ff335b22f23c7..65994b9f68f33 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -182,7 +182,7 @@ bitmap_find_next_zero_area(unsigned long *map,
+ 					      align_mask, 0);
+ }
+ 
+-extern int __bitmap_parse(const char *buf, unsigned int buflen, int is_user,
++extern int bitmap_parse(const char *buf, unsigned int buflen,
+ 			unsigned long *dst, int nbits);
+ extern int bitmap_parse_user(const char __user *ubuf, unsigned int ulen,
+ 			unsigned long *dst, int nbits);
+@@ -450,12 +450,6 @@ static inline void bitmap_replace(unsigned long *dst,
+ 		__bitmap_replace(dst, old, new, mask, nbits);
+ }
+ 
+-static inline int bitmap_parse(const char *buf, unsigned int buflen,
+-			unsigned long *maskp, int nmaskbits)
+-{
+-	return __bitmap_parse(buf, buflen, 0, maskp, nmaskbits);
+-}
+-
+ /**
+  * BITMAP_FROM_U64() - Represent u64 value in the format suitable for bitmap.
+  * @n: u64 value
 diff --git a/lib/bitmap.c b/lib/bitmap.c
-index 4250519d7d1c5..b9ac2d42b99e1 100644
+index b9ac2d42b99e1..5d0acd43a9410 100644
 --- a/lib/bitmap.c
 +++ b/lib/bitmap.c
-@@ -464,22 +464,22 @@ EXPORT_SYMBOL(__bitmap_parse);
-  *    then it must be terminated with a \0.
-  * @maskp: pointer to bitmap array that will contain result.
-  * @nmaskbits: size of bitmap, in bits.
-- *
-- * Wrapper for __bitmap_parse(), providing it with user buffer.
-- *
-- * We cannot have this as an inline function in bitmap.h because it needs
-- * linux/uaccess.h to get the access_ok() declaration and this causes
-- * cyclic dependencies.
+@@ -365,97 +365,6 @@ EXPORT_SYMBOL(bitmap_find_next_zero_area_off);
+  * second version by Paul Jackson, third by Joe Korty.
   */
- int bitmap_parse_user(const char __user *ubuf,
- 			unsigned int ulen, unsigned long *maskp,
- 			int nmaskbits)
- {
--	if (!access_ok(ubuf, ulen))
--		return -EFAULT;
--	return __bitmap_parse((const char __force *)ubuf,
--				ulen, 1, maskp, nmaskbits);
-+	char *buf;
-+	int ret;
  
-+	buf = memdup_user_nul(ubuf, ulen);
-+	if (IS_ERR(buf))
-+		return PTR_ERR(buf);
-+
-+	ret = bitmap_parse(buf, ulen, maskp, nmaskbits);
-+
-+	kfree(buf);
-+	return ret;
+-#define CHUNKSZ				32
+-#define nbits_to_hold_value(val)	fls(val)
+-#define BASEDEC 10		/* fancier cpuset lists input in decimal */
+-
+-/**
+- * __bitmap_parse - convert an ASCII hex string into a bitmap.
+- * @buf: pointer to buffer containing string.
+- * @buflen: buffer size in bytes.  If string is smaller than this
+- *    then it must be terminated with a \0.
+- * @is_user: location of buffer, 0 indicates kernel space
+- * @maskp: pointer to bitmap array that will contain result.
+- * @nmaskbits: size of bitmap, in bits.
+- *
+- * Commas group hex digits into chunks.  Each chunk defines exactly 32
+- * bits of the resultant bitmask.  No chunk may specify a value larger
+- * than 32 bits (%-EOVERFLOW), and if a chunk specifies a smaller value
+- * then leading 0-bits are prepended.  %-EINVAL is returned for illegal
+- * characters and for grouping errors such as "1,,5", ",44", "," and "".
+- * Leading and trailing whitespace accepted, but not embedded whitespace.
+- */
+-int __bitmap_parse(const char *buf, unsigned int buflen,
+-		int is_user, unsigned long *maskp,
+-		int nmaskbits)
+-{
+-	int c, old_c, totaldigits, ndigits, nchunks, nbits;
+-	u32 chunk;
+-	const char __user __force *ubuf = (const char __user __force *)buf;
+-
+-	bitmap_zero(maskp, nmaskbits);
+-
+-	nchunks = nbits = totaldigits = c = 0;
+-	do {
+-		chunk = 0;
+-		ndigits = totaldigits;
+-
+-		/* Get the next chunk of the bitmap */
+-		while (buflen) {
+-			old_c = c;
+-			if (is_user) {
+-				if (__get_user(c, ubuf++))
+-					return -EFAULT;
+-			}
+-			else
+-				c = *buf++;
+-			buflen--;
+-			if (isspace(c))
+-				continue;
+-
+-			/*
+-			 * If the last character was a space and the current
+-			 * character isn't '\0', we've got embedded whitespace.
+-			 * This is a no-no, so throw an error.
+-			 */
+-			if (totaldigits && c && isspace(old_c))
+-				return -EINVAL;
+-
+-			/* A '\0' or a ',' signal the end of the chunk */
+-			if (c == '\0' || c == ',')
+-				break;
+-
+-			if (!isxdigit(c))
+-				return -EINVAL;
+-
+-			/*
+-			 * Make sure there are at least 4 free bits in 'chunk'.
+-			 * If not, this hexdigit will overflow 'chunk', so
+-			 * throw an error.
+-			 */
+-			if (chunk & ~((1UL << (CHUNKSZ - 4)) - 1))
+-				return -EOVERFLOW;
+-
+-			chunk = (chunk << 4) | hex_to_bin(c);
+-			totaldigits++;
+-		}
+-		if (ndigits == totaldigits)
+-			return -EINVAL;
+-		if (nchunks == 0 && chunk == 0)
+-			continue;
+-
+-		__bitmap_shift_left(maskp, maskp, CHUNKSZ, nmaskbits);
+-		*maskp |= chunk;
+-		nchunks++;
+-		nbits += (nchunks == 1) ? nbits_to_hold_value(chunk) : CHUNKSZ;
+-		if (nbits > nmaskbits)
+-			return -EOVERFLOW;
+-	} while (buflen && c == ',');
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(__bitmap_parse);
+-
+ /**
+  * bitmap_parse_user - convert an ASCII hex string in a user buffer into a bitmap
+  *
+@@ -476,7 +385,7 @@ int bitmap_parse_user(const char __user *ubuf,
+ 	if (IS_ERR(buf))
+ 		return PTR_ERR(buf);
+ 
+-	ret = bitmap_parse(buf, ulen, maskp, nmaskbits);
++	ret = bitmap_parse(buf, UINT_MAX, maskp, nmaskbits);
+ 
+ 	kfree(buf);
+ 	return ret;
+@@ -587,6 +496,14 @@ static const char *bitmap_find_region(const char *str)
+ 	return end_of_str(*str) ? NULL : str;
  }
- EXPORT_SYMBOL(bitmap_parse_user);
  
++static const char *bitmap_find_region_reverse(const char *start, const char *end)
++{
++	while (start <= end && __end_of_region(*end))
++		end--;
++
++	return end;
++}
++
+ static const char *bitmap_parse_region(const char *str, struct region *r)
+ {
+ 	str = bitmap_getnum(str, &r->start);
+@@ -710,6 +627,80 @@ int bitmap_parselist_user(const char __user *ubuf,
+ }
+ EXPORT_SYMBOL(bitmap_parselist_user);
+ 
++static const char *bitmap_get_x32_reverse(const char *start,
++					const char *end, u32 *num)
++{
++	u32 ret = 0;
++	int c, i;
++
++	for (i = 0; i < 32; i += 4) {
++		c = hex_to_bin(*end--);
++		if (c < 0)
++			return ERR_PTR(-EINVAL);
++
++		ret |= c << i;
++
++		if (start > end || __end_of_region(*end))
++			goto out;
++	}
++
++	if (hex_to_bin(*end--) >= 0)
++		return ERR_PTR(-EOVERFLOW);
++out:
++	*num = ret;
++	return end;
++}
++
++/**
++ * bitmap_parse - convert an ASCII hex string into a bitmap.
++ * @start: pointer to buffer containing string.
++ * @buflen: buffer size in bytes.  If string is smaller than this
++ *    then it must be terminated with a \0 or \n. In that case,
++ *    UINT_MAX may be provided instead of string length.
++ * @maskp: pointer to bitmap array that will contain result.
++ * @nmaskbits: size of bitmap, in bits.
++ *
++ * Commas group hex digits into chunks.  Each chunk defines exactly 32
++ * bits of the resultant bitmask.  No chunk may specify a value larger
++ * than 32 bits (%-EOVERFLOW), and if a chunk specifies a smaller value
++ * then leading 0-bits are prepended.  %-EINVAL is returned for illegal
++ * characters. Grouping such as "1,,5", ",44", "," or "" is allowed.
++ * Leading, embedded and trailing whitespace accepted.
++ */
++int bitmap_parse(const char *start, unsigned int buflen,
++		unsigned long *maskp, int nmaskbits)
++{
++	const char *end = strnchrnul(start, buflen, '\n') - 1;
++	int chunks = BITS_TO_U32(nmaskbits);
++	u32 *bitmap = (u32 *)maskp;
++	int unset_bit;
++
++	while (1) {
++		end = bitmap_find_region_reverse(start, end);
++		if (start > end)
++			break;
++
++		if (!chunks--)
++			return -EOVERFLOW;
++
++		end = bitmap_get_x32_reverse(start, end, bitmap++);
++		if (IS_ERR(end))
++			return PTR_ERR(end);
++	}
++
++	unset_bit = (BITS_TO_U32(nmaskbits) - chunks) * 32;
++	if (unset_bit < nmaskbits) {
++		bitmap_clear(maskp, unset_bit, nmaskbits - unset_bit);
++		return 0;
++	}
++
++	if (find_next_bit(maskp, unset_bit, nmaskbits) != unset_bit)
++		return -EOVERFLOW;
++
++	return 0;
++}
++EXPORT_SYMBOL(bitmap_parse);
++
+ 
+ #ifdef CONFIG_NUMA
+ /**
 -- 
 2.20.1
 
