@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C16512E44B
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 10:16:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44B2412E451
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 10:17:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbgABJQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 04:16:16 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42348 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727801AbgABJQP (ORCPT
+        id S1727945AbgABJRY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 04:17:24 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51623 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727885AbgABJRX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 04:16:15 -0500
-Received: by mail-wr1-f65.google.com with SMTP id q6so38509771wro.9
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 01:16:14 -0800 (PST)
+        Thu, 2 Jan 2020 04:17:23 -0500
+Received: by mail-wm1-f67.google.com with SMTP id d73so5016278wmd.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 01:17:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=6a8Lf8iEQGPGso4QNX6qUnH52YiLw9fw+hSHtKVe5Q8=;
-        b=D/BhNFU6bkcHXvEEINUxmv5FYMGVJ1xnqDnkjQKk7Psk38x8ZeFVyul9+U+jpd1eSP
-         DxvMkMuhFGPsr2bguS5sbWEVvTagxv2BVzUbBhBbrrdyWk9xlc8tg3D3q2X7UFR+mwKN
-         GcAsYJtTgJU65WZgNmIIt1F79AXFFpX9hW814XSMl9le+PMU5d60T6mviFe/KlEv9DLc
-         vGkMkDKBZGJPQGsq68gzWbOkhr1331JdL4w9uJLRmChkAHHnw41iy/k6wKJ4iKH6tAQ/
-         OeoTPcgC7qslPI4dGafciOxDND6ibxP83RDR6OWnZvq/XfZfKyzIMb6TpoOakUdfYbIt
-         Yg1g==
+        bh=P1yWpMNEaxwfIBhRDW7wOP3v2KrBiS92A23C5dUv0dM=;
+        b=y81PQg98Hdora/vXrikMhof4CFV0BFU5ILO38gK/0YInu2e8p2/0GsezmrVF+0Xxiw
+         AWIIU1SGy9e5WxiOzlTVBcNub5ufgG1fgT4WdFj2hOmEpwAH/Z4fwZZN3N1oFHPImDJa
+         VbKZLJNzyHk7bdq11OWQiEWqsN5N1LiYr1ZlruexAa2RuvJk8o/nM7s2gZ+lu8Q/HpiW
+         r6LNzP9nL95K31tHZ9pxbI9OxFUVU7xhk1nOUFV/tDc6DDu/yy7Ub4x3GVnz2gG69IWr
+         OHxItQmS1mu42rmxOQip7QiSaqGqdC1NeuE2UqOn4Zbl1UCC1lwaDIyrASe9uJmo0dE8
+         GesA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=6a8Lf8iEQGPGso4QNX6qUnH52YiLw9fw+hSHtKVe5Q8=;
-        b=oEOIPo3SbcPcdbGWQ8eXJJMxFjiUtEQMNQFSYn647OmkT8UWPrr4vBknLfgyEnQMLm
-         H+G05kK+NB9NAYx25ILOTDVSTFKJA8eLq/84aXCjb2Iskzs/SFj22fmcoHrqpJ5IAC2T
-         yMlOPKbRZ4kR5opgOTMluRSSYHRtsogNY2HYLRvqapkcdyL2Ku++AVSW+W7DgL+YRWgn
-         k1OYjP0ZTSHggQW27DM5cjaAK3da5OZSvAMAre5vHvLtTp4h+gzdwxOeMHB/FvMmsx9e
-         zPYaj5FyZJuhk6/gax1YiCSBDgI2ZCtRtfhpRxoFc+9SBT++72wL6LyABJaDEER3WrTS
-         aAhw==
-X-Gm-Message-State: APjAAAXxWA+uFYzLfOVYXD1Q1B1tsNC1D6hbiWM9xp9ebQYbgUWPcrLa
-        3CLPW1JNQH9iIK+IEqgubGE47w==
-X-Google-Smtp-Source: APXvYqybG2Qh4sWG7qTZyUUPWfXvX/S5vD0yRLklxHqM3YdDWd5j3iodlFA6Zg/JlnxNGZ3VMUXiHQ==
-X-Received: by 2002:adf:ea8a:: with SMTP id s10mr79641067wrm.278.1577956573505;
-        Thu, 02 Jan 2020 01:16:13 -0800 (PST)
+        bh=P1yWpMNEaxwfIBhRDW7wOP3v2KrBiS92A23C5dUv0dM=;
+        b=U1TQ4QKahShHCua3ku8NDsVG1FkuU1Wn5Z0n/v7rmolM2xnzrtpfug0QPbBKT0+gU/
+         YMkaCNGUFZC+3op4BaG5JVwkDTLKB3rAdLvRwkxvobotnP7utbB8w9eE1wKY/3uUlB07
+         qEdRdCQayspbjI2MIQLeywJ5Wzwb0i5bHEd//u2ATCo0psv/ziK2px+A74VLTPZ4jJ3Z
+         qbFTBHC6fDFYoGoPkVh9Bon3FI/CgBLBpg8MF7kBo5zrGGutm6w3sSowCDkBKHD1vuZY
+         LlJZbuXUU1AnRxdSHR/ttOqdGwhQ+XzhRZuWv10A7XrdYINhgbJyM94keKILg6X+nYrx
+         rdgw==
+X-Gm-Message-State: APjAAAUNs7FHaQVQBsmzokMnmLQzF9XyryrrAq0bwi7b1Jn/HEo7ryO3
+        XgcFaun/Vz3QoKQh2ksTA2PgwmVIaTU=
+X-Google-Smtp-Source: APXvYqyIHfgXCJU+HRibS9maCaPQRnzOAHtBic0biheyfooYAqMbVmoEhPZbjRBEN+HP4RqHEW4DKQ==
+X-Received: by 2002:a7b:cfc9:: with SMTP id f9mr14013277wmm.1.1577956641913;
+        Thu, 02 Jan 2020 01:17:21 -0800 (PST)
 Received: from dell ([2.27.35.135])
-        by smtp.gmail.com with ESMTPSA id 60sm58034828wrn.86.2020.01.02.01.16.12
+        by smtp.gmail.com with ESMTPSA id s3sm8055843wmh.25.2020.01.02.01.17.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 01:16:12 -0800 (PST)
-Date:   Thu, 2 Jan 2020 09:16:25 +0000
+        Thu, 02 Jan 2020 01:17:21 -0800 (PST)
+Date:   Thu, 2 Jan 2020 09:17:33 +0000
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -60,16 +60,16 @@ Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 27/37] mfd: intel_soc_pmic_bxtwc: Convert to use new SCU
+Subject: Re: [PATCH 28/37] mfd: intel_soc_pmic_mrfld: Convert to use new SCU
  IPC API
-Message-ID: <20200102091625.GE22390@dell>
+Message-ID: <20200102091733.GF22390@dell>
 References: <20191223141716.13727-1-mika.westerberg@linux.intel.com>
- <20191223141716.13727-28-mika.westerberg@linux.intel.com>
+ <20191223141716.13727-29-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191223141716.13727-28-mika.westerberg@linux.intel.com>
+In-Reply-To: <20191223141716.13727-29-mika.westerberg@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -78,18 +78,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, 23 Dec 2019, Mika Westerberg wrote:
 
-> Convert the Intel Broxton Whiskey Cover PMIC driver to use the new SCU
-> IPC API. This allows us to get rid of the PMC IPC implementation which
-> is now covered in SCU IPC driver.
-> 
-> Also move PMIC specific IPC message constants to the PMIC driver from
-> the intel_pmc_ipc.h header.
+> This converts the Intel Merrifield PMIC driver over the new SCU IPC API
+> where the SCU IPC instance is passed to the functions.
 > 
 > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 > ---
->  arch/x86/include/asm/intel_pmc_ipc.h |  3 ---
->  drivers/mfd/intel_soc_pmic_bxtwc.c   | 22 +++++++++++++++-------
->  2 files changed, 15 insertions(+), 10 deletions(-)
+>  drivers/mfd/intel_soc_pmic_mrfld.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
 
 For my own reference:
   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
