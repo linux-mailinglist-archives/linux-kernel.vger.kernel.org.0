@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4FF612EEC1
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:41:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C63B12EFFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:50:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731215AbgABWlE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:41:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50572 "EHLO mail.kernel.org"
+        id S1729777AbgABWuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:50:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730607AbgABWhn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:37:43 -0500
+        id S1727937AbgABW0C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:26:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02BAC21835;
-        Thu,  2 Jan 2020 22:37:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D229721835;
+        Thu,  2 Jan 2020 22:26:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004662;
-        bh=K6HirVqhJpK5VtHANmdbKAC4jtJhKUL1RIZrVexjqaM=;
+        s=default; t=1578003961;
+        bh=ZE+Nkej9SxrPmkPD5oIex74WB1Y5UOZ//9qw5V7PLbo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mOBFSwH04kX+iaK163lPG8pff8QoXHTnvtstHAZIglr1cBFEdSYa6yNWcKd7NG5dA
-         +X6+3U0UIpZZ6kUpC1YkV7W4DtX1UGxteBDzNbvqVwt3wi3droX+NtCdrYqMxsEvMi
-         A3+QNzIYTFM1EjbTakBE5DXUVbfaVxSzHqdCGo7g=
+        b=JoQXGzv2sBBLdwcA/sl6XH1+D8AAloxT8ov98YkVHux0ngooX6La8G2eHSs1kEhqR
+         WMKlmpHXRKgBGqQP2gUz3WYSnnJgLKcMmow7gs1H/Gh76pxAqGov+A7EEkoOh9j+QJ
+         yaez2/qtMaGAKH2JigNw4BomeXE/+3RWpOfLdGuU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anthony Steinhauser <asteinhauser@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, David Engraf <david.engraf@sysgo.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Richard Genoud <richard.genoud@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 100/137] powerpc/security/book3s64: Report L1TF status in sysfs
-Date:   Thu,  2 Jan 2020 23:07:53 +0100
-Message-Id: <20200102220600.484272850@linuxfoundation.org>
+Subject: [PATCH 4.14 72/91] tty/serial: atmel: fix out of range clock divider handling
+Date:   Thu,  2 Jan 2020 23:07:54 +0100
+Message-Id: <20200102220446.752202515@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
+References: <20200102220356.856162165@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +45,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anthony Steinhauser <asteinhauser@google.com>
+From: David Engraf <david.engraf@sysgo.com>
 
-[ Upstream commit 8e6b6da91ac9b9ec5a925b6cb13f287a54bd547d ]
+[ Upstream commit cb47b9f8630ae3fa3f5fbd0c7003faba7abdf711 ]
 
-Some PowerPC CPUs are vulnerable to L1TF to the same extent as to
-Meltdown. It is also mitigated by flushing the L1D on privilege
-transition.
+Use MCK_DIV8 when the clock divider is > 65535. Unfortunately the mode
+register was already written thus the clock selection is ignored.
 
-Currently the sysfs gives a false negative on L1TF on CPUs that I
-verified to be vulnerable, a Power9 Talos II Boston 004e 1202, PowerNV
-T2P9D01.
+Fix by doing the baud rate calulation before setting the mode.
 
-Signed-off-by: Anthony Steinhauser <asteinhauser@google.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-[mpe: Just have cpu_show_l1tf() call cpu_show_meltdown() directly]
-Link: https://lore.kernel.org/r/20191029190759.84821-1-asteinhauser@google.com
+Fixes: 5bf5635ac170 ("tty/serial: atmel: add fractional baud rate support")
+Signed-off-by: David Engraf <david.engraf@sysgo.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Acked-by: Richard Genoud <richard.genoud@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191216085403.17050-1-david.engraf@sysgo.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/security.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/tty/serial/atmel_serial.c | 43 ++++++++++++++++---------------
+ 1 file changed, 22 insertions(+), 21 deletions(-)
 
-diff --git a/arch/powerpc/kernel/security.c b/arch/powerpc/kernel/security.c
-index 156cfe6d23b0..fc5c49046aa7 100644
---- a/arch/powerpc/kernel/security.c
-+++ b/arch/powerpc/kernel/security.c
-@@ -161,6 +161,11 @@ ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, cha
+diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+index 9ee41ba0e55b..367ce812743e 100644
+--- a/drivers/tty/serial/atmel_serial.c
++++ b/drivers/tty/serial/atmel_serial.c
+@@ -2183,27 +2183,6 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
+ 		mode |= ATMEL_US_USMODE_NORMAL;
+ 	}
  
- 	return sprintf(buf, "Vulnerable\n");
- }
+-	/* set the mode, clock divisor, parity, stop bits and data size */
+-	atmel_uart_writel(port, ATMEL_US_MR, mode);
+-
+-	/*
+-	 * when switching the mode, set the RTS line state according to the
+-	 * new mode, otherwise keep the former state
+-	 */
+-	if ((old_mode & ATMEL_US_USMODE) != (mode & ATMEL_US_USMODE)) {
+-		unsigned int rts_state;
+-
+-		if ((mode & ATMEL_US_USMODE) == ATMEL_US_USMODE_HWHS) {
+-			/* let the hardware control the RTS line */
+-			rts_state = ATMEL_US_RTSDIS;
+-		} else {
+-			/* force RTS line to low level */
+-			rts_state = ATMEL_US_RTSEN;
+-		}
+-
+-		atmel_uart_writel(port, ATMEL_US_CR, rts_state);
+-	}
+-
+ 	/*
+ 	 * Set the baud rate:
+ 	 * Fractional baudrate allows to setup output frequency more
+@@ -2229,6 +2208,28 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	quot = cd | fp << ATMEL_US_FP_OFFSET;
+ 
+ 	atmel_uart_writel(port, ATMEL_US_BRGR, quot);
 +
-+ssize_t cpu_show_l1tf(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	return cpu_show_meltdown(dev, attr, buf);
-+}
- #endif
++	/* set the mode, clock divisor, parity, stop bits and data size */
++	atmel_uart_writel(port, ATMEL_US_MR, mode);
++
++	/*
++	 * when switching the mode, set the RTS line state according to the
++	 * new mode, otherwise keep the former state
++	 */
++	if ((old_mode & ATMEL_US_USMODE) != (mode & ATMEL_US_USMODE)) {
++		unsigned int rts_state;
++
++		if ((mode & ATMEL_US_USMODE) == ATMEL_US_USMODE_HWHS) {
++			/* let the hardware control the RTS line */
++			rts_state = ATMEL_US_RTSDIS;
++		} else {
++			/* force RTS line to low level */
++			rts_state = ATMEL_US_RTSEN;
++		}
++
++		atmel_uart_writel(port, ATMEL_US_CR, rts_state);
++	}
++
+ 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
+ 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
  
- ssize_t cpu_show_spectre_v1(struct device *dev, struct device_attribute *attr, char *buf)
 -- 
 2.20.1
 
