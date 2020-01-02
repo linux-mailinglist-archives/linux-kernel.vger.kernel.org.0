@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AAAF12EC70
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:19:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1741312ECDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:22:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728455AbgABWS2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:18:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33636 "EHLO mail.kernel.org"
+        id S1728849AbgABWWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:22:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728334AbgABWSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:18:25 -0500
+        id S1729155AbgABWWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:22:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91A8821582;
-        Thu,  2 Jan 2020 22:18:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F0B020866;
+        Thu,  2 Jan 2020 22:22:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003505;
-        bh=ZRzUaS7TbHRkip6Y5V7m23bnGrNRf3b6ulStmFnU4HQ=;
+        s=default; t=1578003754;
+        bh=ZjUObq3nlAjR3r0rrLR5jrSnyaPlZhsIyeLxybNfWYA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rRYfJjzoLxqB1fED8jOqOgjS49pK67+DX4Iihb1s1J5a05oF/X5u3EKo72Lg/WK2r
-         RVm3RxYFbsJtpUDGI1TYFIiZYYHmL7t5XOpQ+Z8WCp/NrbLXSJbMVIrojJaLkb979s
-         DD0a/LVTVlvm8pOTKVfv26goh5+hQwzgyi5Le73s=
+        b=ufmMvDQuCTF36tXFwgKcmB3loatzjX/YJi5T1rAfuUkKiL+oOEY3FFvBGDIRxML+x
+         uDO6J9I9Jjoq76egckBqpQ2IARCXU9iX0I8ZCeKRcSLvaDI7NQ3xpGQ7Wig4JF2OK/
+         LOaGZ6iglbkNGkhQhfB0I3FQcOTYDVP0b8gEHPL8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefano Garzarella <sgarzare@redhat.com>,
+        stable@vger.kernel.org, Guillaume Nault <gnault@redhat.com>,
+        David Ahern <dsahern@gmail.com>,
+        Hangbin Liu <liuhangbin@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 189/191] vhost/vsock: accept only packets with the right dst_cid
-Date:   Thu,  2 Jan 2020 23:07:51 +0100
-Message-Id: <20200102215849.847621468@linuxfoundation.org>
+Subject: [PATCH 4.19 100/114] net/dst: add new function skb_dst_update_pmtu_no_confirm
+Date:   Thu,  2 Jan 2020 23:07:52 +0100
+Message-Id: <20200102220039.284323737@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefano Garzarella <sgarzare@redhat.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-[ Upstream commit 8a3cc29c316c17de590e3ff8b59f3d6cbfd37b0a ]
+[ Upstream commit 07dc35c6e3cc3c001915d05f5bf21f80a39a0970 ]
 
-When we receive a new packet from the guest, we check if the
-src_cid is correct, but we forgot to check the dst_cid.
+Add a new function skb_dst_update_pmtu_no_confirm() for callers who need
+update pmtu but should not do neighbor confirm.
 
-The host should accept only packets where dst_cid is
-equal to the host CID.
+v5: No change.
+v4: No change.
+v3: Do not remove dst_confirm_neigh, but add a new bool parameter in
+    dst_ops.update_pmtu to control whether we should do neighbor confirm.
+    Also split the big patch to small ones for each area.
+v2: Remove dst_confirm_neigh in __ip6_rt_update_pmtu.
 
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+Reviewed-by: Guillaume Nault <gnault@redhat.com>
+Acked-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vhost/vsock.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ include/net/dst.h |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/vhost/vsock.c
-+++ b/drivers/vhost/vsock.c
-@@ -437,7 +437,9 @@ static void vhost_vsock_handle_tx_kick(s
- 		virtio_transport_deliver_tap_pkt(pkt);
+--- a/include/net/dst.h
++++ b/include/net/dst.h
+@@ -530,6 +530,15 @@ static inline void skb_dst_update_pmtu(s
+ 		dst->ops->update_pmtu(dst, NULL, skb, mtu, true);
+ }
  
- 		/* Only accept correctly addressed packets */
--		if (le64_to_cpu(pkt->hdr.src_cid) == vsock->guest_cid)
-+		if (le64_to_cpu(pkt->hdr.src_cid) == vsock->guest_cid &&
-+		    le64_to_cpu(pkt->hdr.dst_cid) ==
-+		    vhost_transport_get_local_cid())
- 			virtio_transport_recv_pkt(pkt);
- 		else
- 			virtio_transport_free_pkt(pkt);
++/* update dst pmtu but not do neighbor confirm */
++static inline void skb_dst_update_pmtu_no_confirm(struct sk_buff *skb, u32 mtu)
++{
++	struct dst_entry *dst = skb_dst(skb);
++
++	if (dst && dst->ops->update_pmtu)
++		dst->ops->update_pmtu(dst, NULL, skb, mtu, false);
++}
++
+ static inline void skb_tunnel_check_pmtu(struct sk_buff *skb,
+ 					 struct dst_entry *encap_dst,
+ 					 int headroom)
 
 
