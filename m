@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30E8E12F0A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:54:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C52C12EE1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:35:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbgABWUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:20:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37316 "EHLO mail.kernel.org"
+        id S1730113AbgABWfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:35:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728053AbgABWUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:20:11 -0500
+        id S1730798AbgABWfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:35:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42AC621582;
-        Thu,  2 Jan 2020 22:20:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E9E021835;
+        Thu,  2 Jan 2020 22:35:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003610;
-        bh=BmOf4eX506gey7d/fY6qrWHZaCqMP9oFOn8fOgVOkiQ=;
+        s=default; t=1578004514;
+        bh=CHSs36IOsuxePvJczmVUO1JQ+Rru2oSd7+I9u8EX4BU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H6J/FSYmlmnfmqUnhUOVmR+CFm5ElRIZSslti9VNotY3AWZa8vnCoeJL16uwEJsPh
-         onuLbmkoUGzXQRba95FGXNfbOvvqjUvF6JRuiiyNJ84nsP42/+vk/4E3NC4gSeBdAF
-         W92xNhXMYPfzG+CAAj3sKsCZtVeNyAjjoA/bX6mA=
+        b=dxbooiLcRuG6EGJJ6JUnDol4WTAootMYpbp5NOSyOjMbe3LQ//gyF6MLK9pupBWyO
+         xotKus+w3a30zqrfXXLuOI3gzII1/M4+apK3r28BJMbe2VyAkw3VO170x8kWHLmpM/
+         YvVcmKtg1HZW3WJgL49w6LOtrAahIwv65WU6IG4s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tyrel Datwyler <tyreld@linux.ibm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 040/114] PCI: rpaphp: Correctly match ibm, my-drc-index to drc-name when using drc-info
+Subject: [PATCH 4.4 039/137] perf probe: Fix to list probe event with correct line number
 Date:   Thu,  2 Jan 2020 23:06:52 +0100
-Message-Id: <20200102220033.132193106@linuxfoundation.org>
+Message-Id: <20200102220551.880032338@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,48 +46,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tyrel Datwyler <tyreld@linux.ibm.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 4f9f2d3d7a434b7f882b72550194c9278f4a3925 ]
+[ Upstream commit 3895534dd78f0fd4d3f9e05ee52b9cdd444a743e ]
 
-The newer ibm,drc-info property is a condensed description of the old
-ibm,drc-* properties (ie. names, types, indexes, and power-domains).
-When matching a drc-index to a drc-name we need to verify that the
-index is within the start and last drc-index range and map it to a
-drc-name using the drc-name-prefix and logical index.
+Since debuginfo__find_probe_point() uses dwarf_entrypc() for finding the
+entry address of the function on which a probe is, it will fail when the
+function DIE has only ranges attribute.
 
-Fix the mapping by checking that the index is within the range of the
-current drc-info entry, and build the name from the drc-name-prefix
-concatenated with the starting drc-name-suffix value and the sequential
-index obtained by subtracting ibm,my-drc-index from this entries
-drc-start-index.
+To fix this issue, use die_entrypc() instead of dwarf_entrypc().
 
-Signed-off-by: Tyrel Datwyler <tyreld@linux.ibm.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/1573449697-5448-10-git-send-email-tyreld@linux.ibm.com
+Without this fix, perf probe -l shows incorrect offset:
+
+  # perf probe -l
+    probe:clear_tasks_mm_cpumask (on clear_tasks_mm_cpumask+18446744071579263632@work/linux/linux/kernel/cpu.c)
+    probe:clear_tasks_mm_cpumask_1 (on clear_tasks_mm_cpumask+18446744071579263752@work/linux/linux/kernel/cpu.c)
+
+With this:
+
+  # perf probe -l
+    probe:clear_tasks_mm_cpumask (on clear_tasks_mm_cpumask@work/linux/linux/kernel/cpu.c)
+    probe:clear_tasks_mm_cpumask_1 (on clear_tasks_mm_cpumask:21@work/linux/linux/kernel/cpu.c)
+
+Committer testing:
+
+Before:
+
+  [root@quaco ~]# perf probe -l
+    probe:clear_tasks_mm_cpumask (on clear_tasks_mm_cpumask+18446744071579765152@kernel/cpu.c)
+  [root@quaco ~]#
+
+After:
+
+  [root@quaco ~]# perf probe -l
+    probe:clear_tasks_mm_cpumask (on clear_tasks_mm_cpumask@kernel/cpu.c)
+  [root@quaco ~]#
+
+Fixes: 1d46ea2a6a40 ("perf probe: Fix listing incorrect line number with inline function")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: http://lore.kernel.org/lkml/157199321227.8075.14655572419136993015.stgit@devnote2
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/hotplug/rpaphp_core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ tools/perf/util/probe-finder.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
-index 7d74fe875225..a306cad70470 100644
---- a/drivers/pci/hotplug/rpaphp_core.c
-+++ b/drivers/pci/hotplug/rpaphp_core.c
-@@ -248,9 +248,10 @@ static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
- 		/* Should now know end of current entry */
- 
- 		/* Found it */
--		if (my_index <= drc.last_drc_index) {
-+		if (my_index >= drc.drc_index_start && my_index <= drc.last_drc_index) {
-+			int index = my_index - drc.drc_index_start;
- 			sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix,
--				my_index);
-+				drc.drc_name_suffix_start + index);
- 			break;
- 		}
- 	}
+diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
+index fdd87c7e3e91..dce40710b5de 100644
+--- a/tools/perf/util/probe-finder.c
++++ b/tools/perf/util/probe-finder.c
+@@ -1481,7 +1481,7 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, unsigned long addr,
+ 		/* Get function entry information */
+ 		func = basefunc = dwarf_diename(&spdie);
+ 		if (!func ||
+-		    dwarf_entrypc(&spdie, &baseaddr) != 0 ||
++		    die_entrypc(&spdie, &baseaddr) != 0 ||
+ 		    dwarf_decl_line(&spdie, &baseline) != 0) {
+ 			lineno = 0;
+ 			goto post;
+@@ -1498,7 +1498,7 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, unsigned long addr,
+ 		while (die_find_top_inlinefunc(&spdie, (Dwarf_Addr)addr,
+ 						&indie)) {
+ 			/* There is an inline function */
+-			if (dwarf_entrypc(&indie, &_addr) == 0 &&
++			if (die_entrypc(&indie, &_addr) == 0 &&
+ 			    _addr == addr) {
+ 				/*
+ 				 * addr is at an inline function entry.
 -- 
 2.20.1
 
