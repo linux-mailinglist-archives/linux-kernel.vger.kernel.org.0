@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5286412EF33
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:44:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DD7812EDED
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:33:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730212AbgABWoZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:44:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40860 "EHLO mail.kernel.org"
+        id S1730045AbgABWda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:33:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730001AbgABWdZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:33:25 -0500
+        id S1730247AbgABWd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:33:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B66A22525;
-        Thu,  2 Jan 2020 22:33:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90C3C20863;
+        Thu,  2 Jan 2020 22:33:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004404;
-        bh=byk/T/blC6QdqOmM5SuAxsXo+9ZoWInFeQF+sh/tvVo=;
+        s=default; t=1578004407;
+        bh=RhCCQf6vbMWOz/PzvEA9pf9RgyUz1RetvwxKHW8BPEw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qbaC0g5d5Xa9LFpGozYzliXV7FN+nkJJa4V0z5XmxInPijBJf/+af3XPYQJogRrJG
-         lmoqPwQh04f338wvAfR0fhM+f3+076ldNj3eWd7kCtFzq3S93z8PDRUXMv/8VbHiLu
-         TeKqQimAWhKWfOHiFNGIcDh45cuC7DIA3ljrwjlg=
+        b=fClO2FcxrotAcLFxAj9Dh4kQhBPEaRkjEQVa+PmIETzFykN0S4dHBZMMpxcPTgcnk
+         rjH139f+UFsc7hnd1fwQf79li0rRBvzpuz2SX9nyW4zEog/GExigM47a/fCm6gKCNb
+         P7OLd9LsOwkeSKdRuezOdE68htwEkiOuqSRShkgU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 165/171] mmc: sdhci: Update the tuning failed messages to pr_debug level
-Date:   Thu,  2 Jan 2020 23:08:16 +0100
-Message-Id: <20200102220609.634841607@linuxfoundation.org>
+        stable@vger.kernel.org, Netanel Belgazal <netanel@amazon.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 166/171] net: ena: fix napi handler misbehavior when the napi budget is zero
+Date:   Thu,  2 Jan 2020 23:08:17 +0100
+Message-Id: <20200102220609.736665065@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
 References: <20200102220546.960200039@linuxfoundation.org>
@@ -44,43 +43,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Faiz Abbas <faiz_abbas@ti.com>
+From: Netanel Belgazal <netanel@amazon.com>
 
-Tuning support in DDR50 speed mode was added in SD Specifications Part1
-Physical Layer Specification v3.01. Its not possible to distinguish
-between v3.00 and v3.01 from the SCR and that is why since
-commit 4324f6de6d2e ("mmc: core: enable CMD19 tuning for DDR50 mode")
-tuning failures are ignored in DDR50 speed mode.
+[ Upstream commit 24dee0c7478d1a1e00abdf5625b7f921467325dc ]
 
-Cards compatible with v3.00 don't respond to CMD19 in DDR50 and this
-error gets printed during enumeration and also if retune is triggered at
-any time during operation. Update the printk level to pr_debug so that
-these errors don't lead to false error reports.
+In netpoll the napi handler could be called with budget equal to zero.
+Current ENA napi handler doesn't take that into consideration.
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-Cc: stable@vger.kernel.org # v4.4+
-Link: https://lore.kernel.org/r/20191206114326.15856-1-faiz_abbas@ti.com
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The napi handler handles Rx packets in a do-while loop.
+Currently, the budget check happens only after decrementing the
+budget, therefore the napi handler, in rare cases, could run over
+MAX_INT packets.
+
+In addition to that, this moves all budget related variables to int
+calculation and stop mixing u32 to avoid ambiguity
+
+Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
+Signed-off-by: Netanel Belgazal <netanel@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/host/sdhci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/amazon/ena/ena_netdev.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index df306caba296..bd43dc7f4c63 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -2098,7 +2098,7 @@ static int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 		spin_lock_irqsave(&host->lock, flags);
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+@@ -1105,8 +1105,8 @@ static int ena_io_poll(struct napi_struc
+ 	struct ena_ring *tx_ring, *rx_ring;
+ 	struct ena_eth_io_intr_reg intr_reg;
  
- 		if (!host->tuning_done) {
--			pr_info(DRIVER_NAME ": Timeout waiting for Buffer Read Ready interrupt during tuning procedure, falling back to fixed sampling clock\n");
-+			pr_debug(DRIVER_NAME ": Timeout waiting for Buffer Read Ready interrupt during tuning procedure, falling back to fixed sampling clock\n");
- 			ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
- 			ctrl &= ~SDHCI_CTRL_TUNED_CLK;
- 			ctrl &= ~SDHCI_CTRL_EXEC_TUNING;
--- 
-2.20.1
-
+-	u32 tx_work_done;
+-	u32 rx_work_done;
++	int tx_work_done;
++	int rx_work_done = 0;
+ 	int tx_budget;
+ 	int napi_comp_call = 0;
+ 	int ret;
+@@ -1122,7 +1122,11 @@ static int ena_io_poll(struct napi_struc
+ 	}
+ 
+ 	tx_work_done = ena_clean_tx_irq(tx_ring, tx_budget);
+-	rx_work_done = ena_clean_rx_irq(rx_ring, napi, budget);
++	/* On netpoll the budget is zero and the handler should only clean the
++	 * tx completions.
++	 */
++	if (likely(budget))
++		rx_work_done = ena_clean_rx_irq(rx_ring, napi, budget);
+ 
+ 	if ((budget > rx_work_done) && (tx_budget > tx_work_done)) {
+ 		napi_complete_done(napi, rx_work_done);
 
 
