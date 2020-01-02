@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66E5F12EED0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:41:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEB0212EDC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:32:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731011AbgABWgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:36:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48486 "EHLO mail.kernel.org"
+        id S1730324AbgABWbn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:31:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730998AbgABWgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:36:51 -0500
+        id S1730306AbgABWbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:31:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61CDC20863;
-        Thu,  2 Jan 2020 22:36:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2FFF21835;
+        Thu,  2 Jan 2020 22:31:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004609;
-        bh=vApgtmOsQVMPYg5aH4YmE1Ihj8QEHEKdTfmokdJklfs=;
+        s=default; t=1578004299;
+        bh=jfEC8rJhOwM5jSDSuLARnYGItx2PhCRc3wve5ssCMK4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dQItHsPrbxxIzre/UHwnZEtp5VrKmRTaGLpjIlo9uy7rs+JKtuN3Uwb4Bjt/LbG1w
-         S9E7af6bqi6d/qgBornt4kmCLJthJYktSd0aA1GgfJZTKxSziLZSineey/qExhAM9P
-         1DV9xyST1NDPbG+ux83bHWWPOZrxZumogmklOZDE=
+        b=E2JVPjEf+Yi3R3pl7e1/msrzjN5+OHX5AJPnOM08FHvkxA7kcdiwjKWWSYrcshjy1
+         Xsfuq3gQ0Qcodv3j2Z5Bmgv2Jw1oOfoPaorBVLwbMmCN89VZEF11hfMur//ZHLQkz4
+         68Q6RmWZOqgb+KmdMBEslMQBXiiUGUibdQC3XS30=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 078/137] net: qlogic: Fix error paths in ql_alloc_large_buffers()
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 120/171] dma-debug: add a schedule point in debug_dma_dump_mappings()
 Date:   Thu,  2 Jan 2020 23:07:31 +0100
-Message-Id: <20200102220557.200215811@linuxfoundation.org>
+Message-Id: <20200102220603.732883004@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,76 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit cad46039e4c99812db067c8ac22a864960e7acc4 ]
+[ Upstream commit 9ff6aa027dbb98755f0265695354f2dd07c0d1ce ]
 
-ql_alloc_large_buffers() has the usual RX buffer allocation
-loop where it allocates skbs and maps them for DMA.  It also
-treats failure as a fatal error.
+debug_dma_dump_mappings() can take a lot of cpu cycles :
 
-There are (at least) three bugs in the error paths:
+lpk43:/# time wc -l /sys/kernel/debug/dma-api/dump
+163435 /sys/kernel/debug/dma-api/dump
 
-1. ql_free_large_buffers() assumes that the lrg_buf[] entry for the
-first buffer that couldn't be allocated will have .skb == NULL.
-But the qla_buf[] array is not zero-initialised.
+real	0m0.463s
+user	0m0.003s
+sys	0m0.459s
 
-2. ql_free_large_buffers() DMA-unmaps all skbs in lrg_buf[].  This is
-incorrect for the last allocated skb, if DMA mapping failed.
+Let's add a cond_resched() to avoid holding cpu for too long.
 
-3. Commit 1acb8f2a7a9f ("net: qlogic: Fix memory leak in
-ql_alloc_large_buffers") added a direct call to dev_kfree_skb_any()
-after the skb is recorded in lrg_buf[], so ql_free_large_buffers()
-will double-free it.
-
-The bugs are somewhat inter-twined, so fix them all at once:
-
-* Clear each entry in qla_buf[] before attempting to allocate
-  an skb for it.  This goes half-way to fixing bug 1.
-* Set the .skb field only after the skb is DMA-mapped.  This
-  fixes the rest.
-
-Fixes: 1357bfcf7106 ("qla3xxx: Dynamically size the rx buffer queue ...")
-Fixes: 0f8ab89e825f ("qla3xxx: Check return code from pci_map_single() ...")
-Fixes: 1acb8f2a7a9f ("net: qlogic: Fix memory leak in ql_alloc_large_buffers")
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Corentin Labbe <clabbe@baylibre.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qla3xxx.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ lib/dma-debug.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/qlogic/qla3xxx.c
-+++ b/drivers/net/ethernet/qlogic/qla3xxx.c
-@@ -2752,6 +2752,9 @@ static int ql_alloc_large_buffers(struct
- 	int err;
+diff --git a/lib/dma-debug.c b/lib/dma-debug.c
+index 8971370bfb16..4435bec55fb5 100644
+--- a/lib/dma-debug.c
++++ b/lib/dma-debug.c
+@@ -435,6 +435,7 @@ void debug_dma_dump_mappings(struct device *dev)
+ 		}
  
- 	for (i = 0; i < qdev->num_large_buffers; i++) {
-+		lrg_buf_cb = &qdev->lrg_buf[i];
-+		memset(lrg_buf_cb, 0, sizeof(struct ql_rcv_buf_cb));
-+
- 		skb = netdev_alloc_skb(qdev->ndev,
- 				       qdev->lrg_buffer_len);
- 		if (unlikely(!skb)) {
-@@ -2762,11 +2765,7 @@ static int ql_alloc_large_buffers(struct
- 			ql_free_large_buffers(qdev);
- 			return -ENOMEM;
- 		} else {
--
--			lrg_buf_cb = &qdev->lrg_buf[i];
--			memset(lrg_buf_cb, 0, sizeof(struct ql_rcv_buf_cb));
- 			lrg_buf_cb->index = i;
--			lrg_buf_cb->skb = skb;
- 			/*
- 			 * We save some space to copy the ethhdr from first
- 			 * buffer
-@@ -2788,6 +2787,7 @@ static int ql_alloc_large_buffers(struct
- 				return -ENOMEM;
- 			}
- 
-+			lrg_buf_cb->skb = skb;
- 			dma_unmap_addr_set(lrg_buf_cb, mapaddr, map);
- 			dma_unmap_len_set(lrg_buf_cb, maplen,
- 					  qdev->lrg_buffer_len -
+ 		spin_unlock_irqrestore(&bucket->lock, flags);
++		cond_resched();
+ 	}
+ }
+ EXPORT_SYMBOL(debug_dma_dump_mappings);
+-- 
+2.20.1
+
 
 
