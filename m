@@ -2,145 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53F6612EBA3
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:05:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B62B12EBD2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:12:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726039AbgABWF0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:05:26 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:36344 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbgABWF0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:05:26 -0500
-Received: by mail-oi1-f193.google.com with SMTP id c16so13646581oic.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 14:05:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=cB5/TfS+9oh4EQGMYevcc+P8vQxKX09YhHxFSkP0EAw=;
-        b=SoIvfKdmMGqdcPIIHUxkj+qmGvmf922xK7i/as2s4MZdgstK11XdL+NxHOnjodRfq8
-         WELQWdpW1UQis9xdxb8QKsbUMvOSE/mD4sAHxRJ2VFUlbyEJAkye2eypjZO564oiz1We
-         5rbnVOwCxC7jwxvm1X5PmNFpyeNCCSUD4Bs34=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cB5/TfS+9oh4EQGMYevcc+P8vQxKX09YhHxFSkP0EAw=;
-        b=oIF75XAL86XX9TwcWaaAO3f9kCkWFbLPW7117h5JlN+IijTwmV8yPi0KQyY3IRtyGX
-         qRgI2RMBtIP8r/4+vEqqf3iTNGGXDVY2lMk5ObrgLxxxsW1tYm/qcg+g4PctIrEpkFpL
-         ZyiOl1/mX+EWPgZC0GlSKamEpeM2FLYYyUjLeugw7kAMC4MITcBems+Frr8ttDKrD3qG
-         4xLpWJk5VtheEwnJh40wPZ34VAf2D6wclGcXP5DncVos+cXGMoUrphlwIGH18H8tWlLL
-         +EYnMAvkDyXpf+HrSQwKUPruEXddXms8MIxaMG/8CgInH8DH+lj54Y/+0HyuZVX5NsV2
-         Uweg==
-X-Gm-Message-State: APjAAAV3/jhmhv0vh8CT3zR1PijGLyOwObmzhuDbA7UtnBC3FEFkLGhD
-        +LhGVsHZlI79nKQRGcDiWID3iQ==
-X-Google-Smtp-Source: APXvYqy2wJQ6w5qrY2GWj4wLitQzqBVRz7s4vI4qGCXjHrYJ6k7BAB7N0GibJEPNj7V286n+kz8ucw==
-X-Received: by 2002:aca:cc08:: with SMTP id c8mr2990525oig.42.1578002725586;
-        Thu, 02 Jan 2020 14:05:25 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id u33sm15182790otb.49.2020.01.02.14.05.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 14:05:24 -0800 (PST)
-Date:   Thu, 2 Jan 2020 14:05:23 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Nikolai Merinov <n.merinov@inango-systems.com>
-Cc:     Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
-        Aleksandr Yashkin <a.yashkin@inango-systems.com>,
-        Ariel Gilman <a.gilman@inango-systems.com>
-Subject: Re: [PATCH] pstore/ram: fix for adding dumps to non-empty zone
-Message-ID: <202001021403.535C210D@keescook>
-References: <20191223133816.28155-1-n.merinov@inango-systems.com>
- <201912301227.47AE22C61@keescook>
- <1964542716.432661.1577779234764.JavaMail.zimbra@inango-systems.com>
+        id S1727521AbgABWMj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:12:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51848 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727506AbgABWMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:12:36 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CBB222314;
+        Thu,  2 Jan 2020 22:12:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578003155;
+        bh=fqZruyXarBHH1x9rF6kKDbJK5w2LbZ8EyRy8jEHQrps=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=uFxL10Wq+OOOk9O8F9cjyqEph84+T+Ym9JGC4WX2Y4KXoBT0o8Eev/3iioVsur7yM
+         hszhPzprnW4AIwJEyVHfm1/0VQdj6ql3fcpFKXfAfJv6egWIFyUYN/sQHXHSLOEPWs
+         7VqUnYJ51SGj9S1tIFjQEt0UkVBbolnMJ4FbrFB4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Jan Kara <jack@suse.cz>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Theodore Tso <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 043/191] ext4: iomap that extends beyond EOF should be marked dirty
+Date:   Thu,  2 Jan 2020 23:05:25 +0100
+Message-Id: <20200102215834.545756785@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1964542716.432661.1577779234764.JavaMail.zimbra@inango-systems.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 31, 2019 at 10:00:34AM +0200, Nikolai Merinov wrote:
-> On Dec 31, 2019, at 1:37 AM, Kees Cook keescook@chromium.org wrote:
-> > On Mon, Dec 23, 2019 at 06:38:16PM +0500, Nikolai Merinov wrote:
-> >> From: Aleksandr Yashkin <a.yashkin@inango-systems.com>
-> >> 
-> >> The circle buffer in ramoops zones has a problem for adding a new
-> >> oops dump to already an existing one.
-> >> 
-> >> The solution to this problem is to reset the circle buffer state before
-> >> writing a new oops dump.
-> > 
-> > Ah, I see it now. When the crashes wrap around, the header is written at
-> > the end of the (possibly incompletely filled) buffer, instead of at the
-> > start, since it wasn't explicitly zapped.
-> 
-> Yes, you are right. We observed this issue when we got two consecutive
-> reboots with a kernel panic: After the first reboot the pstore was able
-> to parse the saved data, but after the second we got a part of the
-> previous compressed message and the new compressed message with the
-> ramoops message header at the middle of the file. 
-> 
-> According to our analysis the same issue can occur if we get more
-> than (rampoops.mem_size/ramoops.record_size) kernel oops during work.
+From: Matthew Bobrowski <mbobrowski@mbobrowski.org>
 
-Yup, perfect. Thanks for confirming! I've tested the patches with this
-in mind and everything seems to be working correctly.
+[ Upstream commit 2e9b51d78229d5145725a481bb5464ebc0a3f9b2 ]
 
-> 
-> > 
-> > Yes, this is important; thank you for tracking this down! This bug has
-> > existed for a very long time. I'll try to find the right Fixes tag for
-> > it...
-> 
-> We would like to see this changes in the LTS kernel releases. Could you
-> please point me the manual about propagation such fixes?
+This patch addresses what Dave Chinner had discovered and fixed within
+commit: 7684e2c4384d. This changes does not have any user visible
+impact for ext4 as none of the current users of ext4_iomap_begin()
+that extend files depend on IOMAP_F_DIRTY.
 
-You don't need to do anything. :) I have already marked it for -stable,
-and it'll end up there as it makes its way through the development
-process.
+When doing a direct IO that spans the current EOF, and there are
+written blocks beyond EOF that extend beyond the current write, the
+only metadata update that needs to be done is a file size extension.
 
--Kees
+However, we don't mark such iomaps as IOMAP_F_DIRTY to indicate that
+there is IO completion metadata updates required, and hence we may
+fail to correctly sync file size extensions made in IO completion when
+O_DSYNC writes are being used and the hardware supports FUA.
 
-> 
-> > 
-> > -Kees
-> > 
-> >> Signed-off-by: Aleksandr Yashkin <a.yashkin@inango-systems.com>
-> >> Signed-off-by: Nikolay Merinov <n.merinov@inango-systems.com>
-> >> Signed-off-by: Ariel Gilman <a.gilman@inango-systems.com>
-> >> 
-> >> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-> >> index 8caff834f002..33fceadbf515 100644
-> >> --- a/fs/pstore/ram.c
-> >> +++ b/fs/pstore/ram.c
-> >> @@ -407,6 +407,13 @@ static int notrace ramoops_pstore_write(struct
-> >> pstore_record *record)
-> >>  
-> >>  	prz = cxt->dprzs[cxt->dump_write_cnt];
-> >>  
-> >> +	/* Clean the buffer from old info.
-> >> +	 * `ramoops_read_kmsg_hdr' expects to find a header in the beginning of
-> >> +	 * buffer data, so we must to reset the buffer values, in order to
-> >> +	 * ensure that the header will be written to the beginning of the buffer
-> >> +	 */
-> >> +	persistent_ram_zap(prz);
-> >> +
-> >>  	/* Build header and append record contents. */
-> >>  	hlen = ramoops_write_kmsg_hdr(prz, record);
-> >>  	if (!hlen)
-> >> --
-> >> 2.17.1
-> >> 
-> > 
-> > --
-> > Kees Cook
-> --
-> Nikolai Merinov
+Hence when setting IOMAP_F_DIRTY, we need to also take into account
+whether the iomap spans the current EOF. If it does, then we need to
+mark it dirty so that IO completion will call generic_write_sync() to
+flush the inode size update to stable storage correctly.
 
+Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
+Link: https://lore.kernel.org/r/8b43ee9ee94bee5328da56ba0909b7d2229ef150.1572949325.git.mbobrowski@mbobrowski.org
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/ext4/inode.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index b10aa115eade..8bba6cd5e870 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3532,8 +3532,14 @@ retry:
+ 			return ret;
+ 	}
+ 
++	/*
++	 * Writes that span EOF might trigger an I/O size update on completion,
++	 * so consider them to be dirty for the purposes of O_DSYNC, even if
++	 * there is no other metadata changes being made or are pending here.
++	 */
+ 	iomap->flags = 0;
+-	if (ext4_inode_datasync_dirty(inode))
++	if (ext4_inode_datasync_dirty(inode) ||
++	    offset + length > i_size_read(inode))
+ 		iomap->flags |= IOMAP_F_DIRTY;
+ 	iomap->bdev = inode->i_sb->s_bdev;
+ 	iomap->dax_dev = sbi->s_daxdev;
 -- 
-Kees Cook
+2.20.1
+
+
+
