@@ -2,90 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ED9912E4CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 11:07:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E80C712E4CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 11:08:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728019AbgABKHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 05:07:23 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55351 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727978AbgABKHX (ORCPT
+        id S1728061AbgABKIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 05:08:15 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:55724 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728011AbgABKIN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 05:07:23 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1imxNp-0007Sk-0f; Thu, 02 Jan 2020 11:07:13 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4A5CD1C2BEB;
-        Thu,  2 Jan 2020 11:07:12 +0100 (CET)
-Date:   Thu, 02 Jan 2020 10:07:12 -0000
-From:   "tip-bot2 for Anthony Steinhauser" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86/nospec: Remove unused RSB_FILL_LOOPS
-Cc:     Anthony Steinhauser <asteinhauser@google.com>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
+        Thu, 2 Jan 2020 05:08:13 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R261e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TmbxjSH_1577959688;
+Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TmbxjSH_1577959688)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 02 Jan 2020 18:08:09 +0800
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Wanpeng Li <wanpeng.li@hotmail.com>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "x86-ml" <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191226204512.24524-1-asteinhauser@google.com>
-References: <20191226204512.24524-1-asteinhauser@google.com>
-MIME-Version: 1.0
-Message-ID: <157795963208.30329.11151985298082895162.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] sched/cputime: move rq parameter in irqtime_account_process_tick
+Date:   Thu,  2 Jan 2020 18:07:52 +0800
+Message-Id: <1577959674-255537-1-git-send-email-alex.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/cleanups branch of tip:
+Every time we call irqtime_account_process_tick() is in a interrupt,
+Every caller will get and assign a parameter rq = this_rq(), This is
+unnecessary and increase the code size a little bit. Move the rq getting
+action to irqtime_account_process_tick internally is better.
 
-Commit-ID:     fae7bfcc78146057ac2730719de8d5e41de19540
-Gitweb:        https://git.kernel.org/tip/fae7bfcc78146057ac2730719de8d5e41de19540
-Author:        Anthony Steinhauser <asteinhauser@google.com>
-AuthorDate:    Thu, 26 Dec 2019 12:45:12 -08:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Thu, 02 Jan 2020 10:54:53 +01:00
+             base               with this patch
+cputime.o    578792 bytes        577888 bytes
 
-x86/nospec: Remove unused RSB_FILL_LOOPS
-
-It was never really used, see
-
-  117cc7a908c8 ("x86/retpoline: Fill return stack buffer on vmexit")
-
-  [ bp: Massage. ]
-
-Signed-off-by: Anthony Steinhauser <asteinhauser@google.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
+Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Wanpeng Li <wanpeng.li@hotmail.com>
+Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20191226204512.24524-1-asteinhauser@google.com
+Cc: linux-kernel@vger.kernel.org
 ---
- arch/x86/include/asm/nospec-branch.h | 1 -
- 1 file changed, 1 deletion(-)
+ kernel/sched/cputime.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 5c24a7b..07e95dc 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -37,7 +37,6 @@
+diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+index d43318a489f2..cff3e656566d 100644
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -355,7 +355,7 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
+  * softirq as those do not count in task exec_runtime any more.
   */
+ static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+-					 struct rq *rq, int ticks)
++					 int ticks)
+ {
+ 	u64 other, cputime = TICK_NSEC * ticks;
  
- #define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
--#define RSB_FILL_LOOPS		16	/* To avoid underflow */
+@@ -381,7 +381,7 @@ static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+ 		account_system_index_time(p, cputime, CPUTIME_SOFTIRQ);
+ 	} else if (user_tick) {
+ 		account_user_time(p, cputime);
+-	} else if (p == rq->idle) {
++	} else if (p == this_rq()->idle) {
+ 		account_idle_time(cputime);
+ 	} else if (p->flags & PF_VCPU) { /* System time or guest time */
+ 		account_guest_time(p, cputime);
+@@ -392,14 +392,12 @@ static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+ 
+ static void irqtime_account_idle_ticks(int ticks)
+ {
+-	struct rq *rq = this_rq();
+-
+-	irqtime_account_process_tick(current, 0, rq, ticks);
++	irqtime_account_process_tick(current, 0, ticks);
+ }
+ #else /* CONFIG_IRQ_TIME_ACCOUNTING */
+ static inline void irqtime_account_idle_ticks(int ticks) { }
+ static inline void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+-						struct rq *rq, int nr_ticks) { }
++						int nr_ticks) { }
+ #endif /* CONFIG_IRQ_TIME_ACCOUNTING */
  
  /*
-  * Google experimented with loop-unrolling and this turned out to be
+@@ -473,13 +471,12 @@ void thread_group_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+ void account_process_tick(struct task_struct *p, int user_tick)
+ {
+ 	u64 cputime, steal;
+-	struct rq *rq = this_rq();
+ 
+ 	if (vtime_accounting_enabled_this_cpu())
+ 		return;
+ 
+ 	if (sched_clock_irqtime) {
+-		irqtime_account_process_tick(p, user_tick, rq, 1);
++		irqtime_account_process_tick(p, user_tick, 1);
+ 		return;
+ 	}
+ 
+@@ -493,7 +490,7 @@ void account_process_tick(struct task_struct *p, int user_tick)
+ 
+ 	if (user_tick)
+ 		account_user_time(p, cputime);
+-	else if ((p != rq->idle) || (irq_count() != HARDIRQ_OFFSET))
++	else if ((p != this_rq()->idle) || (irq_count() != HARDIRQ_OFFSET))
+ 		account_system_time(p, HARDIRQ_OFFSET, cputime);
+ 	else
+ 		account_idle_time(cputime);
+-- 
+1.8.3.1
+
