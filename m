@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49C4912F127
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:58:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0A8512EF92
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:47:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728847AbgABW6f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:58:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56370 "EHLO mail.kernel.org"
+        id S1730108AbgABW36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:29:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728074AbgABWP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:15:28 -0500
+        id S1730094AbgABW3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:29:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7078322314;
-        Thu,  2 Jan 2020 22:15:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 960AB20863;
+        Thu,  2 Jan 2020 22:29:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003327;
-        bh=uj2F/Bn3vJZFnGw988xr2Yfv8vMIVr6SR5KDEcBLs9U=;
+        s=default; t=1578004191;
+        bh=gFmiTIFanl6uDAvj8mEMHH0JSvxZewluyRxF6kMjtPI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=emamTCToYjfXf+dfD0P32unsBwTkph1qk9sbERKjOEuUrwxXAthDBXhNadaBpYYbk
-         /RYxkXv0uDgqKHFi4RG0a+iADPleAvr/laqfUIKAWGyyKPuJHAhhWCO7Y0gVzL/ZAn
-         6C6APMg4JZhB0ALBKz0+QvqtCwDieKoOI/XELfcI=
+        b=OZtYQPKl7iABZgkwVSmz/rhokJVmcRzdKvflbN1cf6/ryclnBxRzFZVZhSAsWCWJ1
+         7/pfBCXfhTCC6ORBTsZrz5/8k+6Zz9bZHREFUIREZD0gXDFgqQvCRY59ayC8CnaGaL
+         tz0q5E7njmHkRwZ8GBxGlZHEqLI7jbcXu6AdndHU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maurizio Lombardi <mlombard@redhat.com>,
-        Douglas Gilbert <dgilbert@interlog.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 089/191] scsi: scsi_debug: num_tgts must be >= 0
-Date:   Thu,  2 Jan 2020 23:06:11 +0100
-Message-Id: <20200102215839.473237715@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 041/171] x86/ioapic: Prevent inconsistent state when moving an interrupt
+Date:   Thu,  2 Jan 2020 23:06:12 +0100
+Message-Id: <20200102220552.675021311@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +47,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maurizio Lombardi <mlombard@redhat.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-[ Upstream commit aa5334c4f3014940f11bf876e919c956abef4089 ]
+[ Upstream commit df4393424af3fbdcd5c404077176082a8ce459c4 ]
 
-Passing the parameter "num_tgts=-1" will start an infinite loop that
-exhausts the system memory
+There is an issue with threaded interrupts which are marked ONESHOT
+and using the fasteoi handler:
 
-Link: https://lore.kernel.org/r/20191115163727.24626-1-mlombard@redhat.com
-Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
-Acked-by: Douglas Gilbert <dgilbert@interlog.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+  if (IS_ONESHOT())
+    mask_irq();
+  ....
+  cond_unmask_eoi_irq()
+    chip->irq_eoi();
+      if (setaffinity_pending) {
+         mask_ioapic();
+         ...
+	 move_affinity();
+	 unmask_ioapic();
+      }
+
+So if setaffinity is pending the interrupt will be moved and then
+unconditionally unmasked at the ioapic level, which is wrong in two
+aspects:
+
+ 1) It should be kept masked up to the point where the threaded handler
+    finished.
+
+ 2) The physical chip state and the software masked state are inconsistent
+
+Guard both the mask and the unmask with a check for the software masked
+state. If the line is marked masked then the ioapic line is also masked, so
+both mask_ioapic() and unmask_ioapic() can be skipped safely.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sebastian Siewior <bigeasy@linutronix.de>
+Fixes: 3aa551c9b4c4 ("genirq: add threaded interrupt handler support")
+Link: https://lkml.kernel.org/r/20191017101938.321393687@linutronix.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/scsi_debug.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/x86/kernel/apic/io_apic.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index d323523f5f9d..32965ec76965 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -5263,6 +5263,11 @@ static int __init scsi_debug_init(void)
- 		return -EINVAL;
- 	}
+diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
+index 09dd95cabfc2..3401b28f1312 100644
+--- a/arch/x86/kernel/apic/io_apic.c
++++ b/arch/x86/kernel/apic/io_apic.c
+@@ -1712,9 +1712,10 @@ static bool io_apic_level_ack_pending(struct mp_chip_data *data)
  
-+	if (sdebug_num_tgts < 0) {
-+		pr_err("num_tgts must be >= 0\n");
-+		return -EINVAL;
-+	}
-+
- 	if (sdebug_guard > 1) {
- 		pr_err("guard must be 0 or 1\n");
- 		return -EINVAL;
+ static inline bool ioapic_irqd_mask(struct irq_data *data)
+ {
+-	/* If we are moving the irq we need to mask it */
++	/* If we are moving the IRQ we need to mask it */
+ 	if (unlikely(irqd_is_setaffinity_pending(data))) {
+-		mask_ioapic_irq(data);
++		if (!irqd_irq_masked(data))
++			mask_ioapic_irq(data);
+ 		return true;
+ 	}
+ 	return false;
+@@ -1751,7 +1752,9 @@ static inline void ioapic_irqd_unmask(struct irq_data *data, bool masked)
+ 		 */
+ 		if (!io_apic_level_ack_pending(data->chip_data))
+ 			irq_move_masked_irq(data);
+-		unmask_ioapic_irq(data);
++		/* If the IRQ is masked in the core, leave it: */
++		if (!irqd_irq_masked(data))
++			unmask_ioapic_irq(data);
+ 	}
+ }
+ #else
 -- 
 2.20.1
 
