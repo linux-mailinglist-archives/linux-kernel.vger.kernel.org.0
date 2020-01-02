@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEB2612EC76
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:19:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CF5E12EC77
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:19:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbgABWSq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:18:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34154 "EHLO mail.kernel.org"
+        id S1728485AbgABWSt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:18:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728362AbgABWSm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:18:42 -0500
+        id S1728474AbgABWSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:18:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5783421582;
-        Thu,  2 Jan 2020 22:18:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B055D2253D;
+        Thu,  2 Jan 2020 22:18:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003521;
-        bh=0LXVk6jEhqxeLmaZ4jPfN2Vp4to1fWueQPFCjiLDdgc=;
+        s=default; t=1578003524;
+        bh=TiQKsBH6qvvSVNlJLrbTeIM1B76u/SMbKkb611bLAdY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0kUI8KHQd5bODERye9O7mQ7hWHQyoNiOyUrh3Hdmv+Dl4xDsQA8Jf9WyAGAPzyJF0
-         3otDhMdcTQ9L73Wsj2MUIDjHQxPGzZnVi05a++vX+Z7kYHRsRs+4DXco/R8f8D5EaN
-         Gzzaj1pCq5e97ljrWdW/Viy6ErOHMwDlQglUgRgQ=
+        b=vmFkZBhdCnsUMRBhY8QlRG0RlVJTImvjV+ekEHeQd38xCKYi/65FbLKrMiHlW6Idt
+         CpYxcnlKWfm3DNaSHMz9tuc7XTbJOKCH0Af5mNKpJnkCXh5n1mfHUNJrjGDAB8FU5N
+         DXRjDDhP4f4luPFHLnK7Igj80nAaQwW74TJSqR7U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Auhagen <sven.auhagen@voleatech.de>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
         Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 5.4 176/191] net: marvell: mvpp2: phylink requires the link interrupt
-Date:   Thu,  2 Jan 2020 23:07:38 +0100
-Message-Id: <20200102215848.146757519@linuxfoundation.org>
+Subject: [PATCH 5.4 177/191] gtp: fix wrong condition in gtp_genl_dump_pdp()
+Date:   Thu,  2 Jan 2020 23:07:39 +0100
+Message-Id: <20200102215848.247649694@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
 References: <20200102215829.911231638@linuxfoundation.org>
@@ -45,51 +43,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit f3f2364ea14d1cf6bf966542f31eadcf178f1577 ]
+[ Upstream commit 94a6d9fb88df43f92d943c32b84ce398d50bf49f ]
 
-phylink requires the MAC to report when its link status changes when
-operating in inband modes.  Failure to report link status changes
-means that phylink has no idea when the link events happen, which
-results in either the network interface's carrier remaining up or
-remaining permanently down.
+gtp_genl_dump_pdp() is ->dumpit() callback of GTP module and it is used
+to dump pdp contexts. it would be re-executed because of dump packet size.
 
-For example, with a fiber module, if the interface is brought up and
-link is initially established, taking the link down at the far end
-will cut the optical power.  The SFP module's LOS asserts, we
-deactivate the link, and the network interface reports no carrier.
+If dump packet size is too big, it saves current dump pointer
+(gtp interface pointer, bucket, TID value) then it restarts dump from
+last pointer.
+Current GTP code allows adding zero TID pdp context but dump code
+ignores zero TID value. So, last dump pointer will not be found.
 
-When the far end is brought back up, the SFP module's LOS deasserts,
-but the MAC may be slower to establish link.  If this happens (which
-in my tests is a certainty) then phylink never hears that the MAC
-has established link with the far end, and the network interface is
-stuck reporting no carrier.  This means the interface is
-non-functional.
+In addition, this patch adds missing rcu_read_lock() in
+gtp_genl_dump_pdp().
 
-Avoiding the link interrupt when we have phylink is basically not
-an option, so remove the !port->phylink from the test.
-
-Fixes: 4bb043262878 ("net: mvpp2: phylink support")
-Tested-by: Sven Auhagen <sven.auhagen@voleatech.de>
-Tested-by: Antoine Tenart <antoine.tenart@bootlin.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fixes: 459aa660eb1d ("gtp: add initial driver for datapath of GPRS Tunneling Protocol (GTP-U)")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/gtp.c |   36 +++++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 17 deletions(-)
 
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -3674,7 +3674,7 @@ static int mvpp2_open(struct net_device
- 		valid = true;
- 	}
+--- a/drivers/net/gtp.c
++++ b/drivers/net/gtp.c
+@@ -38,7 +38,6 @@ struct pdp_ctx {
+ 	struct hlist_node	hlist_addr;
  
--	if (priv->hw_version == MVPP22 && port->link_irq && !port->phylink) {
-+	if (priv->hw_version == MVPP22 && port->link_irq) {
- 		err = request_irq(port->link_irq, mvpp2_link_status_isr, 0,
- 				  dev->name, port);
- 		if (err) {
+ 	union {
+-		u64		tid;
+ 		struct {
+ 			u64	tid;
+ 			u16	flow;
+@@ -1232,43 +1231,46 @@ static int gtp_genl_dump_pdp(struct sk_b
+ 				struct netlink_callback *cb)
+ {
+ 	struct gtp_dev *last_gtp = (struct gtp_dev *)cb->args[2], *gtp;
++	int i, j, bucket = cb->args[0], skip = cb->args[1];
+ 	struct net *net = sock_net(skb->sk);
+-	struct gtp_net *gn = net_generic(net, gtp_net_id);
+-	unsigned long tid = cb->args[1];
+-	int i, k = cb->args[0], ret;
+ 	struct pdp_ctx *pctx;
++	struct gtp_net *gn;
++
++	gn = net_generic(net, gtp_net_id);
+ 
+ 	if (cb->args[4])
+ 		return 0;
+ 
++	rcu_read_lock();
+ 	list_for_each_entry_rcu(gtp, &gn->gtp_dev_list, list) {
+ 		if (last_gtp && last_gtp != gtp)
+ 			continue;
+ 		else
+ 			last_gtp = NULL;
+ 
+-		for (i = k; i < gtp->hash_size; i++) {
+-			hlist_for_each_entry_rcu(pctx, &gtp->tid_hash[i], hlist_tid) {
+-				if (tid && tid != pctx->u.tid)
+-					continue;
+-				else
+-					tid = 0;
+-
+-				ret = gtp_genl_fill_info(skb,
+-							 NETLINK_CB(cb->skb).portid,
+-							 cb->nlh->nlmsg_seq,
+-							 cb->nlh->nlmsg_type, pctx);
+-				if (ret < 0) {
++		for (i = bucket; i < gtp->hash_size; i++) {
++			j = 0;
++			hlist_for_each_entry_rcu(pctx, &gtp->tid_hash[i],
++						 hlist_tid) {
++				if (j >= skip &&
++				    gtp_genl_fill_info(skb,
++					    NETLINK_CB(cb->skb).portid,
++					    cb->nlh->nlmsg_seq,
++					    cb->nlh->nlmsg_type, pctx)) {
+ 					cb->args[0] = i;
+-					cb->args[1] = pctx->u.tid;
++					cb->args[1] = j;
+ 					cb->args[2] = (unsigned long)gtp;
+ 					goto out;
+ 				}
++				j++;
+ 			}
++			skip = 0;
+ 		}
++		bucket = 0;
+ 	}
+ 	cb->args[4] = 1;
+ out:
++	rcu_read_unlock();
+ 	return skb->len;
+ }
+ 
 
 
