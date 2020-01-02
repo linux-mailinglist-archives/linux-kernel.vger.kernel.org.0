@@ -2,82 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93E1512E92D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 18:16:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C9E512E934
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 18:17:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727737AbgABRQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 12:16:31 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41465 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbgABRQb (ORCPT
+        id S1727849AbgABRQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 12:16:57 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33116 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbgABRQ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 12:16:31 -0500
-Received: by mail-qt1-f195.google.com with SMTP id k40so35106339qtk.8
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 09:16:30 -0800 (PST)
+        Thu, 2 Jan 2020 12:16:57 -0500
+Received: by mail-lj1-f194.google.com with SMTP id y6so33371782lji.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 09:16:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=kAQJ38i09v+amShK5qBU7ZxzERB9iZK7X0VJJQXO1pg=;
-        b=Q15Fp3sZh1kg8N0IVHw9ikL56635h8bswHZ2x6XjfR/BSZnwsOzAgLtXnm2d7Dg7dZ
-         bMeW/7mkX53lSUV/K1ss+mCX+VOaMu2ECxzXppX5Ms+99ZYEYLAJWSxNuIB0Ri8K6hfX
-         sKyySuuY4n/KjuL8AbnYomGeKvf6T0kG/Sri042sL7f456qFWyvmDo0aPZbzyr0wkUTm
-         Pfj4pDVpM1lpQUmzIucs1dVdc2LCtncu4V6/1h6GPFDid/oJmDab4VyY1vJ98FrRRzOJ
-         2T5gnqKsHfg18X5kRdxWRIZmxjn1u5voiXAAT8UURcECLMFjsneP9spdTBvaYjFPnQwA
-         vjjg==
+        d=alumni-chalmers-se.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=/LNnVCi/tzD+lehzuQdRtYTIPZ1Mc+i/sOxugMx3Djg=;
+        b=CgtyfogBxkPY246Nyql36knXkxj5+l3ytNlJAZm6YVRfhNsXC0pU+oIf2Yn3mYkEaV
+         OQpRC3VK3JZfJYCCN68ErKLlC0OUzRiVkVe/yU2RNLPpf7+idyGQ3OXqjtiXA6H6RTpH
+         1bffQPli4g8YHD0qIjd2wyddFuKgyUwcAHEcIn/uYMedpEcxVq8KHjx/qzKnXTi+p/SU
+         q9EmvVskXew6igu45N/V78mVP5JtsHPultL/KqoVUslvQLz9AsiIPtvuR+ZsQbaRmuNp
+         lktU3URtOQMyzxZayp9xn2KdCvry4OMKLB9typr2f9cKP2bRjwH73Zr86gdts+ZjPLiM
+         ovhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=kAQJ38i09v+amShK5qBU7ZxzERB9iZK7X0VJJQXO1pg=;
-        b=fJ3JqMl0tAOYJDH70k9bkj3yi0GPGicC3lcQrlvjIRJ/ijrrtWCRfYR9lW83yC8Rc7
-         T+UlZVXdIn3gaVrMUxoj+osdDPEMirRs0tCk73fZEBBC+5AWaIJtlTqjLgqJ5uiNwxZh
-         GBHYDTTSTvGnbu0mUF5ODJszcefSwugZbsl3Li/5jX9a7HaToWmsoi4QLmvbc6LRl8VQ
-         Mn02OwGrhNoT9yF6vACJCmReUgdrbLUtKkME/Rv5zRUYyp0ocV8gZzY30/rN/SkQjw9G
-         KoNW7oma6M8qx7IDwFYlcLdt/RXjYAnd3PiFQEbvdPdWSbiwPYwLtyXbGUcLjUHh+bYN
-         UNlg==
-X-Gm-Message-State: APjAAAUQppGY9FJNr+ina/tGB+3H79iw/BuQF7N4EVDjvBOgM8WF4o4R
-        KV/o6INW1DCUq/3GuIhF4AiKZ1s8IBU=
-X-Google-Smtp-Source: APXvYqx2n+XHSH8XLpr4h7ciLtNAaJg762Gum669jBlOte1uvG5D9FGqgFfW3TyrJUpxF28qlAc4dg==
-X-Received: by 2002:aed:3e83:: with SMTP id n3mr59731182qtf.322.1577985390236;
-        Thu, 02 Jan 2020 09:16:30 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id v7sm17304099qtk.89.2020.01.02.09.16.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Jan 2020 09:16:29 -0800 (PST)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] char/random: silence a lockdep splat with printk()
-Date:   Thu, 2 Jan 2020 12:16:28 -0500
-Message-Id: <00116950-7DFB-4F93-959A-06D63E8FF51E@lca.pw>
-References: <20200102120752.7b893b1e@gandalf.local.home>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, tytso@mit.edu,
-        Arnd Bergmann <arnd@arndb.de>, gregkh@linuxfoundation.org,
-        pmladek@suse.com, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, dan.j.williams@intel.com,
-        Peter Zijlstra <peterz@infradead.org>, longman@redhat.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200102120752.7b893b1e@gandalf.local.home>
-To:     Steven Rostedt <rostedt@goodmis.org>
-X-Mailer: iPhone Mail (17C54)
+        h=x-gm-message-state:from:to:subject:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=/LNnVCi/tzD+lehzuQdRtYTIPZ1Mc+i/sOxugMx3Djg=;
+        b=H1dTzlcdpSk+nRcvyJ0DY6KGkbZ3z/Wpsliymqi+CGHXkyRa6xyUl519jhgHXqVEUk
+         4RtMVx/3YQ+XAliux+e67KqbGSun0d3bbQvl3jewaIqeTefsYbuzkwgOJDB4fTw96Hss
+         RapMyPVd0ILIt53TljK05+PjQiwOItrkkzo5bXeP1IHtlvnVAkREplwAWK0dqD/OkB0r
+         saB+AWGT7pGCf2Z+sAlKJBT7HXpO/JzbrmJylYiYuLTDzlYtGHOlCzLCA1IsLjAtbUBv
+         BXjQ96q4MALRgtOB8BsbC2h/Sfy8S5ch1MLdYzdDo1zo2+SfQrC+aJMKAQIQ7eEshbXv
+         KhWA==
+X-Gm-Message-State: APjAAAV0I7HasVgx/JBJ8Hdn1H2YEXLuJRVrcSqcxi64F+sjOpFfZIAR
+        oj+DFv6wop1klp8n60vo7J7qMpPC1xA=
+X-Google-Smtp-Source: APXvYqySqErkRCz7LQqxqAs6BcKy0nzt2T/uUFiYLKLcX0CdVD9mkB5xmWBk2TcQUECoFDLOigm5SQ==
+X-Received: by 2002:a2e:978c:: with SMTP id y12mr43102817lji.167.1577985414925;
+        Thu, 02 Jan 2020 09:16:54 -0800 (PST)
+Received: from newline.site (h-173-139.A785.priv.bahnhof.se. [98.128.173.139])
+        by smtp.gmail.com with ESMTPSA id y10sm23042372ljm.93.2020.01.02.09.16.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 Jan 2020 09:16:54 -0800 (PST)
+From:   Arseniy Lartsev <arseniy@alumni.chalmers.se>
+To:     linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: usb-audio: add implicit feedback quirk for Yamaha P-125
+Date:   Thu, 02 Jan 2020 18:16:52 +0100
+Message-ID: <6288884.Nqi5ZcYBqQ@newline.site>
+User-Agent: KMail/5.3.2 (Linux/4.4.27-2-default; KDE/5.26.0; x86_64; ; )
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This digital piano has audio playback function with implicit feedback
+endpoint.
+
+On this device in particular, if USB host sends samples slightly too fast due
+to lack of synchronization (50% chance of that happening), playback will fail
+after a few minutes. This patch fixes the problem.
+
+The feedback endpoint is, in fact, very nearly standard-compliant, but
+set_sync_endpoint function currently uses different logic for feedback
+endpoint discovery - the patch also adds a comment to clarify this behaviour.
+
+Signed-off-by: Arseniy Lartsev <arseniy@alumni.chalmers.se>
+---
+ sound/usb/pcm.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/sound/usb/pcm.c b/sound/usb/pcm.c
+index 9c8930b..47ccea6 100644
+--- a/sound/usb/pcm.c
++++ b/sound/usb/pcm.c
+@@ -351,6 +351,10 @@ static int set_sync_ep_implicit_fb_quirk(struct 
+snd_usb_substream *subs,
+ 	case USB_ID(0x0582, 0x01d8): /* BOSS Katana */
+ 		/* BOSS Katana amplifiers do not need quirks */
+ 		return 0;
++	case USB_ID(0x0499, 0x1718): /* Yamaha P-125 digital piano */
++		ep = 0x86;
++		ifnum = 2;
++		goto add_sync_ep_from_ifnum;
+ 	}
+ 
+ 	if (attr == USB_ENDPOINT_SYNC_ASYNC &&
+@@ -427,6 +431,21 @@ static int set_sync_endpoint(struct snd_usb_substream 
+*subs,
+ 	if (err > 0)
+ 		return 0;
+ 
++	/*
++	 * Actually, what USB 2.0 standard says is this:
++	 *
++	 * A feedback endpoint (explicit or implicit) needs to be associated with
++	 * one (or more) isochronous data endpoints to which it provides feedback
++	 * service. <...> The first data endpoint and the feedback endpoint must
++	 * have the same endpoint number (and opposite direction). This ensures
++	 * that a data endpoint can uniquely identify its feedback endpoint by
++	 * searching for the first feedback endpoint that has an endpoint number
++	 * equal or less than its own endpoint number.
++	 *
++	 * However, it looks like hardware vendors never follow this except by
++	 * accident, so we may as well give up on it too. Look for a feedback
++	 * endpoint as a second endpoint on the same interface.
++	 */
+ 	if (altsd->bNumEndpoints < 2)
+ 		return 0;
+ 
+-- 
+2.10.0
 
 
-> On Jan 2, 2020, at 12:07 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
->=20
-> How would this disable lockdep early in the process? The patch is just
-> changing pr_notice() to printk_deferred() correct?
-
-Yes, I meant without this patch. Lockdep will easily generate this potential=
- deadlock warning early after boot and then disable itself.=
