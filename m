@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57AF512EED6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:41:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75BD412F02B
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:51:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731001AbgABWgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:36:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48432 "EHLO mail.kernel.org"
+        id S1729373AbgABWus (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:50:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730991AbgABWgr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:36:47 -0500
+        id S1729085AbgABWZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:25:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03FBE20863;
-        Thu,  2 Jan 2020 22:36:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D60C521835;
+        Thu,  2 Jan 2020 22:25:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004607;
-        bh=aWwajad3FFOd5MGX83mrg5evnt4kXJ3VwXi8MagwZ7E=;
+        s=default; t=1578003906;
+        bh=miIK85yk0a1NO2PCsbAMRy5Kn05eMMdekSaRaXVId84=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bY+9jX+4TQRyLrFHUHYOcTgn/wxGyO7HpgouOHjzI6fnjfcwCAYnXfnw/dKIEPW8J
-         4qfd2rX42zqCNIaJHvB03NI5D35avANdjVl4XZofgBBISTpTjQEEplIfO1WFiZ+Syf
-         BHm6+y6OMfHvLHJYmpu8BYbZYgNWfDGT6W+Jx5k4=
+        b=ULoPfYJFF1pwiSZbjml66zEX+7R/tpKzbFeul2OYZyJqc/yqfipKHjad1hCay2QB4
+         Ohst8GHvyWZwcArPIt+ROpopk26fDBnC2jTg7pIwgNk9JjWPmlWySvSQ9CjRDajkTP
+         rRKMubIWfcS0Yc1AOfQu3QeQWhmRdhjNbQYwI0Rc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 077/137] net: nfc: nci: fix a possible sleep-in-atomic-context bug in nci_uart_tty_receive()
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 48/91] perf regs: Make perf_reg_name() return "unknown" instead of NULL
 Date:   Thu,  2 Jan 2020 23:07:30 +0100
-Message-Id: <20200102220557.086899682@linuxfoundation.org>
+Message-Id: <20200102220436.551724548@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
+References: <20200102220356.856162165@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +46,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit b7ac893652cafadcf669f78452329727e4e255cc ]
+[ Upstream commit 5b596e0ff0e1852197d4c82d3314db5e43126bf7 ]
 
-The kernel may sleep while holding a spinlock.
-The function call path (from bottom to top) in Linux 4.19 is:
+To avoid breaking the build on arches where this is not wired up, at
+least all the other features should be made available and when using
+this specific routine, the "unknown" should point the user/developer to
+the need to wire this up on this particular hardware architecture.
 
-net/nfc/nci/uart.c, 349:
-	nci_skb_alloc in nci_uart_default_recv_buf
-net/nfc/nci/uart.c, 255:
-	(FUNC_PTR)nci_uart_default_recv_buf in nci_uart_tty_receive
-net/nfc/nci/uart.c, 254:
-	spin_lock in nci_uart_tty_receive
+Detected in a container mipsel debian cross build environment, where it
+shows up as:
 
-nci_skb_alloc(GFP_KERNEL) can sleep at runtime.
-(FUNC_PTR) means a function pointer is called.
+  In file included from /usr/mipsel-linux-gnu/include/stdio.h:867,
+                   from /git/linux/tools/perf/lib/include/perf/cpumap.h:6,
+                   from util/session.c:13:
+  In function 'printf',
+      inlined from 'regs_dump__printf' at util/session.c:1103:3,
+      inlined from 'regs__printf' at util/session.c:1131:2:
+  /usr/mipsel-linux-gnu/include/bits/stdio2.h:107:10: error: '%-5s' directive argument is null [-Werror=format-overflow=]
+    107 |   return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC for
-nci_skb_alloc().
+cross compiler details:
 
-This bug is found by a static analysis tool STCheck written by myself.
+  mipsel-linux-gnu-gcc (Debian 9.2.1-8) 9.2.1 20190909
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Also on mips64:
+
+  In file included from /usr/mips64-linux-gnuabi64/include/stdio.h:867,
+                   from /git/linux/tools/perf/lib/include/perf/cpumap.h:6,
+                   from util/session.c:13:
+  In function 'printf',
+      inlined from 'regs_dump__printf' at util/session.c:1103:3,
+      inlined from 'regs__printf' at util/session.c:1131:2,
+      inlined from 'regs_user__printf' at util/session.c:1139:3,
+      inlined from 'dump_sample' at util/session.c:1246:3,
+      inlined from 'machines__deliver_event' at util/session.c:1421:3:
+  /usr/mips64-linux-gnuabi64/include/bits/stdio2.h:107:10: error: '%-5s' directive argument is null [-Werror=format-overflow=]
+    107 |   return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  In function 'printf',
+      inlined from 'regs_dump__printf' at util/session.c:1103:3,
+      inlined from 'regs__printf' at util/session.c:1131:2,
+      inlined from 'regs_intr__printf' at util/session.c:1147:3,
+      inlined from 'dump_sample' at util/session.c:1249:3,
+      inlined from 'machines__deliver_event' at util/session.c:1421:3:
+  /usr/mips64-linux-gnuabi64/include/bits/stdio2.h:107:10: error: '%-5s' directive argument is null [-Werror=format-overflow=]
+    107 |   return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+cross compiler details:
+
+  mips64-linux-gnuabi64-gcc (Debian 9.2.1-8) 9.2.1 20190909
+
+Fixes: 2bcd355b71da ("perf tools: Add interface to arch registers sets")
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-95wjyv4o65nuaeweq31t7l1s@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/nfc/nci/uart.c |    2 +-
+ tools/perf/util/perf_regs.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/nfc/nci/uart.c
-+++ b/net/nfc/nci/uart.c
-@@ -355,7 +355,7 @@ static int nci_uart_default_recv_buf(str
- 			nu->rx_packet_len = -1;
- 			nu->rx_skb = nci_skb_alloc(nu->ndev,
- 						   NCI_MAX_PACKET_SIZE,
--						   GFP_KERNEL);
-+						   GFP_ATOMIC);
- 			if (!nu->rx_skb)
- 				return -ENOMEM;
- 		}
+diff --git a/tools/perf/util/perf_regs.h b/tools/perf/util/perf_regs.h
+index c9319f8d17a6..f732e3af2bd4 100644
+--- a/tools/perf/util/perf_regs.h
++++ b/tools/perf/util/perf_regs.h
+@@ -34,7 +34,7 @@ int perf_reg_value(u64 *valp, struct regs_dump *regs, int id);
+ 
+ static inline const char *perf_reg_name(int id __maybe_unused)
+ {
+-	return NULL;
++	return "unknown";
+ }
+ 
+ static inline int perf_reg_value(u64 *valp __maybe_unused,
+-- 
+2.20.1
+
 
 
