@@ -2,47 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF42112EC0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:15:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80BB212EC7C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:19:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbgABWOx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:14:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55276 "EHLO mail.kernel.org"
+        id S1728510AbgABWTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:19:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727308AbgABWOu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:14:50 -0500
+        id S1728497AbgABWS4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:18:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 312D822314;
-        Thu,  2 Jan 2020 22:14:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B455E22314;
+        Thu,  2 Jan 2020 22:18:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003289;
-        bh=Lwxj6nsXgB+xnSnB19iKOKaidKnAPgH1P00CIo2IHUY=;
+        s=default; t=1578003536;
+        bh=EAOBqE7aU4vFwt1GRkHSNLiSPr86ybJAklPz60GXpHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ivEA7iGkT/OTrxndzrdkBT8UfntQnlckw7qeW89JQQqKcaW+IJl+AeNf5e+N8tX9s
-         EA4QcNNs3GrcOFhzQ+aZTJKCRGvkJB/Kvr8wsHySTxEKUiangkYtag/I4y4FhYG5qM
-         cJW5sdX02MnQmJFFUIluYAekGT3Njfxci3XcSy1U=
+        b=MCF89ew579GG4jEBgFDU1R8MCQGln4m3aTI6cnfj0HyDut3ZqabrrptrkvfE+Gtt/
+         D6RlwXjYUbMog5//s+5qsiEIilkqRfX+VDRBTUg4oSHA/Im3EdtUPf+y79tnXT9S6d
+         94UilAlSb+dYHkDx0kyxEZCBjXyB0vnKJInz161o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kan Liang <kan.liang@intel.com>,
-        "David E. Box" <david.e.box@intel.com>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <jsmart2021@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 099/191] platform/x86: intel_pmc_core: Add Comet Lake (CML) platform support to intel_pmc_core driver
-Date:   Thu,  2 Jan 2020 23:06:21 +0100
-Message-Id: <20200102215840.565389592@linuxfoundation.org>
+Subject: [PATCH 4.19 010/114] scsi: lpfc: Fix SLI3 hba in loop mode not discovering devices
+Date:   Thu,  2 Jan 2020 23:06:22 +0100
+Message-Id: <20200102220030.180212003@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,70 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gayatri Kammela <gayatri.kammela@intel.com>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit 5406327d43edd9a171bd260f49c752d148727eaf ]
+[ Upstream commit feff8b3d84d3d9570f893b4d83e5eab6693d6a52 ]
 
-Add Comet Lake to the list of the platforms that intel_pmc_core driver
-supports for pmc_core device.
+When operating in private loop mode, PLOGI exchanges are racing and the
+driver tries to abort it's PLOGI. But the PLOGI abort ends up terminating
+the login with the other end causing the other end to abort its PLOGI as
+well. Discovery never fully completes.
 
-Just like Ice Lake, Comet Lake can also reuse all the Cannon Lake PCH
-IPs. No additional effort is needed to enable but to simply reuse them.
+Fix by disabling the PLOGI abort when private loop and letting the state
+machine play out.
 
-Cc: Mario Limonciello <mario.limonciello@dell.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Kan Liang <kan.liang@intel.com>
-Cc: David E. Box <david.e.box@intel.com>
-Cc: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Link: https://lore.kernel.org/r/20191018211832.7917-5-jsmart2021@gmail.com
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/intel_pmc_core.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/scsi/lpfc/lpfc_nportdisc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-index 6b6edc30f835..571b4754477c 100644
---- a/drivers/platform/x86/intel_pmc_core.c
-+++ b/drivers/platform/x86/intel_pmc_core.c
-@@ -160,6 +160,7 @@ static const struct pmc_reg_map spt_reg_map = {
- 
- /* Cannon Lake: PGD PFET Enable Ack Status Register(s) bitmap */
- static const struct pmc_bit_map cnp_pfear_map[] = {
-+	/* Reserved for Cannon Lake but valid for Comet Lake */
- 	{"PMC",                 BIT(0)},
- 	{"OPI-DMI",             BIT(1)},
- 	{"SPI/eSPI",            BIT(2)},
-@@ -185,7 +186,7 @@ static const struct pmc_bit_map cnp_pfear_map[] = {
- 	{"SDX",                 BIT(4)},
- 	{"SPE",                 BIT(5)},
- 	{"Fuse",                BIT(6)},
--	/* Reserved for Cannon Lake but valid for Ice Lake */
-+	/* Reserved for Cannon Lake but valid for Ice Lake and Comet Lake */
- 	{"SBR8",		BIT(7)},
- 
- 	{"CSME_FSC",            BIT(0)},
-@@ -229,7 +230,7 @@ static const struct pmc_bit_map cnp_pfear_map[] = {
- 	{"HDA_PGD4",            BIT(2)},
- 	{"HDA_PGD5",            BIT(3)},
- 	{"HDA_PGD6",            BIT(4)},
--	/* Reserved for Cannon Lake but valid for Ice Lake */
-+	/* Reserved for Cannon Lake but valid for Ice Lake and Comet Lake */
- 	{"PSF6",		BIT(5)},
- 	{"PSF7",		BIT(6)},
- 	{"PSF8",		BIT(7)},
-@@ -813,6 +814,8 @@ static const struct x86_cpu_id intel_pmc_core_ids[] = {
- 	INTEL_CPU_FAM6(CANNONLAKE_L, cnp_reg_map),
- 	INTEL_CPU_FAM6(ICELAKE_L, icl_reg_map),
- 	INTEL_CPU_FAM6(ICELAKE_NNPI, icl_reg_map),
-+	INTEL_CPU_FAM6(COMETLAKE, cnp_reg_map),
-+	INTEL_CPU_FAM6(COMETLAKE_L, cnp_reg_map),
- 	{}
- };
- 
+diff --git a/drivers/scsi/lpfc/lpfc_nportdisc.c b/drivers/scsi/lpfc/lpfc_nportdisc.c
+index bd8dc6a2243c..3dfed191252c 100644
+--- a/drivers/scsi/lpfc/lpfc_nportdisc.c
++++ b/drivers/scsi/lpfc/lpfc_nportdisc.c
+@@ -483,8 +483,10 @@ lpfc_rcv_plogi(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
+ 	 * single discovery thread, this will cause a huge delay in
+ 	 * discovery. Also this will cause multiple state machines
+ 	 * running in parallel for this node.
++	 * This only applies to a fabric environment.
+ 	 */
+-	if (ndlp->nlp_state == NLP_STE_PLOGI_ISSUE) {
++	if ((ndlp->nlp_state == NLP_STE_PLOGI_ISSUE) &&
++	    (vport->fc_flag & FC_FABRIC)) {
+ 		/* software abort outstanding PLOGI */
+ 		lpfc_els_abort(phba, ndlp);
+ 	}
 -- 
 2.20.1
 
