@@ -2,72 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27F3112E498
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 10:50:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D708312E49E
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 10:55:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728019AbgABJuq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 04:50:46 -0500
-Received: from mga06.intel.com ([134.134.136.31]:51088 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727924AbgABJup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 04:50:45 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2020 01:50:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,386,1571727600"; 
-   d="scan'208";a="224734562"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 02 Jan 2020 01:50:40 -0800
-Received: by lahna (sSMTP sendmail emulation); Thu, 02 Jan 2020 11:50:40 +0200
-Date:   Thu, 2 Jan 2020 11:50:40 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>, x86@kernel.org,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        "David E . Box" <david.e.box@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 33/37] platform/x86: intel_pmc_ipc: Move under MFD
-Message-ID: <20200102095040.GE465886@lahna.fi.intel.com>
-References: <20191223141716.13727-1-mika.westerberg@linux.intel.com>
- <20191223141716.13727-34-mika.westerberg@linux.intel.com>
- <20200102094126.GG22390@dell>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200102094126.GG22390@dell>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        id S1728005AbgABJzV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 04:55:21 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50203 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727958AbgABJzV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 04:55:21 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a5so5106470wmb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 01:55:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=5OxxgqbSH1bpU+N86be2oTUHJYZJRxIbZuHPbnm3Fbw=;
+        b=tu/x2l1kltY3l/Ho0RoApMDAt/R391Ka5kJlJg6PXwy7qAgXQH6wLIfW1KvVsmQ7yk
+         bLSE0MrtY1Aw6cO8hTN2Zgx5k2t9wW2cJtXY60vcAcTMrlkxrYBc7aWFlLQVhj/uKabP
+         lwDpKRJ0gQ8KxwxqfuINc+B9wGv6WUCkoFEEB14tXtIsVuL0HeLvEAQDmhBjC8gRwYFV
+         GNlr+yv3UdPPNEVJ/DZSAox8lDlS/FS33jjU0sC9wA6wN/V+2XwcubyVVV3vUF4hee05
+         e/SeDTHCNqX55L+wJ3kAfZml00b1z2kDAdcbFHP8Gp2tR5xjWfcwsTzMZTfH+0NsJ9X2
+         ctew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5OxxgqbSH1bpU+N86be2oTUHJYZJRxIbZuHPbnm3Fbw=;
+        b=k9O2GpjLpWnkJwCnUVDWBGjiwvDYKRkLw+yEgbVi+1uzMTnrW+GiUW/NHFg083RDaL
+         Ddd4/NUyyzZRpzgE8wXBErwu4nqlxwUmKdwVpEWFU7ltDM9ialrOJBZXIspmG9kAgkYI
+         vSr/R95VSz/e0bND29sYN0ATsE0BQlUlLK8jWoJwjbD/qGzW6L/sL4B8rlAgcj50KvFa
+         FhzrBKGz+ISL5EDwFxiStTa5YSkwaK+trK9fPgIsaodbmTnTkbYBt7XllYSq3CmlOgke
+         9kcF9j9lmOgPsESI1e3VcstXg/MAQBiksZQnTvta1kzhzQOWciTGR81xP4izbPJuwmDA
+         g+yQ==
+X-Gm-Message-State: APjAAAWbXEe4KuUQlgW/QWqBHxLCmtRw5T1YtMB+4fGutYbaigffsYrd
+        jPNk2k2EPfXktHP+4rghvVnbi2XhK3Y=
+X-Google-Smtp-Source: APXvYqyfwtUdMlicWKNWxM9IPcfk7qztALI/0mg1JSh8RuszTN1DQDP3EUhmM+D0vwjfyKH01pbxIQ==
+X-Received: by 2002:a05:600c:2c7:: with SMTP id 7mr13129541wmn.87.1577958919317;
+        Thu, 02 Jan 2020 01:55:19 -0800 (PST)
+Received: from localhost.localdomain ([197.254.95.38])
+        by smtp.googlemail.com with ESMTPSA id a1sm8131464wmj.40.2020.01.02.01.55.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jan 2020 01:55:18 -0800 (PST)
+From:   Wambui Karuga <wambui.karugax@gmail.com>
+To:     tomi.valkeinen@ti.com, airlied@linux.ie, daniel@ffwll.ch
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/omapdrm: use BUG_ON macro for error debugging.
+Date:   Thu,  2 Jan 2020 12:55:15 +0300
+Message-Id: <20200102095515.7106-1-wambui.karugax@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 02, 2020 at 09:41:26AM +0000, Lee Jones wrote:
-> On Mon, 23 Dec 2019, Mika Westerberg wrote:
-> 
-> > This driver only creates a bunch of platform devices sharing resources
-> > belonging to the PMC device. This is pretty much what MFD subsystem is
-> > for so move the driver there, renaming it to intel_pmc_bxt.c which
-> > should be more clear what it is. We convert the driver to call MFD APIs
-> > in subsequent patches.
-> 
-> Nope.  Not happening.
-> 
-> It's not appropriate to dump a 1000+ line source file into MFD without
-> a thorough review.  For starters, the 100's of lines of code which
-> support the bespoke IPC APIs should remain within the 'platform'
-> domain.
-> 
-> It's okay to move the subordinate device registration into MFD, but it
-> will need to be converted *whilst* transferring it, rather than the
-> dump/edit method currently implemented.
+Since the if statement only checks for the value of the `id` variable,
+it can be replaced by the more concise BUG_ON() macro for error
+reporting.
+Issue found using coccinelle.
 
-OK, will do so in v2.
+Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
+---
+ drivers/gpu/drm/omapdrm/dss/dispc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/omapdrm/dss/dispc.c b/drivers/gpu/drm/omapdrm/dss/dispc.c
+index 413dbdd1771e..dbb90f2d2ccd 100644
+--- a/drivers/gpu/drm/omapdrm/dss/dispc.c
++++ b/drivers/gpu/drm/omapdrm/dss/dispc.c
+@@ -393,8 +393,7 @@ static void dispc_get_reg_field(struct dispc_device *dispc,
+ 				enum dispc_feat_reg_field id,
+ 				u8 *start, u8 *end)
+ {
+-	if (id >= dispc->feat->num_reg_fields)
+-		BUG();
++	BUG_ON(id >= dispc->feat->num_reg_fields);
+ 
+ 	*start = dispc->feat->reg_fields[id].start;
+ 	*end = dispc->feat->reg_fields[id].end;
+-- 
+2.17.1
+
