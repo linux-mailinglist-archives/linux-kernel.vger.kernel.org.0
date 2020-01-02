@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B37512EBCF
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:12:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1FF812EBE2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:13:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726204AbgABWMa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:12:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51512 "EHLO mail.kernel.org"
+        id S1727282AbgABWNO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:13:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726099AbgABWMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:12:24 -0500
+        id S1727632AbgABWNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:13:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4109A21D7D;
-        Thu,  2 Jan 2020 22:12:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58532222C3;
+        Thu,  2 Jan 2020 22:13:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003143;
-        bh=YquLg6jkYweR4AX4GUs+bFzHa07A3GIOUgATF3V/FIs=;
+        s=default; t=1578003191;
+        bh=MzetPlcMtO42x1sKQ4+xlUjnOHVzATAf85E4X9kGBpI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VHaqIl2wu1VA3Q8Vy2iwuUoz18/huzNxL6yuCnuKS0d08IY6y8OkOlYnbD0vdJK7h
-         wTlHC0sbKrCu0Ekjc5EpGXpNwGLHMryEGcDRbn+Ra5a2NW+m9SizraOVu1Ze8QlneY
-         T6JLH1m2Yu8KrqX5Un9C0OsshFN096qkfQrRLXCE=
+        b=tiTqHsJNFp94oQq+H7MrzWU9XwOlfCiqcPrLJI7LogKVJ8HQV1fZq8rtzqUJWMJT1
+         k/SfcVR7WwgTIGHlbbT33PLY+eBBmEDLeAbIGcBiQGSjRyBPCONo/cAzB5K0HB93AV
+         w19fvmrGifsBzbKBvQ909RTVhAPcYUSKT9wrUR7Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 030/191] dma-mapping: Add vmap checks to dma_map_single()
-Date:   Thu,  2 Jan 2020 23:05:12 +0100
-Message-Id: <20200102215833.205799110@linuxfoundation.org>
+        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+        Peng Ma <peng.ma@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 032/191] dmaengine: fsl-qdma: Handle invalid qdma-queue0 IRQ
+Date:   Thu,  2 Jan 2020 23:05:14 +0100
+Message-Id: <20200102215833.437983302@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
 References: <20200102215829.911231638@linuxfoundation.org>
@@ -44,41 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-[ Upstream commit 4544b9f25e70eae9f70a243de0cc802aa5c8cb69 ]
+[ Upstream commit 41814c4eadf8a791b6d07114f96e7e120e59555c ]
 
-As we've seen from USB and other areas[1], we need to always do runtime
-checks for DMA operating on memory regions that might be remapped. This
-adds vmap checks (similar to those already in USB but missing in other
-places) into dma_map_single() so all callers benefit from the checking.
+platform_get_irq_byname() might return -errno which later would be cast
+to an unsigned int and used in IRQ handling code leading to usage of
+wrong ID and errors about wrong irq_base.
 
-[1] https://git.kernel.org/linus/3840c5b78803b2b6cc1ff820100a74a092c40cbb
-
-Suggested-by: Laura Abbott <labbott@redhat.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-[hch: fixed the printk message]
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Peng Ma <peng.ma@nxp.com>
+Tested-by: Peng Ma <peng.ma@nxp.com>
+Link: https://lore.kernel.org/r/20191004150826.6656-1-krzk@kernel.org
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/dma-mapping.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/dma/fsl-qdma.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 4a1c4fca475a..0aad641d662c 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -583,6 +583,10 @@ static inline unsigned long dma_get_merge_boundary(struct device *dev)
- static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
- 		size_t size, enum dma_data_direction dir, unsigned long attrs)
- {
-+	/* DMA must never operate on areas that might be remapped. */
-+	if (dev_WARN_ONCE(dev, is_vmalloc_addr(ptr),
-+			  "rejecting DMA map of vmalloc memory\n"))
-+		return DMA_MAPPING_ERROR;
- 	debug_dma_map_single(dev, ptr, size);
- 	return dma_map_page_attrs(dev, virt_to_page(ptr), offset_in_page(ptr),
- 			size, dir, attrs);
+diff --git a/drivers/dma/fsl-qdma.c b/drivers/dma/fsl-qdma.c
+index 06664fbd2d91..89792083d62c 100644
+--- a/drivers/dma/fsl-qdma.c
++++ b/drivers/dma/fsl-qdma.c
+@@ -1155,6 +1155,9 @@ static int fsl_qdma_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	fsl_qdma->irq_base = platform_get_irq_byname(pdev, "qdma-queue0");
++	if (fsl_qdma->irq_base < 0)
++		return fsl_qdma->irq_base;
++
+ 	fsl_qdma->feature = of_property_read_bool(np, "big-endian");
+ 	INIT_LIST_HEAD(&fsl_qdma->dma_dev.channels);
+ 
 -- 
 2.20.1
 
