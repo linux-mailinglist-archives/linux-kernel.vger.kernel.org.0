@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C36B12EE32
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:36:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D146812F111
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:58:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730902AbgABWgH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:36:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46434 "EHLO mail.kernel.org"
+        id S1728207AbgABWQO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:16:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729117AbgABWgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:36:02 -0500
+        id S1727382AbgABWQL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:16:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7742221D7D;
-        Thu,  2 Jan 2020 22:36:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 173C822314;
+        Thu,  2 Jan 2020 22:16:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004561;
-        bh=jHELNlAoIK3IcWq4LEou555MQCUFgaJta1CBtkCFYs4=;
+        s=default; t=1578003370;
+        bh=YDl3WfqONENFhdk9Sw5GI1d/Yw/iDOBMuN8yMZliGLM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XNL4b1ZjLgwdrVS9teKQutqVKQSiBzYa9S+6zm0BPK1nRjrpxvT9tz1VVW9rJvGj1
-         G/1KNwXVZZl9D3T1DlyaeQKqizZPk1EV3UdYfPtNH/oKN8IpAgaqR59c5/iClmzAyP
-         ciUnZMwNZW+HY5ZQh3T6RLqcVDo5Ne5/c1F+U/Ac=
+        b=xKOLlSA7k0rAV+l3rD09EyO1obXMlCILeobu8vcZZ/3Sfz1z/Rb3ZhojJsL6T6kuc
+         NcW5Tuoiwu+e1zL/7emo8XapLWjZRl+bcuqGM0dr/bwhbzEQ3ir3aln3Nik7JLpFmG
+         8mZ7LVLfReuL4G27BqrVoCnGptDvAr5u3o1H6+9c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benoit Parrot <bparrot@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Jin Yao <yao.jin@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 023/137] media: ti-vpe: vpe: fix a v4l2-compliance failure about frame sequence number
-Date:   Thu,  2 Jan 2020 23:06:36 +0100
-Message-Id: <20200102220549.755281449@linuxfoundation.org>
+Subject: [PATCH 5.4 115/191] perf diff: Use llabs() with 64-bit values
+Date:   Thu,  2 Jan 2020 23:06:37 +0100
+Message-Id: <20200102215842.157880806@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,48 +47,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benoit Parrot <bparrot@ti.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit 2444846c0dbfa4ead21b621e4300ec32c90fbf38 ]
+[ Upstream commit 98e93245113d0f5c279ef77f4a9e7d097323ad71 ]
 
-v4l2-compliance fails with this message:
+To fix these build errors on a debian mipsel cross build environment:
 
-   fail: v4l2-test-buffers.cpp(294): \
-	(int)g_sequence() < seq.last_seq + 1
-   fail: v4l2-test-buffers.cpp(740): \
-	buf.check(m2m_q, last_m2m_seq)
-   fail: v4l2-test-buffers.cpp(974): \
-	captureBufs(node, q, m2m_q, frame_count, true)
-   test MMAP: FAIL
+  builtin-diff.c: In function 'block_cycles_diff_cmp':
+  builtin-diff.c:550:6: error: absolute value function 'labs' given an argument of type 's64' {aka 'long long int'} but has parameter of type 'long int' which may cause truncation of value [-Werror=absolute-value]
+    550 |  l = labs(left->diff.cycles);
+        |      ^~~~
+  builtin-diff.c:551:6: error: absolute value function 'labs' given an argument of type 's64' {aka 'long long int'} but has parameter of type 'long int' which may cause truncation of value [-Werror=absolute-value]
+    551 |  r = labs(right->diff.cycles);
+        |      ^~~~
 
-The driver is failing to update the source frame sequence number in the
-vb2 buffer object. Only the destination frame sequence was being
-updated.
-
-This is only a reporting issue if the user space app actually cares
-about the frame sequence number. But it is fixed nonetheless.
-
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 99150a1faab2 ("perf diff: Use hists to manage basic blocks per symbol")
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-pn7szy5uw384ntjgk6zckh6a@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/ti-vpe/vpe.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/builtin-diff.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
-index ca6629ccf82d..aa2870e864f9 100644
---- a/drivers/media/platform/ti-vpe/vpe.c
-+++ b/drivers/media/platform/ti-vpe/vpe.c
-@@ -1299,6 +1299,7 @@ static irqreturn_t vpe_irq(int irq_vpe, void *data)
- 		d_vb->timecode = s_vb->timecode;
+diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
+index c37a78677955..265682296836 100644
+--- a/tools/perf/builtin-diff.c
++++ b/tools/perf/builtin-diff.c
+@@ -575,8 +575,8 @@ static int64_t block_cycles_diff_cmp(struct hist_entry *left,
+ 	if (!pairs_left && !pairs_right)
+ 		return 0;
  
- 	d_vb->sequence = ctx->sequence;
-+	s_vb->sequence = ctx->sequence;
+-	l = labs(left->diff.cycles);
+-	r = labs(right->diff.cycles);
++	l = llabs(left->diff.cycles);
++	r = llabs(right->diff.cycles);
+ 	return r - l;
+ }
  
- 	d_q_data = &ctx->q_data[Q_DATA_DST];
- 	if (d_q_data->flags & Q_DATA_INTERLACED) {
 -- 
 2.20.1
 
