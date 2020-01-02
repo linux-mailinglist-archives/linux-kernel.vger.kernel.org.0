@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6D7212ED1B
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:25:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9040712EC56
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:17:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729443AbgABWY6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:24:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49530 "EHLO mail.kernel.org"
+        id S1728358AbgABWRd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:17:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729423AbgABWYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:24:54 -0500
+        id S1728168AbgABWRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:17:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA70F20866;
-        Thu,  2 Jan 2020 22:24:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5674A24125;
+        Thu,  2 Jan 2020 22:17:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003894;
-        bh=tQMkJmGcVXYMn7aKUtS8kIoW8AssjEJpTFsjvF9lPnk=;
+        s=default; t=1578003449;
+        bh=xZQLgMunRJyO2nb4wPwgaz0jgqxLQJDMF+Jhyi9R9Ds=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kI8zPofcvJvlC2Cjf6huNu5eSI95ljpRj0LL6hy6hgY1BqhECtnnlOE1joBUH4xev
-         +0xA88BBwZQPYnpquDklIK7QsF0ijBKcG8LzTQxENd+uAXMPfFYI3sy67cHxs4/oMt
-         kkcKNVMqm2TOy5dDptJqtqE2qHreKHfzzgVkYpSk=
+        b=BQ32KbMfUJQNc2DW5OMcW7xVdI2i2UxJk41W1VMJmS8u1o3q2lf3NlHbqPzovajWp
+         li+r8/BR7X27x2E4quUInI9N0T2XPPj8zgKdPuNr0XYFgv5LW22GHWYwQVczL35mIW
+         t/uwe++I1aYwXEIg1rMewIlfJ6s/elixW2i62YyA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 44/91] scripts/kallsyms: fix definitely-lost memory leak
-Date:   Thu,  2 Jan 2020 23:07:26 +0100
-Message-Id: <20200102220434.581406182@linuxfoundation.org>
+        stable@vger.kernel.org, Amit Cohen <amitc@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 165/191] mlxsw: spectrum_router: Skip loopback RIFs during MAC validation
+Date:   Thu,  2 Jan 2020 23:07:27 +0100
+Message-Id: <20200102215847.025180886@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
-References: <20200102220356.856162165@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Amit Cohen <amitc@mellanox.com>
 
-[ Upstream commit 21915eca088dc271c970e8351290e83d938114ac ]
+[ Upstream commit 314bd842d98e1035cc40b671a71e07f48420e58f ]
 
-build_initial_tok_table() overwrites unused sym_entry to shrink the
-table size. Before the entry is overwritten, table[i].sym must be freed
-since it is malloc'ed data.
+When a router interface (RIF) is created the MAC address of the backing
+netdev is verified to have the same MSBs as existing RIFs. This is
+required in order to avoid changing existing RIF MAC addresses that all
+share the same MSBs.
 
-This fixes the 'definitely lost' report from valgrind. I ran valgrind
-against x86_64_defconfig of v5.4-rc8 kernel, and here is the summary:
+Loopback RIFs are special in this regard as they do not have a MAC
+address, given they are only used to loop packets from the overlay to
+the underlay.
 
-[Before the fix]
+Without this change, an error is returned when trying to create a RIF
+after the creation of a GRE tunnel that is represented by a loopback
+RIF. 'rif->dev->dev_addr' points to the GRE device's local IP, which
+does not share the same MSBs as physical interfaces. Adding an IP
+address to any physical interface results in:
 
-  LEAK SUMMARY:
-     definitely lost: 53,184 bytes in 2,874 blocks
+Error: mlxsw_spectrum: All router interface MAC addresses must have the
+same prefix.
 
-[After the fix]
+Fix this by skipping loopback RIFs during MAC validation.
 
-  LEAK SUMMARY:
-     definitely lost: 0 bytes in 0 blocks
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 74bc99397438 ("mlxsw: spectrum_router: Veto unsupported RIF MAC addresses")
+Signed-off-by: Amit Cohen <amitc@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- scripts/kallsyms.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-index b471022c8162..b43531899648 100644
---- a/scripts/kallsyms.c
-+++ b/scripts/kallsyms.c
-@@ -510,6 +510,8 @@ static void build_initial_tok_table(void)
- 				table[pos] = table[i];
- 			learn_symbol(table[pos].sym, table[pos].len);
- 			pos++;
-+		} else {
-+			free(table[i].sym);
- 		}
- 	}
- 	table_cnt = pos;
--- 
-2.20.1
-
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
+@@ -6985,6 +6985,9 @@ static int mlxsw_sp_router_port_check_ri
+ 
+ 	for (i = 0; i < MLXSW_CORE_RES_GET(mlxsw_sp->core, MAX_RIFS); i++) {
+ 		rif = mlxsw_sp->router->rifs[i];
++		if (rif && rif->ops &&
++		    rif->ops->type == MLXSW_SP_RIF_TYPE_IPIP_LB)
++			continue;
+ 		if (rif && rif->dev && rif->dev != dev &&
+ 		    !ether_addr_equal_masked(rif->dev->dev_addr, dev_addr,
+ 					     mlxsw_sp->mac_mask)) {
 
 
