@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 790E812F13D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:59:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41A0C12F137
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:58:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728562AbgABW7A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:59:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55512 "EHLO mail.kernel.org"
+        id S1728087AbgABW6z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:58:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727980AbgABWO7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:14:59 -0500
+        id S1728001AbgABWPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:15:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1C11227BF;
-        Thu,  2 Jan 2020 22:14:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FFA024649;
+        Thu,  2 Jan 2020 22:15:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003299;
-        bh=lIgnPbZoi6opNBmtNTCpIV0Nr11jwcGg5uA+Bg96oEQ=;
+        s=default; t=1578003301;
+        bh=KHMm0neWLyWoQiQj8vd+QVGhRlKjHrs6P4ShXL59hT0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LpR9S7hMa5lacvlprLCcNElzhFCzXVrq/hGN2QnYLIMc5u28BgcJRt2Xb7RlpmwJQ
-         M8KV/V6Q3fTYqXO7zz23RYk0HPORtZiKTLA9JlWVOMlP65ggCaOKJkHQ2aMF+vLQ4P
-         b4X4HWHa8+mP9qzeDHORK+E9+kxY8ClolZJluSHk=
+        b=EGKxekhbSARv5WzxcjyFt5SfCOFneYAJXEaU7TkH61UGUZOjtv37dnOBoLXgSvYgF
+         O5vlghkbRQMPC8YqEpPQ7K5JmryjfUO7OoPMMfvOdgLNTgej6i0bBLKd+Q71YSTO2f
+         egxElNhDp4VNx3jhWw31U3NReW7zVdTU3t7Wf+V4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Dexuan Cui <decui@microsoft.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        John Johansen <john.johansen@canonical.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 103/191] Drivers: hv: vmbus: Fix crash handler reset of Hyper-V synic
-Date:   Thu,  2 Jan 2020 23:06:25 +0100
-Message-Id: <20200102215840.970579601@linuxfoundation.org>
+Subject: [PATCH 5.4 104/191] apparmor: fix unsigned len comparison with less than zero
+Date:   Thu,  2 Jan 2020 23:06:26 +0100
+Message-Id: <20200102215841.088282465@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
 References: <20200102215829.911231638@linuxfoundation.org>
@@ -45,44 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Kelley <mikelley@microsoft.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 7a1323b5dfe44a9013a2cc56ef2973034a00bf88 ]
+[ Upstream commit 00e0590dbaec6f1bcaa36a85467d7e3497ced522 ]
 
-The crash handler calls hv_synic_cleanup() to shutdown the
-Hyper-V synthetic interrupt controller.  But if the CPU
-that calls hv_synic_cleanup() has a VMbus channel interrupt
-assigned to it (which is likely the case in smaller VM sizes),
-hv_synic_cleanup() returns an error and the synthetic
-interrupt controller isn't shutdown.  While the lack of
-being shutdown hasn't caused a known problem, it still
-should be fixed for highest reliability.
+The sanity check in macro update_for_len checks to see if len
+is less than zero, however, len is a size_t so it can never be
+less than zero, so this sanity check is a no-op.  Fix this by
+making len a ssize_t so the comparison will work and add ulen
+that is a size_t copy of len so that the min() macro won't
+throw warnings about comparing different types.
 
-So directly call hv_synic_disable_regs() instead of
-hv_synic_cleanup(), which ensures that the synic is always
-shutdown.
-
-Signed-off-by: Michael Kelley <mikelley@microsoft.com>
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Dexuan Cui <decui@microsoft.com>
+Addresses-Coverity: ("Macro compares unsigned to 0")
+Fixes: f1bd904175e8 ("apparmor: add the base fns() for domain labels")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: John Johansen <john.johansen@canonical.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hv/vmbus_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/apparmor/label.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index 53a60c81e220..05ead1735c6e 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -2308,7 +2308,7 @@ static void hv_crash_handler(struct pt_regs *regs)
- 	vmbus_connection.conn_state = DISCONNECTED;
- 	cpu = smp_processor_id();
- 	hv_stimer_cleanup(cpu);
--	hv_synic_cleanup(cpu);
-+	hv_synic_disable_regs(cpu);
- 	hyperv_cleanup();
- };
+diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+index 59f1cc2557a7..470693239e64 100644
+--- a/security/apparmor/label.c
++++ b/security/apparmor/label.c
+@@ -1458,11 +1458,13 @@ static inline bool use_label_hname(struct aa_ns *ns, struct aa_label *label,
+ /* helper macro for snprint routines */
+ #define update_for_len(total, len, size, str)	\
+ do {					\
++	size_t ulen = len;		\
++					\
+ 	AA_BUG(len < 0);		\
+-	total += len;			\
+-	len = min(len, size);		\
+-	size -= len;			\
+-	str += len;			\
++	total += ulen;			\
++	ulen = min(ulen, size);		\
++	size -= ulen;			\
++	str += ulen;			\
+ } while (0)
  
+ /**
+@@ -1597,7 +1599,7 @@ int aa_label_snxprint(char *str, size_t size, struct aa_ns *ns,
+ 	struct aa_ns *prev_ns = NULL;
+ 	struct label_it i;
+ 	int count = 0, total = 0;
+-	size_t len;
++	ssize_t len;
+ 
+ 	AA_BUG(!str && size != 0);
+ 	AA_BUG(!label);
 -- 
 2.20.1
 
