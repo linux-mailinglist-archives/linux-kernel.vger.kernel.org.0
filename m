@@ -2,42 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D59D612F060
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:53:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C66A12EF35
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:44:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbgABWWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:22:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42342 "EHLO mail.kernel.org"
+        id S1730516AbgABWdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:33:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728730AbgABWWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:22:10 -0500
+        id S1730500AbgABWdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:33:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E765222C3;
-        Thu,  2 Jan 2020 22:22:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 441C220863;
+        Thu,  2 Jan 2020 22:33:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003730;
-        bh=JB+DYKIwsZBH1KvlL773j+Eii/K1XDeuwoVDewlsQYk=;
+        s=default; t=1578004387;
+        bh=pDIoxPnNc49mPiHcOKPF/QNCiTxhOpcIMCCWMSRQfJA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v77NXwYNQLcZWK58gb4MCKJZ8izLheiid14b1BjO6+U2ApQvgb5dziAzU85Ld5SW2
-         /sdn+F9Lzim3gGxgV1ef0oqGMNhJGdjUjVpoJo2CL8+jqLRGwA3/DxEfZWFLze9zpN
-         VV6clErBp+uf1RY/XZ/iSGr+istRPBBUJsch/Zh8=
+        b=KHCmc2hLI0eZPnkrcsonzCgnMCO3y7n7BG7hqIZNLiH4Eg5Rm2Xt5N1di4ds1+JLM
+         f2lu/L3oS9xQtoD7r64rrCR4C/JVu7MRPbOCKA9t4gvF56HsaciZMYwlwvjDV+gBdM
+         FK0p+bk2T6YqIk8k6iyFw8Mo/0o2vbc5xki5m5Vo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Vladyslav Tarasiuk <vladyslavt@mellanox.com>,
-        Aya Levin <ayal@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 091/114] net/mlxfw: Fix out-of-memory error in mfa2 flash burning
+        coverity-bot <keescook+coverity-bot@chromium.org>,
+        James Bottomley <James.Bottomley@SteelEye.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-next@vger.kernel.org, "Ewan D . Milne" <emilne@redhat.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <jsmart2021@gmail.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 132/171] scsi: lpfc: fix: Coverity: lpfc_cmpl_els_rsp(): Null pointer dereferences
 Date:   Thu,  2 Jan 2020 23:07:43 +0100
-Message-Id: <20200102220038.346666896@linuxfoundation.org>
+Message-Id: <20200102220605.372228510@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,62 +50,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladyslav Tarasiuk <vladyslavt@mellanox.com>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit a5bcd72e054aabb93ddc51ed8cde36a5bfc50271 ]
+[ Upstream commit 6c6d59e0fe5b86cf273d6d744a6a9768c4ecc756 ]
 
-The burning process requires to perform internal allocations of large
-chunks of memory. This memory doesn't need to be contiguous and can be
-safely allocated by vzalloc() instead of kzalloc(). This patch changes
-such allocation to avoid possible out-of-memory failure.
+Coverity reported the following:
 
-Fixes: 410ed13cae39 ("Add the mlxfw module for Mellanox firmware flash process")
-Signed-off-by: Vladyslav Tarasiuk <vladyslavt@mellanox.com>
-Reviewed-by: Aya Levin <ayal@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Tested-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+*** CID 101747:  Null pointer dereferences  (FORWARD_NULL)
+/drivers/scsi/lpfc/lpfc_els.c: 4439 in lpfc_cmpl_els_rsp()
+4433     			kfree(mp);
+4434     		}
+4435     		mempool_free(mbox, phba->mbox_mem_pool);
+4436     	}
+4437     out:
+4438     	if (ndlp && NLP_CHK_NODE_ACT(ndlp)) {
+vvv     CID 101747:  Null pointer dereferences  (FORWARD_NULL)
+vvv     Dereferencing null pointer "shost".
+4439     		spin_lock_irq(shost->host_lock);
+4440     		ndlp->nlp_flag &= ~(NLP_ACC_REGLOGIN | NLP_RM_DFLT_RPI);
+4441     		spin_unlock_irq(shost->host_lock);
+4442
+4443     		/* If the node is not being used by another discovery thread,
+4444     		 * and we are sending a reject, we are done with it.
+
+Fix by adding a check for non-null shost in line 4438.
+The scenario when shost is set to null is when ndlp is null.
+As such, the ndlp check present was sufficient. But better safe
+than sorry so add the shost check.
+
+Reported-by: coverity-bot <keescook+coverity-bot@chromium.org>
+Addresses-Coverity-ID: 101747 ("Null pointer dereferences")
+Fixes: 2e0fef85e098 ("[SCSI] lpfc: NPIV: split ports")
+
+CC: James Bottomley <James.Bottomley@SteelEye.com>
+CC: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+CC: linux-next@vger.kernel.org
+Link: https://lore.kernel.org/r/20191111230401.12958-3-jsmart2021@gmail.com
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlxfw/mlxfw_mfa2.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/scsi/lpfc/lpfc_els.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlxfw/mlxfw_mfa2.c
-+++ b/drivers/net/ethernet/mellanox/mlxfw/mlxfw_mfa2.c
-@@ -37,6 +37,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/netlink.h>
-+#include <linux/vmalloc.h>
- #include <linux/xz.h>
- #include "mlxfw_mfa2.h"
- #include "mlxfw_mfa2_file.h"
-@@ -579,7 +580,7 @@ mlxfw_mfa2_file_component_get(const stru
- 	comp_size = be32_to_cpu(comp->size);
- 	comp_buf_size = comp_size + mlxfw_mfa2_comp_magic_len;
- 
--	comp_data = kmalloc(sizeof(*comp_data) + comp_buf_size, GFP_KERNEL);
-+	comp_data = vzalloc(sizeof(*comp_data) + comp_buf_size);
- 	if (!comp_data)
- 		return ERR_PTR(-ENOMEM);
- 	comp_data->comp.data_size = comp_size;
-@@ -601,7 +602,7 @@ mlxfw_mfa2_file_component_get(const stru
- 	comp_data->comp.data = comp_data->buff + mlxfw_mfa2_comp_magic_len;
- 	return &comp_data->comp;
- err_out:
--	kfree(comp_data);
-+	vfree(comp_data);
- 	return ERR_PTR(err);
- }
- 
-@@ -610,7 +611,7 @@ void mlxfw_mfa2_file_component_put(struc
- 	const struct mlxfw_mfa2_comp_data *comp_data;
- 
- 	comp_data = container_of(comp, struct mlxfw_mfa2_comp_data, comp);
--	kfree(comp_data);
-+	vfree(comp_data);
- }
- 
- void mlxfw_mfa2_file_fini(struct mlxfw_mfa2_file *mfa2_file)
+diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
+index 3702497b5b16..4901bf24916b 100644
+--- a/drivers/scsi/lpfc/lpfc_els.c
++++ b/drivers/scsi/lpfc/lpfc_els.c
+@@ -3863,7 +3863,7 @@ lpfc_cmpl_els_rsp(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
+ 		mempool_free(mbox, phba->mbox_mem_pool);
+ 	}
+ out:
+-	if (ndlp && NLP_CHK_NODE_ACT(ndlp)) {
++	if (ndlp && NLP_CHK_NODE_ACT(ndlp) && shost) {
+ 		spin_lock_irq(shost->host_lock);
+ 		ndlp->nlp_flag &= ~(NLP_ACC_REGLOGIN | NLP_RM_DFLT_RPI);
+ 		spin_unlock_irq(shost->host_lock);
+-- 
+2.20.1
+
 
 
