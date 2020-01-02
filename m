@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B080912EF7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:46:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98C8D12F08C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:54:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730180AbgABWai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:30:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34434 "EHLO mail.kernel.org"
+        id S1729013AbgABWVh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:21:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730170AbgABWad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:30:33 -0500
+        id S1728797AbgABWVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:21:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CD6421835;
-        Thu,  2 Jan 2020 22:30:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93B9621D7D;
+        Thu,  2 Jan 2020 22:21:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004231;
-        bh=j0Yy2ANRHWCq+YRclRmXdKIpPCA73fKlGYs5FvjcUCg=;
+        s=default; t=1578003692;
+        bh=k9ANDWWcKQhN4QBCwWmXacEzGCW6Ikef5g5oTgKZehQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g5CdmlAlBIdPY1TamZ9Xjoij8MerDUK4nSwZsgyX+Jl4064kENanJQRjww3RNcU40
-         zfbCWByQJK3T2yc7LDkUV5bvcu692s5cf8DMrAm96eyXAowxg9GnvgWzdV3537BVka
-         jhEwqUcny2BbozcMe8YcmJD4wEXAL02/8ZBsPN6Y=
+        b=tUz8I74gVXAeZMcoXc/+5bIoQQu3puo22jNgT2PH9LFGfcpMet30dweoxsCSW2uTs
+         ezMi6fHi59E4Qct3YpaBCapI438B/NfNNXdSKs7zRZKSBhHWD139dDmG+DJn5nsHbR
+         EY2WlQXmA5SkESdU+QOMx3n4K/WeayatwueJGxu4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Kevin Hao <haokexin@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 092/171] Btrfs: fix removal logic of the tree mod log that leads to use-after-free issues
+Subject: [PATCH 4.19 051/114] watchdog: Fix the race between the release of watchdog_core_data and cdev
 Date:   Thu,  2 Jan 2020 23:07:03 +0100
-Message-Id: <20200102220559.911282020@linuxfoundation.org>
+Message-Id: <20200102220034.214797454@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,114 +45,286 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Kevin Hao <haokexin@gmail.com>
 
-[ Upstream commit 6609fee8897ac475378388238456c84298bff802 ]
+[ Upstream commit 72139dfa2464e43957d330266994740bb7be2535 ]
 
-When a tree mod log user no longer needs to use the tree it calls
-btrfs_put_tree_mod_seq() to remove itself from the list of users and
-delete all no longer used elements of the tree's red black tree, which
-should be all elements with a sequence number less then our equals to
-the caller's sequence number. However the logic is broken because it
-can delete and free elements from the red black tree that have a
-sequence number greater then the caller's sequence number:
+The struct cdev is embedded in the struct watchdog_core_data. In the
+current code, we manage the watchdog_core_data with a kref, but the
+cdev is manged by a kobject. There is no any relationship between
+this kref and kobject. So it is possible that the watchdog_core_data is
+freed before the cdev is entirely released. We can easily get the
+following call trace with CONFIG_DEBUG_KOBJECT_RELEASE and
+CONFIG_DEBUG_OBJECTS_TIMERS enabled.
+  ODEBUG: free active (active state 0) object type: timer_list hint: delayed_work_timer_fn+0x0/0x38
+  WARNING: CPU: 23 PID: 1028 at lib/debugobjects.c:481 debug_print_object+0xb0/0xf0
+  Modules linked in: softdog(-) deflate ctr twofish_generic twofish_common camellia_generic serpent_generic blowfish_generic blowfish_common cast5_generic cast_common cmac xcbc af_key sch_fq_codel openvswitch nsh nf_conncount nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4
+  CPU: 23 PID: 1028 Comm: modprobe Not tainted 5.3.0-next-20190924-yoctodev-standard+ #180
+  Hardware name: Marvell OcteonTX CN96XX board (DT)
+  pstate: 00400009 (nzcv daif +PAN -UAO)
+  pc : debug_print_object+0xb0/0xf0
+  lr : debug_print_object+0xb0/0xf0
+  sp : ffff80001cbcfc70
+  x29: ffff80001cbcfc70 x28: ffff800010ea2128
+  x27: ffff800010bad000 x26: 0000000000000000
+  x25: ffff80001103c640 x24: ffff80001107b268
+  x23: ffff800010bad9e8 x22: ffff800010ea2128
+  x21: ffff000bc2c62af8 x20: ffff80001103c600
+  x19: ffff800010e867d8 x18: 0000000000000060
+  x17: 0000000000000000 x16: 0000000000000000
+  x15: ffff000bd7240470 x14: 6e6968207473696c
+  x13: 5f72656d6974203a x12: 6570797420746365
+  x11: 6a626f2029302065 x10: 7461747320657669
+  x9 : 7463612820657669 x8 : 3378302f3078302b
+  x7 : 0000000000001d7a x6 : ffff800010fd5889
+  x5 : 0000000000000000 x4 : 0000000000000000
+  x3 : 0000000000000000 x2 : ffff000bff948548
+  x1 : 276a1c9e1edc2300 x0 : 0000000000000000
+  Call trace:
+   debug_print_object+0xb0/0xf0
+   debug_check_no_obj_freed+0x1e8/0x210
+   kfree+0x1b8/0x368
+   watchdog_cdev_unregister+0x88/0xc8
+   watchdog_dev_unregister+0x38/0x48
+   watchdog_unregister_device+0xa8/0x100
+   softdog_exit+0x18/0xfec4 [softdog]
+   __arm64_sys_delete_module+0x174/0x200
+   el0_svc_handler+0xd0/0x1c8
+   el0_svc+0x8/0xc
 
-1) At a point in time we have sequence numbers 1, 2, 3 and 4 in the
-   tree mod log;
+This is a common issue when using cdev embedded in a struct.
+Fortunately, we already have a mechanism to solve this kind of issue.
+Please see commit 233ed09d7fda ("chardev: add helper function to
+register char devs with a struct device") for more detail.
 
-2) The task which got assigned the sequence number 1 calls
-   btrfs_put_tree_mod_seq();
+In this patch, we choose to embed the struct device into the
+watchdog_core_data, and use the API provided by the commit 233ed09d7fda
+to make sure that the release of watchdog_core_data and cdev are
+in sequence.
 
-3) Sequence number 1 is deleted from the list of sequence numbers;
-
-4) The current minimum sequence number is computed to be the sequence
-   number 2;
-
-5) A task using sequence number 2 is at tree_mod_log_rewind() and gets
-   a pointer to one of its elements from the red black tree through
-   a call to tree_mod_log_search();
-
-6) The task with sequence number 1 iterates the red black tree of tree
-   modification elements and deletes (and frees) all elements with a
-   sequence number less then or equals to 2 (the computed minimum sequence
-   number) - it ends up only leaving elements with sequence numbers of 3
-   and 4;
-
-7) The task with sequence number 2 now uses the pointer to its element,
-   already freed by the other task, at __tree_mod_log_rewind(), resulting
-   in a use-after-free issue. When CONFIG_DEBUG_PAGEALLOC=y it produces
-   a trace like the following:
-
-  [16804.546854] general protection fault: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC PTI
-  [16804.547451] CPU: 0 PID: 28257 Comm: pool Tainted: G        W         5.4.0-rc8-btrfs-next-51 #1
-  [16804.548059] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-0-ga698c8995f-prebuilt.qemu.org 04/01/2014
-  [16804.548666] RIP: 0010:rb_next+0x16/0x50
-  (...)
-  [16804.550581] RSP: 0018:ffffb948418ef9b0 EFLAGS: 00010202
-  [16804.551227] RAX: 6b6b6b6b6b6b6b6b RBX: ffff90e0247f6600 RCX: 6b6b6b6b6b6b6b6b
-  [16804.551873] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff90e0247f6600
-  [16804.552504] RBP: ffff90dffe0d4688 R08: 0000000000000001 R09: 0000000000000000
-  [16804.553136] R10: ffff90dffa4a0040 R11: 0000000000000000 R12: 000000000000002e
-  [16804.553768] R13: ffff90e0247f6600 R14: 0000000000001663 R15: ffff90dff77862b8
-  [16804.554399] FS:  00007f4b197ae700(0000) GS:ffff90e036a00000(0000) knlGS:0000000000000000
-  [16804.555039] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  [16804.555683] CR2: 00007f4b10022000 CR3: 00000002060e2004 CR4: 00000000003606f0
-  [16804.556336] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  [16804.556968] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-  [16804.557583] Call Trace:
-  [16804.558207]  __tree_mod_log_rewind+0xbf/0x280 [btrfs]
-  [16804.558835]  btrfs_search_old_slot+0x105/0xd00 [btrfs]
-  [16804.559468]  resolve_indirect_refs+0x1eb/0xc70 [btrfs]
-  [16804.560087]  ? free_extent_buffer.part.19+0x5a/0xc0 [btrfs]
-  [16804.560700]  find_parent_nodes+0x388/0x1120 [btrfs]
-  [16804.561310]  btrfs_check_shared+0x115/0x1c0 [btrfs]
-  [16804.561916]  ? extent_fiemap+0x59d/0x6d0 [btrfs]
-  [16804.562518]  extent_fiemap+0x59d/0x6d0 [btrfs]
-  [16804.563112]  ? __might_fault+0x11/0x90
-  [16804.563706]  do_vfs_ioctl+0x45a/0x700
-  [16804.564299]  ksys_ioctl+0x70/0x80
-  [16804.564885]  ? trace_hardirqs_off_thunk+0x1a/0x20
-  [16804.565461]  __x64_sys_ioctl+0x16/0x20
-  [16804.566020]  do_syscall_64+0x5c/0x250
-  [16804.566580]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-  [16804.567153] RIP: 0033:0x7f4b1ba2add7
-  (...)
-  [16804.568907] RSP: 002b:00007f4b197adc88 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-  [16804.569513] RAX: ffffffffffffffda RBX: 00007f4b100210d8 RCX: 00007f4b1ba2add7
-  [16804.570133] RDX: 00007f4b100210d8 RSI: 00000000c020660b RDI: 0000000000000003
-  [16804.570726] RBP: 000055de05a6cfe0 R08: 0000000000000000 R09: 00007f4b197add44
-  [16804.571314] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f4b197add48
-  [16804.571905] R13: 00007f4b197add40 R14: 00007f4b100210d0 R15: 00007f4b197add50
-  (...)
-  [16804.575623] ---[ end trace 87317359aad4ba50 ]---
-
-Fix this by making btrfs_put_tree_mod_seq() skip deletion of elements that
-have a sequence number equals to the computed minimum sequence number, and
-not just elements with a sequence number greater then that minimum.
-
-Fixes: bd989ba359f2ac ("Btrfs: add tree modification log functions")
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Kevin Hao <haokexin@gmail.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20191008112934.29669-1-haokexin@gmail.com
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/ctree.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/watchdog/watchdog_dev.c | 70 +++++++++++++++------------------
+ 1 file changed, 32 insertions(+), 38 deletions(-)
 
-diff --git a/fs/btrfs/ctree.c b/fs/btrfs/ctree.c
-index 3faccbf35e9f..305deb6e59c3 100644
---- a/fs/btrfs/ctree.c
-+++ b/fs/btrfs/ctree.c
-@@ -424,7 +424,7 @@ void btrfs_put_tree_mod_seq(struct btrfs_fs_info *fs_info,
- 	for (node = rb_first(tm_root); node; node = next) {
- 		next = rb_next(node);
- 		tm = container_of(node, struct tree_mod_elem, node);
--		if (tm->seq > min_seq)
-+		if (tm->seq >= min_seq)
- 			continue;
- 		rb_erase(node, tm_root);
- 		kfree(tm);
+diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
+index f6c24b22b37c..4b89333e8eb4 100644
+--- a/drivers/watchdog/watchdog_dev.c
++++ b/drivers/watchdog/watchdog_dev.c
+@@ -38,7 +38,6 @@
+ #include <linux/init.h>		/* For __init/__exit/... */
+ #include <linux/hrtimer.h>	/* For hrtimers */
+ #include <linux/kernel.h>	/* For printk/panic/... */
+-#include <linux/kref.h>		/* For data references */
+ #include <linux/kthread.h>	/* For kthread_work */
+ #include <linux/miscdevice.h>	/* For handling misc devices */
+ #include <linux/module.h>	/* For module stuff/... */
+@@ -56,14 +55,14 @@
+ 
+ /*
+  * struct watchdog_core_data - watchdog core internal data
+- * @kref:	Reference count.
++ * @dev:	The watchdog's internal device
+  * @cdev:	The watchdog's Character device.
+  * @wdd:	Pointer to watchdog device.
+  * @lock:	Lock for watchdog core.
+  * @status:	Watchdog core internal status bits.
+  */
+ struct watchdog_core_data {
+-	struct kref kref;
++	struct device dev;
+ 	struct cdev cdev;
+ 	struct watchdog_device *wdd;
+ 	struct mutex lock;
+@@ -822,7 +821,7 @@ static int watchdog_open(struct inode *inode, struct file *file)
+ 	file->private_data = wd_data;
+ 
+ 	if (!hw_running)
+-		kref_get(&wd_data->kref);
++		get_device(&wd_data->dev);
+ 
+ 	/* dev/watchdog is a virtual (and thus non-seekable) filesystem */
+ 	return nonseekable_open(inode, file);
+@@ -834,11 +833,11 @@ out_clear:
+ 	return err;
+ }
+ 
+-static void watchdog_core_data_release(struct kref *kref)
++static void watchdog_core_data_release(struct device *dev)
+ {
+ 	struct watchdog_core_data *wd_data;
+ 
+-	wd_data = container_of(kref, struct watchdog_core_data, kref);
++	wd_data = container_of(dev, struct watchdog_core_data, dev);
+ 
+ 	kfree(wd_data);
+ }
+@@ -898,7 +897,7 @@ done:
+ 	 */
+ 	if (!running) {
+ 		module_put(wd_data->cdev.owner);
+-		kref_put(&wd_data->kref, watchdog_core_data_release);
++		put_device(&wd_data->dev);
+ 	}
+ 	return 0;
+ }
+@@ -917,17 +916,22 @@ static struct miscdevice watchdog_miscdev = {
+ 	.fops		= &watchdog_fops,
+ };
+ 
++static struct class watchdog_class = {
++	.name =		"watchdog",
++	.owner =	THIS_MODULE,
++	.dev_groups =	wdt_groups,
++};
++
+ /*
+  *	watchdog_cdev_register: register watchdog character device
+  *	@wdd: watchdog device
+- *	@devno: character device number
+  *
+  *	Register a watchdog character device including handling the legacy
+  *	/dev/watchdog node. /dev/watchdog is actually a miscdevice and
+  *	thus we set it up like that.
+  */
+ 
+-static int watchdog_cdev_register(struct watchdog_device *wdd, dev_t devno)
++static int watchdog_cdev_register(struct watchdog_device *wdd)
+ {
+ 	struct watchdog_core_data *wd_data;
+ 	int err;
+@@ -935,7 +939,6 @@ static int watchdog_cdev_register(struct watchdog_device *wdd, dev_t devno)
+ 	wd_data = kzalloc(sizeof(struct watchdog_core_data), GFP_KERNEL);
+ 	if (!wd_data)
+ 		return -ENOMEM;
+-	kref_init(&wd_data->kref);
+ 	mutex_init(&wd_data->lock);
+ 
+ 	wd_data->wdd = wdd;
+@@ -964,23 +967,33 @@ static int watchdog_cdev_register(struct watchdog_device *wdd, dev_t devno)
+ 		}
+ 	}
+ 
++	device_initialize(&wd_data->dev);
++	wd_data->dev.devt = MKDEV(MAJOR(watchdog_devt), wdd->id);
++	wd_data->dev.class = &watchdog_class;
++	wd_data->dev.parent = wdd->parent;
++	wd_data->dev.groups = wdd->groups;
++	wd_data->dev.release = watchdog_core_data_release;
++	dev_set_drvdata(&wd_data->dev, wdd);
++	dev_set_name(&wd_data->dev, "watchdog%d", wdd->id);
++
+ 	/* Fill in the data structures */
+ 	cdev_init(&wd_data->cdev, &watchdog_fops);
+-	wd_data->cdev.owner = wdd->ops->owner;
+ 
+ 	/* Add the device */
+-	err = cdev_add(&wd_data->cdev, devno, 1);
++	err = cdev_device_add(&wd_data->cdev, &wd_data->dev);
+ 	if (err) {
+ 		pr_err("watchdog%d unable to add device %d:%d\n",
+ 			wdd->id,  MAJOR(watchdog_devt), wdd->id);
+ 		if (wdd->id == 0) {
+ 			misc_deregister(&watchdog_miscdev);
+ 			old_wd_data = NULL;
+-			kref_put(&wd_data->kref, watchdog_core_data_release);
++			put_device(&wd_data->dev);
+ 		}
+ 		return err;
+ 	}
+ 
++	wd_data->cdev.owner = wdd->ops->owner;
++
+ 	/* Record time of most recent heartbeat as 'just before now'. */
+ 	wd_data->last_hw_keepalive = ktime_sub(ktime_get(), 1);
+ 
+@@ -990,7 +1003,7 @@ static int watchdog_cdev_register(struct watchdog_device *wdd, dev_t devno)
+ 	 */
+ 	if (watchdog_hw_running(wdd)) {
+ 		__module_get(wdd->ops->owner);
+-		kref_get(&wd_data->kref);
++		get_device(&wd_data->dev);
+ 		if (handle_boot_enabled)
+ 			hrtimer_start(&wd_data->timer, 0, HRTIMER_MODE_REL);
+ 		else
+@@ -1013,7 +1026,7 @@ static void watchdog_cdev_unregister(struct watchdog_device *wdd)
+ {
+ 	struct watchdog_core_data *wd_data = wdd->wd_data;
+ 
+-	cdev_del(&wd_data->cdev);
++	cdev_device_del(&wd_data->cdev, &wd_data->dev);
+ 	if (wdd->id == 0) {
+ 		misc_deregister(&watchdog_miscdev);
+ 		old_wd_data = NULL;
+@@ -1032,15 +1045,9 @@ static void watchdog_cdev_unregister(struct watchdog_device *wdd)
+ 	hrtimer_cancel(&wd_data->timer);
+ 	kthread_cancel_work_sync(&wd_data->work);
+ 
+-	kref_put(&wd_data->kref, watchdog_core_data_release);
++	put_device(&wd_data->dev);
+ }
+ 
+-static struct class watchdog_class = {
+-	.name =		"watchdog",
+-	.owner =	THIS_MODULE,
+-	.dev_groups =	wdt_groups,
+-};
+-
+ static int watchdog_reboot_notifier(struct notifier_block *nb,
+ 				    unsigned long code, void *data)
+ {
+@@ -1071,27 +1078,14 @@ static int watchdog_reboot_notifier(struct notifier_block *nb,
+ 
+ int watchdog_dev_register(struct watchdog_device *wdd)
+ {
+-	struct device *dev;
+-	dev_t devno;
+ 	int ret;
+ 
+-	devno = MKDEV(MAJOR(watchdog_devt), wdd->id);
+-
+-	ret = watchdog_cdev_register(wdd, devno);
++	ret = watchdog_cdev_register(wdd);
+ 	if (ret)
+ 		return ret;
+ 
+-	dev = device_create_with_groups(&watchdog_class, wdd->parent,
+-					devno, wdd, wdd->groups,
+-					"watchdog%d", wdd->id);
+-	if (IS_ERR(dev)) {
+-		watchdog_cdev_unregister(wdd);
+-		return PTR_ERR(dev);
+-	}
+-
+ 	ret = watchdog_register_pretimeout(wdd);
+ 	if (ret) {
+-		device_destroy(&watchdog_class, devno);
+ 		watchdog_cdev_unregister(wdd);
+ 		return ret;
+ 	}
+@@ -1099,7 +1093,8 @@ int watchdog_dev_register(struct watchdog_device *wdd)
+ 	if (test_bit(WDOG_STOP_ON_REBOOT, &wdd->status)) {
+ 		wdd->reboot_nb.notifier_call = watchdog_reboot_notifier;
+ 
+-		ret = devm_register_reboot_notifier(dev, &wdd->reboot_nb);
++		ret = devm_register_reboot_notifier(&wdd->wd_data->dev,
++						    &wdd->reboot_nb);
+ 		if (ret) {
+ 			pr_err("watchdog%d: Cannot register reboot notifier (%d)\n",
+ 			       wdd->id, ret);
+@@ -1121,7 +1116,6 @@ int watchdog_dev_register(struct watchdog_device *wdd)
+ void watchdog_dev_unregister(struct watchdog_device *wdd)
+ {
+ 	watchdog_unregister_pretimeout(wdd);
+-	device_destroy(&watchdog_class, wdd->wd_data->cdev.dev);
+ 	watchdog_cdev_unregister(wdd);
+ }
+ 
 -- 
 2.20.1
 
