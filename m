@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82A5E12EECF
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:41:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 104F912F07C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:54:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731258AbgABWle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:41:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49066 "EHLO mail.kernel.org"
+        id S1728903AbgABWU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:20:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731032AbgABWhE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:37:04 -0500
+        id S1726927AbgABWUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:20:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87B2820866;
-        Thu,  2 Jan 2020 22:37:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DC3D21582;
+        Thu,  2 Jan 2020 22:20:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004624;
-        bh=MwWttBtNzN/i0lLMDO007EKBFmGopDV8Av0V68y56dM=;
+        s=default; t=1578003653;
+        bh=1HQOmY+/vAg36JcMkUhBh/Zavmr/ssHnliyiwLhDux8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mCeSzjsAmHElYEidVKVV/6Gtc9yrkhP3Yi6VGMG/3s71kCdhGdABWGatl3ZhVFxFm
-         k8EBNB25JlOxgbTMrrI3kbY4TiCczFxYmnr0F07obIeL8gxD2Xcfv0wSNk4NERo3WA
-         5W4NXyyd9DmDA0m/MqCU6zH8PkcER0Ftr6W+7tAY=
+        b=bB6N+WIfWcBohw6kFVbm0kr73+AXu3u8hAWou9a/s55o4hJAgKpqm7dnwBt+PP40c
+         4R5Ci+b5/6kP55tniOSaMux8DAX2DDfcvinDudilU2S6VEuoEHvcp0d09Fsak7Z4gw
+         E2UNVdIlPJG9DaUNB7N8enrbFJ1mY/bBnBdmkngI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        John Johansen <john.johansen@canonical.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 058/137] spi: tegra20-slink: add missed clk_unprepare
+Subject: [PATCH 4.19 059/114] apparmor: fix unsigned len comparison with less than zero
 Date:   Thu,  2 Jan 2020 23:07:11 +0100
-Message-Id: <20200102220554.317562031@linuxfoundation.org>
+Message-Id: <20200102220034.968393658@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,51 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 04358e40ba96d687c0811c21d9dede73f5244a98 ]
+[ Upstream commit 00e0590dbaec6f1bcaa36a85467d7e3497ced522 ]
 
-The driver misses calling clk_unprepare in probe failure and remove.
-Add the calls to fix it.
+The sanity check in macro update_for_len checks to see if len
+is less than zero, however, len is a size_t so it can never be
+less than zero, so this sanity check is a no-op.  Fix this by
+making len a ssize_t so the comparison will work and add ulen
+that is a size_t copy of len so that the min() macro won't
+throw warnings about comparing different types.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Link: https://lore.kernel.org/r/20191115083122.12278-1-hslester96@gmail.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Addresses-Coverity: ("Macro compares unsigned to 0")
+Fixes: f1bd904175e8 ("apparmor: add the base fns() for domain labels")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: John Johansen <john.johansen@canonical.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-tegra20-slink.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ security/apparmor/label.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index af2880d0c112..cf2a329fd895 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -1078,7 +1078,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 	ret = clk_enable(tspi->clk);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Clock enable failed %d\n", ret);
--		goto exit_free_master;
-+		goto exit_clk_unprepare;
- 	}
+diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+index ba11bdf9043a..2469549842d2 100644
+--- a/security/apparmor/label.c
++++ b/security/apparmor/label.c
+@@ -1462,11 +1462,13 @@ static inline bool use_label_hname(struct aa_ns *ns, struct aa_label *label,
+ /* helper macro for snprint routines */
+ #define update_for_len(total, len, size, str)	\
+ do {					\
++	size_t ulen = len;		\
++					\
+ 	AA_BUG(len < 0);		\
+-	total += len;			\
+-	len = min(len, size);		\
+-	size -= len;			\
+-	str += len;			\
++	total += ulen;			\
++	ulen = min(ulen, size);		\
++	size -= ulen;			\
++	str += ulen;			\
+ } while (0)
  
- 	spi_irq = platform_get_irq(pdev, 0);
-@@ -1151,6 +1151,8 @@ exit_free_irq:
- 	free_irq(spi_irq, tspi);
- exit_clk_disable:
- 	clk_disable(tspi->clk);
-+exit_clk_unprepare:
-+	clk_unprepare(tspi->clk);
- exit_free_master:
- 	spi_master_put(master);
- 	return ret;
-@@ -1164,6 +1166,7 @@ static int tegra_slink_remove(struct platform_device *pdev)
- 	free_irq(tspi->irq, tspi);
+ /**
+@@ -1601,7 +1603,7 @@ int aa_label_snxprint(char *str, size_t size, struct aa_ns *ns,
+ 	struct aa_ns *prev_ns = NULL;
+ 	struct label_it i;
+ 	int count = 0, total = 0;
+-	size_t len;
++	ssize_t len;
  
- 	clk_disable(tspi->clk);
-+	clk_unprepare(tspi->clk);
- 
- 	if (tspi->tx_dma_chan)
- 		tegra_slink_deinit_dma_param(tspi, false);
+ 	AA_BUG(!str && size != 0);
+ 	AA_BUG(!label);
 -- 
 2.20.1
 
