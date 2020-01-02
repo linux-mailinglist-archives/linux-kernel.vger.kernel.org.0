@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0FF812ED15
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:24:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F201812ECBE
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:21:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729404AbgABWYp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:24:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48946 "EHLO mail.kernel.org"
+        id S1728985AbgABWVW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:21:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729292AbgABWYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:24:40 -0500
+        id S1728716AbgABWVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:21:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71FC3222C3;
-        Thu,  2 Jan 2020 22:24:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52C3421D7D;
+        Thu,  2 Jan 2020 22:21:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003879;
-        bh=Bm30xWwA5ZXQd66HwXCJ4MHYY/5Lva7ZuZAueK2m5QE=;
+        s=default; t=1578003677;
+        bh=4zcmMWZV0iXWhWZZH5zfMx3XDCHgYK6G3e1bCAa4iFc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UcBd86+hiNtMeJV+RlzG8l+nS38oPLKBKQ8APnKV0bmk5yuQLmyWEViv4rpCE6GiT
-         LXxwpWwbJsG6QzyWoXULRNy6+4MH2+0svZ3xKBPdxYS25vl1SZ7IabHceYzO4qvAPw
-         wbp2RpdZv8ZxxFh83wagfeHmaAXQgGdfXofas69U=
+        b=ASnqgG8bVsCWf0iqOdJknPey4Hz9qhz9AglWBEKyptWmIgRiCs2pthBZBBfHSVkP3
+         rwzfRzJFfUzYSdnMoxob030upXsT6oVRgxb0d0zmsFa/RyjxTX9NSpk6BIeCFqh/2K
+         fCqfZVXG8cP27pE0j0HiKrfO9Gd1w6BLOT6SGtN0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maurizio Lombardi <mlombard@redhat.com>,
-        Douglas Gilbert <dgilbert@interlog.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 38/91] scsi: scsi_debug: num_tgts must be >= 0
+Subject: [PATCH 4.19 068/114] s390/cpum_sf: Check for SDBT and SDB consistency
 Date:   Thu,  2 Jan 2020 23:07:20 +0100
-Message-Id: <20200102220433.340097844@linuxfoundation.org>
+Message-Id: <20200102220035.931315472@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
-References: <20200102220356.856162165@linuxfoundation.org>
+In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
+References: <20200102220029.183913184@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +44,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maurizio Lombardi <mlombard@redhat.com>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-[ Upstream commit aa5334c4f3014940f11bf876e919c956abef4089 ]
+[ Upstream commit 247f265fa502e7b17a0cb0cc330e055a36aafce4 ]
 
-Passing the parameter "num_tgts=-1" will start an infinite loop that
-exhausts the system memory
+Each SBDT is located at a 4KB page and contains 512 entries.
+Each entry of a SDBT points to a SDB, a 4KB page containing
+sampled data. The last entry is a link to another SDBT page.
 
-Link: https://lore.kernel.org/r/20191115163727.24626-1-mlombard@redhat.com
-Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
-Acked-by: Douglas Gilbert <dgilbert@interlog.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+When an event is created the function sequence executed is:
+
+  __hw_perf_event_init()
+  +--> allocate_buffers()
+       +--> realloc_sampling_buffers()
+	    +---> alloc_sample_data_block()
+
+Both functions realloc_sampling_buffers() and
+alloc_sample_data_block() allocate pages and the allocation
+can fail. This is handled correctly and all allocated
+pages are freed and error -ENOMEM is returned to the
+top calling function. Finally the event is not created.
+
+Once the event has been created, the amount of initially
+allocated SDBT and SDB can be too low. This is detected
+during measurement interrupt handling, where the amount
+of lost samples is calculated. If the number of lost samples
+is too high considering sampling frequency and already allocated
+SBDs, the number of SDBs is enlarged during the next execution
+of cpumsf_pmu_enable().
+
+If more SBDs need to be allocated, functions
+
+       realloc_sampling_buffers()
+       +---> alloc-sample_data_block()
+
+are called to allocate more pages. Page allocation may fail
+and the returned error is ignored. A SDBT and SDB setup
+already exists.
+
+However the modified SDBTs and SDBs might end up in a situation
+where the first entry of an SDBT does not point to an SDB,
+but another SDBT, basicly an SBDT without payload.
+This can not be handled by the interrupt handler, where an SDBT
+must have at least one entry pointing to an SBD.
+
+Add a check to avoid SDBTs with out payload (SDBs) when enlarging
+the buffer setup.
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/scsi_debug.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/s390/kernel/perf_cpum_sf.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index 92bc5b2d24ae..ac936b5ca74e 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -4960,6 +4960,11 @@ static int __init scsi_debug_init(void)
+diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
+index df92c2af99b6..5c3fd9032b74 100644
+--- a/arch/s390/kernel/perf_cpum_sf.c
++++ b/arch/s390/kernel/perf_cpum_sf.c
+@@ -193,7 +193,7 @@ static int realloc_sampling_buffer(struct sf_buffer *sfb,
+ 				   unsigned long num_sdb, gfp_t gfp_flags)
+ {
+ 	int i, rc;
+-	unsigned long *new, *tail;
++	unsigned long *new, *tail, *tail_prev = NULL;
+ 
+ 	if (!sfb->sdbt || !sfb->tail)
  		return -EINVAL;
+@@ -232,6 +232,7 @@ static int realloc_sampling_buffer(struct sf_buffer *sfb,
+ 			sfb->num_sdbt++;
+ 			/* Link current page to tail of chain */
+ 			*tail = (unsigned long)(void *) new + 1;
++			tail_prev = tail;
+ 			tail = new;
+ 		}
+ 
+@@ -241,10 +242,22 @@ static int realloc_sampling_buffer(struct sf_buffer *sfb,
+ 		 * issue, a new realloc call (if required) might succeed.
+ 		 */
+ 		rc = alloc_sample_data_block(tail, gfp_flags);
+-		if (rc)
++		if (rc) {
++			/* Undo last SDBT. An SDBT with no SDB at its first
++			 * entry but with an SDBT entry instead can not be
++			 * handled by the interrupt handler code.
++			 * Avoid this situation.
++			 */
++			if (tail_prev) {
++				sfb->num_sdbt--;
++				free_page((unsigned long) new);
++				tail = tail_prev;
++			}
+ 			break;
++		}
+ 		sfb->num_sdb++;
+ 		tail++;
++		tail_prev = new = NULL;	/* Allocated at least one SBD */
  	}
  
-+	if (sdebug_num_tgts < 0) {
-+		pr_err("num_tgts must be >= 0\n");
-+		return -EINVAL;
-+	}
-+
- 	if (sdebug_guard > 1) {
- 		pr_err("guard must be 0 or 1\n");
- 		return -EINVAL;
+ 	/* Link sampling buffer to its origin */
 -- 
 2.20.1
 
