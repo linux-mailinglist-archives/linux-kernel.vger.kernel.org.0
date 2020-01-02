@@ -2,41 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E61212ED2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:25:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CA5B12ED3B
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:26:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729567AbgABWZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:25:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51480 "EHLO mail.kernel.org"
+        id S1729615AbgABW0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:26:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729312AbgABWZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:25:40 -0500
+        id S1729608AbgABW0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:26:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D56120866;
-        Thu,  2 Jan 2020 22:25:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE3112253D;
+        Thu,  2 Jan 2020 22:26:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003939;
-        bh=yrMs1fk27v99sck8Q6Sw/5+jY1KWyCt2QXImWW8azOM=;
+        s=default; t=1578003966;
+        bh=MTf0aAiPTOiajZujZI+wd/PHq0w7Fnm3cm7lguMSgSo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UqA6s4u0vK/duDjCZVX+AsX6hAgSl+MO+M9bJQaPIP3RJY8y4v1cH+3znw0YfSgy+
-         nwQgsnnxK7+XEqpurLB+lB+f/iQUz3pnSF+4gjNKh+rI0zJYi5U64XGFoC0ef6k1RY
-         TMq2bBWWZ+QICeSmExi6SEWRTX254YaM+2183HAE=
+        b=E4eA7nRurvHX27gn0j5WGOdvo7bNam+XJ7ga9yjnF30hASXJ4Q/hF0gRhlCM3HeYl
+         uiSirQjpWQKn1+TalNXMR13HvURjLRE3KrqNdpf3/EYTC4O4CvoglnNsOjbBZ9HVdY
+         qxPMzLSj7k41+nHOlgDWPPP0gNZNPy3K+IoG43uA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "=?UTF-8?q?Jan=20H . =20Sch=C3=B6nherr?=" <jschoenh@amazon.de>,
-        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
-        Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        stable@vger.kernel.org, Alexander Lobakin <alobakin@dlink.ru>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 55/91] x86/mce: Fix possibly incorrect severity calculation on AMD
-Date:   Thu,  2 Jan 2020 23:07:37 +0100
-Message-Id: <20200102220438.760274136@linuxfoundation.org>
+Subject: [PATCH 4.14 56/91] net, sysctl: Fix compiler warning when only cBPF is present
+Date:   Thu,  2 Jan 2020 23:07:38 +0100
+Message-Id: <20200102220439.135595611@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
 References: <20200102220356.856162165@linuxfoundation.org>
@@ -49,46 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan H. Schönherr <jschoenh@amazon.de>
+From: Alexander Lobakin <alobakin@dlink.ru>
 
-[ Upstream commit a3a57ddad061acc90bef39635caf2b2330ce8f21 ]
+[ Upstream commit 1148f9adbe71415836a18a36c1b4ece999ab0973 ]
 
-The function mce_severity_amd_smca() requires m->bank to be initialized
-for correct operation. Fix the one case, where mce_severity() is called
-without doing so.
+proc_dointvec_minmax_bpf_restricted() has been firstly introduced
+in commit 2e4a30983b0f ("bpf: restrict access to core bpf sysctls")
+under CONFIG_HAVE_EBPF_JIT. Then, this ifdef has been removed in
+ede95a63b5e8 ("bpf: add bpf_jit_limit knob to restrict unpriv
+allocations"), because a new sysctl, bpf_jit_limit, made use of it.
+Finally, this parameter has become long instead of integer with
+fdadd04931c2 ("bpf: fix bpf_jit_limit knob for PAGE_SIZE >= 64K")
+and thus, a new proc_dolongvec_minmax_bpf_restricted() has been
+added.
 
-Fixes: 6bda529ec42e ("x86/mce: Grade uncorrected errors for SMCA-enabled systems")
-Fixes: d28af26faa0b ("x86/MCE: Initialize mce.bank in the case of a fatal error in mce_no_way_out()")
-Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: <stable@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Link: https://lkml.kernel.org/r/20191210000733.17979-4-jschoenh@amazon.de
+With this last change, we got back to that
+proc_dointvec_minmax_bpf_restricted() is used only under
+CONFIG_HAVE_EBPF_JIT, but the corresponding ifdef has not been
+brought back.
+
+So, in configurations like CONFIG_BPF_JIT=y && CONFIG_HAVE_EBPF_JIT=n
+since v4.20 we have:
+
+  CC      net/core/sysctl_net_core.o
+net/core/sysctl_net_core.c:292:1: warning: ‘proc_dointvec_minmax_bpf_restricted’ defined but not used [-Wunused-function]
+  292 | proc_dointvec_minmax_bpf_restricted(struct ctl_table *table, int write,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Suppress this by guarding it with CONFIG_HAVE_EBPF_JIT again.
+
+Fixes: fdadd04931c2 ("bpf: fix bpf_jit_limit knob for PAGE_SIZE >= 64K")
+Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Link: https://lore.kernel.org/bpf/20191218091821.7080-1-alobakin@dlink.ru
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/mcheck/mce.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/core/sysctl_net_core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index c7bd2e549a6a..0b0e44f85393 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -802,8 +802,8 @@ static int mce_no_way_out(struct mce *m, char **msg, unsigned long *validp,
- 		if (quirk_no_way_out)
- 			quirk_no_way_out(i, m, regs);
+diff --git a/net/core/sysctl_net_core.c b/net/core/sysctl_net_core.c
+index 144cd1acd7e3..069e3c4fcc44 100644
+--- a/net/core/sysctl_net_core.c
++++ b/net/core/sysctl_net_core.c
+@@ -274,6 +274,7 @@ static int proc_dointvec_minmax_bpf_enable(struct ctl_table *table, int write,
+ 	return ret;
+ }
  
-+		m->bank = i;
- 		if (mce_severity(m, mca_cfg.tolerant, &tmp, true) >= MCE_PANIC_SEVERITY) {
--			m->bank = i;
- 			mce_read_aux(m, i);
- 			*msg = tmp;
- 			return 1;
++# ifdef CONFIG_HAVE_EBPF_JIT
+ static int
+ proc_dointvec_minmax_bpf_restricted(struct ctl_table *table, int write,
+ 				    void __user *buffer, size_t *lenp,
+@@ -284,6 +285,7 @@ proc_dointvec_minmax_bpf_restricted(struct ctl_table *table, int write,
+ 
+ 	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+ }
++# endif /* CONFIG_HAVE_EBPF_JIT */
+ 
+ static int
+ proc_dolongvec_minmax_bpf_restricted(struct ctl_table *table, int write,
 -- 
 2.20.1
 
