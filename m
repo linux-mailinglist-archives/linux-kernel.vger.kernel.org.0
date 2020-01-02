@@ -2,98 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFA2D12EE87
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:40:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5AA312F12A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:58:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731427AbgABWjN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:39:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731408AbgABWjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:39:11 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33D1E21835;
-        Thu,  2 Jan 2020 22:39:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004750;
-        bh=DIyWtAQ7QSGL6ztK8yUbiunjL1bhrGVP3ckBM3rg+PU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UayEiFilIm2Zrh/FLvvF6oqsgqfRpkSr4g6ERvMMpR8x4l7DNSxwYGF8fwkau+iib
-         U5deCQl8DFPyTA55MH6Kb7e3yAOXmGN51UcjxqFecvDkm8gZwQtf2df572wrpoy6xH
-         uA/qCyMJLD5Hx4HLyBYy9iyyj0CGLyNWllqFocn4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Christoph Paasch <cpaasch@apple.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 4.4 137/137] tcp: do not send empty skb from tcp_write_xmit()
-Date:   Thu,  2 Jan 2020 23:08:30 +0100
-Message-Id: <20200102220605.660213239@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1728953AbgABW6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:58:39 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:58408 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728065AbgABWP1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:15:27 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R231e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0TmgPslx_1578003315;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TmgPslx_1578003315)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 03 Jan 2020 06:15:24 +0800
+Subject: Re: [PATCH] move_pages.2: not return ENOENT if the page are already
+ on the target nodes
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        cl@linux.com, cai@lca.pw, akpm@linux-foundation.org,
+        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1575596090-115377-1-git-send-email-yang.shi@linux.alibaba.com>
+ <0dc96e40-5f2b-a2fe-6e5f-b6f3d5e9ebde@nvidia.com>
+ <95170ea5-5b62-9168-fcd9-93b43330a1b4@linux.alibaba.com>
+ <092adc11-7039-9343-7067-0e0199c9dc13@gmail.com>
+ <51dd767a-221f-882d-c7f6-45bd0c217a67@nvidia.com>
+ <20191218101711.GB21485@dhcp22.suse.cz>
+ <0059a598-5726-2488-cd37-b4b7f9b3353e@linux.alibaba.com>
+ <87lfqtcfyo.fsf@x220.int.ebiederm.org>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <d081b674-b360-4a0a-eec3-cf7434003cc5@linux.alibaba.com>
+Date:   Thu, 2 Jan 2020 14:15:12 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <87lfqtcfyo.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 1f85e6267caca44b30c54711652b0726fadbb131 ]
 
-Backport of commit fdfc5c8594c2 ("tcp: remove empty skb from
-write queue in error cases") in linux-4.14 stable triggered
-various bugs. One of them has been fixed in commit ba2ddb43f270
-("tcp: Don't dequeue SYN/FIN-segments from write-queue"), but
-we still have crashes in some occasions.
+On 12/30/19 7:49 PM, Eric W. Biederman wrote:
+> Yang Shi <yang.shi@linux.alibaba.com> writes:
+>
+>> On 12/18/19 2:17 AM, Michal Hocko wrote:
+>>> On Tue 17-12-19 23:36:09, John Hubbard wrote:
+>>> [...]
+>>>> diff --git a/man2/move_pages.2 b/man2/move_pages.2
+>>>> index 2d96468fa..1bf1053f2 100644
+>>>> --- a/man2/move_pages.2
+>>>> +++ b/man2/move_pages.2
+>>>> @@ -191,12 +191,6 @@ was specified or an attempt was made to migrate pages of a kernel thread.
+>>>>    .B ENODEV
+>>>>    One of the target nodes is not online.
+>>>>    .TP
+>>>> -.B ENOENT
+>>>> -No pages were found that require moving.
+>>>> -All pages are either already
+>>>> -on the target node, not present, had an invalid address or could not be
+>>>> -moved because they were mapped by multiple processes.
+>>>> -.TP
+>>>>    .B EPERM
+>>>>    The caller specified
+>>>>    .B MPOL_MF_MOVE_ALL
+>>>>
+>>>> ...But I'm not sure if we should change the implementation, instead, so
+>>>> that it *can* return ENOENT. That's the main question to resolve before
+>>>> creating any more patches, I think.
+>>> I would start by dropping any note about ENOENT first. I am not really
+>>> sure there is a reasonable usecase for it but maybe somebody comes up
+>>> with something and only then we should consider it.
+>>>
+>>> Feel free to add
+>>> Acked-by: Michal Hocko <mhocko@suse.com>
+>>>
+>>> ideally with a kernel commit which removed the ENOENT.
+>> A quick audit doesn't show kernel code or comment notes about ENOENT
+>> wrongly. The status could be set as ENOENT if the page is not present
+>> (follow_page() returns NULL), and man page does match what kernel
+>> does.
+> Doesn't the function one layer up then consume the ENOENT?
 
-Root-cause is that when tcp_sendmsg() has allocated a fresh
-skb and could not append a fragment before being blocked
-in sk_stream_wait_memory(), tcp_write_xmit() might be called
-and decide to send this fresh and empty skb.
+No, it doesn't. The return value would be reset unconditionally by 
+store_status(). This is what the man page patch tries to correct.
 
-Sending an empty packet is not only silly, it might have caused
-many issues we had in the past with tp->packets_out being
-out of sync.
-
-Fixes: c65f7f00c587 ("[TCP]: Simplify SKB data portion allocation with NETIF_F_SG.")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Christoph Paasch <cpaasch@apple.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Cc: Jason Baron <jbaron@akamai.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/tcp_output.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -2148,6 +2148,14 @@ static bool tcp_write_xmit(struct sock *
- 				break;
- 		}
- 
-+		/* Argh, we hit an empty skb(), presumably a thread
-+		 * is sleeping in sendmsg()/sk_stream_wait_memory().
-+		 * We do not want to send a pure-ack packet and have
-+		 * a strange looking rtx queue with empty packet(s).
-+		 */
-+		if (TCP_SKB_CB(skb)->end_seq == TCP_SKB_CB(skb)->seq)
-+			break;
-+
- 		if (unlikely(tcp_transmit_skb(sk, skb, 1, gfp)))
- 			break;
- 
-
+>
+> Eric
 
