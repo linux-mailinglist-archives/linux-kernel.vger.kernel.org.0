@@ -2,115 +2,354 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9991612EA77
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 20:29:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B26612EA90
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 20:37:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbgABT33 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 14:29:29 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41858 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728420AbgABT33 (ORCPT
+        id S1728320AbgABThO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 14:37:14 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:5140 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727951AbgABThN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 14:29:29 -0500
-Received: by mail-pl1-f196.google.com with SMTP id bd4so18178790plb.8
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 11:29:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NvU0yti40S840n5QG3gVP/0HZjtdrLIA9EgmtFMdjeY=;
-        b=zu8FI6S0upnpm0ix25G3oaUOc0+/iGH++sv5Bcj2kBLoEdj4G5VLPaG3P9qofdE3jM
-         kGUCcRTgL2gpIFpgfYy8+7EBIN+kA18SrgprqG1Hx2JUlzDb9GtY/RrrYMUXbtDVY2DB
-         5cY4cvup5gLoGT5jtbYCYsnjZNTuWdUlxaDvbCd8bANScYTV7mYZG90qRPPJleqWen+C
-         ZZpw+5VbdODX/MT7Q74c02z/z69qpq5ZkU6j45apQgPvUEMPYVW2IwjU0LH0Klr6uZx5
-         EclAgxpf4f65o/gcdnf98we6dlSPeYiAHl1H1Mx+nTezrYAoOEKzzFbKGKSohdq2K+s/
-         YwTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NvU0yti40S840n5QG3gVP/0HZjtdrLIA9EgmtFMdjeY=;
-        b=CcHbUoAR9AQCnLMUMqEhO/ANK8MkCxNngZM2fkv/LScN4z3UwMB/zCPu1oUFigL9oQ
-         tK60vXVb1h1btSGb4r+TiNlBIk8WCXk3pnuGvPwzauAkv/yZITNcIsoIqk5DwWosiKUX
-         3QwaqHEQoxH/k8iQcoLbT9oei9QGqpBg9LH4ePulzbRRrV5DXOZpzyl8H5O/O4TJwMD4
-         mrphI7NFBtpA2ZveAXALJqZCi8ZML376jshLW44XGijgt7EtiHLSnei2B7WL0zJjwY7w
-         noD9hfHkcmyUmyLrJUHvgVNyHkWA86ibLEK3zEtZDXlGxa9JvS+GGYM3Xdpf3na2gy4b
-         73PA==
-X-Gm-Message-State: APjAAAUczjkDGy8B+s4z5+8wF/m8K4tngKbizmjuJvDGFDnyzugM2Hlj
-        rYRn2Js4Ucl9SNCuDxkB+WEKFA==
-X-Google-Smtp-Source: APXvYqzK6klpqUHj5VLLlr49JBuhy2FCQTzFaMgfn5/VXfd20M9M3/Lj/GoFiNaoEiw0ndMfgfZ6Mg==
-X-Received: by 2002:a17:902:aa46:: with SMTP id c6mr88130383plr.200.1577993368332;
-        Thu, 02 Jan 2020 11:29:28 -0800 (PST)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id b193sm56938366pfb.57.2020.01.02.11.29.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 11:29:27 -0800 (PST)
-Date:   Thu, 2 Jan 2020 11:29:25 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        swboyd@chromium.org, sivaa@codeaurora.org,
-        Andy Gross <agross@kernel.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 4/9] drivers: thermal: tsens: Release device in
- success path
-Message-ID: <20200102192925.GC988120@minitux>
-References: <cover.1577976221.git.amit.kucheria@linaro.org>
- <0a969ecd48910dac4da81581eff45b5e579b2bfc.1577976221.git.amit.kucheria@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0a969ecd48910dac4da81581eff45b5e579b2bfc.1577976221.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        Thu, 2 Jan 2020 14:37:13 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 002Jau8K013733;
+        Thu, 2 Jan 2020 14:36:57 -0500
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2x87mtapbq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 02 Jan 2020 14:36:57 -0500
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 002JFLFs000323;
+        Thu, 2 Jan 2020 19:28:03 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma02wdc.us.ibm.com with ESMTP id 2x5xp6k0dc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 02 Jan 2020 19:28:03 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 002JS28240370528
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 2 Jan 2020 19:28:02 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8D628BE058;
+        Thu,  2 Jan 2020 19:28:02 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CF998BE051;
+        Thu,  2 Jan 2020 19:28:01 +0000 (GMT)
+Received: from talon7.ibm.com (unknown [9.41.103.158])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu,  2 Jan 2020 19:28:01 +0000 (GMT)
+From:   Eddie James <eajames@linux.ibm.com>
+To:     linux-aspeed@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, jason@lakedaemon.net, maz@kernel.org,
+        robh+dt@kernel.org, tglx@linutronix.de, joel@jms.id.au,
+        andrew@aj.id.au, eajames@linux.ibm.com
+Subject: [PATCH v4 07/12] soc: aspeed: xdma: Add user interface
+Date:   Thu,  2 Jan 2020 13:27:51 -0600
+Message-Id: <1577993276-2184-8-git-send-email-eajames@linux.ibm.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1577993276-2184-1-git-send-email-eajames@linux.ibm.com>
+References: <1577993276-2184-1-git-send-email-eajames@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2020-01-02_06:2020-01-02,2020-01-02 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 adultscore=0 phishscore=0 malwarescore=0
+ clxscore=1015 suspectscore=4 impostorscore=0 lowpriorityscore=0
+ spamscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-2001020157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 02 Jan 06:54 PST 2020, Amit Kucheria wrote:
+This commits adds a miscdevice to provide a user interface to the XDMA
+engine. The interface provides the write operation to start DMA
+operations. The DMA parameters are passed as the data to the write call.
+The actual data to transfer is NOT passed through write. Note that both
+directions of DMA operation are accomplished through the write command;
+BMC to host and host to BMC.
 
-> We don't currently call put_device in case of successfully initialising
-> the device.
-> 
-> Allow control to fall through so we can use same code for success and
-> error paths to put_device.
-> 
+The XDMA driver reserves an area of physical memory for DMA operations,
+as the XDMA engine is restricted to accessing certain physical memory
+areas on some platforms. This memory forms a pool from which users can
+allocate pages for their usage with calls to mmap. The space allocated
+by a client will be the space used in the DMA operation. For an
+"upstream" (BMC to host) operation, the data in the client's area will
+be transferred to the host. For a "downstream" (host to BMC) operation,
+the host data will be placed in the client's memory area.
 
-Given the relationship between priv->dev and op I think this wouldn't be
-a problem in practice, but there's two devm_ioremap_resource() done on
-op->dev in this function. So you're depending on op->dev to stick
-around, but with this patch you're no longer expressing that dependency.
+Poll is also provided in order to determine when the DMA operation is
+complete for non-blocking IO.
 
-That said, it looks iffy to do devm_ioremap_resource() on op->dev and
-then create a regmap on priv->dev using that resource. So I think it
-would be better to do platform_get_source() on op, and then
-devm_ioremap_resource() on priv->dev, in which case the regmap backing
-memory will be related to the same struct device as the regmap and it
-makes perfect sense to put_device() the op->dev when you're done
-inspecting it's resources.
+Signed-off-by: Eddie James <eajames@linux.ibm.com>
+---
+Changes since v3:
+ - Use READ_ONCE for current_client
+ - add dev_warn for failed mmap
 
-Regards,
-Bjorn
+ drivers/soc/aspeed/aspeed-xdma.c | 205 +++++++++++++++++++++++++++++++
+ 1 file changed, 205 insertions(+)
 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  drivers/thermal/qcom/tsens-common.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
-> index 1cbc5a6e5b4f..e84e94a6f1a7 100644
-> --- a/drivers/thermal/qcom/tsens-common.c
-> +++ b/drivers/thermal/qcom/tsens-common.c
-> @@ -687,8 +687,6 @@ int __init init_common(struct tsens_priv *priv)
->  	tsens_enable_irq(priv);
->  	tsens_debug_init(op);
->  
-> -	return 0;
-> -
->  err_put_device:
->  	put_device(&op->dev);
->  	return ret;
-> -- 
-> 2.20.1
-> 
+diff --git a/drivers/soc/aspeed/aspeed-xdma.c b/drivers/soc/aspeed/aspeed-xdma.c
+index b79855016c8b..5ad0efaf6e05 100644
+--- a/drivers/soc/aspeed/aspeed-xdma.c
++++ b/drivers/soc/aspeed/aspeed-xdma.c
+@@ -13,6 +13,7 @@
+ #include <linux/io.h>
+ #include <linux/jiffies.h>
+ #include <linux/mfd/syscon.h>
++#include <linux/miscdevice.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/of_device.h>
+@@ -201,6 +202,8 @@ struct aspeed_xdma {
+ 	struct clk *clock;
+ 	struct reset_control *reset;
+ 
++	/* file_lock serializes reads of current_client */
++	struct mutex file_lock;
+ 	/* client_lock protects error and in_progress of the client */
+ 	spinlock_t client_lock;
+ 	struct aspeed_xdma_client *current_client;
+@@ -223,6 +226,8 @@ struct aspeed_xdma {
+ 	void __iomem *mem_virt;
+ 	dma_addr_t cmdq_phys;
+ 	struct gen_pool *pool;
++
++	struct miscdevice misc;
+ };
+ 
+ struct aspeed_xdma_client {
+@@ -527,6 +532,188 @@ static irqreturn_t aspeed_xdma_pcie_irq(int irq, void *arg)
+ 	return IRQ_HANDLED;
+ }
+ 
++static ssize_t aspeed_xdma_write(struct file *file, const char __user *buf,
++				 size_t len, loff_t *offset)
++{
++	int rc;
++	struct aspeed_xdma_op op;
++	struct aspeed_xdma_client *client = file->private_data;
++	struct aspeed_xdma *ctx = client->ctx;
++
++	if (len != sizeof(op))
++		return -EINVAL;
++
++	rc = copy_from_user(&op, buf, len);
++	if (rc)
++		return rc;
++
++	if (!op.len || op.len > client->size ||
++	    op.direction > ASPEED_XDMA_DIRECTION_UPSTREAM)
++		return -EINVAL;
++
++	if (file->f_flags & O_NONBLOCK) {
++		if (!mutex_trylock(&ctx->file_lock))
++			return -EAGAIN;
++
++		if (READ_ONCE(ctx->current_client)) {
++			mutex_unlock(&ctx->file_lock);
++			return -EBUSY;
++		}
++	} else {
++		mutex_lock(&ctx->file_lock);
++
++		rc = wait_event_interruptible(ctx->wait, !ctx->current_client);
++		if (rc) {
++			mutex_unlock(&ctx->file_lock);
++			return -EINTR;
++		}
++	}
++
++	aspeed_xdma_start(ctx, &op, client->phys, client);
++
++	mutex_unlock(&ctx->file_lock);
++
++	if (!(file->f_flags & O_NONBLOCK)) {
++		rc = wait_event_interruptible(ctx->wait, !client->in_progress);
++		if (rc)
++			return -EINTR;
++
++		if (client->error)
++			return -EIO;
++	}
++
++	return len;
++}
++
++static __poll_t aspeed_xdma_poll(struct file *file,
++				 struct poll_table_struct *wait)
++{
++	__poll_t mask = 0;
++	__poll_t req = poll_requested_events(wait);
++	struct aspeed_xdma_client *client = file->private_data;
++	struct aspeed_xdma *ctx = client->ctx;
++
++	if (req & (EPOLLIN | EPOLLRDNORM)) {
++		if (client->in_progress)
++			poll_wait(file, &ctx->wait, wait);
++
++		if (!client->in_progress) {
++			if (client->error)
++				mask |= EPOLLERR;
++			else
++				mask |= EPOLLIN | EPOLLRDNORM;
++		}
++	}
++
++	if (req & (EPOLLOUT | EPOLLWRNORM)) {
++		if (ctx->current_client)
++			poll_wait(file, &ctx->wait, wait);
++
++		if (!ctx->current_client)
++			mask |= EPOLLOUT | EPOLLWRNORM;
++	}
++
++	return mask;
++}
++
++static void aspeed_xdma_vma_close(struct vm_area_struct *vma)
++{
++	int rc;
++	struct aspeed_xdma_client *client = vma->vm_private_data;
++
++	rc = wait_event_interruptible(client->ctx->wait, !client->in_progress);
++	if (rc)
++		return;
++
++	gen_pool_free(client->ctx->pool, (unsigned long)client->virt,
++		      client->size);
++
++	client->virt = NULL;
++	client->phys = 0;
++	client->size = 0;
++}
++
++static const struct vm_operations_struct aspeed_xdma_vm_ops = {
++	.close =	aspeed_xdma_vma_close,
++};
++
++static int aspeed_xdma_mmap(struct file *file, struct vm_area_struct *vma)
++{
++	int rc;
++	struct aspeed_xdma_client *client = file->private_data;
++	struct aspeed_xdma *ctx = client->ctx;
++
++	/* restrict file to one mapping */
++	if (client->size)
++		return -EBUSY;
++
++	client->size = vma->vm_end - vma->vm_start;
++	client->virt = gen_pool_dma_alloc(ctx->pool, client->size,
++					  &client->phys);
++	if (!client->virt) {
++		client->phys = 0;
++		client->size = 0;
++		return -ENOMEM;
++	}
++
++	vma->vm_pgoff = (client->phys - ctx->mem_phys) >> PAGE_SHIFT;
++	vma->vm_ops = &aspeed_xdma_vm_ops;
++	vma->vm_private_data = client;
++	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
++
++	rc = io_remap_pfn_range(vma, vma->vm_start, client->phys >> PAGE_SHIFT,
++				client->size, vma->vm_page_prot);
++	if (rc) {
++		dev_warn(ctx->dev, "mmap err: v[%08lx] to p[%08x], s[%08x]\n",
++			 vma->vm_start, (u32)client->phys, client->size);
++
++		gen_pool_free(ctx->pool, (unsigned long)client->virt,
++			      client->size);
++
++		client->virt = NULL;
++		client->phys = 0;
++		client->size = 0;
++		return rc;
++	}
++
++	dev_dbg(ctx->dev, "mmap: v[%08lx] to p[%08x], s[%08x]\n",
++		vma->vm_start, (u32)client->phys, client->size);
++
++	return 0;
++}
++
++static int aspeed_xdma_open(struct inode *inode, struct file *file)
++{
++	struct miscdevice *misc = file->private_data;
++	struct aspeed_xdma *ctx = container_of(misc, struct aspeed_xdma, misc);
++	struct aspeed_xdma_client *client = kzalloc(sizeof(*client),
++						    GFP_KERNEL);
++
++	if (!client)
++		return -ENOMEM;
++
++	client->ctx = ctx;
++	file->private_data = client;
++	return 0;
++}
++
++static int aspeed_xdma_release(struct inode *inode, struct file *file)
++{
++	struct aspeed_xdma_client *client = file->private_data;
++
++	kfree(client);
++	return 0;
++}
++
++static const struct file_operations aspeed_xdma_fops = {
++	.owner			= THIS_MODULE,
++	.write			= aspeed_xdma_write,
++	.poll			= aspeed_xdma_poll,
++	.mmap			= aspeed_xdma_mmap,
++	.open			= aspeed_xdma_open,
++	.release		= aspeed_xdma_release,
++};
++
+ static int aspeed_xdma_init_scu(struct aspeed_xdma *ctx, struct device *dev)
+ {
+ 	struct regmap *scu = syscon_regmap_lookup_by_phandle(dev->of_node,
+@@ -592,6 +779,7 @@ static int aspeed_xdma_probe(struct platform_device *pdev)
+ 	ctx->chip = md;
+ 	ctx->dev = dev;
+ 	platform_set_drvdata(pdev, ctx);
++	mutex_init(&ctx->file_lock);
+ 	mutex_init(&ctx->start_lock);
+ 	INIT_WORK(&ctx->reset_work, aspeed_xdma_reset_work);
+ 	spin_lock_init(&ctx->client_lock);
+@@ -688,6 +876,22 @@ static int aspeed_xdma_probe(struct platform_device *pdev)
+ 
+ 	aspeed_xdma_init_eng(ctx);
+ 
++	ctx->misc.minor = MISC_DYNAMIC_MINOR;
++	ctx->misc.fops = &aspeed_xdma_fops;
++	ctx->misc.name = "aspeed-xdma";
++	ctx->misc.parent = dev;
++	rc = misc_register(&ctx->misc);
++	if (rc) {
++		dev_err(dev, "Failed to register xdma miscdevice.\n");
++
++		gen_pool_free(ctx->pool, (unsigned long)ctx->cmdq,
++			      XDMA_CMDQ_SIZE);
++
++		reset_control_assert(ctx->reset);
++		clk_disable_unprepare(ctx->clock);
++		return rc;
++	}
++
+ 	/*
+ 	 * This interrupt could fire immediately so only request it once the
+ 	 * engine and driver are initialized.
+@@ -709,6 +913,7 @@ static int aspeed_xdma_remove(struct platform_device *pdev)
+ {
+ 	struct aspeed_xdma *ctx = platform_get_drvdata(pdev);
+ 
++	misc_deregister(&ctx->misc);
+ 	gen_pool_free(ctx->pool, (unsigned long)ctx->cmdq, XDMA_CMDQ_SIZE);
+ 
+ 	reset_control_assert(ctx->reset);
+-- 
+2.24.0
+
