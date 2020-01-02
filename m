@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8EBD12EC30
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:16:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DE4012ED9F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:30:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726121AbgABWQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:16:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57764 "EHLO mail.kernel.org"
+        id S1730140AbgABWaK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:30:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727382AbgABWQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:16:07 -0500
+        id S1729980AbgABWaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:30:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D40622314;
-        Thu,  2 Jan 2020 22:16:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A8D720863;
+        Thu,  2 Jan 2020 22:30:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003365;
-        bh=P+qkyBskgrpDviv0YM89VHDOIOtINogWuFid//yjjY4=;
+        s=default; t=1578004207;
+        bh=vorHKAAlo2Q/D/7oNeovywhUHPTU36ycKOYuHV/ww9s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fXv8hgjHwgMIpkwzAD47F5VbKEw7x5jYMDzxH7R9irMZq9h7QePjBkVNEuviUnLjp
-         CsSscIuqEudxj6gXLabeX5sUJ/OCYNE4BfuPZ+TYWXqJSFVi4MfeeFKbD+y47rMA/W
-         PgByUldkTcs6zu2sFgmPmAFQXCGV2B24hWp4BVeg=
+        b=fyaT7/0xbB20FG1UOJpwStTTbNIPLgnsuWopyOsYctakXF0rtXU+m5WSRvkRScVvV
+         Lfc5K4I58L/cRRR6VbxVp7F5wzEyupvht52mvgTdWRLqqtlc8buG40DmL8Lyi3pf70
+         pn+Ksrzdwhvos7rHS/gYCexzcwXWW3utcjXFYGJU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+9a1bc632e78a1a98488b@syzkaller.appspotmail.com,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Hewenliang <hewenliang4@huawei.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 131/191] sctp: fix err handling of stream initialization
-Date:   Thu,  2 Jan 2020 23:06:53 +0100
-Message-Id: <20200102215843.731264631@linuxfoundation.org>
+Subject: [PATCH 4.9 083/171] libtraceevent: Fix memory leakage in copy_filter_type
+Date:   Thu,  2 Jan 2020 23:06:54 +0100
+Message-Id: <20200102220558.483963336@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,108 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+From: Hewenliang <hewenliang4@huawei.com>
 
-[ Upstream commit 61d5d4062876e21331c3d0ba4b02dbd50c06a658 ]
+[ Upstream commit 10992af6bf46a2048ad964985a5b77464e5563b1 ]
 
-The fix on 951c6db954a1 fixed the issued reported there but introduced
-another. When the allocation fails within sctp_stream_init() it is
-okay/necessary to free the genradix. But it is also called when adding
-new streams, from sctp_send_add_streams() and
-sctp_process_strreset_addstrm_in() and in those situations it cannot
-just free the genradix because by then it is a fully operational
-association.
+It is necessary to free the memory that we have allocated when error occurs.
 
-The fix here then is to only free the genradix in sctp_stream_init()
-and on those other call sites  move on with what it already had and let
-the subsequent error handling to handle it.
-
-Tested with the reproducers from this report and the previous one,
-with lksctp-tools and sctp-tests.
-
-Reported-by: syzbot+9a1bc632e78a1a98488b@syzkaller.appspotmail.com
-Fixes: 951c6db954a1 ("sctp: fix memleak on err handling of stream initialization")
-Signed-off-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: ef3072cd1d5c ("tools lib traceevent: Get rid of die in add_filter_type()")
+Signed-off-by: Hewenliang <hewenliang4@huawei.com>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+Link: http://lore.kernel.org/lkml/20191119014415.57210-1-hewenliang4@huawei.com
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sctp/stream.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ tools/lib/traceevent/parse-filter.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/net/sctp/stream.c b/net/sctp/stream.c
-index 6a30392068a0..c1a100d2fed3 100644
---- a/net/sctp/stream.c
-+++ b/net/sctp/stream.c
-@@ -84,10 +84,8 @@ static int sctp_stream_alloc_out(struct sctp_stream *stream, __u16 outcnt,
- 		return 0;
+diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
+index 5e10ba796a6f..569bceff5f51 100644
+--- a/tools/lib/traceevent/parse-filter.c
++++ b/tools/lib/traceevent/parse-filter.c
+@@ -1492,8 +1492,10 @@ static int copy_filter_type(struct event_filter *filter,
+ 	if (strcmp(str, "TRUE") == 0 || strcmp(str, "FALSE") == 0) {
+ 		/* Add trivial event */
+ 		arg = allocate_arg();
+-		if (arg == NULL)
++		if (arg == NULL) {
++			free(str);
+ 			return -1;
++		}
  
- 	ret = genradix_prealloc(&stream->out, outcnt, gfp);
--	if (ret) {
--		genradix_free(&stream->out);
-+	if (ret)
- 		return ret;
--	}
+ 		arg->type = FILTER_ARG_BOOLEAN;
+ 		if (strcmp(str, "TRUE") == 0)
+@@ -1502,8 +1504,11 @@ static int copy_filter_type(struct event_filter *filter,
+ 			arg->boolean.value = 0;
  
- 	stream->outcnt = outcnt;
- 	return 0;
-@@ -102,10 +100,8 @@ static int sctp_stream_alloc_in(struct sctp_stream *stream, __u16 incnt,
- 		return 0;
+ 		filter_type = add_filter_type(filter, event->id);
+-		if (filter_type == NULL)
++		if (filter_type == NULL) {
++			free(str);
++			free_arg(arg);
+ 			return -1;
++		}
  
- 	ret = genradix_prealloc(&stream->in, incnt, gfp);
--	if (ret) {
--		genradix_free(&stream->in);
-+	if (ret)
- 		return ret;
--	}
+ 		filter_type->filter = arg;
  
- 	stream->incnt = incnt;
- 	return 0;
-@@ -123,7 +119,7 @@ int sctp_stream_init(struct sctp_stream *stream, __u16 outcnt, __u16 incnt,
- 	 * a new one with new outcnt to save memory if needed.
- 	 */
- 	if (outcnt == stream->outcnt)
--		goto in;
-+		goto handle_in;
- 
- 	/* Filter out chunks queued on streams that won't exist anymore */
- 	sched->unsched_all(stream);
-@@ -132,24 +128,28 @@ int sctp_stream_init(struct sctp_stream *stream, __u16 outcnt, __u16 incnt,
- 
- 	ret = sctp_stream_alloc_out(stream, outcnt, gfp);
- 	if (ret)
--		goto out;
-+		goto out_err;
- 
- 	for (i = 0; i < stream->outcnt; i++)
- 		SCTP_SO(stream, i)->state = SCTP_STREAM_OPEN;
- 
--in:
-+handle_in:
- 	sctp_stream_interleave_init(stream);
- 	if (!incnt)
- 		goto out;
- 
- 	ret = sctp_stream_alloc_in(stream, incnt, gfp);
--	if (ret) {
--		sched->free(stream);
--		genradix_free(&stream->out);
--		stream->outcnt = 0;
--		goto out;
--	}
-+	if (ret)
-+		goto in_err;
-+
-+	goto out;
- 
-+in_err:
-+	sched->free(stream);
-+	genradix_free(&stream->in);
-+out_err:
-+	genradix_free(&stream->out);
-+	stream->outcnt = 0;
- out:
- 	return ret;
- }
 -- 
 2.20.1
 
