@@ -2,118 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A5EB12E6DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 14:41:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B902F12E6F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 14:54:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728393AbgABNlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 08:41:42 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:43020 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728353AbgABNlm (ORCPT
+        id S1728460AbgABNy0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 08:54:26 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:51205 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728427AbgABNy0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 08:41:42 -0500
-Received: by mail-ot1-f67.google.com with SMTP id p8so20688032oth.10;
-        Thu, 02 Jan 2020 05:41:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=9F6arg+1GHkDfvfkGXNTjMEzkXmAh86YzkPy0mDsP2g=;
-        b=hn/OvXHr5zwXxonk1Y/MbRTLH/2tk4hCD5ykLHCwQu99jktnnB5kbrEcbk8Z4AlhtQ
-         x8vCt1rjrHKIIrCnZFl2kON4rj3MRdq985dtFLZksY1a+aV4TkJajAePF134Vf50t0MF
-         lAKaBKgu07zoHIOpRc9fxNshMpU0EEkb1IAy1KWTdxyTr+ifAzmwCKnZJ3k60u1mURak
-         mOjaVLZ/Lbl3JFL0RB9yB7+iks1As5qN33ZPSdE4pmnJtyYKmLqbjPf+0DmCXgQc5tHv
-         3C9Z3iNjZQoh6BnvZXs0Bf69xKM/mKvUJhqsIS9HCrzExBEEJN4zOIReNpHZetsu/9DR
-         p/6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9F6arg+1GHkDfvfkGXNTjMEzkXmAh86YzkPy0mDsP2g=;
-        b=BRYZwWYyoCLVwT79cpzXXags5f7SDHknmJv02nC1F1HghzB/JTXEWqiVYUoEN1t9Jd
-         7TNlXf4Q1RzpxVAWwguiFdWKqchb/fcZRJ5cd6z/dCEEVuwrmlUH7B0bj5Ds2+ZDKRGr
-         A0JBtQuVUC/4MYzTNMtuVjHB4F3CxCUqoznO9L3FAacM9zGeXdcxSY5zDlQnm1iwALGL
-         6n8P44xUl+AcybQPpkuWAdxRHD0UmITZQ4PG2LbN8InQcRszR83Gf4EfR4mRTjCqjaC3
-         O0n1xURubl2UD2Zq57ZYx32x7MFmxtSCm6IaIJKez1Cu56C8BthFEgxxiCCbelf18ECv
-         x3Sw==
-X-Gm-Message-State: APjAAAWOX0O6Lvl3Db39opOum0e8OocELdpTF7WaorqZtIGbMTS+VYly
-        zpBD6sf828DY6hCryQgOl0ZLi2fsTApBedEqcsA=
-X-Google-Smtp-Source: APXvYqwM9X7I5gCcvZRgL4MVkeskmW4NqZB2bmNnQeGiPkBh9S4+ecPP2Wi3PIL/T+hDtNZAJRIKUgC3Kwap/d9zdYA=
-X-Received: by 2002:a9d:6196:: with SMTP id g22mr95379977otk.204.1577972501544;
- Thu, 02 Jan 2020 05:41:41 -0800 (PST)
+        Thu, 2 Jan 2020 08:54:26 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1Mz9pT-1jiGIP0xBz-00wBuB; Thu, 02 Jan 2020 14:53:26 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Naveen Manohar <naveen.m@intel.com>,
+        Sathya Prakash M R <sathya.prakash.m.r@intel.com>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: Intel: boards: Fix compile-testing RT1011/RT5682
+Date:   Thu,  2 Jan 2020 14:52:55 +0100
+Message-Id: <20200102135322.1841053-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Received: by 2002:a8a:87:0:0:0:0:0 with HTTP; Thu, 2 Jan 2020 05:41:40 -0800 (PST)
-In-Reply-To: <20200102131659.r2lxzcyhvtgxmz7m@pali>
-References: <20191220062419.23516-1-namjae.jeon@samsung.com>
- <CGME20191220062733epcas1p31665a3ae968ab8c70d91a3cddf529e73@epcas1p3.samsung.com>
- <20191220062419.23516-3-namjae.jeon@samsung.com> <20191229134025.qb3mmqatsn5c4gao@pali>
- <000701d5c132$bed73c80$3c85b580$@samsung.com> <20200102083029.uv2gtig3ski23dpe@pali>
- <20200102131659.r2lxzcyhvtgxmz7m@pali>
-From:   Namjae Jeon <linkinjeon@gmail.com>
-Date:   Thu, 2 Jan 2020 22:41:40 +0900
-Message-ID: <CAKYAXd_YHxRiFg=6m1eyXFmBWTXnEg4e-0VirNBS5q24Lz7jMg@mail.gmail.com>
-Subject: Re: [PATCH v8 02/13] exfat: add super block operations
-To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:zxRcnJYM3Qwzugm8PjSAcZhaHwSkpBGtFfHipa588cNnptL2qON
+ NSD9i7Qg/kZPN617VR9sOzheMm2RYqcM3nybT8U9auEe4SXnAWg2PIDbYTRvXuNVgL8MM/h
+ hOHQdhTLQB3rxThMssg/aqy5TMs4OFxtvMeIzodOFBTnozUp48zN5rn5PiMNUrrgV1K1SKG
+ prSoLK4CbtvFyqyFpX03A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:bEdlaOzjlc4=:Rlb5ilrlSlSqshcCQuCuTW
+ BzyisJQmkkEAA9eevZIA8cW7rwyN1A/6V3ZJjvyWSKSomEVuzw27CS+piy7o+v8J1BVD4uH4C
+ i9okx2bEx6iOmdvPiktk9ek1RwJF+3TC5uJnsMzXBD1r4L+Y4x/zdi5cYapmXBfKZcrz7Nswo
+ 67qs1iFcCijMdTRFK3S1X0tp1iGOdt3kQMA995Mnwzz7xgos+DFpxvVtV/YMm/ZOGUEcJeDct
+ X6FC0QqxUDmqOgaaI+bJJbaFdG7001rMc/IXxYVgwMuUMRUWoheozga9LBpa8RIoFks6Cji3q
+ /VyPve6BUbSneIjhjFZO2hIlpbAhQIeL6pJbBJGBDJyuA7h/iaZag8EoQXvC6HHSWemxwl/2V
+ dc4Vo2VlgCxrIuFEnwcGn3a9FfDKuw+Z+HqE4tcEZPkstnIIVd3pmWS27ESezqHGGSEyOWOHY
+ IEMuKQmaFSDsCxNuQqTZUDFbsezR2+P02U8sC3RM4H2SMl7t/jZ2Wgvkc302gpYLMJK+eae2N
+ 0CmuYuD6XOszSyfA/VdkRCStuqSiZTou8yg7G4iQMqPxyrBtBnFRaKkLA8Q9qTKVunPHXSG1j
+ EWvIvhuiYgYSGjaeplMv5glG0Ku+1HW523OhJGxTm6bHlY5cs2Yia20P3Vj/h7S0MlvIPOAkE
+ NQZ7Mx1pZcpgsY/dz+UavTiY+C8IcnLvpiB4OU2BNuFFmI01YFzHXQ57+DuJp9lluUCn57L9K
+ 2Vb47OXSeMWL+wrPNZkLjjMs8JOl8eufizUqum7QqVGFt2llvXGZFzUpFcajXXu3olLXfm34S
+ ZMRN6P8NC4G1syIun+MiDSFO0AzqetX8GR0GhSC1ZJ21WT1JFh2Wox7hgTfh01/GmO9LbGVvg
+ rhW/LNNkbQApzDsZfFkw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2020-01-02 22:16 GMT+09:00, Pali Roh=C3=A1r <pali.rohar@gmail.com>:
-> On Thursday 02 January 2020 09:30:29 Pali Roh=C3=A1r wrote:
->> On Thursday 02 January 2020 15:06:16 Namjae Jeon wrote:
->> > > > +static const struct fs_parameter_spec exfat_param_specs[] =3D {
->> > > > +	fsparam_u32("uid",			Opt_uid),
->> > > > +	fsparam_u32("gid",			Opt_gid),
->> > > > +	fsparam_u32oct("umask",			Opt_umask),
->> > > > +	fsparam_u32oct("dmask",			Opt_dmask),
->> > > > +	fsparam_u32oct("fmask",			Opt_fmask),
->> > > > +	fsparam_u32oct("allow_utime",		Opt_allow_utime),
->> > > > +	fsparam_string("iocharset",		Opt_charset),
->> > > > +	fsparam_flag("utf8",			Opt_utf8),
->> > >
->> > > Hello! What is the purpose of having extra special "utf8" mount
->> > > option?
->> > > Is not one "iocharset=3Dutf8" option enough?
->> > utf8 nls_table supports utf8<->utf32 conversion and does not support
->> > surrogate character conversion.
->>
->> So in other words, this is just subset of UTF-8 just to 3 byte long
->> sequences (for Unicode code points up to the U+FFFF).
->
-> Anyway, this is limitation of kernel's NLS framework? Or limitation in
-> current exfat driver implementation?
-This is not exfat driver issue. Please check fatfs, cifs, etc..
->
-> Because if it is in kernel's NLS framework then all kernel drivers would
-> be affected by this limitation, and not only exfat.
-Yes, FATfs also has two options and There seems to be
-CONFIG_FAT_DEFAULT_UTF8 option to avoid the issue you said.
+On non-x86, the new driver results in a build failure:
 
-config FAT_DEFAULT_UTF8
-        bool "Enable FAT UTF-8 option by default"
-        depends on VFAT_FS
-        default n
-        help
-          Set this if you would like to have "utf8" mount option set
-          by default when mounting FAT filesystems.
+sound/soc/intel/boards/cml_rt1011_rt5682.c:14:10: fatal error: asm/cpu_device_id.h: No such file or directory
 
-          Even if you say Y here can always disable UTF-8 for
-          particular mount by adding "utf8=3D0" to mount options.
+The asm/cpu_device_id.h header is not actually needed here,
+so don't include it.
 
-          Say Y if you use UTF-8 encoding for file names, N otherwise.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+I found this last week, but the patch still seems to be needed
+as I could not find a fix in mainline or -next.
 
-But the way you suggested looks better.
+Please ignore if there is already a fix in some other tree.
 
-Thanks!
->
-> --
-> Pali Roh=C3=A1r
-> pali.rohar@gmail.com
->
+
+ sound/soc/intel/boards/cml_rt1011_rt5682.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/sound/soc/intel/boards/cml_rt1011_rt5682.c b/sound/soc/intel/boards/cml_rt1011_rt5682.c
+index a22f97234201..5f1bf6d3800c 100644
+--- a/sound/soc/intel/boards/cml_rt1011_rt5682.c
++++ b/sound/soc/intel/boards/cml_rt1011_rt5682.c
+@@ -11,7 +11,6 @@
+ #include <linux/clk.h>
+ #include <linux/dmi.h>
+ #include <linux/slab.h>
+-#include <asm/cpu_device_id.h>
+ #include <linux/acpi.h>
+ #include <sound/core.h>
+ #include <sound/jack.h>
+-- 
+2.20.0
+
