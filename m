@@ -2,61 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05D2112F1E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:43:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDADB12F1E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 00:46:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727332AbgABXnH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 18:43:07 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:52460 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727166AbgABXnH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 18:43:07 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5555B15707A92;
-        Thu,  2 Jan 2020 15:43:06 -0800 (PST)
-Date:   Thu, 02 Jan 2020 15:43:05 -0800 (PST)
-Message-Id: <20200102.154305.639050830505824860.davem@davemloft.net>
-To:     yangpc@wangsu.com
-Cc:     edumazet@google.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        ast@kernel.org, daniel@iogearbox.net, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, andriin@fb.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tcp: fix "old stuff" D-SACK causing SACK to be treated
- as D-SACK
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1577699681-14748-1-git-send-email-yangpc@wangsu.com>
-References: <1577699681-14748-1-git-send-email-yangpc@wangsu.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1727166AbgABXqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 18:46:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40002 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725872AbgABXqk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 18:46:40 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 719322085B;
+        Thu,  2 Jan 2020 23:46:38 +0000 (UTC)
+Date:   Thu, 2 Jan 2020 18:46:36 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrii Nakryiko <andriin@fb.com>, Andrey Ignatov <rdna@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: Re: [RFC] tools lib traceevent: How to do library versioning being
+ in the Linux kernel source?
+Message-ID: <20200102184636.08375a14@gandalf.local.home>
+In-Reply-To: <20200102184252.GA8047@kernel.org>
+References: <20200102122004.216c85da@gandalf.local.home>
+        <20200102184252.GA8047@kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 02 Jan 2020 15:43:06 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pengcheng Yang <yangpc@wangsu.com>
-Date: Mon, 30 Dec 2019 17:54:41 +0800
 
-> When we receive a D-SACK, where the sequence number satisfies:
-> 	undo_marker <= start_seq < end_seq <= prior_snd_una
-> we consider this is a valid D-SACK and tcp_is_sackblock_valid()
-> returns true, then this D-SACK is discarded as "old stuff",
-> but the variable first_sack_index is not marked as negative
-> in tcp_sacktag_write_queue().
-> 
-> If this D-SACK also carries a SACK that needs to be processed
-> (for example, the previous SACK segment was lost), this SACK
-> will be treated as a D-SACK in the following processing of
-> tcp_sacktag_write_queue(), which will eventually lead to
-> incorrect updates of undo_retrans and reordering.
-> 
-> Fixes: fd6dad616d4f ("[TCP]: Earlier SACK block verification & simplify access to them")
-> Signed-off-by: Pengcheng Yang <yangpc@wangsu.com>
+[ Added the BPF folks ]
 
-Applied and queued up for -stable, thank you.
+On Thu, 2 Jan 2020 15:42:52 -0300
+Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com> wrote:
+
+> Em Thu, Jan 02, 2020 at 12:20:04PM -0500, Steven Rostedt escreveu:
+> > This is a problem with living in the Linux source tree as tags and
+> > branches in Linus's tree are for only the Linux kernel source itself.
+> > This may work fine for perf, as it's not a library and there's not  
+> 
+
+> 
+> libperf adopted the versioning and packaging practices introduced by
+> tools/lib/bpf, perhaps you could do the same for tools/lib/traceevent
+> and then we would have a standard for these cases?
+
+I don't see libperf in my Debian testing installation, but I did find
+libbpf.
+
+> 
+> The problem of having libperf, libbpf in distros is already being
+> tackled for quite a while, would be interesting to follow what has
+> happened in that area as well, Jiri knows more about this, Jiri?
+
+Looking at the libbpf Makefile, it is getting the version from the
+libbpf.map file.
+
+What's the standard way for distributions to know when to use the
+number? Only from Linux stable trees? That way, we can make fixes to the
+library, but still need to remember to update the version number before
+the release.
+
+How does libbpf handle the version numbers with bug fixes? Does it get
+updated one a kernel release if there are changes?
+
+Obviously, we need to update the major number if the API changes in
+anyway that is not compatible for a new application, which includes
+adding new functions. Right?
+
+-- Steve
