@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B145112EC50
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:17:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFB2312ED16
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:24:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbgABWRQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:17:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59568 "EHLO mail.kernel.org"
+        id S1729412AbgABWYs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:24:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727374AbgABWRN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:17:13 -0500
+        id S1729302AbgABWYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:24:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75BA521582;
-        Thu,  2 Jan 2020 22:17:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD1BF22525;
+        Thu,  2 Jan 2020 22:24:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003432;
-        bh=6gg8n245oKU6viEJFYY+Mla3YUq8ygLK2YyYWrBCq1A=;
+        s=default; t=1578003882;
+        bh=rQyn/dukZa52J32/ZHdpEc/Ep4F9wGgPq1o6z9Vhpgo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lu+B1C9EClHWHzRki/5HXpjr1Luptwk1CZ7SOcwI7LZhUnUyqSPBwLj41eBNwrKBz
-         WhtaVe8UXBT+qblwSzo7AFlnyVOS5aZiyv1edfvSzaIAeoZoCwfa8v1GKRjhYKKYh+
-         8RSko/3GoHbbma+FEvzhaCRF/2/LJ1MxfyUxEj2k=
+        b=jH03mk0HZKUzK1CjOAzc68ch8TXUOw2XsWP8+Vzs8TEtfDhgfUAX6DRaaZ9SrpdW3
+         j9pjWDb+yyZSHIaQ3dPD62Rtq9XP83bJAnlyRLnbdwVHnG5qPI5JBO4aP536i1EDLI
+         OoVf6Eh6dCHrb56+5Ua5eNE48q5mqAsW1WEoubBY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 159/191] bnxt_en: Free context memory in the open path if firmware has been reset.
+        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 39/91] scsi: NCR5380: Add disconnect_mask module parameter
 Date:   Thu,  2 Jan 2020 23:07:21 +0100
-Message-Id: <20200102215846.425151646@linuxfoundation.org>
+Message-Id: <20200102220433.555468797@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
+References: <20200102220356.856162165@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Chan <michael.chan@broadcom.com>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-[ Upstream commit 325f85f37e5b35807d86185bdf2c64d2980c44ba ]
+[ Upstream commit 0b7a223552d455bcfba6fb9cfc5eef2b5fce1491 ]
 
-This will trigger new context memory to be rediscovered and allocated
-during the re-probe process after a firmware reset.  Without this, the
-newly reset firmware does not have valid context memory and the driver
-will eventually fail to allocate some resources.
+Add a module parameter to inhibit disconnect/reselect for individual
+targets. This gains compatibility with Aztec PowerMonster SCSI/SATA
+adapters with buggy firmware. (No fix is available from the vendor.)
 
-Fixes: ec5d31e3c15d ("bnxt_en: Handle firmware reset status during IF_UP.")
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Apparently these adapters pass-through the product/vendor of the attached
+SATA device. Since they can't be identified from the response to an INQUIRY
+command, a device blacklist flag won't work.
+
+Cc: Michael Schmitz <schmitzmic@gmail.com>
+Link: https://lore.kernel.org/r/993b17545990f31f9fa5a98202b51102a68e7594.1573875417.git.fthain@telegraphics.com.au
+Reviewed-and-tested-by: Michael Schmitz <schmitzmic@gmail.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/NCR5380.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -8766,6 +8766,9 @@ static int bnxt_hwrm_if_change(struct bn
- 	}
- 	if (resc_reinit || fw_reset) {
- 		if (fw_reset) {
-+			bnxt_free_ctx_mem(bp);
-+			kfree(bp->ctx);
-+			bp->ctx = NULL;
- 			rc = bnxt_fw_init_one(bp);
- 			if (rc) {
- 				set_bit(BNXT_STATE_ABORT_ERR, &bp->state);
+diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
+index 21377ac71168..79b0b4eece19 100644
+--- a/drivers/scsi/NCR5380.c
++++ b/drivers/scsi/NCR5380.c
+@@ -129,6 +129,9 @@
+ #define NCR5380_release_dma_irq(x)
+ #endif
+ 
++static unsigned int disconnect_mask = ~0;
++module_param(disconnect_mask, int, 0444);
++
+ static int do_abort(struct Scsi_Host *);
+ static void do_reset(struct Scsi_Host *);
+ static void bus_reset_cleanup(struct Scsi_Host *);
+@@ -946,7 +949,8 @@ static bool NCR5380_select(struct Scsi_Host *instance, struct scsi_cmnd *cmd)
+ 	int err;
+ 	bool ret = true;
+ 	bool can_disconnect = instance->irq != NO_IRQ &&
+-			      cmd->cmnd[0] != REQUEST_SENSE;
++			      cmd->cmnd[0] != REQUEST_SENSE &&
++			      (disconnect_mask & BIT(scmd_id(cmd)));
+ 
+ 	NCR5380_dprint(NDEBUG_ARBITRATION, instance);
+ 	dsprintk(NDEBUG_ARBITRATION, instance, "starting arbitration, id = %d\n",
+-- 
+2.20.1
+
 
 
