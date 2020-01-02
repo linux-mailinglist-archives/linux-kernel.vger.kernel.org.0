@@ -2,128 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D654712EABF
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 21:01:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9608912EAB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 21:00:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728702AbgABUBQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 15:01:16 -0500
-Received: from mail-vs1-f74.google.com ([209.85.217.74]:38274 "EHLO
-        mail-vs1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728296AbgABUBQ (ORCPT
+        id S1728585AbgABUAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 15:00:55 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35696 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728260AbgABUAz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 15:01:16 -0500
-Received: by mail-vs1-f74.google.com with SMTP id o185so3788911vsc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 12:01:15 -0800 (PST)
+        Thu, 2 Jan 2020 15:00:55 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p17so6747990wmb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 12:00:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=IWftFaF/7pwaE+hKN0rmHHTDccHnFs4MwoJXhQKr9TA=;
-        b=ETFtyUbGasImdWusI7+XxX+jtfzy6TbJUp8B/J87NDJKrN0tpvcu+AhRbowiMtcdgg
-         bgjYmyFMHeiZP1YyPkOJe2abYtU+18pqk98PIqIpdmXhiL+NCzGaUfwooMn7yIw2l2sK
-         XNt0kZnYXtKpSNWS81hh9vYloEblPeBm9UO7rjtiG9Mnbfl6BL6rQonfw28PD19VxaYB
-         AtHFPgoQq9kWjklvzY6rcLgQZVIhOxkgZQILADhE/vJ2AnmTJgZg/Nokpsq0P1dpwgGQ
-         hJ0Kkj0DAet+gYl0w8PbWpXOWeuJ4xr8D2GffvLt2+nHrPQgHnWpO70Z1VvVu5hp/FdP
-         hVzQ==
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=C/zqVBJss9FeKefd7C+16Ae2FlqoKun4UIZaiQyERGc=;
+        b=bh8Rm5/FVZosPDfz+Mw5ff9vf/2j572WpXz9+0Va/yBflPMsqI44Jg62X6+/AeFj3V
+         EQOKao/TAmkbp7yJsDnHSorYgfsmsL56FykZIR9KD9Auh8Fsw8QNNDLcYKCVg/9crTl2
+         LwAVJFQWG9hTjgUfWKh/qZiatAQDrsgMONkdM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=IWftFaF/7pwaE+hKN0rmHHTDccHnFs4MwoJXhQKr9TA=;
-        b=AwOfjacVs1QfHbJYL8I5qo0jSIce8AAYkFpZlMA2xLeYofNdo9aKDqLf+RBMrUYhd8
-         LxApa9pB7JfIKcV8L4Mf4H8HNf8Mn1NDzNS9ce8SxXMNB7BAYkYWwkGYWFqJ3I3uVk4I
-         8UN2p3HFmLlTQ33FOgx/n6DzeKOD+Gku+TK8+YxjeaaApyDjjqFikqMoajbeWu+aiUwj
-         V1EZ7Wla+E9OdTQYYK6vyI8weuko0EQzMAbrTcvEwelcx9vZ/08ODixiBCEqAgg+eH7K
-         VzJefxSDGCJfNGvHd05YFTDouYj60QFlaQIaeS1uwus9K7hpEQqpjsoNXgYNJKN4FshX
-         OINQ==
-X-Gm-Message-State: APjAAAUz6dh3fl9BdpZb5r5NohRUVUAxmoeuKvIRSgg4ywVZZ8SbdQyR
-        AgVP5H7KhsFqEFNhNYKuPjdgUVl+yJaMMfo=
-X-Google-Smtp-Source: APXvYqwtC1Uvje2fbb36HVwCkmW0QcIlFAti3E9fgJHG6wwvnd7vXeyx2pz2lLd6Iz8RTxqnfNJndL5sU4NFASA=
-X-Received: by 2002:a1f:d904:: with SMTP id q4mr43772171vkg.13.1577995274922;
- Thu, 02 Jan 2020 12:01:14 -0800 (PST)
-Date:   Thu,  2 Jan 2020 12:00:52 -0800
-In-Reply-To: <20200102200052.51182-1-semenzato@google.com>
-Message-Id: <20200102200052.51182-3-semenzato@google.com>
-Mime-Version: 1.0
-References: <20200102200052.51182-1-semenzato@google.com>
-X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
-Subject: [PATCH v2 2/2] pm: add more logging on hibernation failure
-From:   Luigi Semenzato <semenzato@google.com>
-To:     linux-pm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, rafael@kernel.org, gpike@google.com,
-        Luigi Semenzato <semenzato@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=C/zqVBJss9FeKefd7C+16Ae2FlqoKun4UIZaiQyERGc=;
+        b=T/O7e0vn0Dk9V5r6aGwgdrDa6VPbUgcYYpWYgWmSHr0z1i5YOMxOwUS1Tihb69Rs3v
+         PQqTf173w0L4FCPjTomsFfdA+z6bCbTTq64O2ILzXcp1E+5QUdtCU64QJsgQBigm0W31
+         W9GZYzCEydx2uf0kFwwCFd51J4lh4uxHbEZeUUHoUVkKPyeLhu5TqTTP82pXeu45ELeu
+         mPZLc8MCXCSak/bp5plsWxP447KXk+LVeykioV3RoVMzR3FcB1aBMYq+I2w08ZR4E9PI
+         fJyxkuebaCelIegvHvOAb0jmmiyYg7dotpy/fcIGB8FPABwYok/rG7DjwGSjqvdV2Bxu
+         KzQw==
+X-Gm-Message-State: APjAAAXEWCiFsjoY+1VgMnoQVepLQ0wpn9bAuJjKITtXu6n8ORj88tub
+        89lPXrtEaqEOR2swpP6iLBRIgw==
+X-Google-Smtp-Source: APXvYqzbBWegsQESMIUakWIouetdLTOWbJmmDhnF1qFIOEZFCKKaMuyr8vQCuBQy7j9XFt+KfkRr9A==
+X-Received: by 2002:a7b:c183:: with SMTP id y3mr15283378wmi.45.1577995253252;
+        Thu, 02 Jan 2020 12:00:53 -0800 (PST)
+Received: from localhost ([2620:10d:c092:200::1:3256])
+        by smtp.gmail.com with ESMTPSA id n10sm56618651wrt.14.2020.01.02.12.00.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jan 2020 12:00:52 -0800 (PST)
+Date:   Thu, 2 Jan 2020 20:00:52 +0000
+From:   Chris Down <chris@chrisdown.name>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com
+Subject: Re: [PATCH v2 1/2] tmpfs: Add per-superblock i_ino support
+Message-ID: <20200102200052.GA1181932@chrisdown.name>
+References: <cover.1577990599.git.chris@chrisdown.name>
+ <738b3d565fe7c65f41c38e439fe3cbfa14f87465.1577990599.git.chris@chrisdown.name>
+ <CAOQ4uxi0v4WL30gpedUbex-TD5wN8p8kCop_3VDYV0UBJGB21w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxi0v4WL30gpedUbex-TD5wN8p8kCop_3VDYV0UBJGB21w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hibernation fails when the kernel cannot allocate enough memory
-to copy all pages in use.  This patch ensures that the failure
-reason is clearly logged.
+Amir Goldstein writes:
+>Wouldn't it be easier to check max_inodes instead of passing this
+>use_sb_ino arg?
+>Is there any case where they *need* to differ?
 
-Signed-off-by: Luigi Semenzato <semenzato@google.com>
----
- kernel/power/snapshot.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+Hmm, I suppose probably not? In that case should I just check against 
+SB_KERNMOUNT, since max_inodes can only be 0 in that case?
 
-diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-index 26b9168321e7..df498717a97e 100644
---- a/kernel/power/snapshot.c
-+++ b/kernel/power/snapshot.c
-@@ -1705,16 +1705,20 @@ int hibernate_preallocate_memory(void)
- 	ktime_t start, stop;
- 	int error;
- 
--	pr_info("Preallocating image memory... ");
-+	pr_info("Preallocating hibernation image memory\n");
- 	start = ktime_get();
- 
- 	error = memory_bm_create(&orig_bm, GFP_IMAGE, PG_ANY);
--	if (error)
-+	if (error) {
-+		pr_err("Cannot allocate original bitmap\n");
- 		goto err_out;
-+	}
- 
- 	error = memory_bm_create(&copy_bm, GFP_IMAGE, PG_ANY);
--	if (error)
-+	if (error) {
-+		pr_err("Cannot allocate copy bitmap\n");
- 		goto err_out;
-+	}
- 
- 	alloc_normal = 0;
- 	alloc_highmem = 0;
-@@ -1804,8 +1808,11 @@ int hibernate_preallocate_memory(void)
- 		alloc -= pages;
- 		pages += pages_highmem;
- 		pages_highmem = preallocate_image_highmem(alloc);
--		if (pages_highmem < alloc)
-+		if (pages_highmem < alloc) {
-+			pr_err("Image allocation is %lu pages short\n",
-+				alloc - pages_highmem);
- 			goto err_out;
-+		}
- 		pages += pages_highmem;
- 		/*
- 		 * size is the desired number of saveable pages to leave in
-@@ -1836,13 +1843,12 @@ int hibernate_preallocate_memory(void)
- 
-  out:
- 	stop = ktime_get();
--	pr_cont("done (allocated %lu pages)\n", pages);
-+	pr_info("Allocated %lu pages for hibernation shapshot\n", pages);
- 	swsusp_show_speed(start, stop, pages, "Allocated");
- 
- 	return 0;
- 
-  err_out:
--	pr_cont("\n");
- 	swsusp_free();
- 	return -ENOMEM;
- }
--- 
-2.24.1.735.g03f4e72817-goog
+>> @@ -3378,6 +3411,8 @@ enum shmem_param {
+>>         Opt_nr_inodes,
+>>         Opt_size,
+>>         Opt_uid,
+>> +       Opt_inode32,
+>> +       Opt_inode64,
+>
+>Does not belong to this patch..
+>
+>>  };
+>>
+>>  static const struct fs_parameter_spec shmem_param_specs[] = {
+>> @@ -3389,6 +3424,8 @@ static const struct fs_parameter_spec shmem_param_specs[] = {
+>>         fsparam_string("nr_inodes",     Opt_nr_inodes),
+>>         fsparam_string("size",          Opt_size),
+>>         fsparam_u32   ("uid",           Opt_uid),
+>> +       fsparam_flag  ("inode32",       Opt_inode32),
+>> +       fsparam_flag  ("inode64",       Opt_inode64),
+>
+>Ditto
 
+Bleh, I'll fix this and send v3.
+
+>>         {}
+>>  };
+>>
+>> @@ -3690,7 +3727,8 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
+>>  #endif
+>>         uuid_gen(&sb->s_uuid);
+>>
+>> -       inode = shmem_get_inode(sb, NULL, S_IFDIR | sbinfo->mode, 0, VM_NORESERVE);
+>> +       inode = shmem_get_inode(sb, NULL, S_IFDIR | sbinfo->mode, 0,
+>> +                               VM_NORESERVE, true);
+>
+>Should usb_sb_ino be true for the kern_mount??
+>In any case, it wouldn't matter if it was false, hence no need to pass
+>an argument
+>and can either check for sbinfo->max_inodes or the SB_KERNMOUNT flag in
+>shmem_get_inode().
+
+Ok, cool. I'll fix these up and send v3. Thanks!
