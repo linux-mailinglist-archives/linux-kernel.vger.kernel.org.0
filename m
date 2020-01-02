@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAD0712EE22
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:35:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBC7812EDB5
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:31:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730824AbgABWf2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:35:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45092 "EHLO mail.kernel.org"
+        id S1730243AbgABWbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:31:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730697AbgABWfY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:35:24 -0500
+        id S1730220AbgABWa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:30:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 329C620866;
-        Thu,  2 Jan 2020 22:35:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B067720863;
+        Thu,  2 Jan 2020 22:30:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004523;
-        bh=7+JSJnLaWm9rB9v4jCs3lqAMZplg4udQOpIcjK9RwUE=;
+        s=default; t=1578004258;
+        bh=rvDDPH2iFigv1nS+TAS1khRR8+8SMltKfuS6SkknOAE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d3NdsKIo/2HPgS1cGYlHsJW2xVT3KcQonpg0E96C2YGa22H4U1SdCd4CHG/v4ry9y
-         iq42Rp2D85pQc/G3ya8tM0CovybnqwMQFulWY0F43uvcXIrFgoYviorjh5GPYzWsfT
-         3HiOIpSpBlQazgUNEiX2A0Om/ZnIqxCOTJsNT95U=
+        b=YX+Ayh33fk304huiOGwDdh3lxyTdNwUACMjG2hStbAYswXQQmzP7AZWubaQh+Qw76
+         b3V8JgO2F47XB7YLcpDM28zLDOXrZqaTki8ct4XeEdGrfAtsZjqGSJRkqyZgxaaS15
+         yLLfNKA59APCG5pOLdMK6VZ9rYaHPnPhC47XJ0xg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
-        Stephan Gerhold <stephan@gerhold.net>,
+        stable@vger.kernel.org, Ilya Leoshkevich <iii@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 025/137] extcon: sm5502: Reset registers during initialization
-Date:   Thu,  2 Jan 2020 23:06:38 +0100
-Message-Id: <20200102220549.980968649@linuxfoundation.org>
+Subject: [PATCH 4.9 068/171] s390/disassembler: dont hide instruction addresses
+Date:   Thu,  2 Jan 2020 23:06:39 +0100
+Message-Id: <20200102220556.286898713@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephan Gerhold <stephan@gerhold.net>
+From: Ilya Leoshkevich <iii@linux.ibm.com>
 
-[ Upstream commit 6942635032cfd3e003e980d2dfa4e6323a3ce145 ]
+[ Upstream commit 544f1d62e3e6c6e6d17a5e56f6139208acb5ff46 ]
 
-On some devices (e.g. Samsung Galaxy A5 (2015)), the bootloader
-seems to keep interrupts enabled for SM5502 when booting Linux.
-Changing the cable state (i.e. plugging in a cable) - until the driver
-is loaded - will therefore produce an interrupt that is never read.
+Due to kptr_restrict, JITted BPF code is now displayed like this:
 
-In this situation, the cable state will be stuck forever on the
-initial state because SM5502 stops sending interrupts.
-This can be avoided by clearing those pending interrupts after
-the driver has been loaded.
+000000000b6ed1b2: ebdff0800024  stmg    %r13,%r15,128(%r15)
+000000004cde2ba0: 41d0f040      la      %r13,64(%r15)
+00000000fbad41b0: a7fbffa0      aghi    %r15,-96
 
-One way to do this is to reset all registers to default state
-by writing to SM5502_REG_RESET. This ensures that we start from
-a clean state, with all interrupts disabled.
+Leaking kernel addresses to dmesg is not a concern in this case, because
+this happens only when JIT debugging is explicitly activated, which only
+root can do.
 
-Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Use %px in this particular instance, and also to print an instruction
+address in show_code and PCREL (e.g. brasl) arguments in print_insn.
+While at present functionally equivalent to %016lx, %px is recommended
+by Documentation/core-api/printk-formats.rst for such cases.
+
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Reviewed-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/extcon/extcon-sm5502.c | 4 ++++
- drivers/extcon/extcon-sm5502.h | 2 ++
- 2 files changed, 6 insertions(+)
+ arch/s390/kernel/dis.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/extcon/extcon-sm5502.c b/drivers/extcon/extcon-sm5502.c
-index 7aac3cc7efd7..f63f9961ac12 100644
---- a/drivers/extcon/extcon-sm5502.c
-+++ b/drivers/extcon/extcon-sm5502.c
-@@ -69,6 +69,10 @@ struct sm5502_muic_info {
- /* Default value of SM5502 register to bring up MUIC device. */
- static struct reg_data sm5502_reg_data[] = {
- 	{
-+		.reg = SM5502_REG_RESET,
-+		.val = SM5502_REG_RESET_MASK,
-+		.invert = true,
-+	}, {
- 		.reg = SM5502_REG_CONTROL,
- 		.val = SM5502_REG_CONTROL_MASK_INT_MASK,
- 		.invert = false,
-diff --git a/drivers/extcon/extcon-sm5502.h b/drivers/extcon/extcon-sm5502.h
-index 974b53222f56..12f8b01e5753 100644
---- a/drivers/extcon/extcon-sm5502.h
-+++ b/drivers/extcon/extcon-sm5502.h
-@@ -241,6 +241,8 @@ enum sm5502_reg {
- #define DM_DP_SWITCH_UART			((DM_DP_CON_SWITCH_UART <<SM5502_REG_MANUAL_SW1_DP_SHIFT) \
- 						| (DM_DP_CON_SWITCH_UART <<SM5502_REG_MANUAL_SW1_DM_SHIFT))
- 
-+#define SM5502_REG_RESET_MASK			(0x1)
+diff --git a/arch/s390/kernel/dis.c b/arch/s390/kernel/dis.c
+index aaf9dab3c193..f9dca1aed9a4 100644
+--- a/arch/s390/kernel/dis.c
++++ b/arch/s390/kernel/dis.c
+@@ -1930,10 +1930,11 @@ static int print_insn(char *buffer, unsigned char *code, unsigned long addr)
+ 				ptr += sprintf(ptr, "%%c%i", value);
+ 			else if (operand->flags & OPERAND_VR)
+ 				ptr += sprintf(ptr, "%%v%i", value);
+-			else if (operand->flags & OPERAND_PCREL)
+-				ptr += sprintf(ptr, "%lx", (signed int) value
+-								      + addr);
+-			else if (operand->flags & OPERAND_SIGNED)
++			else if (operand->flags & OPERAND_PCREL) {
++				void *pcrel = (void *)((int)value + addr);
 +
- /* SM5502 Interrupts */
- enum sm5502_irq {
- 	/* INT1 */
++				ptr += sprintf(ptr, "%px", pcrel);
++			} else if (operand->flags & OPERAND_SIGNED)
+ 				ptr += sprintf(ptr, "%i", value);
+ 			else
+ 				ptr += sprintf(ptr, "%u", value);
+@@ -2005,7 +2006,7 @@ void show_code(struct pt_regs *regs)
+ 		else
+ 			*ptr++ = ' ';
+ 		addr = regs->psw.addr + start - 32;
+-		ptr += sprintf(ptr, "%016lx: ", addr);
++		ptr += sprintf(ptr, "%px: ", (void *)addr);
+ 		if (start + opsize >= end)
+ 			break;
+ 		for (i = 0; i < opsize; i++)
+@@ -2033,7 +2034,7 @@ void print_fn_code(unsigned char *code, unsigned long len)
+ 		opsize = insn_length(*code);
+ 		if (opsize > len)
+ 			break;
+-		ptr += sprintf(ptr, "%p: ", code);
++		ptr += sprintf(ptr, "%px: ", code);
+ 		for (i = 0; i < opsize; i++)
+ 			ptr += sprintf(ptr, "%02x", code[i]);
+ 		*ptr++ = '\t';
 -- 
 2.20.1
 
