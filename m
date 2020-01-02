@@ -2,80 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7524E12E996
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 18:55:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A9D312E9A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 19:02:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727907AbgABRzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 12:55:53 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33841 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727706AbgABRzx (ORCPT
+        id S1728091AbgABSBw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 13:01:52 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:57836 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728001AbgABSBt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 12:55:53 -0500
-Received: by mail-qk1-f195.google.com with SMTP id j9so32340967qkk.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 09:55:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=VvBGSQnAvkp/z9KIA70+zCZk+7dfOwKatcr0yFpfC/A=;
-        b=XlJSSg0PEd9Gwmxem87SMKsdC8/nyuwJgJetjj+6wVGVCnKrWFyeFioR7mYgpQavrM
-         e0QUGQOff54lsBTdbtLjAY0Zmbt5jVxbxXT1vFtQuK5lNshrEwoMZs03ZLhXY1uDYCS3
-         pdTIs+x8Y//CNgCZvlQgQYKsUP2clxzBxg17R4GBbXXWM9etsIyhUePTVXUtcIVGnyL0
-         dciGDiEHy+22i0FIpVLIyx2U0ga23gxv+VDL0hPYu5Laf2hseSFlRhnV6jwnFVWLgvgN
-         3+JU/Cplv3wj4GGb1yOf+AwzY2bj+sBw3BmodXdGCcX/kP7XlX6jAE0apst0m0N6Sn2n
-         kRpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=VvBGSQnAvkp/z9KIA70+zCZk+7dfOwKatcr0yFpfC/A=;
-        b=QQs0oyFRN53o0i8SPlhz9rP/gxJYbOhEFGE677tVhU+EmK0S2WkE9XadtHOOIC6kT8
-         rueJL2dW900oM5yJDKnRCJtGSLY9zDkfozMFSSmeagHoow2odp3xmDQPmN5ywtiFM7IN
-         zrCC1vwCizNzSq59qzfLfxaN/f7mEqIHvEn6OsN3/RXYO//X8z1cXj43MSjRvWnOfRYn
-         D/tCH7VR1PvZpdT8htwiNEHddBZ89JdAhK95doaJ8HX4qJpEDwp89JCR5aoBlfWbmvNV
-         b7ZdHUJwKz2oVjuYFGzq6X3eTBnYE7otRiopW0Bso1B3c/IiNAH9zlX3dJuYb3MTawO4
-         jSvA==
-X-Gm-Message-State: APjAAAUsC9xtHmm0/EEy8jeLq7ecHtM4BX7E4XE2hDlrhuFjBCBWlKH+
-        8K1wXiADyeOMV9t0I4WCsq60Te9s+n6iX4mfxfWjp+Et
-X-Google-Smtp-Source: APXvYqwIJ8jhqb3Pxo1nnqStMC/FyAlTk/mLSjRyqYHHLaEk1gII8LrtnY8U8YO2gxgz8yVgYmIVIJ8eoCcUZqkXdhg=
-X-Received: by 2002:a37:6255:: with SMTP id w82mr68484592qkb.330.1577987752601;
- Thu, 02 Jan 2020 09:55:52 -0800 (PST)
+        Thu, 2 Jan 2020 13:01:49 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 002I0Y6w020811
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 2 Jan 2020 13:00:35 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 3EE664200AF; Thu,  2 Jan 2020 13:00:34 -0500 (EST)
+Date:   Thu, 2 Jan 2020 13:00:34 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, gregkh@linuxfoundation.org,
+        pmladek@suse.com, "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, dan.j.williams@intel.com,
+        Peter Zijlstra <peterz@infradead.org>, longman@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] char/random: silence a lockdep splat with printk()
+Message-ID: <20200102180034.GA197330@mit.edu>
+References: <20191205010055.GO93017@google.com>
+ <4F9E9335-334B-4600-8BC3-4AF91510D113@lca.pw>
+ <1CA39814-DE67-4112-8F97-D62B9F47FF9D@lca.pw>
 MIME-Version: 1.0
-References: <1577362338-28744-1-git-send-email-srinivas.neeli@xilinx.com> <1577362338-28744-8-git-send-email-srinivas.neeli@xilinx.com>
-In-Reply-To: <1577362338-28744-8-git-send-email-srinivas.neeli@xilinx.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Thu, 2 Jan 2020 18:55:41 +0100
-Message-ID: <CAMpxmJUgALt6K2m2iAtR9xhkFaDDyESpjqu11EivK-ottVuZLQ@mail.gmail.com>
-Subject: Re: [PATCH 7/8] gpio: zynq: Add pmc gpio support
-To:     Srinivas Neeli <srinivas.neeli@xilinx.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        shubhrajyoti.datta@xilinx.com,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, git@xilinx.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1CA39814-DE67-4112-8F97-D62B9F47FF9D@lca.pw>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-czw., 26 gru 2019 o 13:12 Srinivas Neeli <srinivas.neeli@xilinx.com> napisa=
-=C5=82(a):
->
-> From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
->
-> Add PMC gpio support.
+On Thu, Jan 02, 2020 at 10:42:51AM -0500, Qian Cai wrote:
+> 
+> Not sure if Ted is still interested in maintaining this file as he had no feedback for more
+> than a month. The problem is that this will render the lockdep useless for a general
+> debugging tool as it will disable the lockdep early in the process.
+> 
+> Could Andrew (since the free page shuffle will call get_random) or Linus pick this up
+> directly with the approval from one of the printk() maintainers above?
 
-Again: please provide some background on what PMC is.
+Sorry, things have been busy with the Chistmas holidays and getting
+the ext4 tree ready for the merge window.  I'll take a look at this in the next day or two.
 
-Bart
-
-> Only bank 0,1, 3 and 4 are connected to the multiplexed Input output
-> pins. Bank 0 and 1 to mio and bank 3 and 4 to extended multiplexed input
-> output pins.
->
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+    	      	    	    	  - Ted
