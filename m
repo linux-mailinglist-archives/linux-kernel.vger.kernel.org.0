@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC56012ED75
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:28:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9912912EC06
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:15:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729719AbgABW2f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:28:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58376 "EHLO mail.kernel.org"
+        id S1727922AbgABWO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:14:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729670AbgABW2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:28:31 -0500
+        id S1727912AbgABWO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:14:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E65642464E;
-        Thu,  2 Jan 2020 22:28:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62A2524653;
+        Thu,  2 Jan 2020 22:14:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004110;
-        bh=JmWdkvsqbTXLiuAcRrK4BVTSN7ED4satjx6b3f6/RAA=;
+        s=default; t=1578003265;
+        bh=Sdd+9oGeB8DlpNRG5CotalsKfgsgUEcu2SQl7U+pO2s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Cb2vvpjQGgP71RxxtHMAUiH85NKCSc30G9qEr3g2QKs+w2GcXgNDt9PHAa5vAZYs6
-         bc4qQtxO2zmOGGZXvLclr4W0MEGL4Sjx6upiB4tJZ8EEbdNluM30gOtcilrHK0DdGc
-         66vMCa0/f1uGszuR+UY3J5+/pAv2sX6o8HKR/XtQ=
+        b=EB6yzEYOwvgeLJOpDn4sFf8UXyxTY+9rnl2NyLi4+/ZsRfkFt0pecRyxl1SHBSniy
+         U+RkzqXPKh8jDsJtg1hB3WV/RGVAM84CXQwCQ9p7FtOVQJsn+z4KQ6iYEvXTUTsFpO
+         YYOTsdnYEAHipqo9ZIqMX8NnmnZD3bLE6qGbnp98=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Allen Pais <allen.pais@oracle.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 014/171] libertas: fix a potential NULL pointer dereference
+Subject: [PATCH 5.4 063/191] PCI: rpaphp: Fix up pointer to first drc-info entry
 Date:   Thu,  2 Jan 2020 23:05:45 +0100
-Message-Id: <20200102220548.982792915@linuxfoundation.org>
+Message-Id: <20200102215836.725789187@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Allen Pais <allen.pais@oracle.com>
+From: Tyrel Datwyler <tyreld@linux.ibm.com>
 
-[ Upstream commit 7da413a18583baaf35dd4a8eb414fa410367d7f2 ]
+[ Upstream commit 9723c25f99aff0451cfe6392e1b9fdd99d0bf9f0 ]
 
-alloc_workqueue is not checked for errors and as a result,
-a potential NULL dereference could occur.
+The first entry of the ibm,drc-info property is an int encoded count
+of the number of drc-info entries that follow. The "value" pointer
+returned by of_prop_next_u32() is still pointing at the this value
+when we call of_read_drc_info_cell(), but the helper function
+expects that value to be pointing at the first element of an entry.
 
-Signed-off-by: Allen Pais <allen.pais@oracle.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fix up by incrementing the "value" pointer to point at the first
+element of the first drc-info entry prior.
+
+Signed-off-by: Tyrel Datwyler <tyreld@linux.ibm.com>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/1573449697-5448-5-git-send-email-tyreld@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/marvell/libertas/if_sdio.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/pci/hotplug/rpaphp_core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/wireless/marvell/libertas/if_sdio.c b/drivers/net/wireless/marvell/libertas/if_sdio.c
-index 06a57c708992..44da911c9a1a 100644
---- a/drivers/net/wireless/marvell/libertas/if_sdio.c
-+++ b/drivers/net/wireless/marvell/libertas/if_sdio.c
-@@ -1229,6 +1229,10 @@ static int if_sdio_probe(struct sdio_func *func,
+diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
+index 18627bb21e9e..e3502644a45c 100644
+--- a/drivers/pci/hotplug/rpaphp_core.c
++++ b/drivers/pci/hotplug/rpaphp_core.c
+@@ -239,6 +239,8 @@ static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
+ 	value = of_prop_next_u32(info, NULL, &entries);
+ 	if (!value)
+ 		return -EINVAL;
++	else
++		value++;
  
- 	spin_lock_init(&card->lock);
- 	card->workqueue = alloc_workqueue("libertas_sdio", WQ_MEM_RECLAIM, 0);
-+	if (unlikely(!card->workqueue)) {
-+		ret = -ENOMEM;
-+		goto err_queue;
-+	}
- 	INIT_WORK(&card->packet_worker, if_sdio_host_to_card_worker);
- 	init_waitqueue_head(&card->pwron_waitq);
- 
-@@ -1282,6 +1286,7 @@ err_activate_card:
- 	lbs_remove_card(priv);
- free:
- 	destroy_workqueue(card->workqueue);
-+err_queue:
- 	while (card->packets) {
- 		packet = card->packets;
- 		card->packets = card->packets->next;
+ 	for (j = 0; j < entries; j++) {
+ 		of_read_drc_info_cell(&info, &value, &drc);
 -- 
 2.20.1
 
