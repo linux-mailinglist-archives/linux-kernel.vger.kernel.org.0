@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6E7D12EEC5
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:41:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7695812F0E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:56:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731239AbgABWlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:41:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50006 "EHLO mail.kernel.org"
+        id S1729059AbgABW4a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:56:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731086AbgABWh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:37:28 -0500
+        id S1728416AbgABWSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:18:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8007820866;
-        Thu,  2 Jan 2020 22:37:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE2B722B48;
+        Thu,  2 Jan 2020 22:18:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004648;
-        bh=oAKlgiLASENKMc8vSC96bQbrxPcQYChYFw69i5cC5YA=;
+        s=default; t=1578003500;
+        bh=JS4nCumSHXOPnUPaodSkpRD8uMS2vX+hdTN30K62b4s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pYoQZW+YxcEsEQTULL8JABI71mlcB0ofTupSeKYudWknYzNbCcOOVdCkTR6p8PsTE
-         mwFCy3kS8PDdGyKhdl1XHQFUew80wE4lcT+Jbdi0Dk4iaF5dKPjnmx9NjxB9r2WZ/t
-         23OO5X2oFUNa+5IqGo5oLJ2KO47/xLluzLnmSj+Y=
+        b=HfXNHHhPhdhr+/g2XDIljxJTg7avrW0vG72NZtz1Gnmffm3iAxcagvM2wNjLR7a+S
+         /qBn4xpZR2w2Mxq1psKkuxwDqxGeyt33Ow9tAzJM+k2TJ7v/tmO6eX2IkgIlrGze8S
+         XArgYdNjOJmT4VM98GhHDrJYg5bSk3d93MQc0HcI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <jsmart2021@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 095/137] scsi: lpfc: Fix SLI3 hba in loop mode not discovering devices
-Date:   Thu,  2 Jan 2020 23:07:48 +0100
-Message-Id: <20200102220559.762033259@linuxfoundation.org>
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+Subject: [PATCH 5.4 187/191] net: phylink: fix interface passed to mac_link_up
+Date:   Thu,  2 Jan 2020 23:07:49 +0100
+Message-Id: <20200102215849.625414474@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit feff8b3d84d3d9570f893b4d83e5eab6693d6a52 ]
+[ Upstream commit 9b2079c046a9d6c9c73a4ec33816678565ee01f3 ]
 
-When operating in private loop mode, PLOGI exchanges are racing and the
-driver tries to abort it's PLOGI. But the PLOGI abort ends up terminating
-the login with the other end causing the other end to abort its PLOGI as
-well. Discovery never fully completes.
+A mismerge between the following two commits:
 
-Fix by disabling the PLOGI abort when private loop and letting the state
-machine play out.
+c678726305b9 ("net: phylink: ensure consistent phy interface mode")
+27755ff88c0e ("net: phylink: Add phylink_mac_link_{up, down} wrapper functions")
 
-Link: https://lore.kernel.org/r/20191018211832.7917-5-jsmart2021@gmail.com
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <jsmart2021@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+resulted in the wrong interface being passed to the mac_link_up()
+function. Fix this up.
+
+Fixes: b4b12b0d2f02 ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/lpfc/lpfc_nportdisc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/phy/phylink.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_nportdisc.c b/drivers/scsi/lpfc/lpfc_nportdisc.c
-index 3a4613f9fb9f..6aa0698925da 100644
---- a/drivers/scsi/lpfc/lpfc_nportdisc.c
-+++ b/drivers/scsi/lpfc/lpfc_nportdisc.c
-@@ -454,8 +454,10 @@ lpfc_rcv_plogi(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
- 	 * single discovery thread, this will cause a huge delay in
- 	 * discovery. Also this will cause multiple state machines
- 	 * running in parallel for this node.
-+	 * This only applies to a fabric environment.
- 	 */
--	if (ndlp->nlp_state == NLP_STE_PLOGI_ISSUE) {
-+	if ((ndlp->nlp_state == NLP_STE_PLOGI_ISSUE) &&
-+	    (vport->fc_flag & FC_FABRIC)) {
- 		/* software abort outstanding PLOGI */
- 		lpfc_els_abort(phba, ndlp);
- 	}
--- 
-2.20.1
-
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -444,8 +444,7 @@ static void phylink_mac_link_up(struct p
+ 
+ 	pl->cur_interface = link_state.interface;
+ 	pl->ops->mac_link_up(pl->config, pl->link_an_mode,
+-			     pl->phy_state.interface,
+-			     pl->phydev);
++			     pl->cur_interface, pl->phydev);
+ 
+ 	if (ndev)
+ 		netif_carrier_on(ndev);
 
 
