@@ -2,135 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1CDB12FECF
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 23:32:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63CCE12FEDA
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 23:34:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728842AbgACWc3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 17:32:29 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:33408 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728730AbgACWc3 (ORCPT
+        id S1728869AbgACWdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 17:33:44 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32980 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728730AbgACWdn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 17:32:29 -0500
-Received: by mail-il1-f196.google.com with SMTP id v15so37896446iln.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 14:32:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AwM+4lmsp4OwDXSOplbN0YrPFwHAVZ/Q655/TuvMXxw=;
-        b=PeigxaTeh9dB1v5/Zvrdte6ZuoulV5fSgFDKoXneX23cDQY7zaYaHxxUzf9NG2I+qe
-         L7tAwW5mLAl2vF7lF5+xIwl8XwGWL+UqShaYujTOzRiXChNt3MPbKSDZ/ciwbiF/d4ju
-         ukZgJvv5+Ebf6q8UoUR9C/wfi01WGEvRmA//+icdKrSkCR9SRyGK/IULJTezaDFNGi9q
-         gZGlrLitjByHVwbAdopPlT+v+xZrD8eSKEcNHxLMMxSO4dw3Qcd4AZc6pWcDClbE0AKj
-         Mtr+yrQD2VwcEKX7gQBy6akqUQW0O2om8jWOhSYOqlIX0/12Dy0hmaD2ngpFTpIUe9h6
-         4q9Q==
-X-Gm-Message-State: APjAAAWyGqBGMUoS/AIgSQxIcTSbP6WQFFyJAswFyhp+IKd9a1nDm6Yk
-        BZv67rnjMFeHdIofPsyJnjnzhvY=
-X-Google-Smtp-Source: APXvYqyNb5b7abfkctxN0rZ19zKfr1xJerGyDzG3AVQBVmZ7LvS3m40gblk9i5ZSuLlmdKwpLwTBnA==
-X-Received: by 2002:a92:503:: with SMTP id q3mr68683746ile.160.1578090747863;
-        Fri, 03 Jan 2020 14:32:27 -0800 (PST)
-Received: from rob-hp-laptop ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id m24sm15265943ioc.37.2020.01.03.14.32.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jan 2020 14:32:27 -0800 (PST)
-Received: from rob (uid 1000)
-        (envelope-from rob@rob-hp-laptop)
-        id 2219b7
-        by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Fri, 03 Jan 2020 15:32:25 -0700
-Date:   Fri, 3 Jan 2020 15:32:25 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Robert Jones <rjones@gateworks.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 1/5] dt-bindings: arm: fsl: Add Gateworks Ventana
- i.MX6DL/Q compatibles
-Message-ID: <20200103223225.GB654@bogus>
-References: <20191230231953.29646-1-rjones@gateworks.com>
- <20191230231953.29646-2-rjones@gateworks.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191230231953.29646-2-rjones@gateworks.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 3 Jan 2020 17:33:43 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 003MHPdi080283
+        for <linux-kernel@vger.kernel.org>; Fri, 3 Jan 2020 17:33:42 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2xa48mg336-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 17:33:42 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zaslonko@linux.ibm.com>;
+        Fri, 3 Jan 2020 22:33:40 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 3 Jan 2020 22:33:36 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 003MXZXJ54853854
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 3 Jan 2020 22:33:35 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2836E5206D;
+        Fri,  3 Jan 2020 22:33:35 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id C167852067;
+        Fri,  3 Jan 2020 22:33:34 +0000 (GMT)
+From:   Mikhail Zaslonko <zaslonko@linux.ibm.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Cc:     Richard Purdie <rpurdie@rpsys.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Eduard Shishkin <edward6@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/6] S390 hardware support for kernel zlib
+Date:   Fri,  3 Jan 2020 23:33:28 +0100
+X-Mailer: git-send-email 2.17.1
+X-TM-AS-GCONF: 00
+x-cbid: 20010322-0016-0000-0000-000002DA49EC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20010322-0017-0000-0000-0000333CB865
+Message-Id: <20200103223334.20669-1-zaslonko@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2020-01-03_06:2020-01-02,2020-01-03 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 spamscore=0 mlxscore=0 suspectscore=0 clxscore=1015
+ priorityscore=1501 lowpriorityscore=0 adultscore=0 phishscore=0
+ bulkscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-2001030203
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 30, 2019 at 03:19:49PM -0800, Robert Jones wrote:
-> Add the compatible enum entries for Gateworks Ventana boards.
-> 
-> Signed-off-by: Robert Jones <rjones@gateworks.com>
-> ---
->  Documentation/devicetree/bindings/arm/fsl.yaml | 31 ++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-> index f79683a..8ed4c85 100644
-> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
-> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-> @@ -126,6 +126,22 @@ properties:
->                - toradex,apalis_imx6q-ixora      # Apalis iMX6 Module on Ixora
->                - toradex,apalis_imx6q-ixora-v1.1 # Apalis iMX6 Module on Ixora V1.1
->                - variscite,dt6customboard
-> +              - gw,ventana                # Gateworks i.MX6DL or i.MX6Q Ventana
-> +              - gw,imx6q-gw51xx
+With IBM z15 mainframe the new DFLTCC instruction is available. It
+implements deflate algorithm in hardware (Nest Acceleration Unit - NXU)
+with estimated compression and decompression performance orders of
+magnitude faster than the current zlib.
 
-This doesn't match what you have in dts files. Please check with:
+This patch-set adds s390 hardware compression support to kernel zlib.
+The code is based on the userspace zlib implementation:
+https://github.com/madler/zlib/pull/410
+The coding style is also preserved for future maintainability.
+There is only limited set of userspace zlib functions represented in
+kernel. Apart from that, all the memory allocation should be performed
+in advance. Thus, the workarea structures are extended with the parameter
+lists required for the DEFLATE CONVENTION CALL instruction.
+Since kernel zlib itself does not support gzip headers, only Adler-32
+checksum is processed (also can be produced by DFLTCC facility).
+Like it was implemented for userspace, kernel zlib will compress in
+hardware on level 1, and in software on all other levels. Decompression
+will always happen in hardware (when enabled).
+Two DFLTCC compression calls produce the same results only when they
+both are made on machines of the same generation, and when the
+respective buffers have the same offset relative to the start of the
+page. Therefore care should be taken when using hardware compression
+when reproducible results are desired. However it does always produce
+the standard conform output which can be inflated anyway.
+The new kernel command line parameter 'dfltcc' is introduced to
+configure s390 zlib hardware support:
+    Format: { on | off | def_only | inf_only | always }
+     on:       s390 zlib hardware support for compression on
+               level 1 and decompression (default)
+     off:      No s390 zlib hardware support
+     def_only: s390 zlib hardware support for deflate
+               only (compression on level 1)
+     inf_only: s390 zlib hardware support for inflate
+               only (decompression)
+     always:   Same as 'on' but ignores the selected compression
+               level always using hardware support (used for debugging)
 
-make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/arm/fsl.yaml
+The main purpose of the integration of the NXU support into the kernel zlib
+is the use of hardware deflate in btrfs filesystem with on-the-fly
+compression enabled. Apart from that, hardware support can also be used
+during boot for decompressing the kernel or the ramdisk image 
 
-You'll need a separate entry with 3 compatibles and 'gw,ventana' or drop 
-it.
+With the patch for btrfs expanding zlib buffer from 1 to 4 pages (patch 6)
+the following performance results have been achieved using the ramdisk
+with btrfs. These are relative numbers based on throughput rate and
+compression ratio for zlib level 1:
 
-> +              - gw,imx6q-gw52xx
-> +              - gw,imx6q-gw53xx
-> +              - gw,imx6q-gw5400-a
-> +              - gw,imx6q-gw54xx
-> +              - gw,imx6q-gw551x
-> +              - gw,imx6q-gw552x
-> +              - gw,imx6q-gw553x
-> +              - gw,imx6q-gw560x
-> +              - gw,imx6q-gw5903
-> +              - gw,imx6q-gw5904
-> +              - gw,imx6q-gw5907
-> +              - gw,imx6q-gw5910
-> +              - gw,imx6q-gw5912
-> +              - gw,imx6q-gw5913
->            - const: fsl,imx6q
->  
->        - description: i.MX6QP based Boards
-> @@ -152,6 +168,21 @@ properties:
->                - ysoft,imx6dl-yapp4-draco  # i.MX6 DualLite Y Soft IOTA Draco board
->                - ysoft,imx6dl-yapp4-hydra  # i.MX6 DualLite Y Soft IOTA Hydra board
->                - ysoft,imx6dl-yapp4-ursa   # i.MX6 Solo Y Soft IOTA Ursa board
-> +              - gw,ventana                # Gateworks i.MX6DL or i.MX6Q Ventana
-> +              - gw,imx6dl-gw51xx
-> +              - gw,imx6dl-gw52xx
-> +              - gw,imx6dl-gw53xx
-> +              - gw,imx6dl-gw54xx
-> +              - gw,imx6dl-gw551x
-> +              - gw,imx6dl-gw552x
-> +              - gw,imx6dl-gw553x
-> +              - gw,imx6dl-gw560x
-> +              - gw,imx6dl-gw5903
-> +              - gw,imx6dl-gw5904
-> +              - gw,imx6dl-gw5907
-> +              - gw,imx6dl-gw5910
-> +              - gw,imx6dl-gw5912
-> +              - gw,imx6dl-gw5913
->            - const: fsl,imx6dl
->  
->        - description: i.MX6SL based Boards
-> -- 
-> 2.9.2
-> 
+  Input data              Deflate rate   Inflate rate   Compression ratio
+                          NXU/Software   NXU/Software   NXU/Software
+  stream of zeroes        1.46           1.02           1.00
+  random ASCII data       10.44          3.00           0.96
+  ASCII text (dickens)    6,21           3.33           0.94
+  binary data (vmlinux)   8,37           3.90           1.02
+
+This means that s390 hardware deflate can provide up to 10 times faster
+compression (on level 1) and up to 4 times faster decompression (refers to
+all compression  levels) for btrfs zlib.
+
+Disclaimer: Performance results are based on IBM internal tests using DD
+command-line utility on btrfs on a Fedora 30 based internal driver in native
+LPAR on a z15 system. Results may vary based on individual workload,
+configuration and software levels.
+
+Changelog:
+v2 -> v3:
+ - In btrfs zlib_compress_pages() do not copy input pages to the workspace
+   buffer if no s390 hardware compression is enabled or the remaining
+   input data fits in one page.
+ - Leave just a single Kconfig option for s390 zlib hardware
+   support (CONFIG_ZLIB_DFLTCC)
+ - Fix the issues reported by kbuild test robot.
+v1 -> v2:
+ - Added new external zlib function to check if s390 Deflate-Conversion
+   facility is installed and enabled (see patch 5).
+ - The larger buffer for btrfs zlib workspace is allocated only if
+   s390 hardware compression is enabled. In case of failure to allocate
+   4-page buffer, we fall back to a PAGE_SIZE buffer, as proposed
+   by Josef Bacik (see patch 6).
+
+
+
+Mikhail Zaslonko (6):
+  lib/zlib: Add s390 hardware support for kernel zlib_deflate
+  s390/boot: Rename HEAP_SIZE due to name collision
+  lib/zlib: Add s390 hardware support for kernel zlib_inflate
+  s390/boot: Add dfltcc= kernel command line parameter
+  lib/zlib: Add zlib_deflate_dfltcc_enabled() function
+  btrfs: Use larger zlib buffer for s390 hardware compression
+
+ .../admin-guide/kernel-parameters.txt         |  12 +
+ arch/s390/boot/compressed/decompressor.c      |   8 +-
+ arch/s390/boot/ipl_parm.c                     |  14 +
+ arch/s390/include/asm/setup.h                 |   7 +
+ arch/s390/kernel/setup.c                      |   2 +
+ fs/btrfs/compression.c                        |   2 +-
+ fs/btrfs/zlib.c                               | 128 +++++---
+ include/linux/zlib.h                          |   6 +
+ lib/Kconfig                                   |   7 +
+ lib/Makefile                                  |   1 +
+ lib/decompress_inflate.c                      |  13 +
+ lib/zlib_deflate/deflate.c                    |  85 +++---
+ lib/zlib_deflate/deflate_syms.c               |   1 +
+ lib/zlib_deflate/deftree.c                    |  54 ----
+ lib/zlib_deflate/defutil.h                    | 134 ++++++++-
+ lib/zlib_dfltcc/Makefile                      |  11 +
+ lib/zlib_dfltcc/dfltcc.c                      |  55 ++++
+ lib/zlib_dfltcc/dfltcc.h                      | 155 ++++++++++
+ lib/zlib_dfltcc/dfltcc_deflate.c              | 280 ++++++++++++++++++
+ lib/zlib_dfltcc/dfltcc_inflate.c              | 149 ++++++++++
+ lib/zlib_dfltcc/dfltcc_syms.c                 |  17 ++
+ lib/zlib_dfltcc/dfltcc_util.h                 | 103 +++++++
+ lib/zlib_inflate/inflate.c                    |  32 +-
+ lib/zlib_inflate/inflate.h                    |   8 +
+ lib/zlib_inflate/infutil.h                    |  18 +-
+ 25 files changed, 1150 insertions(+), 152 deletions(-)
+ create mode 100644 lib/zlib_dfltcc/Makefile
+ create mode 100644 lib/zlib_dfltcc/dfltcc.c
+ create mode 100644 lib/zlib_dfltcc/dfltcc.h
+ create mode 100644 lib/zlib_dfltcc/dfltcc_deflate.c
+ create mode 100644 lib/zlib_dfltcc/dfltcc_inflate.c
+ create mode 100644 lib/zlib_dfltcc/dfltcc_syms.c
+ create mode 100644 lib/zlib_dfltcc/dfltcc_util.h
+
+-- 
+2.17.1
+
