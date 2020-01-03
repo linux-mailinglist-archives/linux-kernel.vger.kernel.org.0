@@ -2,62 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A569E12F6C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 11:38:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EE3E12F6CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 11:39:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbgACKiT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 05:38:19 -0500
-Received: from sonic309-20.consmr.mail.ne1.yahoo.com ([66.163.184.146]:43983
-        "EHLO sonic309-20.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727350AbgACKiS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 05:38:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1578047897; bh=BwDPrsA2+wE7onqC1JBBbTtzaCQs5syyrmDpzadvHSI=; h=Date:From:Reply-To:Subject:References:From:Subject; b=MmHTJJrC29MaptlkFNWzfL+Z78+RIB+J7Ksd/hLtZ8Wxt4W+c4unEZ9gs+eetjAuLf8qLwpeK2Be9sp8ewyQgmbYHNNs+3vfpyfbAp105hmEQ3CK4rTvu+Au5yrqjzq6UHh10FDhLCV2IAigUaCKgBZlxOGScXaLwsd88W8X/bwjapg5wKz/epMq23k8tYUD9CNRO8GR4iT2hLpLrlZ2hkyCmwvvt59dlODGyJDcp1LsiX4gW3z9VdkZN86pcqlxhumMtWKMktT2Nk5H0etm5uGP8SGvGxs0AcVpuB9WZi1G5OSpUf/wBkW9YmR8RGZnKwbcmg2V4MHs3vgBkTvHKQ==
-X-YMail-OSG: zegebhoVM1nHXoFrF_n3.eoBKLJmwSuvgr9uOdjWxxuyGWU8FpzEUAFZgah8zoF
- ERbkvljwb16.FCJJkg73nq_TpldpUmcJCvdAJSl9.V0YhDCpTMsKr3fZ4AuVKh5NuKeQ3NIo37Go
- qxOndK5XPUD_VitG9O6RAUMSS_iiK42pVEbx0bMnVP9Z7uXY4PeHVosZi.iQA5.SszU3AMqgdoII
- T8HPlup6byklstSOUhjoMRIATvfEI2BAV4Dc0MWjOrVsLA0C_M905uQZe38i44ZR.8HiQjIOj1lr
- q5wBiWmblZEpgcwVttEDa4h7phyfFxPLYCeVxBjwsxUnYsL16MTDfuYbz5tCuKBGsdeKq1vVXUjb
- 2xqRYH4E5GfD8qsfoAATTB0oRNVOBkOg43LFTqHHojc3CCRC2D8tz1llWfRTX_X9KhXhWSQR2E1J
- NhH7l13u.fZHJEfaZZjIDSP_TTW6N9Fh2blEZp4KLuGWIUaj_Dq0DVhqpy22iAq9I0IS2NWjG4HQ
- mHXeq40StHJ16dbTUDKreLByoW_gLeRmsVO2agN3Q6gc0SHtdb4sKm_g8MrdAi1VR_MBT5CiNVKI
- BLnuMp2JsIu1wexdh3QT8symyNzRSb9Yvh0sWB_EmiP7yEZ6_ztkkziWYo0w0cdEjrKZwpn72FTB
- aPV1DpRLioTeD2kGKwXkYjpxd6bhF.jcy48ZuGPHbjlo1bukjd0ZgBw7rHLdbhUIkydFMEVuSy.0
- mtz1GVovUiYnihUK7QAwF8Uat5tRrt25Poc4t5ieTbi2mKlqyPlTRhAwS1qu8MK_TEHJdgv8LlSs
- vUCytUgZjMdH_yGTuRDnZVuJ1_u44kUEgvC47CZF.UEkkPwx3CsgK4nDTF3xU6L3BhMCB5f_U36T
- qcoA7MCG0hmCxKqcBY2Lvg1da0uEig0rFqg2nF0LGMsu2TYUuAVOOkx5NTRcUduW9npSCSXyWU.n
- 8jn3XREmJaqCJtEZtQ3RYj0FqWmnfHEElKUmdK_6oGs21ZN7wFwekL2q.Dq5MaUn6lJ4gY1H985W
- EboMxvCH2kz9X4yjNXHIqIOZVdF1U.wRelx.nWOJOSKiSigoS2QjR2HhUUGT7CATUN.5go6fMTew
- O2633d10hkyC7xtXsSeh5bk2WGzxXojfyOgU2A8eMyjT2pBU1X6s7UCoKXxR2_ZXRnJM7V4kEpne
- A0x2vm9j_dF_8zoFZvyqGdGH4_U_bg26Olu2EAq7d.qaWo.ZZ_Td13O_Z0HsynnXpN0IKRfvo8Mc
- wDGEKZTp85r4EeFtLVAq0gjWirYTszL6oXp2twfVOuYq7h4NxMS29wPoGGIaRH9cUiGz8KnoG7c4
- -
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Fri, 3 Jan 2020 10:38:17 +0000
-Date:   Fri, 3 Jan 2020 10:38:16 +0000 (UTC)
-From:   Lisa Williams <wlisa2633@gmail.com>
-Reply-To: lisa.wilams@yahoo.com
-Message-ID: <1632349926.6233681.1578047896191@mail.yahoo.com>
-Subject: Hi Dear
+        id S1727572AbgACKjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 05:39:20 -0500
+Received: from mail-dm6nam12on2062.outbound.protection.outlook.com ([40.107.243.62]:64225
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727350AbgACKjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 05:39:19 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Vo+1S9Lh99AJH9eP2Z0/vQ3DbkKpZ9NRuli0hJReuxpOMJmDCuf0PtNwDKbyEFJe142bYn5yOzRYKKU97WHYXgbX9G+hfhhepqMM6UcGvyjF5dmJuATS9ai4Yh6doGBc5xuu2+Fsg0inxnyaeP0Nl2yF5DMH5AoCLoySzcaOG8nEf9bhxiYLb/gWBvKrL6ShT2CPpYt8lYp4SD1GAP1+yvQFtJ3ioTx1aY5hjUegaBWxiBHWtdSL5Co88l6+cFM4FzM/sY5x9lqJWEmflrDBoXG5HSjL7i6dWc9s2WzgVDBquN/0/+f5c/sl7IGNmUbfuRJstBMdIzWnjFSIGj0Elg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1qEWolf3bLpqauwpvas6kP0B4J1efodT+hvqLk1m58k=;
+ b=h6jm7ujKqXI5sBR4e64BXDmmvaHeX1jeBDzTv45MBdc7LKS/lTmAu8TLDPiNTDPQEtXLY13hfDGEvA7T/jbiHaAkFZInkiOVXRuHt+Lm8pVbPdWXrD7SBFCahhEa0NmgnjRKAuJWY5E0zohHZ2s3cwVDyTfg91mlkuxkjiScDnxmMKow+6P9QG1w+QvOTKB34PFtJ/yo3cxG+2AYw6SjMv32+rkWFC1CoNSu9p7wmkWHPc8/4cXhTu9Kbr9U5RaeTrXpZC7NWCRS9KsEKmnvhFP4yMO6KRj5Ympu0zyjAF1wdigPZoEIvafSAvByqyKv81rh/aiYkvo0IONU7dNLNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=silabs.com; dmarc=pass action=none header.from=silabs.com;
+ dkim=pass header.d=silabs.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=silabs.onmicrosoft.com; s=selector2-silabs-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1qEWolf3bLpqauwpvas6kP0B4J1efodT+hvqLk1m58k=;
+ b=XpPwYDWgIAfQ6jUcP2vGRqWNQRjxxcqLSCdsVdModZcK/igmm3Prn8Tgzb2qyHnGfd4xDPsUcIWLwNwmEOHDCeHa3aF2odFZCfhnSqoFQlnQsyv6U/+oYgSYyxmK7hggLdHYH8IDy7SuG22+km3Q4X4+sq0aOCDW0UZBvTCrZiM=
+Received: from MN2PR11MB4063.namprd11.prod.outlook.com (10.255.180.22) by
+ MN2PR11MB3838.namprd11.prod.outlook.com (20.178.252.202) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2602.12; Fri, 3 Jan 2020 10:39:16 +0000
+Received: from MN2PR11MB4063.namprd11.prod.outlook.com
+ ([fe80::f46c:e5b4:2a85:f0bf]) by MN2PR11MB4063.namprd11.prod.outlook.com
+ ([fe80::f46c:e5b4:2a85:f0bf%4]) with mapi id 15.20.2602.012; Fri, 3 Jan 2020
+ 10:39:16 +0000
+From:   =?iso-8859-1?Q?J=E9r=F4me_Pouiller?= <Jerome.Pouiller@silabs.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: [PATCH 13/55] staging: wfx: avoid double warning when no more tx
+ policy are available
+Thread-Topic: [PATCH 13/55] staging: wfx: avoid double warning when no more tx
+ policy are available
+Thread-Index: AQHVtDLD8xTkZNX3aEu0AqQlv1La16fYxecAgAAVyYA=
+Date:   Fri, 3 Jan 2020 10:39:16 +0000
+Message-ID: <2726644.RsKqsKUrSp@pc-42>
+References: <20191216170302.29543-1-Jerome.Pouiller@silabs.com>
+ <20191216170302.29543-14-Jerome.Pouiller@silabs.com>
+ <20200103092116.GB3911@kadam>
+In-Reply-To: <20200103092116.GB3911@kadam>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Jerome.Pouiller@silabs.com; 
+x-originating-ip: [37.71.187.125]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f8b3bc84-07fe-400c-78ba-08d790392e87
+x-ms-traffictypediagnostic: MN2PR11MB3838:
+x-microsoft-antispam-prvs: <MN2PR11MB38387CC6E175EC692841599493230@MN2PR11MB3838.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1923;
+x-forefront-prvs: 0271483E06
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(366004)(396003)(346002)(136003)(376002)(39850400004)(199004)(189003)(33716001)(66476007)(6916009)(66446008)(186003)(64756008)(8676002)(478600001)(66556008)(8936002)(54906003)(81166006)(6486002)(71200400001)(6506007)(9686003)(2906002)(6512007)(91956017)(66946007)(76116006)(4326008)(26005)(66574012)(86362001)(81156014)(316002)(5660300002)(29513003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB3838;H:MN2PR11MB4063.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: silabs.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: fr4s130kFyupY7ALfR84zkYNNTizUsgY0FH09OFvBic6NCX1Q568927//HVoFc+uzaGk8ZITabKRTlGe90XWHwGW+YgZiZG/GaMRkBSTd8qfaBAk9jSnbst5wfwgYT9tPxvssiEvf4OWVfVwFqp5zAGgxY+fijtpRl25P6nN5TtvZajMsjQoToZ23SkfZnL0y3Kgx8fv9KdfpRYGKIwmmicf0vcxyp7ZVfvPzOVWAq743Cdka4BnlIPDMMFfBDgPwwvO2cKBVb3Jg9ywjuvh7/dPgH1qcp31XAbUABn1X2QHWHJ+GJCy7qE5gcajiW3eFpdczDq4xngtyVuCHAujxH8Qv7KhrBLdND4Nwl2+UcBZYRcfRnfGwROVOZl2NdUtvMXTyUPH+Dc6EQKmIx/YI9bxiEt2RaCmOfoqRSNaumQeOPQR6S5ATltkk+zDW8VjvbX8NNgvie1PJsi07oTiAf0F6mANVJ2DJGwndKegzAlbXfFUCwY6mKEL72BYIC0t
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <229EAFC715B6E54EBEBFD888D1EA8753@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <1632349926.6233681.1578047896191.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.14873 YMailNodin Mozilla/5.0 (Windows NT 6.1; rv:71.0) Gecko/20100101 Firefox/71.0
-To:     unlisted-recipients:; (no To-header on input)
+X-OriginatorOrg: silabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8b3bc84-07fe-400c-78ba-08d790392e87
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jan 2020 10:39:16.2621
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 54dbd822-5231-4b20-944d-6f4abcd541fb
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: C4j0qcksboSv+FL2P22lSB0qoFoKUjMS+w5/yDXtZXCzlGyUnUjm8/1LJqwO+mzpminoIWFbUnMBEkIPOmvFhw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB3838
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Friday 3 January 2020 10:21:16 CET Dan Carpenter wrote:
+> On Mon, Dec 16, 2019 at 05:03:40PM +0000, J=E9r=F4me Pouiller wrote:
+> > From: J=E9r=F4me Pouiller <jerome.pouiller@silabs.com>
+> >
+> > Currently, number of available tx retry policies is checked two times.
+> > Only one is sufficient.
+> >
+> > Signed-off-by: J=E9r=F4me Pouiller <jerome.pouiller@silabs.com>
+> > ---
+> >  drivers/staging/wfx/data_tx.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/staging/wfx/data_tx.c b/drivers/staging/wfx/data_t=
+x.c
+> > index 32e269becd75..c9dea627661f 100644
+> > --- a/drivers/staging/wfx/data_tx.c
+> > +++ b/drivers/staging/wfx/data_tx.c
+> > @@ -169,7 +169,8 @@ static int wfx_tx_policy_get(struct wfx_vif *wvif,
+> >       wfx_tx_policy_build(wvif, &wanted, rates);
+> >
+> >       spin_lock_bh(&cache->lock);
+> > -     if (WARN_ON(list_empty(&cache->free))) {
+> > +     if (list_empty(&cache->free)) {
+> > +             WARN(1, "unable to get a valid Tx policy");
+> >               spin_unlock_bh(&cache->lock);
+> >               return WFX_INVALID_RATE_ID;
+>=20
+> This warning is more clear than the original which is good, but that's
+> not what the commit message says.  How does this fix a double warning?
 
+Err... Indeed, it don't. From wfx_tx_get_rate_id():
 
-Hi Dear,
+       rate_id =3D wfx_tx_policy_get(wvif, ...);
+       if (rate_id =3D=3D WFX_INVALID_RATE_ID)
+               dev_warn(wvif->wdev->dev, "unable to get a valid Tx policy")=
+;
 
- How are you doing hope you are fine and OK?
+I will fix that in my next PR.
 
-I was just going through the Internet search when I found your email address, I want to make a new and special friend, so I decided to contact you to see how we can make it work out if we can. Please I wish you will have the desire with me so that we can get to know each other better and see what happens in future.
+--=20
+J=E9r=F4me Pouiller
 
-My name is Lisa Williams, I am an American, but presently I live in the UK, I will be glad to see your reply for us to know each other better to exchange pictures and details about us.
-
-Yours
-Lisa.
