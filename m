@@ -2,96 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24D8312FEE4
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 23:34:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6116312FEE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 23:37:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728969AbgACWeh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 17:34:37 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45168 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728918AbgACWeg (ORCPT
+        id S1728844AbgACWhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 17:37:14 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39630 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728781AbgACWhN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 17:34:36 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 2so24096706pfg.12
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 14:34:35 -0800 (PST)
+        Fri, 3 Jan 2020 17:37:13 -0500
+Received: by mail-pf1-f194.google.com with SMTP id q10so24104670pfs.6
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 14:37:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=h60rRNccMZJTfBCOaaZOGtPzFnUj3qhlo+KAwuFhXj4=;
-        b=EsRBtjZirRTdy5HMs9mwnGgaerFsPYYqRUS6NlbsMnBCmQrRX1WHLJ5Jibwv3bCb6C
-         b/j2ylwjseFZg2SwJs2fmnkeAgR+TkDBirvihpi8deTA2+TiyHIkwJwg7yAcK9VQRbFb
-         xwlU5L/2ocVUSa4PgbN+se/k9FeMGbca7sX3M=
+        bh=9z2Jrxz8B+NqLAfVzgb4mOFXsmumv7Pnna32uCgS49s=;
+        b=tnVP3zsfQZQf9IWPzBds6IQBbwJHd5p9iz+Gd5cjZpF6689inCWlaBe62w13DNeDts
+         ej4KRjVqOYZWa2LQT+cejZuDr+nfEP45lqqszvee0l3CRBTAE+l9TQ9hSaujLNxnVLY4
+         yRsI7qYYntWPdQ8etEekh8I+a+JLY87H+cSFo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=h60rRNccMZJTfBCOaaZOGtPzFnUj3qhlo+KAwuFhXj4=;
-        b=Su/4D8o7yleB8dEL78xMGTA3fVrakS/WWApVs/DMIJvk7GpsX+C0sYxvy1wZqVILiP
-         IXaBzQXoxrbxykbObW/NYifVPKpiyiYTjy1EclLX9/pSGY+AG03NBPy4NQ8iRYuZWCwS
-         tHPUipBdtdTT/5L20M921bdxx0JswKZu38CtFdartjeHurfT+SVTiRu0irhPEaRzP3UP
-         PGMayDuri36BMbsKRx5r89YLuyPEHdVQ2gE1sT4KDGgXigE5oObweRohhr+x9b1ZnEZ6
-         C2uYtd++971U36/Mu/tzCD/vgg07tXq0IYJ4KD2CnKEuBJ5cdNqRoYYWBzdvVITkPheB
-         cN8Q==
-X-Gm-Message-State: APjAAAUTcvM0YazQFmWIz8psJLnHmd0U6LWlRGKR5rAh7Ljdty7ZQVkt
-        ndDnh9uPFHwJnqx0cy+tXR6xlg==
-X-Google-Smtp-Source: APXvYqy1YUoGW3Za8vGr40ZH9+xrVnbTaEXYDDClQiRfun8PIdxUTxNeSYtOh1+mbI40AVtXs68Jsg==
-X-Received: by 2002:a63:e545:: with SMTP id z5mr97558800pgj.209.1578090875439;
-        Fri, 03 Jan 2020 14:34:35 -0800 (PST)
+        bh=9z2Jrxz8B+NqLAfVzgb4mOFXsmumv7Pnna32uCgS49s=;
+        b=GmfjFNQuBYPKtAkKZcOgv9h+LrzqeCWzXzE3+phgLkdCHu4FLjnavC+I0jAr3N7I2V
+         h4D6omz+UUVnB015FcG4vwgau4WiNIDToy86xaWYrRcuTPPG2g+iffoW71S1VIGdtA3p
+         DsBnN4arD1nX6lBZdlHhbe2Em2cHlrgRxMn6TurT8VyhVdMwYYmXqwp1HWUzmTCZ13qZ
+         /dQV7XkXqHwuGrvlO4FGJyp5mV9ujfA2lnKRBKtxJwjT9sRh8zr8m6XW3V+ulwy967/+
+         Eq6wkDjLlTmyYJeM2TfCVJV0PvjJmNNoRKuEfYP3VS33fvPtK5Ano3bmvEHuNQirwYt3
+         CNKw==
+X-Gm-Message-State: APjAAAXfg8CttznrWeNjOac5Vl3gFVERNmTc+rj1v9os74Cslw024oqs
+        f98RFj18vU91kFVjgD/tmiiVJg==
+X-Google-Smtp-Source: APXvYqzpnbI/U+FXATVw6oepP5oCLfwSzNcTTRQEFKLasS2pqKhvrl+bnWY6k6IPH03t2uMqwxWP/A==
+X-Received: by 2002:a63:de03:: with SMTP id f3mr100645112pgg.141.1578091033299;
+        Fri, 03 Jan 2020 14:37:13 -0800 (PST)
 Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id g18sm65172822pfi.80.2020.01.03.14.34.34
+        by smtp.gmail.com with ESMTPSA id z6sm54042858pfa.155.2020.01.03.14.37.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jan 2020 14:34:34 -0800 (PST)
-Date:   Fri, 3 Jan 2020 17:34:33 -0500
+        Fri, 03 Jan 2020 14:37:12 -0800 (PST)
+Date:   Fri, 3 Jan 2020 17:37:11 -0500
 From:   Joel Fernandes <joel@joelfernandes.org>
 To:     Steven Rostedt <rostedt@goodmis.org>
 Cc:     "Frank A. Cancio Bello" <frank@generalsoftwareinc.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, saiprakash.ranjan@codeaurora.org,
-        nachukannan@gmail.com, rdunlap@infradead.org
-Subject: Re: [PATCH v3 0/3] docs: ftrace: Fix minor issues in the doc
-Message-ID: <20200103223433.GB189259@google.com>
-References: <cover.1577231751.git.frank@generalsoftwareinc.com>
- <20200103114828.15581051@gandalf.local.home>
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        saiprakash.ranjan@codeaurora.org, nachukannan@gmail.com
+Subject: Re: [PATCH] tracing: Resets the trace buffer after a snapshot
+Message-ID: <20200103223711.GC189259@google.com>
+References: <20191231085822.yxhph6wcguejb7al@frank-laptop>
+ <20200103114001.2c118ab1@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200103114828.15581051@gandalf.local.home>
+In-Reply-To: <20200103114001.2c118ab1@gandalf.local.home>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 03, 2020 at 11:48:28AM -0500, Steven Rostedt wrote:
-> On Tue, 24 Dec 2019 19:05:38 -0500
+On Fri, Jan 03, 2020 at 11:40:01AM -0500, Steven Rostedt wrote:
+> On Tue, 31 Dec 2019 03:58:22 -0500
 > "Frank A. Cancio Bello" <frank@generalsoftwareinc.com> wrote:
 > 
-> > I didn't want to be pushy with these minor fixes but occur to me
-> > now that, even all seem to be clear in the latest version of the
-> > RFC (v2) related to these fixes, a clean patchset could be expected
-> > after such RFC. So here we go:
-> > 
-> > Clarifies the RAM footprint of buffer_size_kb without getting into
-> > implementation details.
-> > 
-> > Fix typos and a small notation mistakes in the doc.
-> > 
+> > Currently, when a snapshot is taken the trace_buffer and the
+> > max_buffer are swapped. After this swap, the "new" trace_buffer is
+> > not reset. This produces an odd behavior: after a snapshot is taken
+> > the previous snapshot entries become available to the next reader of
+> > the trace_buffer as far as the reading occurs before the buffer is
+> > refilled with new entries by a writer.
 > 
-> Jon,
+> I consider this a feature not a bug ;-)
 > 
-> Can you take these in your tree?
-> 
-> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Anyway, this behavior should be determined by an option. Care to create
+> one? (reset_on_snapshot?) I would keep the default behavior the same,
+> but document this a bit better.
 
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+I relate to what Steve said as well. It is not strictly a bug per-se. An
+option to do this would be nice but I am doubting a user will really turn on
+such option (or even know an option exists) ;-). I would say leave it in the
+current state unless some usecase is disrupted by the current behavior..
 
-thanks,
+thanks!
 
  - Joel
+
 
 > 
 > Thanks!
 > 
 > -- Steve
+> 
+> > 
+> > This patch resets the trace buffer after a snapshot is taken.
+> > 
+> > Signed-off-by: Frank A. Cancio Bello <frank@generalsoftwareinc.com>
+> > ---
+> > 
+> > The following commands illustrate this odd behavior:
+> > 
+> > # cd /sys/kernel/debug/tracing
+> > # echo nop > current_tracer
+> > # echo 1 > tracing_on
+> > # echo m1 > trace_marker
+> > # echo 1 > snapshot
+> > # echo m2 > trace_marker
+> > # echo 1 > snapshot
+> > # cat trace
+> > # tracer: nop
+> > #
+> > # entries-in-buffer/entries-written: 1/1   #P:2
+> > #
+> > #                              _-----=> irqs-off
+> > #                             / _----=> need-resched
+> > #                            | / _---=> hardirq/softirq
+> > #                            || / _--=> preempt-depth
+> > #                            ||| /     delay
+> > #           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
+> > #              | |       |   ||||       |         |
+> >             bash-550   [000] ....    50.479755: tracing_mark_write: m1
+> > 
+> > 
+> >  kernel/trace/trace.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> > index ddb7e7f5fe8d..58373b5ae0cf 100644
+> > --- a/kernel/trace/trace.c
+> > +++ b/kernel/trace/trace.c
+> > @@ -6867,10 +6867,13 @@ tracing_snapshot_write(struct file *filp, const char __user *ubuf, size_t cnt,
+> >  			break;
+> >  		local_irq_disable();
+> >  		/* Now, we're going to swap */
+> > -		if (iter->cpu_file == RING_BUFFER_ALL_CPUS)
+> > +		if (iter->cpu_file == RING_BUFFER_ALL_CPUS) {
+> >  			update_max_tr(tr, current, smp_processor_id(), NULL);
+> > -		else
+> > +			tracing_reset_online_cpus(&tr->trace_buffer);
+> > +		} else {
+> >  			update_max_tr_single(tr, current, iter->cpu_file);
+> > +			tracing_reset_cpu(&tr->trace_buffer, iter->cpu_file);
+> > +		}
+> >  		local_irq_enable();
+> >  		break;
+> >  	default:
+> 
