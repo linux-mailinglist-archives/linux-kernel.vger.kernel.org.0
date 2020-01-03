@@ -2,78 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8CC412FA81
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 17:34:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A64B12FA86
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 17:35:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728008AbgACQeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 11:34:07 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:45338 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727859AbgACQeH (ORCPT
+        id S1728062AbgACQfe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 11:35:34 -0500
+Received: from mail-lj1-f177.google.com ([209.85.208.177]:41824 "EHLO
+        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728035AbgACQfe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 11:34:07 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 407DA1C25EC; Fri,  3 Jan 2020 17:34:05 +0100 (CET)
-Date:   Fri, 3 Jan 2020 17:34:04 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Maurizio Lombardi <mlombard@redhat.com>,
-        Douglas Gilbert <dgilbert@interlog.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 054/114] scsi: scsi_debug: num_tgts must be >= 0
-Message-ID: <20200103163404.GB14328@amd>
-References: <20200102220029.183913184@linuxfoundation.org>
- <20200102220034.493876476@linuxfoundation.org>
+        Fri, 3 Jan 2020 11:35:34 -0500
+Received: by mail-lj1-f177.google.com with SMTP id h23so44436932ljc.8;
+        Fri, 03 Jan 2020 08:35:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fFX7uGIZ1X+s79thV3DjoWZzF0PRIpeDDbwCxzY7LwM=;
+        b=tB4oPF5Pt840/umBcBu0ZUXFfgP4G8j0ioHyS7wrRSnmcUiciLUY+hwLYnd3Y/AYw6
+         M93VdIaHjO2P/xu/dth1dR4zBw7iKOA+kvTyTjpQUa+JQjUxooFKl83thFOCnOZdyMAT
+         +vuotpWTyBEpkjRQcSHLisM1LgPBP4lke8u9qfmAfaE9439mpZgLLT89gWtSk/GOe+Lw
+         JDmCuREF5SthddWRGbxXuaVaLHHHyR/nyf78JN+wNrGdcyQtlJouTSttEd7IeE+HskkI
+         92JVEyzAsfwJETQio4zNn7BCpDOJIMuPNltApGvSfmAzYPz71sJuoVITmgEU3bHOSNTv
+         l0gw==
+X-Gm-Message-State: APjAAAW4D0j7fKNTEM9M6gOKc0reZTOsdcj6AJ5AY8+ylzAoziPiDGSO
+        S9JY5iFPjFSrRtYa53FSYTQ=
+X-Google-Smtp-Source: APXvYqwdsfT9Ue4rfa7wkDSMJ6nFrh+aKIp0gZyMBI5hCHZMJfPLm13CY0cMs1nbZoC3osiPdRFX/Q==
+X-Received: by 2002:a2e:9b9a:: with SMTP id z26mr52058439lji.181.1578069331694;
+        Fri, 03 Jan 2020 08:35:31 -0800 (PST)
+Received: from xi.terra (c-14b8e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.184.20])
+        by smtp.gmail.com with ESMTPSA id w6sm24854434lfq.95.2020.01.03.08.35.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Jan 2020 08:35:30 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.92.3)
+        (envelope-from <johan@xi.terra>)
+        id 1inPvA-0000Kg-Vr; Fri, 03 Jan 2020 17:35:33 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Sean Young <sean@mess.org>, Hans Verkuil <hverkuil@xs4all.nl>,
+        linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 0/6] media: fix USB descriptor issues
+Date:   Fri,  3 Jan 2020 17:35:07 +0100
+Message-Id: <20200103163513.1229-1-johan@kernel.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="7iMSBzlTiPOCCT2k"
-Content-Disposition: inline
-In-Reply-To: <20200102220034.493876476@linuxfoundation.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series fixes a number of issues due to missing or incomplete sanity
+checks that could lead to NULL-pointer dereferences, memory corruption
+or driver misbehaviour when a device has unexpected descriptors.
 
---7iMSBzlTiPOCCT2k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Johan
 
-Hi!
 
-> From: Maurizio Lombardi <mlombard@redhat.com>
->=20
-> [ Upstream commit aa5334c4f3014940f11bf876e919c956abef4089 ]
->=20
-> Passing the parameter "num_tgts=3D-1" will start an infinite loop that
-> exhausts the system memory
+Johan Hovold (6):
+  media: flexcop-usb: fix endpoint sanity check
+  media: ov519: add missing endpoint sanity checks
+  media: stv06xx: add missing descriptor sanity checks
+  media: xirlink_cit: add missing descriptor sanity checks
+  media: dib0700: fix rc endpoint lookup
+  media: iguanair: fix endpoint sanity check
 
-Should we provide some kind of upper bound for num_tgts, too?
-Otherwise integer overflow will follow later in the code. Even without
-overflow, it will kill the system due to OOM...
+ drivers/media/rc/iguanair.c                   |  2 +-
+ drivers/media/usb/b2c2/flexcop-usb.c          |  6 +++---
+ drivers/media/usb/dvb-usb/dib0700_core.c      |  4 ++--
+ drivers/media/usb/gspca/ov519.c               | 10 ++++++++++
+ drivers/media/usb/gspca/stv06xx/stv06xx.c     | 19 ++++++++++++++++++-
+ .../media/usb/gspca/stv06xx/stv06xx_pb0100.c  |  4 ++++
+ drivers/media/usb/gspca/xirlink_cit.c         | 18 +++++++++++++++++-
+ 7 files changed, 55 insertions(+), 8 deletions(-)
 
-Best regards,
-								Pavel
-							=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+-- 
+2.24.1
 
---7iMSBzlTiPOCCT2k
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl4PbPwACgkQMOfwapXb+vJe+QCgxM6mHDdr9lN4KVhL48lnkSd6
-uW0AnAnlyoORhsiDZEtCaYQJO1xEfsUN
-=wV7f
------END PGP SIGNATURE-----
-
---7iMSBzlTiPOCCT2k--
