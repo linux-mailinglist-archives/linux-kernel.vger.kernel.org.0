@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97A9012F35C
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 04:14:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1680512F35D
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 04:14:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbgACDM6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 22:12:58 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:34938 "EHLO
+        id S1727556AbgACDNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 22:13:01 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:38834 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727477AbgACDMw (ORCPT
+        with ESMTP id S1727468AbgACDMw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 2 Jan 2020 22:12:52 -0500
-X-UUID: dbe2dbcce0bb44c296b354889e4f9d06-20200103
+X-UUID: 8a3b57bca418494893e11e8af2680ad9-20200103
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=w/UNojmvQeoqj5ssGa9RuxeKs7Wh0EGoWwzhQTkdINo=;
-        b=b1eN/XpgbGvPvF4HX1oyVOYUZB1ylD3XBmFk2njp027gOVV+4oCs7GFnUVkNvRc118Yo68oc0cHh8+MGS01RWf3dTF2qVwAwcxAwUiv57e1iTTml4QkioXFhCm/osc6EYuRZleL7yqk4edzUneNAVJFoczZgFDmPlZzE11rEhBs=;
-X-UUID: dbe2dbcce0bb44c296b354889e4f9d06-20200103
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=sZZHfWgfl0uySImCnCNvtUkrGZa7+VsmGsRBi9uuioU=;
+        b=Oaq4RqCDR6UbwUvbuxDh7zZf8ekStutQ9leZEgNcMOxTyRPPivXIekhlMG/1LM0Ghk0ezkXof3eyY1+Le8P42v9xBcSi9jAkp90QxnlnclhsCwgiKQjU9k/RFFmsmeZ5LUVAfgz/b+H0vuwV7T7tBu0wmkq84Urwe5yE4N4TZ/A=;
+X-UUID: 8a3b57bca418494893e11e8af2680ad9-20200103
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
         (envelope-from <yongqiang.niu@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1791811769; Fri, 03 Jan 2020 11:12:46 +0800
+        with ESMTP id 1765960839; Fri, 03 Jan 2020 11:12:47 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 3 Jan 2020 11:12:19 +0800
+ mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 3 Jan 2020 11:12:15 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 3 Jan 2020 11:13:12 +0800
+ Transport; Fri, 3 Jan 2020 11:13:13 +0800
 From:   Yongqiang Niu <yongqiang.niu@mediatek.com>
 To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
@@ -38,9 +38,9 @@ CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [RESEND PATCH v6 10/17] drm/mediatek: add connection from RDMA0 to COLOR0
-Date:   Fri, 3 Jan 2020 11:12:21 +0800
-Message-ID: <1578021148-32413-11-git-send-email-yongqiang.niu@mediatek.com>
+Subject: [RESEND PATCH v6 11/17] drm/mediatek: add connection from RDMA1 to DSI0
+Date:   Fri, 3 Jan 2020 11:12:22 +0800
+Message-ID: <1578021148-32413-12-git-send-email-yongqiang.niu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1578021148-32413-1-git-send-email-yongqiang.niu@mediatek.com>
 References: <1578021148-32413-1-git-send-email-yongqiang.niu@mediatek.com>
@@ -53,24 +53,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhpcyBwYXRjaCBhZGQgY29ubmVjdGlvbiBmcm9tIFJETUEwIHRvIENPTE9SMA0KDQpTaWduZWQt
-b2ZmLWJ5OiBZb25ncWlhbmcgTml1IDx5b25ncWlhbmcubml1QG1lZGlhdGVrLmNvbT4NClJldmll
-d2VkLWJ5OiBDSyBIdSA8Y2suaHVAbWVkaWF0ZWsuY29tPg0KLS0tDQogZHJpdmVycy9ncHUvZHJt
-L21lZGlhdGVrL210a19kcm1fZGRwLmMgfCA1ICsrKysrDQogMSBmaWxlIGNoYW5nZWQsIDUgaW5z
-ZXJ0aW9ucygrKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19k
-cm1fZGRwLmMgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kZHAuYw0KaW5kZXgg
-M2ExYWE5YS4uYjZiODY2MDAgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsv
-bXRrX2RybV9kZHAuYw0KKysrIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZGRw
-LmMNCkBAIC0xNzIsNiArMTcyLDggQEAgc3RydWN0IG10a19kZHAgew0KIA0KIHN0cnVjdCBtdGtf
-bW1zeXNfcmVnX2RhdGEgew0KIAl1MzIgb3ZsMF9tb3V0X2VuOw0KKwl1MzIgcmRtYTBfc291dF9z
-ZWxfaW47DQorCXUzMiByZG1hMF9zb3V0X2NvbG9yMDsNCiAJdTMyIHJkbWExX3NvdXRfc2VsX2lu
-Ow0KIAl1MzIgcmRtYTFfc291dF9kcGkwOw0KIAl1MzIgZHBpMF9zZWxfaW47DQpAQCAtNDMyLDYg
-KzQzNCw5IEBAIHN0YXRpYyB1bnNpZ25lZCBpbnQgbXRrX2RkcF9zb3V0X3NlbChjb25zdCBzdHJ1
-Y3QgbXRrX21tc3lzX3JlZ19kYXRhICpkYXRhLA0KIAl9IGVsc2UgaWYgKGN1ciA9PSBERFBfQ09N
-UE9ORU5UX1JETUEyICYmIG5leHQgPT0gRERQX0NPTVBPTkVOVF9EU0kzKSB7DQogCQkqYWRkciA9
-IERJU1BfUkVHX0NPTkZJR19ESVNQX1JETUEyX1NPVVQ7DQogCQl2YWx1ZSA9IFJETUEyX1NPVVRf
-RFNJMzsNCisJfSBlbHNlIGlmIChjdXIgPT0gRERQX0NPTVBPTkVOVF9SRE1BMCAmJiBuZXh0ID09
-IEREUF9DT01QT05FTlRfQ09MT1IwKSB7DQorCQkqYWRkciA9IGRhdGEtPnJkbWEwX3NvdXRfc2Vs
-X2luOw0KKwkJdmFsdWUgPSBkYXRhLT5yZG1hMF9zb3V0X2NvbG9yMDsNCiAJfSBlbHNlIHsNCiAJ
-CXZhbHVlID0gMDsNCiAJfQ0KLS0gDQoxLjguMS4xLmRpcnR5DQo=
+VGhpcyBwYXRjaCBhZGQgY29ubmVjdGlvbiBmcm9tIFJETUExIHRvIERTSTANCg0KU2lnbmVkLW9m
+Zi1ieTogWW9uZ3FpYW5nIE5pdSA8eW9uZ3FpYW5nLm5pdUBtZWRpYXRlay5jb20+DQpSZXZpZXdl
+ZC1ieTogQ0sgSHUgPGNrLmh1QG1lZGlhdGVrLmNvbT4NCi0tLQ0KIGRyaXZlcnMvZ3B1L2RybS9t
+ZWRpYXRlay9tdGtfZHJtX2RkcC5jIHwgNCArKysrDQogMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0
+aW9ucygrKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1f
+ZGRwLmMgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kZHAuYw0KaW5kZXggYjZi
+ODY2MDAuLjdiN2UzNjUgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRr
+X2RybV9kZHAuYw0KKysrIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZGRwLmMN
+CkBAIC0xNzYsNiArMTc2LDcgQEAgc3RydWN0IG10a19tbXN5c19yZWdfZGF0YSB7DQogCXUzMiBy
+ZG1hMF9zb3V0X2NvbG9yMDsNCiAJdTMyIHJkbWExX3NvdXRfc2VsX2luOw0KIAl1MzIgcmRtYTFf
+c291dF9kcGkwOw0KKwl1MzIgcmRtYTFfc291dF9kc2kwOw0KIAl1MzIgZHBpMF9zZWxfaW47DQog
+CXUzMiBkcGkwX3NlbF9pbl9yZG1hMTsNCiAJdTMyIGRzaTBfc2VsX2luOw0KQEAgLTQzNyw2ICs0
+MzgsOSBAQCBzdGF0aWMgdW5zaWduZWQgaW50IG10a19kZHBfc291dF9zZWwoY29uc3Qgc3RydWN0
+IG10a19tbXN5c19yZWdfZGF0YSAqZGF0YSwNCiAJfSBlbHNlIGlmIChjdXIgPT0gRERQX0NPTVBP
+TkVOVF9SRE1BMCAmJiBuZXh0ID09IEREUF9DT01QT05FTlRfQ09MT1IwKSB7DQogCQkqYWRkciA9
+IGRhdGEtPnJkbWEwX3NvdXRfc2VsX2luOw0KIAkJdmFsdWUgPSBkYXRhLT5yZG1hMF9zb3V0X2Nv
+bG9yMDsNCisJfSBlbHNlIGlmIChjdXIgPT0gRERQX0NPTVBPTkVOVF9SRE1BMSAmJiBuZXh0ID09
+IEREUF9DT01QT05FTlRfRFNJMCkgew0KKwkJKmFkZHIgPSBkYXRhLT5yZG1hMV9zb3V0X3NlbF9p
+bjsNCisJCXZhbHVlID0gZGF0YS0+cmRtYTFfc291dF9kc2kwOw0KIAl9IGVsc2Ugew0KIAkJdmFs
+dWUgPSAwOw0KIAl9DQotLSANCjEuOC4xLjEuZGlydHkNCg==
 
