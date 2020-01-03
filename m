@@ -2,62 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5054312F315
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 03:59:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B67FF12F31D
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 03:59:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbgACC6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 21:58:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51422 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726148AbgACC6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 21:58:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E348EAE4B;
-        Fri,  3 Jan 2020 02:58:50 +0000 (UTC)
-Subject: Re: [PATCH 00/14] ARM: dts: realtek: Introduce syscon
-To:     James Tai <james.tai@realtek.com>
-Cc:     "linux-realtek-soc@lists.infradead.org" 
-        <linux-realtek-soc@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20191202182205.14629-1-afaerber@suse.de>
- <0f4d6872-b764-1c5e-9c2a-4e4e415a4877@suse.de>
- <996a6968f411467cb987a14a0764726d@realtek.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Organization: SUSE Software Solutions Germany GmbH
-Message-ID: <f1f3fc5f-ae6c-b803-cb02-d06d60c442ce@suse.de>
-Date:   Fri, 3 Jan 2020 03:58:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1727406AbgACC7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 21:59:49 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:33388 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbgACC7r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 21:59:47 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 0032xAnq081778;
+        Fri, 3 Jan 2020 02:59:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=sLOTaRz6FWrAwppWWWtqXcyocWP/mMZ56iPUA9V8U9o=;
+ b=PYxeuGH4pHDdrVJ9+PL5c+3B0zBCS2LxgpDbMuquqeW1WXQbJVuw+QiEexDOKu1QsdT3
+ iqdOlpXIzmDo7NEeTpub2YNZPwYQbPNMFwhnUhUaPt8+3j8Xj8CUry3vX1fHGfGZoOcd
+ S3MpWuxWNe6Ya3iN0ndCvcflCEAIwhd/SFhnHHOyrlAqx5NG2BSf3PjBfcAv/E6j4g7D
+ 56L1hXt2sBVlAy01b2volKicWU+hRy2SduPRCHcIXKRv07gws/IAkrTImEb1CPp47QFf
+ SA8Nsgt90d8AcHRa6IIN0QSQkN+DfZhB0ZKasR9sFyBwTSAcgXvAr/UcossRiVWu1TL6 mg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2x5y0ptan2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 03 Jan 2020 02:59:26 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 0032xAUw057548;
+        Fri, 3 Jan 2020 02:59:26 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2x8guuq2tc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 03 Jan 2020 02:59:26 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0032xNg6021971;
+        Fri, 3 Jan 2020 02:59:23 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 02 Jan 2020 18:59:22 -0800
+To:     Nishad Kamdar <nishadkamdar@gmail.com>
+Cc:     Hannes Reinecke <hare@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joe Perches <joe@perches.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] scsi: Use the correct style for SPDX License Identifier
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <cover.1577511720.git.nishadkamdar@gmail.com>
+Date:   Thu, 02 Jan 2020 21:59:19 -0500
+In-Reply-To: <cover.1577511720.git.nishadkamdar@gmail.com> (Nishad Kamdar's
+        message of "Sat, 28 Dec 2019 11:24:20 +0530")
+Message-ID: <yq15zht5jp4.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <996a6968f411467cb987a14a0764726d@realtek.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9488 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=745
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001030026
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9488 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=808 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001030027
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
 
-Am 31.12.19 um 10:47 schrieb James Tai:
->> I'm waiting for your Acked-by of the blocks & numbers in these patches.
->> Other Realtek engineers are also invited to respond, of course.
-> 
-> I have reviewed these patches.
+Nishad,
 
-Thanks - does anything need changes in patch 01 or is that ack'ed, too?
+> This patch corrects the SPDX License Identifier style in the scsi
+> driver related files.
 
-Regards,
-Andreas
+Applied to 5.6/scsi-queue, thanks!
 
 -- 
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer
-HRB 36809 (AG Nürnberg)
+Martin K. Petersen	Oracle Linux Engineering
