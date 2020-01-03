@@ -2,120 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03FBF12F4EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 08:25:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 261D212F4F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 08:38:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbgACHZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 02:25:42 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:42383 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725928AbgACHZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 02:25:42 -0500
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 47pxJf6qxmz7s;
-        Fri,  3 Jan 2020 08:25:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1578036339; bh=01dE5Uj2UX6Z3xkoH4ovrHrnnZMZ0qsgpPflyJoviKk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N2xLPdFB7kkCfcrgZqjz286M4Iq2z2R0bQRr2/j2GroNvf2U1wd814qwT24QmYTsK
-         wtaalcj/wRagy+2bqMZogxgtMskLYpXndjpv4m8npeG3DMrRFU1rPnh3wmowiVo4Ou
-         0xQTSVD6iaFUGeiSfOR7qjhuL5FJ9zqUoOYydPfLX6wXI93/0W1xQeB8CtV/z7yaxW
-         qM8FlTiLHeAtcRALqEFsX+IqGkj6s/Rv0nNR3hhYvlUUmpwtYbOLjwXRHgZDwDhjm5
-         Zf5TYIJPES8884u6RB2erVtdPji6I9QiTT0evrg/3Ms7WSe3qF17uIEvZYToyfFR+N
-         0/vREuSglWQdw==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.101.4 at mail
-Date:   Fri, 3 Jan 2020 08:25:36 +0100
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Peter Chen <peter.chen@nxp.com>, Rob Herring <robh-dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 10/10] usb: chipidea: tegra: Add USB_TEGRA_PHY module
- to driver's dependencies
-Message-ID: <20200103072536.GA14228@qmqm.qmqm.pl>
-References: <20191220015238.9228-1-digetx@gmail.com>
- <20191220015238.9228-11-digetx@gmail.com>
- <20191220035650.GC19921@b29397-desktop>
- <fb7dee6e-e645-fe45-126c-c5f1e280bc26@gmail.com>
- <20191223213234.GA28786@qmqm.qmqm.pl>
- <7174833f-8325-7fb4-d190-78ba4bed0cbb@gmail.com>
- <20191230210259.GD24135@qmqm.qmqm.pl>
- <b34972e3-569e-d74a-4d30-d52c89032a08@gmail.com>
+        id S1727377AbgACHiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 02:38:00 -0500
+Received: from sonic301-30.consmr.mail.ne1.yahoo.com ([66.163.184.199]:36899
+        "EHLO sonic301-30.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727315AbgACHiA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 02:38:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1578037079; bh=MJdpASvZnpj3gXKZxrNskiGAl+hYYwdjGUMDZ9fMpsI=; h=Date:From:Reply-To:Subject:References:From:Subject; b=QSzh+FyK+PQqbNd1K5cuBfArUFqLiHiJAQkXv9ezOJqgEXC8QGQMQgZAHUyU4Q0YcLWtuY4D2Sr0/dr6OjadKmrFpRakTwV7xCp1Dw9f3Q8q2/NkQ+4lnuwCSU6ZzF+/SD5BmTiB2snpNWbd/vjroSKHRXVe13Ijb3DEHq61gm+41ZOBxaPDbGxUDpkZ8SREJ0VaTp1sKxjjUlqQ71XhzeDKepMbeP55ACCKICPw3k8vC84jh5JeEVKUf4+ADYt70sDmqegTPKmZMC9QOWyFjc5PX3rjn6/D10NDWKEFrjS7h/8J9Y+dKohuMDQAzRvoNR6eF6qw7FzJN6TwUm1t6Q==
+X-YMail-OSG: yXnmVBcVM1nFNSolob2gHkbHPZ3yfZSyZjIbiwo.24pXbh3OORIC9CiEzjjKfH6
+ 8rSqYYnETRF7LhGLdUPzfYxNL6Gya8Ka3CCZWTtjqUbND6M5a2wBG3Y7vYCztdFqeu78uLMNZC5m
+ b7EeHWZ4xaoadYgjjjfuitcXMc36jsOezDOKkecQ9TRe6DtHyC5EvQqVsYwapO8tlf4JYG6EG.FO
+ fpu2auCbIRLs2MMA4vMibGMiLjZrSyX1kCZbgDexAdD_u8b6KDCrEjd.8YF8F5qs3Fs_VGdMsOR0
+ jZsb6E8Efoq_Si6fVJggXbZQTFHf8MpBVXhO5euMma_ZBUlsoQi2o0U1Odi4aNmPfRfOEgmR90h.
+ jdRum8_.6VtYtI_pOGkH2YCHRtFFd476aeEECdrF.AFtyXeOxs2o7H749gRc9BNV6sXxBwgMOj2E
+ ShP09eiehvu.hKrhwu6x6yrDIIpsTqX7LCK0nHuyzZs1uvNd2EfdAbHabW7zBrJJLPT5PaIY4ovG
+ p0Szss.hm_6Pz4O9p5anMdPoK43XMHT03yxf6swDbirj_O98EUYSPd9C6B1LXMD0iWHjuSl4tu4z
+ GIkIvc5lErAM8tTr24dgvhNxDUiJjvDKO8aA9jRuhSAko29MJ2iRVxJezRLqhuWEeVdzlkskH9EI
+ ZD_4G3.v4_qxcPOSs4ITL4lFHkQ3bJ1Y3Sy7rM5os5jjdtpUycMyD5TDpD__0Zyv.rpIlc3Kp6oq
+ ina.QJE1E6rtxYYhIcDId1NSX8jEd6EvQxUOBktCleihXRVNPm2g0PWI_eEw1eFFFD7gOcvtR7WD
+ BH75SicEpJ4UxtblvYRCgbF4nBbu07TsJlDBqpoYhXjSllQlGGLt66pzu0itIp62Il08vY2UkuvB
+ 47aUc1oLbRxxjU.ZjgJiYHzj6rspZAMCHXwdber4wpv4kbkhO7B1ErJ9czk266z92WRVUmIXubFy
+ xoCO4fNiGxGSeULLlJXDzuatxKFNeZOshtAHHZsIYIpy8hqudstdD960GzqSzolnSothWFrZ9lPk
+ fdpDXQjhh_Bhq4AyRjbclegvE0E2Q6oVs48sZAx4e9.9jOD53UK9T51iW.8Qg4gQ7WDyjiFU097R
+ zRDteTFA2hFNqSihVhw0S70tRmOJUBWFF02lceT0zzN5czDm.R0ujSijrvskZZ8FRh6voapbwD2b
+ 2ZlGVZU0NAjdPxBL5xsAIPzLSSlYf_w7Z.xyZ7MCtzl.LRHZTR7.FX2iNvzladPYgxttJZOgLMCI
+ m7qk3S8Vtp3MqstvSjUF8K5e9axmV8qc4Htq4lQZhpUQ8zddeP2QVwyQbhsfIP2LKdUbWexqI
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Fri, 3 Jan 2020 07:37:59 +0000
+Date:   Fri, 3 Jan 2020 07:37:55 +0000 (UTC)
+From:   Brian Gilvary <1brian.gilvary@gmail.com>
+Reply-To: gilvarybrian@aol.com
+Message-ID: <466166173.6197256.1578037075711@mail.yahoo.com>
+Subject: Happy New Year For Our Mutual Benefits
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b34972e3-569e-d74a-4d30-d52c89032a08@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+References: <466166173.6197256.1578037075711.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.14873 YMailNodin Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 02, 2020 at 06:17:47PM +0300, Dmitry Osipenko wrote:
-> 31.12.2019 00:02, Michał Mirosław пишет:
-> > On Tue, Dec 24, 2019 at 07:21:05AM +0300, Dmitry Osipenko wrote:
-> >> 24.12.2019 00:32, Michał Mirosław пишет:
-> >>> On Fri, Dec 20, 2019 at 07:31:08AM +0300, Dmitry Osipenko wrote:
-> >>>> 20.12.2019 06:56, Peter Chen пишет:
-> >>>>> On 19-12-20 04:52:38, Dmitry Osipenko wrote:
-> >>> [...]
-> >>>>>> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
-> >>>>>> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-> >>>>>> @@ -53,6 +53,12 @@ static int tegra_udc_probe(struct platform_device *pdev)
-> >>>>>>  	struct tegra_udc *udc;
-> >>>>>>  	int err;
-> >>>>>>  
-> >>>>>> +	if (IS_MODULE(CONFIG_USB_TEGRA_PHY)) {
-> >>>>>> +		err = request_module("phy_tegra_usb");
-> >>>>>> +		if (err)
-> >>>>>> +			return err;
-> >>>>>> +	}
-> >>>>>> +
-> >>>>>
-> >>>>> Why you do this dependency, if this controller driver can't
-> >>>>> get USB PHY, it should return error. What's the return value
-> >>>>> after calling below:
-> >>>>>
-> >>>>> 	udc->phy = devm_usb_get_phy_by_phandle(&pdev->dev, "nvidia,phy", 0);
-> >>>>
-> >>>> It returns -EPROBE_DEFER when phy_tegra_usb isn't loaded.
-> >>>
-> >>> How are other driver modules autoloaded? Isn't there an appropriate
-> >>> MODALIAS or MODULE_DEVICE_TABLE in there?
-> >>
-> >> Hello Michał,
-> >>
-> >> The phy_tegra_usb module is fine by itself, it's getting autoloaded.
-> >>
-> >> The problem is that ci_hdrc_tegra module depends on the phy_tegra_usb
-> >> module and thus the PHY module should be loaded before the CI module,
-> >> otherwise CI driver fails with the EPROBE_DEFER.
-> > 
-> > Why, then, is CI driver not being probed again after PHY driver loads?
-> > EPROBE_DEFER is what should cause driver core to re-probe a device after
-> > other devices appear (PHY in this case).
-> 
-> CI driver is getting re-probed just fine if PHY's driver module is
-> loaded manually after loading the CI's module. This patch removes this
-> necessity to manually load PHY's module.
-> 
-> This is just a minor convenience change that brings the CI's driver
-> loading behaviour on par with the behaviour of loading Tegra's EHCI
-> driver module.
+Hi
 
-I fully understand the goal, but what I'm missing is that why this
-doesn't work out of the box? If the PHY module is autoloaded, and so is
-CI driver, and (as I understand) the driver's probe() correctly returns
-EPROBE_DEFER when PHY is not probed yet, then I guess that means bug
-somewhere else and the patch just covers it up.
+As the Chief Financial Officer, British Petroleum Company plc (BP), I am in=
+ a position to facilitate immediate transfer of =C2=A3 48,000,000.00 (Forty=
+ Eight Million British Pounds Sterling), to any of your nominated Bank Acco=
+unt.
 
-Best Regards,
-Michał Mirosław
+Source of Funds: An over-invoiced payment from a past project executed in m=
+y department. I cannot successfully achieve this transaction without presen=
+ting you as foreign contractor who will provide the bank account to receive=
+ the funds. Every documentation for the claim of the funds will be legally =
+processed and documented, so I will need your full co-operation for our mut=
+ual benefits.
+
+We will discuss details if you are interested to work with me to secure thi=
+s funds, as I said for our mutual benefits. I will be looking forward to yo=
+ur prompt response.
+
+Best regards
+Brian Gilvary
+Chief financial officer
+BP, Plc.
