@@ -2,113 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 513F612F97A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 16:05:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E326212F988
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 16:08:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbgACPF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 10:05:27 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37745 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbgACPF1 (ORCPT
+        id S1727985AbgACPIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 10:08:06 -0500
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:64874 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727762AbgACPID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 10:05:27 -0500
-Received: by mail-wr1-f65.google.com with SMTP id w15so30110526wru.4;
-        Fri, 03 Jan 2020 07:05:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=X5+ayP/0hzBeWDiiokaoXUV3s80MSoMhBga4b9S7sks=;
-        b=OphOn0vxqlZHvxhxkC7gFavcg8KUzD6thbTzOhjFjaBwVoRmNB8VfO1KaKsg0+uWh+
-         eCTB8bn6Y+npzS6wYCGaH7avGMzRL6Z8oSNpa8+37wBkL1Ki8L6Vri+iwi2WOyo/akMv
-         yoxr9xRKDbeTnRvAXnejWI8qMajzpZnBwCZqk2qdxB1uIBuBf446N7e3ndG0BiWbekMj
-         GOp75VenYqte4WaHktOF38ySpwt8xWbaZ8butvV6BZisrj68WoDAzp1mwphj+rwUgwmi
-         iwm1zXUKYlE6W9BLg4YYhHGRFbC7RBy6r91fLogs9yP7sPwUf6ll13c9R+G8KyDZwhbt
-         2DpA==
-X-Gm-Message-State: APjAAAUi358JJHZqDOJgLAkj6I8kY6Zn6/RWpVESWfpzWgI70nlVDxkn
-        dWVyKre7jEh1W/kBJjBv5aM=
-X-Google-Smtp-Source: APXvYqygr/6TniLTdugF+WqW3lwlKrSR9oQWEVDaSy91cNcI3WRlF+4XJBcs5clvoogcu5G/pibIzg==
-X-Received: by 2002:adf:9144:: with SMTP id j62mr84290643wrj.168.1578063925002;
-        Fri, 03 Jan 2020 07:05:25 -0800 (PST)
-Received: from Johanness-MBP.fritz.box (ppp-46-244-218-95.dynamic.mnet-online.de. [46.244.218.95])
-        by smtp.gmail.com with ESMTPSA id e8sm60583844wrt.7.2020.01.03.07.05.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Jan 2020 07:05:24 -0800 (PST)
-Subject: Re: [PATCH v5 2/2] zonefs: Add documentation
-To:     Damien Le Moal <damien.lemoal@wdc.com>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Naohiro Aota <naohiro.aota@wdc.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Hannes Reinecke <hare@suse.de>
-References: <20200103023445.1352524-1-damien.lemoal@wdc.com>
- <20200103023445.1352524-3-damien.lemoal@wdc.com>
-From:   Johannes Thumshirn <jth@kernel.org>
-Message-ID: <e9df8ffe-96b2-f9c6-7f42-30f3b33097fb@kernel.org>
-Date:   Fri, 3 Jan 2020 16:05:23 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.3.1
+        Fri, 3 Jan 2020 10:08:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1578064083; x=1609600083;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=iScVvzy4kldAidXvB46y5RqTW5IdFH/pNIveRmCeq3Q=;
+  b=FTTDI0rCgGp+OrKxBHgUzBwNeOgX2d3me+ujoJNbodbZSgAtuqZe+s58
+   hPJiThkNWXGG14Zb1Pk2J0o+bSGaNKO5Hg/cj53RwnYG5qj73aNPEBrRM
+   UJACxdhnME44e0sE/suXQAeiMW4Ib7CKa7xx4IgTTw2cFtI2BmHK6riqW
+   c=;
+IronPort-SDR: F9CLz6y3IrEhyxpRN784UtvWMqWOfXnbUcR98YjCf+RgGtuAUdx/g2PjEgAKVmUDqflDaEAe56
+ qDocL2B+R9DQ==
+X-IronPort-AV: E=Sophos;i="5.69,390,1571702400"; 
+   d="scan'208";a="11421828"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-27fb8269.us-east-1.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 03 Jan 2020 15:07:44 +0000
+Received: from u7588a65da6b65f.ant.amazon.com (iad7-ws-svc-lb50-vlan3.amazon.com [10.0.93.214])
+        by email-inbound-relay-1e-27fb8269.us-east-1.amazon.com (Postfix) with ESMTPS id 41B93A05E2;
+        Fri,  3 Jan 2020 15:07:39 +0000 (UTC)
+Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTPS id 003F7b23020436
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 3 Jan 2020 16:07:37 +0100
+Received: (from jschoenh@localhost)
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Submit) id 003F7ah5020431;
+        Fri, 3 Jan 2020 16:07:36 +0100
+From:   =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
+        Yazen Ghannam <yazen.ghannam@amd.com>,
+        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+        Tony Luck <tony.luck@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH v2 0/6] x86/mce: Various fixes and cleanups for MCE handling
+Date:   Fri,  3 Jan 2020 16:07:16 +0100
+Message-Id: <20200103150722.20313-1-jschoenh@amazon.de>
+X-Mailer: git-send-email 2.22.0.3.gb49bb57c8208.dirty
 MIME-Version: 1.0
-In-Reply-To: <20200103023445.1352524-3-damien.lemoal@wdc.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Boris.
 
-Am 03.01.20 um 03:34 schrieb Damien Le Moal:
-[...]
-> +
-> +Overview
-> +========
-> +
-> +zonefs is a very simple file system exposing each zone of a zoned block device
-> +as a file. Unlike a regular file system with zoned block device support (e.g.
-> +f2fs), zonefs does not hide the sequential write constraint of zoned block
-> +devices to the user. Files representing sequential write zones of the device
-> +must be written sequentially starting from the end of the file (append only
-> +writes).
-> +
-> +As such, zonefs is in essence closer to a raw block device access interface
-> +than to a full featured POSIX file system. The goal of zonefs is to simplify
-> +the implementation of zoned block device support in applications by replacing
-> +raw block device file accesses with a richer file API, avoiding relying on
-> +direct block device file ioctls which may be more obscure to developers. One
-> +example of this approach is the implementation of LSM (log-structured merge)
-> +tree structures (such as used in RocksDB and LevelDB) on zoned block devices
-> +by allowing SSTables to be stored in a zone file similarly to a regular file
-> +system rather than as a range of sectors of the entire disk. The introduction
-> +of the higher level construct "one file is one zone" can help reducing the
-> +amount of changes needed in the application as well as introducing support for
-> +different application programming languages.
+This is the 2nd iteration of a smallish series with some fixes/cleanups
+for the handling of MCEs. It should apply cleanly to your ras/core branch.
 
-Maybe add a small subsection on what zoned block devices are? Given that
-we had at least one person looking at this series while it was on the
-list, who didn't really know what zoned block devices are and what the
-constraints of them are.
+The first iteration can be found here:
+  https://lore.kernel.org/linux-edac/20191217073414.GB28788@zn.tnic/T/
 
-[...]
-> +Zone files
-> +----------
-> +
-> +Zone files are named using the number of the zone they represent within the set
-> +of zones of a particular type. That is, both the "cnv" and "seq" directories
-> +contain files named "0", "1", "2", ... The file numbers also represent
-> +increasing zone start sector on the device.
-> +
-> +All read and write operations to zone files are not allowed beyond the file
-> +maximum size, that is, beyond the zone size. Any access exceeding the zone
-> +size is failed with the -EFBIG error.
-> +
-> +Creating, deleting, renaming or modifying any attribute of files and
-> +sub-directories is not allowed.
+Changes v1 -> v2:
+- dropped patches 3, 5, 6  as you already cherry-picked them into
+  ras/core or ras/urgent (this renumbers patch 4 in v1 to patch 3 in v2);
+- addressed remaining comments on patches 1-3;
+- added patch 5 as per Yazen's comment that the SRAO notifier shall
+  not be used on AMD for now;
+- added patch 4 as a prerequisite for the given realization of patch 5;
+- added patch 6 as an example, what else can be done due to patch 4.
 
-Nit: Above you explicitly say it's failed with -EFBIG, maybe document
-the error here as well?
+See individual patches 1-3 for more detailed comments on changes.
 
-Other than that,
-Reviewed-by: Johannes Thumshirn <jth@kernel.org>
+I'm not yet convinced, that patch 6 is an entirely good idea. I've
+still included it for discussion. If we end up not doing something
+like it, we can as well rewrite patch 5 to be just another "if"
+within srao_decode_notifier()/uc_decode_notifier().
+
+Regards
+Jan
+
+Jan H. Schönherr (6):
+  x86/mce: Take action on UCNA/Deferred errors again
+  x86/mce: Make mce=nobootlog work again
+  x86/mce: Fix use of uninitialized MCE message string
+  x86/mce: Allow a variable number of internal MCE decode notifiers
+  x86/mce: Do not take action on SRAO/Deferred errors on AMD for now
+  x86/mce: Dynamically register default MCE handler
+
+ arch/x86/include/asm/mce.h     |   2 +-
+ arch/x86/kernel/cpu/mce/core.c | 145 ++++++++++++++++++---------------
+ 2 files changed, 81 insertions(+), 66 deletions(-)
+
+-- 
+2.22.0.3.gb49bb57c8208.dirty
 
