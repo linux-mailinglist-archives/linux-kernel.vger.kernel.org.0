@@ -2,89 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53FF112F6F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 12:00:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F08F12F6F7
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 12:05:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbgACLAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 06:00:32 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41967 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727220AbgACLAc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 06:00:32 -0500
-Received: by mail-pf1-f195.google.com with SMTP id w62so23398448pfw.8
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 03:00:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=AGnweEgmP06z9NPM524MganQhW1RHEdOReiWN+3vTf4=;
-        b=DEtPFmwOFhKFwSYl3ZjpIHcvOfNGI/gSPbEn0LTUWasPYJRWkrOPhSeljh5VftxjO9
-         FIdYox4DrGGjwH3SO8P0cpNOB+jFIRkO4e9ml+/BzNiDMH3WjErOKwS5mwT6TIg1G6zT
-         ktEPC5ShX8fE/0dgxG3wkWANZinqXwYHQEV7epxr1W5p/v2DFINIkxg1QUJl17vGtZGr
-         T7WCWPB3pkJI+G0emLktY+wgkXOqblxs9QSkm7Nv0l+v2UrIMgDalHXaTiUoAEGk/VQ/
-         du9qMd6x+ui7BoOz881Aeq9sAyjI2gTnx8dY9QSbOZmY4gopzZvIn3OJFqf/hdbgtqXU
-         144A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=AGnweEgmP06z9NPM524MganQhW1RHEdOReiWN+3vTf4=;
-        b=orgrTkwzMrDVLZOFU+yy2M6mHQ+cxojF+aksegE5uM5sDSv0k/A3UohZGq223HZapw
-         eRquD5Kw/+pCjce7FBFaipA0d2h0yyd4Mbw/ZHApzHRkKv6xxNBt/XVIVgpDVu9iH+03
-         4WCtSJsrLGKPH7wdIhvbuWq9y6w9+NEsuys3EMEovYxsphKQXem0K/D0Em1dpMxeSowl
-         Pjdo+DjyMu4bIe4aDOh1n/LDHVRYFaXPakKeW5X0i661VjjYO5pdDgoBc7RFPgzL4iJ+
-         4XkpaZdvm/pmhjdKXfeqqZnXWYuknOfMyx2GznfE2b0Qx63MaZT8Z1QfPHbElKo0Utrf
-         msag==
-X-Gm-Message-State: APjAAAV1i4i45ZZoGxfXDWa2S2BmF7qKF+y+G5oGSed7Q1lAsdrYAWYC
-        0g+L+Q5/SEIlP46xyEGh2jtv1KQ0OqGzHodApM8=
-X-Google-Smtp-Source: APXvYqxAj0LfDGfKc6hu8kjjTd4OQAAVM9+n5E1BoQy9h8kjehPEHqz6teYA/ZMQv1vcs7AnKIxWT+0z7cuY0gqrua8=
-X-Received: by 2002:a63:d442:: with SMTP id i2mr98516803pgj.349.1578049231436;
- Fri, 03 Jan 2020 03:00:31 -0800 (PST)
+        id S1727563AbgACLEz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 06:04:55 -0500
+Received: from mga02.intel.com ([134.134.136.20]:42417 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727220AbgACLEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 06:04:55 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jan 2020 03:04:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,390,1571727600"; 
+   d="scan'208";a="224936720"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 03 Jan 2020 03:04:52 -0800
+Received: by lahna (sSMTP sendmail emulation); Fri, 03 Jan 2020 13:04:51 +0200
+Date:   Fri, 3 Jan 2020 13:04:51 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Paul Menzel <pmenzel@molgen.mpg.de>
+Cc:     Greg KH <greg@kroah.com>, Mathias Nyman <mathias.nyman@intel.com>,
+        linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: BUG: KASAN: use-after-free in
+ xhci_trb_virt_to_dma.part.24+0x1c/0x80
+Message-ID: <20200103110451.GJ465886@lahna.fi.intel.com>
+References: <95b4bdb2-962f-561e-ac14-79cd44395915@molgen.mpg.de>
+ <20180720095410.GA11904@kroah.com>
+ <107dbdd1-4e45-836f-7f8f-85bc63374e4f@molgen.mpg.de>
+ <30b069b5-63f6-dd9e-b323-668f06bff6cf@molgen.mpg.de>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:eac1:0:0:0:0 with HTTP; Fri, 3 Jan 2020 03:00:31
- -0800 (PST)
-Reply-To: azmanjaacob62@gmail.com
-From:   Azman Jaacob Chambers <bill201smith@gmail.com>
-Date:   Fri, 3 Jan 2020 12:00:31 +0100
-Message-ID: <CADWr=w3TJk=xxJaXC21E2DMdAtM1PRFvaZt+B_QBcqSTgqok2g@mail.gmail.com>
-Subject: Dear Zhang,Private & confidential.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <30b069b5-63f6-dd9e-b323-668f06bff6cf@molgen.mpg.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Private & confidential.
+On Thu, Jan 02, 2020 at 03:10:14PM +0100, Paul Menzel wrote:
+> Mika, as you fixed the other leak, any idea, how to continue from the
+> kmemleak log below?
+> 
+> ```
+> unreferenced object 0xffff8c207a1e1408 (size 8):
+>   comm "systemd-udevd", pid 183, jiffies 4294667978 (age 752.292s)
+>   hex dump (first 8 bytes):
+>     34 01 05 00 00 00 00 00                          4.......
+>   backtrace:
+>     [<00000000aea7b46d>] xhci_mem_init+0xcfa/0xec0 [xhci_hcd]
 
-It may surprise you to receive this letter from me, since there was no
-previous correspondence between us. My name is Barrister Jaacob Esq. I
-found your contact information through the Asia Public records while
-searching for a last name similar to my deceased client.
+There are probably better ways for doing this but you can use objdump
+for example:
 
-I am contacting you because you have the same surname as my deceased
-client, and i felt that you are his relative or maybe you could help
-me in the distribution of the fund left by my late client. This fund
-is close to be declared un serviceable by the bank as there were no
-indicated next of kin or beneficiary of the fund in the holding
-bank.My proposition to you is to seek your consent, and to present you
-as the beneficiary to my late client Dr Leo Zhang. I know you may not
-be anyway related to my late client but having a common surname with
-him, i can guarantee that if you follow my instructions (The rule of
-law) the fund will be release to us. The total amount of cash in the
-bank account of my deceased client is US$9.7 Million (Nine Million and
-seven hundred Thousand United State Dollars Only). The bank has issued
-me a notification to contact his beneficiary, to re-activate the
-dormant bank account left by my late client and make claim of the
-fund.
+  $ objdump -l --prefix-addresses -j .text --disassemble=xhci_mem_init drivers/usb/host/xhci-hcd.ko
 
-This means that the proceeds of his bank account will be paid to you
-as his legitimate beneficiary after due process. However, this fund
-will be shared based on a mutually agreed percentage of 60% for me and
-40% for you. I will be in position to provide all the legal documents
-that will back you up as my late client beneficiary. Your honest
-cooperation in this proposition will be highly appreciated. This will
-be done under a legitimate arrangement in accordance to the Thailand
-law amended in 1997 towards beneficiary claim.
-
-Barrister Jaacob
+then find the offset xhci_mem_init+0xcfa. It should show you the line
+numbers as well if you have compiled your kernel with debug info. This
+should be close to the line that allocated the memory that was leaked.
