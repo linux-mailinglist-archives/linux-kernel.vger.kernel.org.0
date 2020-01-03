@@ -2,135 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C47312F6BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 11:30:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E4A712F6C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 11:37:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbgACKa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 05:30:27 -0500
-Received: from mail-mw2nam10on2069.outbound.protection.outlook.com ([40.107.94.69]:48834
-        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727220AbgACKa1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 05:30:27 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cEWP7rKipD4Y+Ki9Gd82jaNMgnZP1uOWLGmtPXdHP5NC8+KuTbiXS8kjsdlqV+mpSKplpuyU2FHk0pCpCqQe5QEfdSsTIpv8vZ/eU9EQve0fthvvr+NHGuWj08ZwnB3VgB8a1zU0yULDISErNjtlfDqW+42mbU8iPN2cZeWZUyLEDrmZxTHaEjFwLYc0sOGH24ofLbYY4C1gAj3U0pYOjJXSAA3+Qp9Kh0OAWBMr4rt540skEfAXKWsClr3VBkefd2bhrkS4f4I71YnGNpXhdk5IiTF2KbMmM7ISLXbvUgerna99h0j4FzdJrfnvTApOdqvv+FUEGPeV9X5RlQL2Cg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TAa4pxEUhjTn7Fz0hdC1SgooL5EhxD6HuZfMNNChnEU=;
- b=KPs17wJMOBb7OmfS2dwBHid0ox6tb6EGFugFZ+QemLCUxo8b0rGKnwPN4/SI+undv+40+HonqXLWtvm//HvLYwCYe0NZofFPSyPLVsyPS4lfkBjbAEFksFh8euigUn8CwFP1d56CduHLqSmiY7wnHdlY5SYBA1Fs/n0K4dj0J0f+MjeG0yzdFDcsWV7FblU+e9Be1zoYtplkEyO1HxwK0o5p9n57fKMATJDnQiWk/gdcAAMlCG0c5h0o8Tv3Df+STbMRqk7zM1U2kMpIAKXZSrr9Ot2cxUkKit/a/7MmfwNVERn4SV1CtcDChqnnqK+QIWOduNIQSYiQVjkbRhboJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=silabs.com; dmarc=pass action=none header.from=silabs.com;
- dkim=pass header.d=silabs.com; arc=none
+        id S1727527AbgACKhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 05:37:14 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43057 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727220AbgACKhO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 05:37:14 -0500
+Received: by mail-lf1-f67.google.com with SMTP id 9so31622606lfq.10
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 02:37:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=silabs.onmicrosoft.com; s=selector2-silabs-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TAa4pxEUhjTn7Fz0hdC1SgooL5EhxD6HuZfMNNChnEU=;
- b=m30RMU1OuxMfalrbtH5fUA4v9bX3KUxVor7jcwoSs0TudSaFu6eP6BtqDFVCKO65tM9zykZvbeorMBfYpFUpQ7NU1Z4fBeDXvGULWXLVaRlr/EKMJH89HYi6Ix+JPA/amIu3QDpvBJ1ZBXmVTDEtSP8gi9V00m0SNzIwpV18tgY=
-Received: from MN2PR11MB4063.namprd11.prod.outlook.com (10.255.180.22) by
- MN2PR11MB4125.namprd11.prod.outlook.com (10.255.181.152) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2581.12; Fri, 3 Jan 2020 10:30:22 +0000
-Received: from MN2PR11MB4063.namprd11.prod.outlook.com
- ([fe80::f46c:e5b4:2a85:f0bf]) by MN2PR11MB4063.namprd11.prod.outlook.com
- ([fe80::f46c:e5b4:2a85:f0bf%4]) with mapi id 15.20.2602.012; Fri, 3 Jan 2020
- 10:30:22 +0000
-From:   =?iso-8859-1?Q?J=E9r=F4me_Pouiller?= <Jerome.Pouiller@silabs.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: [PATCH 25/55] staging: wfx: fix name of struct
- hif_req_start_scan_alt
-Thread-Topic: [PATCH 25/55] staging: wfx: fix name of struct
- hif_req_start_scan_alt
-Thread-Index: AQHVtDLHrXJIw8KXhEKG+rORdR0cIqfYx7UAgAARf4A=
-Date:   Fri, 3 Jan 2020 10:30:22 +0000
-Message-ID: <50905928.71mObdnaeR@pc-42>
-References: <20191216170302.29543-1-Jerome.Pouiller@silabs.com>
- <20191216170302.29543-26-Jerome.Pouiller@silabs.com>
- <20200103092744.GC3911@kadam>
-In-Reply-To: <20200103092744.GC3911@kadam>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jerome.Pouiller@silabs.com; 
-x-originating-ip: [37.71.187.125]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8da04030-e909-40bd-2db5-08d79037f07f
-x-ms-traffictypediagnostic: MN2PR11MB4125:
-x-microsoft-antispam-prvs: <MN2PR11MB4125C4CCBA4CE9248ECC562F93230@MN2PR11MB4125.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 0271483E06
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(39850400004)(376002)(396003)(366004)(136003)(346002)(199004)(189003)(6506007)(26005)(186003)(86362001)(5660300002)(66574012)(4326008)(71200400001)(66556008)(76116006)(64756008)(66446008)(66946007)(6916009)(316002)(66476007)(91956017)(54906003)(9686003)(478600001)(6486002)(2906002)(33716001)(8676002)(81156014)(8936002)(81166006)(6512007)(39026012);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB4125;H:MN2PR11MB4063.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: silabs.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: s/PtN3otIuJ7sgTyHcgeq4wc1ytyKPD8Ocmu93W9wHjguilC7eobn/Kik+q28XQ3YYXyvIRBFnzOgpskBAqW3D+M1Br4ZPCiFXkPzP9TIppjg7P8/H7SX2I30En31TK9o3dOHFUNgqGfhthlyJmV9hFnV8g1FE+s3uNdh7xdmZgCUEEhyNYcACgRafjDlqSTXB3QHsjC7Va1/SLiaRBtJbyVZYfhcL9wk237oN2V6dVtv9vXADm7gQwUEmsBMJYfYvtGkl/356WQ9FqwutImBnMPMWej659yAbR7q74+20+UalJKHVFzytXX+JRBGKkXIe7yH/YFsYAkUh1+FC6pBwszmrhZ8GEIQDigmX5dtKAkG9mwRREThpf6aDB/2UxArc25RhbAklkwW4FGpWnzGdmrkmBqd4MlnNs2HAb9W4T70ydbXYUf7yiO8VdqEtQ7SA2kpIaODLz79yHLJqcP1Wpsvoml8rLeEkUeIlemGwEif/VNELVV2y2wI2BLiAGV
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <9C9EB63A0D80AD4B93E929299CCA5861@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=e1VONZKN47Aw6juCyL/A73XM5IVvw0+2i1dyfWe9MK0=;
+        b=Fhl9YzW8WppJUvDeZdTMGR1XJqmcB6TalG0n7A8zpD55tcqk3ML1vD6zvcmuxMEiQS
+         aT5bysK5rQU40UUINDSUm9VXpexB7r1N/CBSFppsXxncAFIyO0y2rkiWeb95HnpwU3IN
+         0OyoAH/9qybXFmig7BIO5hERgIp6aWsfDUveXBk1xf5e3kmMhvOtRrwJwpl/IEoEHiJa
+         d2HaGR9FrrRj3OKs6DFpK0iYP8fizuP7vdWE0hveGhMePxt+yPI2xRhylVrBmYq5qkRk
+         GTHPLMbmpnmvSWkgTOXesoO4IbicDCKbkhCuBYXkOXwcVaspOhnAevfABvK7W6xCICJc
+         xsng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=e1VONZKN47Aw6juCyL/A73XM5IVvw0+2i1dyfWe9MK0=;
+        b=CKlF+BxFQJK5e4YXZQuc6teuF1qgvDDb9Imkt5D9NrZYQVKnK8Q+r5DqTtuk5y29wH
+         Mmmd9xseNLDjhkifoAQKAxIom0iQ7fbvzHdD8wwpgvkKx0lQtuOTFaPgp5/KJg0Crr1Y
+         l4IOVPFut00Nx1JT3F8JjFDBsutVnh2NZNBYG/eVjTNN6Uc3U3CulzDrYmDXHtB+lV2l
+         4FfRHRQtXXRv5N1pFhTDdEfTXTv4l3KXZdr0kLXNxjI21oWNmUuSAGfPy8VIboeP6fHU
+         zCvmhq+DSBmccLOwMCd4EkbgN0bULheX27gB+DmlbSP0JffudfxaHzjUkwxcFvnIOnLB
+         AFSw==
+X-Gm-Message-State: APjAAAVUa4tLw9huyhmVv+MtLR/DiecjEemvb9USVyaMQPNlUNCD+Gp/
+        8oURwp5kf8ODxmngN1838fcyuQ==
+X-Google-Smtp-Source: APXvYqzeu11NzT4u0LYNO6/ynfbsLDH+8fwoOKEZ4tO/YtRCEUnX2yjqO7toLdDd2ZT8V37uMiM2aQ==
+X-Received: by 2002:ac2:508e:: with SMTP id f14mr46097583lfm.72.1578047832449;
+        Fri, 03 Jan 2020 02:37:12 -0800 (PST)
+Received: from jax (h-249-223.A175.priv.bahnhof.se. [98.128.249.223])
+        by smtp.gmail.com with ESMTPSA id b22sm15891942lji.99.2020.01.03.02.37.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 03 Jan 2020 02:37:11 -0800 (PST)
+Date:   Fri, 3 Jan 2020 11:37:10 +0100
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+To:     arm@kernel.org, soc@kernel.org
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        tee-dev@lists.linaro.org
+Subject: [GIT PULL] optee driver fix for v5.5
+Message-ID: <20200103103710.GA3469@jax>
 MIME-Version: 1.0
-X-OriginatorOrg: silabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8da04030-e909-40bd-2db5-08d79037f07f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jan 2020 10:30:22.7063
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 54dbd822-5231-4b20-944d-6f4abcd541fb
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6eXWyP15qyQ73Vi1arZQjzEbokUcL0hmDDx1r7wG4v4JU/OLTh3VBH8widZSJJkg2dFKnhbCb6Olfb65sdu6vQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4125
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 3 January 2020 10:27:44 CET Dan Carpenter wrote:
-> On Mon, Dec 16, 2019 at 05:03:46PM +0000, J=E9r=F4me Pouiller wrote:
-> > From: J=E9r=F4me Pouiller <jerome.pouiller@silabs.com>
-> >
-> > The original name did not make any sense.
-> >
-> > Signed-off-by: J=E9r=F4me Pouiller <jerome.pouiller@silabs.com>
-> > ---
-> >  drivers/staging/wfx/hif_api_cmd.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/staging/wfx/hif_api_cmd.h b/drivers/staging/wfx/hi=
-f_api_cmd.h
-> > index 3e77fbe3d5ff..4ce3bb51cf04 100644
-> > --- a/drivers/staging/wfx/hif_api_cmd.h
-> > +++ b/drivers/staging/wfx/hif_api_cmd.h
-> > @@ -188,7 +188,7 @@ struct hif_req_start_scan {
-> >       u8    ssid_and_channel_lists[];
-> >  } __packed;
-> >
-> > -struct hif_start_scan_req_cstnbssid_body {
-> > +struct hif_req_start_scan_alt {
-> >       u8    band;
-> >       struct hif_scan_type scan_type;
-> >       struct hif_scan_flags scan_flags;
->=20
-> Why not just delete this if it isn't used?
+Hello arm-soc maintainers,
 
-Patch 47/55 start to use it.
+Please pull this OP-TEE driver fix for kernel allocated dynamic shared
+memory.
 
-However, since patch 47, struct hif_req_start_scan is no more used.
-There is an item in TODO file about this:
+Thanks,
+Jens
 
-    hif_api_*.h have been imported from firmware code. Some of the structur=
-es
-    are never used in driver.
+The following changes since commit d1eef1c619749b2a57e514a3fa67d9a516ffa919:
 
+  Linux 5.5-rc2 (2019-12-15 15:16:08 -0800)
 
---=20
-J=E9r=F4me Pouiller
+are available in the Git repository at:
 
+  git://git.linaro.org:/people/jens.wiklander/linux-tee.git tags/tee-optee-fix-for-5.5
+
+for you to fetch changes up to 5a769f6ff439cedc547395a6dc78faa26108f741:
+
+  optee: Fix multi page dynamic shm pool alloc (2020-01-03 11:21:12 +0100)
+
+----------------------------------------------------------------
+Fix OP-TEE multi page dynamic shm pool alloc
+
+----------------------------------------------------------------
+Sumit Garg (1):
+      optee: Fix multi page dynamic shm pool alloc
+
+ drivers/tee/optee/shm_pool.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
