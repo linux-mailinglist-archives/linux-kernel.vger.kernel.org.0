@@ -2,532 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C3FE12F2A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 02:17:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4277912F292
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 02:07:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbgACBRP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 20:17:15 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:26929 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbgACBRP (ORCPT
+        id S1726837AbgACBHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 20:07:07 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:37536 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726219AbgACBHH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 20:17:15 -0500
+        Thu, 2 Jan 2020 20:07:07 -0500
 Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200103011710epoutp03e1acb95fd0d5904bd0cf471b0500a078~mO5TvaxP11976319763epoutp03I
-        for <linux-kernel@vger.kernel.org>; Fri,  3 Jan 2020 01:17:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200103011710epoutp03e1acb95fd0d5904bd0cf471b0500a078~mO5TvaxP11976319763epoutp03I
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200103010703epoutp0258125bdba35a53bcbf2565ce9ab2c003~mOwe_LLVR2453324533epoutp02H
+        for <linux-kernel@vger.kernel.org>; Fri,  3 Jan 2020 01:07:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200103010703epoutp0258125bdba35a53bcbf2565ce9ab2c003~mOwe_LLVR2453324533epoutp02H
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1578014230;
-        bh=Hq+W8EsQWGrVHW3Cr5DoY9AOxIarWUa66nhaKRJtZB8=;
+        s=mail20170921; t=1578013623;
+        bh=lMeH+CW26VVFbE1BoutX382wcZ4Z8J4ivY4VbIZlPwU=;
         h=From:To:Cc:Subject:Date:References:From;
-        b=PivFhJWMSsEoowtTFE1aYG8/O3X56vwuBH3nwLbkAmel/2aAWjYDv42CdD9Qeuywk
-         5Vd2RU4/LyZSl9X0OaSQoNJ77M5a/RHpNMQN/vPgLGbwTy2b9qFqhbkWmsxYg7GbTg
-         VtnfFLGZRuRqO+Z18qAc7EUyhJjQUraShXOOX5Uk=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20200103011709epcas1p4e1f76239c591ce0a382ec9a4737b3b13~mO5TY6C_N2399623996epcas1p4d;
-        Fri,  3 Jan 2020 01:17:09 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.161]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 47pn7S6y0XzMqYkV; Fri,  3 Jan
-        2020 01:17:08 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FB.43.52419.4169E0E5; Fri,  3 Jan 2020 10:17:08 +0900 (KST)
+        b=gfUP6gE+9Ay212PCGfOXbQ97kQueDSXdO3456gzeoF5s73dhApM+SiQSBSpuemWMN
+         URT6dAlm2hgnzkbO0ON0Qh1/fC9UZldsoyxWh46d8X0eIoCz6a+GV0tf27zOX2esCQ
+         ki62hE1bypvN6hCkK4e86K5J1BLb0BVyqJXKA0Xo=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20200103010703epcas1p39abc2b4afb7ad3479cfc437e122876cb~mOwemgwSo1554615546epcas1p3v;
+        Fri,  3 Jan 2020 01:07:03 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 47pmvl4J9VzMqYlx; Fri,  3 Jan
+        2020 01:06:59 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        41.07.48019.3B39E0E5; Fri,  3 Jan 2020 10:06:59 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200103011708epcas1p3be094a9c7cf7b633f7b5d9c404d16ea5~mO5SNcGHm1588015880epcas1p3X;
-        Fri,  3 Jan 2020 01:17:08 +0000 (GMT)
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20200103010658epcas1p44ecdbebc9ac9dda57e5d42ee39c25d8e~mOwZ_W8Wn0902109021epcas1p4r;
+        Fri,  3 Jan 2020 01:06:58 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200103011708epsmtrp1c3278d28a41bc5ef44bfff8eab38d2a5~mO5SMru3z1308913089epsmtrp1Z;
-        Fri,  3 Jan 2020 01:17:08 +0000 (GMT)
-X-AuditID: b6c32a37-a10cb9c00001ccc3-83-5e0e96146118
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        20200103010658epsmtrp1b46f4793b9c28705422969dd92aaff14~mOwZ9sMI40764907649epsmtrp1G;
+        Fri,  3 Jan 2020 01:06:58 +0000 (GMT)
+X-AuditID: b6c32a38-23fff7000001bb93-a0-5e0e93b382b3
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        ED.7B.10238.4169E0E5; Fri,  3 Jan 2020 10:17:08 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.88.103.87]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200103011708epsmtip154fa03f4e5ca56d1b5ef2407a4e46665~mO5SDXVGK0375203752epsmtip1Q;
-        Fri,  3 Jan 2020 01:17:08 +0000 (GMT)
-From:   Namjae Jeon <namjae.jeon@samsung.com>
-To:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, Namjae Jeon <namjae.jeon@samsung.com>
-Subject: [PATCH] staging: exfat: add STAGING prefix to config names
-Date:   Fri,  3 Jan 2020 09:13:45 +0800
-Message-Id: <20200103011345.25245-1-namjae.jeon@samsung.com>
+        07.EA.10238.2B39E0E5; Fri,  3 Jan 2020 10:06:58 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200103010658epsmtip26d1432afb3f09b83b826b7b9bd6a8241~mOwZw2EQX1898018980epsmtip20;
+        Fri,  3 Jan 2020 01:06:58 +0000 (GMT)
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     cw00.choi@samsung.com, chanwoo@kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        natechancellor@gmail.com
+Subject: [PATCH v2] PM / devfreq: Add debugfs support with devfreq_summary
+ file
+Date:   Fri,  3 Jan 2020 10:13:56 +0900
+Message-Id: <20200103011356.17283-1-cw00.choi@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCKsWRmVeSWpSXmKPExsWy7bCmnq7INL44g1vdVhZ7zvxit2hevJ7N
-        Ys/ekywWl3fNYbP4Mb3e4tL7DywObB739h1m8dg/dw27R9+WVYwenzfJeRza/oYtgDUqxyYj
-        NTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6AAlhbLEnFKg
-        UEBicbGSvp1NUX5pSapCRn5xia1SakFKToGhQYFecWJucWleul5yfq6VoYGBkSlQZUJOxokn
-        pxgLThRWNPxuYWlgbIrvYuTkkBAwkTh5dyZ7FyMXh5DADkaJD0tuQjmfGCVevH/AAuF8Y5Q4
-        s6+PCabl0P6JUIm9QFV3L7CBJMBabs1X6mLk4GAT0Jb4s0UUJCwiYC6x+9J1VpB6ZoEWRonb
-        nz+yg9QICzhLbPyoA1LDIqAqsf7DREaQMK+AjcSWySoQq+QlVm84wAzSKiHwl1ViRW8jO0TC
-        RWLO+bdQ9whLvDq+BSouJfGyvw1svIRAtcTH/cwQ4Q6gM7/bQtjGEjfXb2AFKWEW0JRYv0sf
-        IqwosfP3XEYQm1mAT+Ld1x5WiCm8Eh1tQhAlqhJ9lw5DLZWW6Gr/ALXUQ+L0hk0skDCIlfj2
-        uoV5AqPsLIQFCxgZVzGKpRYU56anFhsWGCPH0CZGcIrSMt/BuOGczyFGAQ5GJR7eCdd444RY
-        E8uKK3MPMUpwMCuJ8JYHAoV4UxIrq1KL8uOLSnNSiw8xmgKDbiKzlGhyPjB95pXEG5oaGRsb
-        W5iYmZuZGiuJ83L8uBgrJJCeWJKanZpakFoE08fEwSnVwMjVszzjlFNgtkGNXMSzO9tiovht
-        zokFthqv3CV3yvSz9G3XkpWrg3yKTZ6xOu0SSrD9czGxfQV7w9c3t3rW9E6OWH5JWz/2UePy
-        i43MwVbPj8ioq2n2vqv7/mqZzIZu+6ICn4nRrYeZ56TZeojoZCwPuS6XzXD9QvtVT6mXJrxN
-        NfLLWK8qKrEUZyQaajEXFScCAMKl79BnAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmluLIzCtJLcpLzFFi42LZdlhJTldkGl+cwYfdyhZ7zvxit2hevJ7N
-        Ys/ekywWl3fNYbP4Mb3e4tL7DywObB739h1m8dg/dw27R9+WVYwenzfJeRza/oYtgDWKyyYl
-        NSezLLVI3y6BK+PEk1OMBScKKxp+t7A0MDbFdzFyckgImEgc2j+RpYuRi0NIYDejxNKbS5gg
-        EtISx06cYe5i5ACyhSUOHy6GqPnAKHHn5DwWkDibgLbEny2iIOUiApYSU+//ZgepYRboYJT4
-        MecCI0iNsICzxMaPOiA1LAKqEus/TAQL8wrYSGyZrAKxSV5i9YYDzBMYeRYwMqxilEwtKM5N
-        zy02LDDMSy3XK07MLS7NS9dLzs/dxAgOGi3NHYyXl8QfYhTgYFTi4Z1wjTdOiDWxrLgy9xCj
-        BAezkghveSBQiDclsbIqtSg/vqg0J7X4EKM0B4uSOO/TvGORQgLpiSWp2ampBalFMFkmDk6p
-        Bsa+yI8h+sw718rZhJnPv9nfffX+5Ozlu2UkjP7GZ6fPaIrXD976c6eKrO6qi9aHerpja68e
-        uXuBr9vjhULtmnreiyd3XWSWO8m51M9R7U3ln611B8za7h08+rFeRtxVNXjJFXGWMzGlZdOn
-        qM/70fh85ubCEO9dxwyff101a6lF5ZKP0hN3K6kosRRnJBpqMRcVJwIAswKBlhYCAAA=
-X-CMS-MailID: 20200103011708epcas1p3be094a9c7cf7b633f7b5d9c404d16ea5
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBKsWRmVeSWpSXmKPExsWy7bCmge7myXxxBnsa5C0m3rjCYnH9y3NW
+        i7NNb9gtLu+aw2bxufcIo8XtxhVsFh/eljiwe+ycdZfdY9OqTjaPvi2rGD0+b5ILYInKtslI
+        TUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBOkBJoSwxpxQo
+        FJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BZoFecmFtcmpeul5yfa2VoYGBkClSYkJ1xatc8
+        1oLpOhXHd61nbWCcptjFyMkhIWAi8fD7HuYuRi4OIYEdjBLtU85BOZ8YJebNaWKFcL4xSryc
+        +5QVpmXipq9sEIm9jBLvNzxggXC+MEosPLWEGaSKTUBLYv+LG2wgtoiAlcTp/x1gcWaBOokj
+        v78wgdjCAoES/w48YQexWQRUJabtWQJm8wLV903dxQaxTV5i9YYDYDdJCPxllZi1eQU7RMJF
+        4sSEAywQtrDEq+NboOJSEi/726DsaomVJ4+wQTR3MEps2X8B6gdjif1LJwNdwQF0kabE+l36
+        EGFFiZ2/5zJCHMon8e5rDytIiYQAr0RHmxBEibLE5Qd3mSBsSYnF7Z1Qd3pI9E6aC7ZWSCBW
+        4uuZy0wTGGVnISxYwMi4ilEstaA4Nz212LDABDmaNjGCU5WWxQ7GPed8DjEKcDAq8fBOuMYb
+        J8SaWFZcmXuIUYKDWUmEtzwQKMSbklhZlVqUH19UmpNafIjRFBh6E5mlRJPzgWk0ryTe0NTI
+        2NjYwsTQzNTQUEmcl+PHxVghgfTEktTs1NSC1CKYPiYOTqkGxkkNLFOVLpTGNe8Q+n7JedZC
+        /k2tTRf+/67/9qddfRnzzlaWtGy+SPaCyj0sU+TsHiZ4G3pX3NHSXdR2akfDB3GBD+XeHLsf
+        r5a8+vQy8+JAZ/3CV6+L3izYInWg4fr9X5MyF8vprs24sEUvjDvnifWqyE8O5599ONxmv2s+
+        v9SNxu/Z8QI1U5VYijMSDbWYi4oTAWPS5sBrAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphluLIzCtJLcpLzFFi42LZdlhJXnfTZL44g6kTpS0m3rjCYnH9y3NW
+        i7NNb9gtLu+aw2bxufcIo8XtxhVsFh/eljiwe+ycdZfdY9OqTjaPvi2rGD0+b5ILYInisklJ
+        zcksSy3St0vgyji1ax5rwXSdiuO71rM2ME5T7GLk5JAQMJGYuOkrG4gtJLCbUeLMnySIuKTE
+        tItHmbsYOYBsYYnDh4u7GLmASj4xSmxpegRWzyagJbH/xQ0wW0TARuLu4mssIDazQAujxIPJ
+        piC2sIC/xKadL1hBbBYBVYlpe5awg9i8AlYSfVN3sUHskpdYveEA8wRGngWMDKsYJVMLinPT
+        c4sNCwzzUsv1ihNzi0vz0vWS83M3MYLDRktzB+PlJfGHGAU4GJV4eCdc440TYk0sK67MPcQo
+        wcGsJMJbHggU4k1JrKxKLcqPLyrNSS0+xCjNwaIkzvs071ikkEB6YklqdmpqQWoRTJaJg1Oq
+        gVHwxc7ZqbGpn83unJ5Tb/S8tY9XqfNrx907v5oWH1qv9kp/bZHI4y06r2rddzxMjnsbMGuh
+        AIOrdfFELW+5s5e8Dn9TVyicYsItnPn44hrPjbvb3u/p265685DUttDzVc/q1lQcFO24r7J3
+        Q0a4jpuWmXi6wfTamU+NTz/cd/f9ioJDojc+ysopsRRnJBpqMRcVJwIAerbqNRcCAAA=
+X-CMS-MailID: 20200103010658epcas1p44ecdbebc9ac9dda57e5d42ee39c25d8e
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200103011708epcas1p3be094a9c7cf7b633f7b5d9c404d16ea5
-References: <CGME20200103011708epcas1p3be094a9c7cf7b633f7b5d9c404d16ea5@epcas1p3.samsung.com>
+X-CMS-RootMailID: 20200103010658epcas1p44ecdbebc9ac9dda57e5d42ee39c25d8e
+References: <CGME20200103010658epcas1p44ecdbebc9ac9dda57e5d42ee39c25d8e@epcas1p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add STAGING prefix to config names to avoid collsion with fs/exfat config.
+Add debugfs interface to provide debugging information of devfreq device.
+It contains 'devfreq_summary' entry to show the summary of registered
+devfreq devices as following and the additional debugfs file will be added.
+- /sys/kernel/debug/devfreq/devfreq_summary
 
-Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+[For example on Exynos5422-based Odroid-XU3 board]
+- In order to show the multiple governors on devfreq_summay result,
+change the governor of devfreq0 from simple_ondemand to userspace.
+
+$ cat /sys/kernel/debug/devfreq/devfreq_summary
+dev name                       dev        parent dev governor        cur_freq     min_freq     max_freq
+------------------------------ ---------- ---------- --------------- ------------ ------------ ------------
+10c20000.memory-controller     devfreq0              userspace       165000000    165000000    825000000
+soc:bus_wcore                  devfreq1              simple_ondemand 400000000    84000000     400000000
+soc:bus_noc                    devfreq2   devfreq1   passive         100000000    67000000     100000000
+soc:bus_fsys_apb               devfreq3   devfreq1   passive         200000000    100000000    200000000
+soc:bus_fsys                   devfreq4   devfreq1   passive         200000000    100000000    200000000
+soc:bus_fsys2                  devfreq5   devfreq1   passive         150000000    75000000     150000000
+soc:bus_mfc                    devfreq6   devfreq1   passive         333000000    96000000     333000000
+soc:bus_gen                    devfreq7   devfreq1   passive         267000000    89000000     267000000
+soc:bus_peri                   devfreq8   devfreq1   passive         67000000     67000000     67000000
+soc:bus_g2d                    devfreq9   devfreq1   passive         333000000    84000000     333000000
+soc:bus_g2d_acp                devfreq10  devfreq1   passive         267000000    67000000     267000000
+soc:bus_jpeg                   devfreq11  devfreq1   passive         300000000    75000000     300000000
+soc:bus_jpeg_apb               devfreq12  devfreq1   passive         167000000    84000000     167000000
+soc:bus_disp1_fimd             devfreq13  devfreq1   passive         200000000    120000000    200000000
+soc:bus_disp1                  devfreq14  devfreq1   passive         300000000    120000000    300000000
+soc:bus_gscl_scaler            devfreq15  devfreq1   passive         300000000    150000000    300000000
+soc:bus_mscl                   devfreq16  devfreq1   passive         400000000    84000000     400000000
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- drivers/staging/Makefile             |  2 +-
- drivers/staging/exfat/Kconfig        | 26 +++++++--------
- drivers/staging/exfat/Makefile       |  2 +-
- drivers/staging/exfat/exfat.h        | 14 ++++----
- drivers/staging/exfat/exfat_blkdev.c | 12 +++----
- drivers/staging/exfat/exfat_core.c   |  8 ++---
- drivers/staging/exfat/exfat_super.c  | 50 ++++++++++++++--------------
- 7 files changed, 57 insertions(+), 57 deletions(-)
+Changes from v1:
+- Handle exception case when DEVFREQ_GOV_PASSIVE is unset.
 
-diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
-index 463aef6a18ef..fdd03fd6e704 100644
---- a/drivers/staging/Makefile
-+++ b/drivers/staging/Makefile
-@@ -48,7 +48,7 @@ obj-$(CONFIG_FIELDBUS_DEV)     += fieldbus/
- obj-$(CONFIG_KPC2000)		+= kpc2000/
- obj-$(CONFIG_UWB)		+= uwb/
- obj-$(CONFIG_USB_WUSB)		+= wusbcore/
--obj-$(CONFIG_EXFAT_FS)		+= exfat/
-+obj-$(CONFIG_STAGING_EXFAT_FS)	+= exfat/
- obj-$(CONFIG_QLGE)		+= qlge/
- obj-$(CONFIG_NET_VENDOR_HP)	+= hp/
- obj-$(CONFIG_WFX)		+= wfx/
-diff --git a/drivers/staging/exfat/Kconfig b/drivers/staging/exfat/Kconfig
-index 0130019cbec2..292a19dfcaf5 100644
---- a/drivers/staging/exfat/Kconfig
-+++ b/drivers/staging/exfat/Kconfig
-@@ -1,41 +1,41 @@
- # SPDX-License-Identifier: GPL-2.0
--config EXFAT_FS
-+config STAGING_EXFAT_FS
- 	tristate "exFAT fs support"
- 	depends on BLOCK
- 	select NLS
- 	help
- 	  This adds support for the exFAT file system.
+ drivers/devfreq/devfreq.c | 68 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index acd21345a070..44feade5977d 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -10,6 +10,7 @@
+ #include <linux/kernel.h>
+ #include <linux/kmod.h>
+ #include <linux/sched.h>
++#include <linux/debugfs.h>
+ #include <linux/errno.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+@@ -33,6 +34,7 @@
+ #define HZ_PER_KHZ	1000
  
--config EXFAT_DISCARD
-+config STAGING_EXFAT_DISCARD
- 	bool "enable discard support"
--	depends on EXFAT_FS
-+	depends on STAGING_EXFAT_FS
- 	default y
- 
--config EXFAT_DELAYED_SYNC
-+config STAGING_EXFAT_DELAYED_SYNC
- 	bool "enable delayed sync"
--	depends on EXFAT_FS
-+	depends on STAGING_EXFAT_FS
- 	default n
- 
--config EXFAT_KERNEL_DEBUG
-+config STAGING_EXFAT_KERNEL_DEBUG
- 	bool "enable kernel debug features via ioctl"
--	depends on EXFAT_FS
-+	depends on STAGING_EXFAT_FS
- 	default n
- 
--config EXFAT_DEBUG_MSG
-+config STAGING_EXFAT_DEBUG_MSG
- 	bool "print debug messages"
--	depends on EXFAT_FS
-+	depends on STAGING_EXFAT_FS
- 	default n
- 
--config EXFAT_DEFAULT_CODEPAGE
-+config STAGING_EXFAT_DEFAULT_CODEPAGE
- 	int "Default codepage for exFAT"
- 	default 437
--	depends on EXFAT_FS
-+	depends on STAGING_EXFAT_FS
- 	help
- 	  This option should be set to the codepage of your exFAT filesystems.
- 
--config EXFAT_DEFAULT_IOCHARSET
-+config STAGING_EXFAT_DEFAULT_IOCHARSET
- 	string "Default iocharset for exFAT"
- 	default "utf8"
--	depends on EXFAT_FS
-+	depends on STAGING_EXFAT_FS
- 	help
- 	  Set this to the default input/output character set you'd like exFAT to use.
-diff --git a/drivers/staging/exfat/Makefile b/drivers/staging/exfat/Makefile
-index 6c90aec83feb..057556eeca0c 100644
---- a/drivers/staging/exfat/Makefile
-+++ b/drivers/staging/exfat/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-or-later
- 
--obj-$(CONFIG_EXFAT_FS) += exfat.o
-+obj-$(CONFIG_STAGING_EXFAT_FS) += exfat.o
- 
- exfat-y :=	exfat_core.o	\
- 		exfat_super.o	\
-diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-index 51c665a924b7..3865c17027ce 100644
---- a/drivers/staging/exfat/exfat.h
-+++ b/drivers/staging/exfat/exfat.h
-@@ -9,7 +9,7 @@
- #include <linux/types.h>
- #include <linux/buffer_head.h>
- 
--#ifdef CONFIG_EXFAT_KERNEL_DEBUG
-+#ifdef CONFIG_STAGING_EXFAT_KERNEL_DEBUG
-   /* For Debugging Purpose */
- 	/* IOCTL code 'f' used by
- 	 *   - file systems typically #0~0x1F
-@@ -22,9 +22,9 @@
- 
- #define EXFAT_DEBUGFLAGS_INVALID_UMOUNT	0x01
- #define EXFAT_DEBUGFLAGS_ERROR_RW	0x02
--#endif /* CONFIG_EXFAT_KERNEL_DEBUG */
-+#endif /* CONFIG_STAGING_EXFAT_KERNEL_DEBUG */
- 
--#ifdef CONFIG_EXFAT_DEBUG_MSG
-+#ifdef CONFIG_STAGING_EXFAT_DEBUG_MSG
- #define DEBUG	1
- #else
- #undef DEBUG
-@@ -661,10 +661,10 @@ struct exfat_mount_options {
- 
- 	/* on error: continue, panic, remount-ro */
- 	unsigned char errors;
--#ifdef CONFIG_EXFAT_DISCARD
-+#ifdef CONFIG_STAGING_EXFAT_DISCARD
- 	/* flag on if -o dicard specified and device support discard() */
- 	unsigned char discard;
--#endif /* CONFIG_EXFAT_DISCARD */
-+#endif /* CONFIG_STAGING_EXFAT_DISCARD */
- };
- 
- #define EXFAT_HASH_BITS		8
-@@ -700,9 +700,9 @@ struct exfat_sb_info {
- 
- 	spinlock_t inode_hash_lock;
- 	struct hlist_head inode_hashtable[EXFAT_HASH_SIZE];
--#ifdef CONFIG_EXFAT_KERNEL_DEBUG
-+#ifdef CONFIG_STAGING_EXFAT_KERNEL_DEBUG
- 	long debug_flags;
--#endif /* CONFIG_EXFAT_KERNEL_DEBUG */
-+#endif /* CONFIG_STAGING_EXFAT_KERNEL_DEBUG */
- };
+ static struct class *devfreq_class;
++static struct dentry *devfreq_debugfs;
  
  /*
-diff --git a/drivers/staging/exfat/exfat_blkdev.c b/drivers/staging/exfat/exfat_blkdev.c
-index 7bcd98b13109..8791a5f2bb08 100644
---- a/drivers/staging/exfat/exfat_blkdev.c
-+++ b/drivers/staging/exfat/exfat_blkdev.c
-@@ -35,13 +35,13 @@ int exfat_bdev_read(struct super_block *sb, sector_t secno, struct buffer_head *
- {
- 	struct bd_info_t *p_bd = &(EXFAT_SB(sb)->bd_info);
- 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
--#ifdef CONFIG_EXFAT_KERNEL_DEBUG
-+#ifdef CONFIG_STAGING_EXFAT_KERNEL_DEBUG
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 	long flags = sbi->debug_flags;
- 
- 	if (flags & EXFAT_DEBUGFLAGS_ERROR_RW)
- 		return -EIO;
--#endif /* CONFIG_EXFAT_KERNEL_DEBUG */
-+#endif /* CONFIG_STAGING_EXFAT_KERNEL_DEBUG */
- 
- 	if (!p_bd->opened)
- 		return -ENODEV;
-@@ -72,13 +72,13 @@ int exfat_bdev_write(struct super_block *sb, sector_t secno, struct buffer_head
- 	struct buffer_head *bh2;
- 	struct bd_info_t *p_bd = &(EXFAT_SB(sb)->bd_info);
- 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
--#ifdef CONFIG_EXFAT_KERNEL_DEBUG
-+#ifdef CONFIG_STAGING_EXFAT_KERNEL_DEBUG
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 	long flags = sbi->debug_flags;
- 
- 	if (flags & EXFAT_DEBUGFLAGS_ERROR_RW)
- 		return -EIO;
--#endif /* CONFIG_EXFAT_KERNEL_DEBUG */
-+#endif /* CONFIG_STAGING_EXFAT_KERNEL_DEBUG */
- 
- 	if (!p_bd->opened)
- 		return -ENODEV;
-@@ -121,13 +121,13 @@ int exfat_bdev_write(struct super_block *sb, sector_t secno, struct buffer_head
- int exfat_bdev_sync(struct super_block *sb)
- {
- 	struct bd_info_t *p_bd = &(EXFAT_SB(sb)->bd_info);
--#ifdef CONFIG_EXFAT_KERNEL_DEBUG
-+#ifdef CONFIG_STAGING_EXFAT_KERNEL_DEBUG
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 	long flags = sbi->debug_flags;
- 
- 	if (flags & EXFAT_DEBUGFLAGS_ERROR_RW)
- 		return -EIO;
--#endif /* CONFIG_EXFAT_KERNEL_DEBUG */
-+#endif /* CONFIG_STAGING_EXFAT_KERNEL_DEBUG */
- 
- 	if (!p_bd->opened)
- 		return -ENODEV;
-diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
-index 794000e7bc6f..5e7645fe8c45 100644
---- a/drivers/staging/exfat/exfat_core.c
-+++ b/drivers/staging/exfat/exfat_core.c
-@@ -177,11 +177,11 @@ static s32 clr_alloc_bitmap(struct super_block *sb, u32 clu)
- {
- 	int i, b;
- 	sector_t sector;
--#ifdef CONFIG_EXFAT_DISCARD
-+#ifdef CONFIG_STAGING_EXFAT_DISCARD
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 	struct exfat_mount_options *opts = &sbi->options;
- 	int ret;
--#endif /* CONFIG_EXFAT_DISCARD */
-+#endif /* CONFIG_STAGING_EXFAT_DISCARD */
- 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
- 	struct bd_info_t *p_bd = &(EXFAT_SB(sb)->bd_info);
- 
-@@ -192,7 +192,7 @@ static s32 clr_alloc_bitmap(struct super_block *sb, u32 clu)
- 
- 	exfat_bitmap_clear((u8 *)p_fs->vol_amap[i]->b_data, b);
- 
--#ifdef CONFIG_EXFAT_DISCARD
-+#ifdef CONFIG_STAGING_EXFAT_DISCARD
- 	if (opts->discard) {
- 		ret = sb_issue_discard(sb, START_SECTOR(clu),
- 				       (1 << p_fs->sectors_per_clu_bits),
-@@ -204,7 +204,7 @@ static s32 clr_alloc_bitmap(struct super_block *sb, u32 clu)
- 			return ret;
- 		}
- 	}
--#endif /* CONFIG_EXFAT_DISCARD */
-+#endif /* CONFIG_STAGING_EXFAT_DISCARD */
- 
- 	return sector_write(sb, sector, p_fs->vol_amap[i], 0);
- }
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index 744344a2521c..9fa2ad3627c5 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -38,8 +38,8 @@
- 
- static struct kmem_cache *exfat_inode_cachep;
- 
--static int exfat_default_codepage = CONFIG_EXFAT_DEFAULT_CODEPAGE;
--static char exfat_default_iocharset[] = CONFIG_EXFAT_DEFAULT_IOCHARSET;
-+static int exfat_default_codepage = CONFIG_STAGING_EXFAT_DEFAULT_CODEPAGE;
-+static char exfat_default_iocharset[] = CONFIG_STAGING_EXFAT_DEFAULT_IOCHARSET;
- 
- #define INC_IVERSION(x) (inode_inc_iversion(x))
- #define GET_IVERSION(x) (inode_peek_iversion_raw(x))
-@@ -647,7 +647,7 @@ static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
- 	/* create a new file */
- 	ret = create_file(inode, &dir, &uni_name, mode, fid);
- 
--#ifndef CONFIG_EXFAT_DELAYED_SYNC
-+#ifndef CONFIG_STAGING_EXFAT_DELAYED_SYNC
- 	fs_sync(sb, true);
- 	fs_set_vol_flags(sb, VOL_CLEAN);
- #endif
-@@ -1008,7 +1008,7 @@ static int ffsWriteFile(struct inode *inode, struct file_id_t *fid,
- 	update_dir_checksum_with_entry_set(sb, es);
- 	release_entry_set(es);
- 
--#ifndef CONFIG_EXFAT_DELAYED_SYNC
-+#ifndef CONFIG_STAGING_EXFAT_DELAYED_SYNC
- 	fs_sync(sb, true);
- 	fs_set_vol_flags(sb, VOL_CLEAN);
- #endif
-@@ -1134,7 +1134,7 @@ static int ffsTruncateFile(struct inode *inode, u64 old_size, u64 new_size)
- 	if (fid->rwoffset > fid->size)
- 		fid->rwoffset = fid->size;
- 
--#ifndef CONFIG_EXFAT_DELAYED_SYNC
-+#ifndef CONFIG_STAGING_EXFAT_DELAYED_SYNC
- 	fs_sync(sb, true);
- 	fs_set_vol_flags(sb, VOL_CLEAN);
- #endif
-@@ -1282,7 +1282,7 @@ static int ffsMoveFile(struct inode *old_parent_inode, struct file_id_t *fid,
- 						num_entries + 1);
- 	}
- out:
--#ifndef CONFIG_EXFAT_DELAYED_SYNC
-+#ifndef CONFIG_STAGING_EXFAT_DELAYED_SYNC
- 	fs_sync(sb, true);
- 	fs_set_vol_flags(sb, VOL_CLEAN);
- #endif
-@@ -1344,7 +1344,7 @@ static int ffsRemoveFile(struct inode *inode, struct file_id_t *fid)
- 	fid->start_clu = CLUSTER_32(~0);
- 	fid->flags = (p_fs->vol_type == EXFAT) ? 0x03 : 0x01;
- 
--#ifndef CONFIG_EXFAT_DELAYED_SYNC
-+#ifndef CONFIG_STAGING_EXFAT_DELAYED_SYNC
- 	fs_sync(sb, true);
- 	fs_set_vol_flags(sb, VOL_CLEAN);
- #endif
-@@ -1420,7 +1420,7 @@ static int ffsSetAttr(struct inode *inode, u32 attr)
- 	update_dir_checksum_with_entry_set(sb, es);
- 	release_entry_set(es);
- 
--#ifndef CONFIG_EXFAT_DELAYED_SYNC
-+#ifndef CONFIG_STAGING_EXFAT_DELAYED_SYNC
- 	fs_sync(sb, true);
- 	fs_set_vol_flags(sb, VOL_CLEAN);
- #endif
-@@ -1804,7 +1804,7 @@ static int ffsCreateDir(struct inode *inode, char *path, struct file_id_t *fid)
- 
- 	ret = create_dir(inode, &dir, &uni_name, fid);
- 
--#ifndef CONFIG_EXFAT_DELAYED_SYNC
-+#ifndef CONFIG_STAGING_EXFAT_DELAYED_SYNC
- 	fs_sync(sb, true);
- 	fs_set_vol_flags(sb, VOL_CLEAN);
- #endif
-@@ -2053,7 +2053,7 @@ static int ffsRemoveDir(struct inode *inode, struct file_id_t *fid)
- 	fid->start_clu = CLUSTER_32(~0);
- 	fid->flags = (p_fs->vol_type == EXFAT) ? 0x03 : 0x01;
- 
--#ifndef CONFIG_EXFAT_DELAYED_SYNC
-+#ifndef CONFIG_STAGING_EXFAT_DELAYED_SYNC
- 	fs_sync(sb, true);
- 	fs_set_vol_flags(sb, VOL_CLEAN);
- #endif
-@@ -2176,14 +2176,14 @@ static long exfat_generic_ioctl(struct file *filp, unsigned int cmd,
- 				unsigned long arg)
- {
- 	struct inode *inode = filp->f_path.dentry->d_inode;
--#ifdef CONFIG_EXFAT_KERNEL_DEBUG
-+#ifdef CONFIG_STAGING_EXFAT_KERNEL_DEBUG
- 	unsigned int flags;
--#endif /* CONFIG_EXFAT_KERNEL_DEBUG */
-+#endif /* CONFIG_STAGING_EXFAT_KERNEL_DEBUG */
- 
- 	switch (cmd) {
- 	case EXFAT_IOCTL_GET_VOLUME_ID:
- 		return exfat_ioctl_volume_id(inode);
--#ifdef CONFIG_EXFAT_KERNEL_DEBUG
-+#ifdef CONFIG_STAGING_EXFAT_KERNEL_DEBUG
- 	case EXFAT_IOC_GET_DEBUGFLAGS: {
- 		struct super_block *sb = inode->i_sb;
- 		struct exfat_sb_info *sbi = EXFAT_SB(sb);
-@@ -2207,7 +2207,7 @@ static long exfat_generic_ioctl(struct file *filp, unsigned int cmd,
- 
- 		return 0;
- 	}
--#endif /* CONFIG_EXFAT_KERNEL_DEBUG */
-+#endif /* CONFIG_STAGING_EXFAT_KERNEL_DEBUG */
- 	default:
- 		return -ENOTTY; /* Inappropriate ioctl for device */
- 	}
-@@ -3400,7 +3400,7 @@ static int exfat_show_options(struct seq_file *m, struct dentry *root)
- 		seq_puts(m, ",errors=panic");
- 	else
- 		seq_puts(m, ",errors=remount-ro");
--#ifdef CONFIG_EXFAT_DISCARD
-+#ifdef CONFIG_STAGING_EXFAT_DISCARD
- 	if (opts->discard)
- 		seq_puts(m, ",discard");
- #endif
-@@ -3481,7 +3481,7 @@ enum {
- 	Opt_err_ro,
- 	Opt_utf8_hack,
- 	Opt_err,
--#ifdef CONFIG_EXFAT_DISCARD
-+#ifdef CONFIG_STAGING_EXFAT_DISCARD
- 	Opt_discard,
- #endif /* EXFAT_CONFIG_DISCARD */
+  * devfreq core provides delayed work based load monitoring helper
+@@ -1670,6 +1672,64 @@ static struct attribute *devfreq_attrs[] = {
  };
-@@ -3501,9 +3501,9 @@ static const match_table_t exfat_tokens = {
- 	{Opt_err_panic, "errors=panic"},
- 	{Opt_err_ro, "errors=remount-ro"},
- 	{Opt_utf8_hack, "utf8"},
--#ifdef CONFIG_EXFAT_DISCARD
-+#ifdef CONFIG_STAGING_EXFAT_DISCARD
- 	{Opt_discard, "discard"},
--#endif /* CONFIG_EXFAT_DISCARD */
-+#endif /* CONFIG_STAGING_EXFAT_DISCARD */
- 	{Opt_err, NULL}
- };
+ ATTRIBUTE_GROUPS(devfreq);
  
-@@ -3524,7 +3524,7 @@ static int parse_options(char *options, int silent, int *debug,
- 	opts->iocharset = exfat_default_iocharset;
- 	opts->casesensitive = 0;
- 	opts->errors = EXFAT_ERRORS_RO;
--#ifdef CONFIG_EXFAT_DISCARD
-+#ifdef CONFIG_STAGING_EXFAT_DISCARD
- 	opts->discard = 0;
- #endif
- 	*debug = 0;
-@@ -3595,11 +3595,11 @@ static int parse_options(char *options, int silent, int *debug,
- 		case Opt_debug:
- 			*debug = 1;
- 			break;
--#ifdef CONFIG_EXFAT_DISCARD
-+#ifdef CONFIG_STAGING_EXFAT_DISCARD
- 		case Opt_discard:
- 			opts->discard = 1;
- 			break;
--#endif /* CONFIG_EXFAT_DISCARD */
-+#endif /* CONFIG_STAGING_EXFAT_DISCARD */
- 		case Opt_utf8_hack:
- 			break;
- 		default:
-@@ -3803,7 +3803,7 @@ static void __exit exfat_destroy_inodecache(void)
- 	kmem_cache_destroy(exfat_inode_cachep);
- }
- 
--#ifdef CONFIG_EXFAT_KERNEL_DEBUG
-+#ifdef CONFIG_STAGING_EXFAT_KERNEL_DEBUG
- static void exfat_debug_kill_sb(struct super_block *sb)
++static int devfreq_summary_show(struct seq_file *s, void *data)
++{
++	struct devfreq *devfreq;
++	struct devfreq *parent_devfreq = NULL;
++	unsigned long cur_freq, min_freq, max_freq;
++
++	seq_printf(s, "%-30s %-10s %-10s %-15s %-12s %-12s %-12s\n",
++			"dev name",
++			"dev",
++			"parent dev",
++			"governor",
++			"cur_freq",
++			"min_freq",
++			"max_freq");
++	seq_printf(s, "%-30s %-10s %-10s %-15s %-12s %-12s %-12s\n",
++			"------------------------------",
++			"----------",
++			"----------",
++			"---------------",
++			"------------",
++			"------------",
++			"------------");
++
++	mutex_lock(&devfreq_list_lock);
++
++	list_for_each_entry_reverse(devfreq, &devfreq_list, node) {
++#if IS_ENABLED(CONFIG_DEVFREQ_GOV_PASSIVE)
++		if (!strncmp(devfreq->governor_name, DEVFREQ_GOV_PASSIVE,
++							DEVFREQ_NAME_LEN)) {
++			struct devfreq_passive_data *data = devfreq->data;
++
++			if (data)
++				parent_devfreq = data->parent;
++		} else {
++			parent_devfreq = NULL;
++		}
++#endif
++		mutex_lock(&devfreq->lock);
++		cur_freq = devfreq->previous_freq,
++		get_freq_range(devfreq, &min_freq, &max_freq);
++		mutex_unlock(&devfreq->lock);
++
++		seq_printf(s, "%-30s %-10s %-10s %-15s %-12ld %-12ld %-12ld\n",
++			dev_name(devfreq->dev.parent),
++			dev_name(&devfreq->dev),
++			parent_devfreq ? dev_name(&parent_devfreq->dev) : "",
++			devfreq->governor_name,
++			cur_freq,
++			min_freq,
++			max_freq);
++	}
++
++	mutex_unlock(&devfreq_list_lock);
++
++	return 0;
++}
++DEFINE_SHOW_ATTRIBUTE(devfreq_summary);
++
+ static int __init devfreq_init(void)
  {
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-@@ -3831,17 +3831,17 @@ static void exfat_debug_kill_sb(struct super_block *sb)
+ 	devfreq_class = class_create(THIS_MODULE, "devfreq");
+@@ -1686,6 +1746,14 @@ static int __init devfreq_init(void)
+ 	}
+ 	devfreq_class->dev_groups = devfreq_groups;
  
- 	kill_block_super(sb);
++	devfreq_debugfs = debugfs_create_dir("devfreq", NULL);
++	if (PTR_ERR(devfreq_debugfs) != -ENODEV && IS_ERR(devfreq_debugfs)) {
++		pr_warn("%s: couldn't create debugfs dir\n", __FILE__);
++	} else {
++		debugfs_create_file("devfreq_summary", 0444, devfreq_debugfs,
++					NULL, &devfreq_summary_fops);
++	}
++
+ 	return 0;
  }
--#endif /* CONFIG_EXFAT_KERNEL_DEBUG */
-+#endif /* CONFIG_STAGING_EXFAT_KERNEL_DEBUG */
- 
- static struct file_system_type exfat_fs_type = {
- 	.owner       = THIS_MODULE,
- 	.name        = "exfat",
- 	.mount       = exfat_fs_mount,
--#ifdef CONFIG_EXFAT_KERNEL_DEBUG
-+#ifdef CONFIG_STAGING_EXFAT_KERNEL_DEBUG
- 	.kill_sb    = exfat_debug_kill_sb,
- #else
- 	.kill_sb    = kill_block_super,
--#endif /* CONFIG_EXFAT_KERNEL_DEBUG */
-+#endif /* CONFIG_STAGING_EXFAT_KERNEL_DEBUG */
- 	.fs_flags    = FS_REQUIRES_DEV,
- };
- 
+ subsys_initcall(devfreq_init);
 -- 
 2.17.1
 
