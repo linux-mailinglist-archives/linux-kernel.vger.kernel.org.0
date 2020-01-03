@@ -2,121 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4846612F2A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 02:12:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C00D12F288
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 02:05:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbgACBMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 20:12:19 -0500
-Received: from mga06.intel.com ([134.134.136.31]:48945 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725872AbgACBMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 20:12:18 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2020 17:12:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,388,1571727600"; 
-   d="scan'208";a="221511534"
-Received: from joy-optiplex-7040.sh.intel.com ([10.239.13.9])
-  by orsmga006.jf.intel.com with ESMTP; 02 Jan 2020 17:12:16 -0800
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     zhenyuw@linux.intel.com
-Cc:     alex.williamson@redhat.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, intel-gvt@eclists.intel.com,
-        pbonzini@redhat.com, kevin.tian@intel.com,
-        Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH 2/2] drm/i915/gvt: subsitute kvm_read/write_guest with vfio_iova_rw
-Date:   Thu,  2 Jan 2020 20:03:49 -0500
-Message-Id: <20200103010349.4262-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200103010055.4140-1-yan.y.zhao@intel.com>
-References: <20200103010055.4140-1-yan.y.zhao@intel.com>
+        id S1727457AbgACBEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 20:04:22 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48846 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbgACBET (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 20:04:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ozic6TqYruSpEFOoFH0HYCbh75txsD2Py+nk3nYG6TY=; b=GUSzzbSipkopZxcOEAsxR1eXx
+        +naIE9vf2wwM0xnkUQ4Z2N4Bo6DVI2m2mNhzq0GmRjcyej8pOkgi5liUyMIjKQ3lDEElkLYINxpjV
+        TmUKS7jJtgGh3BkRKS20HozIzTdKDvJVL3FCRY+ajYYX0nsPVrYjh3K20F2RcIVsdLo2k=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1inBNq-0003Mk-Mz; Fri, 03 Jan 2020 01:04:10 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 14FA9D057C6; Fri,  3 Jan 2020 01:04:09 +0000 (GMT)
+Date:   Fri, 3 Jan 2020 01:04:09 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     kongxinwei <kong.kongxinwei@hisilicon.com>
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com, fengsheng <fengsheng5@huawei.com>
+Subject: Re: [PATCH] spi: dw: use "smp_mb()" to avoid sending spi data error
+Message-ID: <20200103010409.GG3897@sirena.org.uk>
+References: <1577352088-35856-1-git-send-email-kong.kongxinwei@hisilicon.com>
+ <20191227002239.GH27497@sirena.org.uk>
+ <afad8a97-6159-bf7e-466a-fdbaf0a07d4a@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="1giRMj6yz/+FOIRq"
+Content-Disposition: inline
+In-Reply-To: <afad8a97-6159-bf7e-466a-fdbaf0a07d4a@hisilicon.com>
+X-Cookie: Programming is an unnatural act.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As a device model, it is better to read/write guest memory using vfio
-interface, so that vfio is able to maintain dirty info of device IOVAs.
 
-Compared to CPU side interfaces kvm_read/write_guest(), vfio_iova_rw()
-has ~600 cycles more overhead on average.
--------------------------------------
-|    interface     | avg cpu cycles |
-|-----------------------------------|
-| kvm_write_guest  |     1546       |
-| ----------------------------------|
-| kvm_read_guest   |     686        |
-|-----------------------------------|
-| vfio_iova_rw(w)  |     2233       |
-|-----------------------------------|
-| vfio_iova_rw(r)  |     1262       |
--------------------------------------
+--1giRMj6yz/+FOIRq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Comparison of benchmarks scores are as blow:
----------------------------------------------------------
-|  avg score  | kvm_read/write_guest   | vfio_iova_rw   |
----------------------------------------------------------
-|   Glmark2   |         1132           |      1138.2    |
----------------------------------------------------------
-|  Lightsmark |        61.558          |      61.538    |
-|--------------------------------------------------------
-|  OpenArena  |        142.77          |      136.6     |
----------------------------------------------------------
-|   Heaven    |         698            |      686.8     |
---------------------------------------------------------
-No obvious performance downgrade found.
+On Sat, Dec 28, 2019 at 04:31:53PM +0800, kongxinwei wrote:
 
-Cc: Kevin Tian <kevin.tian@intel.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
- drivers/gpu/drm/i915/gvt/kvmgt.c | 26 +++++++-------------------
- 1 file changed, 7 insertions(+), 19 deletions(-)
+> > I'd be much more comfortable here if I understood what this was
+> > supposed to be syncing - what exactly gets flushed here and why
+> > is a memory barrier enough to ensure it's synced?  A comment in
+> > the code would be especially good so anyone modifying the code
+> > understands this in future.
 
-diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/kvmgt.c
-index bd79a9718cc7..576b05db3998 100644
---- a/drivers/gpu/drm/i915/gvt/kvmgt.c
-+++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
-@@ -1966,31 +1966,19 @@ static int kvmgt_rw_gpa(unsigned long handle, unsigned long gpa,
- 			void *buf, unsigned long len, bool write)
- {
- 	struct kvmgt_guest_info *info;
--	struct kvm *kvm;
--	int idx, ret;
--	bool kthread = current->mm == NULL;
-+	int ret;
-+	struct intel_vgpu *vgpu;
-+	struct device *dev;
- 
- 	if (!handle_valid(handle))
- 		return -ESRCH;
- 
- 	info = (struct kvmgt_guest_info *)handle;
--	kvm = info->kvm;
--
--	if (kthread) {
--		if (!mmget_not_zero(kvm->mm))
--			return -EFAULT;
--		use_mm(kvm->mm);
--	}
--
--	idx = srcu_read_lock(&kvm->srcu);
--	ret = write ? kvm_write_guest(kvm, gpa, buf, len) :
--		      kvm_read_guest(kvm, gpa, buf, len);
--	srcu_read_unlock(&kvm->srcu, idx);
-+	vgpu = info->vgpu;
-+	dev = mdev_dev(vgpu->vdev.mdev);
- 
--	if (kthread) {
--		unuse_mm(kvm->mm);
--		mmput(kvm->mm);
--	}
-+	ret = write ? vfio_iova_rw(dev, gpa, buf, len, true) :
-+			vfio_iova_rw(dev, gpa, buf, len, false);
- 
- 	return ret;
- }
--- 
-2.17.1
+> Because of out-of-order execution about some CPU architecture,
+> In this debug stage we find Completing spi interrupt enable ->
+> prodrucing TXEI interrupt -> running "interrupt_transfer" function
+> will prior to set "dw->rx and dws->rx_end" data, so it will result
+> in SPI sending error
 
+Could you update the commit message to say that, and ideally also
+add a comment saying something like "Ensure dw->rx and dw->rx_end
+are visible" please?
+
+--1giRMj6yz/+FOIRq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4OkwgACgkQJNaLcl1U
+h9AkFgf/fypiFJ4eRlJVOmkAYnGY01lAChSELOS/91cDAaOXJSQhz/hwB/cdeHjq
+2KYpCiICZDeG8FB6y6dvAWUMCkVxGH0WVGS9/OlnmI+aDoPjqyiyJ5R1a+bRBAcE
+YAaX12ARLr0uj9l9Fh6hhZxScRgit+ZKRB12T77pdyFFcoCh4kJLSD58D+78OmEO
+YUXkkBxX7cayLE5CKvl2UrQp8K18T4EKZ4YX7jDCUuY4wXkoScvm7G3ik25DhEJR
+jenBxAnbnw0De745jFhdI5VJygGUOF3caiWT3wc2tOIQwI1LJThI0cp4d3DRbphU
+XpWJcoIuRXqY+TfLjulA4WjTtGsDew==
+=Xa85
+-----END PGP SIGNATURE-----
+
+--1giRMj6yz/+FOIRq--
