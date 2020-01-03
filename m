@@ -2,128 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24B2D12F2AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 02:22:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4B2D12F2B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 02:25:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbgACBWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 20:22:41 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40223 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbgACBWk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 20:22:40 -0500
-Received: by mail-pl1-f194.google.com with SMTP id s21so15733170plr.7
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 17:22:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=bU5ftLS707p9emizE3edIYm0K+YhoKgbEoXph++J77w=;
-        b=eO0H+/B3YNkJ+haDdGN+fbtIbWIn/p6bpiH1PwpZe9t6uL1eeyp65FzJJdyYY7HhSf
-         WaE84+UaWzceahHQgxKS4dWCNHCM4F60SfK3s1hBJumBaVWsdDdwoUT9PnAXb+Jt38fN
-         zzBf9HFVU++uSOgJOfZQ6il2XER4J7l6y3GGV8RRgYf05/Md+lnvK9jARlCDS0FVogdt
-         AFgR6GMTtHFVUPwPSTGG/dND07TYubmNhV/jeEw7F6hknKMXKUIZnqhAgm0DfxB9um5c
-         DYT39amJJcWHMZiMFooMMxg7aPZpFrGF7KyaazDjW1tMBcmD51qG3A9H0P1QiqoZNeeg
-         Xuqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=bU5ftLS707p9emizE3edIYm0K+YhoKgbEoXph++J77w=;
-        b=T90lXZxLFaox5BkaC/MeUfzqFUvEKwi22qHIcNmwpNs9Z42SL9nIAxlL+R5jM4RvTn
-         IcwtTfrN4sfWiCS2vSchJrkFlLrvhEO1ip94q0qSU44n+8JwtPTtmrTYCbs1h4hOwbQj
-         uFkcyIReR7YNpgDsRnifZ6dqAQen7b9b/wRrf4o/uLwfy78vpq0cesHAy2jucV3IUHOd
-         0NH9TKbETRMXxA9O97ib/6tOwCliCNKbPSNDKdgDUIqAN/kpDnh4MirWDS6Y+la3yALN
-         b7JTfvDK+lpKh4F0gPP0O6KKIBXlewapJQ3Q/qXaEixrNqMwCzAIATQUD2x+KLNuSRd4
-         wn0A==
-X-Gm-Message-State: APjAAAUBPsy7GFwpCGFvW2txVc/yEoD8ZJboXVRQ8m9HSDqOp9Womw39
-        WqYup5BJxB4Sv73qWvBiyzU=
-X-Google-Smtp-Source: APXvYqyATFbZFIEDnNWcj+zkkjNdcQQxHVjcQ54l21Dfx1AnlJiuOJM+y/3cLzl1opelaNTSrfJXFQ==
-X-Received: by 2002:a17:90a:a88d:: with SMTP id h13mr23480887pjq.48.1578014560241;
-        Thu, 02 Jan 2020 17:22:40 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id u23sm65044792pfm.29.2020.01.02.17.22.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 17:22:39 -0800 (PST)
-Date:   Thu, 2 Jan 2020 17:22:38 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Tudor Ambarus <tudor.ambarus@microchip.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mtd: rawnand: atmel: switch to using devm_fwnode_gpiod_get()
-Message-ID: <20200103012238.GA3648@dtor-ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726820AbgACBZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 20:25:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46012 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725872AbgACBZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 20:25:06 -0500
+Subject: Re: [GIT PULL] pstore fixes for v5.5-rc5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578014705;
+        bh=gPChPPtSRqW9FMY1CkJtHflw4zyyZbnNmaahIM2DQGY=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=2HObflPFn4qb7dXQurjjnj6jq4dldEpHMoeXoE1/FGyPZpST7ptkI5GRaQ+zOmbY7
+         8s8F/zIH6seIOVo9Y4c3A9YOufRdI+2vjQHuzZaMrErmiBJTpQNzztXh1Gc7MKct1m
+         WQX3OO3odxnwhIlS5X9zrHBnoWRhIYUwRmnxtIUI=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <202001021254.2F43E8A@keescook>
+References: <202001021254.2F43E8A@keescook>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <202001021254.2F43E8A@keescook>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git
+ tags/pstore-v5.5-rc5
+X-PR-Tracked-Commit-Id: 9e5f1c19800b808a37fb9815a26d382132c26c3d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 278b14eb920322255bf5b831e2bcfc1bf5999036
+Message-Id: <157801470547.30243.13698778260520943611.pr-tracker-bot@kernel.org>
+Date:   Fri, 03 Jan 2020 01:25:05 +0000
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Aleksandr Yashkin <a.yashkin@inango-systems.com>,
+        Ariel Gilman <a.gilman@inango-systems.com>,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Nikolay Merinov <n.merinov@inango-systems.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devm_fwnode_get_index_gpiod_from_child() is going away as the name is
-too unwieldy, let's switch to using the new devm_fwnode_gpiod_get().
+The pull request you sent on Thu, 2 Jan 2020 12:55:08 -0800:
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/mtd/nand/raw/atmel/nand-controller.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/pstore-v5.5-rc5
 
-diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
-index 8d6be90a6fe8a..849bd5f16492d 100644
---- a/drivers/mtd/nand/raw/atmel/nand-controller.c
-+++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
-@@ -1578,9 +1578,8 @@ static struct atmel_nand *atmel_nand_create(struct atmel_nand_controller *nc,
- 
- 	nand->numcs = numcs;
- 
--	gpio = devm_fwnode_get_index_gpiod_from_child(nc->dev, "det", 0,
--						      &np->fwnode, GPIOD_IN,
--						      "nand-det");
-+	gpio = devm_fwnode_gpiod_get(nc->dev, of_fwnode_hanlde(np),
-+				     "det", GPIOD_IN, "nand-det");
- 	if (IS_ERR(gpio) && PTR_ERR(gpio) != -ENOENT) {
- 		dev_err(nc->dev,
- 			"Failed to get detect gpio (err = %ld)\n",
-@@ -1624,9 +1623,10 @@ static struct atmel_nand *atmel_nand_create(struct atmel_nand_controller *nc,
- 			nand->cs[i].rb.type = ATMEL_NAND_NATIVE_RB;
- 			nand->cs[i].rb.id = val;
- 		} else {
--			gpio = devm_fwnode_get_index_gpiod_from_child(nc->dev,
--							"rb", i, &np->fwnode,
--							GPIOD_IN, "nand-rb");
-+			gpio = devm_fwnode_gpiod_get_index(nc->dev,
-+							   of_fwnode_handle(np),
-+							   "rb", i, GPIOD_IN,
-+							   "nand-rb");
- 			if (IS_ERR(gpio) && PTR_ERR(gpio) != -ENOENT) {
- 				dev_err(nc->dev,
- 					"Failed to get R/B gpio (err = %ld)\n",
-@@ -1640,10 +1640,10 @@ static struct atmel_nand *atmel_nand_create(struct atmel_nand_controller *nc,
- 			}
- 		}
- 
--		gpio = devm_fwnode_get_index_gpiod_from_child(nc->dev, "cs",
--							      i, &np->fwnode,
--							      GPIOD_OUT_HIGH,
--							      "nand-cs");
-+		gpio = devm_fwnode_gpiod_get_index(nc->dev,
-+						   of_fwnode_handle(np),
-+						   "cs", i, GPIOD_OUT_HIGH,
-+						   "nand-cs");
- 		if (IS_ERR(gpio) && PTR_ERR(gpio) != -ENOENT) {
- 			dev_err(nc->dev,
- 				"Failed to get CS gpio (err = %ld)\n",
--- 
-2.24.1.735.g03f4e72817-goog
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/278b14eb920322255bf5b831e2bcfc1bf5999036
 
+Thank you!
 
 -- 
-Dmitry
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
