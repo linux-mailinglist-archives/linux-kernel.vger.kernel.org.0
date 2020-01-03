@@ -2,70 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FBBD12FAA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 17:39:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F12912FAAA
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 17:40:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728053AbgACQje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 11:39:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44882 "EHLO mail.kernel.org"
+        id S1728061AbgACQkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 11:40:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727859AbgACQjd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 11:39:33 -0500
-Received: from localhost.localdomain (unknown [194.230.155.149])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727859AbgACQkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 11:40:03 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4208206DB;
-        Fri,  3 Jan 2020 16:39:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578069573;
-        bh=KcvtLb+TfRw1uY1bkvdvgbpsv4uEyCRqJ6XVxzKKvF0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=LOZmr+i4jRgwSxWi5VgUA43TvKSnrW8qnE6mK25b30xr16UOeTUcaErQWMoD9qcpg
-         8B/9TLXN7UCk8ZoD7SaC9Lv1rS4KYBHAbPSV1IVdIYgkbR7YAiiy66zDTa79ID0zPH
-         zGq/Ij7X9oIc//Otvl1X7ZH6i8D5CQFRYN32r1dY=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] parisc: Use proper printk format for resource_size_t
-Date:   Fri,  3 Jan 2020 17:39:25 +0100
-Message-Id: <20200103163925.3967-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        by mail.kernel.org (Postfix) with ESMTPSA id A2E07206DB;
+        Fri,  3 Jan 2020 16:40:02 +0000 (UTC)
+Date:   Fri, 3 Jan 2020 11:40:01 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "Frank A. Cancio Bello" <frank@generalsoftwareinc.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        joel@joelfernandes.org, saiprakash.ranjan@codeaurora.org,
+        nachukannan@gmail.com
+Subject: Re: [PATCH] tracing: Resets the trace buffer after a snapshot
+Message-ID: <20200103114001.2c118ab1@gandalf.local.home>
+In-Reply-To: <20191231085822.yxhph6wcguejb7al@frank-laptop>
+References: <20191231085822.yxhph6wcguejb7al@frank-laptop>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-resource_size_t should be printed with its own size-independent format
-to fix warnings when compiling on 64-bit platform (e.g. with
-COMPILE_TEST):
+On Tue, 31 Dec 2019 03:58:22 -0500
+"Frank A. Cancio Bello" <frank@generalsoftwareinc.com> wrote:
 
-    arch/parisc/kernel/drivers.c: In function 'print_parisc_device':
-    arch/parisc/kernel/drivers.c:892:9: warning:
-        format '%p' expects argument of type 'void *',
-        but argument 4 has type 'resource_size_t {aka unsigned int}' [-Wformat=]
+> Currently, when a snapshot is taken the trace_buffer and the
+> max_buffer are swapped. After this swap, the "new" trace_buffer is
+> not reset. This produces an odd behavior: after a snapshot is taken
+> the previous snapshot entries become available to the next reader of
+> the trace_buffer as far as the reading occurs before the buffer is
+> refilled with new entries by a writer.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/parisc/kernel/drivers.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I consider this a feature not a bug ;-)
 
-diff --git a/arch/parisc/kernel/drivers.c b/arch/parisc/kernel/drivers.c
-index a6c9f49c6612..a154de424421 100644
---- a/arch/parisc/kernel/drivers.c
-+++ b/arch/parisc/kernel/drivers.c
-@@ -889,8 +889,8 @@ static void print_parisc_device(struct parisc_device *dev)
- 	static int count;
- 
- 	print_pa_hwpath(dev, hw_path);
--	pr_info("%d. %s at 0x%px [%s] { %d, 0x%x, 0x%.3x, 0x%.5x }",
--		++count, dev->name, (void*) dev->hpa.start, hw_path, dev->id.hw_type,
-+	pr_info("%d. %s at %pa[p] [%s] { %d, 0x%x, 0x%.3x, 0x%.5x }",
-+		++count, dev->name, &(dev->hpa.start), hw_path, dev->id.hw_type,
- 		dev->id.hversion_rev, dev->id.hversion, dev->id.sversion);
- 
- 	if (dev->num_addrs) {
--- 
-2.17.1
+Anyway, this behavior should be determined by an option. Care to create
+one? (reset_on_snapshot?) I would keep the default behavior the same,
+but document this a bit better.
+
+Thanks!
+
+-- Steve
+
+> 
+> This patch resets the trace buffer after a snapshot is taken.
+> 
+> Signed-off-by: Frank A. Cancio Bello <frank@generalsoftwareinc.com>
+> ---
+> 
+> The following commands illustrate this odd behavior:
+> 
+> # cd /sys/kernel/debug/tracing
+> # echo nop > current_tracer
+> # echo 1 > tracing_on
+> # echo m1 > trace_marker
+> # echo 1 > snapshot
+> # echo m2 > trace_marker
+> # echo 1 > snapshot
+> # cat trace
+> # tracer: nop
+> #
+> # entries-in-buffer/entries-written: 1/1   #P:2
+> #
+> #                              _-----=> irqs-off
+> #                             / _----=> need-resched
+> #                            | / _---=> hardirq/softirq
+> #                            || / _--=> preempt-depth
+> #                            ||| /     delay
+> #           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
+> #              | |       |   ||||       |         |
+>             bash-550   [000] ....    50.479755: tracing_mark_write: m1
+> 
+> 
+>  kernel/trace/trace.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index ddb7e7f5fe8d..58373b5ae0cf 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -6867,10 +6867,13 @@ tracing_snapshot_write(struct file *filp, const char __user *ubuf, size_t cnt,
+>  			break;
+>  		local_irq_disable();
+>  		/* Now, we're going to swap */
+> -		if (iter->cpu_file == RING_BUFFER_ALL_CPUS)
+> +		if (iter->cpu_file == RING_BUFFER_ALL_CPUS) {
+>  			update_max_tr(tr, current, smp_processor_id(), NULL);
+> -		else
+> +			tracing_reset_online_cpus(&tr->trace_buffer);
+> +		} else {
+>  			update_max_tr_single(tr, current, iter->cpu_file);
+> +			tracing_reset_cpu(&tr->trace_buffer, iter->cpu_file);
+> +		}
+>  		local_irq_enable();
+>  		break;
+>  	default:
 
