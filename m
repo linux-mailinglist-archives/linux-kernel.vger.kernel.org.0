@@ -2,94 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA15112F8E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 14:44:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD5FD12F8D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 14:36:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727830AbgACNnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 08:43:55 -0500
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.162]:30089 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727527AbgACNnz (ORCPT
+        id S1727800AbgACNgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 08:36:52 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:41065 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727508AbgACNgw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 08:43:55 -0500
-X-Greylist: delayed 360 seconds by postgrey-1.27 at vger.kernel.org; Fri, 03 Jan 2020 08:43:54 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1578059033;
-        s=strato-dkim-0002; d=aepfle.de;
-        h=References:In-Reply-To:Message-ID:Subject:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=nLUaJbwi1ip35T9ouH4xnaMxz+OZ8pmUc8OdZQe4ZWI=;
-        b=OHayZeimyMlBnFjXmNC2zck4TYc/A+tk7PW8/qtfx3Xx4YiqCop64095vgLfwvV+jQ
-        8FpI42xBJAAHFZdciVXb0+Hq2iP1Bw6+96MA9D/87Y37XwAQ7YVc+es7gmTXvV81MtPy
-        Y6cv/WcjUFGpn59npV7ggc2/btjh8z7yLMJBul4bWfBn9bm1/bGy0AZ2HMPhG9q6b5JZ
-        Ef6rDBJ7MAnYHbb946dN+U4lmqfYvlE+HnnTb+njCCEeloENoiqoGKQ/W1AKHTkS/eYQ
-        1SBExzzDWn8QKvliHqqZuK2gRNeY9ZUWrSTCn90Woeoa/Wy+GTWweGPW8GHTb9uLaHtf
-        vceA==
-X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QED/SSGq+wjGiUC44eztn93Z9OGdNZkAhh"
-X-RZG-CLASS-ID: mo00
-Received: from sender
-        by smtp.strato.de (RZmta 46.1.3 DYNA|AUTH)
-        with ESMTPSA id D0b379w03DVmOY5
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Fri, 3 Jan 2020 14:31:48 +0100 (CET)
-Date:   Fri, 3 Jan 2020 14:31:33 +0100
-From:   Olaf Hering <olaf@aepfle.de>
-To:     "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-hyperv@vger.kernel.org (open list:Hyper-V CORE AND DRIVERS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: Re: [PATCH v2] tools/hv: async name resolution in kvp_daemon
-Message-ID: <20200103143133.7168cff4.olaf@aepfle.de>
-In-Reply-To: <20191113155400.25456-1-olaf@aepfle.de>
-References: <20191113155400.25456-1-olaf@aepfle.de>
-X-Mailer: Claws Mail 2019.12.16 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        Fri, 3 Jan 2020 08:36:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578058611;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1QFlBo3vDQPLBWeq0dezqO4Vx5uH3VhVUt1aFOP/rzk=;
+        b=gPwKAAIUfKV7nR8FBgzNtcWDi+e1aWV3o2uDO7ym5j3vC7U2oB9m8VcRjJ6mYNPzneLj/o
+        1KFWwX+r3jQW7x6mLqmKrjJVkm1vw4XHGGwbrf+QLyyE2lYMXDQCt21LoB8/bRMPoHFwER
+        HHT9cztt8ROgv6vuYAxcGTH2O1D7dZo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-403-NmkAFACQM6SdShNifj5NLg-1; Fri, 03 Jan 2020 08:36:48 -0500
+X-MC-Unique: NmkAFACQM6SdShNifj5NLg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7D2B4477;
+        Fri,  3 Jan 2020 13:36:45 +0000 (UTC)
+Received: from krava (ovpn-205-10.brq.redhat.com [10.40.205.10])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5495C7BFBD;
+        Fri,  3 Jan 2020 13:36:43 +0000 (UTC)
+Date:   Fri, 3 Jan 2020 14:36:40 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFC] tools lib traceevent: How to do library versioning being
+ in the Linux kernel source?
+Message-ID: <20200103133640.GD9715@krava>
+References: <20200102122004.216c85da@gandalf.local.home>
+ <20200102234950.GA14768@krava>
+ <20200102185853.0ed433e4@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8KC0n9/zLPMhjeiBcAFvawH"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200102185853.0ed433e4@gandalf.local.home>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/8KC0n9/zLPMhjeiBcAFvawH
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jan 02, 2020 at 06:58:53PM -0500, Steven Rostedt wrote:
+> On Fri, 3 Jan 2020 00:49:50 +0100
+> Jiri Olsa <jolsa@redhat.com> wrote:
+> 
+> > > Should we move libtraceevent into a stand alone git repo (on
+> > > kernel.org), that can have tags and branches specifically for it? We
+> > > can keep a copy in the Linux source tree for perf to use till it  
+> > 
+> > so libbpf 'moved' for this reason to github repo,
+> > but keeping the kernel as the true/first source,
+> > and updating github repo when release is ready
+> > 
+> > libbpf github repo is then source for fedora (and others)
+> > package
+> 
+> Ah, so perhaps I should follow this? I could keep it a kernel.org repo
+> (as I rather have it there anyway).
 
-Am Wed, 13 Nov 2019 16:54:00 +0100
-schrieb Olaf Hering <olaf@aepfle.de>:
+sounds good, and if it works out, we'll follow you with libperf :-)
 
-> Adjust the code to resolve the current hostname in a separate thread.
+if you want to check on the libbpf:
+  https://github.com/libbpf/libbpf
 
-Are you now finally able to compile the patch?
-Did you find some documentation about the host-side API of the "FullyQualif=
-iedDomainName" request?
-Any further comments about the "aim for success" approach?
+there might be some syncs scripts worth checking
 
+jirka
 
-Thanks,
-Olaf
+> 
+> We can have the tools/lib/traceevent be the main source, but then just
+> copy it to the stand alone for releases.
+> 
+> Sudip, would this work for you too? (and yes, I plan on acking that
+> patch for the -ldl change, after looking at it a little bit more).
+> 
+> -- Steve
+> 
 
---Sig_/8KC0n9/zLPMhjeiBcAFvawH
-Content-Type: application/pgp-signature
-Content-Description: Digitale Signatur von OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE97o7Um30LT3B+5b/86SN7mm1DoAFAl4PQjUACgkQ86SN7mm1
-DoDHlRAAkio4iY0zZA/e2HYJdbpsT6hBLoldQeIEP8szqHJRnb7ctsZcEkWPShqd
-MO5Tgh3kECKjm8fqsXuU8oDWjMLU8Vwn5srgUauWcrQJpNF11dtOwX5DTmAyLE6v
-g8xF/MEYXkhzyqKHK9hdddMPqCTffnKNQSuS2nA1jRUh6MzvbVH2Bklh21xYfSdh
-Hbl1EXNpA/vnr6K4SFfVgf9aV49P21FPA+gq/AgRntVOSKFMTpqxsd8ox4gdgW7H
-v+Di8AfMHFVnCHWCsRpWzLbHqK0CEnwXyE21VpuzPrygHMAW3gG+ZiFu/55/f/6P
-mlKIDQe+QGYezGnL1+/inR186BMcA9CfiM8htCKTC/6Ea23AR+onuy/QjvAMqnKD
-l1c+gt41l/TdhMGBPWHx6UeDQsj4WCwBAaryv0ARLLHr72IcEpKvML98/q/xAkYs
-vce20VuI8yplYBck6EaLRQgf7s+GUHlsBTSAK6UKoFpvFKIUHmsLWkBKDOlwYfsR
-9JV6RTthF/umFjdLaFsnvZPgzcJgDM9cWbxMZZm2trR4ovLhI+Tl/Exzai2mm4xA
-6Y3rQfVchIaLEAQwHtXx124ioBmVm8p3BOZyvq0EE9V1CCJaMHC4a9+JR9eN7dWR
-uQE5ZYCzHGTx2P1oQwpGEboyL5yKikiJOUyw2sEeF6zNcn1Wkq4=
-=0Oyf
------END PGP SIGNATURE-----
-
---Sig_/8KC0n9/zLPMhjeiBcAFvawH--
