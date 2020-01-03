@@ -2,115 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F7E112FB3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 18:12:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7610C12FB49
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 18:12:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728223AbgACRMS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 12:12:18 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:52412 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728207AbgACRMP (ORCPT
+        id S1728282AbgACRMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 12:12:33 -0500
+Received: from mail-qv1-f65.google.com ([209.85.219.65]:34128 "EHLO
+        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728259AbgACRM1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 12:12:15 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id D641E1C2461; Fri,  3 Jan 2020 18:12:13 +0100 (CET)
-Date:   Fri, 3 Jan 2020 18:12:13 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 062/114] f2fs: choose hardlimit when softlimit is
- larger than hardlimit in f2fs_statfs_project()
-Message-ID: <20200103171213.GC14328@amd>
-References: <20200102220029.183913184@linuxfoundation.org>
- <20200102220035.294585461@linuxfoundation.org>
+        Fri, 3 Jan 2020 12:12:27 -0500
+Received: by mail-qv1-f65.google.com with SMTP id o18so16489055qvf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 09:12:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vV6a+3S2CgVP2zgllAWlmqvUviEk0ZUKB0VmFQup2MM=;
+        b=q7SqmRt9svPc6WesbG64Tpx4gDTGEX4IrS83bOn2XC8YkU10kfQBqVN7caHtrQJwPs
+         39C8hXjMIwxG4fINgl9nD+54tuIK1HA3tbxJB839znVN+ORUOp3UlarGBB6NWnAPsUrj
+         JkELDqNjEAwJjiakOzCiZx+Z1EI8UBvrpvwF4hu3e2ji76fJQNdgdrboJODQ0PnCXvNy
+         rEvf1B+KnUAMyeX4c/a8CLAdI5e+hvWx+xGc1zfn8KmLz9JNPn1Xr1aZN8GCpqpSv0tj
+         6mCbSXd4TgiUS5GYBIg3GijK/SUKhWtIJYRqhuHTlRr2vNQ5NcvKrHVawXkc0bzV5sL1
+         70fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vV6a+3S2CgVP2zgllAWlmqvUviEk0ZUKB0VmFQup2MM=;
+        b=L5mfmR3yfLGG73KghKJ5SeCnd5B6EBfFOoetbmfjT5FenuHj2pl7RsSMg6I/rVpgR8
+         qo4pixQrevj3O8u6QRKak7Ot0Ax0S3xtXAlmyHKVh2uWSNJm7P5knckmTSuaz7CBU7ib
+         cVTWl6A/W3iYMwvnIAtOnDrNSFEfRpesCAzMFCuzZuPSKMR1PqRr2E54Oqnqce3AqA+c
+         P7s0vIMqRE5bBxyRqVva3ZTP0w8on81JMJgjE/8yUFJSJzJlruNfE+oj2C9DyKVVtLyB
+         LZRaybH+4pjH/UXdodvs+y3mQ9lq7Ec8dpV1OJy96NiCxOyv2C0ksQYta7RFbozdNF7M
+         zkiw==
+X-Gm-Message-State: APjAAAWLZiSA1C3XytOM8Vz72a1b8Mq+rPon6Vk6KZFyOgHS/h9MAyxq
+        n82e2Ayo3KKPbY2RnDLHdOs=
+X-Google-Smtp-Source: APXvYqx6Er3/Z0yocOThD/C83mCKegn2uS88qcp2Wo0KSp+6jt5479A3OtISRAReOEj+l8zXMPpDaw==
+X-Received: by 2002:a05:6214:162c:: with SMTP id e12mr66843626qvw.3.1578071546080;
+        Fri, 03 Jan 2020 09:12:26 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id 17sm18990708qtz.85.2020.01.03.09.12.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Jan 2020 09:12:25 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Fri, 3 Jan 2020 12:12:24 -0500
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/24] Consolidate dummy_con initialization
+Message-ID: <20200103171223.GA1308999@rani.riverdale.lan>
+References: <20191218204002.30512-1-nivedita@alum.mit.edu>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="TiqCXmo5T1hvSQQg"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200102220035.294585461@linuxfoundation.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20191218204002.30512-1-nivedita@alum.mit.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Dec 18, 2019 at 03:39:38PM -0500, Arvind Sankar wrote:
+> This series moves initialization of conswitchp to dummy_con into vt.c,
+> and configures DUMMY_CONSOLE unconditionally when CONFIG_VT is enabled.
+> 
+> The patches after the second one remove conswitchp = &dummy_con; from
+> the various architecture setup functions where it currently appears. If
+> the first two look ok, I was thinking of sending the others
+> individually.
+> 
 
---TiqCXmo5T1hvSQQg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Greg/Jiri, happy new year!
 
-Hi!
+Are you able to look at this series?
 
-> From: Chengguang Xu <cgxu519@mykernel.net>
->=20
-> [ Upstream commit 909110c060f22e65756659ec6fa957ae75777e00 ]
->=20
-> Setting softlimit larger than hardlimit seems meaningless
-> for disk quota but currently it is allowed. In this case,
-> there may be a bit of comfusion for users when they run
-> df comamnd to directory which has project quota.
->=20
-> For example, we set 20M softlimit and 10M hardlimit of
-> block usage limit for project quota of test_dir(project id 123).
-
-> Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  fs/f2fs/super.c | 20 ++++++++++++++------
->  1 file changed, 14 insertions(+), 6 deletions(-)
->=20
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 7a9cc64f5ca3..662c7de58b99 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1148,9 +1148,13 @@ static int f2fs_statfs_project(struct super_block =
-*sb,
->  		return PTR_ERR(dquot);
->  	spin_lock(&dquot->dq_dqb_lock);
-> =20
-> -	limit =3D (dquot->dq_dqb.dqb_bsoftlimit ?
-> -		 dquot->dq_dqb.dqb_bsoftlimit :
-> -		 dquot->dq_dqb.dqb_bhardlimit) >> sb->s_blocksize_bits;
-> +	limit =3D 0;
-> +	if (dquot->dq_dqb.dqb_bsoftlimit)
-> +		limit =3D dquot->dq_dqb.dqb_bsoftlimit;
-> +	if (dquot->dq_dqb.dqb_bhardlimit &&
-> +			(!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
-> +		limit =3D dquot->dq_dqb.dqb_bhardlimit;
-> +
->  	if (limit && buf->f_blocks > limit) {
-
->> blocksize disappeared here. That can't be right.
-
-Plus, is this just obfuscated way of saying
-
-limit =3D min_not_zero(dquot->dq_dqb.dqb_bsoftlimit, dquot->dq_dqb.dqb_bhar=
-dlimit)?
-
-Best regards,
-								Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---TiqCXmo5T1hvSQQg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl4Pde0ACgkQMOfwapXb+vLqwgCfQB23lTPPylgzByCY4o28WHli
-ZSEAmwVz9M718u4eqzta/6qKREiJLCk4
-=iDPi
------END PGP SIGNATURE-----
-
---TiqCXmo5T1hvSQQg--
+https://lore.kernel.org/lkml/20191218214506.49252-1-nivedita@alum.mit.edu/
