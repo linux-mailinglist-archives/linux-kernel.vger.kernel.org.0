@@ -2,81 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DFA412F9F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 16:47:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACE2912F9EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 16:45:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727908AbgACPrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 10:47:08 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:43510 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727539AbgACPrI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 10:47:08 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 003Fl48L098132;
-        Fri, 3 Jan 2020 09:47:04 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578066424;
-        bh=IzGspcIkDXJBcCzRYOLRM97rZAxVKQLhqmXvzyl7N5M=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=RTfX/JWVa4gfsumx0pJ+ssxbF9xN5KMtMjwsQnDrPee/btTqdiNliUw7GzVF203fr
-         yIis28Y4xX2pGOi+uAZ40tnIt5oC8ZwlF8yzVWYs2Pe7Nzom3uXi58wmvoC1639LQG
-         5mN3QTvI6ESfqjSftnhnOBs5jPX6kYLm7ezlwJSc=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 003Fl46L034139
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 3 Jan 2020 09:47:04 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 3 Jan
- 2020 09:47:03 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 3 Jan 2020 09:47:04 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 003Fl39R009112;
-        Fri, 3 Jan 2020 09:47:03 -0600
-Subject: Re: [PATCH v17 12/19] leds: lp55xx: Convert LED class registration to
- devm_*
-To:     Pavel Machek <pavel@ucw.cz>
-CC:     <jacek.anaszewski@gmail.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20191114133023.32185-1-dmurphy@ti.com>
- <20191114133023.32185-13-dmurphy@ti.com> <20191222183014.GD23369@amd>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <7cdc1a0d-4a66-a248-6a6f-d05a5c7eda2e@ti.com>
-Date:   Fri, 3 Jan 2020 09:44:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727851AbgACPpV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 10:45:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39872 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727539AbgACPpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 10:45:21 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 255AC21734;
+        Fri,  3 Jan 2020 15:45:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578066320;
+        bh=iq1Twbqj7FIJKJlRQnhfVitva3hiAIvKZgahrbTOPeY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DUXQWZE0hh32tb6Qnaqv50moEJfXYD2EUDfklpYH2wiiP/FOWq2s3UtkOCJfHl7ad
+         GLGYcuLyLMaNyDiBnBhE2FD1DDy8VdRBPJJEPI8NiFML6E30M140sC5jcW7ASm/7af
+         K3q7vy9b7oBqtOKWAlmjVeodC0axBXP3FQl+Gbmc=
+Date:   Fri, 3 Jan 2020 16:45:18 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>, LTP List <ltp@lists.linux.it>,
+        Jan Stancek <jstancek@redhat.com>,
+        John Stultz <john.stultz@linaro.org>
+Subject: Re: [PATCH 5.4 000/191] 5.4.8-stable review
+Message-ID: <20200103154518.GB1064304@kroah.com>
+References: <20200102215829.911231638@linuxfoundation.org>
+ <CA+G9fYuPkOGKbeQ0FKKx4H0Bs-nRHALsFtwyRw0Rt5DoOCvRHg@mail.gmail.com>
+ <CAK8P3a1+Srey_7cUd0xfaO8HdMv5tkUcs6DeDXzcUKkUD-DnGQ@mail.gmail.com>
+ <CAK8P3a24EkUXTu-K2c-5B3w-LZwY7zNcX0dZixb3gd59vRw_Kw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191222183014.GD23369@amd>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a24EkUXTu-K2c-5B3w-LZwY7zNcX0dZixb3gd59vRw_Kw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pavel
+On Fri, Jan 03, 2020 at 04:29:56PM +0100, Arnd Bergmann wrote:
+> On Fri, Jan 3, 2020 at 4:25 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > On Fri, Jan 3, 2020 at 4:03 PM Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> > >
+> > > On Fri, 3 Jan 2020 at 03:42, Greg Kroah-Hartman
+> > > <gregkh@linuxfoundation.org> wrote:
+> >
+> > -ENOENT is what you get when hugetlbfs is not mounted, so this hints to
+> >
+> > 8fc312b32b2  mm/hugetlbfs: fix error handling when setting up mounts
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git/commit/?h=linux-5.4.y&id=3f549fb42a39bea3b29c0fc12afee53c4a01bec9
+> 
+> I see that Mike Kravetz suggested not putting this patch into stable in
+> 
+> https://lore.kernel.org/lkml/befca227-cb8a-8f47-617d-e3bf9972bfec@oracle.com/
+> 
+> but it was picked through the autosel mechanism later.
 
-On 12/22/19 12:30 PM, Pavel Machek wrote:
-> On Thu 2019-11-14 07:30:16, Dan Murphy wrote:
->> Convert the LED class registration calls to the LED devm_*
->> registration calls.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> Nothing obviously wrong here. Was it tested?
->
-> Acked-by: Pavel Machek <pavel@ucw.cz>
->
-> Best regards,
-> 							Pavel
+So does that mean that Linus's tree shows this LTP failure as well?
 
-Was there a specific test you are looking for me to perform besides 
-basic testing?
+This does seem to fix a real issue, as shown by the LTP test noticing
+it, so should the error code value be fixed in Linus's tree?
 
-Dan
+thanks,
 
+greg k-h
