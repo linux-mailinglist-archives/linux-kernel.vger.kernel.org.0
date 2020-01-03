@@ -2,144 +2,275 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51FAE12F624
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 10:37:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53AE212F632
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 10:40:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbgACJhl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 04:37:41 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:26503 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726181AbgACJhk (ORCPT
+        id S1727468AbgACJkh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 04:40:37 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:1392 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbgACJkg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 04:37:40 -0500
-X-UUID: 16ff7660477847e9bbf9d948f12aaa8b-20200103
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=vpgaibXjOdFAqO+kX2Fv8LdJ4vqTcO7KTaF1GnXZ9kc=;
-        b=U4dCE59QaxeMEgVHdL5d3C9khVAxN9gI52Tw0wxci575+T0U7bvB/u9/yWuja3QmgeogubyKu0qixR3XcreYanxl7X3Ks67BwNHGQ016lbW/RDq4x511ARzlK/sa0T8kdQa+RB2s+kzJhOXdSvaN0gQeOlRr39gUK9dgx86xxx0=;
-X-UUID: 16ff7660477847e9bbf9d948f12aaa8b-20200103
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <jiaxin.yu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 84018256; Fri, 03 Jan 2020 17:37:35 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 3 Jan 2020 17:37:07 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 3 Jan 2020 17:37:31 +0800
-From:   Jiaxin Yu <jiaxin.yu@mediatek.com>
-To:     <yong.liang@mediatek.com>, <wim@linux-watchdog.org>,
-        <linux@roeck-us.net>, <p.zabel@pengutronix.de>,
-        <matthias.bgg@gmail.com>, <linux-watchdog@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <chang-an.chen@mediatek.com>, <freddy.hsin@mediatek.com>
-CC:     <yingjoe.chen@mediatek.com>, <sboyd@kernel.org>,
-        Jiaxin Yu <jiaxin.yu@mediatek.com>
-Subject: [PATCH 2/2] [PATCH v8 2/2] watchdog: mtk_wdt: mt8183: Add reset controller
-Date:   Fri, 3 Jan 2020 17:37:25 +0800
-Message-ID: <1578044245-26939-3-git-send-email-jiaxin.yu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1578044245-26939-1-git-send-email-jiaxin.yu@mediatek.com>
-References: <1578044245-26939-1-git-send-email-jiaxin.yu@mediatek.com>
+        Fri, 3 Jan 2020 04:40:36 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e0f0be70000>; Fri, 03 Jan 2020 01:39:51 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 03 Jan 2020 01:40:35 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 03 Jan 2020 01:40:35 -0800
+Received: from [10.25.72.211] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 3 Jan
+ 2020 09:40:30 +0000
+Subject: Re: [PATCH 1/4] PCI: dwc: Add new feature to skip core initialization
+To:     Kishon Vijay Abraham I <kishon@ti.com>, <jingoohan1@gmail.com>,
+        <gustavo.pimentel@synopsys.com>, <lorenzo.pieralisi@arm.com>,
+        <andrew.murray@arm.com>, <bhelgaas@google.com>,
+        <thierry.reding@gmail.com>
+CC:     <Jisheng.Zhang@synaptics.com>, <jonathanh@nvidia.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kthota@nvidia.com>, <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
+References: <20191113090851.26345-1-vidyas@nvidia.com>
+ <20191113090851.26345-2-vidyas@nvidia.com>
+ <47c801ab-ddec-d436-1f0d-1dd0c4980869@ti.com>
+X-Nvconfidentiality: public
+From:   Vidya Sagar <vidyas@nvidia.com>
+Message-ID: <0ecb49ba-e40a-f384-2c14-153e4f3ba9bb@nvidia.com>
+Date:   Fri, 3 Jan 2020 15:10:27 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+In-Reply-To: <47c801ab-ddec-d436-1f0d-1dd0c4980869@ti.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1578044391; bh=OxagPO2Jgwq13WrPn4kUXTtKpWEMPFp8ZpiTyzeZtlU=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=W2h5t6fryBvkjjpoHqgqhLRhwOeiQu/DuintFtFEkNH+U1hAczaXrTbkXPHud7rKq
+         6ChelU19203iWIJXqWVYDGlVAiNzAHtGabO73zi04XRDvVCYCAuObi7bi/Js4dqVt7
+         1DE1VTE8qq8CkcKmZr7H/ba1/hoLbgwAsAi12lId7Xd2K7asYiN3tNgKRiwFj1wvm2
+         5udEsu6Nt49uNeShqmcK0uEuZmDZnuEkrzPuzqgpplvhRZkJPfuTELpbKUrN2gywrL
+         w/GG9yoWq1hI1JHyBeAU7HhPeD8t/OgcY8OVoGT3N8G1BfmrQ+ZAqemyxjCGzp86uO
+         MG0dOeXyRtzOQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QWRkIHJlc2V0IGNvbnRyb2xsZXIgQVBJIGluIHdhdGNoZG9nIGRyaXZlci4NCkJlc2lkZXMgd2F0
-Y2hkb2csIE1USyB0b3ByZ3UgbW9kdWxlIGFsc2EgcHJvdmlkZSBzdWItc3lzdGVtIChlZywgYXVk
-aW8sDQpjYW1lcmEsIGNvZGVjIGFuZCBjb25uZWN0aXZpdHkpIHNvZnR3YXJlIHJlc2V0IGZ1bmN0
-aW9uYWxpdHkuDQoNCkNoYW5nZS1JZDogSTE1MDRlM2E2ODNiM2Q5NjcyMmYwY2FiZTA1NzZkMGQy
-ZmQzNDUzZjENClNpZ25lZC1vZmYtYnk6IHlvbmcubGlhbmcgPHlvbmcubGlhbmdAbWVkaWF0ZWsu
-Y29tPg0KU2lnbmVkLW9mZi1ieTogSmlheGluIFl1IDxqaWF4aW4ueXVAbWVkaWF0ZWsuY29tPg0K
-UmV2aWV3ZWQtYnk6IFlpbmdqb2UgQ2hlbiA8eWluZ2pvZS5jaGVuQG1lZGlhdGVrLmNvbT4NClJl
-dmlld2VkLWJ5OiBQaGlsaXBwIFphYmVsIDxwLnphYmVsQHBlbmd1dHJvbml4LmRlPg0KLS0tDQog
-ZHJpdmVycy93YXRjaGRvZy9tdGtfd2R0LmMgfCAxMDUgKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrLQ0KIDEgZmlsZSBjaGFuZ2VkLCAxMDQgaW5zZXJ0aW9ucygrKSwgMSBkZWxl
-dGlvbigtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy93YXRjaGRvZy9tdGtfd2R0LmMgYi9kcml2
-ZXJzL3dhdGNoZG9nL210a193ZHQuYw0KaW5kZXggOWMzZDAwMzMyNjBkLi5kNmE2MzkzZjYwOWQg
-MTAwNjQ0DQotLS0gYS9kcml2ZXJzL3dhdGNoZG9nL210a193ZHQuYw0KKysrIGIvZHJpdmVycy93
-YXRjaGRvZy9tdGtfd2R0LmMNCkBAIC05LDYgKzksOSBAQA0KICAqIEJhc2VkIG9uIHN1bnhpX3dk
-dC5jDQogICovDQogDQorI2luY2x1ZGUgPGR0LWJpbmRpbmdzL3Jlc2V0LWNvbnRyb2xsZXIvbXQy
-NzEyLXJlc2V0cy5oPg0KKyNpbmNsdWRlIDxkdC1iaW5kaW5ncy9yZXNldC1jb250cm9sbGVyL210
-ODE4My1yZXNldHMuaD4NCisjaW5jbHVkZSA8bGludXgvZGVsYXkuaD4NCiAjaW5jbHVkZSA8bGlu
-dXgvZXJyLmg+DQogI2luY2x1ZGUgPGxpbnV4L2luaXQuaD4NCiAjaW5jbHVkZSA8bGludXgvaW8u
-aD4NCkBAIC0xNiwxMCArMTksMTEgQEANCiAjaW5jbHVkZSA8bGludXgvbW9kdWxlLmg+DQogI2lu
-Y2x1ZGUgPGxpbnV4L21vZHVsZXBhcmFtLmg+DQogI2luY2x1ZGUgPGxpbnV4L29mLmg+DQorI2lu
-Y2x1ZGUgPGxpbnV4L29mX2RldmljZS5oPg0KICNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZp
-Y2UuaD4NCisjaW5jbHVkZSA8bGludXgvcmVzZXQtY29udHJvbGxlci5oPg0KICNpbmNsdWRlIDxs
-aW51eC90eXBlcy5oPg0KICNpbmNsdWRlIDxsaW51eC93YXRjaGRvZy5oPg0KLSNpbmNsdWRlIDxs
-aW51eC9kZWxheS5oPg0KIA0KICNkZWZpbmUgV0RUX01BWF9USU1FT1VUCQkzMQ0KICNkZWZpbmUg
-V0RUX01JTl9USU1FT1VUCQkxDQpAQCAtNDQsNiArNDgsOSBAQA0KICNkZWZpbmUgV0RUX1NXUlNU
-CQkweDE0DQogI2RlZmluZSBXRFRfU1dSU1RfS0VZCQkweDEyMDkNCiANCisjZGVmaW5lIFdEVF9T
-V1NZU1JTVAkJMHgxOFUNCisjZGVmaW5lIFdEVF9TV1NZU19SU1RfS0VZCTB4ODgwMDAwMDANCisN
-CiAjZGVmaW5lIERSVl9OQU1FCQkibXRrLXdkdCINCiAjZGVmaW5lIERSVl9WRVJTSU9OCQkiMS4w
-Ig0KIA0KQEAgLTUzLDggKzYwLDk0IEBAIHN0YXRpYyB1bnNpZ25lZCBpbnQgdGltZW91dDsNCiBz
-dHJ1Y3QgbXRrX3dkdF9kZXYgew0KIAlzdHJ1Y3Qgd2F0Y2hkb2dfZGV2aWNlIHdkdF9kZXY7DQog
-CXZvaWQgX19pb21lbSAqd2R0X2Jhc2U7DQorCXNwaW5sb2NrX3QgbG9jazsgLyogcHJvdGVjdHMg
-V0RUX1NXU1lTUlNUIHJlZyAqLw0KKwlzdHJ1Y3QgcmVzZXRfY29udHJvbGxlcl9kZXYgcmNkZXY7
-DQorfTsNCisNCitzdHJ1Y3QgbXRrX3dkdF9kYXRhIHsNCisJaW50IHRvcHJndV9zd19yc3RfbnVt
-Ow0KIH07DQogDQorc3RhdGljIGNvbnN0IHN0cnVjdCBtdGtfd2R0X2RhdGEgbXQyNzEyX2RhdGEg
-PSB7DQorCS50b3ByZ3Vfc3dfcnN0X251bSA9IE1UMjcxMl9UT1BSR1VfU1dfUlNUX05VTSwNCit9
-Ow0KKw0KK3N0YXRpYyBjb25zdCBzdHJ1Y3QgbXRrX3dkdF9kYXRhIG10ODE4M19kYXRhID0gew0K
-KwkudG9wcmd1X3N3X3JzdF9udW0gPSBNVDgxODNfVE9QUkdVX1NXX1JTVF9OVU0sDQorfTsNCisN
-CitzdGF0aWMgaW50IHRvcHJndV9yZXNldF91cGRhdGUoc3RydWN0IHJlc2V0X2NvbnRyb2xsZXJf
-ZGV2ICpyY2RldiwNCisJCQkgICAgICAgdW5zaWduZWQgbG9uZyBpZCwgYm9vbCBhc3NlcnQpDQor
-ew0KKwl1bnNpZ25lZCBpbnQgdG1wOw0KKwl1bnNpZ25lZCBsb25nIGZsYWdzOw0KKwlzdHJ1Y3Qg
-bXRrX3dkdF9kZXYgKmRhdGEgPQ0KKwkJIGNvbnRhaW5lcl9vZihyY2Rldiwgc3RydWN0IG10a193
-ZHRfZGV2LCByY2Rldik7DQorDQorCXNwaW5fbG9ja19pcnFzYXZlKCZkYXRhLT5sb2NrLCBmbGFn
-cyk7DQorDQorCXRtcCA9IHJlYWRsKGRhdGEtPndkdF9iYXNlICsgV0RUX1NXU1lTUlNUKTsNCisJ
-aWYgKGFzc2VydCkNCisJCXRtcCB8PSBCSVQoaWQpOw0KKwllbHNlDQorCQl0bXAgJj0gfkJJVChp
-ZCk7DQorCXRtcCB8PSBXRFRfU1dTWVNfUlNUX0tFWTsNCisJd3JpdGVsKHRtcCwgZGF0YS0+d2R0
-X2Jhc2UgKyBXRFRfU1dTWVNSU1QpOw0KKw0KKwlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZkYXRh
-LT5sb2NrLCBmbGFncyk7DQorDQorCXJldHVybiAwOw0KK30NCisNCitzdGF0aWMgaW50IHRvcHJn
-dV9yZXNldF9hc3NlcnQoc3RydWN0IHJlc2V0X2NvbnRyb2xsZXJfZGV2ICpyY2RldiwNCisJCQkg
-ICAgICAgdW5zaWduZWQgbG9uZyBpZCkNCit7DQorCXJldHVybiB0b3ByZ3VfcmVzZXRfdXBkYXRl
-KHJjZGV2LCBpZCwgdHJ1ZSk7DQorfQ0KKw0KK3N0YXRpYyBpbnQgdG9wcmd1X3Jlc2V0X2RlYXNz
-ZXJ0KHN0cnVjdCByZXNldF9jb250cm9sbGVyX2RldiAqcmNkZXYsDQorCQkJCSB1bnNpZ25lZCBs
-b25nIGlkKQ0KK3sNCisJcmV0dXJuIHRvcHJndV9yZXNldF91cGRhdGUocmNkZXYsIGlkLCBmYWxz
-ZSk7DQorfQ0KKw0KK3N0YXRpYyBpbnQgdG9wcmd1X3Jlc2V0KHN0cnVjdCByZXNldF9jb250cm9s
-bGVyX2RldiAqcmNkZXYsDQorCQkJdW5zaWduZWQgbG9uZyBpZCkNCit7DQorCWludCByZXQ7DQor
-DQorCXJldCA9IHRvcHJndV9yZXNldF9hc3NlcnQocmNkZXYsIGlkKTsNCisJaWYgKHJldCkNCisJ
-CXJldHVybiByZXQ7DQorDQorCXJldHVybiB0b3ByZ3VfcmVzZXRfZGVhc3NlcnQocmNkZXYsIGlk
-KTsNCit9DQorDQorc3RhdGljIGNvbnN0IHN0cnVjdCByZXNldF9jb250cm9sX29wcyB0b3ByZ3Vf
-cmVzZXRfb3BzID0gew0KKwkuYXNzZXJ0ID0gdG9wcmd1X3Jlc2V0X2Fzc2VydCwNCisJLmRlYXNz
-ZXJ0ID0gdG9wcmd1X3Jlc2V0X2RlYXNzZXJ0LA0KKwkucmVzZXQgPSB0b3ByZ3VfcmVzZXQsDQor
-fTsNCisNCitzdGF0aWMgaW50IHRvcHJndV9yZWdpc3Rlcl9yZXNldF9jb250cm9sbGVyKHN0cnVj
-dCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYsDQorCQkJCQkgICAgaW50IHJzdF9udW0pDQorew0KKwlp
-bnQgcmV0Ow0KKwlzdHJ1Y3QgbXRrX3dkdF9kZXYgKm10a193ZHQgPSBwbGF0Zm9ybV9nZXRfZHJ2
-ZGF0YShwZGV2KTsNCisNCisJc3Bpbl9sb2NrX2luaXQoJm10a193ZHQtPmxvY2spOw0KKw0KKwlt
-dGtfd2R0LT5yY2Rldi5vd25lciA9IFRISVNfTU9EVUxFOw0KKwltdGtfd2R0LT5yY2Rldi5ucl9y
-ZXNldHMgPSByc3RfbnVtOw0KKwltdGtfd2R0LT5yY2Rldi5vcHMgPSAmdG9wcmd1X3Jlc2V0X29w
-czsNCisJbXRrX3dkdC0+cmNkZXYub2Zfbm9kZSA9IHBkZXYtPmRldi5vZl9ub2RlOw0KKwlyZXQg
-PSBkZXZtX3Jlc2V0X2NvbnRyb2xsZXJfcmVnaXN0ZXIoJnBkZXYtPmRldiwgJm10a193ZHQtPnJj
-ZGV2KTsNCisJaWYgKHJldCAhPSAwKQ0KKwkJZGV2X2VycigmcGRldi0+ZGV2LA0KKwkJCSJjb3Vs
-ZG4ndCByZWdpc3RlciB3ZHQgcmVzZXQgY29udHJvbGxlcjogJWRcbiIsIHJldCk7DQorCXJldHVy
-biByZXQ7DQorfQ0KKw0KIHN0YXRpYyBpbnQgbXRrX3dkdF9yZXN0YXJ0KHN0cnVjdCB3YXRjaGRv
-Z19kZXZpY2UgKndkdF9kZXYsDQogCQkJICAgdW5zaWduZWQgbG9uZyBhY3Rpb24sIHZvaWQgKmRh
-dGEpDQogew0KQEAgLTE1NSw2ICsyNDgsNyBAQCBzdGF0aWMgaW50IG10a193ZHRfcHJvYmUoc3Ry
-dWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCiB7DQogCXN0cnVjdCBkZXZpY2UgKmRldiA9ICZw
-ZGV2LT5kZXY7DQogCXN0cnVjdCBtdGtfd2R0X2RldiAqbXRrX3dkdDsNCisJY29uc3Qgc3RydWN0
-IG10a193ZHRfZGF0YSAqd2R0X2RhdGE7DQogCWludCBlcnI7DQogDQogCW10a193ZHQgPSBkZXZt
-X2t6YWxsb2MoZGV2LCBzaXplb2YoKm10a193ZHQpLCBHRlBfS0VSTkVMKTsNCkBAIC0xOTAsNiAr
-Mjg0LDEzIEBAIHN0YXRpYyBpbnQgbXRrX3dkdF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
-ICpwZGV2KQ0KIAlkZXZfaW5mbyhkZXYsICJXYXRjaGRvZyBlbmFibGVkICh0aW1lb3V0PSVkIHNl
-Yywgbm93YXlvdXQ9JWQpXG4iLA0KIAkJIG10a193ZHQtPndkdF9kZXYudGltZW91dCwgbm93YXlv
-dXQpOw0KIA0KKwl3ZHRfZGF0YSA9IG9mX2RldmljZV9nZXRfbWF0Y2hfZGF0YShkZXYpOw0KKwlp
-ZiAod2R0X2RhdGEpIHsNCisJCWVyciA9IHRvcHJndV9yZWdpc3Rlcl9yZXNldF9jb250cm9sbGVy
-KHBkZXYsDQorCQkJCQkJICAgICAgIHdkdF9kYXRhLT50b3ByZ3Vfc3dfcnN0X251bSk7DQorCQlp
-ZiAoZXJyKQ0KKwkJCXJldHVybiBlcnI7DQorCX0NCiAJcmV0dXJuIDA7DQogfQ0KIA0KQEAgLTIx
-OCw3ICszMTksOSBAQCBzdGF0aWMgaW50IG10a193ZHRfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRl
-dikNCiAjZW5kaWYNCiANCiBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBtdGtfd2R0
-X2R0X2lkc1tdID0gew0KKwl7IC5jb21wYXRpYmxlID0gIm1lZGlhdGVrLG10MjcxMi13ZHQiLCAu
-ZGF0YSA9ICZtdDI3MTJfZGF0YSB9LA0KIAl7IC5jb21wYXRpYmxlID0gIm1lZGlhdGVrLG10NjU4
-OS13ZHQiIH0sDQorCXsgLmNvbXBhdGlibGUgPSAibWVkaWF0ZWssbXQ4MTgzLXdkdCIsIC5kYXRh
-ID0gJm10ODE4M19kYXRhIH0sDQogCXsgLyogc2VudGluZWwgKi8gfQ0KIH07DQogTU9EVUxFX0RF
-VklDRV9UQUJMRShvZiwgbXRrX3dkdF9kdF9pZHMpOw0KLS0gDQoyLjE4LjANCg==
+On 12/5/2019 3:34 PM, Kishon Vijay Abraham I wrote:
+>=20
+>=20
+> On 13/11/19 2:38 pm, Vidya Sagar wrote:
+>> Add a new feature 'skip_core_init' that can be set by platform drivers
+>> of devices that do not have their core registers available until referen=
+ce
+>> clock from host is available (Ex:- Tegra194) to indicate DesignWare
+>> endpoint mode sub-system to not perform core registers initialization.
+>> Existing dw_pcie_ep_init() is refactored and all the code that touches
+>> registers is extracted to form a new API dw_pcie_ep_init_complete() that
+>> can be called later by platform drivers setting 'skip_core_init' to '1'.
+>=20
+> No. pci_epc_features should only use constant values. This is used by fun=
+ction drivers to know the controller capabilities.
+Yes. I'm going to set EPC features as constant values in pcie-tegra194.c dr=
+iver.
+I'm going to rewrite this commit message in the next patch.
+ =20
+>=20
+> Thanks
+> Kishon
+>=20
+>>
+>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>> ---
+>> =C2=A0 .../pci/controller/dwc/pcie-designware-ep.c=C2=A0=C2=A0 | 72 ++++=
++++++++--------
+>> =C2=A0 drivers/pci/controller/dwc/pcie-designware.h=C2=A0 |=C2=A0 6 ++
+>> =C2=A0 include/linux/pci-epc.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 1 +
+>> =C2=A0 3 files changed, 51 insertions(+), 28 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/p=
+ci/controller/dwc/pcie-designware-ep.c
+>> index 3dd2e2697294..06f4379be8a3 100644
+>> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+>> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+>> @@ -492,19 +492,53 @@ static unsigned int dw_pcie_ep_find_ext_capability=
+(struct dw_pcie *pci, int cap)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>> =C2=A0 }
+>> -int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>> +int dw_pcie_ep_init_complete(struct dw_pcie_ep *ep)
+>> =C2=A0 {
+>> +=C2=A0=C2=A0=C2=A0 struct dw_pcie *pci =3D to_dw_pcie_from_ep(ep);
+>> +=C2=A0=C2=A0=C2=A0 unsigned int offset;
+>> +=C2=A0=C2=A0=C2=A0 unsigned int nbars;
+>> +=C2=A0=C2=A0=C2=A0 u8 hdr_type;
+>> +=C2=A0=C2=A0=C2=A0 u32 reg;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int i;
+>> +
+>> +=C2=A0=C2=A0=C2=A0 hdr_type =3D dw_pcie_readb_dbi(pci, PCI_HEADER_TYPE)=
+;
+>> +=C2=A0=C2=A0=C2=A0 if (hdr_type !=3D PCI_HEADER_TYPE_NORMAL) {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(pci->dev,
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "PCI=
+e controller is not set to EP mode (hdr_type:0x%x)!\n",
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hdr_=
+type);
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EIO;
+>> +=C2=A0=C2=A0=C2=A0 }
+>> +
+>> +=C2=A0=C2=A0=C2=A0 ep->msi_cap =3D dw_pcie_find_capability(pci, PCI_CAP=
+_ID_MSI);
+>> +
+>> +=C2=A0=C2=A0=C2=A0 ep->msix_cap =3D dw_pcie_find_capability(pci, PCI_CA=
+P_ID_MSIX);
+>> +
+>> +=C2=A0=C2=A0=C2=A0 offset =3D dw_pcie_ep_find_ext_capability(pci, PCI_E=
+XT_CAP_ID_REBAR);
+>> +=C2=A0=C2=A0=C2=A0 if (offset) {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D dw_pcie_readl_dbi(pc=
+i, offset + PCI_REBAR_CTRL);
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nbars =3D (reg & PCI_REBAR_C=
+TRL_NBAR_MASK) >>
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PCI_=
+REBAR_CTRL_NBAR_SHIFT;
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dw_pcie_dbi_ro_wr_en(pci);
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < nbars; i++=
+, offset +=3D PCI_REBAR_CTRL)
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dw_p=
+cie_writel_dbi(pci, offset + PCI_REBAR_CAP, 0x0);
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dw_pcie_dbi_ro_wr_dis(pci);
+>> +=C2=A0=C2=A0=C2=A0 }
+>> +
+>> +=C2=A0=C2=A0=C2=A0 dw_pcie_setup(pci);
+>> +
+>> +=C2=A0=C2=A0=C2=A0 return 0;
+>> +}
+>> +
+>> +int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>> +{
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int ret;
+>> -=C2=A0=C2=A0=C2=A0 u32 reg;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void *addr;
+>> -=C2=A0=C2=A0=C2=A0 u8 hdr_type;
+>> -=C2=A0=C2=A0=C2=A0 unsigned int nbars;
+>> -=C2=A0=C2=A0=C2=A0 unsigned int offset;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct pci_epc *epc;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct dw_pcie *pci =3D to_dw_pcie_from_e=
+p(ep);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device *dev =3D pci->dev;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device_node *np =3D dev->of_node;
+>> +=C2=A0=C2=A0=C2=A0 const struct pci_epc_features *epc_features;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!pci->dbi_base || !pci->dbi_base2) {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(dev, "dbi=
+_base/dbi_base2 is not populated\n");
+>> @@ -563,13 +597,6 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ep->ops->ep_init)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ep->ops->ep_init(=
+ep);
+>> -=C2=A0=C2=A0=C2=A0 hdr_type =3D dw_pcie_readb_dbi(pci, PCI_HEADER_TYPE)=
+;
+>> -=C2=A0=C2=A0=C2=A0 if (hdr_type !=3D PCI_HEADER_TYPE_NORMAL) {
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(pci->dev, "PCIe cont=
+roller is not set to EP mode (hdr_type:0x%x)!\n",
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hdr_=
+type);
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EIO;
+>> -=C2=A0=C2=A0=C2=A0 }
+>> -
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D of_property_read_u8(np, "max-func=
+tions", &epc->max_functions);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret < 0)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 epc->max_function=
+s =3D 1;
+>> @@ -587,23 +614,12 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(dev, "Fai=
+led to reserve memory for MSI/MSI-X\n");
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ENOMEM;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>> -=C2=A0=C2=A0=C2=A0 ep->msi_cap =3D dw_pcie_find_capability(pci, PCI_CAP=
+_ID_MSI);
+>> -=C2=A0=C2=A0=C2=A0 ep->msix_cap =3D dw_pcie_find_capability(pci, PCI_CA=
+P_ID_MSIX);
+>> -
+>> -=C2=A0=C2=A0=C2=A0 offset =3D dw_pcie_ep_find_ext_capability(pci, PCI_E=
+XT_CAP_ID_REBAR);
+>> -=C2=A0=C2=A0=C2=A0 if (offset) {
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D dw_pcie_readl_dbi(pc=
+i, offset + PCI_REBAR_CTRL);
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nbars =3D (reg & PCI_REBAR_C=
+TRL_NBAR_MASK) >>
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PCI_=
+REBAR_CTRL_NBAR_SHIFT;
+>> -
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dw_pcie_dbi_ro_wr_en(pci);
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < nbars; i++=
+, offset +=3D PCI_REBAR_CTRL)
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dw_p=
+cie_writel_dbi(pci, offset + PCI_REBAR_CAP, 0x0);
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dw_pcie_dbi_ro_wr_dis(pci);
+>> +=C2=A0=C2=A0=C2=A0 if (ep->ops->get_features) {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 epc_features =3D ep->ops->ge=
+t_features(ep);
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (epc_features->skip_core_=
+init)
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 retu=
+rn 0;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>> -=C2=A0=C2=A0=C2=A0 dw_pcie_setup(pci);
+>> -
+>> -=C2=A0=C2=A0=C2=A0 return 0;
+>> +=C2=A0=C2=A0=C2=A0 return dw_pcie_ep_init_complete(ep);
+>> =C2=A0 }
+>> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/=
+controller/dwc/pcie-designware.h
+>> index 5accdd6bc388..340783e9032e 100644
+>> --- a/drivers/pci/controller/dwc/pcie-designware.h
+>> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+>> @@ -399,6 +399,7 @@ static inline int dw_pcie_allocate_domains(struct pc=
+ie_port *pp)
+>> =C2=A0 #ifdef CONFIG_PCIE_DW_EP
+>> =C2=A0 void dw_pcie_ep_linkup(struct dw_pcie_ep *ep);
+>> =C2=A0 int dw_pcie_ep_init(struct dw_pcie_ep *ep);
+>> +int dw_pcie_ep_init_complete(struct dw_pcie_ep *ep);
+>> =C2=A0 void dw_pcie_ep_exit(struct dw_pcie_ep *ep);
+>> =C2=A0 int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no=
+);
+>> =C2=A0 int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+>> @@ -416,6 +417,11 @@ static inline int dw_pcie_ep_init(struct dw_pcie_ep=
+ *ep)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>> =C2=A0 }
+>> +static inline int dw_pcie_ep_init_complete(struct dw_pcie_ep *ep)
+>> +{
+>> +=C2=A0=C2=A0=C2=A0 return 0;
+>> +}
+>> +
+>> =C2=A0 static inline void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
+>> =C2=A0 {
+>> =C2=A0 }
+>> diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+>> index 36644ccd32ac..241e6a6f39fb 100644
+>> --- a/include/linux/pci-epc.h
+>> +++ b/include/linux/pci-epc.h
+>> @@ -121,6 +121,7 @@ struct pci_epc_features {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u8=C2=A0=C2=A0=C2=A0 bar_fixed_64bit;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u64=C2=A0=C2=A0=C2=A0 bar_fixed_size[PCI_=
+STD_NUM_BARS];
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 size_t=C2=A0=C2=A0=C2=A0 align;
+>> +=C2=A0=C2=A0=C2=A0 bool=C2=A0=C2=A0=C2=A0 skip_core_init;
+>> =C2=A0 };
+>> =C2=A0 #define to_pci_epc(device) container_of((device), struct pci_epc,=
+ dev)
+>>
 
