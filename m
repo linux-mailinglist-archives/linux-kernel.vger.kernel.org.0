@@ -2,110 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1598B12F971
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 16:02:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B32B12F976
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 16:03:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727951AbgACPCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 10:02:44 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39895 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbgACPCo (ORCPT
+        id S1727963AbgACPDq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 10:03:46 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:24433 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727686AbgACPDp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 10:02:44 -0500
-Received: by mail-lj1-f193.google.com with SMTP id l2so44145057lja.6;
-        Fri, 03 Jan 2020 07:02:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=jYP3oiguXTu4ukRMGsTE94fcOoRU1pxMAUcZzbqTsoQ=;
-        b=kktXjEaeJoDj7MeJeceF+PZIAvZB1dFHWf2rIlpcI78QiDUIEXFx8aqrRtXrAcWClv
-         rFKVKpb5IeEkBo4sjlZ6Yh971Qrxp1ffTFcvLaZsRY5+FTkxX3bqXWaQUxPvjGKyPHc/
-         C5ir3vqVYaAdV+Q2C+xdKsh9ZsjuRtIJ3h6U1XPoaYjVSAsubhlyeSZA9I6gT63my9+O
-         bQVqw67foi7WGZrwovnhuK7QW6m6q2NUAB18JWvvvapZMhh1/Zh82z9ethsHN3V8k/eV
-         AJO/40nyT+zMsUUgXTZNVN4alPmqpgxlshU4y28PH0pID0iGr+0U5EIb/RL6r1UwZay9
-         80Eg==
-X-Gm-Message-State: APjAAAWzn3gWmRS1ySDtjsfw7AXqweyzbrbyGFjC3e197t1XEpYBsI7K
-        gsAP0kBmjriebs/BKUw9pOtMf+ef
-X-Google-Smtp-Source: APXvYqwKx1QwKtOPNraV0L9IHhbkT8H7iic6sFO29rqdvf4tU3k2+YpJg3mg8DbMbm7TyLBrosdkAg==
-X-Received: by 2002:a05:651c:118b:: with SMTP id w11mr53364810ljo.54.1578063762042;
-        Fri, 03 Jan 2020 07:02:42 -0800 (PST)
-Received: from xi.terra (c-14b8e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.184.20])
-        by smtp.gmail.com with ESMTPSA id t1sm24602951lji.98.2020.01.03.07.02.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jan 2020 07:02:40 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.92.3)
-        (envelope-from <johan@kernel.org>)
-        id 1inOTK-0006si-Jb; Fri, 03 Jan 2020 16:02:42 +0100
-Date:   Fri, 3 Jan 2020 16:02:42 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 5.4 106/434] media: flexcop-usb: fix NULL-ptr deref in
- flexcop_usb_transfer_init()
-Message-ID: <20200103150242.GC17614@localhost>
-References: <20191229172702.393141737@linuxfoundation.org>
- <20191229172708.658173957@linuxfoundation.org>
+        Fri, 3 Jan 2020 10:03:45 -0500
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id 003F3dFi015419;
+        Sat, 4 Jan 2020 00:03:40 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 003F3dFi015419
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1578063820;
+        bh=IhDXEO07k6n70uEE3QtqxuHGBeItquntGAry9r1k5rA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=0KZ/seAv8LHTRu9ILzAYefyYQqH1Ym/5QwjUFB/cat47biwQsWvbyQbakgu/uTiF9
+         stu9Gd8XP2Ipvg2+1Dtsx7Y0NNqAJpxh6a0NSftHg1y0tFD0CAlCwOk6iCcPOIbSlA
+         7Ds0nrhYk7U882wbvdBeQ7yw5+k7QQbVhlsxoSqSU5LOv3/Um3/vDm9/BR2E6TqVOW
+         C5LUR9onLyyaljNEGhZZ9dFtXj6s/KcRdwkuKQyc78NSrg7bwcF67ttRoFKfnkIa15
+         Txt/oe105pAGiyXLrah53FgOQyWR4f/x479q6WC7NcS536kIdvD35KMfVB2xOjtejt
+         9VZhQLcS6Hqyg==
+X-Nifty-SrcIP: [209.85.222.45]
+Received: by mail-ua1-f45.google.com with SMTP id c14so13565844uaq.11;
+        Fri, 03 Jan 2020 07:03:40 -0800 (PST)
+X-Gm-Message-State: APjAAAUeGsKbzU9IvD1iJXHscZ1dfYmx2jBYlCDGm4JgLEqMF2W/fwuc
+        /s7QAk2V2LVtNDMGkuKluRxdDcGfKBo/S3PwyX8=
+X-Google-Smtp-Source: APXvYqySISfnCbUOlz7G2gjwAobqS5qjcexrFKOkKqFS2+6u8hudCn7xoGu/DvK6iqxIfyiIpv6d6DnoXseZm6jZjk8=
+X-Received: by 2002:ab0:6509:: with SMTP id w9mr51611068uam.121.1578063819075;
+ Fri, 03 Jan 2020 07:03:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191229172708.658173957@linuxfoundation.org>
+References: <20191230140747.50415-1-ardb@kernel.org>
+In-Reply-To: <20191230140747.50415-1-ardb@kernel.org>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Sat, 4 Jan 2020 00:03:03 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASVcLMPVECckdeGKgtgNy=48ONUDyKcbEF6wtvzaQ+jEQ@mail.gmail.com>
+Message-ID: <CAK7LNASVcLMPVECckdeGKgtgNy=48ONUDyKcbEF6wtvzaQ+jEQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild/deb-pkg: annotate libelf-dev dependency as :native
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Riku Voipio <riku.voipio@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 29, 2019 at 06:22:39PM +0100, Greg Kroah-Hartman wrote:
-> From: Yang Yingliang <yangyingliang@huawei.com>
-> 
-> [ Upstream commit 649cd16c438f51d4cd777e71ca1f47f6e0c5e65d ]
-> 
-> If usb_set_interface() failed, iface->cur_altsetting will
-> not be assigned and it will be used in flexcop_usb_transfer_init()
-> It may lead a NULL pointer dereference.
-> 
-> Check usb_set_interface() return value in flexcop_usb_init()
-> and return failed to avoid using this NULL pointer.
-> 
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-> Signed-off-by: Sean Young <sean@mess.org>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+On Mon, Dec 30, 2019 at 11:07 PM Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> Cross compiling the x86 kernel on a non-x86 build machine produces
+> the following error when CONFIG_UNWINDER_ORC is enabled, regardless
+> of whether libelf-dev is installed or not.
+>
+>   dpkg-checkbuilddeps: error: Unmet build dependencies: libelf-dev
+>   dpkg-buildpackage: warning: build dependencies/conflicts unsatisfied; aborting
+>   dpkg-buildpackage: warning: (Use -d flag to override.)
+>
+> Since this is a build time dependency for a build tool, we need to
+> depend on the native version of libelf-dev so add the appropriate
+> annotation.
+>
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 
-This commit is bogus and should be dropped from all stable queues.
+Applied to linux-kbuild/fixes.
+Thanks.
 
-Contrary to what the commit message claims, iface->cur_altsetting will
-never be NULL so there's no risk for a NULL-pointer dereference here.
-
-Even though the change itself is benign, we shouldn't spread this
-confusion further.
 
 > ---
->  drivers/media/usb/b2c2/flexcop-usb.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/usb/b2c2/flexcop-usb.c b/drivers/media/usb/b2c2/flexcop-usb.c
-> index 1a801dc286f8..d1331f828108 100644
-> --- a/drivers/media/usb/b2c2/flexcop-usb.c
-> +++ b/drivers/media/usb/b2c2/flexcop-usb.c
-> @@ -504,7 +504,13 @@ urb_error:
->  static int flexcop_usb_init(struct flexcop_usb *fc_usb)
->  {
->  	/* use the alternate setting with the larges buffer */
-> -	usb_set_interface(fc_usb->udev,0,1);
-> +	int ret = usb_set_interface(fc_usb->udev, 0, 1);
-> +
-> +	if (ret) {
-> +		err("set interface failed.");
-> +		return ret;
-> +	}
-> +
->  	switch (fc_usb->udev->speed) {
->  	case USB_SPEED_LOW:
->  		err("cannot handle USB speed because it is too slow.");
+>  scripts/package/mkdebian | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+> index 7c230016b08d..357dc56bcf30 100755
+> --- a/scripts/package/mkdebian
+> +++ b/scripts/package/mkdebian
+> @@ -136,7 +136,7 @@ mkdir -p debian/source/
+>  echo "1.0" > debian/source/format
+>
+>  echo $debarch > debian/arch
+> -extra_build_depends=", $(if_enabled_echo CONFIG_UNWINDER_ORC libelf-dev)"
+> +extra_build_depends=", $(if_enabled_echo CONFIG_UNWINDER_ORC libelf-dev:native)"
+>  extra_build_depends="$extra_build_depends, $(if_enabled_echo CONFIG_SYSTEM_TRUSTED_KEYRING libssl-dev:native)"
+>
+>  # Generate a simple changelog template
+> --
+> 2.20.1
+>
 
-Johan
+
+-- 
+Best Regards
+Masahiro Yamada
