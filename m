@@ -2,113 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57D1112F5E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 10:07:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E78812F5F7
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 10:13:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbgACJHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 04:07:18 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:49341 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725972AbgACJHS (ORCPT
+        id S1727448AbgACJND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 04:13:03 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:46759 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725972AbgACJND (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 04:07:18 -0500
-X-Originating-IP: 90.65.102.129
-Received: from localhost (lfbn-lyo-1-1670-129.w90-65.abo.wanadoo.fr [90.65.102.129])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 89633E000C;
-        Fri,  3 Jan 2020 09:07:04 +0000 (UTC)
-Date:   Fri, 3 Jan 2020 10:07:04 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: rawnand: atmel: switch to using
- devm_fwnode_gpiod_get()
-Message-ID: <20200103090704.GG3040@piout.net>
-References: <20200103012238.GA3648@dtor-ws>
+        Fri, 3 Jan 2020 04:13:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578042782;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Q4QuRAE7abPlfbDQQ4rJ1Q0z69yHUykaSdUazgcIaSo=;
+        b=V/unXs7KeEVqOeU0686PYkNlJZZupBvQunasn2tdLOeemlKWOzyf3C1IK/M79FfOLwCc4p
+        biKNPuGK5PsNLFcTynPGz3pPNYPaFOWAp/Yc4k+CMuXD2pO9mmJTgUpzJQsj87FGJ2O42w
+        YrKMQxUUgkIZisBsVBomC0ZbmVGbGzE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-23-4W9tKpGVNJuLj3UOv0tyZA-1; Fri, 03 Jan 2020 04:13:01 -0500
+X-MC-Unique: 4W9tKpGVNJuLj3UOv0tyZA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1E81D1800D42;
+        Fri,  3 Jan 2020 09:12:59 +0000 (UTC)
+Received: from [10.72.12.42] (ovpn-12-42.pek2.redhat.com [10.72.12.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6CE505C545;
+        Fri,  3 Jan 2020 09:12:47 +0000 (UTC)
+Subject: Re: [virtio-dev] Re: [PATCH v1 2/2] virtio-mmio: add features for
+ virtio-mmio specification version 3
+To:     "Liu, Jiang" <gerry@linux.alibaba.com>
+Cc:     "Liu, Jing2" <jing2.liu@linux.intel.com>,
+        Zha Bin <zhabin@linux.alibaba.com>,
+        linux-kernel@vger.kernel.org, mst@redhat.com, slp@redhat.com,
+        virtio-dev@lists.oasis-open.org, jing2.liu@intel.com,
+        chao.p.peng@intel.com
+References: <cover.1577240905.git.zhabin@linux.alibaba.com>
+ <a11d4c616158c9fb1ca4575ca0530b2e17b952fa.1577240905.git.zhabin@linux.alibaba.com>
+ <85eeab19-1f53-6c45-95a2-44c1cfd39184@redhat.com>
+ <28da67db-73ab-f772-fb00-5a471b746fc5@linux.intel.com>
+ <683cac51-853d-c8c8-24c6-b01886978ca4@redhat.com>
+ <42346d41-b758-967a-30b7-95aa0d383beb@linux.intel.com>
+ <0c3d33de-3940-7895-2fe2-81de8714139c@redhat.com>
+ <46806720-1D1C-40C3-BEE2-EDB0D4DA39BF@linux.alibaba.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <7e151886-408e-2c1d-3958-77c26b8a4ac0@redhat.com>
+Date:   Fri, 3 Jan 2020 17:12:38 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200103012238.GA3648@dtor-ws>
+In-Reply-To: <46806720-1D1C-40C3-BEE2-EDB0D4DA39BF@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 02/01/2020 17:22:38-0800, Dmitry Torokhov wrote:
-> devm_fwnode_get_index_gpiod_from_child() is going away as the name is
-> too unwieldy, let's switch to using the new devm_fwnode_gpiod_get().
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/mtd/nand/raw/atmel/nand-controller.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
-> index 8d6be90a6fe8a..849bd5f16492d 100644
-> --- a/drivers/mtd/nand/raw/atmel/nand-controller.c
-> +++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
-> @@ -1578,9 +1578,8 @@ static struct atmel_nand *atmel_nand_create(struct atmel_nand_controller *nc,
->  
->  	nand->numcs = numcs;
->  
-> -	gpio = devm_fwnode_get_index_gpiod_from_child(nc->dev, "det", 0,
-> -						      &np->fwnode, GPIOD_IN,
-> -						      "nand-det");
-> +	gpio = devm_fwnode_gpiod_get(nc->dev, of_fwnode_hanlde(np),
+On 2020/1/3 =E4=B8=8B=E5=8D=882:14, Liu, Jiang wrote:
+>> Ok, I get you now.
+>>
+>> But still, having fixed number of MSIs is less flexible. E.g:
+>>
+>> - for x86, processor can only deal with about 250 interrupt vectors.
+>> - driver may choose to share MSI vectors [1] (which is not merged but =
+we will for sure need it)
+> Thanks for the info:)
+> X86 systems roughly have NCPU * 200 vectors available for device interr=
+upts.
+> The proposed patch tries to map multiple event sources to an interrupt =
+vector, to avoid running out of x86 CPU vectors.
+> Many virtio mmio devices may have several or tens of event sources, and=
+ it=E2=80=99s rare to have hundreds of event sources.
+> So could we treat the dynamic mapping between event sources and interru=
+pt vectors as an advanced optional feature?
+>
 
-Shouldn't that be of_fwnode_handle(np)?
+Maybe, but I still prefer to implement it if it is not too complex.=20
+Let's see Michael's opinion on this.
 
-> +				     "det", GPIOD_IN, "nand-det");
->  	if (IS_ERR(gpio) && PTR_ERR(gpio) != -ENOENT) {
->  		dev_err(nc->dev,
->  			"Failed to get detect gpio (err = %ld)\n",
-> @@ -1624,9 +1623,10 @@ static struct atmel_nand *atmel_nand_create(struct atmel_nand_controller *nc,
->  			nand->cs[i].rb.type = ATMEL_NAND_NATIVE_RB;
->  			nand->cs[i].rb.id = val;
->  		} else {
-> -			gpio = devm_fwnode_get_index_gpiod_from_child(nc->dev,
-> -							"rb", i, &np->fwnode,
-> -							GPIOD_IN, "nand-rb");
-> +			gpio = devm_fwnode_gpiod_get_index(nc->dev,
-> +							   of_fwnode_handle(np),
-> +							   "rb", i, GPIOD_IN,
-> +							   "nand-rb");
->  			if (IS_ERR(gpio) && PTR_ERR(gpio) != -ENOENT) {
->  				dev_err(nc->dev,
->  					"Failed to get R/B gpio (err = %ld)\n",
-> @@ -1640,10 +1640,10 @@ static struct atmel_nand *atmel_nand_create(struct atmel_nand_controller *nc,
->  			}
->  		}
->  
-> -		gpio = devm_fwnode_get_index_gpiod_from_child(nc->dev, "cs",
-> -							      i, &np->fwnode,
-> -							      GPIOD_OUT_HIGH,
-> -							      "nand-cs");
-> +		gpio = devm_fwnode_gpiod_get_index(nc->dev,
-> +						   of_fwnode_handle(np),
-> +						   "cs", i, GPIOD_OUT_HIGH,
-> +						   "nand-cs");
->  		if (IS_ERR(gpio) && PTR_ERR(gpio) != -ENOENT) {
->  			dev_err(nc->dev,
->  				"Failed to get CS gpio (err = %ld)\n",
-> -- 
-> 2.24.1.735.g03f4e72817-goog
-> 
-> 
-> -- 
-> Dmitry
+Thanks
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
