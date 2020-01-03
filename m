@@ -2,98 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F11E12FB5D
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 18:13:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F7E112FB3A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 18:12:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbgACRNO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 12:13:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48982 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728357AbgACRNG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 12:13:06 -0500
-Received: from localhost.localdomain (unknown [194.230.155.149])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC3AA215A4;
-        Fri,  3 Jan 2020 17:13:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578071585;
-        bh=fPm5Yby+y1HvlcMvlRngQAQVaF5ytWsyr2iFrW2UnT4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nfU9D4Xqx4lG34UMVnNZSfUw6Ch56xCx/oZWiTm4y2AnbXl0SuB7flfJHj1RV9yKD
-         +vAI0BN/BgtI9wncq/ea2fc3NJ6Ol6nFpOPt2mWtzp8AM4dxk29DLWEohMgdWWUk2n
-         LcgyTE7qH6pAK7oYvUOlSI7+4SJwM+a/Kv+aOi/k=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 19/19] regulator: samsung: Rename Samsung to lowercase
-Date:   Fri,  3 Jan 2020 18:11:31 +0100
-Message-Id: <20200103171131.9900-20-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200103171131.9900-1-krzk@kernel.org>
-References: <20200103171131.9900-1-krzk@kernel.org>
+        id S1728223AbgACRMS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 12:12:18 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:52412 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728207AbgACRMP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 12:12:15 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id D641E1C2461; Fri,  3 Jan 2020 18:12:13 +0100 (CET)
+Date:   Fri, 3 Jan 2020 18:12:13 +0100
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 062/114] f2fs: choose hardlimit when softlimit is
+ larger than hardlimit in f2fs_statfs_project()
+Message-ID: <20200103171213.GC14328@amd>
+References: <20200102220029.183913184@linuxfoundation.org>
+ <20200102220035.294585461@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="TiqCXmo5T1hvSQQg"
+Content-Disposition: inline
+In-Reply-To: <20200102220035.294585461@linuxfoundation.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix up inconsistent usage of upper and lowercase letters in "Samsung"
-name.
 
-"SAMSUNG" is not an abbreviation but a regular trademarked name.
-Therefore it should be written with lowercase letters starting with
-capital letter.
+--TiqCXmo5T1hvSQQg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Although advertisement materials usually use uppercase "SAMSUNG", the
-lowercase version is used in all legal aspects (e.g. on Wikipedia and in
-privacy/legal statements on
-https://www.samsung.com/semiconductor/privacy-global/).
+Hi!
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/regulator/s2mpa01.c | 2 +-
- drivers/regulator/s2mps11.c | 2 +-
- drivers/regulator/s5m8767.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+> From: Chengguang Xu <cgxu519@mykernel.net>
+>=20
+> [ Upstream commit 909110c060f22e65756659ec6fa957ae75777e00 ]
+>=20
+> Setting softlimit larger than hardlimit seems meaningless
+> for disk quota but currently it is allowed. In this case,
+> there may be a bit of comfusion for users when they run
+> df comamnd to directory which has project quota.
+>=20
+> For example, we set 20M softlimit and 10M hardlimit of
+> block usage limit for project quota of test_dir(project id 123).
 
-diff --git a/drivers/regulator/s2mpa01.c b/drivers/regulator/s2mpa01.c
-index 51f7e8b74d8c..115f59530852 100644
---- a/drivers/regulator/s2mpa01.c
-+++ b/drivers/regulator/s2mpa01.c
-@@ -390,5 +390,5 @@ module_platform_driver(s2mpa01_pmic_driver);
- /* Module information */
- MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
- MODULE_AUTHOR("Sachin Kamat <sachin.kamat@samsung.com>");
--MODULE_DESCRIPTION("SAMSUNG S2MPA01 Regulator Driver");
-+MODULE_DESCRIPTION("Samsung S2MPA01 Regulator Driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 4f2dc5ebffdc..23d288278957 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -1265,5 +1265,5 @@ module_platform_driver(s2mps11_pmic_driver);
- 
- /* Module information */
- MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
--MODULE_DESCRIPTION("SAMSUNG S2MPS11/S2MPS14/S2MPS15/S2MPU02 Regulator Driver");
-+MODULE_DESCRIPTION("Samsung S2MPS11/S2MPS14/S2MPS15/S2MPU02 Regulator Driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index 12d6b8d2e97e..4abd3ed31f60 100644
---- a/drivers/regulator/s5m8767.c
-+++ b/drivers/regulator/s5m8767.c
-@@ -1015,5 +1015,5 @@ module_exit(s5m8767_pmic_exit);
- 
- /* Module information */
- MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
--MODULE_DESCRIPTION("SAMSUNG S5M8767 Regulator Driver");
-+MODULE_DESCRIPTION("Samsung S5M8767 Regulator Driver");
- MODULE_LICENSE("GPL");
--- 
-2.17.1
+> Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  fs/f2fs/super.c | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 7a9cc64f5ca3..662c7de58b99 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1148,9 +1148,13 @@ static int f2fs_statfs_project(struct super_block =
+*sb,
+>  		return PTR_ERR(dquot);
+>  	spin_lock(&dquot->dq_dqb_lock);
+> =20
+> -	limit =3D (dquot->dq_dqb.dqb_bsoftlimit ?
+> -		 dquot->dq_dqb.dqb_bsoftlimit :
+> -		 dquot->dq_dqb.dqb_bhardlimit) >> sb->s_blocksize_bits;
+> +	limit =3D 0;
+> +	if (dquot->dq_dqb.dqb_bsoftlimit)
+> +		limit =3D dquot->dq_dqb.dqb_bsoftlimit;
+> +	if (dquot->dq_dqb.dqb_bhardlimit &&
+> +			(!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
+> +		limit =3D dquot->dq_dqb.dqb_bhardlimit;
+> +
+>  	if (limit && buf->f_blocks > limit) {
 
+>> blocksize disappeared here. That can't be right.
+
+Plus, is this just obfuscated way of saying
+
+limit =3D min_not_zero(dquot->dq_dqb.dqb_bsoftlimit, dquot->dq_dqb.dqb_bhar=
+dlimit)?
+
+Best regards,
+								Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--TiqCXmo5T1hvSQQg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl4Pde0ACgkQMOfwapXb+vLqwgCfQB23lTPPylgzByCY4o28WHli
+ZSEAmwVz9M718u4eqzta/6qKREiJLCk4
+=iDPi
+-----END PGP SIGNATURE-----
+
+--TiqCXmo5T1hvSQQg--
