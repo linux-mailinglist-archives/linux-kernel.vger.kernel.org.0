@@ -2,98 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD98512F26F
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 02:03:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4846612F2A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 02:12:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbgACBDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 20:03:31 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41042 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727247AbgACBD1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 20:03:27 -0500
-Received: by mail-pl1-f195.google.com with SMTP id bd4so18456913plb.8;
-        Thu, 02 Jan 2020 17:03:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=8raNKHHqbrLxNNM2oLUriEG3Gl922A0KHZoXKNxlPCI=;
-        b=TP7f+WuyusDO5KHLNPuGWx6H3bszUBiGq90mxk2AgHj678yUim/ZXQH463JzSP4xzo
-         BXz0uu5779J3W5cTqrnT06J2jUNDYHy5d8rKpKqqa0aMnDjc0udgiDTQtHgB65QHh79D
-         y0dJgsKCDWbD7i6rFR/a2eon5LTYhoTfFnkX8kvGUtN/JST9NN5UB5Y9nd0f+Dst+HTs
-         DR996gTQuGpc5OrtSkt69CzyCSk5YBKDRzryroH1q3hpqJdvVTCfru7RXdTFyi8CItOa
-         hl7SztjzKBMCsgy3vlDReKvg/im0CORRpXghS9K1UWDeH7NvQxJUZV8lgfHQ4OLAo6G4
-         o6mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8raNKHHqbrLxNNM2oLUriEG3Gl922A0KHZoXKNxlPCI=;
-        b=uNgR9ebRCbKSXEYi17M4MzPmUNaZkfGBiA2py5/4vML0FY2TvregE12cpL6iWnRzjm
-         1RPeMQBj5wC+NDUf8zkcMUIjQhHfZFEPZnGSWqoMYEbfVU2EnY5fcszCrIVcxjq7w4Hf
-         /m5pcl3OhbBThUIktrxkoa8m+qlepFVKTfLT60+ZTbD26phMdvrxBDrJxtQb9iOhDHtm
-         yU4JWI/EdNp2rpQHWcKSMRGSdXkavAsijd9Fd1zQ8PgGyDIJpmCayUY7krRpvaD9CgYL
-         VewFk5XGr/2BUMv1Wpqvp99Tko4zVuiVn5y9pt/5O0d6WjE0RySHgw+L74laJKnTimfB
-         xalw==
-X-Gm-Message-State: APjAAAVH4cF8iKR622tzUVYlMEwCfuPVxuO5iA/Cg1lLyZeMYNiVnQFY
-        wXljpYriqLxzC5C5Gg4Ii1E=
-X-Google-Smtp-Source: APXvYqzJg+fdvX7+CUg9oCAaw20MjnnG5esX+Zoed2hNj2yclmwVSoPYOJhd0NjvkkqYV9bexx/wDg==
-X-Received: by 2002:a17:902:7602:: with SMTP id k2mr6880556pll.34.1578013406356;
-        Thu, 02 Jan 2020 17:03:26 -0800 (PST)
-Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id 5sm12780784pjt.28.2020.01.02.17.03.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 17:03:25 -0800 (PST)
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     "David S . Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH v3 3/3] net: phy: fixed_phy: switch to using fwnode_gpiod_get_index
-Date:   Thu,  2 Jan 2020 17:03:20 -0800
-Message-Id: <20200103010320.245675-4-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
-In-Reply-To: <20200103010320.245675-1-dmitry.torokhov@gmail.com>
-References: <20200103010320.245675-1-dmitry.torokhov@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727265AbgACBMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 20:12:19 -0500
+Received: from mga06.intel.com ([134.134.136.31]:48945 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725872AbgACBMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 20:12:18 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2020 17:12:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,388,1571727600"; 
+   d="scan'208";a="221511534"
+Received: from joy-optiplex-7040.sh.intel.com ([10.239.13.9])
+  by orsmga006.jf.intel.com with ESMTP; 02 Jan 2020 17:12:16 -0800
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     zhenyuw@linux.intel.com
+Cc:     alex.williamson@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, intel-gvt@eclists.intel.com,
+        pbonzini@redhat.com, kevin.tian@intel.com,
+        Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH 2/2] drm/i915/gvt: subsitute kvm_read/write_guest with vfio_iova_rw
+Date:   Thu,  2 Jan 2020 20:03:49 -0500
+Message-Id: <20200103010349.4262-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200103010055.4140-1-yan.y.zhao@intel.com>
+References: <20200103010055.4140-1-yan.y.zhao@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gpiod_get_from_of_node() is being retired in favor of
-[devm_]fwnode_gpiod_get_index(), that behaves similar to
-[devm_]gpiod_get_index(), but can work with arbitrary firmware node. It
-will also be able to support secondary software nodes.
+As a device model, it is better to read/write guest memory using vfio
+interface, so that vfio is able to maintain dirty info of device IOVAs.
 
-Let's switch this driver over.
+Compared to CPU side interfaces kvm_read/write_guest(), vfio_iova_rw()
+has ~600 cycles more overhead on average.
+-------------------------------------
+|    interface     | avg cpu cycles |
+|-----------------------------------|
+| kvm_write_guest  |     1546       |
+| ----------------------------------|
+| kvm_read_guest   |     686        |
+|-----------------------------------|
+| vfio_iova_rw(w)  |     2233       |
+|-----------------------------------|
+| vfio_iova_rw(r)  |     1262       |
+-------------------------------------
 
-Acked-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Comparison of benchmarks scores are as blow:
+---------------------------------------------------------
+|  avg score  | kvm_read/write_guest   | vfio_iova_rw   |
+---------------------------------------------------------
+|   Glmark2   |         1132           |      1138.2    |
+---------------------------------------------------------
+|  Lightsmark |        61.558          |      61.538    |
+|--------------------------------------------------------
+|  OpenArena  |        142.77          |      136.6     |
+---------------------------------------------------------
+|   Heaven    |         698            |      686.8     |
+--------------------------------------------------------
+No obvious performance downgrade found.
 
+Cc: Kevin Tian <kevin.tian@intel.com>
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
 ---
+ drivers/gpu/drm/i915/gvt/kvmgt.c | 26 +++++++-------------------
+ 1 file changed, 7 insertions(+), 19 deletions(-)
 
- drivers/net/phy/fixed_phy.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/phy/fixed_phy.c b/drivers/net/phy/fixed_phy.c
-index 4190f9ed5313d..73a72ff0fb16b 100644
---- a/drivers/net/phy/fixed_phy.c
-+++ b/drivers/net/phy/fixed_phy.c
-@@ -210,8 +210,8 @@ static struct gpio_desc *fixed_phy_get_gpiod(struct device_node *np)
- 	 * Linux device associated with it, we simply have obtain
- 	 * the GPIO descriptor from the device tree like this.
- 	 */
--	gpiod = gpiod_get_from_of_node(fixed_link_node, "link-gpios", 0,
--				       GPIOD_IN, "mdio");
-+	gpiod = fwnode_gpiod_get_index(of_fwnode_handle(fixed_link_node),
-+				       "link", 0, GPIOD_IN, "mdio");
- 	if (IS_ERR(gpiod) && PTR_ERR(gpiod) != -EPROBE_DEFER) {
- 		if (PTR_ERR(gpiod) != -ENOENT)
- 			pr_err("error getting GPIO for fixed link %pOF, proceed without\n",
+diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/kvmgt.c
+index bd79a9718cc7..576b05db3998 100644
+--- a/drivers/gpu/drm/i915/gvt/kvmgt.c
++++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
+@@ -1966,31 +1966,19 @@ static int kvmgt_rw_gpa(unsigned long handle, unsigned long gpa,
+ 			void *buf, unsigned long len, bool write)
+ {
+ 	struct kvmgt_guest_info *info;
+-	struct kvm *kvm;
+-	int idx, ret;
+-	bool kthread = current->mm == NULL;
++	int ret;
++	struct intel_vgpu *vgpu;
++	struct device *dev;
+ 
+ 	if (!handle_valid(handle))
+ 		return -ESRCH;
+ 
+ 	info = (struct kvmgt_guest_info *)handle;
+-	kvm = info->kvm;
+-
+-	if (kthread) {
+-		if (!mmget_not_zero(kvm->mm))
+-			return -EFAULT;
+-		use_mm(kvm->mm);
+-	}
+-
+-	idx = srcu_read_lock(&kvm->srcu);
+-	ret = write ? kvm_write_guest(kvm, gpa, buf, len) :
+-		      kvm_read_guest(kvm, gpa, buf, len);
+-	srcu_read_unlock(&kvm->srcu, idx);
++	vgpu = info->vgpu;
++	dev = mdev_dev(vgpu->vdev.mdev);
+ 
+-	if (kthread) {
+-		unuse_mm(kvm->mm);
+-		mmput(kvm->mm);
+-	}
++	ret = write ? vfio_iova_rw(dev, gpa, buf, len, true) :
++			vfio_iova_rw(dev, gpa, buf, len, false);
+ 
+ 	return ret;
+ }
 -- 
-2.24.1.735.g03f4e72817-goog
+2.17.1
 
