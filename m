@@ -2,73 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45B5C12F33C
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 04:10:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7FDA12F355
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 04:14:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbgACDJ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 22:09:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57314 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726481AbgACDJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 22:09:57 -0500
-Received: from rorschach.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CAA621D7D;
-        Fri,  3 Jan 2020 03:09:56 +0000 (UTC)
-Date:   Thu, 2 Jan 2020 22:09:55 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>, kbuild-all@lists.01.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] tracing: Have stack tracer compile when MCOUNT_INSN_SIZE is
- not defined
-Message-ID: <20200102220955.05975d6e@rorschach.local.home>
-In-Reply-To: <20200102220754.5dc61fcc@rorschach.local.home>
-References: <202001020219.zvE3vsty%lkp@intel.com>
-        <20200102220754.5dc61fcc@rorschach.local.home>
-X-Mailer: Claws Mail 3.17.4git76 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727486AbgACDMv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 22:12:51 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:17761 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727225AbgACDMm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 22:12:42 -0500
+X-UUID: 482bc68ae7d34efa9f2bcae5fa403352-20200103
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=Y87Ghi2q7lqLcNdble/73yvTJNLbvfLPEvasR6g7eVc=;
+        b=EW8Rl9vk/EApmqzpqI3onAZp9idC8+8Zw9KY9QUlNY9Jvv6FbxhmcZSxVoPHvddObjEBEg2bwQDfAUpIApmpf5uRrUVwigDT+hXgBqfSLUYgUKSrmkFYZhZWx/aUCWSlTWptciGtZVJO+YIQzRISCoGZVJt3Oy6BhEXvNjk+L5A=;
+X-UUID: 482bc68ae7d34efa9f2bcae5fa403352-20200103
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <yongqiang.niu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 863220953; Fri, 03 Jan 2020 11:12:37 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 3 Jan 2020 11:12:10 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 3 Jan 2020 11:13:03 +0800
+From:   Yongqiang Niu <yongqiang.niu@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yongqiang Niu <yongqiang.niu@mediatek.com>
+Subject: [RESEND PATCH v6 00/17] add drm support for MT8183
+Date:   Fri, 3 Jan 2020 11:12:11 +0800
+Message-ID: <1578021148-32413-1-git-send-email-yongqiang.niu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-
-On some archs with some configurations, MCOUNT_INSN_SIZE is not defined, and
-this makes the stack tracer fail to compile. Just define it to zero in this
-case.
-
-Link: https://lore.kernel.org/r/202001020219.zvE3vsty%lkp@intel.com
-
-Cc: stable@vger.kernel.org
-Fixes: 4df297129f622 ("tracing: Remove most or all of stack tracer stack size from stack_max_size")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace_stack.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
-index 4df9a209f7ca..c557f42a9397 100644
---- a/kernel/trace/trace_stack.c
-+++ b/kernel/trace/trace_stack.c
-@@ -283,6 +283,11 @@ static void check_stack(unsigned long ip, unsigned long *stack)
- 	local_irq_restore(flags);
- }
- 
-+/* Some archs may not define MCOUNT_INSN_SIZE */
-+#ifndef MCOUNT_INSN_SIZE
-+# define MCOUNT_INSN_SIZE 0
-+#endif
-+
- static void
- stack_trace_call(unsigned long ip, unsigned long parent_ip,
- 		 struct ftrace_ops *op, struct pt_regs *pt_regs)
--- 
-2.20.1
+VGhpcyBzZXJpZXMgYXJlIGJhc2VkIG9uIDUuNS1yYzEgYW5kIHByb3ZpZCAxNyBwYXRjaA0KdG8g
+c3VwcG9ydCBtZWRpYXRlayBTT0MgTVQ4MTgzDQoNCkNoYW5nZSBzaW5jZSB2NQ0KLSBmaXggcmV2
+aWV3ZWQgaXNzdWUgaW4gdjUNCmJhc2UgaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wcm9q
+ZWN0L2xpbnV4LW1lZGlhdGVrL2xpc3QvP3Nlcmllcz0yMTMyMTkNCg0KQ2hhbmdlIHNpbmNlIHY0
+DQotIGZpeCByZXZpZXdlZCBpc3N1ZSBpbiB2NA0KDQpDaGFuZ2Ugc2luY2UgdjMNCi0gZml4IHJl
+dmlld2VkIGlzc3VlIGluIHYzDQotIGZpeCB0eXBlIGVycm9yIGluIHYzDQotIGZpeCBjb25mbGlj
+dCB3aXRoIGlvbW11IHBhdGNoDQoNCkNoYW5nZSBzaW5jZSB2Mg0KLSBmaXggcmV2aWV3ZWQgaXNz
+dWUgaW4gdjINCi0gYWRkIG11dGV4IG5vZGUgaW50byBkdHMgZmlsZQ0KDQpDaGFuZ2VzIHNpbmNl
+IHYxOg0KLSBmaXggcmV2aWV3ZWQgaXNzdWUgaW4gdjENCi0gYWRkIGR0cyBmb3IgbXQ4MTgzIGRp
+c3BsYXkgbm9kZXMNCi0gYWRqdXN0IGRpc3BsYXkgY2xvY2sgY29udHJvbCBmbG93IGluIHBhdGNo
+IDIyDQotIGFkZCB2bWFwIHN1cHBvcnQgZm9yIG1lZGlhdGVrIGRybSBpbiBwYXRjaCAyMw0KLSBm
+aXggcGFnZSBvZmZzZXQgaXNzdWUgZm9yIG1tYXAgZnVuY3Rpb24gaW4gcGF0Y2ggMjQNCi0gZW5h
+YmxlIGFsbG93X2ZiX21vZGlmaWVycyBmb3IgbWVkaWF0ZWsgZHJtIGluIHBhdGNoIDI1DQoNCllv
+bmdxaWFuZyBOaXUgKDE3KToNCiAgZHQtYmluZGluZ3M6IG1lZGlhdGVrOiBhZGQgcmRtYV9maWZv
+X3NpemUgZGVzY3JpcHRpb24gZm9yIG10ODE4Mw0KICAgIGRpc3BsYXkNCiAgYXJtNjQ6IGR0czog
+YWRkIGRpc3BsYXkgbm9kZXMgZm9yIG10ODE4Mw0KICBkcm0vbWVkaWF0ZWs6IG1vdmUgZHNpL2Rw
+aSBzZWxlY3QgaW5wdXQgaW50byBtdGtfZGRwX3NlbF9pbg0KICBkcm0vbWVkaWF0ZWs6IG1ha2Ug
+c291dCBzZWxlY3QgZnVuY3Rpb24gZm9ybWF0IHNhbWUgd2l0aCBzZWxlY3QgaW5wdXQNCiAgZHJt
+L21lZGlhdGVrOiBhZGQgbW1zeXMgcHJpdmF0ZSBkYXRhIGZvciBkZHAgcGF0aCBjb25maWcNCiAg
+ZHJtL21lZGlhdGVrOiBhZGQgcHJpdmF0ZSBkYXRhIGZvciByZG1hMSB0byBkcGkwIGNvbm5lY3Rp
+b24NCiAgZHJtL21lZGlhdGVrOiBhZGQgcHJpdmF0ZSBkYXRhIGZvciByZG1hMSB0byBkc2kwIGNv
+bm5lY3Rpb24NCiAgZHJtL21lZGlhdGVrOiBtb3ZlIHJkbWEgc291dCBmcm9tIG10a19kZHBfbW91
+dF9lbiBpbnRvDQogICAgbXRrX2RkcF9zb3V0X3NlbA0KICBkcm0vbWVkaWF0ZWs6IGFkZCBjb25u
+ZWN0aW9uIGZyb20gT1ZMMCB0byBPVkxfMkwwDQogIGRybS9tZWRpYXRlazogYWRkIGNvbm5lY3Rp
+b24gZnJvbSBSRE1BMCB0byBDT0xPUjANCiAgZHJtL21lZGlhdGVrOiBhZGQgY29ubmVjdGlvbiBm
+cm9tIFJETUExIHRvIERTSTANCiAgZHJtL21lZGlhdGVrOiBhZGQgY29ubmVjdGlvbiBmcm9tIE9W
+TF8yTDAgdG8gUkRNQTANCiAgZHJtL21lZGlhdGVrOiBhZGQgY29ubmVjdGlvbiBmcm9tIE9WTF8y
+TDEgdG8gUkRNQTENCiAgZHJtL21lZGlhdGVrOiBhZGQgY29ubmVjdGlvbiBmcm9tIERJVEhFUjAg
+dG8gRFNJMA0KICBkcm0vbWVkaWF0ZWs6IGFkZCBjb25uZWN0aW9uIGZyb20gUkRNQTAgdG8gRFNJ
+MA0KICBkcm0vbWVkaWF0ZWs6IGFkZCBmaWZvX3NpemUgaW50byByZG1hIHByaXZhdGUgZGF0YQ0K
+ICBkcm0vbWVkaWF0ZWs6IGFkZCBzdXBwb3J0IGZvciBtZWRpYXRlayBTT0MgTVQ4MTgzDQoNCiAu
+Li4vYmluZGluZ3MvZGlzcGxheS9tZWRpYXRlay9tZWRpYXRlayxkaXNwLnR4dCAgICB8ICAxMyAr
+DQogYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9tdDgxODMuZHRzaSAgICAgICAgICAgfCAg
+OTggKysrKysrKw0KIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZGlzcF9vdmwuYyAgICAg
+ICAgICAgIHwgIDE4ICsrDQogZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kaXNwX3JkbWEu
+YyAgICAgICAgICAgfCAgMjUgKy0NCiBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9j
+cnRjLmMgICAgICAgICAgICB8ICAgNCArDQogZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19k
+cm1fZGRwLmMgICAgICAgICAgICAgfCAyODggKysrKysrKysrKysrKysrKy0tLS0tDQogZHJpdmVy
+cy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZGRwLmggICAgICAgICAgICAgfCAgIDcgKw0KIGRy
+aXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2Rydi5jICAgICAgICAgICAgIHwgIDQ5ICsr
+KysNCiBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kcnYuaCAgICAgICAgICAgICB8
+ICAgMyArDQogOSBmaWxlcyBjaGFuZ2VkLCA0MzUgaW5zZXJ0aW9ucygrKSwgNzAgZGVsZXRpb25z
+KC0pDQoNCi0tIA0KMS44LjEuMS5kaXJ0eQ0K
 
