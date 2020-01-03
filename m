@@ -2,60 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5321B12FAC9
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 17:48:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3971D12FAD3
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 17:52:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbgACQsc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 11:48:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35078 "EHLO mail.kernel.org"
+        id S1728085AbgACQwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 11:52:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727912AbgACQsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 11:48:31 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727912AbgACQwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 11:52:16 -0500
+Received: from localhost.localdomain (unknown [194.230.155.149])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 214C62072C;
-        Fri,  3 Jan 2020 16:48:30 +0000 (UTC)
-Date:   Fri, 3 Jan 2020 11:48:28 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Frank A. Cancio Bello" <frank@generalsoftwareinc.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        joel@joelfernandes.org, saiprakash.ranjan@codeaurora.org,
-        nachukannan@gmail.com, rdunlap@infradead.org
-Subject: Re: [PATCH v3 0/3] docs: ftrace: Fix minor issues in the doc
-Message-ID: <20200103114828.15581051@gandalf.local.home>
-In-Reply-To: <cover.1577231751.git.frank@generalsoftwareinc.com>
-References: <cover.1577231751.git.frank@generalsoftwareinc.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mail.kernel.org (Postfix) with ESMTPSA id 2449921734;
+        Fri,  3 Jan 2020 16:52:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578070335;
+        bh=GNr6Irv4ZHYaD0lADq4BHgVbO6AWrFxItDdiA1EIOyQ=;
+        h=From:To:Subject:Date:From;
+        b=hIYXmzwQSe0GJcYL5eJfh7B+W5SoNxd3n78lFtGRppNmkQbh4juqaawFJCNwACN31
+         cqU8MaAIJvTtaEzbAvzIQ6RU+/dc0Z2tid7Fy0xzv5CsXtW5tU8uCD5Q9inVGV2MFc
+         5B5nFs7Ges1vAFv5GQmDBQp8OMxXy2Ohp8MHRZic=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: exynos: Correct the help text for platform Kconfig option
+Date:   Fri,  3 Jan 2020 17:52:08 +0100
+Message-Id: <20200103165208.8287-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Dec 2019 19:05:38 -0500
-"Frank A. Cancio Bello" <frank@generalsoftwareinc.com> wrote:
+ARCH_EXYNOS option is used for entire ARMv7 Exynos family, including
+also Exynos3 SoCs.
 
-> I didn't want to be pushy with these minor fixes but occur to me
-> now that, even all seem to be clear in the latest version of the
-> RFC (v2) related to these fixes, a clean patchset could be expected
-> after such RFC. So here we go:
-> 
-> Clarifies the RAM footprint of buffer_size_kb without getting into
-> implementation details.
-> 
-> Fix typos and a small notation mistakes in the doc.
-> 
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/mach-exynos/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jon,
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 4ef56571145b..9fb045ab80e4 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -41,7 +41,7 @@ menuconfig ARCH_EXYNOS
+ 	select POWER_RESET_SYSCON
+ 	select POWER_RESET_SYSCON_POWEROFF
+ 	help
+-	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
++	  Support for SAMSUNG EXYNOS SoCs
+ 
+ if ARCH_EXYNOS
+ 
+-- 
+2.17.1
 
-Can you take these in your tree?
-
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-Thanks!
-
--- Steve
