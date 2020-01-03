@@ -2,82 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCA5212FEE0
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 23:34:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93E3412FEE5
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 23:34:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728956AbgACWe2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 17:34:28 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:38581 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728822AbgACWe0 (ORCPT
+        id S1728978AbgACWem (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 17:34:42 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:45757 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728893AbgACWel (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 17:34:26 -0500
-Received: by mail-il1-f194.google.com with SMTP id f5so37864726ilq.5
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 14:34:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z/2Xg5vRSUumZDtJtIhcj+vGbHinC6E/xmYbVuQQYS8=;
-        b=XdJmHwE8y4tkW7ZKGWTJPH6oiCnglQd4vpL0q+95lsbiywtDb680ad0Zt0h+1PUhIh
-         7+p06unspDXjUsxAGyPJQfn7P17xdXEE7OdkElzBDlsYUwPR+VSYs+lT/z2VYyx9NV73
-         kub7kxFzqc1JVqSqkE6JR/1J/wKz5kblGxoUEo/wtD8u0fQ2QDumwk/k8whezq6V7H2y
-         53klTUXxi0cnBd7Z+0sbX++K2BFgTpJqy+qnnzx0cZgy/rug0n4BNG9F/AKLrWWj18LL
-         QhXpP1bDxhbC6r5chJXbGbaI/JwhVs8ckxkotu3f0jnKbca62qdS+RvaEq8ob9MFjOvz
-         6vQQ==
-X-Gm-Message-State: APjAAAWKzG6JP7QMM1LvbFqViYmBI+iZdPrhY3rIGm90I28hhy6wUphC
-        OHOkMXE/v0npLnVOEaeywLaHBY8=
-X-Google-Smtp-Source: APXvYqypK7wvm14nkKJJOjUZzMLRPz9r9VMYT38ESVlendS9DNss2qQCRU52xs/TlO+s892OGMyGAA==
-X-Received: by 2002:a92:5d88:: with SMTP id e8mr78850910ilg.106.1578090865154;
-        Fri, 03 Jan 2020 14:34:25 -0800 (PST)
-Received: from rob-hp-laptop ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id a7sm15185879iod.61.2020.01.03.14.34.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jan 2020 14:34:23 -0800 (PST)
-Received: from rob (uid 1000)
-        (envelope-from rob@rob-hp-laptop)
-        id 2219a5
-        by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Fri, 03 Jan 2020 15:34:21 -0700
-Date:   Fri, 3 Jan 2020 15:34:21 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Swapnil Kashinath Jakhade <sjakhade@cadence.com>,
-        Roger Quadros <rogerq@ti.com>, Jyri Sarha <jsarha@ti.com>,
-        devicetree@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 13/14] dt-bindings: phy: Document WIZ (SERDES wrapper)
- bindings
-Message-ID: <20200103223421.GA9017@bogus>
-References: <20191216095712.13266-14-kishon@ti.com>
- <20200102095631.1165-1-kishon@ti.com>
+        Fri, 3 Jan 2020 17:34:41 -0500
+Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 5B7A82327F;
+        Fri,  3 Jan 2020 23:34:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1578090879;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=01RuAxwe3663Q4eSX/Px6cjA8DpVjY+TfHu2kXzGS7U=;
+        b=FV0eSLAcl2goPF84r301xkwIpB05R2H5q7c7hQuIiHjBjXRLgPAR2JbxpAUdqztPbsgJQ8
+        +rWzq8yBiETdPX7R5Yr29Vg/BP4MchoPLCJ1v4GpBXy+P5PlHDmg4eNY5Ns/nRvnMV2aFn
+        qNcO1JtFAO41nu119q5TE9bAwCnPedc=
+From:   Michael Walle <michael@walle.cc>
+To:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Michael Walle <michael@walle.cc>
+Subject: [PATCH] mtd: spi-nor: Add support for w25qNNjwim
+Date:   Fri,  3 Jan 2020 23:34:23 +0100
+Message-Id: <20200103223423.14025-1-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200102095631.1165-1-kishon@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: ++++
+X-Spam-Level: ****
+X-Rspamd-Server: web
+X-Spam-Status: No, score=4.90
+X-Spam-Score: 4.90
+X-Rspamd-Queue-Id: 5B7A82327F
+X-Spamd-Result: default: False [4.90 / 15.00];
+         ARC_NA(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         R_MISSING_CHARSET(2.50)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         BROKEN_CONTENT_TYPE(1.50)[];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[7];
+         MID_CONTAINS_FROM(1.00)[];
+         NEURAL_HAM(-0.00)[-0.833];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         ASN(0.00)[asn:31334, ipnet:2a02:810c::/31, country:DE]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2 Jan 2020 15:26:31 +0530, Kishon Vijay Abraham I wrote:
-> Add DT binding documentation for WIZ (SERDES wrapper). WIZ is *NOT* a
-> PHY but a wrapper used to configure some of the input signals to the
-> SERDES. It is used with both Sierra(16G) and Torrent(10G) serdes.
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> [jsarha@ti.com: Add separate compatible for Sierra(16G) and Torrent(10G)
->  SERDES]
-> Signed-off-by: Jyri Sarha <jsarha@ti.com>
-> ---
-> Changes from v4:
-> *) Fixed the indentation as suggested by Rob v4
-> 
->  .../bindings/phy/ti,phy-j721e-wiz.yaml        | 204 ++++++++++++++++++
->  1 file changed, 204 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
-> 
+Add support for the Winbond W25QnnJW-IM flashes. These have a
+programmable QE bit. There are also the W25QnnJW-IQ variant which shares
+the ID with the W25QnnFW parts. These have the QE bit hard strapped to
+1, thus don't support hardware write protection.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+ drivers/mtd/spi-nor/spi-nor.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index addb6319fcbb..3fa8a81bdab0 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -2627,6 +2627,11 @@ static const struct flash_info spi_nor_ids[] = {
+ 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
+ 			SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB)
+ 	},
++	{
++		"w25q16jwim", INFO(0xef8015, 0, 64 * 1024,  32,
++			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
++			SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB)
++	},
+ 	{ "w25x32", INFO(0xef3016, 0, 64 * 1024,  64, SECT_4K) },
+ 	{
+ 		"w25q16jv-im/jm", INFO(0xef7015, 0, 64 * 1024,  32,
+@@ -2647,6 +2652,11 @@ static const struct flash_info spi_nor_ids[] = {
+ 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
+ 			SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB)
+ 	},
++	{
++		"w25q32jwim", INFO(0xef8016, 0, 64 * 1024,  64,
++			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
++			SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB)
++	},
+ 	{ "w25x64", INFO(0xef3017, 0, 64 * 1024, 128, SECT_4K) },
+ 	{ "w25q64", INFO(0xef4017, 0, 64 * 1024, 128, SECT_4K) },
+ 	{
+@@ -2654,6 +2664,11 @@ static const struct flash_info spi_nor_ids[] = {
+ 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
+ 			SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB)
+ 	},
++	{
++		"w25q64jwim", INFO(0xef8017, 0, 64 * 1024, 128,
++			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
++			SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB)
++	},
+ 	{
+ 		"w25q128fw", INFO(0xef6018, 0, 64 * 1024, 256,
+ 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
+@@ -2664,6 +2679,11 @@ static const struct flash_info spi_nor_ids[] = {
+ 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
+ 			SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB)
+ 	},
++	{
++		"w25q128jwim", INFO(0xef8018, 0, 64 * 1024, 256,
++			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
++			SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB)
++	},
+ 	{ "w25q80", INFO(0xef5014, 0, 64 * 1024,  16, SECT_4K) },
+ 	{ "w25q80bl", INFO(0xef4014, 0, 64 * 1024,  16, SECT_4K) },
+ 	{ "w25q128", INFO(0xef4018, 0, 64 * 1024, 256, SECT_4K) },
+@@ -2674,6 +2694,8 @@ static const struct flash_info spi_nor_ids[] = {
+ 			     SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+ 	{ "w25q256jw", INFO(0xef6019, 0, 64 * 1024, 512,
+ 			     SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
++	{ "w25q256jwim", INFO(0xef8019, 0, 64 * 1024, 512,
++			     SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+ 	{ "w25m512jv", INFO(0xef7119, 0, 64 * 1024, 1024,
+ 			SECT_4K | SPI_NOR_QUAD_READ | SPI_NOR_DUAL_READ) },
+ 
+-- 
+2.20.1
+
