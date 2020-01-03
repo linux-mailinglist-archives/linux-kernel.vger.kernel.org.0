@@ -2,97 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41EDF12FC2A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 19:17:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 701A812FC32
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 19:19:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbgACSRF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 13:17:05 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39092 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728186AbgACSRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 13:17:04 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id A7722ACFA;
-        Fri,  3 Jan 2020 18:17:02 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 5388DE0473; Fri,  3 Jan 2020 19:17:01 +0100 (CET)
-Date:   Fri, 3 Jan 2020 19:17:01 +0100
-From:   Michal Kubecek <mkubecek@suse.cz>
-To:     netdev@vger.kernel.org
-Cc:     Andrew Lunn <andrew@lunn.ch>, Matthew Wilcox <willy@infradead.org>,
-        yu kuai <yukuai3@huawei.com>, klassert@kernel.org,
-        davem@davemloft.net, hkallweit1@gmail.com,
-        jakub.kicinski@netronome.com, hslester96@gmail.com, mst@redhat.com,
-        yang.wei9@zte.com.cn, linux-kernel@vger.kernel.org,
-        yi.zhang@huawei.com, zhengbin13@huawei.com
-Subject: Re: [PATCH] net: 3com: 3c59x: remove set but not used variable
- 'mii_reg1'
-Message-ID: <20200103181701.GB22387@unicorn.suse.cz>
-References: <20200103121907.5769-1-yukuai3@huawei.com>
- <20200103144623.GI6788@bombadil.infradead.org>
- <20200103175318.GN1397@lunn.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200103175318.GN1397@lunn.ch>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1728319AbgACSTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 13:19:23 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39552 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728186AbgACSTX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 13:19:23 -0500
+Received: by mail-pf1-f195.google.com with SMTP id q10so23861636pfs.6;
+        Fri, 03 Jan 2020 10:19:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=/bkVpKLcARihH63b9lhuj6u+KHSXhqLrTec8GSi2HiQ=;
+        b=U3aWBB0eAPUe5/1UmDixtix7tccIYAwaS17+7kxEE/IPIq1dTHL4znhs+SfRfybZ+3
+         GV3s0wALIainuvKZqN6MlT0jug76jR1lo/R4e++MEmgSTJ7qhU3VcsDC3rsB7myoGjjb
+         kWiBDQxKsYtAQGHqscCgLdcTdbGv1GSrAELRwmzyj47s9WdqcL6qOZrEcweQL/k9SCiV
+         7Lrj/y/qIqJa4XIUx+7JpEnUOXK4Hx+Pwc0qbsktlPvrETHhpFmyROOE+6juFjchrJ98
+         07kWC6B/RR0Eu4BCizRJ+ET24shStGA4Jj2yMSJ0y5nL1jUyeaI5e5FJ21AVm0+wI1h6
+         ZRLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/bkVpKLcARihH63b9lhuj6u+KHSXhqLrTec8GSi2HiQ=;
+        b=KobQPiM0EIWfpVQaaunf99tfjTiGHYXASieCxgqEXX00+qWBZKHEsaS64/ADpTtiSs
+         yi8ok/jcirkwsEJF8u8X2Uj+XrvH55Ly6N3sB7iLja8EoOqmcszpmfVp0QCmrtCUc2Bs
+         LXzTbiUjlDIie1NQtsPK0wKtmm+NtLEki9vsya5Kwv3MGeS3PSo4vWML48sCgsmbVcTi
+         RCgkTlMVB+zZd34RHw3Ca4Jg/oeKrSfkK/yBj5uQ2h1MfKcUDvq9KYmbTHvnrwhmh/R6
+         FvnuoX8XanfUw1+eUdzddTONJ1UWdFWiQytv3cxGXHBr38xg8zpm+43fsh5NNWUg5Xci
+         6oWw==
+X-Gm-Message-State: APjAAAUL285XhJTUuUxiUldv+70jQU4NdBzxAMbbS+NW/xgTVVJJSbtB
+        cXuhRF6B/4CQeK0EvpdB8SP/1/HQ2sE=
+X-Google-Smtp-Source: APXvYqwAf9b3wmXwzbSi1jvr+9Q5jQiDl+xXarqGzrWNzpwlxn5PP+a7oVWcFRe1BR53uq/8uLsjJw==
+X-Received: by 2002:aa7:9829:: with SMTP id q9mr88211919pfl.231.1578075562347;
+        Fri, 03 Jan 2020 10:19:22 -0800 (PST)
+Received: from stbsrv-and-01.and.broadcom.net ([192.19.231.250])
+        by smtp.gmail.com with ESMTPSA id j8sm41783602pfe.182.2020.01.03.10.19.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Jan 2020 10:19:21 -0800 (PST)
+From:   Al Cooper <alcooperx@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Al Cooper <alcooperx@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM BCM7XXX ARM
+        ARCHITECTURE), Srinath Mannam <srinath.mannam@broadcom.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX
+        ARM ARCHITECTURE)
+Subject: [PATCH v4 00/13] phy: usb: Updates to Broadcom STB USB PHY driver
+Date:   Fri,  3 Jan 2020 13:17:58 -0500
+Message-Id: <20200103181811.22939-1-alcooperx@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 03, 2020 at 06:53:18PM +0100, Andrew Lunn wrote:
-> On Fri, Jan 03, 2020 at 06:46:23AM -0800, Matthew Wilcox wrote:
-> > On Fri, Jan 03, 2020 at 08:19:07PM +0800, yu kuai wrote:
-> > > Fixes gcc '-Wunused-but-set-variable' warning:
-> > > 
-> > > drivers/net/ethernet/3com/3c59x.c: In function ‘vortex_up’:
-> > > drivers/net/ethernet/3com/3c59x.c:1551:9: warning: variable
-> > > ‘mii_reg1’ set but not used [-Wunused-but-set-variable]
-> > > 
-> > > It is never used, and so can be removed.
-> > ...
-> > >  	if (dev->if_port == XCVR_MII || dev->if_port == XCVR_NWAY) {
-> > > -		mii_reg1 = mdio_read(dev, vp->phys[0], MII_BMSR);
-> > >  		mii_reg5 = mdio_read(dev, vp->phys[0], MII_LPA);
-> > 
-> > I know nothing about the MII interface, but in general this is not
-> > a safe thing to do.
-> 
-> Hi Matthew
-> 
-> I fully agree about the general case. However, reading the MII_BMSR
-> should not have any side affects. It would be an odd Ethernet PHY if
-> it did.
-> 
-> But I am curious why this read is here. There is a slim change the
-> MDIO bus is broken, and this is a workaround. So it would be good if
-> somebody dug into the history and found out when this read was added
-> and if there are any comments about why it is there. Or if the usage
-> of mii_reg1 as been removed at some point, and the read was not
-> cleaned up.
+This patchset contains various updates to the Broadcom STB USB Driver.
+The updates include:
+- Add support for 7216 and 7211 Broadcom SoCs which use the new
+  Synopsys USB Controller.
+- Add support for USB Wake
+- Add various bug fixes.
 
-I tried to dig a bit and found that originally (before git), there was
-also
 
-	if (vortex_debug > 1)
-		printk(KERN_INFO "%s: MII #%d status %4.4x, link partner capability %4.4x,"
-		       " info1 %04x, setting %s-duplex.\n",
-		       dev->name, vp->phys[0],
-		       mii_reg1, mii_reg5,
-		       vp->info1, ((vp->info1 & 0x8000) || vp->full_duplex) ? "full" : "half");
+v4 - Fix mispelling, change Synopsis to Synopsys. Also add
+     "Reviewed-by: Rob Herring" to bindings patch. There are no
+     functional code changes in v4.
 
-The whole mii code in vortex_up() was removed by commit 125d5ce8a4e9
-("[PATCH] 3c59x: use mii_check_media") and later the mdio_read() calls
-were restored by commit 09ce3512dcad ("[PATCH] 3c59x: fix networking for
-10base2 NICs") with "Also brought back some mii stuff to be sure that it
-does not break something else", but without the debugging printk().
+v3 - Rebase to v5.5-rc1
 
-It's not really a proof that reading MII_BMSR was only needed for the
-log message but there is a good chance it was. I'm afraid we won't be
-able to find anyone who would be able to tell for sure after all those
-years.
+v2 - Changes based on review feedback
+   - Add vendor prefix to DT property "syscon-piarbctl"
+   - Use standard "wakeup" instead of "wake" for DT "interrupt-names"
 
-Michal
+Al Cooper (13):
+  phy: usb: EHCI DMA may lose a burst of DMA data for 7255xA0 family
+  phy: usb: Get all drivers that use USB clks using correct
+    enable/disable
+  phy: usb: Put USB phys into IDDQ on suspend to save power in S2 mode
+  phy: usb: Add "wake on" functionality
+  phy: usb: Restructure in preparation for adding 7216 USB support
+  dt-bindings: Add Broadcom STB USB PHY binding document
+  phy: usb: Add support for new Synopsys USB controller on the 7216
+  phy: usb: Add support for new Synopsys USB controller on the 7211b0
+  phy: usb: fix driver to defer on clk_get defer
+  phy: usb: PHY's MDIO registers not accessible without device installed
+  phy: usb: bdc: Fix occasional failure with BDC on 7211
+  phy: usb: USB driver is crashing during S3 resume on 7216
+  phy: usb: Add support for wake and USB low power mode for 7211 S2/S5
+
+ .../bindings/phy/brcm,brcmstb-usb-phy.txt     |  69 ++-
+ drivers/phy/broadcom/Makefile                 |   2 +-
+ .../phy/broadcom/phy-brcm-usb-init-synopsys.c | 414 ++++++++++++++++++
+ drivers/phy/broadcom/phy-brcm-usb-init.c      | 226 +++++-----
+ drivers/phy/broadcom/phy-brcm-usb-init.h      | 148 ++++++-
+ drivers/phy/broadcom/phy-brcm-usb.c           | 269 ++++++++++--
+ 6 files changed, 943 insertions(+), 185 deletions(-)
+ create mode 100644 drivers/phy/broadcom/phy-brcm-usb-init-synopsys.c
+
+-- 
+2.17.1
+
