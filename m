@@ -2,154 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E63212F974
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 16:03:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 513F612F97A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 16:05:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727824AbgACPDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 10:03:36 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33267 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727686AbgACPDf (ORCPT
+        id S1727859AbgACPF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 10:05:27 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37745 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbgACPF1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 10:03:35 -0500
-Received: by mail-lf1-f68.google.com with SMTP id n25so32064468lfl.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 07:03:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fXLuplpySrohqFP6kS7OpIEbP/zNERMePL4SR7+mMjs=;
-        b=xvXL8AjzcVepvA9glzXDHT0fioLRNmbgVkJ0/9FZHbw7TOvSZOhWG2oTR3lrLr4fFS
-         xvJvT3VjsTxoQlt2RRk8qYfOnwTXauUgzaMN6AZ8mmx6mawvrLaObvPuwQFI5cMsS52b
-         gdkmpDZoSvX7Oz/7rwqlScIm22M68k6KgpmMNjbBvP/IDpTWp5ontHVuvJsLjq2Q+vwa
-         yBmxqrzlpLByYN+vMlQtn+CadZ8L3SJZ97abkEr7kQnQxp3FTVycCcbP4yQcetMwuEoZ
-         cjJkGbcIlHNVJ9MWdhHO1pHd2ru6qzdVy2xYQsefeW+tmreZ4XW4bpOuanrf/supdelY
-         KmJQ==
+        Fri, 3 Jan 2020 10:05:27 -0500
+Received: by mail-wr1-f65.google.com with SMTP id w15so30110526wru.4;
+        Fri, 03 Jan 2020 07:05:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fXLuplpySrohqFP6kS7OpIEbP/zNERMePL4SR7+mMjs=;
-        b=BwvCnuPP7twavwR9Voff/MNMejp2QCfGNr//g92FVyVjo6A6dJMcz/MCkIgYIfbQhc
-         w2arJ/iOcjXjsnSS3DJZ+winuhJHKGprdFR0HzRwEGjIsuHJjZiSkHH+WRecumrANYQY
-         3jcKUH+OxmjSHyoCDxcKe5Agt2N8MLK0R8B0fNCrAzBuHMRaoxnDf+enqxzl11/QoxHB
-         B4ME7Fo0BkgnwkVziyvcTgFlDwnH5Wta6b0UTDJouiLqrp533LdpfPqwdGabEw1f/aGA
-         cSxAuEZML8ucpw+cXsgXqDZHOxBtmVIH0Hs9hA8qibAvKyXzT69elPGDnlUHCgRAP0k1
-         xL4g==
-X-Gm-Message-State: APjAAAW6vexQDgYiYOMrdOdXxe/V+I0JUXLzA0oppgDIRSYha7loTBxY
-        ltfr+ng7I/0ayKg/E1PLStkVZrkDqHWiKcHjMGvIhg==
-X-Google-Smtp-Source: APXvYqw4vzT9NE5JBE4750Ibpsg4DfZbpJYeAmaoiYp8s1njp31bKNa9lXROJc+TkxaJZn7Eff6d3LMnkGO/OqxXMpU=
-X-Received: by 2002:a19:784:: with SMTP id 126mr49377262lfh.191.1578063813660;
- Fri, 03 Jan 2020 07:03:33 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=X5+ayP/0hzBeWDiiokaoXUV3s80MSoMhBga4b9S7sks=;
+        b=OphOn0vxqlZHvxhxkC7gFavcg8KUzD6thbTzOhjFjaBwVoRmNB8VfO1KaKsg0+uWh+
+         eCTB8bn6Y+npzS6wYCGaH7avGMzRL6Z8oSNpa8+37wBkL1Ki8L6Vri+iwi2WOyo/akMv
+         yoxr9xRKDbeTnRvAXnejWI8qMajzpZnBwCZqk2qdxB1uIBuBf446N7e3ndG0BiWbekMj
+         GOp75VenYqte4WaHktOF38ySpwt8xWbaZ8butvV6BZisrj68WoDAzp1mwphj+rwUgwmi
+         iwm1zXUKYlE6W9BLg4YYhHGRFbC7RBy6r91fLogs9yP7sPwUf6ll13c9R+G8KyDZwhbt
+         2DpA==
+X-Gm-Message-State: APjAAAUi358JJHZqDOJgLAkj6I8kY6Zn6/RWpVESWfpzWgI70nlVDxkn
+        dWVyKre7jEh1W/kBJjBv5aM=
+X-Google-Smtp-Source: APXvYqygr/6TniLTdugF+WqW3lwlKrSR9oQWEVDaSy91cNcI3WRlF+4XJBcs5clvoogcu5G/pibIzg==
+X-Received: by 2002:adf:9144:: with SMTP id j62mr84290643wrj.168.1578063925002;
+        Fri, 03 Jan 2020 07:05:25 -0800 (PST)
+Received: from Johanness-MBP.fritz.box (ppp-46-244-218-95.dynamic.mnet-online.de. [46.244.218.95])
+        by smtp.gmail.com with ESMTPSA id e8sm60583844wrt.7.2020.01.03.07.05.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Jan 2020 07:05:24 -0800 (PST)
+Subject: Re: [PATCH v5 2/2] zonefs: Add documentation
+To:     Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Naohiro Aota <naohiro.aota@wdc.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Hannes Reinecke <hare@suse.de>
+References: <20200103023445.1352524-1-damien.lemoal@wdc.com>
+ <20200103023445.1352524-3-damien.lemoal@wdc.com>
+From:   Johannes Thumshirn <jth@kernel.org>
+Message-ID: <e9df8ffe-96b2-f9c6-7f42-30f3b33097fb@kernel.org>
+Date:   Fri, 3 Jan 2020 16:05:23 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.3.1
 MIME-Version: 1.0
-References: <20200102215829.911231638@linuxfoundation.org>
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 3 Jan 2020 20:33:22 +0530
-Message-ID: <CA+G9fYuPkOGKbeQ0FKKx4H0Bs-nRHALsFtwyRw0Rt5DoOCvRHg@mail.gmail.com>
-Subject: Re: [PATCH 5.4 000/191] 5.4.8-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Sasha Levin <sashal@kernel.org>, LTP List <ltp@lists.linux.it>,
-        Jan Stancek <jstancek@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        John Stultz <john.stultz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200103023445.1352524-3-damien.lemoal@wdc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 3 Jan 2020 at 03:42, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.4.8 release.
-> There are 191 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 04 Jan 2020 21:55:35 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.8-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
 
-LTP syscalls memfd_create04 failed on arm64 devices.
-Test PASS on arm, i386 and x86_64.
+Am 03.01.20 um 03:34 schrieb Damien Le Moal:
+[...]
+> +
+> +Overview
+> +========
+> +
+> +zonefs is a very simple file system exposing each zone of a zoned block device
+> +as a file. Unlike a regular file system with zoned block device support (e.g.
+> +f2fs), zonefs does not hide the sequential write constraint of zoned block
+> +devices to the user. Files representing sequential write zones of the device
+> +must be written sequentially starting from the end of the file (append only
+> +writes).
+> +
+> +As such, zonefs is in essence closer to a raw block device access interface
+> +than to a full featured POSIX file system. The goal of zonefs is to simplify
+> +the implementation of zoned block device support in applications by replacing
+> +raw block device file accesses with a richer file API, avoiding relying on
+> +direct block device file ioctls which may be more obscure to developers. One
+> +example of this approach is the implementation of LSM (log-structured merge)
+> +tree structures (such as used in RocksDB and LevelDB) on zoned block devices
+> +by allowing SSTables to be stored in a zone file similarly to a regular file
+> +system rather than as a range of sectors of the entire disk. The introduction
+> +of the higher level construct "one file is one zone" can help reducing the
+> +amount of changes needed in the application as well as introducing support for
+> +different application programming languages.
 
-We are bisecting this failure on arm64.
+Maybe add a small subsection on what zoned block devices are? Given that
+we had at least one person looking at this series while it was on the
+list, who didn't really know what zoned block devices are and what the
+constraints of them are.
 
-Test case failed log,
-memfd_create04.c:68: INFO: Attempt to create file using 64kB huge page size
-memfd_create04.c:76: FAIL: memfd_create() failed unexpectedly: ENOENT (2)
+[...]
+> +Zone files
+> +----------
+> +
+> +Zone files are named using the number of the zone they represent within the set
+> +of zones of a particular type. That is, both the "cnv" and "seq" directories
+> +contain files named "0", "1", "2", ... The file numbers also represent
+> +increasing zone start sector on the device.
+> +
+> +All read and write operations to zone files are not allowed beyond the file
+> +maximum size, that is, beyond the zone size. Any access exceeding the zone
+> +size is failed with the -EFBIG error.
+> +
+> +Creating, deleting, renaming or modifying any attribute of files and
+> +sub-directories is not allowed.
 
-Strace output:
-memfd_create(\"tfile\", MFD_HUGETLB|0x40000000) = -1 ENOENT (No such
-file or directory)
+Nit: Above you explicitly say it's failed with -EFBIG, maybe document
+the error here as well?
 
-Test case Description,
+Other than that,
+Reviewed-by: Johannes Thumshirn <jth@kernel.org>
 
-/*
-* Test: Validating memfd_create() with MFD_HUGETLB and MFD_HUGE_x flags.
-*
-* Test cases: Attempt to create files in the hugetlbfs filesystem using
-* different huge page sizes.
-*
-* Test logic: memfd_create() should return non-negative value (fd)
-* if the system supports that particular huge page size.
-* On success, fd is returned.
-* On failure, -1 is returned with ENODEV error.
-*/
-
-Test code snippet:
-<>
-check_hugepage_support(&tflag);
-tst_res(TINFO,
-"Attempt to create file using %s huge page size",
-tflag.h_size);
-
-fd = sys_memfd_create("tfile", MFD_HUGETLB | tflag.flag);
-if (fd < 0) {
-if (errno == tflag.exp_err)
-tst_res(TPASS, "Test failed as expected\n");
-else
-tst_brk(TFAIL | TERRNO,
-"memfd_create() failed unexpectedly");
-return;
-}
-<>
-
-Steps to reproduce:
-          - cd /opt/ltp/testcases/bin/
-          - ./memfd_create04
-
-https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/memfd_create/memfd_create04.c#L75
-
-Test output log,
-https://lkft.validation.linaro.org/scheduler/job/1081716
-
-Test results comparison,
-https://qa-reports.linaro.org/lkft/linux-stable-rc-5.4-oe/tests/ltp-syscalls-tests/memfd_create04
-
-
--- 
-Linaro LKFT
-https://lkft.linaro.org
