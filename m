@@ -2,164 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81A9112F741
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 12:29:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03A3312F745
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 12:31:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbgACL3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 06:29:53 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:26179 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727634AbgACL3w (ORCPT
+        id S1727576AbgACLbx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 06:31:53 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:41083 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727453AbgACLbx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 06:29:52 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1578050991; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=2lbRJw9IF3CEv+Kl4UADA4r+ZNZCf+ELFfYx8aHdNLg=;
- b=u1dGM04QiQGmWh/r3bikINpCHvG4/VK4QDThKjZP17biQw9IVuN6BWJhHd8+HwkyjaCI2Afe
- 420RD/XLegrHKaX1gZo09baq4awoUWwXOCzFLeqlOK55Vlwq8eraoSaLkavpVexfz/wz8Ehc
- ixM6vqhsiL925fO3v1BjEkjuwHA=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e0f25ac.7f34242d63b0-smtp-out-n02;
- Fri, 03 Jan 2020 11:29:48 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 36480C447A3; Fri,  3 Jan 2020 11:29:48 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 91BC8C433CB;
-        Fri,  3 Jan 2020 11:29:47 +0000 (UTC)
+        Fri, 3 Jan 2020 06:31:53 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R821e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=wenyang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TmjiLWd_1578051110;
+Received: from IT-C02W23QPG8WN.local(mailfrom:wenyang@linux.alibaba.com fp:SMTPD_---0TmjiLWd_1578051110)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 03 Jan 2020 19:31:51 +0800
+Subject: Re: [PATCH v2] ftrace: avoid potential division by zero
+To:     Justin Capella <justincapella@gmail.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, xlpang@linux.alibaba.com,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20200103030248.14516-1-wenyang@linux.alibaba.com>
+ <CAMrEMU8wB4c0TFTSJ4ixQg_gSnW72n_T3ip8ZfZFAk8xWjaKsA@mail.gmail.com>
+From:   Wen Yang <wenyang@linux.alibaba.com>
+Message-ID: <a2468cc8-cdc1-0a03-6de1-6607bff4d0fa@linux.alibaba.com>
+Date:   Fri, 3 Jan 2020 19:31:49 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 03 Jan 2020 16:59:47 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     bjorn.andersson@linaro.org, ohad@wizery.com, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        agross@kernel.org, linux-kernel-owner@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] remoteproc: mss: q6v5-mss: Add modem support on
- SC7180
-In-Reply-To: <4a3c80a0b616d54c5d4b465688034e19694c18c0.camel@pengutronix.de>
-References: <20191219054506.20565-1-sibis@codeaurora.org>
- <20191219054506.20565-3-sibis@codeaurora.org>
- <4a3c80a0b616d54c5d4b465688034e19694c18c0.camel@pengutronix.de>
-Message-ID: <39b3af3e6cefde9b7998fada9c311db9@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+In-Reply-To: <CAMrEMU8wB4c0TFTSJ4ixQg_gSnW72n_T3ip8ZfZFAk8xWjaKsA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Philipp,
 
-Thanks for taking time to review the
-patch series.
 
-On 2020-01-02 18:56, Philipp Zabel wrote:
-> On Thu, 2019-12-19 at 11:15 +0530, Sibi Sankar wrote:
->> Add the out of reset sequence support for modem sub-system on SC7180
->> SoCs. It requires access to an additional halt nav register to put
->> the modem back into reset.
->> 
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
->>  drivers/remoteproc/qcom_q6v5_mss.c | 199 
->> ++++++++++++++++++++++++++++-
->>  1 file changed, 198 insertions(+), 1 deletion(-)
->> 
->> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c 
->> b/drivers/remoteproc/qcom_q6v5_mss.c
->> index 164fc2a53ef11..51f451311f5fc 100644
->> --- a/drivers/remoteproc/qcom_q6v5_mss.c
->> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> [...]
->> @@ -396,6 +409,18 @@ static int q6v5_reset_assert(struct q6v5 *qproc)
->>  		reset_control_assert(qproc->pdc_reset);
->>  		ret = reset_control_reset(qproc->mss_restart);
->>  		reset_control_deassert(qproc->pdc_reset);
->> +	} else if (qproc->has_halt_nav) {
->> +		/* SWAR using CONN_BOX_SPARE_0 for pipeline glitch issue */
->> +		reset_control_assert(qproc->pdc_reset);
->> +		regmap_update_bits(qproc->conn_map, qproc->conn_box,
->> +				   BIT(0), BIT(0));
->> +		regmap_update_bits(qproc->halt_nav_map, qproc->halt_nav,
->> +				   NAV_AXI_HALTREQ_BIT, 0);
->> +		reset_control_assert(qproc->mss_restart);
->> +		reset_control_deassert(qproc->pdc_reset);
->> +		regmap_update_bits(qproc->conn_map, qproc->conn_box,
->> +				   BIT(0), 0);
->> +		ret = reset_control_deassert(qproc->mss_restart);
->>  	} else {
->>  		ret = reset_control_assert(qproc->mss_restart);
->>  	}
+On 2020/1/3 4:00 下午, Justin Capella wrote:
+>> -               do_div(stddev, rec->counter * (rec->counter - 1) * 1000);
+>>
+>> +               stddev = div64_ul(stddev,
+>> +                                 rec->counter * (rec->counter - 1) * 1000);
 > 
-> Without knowing anything about the hardware this does look a bit weird,
-> but I assume there is a good reason for every step.
 > 
-> Is the function name still describing its behaviour correctly, or would
-> it make sense to rename q6v5_reset_assert/deassert to something else?
-
-In qualcomm terminology, Q6 remote
-processor requires its reset deasserted
-while bringing it out of reset and reset
-asserted while putting it back into reset.
-However over time deassert/assert has
-morphed into a sequence which we still
-collectively refer to reset assert/
-deassert.
-
-I'm prefer continuing with the same name
-since it helps abstract the out of reset
-sequence into a few simple steps
-(enable supplies->clk->pds->reset_deassert)
-(disable reset_assert->clk->pds->supplies)
-I'll let Bjorn decide what to do on this.
-
+> Is a rec->counter > 1 assertion needed here?
 > 
-> [...]
->> @@ -667,6 +742,39 @@ static void q6v5proc_halt_axi_port(struct q6v5 
->> *qproc,
->>  	regmap_write(halt_map, offset + AXI_HALTREQ_REG, 0);
->>  }
->> 
->> +static void q6v5proc_halt_nav_axi_port(struct q6v5 *qproc,
->> +				       struct regmap *halt_map,
->> +				       u32 offset)
->> +{
-> [...]
->> +	/* Wait for halt ack*/
->> +	timeout = jiffies + msecs_to_jiffies(HALT_ACK_TIMEOUT_MS);
->> +	for (;;) {
->> +		ret = regmap_read(halt_map, offset, &val);
->> +		if (ret || (val & NAV_AXI_HALTACK_BIT) ||
->> +		    time_after(jiffies, timeout))
->> +			break;
->> +
->> +		udelay(5);
->> +	}
-> 
-> This does look like a candidate for using regmap_read_poll_timeout().
 
-yes it does... will send a patch for
-it since I think the series is already
-in lnext.
+Hello, the above lines deal with this situation:
 
-> 
-> regards
-> Philipp
+         if (rec->counter <= 1)
+                 stddev = 0;
+         else {
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+
+--
+Regards,
+Wen
