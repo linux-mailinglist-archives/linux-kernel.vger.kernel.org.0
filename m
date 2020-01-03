@@ -2,80 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7610C12FB49
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 18:12:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93E0B12FB7A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 18:17:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728282AbgACRMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 12:12:33 -0500
-Received: from mail-qv1-f65.google.com ([209.85.219.65]:34128 "EHLO
-        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728259AbgACRM1 (ORCPT
+        id S1728118AbgACRRi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 12:17:38 -0500
+Received: from mail-qv1-f66.google.com ([209.85.219.66]:41332 "EHLO
+        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727952AbgACRRi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 12:12:27 -0500
-Received: by mail-qv1-f65.google.com with SMTP id o18so16489055qvf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 09:12:26 -0800 (PST)
+        Fri, 3 Jan 2020 12:17:38 -0500
+Received: by mail-qv1-f66.google.com with SMTP id x1so16473280qvr.8
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 09:17:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=vV6a+3S2CgVP2zgllAWlmqvUviEk0ZUKB0VmFQup2MM=;
-        b=q7SqmRt9svPc6WesbG64Tpx4gDTGEX4IrS83bOn2XC8YkU10kfQBqVN7caHtrQJwPs
-         39C8hXjMIwxG4fINgl9nD+54tuIK1HA3tbxJB839znVN+ORUOp3UlarGBB6NWnAPsUrj
-         JkELDqNjEAwJjiakOzCiZx+Z1EI8UBvrpvwF4hu3e2ji76fJQNdgdrboJODQ0PnCXvNy
-         rEvf1B+KnUAMyeX4c/a8CLAdI5e+hvWx+xGc1zfn8KmLz9JNPn1Xr1aZN8GCpqpSv0tj
-         6mCbSXd4TgiUS5GYBIg3GijK/SUKhWtIJYRqhuHTlRr2vNQ5NcvKrHVawXkc0bzV5sL1
-         70fA==
+        bh=JAQ9XzTinm2DVqzapCNnXi/zMEgMhpMOb4nhGt9yK/0=;
+        b=jrkSRbCQZT28oTMBH6aPlyPA5WcHNROE19klYmWmmPFh75cbw2SfrK+8dw9nOe/68W
+         q6cCE043+1MyRpDRvfUjKM1NTjoTAUr9eWDM2unobZMCBjlO87cr8I+0WToauYkxGzxf
+         /4V+8O8YKB432b6jMoOOl3vtyzigmLv4rK/jZF05B4lLcBguwQdRNhM5T60FEt0E5XLS
+         tXVI6diBchn5spzo9Jn1kPiDmo53Yl3M+QfF3tzMGVw86CGJMwu3aEL18fymtecvuaH/
+         sX0cTvfCRC3YqGT9kzypOl66TmfC/UAvNMq72v8inx/RXGYDsqUZcgcGRY70OiOMPaE/
+         it7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vV6a+3S2CgVP2zgllAWlmqvUviEk0ZUKB0VmFQup2MM=;
-        b=L5mfmR3yfLGG73KghKJ5SeCnd5B6EBfFOoetbmfjT5FenuHj2pl7RsSMg6I/rVpgR8
-         qo4pixQrevj3O8u6QRKak7Ot0Ax0S3xtXAlmyHKVh2uWSNJm7P5knckmTSuaz7CBU7ib
-         cVTWl6A/W3iYMwvnIAtOnDrNSFEfRpesCAzMFCuzZuPSKMR1PqRr2E54Oqnqce3AqA+c
-         P7s0vIMqRE5bBxyRqVva3ZTP0w8on81JMJgjE/8yUFJSJzJlruNfE+oj2C9DyKVVtLyB
-         LZRaybH+4pjH/UXdodvs+y3mQ9lq7Ec8dpV1OJy96NiCxOyv2C0ksQYta7RFbozdNF7M
-         zkiw==
-X-Gm-Message-State: APjAAAWLZiSA1C3XytOM8Vz72a1b8Mq+rPon6Vk6KZFyOgHS/h9MAyxq
-        n82e2Ayo3KKPbY2RnDLHdOs=
-X-Google-Smtp-Source: APXvYqx6Er3/Z0yocOThD/C83mCKegn2uS88qcp2Wo0KSp+6jt5479A3OtISRAReOEj+l8zXMPpDaw==
-X-Received: by 2002:a05:6214:162c:: with SMTP id e12mr66843626qvw.3.1578071546080;
-        Fri, 03 Jan 2020 09:12:26 -0800 (PST)
+        bh=JAQ9XzTinm2DVqzapCNnXi/zMEgMhpMOb4nhGt9yK/0=;
+        b=RwXt7NT5aFA/VMzzyWrCQPlje/mc5OvMgAH7Nh4oIAUd1TgjbvQ8EX4ALlfMLtqhUG
+         TUOf3GCM4scAa+MM3GmTxcCSeqyQwbh/Qc7VoOdJKqns8Xti1s3mJIDgrWCzvxyzfc/E
+         BsY07hq8icE+jxsrEDDxSkWnFWNgKcUUQs2hPWS1uFRxlk3JxBPV+BJaKP+rkosEDq2X
+         2Ulrh3vmbXOoLDKY8HwZW3WejLf9EbVqwn5qeTEI1WPXCWxOlIQXw1XtxJ0I6AfPh8+C
+         RWQ9XCMllWdPYR1BOlTDMPys4yS6msgulgmFMwdxpMI9Fq6SrK/iptJtDeS0jYE0vpJN
+         WWCg==
+X-Gm-Message-State: APjAAAUpZysSVOT/myf58n3sh1Qc7EDYn6L43C7oLwDvbR1ePaCrd1QM
+        VJ4srlsSvst79i+wyqauUZQ/7+0YR5Q=
+X-Google-Smtp-Source: APXvYqxBZEqr41xTPmKc44NLKT4LwNjwR1m0ZnAV3dEqJQRB4s5sopAgiKeFR1w7raO5ybdLSb1bGg==
+X-Received: by 2002:a05:6214:4f0:: with SMTP id cl16mr69773683qvb.213.1578071857186;
+        Fri, 03 Jan 2020 09:17:37 -0800 (PST)
 Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id 17sm18990708qtz.85.2020.01.03.09.12.25
+        by smtp.gmail.com with ESMTPSA id 17sm18999293qtz.85.2020.01.03.09.17.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jan 2020 09:12:25 -0800 (PST)
+        Fri, 03 Jan 2020 09:17:37 -0800 (PST)
 From:   Arvind Sankar <nivedita@alum.mit.edu>
 X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Fri, 3 Jan 2020 12:12:24 -0500
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/24] Consolidate dummy_con initialization
-Message-ID: <20200103171223.GA1308999@rani.riverdale.lan>
-References: <20191218204002.30512-1-nivedita@alum.mit.edu>
+Date:   Fri, 3 Jan 2020 12:17:35 -0500
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sparc/console: kill off obsolete declarations
+Message-ID: <20200103171735.GB1308999@rani.riverdale.lan>
+References: <20191216221004.3476562-1-nivedita@alum.mit.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191218204002.30512-1-nivedita@alum.mit.edu>
+In-Reply-To: <20191216221004.3476562-1-nivedita@alum.mit.edu>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 03:39:38PM -0500, Arvind Sankar wrote:
-> This series moves initialization of conswitchp to dummy_con into vt.c,
-> and configures DUMMY_CONSOLE unconditionally when CONFIG_VT is enabled.
-> 
-> The patches after the second one remove conswitchp = &dummy_con; from
-> the various architecture setup functions where it currently appears. If
-> the first two look ok, I was thinking of sending the others
-> individually.
+On Mon, Dec 16, 2019 at 05:10:04PM -0500, Arvind Sankar wrote:
+> commit 09d3f3f0e02c ("sparc: Kill PROM console driver.") missed removing
+> the declarations of the deleted prom_con structure and prom_con_init
+> function from console.h. Kill them off now.
 > 
 
-Hi Greg/Jiri, happy new year!
+Hi David, happy new year!
 
-Are you able to look at this series?
+Reminder for the following small cleanup patch.
 
-https://lore.kernel.org/lkml/20191218214506.49252-1-nivedita@alum.mit.edu/
+https://lore.kernel.org/lkml/20191216221004.3476562-1-nivedita@alum.mit.edu/
