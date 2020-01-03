@@ -2,218 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3F6C12F985
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 16:08:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D039012F98C
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 16:08:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbgACPIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 10:08:07 -0500
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:28273 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727742AbgACPID (ORCPT
+        id S1728026AbgACPIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 10:08:30 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41842 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727786AbgACPI3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 10:08:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1578064083; x=1609600083;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Z3tkOD4FG1FNGsCTSm+doFuNCbFR2kiicI330Grt1Ls=;
-  b=DMyYrFTZ5N/znj46NzoqHqlQK+IVJ0E8Raq272GnZlp89a182pe1LFel
-   azIxYGzVQrwNF8FSlKGsk0DmkW3rHNQfBCMo4s0aegB/Fd3Fg/q2G8/SB
-   q1xBpF1ihrSGtMSkvU+6WVoMgpQ2yvF3a07ngUqk0RF3oI7T22kiccDGQ
-   0=;
-IronPort-SDR: j/1aZfZMIEify9CS7bxtKFpVmv3DbjadmiJ6p8Keovlx4Hcznlj640wtQ3rbdsm0sb1sgXa8tG
- rdIoBRWwoGYQ==
-X-IronPort-AV: E=Sophos;i="5.69,390,1571702400"; 
-   d="scan'208";a="16652123"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1a-7d76a15f.us-east-1.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 03 Jan 2020 15:07:44 +0000
-Received: from u7588a65da6b65f.ant.amazon.com (iad7-ws-svc-lb50-vlan2.amazon.com [10.0.93.210])
-        by email-inbound-relay-1a-7d76a15f.us-east-1.amazon.com (Postfix) with ESMTPS id B9D05A2861;
-        Fri,  3 Jan 2020 15:07:40 +0000 (UTC)
-Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTPS id 003F7cx3020489
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 3 Jan 2020 16:07:38 +0100
-Received: (from jschoenh@localhost)
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Submit) id 003F7cHx020488;
-        Fri, 3 Jan 2020 16:07:38 +0100
-From:   =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
-        Yazen Ghannam <yazen.ghannam@amd.com>,
-        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-        Tony Luck <tony.luck@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: [PATCH v2 6/6] x86/mce: Dynamically register default MCE handler
-Date:   Fri,  3 Jan 2020 16:07:22 +0100
-Message-Id: <20200103150722.20313-7-jschoenh@amazon.de>
-X-Mailer: git-send-email 2.22.0.3.gb49bb57c8208.dirty
-In-Reply-To: <20200103150722.20313-1-jschoenh@amazon.de>
-References: <20200103150722.20313-1-jschoenh@amazon.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Fri, 3 Jan 2020 10:08:29 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 003F5IlY042234
+        for <linux-kernel@vger.kernel.org>; Fri, 3 Jan 2020 10:08:28 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2x9y3nx1sg-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 10:08:28 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 3 Jan 2020 15:08:26 -0000
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 3 Jan 2020 15:08:21 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 003F8LgI36700630
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 3 Jan 2020 15:08:21 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EA203A4040;
+        Fri,  3 Jan 2020 15:08:20 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8DA9EA4053;
+        Fri,  3 Jan 2020 15:08:19 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.213.69])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  3 Jan 2020 15:08:19 +0000 (GMT)
+Subject: Re: [PATCH v6 0/3] IMA: Deferred measurement of keys
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        James.Bottomley@HansenPartnership.com,
+        linux-integrity@vger.kernel.org
+Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
+        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
+Date:   Fri, 03 Jan 2020 10:08:19 -0500
+In-Reply-To: <20200103055608.22491-1-nramas@linux.microsoft.com>
+References: <20200103055608.22491-1-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20010315-0020-0000-0000-0000039D9086
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20010315-0021-0000-0000-000021F4E294
+Message-Id: <1578064099.5874.170.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2020-01-03_04:2020-01-02,2020-01-03 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ mlxlogscore=999 malwarescore=0 bulkscore=0 phishscore=0 impostorscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001030141
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The default MCE handler takes action, when no external MCE handler is
-registered. Instead of checking for external handlers within the default
-MCE handler, only register the default MCE handler when there are no
-external handlers in the first place.
+Hi Lakshmi,
 
-Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
----
-New in v2. This is something that became possible due to patch 4.
-I'm not entirely happy with it.
+Instead of loosing the cover letter, Jonathan Corbet suggested
+including it as the merge comment.  I'd like to do that with this
+cover letter.
 
-One the one hand, I'm wondering whether there's a nicer way to handle
-(de-)registration races.
+On Thu, 2020-01-02 at 21:56 -0800, Lakshmi Ramasubramanian wrote:
+> This patchset extends the previous version[1] by adding support for
+> deferred processing of keys.
+> 
+> With the patchset referenced above, the IMA subsystem supports
+> measuring asymmetric keys when the key is created or updated.
 
-On the other hand, I'm starting to question the whole logic to "only print
-the MCE if nothing else in the kernel has a handler registered". Is that
-really how it should be? For example, there are handlers that filter for a
-specific subset of MCEs. If one of those is registered, we're losing all
-information for MCEs that don't match.
+The first sentence and the clause of the next sentence are
+unnecessary.  I would begin the cover letter with "The IMA subsystem
+supports" and add the reference afterwards.
 
-A possible solution to the latter would be to have a "handled" or "printed"
-flag within "struct mce" and print the MCE based on that in the default
-handler. What do you think?
----
- arch/x86/kernel/cpu/mce/core.c | 90 ++++++++++++++++++++--------------
- 1 file changed, 52 insertions(+), 38 deletions(-)
+> But keys created or updated before a custom IMA policy is loaded
+> are currently not measured. This includes keys added to, for instance,
+> .builtin_trusted_keys which happens early in the boot process.
 
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index d8fe5b048ee7..3b6e37c5252f 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -156,36 +156,6 @@ void mce_log(struct mce *m)
- }
- EXPORT_SYMBOL_GPL(mce_log);
- 
--/*
-- * We run the default notifier as long as we have no external
-- * notifiers registered on the chain.
-- */
--static atomic_t num_notifiers;
--
--static void mce_register_decode_chain_internal(struct notifier_block *nb)
--{
--	if (WARN_ON(nb->priority > MCE_PRIO_MCELOG && nb->priority < MCE_PRIO_EDAC))
--		return;
--
--	blocking_notifier_chain_register(&x86_mce_decoder_chain, nb);
--}
--
--void mce_register_decode_chain(struct notifier_block *nb)
--{
--	atomic_inc(&num_notifiers);
--
--	mce_register_decode_chain_internal(nb);
--}
--EXPORT_SYMBOL_GPL(mce_register_decode_chain);
--
--void mce_unregister_decode_chain(struct notifier_block *nb)
--{
--	atomic_dec(&num_notifiers);
--
--	blocking_notifier_chain_unregister(&x86_mce_decoder_chain, nb);
--}
--EXPORT_SYMBOL_GPL(mce_unregister_decode_chain);
--
- static inline u32 ctl_reg(int bank)
- {
- 	return MSR_IA32_MCx_CTL(bank);
-@@ -606,18 +576,19 @@ static struct notifier_block mce_uc_nb = {
- 	.priority	= MCE_PRIO_UC,
- };
- 
-+/*
-+ * We run the default notifier as long as we have no external
-+ * notifiers registered on the chain.
-+ */
-+static atomic_t num_notifiers;
-+
- static int mce_default_notifier(struct notifier_block *nb, unsigned long val,
- 				void *data)
- {
- 	struct mce *m = (struct mce *)data;
- 
--	if (!m)
--		return NOTIFY_DONE;
--
--	if (atomic_read(&num_notifiers))
--		return NOTIFY_DONE;
--
--	__print_mce(m);
-+	if (m)
-+		__print_mce(m);
- 
- 	return NOTIFY_DONE;
- }
-@@ -628,6 +599,49 @@ static struct notifier_block mce_default_nb = {
- 	.priority	= MCE_PRIO_LOWEST,
- };
- 
-+static void update_default_notifier_registration(void)
-+{
-+	bool has_notifiers = !!atomic_read(&num_notifiers);
-+
-+retry:
-+	if (has_notifiers)
-+		blocking_notifier_chain_unregister(&x86_mce_decoder_chain,
-+						   &mce_default_nb);
-+	else
-+		blocking_notifier_chain_cond_register(&x86_mce_decoder_chain,
-+						      &mce_default_nb);
-+
-+	if (has_notifiers != !!atomic_read(&num_notifiers)) {
-+		has_notifiers = !has_notifiers;
-+		goto retry;
-+	}
-+}
-+
-+static void mce_register_decode_chain_internal(struct notifier_block *nb)
-+{
-+	if (WARN_ON(nb->priority > MCE_PRIO_MCELOG &&
-+		    nb->priority < MCE_PRIO_EDAC))
-+		return;
-+
-+	blocking_notifier_chain_register(&x86_mce_decoder_chain, nb);
-+}
-+
-+void mce_register_decode_chain(struct notifier_block *nb)
-+{
-+	atomic_inc(&num_notifiers);
-+	mce_register_decode_chain_internal(nb);
-+	update_default_notifier_registration();
-+}
-+EXPORT_SYMBOL_GPL(mce_register_decode_chain);
-+
-+void mce_unregister_decode_chain(struct notifier_block *nb)
-+{
-+	atomic_dec(&num_notifiers);
-+	update_default_notifier_registration();
-+	blocking_notifier_chain_unregister(&x86_mce_decoder_chain, nb);
-+}
-+EXPORT_SYMBOL_GPL(mce_unregister_decode_chain);
-+
- /*
-  * Read ADDR and MISC registers.
-  */
-@@ -1972,7 +1986,7 @@ int __init mcheck_init(void)
- 	mce_register_decode_chain_internal(&first_nb);
- 	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
- 		mce_register_decode_chain_internal(&mce_uc_nb);
--	mce_register_decode_chain_internal(&mce_default_nb);
-+	update_default_notifier_registration();
- 	mcheck_vendor_init_severity();
- 
- 	INIT_WORK(&mce_work, mce_gen_pool_process);
--- 
-2.22.0.3.gb49bb57c8208.dirty
+Let's not limit the example to just the .builtin_trusted_keys keyring.
+ Please update it as:
+
+This includes keys added, for instance, to either the .ima or
+.builtin_trusted_keys keyrings, which happens early in the boot
+process.
+
+> 
+> This change adds support for queuing keys created or updated before
+> a custom IMA policy is loaded. The queued keys are processed when
+> a custom policy is loaded. Keys created or updated after a custom policy
+> is loaded are measured immediately (not queued).
+> 
+> If the kernel is built with both CONFIG_IMA and
+> CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE enabled then the IMA policy
+> must be applied as a custom policy for the keys to be measured.
+> If a custom IMA policy is not provided within 5 minutes after
+> IMA is initialized, any queued keys will be freed.
+
+As the merge message, this is too much information.  I would extend
+the previous paragraph and drop this one, like:
+"... (not queued).  In the case when a custom policy is not loaded
+within 5 minutes of IMA initialization, the queued keys are freed."
+
+> This is by design.
+
+It's unclear what "is by design" refers to.  Perhaps expand this
+sentence like: "Measuring the early boot keys, by design, requires
+loading a custom policy.
+
+> 
+> [1] https://lore.kernel.org/linux-integrity/20191211164707.4698-1-nramas@linux.microsoft.com/
+
+thanks,
+
+Mimi
 
