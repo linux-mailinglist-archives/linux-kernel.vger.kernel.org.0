@@ -2,103 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3F3912FAA7
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 17:39:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FBBD12FAA9
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 17:39:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbgACQjL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 11:39:11 -0500
-Received: from foss.arm.com ([217.140.110.172]:56784 "EHLO foss.arm.com"
+        id S1728053AbgACQje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 11:39:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727859AbgACQjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 11:39:11 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B4E77328;
-        Fri,  3 Jan 2020 08:39:10 -0800 (PST)
-Received: from [10.1.194.46] (e113632-lin.cambridge.arm.com [10.1.194.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 421583F703;
-        Fri,  3 Jan 2020 08:39:09 -0800 (PST)
-Subject: Re: [PATCH v4 00/10] sched/fair: rework the CFS load balance
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org
-Cc:     pauld@redhat.com, srikar@linux.vnet.ibm.com,
-        quentin.perret@arm.com, dietmar.eggemann@arm.com,
-        Morten.Rasmussen@arm.com, hdanton@sina.com, parth@linux.ibm.com,
-        riel@surriel.com
-References: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org>
- <e33e1896-01e1-665d-862a-e73384b0fbe6@arm.com>
-Message-ID: <48636730-f8fb-6c65-fc30-068345923bc1@arm.com>
-Date:   Fri, 3 Jan 2020 16:39:08 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <e33e1896-01e1-665d-862a-e73384b0fbe6@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727859AbgACQjd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 11:39:33 -0500
+Received: from localhost.localdomain (unknown [194.230.155.149])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4208206DB;
+        Fri,  3 Jan 2020 16:39:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578069573;
+        bh=KcvtLb+TfRw1uY1bkvdvgbpsv4uEyCRqJ6XVxzKKvF0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LOZmr+i4jRgwSxWi5VgUA43TvKSnrW8qnE6mK25b30xr16UOeTUcaErQWMoD9qcpg
+         8B/9TLXN7UCk8ZoD7SaC9Lv1rS4KYBHAbPSV1IVdIYgkbR7YAiiy66zDTa79ID0zPH
+         zGq/Ij7X9oIc//Otvl1X7ZH6i8D5CQFRYN32r1dY=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] parisc: Use proper printk format for resource_size_t
+Date:   Fri,  3 Jan 2020 17:39:25 +0100
+Message-Id: <20200103163925.3967-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/11/2019 12:48, Valentin Schneider wrote:
-> I've been busy trying to get some perf numbers on arm64 server~ish systems,
-> I finally managed to get some specjbb numbers on TX2 (the 2 nodes, 224
-> CPUs version which I suspect is the same as you used in the above). I only
-> have a limited number of iterations (5, although each runs for about 2h)
-> because I wanted to get some (usable) results by today, I'll spin some more
-> during the week.
-> 
-> 
-> This is based on the "critical-jOPs" metric which AFAIU higher is better:
-> 
-> Baseline, SMTOFF:
->   mean     12156.400000
->   std        660.640068
->   min      11016.000000
->   25%      12158.000000
->   50%      12464.000000
->   75%      12521.000000
->   max      12623.000000
-> 
-> Patches (+ find_idlest_group() fixup), SMTOFF:
->   mean     12487.250000
->   std        184.404221
->   min      12326.000000
->   25%      12349.250000
->   50%      12449.500000
->   75%      12587.500000
->   max      12724.000000	
-> 
-> 
-> It looks slightly better overall (mean, stddev), but I'm annoyed by that
-> low iteration count. I also had some issues with my SMTON run and I only
-> got numbers for 2 iterations, so I'll respin that before complaining.
-> 
-> FWIW the branch I've been using is:
-> 
->   http://www.linux-arm.org/git?p=linux-vs.git;a=shortlog;h=refs/heads/mainline/load-balance/vincent_rework/tip
-> 
+resource_size_t should be printed with its own size-independent format
+to fix warnings when compiling on 64-bit platform (e.g. with
+COMPILE_TEST):
 
-Forgot about that; I got some more results in the meantime, still specjbb
-and still ThunderX2):
+    arch/parisc/kernel/drivers.c: In function 'print_parisc_device':
+    arch/parisc/kernel/drivers.c:892:9: warning:
+        format '%p' expects argument of type 'void *',
+        but argument 4 has type 'resource_size_t {aka unsigned int}' [-Wformat=]
 
-| kernel          | count |         mean |        std |     min |     50% |      75% |      99% |     max |
-|-----------------+-------+--------------+------------+---------+---------+----------+----------+---------|
-| -REWORK SMT-ON  |    15 | 19961.133333 | 613.406515 | 19058.0 | 20006.0 | 20427.50 | 20903.42 | 20924.0 |
-| +REWORK SMT-ON  |    12 | 19265.666667 | 563.959917 | 18380.0 | 19133.5 | 19699.25 | 20024.90 | 20026.0 |
-| -REWORK SMT-OFF |    25 | 12397.000000 | 425.763628 | 11016.0 | 12377.0 | 12623.00 | 13137.20 | 13154.0 |
-| +REWORK SMT-OFF |    20 | 12436.700000 | 414.130554 | 11313.0 | 12505.0 | 12687.00 | 12981.44 | 12986.0 |
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/parisc/kernel/drivers.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-SMT-ON  delta: -3.48%
-SMT-OFF delta: +0.32%
+diff --git a/arch/parisc/kernel/drivers.c b/arch/parisc/kernel/drivers.c
+index a6c9f49c6612..a154de424421 100644
+--- a/arch/parisc/kernel/drivers.c
++++ b/arch/parisc/kernel/drivers.c
+@@ -889,8 +889,8 @@ static void print_parisc_device(struct parisc_device *dev)
+ 	static int count;
+ 
+ 	print_pa_hwpath(dev, hw_path);
+-	pr_info("%d. %s at 0x%px [%s] { %d, 0x%x, 0x%.3x, 0x%.5x }",
+-		++count, dev->name, (void*) dev->hpa.start, hw_path, dev->id.hw_type,
++	pr_info("%d. %s at %pa[p] [%s] { %d, 0x%x, 0x%.3x, 0x%.5x }",
++		++count, dev->name, &(dev->hpa.start), hw_path, dev->id.hw_type,
+ 		dev->id.hversion_rev, dev->id.hversion, dev->id.sversion);
+ 
+ 	if (dev->num_addrs) {
+-- 
+2.17.1
 
-
-This is consistent with some earlier runs (where I had a few issues
-getting enough iterations): SMT-OFF performs a tad better, and SMT-ON
-performs slightly worse.
-
-Looking at the 99th percentile, it seems we're a bit worse compared to
-the previous best cases, but looking at the slightly reduced stddev it also
-seems that we are somewhat more consistent.
