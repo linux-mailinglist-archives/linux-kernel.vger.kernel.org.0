@@ -2,73 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71D1012F9EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 16:43:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0BC712F9F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 16:46:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbgACPnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 10:43:10 -0500
-Received: from fieldses.org ([173.255.197.46]:50494 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727817AbgACPnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 10:43:09 -0500
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 52A361CB4; Fri,  3 Jan 2020 10:43:09 -0500 (EST)
-Date:   Fri, 3 Jan 2020 10:43:09 -0500
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     Aditya Pakki <pakki001@umn.edu>
-Cc:     kjlu@umn.edu, Chuck Lever <chuck.lever@oracle.com>,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] nfsd: remove unnecessary assertion in
- nfsd4_layout_setlease
-Message-ID: <20200103154309.GA23945@fieldses.org>
-References: <20191226203733.27808-1-pakki001@umn.edu>
+        id S1727902AbgACPqR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 10:46:17 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:39092 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727539AbgACPqR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 10:46:17 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 003FkC71029465;
+        Fri, 3 Jan 2020 09:46:12 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578066372;
+        bh=lb0AnQ1+V7a+ZHjp9y/3Z41QC1sC2dSQ9y8lR2d1B6M=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=yAdIgCBPqESKui77m9z+GH3ow/kIUaCPaH6wJGLTK2yg3JihGDNynNcrmvURtwovL
+         yQun2W6SR6aT50n3+31iKbFNw/Nft1pBfgpoiHuDppyPOIWcLDkx/qTd/sxnTxB1+y
+         LRdjzV9PO7JTkeXShA9v14u5gDVFD+UWANewLkuI=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 003FkCj3071007
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 3 Jan 2020 09:46:12 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 3 Jan
+ 2020 09:46:12 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 3 Jan 2020 09:46:12 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 003FkBen047834;
+        Fri, 3 Jan 2020 09:46:12 -0600
+Subject: Re: [PATCH v17 19/19] leds: lp55xx-common: Remove extern from
+ lp55xx-common header
+To:     Pavel Machek <pavel@ucw.cz>
+CC:     <jacek.anaszewski@gmail.com>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20191114133023.32185-1-dmurphy@ti.com>
+ <20191114133023.32185-20-dmurphy@ti.com> <20191222183523.GH23369@amd>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <f43fde41-de0e-5b77-e22d-abab76e90c59@ti.com>
+Date:   Fri, 3 Jan 2020 09:43:27 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191226203733.27808-1-pakki001@umn.edu>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20191222183523.GH23369@amd>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It took me a minute to see how fl can even fail to be NULL, since we
-just accessed fields of fl.
+Pavel
 
-OK, I see, &fl is passed to vfs_setlease, so it can change the value of
-fl.
+Thanks for the review on all the patches.  Sorry for the late reply I 
+was on holiday
 
-Looks like generic_addlease() clears flp on success, unless it finds an
-existing non-conflicting lease?  I'm not clear why nfsd4_layout_setlease
-knows it can't hit that case.
+On 12/22/19 12:35 PM, Pavel Machek wrote:
+> On Thu 2019-11-14 07:30:23, Dan Murphy wrote:
+>> extern is implied and is not needed in the common header file.
+>> Remove the extern keyword and re-align the code.
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> Lets not do this.
 
-In any case, I don't see why this assertion is redundant; leaving it
-there.
+OK this is the last patch in the series so I am OK to drop it.
 
---b.
+Dan
 
-On Thu, Dec 26, 2019 at 02:37:33PM -0600, Aditya Pakki wrote:
-> In nfsd4_layout_setlease, checking for a valid file lock is
-> redundant and can be removed. This patch eliminates such a
-> BUG_ON check.
-> 
-> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-> ---
->  fs/nfsd/nfs4layouts.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
-> index 2681c70283ce..ef5f8e645f4f 100644
-> --- a/fs/nfsd/nfs4layouts.c
-> +++ b/fs/nfsd/nfs4layouts.c
-> @@ -204,7 +204,6 @@ nfsd4_layout_setlease(struct nfs4_layout_stateid *ls)
->  		locks_free_lock(fl);
->  		return status;
->  	}
-> -	BUG_ON(fl != NULL);
->  	return 0;
->  }
->  
-> -- 
-> 2.20.1
