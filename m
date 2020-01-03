@@ -2,390 +2,248 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A90512FC01
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 19:01:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCF1C12FC0E
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 19:04:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728454AbgACSAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 13:00:47 -0500
-Received: from conuserg-07.nifty.com ([210.131.2.74]:16587 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728291AbgACSAp (ORCPT
+        id S1728274AbgACSE5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 13:04:57 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:33485 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728218AbgACSE5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 13:00:45 -0500
-Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id 003HxSJC022724;
-        Sat, 4 Jan 2020 02:59:35 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com 003HxSJC022724
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1578074375;
-        bh=PA1hh0oVkb5HTcxrPiCLvIrt+m0pb6t29hc66/OGTJU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1tbMTCIFZYalxjRrxnssVvO72bKqmXpu+6P1iwJb4YVy+g3D+7XVImew+51Gm6ED3
-         IIobTIDFW3KL1gxXl3jDwQEhzOlv0qUw4tXpVR5yVFOLF5HcGGONEPBuX25U86NxO1
-         uwsAWJmLrRCKBgxwckpZc8Y85eq5y34+x+n9NDg3+JSL6/ERt4VJg+6UVrIOsO21eP
-         FBag7Lk813MD/6hfg5Xjc7iFu+5CVKAK0GksxuUTxFmcpFndn7rsya7ma4Bud94bcG
-         RjPx457XREKp0WtnPbKaRzpuyOoQ8yd4w3GNLsQyfyVtnbi5GVT9406HRD6JUIT93R
-         b75eS3U7ghZpQ==
-X-Nifty-SrcIP: [126.93.102.113]
-From:   Masahiro Yamada <masahiroy@kernel.org>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <masahiroy@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH 11/12] initramfs: refactor the initramfs build rules
-Date:   Sat,  4 Jan 2020 02:59:14 +0900
-Message-Id: <20200103175915.26663-12-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200103175915.26663-1-masahiroy@kernel.org>
-References: <20200103175915.26663-1-masahiroy@kernel.org>
+        Fri, 3 Jan 2020 13:04:57 -0500
+Received: by mail-io1-f68.google.com with SMTP id z8so42091684ioh.0;
+        Fri, 03 Jan 2020 10:04:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=w/Rt0Evk9JktZfPPe+CjYHqmRZtIwzRmPZp+xZRDdqo=;
+        b=X5oOwWBPdMHuW+mqPwYLS0lKm+hYGz0/hdXQZgCW6rjpiTUgm6VO2JuTPlt/zpMhGz
+         Gh9ed68yAMTRWS0+1gTw0oZ1aSIuh+0YtQgVdbCcqABu4lbiA8hwDlXdItjoBu2sECYS
+         UtX8sSqn5tpFQlVzcy9fV2wb6Gt8HoQoTdK6DOTLK7uwhMQY6YZUTx8kuckw9pGd3CJh
+         R0nDNYD9aEbD74dsBNcyuv1oN0cvLzaEAXk3aw1tG4hHNEN8hzkJQ2wULlLioNvhzwpe
+         Mozn1EKGt30gRAFuXdkp5opj1HBE8hLLg88i2tw1N9bEHrzNpDKVcxTLswsY8Wh02FlG
+         xO7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=w/Rt0Evk9JktZfPPe+CjYHqmRZtIwzRmPZp+xZRDdqo=;
+        b=GmS9iR02Qn7RBeEe5YZHr80QOvlusCxFjDKhgFWyxkzvtrYtXLvOVrFVhqMfcopD9Q
+         qwsgrf80xYouoB1vN4q9N5tIYxfGVAqNVNG20u6EbhImspffmvLF1AxGX7KA3NDTYg3s
+         cOPytxWIko6NuSbwDH9g0tynAboMlEZw+6pXXNcsmd4+RVoJrBx89sNbm2GESACLsVps
+         534MK6SR6Km/zodCB/9KyYEaNdZfx+q8YWJytWYKnsQZSkOmf/pCEK3rSaqUxvGcKg7/
+         yKTyCw/dTXatTBUdSJXltlazOMlLmcaz268Yr2JBas+VN1I7BBG3scKlP26cdMbRAqyG
+         73gw==
+X-Gm-Message-State: APjAAAW0z/hLOjuOlyFvyxlB/i2YXqn/B9ZjDSbwXUlTlPNwmCTA09qF
+        jmOHjYgr/LuYEgnuXmvJPwK5zMoTq8ubrxwwP6wF1Kb8wg4=
+X-Google-Smtp-Source: APXvYqzeREcjx0+sbiJGm4VX7qx5pjIgl0/6SWtZ2CLBlDEvml7MJ4sPVdZzXwxj33pm/1TG8sF8PtwA0E6XtYzldwo=
+X-Received: by 2002:a5d:9285:: with SMTP id s5mr46380645iom.85.1578074696173;
+ Fri, 03 Jan 2020 10:04:56 -0800 (PST)
+MIME-Version: 1.0
+References: <20200103174935.5612-1-vidyas@nvidia.com>
+In-Reply-To: <20200103174935.5612-1-vidyas@nvidia.com>
+Reply-To: bjorn@helgaas.com
+From:   Bjorn Helgaas <bjorn.helgaas@gmail.com>
+Date:   Fri, 3 Jan 2020 12:04:44 -0600
+Message-ID: <CABhMZUUHGEEhsJ-+foSsodqtKXyX5ZNPkGgv_VzXz=Qv+NVcUA@mail.gmail.com>
+Subject: Re: [PATCH] PCI: Add MCFG quirks for Tegra194 host controllers
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andrew Murray <andrew.murray@arm.com>, treding@nvidia.com,
+        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, usr/gen_initramfs.sh takes care of all the use-cases:
+On Fri, Jan 3, 2020 at 11:50 AM Vidya Sagar <vidyas@nvidia.com> wrote:
+>
+> The PCIe controller in Tegra194 SoC is not completely ECAM-compliant.
 
- [1] generates a cpio file unless CONFIG_INITRAMFS_SOURCE points to
-     a single cpio archive
+What is the plan for making these SoCs ECAM-compliant?  When was
+Tegra194 designed?  Is it shipping to end customers, i.e., would I be
+able to buy one?
 
- [2] If CONFIG_INITRAMFS_SOURCE is the path to a cpio archive,
-     use it as-is.
+I do not want to add these quirks indefinitely, and the first quirks
+were added over three years ago.
 
- [3] Compress the cpio file according to CONFIG_INITRAMFS_COMPRESSION_*
-     unless it is passed a compressed archive.
-
-To simplify the script, move [2] and [3] to usr/Makefile.
-
-If CONFIG_INITRAMFS_SOURCE is the path to a cpio archive, there is
-no need to run this shell script.
-
-For the cpio archive compression, you can re-use the rules from
-scripts/Makefile.lib
-
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
-
- usr/.gitignore       |  8 +---
- usr/Kconfig          | 10 -----
- usr/Makefile         | 88 +++++++++++++++++++++++++++++---------------
- usr/gen_initramfs.sh | 77 ++++++++------------------------------
- usr/initramfs_data.S |  5 +--
- 5 files changed, 77 insertions(+), 111 deletions(-)
-
-diff --git a/usr/.gitignore b/usr/.gitignore
-index be5eae1df7eb..610de736b75e 100644
---- a/usr/.gitignore
-+++ b/usr/.gitignore
-@@ -1,9 +1,3 @@
--#
--# Generated files
--#
- gen_init_cpio
- initramfs_data.cpio
--initramfs_data.cpio.gz
--initramfs_data.cpio.bz2
--initramfs_data.cpio.lzma
--initramfs_list
-+/initramfs_inc_data
-diff --git a/usr/Kconfig b/usr/Kconfig
-index ab61e81165e0..529caab1a328 100644
---- a/usr/Kconfig
-+++ b/usr/Kconfig
-@@ -207,13 +207,3 @@ config INITRAMFS_COMPRESSION_LZ4
- 	  by default which could cause a build failure.
- 
- endchoice
--
--config INITRAMFS_COMPRESSION
--	string
--	default ""      if INITRAMFS_COMPRESSION_NONE
--	default ".gz"   if INITRAMFS_COMPRESSION_GZIP
--	default ".bz2"  if INITRAMFS_COMPRESSION_BZIP2
--	default ".lzma" if INITRAMFS_COMPRESSION_LZMA
--	default ".xz"   if INITRAMFS_COMPRESSION_XZ
--	default ".lzo"  if INITRAMFS_COMPRESSION_LZO
--	default ".lz4"  if INITRAMFS_COMPRESSION_LZ4
-diff --git a/usr/Makefile b/usr/Makefile
-index 9256a5b189ee..579ffb915b8e 100644
---- a/usr/Makefile
-+++ b/usr/Makefile
-@@ -3,55 +3,85 @@
- # kbuild file for usr/ - including initramfs image
- #
- 
--suffix_y = $(subst $\",,$(CONFIG_INITRAMFS_COMPRESSION))
--datafile_y = initramfs_data.cpio$(suffix_y)
--datafile_d_y = .$(datafile_y).d
--AFLAGS_initramfs_data.o += -DINITRAMFS_IMAGE="usr/$(datafile_y)"
-+# cmd_bzip2, cmd_lzma, cmd_lzo, cmd_lz4 from scripts/Makefile.lib appends the
-+# size at the end of the compressed file, which unfortunately does not work
-+# with unpack_to_rootfs(). Make size_append no-op.
-+override size_append := :
- 
--# clean rules do not have CONFIG_INITRAMFS_COMPRESSION.  So clean up after all
--# possible compression formats.
--clean-files += initramfs_data.cpio*
-+compress-$(CONFIG_INITRAMFS_COMPRESSION_NONE)	:= shipped
-+compress-$(CONFIG_INITRAMFS_COMPRESSION_GZIP)	:= gzip
-+compress-$(CONFIG_INITRAMFS_COMPRESSION_BZIP2)	:= bzip2
-+compress-$(CONFIG_INITRAMFS_COMPRESSION_LZMA)	:= lzma
-+compress-$(CONFIG_INITRAMFS_COMPRESSION_XZ)	:= xzmisc
-+compress-$(CONFIG_INITRAMFS_COMPRESSION_LZO)	:= lzo
-+compress-$(CONFIG_INITRAMFS_COMPRESSION_LZ4)	:= lz4
- 
--# Generate builtin.o based on initramfs_data.o
- obj-$(CONFIG_BLK_DEV_INITRD) := initramfs_data.o
- 
--# initramfs_data.o contains the compressed initramfs_data.cpio image.
--# The image is included using .incbin, a dependency which is not
--# tracked automatically.
--$(obj)/initramfs_data.o: $(obj)/$(datafile_y) FORCE
-+$(obj)/initramfs_data.o: $(obj)/initramfs_inc_data
- 
--#####
--# Generate the initramfs cpio archive
-+ramfs-input := $(shell echo $(CONFIG_INITRAMFS_SOURCE))
-+cpio-data :=
-+
-+ifeq ($(words $(ramfs-input)),0)
-+
-+# If CONFIG_INITRAMFS_SOURCE is empty, generate a small initramfs with the
-+# default contents.
-+ramfs-input := $(srctree)/$(src)/default_cpio_list
-+
-+else ifeq ($(words $(ramfs-input)),1)
-+# If CONFIG_INITRAMFS_SOURCE specifies a single file, and it is suffixed with
-+# .cpio or .cpio.*, use it directly as an initramfs.
-+ifneq ($(filter %.cpio,$(ramfs-input)),)
-+cpio-data := $(ramfs-input)
-+endif
-+
-+ifeq ($(words $(subst .cpio.,$(space),$(ramfs-input))),2)
-+cpio-data := $(ramfs-input)
-+# If the specified archive is suffixed with .cpio.* (i.e. already compressed),
-+# we do not double-compress it.
-+compress-y := shipped
-+endif
-+
-+endif
-+
-+ifeq ($(cpio-data),)
-+# For other cases, generate the initramfs cpio archive based on the contents
-+# specified by CONFIG_INITRAMFS_SOURCE.
-+
-+cpio-data := $(obj)/initramfs_data.cpio
- 
- hostprogs-y := gen_init_cpio
--ramfs-input := $(if $(filter-out "",$(CONFIG_INITRAMFS_SOURCE)), \
--			$(shell echo $(CONFIG_INITRAMFS_SOURCE)),$(srctree)/$(src)/default_cpio_list)
--ramfs-args  := \
--        $(if $(CONFIG_INITRAMFS_ROOT_UID), -u $(CONFIG_INITRAMFS_ROOT_UID)) \
--        $(if $(CONFIG_INITRAMFS_ROOT_GID), -g $(CONFIG_INITRAMFS_ROOT_GID))
- 
--# $(datafile_d_y) is used to identify all files included
-+# .initramfs_data.cpio.d is used to identify all files included
- # in initramfs and to detect if any files are added/removed.
- # Removed files are identified by directory timestamp being updated
- # The dependency list is generated by gen_initramfs.sh -l
--ifneq ($(wildcard $(obj)/$(datafile_d_y)),)
--	include $(obj)/$(datafile_d_y)
--endif
--
--quiet_cmd_initfs = GEN     $@
--      cmd_initfs = $< -o $@ -l $(obj)/$(datafile_d_y) $(ramfs-args) $(ramfs-input)
--
--targets := $(datafile_y)
-+-include $(obj)/.initramfs_data.cpio.d
- 
- # do not try to update files included in initramfs
- $(deps_initramfs): ;
- 
-+quiet_cmd_initfs = GEN     $@
-+      cmd_initfs = \
-+	$< -o $@ -l $(obj)/.initramfs_data.cpio.d \
-+	$(if $(CONFIG_INITRAMFS_ROOT_UID), -u $(CONFIG_INITRAMFS_ROOT_UID)) \
-+	$(if $(CONFIG_INITRAMFS_ROOT_GID), -g $(CONFIG_INITRAMFS_ROOT_GID)) \
-+	$(ramfs-input)
-+
- # We rebuild initramfs_data.cpio if:
- # 1) Any included file is newer than initramfs_data.cpio
- # 2) There are changes in which files are included (added or deleted)
- # 3) If gen_init_cpio are newer than initramfs_data.cpio
- # 4) Arguments to gen_initramfs.sh changes
--$(obj)/$(datafile_y): $(src)/gen_initramfs.sh $(obj)/gen_init_cpio $(deps_initramfs) FORCE
-+$(obj)/initramfs_data.cpio: $(src)/gen_initramfs.sh $(obj)/gen_init_cpio $(deps_initramfs) FORCE
- 	$(call if_changed,initfs)
- 
-+endif
-+
-+$(obj)/initramfs_inc_data: $(cpio-data) FORCE
-+	$(call if_changed,$(compress-y))
-+
-+targets += initramfs_data.cpio initramfs_inc_data
-+
- subdir-$(CONFIG_UAPI_HEADER_TEST) += include
-diff --git a/usr/gen_initramfs.sh b/usr/gen_initramfs.sh
-index 1efb87bda545..4e6715f8ff7f 100755
---- a/usr/gen_initramfs.sh
-+++ b/usr/gen_initramfs.sh
-@@ -5,7 +5,7 @@
- # Released under the terms of the GNU GPL
- #
- # Generate a cpio packed initramfs. It uses gen_init_cpio to generate
--# the cpio archive, and then compresses it.
-+# the cpio archive.
- # This script assumes that gen_init_cpio is located in usr/ directory
- 
- # error out on errors
-@@ -15,8 +15,7 @@ usage() {
- cat << EOF
- Usage:
- $0 [-o <file>] [-l <dep_list>] [-u <uid>] [-g <gid>] {-d | <cpio_source>} ...
--	-o <file>      Create compressed initramfs file named <file> using
--		       gen_init_cpio and compressor depending on the extension
-+	-o <file>      Create initramfs file named <file> by using gen_init_cpio
- 	-l <dep_list>  Create dependency list named <dep_list>
- 	-u <uid>       User ID to map to user ID 0 (root).
- 		       <uid> is only meaningful if <cpio_source> is a
-@@ -162,20 +161,12 @@ dir_filelist() {
- 	fi
- }
- 
--# if only one file is specified and it is .cpio file then use it direct as fs
--# if a directory is specified then add all files in given direcotry to fs
--# if a regular file is specified assume it is in gen_init_cpio format
- input_file() {
- 	source="$1"
- 	if [ -f "$1" ]; then
-+		# If a regular file is specified, assume it is in
-+		# gen_init_cpio format
- 		header "$1"
--		is_cpio="$(echo "$1" | sed 's/^.*\.cpio\(\..*\)\{0,1\}/cpio/')"
--		if [ $2 -eq 0 -a ${is_cpio} = "cpio" ]; then
--			cpio_file=$1
--			echo "$1" | grep -q '^.*\.cpio\..*' && is_cpio_compressed="compressed"
--			[ -n "$dep_list" ] && echo "$1" >> $dep_list
--			return 0
--		fi
- 		print_mtime "$1" >> $cpio_list
- 		cat "$1"         >> $cpio_list
- 		if [ -n "$dep_list" ]; then
-@@ -187,6 +178,7 @@ input_file() {
- 			done
- 		fi
- 	elif [ -d "$1" ]; then
-+		# If a directory is specified then add all files in it to fs
- 		dir_filelist "$1"
- 	else
- 		echo "  ${prog}: Cannot open '$1'" >&2
-@@ -198,12 +190,8 @@ prog=$0
- root_uid=0
- root_gid=0
- dep_list=
--cpio_file=
- cpio_list=$(mktemp ${TMPDIR:-/tmp}/cpiolist.XXXXXX)
- output="/dev/stdout"
--output_file="/dev/stdout"
--is_cpio_compressed=
--compr="gzip -n -9 -f"
- 
- while [ $# -gt 0 ]; do
- 	arg="$1"
-@@ -214,28 +202,8 @@ while [ $# -gt 0 ]; do
- 			echo "deps_initramfs := \\" > $dep_list
- 			shift
- 			;;
--		"-o")	# generate compressed cpio image named $1
--			output_file="$1"
--			output=$cpio_list
--			echo "$output_file" | grep -q "\.gz$" \
--			&& [ -x "`which gzip 2> /dev/null`" ] \
--			&& compr="gzip -n -9 -f"
--			echo "$output_file" | grep -q "\.bz2$" \
--			&& [ -x "`which bzip2 2> /dev/null`" ] \
--			&& compr="bzip2 -9 -f"
--			echo "$output_file" | grep -q "\.lzma$" \
--			&& [ -x "`which lzma 2> /dev/null`" ] \
--			&& compr="lzma -9 -f"
--			echo "$output_file" | grep -q "\.xz$" \
--			&& [ -x "`which xz 2> /dev/null`" ] \
--			&& compr="xz --check=crc32 --lzma2=dict=1MiB"
--			echo "$output_file" | grep -q "\.lzo$" \
--			&& [ -x "`which lzop 2> /dev/null`" ] \
--			&& compr="lzop -9 -f"
--			echo "$output_file" | grep -q "\.lz4$" \
--			&& [ -x "`which lz4 2> /dev/null`" ] \
--			&& compr="lz4 -l -9 -f"
--			echo "$output_file" | grep -q "\.cpio$" && compr="cat"
-+		"-o")	# generate cpio image named $1
-+			output="$1"
- 			shift
- 			;;
- 		"-u")	# map $1 to uid=0 (root)
-@@ -258,34 +226,21 @@ while [ $# -gt 0 ]; do
- 					unknown_option
- 					;;
- 				*)	# input file/dir - process it
--					input_file "$arg" "$#"
-+					input_file "$arg"
- 					;;
- 			esac
- 			;;
- 	esac
- done
- 
--# If output_file is set we will generate cpio archive and compress it
-+# If output_file is set we will generate cpio archive
- # we are careful to delete tmp files
--if [ -z ${cpio_file} ]; then
--	timestamp=
--	if test -n "$KBUILD_BUILD_TIMESTAMP"; then
--		timestamp="$(date -d"$KBUILD_BUILD_TIMESTAMP" +%s || :)"
--		if test -n "$timestamp"; then
--			timestamp="-t $timestamp"
--		fi
-+timestamp=
-+if test -n "$KBUILD_BUILD_TIMESTAMP"; then
-+	timestamp="$(date -d"$KBUILD_BUILD_TIMESTAMP" +%s || :)"
-+	if test -n "$timestamp"; then
-+		timestamp="-t $timestamp"
- 	fi
--	cpio_tfile="$(mktemp ${TMPDIR:-/tmp}/cpiofile.XXXXXX)"
--	usr/gen_init_cpio $timestamp ${cpio_list} > ${cpio_tfile}
--else
--	cpio_tfile=${cpio_file}
--fi
--rm ${cpio_list}
--if [ "${is_cpio_compressed}" = "compressed" ]; then
--	cat ${cpio_tfile} > ${output_file}
--else
--	(cat ${cpio_tfile} | ${compr}  - > ${output_file}) \
--	|| (rm -f ${output_file} ; false)
- fi
--[ -z ${cpio_file} ] && rm ${cpio_tfile}
--exit 0
-+usr/gen_init_cpio $timestamp $cpio_list > $output
-+rm $cpio_list
-diff --git a/usr/initramfs_data.S b/usr/initramfs_data.S
-index d07648f05bbf..cd67edc38797 100644
---- a/usr/initramfs_data.S
-+++ b/usr/initramfs_data.S
-@@ -22,12 +22,9 @@
-   in the ELF header, as required by certain architectures.
- */
- 
--#include <linux/stringify.h>
--#include <asm-generic/vmlinux.lds.h>
--
- .section .init.ramfs,"a"
- __irf_start:
--.incbin __stringify(INITRAMFS_IMAGE)
-+.incbin "usr/initramfs_inc_data"
- __irf_end:
- .section .init.ramfs.info,"a"
- .globl __initramfs_size
--- 
-2.17.1
-
+> With the current hardware design limitations in place, ECAM can be enabled
+> only for one controller (C5 controller to be precise) with bus numbers
+> starting from 160 instead of 0. A different approach is taken to avoid this
+> abnormal way of enabling ECAM  for just one controller and to also enable
+> configuration space access for all the other controllers. In this approach,
+> MCFG quirks are added for each controller with a 30MB PCIe aperture
+> resource for each controller in the disguise of ECAM region. But, this
+> region actually contains DesignWare core's internal Address Translation
+> Unit (iATU) using which the ECAM ops access configuration space in the
+> otherwise standard way of programming iATU registers in DesignWare core
+> based IPs for a respective B:D:F.
+>
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
+>  drivers/acpi/pci_mcfg.c                    | 13 +++
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 95 ++++++++++++++++++++++
+>  include/linux/pci-ecam.h                   |  1 +
+>  3 files changed, 109 insertions(+)
+>
+> diff --git a/drivers/acpi/pci_mcfg.c b/drivers/acpi/pci_mcfg.c
+> index 6b347d9920cc..a42918ecc19a 100644
+> --- a/drivers/acpi/pci_mcfg.c
+> +++ b/drivers/acpi/pci_mcfg.c
+> @@ -116,6 +116,19 @@ static struct mcfg_fixup mcfg_quirks[] = {
+>         THUNDER_ECAM_QUIRK(2, 12),
+>         THUNDER_ECAM_QUIRK(2, 13),
+>
+> +       { "NVIDIA", "TEGRA194", 1, 0, MCFG_BUS_ANY, &tegra194_pcie_ops,
+> +         DEFINE_RES_MEM(0x38200000, (30 * SZ_1M))},
+> +       { "NVIDIA", "TEGRA194", 1, 1, MCFG_BUS_ANY, &tegra194_pcie_ops,
+> +         DEFINE_RES_MEM(0x30200000, (30 * SZ_1M))},
+> +       { "NVIDIA", "TEGRA194", 1, 2, MCFG_BUS_ANY, &tegra194_pcie_ops,
+> +         DEFINE_RES_MEM(0x32200000, (30 * SZ_1M))},
+> +       { "NVIDIA", "TEGRA194", 1, 3, MCFG_BUS_ANY, &tegra194_pcie_ops,
+> +         DEFINE_RES_MEM(0x34200000, (30 * SZ_1M))},
+> +       { "NVIDIA", "TEGRA194", 1, 4, MCFG_BUS_ANY, &tegra194_pcie_ops,
+> +         DEFINE_RES_MEM(0x36200000, (30 * SZ_1M))},
+> +       { "NVIDIA", "TEGRA194", 1, 5, MCFG_BUS_ANY, &tegra194_pcie_ops,
+> +         DEFINE_RES_MEM(0x3a200000, (30 * SZ_1M))},
+> +
+>  #define XGENE_V1_ECAM_MCFG(rev, seg) \
+>         {"APM   ", "XGENE   ", rev, seg, MCFG_BUS_ANY, \
+>                 &xgene_v1_pcie_ecam_ops }
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index cbe95f0ea0ca..91496978deb7 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -21,6 +21,8 @@
+>  #include <linux/of_irq.h>
+>  #include <linux/of_pci.h>
+>  #include <linux/pci.h>
+> +#include <linux/pci-acpi.h>
+> +#include <linux/pci-ecam.h>
+>  #include <linux/phy/phy.h>
+>  #include <linux/pinctrl/consumer.h>
+>  #include <linux/platform_device.h>
+> @@ -895,6 +897,99 @@ static struct dw_pcie_host_ops tegra_pcie_dw_host_ops = {
+>         .set_num_vectors = tegra_pcie_set_msi_vec_num,
+>  };
+>
+> +#if defined(CONFIG_ACPI) && defined(CONFIG_PCI_QUIRKS)
+> +struct tegra194_pcie_acpi  {
+> +       void __iomem *dbi_base;
+> +       void __iomem *iatu_base;
+> +};
+> +
+> +static int tegra194_acpi_init(struct pci_config_window *cfg)
+> +{
+> +       struct device *dev = cfg->parent;
+> +       struct tegra194_pcie_acpi *pcie;
+> +
+> +       pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+> +       if (!pcie)
+> +               return -ENOMEM;
+> +
+> +       pcie->dbi_base = cfg->win;
+> +       pcie->iatu_base = cfg->win + SZ_256K;
+> +       cfg->priv = pcie;
+> +
+> +       return 0;
+> +}
+> +
+> +static inline void atu_reg_write(struct tegra194_pcie_acpi *pcie, int index,
+> +                                u32 val, u32 reg)
+> +{
+> +       u32 offset = PCIE_GET_ATU_OUTB_UNR_REG_OFFSET(index);
+> +
+> +       writel(val, pcie->iatu_base + offset + reg);
+> +}
+> +
+> +static void program_outbound_atu(struct tegra194_pcie_acpi *pcie, int index,
+> +                                int type, u64 cpu_addr, u64 pci_addr, u64 size)
+> +{
+> +       atu_reg_write(pcie, index, lower_32_bits(cpu_addr),
+> +                     PCIE_ATU_LOWER_BASE);
+> +       atu_reg_write(pcie, index, upper_32_bits(cpu_addr),
+> +                     PCIE_ATU_UPPER_BASE);
+> +       atu_reg_write(pcie, index, lower_32_bits(pci_addr),
+> +                     PCIE_ATU_LOWER_TARGET);
+> +       atu_reg_write(pcie, index, lower_32_bits(cpu_addr + size - 1),
+> +                     PCIE_ATU_LIMIT);
+> +       atu_reg_write(pcie, index, upper_32_bits(pci_addr),
+> +                     PCIE_ATU_UPPER_TARGET);
+> +       atu_reg_write(pcie, index, type, PCIE_ATU_CR1);
+> +       atu_reg_write(pcie, index, PCIE_ATU_ENABLE, PCIE_ATU_CR2);
+> +}
+> +
+> +static void __iomem *tegra194_map_bus(struct pci_bus *bus,
+> +                                     unsigned int devfn, int where)
+> +{
+> +       struct pci_config_window *cfg = bus->sysdata;
+> +       struct tegra194_pcie_acpi *pcie = cfg->priv;
+> +       u32 busdev;
+> +       int type;
+> +
+> +       if (bus->number < cfg->busr.start || bus->number > cfg->busr.end)
+> +               return NULL;
+> +
+> +       if (bus->number == cfg->busr.start) {
+> +               if (PCI_SLOT(devfn) == 0)
+> +                       return pcie->dbi_base + where;
+> +               else
+> +                       return NULL;
+> +       }
+> +
+> +       busdev = PCIE_ATU_BUS(bus->number) | PCIE_ATU_DEV(PCI_SLOT(devfn)) |
+> +                PCIE_ATU_FUNC(PCI_FUNC(devfn));
+> +
+> +       if (bus->parent->number == cfg->busr.start) {
+> +               if (PCI_SLOT(devfn) == 0)
+> +                       type = PCIE_ATU_TYPE_CFG0;
+> +               else
+> +                       return NULL;
+> +       } else {
+> +               type = PCIE_ATU_TYPE_CFG1;
+> +       }
+> +
+> +       program_outbound_atu(pcie, PCIE_ATU_REGION_INDEX0, type,
+> +                            cfg->res.start + SZ_128K, busdev, SZ_128K);
+> +       return (void __iomem *)(pcie->dbi_base + SZ_128K + where);
+> +}
+> +
+> +struct pci_ecam_ops tegra194_pcie_ops = {
+> +       .bus_shift      = 20,
+> +       .init           = tegra194_acpi_init,
+> +       .pci_ops        = {
+> +               .map_bus        = tegra194_map_bus,
+> +               .read           = pci_generic_config_read,
+> +               .write          = pci_generic_config_write,
+> +       }
+> +};
+> +#endif /* defined(CONFIG_ACPI) && defined(CONFIG_PCI_QUIRKS) */
+> +
+>  static void tegra_pcie_disable_phy(struct tegra_pcie_dw *pcie)
+>  {
+>         unsigned int phy_count = pcie->phy_count;
+> diff --git a/include/linux/pci-ecam.h b/include/linux/pci-ecam.h
+> index a73164c85e78..6156140dcbb6 100644
+> --- a/include/linux/pci-ecam.h
+> +++ b/include/linux/pci-ecam.h
+> @@ -57,6 +57,7 @@ extern struct pci_ecam_ops pci_thunder_ecam_ops; /* Cavium ThunderX 1.x */
+>  extern struct pci_ecam_ops xgene_v1_pcie_ecam_ops; /* APM X-Gene PCIe v1 */
+>  extern struct pci_ecam_ops xgene_v2_pcie_ecam_ops; /* APM X-Gene PCIe v2.x */
+>  extern struct pci_ecam_ops al_pcie_ops; /* Amazon Annapurna Labs PCIe */
+> +extern struct pci_ecam_ops tegra194_pcie_ops; /* Tegra194 PCIe */
+>  #endif
+>
+>  #ifdef CONFIG_PCI_HOST_COMMON
+> --
+> 2.17.1
+>
