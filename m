@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C6B212FC40
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 19:20:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0BB312FC45
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 19:20:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbgACSTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 13:19:45 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39678 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728451AbgACSTl (ORCPT
+        id S1728519AbgACST4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 13:19:56 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46499 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728464AbgACSTn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 13:19:41 -0500
-Received: by mail-pl1-f194.google.com with SMTP id g6so16368013plp.6;
-        Fri, 03 Jan 2020 10:19:40 -0800 (PST)
+        Fri, 3 Jan 2020 13:19:43 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z124so23740041pgb.13;
+        Fri, 03 Jan 2020 10:19:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hObdGfhJZd0SmP8SodLo/G+SfyA3edd8eSiGk2vdy/s=;
-        b=rr2oD3VVAcuSjaCyH+1w105sIq0VCXM5GrVe2oYbdEhaZj21pxjsHxinGTzvYpGtz3
-         yBAcQlOLvUdcc4PVExO2HHJsjd43SxfEO5JHcWckCmnzVpOUDM0pCU3QH4eEbozNI1wA
-         RJ+5wD00KMQATPlxf+tD51y4foy+E1kjAFbW5LohNoJdwNF2ssEudpeXuwf3HJWFCxcF
-         4Axn7q9ewa8/fyUiK08HQpwM2rptVr/c16gjPlwjj7UyzFVzuc2T/ADD2GTGG4HFrBnN
-         bZF2CFLt0MDLul1CPAedBFA8pNOIwgd2Box/OWh+B6FEdhZKtuMZrgrRzJMYZnGIgapF
-         wTbg==
+        bh=GxyV8c+CBh8Hzl+nonamgJns7cvu4S002wlvn50HIgE=;
+        b=IBVgF7kcovA/22Yyi+gP0AMpaL+7MydmphB1e+66ORf9qKVpKjxNgKSiT5xpgikV/2
+         yKO4BRjpy38a/IK0tRSZThjagR4Q97G7DZEHNwOFUqBpsCNfvwLeCR1hdAAi31EXgWxe
+         jWBCGbdERxYtGkWmXr8M+vvkI4CMGTHghqenpzlezm9hzC8Dl/L/dqlEIeb9qfHrOY/p
+         g/3sQoA9h1RCwq4tB9a7WA/n8zrLFcKWgleP2++O4FKHS+qgj9m/fjBDMQDKeTBsz7fm
+         6pdu2Qm+efusHEPstOiHwUBm7SAwdpW7BdsumHQw8x5cyHjC5Ffc8aTC+vduW7vrRDdZ
+         4U1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=hObdGfhJZd0SmP8SodLo/G+SfyA3edd8eSiGk2vdy/s=;
-        b=QyG/JUi5IOKAFsBRSAAz5n+iAvYoBgm1wyequ6/JNaF05dw9kPk1CtpJInBRcpDv+D
-         Q8kyYuoicj6xuYnivC5RERQQ5LbGFLrxvSC6DUQuArCsA6JU2rzd1KWkrKZZt8DHIZyI
-         dFZTWjJptSYwxI2WyoKhwgMYOwgimUHGphzGfdIKotQhZGhHvzgzr+m9hL+N/SOacJgp
-         Hgnd1gckffSLXOXe4jJhTeZhOkMi6x10LVErH0zPn7u+q0/q6X9em0XDeIrPT3YYYI4O
-         RjbFLmzbDu+GLZksGIpLiJ37caNrLls9hQZAg55PYkJJUmNz7zHw73+DTZCFXT3c+Q6c
-         co0A==
-X-Gm-Message-State: APjAAAVudzzpV7lQg3F2AdpcjeMAmrWJASb6uURYrvm1nZxMkTwB/i7S
-        /9WMt0MqkUgOMM0WWbnwEl/xa4tQ
-X-Google-Smtp-Source: APXvYqyxVbyVdmuEyNYCeZvfxH9A1WjQiJHvKs5vzKLwH12ImzSu2kcR/dCMUQBUYJlzV89Xo4lVCA==
-X-Received: by 2002:a17:902:aa48:: with SMTP id c8mr92033758plr.243.1578075580077;
-        Fri, 03 Jan 2020 10:19:40 -0800 (PST)
+        bh=GxyV8c+CBh8Hzl+nonamgJns7cvu4S002wlvn50HIgE=;
+        b=H8oEqBvC23IiP1FrNRpVZ+tciM4yIXvNd92MytIZBYvsMUwgd1EHqJ4ISdJqa6g01s
+         adFcW4866kWqO5T4cglojY94GW+Kl+ntXXYEuOChqJBDue93KnQSsStETt/PbEVWGeyF
+         gwXNU8/TuwZVq4xOZOfoHLeY7CbYmu/kupfX/oUO1GfnZUeO6c9kbPGFpY8C258vA2n/
+         hIEo2NsvbYG7jlPj5YQYlEg5vML7IFvmHHr1S0KGcbnji8ZMNfe6SlhyNL/LbE3V60Jd
+         dCsi8snYir8P2bGtQgyVvIURzehnCb9DZGDsNUB7To1Fl7Lq78R8l8mBzeixU2xxZjAo
+         oLaw==
+X-Gm-Message-State: APjAAAUAvuuGBDykmsb1bBa+B/nj0O5UlcvQSl2fpb4I+jsI6RqWT8Iv
+        KI5N49WQZjYBvCpvUlqweCLlhl1d
+X-Google-Smtp-Source: APXvYqxQEWMTbYtewRqXSui8P1dL9laQDNhH3i/UQqpkd11zY4PhnjiKxFZga8BpCBWLmGKrBBQwjg==
+X-Received: by 2002:a63:d041:: with SMTP id s1mr98708238pgi.363.1578075581804;
+        Fri, 03 Jan 2020 10:19:41 -0800 (PST)
 Received: from stbsrv-and-01.and.broadcom.net ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id j8sm41783602pfe.182.2020.01.03.10.19.38
+        by smtp.gmail.com with ESMTPSA id j8sm41783602pfe.182.2020.01.03.10.19.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jan 2020 10:19:39 -0800 (PST)
+        Fri, 03 Jan 2020 10:19:41 -0800 (PST)
 From:   Al Cooper <alcooperx@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Al Cooper <alcooperx@gmail.com>,
@@ -57,9 +57,9 @@ Cc:     Al Cooper <alcooperx@gmail.com>,
         DEVICE TREE BINDINGS),
         linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX
         ARM ARCHITECTURE)
-Subject: [PATCH v4 10/13] phy: usb: PHY's MDIO registers not accessible without device installed
-Date:   Fri,  3 Jan 2020 13:18:08 -0500
-Message-Id: <20200103181811.22939-11-alcooperx@gmail.com>
+Subject: [PATCH v4 11/13] phy: usb: bdc: Fix occasional failure with BDC on 7211
+Date:   Fri,  3 Jan 2020 13:18:09 -0500
+Message-Id: <20200103181811.22939-12-alcooperx@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200103181811.22939-1-alcooperx@gmail.com>
 References: <20200103181811.22939-1-alcooperx@gmail.com>
@@ -68,44 +68,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When there is no device connected and FSM is enabled, the XHCI puts
-the PHY into suspend mode.  When the PHY is put into suspend mode
-the USB LDO powers down the PHY. This causes the MDIO to be
-inaccessible and its registers reset to default. The fix is to
-disable FSM.
+The BDC "Read Transaction Size" needs to be changed from 1024
+bytes to 256 bytes to prevent occasional transaction failures.
 
 Signed-off-by: Al Cooper <alcooperx@gmail.com>
 ---
- drivers/phy/broadcom/phy-brcm-usb-init-synopsys.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ .../phy/broadcom/phy-brcm-usb-init-synopsys.c | 18 +++++++++++++++
+ drivers/phy/broadcom/phy-brcm-usb-init.h      |  1 +
+ drivers/phy/broadcom/phy-brcm-usb.c           | 23 +++++++++++++++----
+ 3 files changed, 38 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/phy/broadcom/phy-brcm-usb-init-synopsys.c b/drivers/phy/broadcom/phy-brcm-usb-init-synopsys.c
-index ee49cbdb55bb..ce4226ac552e 100644
+index ce4226ac552e..60969827a67a 100644
 --- a/drivers/phy/broadcom/phy-brcm-usb-init-synopsys.c
 +++ b/drivers/phy/broadcom/phy-brcm-usb-init-synopsys.c
-@@ -56,6 +56,7 @@
- #define USB_PHY_PLL_LDO_CTL		0x08
- #define   USB_PHY_PLL_LDO_CTL_AFE_CORERDY_MASK		0x00000004
- #define USB_PHY_UTMI_CTL_1		0x04
-+#define   USB_PHY_UTMI_CTL_1_POWER_UP_FSM_EN_MASK	0x00000800
- #define   USB_PHY_UTMI_CTL_1_PHY_MODE_MASK		0x0000000c
- #define   USB_PHY_UTMI_CTL_1_PHY_MODE_SHIFT		2
- #define USB_PHY_STATUS			0x20
-@@ -229,6 +230,14 @@ static void usb_init_common_7211b0(struct brcm_usb_init_params *params)
+@@ -70,6 +70,11 @@
+ #define USB_GMDIOCSR	0
+ #define USB_GMDIOGEN	4
+ 
++/* Register definitions for the BDC EC block in 7211b0 */
++#define BDC_EC_AXIRDA			0x0c
++#define   BDC_EC_AXIRDA_RTS_MASK			0xf0000000
++#define   BDC_EC_AXIRDA_RTS_SHIFT			28
++
+ 
+ static void usb_mdio_write_7211b0(struct brcm_usb_init_params *params,
+ 				  uint8_t addr, uint16_t data)
+@@ -198,6 +203,7 @@ static void usb_init_common_7211b0(struct brcm_usb_init_params *params)
+ {
+ 	void __iomem *ctrl = params->regs[BRCM_REGS_CTRL];
+ 	void __iomem *usb_phy = params->regs[BRCM_REGS_USB_PHY];
++	void __iomem *bdc_ec = params->regs[BRCM_REGS_BDC_EC];
+ 	int timeout_ms = PHY_LOCK_TIMEOUT_MS;
+ 	u32 reg;
+ 
+@@ -230,6 +236,18 @@ static void usb_init_common_7211b0(struct brcm_usb_init_params *params)
  
  	usb_init_common(params);
  
 +	/*
-+	 * Disable FSM, otherwise the PHY will auto suspend when no
-+	 * device is connected and will be reset on resume.
++	 * The BDC controller will get occasional failures with
++	 * the default "Read Transaction Size" of 6 (1024 bytes).
++	 * Set it to 4 (256 bytes).
 +	 */
-+	reg = brcm_usb_readl(usb_phy + USB_PHY_UTMI_CTL_1);
-+	reg &= ~USB_PHY_UTMI_CTL_1_POWER_UP_FSM_EN_MASK;
-+	brcm_usb_writel(reg, usb_phy + USB_PHY_UTMI_CTL_1);
++	if ((params->mode != USB_CTLR_MODE_HOST) && bdc_ec) {
++		reg = brcm_usb_readl(bdc_ec + BDC_EC_AXIRDA);
++		reg &= ~BDC_EC_AXIRDA_RTS_MASK;
++		reg |= (0x4 << BDC_EC_AXIRDA_RTS_SHIFT);
++		brcm_usb_writel(reg, bdc_ec + BDC_EC_AXIRDA);
++	}
 +
- 	usb2_eye_fix_7211b0(params);
- }
+ 	/*
+ 	 * Disable FSM, otherwise the PHY will auto suspend when no
+ 	 * device is connected and will be reset on resume.
+diff --git a/drivers/phy/broadcom/phy-brcm-usb-init.h b/drivers/phy/broadcom/phy-brcm-usb-init.h
+index 2ea81daf295e..4cdd9cc1c5a3 100644
+--- a/drivers/phy/broadcom/phy-brcm-usb-init.h
++++ b/drivers/phy/broadcom/phy-brcm-usb-init.h
+@@ -19,6 +19,7 @@ enum brcmusb_reg_sel {
+ 	BRCM_REGS_XHCI_GBL,
+ 	BRCM_REGS_USB_PHY,
+ 	BRCM_REGS_USB_MDIO,
++	BRCM_REGS_BDC_EC,
+ 	BRCM_REGS_MAX
+ };
  
+diff --git a/drivers/phy/broadcom/phy-brcm-usb.c b/drivers/phy/broadcom/phy-brcm-usb.c
+index c82d7ec15334..cc5763ace3ad 100644
+--- a/drivers/phy/broadcom/phy-brcm-usb.c
++++ b/drivers/phy/broadcom/phy-brcm-usb.c
+@@ -36,6 +36,7 @@ struct value_to_name_map {
+ struct match_chip_info {
+ 	void *init_func;
+ 	u8 required_regs[BRCM_REGS_MAX + 1];
++	u8 optional_reg;
+ };
+ 
+ static struct value_to_name_map brcm_dr_mode_to_name[] = {
+@@ -71,7 +72,7 @@ struct brcm_usb_phy_data {
+ };
+ 
+ static s8 *node_reg_names[BRCM_REGS_MAX] = {
+-	"crtl", "xhci_ec", "xhci_gbl", "usb_phy", "usb_mdio"
++	"crtl", "xhci_ec", "xhci_gbl", "usb_phy", "usb_mdio", "bdc_ec"
+ };
+ 
+ static irqreturn_t brcm_usb_phy_wake_isr(int irq, void *dev_id)
+@@ -271,6 +272,7 @@ static struct match_chip_info chip_info_7211b0 = {
+ 		BRCM_REGS_USB_MDIO,
+ 		-1,
+ 	},
++	.optional_reg = BRCM_REGS_BDC_EC,
+ };
+ 
+ static struct match_chip_info chip_info_7445 = {
+@@ -300,7 +302,8 @@ static const struct of_device_id brcm_usb_dt_ids[] = {
+ 
+ static int brcm_usb_get_regs(struct platform_device *pdev,
+ 			     enum brcmusb_reg_sel regs,
+-			     struct  brcm_usb_init_params *ini)
++			     struct  brcm_usb_init_params *ini,
++			     bool optional)
+ {
+ 	struct resource *res;
+ 
+@@ -317,7 +320,13 @@ static int brcm_usb_get_regs(struct platform_device *pdev,
+ 				return 0;
+ 		}
+ 		if (res == NULL) {
+-			dev_err(&pdev->dev, "can't get %s base address\n",
++			if (optional) {
++				dev_dbg(&pdev->dev,
++					"Optional reg %s not found\n",
++					node_reg_names[regs]);
++				return 0;
++			}
++			dev_err(&pdev->dev, "can't get %s base addr\n",
+ 				node_reg_names[regs]);
+ 			return 1;
+ 		}
+@@ -460,7 +469,13 @@ static int brcm_usb_phy_probe(struct platform_device *pdev)
+ 			break;
+ 
+ 		err = brcm_usb_get_regs(pdev, info->required_regs[x],
+-					&priv->ini);
++					&priv->ini, false);
++		if (err)
++			return -EINVAL;
++	}
++	if (info->optional_reg) {
++		err = brcm_usb_get_regs(pdev, info->optional_reg,
++					&priv->ini, true);
+ 		if (err)
+ 			return -EINVAL;
+ 	}
 -- 
 2.17.1
 
