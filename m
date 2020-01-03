@@ -2,230 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6349F12F498
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 07:33:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A642412F4AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 07:45:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbgACGdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 01:33:49 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:63140 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725890AbgACGdt (ORCPT
+        id S1727316AbgACGoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 01:44:19 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:62447 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726181AbgACGoR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 01:33:49 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1578033228; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=P4vq32jHwms69hs9KGFtcKj6SJ9aNexS280R3S/lO/w=;
- b=SuWg9eJ64Sup0+mrtgiKA0Yl5k3+V4UDdnjZTE8PjFPHWHxmhGO14ACj1DieG1TcsB7Qfp4y
- udhIccHeWJkZGwtGOQgOCnUo9cLjO9meDv18tvw4TE+C/J6hBSEKUXYJj7te8OUsES4F//HA
- nAp8QSbSo0xMYM/QqYEq8E+tCtY=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e0ee04b.7f8aa77a56c0-smtp-out-n01;
- Fri, 03 Jan 2020 06:33:47 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id BD306C4479C; Fri,  3 Jan 2020 06:33:47 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: rjliao)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id EE9D4C433CB;
-        Fri,  3 Jan 2020 06:33:46 +0000 (UTC)
+        Fri, 3 Jan 2020 01:44:17 -0500
+X-UUID: e9e4b51c9fbe42fbac68190756123ae4-20200103
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=ih+VIQfKXduOjptVm6qmEZ+ILG81EfY3C/tspmpMToM=;
+        b=QZjmnx6+7vSaqjC7GGJ5CaY5BVyCt0Kl7Tx5BKUUG9WYwzSK3AJCkZpB9VRClHNHnFD3fbWK7ITN5VO3X9qB+plVtgX1Vdk+PBUwuy7bNYkTzvj5KIJNZmqlKWYnmDkD8vAcQIqgrilsiN2t3wt6QtcuroisWKwNcctOwIYHAjo=;
+X-UUID: e9e4b51c9fbe42fbac68190756123ae4-20200103
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <michael.kao@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1938605274; Fri, 03 Jan 2020 14:44:10 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 3 Jan 2020 14:43:44 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 3 Jan 2020 14:44:08 +0800
+From:   Michael Kao <michael.kao@mediatek.com>
+To:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <hsinyi@chromium.org>, <linux-pm@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Subject: [PATCH v3,0/8] Add Mediatek thermal dirver and dtsi 
+Date:   Fri, 3 Jan 2020 14:43:59 +0800
+Message-ID: <20200103064407.19861-1-michael.kao@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Fri, 03 Jan 2020 14:33:46 +0800
-From:   rjliao@codeaurora.org
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] Bluetooth: hci_qca: Add HCI command timeout
- handling
-In-Reply-To: <20200102190727.GB89495@google.com>
-References: <20191225060317.5258-1-rjliao@codeaurora.org>
- <20191227072130.29431-1-rjliao@codeaurora.org>
- <20191227072130.29431-4-rjliao@codeaurora.org>
- <20200102190727.GB89495@google.com>
-Message-ID: <fe752fb28dbefd87f103a4986df55e20@codeaurora.org>
-X-Sender: rjliao@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2020-01-03 03:07，Matthias Kaehlcke 写道：
-> Hi Rocky,
-> 
-> On Fri, Dec 27, 2019 at 03:21:30PM +0800, Rocky Liao wrote:
->> This patch adds the HCI command timeout handling, it will trigger 
->> btsoc
->> to report its memory dump via vendor specific events when hit the 
->> defined
->> max HCI command timeout count. After all the memory dump VSE are sent, 
->> the
->> btsoc will also send a HCI_HW_ERROR event to host and this will cause 
->> a new
->> hci down/up process and the btsoc will be re-initialized.
->> 
->> Signed-off-by: Rocky Liao <rjliao@codeaurora.org>
->> ---
->> 
->> Changes in v2:
->> - Fix build error
->> Changes in v3:
->> - Remove the function declaration
->> - Move the cmd_timeout() callback register to probe()
->> - Remove the redundant empty line
->> 
->>  drivers/bluetooth/hci_qca.c | 45 
->> +++++++++++++++++++++++++++++++++++++
->>  1 file changed, 45 insertions(+)
->> 
->> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
->> index ca0b38f065e5..026e2e2cdd30 100644
->> --- a/drivers/bluetooth/hci_qca.c
->> +++ b/drivers/bluetooth/hci_qca.c
->> @@ -47,6 +47,8 @@
->>  #define IBS_HOST_TX_IDLE_TIMEOUT_MS	2000
->>  #define CMD_TRANS_TIMEOUT_MS		100
->> 
->> +#define QCA_BTSOC_DUMP_CMD	0xFB
->> +
->>  /* susclk rate */
->>  #define SUSCLK_RATE_32KHZ	32768
->> 
->> @@ -56,6 +58,9 @@
->>  /* max retry count when init fails */
->>  #define QCA_MAX_INIT_RETRY_COUNT 3
->> 
->> +/* when hit the max cmd time out count, trigger btsoc dump */
->> +#define QCA_MAX_CMD_TIMEOUT_COUNT 3
-> 
-> nit: MAX_CMD_TIMEOUTS?
-> 
-> Similar to QCA_MAX_INIT_RETRY_COUNT on which I commented earlier I 
-> don't
-> think the 'QCA' prefix adds value here. The constant is defined in the 
-> driver
-> itself and isn't related to hardware.
-> 
+VGhpcyBwYXRjaHNldCBzdXBwb3J0cyBmb3IgTVQ4MTgzIGNoaXAgdG8gbXRrX3RoZXJtYWwuYy4N
+CkFkZCB0aGVybWFsIHpvbmUgb2YgYWxsIHRoZSB0aGVybWFsIHNlbnNvciBpbiBTb0MgZm9yDQph
+bm90aGVyIGdldCB0ZW1wZXJhdHJ1ZS4gVGhleSBkb24ndCBuZWVkIHRvIHRoZXJtYWwgdGhyb3R0
+bGUuDQpBbmQgd2UgYmluZCBjb29sZXJzIGZvciB0aGVybWFsIHpvbmUgbm9kZXMgb2YgY3B1X3Ro
+ZXJtYWwuDQoNClJlYmFzZSB0byBrZXJuZWwtNS41LXJjMS4NCg0KVXBkYXRlIGNvbnRlbnQ6DQoN
+ClsxLzhdDQpVcGRhdGUgc3VzdGFpbmFibGUgcG93ZXIgb2YgY3B1LCB0enRzMX41IGFuZCB0enRz
+QUJCLg0KDQpbNy84XQ0KQnlwYXNzIHRoZSBmYWlsdXJlIHRoYXQgbm9uIGNwdV90aGVybWFsIHNl
+bnNvciBpcyBub3QgZmluZCBpbiB0aGVybWFsLXpvbmVzDQppbiBkdHMsIHdoaWNoIGlzIG5vcm1h
+bCBmb3IgbXQ4MTczLCBzbyBwcm9tcHQgYSB3YXJuaW5nIGhlcmUgaW5zdGVhZCBvZg0KZmFpbGlu
+Zy4NCg0KUmV0dXJuIC1FQUdBSU4gaW5zdGVhZCBvZiAtRUFDQ0VTUyBvbiB0aGUgZmlyc3QgcmVh
+ZCBvZiBzZW5zb3IgdGhhdA0Kb2Z0ZW4gYXJlIGJvZ3VzIHZhbHVlcy4gVGhpcyBjYW4gYXZvaWQg
+Zm9sbG93aW5nIHdhcm5pbmcgb24gYm9vdDoNCg0KICB0aGVybWFsIHRoZXJtYWxfem9uZTY6IGZh
+aWxlZCB0byByZWFkIG91dCB0aGVybWFsIHpvbmUgKC0xMykNCg0KDQpUaGlzIHBhdGNoIHNlcmll
+cyBiYXNlIG9uIHRoZXNlIHBhdGNoZXMgWzFdWzJdWzNdWzRdLg0KDQpbMV1zdXBwb3J0IGZvciBy
+ZWFkaW5nIGNoaXAgSUQgYW5kIGVmdXNlIChodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3Bh
+dGNoLzEwOTAyMTMxLykNClsyXWFybTY0OiBkdHM6IG10ODE4MzogQWRkIHJlc2V0LWNlbGxzIGlu
+IGluZnJhY2ZnIChodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzEwOTA4NjUzLykN
+ClszXWNsazogcmVzZXQ6IE1vZGlmeSByZXNldC1jb250cm9sbGVyIGRyaXZlciAoaHR0cHM6Ly9w
+YXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDkwODY1Ny8pDQpbNF1QTSAvIEFWUzogU1ZTOiBJ
+bnRyb2R1Y2UgU1ZTIGVuZ2luZSAoaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8x
+MDkyMzI4OS8pDQoNCk1hdHRoaWFzIEthZWhsY2tlICgyKToNCiAgYXJtNjQ6IGR0czogbXQ4MTgz
+OiBDb25maWd1cmUgQ1BVIGNvb2xpbmcNCiAgYXJtNjQ6IGR0czogbXQ4MTgzOiBJbmNyZWFzZSBw
+b2xsaW5nIGZyZXF1ZW5jeSBmb3IgQ1BVIHRoZXJtYWwgem9uZQ0KDQpNaWNoYWVsIEthbyAoNik6
+DQogIGFybTY0OiBkdHM6IG10ODE4MzogYWRkIHRoZXJtYWwgem9uZSBub2RlDQogIGFybTY0OiBk
+dHM6IG10ODE4MzogYWRkL3VwZGF0ZSBkeW5hbWljIHBvd2VyIGNvZWZmaWNpZW50cw0KICBhcm02
+NDogZHRzOiBtdDgxODM6IEFkZCAjY29vbGluZy1jZWxscyB0byBDUFUgbm9kZXMNCiAgdGhlcm1h
+bDogbWVkaWF0ZWs6IG10ODE4MzogZml4IGJhbmsgbnVtYmVyIHNldHRpbmdzDQogIHRoZXJtYWw6
+IG1lZGlhdGVrOiBhZGQgYW5vdGhlciBnZXRfdGVtcCBvcHMgZm9yIHRoZXJtYWwgc2Vuc29ycw0K
+ICB0aGVybWFsOiBtZWRpYXRlazogdXNlIHNwaW5sb2NrIHRvIHByb3RlY3QgUFRQQ09SRVNFTA0K
+DQogYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9tdDgxODMuZHRzaSB8IDE1NyArKysrKysr
+KysrKysrKysrKysrKysrKw0KIGRyaXZlcnMvdGhlcm1hbC9tdGtfdGhlcm1hbC5jICAgICAgICAg
+ICAgfCAgODggKysrKysrKysrKystLQ0KIDIgZmlsZXMgY2hhbmdlZCwgMjMxIGluc2VydGlvbnMo
+KyksIDE0IGRlbGV0aW9ucygtKQ0KDQo=
 
-OK
-
->> +
->>  enum qca_flags {
->>  	QCA_IBS_ENABLED,
->>  	QCA_DROP_VENDOR_EVENT,
->> @@ -123,6 +128,8 @@ struct qca_data {
->>  	u64 rx_votes_off;
->>  	u64 votes_on;
->>  	u64 votes_off;
->> +
->> +	u32 cmd_timeout_cnt;
-> 
-> nit: cmd_timeouts?
-> 
->>  };
->> 
->>  enum qca_speed_type {
->> @@ -1332,6 +1339,11 @@ static int qca_setup(struct hci_uart *hu)
->>  	if (!ret) {
->>  		set_bit(QCA_IBS_ENABLED, &qca->flags);
->>  		qca_debugfs_init(hdev);
->> +
->> +		/* clear the command time out count every time after
->> +		 * initializaiton done
->> +		 */
->> +		qca->cmd_timeout_cnt = 0;
->>  	} else if (ret == -ENOENT) {
->>  		/* No patch/nvm-config found, run with original fw/config */
->>  		ret = 0;
->> @@ -1462,6 +1474,38 @@ static int qca_power_off(struct hci_dev *hdev)
->>  	return 0;
->>  }
->> 
->> +static int qca_send_btsoc_dump_cmd(struct hci_uart *hu)
->> +{
->> +	int err = 0;
-> 
-> The variable is pointless, just return 0 at the end of the function.
-> 
-OK
-
->> +	struct sk_buff *skb = NULL;
->> +	struct qca_data *qca = hu->priv;
->> +
->> +	BT_DBG("hu %p sending btsoc dump command", hu);
->> +
->> +	skb = bt_skb_alloc(1, GFP_ATOMIC);
->> +	if (!skb) {
->> +		BT_ERR("Failed to allocate memory for qca dump command");
-> 
-> "These generic allocation functions all emit a stack dump on failure 
-> when used
-> without __GFP_NOWARN so there is no use in emitting an additional 
-> failure
-> message when NULL is returned."
-> 
-> Documentation/process/coding-style.rst
-> 
-> hence the logging is redundant, drop it.
-> 
-
-OK
-
->> +		return -ENOMEM;
->> +	}
->> +
->> +	skb_put_u8(skb, QCA_BTSOC_DUMP_CMD);
->> +
->> +	skb_queue_tail(&qca->txq, skb);
->> +
->> +	return err;
->> +}
->> +
->> +static void qca_cmd_timeout(struct hci_dev *hdev)
->> +{
->> +	struct hci_uart *hu = hci_get_drvdata(hdev);
->> +	struct qca_data *qca = hu->priv;
->> +
->> +	BT_ERR("hu %p hci cmd timeout count=0x%x", hu, 
->> ++qca->cmd_timeout_cnt);
-> 
-> Is there any particular reason to print the counter in hex instead of
-> decimal?
-> 
-> Should this use bt_dev_err() since we have a hdev in this context?
-> 
-
-OK
-
->> +
->> +	if (qca->cmd_timeout_cnt >= QCA_MAX_CMD_TIMEOUT_COUNT)
->> +		qca_send_btsoc_dump_cmd(hu);
->> +}
->> +
->>  static int qca_regulator_enable(struct qca_serdev *qcadev)
->>  {
->>  	struct qca_power *power = qcadev->bt_power;
->> @@ -1605,6 +1649,7 @@ static int qca_serdev_probe(struct serdev_device 
->> *serdev)
->>  		hdev = qcadev->serdev_hu.hdev;
->>  		set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
->>  		hdev->shutdown = qca_power_off;
->> +		hdev->cmd_timeout = qca_cmd_timeout;
->>  	}
->> 
->>  out:	return err;
->> --
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
->> Forum, a Linux Foundation Collaborative Project
