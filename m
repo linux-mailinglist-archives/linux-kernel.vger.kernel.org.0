@@ -2,76 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 988D912FE6D
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 22:47:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A974A12FE6E
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 22:47:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728739AbgACVq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 16:46:59 -0500
-Received: from smtprelay0098.hostedemail.com ([216.40.44.98]:38454 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728549AbgACVq6 (ORCPT
+        id S1728761AbgACVr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 16:47:27 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:44843 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728549AbgACVr0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 16:46:58 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id C64CE249C;
-        Fri,  3 Jan 2020 21:46:56 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3868:3871:3872:4250:4321:5007:7514:8603:10004:10400:10848:11026:11232:11658:11914:12048:12297:12555:12740:12760:12895:13069:13146:13230:13311:13357:13439:14096:14097:14181:14659:14721:21063:21080:21324:21433:21611:21627:30012:30054:30070:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: bulb70_249ac3912826
-X-Filterd-Recvd-Size: 2061
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf12.hostedemail.com (Postfix) with ESMTPA;
-        Fri,  3 Jan 2020 21:46:55 +0000 (UTC)
-Message-ID: <e76bdf736141d5a390e57f2bc8f6f6f9fbe574c1.camel@perches.com>
-Subject: Re: [PATCH 3/3] lib/find_bit.c: uninline helper _find_next_bit()
-From:   Joe Perches <joe@perches.com>
-To:     Yury Norov <yury.norov@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 03 Jan 2020 13:46:07 -0800
-In-Reply-To: <20200103202846.21616-3-yury.norov@gmail.com>
-References: <20200103202846.21616-1-yury.norov@gmail.com>
-         <20200103202846.21616-3-yury.norov@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Fri, 3 Jan 2020 16:47:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578088045;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:in-reply-to:in-reply-to:  references:references;
+        bh=aQ66C15EM+pgbqrVEPhqNK/QPopaJL165JeYQIZUeJw=;
+        b=O8bmurikcXHJDhURkNVUcPbznKUIeWWhKXohV6hv0xNnQfUGOUtHzydM/Eq6BaOtdv/jBt
+        GBxY2lmQjOvxITvOYWYUu42TRMRIQ/ExTW3hsaEmngTDFs+zZJTW/JsOxiIG/xD9lYRno3
+        G9rV1HiRw8WdRnBHYa55eTjd/w3CdME=
+Received: from mail-yw1-f72.google.com (mail-yw1-f72.google.com
+ [209.85.161.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-155-MrqXTHtqMm29pgFOOTv-vA-1; Fri, 03 Jan 2020 16:47:23 -0500
+X-MC-Unique: MrqXTHtqMm29pgFOOTv-vA-1
+Received: by mail-yw1-f72.google.com with SMTP id j9so10904481ywg.14
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 13:47:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=aQ66C15EM+pgbqrVEPhqNK/QPopaJL165JeYQIZUeJw=;
+        b=t9incNBBAviTnw9jEfWts3vE0/pH4x2tQWnesDAdqG2v6sp3948d4j5dcRC/qsAvu2
+         7nBgb99r+wG3gG7Y/RJD8KZPuTmx4MHwoFabR0E5tUQMfdiVH24pxLEI65AQ6snciFEE
+         0ZaWv5gPBUfelHPU7WeTTyvNG9VxS6YsJrsPBRziGisB81/HjxCBhfdnodJjzqT0eJwQ
+         iGFoxHC+GdIEcFgzJQVITNuIdSGKG9xxoIuWW1r/JAWwe5bDmaS/52YfRQw2CUXrd7cQ
+         GzrcNrZ/HW5wI43M4gcnLvfztchLfNFv8GhzcSO5r2w+El0zq4w4RN9njYZQwnnLICwd
+         +YmQ==
+X-Gm-Message-State: APjAAAVO0pDrWwz46Y0YjGY7dkeJTBcFcixbtn7UhUOFN0AlwPRYoxeg
+        2z9xCKVJe+sKQwpItZpqlhsE4diiwt48MEzGSDk1IL+wxSf/D1K1LpUxB7hI8597rYLZ4eQMGP/
+        T19KQ1c3JsKiY9ob05jmFL/2c
+X-Received: by 2002:a81:98b:: with SMTP id 133mr64946274ywj.387.1578088043348;
+        Fri, 03 Jan 2020 13:47:23 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwv/q4jZ5mihtaQmAWvF5KH4xP7n1jA76SqQP/5d+Cz8w7XkIwzVRIqbdPsV0pMGBPXo+6N6A==
+X-Received: by 2002:a81:98b:: with SMTP id 133mr64946251ywj.387.1578088043065;
+        Fri, 03 Jan 2020 13:47:23 -0800 (PST)
+Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
+        by smtp.gmail.com with ESMTPSA id q189sm24069007ywb.15.2020.01.03.13.47.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Jan 2020 13:47:22 -0800 (PST)
+Date:   Fri, 3 Jan 2020 14:47:20 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Christian Bundy <christianbundy@fraction.io>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        stable-commits@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Patch "tpm_tis: reserve chip for duration of tpm_tis_core_init"
+ has been added to the 5.4-stable tree
+Message-ID: <20200103214720.nf2ahcpk3t2d7lua@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Christian Bundy <christianbundy@fraction.io>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Peter Huewe <peterhuewe@gmx.de>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        stable-commits@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAPcyv4jfpOX85GWgNTyugWksU=e-j=RhU_fcrcHBo4GMZ8_bhw@mail.gmail.com>
+ <c6ce34b130210d2d1330fc4079d6d82bd74dcef1.camel@linux.intel.com>
+ <50217a688ffa56cf5f150ffd358daba2a88cad48.camel@linux.intel.com>
+ <20191228151526.GA6971@linux.intel.com>
+ <CAPcyv4i_frm8jZeknniPexp8AAmGsaq0_DHegmL4XZHQi1ThxA@mail.gmail.com>
+ <CAPcyv4iyQeXBWvp8V_UPBsOk29cfmTVZGYrrDgyYYqzsQvTjNA@mail.gmail.com>
+ <2c4a80e0d30bf1dfe89c6e3469d1dbfb008275fa.camel@linux.intel.com>
+ <20191231010256.kymv4shwmx5jcmey@cantor>
+ <20191231155944.GA4790@linux.intel.com>
+ <be07a1e4-c290-4185-8c23-d97050279564@www.fastmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <be07a1e4-c290-4185-8c23-d97050279564@www.fastmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2020-01-03 at 12:28 -0800, Yury Norov wrote:
-> It saves 25% of .text for arm64, and more for BE architectures.
+On Tue Dec 31 19, Christian Bundy wrote:
+>> Christian, were you having any issues with interrupts? You system was going
+>> into this code as well.
+>
+>Unfortunately I'm now unable to test, sorry for the trouble. I replaced my BIOS
+>with UEFI firmware and the problem has disappeared. Please let me know if there
+>is anything else I can do to help.
+>
+>Christian
+>
 
-This seems a rather misleading code size reduction description.
-
-Please detail the specific code sizes using "size lib/find_bit.o"
-before and after this change.
-
-Also, _find_next_bit is used 3 times, perhaps any code size
-increase is appropriate given likely reduced run time.
-
-> Signed-off-by: Yury Norov <yury.norov@gmail.com>
-> ---
->  lib/find_bit.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/find_bit.c b/lib/find_bit.c
-> index c03cbecb2b1f6..0e4b2b90c9c02 100644
-> --- a/lib/find_bit.c
-> +++ b/lib/find_bit.c
-> @@ -27,7 +27,7 @@
->   *    searching it for one bits.
->   *  - The optional "addr2", which is anded with "addr1" if present.
->   */
-> -static inline unsigned long _find_next_bit(const unsigned long *addr1,
-> +static unsigned long _find_next_bit(const unsigned long *addr1,
->  		const unsigned long *addr2, unsigned long nbits,
->  		unsigned long start, unsigned long invert, unsigned long le)
->  {
+That is interesting. Is the tpm functioning, or did the firmware change disable it?
+Is there any output from 'dmesg | grep -i tpm' or anything in /sys/class/tpm/ ?
 
