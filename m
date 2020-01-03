@@ -2,103 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CACD512F76C
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 12:40:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6213612F799
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 12:42:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727628AbgACLkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 06:40:15 -0500
-Received: from foss.arm.com ([217.140.110.172]:54910 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727457AbgACLkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 06:40:14 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 686661FB;
-        Fri,  3 Jan 2020 03:40:14 -0800 (PST)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D6B73F703;
-        Fri,  3 Jan 2020 03:40:13 -0800 (PST)
-Date:   Fri, 3 Jan 2020 11:40:11 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     "Zengtao (B)" <prime.zeng@hisilicon.com>
-Cc:     Valentin Schneider <valentin.schneider@arm.com>,
-        Linuxarm <linuxarm@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH] cpu-topology: warn if NUMA configurations conflicts with
- lower layer
-Message-ID: <20200103114011.GB19390@bogus>
-References: <1577088979-8545-1-git-send-email-prime.zeng@hisilicon.com>
- <20191231164051.GA4864@bogus>
- <678F3D1BB717D949B966B68EAEB446ED340AE1D3@dggemm526-mbx.china.huawei.com>
- <20200102112955.GC4864@bogus>
- <678F3D1BB717D949B966B68EAEB446ED340AEB67@dggemm526-mbx.china.huawei.com>
- <c43342d0-7e4d-3be0-0fe1-8d802b0d7065@arm.com>
- <678F3D1BB717D949B966B68EAEB446ED340AFCA0@dggemm526-mbx.china.huawei.com>
+        id S1727717AbgACLmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 06:42:07 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46860 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727560AbgACLmH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 06:42:07 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z7so42077719wrl.13
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 03:42:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DOp7/NK/kDQFb3w2KXAmvUYnxJH6vqk7p3b0dByfVmI=;
+        b=VoGDQ6SiKuFgnf2qlFKP1psc3/j9gZewO2B8sqI595AAXi7Ed2XsUavtezZcxzQ+1f
+         p/cidDY7cbnLVt3Cy0d72h8fWxNe0F4AjQKooGUwn2+Fjehbvvj5/zLvCOppTVknAd8Q
+         F1oBWoqfuLyFU6HITwt0uRO00SO36F/sQ1dUco3i/hpnv9Ft7eEbUpbGKtlv21tT6X2f
+         Q/SkDqhwGOTN3AreD0KKT+32vlSaPOmRpO7K9Si3WsIs8SQ/XM+NuIx5cEKxh67bH8ga
+         zzDyoo0zOaAdD7WAjSfnNu9rSIULBXph9Gj5tfhyH3WU12WVrjTeR8RlmJdS6/xb8CoS
+         6bUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DOp7/NK/kDQFb3w2KXAmvUYnxJH6vqk7p3b0dByfVmI=;
+        b=nXzKO29BDepRNN5HX1bM8RXCAbteb0CtPTZ582AakWQ5k7gp178iGvhN2FDvbqgPFQ
+         jkVWdtYNXNYyEEgngoJ2pFm4cgdbcXW8hCuwV/EvbNQ2xJ1IdSxDFPYb1LwkKHiJw2GF
+         Ow3gW7TzDOv1nYqjc16e/ceZlZRXRY3jyQA+TEd4os+C79cC8yeZbjM3vrETSRaXTBlL
+         /qaFrVIoU3+VlZk+7wj52dC1U7LrLwmguTp6dpL7NigDKXTbuj/btFaAxBnDSNp/2AZV
+         mjFAkWTwqfD1cDzdghD6lR9OCLvbLSdpRMegz/gUsD0+Whuh2629+iEWMJtKAwIia129
+         PPxQ==
+X-Gm-Message-State: APjAAAXKbk0lY956cLkm8X58ZV+VAtuinCCQxVXfMQCgQjx2/iQMHaRl
+        39Ebtpl6MktZobnUIvGAy/ZyPg==
+X-Google-Smtp-Source: APXvYqxTqq6ykFq8IR98BhEbv2Xpz7UddsNCByTuY68itBs2JcsLp/9mCi6/E/c6kWhLf0xrXdZEuA==
+X-Received: by 2002:adf:dc8d:: with SMTP id r13mr16048962wrj.357.1578051725088;
+        Fri, 03 Jan 2020 03:42:05 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id x18sm59934893wrr.75.2020.01.03.03.42.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Jan 2020 03:42:04 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Paul Gazzillo <paul@pgazz.com>
+Subject: [PATCH] mfd: max77650: Select REGMAP_IRQ in Kconfig
+Date:   Fri,  3 Jan 2020 12:41:56 +0100
+Message-Id: <20200103114156.20089-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <678F3D1BB717D949B966B68EAEB446ED340AFCA0@dggemm526-mbx.china.huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 03, 2020 at 04:24:04AM +0000, Zengtao (B) wrote:
-> > -----Original Message-----
-> > From: Valentin Schneider [mailto:valentin.schneider@arm.com]
-> > Sent: Thursday, January 02, 2020 9:22 PM
-> > To: Zengtao (B); Sudeep Holla
-> > Cc: Linuxarm; Greg Kroah-Hartman; Rafael J. Wysocki;
-> > linux-kernel@vger.kernel.org; Morten Rasmussen
-> > Subject: Re: [PATCH] cpu-topology: warn if NUMA configurations conflicts
-> > with lower layer
-> >
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-[...]
+MAX77650 MFD driver uses regmap_irq API but doesn't select the required
+REGMAP_IRQ option in Kconfig. This can cause the following build error
+if regmap irq is not enabled implicitly by someone else:
 
-> >
-> > Right, and that is checked when you have sched_debug on the cmdline
-> > (or write 1 to /sys/kernel/debug/sched_debug & regenerate the sched
-> > domains)
-> >
->
-> No, here I think you don't get my issue, please try to understand my example
-> First:.
->
-> *************************************
-> NUMA:         0-2,  3-7
-> core_siblings:    0-3,  4-7
-> *************************************
-> When we are building the sched domain, per the current code:
-> (1) For core 3
->  MC sched domain fallbacks to 3~7
->  DIE sched domain is 3~7
-> (2) For core 4:
->  MC sched domain is 4~7
->  DIE sched domain is 3~7
->
-> When we are build sched groups for the MC level:
-> (1). core3's sched groups chain is built like as: 3->4->5->6->7->3
-> (2). core4's sched groups chain is built like as: 4->5->6->7->4
-> so after (2),
-> core3's sched groups is overlapped, and it's not a chain any more.
-> In the afterwards usecase of core3's sched groups, deadloop happens.
->
-> And it's difficult for the scheduler to find out such errors,
-> that is why I think a warning is necessary here.
->
+    ld: drivers/mfd/max77650.o: in function `max77650_i2c_probe':
+    max77650.c:(.text+0xcb): undefined reference to `devm_regmap_add_irq_chip'
+    ld: max77650.c:(.text+0xdb): undefined reference to `regmap_irq_get_domain'
+    make: *** [Makefile:1079: vmlinux] Error 1
 
-We can figure out a way to warn if it's absolutely necessary, but I
-would like to understand the system topology here. You haven't answered
-my query on cache topology. Please give more description on why the
-NUMA configuration is like the above example with specific hardware
-design details. Is this just a case where user can specify anything
-they wish ?
+Fix it by adding the missing option.
 
---
-Regards,
-Sudeep
+Fixes: d0f60334500b ("mfd: Add new driver for MAX77650 PMIC")
+Reported-by: Paul Gazzillo <paul@pgazz.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/mfd/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 420900852166..c366503c466d 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -758,6 +758,7 @@ config MFD_MAX77650
+ 	depends on OF || COMPILE_TEST
+ 	select MFD_CORE
+ 	select REGMAP_I2C
++	select REGMAP_IRQ
+ 	help
+ 	  Say Y here to add support for Maxim Semiconductor MAX77650 and
+ 	  MAX77651 Power Management ICs. This is the core multifunction
+-- 
+2.23.0
+
