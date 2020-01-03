@@ -2,91 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CFC512F93E
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 15:34:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28B2E12F94B
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 15:42:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727870AbgACOeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 09:34:09 -0500
-Received: from mga09.intel.com ([134.134.136.24]:19884 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727598AbgACOeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 09:34:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jan 2020 06:34:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,390,1571727600"; 
-   d="scan'208";a="252604822"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by fmsmga002.fm.intel.com with ESMTP; 03 Jan 2020 06:34:06 -0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
-        akpm@linux-foundation.org
-Cc:     kirill.shutemov@linux.intel.com, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        yang.shi@linux.alibaba.com,
-        Wei Yang <richardw.yang@linux.intel.com>
-Subject: [RFC PATCH] mm: thp: grab the lock before manipulation defer list
-Date:   Fri,  3 Jan 2020 22:34:07 +0800
-Message-Id: <20200103143407.1089-1-richardw.yang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727891AbgACOmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 09:42:25 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:54319 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727527AbgACOmZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 09:42:25 -0500
+Received: by mail-pj1-f67.google.com with SMTP id kx11so4676779pjb.4;
+        Fri, 03 Jan 2020 06:42:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JshPeSWOOSIb8mFV+SIuZIYPc1RHhKOYhfPWibxQF+4=;
+        b=e0eMo+efL/Z5fxSq3qSAC6eh+RMohEWj1ttf6QPFVP4oUeHywBb1CF3OGCtkBVC540
+         fymnPt7RKLjlWXAunEvEouukTe8t2QNmI5ot6lopUP3IKIoG/mGyv3aHMOC/4d6j9a2o
+         83MWPf+p9R17Y0z51Rvd4Zb8B/qq/NIEolIfhXfuCYxXZd7x42Jj3/zkrdr5fqi3jUws
+         nMLRCo7geoTYk7KH8JzULWaJ7nuvFvj+DmRA+atmYcX3J6rVkSQv5HnScEZZjXnxwCge
+         70dhq/XKVB58nTWjys13pVIIMv5nLEfGPytNvpvgC7qSZhFcgfS7f3jrIorMj4qqADxY
+         0phg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JshPeSWOOSIb8mFV+SIuZIYPc1RHhKOYhfPWibxQF+4=;
+        b=cWyjICt93/KSZm0Iowsfws2ANEFtqkqefmy9L+/gMcKslc8qLySE/LmNY7T/aMTEMg
+         6oHaTK44YPpTMePF8WmWGCwGCt6Jrw3Fq7TbJ3Z1k3UoJ27vzAiedYIb93lfVpDS268G
+         U367VMgjFXDP65n39tLlD5TLO3cNjCRiGIPfu/8euorNMckbzrcBdwxCDNH18M8hJRuB
+         T5P+RrcuxT/cepCy5GVzDQuamBpZjchNVN0GKgwqV/7DgTs8pVegIUvGwDd5eBjcN0cr
+         nivZvtQh/V9oE2ho86BDjjpxA8XMweNWiogSdFt4ZB1zAnhmcDeuEKIhTrGSvLCC2cXO
+         GCAQ==
+X-Gm-Message-State: APjAAAVtoV/FgNDV42v3u1Ba+v5orFxmddyMxuoqSmu7SWAUiES1KEbF
+        R08kLHnuyTLokG/id1tdq0r/JkRv
+X-Google-Smtp-Source: APXvYqwhivL5/PxaPf05yyKEV2jBNyMcv8tYg8djnrhJEI8hSJ527IausfEWaVJnVbWY1xvDH79uzg==
+X-Received: by 2002:a17:90a:a88d:: with SMTP id h13mr25757091pjq.55.1578062544178;
+        Fri, 03 Jan 2020 06:42:24 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id m3sm62968869pfh.116.2020.01.03.06.42.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Jan 2020 06:42:23 -0800 (PST)
+Subject: Re: [PATCH 4.4 000/137] 4.4.208-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20200102220546.618583146@linuxfoundation.org>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <628eb605-0613-0f85-b906-6b3cd78195ab@roeck-us.net>
+Date:   Fri, 3 Jan 2020 06:42:22 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As all the other places, we grab the lock before manipulate the defer list.
-Current implementation may face a race condition.
+On 1/2/20 2:06 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.208 release.
+> There are 137 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 04 Jan 2020 22:02:41 +0000.
+> Anything received after that time might be too late.
+> 
 
-Fixes: 87eaceb3faa5 ("mm: thp: make deferred split shrinker memcg aware")
+Build results:
+	total: 170 pass: 170 fail: 0
+Qemu test results:
+	total: 325 pass: 325 fail: 0
 
-Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
-
----
-I notice the difference during code reading and just confused about the
-difference. No specific test is done since limited knowledge about cgroup.
-
-Maybe I miss something important?
----
- mm/memcontrol.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index bc01423277c5..62b7ec34ef1a 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -5368,12 +5368,12 @@ static int mem_cgroup_move_account(struct page *page,
- 	}
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	spin_lock(&from->deferred_split_queue.split_queue_lock);
- 	if (compound && !list_empty(page_deferred_list(page))) {
--		spin_lock(&from->deferred_split_queue.split_queue_lock);
- 		list_del_init(page_deferred_list(page));
- 		from->deferred_split_queue.split_queue_len--;
--		spin_unlock(&from->deferred_split_queue.split_queue_lock);
- 	}
-+	spin_unlock(&from->deferred_split_queue.split_queue_lock);
- #endif
- 	/*
- 	 * It is safe to change page->mem_cgroup here because the page
-@@ -5385,13 +5385,13 @@ static int mem_cgroup_move_account(struct page *page,
- 	page->mem_cgroup = to;
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	spin_lock(&to->deferred_split_queue.split_queue_lock);
- 	if (compound && list_empty(page_deferred_list(page))) {
--		spin_lock(&to->deferred_split_queue.split_queue_lock);
- 		list_add_tail(page_deferred_list(page),
- 			      &to->deferred_split_queue.split_queue);
- 		to->deferred_split_queue.split_queue_len++;
--		spin_unlock(&to->deferred_split_queue.split_queue_lock);
- 	}
-+	spin_unlock(&to->deferred_split_queue.split_queue_lock);
- #endif
- 
- 	spin_unlock_irqrestore(&from->move_lock, flags);
--- 
-2.17.1
-
+Guenter
