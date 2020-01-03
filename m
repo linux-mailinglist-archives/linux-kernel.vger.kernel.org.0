@@ -2,228 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74EA712FE4E
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 22:20:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5970B12FE50
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 22:21:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728773AbgACVUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 16:20:36 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:53062 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728707AbgACVUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 16:20:31 -0500
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1inUMq-00053I-OW; Fri, 03 Jan 2020 14:20:30 -0700
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1inUMp-0000lN-56; Fri, 03 Jan 2020 14:20:23 -0700
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Jiasen Lin <linjiasen@hygon.cn>, Kit Chow <kchow@gigaio.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Fri,  3 Jan 2020 14:20:21 -0700
-Message-Id: <20200103212021.2881-4-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200103212021.2881-1-logang@deltatee.com>
-References: <20200103212021.2881-1-logang@deltatee.com>
+        id S1728802AbgACVVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 16:21:11 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40968 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728549AbgACVVK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 16:21:10 -0500
+Received: by mail-pf1-f196.google.com with SMTP id w62so24036119pfw.8;
+        Fri, 03 Jan 2020 13:21:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:date:message-id:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=yOvpSx16yNanZpbvFfAUMxFv0SM7m3MFplEES/wscuI=;
+        b=aUnnZPoyzNSRZI+t0GKzb0TiRDWqBbMy6GlerfoXN1OAqft7NaJEzn11o9T/3DMq5m
+         D5lh3LBDCt0ZanoRzaNEMVxEkXPa0M9P1E220EWP2F59b00BA4OG79c6V2n3y9Eo545d
+         QD+tLlReeFsllG9KaJ1OekusQGVfJ7Zxdtv429ovUZUEnqUK+51gA6eOLfHUomr1Aet/
+         yfDu+Y5PiczTZwrNZ08YNf8D4DJfGSplZfhj7UDe8L2wCHMDBpqFijZfgOsn+VLS9Omz
+         GPxhdghSOZjPtQ7giiRMtP7rnfLzWPfAIykW/Fx50jiJapPwSY2jeAOSPwumC1Mn8U+A
+         qhvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=yOvpSx16yNanZpbvFfAUMxFv0SM7m3MFplEES/wscuI=;
+        b=OcdLZocLD6egBy0h+rZO5qteULckBqn2ghJFqSnnsiMor3RYLt20MyhHl27h1tjeog
+         H0WTEN2i4HhBE1/CtOCFPBEGDmnpvFWyTTGGHnHOV8k4BLnWxwZmfJVAPhAmQFPkxA70
+         VP1efGbu+yziE2kEiwmZ9ZzjAzpUPIq3T1tRLlgwqBNhs7bMkNd2EupUyl0UDzrxuWqw
+         tnZpB+VQf6KoNA0e+ZR3l4BroAWdUyEZKfiRf3piB1p+mp6x9dnoqwm1UcwSAC7LP6IB
+         d3UmmR2luwBSKNh6bp07iTgldMxBfmaYkaXLGgO0KG29lfMy9McFaJ2DZenUnsXbaNKb
+         D6Hg==
+X-Gm-Message-State: APjAAAUnyJB1C+IPgRAxBYOBvF+1yI05ED2Lxw+nzUSw/gDZ6CGlipvN
+        6ioeGnNuHUdsf5RXN/V3dRc=
+X-Google-Smtp-Source: APXvYqyl/OVK4piGSFsYxsF33xMxvHQ/DgomiEAziuxRDwCwRMxsSuZnqK2aGPyyvqltNieLPJI63Q==
+X-Received: by 2002:a63:3d8e:: with SMTP id k136mr97287157pga.4.1578086469815;
+        Fri, 03 Jan 2020 13:21:09 -0800 (PST)
+Received: from localhost.localdomain ([2001:470:b:9c3:9e5c:8eff:fe4f:f2d0])
+        by smtp.gmail.com with ESMTPSA id z22sm61861872pfr.83.2020.01.03.13.21.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 03 Jan 2020 13:21:09 -0800 (PST)
+Subject: [PATCH v16 QEMU 1/3] virtio-ballon: Implement support for page
+ poison tracking feature
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+To:     virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        mst@redhat.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+        mhocko@kernel.org, linux-mm@kvack.org, akpm@linux-foundation.org,
+        mgorman@techsingularity.net, vbabka@suse.cz
+Cc:     yang.zhang.wz@gmail.com, nitesh@redhat.com, konrad.wilk@oracle.com,
+        david@redhat.com, pagupta@redhat.com, riel@surriel.com,
+        lcapitulino@redhat.com, dave.hansen@intel.com,
+        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
+        dan.j.williams@intel.com, alexander.h.duyck@linux.intel.com,
+        osalvador@suse.de
+Date:   Fri, 03 Jan 2020 13:21:08 -0800
+Message-ID: <20200103212108.29681.99290.stgit@localhost.localdomain>
+In-Reply-To: <20200103210509.29237.18426.stgit@localhost.localdomain>
+References: <20200103210509.29237.18426.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org, vkoul@kernel.org, dan.j.williams@intel.com, linjiasen@hygon.cn, kchow@gigaio.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_FREE,MYRULES_NO_TEXT autolearn=ham
-        autolearn_force=no version=3.4.2
-Subject: [PATCH v3 3/3] dmaengine: plx-dma: Implement descriptor submission
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On prep, a spin lock is taken and the next entry in the circular buffer
-is filled. On submit, the valid bit is set in the hardware descriptor
-and the lock is released.
+From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-The DMA engine is started (if it's not already running) when the client
-calls dma_async_issue_pending().
+We need to make certain to advertise support for page poison tracking if
+we want to actually get data on if the guest will be poisoning pages. So
+if free page hinting is active we should add page poisoning support and
+let the guest disable it if it isn't using it.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Page poisoning will result in a page being dirtied on free. As such we
+cannot really avoid having to copy the page at least one more time since
+we will need to write the poison value to the destination. As such we can
+just ignore free page hinting if page poisoning is enabled as it will
+actually reduce the work we have to do.
+
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- drivers/dma/plx_dma.c | 119 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 119 insertions(+)
+ hw/virtio/virtio-balloon.c         |   25 +++++++++++++++++++++----
+ include/hw/virtio/virtio-balloon.h |    1 +
+ 2 files changed, 22 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/dma/plx_dma.c b/drivers/dma/plx_dma.c
-index f3a5c9e47658..db4c5fd453a9 100644
---- a/drivers/dma/plx_dma.c
-+++ b/drivers/dma/plx_dma.c
-@@ -7,6 +7,7 @@
+diff --git a/hw/virtio/virtio-balloon.c b/hw/virtio/virtio-balloon.c
+index 40b04f518028..6ecfec422309 100644
+--- a/hw/virtio/virtio-balloon.c
++++ b/hw/virtio/virtio-balloon.c
+@@ -531,6 +531,15 @@ static void virtio_balloon_free_page_start(VirtIOBalloon *s)
+         return;
+     }
  
- #include "dmaengine.h"
- 
-+#include <linux/circ_buf.h>
- #include <linux/dmaengine.h>
- #include <linux/kref.h>
- #include <linux/list.h>
-@@ -120,6 +121,11 @@ static struct plx_dma_dev *chan_to_plx_dma_dev(struct dma_chan *c)
- 	return container_of(c, struct plx_dma_dev, dma_chan);
++    /*
++     * If page poisoning is enabled then we probably shouldn't bother with
++     * the hinting since the poisoning will dirty the page and invalidate
++     * the work we are doing anyway.
++     */
++    if (virtio_vdev_has_feature(vdev, VIRTIO_BALLOON_F_PAGE_POISON)) {
++        return;
++    }
++
+     if (s->free_page_report_cmd_id == UINT_MAX) {
+         s->free_page_report_cmd_id =
+                        VIRTIO_BALLOON_FREE_PAGE_REPORT_CMD_ID_MIN;
+@@ -618,12 +627,10 @@ static size_t virtio_balloon_config_size(VirtIOBalloon *s)
+     if (s->qemu_4_0_config_size) {
+         return sizeof(struct virtio_balloon_config);
+     }
+-    if (virtio_has_feature(features, VIRTIO_BALLOON_F_PAGE_POISON)) {
++    if (virtio_has_feature(features, VIRTIO_BALLOON_F_PAGE_POISON) ||
++        virtio_has_feature(features, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
+         return sizeof(struct virtio_balloon_config);
+     }
+-    if (virtio_has_feature(features, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
+-        return offsetof(struct virtio_balloon_config, poison_val);
+-    }
+     return offsetof(struct virtio_balloon_config, free_page_report_cmd_id);
  }
  
-+static struct plx_dma_desc *to_plx_desc(struct dma_async_tx_descriptor *txd)
-+{
-+	return container_of(txd, struct plx_dma_desc, txd);
-+}
-+
- static struct plx_dma_desc *plx_dma_get_desc(struct plx_dma_dev *plxdev, int i)
- {
- 	return plxdev->desc_ring[i & (PLX_DMA_RING_COUNT - 1)];
-@@ -242,6 +248,113 @@ static void plx_dma_desc_task(unsigned long data)
- 	plx_dma_process_desc(plxdev);
+@@ -634,6 +641,7 @@ static void virtio_balloon_get_config(VirtIODevice *vdev, uint8_t *config_data)
+ 
+     config.num_pages = cpu_to_le32(dev->num_pages);
+     config.actual = cpu_to_le32(dev->actual);
++    config.poison_val = cpu_to_le32(dev->poison_val);
+ 
+     if (dev->free_page_report_status == FREE_PAGE_REPORT_S_REQUESTED) {
+         config.free_page_report_cmd_id =
+@@ -697,6 +705,8 @@ static void virtio_balloon_set_config(VirtIODevice *vdev,
+         qapi_event_send_balloon_change(vm_ram_size -
+                         ((ram_addr_t) dev->actual << VIRTIO_BALLOON_PFN_SHIFT));
+     }
++    dev->poison_val = virtio_vdev_has_feature(vdev, VIRTIO_BALLOON_F_PAGE_POISON) ? 
++                      le32_to_cpu(config.poison_val) : 0;
+     trace_virtio_balloon_set_config(dev->actual, oldactual);
  }
  
-+static struct dma_async_tx_descriptor *plx_dma_prep_memcpy(struct dma_chan *c,
-+		dma_addr_t dma_dst, dma_addr_t dma_src, size_t len,
-+		unsigned long flags)
-+	__acquires(plxdev->ring_lock)
-+{
-+	struct plx_dma_dev *plxdev = chan_to_plx_dma_dev(c);
-+	struct plx_dma_desc *plxdesc;
-+
-+	spin_lock_bh(&plxdev->ring_lock);
-+	if (!plxdev->ring_active)
-+		goto err_unlock;
-+
-+	if (!CIRC_SPACE(plxdev->head, plxdev->tail, PLX_DMA_RING_COUNT))
-+		goto err_unlock;
-+
-+	if (len > PLX_DESC_SIZE_MASK)
-+		goto err_unlock;
-+
-+	plxdesc = plx_dma_get_desc(plxdev, plxdev->head);
-+	plxdev->head++;
-+
-+	plxdesc->hw->dst_addr_lo = cpu_to_le32(lower_32_bits(dma_dst));
-+	plxdesc->hw->dst_addr_hi = cpu_to_le16(upper_32_bits(dma_dst));
-+	plxdesc->hw->src_addr_lo = cpu_to_le32(lower_32_bits(dma_src));
-+	plxdesc->hw->src_addr_hi = cpu_to_le16(upper_32_bits(dma_src));
-+
-+	plxdesc->orig_size = len;
-+
-+	if (flags & DMA_PREP_INTERRUPT)
-+		len |= PLX_DESC_FLAG_INT_WHEN_DONE;
-+
-+	plxdesc->hw->flags_and_size = cpu_to_le32(len);
-+	plxdesc->txd.flags = flags;
-+
-+	/* return with the lock held, it will be released in tx_submit */
-+
-+	return &plxdesc->txd;
-+
-+err_unlock:
-+	/*
-+	 * Keep sparse happy by restoring an even lock count on
-+	 * this lock.
-+	 */
-+	__acquire(plxdev->ring_lock);
-+
-+	spin_unlock_bh(&plxdev->ring_lock);
-+	return NULL;
-+}
-+
-+static dma_cookie_t plx_dma_tx_submit(struct dma_async_tx_descriptor *desc)
-+	__releases(plxdev->ring_lock)
-+{
-+	struct plx_dma_dev *plxdev = chan_to_plx_dma_dev(desc->chan);
-+	struct plx_dma_desc *plxdesc = to_plx_desc(desc);
-+	dma_cookie_t cookie;
-+
-+	cookie = dma_cookie_assign(desc);
-+
-+	/*
-+	 * Ensure the descriptor updates are visible to the dma device
-+	 * before setting the valid bit.
-+	 */
-+	wmb();
-+
-+	plxdesc->hw->flags_and_size |= cpu_to_le32(PLX_DESC_FLAG_VALID);
-+
-+	spin_unlock_bh(&plxdev->ring_lock);
-+
-+	return cookie;
-+}
-+
-+static enum dma_status plx_dma_tx_status(struct dma_chan *chan,
-+		dma_cookie_t cookie, struct dma_tx_state *txstate)
-+{
-+	struct plx_dma_dev *plxdev = chan_to_plx_dma_dev(chan);
-+	enum dma_status ret;
-+
-+	ret = dma_cookie_status(chan, cookie, txstate);
-+	if (ret == DMA_COMPLETE)
-+		return ret;
-+
-+	plx_dma_process_desc(plxdev);
-+
-+	return dma_cookie_status(chan, cookie, txstate);
-+}
-+
-+static void plx_dma_issue_pending(struct dma_chan *chan)
-+{
-+	struct plx_dma_dev *plxdev = chan_to_plx_dma_dev(chan);
-+
-+	rcu_read_lock();
-+	if (!rcu_dereference(plxdev->pdev)) {
-+		rcu_read_unlock();
-+		return;
-+	}
-+
-+	/*
-+	 * Ensure the valid bits are visible before starting the
-+	 * DMA engine.
-+	 */
-+	wmb();
-+
-+	writew(PLX_REG_CTRL_START_VAL, plxdev->bar + PLX_REG_CTRL);
-+
-+	rcu_read_unlock();
-+}
-+
- static irqreturn_t plx_dma_isr(int irq, void *devid)
- {
- 	struct plx_dma_dev *plxdev = devid;
-@@ -276,7 +389,9 @@ static int plx_dma_alloc_desc(struct plx_dma_dev *plxdev)
- 			goto free_and_exit;
+@@ -706,6 +716,9 @@ static uint64_t virtio_balloon_get_features(VirtIODevice *vdev, uint64_t f,
+     VirtIOBalloon *dev = VIRTIO_BALLOON(vdev);
+     f |= dev->host_features;
+     virtio_add_feature(&f, VIRTIO_BALLOON_F_STATS_VQ);
++    if (virtio_has_feature(f, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
++        virtio_add_feature(&f, VIRTIO_BALLOON_F_PAGE_POISON);
++    }
  
- 		dma_async_tx_descriptor_init(&desc->txd, &plxdev->dma_chan);
-+		desc->txd.tx_submit = plx_dma_tx_submit;
- 		desc->hw = &plxdev->hw_ring[i];
+     return f;
+ }
+@@ -847,6 +860,8 @@ static void virtio_balloon_device_reset(VirtIODevice *vdev)
+         g_free(s->stats_vq_elem);
+         s->stats_vq_elem = NULL;
+     }
 +
- 		plxdev->desc_ring[i] = desc;
- 	}
++    s->poison_val = 0;
+ }
  
-@@ -407,11 +522,15 @@ static int plx_dma_create(struct pci_dev *pdev)
- 	dma = &plxdev->dma_dev;
- 	dma->chancnt = 1;
- 	INIT_LIST_HEAD(&dma->channels);
-+	dma_cap_set(DMA_MEMCPY, dma->cap_mask);
- 	dma->copy_align = DMAENGINE_ALIGN_1_BYTE;
- 	dma->dev = get_device(&pdev->dev);
+ static void virtio_balloon_set_status(VirtIODevice *vdev, uint8_t status)
+@@ -909,6 +924,8 @@ static Property virtio_balloon_properties[] = {
+                     VIRTIO_BALLOON_F_DEFLATE_ON_OOM, false),
+     DEFINE_PROP_BIT("free-page-hint", VirtIOBalloon, host_features,
+                     VIRTIO_BALLOON_F_FREE_PAGE_HINT, false),
++    DEFINE_PROP_BIT("x-page-poison", VirtIOBalloon, host_features,
++                    VIRTIO_BALLOON_F_PAGE_POISON, false),
+     /* QEMU 4.0 accidentally changed the config size even when free-page-hint
+      * is disabled, resulting in QEMU 3.1 migration incompatibility.  This
+      * property retains this quirk for QEMU 4.1 machine types.
+diff --git a/include/hw/virtio/virtio-balloon.h b/include/hw/virtio/virtio-balloon.h
+index d1c968d2376e..7fe78e5c14d7 100644
+--- a/include/hw/virtio/virtio-balloon.h
++++ b/include/hw/virtio/virtio-balloon.h
+@@ -70,6 +70,7 @@ typedef struct VirtIOBalloon {
+     uint32_t host_features;
  
- 	dma->device_alloc_chan_resources = plx_dma_alloc_chan_resources;
- 	dma->device_free_chan_resources = plx_dma_free_chan_resources;
-+	dma->device_prep_dma_memcpy = plx_dma_prep_memcpy;
-+	dma->device_issue_pending = plx_dma_issue_pending;
-+	dma->device_tx_status = plx_dma_tx_status;
- 	dma->device_release = plx_dma_release;
+     bool qemu_4_0_config_size;
++    uint32_t poison_val;
+ } VirtIOBalloon;
  
- 	chan = &plxdev->dma_chan;
--- 
-2.20.1
+ #endif
 
