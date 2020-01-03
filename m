@@ -2,71 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 261D212F4F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 08:38:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2159A12F50B
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 08:39:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbgACHiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 02:38:00 -0500
-Received: from sonic301-30.consmr.mail.ne1.yahoo.com ([66.163.184.199]:36899
-        "EHLO sonic301-30.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727315AbgACHiA (ORCPT
+        id S1727440AbgACHja (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 02:39:30 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44756 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727409AbgACHj3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 02:38:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1578037079; bh=MJdpASvZnpj3gXKZxrNskiGAl+hYYwdjGUMDZ9fMpsI=; h=Date:From:Reply-To:Subject:References:From:Subject; b=QSzh+FyK+PQqbNd1K5cuBfArUFqLiHiJAQkXv9ezOJqgEXC8QGQMQgZAHUyU4Q0YcLWtuY4D2Sr0/dr6OjadKmrFpRakTwV7xCp1Dw9f3Q8q2/NkQ+4lnuwCSU6ZzF+/SD5BmTiB2snpNWbd/vjroSKHRXVe13Ijb3DEHq61gm+41ZOBxaPDbGxUDpkZ8SREJ0VaTp1sKxjjUlqQ71XhzeDKepMbeP55ACCKICPw3k8vC84jh5JeEVKUf4+ADYt70sDmqegTPKmZMC9QOWyFjc5PX3rjn6/D10NDWKEFrjS7h/8J9Y+dKohuMDQAzRvoNR6eF6qw7FzJN6TwUm1t6Q==
-X-YMail-OSG: yXnmVBcVM1nFNSolob2gHkbHPZ3yfZSyZjIbiwo.24pXbh3OORIC9CiEzjjKfH6
- 8rSqYYnETRF7LhGLdUPzfYxNL6Gya8Ka3CCZWTtjqUbND6M5a2wBG3Y7vYCztdFqeu78uLMNZC5m
- b7EeHWZ4xaoadYgjjjfuitcXMc36jsOezDOKkecQ9TRe6DtHyC5EvQqVsYwapO8tlf4JYG6EG.FO
- fpu2auCbIRLs2MMA4vMibGMiLjZrSyX1kCZbgDexAdD_u8b6KDCrEjd.8YF8F5qs3Fs_VGdMsOR0
- jZsb6E8Efoq_Si6fVJggXbZQTFHf8MpBVXhO5euMma_ZBUlsoQi2o0U1Odi4aNmPfRfOEgmR90h.
- jdRum8_.6VtYtI_pOGkH2YCHRtFFd476aeEECdrF.AFtyXeOxs2o7H749gRc9BNV6sXxBwgMOj2E
- ShP09eiehvu.hKrhwu6x6yrDIIpsTqX7LCK0nHuyzZs1uvNd2EfdAbHabW7zBrJJLPT5PaIY4ovG
- p0Szss.hm_6Pz4O9p5anMdPoK43XMHT03yxf6swDbirj_O98EUYSPd9C6B1LXMD0iWHjuSl4tu4z
- GIkIvc5lErAM8tTr24dgvhNxDUiJjvDKO8aA9jRuhSAko29MJ2iRVxJezRLqhuWEeVdzlkskH9EI
- ZD_4G3.v4_qxcPOSs4ITL4lFHkQ3bJ1Y3Sy7rM5os5jjdtpUycMyD5TDpD__0Zyv.rpIlc3Kp6oq
- ina.QJE1E6rtxYYhIcDId1NSX8jEd6EvQxUOBktCleihXRVNPm2g0PWI_eEw1eFFFD7gOcvtR7WD
- BH75SicEpJ4UxtblvYRCgbF4nBbu07TsJlDBqpoYhXjSllQlGGLt66pzu0itIp62Il08vY2UkuvB
- 47aUc1oLbRxxjU.ZjgJiYHzj6rspZAMCHXwdber4wpv4kbkhO7B1ErJ9czk266z92WRVUmIXubFy
- xoCO4fNiGxGSeULLlJXDzuatxKFNeZOshtAHHZsIYIpy8hqudstdD960GzqSzolnSothWFrZ9lPk
- fdpDXQjhh_Bhq4AyRjbclegvE0E2Q6oVs48sZAx4e9.9jOD53UK9T51iW.8Qg4gQ7WDyjiFU097R
- zRDteTFA2hFNqSihVhw0S70tRmOJUBWFF02lceT0zzN5czDm.R0ujSijrvskZZ8FRh6voapbwD2b
- 2ZlGVZU0NAjdPxBL5xsAIPzLSSlYf_w7Z.xyZ7MCtzl.LRHZTR7.FX2iNvzladPYgxttJZOgLMCI
- m7qk3S8Vtp3MqstvSjUF8K5e9axmV8qc4Htq4lQZhpUQ8zddeP2QVwyQbhsfIP2LKdUbWexqI
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Fri, 3 Jan 2020 07:37:59 +0000
-Date:   Fri, 3 Jan 2020 07:37:55 +0000 (UTC)
-From:   Brian Gilvary <1brian.gilvary@gmail.com>
-Reply-To: gilvarybrian@aol.com
-Message-ID: <466166173.6197256.1578037075711@mail.yahoo.com>
-Subject: Happy New Year For Our Mutual Benefits
+        Fri, 3 Jan 2020 02:39:29 -0500
+Received: by mail-pg1-f196.google.com with SMTP id x7so23057620pgl.11
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Jan 2020 23:39:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sjtveIW4Cl8kNrXZqHnmr6fnNFiKvYCRuejNL5G2GwA=;
+        b=uFbz82UcbCfLMIjitqY2s+Lf/IFr5b/di7TwUd18XW7lu7xxcWBAj7ARLY+CotoDWW
+         yiGAQS0F3w1BHdhzdF+AtSWqmHlBAkIcl2c5eSKyB1YKsg+dWtOKhgZqiehTnsyXLGnO
+         JPNZnSm+TeooIHjD2gpIjsFM1C8sADgcLsyLAs83Z4qLFiK05PSU82g5gQn+9WyAvK0B
+         OeG8s/YAK/hbsMGsPWn13iXxRUst9irRAJ0NPuzrlG0uzYZYh2NDRXnhH9Ug6zRgR30H
+         21QwSQ7vSTYpd2EtkOtYXTtVfDodJDeQjKLx/T81AuZA554FOPJR6/wq9E0o1rge9/98
+         Ctrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sjtveIW4Cl8kNrXZqHnmr6fnNFiKvYCRuejNL5G2GwA=;
+        b=Op9kU2HnFveibi+3U1fZ+WElfTz5IKo/TZaF62dSb51KobYH7fk5xnomhMggspu68w
+         5ZRG1Txfr/NZwlnyV7SGySpmaTy6sWyTtvL6QPIv//sZbG14fPfDYeVRM9Lb7DNIPDAC
+         Wei9prGDxpmZlQ8/YxJefnI2dajlrRt9jogX7pyzV+k3LFbUlrRwfi6wc1wjj30bZ1Zn
+         QCckFX0F2YwxFkW5G774c61LX+WaEWQRy1pK0ZdDtQN+Ni3WwkMKBNqumqCW/UCAT0PQ
+         zCF/bEG/1w6a7VI50bP5bJ4xbAToQu2Azow4SrWwolaSFc125xUQ+MmPaf0CsZHMZrop
+         8x3A==
+X-Gm-Message-State: APjAAAX4MiDxvLPDlpK52I4LhtcAihda476PkHDS5E3m9BRRpLbQhM9W
+        ELIsesd7JlnXUc8XTWMJ3YcQow==
+X-Google-Smtp-Source: APXvYqyyU7kpxL3w14To+lQvT4cnfmqHinwWDkZhr0aaOhBIOoiPbjX7uA+9mJHxSwxrRijEC7CYoQ==
+X-Received: by 2002:aa7:9629:: with SMTP id r9mr60567555pfg.51.1578037169173;
+        Thu, 02 Jan 2020 23:39:29 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id y6sm13245950pjy.1.2020.01.02.23.39.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jan 2020 23:39:28 -0800 (PST)
+Date:   Thu, 2 Jan 2020 23:39:26 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Niklas Cassel <niklas.cassel@linaro.org>
+Subject: Re: [PATCH] clk: Use parent node pointer during registration if
+ necessary
+Message-ID: <20200103073926.GM988120@minitux>
+References: <20191230190455.141339-1-sboyd@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-References: <466166173.6197256.1578037075711.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.14873 YMailNodin Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191230190455.141339-1-sboyd@kernel.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+On Mon 30 Dec 11:04 PST 2019, Stephen Boyd wrote:
 
-As the Chief Financial Officer, British Petroleum Company plc (BP), I am in=
- a position to facilitate immediate transfer of =C2=A3 48,000,000.00 (Forty=
- Eight Million British Pounds Sterling), to any of your nominated Bank Acco=
-unt.
+> Sometimes clk drivers are attached to devices which are children of a
+> parent device that is connected to a node in DT. This happens when
+> devices are MFD-ish and the parent device driver mostly registers child
+> devices to match against drivers placed in their respective subsystem
+> directories like drivers/clk, drivers/regulator, etc. When the clk
+> driver calls clk_register() with a device pointer, that struct device
+> pointer won't have a device_node associated with it because it was
+> created purely in software as a way to partition logic to a subsystem.
+> 
+> This causes problems for the way we find parent clks for the clks
+> registered by these child devices because we look at the registering
+> device's device_node pointer to lookup 'clocks' and 'clock-names'
+> properties. Let's use the parent device's device_node pointer if the
+> registering device doesn't have a device_node but the parent does. This
+> simplifies clk registration code by avoiding the need to assign some
+> device_node to the device registering the clk.
+> 
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+> 
+> I decided to introduce a new function instead of trying to jam it all
+> in the one line where we assign np. This way the function gets the 
+> true 'np' as an argument all the time.
+> 
 
-Source of Funds: An over-invoiced payment from a past project executed in m=
-y department. I cannot successfully achieve this transaction without presen=
-ting you as foreign contractor who will provide the bank account to receive=
- the funds. Every documentation for the claim of the funds will be legally =
-processed and documented, so I will need your full co-operation for our mut=
-ual benefits.
+Looks better.
 
-We will discuss details if you are interested to work with me to secure thi=
-s funds, as I said for our mutual benefits. I will be looking forward to yo=
-ur prompt response.
+>  drivers/clk/clk.c | 27 +++++++++++++++++++++++++--
+>  1 file changed, 25 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index b68e200829f2..a743fffe8e46 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3719,6 +3719,28 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+>  	return ERR_PTR(ret);
+>  }
+>  
+> +/**
+> + * dev_or_parent_of_node - Get device node of @dev or @dev's parent
 
-Best regards
-Brian Gilvary
-Chief financial officer
-BP, Plc.
+()
+
+> + * @dev: Device to get device node of
+> + *
+> + * Returns: device node pointer of @dev, or the device node pointer of
+
+Return: (no 's')
+
+
+With that,
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Tested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> + * @dev->parent if dev doesn't have a device node, or NULL if neither
+> + * @dev or @dev->parent have a device node.
+> + */
+> +static struct device_node *dev_or_parent_of_node(struct device *dev)
+> +{
+> +	struct device_node *np;
+> +
+> +	if (!dev)
+> +		return NULL;
+> +
+> +	np = dev_of_node(dev);
+> +	if (!np)
+> +		np = dev_of_node(dev->parent);
+> +
+> +	return np;
+> +}
+> +
+>  /**
+>   * clk_register - allocate a new clock, register it and return an opaque cookie
+>   * @dev: device that is registering this clock
+> @@ -3734,7 +3756,7 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+>   */
+>  struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+>  {
+> -	return __clk_register(dev, dev_of_node(dev), hw);
+> +	return __clk_register(dev, dev_or_parent_of_node(dev), hw);
+>  }
+>  EXPORT_SYMBOL_GPL(clk_register);
+>  
+> @@ -3750,7 +3772,8 @@ EXPORT_SYMBOL_GPL(clk_register);
+>   */
+>  int clk_hw_register(struct device *dev, struct clk_hw *hw)
+>  {
+> -	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_of_node(dev), hw));
+> +	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_or_parent_of_node(dev),
+> +			       hw));
+>  }
+>  EXPORT_SYMBOL_GPL(clk_hw_register);
+>  
+> 
+> base-commit: e42617b825f8073569da76dc4510bfa019b1c35a
+> -- 
+> Sent by a computer, using git, on the internet
+> 
