@@ -2,100 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7837612F263
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 01:54:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97C6912F297
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 02:09:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726136AbgACAyk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 19:54:40 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60858 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbgACAyk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 19:54:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=w8FcuKIRc1fu8oxZLGHNujTkaW4KdWzXN9N/pQxssUs=; b=aizdm9srKEF+86calgWhejVZI
-        lvrluuEvxzSfCattQ54W4Sloxfh/oqSeHcZDzsEvJLGGfvdTWf4j5sPBFu9KdD6IdIUp6kfAtw0D8
-        TJBRLFaoVF0GVnS5DuyuOJ61E6LxztQK6IJwIKgBTiuGw6F7vhUgr+GJiSl7ElShB8MVE=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1inBEP-0003Ll-DL; Fri, 03 Jan 2020 00:54:25 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 2AF04D057C6; Fri,  3 Jan 2020 00:54:24 +0000 (GMT)
-Date:   Fri, 3 Jan 2020 00:54:24 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Bard Liao <bardliao@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>, linux-tegra@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] ASoC: rt5640: Fix NULL dereference on module unload
-Message-ID: <20200103005424.GF3897@sirena.org.uk>
-References: <20191229150454.2127-1-digetx@gmail.com>
- <20191231001719.GC3897@sirena.org.uk>
- <03ccf221-697e-bc34-f4ba-bf191aecd675@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="V4b9U9vrdWczvw78"
-Content-Disposition: inline
-In-Reply-To: <03ccf221-697e-bc34-f4ba-bf191aecd675@gmail.com>
-X-Cookie: Programming is an unnatural act.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726481AbgACBJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 20:09:30 -0500
+Received: from mga03.intel.com ([134.134.136.65]:29111 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725872AbgACBJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 20:09:30 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2020 17:09:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,388,1571727600"; 
+   d="scan'208";a="252429485"
+Received: from joy-optiplex-7040.sh.intel.com ([10.239.13.9])
+  by fmsmga002.fm.intel.com with ESMTP; 02 Jan 2020 17:09:28 -0800
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     alex.williamson@redhat.com, zhenyuw@linux.intel.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-gvt@eclists.intel.com, pbonzini@redhat.com,
+        kevin.tian@intel.com, Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH 0/2] use vfio_iova_rw() to read/write IOVAs from CPU side
+Date:   Thu,  2 Jan 2020 20:00:55 -0500
+Message-Id: <20200103010055.4140-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When device models read/write memory pointed by a range of IOVAs, it is
+better to use vfio interfaces. And because this read/write is from CPUs,
+there's no need to call vfio_pin_pages() to pin those memory.
 
---V4b9U9vrdWczvw78
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+patch 1 introduces interface vfio_iova_rw() in vfio to read/write
+userspace IOVAs without pinning userspace pages.
 
-On Thu, Jan 02, 2020 at 06:57:14PM +0300, Dmitry Osipenko wrote:
-> 31.12.2019 03:17, Mark Brown =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+patch 2 let gvt switch from kvm side rw interface to vfio_iova_rw().
 
-> > Please think hard before including complete backtraces in upstream
-> > reports, they are very large and contain almost no useful information
-> > relative to their size so often obscure the relevant content in your
-> > message. If part of the backtrace is usefully illustrative then it's
-> > usually better to pull out the relevant sections.
 
-> Yeah, perhaps it's not really useful to have backtrace in the commit's
-> description for the case of this patch in particular. But in general it
-> is very useful to have backtraces somewhere near the patch such that
-> online search engines, like google, could pick it up. I'll move the
-> backtrace below --- in v2, thanks.
+Yan Zhao (2):
+  vfio: introduce vfio_iova_rw to read/write a range of IOVAs
+  drm/i915/gvt: subsitute kvm_read/write_guest with vfio_iova_rw
 
-Right, this is more directed at just pasting in the entire
-backtrace (which can be huge with lots of generic bits before the
-small number that are relevant) but some edited highlights can
-definitely be helpful for search engines and for explaining the
-problem.  I'll modify what I'm saying there to clarify this.
+ drivers/gpu/drm/i915/gvt/kvmgt.c | 26 +++-------
+ drivers/vfio/vfio.c              | 45 ++++++++++++++++++
+ drivers/vfio/vfio_iommu_type1.c  | 81 ++++++++++++++++++++++++++++++++
+ include/linux/vfio.h             |  5 ++
+ 4 files changed, 138 insertions(+), 19 deletions(-)
 
---V4b9U9vrdWczvw78
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+2.17.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4OkLwACgkQJNaLcl1U
-h9BL0gf/bBWZbW0DvZqYZ84Y2N8XEhFRF5QQ+NS5MBAvcrqzNDvh/KAHA0Vzm9Xq
-NBM3uErwYTIgr+uRQSMbu6MQ+YeG5nptjZoPv3c0rWN5jT5ZXjmxIfFlE9EFuAn0
-tq3Jhi1U8fGT8oopIMLKQPWvF3FGE242LyYR1C1PLprQk9VMxf6iP0OBRfhG/thu
-MzDgxHjbqlsDY6eWnAt2ViTL8MG+1TobCEGkifo6j2kLk8ARy0C1ThkdVGDIc970
-xvKX7QouOf94TT3C+2kfdV6TyCEG7BtYfjkirDuMRgOddz0QhAuXC3yi4f7lympq
-k7w6IV//x/B7qbVREWl06hP7/HpKBg==
-=1GRG
------END PGP SIGNATURE-----
-
---V4b9U9vrdWczvw78--
