@@ -2,99 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B32B12F976
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 16:03:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E63212F974
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 16:03:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbgACPDq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 10:03:46 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:24433 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727686AbgACPDp (ORCPT
+        id S1727824AbgACPDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 10:03:36 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33267 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727686AbgACPDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 10:03:45 -0500
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id 003F3dFi015419;
-        Sat, 4 Jan 2020 00:03:40 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 003F3dFi015419
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1578063820;
-        bh=IhDXEO07k6n70uEE3QtqxuHGBeItquntGAry9r1k5rA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0KZ/seAv8LHTRu9ILzAYefyYQqH1Ym/5QwjUFB/cat47biwQsWvbyQbakgu/uTiF9
-         stu9Gd8XP2Ipvg2+1Dtsx7Y0NNqAJpxh6a0NSftHg1y0tFD0CAlCwOk6iCcPOIbSlA
-         7Ds0nrhYk7U882wbvdBeQ7yw5+k7QQbVhlsxoSqSU5LOv3/Um3/vDm9/BR2E6TqVOW
-         C5LUR9onLyyaljNEGhZZ9dFtXj6s/KcRdwkuKQyc78NSrg7bwcF67ttRoFKfnkIa15
-         Txt/oe105pAGiyXLrah53FgOQyWR4f/x479q6WC7NcS536kIdvD35KMfVB2xOjtejt
-         9VZhQLcS6Hqyg==
-X-Nifty-SrcIP: [209.85.222.45]
-Received: by mail-ua1-f45.google.com with SMTP id c14so13565844uaq.11;
-        Fri, 03 Jan 2020 07:03:40 -0800 (PST)
-X-Gm-Message-State: APjAAAUeGsKbzU9IvD1iJXHscZ1dfYmx2jBYlCDGm4JgLEqMF2W/fwuc
-        /s7QAk2V2LVtNDMGkuKluRxdDcGfKBo/S3PwyX8=
-X-Google-Smtp-Source: APXvYqySISfnCbUOlz7G2gjwAobqS5qjcexrFKOkKqFS2+6u8hudCn7xoGu/DvK6iqxIfyiIpv6d6DnoXseZm6jZjk8=
-X-Received: by 2002:ab0:6509:: with SMTP id w9mr51611068uam.121.1578063819075;
- Fri, 03 Jan 2020 07:03:39 -0800 (PST)
+        Fri, 3 Jan 2020 10:03:35 -0500
+Received: by mail-lf1-f68.google.com with SMTP id n25so32064468lfl.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 07:03:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fXLuplpySrohqFP6kS7OpIEbP/zNERMePL4SR7+mMjs=;
+        b=xvXL8AjzcVepvA9glzXDHT0fioLRNmbgVkJ0/9FZHbw7TOvSZOhWG2oTR3lrLr4fFS
+         xvJvT3VjsTxoQlt2RRk8qYfOnwTXauUgzaMN6AZ8mmx6mawvrLaObvPuwQFI5cMsS52b
+         gdkmpDZoSvX7Oz/7rwqlScIm22M68k6KgpmMNjbBvP/IDpTWp5ontHVuvJsLjq2Q+vwa
+         yBmxqrzlpLByYN+vMlQtn+CadZ8L3SJZ97abkEr7kQnQxp3FTVycCcbP4yQcetMwuEoZ
+         cjJkGbcIlHNVJ9MWdhHO1pHd2ru6qzdVy2xYQsefeW+tmreZ4XW4bpOuanrf/supdelY
+         KmJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fXLuplpySrohqFP6kS7OpIEbP/zNERMePL4SR7+mMjs=;
+        b=BwvCnuPP7twavwR9Voff/MNMejp2QCfGNr//g92FVyVjo6A6dJMcz/MCkIgYIfbQhc
+         w2arJ/iOcjXjsnSS3DJZ+winuhJHKGprdFR0HzRwEGjIsuHJjZiSkHH+WRecumrANYQY
+         3jcKUH+OxmjSHyoCDxcKe5Agt2N8MLK0R8B0fNCrAzBuHMRaoxnDf+enqxzl11/QoxHB
+         B4ME7Fo0BkgnwkVziyvcTgFlDwnH5Wta6b0UTDJouiLqrp533LdpfPqwdGabEw1f/aGA
+         cSxAuEZML8ucpw+cXsgXqDZHOxBtmVIH0Hs9hA8qibAvKyXzT69elPGDnlUHCgRAP0k1
+         xL4g==
+X-Gm-Message-State: APjAAAW6vexQDgYiYOMrdOdXxe/V+I0JUXLzA0oppgDIRSYha7loTBxY
+        ltfr+ng7I/0ayKg/E1PLStkVZrkDqHWiKcHjMGvIhg==
+X-Google-Smtp-Source: APXvYqw4vzT9NE5JBE4750Ibpsg4DfZbpJYeAmaoiYp8s1njp31bKNa9lXROJc+TkxaJZn7Eff6d3LMnkGO/OqxXMpU=
+X-Received: by 2002:a19:784:: with SMTP id 126mr49377262lfh.191.1578063813660;
+ Fri, 03 Jan 2020 07:03:33 -0800 (PST)
 MIME-Version: 1.0
-References: <20191230140747.50415-1-ardb@kernel.org>
-In-Reply-To: <20191230140747.50415-1-ardb@kernel.org>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Sat, 4 Jan 2020 00:03:03 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASVcLMPVECckdeGKgtgNy=48ONUDyKcbEF6wtvzaQ+jEQ@mail.gmail.com>
-Message-ID: <CAK7LNASVcLMPVECckdeGKgtgNy=48ONUDyKcbEF6wtvzaQ+jEQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild/deb-pkg: annotate libelf-dev dependency as :native
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Riku Voipio <riku.voipio@linaro.org>
+References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 3 Jan 2020 20:33:22 +0530
+Message-ID: <CA+G9fYuPkOGKbeQ0FKKx4H0Bs-nRHALsFtwyRw0Rt5DoOCvRHg@mail.gmail.com>
+Subject: Re: [PATCH 5.4 000/191] 5.4.8-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>, LTP List <ltp@lists.linux.it>,
+        Jan Stancek <jstancek@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        John Stultz <john.stultz@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 30, 2019 at 11:07 PM Ard Biesheuvel <ardb@kernel.org> wrote:
+On Fri, 3 Jan 2020 at 03:42, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> Cross compiling the x86 kernel on a non-x86 build machine produces
-> the following error when CONFIG_UNWINDER_ORC is enabled, regardless
-> of whether libelf-dev is installed or not.
+> This is the start of the stable review cycle for the 5.4.8 release.
+> There are 191 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
->   dpkg-checkbuilddeps: error: Unmet build dependencies: libelf-dev
->   dpkg-buildpackage: warning: build dependencies/conflicts unsatisfied; aborting
->   dpkg-buildpackage: warning: (Use -d flag to override.)
+> Responses should be made by Sat, 04 Jan 2020 21:55:35 +0000.
+> Anything received after that time might be too late.
 >
-> Since this is a build time dependency for a build tool, we need to
-> depend on the native version of libelf-dev so add the appropriate
-> annotation.
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.8-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
 >
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> thanks,
+>
+> greg k-h
 
-Applied to linux-kbuild/fixes.
-Thanks.
+LTP syscalls memfd_create04 failed on arm64 devices.
+Test PASS on arm, i386 and x86_64.
 
+We are bisecting this failure on arm64.
 
-> ---
->  scripts/package/mkdebian | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-> index 7c230016b08d..357dc56bcf30 100755
-> --- a/scripts/package/mkdebian
-> +++ b/scripts/package/mkdebian
-> @@ -136,7 +136,7 @@ mkdir -p debian/source/
->  echo "1.0" > debian/source/format
->
->  echo $debarch > debian/arch
-> -extra_build_depends=", $(if_enabled_echo CONFIG_UNWINDER_ORC libelf-dev)"
-> +extra_build_depends=", $(if_enabled_echo CONFIG_UNWINDER_ORC libelf-dev:native)"
->  extra_build_depends="$extra_build_depends, $(if_enabled_echo CONFIG_SYSTEM_TRUSTED_KEYRING libssl-dev:native)"
->
->  # Generate a simple changelog template
-> --
-> 2.20.1
->
+Test case failed log,
+memfd_create04.c:68: INFO: Attempt to create file using 64kB huge page size
+memfd_create04.c:76: FAIL: memfd_create() failed unexpectedly: ENOENT (2)
+
+Strace output:
+memfd_create(\"tfile\", MFD_HUGETLB|0x40000000) = -1 ENOENT (No such
+file or directory)
+
+Test case Description,
+
+/*
+* Test: Validating memfd_create() with MFD_HUGETLB and MFD_HUGE_x flags.
+*
+* Test cases: Attempt to create files in the hugetlbfs filesystem using
+* different huge page sizes.
+*
+* Test logic: memfd_create() should return non-negative value (fd)
+* if the system supports that particular huge page size.
+* On success, fd is returned.
+* On failure, -1 is returned with ENODEV error.
+*/
+
+Test code snippet:
+<>
+check_hugepage_support(&tflag);
+tst_res(TINFO,
+"Attempt to create file using %s huge page size",
+tflag.h_size);
+
+fd = sys_memfd_create("tfile", MFD_HUGETLB | tflag.flag);
+if (fd < 0) {
+if (errno == tflag.exp_err)
+tst_res(TPASS, "Test failed as expected\n");
+else
+tst_brk(TFAIL | TERRNO,
+"memfd_create() failed unexpectedly");
+return;
+}
+<>
+
+Steps to reproduce:
+          - cd /opt/ltp/testcases/bin/
+          - ./memfd_create04
+
+https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/memfd_create/memfd_create04.c#L75
+
+Test output log,
+https://lkft.validation.linaro.org/scheduler/job/1081716
+
+Test results comparison,
+https://qa-reports.linaro.org/lkft/linux-stable-rc-5.4-oe/tests/ltp-syscalls-tests/memfd_create04
 
 
 -- 
-Best Regards
-Masahiro Yamada
+Linaro LKFT
+https://lkft.linaro.org
