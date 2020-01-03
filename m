@@ -2,129 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C722312FD07
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 20:29:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64AD812FD0E
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Jan 2020 20:30:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728541AbgACT3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 14:29:08 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:35051 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728503AbgACT3I (ORCPT
+        id S1728579AbgACTar (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 14:30:47 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:40050 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728488AbgACTaq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 14:29:08 -0500
-Received: by mail-pj1-f68.google.com with SMTP id s7so5088275pjc.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 11:29:08 -0800 (PST)
+        Fri, 3 Jan 2020 14:30:46 -0500
+Received: by mail-oi1-f195.google.com with SMTP id c77so14403126oib.7
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 11:30:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=xiCyHmcnUXsbcQ7aHolyREhLRtQlcm0tNcQpv0xj54g=;
-        b=otHt/I+pw8YEKdneORJaQbqVOMxTvFzuxsTLLo7ZOfnkm7+sA/s/x+b5ZiwnwdyNsM
-         mfRl/YbfDdxHzR2Rfe0dAizN3JrCsQ76Os4SjYyo9S1ECVmqUOML8K8S/YBi5lHfUumH
-         I5sRO4W4LYYWzpp+g2tfXYM8x+1i2fRx+TVLGkGcDO7rAoq4BzN5giqoCdnq10C+hw+o
-         NVmD4trJFm7qSbm58YTvtBPmdSOVfFH9OlPvaUYGTkLBuR4W1QJa14C5GlU267SLGDIk
-         nJvj1z52hjwCB/qZkkakQbkJqE7ovBP/lPjUGrjm7HuF9J8UTNwBPO9jMGL9+KBvpBx7
-         97Og==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+A1yNa9EKEJAvf7mT00hIXluvZccqZJ7nsuzns/AIw8=;
+        b=QcqFB30MvhWgAdAzPCflfRmMETbH1hoaJBG7MjYnvbJcTSSYFCqw7gCztL7VDsBjEQ
+         bft3HLIHqI3AG32tRCL397/3D+LE5eZUjbGrWZoUGjgrKYA3BuQJ7UwTUoalWAZm+esn
+         8VdrudiYMzMuJ2ZlhI0/GyrZnfkMedu++29oggEnKOE7bVGp9DPbnOW7whKKa8O3My1v
+         HoCi+cbEXmbmUDIWSPp3CDf36DG9rMFaaQTalTxHrlD/PJvxiwpEn0B+nR3yasZOwDky
+         JzxMuv+w316sqBBqiR96737ifpKGaWFGzriRnlgq4zDPQgbOkNVzn1ruNr2LzpuIl1yv
+         O9tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=xiCyHmcnUXsbcQ7aHolyREhLRtQlcm0tNcQpv0xj54g=;
-        b=MWNzux7wlrk18UBmFnJmL8f0J+AuS27G9rux8MeHKu4omoQ6IOct7Z8AsNUtBjHevk
-         /9aJvD4wz+36mevgE6GFzWgAm+J9Nor1+eM84ZbQAwFj2vj1zxWitplyb7KLn+mE3uGa
-         9L6DpewpTXdzcQNTX8LrUxTnx40MMZvnw97s4SBGTl0BI44jU9jNu1wSe9SBRVa/h7Wu
-         3KttIU6VIQoES+ib2vXujRMJoiPaQUh+k7Wpma3pRnMpB1lTEk+dZp4NZCeKw37hZdrv
-         vpa4ioWFc7s8/+/F4twpnSCi9Ey5JFfM9ra0k1zlmoSUzsr6TKiCQ40QHBRPzA6f2omW
-         h1tQ==
-X-Gm-Message-State: APjAAAWRm4iMujlFvS0T6Dp6+ykarr6xm68SmcJQRMho2RB9vwUgh5PS
-        dXIlX2R7AE2upoUhre/4HA/Olg==
-X-Google-Smtp-Source: APXvYqwNpsVSpllqMOsBw0KVEfj6ixi9vpK94YoxKUCK8BvVN+K2rt+0zmH9iLuSgofxUQodtrJbFA==
-X-Received: by 2002:a17:902:9a42:: with SMTP id x2mr15707448plv.194.1578079747357;
-        Fri, 03 Jan 2020 11:29:07 -0800 (PST)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id u23sm68353574pfm.29.2020.01.03.11.29.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jan 2020 11:29:06 -0800 (PST)
-Date:   Fri, 3 Jan 2020 11:29:06 -0800 (PST)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Wei Yang <richardw.yang@linux.intel.com>
-cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
-        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, yang.shi@linux.alibaba.com
-Subject: Re: [RFC PATCH] mm: thp: grab the lock before manipulation defer
- list
-In-Reply-To: <20200103143407.1089-1-richardw.yang@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.2001031128200.160920@chino.kir.corp.google.com>
-References: <20200103143407.1089-1-richardw.yang@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+A1yNa9EKEJAvf7mT00hIXluvZccqZJ7nsuzns/AIw8=;
+        b=aaBI4utQ7CzEwWCtGoTxrGzQl8jhE1tyGVev8rMwgvu+BZy59+VISV7D7/9nx7KMr2
+         sOnXa3J+i90jHMElItd0195yEc4KIJAHh2aUATlCrX5J+/Clq9aJRFUGirvZEqEOHKWe
+         lb6HT1TZFbma1ZZ5+GDD43rwL3UIAek5Vp85LgtSS9qN3+H+RUkE1I1eUsP3cJCoyhyj
+         bmMm6VCNTLyMCIvExVSA0lid8sAvB1J4dwZvl9M3fB3EdWKfUKttVavuPFfQ4twsnsk+
+         RWfme/PWgwMMkbR5HYJpKsgobkkWBm0ipH0aPipJbspeipwp4P9LYoMEzkFJSlbeBUlR
+         1UpQ==
+X-Gm-Message-State: APjAAAU3j+nkWMtCpFYNF9FDM7K5aQkfb51crnvSWtDJ0Sjqf28Y9ZXV
+        TlNei+SjcdsZSj95BB2qTeg5DqU0x7f0y47IJIXv7g==
+X-Google-Smtp-Source: APXvYqyU0RUmJHbu8sFP1etbSHj6m5ri0lKObr59npnVW1CLsV3/SdCgQXzjKK3OOe298BMpuBxbd4JwwIlerJ4Wg8c=
+X-Received: by 2002:aca:3f54:: with SMTP id m81mr4434705oia.73.1578079845934;
+ Fri, 03 Jan 2020 11:30:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20190821175720.25901-1-vgoyal@redhat.com> <20190821175720.25901-3-vgoyal@redhat.com>
+ <20190826115316.GB21051@infradead.org> <20190826203326.GB13860@redhat.com>
+ <20190826205829.GC13860@redhat.com> <20200103141235.GA13350@redhat.com>
+ <CAPcyv4hr-KXUAT_tVy-GuTOq1GvVGHKsHwAPih60wcW3DGmqRg@mail.gmail.com>
+ <CAPcyv4jM8s8T5ifv0c2eyqaBu3f2bd_j+fQHmJttZAajZ-we=g@mail.gmail.com> <20200103183307.GB13350@redhat.com>
+In-Reply-To: <20200103183307.GB13350@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 3 Jan 2020 11:30:35 -0800
+Message-ID: <CAPcyv4geobjz_FZpfow7CKYDHHPe=65=tYV65E0901OzPszpww@mail.gmail.com>
+Subject: Re: [PATCH 02/19] dax: Pass dax_dev to dax_writeback_mapping_range()
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, virtio-fs@redhat.com,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 3 Jan 2020, Wei Yang wrote:
+On Fri, Jan 3, 2020 at 10:33 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Fri, Jan 03, 2020 at 10:18:22AM -0800, Dan Williams wrote:
+> > On Fri, Jan 3, 2020 at 10:12 AM Dan Williams <dan.j.williams@intel.com> wrote:
+> > >
+> > > On Fri, Jan 3, 2020 at 6:12 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > [..]
+> > > > Hi Dan,
+> > > >
+> > > > Ping for this patch. I see christoph and Jan acked it. Can we take it. Not
+> > > > sure how to get ack from ext4 developers.
+> > >
+> > > Jan counts for ext4, I just missed this. Now merged.
+> >
+> > Oh, this now collides with:
+> >
+> >    30fa529e3b2e xfs: add a xfs_inode_buftarg helper
+> >
+> > Care to rebase? I'll also circle back to your question about
+> > partitions on patch1.
+>
+> Hi Dan,
+>
+> Here is the updated patch.
+>
+> Thanks
+> Vivek
+>
+> Subject: dax: Pass dax_dev instead of bdev to dax_writeback_mapping_range()
 
-> As all the other places, we grab the lock before manipulate the defer list.
-> Current implementation may face a race condition.
-> 
-> Fixes: 87eaceb3faa5 ("mm: thp: make deferred split shrinker memcg aware")
-> 
-> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
-> 
-> ---
-> I notice the difference during code reading and just confused about the
-> difference. No specific test is done since limited knowledge about cgroup.
-> 
-> Maybe I miss something important?
-
-The check for !list_empty(page_deferred_list(page)) must certainly be 
-serialized with doing list_del_init(page_deferred_list(page)).
-
-> ---
->  mm/memcontrol.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index bc01423277c5..62b7ec34ef1a 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -5368,12 +5368,12 @@ static int mem_cgroup_move_account(struct page *page,
->  	}
->  
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +	spin_lock(&from->deferred_split_queue.split_queue_lock);
->  	if (compound && !list_empty(page_deferred_list(page))) {
-> -		spin_lock(&from->deferred_split_queue.split_queue_lock);
->  		list_del_init(page_deferred_list(page));
->  		from->deferred_split_queue.split_queue_len--;
-> -		spin_unlock(&from->deferred_split_queue.split_queue_lock);
->  	}
-> +	spin_unlock(&from->deferred_split_queue.split_queue_lock);
->  #endif
->  	/*
->  	 * It is safe to change page->mem_cgroup here because the page
-> @@ -5385,13 +5385,13 @@ static int mem_cgroup_move_account(struct page *page,
->  	page->mem_cgroup = to;
->  
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +	spin_lock(&to->deferred_split_queue.split_queue_lock);
->  	if (compound && list_empty(page_deferred_list(page))) {
-> -		spin_lock(&to->deferred_split_queue.split_queue_lock);
->  		list_add_tail(page_deferred_list(page),
->  			      &to->deferred_split_queue.split_queue);
->  		to->deferred_split_queue.split_queue_len++;
-> -		spin_unlock(&to->deferred_split_queue.split_queue_lock);
->  	}
-> +	spin_unlock(&to->deferred_split_queue.split_queue_lock);
->  #endif
->  
->  	spin_unlock_irqrestore(&from->move_lock, flags);
-> -- 
-> 2.17.1
-> 
-> 
-> 
+Looks good, applied.
