@@ -2,114 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE1FB130258
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 13:23:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E52FE13025D
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 13:31:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725911AbgADMXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 07:23:21 -0500
-Received: from mail-il1-f177.google.com ([209.85.166.177]:44442 "EHLO
-        mail-il1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbgADMXU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 07:23:20 -0500
-Received: by mail-il1-f177.google.com with SMTP id z12so2292751iln.11;
-        Sat, 04 Jan 2020 04:23:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LKQLDuUQyKEp3PqqNw3i4af+LyZvLM7Wyx7d36N1/7g=;
-        b=vAB0O4s6yBazbpmIEiJWWx9AHn68/D7fHgaqYwW8qVN6GEYn3Jd5FTODWftDaqvoWb
-         o0aR4RUJuL8WgEYjmE59nhe1op+jIQ0w3FEU8F2Bi0d9e604m0gXTi4CX4zqkFy5ESIE
-         a2/qY0xyBIhm3xiuremTqrk83EOHEEEnchWuG7ptss2XGcjOjGay+2Sv+5wQLTbIx8yS
-         R2G7Z3Iwgsi2X50VkDj0E/nti4kMIRlzm1pGnx63us7gEwBE21oQhbjm0TqZ0z+erHs5
-         GLPxLYuLwVAzytAc5/aPAGggMgctbiurMUgkkfO2ZZmympTiR4XIrAf0sYhiPEX9gH79
-         usLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LKQLDuUQyKEp3PqqNw3i4af+LyZvLM7Wyx7d36N1/7g=;
-        b=B240iv7WmWACD5yryV5Zfdep0qAXt7CEZrqq/hN8zAIr2UD9YoKMwlnilsOilS2GDX
-         c2eByEyrIBuHZDVXDF2xtTIWPGTHT1rrsKalZKOfhKH4XCrUJmnbWLraDztComNXLrbu
-         uKX8CZONYj7PoQ5TMxJvJLnpiD33aLsiTWQyVCDPDiQz5IkNxPP28dt+P5sfUXjDj7Ho
-         anabQkZlLtiL7j4jcIZptaeaqWAm5nI9DPjk6Ar1AmgbthxaQjV6bVEfgq+8i97uwGcd
-         ukP0gj2eU8xjzNkjnK+VMZmkh7xtHbdSVs/D92Wg/WTih4YlsMyeAxj32jkiaNPHGVsh
-         pALA==
-X-Gm-Message-State: APjAAAV57W51veMPDzYYaISUebeXMP+QtJ2tayzUM8TaK618bGftDqHI
-        cElf1++QeGuWfHm3KMqX0NGsdbdXuLrhwdmbLzRVLH0/5g8aRP0w
-X-Google-Smtp-Source: APXvYqxRGib/GBLbSGJvISDQygameAmB0qxfxm7Vznd0dHfFks8EvS8cx3KiThhlephAoOkZaLJzrXSeJ044Qstyhy0=
-X-Received: by 2002:a92:cc42:: with SMTP id t2mr79004310ilq.111.1578140599825;
- Sat, 04 Jan 2020 04:23:19 -0800 (PST)
+        id S1725900AbgADMbJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 07:31:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34786 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725802AbgADMbI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Jan 2020 07:31:08 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D846620848;
+        Sat,  4 Jan 2020 12:31:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578141068;
+        bh=QVpjc1/4jlPVd2gtunIVnBcBi4YgLlgOIz3IUTkp1Dg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iduUkJNBpHF62ZC98P46HgSPBOXZwjopv/NCb6k2lqvkGvdinQEjSblWa6PpLuObk
+         NEXIV13S5I91mer+4T/YS07VGa+EcpqXzcp/3V4f/gSAWK4YQEPiU40kQyKqZ2K0Bo
+         ceHppjRkx+0I8EgqR5H5YGhV5JuFcMaPefOkL0fU=
+Date:   Sat, 4 Jan 2020 13:31:06 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Barry Song <Baohua.Song@csr.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 5.4 055/191] mfd: mfd-core: Honour Device Trees request
+ to disable a child-device
+Message-ID: <20200104123106.GB1296856@kroah.com>
+References: <20200102215829.911231638@linuxfoundation.org>
+ <20200102215835.819082035@linuxfoundation.org>
+ <20200103102347.GA879@gerhold.net>
 MIME-Version: 1.0
-References: <CABXGCsOv26W6aqB5WPMe-mEynmwy55DTfTeL5Dg9vRq6+Y6WvA@mail.gmail.com>
- <CABXGCsNkzPrjqMRaWpssorxzhMLWBvLeSw9BpKYr_DW4LJQECQ@mail.gmail.com>
- <20200102110817.ahqaqidw3ztw3kax@10.255.255.10> <CABXGCsNkm3VuzO60WBCi4VJmDnO=DmprQ1P=dd0FcW2-+dGc0w@mail.gmail.com>
- <20200102131434.tky2hquki23laqqo@10.255.255.10> <CABXGCsMV1GRiqrXCQGHqvpBiendU3mG36h0YoG=4nw6spZHq=w@mail.gmail.com>
- <nycvar.YAK.7.76.2001021153220.1385@zhn.tzk.pbz> <CABXGCsMLfarquWnzV=e3Ta_HPac+DALfKEOaD3rp5n9MPqgyFw@mail.gmail.com>
- <20200103100232.GH3040@piout.net> <CABXGCsNv7G94TxaaKX8KXL5DEJiFgNcSu4+WShE_kQjVSa7zZA@mail.gmail.com>
- <20200103101935.GI3040@piout.net> <CABXGCsMLob0DC25JS8wwAYydnDoHBSoMh2_YLPfqm3TTvDE-Zw@mail.gmail.com>
- <7c015680-01b7-9c3e-c4c7-5d0b6e964781@hygon.cn> <CABXGCsNpS+nCMZ9C89UQVEu_u+hJVtdxCvdnj2QNqQf-j7+DrA@mail.gmail.com>
- <6ac1d65c-33ac-e3a4-799f-24279b677f90@hygon.cn>
-In-Reply-To: <6ac1d65c-33ac-e3a4-799f-24279b677f90@hygon.cn>
-From:   Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date:   Sat, 4 Jan 2020 17:23:09 +0500
-Message-ID: <CABXGCsO25iq2tZMis3E-DF2ADz2Je45YfL11cgjFhmr+bz-6jg@mail.gmail.com>
-Subject: Re: [bugreport] "hwclock -w" reset time instead of setting the right time
-To:     Jinke Fan <fanjinke@hygon.cn>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        J William Piggott <elseifthen@gmx.com>,
-        Karel Zak <kzak@redhat.com>,
-        "util-linux@vger.kernel.org" <util-linux@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200103102347.GA879@gerhold.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 4 Jan 2020 at 16:37, Jinke Fan <fanjinke@hygon.cn> wrote:
->
-> Hi Mike:
-> Yes, We do check the time in BIOS Menu after first reboot.
->
-> We do some further tests in our X570 platform:
-> * "AMD Ryzen 7 3700X" with mainboard "ASUS ROG STRIX X570-E GAMING".
-> * OS is Fedora rawhide, with default Kernel version which is shown as
-> follows:
-> $uname -a
-> Linux bogon 5.5.0-0.rc4.git0.1.fc32.x86_64 #1 SMP Mon Dec 30 06:32:36
-> UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
->
-> And we upgrade/downgrade BIOS version from 1005/1201/1404/1405, and we
-> found out that :
-> * OLD BIOS version 1005/1201 does not reset the rtc time and keep the
-> setup rtc time after reboot.
-> * NEW BIOS version 1404/1405 DO reset the rtc time to 2019/01/01 after
-> reboot.
->
-> Detailed pictures of the BIOS time after reboot is shown in [2],
->
-> We suspect the BIOS 1201->1404 upgrade might cause this issue.
->  From x570 BIOS changelog, we found that the big difference between
-> 1201/1404 is the AMD AM4 PI upgrade from AGESA 1.0.0.3ABBA to AM4 combo
-> PI 1.0.0.4 patch B,
+On Fri, Jan 03, 2020 at 11:23:47AM +0100, Stephan Gerhold wrote:
+> On Thu, Jan 02, 2020 at 11:05:37PM +0100, Greg Kroah-Hartman wrote:
+> > From: Lee Jones <lee.jones@linaro.org>
+> > 
+> > [ Upstream commit 6b5c350648b857047b47acf74a57087ad27d6183 ]
+> > 
+> > Until now, MFD has assumed all child devices passed to it (via
+> > mfd_cells) are to be registered. It does not take into account
+> > requests from Device Tree and the like to disable child devices
+> > on a per-platform basis.
+> > 
+> > Well now it does.
+> > 
+> > Link: https://www.spinics.net/lists/arm-kernel/msg366309.html
+> > Link: https://lkml.org/lkml/2019/8/22/1350
+> 
+> As far as I understand it, this commit is not suitable for backporting.
+> The link above explains the problem for a similar patch:
+> 
+> 	But I believe this would introduce a rather ugly bug in
+> 	mfd_remove_devices() if the first sub-device is set to disabled:
+> 	It iterates over the children devices to find the base address
+> 	of the allocated "usage count" array, which is then used to free it.
+> 	If the first sub-device is missing, it would free the wrong address.
+> 
+> This problem does not exist in mainline because the MFD usage counting
+> was removed entirely as part of the larger "Simplify MFD Core" series [1].
+> 
+> None of the device trees in the stable kernels should depend on
+> disabling MFD devices from the device tree. (They were written at a time
+> when the MFD core ignored that request entirely...)
+> Therefore, I would suggest to drop this patch entirely.
 
-The changelog for my BIOS are the same [1]. Unfortunately, I will not
-able downgrade to BIOS of 0404 ver for checking assumption because
-changelog description of ver 1404 contains warning "* You will not be
-able to downgrade your BIOS after updating to this BIOS version"
+Thanks for catching this, now dropped from all stable queues.
 
-> If possible, please tell us about the BIOS version and your hardware
-> platform, which can be get from BIOS UI or using "dmidecode"
-> in Linux env.
-
-The version of my BIOS is the latest. It is 1405 for my motherboard.
-Here is "dmidecode" paste: https://pastebin.com/akBPAvZJ
-
-[1] https://www.asus.com/Motherboards/ROG-Strix-X570-I-Gaming/HelpDesk_BIOS/
-
---
-Best Regards,
-Mike Gavrilov.
+greg k-h
