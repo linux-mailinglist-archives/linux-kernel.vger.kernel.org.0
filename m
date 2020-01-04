@@ -2,340 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D00D130251
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 13:04:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D058130259
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 13:23:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726264AbgADMEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 07:04:15 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:35023 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725802AbgADMEP (ORCPT
+        id S1726005AbgADMXW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 07:23:22 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36443 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbgADMXW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 07:04:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578139453;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=tdR3Vz6+ofuay9NZxSeucQOMq0Uj1CPcpO0WCc1v3G4=;
-        b=AYpWAILnUB3UYVXxvquExK8/qraWmxpaw7m5tWmjgWIGTnnj1TDJRkW6pMxqIXRROcjqAl
-        R/en58UfbytUhMHav5/H8kK9t/td76Lalqe8HpSDXYCCVjB75HAyhNcWZZI7wQfx9U+KSY
-        ccgUbGwITCOuW1jAjVblWKLEQ0VppfA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-161--E6dYDsFN1KEH2fVCROwoA-1; Sat, 04 Jan 2020 07:04:09 -0500
-X-MC-Unique: -E6dYDsFN1KEH2fVCROwoA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 82DAA800D41;
-        Sat,  4 Jan 2020 12:04:06 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-22.pek2.redhat.com [10.72.8.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 879C87DB25;
-        Sat,  4 Jan 2020 12:03:54 +0000 (UTC)
-Date:   Sat, 4 Jan 2020 20:03:49 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     John Garry <john.garry@huawei.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "chenxiang (M)" <chenxiang66@hisilicon.com>,
-        "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hare@suse.com" <hare@suse.com>, "hch@lst.de" <hch@lst.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        Zhang Yi <yi.zhang@redhat.com>
-Subject: Re: [PATCH RFC 1/1] genirq: Make threaded handler use irq affinity
- for managed interrupt
-Message-ID: <20200104120349.GA3810@ming.t460p>
-References: <d5774e2f-bb60-c27c-bf00-267b88400a12@huawei.com>
- <e815b5451ea86e99d42045f7067f455a@www.loen.fr>
- <20191224015926.GC13083@ming.t460p>
- <7a961950624c414bb9d0c11c914d5c62@www.loen.fr>
- <20191225004822.GA12280@ming.t460p>
- <72a6a738-f04b-3792-627a-fbfcb7b297e1@huawei.com>
- <20200103004625.GA5219@ming.t460p>
- <2b070d25-ee35-aa1f-3254-d086c6b872b1@huawei.com>
- <20200103112908.GA20353@ming.t460p>
- <e40ec76b-c9d7-2b2f-8257-d3ced0894260@huawei.com>
+        Sat, 4 Jan 2020 07:23:22 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z3so44798704wru.3
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Jan 2020 04:23:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zwNUSd99uCpcD2i/Zhi09ZcL/ngKkzJPJ00O7NK8uak=;
+        b=IfTd8sm1QFVaGBFpKEd2oviq06KevNXtkX8yOkcbAfoA/loOfqRuxsDuAIl+7o48RH
+         MSQEDOb1T81BxBwJxy5VfiRMx3OZz7EGSB+++T81oGS2K67N0qr86+S7tNcHwTsyXMh8
+         yxZQFVfHiv4Z79srxGd4VVTYYh+SuNKGV7d+yhhEYLou6OmAZk0cNSG11m8vRXHDpR6v
+         7DaLWosJ0wFwOh/LQhuxWHn/86XYWgtAJWmeOVic27RwCYORDqmaOK+mk/3nGuKiyvv0
+         0U7ZKg1A/dBNlW5n9hlSoXgvJJR7y7E+V6Lrzf1Bh8tHIb0hnrmvpjVmuc+TweyCWkEe
+         ravg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zwNUSd99uCpcD2i/Zhi09ZcL/ngKkzJPJ00O7NK8uak=;
+        b=UmeHIqCfKtkvDik1l1/VIYnQ7PAsh65G9oHMzrzycAOtNcnHzm0COKq9ZdhobE0/fW
+         KK53Nxn0zkxBcrt9A4OdGaFekx1pF32I9ZHHM18UPpcnHzgzaZfqe1PkQvUO8ynGKwjc
+         BCSRe4dUkHldOyaEJdyFQd//fXT7ORe0jcBLC0T60HDdubJaECxQ7Fkp5e4WA4Lw/ApP
+         FJ6jgs+qPkNiiN/PDzWmpju62OamJd69Ls6fsYgbeYhUzfaJQyfl4XH+EOqbiqwHEVX/
+         vs6SV82qBrEz73E/GTJUhar/eV6Yu/yEHOzmtXVxfQAlrKToOMWMsF0ZiyAJuo+ldfDj
+         oZMw==
+X-Gm-Message-State: APjAAAX4Ul3bXNY8eE0tGlaOsw8dMavdgekpkL/dEZP/rj4nFSqcof+4
+        qMl5L6/cBZD/K2iaCVqLp10=
+X-Google-Smtp-Source: APXvYqwWWPHCXqNuFyKebMBHxIW3UvhYBcQU+Lb0o2+33MGKCCL2vlFiYVBCV4+9nZQtxkNSoTyv6A==
+X-Received: by 2002:a5d:620b:: with SMTP id y11mr90778799wru.230.1578140599973;
+        Sat, 04 Jan 2020 04:23:19 -0800 (PST)
+Received: from localhost.localdomain (bzq-79-176-206-154.red.bezeqint.net. [79.176.206.154])
+        by smtp.googlemail.com with ESMTPSA id x1sm63227093wru.50.2020.01.04.04.23.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 Jan 2020 04:23:19 -0800 (PST)
+From:   Dor Askayo <dor.askayo@gmail.com>
+To:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Cc:     Dor Askayo <dor.askayo@gmail.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH] drm/amd/display: do not allocate display_mode_lib unnecessarily
+Date:   Sat,  4 Jan 2020 14:22:15 +0200
+Message-Id: <20200104122217.148883-1-dor.askayo@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="3V7upXqbjpZ4EhLz"
-Content-Disposition: inline
-In-Reply-To: <e40ec76b-c9d7-2b2f-8257-d3ced0894260@huawei.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This allocation isn't required and can fail when resuming from suspend.
 
---3V7upXqbjpZ4EhLz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Bug: https://gitlab.freedesktop.org/drm/amd/issues/1009
+Signed-off-by: Dor Askayo <dor.askayo@gmail.com>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-On Fri, Jan 03, 2020 at 11:50:51AM +0000, John Garry wrote:
-> On 03/01/2020 11:29, Ming Lei wrote:
-> > On Fri, Jan 03, 2020 at 10:41:48AM +0000, John Garry wrote:
-> > > On 03/01/2020 00:46, Ming Lei wrote:
-> > > > > > > d the
-> > > > > > > DMA API more than an architecture-specific problem.
-> > > > > > > 
-> > > > > > > Given that we have so far very little data, I'd hold off any conclusion.
-> > > > > > We can start to collect latency data of dma unmapping vs nvme_irq()
-> > > > > > on both x86 and arm64.
-> > > > > > 
-> > > > > > I will see if I can get a such box for collecting the latency data.
-> > > > > To reiterate what I mentioned before about IOMMU DMA unmap on x86, a key
-> > > > > difference is that by default it uses the non-strict (lazy) mode unmap, i.e.
-> > > > > we unmap in batches. ARM64 uses general default, which is strict mode, i.e.
-> > > > > every unmap results in an IOTLB fluch.
-> > > > > 
-> > > > > In my setup, if I switch to lazy unmap (set iommu.strict=0 on cmdline), then
-> > > > > no lockup.
-> > > > > 
-> > > > > Are any special IOMMU setups being used for x86, like enabling strict mode?
-> > > > > I don't know...
-> > > > BTW, I have run the test on one 224-core ARM64 with one 32-hw_queue NVMe, the
-> > > > softlock issue can be triggered in one minute.
-> > > > 
-> > > > nvme_irq() often takes ~5us to complete on this machine, then there is really
-> > > > risk of cpu lockup when IOPS is > 200K.
-> > > 
-> > > Do you have a typical nvme_irq() completion time for a mid-range x86 server?
-> > 
-> > ~1us.
-> 
-> Eh, so ~ x5 faster on x86 machine?! Seems some real issue here.
-> 
-> > 
-> > It is done via bcc script, and ebpf itself may introduce some overhead.
-> > 
-> 
-> Can you share the script/instructions? I would like to test on my machine. I
-> assume you tested on an ThunderX2.
-
-It should have been done easier by bpftrace than bcc, however it has bug in case
-of too many cpu cores on arm64.
-
-So I uses a modified hardirqs.py to do that, you can collect the latency
-histogram via funclatency too.
-
-
-
-Thanks,
-Ming
-
---3V7upXqbjpZ4EhLz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="hardirqs.py"
-
-#!/usr/bin/python
-# @lint-avoid-python-3-compatibility-imports
-#
-# hardirqs  Summarize hard IRQ (interrupt) event time.
-#           For Linux, uses BCC, eBPF.
-#
-# USAGE: hardirqs [-h] [-T] [-N] [-C] [-d] [interval] [outputs]
-#
-# Thanks Amer Ather for help understanding irq behavior.
-#
-# Copyright (c) 2015 Brendan Gregg.
-# Licensed under the Apache License, Version 2.0 (the "License")
-#
-# 19-Oct-2015   Brendan Gregg   Created this.
-
-from __future__ import print_function
-from bcc import BPF
-from time import sleep, strftime
-import argparse
-
-# arguments
-examples = """examples:
-    ./hardirqs            # sum hard irq event time
-    ./hardirqs -d         # show hard irq event time as histograms
-    ./hardirqs 1 10       # print 1 second summaries, 10 times
-    ./hardirqs -NT 1      # 1s summaries, nanoseconds, and timestamps
-"""
-parser = argparse.ArgumentParser(
-    description="Summarize hard irq event time as histograms",
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-    epilog=examples)
-parser.add_argument("-T", "--timestamp", action="store_true",
-    help="include timestamp on output")
-parser.add_argument("-N", "--nanoseconds", action="store_true",
-    help="output in nanoseconds")
-parser.add_argument("-C", "--count", action="store_true",
-    help="show event counts instead of timing")
-parser.add_argument("-d", "--dist", action="store_true",
-    help="show distributions as histograms")
-parser.add_argument("interval", nargs="?", default=99999999,
-    help="output interval, in seconds")
-parser.add_argument("outputs", nargs="?", default=99999999,
-    help="number of outputs")
-parser.add_argument("--ebpf", action="store_true",
-    help=argparse.SUPPRESS)
-args = parser.parse_args()
-countdown = int(args.outputs)
-if args.count and (args.dist or args.nanoseconds):
-    print("The --count option can't be used with time-based options")
-    exit()
-if args.count:
-    factor = 1
-    label = "count"
-elif args.nanoseconds:
-    factor = 1
-    label = "nsecs"
-else:
-    factor = 1000
-    label = "usecs"
-debug = 0
-
-# define BPF program
-bpf_text = """
-#include <uapi/linux/ptrace.h>
-#include <linux/irq.h>
-#include <linux/irqdesc.h>
-#include <linux/interrupt.h>
-
-struct irq_key {
-    u64 id;
-    u64 slot;
-};
-
-BPF_HISTOGRAM(irq_rqs, struct irq_key, 512);
-
-struct irq_info {
-    u32 irq;
-    u32 rqs;
-    u64 start;
-};
-
-//at most 256 CPUs
-//BPF_ARRAY(curr_irq, struct irq_info, 256);
-BPF_HASH(curr_irq, u32, struct irq_info);
-
-struct irq_sum_info {
-    u64 total;
-    u64 cnt;
-    u64 rq_cnt;
-};
-BPF_HASH(irq, u32, struct irq_sum_info);
-
-// time IRQ
-int trace_start(struct pt_regs *ctx, struct irq_desc *desc)
-{
-    struct irq_info __info = {};
-    struct irq_info *info = &__info;
-    u32 id = bpf_get_smp_processor_id();
-
-    info->irq = desc->irq_data.irq;
-    info->start = bpf_ktime_get_ns();
-    info->rqs = 0;
-
-    curr_irq.update(&id, &__info);
-
-    return 0;
-}
-
-int trace_completion(struct pt_regs *ctx)
-{
-    u32 irq_no;
-    struct irq_sum_info *sum;
-    struct irq_sum_info zero = {}; 
-    u64 delta;
-    struct irq_desc *desc = (struct irq_desc *)PT_REGS_PARM1(ctx);
-    u32 id = bpf_get_smp_processor_id();
-    struct irq_info *info = curr_irq.lookup(&id);
-
-    if (!info)
-        return 0;
-
-    irq_no = info->irq;
-    delta = bpf_ktime_get_ns() - info->start;
-
-    if (irq_no != desc->irq_data.irq)
-        bpf_trace_printk("irq not match: %d %d\\n", irq_no, desc->irq_data.irq);
-    
-    sum = irq.lookup_or_init(&irq_no, &zero);
-    if (sum) {
-        sum->total += delta;
-        sum->cnt++;
-        sum->rq_cnt += info->rqs;
-    }
-
-    struct irq_key ikey = {.id = irq_no, .slot = info->rqs};
-    irq_rqs.increment(ikey);
-    curr_irq.delete(&id);
-
-    return 0;
-}
-int trace_rq(struct pt_regs *ctx, struct request *rq)
-{
-    u32 id = bpf_get_smp_processor_id();
-    struct irq_info *info = curr_irq.lookup(&id);
-
-    if (!info)
-        return 0;
-
-    info->rqs++;
-
-    return 0;
-}
-"""
-
-# code substitutions
-if debug or args.ebpf:
-    print(bpf_text)
-    if args.ebpf:
-        exit()
-
-# load BPF program
-b = BPF(text=bpf_text)
-
-# these should really use irq:irq_handler_entry/exit tracepoints:
-b.attach_kprobe(event="handle_irq_event_percpu", fn_name="trace_start")
-b.attach_kretprobe(event="handle_irq_event_percpu", fn_name="trace_completion")
-b.attach_kprobe(event="blk_mq_complete_request", fn_name="trace_rq")
-print("Tracing hard irq event time... Hit Ctrl-C to end.")
-
-# output
-exiting = 0 if args.interval else 1
-dist = b.get_table("irq")
-irq_rqs = b.get_table("irq_rqs")
-
-if args.timestamp:
-    print("start time %-8s\n" % strftime("%H:%M:%S"), end="")
-while (1):
-    try:
-        sleep(int(args.interval))
-    except KeyboardInterrupt:
-        exiting = 1
-
-    print()
-    if args.timestamp:
-        print("end time %-8s\n" % strftime("%H:%M:%S"), end="")
-
-    if args.dist:
-        dist.print_log2_hist(label, "hardirq")
-    else:
-        print("%-10s %11s %11s %11s %11s %11s" % ("HARDIRQ", "TOTAL_TIME", "TOTAL_COUNT",
-            "AVG_TIME", "RQS", "AVG_RQS"))
-        for k, v in sorted(dist.items(), key=lambda dist: dist[1].total):
-            print("%-10d %11d %11d %11d %11d %11d" % (k.value, v.total / factor, v.cnt,
-                v.total / (factor * v.cnt),
-                v.rq_cnt,
-                v.rq_cnt / v.cnt))
-    dist.clear()
-
-    irq_rqs.print_linear_hist("rqs", "irq")
-    irq_rqs.clear()
-
-    countdown -= 1
-    if exiting or countdown == 0:
-        exit()
-
---3V7upXqbjpZ4EhLz--
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
+index dd4731ab935c..83ebb716166b 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
+@@ -2179,12 +2179,7 @@ void dc_set_power_state(
+ 	enum dc_acpi_cm_power_state power_state)
+ {
+ 	struct kref refcount;
+-	struct display_mode_lib *dml = kzalloc(sizeof(struct display_mode_lib),
+-						GFP_KERNEL);
+-
+-	ASSERT(dml);
+-	if (!dml)
+-		return;
++	struct display_mode_lib *dml;
+ 
+ 	switch (power_state) {
+ 	case DC_ACPI_CM_POWER_STATE_D0:
+@@ -2206,6 +2201,12 @@ void dc_set_power_state(
+ 		 * clean state, and dc hw programming optimizations will not
+ 		 * cause any trouble.
+ 		 */
++		dml = kzalloc(sizeof(struct display_mode_lib),
++				GFP_KERNEL);
++
++		ASSERT(dml);
++		if (!dml)
++			return;
+ 
+ 		/* Preserve refcount */
+ 		refcount = dc->current_state->refcount;
+@@ -2219,10 +2220,10 @@ void dc_set_power_state(
+ 		dc->current_state->refcount = refcount;
+ 		dc->current_state->bw_ctx.dml = *dml;
+ 
++		kfree(dml);
++
+ 		break;
+ 	}
+-
+-	kfree(dml);
+ }
+ 
+ void dc_resume(struct dc *dc)
+-- 
+2.24.1
 
