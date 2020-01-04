@@ -2,102 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E38421302F5
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 16:18:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E75CE1302F8
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 16:21:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbgADPSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 10:18:39 -0500
-Received: from asavdk4.altibox.net ([109.247.116.15]:38724 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725946AbgADPSj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 10:18:39 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726135AbgADPVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 10:21:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58896 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725943AbgADPVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Jan 2020 10:21:44 -0500
+Received: from localhost.localdomain (unknown [194.230.155.149])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id EC59B80622;
-        Sat,  4 Jan 2020 16:18:35 +0100 (CET)
-Date:   Sat, 4 Jan 2020 16:18:34 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
+        by mail.kernel.org (Postfix) with ESMTPSA id EE35521734;
+        Sat,  4 Jan 2020 15:21:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578151302;
+        bh=CHtvmJmJTYA2XWUU5fS02RD4y82wxxLkb2gjothw9tA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RDzsuAq+nYsQO29qCBhBO9FjDxx618JMRr5D9o92vqiVferDfQLcLqEQ4DQLlo662
+         lOS1FuuNWrW746XfRQkDHYBm+qU74NPgWbr0sfR0D5d/LCUydagdMTpGK/ePGLoHSH
+         m8R1KB9m4f/U8yUJSFYwB611Byd98e61/IgMyJ3M=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 3/3] drm/panel: simple: Add Satoz SAT050AT40H12R2
- panel support
-Message-ID: <20200104151834.GD17768@ravnborg.org>
-References: <20191224141905.22780-1-miquel.raynal@bootlin.com>
- <20191224141905.22780-3-miquel.raynal@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191224141905.22780-3-miquel.raynal@bootlin.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=P-IC7800AAAA:8
-        a=6d4WGEFEbrAP5ViGYu4A:9 a=CjuIK1q_8ugA:10 a=d3PnA9EDa4IxuAV0gXij:22
+        Kukjin Kim <kgene@kernel.org>, Kamil Debski <kamil@wypas.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 01/20] dt-bindings: Rename Exynos to lowercase
+Date:   Sat,  4 Jan 2020 16:20:48 +0100
+Message-Id: <20200104152107.11407-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200104152107.11407-1-krzk@kernel.org>
+References: <20200104152107.11407-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miquel.
+Fix up inconsistent usage of upper and lowercase letters in "Exynos"
+name.
 
-On Tue, Dec 24, 2019 at 03:19:05PM +0100, Miquel Raynal wrote:
-> Add support for the Satoz SAT050AT40H12R2 RGB panel.
-> 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
-> 
-> Changes since v2:
-> * Dropped two uneeded lines which would fail the build.
-> 
-> Changes since v1:
-> * Switched to display_timing's instead of display_mode.
-> 
->  drivers/gpu/drm/panel/panel-simple.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-> index ac6f6b5d200d..cc1595c5633a 100644
-> --- a/drivers/gpu/drm/panel/panel-simple.c
-> +++ b/drivers/gpu/drm/panel/panel-simple.c
-> @@ -2559,6 +2559,29 @@ static const struct panel_desc samsung_ltn140at29_301 = {
->  	},
->  };
->  
-> +static const struct display_timing satoz_sat050at40h12r2_timing = {
-> +	.pixelclock = { 33300000, 33300000, 50000000 },
-> +	.hactive = {800, 800, 800},
-> +	.hfront_porch = {16, 210, 354},
-> +	.hback_porch = {46, 46, 46},
-> +	.hsync_len = {1, 1, 40},
-> +	.vactive = {480, 480, 480},
-> +	.vfront_porch = {7, 22, 147},
-> +	.vback_porch = {23, 23, 23},
-> +	.vsync_len = {1, 1, 20},
-> +};
-> +
-> +static const struct panel_desc satoz_sat050at40h12r2 = {
-> +	.timings = &satoz_sat050at40h12r2_timing,
-> +	.num_timings = 1,
-> +	.bpc = 8,
-> +	.size = {
-> +		.width = 108,
-> +		.height = 65,
-> +	},
-> +	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
-> +};
-Please add connector_type as well.
-This is mandatory for all new panels.
+"EXYNOS" is not an abbreviation but a regular trademarked name.
+Therefore it should be written with lowercase letters starting with
+capital letter.
 
-	Sam
+The lowercase "Exynos" name is promoted by its manufacturer Samsung
+Electronics Co., Ltd., in advertisement materials and on website.
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+---
+
+Changes since v1:
+1. New patch
+---
+ .../devicetree/bindings/media/exynos-jpeg-codec.txt         | 2 +-
+ Documentation/devicetree/bindings/media/exynos5-gsc.txt     | 2 +-
+ Documentation/devicetree/bindings/media/samsung-fimc.txt    | 2 +-
+ .../devicetree/bindings/media/samsung-mipi-csis.txt         | 2 +-
+ Documentation/devicetree/bindings/phy/samsung-phy.txt       | 6 +++---
+ 5 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt b/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
+index 38941db23dd2..ce9a22689e53 100644
+--- a/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
++++ b/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
+@@ -1,4 +1,4 @@
+-Samsung S5P/EXYNOS SoC series JPEG codec
++Samsung S5P/Exynos SoC series JPEG codec
+ 
+ Required properties:
+ 
+diff --git a/Documentation/devicetree/bindings/media/exynos5-gsc.txt b/Documentation/devicetree/bindings/media/exynos5-gsc.txt
+index bc963a6d305a..1872688fa408 100644
+--- a/Documentation/devicetree/bindings/media/exynos5-gsc.txt
++++ b/Documentation/devicetree/bindings/media/exynos5-gsc.txt
+@@ -1,6 +1,6 @@
+ * Samsung Exynos5 G-Scaler device
+ 
+-G-Scaler is used for scaling and color space conversion on EXYNOS5 SoCs.
++G-Scaler is used for scaling and color space conversion on Exynos5 SoCs.
+ 
+ Required properties:
+ - compatible: should be one of
+diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+index 48c599dacbdf..f91b9dc80eb3 100644
+--- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
++++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+@@ -1,4 +1,4 @@
+-Samsung S5P/EXYNOS SoC Camera Subsystem (FIMC)
++Samsung S5P/Exynos SoC Camera Subsystem (FIMC)
+ ----------------------------------------------
+ 
+ The S5P/Exynos SoC Camera subsystem comprises of multiple sub-devices
+diff --git a/Documentation/devicetree/bindings/media/samsung-mipi-csis.txt b/Documentation/devicetree/bindings/media/samsung-mipi-csis.txt
+index be45f0b1a449..a4149c9434ea 100644
+--- a/Documentation/devicetree/bindings/media/samsung-mipi-csis.txt
++++ b/Documentation/devicetree/bindings/media/samsung-mipi-csis.txt
+@@ -1,4 +1,4 @@
+-Samsung S5P/EXYNOS SoC series MIPI CSI-2 receiver (MIPI CSIS)
++Samsung S5P/Exynos SoC series MIPI CSI-2 receiver (MIPI CSIS)
+ -------------------------------------------------------------
+ 
+ Required properties:
+diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+index 1c40ccd40ce4..7510830a79bd 100644
+--- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
++++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+@@ -1,4 +1,4 @@
+-Samsung S5P/EXYNOS SoC series MIPI CSIS/DSIM DPHY
++Samsung S5P/Exynos SoC series MIPI CSIS/DSIM DPHY
+ -------------------------------------------------
+ 
+ Required properties:
+@@ -27,7 +27,7 @@ the PHY specifier identifies the PHY and its meaning is as follows:
+ supports additional fifth PHY:
+   4 - MIPI CSIS 2.
+ 
+-Samsung EXYNOS SoC series Display Port PHY
++Samsung Exynos SoC series Display Port PHY
+ -------------------------------------------------
+ 
+ Required properties:
+@@ -38,7 +38,7 @@ Required properties:
+ 		      control pmu registers for power isolation.
+ - #phy-cells : from the generic PHY bindings, must be 0;
+ 
+-Samsung S5P/EXYNOS SoC series USB PHY
++Samsung S5P/Exynos SoC series USB PHY
+ -------------------------------------------------
+ 
+ Required properties:
+-- 
+2.17.1
+
