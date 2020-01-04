@@ -2,77 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAAEE1301F2
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 12:08:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 362C31301F5
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 12:12:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725884AbgADLHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 06:07:18 -0500
-Received: from mail-40135.protonmail.ch ([185.70.40.135]:41575 "EHLO
-        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbgADLHS (ORCPT
+        id S1725900AbgADLLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 06:11:52 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:59725 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbgADLLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 06:07:18 -0500
-Date:   Sat, 04 Jan 2020 11:02:01 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1578135729;
-        bh=9lo0cZrYUn87JmWrXa1EzvMoWSlzQ91H4SkQQpgpMfU=;
-        h=Date:To:From:Cc:Reply-To:Subject:Feedback-ID:From;
-        b=yI/baj7+QElBKg71HnKQ5mg8mMRbrg8J7KtnOltDb85qpQPkD58Ry2OREyCvQ4T3k
-         HoS3g084E2h0k1gsBDmh8Me6ZFR/7kPrUjrCtZ7bbBrEn7qJvNda1senhCPm4EVb4e
-         yw95/t55kxjlw6313COaB0Cx5orNfMA2x/m7P7dw=
-To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-From:   atmgnd <atmgnd@protonmail.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>
-Reply-To: atmgnd <atmgnd@protonmail.com>
-Subject: [PATCH] usb: missing parentheses in USE_NEW_SCHEME
-Message-ID: <ht4mtag8ZP-HKEhD0KkJhcFnVlOFV8N8eNjJVRD9pDkkLUNhmEo8_cL_sl7xy9mdajdH-T8J3TFQsjvoYQT61NFjQXy469Ed_BbBw_x4S1E=@protonmail.com>
-Feedback-ID: py-oVO8Vt0vS1FKaKugS2_MTpFC3lKhHMurhoXPAalWk9Eh40Mo1lZOn2CI1vswSSKJBwBLYgn_VKFu9qW3csg==:Ext:ProtonMail
+        Sat, 4 Jan 2020 06:11:51 -0500
+Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 004B97TD090039;
+        Sat, 4 Jan 2020 20:09:07 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav304.sakura.ne.jp);
+ Sat, 04 Jan 2020 20:09:07 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav304.sakura.ne.jp)
+Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 004B927x089997
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 4 Jan 2020 20:09:06 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: INFO: rcu detected stall in sys_sendfile64
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+bcad772bbc241b4c6147@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>
+References: <000000000000e728ec057d5c9d90@google.com>
+ <a5478450-f975-228f-1ca6-886a45b654a1@I-love.SAKURA.ne.jp>
+ <CACT4Y+YqWgZZFXdX2A2jVYEdHfY9ywGMgRRP5W4Uqdu__rA63g@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <bc53fe0b-2c17-4d4f-1c40-f290997d0521@i-love.sakura.ne.jp>
+Date:   Sat, 4 Jan 2020 20:09:00 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-0.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HK_RANDOM_REPLYTO
-        shortcircuit=no autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
+In-Reply-To: <CACT4Y+YqWgZZFXdX2A2jVYEdHfY9ywGMgRRP5W4Uqdu__rA63g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-accroding to bd0e6c9#diff-28615d62e1250eadc353d804f49bc6d6, will try old en=
-umeration
-scheme first for high speed devices. for example, when a high speed device =
-pluged in,
-line 2720 should expand to 0 at the first time. USE_NEW_SCHEME(0, 0 || 0 ||=
- 1) =3D=3D=3D 0.
-but it wrongly expand to 1(alway expand to 1 for high speed device), and ch=
-ange
-USE_NEW_SCHEME to USE_NEW_SCHEME((i) % 2 =3D=3D (int)(scheme)) may be bette=
-r ?
+On 2018/12/20 3:42, Dmitry Vyukov wrote:
+> On Wed, Dec 19, 2018 at 11:13 AM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>
+>> On 2018/12/19 18:27, syzbot wrote:
+>>> HEAD commit:    ddfbab46539f Merge tag 'scsi-fixes' of git://git.kernel.or..
+>>> git tree:       upstream
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=15b87fa3400000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=861a3573f4e78ba1
+>>> dashboard link: https://syzkaller.appspot.com/bug?extid=bcad772bbc241b4c6147
+>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13912ccd400000
+>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=145781db400000
+>>
+>> This is not a LSM problem, for the reproducer is calling
+>> sched_setattr(SCHED_DEADLINE) with very large values.
+>>
+>>   sched_setattr(0, {size=0, sched_policy=0x6 /* SCHED_??? */, sched_flags=0, sched_nice=0, sched_priority=0, sched_runtime=2251799813724439, sched_deadline=4611686018427453437, sched_period=0}, 0) = 0
+>>
+>> I think that this problem is nothing but an insane sched_setattr() parameter.
+>>
+>> #syz invalid
+> 
+> Note there was another one with sched_setattr, which turned out to be
+> some serious problem in kernel (sched_setattr should not cause CPU
+> stall for 3 minutes):
+> INFO: rcu detected stall in do_idle
+> https://syzkaller.appspot.com/bug?extid=385468161961cee80c31
+> https://groups.google.com/forum/#!msg/syzkaller-bugs/crrfvusGtwI/IoD_zus4BgAJ
+> 
+> Maybe it another incarnation of the same bug, that one is still not fixed.
+> 
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Qi Zhou <atmgnd@outlook.com>
----
- drivers/usb/core/hub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index f229ad6952c0..7d17deca7021 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -2692,7 +2692,7 @@ static unsigned hub_is_wusb(struct usb_hub *hub)
- #define SET_ADDRESS_TRIES=092
- #define GET_DESCRIPTOR_TRIES=092
- #define SET_CONFIG_TRIES=09(2 * (use_both_schemes + 1))
--#define USE_NEW_SCHEME(i, scheme)=09((i) / 2 =3D=3D (int)scheme)
-+#define USE_NEW_SCHEME(i, scheme)=09((i) / 2 =3D=3D (int)(scheme))
-
- #define HUB_ROOT_RESET_TIME=0960=09/* times are in msec */
- #define HUB_SHORT_RESET_TIME=0910
---
-2.17.1
-
-
+Can we let syzbot blacklist sched_setattr() for now? There are many stall reports
+doing sched_setattr(SCHED_RR) which makes it difficult to find stall reports not
+using sched_setattr().
