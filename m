@@ -2,110 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ADC313023F
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 12:53:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0127130246
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 13:03:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725911AbgADLxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 06:53:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44532 "EHLO mail.kernel.org"
+        id S1726164AbgADMDK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 07:03:10 -0500
+Received: from mga18.intel.com ([134.134.136.126]:19358 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725796AbgADLxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 06:53:12 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0149A24649;
-        Sat,  4 Jan 2020 11:53:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578138790;
-        bh=/zeTUOLPTnr8cd2pSmtDmYm5FZFtcaNSMd3zUfMLuZM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=s+7E9Yp0eTdm44eKkGtBoeqw6sqgYg8JOj9PgeNZ9OGjrdWq+WCgPTu0y7EGV8zvI
-         Tol8GWIkZkFLgZH6fCTuWO0jxpFBnlTw7y6dbm9SaBAOPc35dCD6DzUFAX2rRpEtdW
-         wtUyfwMRn4lr6ykgjL03wt4RYJjJC+qxYaTgqR6Q=
-Date:   Sat, 4 Jan 2020 12:53:08 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Chengguang Xu <cgxu519@mykernel.net>
-Cc:     Pavel Machek <pavel@denx.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 062/114] f2fs: choose hardlimit when softlimit is
- larger than hardlimit in f2fs_statfs_project()
-Message-ID: <20200104115308.GA1296856@kroah.com>
-References: <20200102220029.183913184@linuxfoundation.org>
- <20200102220035.294585461@linuxfoundation.org>
- <20200103171213.GC14328@amd>
- <16f6e3f5bbe.d291a05d38838.5222280714928609391@mykernel.net>
+        id S1725802AbgADMDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Jan 2020 07:03:09 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2020 04:03:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,394,1571727600"; 
+   d="scan'208";a="214717996"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga008.jf.intel.com with ESMTP; 04 Jan 2020 04:03:05 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1ini93-0009qt-B6; Sat, 04 Jan 2020 20:03:05 +0800
+Date:   Sat, 4 Jan 2020 20:02:16 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Sricharan R <sricharan@codeaurora.org>
+Cc:     kbuild-all@lists.01.org, sricharan@codeaurora.org,
+        agross@kernel.org, devicetree@vger.kernel.org,
+        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-soc@vger.kernel.org, robh+dt@kernel.org, sboyd@kernel.org,
+        sivaprak@codeaurora.org
+Subject: Re: [PATCH 2/2] clk: qcom: Add ipq6018 Global Clock Controller
+ support
+Message-ID: <202001041937.BBQYk2aO%lkp@intel.com>
+References: <1578050744-3761-3-git-send-email-sricharan@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <16f6e3f5bbe.d291a05d38838.5222280714928609391@mykernel.net>
+In-Reply-To: <1578050744-3761-3-git-send-email-sricharan@codeaurora.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 04, 2020 at 09:50:43AM +0800, Chengguang Xu wrote:
->  ---- 在 星期六, 2020-01-04 01:12:13 Pavel Machek <pavel@denx.de> 撰写 ----
->  > Hi!
->  > 
->  > > From: Chengguang Xu <cgxu519@mykernel.net>
->  > > 
->  > > [ Upstream commit 909110c060f22e65756659ec6fa957ae75777e00 ]
->  > > 
->  > > Setting softlimit larger than hardlimit seems meaningless
->  > > for disk quota but currently it is allowed. In this case,
->  > > there may be a bit of comfusion for users when they run
->  > > df comamnd to directory which has project quota.
->  > > 
->  > > For example, we set 20M softlimit and 10M hardlimit of
->  > > block usage limit for project quota of test_dir(project id 123).
->  > 
->  > > Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
->  > > Reviewed-by: Chao Yu <yuchao0@huawei.com>
->  > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->  > > Signed-off-by: Sasha Levin <sashal@kernel.org>
->  > > ---
->  > >  fs/f2fs/super.c | 20 ++++++++++++++------
->  > >  1 file changed, 14 insertions(+), 6 deletions(-)
->  > > 
->  > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->  > > index 7a9cc64f5ca3..662c7de58b99 100644
->  > > --- a/fs/f2fs/super.c
->  > > +++ b/fs/f2fs/super.c
->  > > @@ -1148,9 +1148,13 @@ static int f2fs_statfs_project(struct super_block *sb,
->  > >          return PTR_ERR(dquot);
->  > >      spin_lock(&dquot->dq_dqb_lock);
->  > >  
->  > > -    limit = (dquot->dq_dqb.dqb_bsoftlimit ?
->  > > -         dquot->dq_dqb.dqb_bsoftlimit :
->  > > -         dquot->dq_dqb.dqb_bhardlimit) >> sb->s_blocksize_bits;
->  > > +    limit = 0;
->  > > +    if (dquot->dq_dqb.dqb_bsoftlimit)
->  > > +        limit = dquot->dq_dqb.dqb_bsoftlimit;
->  > > +    if (dquot->dq_dqb.dqb_bhardlimit &&
->  > > +            (!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
->  > > +        limit = dquot->dq_dqb.dqb_bhardlimit;
->  > > +
->  > >      if (limit && buf->f_blocks > limit) {
->  > 
->  > >> blocksize disappeared here. That can't be right.
->  > 
->  > Plus, is this just obfuscated way of saying
->  > 
->  > limit = min_not_zero(dquot->dq_dqb.dqb_bsoftlimit, dquot->dq_dqb.dqb_bhardlimit)?
->  > 
-> 
-> Please  skip this patch from  stable list,  I'll send  a revised patch to upstream.
+Hi Sricharan,
 
-This patch is already in Linus's tree, so you can't send a "revised"
-version, only one that applies on top of this one :)
+Thank you for the patch! Perhaps something to improve:
 
-That being said, I'll go drop this from the stable queues, thanks.
-Please let us know when the fixed patch is in Linus's tree and we will
-be glad to take both of them.
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on v5.5-rc4 next-20191220]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
 
-greg k-h
+url:    https://github.com/0day-ci/linux/commits/Sricharan-R/Add-Global-clock-controller-support-for-IPQ6018/20200104-133041
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-129-g341daf20-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/clk/qcom/gcc-ipq6018.c:2623:17: sparse: sparse: symbol 'lpass_core_axim_clk_src' was not declared. Should it be static?
+>> drivers/clk/qcom/gcc-ipq6018.c:2642:17: sparse: sparse: symbol 'lpass_snoc_cfg_clk_src' was not declared. Should it be static?
+>> drivers/clk/qcom/gcc-ipq6018.c:2661:17: sparse: sparse: symbol 'lpass_q6_axim_clk_src' was not declared. Should it be static?
+>> drivers/clk/qcom/gcc-ipq6018.c:2674:17: sparse: sparse: symbol 'ftbl_rbcpr_wcss_clk_src' was not declared. Should it be static?
+>> drivers/clk/qcom/gcc-ipq6018.c:2680:17: sparse: sparse: symbol 'rbcpr_wcss_clk_src' was not declared. Should it be static?
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
