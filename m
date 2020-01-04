@@ -2,115 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4C97130390
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 17:29:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 780D0130395
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 17:29:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726194AbgADQ3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 11:29:18 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38991 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbgADQ3S (ORCPT
+        id S1726380AbgADQ3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 11:29:34 -0500
+Received: from vulcan.natalenko.name ([104.207.131.136]:46144 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726004AbgADQ3e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 11:29:18 -0500
-Received: by mail-pg1-f193.google.com with SMTP id b137so24804273pga.6;
-        Sat, 04 Jan 2020 08:29:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xg4ooeb4ZqD5RUJja+KKcwjjVJIN28IYYLoomRMkZSE=;
-        b=MfsLly0BVG4U2BVJOBiEw/leGY5GskyTW3deWOm+jYg7rRLD8ShxcnWonHK/f1wlek
-         ObdsdYrr305sRxIwWLrduvt7EE2kM2k5VxmNXQb+9l5vUjFN1BaeOHKzlOplpJiIdfSy
-         A0jTQFfoIHG2pc3a7716hzAXG6iQZnI7HfJQY7zx1UDxQocRNIG/FswD5LcrVWxLmWPC
-         I231T4APvpJy1EZ5tr/ASS2Yop5XfNY+xfycYAjxKeNte3zssujCmWLeVv10EhX/madD
-         8kvgyUY6X775xiNPB2KulbmIGmmdi3qXRuSk8YPHD2mDuoN37YOHKcFazyXvf4YhxUBJ
-         R0pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xg4ooeb4ZqD5RUJja+KKcwjjVJIN28IYYLoomRMkZSE=;
-        b=bs1ucxQx0M2kufcb1HUYmqUkCPQ99nFbHLISZW/fwPi1bkgfi7RJmavC+XQOO8+Hkn
-         IUvewPRe1LXv+1rvhggXBuJU5hXH2jj3DPk7m1z7hFRylZrq31YutciKBXLid5UvxGyQ
-         LLDgcR84W7ASm8letB8cPQai0Z0jVmOHd1ERw313dkm1eZyGrQFn3j/RGBdnT5Deonfe
-         9xmnjuR2sGeVp1zpocBVXQIjbiE5mMX+EeGu9le6WLkOuBdPKRHntVCxyyjGIdQe3L02
-         II8qB9KZwBuK6uPBARJhOhW5I4KsisytVt2jz07rbYmw7nxH0nnghe0F6jw9O2W7Zjd7
-         B+ow==
-X-Gm-Message-State: APjAAAUWyut5EJUuad4Ty/c+v2y9b5f2Ni80d+/YU1mujgf+MmSACR8Q
-        kl8XPL/BUcYORYy1B+IFNps=
-X-Google-Smtp-Source: APXvYqwdgptw3Ge/84SYGAHM8emhnTsyMb+shqkQAOh3BTP0m5/lsTlI8Cmz0EslUcROLY32EfsJ4Q==
-X-Received: by 2002:aa7:848c:: with SMTP id u12mr97193118pfn.12.1578155357545;
-        Sat, 04 Jan 2020 08:29:17 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id m22sm70927215pgn.8.2020.01.04.08.29.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 04 Jan 2020 08:29:17 -0800 (PST)
-Date:   Sat, 4 Jan 2020 08:29:16 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Eddie James <eajames@linux.ibm.com>
-Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jdelvare@suse.com, bjwyman@gmail.com
-Subject: Re: [PATCH 2/3] hwmon: (pmbus/ibm-cffps) Add the VMON property for
- version 2
-Message-ID: <20200104162916.GA20041@roeck-us.net>
-References: <1576788607-13567-1-git-send-email-eajames@linux.ibm.com>
- <1576788607-13567-3-git-send-email-eajames@linux.ibm.com>
- <20200104162810.GA30243@roeck-us.net>
+        Sat, 4 Jan 2020 11:29:34 -0500
+Received: from mail.natalenko.name (vulcan.natalenko.name [IPv6:fe80::5400:ff:fe0c:dfa0])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by vulcan.natalenko.name (Postfix) with ESMTPSA id 7677F67E7DA;
+        Sat,  4 Jan 2020 17:29:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=dkim-20170712; t=1578155371;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=RboBw79xQDQsEmbNfetBmtEfWpp5jtrjn3jvMeyFDd8=;
+        b=DkHWDLocTyngL9E+vupQYYBTyODXr2TXjDvI/3TsSqhEPaM3q+P51wizrwMU4TIGePHz5j
+        unvCnt0pxUY7PaVkSI92RlWHybv7hfOpvkJUVW1EgXM0BTj/q645jA/tGSIQdPh1F8cI/+
+        5sx+fsMDnp+sAIRnwmzxnUQGkrT3Y5E=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200104162810.GA30243@roeck-us.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Sat, 04 Jan 2020 17:29:31 +0100
+From:   Oleksandr Natalenko <oleksandr@natalenko.name>
+To:     linux-f2fs-devel@lists.sourceforge.net
+Cc:     linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <chao@kernel.org>
+Subject: Multidevice f2fs mount after disk rearrangement
+User-Agent: Roundcube Webmail/1.4.1
+Message-ID: <4c6cf8418236145f7124ac61eb2908ad@natalenko.name>
+X-Sender: oleksandr@natalenko.name
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 04, 2020 at 08:28:10AM -0800, Guenter Roeck wrote:
-> On Thu, Dec 19, 2019 at 02:50:06PM -0600, Eddie James wrote:
-> > Version 2 of the PSU supports reading an auxiliary voltage. Use the
-> > pmbus VMON property and associated virtual register to read it.
-> > 
-> > Signed-off-by: Eddie James <eajames@linux.ibm.com>
-> 
-> I assume you are ok with v1 reading (or trying to read) this voltage.
-> 
-Ah, never mind, you don't. Sorry for the noise.
+Hello.
 
-> Applied to hwmon-next.
-> 
-> > ---
-> >  drivers/hwmon/pmbus/ibm-cffps.c | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/hwmon/pmbus/ibm-cffps.c b/drivers/hwmon/pmbus/ibm-cffps.c
-> > index a564be9..b37faf1 100644
-> > --- a/drivers/hwmon/pmbus/ibm-cffps.c
-> > +++ b/drivers/hwmon/pmbus/ibm-cffps.c
-> > @@ -28,6 +28,7 @@
-> >  #define CFFPS1_FW_NUM_BYTES			4
-> >  #define CFFPS2_FW_NUM_WORDS			3
-> >  #define CFFPS_SYS_CONFIG_CMD			0xDA
-> > +#define CFFPS_12VCS_VOUT_CMD			0xDE
-> >  
-> >  #define CFFPS_INPUT_HISTORY_CMD			0xD6
-> >  #define CFFPS_INPUT_HISTORY_SIZE		100
-> > @@ -350,6 +351,9 @@ static int ibm_cffps_read_word_data(struct i2c_client *client, int page,
-> >  		if (mfr & CFFPS_MFR_PS_KILL)
-> >  			rc |= PB_STATUS_OFF;
-> >  		break;
-> > +	case PMBUS_VIRT_READ_VMON:
-> > +		rc = pmbus_read_word_data(client, page, CFFPS_12VCS_VOUT_CMD);
-> > +		break;
-> >  	default:
-> >  		rc = -ENODATA;
-> >  		break;
-> > @@ -453,7 +457,7 @@ static void ibm_cffps_create_led_class(struct ibm_cffps *psu)
-> >  			PMBUS_HAVE_TEMP2 | PMBUS_HAVE_TEMP3 |
-> >  			PMBUS_HAVE_STATUS_VOUT | PMBUS_HAVE_STATUS_IOUT |
-> >  			PMBUS_HAVE_STATUS_INPUT | PMBUS_HAVE_STATUS_TEMP |
-> > -			PMBUS_HAVE_STATUS_FAN12,
-> > +			PMBUS_HAVE_STATUS_FAN12 | PMBUS_HAVE_VMON,
-> >  		.func[1] = PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT |
-> >  			PMBUS_HAVE_TEMP | PMBUS_HAVE_TEMP2 | PMBUS_HAVE_TEMP3 |
-> >  			PMBUS_HAVE_STATUS_VOUT | PMBUS_HAVE_STATUS_IOUT,
+I was brave enough to create f2fs filesystem spanning through 2 physical 
+device using this command:
+
+# mkfs.f2fs -t 0 /dev/sdc -c /dev/sdd
+
+It worked fine until I removed /dev/sdb from my system, so f2fs devices 
+became:
+
+/dev/sdc -> /dev/sdb
+/dev/sdd -> /dev/sdc
+
+Now, when I try to mount it, I get the following:
+
+# mount -t f2fs /dev/sdb /mnt/fs
+mount: /mnt/fs: mount(2) system call failed: No such file or directory.
+
+In dmesg:
+
+[Jan 4 17:25] F2FS-fs (sdb): Mount Device [ 0]:             /dev/sdc,    
+59063,        0 -  1cd6fff
+[  +0,000024] F2FS-fs (sdb): Failed to find devices
+
+fsck also fails with the following assertion:
+
+[ASSERT] (init_sb_info: 908) !strcmp((char *)sb->devs[i].path, (char 
+*)c.devices[i].path)
+
+Am I doing something obviously stupid, and the device path can be 
+(somehow) changed so that the mount succeeds, or this is unfixable, and 
+f2fs relies on persistent device naming?
+
+Please suggest.
+
+Thank you.
+
+-- 
+   Oleksandr Natalenko (post-factum)
