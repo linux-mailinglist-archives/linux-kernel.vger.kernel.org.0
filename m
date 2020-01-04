@@ -2,103 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B5B0130249
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 13:03:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17A7A130250
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 13:04:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725945AbgADMDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 07:03:09 -0500
-Received: from mga01.intel.com ([192.55.52.88]:39773 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725796AbgADMDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 07:03:09 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2020 04:03:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,394,1571727600"; 
-   d="scan'208";a="245137670"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 04 Jan 2020 04:03:06 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1ini93-0009yX-NR; Sat, 04 Jan 2020 20:03:05 +0800
-Date:   Sat, 4 Jan 2020 20:02:28 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Sricharan R <sricharan@codeaurora.org>
-Cc:     kbuild-all@lists.01.org, sricharan@codeaurora.org,
-        agross@kernel.org, devicetree@vger.kernel.org,
-        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-soc@vger.kernel.org, robh+dt@kernel.org, sboyd@kernel.org,
-        sivaprak@codeaurora.org
-Subject: [RFC PATCH] clk: qcom: lpass_core_axim_clk_src can be static
-Message-ID: <20200104120228.brohuapo4d632jcq@f53c9c00458a>
-References: <1578050744-3761-3-git-send-email-sricharan@codeaurora.org>
+        id S1726219AbgADMDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 07:03:50 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45159 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725802AbgADMDu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Jan 2020 07:03:50 -0500
+Received: by mail-lj1-f193.google.com with SMTP id j26so46277243ljc.12
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Jan 2020 04:03:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=vGhxVor9ulDL2oEguAqSM9R7/YysC+AALpEei/FymWA=;
+        b=l6vNVfvtSNHKostexJ3/ozxzhLyuZ6dM8h2tHxp3a9wJPvfD+RGkuQcD5UwiLGEf+T
+         rwA98/SVwSStF0TM7pauFL3H/rnzkVrnEdkT3V7h6Eutp096fV3ROy8rCzEO0fRclU2T
+         RelpEQky42QqY7V+lHXTDrXWWc4JGjObl6qfcKgmavCmU4pDtyXnbqm//PBHtKXJNM8h
+         0kfTGPUWzVywhkSUiuYHrFuiRtxWImUh8NYrXNzzwod3cJOpjQuGMYhQ350RjlmJ3hVb
+         U9dnIbrbwG0mkaMg7d8y5LxBgw0iLQrBDXufCx0MW24sLwdl/ZFAsjqYA2sj2onwEt6q
+         9sjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=vGhxVor9ulDL2oEguAqSM9R7/YysC+AALpEei/FymWA=;
+        b=AuIdOo/T1nUI8TgSwvK8XeUjigxi+2pEh9/8Xjd8ba03qzTXeWFXuAuAZQxuGhhZNc
+         G+V66ykBhhBqIJg1jSTKElCm10PAN07ZGqYDBY/uXpDxs7bNGz+D7gNGroMe3HLzA9FN
+         8jqlvUbwQrGgDsawRWh7/2KOSQEQrw0Vp92BiuHEERd6yNddL/MS3iYBhLjXjB4KDiNe
+         WvUK10Ayqrgh1zYIfRa3+Q4MrvmkDH1TU7atHQhhvzVyaksXirRAgkNl7wnu6JsJ0gVn
+         tekvkL7QtDE5bpkhOwTe+ZkE07vSoPXVmNsj4o/5Y8GdypULuSHO7eMlGNEyi4ll/X4y
+         UtyQ==
+X-Gm-Message-State: APjAAAU+RPHrseJ+1IQgOi/1ASCdH1Ho58KlJ/jev1R2uPaEsRMpneS4
+        4XUREySQ768+YHIFqgRNqUyz9v734qdZmTjYV7c=
+X-Google-Smtp-Source: APXvYqwXYxMx5zeN86rQvUBbRdBgrEU2OOVEJryTuNOIHE5Lz8PMpuiMFKgLN22lQTyZ/a4k7rPB8yxXZF4QEjl4AgM=
+X-Received: by 2002:a2e:3a12:: with SMTP id h18mr56206475lja.81.1578139428735;
+ Sat, 04 Jan 2020 04:03:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1578050744-3761-3-git-send-email-sricharan@codeaurora.org>
-X-Patchwork-Hint: ignore
-User-Agent: NeoMutt/20170113 (1.7.2)
+Received: by 2002:ab3:7f4b:0:0:0:0:0 with HTTP; Sat, 4 Jan 2020 04:03:48 -0800 (PST)
+Reply-To: jessicavail090@gmail.com
+From:   Jessica Vail <lovepromigood11111@gmail.com>
+Date:   Sat, 4 Jan 2020 12:03:48 +0000
+Message-ID: <CAFOsjm92h5mDQUv3qt-u6HDKJdNV44N119eyhbB07gsv2Dw7tQ@mail.gmail.com>
+Subject: 
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi dear,
 
-Fixes: ac86608aeb82 ("clk: qcom: Add ipq6018 Global Clock Controller support")
-Signed-off-by: kbuild test robot <lkp@intel.com>
----
- gcc-ipq6018.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+I'm Jessica Vail, from the United States,please i wish to have
+communication with you.
 
-diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
-index a3597f46ad017..3f9c2f61a5d93 100644
---- a/drivers/clk/qcom/gcc-ipq6018.c
-+++ b/drivers/clk/qcom/gcc-ipq6018.c
-@@ -2620,7 +2620,7 @@ static const struct freq_tbl ftbl_lpass_core_axim_clk_src[] = {
- 	{ }
- };
- 
--struct clk_rcg2 lpass_core_axim_clk_src = {
-+static struct clk_rcg2 lpass_core_axim_clk_src = {
- 	.cmd_rcgr = 0x1F020,
- 	.freq_tbl = ftbl_lpass_core_axim_clk_src,
- 	.hid_width = 5,
-@@ -2639,7 +2639,7 @@ static const struct freq_tbl ftbl_lpass_snoc_cfg_clk_src[] = {
- 	{ }
- };
- 
--struct clk_rcg2 lpass_snoc_cfg_clk_src = {
-+static struct clk_rcg2 lpass_snoc_cfg_clk_src = {
- 	.cmd_rcgr = 0x1F040,
- 	.freq_tbl = ftbl_lpass_snoc_cfg_clk_src,
- 	.hid_width = 5,
-@@ -2658,7 +2658,7 @@ static const struct freq_tbl ftbl_lpass_q6_axim_clk_src[] = {
- 	{ }
- };
- 
--struct clk_rcg2 lpass_q6_axim_clk_src = {
-+static struct clk_rcg2 lpass_q6_axim_clk_src = {
- 	.cmd_rcgr = 0x1F008,
- 	.freq_tbl = ftbl_lpass_q6_axim_clk_src,
- 	.hid_width = 5,
-@@ -2671,13 +2671,13 @@ struct clk_rcg2 lpass_q6_axim_clk_src = {
- 	},
- };
- 
--struct freq_tbl ftbl_rbcpr_wcss_clk_src[] = {
-+static struct freq_tbl ftbl_rbcpr_wcss_clk_src[] = {
- 	F(24000000, P_XO, 1, 0, 0),
- 	F(50000000, P_GPLL0, 16, 0, 0),
- 	{ }
- };
- 
--struct clk_rcg2 rbcpr_wcss_clk_src = {
-+static struct clk_rcg2 rbcpr_wcss_clk_src = {
- 	.cmd_rcgr = 0x3a00c,
- 	.freq_tbl = ftbl_rbcpr_wcss_clk_src,
- 	.hid_width = 5,
+I am waiting for your answer,
+
+Jessica Vail,
