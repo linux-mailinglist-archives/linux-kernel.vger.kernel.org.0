@@ -2,103 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A06A1301CA
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 11:49:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 279101301CE
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 11:54:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725928AbgADKt2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 05:49:28 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:37271 "EHLO rere.qmqm.pl"
+        id S1726118AbgADKye (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 05:54:34 -0500
+Received: from honk.sigxcpu.org ([24.134.29.49]:40172 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725796AbgADKt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 05:49:27 -0500
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 47qdnK6m31zGW;
-        Sat,  4 Jan 2020 11:49:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1578134966; bh=f3Z6UsbjoOT1VhMg8QYIOZi2SQ2MnybBnCkCBDFBO68=;
-        h=Date:From:Subject:To:Cc:From;
-        b=fagngUrp6rzdFL/6im0RWAKjsT8EOE8ug3sl/Y65v4jGnG/7/5JNcnlwkjkPzDIst
-         /99HX0DcxkG842ympC7NHmF5jjcf3IV7WJpiWchz2hddVcGM4a3EJ6izW1Df/HCNWf
-         y/IYxGg3F2YSsqoThKkuKuB7yhdHDJPynybSr8gsMVCRHGOnD9UHzxXs2wfq2h6w1h
-         lXLzBHpWZ2XoxarHfkJQJDhm6VvKraIPqXUxEGV+Q9PqRsMvZRjDAZ5+w2jWJdpNCB
-         KAEn0FJpnqKk8xAnDw+FvyzNKigTtA0TU8UI3nZmLffatTERIzB4m/i5FOEIFWpH23
-         5+wPhVsbXfNuQ==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.101.4 at mail
-Date:   Sat, 04 Jan 2020 11:49:25 +0100
-Message-Id: <85e4141348db00ecf1f2bc5c2ff6ba3de75e8ff4.1578134920.git.mirq-linux@rere.qmqm.pl>
-From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2] regmap-i2c: constify regmap_bus structures
+        id S1725812AbgADKyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Jan 2020 05:54:33 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id 16572FB02;
+        Sat,  4 Jan 2020 11:54:30 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id p7bQUniFPXNl; Sat,  4 Jan 2020 11:54:27 +0100 (CET)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id 074E049AA7; Sat,  4 Jan 2020 11:54:25 +0100 (CET)
+From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/9] leds: lm3692x: Allow to set ovp and brigthness mode
+Date:   Sat,  4 Jan 2020 11:54:16 +0100
+Message-Id: <cover.1578134779.git.agx@sigxcpu.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-To:     Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-regmap_bus structures are not changed anywhere. Mark them const.
+Overvoltage protection and brightness mode are currently hardcoded
+as 29V and disabled in the driver. Make these configurable via DT.
 
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
----
- v2: add commit message content
----
- drivers/base/regmap/regmap-i2c.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Besides addressing review comments v3 folds in the patches to
+disable the chip and turn of the regulator on brightness 0 from
 
-diff --git a/drivers/base/regmap/regmap-i2c.c b/drivers/base/regmap/regmap-i2c.c
-index ac9b31c57967..008f8da69d97 100644
---- a/drivers/base/regmap/regmap-i2c.c
-+++ b/drivers/base/regmap/regmap-i2c.c
-@@ -43,7 +43,7 @@ static int regmap_smbus_byte_reg_write(void *context, unsigned int reg,
- 	return i2c_smbus_write_byte_data(i2c, reg, val);
- }
- 
--static struct regmap_bus regmap_smbus_byte = {
-+static const struct regmap_bus regmap_smbus_byte = {
- 	.reg_write = regmap_smbus_byte_reg_write,
- 	.reg_read = regmap_smbus_byte_reg_read,
- };
-@@ -79,7 +79,7 @@ static int regmap_smbus_word_reg_write(void *context, unsigned int reg,
- 	return i2c_smbus_write_word_data(i2c, reg, val);
- }
- 
--static struct regmap_bus regmap_smbus_word = {
-+static const struct regmap_bus regmap_smbus_word = {
- 	.reg_write = regmap_smbus_word_reg_write,
- 	.reg_read = regmap_smbus_word_reg_read,
- };
-@@ -115,7 +115,7 @@ static int regmap_smbus_word_write_swapped(void *context, unsigned int reg,
- 	return i2c_smbus_write_word_swapped(i2c, reg, val);
- }
- 
--static struct regmap_bus regmap_smbus_word_swapped = {
-+static const struct regmap_bus regmap_smbus_word_swapped = {
- 	.reg_write = regmap_smbus_word_write_swapped,
- 	.reg_read = regmap_smbus_word_read_swapped,
- };
-@@ -197,7 +197,7 @@ static int regmap_i2c_read(void *context,
- 		return -EIO;
- }
- 
--static struct regmap_bus regmap_i2c = {
-+static const struct regmap_bus regmap_i2c = {
- 	.write = regmap_i2c_write,
- 	.gather_write = regmap_i2c_gather_write,
- 	.read = regmap_i2c_read,
-@@ -239,7 +239,7 @@ static int regmap_i2c_smbus_i2c_read(void *context, const void *reg,
- 		return -EIO;
- }
- 
--static struct regmap_bus regmap_i2c_smbus_i2c_block = {
-+static const struct regmap_bus regmap_i2c_smbus_i2c_block = {
- 	.write = regmap_i2c_smbus_i2c_write,
- 	.read = regmap_i2c_smbus_i2c_read,
- 	.max_raw_read = I2C_SMBUS_BLOCK_MAX,
+  https://lore.kernel.org/linux-leds/20191226101419.GE4033@amd/T/#t
+
+Besides addressing review comments v2 also allows to limit the maximum led
+current.
+
+Patches are against next-20191220.
+
+Changes from v2
+- As per review comment from Pavel Machek
+  https://lore.kernel.org/linux-leds/20191226100615.GA4033@amd/T/#u
+  - Use default value in DT example
+  https://lore.kernel.org/linux-leds/20191226100842.GC4033@amd/T/#u
+  - Use uppercase LED in commit message
+  https://lore.kernel.org/linux-leds/20191226101336.GD4033@amd/T/#u
+  - Fix typo in commit message
+  - Use correct return value when checking if property is present
+  - Fold in
+    https://lore.kernel.org/linux-leds/20191226101419.GE4033@amd/T/#t
+- Add Acked-By's from Pavel Machek, thanks!
+
+Changes from v1
+- As per review comments by Dan Murphy
+  https://lore.kernel.org/linux-leds/3d66b07d-b4c5-43e6-4378-d63cc84b8d43@ti.com/
+  - Split commits per propoerty
+  - Add new properties to DT example too
+  - Drop dev_dbg() statements
+  - ovp: fix 21V value parsing
+  - ovp: Set correct default value if DT parsing fails
+- As per review comments by Pavel Machek
+  https://lore.kernel.org/linux-leds/20191221191515.GF32732@amd/
+  - Fix defaults (which is 29V)
+  - Use uV as Unit for ovp property
+- Change property name to 'ti,ovp-microvolt' to make it shorter
+- Honor led-max-microamp to not exceed the maximum led current
+
+Guido Günther (9):
+  dt: bindings: lm3692x: Add ti,ovp-microvolt property
+  leds: lm3692x: Allow to configure over voltage protection
+  dt: bindings: lm3692x: Add ti,brightness-mapping-exponential property
+  leds: lm3692x: Allow to configure brigthness mode
+  dt: bindings: lm3692x: Add led-max-microamp property
+  leds: lm3692x: Make sure we don't exceed the maximum led current
+  leds: lm3692x: Move lm3692x_init and rename to lm3692x_leds_enable
+  leds: lm3692x: Split out lm3692x_leds_disable
+  leds: lm3692x: Disable chip on brightness 0
+
+ .../devicetree/bindings/leds/leds-lm3692x.txt |  11 +
+ drivers/leds/leds-lm3692x.c                   | 195 +++++++++++++-----
+ 2 files changed, 149 insertions(+), 57 deletions(-)
+
 -- 
-2.20.1
+2.23.0
 
