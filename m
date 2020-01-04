@@ -2,174 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 282A2130060
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 04:24:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3F7413006C
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 04:37:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbgADDYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 22:24:14 -0500
-Received: from mail-40135.protonmail.ch ([185.70.40.135]:19923 "EHLO
-        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727274AbgADDYO (ORCPT
+        id S1727463AbgADDg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 22:36:28 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:32061 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727274AbgADDg0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 22:24:14 -0500
-Date:   Sat, 04 Jan 2020 03:24:04 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1578108250;
-        bh=VdseeMBzHGRC0ODSp5TYUOy1uhNPZvnSaTxlOa+pGws=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=mpDobPHWu5BOFhP/RA1e2bBpIrAPEAL8RWqLHNJCw1OaARVlxyFQz1RnOD+3bRCK0
-         RVpcbg4uk4WCET4ZxdK7LPZmWlw23k/q9TSw0Z8NUApaUyZNMIYyJ9GpiuuA6JtkY8
-         befq7qvwTZJQVa9wHv3fMbbzThY+VhOvtE70dBhM=
-To:     Alan Stern <stern@rowland.harvard.edu>
-From:   atmgnd <atmgnd@protonmail.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Reply-To: atmgnd <atmgnd@protonmail.com>
-Subject: Re: Fw: usbcore missing parentheses in USE_NEW_SCHEME
-Message-ID: <SHQhnDsmKIpzyLJUY7lJlcdb9DLUPl8gGALB1h82ePlEPUQN9l5cHWxUWyqCcUaMRMGoq6dXRZA3e2gTvG4-HkJDxH994zTiHdeuaKJ6m-c=@protonmail.com>
-In-Reply-To: <Pine.LNX.4.44L0.2001021018330.1546-100000@iolanthe.rowland.org>
-References: <Pine.LNX.4.44L0.2001021018330.1546-100000@iolanthe.rowland.org>
-Feedback-ID: py-oVO8Vt0vS1FKaKugS2_MTpFC3lKhHMurhoXPAalWk9Eh40Mo1lZOn2CI1vswSSKJBwBLYgn_VKFu9qW3csg==:Ext:ProtonMail
+        Fri, 3 Jan 2020 22:36:26 -0500
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id 0043aDh2023619;
+        Sat, 4 Jan 2020 12:36:14 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 0043aDh2023619
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1578108974;
+        bh=E7v6OsSDfr6V815FU2MY7OtZnfPcFmRdIvSTyf6A5q8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=M2Yv2C4BCcLEiA+O/utwZa5WrRwTqIxLFxjRiKwkX7G+1GJVIp7G/T0t09moraU0O
+         8dBsLLVKwOLGoHuSfnJ7M6wO3+sbLlYb5k5qeEW0JfaZgR6KQWoiYcVkeqsCKt5dMF
+         D9KQGCWxmzXjHlDfIJPYpaYJSkg98zWhLFOzPKdYksMblnl/ZvwCyORqWR+eBzPZmO
+         wuN/jQIiKPAiiTjmRlDFiDfHBra9ftCky5hhIcHMUkRUvG4Z+VAK4vJzjflpfQUBpA
+         TiBaTxZLuJR8VaF/sVuMcGmk+QjmRhyRbO4ES7DFLpZF453IYxRCduPxe3RaM8Lqtr
+         /Q+p0xXDSDOqg==
+X-Nifty-SrcIP: [209.85.221.170]
+Received: by mail-vk1-f170.google.com with SMTP id c129so11222716vkh.7;
+        Fri, 03 Jan 2020 19:36:14 -0800 (PST)
+X-Gm-Message-State: APjAAAVUFwwOtfXLt7Fp93ZV5hWE/Qd3gSq8DbQbo+DFMbweK5KLamyu
+        5OVgDt1wSEH9BzTSeVgSMzj3j3l989yFTaT+mm8=
+X-Google-Smtp-Source: APXvYqwFrX0S6OIqke8PQUsgzrJ85FumVCcPzymZOA5sJCiSerQ6OnjY8DABR6LmjjZSqaQZJWGUxu05TfzGAAs3kTw=
+X-Received: by 2002:a1f:6344:: with SMTP id x65mr52196094vkb.26.1578108973033;
+ Fri, 03 Jan 2020 19:36:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=0.8 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
-        HK_RANDOM_REPLYTO shortcircuit=no autolearn=no autolearn_force=no
-        version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
+References: <20200103175915.26663-1-masahiroy@kernel.org> <20200103175915.26663-12-masahiroy@kernel.org>
+ <20200103195205.GC21515@ravnborg.org>
+In-Reply-To: <20200103195205.GC21515@ravnborg.org>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Sat, 4 Jan 2020 12:35:37 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQXx0RGutdOe4JFLTbjm7=cx9aEKQ-823-irED4SyCmMA@mail.gmail.com>
+Message-ID: <CAK7LNAQXx0RGutdOe4JFLTbjm7=cx9aEKQ-823-irED4SyCmMA@mail.gmail.com>
+Subject: Re: [PATCH 11/12] initramfs: refactor the initramfs build rules
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg Kroah-Hartman:
-here is the new patch:
+Hi Sam,
 
-
-From 85f01b89d050a988f4d9fc78232de47e793c6a7c Mon Sep 17 00:00:00 2001
-From: Qi.Zhou <atmgnd@outlook.com>
-Date: Wed, 1 Jan 2020 21:27:13 +0800
-Subject: [PATCH] usb: hub: missing parentheses in USE_NEW_SCHEME
-
-accroding to bd0e6c9#diff-28615d62e1250eadc353d804f49bc6d6, will try old en=
-umeration
-scheme first for high speed devices. for example, when a high speed device =
-pluged in,
-line 2720 should expand to 0 at the first time. USE_NEW_SCHEME(0, 0 || 0 ||=
- 1) =3D=3D=3D 0.
-but it wrongly expand to 1(alway expand to 1 for high speed device), and ch=
-ange
-USE_NEW_SCHEME to USE_NEW_SCHEME((i) % 2 =3D=3D (int)(scheme)) may be bette=
-r ?
-
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Qi.Zhou <atmgnd@outlook.com>
----
- drivers/usb/core/hub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index f229ad6952c0..7d17deca7021 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -2692,7 +2692,7 @@ static unsigned hub_is_wusb(struct usb_hub *hub)
- #define SET_ADDRESS_TRIES=092
- #define GET_DESCRIPTOR_TRIES=092
- #define SET_CONFIG_TRIES=09(2 * (use_both_schemes + 1))
--#define USE_NEW_SCHEME(i, scheme)=09((i) / 2 =3D=3D (int)scheme)
-+#define USE_NEW_SCHEME(i, scheme)=09((i) / 2 =3D=3D (int)(scheme))
-
- #define HUB_ROOT_RESET_TIME=0960=09/* times are in msec */
- #define HUB_SHORT_RESET_TIME=0910
---
-2.17.1
-
-
-
-Sent with ProtonMail Secure Email.
-
-=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
-ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
-On Thursday, January 2, 2020 11:22 PM, Alan Stern <stern@rowland.harvard.ed=
-u> wrote:
-
-> On Wed, 1 Jan 2020, Randy Dunlap wrote:
+On Sat, Jan 4, 2020 at 4:52 AM Sam Ravnborg <sam@ravnborg.org> wrote:
 >
-> > [adding linux-usb mailing list]
-> > On 1/1/20 6:46 AM, atmgnd wrote:
+> Hi Mashahiro.
+>
+> I just browsed this fine patchset and noticed...
 > >
-> > > I think there is missing parentheses in macro USE_NEW_SCHEME, it shou=
-ld be:
-> > > #define USE_NEW_SCHEME(i, scheme) ((i) / 2 =3D=3D (int)(scheme))
-> > > causes a fail wiht "device descriptor read/64, error -110" using my u=
-sb drive on vmware using usb 3.0 hub.
-> > > from https://github.com/torvalds/linux/commit/25244227158e15020620413=
-65a439a54cb8fe673#diff-28615d62e1250eadc353d804f49bc6d6
-> > > someone changed USE_NEW_SCHEME, but without parentheses for second pa=
-rameter. as result. in fuction use_new_scheme when old_scheme_first is 1, u=
-se_new_scheme will return 1 always(actullay is should return 0). it also ma=
-ke https://github.com/torvalds/linux/commit/bd0e6c9614b95352eb31d0207df16dc=
-156c527fa#diff-28615d62e1250eadc353d804f49bc6d6 fails.
-> > > I cannot use git send-mail, there some issue with my network provider=
-. patch below, :
-> > > From 85f01b89d050a988f4d9fc78232de47e793c6a7c Mon Sep 17 00:00:00 200=
-1
-> > > From: atmgnd atmgnd@outlook.com
-> > > Date: Wed, 1 Jan 2020 21:27:13 +0800
-> > > Subject: [PATCH] usb: hub: missing parentheses in USE_NEW_SCHEME
-> > > accroding to bd0e6c9#diff-28615d62e1250eadc353d804f49bc6d6, will try =
-old enumeration
-> > > scheme first for high speed devices. for example, when a high speed d=
-evice pluged in,
-> > > line 2720 should expand to 0 at the first time. USE_NEW_SCHEME(0, 0 |=
-| 0 || 1) =3D=3D=3D 0.
-> > > but it wrongly expand to 1(alway expand to 1 for high speed device), =
-and change
-> > > USE_NEW_SCHEME to USE_NEW_SCHEME((i) % 2 =3D=3D (int)(scheme)) may be=
- better ?
-> > >
-> > > Signed-off-by: atmgnd atmgnd@outlook.com
-> > >
-> > > -----------------------------------------
-> > >
-> > > drivers/usb/core/hub.c | 2 +-
-> > > 1 file changed, 1 insertion(+), 1 deletion(-)
-> > > diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> > > index f229ad6952c0..7d17deca7021 100644
-> > > --- a/drivers/usb/core/hub.c
-> > > +++ b/drivers/usb/core/hub.c
-> > > @@ -2692,7 +2692,7 @@ static unsigned hub_is_wusb(struct usb_hub *hub=
-)
-> > > #define SET_ADDRESS_TRIES 2
-> > > #define GET_DESCRIPTOR_TRIES 2
-> > > #define SET_CONFIG_TRIES (2 * (use_both_schemes + 1))
-> > > -#define USE_NEW_SCHEME(i, scheme) ((i) / 2 =3D=3D (int)scheme)
-> > > +#define USE_NEW_SCHEME(i, scheme) ((i) / 2 =3D=3D (int)(scheme))
-> > >
-> > > #define HUB_ROOT_RESET_TIME 60 /* times are in msec */
-> > > #define HUB_SHORT_RESET_TIME 10
-> > >
-> > > ---------------------------------------------------------------------=
-------------------
-> > >
-> > > 2.17.1
+> > -#####
+> > -# Generate the initramfs cpio archive
+> > +ramfs-input := $(shell echo $(CONFIG_INITRAMFS_SOURCE))
+> > +cpio-data :=
+> > +
+> > +ifeq ($(words $(ramfs-input)),0)
+> > +
+> > +# If CONFIG_INITRAMFS_SOURCE is empty, generate a small initramfs with the
+> > +# default contents.
+> > +ramfs-input := $(srctree)/$(src)/default_cpio_list
+> > +
+> > +else ifeq ($(words $(ramfs-input)),1)
+> > +# If CONFIG_INITRAMFS_SOURCE specifies a single file, and it is suffixed with
+> > +# .cpio or .cpio.*, use it directly as an initramfs.
+> > +ifneq ($(filter %.cpio,$(ramfs-input)),)
+> > +cpio-data := $(ramfs-input)
+> > +endif
 >
-> atmgnd:
->
-> Please resend this patch to Greg Kroah-Hartman
-> gregkh@linuxfoundation.org with the appropriate CC's. Also, your
-> Signed-off-by: line should contain a real name, not an email userid
-> (you probably don't use "atmgnd" as your signature on legal
-> documents!).
->
-> When you resend the patch, you can include:
->
-> Acked-by: Alan Stern stern@rowland.harvard.edu
->
-> Alan Stern
+> This part will now work if the file is named foo.cpio.bar.
+> $(findstring .cpio, should be used and not $(filter %.cpio
+> At least if the comment describes the intended behaviour.
 
 
+The 'foo.cpio.bar' is taken care of
+by ifeq ($(words $(subst .cpio.,$(space),$(ramfs-input))),2)
+
+I admit the comment was confusing.
+
+
+I will clarify the comments as follows:
+
+
+
+# If CONFIG_INITRAMFS_SOURCE specifies a single file, and it is suffixed with
+# .cpio, use it directly as an initramfs.
+ifneq ($(filter %.cpio,$(ramfs-input)),)
+cpio-data := $(ramfs-input)
+endif
+
+# If CONFIG_INITRAMFS_SOURCE specifies a single file, and it is suffixed with
+# .cpio.*, use it directly as an initramfs, and avoid double compression.
+ifeq ($(words $(subst .cpio.,$(space),$(ramfs-input))),2)
+cpio-data := $(ramfs-input)
+compress-y := shipped
+endif
+
+
+
+
+
+
+> > +
+> > +ifeq ($(words $(subst .cpio.,$(space),$(ramfs-input))),2)
+> > +cpio-data := $(ramfs-input)
+> > +# If the specified archive is suffixed with .cpio.* (i.e. already compressed),
+> > +# we do not double-compress it.
+> > +compress-y := shipped
+> > +endif
+> > +
+> > +endif
+>
+>
+>         Sam
+
+
+
+
+
+
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
