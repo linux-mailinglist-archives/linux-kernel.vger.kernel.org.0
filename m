@@ -2,66 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E5D81301A5
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 10:48:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0EA71301B0
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 10:56:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbgADJsB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 04:48:01 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:36398 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbgADJsA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 04:48:00 -0500
-Received: from marcel-macbook.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 3FE45CED12;
-        Sat,  4 Jan 2020 10:57:14 +0100 (CET)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
-Subject: Re: [RFC PATCH v1] Bluetooth: hci_qca: Collect controller memory dump
- during SSR
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20200102144911.8358-1-bgodavar@codeaurora.org>
-Date:   Sat, 4 Jan 2020 10:47:58 +0100
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        BlueZ devel list <linux-bluetooth@vger.kernel.org>,
-        Hemantg <hemantg@codeaurora.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Claire Chang <tientzu@chromium.org>, seanpaul@chromium.org,
-        Rocky Liao <rjliao@codeaurora.org>,
-        Yoni Shavit <yshavit@google.com>,
-        Venkata Lakshmi Narayana Gubba <gubbaven@codeaurora.org>
-Content-Transfer-Encoding: 7bit
-Message-Id: <1D304799-509F-4387-B7E5-4D415461C98F@holtmann.org>
-References: <20200102144911.8358-1-bgodavar@codeaurora.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-X-Mailer: Apple Mail (2.3608.40.2.2.4)
+        id S1726446AbgADJz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 04:55:59 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:52047 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726191AbgADJz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Jan 2020 04:55:58 -0500
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 47qcbb5t3czGW;
+        Sat,  4 Jan 2020 10:55:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1578131756; bh=oM/ciusTy/ZEkF90jacNzOpT3U2e3nEZociObnH9O7g=;
+        h=Date:From:Subject:To:Cc:From;
+        b=JQ+0PkPraFXwd1ql9TG9LVsHIHcRyz7/sDGUPYSjVJMafroM7YrHtc+ArI+ohBdye
+         Umv6dgsZ+6MIVUOBBgCdocxQBbrCxMVmqJBoBykJrFjVHwo06x36NG1haLHIvL/B7v
+         0SUOLU0W0GGe4JIhPQvXm6wzFa8BKh9rIzVYoscBqefEObQjiIsd7SJYxeOoI7+4xD
+         7ieb2Q/4FLpwdrVscB7iXtCsv+uMhdNEd/NtDxedIKD+7l++xHaGzJO+UgovSbh/Rr
+         OaqZSmD5y1NEp+Jn4ew0b2KmvmncTvGLAFqBO8i3CYxASdZfgrkl5yMIkx1MEMJjo2
+         DM9079Gn95IrQ==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.101.4 at mail
+Date:   Sat, 04 Jan 2020 10:55:52 +0100
+Message-Id: <09f5b36d9c64b4e6d1d235f84a7333b7802b2866.1578131485.git.mirq-linux@rere.qmqm.pl>
+From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH 1/2] builddeb: allow selection of .deb compressor
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>
+Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Balakrishna,
+Select deb compression using KPKG_COMPRESS make variable. This allows to
+use gzip compression for local or test builds, and that's way faster
+than now-default xz compression.
 
-> We will collect the ramdump of BT controller when hardware error event
-> received before rebooting the HCI layer. Before restarting a subsystem
-> or a process running on a subsystem, it is often required to request
-> either a subsystem or a process to perform proper cache dump and
-> software failure reason into a memory buffer which application
-> processor can retrieve afterwards. SW developers can often provide
-> initial investigation by looking into that debugging information.
-> 
-> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> Signed-off-by: Venkata Lakshmi Narayana Gubba <gubbaven@codeaurora.org>
-> ---
-> drivers/bluetooth/hci_qca.c | 296 +++++++++++++++++++++++++++++++++++-
-> 1 file changed, 291 insertions(+), 5 deletions(-)
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+---
+ scripts/package/builddeb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-patch has been applied to bluetooth-next tree.
-
-Regards
-
-Marcel
+diff --git a/scripts/package/builddeb b/scripts/package/builddeb
+index c4c580f547ef..d289c4ebc891 100755
+--- a/scripts/package/builddeb
++++ b/scripts/package/builddeb
+@@ -43,7 +43,7 @@ create_package() {
+ 
+ 	# Create the package
+ 	dpkg-gencontrol -p$pname -P"$pdir"
+-	dpkg --build "$pdir" ..
++	dpkg-deb ${KPKG_COMPRESS:+-Z$KPKG_COMPRESS} --build "$pdir" ..
+ }
+ 
+ version=$KERNELRELEASE
+-- 
+2.20.1
 
