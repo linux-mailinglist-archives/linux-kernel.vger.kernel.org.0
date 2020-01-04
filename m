@@ -2,175 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B74AE130296
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 15:19:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C1DB13029E
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 15:21:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726181AbgADOTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 09:19:01 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:33178 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725924AbgADOTB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 09:19:01 -0500
-Received: from zn.tnic (p200300EC2F18F800CC7EEF965DC10FDE.dip0.t-ipconnect.de [IPv6:2003:ec:2f18:f800:cc7e:ef96:5dc1:fde])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8781A1EC0626;
-        Sat,  4 Jan 2020 15:18:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1578147539;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=grHGSZANPdRX4GYfQm3z7DlEzhiM+6VKLUd0nRV33tA=;
-        b=Y7/wS0YXsjQghvkU8yEZ40tZhEzBbsKiNBJ1HmgK5aYWcv9BkvQzjCnnOq9DqdlMvytTFd
-        sgmZJm+4JvQCu43OuEd3pjOrVI+sKdsWA46seByvy6aGs2d9BXTGeR9sWGEFCREPpM/Sk2
-        Q+yinBO2YOC2ZGxYyDClL8N7uGscesA=
-Date:   Sat, 4 Jan 2020 15:18:51 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Dave Jiang <dave.jiang@intel.com>
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        vkoul@kernel.org, dan.j.williams@intel.com, tony.luck@intel.com,
-        jing.lin@intel.com, ashok.raj@intel.com, sanjay.k.kumar@intel.com,
-        megha.dey@intel.com, jacob.jun.pan@intel.com, yi.l.liu@intel.com,
-        axboe@kernel.dk, akpm@linux-foundation.org, tglx@linutronix.de,
-        mingo@redhat.com, fenghua.yu@intel.com, hpa@zytor.com
-Subject: Re: [PATCH RFC v3 01/14] x86/asm: add iosubmit_cmds512() based on
- movdir64b CPU instruction
-Message-ID: <20200104141851.GA31856@zn.tnic>
-References: <157662541786.51652.7666763291600764054.stgit@djiang5-desk3.ch.intel.com>
- <157662558568.51652.16396789566261303659.stgit@djiang5-desk3.ch.intel.com>
+        id S1726299AbgADOVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 09:21:25 -0500
+Received: from sender2-of-o52.zoho.com.cn ([163.53.93.247]:21135 "EHLO
+        sender2-of-o52.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726005AbgADOVR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Jan 2020 09:21:17 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1578147625; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=bgbpHZyY+MRw8YTJOM1WEOc7yXFt1MCmQ61SZGH2rCLHeEBVB4FX376zfIqrFHr+4TW1CmxdlgFkm71q6+heq6ihQRzsneaLjpR1TqfbZI4hxtQgahVRkRpZ/HgFO844kR/9YK4Nl6kpPECRmtWRxr345LyPkP7idrq2qrvV+eE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1578147625; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
+        bh=6RgICWXwhvwNHztqQtPT2dhQ/f21R4V1Nli9Z29zuMM=; 
+        b=B8LMXxqN+WYi2cB+C1WgsNs4MSabWqQN3AnbeGsdg0da3fF8Z2qJkwLk51zoErV3I1R5+bIPR69V7eR1j1vrvhNabBeQobn5ljVEYWfjYM/ETcU7veEbtogT8JhGfCoEU0lCOArv8hKlSxFb8Gx0UDz3PmSWL2H8DlLMob3UJm8=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1578147625;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
+        bh=6RgICWXwhvwNHztqQtPT2dhQ/f21R4V1Nli9Z29zuMM=;
+        b=e8i109+QZvsd4wrqLK+Ybcy0JonbcvaCzWUFIG4Iwxz4G4U8UYlj1I/qUOqH64cF
+        qGOUrEQYCiykqYIU6t+eIUqA/roamSoT7ILbISdwEw6MSZvg6qeMelcXj5bANQIc7Oo
+        zJUYuSqTJ4leSILovkpfDaLNU+0aPpMCV9KLhQSk=
+Received: from localhost.localdomain.localdomain (113.116.49.111 [113.116.49.111]) by mx.zoho.com.cn
+        with SMTPS id 15781476236011.4213776319637645; Sat, 4 Jan 2020 22:20:23 +0800 (CST)
+From:   Chengguang Xu <cgxu519@mykernel.net>
+To:     jaegeuk@kernel.org, chao@kernel.org
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chengguang Xu <cgxu519@mykernel.net>
+Message-ID: <20200104142004.12883-1-cgxu519@mykernel.net>
+Subject: [f2fs-dev][PATCH 1/2] f2fs: fix miscounted block limit in f2fs_statfs_project()
+Date:   Sat,  4 Jan 2020 22:20:03 +0800
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <157662558568.51652.16396789566261303659.stgit@djiang5-desk3.ch.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+X-ZohoCNMailClient: External
+Content-Type: text/plain; charset=utf8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 04:33:05PM -0700, Dave Jiang wrote:
-> With the introduction of movdir64b instruction, there is now an instruction
+statfs calculates Total/Used/Avail disk space in block unit,
+so we should translate soft/hard prjquota limit to block unit
+as well.
 
-MOVDIR64B in caps like the SDM.
+Below testing result shows the block/inode numbers of
+Total/Used/Avail from df command are all correct afer
+applying this patch.
 
-> that can write 64 bytes of data atomicaly.
+[root@localhost quota-tools]\# ./repquota -P /dev/sdb1
+*** Report for project quotas on device /dev/sdb1
+Block grace time: 7days; Inode grace time: 7days
+              Block limits                File limits
+Project   used soft    hard  grace  used  soft  hard  grace
+-----------------------------------------------------------
+\#0   --   4       0       0         1     0     0
+\#101 --   0       0       0         2     0     0
+\#102 --   0   10240       0         2    10     0
+\#103 --   0       0   20480         2     0    20
+\#104 --   0   10240   20480         2    10    20
+\#105 --   0   20480   10240         2    20    10
 
-"atomically"
+[root@localhost sdb1]\# lsattr -p t{1,2,3,4,5}
+  101 ----------------N-- t1/a1
+  102 ----------------N-- t2/a2
+  103 ----------------N-- t3/a3
+  104 ----------------N-- t4/a4
+  105 ----------------N-- t5/a5
 
-> Quoting from Intel SDM:
-> "There is no atomicity guarantee provided for the 64-byte load operation
-> from source address, and processor implementations may use multiple
-> load operations to read the 64-bytes. The 64-byte direct-store issued
-> by MOVDIR64B guarantees 64-byte write-completion atomicity. This means
-> that the data arrives at the destination in a single undivided 64-byte
-> write transaction."
-> 
-> We have identified at least 3 different use cases for this instruction in
-> the format of func(dst, src, count):
-> 1) Clear poison / Initialize MKTME memory
->    Destination is normal memory.
->    Source in normal memory. Does not increment. (Copy same line to all
->    targets)
->    Count (to clear/init multiple lines)
+[root@localhost sdb1]\# df -hi t{1,2,3,4,5}
+Filesystem     Inodes IUsed IFree IUse% Mounted on
+/dev/sdb1        2.4M    21  2.4M    1% /mnt/sdb1
+/dev/sdb1          10     2     8   20% /mnt/sdb1
+/dev/sdb1          20     2    18   10% /mnt/sdb1
+/dev/sdb1          10     2     8   20% /mnt/sdb1
+/dev/sdb1          10     2     8   20% /mnt/sdb1
 
-If you're going to refer to @dst, @src and @count as the arguments of
-"func", then use the same spelling here too pls.
+[root@localhost sdb1]\# df -h t{1,2,3,4,5}
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sdb1        10G  489M  9.6G   5% /mnt/sdb1
+/dev/sdb1        10M     0   10M   0% /mnt/sdb1
+/dev/sdb1        20M     0   20M   0% /mnt/sdb1
+/dev/sdb1        10M     0   10M   0% /mnt/sdb1
+/dev/sdb1        10M     0   10M   0% /mnt/sdb1
 
-> 2) Submit command(s) to new devices
->    Destination is a special MMIO region for a device. Does not increment.
->    Source is normal memory. Increments.
->    Count usually is 1, but can be multiple.
-> 3) Copy to iomem in big chunks
->    Destination is iomem and increments
->    Source in normal memory and increments
->    Count is number of chunks to copy
+Fixes: 909110c060f2 ("f2fs: choose hardlimit when softlimit is larger than =
+hardlimit in f2fs_statfs_project()")
+Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+---
+ fs/f2fs/super.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I could use some blurb here explaining why is this needed. As in, device
-takes only 64byte writes as commands, we want it faster by shuffling
-more data in one go, etc, etc.
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 5111e1ffe58a..78efd0e76174 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1219,6 +1219,8 @@ static int f2fs_statfs_project(struct super_block *sb=
+,
+ =09if (dquot->dq_dqb.dqb_bhardlimit &&
+ =09=09=09(!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
+ =09=09limit =3D dquot->dq_dqb.dqb_bhardlimit;
++=09if (limit)
++=09=09limit >>=3D sb->s_blocksize_bits;
+=20
+ =09if (limit && buf->f_blocks > limit) {
+ =09=09curblock =3D dquot->dq_dqb.dqb_curspace >> sb->s_blocksize_bits;
+--=20
+2.21.1
 
-> This commit adds support for case #2 to support device that will accept
 
-s/This commit//
 
-> commands via this instruction.
-
-This is hinting at the need for the atomic 64-bit writes but an explicit
-justification would be better.
-
-> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  arch/x86/include/asm/io.h |   42 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
-> index 9997521fc5cd..2d3c9dd39479 100644
-> --- a/arch/x86/include/asm/io.h
-> +++ b/arch/x86/include/asm/io.h
-> @@ -399,4 +399,46 @@ extern bool arch_memremap_can_ram_remap(resource_size_t offset,
->  extern bool phys_mem_access_encrypted(unsigned long phys_addr,
->  				      unsigned long size);
->  
-> +static inline void __iowrite512(void __iomem *__dst, const void *src)
-
-I don't see that function used anywhere except in iosubmit_cmds512(). If
-you're not going to use it elsewhere, pls fold it into iosubmit_cmds512().
-
-> +{
-> +	/*
-> +	 * Note that this isn't an "on-stack copy", just definition of "dst"
-> +	 * as a pointer to 64-bytes of stuff that is going to be overwritten.
-> +	 * In the movdir64b() case that may be needed as you can use the
-		  ^^^^^^^^^^^
-
-Is that a function?
-
-> +	 * MOVDIR64B instruction to copy arbitrary memory around. This trick
-> +	 * lets the compiler know how much gets clobbered.
-> +	 */
-> +	volatile struct { char _[64]; } *dst = __dst;
-> +
-> +	/* movdir64b [rdx], rax */
-
-MOVDIR64B - we usually spell instruction mnemonics in all caps.
-
-> +	asm volatile(".byte 0x66, 0x0f, 0x38, 0xf8, 0x02"
-> +			: "=m" (dst)
-> +			: "d" (src), "a" (dst));
-> +}
-> +
-> +/**
-> + * iosubmit_cmds512 - copy data to single MMIO location, in 512-bit units
-> + * @dst: destination, in MMIO space (must be 512-bit aligned)
-> + * @src: source
-> + * @count: number of 512 bits quantities to submit
-> + *
-> + * Submit data from kernel space to MMIO space, in units of 512 bits at a
-> + * time.  Order of access is not guaranteed, nor is a memory barrier
-> + * performed afterwards.
-> + *
-> + * Warning: Do not use this helper unless your driver has checked that the CPU
-> + * instruction is supported on the platform.
-> + */
-> +static inline void iosubmit_cmds512(void __iomem *dst, const void *src,
-> +				    size_t count)
-> +{
-> +	const u8 *from = src;
-> +	const u8 *end = from + count * 64;
-> +
-> +	while (from < end) {
-> +		__iowrite512(dst, from);
-> +		from += 64;
-> +	}
-> +}
-> +
->  #endif /* _ASM_X86_IO_H */
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
