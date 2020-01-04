@@ -2,130 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 448B813029D
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 15:21:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F26071302A5
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 15:26:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbgADOVR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 09:21:17 -0500
-Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25331 "EHLO
-        sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725924AbgADOVR (ORCPT
+        id S1726299AbgADO0V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 09:26:21 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:37327 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725924AbgADO0Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 09:21:17 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1578147644; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=UP5v/gTFe0EoamPGJk/WCJd2JodnefWKtjVR7nniThTrWZyrGKLR91BN3S2vjnge9aQapbroNQ4wQfM+zY8R6pYu2dSpi9t530EkJtwP1TpedpHw/1vUaRzIQJZfLadw/Eavm0WL+EyxwJ68A86dMd3bUSLR8HME0mAQFQZPaQI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1578147644; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=WXgRlYlDQiMQqPDWb4znFahq2VSqYBgacavFm5kZdZs=; 
-        b=dGnCp3tQwZMyv1UKmrAOZBjP3+qBzzRkNVpu5nINu2sH9NDkDnjE1+JOlMK65S3qsQFhFXzomyDMelteQnxf45WmBBdbh9S7hKC2NIC4eUMLdsue5OyRNj5rTcKGqN2HzPlR+HN+QFt1VNonSk9eMKR3NPzgXINrMpqrf+8YEM8=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1578147644;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=WXgRlYlDQiMQqPDWb4znFahq2VSqYBgacavFm5kZdZs=;
-        b=LLlTOhYdqt3XBobFMfb0tFs/LfyWwnAKOV6ZMvhiXYDQvoYDG8/R3+8g0e80W9RT
-        VEezyCczBQHCsOPPWvwIo2YX2Qk0UqwNYJj1Eg4c6XYAtGriTaPRM9SBGjD0mTALw9d
-        zG/CBctW2edP5tV1ac+ZKJfkxkmCQ9c6cj+f2Mn0=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 1578147642134520.0998453017459; Sat, 4 Jan 2020 22:20:42 +0800 (CST)
-Date:   Sat, 04 Jan 2020 22:20:42 +0800
-From:   Chengguang Xu <cgxu519@mykernel.net>
-Reply-To: cgxu519@mykernel.net
-To:     "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc:     "Pavel Machek" <pavel@denx.de>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "stable" <stable@vger.kernel.org>, "Chao Yu" <yuchao0@huawei.com>,
-        "Jaegeuk Kim" <jaegeuk@kernel.org>,
-        "Sasha Levin" <sashal@kernel.org>
-Message-ID: <16f70edfb11.12deacc7a49186.2118741807946874161@mykernel.net>
-In-Reply-To: <20200104115308.GA1296856@kroah.com>
-References: <20200102220029.183913184@linuxfoundation.org>
- <20200102220035.294585461@linuxfoundation.org>
- <20200103171213.GC14328@amd>
- <16f6e3f5bbe.d291a05d38838.5222280714928609391@mykernel.net> <20200104115308.GA1296856@kroah.com>
-Subject: Re: [PATCH 4.19 062/114] f2fs: choose hardlimit when softlimit is
- larger than hardlimit in f2fs_statfs_project()
+        Sat, 4 Jan 2020 09:26:16 -0500
+X-UUID: 46450077ffe143ea9228d5997c563ab3-20200104
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=SW1ng1B4N9Uj3rz0yt1c6Qc8LA9cWa+omxEpLReC8d8=;
+        b=UUkxHU4LWdgCqGe0/xCUtGeCmxTGwiBsBIyDEFdDgjpNWNM7evvIY02oDFMSP9zbTWLzQtZFsKoYdx9T17YaC+ABtOM1iK1j7f1kgwQwwaj+V1S32H2O1yErzD0pN6RWnt4YGPyui/9rd71Ub5AkUUU+HAKJPB3/4pWf9vHkj+w=;
+X-UUID: 46450077ffe143ea9228d5997c563ab3-20200104
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 72482906; Sat, 04 Jan 2020 22:26:11 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Sat, 4 Jan 2020 22:25:16 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Sat, 4 Jan 2020 22:26:39 +0800
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
+        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
+        <jejb@linux.ibm.com>
+CC:     <beanhuo@micron.com>, <asutoshd@codeaurora.org>,
+        <cang@codeaurora.org>, <matthias.bgg@gmail.com>,
+        <bvanassche@acm.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
+        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
+        <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
+Subject: [PATCH v1 0/3] scsi: ufs: fix error history and complete device reset history
+Date:   Sat, 4 Jan 2020 22:26:05 +0800
+Message-ID: <1578147968-30938-1-git-send-email-stanley.chu@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Priority: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
+Content-Type: text/plain
+X-TM-SNTS-SMTP: B3B9B6EB5DB4CEFAF1AC2165BB001FC8EDE9F53FF6594DACC0221E1470DD5E432000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E5=85=AD, 2020-01-04 19:53:08 Greg Kroah=
--Hartman <gregkh@linuxfoundation.org> =E6=92=B0=E5=86=99 ----
- > On Sat, Jan 04, 2020 at 09:50:43AM +0800, Chengguang Xu wrote:
- > >  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E5=85=AD, 2020-01-04 01:12:13 Pavel=
- Machek <pavel@denx.de> =E6=92=B0=E5=86=99 ----
- > >  > Hi!
- > >  >=20
- > >  > > From: Chengguang Xu <cgxu519@mykernel.net>
- > >  > >=20
- > >  > > [ Upstream commit 909110c060f22e65756659ec6fa957ae75777e00 ]
- > >  > >=20
- > >  > > Setting softlimit larger than hardlimit seems meaningless
- > >  > > for disk quota but currently it is allowed. In this case,
- > >  > > there may be a bit of comfusion for users when they run
- > >  > > df comamnd to directory which has project quota.
- > >  > >=20
- > >  > > For example, we set 20M softlimit and 10M hardlimit of
- > >  > > block usage limit for project quota of test_dir(project id 123).
- > >  >=20
- > >  > > Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
- > >  > > Reviewed-by: Chao Yu <yuchao0@huawei.com>
- > >  > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
- > >  > > Signed-off-by: Sasha Levin <sashal@kernel.org>
- > >  > > ---
- > >  > >  fs/f2fs/super.c | 20 ++++++++++++++------
- > >  > >  1 file changed, 14 insertions(+), 6 deletions(-)
- > >  > >=20
- > >  > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
- > >  > > index 7a9cc64f5ca3..662c7de58b99 100644
- > >  > > --- a/fs/f2fs/super.c
- > >  > > +++ b/fs/f2fs/super.c
- > >  > > @@ -1148,9 +1148,13 @@ static int f2fs_statfs_project(struct supe=
-r_block *sb,
- > >  > >          return PTR_ERR(dquot);
- > >  > >      spin_lock(&dquot->dq_dqb_lock);
- > >  > > =20
- > >  > > -    limit =3D (dquot->dq_dqb.dqb_bsoftlimit ?
- > >  > > -         dquot->dq_dqb.dqb_bsoftlimit :
- > >  > > -         dquot->dq_dqb.dqb_bhardlimit) >> sb->s_blocksize_bits;
- > >  > > +    limit =3D 0;
- > >  > > +    if (dquot->dq_dqb.dqb_bsoftlimit)
- > >  > > +        limit =3D dquot->dq_dqb.dqb_bsoftlimit;
- > >  > > +    if (dquot->dq_dqb.dqb_bhardlimit &&
- > >  > > +            (!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
- > >  > > +        limit =3D dquot->dq_dqb.dqb_bhardlimit;
- > >  > > +
- > >  > >      if (limit && buf->f_blocks > limit) {
- > >  >=20
- > >  > >> blocksize disappeared here. That can't be right.
- > >  >=20
- > >  > Plus, is this just obfuscated way of saying
- > >  >=20
- > >  > limit =3D min_not_zero(dquot->dq_dqb.dqb_bsoftlimit, dquot->dq_dqb.=
-dqb_bhardlimit)?
- > >  >=20
- > >=20
- > > Please  skip this patch from  stable list,  I'll send  a revised patch=
- to upstream.
- >=20
- > This patch is already in Linus's tree, so you can't send a "revised"
- > version, only one that applies on top of this one :)
- >=20
- > That being said, I'll go drop this from the stable queues, thanks.
- > Please let us know when the fixed patch is in Linus's tree and we will
- > be glad to take both of them.
-=20
-I got it, Thanks Greg!
-
+SGksDQoNClRoaXMgc2VyaWVzIHRhcmdldHMgb24gVUZTIGVycm9yIGhpc3RvcnkgZml4ZXMgYW5k
+IGZlYXR1cmUgYWRkLW9uLA0KDQoxLiBGaXggZW1wdHkgY2hlY2sgbG9naWMgd2hpbGUgb3V0cHV0
+aW5nIGVycm9yIGhpc3RvcnkuDQoyLiBBZGQgZGV2aWNlIHJlc2V0IGhpc3RvcnkgZXZlbnRzIGZv
+ciB2ZW5kb3IncyBpbXBsZW1lbnRhdGlvbnMuDQozLiBSZW1vdmUgZHVtbXkgd29yZCBpbiBvdXRw
+dXQgZm9ybWF0Lg0KDQpTdGFubGV5IENodSAoMyk6DQogIHNjc2k6IHVmczogZml4IGVtcHR5IGNo
+ZWNrIG9mIGVycm9yIGhpc3RvcnkNCiAgc2NzaTogdWZzOiBhZGQgZGV2aWNlIHJlc2V0IGhpc3Rv
+cnkgZm9yIHZlbmRvciBpbXBsZW1lbnRhdGlvbnMNCiAgc2NzaTogdWZzOiByZW1vdmUgImVycm9y
+cyIgd29yZCBpbiB1ZnNoY2RfcHJpbnRfZXJyX2hpc3QoKQ0KDQogZHJpdmVycy9zY3NpL3Vmcy91
+ZnNoY2QuYyB8IDkgKysrKystLS0tDQogZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2QuaCB8IDYgKysr
+KystDQogMiBmaWxlcyBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQ0K
+DQotLSANCjIuMTguMA0K
 
