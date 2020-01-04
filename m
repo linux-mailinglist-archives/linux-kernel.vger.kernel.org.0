@@ -2,140 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3F7413006C
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 04:37:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45F0F130065
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 04:36:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727463AbgADDg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 22:36:28 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:32061 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727274AbgADDg0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 22:36:26 -0500
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id 0043aDh2023619;
-        Sat, 4 Jan 2020 12:36:14 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 0043aDh2023619
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1578108974;
-        bh=E7v6OsSDfr6V815FU2MY7OtZnfPcFmRdIvSTyf6A5q8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=M2Yv2C4BCcLEiA+O/utwZa5WrRwTqIxLFxjRiKwkX7G+1GJVIp7G/T0t09moraU0O
-         8dBsLLVKwOLGoHuSfnJ7M6wO3+sbLlYb5k5qeEW0JfaZgR6KQWoiYcVkeqsCKt5dMF
-         D9KQGCWxmzXjHlDfIJPYpaYJSkg98zWhLFOzPKdYksMblnl/ZvwCyORqWR+eBzPZmO
-         wuN/jQIiKPAiiTjmRlDFiDfHBra9ftCky5hhIcHMUkRUvG4Z+VAK4vJzjflpfQUBpA
-         TiBaTxZLuJR8VaF/sVuMcGmk+QjmRhyRbO4ES7DFLpZF453IYxRCduPxe3RaM8Lqtr
-         /Q+p0xXDSDOqg==
-X-Nifty-SrcIP: [209.85.221.170]
-Received: by mail-vk1-f170.google.com with SMTP id c129so11222716vkh.7;
-        Fri, 03 Jan 2020 19:36:14 -0800 (PST)
-X-Gm-Message-State: APjAAAVUFwwOtfXLt7Fp93ZV5hWE/Qd3gSq8DbQbo+DFMbweK5KLamyu
-        5OVgDt1wSEH9BzTSeVgSMzj3j3l989yFTaT+mm8=
-X-Google-Smtp-Source: APXvYqwFrX0S6OIqke8PQUsgzrJ85FumVCcPzymZOA5sJCiSerQ6OnjY8DABR6LmjjZSqaQZJWGUxu05TfzGAAs3kTw=
-X-Received: by 2002:a1f:6344:: with SMTP id x65mr52196094vkb.26.1578108973033;
- Fri, 03 Jan 2020 19:36:13 -0800 (PST)
+        id S1727332AbgADDgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 22:36:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727274AbgADDgW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 22:36:22 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A49E21734;
+        Sat,  4 Jan 2020 03:36:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578108982;
+        bh=RKss8AYHv4Kyjh0YCeV+MZfYd5TUz/A3y1gOnGHhl/c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=xSR7+1goKXxOlYlLi2w9bEHVipkgppZoZER3iOwiFcreyyHhFqLhgVnD5dp026MYN
+         C+n4gEM0W7T77QaOOiCe6x5+n+DxcFFQBvrSo+WdtMjBEiUXsLgPV7AKTza1Z4mUC1
+         ggVtGDhQ7lTCKxkZMwzNUpmMy8ZeVZFwkNUj8+KA=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     =?UTF-8?q?Johnson=20CH=20Chen=20=28=E9=99=B3=E6=98=AD=E5=8B=B3=29?= 
+        <JohnsonCH.Chen@moxa.com>, Johnson Chen <johnsonch.chen@moxa.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 01/10] gpio: mpc8xxx: Add platform device to gpiochip->parent
+Date:   Fri,  3 Jan 2020 22:36:10 -0500
+Message-Id: <20200104033620.10977-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20200103175915.26663-1-masahiroy@kernel.org> <20200103175915.26663-12-masahiroy@kernel.org>
- <20200103195205.GC21515@ravnborg.org>
-In-Reply-To: <20200103195205.GC21515@ravnborg.org>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Sat, 4 Jan 2020 12:35:37 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQXx0RGutdOe4JFLTbjm7=cx9aEKQ-823-irED4SyCmMA@mail.gmail.com>
-Message-ID: <CAK7LNAQXx0RGutdOe4JFLTbjm7=cx9aEKQ-823-irED4SyCmMA@mail.gmail.com>
-Subject: Re: [PATCH 11/12] initramfs: refactor the initramfs build rules
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sam,
+From: Johnson CH Chen (陳昭勳) <JohnsonCH.Chen@moxa.com>
 
-On Sat, Jan 4, 2020 at 4:52 AM Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> Hi Mashahiro.
->
-> I just browsed this fine patchset and noticed...
-> >
-> > -#####
-> > -# Generate the initramfs cpio archive
-> > +ramfs-input := $(shell echo $(CONFIG_INITRAMFS_SOURCE))
-> > +cpio-data :=
-> > +
-> > +ifeq ($(words $(ramfs-input)),0)
-> > +
-> > +# If CONFIG_INITRAMFS_SOURCE is empty, generate a small initramfs with the
-> > +# default contents.
-> > +ramfs-input := $(srctree)/$(src)/default_cpio_list
-> > +
-> > +else ifeq ($(words $(ramfs-input)),1)
-> > +# If CONFIG_INITRAMFS_SOURCE specifies a single file, and it is suffixed with
-> > +# .cpio or .cpio.*, use it directly as an initramfs.
-> > +ifneq ($(filter %.cpio,$(ramfs-input)),)
-> > +cpio-data := $(ramfs-input)
-> > +endif
->
-> This part will now work if the file is named foo.cpio.bar.
-> $(findstring .cpio, should be used and not $(filter %.cpio
-> At least if the comment describes the intended behaviour.
+[ Upstream commit 322f6a3182d42df18059a89c53b09d33919f755e ]
 
+Dear Linus Walleij,
 
-The 'foo.cpio.bar' is taken care of
-by ifeq ($(words $(subst .cpio.,$(space),$(ramfs-input))),2)
+In old kernels, some APIs still try to use parent->of_node from struct gpio_chip,
+and it could be resulted in kernel panic because parent is NULL. Adding platform
+device to gpiochip->parent can fix this problem.
 
-I admit the comment was confusing.
+Signed-off-by: Johnson Chen <johnsonch.chen@moxa.com>
+Link: https://patchwork.kernel.org/patch/11234609
+Link: https://lore.kernel.org/r/HK0PR01MB3521489269F76467DFD7843FFA450@HK0PR01MB3521.apcprd01.prod.exchangelabs.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpio/gpio-mpc8xxx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+index 16a47de29c94..161e3ff4106a 100644
+--- a/drivers/gpio/gpio-mpc8xxx.c
++++ b/drivers/gpio/gpio-mpc8xxx.c
+@@ -346,6 +346,7 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	gc = &mpc8xxx_gc->gc;
++	gc->parent = &pdev->dev;
+ 
+ 	if (of_property_read_bool(np, "little-endian")) {
+ 		ret = bgpio_init(gc, &pdev->dev, 4,
+-- 
+2.20.1
 
-I will clarify the comments as follows:
-
-
-
-# If CONFIG_INITRAMFS_SOURCE specifies a single file, and it is suffixed with
-# .cpio, use it directly as an initramfs.
-ifneq ($(filter %.cpio,$(ramfs-input)),)
-cpio-data := $(ramfs-input)
-endif
-
-# If CONFIG_INITRAMFS_SOURCE specifies a single file, and it is suffixed with
-# .cpio.*, use it directly as an initramfs, and avoid double compression.
-ifeq ($(words $(subst .cpio.,$(space),$(ramfs-input))),2)
-cpio-data := $(ramfs-input)
-compress-y := shipped
-endif
-
-
-
-
-
-
-> > +
-> > +ifeq ($(words $(subst .cpio.,$(space),$(ramfs-input))),2)
-> > +cpio-data := $(ramfs-input)
-> > +# If the specified archive is suffixed with .cpio.* (i.e. already compressed),
-> > +# we do not double-compress it.
-> > +compress-y := shipped
-> > +endif
-> > +
-> > +endif
->
->
->         Sam
-
-
-
-
-
-
-
-
-
-
---
-Best Regards
-Masahiro Yamada
