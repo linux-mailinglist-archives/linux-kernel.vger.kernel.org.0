@@ -2,90 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 546A9130343
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 16:34:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 209FD13034B
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 16:34:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726204AbgADPdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 10:33:49 -0500
-Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:44136 "EHLO
+        id S1726401AbgADPeC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 10:34:02 -0500
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:44572 "EHLO
         wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726083AbgADPds (ORCPT
+        by vger.kernel.org with ESMTP id S1726016AbgADPeC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 10:33:48 -0500
+        Sat, 4 Jan 2020 10:34:02 -0500
 Received: from [2003:a:659:3f00:1e6f:65ff:fe31:d1d5] (helo=hermes.fivetechno.de); authenticated
         by wp126.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        id 1inlQv-0001SO-76; Sat, 04 Jan 2020 16:33:45 +0100
+        id 1inlR8-0002an-Ix; Sat, 04 Jan 2020 16:33:58 +0100
 X-Virus-Scanned: by amavisd-new 2.11.1 using newest ClamAV at
         linuxbbg.five-lan.de
 Received: from roc-pc (p508F384D.dip0.t-ipconnect.de [80.143.56.77])
         (authenticated bits=0)
-        by hermes.fivetechno.de (8.15.2/8.14.5/SuSE Linux 0.8) with ESMTPSA id 004FXiAD009237
+        by hermes.fivetechno.de (8.15.2/8.14.5/SuSE Linux 0.8) with ESMTPSA id 004FXv67009246
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 4 Jan 2020 16:33:44 +0100
+        Sat, 4 Jan 2020 16:33:57 +0100
 From:   Markus Reichl <m.reichl@fivetechno.de>
 To:     linux-rockchip@lists.infradead.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
 Cc:     Markus Reichl <m.reichl@fivetechno.de>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] regulator: mp8859: add config option and build entry
-Date:   Sat,  4 Jan 2020 16:32:46 +0100
-Message-Id: <20200104153321.6584-3-m.reichl@fivetechno.de>
+        Maxime Ripard <mripard@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/5] dt-bindings: add vendor Monolithic Power Systems
+Date:   Sat,  4 Jan 2020 16:32:47 +0100
+Message-Id: <20200104153321.6584-4-m.reichl@fivetechno.de>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200104153321.6584-1-m.reichl@fivetechno.de>
 References: <20200104153321.6584-1-m.reichl@fivetechno.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;m.reichl@fivetechno.de;1578152027;4063e63e;
-X-HE-SMSGID: 1inlQv-0001SO-76
+X-bounce-key: webpack.hosteurope.de;m.reichl@fivetechno.de;1578152041;d61c18a9;
+X-HE-SMSGID: 1inlR8-0002an-Ix
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add entries for the mp8857 regulator driver
-to the build system.
+MPS produce power regulators like the MP8859.
 
 Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
 ---
- drivers/regulator/Kconfig  | 11 +++++++++++
- drivers/regulator/Makefile |  1 +
- 2 files changed, 12 insertions(+)
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 56512748a47d..593733a88a61 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -612,6 +612,17 @@ config REGULATOR_MCP16502
- 	  through the regulator interface. In addition it enables
- 	  suspend-to-ram/standby transition.
- 
-+config REGULATOR_MP8859
-+	tristate "MPS MP8859 regulator driver"
-+	depends on I2C
-+	select REGMAP_I2C
-+	help
-+	  Say y here to support the MP8859 voltage regulator. This driver
-+	  supports basic operations (get/set voltage) through the regulator
-+	  interface.
-+	  Say M here if you want to include support for the regulator as a
-+	  module. The module will be named "mp8859".
-+
- config REGULATOR_MT6311
- 	tristate "MediaTek MT6311 PMIC"
- 	depends on I2C
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index 9eccf93bc3ab..8ba8e5deebbd 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -78,6 +78,7 @@ obj-$(CONFIG_REGULATOR_MC13783) += mc13783-regulator.o
- obj-$(CONFIG_REGULATOR_MC13892) += mc13892-regulator.o
- obj-$(CONFIG_REGULATOR_MC13XXX_CORE) +=  mc13xxx-regulator-core.o
- obj-$(CONFIG_REGULATOR_MCP16502) += mcp16502.o
-+obj-$(CONFIG_REGULATOR_MP8859) += mp8859.o
- obj-$(CONFIG_REGULATOR_MT6311) += mt6311-regulator.o
- obj-$(CONFIG_REGULATOR_MT6323)	+= mt6323-regulator.o
- obj-$(CONFIG_REGULATOR_MT6358)	+= mt6358-regulator.o
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index fa6aa3c5a500..4fa3bb494745 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -617,6 +617,8 @@ patternProperties:
+     description: Moxa Inc.
+   "^mpl,.*":
+     description: MPL AG
++  "^mps,.*":
++    description: Monolithic Power Systems Inc.
+   "^mqmaker,.*":
+     description: mqmaker Inc.
+   "^mscc,.*":
 -- 
 2.24.1
 
