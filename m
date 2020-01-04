@@ -2,63 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34DF5130504
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Jan 2020 00:08:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19D6C130515
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Jan 2020 00:52:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbgADXId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 18:08:33 -0500
-Received: from fgw20-4.mail.saunalahti.fi ([62.142.5.107]:10220 "EHLO
-        fgw20-4.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726170AbgADXId (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 18:08:33 -0500
-Received: from darkstar.musicnaut.iki.fi (85-76-82-2-nat.elisa-mobile.fi [85.76.82.2])
-        by fgw20.mail.saunalahti.fi (Halon) with ESMTP
-        id 1f4f40ca-2f47-11ea-826b-005056bd6ce9;
-        Sun, 05 Jan 2020 01:08:30 +0200 (EET)
-Date:   Sun, 5 Jan 2020 01:08:30 +0200
-From:   Aaro Koskinen <aaro.koskinen@iki.fi>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Odelu Kukatla <okukatla@codeaurora.org>, georgi.djakov@linaro.org,
-        daidavid1@codeaurora.org, bjorn.andersson@linaro.org,
-        evgreen@google.com, Andy Gross <agross@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, ilina@codeaurora.org, seansw@qti.qualcomm.com,
-        elder@linaro.org, linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [V2, 1/3] dt-bindings: interconnect: Add Qualcomm SC7180 DT
- bindings
-Message-ID: <20200104230830.GA27471@darkstar.musicnaut.iki.fi>
-References: <1577782737-32068-1-git-send-email-okukatla@codeaurora.org>
- <1577782737-32068-2-git-send-email-okukatla@codeaurora.org>
- <20200104220142.GA28701@bogus>
+        id S1726333AbgADXwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 18:52:01 -0500
+Received: from trent.utfs.org ([94.185.90.103]:35320 "EHLO trent.utfs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726135AbgADXwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Jan 2020 18:52:01 -0500
+Received: from localhost (localhost [IPv6:::1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by trent.utfs.org (Postfix) with ESMTPS id 77FF96003F;
+        Sun,  5 Jan 2020 00:51:57 +0100 (CET)
+Date:   Sat, 4 Jan 2020 15:51:57 -0800 (PST)
+From:   Christian Kujau <lists@nerdbynature.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Eric Biggers <ebiggers@google.com>
+Subject: Re: [PATCH] Re: filesystem being remounted supports timestamps until
+ 2038
+In-Reply-To: <CAHk-=wim6VGnxQmjfK_tDg6fbHYKL4EFkmnTjVr9QnRqjDBAeA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.99999.375.2001041545350.21037@trent.utfs.org>
+References: <alpine.DEB.2.21.99999.375.1912201332260.21037@trent.utfs.org> <alpine.DEB.2.21.99999.375.1912261445200.21037@trent.utfs.org> <CAHk-=wim6VGnxQmjfK_tDg6fbHYKL4EFkmnTjVr9QnRqjDBAeA@mail.gmail.com>
+User-Agent: Alpine 2.21.99999 (DEB 375 2019-10-29)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200104220142.GA28701@bogus>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Sat, Jan 04, 2020 at 03:01:42PM -0700, Rob Herring wrote:
-> On Tue, Dec 31, 2019 at 02:28:55PM +0530, Odelu Kukatla wrote:
-> > diff --git a/Documentation/devicetree/bindings/interconnect/qcom,sc7180.yaml b/Documentation/devicetree/bindings/interconnect/qcom,sc7180.yaml
-> > new file mode 100644
-> > index 0000000..487da5e
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/interconnect/qcom,sc7180.yaml
-> > @@ -0,0 +1,155 @@
-> > +# SPDX-License-Identifier: GPL-2.0
+On Sun, 29 Dec 2019, Linus Torvalds wrote:
+> >     When file systems are remounted a couple of times per day (e.g. rw/ro for backup
+> >     purposes), dmesg gets flooded with these messages. Change pr_warn into pr_debug
+> >     to make it stop.
 > 
-> Dual license new bindings:
-> 
-> (GPL-2.0-only OR BSD-2-Clause)
+> How about just doing it once per mount?
 
-Just curious, is that mandatory for any new bindings?
+Yes, once per mount would work, and maybe not print a warning on remounts 
+at all.
 
-A.
+Commit f8b92ba67c5d ("mount: Add mount warning for impending timestamp 
+expiry") introduced:
+
+   Mounted %s file system at %s supports timestamps until [...]
+
+in mnt_warn_timestamp_expiry(), but then 0ecee6699064 ("fs/namespace.c: 
+fix use-after-free of mount in mnt_warn_timestamp_expiry") changed this to
+
+  %s filesystem being %s at %s supports timestamps until [...]
+
+in order to fix a use-after-free.
+
+> Of course, if you actually unmount and completely re-mount a
+> filesystem, then that would still warn multiple times, but at that
+> point I think it's reasonable to do.
+
+Yes, of course. Umount/remount cycles should still issue a warning, but 
+"-o remount" should not, IMHO.
+
+Thanks,
+Christian.
+-- 
+BOFH excuse #108:
+
+The air conditioning water supply pipe ruptured over the machine room
