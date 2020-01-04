@@ -2,101 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA76313029C
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 15:21:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1F6B130298
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 15:20:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726275AbgADOVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 09:21:18 -0500
-Received: from sender2-of-o52.zoho.com.cn ([163.53.93.247]:21134 "EHLO
-        sender2-of-o52.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725928AbgADOVR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 09:21:17 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1578147631; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=Wm1LmxEiRdnPxgUwAF6QFOvou39oZfviXf6u9vBIe+s4Wp24uY8rW49btrDPv9isBkv4WKchZ9HgTPykYIZYlv383SWfGnsJuhY7fQAhR2Fyp9kER6BjGvkqh8S9kXxOTn03xPJABz/DQKZNNUnobxZE0uPuw6GceLkABB4hoiw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1578147631; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=7k8gaLXukPzjJGyY+xIC8DOJaUh+oLrwvPFiks3Knak=; 
-        b=fZJBaexuGyqp/gqCJVR0N/D7EWMuF9C8MMisxzgrbDxZ8XIW+hjdXF+uBCK/GoiQTc8zGXJlV8Yr4I/RlulMlp+OGQVzVQPBWIxcLi9Y8IjzvQ5IDA+CSaWlEwQ1JlO2DYxgxqC4rRXlIDdiUa3z2Z3AtGKuk9Ezlc5gkOU/45Y=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1578147631;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=From:To:Cc:Message-ID:Subject:Date:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type;
-        bh=7k8gaLXukPzjJGyY+xIC8DOJaUh+oLrwvPFiks3Knak=;
-        b=cng1tKuBAc7ah7mdBkmJMkb1ivGDCz7jaUqTUyBO/pfGl6X47GgFlfPQzTB0R8dF
-        mpQSMQnATVk2uNkaUraso0szktsumaHmGPg5zINaL4UFB9+wZguvZtGIiYZiG/jyoCZ
-        nE/r+3MgyPNA1dCdAgiFTowqWQKHmYrcPzLzBeXI=
-Received: from localhost.localdomain.localdomain (113.116.49.111 [113.116.49.111]) by mx.zoho.com.cn
-        with SMTPS id 1578147629444192.7016564807659; Sat, 4 Jan 2020 22:20:29 +0800 (CST)
-From:   Chengguang Xu <cgxu519@mykernel.net>
-To:     jaegeuk@kernel.org, chao@kernel.org
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Chengguang Xu <cgxu519@mykernel.net>
-Message-ID: <20200104142004.12883-2-cgxu519@mykernel.net>
-Subject: [f2fs-dev][PATCH 2/2] f2fs: code cleanup for f2fs_statfs_project()
-Date:   Sat,  4 Jan 2020 22:20:04 +0800
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200104142004.12883-1-cgxu519@mykernel.net>
-References: <20200104142004.12883-1-cgxu519@mykernel.net>
+        id S1726083AbgADOUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 09:20:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34006 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725924AbgADOUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Jan 2020 09:20:17 -0500
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8872922B48;
+        Sat,  4 Jan 2020 14:20:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578147617;
+        bh=XsnHsHj53JhaNYFbo6CFsI3eeVhtmBQ3PCkV9VTU9Hs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cuQWj+ghg2SnHa/Geq6Fb5zpTiTpIcRhG/BSO2FF5F/yFYZSkTuL+Apmr7vFf6BDm
+         rMmn4RFiatdKPi4Ag0vnuMCM1mM7EP6naB3Dv0Cpl3hnzhOUCQF2+VWph0ZvQ5mBEv
+         I9e2N5Iet/IQV+5fTulEYEb94y0ai+vY/g7U0P2k=
+Date:   Sat, 4 Jan 2020 15:20:14 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Subject: Re: [PATCH v3 2/9] drm/sun4i: tcon: Add TCON LCD support for R40
+Message-ID: <20200104142014.o6znmngwjw7o46dl@gilmour.lan>
+References: <20191231130528.20669-1-jagan@amarulasolutions.com>
+ <20191231130528.20669-3-jagan@amarulasolutions.com>
+ <20200102105424.kmte7aooh2gkrcnu@gilmour.lan>
+ <CAMty3ZA0e8eJZWvAh0x=KGAZVL3apdao3COvR6j3-ckv0cdvcg@mail.gmail.com>
+ <20200102154703.3prgwcjyo36g5g5u@gilmour.lan>
+ <CAMty3ZB_6GyK=hhJU-8yAQiom1Uq25ojFbKaGrK1fmW8SnDV_A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-ZohoCNMailClient: External
-Content-Type: text/plain; charset=utf8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zomtrfc34zk3phes"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZB_6GyK=hhJU-8yAQiom1Uq25ojFbKaGrK1fmW8SnDV_A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Calling min_not_zero() to simplify complicated prjquota
-limit comparison in f2fs_statfs_project().
 
-Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
----
- fs/f2fs/super.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+--zomtrfc34zk3phes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 78efd0e76174..ac01c3f8863d 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1213,12 +1213,8 @@ static int f2fs_statfs_project(struct super_block *s=
-b,
- =09=09return PTR_ERR(dquot);
- =09spin_lock(&dquot->dq_dqb_lock);
-=20
--=09limit =3D 0;
--=09if (dquot->dq_dqb.dqb_bsoftlimit)
--=09=09limit =3D dquot->dq_dqb.dqb_bsoftlimit;
--=09if (dquot->dq_dqb.dqb_bhardlimit &&
--=09=09=09(!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
--=09=09limit =3D dquot->dq_dqb.dqb_bhardlimit;
-+=09limit =3D min_not_zero(dquot->dq_dqb.dqb_bsoftlimit,
-+=09=09=09=09=09dquot->dq_dqb.dqb_bhardlimit);
- =09if (limit)
- =09=09limit >>=3D sb->s_blocksize_bits;
-=20
-@@ -1230,12 +1226,8 @@ static int f2fs_statfs_project(struct super_block *s=
-b,
- =09=09=09 (buf->f_blocks - curblock) : 0;
- =09}
-=20
--=09limit =3D 0;
--=09if (dquot->dq_dqb.dqb_isoftlimit)
--=09=09limit =3D dquot->dq_dqb.dqb_isoftlimit;
--=09if (dquot->dq_dqb.dqb_ihardlimit &&
--=09=09=09(!limit || dquot->dq_dqb.dqb_ihardlimit < limit))
--=09=09limit =3D dquot->dq_dqb.dqb_ihardlimit;
-+=09limit =3D min_not_zero(dquot->dq_dqb.dqb_isoftlimit,
-+=09=09=09=09=09dquot->dq_dqb.dqb_ihardlimit);
-=20
- =09if (limit && buf->f_files > limit) {
- =09=09buf->f_files =3D limit;
---=20
-2.21.1
+Hi,
 
+On Thu, Jan 02, 2020 at 10:04:40PM +0530, Jagan Teki wrote:
+> On Thu, Jan 2, 2020 at 9:17 PM Maxime Ripard <mripard@kernel.org> wrote:
+> >
+> > On Thu, Jan 02, 2020 at 09:10:31PM +0530, Jagan Teki wrote:
+> > > On Thu, Jan 2, 2020 at 4:24 PM Maxime Ripard <mripard@kernel.org> wrote:
+> > > >
+> > > > On Tue, Dec 31, 2019 at 06:35:21PM +0530, Jagan Teki wrote:
+> > > > > TCON LCD0, LCD1 in allwinner R40, are used for managing
+> > > > > LCD interfaces like RGB, LVDS and DSI.
+> > > > >
+> > > > > Like TCON TV0, TV1 these LCD0, LCD1 are also managed via
+> > > > > tcon top.
+> > > > >
+> > > > > Add support for it, in tcon driver.
+> > > > >
+> > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > ---
+> > > > > Changes for v3:
+> > > > > - none
+> > > > >
+> > > > >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 8 ++++++++
+> > > > >  1 file changed, 8 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > > index fad72799b8df..69611d38c844 100644
+> > > > > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > > @@ -1470,6 +1470,13 @@ static const struct sun4i_tcon_quirks sun8i_a83t_tv_quirks = {
+> > > > >       .has_channel_1          = true,
+> > > > >  };
+> > > > >
+> > > > > +static const struct sun4i_tcon_quirks sun8i_r40_lcd_quirks = {
+> > > > > +     .supports_lvds          = true,
+> > > > > +     .has_channel_0          = true,
+> > > > > +     /* TODO Need to support TCON output muxing via GPIO pins */
+> > > > > +     .set_mux                = sun8i_r40_tcon_tv_set_mux,
+> > > >
+> > > > What is this muking about? And why is it a TODO?
+> > >
+> > > Muxing similar like how TCON TOP handle TV0, TV1 I have reused the
+> > > same so-that it would configure de port selection via
+> > > sun8i_tcon_top_de_config
+> > >
+> > > TCON output muxing have gpio with GPIOD and GPIOH bits, which select
+> > > which of LCD or TV TCON outputs to the LCD function pins. I have
+> > > marked these has TODO for further support as mentioned by Chen-Yu in
+> > > v1[1].
+> >
+> > It should be in the commit log.
+>
+> Make sense.
+>
+> > What's the plan to support that when needed? And that means that the
+> > LCD and TV outputs are mutually exclusive? We should at the very least
+> > check that both aren't enabled at the same time.
+>
+> Yes, LCD or TV within the outselect seems to be mutually exclusive.
+> Like LCD0 or TV0 can output to GPIOD incase of TV0_OUTSEL and LCD1 or
+> TV1 can output to GPIOH incase of TV1_OUTSEL. I think checking them
+> before configuring TCON_TOP_PORT_SEL_REG would make sense, let me know
+> if you have any suggestions?
 
+Making sure in atomic_check that TV and LCD are not used at the same
+time, and then in encoders mode_set / enable mux the pins to our
+encoders would be my first guess.
 
+Maxime
+
+--zomtrfc34zk3phes
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXhCfHgAKCRDj7w1vZxhR
+xQw+AQC+UAAD2DuXR7nMr0l0A/3NybkZVTKykyr2HbVJa1arrgEAuPLgwEfGu61X
+lS7E6DoCPkU97rnULAbmAOLQBZyMjws=
+=D1UE
+-----END PGP SIGNATURE-----
+
+--zomtrfc34zk3phes--
