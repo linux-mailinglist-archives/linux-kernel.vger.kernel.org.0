@@ -2,87 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6173D130009
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 02:57:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E664130011
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 03:06:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbgADB5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 20:57:48 -0500
-Received: from onstation.org ([52.200.56.107]:34448 "EHLO onstation.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727194AbgADB5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 20:57:48 -0500
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 3F5B03EE7A;
-        Sat,  4 Jan 2020 01:57:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1578103067;
-        bh=gVOohcLyYG5QMrVIrqr7DlRzMKsljT/YFEUQa5kCQT8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ay2ibw6fyoMPxDPVyUSYmuCFLjNrwhKMyBiPo7P4ZPrF2kMsZGp1hI/cSyf9CylzR
-         EnyAJO51FQUaYpdEulXuv2a2auZLzsTSb4EgngxwIDYFKbntcW0fspPagfNvdV4EoG
-         wNLr2o0K2e7M5fq4bWxPC5OtwpFAqz51PRNr4Liw=
-Date:   Fri, 3 Jan 2020 20:57:47 -0500
-From:   Brian Masney <masneyb@onstation.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Fabio Estevam <festevam@gmail.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: Re: [PATCH] firmware: scm: Add stubs for OCMEM and
- restore_sec_cfg_available
-Message-ID: <20200104015747.GB30866@onstation.org>
-References: <20200103220825.28710-1-krzk@kernel.org>
+        id S1727264AbgADCGR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 21:06:17 -0500
+Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25379 "EHLO
+        sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727074AbgADCGR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Jan 2020 21:06:17 -0500
+X-Greylist: delayed 905 seconds by postgrey-1.27 at vger.kernel.org; Fri, 03 Jan 2020 21:06:15 EST
+ARC-Seal: i=1; a=rsa-sha256; t=1578102645; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=qhvmzewoXEKEEwmc2ql0m9CKDVnIqxe2FazWILfFNdjRAUfx6fABgwygtskKww2Q9MVUBFlVnlYCDaRX6Mzgu54WG2kl827yH0PdYmpL/YtdtP3fw16PJtBW9NBhsIdI0gVeXabRARzzX9yAp4YIFJv2eNyVYPNWKdIcp/d1i4c=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1578102645; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=sr52V3J6KDFLSvQhoxBBsFeM63u2k44ubK1tp32MvjQ=; 
+        b=BzgX/ZQp829nXJQBDGKhJqxTqRqvTcslfaThK8p2ymj7vRLXzgnzQgnXEnF5EAmN30pPzkpWAHXIvF2dyFhYBDDBzdPwXOry4Q3z4mjRmM+jZfgGFRKSSwKXe8c/toyqPJl9TsqJ/Chslmg/M/70t/SKntU5JeAy8L24k3T+SKY=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1578102645;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=sr52V3J6KDFLSvQhoxBBsFeM63u2k44ubK1tp32MvjQ=;
+        b=KfewwbuhZcpRJQo7t3Ely+kmHrcKizp3Jr/E0BSTc+ZGst5z51zGcMsBjhWHB1mQ
+        pvc2s+wcL1XJBkXdbobMQ4yXCmamtpMmLOYjPxHIiTH1euesiNWB7FO8ihkspEmO8U+
+        MnLFjaxG1Gj/Gg7n7ltQC4Ps2rk+VqweVJ0Xiy7E=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 1578102643649653.3693286775876; Sat, 4 Jan 2020 09:50:43 +0800 (CST)
+Date:   Sat, 04 Jan 2020 09:50:43 +0800
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Reply-To: cgxu519@mykernel.net
+To:     "Pavel Machek" <pavel@denx.de>
+Cc:     "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "stable" <stable@vger.kernel.org>, "Chao Yu" <yuchao0@huawei.com>,
+        "Jaegeuk Kim" <jaegeuk@kernel.org>,
+        "Sasha Levin" <sashal@kernel.org>
+Message-ID: <16f6e3f5bbe.d291a05d38838.5222280714928609391@mykernel.net>
+In-Reply-To: <20200103171213.GC14328@amd>
+References: <20200102220029.183913184@linuxfoundation.org>
+ <20200102220035.294585461@linuxfoundation.org> <20200103171213.GC14328@amd>
+Subject: Re: [PATCH 4.19 062/114] f2fs: choose hardlimit when softlimit is
+ larger than hardlimit in f2fs_statfs_project()
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200103220825.28710-1-krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Priority: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 03, 2020 at 11:08:25PM +0100, Krzysztof Kozlowski wrote:
-> Add few more stubs (for OCMEM-related functions and
-> qcom_scm_restore_sec_cfg_available()) in case of !CONFIG_QCOM_SCM.
-> These are actually not necessary for builds but provide them for
-> completeness.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E5=85=AD, 2020-01-04 01:12:13 Pavel Mach=
+ek <pavel@denx.de> =E6=92=B0=E5=86=99 ----
+ > Hi!
+ >=20
+ > > From: Chengguang Xu <cgxu519@mykernel.net>
+ > >=20
+ > > [ Upstream commit 909110c060f22e65756659ec6fa957ae75777e00 ]
+ > >=20
+ > > Setting softlimit larger than hardlimit seems meaningless
+ > > for disk quota but currently it is allowed. In this case,
+ > > there may be a bit of comfusion for users when they run
+ > > df comamnd to directory which has project quota.
+ > >=20
+ > > For example, we set 20M softlimit and 10M hardlimit of
+ > > block usage limit for project quota of test_dir(project id 123).
+ >=20
+ > > Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+ > > Reviewed-by: Chao Yu <yuchao0@huawei.com>
+ > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+ > > Signed-off-by: Sasha Levin <sashal@kernel.org>
+ > > ---
+ > >  fs/f2fs/super.c | 20 ++++++++++++++------
+ > >  1 file changed, 14 insertions(+), 6 deletions(-)
+ > >=20
+ > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+ > > index 7a9cc64f5ca3..662c7de58b99 100644
+ > > --- a/fs/f2fs/super.c
+ > > +++ b/fs/f2fs/super.c
+ > > @@ -1148,9 +1148,13 @@ static int f2fs_statfs_project(struct super_blo=
+ck *sb,
+ > >          return PTR_ERR(dquot);
+ > >      spin_lock(&dquot->dq_dqb_lock);
+ > > =20
+ > > -    limit =3D (dquot->dq_dqb.dqb_bsoftlimit ?
+ > > -         dquot->dq_dqb.dqb_bsoftlimit :
+ > > -         dquot->dq_dqb.dqb_bhardlimit) >> sb->s_blocksize_bits;
+ > > +    limit =3D 0;
+ > > +    if (dquot->dq_dqb.dqb_bsoftlimit)
+ > > +        limit =3D dquot->dq_dqb.dqb_bsoftlimit;
+ > > +    if (dquot->dq_dqb.dqb_bhardlimit &&
+ > > +            (!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
+ > > +        limit =3D dquot->dq_dqb.dqb_bhardlimit;
+ > > +
+ > >      if (limit && buf->f_blocks > limit) {
+ >=20
+ > >> blocksize disappeared here. That can't be right.
+ >=20
+ > Plus, is this just obfuscated way of saying
+ >=20
+ > limit =3D min_not_zero(dquot->dq_dqb.dqb_bsoftlimit, dquot->dq_dqb.dqb_b=
+hardlimit)?
+ >=20
 
-Reviewed-by: Brian Masney <masneyb@onstation.org>
+Please  skip this patch from  stable list,  I'll send  a revised patch to u=
+pstream.
+
+Thanks.
 
 
-> ---
->  include/linux/qcom_scm.h | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
-> index d05ddac9a57e..2c1d20312ce0 100644
-> --- a/include/linux/qcom_scm.h
-> +++ b/include/linux/qcom_scm.h
-> @@ -105,6 +105,11 @@ static inline bool qcom_scm_is_available(void) { return false; }
->  static inline bool qcom_scm_hdcp_available(void) { return false; }
->  static inline int qcom_scm_hdcp_req(struct qcom_scm_hdcp_req *req, u32 req_cnt,
->  				    u32 *resp) { return -ENODEV; }
-> +static inline bool qcom_scm_ocmem_lock_available(void) { return false; }
-> +static inline int qcom_scm_ocmem_lock(enum qcom_scm_ocmem_client id, u32 offset,
-> +				      u32 size, u32 mode) { return -ENODEV; }
-> +static inline int qcom_scm_ocmem_unlock(enum qcom_scm_ocmem_client id, u32 offset,
-> +					u32 size) { return -ENODEV; }
->  static inline bool qcom_scm_pas_supported(u32 peripheral) { return false; }
->  static inline int qcom_scm_pas_init_image(u32 peripheral, const void *metadata,
->  					  size_t size) { return -ENODEV; }
-> @@ -121,6 +126,7 @@ static inline void qcom_scm_cpu_power_down(u32 flags) {}
->  static inline u32 qcom_scm_get_version(void) { return 0; }
->  static inline u32
->  qcom_scm_set_remote_state(u32 state,u32 id) { return -ENODEV; }
-> +static inline bool qcom_scm_restore_sec_cfg_available(void) { return false; }
->  static inline int qcom_scm_restore_sec_cfg(u32 device_id, u32 spare) { return -ENODEV; }
->  static inline int qcom_scm_iommu_secure_ptbl_size(u32 spare, size_t *size) { return -ENODEV; }
->  static inline int qcom_scm_iommu_secure_ptbl_init(u64 addr, u32 size, u32 spare) { return -ENODEV; }
-> -- 
-> 2.17.1
+
+
