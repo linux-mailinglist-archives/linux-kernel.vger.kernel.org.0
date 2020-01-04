@@ -2,76 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B643712FFE4
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 02:03:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E255112FFE7
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 02:06:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbgADBDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 20:03:09 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:39918 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726968AbgADBDJ (ORCPT
+        id S1727244AbgADBGB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 20:06:01 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:34455 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726968AbgADBGA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 20:03:09 -0500
-Received: by mail-il1-f195.google.com with SMTP id x5so38045435ila.6
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 17:03:08 -0800 (PST)
+        Fri, 3 Jan 2020 20:06:00 -0500
+Received: by mail-qt1-f196.google.com with SMTP id 5so38137892qtz.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 17:06:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hh5F5krN3LWZxGpDu/50qQGTG2uQZAPCOnhR4ARYHnA=;
+        b=Eul0uJlQt6DICntdHemW6eGGFPZ/1VhFWlBwq3Uy3Rcnu9KsrS/Z1IDv0Hs2zXLJEo
+         qPG+giGqitGky3rjRIQAOE34qlCurmV4Z24AGg92ADc+yR1neckfy0gMpG16Nh+md9Bn
+         h2opUrSznOYgiNsaFhX9f6D6vtEi9TonRuuTTeVE1RrRmu6Swd3TPrxhdQHrOBUDDUCS
+         8agRVX6mZjKRGYN263vcMCxmrnBt3x9a1dwxVUQ3hhsi+XsIJghPJTujYN+geMzQ1jbt
+         NqqY496VxJ9xpH06FQWwziE1y96m0a0xCp24g4do4087que8eD4gZfbQO4IPGcAh1qHV
+         pq2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=x/iGc+RKtnsFuMU64/4qfZ200vWGywjrQ0igZLbD2L0=;
-        b=pIj1bcYJ9S0DuNDP/5hpSjgF6j5q+vWFB4kSFeioLFCO01hcNCABQbNvp7N0l7anRm
-         uSwuoYuLPeir9MT3+RfsuW9wTIMiZvzcB0ono/jgswch26Kr5SFXWu+wP2WGJdIvLbRD
-         F8hZcBiLA3x5UmtFPrkEJ2MkL55/dz38qeCQkBjfgfSIH6xHv2FzC/woEBHTIVdsXeFj
-         CsWKDb7JAxktiM0t5FfMfM1UYpjCe8Fschet4ycHSpQymiH3tFiE6CtevuEKTX2BRKLj
-         NoghTkO60+L7ygzxkafiF2u9zKxgWt/MAf7pXxIf1F+5MKbH4sR+xiqxhqxdP9N3Y3M1
-         4ptQ==
-X-Gm-Message-State: APjAAAU3BXCWPp0YKrqyaQlKb8FlLESBvJiZM0g9qlvdKali0+qU45r0
-        enuM/B/XEaqjocfIPg9oGXrjgRI=
-X-Google-Smtp-Source: APXvYqyOIN+EpGdrdT3UzhFyy/Yxq4YBabLZTVQhvr2s4vIemWmrK0rh95DBsy/gY0XNdXQXvs9v6A==
-X-Received: by 2002:a92:5805:: with SMTP id m5mr72823184ilb.59.1578099788029;
-        Fri, 03 Jan 2020 17:03:08 -0800 (PST)
-Received: from rob-hp-laptop ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id y75sm21415143ill.87.2020.01.03.17.03.06
-        for <linux-kernel@vger.kernel.org>
+        bh=hh5F5krN3LWZxGpDu/50qQGTG2uQZAPCOnhR4ARYHnA=;
+        b=hXIAoB67Hy6aP7Hkvzx9kheuCYPTCcopTCLQBUZsntOL6a0qEdVQyc5fz+jhIId8dW
+         MnET1bwnA1O+vktB7vD/yC0+QZx+ed8544/va+3x3aG7kFRrvzyTpVLbjT3lFmrihTIh
+         xrXivV7u+dYv86y8AgO7WxjcxxtOWBfP/lurihI6DIiAdoc8bX9spGbTzbLuYh5uVu8q
+         kjUYizMr9L9AAl5VQHxun5uZX9Vqrc6uBiuRsubLbCOMmvP378jcHkf+f+8bMbviZM2g
+         DlQE9UTOYgA5jKUQrGGGk+K5rx6fVgjkP72CmnlVJHsKHhZpDn8wenqI34DdQEo4kKl3
+         HYSQ==
+X-Gm-Message-State: APjAAAWYW84IJ8HhZYm/4RiAiSgYJy9nyPZ9v/WDcJ8u5InuGCYEprPX
+        2n2J+KRLaR9vRQ36sXZf5W8=
+X-Google-Smtp-Source: APXvYqxFJfgqzwZLGeNy/ZJ7uwLIZYqpJ5ReT8WcytV/ZU1T8cjzuwVWVKVSzG41OObvyaMPzwD4fA==
+X-Received: by 2002:ac8:461a:: with SMTP id p26mr64146952qtn.317.1578099959734;
+        Fri, 03 Jan 2020 17:05:59 -0800 (PST)
+Received: from localhost ([2604:2000:4185:2300:b196:4884:e960:2cb8])
+        by smtp.gmail.com with ESMTPSA id v67sm14733627qkh.46.2020.01.03.17.05.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jan 2020 17:03:07 -0800 (PST)
-Received: from rob (uid 1000)
-        (envelope-from rob@rob-hp-laptop)
-        id 2219b7
-        by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Fri, 03 Jan 2020 18:03:05 -0700
-Date:   Fri, 3 Jan 2020 18:03:05 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Beniamin Bia <beniamin.bia@analog.com>
-Cc:     linux-hwmon@vger.kernel.org, Michael.Hennerich@analog.com,
-        linux-kernel@vger.kernel.org, jdelvare@suse.com,
-        linux@roeck-us.net, mark.rutland@arm.com, lgirdwood@gmail.com,
-        broonie@kernel.org, devicetree@vger.kernel.org,
-        biabeniamin@outlook.com, Beniamin Bia <beniamin.bia@analog.com>
-Subject: Re: [PATCH v2 2/3] dt-binding: hwmon: Add documentation for ADM1177
-Message-ID: <20200104010305.GA21152@bogus>
-References: <20191219114127.21905-1-beniamin.bia@analog.com>
- <20191219114127.21905-2-beniamin.bia@analog.com>
+        Fri, 03 Jan 2020 17:05:59 -0800 (PST)
+Date:   Fri, 3 Jan 2020 17:05:58 -0800
+From:   Yury Norov <yury.norov@gmail.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Yury Norov <yury.norov@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] lib/find_bit.c: uninline helper _find_next_bit()
+Message-ID: <20200104010558.GA26661@yury-thinkpad>
+References: <20200103202846.21616-1-yury.norov@gmail.com>
+ <20200103202846.21616-3-yury.norov@gmail.com>
+ <e76bdf736141d5a390e57f2bc8f6f6f9fbe574c1.camel@perches.com>
+ <20200104000843.GA23653@yury-thinkpad>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191219114127.21905-2-beniamin.bia@analog.com>
+In-Reply-To: <20200104000843.GA23653@yury-thinkpad>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Dec 2019 13:41:26 +0200, Beniamin Bia wrote:
-> Documentation for ADM1177 was added.
+On Fri, Jan 03, 2020 at 04:08:43PM -0800, Yury Norov wrote:
+> On Fri, Jan 03, 2020 at 01:46:07PM -0800, Joe Perches wrote:
+> > On Fri, 2020-01-03 at 12:28 -0800, Yury Norov wrote:
+> > > It saves 25% of .text for arm64, and more for BE architectures.
+> > 
+> > This seems a rather misleading code size reduction description.
+> > 
+> > Please detail the specific code sizes using "size lib/find_bit.o"
+> > before and after this change.
 > 
-> Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
-> ---
-> Changes in v2:
-> -adi,r-sense-micro-ohms: replaced by shunt-resistor-micro-ohms 
->  .../bindings/hwmon/adi,adm1177.yaml           | 66 +++++++++++++++++++
->  1 file changed, 66 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/hwmon/adi,adm1177.yaml
+> Before:
+> $ size lib/find_bit.o
+>    text    data     bss     dec     hex filename
+>    1012      56       0    1068     42c lib/find_bit.o
 > 
+> After:
+> $ size lib/find_bit.o
+>    text    data     bss     dec     hex filename
+>     776      56       0     832     340 lib/find_bit.o
+> 
+> > Also, _find_next_bit is used 3 times, perhaps any code size
+> > increase is appropriate given likely reduced run time.
+> 
+> Second patch of the series switches find_next_zero_bit_le()
+> and find_next_bit_le() to _find_next_bit(), so totally 5.
+>  
+> Yury
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> > perhaps any code size
+> > increase is appropriate given likely reduced run time.
+
+I have a benchmark for the find_bit functions upstream, however, it cannot
+measure the overall performance degradation related to increased probability
+of cache eviction.
+
+When I originally wrote _find_next_bit() in 2014, it was simpler and had 2
+users. Now there are 5 of them, and I think it's good time to stop inlining
+_find_next_bit().
+
+Yury
