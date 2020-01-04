@@ -2,70 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94A6F1302D3
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 16:03:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C311B1302C5
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 16:02:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbgADPDW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 10:03:22 -0500
-Received: from conuserg-10.nifty.com ([210.131.2.77]:53555 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725924AbgADPDB (ORCPT
+        id S1726054AbgADPCa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 10:02:30 -0500
+Received: from pindarots.xs4all.nl ([82.161.210.87]:34642 "EHLO
+        pindarots.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725924AbgADPCa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 10:03:01 -0500
-Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id 004F2gcT018492;
-        Sun, 5 Jan 2020 00:02:44 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com 004F2gcT018492
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1578150165;
-        bh=zUVXeIJTFh9cAI4ZnqdgT2rf+tWF/1NubRKRJEqQ8Kg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rAyxLQ4/E572t2vCiQaRi2R2U2etpr+ZmpTWNAjOFGt2MBPHtOxYvL0HyWveKyqqI
-         BlLc/KPzbaeOihMRogi4t/fTJg6tv+PBUylrDGJtVSFSM+khAarrENp7etVvIXsVNP
-         8CtGKwwiTN5m/mUUl2KxWaY8/froJmdSSiZo98QdKInhCOVhHF62pPGQdQhFNXiRF/
-         CxCaTEo8DCDvLa+3DXYezg0NhSfgwJIZVU+Wvdk2oqJ6nesx15EkzdoZfLWmyrEvKQ
-         NW9xNYERMA/HKt+LVu8UM2jTLGVJA4uNIkW6y7JifD6Ydvf/x1CCOe9GuwkG5CKdVe
-         rtmgzaqjqyhEA==
-X-Nifty-SrcIP: [126.93.102.113]
-From:   Masahiro Yamada <masahiroy@kernel.org>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <masahiroy@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 03/13] gen_initramfs_list.sh: fix the tool name in the comment
-Date:   Sun,  5 Jan 2020 00:02:28 +0900
-Message-Id: <20200104150238.19834-4-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200104150238.19834-1-masahiroy@kernel.org>
-References: <20200104150238.19834-1-masahiroy@kernel.org>
+        Sat, 4 Jan 2020 10:02:30 -0500
+Received: from surfplank2.hierzo (localhost.localdomain [127.0.0.1])
+        by pindarots.xs4all.nl (8.15.2/8.14.5) with ESMTPS id 004F2SeW040032
+        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO)
+        for <linux-kernel@vger.kernel.org>; Sat, 4 Jan 2020 16:02:28 +0100
+Subject: Re: 5.4.7: WARNING: CPU: 4 PID: 30 at kernel/rcu/tree.c:2211
+ rcu_core+0x3f7/0x450
+From:   Udo van den Heuvel <udovdh@xs4all.nl>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <3d77ca55-9da5-6cfe-ba88-f76e10213e62@xs4all.nl>
+Autocrypt: addr=udovdh@xs4all.nl; prefer-encrypt=mutual; keydata=
+ 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
+ JjyRAfO8kEkwCkTZ6/Mnrxsunx9VNLGDEw==
+Organization: hierzo
+Message-ID: <1c1fe83d-4173-f4a0-71d2-8b07a718f5f6@xs4all.nl>
+Date:   Sat, 4 Jan 2020 16:02:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
+MIME-Version: 1.0
+In-Reply-To: <3d77ca55-9da5-6cfe-ba88-f76e10213e62@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no tool named "gen_initramfs". The correct name is
-"gen_init_cpio".
+On 02-01-2020 18:01, Udo van den Heuvel wrote:
+(...)
+> 
+> What happend here?
+> Is it a bug?
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+It appears to happen more than once:
 
-Changes in v2: None
+[  246.911694] ------------[ cut here ]------------
+[  246.911705] WARNING: CPU: 3 PID: 25 at kernel/rcu/tree.c:2211
+rcu_core+0x3f7/0x450
+[  246.911706] Modules linked in: fuse mq_deadline ip6t_REJECT
+nf_reject_ipv6 xt_state ip6table_filter ip6_tables
+nf_conntrack_netbios_ns nf_conntrack_broadcast xt_MASQUERADE iptable_nat
+nf_nat ipt_REJECT nf_reject_ipv4 xt_u32 xt_multiport xt_tcpudp
+xt_conntrack nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 msr it87
+hwmon_vid iptable_filter uvcvideo videobuf2_vmalloc snd_usb_audio
+videobuf2_memops videobuf2_v4l2 snd_hwdep videodev snd_usbmidi_lib
+videobuf2_common snd_rawmidi cdc_acm snd_hda_codec_realtek
+snd_hda_codec_generic snd_hda_intel snd_intel_nhlt snd_hda_codec
+snd_hda_core snd_seq k10temp snd_seq_device snd_pcm i2c_piix4 snd_timer
+snd bfq evdev acpi_cpufreq binfmt_misc ip_tables x_tables hid_generic
+sr_mod cdrom usbhid aesni_intel amdgpu gpu_sched ttm i2c_dev autofs4
+[  246.911746] CPU: 3 PID: 25 Comm: ksoftirqd/3 Tainted: G        W
+    5.4.7 #9
+[  246.911748] Hardware name: Gigabyte Technology Co., Ltd. X570 AORUS
+PRO/X570 AORUS PRO, BIOS F11 12/06/2019
+[  246.911750] RIP: 0010:rcu_core+0x3f7/0x450
+[  246.911754] Code: fd ff ff 48 2b 15 49 13 f6 00 48 39 c2 7e 07 48 89
+83 b0 00 00 00 48 8b 43 50 48 85 c0 75 c7 0f 0b eb c3 0f 0b e9 59 fc ff
+ff <0f> 0b eb b8 48 8b 15 26 13 f6 00 48 89 93 c0 00 00 00 e9 72 ff ff
+[  246.911756] RSP: 0018:ffff9df7801d7e18 EFLAGS: 00010006
+[  246.911758] RAX: 000000397e6650ca RBX: ffff8ba4df0dee80 RCX:
+ffff8ba4a056d590
+[  246.911759] RDX: 0000000000000000 RSI: ffff9df7801d7e18 RDI:
+ffff8ba4df0deed0
+[  246.911761] RBP: ffff8ba4df0deed0 R08: 0000000000000000 R09:
+0000000000000100
+[  246.911762] R10: 0000000000000002 R11: 0000000000000000 R12:
+0000000000000246
+[  246.911763] R13: ffff8ba4ddf410c0 R14: 0000000000000000 R15:
+0000000000000000
+[  246.911765] FS:  0000000000000000(0000) GS:ffff8ba4df0c0000(0000)
+knlGS:0000000000000000
+[  246.911766] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  246.911768] CR2: 00007ff60f06ffe0 CR3: 00000003d179c000 CR4:
+00000000003406e0
+[  246.911769] Call Trace:
+[  246.911777]  __do_softirq+0xfc/0x247
+[  246.911783]  run_ksoftirqd+0x21/0x30
+[  246.911787]  smpboot_thread_fn+0x195/0x230
+[  246.911789]  ? sort_range+0x20/0x20
+[  246.911792]  kthread+0x118/0x130
+[  246.911795]  ? kthread_create_worker_on_cpu+0x60/0x60
+[  246.911797]  ret_from_fork+0x22/0x40
+[  246.911800] ---[ end trace 6f223c45fc8e7e99 ]---
 
- usr/gen_initramfs_list.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/usr/gen_initramfs_list.sh b/usr/gen_initramfs_list.sh
-index 909a7b865aa7..1fd93414fb37 100755
---- a/usr/gen_initramfs_list.sh
-+++ b/usr/gen_initramfs_list.sh
-@@ -189,7 +189,7 @@ dir_filelist() {
- 
- # if only one file is specified and it is .cpio file then use it direct as fs
- # if a directory is specified then add all files in given direcotry to fs
--# if a regular file is specified assume it is in gen_initramfs format
-+# if a regular file is specified assume it is in gen_init_cpio format
- input_file() {
- 	source="$1"
- 	if [ -f "$1" ]; then
--- 
-2.17.1
-
+Kind regards,
+Udo
