@@ -2,85 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D52013000C
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 03:04:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9D74130015
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 Jan 2020 03:08:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727257AbgADCEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 Jan 2020 21:04:43 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:43093 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727189AbgADCEm (ORCPT
+        id S1727267AbgADCIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 Jan 2020 21:08:53 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:39829 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727141AbgADCIw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Jan 2020 21:04:42 -0500
-Received: by mail-lf1-f67.google.com with SMTP id 9so32996281lfq.10;
-        Fri, 03 Jan 2020 18:04:41 -0800 (PST)
+        Fri, 3 Jan 2020 21:08:52 -0500
+Received: by mail-pj1-f67.google.com with SMTP id t101so5378565pjb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Jan 2020 18:08:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DP1fYoznEacFSbgWsSDZL+rwUQxQG8vzPv53EveY774=;
-        b=ENw57qnUM0Ch8wLUwrLe0Lhf0ax96F+wK9PrLkOSXC9hQkS9xluescyFCdr7bG4Twq
-         U7KgCZ/+R28tGTo/Pe09DwKX9piauepr8pDeEdYeOhpt7AluAGpAhD8BWac9nCJDqvzp
-         +BW9G4twPl5CUD8+4LsHs5sI3waUDns3Kygx9LqNlTvIAbDSmzjSjYjH1C1wos8F6fl6
-         cBxfcD6bZTdztSDMu9vKRvbnNJELYatMk/3t9JDKYPZogages1aI6PxkbLLNyrI9xWe8
-         4rqeRsZ/6fuuQZp+PtAeMPBTyLDIDoRq6h1HFD5e+j9THOyK3BH4ZJq6lSHn0cosnPSX
-         3ZNQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zXEe3WcWiJE+Ho4BlR/nUq6/fS0/xrpLIcfb3zFC9CE=;
+        b=t6a8T5SUz+8xdRkaPVEKxGbCytJ4SR2QQRtmSYQeBFymQdPkGQDPbCc+98EKmKZ/J2
+         n3SAdn7YPQgWoUplaKbuQybkR/pk/x6TJ5aJIUhQ83jBMsLjUGeX3wiDVmiardN5Xuf4
+         xt1LYQAjnRGYRv4wrkFGPI49Bbs5fZlST+lzAmz5O2CeiZ3f9AP4/e3HPMcd2mxycf9z
+         hmBMxGP254FElbLTsBLtpJWyt4OYGdaD7FZ9T4PlrF0MxORki7bKa2s+aXvAsZlswceJ
+         HM/KU6wAn0CAp1I65uEH4IuVtF76d0CVhm7/fay+iNHkdO2Hap2xWQrhAh95HaczsoKn
+         xW2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DP1fYoznEacFSbgWsSDZL+rwUQxQG8vzPv53EveY774=;
-        b=FcD5inX0Asg+UMn+GQV+e2bAbOiQVBA9F0IW/Ss+bqUfT+X0n1pSs+s2MCeU2TO1jH
-         Yho+EN8jotbLtDfWa5U9WIUI3TZmrftO/Zo+baVtThoYyS5AMmmgPHPbWyYkfuABjGcJ
-         qgMVYQ7S4WMRk+OwGjb3FqohuPvcwYduTIQqYYVC3LaKlH3FueH6SU1YERYnaOJorn+3
-         uyLDyPZsn2Bwadd8+9wVSyRELMn4ITUzicHMiGpRiN/+mw/CB+1cMWQwrR8++YkGL9AF
-         JXiQJvwTmIEsG+NPQ0c56EVq7Wn6+cMp5zIi7sz4tHh1DKfrGa/puMBJujh/+QPngeHN
-         80Hw==
-X-Gm-Message-State: APjAAAV3A0q/UC6l1EtZhV8F5pYJXv+QKxvEDywDCzTsV6iRsY9u8Jq0
-        SFnMOQTRNb16NoCMZo9MYUUZTRG9
-X-Google-Smtp-Source: APXvYqz/P3UeuIynbTD2ACZJlI96d20BxjSLSMXbG6FDOyMTE8bhGAkaJyn6xBZGCOqVbhw89Cl+EQ==
-X-Received: by 2002:ac2:46dc:: with SMTP id p28mr51678437lfo.23.1578103480073;
-        Fri, 03 Jan 2020 18:04:40 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id e8sm30021439ljb.45.2020.01.03.18.04.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Jan 2020 18:04:39 -0800 (PST)
-Subject: Re: [PATCH v3 01/16] dt-binding: usb: ci-hdrc-usb2: Document NVIDIA
- Tegra support
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191228203358.23490-1-digetx@gmail.com>
- <20191228203358.23490-2-digetx@gmail.com> <20200104003341.GA5889@bogus>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b24a37f2-1515-9586-ae87-864272b87410@gmail.com>
-Date:   Sat, 4 Jan 2020 05:04:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zXEe3WcWiJE+Ho4BlR/nUq6/fS0/xrpLIcfb3zFC9CE=;
+        b=CF/VXOigHm8v6GcCgD4PsKNpbOCH+j+0+8tKWdccD1GoD9vR3PomxP7TXZX+JOTQHN
+         Vu7JtTYBD/tDaOy79sOkzWPsnwR+pMaxTLOcWnRyhNWuIGxun3KvxUoEM/ZtoP8RJyZD
+         AHt8Lu4MaS7ClGUbKTcyPnb7h84xOYxaQSt0dNkjDwRRLxJZ7Ly4L4Eood833caSXB/V
+         7O3vEHBlMVZyLJ6mstGv2WXDDVgE2Pvih2QsJbfKQvxe092JtJYaP6I2fm57qbSA67OB
+         8Pwtz8nAIIWF1Jntzx2jWQcAwBM6d12CXEorikpVirUdmoqL0umQ5YYaBtk9J3o6EeQS
+         zfsQ==
+X-Gm-Message-State: APjAAAU9KcH0Ds5Llu2jmqwa8gt+tFP5pACzYAlMCLevR1Uue9+w5AGg
+        bTPoUZzb4Xl/UcSP47BVpR9Eiw==
+X-Google-Smtp-Source: APXvYqz409Hxwt/ZbE6ZIVbYQT2+dH39bMO/CornhKy6+4WLrmFYSYqsSa/snmKmI5dVehqlajfi8w==
+X-Received: by 2002:a17:902:5a83:: with SMTP id r3mr96772476pli.145.1578103731911;
+        Fri, 03 Jan 2020 18:08:51 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id y128sm67099181pfg.17.2020.01.03.18.08.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Jan 2020 18:08:51 -0800 (PST)
+Date:   Fri, 3 Jan 2020 18:08:49 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     Elliot Berman <eberman@codeaurora.org>, agross@kernel.org,
+        swboyd@chromium.org, saiprakash.ranjan@codeaurora.org,
+        tsoni@codeaurora.org, sidgup@codeaurora.org,
+        psodagud@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/17] Restructure, improve target support for
+ qcom_scm driver
+Message-ID: <20200104020849.GR3755841@builder>
+References: <0101016efb7349c0-3c8f33b3-f7d2-46df-9bbb-c8f4401c5bf2-000000@us-west-2.amazonses.com>
+ <20200104015654.GA30866@onstation.org>
 MIME-Version: 1.0
-In-Reply-To: <20200104003341.GA5889@bogus>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200104015654.GA30866@onstation.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-04.01.2020 03:33, Rob Herring пишет:
-> On Sat, 28 Dec 2019 23:33:43 +0300, Dmitry Osipenko wrote:
->> NVIDIA Tegra SoCs use ChipIdea silicon IP for the USB controllers.
->>
->> Acked-by: Peter Chen <peter.chen@nxp.com>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
+On Fri 03 Jan 17:56 PST 2020, Brian Masney wrote:
+
+> On Thu, Dec 12, 2019 at 06:51:07PM +0000, Elliot Berman wrote:
+> > This series improves support for 32-bit Qualcomm targets on qcom_scm driver and cleans
+> > up the driver for 64-bit implementations.
+> > 
+> > Currently, the qcom_scm driver supports only 64-bit Qualcomm targets and very
+> > old 32-bit Qualcomm targets. Newer 32-bit targets use ARM's SMC Calling
+> > Convention to communicate with secure world. Older 32-bit targets use a
+> > "buffer-based" legacy approach for communicating with secure world (as
+> > implemented in qcom_scm-32.c). All arm64 Qualcomm targets use ARM SMCCC.
+> > Currently, SMCCC-based communication is enabled only on ARM64 config and
+> > buffer-based communication only on ARM config. This patch-series combines SMCCC
+> > and legacy conventions and selects the correct convention by querying the secure
+> > world [1].
+> > 
+> > We decided to take the opportunity as well to clean up the driver rather than
+> > try to patch together qcom_scm-32 and qcom_scm-64.
+> > 
+> > Patches 1-3 and 15 improve macro names, reorder macros/functions, and prune unused
+> >             macros/functions. No functional changes were introduced.
+> > Patches 4-8 clears up the SCM abstraction in qcom_scm-64.
+> > Patches 9-14 clears up the SCM abstraction in qcom_scm-32.
+> > Patches 16-17 enable dynamically using the different calling conventions.
 > 
-> Acked-by: Rob Herring <robh@kernel.org>
+> I tested this whole series on arm32 (msm8974) and everything looks good
+> from my vantage point. Feel free to add my:
+> 
+> Tested-by: Brian Masney <masneyb@onstation.org> # arm32
 > 
 
-Thanks!
+Much appreciated Brian!
+
+Thanks,
+Bjorn
