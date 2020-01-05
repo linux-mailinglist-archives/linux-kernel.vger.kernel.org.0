@@ -2,107 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3F7A130553
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Jan 2020 02:19:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF67F13056E
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Jan 2020 02:25:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbgAEBT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 20:19:28 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33483 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbgAEBT1 (ORCPT
+        id S1727224AbgAEBZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 20:25:01 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:38875 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726205AbgAEBYS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 20:19:27 -0500
-Received: by mail-ot1-f68.google.com with SMTP id b18so44681727otp.0;
-        Sat, 04 Jan 2020 17:19:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=rjpqbK93O/iu5o//OmgzmyGJYgPRsECTez5RhFbPj4o=;
-        b=Hqpa6/nFMt1k6Gacb/LNwp7rvTpRgL96QMH2uL2Mvi2jOAk1KerRRAvklfHVZvReYD
-         91VPWQLdhtrbwEw10Mg0bO3VH9jI7Sk9vhp4Qh8YKHQx+wU/rVwfrrzhekSIVl+GJ4MW
-         ET8Vv/SmK6dxspqTTZR8JPpr3Li1VFK8p54X3xa6ucd23uiJlW8TCvXE8h4EJMeplk7z
-         jQARTTMTedqp+AREiD/XcaUjKVk72yu90lWgxzUWoyt8c46jYSvvmZQBy7hizMz6/4rt
-         fuXdHhIkcAihhYErtRKj993KME6Ci+shJVKflL5hiAYDcJ0mTYCc3ev+GvbVkOlXerTW
-         v0cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=rjpqbK93O/iu5o//OmgzmyGJYgPRsECTez5RhFbPj4o=;
-        b=rfV5sYzqAbE1a/jtkhRe4GScWpVqjIJcnpBa6gExZVb3xisD6P3HRXl/BV+e5FLVks
-         9HevBcV+8qsyFTFxGrm/eyhhC4mvQIOttdLQS3vG4qnixKdjsZYExq922uUMHvBINDTk
-         MX36mVeWL1bMJePGQpNEuIYd4XS2d529Ykv7W9QgILyNz9B9R3g5/KKu3XqSXCST2w7Z
-         WgrhV+yGg52OPveWMgs/wkTSfwuEGAAF+dpCUWYWbfFD+rtE+LUQTcX2tqYAJl8qm1fi
-         gCQ/LQIbaEjZArz+p0iD+F7l98RTT8riXJNZC0vQqS+mFVC3+/q8F50RhCprbUO7RxN9
-         6CbA==
-X-Gm-Message-State: APjAAAXZspQbUyst6OHgBluq/42CFYA1AYWR7BgCayYKjUH036+5v/yZ
-        0adEicJw8l5KZhh0W8fVVKOD1Oi8jqCtbKmStTE=
-X-Google-Smtp-Source: APXvYqwP+k+lkGBdLKIyu1Aozce9RaFYCdw7nnPyhgRnq8iNFacAvNb58GSAazI6o1ej8726b6Y9SX3w9f4jODeLw/M=
-X-Received: by 2002:a9d:6c92:: with SMTP id c18mr92355757otr.157.1578187166437;
- Sat, 04 Jan 2020 17:19:26 -0800 (PST)
+        Sat, 4 Jan 2020 20:24:18 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 4A79C21B6A;
+        Sat,  4 Jan 2020 20:24:17 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sat, 04 Jan 2020 20:24:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm1; bh=GKK6wqE4U1lTliVglqZDNGDO+1
+        0THmTKZg0GRYtue70=; b=Yz/15x6bvTrs+8MyRAf6WIx/31jwMPNCmSpJv+UFxI
+        O1VQsQW22vxWmN1dVGOPYf2cztd0iMQUqDYp2cMUldC7bys7IgDUb/pE5VZdpdAh
+        dOs11XzoLpL2ews0EuE4kMEF+cjZEsG22YJpeyUAS1Gx7w13u4jtotVOxJjPFyej
+        cKh5YV80Li8isHROhBxv5g0v5K105YYjS1fL4SyN8uiPV9Z+MipsPHXMqQMYGGaW
+        SiPk4JS7jpWztSqyploZBPDfraxQmDBUHDMkc0r3YQphGuhyUiiI5s4gaXi7LuCK
+        8O4GTg9gFz0vA15rV0G2AWFn0490N6VzSnN9LMsrin7w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=GKK6wqE4U1lTliVgl
+        qZDNGDO+10THmTKZg0GRYtue70=; b=nhkAjP3WTI3+wuu1os8CTZAxHbz9OqDDK
+        Igi9BZlfz/V5q43owWwXZPpYahvBfyopwkRry6vpC0MjTtYj1o086ScHoHHvLOsT
+        uJhLn5RRGHsLWkqJxW3b0aZ5bPRgqm+kXCHHfKmc7JoXNeoS2bUoJOnOPZeLgWuJ
+        EWTptDNTSYZkRu0PX72+AFp5EmeU9ntzKEzH1i0KuXBr+EsiBmh+AkGz7BEjHRS3
+        0qzbRy0KHGEOL8T3yzOyUQAJEKjESPhOPJP/qcEkLZKZyQOYIz3L+N/gEot9Olg6
+        55llBVraOll/ZTuN5MPxKwg5ChjpkyhbHWLKtD/Uxr+p6bGn455gA==
+X-ME-Sender: <xms:wDoRXv3MPrtKB6dgPteitwwoMHHxvvSmsNIEGaoZITAjjcLGIQcv-w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdegiedgfeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgvlhcu
+    jfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucfkphepje
+    dtrddufeehrddugeekrdduhedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghmuhgv
+    lhesshhhohhllhgrnhgurdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:wDoRXhAeDaGg_SDgRU--beqAwqvd0BZrLJBeQExgckxmzBmxh1loAQ>
+    <xmx:wDoRXmped2Wrg1Pzl_um9F5bhsBREE9f4DSW3HQgcnQ_Ic0zkaZ7Kg>
+    <xmx:wDoRXu_rOFhwIz1f8_hxs0orq7KM4u6xwEHbpDbsBBJB1VnKY8PTaQ>
+    <xmx:wToRXlvCI7zTeQTxhlv-uSfv2bESCx2gxbnFgIe1T94OTNe7-4KxNg>
+Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id AE0438005C;
+        Sat,  4 Jan 2020 20:24:15 -0500 (EST)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Chen-Yu Tsai <wens@csie.org>, Sebastian Reichel <sre@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Oskari Lemmela <oskari@lemmela.net>,
+        Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
+Subject: [PATCH v2 0/9] X-Powers Power Supply Improvements
+Date:   Sat,  4 Jan 2020 19:24:07 -0600
+Message-Id: <20200105012416.23296-1-samuel@sholland.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <20200103234725.22846-1-kpsingh@chromium.org> <F25C9071-A7A7-4221-BC49-A769E1677EE1@amacapital.net>
-In-Reply-To: <F25C9071-A7A7-4221-BC49-A769E1677EE1@amacapital.net>
-From:   Justin Capella <justincapella@gmail.com>
-Date:   Sat, 4 Jan 2020 17:19:14 -0800
-Message-ID: <CAMrEMU-8KizWmgmYHzu8B++HOyfvC-2LF4KP7ibZki_q-_JrxA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: Make trampolines W^X
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org,
-        x86@kernel.org, linux-security-module@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Halcrow <mhalcrow@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm guessing 2 pages are used to allow for different protections? Does
-only the first page's protections need to be changed? Is that
-"old_image"?
+This series adds some improvements to the axp20x* power supply drivers
+to better support suspend/resume and use on mobile devices.
 
-+       set_memory_nx((unsigned long)image, 1);
-+       set_memory_rw((unsigned long)image, 1);
+The first two patches fix bugs I found while testing the ONLINE control
+added in later patches.
 
-+       set_memory_ro((unsigned long)new_image, 1);
-+       set_memory_x((unsigned long)new_image, 1);
+Patches 3 and 7 allow userspace to take the power supplies offline.
+Patches 4 and 8 allow userspace to control the wakeup behavior.
 
-Because
+Patch 9 avoids polling USB VBUS presence when possible. While working on
+the RSB driver, I was seeing ~50 transfers per second, while idle and
+tracked it down to this VBUS polling (20 reads/second). The polling
+often caused the CPU to clock up and back down, which triggered the
+remaining transfers (changes to the CPU voltage).
 
-+       void *old_image =3D tr->image + ((tr->selector + 1) & 1) * PAGE_SIZ=
-E;
-+       void *new_image =3D tr->image + (tr->selector & 1) * PAGE_SIZE
+Unfortunately, I don't see a way to avoid the polling when running on
+battery (where it matters most), other than to move the polling back to
+the USB PHY driver.
 
+Changes since v1:
+ - Add patches 1-2
+ - Shift value properly in calls to regmap_update_bits (3, 7)
+ - Use #ifdef instead of #if to avoid -Wundef warnings (4, 8)
+ - Poll once after an IRQ, instead of setting power->online in the IRQ (9)
+ - Poll once on resume, in case the state changed during suspend (9)
 
-> > - Mark the memory as read-only (set_memory_ro)
-> > - Mark the memory as executable (set_memory_x)
->
-> No, thanks. There=E2=80=99s very little excuse for doing two IPI flushes =
-when one would suffice.
+Samuel Holland (9):
+  mfd: axp20x: Mark AXP20X_VBUS_IPSOUT_MGMT as volatile
+  power: supply: axp20x_ac_power: Fix reporting online status
+  power: supply: axp20x_ac_power: Allow offlining
+  power: supply: axp20x_ac_power: Add wakeup control
+  power: supply: axp20x_usb_power: Remove unused device_node
+  power: supply: axp20x_usb_power: Use a match structure
+  power: supply: axp20x_usb_power: Allow offlining
+  power: supply: axp20x_usb_power: Add wakeup control
+  power: supply: axp20x_usb_power: Only poll while offline
 
-If there were checks between these steps to verify the trampoline
-wasn't tampered with while the page was writable it would make sense
-to do so before enabling execution.
+ drivers/mfd/axp20x.c                    |   2 +-
+ drivers/power/supply/axp20x_ac_power.c  | 131 +++++++++++---
+ drivers/power/supply/axp20x_usb_power.c | 220 ++++++++++++++++++------
+ 3 files changed, 276 insertions(+), 77 deletions(-)
 
-Could some of these int's be unsigned to be extra cautious?
+-- 
+2.23.0
 
-One last thought, if the extra checks are implemented, maybe comparing
-against the old image prior to setting rw would be worthwhile?
