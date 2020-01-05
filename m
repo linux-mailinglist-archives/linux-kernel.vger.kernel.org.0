@@ -2,65 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B80D6130662
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Jan 2020 08:02:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6A81130663
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Jan 2020 08:02:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725990AbgAEHCJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 02:02:09 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:34890 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbgAEHCJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 02:02:09 -0500
-Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id 00570Vd5025147;
-        Sun, 5 Jan 2020 16:00:31 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com 00570Vd5025147
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1578207632;
-        bh=aQWA9Wh+CP+a7XG9Z34xhxqGyAotNfwR+iGU1r9t/jE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=wSbSvN2j+w1+6m9KA5SJxkopWYj2dDvR+iI9lH5mdREdTUiQrswh5Y7n8Whgnr7q1
-         +64XQTbV7gVU29uijD8KklSBlxdWEZLBub4dykx2ymdILxg2Sv7E5BXjHCyl0t3jJ9
-         jzs5B9SDzb2+aDrTeZ9R700Vd3lnbGfQPztn6OmESEhs535UjTAxN1P6DeP2lLX3iN
-         P3jfnacjqtomoQWVKspINuWYdsjGyPsMJLBh6hpCtTFB1KRhpv5Au0OqU9FXLGn9Xg
-         t/avrQUxR4mtxXeWgfNAY3Jun0BI+g2lKs8Kw8wKU4Fe7XJCWat0A3OcaN78CS80uM
-         6HCBKnu/E88ZQ==
-X-Nifty-SrcIP: [126.93.102.113]
-From:   Masahiro Yamada <masahiroy@kernel.org>
-To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        ocfs2-devel@oss.oracle.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ocfs2: remove unneeded header include path in fs/ocfs2/Makefile
-Date:   Sun,  5 Jan 2020 16:00:23 +0900
-Message-Id: <20200105070023.27806-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        id S1726351AbgAEHCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 02:02:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43892 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725535AbgAEHCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Jan 2020 02:02:44 -0500
+Received: from rapoport-lnx (nesher1.haifa.il.ibm.com [195.110.40.7])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D18BF20866;
+        Sun,  5 Jan 2020 07:02:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578207763;
+        bh=N3XRiR7CmsQsVRLAZucAVOasILmNQQtZLni2nmDCmMo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qeY1BTDvcMglSfXPB93lsmipOPUh4PNjZC6fWuH5QzMqHnAPA3+2hlmcdx+b1gRzJ
+         lVvv+2qHHqoS5jJwn8LfdfPQ5omY1KB3swSZcxqQ0Nd5/OhBvhqlldib8qkKniVQEx
+         DU4N5PvpX68p/g65Qjsoli11Bf62jl1BtfpwHj9g=
+Date:   Sun, 5 Jan 2020 09:02:37 +0200
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     linuxppc-dev@lists.ozlabs.org, Paul Mackerras <paulus@samba.org>,
+        linux-mm@kvack.org, Mike Rapoport <rppt@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH] powerpc: add support for folded p4d page tables
+Message-ID: <20200105070236.GA7261@rapoport-lnx>
+References: <20191209150908.6207-1-rppt@kernel.org>
+ <20200102081059.GA12063@rapoport-lnx>
+ <20200102174231.Horde.vA_c3sSHB1vhx2H9Ce-i9Q1@messagerie.si.c-s.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200102174231.Horde.vA_c3sSHB1vhx2H9Ce-i9Q1@messagerie.si.c-s.fr>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-You can build fs/ocfs2 without this.
+On Thu, Jan 02, 2020 at 05:42:31PM +0100, Christophe Leroy wrote:
+> Mike Rapoport <rppt@kernel.org> a écrit :
+> 
+> >Any updates on this?
+> 
+> Checkpatch reported several points, see
+> https://patchwork.ozlabs.org/patch/1206344/
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+Well, for the most part checkpatch is unhappy because I've tried to keep
+the changes consistent with the old code. And, there are some lines over 90
+characters that do no seem worth breaking.
 
- fs/ocfs2/Makefile | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/fs/ocfs2/Makefile b/fs/ocfs2/Makefile
-index cc9b32b9db7c..46381d9dd890 100644
---- a/fs/ocfs2/Makefile
-+++ b/fs/ocfs2/Makefile
-@@ -1,5 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
--ccflags-y := -I$(src)
- 
- obj-$(CONFIG_OCFS2_FS) += 	\
- 	ocfs2.o			\
--- 
-2.17.1
-
+> Christophe
+> 
