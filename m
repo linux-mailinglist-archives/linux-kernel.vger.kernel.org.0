@@ -2,102 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96808130757
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Jan 2020 11:48:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6486C13075D
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Jan 2020 11:48:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbgAEKr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 05:47:29 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:61073 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727200AbgAEKr0 (ORCPT
+        id S1726497AbgAEKsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 05:48:03 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:44139 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725938AbgAEKsC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 05:47:26 -0500
-X-UUID: 6aa44d3c98c74eeb9f0c1e78ab4293ac-20200105
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=3mbq9FpjSxSDLEY2w5X2s9Gfj1UKMBPHT8u/FwCDfyk=;
-        b=Wt5c9fV25mF/KFJFOc5ImE3zvuehaP/tlV0EzygatHO1BspQwiF2nPZbJLb6Fkf8yLHOT/A4f7ZL8m7Fc2SmEaFcli4OgBqE+G4dSPduxiVx99Hhvmcs6SLNoJhbKdtMiR339KQwiphmQWMBq5J7E3YWZKscjL8LllIn+4aqU2c=;
-X-UUID: 6aa44d3c98c74eeb9f0c1e78ab4293ac-20200105
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <chao.hao@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1127711607; Sun, 05 Jan 2020 18:47:22 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sun, 5 Jan 2020 18:46:54 +0800
-Received: from localhost.localdomain (10.15.20.246) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sun, 5 Jan 2020 18:45:52 +0800
-From:   Chao Hao <chao.hao@mediatek.com>
-To:     Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     <iommu@lists.linux-foundation.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        Chao Hao <chao.hao@mediatek.com>,
-        Jun Yan <jun.yan@mediatek.com>,
-        Cui Zhang <zhang.cui@mediatek.com>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Anan Sun <anan.sun@mediatek.com>
-Subject: [PATCH v2 19/19] iommu/mediatek: Add multiple mtk_iommu_domain support for mt6779
-Date:   Sun, 5 Jan 2020 18:45:23 +0800
-Message-ID: <20200105104523.31006-20-chao.hao@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20200105104523.31006-1-chao.hao@mediatek.com>
-References: <20200105104523.31006-1-chao.hao@mediatek.com>
+        Sun, 5 Jan 2020 05:48:02 -0500
+Received: by mail-ed1-f67.google.com with SMTP id bx28so45119522edb.11;
+        Sun, 05 Jan 2020 02:48:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QuyX84JqDmDM+0I6dBJwuvVn9myG7QWWOIsvvnZAafc=;
+        b=jkz8yR+7gKud+bPKHnzAYNLSC/Q+bZfy7k/eOB4XIBURQQ3aPKjf/R0cRPxqgFZ5Up
+         i5NFm96rARW4jJ5wTK2Icm4JyiTrqXRr8WpIxaMisUvNb/+pvrjU1M2IOatXWHY1LlS0
+         c1Msfe3hd/G93L7B08WSilsdfPN4+4M2Y3aibRq70qjLC61f9khCYE/uJ4k3ZSyisCV5
+         TLimMx8TruVdSW9gQMxipLQ8DOMyxn+dglMFeafOqpn70N6IGKJx1paoD0mBTEnSXEWO
+         7uMybjLyOd8X8P+u+HwC9mpgkSYGSHjwL3bi6mebSSefYPUWsmxbz/KtKSodR4VdsN8N
+         97DA==
+X-Gm-Message-State: APjAAAUDaVeeXMPh6LD/CI0TYWdV9FZ+4CJ+00Gc8xmomwjX2BvT8VIA
+        QdpBohdEAa4kcapEMjAQxw18pt+YwSw=
+X-Google-Smtp-Source: APXvYqyPgQHyul2vpb2JJWM9wD17iqkjkB0Jxy8QHcuSyAEai2cnCP73JPPsrsB4gXAtyDp2iNBBSQ==
+X-Received: by 2002:aa7:cfcb:: with SMTP id r11mr104889385edy.103.1578221280502;
+        Sun, 05 Jan 2020 02:48:00 -0800 (PST)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com. [209.85.128.41])
+        by smtp.gmail.com with ESMTPSA id bs4sm7910044ejb.39.2020.01.05.02.47.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 Jan 2020 02:48:00 -0800 (PST)
+Received: by mail-wm1-f41.google.com with SMTP id 20so12378506wmj.4;
+        Sun, 05 Jan 2020 02:47:59 -0800 (PST)
+X-Received: by 2002:a05:600c:2046:: with SMTP id p6mr29347016wmg.110.1578221279472;
+ Sun, 05 Jan 2020 02:47:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <20200105012416.23296-1-samuel@sholland.org> <20200105012416.23296-9-samuel@sholland.org>
+In-Reply-To: <20200105012416.23296-9-samuel@sholland.org>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Sun, 5 Jan 2020 18:47:47 +0800
+X-Gmail-Original-Message-ID: <CAGb2v641_yfJ8nE2soPcUhcOGp5vDmcPUpmN=Vr1RrB5RNQkbw@mail.gmail.com>
+Message-ID: <CAGb2v641_yfJ8nE2soPcUhcOGp5vDmcPUpmN=Vr1RrB5RNQkbw@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2 8/9] power: supply: axp20x_usb_power: Add
+ wakeup control
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Oskari Lemmela <oskari@lemmela.net>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rm9yIG10Njc3OSwgaXQgbmVlZCB0byBzdXBwb3J0IHRocmVlIG10a19pb21tdV9kb21haW5zLCBl
-dmVyeQ0KbXRrX2lvbW11X2RvbWFpbidzIGlvdmEgc3BhY2UgaXMgZGlmZmVyZW50Lg0KVGhyZWUg
-bXRrX2lvbW11X2RvbWFpbnMgaXMgYXMgYmVsb3c6DQoxLiBOb3JtYWwgbXRrX2lvbW11X2RvbWFp
-biBleGNsdWRlIDB4NDAwMF8wMDAwfjB4NDdmZl9mZmZmIGFuZA0KICAgMHg3ZGEwXzAwMDB+N2Zi
-Zl9mZmZmLg0KMi4gQ0NVIG10a19pb21tdV9kb21haW4gaW5jbHVkZSAweDQwMDBfMDAwMH4weDQ3
-ZmZfZmZmZi4NCjMuIFZQVSBtdGtfaW9tbXVfZG9tYWluIDB4N2RhMF8wMDAwfjB4N2ZiZl9mZmZm
-Lg0KDQpTaWduZWQtb2ZmLWJ5OiBDaGFvIEhhbyA8Y2hhby5oYW9AbWVkaWF0ZWsuY29tPg0KLS0t
-DQogZHJpdmVycy9pb21tdS9tdGtfaW9tbXUuYyB8IDQ1ICsrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKystLQ0KIDEgZmlsZSBjaGFuZ2VkLCA0MyBpbnNlcnRpb25zKCspLCAyIGRl
-bGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9pb21tdS9tdGtfaW9tbXUuYyBiL2Ry
-aXZlcnMvaW9tbXUvbXRrX2lvbW11LmMNCmluZGV4IGFiMDlmNDM1ZDQzNy4uZDU2MjU0ODgzNTQx
-IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9pb21tdS9tdGtfaW9tbXUuYw0KKysrIGIvZHJpdmVycy9p
-b21tdS9tdGtfaW9tbXUuYw0KQEAgLTEzNCw2ICsxMzQsMzAgQEAgY29uc3Qgc3RydWN0IG10a19k
-b21haW5fZGF0YSBzaW5nbGVfZG9tID0gew0KIAkubWF4X2lvdmEgPSBETUFfQklUX01BU0soMzIp
-DQogfTsNCiANCisvKg0KKyAqIHJlbGF0ZWQgZmlsZTogbXQ2Nzc5LWxhcmItcG9ydC5oDQorICov
-DQorY29uc3Qgc3RydWN0IG10a19kb21haW5fZGF0YSBtdDY3NzlfbXVsdGlfZG9tW10gPSB7DQor
-CS8qIG5vcm1hbCBkb21haW4gKi8NCisJew0KKwkgLm1pbl9pb3ZhID0gMHgwLA0KKwkgLm1heF9p
-b3ZhID0gRE1BX0JJVF9NQVNLKDMyKSwNCisJfSwNCisJLyogY2N1IGRvbWFpbiAqLw0KKwl7DQor
-CSAubWluX2lvdmEgPSAweDQwMDAwMDAwLA0KKwkgLm1heF9pb3ZhID0gMHg0ODAwMDAwMCAtIDEs
-DQorCSAucG9ydF9tYXNrID0ge01US19NNFVfSUQoOSwgMjEpLCBNVEtfTTRVX0lEKDksIDIyKSwN
-CisJCSAgICAgICBNVEtfTTRVX0lEKDEyLCAwKSwgTVRLX000VV9JRCgxMiwgMSl9DQorCX0sDQor
-CS8qIHZwdSBkb21haW4gKi8NCisJew0KKwkgLm1pbl9pb3ZhID0gMHg3ZGEwMDAwMCwNCisJIC5t
-YXhfaW92YSA9IDB4N2ZjMDAwMDAgLSAxLA0KKwkgLnBvcnRfbWFzayA9IHtNVEtfTTRVX0lEKDEz
-LCAwKX0NCisJfQ0KK307DQorDQogc3RhdGljIHN0cnVjdCBtdGtfaW9tbXVfcGd0YWJsZSAqc2hh
-cmVfcGd0YWJsZTsNCiBzdGF0aWMgY29uc3Qgc3RydWN0IGlvbW11X29wcyBtdGtfaW9tbXVfb3Bz
-Ow0KIA0KQEAgLTEwNTAsNiArMTA3NCwyMSBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGRldl9wbV9v
-cHMgbXRrX2lvbW11X3BtX29wcyA9IHsNCiAJU0VUX05PSVJRX1NZU1RFTV9TTEVFUF9QTV9PUFMo
-bXRrX2lvbW11X3N1c3BlbmQsIG10a19pb21tdV9yZXN1bWUpDQogfTsNCiANCitzdGF0aWMgY29u
-c3Qgc3RydWN0IG10a19pb21tdV9yZXN2X2lvdmFfcmVnaW9uIG10Njc3OV9pb21tdV9yc3ZfbGlz
-dFtdID0gew0KKwl7DQorCQkuZG9tX2lkID0gMCwNCisJCS5pb3ZhX2Jhc2UgPSAweDQwMDAwMDAw
-LAkvKiBDQ1UgKi8NCisJCS5pb3ZhX3NpemUgPSAweDgwMDAwMDAsDQorCQkudHlwZSA9IElPTU1V
-X1JFU1ZfUkVTRVJWRUQsDQorCX0sDQorCXsNCisJCS5kb21faWQgPSAwLA0KKwkJLmlvdmFfYmFz
-ZSA9IDB4N2RhMDAwMDAsCS8qIFZQVS9NRExBICovDQorCQkuaW92YV9zaXplID0gMHgyNzAwMDAw
-LA0KKwkJLnR5cGUgPSBJT01NVV9SRVNWX1JFU0VSVkVELA0KKwl9LA0KK307DQorDQogc3RhdGlj
-IGNvbnN0IHN0cnVjdCBtdGtfaW9tbXVfcGxhdF9kYXRhIG10MjcxMl9kYXRhID0gew0KIAkubTR1
-X3BsYXQgICAgID0gTTRVX01UMjcxMiwNCiAJLmhhc180Z2JfbW9kZSA9IHRydWUsDQpAQCAtMTA2
-Myw4ICsxMTAyLDEwIEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgbXRrX2lvbW11X3BsYXRfZGF0YSBt
-dDI3MTJfZGF0YSA9IHsNCiANCiBzdGF0aWMgY29uc3Qgc3RydWN0IG10a19pb21tdV9wbGF0X2Rh
-dGEgbXQ2Nzc5X2RhdGEgPSB7DQogCS5tNHVfcGxhdCA9IE00VV9NVDY3NzksDQotCS5kb21fY250
-ID0gMSwNCi0JLmRvbV9kYXRhID0gJnNpbmdsZV9kb20sDQorCS5yZXN2X2NudCAgICAgPSBBUlJB
-WV9TSVpFKG10Njc3OV9pb21tdV9yc3ZfbGlzdCksDQorCS5yZXN2X3JlZ2lvbiAgPSBtdDY3Nzlf
-aW9tbXVfcnN2X2xpc3QsDQorCS5kb21fY250ID0gQVJSQVlfU0laRShtdDY3NzlfbXVsdGlfZG9t
-KSwNCisJLmRvbV9kYXRhID0gbXQ2Nzc5X211bHRpX2RvbSwNCiAJLmxhcmJpZF9yZW1hcFswXSA9
-IHswLCAxLCAyLCAzLCA1LCA3LCAxMCwgOX0sDQogCS8qIHZwNmEsIHZwNmIsIG1kbGEvY29yZTIs
-IG1kbGEvZWRtYyovDQogCS5sYXJiaWRfcmVtYXBbMV0gPSB7MiwgMCwgMywgMX0sDQotLSANCjIu
-MTguMA0K
+On Sun, Jan 5, 2020 at 9:24 AM Samuel Holland <samuel@sholland.org> wrote:
+>
+> The USB power supply input can be used as a wakeup source. Hook up the
+> VBUS_PLUGIN IRQ to trigger wakeup based on userspace configuration.
+>
+> To do this, we must remember the list of IRQs for the life of the
+> device. To know how much space to allocate for the flexible array
+> member, we switch from using a NULL sentinel to using an array length.
+>
+> Because we now depend on the specific order of the IRQs (we assume
+> VBUS_PLUGIN is first and always present), failing to acquire an IRQ
+> during probe must be a fatal error.
+>
+> To avoid spuriously waking up the system when the USB power supply is
+> not configured as a wakeup source, we must explicitly disable all non-
+> wake IRQs during system suspend. This is because the SoC's NMI input is
+> shared among all IRQs on the AXP PMIC. Due to the use of regmap-irq, the
+> individual IRQs within the PMIC are nested threaded interrupts, and are
+> therefore not automatically disabled during system suspend.
+>
+> The upshot is that if any other device within the MFD (such as the power
+> key) is an enabled wakeup source, all enabled IRQs within the PMIC will
+> cause wakeup. We still need to call enable_irq_wake() when we *do* want
+> wakeup, in case those other wakeup sources on the PMIC are all disabled.
+>
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
