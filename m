@@ -2,127 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 396821308B2
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Jan 2020 16:25:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA5B91308D1
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Jan 2020 16:36:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbgAEPYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 10:24:51 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33039 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbgAEPYv (ORCPT
+        id S1726436AbgAEPgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 10:36:03 -0500
+Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:35147 "EHLO
+        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726212AbgAEPgD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 10:24:51 -0500
-Received: by mail-wr1-f68.google.com with SMTP id b6so47010085wrq.0;
-        Sun, 05 Jan 2020 07:24:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4F9+RY0yU9fqVfTSeicS1qBjnlshzGXW5AwJXhtTU9s=;
-        b=E18QoDhneNFDiyLfRMo2yBdct25MXHmDNVcq2fDINCHw6wdWiuCwG7Fv8YCu+z373m
-         zQ0FfWrp+Pc9Y1Pkrj7Z50QO9TsZbIuGTm9O3adSW70qeoX0YL42SCMioOeJW0XvdCOD
-         6oF7MIufHhxF7babum0iXZvAvBgRi+hJoo3X21mDv5ZhQU9LWbPDWu6vRRC/m39b7jMh
-         clQpzSaNQy7e1yZs8CPlaO5vkHlQMebiFfWEoWB4o46Vfh/FaqO/1XiWV0p6v+3+ckn5
-         a+7sIydrU7OmEsPMG7N3PWu556IRjBt6Hd+dMJR+7fdCYP4NylzAkjI5lpZ7bJYHNSco
-         cfAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4F9+RY0yU9fqVfTSeicS1qBjnlshzGXW5AwJXhtTU9s=;
-        b=FiYj31QT1J5ORY/F+lX7eJ5zOl8Q7KeWkFn9je/T5fpv4J7xLzNIJ+r55J90dzdAEY
-         EriFbWmIRu2PQeChv1kqG8I9YGoohHvorXwfhpvFGilJsRhUWVXq/cIGneP2cdS0wrpn
-         Xuje9NpNWAKafQW1yqDl0KLLIuDZeX19ejlTdufd1clk5lMQZR7D3ySmBtiAKt0/vYre
-         H3Art0Mu3Ze36va81QfYx+CBa8CHAl4KOxFK5NGvckP/hll/MXgfobuIYNJyNBQW9+mo
-         bPULZEorG+qGTiUlSQGGnCWoctGjxDnrjNDqQVjG3AhYP6RSES0fBWUG5zhUVBokLnoR
-         bHyQ==
-X-Gm-Message-State: APjAAAUCXRtc5TefkW41cyWl5DS/Y3mmQLmm6WJphlkK47c0Rqizrqju
-        Vo2pF+utkC/bQc331pUh7lQ=
-X-Google-Smtp-Source: APXvYqyPCZVCPY70gGbJCHHm6NLKtjwZr+Uvzi/p6xXC+Nn1md5VrLUxOH8Ai8YZjCCIOzJSC15Wtg==
-X-Received: by 2002:adf:f78e:: with SMTP id q14mr98169159wrp.186.1578237889014;
-        Sun, 05 Jan 2020 07:24:49 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id h66sm20616568wme.41.2020.01.05.07.24.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jan 2020 07:24:47 -0800 (PST)
-Date:   Sun, 5 Jan 2020 16:24:47 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, linkinjeon@gmail.com
-Subject: Re: [PATCH v9 10/13] exfat: add nls operations
-Message-ID: <20200105152447.jo27m7jgskyu2dos@pali>
-References: <20200102082036.29643-1-namjae.jeon@samsung.com>
- <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com>
- <20200102082036.29643-11-namjae.jeon@samsung.com>
+        Sun, 5 Jan 2020 10:36:03 -0500
+X-Greylist: delayed 530 seconds by postgrey-1.27 at vger.kernel.org; Sun, 05 Jan 2020 10:36:02 EST
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.west.internal (Postfix) with ESMTP id 63D3C5FF;
+        Sun,  5 Jan 2020 10:27:11 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Sun, 05 Jan 2020 10:27:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        subject:to:cc:references:from:message-id:date:mime-version
+        :in-reply-to:content-type:content-transfer-encoding; s=fm1; bh=s
+        rCX085Fcg6QJTzWvKbgSzWWkOVQY8YF3nspHYJ3mXw=; b=Qxq6/1zuezyfGDttK
+        nc1Vq/vhSPg4CkwsygWouH1ePqasr9TRJK6trM7L4myM5U9V5cTWiq4C+li1C6Qw
+        wY+/6AShZLzd+fgZWyTXWVrBG3TGFCsi2eNoIJAqVOV14Dni982Xfo3hM3PA2p5l
+        zFgg+/Hh+D49f1OtPT/Ng1eNNmnvuLgjNg9nqhxWKao/YxKlFWT/CqWxxkVus2u9
+        g+DkJTC2Zsq4mR3EIpwhvg+xHaWE7afbbOfT9BqBzfo80a6hfye/Q8czX+qw8TjB
+        +Z4kY/mramtceQE9TJ9z57s4/vHsjIZzaUjETvF2ZLjQY1S4yi0/gsMO1P/au2Y4
+        RKedQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=srCX085Fcg6QJTzWvKbgSzWWkOVQY8YF3nspHYJ3m
+        Xw=; b=hDIr/GEvNuapESIHqigtM6hwqUp2RUbAxrYzhTjDnsOpPwpugMyvaXQKi
+        y+/o6YHMq13fiQhzj3SXatTz5/OqSeXy8F6cicajp+idf4eTgv2GyBGiiHbCavVT
+        jSZ9LHWFSfVPMuspnEfIZWNO4m8zLCSIOwOXHu7isyMQi5QG6bz4/gF/6bkmW3K2
+        X85QbmCh7+NVTfTZnwmpROE1rVg+ZGjIYjekaY1y0CQHpTx46hkUQk0N6YP8Bvop
+        x6YoHvtFAQTYrwXQQvHbuQprUpZuk4ZuRXK+v68pwVG3VH27EuyU5L3k0bZG6mj5
+        Wvuhiufl9mKn2yyrILk4aI38kVb+Q==
+X-ME-Sender: <xms:TgASXmFgVFdIyq29-ziqQ8h2HizIwQbZYGSjm8s9QZsmnT2t9JzVRA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdegkedgjeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepuffvfhfhkffffgggjggtgfesthejredttdefjeenucfhrhhomhepufgrmhhu
+    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukf
+    hppeejtddrudefhedrudegkedrudehudenucfrrghrrghmpehmrghilhhfrhhomhepshgr
+    mhhuvghlsehshhholhhlrghnugdrohhrghenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:TgASXu7-gUu1DRRRgVIFZLrTjbFm0eN-GQPT0Ijo2WzKpI2Qdcr0Ig>
+    <xmx:TgASXvxpdnMllh4roMW0NVo2UlX8JP2FJsoGfaYyor9_bnFl--BRNg>
+    <xmx:TgASXs3npnzidKxoiEPlPzgR8irJH567GW5peUBTQydu75wyRCq__Q>
+    <xmx:TwASXlC_kvP64e2oXAp_bZyfIGHaKGmXmuU_O2WL6tOSMssT-58Eq9E-zFs>
+Received: from [192.168.50.169] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id CE31B30602DB;
+        Sun,  5 Jan 2020 10:27:09 -0500 (EST)
+Subject: Re: [linux-sunxi] [PATCH v2 2/9] power: supply: axp20x_ac_power: Fix
+ reporting online status
+To:     Julian Calaby <julian.calaby@gmail.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Sebastian Reichel <sre@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Oskari Lemmela <oskari@lemmela.net>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        linux-pm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        stable@vger.kernel.org
+References: <20200105012416.23296-1-samuel@sholland.org>
+ <20200105012416.23296-3-samuel@sholland.org>
+ <CAGRGNgXeenNYMNXY0dewQaeG2QecUPgE_MOofURg7HzcND782w@mail.gmail.com>
+From:   Samuel Holland <samuel@sholland.org>
+Message-ID: <6e299dd3-3d70-9306-8581-798927241779@sholland.org>
+Date:   Sun, 5 Jan 2020 09:27:07 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="f2e4tgqxncq2o4tg"
-Content-Disposition: inline
-In-Reply-To: <20200102082036.29643-11-namjae.jeon@samsung.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAGRGNgXeenNYMNXY0dewQaeG2QecUPgE_MOofURg7HzcND782w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Julian,
 
---f2e4tgqxncq2o4tg
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 1/5/20 7:00 AM, Julian Calaby wrote:
+> On Sun, Jan 5, 2020 at 12:24 PM Samuel Holland <samuel@sholland.org> wrote:
+>>
+>> AXP803/AXP813 have a flag that enables/disables the AC power supply
+>> input. This flag does not affect the status bits in PWR_INPUT_STATUS.
+>> Its effect can be verified by checking the battery charge/discharge
+>> state (bit 2 of PWR_INPUT_STATUS), or by examining the current draw on
+>> the AC input.
+>>
+>> Take this flag into account when getting the ONLINE property of the AC
+>> input, on PMICs where this flag is present.
+>>
+>> Fixes: 7693b5643fd2 ("power: supply: add AC power supply driver for AXP813")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Samuel Holland <samuel@sholland.org>
+>> ---
+>>  drivers/power/supply/axp20x_ac_power.c | 31 +++++++++++++++++++++-----
+>>  1 file changed, 25 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/power/supply/axp20x_ac_power.c b/drivers/power/supply/axp20x_ac_power.c
+>> index 0d34a932b6d5..ca0a28f72a27 100644
+>> --- a/drivers/power/supply/axp20x_ac_power.c
+>> +++ b/drivers/power/supply/axp20x_ac_power.c
+>> @@ -23,6 +23,8 @@
+>>  #define AXP20X_PWR_STATUS_ACIN_PRESENT BIT(7)
+>>  #define AXP20X_PWR_STATUS_ACIN_AVAIL   BIT(6)
+>>
+>> +#define AXP813_ACIN_PATH_SEL           BIT(7)
+>> +
+>>  #define AXP813_VHOLD_MASK              GENMASK(5, 3)
+>>  #define AXP813_VHOLD_UV_TO_BIT(x)      ((((x) / 100000) - 40) << 3)
+>>  #define AXP813_VHOLD_REG_TO_UV(x)      \
+>> @@ -40,6 +42,7 @@ struct axp20x_ac_power {
+>>         struct power_supply *supply;
+>>         struct iio_channel *acin_v;
+>>         struct iio_channel *acin_i;
+>> +       bool has_acin_path_sel;
+>>  };
+>>
+>>  static irqreturn_t axp20x_ac_power_irq(int irq, void *devid)
+>> @@ -86,6 +89,17 @@ static int axp20x_ac_power_get_property(struct power_supply *psy,
+>>                         return ret;
+>>
+>>                 val->intval = !!(reg & AXP20X_PWR_STATUS_ACIN_AVAIL);
+>> +
+>> +               /* ACIN_PATH_SEL disables ACIN even if ACIN_AVAIL is set. */
+>> +               if (power->has_acin_path_sel) {
+> 
+> Do we need to check this bit if ACIN_AVAIL is not set?
 
-On Thursday 02 January 2020 16:20:33 Namjae Jeon wrote:
-> This adds the implementation of nls operations for exfat.
->=20
-> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
-> ---
->  fs/exfat/nls.c | 809 +++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 809 insertions(+)
->  create mode 100644 fs/exfat/nls.c
->=20
-> diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-> new file mode 100644
-> index 000000000000..af52328e28ff
-> --- /dev/null
-> +++ b/fs/exfat/nls.c
+No, we don't. However due to regcache this won't actually cause another read
+from the device. If I send a v3, I'll move the && to  the if statement.
 
-=2E..
+>> +                       ret = regmap_read(power->regmap, AXP813_ACIN_PATH_CTRL,
+>> +                                         &reg);
+>> +                       if (ret)
+>> +                               return ret;
+>> +
+>> +                       val->intval &= !!(reg & AXP813_ACIN_PATH_SEL);
+> 
+> If we only check this bit if ACIN_AVAIL is set, then we don't need the
+> "&" in the "&=". (I'm assuming that val->intval is an int, not a bool,
+> otherwise this is the wrong operator)
 
-> +int exfat_nls_cmp_uniname(struct super_block *sb, unsigned short *a,
-> +		unsigned short *b)
-> +{
-> +	int i;
-> +
-> +	for (i =3D 0; i < MAX_NAME_LENGTH; i++, a++, b++) {
-> +		if (exfat_nls_upper(sb, *a) !=3D exfat_nls_upper(sb, *b))
-> +			return 1;
-> +		if (*a =3D=3D 0x0)
-> +			return 0;
-> +	}
-> +	return 0;
-> +}
+val->intval is an int, but it only ever takes the values 0 or 1. The !!
+expression coerces an integer to the range of a boolean. So the two ways of
+deriving the value ("&=" here vs "&& val->intval" in the if statement) are
+equivalent.
 
-Hello, this function returns wrong result when second string (b) is
-longer then first string (a).
+> Thanks,
 
-Also it is a best practise to first check for end-of-string and then
-access/work with i-th element of string.
+Thanks!
+Samuel
 
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---f2e4tgqxncq2o4tg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXhH/vAAKCRCL8Mk9A+RD
-Uqv7AJwIkABv+Bpvw7Z2sHDERYMAUNrI1QCeO5I7iyE5/RVgyXEYwonl4aM0vDQ=
-=BcPO
------END PGP SIGNATURE-----
-
---f2e4tgqxncq2o4tg--
