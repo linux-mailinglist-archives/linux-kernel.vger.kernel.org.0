@@ -2,63 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 407CE130AB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 00:11:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AB92130ACB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 00:47:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbgAEXL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 18:11:26 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:42566 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbgAEXL0 (ORCPT
+        id S1727238AbgAEXrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 18:47:11 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:39398 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726773AbgAEXrL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 18:11:26 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id BD52C15714135;
-        Sun,  5 Jan 2020 15:11:25 -0800 (PST)
-Date:   Sun, 05 Jan 2020 15:11:25 -0800 (PST)
-Message-Id: <20200105.151125.1541050812175137787.davem@davemloft.net>
-To:     sboyd@kernel.org
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        nicolas.ferre@microchip.com, yash.shah@sifive.com,
-        linux@roeck-us.net
-Subject: Re: [PATCH] macb: Don't unregister clks unconditionally
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200104001921.225529-1-sboyd@kernel.org>
-References: <20200104001921.225529-1-sboyd@kernel.org>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 05 Jan 2020 15:11:26 -0800 (PST)
+        Sun, 5 Jan 2020 18:47:11 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 824451C2453; Mon,  6 Jan 2020 00:47:09 +0100 (CET)
+Date:   Mon, 6 Jan 2020 00:47:08 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/9] leds: lm3692x: Allow to set ovp and brigthness
+ mode
+Message-ID: <20200105234708.GA7598@amd>
+References: <cover.1578134779.git.agx@sigxcpu.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="X1bOJ3K7DJ5YkBrT"
+Content-Disposition: inline
+In-Reply-To: <cover.1578134779.git.agx@sigxcpu.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Fri,  3 Jan 2020 16:19:21 -0800
 
-> The only clk init function in this driver that register a clk is
-> fu540_c000_clk_init(), and thus we need to unregister the clk when this
-> driver is removed on that platform. Other init functions, for example
-> macb_clk_init(), don't register clks and therefore we shouldn't
-> unregister the clks when this driver is removed. Convert this
-> registration path to devm so it gets auto-unregistered when this driver
-> is removed and drop the clk_unregister() calls in driver remove (and
-> error paths) so that we don't erroneously remove a clk from the system
-> that isn't registered by this driver.
-> 
-> Otherwise we get strange crashes with a use-after-free when the
-> devm_clk_get() call in macb_clk_init() calls clk_put() on a clk pointer
-> that has become invalid because it is freed in clk_unregister().
-> 
-> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-> Cc: Yash Shah <yash.shah@sifive.com>
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Fixes: c218ad559020 ("macb: Add support for SiFive FU540-C000")
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+--X1bOJ3K7DJ5YkBrT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied and queued up for -stable, thanks.
+Hi!
+
+> Overvoltage protection and brightness mode are currently hardcoded
+> as 29V and disabled in the driver. Make these configurable via DT.
+>=20
+> Besides addressing review comments v3 folds in the patches to
+> disable the chip and turn of the regulator on brightness 0 from
+>=20
+>   https://lore.kernel.org/linux-leds/20191226101419.GE4033@amd/T/#t
+>=20
+> Besides addressing review comments v2 also allows to limit the maximum led
+> current.
+
+> Patches are against next-20191220.
+
+I applied everything but the "exponential" changes and the last
+one. I'll apply the last one if I get version that applies on top of
+leds tree.
+
+Best regards,
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--X1bOJ3K7DJ5YkBrT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl4SdXwACgkQMOfwapXb+vJaMQCgwV3gy5DFAEFexXL3O3QhZr1C
+264An3kUacGLDJhhGUg/OGlcCubROOow
+=E8m6
+-----END PGP SIGNATURE-----
+
+--X1bOJ3K7DJ5YkBrT--
