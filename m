@@ -2,108 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D57C130A47
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Jan 2020 23:43:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71B7F130A4A
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Jan 2020 23:47:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbgAEWnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 17:43:15 -0500
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:48572 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726851AbgAEWnO (ORCPT
+        id S1727171AbgAEWrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 17:47:06 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:41520 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726851AbgAEWrG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 17:43:14 -0500
-Received: from [81.174.41.21] (port=58572 helo=melee.fritz.box)
-        by hostingweb31.netsons.net with esmtpa (Exim 4.92)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1ioEbs-00GPCc-B9; Sun, 05 Jan 2020 23:43:11 +0100
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-To:     linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org
-Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
-Subject: [PATCH 00/26] docs: i2c: rework I2C documentation, part I
-Date:   Sun,  5 Jan 2020 23:39:40 +0100
-Message-Id: <20200105224006.10321-1-luca@lucaceresoli.net>
-X-Mailer: git-send-email 2.24.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Sun, 5 Jan 2020 17:47:06 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 42DC515554F98;
+        Sun,  5 Jan 2020 14:47:05 -0800 (PST)
+Date:   Sun, 05 Jan 2020 14:47:04 -0800 (PST)
+Message-Id: <20200105.144704.221506192255563950.davem@davemloft.net>
+To:     wgong@codeaurora.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ath11k@lists.infradead.org
+Subject: Re: [PATCH v2] net: qrtr: fix len of skb_put_padto in
+ qrtr_node_enqueue
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20200103045016.12459-1-wgong@codeaurora.org>
+References: <20200103045016.12459-1-wgong@codeaurora.org>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 05 Jan 2020 14:47:05 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Wen Gong <wgong@codeaurora.org>
+Date: Fri,  3 Jan 2020 12:50:16 +0800
 
-this series is a list of improvements to the I2C documentation.
+> The len used for skb_put_padto is wrong, it need to add len of hdr.
 
-It started as a simple reordering of index.rst from alphabetical order to a
-logical order. Then it grew to a mixture of various improvements to each
-section. I wanted to rework all the sections in a unique series, but after
-covering about one third of them the number of patches has already grown
-pretty long so I'm sending it in its current state.
+Thanks, applied.
 
-Let's see how this series is received, I will continue to cover the rest of
-the sections later.
+There is another bug here, skb_put_padto() returns an error and frees
+the SKB when the put fails.  There really needs to be a check here,
+because currently the code right now will keep using the freed up
+skb in that situation.
 
-Each patch is quite self-standing, and most are trivial, so have a good
-reading.
-
-Luca
-
-Luca Ceresoli (26):
-  docs: i2c: sort index logically
-  docs: i2c: summary: extend introduction
-  docs: i2c: summary: rewrite the "terminology" section
-  docs: i2c: call it "I2C" consistently
-  docs: i2c: fix typo
-  docs: i2c: replace "I2C-transfer" -> "I2C transfer" consistently
-  docs: i2c: i2c-protocol: fix kernel-doc function syntax
-  docs: i2c: i2c-protocol: properly name start and stop conditions
-  docs: i2c: i2c-protocol: remove unneeded colons from table
-  docs: i2c: i2c-protocol: use proper names for ACK and NACK
-  docs: i2c: smbus: fix link syntax
-  docs: i2c: smbus-protocol: properly name start and stop conditions
-  docs: i2c: smbus-protocol: remove unneeded colons from table
-  docs: i2c: smbus-protocol: use proper names for ACK and NACK
-  docs: i2c: smbus-protocol: enable kernel-doc function syntax
-  docs: i2c: smbus-protocol: fix kernel-doc function syntax
-  docs: i2c: i2c-protocol: fix typo
-  docs: i2c: i2c-protocol: fix punctuation
-  docs: i2c: smbus-protocol: improve I2C Block transactions description
-  docs: i2c: instantiating-devices: fix internal hyperlink
-  docs: i2c: instantiating-devices: rearrange static instatiation
-  docs: i2c: instantiating-devices: use monospace for filenames
-  docs: i2c: old-module-parameters: fix internal hyperlink
-  docs: i2c: old-module-parameters: clarify this is for obsolete kernels
-  docs: i2c: old-module-parameters: use monospace for filenames
-  docs: i2c: rename sections so the overall picture is clearer
-
- Documentation/i2c/dev-interface.rst         |   24 +-
- Documentation/i2c/dma-considerations.rst    |    2 +-
- Documentation/i2c/i2c-protocol.rst          |   45 +-
- Documentation/i2c/i2c-topology.rst          |   72 +-
- Documentation/i2c/i2c.svg                   | 1341 +++++++++++++++++++
- Documentation/i2c/index.rst                 |   21 +-
- Documentation/i2c/instantiating-devices.rst |  116 +-
- Documentation/i2c/old-module-parameters.rst |   30 +-
- Documentation/i2c/slave-interface.rst       |    4 +-
- Documentation/i2c/smbus-protocol.rst        |  107 +-
- Documentation/i2c/summary.rst               |   61 +-
- Documentation/i2c/writing-clients.rst       |   10 +-
- 12 files changed, 1611 insertions(+), 222 deletions(-)
- create mode 100644 Documentation/i2c/i2c.svg
-
--- 
-2.24.1
-
+Thanks.
