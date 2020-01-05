@@ -2,189 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CEBB130545
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Jan 2020 02:05:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2837C130550
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Jan 2020 02:18:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbgAEBFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 Jan 2020 20:05:42 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41439 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726205AbgAEBFl (ORCPT
+        id S1726488AbgAEBSq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 Jan 2020 20:18:46 -0500
+Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:8826 "EHLO
+        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726240AbgAEBSp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Jan 2020 20:05:41 -0500
-Received: by mail-lj1-f193.google.com with SMTP id h23so47424247ljc.8;
-        Sat, 04 Jan 2020 17:05:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=by4tfSoTAV+JLschlMD5HX37YOQ4eMnDIxNMWutbetQ=;
-        b=TBXFdNMs3yzXw1YnMJXgTBQFJXButI5L+HdktNwol6APbVGK7EZTS1tNN0nYoGxrq3
-         TkfXqOKziqWaka3isjmK2HFTl2VhSo53vTy+1d/9JZF5alXIeuaDVCm5d4J7BFV8VKlI
-         etVU6iNQ0cxHxfnhJoKdDFRhdmkalGLtwDHGztzJCMN5HL9f22cDXx0bVK/Rchl+H41+
-         Tf2L1b2kSaaqhEbH/F93gTPFP4HJlOun+N2g6P8C1nvFv3rS05UYm4z9L6xaml12lp8t
-         IQKJu3IDnabjapsewEM9VY7uJbjLzbuHOj3K61nEPhcAjV749IB5J7cpfrBPgd/SGZt3
-         DW8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=by4tfSoTAV+JLschlMD5HX37YOQ4eMnDIxNMWutbetQ=;
-        b=BEuZ497Lwa+0QJxyhpMgTXLLbwGJC+EPdvFi0njOdSKffo10iaY4PhJqynAgJrj15B
-         3Fmfdo7mx9ub+TmIOFSZAHNsjxSOJtx6jHtw13dmE7EQgKNJsM4M2s1qCwndIj7p1MUM
-         DcS7tbgt0US1gJhrQNhiroDTMPHIqNReRt3/rQHqR+/1cMTKJTpK8f78WKmj6KxDt9MX
-         +6Gs3Q7NCBWGLyt5hMFe8kXM5Z+MeEwqWNB5CgnjulgF7FjIx52eWXUwrUZQfoRa+t0+
-         LqIfDReiBPDeUINzbh1IGFoQBi9PkGdz04b++yo2BNuwFNeAIyMLcc6xNULo05HQ0xDT
-         F+hg==
-X-Gm-Message-State: APjAAAUJfEHCX5rwtwWsojzutmSFWEckAzpk44Vv0gVtI8S/7if4M5Jj
-        dnR+C8mFIlBtycFMJr0H8R4V32+R
-X-Google-Smtp-Source: APXvYqwP5i4OsnrnoLMZNV8UkJdD2AjQhEANkC/mg0pYIS7v9tQEJrBn8TuOirgM9WWG6RnIzqZEYA==
-X-Received: by 2002:a2e:9a51:: with SMTP id k17mr52823683ljj.206.1578186337852;
-        Sat, 04 Jan 2020 17:05:37 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id q26sm26874979lfc.52.2020.01.04.17.05.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 04 Jan 2020 17:05:37 -0800 (PST)
-Subject: Re: [PATCH v5 12/19] ASoC: tegra: Add initial parent configuration
- for audio mclk
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
-        josephl@nvidia.com, daniel.lezcano@linaro.org,
-        mmaddireddy@nvidia.com, markz@nvidia.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
- <1576880825-15010-13-git-send-email-skomatineni@nvidia.com>
- <a6567ff1-7bc2-3ca5-1200-92a63eb44ddb@gmail.com>
- <20191225175736.GC27497@sirena.org.uk>
- <856d8a92-0c24-6722-952c-06b86c706e97@gmail.com>
- <dbbce994-27f5-d949-078d-05646100e6be@nvidia.com>
- <b6ec6cfd-d883-ea28-00f8-884fa80cfee1@nvidia.com>
- <576fca44-6734-5431-b523-512747a0bf12@gmail.com>
- <fb252096-e101-7d21-9717-c23607ae6edd@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <0f956c12-98cf-3466-f3ee-ffc3a23e3e3d@gmail.com>
-Date:   Sun, 5 Jan 2020 04:05:36 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Sat, 4 Jan 2020 20:18:45 -0500
+Received: from pps.filterd (m0148663.ppops.net [127.0.0.1])
+        by mx0a-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0051IY29022683;
+        Sun, 5 Jan 2020 01:18:34 GMT
+Received: from g2t2352.austin.hpe.com (g2t2352.austin.hpe.com [15.233.44.25])
+        by mx0a-002e3701.pphosted.com with ESMTP id 2xb423rd00-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 05 Jan 2020 01:18:34 +0000
+Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
+        by g2t2352.austin.hpe.com (Postfix) with ESMTP id 926A4A7;
+        Sun,  5 Jan 2020 01:18:33 +0000 (UTC)
+Received: from blofly.tw.rdlabs.hpecorp.net (blofly.tw.rdlabs.hpecorp.net [15.119.208.30])
+        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id 6412736;
+        Sun,  5 Jan 2020 01:18:31 +0000 (UTC)
+Date:   Sun, 5 Jan 2020 09:12:46 +0800
+From:   Clay Chang <clayc@hpe.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com
+Subject: Re: [PATCH] ima: Add a space after printing a LSM rule for
+ readability
+Message-ID: <20200105011246.GA5936@blofly.tw.rdlabs.hpecorp.net>
+References: <1578037863-7102-1-git-send-email-clayc@hpe.com>
+ <1578071487.5152.13.camel@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <fb252096-e101-7d21-9717-c23607ae6edd@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1578071487.5152.13.camel@linux.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2020-01-04_06:2020-01-02,2020-01-04 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ impostorscore=0 adultscore=0 phishscore=0 suspectscore=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 spamscore=0
+ bulkscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001050010
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-04.01.2020 08:49, Sowjanya Komatineni пишет:
+On Fri, Jan 03, 2020 at 12:11:27PM -0500, Mimi Zohar wrote:
+> On Fri, 2020-01-03 at 15:51 +0800, clayc@hpe.com wrote:
+> > From: Clay Chang <clayc@hpe.com>
 > 
-> On 1/2/20 8:12 AM, Dmitry Osipenko wrote:
->> 02.01.2020 10:03, Sowjanya Komatineni пишет:
->>> On 12/27/19 1:19 PM, Sowjanya Komatineni wrote:
->>>> On 12/27/19 6:56 AM, Dmitry Osipenko wrote:
->>>>> 25.12.2019 20:57, Mark Brown пишет:
->>>>>> On Mon, Dec 23, 2019 at 12:14:34AM +0300, Dmitry Osipenko wrote:
->>>>>>> 21.12.2019 01:26, Sowjanya Komatineni пишет:
->>>>>>>> Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
->>>>>>>> through Tegra210 and currently Tegra clock driver does initial parent
->>>>>>>> configuration for audio mclk "clk_out_1" and enables them by default.
->>>>>> Please delete unneeded context from mails when replying.  Doing this
->>>>>> makes it much easier to find your reply in the message, helping ensure
->>>>>> it won't be missed by people scrolling through the irrelevant quoted
->>>>>> material.
->>>>> Ok
->>>>>
->>>>>>>> -    clk_disable_unprepare(data->clk_cdev1);
->>>>>>>> -    clk_disable_unprepare(data->clk_pll_a_out0);
->>>>>>>> -    clk_disable_unprepare(data->clk_pll_a);
->>>>>>>> +    if (__clk_is_enabled(data->clk_cdev1))
->>>>>>>> +        clk_disable_unprepare(data->clk_cdev1);
->>>>>>> The root of the problem is that you removed clocks enabling from
->>>>>>> tegra_asoc_utils_init().
->>>> currently, audio mclk and its parent clocks enabling are from clock
->>>> driver init and not from tegra_asoc_utils_init.
->>>>>>> I'm not sure why clocks should be disabled during the rate-changing,
->>>>>>> probably this action is not really needed.
->>>>>> I know nothing about this particular device but this is not that
->>>>>> unusual a restriction for audio hardware, you often can't
->>>>>> robustly reconfigure the clocking for a device while it's active
->>>>>> due to issues in the hardware.  You often see issues with FIFOs
->>>>>> glitching or state machines getting stuck.  This may not be an
->>>>>> issue here but if it's something that's documented as a
->>>>>> requirement it's probably good to pay attention.
->>>>> I don't know details about that hardware either, maybe it is simply not
->>>>> safe to change PLL_A rate dynamically and then CLK_SET_RATE_GATE could
->>>>> be used.
->>>>>
->>>>> If nobody knows for sure, then will be better to keep
->>>>> tegra_asoc_utils_set_rate() unchanged.
->>>> plla rate change through tegra_asoc_utils_set_rate() happens only when
->>>> there is not active playback or record corresponding to this sound
->>>> device.
->>>>
->>>> So, I don't see reason for disabling clock during rate change and not
->>>> sure why we had this from the beginning.
->>>>
->>>> Thierry/Sameer,
->>>>
->>>> Can you please comment?
->>>>
->>>> Yes, we can use CLK_SET_RATE_GATE for PLLA and remove clock disabling
->>>> before rate change.
->>>>
->>> PLLA is used for both I2S controller clock and also for audio mclk. I2S
->>> driver suspend resume implementations takes care of enabling and
->>> disabling I2S clock but audio mclk will be enabled during that time and
->>> PLLA disable might not happen. So using CLK_SET_RATE_GATE prevents rate
->>> change to happen and as rate change happens only when there is no active
->>> audio record/playback, we can perform rate change without disable/enable
->>> during rate change.
->>>
->>> So probably below changes should be good.
->>>
->>>   * remove asoc_utils_set_rate call from asoc_utils_init as set_rate
->>>     happens during existing hw_params callback implementations in sound
->>>     drivers and there is no need to do rate change during asoc_utils_init.
->>>   * remove disable/enable clocks during rate change in asoc_utils_set_rate.
->>>   * add startup and shutdown snd_soc_ops callbacks to do enable and
->>>     disable audio mclk.
->>>
->> Sounds good, thanks. I'll be happy to review and test it.
-> 
-> Regarding disabling audio mclk during PLLA rate change, no need to
-> explicitly disable PLLA on asoc utils as clock driver takes care of it
-> properly during pll rate change.
-> 
-> But the downstream clock divider hardware can malfunction without
-> recovery when subject to unstable PLL output during locking, unless
-> clock is gated.
-> 
-> So it is recommended to disable downstream clocks during PLL rate change.
-> 
-> PLLA downstream clocks are I2S and audio mclk (cdev1/clk1 and extern1
-> clocks) and I2S clock is disabled in I2S driver by PM runtime ops.
+> Normally this "From" line is only seen when the sender isn't the patch
+> author. �Any ideas what happened?�
+>
 
-The I2S driver uses asynchronous pm_runtime_put() and thus there is no
-guarantee that I2S clock is disabled at the time of changing PLLA rate.
-Could this be a problem?
+Hi Mimi,
 
-> For audio mclk, need to make sure mclk are disabled during rate change.
+Apparently I should not use "--from" in git-send-email command.
+
+> > 
+> > When reading ima_policy from securityfs, there is a missing
+> > space between output string of LSM rules.
+> > 
+> > Signed-off-by: Clay Chang <clayc@hpe.com>
 > 
-> So below are the changes to audio clocks that will be in next version.
-> 
->   * remove tegra_asoc_utils_set_rate call from tegra_asoc_utils_init as
->     tegra_asoc_utils_set_rate happens during hw_params callback.
->   * add shutdown snd_soc_ops callbacks to disable of audio mclk.
->   * remove disable audio mclk (cdev1) and plla clocks prior to rate
->     change in tegra_asoc_utils_set_rate (as audio mclk will always be in
->     disabled state every time hw_param callback gets executed) and keep
->     audio mclk enable after the rate change in tegra_asoc_utils_set_rate.
+> Good catch! �IMA policy rules based on LSM labels are used to
+> constrain which files are in policy. �Normally a single LSM label is
+> enough (e.g. dont_measure obj_type=auditd_log_t). �Could you include
+> in this patch description a use case where multiple LSM labels are
+> needed?
 > 
 
+Apology for not expressed my intention clearly. The intention of this
+patch is to add a space after printing LSM rules (if any) and the
+remaining rules.
+
+Currently, if I have a policy, for example:
+appraise func=BPRM_CHECK obj_type=shell_exec_t appraise_type=imasig
+
+The read back result is:
+appraise func=BPRM_CHECK obj_type=shell_exec_tappraise_type=imasig
+
+which is not correct.
+
+I do not have a case for multiple LSM labels, but if there is one
+such case, this patch will also apply.
+
+I will post a v2 patch with tuned description.
+
+Thanks,
+Clay
