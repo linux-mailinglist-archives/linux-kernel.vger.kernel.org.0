@@ -2,120 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB7DD1306E2
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 Jan 2020 10:06:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21E731306E8
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 Jan 2020 10:16:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725991AbgAEJGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 04:06:00 -0500
-Received: from mail-vi1eur05on2098.outbound.protection.outlook.com ([40.107.21.98]:2913
-        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725535AbgAEJGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 04:06:00 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KoaLmkBar4SkoCRYQLy0twFwcqENRM8rwV+PMnCD9dMsELy33Des3xClQ9Fr2QMrepViWUkafReP/NenSKBCPAa88TEVTnB+iIRkIz09OsyAm2+fJS8526USwbdJa4hAZj+yC3kEZ5Pb0YQoQXwwkTl5UjJ+GgsBSqHm+ry07epLL5m7dBJfyGx504bPXocHQJZQJpPmi0xN0ZIWaRzYC+5kQEi1Bt0egWjqa0TZesxglKRWQs8MZ8+2uRmHI5Hy33hI5JsRUFGMQmQefV5s3a6sYFwWmStfZG+BBXVOQSknw6LMzeuzXLDFpTy9CVDq/d5A3WmC5EPTjrmQ/voZcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=316Pn0fTuE8DU+LNKlRDVBc2yeGDE4spJ98VY7jWMSU=;
- b=VQAK6gaOF3vtuTODdtdTDosMAfuZDVMyGNVnNwKRsH7sF5cXfvEDLbgw7PkR6yr3b15uZ/blUUXblisuq69Y4wt/rygm0WigHN+pYaB8m/yPxc0PsoYR4w/dr6Ruf8hR1f/fdkG2DBponFSDTGD6ItW/YHZMwon2vWekKHI/nUl6msZ0HJIj4gVI7/+yz00bHE7Wn2tewl2GDbHZFiZAjJGNOBwyGzzzscqvoCFIQclf4Tcm5dGtVTeqR4LMqAoDVCSc7QwIN2exlZs9FQ11vod34SikGRc33fuSFle1YoMjXIjZwPvJkXyHAvuFDPLA0jjMOCorK5KyCopP1OFxwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=habana.ai; dmarc=pass action=none header.from=habana.ai;
- dkim=pass header.d=habana.ai; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=habanalabs.onmicrosoft.com; s=selector2-habanalabs-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=316Pn0fTuE8DU+LNKlRDVBc2yeGDE4spJ98VY7jWMSU=;
- b=TkQkbilbH6arRebk61eoqWBO/LXt2QccSD4uee5L4IeDBPNm9+fPx8fNzGjq/es1R1MrsvGTykoYSd1iLcsCr18qJblUug4xVyqAPywyXEl+mQrGvT2j6Op9Pg6aMJZdoW7UHYMK56qgi6sGVl3MMv1tnniIwgsNj3SQtS3Dk+s=
-Received: from AM0PR02MB5523.eurprd02.prod.outlook.com (10.255.29.216) by
- AM0PR02MB3731.eurprd02.prod.outlook.com (52.133.63.152) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2602.15; Sun, 5 Jan 2020 09:05:54 +0000
-Received: from AM0PR02MB5523.eurprd02.prod.outlook.com
- ([fe80::313d:beaa:db61:2e3d]) by AM0PR02MB5523.eurprd02.prod.outlook.com
- ([fe80::313d:beaa:db61:2e3d%2]) with mapi id 15.20.2602.015; Sun, 5 Jan 2020
- 09:05:54 +0000
-Received: from oshpigelman2-vm.habana-labs.com (31.154.190.6) by ZR0P278CA0022.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:1c::9) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2602.11 via Frontend Transport; Sun, 5 Jan 2020 09:05:45 +0000
-From:   Omer Shpigelman <oshpigelman@habana.ai>
-To:     "oded.gabbay@gmail.com" <oded.gabbay@gmail.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] habanalabs: do not halt Coresight during hard reset
-Thread-Topic: [PATCH 2/2] habanalabs: do not halt Coresight during hard reset
-Thread-Index: AQHVw6dQ3xASO1vhTkSE0k9uv9gUUQ==
-Date:   Sun, 5 Jan 2020 09:05:45 +0000
-Message-ID: <20200105090537.19979-2-oshpigelman@habana.ai>
-References: <20200105090537.19979-1-oshpigelman@habana.ai>
-In-Reply-To: <20200105090537.19979-1-oshpigelman@habana.ai>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: ZR0P278CA0022.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:1c::9) To AM0PR02MB5523.eurprd02.prod.outlook.com
- (2603:10a6:208:15e::24)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=oshpigelman@habana.ai; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [31.154.190.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 65ac9fed-621b-4f05-0bc7-08d791be730d
-x-ms-traffictypediagnostic: AM0PR02MB3731:
-x-microsoft-antispam-prvs: <AM0PR02MB373121D9B7602B1618E73D91B83D0@AM0PR02MB3731.eurprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 027367F73D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39840400004)(376002)(346002)(366004)(396003)(199004)(189003)(5660300002)(36756003)(6916009)(1076003)(2906002)(4744005)(86362001)(6486002)(316002)(52116002)(81156014)(956004)(2616005)(81166006)(8936002)(8676002)(66556008)(66476007)(66946007)(66446008)(64756008)(186003)(478600001)(26005)(16526019)(6506007)(4326008)(6512007)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM0PR02MB3731;H:AM0PR02MB5523.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: habana.ai does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: NO7AOSgJqMgCcEZtlkFl8dpRhFRD3IZ5xKBYYh974bQ8x9ZZolbtbl6u6QylQlqMHwExyaiXSL0fTHCKCrJehRQXF2SFZI4iuUgrIs4u6KJRXKx8uYi+Gsnzovhd45oPK2RjQo422k10Olupz8F+ozLmp7v3iJ3ExPPN57WhB8/bXcSrQECDK4sdLmD3NQrwxHJk7f2JVyOILC5AUSSIycQt85qvbDsDTxtZmvRcgRfhGRD+IAsnnsXHSM2X82ItHyEQqg/8820L6wO2Q5S9eqKPSCLoG5E973b7GhcrxsyD0krXXd2JlcsTecy1K65p4Co4fx64SB08iG32fk/fz8q5Ru7ncA0Oe3zssGXqODFbtYc//2AT7n6sa3c27PFtkglYolEiMQUjLJ3jWqf3DhcEH4izCHS4NZM2srHPpo8ZCtYY4z0GgDG+eGthWCjv
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1726029AbgAEJQ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 04:16:26 -0500
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:46506 "EHLO
+        wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725535AbgAEJQ0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Jan 2020 04:16:26 -0500
+Received: from [2003:a:659:3f00:1e6f:65ff:fe31:d1d5] (helo=hermes.fivetechno.de); authenticated
+        by wp126.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1io215-0007wK-3N; Sun, 05 Jan 2020 10:16:11 +0100
+X-Virus-Scanned: by amavisd-new 2.11.1 using newest ClamAV at
+        linuxbbg.five-lan.de
+Received: from dell2.five-lan.de (p508F34C7.dip0.t-ipconnect.de [80.143.52.199])
+        (authenticated bits=0)
+        by hermes.fivetechno.de (8.15.2/8.14.5/SuSE Linux 0.8) with ESMTPSA id 0059G9tA005418
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Sun, 5 Jan 2020 10:16:09 +0100
+Subject: Re: [PATCH 5/5] arm64: dts: rockchip: Enable mp8859 regulator on
+ rk3399-roc-pc
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <20200104153321.6584-1-m.reichl@fivetechno.de>
+ <20200104153321.6584-6-m.reichl@fivetechno.de> <11639547.aalzkRAYeW@phil>
+From:   Markus Reichl <m.reichl@fivetechno.de>
+Message-ID: <2dd59b6a-7890-8546-8030-198c6ae8608b@fivetechno.de>
+Date:   Sun, 5 Jan 2020 10:16:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: habana.ai
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65ac9fed-621b-4f05-0bc7-08d791be730d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jan 2020 09:05:45.8371
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oJz533Jxv7In5MSkx6AT6w2EQOGQqtrdavZlWgx6iMNNvCh1S0FTaZFz2RubDRW4yn4E1G0NKmNOnvcl6ijFoQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR02MB3731
+In-Reply-To: <11639547.aalzkRAYeW@phil>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;m.reichl@fivetechno.de;1578215786;eeaad5e1;
+X-HE-SMSGID: 1io215-0007wK-3N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During hard reset we must not write to the device.
-Hence avoid halting Coresight during user context close if it is done
-during hard reset.
-In addition, we must not reenable clock gating afterwards as it was
-deliberately disabled in the beginning of the hard reset flow.
+Hi Heiko,
 
-Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
----
- drivers/misc/habanalabs/device.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Am 04.01.20 um 22:23 schrieb Heiko Stuebner:
+> Hi Markus,
+> 
+> Am Samstag, 4. Januar 2020, 16:32:49 CET schrieb Markus Reichl:
+>> The rk3399-roc-pc uses a MP8859 DC/DC converter for 12V supply.
+>> This supplies 5V only in default state after booting.
+> 
+> Just for my understanding ... both the old static regulator before as
+> well as the new i2c node said to supply 12V, but above you say that
+> the default is 5V ... so I'm wondering who configured the 12V before.
+> 
+> Or was it the case that the old regulator node was just wrong and we
+> had 5V running on the dc_12v line?
 
-diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/dev=
-ice.c
-index 166883b64725..b680b0caa69b 100644
---- a/drivers/misc/habanalabs/device.c
-+++ b/drivers/misc/habanalabs/device.c
-@@ -598,7 +598,9 @@ int hl_device_set_debug_mode(struct hl_device *hdev, bo=
-ol enable)
- 			goto out;
- 		}
-=20
--		hdev->asic_funcs->halt_coresight(hdev);
-+		if (!hdev->hard_reset_pending)
-+			hdev->asic_funcs->halt_coresight(hdev);
-+
- 		hdev->in_debug =3D 0;
-=20
- 		goto out;
---=20
-2.17.1
+Yes, the dc_12v line was running at 5V (measured 4,7V) as it is the
+default power up value for the MP8859. This is as documented in the data
+sheet [1].
 
+[1] https://www.monolithicpower.com/en/documentview/productdocument/index/version/2/document_type/Datasheet/lang/en/sku/MP8859/document_id/4033/
+
+Gruß
+--
+Markus
+> 
+> Thanks
+> Heiko
+> 
+>> Now we can control the output voltage via I2C interface.
+>> Add a node for the driver to reach 12V.
+>> 
+>> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+>> ---
+>>  .../boot/dts/rockchip/rk3399-roc-pc.dtsi      | 32 +++++++++++--------
+>>  1 file changed, 18 insertions(+), 14 deletions(-)
+>> 
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
+>> index 8e01b04144b7..9f225e9c3d54 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
+>> @@ -110,20 +110,6 @@ vcc_vbus_typec0: vcc-vbus-typec0 {
+>>  		regulator-max-microvolt = <5000000>;
+>>  	};
+>>  
+>> -	/*
+>> -	 * should be placed inside mp8859, but not until mp8859 has
+>> -	 * its own dt-binding.
+>> -	 */
+>> -	dc_12v: mp8859-dcdc1 {
+>> -		compatible = "regulator-fixed";
+>> -		regulator-name = "dc_12v";
+>> -		regulator-always-on;
+>> -		regulator-boot-on;
+>> -		regulator-min-microvolt = <12000000>;
+>> -		regulator-max-microvolt = <12000000>;
+>> -		vin-supply = <&vcc_vbus_typec0>;
+>> -	};
+>> -
+>>  	/* switched by pmic_sleep */
+>>  	vcc1v8_s3: vcca1v8_s3: vcc1v8-s3 {
+>>  		compatible = "regulator-fixed";
+>> @@ -546,6 +532,24 @@ fusb0: usb-typec@22 {
+>>  		vbus-supply = <&vcc_vbus_typec0>;
+>>  		status = "okay";
+>>  	};
+>> +
+>> +	mp8859: regulator@66 {
+>> +		compatible = "mps,mp8859";
+>> +		reg = <0x66>;
+>> +		dc_12v: mp8859_dcdc {
+>> +			regulator-name = "dc_12v";
+>> +			regulator-min-microvolt = <12000000>;
+>> +			regulator-max-microvolt = <12000000>;
+>> +			regulator-always-on;
+>> +			regulator-boot-on;
+>> +			vin-supply = <&vcc_vbus_typec0>;
+>> +
+>> +			regulator-state-mem {
+>> +				regulator-on-in-suspend;
+>> +				regulator-suspend-microvolt = <12000000>;
+>> +			};
+>> +		};
+>> +	};
+>>  };
+>>  
+>>  &i2s0 {
+>> 
+> 
+> 
+> 
+> 
+> 
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+> 
