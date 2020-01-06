@@ -2,142 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CF8D131B11
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 23:07:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECA66131B23
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 23:15:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbgAFWHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 17:07:51 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36166 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726760AbgAFWHv (ORCPT
+        id S1727142AbgAFWPX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 17:15:23 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44344 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbgAFWPW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 17:07:51 -0500
-Received: by mail-pl1-f193.google.com with SMTP id a6so21622745plm.3;
-        Mon, 06 Jan 2020 14:07:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pH0bW5L244MhRBbTgYq971yU1s9EHra7myYPhaQViJg=;
-        b=U3ESQHwtHWbtFMdfTuDBniP6O0qQcGNps8BjZGNmHiiZ3MjD29QZYDu5t9gA8C6zeI
-         kPPUWZwLXplbBsAeo2r3ToaG1hpj4G+zYvoJurqGgzghNPvinzIdQvKHuhuOIqEfUzwj
-         SW3cCAxDBUNUZqtW8JwH2zT98ODIthR8aRgPyOQq0ZaJH+tR01uCMUI1rIv0zmKGXAYn
-         lQBX/Yvvhz+hbrEldYo3kxC4hQkMFIHlNkyy00qRpKY+PcbUBLtBYFC2UPvJ3WrXCnOf
-         Oa8OANHUEqg6Ary+vPRYwfzGyvRZHdUrMx4G8XeEPQZ/z2j+fBQE9bB0rxLNQyy/3t2T
-         IhLg==
+        Mon, 6 Jan 2020 17:15:22 -0500
+Received: by mail-oi1-f196.google.com with SMTP id d62so16955972oia.11
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 14:15:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pH0bW5L244MhRBbTgYq971yU1s9EHra7myYPhaQViJg=;
-        b=cPc+Wf/s+V2Ky+2m5XyDECmXdzMEkBlld7TqavuWA0JJuP+3zI1zEC3ln9U3IJIoOt
-         nFDdLne8Qpjgxa8wCc0rKGfv1WfTzFJlvgVfeewg9Mmc78ISTd+cHQGcIei4nR1lmiNw
-         4H6kqiNgL8qFht6FI8db5aDMQ6e/8nm1up6yNQpqlQZKikJaKBrA2HWYkMdvAtYNuJCw
-         Gyl/838EvPInaFjbThRO7Y8+EzoQUH5L93QouqVSfVSfuavg8+cCVIjFHuOe+UY70tvk
-         BCB6ic9j+UqMRZm2TjpF0O6ZlCrhy9c0/cRvWrnz1UOapXmJOAxX2c2btcR9D0iIPK56
-         /TKA==
-X-Gm-Message-State: APjAAAUMzWdXdgpq9j4iOle23hMMmT5uJdXEUXX9FFLGjBgmdfZHn4p9
-        PQ3JzhnxDc6eFzrIpgSK4K0=
-X-Google-Smtp-Source: APXvYqz59p5J+wJOEJOLpGeB4wIJfEe9IM9k8rTohNejmSeefpox5Hm1VCMzuUD+KYDflhtOTh7liQ==
-X-Received: by 2002:a17:902:8ec4:: with SMTP id x4mr93239772plo.234.1578348470494;
-        Mon, 06 Jan 2020 14:07:50 -0800 (PST)
-Received: from ast-mbp ([2620:10d:c090:200::1:2bf6])
-        by smtp.gmail.com with ESMTPSA id n1sm79713492pfd.47.2020.01.06.14.07.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Jan 2020 14:07:49 -0800 (PST)
-Date:   Mon, 6 Jan 2020 14:07:48 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     "tj@kernel.org" <tj@kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH bpf] bpf: cgroup: prevent out-of-order release of cgroup
- bpf
-Message-ID: <20200106220746.fm3hp3zynaiaqgly@ast-mbp>
-References: <20191227215034.3169624-1-guro@fb.com>
- <20200104003523.rfte5rw6hbnncjes@ast-mbp>
- <20200104011318.GA11376@localhost.localdomain>
- <20200104023112.6edfdvsff6cgsstn@ast-mbp>
- <20200104030041.GA12685@localhost.localdomain>
+        bh=CLp8AWOq/ppcpPg4zoNMmXmjnqf4+B8gtYz+J6bqL0A=;
+        b=rizSxbZ2vSQf77Cm2NjLVnCzm55owTA73Ki18YMDdx/Pn3c27ot3mb6n9zEJaUoGqL
+         N1omqFtohDOTJnA33PCY5ZK4EDWe/zTEmez9wMWd4Dtb0Oslco4vzics3S04NeW6Id4V
+         tmBRfsJPB4br1fSCoCPqxs2SHkyj7NbSO2faAPRiV4IeoaoS12HQthrMDq5w3idZ0f9q
+         ONgQ4vpgjVqXuOgFHyWZuuO+0DxkK+u3uwlh94KsD5iTivlsfAbguMZyE94AyKo1nWGe
+         Ul/cV3W2PcESO3tZ6nQpOgftQdu4Qj95499uxH1BXPW7r0chn0TwZ4fXROBJhBBEbLIg
+         KvXA==
+X-Gm-Message-State: APjAAAVPfggHKrrWIACnS8JBHTYkJOkDXWCWwjU/ZZxt7nscXbPk80wp
+        xiV5V1gb0T65XaiaOG9Z2qyu54I=
+X-Google-Smtp-Source: APXvYqzQZBlNYVpNJzkdz9iLmV1lswayFJ8vZbFXnBhthatkuStc0f2/ojKK02ZWIeMITaWYowg4Ig==
+X-Received: by 2002:aca:5745:: with SMTP id l66mr6764185oib.3.1578348921355;
+        Mon, 06 Jan 2020 14:15:21 -0800 (PST)
+Received: from rob-hp-laptop (ip-70-5-121-225.ftwttx.spcsdns.net. [70.5.121.225])
+        by smtp.gmail.com with ESMTPSA id i6sm19114676oie.12.2020.01.06.14.15.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jan 2020 14:15:21 -0800 (PST)
+Received: from rob (uid 1000)
+        (envelope-from rob@rob-hp-laptop)
+        id 22043f
+        by rob-hp-laptop (DragonFly Mail Agent v0.11);
+        Mon, 06 Jan 2020 16:12:46 -0600
+Date:   Mon, 6 Jan 2020 16:12:46 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
+        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
+        mark.rutland@arm.com, s.hauer@pengutronix.de,
+        catalin.marinas@arm.com, will@kernel.org, abel.vesa@nxp.com,
+        bjorn.andersson@linaro.org, olof@lixom.net, maxime@cerno.tech,
+        leonard.crestez@nxp.com, dinguyen@kernel.org,
+        marcin.juszkiewicz@linaro.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH V3 1/3] dt-bindings: imx: Add pinctrl binding doc for
+ i.MX8MP
+Message-ID: <20200106221246.GA17055@bogus>
+References: <1578302992-5723-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200104030041.GA12685@localhost.localdomain>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <1578302992-5723-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 04, 2020 at 03:00:46AM +0000, Roman Gushchin wrote:
-> On Fri, Jan 03, 2020 at 06:31:14PM -0800, Alexei Starovoitov wrote:
-> > On Sat, Jan 04, 2020 at 01:13:24AM +0000, Roman Gushchin wrote:
-> > > On Fri, Jan 03, 2020 at 04:35:25PM -0800, Alexei Starovoitov wrote:
-> > > > On Fri, Dec 27, 2019 at 01:50:34PM -0800, Roman Gushchin wrote:
-> > > > > Before commit 4bfc0bb2c60e ("bpf: decouple the lifetime of cgroup_bpf
-> > > > > from cgroup itself") cgroup bpf structures were released with
-> > > > > corresponding cgroup structures. It guaranteed the hierarchical order
-> > > > > of destruction: children were always first. It preserved attached
-> > > > > programs from being released before their propagated copies.
-> > > > > 
-> > > > > But with cgroup auto-detachment there are no such guarantees anymore:
-> > > > > cgroup bpf is released as soon as the cgroup is offline and there are
-> > > > > no live associated sockets. It means that an attached program can be
-> > > > > detached and released, while its propagated copy is still living
-> > > > > in the cgroup subtree. This will obviously lead to an use-after-free
-> > > > > bug.
-> > > > ...
-> > > > > @@ -65,6 +65,9 @@ static void cgroup_bpf_release(struct work_struct *work)
-> > > > >  
-> > > > >  	mutex_unlock(&cgroup_mutex);
-> > > > >  
-> > > > > +	for (p = cgroup_parent(cgrp); p; p = cgroup_parent(p))
-> > > > > +		cgroup_bpf_put(p);
-> > > > > +
-> > > > 
-> > > > The fix makes sense, but is it really safe to walk cgroup hierarchy
-> > > > without holding cgroup_mutex?
-> > > 
-> > > It is, because we're holding a reference to the original cgroup and going
-> > > towards the root. On each level the cgroup is protected by a reference
-> > > from their child cgroup.
-> > 
-> > cgroup_bpf_put(p) can make bpf.refcnt zero which may call cgroup_bpf_release()
-> > on another cpu which will do cgroup_put() and this cpu p = cgroup_parent(p)
-> > would be use-after-free?
-> > May be not due to the way work_queues are implemented.
-> > But it feels dangerous to have such delicate release logic.
+On Mon, Jan 06, 2020 at 05:29:50PM +0800, Anson Huang wrote:
+> Add binding doc for i.MX8MP pinctrl driver.
 > 
-> If I understand your concern correctly: you assume that parent's
-> cgroup_bpf_release() can be finished prior to the child's one and
-> the final cgroup_put() will release the parent?
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+> ---
+> Changes since V2:
+> 	- use DT schema instead of txt for binding doc.
+> ---
+>  .../bindings/pinctrl/fsl,imx8mp-pinctrl.yaml       |  65 ++
+>  arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h     | 931 +++++++++++++++++++++
+>  2 files changed, 996 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml
+>  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
 > 
-> If so, it's not possible, because the child hold a reference to the
-> parent (independent to all cgroup bpf stuff), which exists at least
-> until the final cgroup_put() in cgroup_bpf_release(). Please, look
-> at css_free_rwork_fn() for details.
-> 
-> > Why not to move the loop under the mutex and make things obvious?
-> 
-> Traversing the cgroup tree to the root cgroup without additional
-> locking seems pretty common to me. You can find a ton of examples in
-> mm/memcontrol.c. So it doesn't look scary or adventurous to me.
-> 
-> I think it doesn't matter that much here, so I'm ok with putting it
-> under the mutex, but IMO it won't make the code any safer.
-> 
-> 
-> cc Tejun for the second opinion on cgroup locking
+> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml
+> new file mode 100644
+> index 0000000..cdb6c21
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml
+> @@ -0,0 +1,65 @@
+> +# SPDX-License-Identifier: GPL-2.0-or-later
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/fsl,imx8mp-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale IMX8MP IOMUX Controller
+> +
+> +maintainers:
+> +  - Anson Huang <Anson.Huang@nxp.com>
+> +
+> +description:
+> +  Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
+> +  for common binding part and usage.
+> +
+> +properties:
+> +  compatible:
+> +    const: fsl,imx8mp-iomuxc
+> +
+> +# Client device subnode's properties
+> +patternProperties:
+> +  '-grp$':
+> +    type: object
+> +    description:
+> +      Pinctrl node's client devices use subnodes for desired pin configuration.
+> +      Client device subnodes use below standard properties.
+> +
+> +    properties:
+> +      fsl,pins:
+> +        $ref: /schemas/types.yaml#/definitions/string
 
-Checked with TJ offline. This seems fine.
+string or...
 
-I tweaked commit log:
-- extra 'diff' lines were confusing 'git am'
-- commit description shouldn't be split into multiline
+> +        description:
+> +          each entry consists of 6 integers and represents the mux and config
 
-And applied to bpf tree. Thanks
+integers?
+
+> +          setting for one pin. The first 5 integers <mux_reg conf_reg input_reg
+> +          mux_val input_val> are specified using a PIN_FUNC_ID macro, which can
+> +          be found in <arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h>. The last
+> +          integer CONFIG is the pad setting value like pull-up on this pin. Please
+> +          refer to i.MX8M Plus Reference Manual for detailed CONFIG settings.
+> +
+> +    required:
+> +      - fsl,pins
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  # Pinmux controller node
+> +  - |
+> +    iomuxc: pinctrl@30330000 {
+> +        compatible = "fsl,imx8mp-iomuxc";
+> +        reg = <0x30330000 0x10000>;
+> +
+> +        pinctrl_uart2: uart2grp {
+> +            fsl,pins = <
+> +                MX8MP_IOMUXC_UART2_RXD__UART2_DCE_RX	0x49
+> +                MX8MP_IOMUXC_UART2_TXD__UART2_DCE_TX	0x49
+
+Run 'make dt_binding_check'. Doesn't build:
+
+Error: Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.example.dts:23.21-22 syntax error
+FATAL ERROR: Unable to parse input tree
+
+> +            >;
+> +        };
+> +    };
+> +
+> +...
