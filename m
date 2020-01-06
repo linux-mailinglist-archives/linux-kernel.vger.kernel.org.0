@@ -2,148 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E94C0130D42
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 06:48:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71DDE130D48
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 06:49:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbgAFFsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 00:48:14 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:33182 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbgAFFsO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 00:48:14 -0500
-Received: by mail-pj1-f65.google.com with SMTP id u63so4055004pjb.0
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Jan 2020 21:48:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ittmWLzoiwbYfzA04b4FRh3oV8Mt00ekdOIO1DGBia4=;
-        b=PCgb8ZzsvivfjE9d60WEMDMyQbNBzEHv5fBK7m3g+KRKmJWigbH5K1vjI2ggSi7juH
-         HZhxqwZvLlxCGMbISviW9+xituKp0g0kxYOff5eS7vH2ZjXUOm2g1g6i/UDEiUaB6ga4
-         HWKRqfxhjX6jwLoDoTY5NRJpWervYA1ksV0EESrmsJX8eZUly31FDgtdL4x2rv3y+QjF
-         ppQA3qywUSgo6nlLkTaBFRp48rA1AtwpypHyQsb/2ggxnfe/mPfSEx5qOxc/aYYW6APm
-         aMzObXB6sDp7jt7vOWa2wDlO2JX8yi1QnBLwF4ZSGVkbXA3X5GxaNKC4XB6LuqQ9w8R3
-         Upvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ittmWLzoiwbYfzA04b4FRh3oV8Mt00ekdOIO1DGBia4=;
-        b=VAzs6mPUVrHddp1qqlgBSiY3217HvkHaDGw8b7Pab6mOLqCTpVxoet0a8j4+lznX60
-         Nm8PLlagEfJ+8CT+xE0nuyExOHZxOcOBpH7locy/hYkxFQcSYW13x94VsCKkK0ZaNjhv
-         SXQoYLq0O4viRIs5FLn49YoTFB5uOGODvJfLom8wCas3gsHdmhXpyQHq3BsshRp8dlqP
-         0ogbxvPsLPe6YXDoX6JwqUNs77r67XM8ddtGNnTvf5TSdfJ78/HAIf/k9EpcAWA/emSQ
-         +rkmTtEarlYpHxT+si4TFc3AaaTvDsKUCKHt4kQhlxVDUgqXy9/YHOi90RAUeJ/YhU3C
-         zEog==
-X-Gm-Message-State: APjAAAUj3i7p+KYRiU9c89zj4lf3VcZZvptDi7yUhEQAVkGOGIxZulEM
-        lL9LGuF76DqJb5DFGjV+sI7+UQ==
-X-Google-Smtp-Source: APXvYqzY7Y/N3u1EIAlYonSqEdQqQr5D/DGlIXfcIAtx/yQ+I9zoC0IR+vPRp+fuNusv/Ptc8RdGSA==
-X-Received: by 2002:a17:90a:5806:: with SMTP id h6mr41233347pji.63.1578289693795;
-        Sun, 05 Jan 2020 21:48:13 -0800 (PST)
-Received: from localhost ([122.172.26.121])
-        by smtp.gmail.com with ESMTPSA id 64sm73939461pfd.48.2020.01.05.21.48.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 05 Jan 2020 21:48:13 -0800 (PST)
-Date:   Mon, 6 Jan 2020 11:18:11 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     qiwuchen55@gmail.com
-Cc:     kgene@kernel.org, krzk@kernel.org, rjw@rjwysocki.net,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenqiwu <chenqiwu@xiaomi.com>
-Subject: Re: [PATCH] cpufreq: s3c: avoid use after free issue in
- xxx_cpufreq_reboot_notifier_evt()
-Message-ID: <20200106054811.uduf2qdn5ecvbwrc@vireshk-i7>
-References: <1577515439-14477-1-git-send-email-qiwuchen55@gmail.com>
+        id S1726789AbgAFFts (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 00:49:48 -0500
+Received: from ozlabs.org ([203.11.71.1]:57651 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726338AbgAFFts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 00:49:48 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47rl2d4Kf9z9sR4;
+        Mon,  6 Jan 2020 16:49:45 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1578289786;
+        bh=tZmF/WDn1Rl9uQxu18Ig3v3tPGDxQ5X6sH5nqcnQnrw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=FAT2GuUwSQEOC95zpXnmSjpcD7QNieVGZtWZd0RYoUgaHmNoXeWeGhxzyvJuak+NI
+         FwvTJaiL5i0FpF6tTpTjF6o5O1/HRw8XLu5k8S2SFsAOzL8Op5B7MQl+xR2Ak2uO8q
+         /4+SDMzmw5RLRv5Qf+IuAh8C18/H7vn7u3JmPDurDw5mzo+mCpxGvbgzVQYsirvLUC
+         T90BKiUGyK8jY30y5umZTaPEWolRed2KVj3nJkL0sqspFih1A7gCmwjhiwuR6cEkAd
+         0YgC043UMxpwKfufKvEeLFqqD12THCNp+zYcR9rGE2LnlptOFdUOPSygPHd8cJO0vl
+         YObIU6/e4Ez2A==
+Date:   Mon, 6 Jan 2020 16:49:44 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Message-ID: <20200106164944.063ac07b@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1577515439-14477-1-git-send-email-qiwuchen55@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: multipart/signed; boundary="Sig_/xkYCoiMf93arr8aBlvWVIku";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28-12-19, 14:43, qiwuchen55@gmail.com wrote:
-> From: chenqiwu <chenqiwu@xiaomi.com>
-> 
-> There is a potential UAF issue in xxx_cpufreq_reboot_notifier_evt() that
-> the cpufreq policy of cpu0 has been released before using it. So we should
-> make a judgement to avoid it.
+--Sig_/xkYCoiMf93arr8aBlvWVIku
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-There is no UAF problem here, but that we do cpufreq_cpu_get() with a
-corresponding cpufreq_cpu_put().
+Hi all,
 
-> Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
-> ---
->  drivers/cpufreq/s3c2416-cpufreq.c | 11 ++++++++++-
->  drivers/cpufreq/s5pv210-cpufreq.c | 10 +++++++++-
->  2 files changed, 19 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/s3c2416-cpufreq.c b/drivers/cpufreq/s3c2416-cpufreq.c
-> index 1069103..0f576ba 100644
-> --- a/drivers/cpufreq/s3c2416-cpufreq.c
-> +++ b/drivers/cpufreq/s3c2416-cpufreq.c
-> @@ -304,6 +304,7 @@ static int s3c2416_cpufreq_reboot_notifier_evt(struct notifier_block *this,
->  {
->  	struct s3c2416_data *s3c_freq = &s3c2416_cpufreq;
->  	int ret;
-> +	struct cpufreq_policy policy;
->  
->  	mutex_lock(&cpufreq_lock);
->  
-> @@ -318,7 +319,15 @@ static int s3c2416_cpufreq_reboot_notifier_evt(struct notifier_block *this,
->  	 */
->  	if (s3c_freq->is_dvs) {
->  		pr_debug("cpufreq: leave dvs on reboot\n");
-> -		ret = cpufreq_driver_target(cpufreq_cpu_get(0), FREQ_SLEEP, 0);
-> +
-> +		memset(&policy, 0, sizeof(policy));
-> +		ret = cpufreq_get_policy(&policy, 0);
-> +		if (ret < 0) {
-> +			pr_debug("cpufreq: get no policy for cpu0\n");
-> +			return NOTIFY_BAD;
-> +		}
-> +
+After merging the akpm-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-This doesn't make sense to me, why don't you do cpufreq_cpu_get() and
-put() instead ?
+ERROR: "_debug_pagealloc_enabled_early" [sound/drivers/pcsp/snd-pcsp.ko] un=
+defined!
 
-> +		ret = cpufreq_driver_target(&policy, FREQ_SLEEP, 0);
->  		if (ret < 0)
->  			return NOTIFY_BAD;
->  	}
-> diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-> index 5d10030..d99b4b1 100644
-> --- a/drivers/cpufreq/s5pv210-cpufreq.c
-> +++ b/drivers/cpufreq/s5pv210-cpufreq.c
-> @@ -555,8 +555,16 @@ static int s5pv210_cpufreq_reboot_notifier_event(struct notifier_block *this,
->  						 unsigned long event, void *ptr)
->  {
->  	int ret;
-> +	struct cpufreq_policy *policy;
->  
-> -	ret = cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ, 0);
-> +	policy = cpufreq_cpu_get(0);
-> +	if (!policy) {
-> +		pr_debug("cpufreq: get no policy for cpu0\n");
-> +		return NOTIFY_BAD;
-> +	}
-> +
-> +	ret = cpufreq_driver_target(policy, SLEEP_FREQ, 0);
-> +	cpufreq_cpu_put(policy);
+Caused by commit
 
-Like what is done here.
+  6538817e7869 ("mm, debug_pagealloc: don't rely on static keys too early")
 
-Also add a blank line here.
+I have added this patch for today:
 
->  	if (ret < 0)
->  		return NOTIFY_BAD;
->  
-> -- 
-> 1.9.1
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 6 Jan 2020 16:44:57 +1100
+Subject: [PATCH] mm, debug_pagealloc: need to export _debug_pagealloc_enabl=
+ed_early
 
--- 
-viresh
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ mm/page_alloc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 85811f1465e5..a41bd7341de1 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -696,6 +696,7 @@ unsigned int _debug_guardpage_minorder;
+=20
+ bool _debug_pagealloc_enabled_early __read_mostly
+ 			=3D IS_ENABLED(CONFIG_DEBUG_PAGEALLOC_ENABLE_DEFAULT);
++EXPORT_SYMBOL(_debug_pagealloc_enabled_early);
+ DEFINE_STATIC_KEY_FALSE(_debug_pagealloc_enabled);
+ EXPORT_SYMBOL(_debug_pagealloc_enabled);
+=20
+--=20
+2.24.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/xkYCoiMf93arr8aBlvWVIku
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4SynkACgkQAVBC80lX
+0GyeAggAk2sgUF6Wk0X6K3Yo33ZC7v4f5yCcmQ15RfKpWDhNDKETzN80wacIvnSl
+FMIF7tnbCH8s8c3OY5fCxfK+jb1tA+L2FvxKrwqsifIJ8MKaY4XoDf8/c8q3QsIb
+kKMYNj53DQcoxT3FAN059lVUkA/VLLE/MB1YI8UYD1HfIxgyREeCBgk+T6OVAgd3
+OF/vS6VM+8VsFo4HVoKlbAv//q+47hEqJdj6Y1Q4jht7BKNxPWaOTPQwF4xJKmYA
+MMtwFua50sxamdW0fvQpCuNevmDxL8FJbx2vwuqfRKsgloBkWX2DzHkvwaSsSeSx
+xcQ8xf/VO6jAAozq4icxMtwSRfIdmg==
+=7QBI
+-----END PGP SIGNATURE-----
+
+--Sig_/xkYCoiMf93arr8aBlvWVIku--
