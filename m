@@ -2,87 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB28C130ADC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 01:27:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90B3F130AEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 01:39:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbgAFA1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 19:27:22 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:5943 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727219AbgAFA1W (ORCPT
+        id S1726825AbgAFAiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 19:38:17 -0500
+Received: from asavdk4.altibox.net ([109.247.116.15]:56062 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbgAFAiQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 19:27:22 -0500
-X-UUID: 04bd6e4d801249fa88d155a24e3dc5f2-20200106
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=8BzC12aG5DHtHZ2qSHgLaSvaZKEz7ErXAlzHysQ8AUI=;
-        b=Ry324sGHxLqVHmRoBKJu0wrsH6bmmgdJ39/oul5CroLAEDNc6QcgWOiDk+m7/oVyBB3fDfnx820SfRVwzvIZOpLE8uZ/aEdKj9rQk++jOu0VBlvRe/5ZgDhlMQ2Bd4c2JSIxJgKnJONehwTsLzRtB8TaAB+y1G6q7uWNDS3txJI=;
-X-UUID: 04bd6e4d801249fa88d155a24e3dc5f2-20200106
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 240022176; Mon, 06 Jan 2020 08:27:16 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 6 Jan 2020 08:26:24 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 6 Jan 2020 08:25:44 +0800
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
-        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
-        <jejb@linux.ibm.com>
-CC:     <beanhuo@micron.com>, <asutoshd@codeaurora.org>,
-        <cang@codeaurora.org>, <matthias.bgg@gmail.com>,
-        <bvanassche@acm.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
-        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
-        <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
-Subject: [PATCH v2 2/2] scsi: ufs-mediatek: add apply_dev_quirks variant operation
-Date:   Mon, 6 Jan 2020 08:27:11 +0800
-Message-ID: <1578270431-9873-3-git-send-email-stanley.chu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1578270431-9873-1-git-send-email-stanley.chu@mediatek.com>
-References: <1578270431-9873-1-git-send-email-stanley.chu@mediatek.com>
+        Sun, 5 Jan 2020 19:38:16 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id F259F8050A;
+        Mon,  6 Jan 2020 01:38:10 +0100 (CET)
+Date:   Mon, 6 Jan 2020 01:38:09 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, od@zcrc.me,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] drm/panel: simple: Add support for the Frida
+ FRD350H54004 panel
+Message-ID: <20200106003809.GA552@ravnborg.org>
+References: <20191202154123.64139-1-paul@crapouillou.net>
+ <20191202154123.64139-3-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: EF9F7240A7E5841972FBE79599879B822F061DC521957848BA3EC05D9979D0962000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191202154123.64139-3-paul@crapouillou.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=ER_8r6IbAAAA:8
+        a=4eiu5t_5MPiKWv0nutYA:9 a=CjuIK1q_8ugA:10 a=9LHmKk7ezEChjTCyhBa9:22
+        a=pHzHmUro8NiASowvMSCR:22 a=6VlIyEUom7LUIeUMNQJH:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QWRkIHZlbmRvci1zcGVjaWZpYyB2YXJpYW50IGNhbGxiYWNrICJhcHBseV9kZXZfcXVpcmtzIg0K
-aW4gTWVkaWFUZWsgVUZTIGRyaXZlci4NCg0KQ2M6IEFsaW0gQWtodGFyIDxhbGltLmFraHRhckBz
-YW1zdW5nLmNvbT4NCkNjOiBBc3V0b3NoIERhcyA8YXN1dG9zaGRAY29kZWF1cm9yYS5vcmc+DQpD
-YzogQXZyaSBBbHRtYW4gPGF2cmkuYWx0bWFuQHdkYy5jb20+DQpDYzogQmFydCBWYW4gQXNzY2hl
-IDxidmFuYXNzY2hlQGFjbS5vcmc+DQpDYzogQmVhbiBIdW8gPGJlYW5odW9AbWljcm9uLmNvbT4N
-CkNjOiBDYW4gR3VvIDxjYW5nQGNvZGVhdXJvcmEub3JnPg0KQ2M6IE1hdHRoaWFzIEJydWdnZXIg
-PG1hdHRoaWFzLmJnZ0BnbWFpbC5jb20+DQpSZXZpZXdlZC1ieTogQXZyaSBBbHRtYW4gPGF2cmku
-YWx0bWFuQHdkYy5jb20+DQpTaWduZWQtb2ZmLWJ5OiBTdGFubGV5IENodSA8c3RhbmxleS5jaHVA
-bWVkaWF0ZWsuY29tPg0KLS0tDQogZHJpdmVycy9zY3NpL3Vmcy91ZnMtbWVkaWF0ZWsuYyB8IDEx
-ICsrKysrKysrKysrDQogMSBmaWxlIGNoYW5nZWQsIDExIGluc2VydGlvbnMoKykNCg0KZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVrLmMgYi9kcml2ZXJzL3Njc2kvdWZz
-L3Vmcy1tZWRpYXRlay5jDQppbmRleCA0MWY4MGVlYWRhNDYuLjhkOTk5YzBlNjBmZSAxMDA2NDQN
-Ci0tLSBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVrLmMNCisrKyBiL2RyaXZlcnMvc2Nz
-aS91ZnMvdWZzLW1lZGlhdGVrLmMNCkBAIC0xNiw2ICsxNiw3IEBADQogDQogI2luY2x1ZGUgInVm
-c2hjZC5oIg0KICNpbmNsdWRlICJ1ZnNoY2QtcGx0ZnJtLmgiDQorI2luY2x1ZGUgInVmc19xdWly
-a3MuaCINCiAjaW5jbHVkZSAidW5pcHJvLmgiDQogI2luY2x1ZGUgInVmcy1tZWRpYXRlay5oIg0K
-IA0KQEAgLTQwNSw2ICs0MDYsMTUgQEAgc3RhdGljIGludCB1ZnNfbXRrX3Jlc3VtZShzdHJ1Y3Qg
-dWZzX2hiYSAqaGJhLCBlbnVtIHVmc19wbV9vcCBwbV9vcCkNCiAJcmV0dXJuIDA7DQogfQ0KIA0K
-K3N0YXRpYyBpbnQgdWZzX210a19hcHBseV9kZXZfcXVpcmtzKHN0cnVjdCB1ZnNfaGJhICpoYmEs
-DQorCQkJCSAgICBzdHJ1Y3QgdWZzX2Rldl9kZXNjICpjYXJkKQ0KK3sNCisJaWYgKGNhcmQtPndt
-YW51ZmFjdHVyZXJpZCA9PSBVRlNfVkVORE9SX1NBTVNVTkcpDQorCQl1ZnNoY2RfZG1lX3NldCho
-YmEsIFVJQ19BUkdfTUlCKFBBX1RBQ1RJVkFURSksIDYpOw0KKw0KKwlyZXR1cm4gMDsNCit9DQor
-DQogLyoqDQogICogc3RydWN0IHVmc19oYmFfbXRrX3ZvcHMgLSBVRlMgTVRLIHNwZWNpZmljIHZh
-cmlhbnQgb3BlcmF0aW9ucw0KICAqDQpAQCAtNDE3LDYgKzQyNyw3IEBAIHN0YXRpYyBzdHJ1Y3Qg
-dWZzX2hiYV92YXJpYW50X29wcyB1ZnNfaGJhX210a192b3BzID0gew0KIAkuc2V0dXBfY2xvY2tz
-ICAgICAgICA9IHVmc19tdGtfc2V0dXBfY2xvY2tzLA0KIAkubGlua19zdGFydHVwX25vdGlmeSA9
-IHVmc19tdGtfbGlua19zdGFydHVwX25vdGlmeSwNCiAJLnB3cl9jaGFuZ2Vfbm90aWZ5ICAgPSB1
-ZnNfbXRrX3B3cl9jaGFuZ2Vfbm90aWZ5LA0KKwkuYXBwbHlfZGV2X3F1aXJrcyAgICA9IHVmc19t
-dGtfYXBwbHlfZGV2X3F1aXJrcywNCiAJLnN1c3BlbmQgICAgICAgICAgICAgPSB1ZnNfbXRrX3N1
-c3BlbmQsDQogCS5yZXN1bWUgICAgICAgICAgICAgID0gdWZzX210a19yZXN1bWUsDQogCS5kZXZp
-Y2VfcmVzZXQgICAgICAgID0gdWZzX210a19kZXZpY2VfcmVzZXQsDQotLSANCjIuMTguMA0K
+Hi Paul.
 
+On Mon, Dec 02, 2019 at 04:41:23PM +0100, Paul Cercueil wrote:
+> The FRD350H54004 is a simple 3.5" 320x240 24-bit TFT panel, found for
+> instance inside the Anbernic RG-350 handheld gaming console.
+> 
+> v2: Order alphabetically
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  drivers/gpu/drm/panel/panel-simple.c | 29 ++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+> index 28fa6ba7b767..0e5e33a57f0c 100644
+> --- a/drivers/gpu/drm/panel/panel-simple.c
+> +++ b/drivers/gpu/drm/panel/panel-simple.c
+> @@ -1402,6 +1402,32 @@ static const struct panel_desc foxlink_fl500wvr00_a0t = {
+>  	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
+>  };
+>  
+> +static const struct drm_display_mode frida_frd350h54004_mode = {
+> +	.clock = 6777,
+> +	.hdisplay = 320,
+> +	.hsync_start = 320 + 70,
+> +	.hsync_end = 320 + 70 + 50,
+> +	.htotal = 320 + 70 + 50 + 10,
+> +	.vdisplay = 240,
+> +	.vsync_start = 240 + 5,
+> +	.vsync_end = 240 + 5 + 1,
+> +	.vtotal = 240 + 5 + 1 + 5,
+> +	.vrefresh = 60,
+> +	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
+> +};
+> +
+> +static const struct panel_desc frida_frd350h54004 = {
+> +	.modes = &frida_frd350h54004_mode,
+> +	.num_modes = 1,
+> +	.bpc = 8,
+> +	.size = {
+> +		.width = 77,
+> +		.height = 64,
+> +	},
+> +	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
+> +	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_POSEDGE,
+> +};
+connector_type is mandatory for new panel-simple panels.
+
+	Sam
+> +
+>  static const struct drm_display_mode friendlyarm_hd702e_mode = {
+>  	.clock		= 67185,
+>  	.hdisplay	= 800,
+> @@ -3189,6 +3215,9 @@ static const struct of_device_id platform_of_match[] = {
+>  	}, {
+>  		.compatible = "foxlink,fl500wvr00-a0t",
+>  		.data = &foxlink_fl500wvr00_a0t,
+> +	}, {
+> +		.compatible = "frida,frd350h54004",
+> +		.data = &frida_frd350h54004,
+>  	}, {
+>  		.compatible = "friendlyarm,hd702e",
+>  		.data = &friendlyarm_hd702e,
+> -- 
+> 2.24.0
