@@ -2,79 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2979131C1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 00:10:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C9A1131C0F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 00:05:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbgAFXKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 18:10:36 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:43438 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbgAFXKg (ORCPT
+        id S1727319AbgAFXFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 18:05:17 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42041 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726735AbgAFXFQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 18:10:36 -0500
-Received: by mail-yb1-f194.google.com with SMTP id v24so22819995ybd.10
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 15:10:35 -0800 (PST)
+        Mon, 6 Jan 2020 18:05:16 -0500
+Received: by mail-lj1-f194.google.com with SMTP id y4so38318218ljj.9
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 15:05:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YUbyXuNj/nV2mvWyQuOWH4rMIzJEpHNGktDVq6OfmV4=;
+        b=Y24G2rLT62gVi5UB4PSR0/0wz9F1EYqZ56Cd5xJQebRbp8KCL3GxnMuy9jCL3Yhfwf
+         HjbIDLD3LDoKQm+F5/Rmtd4LjbGEwULoYlWfbBA6DHBJDjNPUDuyAycdA7FrP/nr/WrY
+         lMSYjhOM+wrLU48osUO/7sLQVyCy8fevVa7H0pVciTJFeDg00Ft8UEIrQcCjT7R7J5gY
+         AUbQt/I3jdZ+fV7E3Gq2u6vGW2f4LBkv/JnUXIO5eHav6EUS0vqIi80JL2JsM+1JU5H8
+         gbVoNBgkYwEWkw82fR+oU0qyWJas3JeG1t0BkedS8F/NgbPggf/lQyiglaedmE/BvOeN
+         pvsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=t+t1eROLK9g0HiqH07fHsSxCWd48TLqA6FF38j0G2gc=;
-        b=QvPvKfU9KCPWNFecyIg0Zgd2SRgCQNNM9322v8uNUiM4BSiGftwOWv2QoBduUWDbOo
-         g7ihoA9/LixlOfU6XBxwgfgWUPaumBGfjJCou3dqjLO+1MWHTpdiTJnM75UjODHUYBmu
-         2qr686oNqCMY4a0P9A94j5M7Mk1xHj0MjPgpGwyqtblNB3odNFzIrFRUnUn9EHcq6Ug7
-         yNmNxp52CEfzBv/xZ61RWyxdAhUBxEi3bJnxQvQUYsEqchAIqIzK3+QJEY6A22rVCjE5
-         Q2NuRG+R+gdy4qGx5imIe+Dqrwoid1Qr3DIj0drrrvDfIdQLIw+PhnVoI0AE8qty9+wc
-         BHvQ==
-X-Gm-Message-State: APjAAAXe6G4McTBl47JtXRCv1LnpAIXh/IHWwA3cV47K0OoiE8Yc2U32
-        GWl7pRXWJrwK50QnU2qLRRVdm0g=
-X-Google-Smtp-Source: APXvYqysxpj1g8iYldNlywPZQ9sD1f9Pt98LPWbsi6wr6Duo31W0HztGeumerKJ7DKCGgz6AbfRrUQ==
-X-Received: by 2002:a25:c42:: with SMTP id 63mr56039180ybm.375.1578352235164;
-        Mon, 06 Jan 2020 15:10:35 -0800 (PST)
-Received: from rob-hp-laptop ([172.58.110.146])
-        by smtp.gmail.com with ESMTPSA id i127sm28202574ywe.65.2020.01.06.15.10.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 15:10:35 -0800 (PST)
-Received: from rob (uid 1000)
-        (envelope-from rob@rob-hp-laptop)
-        id 2209ae
-        by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Mon, 06 Jan 2020 17:03:01 -0600
-Date:   Mon, 6 Jan 2020 17:03:01 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Rajeshwari <rkambl@codeaurora.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sanm@codeaurora.org, sivaa@codeaurora.org, manaf@codeaurora.org,
-        Rajeshwari <rkambl@codeaurora.org>
-Subject: Re: [PATCH v2 2/2] dt-bindings: thermal: tsens: Add configuration in
- yaml
-Message-ID: <20200106230301.GA12602@bogus>
-References: <1578317369-16045-1-git-send-email-rkambl@codeaurora.org>
- <1578317369-16045-3-git-send-email-rkambl@codeaurora.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YUbyXuNj/nV2mvWyQuOWH4rMIzJEpHNGktDVq6OfmV4=;
+        b=MYdEUSB/HUMVFiuuOJLFhN01qzuq4PSH51Le8WUBCeR3pIaaIMqkk9EXwVROSgZoo+
+         5JBCUzGG+MLaJdasjL1wfrtW+T6O9A8j3p97GB1iSxfXonCRYtb7xeY3jWsAgPLNYjyB
+         TqMrheML4pEBhMnZeopzuoppHOSPJcsX59be6PLeXTZ4Wfb7vQLwbSI3mWgT+T2yt4hZ
+         682uHbuz/ximd21poj1l1Y0BKwowqKIZ7U47L0Ink4rrhdQOLnb3Z2QqzBQpLKNxyjVc
+         WOfCbS1n1o+4OHVzRvbVS5vZxzaPmVOXWUXj3cQigUvR3KdC/DM5hVYclnOkZ3rt/8xt
+         yhUQ==
+X-Gm-Message-State: APjAAAXzXx0XjexP3LsfKKXDDaR3rWB1yTt8GpUxlB92AOCRh/Snlae7
+        A3cnqs82sLKonVjCbaRCU5634A0OJr1wd0fnCyfoUQ==
+X-Google-Smtp-Source: APXvYqzTTARViZbNA1PJIgCijb0mRSzkTPdGonONIBTiDvfmnoknOA5gNAB0/N4oSUa+0AujUlg0CqsTUQj0MWd+Yss=
+X-Received: by 2002:a2e:844e:: with SMTP id u14mr62036735ljh.183.1578351913918;
+ Mon, 06 Jan 2020 15:05:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1578317369-16045-3-git-send-email-rkambl@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191214114913.8610-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20191214114913.8610-1-lukas.bulwahn@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 7 Jan 2020 00:05:02 +0100
+Message-ID: <CACRpkdaY6jCdSpdDejo87CgoO6qbekj-QO354a1K0BeHYOnCpw@mail.gmail.com>
+Subject: Re: [PATCH] fmc: remove left-over ipmi-fru.h after fmc deletion
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Federico Vaga <federico.vaga@cern.ch>,
+        Denis Efremov <efremov@linux.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Pat Riehecky <riehecky@fnal.gov>,
+        Alessandro Rubini <rubini@gnudd.com>,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        Sebastian Duda <sebastian.duda@fau.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  6 Jan 2020 18:59:29 +0530, Rajeshwari wrote:
-> Added configuration in dt-bindings for SC7180.
-> 
-> Signed-off-by: Rajeshwari <rkambl@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+On Sat, Dec 14, 2019 at 12:49 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 
-Acked-by: Rob Herring <robh@kernel.org>
+> Commit 6a80b30086b8 ("fmc: Delete the FMC subsystem") from Linus Walleij
+> deleted the obsolete FMC subsystem, but missed the MAINTAINERS entry and
+> include/linux/ipmi-fru.h mentioned in the MAINTAINERS entry.
+>
+> Later, commit d5d4aa1ec198 ("MAINTAINERS: Remove FMC subsystem") from
+> Denis Efremov cleaned up the MAINTAINERS entry, but actually also missed
+> that include/linux/ipmi-fru.h should also be deleted while deleting its
+> reference in MAINTAINERS.
+>
+> So, deleting include/linux/ipmi-fru.h slipped through the previous
+> clean-ups.
+>
+> As there is no further use for include/linux/ipmi-fru.h, finally delete
+> include/linux/ipmi-fru.h for good now.
+>
+> Fixes: d5d4aa1ec198 ("MAINTAINERS: Remove FMC subsystem")
+> Fixes: 6a80b30086b8 ("fmc: Delete the FMC subsystem")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Linus, please pick this patch.
+
+OK applied this to the GPIO tree, thanks!
+
+Yours,
+Linus Walleij
