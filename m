@@ -2,78 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45ADF131A8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 22:35:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 930B6131A8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 22:35:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbgAFVfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 16:35:00 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:55496 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726937AbgAFVe7 (ORCPT
+        id S1727183AbgAFVfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 16:35:08 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44558 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbgAFVfH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 16:34:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578346498;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=b3Wm+uXhIbTiq/MxKpttGGeUtpHNdSriyRcWo1I9x6Y=;
-        b=a+blDqN3c5YlzMPK8E+9PhdbaQiYA/RMgzewHOn7xN1GS+cfyb9KAvbXbPlpv9AguSJJi1
-        /ma9+EY6bi6G+gRRoJmlXtdQJXrzzVe243yaI8jSXjY72eab1vX5RR4BYpjW5YZUGu2D4S
-        VsfRhdZjPVJ5HFKpKk73PErZjoSey8g=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-204-BjrI9V4_N92wKVXid-vgeQ-1; Mon, 06 Jan 2020 16:34:55 -0500
-X-MC-Unique: BjrI9V4_N92wKVXid-vgeQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5F049477;
-        Mon,  6 Jan 2020 21:34:53 +0000 (UTC)
-Received: from localhost (ovpn-112-4.rdu2.redhat.com [10.10.112.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CC45B19C58;
-        Mon,  6 Jan 2020 21:34:49 +0000 (UTC)
-Date:   Mon, 06 Jan 2020 13:34:48 -0800 (PST)
-Message-Id: <20200106.133448.1654261172205332113.davem@redhat.com>
-To:     arnd@arndb.de
-Cc:     saeedm@mellanox.com, leon@kernel.org,
-        adhemerval.zanella@linaro.org, tariqt@mellanox.com,
-        shayag@mellanox.com, eranbe@mellanox.com, maximmi@mellanox.com,
-        ayal@mellanox.com, moshe@mellanox.com, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mlx5: work around high stack usage with gcc
-From:   David Miller <davem@redhat.com>
-In-Reply-To: <20200104215156.689245-1-arnd@arndb.de>
-References: <20200104215156.689245-1-arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+        Mon, 6 Jan 2020 16:35:07 -0500
+Received: by mail-pg1-f196.google.com with SMTP id x7so27439383pgl.11;
+        Mon, 06 Jan 2020 13:35:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=m5JbUZHGVS7KhF/eteOGbVRmf/p5dDdWHItMOmdV+PY=;
+        b=KXEBFPr7uLQ4erGLtuIgSp+jERI4sICam+LtekOisclwM/7Qx2N3YufOUEUvR5OLLO
+         XdTzdU8wj6aTXkVgZQghUWNKX8HHrujLuUn7U/6QdzzfigQDunDmhBZPk7pTbg4HAn09
+         8ux3h6/ue1ptdVg7cPXq2UwMXsxX3J3i0cCAbZXn4HTwJig05+Ff2b8/ARSw65Au3Z4c
+         WDfXSfvuEh9BNLMKuAY1hTMyoLvov63knvGkpmFO2OaYyzPQivH3SevLolpROMrsxRba
+         mpsaWA5DwVT6nUFBEWYEFJ7GnNTFP0nIBGlGku150zrhA4iZjYHmjachj/FdlaSVvnle
+         omPg==
+X-Gm-Message-State: APjAAAUaDyzvedV6CbNNLujbyp3HLCfwfxN1tinkfl0NdZXKzsJpBi6I
+        DUjEMlCNofyeOBCdPVIJ0v8=
+X-Google-Smtp-Source: APXvYqw182QJjFmapUgFthZkzGtp0VoNIvjQLkmo3FZplcl6V6fewGd0Km+oD9FveLcEgGfjcf+wSw==
+X-Received: by 2002:a62:486:: with SMTP id 128mr111783695pfe.236.1578346506948;
+        Mon, 06 Jan 2020 13:35:06 -0800 (PST)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id g22sm74464874pgk.85.2020.01.06.13.35.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jan 2020 13:35:05 -0800 (PST)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 2F19740321; Mon,  6 Jan 2020 21:35:05 +0000 (UTC)
+Date:   Mon, 6 Jan 2020 21:35:05 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Peter Jones <pjones@redhat.com>,
+        Dave Olsthoorn <dave@bewaar.me>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH v10 00/10] efi/firmware/platform-x86: Add EFI embedded fw
+ support
+Message-ID: <20200106213505.GW11244@42.do-not-panic.com>
+References: <20191210115117.303935-1-hdegoede@redhat.com>
+ <66f45932-756d-0bb0-d7a8-330d61785663@redhat.com>
+ <CAKv+Gu_X+UM95MJJMjT69upL9zN3H9BnUkv8s9TjcpevANbYEw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu_X+UM95MJJMjT69upL9zN3H9BnUkv8s9TjcpevANbYEw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Sat,  4 Jan 2020 22:51:44 +0100
-
-> In some configurations, gcc tries too hard to optimize this code:
+On Fri, Jan 03, 2020 at 12:36:04PM +0100, Ard Biesheuvel wrote:
+> On Fri, 3 Jan 2020 at 12:27, Hans de Goede <hdegoede@redhat.com> wrote:
+> >
+> > Hi All,
+> >
+> > Since I send this out, efi-next has seen some changes causing the first
+> > 2 patches to no longer cleanly apply. So it looks like we need to
+> > merge this one bit at a time with immutable branches.
+> >
+> > Ard, the first 2 patches in this series should be merged through your
+> > efi tree. AFAIK everyone is happy with them in their current state
+> > so they are ready for merging. Can you create an immutable branch
+> > with these 2 patches and merge that into your efi-next branch?
+> >
+> > Note if you do the immutable branch on 5.5-rc1 + just these 2 patches,
+> > there will be a conflict when you merge this into efi-next, but it is
+> > trivial to resolve.
+> >
 > 
-> drivers/net/ethernet/mellanox/mlx5/core/en_stats.c: In function 'mlx5e_grp_sw_update_stats':
-> drivers/net/ethernet/mellanox/mlx5/core/en_stats.c:302:1: error: the frame size of 1336 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+> I will need to defer to Ingo here, as he usually applies the EFI
+> changes piecemeal rather than merging my branches directly.
 > 
-> As was stated in the bug report, the reason is that gcc runs into a corner
-> case in the register allocator that is rather hard to fix in a good way.
-> 
-> As there is an easy way to work around it, just add a comment and the
-> barrier that stops gcc from trying to overoptimize the function.
-> 
-> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=92657
-> Cc: Adhemerval Zanella <adhemerval.zanella@linaro.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> I'd be fine with just annotating the conflict in the pull request if
+> it is trivial, though, but it is really up to Luis and Ingo to align
+> here.
 
-Saeed, please take this.
+I don't have a tree, and firmware goes Greg's driver core tree so
+actually its up to Greg and Ingo on how this gets merged. But it seems
+you just have one issue to fix:
 
-Thank you.
+[PATCH v10 05/10] test_firmware: add support for firmware_request_platform
 
+There is a few set of empty lines added and I had one comment on the
+release of the firmware.
+
+Other than this, I agree this seems ready to be merged.
+
+  Luis
