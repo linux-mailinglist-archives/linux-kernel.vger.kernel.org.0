@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02E3E130BA9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 02:35:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B590E130BA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 02:35:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbgAFBf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 20:35:27 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34470 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727452AbgAFBe4 (ORCPT
+        id S1727507AbgAFBfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 20:35:01 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37072 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727460AbgAFBe5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 20:34:56 -0500
-Received: by mail-lj1-f196.google.com with SMTP id z22so44495869ljg.1;
-        Sun, 05 Jan 2020 17:34:54 -0800 (PST)
+        Sun, 5 Jan 2020 20:34:57 -0500
+Received: by mail-lj1-f194.google.com with SMTP id o13so37885713ljg.4;
+        Sun, 05 Jan 2020 17:34:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=bBOdi+OKZRFZU4WYLXtV3AOw8+qJl80/HyzpZqYt9wQ=;
-        b=LdA2yUgBw+XwewIEmZXjTplQjbHVYwYexhqb2+aPPXi5Lf2HVtsyj5NKf2Xf3JVseD
-         vz9BH+JaKGETzIMbzIYgR18TLL5GL/fiBpN/tcgItror7ZQlCKcVlO9KC99silNsQxJT
-         tFKdbDPt3xybjAPxOw9fHKB8mLR1f0hLws5NmDlfk4DJ/IBdD/MK1oTwchZhfKkZh4jM
-         mzb442V0yuxDuUsZdrzXyjJb7tAkUNC2nr/6GVWasmQPaAhKuBhaoqhkl4mcXZvUnJ8N
-         TEZhBOOnqnKTQdBZfaYycu5j4+yu1Vhb0Mw1dUtF2B3rk4Qagr0hdCKPkxoltClhnygw
-         dmXw==
+        bh=GxHWs7smKY9c542URAYmUJXKzRbv59ZDpizKO+V3yf8=;
+        b=VRVHx06Vdq1FmBBvykANKRrOTaBaWpW0ceu68mFMZkSaW1MKOTvYtijA7Jfcv9Z+Vy
+         VHT7+Vw39+kILzZ8Fl+IvaGkRY6UErngMeqmXa+LqWSFfgHsydPqgDANeomLVUXGZvol
+         e9QJqSSUqFaPaVEjIVmHlxTfkP6vA2i3MMCutwpsQ021++LZYYEf9ZwVqIgagdCh/SHy
+         +jbHCuUtUhOpv2fyAskwH2eAA2MUlOIW4SlztlFxrBEVovI1Y8smatUy1guroTVGidAA
+         V1omcibhTwdMuBCnzQjPxgfVk2VbsJ2r1nEK7raM4Q6vfCvi622d+IwlIfq14xfxmnvc
+         OHqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bBOdi+OKZRFZU4WYLXtV3AOw8+qJl80/HyzpZqYt9wQ=;
-        b=HND7NJCHoraQQSGP1gjHBHH3JNCmUyEtS25ePiKvWGLAOSMiEVALFfe2oi/uqWKD5A
-         VPFHn1lBUenT1l10DRayFYnrPQzDi8dgdF9bbVHikmFd8NmP6YlzJF9Xl7krY+X3beMP
-         qS49+u/hUFhY9rYSAC1HeK1SgOb5nSbi069BGps8yFr9LBhWoDHFuOq0n/iDTgkTzqxL
-         GiV0nGhaT4vp9QyMcrFNO84urrT+V1VeWVleJHXPBEMLXANWMnNigNJiScvsTaK4B5H2
-         03xQ0+9E9h3pLGrEiHVIvwXilIV4zWGyIGQaUWu+1vB9eEo73c50oBV2e55UXfA77nf4
-         DiTw==
-X-Gm-Message-State: APjAAAVZYNTk1URQbKJC0NcsGlsaBfC0lK+6Lmylnob8XSpANxMjUAon
-        skuALVVSOmwPe6ZZXLg0+A8=
-X-Google-Smtp-Source: APXvYqyyhjwg8kpHsnaICuv2fadBZMPDwe4NGNHvRBQiC9YWl4W0NLGRp9laeLFLTQDylXd4CayFuA==
-X-Received: by 2002:a2e:9ad8:: with SMTP id p24mr58773421ljj.148.1578274494089;
+        bh=GxHWs7smKY9c542URAYmUJXKzRbv59ZDpizKO+V3yf8=;
+        b=hADt+o4AVd1zzQp6Yk5ccuuFWQmpRgiFvgPF1waGCjwmPaDEggjWWu4W3vJc5fdCK6
+         OelO4rbVgHG8uc8+D+FhjVL4Rtski+4HxyAMfT0BnEkFj9muUp+IiwfTYBeI6DIjXPkt
+         R+lrfIF1Fj27VdB/JBK4u9ux8rXcne79RKZipsJJRBreg7oXg/5FF8wuBa2em9jAAxU0
+         xpmERg8stGTda0kIsHktiKYbnXBpUr3uLmFKtvJ11uxJA20TlxA/1gI6KThDXhnqztv8
+         cWxVsb4TLf7YQzY8+8728pnvP5v2+GeJ73KytY7Tekb3YSBFbIuSeFD+KvbWwYPj0L8R
+         QEyg==
+X-Gm-Message-State: APjAAAWx2X4GlDkP38H5GNHCXTZzKSh36H6de0vbhkG4oTpJr4IPt01z
+        5++3XuVIIc6S/rgUSf6WUyA=
+X-Google-Smtp-Source: APXvYqwdZzmJbOI48HJEEBGpaUjSh004D0logSjpYIG20UUxtX7jJxIu81U4ZvA/91YgmezcYMor4g==
+X-Received: by 2002:a2e:b0c9:: with SMTP id g9mr57560697ljl.134.1578274494896;
         Sun, 05 Jan 2020 17:34:54 -0800 (PST)
 Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id h10sm28235739ljc.39.2020.01.05.17.34.53
+        by smtp.gmail.com with ESMTPSA id h10sm28235739ljc.39.2020.01.05.17.34.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jan 2020 17:34:53 -0800 (PST)
+        Sun, 05 Jan 2020 17:34:54 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Peter Chen <Peter.Chen@nxp.com>,
@@ -54,9 +54,9 @@ To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
 Cc:     linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 15/20] usb: phy: tegra: Move utmip_pad_count checking under lock
-Date:   Mon,  6 Jan 2020 04:34:11 +0300
-Message-Id: <20200106013416.9604-16-digetx@gmail.com>
+Subject: [PATCH v4 16/20] usb: phy: tegra: Keep CPU interrupts enabled
+Date:   Mon,  6 Jan 2020 04:34:12 +0300
+Message-Id: <20200106013416.9604-17-digetx@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20200106013416.9604-1-digetx@gmail.com>
 References: <20200106013416.9604-1-digetx@gmail.com>
@@ -67,61 +67,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's unlikely that two drivers could manage PHY's state simultaneously in
-practice, nevertheless the utmip_pad_count checking should be under lock,
-for consistency.
+There is no good reason for disabling of CPU interrupts in order to
+protect the utmip_pad_count modification.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/usb/phy/phy-tegra-usb.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ drivers/usb/phy/phy-tegra-usb.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 90b42e963a1e..1b9667b0aa11 100644
+index 1b9667b0aa11..037e8eee737d 100644
 --- a/drivers/usb/phy/phy-tegra-usb.c
 +++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -348,30 +348,31 @@ static int utmip_pad_power_off(struct tegra_usb_phy *phy)
+@@ -310,7 +310,6 @@ static int utmip_pad_power_on(struct tegra_usb_phy *phy)
+ {
+ 	struct tegra_utmip_config *config = phy->config;
  	void __iomem *base = phy->pad_regs;
- 	unsigned long flags;
+-	unsigned long flags;
  	u32 val;
--	int err;
-+	int ret;
-+
-+	ret = clk_prepare_enable(phy->pad_clk);
-+	if (ret)
-+		return ret;
-+
-+	spin_lock_irqsave(&utmip_pad_lock, flags);
+ 	int err;
  
- 	if (!utmip_pad_count) {
- 		dev_err(phy->u_phy.dev, "UTMIP pad already powered off\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto ulock;
- 	}
+@@ -318,7 +317,7 @@ static int utmip_pad_power_on(struct tegra_usb_phy *phy)
+ 	if (err)
+ 		return err;
  
--	err = clk_prepare_enable(phy->pad_clk);
--	if (err)
--		return err;
--
 -	spin_lock_irqsave(&utmip_pad_lock, flags);
--
- 	if (--utmip_pad_count == 0) {
++	spin_lock(&utmip_pad_lock);
+ 
+ 	if (utmip_pad_count++ == 0) {
  		val = readl_relaxed(base + UTMIP_BIAS_CFG0);
- 		val |= UTMIP_OTGPD | UTMIP_BIASPD;
+@@ -336,7 +335,7 @@ static int utmip_pad_power_on(struct tegra_usb_phy *phy)
  		writel_relaxed(val, base + UTMIP_BIAS_CFG0);
  	}
--
-+ulock:
- 	spin_unlock_irqrestore(&utmip_pad_lock, flags);
+ 
+-	spin_unlock_irqrestore(&utmip_pad_lock, flags);
++	spin_unlock(&utmip_pad_lock);
  
  	clk_disable_unprepare(phy->pad_clk);
  
--	return 0;
-+	return ret;
- }
+@@ -346,7 +345,6 @@ static int utmip_pad_power_on(struct tegra_usb_phy *phy)
+ static int utmip_pad_power_off(struct tegra_usb_phy *phy)
+ {
+ 	void __iomem *base = phy->pad_regs;
+-	unsigned long flags;
+ 	u32 val;
+ 	int ret;
  
- static int utmi_wait_register(void __iomem *reg, u32 mask, u32 result)
+@@ -354,7 +352,7 @@ static int utmip_pad_power_off(struct tegra_usb_phy *phy)
+ 	if (ret)
+ 		return ret;
+ 
+-	spin_lock_irqsave(&utmip_pad_lock, flags);
++	spin_lock(&utmip_pad_lock);
+ 
+ 	if (!utmip_pad_count) {
+ 		dev_err(phy->u_phy.dev, "UTMIP pad already powered off\n");
+@@ -368,7 +366,7 @@ static int utmip_pad_power_off(struct tegra_usb_phy *phy)
+ 		writel_relaxed(val, base + UTMIP_BIAS_CFG0);
+ 	}
+ ulock:
+-	spin_unlock_irqrestore(&utmip_pad_lock, flags);
++	spin_unlock(&utmip_pad_lock);
+ 
+ 	clk_disable_unprepare(phy->pad_clk);
+ 
 -- 
 2.24.0
 
