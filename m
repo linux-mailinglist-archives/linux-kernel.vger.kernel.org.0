@@ -2,372 +2,750 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 866DB131D2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 02:28:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CE13131D5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 02:55:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbgAGB2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 20:28:39 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:20390 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727315AbgAGB2j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 20:28:39 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200107012834epoutp023cfb26ac2d1a424ab0d02997e544ef40~ndoaaLFA92585225852epoutp02_
-        for <linux-kernel@vger.kernel.org>; Tue,  7 Jan 2020 01:28:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200107012834epoutp023cfb26ac2d1a424ab0d02997e544ef40~ndoaaLFA92585225852epoutp02_
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1578360514;
-        bh=KtwYG9/2PGm4rQZ3lBDvM+ZeSIZzfHcUgOjUaf5kfFg=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=GaydIGPgGh/cFlDTUSn5ig69XclhvZofFYIp8WWqzPdVONhAkKij5kbVkT4YcUemQ
-         WGi/PwmtOmDIhUxvKfpdKGnn0KCMDcqL2Qt41vtNPSanc13bWeanuxpiF7u45A/djd
-         IP0kvm2phGt3ZTzk8FARE+kdn02WYwDJeKxEESYA=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20200107012834epcas1p49e4d63e8291b54ab8c9a89a647c4e887~ndoZ_mucO1223112231epcas1p4S;
-        Tue,  7 Jan 2020 01:28:34 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.152]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 47sFBk6PqwzMqYkk; Tue,  7 Jan
-        2020 01:28:30 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        03.2C.52419.BBED31E5; Tue,  7 Jan 2020 10:28:27 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200107012826epcas1p17480af9ce779b3c17f6a815cc78ed25b~ndoSiqAws1561415614epcas1p1v;
-        Tue,  7 Jan 2020 01:28:26 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200107012826epsmtrp1fbd0b95c718f978ea98d703bbf46f792~ndoSiC_GT1341013410epsmtrp1j;
-        Tue,  7 Jan 2020 01:28:26 +0000 (GMT)
-X-AuditID: b6c32a37-5b7ff7000001ccc3-87-5e13debb17de
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        82.7F.06569.ABED31E5; Tue,  7 Jan 2020 10:28:26 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200107012826epsmtip1328a167dc03d7ca8ab7820df8409ee82~ndoSamrmO1818918189epsmtip18;
-        Tue,  7 Jan 2020 01:28:26 +0000 (GMT)
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     cw00.choi@samsung.com, chanwoo@kernel.org,
-        myungjoo.ham@samsung.com, kyungmin.park@samsung.com
-Subject: [PATCH] PM / devfreq: Add missing function description and rename
- static functions
-Date:   Tue,  7 Jan 2020 10:35:23 +0900
-Message-Id: <20200107013523.27177-1-cw00.choi@samsung.com>
+        id S1727436AbgAGBy7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 20:54:59 -0500
+Received: from mail.prewas.sk ([212.5.209.170]:62912 "EHLO mail.prewas.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727326AbgAGBy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 20:54:59 -0500
+X-Greylist: delayed 7281 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 Jan 2020 20:54:58 EST
+dkim-signature: v=1; a=rsa-sha256; d=3ksolutions.sk; s=mail.prewas.sk;
+        c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC;
+        bh=M/eBOS8Jjs955qjcv8N+fYgQg7V3zf0yVAbpJAfg4pU=;
+        b=Jh49mNICcBuOfhwIKxBjMOmAyog220UbQOqz4Hp8yetRnFMitxj3TXYZPWxfb6FBEQwcg/EzTDikwqf2jSGfQ1meyWDXg9iJ6zkAkXMy0hAKPJR75iiRXh8SFuH4A6eKfZn2eup9Ud5NtfpGMexlK6hLWEd5q2qWHOEm7dEAk3sNS7k/IpwTFN7MQU+BxJuI66pj2tLEbgvRWQS8YedWho08w7V24JPGY4GC/HqEwpolk3E0pDFcd8u2pF
+        wfN+r25OFNvTczZm057KJTLXQzzviptMY0pLPK7EqZiezEcT/p+QCOJ+0lAx3W1PoqXnSjb9pAZfCKBHxamPzgBmk2Pw==
+Received: from localhost.localdomain (Unknown [10.0.1.41])
+        by mail.prewas.sk with ESMTPSA
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128)
+        ; Tue, 7 Jan 2020 00:53:20 +0100
+From:   Ivan Sistik <sistik@3ksolutions.sk>
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     Ivan Sistik <sistik@3ksolutions.sk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: [PATCH] tty: serial: amba-pl011: added RS485 support
+Date:   Tue,  7 Jan 2020 00:52:03 +0100
+Message-Id: <20200106235203.27256-1-sistik@3ksolutions.sk>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDKsWRmVeSWpSXmKPExsWy7bCmge7ue8JxBt3rNS0m3rjCYnH9y3NW
-        i7NNb9gtLu+aw2bxufcIo8XtxhVsDmwem1Z1snn0bVnF6PF5k1wAc1S2TUZqYkpqkUJqXnJ+
-        SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QXiWFssScUqBQQGJxsZK+nU1R
-        fmlJqkJGfnGJrVJqQUpOgWWBXnFibnFpXrpecn6ulaGBgZEpUGFCdsaVu28YC/77VNzoWcLc
-        wDjVvouRk0NCwERiz7Iepi5GLg4hgR2MEhs+fmaFcD4xSuw/sJIFwvnGKDHzzTr2LkYOsJZD
-        H71AuoUE9jJKzGmugKj5wiix8uVBJpAEm4CWxP4XN9hAbBEBK4nT/zuYQWxmgRSJ/t9nWEBs
-        YYFYicPfb7KD2CwCqhJbr65mBbF5gerbT/xhgzhPXmL1hgPMIAskBD6ySiw7tw4q4SLxdeJ/
-        dghbWOLV8S1QtpTEy/42KLtaYuXJI2wQzR2MElv2X2CFSBhL7F86mQnkG2YBTYn1u/QhwooS
-        O3/PZYQ4lE/i3dceVoiHeSU62oQgSpQlLj+4ywRhS0osbu+EOsdDYuXyo2AThYD+mnREZgKj
-        7CyE+QsYGVcxiqUWFOempxYbFhgjx9EmRnBK0jLfwbjhnM8hRgEORiUe3gkywnFCrIllxZW5
-        hxglOJiVRHgb3QTjhHhTEiurUovy44tKc1KLDzGaAgNvIrOUaHI+MF3mlcQbmhoZGxtbmBia
-        mRoaKonzcvy4GCskkJ5YkpqdmlqQWgTTx8TBKdXAyCzJG3j34tMJyz4ZhKdtL3k+wbDLekro
-        rSKba7U3NyZ8lhdUCWUpOuawtadv6k8lloSDNRany/jfGST322z7echVp6Y8Jfzprr+LCuMY
-        u+c+te9bHle6o6LG3urvBpeoQzULV+WoulW2hiVbRn+zXP70uI2qYGfJnp/he14XL/0SzfOw
-        No5diaU4I9FQi7moOBEAs+9uUV8DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJJMWRmVeSWpSXmKPExsWy7bCSnO6ue8JxBu0rJS0m3rjCYnH9y3NW
-        i7NNb9gtLu+aw2bxufcIo8XtxhVsDmwem1Z1snn0bVnF6PF5k1wAcxSXTUpqTmZZapG+XQJX
-        xpW7bxgL/vtU3OhZwtzAONW+i5GDQ0LAROLQR68uRi4OIYHdjBKLL7xn6WLkBIpLSky7eJQZ
-        okZY4vDhYpCwkMAnRonDq51BbDYBLYn9L26wgdgiAjYSdxdfYwEpZxbIkPi/XAkkLCwQLbH0
-        2RWwiSwCqhJbr65mBbF5Bawk2k/8YYPYJC+xesMB5gmMPAsYGVYxSqYWFOem5xYbFhjlpZbr
-        FSfmFpfmpesl5+duYgQHiJbWDsYTJ+IPMQpwMCrx8FpICccJsSaWFVfmHmKU4GBWEuFtdBOM
-        E+JNSaysSi3Kjy8qzUktPsQozcGiJM4rn38sUkggPbEkNTs1tSC1CCbLxMEp1cA409JSdc/z
-        fLO0HJe5C5oul5ZPFenzLRLRObjmhdreGqX2IqWt8Wb8k//YTkspSbqa+1hc4/PBfbFB93hu
-        ve9cPOnHPsH18Td3tu+73T7rlMFv00bdvaUyJxZF/VMJ1U5P1wj6ayst8/9I0uEbzzM7Az/o
-        /bn+dOfWhpOb1Q5yz3OJVU5YNrdMiaU4I9FQi7moOBEAW0nUygwCAAA=
-X-CMS-MailID: 20200107012826epcas1p17480af9ce779b3c17f6a815cc78ed25b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200107012826epcas1p17480af9ce779b3c17f6a815cc78ed25b
-References: <CGME20200107012826epcas1p17480af9ce779b3c17f6a815cc78ed25b@epcas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename internal function name used by devfreq core without 'devfreq_'
-prefix in order to separate them from the exported functions.
-And add missing function description for improving the readability.
+AMBA PL011 do not have hardware support for RS485. This implementation is
+for drive enable signal (DE), which switch direction of RS485 driver chip.
+This signal si drived by RTS pin. Correct multiplexor settings have to be
+provided to Device Tree. Usually it is 'ctsrts', which is used for enabling
+of HW flow control, too.
 
-Lastly, add the comments of devfreq_add_device to increase
-the understanding of behavior of devfreq_add_device.
+DE signal is switched by starting transmition from serial core and data
+transfer is initiated by first hrtimer if there is delay before send
+enabled.
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+There is missing FIFO empty interrupt in PL011. It is replaced by second
+hrtimer which is started if there are no more data in port transmit buffer.
+Notice that port transmit buffer is not the same as HW TX FIFO. Time of
+this timmer is set to char send time and it is running until fifo is empty.
+This kind of implementation cause that there can be unwanted delay of one
+timer tick before DE signal is switched. This is used to prevent data loss
+during transmit. Second timer can start first if there is delay after send
+enabled.
+
+Signed-off-by: Ivan Sistik <sistik@3ksolutions.sk>
 ---
- drivers/devfreq/devfreq.c | 81 +++++++++++++++++++++++++++++++--------
- 1 file changed, 64 insertions(+), 17 deletions(-)
+ arch/arm/configs/bcm2835_defconfig |   1 +
+ drivers/tty/serial/Kconfig         |  12 +
+ drivers/tty/serial/amba-pl011.c    | 470 ++++++++++++++++++++++++++++-
+ 3 files changed, 480 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index acd21345a070..254f11b31824 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -48,7 +48,7 @@ static LIST_HEAD(devfreq_list);
- static DEFINE_MUTEX(devfreq_list_lock);
+diff --git a/arch/arm/configs/bcm2835_defconfig b/arch/arm/configs/bcm2835_defconfig
+index e9bc88937b1e..514888681913 100644
+--- a/arch/arm/configs/bcm2835_defconfig
++++ b/arch/arm/configs/bcm2835_defconfig
+@@ -78,6 +78,7 @@ CONFIG_SERIAL_8250_SHARE_IRQ=y
+ CONFIG_SERIAL_8250_BCM2835AUX=y
+ CONFIG_SERIAL_AMBA_PL011=y
+ CONFIG_SERIAL_AMBA_PL011_CONSOLE=y
++CONFIG_SERIAL_AMBA_PL011_SOFT_RS485=y
+ CONFIG_SERIAL_DEV_BUS=y
+ CONFIG_TTY_PRINTK=y
+ CONFIG_I2C_CHARDEV=y
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index df8bd0c7b97d..3cecd8a75691 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -73,6 +73,18 @@ config SERIAL_AMBA_PL011_CONSOLE
+ 	  your boot loader (lilo or loadlin) about how to pass options to the
+ 	  kernel at boot time.)
  
- /**
-- * find_device_devfreq() - find devfreq struct using device pointer
-+ * find_device_devfreq() - Find devfreq struct using device pointer
-  * @dev:	device pointer used to lookup device devfreq.
-  *
-  * Search the list of device devfreqs and return the matched device's
-@@ -73,6 +73,13 @@ static struct devfreq *find_device_devfreq(struct device *dev)
- 	return ERR_PTR(-ENODEV);
- }
- 
-+/**
-+ * find_available_min_freq() - Find available min frequency via OPP interface
-+ * @devfreq:	the devfreq instance
++config SERIAL_AMBA_PL011_SOFT_RS485
++	bool "RS485 software direction switching for ARM AMBA PL011 serial"
++	depends on SERIAL_AMBA_PL011=y
++	select SERIAL_CORE
++	help
++	  Enable RS485 software direction switching of driver enable (RTS pin)
++	  for ARM AMBA PL011 serial. AMBA PL011 does not have HW support for
++	  RS485. This driver use 2 hrtimers. One is used for rs485 delays.
++	  Secon one is used for polling of TX FIFO. There is not TX FIFO
++	  empty interrupt in PL011. Secondary timer is started by empty
++	  transmit buffer.
++
+ config SERIAL_EARLYCON_ARM_SEMIHOST
+ 	bool "Early console using ARM semihosting"
+ 	depends on ARM64 || ARM
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index af21122dfade..0fe24d169730 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -14,6 +14,9 @@
+  * not have an RI input, nor do they have DTR or RTS outputs.  If
+  * required, these have to be supplied via some other means (eg, GPIO)
+  * and hooked into this driver.
 + *
-+ * Find available minimum frequency among the active OPP entries
-+ * because could either enable or disable the frequency by using OPP interface.
-+ */
- static unsigned long find_available_min_freq(struct devfreq *devfreq)
- {
- 	struct dev_pm_opp *opp;
-@@ -87,6 +94,13 @@ static unsigned long find_available_min_freq(struct devfreq *devfreq)
- 	return min_freq;
- }
- 
-+/**
-+ * find_available_max_freq() - Find available max frequency via OPP interface
-+ * @devfreq:	the devfreq instance
-+ *
-+ * Find available maximum frequency among the active OPP entries
-+ * because could either enable or disable the frequency by using OPP interface.
-+ */
- static unsigned long find_available_max_freq(struct devfreq *devfreq)
- {
- 	struct dev_pm_opp *opp;
-@@ -150,11 +164,11 @@ static void get_freq_range(struct devfreq *devfreq,
- }
- 
- /**
-- * devfreq_get_freq_level() - Lookup freq_table for the frequency
-+ * get_freq_level() - Lookup freq_table for the frequency
-  * @devfreq:	the devfreq instance
-  * @freq:	the target frequency
++ * Added software RS485 support, 05/jan/2020, Ivan Sistik
++ *     sistik@3ksolutions.sk
   */
--static int devfreq_get_freq_level(struct devfreq *devfreq, unsigned long freq)
-+static int get_freq_level(struct devfreq *devfreq, unsigned long freq)
- {
- 	int lev;
  
-@@ -165,6 +179,13 @@ static int devfreq_get_freq_level(struct devfreq *devfreq, unsigned long freq)
- 	return -EINVAL;
+ 
+@@ -46,6 +49,7 @@
+ #include <linux/sizes.h>
+ #include <linux/io.h>
+ #include <linux/acpi.h>
++#include <linux/math64.h>
+ 
+ #include "amba-pl011.h"
+ 
+@@ -60,6 +64,18 @@
+ #define UART_DR_ERROR		(UART011_DR_OE|UART011_DR_BE|UART011_DR_PE|UART011_DR_FE)
+ #define UART_DUMMY_DR_RX	(1 << 16)
+ 
++#ifdef CONFIG_SERIAL_AMBA_PL011_SOFT_RS485
++/*
++ * Enum with current status
++ */
++enum rs485_status {
++	rs485_receiving,
++	rs485_delay_before_send,
++	rs485_sending,
++	rs485_delay_after_send
++};
++#endif
++
+ static u16 pl011_std_offsets[REG_ARRAY_SIZE] = {
+ 	[REG_DR] = UART01x_DR,
+ 	[REG_FR] = UART01x_FR,
+@@ -270,6 +286,16 @@ struct uart_amba_port {
+ 	unsigned int		old_cr;		/* state during shutdown */
+ 	unsigned int		fixed_baud;	/* vendor-set fixed baud rate */
+ 	char			type[12];
++
++#ifdef CONFIG_SERIAL_AMBA_PL011_SOFT_RS485
++	enum rs485_status	rs485_current_status; /* status used for RTS */
++	enum rs485_status	rs485_next_status; /* this status after tick */
++	struct hrtimer		rs485_delay_timer;
++	struct hrtimer		rs485_tx_empty_poll_timer;
++	unsigned long		send_char_time;	/* send char (nanoseconds) */
++	bool			rs485_last_char_sending;
++#endif
++
+ #ifdef CONFIG_DMA_ENGINE
+ 	/* DMA stuff */
+ 	bool			using_tx_dma;
+@@ -280,6 +306,25 @@ struct uart_amba_port {
+ #endif
+ };
+ 
++#ifdef CONFIG_SERIAL_AMBA_PL011_SOFT_RS485
++
++static void pl011_rs485_start_rts_delay(struct uart_amba_port *uap);
++
++#define RS485_SET_RTS_SIGNAL(pUAP, value)		\
++	do {						\
++		unsigned int rts_temp_cr;		\
++		rts_temp_cr = pl011_read(pUAP, REG_CR);	\
++		if (!(value))				\
++			rts_temp_cr |= UART011_CR_RTS;	\
++		else					\
++			rts_temp_cr &= ~UART011_CR_RTS;	\
++		pl011_write(rts_temp_cr, pUAP, REG_CR);	\
++	} while (0)
++
++#define RS485_TX_FIFO_EMPTY(pUAP)			\
++	(pl011_read(pUAP, REG_FR) & UART011_FR_TXFE)
++#endif
++
+ static unsigned int pl011_reg_to_offset(const struct uart_amba_port *uap,
+ 	unsigned int reg)
+ {
+@@ -1298,6 +1343,11 @@ static void pl011_stop_tx(struct uart_port *port)
+ 	uap->im &= ~UART011_TXIM;
+ 	pl011_write(uap->im, uap, REG_IMSC);
+ 	pl011_dma_tx_stop(uap);
++
++#ifdef CONFIG_SERIAL_AMBA_PL011_SOFT_RS485
++	if (uap->port.rs485.flags & SER_RS485_ENABLED)
++		pl011_rs485_start_rts_delay(uap);
++#endif
  }
  
-+/**
-+ * set_freq_table() - Fill out the freq_table of devfreq instance
-+ * @devfreq:	the devfreq instance
-+ *
-+ * If freq_table array is NULL, fill out the freq_table array
-+ * by using OPP interface because OPP is mandatory.
-+ */
- static int set_freq_table(struct devfreq *devfreq)
- {
- 	struct devfreq_dev_profile *profile = devfreq->profile;
-@@ -218,7 +239,7 @@ int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
- 	if (!devfreq->previous_freq)
- 		goto out;
+ static bool pl011_tx_chars(struct uart_amba_port *uap, bool from_irq);
+@@ -1316,8 +1366,122 @@ static void pl011_start_tx(struct uart_port *port)
+ 	struct uart_amba_port *uap =
+ 	    container_of(port, struct uart_amba_port, port);
  
--	prev_lev = devfreq_get_freq_level(devfreq, devfreq->previous_freq);
-+	prev_lev = get_freq_level(devfreq, devfreq->previous_freq);
- 	if (prev_lev < 0) {
- 		ret = prev_lev;
- 		goto out;
-@@ -227,7 +248,7 @@ int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
- 	devfreq->stats.time_in_state[prev_lev] +=
- 			cur_time - devfreq->stats.last_update;
- 
--	lev = devfreq_get_freq_level(devfreq, freq);
-+	lev = get_freq_level(devfreq, freq);
- 	if (lev < 0) {
- 		ret = lev;
- 		goto out;
-@@ -246,7 +267,7 @@ int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
- EXPORT_SYMBOL(devfreq_update_status);
- 
- /**
-- * find_devfreq_governor() - find devfreq governor from name
-+ * find_devfreq_governor() - Find devfreq governor from name
-  * @name:	name of the governor
-  *
-  * Search the list of devfreq governors and return the matched
-@@ -314,8 +335,17 @@ static struct devfreq_governor *try_then_request_governor(const char *name)
- 	return governor;
+-	if (!pl011_dma_tx_start(uap))
+-		pl011_start_tx_pio(uap);
++#define START_PL011_TX()				\
++	do {						\
++		if (!pl011_dma_tx_start(uap))		\
++			pl011_start_tx_pio(uap);	\
++	} while (0)
++
++#ifndef CONFIG_SERIAL_AMBA_PL011_SOFT_RS485
++	START_PL011_TX();
++#else
++
++#define CANCEL_RS485_TIMERS()						 \
++	do {								 \
++		hrtimer_try_to_cancel(&(uap->rs485_delay_timer));	 \
++		hrtimer_try_to_cancel(&(uap->rs485_tx_empty_poll_timer));\
++	} while (0)
++
++	if (uap->port.rs485.flags & SER_RS485_ENABLED) {
++		ktime_t ktime;
++
++		switch (uap->rs485_current_status) {
++		case rs485_delay_after_send:
++			/* stop old delay timer */
++			CANCEL_RS485_TIMERS();
++
++			/* check if timer expired */
++			if (uap->rs485_current_status
++					!= rs485_delay_after_send) {
++				/* Timer expired and RTS is in wrong state.*/
++				uap->rs485_current_status
++					= rs485_delay_before_send;
++				uap->rs485_next_status = rs485_sending;
++
++				/* Set RTS */
++				RS485_SET_RTS_SIGNAL(uap,
++					uap->port.rs485.flags
++						& SER_RS485_RTS_ON_SEND);
++
++				/* Start timer */
++				ktime = ktime_set(0,
++					  uap->port.rs485
++						.delay_rts_before_send
++					  * 1000000L);
++
++				hrtimer_start(
++					&(uap->rs485_delay_timer),
++					ktime,
++					HRTIMER_MODE_REL);
++				return;
++			}
++
++			/* timer was stopped and driver can continue sending */
++			uap->rs485_current_status = rs485_sending;
++			uap->rs485_next_status = rs485_sending;
++
++			/* driver is already in sending state */
++			START_PL011_TX();
++			break;
++
++		case rs485_sending:
++			/* stop old timer. There can be running timer	*/
++			/* which is checking TX FIFO empty flag		*/
++			CANCEL_RS485_TIMERS();
++
++			/* driver is already in sending state */
++			START_PL011_TX();
++			break;
++
++		case rs485_receiving:
++		default:
++			/* stop old timer. There can be running timer	*/
++			/* which is checking TX FIFO empty flag		*/
++			CANCEL_RS485_TIMERS();
++
++			/* Set RTS */
++			RS485_SET_RTS_SIGNAL(uap,
++				     uap->port.rs485.flags
++					     & SER_RS485_RTS_ON_SEND);
++
++			if (uap->port.rs485.delay_rts_before_send == 0) {
++				/* Change state */
++				uap->rs485_current_status
++					= rs485_sending;
++				uap->rs485_next_status
++					= rs485_sending;
++
++				/* driver is in sending state */
++				START_PL011_TX();
++				break;
++			}
++
++			/* Change state */
++			uap->rs485_current_status
++				= rs485_delay_before_send;
++			uap->rs485_next_status = rs485_sending;
++
++			/* Start timer */
++			ktime = ktime_set(0,
++				  uap->port.rs485.delay_rts_before_send
++				  * 1000000L);
++			hrtimer_start(&(uap->rs485_delay_timer),
++				ktime,
++				HRTIMER_MODE_REL);
++			break;
++
++		case rs485_delay_before_send:
++			/* do nothing because delay timer should be running */
++			break;
++		}
++	} else {
++		START_PL011_TX();
++	}
++#undef CANCEL_RS485_TIMERS
++
++#endif
++
++#undef START_PL011_TX
  }
  
--static int devfreq_notify_transition(struct devfreq *devfreq,
--		struct devfreq_freqs *freqs, unsigned int state)
-+/**
-+ * notify_transition() - Send the transition notification
-+ * @name:	name of the governor
-+ * @freqs:	the data containing the both old and new frequency
-+ * @state:	the kind of notification
-+ *
-+ * Send the transition notification to the registered receivers
-+ * in order to inform the frequency change.
+ static void pl011_stop_rx(struct uart_port *port)
+@@ -1473,6 +1637,167 @@ static void check_apply_cts_event_workaround(struct uart_amba_port *uap)
+ 	dummy_read = pl011_read(uap, REG_ICR);
+ }
+ 
++#ifdef CONFIG_SERIAL_AMBA_PL011_SOFT_RS485
++
++/*
++ * Change state according to pending delay
++ * Locking: port is locked in this function
 + */
-+static int notify_transition(struct devfreq *devfreq,
-+			struct devfreq_freqs *freqs, unsigned int state)
++static enum hrtimer_restart
++pl011_rs485_tx_poll_timer(struct hrtimer *timer)
++{
++	unsigned long flags;
++	ktime_t ktime;
++
++	struct uart_amba_port *uap =
++		container_of(timer, struct uart_amba_port,
++			     rs485_tx_empty_poll_timer);
++
++	spin_lock_irqsave(&uap->port.lock, flags);
++
++	if (!(uart_circ_empty(&uap->port.state->xmit))) {
++		spin_unlock_irqrestore(&uap->port.lock, flags);
++		return HRTIMER_NORESTART;
++	}
++
++	if (!RS485_TX_FIFO_EMPTY(uap) || !uap->rs485_last_char_sending) {
++		/*
++		 * FIFO is empty but there can be last char in transmit shift
++		 * register so we need one more tick
++		 */
++		uap->rs485_last_char_sending = RS485_TX_FIFO_EMPTY(uap);
++
++		hrtimer_forward_now(timer, ktime_set(0, uap->send_char_time));
++
++		spin_unlock_irqrestore(&uap->port.lock, flags);
++		return HRTIMER_RESTART;
++	}
++
++	/* Check if delay after send is set*/
++	if (uap->port.rs485.delay_rts_after_send == 0) {
++		/* Change state */
++		uap->rs485_current_status = rs485_receiving;
++		uap->rs485_next_status = rs485_receiving;
++
++		/* if there is no delay after send change RTS value*/
++		RS485_SET_RTS_SIGNAL(uap,
++			     uap->port.rs485.flags
++				     & SER_RS485_RTS_AFTER_SEND);
++
++		spin_unlock_irqrestore(&uap->port.lock, flags);
++		return HRTIMER_NORESTART;
++	}
++
++	/* Change state */
++	uap->rs485_current_status = rs485_delay_after_send;
++	uap->rs485_next_status = rs485_receiving;
++
++	/* RTS will be set in timer handler */
++
++	/* Start delay timer */
++	ktime = ktime_set(0, (uap->port.rs485.delay_rts_after_send
++			* 1000000L));
++	hrtimer_start(&(uap->rs485_delay_timer), ktime, HRTIMER_MODE_REL);
++
++	spin_unlock_irqrestore(&uap->port.lock, flags);
++	return HRTIMER_NORESTART;
++}
++
++/*
++ * Change state according to pending delay
++ * Locking: port is locked in this function
++ */
++static enum hrtimer_restart
++pl011_rs485_timer(struct hrtimer *timer)
++{
++	unsigned long flags;
++
++	struct uart_amba_port *uap =
++		container_of(timer, struct uart_amba_port, rs485_delay_timer);
++
++	spin_lock_irqsave(&uap->port.lock, flags);
++
++	if (uap->rs485_current_status == uap->rs485_next_status) {
++		/* timer was canceled or handled */
++		spin_unlock_irqrestore(&uap->port.lock, flags);
++		return HRTIMER_NORESTART;
++	}
++
++	switch (uap->rs485_current_status) {
++	case rs485_delay_before_send:
++		uap->rs485_current_status = rs485_sending;
++		uap->rs485_next_status = rs485_sending;
++		if (!pl011_dma_tx_start(uap))
++			pl011_start_tx_pio(uap);
++		break;
++
++	case rs485_delay_after_send:
++		uap->rs485_current_status = rs485_receiving;
++		uap->rs485_next_status = rs485_receiving;
++		RS485_SET_RTS_SIGNAL(uap,
++			     uap->port.rs485.flags
++				     & SER_RS485_RTS_AFTER_SEND);
++		break;
++
++	default:
++		break;
++	}
++
++	spin_unlock_irqrestore(&uap->port.lock, flags);
++	return HRTIMER_NORESTART;
++}
++
++/*
++ * Evaluate transmit buffer status and start delay to off
++ * Locking: called with port lock held and IRQs disabled
++ */
++static void pl011_rs485_start_rts_delay(struct uart_amba_port *uap)
++{
++	ktime_t ktime;
++
++	if (uap->rs485_current_status == rs485_receiving)
++		return;
++
++	/* if there is timeout in progress cancel it and start new */
++	hrtimer_try_to_cancel(&(uap->rs485_delay_timer));
++	hrtimer_try_to_cancel(&(uap->rs485_tx_empty_poll_timer));
++
++
++	if (!RS485_TX_FIFO_EMPTY(uap)
++			|| uap->port.rs485.delay_rts_after_send == 0) {
++		/*
++		 * Schedule validation timer if there is data in TX FIFO
++		 * because there is not TX FIFO empty interrupt
++		 */
++
++		uap->rs485_current_status = rs485_sending;
++		uap->rs485_next_status = rs485_sending;
++
++		uap->rs485_last_char_sending = false;
++
++		ktime = ktime_set(0, uap->send_char_time);
++		hrtimer_start(&(uap->rs485_tx_empty_poll_timer),
++			ktime,
++			HRTIMER_MODE_REL);
++		return;
++	}
++
++	/* Change state */
++	uap->rs485_current_status = rs485_delay_after_send;
++	uap->rs485_next_status = rs485_receiving;
++
++	/* RTS will be set in timer handler */
++
++	/* Start timer */
++	ktime = ktime_set(0, (uap->port.rs485.delay_rts_after_send
++			* 1000000L));
++
++	hrtimer_start(&(uap->rs485_delay_timer),
++		ktime,
++		HRTIMER_MODE_REL);
++}
++#endif
++
+ static irqreturn_t pl011_int(int irq, void *dev_id)
  {
- 	if (!devfreq)
- 		return -EINVAL;
-@@ -337,8 +367,17 @@ static int devfreq_notify_transition(struct devfreq *devfreq,
+ 	struct uart_amba_port *uap = dev_id;
+@@ -1615,6 +1940,11 @@ static void pl011_quiesce_irqs(struct uart_port *port)
+ 	 */
+ 	pl011_write(pl011_read(uap, REG_IMSC) & ~UART011_TXIM, uap,
+ 		    REG_IMSC);
++
++#ifdef CONFIG_SERIAL_AMBA_PL011_SOFT_RS485
++	if (uap->port.rs485.flags & SER_RS485_ENABLED)
++		pl011_rs485_start_rts_delay(uap);
++#endif
+ }
+ 
+ static int pl011_get_poll_char(struct uart_port *port)
+@@ -1687,6 +2017,27 @@ static int pl011_hwinit(struct uart_port *port)
+ 		if (plat->init)
+ 			plat->init();
+ 	}
++
++#ifdef CONFIG_SERIAL_AMBA_PL011_SOFT_RS485
++	/*
++	 * Initialize timers used for RS485
++	 */
++	hrtimer_init(&(uap->rs485_delay_timer),
++		CLOCK_MONOTONIC,
++		HRTIMER_MODE_REL);
++
++	uap->rs485_delay_timer.function = &pl011_rs485_timer;
++
++	hrtimer_init(&(uap->rs485_tx_empty_poll_timer),
++		CLOCK_MONOTONIC,
++		HRTIMER_MODE_REL);
++
++	uap->rs485_tx_empty_poll_timer.function = &pl011_rs485_tx_poll_timer;
++
++	uap->rs485_current_status = rs485_receiving;
++	RS485_SET_RTS_SIGNAL(uap, false);
++#endif
++
  	return 0;
  }
  
--static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
--			      u32 flags)
-+/**
-+ * set_target() - Set target frequency of devfreq instance
-+ * @devfreq:	the devfreq instance
-+ * @new_freq:	the target frequency
-+ * @flags:	flags handed from devfreq framework
-+ *
-+ * Set the target frequency of which is decided by governor
-+ * and then is adjusted with constraints.
-+ */
-+static int set_target(struct devfreq *devfreq,
-+			unsigned long new_freq, u32 flags)
+@@ -1870,6 +2221,16 @@ static void pl011_shutdown(struct uart_port *port)
+ 	struct uart_amba_port *uap =
+ 		container_of(port, struct uart_amba_port, port);
+ 
++#ifdef CONFIG_SERIAL_AMBA_PL011_SOFT_RS485
++	if (uap->port.rs485.flags & SER_RS485_ENABLED) {
++		hrtimer_try_to_cancel(&(uap->rs485_delay_timer));
++		hrtimer_try_to_cancel(&(uap->rs485_tx_empty_poll_timer));
++
++		uap->rs485_current_status = rs485_receiving;
++		RS485_SET_RTS_SIGNAL(uap, true);
++	}
++#endif
++
+ 	pl011_disable_interrupts(uap);
+ 
+ 	pl011_dma_shutdown(uap);
+@@ -1952,6 +2313,24 @@ pl011_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	unsigned long flags;
+ 	unsigned int baud, quot, clkdiv;
+ 
++#ifdef CONFIG_SERIAL_AMBA_PL011_SOFT_RS485
++	unsigned int transfer_bit_count;
++	unsigned long char_transfer_time;
++
++	/*
++	 * Calculate bit count which will be send
++	 * by UART. It is used for calculation of
++	 * time required to start timer until TX FIFO (HW) is empty
++	 * There is not interrupt for FIFO empty in PL011.
++	 * There is only FIFO empty flag in REG_FR.
++	 */
++	transfer_bit_count = 0;
++
++#define	ADD_DATA_BITS(bits)	(transfer_bit_count += bits)
++#else
++#define	ADD_DATA_BITS(bits)
++#endif
++
+ 	if (uap->vendor->oversampling)
+ 		clkdiv = 8;
+ 	else
+@@ -1978,29 +2357,53 @@ pl011_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	switch (termios->c_cflag & CSIZE) {
+ 	case CS5:
+ 		lcr_h = UART01x_LCRH_WLEN_5;
++		ADD_DATA_BITS(7);
+ 		break;
+ 	case CS6:
+ 		lcr_h = UART01x_LCRH_WLEN_6;
++		ADD_DATA_BITS(8);
+ 		break;
+ 	case CS7:
+ 		lcr_h = UART01x_LCRH_WLEN_7;
++		ADD_DATA_BITS(9);
+ 		break;
+ 	default: // CS8
+ 		lcr_h = UART01x_LCRH_WLEN_8;
++		ADD_DATA_BITS(10);
+ 		break;
+ 	}
+-	if (termios->c_cflag & CSTOPB)
++
++	if (termios->c_cflag & CSTOPB) {
+ 		lcr_h |= UART01x_LCRH_STP2;
++		ADD_DATA_BITS(1);
++	}
++
+ 	if (termios->c_cflag & PARENB) {
+ 		lcr_h |= UART01x_LCRH_PEN;
++		ADD_DATA_BITS(1);
++
+ 		if (!(termios->c_cflag & PARODD))
+ 			lcr_h |= UART01x_LCRH_EPS;
++
+ 		if (termios->c_cflag & CMSPAR)
+ 			lcr_h |= UART011_LCRH_SPS;
+ 	}
++
++#undef ADD_DATA_BITS
++
+ 	if (uap->fifosize > 1)
+ 		lcr_h |= UART01x_LCRH_FEN;
+ 
++#ifdef CONFIG_SERIAL_AMBA_PL011_SOFT_RS485
++	/* Calculate time required to send one char (nanoseconds) */
++	char_transfer_time =
++		(unsigned long) div_u64(
++				mul_u32_u32(
++					(u32)transfer_bit_count,
++					(u32)NSEC_PER_SEC),
++				(u32)baud);
++#endif
++
+ 	spin_lock_irqsave(&port->lock, flags);
+ 
+ 	/*
+@@ -2008,6 +2411,7 @@ pl011_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	 */
+ 	uart_update_timeout(port, termios->c_cflag, baud);
+ 
++
+ 	pl011_setup_status_masks(port, termios);
+ 
+ 	if (UART_ENABLE_MS(port, termios->c_cflag))
+@@ -2017,6 +2421,11 @@ pl011_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	old_cr = pl011_read(uap, REG_CR);
+ 	pl011_write(0, uap, REG_CR);
+ 
++#ifdef CONFIG_SERIAL_AMBA_PL011_SOFT_RS485
++	/* Update send_char_time in locked context */
++	uap->send_char_time = char_transfer_time;
++#endif
++
+ 	if (termios->c_cflag & CRTSCTS) {
+ 		if (old_cr & UART011_CR_RTS)
+ 			old_cr |= UART011_CR_RTSEN;
+@@ -2088,6 +2497,7 @@ static const char *pl011_type(struct uart_port *port)
  {
- 	struct devfreq_freqs freqs;
- 	unsigned long cur_freq;
-@@ -351,17 +390,17 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
- 
- 	freqs.old = cur_freq;
- 	freqs.new = new_freq;
--	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_PRECHANGE);
-+	notify_transition(devfreq, &freqs, DEVFREQ_PRECHANGE);
- 
- 	err = devfreq->profile->target(devfreq->dev.parent, &new_freq, flags);
- 	if (err) {
- 		freqs.new = cur_freq;
--		devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
-+		notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
- 		return err;
- 	}
- 
- 	freqs.new = new_freq;
--	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
-+	notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
- 
- 	if (devfreq_update_status(devfreq, new_freq))
- 		dev_err(&devfreq->dev,
-@@ -413,7 +452,7 @@ int update_devfreq(struct devfreq *devfreq)
- 		flags |= DEVFREQ_FLAG_LEAST_UPPER_BOUND; /* Use LUB */
- 	}
- 
--	return devfreq_set_target(devfreq, freq, flags);
-+	return set_target(devfreq, freq, flags);
- 
+ 	struct uart_amba_port *uap =
+ 	    container_of(port, struct uart_amba_port, port);
++
+ 	return uap->port.type == PORT_AMBA ? uap->type : NULL;
  }
- EXPORT_SYMBOL(update_devfreq);
-@@ -421,7 +460,6 @@ EXPORT_SYMBOL(update_devfreq);
- /**
-  * devfreq_monitor() - Periodically poll devfreq objects.
-  * @work:	the work struct used to run devfreq_monitor periodically.
-- *
+ 
+@@ -2119,6 +2529,44 @@ static void pl011_config_port(struct uart_port *port, int flags)
+ 	}
+ }
+ 
++/*
++ * Configure RS485
++ * Locking: called with port lock held and IRQs disabled
++ */
++#ifdef CONFIG_SERIAL_AMBA_PL011_SOFT_RS485
++static int pl011_config_rs485(struct uart_port *port,
++			      struct serial_rs485 *rs485)
++{
++	struct uart_amba_port *uap =
++			container_of(port, struct uart_amba_port, port);
++
++	port->rs485.flags = rs485->flags;
++	port->rs485.delay_rts_after_send = rs485->delay_rts_after_send;
++	port->rs485.delay_rts_before_send = rs485->delay_rts_before_send;
++
++	if (port->rs485.flags & SER_RS485_ENABLED) {
++		unsigned int cr;
++
++		hrtimer_try_to_cancel(&(uap->rs485_delay_timer));
++		hrtimer_try_to_cancel(&(uap->rs485_tx_empty_poll_timer));
++
++		/* If RS485 is enabled, disable auto RTS */
++		cr = pl011_read(uap, REG_CR);
++		cr &= ~UART011_CR_RTSEN;
++		pl011_write(cr, uap, REG_CR);
++
++		uap->rs485_current_status = rs485_receiving;
++		RS485_SET_RTS_SIGNAL(uap,
++			     port->rs485.flags
++				     & SER_RS485_RTS_AFTER_SEND);
++	} else {
++		RS485_SET_RTS_SIGNAL(uap, true);
++	}
++
++	return 0;
++}
++#endif
++
+ /*
+  * verify the new serial_struct (for TIOCSSERIAL).
   */
- static void devfreq_monitor(struct work_struct *work)
+@@ -2641,6 +3089,12 @@ static int pl011_probe(struct amba_device *dev, const struct amba_id *id)
+ 	uap->port.irq = dev->irq[0];
+ 	uap->port.ops = &amba_pl011_pops;
+ 
++#ifdef CONFIG_SERIAL_AMBA_PL011_SOFT_RS485
++	uap->port.rs485_config = &pl011_config_rs485;
++	uap->port.rs485.flags = 0;	/* RS485 is not enabled by default */
++	dev_info(&dev->dev, "Software switching for RS485 enabled\n");
++#endif
++
+ 	snprintf(uap->type, sizeof(uap->type), "PL011 rev%u", amba_rev(dev));
+ 
+ 	ret = pl011_setup_port(&dev->dev, uap, &dev->res, portnr);
+@@ -2816,10 +3270,15 @@ static struct amba_driver pl011_driver = {
+ 
+ static int __init pl011_init(void)
  {
-@@ -739,11 +777,13 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 	static atomic_t devfreq_no = ATOMIC_INIT(-1);
- 	int err = 0;
++#ifndef CONFIG_SERIAL_AMBA_PL011_SOFT_RS485
+ 	printk(KERN_INFO "Serial: AMBA PL011 UART driver\n");
++#else
++	printk(KERN_INFO "Serial: AMBA PL011 UART driver with soft RS485 support\n");
++#endif
  
-+	/* Check the parameter is valid */
- 	if (!dev || !profile || !governor_name) {
- 		dev_err(dev, "%s: Invalid parameters.\n", __func__);
- 		return ERR_PTR(-EINVAL);
- 	}
+ 	if (platform_driver_register(&arm_sbsa_uart_platform_driver))
+ 		pr_warn("could not register SBSA UART platform driver\n");
++
+ 	return amba_driver_register(&pl011_driver);
+ }
  
-+	/* Check the device is already added or not */
- 	mutex_lock(&devfreq_list_lock);
- 	devfreq = find_device_devfreq(dev);
- 	mutex_unlock(&devfreq_list_lock);
-@@ -754,6 +794,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 		goto err_out;
- 	}
+@@ -2829,6 +3288,11 @@ static void __exit pl011_exit(void)
+ 	amba_driver_unregister(&pl011_driver);
+ }
  
-+	/* Initialize the devfreq instance */
- 	devfreq = kzalloc(sizeof(struct devfreq), GFP_KERNEL);
- 	if (!devfreq) {
- 		err = -ENOMEM;
-@@ -798,6 +839,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 	devfreq->suspend_freq = dev_pm_opp_get_suspend_opp_freq(dev);
- 	atomic_set(&devfreq->suspend_count, 0);
- 
-+	/* Register a device for devfreq instance */
- 	dev_set_name(&devfreq->dev, "devfreq%d",
- 				atomic_inc_return(&devfreq_no));
- 	err = device_register(&devfreq->dev);
-@@ -807,6 +849,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 		goto err_out;
- 	}
- 
-+	/* Initialize the statistics of devfreq device behavior */
- 	devfreq->stats.trans_table = devm_kzalloc(&devfreq->dev,
- 			array3_size(sizeof(unsigned int),
- 				    devfreq->profile->max_state,
-@@ -831,10 +874,12 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 	devfreq->stats.total_trans = 0;
- 	devfreq->stats.last_update = get_jiffies_64();
- 
-+	/* Initialize notifiers for informing the transition of devfreq */
- 	srcu_init_notifier_head(&devfreq->transition_notifier_list);
- 
- 	mutex_unlock(&devfreq->lock);
- 
-+	/* Initialize PM QoS for applying the constraints */
- 	err = dev_pm_qos_add_request(dev, &devfreq->user_min_freq_req,
- 				     DEV_PM_QOS_MIN_FREQUENCY, 0);
- 	if (err < 0)
-@@ -859,6 +904,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 
- 	mutex_lock(&devfreq_list_lock);
- 
-+	/* Find the devfreq governor and start */
- 	governor = try_then_request_governor(devfreq->governor_name);
- 	if (IS_ERR(governor)) {
- 		dev_err(dev, "%s: Unable to find governor for the device\n",
-@@ -876,6 +922,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 		goto err_init;
- 	}
- 
-+	/* Add the devfreq instance to global devfreq list finally */
- 	list_add(&devfreq->node, &devfreq_list);
- 
- 	mutex_unlock(&devfreq_list_lock);
-@@ -1076,7 +1123,7 @@ int devfreq_suspend_device(struct devfreq *devfreq)
- 
- 	if (devfreq->suspend_freq) {
- 		mutex_lock(&devfreq->lock);
--		ret = devfreq_set_target(devfreq, devfreq->suspend_freq, 0);
-+		ret = set_target(devfreq, devfreq->suspend_freq, 0);
- 		mutex_unlock(&devfreq->lock);
- 		if (ret)
- 			return ret;
-@@ -1106,7 +1153,7 @@ int devfreq_resume_device(struct devfreq *devfreq)
- 
- 	if (devfreq->resume_freq) {
- 		mutex_lock(&devfreq->lock);
--		ret = devfreq_set_target(devfreq, devfreq->resume_freq, 0);
-+		ret = set_target(devfreq, devfreq->resume_freq, 0);
- 		mutex_unlock(&devfreq->lock);
- 		if (ret)
- 			return ret;
++#ifdef CONFIG_SERIAL_AMBA_PL011_SOFT_RS485
++#undef RS485_SET_RTS_SIGNAL
++#undef RS485_TX_FIFO_EMPTY
++#endif
++
+ /*
+  * While this can be a module, if builtin it's most likely the console
+  * So let's leave module_exit but move module_init to an earlier place
 -- 
 2.17.1
+
 
