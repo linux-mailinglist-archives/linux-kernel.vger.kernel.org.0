@@ -2,86 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1C6313107D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 11:23:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6C7F131085
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 11:24:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726422AbgAFKXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 05:23:24 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41011 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbgAFKXY (ORCPT
+        id S1726545AbgAFKYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 05:24:09 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:40382 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbgAFKYI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 05:23:24 -0500
-Received: by mail-lj1-f194.google.com with SMTP id h23so50411459ljc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 02:23:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=B0/5oZmpyMpvoGdHibbnECdx+O3YaUpB8rzrVDmAk5M=;
-        b=clEtWmbh+qaBqe+He2QKgbhvUT/cLCZyyQvw1JRHZwX93MLJhhwpKITQs2A86cqhDK
-         R1FVH3Ul0Epai3TWrb4TBgeDApCtrRqtdL5z8uviLVawFn6h7LD1wEOhyhOIhlJoZWyG
-         buJC+IMocTB2ZqduPh8Ae++DtZq6endywr62f5VL1SbHV1XCSI2dyK8w4+9Yk9uG5WDb
-         1Obk37dnPqbEtjqDAQgg0HhbuiXjnk6PYm+xXNoz2bL+jcHaEC3T00YId8Qw8DL5WOMP
-         xsY5IV8vtZQBkiunVu9CGDBU3/AYduXDd5o+PUcvSUcIKORFetRxY32ZvJswqfqff3ns
-         sqvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=B0/5oZmpyMpvoGdHibbnECdx+O3YaUpB8rzrVDmAk5M=;
-        b=NIuc2OTell3ZXpwBWaNuYImHcvA7/Oq++w1DZZ0L5C/eOM5S7IM0Tad9dKF532pVGs
-         wPQ5Q9Fhs1K3XOxh/YzlEF0eIgvPrz/7KC/utXN0lZ0ZAwoKsfCK8LgJ5dk6YA1aJe5a
-         7E4vHHbNM7DMbeBZgKoXdZkHLTvveDZ6BLr3+UdUJKEyR3/wIRLW539PzKPQEvDb4qUG
-         7m29HQyhW8bDw793VQBMxq6jnKZuPghSlPcLEmPtj8bkZcS26Ej7Vqqzn/MThutV0QCd
-         FQxvrGN8fhZM7F2bNQTJaYIPsmrzspXocmkdw46VCZWPkeM110OMcaJhr+mTrZJPT2fY
-         hEyw==
-X-Gm-Message-State: APjAAAUdreMdShlczDX8ycukUUgtUe9JwT4rpIywOEVUJscsWotfrWDa
-        eWMocGel4xFbCl1/aWkwn9ICRw==
-X-Google-Smtp-Source: APXvYqylp5NiLHXERz7acxYKyV5J6DD2bC3iTYDcgMA9NVOGybslb4wcRBjNRaJF/9+lKu8tR223bA==
-X-Received: by 2002:a2e:8954:: with SMTP id b20mr44715875ljk.27.1578306202203;
-        Mon, 06 Jan 2020 02:23:22 -0800 (PST)
-Received: from localhost.localdomain ([37.157.136.193])
-        by smtp.gmail.com with ESMTPSA id u25sm28836745lfk.46.2020.01.06.02.23.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 02:23:21 -0800 (PST)
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-To:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH] arm64: dts: qcom: msm8996: Fix venus iommu nodename error
-Date:   Mon,  6 Jan 2020 12:23:05 +0200
-Message-Id: <20200106102305.27059-1-stanimir.varbanov@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Mon, 6 Jan 2020 05:24:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=g9YBz3F+B0vv6Z8r9xsyYIVGQYxQAbmF8Qb3K4NcA+A=; b=N+nS18znWKjmEYLgGbzrCg9tz
+        IdcDn2h6JdIpBdWF0v5ZMOARbrN8br+d5EgzsfVfg1p3Ft9o4pW0UUvEssCtYXPegMTfUHF6oqq3P
+        cMZdCUjLiWIvEzE/10F/tB8kG7TlFkQbJtyv7tgFJakLatFSio3Z6hKF01fSFf9ugR7I8TTXkONzE
+        fWvApuW+voFa+eGzPLjzsyc9o7QDIhICoMTP3fsaOZ47XWrotAYMSvEplsimQEUUdHmZdR476wfgm
+        y8YT7R95ZDt8OikrwOJzzZKgAnWrYzLxxQEJJ/rHZ+IL473lsq8eoLNpg+ZdW1F/dovgZSlm+Grmf
+        FNbc592Yw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ioPY0-0000tu-Dv; Mon, 06 Jan 2020 10:23:44 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5E54B306CEE;
+        Mon,  6 Jan 2020 11:22:09 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5D9DA2B627478; Mon,  6 Jan 2020 11:23:41 +0100 (CET)
+Date:   Mon, 6 Jan 2020 11:23:41 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Peng Liu <iwtbavbm@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, qais.yousef@arm.com, morten.rasmussen@arm.com,
+        valentin.schneider@arm.com
+Subject: Re: [PATCH v2] sched/fair: fix sgc->{min,max}_capacity miscalculate
+Message-ID: <20200106102341.GM2810@hirez.programming.kicks-ass.net>
+References: <20200104130828.GA7718@iZj6chx1xj0e0buvshuecpZ>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200104130828.GA7718@iZj6chx1xj0e0buvshuecpZ>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following error/warn seen with make dtbs_check
+On Sat, Jan 04, 2020 at 09:08:28PM +0800, Peng Liu wrote:
+> commit bf475ce0a3dd ("sched/fair: Add per-CPU min capacity to
+> sched_group_capacity") introduced per-cpu min_capacity.
+> 
+> commit e3d6d0cb66f2 ("sched/fair: Add sched_group per-CPU max capacity")
+> introduced per-cpu max_capacity.
+> 
+> Here, capacity is the accumulated sum of (maybe) many CPUs' capacity.
+> Compare with capacity to get {min,max}_capacity makes no sense. Instead,
+> we should compare one by one in each iteration to get
+> sgc->{min,max}_capacity of the group.
+> 
+> Also, the only CPU in rq->sd->groups should be rq's CPU. Thus,
+> capacity_of(cpu_of(rq)) should be equal to rq->sd->groups->sgc->capacity.
+> Code can be simplified by removing the if/else.
+> 
+> Signed-off-by: Peng Liu <iwtbavbm@gmail.com>
+> Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
+> ---
+> v1: https://lkml.org/lkml/2019/12/30/502
 
-arm,smmu-venus@d40000: $nodename:0: 'arm,smmu-venus@d40000' does not match '^iommu@[0-9a-f]*'
-arm,smmu-venus@d40000: clock-names:0: 'bus' was expected
-arm,smmu-venus@d40000: clock-names:1: 'iface' was expected
+Please (for future use); use the form:
 
-by rename nodename to "iommu".
-
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 4ca2e7b44559..9bbcee31f28b 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -2267,7 +2267,7 @@
- 			};
- 		};
- 
--		venus_smmu: arm,smmu-venus@d40000 {
-+		venus_smmu: iommu@d40000 {
- 			compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
- 			reg = <0xd40000 0x20000>;
- 			#global-interrupts = <1>;
--- 
-2.17.1
+  https://lkml.kernel.org/r/$msgid
 
