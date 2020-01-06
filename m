@@ -2,197 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41504130D34
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 06:31:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 621D9130D39
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 06:40:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbgAFFa6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 00:30:58 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:46734 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726303AbgAFFa5 (ORCPT
+        id S1726690AbgAFFjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 00:39:03 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39264 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbgAFFjD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 00:30:57 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0065UmVp123951;
-        Sun, 5 Jan 2020 23:30:48 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578288648;
-        bh=l3SBppAnhj+nCRQvU2uA5pxuogA04+AgYwbbsVVv9EM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Su0gWFZwb1VAtWnyYa8HXAL1JszTInCplgf/dDL9xJPzE7pH17mZ4oM/r/leuMq66
-         zVbFl+Xt5DO/OIyDsfr/QW1sNISV8QDFE5w3oOf30WW4gRBjpBg2A7qPO/1WUwL4mS
-         yI19JtuZ88IHVI1KWSddXZicOL2BILYM02NnlBpI=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0065Ump6048897
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 5 Jan 2020 23:30:48 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Sun, 5 Jan
- 2020 23:30:48 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Sun, 5 Jan 2020 23:30:48 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0065Uiu9120958;
-        Sun, 5 Jan 2020 23:30:45 -0600
-Subject: Re: [PATCH v2 01/14] dt-bindings: phy: Convert Cadence MHDP PHY
- bindings to YAML.
-To:     Yuti Amonkar <yamonkar@cadence.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>, <maxime@cerno.tech>
-CC:     <jsarha@ti.com>, <tomi.valkeinen@ti.com>, <praneeth@ti.com>,
-        <mparab@cadence.com>, <sjakhade@cadence.com>
-References: <1577114139-14984-1-git-send-email-yamonkar@cadence.com>
- <1577114139-14984-2-git-send-email-yamonkar@cadence.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <5b1c3157-2584-c9c2-0823-ce4a5c709492@ti.com>
-Date:   Mon, 6 Jan 2020 11:02:50 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 6 Jan 2020 00:39:03 -0500
+Received: by mail-lj1-f195.google.com with SMTP id l2so49688604lja.6
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Jan 2020 21:39:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GlkkInIyCG//aHEm2YZjtVGYBTSoUzhq7aMbB6wqBY8=;
+        b=kQIU7dGXyHK5nRWZlaZpGXDAV18PHQE00gTrtC+Up+k9CsDijsoEnEu8ZzFfTlpg+C
+         Zw/UDMwrlG4zBb69D4oC36DpQqQdfSJaYKZlnL64l1vDWSm7lhLZQ9hpgnOmAgWap1Hj
+         0OVX13ZBTDamKffWGm5dpa0+II6+J0KE/ehkkJ5+32OhPq71yfyg60VVGJBGR/VELdd4
+         Wx6KzswF51p8E4M/pe77zZ7IfwF+MZmfbzeEZvGP2VutoShnFsOzEoKQg8uQfNBVyXMV
+         fHR7eZZYwjhjFqKMgYQRwle0fSuuWc4pZwWlCqlfgLoXm9stF3UzL0NySBDQusIyfX7R
+         UCvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GlkkInIyCG//aHEm2YZjtVGYBTSoUzhq7aMbB6wqBY8=;
+        b=lnHtcMckoHboYlgYGKHP9a3Y/8a3d+Ls8JPMZB/FjewLGIX9U+GLjaCpWAtU96Mf4K
+         lUeMJEfjdIYRX6PeW40hartnv2tWQqnnasEnH9tXk+pVrQSIjVT1luevduwMWoIwnEh6
+         XIXdixRkzu+5ZpZdYPI85wr9Z5ieDGzocw8ksi3aWZpGZ1IP54Sfi50qqNPW0ONKAJ5x
+         pFNCRLOLyGUHFQrk/oDVFsy9Nzg+3rCGRn1Mf+DTFE+xjHFeeLSqmjotXV8HDtbzGVmB
+         yQiT/pqBYdM4OiNdjTpYPA7Hi1rrpafoinNHWFCVhEb67Bg5Y2hqrG1KcVOcYAtiwtKZ
+         l1fw==
+X-Gm-Message-State: APjAAAUQn1HQ6ZVXLElV9JtO/YzCVoaSQbf4sXJDnQiDVMX7GqSIHhpf
+        j5DZi+lGDm4sMayrBBmIcLG1tkcOaHPIz3wnfJwVcite
+X-Google-Smtp-Source: APXvYqw/Mn7CLRfO8Sa9X3Wkha6pSbBkSmBw4YM1xZXTY1WQvhH1uqWAYfR9xjfMGrxrhQVH7EvsKxg9fnaWjvj70BU=
+X-Received: by 2002:a2e:3609:: with SMTP id d9mr58015801lja.188.1578289141455;
+ Sun, 05 Jan 2020 21:39:01 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1577114139-14984-2-git-send-email-yamonkar@cadence.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <1574694943-7883-1-git-send-email-yingjie_bai@126.com>
+ <87pngglmxg.fsf@mpe.ellerman.id.au> <CAFAt38F-YQUVNXEnLut0tMivYUy_OTK7G4wAHfddcmncsEpREQ@mail.gmail.com>
+ <9e680f3798f1a771cba4b41f7a5d7fda7f534522.camel@buserror.net>
+ <CAFAt38FnH376ioDuvyNJW=iOxbcooRRsEeVEfDudRoV4gG98SQ@mail.gmail.com>
+ <a37338283db548c58e6c36e4996a9474b1fe2038.camel@buserror.net>
+ <CAFAt38HEUZ1tc-OGw2YF3-YcouG63h1uG8Quot=G5xj+u9pTtA@mail.gmail.com> <CAFAt38EFEh25Xv_K2GiO2CACW4v17fbtE0YnL0k3x61dERS2fw@mail.gmail.com>
+In-Reply-To: <CAFAt38EFEh25Xv_K2GiO2CACW4v17fbtE0YnL0k3x61dERS2fw@mail.gmail.com>
+From:   Yingjie Bai <byj.tea@gmail.com>
+Date:   Mon, 6 Jan 2020 13:38:50 +0800
+Message-ID: <CAFAt38GhDX0OMEz-3AcQRJy6q-cpO-GW_eDFGHmHYw5tZw6EXw@mail.gmail.com>
+Subject: Re: [PATCH] powerpc/mpc85xx: also write addr_h to spin table for
+ 64bit boot entry
+To:     Scott Wood <oss@buserror.net>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>, yingjie_bai@126.com,
+        Kumar Gala <galak@kernel.crashing.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Scott,
 
-On 23/12/19 8:45 PM, Yuti Amonkar wrote:
-> - Convert the MHDP PHY devicetree bindings to yaml schemas.
-> - Rename DP PHY to have generic Torrent PHY nomrnclature.
-> - Rename compatible string from "cdns,dp-phy" to "cdns,torrent-phy".
->   This will not affect ABI as the driver has never been functional,
->   and therefore do not exist in any active use case
+Sorry for the late reply, I have checked the compilation error from
+kbuild system, and found when CONFIG_PHYS_64BIT is not set,
+phys_addr_t is 32bit, there is still "right shift count >= width of
+type" error.
+So I update the patches accordingly.
 
-Since the Torrent SERDES is similar in design to Sierra SERDES, can we
-make the binding look similar too.
+https://lore.kernel.org/patchwork/patch/1175560/
+https://lore.kernel.org/patchwork/patch/1175559/
 
-For example, with the current binding here, it might not be possible to
-specify multi-link. Sierra has a subnode for every link.
 
-Thanks
-Kishon
-
-> 
-> Signed-off-by: Yuti Amonkar <yamonkar@cadence.com>
-> ---
->  .../devicetree/bindings/phy/phy-cadence-dp.txt     | 30 ----------
->  .../bindings/phy/phy-cadence-torrent.yaml          | 64 ++++++++++++++++++++++
->  2 files changed, 64 insertions(+), 30 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
->  create mode 100644 Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-dp.txt b/Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
-> deleted file mode 100644
-> index 7f49fd54e..0000000
-> --- a/Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
-> +++ /dev/null
-> @@ -1,30 +0,0 @@
-> -Cadence MHDP DisplayPort SD0801 PHY binding
-> -===========================================
-> -
-> -This binding describes the Cadence SD0801 PHY hardware included with
-> -the Cadence MHDP DisplayPort controller.
-> -
-> --------------------------------------------------------------------------------
-> -Required properties (controller (parent) node):
-> -- compatible	: Should be "cdns,dp-phy"
-> -- reg		: Defines the following sets of registers in the parent
-> -		  mhdp device:
-> -			- Offset of the DPTX PHY configuration registers
-> -			- Offset of the SD0801 PHY configuration registers
-> -- #phy-cells	: from the generic PHY bindings, must be 0.
-> -
-> -Optional properties:
-> -- num_lanes	: Number of DisplayPort lanes to use (1, 2 or 4)
-> -- max_bit_rate	: Maximum DisplayPort link bit rate to use, in Mbps (2160,
-> -		  2430, 2700, 3240, 4320, 5400 or 8100)
-> --------------------------------------------------------------------------------
-> -
-> -Example:
-> -	dp_phy: phy@f0fb030a00 {
-> -		compatible = "cdns,dp-phy";
-> -		reg = <0xf0 0xfb030a00 0x0 0x00000040>,
-> -		      <0xf0 0xfb500000 0x0 0x00100000>;
-> -		num_lanes = <4>;
-> -		max_bit_rate = <8100>;
-> -		#phy-cells = <0>;
-> -	};
-> diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
-> new file mode 100644
-> index 0000000..3587312
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
-> @@ -0,0 +1,64 @@
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/phy/phy-cadence-torrent.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Cadence Torrent SD0801 PHY binding for DisplayPort
-> +
-> +description:
-> +  This binding describes the Cadence SD0801 PHY hardware included with
-> +  the Cadence MHDP DisplayPort controller.
-> +
-> +maintainers:
-> +  - Swapnil Jakhade <sjakhade@cadence.com>
-> +  - Yuti Amonkar <yamonkar@cadence.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: cdns,torrent-phy
-> +
-> +  reg:
-> +    items:
-> +      - description: Offset of the DPTX PHY configuration registers.
-> +      - description: Offset of the SD0801 PHY configuration registers.
-> +
-> +  reg-names:
-> +    items:
-> +      - const: dptx_phy
-> +      - const: sd0801_phy
-> +
-> +  "#phy-cells":
-> +    const: 0
-> +
-> +  num_lanes:
-> +    description:
-> +      Number of DisplayPort lanes.
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +      - enum: [1, 2, 4]
-> +
-> +  max_bit_rate:
-> +    description:
-> +      Maximum DisplayPort link bit rate to use, in Mbps
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +      - enum: [2160, 2430, 2700, 3240, 4320, 5400, 8100]
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#phy-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    dp_phy: phy@f0fb030a00 {
-> +          compatible = "cdns,torrent-phy";
-> +          reg = <0xf0 0xfb030a00 0x0 0x00000040>,
-> +                <0xf0 0xfb500000 0x0 0x00100000>;
-> +          num_lanes = <4>;
-> +          max_bit_rate = <8100>;
-> +          #phy-cells = <0>;
-> +    };
-> +...
-> 
+On Mon, Dec 30, 2019 at 3:41 PM Yingjie Bai <byj.tea@gmail.com> wrote:
+>
+> Hi Scott,
+>
+> Thanks for your time to review this patch
+>
+> Based on your suggestion, I have verified below new patches that pass
+> compilation with and without CONFIG_RELOCATABLE
+>
+> https://lore.kernel.org/patchwork/patch/1173548
+> https://lore.kernel.org/patchwork/patch/1173547
+>
+> On Wed, Dec 25, 2019 at 3:19 PM Yingjie Bai <byj.tea@gmail.com> wrote:
+> >
+> > Thanks Scott, I will test to see if returning phys_addr_t in __pa()
+> > works for my setup.
+> >
+> > And another thin I will test is to compile without CONFIG_RELOCATABLE
+> > before resubmitting the patch.
+> >
+> > On Wed, Dec 25, 2019 at 2:53 PM Scott Wood <oss@buserror.net> wrote:
+> > >
+> > > On Wed, 2019-12-25 at 11:24 +0800, Yingjie Bai wrote:
+> > > > Hi Scott,
+> > > >
+> > > > __pa() returns 64bit in my setup.
+> > > >
+> > > > in arch/powerpc/include/asm/page.h
+> > > >
+> > > > #if defined(CONFIG_PPC32) && defined(CONFIG_BOOKE)
+> > > > #define __va(x) ((void *)(unsigned long)((phys_addr_t)(x) +
+> > > > VIRT_PHYS_OFFSET))
+> > > > #define __pa(x) ((unsigned long)(x) - VIRT_PHYS_OFFSET)
+> > > > #else
+> > > > #ifdef CONFIG_PPC64
+> > > > ...
+> > > >
+> > > >
+> > > >
+> > > > /* See Description below for VIRT_PHYS_OFFSET */
+> > > > #if defined(CONFIG_PPC32) && defined(CONFIG_BOOKE)
+> > > > #ifdef CONFIG_RELOCATABLE
+> > > > #define VIRT_PHYS_OFFSET virt_phys_offset
+> > > > #else
+> > > > #define VIRT_PHYS_OFFSET (KERNELBASE - PHYSICAL_START)
+> > > > #endif
+> > > > #endif
+> > >
+> > > OK, so it's the lack of CONFIG_RELOCATABLE causing the build to fail.  Ideally
+> > > we'd make __pa() consistently return phys_addr_t, even if the upper bits are
+> > > known to always be zero in a particular config.
+> > >
+> > > -Scott
+> > >
+> > >
