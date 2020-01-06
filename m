@@ -2,84 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC34B130DF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 08:24:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0FA3130DEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 08:22:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbgAFHYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 02:24:22 -0500
-Received: from mga12.intel.com ([192.55.52.136]:48996 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726488AbgAFHYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 02:24:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jan 2020 23:24:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,401,1571727600"; 
-   d="scan'208";a="222761835"
-Received: from liujing-mobl1.ccr.corp.intel.com (HELO [10.238.130.219]) ([10.238.130.219])
-  by orsmga003.jf.intel.com with ESMTP; 05 Jan 2020 23:24:20 -0800
-Subject: Re: [PATCH v1 2/2] virtio-mmio: add features for virtio-mmio
- specification version 3
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        "Liu, Jiang" <gerry@linux.alibaba.com>
-Cc:     Jason Wang <jasowang@redhat.com>,
-        Zha Bin <zhabin@linux.alibaba.com>,
-        linux-kernel@vger.kernel.org, slp@redhat.com,
-        virtio-dev@lists.oasis-open.org, jing2.liu@intel.com,
-        chao.p.peng@intel.com
-References: <cover.1577240905.git.zhabin@linux.alibaba.com>
- <a11d4c616158c9fb1ca4575ca0530b2e17b952fa.1577240905.git.zhabin@linux.alibaba.com>
- <229e689d-10f1-2bfb-c393-14dfa9c78971@redhat.com>
- <0460F92A-3DF6-4F7A-903B-6434555577CC@linux.alibaba.com>
- <f8b46502-a5a5-c5c6-88df-101dbfd02fda@redhat.com>
- <56703BDA-B7AE-4656-8061-85FD1A130597@linux.alibaba.com>
- <20200105054142-mutt-send-email-mst@kernel.org>
-From:   "Liu, Jing2" <jing2.liu@linux.intel.com>
-Message-ID: <ec003137-c08f-cda6-6a94-d37d5460189c@linux.intel.com>
-Date:   Mon, 6 Jan 2020 15:24:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1726825AbgAFHWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 02:22:41 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:35298 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbgAFHWk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 02:22:40 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0067MZWK120601;
+        Mon, 6 Jan 2020 01:22:35 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578295355;
+        bh=JbgEMJAZcphTCT3ArjgkaPbRozfPwgrPxgmVTA/cfuc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=fwa6GxJ2BnjQ71dnuF1PBO9+Cp2/gBVVUkeTYdf825Fw4baX90M+vHcS964pAE8l9
+         S3MKMWfos0Rc/iZ99GSEWp5OSyFMqoje/ZA6570pVERRzSb1/boNArFkE4BbrgNt7L
+         EjUdkU+EFoukN66oeZQFThyj5XVY3nXcWLaD7Sos=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0067MZDV030457
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 6 Jan 2020 01:22:35 -0600
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 6 Jan
+ 2020 01:22:35 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 6 Jan 2020 01:22:35 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0067MWuq005200;
+        Mon, 6 Jan 2020 01:22:32 -0600
+Subject: Re: [PATCH v10 0/2] phy: intel-lgm-emmc: Add support for eMMC PHY
+To:     "Ramuthevar,Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC:     <andriy.shevchenko@intel.com>, <cheol.yong.kim@intel.com>,
+        <qi-ming.wu@intel.com>, <peter.harliman.liem@intel.com>
+References: <20191217015658.23017-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <c5df1165-5b8d-f329-582f-15553eb5eb1a@ti.com>
+Date:   Mon, 6 Jan 2020 12:54:37 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200105054142-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191217015658.23017-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 1/5/2020 6:42 PM, Michael S. Tsirkin wrote:
-> On Thu, Dec 26, 2019 at 09:16:19PM +0800, Liu, Jiang wrote:
->>> 2) The mask and unmask control is missed
->>>
->>>
->>>>   but the extension doesn’t support 3) because
->>>> we noticed that the Linux virtio subsystem doesn’t really make use of interrupt masking/unmasking.
-> Linux uses masking/unmasking in order to migrate interrupts between
-> CPUs.
 
-Hi Michael,
+On 17/12/19 7:26 AM, Ramuthevar,Vadivel MuruganX wrote:
+> Add eMMC-PHY support for Intel LGM SoC
 
-Thanks for reviewing the patches!
+merged now, Thanks!
 
-When trying to study the mask/unmask use case during migrating irq, it 
-seems being used e.g.
+-Kishon
 
-1) migrate irq(s) away from offline cpu
-
-2) irq affinity is changing, while an interrupt comes so it sets 
-SETAFFINITY_PENDING and
-
-the lapic (e.g. x86) does the mask and unmask to finish the pending 
-during ack.
-
-Is this right? So we should have mask/unmask for each vector.
-
-Thanks,
-
-Jing
-
+> 
+> changes in v10:
+>   - Rob's review comments update in YAML
+>   - drop clock-names since it is single entry
+>  
+> changes in v9:
+>   - Rob's review comments update in YAML
+> 
+> changes in v8:
+>  Remove the extra Signed-of-by
+> 
+> changes in v7:
+>  Rebased to maintainer kernel tree phy-tag-5.5
+> 
+> changes in v6:
+>    - cobined comaptible strings
+>    - added as contiguous and can be a single entry for reg properties
+> changes in v5:
+>    - earlier Review-by tag given by Rob
+>    - rework done with syscon parent node.
+> 
+>  changes in v4:
+>    - As per Rob's review: validate 5.2 and 5.3
+>    - drop unrelated items.
+> 
+>  changes in v3:
+>    - resolve 'make dt_binding_check' warnings
+> 
+>  changes in v2:
+>    As per Rob Herring review comments, the following updates
+>   - change GPL-2.0 -> (GPL-2.0-only OR BSD-2-Clause)
+>   - filename is the compatible string plus .yaml
+>   - LGM: Lightning Mountain
+>   - update maintainer
+>   - add intel,syscon under property list
+>   - keep one example instead of two
+> 
+> 
+> 
+> Ramuthevar Vadivel Murugan (2):
+>   dt-bindings: phy: intel-emmc-phy: Add YAML schema for LGM eMMC PHY
+>   phy: intel-lgm-emmc: Add support for eMMC PHY
+> 
+>  .../bindings/phy/intel,lgm-emmc-phy.yaml           |  56 ++++
+>  drivers/phy/Kconfig                                |   1 +
+>  drivers/phy/Makefile                               |   1 +
+>  drivers/phy/intel/Kconfig                          |   9 +
+>  drivers/phy/intel/Makefile                         |   2 +
+>  drivers/phy/intel/phy-intel-emmc.c                 | 283 +++++++++++++++++++++
+>  6 files changed, 352 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
+>  create mode 100644 drivers/phy/intel/Kconfig
+>  create mode 100644 drivers/phy/intel/Makefile
+>  create mode 100644 drivers/phy/intel/phy-intel-emmc.c
+> 
