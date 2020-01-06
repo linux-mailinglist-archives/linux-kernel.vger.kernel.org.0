@@ -2,83 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8CF4130BE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 02:52:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 712C4130BEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 02:55:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbgAFBw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 20:52:28 -0500
-Received: from szxga08-in.huawei.com ([45.249.212.255]:56876 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727226AbgAFBw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 20:52:27 -0500
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id 344BCE20430513D69D12;
-        Mon,  6 Jan 2020 09:52:25 +0800 (CST)
-Received: from DGGEMM526-MBX.china.huawei.com ([169.254.8.143]) by
- DGGEMM403-HUB.china.huawei.com ([10.3.20.211]) with mapi id 14.03.0439.000;
- Mon, 6 Jan 2020 09:52:19 +0800
-From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
-To:     Valentin Schneider <valentin.schneider@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-CC:     Linuxarm <linuxarm@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Morten Rasmussen" <morten.rasmussen@arm.com>
-Subject: RE: [PATCH] cpu-topology: warn if NUMA configurations conflicts
- with lower layer
-Thread-Topic: [PATCH] cpu-topology: warn if NUMA configurations conflicts
- with lower layer
-Thread-Index: AQHVuWnsK0zwK8RxTkqe/SNAoYeaUKfT+S+AgALBI6CAAAyngIAAlqWw//+IwoCAAXt3QP//7niAgAAVeoCABI6+sA==
-Date:   Mon, 6 Jan 2020 01:52:18 +0000
-Message-ID: <678F3D1BB717D949B966B68EAEB446ED340B3211@dggemm526-mbx.china.huawei.com>
-References: <1577088979-8545-1-git-send-email-prime.zeng@hisilicon.com>
- <20191231164051.GA4864@bogus>
- <678F3D1BB717D949B966B68EAEB446ED340AE1D3@dggemm526-mbx.china.huawei.com>
- <20200102112955.GC4864@bogus>
- <678F3D1BB717D949B966B68EAEB446ED340AEB67@dggemm526-mbx.china.huawei.com>
- <c43342d0-7e4d-3be0-0fe1-8d802b0d7065@arm.com>
- <678F3D1BB717D949B966B68EAEB446ED340AFCA0@dggemm526-mbx.china.huawei.com>
- <7b375d79-2d3c-422b-27a6-68972fbcbeaf@arm.com>
- <66943c82-2cfd-351b-7f36-5aefdb196a03@arm.com>
-In-Reply-To: <66943c82-2cfd-351b-7f36-5aefdb196a03@arm.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.74.221.187]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727323AbgAFBzk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 20:55:40 -0500
+Received: from ozlabs.org ([203.11.71.1]:40341 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727226AbgAFBzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Jan 2020 20:55:40 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47rdrT1tm4z9sPJ;
+        Mon,  6 Jan 2020 12:55:37 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1578275737;
+        bh=H8huH0kHSTplQmOfDL3UG9eTTuXnRHDVPGYIItGVNwg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=CoMIQEDINd6JcqxZRnnBV5qztqn9gPn1h6L/M5OcDNoxpcN1O0l2kcmZZSKj9r/zs
+         ed0+sNSp10WIH6goQ+lC2XDofTdAaV3cv67jEIKntJdls8vVPWfWGgrmDBdbCi6al2
+         UeLjV/nWAf5zgeTxUJa5j+wsYK222KkdmReDHrHeN9aVoMLbGXZBxWSEde6EICmXfw
+         EHUhLJ2q6uwQ5alyfOHDxxlj/QyExsZYB5cxE5ujicV35qR2XBoRexW4Xy5iZoefqP
+         WBsGiwW217koFQ4rNXHIFc/fOqG0y30+cosMpHt1JbNPqETNBBkBmPHzF1fbw4V+7E
+         7AskMCowbqV6A==
+Date:   Mon, 6 Jan 2020 12:55:36 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul@pwsan.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the risc-v tree with Linus' tree
+Message-ID: <20200106125536.42fa3df4@canb.auug.org.au>
+In-Reply-To: <alpine.DEB.2.21.9999.2001051749560.484919@viisi.sifive.com>
+References: <20200106093246.6abbb7e9@canb.auug.org.au>
+        <alpine.DEB.2.21.9999.2001051749560.484919@viisi.sifive.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; boundary="Sig_/+cGBlbluk_+o6SF.ktlJQ/T";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBWYWxlbnRpbiBTY2huZWlkZXIg
-W21haWx0bzp2YWxlbnRpbi5zY2huZWlkZXJAYXJtLmNvbV0NCj4gU2VudDogRnJpZGF5LCBKYW51
-YXJ5IDAzLCAyMDIwIDg6MTUgUE0NCj4gVG86IFplbmd0YW8gKEIpOyBTdWRlZXAgSG9sbGENCj4g
-Q2M6IExpbnV4YXJtOyBHcmVnIEtyb2FoLUhhcnRtYW47IFJhZmFlbCBKLiBXeXNvY2tpOw0KPiBs
-aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBNb3J0ZW4gUmFzbXVzc2VuDQo+IFN1YmplY3Q6
-IFJlOiBbUEFUQ0hdIGNwdS10b3BvbG9neTogd2FybiBpZiBOVU1BIGNvbmZpZ3VyYXRpb25zIGNv
-bmZsaWN0cw0KPiB3aXRoIGxvd2VyIGxheWVyDQo+IA0KPiBPbiAwMy8wMS8yMDIwIDEwOjU3LCBW
-YWxlbnRpbiBTY2huZWlkZXIgd3JvdGU6DQo+ID4gSSdtIGp1Z2dsaW5nIHdpdGggb3RoZXIgdGhp
-bmdzIGF0bSwgYnV0IGxldCBtZSBoYXZlIGEgdGhpbmsgYW5kIHNlZSBpZiB3ZQ0KPiA+IGNvdWxk
-bid0IGRldGVjdCB0aGF0IGluIHRoZSBzY2hlZHVsZXIgaXRzZWxmLg0KPiA+DQo+IA0KPiBTb21l
-dGhpbmcgbGlrZSB0aGlzIG91Z2h0IHRvIGNhdGNoIHlvdXIgY2FzZTsgbWlnaHQgbmVlZCB0byBj
-b21wYXJlIGdyb3VwDQo+IHNwYW5zIHJhdGhlciB0aGFuIHB1cmUgZ3JvdXAgcG9pbnRlcnMuDQo+
-IA0KDQpHb29kIHN1Z2dlc3Rpb24sIEkgd2lsbCBuZWVkIHRvIGhhdmUgYSB0aGluayBhbmQgdHJ5
-DQpUaGFua3MuIA0KDQo+IC0tLQ0KPiBkaWZmIC0tZ2l0IGEva2VybmVsL3NjaGVkL3RvcG9sb2d5
-LmMgYi9rZXJuZWwvc2NoZWQvdG9wb2xvZ3kuYw0KPiBpbmRleCA2ZWMxZTU5NWIxZDQuLmM0MTUx
-ZTExYWZjZCAxMDA2NDQNCj4gLS0tIGEva2VybmVsL3NjaGVkL3RvcG9sb2d5LmMNCj4gKysrIGIv
-a2VybmVsL3NjaGVkL3RvcG9sb2d5LmMNCj4gQEAgLTExMjAsNiArMTEyMCwxMyBAQCBidWlsZF9z
-Y2hlZF9ncm91cHMoc3RydWN0IHNjaGVkX2RvbWFpbiAqc2QsDQo+IGludCBjcHUpDQo+IA0KPiAg
-CQlzZyA9IGdldF9ncm91cChpLCBzZGQpOw0KPiANCj4gKwkJLyogc2cncyBhcmUgaW5pdGVkIGFz
-IHNlbGYtbG9vcGluZy4gSWYgJ2xhc3QnIGlzIG5vdCBzZWxmDQo+ICsJCSAqIGxvb3BpbmcsIHdl
-IHNldCBpdCBpbiBhIHByZXZpb3VzIHZpc2l0LiBObyBmdXJ0aGVyIHZpc2l0DQo+ICsJCSAqIHNo
-b3VsZCBjaGFuZ2UgdGhlIGxpbmsgb3JkZXIsIGlmIHdlIGRvIHRoZW4gdGhlIHRvcG9sb2d5DQo+
-ICsJCSAqIGRlc2NyaXB0aW9uIGlzIHRlcm1pbmFsbHkgYnJva2VuLg0KPiArCQkgKi8NCj4gKwkJ
-QlVHX09OKGxhc3QgJiYgbGFzdC0+bmV4dCAhPSBsYXN0ICYmIGxhc3QtPm5leHQgIT0gc2cpOw0K
-PiArDQo+ICAJCWNwdW1hc2tfb3IoY292ZXJlZCwgY292ZXJlZCwgc2NoZWRfZ3JvdXBfc3Bhbihz
-ZykpOw0KPiANCj4gIAkJaWYgKCFmaXJzdCkNCg==
+--Sig_/+cGBlbluk_+o6SF.ktlJQ/T
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Paul,
+
+On Sun, 5 Jan 2020 17:50:35 -0800 (PST) Paul Walmsley <paul.walmsley@sifive=
+.com> wrote:
+>=20
+> Thanks, I just reset our for-next branch to v5.5-rc5, so this won't=20
+> reappear.
+
+Excellent, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/+cGBlbluk_+o6SF.ktlJQ/T
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4Sk5gACgkQAVBC80lX
+0Gw0Owf9EGr7v1YpBlpF5thV9GQWkE2gQ5/p9GQ78vTSscEut3TAKP6svS2b/74c
+NK8mpeIjVLPiIacaZNe4eWnFIxGb8Z0hbBVSYiU4eMQSU8OnEWOYWoRtWwOYHuRj
+WqizGY2hvK6T2VDmZb502cSH2cgIzv9h7lXZ9G8+F18qy9jF9XdjKDko/Gtn4e0o
+6lCvlsxZvoCiZBwq+e/KHAUgz0sq+BkPC1sT9iVmZvPZL75/ZPTfONlWM8v4yHPa
+XOpXhYuacnMw6sy7EWJoNgtyXyRnLG5DQTmeyp3M9OpH22nBh/HX+cKeTLAAWrDe
+AFfVAVnt6n+SGD9QjMn20EnGN+c4QA==
+=zceD
+-----END PGP SIGNATURE-----
+
+--Sig_/+cGBlbluk_+o6SF.ktlJQ/T--
