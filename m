@@ -2,90 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01D2D131736
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:05:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61824131749
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:13:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbgAFSFY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 13:05:24 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:61774 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbgAFSFX (ORCPT
+        id S1726707AbgAFSM5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 13:12:57 -0500
+Received: from baldur.buserror.net ([165.227.176.147]:48246 "EHLO
+        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbgAFSM5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 13:05:23 -0500
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id 006I54ue013464;
-        Tue, 7 Jan 2020 03:05:05 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com 006I54ue013464
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1578333905;
-        bh=ilQorFqS+zyMuayxMN+IpKjCHeBpG/ajISHuV8eMShA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=21siazaPoePAzfB8/BUG0CJf9TlDNifIdYb4d8oCT5/8Vnhd3vpxxFN7aQnQClJcC
-         Dv1gauvi0G+OWGz64vgtgQs/NGjIuOB7wxUMnkc1/lMND0+iA1S7nirIquujt/UyXl
-         L2zZG3jh9NZhkJVlxbwtpu1rdmimspym7LRQkrwPCN5TnuNz6J8VnV51nyJ/Q5Vea1
-         vq7RJv2rkxQLP6jpPJKUEEcoYzJYJIWiJ4KiVn4OegQ2504degVDMM3HuM+j7syuQr
-         9yLZ+zEX6vG7isP50NmeVaPYLo9G+bea2WZWkZqGB6XWQGFh2dAYrJCwsfGmWA7TR7
-         p5U/l8tk+rWJg==
-X-Nifty-SrcIP: [209.85.217.48]
-Received: by mail-vs1-f48.google.com with SMTP id g15so32203108vsf.1;
-        Mon, 06 Jan 2020 10:05:05 -0800 (PST)
-X-Gm-Message-State: APjAAAX7VgDErFB2Wo08hv4xXA1bxFxUAOMou+s2T8ZSoXVjw5Dw6Rys
-        lQgR0WnrDhTnvSZ/fjEnKbnn6mIELU2v8GDbZIc=
-X-Google-Smtp-Source: APXvYqzLMthNv/omDtOFD3rCYekMf0c1Qo8cZvSZACuUeY6SdmL+pxCYSI/AmGugkfWuMqx1ZrBVHHzsnB9zi04Vhwg=
-X-Received: by 2002:a05:6102:48b:: with SMTP id n11mr44112854vsa.181.1578333903950;
- Mon, 06 Jan 2020 10:05:03 -0800 (PST)
-MIME-Version: 1.0
-References: <1575979754-184896-1-git-send-email-john.garry@huawei.com> <7e769634-eb22-5827-e2d8-df68134056c0@huawei.com>
-In-Reply-To: <7e769634-eb22-5827-e2d8-df68134056c0@huawei.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Tue, 7 Jan 2020 03:04:28 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS+XHGete9u2SV7fTj3HpROQmzfuJhV8tXW_xXkoPOYvg@mail.gmail.com>
-Message-ID: <CAK7LNAS+XHGete9u2SV7fTj3HpROQmzfuJhV8tXW_xXkoPOYvg@mail.gmail.com>
-Subject: Re: [PATCH] merge_config.sh: Add option for allmodconfig
-To:     John Garry <john.garry@huawei.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Anders Roxell <anders.roxell@linaro.org>
+        Mon, 6 Jan 2020 13:12:57 -0500
+Received: from [2601:449:8480:af0:12bf:48ff:fe84:c9a0]
+        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <oss@buserror.net>)
+        id 1ioWlM-0008D1-Mb; Mon, 06 Jan 2020 12:06:01 -0600
+Message-ID: <d8cddd005901e64133e9ecbb14ec8fdf3269972d.camel@buserror.net>
+From:   Scott Wood <oss@buserror.net>
+To:     yingjie_bai@126.com, Kumar Gala <galak@kernel.crashing.org>
+Cc:     Bai Yingjie <byj.tea@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Jason Yan <yanaijie@huawei.com>,
+        Diana Craciun <diana.craciun@nxp.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Date:   Mon, 06 Jan 2020 12:05:59 -0600
+In-Reply-To: <20200106042957.26494-2-yingjie_bai@126.com>
+References: <20200106042957.26494-1-yingjie_bai@126.com>
+         <20200106042957.26494-2-yingjie_bai@126.com>
+Organization: Red Hat
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2601:449:8480:af0:12bf:48ff:fe84:c9a0
+X-SA-Exim-Rcpt-To: yingjie_bai@126.com, galak@kernel.crashing.org, byj.tea@gmail.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, christophe.leroy@c-s.fr, aneesh.kumar@linux.ibm.com, yanaijie@huawei.com, diana.craciun@nxp.com, nsaenzjulienne@suse.de, npiggin@gmail.com, tglx@linutronix.de, gregkh@linuxfoundation.org, allison@lohutok.net, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: oss@buserror.net
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on baldur.localdomain
+X-Spam-Level: 
+X-Spam-Status: No, score=-17.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+        *      [score: 0.0000]
+        * -1.5 GREYLIST_ISWHITE The incoming server has been whitelisted for
+        *      this recipient and sender
+Subject: Re: [PATCH v3 2/2] powerpc/mpc85xx: also write addr_h to spin table
+ for 64bit boot entry
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 6, 2020 at 6:18 PM John Garry <john.garry@huawei.com> wrote:
->
-> On 10/12/2019 12:09, John Garry wrote:
->
-> Hi Masahiro,
->
-> Could you please consider this patch?
->
-> Thanks,
-> John
->
-> > Recently there has been some work in reporting and fixing bugs in booting
-> > an allmodconfig kernel - here are a few examples:
-> >
-> > https://lore.kernel.org/linux-edac/304df85b-8b56-b77e-1a11-aa23769f2e7c@huawei.com/T/#t
-> > https://lore.kernel.org/linux-ide/bdf02e03-86a1-3d35-2908-28187f504495@huawei.com/T/#t
-> > https://lore.kernel.org/netdev/CADYN=9LCPfbpwdTWKw03B22-y3Text=RWXW7XP7wJBHYsMOgrA@mail.gmail.com/
-> > https://sourceforge.net/p/openipmi/mailman/message/36871567/
-> >
-> > If we want to boot an allmodconfig kernel we may still want to force some
-> > loadable modules built-in, like UART drivers. Or just still turn off some
-> > configs.
+On Mon, 2020-01-06 at 12:29 +0800, yingjie_bai@126.com wrote:
+> From: Bai Yingjie <byj.tea@gmail.com>
+> 
+> CPU like P4080 has 36bit physical address, its DDR physical
+> start address can be configured above 4G by LAW registers.
+> 
+> For such systems in which their physical memory start address was
+> configured higher than 4G, we need also to write addr_h into the spin
+> table of the target secondary CPU, so that addr_h and addr_l together
+> represent a 64bit physical address.
+> Otherwise the secondary core can not get correct entry to start from.
+> 
+> Signed-off-by: Bai Yingjie <byj.tea@gmail.com>
+> ---
+>  arch/powerpc/platforms/85xx/smp.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+
+Acked-by: Scott Wood <oss@buserror.net>
+
+-Scott
 
 
-I do not understand why you need to use merge_config.sh
-for this purpose.
-
-KCONFIG_ALLCONFIG=<path-to-your-config-fragment> make allmodconfig
-
-should work.
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
