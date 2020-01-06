@@ -2,148 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 506D7131B6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 23:30:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 160A0131B58
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 23:29:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbgAFW3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 17:29:35 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:49598 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727309AbgAFW3d (ORCPT
+        id S1727207AbgAFW3O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 17:29:14 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35165 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726721AbgAFW3O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 17:29:33 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 006MJEXk032731;
-        Mon, 6 Jan 2020 22:29:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2019-08-05;
- bh=UtF7imOhmPSAXDklZ55E8gWyotvBGV1fxPBlvWgNXg4=;
- b=qzygc/n12gLiB41nlin+xnlX4lWvP20WRTul/mQjcJglGzHppp0VoaYOVSyCATFydlB0
- +fVkTAsSzh25sRBkmPA9HtAhWiYYP9X5shKpxhet+3gI8SFl40oO5dAGGai8aej7uERs
- mbsDP7XCOottVQuIiVGFaCUuEavLVuDpd2Q1nFp4t7PSUWmDCnxRfqSN94DBJGMznos9
- mPwKS8ir0rpldeg0mAAqMjCUduVJ/B6Xaor7a6tnFvOge6Coj9e5BXP4iq/CYbYaMTSc
- fIj/sYeiE7JYStjV5l383n0dOFJ/mvMyq/cGRFjIIz9hR1Qp62XeJ4RmjPVFDM5qs1Ls bQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2xakbqhwb8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 06 Jan 2020 22:29:14 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 006MJ9vL195757;
-        Mon, 6 Jan 2020 22:29:14 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2xb4ups358-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 06 Jan 2020 22:29:14 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 006MTB1X028994;
-        Mon, 6 Jan 2020 22:29:11 GMT
-Received: from dhcp-10-175-162-40.vpn.oracle.com (/10.175.162.40)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 06 Jan 2020 14:29:11 -0800
-From:   Alan Maguire <alan.maguire@oracle.com>
-To:     shuah@kernel.org, brendanhiggins@google.com,
-        linux-kselftest@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com,
-        keescook@chromium.org, yzaikin@google.com,
-        akpm@linux-foundation.org, yamada.masahiro@socionext.com,
-        catalin.marinas@arm.com, joe.lawrence@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, urezki@gmail.com,
-        andriy.shevchenko@linux.intel.com, corbet@lwn.net,
-        davidgow@google.com, adilger.kernel@dilger.ca, tytso@mit.edu,
-        mcgrof@kernel.org, linux-doc@vger.kernel.org,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Knut Omang <knut.omang@oracle.com>
-Subject: [RESEND PATCH v7 linux-kselftest-test 6/6] kunit: update documentation to describe module-based build
-Date:   Mon,  6 Jan 2020 22:28:23 +0000
-Message-Id: <1578349703-15650-7-git-send-email-alan.maguire@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1578349703-15650-1-git-send-email-alan.maguire@oracle.com>
-References: <1578349703-15650-1-git-send-email-alan.maguire@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9492 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=4 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001060185
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9492 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=4 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001060185
+        Mon, 6 Jan 2020 17:29:14 -0500
+Received: by mail-pf1-f195.google.com with SMTP id i23so22168082pfo.2;
+        Mon, 06 Jan 2020 14:29:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=diZOMCp7+H8GRYEkNWog4Ps7I49ot4hzmdFa71cNqnE=;
+        b=vWofFeX6eERqgExDOv7aZeIVIZPneb5CrDskwtpnOmEaib83SGJppUSicXLLkiR0Sw
+         ECP7Zg1Yh9i9rxUtplbHEiDWmhyS30KZtpakfi9SRBHc244NYxeFdkN0il1ZM91B+c39
+         iDxqOXHSSZQp10Ds89Rjthh8Ql6hm+yus3sY8uqeOl4VO3c9gw5mbHYzdRvpRm1d16xh
+         9X29RgO9DsO7I5RjuaY+Uwg8mPpgcWb++H0AzhFb6lFBtLTgVRE7kyLCaw0ivEJLrE8w
+         TgA2dFh9SCNK4ZVmP/kVyoZ8ePNHJReTMqFhlSVBTrtAaWAba9ZRnC3oiheDQe/l7FHa
+         fb8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=diZOMCp7+H8GRYEkNWog4Ps7I49ot4hzmdFa71cNqnE=;
+        b=mjxk8rFmN4nlXCU1DzBjJQBfPdaNxzs7fj5oVMGum2mckb8G3IZii8W3KwHyJ+KDpM
+         QKkBF8rIv8XG2GuM0YuSYWxiAkIYC/1AdtynE/Ig5KDC8RuLA+XuNy5sBix9RqdNSt7a
+         nWabAYfJRyQ8uSbNd0BbHtdj/wHOghAoQa4/KSoPDrNjXvnuNcz9yZMxNk8Nt6PU5mQj
+         hGwspNAu3AqCUp4ROj97qLl+QpKgSCiSSdrq1jmNRq8Mt/jtPuKyyL4IOt3q3Pacsg/X
+         sOUxz8aTTFRgwBJXxqukP6jJnK0JhPsaOUQRL1wJaqUbVu5CJ6HoObgKWJD2CFYjHXLR
+         l9zw==
+X-Gm-Message-State: APjAAAU7Mb2yyPxqjtrFJiWpZ1uSnjpAnCPQKO/Cuf+wUY2hpx1yMqLt
+        ukebYyfFEthoSfryT30bsEI=
+X-Google-Smtp-Source: APXvYqzbKi4t9HEBGcGGPQoSxQoRLDW/LPWNuNpDDvVYbZHKciQZeFmF6o0uWqHVMF4bt/8tBRJb4Q==
+X-Received: by 2002:a63:1c64:: with SMTP id c36mr102033191pgm.302.1578349753644;
+        Mon, 06 Jan 2020 14:29:13 -0800 (PST)
+Received: from ast-mbp ([2620:10d:c090:200::1:2bf6])
+        by smtp.gmail.com with ESMTPSA id 136sm72399748pgg.74.2020.01.06.14.29.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 Jan 2020 14:29:12 -0800 (PST)
+Date:   Mon, 6 Jan 2020 14:29:08 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Jann Horn <jannh@google.com>, bpf@vger.kernel.org,
+        live-patching@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        KP Singh <kpsingh@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: BPF tracing trampoline synchronization between update/freeing
+ and execution?
+Message-ID: <20200106222907.yjoranutzjdersty@ast-mbp>
+References: <CAG48ez2gDDRtKaOcGdKLREd7RGtVzCypXiBMHBguOGSpxQFk3w@mail.gmail.com>
+ <20200106165654.GP2844@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200106165654.GP2844@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Documentation should describe how to build kunit and tests as
-modules.
+On Mon, Jan 06, 2020 at 05:56:54PM +0100, Peter Zijlstra wrote:
+> On Mon, Jan 06, 2020 at 05:39:30PM +0100, Jann Horn wrote:
+> > Hi!
+> > 
+> > I was chatting with kpsingh about BPF trampolines, and I noticed that
+> > it looks like BPF trampolines (as of current bpf-next/master) seem to
+> > be missing synchronization between trampoline code updates and
+> > trampoline execution. Or maybe I'm missing something?
+> > 
+> > If I understand correctly, trampolines are executed directly from the
+> > fentry placeholders at the start of arbitrary kernel functions, so
+> > they can run without any locks held. So for example, if task A starts
+> > executing a trampoline on entry to sys_open(), then gets preempted in
+> > the middle of the trampoline, and then task B quickly calls
+> > BPF_RAW_TRACEPOINT_OPEN twice, and then task A continues execution,
+> > task A will end up executing the middle of newly-written machine code,
+> > which can probably end up crashing the kernel somehow?
+> > 
+> > I think that at least to synchronize trampoline text freeing with
+> > concurrent trampoline execution, it is necessary to do something
+> > similar to what the livepatching code does with klp_check_stack(), and
+> > then either use a callback from the scheduler to periodically re-check
+> > tasks that were in the trampoline or let the trampoline tail-call into
+> > a cleanup helper that is part of normal kernel text. And you'd
+> > probably have to gate BPF trampolines on
+> > CONFIG_HAVE_RELIABLE_STACKTRACE.
+> 
+> ftrace uses synchronize_rcu_tasks() to flip between trampolines iirc.
 
-Co-developed-by: Knut Omang <knut.omang@oracle.com>
-Signed-off-by: Knut Omang <knut.omang@oracle.com>
-Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
----
- Documentation/dev-tools/kunit/faq.rst   |  3 ++-
- Documentation/dev-tools/kunit/index.rst |  3 +++
- Documentation/dev-tools/kunit/usage.rst | 16 ++++++++++++++++
- 3 files changed, 21 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/dev-tools/kunit/faq.rst b/Documentation/dev-tools/kunit/faq.rst
-index bf20951..ea55b24 100644
---- a/Documentation/dev-tools/kunit/faq.rst
-+++ b/Documentation/dev-tools/kunit/faq.rst
-@@ -29,7 +29,8 @@ Yes, well, mostly.
- 
- For the most part, the KUnit core framework (what you use to write the tests)
- can compile to any architecture; it compiles like just another part of the
--kernel and runs when the kernel boots. However, there is some infrastructure,
-+kernel and runs when the kernel boots, or when built as a module, when the
-+module is loaded.  However, there is some infrastructure,
- like the KUnit Wrapper (``tools/testing/kunit/kunit.py``) that does not support
- other architectures.
- 
-diff --git a/Documentation/dev-tools/kunit/index.rst b/Documentation/dev-tools/kunit/index.rst
-index 26ffb46..7ddc385 100644
---- a/Documentation/dev-tools/kunit/index.rst
-+++ b/Documentation/dev-tools/kunit/index.rst
-@@ -48,6 +48,9 @@ to a standalone program that can be run like any other program directly inside
- of a host operating system; to be clear, it does not require any virtualization
- support; it is just a regular program.
- 
-+Alternatively, kunit and kunit tests can be built as modules and tests will
-+run when the test module is loaded.
-+
- KUnit is fast. Excluding build time, from invocation to completion KUnit can run
- several dozen tests in only 10 to 20 seconds; this might not sound like a big
- deal to some people, but having such fast and easy to run tests fundamentally
-diff --git a/Documentation/dev-tools/kunit/usage.rst b/Documentation/dev-tools/kunit/usage.rst
-index c6e6963..82f9213 100644
---- a/Documentation/dev-tools/kunit/usage.rst
-+++ b/Documentation/dev-tools/kunit/usage.rst
-@@ -539,6 +539,22 @@ Interspersed in the kernel logs you might see the following:
- 
- Congratulations, you just ran a KUnit test on the x86 architecture!
- 
-+In a similar manner, kunit and kunit tests can also be built as modules,
-+so if you wanted to run tests in this way you might add the following config
-+options to your ``.config``:
-+
-+.. code-block:: none
-+
-+	CONFIG_KUNIT=m
-+	CONFIG_KUNIT_EXAMPLE_TEST=m
-+
-+Once the kernel is built and installed, a simple
-+
-+.. code-block:: bash
-+	modprobe example-test
-+
-+...will run the tests.
-+
- Writing new tests for other architectures
- -----------------------------------------
- 
--- 
-1.8.3.1
-
+good catch and good suggestion. synchronize_rcu_tasks() is needed here too.
