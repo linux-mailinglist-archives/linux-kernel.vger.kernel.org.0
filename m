@@ -2,112 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96C4C13143C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 15:59:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3027513144A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 16:02:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbgAFO7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 09:59:38 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:44568 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726303AbgAFO7h (ORCPT
+        id S1726591AbgAFPCJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 10:02:09 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34575 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726303AbgAFPCI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 09:59:37 -0500
-Received: by mail-il1-f194.google.com with SMTP id z12so6322256iln.11;
-        Mon, 06 Jan 2020 06:59:37 -0800 (PST)
+        Mon, 6 Jan 2020 10:02:08 -0500
+Received: by mail-pg1-f194.google.com with SMTP id r11so27021913pgf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 07:02:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S/jebwPOZOQht3usJfKEu3FgzxbDletvVl/Mn3ZSls8=;
-        b=Q4/OzEe+kjmfTUoh5hd/7fq1RzIJaqnmzUnDWeWlC2IVq6fc5j6Ij9J5tJ4Bfwnqak
-         Kz/c7ASuRo9Pb9uzII6lCVjDvDD1V8EZ59tvAbQWLagoZgl+4jAu6T/lC0F5Bi/vqJtg
-         Hi0Sgqr9h4GDtyJN9InzycN8AK+XX4LhpMEwlZqMSYcFep0wZutiq2bnuqVFYo5AJMwm
-         +FfpkOhgF6f8LTuYjmMseTsSDHuz8d6dL8yytPJfNKNkUifK2AEMz+JMS944S70yLEh+
-         w6xp8OkF0BJiaWs0AdbIfhUzixk0rYsI7U/fEq0flD3YbM5Wf8Q3xbADIxecwfFnRn7y
-         +tXw==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=iWBJ9etiBm/hh818InyCY7sxm3rRSJTmMlNUHIhyA9c=;
+        b=chjKRXcMG1Vj8FXpUt1nXjb7EE4NRAGt3xE9irZZ2TmXDzQcAvUotOX360Q5KzoCEs
+         ZXs4kdiFyasmZuLymCHHVwJ2J36RhbF5yRAw0Y8xUd7jviYqCpJOVqup9Xn+wcNm4eGi
+         VlHPtbicdCc4R18Sip9nZSyWhSjBGC9KlyoDTxrw+02pdo/O7L1FmnmBRceLwAPvsTCe
+         YoqnFVyQOWkiXqugsGuLcxd2Sq1OEDFDN7J/dzo7+koFo3erLJwJ3UrgKXoaezlkALtE
+         s1DQ9x9sBWhTpJZsjy9l16NzBbDMR5m01dvcUD9N6mg7KB0aYPqNiIMx+fOL4UN/doAD
+         VF6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S/jebwPOZOQht3usJfKEu3FgzxbDletvVl/Mn3ZSls8=;
-        b=c5AEoOfXr4FWwvQSfTl7+UFdeyT+mUg1oXZQSerUUXf28BTifufqJe/3LfvI6J7he4
-         QRCBXq+JlJ9Yt2IoxDf1Igqs0X4TPQgKGoSRVjkkt9tBLLLgpb8XeygOb3junnqEzT1X
-         aed9mMfr1veBwnaaA5XqtR7yGwfzhLZP0efCPJ16xElZlIOqgY9tAmCnzx7nE3bG8WoK
-         5lfk/RTd6407tGQ3w8iEB+03UIsfx1S8CgeXVnXtAMH5OvsEPA5xAtCWyk3NCUEaQ4zj
-         tOb7hvFFX3J08rlhmvpeGdrWkTdZ8eie6FilP0xfaZ3ZNMfcDDCUE2vy2SDyFEdkFP+u
-         m4Yw==
-X-Gm-Message-State: APjAAAW3vc1L2VmjL443gK3YI2E4iRa4478Lyhk0XHuNYRyHL+D7Cjz2
-        QfsWSFf/ket42Fza1Vv2NbFpYnXtzzKBgpZfguk=
-X-Google-Smtp-Source: APXvYqy4u/JRres2EGU5ieqrujzsZ3D2NuFMJ0n4GDkilQZGf8717lzAiCYPxnnzuD9NYYD1NUX58LG4TQDZ3K45/6s=
-X-Received: by 2002:a92:d7c6:: with SMTP id g6mr82995357ilq.282.1578322777185;
- Mon, 06 Jan 2020 06:59:37 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=iWBJ9etiBm/hh818InyCY7sxm3rRSJTmMlNUHIhyA9c=;
+        b=Rdw0crH5MkhhwEO49SChDsAIppflwHwOBJLZI9FlZ5V1NeGyRufvSJA7GJVoCDxFju
+         6tv80UTufLE+5rs6cLbr2GKqZKxcdslxaovbXk22WnitKsUUMeZ0r4fMxnHf2ipBqFrW
+         6AmSxRxRYUgD6MXJDGvd/3G7zx/EhiAassUGPvcvuJ0wUbMUD9DZdZN57HfRW6NAURlN
+         TC9K0S7afhbL+xjDtFYN7rwyLMvwzuBvJboBDILb2BUCxtdscwj/mm913CcNZLVSNsi0
+         ALeZFfEZkecENRWdPhFbIkvaoWSPQxNDCrvaZDIgHouufouQK5oHT3a4Ng4EfQ/PdPGD
+         9YUg==
+X-Gm-Message-State: APjAAAVZ8flvsmdHYzXyzh4MUuMS7r91TMl7e0DEDvm+oB7qMoafEVp3
+        HGy257+b1SJH3YG9saOvB85uobW5gN+et3AQu7+vlV2r9lU=
+X-Google-Smtp-Source: APXvYqzG0DVlBkbUNzZTObVS/xbzkvkAWqSXL/KBOuF+ND0VQFkNc5g7n7zWTuRxOtHwnrY/Q4dfxkiT0l6bnU4cGOU=
+X-Received: by 2002:a63:ed48:: with SMTP id m8mr109122278pgk.399.1578322926969;
+ Mon, 06 Jan 2020 07:02:06 -0800 (PST)
 MIME-Version: 1.0
-References: <1577111958-100981-1-git-send-email-chenwandun@huawei.com>
-In-Reply-To: <1577111958-100981-1-git-send-email-chenwandun@huawei.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 6 Jan 2020 16:04:36 +0100
-Message-ID: <CAOi1vP9-s9rp1=BTHrd=ounkZ0bzYV4HfKao6_GL+r8gh1muhg@mail.gmail.com>
-Subject: Re: [PATCH next] ceph: Fix debugfs_simple_attr.cocci warnings
-To:     Chen Wandun <chenwandun@huawei.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+Received: by 2002:a17:90a:2748:0:0:0:0 with HTTP; Mon, 6 Jan 2020 07:02:05
+ -0800 (PST)
+Reply-To: cfffdfd8brahim4@yandex.com
+From:   Salah Ibrahim <mr.moussa.ahmed888@gmail.com>
+Date:   Mon, 6 Jan 2020 07:02:05 -0800
+Message-ID: <CAK56hS+Lq47fymigk6BkHAbG-d4h6DNie47MZwWM0uHG+5O-8g@mail.gmail.com>
+Subject: Greetings
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 23, 2019 at 3:32 PM Chen Wandun <chenwandun@huawei.com> wrote:
->
-> Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
-> for debugfs files.
->
-> Semantic patch information:
-> Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
-> imposes some significant overhead as compared to
-> DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
->
-> Signed-off-by: Chen Wandun <chenwandun@huawei.com>
-> ---
->  fs/ceph/debugfs.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-> index c281f32..60a0f1a 100644
-> --- a/fs/ceph/debugfs.c
-> +++ b/fs/ceph/debugfs.c
-> @@ -243,8 +243,8 @@ static int congestion_kb_get(void *data, u64 *val)
->         return 0;
->  }
->
-> -DEFINE_SIMPLE_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
-> -                       congestion_kb_set, "%llu\n");
-> +DEFINE_DEBUGFS_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
-> +                        congestion_kb_set, "%llu\n");
->
->
->  void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
-> @@ -264,11 +264,11 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
->
->         dout("ceph_fs_debugfs_init\n");
->         fsc->debugfs_congestion_kb =
-> -               debugfs_create_file("writeback_congestion_kb",
-> -                                   0600,
-> -                                   fsc->client->debugfs_dir,
-> -                                   fsc,
-> -                                   &congestion_kb_fops);
-> +               debugfs_create_file_unsafe("writeback_congestion_kb",
-> +                                          0600,
-> +                                          fsc->client->debugfs_dir,
-> +                                          fsc,
-> +                                          &congestion_kb_fops);
-
-Hi Chen,
-
-debugfs_create_file_unsafe() has "unsafe" in its name for a reason.
-Have you verified that this conversion is safe?
-
-Thanks,
-
-                Ilya
+Dear Friend. I have a business proposal of  $35 Million USD which i want to
+transact with you  get back for more details.Best Regards From Salah Ibrahim
