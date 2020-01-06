@@ -2,69 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F272131A74
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 22:32:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9687F131A7C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 22:34:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbgAFVcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 16:32:04 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:44054 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726713AbgAFVcD (ORCPT
+        id S1727099AbgAFVdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 16:33:44 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:57662 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727036AbgAFVdl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 16:32:03 -0500
+        Mon, 6 Jan 2020 16:33:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578346322;
+        s=mimecast20190719; t=1578346420;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=XiXBOwIesFh04X7+/5jDrRr4txiFi4Mcnlwaam3kiKM=;
-        b=QpbBrEzy48dIFAYj8NfhmMUv76S3NM28p4WHsB30M1ZqriwTkIJ/bOeXbNef/yqKWIoniA
-        coQq7oeZBnb/nc0UB1ZxKIrgH999YP9QeGJGFqFMKI0xy0/FjilelihtDMU6m49o+VKAoV
-        RsW4Tx0Lh2mWCxfGlXk+oEzftRGyBmc=
+        bh=ndCiValwjZ2VzwmVywuV8cEskc/OiOIGtx3yRN/wleM=;
+        b=fXvS5sbM78n4zSuAAlGZW86Aob+Y6lp1FWb3FoslYQA1xqPJHIhkdnPEBOGJrNX/st/qgk
+        Z/D+mfjp84cHltjHDhr7AHBSFaf5EpTXFjls9EXQ8A02pqnukja3bB3qrBIEZfDKYEA7d6
+        fbtoLnkKHVQFi9lu4aPBIfcl0HLjhIo=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-265-ajXQLeimMPKpFY-Ki2s9uw-1; Mon, 06 Jan 2020 16:31:59 -0500
-X-MC-Unique: ajXQLeimMPKpFY-Ki2s9uw-1
+ us-mta-308-5ZiLwMoyNYe74EfrTnWIhw-1; Mon, 06 Jan 2020 16:33:35 -0500
+X-MC-Unique: 5ZiLwMoyNYe74EfrTnWIhw-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4882D10054E3;
-        Mon,  6 Jan 2020 21:31:58 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 747331800D4A;
+        Mon,  6 Jan 2020 21:33:33 +0000 (UTC)
 Received: from localhost (ovpn-112-4.rdu2.redhat.com [10.10.112.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2E9165D9CA;
-        Mon,  6 Jan 2020 21:31:56 +0000 (UTC)
-Date:   Mon, 06 Jan 2020 13:31:55 -0800 (PST)
-Message-Id: <20200106.133155.1221137250116950495.davem@redhat.com>
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B28E25D9CA;
+        Mon,  6 Jan 2020 21:33:29 +0000 (UTC)
+Date:   Mon, 06 Jan 2020 13:33:28 -0800 (PST)
+Message-Id: <20200106.133328.353889817169904583.davem@redhat.com>
 To:     krzk@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] net: ethernet: 3c515: Fix cast from pointer to
- integer of different size
+Cc:     linux-kernel@vger.kernel.org, bh74.an@samsung.com,
+        ks.giri@samsung.com, vipul.pandya@samsung.com,
+        gregkh@linuxfoundation.org, tglx@linutronix.de,
+        allison@lohutok.net, andrew@lunn.ch, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 19/20] net: ethernet: sxgbe: Rename Samsung to
+ lowercase
 From:   David Miller <davem@redhat.com>
-In-Reply-To: <20200104143306.21210-1-krzk@kernel.org>
-References: <20200104143306.21210-1-krzk@kernel.org>
+In-Reply-To: <20200104152107.11407-20-krzk@kernel.org>
+References: <20200104152107.11407-1-krzk@kernel.org>
+        <20200104152107.11407-20-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-7
-Content-Transfer-Encoding: base64
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPg0KRGF0ZTogU2F0LCAg
-NCBKYW4gMjAyMCAxNTozMzowNSArMDEwMA0KDQo+IFBvaW50ZXIgcGFzc2VkIGFzIGludGVnZXIg
-c2hvdWxkIGJlIGNhc3QgdG8gdW5zaWduZWQgbG9uZyB0bw0KPiBhdm9pZCB3YXJuaW5nIChjb21w
-aWxlIHRlc3Rpbmcgb24gYWxwaGEgYXJjaGl0ZWN0dXJlKToNCj4gDQo+ICAgICBkcml2ZXJzL25l
-dC9ldGhlcm5ldC8zY29tLzNjNTE1LmM6IEluIGZ1bmN0aW9uIKFjb3Jrc2NyZXdfc3RhcnRfeG1p
-dKI6DQo+ICAgICBkcml2ZXJzL25ldC9ldGhlcm5ldC8zY29tLzNjNTE1LmM6MTA2Njo4OiB3YXJu
-aW5nOg0KPiAgICAgICAgIGNhc3QgZnJvbSBwb2ludGVyIHRvIGludGVnZXIgb2YgZGlmZmVyZW50
-IHNpemUgWy1XcG9pbnRlci10by1pbnQtY2FzdF0NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEtyenlz
-enRvZiBLb3psb3dza2kgPGtyemtAa2VybmVsLm9yZz4NCj4gDQo+IC0tLQ0KPiANCj4gT25seSBj
-b21waWxlIHRlc3RlZA0KDQpTb3JyeSwgSSdtIG5vdCBhcHBseWluZyB0aGVzZSB0d28uDQoNCkl0
-IGlzIGNsZWFyIHRoYXQgdGhlc2UgZHJpdmVycyBvbmx5IHdvcmsgcHJvcGVybHkgb24gMzItYml0
-IGFyY2hpdGVjdHVyZXMNCndoZXJlIHZpcnR1YWwgYWRkcmVzcyBlcXVhbHMgdGhlIERNQSBhZGRy
-ZXNzLg0KDQpNYWtpbmcgdGhpcyB3YXJuaW5nIGdvZXMgYXdheSBjcmVhdGVzIGEgZmFsc2Ugc2Vu
-c2UgdGhhdCB0aGV5IGFyZSBpbg0KZmFjdCA2NC1iaXQgY2xlYW4gYW5kIGNhcGFibGUsIHRoZXkg
-YXJlIG5vdC4NCg==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Sat,  4 Jan 2020 16:21:06 +0100
+
+> Fix up inconsistent usage of upper and lowercase letters in "Samsung"
+> name.
+> 
+> "SAMSUNG" is not an abbreviation but a regular trademarked name.
+> Therefore it should be written with lowercase letters starting with
+> capital letter.
+> 
+> Although advertisement materials usually use uppercase "SAMSUNG", the
+> lowercase version is used in all legal aspects (e.g. on Wikipedia and in
+> privacy/legal statements on
+> https://www.samsung.com/semiconductor/privacy-global/).
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Applied.
 
