@@ -2,83 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 712C4130BEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 02:55:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 545FB130BF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 02:56:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbgAFBzk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 20:55:40 -0500
-Received: from ozlabs.org ([203.11.71.1]:40341 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727226AbgAFBzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 20:55:40 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47rdrT1tm4z9sPJ;
-        Mon,  6 Jan 2020 12:55:37 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1578275737;
-        bh=H8huH0kHSTplQmOfDL3UG9eTTuXnRHDVPGYIItGVNwg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=CoMIQEDINd6JcqxZRnnBV5qztqn9gPn1h6L/M5OcDNoxpcN1O0l2kcmZZSKj9r/zs
-         ed0+sNSp10WIH6goQ+lC2XDofTdAaV3cv67jEIKntJdls8vVPWfWGgrmDBdbCi6al2
-         UeLjV/nWAf5zgeTxUJa5j+wsYK222KkdmReDHrHeN9aVoMLbGXZBxWSEde6EICmXfw
-         EHUhLJ2q6uwQ5alyfOHDxxlj/QyExsZYB5cxE5ujicV35qR2XBoRexW4Xy5iZoefqP
-         WBsGiwW217koFQ4rNXHIFc/fOqG0y30+cosMpHt1JbNPqETNBBkBmPHzF1fbw4V+7E
-         7AskMCowbqV6A==
-Date:   Mon, 6 Jan 2020 12:55:36 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul@pwsan.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the risc-v tree with Linus' tree
-Message-ID: <20200106125536.42fa3df4@canb.auug.org.au>
-In-Reply-To: <alpine.DEB.2.21.9999.2001051749560.484919@viisi.sifive.com>
-References: <20200106093246.6abbb7e9@canb.auug.org.au>
-        <alpine.DEB.2.21.9999.2001051749560.484919@viisi.sifive.com>
+        id S1727404AbgAFB4l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 20:56:41 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40229 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbgAFB4k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Jan 2020 20:56:40 -0500
+Received: by mail-lj1-f194.google.com with SMTP id u1so49318763ljk.7;
+        Sun, 05 Jan 2020 17:56:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4rvRIWvPPO3rgIXN9Qu/ANljbCFEmjfGVoQUvS+BrRQ=;
+        b=ARoVldjpnELYLXAJ7cCzkdlqzT4ncLTMjGveBhivQrZqSIbI2lWMrmOM0u7JorPLGA
+         CCSiNRIm0tRvFfvQLOqa18QhhjYinnWB+nUrwvQ3NKJa+n0C2h8eWhOeK7a2T9CnCDB/
+         Hoav1uW6/qqp0DdPR90DmPqTzc5LVbln4HxCjqNNnOAnuROWIshCYuEFUlqY6JGhY26G
+         TIGZ1JeWVCLMhM5AgREoleB0JlSUimr0BYLEgL1pcYVfa2J5c553xq2i08Y2ao4oN6V2
+         bWmEV+ua+YDPdUN8jHoCoRJvRLA1wysccMpweeWfoEvHufdQwUzOHfmrTfzGsV0QOox/
+         HYzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4rvRIWvPPO3rgIXN9Qu/ANljbCFEmjfGVoQUvS+BrRQ=;
+        b=TXTaluoQhcY53CLa2ovpMjtp51tJ24tn3A8mAWAwjurMkbArWkOYU734B7jvrB0jIE
+         dfPEDFKxfGbHbw02msTxtJ7iqO/RZHOsPYG5cWKc7OXQKMxvPSmgqTnrxsarusUP2cXt
+         kfMr3MgA9yW7c0NFgCXX8NaLY3dn1pFqAJy80QvRJHqV57GEbiZe8L/+HI53qnTyQNbR
+         dsggl6vLabkutBWEQRB0lE9uEBmlhRflHV0bw6PPv737yKQL2fqz8sWTxKOtvj0C9iun
+         OP977S0V1ibS9SOO2iMTgSQ3BYo/W91/yM608xbCLvQPAauWm/qeopiQvnAACOSACMMs
+         A7ug==
+X-Gm-Message-State: APjAAAXupfPK1pO3s3u4d8lBvg54qg+1AElS3mNp83dMEZEZ9OInoIj4
+        68tconS7DYr36yuhd5lH+tI=
+X-Google-Smtp-Source: APXvYqw4+wDYspdBn20/FIYRd/Zx8SwBF9egqxCzltwle7cFRuRQvj82k0BUzA7kePdHTqZkSWlPXw==
+X-Received: by 2002:a2e:7518:: with SMTP id q24mr59460256ljc.119.1578275798191;
+        Sun, 05 Jan 2020 17:56:38 -0800 (PST)
+Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.gmail.com with ESMTPSA id d1sm27433458ljl.18.2020.01.05.17.56.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Jan 2020 17:56:37 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-rtc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] rtc: tps6586x: Use IRQ_NOAUTOEN flag
+Date:   Mon,  6 Jan 2020 04:56:15 +0300
+Message-Id: <20200106015615.12602-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/+cGBlbluk_+o6SF.ktlJQ/T";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/+cGBlbluk_+o6SF.ktlJQ/T
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The IRQ_NOAUTOEN flag tells interrupt core that interrupt shall not be
+auto-enabled at the time of requesting interrupt. This is a minor clean-up
+change that doesn't fix any problems.
 
-Hi Paul,
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/rtc/rtc-tps6586x.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-On Sun, 5 Jan 2020 17:50:35 -0800 (PST) Paul Walmsley <paul.walmsley@sifive=
-.com> wrote:
->=20
-> Thanks, I just reset our for-next branch to v5.5-rc5, so this won't=20
-> reappear.
+diff --git a/drivers/rtc/rtc-tps6586x.c b/drivers/rtc/rtc-tps6586x.c
+index 859d901fa6cb..e39af2d67051 100644
+--- a/drivers/rtc/rtc-tps6586x.c
++++ b/drivers/rtc/rtc-tps6586x.c
+@@ -23,6 +23,7 @@
+ #include <linux/device.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
++#include <linux/irq.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/tps6586x.h>
+ #include <linux/module.h>
+@@ -267,6 +268,8 @@ static int tps6586x_rtc_probe(struct platform_device *pdev)
+ 	rtc->rtc->start_secs = mktime64(2009, 1, 1, 0, 0, 0);
+ 	rtc->rtc->set_start_time = true;
+ 
++	irq_set_status_flags(rtc->irq, IRQ_NOAUTOEN);
++
+ 	ret = devm_request_threaded_irq(&pdev->dev, rtc->irq, NULL,
+ 				tps6586x_rtc_irq,
+ 				IRQF_ONESHOT,
+@@ -276,7 +279,6 @@ static int tps6586x_rtc_probe(struct platform_device *pdev)
+ 				rtc->irq, ret);
+ 		goto fail_rtc_register;
+ 	}
+-	disable_irq(rtc->irq);
+ 
+ 	ret = rtc_register_device(rtc->rtc);
+ 	if (ret)
+-- 
+2.24.0
 
-Excellent, thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/+cGBlbluk_+o6SF.ktlJQ/T
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4Sk5gACgkQAVBC80lX
-0Gw0Owf9EGr7v1YpBlpF5thV9GQWkE2gQ5/p9GQ78vTSscEut3TAKP6svS2b/74c
-NK8mpeIjVLPiIacaZNe4eWnFIxGb8Z0hbBVSYiU4eMQSU8OnEWOYWoRtWwOYHuRj
-WqizGY2hvK6T2VDmZb502cSH2cgIzv9h7lXZ9G8+F18qy9jF9XdjKDko/Gtn4e0o
-6lCvlsxZvoCiZBwq+e/KHAUgz0sq+BkPC1sT9iVmZvPZL75/ZPTfONlWM8v4yHPa
-XOpXhYuacnMw6sy7EWJoNgtyXyRnLG5DQTmeyp3M9OpH22nBh/HX+cKeTLAAWrDe
-AFfVAVnt6n+SGD9QjMn20EnGN+c4QA==
-=zceD
------END PGP SIGNATURE-----
-
---Sig_/+cGBlbluk_+o6SF.ktlJQ/T--
