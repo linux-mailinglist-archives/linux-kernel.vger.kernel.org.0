@@ -2,107 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12BBB131903
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 21:07:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1BE41318F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 21:02:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbgAFUHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 15:07:18 -0500
-Received: from www.linux-watchdog.org ([185.87.125.42]:45066 "EHLO
-        www.linux-watchdog.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbgAFUHS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 15:07:18 -0500
-X-Greylist: delayed 422 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 Jan 2020 15:07:17 EST
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-        id E61D74018E; Mon,  6 Jan 2020 20:12:34 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org E61D74018E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-        s=odk20180602; t=1578337954;
-        bh=2VvN6Q99eRU6JAhLlTbUje/JR/J+1FCxnbH7sV88u5o=;
-        h=Date:From:To:Cc:Subject:From;
-        b=kKMyPh9sxv0KOnNaXRVlqG/+dCNEI5hNXbe7YzJjbQVJMfwOndhWWuUaMjkH+dB8N
-         myxvauKOAz13BcyP+eGaB1VmT2duJ77VeFVfh7gmcJ1TXkoMMEWQS3fDdeIIaS+nmQ
-         m9U87UQ4XDHX/sRz4KRUKHHq2WgnKCSkrQuxXCj8=
-Date:   Mon, 6 Jan 2020 20:12:34 +0100
-From:   Wim Van Sebroeck <wim@linux-watchdog.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        David Engraf <david.engraf@sysgo.com>,
+        id S1726734AbgAFUCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 15:02:03 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:45910 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726569AbgAFUCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 15:02:03 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 860DB1A0E48;
+        Mon,  6 Jan 2020 21:02:00 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 794061A0E3F;
+        Mon,  6 Jan 2020 21:02:00 +0100 (CET)
+Received: from fsr-ub1864-014.ea.freescale.net (fsr-ub1864-014.ea.freescale.net [10.171.95.219])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 0284C203CC;
+        Mon,  6 Jan 2020 21:01:59 +0100 (CET)
+From:   =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Srikanth Krishnakar <skrishnakar@gmail.com>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [GIT PULL REQUEST] watchdog - v5.5 Fixes
-Message-ID: <20200106191234.GA1443@www.linux-watchdog.org>
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] crypto: caam - add support for i.MX8M Nano
+Date:   Mon,  6 Jan 2020 22:01:53 +0200
+Message-Id: <20200106200154.30643-1-horia.geanta@nxp.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.20 (2009-12-10)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Add support for the crypto engine used in i.mx8mn (i.MX 8M "Nano"),
+which is very similar to the one used in i.mx8mq, i.mx8mm.
 
-Please pull the watchdog changes for the v5.5 release cycle.
+Since the clocks are identical for all members of i.MX 8M family,
+simplify the SoC <--> clock array mapping table.
 
-This series contains:
-* rn5t618_wdt: fix module aliases
-* max77620_wdt: fix potential build errors
-* imx7ulp: Fix missing conversion of imx7ulp_wdt_enable()
-* orion: fix platform_get_irq() complaints
-* w83627hf_wdt: Fix NCT6116D support
+Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+---
+ drivers/crypto/caam/ctrl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-
-The output from git request-pull:
-----------------------------------------------------------------
-The following changes since commit d1eef1c619749b2a57e514a3fa67d9a516ffa919:
-
-  Linux 5.5-rc2 (2019-12-15 15:16:08 -0800)
-
-are available in the git repository at:
-
-  git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-5.5-fixes
-
-for you to fetch changes up to dcbce5fbcc69bf2553f650004aad44bf390eca73:
-
-  watchdog: orion: fix platform_get_irq() complaints (2019-12-30 15:58:29 +0100)
-
-----------------------------------------------------------------
-linux-watchdog 5.5-fixes tag
-
-----------------------------------------------------------------
-Andreas Kemnade (1):
-      watchdog: rn5t618_wdt: fix module aliases
-
-David Engraf (1):
-      watchdog: max77620_wdt: fix potential build errors
-
-Fabio Estevam (1):
-      watchdog: imx7ulp: Fix missing conversion of imx7ulp_wdt_enable()
-
-Russell King (1):
-      watchdog: orion: fix platform_get_irq() complaints
-
-Srikanth Krishnakar (1):
-      watchdog: w83627hf_wdt: Fix support NCT6116D
-
-YueHaibing (1):
-      watchdog: tqmx86_wdt: Fix build error
-
- drivers/watchdog/Kconfig        | 2 ++
- drivers/watchdog/imx7ulp_wdt.c  | 2 +-
- drivers/watchdog/orion_wdt.c    | 4 ++--
- drivers/watchdog/rn5t618_wdt.c  | 1 +
- drivers/watchdog/w83627hf_wdt.c | 2 +-
- 5 files changed, 7 insertions(+), 4 deletions(-)
-----------------------------------------------------------------
-
-Kind regards,
-Wim.
+diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
+index 6659c8d9672e..88a58a8fc533 100644
+--- a/drivers/crypto/caam/ctrl.c
++++ b/drivers/crypto/caam/ctrl.c
+@@ -99,11 +99,12 @@ static inline int run_descriptor_deco0(struct device *ctrldev, u32 *desc,
+ 
+ 	if (ctrlpriv->virt_en == 1 ||
+ 	    /*
+-	     * Apparently on i.MX8MQ it doesn't matter if virt_en == 1
++	     * Apparently on i.MX8MQ, 8MM, 8MN it doesn't matter if virt_en == 1
+ 	     * and the following steps should be performed regardless
+ 	     */
+ 	    of_machine_is_compatible("fsl,imx8mq") ||
+-	    of_machine_is_compatible("fsl,imx8mm")) {
++	    of_machine_is_compatible("fsl,imx8mm") ||
++	    of_machine_is_compatible("fsl,imx8mn")) {
+ 		clrsetbits_32(&ctrl->deco_rsr, 0, DECORSR_JR0);
+ 
+ 		while (!(rd_reg32(&ctrl->deco_rsr) & DECORSR_VALID) &&
+@@ -509,8 +510,7 @@ static const struct soc_device_attribute caam_imx_soc_table[] = {
+ 	{ .soc_id = "i.MX6UL", .data = &caam_imx6ul_data },
+ 	{ .soc_id = "i.MX6*",  .data = &caam_imx6_data },
+ 	{ .soc_id = "i.MX7*",  .data = &caam_imx7_data },
+-	{ .soc_id = "i.MX8MQ", .data = &caam_imx7_data },
+-	{ .soc_id = "i.MX8MM", .data = &caam_imx7_data },
++	{ .soc_id = "i.MX8M*", .data = &caam_imx7_data },
+ 	{ .family = "Freescale i.MX" },
+ 	{ /* sentinel */ }
+ };
+-- 
+2.17.1
 
