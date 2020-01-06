@@ -2,120 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BDC0131997
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 21:47:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D04D31319A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 21:48:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbgAFUrS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 15:47:18 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:40514 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbgAFUrS (ORCPT
+        id S1727128AbgAFUrv convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 6 Jan 2020 15:47:51 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:39670 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727035AbgAFUrt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 15:47:18 -0500
-Received: by mail-qk1-f193.google.com with SMTP id c17so40715210qkg.7
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 12:47:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DHIwKB1SdWvG9S5/QAvd4TjIognysn5YuV1n6f7gju4=;
-        b=Ra6NkQtFY7ijfnuXcAGbxOh84AXs0GWCp722hpltolpulCuDmOLw8xBTEKXWQtdU+h
-         2OGkYYMcxBKG2t7aYoNXT7nLc6Ti0my91ZM3b+texHVG5h/wSGkOic3KAWj47Ry08SHn
-         R7Dp/dPAv3KbpsRpBkV/2WwjI1BrSDy/eZugBIFEG/6s5dE5gmiqNAkkExzhPnpE3IJI
-         jnoj1PE/njE4mZgeMqGQJfCILswzX/1AI4LO9cAS3dpvOPX5nTS6mGoC4lRRGTzVL6nY
-         dRkDX701YnWJcV1QYJYEP2mjxIraSqA6JbePQEroGvKRZGaXUwws0WuQSZZRD2tXVRit
-         dadA==
+        Mon, 6 Jan 2020 15:47:49 -0500
+Received: by mail-io1-f68.google.com with SMTP id c16so20199230ioh.6;
+        Mon, 06 Jan 2020 12:47:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DHIwKB1SdWvG9S5/QAvd4TjIognysn5YuV1n6f7gju4=;
-        b=LQkStbOAge8QHONrOkYvo0nTFt/GxcengozVNjYGeRYB1K+MyMBU05ElPioD1P14mM
-         +vKpE36EINBt2wDKai1V4Iy1nwAlaCjWbNE4sWt19ppEqcVsmKMfXi0T+83aqCZBUbEe
-         KlwFSUQvxGZwKH2H2Bn27S73B36ZB627jr0Lin1+pFbZ3nIUUhSwyq1dktRXFUD2O2KW
-         jlurBTBz1DmtI3KmsygTWf2v5n1yA1RwsBI+p61lqzTezXJ6KuRcTYIw6YgYaf1ASdf3
-         NeqnS8C1joRPbYQBIQnxjgiaNIRpLBMPJhF9xe0eHk5Vp2FpqnhEO9trfFlOxOmf+smR
-         8V8A==
-X-Gm-Message-State: APjAAAVZo/O0OqM2mshCYCLuh2oT+OaNk/ZJCHtJn17JGBYXZIKSv+Xz
-        GTy3RfpRiQtzqWekbwwh9nt95w==
-X-Google-Smtp-Source: APXvYqzEgsE5n2gRG76eAGoeg63WHVa5P6c8cDUeUTV19BhlgMQXoclCr81eaop/b4Jhnynt+RpN3A==
-X-Received: by 2002:a05:620a:143a:: with SMTP id k26mr85511562qkj.450.1578343636899;
-        Mon, 06 Jan 2020 12:47:16 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
-        by smtp.gmail.com with ESMTPSA id d184sm13598598qkb.128.2020.01.06.12.47.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Jan 2020 12:47:16 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1ioZHP-0007G2-J2; Mon, 06 Jan 2020 16:47:15 -0400
-Date:   Mon, 6 Jan 2020 16:47:15 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        users@linux.kernel.org
-Subject: Re: [kernel.org users] [RFC] tools lib traceevent: How to do library
- versioning being in the Linux kernel source?
-Message-ID: <20200106204715.GA22353@ziepe.ca>
-References: <20200102122004.216c85da@gandalf.local.home>
- <20200102234950.GA14768@krava>
- <20200102185853.0ed433e4@gandalf.local.home>
- <20200103133640.GD9715@krava>
- <20200103181614.7aa37f6d@gandalf.local.home>
- <20200106151902.GB236146@krava>
- <20200106162623.GA11285@kernel.org>
- <20200106113615.4545e3c5@gandalf.local.home>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=dr6kqP9sFPas/i5LLhbsBNpYIgNstL4ct56nJvUTBqY=;
+        b=LlHjE/t4pNa3eB0hB4+Vvn70h6BPVtzqnMfQ9gMejRxCggIjC9qfCwC2+mwrTbeUUj
+         NYyfLZdKSYv1ygmoaSaJZkzK+9rySV0PhGdya+j8OHtwb2MMPSHJliz2rP/gDhONjwVa
+         4vR3UCBAghX5rbEdTzsFZy0KXqpcChdmV761PCUohyypBJSoG2eSoTWdpgJmmSODv//P
+         jG1x+7FjFxz/vJqrGevFZ0vEyyyUEmHGZiJgTPXSrcE/gC7IZsziLi9zyQk1tHST8ZSX
+         285XkjpKB7qKIDmS7wG89yjL2FlMDJSIj97R49QeshEEpNY7i1uDyGXU7m4RDYt/nlWb
+         VlpQ==
+X-Gm-Message-State: APjAAAWPR4/ZWnMY5PbhlW5qcsGLo0/qQCVVW4jDtUr96wqKt47pyF+Z
+        l2v9daYtZbnKIV8KkeeUYZwzOCaKbb0TeGyJDi6W9eB1gVM=
+X-Google-Smtp-Source: APXvYqwxQxN3/+hLZQ2HNRsDO/bFehGpBCG7UCI9gPnzHAuSJsadM2vu209w+V2pesB+ikDM791KnLee4uZVH9ZSLX4=
+X-Received: by 2002:a6b:730c:: with SMTP id e12mr69128756ioh.4.1578343667897;
+ Mon, 06 Jan 2020 12:47:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200106113615.4545e3c5@gandalf.local.home>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200106130909.7697-1-matwey@sai.msu.ru> <CAOCHtYgyN+qXXX1YeEcO+nvRFrAL1HAVVMvjfeJ5nvxVjtFKtg@mail.gmail.com>
+In-Reply-To: <CAOCHtYgyN+qXXX1YeEcO+nvRFrAL1HAVVMvjfeJ5nvxVjtFKtg@mail.gmail.com>
+From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Date:   Mon, 6 Jan 2020 23:47:36 +0300
+Message-ID: <CAJs94EbUL6o9sM+pwxwpqHVDkFqy7wFRirET-Vq3SNVd3grUsA@mail.gmail.com>
+Subject: Re: [PATCH] arm: dts: am335x-boneblack-common: fix memory size
+To:     Robert Nelson <robertcnelson@gmail.com>
+Cc:     =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OMAP DEVICE TREE SUPPORT" <linux-omap@vger.kernel.org>,
+        "open list:OMAP DEVICE TREE SUPPORT" <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 11:36:15AM -0500, Steven Rostedt wrote:
-> On Mon, 6 Jan 2020 13:26:23 -0300
-> Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com> wrote:
-> 
-> > So, we have:
-> > 
-> > https://www.kernel.org/pub/linux/kernel/tools/perf/
-> > 
-> > trying to mimic the kernel sources tree structure, so perhaps we could
-> > have:
-> > 
-> > https://www.kernel.org/pub/linux/kernel/tools/lib/{perf,traceevent}/
-> > 
-> > To continue that directory tree mirror?
-> 
-> Wouldn't that become a bit of manual work. Unlike perf, the versions
-> will not correspond to the Linux kernel versions. They would need to
-> follow library versioning.
-> 
-> It would at a minimum require new scripting to get this right.
+пн, 6 янв. 2020 г. в 23:44, Robert Nelson <robertcnelson@gmail.com>:
+>
+> On Mon, Jan 6, 2020 at 7:10 AM Matwey V. Kornilov <matwey@sai.msu.ru> wrote:
+> >
+> > BeagleBone Black series is equipped with 512MB RAM
+> > whereas only 256MB is included from am335x-bone-common.dtsi
+>
+> FYI: While all versions from the factory are 512MB, some 3rd parties
+> offered 1GB reballing upgrades..
+>
+> and the SanCloud variant which uses this file, was built with 1GB:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/am335x-sancloud-bbe.dts
+>
+> >
+> > This leads to an issue with unusual setups when devicetree
+> > is loaded by GRUB2 directly.
+>
+> It's a miracle, since when did GRUB2 gain this ability?
+>
 
-If it is not tightly linked to the kernel and is just a normal
-library, you might consider using github. This is what we do for the
-rdma user space and it works well. We still take patches from the
-mailing list flow, but do use a fair amount of the github stuff too:
+I am not sure about when. But Grub 2.02 has devicetree command, which
+can be used as the following:
 
-https://github.com/linux-rdma/rdma-core
+        echo "Loading device tree blob ..."
+        devicetree (tftp)/dtb/am335x-boneblack.dtb
 
-With github actions now able to provide a quite good CI it covers a
-lot of required stuff for a library in one place, in a way that
-doesn't silo all the build infrastucture.
+And you know, you can run Grub itself as EFI application on to of u-boot.
 
-If you are interested in how we set it up I can write a longer email.
+> >
+> > Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
+> > ---
+> >  arch/arm/boot/dts/am335x-boneblack-common.dtsi | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/am335x-boneblack-common.dtsi b/arch/arm/boot/dts/am335x-boneblack-common.dtsi
+> > index 7ad079861efd..91f93bc89716 100644
+> > --- a/arch/arm/boot/dts/am335x-boneblack-common.dtsi
+> > +++ b/arch/arm/boot/dts/am335x-boneblack-common.dtsi
+> > @@ -131,6 +131,11 @@
+> >  };
+> >
+> >  / {
+> > +       memory@80000000 {
+> > +               device_type = "memory";
+> > +               reg = <0x80000000 0x20000000>; /* 512 MB */
+> > +       };
+> > +
+> >         clk_mcasp0_fixed: clk_mcasp0_fixed {
+> >                 #clock-cells = <0>;
+> >                 compatible = "fixed-clock";
+> > --
+> > 2.16.4
+> >
+>
+>
+> --
+> Robert Nelson
+> https://rcn-ee.com/
 
-Regards,
-Jason
+
+
+-- 
+With best regards,
+Matwey V. Kornilov.
+Sternberg Astronomical Institute, Lomonosov Moscow State University, Russia
+119234, Moscow, Universitetsky pr-k 13, +7 (495) 9392382
