@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED6EE13196A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 21:30:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C143131975
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 21:31:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727200AbgAFUad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 15:30:33 -0500
+        id S1727303AbgAFUbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 15:31:01 -0500
 Received: from mga03.intel.com ([134.134.136.65]:10719 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727132AbgAFUa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727140AbgAFUa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 6 Jan 2020 15:30:26 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jan 2020 12:30:25 -0800
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jan 2020 12:30:26 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,403,1571727600"; 
-   d="scan'208";a="245699486"
+   d="scan'208";a="245699490"
 Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.50])
-  by fmsmga004.fm.intel.com with ESMTP; 06 Jan 2020 12:30:25 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 06 Jan 2020 12:30:26 -0800
 From:   kan.liang@linux.intel.com
 To:     peterz@infradead.org, acme@redhat.com, mingo@kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
         alexander.shishkin@linux.intel.com, ak@linux.intel.com,
         Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V5 RESEND 08/14] perf/x86/intel: Export TopDown events for Icelake
-Date:   Mon,  6 Jan 2020 12:29:13 -0800
-Message-Id: <20200106202919.2943-9-kan.liang@linux.intel.com>
+Subject: [PATCH V5 RESEND 09/14] perf/x86/intel: Disable sampling read slots and topdown
+Date:   Mon,  6 Jan 2020 12:29:14 -0800
+Message-Id: <20200106202919.2943-10-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200106202919.2943-1-kan.liang@linux.intel.com>
 References: <20200106202919.2943-1-kan.liang@linux.intel.com>
@@ -39,61 +39,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-Export new TopDown metrics events for perf that map to the sub metrics
-in the metrics register, and another for the new slots fixed counter.
-This makes the new fixed counters in Icelake visible to the perf
-user tools.
+The slots event supports sampling. Users may sampling read slots and
+metrics events, e.g perf record -e '{slots, topdown-retiring}:S'.
+But the metrics event will reset the fixed counter 3 which will impact
+the sampling of the slots event.
 
-Originally-by: Andi Kleen <ak@linux.intel.com>
+Add specific validate_group() support to reject the case and error out
+for Icelake.
+
+An alternative fix may unconditionally disable SLOTS sampling. But it's
+not a decent fix. Because users may want to only sampling slot events
+without topdown metrics event.
+
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
 
 No changes since V4
 
- arch/x86/events/intel/core.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/x86/events/core.c       |  4 ++++
+ arch/x86/events/intel/core.c | 20 ++++++++++++++++++++
+ arch/x86/events/perf_event.h |  2 ++
+ 3 files changed, 26 insertions(+)
 
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 333541c05815..48dd920c5e7d 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2111,7 +2111,11 @@ static int validate_group(struct perf_event *event)
+ 
+ 	fake_cpuc->n_events = 0;
+ 	ret = x86_pmu.schedule_events(fake_cpuc, n, NULL);
++	if (ret)
++		goto out;
+ 
++	if (x86_pmu.validate_group)
++		ret = x86_pmu.validate_group(fake_cpuc, n);
+ out:
+ 	free_fake_cpuc(fake_cpuc);
+ 	return ret;
 diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 0d1a327c18fc..d913dda3e1c2 100644
+index d913dda3e1c2..7fbf268f5143 100644
 --- a/arch/x86/events/intel/core.c
 +++ b/arch/x86/events/intel/core.c
-@@ -321,6 +321,12 @@ EVENT_ATTR_STR_HT(topdown-recovery-bubbles, td_recovery_bubbles,
- EVENT_ATTR_STR_HT(topdown-recovery-bubbles.scale, td_recovery_bubbles_scale,
- 	"4", "2");
+@@ -4512,6 +4512,25 @@ static __init void intel_ht_bug(void)
+ 	x86_pmu.stop_scheduling = intel_stop_scheduling;
+ }
  
-+EVENT_ATTR_STR(slots,			slots,		"event=0x00,umask=0x4");
-+EVENT_ATTR_STR(topdown-retiring,	td_retiring,	"event=0x00,umask=0x10");
-+EVENT_ATTR_STR(topdown-bad-spec,	td_bad_spec,	"event=0x00,umask=0x11");
-+EVENT_ATTR_STR(topdown-fe-bound,	td_fe_bound,	"event=0x00,umask=0x12");
-+EVENT_ATTR_STR(topdown-be-bound,	td_be_bound,	"event=0x00,umask=0x13");
++static int icl_validate_group(struct cpu_hw_events *cpuc, int n)
++{
++	bool has_sampling_slots = false, has_metrics = false;
++	struct perf_event *e;
++	int i;
 +
- static struct attribute *snb_events_attrs[] = {
- 	EVENT_PTR(td_slots_issued),
- 	EVENT_PTR(td_slots_retired),
-@@ -4567,6 +4573,15 @@ static struct attribute *icl_events_attrs[] = {
- 	NULL,
- };
++	for (i = 0; i < n; i++) {
++		e = cpuc->event_list[i];
++		if (is_slots_event(e) && is_sampling_event(e))
++			has_sampling_slots = true;
++
++		if (is_metric_event(e))
++			has_metrics = true;
++	}
++	if (unlikely(has_sampling_slots && has_metrics))
++		return -EINVAL;
++	return 0;
++}
++
+ EVENT_ATTR_STR(mem-loads,	mem_ld_hsw,	"event=0xcd,umask=0x1,ldlat=3");
+ EVENT_ATTR_STR(mem-stores,	mem_st_hsw,	"event=0xd0,umask=0x82")
  
-+static struct attribute *icl_td_events_attrs[] = {
-+	EVENT_PTR(slots),
-+	EVENT_PTR(td_retiring),
-+	EVENT_PTR(td_bad_spec),
-+	EVENT_PTR(td_fe_bound),
-+	EVENT_PTR(td_be_bound),
-+	NULL,
-+};
+@@ -5364,6 +5383,7 @@ __init int intel_pmu_init(void)
+ 		intel_pmu_pebs_data_source_skl(pmem);
+ 		x86_pmu.update_topdown_event = icl_update_topdown_event;
+ 		x86_pmu.set_topdown_event_period = icl_set_topdown_event_period;
++		x86_pmu.validate_group = icl_validate_group;
+ 		pr_cont("Icelake events, ");
+ 		name = "icelake";
+ 		break;
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index 404bf3f2c293..132ac123e83f 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -661,6 +661,8 @@ struct x86_pmu {
+ 	int		perfctr_second_write;
+ 	u64		(*limit_period)(struct perf_event *event, u64 l);
+ 
++	int		(*validate_group)(struct cpu_hw_events *cpuc, int n);
 +
- static struct attribute *icl_tsx_events_attrs[] = {
- 	EVENT_PTR(tx_start),
- 	EVENT_PTR(tx_abort),
-@@ -5342,6 +5357,7 @@ __init int intel_pmu_init(void)
- 			hsw_format_attr : nhm_format_attr;
- 		extra_skl_attr = skl_format_attr;
- 		mem_attr = icl_events_attrs;
-+		td_attr = icl_td_events_attrs;
- 		tsx_attr = icl_tsx_events_attrs;
- 		x86_pmu.rtm_abort_event = X86_CONFIG(.event=0xca, .umask=0x02);
- 		x86_pmu.lbr_pt_coexist = true;
+ 	/* PMI handler bits */
+ 	unsigned int	late_ack		:1,
+ 			counter_freezing	:1;
 -- 
 2.17.1
 
