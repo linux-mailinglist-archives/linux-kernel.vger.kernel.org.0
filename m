@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8086C130E02
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 08:34:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D07A9130E04
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 08:34:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbgAFHeM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 02:34:12 -0500
-Received: from mail-qt1-f201.google.com ([209.85.160.201]:52650 "EHLO
-        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbgAFHeL (ORCPT
+        id S1726698AbgAFHeh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 02:34:37 -0500
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:48591 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbgAFHeh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 02:34:11 -0500
-Received: by mail-qt1-f201.google.com with SMTP id o18so11234916qtt.19
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Jan 2020 23:34:11 -0800 (PST)
+        Mon, 6 Jan 2020 02:34:37 -0500
+Received: by mail-qk1-f202.google.com with SMTP id d1so6806160qkk.15
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Jan 2020 23:34:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=hwg+2X/dPh6Rt2epUfRIb2mp0zKIH8H5oeMACxWCYPE=;
-        b=SeAbFzLjhR+b0UiQhQ0vyiVteaaEpsbihkXBJGYIc3R6kb0bBqtfY8avhT4XOa3R1l
-         lRRTEsifNgVRARlkXnKpXgt/aQ7OgQ4B6lXV8v722EMo2PgYB8/UY2FNlrDetzBSx+wb
-         imE1AFBMes62JY7xUcPwoQukThsEwI43EPzW97gegfuE3QvwJ/ojVW1Cv3vbA40NMu5G
-         Mzr39+unBcUb5CtsTZavjODGbRSu9UqXsnGTO5rGOgnzqfB9Zn7Tfr/rAwLhiYcev4vu
-         13FrwIo7IEZqCDLJRfoKw2U1JjEkKkVpyJ2LW548/u9CJIdC3NeBKMbITu0boV5kWxq1
-         opMg==
+        bh=xQuut/X/n4tj8+mFTwoLLA+4SmHaEnPrhwV00PJc3JE=;
+        b=G2W69+bt7ri9aBBIUO5TrD0dCvZaGADY6sf5X0OO2PtW2ov2MwhsLM8r0NaXWQ2UB+
+         kDHIn101OYCbCytSGJhlVuuace7KdkLwG/CSlktcMZrKtIgu/AthjuXKsAuXbQIjS9VU
+         F1J0PWyZsAbO793m6K9TF+eTO47fjkoVhBZPKorywrxgZncdzgz5R8mJnqusA/J1Q53X
+         tA5cRfw9OAaYSaBXRqH1S7bjnM0Xsk8SZNJ8orjSDpqxKjVzMsdOwmUYvW9eSXYwJcwx
+         WseBEa9Bx1+BFWzO6iS5HLBpyTKRi1rUkkllfk9yt90f7SlSbxSpYJt1GyWw2Wf96vTR
+         O7gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=hwg+2X/dPh6Rt2epUfRIb2mp0zKIH8H5oeMACxWCYPE=;
-        b=PyNF3h/S+5rQ3I2T8bBWz2H/F1wrcznsmvn8rQN8J1vO7QwhSxZm6wMDWHb7KZvoXx
-         JNNBDSA23U3eq5w06NTgCbLSLRRT3u0bS14MW4NdK+mdF7ttrj1pjNKS2cTnfx/9rHZA
-         TyuDR7epov3MOvLFP4v+S5vQxnty5pY7CNnkmCP0DVhFQw/efhamVx8bpOurDp/g+QKH
-         UONZRfkSaeHcU1/ol5G60s8wHb8IXl/sqYhF/3zXsneJxJqwdrT2B8moUoCuSAIRqjTK
-         NErdqJazJn7pM9qWVoWwUxxobxHWHZzsHuoPZNsVnrRFNNq09UAoQ7HsgxEqm8Wv6EB1
-         p26g==
-X-Gm-Message-State: APjAAAVaLp7w5PrRxE2Y64sxH2v3mZ9UnzS+zMp7XzV9nZ98SFp6qZch
-        bvj8z9wczsGC0CVJ6uJSLQcG6TKHcktg
-X-Google-Smtp-Source: APXvYqx0qukNheHEBOwMXOx9VBU1vr1+b0uQiPg/FwCVmGfMUvtGwHPbEzX1YnE5Qj8EmQP60u5J3NhSIjIc
-X-Received: by 2002:a37:4b56:: with SMTP id y83mr82028694qka.42.1578296050370;
- Sun, 05 Jan 2020 23:34:10 -0800 (PST)
-Date:   Sun, 05 Jan 2020 23:34:08 -0800
-In-Reply-To: <20200104150238.19834-3-masahiroy@kernel.org>
-Message-Id: <xr93lfql6ntb.fsf@gthelen.svl.corp.google.com>
+        bh=xQuut/X/n4tj8+mFTwoLLA+4SmHaEnPrhwV00PJc3JE=;
+        b=dW4lBXt59kGsrNwFK5P9q7ShKQS2MIgBTKA0ktdNK0xEKl3+J03w4AVE+BmXKiaLD0
+         T0Za20W+kDj/O7SD+KkpVxpQIZj0+bbjyJl+97NdCAGcF9QA6fLlN7InfbYaKG2QncQx
+         dpZmWD8hd4P/CDdFFMsB+os2rLcQLxn2lOjxk7F+NlBT7LOPMp4Ma31iX56gYi0ofihX
+         DHWxGbADbEEGWvRgrXy97Ro9exp3TdLFNS1FR/lmc9BlwPsknLDtRekeLNdzd1Iy0/kS
+         3QI/SYEi9Ly1v4u+o2VogXS0U0+MLZw7mgUxMtmQfBan+rT1EPHGvCpDJdLoJmi3JXBn
+         8E/w==
+X-Gm-Message-State: APjAAAUzaelhPBz64LM+9eOb/90NNZIDw/2JECjkP9flelBlUlQaLoiW
+        MGKw50wsA3XzA4xKzVeFbgp+Ir1oya5L
+X-Google-Smtp-Source: APXvYqwZk96azg+wSnBjPpdVcomn4j/TgWjL9PPZ6ewHrda792uhgGbb4+PaOi2lhAuZEybajJl1bYRSiXrG
+X-Received: by 2002:ac8:440b:: with SMTP id j11mr75206754qtn.283.1578296075872;
+ Sun, 05 Jan 2020 23:34:35 -0800 (PST)
+Date:   Sun, 05 Jan 2020 23:34:33 -0800
+In-Reply-To: <20200104150238.19834-4-masahiroy@kernel.org>
+Message-Id: <xr93imlp6nsm.fsf@gthelen.svl.corp.google.com>
 Mime-Version: 1.0
-References: <20200104150238.19834-1-masahiroy@kernel.org> <20200104150238.19834-3-masahiroy@kernel.org>
-Subject: Re: [PATCH v2 02/13] gen_initramfs_list.sh: remove unused variable 'default_list'
+References: <20200104150238.19834-1-masahiroy@kernel.org> <20200104150238.19834-4-masahiroy@kernel.org>
+Subject: Re: [PATCH v2 03/13] gen_initramfs_list.sh: fix the tool name in the comment
 From:   Greg Thelen <gthelen@google.com>
 To:     Masahiro Yamada <masahiroy@kernel.org>,
         linux-kbuild@vger.kernel.org
@@ -60,7 +60,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Masahiro Yamada <masahiroy@kernel.org> wrote:
 
-> This is assigned, but not referenced.
+> There is no tool named "gen_initramfs". The correct name is
+> "gen_init_cpio".
 >
 > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
