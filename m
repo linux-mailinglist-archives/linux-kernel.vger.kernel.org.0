@@ -2,104 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 160A0131B58
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 23:29:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 418B8131B6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 23:30:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbgAFW3O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 17:29:14 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35165 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726721AbgAFW3O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 17:29:14 -0500
-Received: by mail-pf1-f195.google.com with SMTP id i23so22168082pfo.2;
-        Mon, 06 Jan 2020 14:29:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=diZOMCp7+H8GRYEkNWog4Ps7I49ot4hzmdFa71cNqnE=;
-        b=vWofFeX6eERqgExDOv7aZeIVIZPneb5CrDskwtpnOmEaib83SGJppUSicXLLkiR0Sw
-         ECP7Zg1Yh9i9rxUtplbHEiDWmhyS30KZtpakfi9SRBHc244NYxeFdkN0il1ZM91B+c39
-         iDxqOXHSSZQp10Ds89Rjthh8Ql6hm+yus3sY8uqeOl4VO3c9gw5mbHYzdRvpRm1d16xh
-         9X29RgO9DsO7I5RjuaY+Uwg8mPpgcWb++H0AzhFb6lFBtLTgVRE7kyLCaw0ivEJLrE8w
-         TgA2dFh9SCNK4ZVmP/kVyoZ8ePNHJReTMqFhlSVBTrtAaWAba9ZRnC3oiheDQe/l7FHa
-         fb8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=diZOMCp7+H8GRYEkNWog4Ps7I49ot4hzmdFa71cNqnE=;
-        b=mjxk8rFmN4nlXCU1DzBjJQBfPdaNxzs7fj5oVMGum2mckb8G3IZii8W3KwHyJ+KDpM
-         QKkBF8rIv8XG2GuM0YuSYWxiAkIYC/1AdtynE/Ig5KDC8RuLA+XuNy5sBix9RqdNSt7a
-         nWabAYfJRyQ8uSbNd0BbHtdj/wHOghAoQa4/KSoPDrNjXvnuNcz9yZMxNk8Nt6PU5mQj
-         hGwspNAu3AqCUp4ROj97qLl+QpKgSCiSSdrq1jmNRq8Mt/jtPuKyyL4IOt3q3Pacsg/X
-         sOUxz8aTTFRgwBJXxqukP6jJnK0JhPsaOUQRL1wJaqUbVu5CJ6HoObgKWJD2CFYjHXLR
-         l9zw==
-X-Gm-Message-State: APjAAAU7Mb2yyPxqjtrFJiWpZ1uSnjpAnCPQKO/Cuf+wUY2hpx1yMqLt
-        ukebYyfFEthoSfryT30bsEI=
-X-Google-Smtp-Source: APXvYqzbKi4t9HEBGcGGPQoSxQoRLDW/LPWNuNpDDvVYbZHKciQZeFmF6o0uWqHVMF4bt/8tBRJb4Q==
-X-Received: by 2002:a63:1c64:: with SMTP id c36mr102033191pgm.302.1578349753644;
-        Mon, 06 Jan 2020 14:29:13 -0800 (PST)
-Received: from ast-mbp ([2620:10d:c090:200::1:2bf6])
-        by smtp.gmail.com with ESMTPSA id 136sm72399748pgg.74.2020.01.06.14.29.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Jan 2020 14:29:12 -0800 (PST)
-Date:   Mon, 6 Jan 2020 14:29:08 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jann Horn <jannh@google.com>, bpf@vger.kernel.org,
-        live-patching@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        KP Singh <kpsingh@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: BPF tracing trampoline synchronization between update/freeing
- and execution?
-Message-ID: <20200106222907.yjoranutzjdersty@ast-mbp>
-References: <CAG48ez2gDDRtKaOcGdKLREd7RGtVzCypXiBMHBguOGSpxQFk3w@mail.gmail.com>
- <20200106165654.GP2844@hirez.programming.kicks-ass.net>
+        id S1727352AbgAFW3y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 17:29:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33334 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726735AbgAFW3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 17:29:53 -0500
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8374924687;
+        Mon,  6 Jan 2020 22:29:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578349792;
+        bh=1De1CokmZJzvWcJL3EL1QdC4D4rWqmpc0SisOSfVtB0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=yqgOwbgI6EhCqdM8g9AQYz5x6tFbiGs87TCojq6MMCGjzBnGj9qM+OvtR3zCtxRhX
+         Dr+7N4EW6o/9ptvy2xqkhWaWimTP7A4SicBarV7iCq/XZXm22PgTTKeW0VkcZjMsPx
+         sYkyeuuOQGWd1cD6I3HOJpqJcbFYcc87GFqNFv5c=
+Received: by mail-qv1-f43.google.com with SMTP id l14so19726009qvu.12;
+        Mon, 06 Jan 2020 14:29:52 -0800 (PST)
+X-Gm-Message-State: APjAAAXTKezVOBKcTEYxdBAa5w2N9vTKn07mdjz+b+3/dDXebXq4G/fb
+        vhbQgNtyTaaQDJNNz4pk514kyW7FnqN3fLAUTQ==
+X-Google-Smtp-Source: APXvYqzF+/+VjZiO27tMFOFZDdgfF2Kx9B2Ly1NVCZZoUZYFxwJPkkwCNae3ZKIHAXThR4kSNA6ABNukCDQkEY/s4/4=
+X-Received: by 2002:ad4:4511:: with SMTP id k17mr77533622qvu.135.1578349791507;
+ Mon, 06 Jan 2020 14:29:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200106165654.GP2844@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180223
+References: <20191227200116.2612137-1-helen.koike@collabora.com> <20191227200116.2612137-10-helen.koike@collabora.com>
+In-Reply-To: <20191227200116.2612137-10-helen.koike@collabora.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 6 Jan 2020 16:29:39 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+Oarx=Q95H+_mOYUiD0OpdxX6eMNJ0Dyv_zzSiEUzWaw@mail.gmail.com>
+Message-ID: <CAL_Jsq+Oarx=Q95H+_mOYUiD0OpdxX6eMNJ0Dyv_zzSiEUzWaw@mail.gmail.com>
+Subject: Re: [PATCH v12 09/11] media: staging: dt-bindings: add Rockchip MIPI
+ RX D-PHY yaml bindings
+To:     Helen Koike <helen.koike@collabora.com>
+Cc:     "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Eddie Cai <eddie.cai.linux@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrey Konovalov <andrey.konovalov@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        joacim.zetterling@gmail.com, kernel@collabora.com,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 05:56:54PM +0100, Peter Zijlstra wrote:
-> On Mon, Jan 06, 2020 at 05:39:30PM +0100, Jann Horn wrote:
-> > Hi!
-> > 
-> > I was chatting with kpsingh about BPF trampolines, and I noticed that
-> > it looks like BPF trampolines (as of current bpf-next/master) seem to
-> > be missing synchronization between trampoline code updates and
-> > trampoline execution. Or maybe I'm missing something?
-> > 
-> > If I understand correctly, trampolines are executed directly from the
-> > fentry placeholders at the start of arbitrary kernel functions, so
-> > they can run without any locks held. So for example, if task A starts
-> > executing a trampoline on entry to sys_open(), then gets preempted in
-> > the middle of the trampoline, and then task B quickly calls
-> > BPF_RAW_TRACEPOINT_OPEN twice, and then task A continues execution,
-> > task A will end up executing the middle of newly-written machine code,
-> > which can probably end up crashing the kernel somehow?
-> > 
-> > I think that at least to synchronize trampoline text freeing with
-> > concurrent trampoline execution, it is necessary to do something
-> > similar to what the livepatching code does with klp_check_stack(), and
-> > then either use a callback from the scheduler to periodically re-check
-> > tasks that were in the trampoline or let the trampoline tail-call into
-> > a cleanup helper that is part of normal kernel text. And you'd
-> > probably have to gate BPF trampolines on
-> > CONFIG_HAVE_RELIABLE_STACKTRACE.
-> 
-> ftrace uses synchronize_rcu_tasks() to flip between trampolines iirc.
+On Fri, Dec 27, 2019 at 2:02 PM Helen Koike <helen.koike@collabora.com> wrote:
+>
+> Add yaml DT bindings for Rockchip MIPI D-PHY RX
+>
+> This was tested and verified with:
+> mv drivers/staging/media/phy-rockchip-dphy/Documentation/devicetree/bindings/phy/rockchip-mipi-dphy.yaml  Documentation/devicetree/bindings/phy/
+> make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/phy/rockchip-mipi-dphy.yaml
+> make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/phy/rockchip-mipi-dphy.yaml
+>
+> Signed-off-by: Helen Koike <helen.koike@collabora.com>
+>
+> ---
+>
+> Changes in v12:
+> - The commit replaces the following commit in previous series named
+> media: staging: dt-bindings: Document the Rockchip MIPI RX D-PHY bindings
+> This new patch adds yaml binding and was verified with
+> make dtbs_check and make dt_binding_check
+>
+> Changes in v11: None
+> Changes in v10:
+> - unsquash
+>
+> Changes in v9:
+> - fix title division style
+> - squash
+> - move to staging
+>
+> Changes in v8: None
+> Changes in v7:
+> - updated doc with new design and tested example
+>
+>  .../bindings/phy/rockchip-mipi-dphy.yaml      | 75 +++++++++++++++++++
+>  1 file changed, 75 insertions(+)
+>  create mode 100644 drivers/staging/media/phy-rockchip-dphy/Documentation/devicetree/bindings/phy/rockchip-mipi-dphy.yaml
 
-good catch and good suggestion. synchronize_rcu_tasks() is needed here too.
+Reviewed-by: Rob Herring <robh@kernel.org>
