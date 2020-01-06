@@ -2,87 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35202130BF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 02:56:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00F8D130BF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 03:04:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbgAFB4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 20:56:25 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:55254 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727226AbgAFB4Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 20:56:24 -0500
-Received: by mail-pj1-f66.google.com with SMTP id kx11so6907009pjb.4;
-        Sun, 05 Jan 2020 17:56:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Bwykfnh9I+HBTex5KIv5flUDMZzUB+KXgYZaVTuNTVw=;
-        b=Ji/Uri2phyquI7tB8XXhe1WF/Q/QRG9LVCeX5W+cBP9IjDAeGBcb1e6BGAQw9tbTmo
-         1+5gUpRdr0mwzShSPcROxJl71xDR4R57tQezoQPsvZw93yUZCnlv7qYICAA1ca0W9yUC
-         NnhMGHxzOXPB0lsI214wqc1MSkaB/arMYEXBkeB2zmCGtX7m50ME2DJuFQkdsRzvYLRj
-         6d7tIf92A6XWNbrLe8ovm4Kn3LlFP+8r1qXXQb3VExQvcN5netq1WY0uueZakvojQ77w
-         fdxqGrJaHaiHC2FqYk5klZuPLIk/36/SuwPieoMdecy+iM+0NW89Cm72F75QIzEjw7fy
-         eBLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Bwykfnh9I+HBTex5KIv5flUDMZzUB+KXgYZaVTuNTVw=;
-        b=mg3F/7Yo7L1v0jeBrxyYCR6iPtOiavtRPPjgmleC48hcQlK1+vbD0UDp2Vgka3OePB
-         CWSE8XpvEifglm7cYPxTpE/TPi9ceKNySd2K8LOC2c2s7ns/OSVG3GZlxyjmBWRFUzHz
-         1sM1u9t7GJyZUyn+W8XJ39LjtQQSGlohHA2vWb1iofSyB/6AzQOHV/1lnejvgjId1LVU
-         //2V/+hZwWGX7fZhJtknVNHR4YqsLR10JmomNbCseJDv0YIAMocyq2mYRoV/BipN3dPm
-         +qvU8yep9HC8yBl1BTk3P3L51LTRC5DuLCBlQDCTEgWBbw4wPQTqprCSquZHTB4VUDB7
-         sxQw==
-X-Gm-Message-State: APjAAAWCj1IlPt9BEyHwjumt7HpeDmBORcEcPxrBCdEOhQ4JmjH9RIuD
-        n4xOoBTho4VRYUA41NVkA2U=
-X-Google-Smtp-Source: APXvYqwprWNudrZCAIdy2jEAfpLuiljLwlXloJdJDl3DL5bBJ0mppBmTwbVXm2ltIwpCH+09OxqEOw==
-X-Received: by 2002:a17:90b:1243:: with SMTP id gx3mr40570711pjb.117.1578275784141;
-        Sun, 05 Jan 2020 17:56:24 -0800 (PST)
-Received: from localhost ([43.224.245.180])
-        by smtp.gmail.com with ESMTPSA id e16sm68495846pgk.77.2020.01.05.17.56.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 05 Jan 2020 17:56:23 -0800 (PST)
-From:   liuyang34 <yangliuxm34@gmail.com>
-X-Google-Original-From: liuyang34 <liuyang34@xiaomi.com>
-To:     Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     liuyang34 <liuyang34@xiaomi.com>
-Subject: [PATCH] selinuxfs: use scnprinft to get real length in sel_read_class
-Date:   Mon,  6 Jan 2020 09:56:18 +0800
-Message-Id: <ba3290e18f9867e110b77d058c3f8c7015bd868b.1578274288.git.liuyang34@xiaomi.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1578274288.git.liuyang34@xiaomi.com>
-References: <cover.1578274288.git.liuyang34@xiaomi.com>
+        id S1727334AbgAFCEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 21:04:06 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56458 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727226AbgAFCEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Jan 2020 21:04:05 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 82B3A5B94C23C3898F14;
+        Mon,  6 Jan 2020 10:04:01 +0800 (CST)
+Received: from [127.0.0.1] (10.184.213.217) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Mon, 6 Jan 2020
+ 10:03:58 +0800
+Subject: Re: [PATCH v5 1/2] tmpfs: Add per-superblock i_ino support
+To:     Chris Down <chris@chrisdown.name>, <linux-mm@kvack.org>
+CC:     Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Matthew Wilcox" <willy@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Jeff Layton" <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>
+References: <cover.1578225806.git.chris@chrisdown.name>
+ <91b4ed6727712cb6d426cf60c740fe2f473f7638.1578225806.git.chris@chrisdown.name>
+From:   "zhengbin (A)" <zhengbin13@huawei.com>
+Message-ID: <4106bf3f-5c99-77a4-717e-10a0ffa6a3fa@huawei.com>
+Date:   Mon, 6 Jan 2020 10:03:57 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <91b4ed6727712cb6d426cf60c740fe2f473f7638.1578225806.git.chris@chrisdown.name>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.184.213.217]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-as the return value of snprintf maybe over the size of TMPBUFLEN, 
-use scnprintf to instead of it
 
-Signed-off-by: liuyang34 <liuyang34@xiaomi.com>
----
- security/selinux/selinuxfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2020/1/5 20:06, Chris Down wrote:
+> get_next_ino has a number of problems:
+>
+> - It uses and returns a uint, which is susceptible to become overflowed
+>   if a lot of volatile inodes that use get_next_ino are created.
+> - It's global, with no specificity per-sb or even per-filesystem. This
+>   means it's not that difficult to cause inode number wraparounds on a
+>   single device, which can result in having multiple distinct inodes
+>   with the same inode number.
+>
+> This patch adds a per-superblock counter that mitigates the second case.
+> This design also allows us to later have a specific i_ino size
+> per-device, for example, allowing users to choose whether to use 32- or
+> 64-bit inodes for each tmpfs mount. This is implemented in the next
+> commit.
+>
+> Signed-off-by: Chris Down <chris@chrisdown.name>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Jeff Layton <jlayton@kernel.org>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: linux-mm@kvack.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: kernel-team@fb.com
+> ---
+>  include/linux/shmem_fs.h |  1 +
+>  mm/shmem.c               | 30 +++++++++++++++++++++++++++++-
+>  2 files changed, 30 insertions(+), 1 deletion(-)
+>
+> v5: Nothing in code, just resending with correct linux-mm domain.
+>
+> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> index de8e4b71e3ba..7fac91f490dc 100644
+> --- a/include/linux/shmem_fs.h
+> +++ b/include/linux/shmem_fs.h
+> @@ -35,6 +35,7 @@ struct shmem_sb_info {
+>  	unsigned char huge;	    /* Whether to try for hugepages */
+>  	kuid_t uid;		    /* Mount uid for root directory */
+>  	kgid_t gid;		    /* Mount gid for root directory */
+> +	ino_t next_ino;		    /* The next per-sb inode number to use */
+>  	struct mempolicy *mpol;     /* default memory policy for mappings */
+>  	spinlock_t shrinklist_lock;   /* Protects shrinklist */
+>  	struct list_head shrinklist;  /* List of shinkable inodes */
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 8793e8cc1a48..9e97ba972225 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2236,6 +2236,12 @@ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * shmem_get_inode - reserve, allocate, and initialise a new inode
+> + *
+> + * If this tmpfs is from kern_mount we use get_next_ino, which is global, since
+> + * inum churn there is low and this avoids taking locks.
+> + */
+>  static struct inode *shmem_get_inode(struct super_block *sb, const struct inode *dir,
+>  				     umode_t mode, dev_t dev, unsigned long flags)
+>  {
+> @@ -2248,7 +2254,28 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
+>  
+>  	inode = new_inode(sb);
+>  	if (inode) {
+> -		inode->i_ino = get_next_ino();
+> +		if (sb->s_flags & SB_KERNMOUNT) {
+> +			/*
+> +			 * __shmem_file_setup, one of our callers, is lock-free:
+> +			 * it doesn't hold stat_lock in shmem_reserve_inode
+> +			 * since max_inodes is always 0, and is called from
+> +			 * potentially unknown contexts. As such, use the global
+> +			 * allocator which doesn't require the per-sb stat_lock.
+> +			 */
+> +			inode->i_ino = get_next_ino();
+> +		} else {
+> +			spin_lock(&sbinfo->stat_lock);
 
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index ee94fa4..977c32d 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -1672,7 +1672,7 @@ static ssize_t sel_read_class(struct file *file, char __user *buf,
- {
- 	unsigned long ino = file_inode(file)->i_ino;
- 	char res[TMPBUFLEN];
--	ssize_t len = snprintf(res, sizeof(res), "%d", sel_ino_to_class(ino));
-+	ssize_t len = scnprintf(res, sizeof(res), "%d", sel_ino_to_class(ino));
- 	return simple_read_from_buffer(buf, count, ppos, res, len);
- }
- 
--- 
-2.7.4
+Use spin_lock will affect performance, how about define
+
+unsigned long __percpu *last_ino_number; /* Last inode number */
+atomic64_t shared_last_ino_number; /* Shared last inode number */
+in shmem_sb_info, whose performance will be better?
+
+> +			if (unlikely(sbinfo->next_ino > UINT_MAX)) {
+> +				/*
+> +				 * Emulate get_next_ino uint wraparound for
+> +				 * compatibility
+> +				 */
+> +				sbinfo->next_ino = 1;
+> +			}
+> +			inode->i_ino = sbinfo->next_ino++;
+> +			spin_unlock(&sbinfo->stat_lock);
+> +		}
+> +
+>  		inode_init_owner(inode, dir, mode);
+>  		inode->i_blocks = 0;
+>  		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
+> @@ -3662,6 +3689,7 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
+>  #else
+>  	sb->s_flags |= SB_NOUSER;
+>  #endif
+> +	sbinfo->next_ino = 1;
+>  	sbinfo->max_blocks = ctx->blocks;
+>  	sbinfo->free_inodes = sbinfo->max_inodes = ctx->inodes;
+>  	sbinfo->uid = ctx->uid;
 
