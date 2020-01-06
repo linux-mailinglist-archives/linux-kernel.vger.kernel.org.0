@@ -2,102 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A9D0131B39
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 23:20:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7BCA131B3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 23:20:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbgAFWT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 17:19:59 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:45943 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbgAFWT7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 17:19:59 -0500
-Received: by mail-qt1-f193.google.com with SMTP id l12so43719172qtq.12;
-        Mon, 06 Jan 2020 14:19:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Ra9GVssxYnn9Jv0jKh592D0gJEylVk6b1qXaRL8Qcy8=;
-        b=hdCTFdcSDzDKK6xkyVsnM7SX8IJIEC0ncaSMPpmCfjpHoJ3ne0KeeWAXB3nAMUsrvL
-         FcV5IisYscLVpLEv/CrHF2wiwmzEHiPxluYAbILZFlfpyM1qlpvwexQmti/kuN955k/h
-         L0j4gdXA1iIDPJw65Nqc+Yf5XT2JStkRKzQdNib4XvUTLJMGe8rkDQ66W8PQWTX//nkO
-         IQFbDSI0f45UjuIpeVI49ZMYpKZkMDHxhdpWevi6gWSGoiw87QTyzmLJGBPrT/lM8CIM
-         37T3rpnqnD2HDtYyRh2nQ0OSqEHNZoNltH1ZpZWOS4dIPXAGAs2gjsAYgIk/Ckd3Asc7
-         f4Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Ra9GVssxYnn9Jv0jKh592D0gJEylVk6b1qXaRL8Qcy8=;
-        b=Hn8emVBDujx1Df2PW5Va2kCmhNlyq3rkyKYeB+AIsxDAFk+JH4PsoVNJwTmSJRJf3m
-         SwBGC/Blf0PG8bksNvqBK3B3W9s0KxreljjMuXE362GCVXxRQE/6dGEaJpB0k+tYCVTh
-         8ivmPdTVtvVdkTuxIBj1sktMjZXCkpsGI5g8NkiaLFHSX3y3XEjiwqdei8Y395Gm5BYf
-         BXpfNr4Mlz6lcn48OJhx/nI8u4k/Dl12SGGSaAYAPbneYR5C9tukdO0vNQ1vzpUK5i5s
-         /c/ndyNz62V9LLiyJLQmsf9UCVR5FBszVVZl/4lrC6TjUFj3nB0C49cnAdfeAvnCsdaq
-         A+PQ==
-X-Gm-Message-State: APjAAAUi4AltW5DTHv5p4bfMb3PLUsjJLzd2RscqSUKMqRCJ496KGDLs
-        MrcZt8efg9KDbLfqXH49D2Y599tpg5M=
-X-Google-Smtp-Source: APXvYqwJCr/tvHE+vpfWKO5QRrw7Twha5XmvoqKiKgkMGGBQYkr8kBHkLcYGU+sBbJD24A6zL+JD/A==
-X-Received: by 2002:ac8:5215:: with SMTP id r21mr76183728qtn.77.1578349197920;
-        Mon, 06 Jan 2020 14:19:57 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id n190sm21616014qke.90.2020.01.06.14.19.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 14:19:57 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 856B440DFD; Mon,  6 Jan 2020 19:19:55 -0300 (-03)
-Date:   Mon, 6 Jan 2020 19:19:55 -0300
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc:     rostedt@goodmis.org, Arnaldo Carvalho de Melo <acme@redhat.com>,
-        arnaldo.melo@gmail.com, linux-kernel@vger.kernel.org,
-        linux-trace-devel@vger.kernel.org
-Subject: Re: [PATCH] libtraceevent: Add dependency on libdl
-Message-ID: <20200106221955.GC16851@kernel.org>
-References: <20191226224931.3458-1-sudipm.mukherjee@gmail.com>
+        id S1727189AbgAFWU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 17:20:27 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:33381 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726695AbgAFWU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 17:20:26 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47s91g6hSnz9sPK;
+        Tue,  7 Jan 2020 09:20:23 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1578349224;
+        bh=D4L4d0o2nGXQmsn4N43cbibnhfi2fb4y3rP05X2ZFm4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=BcJXEtH4ciYUdQ9TcUeoVBbDzM4KyfLWuZ0bGVqnzvPhzDMfxQInzypRvZheC/L7x
+         oPcXIRBYCJ+pJOybA7CpIoHS8h1U+8AdFIjMYXfn+oqWYv3kVuXSrt/HWAhr+jJPX2
+         z+OmYtexUNAodjXUetlZkzsZGmwSxRoKfUy1ujHZ8GlM+e5AA276KcLrFbOdLl42sg
+         SXzgXUl+64+1Gs5xBkr94KqWW1q2oAT/2i9V0Fro0An3yyv9sVfRfHMrG7B5PLnQUf
+         VRvvoVjT+VTo0Rh3rqMi97NLJLigOUkhSMwaINTN5KqRZN9PI6Jjfij6ysrMTAheaV
+         2nD5do5NR/cfg==
+Date:   Tue, 7 Jan 2020 09:20:17 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andre Przywara <andre.przywara@arm.com>
+Subject: linux-next: build failure after merge of the sunxi tree
+Message-ID: <20200107092017.1f219a19@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191226224931.3458-1-sudipm.mukherjee@gmail.com>
-X-Url:  http://acmel.wordpress.com
+Content-Type: multipart/signed; boundary="Sig_/_j1Wl=vgzOhip/lEsdpXq7K";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Dec 26, 2019 at 10:49:31PM +0000, Sudip Mukherjee escreveu:
-> event-plugin.c is calling dl_*() functions but it is not linked with
-> libdl. As a result when we use ldd on the generated libtraceevent.so
-> file, it does not list libdl as one of its dependencies.
-> Add -ldl explicitly as done in tools/lib/lockdep.
+--Sig_/_j1Wl=vgzOhip/lEsdpXq7K
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Rostedt, can you ack this one? It applies just fine.
+Hi all,
 
-- Arnaldo
- 
-> Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-> ---
->  tools/lib/traceevent/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
-> index c874c017c636..0d0575981cc7 100644
-> --- a/tools/lib/traceevent/Makefile
-> +++ b/tools/lib/traceevent/Makefile
-> @@ -143,7 +143,7 @@ $(TE_IN): force
->  	$(Q)$(MAKE) $(build)=libtraceevent
->  
->  $(OUTPUT)libtraceevent.so.$(EVENT_PARSE_VERSION): $(TE_IN)
-> -	$(QUIET_LINK)$(CC) --shared $(LDFLAGS) $^ -Wl,-soname,libtraceevent.so.$(EP_VERSION) -o $@
-> +	$(QUIET_LINK)$(CC) --shared $(LDFLAGS) $^ -ldl -Wl,-soname,libtraceevent.so.$(EP_VERSION) -o $@
->  	@ln -sf $(@F) $(OUTPUT)libtraceevent.so
->  	@ln -sf $(@F) $(OUTPUT)libtraceevent.so.$(EP_VERSION)
->  
-> -- 
-> 2.11.0
+After merging the sunxi tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
--- 
+arch/arm/boot/dts/sun8i-r40.dtsi:656.21-669.5: ERROR (phandle_references): =
+/soc/spi@1c05000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:656.21-669.5: ERROR (phandle_references): =
+/soc/spi@1c05000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:671.21-684.5: ERROR (phandle_references): =
+/soc/spi@1c06000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:671.21-684.5: ERROR (phandle_references): =
+/soc/spi@1c06000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:686.21-699.5: ERROR (phandle_references): =
+/soc/spi@1c07000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:686.21-699.5: ERROR (phandle_references): =
+/soc/spi@1c07000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:701.21-714.5: ERROR (phandle_references): =
+/soc/spi@1c0f000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:701.21-714.5: ERROR (phandle_references): =
+/soc/spi@1c0f000: Reference to non-existent node or label "dma"
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[2]: *** [scripts/Makefile.lib:292: arch/arm/boot/dts/sun8i-v40-bananap=
+i-m2-berry.dtb] Error 2
+arch/arm/boot/dts/sun8i-r40.dtsi:656.21-669.5: ERROR (phandle_references): =
+/soc/spi@1c05000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:656.21-669.5: ERROR (phandle_references): =
+/soc/spi@1c05000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:671.21-684.5: ERROR (phandle_references): =
+/soc/spi@1c06000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:671.21-684.5: ERROR (phandle_references): =
+/soc/spi@1c06000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:686.21-699.5: ERROR (phandle_references): =
+/soc/spi@1c07000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:686.21-699.5: ERROR (phandle_references): =
+/soc/spi@1c07000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:701.21-714.5: ERROR (phandle_references): =
+/soc/spi@1c0f000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:701.21-714.5: ERROR (phandle_references): =
+/soc/spi@1c0f000: Reference to non-existent node or label "dma"
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[2]: *** [scripts/Makefile.lib:292: arch/arm/boot/dts/sun8i-r40-bananap=
+i-m2-ultra.dtb] Error 2
+arch/arm/boot/dts/sun8i-r40.dtsi:656.21-669.5: ERROR (phandle_references): =
+/soc/spi@1c05000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:656.21-669.5: ERROR (phandle_references): =
+/soc/spi@1c05000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:671.21-684.5: ERROR (phandle_references): =
+/soc/spi@1c06000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:671.21-684.5: ERROR (phandle_references): =
+/soc/spi@1c06000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:686.21-699.5: ERROR (phandle_references): =
+/soc/spi@1c07000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:686.21-699.5: ERROR (phandle_references): =
+/soc/spi@1c07000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:701.21-714.5: ERROR (phandle_references): =
+/soc/spi@1c0f000: Reference to non-existent node or label "dma"
+arch/arm/boot/dts/sun8i-r40.dtsi:701.21-714.5: ERROR (phandle_references): =
+/soc/spi@1c0f000: Reference to non-existent node or label "dma"
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[2]: *** [scripts/Makefile.lib:292: arch/arm/boot/dts/sun8i-t3-cqa3t-bv=
+3.dtb] Error 2
 
-- Arnaldo
+I am not sure which commits caused this.  I have used the sunxi tree
+from next-20200106 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/_j1Wl=vgzOhip/lEsdpXq7K
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4TsqEACgkQAVBC80lX
+0Gy9Qwf/cClLDg1KvU91VRswOst+kXxmgf0ef66eYzrt85Gyrsio9BnQzOopKKGG
+Couog5WucGyww0DFi1SugQXD7PYD1wClUogwCPeQ3Ge/u2tX0glBYGX6cZoTAeW8
+mtJBl6EJwA79XmvMqteDX/ZWrFr1aA560YZ41O42l92CrN4QFcgg5vJeV2XNkwOC
+ibZzlfPHGhUSu+lyi4rHVdAeCllINor0qnaJO59j20ZRyZyzuEI/ifZ3Q7JP4HoC
+LNfNdHZcmrU3tvazfTqi+eHeCBVyMX56CPLpO3VC6XjRwoh9I2HVYqvw0MQldeco
+s6XB2Ef6Ww/J4wcx7MHPfuOZLB4q7Q==
+=3prn
+-----END PGP SIGNATURE-----
+
+--Sig_/_j1Wl=vgzOhip/lEsdpXq7K--
