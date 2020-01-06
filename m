@@ -2,88 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C61E2130B80
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 02:31:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBC4E130BD1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 02:36:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbgAFBbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 20:31:18 -0500
-Received: from mail1.windriver.com ([147.11.146.13]:58892 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726731AbgAFBbR (ORCPT
+        id S1727654AbgAFBgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 20:36:19 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38508 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727316AbgAFBen (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 20:31:17 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.2) with ESMTPS id 0061UvG4010178
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
-        Sun, 5 Jan 2020 17:30:57 -0800 (PST)
-Received: from [128.224.162.195] (128.224.162.195) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server id 14.3.468.0; Sun, 5 Jan 2020
- 17:30:56 -0800
-Subject: Re: [PATCH] stmmac: debugfs entry name is not be changed when udev
- rename device name.
-To:     David Miller <davem@davemloft.net>
-CC:     <peppe.cavallaro@st.com>, <alexandre.torgue@st.com>,
-        <joabreu@synopsys.com>, <mcoquelin.stm32@gmail.com>,
-        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, ytao <yue.tao@windriver.com>
-References: <20200102013544.19271-1-jiping.ma2@windriver.com>
- <20200104.201833.91020607861340266.davem@davemloft.net>
-From:   Jiping Ma <Jiping.Ma2@windriver.com>
-Message-ID: <dd27bae8-46d0-6802-90b9-475d8489d528@windriver.com>
-Date:   Mon, 6 Jan 2020 09:30:53 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Sun, 5 Jan 2020 20:34:43 -0500
+Received: by mail-lf1-f66.google.com with SMTP id r14so35370216lfm.5;
+        Sun, 05 Jan 2020 17:34:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eXx8AiTiQfdwEaklBBCooH/CXMpEnuY2OdI9oQhNEoY=;
+        b=eRr/nzkU2oFWoEEF/PKRz8Vx/Kqu/ABZyNema2H17iapZ+kax9iGpIJGSmHX9F8/Qn
+         oVy3fNSI/OoGqffPJgwEZm2dubCuIGIIB1nuVkr3aqNyCFqDUgIwGc0oZM1KhEnoJOLf
+         kzYF85Szg1u+cCilrmmQI0aC3P/V0udjNiOxAFKs9sazJpOM9qLgS1YK876ohQSqpIhd
+         fC9r6WCGoSIqswSAMJbCkG33NfNkRpyCEUxZwJP01r+Zlj2lufdacWWYej0/RmOrnQWm
+         itl88XOiiyvmO8XWyO8HAxnRlLeCXBIghMb0wEilGVBlW8ovF8taRGyRIqNu07I8DLMY
+         lgSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eXx8AiTiQfdwEaklBBCooH/CXMpEnuY2OdI9oQhNEoY=;
+        b=WpE16MNdQ01UdRF5mlStn4kVj4w/zbVC7bAzHrlliUVI1IrjXach6TSFDVkp1h00yS
+         JW5p5mfx8BmYFoU7Nuw2Bt45ukyqU9liH711q2bJTTwAV598ldy7bYsWra3Xj6iBguJw
+         A6bd5aEibGKnqMporjtbi8JusdAT0sP+JeFDCAQ7s+kcIQZueJ5cy40butPsAAzr09SR
+         OZ9SiUBOtdJ0Jj0ooWrxvAr5RuIQMb62ftjO7FhojLdFG2qkVK0aLcXaUr2wMlcWg+AT
+         k9XCYXI3I07Kks6CGe/eexvgQPA+Sl0hAhUwJBMvziIirQuXucUznPTGx7d8DzaN3EcQ
+         Ogkg==
+X-Gm-Message-State: APjAAAWO/gaBrQE6CD6z0x8yoaDaukDU6EielLgvfVv1AtqKSRiKRCBK
+        8DtqpD52RPSYVAtpiHhdMT8=
+X-Google-Smtp-Source: APXvYqyLNC7CfFJ5fYIaYrzTiJvJnDvbuLZna7+bIOX/WSAzztzloJnvs92To8krqE95BpYFL0bWDQ==
+X-Received: by 2002:ac2:51a4:: with SMTP id f4mr58574838lfk.76.1578274480972;
+        Sun, 05 Jan 2020 17:34:40 -0800 (PST)
+Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.gmail.com with ESMTPSA id h10sm28235739ljc.39.2020.01.05.17.34.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Jan 2020 17:34:40 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Cc:     linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/20] NVIDIA Tegra USB2 drivers clean up
+Date:   Mon,  6 Jan 2020 04:33:56 +0300
+Message-Id: <20200106013416.9604-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <20200104.201833.91020607861340266.davem@davemloft.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
+This patch series brings the NVIDIA Tegra USB2 PHY driver into a better
+shape by refactoring code to match upstream standards, the ChipIdea/Tegra UDC
+driver also gets a minor update. Please review and apply, thanks in advance!
 
-On 01/05/2020 12:18 PM, David Miller wrote:
-> From: Jiping Ma <jiping.ma2@windriver.com>
-> Date: Thu, 2 Jan 2020 09:35:44 +0800
->
->> Add one notifier for udev changes net device name.
->>
->> Signed-off-by: Jiping Ma <jiping.ma2@windriver.com>
->> ---
->>   .../net/ethernet/stmicro/stmmac/stmmac_main.c | 28 +++++++++++++++++++
->>   1 file changed, 28 insertions(+)
->>
->> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
->> index b14f46a57154..3b05cb80eed7 100644
->> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
->> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
->> @@ -4038,6 +4038,31 @@ static int stmmac_dma_cap_show(struct seq_file *seq, void *v)
->>   }
->>   DEFINE_SHOW_ATTRIBUTE(stmmac_dma_cap);
->>   
->> +/* Use network device events to rename debugfs file entries.
->> + */
->> +static int stmmac_device_event(struct notifier_block *unused,
->> +			       unsigned long event, void *ptr)
->> +{
->> +	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
->> +	struct stmmac_priv *priv = netdev_priv(dev);
->> +
->> +	switch (event) {
->> +	case NETDEV_CHANGENAME:
-> This notifier gets called for every single netdevice in the entire
-> system.
->
-> You cannot just assume that the device that gets passed in here is
-> an stmmac device.
->
-> Look at how other drivers handle this to see how to do it correctly.
->
-> Thank you.
-Thanks to remind.  I will modify it and send it review again.
->
+Changelog:
+
+v4: - Dropped the request_module() from "Add USB_TEGRA_PHY to driver's
+      dependencies" because it resulted in a bit too many questions during
+      review and since it won't be needed once Tegra EHCI driver will be
+      squashed into the CI anyways.
+
+    - Factored out clean up of ulpi_phy_power_off into a separate patch and
+      improved it a bit move by disabling clock *after* asserting reset:
+
+        usb: phy: tegra: Clean up ulpi_phy_power_off
+
+    - Cleaned up ULPI reset-GPIO changes that were messed up a tad in v3,
+      thanks to Michał Mirosław for reviewing it in v3.
+
+    - Dropped the "Assert reset on ULPI close instead of deasserting it"
+      patch because turned out that the problem was introduced by an earlier
+      patch in this series, which is fixed now.
+
+    - Added missed tegra_usb_phy_power_off to tegra_usb_phy_shutdown() in
+      the "Hook up init/shutdown callbacks" patch.
+
+    - I found out that PHY-enable refcount is broken after drivers reloading,
+      added these new patches in a result:
+
+        usb: phy: tegra: Keep track of power on-off state
+        usb: host: ehci-tegra: Stop managing PHY's power
+
+    - Added patch to clean up included headers in the PHY driver:
+
+        usb: phy: tegra: Clean up included headers
+
+v3: - The "Perform general clean up of the code" patch now cleans up couple
+      more minor crumbs.
+
+    - Added more "clean up" patches:
+
+        usb: phy: tegra: Disable VBUS regulator on tegra_usb_phy_init failure
+        usb: phy: tegra: Move utmip_pad_count checking under lock
+        usb: phy: tegra: Keep CPU interrupts enabled
+        usb: host: ehci-tegra: Remove unused fields from tegra_ehci_hcd
+
+    - I noticed that ULPI's reset is getting erroneously deasserted on
+      PHY's shutdown, this is fixed in these new patches:
+
+        usb: phy: tegra: Assert reset on ULPI close instead of deasserting it
+        usb: phy: tegra: Use device-tree notion of reset-GPIO's active-state
+
+v2: - The "usb: phy: tegra: Hook up init/shutdown callbacks" patch was
+      updated and now it does a better job in regards to checking whether
+      PHY is initialized before it is started to be used and whether there
+      is a double init/shutdown. This allows to factor out the ChipIdea's
+      driver change into a separate patch, which was requested by Peter Chen
+      in a review comment to v1. In a result there is this new patch:
+
+        usb: chipidea: tegra: Stop managing PHY's power
+
+    - Added few more new patches:
+
+        usb: phy: tegra: Use generic stub for a missing VBUS regulator
+
+      I noticed that VBUS regulator usage could be cleaned up a tad as well.
+
+        usb: ulpi: Add resource-managed variant of otg_ulpi_create()
+        usb: phy: tegra: Use devm_otg_ulpi_create()
+        usb: phy: tegra: Use u32 for hardware register variables
+
+      These patches are made in response to review comments that were made
+      by Thierry Reding to v1.
+
+      I also noticed that phy_tegra_usb isn't getting auto-loaded while it
+      should be. This is fixed in this new patch:
+
+        usb: chipidea: tegra: Add USB_TEGRA_PHY to driver's dependencies
+
+Dmitry Osipenko (20):
+  dt-binding: usb: ci-hdrc-usb2: Document NVIDIA Tegra support
+  usb: host: ehci-tegra: Correct teardown order of driver's removal
+  usb: phy: tegra: Clean up ulpi_phy_power_off
+  usb: phy: tegra: Keep track of power on-off state
+  usb: phy: tegra: Hook up init/shutdown callbacks
+  usb: phy: tegra: Perform general clean up of the code
+  usb: phy: tegra: Clean up included headers
+  usb: phy: tegra: Use relaxed versions of readl/writel
+  usb: phy: tegra: Use generic stub for a missing VBUS regulator
+  usb: ulpi: Add resource-managed variant of otg_ulpi_create()
+  usb: phy: tegra: Use devm_otg_ulpi_create()
+  usb: phy: tegra: Use u32 for hardware register variables
+  usb: phy: tegra: Use device-tree notion of reset-GPIO's active-state
+  usb: phy: tegra: Disable VBUS regulator on tegra_usb_phy_init failure
+  usb: phy: tegra: Move utmip_pad_count checking under lock
+  usb: phy: tegra: Keep CPU interrupts enabled
+  usb: chipidea: tegra: Stop managing PHY's power
+  usb: chipidea: tegra: Add USB_TEGRA_PHY to driver's dependencies
+  usb: host: ehci-tegra: Stop managing PHY's power
+  usb: host: ehci-tegra: Remove unused fields from tegra_ehci_hcd
+
+ .../devicetree/bindings/usb/ci-hdrc-usb2.txt  |   4 +
+ drivers/usb/chipidea/Kconfig                  |   1 +
+ drivers/usb/chipidea/ci_hdrc_tegra.c          |   9 -
+ drivers/usb/host/ehci-tegra.c                 |  16 +-
+ drivers/usb/phy/phy-tegra-usb.c               | 896 +++++++++---------
+ drivers/usb/phy/phy-ulpi.c                    |  48 +-
+ include/linux/usb/tegra_usb_phy.h             |   4 +-
+ include/linux/usb/ulpi.h                      |  11 +
+ 8 files changed, 530 insertions(+), 459 deletions(-)
+
+-- 
+2.24.0
 
