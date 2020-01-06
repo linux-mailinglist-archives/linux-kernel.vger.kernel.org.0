@@ -2,72 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30607131369
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 15:17:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F75D131386
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 15:21:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbgAFORn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 09:17:43 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:43960 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbgAFORm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 09:17:42 -0500
-Received: by mail-oi1-f195.google.com with SMTP id p125so13741943oif.10
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 06:17:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=SWROCM1ytxc0KjQwpMH18fW8c9E/im8B3jG70FYy+uk=;
-        b=OATrwvmO+CyErGzHT1lt2Buo/ZiGdvzIaYYyIMyoVMWjRY/QcDE6+LE2KnQKPbzacw
-         /+rGKQfsu7gQZCNPp+6cHD5YQ+iFkVZk+5Wvc+TqMX8YKhszrH5xfgZQWt05H5fpZbdi
-         7BK03SsbKbENg80NJ5HsF9d90CBsvuJ+rQ8uCsqdLvE1MVL+NI9Gph36VyQoXNGIrxpK
-         5MY58+fdH83fH4SFksBN5hDmyjRsawhL2P/Hv+D1BjGLlrCE67LgMZgDaTfLdDK8W/nh
-         Y6Ngccu4/bTjRR6TcHsrUvMdXtJNBwKFdB6N3YFD6ETAtIdsOx7+KnxJ8El+DXL0kJS0
-         kkaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=SWROCM1ytxc0KjQwpMH18fW8c9E/im8B3jG70FYy+uk=;
-        b=pp7UdFTv+Gp1Y3WPwuSRwuDJX6BSvRSg3lYMO5MySuRPyBWm9w7sUOtz1hagods7+f
-         m7D0GEsZ7Pe4ZDFC0uGaxZ0wM+GdQg6x3dUF3QkAU2NCTHpQyRr2lJUdG3nkHMazNqB7
-         s9/V8WDRVOl3/xc80vwerYYGcZh+V75XG6lmQGAC7JpuF/7EFoY5c6vjvOCy6jw+vtxh
-         l2HMLaJpe0pbDmdaCQqR7Hj7R3XzbFc8+YwvdzG7O1H41vWq4oTf9K5EnJZzMugcJylS
-         n60PJrnVGCdNtrFL2SKE4Tchpohkukzyzz8Nbb+D4OHbfz6HdWg9kDR7edqBBJQqhh/A
-         +W5w==
-X-Gm-Message-State: APjAAAV/tNBCclypeHxEFesJmP2SKohsE/nXDK1xYDSosFWARIKGZd22
-        lmJOppv8ZqtM5Mvf+bvQHniy3P2l13CUNQHhVN0=
-X-Google-Smtp-Source: APXvYqzsLJnSzIcmw6PCol/lgo+jRHvZl759BIhEN5f3CDhcd2LPIy/O8mu7/V8L5ElxRjtTXLseTKLXRB1pmMSYzpk=
-X-Received: by 2002:aca:55cc:: with SMTP id j195mr5723915oib.22.1578320261690;
- Mon, 06 Jan 2020 06:17:41 -0800 (PST)
+        id S1726528AbgAFOVo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 09:21:44 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:51568 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726307AbgAFOVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 09:21:43 -0500
+Received: from ip5f5a5f74.dynamic.kabel-deutschland.de ([95.90.95.116] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1ioTFp-0005Md-9V; Mon, 06 Jan 2020 15:21:13 +0100
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     Akash Gajjar <akash@openedev.com>
+Cc:     jagan@openedev.com, tom@radxa.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Vivek Unune <npcomplete13@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        Markus Reichl <m.reichl@fivetechno.de>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Nick Xie <nick@khadas.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3, 1/1] arm64: dts: rockchip: add ROCK Pi S DTS support
+Date:   Mon, 06 Jan 2020 15:21:12 +0100
+Message-ID: <14039094.HKn2KS7fIZ@diego>
+In-Reply-To: <20191230145008.5899-1-akash@openedev.com>
+References: <20191230145008.5899-1-akash@openedev.com>
 MIME-Version: 1.0
-Received: by 2002:a4a:9590:0:0:0:0:0 with HTTP; Mon, 6 Jan 2020 06:17:41 -0800 (PST)
-Reply-To: issaaapo1@gmail.com
-From:   "Bar. Aapo Issa" <infosu.org@gmail.com>
-Date:   Mon, 6 Jan 2020 02:17:41 -1200
-Message-ID: <CAHuUpd8KvaiQoTrd6QyzEVUBxWqnK4PjnK3qEhq2RoL2xJ-ngQ@mail.gmail.com>
-Subject: re
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Your choice is intentional and not a mistake. You might not in any way
-be related to the deceased client.  now, you're require to forward
-with the below requested information to enable us proceed.
+Hi Akash,
 
-I await your reply and acceptance.I expect a feedback from you with
-the below personal data:
+Am Montag, 30. Dezember 2019, 15:49:32 CET schrieb Akash Gajjar:
+> ROCK Pi S is RK3308 based SBC from radxa.com. ROCK Pi S has a,
+> - 256MB/512MB DDR3 RAM
+> - SD, NAND flash (optional on board 1/2/4/8Gb)
+> - 100MB ethernet, PoE (optional)
+> - Onboard 802.11 b/g/n wifi + Bluetooth 4.0 Module
+> - USB2.0 Type-A HOST x1
+> - USB3.0 Type-C OTG x1
+> - 26-pin expansion header
+> - USB Type-C DC 5V Power Supply
+> 
+> This patch enables
+> - Console
+> - NAND Flash
+> - SD Card
+> 
+> Signed-off-by: Akash Gajjar <akash@openedev.com>
 
-1. Your Full Name .
-2. Telephone/ Mobile Number.
-3. Profession.
-4. Date and Place of birth.
-5. Identity Copy.
-6. Residential address.
-7. Your Country / Nationality.
+> +&emmc {
+> +	bus-width = <4>;
+> +	cap-mmc-highspeed;
+> +	mmc-hs200-1_8v;
+> +	supports-sd;
 
-Be rest assured that all processes will be executed under the ambit of
-laws of both countries.
+supports-sd is not a property
+
+> +	disable-wp;
+> +	non-removable;
+> +	num-slots = <1>;
+
+nums-slots was removed very long ago
+
+> +	vin-supply = <&vcc_io>;
+
+please provide actual vmmc and vqmmc supplies
+vin is not a valid supply for emmcs
+
+> +	status = "okay";
+> +};
+> +
+> +&i2c1 {
+> +	status = "okay";
+> +};
+> +
+> +&sdmmc {
+> +	bus-width = <4>;
+> +	cap-mmc-highspeed;
+> +	cap-sd-highspeed;
+> +	max-frequeency = <150000000>;
+> +	supports-sd;
+
+supports-sd is not a valid property
+
+> +	disable-wp;
+> +	num-slots = <1>;
+
+again, obsolete num-slots
+
+> +	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_det &sdmmc_bus4>;
+> +	card-detect-delay = <800>;
+> +	status = "okay";
+> +};
+> +
+> +&spi2 {
+> +	status = "okay";
+> +	max-freq = <10000000>;
+> +};
+> +
+> +&pinctrl {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&rtc_32k>;
+> +
+> +	leds {
+> +		green_led_gio: green-led-gpio {
+> +			rockchip,pins = <0 RK_PA6 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +
+> +		heartbeat_led_gpio: heartbeat-led-gpio {
+> +			rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +	};
+> +
+> +	usb {
+> +		otg_vbus_drv: otg-vbus-drv {
+> +			rockchip,pins = <0 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +	};
+> +
+> +	sdio-pwrseq {
+> +		wifi_enable_h: wifi-enable-h {
+> +			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +
+> +		wifi_host_wake: wifi-host-wake {
+> +			rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_down>;
+> +		};
+> +	};
+> +};
+> +
+> +&pwm0 {
+> +	status = "okay";
+> +	pinctrl-0 = <&pwm0_pin_pull_down>;
+> +};
+> +
+> +&saradc {
+> +	vref-supply = <&vcc_1v8>;
+> +	status = "okay";
+> +};
+> +
+> +&sdio {
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +	bus-width = <4>;
+> +	max-frequency = <1000000>;
+> +	cap-sd-highspeed;
+> +	cap-sdio-irq;
+> +	supports-sdio;
+
+not a valid property
+
+> +	keep-power-in-suspend;
+> +	mmc-pwrseq = <&sdio_pwrseq>;
+> +	non-removable;
+> +	sd-uhs-sdr104;
+> +	status = "okay";
+> +};
+
+Heiko
+
+
