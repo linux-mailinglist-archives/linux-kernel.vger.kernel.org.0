@@ -2,82 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D786513138E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 15:23:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08A5813139F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 15:31:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbgAFOXq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 09:23:46 -0500
-Received: from mga11.intel.com ([192.55.52.93]:9090 "EHLO mga11.intel.com"
+        id S1726478AbgAFOb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 09:31:28 -0500
+Received: from foss.arm.com ([217.140.110.172]:44612 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726303AbgAFOXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 09:23:46 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jan 2020 06:23:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,402,1571727600"; 
-   d="scan'208";a="216842020"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
-  by fmsmga007.fm.intel.com with ESMTP; 06 Jan 2020 06:23:43 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id A6E1F300DE4; Mon,  6 Jan 2020 06:23:43 -0800 (PST)
-Date:   Mon, 6 Jan 2020 06:23:43 -0800
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     kan.liang@linux.intel.com, mingo@redhat.com, acme@kernel.org,
-        tglx@linutronix.de, bp@alien8.de, linux-kernel@vger.kernel.org,
-        eranian@google.com, alexey.budankov@linux.intel.com,
-        vitaly.slobodskoy@intel.com
-Subject: Re: [RFC PATCH V2 2/7] perf: Init/fini PMU specific data
-Message-ID: <20200106142343.GK15478@tassilo.jf.intel.com>
-References: <1578080364-5928-1-git-send-email-kan.liang@linux.intel.com>
- <1578080364-5928-2-git-send-email-kan.liang@linux.intel.com>
- <20200106103832.GO2810@hirez.programming.kicks-ass.net>
+        id S1726303AbgAFOb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 09:31:27 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA4A231B;
+        Mon,  6 Jan 2020 06:31:26 -0800 (PST)
+Received: from [192.168.0.7] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8043E3F6C4;
+        Mon,  6 Jan 2020 06:31:25 -0800 (PST)
+Subject: Re: [PATCH] cpu-topology: warn if NUMA configurations conflicts with
+ lower layer
+To:     "Zengtao (B)" <prime.zeng@hisilicon.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Linuxarm <linuxarm@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>
+References: <1577088979-8545-1-git-send-email-prime.zeng@hisilicon.com>
+ <20191231164051.GA4864@bogus>
+ <678F3D1BB717D949B966B68EAEB446ED340AE1D3@dggemm526-mbx.china.huawei.com>
+ <20200102112955.GC4864@bogus>
+ <678F3D1BB717D949B966B68EAEB446ED340AEB67@dggemm526-mbx.china.huawei.com>
+ <c43342d0-7e4d-3be0-0fe1-8d802b0d7065@arm.com>
+ <678F3D1BB717D949B966B68EAEB446ED340AFCA0@dggemm526-mbx.china.huawei.com>
+ <7b375d79-2d3c-422b-27a6-68972fbcbeaf@arm.com>
+ <66943c82-2cfd-351b-7f36-5aefdb196a03@arm.com>
+ <c0e82c31-8ed6-4739-6b01-2594c58df95a@arm.com>
+ <678F3D1BB717D949B966B68EAEB446ED340B3203@dggemm526-mbx.china.huawei.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <51a7d543-e35f-6492-fa51-02828832c154@arm.com>
+Date:   Mon, 6 Jan 2020 15:31:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200106103832.GO2810@hirez.programming.kicks-ass.net>
+In-Reply-To: <678F3D1BB717D949B966B68EAEB446ED340B3203@dggemm526-mbx.china.huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > +	rcu_read_lock();
-> > +	for_each_process_thread(g, p) {
-> > +		mutex_lock(&p->perf_event_mutex);
-> > +		if (p->perf_ctx_data) {
-> > +			/*
-> > +			 * The perf_ctx_data for this thread may has been
-> > +			 * allocated by per-task event.
-> > +			 * Only update refcount for the case.
-> > +			 */
-> > +			refcount_inc(&p->perf_ctx_data->refcount);
-> > +			mutex_unlock(&p->perf_event_mutex);
-> > +			continue;
-> > +		}
-> > +
-> > +		if (pos < num_thread) {
-> > +			refcount_set(&data[pos]->refcount, 1);
-> > +			rcu_assign_pointer(p->perf_ctx_data, data[pos++]);
-> > +		} else {
-> > +			/*
-> > +			 * There may be some new threads created,
-> > +			 * when we allocate space.
-> > +			 * Track the number in nr_new_tasks.
-> > +			 */
-> > +			nr_new_tasks++;
-> > +		}
-> > +		mutex_unlock(&p->perf_event_mutex);
-> > +	}
-> > +	rcu_read_unlock();
-> > +
-> > +	raw_spin_unlock_irqrestore(&task_data_sys_wide_events_lock, flags);
+On 06/01/2020 02:48, Zengtao (B) wrote:
+
+[...]
+
+>> -----Original Message-----
+>> From: Dietmar Eggemann [mailto:dietmar.eggemann@arm.com]
+>> Sent: Saturday, January 04, 2020 1:21 AM
+>> To: Valentin Schneider; Zengtao (B); Sudeep Holla
+>> Cc: Linuxarm; Greg Kroah-Hartman; Rafael J. Wysocki;
+>> linux-kernel@vger.kernel.org; Morten Rasmussen
+>> Subject: Re: [PATCH] cpu-topology: warn if NUMA configurations conflicts
+>> with lower layer
+>>
+>> On 03/01/2020 13:14, Valentin Schneider wrote:
+>>> On 03/01/2020 10:57, Valentin Schneider wrote:
+
+>> Still don't see the actual problem case. The closest I came is:
+>>
+>> qemu-system-aarch64 -kernel ... -append ' ... loglevel=8 sched_debug'
+>> -smp cores=4,sockets=2 ... -numa node,cpus=0-2,nodeid=0
+>> -numa node,cpus=3-7,nodeid=1
+>>
 > 
-> Still NAK. That's some mightly broken code there.
+> It's related to the HW topology, if you hw have got 2 clusters 0~3, 4~7, 
+> with the mainline qemu, you will see the issue.
+> I think you can manually modify the MPIDR parsing to reproduce the 
+> issue.
+> Linux will use the MPIDR to guess the MC topology since currently qemu
+> don't provide it.
+> Refer to: https://patchwork.ozlabs.org/cover/939301/
 
-Yes, Kan you cannot use a mutex (sleeping) inside rcu_read_lock().
-Can perf_event_mutex be a spin lock?
+That makes sense to me. Valentin and I already discussed this setup as a
+possible system where this issue can happen.
 
--Andi
+I already suspected that virt machines only support flat cpu toplogy.
+Good to know. Although I was able to to pass '... -smp cores=8 -dtb
+foo.dtb ...' into mainline qemu to achieve a 2 cluster system (MC and
+DIE sd level) with an extra cpu-map entry in the dts file:
+
+               cpu-map {
+                        cluster0 {
+                                core0 {
+                                        cpu = <&A53_0>;
+                                };
+                                ...
+                        };
+
+                        cluster1 {
+                                core0 {
+                                        cpu = <&A53_4>;
+                                };
+                                ...
+                        };
+                };
+
+But I didn't succeed in combining this with the '... -numa
+node,cpus=0-3,nodeid=0 -numa node,cpus=4-7,nodeid=1 ...' params to
+create a system like yours.
+
+Your issue is related to the 'numa mask check for scheduler MC
+selection' functionality.  It was introduced by commit 37c3ec2d810f and
+re-introduced by commit e67ecf647020 later. I don't know why we need
+this functionality?
+
+How does your setup behave when you revert commit e67ecf647020? Or do
+you want an explicit warning in case of NUMA boundaries not respecting
+physical topology?
