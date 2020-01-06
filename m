@@ -2,159 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95D09130ED4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 09:43:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B39E130EE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 09:46:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbgAFImu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 03:42:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40320 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbgAFImq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 03:42:46 -0500
-Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6381B2467C;
-        Mon,  6 Jan 2020 08:42:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578300165;
-        bh=0EIGPjYZo6FBtZUEJQgirKj6xdjoxrfaE3eT2iKS86s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=unTNw/nHTKzY1uXQZVSWdfnLxW9lfD7nao0e3WVvhzeaa2N4VgILukEnQwHayt+PX
-         zD/ZWIdj9j0IDldXXusntoeJxgHzAgLPoFoMdMQMRqZMus1eDGTr7MFBZpjdZZRN3g
-         fnjF2/nNcPxDeqdtX1sdwfm7m7K+bGZKKX+9mymk=
-Received: by wens.tw (Postfix, from userid 1000)
-        id 73CB35FD7D; Mon,  6 Jan 2020 16:42:41 +0800 (CST)
-From:   Chen-Yu Tsai <wens@kernel.org>
-To:     Maxime Ripard <mripard@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/7] [DO NOT MERGE] ARM: dts: sun8i-r40: bananapi-m2-ultra: Enable OV5640 camera
-Date:   Mon,  6 Jan 2020 16:42:40 +0800
-Message-Id: <20200106084240.1076-8-wens@kernel.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200106084240.1076-1-wens@kernel.org>
-References: <20200106084240.1076-1-wens@kernel.org>
+        id S1726212AbgAFIph (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 03:45:37 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38301 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725446AbgAFIph (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 03:45:37 -0500
+Received: by mail-wr1-f66.google.com with SMTP id y17so48744311wrh.5
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 00:45:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=E+ZsR7Z6Or+Q9BNSYlv8m9k1i0fDEt4sNmLSr2qVLrE=;
+        b=b6EoJUPx4omgCfCytDHI5M/8GKVGW1pS/Q0ukuUb7HkffVkKyEWFhHUwnA4PXQB1m5
+         qAUBj9pMGqUSqG4+z/oaABcxhRaKjqTHoqlJkl1X/pWm++WDEUh6zRHoz2qPVNU28txW
+         kyvLH3wU019LV43vRa1wHHGDYaMIpm0Xt2B1Z2u7WT0FnwzkeDDFea6m2Az5EuZ73VaY
+         iHoRWNHfEGFXf3eWklrzVDg4SX4+I2OI74ZuTK4H7grXGv0dj19Pds60dYhLIqIQme9E
+         zaIZfiYyscy0y1Y3a5N8RLfshXOorElBxVojEvb9ruo0GAXpDWGysJDhxOx6hInEaopG
+         ZPnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=E+ZsR7Z6Or+Q9BNSYlv8m9k1i0fDEt4sNmLSr2qVLrE=;
+        b=c/mjVZmZjGJnbGUr4kwTK+xky21hZWQhQmrti44YJcFsL3mWByJYFNi15S05bHlSG+
+         arZu6yqD93n7XpqxHsqNnQaX0DP3M7t6TJ0k7RN+9/QLkgqiFubKvaRHoKLM6S2HsIJF
+         ZLNZCohrEzBIitg22hYAH4mc7jG1HF69MMl1jGIyRdBtPUcZPOb3gCEdfeqZ7ZMf5lVt
+         OHYh8er9z01NeT5pLk7d1ODdC8SW9X5LEeHNR+cThc+x7RZQ0b2XZohjZFQNNLvWfvUX
+         iFkXEc6g8gOspD4VivmiiEF0NiQBMtKARIbz23Vm7RxboOCbwjnz2K/Fs/BYlXMJSX32
+         8Ndw==
+X-Gm-Message-State: APjAAAVmdQxGsE0wSohvtYcxeQ2u8Z9fxmCe/wwLnGTV7mhX2MLPFuW7
+        eprEUTaTiSdh8908WjSpZEuYNw==
+X-Google-Smtp-Source: APXvYqwxcQQlcWtECdQoOFeMi0PnZaRKIl/UK7OQlM3noxtNGd+dNEVLfF5LUtq5jrb7KMBL2hK+Yg==
+X-Received: by 2002:a05:6000:118e:: with SMTP id g14mr100885486wrx.39.1578300334744;
+        Mon, 06 Jan 2020 00:45:34 -0800 (PST)
+Received: from dell ([2.27.35.135])
+        by smtp.gmail.com with ESMTPSA id q6sm76176240wrx.72.2020.01.06.00.45.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jan 2020 00:45:34 -0800 (PST)
+Date:   Mon, 6 Jan 2020 08:45:49 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org,
+        martin_rysavy@centrum.cz, agx@sigxcpu.org,
+        daniel.thompson@linaro.org, jingoohan1@gmail.com,
+        dri-devel@lists.freedesktop.org, tomi.valkeinen@ti.com,
+        jjhiblot@ti.com
+Subject: Re: LED backlight on Droid 4 and others
+Message-ID: <20200106084549.GA14821@dell>
+References: <20200105183202.GA17784@duo.ucw.cz>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200105183202.GA17784@duo.ucw.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen-Yu Tsai <wens@csie.org>
+On Sun, 05 Jan 2020, Pavel Machek wrote:
 
-Bananapi offers a small OV5640 based camera module, attached via an FPC
-connector.
+> Hi!
+> 
+> It would be good to get LED backlight to work in clean way for 5.6
+> kernel.
+> 
+> As far as I can see, these are neccessary (but not enough; it does not
+> work for me): lm3532 changes to register LED with of node, plus device
+> tree changes for droid 4, and these generic changes:
+> 
+> commit d457d0c97d6d55fe3e62633791ac05d289a37d2e
+> Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Date:   Thu Oct 3 10:28:12 2019 +0200
+> 
+>     backlight: add led-backlight driver
+>     
+>     This patch adds a led-backlight driver (led_bl), which is similar to
+>     pwm_bl except the driver uses a LED class driver to adjust the
+>     brightness in the HW. Multiple LEDs can be used for a single backlight.
+>     
+>     Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+>     Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+>     Acked-by: Pavel Machek <pavel@ucw.cz>
+>     Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+> 
+> commit 44b7adbf0b07904e4198ae1d0a763917d1c68a23
+> Author: Jean-Jacques Hiblot <jjhiblot@ti.com>
+> Date:   Thu Oct 3 10:28:10 2019 +0200
+> 
+>     leds: Add managed API to get a LED from a device driver
+>     
+>     If the LED is acquired by a consumer device with devm_led_get(), it is
+>     automatically released when the device is detached.
+>     
+>     Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+>     Acked-by: Pavel Machek <pavel@ucw.cz>
+>     Signed-off-by: Pavel <pavel@ucw.cz>
+> 
+> commit 93b98c570d7f898063ab6204e1b3950a3335dd12
+> Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Date:   Thu Oct 3 10:28:09 2019 +0200
+> 
+>     leds: Add of_led_get() and led_put()
+>     
+>     This patch adds basic support for a kernel driver to get a LED device.
+>     This will be used by the led-backlight driver.
+>     
+>     Only OF version is implemented for now, and the behavior is similar to
+>     PWM's of_pwm_get() and pwm_put().
+>     
+>     Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+>     Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+>     Acked-by: Pavel Machek <pavel@ucw.cz>
+>     Signed-off-by: Pavel <pavel@ucw.cz>
+> 
+> [If you have an idea what else is needed, it would be welcome; it
+> works for me in development tree but not in tree I'd like to
+> upstream.]
+> 
+> Lee, would you be willing to take "backlight: add led-backlight
+> driver"? Would it help if I got "leds: Add managed API to get a LED
+> from a device driver" and "leds: Add of_led_get() and led_put()" into
+> for_next tree of the LED subsystem?
 
-Add the related regulator constraints, and hook everything up.
+It looks like you have an open question from Tony on v10.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- .../boot/dts/sun8i-r40-bananapi-m2-ultra.dts  | 67 +++++++++++++++++++
- 1 file changed, 67 insertions(+)
+Is that patch orthogonal, or are there depend{ants,encies}?
 
-diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-index 42d62d1ba1dc..86183d40c7af 100644
---- a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-+++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-@@ -113,6 +113,24 @@ &ahci {
- 	status = "okay";
- };
- 
-+&csi0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&csi0_8bits_pins>;
-+	status = "okay";
-+
-+	port {
-+		/* Parallel bus endpoint */
-+		csi0_from_ov5640: endpoint {
-+			remote-endpoint = <&ov5640_to_csi0>;
-+			bus-width = <8>;
-+			hsync-active = <1>; /* Active high */
-+			vsync-active = <1>; /* Active high */
-+			data-active = <1>;  /* Active high */
-+			pclk-sample = <1>;  /* Rising */
-+		};
-+	};
-+};
-+
- &de {
- 	status = "okay";
- };
-@@ -164,6 +182,37 @@ axp22x: pmic@34 {
- 
- #include "axp22x.dtsi"
- 
-+&i2c4 {
-+	status = "okay";
-+
-+	ov5640: camera@3c {
-+		compatible = "ovti,ov5640";
-+		reg = <0x3c>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&csi0_mclk_pin>;
-+		clocks = <&ccu CLK_CSI0_MCLK>;
-+		clock-names = "xclk";
-+
-+		reset-gpios = <&pio 8 7 GPIO_ACTIVE_LOW>; /* PI7 */
-+		powerdown-gpios = <&pio 8 6 GPIO_ACTIVE_HIGH>; /* PI6 */
-+		AVDD-supply = <&reg_aldo1>;
-+		DOVDD-supply = <&reg_eldo1>;
-+		DVDD-supply = <&reg_eldo2>;
-+
-+		port {
-+			ov5640_to_csi0: endpoint {
-+				remote-endpoint = <&csi0_from_ov5640>;
-+				bus-width = <8>;
-+				data-shift = <2>;
-+				hsync-active = <1>; /* Active high */
-+				vsync-active = <1>; /* Active high */
-+				data-active = <1>;  /* Active high */
-+				pclk-sample = <1>;  /* Rising */
-+			};
-+		};
-+	};
-+};
-+
- &mmc0 {
- 	vmmc-supply = <&reg_dcdc1>;
- 	bus-width = <4>;
-@@ -209,6 +258,12 @@ &pio {
- 	vcc-pg-supply = <&reg_dldo1>;
- };
- 
-+&reg_aldo1 {
-+	regulator-name = "csi-avdd";
-+	regulator-min-microvolt = <2800000>;
-+	regulator-max-microvolt = <2800000>;
-+};
-+
- &reg_aldo2 {
- 	regulator-min-microvolt = <2500000>;
- 	regulator-max-microvolt = <2500000>;
-@@ -289,6 +344,18 @@ &reg_dldo4 {
- 	regulator-name = "vdd2v5-sata";
- };
- 
-+&reg_eldo1 {
-+	regulator-name = "csi-iovcc";
-+	regulator-min-microvolt = <2800000>;
-+	regulator-max-microvolt = <2800000>;
-+};
-+
-+&reg_eldo2 {
-+	regulator-name = "csi-dvdd";
-+	regulator-min-microvolt = <1500000>;
-+	regulator-max-microvolt = <1500000>;
-+};
-+
- &reg_eldo3 {
- 	regulator-min-microvolt = <1200000>;
- 	regulator-max-microvolt = <1200000>;
+> It is kind of important as, well, phone without screen looks pretty
+> much dead, and same issue hits Droid 4 and Librem 5 phones at least...
+> 
+> Best regards,
+> 									Pavel
+
+
+
 -- 
-2.24.1
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
