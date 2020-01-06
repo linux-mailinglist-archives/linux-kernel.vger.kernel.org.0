@@ -2,153 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A36FB130C49
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 04:00:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7118C130C50
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 04:03:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727436AbgAFDAp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 22:00:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57186 "EHLO mail.kernel.org"
+        id S1727385AbgAFDDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 22:03:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727307AbgAFDAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 22:00:43 -0500
+        id S1727307AbgAFDDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Jan 2020 22:03:12 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 774D8206F0;
-        Mon,  6 Jan 2020 03:00:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6538820801;
+        Mon,  6 Jan 2020 03:03:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578279642;
-        bh=8YANkl89iwxe3dndcojVuSNVMnw/MSIeyN/ppnKf2jk=;
+        s=default; t=1578279791;
+        bh=CNeeKXcxdQM66JWLklaMOAzOty0uI/w8076uzZzgDRI=;
         h=In-Reply-To:References:Cc:To:Subject:From:Date:From;
-        b=oJZCOjtCELktDjSt6kYgGQPI3DEltjOBAg1lnsZdVUGN1I/FOOROK4fxBkX8dQx4j
-         VkdfHRuvyP/HcLc+meedc2mcaYGW34OKvRwOpQlf+Efkl1CB6ZQrEgNCiSBXWwVfYJ
-         Mr8dQBOTBJZZhTPijB9n4s5PDzg0Xz5VH68ONw9U=
+        b=B8jLcelHLRRSOCy+vJWPw+k53NEYrT9FYA57S9bX/rSFrb1QnF7jiZzenQE97Bki8
+         bmLxQ9wbVrMV+s3MvgbJ7IelLc0T3WRD4sygIpTAo27zyJ0oW184daAwo9vXsqoCR7
+         UJnYZl57w2F4em23l0WDNz1ohcgOJFr4qSBL+IXY=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1577412748-28213-1-git-send-email-Anson.Huang@nxp.com>
-References: <1577412748-28213-1-git-send-email-Anson.Huang@nxp.com>
-Cc:     Linux-imx@nxp.com
-To:     Anson Huang <Anson.Huang@nxp.com>, abel.vesa@nxp.com,
-        bjorn.andersson@linaro.org, catalin.marinas@arm.com,
-        devicetree@vger.kernel.org, dinguyen@kernel.org,
-        festevam@gmail.com, kernel@pengutronix.de, leonard.crestez@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, marcin.juszkiewicz@linaro.org,
-        mark.rutland@arm.com, maxime@cerno.tech, mturquette@baylibre.com,
-        olof@lixom.net, ping.bai@nxp.com, robh+dt@kernel.org,
-        s.hauer@pengutronix.de, shawnguo@kernel.org, will@kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: imx: Add clock binding doc for i.MX8MP
+In-Reply-To: <20191226191224.3785282-3-martin.blumenstingl@googlemail.com>
+References: <20191226191224.3785282-1-martin.blumenstingl@googlemail.com> <20191226191224.3785282-3-martin.blumenstingl@googlemail.com>
+Cc:     narmstrong@baylibre.com, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        jbrunet@baylibre.com, linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH v2 2/2] clk: clarify that clk_set_rate() does updates from top to bottom
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Sun, 05 Jan 2020 19:00:41 -0800
-Message-Id: <20200106030042.774D8206F0@mail.kernel.org>
+Date:   Sun, 05 Jan 2020 19:03:10 -0800
+Message-Id: <20200106030311.6538820801@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Anson Huang (2019-12-26 18:12:26)
-> diff --git a/Documentation/devicetree/bindings/clock/imx8mp-clock.yaml b/=
-Documentation/devicetree/bindings/clock/imx8mp-clock.yaml
-> new file mode 100644
-> index 0000000..5e01995
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/imx8mp-clock.yaml
-> @@ -0,0 +1,112 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/bindings/clock/imx8mp-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP i.MX8M Plus Clock Control Module Binding
-> +
-> +maintainers:
-> +  - Anson Huang <Anson.Huang@nxp.com>
-> +
-> +description: |
-> +  NXP i.MX8M Plus clock control module is an integrated clock controller=
-, which
-> +  generates and supplies to all modules.
-> +
-> +properties:
-> +  compatible:
-> +    const: fsl,imx8mp-ccm
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: 32k osc
-> +      - description: 24m osc
-> +      - description: ext1 clock input
-> +      - description: ext2 clock input
-> +      - description: ext3 clock input
-> +      - description: ext4 clock input
-> +
-> +  clock-names:
-> +    items:
-> +      - const: osc_32k
-> +      - const: osc_24m
-> +      - const: clk_ext1
-> +      - const: clk_ext2
-> +      - const: clk_ext3
-> +      - const: clk_ext4
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +    description: |
+Quoting Martin Blumenstingl (2019-12-26 11:12:24)
+> clk_set_rate() currently starts updating the rate for a clock at the
+> top-most affected clock and then walks down the tree to update the
+> bottom-most affected clock last.
+> This behavior is important for protected clocks where we can switch
+> between multiple parents to achieve the same output.
+>=20
+> An example for this is the mali clock tree on Amlogic SoCs:
+>   mali_0_mux (must not change when enabled)
+>     mali_0_div (must not change when enabled)
+>      mali_0 (gate)
+>   mali_1_mux (must not change when enabled)
+>     mali_1_div (must not change when enabled)
+>       mali_1 (gate)
+> The final output can either use mali_0_gate or mali_1. To change the
+> final output we must switch to the "inactive" tree. Assuming mali_0 is
+> active, then we need to prepare mali_1 with the new desired rate and
+> finally switch the output to the mali_1 tree. This process will then
+> protect the mali_1 tree and at the same time unprotect the mali_0 tree.
+> The next call to clk_set_rate() will then switch from the mali_1 tree
+> back to mali_0.
+>=20
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
 
-I think we can drop the bar here. Newlines shouldn't matter.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-> +      The clock consumer should specify the desired clock by having the =
-clock
-> +      ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx=
-8mp-clock.h
-> +      for the full list of i.MX8M Plus clock IDs.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-> +
-> +examples:
-> +  # Clock Control Module node:
-> +  - |
-> +    clk: clock-controller@30380000 {
-> +        compatible =3D "fsl,imx8mp-ccm";
-> +        reg =3D <0x30380000 0x10000>;
-> +        #clock-cells =3D <1>;
-> +        clocks =3D <&osc_32k>, <&osc_24m>, <&clk_ext1>,
-> +                 <&clk_ext2>, <&clk_ext3>, <&clk_ext4>;
-> +        clock-names =3D "osc_32k", "osc_24m", "clk_ext1",
-> +                      "clk_ext2", "clk_ext3", "clk_ext4";
-> +    };
-> +
-> +  # Required external clocks for Clock Control Module node:
-> +  - |
-> +    osc_32k: clock-osc-32k {
-> +        compatible =3D "fixed-clock";
-> +        #clock-cells =3D <0>;
-> +        clock-frequency =3D <32768>;
-> +        clock-output-names =3D "osc_32k";
-> +    };
-
-Do we need these in the example? They don't seem too useful.
-
-> +
-> +    osc_24m: clock-osc-24m {
-> +        compatible =3D "fixed-clock";
-> +        #clock-cells =3D <0>;
-> +        clock-frequency =3D <24000000>;
-> +        clock-output-names =3D "osc_24m";
-> +    };
-> +
-> +    clk_ext1: clock-ext1 {
-> +        compatible =3D "fixed-clock";
-> +        #clock-cells =3D <0>;
-> +        clock-frequency =3D <133000000>;
