@@ -2,78 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED1CA131C05
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 00:03:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2979131C1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 00:10:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbgAFXC7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 18:02:59 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36670 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726721AbgAFXC6 (ORCPT
+        id S1727244AbgAFXKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 18:10:36 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:43438 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726858AbgAFXKg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 18:02:58 -0500
-Received: by mail-lf1-f65.google.com with SMTP id n12so37500681lfe.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 15:02:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=PoH3a6UFcev6hSnVLUpMXxu6G3cX+06NWDeSI46eOP4=;
-        b=AG+WKiRLIfE4a3Ryt/xpjGAZPcaSQn4bMpbWlqsm88zytaALksIdw8OAY7rkkFI0/9
-         oyY2v8tSO1j1bhxa9ioSRY2Gh0bmKOWJI2dHYpfdL2FzqskvARvVPm1VRp/HP598/MxQ
-         P50damguECiqf30ejikCqgmTc661ItZy+O+JZ6T3mLJZVg5BH3mmyrkGgmYZA44hkyOE
-         IS8ua41bXhtqrkt6enZELSJlgkb5sW7fsNVUK1VxIGL8pS7zoQqQ+D4eTVzWZYCfbsIK
-         SlPqr1xQKaYWY1sAV9HVYIaIfGjlGbySTVvKLIy2O8lW9JYnlkUYohgwcbRid8lZHxbO
-         5X9w==
+        Mon, 6 Jan 2020 18:10:36 -0500
+Received: by mail-yb1-f194.google.com with SMTP id v24so22819995ybd.10
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 15:10:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=PoH3a6UFcev6hSnVLUpMXxu6G3cX+06NWDeSI46eOP4=;
-        b=aAi8vPO/dYEJM7kHw+6AUiumI1Djl37X4rNc3rGdk7KRqPs/XCGDkXtUhWK3pvCC+S
-         2cJVsJKarPRwCZylR6F1lTTZJplxC0tnshAMl1T+/53eF6ulQtSJtAzZ6kmTOF9kmrWT
-         gExL44k2iH+/LF4PExG1kTELKpYJ7+uWeFvlASmGGxdubtqUz4OZUHPgb4k7A7Wkkv+d
-         uIwuwq8Qm3ocvNPA9lCW+ZMVVeSxzFJmeRVgHHbdazp+IlQ0dQMIyeP2nfUiTOV3E+yI
-         rYfguW5OcYxKiy/v5bod/yZTfvhSXkE/IxsvoVdtpOz6dV8K+iJVHiWfWoZegXJqjKR1
-         m0nA==
-X-Gm-Message-State: APjAAAW/hhMxwApOZFRTnJ5CkJ7bx4WbiEMRgNSMkaKaf1QGxbZA8aNN
-        0LjnQzBT8Wquv4rgmbAUEKf6srLpbL8FQuosiUdhYw==
-X-Google-Smtp-Source: APXvYqztDsiEMPzgq8tia4/g2GReO5Rdoxf4kFUrQqstmxXWTvU9bAoWL4HoosBo1RlFHnQrEHEus6Ink0jFQf9inoE=
-X-Received: by 2002:ac2:5c4b:: with SMTP id s11mr57106508lfp.133.1578351776360;
- Mon, 06 Jan 2020 15:02:56 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=t+t1eROLK9g0HiqH07fHsSxCWd48TLqA6FF38j0G2gc=;
+        b=QvPvKfU9KCPWNFecyIg0Zgd2SRgCQNNM9322v8uNUiM4BSiGftwOWv2QoBduUWDbOo
+         g7ihoA9/LixlOfU6XBxwgfgWUPaumBGfjJCou3dqjLO+1MWHTpdiTJnM75UjODHUYBmu
+         2qr686oNqCMY4a0P9A94j5M7Mk1xHj0MjPgpGwyqtblNB3odNFzIrFRUnUn9EHcq6Ug7
+         yNmNxp52CEfzBv/xZ61RWyxdAhUBxEi3bJnxQvQUYsEqchAIqIzK3+QJEY6A22rVCjE5
+         Q2NuRG+R+gdy4qGx5imIe+Dqrwoid1Qr3DIj0drrrvDfIdQLIw+PhnVoI0AE8qty9+wc
+         BHvQ==
+X-Gm-Message-State: APjAAAXe6G4McTBl47JtXRCv1LnpAIXh/IHWwA3cV47K0OoiE8Yc2U32
+        GWl7pRXWJrwK50QnU2qLRRVdm0g=
+X-Google-Smtp-Source: APXvYqysxpj1g8iYldNlywPZQ9sD1f9Pt98LPWbsi6wr6Duo31W0HztGeumerKJ7DKCGgz6AbfRrUQ==
+X-Received: by 2002:a25:c42:: with SMTP id 63mr56039180ybm.375.1578352235164;
+        Mon, 06 Jan 2020 15:10:35 -0800 (PST)
+Received: from rob-hp-laptop ([172.58.110.146])
+        by smtp.gmail.com with ESMTPSA id i127sm28202574ywe.65.2020.01.06.15.10.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jan 2020 15:10:35 -0800 (PST)
+Received: from rob (uid 1000)
+        (envelope-from rob@rob-hp-laptop)
+        id 2209ae
+        by rob-hp-laptop (DragonFly Mail Agent v0.11);
+        Mon, 06 Jan 2020 17:03:01 -0600
+Date:   Mon, 6 Jan 2020 17:03:01 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Rajeshwari <rkambl@codeaurora.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sanm@codeaurora.org, sivaa@codeaurora.org, manaf@codeaurora.org,
+        Rajeshwari <rkambl@codeaurora.org>
+Subject: Re: [PATCH v2 2/2] dt-bindings: thermal: tsens: Add configuration in
+ yaml
+Message-ID: <20200106230301.GA12602@bogus>
+References: <1578317369-16045-1-git-send-email-rkambl@codeaurora.org>
+ <1578317369-16045-3-git-send-email-rkambl@codeaurora.org>
 MIME-Version: 1.0
-References: <20200106015154.12040-1-digetx@gmail.com>
-In-Reply-To: <20200106015154.12040-1-digetx@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 7 Jan 2020 00:02:45 +0100
-Message-ID: <CACRpkdZK7hvqri9NwvWfiittb2+JKJCyutP6MfBZpThJD13CWw@mail.gmail.com>
-Subject: Re: [PATCH v1] gpio: max77620: Add missing dependency on GPIOLIB_IRQCHIP
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1578317369-16045-3-git-send-email-rkambl@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 6, 2020 at 2:52 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+On Mon,  6 Jan 2020 18:59:29 +0530, Rajeshwari wrote:
+> Added configuration in dt-bindings for SC7180.
+> 
+> Signed-off-by: Rajeshwari <rkambl@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-> Driver fails to compile in a minimized kernel's configuration because of
-> the missing dependency on GPIOLIB_IRQCHIP.
->
->  error: =E2=80=98struct gpio_chip=E2=80=99 has no member named =E2=80=98i=
-rq=E2=80=99
->    44 |   virq =3D irq_find_mapping(gpio->gpio_chip.irq.domain, offset);
->
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-
-Patch applied for fixes, thanks!
-
-Yours,
-Linus Walleij
+Acked-by: Rob Herring <robh@kernel.org>
