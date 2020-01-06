@@ -2,91 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85F81131C2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 00:16:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFC27131C35
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 00:19:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbgAFXQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 18:16:20 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41764 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbgAFXQU (ORCPT
+        id S1727280AbgAFXTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 18:19:38 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36917 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726599AbgAFXTg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 18:16:20 -0500
-Received: by mail-pg1-f194.google.com with SMTP id x8so27545526pgk.8
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 15:16:19 -0800 (PST)
+        Mon, 6 Jan 2020 18:19:36 -0500
+Received: by mail-lj1-f196.google.com with SMTP id o13so41273166ljg.4
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 15:19:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TrkNrlsI6gf+UgcIdoDUEX3iqa/Oz0F6ZIOtZxRpg7U=;
-        b=h5aYFg1LHy7RecocWz2pJ8zPdAcz/Zlxf0A90TagTHHfzfgiLT7dDpHo3qzZKG5T7h
-         x6bJ+8DtVgwqQG8oyrM0gdwnUJLKdJybBqYaDsW7IsaXO6CsqpcneYkkRi011gVD/Zsz
-         9t98bw6eht+s2PTB+3QTmsmDwt8fnshoyGsbUiAghLSWmK0QERKfo7CkKuU6f4XN8JtR
-         qN5hg/lchx9eiPOk924DnTRLTxXolWcdAnCmvRJVRpJQCtctjshI1OIAiZukYPFvHeVX
-         8r7YjAUrMbKcFgIX4is99Zkb3FsrbRVEKe0fdyj3WsJ5BnfoEy7Dtb+atpT1zhk6ERzt
-         0lQg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4ifLICUP3yJ2Jc69aKyPrFElbdfNiE/0Qf5WDAsEJ7k=;
+        b=pyrjEmMhzxyrQ1hUcrahOg9m+TH53ZbznItKyNMvrY/fK9J7ew5E739goWY8PcP9KE
+         osp4+WXa6IXcUIoxC6oD/scn2Onhm9/F5WLSauRcFyqPnaJoVvPfFzwD+F5P8GTeBsbs
+         IKj8xSuE8o4iWnYrwVGJXJHOyotZUEfxCkQMHSfKpuSQQzPqiDDzL5OlFx4j1FOnf8l4
+         spxkANE2K6lr2bophpOyTCu3bGpeqx808DpHV/jZSnQMRLbigYYQh4wpTK5LTFz8AmWZ
+         F6FWtkrhW3/4vcP+x1KiWc0xlIsBb724CeRwPedJKwiQ92ZcHTft0Qj0PMSU3GQvHilz
+         fvxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TrkNrlsI6gf+UgcIdoDUEX3iqa/Oz0F6ZIOtZxRpg7U=;
-        b=PxhpFgqOXud7hzlMacL0fPoIuTPrycC97SlM+tJWrDyWgprWFvWKoA6UDzcI/cfG0p
-         MbI/RzOAis/xJHSCa7sN2x6pWjL/rtffFx+wK+76YQZfFFuUcWoO43zZizJhtgC8FYQA
-         vfHqUxUvTfYsv02H7okCKViAX/Zp/HJqYetCr8lIw5/CCih+5hCuaV6sLvRHEcXikJVg
-         n7DiaVcRiseyp1WSTHD87fCmrLFocD6VVMS7s7Z+SHt336gV3ZdANIK/3V8/TENKy/Nl
-         O9Dk+W39sAb6wyHDucucHoBPBpAQZgIjtL4+6t+eghgI14teWlyG+wQj76vJGWF106mH
-         NVUA==
-X-Gm-Message-State: APjAAAUTz1WIVDhxNAilJWBjtuZwpYmiTXksrEcdYZLIedzOViLD4kVi
-        ENE9m0M+MD1dJkM7t4FRfbcP4g==
-X-Google-Smtp-Source: APXvYqziUHnuk5l/Atiw2vj5n2Wz6sjwDTja/WaJs0V1Vh/2LG/VjEj5/h6HlAXT+QuTPWrIOVMPDQ==
-X-Received: by 2002:a63:4c4f:: with SMTP id m15mr112630946pgl.346.1578352579414;
-        Mon, 06 Jan 2020 15:16:19 -0800 (PST)
-Received: from rip.lixom.net (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
-        by smtp.gmail.com with ESMTPSA id s131sm65052995pfs.135.2020.01.06.15.16.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 15:16:18 -0800 (PST)
-From:   Olof Johansson <olof@lixom.net>
-To:     paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
-Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Olof Johansson <olof@lixom.net>
-Subject: [PATCH] riscv: keep 32-bit kernel to 32-bit phys_addr_t
-Date:   Mon,  6 Jan 2020 15:16:11 -0800
-Message-Id: <20200106231611.10169-1-olof@lixom.net>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4ifLICUP3yJ2Jc69aKyPrFElbdfNiE/0Qf5WDAsEJ7k=;
+        b=aQjH0d0W8wH0xF5lIJFJaqyLmJ4cbNNgLNQXppHU2p26hRXDkR3BsZTj5XYG77CH4w
+         WXk6o+Dxs6ztX5lNRWbpC/6s2pt7ZXNL8lUlpfpDjOv0qWAgyxCDRo+iEOyobykqDSOV
+         hzZPMg3pipxqxew94hkMPzzkMePiHpsbryqv/1SfcjkCUpxSxAumH0NlAARwTq8jM9+j
+         kV+AoCz1GaSOZGCgrAqii0ZG9ZT3NkWCERmbd5O9E8GPrQ75ykn5Hs6MG29T5niYqvvh
+         AkFYPDMBjzIn5cpH4M1DKvksdI0TFpZ1EccIAQOGtC555mMm4nGeQ9gGIySjx8bQtsGa
+         aXtQ==
+X-Gm-Message-State: APjAAAVvrb+7/6c4Sl+kjToLJoYbot4LXgPZzj492TgEd7BO0NxAphog
+        rk5uESwcNllF9p7fjFNx5Vh00JX4P+QQHqZrInQVbA==
+X-Google-Smtp-Source: APXvYqxVrJvf9BPRKtKqrWl9CB2TzK8f78daLojWiACCChF+prk4cqTGQs5ip21no8hv5sSnLvVrxbWEWln/dkHJOQk=
+X-Received: by 2002:a2e:86d6:: with SMTP id n22mr50504659ljj.77.1578352774218;
+ Mon, 06 Jan 2020 15:19:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191217121642.28534-1-srinivas.kandagatla@linaro.org> <20191217121642.28534-10-srinivas.kandagatla@linaro.org>
+In-Reply-To: <20191217121642.28534-10-srinivas.kandagatla@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 7 Jan 2020 00:19:23 +0100
+Message-ID: <CACRpkdbQCc3AUgj81JLfzeUDt4XyVWLTzwkhAQS+0PSskL4ggA@mail.gmail.com>
+Subject: Re: [PATCH v5 09/11] gpio: wcd934x: Add support to wcd934x gpio controller
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Vinod Koul <vinod.koul@linaro.org>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        spapothi@codeaurora.org, bgoswami@codeaurora.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While rv32 technically has 34-bit physical addresses, no current
-platforms use it and it's likely to shake out driver bugs.
+On Tue, Dec 17, 2019 at 1:17 PM Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> wrote:
 
-Let's keep 64-bit phys_addr_t off on 32-bit builds until one shows up,
-since other work will be needed to make such a system useful anyway.
+> This patch adds support to wcd934x gpio block found in
+> WCD9340/WC9341 Audio codecs.
+>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Signed-off-by: Olof Johansson <olof@lixom.net>
----
- arch/riscv/Kconfig | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+This looks mostly finished, some minor comments.
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index a31169b02ec06..33a20fa046e0a 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -12,8 +12,9 @@ config 32BIT
- 
- config RISCV
- 	def_bool y
--	# even on 32-bit, physical (and DMA) addresses are > 32-bits
--	select PHYS_ADDR_T_64BIT
-+	# While RV32 has 34-bit physical addresses, no known platform
-+	# uses it, so keep it to 32-bit until one shows up to test with.
-+	select PHYS_ADDR_T_64BIT if 64BIT
- 	select OF
- 	select OF_EARLY_FLATTREE
- 	select OF_IRQ
--- 
-2.20.1
+> +config GPIO_WCD934X
+> +       tristate "Qualcomm Technologies Inc WCD9340/WCD9341 gpio controller driver"
+> +       depends on MFD_WCD934X && OF_GPIO
+> +       select GPIO_GENERIC
 
+You're not using GPIO_GENERIC so select GPIOLIB instead.
+
+> +#include <linux/module.h>
+> +#include <linux/gpio.h>
+
+Don't use this legacy header, use
+<linux/gpio/driver.h>
+
+> +static int wcd_gpio_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev = &pdev->dev;
+> +       struct wcd_gpio_data *data;
+> +       struct gpio_chip *chip;
+> +
+> +       data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +       if (!data)
+> +               return -ENOMEM;
+> +
+> +       data->map = dev_get_regmap(dev->parent, NULL);
+> +       if (!data->map) {
+> +               dev_err(dev, "%s: failed to get regmap\n", __func__);
+> +               return  -EINVAL;
+> +       }
+> +
+> +       chip = &data->chip;
+> +       chip->direction_input  = wcd_gpio_direction_input;
+> +       chip->direction_output = wcd_gpio_direction_output;
+> +       chip->get = wcd_gpio_get;
+> +       chip->set = wcd_gpio_set;
+
+If you can, please implement .get_direction(), see other drivers
+under gpio for examples.
+
+Yours,
+Linus Walleij
