@@ -2,118 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D00351317F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:57:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0526B1317CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:55:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727156AbgAFS41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 13:56:27 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:22592 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726793AbgAFS40 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 13:56:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578336985;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:in-reply-to:
-         references:references:references;
-        bh=DWXFKSOUzkRcgpCgfN3PkqlzQm42xZwQFxY49CXWt+A=;
-        b=YFQfg+kEJ8RJMkegNWz+dx8KVvQ8m1HXy89wtzuebOwuiNiTnY0jKX5vkLE4bPjT3he4Pm
-        g3LUH4LcJ4SQ5/aTkh4L4sLEKQBvio39GPM1RJLyWroix0juZyueaOifd7nvRKjdgtC7Md
-        JCc2swZV/QdY+bm2MKw/H8R9waLdJsk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-268-g7QKIePsM42r8CFLX5OFyg-1; Mon, 06 Jan 2020 13:56:22 -0500
-X-MC-Unique: g7QKIePsM42r8CFLX5OFyg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726789AbgAFSy7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 13:54:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40186 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726719AbgAFSy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 13:54:58 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CEE9B102C867;
-        Mon,  6 Jan 2020 18:56:20 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-34.phx2.redhat.com [10.3.112.34])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D7B165D9E1;
-        Mon,  6 Jan 2020 18:56:15 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netfilter-devel@vger.kernel.org
-Cc:     Paul Moore <paul@paul-moore.com>, sgrubb@redhat.com,
-        omosnace@redhat.com, fw@strlen.de, twoerner@redhat.com,
-        eparis@parisplace.org, ebiederm@xmission.com, tgraf@infradead.org,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghak25 v2 9/9] netfilter: audit table unregister actions
-Date:   Mon,  6 Jan 2020 13:54:10 -0500
-Message-Id: <65974a7254dffe53b5084bedfd60c95a29a41e08.1577830902.git.rgb@redhat.com>
-In-Reply-To: <cover.1577830902.git.rgb@redhat.com>
-References: <cover.1577830902.git.rgb@redhat.com>
-In-Reply-To: <cover.1577830902.git.rgb@redhat.com>
-References: <cover.1577830902.git.rgb@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+        by mail.kernel.org (Postfix) with ESMTPSA id 995EF2070E;
+        Mon,  6 Jan 2020 18:54:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578336897;
+        bh=yVdtCtKT4wuNUclV+dp7A5m3+vWo+hXaOhVzb4vGJZs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=pCkeZrlJvzfB8bumYbfPweUD3s/YmyupadzGUiQCATziose1uTbTNx0S8N+8uhBj3
+         szoeKcBntLiyh7PM7NaZ4//cvaXZZckNRWoHTO3LmLgTXEAuQ9wqlpbn9dew6Kfo7e
+         CYqIQ5U9wQCa5qSsiNt+uP9wnmMOESfiGsdJpOvs=
+Subject: Re: [PATCH v6 linux-kselftest-test 0/6] kunit: support building
+ core/tests as modules
+To:     Alan Maguire <alan.maguire@oracle.com>, brendanhiggins@google.com,
+        linux-kselftest@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com,
+        keescook@chromium.org, yzaikin@google.com,
+        akpm@linux-foundation.org, yamada.masahiro@socionext.com,
+        catalin.marinas@arm.com, joe.lawrence@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, urezki@gmail.com,
+        andriy.shevchenko@linux.intel.com, corbet@lwn.net,
+        davidgow@google.com, adilger.kernel@dilger.ca, tytso@mit.edu,
+        mcgrof@kernel.org, linux-doc@vger.kernel.org,
+        shuah <shuah@kernel.org>
+References: <1575473234-5443-1-git-send-email-alan.maguire@oracle.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <b03a80a8-c887-7d85-4ca5-92446ee28054@kernel.org>
+Date:   Mon, 6 Jan 2020 11:54:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <1575473234-5443-1-git-send-email-alan.maguire@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Audit the action of unregistering ebtables and x_tables.
+Hi Alan,
 
-See: https://github.com/linux-audit/audit-kernel/issues/44
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- kernel/auditsc.c                | 3 ++-
- net/bridge/netfilter/ebtables.c | 3 +++
- net/netfilter/x_tables.c        | 4 +++-
- 3 files changed, 8 insertions(+), 2 deletions(-)
+On 12/4/19 8:27 AM, Alan Maguire wrote:
+> The current kunit execution model is to provide base kunit functionality
+> and tests built-in to the kernel.  The aim of this series is to allow
+> building kunit itself and tests as modules.  This in turn allows a
+> simple form of selective execution; load the module you wish to test.
+> In doing so, kunit itself (if also built as a module) will be loaded as
+> an implicit dependency.
+> 
+> Because this requires a core API modification - if a module delivers
+> multiple suites, they must be declared with the kunit_test_suites()
+> macro - we're proposing this patch set as a candidate to be applied to the
+> test tree before too many kunit consumers appear.  We attempt to deal
+> with existing consumers in patch 3.
+> 
+> Changes since v5:
+>   - fixed fs/ext4/Makefile to remove unneeded conditional compilation
+>     (Iurii, patch 3)
+>   - added Reviewed-by, Acked-by to patches 3, 4, 5 and 6
+> 
 
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 999ac184246b..2644130a9e66 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2557,7 +2557,8 @@ void __audit_nf_cfg(const char *name, u8 af, int nentries, int op)
- 		return;	/* audit_panic or being filtered */
- 	audit_log_format(ab, "table=%s family=%u entries=%u op=%s",
- 			 name, af, nentries,
--			 op ? "replace" : "register");
-+			 op == 1 ? "replace" :
-+				   (op ? "unregister" : "register"));
- 	audit_log_end(ab);
- }
- EXPORT_SYMBOL_GPL(__audit_nf_cfg);
-diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-index baff2f05af43..3dd4eb5b13fd 100644
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -1126,6 +1126,9 @@ static void __ebt_unregister_table(struct net *net, struct ebt_table *table)
- 	mutex_lock(&ebt_mutex);
- 	list_del(&table->list);
- 	mutex_unlock(&ebt_mutex);
-+	if (audit_enabled)
-+		audit_nf_cfg(table->name, AF_BRIDGE, table->private->nentries,
-+			     2);
- 	EBT_ENTRY_ITERATE(table->private->entries, table->private->entries_size,
- 			  ebt_cleanup_entry, net, NULL);
- 	if (table->private->nentries)
-diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
-index 4ae4f7bf8946..e4852a0cb62f 100644
---- a/net/netfilter/x_tables.c
-+++ b/net/netfilter/x_tables.c
-@@ -1403,7 +1403,7 @@ struct xt_table_info *xt_replace_table(struct xt_table *table,
- 
- 	if (audit_enabled)
- 		audit_nf_cfg(table->name, table->af, private->number,
--			     private->number);
-+			     !!private->number);
- 
- 	return private;
- }
-@@ -1466,6 +1466,8 @@ void *xt_unregister_table(struct xt_table *table)
- 	private = table->private;
- 	list_del(&table->list);
- 	mutex_unlock(&xt[table->af].mutex);
-+	if (audit_enabled)
-+		audit_nf_cfg(table->name, table->af, private->number, 2);
- 	kfree(table);
- 
- 	return private;
--- 
-1.8.3.1
+Are you planning to send v7 to address the kbuild issue? I can pull
+them in for 5.6
 
+thanks,
+-- Shuah
