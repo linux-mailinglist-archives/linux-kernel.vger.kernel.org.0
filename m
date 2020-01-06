@@ -2,182 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E3C1130E50
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 09:04:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5324C130E72
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 09:10:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726467AbgAFIEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 03:04:06 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:55964 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbgAFIEF (ORCPT
+        id S1726173AbgAFIKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 03:10:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57478 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725446AbgAFIKa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 03:04:05 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200106080402epoutp0378b44c085e4962f4fba34eb28989bc91~nPYahzXcS1913619136epoutp03v
-        for <linux-kernel@vger.kernel.org>; Mon,  6 Jan 2020 08:04:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200106080402epoutp0378b44c085e4962f4fba34eb28989bc91~nPYahzXcS1913619136epoutp03v
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1578297842;
-        bh=2N1cMzaelT4GEcMOxrpKGVEc7+Kwyhgvo3E3y24uV9s=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=U42Wl4rhHcbYpy4AUCDxQDTcKbttsXGxNncKAmRk8mBcGdhxmtWCcGxce/4+rOQyB
-         w6RmBvt1oLd/R1Sb0jyu+stdFd1bKi/yz92ORug1CdmLtLEldP11QiBV5u0ubWEzTE
-         9Z2QrFo8zKxCRKAUXUw0vDy3CPHFvXDxoT+4XPaA=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20200106080402epcas1p4883f6c266926418496ffcfab59943b32~nPYaCHavV0252602526epcas1p4L;
-        Mon,  6 Jan 2020 08:04:02 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.156]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 47rp1X0qGFzMqYkh; Mon,  6 Jan
-        2020 08:04:00 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        22.5F.48019.0F9E21E5; Mon,  6 Jan 2020 17:04:00 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20200106080359epcas1p43784b28c3abd6d52966fade1144c2a28~nPYXdL6wl0529005290epcas1p4e;
-        Mon,  6 Jan 2020 08:03:59 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200106080359epsmtrp2d3fb29d0a153503d12223a8a6ddebefa~nPYXcXAfe2989729897epsmtrp27;
-        Mon,  6 Jan 2020 08:03:59 +0000 (GMT)
-X-AuditID: b6c32a38-257ff7000001bb93-09-5e12e9f0aeb9
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        11.26.10238.FE9E21E5; Mon,  6 Jan 2020 17:03:59 +0900 (KST)
-Received: from [10.113.221.211] (unknown [10.113.221.211]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200106080359epsmtip297c553803669d2d65d4e8ffd26b760e2~nPYXQlSzV2123521235epsmtip2Z;
-        Mon,  6 Jan 2020 08:03:59 +0000 (GMT)
-Subject: Re: [PATCH v2 14/20] drm/exynos: Rename Exynos to lowercase
-To:     Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-From:   Inki Dae <inki.dae@samsung.com>
-Message-ID: <7a3091c2-c9fe-ba60-cc59-3d812a4407f7@samsung.com>
-Date:   Mon, 6 Jan 2020 17:07:46 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
+        Mon, 6 Jan 2020 03:10:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=4jQT2MzQnGVbRqu0zEK79SsXrd8bqafhR3CZKOJDJAI=; b=ZUDeLbmSrGs+4SbT7pm8/4nX8
+        tDqFDyrJfAWLbNTFH8krQ/jD9CmZo00y/8QCaZP/ZD0ZF0J74oLl6njQxiLOSuXqbifp2mteZIGXj
+        Kv48FYjP11u/tXXxudiu2rB3gBeZb24sS/qIjcM0/Hm6r+qSKpGnI+ABWjvnUJSoElxkky5fLM35H
+        pQGJvDdOd6JNvrZhY/d9wRPC5LwSeEfREX3urIJGZlAVhpTzX2OTUqKnYwEZJ66FhsWaexuXiaK1a
+        kTzHNM5qH4k0+kw6bvh+llV0aCM3NNITchFIeu4CsP76UfMNAxMRZC2Uexhda+koZZrKFhNq/l46d
+        A4PJKUhpw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ioNSx-0008Gk-9a; Mon, 06 Jan 2020 08:10:23 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A8799304124;
+        Mon,  6 Jan 2020 09:08:48 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5F1612B508237; Mon,  6 Jan 2020 09:10:20 +0100 (CET)
+Date:   Mon, 6 Jan 2020 09:10:20 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [RFC PATCH 0/7] sched: Streamline select_task_rq() &
+ select_task_rq_fair()
+Message-ID: <20200106081020.GL2844@hirez.programming.kicks-ass.net>
+References: <20191211164401.5013-1-valentin.schneider@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20200104152107.11407-15-krzk@kernel.org>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEJsWRmVeSWpSXmKPExsWy7bCmvu6Hl0JxBvNvMlv0njvJZPF/20Rm
-        iytf37NZvLh3kcWi//FrZovz5zewW5xtesNusenxNVaLy7vmsFnMOL+PyWLG5JdsDtwee78t
-        YPHYtKqTzWP7twesHve7jzN5bF5S79G3ZRWjx+dNcgHsUdk2GamJKalFCql5yfkpmXnptkre
-        wfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUA3KimUJeaUAoUCEouLlfTtbIryS0tSFTLy
-        i0tslVILUnIKLAv0ihNzi0vz0vWS83OtDA0MjEyBChOyMxY+3sFW8Fi4YuHtQ6wNjD0CXYyc
-        HBICJhIPTjYxdTFycQgJ7GCU+DR3BSNIQkjgE6PE3+0hEIlvjBJPNp9igen4N+sGVMdeRokZ
-        r16xQjjvGSW2b3zIBFIlLOAisbbvJjOILSLgLrHg/xo2kCJmgUtMEnvub2QHSbAJqEpMXHGf
-        DcTmFbCTOPPzAtgKFgEViT9z5wNN5eAQFYiQOP01EaJEUOLkzCdgJZwCZhLHp7WxgtjMAuIS
-        t57MZ4Kw5SWat85mBtklIdDPLvHpdBcrxNkuEmsmLmSGsIUlXh3fwg5hS0l8freXDcKulphw
-        8D8LRHMDo0T30U6oImOJ/UsnM4EcxCygKbF+lz5EWFFi5++5jBCL+STefe0Bu1lCgFeio00I
-        okRJ4tjFG4wQtoTEhSUToVZ5SGx+uIZpAqPiLCSvzULyziwk78xCWLyAkWUVo1hqQXFuemqx
-        YYEJcmxvYgSnXy2LHYx7zvkcYhTgYFTi4WUIFooTYk0sK67MPcQowcGsJMLb6CYYJ8SbklhZ
-        lVqUH19UmpNafIjRFBjwE5mlRJPzgbkhryTe0NTI2NjYwsTQzNTQUEmcl+PHxVghgfTEktTs
-        1NSC1CKYPiYOTqkGxpa5sSkdUkVT2S5KLO+dWhTWIdXRwrclWbtd71SynOff7jN+QqmHnioe
-        nyMfWh126HzG0U2bt9nPmrL37Mt3Jz+W3ebzWlCeGx2eMmvS9ownX0pdPwib7vi78az+jOU6
-        K39qO76P/bVh0fyvvRkPBZWW/91tcfyvuaWCm6mbRNrkN5e/ZtSE7lFiKc5INNRiLipOBAAS
-        rtmL1QMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsWy7bCSvO77l0JxBq8Pylr0njvJZPF/20Rm
-        iytf37NZvLh3kcWi//FrZovz5zewW5xtesNusenxNVaLy7vmsFnMOL+PyWLG5JdsDtwee78t
-        YPHYtKqTzWP7twesHve7jzN5bF5S79G3ZRWjx+dNcgHsUVw2Kak5mWWpRfp2CVwZCx/vYCt4
-        LFyx8PYh1gbGHoEuRk4OCQETiX+zbjB1MXJxCAnsZpR4evAJSxcjB1BCQmLLVg4IU1ji8OFi
-        iJK3jBLbt09kA+kVFnCRWNt3kxnEFhFwl1jwfw0bSBGzwBUmiTPP9oIlhAS2MEqs+sYPYrMJ
-        qEpMXHEfrJlXwE7izM8LLCA2i4CKxJ+581lBbFGBCInn228wQtQISpyc+QSshlPATOL4tDaw
-        GmYBdYk/8y4xQ9jiEreezGeCsOUlmrfOZp7AKDQLSfssJC2zkLTMQtKygJFlFaNkakFxbnpu
-        sWGBYV5quV5xYm5xaV66XnJ+7iZGcLxpae5gvLwk/hCjAAejEg/vigChOCHWxLLiytxDjBIc
-        zEoivI1ugnFCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeZ/mHYsUEkhPLEnNTk0tSC2CyTJxcEoB
-        o2NGgeLEpLnxmb75kY5z/vWIv/ig8dOee/LuZ712mrODrmcsXGvKeSmium//BvPUQKV39no5
-        r3O3+nQ2/Uj7uDCvcM+/zpxtbyes41jZV3G62fYld11kwOa+jJvNn/fG+Bu+LDrB2HN7YsAR
-        viVTmgXPaKpeM0q58zh74aeePas+shuxVxzjUWIpzkg01GIuKk4EAGaSPeazAgAA
-X-CMS-MailID: 20200106080359epcas1p43784b28c3abd6d52966fade1144c2a28
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200104152253epcas1p121c2069ac4e57679d6012e0a5e7a5002
-References: <20200104152107.11407-1-krzk@kernel.org>
-        <CGME20200104152253epcas1p121c2069ac4e57679d6012e0a5e7a5002@epcas1p1.samsung.com>
-        <20200104152107.11407-15-krzk@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191211164401.5013-1-valentin.schneider@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
+On Wed, Dec 11, 2019 at 04:43:54PM +0000, Valentin Schneider wrote:
+> Discussion points
+> =================
+> 
+> The use of SD_LOAD_BALANCE forced me to do a few ugly things.
+> 
+> Patch 5 is only required because the domain walk in select_task_rq_fair()
+> is ceiled by the presence of SD_LOAD_BALANCE. Thing is (I also ramble about
+> this in the changelog of patch 7) AFAIK this flag is set unconditionally in
+> sd_init() and the only way to clear it is via the sched_domain sysctl,
+> which is a SCHED_DEBUG interface. I haven't found anything with cpusets
+> that would clear it; AFAICT cpusets can end up attaching the NULL domain to
+> some CPUs (with sched_load_balance=0) but that's as far as this goes:
 
-20. 1. 5. 오전 12:21에 Krzysztof Kozlowski 이(가) 쓴 글:
-> Fix up inconsistent usage of upper and lowercase letters in "Exynos"
-> name.
-> 
-> "EXYNOS" is not an abbreviation but a regular trademarked name.
-> Therefore it should be written with lowercase letters starting with
-> capital letter.
-> 
-> The lowercase "Exynos" name is promoted by its manufacturer Samsung
-> Electronics Co., Ltd., in advertisement materials and on website.
+I can't find it in a hurry, but cpusets should really be able to build
+stuff without LOAD_BALANCe on, otherwise it is broken.
 
-Making sense so picked it up now.
+/me digs a little into the code and finds that. no, you're right. What
+cpusets does is create non-overlapping domain trees for each parition.
+Which avoids the need to clear that flag.
 
-Thanks,
-Inki Dae
-
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/gpu/drm/exynos/Kconfig | 6 +++---
->  include/uapi/drm/exynos_drm.h  | 2 +-
->  2 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-> index 6f7d3b3b3628..6417f374b923 100644
-> --- a/drivers/gpu/drm/exynos/Kconfig
-> +++ b/drivers/gpu/drm/exynos/Kconfig
-> @@ -1,13 +1,13 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  config DRM_EXYNOS
-> -	tristate "DRM Support for Samsung SoC EXYNOS Series"
-> +	tristate "DRM Support for Samsung SoC Exynos Series"
->  	depends on OF && DRM && (ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || ARCH_MULTIPLATFORM || COMPILE_TEST)
->  	depends on MMU
->  	select DRM_KMS_HELPER
->  	select VIDEOMODE_HELPERS
->  	select SND_SOC_HDMI_CODEC if SND_SOC
->  	help
-> -	  Choose this option if you have a Samsung SoC EXYNOS chipset.
-> +	  Choose this option if you have a Samsung SoC Exynos chipset.
->  	  If M is selected the module will be called exynosdrm.
->  
->  if DRM_EXYNOS
-> @@ -62,7 +62,7 @@ config DRM_EXYNOS_DSI
->  	  This enables support for Exynos MIPI-DSI device.
->  
->  config DRM_EXYNOS_DP
-> -	bool "EXYNOS specific extensions for Analogix DP driver"
-> +	bool "Exynos specific extensions for Analogix DP driver"
->  	depends on DRM_EXYNOS_FIMD || DRM_EXYNOS7_DECON
->  	select DRM_ANALOGIX_DP
->  	default DRM_EXYNOS
-> diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
-> index 45c6582b3df3..a51aa1c618c1 100644
-> --- a/include/uapi/drm/exynos_drm.h
-> +++ b/include/uapi/drm/exynos_drm.h
-> @@ -394,7 +394,7 @@ struct drm_exynos_ioctl_ipp_commit {
->  #define DRM_IOCTL_EXYNOS_IPP_COMMIT		DRM_IOWR(DRM_COMMAND_BASE + \
->  		DRM_EXYNOS_IPP_COMMIT, struct drm_exynos_ioctl_ipp_commit)
->  
-> -/* EXYNOS specific events */
-> +/* Exynos specific events */
->  #define DRM_EXYNOS_G2D_EVENT		0x80000000
->  #define DRM_EXYNOS_IPP_EVENT		0x80000002
->  
-> 
+Hmmm.. if we double check all that, I don't suppose there is anything
+against simply removing that flag. Less is more etc..
