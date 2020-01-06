@@ -2,105 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C15DF1317F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:58:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0A421317FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:58:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbgAFS4k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 13:56:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726690AbgAFS4k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 13:56:40 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726773AbgAFS62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 13:58:28 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:35892 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726569AbgAFS61 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 13:58:27 -0500
+Received: from localhost (unknown [IPv6:2610:98:8005::147])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1310B2072A;
-        Mon,  6 Jan 2020 18:56:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578336999;
-        bh=B/kWhHx1btx8ugLNBM9UY7cdDolaEByVRoHh+OX9Nx4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=wFB5cCk6ZBpaS/EqqKbo5pIKR+rsp94ZcY9zSFOsbabe5bOQG+RPLOjinJj9CYhfV
-         zGVAr6t+miSuHWR62tfbt/nFiaAwYJuehtQup86EKEFGyMfGOoWEStJnsT45bwEcEe
-         +VnUJX0LWJM/pNqWLI5ivdY70s4gznekvt1E2byc=
-Subject: Re: [PATCH v6 linux-kselftest-test 3/6] kunit: allow kunit tests to
- be loaded as a module
-To:     Alan Maguire <alan.maguire@oracle.com>,
-        kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, brendanhiggins@google.com,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kunit-dev@googlegroups.com, keescook@chromium.org,
-        yzaikin@google.com, akpm@linux-foundation.org,
-        yamada.masahiro@socionext.com, catalin.marinas@arm.com,
-        joe.lawrence@redhat.com, penguin-kernel@i-love.sakura.ne.jp,
-        urezki@gmail.com, andriy.shevchenko@linux.intel.com,
-        corbet@lwn.net, davidgow@google.com, adilger.kernel@dilger.ca,
-        tytso@mit.edu, mcgrof@kernel.org, linux-doc@vger.kernel.org,
-        Knut Omang <knut.omang@oracle.com>, shuah <shuah@kernel.org>
-References: <1575473234-5443-4-git-send-email-alan.maguire@oracle.com>
- <201912190658.JKOfMs2i%lkp@intel.com>
- <alpine.LRH.2.20.1912191424440.27984@dhcp-10-175-218-218.vpn.oracle.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <5671f077-d2ed-2e26-7588-29d1e4b8123e@kernel.org>
-Date:   Mon, 6 Jan 2020 11:56:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        (Authenticated sender: krisman)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 1EA22291166;
+        Mon,  6 Jan 2020 18:58:26 +0000 (GMT)
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     gregkh@linuxfoundation.org
+Cc:     rafael@kernel.org, lduncan@suse.com, cleech@redhat.com,
+        jejb@linux.ibm.com, martin.petersen@oracle.com,
+        open-iscsi@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel@collabora.com
+Subject: [PATCH 0/3] drivers base: transport component error propagation
+Date:   Mon,  6 Jan 2020 13:58:14 -0500
+Message-Id: <20200106185817.640331-1-krisman@collabora.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.20.1912191424440.27984@dhcp-10-175-218-218.vpn.oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/19/19 7:28 AM, Alan Maguire wrote:
-> On Thu, 19 Dec 2019, kbuild test robot wrote:
-> 
->> Hi Alan,
->>
->> Thank you for the patch! Yet something to improve:
->>
->> [auto build test ERROR on linus/master]
->> [also build test ERROR on linux/master v5.5-rc2 next-20191218]
->> [cannot apply to ext4/dev]
->> [if your patch is applied to the wrong git tree, please drop us a note to help
->> improve the system. BTW, we also suggest to use '--base' option to specify the
->> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
->>
->> url:    https://github.com/0day-ci/linux/commits/Alan-Maguire/kunit-support-building-core-tests-as-modules/20191207-021244
->> base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git b0d4beaa5a4b7d31070c41c2e50740304a3f1138
->> config: x86_64-randconfig-e002-20191218 (attached as .config)
->> compiler: gcc-7 (Debian 7.5.0-1) 7.5.0
->> reproduce:
->>          # save the attached .config to linux build tree
->>          make ARCH=x86_64
->>
->> If you fix the issue, kindly add following tag
->> Reported-by: kbuild test robot <lkp@intel.com>
->>
->> All errors (new ones prefixed by >>):
->>
->>     drivers/base/power/qos-test.c:117:1: warning: data definition has no type or storage class
->>      kunit_test_suite(pm_qos_test_module);
->>      ^~~~~~~~~~~~~~~~
-> 
-> I hadn't thought about the possibility that other trees
-> would have added kunit tests in the interim; it probably
-> makes most sense to not retire the kunit_test_suite()
-> definition (it can be trivially defined via kunit_test_suites().
-> Converting the test suite isn't an option as it's not in
-> the kselftest-test tree.
-> 
-> I'll spin up a v7 patchset with that 1-line change to patch 3
-> as I don't _think_ these changes have been pulled in yet.
-> 
+Hi,
 
+This small series improves error propagation on the transport component
+to prevent an inconsistent state in the iscsi module.  The bug that
+motivated this patch results in a hanging iscsi connection that cannot
+be used or removed by userspace, since the session is in an inconsistent
+state.
 
-Alan,
+That said, I tested it using the TCP iscsi transport (and forcing errors
+on the triggered function), which doesn't require a particularly complex
+container structure, so it is not the best test for finding corner cases
+on the atomic attribute_container_device trigger version.
 
-Please do send v7. I will pull it for 5.6.
+Please let me know what you think.
 
-thanks,
--- Shuah
+Gabriel Krisman Bertazi (3):
+  drivers: base: Support atomic version of
+    attribute_container_device_trigger
+  drivers: base: Propagate errors through the transport component
+  iscsi: Fail session and connection on transport registration failure
+
+ drivers/base/attribute_container.c  | 103 ++++++++++++++++++++++++++++
+ drivers/base/transport_class.c      |  11 ++-
+ drivers/scsi/scsi_transport_iscsi.c |  18 ++++-
+ include/linux/attribute_container.h |   7 ++
+ include/linux/transport_class.h     |   6 +-
+ 5 files changed, 137 insertions(+), 8 deletions(-)
+
+-- 
+2.24.1
+
