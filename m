@@ -2,126 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE66F131681
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 18:09:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7991213169A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 18:19:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbgAFRJt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 12:09:49 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:45473 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbgAFRJt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 12:09:49 -0500
-X-Originating-IP: 93.34.114.233
-Received: from uno.localdomain (93-34-114-233.ip49.fastwebnet.it [93.34.114.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 93514C000D;
-        Mon,  6 Jan 2020 17:09:44 +0000 (UTC)
-Date:   Mon, 6 Jan 2020 18:12:09 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH v2 2/3] ARM: dts: imx6qdl-icore-1.5: Remove duplicate phy
- reset methods
-Message-ID: <20200106171209.bkberpu4it5qo6qj@uno.localdomain>
-References: <20191230120021.32630-1-jagan@amarulasolutions.com>
- <20191230120021.32630-2-jagan@amarulasolutions.com>
+        id S1726668AbgAFRTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 12:19:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726526AbgAFRTB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 12:19:01 -0500
+Received: from localhost (c-67-164-102-47.hsd1.ca.comcast.net [67.164.102.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 728B420715;
+        Mon,  6 Jan 2020 17:18:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578331140;
+        bh=N4PyN/ioMxd3f4CHCcX1fBkgPLk3L3vfRcqZXGCf8RY=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=cXduWxmAnxmAWU+Be8dJklvJXJp2oMHir6bdtrEv4Fwteh29LQqkUPXJrQdp7MmFI
+         LyNyn5AajDUcvvQ71zsBXr7megMtaKNtQLY7lxFbOY2kX68djp+bMVoHInuvY5ZRJV
+         EXL6FiABUErJtEpNG7I2bz6x8X+1KhyrhtM5fy+g=
+Date:   Mon, 6 Jan 2020 09:18:54 -0800 (PST)
+From:   Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@sstabellini-ThinkPad-T480s
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>
+cc:     jmorris@namei.org, sashal@kernel.org, linux-kernel@vger.kernel.org,
+        catalin.marinas@arm.com, will@kernel.org, steve.capper@arm.com,
+        linux-arm-kernel@lists.infradead.org, maz@kernel.org,
+        james.morse@arm.com, vladimir.murzin@arm.com, mark.rutland@arm.com,
+        tglx@linutronix.de, gregkh@linuxfoundation.org,
+        allison@lohutok.net, info@metux.net, alexios.zavras@intel.com,
+        sstabellini@kernel.org, boris.ostrovsky@oracle.com,
+        jgross@suse.com, stefan@agner.ch, yamada.masahiro@socionext.com,
+        xen-devel@lists.xenproject.org, linux@armlinux.org.uk,
+        andrew.cooper3@citrix.com, julien@xen.org
+Subject: Re: [PATCH v5 1/6] arm/arm64/xen: hypercall.h add includes guards
+In-Reply-To: <20200102211357.8042-2-pasha.tatashin@soleen.com>
+Message-ID: <alpine.DEB.2.21.2001060918470.732@sstabellini-ThinkPad-T480s>
+References: <20200102211357.8042-1-pasha.tatashin@soleen.com> <20200102211357.8042-2-pasha.tatashin@soleen.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="u75eg3etc6nba3gs"
-Content-Disposition: inline
-In-Reply-To: <20191230120021.32630-2-jagan@amarulasolutions.com>
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 2 Jan 2020, Pavel Tatashin wrote:
+> The arm and arm64 versions of hypercall.h are missing the include
+> guards. This is needed because C inlines for privcmd_call are going to
+> be added to the files.
+> 
+> Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+> Reviewed-by: Julien Grall <julien@xen.org>
 
---u75eg3etc6nba3gs
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-Hi Jagan,
-   small detail, this should come -after= 3/3 in the series, am I
-   wrong ?
-
-On Mon, Dec 30, 2019 at 05:30:20PM +0530, Jagan Teki wrote:
-> From: Michael Trimarchi <michael@amarulasolutions.com>
->
-> Engicam i.CoreM6 1.5 Quad/Dual MIPI dtsi is reusing fec node
-> from Engicam i.CoreM6 dtsi but have sampe copy of phy-reset-gpio
-> and phy-mode properties.
->
-> So, drop this phy reset methods from imx6qdl-icore-1.5 dsti file.
->
-> Cc: Jacopo Mondi <jacopo@jmondi.org>
-> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-
-Anyway, I've tested on my iCore 1.5 Quad starter kit and things are
-still working.
-
-Pending acceptance of 3/3, which seem correct to me but I cannot
-really judge knowing very few things about net:
-
-Tested-by: Jacopo Mondi <jacopo@jmondi.org>
-
-Thanks
-   j
+Acked-by: Stefano Stabellini <sstabellini@kernel.org>
 
 > ---
-> Changes for v2:
-> - new patch.
->
->  arch/arm/boot/dts/imx6qdl-icore-1.5.dtsi | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/imx6qdl-icore-1.5.dtsi b/arch/arm/boot/dts/imx6qdl-icore-1.5.dtsi
-> index d91d46b5898f..0fd7f2e24d9c 100644
-> --- a/arch/arm/boot/dts/imx6qdl-icore-1.5.dtsi
-> +++ b/arch/arm/boot/dts/imx6qdl-icore-1.5.dtsi
-> @@ -25,10 +25,8 @@
->  &fec {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_enet>;
-> -	phy-reset-gpios = <&gpio7 12 GPIO_ACTIVE_LOW>;
->  	clocks = <&clks IMX6QDL_CLK_ENET>,
->  		 <&clks IMX6QDL_CLK_ENET>,
->  		 <&clks IMX6QDL_CLK_ENET_REF>;
-> -	phy-mode = "rmii";
->  	status = "okay";
->  };
-> --
-> 2.18.0.321.gffc6fa0e3
->
-
---u75eg3etc6nba3gs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl4TamkACgkQcjQGjxah
-VjydUhAAhZ1rpFfpJEhocX9PC/9nhJAgmt1D+IOAudsNBlc41dVfVL/QWHzL0Fkl
-x2SAuFR0UuYRlXWddg0XlbF3WzYgiiNS4eHcoSlK9v9d2KIXo5NrFLJ18xRoont9
-fyD6bwDc7R4ZITur+r8OXfd/mIs8Gj5NTQv/AcKsS94siZGzrhGxxIdSWdkaliZq
-XwIsVRf1q9jNifFvUIDFDUGuEYLm9NYY8uOWSvA0Pj0ZOTkCgrOvMmcAUy69+uUq
-Sqznbj28XP2daw4n9PZ+1rj2Nluiou/SbGpeAq5qoEe+O+ZAPO+++eVroRKQt2q7
-kDEM3FZ8sUiyfKchp+iqZK9qAdFbCldvzhy4xeZFdCBQnNKHOn8obq0DlfUoXMYl
-pf/h4cusUeF8Ip4EL1G9yJDCmqrUsZ0bBma4fI17TjHfNQBed1KpjM+F66lL00m1
-gFOSKICn4CUQUSVqK0nPJ96ZEHObKVQbL+SQdJoPRcwjaTCGjXWZIaLJ5iWsgO05
-NOA//juKke2Lv8IslxD0fA3dhMj8ws3MI0N1q2rI06XX9+lwmUrlU00awWazPLgd
-Fz2Av+sxAi+aWIt+4X4tYH9IjFE0qn1d7yZFqBjQGQHQg4S9xn6sRs4rD/Dcf2BN
-rXDGW5/tIo+z4lcR0cpRusLAlHwYHvxKYzB+u795bdIKwS44gdI=
-=Qc8J
------END PGP SIGNATURE-----
-
---u75eg3etc6nba3gs--
+>  arch/arm/include/asm/xen/hypercall.h   | 4 ++++
+>  arch/arm64/include/asm/xen/hypercall.h | 4 ++++
+>  include/xen/arm/hypercall.h            | 6 +++---
+>  3 files changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/xen/hypercall.h b/arch/arm/include/asm/xen/hypercall.h
+> index 3522cbaed316..c6882bba5284 100644
+> --- a/arch/arm/include/asm/xen/hypercall.h
+> +++ b/arch/arm/include/asm/xen/hypercall.h
+> @@ -1 +1,5 @@
+> +#ifndef _ASM_ARM_XEN_HYPERCALL_H
+> +#define _ASM_ARM_XEN_HYPERCALL_H
+>  #include <xen/arm/hypercall.h>
+> +
+> +#endif /* _ASM_ARM_XEN_HYPERCALL_H */
+> diff --git a/arch/arm64/include/asm/xen/hypercall.h b/arch/arm64/include/asm/xen/hypercall.h
+> index 3522cbaed316..c3198f9ccd2e 100644
+> --- a/arch/arm64/include/asm/xen/hypercall.h
+> +++ b/arch/arm64/include/asm/xen/hypercall.h
+> @@ -1 +1,5 @@
+> +#ifndef _ASM_ARM64_XEN_HYPERCALL_H
+> +#define _ASM_ARM64_XEN_HYPERCALL_H
+>  #include <xen/arm/hypercall.h>
+> +
+> +#endif /* _ASM_ARM64_XEN_HYPERCALL_H */
+> diff --git a/include/xen/arm/hypercall.h b/include/xen/arm/hypercall.h
+> index b40485e54d80..babcc08af965 100644
+> --- a/include/xen/arm/hypercall.h
+> +++ b/include/xen/arm/hypercall.h
+> @@ -30,8 +30,8 @@
+>   * IN THE SOFTWARE.
+>   */
+>  
+> -#ifndef _ASM_ARM_XEN_HYPERCALL_H
+> -#define _ASM_ARM_XEN_HYPERCALL_H
+> +#ifndef _ARM_XEN_HYPERCALL_H
+> +#define _ARM_XEN_HYPERCALL_H
+>  
+>  #include <linux/bug.h>
+>  
+> @@ -88,4 +88,4 @@ MULTI_mmu_update(struct multicall_entry *mcl, struct mmu_update *req,
+>  	BUG();
+>  }
+>  
+> -#endif /* _ASM_ARM_XEN_HYPERCALL_H */
+> +#endif /* _ARM_XEN_HYPERCALL_H */
+> -- 
+> 2.17.1
+> 
