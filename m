@@ -2,47 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5261913156C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 16:51:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 503F6131571
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 16:52:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbgAFPv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 10:51:27 -0500
-Received: from gentwo.org ([3.19.106.255]:48330 "EHLO gentwo.org"
+        id S1726778AbgAFPwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 10:52:16 -0500
+Received: from honk.sigxcpu.org ([24.134.29.49]:41292 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726477AbgAFPv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 10:51:27 -0500
-Received: by gentwo.org (Postfix, from userid 1002)
-        id 8092B3F875; Mon,  6 Jan 2020 15:51:26 +0000 (UTC)
+        id S1726508AbgAFPwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 10:52:16 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by gentwo.org (Postfix) with ESMTP id 7F9463E89B;
-        Mon,  6 Jan 2020 15:51:26 +0000 (UTC)
-Date:   Mon, 6 Jan 2020 15:51:26 +0000 (UTC)
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@www.lameter.com
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: SLUB: purpose of sysfs events on cache creation/removal
-In-Reply-To: <20200106115733.GH12699@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.21.2001061550270.23163@www.lameter.com>
-References: <20191126165420.GL20912@dhcp22.suse.cz> <alpine.DEB.2.21.1911271535560.16935@www.lameter.com> <20191127162400.GT20912@dhcp22.suse.cz> <alpine.DEB.2.21.1911271625110.17727@www.lameter.com> <20191127174317.GD26807@dhcp22.suse.cz>
- <20191204132812.GF25242@dhcp22.suse.cz> <alpine.DEB.2.21.1912041524290.18825@www.lameter.com> <20191204153225.GM25242@dhcp22.suse.cz> <alpine.DEB.2.21.1912041652410.29709@www.lameter.com> <20191204173224.GN25242@dhcp22.suse.cz>
- <20200106115733.GH12699@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        by honk.sigxcpu.org (Postfix) with ESMTP id 4A4D1FB03;
+        Mon,  6 Jan 2020 16:52:13 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id sImuiCrcHRMc; Mon,  6 Jan 2020 16:52:11 +0100 (CET)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id 7681549D3D; Mon,  6 Jan 2020 16:52:11 +0100 (CET)
+Date:   Mon, 6 Jan 2020 16:52:11 +0100
+From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the leds tree
+Message-ID: <20200106155211.GA30225@bogon.m.sigxcpu.org>
+References: <20200106142116.538320e1@canb.auug.org.au>
+ <20200106093129.GA13043@bogon.m.sigxcpu.org>
+ <20200106103233.GA32426@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200106103233.GA32426@amd>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 6 Jan 2020, Michal Hocko wrote:
+Hi,
+On Mon, Jan 06, 2020 at 11:32:33AM +0100, Pavel Machek wrote:
+> Hi!
+> 
+> > > After merging the leds tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > > 
+> > > drivers/leds/leds-lm3692x.c: In function 'lm3692x_max_brightness':
+> > > drivers/leds/leds-lm3692x.c:355:9: error: 'struct lm3692x_led' has no member named 'brightness_ctrl'
+> > >   355 |  if (led->brightness_ctrl & LM3692X_MAP_MODE_EXP) {
+> > >       |         ^~
+> > 
+> > That's a result of a patch from the mid of the series not being applied.
+> > 'leds: lm3692x: Allow to configure brigthness mode' introduces that
+> > struct member.
+> > 
+> > > drivers/leds/leds-lm3692x.c: In function 'lm3692x_probe_dt':
+> > > drivers/leds/leds-lm3692x.c:437:61: error: 'max_cur' undeclared (first use in this function)
+> > >   437 |  ret = fwnode_property_read_u32(child, "led-max-microamp", &max_cur);
+> > >       |                                                             ^~~~~~~
+> > 
+> > That somehow got lost during merge of this commit:
+> > 
+> >     https://lore.kernel.org/linux-leds/5826b77d42521595e93d01d53475a8881cad1875.1578134779.git.agx@sigxcpu.org/T/#u
+> > 
+> > Pavel, shall i send a patch to fix that up or should we rather try to
+> > get the rest of the series in in the right order? Resetting linux-next
+> > back to cffd61a5c7755546154539dcd7f36590e91e002f for the moment?
+> 
+> I kept just three patches from the series, and pushed the result.
+> 
+> Could I get the rest of the series, minus the "exponential" stuff, on
+> top of that?
+> 
+> Sorry for the confusion,
 
-> On Wed 04-12-19 18:32:24, Michal Hocko wrote:
-> > [Cc akpm - the email thread starts
-> > http://lkml.kernel.org/r/20191126121901.GE20912@dhcp22.suse.cz]
->
-> ping.
+No problem, reshuffling stuff turned out to be simpler than expected:
 
-There does not seem to be much of an interest in the patch?
+     https://lore.kernel.org/linux-leds/cover.1578324703.git.agx@sigxcpu.org/T/#mbbbaabea8ebaba1f864d8a4211d9bcac780261aa
+
+If you don't want the exponential mode setting just omit 5/6 and
+6/6.
+
+Cheers,
+ -- Guido
+
+> 
+> 									Pavel
+> -- 
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+
 
