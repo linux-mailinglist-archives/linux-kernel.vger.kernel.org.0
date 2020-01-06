@@ -2,103 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8861213189A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 20:20:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7C49131885
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 20:20:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727198AbgAFTTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 14:19:33 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39147 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727035AbgAFTTU (ORCPT
+        id S1726734AbgAFTTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 14:19:10 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37855 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726569AbgAFTTK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 14:19:20 -0500
-Received: by mail-wr1-f66.google.com with SMTP id y11so50971484wrt.6;
-        Mon, 06 Jan 2020 11:19:18 -0800 (PST)
+        Mon, 6 Jan 2020 14:19:10 -0500
+Received: by mail-pf1-f193.google.com with SMTP id p14so27375826pfn.4;
+        Mon, 06 Jan 2020 11:19:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vGg3ZTA0AdAyTlCUXvBOcxXYMS9l69TXZtzSDH3ov8s=;
-        b=XeOWgz299BHP2DP1j1E1lK2HGTUOUZ94xHwxWj1f8/4DEmDtRvuHel4fljRhCdDwjO
-         MV4Qf39yQ1Ku791UG4WyFHN9TN0IMVlDWvVGozIFe8SL0QGEffsK5iKWP1qDuWkF5v0q
-         SJlED1oWHLiNmpYP8DWJ7+52XW3RA5nAMKBRAvGdRAnjELMXA2olTrMgscE2zAI4mk+G
-         +aZfXlvS8tiJEiIjs4v/OWS66OjG8KHXovBajwf7xUyKsmmOzu2VWOCP8XwTOIaPU0UI
-         I1/0IS6lLBeHrKnHnNWDLj5FIqvfarAmHbYSoYOkJXicNvfYBH+AryuPMatDlAGWFReX
-         7nRQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=heHz5wZuzXTdBGUmx/YHIf/45oIB7A91VueQZsvfKjE=;
+        b=DnXpGput7gtpmON1fqiLnDOfVc681O5mWoaNZbQ/Tnw7QOg9aVfdryzL2FcP+EPQod
+         iVOpopUdj8aB4pFwFJAtZRGfwLajTUF/yvCwusWMiU5Q5Nz7r3gTH63KRIJFVYOoWMM2
+         O+pXWl0V2STFGnS7TXo0Tp1yHSh522djSrsWOQsmTT5k2m0YscarL9uJe88lTTX2ZgEy
+         NWdGx6KE0FqHKLCwrzrlG6yGEFQ7YYfchb1fYr9+cETIs5vWVPK/7o6D6gO/0MNCLzxJ
+         TT7pba2ntof5WGShFaOdIhiTmLNf4d/xJoWK0CFY7MSJH7I1Au+EZNNoMM4aHXGL0gsh
+         NTsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=vGg3ZTA0AdAyTlCUXvBOcxXYMS9l69TXZtzSDH3ov8s=;
-        b=tGaHm+C+hLSXQXDVJisk8DEdXNuPmUlggyp6mmGjzl42VArG3K81SZMMhWUdE5WHFN
-         qAWITCX0bcgP9V1ydIohaH2lyLTd/PhPakzHBaHKlgY2hnE/Pm0IB07NM0K8SreSQFWo
-         k3j28/INTx9KGkIvSplaS3NmxLBU0xVZvtzarhaXYmnp/SK+OIO/r1AdEntc/Qt5jL51
-         +iRXC+JXcsbt6YtkyMqHAr5FnT4VWLhGzMi8jOk2eSuC0RIAVn3kyjCOYwi0b9HWfyla
-         /u3zgg0QJyCo1vHM305cZ8Y2dbrSRSKi4oNtU4JlMM4yoeqLgU4tRrXhEY+O0fdR2xOj
-         xtEQ==
-X-Gm-Message-State: APjAAAWGg1tJH8z0IciBu9zGPdttmwhSpG18KOoOGOxc1isRvpGGpOU/
-        TWjhOWYHWFYFO1u5YzUHTdk=
-X-Google-Smtp-Source: APXvYqxMwRG0fTMpNevLwHNROx4q6sdNJBT+nqdNCYxHybddDiXql6Di+T/nCRGJUlV/Ltj8IM99jw==
-X-Received: by 2002:adf:f288:: with SMTP id k8mr110922459wro.301.1578338358105;
-        Mon, 06 Jan 2020 11:19:18 -0800 (PST)
-Received: from localhost.localdomain ([2a02:2450:10d2:194d:74f9:b588:decc:794d])
-        by smtp.gmail.com with ESMTPSA id o4sm72041756wrx.25.2020.01.06.11.19.17
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=heHz5wZuzXTdBGUmx/YHIf/45oIB7A91VueQZsvfKjE=;
+        b=fCaAyO3kxZ6X0ZQzoLH3gBF6t8IHQpx/tUiukS5Wp3+LE6KoddAsyTTweIQJzJf4l8
+         GVIc+6R8lEU0d1ksZnLFzZxaDbVTwlklSyDwOAlo31Q8Rd5flLijuEAGo+sgq5Qx1bpo
+         DyQzBPSGK5K69aU/o9I076eWFmkLwJdU4xkUHtmycyMM4m+Pcjd/SmJGAjwqWDrVKAkr
+         75PgYlNeIDmYqUY/uJUQsog3IdjkI1IAepb6XkFg+6Xok8IsiKu5tuqsH512//m+FV45
+         JvRSVOU3AQVrjVSrYl59H1vc4xjQ4uRIfTJswrdhsVrpVYciyyxjqlHQWGe582y/I2OQ
+         +wjA==
+X-Gm-Message-State: APjAAAUNJpY1pO4jCwZWyfEL3cxOzqg2kO1I2zECix5s+VrhHut6IgLQ
+        qHoUqXDwUZkGCja154DX/XkYKGaS
+X-Google-Smtp-Source: APXvYqw02VHBv9pALmTt4e66yjxNPt0213mHu1XoW1os+69zviUlI+QEIwTyoxOUmaFmR9g8oJ80YA==
+X-Received: by 2002:a62:1d52:: with SMTP id d79mr110270721pfd.144.1578338349310;
+        Mon, 06 Jan 2020 11:19:09 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id g10sm72795594pgh.35.2020.01.06.11.19.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 11:19:17 -0800 (PST)
-From:   SeongJae Park <sj38.park@gmail.com>
-X-Google-Original-From: SeongJae Park <sjpark@amazon.de>
-To:     paulmck@kernel.org
-Cc:     corbet@lwn.net, rcu@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, madhuparnabhowmik04@gmail.com,
-        sj38.park@gmail.com, SeongJae Park <sjpark@amazon.de>
-Subject: [PATCH v2 7/7] rcu: Fix typos in beginning comments
-Date:   Mon,  6 Jan 2020 20:18:52 +0100
-Message-Id: <20200106191852.22973-8-sjpark@amazon.de>
+        Mon, 06 Jan 2020 11:19:08 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Tejun Heo <tj@kernel.org>, Jaedon Shin <jaedon.shin@gmail.com>,
+        linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and
+        Parallel ATA drivers)),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS)
+Subject: [PATCH v2 0/2] ata: ahci_brcm: Follow-up changes for BCM7216
+Date:   Mon,  6 Jan 2020 11:19:04 -0800
+Message-Id: <20200106191906.18266-1-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200106191852.22973-1-sjpark@amazon.de>
-References: <20200106191852.22973-1-sjpark@amazon.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
----
- kernel/rcu/srcutree.c | 2 +-
- kernel/rcu/tree.c     | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Hi Jens,
 
-diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-index 3c4e6441bbf9..0b561480e6c4 100644
---- a/kernel/rcu/srcutree.c
-+++ b/kernel/rcu/srcutree.c
-@@ -5,7 +5,7 @@
-  * Copyright (C) IBM Corporation, 2006
-  * Copyright (C) Fujitsu, 2012
-  *
-- * Author: Paul McKenney <paulmck@linux.ibm.com>
-+ * Authors: Paul McKenney <paulmck@linux.ibm.com>
-  *	   Lai Jiangshan <laijs@cn.fujitsu.com>
-  *
-  * For detailed explanation of Read-Copy Update mechanism see -
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 982c7b48cd9b..8367fc080801 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1,12 +1,12 @@
- // SPDX-License-Identifier: GPL-2.0+
- /*
-- * Read-Copy Update mechanism for mutual exclusion
-+ * Read-Copy Update mechanism for mutual exclusion (tree-based version)
-  *
-  * Copyright IBM Corporation, 2008
-  *
-  * Authors: Dipankar Sarma <dipankar@in.ibm.com>
-  *	    Manfred Spraul <manfred@colorfullife.com>
-- *	    Paul E. McKenney <paulmck@linux.ibm.com> Hierarchical version
-+ *	    Paul E. McKenney <paulmck@linux.ibm.com>
-  *
-  * Based on the original work by Paul McKenney <paulmck@linux.ibm.com>
-  * and inputs from Rusty Russell, Andrea Arcangeli and Andi Kleen.
+These two patches are a follow-up to my previous series titled: ata:
+ahci_brcm: Fixes and new device support.
+
+After submitting the BCM7216 RESCAL reset driver, Philipp the reset
+controller maintained indicated that the reset line should be self
+de-asserting and so reset_control_reset() should be used instead.
+
+These two patches update the driver in that regard. It would be great if
+you could apply those and get them queued up for 5.6 since they are
+directly related to the previous series.
+
+Changes in v2:
+- updated error path after moving the reset line control
+
+Thanks!
+
+Florian Fainelli (2):
+  ata: ahci_brcm: Perform reset after obtaining resources
+  ata: ahci_brcm: BCM7216 reset is self de-asserting
+
+ drivers/ata/ahci_brcm.c | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
+
 -- 
 2.17.1
 
