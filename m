@@ -2,86 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE3B3130D7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 07:21:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B31A130D82
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 07:26:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbgAFGVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 01:21:24 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:34371 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbgAFGVY (ORCPT
+        id S1727421AbgAFG0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 01:26:01 -0500
+Received: from mail-pf1-f176.google.com ([209.85.210.176]:40939 "EHLO
+        mail-pf1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727020AbgAFG0B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 01:21:24 -0500
-Received: by mail-ot1-f67.google.com with SMTP id a15so70264532otf.1;
-        Sun, 05 Jan 2020 22:21:23 -0800 (PST)
+        Mon, 6 Jan 2020 01:26:01 -0500
+Received: by mail-pf1-f176.google.com with SMTP id q8so26489807pfh.7
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Jan 2020 22:26:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uwZ2SiPflAo2gMhAO1B+oTaVC9KrM+PVnRjYk/ratMc=;
-        b=KuCFY6D6VJ9hn4OiaxJtMwWEQG8NmA3MxjnNQOZSc5mR7A88m+caskdq7A/waITkGQ
-         MnElD30Zann/cg+8HjO1QoHyN8so6ptaAT4JfOJTb3K/vMokV4Q+jHRJUA2Qhv/7kwMN
-         FfJYiURQuGfoYLO+5yUoFi3UjJhAVW2Gikk7BtJsoMgZ+3MqAyIG9dMcu5QMIKsqg1kl
-         ukRgts8sLgL3CkRnMYG2ijI8k+U328q0UxMy+Sko9DC3SSUN2JA6a5OpFZMUOAcXJpD8
-         ZbxzkZ6r3rauCCgMgfQGtsdoJADm7lB6kG/HQt3ZGEPcztnBluuxw4t/CX+Cm8RtDFsI
-         3zQQ==
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=evzD0JK8LSn0ZimlzI9kK570jZJqixSLv6BagHOwVBY=;
+        b=NKdUNnZTSI9nymd83D47gfZpXWe0OOhfLyoruQtT/TMSayYi32ZuRc7G6doc5Ls/sX
+         NTQ1A8In7Jl31DVwmbpH2ODw1YUy9qw5TeCv9rqPDUqTQ+48vrIM6q2OA4fEIIrO8KYF
+         5g3o4E9Lsdo+pktOokLErqtxctb2jO6OrcE6M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uwZ2SiPflAo2gMhAO1B+oTaVC9KrM+PVnRjYk/ratMc=;
-        b=EjW6c9aLJsmwDhOrH4xYykR5mLFkHczc8wz4HX35OU4bB89kDpiX0vCdqAkM5D7yaP
-         9RA2t+cyYuxIPBp3xOXabjIOR+fsd9NW8Q+B9d5/CBmJR+Mk7E3HX8zJOiNyE4e7oKZP
-         LMFM+KIFeilhSwFuONFdlx5RjBeC4aACiAI1IMq6Ypf6unwa0yuU5CV68GZLJlLTfKHG
-         lml/NvnuQr/qKqqoFc398IMxCaPaabqfhhGpW11fpfeDhoCYJs6HNOxfq/NYi1WXLRIT
-         C68fxjyHORFGpwURfT7ItimSeDlhRtEGVL4IbcSn/XMZqTq0TrVkvLi9U3cMX1ogAW3i
-         v7Pw==
-X-Gm-Message-State: APjAAAXTPI8mULf7sFS4UlN3YnvjakL6hHV2aX1VgvaDeqERPOpryKSM
-        pKGJscx54NcU3EzcdGZUA1GhYkcdtrY3tZLk2HA=
-X-Google-Smtp-Source: APXvYqxSz+b6F8LCIGIB5VIaGn6Cwvvmn5NGtc/3Mr2o8u1nlt15cKuWTr4XZ0S6VEX/2BCSmmay9uuguOVl8IfS0YQ=
-X-Received: by 2002:a05:6830:120b:: with SMTP id r11mr13747016otp.254.1578291683382;
- Sun, 05 Jan 2020 22:21:23 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=evzD0JK8LSn0ZimlzI9kK570jZJqixSLv6BagHOwVBY=;
+        b=AIifeBtwnvtimxe0s2dvfhkOWXZe5sCE/Y0TTc4qkG6GoKgVkaSFa80DfcVeIwgVZg
+         HR1WYvZzCqGa7gRgLKhrwABve+c+S/x0DqKh7wwRdbU40O59u4mUzxfWkNzDPL4fQr0n
+         1o50uAOxq+aOMOLhB9a0wtguTUfN1U5HUijKCAy2bOHXOA45viYliMw2cDzYiyHLXtGg
+         Bs6cbHhC+X+MwK18LuJ7DvgBzzI3fZV/NaxWma2DHGEArOzAENVoe4m/OybHArQyRYPA
+         0fC9dT8bZ1Oj3TZhaK+9F1ivnNXyBQ2cScyKXspzh0OxSD/dVMO1VvEu2zavPSGbtVEP
+         arhQ==
+X-Gm-Message-State: APjAAAU2/mfBZr97aM8Pl0KSf4M9G/y3DkVGXItUwU/SslW/CZicBwB8
+        FOuYo1uqnNvhZBNJmCsDnuH/Zw==
+X-Google-Smtp-Source: APXvYqyejuh87pzgwbSyfPS008rp+nddy4t59iTYRlyINoAQuexuQLkOxbUHjDxUEazEW7m0lfLpIA==
+X-Received: by 2002:a63:cd16:: with SMTP id i22mr113351949pgg.239.1578291960493;
+        Sun, 05 Jan 2020 22:26:00 -0800 (PST)
+Received: from Ninja.ibn.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id o16sm70704250pgl.58.2020.01.05.22.25.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 05 Jan 2020 22:25:59 -0800 (PST)
+From:   Vikas Gupta <vikas.gupta@broadcom.com>
+To:     =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>,
+        netdev@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Sumit Garg <sumit.garg@linaro.org>
+Cc:     vikram.prakash@broadcom.com, vasundhara-v.volam@broadcom.com,
+        Vikas Gupta <vikas.gupta@broadcom.com>
+Subject: [PATCH v1] firmware: tee_bnxt: Fix multiple call to tee_client_close_context
+Date:   Mon,  6 Jan 2020 11:54:02 +0530
+Message-Id: <1578291843-27613-1-git-send-email-vikas.gupta@broadcom.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-References: <1561682593-12071-1-git-send-email-wanpengli@tencent.com>
- <20190628011012.GA19488@lerouge> <CANRm+CxUpwZ9KwOcQp=Ok64giyjjcJOGb2=zU6vayQzLqYvpXQ@mail.gmail.com>
- <alpine.DEB.2.21.1910231028250.2308@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1910231028250.2308@nanos.tec.linutronix.de>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Mon, 6 Jan 2020 14:21:13 +0800
-Message-ID: <CANRm+Cw1eTNgB1r79J7U__ynio7pMSR4Xa35XuQuj-JKAQGxmg@mail.gmail.com>
-Subject: Re: [PATCH v2] sched/nohz: Optimize get_nohz_timer_target()
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, kvm <kvm@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
-On Wed, 23 Oct 2019 at 16:29, Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> On Wed, 23 Oct 2019, Wanpeng Li wrote:
-> > I didn't see your refactor to get_nohz_timer_target() which you
-> > mentioned in IRC after four months, I can observe cyclictest drop from
-> > 4~5us to 8us in kvm guest(we offload the lapic timer emulation to
-> > housekeeping cpu to avoid timer fire external interrupt on the pCPU
-> > which vCPU resident incur a vCPU vmexit) w/o this patch in the case of
-> > there is no busy housekeeping cpu. The score can be recovered after I
-> > give stress to create a busy housekeeping cpu.
-> >
-> > Could you consider applying this patch for temporary since I'm not
-> > sure when the refactor can be ready.
->
-> Yeah. It's delayed (again).... Will pick that up.
+Fix calling multiple tee_client_close_context in case of shm allocation
+fails.
 
-I didn't find WIP tag for this work after ~half year since v4 was
-posted https://lkml.org/lkml/2019/6/28/231 Could you apply this patch
-for temporary because the completion time of refactor is not
-deterministic.
+Fixes: 246880958ac9 (“firmware: broadcom: add OP-TEE based BNXT f/w manager”)
+Signed-off-by: Vikas Gupta <vikas.gupta@broadcom.com>
+---
+ drivers/firmware/broadcom/tee_bnxt_fw.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-    Wanpeng
+diff --git a/drivers/firmware/broadcom/tee_bnxt_fw.c b/drivers/firmware/broadcom/tee_bnxt_fw.c
+index 5b7ef89..ed10da5 100644
+--- a/drivers/firmware/broadcom/tee_bnxt_fw.c
++++ b/drivers/firmware/broadcom/tee_bnxt_fw.c
+@@ -215,7 +215,6 @@ static int tee_bnxt_fw_probe(struct device *dev)
+ 	fw_shm_pool = tee_shm_alloc(pvt_data.ctx, MAX_SHM_MEM_SZ,
+ 				    TEE_SHM_MAPPED | TEE_SHM_DMA_BUF);
+ 	if (IS_ERR(fw_shm_pool)) {
+-		tee_client_close_context(pvt_data.ctx);
+ 		dev_err(pvt_data.dev, "tee_shm_alloc failed\n");
+ 		err = PTR_ERR(fw_shm_pool);
+ 		goto out_sess;
+-- 
+2.7.4
+
