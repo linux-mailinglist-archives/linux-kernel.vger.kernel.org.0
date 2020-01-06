@@ -2,165 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECA66131B23
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 23:15:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C821131B1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 23:13:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbgAFWPX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 17:15:23 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:44344 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbgAFWPW (ORCPT
+        id S1726820AbgAFWNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 17:13:22 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36679 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbgAFWNV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 17:15:22 -0500
-Received: by mail-oi1-f196.google.com with SMTP id d62so16955972oia.11
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 14:15:22 -0800 (PST)
+        Mon, 6 Jan 2020 17:13:21 -0500
+Received: by mail-pg1-f193.google.com with SMTP id k3so27493050pgc.3;
+        Mon, 06 Jan 2020 14:13:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=eyolJd68ERnJpeKV8cAEbEAjcAmeu/bmG+0f7OhQ2SA=;
+        b=Yijm0XTU+T/0xsej33JyRLg5dgQC8KC6yShekyLo5/vaHao2/7DcUd/SI8l20lCGjS
+         mRL39ZS33Ne/7Xm2Xr0sU8REN9pHR8iHGfOPR8aFm6qsoL9a5bDUvRjAKzh1H8gTlYXD
+         vA+ciQ0duA1TVCe/iUPA98eLjzYzfOznyTYKt26YlD2xIA1iR5QxQw7oKy+44L788t+0
+         wY8COOYx7B1l+NnVPkBDk6qqAZy8y6rR/ERf5q324H0L4iTy6eyLKivhcRUHS/vhPsoh
+         rjV0KqBOp+Skwxq71Lo0SP/nGtKA3TTCzRrtYu6jJ/vVG/IqlW7FjkIb2QuFmRVpzDTu
+         EN8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CLp8AWOq/ppcpPg4zoNMmXmjnqf4+B8gtYz+J6bqL0A=;
-        b=rizSxbZ2vSQf77Cm2NjLVnCzm55owTA73Ki18YMDdx/Pn3c27ot3mb6n9zEJaUoGqL
-         N1omqFtohDOTJnA33PCY5ZK4EDWe/zTEmez9wMWd4Dtb0Oslco4vzics3S04NeW6Id4V
-         tmBRfsJPB4br1fSCoCPqxs2SHkyj7NbSO2faAPRiV4IeoaoS12HQthrMDq5w3idZ0f9q
-         ONgQ4vpgjVqXuOgFHyWZuuO+0DxkK+u3uwlh94KsD5iTivlsfAbguMZyE94AyKo1nWGe
-         Ul/cV3W2PcESO3tZ6nQpOgftQdu4Qj95499uxH1BXPW7r0chn0TwZ4fXROBJhBBEbLIg
-         KvXA==
-X-Gm-Message-State: APjAAAVPfggHKrrWIACnS8JBHTYkJOkDXWCWwjU/ZZxt7nscXbPk80wp
-        xiV5V1gb0T65XaiaOG9Z2qyu54I=
-X-Google-Smtp-Source: APXvYqzQZBlNYVpNJzkdz9iLmV1lswayFJ8vZbFXnBhthatkuStc0f2/ojKK02ZWIeMITaWYowg4Ig==
-X-Received: by 2002:aca:5745:: with SMTP id l66mr6764185oib.3.1578348921355;
-        Mon, 06 Jan 2020 14:15:21 -0800 (PST)
-Received: from rob-hp-laptop (ip-70-5-121-225.ftwttx.spcsdns.net. [70.5.121.225])
-        by smtp.gmail.com with ESMTPSA id i6sm19114676oie.12.2020.01.06.14.15.20
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 14:15:21 -0800 (PST)
-Received: from rob (uid 1000)
-        (envelope-from rob@rob-hp-laptop)
-        id 22043f
-        by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Mon, 06 Jan 2020 16:12:46 -0600
-Date:   Mon, 6 Jan 2020 16:12:46 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
-        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
-        mark.rutland@arm.com, s.hauer@pengutronix.de,
-        catalin.marinas@arm.com, will@kernel.org, abel.vesa@nxp.com,
-        bjorn.andersson@linaro.org, olof@lixom.net, maxime@cerno.tech,
-        leonard.crestez@nxp.com, dinguyen@kernel.org,
-        marcin.juszkiewicz@linaro.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH V3 1/3] dt-bindings: imx: Add pinctrl binding doc for
- i.MX8MP
-Message-ID: <20200106221246.GA17055@bogus>
-References: <1578302992-5723-1-git-send-email-Anson.Huang@nxp.com>
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=eyolJd68ERnJpeKV8cAEbEAjcAmeu/bmG+0f7OhQ2SA=;
+        b=p+UKY58PiIUATy9p9bK+zSQllH62xQFusFAyFxW/Wvxo7JP/JwcxHj44his3hjEV9u
+         /+HCRz5/XRSjhm6i3mbB307YIy/mSvedWv25Z7NmGl1Vlk9Ha6wA6vB4q1sAB4ypOY0s
+         Tr3qb2Q1VyK9X/Vpt4HX+WlUirAOHEuIwxhL4gsSsQH2aNiyFYwLNunlX8mizuHaIY7L
+         lYSk10KKLa37sP390jxrB3cJrFXFsF8XoSTVuLmcfog/zPLOgdxSXKOueYr52XYN9IDL
+         MveM7tYJyKKq0u0om3IpM3O5YCaFqxHhGvILpPvUO5Ao6IN0Z+wuJ7Php6k2Rn2QYmCS
+         InAA==
+X-Gm-Message-State: APjAAAUSBqJv/YIWkFFxMRD9KxgMI+yiKD2NItFSeJV8qXFIOIqHb0PH
+        xNwxm/1fvz4EYK39X00cN2A=
+X-Google-Smtp-Source: APXvYqwYCJHcfeniuDi19iZ4yWsGvSHZV7jg0PZh3evoX6cntwbvydeSWfPAi1Ewbi82beKuDIKX3Q==
+X-Received: by 2002:a63:31d1:: with SMTP id x200mr106298627pgx.405.1578348801200;
+        Mon, 06 Jan 2020 14:13:21 -0800 (PST)
+Received: from ast-mbp ([2620:10d:c090:200::1:2bf6])
+        by smtp.gmail.com with ESMTPSA id w131sm81274287pfc.16.2020.01.06.14.13.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 Jan 2020 14:13:20 -0800 (PST)
+Date:   Mon, 6 Jan 2020 14:13:18 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Justin Capella <justincapella@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+        linux-security-module@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Halcrow <mhalcrow@google.com>
+Subject: Re: [PATCH bpf-next] bpf: Make trampolines W^X
+Message-ID: <20200106221317.wpwut2rgw23tdaoo@ast-mbp>
+References: <CAMrEMU8Vsn8rfULqf1gfuYL_-ybqzit29CLYReskaZ8XUroZww@mail.gmail.com>
+ <768BAF04-BEBF-489A-8737-B645816B262A@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1578302992-5723-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <768BAF04-BEBF-489A-8737-B645816B262A@amacapital.net>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 05:29:50PM +0800, Anson Huang wrote:
-> Add binding doc for i.MX8MP pinctrl driver.
+On Sun, Jan 05, 2020 at 10:33:54AM +0900, Andy Lutomirski wrote:
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
-> Changes since V2:
-> 	- use DT schema instead of txt for binding doc.
-> ---
->  .../bindings/pinctrl/fsl,imx8mp-pinctrl.yaml       |  65 ++
->  arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h     | 931 +++++++++++++++++++++
->  2 files changed, 996 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
+> >> On Jan 4, 2020, at 8:03 PM, Justin Capella <justincapella@gmail.com> wrote:
+> > ﻿
+> > I'm rather ignorant about this topic but it would make sense to check prior to making executable from a security standpoint wouldn't it? (In support of the (set_memory_ro + set_memory_x)
+> > 
 > 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml
-> new file mode 100644
-> index 0000000..cdb6c21
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml
-> @@ -0,0 +1,65 @@
-> +# SPDX-License-Identifier: GPL-2.0-or-later
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/fsl,imx8mp-pinctrl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Freescale IMX8MP IOMUX Controller
-> +
-> +maintainers:
-> +  - Anson Huang <Anson.Huang@nxp.com>
-> +
-> +description:
-> +  Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
-> +  for common binding part and usage.
-> +
-> +properties:
-> +  compatible:
-> +    const: fsl,imx8mp-iomuxc
-> +
-> +# Client device subnode's properties
-> +patternProperties:
-> +  '-grp$':
-> +    type: object
-> +    description:
-> +      Pinctrl node's client devices use subnodes for desired pin configuration.
-> +      Client device subnodes use below standard properties.
-> +
-> +    properties:
-> +      fsl,pins:
-> +        $ref: /schemas/types.yaml#/definitions/string
+> Maybe, depends if it’s structured in a way that’s actually helpful from a security perspective.
+> 
+> It doesn’t help that set_memory_x and friends are not optimized at all. These functions are very, very, very slow and adversely affect all CPUs.
 
-string or...
-
-> +        description:
-> +          each entry consists of 6 integers and represents the mux and config
-
-integers?
-
-> +          setting for one pin. The first 5 integers <mux_reg conf_reg input_reg
-> +          mux_val input_val> are specified using a PIN_FUNC_ID macro, which can
-> +          be found in <arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h>. The last
-> +          integer CONFIG is the pad setting value like pull-up on this pin. Please
-> +          refer to i.MX8M Plus Reference Manual for detailed CONFIG settings.
-> +
-> +    required:
-> +      - fsl,pins
-> +
-> +    additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  # Pinmux controller node
-> +  - |
-> +    iomuxc: pinctrl@30330000 {
-> +        compatible = "fsl,imx8mp-iomuxc";
-> +        reg = <0x30330000 0x10000>;
-> +
-> +        pinctrl_uart2: uart2grp {
-> +            fsl,pins = <
-> +                MX8MP_IOMUXC_UART2_RXD__UART2_DCE_RX	0x49
-> +                MX8MP_IOMUXC_UART2_TXD__UART2_DCE_TX	0x49
-
-Run 'make dt_binding_check'. Doesn't build:
-
-Error: Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.example.dts:23.21-22 syntax error
-FATAL ERROR: Unable to parse input tree
-
-> +            >;
-> +        };
-> +    };
-> +
-> +...
+That was one of the reason it wasn't done in the first.
+Also ftrace trampoline break w^x as well.
+Not sure what is the plan for ftrace, but for bpf trampoline I'm going to switch
+to text_poke (without _bp) once tip bits get merged during next merge window.
+Then bpf trampoline will be allocated as ro+x and text_poke will be used instead of memcpy.
