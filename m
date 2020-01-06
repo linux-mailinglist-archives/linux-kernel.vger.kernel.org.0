@@ -2,104 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 582E213190D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 21:09:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E2FA131915
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 21:12:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbgAFUIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 15:08:39 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35933 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726939AbgAFUId (ORCPT
+        id S1726739AbgAFUMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 15:12:25 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:31979 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726657AbgAFUMZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 15:08:33 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z3so51189101wru.3;
-        Mon, 06 Jan 2020 12:08:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=eWt51KQwIIGexXid/EYUJpEHl4uI8BLmPg/J7TLtAjc=;
-        b=DVfku5Fd8cSHoyc2ywYCmHKqT5A3PYvmprt7iIqn/fUWEwMuLlgCIne+ynmw2itUe/
-         Ux+pvJhSMBFVDPymuEycZv8ZsQsI9oYsIbE6vVBI2RKUpzWDYwHzHjlScPvWPopsW3+D
-         JaEkzObwPsz6yo3THI4t2sr4dGZxvIMgDBYRn+ZOb6FvTHNXvvDzq7K835G4pzTXQqeK
-         DifDcgcnKMT5a8+pumAT+xxutkmX9/k4LM0ZWu9p6BJ7ln2CSpEysJBQSIgVe5XHo1+D
-         L+jWeMJ7jZQbb783rW4cbEy2hS0e07JJd0hc/CrtigzsHct6FdfxgO9WL+CV1vzSkLHM
-         sv+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=eWt51KQwIIGexXid/EYUJpEHl4uI8BLmPg/J7TLtAjc=;
-        b=Rbco+kZx3OJFB3qwse4vMi5XNZuArKz1SFRtHXwRLHntmOeRmvcn4zTd/D37okkTFy
-         QN53ShnOJXV2o+AfaHFhTRo9LjjzfzzKIYQ+0fbfSnOnaTj2fxWTQrh4qBIF8qGTvToD
-         g/3JR/xoTqLN4sjne7Lcq9fMv+11kv73pgTyawaQpaEAptOLT9G8k8BNGfJPeosLYnRm
-         FQuXsk8GlVLEcMTaF/TC/bjKZEt7IzPDD2VXyMkrUwDVrsH5N2oelV8dMY6uRjXapQiW
-         2tOkjBLpSm0jzjTpDkv0jP/2KUJzJ4rpe64NmC6mITc+3vwNVFps+ETY56S/fJOVVjmq
-         23Jw==
-X-Gm-Message-State: APjAAAVqBlEfZyZ7EoWholCqHZk8l9G3B6GpHJ89L3fh+ooyZl+n6BYU
-        fIcs25YLZDOM+ZZRV8Q3Cr4=
-X-Google-Smtp-Source: APXvYqyIUd1gy7nCgJ2A6QEvB3sGsCR7g89R29pIydrCXhoThnVWvbaTOm2YdHoQpsgsmT//d7MIsw==
-X-Received: by 2002:adf:f052:: with SMTP id t18mr102070129wro.192.1578341311244;
-        Mon, 06 Jan 2020 12:08:31 -0800 (PST)
-Received: from localhost.localdomain ([2a02:2450:10d2:194d:74f9:b588:decc:794d])
-        by smtp.gmail.com with ESMTPSA id t190sm23836982wmt.44.2020.01.06.12.08.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 12:08:30 -0800 (PST)
-From:   SeongJae Park <sj38.park@gmail.com>
-To:     paulmck@kernel.org
-Cc:     corbet@lwn.net, madhuparnabhowmik04@gmail.com, rcu@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        SeongJae Park <sjpark@amazon.de>
-Subject: [PATCH v3 7/7] rcu: Fix typos in beginning comments
-Date:   Mon,  6 Jan 2020 21:08:02 +0100
-Message-Id: <20200106200802.26994-8-sj38.park@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200106200802.26994-1-sj38.park@gmail.com>
-References: <20200106200802.26994-1-sj38.park@gmail.com>
+        Mon, 6 Jan 2020 15:12:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578341543;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=gdEgty3CE7PdK55uX5qyqvzB3E0+BaCykDG5H4EW69Y=;
+        b=dcZdrnAUwOfUXFLh2EyyIsZ5F3MMAyHJIYVmVKd6IyYyfPVeOakTkj5KFu4eUSNgj2EAQ1
+        AxAUR3L7tLTLI3cTwQT/ksgVYUQhKUaXX/KPO2lzNmwQxmY8ZPhARymk1KFgLvcWX/Hnf3
+        34PP3fDU/wP/80Dk9EeaM+7mROB9Oes=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-391-SCAqrdTOOiiypzT3olz16A-1; Mon, 06 Jan 2020 15:12:21 -0500
+X-MC-Unique: SCAqrdTOOiiypzT3olz16A-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 584B6107ACC7;
+        Mon,  6 Jan 2020 20:12:20 +0000 (UTC)
+Received: from ovpn-117-103.phx2.redhat.com (ovpn-117-103.phx2.redhat.com [10.3.117.103])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C76E67DB55;
+        Mon,  6 Jan 2020 20:12:19 +0000 (UTC)
+Message-ID: <8f0763efd927f791b1c13ca65712a2380985297a.camel@redhat.com>
+Subject: Re: [PATCH 1/4] tick/sched: Forward timer even in nohz mode
+From:   Scott Wood <swood@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Date:   Mon, 06 Jan 2020 14:12:19 -0600
+In-Reply-To: <1576538545-13274-1-git-send-email-swood@redhat.com>
+References: <1576538545-13274-1-git-send-email-swood@redhat.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: SeongJae Park <sjpark@amazon.de>
+On Mon, 2019-12-16 at 18:22 -0500, Scott Wood wrote:
+> Currently when exiting nohz, the expiry will be forwarded as if we
+> had just run the timer.  If we re-enter nohz before this new expiry,
+> and exit after, this forwarding will happen again.  If this load pattern
+> recurs the tick can be indefinitely postponed.
+> 
+> To avoid this, use last_tick as-is rather than calling hrtimer_forward().
+> However, in some cases the tick *will* have just run (despite being
+> "stopped"), and leading to double timer execution.
+> 
+> To avoid that, forward the timer after every tick (regardless of nohz
+> status) and keep last_tick up-to-date.  During nohz, last_tick will
+> reflect what the expiry would have been if not in nohz mode.
+> 
+> Signed-off-by: Scott Wood <swood@redhat.com>
+> ---
+>  kernel/time/tick-sched.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
 
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
----
- kernel/rcu/srcutree.c | 2 +-
- kernel/rcu/tree.c     | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Any comments on these patches?
 
-diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-index 3c4e6441bbf9..0b561480e6c4 100644
---- a/kernel/rcu/srcutree.c
-+++ b/kernel/rcu/srcutree.c
-@@ -5,7 +5,7 @@
-  * Copyright (C) IBM Corporation, 2006
-  * Copyright (C) Fujitsu, 2012
-  *
-- * Author: Paul McKenney <paulmck@linux.ibm.com>
-+ * Authors: Paul McKenney <paulmck@linux.ibm.com>
-  *	   Lai Jiangshan <laijs@cn.fujitsu.com>
-  *
-  * For detailed explanation of Read-Copy Update mechanism see -
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 982c7b48cd9b..8367fc080801 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1,12 +1,12 @@
- // SPDX-License-Identifier: GPL-2.0+
- /*
-- * Read-Copy Update mechanism for mutual exclusion
-+ * Read-Copy Update mechanism for mutual exclusion (tree-based version)
-  *
-  * Copyright IBM Corporation, 2008
-  *
-  * Authors: Dipankar Sarma <dipankar@in.ibm.com>
-  *	    Manfred Spraul <manfred@colorfullife.com>
-- *	    Paul E. McKenney <paulmck@linux.ibm.com> Hierarchical version
-+ *	    Paul E. McKenney <paulmck@linux.ibm.com>
-  *
-  * Based on the original work by Paul McKenney <paulmck@linux.ibm.com>
-  * and inputs from Rusty Russell, Andrea Arcangeli and Andi Kleen.
--- 
-2.17.1
+Thanks,
+Scott
+
 
