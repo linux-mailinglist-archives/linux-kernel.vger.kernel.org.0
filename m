@@ -2,147 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5E29131259
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 13:55:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7065D13125C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 13:55:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbgAFMzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 07:55:07 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:36564 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726467AbgAFMzH (ORCPT
+        id S1726641AbgAFMzR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 07:55:17 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:41737 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbgAFMzQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 07:55:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578315306;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yhPHPLkCZ8lM3SxpsRZPADXb9w62jCJdaNx5uMlL9bE=;
-        b=FFCAnCx9owovULn/g3G9mOA1t2WDXXQAiug+GuV8EsDCspUBDvTWkQ8DkBs+5hOMmvqox0
-        pju9Z+PDRuP+IU1igRgHWBUePud2XJP1c937R0r58/cphVIktFiGEIj1j8GrKzrnkJJSJE
-        v+OZw1eSwECCy4yFrVWGzZEkKA64P2g=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-399-mD9HBtSZP9CECu14JOp73A-1; Mon, 06 Jan 2020 07:54:59 -0500
-X-MC-Unique: mD9HBtSZP9CECu14JOp73A-1
-Received: by mail-qv1-f70.google.com with SMTP id e14so4310672qvr.6
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 04:54:59 -0800 (PST)
+        Mon, 6 Jan 2020 07:55:16 -0500
+Received: by mail-il1-f196.google.com with SMTP id f10so42453387ils.8
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 04:55:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jw04yP0BtmCga5GDtI/uaCXgvPW9/k1x3K98MyMaeBk=;
+        b=cYopsQwYieIprrXOs8tsBoBt18fC60PZEtO+XSVwDCaPIchL6eKyJ5I//UnSyFn4gq
+         8BEocbj40TQuS/HFiSo+CwV5miUR9uiaiF9gWL6O6NtsbR3YrS30oQEH2G3Ql0BkGt6m
+         RKs3+aVTVCqLJwS6qXlPeiLkSniNRqupe56R81TB/p3xl+Bqz6RPWn/D1IBXC89VmF7J
+         4cPecbbWPtqPa/LTK3LTMiXQtFagFxza3lRp2fKqV7rKl5DoK90w6w8xXXEWIyv77UIm
+         sSlFweA9lsFG25A2HJgdmjYsKSjdMdh0vTdLP8HXGklzGm0QXCyzlRB9bPWQQXxr4qWF
+         uF7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=yhPHPLkCZ8lM3SxpsRZPADXb9w62jCJdaNx5uMlL9bE=;
-        b=OCtq7+88qsxNUzdybpsjo7RoaTnEtFkJM4ttGa2FpZRJObThGsVDDxbx543iT72UGT
-         84igHXKGjopIOUX8EXH5LLJeHhkhsih/f96yKbnTIzY6K9cLYcHsW4u9wROHPasEz0Xz
-         9xnnW4r1In3EIHcZ6Cegcg16MJcEr/fFmt4JfaMvrjLF/0A4opRbRUv4rTQs5FgV6n7O
-         nRs/NbTyg9d9K5Hip+OBEVajVOhBa62b/lyx9K+YYahuOjFUk1bPL4Ev2a7qljidk2Al
-         O7dO7F8tLtA6UIsQj80/x7+/eb68mS4nUI8BusBPElAZNj1+FK5ykhbfU+BoQYWidjgC
-         unwQ==
-X-Gm-Message-State: APjAAAVAWtbhK6HqQD/cjgzooaDEzyHY6rc1KTBItF5kqeebQAGrU34I
-        Rp7PxzXF7Y+TAX+Wjz83IoEHF+72kZDRtC1u4MNTfDcRwMoDyfroBx1yvgbjQL1fR3umcS7r8f4
-        nr2zVslhGL9tjTssqkQqFvKRV
-X-Received: by 2002:ae9:c018:: with SMTP id u24mr82140921qkk.339.1578315299359;
-        Mon, 06 Jan 2020 04:54:59 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxDXcUxpr3THHQDy0ezxTflLL2W1afkjCl20F4fSV1ea/2dz+3q8ot7JpP826jzMXK+20FIoA==
-X-Received: by 2002:ae9:c018:: with SMTP id u24mr82140903qkk.339.1578315299104;
-        Mon, 06 Jan 2020 04:54:59 -0800 (PST)
-Received: from redhat.com (bzq-79-183-34-164.red.bezeqint.net. [79.183.34.164])
-        by smtp.gmail.com with ESMTPSA id c3sm20686592qkk.8.2020.01.06.04.54.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 04:54:58 -0800 (PST)
-Date:   Mon, 6 Jan 2020 07:54:53 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Alistair Delva <adelva@google.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2] virtio_net: CTRL_GUEST_OFFLOADS depends on CTRL_VQ
-Message-ID: <20200106074426-mutt-send-email-mst@kernel.org>
-References: <20200105132120.92370-1-mst@redhat.com>
- <2d7053b5-295c-4051-a722-7656350bdb74@redhat.com>
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jw04yP0BtmCga5GDtI/uaCXgvPW9/k1x3K98MyMaeBk=;
+        b=sYJqWGrTW4Tb8j12qAa+Es91gzrrG8Sns79mG4C20IyMFdwfwiXS8TTHHMWC5VhbKC
+         gXsl148qF3oPxBTg4b7CKEYl7xY4d6mZF8CIQTk4mxh/OXpDu8NT43LCaTM1qCyfQv6J
+         b2tD3CH0G5TyQheg0AAJ8N+fXvP/G/qgQFUgRIVXA9guZjVIn9IK9ZJdrDcXI7s5Z8db
+         UNVbCkO033u7TEjO92EtnLnJxlKUmI2CMVHT/kxWT+gGDPeFs/AvItXxdazhrdl04zkW
+         UjllFxdzfGw25VYpieS9Y5C2pcf2MftGAFfLEWz4rQsXCJEb6Hqo/jVK3gPxEQHLBawI
+         Nwvg==
+X-Gm-Message-State: APjAAAXIwXB7XCdzHbF5e3+vBPQxb73TWp1VH6YsOKBReW4nmYozFoBQ
+        CP3RPcxBWD5ScGS4ys26WLaUAQ==
+X-Google-Smtp-Source: APXvYqwDsqs0+9gVRtqUY4GzPI6NDhiqNJUvP/12fN58CVVxnnRlR+T+TpUDerqJI9Um9t5Z5gyQGA==
+X-Received: by 2002:a92:d80f:: with SMTP id y15mr87676368ilm.225.1578315314782;
+        Mon, 06 Jan 2020 04:55:14 -0800 (PST)
+Received: from leoy-ThinkPad-X240s (li1058-79.members.linode.com. [45.33.121.79])
+        by smtp.gmail.com with ESMTPSA id u29sm23991791ill.62.2020.01.06.04.55.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 Jan 2020 04:55:14 -0800 (PST)
+Date:   Mon, 6 Jan 2020 20:55:06 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf parse: Copy string to perf_evsel_config_term
+Message-ID: <20200106125506.GB29905@leoy-ThinkPad-X240s>
+References: <20200102151326.31342-1-leo.yan@linaro.org>
+ <20200106113610.GB207350@krava>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2d7053b5-295c-4051-a722-7656350bdb74@redhat.com>
+In-Reply-To: <20200106113610.GB207350@krava>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 10:47:35AM +0800, Jason Wang wrote:
+Hi Jiri,
+
+On Mon, Jan 06, 2020 at 12:36:10PM +0100, Jiri Olsa wrote:
+> On Thu, Jan 02, 2020 at 11:13:26PM +0800, Leo Yan wrote:
+> > perf with CoreSight fails to record trace data with command:
+> > 
+> >   perf record -e cs_etm/@tmc_etr0/u --per-thread ls
+> >   failed to set sink "" on event cs_etm/@tmc_etr0/u with 21 (Is a
+> >   directory)/perf/
+> > 
+> > This failure is root caused with the commit 1dc925568f01 ("perf
+> > parse: Add a deep delete for parse event terms").
+> > 
+> > The log shows, cs_etm fails to parse the sink attribution; cs_etm event
+> > relies on the event configuration to pass sink name, but the event
+> > specific configuration data cannot be passed properly with flow:
+> > 
+> >   get_config_terms()
+> >     ADD_CONFIG_TERM(DRV_CFG, drv_cfg, term->val.str);
+> >       __t->val.drv_cfg = term->val.str;
+> >         `> __t->val.drv_cfg is assigned to term->val.str;
+> > 
+> >   parse_events_terms__purge()
+> >     parse_events_term__delete()
+> >       zfree(&term->val.str);
+> >         `> term->val.str is freed and assigned to NULL pointer;
+> > 
+> >   cs_etm_set_sink_attr()
+> >     sink = __t->val.drv_cfg;
+> >       `> sink string has been freed.
 > 
-> On 2020/1/5 下午9:22, Michael S. Tsirkin wrote:
-> > The only way for guest to control offloads (as enabled by
-> > VIRTIO_NET_F_CTRL_GUEST_OFFLOADS) is by sending commands
-> > through CTRL_VQ. So it does not make sense to
-> > acknowledge VIRTIO_NET_F_CTRL_GUEST_OFFLOADS without
-> > VIRTIO_NET_F_CTRL_VQ.
+> so your problem is that the data is freed before you use it?
+
+Yes, exactly.
+
 > > 
-> > The spec does not outlaw devices with such a configuration, so we have
-> > to support it. Simply clear VIRTIO_NET_F_CTRL_GUEST_OFFLOADS.
-> > Note that Linux is still crashing if it tries to
-> > change the offloads when there's no control vq.
-> > That needs to be fixed by another patch.
+> > To fix this issue, in the function get_config_terms(), this patch
+> > changes from directly assignment pointer value for the strings to
+> > use strdup() for allocation a new duplicate string for the cases:
 > > 
-> > Reported-by: Alistair Delva <adelva@google.com>
-> > Reported-by: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-> > Fixes: 3f93522ffab2 ("virtio-net: switch off offloads on demand if possible on XDP set")
-> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> >   perf_evsel_config_term::val.callgraph
+> >   perf_evsel_config_term::val.branch
+> >   perf_evsel_config_term::val.drv_cfg.
+> > 
+> > Fixes: 1dc925568f01 ("perf parse: Add a deep delete for parse event terms")
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
 > > ---
+> >  tools/perf/util/parse-events.c | 49 ++++++++++++++++++++--------------
+> >  1 file changed, 29 insertions(+), 20 deletions(-)
 > > 
-> > Same patch as v1 but update documentation so it's clear it's not
-> > enough to fix the crash.
-> > 
-> >   drivers/net/virtio_net.c | 9 +++++++++
-> >   1 file changed, 9 insertions(+)
-> > 
-> > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > index 4d7d5434cc5d..7b8805b47f0d 100644
-> > --- a/drivers/net/virtio_net.c
-> > +++ b/drivers/net/virtio_net.c
-> > @@ -2971,6 +2971,15 @@ static int virtnet_validate(struct virtio_device *vdev)
-> >   	if (!virtnet_validate_features(vdev))
-> >   		return -EINVAL;
-> > +	/* VIRTIO_NET_F_CTRL_GUEST_OFFLOADS does not work without
-> > +	 * VIRTIO_NET_F_CTRL_VQ. Unfortunately spec forgot to
-> > +	 * specify that VIRTIO_NET_F_CTRL_GUEST_OFFLOADS depends
-> > +	 * on VIRTIO_NET_F_CTRL_VQ so devices can set the later but
-> > +	 * not the former.
-> > +	 */
-> > +	if (!virtio_has_feature(vdev, VIRTIO_NET_F_CTRL_VQ))
-> > +			__virtio_clear_bit(vdev, VIRTIO_NET_F_CTRL_GUEST_OFFLOADS);
-> 
-> 
-> If it's just because a bug of spec, should we simply fix the bug and fail
-> the negotiation in virtnet_validate_feature()?
-
-One man's bug is another man's feature: arguably leaving the features
-independent in the spec might allow reuse of the feature bit without
-breaking guests.
-
-And even if we say it's a bug we can't simply fix the bug in the
-spec: changing the text for a future version does not change the fact
-that devices behaving according to the spec exist.
-
-> Otherwise there would be inconsistency in handling feature dependencies for
-> ctrl vq.
-> 
-> Thanks
-
-That's a cosmetic problem ATM. It might be a good idea to generally
-change our handling of dependencies, and clear feature bits instead of
-failing probe on a mismatch. It's worth thinking  - at the spec level -
-how we can best make the configuration extensible.
-But that's not something spec should worry about.
-
-
-> 
+> > diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+> > index ed7c008b9c8b..5972acdd40d6 100644
+> > --- a/tools/perf/util/parse-events.c
+> > +++ b/tools/perf/util/parse-events.c
+> > @@ -1220,7 +1220,6 @@ static int get_config_terms(struct list_head *head_config,
+> >  			    struct list_head *head_terms __maybe_unused)
+> >  {
+> >  #define ADD_CONFIG_TERM(__type, __name, __val)			\
+> > -do {								\
+> >  	struct perf_evsel_config_term *__t;			\
+> >  								\
+> >  	__t = zalloc(sizeof(*__t));				\
+> > @@ -1229,9 +1228,19 @@ do {								\
+> >  								\
+> >  	INIT_LIST_HEAD(&__t->list);				\
+> >  	__t->type       = PERF_EVSEL__CONFIG_TERM_ ## __type;	\
+> > -	__t->val.__name = __val;				\
+> >  	__t->weak	= term->weak;				\
+> > -	list_add_tail(&__t->list, head_terms);			\
+> > +	list_add_tail(&__t->list, head_terms)
 > > +
-> >   	if (virtio_has_feature(vdev, VIRTIO_NET_F_MTU)) {
-> >   		int mtu = virtio_cread16(vdev,
-> >   					 offsetof(struct virtio_net_config,
+> > +#define ADD_CONFIG_TERM_VAL(__type, __name, __val)		\
+> > +do {								\
+> > +	ADD_CONFIG_TERM(__type, __name, __val);			\
+> > +	__t->val.__name = __val;				\
+> > +} while (0)
+> > +
+> > +#define ADD_CONFIG_TERM_STR(__type, __name, __val)		\
+> > +do {								\
+> > +	ADD_CONFIG_TERM(__type, __name, __val);			\
+> > +	__t->val.__name = strdup(__val);			\
+> >  } while (0)
+> 
+> the term->val.str is supposed to be already strdup-ed,
+> so this seems wrong and leaking mem
 
+Though term->val.str is strdup-ed, after merged the commit 1dc925568f01
+("perf parse: Add a deep delete for parse event terms"), term->val.str
+is freed in the code [1].
+
+If term->val.str should not be freed, how about to rollback the code as
+below:
+
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index 5972acdd40d6..f3211cde0d9f 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -2955,7 +2955,12 @@ void parse_events_terms__purge(struct list_head *terms)
+ 
+        list_for_each_entry_safe(term, h, terms, list) {
+                list_del_init(&term->list);
+-               parse_events_term__delete(term);
++
++               if (term->array.nr_ranges)
++                       zfree(&term->array.ranges);
++
++               zfree(&term->config);
++               free(term);
+        }
+ }
+
+Thanks,
+Leo
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/perf/util/parse-events.c?h=v5.5-rc5#n2911
+
+> 
+> jirka
+> 
