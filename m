@@ -2,161 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFFAA131700
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 18:45:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35F0F131709
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 18:46:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726760AbgAFRpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 12:45:32 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:25600 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726622AbgAFRpc (ORCPT
+        id S1726696AbgAFRqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 12:46:44 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38107 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbgAFRqn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 12:45:32 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1578332731; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=aE88VHpKzshop14jt/7qVz5iKKzIOcAtFxm19yTXAyw=;
- b=V2NdpRKEyyNjK3ybA4P4cF6B//C+HhTu6BuCCo/cJApFfW6dzEeKNIWNNDtdFJ17X/AL1YbM
- B6TmsJt2NO4ZzAh+OCK/7CVnU4eQaxSBE+vmFFS4Ya0p+1mhWzbUa2upiHoiY5rgA+EA+cBN
- Khp5Week1SULIqx6d/wnsDp2Dco=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e137238.7f95a7fb9810-smtp-out-n03;
- Mon, 06 Jan 2020 17:45:28 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 18EF4C447B4; Mon,  6 Jan 2020 17:45:27 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: asutoshd)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 00987C433A2;
-        Mon,  6 Jan 2020 17:45:25 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 06 Jan 2020 09:45:25 -0800
-From:   asutoshd@codeaurora.org
-To:     Stanley Chu <stanley.chu@mediatek.com>
-Cc:     linux-scsi@vger.kernel.org, martin.petersen@oracle.com,
-        avri.altman@wdc.com, alim.akhtar@samsung.com, jejb@linux.ibm.com,
-        beanhuo@micron.com, cang@codeaurora.org, matthias.bgg@gmail.com,
-        bvanassche@acm.org, linux-mediatek@lists.infradead.org,
+        Mon, 6 Jan 2020 12:46:43 -0500
+Received: by mail-pg1-f195.google.com with SMTP id a33so27189278pgm.5;
+        Mon, 06 Jan 2020 09:46:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=YdPHerSYFOJLKYefQHipXAmsHXvXtkbfyGcWcsin/Eo=;
+        b=t0vgrTSVmmj/57ZBr/Sm79BsA7lylrWcfhlGn3rqkCJQCiNewUgV8qMRVWd8rd+egl
+         y4YVUkO7FONNsn1TClHXBiMGXvlSzd8EjZHCxDyfZ8/ypJCvTGSy8kp4u/luDiWgNpte
+         /xuomSpMzKHv0y+ZJvGamupdnU4OhCIJqHfkhjDpnrsSs1rV4bksqvmVVGeldtCqIFk/
+         819/hKDzWB8e247vq3PjjUkLt61zIYtkRKmSMFad+FWT6x6C6Jcsl1fq+RH6GheqS9+k
+         1403NTO1gKuKwNcYpL902uwwL6oQ+rariS58bn2hsAqJ3rxjl1Eqtojz7ewaRqFZIAVH
+         LL/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YdPHerSYFOJLKYefQHipXAmsHXvXtkbfyGcWcsin/Eo=;
+        b=pOwWaKC7mQ2CfgaJItXKNrop3Muuhm0LdQvXWhraQrgUDnNhhFkNOqmbpcn0rUcn2v
+         +TM8LNPZSAS37Rlyp/p7ltcQG7DGsWWzh2FYTra6jSujrxFFLAfhWx8DfLSlf2mQeFOU
+         eDV/yman44bQaqOxgb350jQhcrY8CjMM8BRbFzO9TRnSwOiIIxwNdEXD9Tbq6TgvVR6v
+         QE3RhAkEUgY5aI3iKNKeV69xz31BdZ9gxMvGb4+xv++MrK8ZbUo0mDwAMKrvlbdAFXdB
+         gQmp0bs2ykyVTVthrkiOfRvdk6bGOHEbIhrQHirUYNj3gHa9Yn/i5HVuDbmEQlmjhkTz
+         Ablg==
+X-Gm-Message-State: APjAAAXpyVoc7RK98S0L3q8XbjbZuWy7KIm1JR8oyMTq7q/26/RM4TBj
+        Up1QFblKZuymomVBqlb7Z7o=
+X-Google-Smtp-Source: APXvYqwNzPNo38qKaDE4TWjCFQ11EAzeBDsfFL07gxRaNNMnBA7f1Wmk2ubLY9y2gRba8Y9FzmQz5w==
+X-Received: by 2002:aa7:874a:: with SMTP id g10mr91607578pfo.205.1578332803309;
+        Mon, 06 Jan 2020 09:46:43 -0800 (PST)
+Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
+        by smtp.gmail.com with ESMTPSA id z4sm25051105pjn.29.2020.01.06.09.46.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 Jan 2020 09:46:42 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, mripard@kernel.org,
+        wens@csie.org, anarsoul@gmail.com, rui.zhang@intel.com,
+        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
+        megous@megous.com, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kuohong.wang@mediatek.com, peter.wang@mediatek.com,
-        chun-hung.wu@mediatek.com, andy.teng@mediatek.com,
-        linux-scsi-owner@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] scsi: ufs: pass device information to
- apply_dev_quirks
-In-Reply-To: <1578270431-9873-2-git-send-email-stanley.chu@mediatek.com>
-References: <1578270431-9873-1-git-send-email-stanley.chu@mediatek.com>
- <1578270431-9873-2-git-send-email-stanley.chu@mediatek.com>
-Message-ID: <5eafff63c1c2e4ca6fdaf2d349a74dac@codeaurora.org>
-X-Sender: asutoshd@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+        linux-pm@vger.kernel.org
+Cc:     Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH v2 1/2] thermal: sun8i: fix r40 ths number
+Date:   Mon,  6 Jan 2020 17:46:38 +0000
+Message-Id: <20200106174639.20862-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-01-05 16:27, Stanley Chu wrote:
-> Pass UFS device information to vendor-specific variant callback
-> "apply_dev_quirks" because some platform vendors need to know such
-> information to apply special handlings or quirks in specific devices.
-> 
-> In the same time, modify existed vendor implementation according to
-> the new interface.
-> 
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: Asutosh Das <asutoshd@codeaurora.org>
-> Cc: Avri Altman <avri.altman@wdc.com>
-> Cc: Bart Van Assche <bvanassche@acm.org>
-> Cc: Bean Huo <beanhuo@micron.com>
-> Cc: Can Guo <cang@codeaurora.org>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Reviewed-by: Avri Altman <avri.altman@wdc.com>
-> Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
-> ---
->  drivers/scsi/ufs/ufs-qcom.c | 3 ++-
->  drivers/scsi/ufs/ufshcd.c   | 5 +++--
->  drivers/scsi/ufs/ufshcd.h   | 7 ++++---
->  3 files changed, 9 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-> index c69c29a1ceb9..ebb5c66e069f 100644
-> --- a/drivers/scsi/ufs/ufs-qcom.c
-> +++ b/drivers/scsi/ufs/ufs-qcom.c
-> @@ -949,7 +949,8 @@ static int
-> ufs_qcom_quirk_host_pa_saveconfigtime(struct ufs_hba *hba)
->  	return err;
->  }
-> 
-> -static int ufs_qcom_apply_dev_quirks(struct ufs_hba *hba)
-> +static int ufs_qcom_apply_dev_quirks(struct ufs_hba *hba,
-> +				     struct ufs_dev_desc *card)
->  {
->  	int err = 0;
-> 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 1b97f2dc0b63..9abf0ea8c308 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -6803,7 +6803,8 @@ static int
-> ufshcd_quirk_tune_host_pa_tactivate(struct ufs_hba *hba)
->  	return ret;
->  }
-> 
-> -static void ufshcd_tune_unipro_params(struct ufs_hba *hba)
-> +static void ufshcd_tune_unipro_params(struct ufs_hba *hba,
-> +				      struct ufs_dev_desc *card)
->  {
->  	if (ufshcd_is_unipro_pa_params_tuning_req(hba)) {
->  		ufshcd_tune_pa_tactivate(hba);
-> @@ -6817,7 +6818,7 @@ static void ufshcd_tune_unipro_params(struct 
-> ufs_hba *hba)
->  	if (hba->dev_quirks & UFS_DEVICE_QUIRK_HOST_PA_TACTIVATE)
->  		ufshcd_quirk_tune_host_pa_tactivate(hba);
-> 
-> -	ufshcd_vops_apply_dev_quirks(hba);
-> +	ufshcd_vops_apply_dev_quirks(hba, card);
->  }
-> 
->  static void ufshcd_clear_dbg_ufs_stats(struct ufs_hba *hba)
-> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-> index e05cafddc87b..4f3fa71303da 100644
-> --- a/drivers/scsi/ufs/ufshcd.h
-> +++ b/drivers/scsi/ufs/ufshcd.h
-> @@ -320,7 +320,7 @@ struct ufs_hba_variant_ops {
->  	void	(*setup_task_mgmt)(struct ufs_hba *, int, u8);
->  	void    (*hibern8_notify)(struct ufs_hba *, enum uic_cmd_dme,
->  					enum ufs_notify_change_status);
-> -	int	(*apply_dev_quirks)(struct ufs_hba *);
-> +	int	(*apply_dev_quirks)(struct ufs_hba *, struct ufs_dev_desc *);
->  	int     (*suspend)(struct ufs_hba *, enum ufs_pm_op);
->  	int     (*resume)(struct ufs_hba *, enum ufs_pm_op);
->  	void	(*dbg_register_dump)(struct ufs_hba *hba);
-> @@ -1052,10 +1052,11 @@ static inline void
-> ufshcd_vops_hibern8_notify(struct ufs_hba *hba,
->  		return hba->vops->hibern8_notify(hba, cmd, status);
->  }
-> 
-> -static inline int ufshcd_vops_apply_dev_quirks(struct ufs_hba *hba)
-> +static inline int ufshcd_vops_apply_dev_quirks(struct ufs_hba *hba,
-> +					       struct ufs_dev_desc *card)
->  {
->  	if (hba->vops && hba->vops->apply_dev_quirks)
-> -		return hba->vops->apply_dev_quirks(hba);
-> +		return hba->vops->apply_dev_quirks(hba, card);
->  	return 0;
->  }
+According to the spec, r40 has 2 thermal sensors.
+Sensor0 located in the CPU, another in the GPU.
 
-Please separate the vendor code (ufs-qcom, in this case) to a separate 
-patch.
+Fixes: 730a45ccd9322 ("thermal/drivers/sun8i: Add thermal driver for H6/H5/H3/A64/A83T/R40")
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Tested-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+Tested-on: sun8i-r40-bananapi-m2-ultra
+---
+ drivers/thermal/sun8i_thermal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--asd
+diff --git a/drivers/thermal/sun8i_thermal.c b/drivers/thermal/sun8i_thermal.c
+index 23a5f4aa4be4..c5661d7c3e20 100644
+--- a/drivers/thermal/sun8i_thermal.c
++++ b/drivers/thermal/sun8i_thermal.c
+@@ -565,7 +565,7 @@ static const struct ths_thermal_chip sun8i_h3_ths = {
+ };
+ 
+ static const struct ths_thermal_chip sun8i_r40_ths = {
+-	.sensor_num = 3,
++	.sensor_num = 2,
+ 	.offset = 251086,
+ 	.scale = 1130,
+ 	.has_mod_clk = true,
+-- 
+2.17.1
+
