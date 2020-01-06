@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 728BA13189C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 20:20:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B48E131895
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 20:20:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbgAFTTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 14:19:38 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38339 "EHLO
+        id S1727146AbgAFTTW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 14:19:22 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50323 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726937AbgAFTTQ (ORCPT
+        with ESMTP id S1726969AbgAFTTS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 14:19:16 -0500
-Received: by mail-wm1-f67.google.com with SMTP id u2so16507325wmc.3;
-        Mon, 06 Jan 2020 11:19:15 -0800 (PST)
+        Mon, 6 Jan 2020 14:19:18 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a5so16213407wmb.0;
+        Mon, 06 Jan 2020 11:19:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=BiVSGDhREaUEf54KgSEKmOQyVoop478wRSm340p5AAw=;
-        b=BOTUID1kNmUCME5BD87r2im56ctjTtka/2HhskCJDunHZeZI7kNgTLVEDOQek4wdAd
-         e2T7n3J46OI4j8w/D2sHdBVv6H1x+cTpmtItSeMsf54y4qukPrNg+DEk7SI08ts/4lwr
-         seAMw9zeK/Z5VedOjOGZl3T43528TObl77mXdbe8+J/QEGzlxQAWui/KAgNYIHWTB1JS
-         HWgBWDlTnxlgCY0Qr7YQT1J2AniF3Ilrw0im/pugKz5TQs9XEPztWakx23HOj5g468xu
-         3WD84iFYHGmf4y34rhut8F3bfHR/tVsOFg1ocd5qvblzk82iy1zXHloPe1l4t2uNRTsa
-         B8HQ==
+        bh=G1EFNMDUzTeZnk/VjF52QA1icduulaXMjExrVxZh1z4=;
+        b=p2itK/10UtqIJi99hHQPcrVU9j3avjoeukfC6iDjkhkNUeL/mL+O5z2y/hxiFNLnVO
+         cA8SAWV8a/ARIBSZTKOaJAgpCcBkqZhqFrcKpXB3Tqi0ewwH0qADNdazDHDQAufouMME
+         n5jYASPo/E2PK7A0oTp7gZzm2wKJ23ZaWA8J9Mc2LZCWVigF5260DE3L84Iyq2JeAU3o
+         2MWYmNHHRKuEiRiZnx7KE4wXmAF6xj1um1JRzrOA0cvOJiKDNAmRmPo0nFVPXxpRy+Gx
+         rjfZR98mCoxNZFLIVF1xW4O6hDXgHxvIxpZybK9qlS4OmeEUquDsNcbMwMsN7OYhjYzj
+         HlBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=BiVSGDhREaUEf54KgSEKmOQyVoop478wRSm340p5AAw=;
-        b=Nw1JbtIVgSEr0mEbforfGPfRXwJuoKjP/0EYqtrIg5wv5NU956zc1q73ODMzjtF/s/
-         eoP0uLk/Ja9fpCFzxN0uZRhaFmLdhZ8f2Xc0m+H/jTrMSvizpmmJFtwQKmmPvWO0IKo9
-         i10m8rpvc8szpgfO0zFSm/9Bf5J+kKUH+3u1GmSDzxWbMJ4JhNcyjrocLb+s0n5HDA48
-         UZdbekE3VyNmCSUUtq9opHX9D0InheJL4qWeTtKXJVsdjJLl5yHubNlYAInXpnF7EhAR
-         /3o0Phz+nOszg7iF1LLx21nIxLLkrgrW5n8KlfHynT00ivmsf9stvgNoBudfdiZUUMKv
-         z6RQ==
-X-Gm-Message-State: APjAAAUGKyGuiOn8I9hzCtJIpHJA2V9QB/Znz9LCvSw/BJG3coQEleZa
-        uTpFMkRJYtRqRQhalJzKtLe2L7sv
-X-Google-Smtp-Source: APXvYqy1wTq4hJotlXKxiQu+cXtwGmQzU4XCYLcRdisOuXwT4/BrV8lTguH2yCMaqCd9xrSFoWJEFA==
-X-Received: by 2002:a1c:7901:: with SMTP id l1mr35233423wme.67.1578338354811;
-        Mon, 06 Jan 2020 11:19:14 -0800 (PST)
+        bh=G1EFNMDUzTeZnk/VjF52QA1icduulaXMjExrVxZh1z4=;
+        b=d/1srB665GY6hNkK0Neks0DG2S2dRV+vCd6aFQOB8spdUDyPvVTYCKpWopFG2Nvu3t
+         B/S+KPcG1vO8TiiYhdAv8lEM1q3puFjerxZmnUMGUvQpjxmzMOjjg8n4qUUxJKutbjH3
+         ZDdo8f8B+VFmDhdmtlVUQI26NpIAswYP/6ReFpATV58kdberxUN1eVpSHsylOMd0aJf9
+         i9w/BZmhRRPS02aFTKq1dRFWdET8RIs6Kt/VTt0Z6saBp+SrsI+I+ybmBfsVmDFX6EOW
+         F2mnhVTwH/CeeP9K/Ti6eE+LX8KhZekSKYoR0C46rWjUFRheMVMTyry2CQmfD2D4kEG+
+         VvnA==
+X-Gm-Message-State: APjAAAWg+jgnZ6jzBNb8eTASkBOm+hTpvFSF1hAWFjjpaDqJ7jWIqgnB
+        vFJKhmg1SmvDU0xsybqO+c0=
+X-Google-Smtp-Source: APXvYqz0CFTcLEYEW///OPvpRwaDxUdM994GrzguZ745v1OqmJilo8qWJ6UFHHZ96LOh1bQZg95m+Q==
+X-Received: by 2002:a7b:c851:: with SMTP id c17mr37311106wml.71.1578338355944;
+        Mon, 06 Jan 2020 11:19:15 -0800 (PST)
 Received: from localhost.localdomain ([2a02:2450:10d2:194d:74f9:b588:decc:794d])
-        by smtp.gmail.com with ESMTPSA id o4sm72041756wrx.25.2020.01.06.11.19.13
+        by smtp.gmail.com with ESMTPSA id o4sm72041756wrx.25.2020.01.06.11.19.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 11:19:14 -0800 (PST)
+        Mon, 06 Jan 2020 11:19:15 -0800 (PST)
 From:   SeongJae Park <sj38.park@gmail.com>
 X-Google-Original-From: SeongJae Park <sjpark@amazon.de>
 To:     paulmck@kernel.org
 Cc:     corbet@lwn.net, rcu@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, madhuparnabhowmik04@gmail.com,
         sj38.park@gmail.com, SeongJae Park <sjpark@amazon.de>
-Subject: [PATCH v2 4/7] doc/RCU/rcu: Use ':ref:' for links to other docs
-Date:   Mon,  6 Jan 2020 20:18:49 +0100
-Message-Id: <20200106191852.22973-5-sjpark@amazon.de>
+Subject: [PATCH v2 5/7] doc/RCU/rcu: Use absolute paths for non-rst files
+Date:   Mon,  6 Jan 2020 20:18:50 +0100
+Message-Id: <20200106191852.22973-6-sjpark@amazon.de>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200106191852.22973-1-sjpark@amazon.de>
 References: <20200106191852.22973-1-sjpark@amazon.de>
@@ -63,46 +63,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: SeongJae Park <sjpark@amazon.de>
 ---
- Documentation/RCU/rcu.rst | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ Documentation/RCU/rcu.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/RCU/rcu.rst b/Documentation/RCU/rcu.rst
-index 8dfb437dacc3..a1dd71d01862 100644
+index a1dd71d01862..2a830c51477e 100644
 --- a/Documentation/RCU/rcu.rst
 +++ b/Documentation/RCU/rcu.rst
-@@ -11,8 +11,8 @@ must be long enough that any readers accessing the item being deleted have
- since dropped their references.  For example, an RCU-protected deletion
- from a linked list would first remove the item from the list, wait for
- a grace period to elapse, then free the element.  See the
--Documentation/RCU/listRCU.rst file for more information on using RCU with
--linked lists.
-+:ref:`Documentation/RCU/listRCU.rst <list_rcu_doc>` for more information on
-+using RCU with linked lists.
- 
- Frequently Asked Questions
- --------------------------
-@@ -50,7 +50,7 @@ Frequently Asked Questions
- - If I am running on a uniprocessor kernel, which can only do one
-   thing at a time, why should I wait for a grace period?
- 
--  See the Documentation/RCU/UP.rst file for more information.
-+  See :ref:`Documentation/RCU/UP.rst <up_doc>` for more information.
- 
- - How can I see where RCU is currently used in the Linux kernel?
- 
-@@ -68,9 +68,9 @@ Frequently Asked Questions
- 
- - Why the name "RCU"?
- 
--  "RCU" stands for "read-copy update".  The file Documentation/RCU/listRCU.rst
--  has more information on where this name came from, search for
--  "read-copy update" to find it.
-+  "RCU" stands for "read-copy update".
-+  :ref:`Documentation/RCU/listRCU.rst <list_rcu_doc>` has more information on where
-+  this name came from, search for "read-copy update" to find it.
- 
+@@ -75,7 +75,7 @@ Frequently Asked Questions
  - I hear that RCU is patented?  What is with that?
  
+   Yes, it is.  There are several known patents related to RCU,
+-  search for the string "Patent" in RTFP.txt to find them.
++  search for the string "Patent" in Documentation/RCU/RTFP.txt to find them.
+   Of these, one was allowed to lapse by the assignee, and the
+   others have been contributed to the Linux kernel under GPL.
+   There are now also LGPL implementations of user-level RCU
+@@ -88,5 +88,5 @@ Frequently Asked Questions
+ 
+ - Where can I find more information on RCU?
+ 
+-  See the RTFP.txt file in this directory.
++  See the Documentation/RCU/RTFP.txt file.
+   Or point your browser at (http://www.rdrop.com/users/paulmck/RCU/).
 -- 
 2.17.1
 
