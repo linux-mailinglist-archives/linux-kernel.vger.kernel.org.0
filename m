@@ -2,66 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAF4F130FD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 10:57:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0854C130FD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 10:58:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbgAFJ5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 04:57:05 -0500
-Received: from mga05.intel.com ([192.55.52.43]:30954 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725446AbgAFJ5E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 04:57:04 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jan 2020 01:57:03 -0800
-X-ExtLoop1: 1
+        id S1726294AbgAFJ6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 04:58:12 -0500
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:40984 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725446AbgAFJ6M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 04:58:12 -0500
+Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa4.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa4.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: PmhlA7huUpuuBJDBDnHSRGbjciQG7JYkXuk5OSg+lv8yqWLmNPfdEfsiJY01ghAs7pOSX4uUlQ
+ 0o8y5hPRlHfv1ejiSC2R2r2O3j+R8U5VIjMm+ytHnhuCPSfD2nuDiXrXSs+TcywZ+dugjQ1dji
+ +BIyG+53rn2HVmYZCXrSBNhFy+xZd9YWrhIOB1cSnJVsyJ5yRQZmt5trQSLSUnREOs02TdwzjA
+ zlIPg4JPUBDRg7y9f3I44FYHSy52dPLLnQTiOO7/QR/hhESohMYAjBusaa2lzLzoxDBYuDXIq9
+ zgM=
 X-IronPort-AV: E=Sophos;i="5.69,402,1571727600"; 
-   d="scan'208";a="210741075"
-Received: from tuedungt-mobl.ger.corp.intel.com (HELO M5530.gar.corp.intel.com) ([10.255.164.193])
-  by orsmga007.jf.intel.com with ESMTP; 06 Jan 2020 01:56:59 -0800
-From:   Harry Pan <harry.pan@intel.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     rajatja@google.com, gs0622@gmail.com,
-        Harry Pan <harry.pan@intel.com>,
-        Vishwanath Somayaji <vishwanath.somayaji@intel.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
-        Darren Hart <dvhart@infradead.org>
-Subject: [PATCH] platform/x86: intel_pmc_core: update Comet Lake platform driver
-Date:   Mon,  6 Jan 2020 17:57:00 +0800
-Message-Id: <20200106175643.1.Iaff1da2791b9a00377e8d93aa81b5394ffc5b1b8@changeid>
-X-Mailer: git-send-email 2.24.1
+   d="scan'208";a="60247120"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 06 Jan 2020 02:58:11 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 6 Jan 2020 02:58:11 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Mon, 6 Jan 2020 02:58:11 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <daniel.lezcano@linaro.org>, <tglx@linutronix.de>
+CC:     <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH] clocksource/drivers/timer-microchip-pit64b: fix sparse warning
+Date:   Mon, 6 Jan 2020 11:58:08 +0200
+Message-ID: <1578304688-14882-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding new CML CPU model ID into platform driver support list.
+Fix sparse warning.
 
-Signed-off-by: Harry Pan <harry.pan@intel.com>
-
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
+ drivers/clocksource/timer-microchip-pit64b.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
- drivers/platform/x86/intel_pmc_core_pltdrv.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/platform/x86/intel_pmc_core_pltdrv.c b/drivers/platform/x86/intel_pmc_core_pltdrv.c
-index 6fe829f30997..e1266f5c6359 100644
---- a/drivers/platform/x86/intel_pmc_core_pltdrv.c
-+++ b/drivers/platform/x86/intel_pmc_core_pltdrv.c
-@@ -44,6 +44,8 @@ static const struct x86_cpu_id intel_pmc_core_platform_ids[] = {
- 	INTEL_CPU_FAM6(KABYLAKE, pmc_core_device),
- 	INTEL_CPU_FAM6(CANNONLAKE_L, pmc_core_device),
- 	INTEL_CPU_FAM6(ICELAKE_L, pmc_core_device),
-+	INTEL_CPU_FAM6(COMETLAKE, pmc_core_device),
-+	INTEL_CPU_FAM6(COMETLAKE_L, pmc_core_device),
- 	{}
- };
- MODULE_DEVICE_TABLE(x86cpu, intel_pmc_core_platform_ids);
+diff --git a/drivers/clocksource/timer-microchip-pit64b.c b/drivers/clocksource/timer-microchip-pit64b.c
+index 27a389a7e078..bd63d3484838 100644
+--- a/drivers/clocksource/timer-microchip-pit64b.c
++++ b/drivers/clocksource/timer-microchip-pit64b.c
+@@ -248,6 +248,8 @@ static int __init mchp_pit64b_init_mode(struct mchp_pit64b_timer *timer,
+ 	if (!pclk_rate)
+ 		return -EINVAL;
+ 
++	timer->mode = 0;
++
+ 	/* Try using GCLK. */
+ 	gclk_round = clk_round_rate(timer->gclk, max_rate);
+ 	if (gclk_round < 0)
+@@ -360,7 +362,7 @@ static int __init mchp_pit64b_dt_init_timer(struct device_node *node,
+ 					    bool clkevt)
+ {
+ 	u32 freq = clkevt ? MCHP_PIT64B_DEF_CE_FREQ : MCHP_PIT64B_DEF_CS_FREQ;
+-	struct mchp_pit64b_timer timer = { 0 };
++	struct mchp_pit64b_timer timer;
+ 	unsigned long clk_rate;
+ 	u32 irq = 0;
+ 	int ret;
 -- 
-2.24.1
+2.7.4
 
