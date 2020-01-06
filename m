@@ -2,97 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3548131591
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 17:01:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E418E131599
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 17:03:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbgAFQBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 11:01:24 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:35988 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbgAFQBY (ORCPT
+        id S1726560AbgAFQD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 11:03:28 -0500
+Received: from mail-lf1-f41.google.com ([209.85.167.41]:33977 "EHLO
+        mail-lf1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726296AbgAFQD1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 11:01:24 -0500
-Received: by mail-ua1-f66.google.com with SMTP id y3so13390519uae.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 08:01:24 -0800 (PST)
+        Mon, 6 Jan 2020 11:03:27 -0500
+Received: by mail-lf1-f41.google.com with SMTP id l18so28549307lfc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 08:03:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WHKvj+lR2oxOoJDYfB6OF+P0g9s4Fqqs9QyHOmAvNmo=;
-        b=hE/Il/myONgZlPpM8dlP5hw/oNFkwGoIN4KZ+UY30BclcbEOUqUAWhMT9MwU5gZBxx
-         gptw9QRBG10TwkwJAciBTr1c1//qBZB0PU3e3vyxhViKR94ANuJYmDclsBnmg+T+HU7v
-         uFM//nFhAhfWR826oCEUpvKst94HTwOj9F64CfMr+aUEcftPvMW/9wEQ6FZkpDgk9UNh
-         Nh++Q8b7giwiQpWsElAsGunOQGXVyNGxgfM2sST2pxro7mLwJiYKOZ3znx05Q10QH7QO
-         ZSro9EN6Hzy2bT4uIfk7dmHuTXXR2CZJK/OuLFjHNnB4fqMlOe3Z3idimGPjERQKqMvv
-         EChg==
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=itvRAEq5hhm5w1XL2na3ikbvjiZ4Frt2H6fMMo3dtUo=;
+        b=IMEMN26mxx+0if+Z5orqFsG5Ta5QTMbdP6XuElWw+WYlI6eBg2sBhKy4S5CtbBq8vw
+         hJzK+PX8PjD6W+Z9Shw9NjjZUK6as6N0Fl0Je0oS65TY/Edpey6SRLsoTTsjjcgC4gSL
+         K7QOdDQHwZ1D8JO4EbcT68eLlhXi0NgvlbLR2yJ874vTb7EovS+ecwsqJuVf/rRfELe/
+         +ejM+PXsLZVnT8s/YaBPBh7FB2ti8ogOq47g28c9hZ1/v5ES+rhnIptTfPIPoA4C89Nh
+         xShY4JyBpnAO5Z99ZYzSOs9XY6U/j1Jswvnltimg1JHjnbgl8X2mfTdfXlty+tSjdvwB
+         dnbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WHKvj+lR2oxOoJDYfB6OF+P0g9s4Fqqs9QyHOmAvNmo=;
-        b=Xamje/unqzSAwEKqgUDOMaK93XOj4PlavTXVvZLI2RkMsIETiWU/EI0J0JezTOEOO3
-         LRGR7xDwmCfU8phKBTF9OfmO7kjdfw/Xq64cJuoszpUW1BccqzS/Mhyi4wGZBFyA7UUF
-         Nt/jHyJDgoHmknB9/dr8uhQ0JJNfcSekqdQ8/XFZuO7XpC09Qe3LEkCR6dlfcn1uiJ7Z
-         3aCNxFUMtFeO12yK3up9xBgQ+OkGJ+glB0vg2eBEezkZqIppRiuJqeIi1wrJIhT1UQ6b
-         ccMJ41u93bqFE4Y+bG+izz+zCMLtQlKpSx0n28M/n+CORdlGzpi5fD7pwHpAD0VZ8Qrm
-         H+7w==
-X-Gm-Message-State: APjAAAWH65Kueb0oK/N3vXjhBQXACHgqcPuGpPpG5HcBEqqSE8zWwnN6
-        k7uh5eIr8/6stx1MqTmTpVRg2+t3bnvuXYyfjjrjpBmOEK0=
-X-Google-Smtp-Source: APXvYqyanrUg5kMh1Y7eIxZ0CnYSMUXd/hQcoQkIbAMWiOWbPfnrcHCsktMDMB1gAMN1jTUdSGTJGPI1aMc5afzrAXM=
-X-Received: by 2002:ab0:4aca:: with SMTP id t10mr57253605uae.89.1578326483419;
- Mon, 06 Jan 2020 08:01:23 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=itvRAEq5hhm5w1XL2na3ikbvjiZ4Frt2H6fMMo3dtUo=;
+        b=VGvKLc+SOdWl/COZaUw96J1/R500JppJcYa3kzIqMg0HaMp8BROC81VZ5JMJkWNzfm
+         67XJsKwBg91XefEnUUgnwUyDBbezuQa9ceupODU/n1wUmMyj3THDcCrILfwS1jVJqS1+
+         n7HDThKzM0BKxef8jtClxBr2ufDkiQ0yImmMimD9PXUKG/L2q+PHYOgNOr68kocSAyKa
+         /FsclA9WgBElP8Uh5Eb0LkcR24J5zVQdri2NgDZ3BlH0B0alwq2gx08j5GtPC1m9pEqi
+         MMTvQm2k3yAQarK+xkMQrMsb0SSoYGXarFvfihBrLiPPSV42r4qmljmg+t5NTfgMGi29
+         Q4iw==
+X-Gm-Message-State: APjAAAUTTLK6lCsLu8ygZD1NWY5Svw51ufFerZLmreUeXhSADuK6Pbqm
+        oz2QKhEWIH2kfTlkB2DlSidnDMQo/424/6vw4U0=
+X-Google-Smtp-Source: APXvYqyCPz5uOFTxqmmu9mFOqMoLis8jVeWW/CDPrkNj4hAKTEOvSBuaO+7VnWREhJB04+vQllsgv+CeBeNEu4TIadQ=
+X-Received: by 2002:a19:850a:: with SMTP id h10mr57860463lfd.89.1578326605338;
+ Mon, 06 Jan 2020 08:03:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20200106151655.311413-1-christian.gmeiner@gmail.com> <20200106153643.GA8535@ravnborg.org>
-In-Reply-To: <20200106153643.GA8535@ravnborg.org>
-From:   Christian Gmeiner <christian.gmeiner@gmail.com>
-Date:   Mon, 6 Jan 2020 17:01:11 +0100
-Message-ID: <CAH9NwWd7C+DzAKe97kURm=sGjDH+KQJOif3j=w6K+99xmYGncQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] update hwdw for gc400
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        The etnaviv authors <etnaviv@lists.freedesktop.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        Russell King <linux+etnaviv@armlinux.org.uk>
+Reply-To: janetrossana01@gmail.com
+Received: by 2002:a2e:a211:0:0:0:0:0 with HTTP; Mon, 6 Jan 2020 08:03:24 -0800 (PST)
+From:   janet rossana <janetrossana01@gmail.com>
+Date:   Mon, 6 Jan 2020 16:03:24 +0000
+X-Google-Sender-Auth: qkJU38JbP4Xv9Ucw79nDKZzhZMI
+Message-ID: <CAA5i80H0x1UD-oV60NzOK9_YoXA=Zpr4sn-=4XzrKqjwffB=2A@mail.gmail.com>
+Subject: Hi,
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sam,
+Please dear, I know this contact will be so strange to you, but i
+summon courage to reach you because i desperately need your friendly
+assistance there in your country. I am making preparations to relocate
+with my children there, and i have some capital which i wanted to
+invest there to be able to take care of my kids. And i want you by my
+side to plan the investment and decide the best city for us to reside.
+Please listen to me so that you will understand properly the reason i
+contacted you.
 
-> For future patches can you please incldue a small changelog
-> within each patch.
->
-> Something like
->
-> v2:
->   - Drop redundant newlines (Lucas)
->
-> This serves several purposes:
-> - It explains what was changed since last version
-> - It allow the reader to focus on changed parts
-> - It attributes who requested a specific change
-> - It gives a good idea of the history of a patch
->
-> In the DRM sub-subsystem the idea is that if it is written it
-> should be visible in git too. So include the changelog part in the
-> normal commit-message.
->
-
-To be honest.. I forgot the change log thing this time - sorry. So the rule
-is to have the change log in the normal commit message?
-Funny - Lucas told me something different:
-
-"Please move those changelogs below the 3 dashes, so they don't end up
-in the commit message. They don't really add any value to the
-persistent kernel history."
-https://lkml.org/lkml/2019/9/13/107
-
--- 
-greets
---
-Christian Gmeiner, MSc
-
-https://christian-gmeiner.info/privacypolicy
+Mrs.Rossana.
