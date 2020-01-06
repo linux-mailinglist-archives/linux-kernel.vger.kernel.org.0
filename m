@@ -2,110 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38AA5130EC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 09:42:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F4CE130ED6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 09:43:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbgAFImB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 03:42:01 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44378 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbgAFImA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 03:42:00 -0500
-Received: by mail-wr1-f68.google.com with SMTP id q10so9749806wrm.11
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 00:41:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=M8EUuah2JQYFbZVRs4FZbIzhWD8SMtL+msO/T9weTJI=;
-        b=cOVWGtwbDXYSvf0c0GX5XlAiVh+TPkIgTWgHF6Tabz3GUbi9aAt+qWys5MuUOzY1OP
-         XovJm8QftmdmY7GzMtQhlpOmnoXiNnZuTOkQP6f3ogZi1KeQ0JpiKUYAHJyEA5zvCZvT
-         ytT+NqePYbZk0eGryXBzDhB/luNCVNDoitk8W+QNh8DpUWKt8FK306UKWgXV7OL4xT6N
-         3zjMC5v1tiFnKzH1qVP8um0np30HxiA+0xMnEfJWabnzitBa/Au5DtyU1tnQpMW4J5ZW
-         cAxNdMCoEkbfWH4BH3H4IwMIYLseffge0XbsYwaptB2KwkzEBwMTIZab8l4ukezP/IEq
-         5ffg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=M8EUuah2JQYFbZVRs4FZbIzhWD8SMtL+msO/T9weTJI=;
-        b=k6LbM/B7D6Bj2R6eD906TF/hOhnKbottdvozisYldm3z1WQ5YoiQKnqIMs01BDNwgk
-         f2ARod2m5Mv/qgzLL7iw6+Imq8PPB5f4/JnQrrnCTvfI46n973kr79MinR6kt76ODGSX
-         qKMNXBUVQqQYHYsDctHUHey9evFm2aiucPrlJR84tpsw4F1sXsr0s9Twm/QyI2Q71+Mt
-         1Ocg84AF1B2Rn+VFfXB+wCKVf3wi6hLojSEjvF37bzXN6R99X41IL7A/93u58JSlwNxC
-         ktF+QTryqcDABCT8Xe21e8fKLfQJ2ZiTAV4p2laZP3PVYjRSj0d+7wqZEfXRFMMwUrNP
-         0lvQ==
-X-Gm-Message-State: APjAAAW+3pfqVF7HGPMF2Qee2tmFAipYLAaxsUnaH2FvWFu9KniWEBRk
-        WPRrcEa9pzFldV9qiU9GlpkZBw==
-X-Google-Smtp-Source: APXvYqyXJ1E8kAivSw7L5PiTuqmj6FvNr+aT48bF+Uyd9IWHg2Ch1S32YoUtE1yw0rjXlM+ROZu6TA==
-X-Received: by 2002:a5d:4749:: with SMTP id o9mr53851412wrs.242.1578300118793;
-        Mon, 06 Jan 2020 00:41:58 -0800 (PST)
-Received: from netronome.com ([2001:982:756:703:d63d:7eff:fe99:ac9d])
-        by smtp.gmail.com with ESMTPSA id a1sm22350876wmj.40.2020.01.06.00.41.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 00:41:58 -0800 (PST)
-Date:   Mon, 6 Jan 2020 09:41:57 +0100
-From:   Simon Horman <simon.horman@netronome.com>
-To:     Michal Kubecek <mkubecek@suse.cz>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Maya Erez <merez@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com,
-        Francois Romieu <romieu@fr.zoreil.com>,
-        linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH net-next v2 0/3] ethtool: allow nesting of begin() and
- complete() callbacks
-Message-ID: <20200106084156.GA10460@netronome.com>
-References: <cover.1578292157.git.mkubecek@suse.cz>
+        id S1726677AbgAFInC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 03:43:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40110 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726080AbgAFImo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 03:42:44 -0500
+Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C7EB20656;
+        Mon,  6 Jan 2020 08:42:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578300163;
+        bh=GyMtO6oRWPq3+Hr+8BFljMOSlSlAK0b+OtMogPrfuWQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Zn5UiXsAtWD4qD796sVyJoLSKjO0SAI5FLpo3LlbuonQrebo2np2BDkx7sUmWRcSv
+         nY8kO0U5p7NNRuK3qhp6q+L1uwvp8r9rxsK1dpy5vmQk94LahC5fj2azRApbE+iwg8
+         AkExBPM/v4TBuDD4d1KilJeAteBWrP4bZ25I7/Qs=
+Received: by wens.tw (Postfix, from userid 1000)
+        id 49CE25FC12; Mon,  6 Jan 2020 16:42:41 +0800 (CST)
+From:   Chen-Yu Tsai <wens@kernel.org>
+To:     Maxime Ripard <mripard@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] media: sun4i-csi: A10/A20 CSI1 and R40 CSI0 support
+Date:   Mon,  6 Jan 2020 16:42:33 +0800
+Message-Id: <20200106084240.1076-1-wens@kernel.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1578292157.git.mkubecek@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 07:39:26AM +0100, Michal Kubecek wrote:
-> The ethtool ioctl interface used to guarantee that ethtool_ops callbacks
-> were always called in a block between calls to ->begin() and ->complete()
-> (if these are defined) and that this whole block was executed with RTNL
-> lock held:
-> 
-> 	rtnl_lock();
-> 	ops->begin();
-> 	/* other ethtool_ops calls */
-> 	ops->complete();
-> 	rtnl_unlock();
-> 
-> This prevented any nesting or crossing of the begin-complete blocks.
-> However, this is no longer guaranteed even for ioctl interface as at least
-> ethtool_phys_id() releases RTNL lock while waiting for a timer. With the
-> introduction of netlink ethtool interface, the begin-complete pairs are
-> naturally nested e.g. when a request triggers a netlink notification.
-> 
-> Fortunately, only minority of networking drivers implements begin() and
-> complete() callbacks and most of those that do, fall into three groups:
-> 
->   - wrappers for pm_runtime_get_sync() and pm_runtime_put()
->   - wrappers for clk_prepare_enable() and clk_disable_unprepare()
->   - begin() checks netif_running() (fails if false), no complete()
-> 
-> First two have their own refcounting, third is safe w.r.t. nesting of the
-> blocks.
-> 
-> Only three in-tree networking drivers need an update to deal with nesting
-> of begin() and complete() calls: via-velocity and epic100 perform resume
-> and suspend on their own and wil6210 completely serializes the calls using
-> its own mutex (which would lead to a deadlock if a request request
-> triggered a netlink notification). The series addresses these problems.
-> 
-> changes between v1 and v2:
->   - fix inverted condition in epic100 ethtool_begin() (thanks to Andrew
->     Lunn)
+From: Chen-Yu Tsai <wens@csie.org>
 
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
+Hi everyone,
+
+This is v2 of my A10/A20 CSI1 and R40 CSI0 series. v2 is simply the
+remaining patches rebased on top of linux-next 20200106, with the
+MBUS device tree binding changes converted to YAML format.
+
+This series adds basic support for CSI1 on Allwinner A10/A20 and CSI0 on
+Allwinner R40. The CSI1 block has the same structure and layout as the
+CSI0 block. Differences include:
+
+  - Only one channel in BT.656 instead of four in CSI0
+  - 10-bit raw data input vs 8-bit in CSI0
+  - 24-bit RGB888/YUV444 input vs 16-bit RGB565/YUV422 in CSI0
+  - No ISP hardware (CSI SCLK not needed)
+
+The CSI0 block in the Allwinner R40 SoC looks to be the same as the one
+in the A20. The register maps line up, and they support the same
+features. The R40 appears to support BT.1120 based on the feature
+overview, but it is not mentioned anywhere else. Also like the A20, the
+ISP is not mentioned, but the CSI special clock needs to be enabled for
+the hardware to function. The manual does state that the CSI special
+clock is the TOP clock for all CSI hardware, but currently no hardware
+exists for us to test if CSI1 also depends on it or not.
+
+Included are a couple of fixes for signal polarity and DRAM offset
+handling.
+
+Patches 1 and 2 add CSI1 to A10 (sun4i) and A20 (sun7i) dtsi files.
+
+Patch 3 adds a compatible string for the R40's MBUS (memory bus).
+This patch needs to go through Rob's tree as it now depends on
+the patch "dt-bindings: interconnect: Convert Allwinner MBUS
+controller to a schema" that was already merged.
+
+Patch 4 adds CSI0 to the R40 dtsi file
+
+Patches 5 through 7 are examples of cameras hooked up to boards.
+
+
+Regards
+ChenYu
+
+
+Chen-Yu Tsai (7):
+  ARM: dts: sun4i: Add CSI1 controller and pinmux options
+  ARM: dts: sun7i: Add CSI1 controller and pinmux options
+  dt-bindings: bus: sunxi: Add R40 MBUS compatible
+  ARM: dts: sun8i: r40: Add device node for CSI0
+  [DO NOT MERGE] ARM: dts: sun4i: cubieboard: Enable OV7670 camera on
+    CSI1
+  [DO NOT MERGE] ARM: dts: sun7i: cubieboard2: Enable OV7670 camera on
+    CSI1
+  [DO NOT MERGE] ARM: dts: sun8i-r40: bananapi-m2-ultra: Enable OV5640
+    camera
+
+ .../arm/sunxi/allwinner,sun4i-a10-mbus.yaml   |  1 +
+ arch/arm/boot/dts/sun4i-a10-cubieboard.dts    | 42 ++++++++++++
+ arch/arm/boot/dts/sun4i-a10.dtsi              | 35 ++++++++++
+ arch/arm/boot/dts/sun7i-a20-cubieboard2.dts   | 42 ++++++++++++
+ arch/arm/boot/dts/sun7i-a20.dtsi              | 36 ++++++++++
+ .../boot/dts/sun8i-r40-bananapi-m2-ultra.dts  | 67 +++++++++++++++++++
+ arch/arm/boot/dts/sun8i-r40.dtsi              | 36 ++++++++++
+ 7 files changed, 259 insertions(+)
+
+-- 
+2.24.1
 
