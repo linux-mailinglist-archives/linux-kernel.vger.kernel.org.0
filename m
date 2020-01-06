@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECBBF131890
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 20:20:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6764131892
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 20:20:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbgAFTTR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 14:19:17 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37359 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726759AbgAFTTN (ORCPT
+        id S1727077AbgAFTTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 14:19:19 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33360 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726797AbgAFTTP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 14:19:13 -0500
-Received: by mail-wr1-f66.google.com with SMTP id w15so38386504wru.4;
-        Mon, 06 Jan 2020 11:19:12 -0800 (PST)
+        Mon, 6 Jan 2020 14:19:15 -0500
+Received: by mail-wm1-f65.google.com with SMTP id d139so12582528wmd.0;
+        Mon, 06 Jan 2020 11:19:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MutBRahz4Dk9dzENPsGVB9OQYLb4xC1rOEUgBqJ0GEk=;
-        b=d9B1fpNkqJq5+eUoMZtQhrP3MSZAUGsSMxEeMySudr72P2UjGJPMCt8bx6oioKgQA1
-         9LC7VcRZgoFcWM1da6Nn+7y7NlvTIx7ZFdC+tZj5tLQujvP+AfRmBCCyk5uXXUG7ZX/X
-         M31W17IzRWtr5moeABKKPlsRe48ibYlPPtM/r+PcTI2pmhHWaKttTKT8f17+nj9PW5i8
-         J46cQnhRu7qJCosGqzvCgqH22974/SZ31MUgKSQWMgZW/r2xXCxRMgTU4Hq28bcpZwRL
-         tYT/apNptWRRUNN9KsOPMtVhZafHwsvIpAdwNkfEUBTJl7DOApbF8zbPBlbh87cCXwll
-         jVwQ==
+        bh=zeP0eN1dUE1xzDIlU/IUQAQU1O+6HgpYq6pFUmIIuMk=;
+        b=Fd7LSQWRINPNLb/VBtgPeEZtoKSP6R+vwS8lVCQFMpkGsKHLgBHjGY06+QfeXADO0I
+         VXT5VFO6ZlwJO66g4dWgqMGxU1U/kfy+YPCYBuLVcOA+wkTOsNIxWdWhzcovTNC5CkMb
+         7+5eBfKl8XYyhnc0U1d8h/lQxK0NqFOjdQCHewk2Et3qC+kMCIFMlyMWHbBkMXOGVFT7
+         wMW74bJvd0g1m7k2JHfN27fjzhtDcGqlZ0U/0gBVxoVpXA0v9QWYwB+SypvKyUj9zcpT
+         JtCJfYXUkOOCC83tvy8bau8DANcFqjWx/cgAv1oAF2RmI7NumYDF0joOGE0O1OTSRSll
+         m5Jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=MutBRahz4Dk9dzENPsGVB9OQYLb4xC1rOEUgBqJ0GEk=;
-        b=WH4LW/7g8zxirIRLveWmEDZeAdxlmk1UxQzo7exTXil4OVfQ6aQCJh7LXUPe2KMNmi
-         yyrmBL13kNuxtdQ/bV8u7jIaptJwiNO0vIlOGRpGR2cPeMDSEAxkX8SMx/3RawuulDPM
-         QvdZeGdobjFqzMEnTSduL1WXZQmf1+2RIdeSZBzdQrYhxQ8kQXjeZJpeAQRHCp3Vnheb
-         RayaUMf12jY5n9lr3A2DgeZFWgADQ7GIW+dv1pUIVidlN8puZJKtu6DZ52PkvghDHzsg
-         Yy6q4+i7cacXo09Tza9ezTcGprRZLcJO3ocphBPeQP0bbCaKUNfEt8roVzBIbpJoRJkt
-         Nmsw==
-X-Gm-Message-State: APjAAAW5dnE7x3yAgckM45SYj9+BQytFvBxsf7dFFgulOraI9+cJyq8/
-        Kprl7iHCWqAmC24BTC2KhBw=
-X-Google-Smtp-Source: APXvYqwlZ5zzi84esvG8qBqF310Lr4/splfRmNW7i3N+ELPuNB2m5ny4t5g4mswIDVD3sy/DlYT7Rw==
-X-Received: by 2002:a5d:50ce:: with SMTP id f14mr104492337wrt.254.1578338351427;
-        Mon, 06 Jan 2020 11:19:11 -0800 (PST)
+        bh=zeP0eN1dUE1xzDIlU/IUQAQU1O+6HgpYq6pFUmIIuMk=;
+        b=GywX+1oD7oR3+qrVMo5prSU5WUhWP9r2w5pmPuw8NIRIvuW4TDEdcmvrxo4HYFeLk6
+         6dmBcjDgBV8ib3KflhdA0vL2AX1H6ZnTNkAK9AGDYP/iIwz+A+6oVRyWrh66ISB49IrM
+         ouo4kBeF5qZuNr13gd7RPuyUgv2JtkM96r4nEN7/9rZexDavrewi0KkmUpkhWZ0kjC/z
+         PzvOyitQaZRVHrV92yHIN37yFXwC3VrxorDuIR4s1JGaL5hBeSpxBLC9WdRcart16e/l
+         bd4zqrZW0xaYEniR4juyc1GyHGFd7N1cNjlkS8cQGbKtWYVNYt9DEyVbtD5bIZphD8o3
+         aDZg==
+X-Gm-Message-State: APjAAAWBI6eY/sVn6uNCqli6aog6zPoCDvGGublGNoAC3gQYrMZxAlN9
+        0/R+OxGNQweQgyaqwcSjPU0=
+X-Google-Smtp-Source: APXvYqz/pL+s4nunEAAnflBlpILs+ijTd1HLdhvuPtJjt5Nwy+P/KhoWwS3p9BTQOQM8N2grZ4VN6g==
+X-Received: by 2002:a05:600c:2290:: with SMTP id 16mr37939668wmf.93.1578338352548;
+        Mon, 06 Jan 2020 11:19:12 -0800 (PST)
 Received: from localhost.localdomain ([2a02:2450:10d2:194d:74f9:b588:decc:794d])
-        by smtp.gmail.com with ESMTPSA id o4sm72041756wrx.25.2020.01.06.11.19.10
+        by smtp.gmail.com with ESMTPSA id o4sm72041756wrx.25.2020.01.06.11.19.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 11:19:10 -0800 (PST)
+        Mon, 06 Jan 2020 11:19:11 -0800 (PST)
 From:   SeongJae Park <sj38.park@gmail.com>
 X-Google-Original-From: SeongJae Park <sjpark@amazon.de>
 To:     paulmck@kernel.org
 Cc:     corbet@lwn.net, rcu@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, madhuparnabhowmik04@gmail.com,
         sj38.park@gmail.com, SeongJae Park <sjpark@amazon.de>
-Subject: [PATCH v2 1/7] doc/RCU/Design: Remove remaining HTML tags in ReST files
-Date:   Mon,  6 Jan 2020 20:18:46 +0100
-Message-Id: <20200106191852.22973-2-sjpark@amazon.de>
+Subject: [PATCH v2 2/7] doc/RCU/listRCU: Fix typos in a example code snippets
+Date:   Mon,  6 Jan 2020 20:18:47 +0100
+Message-Id: <20200106191852.22973-3-sjpark@amazon.de>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200106191852.22973-1-sjpark@amazon.de>
 References: <20200106191852.22973-1-sjpark@amazon.de>
@@ -61,51 +61,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit ccc9971e2147 ("docs: rcu: convert some articles from html to
-ReST") has converted a few of html RCU docs into ReST files, but a few
-of html tags which not supported on rst is remaining.  This commit
-converts those to ReST appropriate alternatives.
-
-Reviewed-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
 Signed-off-by: SeongJae Park <sjpark@amazon.de>
 ---
- .../Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst   | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ Documentation/RCU/listRCU.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst
-index 1a8b129cfc04..83ae3b79a643 100644
---- a/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst
-+++ b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst
-@@ -4,7 +4,7 @@ A Tour Through TREE_RCU's Grace-Period Memory Ordering
- 
- August 8, 2017
- 
--This article was contributed by Paul E.&nbsp;McKenney
-+This article was contributed by Paul E. McKenney
- 
- Introduction
- ============
-@@ -48,7 +48,7 @@ Tree RCU Grace Period Memory Ordering Building Blocks
- 
- The workhorse for RCU's grace-period memory ordering is the
- critical section for the ``rcu_node`` structure's
--``-&gt;lock``. These critical sections use helper functions for lock
-+``->lock``. These critical sections use helper functions for lock
- acquisition, including ``raw_spin_lock_rcu_node()``,
- ``raw_spin_lock_irq_rcu_node()``, and ``raw_spin_lock_irqsave_rcu_node()``.
- Their lock-release counterparts are ``raw_spin_unlock_rcu_node()``,
-@@ -102,9 +102,9 @@ lock-acquisition and lock-release functions::
-    23   r3 = READ_ONCE(x);
-    24 }
-    25
--   26 WARN_ON(r1 == 0 &amp;&amp; r2 == 0 &amp;&amp; r3 == 0);
-+   26 WARN_ON(r1 == 0 && r2 == 0 && r3 == 0);
- 
--The ``WARN_ON()`` is evaluated at &ldquo;the end of time&rdquo;,
-+The ``WARN_ON()`` is evaluated at "the end of time",
- after all changes have propagated throughout the system.
- Without the ``smp_mb__after_unlock_lock()`` provided by the
- acquisition functions, this ``WARN_ON()`` could trigger, for example
+diff --git a/Documentation/RCU/listRCU.rst b/Documentation/RCU/listRCU.rst
+index 55d2b30db481..e768f56e8fa3 100644
+--- a/Documentation/RCU/listRCU.rst
++++ b/Documentation/RCU/listRCU.rst
+@@ -226,7 +226,7 @@ need to be filled in)::
+ 		list_for_each_entry(e, list, list) {
+ 			if (!audit_compare_rule(rule, &e->rule)) {
+ 				e->rule.action = newaction;
+-				e->rule.file_count = newfield_count;
++				e->rule.field_count = newfield_count;
+ 				write_unlock(&auditsc_lock);
+ 				return 0;
+ 			}
+@@ -255,7 +255,7 @@ RCU (*read-copy update*) its name.  The RCU code is as follows::
+ 					return -ENOMEM;
+ 				audit_copy_rule(&ne->rule, &e->rule);
+ 				ne->rule.action = newaction;
+-				ne->rule.file_count = newfield_count;
++				ne->rule.field_count = newfield_count;
+ 				list_replace_rcu(&e->list, &ne->list);
+ 				call_rcu(&e->rcu, audit_free_rule);
+ 				return 0;
 -- 
 2.17.1
 
