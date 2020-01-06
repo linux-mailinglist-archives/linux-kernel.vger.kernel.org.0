@@ -2,93 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C44781318E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 20:52:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12BBB131903
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 21:07:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbgAFTwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 14:52:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46904 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726569AbgAFTwn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 14:52:43 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47B772072E;
-        Mon,  6 Jan 2020 19:52:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578340362;
-        bh=P7RifdT06T772dwOoK4koYvLm7Pt0vr8o0AB6bu6BMA=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=2VyobgkjORYH/J07rphHQ7iVAi5isqI+7hQvd6wJnHIRMkI8tJvk9wqHZePhDfsaO
-         PYkXbsD95dSU1i+7ukULvWHyo4R9h3RDbDLiZ1ihYv7ExsBB/GyYk2gIK4acX+VqYM
-         BpLmj5V6cH4bhtNUVlmmFSIhPWcIg0EQEBDHAeJA=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 249A3352274D; Mon,  6 Jan 2020 11:52:42 -0800 (PST)
-Date:   Mon, 6 Jan 2020 11:52:42 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     SeongJae Park <sj38.park@gmail.com>
-Cc:     corbet@lwn.net, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, madhuparnabhowmik04@gmail.com,
-        rcu@vger.kernel.org, sjpark@amazon.de
-Subject: Re: [PATCH v2 0/7] Fix trivial nits in RCU docs
-Message-ID: <20200106195242.GT13449@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200106191852.22973-1-sjpark@amazon.de>
- <20200106194330.24687-1-sj38.park@gmail.com>
+        id S1726742AbgAFUHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 15:07:18 -0500
+Received: from www.linux-watchdog.org ([185.87.125.42]:45066 "EHLO
+        www.linux-watchdog.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbgAFUHS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 15:07:18 -0500
+X-Greylist: delayed 422 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 Jan 2020 15:07:17 EST
+Received: by www.linux-watchdog.org (Postfix, from userid 500)
+        id E61D74018E; Mon,  6 Jan 2020 20:12:34 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org E61D74018E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
+        s=odk20180602; t=1578337954;
+        bh=2VvN6Q99eRU6JAhLlTbUje/JR/J+1FCxnbH7sV88u5o=;
+        h=Date:From:To:Cc:Subject:From;
+        b=kKMyPh9sxv0KOnNaXRVlqG/+dCNEI5hNXbe7YzJjbQVJMfwOndhWWuUaMjkH+dB8N
+         myxvauKOAz13BcyP+eGaB1VmT2duJ77VeFVfh7gmcJ1TXkoMMEWQS3fDdeIIaS+nmQ
+         m9U87UQ4XDHX/sRz4KRUKHHq2WgnKCSkrQuxXCj8=
+Date:   Mon, 6 Jan 2020 20:12:34 +0100
+From:   Wim Van Sebroeck <wim@linux-watchdog.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        David Engraf <david.engraf@sysgo.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Srikanth Krishnakar <skrishnakar@gmail.com>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [GIT PULL REQUEST] watchdog - v5.5 Fixes
+Message-ID: <20200106191234.GA1443@www.linux-watchdog.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200106194330.24687-1-sj38.park@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mutt/1.5.20 (2009-12-10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 08:43:30PM +0100, SeongJae Park wrote:
-> Author email (sjpark@amazon.de) is not applied to this patch set mails...
-> Maybe my git send-email setting is somewhere broken.  Sorry, I will correct
-> this and send v3 soon.
+Hi Linus,
 
-Given my recent change in email address, I can certainly sympathize!  ;-)
+Please pull the watchdog changes for the v5.5 release cycle.
 
-							Thanx, Paul
+This series contains:
+* rn5t618_wdt: fix module aliases
+* max77620_wdt: fix potential build errors
+* imx7ulp: Fix missing conversion of imx7ulp_wdt_enable()
+* orion: fix platform_get_irq() complaints
+* w83627hf_wdt: Fix NCT6116D support
 
-> Thanks,
-> SeongJae Park
-> 
-> On   Mon,  6 Jan 2020 20:18:45 +0100   SeongJae Park <sj38.park@gmail.com> wrote:
-> 
-> > This patchset fixes trivial nits in the RCU documentations.
-> > 
-> > It is based on the latest dev branch of Paul's linux-rcu git repository.
-> > The Complete git tree is also available at
-> > https://github.com/sjp38/linux/tree/patches/rcu/docs/2019-12-31/v2.
-> > 
-> > Changes from v1
-> > (https://lore.kernel.org/linux-doc/20191231151549.12797-1-sjpark@amazon.de/)
-> > 
-> >  - Add 'Reviewed-by' from Madhuparna
-> >  - Fix wrong author email address
-> >  - Rebased on latest dev branch of Paul's linux-rcu git repository.
-> > 
-> > SeongJae Park (7):
-> >   doc/RCU/Design: Remove remaining HTML tags in ReST files
-> >   doc/RCU/listRCU: Fix typos in a example code snippets
-> >   doc/RCU/listRCU: Update example function name
-> >   doc/RCU/rcu: Use ':ref:' for links to other docs
-> >   doc/RCU/rcu: Use absolute paths for non-rst files
-> >   doc/RCU/rcu: Use https instead of http if possible
-> >   rcu: Fix typos in beginning comments
-> > 
-> >  .../Tree-RCU-Memory-Ordering.rst               |  8 ++++----
-> >  Documentation/RCU/listRCU.rst                  | 10 +++++-----
-> >  Documentation/RCU/rcu.rst                      | 18 +++++++++---------
-> >  kernel/rcu/srcutree.c                          |  2 +-
-> >  kernel/rcu/tree.c                              |  4 ++--
-> >  5 files changed, 21 insertions(+), 21 deletions(-)
-> > 
-> > -- 
-> > 2.17.1
-> > 
+
+The output from git request-pull:
+----------------------------------------------------------------
+The following changes since commit d1eef1c619749b2a57e514a3fa67d9a516ffa919:
+
+  Linux 5.5-rc2 (2019-12-15 15:16:08 -0800)
+
+are available in the git repository at:
+
+  git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-5.5-fixes
+
+for you to fetch changes up to dcbce5fbcc69bf2553f650004aad44bf390eca73:
+
+  watchdog: orion: fix platform_get_irq() complaints (2019-12-30 15:58:29 +0100)
+
+----------------------------------------------------------------
+linux-watchdog 5.5-fixes tag
+
+----------------------------------------------------------------
+Andreas Kemnade (1):
+      watchdog: rn5t618_wdt: fix module aliases
+
+David Engraf (1):
+      watchdog: max77620_wdt: fix potential build errors
+
+Fabio Estevam (1):
+      watchdog: imx7ulp: Fix missing conversion of imx7ulp_wdt_enable()
+
+Russell King (1):
+      watchdog: orion: fix platform_get_irq() complaints
+
+Srikanth Krishnakar (1):
+      watchdog: w83627hf_wdt: Fix support NCT6116D
+
+YueHaibing (1):
+      watchdog: tqmx86_wdt: Fix build error
+
+ drivers/watchdog/Kconfig        | 2 ++
+ drivers/watchdog/imx7ulp_wdt.c  | 2 +-
+ drivers/watchdog/orion_wdt.c    | 4 ++--
+ drivers/watchdog/rn5t618_wdt.c  | 1 +
+ drivers/watchdog/w83627hf_wdt.c | 2 +-
+ 5 files changed, 7 insertions(+), 4 deletions(-)
+----------------------------------------------------------------
+
+Kind regards,
+Wim.
+
