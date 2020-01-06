@@ -2,120 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBF461318CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 20:32:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B13FB1318D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 20:40:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbgAFTcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 14:32:13 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45947 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbgAFTcM (ORCPT
+        id S1726721AbgAFTkk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 14:40:40 -0500
+Received: from UHIL19PA37.eemsg.mail.mil ([214.24.21.196]:40148 "EHLO
+        UHIL19PA37.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726569AbgAFTkj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 14:32:12 -0500
-Received: by mail-wr1-f67.google.com with SMTP id j42so50993605wrj.12;
-        Mon, 06 Jan 2020 11:32:12 -0800 (PST)
+        Mon, 6 Jan 2020 14:40:39 -0500
+X-Greylist: delayed 428 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 Jan 2020 14:40:39 EST
+X-EEMSG-check-017: 63071641|UHIL19PA37_ESA_OUT03.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.69,403,1571702400"; 
+   d="scan'208";a="63071641"
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by UHIL19PA37.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 06 Jan 2020 19:33:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8o2sKD5F6r3n9vP99rpxAg/yvqUr2DBBH2v8mEkde6I=;
-        b=cgK48k3VEm1ZZSOwvZZXnLvzdte4R7HCAi9cjvE1hg14+B4gbzHfe5gKggshw0KRgG
-         zWRQa/KGy1uOzgO4qrQyEwRJdoZhn/cDL9yd3jwKvnumeeMhqNmRXCe+HEcsvgkDkQhT
-         YT8NqKFKPzKPXLZbTRDVZVasjCsDY6gKYyiy70xHW0yDnxM6OHEkfyySsZKkFGUEQH6+
-         BBMo54zdnX++k0D4Qc8eE4W9LaeXfU/sJdisHCVRABjux0Z3jzK3Z5kJzQWmygRn+49Q
-         3kAU17KywWRH8kNtb58EyGbM8rguEYFW8kpyzqsVGf6Ns24mXKpcFAxgW2+QhEWdAhSw
-         muJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8o2sKD5F6r3n9vP99rpxAg/yvqUr2DBBH2v8mEkde6I=;
-        b=N4JVbrIltyaCTZnOJIcvGR+ulhiKWoygYE9hry215zwpI5zEv15QUvubLKKFwwheqH
-         haaRXQE1XY5f6hE+ogkdMHnUvMFnGrl0VuHzs1qfyXXKjXtQ//fuYRJ0tub4jwHv4bg6
-         JIoO7a2qxTvg2CojVf7DiHYdSjvLOyNvNq4IEVPwCvQvBkM0HsFygO2vbPuaf7FO/7Fs
-         6hbhaGSN7TTFhPtE3tqP/tCzaIlaNQ8L7t/m73nugtuVFPdjDIP0WN6eDOOQiI5jTcyP
-         vkmfIpLA4XLIrt0AvwO38+eVPBybxhV+CNrENW6qr4GmW1VCnqePOIS7YOhhVSJb3Z5M
-         L7PA==
-X-Gm-Message-State: APjAAAUyigah00omYSnJsCLIwSE1u+GymJi2xzIF0FWiU4VY/x+Kc0Bv
-        MYJgpMdy7BBjkG4K7GtGHbQ=
-X-Google-Smtp-Source: APXvYqxtiAnjS9xP3tqTG2THQF5l24EjHH58DXeaAWMYglXCec6eS/XofGQ04SMvGbMB+eteCGA/iw==
-X-Received: by 2002:adf:c145:: with SMTP id w5mr104778252wre.205.1578339131597;
-        Mon, 06 Jan 2020 11:32:11 -0800 (PST)
-Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id r68sm22143312wmr.43.2020.01.06.11.32.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 11:32:11 -0800 (PST)
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        mripard@kernel.org, wens@csie.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH] crypto: sun8i-ce: remove dead code
-Date:   Mon,  6 Jan 2020 20:32:08 +0100
-Message-Id: <20200106193208.4367-1-clabbe.montjoie@gmail.com>
-X-Mailer: git-send-email 2.24.1
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1578339210; x=1609875210;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=67eCUxRZt68ZH+LKSpSy6Guy4XdKARnQ4PpmgXjbTq8=;
+  b=Ft/p4AIfNHsAgTjx66utwda6gkgb9CGucOU6jCEojbt5nNqEdSiyRWEJ
+   PdR0iMkEj0C90dqcBIBCQ9IuFhIwY6NeoKcx+TrUb5La/rEogzCbzBU9t
+   stvD+kcf4Ua/BdSZeT5gi1tyAT9Mfl7S/OQu4/NewMy4GeHGw90mBly4+
+   z2an4OEto8pzJguUuqc84rkucBgcei9wBmayAwjVUiTidu0AmLAVMY0u4
+   8zzarHNCetaz+KZucu6DKwGssBlDJEgLR2YoAHMbjxywgX8QEyQvp46JK
+   e2M5lhBJnotyqDVc03D8416O4s83BRCe2iPWF6WCsj5I+bKez4XAZIXNu
+   g==;
+X-IronPort-AV: E=Sophos;i="5.69,403,1571702400"; 
+   d="scan'208";a="31640672"
+IronPort-PHdr: =?us-ascii?q?9a23=3A87JOIxwop/ngOSnXCy+O+j09IxM/srCxBDY+r6?=
+ =?us-ascii?q?Qd0ugULPad9pjvdHbS+e9qxAeQG9mCsLQe1rKd6vq8EUU7or+5+EgYd5JNUx?=
+ =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
+ =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCezbL9oMhm7rRndusYLjYd8Jas61w?=
+ =?us-ascii?q?fErGZPd+lK321jOEidnwz75se+/Z5j9zpftvc8/MNeUqv0Yro1Q6VAADspL2?=
+ =?us-ascii?q?466svrtQLeTQSU/XsTTn8WkhtTDAfb6hzxQ4r8vTH7tup53ymaINH2QLUpUj?=
+ =?us-ascii?q?ms86tnVBnlgzocOjUn7G/YlNB/jKNDoBKguRN/xZLUYJqIP/Z6Z6/RYM8WSX?=
+ =?us-ascii?q?ZEUstXWSNBGIe8ZJYRAeQHM+hTso3xq0IAoBa6AAWhAv7kxD1ViX/sxaA0zv?=
+ =?us-ascii?q?ovEQ/G0gIjEdwBvnvbo9fpO6kdSu210KvFwC/fY/9K1zrw6o7FeQ0hr/GWWr?=
+ =?us-ascii?q?JwdNLcx1QzFwzbllWQqZLqPzWI3eoQtmiU9e5gVeaxhG8ntgp8pSOvydo3io?=
+ =?us-ascii?q?TSmoIUykzL9SV+wIovI924U1R0bcSrEJtXqSGXLo17Sd4hTWFwoCs217ILtJ?=
+ =?us-ascii?q?GhcCUK1Zgr3QDTZvOZf4SS/x7uUvuaLy1ii3J/Yr2/gg6/8U2nyuLhSMa5yE?=
+ =?us-ascii?q?1Kri9ZktnUsXANygDT5tCHSvRj+keh3i6C1xzJ5eFeIEA0iLHbJ4Qgwr42mJ?=
+ =?us-ascii?q?oTtl/DETHql0nskK+Xdlkr+uiv6+j9ZLXpuoScOJNuhgH7M6QuntSzAeU+Mg?=
+ =?us-ascii?q?cQQ2iW4fmw2bLs8EHjQLhGk+c6nrfWvZzEP8gXu7a1AwpP3YYi7xa/AS2m0N?=
+ =?us-ascii?q?MdnXQfN1JKZQmHgpP1O1DOPP/4DfC/j06qkDdw3f/KJLLhApLTLnTbirfuYa?=
+ =?us-ascii?q?5961JAyAo01d1f54hUCrAcL/PzQED8r9PYDhg+Mwy7x+boFs9x2Z8ZWWKKGq?=
+ =?us-ascii?q?WZKr/dsUeU5uIzJOmBfJcVtyzgK/gh/PPulWU2mUIZfaWw2JsXb3e4Hu54LE?=
+ =?us-ascii?q?mDfXXshdIBG38QvgUiVOzqlEGCUTlLanmsR6Iz/Cs7CIO9DYrYXoCimqaB3C?=
+ =?us-ascii?q?agHp1OYmBJEEyDHmnye4WDQfcMZzqYItV9nTwcSbihV4gh2Am1tADkz7pnL+?=
+ =?us-ascii?q?zU+jAXtJ/4yth16PPclQso+Tx3EcudyWeNQH9wnm8SQD82xq9/q1Rnylifya?=
+ =?us-ascii?q?h4n+BYFdtL6vNNUwc6M4PczuNjB9DxRA3BZNGJR0iiQti9HzExQcw+w8UUb0?=
+ =?us-ascii?q?Z+BdqilBbD0DSuA7MPkLyLHpM0+LrG33ftP8Z912rG1K45glklXMRPL2umib?=
+ =?us-ascii?q?B79wTKG47GjV+Wl6OxeKsG2i7C6X2DzW2PvE5FSgJ/TaLFXXUHbEvMsdv5/l?=
+ =?us-ascii?q?/CT6OpCbk/MAtO18CCKqVUatDyglVGQ/DjONvaY22vgWu/GRGIxraUZorwZ2?=
+ =?us-ascii?q?odxDndCFQDkw0L5naJLww+ByegomPeCjxjDkjgY0Xx/ulkr3O7T1I7wxuWYE?=
+ =?us-ascii?q?1m0rrmsiIS0NyGSv8C1/o6sSM6oi99Hkv1i9LMCtaRriJue6JTZd5761BCgz?=
+ =?us-ascii?q?H3rQt4a6e8Irhii1hWSAF+u0fjxl0jEYlbudQ7p3MtigxpIOSX100XJGDQ5o?=
+ =?us-ascii?q?z5JrCCcjq6xxuocaODnwiFgds=3D?=
+X-IPAS-Result: =?us-ascii?q?A2CzAACuihNe/wHyM5BmHAEBAQEBBwEBEQEEBAEBgWsEA?=
+ =?us-ascii?q?QELAYF8gWwBIBIqhAIHiQOGZAEBBAaBEiWJbo9hgRADRw0JAQEBAQEBAQEBI?=
+ =?us-ascii?q?BcBAYRAAoINNwYOAhABAQEEAQEBAQEFAwEBbIVDgjspAYJ5AQEBAQIBIwQRF?=
+ =?us-ascii?q?isQCxgCAiYCAjEmBggFAgQBAQEBGQSCQj+CUwUgrRB1fzOFT4MogT2BDigBh?=
+ =?us-ascii?q?X+GM3mBB4E4DAOCXT6EFgESAYMvgjwiBI12gguGNGFGlz2CQIJFk08GG5pbq?=
+ =?us-ascii?q?zwjNzBxKwgCGAghD4MnUBgNjjkBCI00IwMwEIwlgjIBAQ?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 06 Jan 2020 19:33:29 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 006JWpTg063000;
+        Mon, 6 Jan 2020 14:32:56 -0500
+Subject: Re: [PATCH] security: selinux: allow per-file labelling for binderfs
+To:     Hridya Valsaraju <hridya@google.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Mark Salyzyn <salyzyn@android.com>
+References: <20200106181329.167322-1-hridya@google.com>
+ <d78e4db4-5847-082c-189a-f13d7d6a6c7a@tycho.nsa.gov>
+ <CA+wgaPMHWOVYo_pVeYuvj6CrQOgy9=vQco+tnGHjPX3=CLh5wA@mail.gmail.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <c1354989-1e08-1433-f2c0-5984da341cf5@tycho.nsa.gov>
+Date:   Mon, 6 Jan 2020 14:33:58 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+wgaPMHWOVYo_pVeYuvj6CrQOgy9=vQco+tnGHjPX3=CLh5wA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some code were left in the final driver but without any use.
+On 1/6/20 2:06 PM, Hridya Valsaraju wrote:
+> On Mon, Jan 6, 2020 at 10:33 AM 'Stephen Smalley' via kernel-team
+> <kernel-team@android.com> wrote:
+>>
+>> On 1/6/20 1:13 PM, Hridya Valsaraju wrote:
+>>> This patch allows genfscon per-file labeling for binderfs.
+>>> This is required to have separate permissions to allow
+>>> access to binder, hwbinder and vndbinder devices which are
+>>> relocating to binderfs.
+>>>
+>>> Acked-by: Jeff Vander Stoep <jeffv@google.com>
+>>> Acked-by: Mark Salyzyn <salyzyn@android.com>
+>>> Signed-off-by: Hridya Valsaraju <hridya@google.com>
+>>
+>> Do you want binderfs to also support userspace labeling of files via
+>> setxattr()?  If so, you'll want to also add it to
+>> selinux_is_genfs_special_handling() as well.
+> 
+> Thank you for the quick response Stephen :) I cannot think of a
+> use-case for the userspace labelling of files in binderfs via
+> setxattr() as of now. I
+> will make the change if one comes up!
 
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
----
- drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c | 5 -----
- drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h        | 8 --------
- 2 files changed, 13 deletions(-)
+Ok, then you can include my:
+Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
 
-diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
-index 37d0b6c386a0..75e2bef2b363 100644
---- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
-+++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
-@@ -144,11 +144,6 @@ static int sun8i_ce_cipher(struct skcipher_request *areq)
- 	cet->t_sym_ctl = cpu_to_le32(sym);
- 	cet->t_asym_ctl = 0;
- 
--	chan->op_mode = ce->variant->op_mode[algt->ce_blockmode];
--	chan->op_dir = rctx->op_dir;
--	chan->method = ce->variant->alg_cipher[algt->ce_algo_id];
--	chan->keylen = op->keylen;
--
- 	addr_key = dma_map_single(ce->dev, op->key, op->keylen, DMA_TO_DEVICE);
- 	cet->t_key = cpu_to_le32(addr_key);
- 	if (dma_mapping_error(ce->dev, addr_key)) {
-diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
-index 43db49ceafe4..8f8404c84a4d 100644
---- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
-+++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
-@@ -131,12 +131,8 @@ struct ce_task {
-  * @engine:	ptr to the crypto_engine for this flow
-  * @bounce_iv:	buffer which contain the IV
-  * @ivlen:	size of bounce_iv
-- * @keylen:	keylen for this flow operation
-  * @complete:	completion for the current task on this flow
-  * @status:	set to 1 by interrupt if task is done
-- * @method:	current method for flow
-- * @op_dir:	direction (encrypt vs decrypt) of this flow
-- * @op_mode:	op_mode for this flow
-  * @t_phy:	Physical address of task
-  * @tl:		pointer to the current ce_task for this flow
-  * @stat_req:	number of request done by this flow
-@@ -145,12 +141,8 @@ struct sun8i_ce_flow {
- 	struct crypto_engine *engine;
- 	void *bounce_iv;
- 	unsigned int ivlen;
--	unsigned int keylen;
- 	struct completion complete;
- 	int status;
--	u32 method;
--	u32 op_dir;
--	u32 op_mode;
- 	dma_addr_t t_phy;
- 	int timeout;
- 	struct ce_task *tl;
--- 
-2.24.1
+> 
+> Thanks,
+> Hridya
+> 
+> 
+>>
+>>> ---
+>>>    security/selinux/hooks.c | 1 +
+>>>    1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+>>> index 116b4d644f68..3f0669a708e9 100644
+>>> --- a/security/selinux/hooks.c
+>>> +++ b/security/selinux/hooks.c
+>>> @@ -752,6 +752,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+>>>
+>>>        if (!strcmp(sb->s_type->name, "debugfs") ||
+>>>            !strcmp(sb->s_type->name, "tracefs") ||
+>>> +         !strcmp(sb->s_type->name, "binderfs") ||
+>>>            !strcmp(sb->s_type->name, "pstore"))
+>>>                sbsec->flags |= SE_SBGENFS;
+>>>
+>>>
+>>
+>> --
+>> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
+>>
 
