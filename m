@@ -2,109 +2,233 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8A55130C38
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 03:51:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90F8B130C40
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 03:59:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbgAFCv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 21:51:29 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:26399 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727307AbgAFCv3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 21:51:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578279088;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CsRJ7uoCT/3TCgqLDKH0aLBqgk5O1Rp9vht+XRsijOA=;
-        b=RWgPNtmXajvE5hLnVdmNi2p9s2KUFQYHOcl/02Fd/mVXTmkMZVqp6uf2mrwuoeuvZjjwXe
-        6YDcqbXK4PufVzfQ0epPLInIKDcY1sneEpw5H2G3AKxzotz9mZsBTyDFttobEdxmwDosfU
-        vVa0lXKoUH05S6eBsZT2yI4a0Fd9qAo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-99-DGFkBu0UO6O5ST1fwjOQGQ-1; Sun, 05 Jan 2020 21:51:25 -0500
-X-MC-Unique: DGFkBu0UO6O5ST1fwjOQGQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727389AbgAFC7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 21:59:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56754 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727307AbgAFC7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Jan 2020 21:59:16 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E6F8A801E76;
-        Mon,  6 Jan 2020 02:51:23 +0000 (UTC)
-Received: from [10.72.12.147] (ovpn-12-147.pek2.redhat.com [10.72.12.147])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9E3DC10840F1;
-        Mon,  6 Jan 2020 02:51:12 +0000 (UTC)
-Subject: Re: [virtio-dev] Re: [PATCH v1 2/2] virtio-mmio: add features for
- virtio-mmio specification version 3
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     "Liu, Jiang" <gerry@linux.alibaba.com>,
-        "Liu, Jing2" <jing2.liu@linux.intel.com>,
-        Zha Bin <zhabin@linux.alibaba.com>,
-        linux-kernel@vger.kernel.org, slp@redhat.com,
-        virtio-dev@lists.oasis-open.org, jing2.liu@intel.com,
-        chao.p.peng@intel.com
-References: <cover.1577240905.git.zhabin@linux.alibaba.com>
- <a11d4c616158c9fb1ca4575ca0530b2e17b952fa.1577240905.git.zhabin@linux.alibaba.com>
- <85eeab19-1f53-6c45-95a2-44c1cfd39184@redhat.com>
- <28da67db-73ab-f772-fb00-5a471b746fc5@linux.intel.com>
- <683cac51-853d-c8c8-24c6-b01886978ca4@redhat.com>
- <42346d41-b758-967a-30b7-95aa0d383beb@linux.intel.com>
- <0c3d33de-3940-7895-2fe2-81de8714139c@redhat.com>
- <46806720-1D1C-40C3-BEE2-EDB0D4DA39BF@linux.alibaba.com>
- <7e151886-408e-2c1d-3958-77c26b8a4ac0@redhat.com>
- <20200105062023-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <e8dafb72-0737-01ad-f1c9-28870dbb8c1a@redhat.com>
-Date:   Mon, 6 Jan 2020 10:51:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        by mail.kernel.org (Postfix) with ESMTPSA id A180E206F0;
+        Mon,  6 Jan 2020 02:59:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578279554;
+        bh=Fevvnl4RnqYZ7TIx/wmZITfpCbFbNblxka/5cM3df40=;
+        h=In-Reply-To:References:Cc:To:Subject:From:Date:From;
+        b=TLie7Vn3TeYHwtqiDX04AsTUgrJsDbSxZcL8qqY4YIHCRaQvLsic9ntW0eYTN1X0a
+         waKC7lNKOmCt8Z05eE62Wy+5oYIq8WyKAI7rlSbLGeSFEAKArimYyVf6JeJ9Jm8Zg1
+         8f4VHnYCQHtbgSMuwPBZ9S3A2435ZlYW/uzvF8F8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20200105062023-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1577412748-28213-2-git-send-email-Anson.Huang@nxp.com>
+References: <1577412748-28213-1-git-send-email-Anson.Huang@nxp.com> <1577412748-28213-2-git-send-email-Anson.Huang@nxp.com>
+Cc:     Linux-imx@nxp.com
+To:     Anson Huang <Anson.Huang@nxp.com>, abel.vesa@nxp.com,
+        bjorn.andersson@linaro.org, catalin.marinas@arm.com,
+        devicetree@vger.kernel.org, dinguyen@kernel.org,
+        festevam@gmail.com, kernel@pengutronix.de, leonard.crestez@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, marcin.juszkiewicz@linaro.org,
+        mark.rutland@arm.com, maxime@cerno.tech, mturquette@baylibre.com,
+        olof@lixom.net, ping.bai@nxp.com, robh+dt@kernel.org,
+        s.hauer@pengutronix.de, shawnguo@kernel.org, will@kernel.org
+Subject: Re: [PATCH 2/3] clk: imx: Add support for i.MX8MP clock driver
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Sun, 05 Jan 2020 18:59:13 -0800
+Message-Id: <20200106025914.A180E206F0@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting Anson Huang (2019-12-26 18:12:27)
+> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+> new file mode 100644
+> index 0000000..7f0d482
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-imx8mp.c
+> @@ -0,0 +1,767 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2019 NXP.
+> + */
+> +
+> +#include <dt-bindings/clock/imx8mp-clock.h>
+> +#include <linux/clk.h>
 
-On 2020/1/5 =E4=B8=8B=E5=8D=887:25, Michael S. Tsirkin wrote:
-> On Fri, Jan 03, 2020 at 05:12:38PM +0800, Jason Wang wrote:
->> On 2020/1/3 =E4=B8=8B=E5=8D=882:14, Liu, Jiang wrote:
->>>> Ok, I get you now.
->>>>
->>>> But still, having fixed number of MSIs is less flexible. E.g:
->>>>
->>>> - for x86, processor can only deal with about 250 interrupt vectors.
->>>> - driver may choose to share MSI vectors [1] (which is not merged bu=
-t we will for sure need it)
->>> Thanks for the info:)
->>> X86 systems roughly have NCPU * 200 vectors available for device inte=
-rrupts.
->>> The proposed patch tries to map multiple event sources to an interrup=
-t vector, to avoid running out of x86 CPU vectors.
->>> Many virtio mmio devices may have several or tens of event sources, a=
-nd it=E2=80=99s rare to have hundreds of event sources.
->>> So could we treat the dynamic mapping between event sources and inter=
-rupt vectors as an advanced optional feature?
->>>
->> Maybe, but I still prefer to implement it if it is not too complex. Le=
-t's
->> see Michael's opinion on this.
->>
->> Thanks
-> I think a way for the device to limit # of vectors in use by driver is
-> useful. But sharing of vectors doesn't really need any special
-> registers, just program the same vector for multiple Qs/interrupts.
+Please include clk-provider.h as this is a clk provider. If possible,
+don't include clk.h as this shouldn't be a consumer.
 
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
 
-Right, but sine the #vectors is limited, we still need dynamic mapping=20
-like what is done in PCI.
+Is this include used?
 
-Thanks
+> +#include <linux/of_address.h>
 
+Is this include used?
 
->
+> +#include <linux/platform_device.h>
+> +#include <linux/types.h>
+> +
+> +#include "clk.h"
+> +
+> +static u32 share_count_nand;
+> +static u32 share_count_media;
+> +
+> +static const char *pll_ref_sels[] =3D { "osc_24m", "dummy", "dummy", "du=
+mmy", };
 
+Is it possible to make these const char * const foo[] arrays?
+
+> +static const char *audio_pll1_bypass_sels[] =3D {"audio_pll1", "audio_pl=
+l1_ref_sel", };
+> +static const char *audio_pll2_bypass_sels[] =3D {"audio_pll2", "audio_pl=
+l2_ref_sel", };
+> +static const char *video_pll1_bypass_sels[] =3D {"video_pll1", "video_pl=
+l1_ref_sel", };
+[...]
+> +       clk_set_parent(clks[IMX8MP_AUDIO_PLL1_BYPASS], clks[IMX8MP_AUDIO_=
+PLL1]);
+> +       clk_set_parent(clks[IMX8MP_AUDIO_PLL2_BYPASS], clks[IMX8MP_AUDIO_=
+PLL2]);
+> +       clk_set_parent(clks[IMX8MP_VIDEO_PLL1_BYPASS], clks[IMX8MP_VIDEO_=
+PLL1]);
+> +       clk_set_parent(clks[IMX8MP_DRAM_PLL_BYPASS], clks[IMX8MP_DRAM_PLL=
+]);
+> +       clk_set_parent(clks[IMX8MP_GPU_PLL_BYPASS], clks[IMX8MP_GPU_PLL]);
+> +       clk_set_parent(clks[IMX8MP_VPU_PLL_BYPASS], clks[IMX8MP_VPU_PLL]);
+> +       clk_set_parent(clks[IMX8MP_ARM_PLL_BYPASS], clks[IMX8MP_ARM_PLL]);
+> +       clk_set_parent(clks[IMX8MP_SYS_PLL1_BYPASS], clks[IMX8MP_SYS_PLL1=
+]);
+> +       clk_set_parent(clks[IMX8MP_SYS_PLL2_BYPASS], clks[IMX8MP_SYS_PLL2=
+]);
+> +       clk_set_parent(clks[IMX8MP_SYS_PLL3_BYPASS], clks[IMX8MP_SYS_PLL3=
+]);
+
+These can't be done with assigned-clock-parents properties in DT?
+
+> +
+> +       clks[IMX8MP_AUDIO_PLL1_OUT] =3D imx_clk_gate("audio_pll1_out", "a=
+udio_pll1_bypass", base, 13);
+> +       clks[IMX8MP_AUDIO_PLL2_OUT] =3D imx_clk_gate("audio_pll2_out", "a=
+udio_pll2_bypass", base + 0x14, 13);
+> +       clks[IMX8MP_VIDEO_PLL1_OUT] =3D imx_clk_gate("video_pll1_out", "v=
+ideo_pll1_bypass", base + 0x28, 13);
+> +       clks[IMX8MP_DRAM_PLL_OUT] =3D imx_clk_gate("dram_pll_out", "dram_=
+pll_bypass", base + 0x50, 13);
+> +       clks[IMX8MP_GPU_PLL_OUT] =3D imx_clk_gate("gpu_pll_out", "gpu_pll=
+_bypass", base + 0x64, 11);
+> +       clks[IMX8MP_VPU_PLL_OUT] =3D imx_clk_gate("vpu_pll_out", "vpu_pll=
+_bypass", base + 0x74, 11);
+> +       clks[IMX8MP_ARM_PLL_OUT] =3D imx_clk_gate("arm_pll_out", "arm_pll=
+_bypass", base + 0x84, 11);
+> +       clks[IMX8MP_SYS_PLL1_OUT] =3D imx_clk_gate("sys_pll1_out", "sys_p=
+ll1_bypass", base + 0x94, 11);
+> +       clks[IMX8MP_SYS_PLL2_OUT] =3D imx_clk_gate("sys_pll2_out", "sys_p=
+ll2_bypass", base + 0x104, 11);
+> +       clks[IMX8MP_SYS_PLL3_OUT] =3D imx_clk_gate("sys_pll3_out", "sys_p=
+ll3_bypass", base + 0x114, 11);
+
+Any reason why we can't get back clk_hw pointers instead and register a
+hw based provider?
+
+> +
+> +       clks[IMX8MP_SYS_PLL1_40M] =3D imx_clk_fixed_factor("sys_pll1_40m"=
+, "sys_pll1_out", 1, 20);
+> +       clks[IMX8MP_SYS_PLL1_80M] =3D imx_clk_fixed_factor("sys_pll1_80m"=
+, "sys_pll1_out", 1, 10);
+> +       clks[IMX8MP_SYS_PLL1_100M] =3D imx_clk_fixed_factor("sys_pll1_100=
+m", "sys_pll1_out", 1, 8);
+> +       clks[IMX8MP_SYS_PLL1_133M] =3D imx_clk_fixed_factor("sys_pll1_133=
+m", "sys_pll1_out", 1, 6);
+> +       clks[IMX8MP_SYS_PLL1_160M] =3D imx_clk_fixed_factor("sys_pll1_160=
+m", "sys_pll1_out", 1, 5);
+> +       clks[IMX8MP_SYS_PLL1_200M] =3D imx_clk_fixed_factor("sys_pll1_200=
+m", "sys_pll1_out", 1, 4);
+> +       clks[IMX8MP_SYS_PLL1_266M] =3D imx_clk_fixed_factor("sys_pll1_266=
+m", "sys_pll1_out", 1, 3);
+> +       clks[IMX8MP_SYS_PLL1_400M] =3D imx_clk_fixed_factor("sys_pll1_400=
+m", "sys_pll1_out", 1, 2);
+> +       clks[IMX8MP_SYS_PLL1_800M] =3D imx_clk_fixed_factor("sys_pll1_800=
+m", "sys_pll1_out", 1, 1);
+> +
+> +       clks[IMX8MP_SYS_PLL2_50M] =3D imx_clk_fixed_factor("sys_pll2_50m"=
+, "sys_pll2_out", 1, 20);
+> +       clks[IMX8MP_SYS_PLL2_100M] =3D imx_clk_fixed_factor("sys_pll2_100=
+m", "sys_pll2_out", 1, 10);
+> +       clks[IMX8MP_SYS_PLL2_125M] =3D imx_clk_fixed_factor("sys_pll2_125=
+m", "sys_pll2_out", 1, 8);
+> +       clks[IMX8MP_SYS_PLL2_166M] =3D imx_clk_fixed_factor("sys_pll2_166=
+m", "sys_pll2_out", 1, 6);
+> +       clks[IMX8MP_SYS_PLL2_200M] =3D imx_clk_fixed_factor("sys_pll2_200=
+m", "sys_pll2_out", 1, 5);
+> +       clks[IMX8MP_SYS_PLL2_250M] =3D imx_clk_fixed_factor("sys_pll2_250=
+m", "sys_pll2_out", 1, 4);
+> +       clks[IMX8MP_SYS_PLL2_333M] =3D imx_clk_fixed_factor("sys_pll2_333=
+m", "sys_pll2_out", 1, 3);
+> +       clks[IMX8MP_SYS_PLL2_500M] =3D imx_clk_fixed_factor("sys_pll2_500=
+m", "sys_pll2_out", 1, 2);
+> +       clks[IMX8MP_SYS_PLL2_1000M] =3D imx_clk_fixed_factor("sys_pll2_10=
+00m", "sys_pll2_out", 1, 1);
+> +
+> +       np =3D dev->of_node;
+> +       base =3D devm_platform_ioremap_resource(pdev, 0);
+> +       if (WARN_ON(IS_ERR(base))) {
+> +               ret =3D PTR_ERR(base);
+> +               goto unregister_clks;
+
+Why not ioremap first so we don't have to unwind clk registration on
+failure?
+
+> +       }
+> +
+> +       clks[IMX8MP_CLK_A53_SRC] =3D imx_clk_mux2("arm_a53_src", base + 0=
+x8000, 24, 3, imx8mp_a53_sels, ARRAY_SIZE(imx8mp_a53_sels));
+> +       clks[IMX8MP_CLK_M7_SRC] =3D imx_clk_mux2("arm_m7_src", base + 0x8=
+080, 24, 3, imx8mp_m7_sels, ARRAY_SIZE(imx8mp_m7_sels));
+> +       clks[IMX8MP_CLK_ML_SRC] =3D imx_clk_mux2("ml_src", base + 0x8100,=
+ 24, 3, imx8mp_ml_sels, ARRAY_SIZE(imx8mp_ml_sels));
+> +       clks[IMX8MP_CLK_GPU3D_CORE_SRC] =3D imx_clk_mux2("gpu3d_core_src"=
+, base + 0x8180, 24, 3,  imx8mp_gpu3d_core_sels, ARRAY_SIZE(imx8mp_gpu3d_co=
+re_sels));
+> +       clks[IMX8MP_CLK_GPU3D_SHADER_SRC] =3D imx_clk_mux2("gpu3d_shader_=
+src", base + 0x8200, 24, 3, imx8mp_gpu3d_shader_sels, ARRAY_SIZE(imx8mp_gpu=
+3d_shader_sels));
+> +       clks[IMX8MP_CLK_GPU2D_SRC] =3D imx_clk_mux2("gpu2d_src", base + 0=
+x8280, 24, 3, imx8mp_gpu2d_sels, ARRAY_SIZE(imx8mp_gpu2d_sels));
+> +       clks[IMX8MP_CLK_AUDIO_AXI_SRC] =3D imx_clk_mux2("audio_axi_src", =
+base + 0x8300, 24, 3, imx8mp_audio_axi_sels, ARRAY_SIZE(imx8mp_audio_axi_se=
+ls));
+[...]
+> +
+> +       imx_register_uart_clocks(uart_clks);
+> +
+> +       return 0;
+> +
+> +unregister_clks:
+> +       imx_unregister_clocks(clks, ARRAY_SIZE(clks));
+> +
+> +       return ret;
+> +}
+> +
+> +static const struct of_device_id imx8mp_clk_of_match[] =3D {
+> +       { .compatible =3D "fsl,imx8mp-ccm" },
+> +       { /* Sentinel */ },
+
+Please drop the comma after sentinel so that nothing can go after it.
+
+> +};
+> +MODULE_DEVICE_TABLE(of, imx8mp_clk_of_match);
+> +
+> +static struct platform_driver imx8mp_clk_driver =3D {
+> +       .probe =3D imx8mp_clocks_probe,
