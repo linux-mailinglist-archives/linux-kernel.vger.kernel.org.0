@@ -2,133 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A35A21318D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 20:38:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D687F1318DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 20:46:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbgAFTim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 14:38:42 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45713 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726569AbgAFTim (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 14:38:42 -0500
-Received: by mail-io1-f66.google.com with SMTP id i11so49785692ioi.12;
-        Mon, 06 Jan 2020 11:38:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cFL1fKtV0fgN9gDJ7Fm/iZJuC48WZ+DUJ81pq9R4fTw=;
-        b=mONhGolss5xAIaSVNmY/VtF7D5t3S8CORW4oqNNOlfYgn5MTeWxb+LZk7OUDOsnZCM
-         h1xxXcCHkBF33srP3ImNfNtizd73nSUUSVdWHlm8Xbp1+E6wNk3RtbzX89FCZS7quirv
-         sJZOopIfH8wgaD9E/NOcbE506NbI2a8ahXftWesxADkmZafB14mueoO3dCrk2RH9BUhd
-         0zByWiECq/Bm2Z4ApHV8SqQgJTpAkMCV6hEpE+NdO4ofoUkX3LFlUXiA6+cAGYKl4pJV
-         +sURO4IlbLX1IOlGBz9sfzLm3MexQqtG82tuNUaTELBjnEK1RS/oLvclJNuxULf2u7wC
-         me/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cFL1fKtV0fgN9gDJ7Fm/iZJuC48WZ+DUJ81pq9R4fTw=;
-        b=mO6l24VfgRVGjlsKEUbhjnemRmrAsUD1edUfucJ0lyxHSjIwHtbEcecmS/94HF9ml8
-         kWY14wKUwBx/l/V9pklXYjxAuoMeYLBYOCw84A/pxLvz2jHEkRZt4pWfRvUjPtsVTdzN
-         qcBtHe6FzunJ5ZSLfWh4ksf5VSnbUbwpf3IpE7NC/yMRTS3aKSk3xggP1tZgHWIrtfzj
-         vepY2fePBlz7o8pJ/tZyLsJ64bOTCH4eE7ixvu1Jw+KKzn1xKp/FYqJc6GIpJtXn0pt9
-         VNIhdpy3xeEHJp8+kqWktKomSgIWHyapzEpSUr4/tqUeGAnIido6D8CpcaVMNrog03ui
-         oX9w==
-X-Gm-Message-State: APjAAAXJfNte1RJB7+xaehhgrcxH6nWus4oiHGbJsaHDNnLI9g1pPxB2
-        WQQ2wbFVr43prs+fOPyXQsxQkAdP1LGvPoqJGOAsSA==
-X-Google-Smtp-Source: APXvYqxg3XNAVjsAlMB/h9I0hNtVDxbwwdFx6/0b6++YshopUpBVSxbIjnMZ6rec/szJ31LLeytI64XVk6J1N/pzpDM=
-X-Received: by 2002:a05:6638:76f:: with SMTP id y15mr81509841jad.5.1578339521244;
- Mon, 06 Jan 2020 11:38:41 -0800 (PST)
-MIME-Version: 1.0
-References: <20200104225052.27275-1-deepa.kernel@gmail.com> <20200106135455.GA104407@google.com>
-In-Reply-To: <20200106135455.GA104407@google.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Mon, 6 Jan 2020 11:38:29 -0800
-Message-ID: <CABeXuvownNp7ngp38vHzCgQfLA-tnH7FFT5pQQeHF3tLizmxcg@mail.gmail.com>
-Subject: Re: [PATCH] pci: Warn if BME cannot be turned off during kexec
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     mika.westerberg@linux.intel.com, alex.williamson@redhat.com,
-        logang@deltatee.com, linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726734AbgAFTpt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 14:45:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42946 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726657AbgAFTpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 14:45:49 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 4C53EAD11;
+        Mon,  6 Jan 2020 19:45:47 +0000 (UTC)
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     rpenyaev@suse.de
+Cc:     akpm@linux-foundation.org, dave@stgolabs.net, jbaron@akamai.com,
+        linux-kernel@vger.kernel.org, normalperson@yhbt.net,
+        viro@zeniv.linux.org.uk, Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH] fs/epoll: rework safewake for CONFIG_DEBUG_LOCK_ALLOC
+Date:   Mon,  6 Jan 2020 11:38:30 -0800
+Message-Id: <20200106193830.27224-1-dave@stgolabs.net>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <76f656dc7ac92f92682641e22e1c44c4@suse.de>
+References: <76f656dc7ac92f92682641e22e1c44c4@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 6, 2020 at 5:54 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> Hi Deepa,
->
-> Thanks for the patches.  Since these two patches touch the same piece
-> of code in pci_device_shutdown(), they conflict with each other.  I
-> could resolve this myself, but maybe you could make them a series that
-> applies cleanly together?
+Some comments on:
 
-Sure, will make this a series.
+      f6520c52084 (epoll: simplify ep_poll_safewake() for CONFIG_DEBUG_LOCK_ALLOC)
 
-> Can you also please edit the subject lines so they match the
-> convention (use "git log --oneline drivers/pci/pci-driver.c" to see
-> it).
+For one this does not play nice with preempt_rt as disabling irq and
+then taking a spinlock_t is a no no; the critical region becomes
+preemptible. This is particularly important as -rt is being mainlined.
 
-Will do.
+Secondly, it is really ugly compared to what we had before - albeit not
+having to deal with all the ep_call_nested() checks, but I doubt this
+overhead matters at all with CONFIG_DEBUG_LOCK_ALLOC.
 
-> On Sat, Jan 04, 2020 at 02:50:52PM -0800, Deepa Dinamani wrote:
-> > BME not being off is a security risk, so for whatever
-> > reason if we cannot disable it, print a warning.
->
-> "BME" is not a common term in drivers/pci; can you use "Bus Master
-> Enable" (to match the PCIe spec) or "PCI_COMMAND_MASTER" (to match the
-> Linux code)?
+While the current logic avoids nesting by disabling irq during the whole
+path, this seems like an overkill under debug. This patch proposes using
+this_cpu_inc_return() then taking the irq-safe lock - albeit a possible
+irq coming in the middle between these operations and messing up the
+subclass. If this is unacceptable, we could always revert the patch,
+as this was never a problem in the first place.
 
-Will do.
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+---
 
-> Can you also explain why this is a security risk?  It looks like we
-> disable bus mastering if the device is in D0-D3hot.  If the device is
-> in D3cold, it's powered off, so we can't read/write config space.  But
-> if it's in D3cold, the device is powered off, so it can't be a bus
-> master either, so why would we warn about it?
+This is pretty much untested - I wanted to see what is the best way to
+address the concerns first.
 
-I was mainly concerned about the PCI_UNKNOWN state here. Maybe we can
-add a specific check for the unknown state if that is preferable.
+XXX: I don't think we need get/put_cpu() around the call, this was intended
+only for ep_call_nested() tasks_call_list checking afaict.
 
-> > Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> > ---
-> >  drivers/pci/pci-driver.c | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> > index 0454ca0e4e3f..6c866a81f46c 100644
-> > --- a/drivers/pci/pci-driver.c
-> > +++ b/drivers/pci/pci-driver.c
-> > @@ -491,8 +491,12 @@ static void pci_device_shutdown(struct device *dev)
-> >        * If it is not a kexec reboot, firmware will hit the PCI
-> >        * devices with big hammer and stop their DMA any way.
-> >        */
-> > -     if (kexec_in_progress && (pci_dev->current_state <= PCI_D3hot))
-> > -             pci_clear_master(pci_dev);
-> > +     if (kexec_in_progress) {
-> > +             if (likely(pci_dev->current_state <= PCI_D3hot))
->
-> No need to use "likely" here unless you can measure a difference.  I
-> doubt this is a performance path.
->
-> > +                     pci_clear_master(pci_dev);
-> > +             else
-> > +                     dev_warn(dev, "Unable to turn off BME during kexec");
->
-> How often and for what sort of devices would you expect this warning
-> to be emitted?  If this is a common situation and the user can't do
-> anything about it, the warnings will clutter the logs and train users
-> to ignore them.
+ fs/eventpoll.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-This is not a common situation. I think I have seen this only a couple
-of times in my kexec experiments. I have not found any documentation
-about if a device can go into an unknown power state and still be
-harmful or not. But, if you need more testing, I could check the patch
-into the Google datacenter code and sweep the logs to see if these get
-printed at all.
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 67a395039268..97d036deff3e 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -558,16 +558,17 @@ static void ep_poll_safewake(wait_queue_head_t *wq)
+ 	unsigned long flags;
+ 	int subclass;
+ 
+-	local_irq_save(flags);
+-	preempt_disable();
+-	subclass = __this_cpu_read(wakeup_nest);
+-	spin_lock_nested(&wq->lock, subclass + 1);
+-	__this_cpu_inc(wakeup_nest);
++	subclass = this_cpu_inc_return(wakeup_nest);
++	/*
++	 * Careful: while unlikely, an irq can occur here and mess up
++	 * the subclass. The same goes for right before the dec
++	 * operation, but that does not matter.
++	 */
++	spin_lock_irqsave_nested(&wq->lock, flags, subclass + 1);
+ 	wake_up_locked_poll(wq, POLLIN);
+-	__this_cpu_dec(wakeup_nest);
+-	spin_unlock(&wq->lock);
+-	local_irq_restore(flags);
+-	preempt_enable();
++	spin_unlock_irqrestore(&wq->lock, flags);
++
++	this_cpu_dec(wakeup_nest);
+ }
+ 
+ #else
+-- 
+2.16.4
 
--Deepa
