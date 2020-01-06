@@ -2,191 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B63BF1317FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:58:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 317DD1317FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:58:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbgAFS6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 13:58:32 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:35916 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbgAFS6b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 13:58:31 -0500
-Received: from localhost (unknown [IPv6:2610:98:8005::147])
+        id S1726721AbgAFS6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 13:58:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44146 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726657AbgAFS6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 13:58:19 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 09F3029196A;
-        Mon,  6 Jan 2020 18:58:28 +0000 (GMT)
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     gregkh@linuxfoundation.org
-Cc:     rafael@kernel.org, lduncan@suse.com, cleech@redhat.com,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        open-iscsi@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel@collabora.com
-Subject: [PATCH 1/3] drivers: base: Support atomic version of attribute_container_device_trigger
-Date:   Mon,  6 Jan 2020 13:58:15 -0500
-Message-Id: <20200106185817.640331-2-krisman@collabora.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200106185817.640331-1-krisman@collabora.com>
-References: <20200106185817.640331-1-krisman@collabora.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id B150E2072A;
+        Mon,  6 Jan 2020 18:58:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578337099;
+        bh=JqFB7SxHrWcyOP4N5DEnQmENuaUMIVm+HFB3PT0FOAk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rVqz9/iIhSuobLqKYxE3K2Q8yDobIT1SpgZ5vcfEmmZK+hiiFdi9Ju9xE1iGOEjSI
+         3FHHSBVr3f30wbOoOqvsBbA2V6yHLdKXFpM9d61vw81/okq03pJyxwn/dVfFdEbE8L
+         ShwxkmNHzrCNt2fXelnDXpO3BXOy1E/BI2fIKpiU=
+Date:   Mon, 6 Jan 2020 19:58:16 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Patrice Chotard <patrice.chotard@st.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tty: st-asc: switch to using devm_gpiod_get()
+Message-ID: <20200106185816.GA597279@kroah.com>
+References: <20200104202314.GA13591@dtor-ws>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200104202314.GA13591@dtor-ws>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-attribute_container_device_trigger invokes callbacks that may fail for
-one or more classdev's, for instance, the transport_add_class_device
-callback, called during transport creation, does memory allocation.
-This information, though, is not propagated to upper layers, and any
-driver using the attribute_container_device_trigger API will not know
-whether any, some, or all callbacks succeeded.
+On Sat, Jan 04, 2020 at 12:23:14PM -0800, Dmitry Torokhov wrote:
+> The node pointer in question is not a child node, but the node assigned
+> to the port device itself, so we should not be using
+> devm_fwnode_get_gpiod_from_child() [that is going away], but standard
+> devm_gpiod_get().
+> 
+> To maintain the previous labeling we use gpiod_set_consumer_name() after
+> we acquire the GPIO.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/tty/serial/st-asc.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
 
-This patch implements a safe version of this dispatcher, to either
-succeed all the callbacks or revert to the original state.
+What changed from v1 of this patch?  Please put that below the --- line
+and versino your patches.
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
----
- drivers/base/attribute_container.c  | 103 ++++++++++++++++++++++++++++
- include/linux/attribute_container.h |   7 ++
- 2 files changed, 110 insertions(+)
+v3?
 
-diff --git a/drivers/base/attribute_container.c b/drivers/base/attribute_container.c
-index 20736aaa0e69..f7bd0f4db13d 100644
---- a/drivers/base/attribute_container.c
-+++ b/drivers/base/attribute_container.c
-@@ -236,6 +236,109 @@ attribute_container_remove_device(struct device *dev,
- 	mutex_unlock(&attribute_container_mutex);
- }
- 
-+static int
-+do_attribute_container_device_trigger_safe(struct device *dev,
-+					   struct attribute_container *cont,
-+					   int (*fn)(struct attribute_container *,
-+						     struct device *, struct device *),
-+					   int (*undo)(struct attribute_container *,
-+						       struct device *, struct device *))
-+{
-+	int ret;
-+	struct internal_container *ic, *failed;
-+	struct klist_iter iter;
-+
-+	if (attribute_container_no_classdevs(cont))
-+		return fn(cont, dev, NULL);
-+
-+	klist_for_each_entry(ic, &cont->containers, node, &iter) {
-+		if (dev == ic->classdev.parent) {
-+			ret = fn(cont, dev, &ic->classdev);
-+			if (ret) {
-+				failed = ic;
-+				klist_iter_exit(&iter);
-+				goto fail;
-+			}
-+		}
-+	}
-+	return 0;
-+
-+fail:
-+	if (!undo)
-+		return ret;
-+
-+	/* Attempt to undo the work partially done. */
-+	klist_for_each_entry(ic, &cont->containers, node, &iter) {
-+		if (ic == failed) {
-+			klist_iter_exit(&iter);
-+			break;
-+		}
-+		if (dev == ic->classdev.parent)
-+			undo(cont, dev, &ic->classdev);
-+	}
-+	return ret;
-+}
-+
-+/**
-+ * attribute_container_device_trigger_safe - execute a trigger for each
-+ * matching classdev or fail all of them.
-+ *
-+ * @dev:  The generic device to run the trigger for
-+ * @fn	  the function to execute for each classdev.
-+ * @undo  A function to undo the work previously done in case of error
-+ *
-+ * This function is a safe version of
-+ * attribute_container_device_trigger. It stops on the first error and
-+ * undo the partial work that has been done, on previous classdev.  It
-+ * is guaranteed that either they all succeeded, or none of them
-+ * succeeded.
-+ */
-+int
-+attribute_container_device_trigger_safe(struct device *dev,
-+					int (*fn)(struct attribute_container *,
-+						  struct device *,
-+						  struct device *),
-+					int (*undo)(struct attribute_container *,
-+						    struct device *,
-+						    struct device *))
-+{
-+	struct attribute_container *cont, *failed = NULL;
-+	int ret = 0;
-+
-+	mutex_lock(&attribute_container_mutex);
-+
-+	list_for_each_entry(cont, &attribute_container_list, node) {
-+
-+		if (!cont->match(cont, dev))
-+			continue;
-+
-+		ret = do_attribute_container_device_trigger_safe(dev, cont,
-+								 fn, undo);
-+		if (ret) {
-+			failed = cont;
-+			break;
-+		}
-+	}
-+
-+	if (ret && !WARN_ON(!undo)) {
-+		list_for_each_entry(cont, &attribute_container_list, node) {
-+
-+			if (failed == cont)
-+				break;
-+
-+			if (!cont->match(cont, dev))
-+				continue;
-+
-+			do_attribute_container_device_trigger_safe(dev, cont,
-+								   undo, NULL);
-+		}
-+	}
-+
-+	mutex_unlock(&attribute_container_mutex);
-+	return ret;
-+
-+}
-+
- /**
-  * attribute_container_device_trigger - execute a trigger for each matching classdev
-  *
-diff --git a/include/linux/attribute_container.h b/include/linux/attribute_container.h
-index d12bb2153cd6..e4004d1e6725 100644
---- a/include/linux/attribute_container.h
-+++ b/include/linux/attribute_container.h
-@@ -54,6 +54,13 @@ void attribute_container_device_trigger(struct device *dev,
- 					int (*fn)(struct attribute_container *,
- 						  struct device *,
- 						  struct device *));
-+int attribute_container_device_trigger_safe(struct device *dev,
-+					    int (*fn)(struct attribute_container *,
-+						      struct device *,
-+						      struct device *),
-+					    int (*undo)(struct attribute_container *,
-+							struct device *,
-+							struct device *));
- void attribute_container_trigger(struct device *dev, 
- 				 int (*fn)(struct attribute_container *,
- 					   struct device *));
--- 
-2.24.1
+thanks,
 
+greg k-h
