@@ -2,98 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 819851318C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 20:30:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56CF61318C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 20:31:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbgAFT35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 14:29:57 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51395 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbgAFT35 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 14:29:57 -0500
-Received: by mail-wm1-f65.google.com with SMTP id d73so16231229wmd.1;
-        Mon, 06 Jan 2020 11:29:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9Ur3CxFG0cQbKNwUJ75Zx2lXsthVwW+wWDfRyfXmnKM=;
-        b=MFDHoVhhfNfJOoS+7B7TS0SyZvJrXkAmv9gGVyRrLcFaG6lMwTT7g8Nw48eUSo/ihd
-         iE09TrqHNUuJ1yrNx8eqPe/Bf6gJegD+DVCBYVFa3za5W8hLkWvdoLTpZDEEiHtar4+Q
-         pKqqaX4vnkREBw8bLnRfq2kh5v610vdQecjHN/TN8/sSUkLUv+JvKm8Jsa/rdrblmhq0
-         uhLdN8vIor7xFd3r94ysMJs7hOqQZN08M/sKaaagiqHpkuGpBI7l5slMNOoFkja7LlFr
-         5lUstKr4VwNTFvhDrVj8RMeFN1GPti+JFk5/Hjf9t0KfwFGuOpMcuYVstzFEf8e8EJkN
-         F22Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9Ur3CxFG0cQbKNwUJ75Zx2lXsthVwW+wWDfRyfXmnKM=;
-        b=Ne6fHnwxMAdkpvT/ZBwkxsuRx5p5OhGVZi/ZW24MHalyPM7hB454YjzR0OdCij3Ss1
-         exu4VeGdEjuEAlGxYYhhXPRATLvo7SoFNeu2D7/gmsxclCZtH//3bIfUtDhzjHcKwDnK
-         bBUwSG6elt4m7pASCzPL7IjKIbWroBuc1X55soXLevBSJR8iRFpVmbFEDQLFdCfwv4gi
-         LhrN+xL0J2+YDTEBd8Gfjt3VpMgBzZ5bz/RG8hXwKBYNIoBrzmlpYgnR1dviwawUJbcz
-         Og7yOXWdNz2ERYL8Ih+5EJkhlsOmiG0Gou9qsd+BjrpuebtYbmHFP6f5KpCmVX7LPChN
-         JJPg==
-X-Gm-Message-State: APjAAAWWBtXvJBCQU7fHG+7vcWmV9dubX4KZMZHJ1/LHOZS+OJcen4+Y
-        Xugyfc1FmB4F/HuCVxARi5k=
-X-Google-Smtp-Source: APXvYqyQllloLFr5JAArKfaDOfayLtkqaScpZ+uJ6DkBjZ3d+DoyF58NzIDEURVT4mhNYEGilCH9JA==
-X-Received: by 2002:a1c:1dd7:: with SMTP id d206mr34934742wmd.5.1578338994696;
-        Mon, 06 Jan 2020 11:29:54 -0800 (PST)
-Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id g21sm23802398wmh.17.2020.01.06.11.29.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 11:29:54 -0800 (PST)
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        narmstrong@baylibre.com
-Cc:     linux-amlogic@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH] crypto: amlogic: fix removal of module
-Date:   Mon,  6 Jan 2020 20:29:50 +0100
-Message-Id: <20200106192950.23475-1-clabbe.montjoie@gmail.com>
-X-Mailer: git-send-email 2.24.1
+        id S1726875AbgAFTbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 14:31:10 -0500
+Received: from albireo.enyo.de ([37.24.231.21]:50288 "EHLO albireo.enyo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726695AbgAFTbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 14:31:10 -0500
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1ioY5g-0003eK-3x; Mon, 06 Jan 2020 19:31:04 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.92)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1ioY4k-0004zc-C2; Mon, 06 Jan 2020 20:30:06 +0100
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        paulmck <paulmck@linux.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Paul Turner <pjt@google.com>,
+        linux-api <linux-api@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Neel Natu <neelnatu@google.com>
+Subject: Re: [PATCH for 5.5 1/2] rseq: Fix: Clarify rseq.h UAPI rseq_cs memory reclaim requirements
+References: <20191220201207.17389-1-mathieu.desnoyers@efficios.com>
+        <87imman36g.fsf@mid.deneb.enyo.de>
+        <173832695.14381.1576875253374.JavaMail.zimbra@efficios.com>
+        <875zian2a2.fsf@mid.deneb.enyo.de>
+        <669061171.14506.1576876500152.JavaMail.zimbra@efficios.com>
+        <1025393027.850.1578337717165.JavaMail.zimbra@efficios.com>
+Date:   Mon, 06 Jan 2020 20:30:06 +0100
+In-Reply-To: <1025393027.850.1578337717165.JavaMail.zimbra@efficios.com>
+        (Mathieu Desnoyers's message of "Mon, 6 Jan 2020 14:08:37 -0500
+        (EST)")
+Message-ID: <87a7709ydd.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Removing the driver cause an oops due to the fact we clean an extra
-channel.
-Let's give the right index to the cleaning function.
-Fixes: 48fe583fe541 ("crypto: amlogic - Add crypto accelerator for amlogic GXL")
+* Mathieu Desnoyers:
 
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
----
- drivers/crypto/amlogic/amlogic-gxl-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Just to clarify: should the discussion here prevent the UAPI
+> documentation change from being merged into the Linux kernel ? Our
+> discussion seems to be related to integration of rseq into glibc,
+> rather than the kernel UAPI per se.
 
-diff --git a/drivers/crypto/amlogic/amlogic-gxl-core.c b/drivers/crypto/amlogic/amlogic-gxl-core.c
-index fa05fce1c0de..9d4ead2f7ebb 100644
---- a/drivers/crypto/amlogic/amlogic-gxl-core.c
-+++ b/drivers/crypto/amlogic/amlogic-gxl-core.c
-@@ -289,7 +289,7 @@ static int meson_crypto_probe(struct platform_device *pdev)
- error_alg:
- 	meson_unregister_algs(mc);
- error_flow:
--	meson_free_chanlist(mc, MAXFLOW);
-+	meson_free_chanlist(mc, MAXFLOW - 1);
- 	clk_disable_unprepare(mc->busclk);
- 	return err;
- }
-@@ -304,7 +304,7 @@ static int meson_crypto_remove(struct platform_device *pdev)
- 
- 	meson_unregister_algs(mc);
- 
--	meson_free_chanlist(mc, MAXFLOW);
-+	meson_free_chanlist(mc, MAXFLOW - 1);
- 
- 	clk_disable_unprepare(mc->busclk);
- 	return 0;
--- 
-2.24.1
+I still think that clearing rseq_cs upon exit from the function that
+contains the sequence is good practice, and the UAPI header should
+mention that.
 
+For glibc, if I recall correctly, we decided against doing anything in
+dlclose to deal with this issue (remapping new code in an existing
+rseq area) because it would need updating all threads, not just the
+thread calling dlclose.  That's why we're punting this to
+applications and why I think the UAPI header should mention this.
