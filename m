@@ -2,78 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C10A2130E38
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 08:55:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA57D130E3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 08:59:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbgAFHzc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 02:55:32 -0500
-Received: from conuserg-09.nifty.com ([210.131.2.76]:19304 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbgAFHzb (ORCPT
+        id S1726199AbgAFH7C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 02:59:02 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38784 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725446AbgAFH7C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 02:55:31 -0500
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id 0067t0HK015985;
-        Mon, 6 Jan 2020 16:55:00 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com 0067t0HK015985
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1578297301;
-        bh=efnKuYuz9lMVFzD60VImov9gE/cfNQG04Z6RLrlvcBI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=OqTiVlEP/fkyxM1gu4IB+r9/4yKPkoItNtAoplP08Y/dGD1/Vd59g5avkZJTuN2ma
-         aGlLfxaJTNJi/rrMea7KDUnZXOMRoLw1q9MeHqZzUyl4uc5aenKPuFjTYZUWwcDDRF
-         AbtwzxCFBzis7hWTClf2+TMMcPxXGHiTv6Eddu5+cfzE58VvfVu8pXEn55C0BgEw1K
-         Y+M2B0CBQuRm9C1KmSnZGn1Uhw3eWmk9uqBNxD24kAb0+R5+J6ysruDcWHJB0Ektgk
-         j/KBJe9p6ENLN+kTNhUNJ09ZILGh48m1UEM4gp+YrrZQnljaJsjfWHXgOY8LDFcS7O
-         mWCokwk9nTLSg==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <masahiroy@kernel.org>
-To:     Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        linux-wireless@vger.kernel.org
-Cc:     Masahiro Yamada <masahiroy@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH] iwlwifi: remove object duplication in Makefile
-Date:   Mon,  6 Jan 2020 16:54:38 +0900
-Message-Id: <20200106075439.20926-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Mon, 6 Jan 2020 02:59:02 -0500
+Received: by mail-ed1-f67.google.com with SMTP id i16so46717066edr.5;
+        Sun, 05 Jan 2020 23:59:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=shX2EL3hEDUKUPyK9slyF9fPOfxblBV1rDmKHdnGIro=;
+        b=cf24onDgS/hE56kWcaUtSTavyFoiMUG0VVBb+0q4YEgTsvUn5+Hrr3443oN5u4XRxE
+         u5UVvKJvoYt1LfaPsQdeVMpzISpidcehneZnSaCsjqy/AS8vR9FGC7zVlSJK3xW7gjK8
+         FscuOj5+8UewxKzHzI+MptYHVe0RS8nnBeKM7DyoZ9l9CUbfrTwPJtgCONODHQwaW3AU
+         2iqKJo9YJGxpscqRz2G7CPzL8lGi+9hIUI/fuDPnQUBZiaMKjUyx426vYhB33ngBh8uU
+         XzyPVkmMoC7mh9yxo0exlfpQRDhV05jDAvOu6cwzY58EdH8uy0Ly3q6gdUQ/x3SsD4lC
+         2SMw==
+X-Gm-Message-State: APjAAAX1JCZWh7E9UKOG9zr+RPPniVh+5EU+tdewvpUXxe63f20O7DGA
+        SJ+yFjnZDl6+5RwzNj0ynZk=
+X-Google-Smtp-Source: APXvYqz6BzoBH5eS9cIT73CTasbNOaO7wb2JgFWK3mKQ8G90HFNewbThd8aAYjv20+JBO1pkDPP+LQ==
+X-Received: by 2002:a05:6402:1484:: with SMTP id e4mr59115716edv.286.1578297540599;
+        Sun, 05 Jan 2020 23:59:00 -0800 (PST)
+Received: from pi3 ([194.230.155.149])
+        by smtp.googlemail.com with ESMTPSA id p18sm7961240ejx.80.2020.01.05.23.58.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Jan 2020 23:58:59 -0800 (PST)
+Date:   Mon, 6 Jan 2020 08:58:58 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Greg KH <greg@kroah.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>
+Subject: Re: linux-next: build warning after merge of the usb tree
+Message-ID: <20200106075858.GA13634@pi3>
+References: <20200106144122.01f51be9@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200106144122.01f51be9@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The objects in $(iwlwifi-objs) $(iwlwifi-y) $(iwlwifi-m) are linked to
-iwlwifi.ko .
+On Mon, Jan 06, 2020 at 02:41:22PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
+> produced this warning:
+> 
+> WARNING: unmet direct dependencies detected for PHY_DA8XX_USB
+>   Depends on [n]: ARCH_DAVINCI_DA8XX
+>   Selected by [m]:
+>   - USB_OHCI_HCD_DAVINCI [=m] && USB_SUPPORT [=y] && USB [=m] && (ARCH_DAVINCI_DA8XX || COMPILE_TEST [=y]) && USB_OHCI_HCD [=m]
+> 
+> WARNING: unmet direct dependencies detected for PHY_DA8XX_USB
+>   Depends on [n]: ARCH_DAVINCI_DA8XX
+>   Selected by [m]:
+>   - USB_OHCI_HCD_DAVINCI [=m] && USB_SUPPORT [=y] && USB [=m] && (ARCH_DAVINCI_DA8XX || COMPILE_TEST [=y]) && USB_OHCI_HCD [=m]
+> 
+> WARNING: unmet direct dependencies detected for PHY_DA8XX_USB
+>   Depends on [n]: ARCH_DAVINCI_DA8XX
+>   Selected by [m]:
+>   - USB_OHCI_HCD_DAVINCI [=m] && USB_SUPPORT [=y] && USB [=m] && (ARCH_DAVINCI_DA8XX || COMPILE_TEST [=y]) && USB_OHCI_HCD [=m]
+> 
+> Introduced by commit
+> 
+>   88eaaecc4446 ("usb: host: Enable compile testing for some of drivers")
 
-This line adds $(iwlwifi-m) to iwlwifi-objs, so the objects from
-$(iwlwifi-m) are listed twice as the dependency of the module.
++Cc,
 
-It works because Kbuild trims the duplicated objects from linking,
-but there is no good reason to have this line.
+Hi Stephen,
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+Thanks for the report.  I already sent a patch for it for the phy:
+https://lore.kernel.org/lkml/20200103164710.4829-2-krzk@kernel.org/
 
- drivers/net/wireless/intel/iwlwifi/Makefile | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/Makefile b/drivers/net/wireless/intel/iwlwifi/Makefile
-index 0aae3fa4128c..a018d27a5410 100644
---- a/drivers/net/wireless/intel/iwlwifi/Makefile
-+++ b/drivers/net/wireless/intel/iwlwifi/Makefile
-@@ -19,8 +19,6 @@ iwlwifi-$(CONFIG_IWLMVM) += fw/paging.o fw/smem.o fw/init.o
- iwlwifi-$(CONFIG_ACPI) += fw/acpi.o
- iwlwifi-$(CONFIG_IWLWIFI_DEBUGFS) += fw/debugfs.o
- 
--iwlwifi-objs += $(iwlwifi-m)
--
- iwlwifi-$(CONFIG_IWLWIFI_DEVICE_TRACING) += iwl-devtrace.o
- 
- ccflags-y += -I$(src)
--- 
-2.17.1
-
+Best regards,
+Krzysztof
