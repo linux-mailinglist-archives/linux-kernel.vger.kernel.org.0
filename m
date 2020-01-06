@@ -2,77 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03172130DC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 08:08:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAA70130DC9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 08:08:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbgAFHII (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 02:08:08 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:57460 "EHLO mail.skyhub.de"
+        id S1726760AbgAFHIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 02:08:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726477AbgAFHII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 02:08:08 -0500
-Received: from zn.tnic (p200300EC2F270F0024DF20D65B514141.dip0.t-ipconnect.de [IPv6:2003:ec:2f27:f00:24df:20d6:5b51:4141])
+        id S1726477AbgAFHIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 02:08:39 -0500
+Received: from localhost.localdomain (unknown [117.99.94.5])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0258B1EC0B67;
-        Mon,  6 Jan 2020 08:08:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1578294487;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=cZSFcr/6/NDXfNRf5/C3Serqj4wqjHvHUQIPMvTEhB4=;
-        b=q6euyIR7Ji8hgeAK5l4wMIBf3WAxqPQYMSYQTfik54CnvRxfGAzOFdIryGrA7TGwhLVgKk
-        uC6G37D39f7VfY7LS0GMbc49z03m/Q/xDO5ISJVX3NTmqsAb0fvd0pXjnjB/IJQAsZeZ7W
-        zUvSbphmAFOqpM0HEH149N3cWDY6lfg=
-Date:   Mon, 6 Jan 2020 08:07:59 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Chuansheng Liu <chuansheng.liu@intel.com>
-Cc:     linux-kernel@vger.kernel.org, tony.luck@intel.com,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [PATCH] x86/mce/therm_throt: Fix the access of uninitialized
- therm_work
-Message-ID: <20200106070759.GB12238@zn.tnic>
-References: <20200106064155.64-1-chuansheng.liu@intel.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 7950821734;
+        Mon,  6 Jan 2020 07:08:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578294519;
+        bh=jcMGfDJ/l8aPZ8hnPH44OsHJ1VO3mgrqDScv0+LD6G0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GQa+zQniwgC7abcVLHJb2017wPEzrDTRw6Z8ehietXXjJySCKZ7tgM4ROv227Rbzo
+         clyJhRC3Zm6w/kc1OOpfZG/XKyX8BnLDFX/Nq5ulxdgJlOy6UiPtn2AgNQY0JpEKdJ
+         bh+OjdWedcGh4ozc+DukUyxG6wKT7GslDfnFsV94=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Can Guo <cang@codeaurora.org>
+Subject: [PATCH 0/3] arm64: dts: qcom: UFS updates
+Date:   Mon,  6 Jan 2020 12:38:23 +0530
+Message-Id: <20200106070826.147064-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200106064155.64-1-chuansheng.liu@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 06:41:55AM +0000, Chuansheng Liu wrote:
-> In ICL platform, it is easy to hit bootup failure with panic
-> in thermal interrupt handler during early bootup stage.
-> 
-> Such issue makes my platform almost can not boot up with
-> latest kernel code.
-> 
-> The call stack is like:
-> kernel BUG at kernel/timer/timer.c:1152!
-> 
-> Call Trace:
-> __queue_delayed_work
-> queue_delayed_work_on
-> therm_throt_process
-> intel_thermal_interrupt
-> ...
-> 
-> When one CPU is up, the irq is enabled prior to CPU UP
-> notification which will then initialize therm_worker.
+We recently saw regression on UFS on SM8150 and few other boards and that
+was resolved by adding timeout and fixing the UFS phy reset sequence. That
+patches are in linux-next now.
 
-You mean the unmasking of the thermal vector at the end of
-intel_init_thermal()?
+During this we found sm8150 lacks gpio reset for ufs, so add that and fix
+the ufs phy register size.
+Also add the sdm845 ufs reset.
 
-If so, why don't you move that to the end of the notifier and unmask it
-only after all the necessary work like setting up the workqueues etc, is
-done, and save yourself adding yet another silly bool?
+Vinod Koul (3):
+  arm64: dts: qcom: sm8150-mtp: Add UFS gpio reset
+  arm64: dts: qcom: sm8150: Fix UFS phy register size
+  arm64: dts: qcom: sdm845: add the ufs reset
+
+ arch/arm64/boot/dts/qcom/sdm845.dtsi    | 2 ++
+ arch/arm64/boot/dts/qcom/sm8150-mtp.dts | 3 +++
+ arch/arm64/boot/dts/qcom/sm8150.dtsi    | 2 +-
+ 3 files changed, 6 insertions(+), 1 deletion(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.24.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
