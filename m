@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C03D1131894
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 20:20:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 728BA13189C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 20:20:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbgAFTTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 14:19:21 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39135 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbgAFTTP (ORCPT
+        id S1727219AbgAFTTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 14:19:38 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38339 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726937AbgAFTTQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 14:19:15 -0500
-Received: by mail-wm1-f65.google.com with SMTP id 20so16488547wmj.4;
-        Mon, 06 Jan 2020 11:19:14 -0800 (PST)
+        Mon, 6 Jan 2020 14:19:16 -0500
+Received: by mail-wm1-f67.google.com with SMTP id u2so16507325wmc.3;
+        Mon, 06 Jan 2020 11:19:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EY+zZvmDa2mHk6GedD4Ps5Jyzy5pn8SVTKFDxsd6ff0=;
-        b=UmJWfdwy/gRN6EbMwlCS5xB9VW7LvAZHfsXDqtC+PNsYo7u5xN/TEinGNu3d42K0Ae
-         RW9LPAO71wNMLHXSQkQ2J4Bz61psDxVYGc1UHeWRUWYisdZcAY95CGdEa7zJ2SIUsMPl
-         0wblJinu0vJLiWKp0FevjlT3vrNfcozB38b1ARE9OkS4PiQcmDMLxmzEnmIV6JdTaaYd
-         /Uh7ArNzK+h5ianwZklkq5JWPxqcv8rv23FWoDPDp0OnRRge8yhTZ4eMC4V6H+37fHxo
-         +z6lG7OZPTXUFG68CvtOQy52Bd4qPklPZdW9ney85lJLu5qdJyU3UsPf0ge9qj+GA6DD
-         +2yg==
+        bh=BiVSGDhREaUEf54KgSEKmOQyVoop478wRSm340p5AAw=;
+        b=BOTUID1kNmUCME5BD87r2im56ctjTtka/2HhskCJDunHZeZI7kNgTLVEDOQek4wdAd
+         e2T7n3J46OI4j8w/D2sHdBVv6H1x+cTpmtItSeMsf54y4qukPrNg+DEk7SI08ts/4lwr
+         seAMw9zeK/Z5VedOjOGZl3T43528TObl77mXdbe8+J/QEGzlxQAWui/KAgNYIHWTB1JS
+         HWgBWDlTnxlgCY0Qr7YQT1J2AniF3Ilrw0im/pugKz5TQs9XEPztWakx23HOj5g468xu
+         3WD84iFYHGmf4y34rhut8F3bfHR/tVsOFg1ocd5qvblzk82iy1zXHloPe1l4t2uNRTsa
+         B8HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=EY+zZvmDa2mHk6GedD4Ps5Jyzy5pn8SVTKFDxsd6ff0=;
-        b=AvwEsaZS8v24b6sS6vB9hKqkEnOI2Q96/nKllnv2o8yh44sRZXjLwBxUjkygRyn215
-         ihrghJXyzpnPDluDhbdZnm5dI5UknPsBLXcoKBrWdV5NvcIyUhbADBFPHpyZ/hmuhugg
-         44RTEojm+iOeXx7MlEmRiBkFb0/sKO6068WFO1dYNXe64Y1IvXyQYAlxgnL1CcmCcidL
-         z7t5tTRBVrsoYXp/4p4SGrvAzwQqcKnvpsEXssR53cvVMgrMCmQuFYxp0XaTsE76ITDn
-         /3EhnTfllMFt/sPihFvPoeZxSbqMR+kNX3RpIPMEeB6KFW8EVIAVdV38ij18aPtHJflD
-         KatQ==
-X-Gm-Message-State: APjAAAV8/rCR5Es7qcNZfEy60sW+vv4UqD5cHfxVevitSl/BuOB5pzpO
-        0z44pJBSQC1mK/wu7CPAFIY=
-X-Google-Smtp-Source: APXvYqwSEKFcz+d2s4gNXu6k1YCzZ4/cB93QjBpJLHU67sQk7Nw6naVxc0iYNJbzIlSCyIOzuwJQnw==
-X-Received: by 2002:a1c:7c11:: with SMTP id x17mr34942562wmc.168.1578338353730;
-        Mon, 06 Jan 2020 11:19:13 -0800 (PST)
+        bh=BiVSGDhREaUEf54KgSEKmOQyVoop478wRSm340p5AAw=;
+        b=Nw1JbtIVgSEr0mEbforfGPfRXwJuoKjP/0EYqtrIg5wv5NU956zc1q73ODMzjtF/s/
+         eoP0uLk/Ja9fpCFzxN0uZRhaFmLdhZ8f2Xc0m+H/jTrMSvizpmmJFtwQKmmPvWO0IKo9
+         i10m8rpvc8szpgfO0zFSm/9Bf5J+kKUH+3u1GmSDzxWbMJ4JhNcyjrocLb+s0n5HDA48
+         UZdbekE3VyNmCSUUtq9opHX9D0InheJL4qWeTtKXJVsdjJLl5yHubNlYAInXpnF7EhAR
+         /3o0Phz+nOszg7iF1LLx21nIxLLkrgrW5n8KlfHynT00ivmsf9stvgNoBudfdiZUUMKv
+         z6RQ==
+X-Gm-Message-State: APjAAAUGKyGuiOn8I9hzCtJIpHJA2V9QB/Znz9LCvSw/BJG3coQEleZa
+        uTpFMkRJYtRqRQhalJzKtLe2L7sv
+X-Google-Smtp-Source: APXvYqy1wTq4hJotlXKxiQu+cXtwGmQzU4XCYLcRdisOuXwT4/BrV8lTguH2yCMaqCd9xrSFoWJEFA==
+X-Received: by 2002:a1c:7901:: with SMTP id l1mr35233423wme.67.1578338354811;
+        Mon, 06 Jan 2020 11:19:14 -0800 (PST)
 Received: from localhost.localdomain ([2a02:2450:10d2:194d:74f9:b588:decc:794d])
-        by smtp.gmail.com with ESMTPSA id o4sm72041756wrx.25.2020.01.06.11.19.12
+        by smtp.gmail.com with ESMTPSA id o4sm72041756wrx.25.2020.01.06.11.19.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 11:19:13 -0800 (PST)
+        Mon, 06 Jan 2020 11:19:14 -0800 (PST)
 From:   SeongJae Park <sj38.park@gmail.com>
 X-Google-Original-From: SeongJae Park <sjpark@amazon.de>
 To:     paulmck@kernel.org
 Cc:     corbet@lwn.net, rcu@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, madhuparnabhowmik04@gmail.com,
         sj38.park@gmail.com, SeongJae Park <sjpark@amazon.de>
-Subject: [PATCH v2 3/7] doc/RCU/listRCU: Update example function name
-Date:   Mon,  6 Jan 2020 20:18:48 +0100
-Message-Id: <20200106191852.22973-4-sjpark@amazon.de>
+Subject: [PATCH v2 4/7] doc/RCU/rcu: Use ':ref:' for links to other docs
+Date:   Mon,  6 Jan 2020 20:18:49 +0100
+Message-Id: <20200106191852.22973-5-sjpark@amazon.de>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200106191852.22973-1-sjpark@amazon.de>
 References: <20200106191852.22973-1-sjpark@amazon.de>
@@ -61,36 +61,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-listRCU.rst document gives an example with 'ipc_lock()', but the
-function has dropped off by commit 82061c57ce93 ("ipc: drop
-ipc_lock()").  Because the main logic of 'ipc_lock()' has melded in
-'shm_lock()' by the commit, this commit updates the document to use
-'shm_lock()' instead.
-
-Reviewed-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
 Signed-off-by: SeongJae Park <sjpark@amazon.de>
 ---
- Documentation/RCU/listRCU.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Documentation/RCU/rcu.rst | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/RCU/listRCU.rst b/Documentation/RCU/listRCU.rst
-index e768f56e8fa3..2a643e293fb4 100644
---- a/Documentation/RCU/listRCU.rst
-+++ b/Documentation/RCU/listRCU.rst
-@@ -286,11 +286,11 @@ time the external state changes before Linux becomes aware of the change,
- additional RCU-induced staleness is generally not a problem.
+diff --git a/Documentation/RCU/rcu.rst b/Documentation/RCU/rcu.rst
+index 8dfb437dacc3..a1dd71d01862 100644
+--- a/Documentation/RCU/rcu.rst
++++ b/Documentation/RCU/rcu.rst
+@@ -11,8 +11,8 @@ must be long enough that any readers accessing the item being deleted have
+ since dropped their references.  For example, an RCU-protected deletion
+ from a linked list would first remove the item from the list, wait for
+ a grace period to elapse, then free the element.  See the
+-Documentation/RCU/listRCU.rst file for more information on using RCU with
+-linked lists.
++:ref:`Documentation/RCU/listRCU.rst <list_rcu_doc>` for more information on
++using RCU with linked lists.
  
- However, there are many examples where stale data cannot be tolerated.
--One example in the Linux kernel is the System V IPC (see the ipc_lock()
--function in ipc/util.c).  This code checks a *deleted* flag under a
-+One example in the Linux kernel is the System V IPC (see the shm_lock()
-+function in ipc/shm.c).  This code checks a *deleted* flag under a
- per-entry spinlock, and, if the *deleted* flag is set, pretends that the
- entry does not exist.  For this to be helpful, the search function must
--return holding the per-entry lock, as ipc_lock() does in fact do.
-+return holding the per-entry spinlock, as shm_lock() does in fact do.
+ Frequently Asked Questions
+ --------------------------
+@@ -50,7 +50,7 @@ Frequently Asked Questions
+ - If I am running on a uniprocessor kernel, which can only do one
+   thing at a time, why should I wait for a grace period?
  
- .. _quick_quiz:
+-  See the Documentation/RCU/UP.rst file for more information.
++  See :ref:`Documentation/RCU/UP.rst <up_doc>` for more information.
+ 
+ - How can I see where RCU is currently used in the Linux kernel?
+ 
+@@ -68,9 +68,9 @@ Frequently Asked Questions
+ 
+ - Why the name "RCU"?
+ 
+-  "RCU" stands for "read-copy update".  The file Documentation/RCU/listRCU.rst
+-  has more information on where this name came from, search for
+-  "read-copy update" to find it.
++  "RCU" stands for "read-copy update".
++  :ref:`Documentation/RCU/listRCU.rst <list_rcu_doc>` has more information on where
++  this name came from, search for "read-copy update" to find it.
+ 
+ - I hear that RCU is patented?  What is with that?
  
 -- 
 2.17.1
