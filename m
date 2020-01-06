@@ -2,67 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C98B9131B38
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 23:19:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A9D0131B39
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 23:20:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbgAFWSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 17:18:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48714 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726695AbgAFWSy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 17:18:54 -0500
-Received: from localhost (lfbn-ncy-1-150-155.w83-194.abo.wanadoo.fr [83.194.232.155])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A5D82081E;
-        Mon,  6 Jan 2020 22:18:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578349133;
-        bh=aOq88Kdv/xqqvmSHyVyBDCV/K9Sa1oXzVNvd1u+Buts=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qPC5q+ZmrxSZU7qareABNle0xnS3ptrD66RNLoj3Y+CyK38TidyrkZmk6zUbKCbeN
-         TzkDjYPZMoYpxfwufXgiuwHsb/gKHZXmxHnRcePvWdnIQUqlVJjr/r5q7AiTQGJiY4
-         rHwMv4i3cJZaE2rgRhvEv51rhnDtyIjMdad1w20E=
-Date:   Mon, 6 Jan 2020 23:18:51 +0100
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Scott Wood <swood@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] tick/sched: Forward timer even in nohz mode
-Message-ID: <20200106221850.GD26097@lenoir>
-References: <1576538545-13274-1-git-send-email-swood@redhat.com>
+        id S1727027AbgAFWT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 17:19:59 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45943 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbgAFWT7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 17:19:59 -0500
+Received: by mail-qt1-f193.google.com with SMTP id l12so43719172qtq.12;
+        Mon, 06 Jan 2020 14:19:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Ra9GVssxYnn9Jv0jKh592D0gJEylVk6b1qXaRL8Qcy8=;
+        b=hdCTFdcSDzDKK6xkyVsnM7SX8IJIEC0ncaSMPpmCfjpHoJ3ne0KeeWAXB3nAMUsrvL
+         FcV5IisYscLVpLEv/CrHF2wiwmzEHiPxluYAbILZFlfpyM1qlpvwexQmti/kuN955k/h
+         L0j4gdXA1iIDPJw65Nqc+Yf5XT2JStkRKzQdNib4XvUTLJMGe8rkDQ66W8PQWTX//nkO
+         IQFbDSI0f45UjuIpeVI49ZMYpKZkMDHxhdpWevi6gWSGoiw87QTyzmLJGBPrT/lM8CIM
+         37T3rpnqnD2HDtYyRh2nQ0OSqEHNZoNltH1ZpZWOS4dIPXAGAs2gjsAYgIk/Ckd3Asc7
+         f4Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Ra9GVssxYnn9Jv0jKh592D0gJEylVk6b1qXaRL8Qcy8=;
+        b=Hn8emVBDujx1Df2PW5Va2kCmhNlyq3rkyKYeB+AIsxDAFk+JH4PsoVNJwTmSJRJf3m
+         SwBGC/Blf0PG8bksNvqBK3B3W9s0KxreljjMuXE362GCVXxRQE/6dGEaJpB0k+tYCVTh
+         8ivmPdTVtvVdkTuxIBj1sktMjZXCkpsGI5g8NkiaLFHSX3y3XEjiwqdei8Y395Gm5BYf
+         BXpfNr4Mlz6lcn48OJhx/nI8u4k/Dl12SGGSaAYAPbneYR5C9tukdO0vNQ1vzpUK5i5s
+         /c/ndyNz62V9LLiyJLQmsf9UCVR5FBszVVZl/4lrC6TjUFj3nB0C49cnAdfeAvnCsdaq
+         A+PQ==
+X-Gm-Message-State: APjAAAUi4AltW5DTHv5p4bfMb3PLUsjJLzd2RscqSUKMqRCJ496KGDLs
+        MrcZt8efg9KDbLfqXH49D2Y599tpg5M=
+X-Google-Smtp-Source: APXvYqwJCr/tvHE+vpfWKO5QRrw7Twha5XmvoqKiKgkMGGBQYkr8kBHkLcYGU+sBbJD24A6zL+JD/A==
+X-Received: by 2002:ac8:5215:: with SMTP id r21mr76183728qtn.77.1578349197920;
+        Mon, 06 Jan 2020 14:19:57 -0800 (PST)
+Received: from quaco.ghostprotocols.net ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id n190sm21616014qke.90.2020.01.06.14.19.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jan 2020 14:19:57 -0800 (PST)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 856B440DFD; Mon,  6 Jan 2020 19:19:55 -0300 (-03)
+Date:   Mon, 6 Jan 2020 19:19:55 -0300
+To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc:     rostedt@goodmis.org, Arnaldo Carvalho de Melo <acme@redhat.com>,
+        arnaldo.melo@gmail.com, linux-kernel@vger.kernel.org,
+        linux-trace-devel@vger.kernel.org
+Subject: Re: [PATCH] libtraceevent: Add dependency on libdl
+Message-ID: <20200106221955.GC16851@kernel.org>
+References: <20191226224931.3458-1-sudipm.mukherjee@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1576538545-13274-1-git-send-email-swood@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191226224931.3458-1-sudipm.mukherjee@gmail.com>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 06:22:22PM -0500, Scott Wood wrote:
-> Currently when exiting nohz, the expiry will be forwarded as if we
-> had just run the timer.  If we re-enter nohz before this new expiry,
-> and exit after, this forwarding will happen again.  If this load pattern
-> recurs the tick can be indefinitely postponed.
+Em Thu, Dec 26, 2019 at 10:49:31PM +0000, Sudip Mukherjee escreveu:
+> event-plugin.c is calling dl_*() functions but it is not linked with
+> libdl. As a result when we use ldd on the generated libtraceevent.so
+> file, it does not list libdl as one of its dependencies.
+> Add -ldl explicitly as done in tools/lib/lockdep.
 
-I must be missing something but I don't see why that would be a problem.
-Indeed the tick can be indefinitely postponed but that's as long as it's
-not needed. As soon as it's needed (timer callback expired, RCU, ...), the
-tick will be retained and it will eventually fire.
+Rostedt, can you ack this one? It applies just fine.
 
-> @@ -642,9 +642,6 @@ static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
->  	hrtimer_cancel(&ts->sched_timer);
->  	hrtimer_set_expires(&ts->sched_timer, ts->last_tick);
+- Arnaldo
+ 
+> Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+> ---
+>  tools/lib/traceevent/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
+> index c874c017c636..0d0575981cc7 100644
+> --- a/tools/lib/traceevent/Makefile
+> +++ b/tools/lib/traceevent/Makefile
+> @@ -143,7 +143,7 @@ $(TE_IN): force
+>  	$(Q)$(MAKE) $(build)=libtraceevent
 >  
-> -	/* Forward the time to expire in the future */
-> -	hrtimer_forward(&ts->sched_timer, now, tick_period);
-> -
+>  $(OUTPUT)libtraceevent.so.$(EVENT_PARSE_VERSION): $(TE_IN)
+> -	$(QUIET_LINK)$(CC) --shared $(LDFLAGS) $^ -Wl,-soname,libtraceevent.so.$(EP_VERSION) -o $@
+> +	$(QUIET_LINK)$(CC) --shared $(LDFLAGS) $^ -ldl -Wl,-soname,libtraceevent.so.$(EP_VERSION) -o $@
+>  	@ln -sf $(@F) $(OUTPUT)libtraceevent.so
+>  	@ln -sf $(@F) $(OUTPUT)libtraceevent.so.$(EP_VERSION)
+>  
+> -- 
+> 2.11.0
 
-By doing that, you may program a past tick and thus add a useless interrupt
-at each idle exit.
+-- 
 
-Thanks.
+- Arnaldo
