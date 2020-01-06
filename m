@@ -2,95 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8148130B9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 02:35:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0577130BD5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 02:40:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbgAFBfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 20:35:05 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40246 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727486AbgAFBfA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 20:35:00 -0500
-Received: by mail-lf1-f68.google.com with SMTP id i23so35348747lfo.7;
-        Sun, 05 Jan 2020 17:34:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=arvMuYwhC6kmGPqHAkymvpsO/QkvwuD8ZdbKq/fROtw=;
-        b=SPToMhG8xkcHN3DpqL+yC+h8j/VRBtyTdvNPnTRp3Pmti8jOZD5xhKMxOozTu7vV35
-         z34D1EeQWpdisk7i2L5GSsLd10l0UDYGbju3ibG08bu+M9ttvMu8Q2z5KoFnRufNh+bg
-         09jPba8Z1LN+cQtq/d0PcCtlmydZut3IYQPSDWeWff/u6LKMi7gfQ/8RvLPzF0gOFKDN
-         6i7mYSyTyFwrg3VUBQ47RoxLyBCsqxOzIWLf1TVTjasd11prS4yitY6zWDXkeB8s3EJb
-         DZjr2qrLjIo3qgAjSPVK5APKeMwJ07tP2vVgdk6Lii87vV6R9Q9LHTRkRsQ1ORl7QfAc
-         SJsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=arvMuYwhC6kmGPqHAkymvpsO/QkvwuD8ZdbKq/fROtw=;
-        b=EU4N+iXl4esZahWs8vjaJZa6asWAYQiGF4FQ1pKKEnX/CJaNPFWVdGP+omtOqkocgC
-         QX8D6ig6DYqwrDEdVseEAnSpK+dLTMDdc41WHTDAIChthhTY9v5+TYajXuN96MrO/Btx
-         3gd8wxQm+HJdplVvZS/smY3ToobpehKVPhsDufmj1A5dHIq+fNS/phBJ/ieJVlcqiEvF
-         y52q/hcaT1r4abeeWfkOvK+93UfySgV5Z5JZAqOCueaOdVG3tzqqdY/qXtb/XScG9p12
-         HEjnZqKPR99WgZP4vvPhqPY6nqtSBO+eFLUD7f6Mjpu5G1WYz+gf7f7sMXRwa79eZVdH
-         FArQ==
-X-Gm-Message-State: APjAAAW+Cdo+nVtNhiZ6lM842Zvmd99DI0YZKaDOt0eBlyRocJiLR7rY
-        E2GgJUGsZ6TppRZgCVDHDuU=
-X-Google-Smtp-Source: APXvYqxsh92kdjazmb0pr3lkYmWjoMIy8rIrxs0GKYd9+ZEhHUT9jphMz0O6WndobxVN7VNt02JRrQ==
-X-Received: by 2002:a19:e011:: with SMTP id x17mr36980429lfg.59.1578274498236;
-        Sun, 05 Jan 2020 17:34:58 -0800 (PST)
-Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id h10sm28235739ljc.39.2020.01.05.17.34.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jan 2020 17:34:57 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Cc:     linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 20/20] usb: host: ehci-tegra: Remove unused fields from tegra_ehci_hcd
-Date:   Mon,  6 Jan 2020 04:34:16 +0300
-Message-Id: <20200106013416.9604-21-digetx@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200106013416.9604-1-digetx@gmail.com>
-References: <20200106013416.9604-1-digetx@gmail.com>
+        id S1727304AbgAFBiN convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 5 Jan 2020 20:38:13 -0500
+Received: from szxga08-in.huawei.com ([45.249.212.255]:60154 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727226AbgAFBiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Jan 2020 20:38:13 -0500
+Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.55])
+        by Forcepoint Email with ESMTP id 345779FD04840D9C8C5D;
+        Mon,  6 Jan 2020 09:38:11 +0800 (CST)
+Received: from DGGEMM423-HUB.china.huawei.com (10.1.198.40) by
+ DGGEMM403-HUB.china.huawei.com (10.3.20.211) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 6 Jan 2020 09:38:10 +0800
+Received: from DGGEMM526-MBX.china.huawei.com ([169.254.8.143]) by
+ dggemm423-hub.china.huawei.com ([10.1.198.40]) with mapi id 14.03.0439.000;
+ Mon, 6 Jan 2020 09:38:00 +0800
+From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+CC:     Valentin Schneider <valentin.schneider@arm.com>,
+        Linuxarm <linuxarm@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>
+Subject: RE: [PATCH] cpu-topology: warn if NUMA configurations conflicts
+ with lower layer
+Thread-Topic: [PATCH] cpu-topology: warn if NUMA configurations conflicts
+ with lower layer
+Thread-Index: AQHVuWnsK0zwK8RxTkqe/SNAoYeaUKfT+S+AgALBI6CAAAyngIAAlqWw//+IwoCAAXt3QP//+lWAgASRonA=
+Date:   Mon, 6 Jan 2020 01:37:59 +0000
+Message-ID: <678F3D1BB717D949B966B68EAEB446ED340B31E9@dggemm526-mbx.china.huawei.com>
+References: <1577088979-8545-1-git-send-email-prime.zeng@hisilicon.com>
+ <20191231164051.GA4864@bogus>
+ <678F3D1BB717D949B966B68EAEB446ED340AE1D3@dggemm526-mbx.china.huawei.com>
+ <20200102112955.GC4864@bogus>
+ <678F3D1BB717D949B966B68EAEB446ED340AEB67@dggemm526-mbx.china.huawei.com>
+ <c43342d0-7e4d-3be0-0fe1-8d802b0d7065@arm.com>
+ <678F3D1BB717D949B966B68EAEB446ED340AFCA0@dggemm526-mbx.china.huawei.com>
+ <20200103114011.GB19390@bogus>
+In-Reply-To: <20200103114011.GB19390@bogus>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.74.221.187]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are few stale fields in tegra_ehci_hcd structure, let's remove them.
+> -----Original Message-----
+> From: Sudeep Holla [mailto:sudeep.holla@arm.com]
+> Sent: Friday, January 03, 2020 7:40 PM
+> To: Zengtao (B)
+> Cc: Valentin Schneider; Linuxarm; Greg Kroah-Hartman; Rafael J. Wysocki;
+> linux-kernel@vger.kernel.org; Morten Rasmussen; Sudeep Holla
+> Subject: Re: [PATCH] cpu-topology: warn if NUMA configurations conflicts
+> with lower layer
+> 
+> On Fri, Jan 03, 2020 at 04:24:04AM +0000, Zengtao (B) wrote:
+> > > -----Original Message-----
+> > > From: Valentin Schneider [mailto:valentin.schneider@arm.com]
+> > > Sent: Thursday, January 02, 2020 9:22 PM
+> > > To: Zengtao (B); Sudeep Holla
+> > > Cc: Linuxarm; Greg Kroah-Hartman; Rafael J. Wysocki;
+> > > linux-kernel@vger.kernel.org; Morten Rasmussen
+> > > Subject: Re: [PATCH] cpu-topology: warn if NUMA configurations
+> conflicts
+> > > with lower layer
+> > >
+> 
+> [...]
+> 
+> > >
+> > > Right, and that is checked when you have sched_debug on the cmdline
+> > > (or write 1 to /sys/kernel/debug/sched_debug & regenerate the sched
+> > > domains)
+> > >
+> >
+> > No, here I think you don't get my issue, please try to understand my
+> example
+> > First:.
+> >
+> > *************************************
+> > NUMA:         0-2,  3-7
+> > core_siblings:    0-3,  4-7
+> > *************************************
+> > When we are building the sched domain, per the current code:
+> > (1) For core 3
+> >  MC sched domain fallbacks to 3~7
+> >  DIE sched domain is 3~7
+> > (2) For core 4:
+> >  MC sched domain is 4~7
+> >  DIE sched domain is 3~7
+> >
+> > When we are build sched groups for the MC level:
+> > (1). core3's sched groups chain is built like as: 3->4->5->6->7->3
+> > (2). core4's sched groups chain is built like as: 4->5->6->7->4
+> > so after (2),
+> > core3's sched groups is overlapped, and it's not a chain any more.
+> > In the afterwards usecase of core3's sched groups, deadloop happens.
+> >
+> > And it's difficult for the scheduler to find out such errors,
+> > that is why I think a warning is necessary here.
+> >
+> 
+> We can figure out a way to warn if it's absolutely necessary, but I
+> would like to understand the system topology here. You haven't answered
+> my query on cache topology. Please give more description on why the
+> NUMA configuration is like the above example with specific hardware
+> design details. Is this just a case where user can specify anything
+> they wish ?
+>
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/usb/host/ehci-tegra.c | 2 --
- 1 file changed, 2 deletions(-)
+Sorry for the late response, In fact, it's a VM usecase, you can simply 
+understand it as a test case. It's a corner case, but it will hang the kernel,
+that is why I suggest a warning is needed.
 
-diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index 1eb94205a5ac..d6433f206c17 100644
---- a/drivers/usb/host/ehci-tegra.c
-+++ b/drivers/usb/host/ehci-tegra.c
-@@ -42,12 +42,10 @@ struct tegra_ehci_soc_config {
- };
- 
- struct tegra_ehci_hcd {
--	struct tegra_usb_phy *phy;
- 	struct clk *clk;
- 	struct reset_control *rst;
- 	int port_resuming;
- 	bool needs_double_reset;
--	enum tegra_usb_phy_port_speed port_speed;
- };
- 
- static int tegra_reset_usb_controller(struct platform_device *pdev)
--- 
-2.24.0
+I think we need an sanity check or just simply warning, either in the scheduler
+or arch topology parsing.
 
+Regards
+Zengtao
