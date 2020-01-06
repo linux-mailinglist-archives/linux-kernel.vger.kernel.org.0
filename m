@@ -2,100 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4016313178B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:34:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7E69131793
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:35:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbgAFSex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 13:34:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51918 "EHLO mail.kernel.org"
+        id S1726734AbgAFSfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 13:35:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726569AbgAFSew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 13:34:52 -0500
-Received: from localhost (unknown [104.132.0.81])
+        id S1726569AbgAFSfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 13:35:44 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA7112072E;
-        Mon,  6 Jan 2020 18:34:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BACA2072E;
+        Mon,  6 Jan 2020 18:35:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578335691;
-        bh=JntLi/yJ4cS9Fj9APMSIeBKJes+q3Xm+EQZItJCaOHk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=M76DJxGL5Awgyq2fvLv9+VPDjy3kmhrnKoXgIa9knVhOjKWnr4iqsgJwK48shJvJ0
-         KMavplXlMD0T899wAH2nlhEYqqtwalODpjq7Q5Y9ypTEFaGQyp8cW87Z0/WqxHxzMd
-         Wo/XR6RGKdOI1Pfw44H/1p5Qpgt8l1cBasPJ+B/4=
-Date:   Mon, 6 Jan 2020 10:34:50 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Chao Yu <chao@kernel.org>
-Subject: Re: Multidevice f2fs mount after disk rearrangement
-Message-ID: <20200106183450.GC50058@jaegeuk-macbookpro.roam.corp.google.com>
-References: <4c6cf8418236145f7124ac61eb2908ad@natalenko.name>
- <2c4cafd35d1595a62134203669d7c244@natalenko.name>
+        s=default; t=1578335743;
+        bh=tvOktxxdOsY2Vaw97cRdVlckBmMduaVuO7iggyPxMBg=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=z1E9L3+WxOSGWZJiQn8ZNd+y976FRz0y3cv89C4E+7J3x7vwBVmyRsR3rIa5XzP4X
+         zk8EjHxcUSlyvvnU85DILtNfq63Hx8npITrTSmtpaI4UXMbGiLzPBRuIBtCLqPnAjy
+         F4/uJDcIk+hC6LzkLXiKkYiCAE9Ez1H+UMzPkA5s=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 22C79352274D; Mon,  6 Jan 2020 10:35:43 -0800 (PST)
+Date:   Mon, 6 Jan 2020 10:35:43 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     madhuparnabhowmik04@gmail.com
+Cc:     sj38.park@gmail.com, joel@joelfernandes.or, frextrite@gmail.com,
+        corbet@lwn.net, rcu@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, SeongJae Park <sjpark@amazon.de>
+Subject: Re: [PATCH 6/7] doc/RCU/rcu: Use https instead of http if possible
+Message-ID: <20200106183543.GN13449@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191231151549.12797-1-sjpark@amazon.de>
+ <20191231151549.12797-7-sjpark@amazon.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2c4cafd35d1595a62134203669d7c244@natalenko.name>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20191231151549.12797-7-sjpark@amazon.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/04, Oleksandr Natalenko wrote:
-> Hi.
+On Mon, Jan 06, 2020 at 06:59:51PM +0530, madhuparnabhowmik04@gmail.com wrote:
+> From: sj38.park@gmail.com
 > 
-> On 04.01.2020 17:29, Oleksandr Natalenko wrote:
-> > I was brave enough to create f2fs filesystem spanning through 2
-> > physical device using this command:
-> > 
-> > # mkfs.f2fs -t 0 /dev/sdc -c /dev/sdd
-> > 
-> > It worked fine until I removed /dev/sdb from my system, so f2fs devices
-> > became:
-> > 
-> > /dev/sdc -> /dev/sdb
-> > /dev/sdd -> /dev/sdc
-> > 
-> > Now, when I try to mount it, I get the following:
-> > 
-> > # mount -t f2fs /dev/sdb /mnt/fs
-> > mount: /mnt/fs: mount(2) system call failed: No such file or directory.
-> > 
-> > In dmesg:
-> > 
-> > [Jan 4 17:25] F2FS-fs (sdb): Mount Device [ 0]:             /dev/sdc,
-> >   59063,        0 -  1cd6fff
-> > [  +0,000024] F2FS-fs (sdb): Failed to find devices
-> > 
-> > fsck also fails with the following assertion:
-> > 
-> > [ASSERT] (init_sb_info: 908) !strcmp((char *)sb->devs[i].path, (char
-> > *)c.devices[i].path)
-> > 
-> > Am I doing something obviously stupid, and the device path can be
-> > (somehow) changed so that the mount succeeds, or this is unfixable,
-> > and f2fs relies on persistent device naming?
-> > 
-> > Please suggest.
-> > 
-> > Thank you.
+> From: SeongJae Park <sjpark@amazon.de>
 > 
-> Erm, fine. I studied f2fs-tools code a little bit and discovered that
-> superblock indeed had /dev/sdX paths saved as strings. So I fired up hexedit
-> and just changed the superblock directly on the first device, substituting
-> sdc with sdb and sdd with sdc (I did it twice; I guess there are 2 copies of
-> superblock), and after this the mount worked.
+> Signed-off-by: SeongJae Park <sjpark@amazon.de>
 > 
-> Am I really supposed to do this manually ;)?
-
-Thank you for investigating this ahead of me. :) Yes, the device list is stored
-in superblock, so hacking it manually should work.
-
-Let me think about a tool to tune that.
-
-Thanks,
-
+> Hi SeongJae,
 > 
+> The patch looks fine, but I am not sure if this change is required.
+> What do you think Paul?
+
+Thank you, Madhuparna!  This change might not be absolutely required,
+but it is a good change.
+
+SeongJae, could you please include Madhuparna's pair of Reviewed-by
+tags and also make your email address consistent in your next posting?
+You currently have both sj38.park@gmail.com and sjpark@amazon.de.
+Either is fine.  ;-)
+
+							Thanx, Paul
+
+> Thanks,
+> Madhuparna
+> 
+> ---
+>  Documentation/RCU/rcu.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/RCU/rcu.rst b/Documentation/RCU/rcu.rst
+> index 2a830c51477e..0e03c6ef3147 100644
+> --- a/Documentation/RCU/rcu.rst
+> +++ b/Documentation/RCU/rcu.rst
+> @@ -79,7 +79,7 @@ Frequently Asked Questions
+>    Of these, one was allowed to lapse by the assignee, and the
+>    others have been contributed to the Linux kernel under GPL.
+>    There are now also LGPL implementations of user-level RCU
+> -  available (http://liburcu.org/).
+> +  available (https://liburcu.org/).
+>  
+>  - I hear that RCU needs work in order to support realtime kernels?
+>  
 > -- 
->   Oleksandr Natalenko (post-factum)
+> 2.17.1
+> 
+> 
