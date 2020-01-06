@@ -2,144 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF08513173C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:10:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1843131740
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:10:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbgAFSKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 13:10:03 -0500
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:37491 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbgAFSKC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 13:10:02 -0500
-Received: by mail-qv1-f66.google.com with SMTP id f16so19409193qvi.4
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 10:10:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maine.edu; s=google;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=Scg+5c1bo7BzriOdYCjzy69y4LMw3hBOSsv5RxX0B2s=;
-        b=bZc9isEtCO4q9pUWW9qXKMRW92eYNSKQQ5G3t4oSCu+AcoFlX77fXSICadA+EstGuE
-         mwOf7VGZnRi2uoNfC/XkOx57rnwoRAD6P9P4mqOovetU8iiMnCDQ659d5iJJRoWo0l1x
-         YUD2XYBKKm9GdEac4aQ2udYBy2l88uzsUpqF8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=Scg+5c1bo7BzriOdYCjzy69y4LMw3hBOSsv5RxX0B2s=;
-        b=d633nZZHVnd5y6Oy46jTbUZigu+qr9zNoIwdNpS6HlvYUliVs7Z9UjMEKztXZm9bOz
-         QgZBeRiv3jqFQl4QQ3hDe1A8lMMFiNcFvK/nHgOwh0o+JAIGJIXPIvOH9wd+whxTB5zM
-         5pRbk0I5I1a+sd30a/PyF/ezPlZHjX9lTXAIKCUiJr5Ea35uSdzJgscdI7drNrLqVVVc
-         iNylCTMgRRH7KI90SgnVzR9DMXld2njgdOfWEu0/y5mn2crYVyWBPYzrkRjhFcnuPMEX
-         0U94Ha4RAQKa3MsiRBUm8FmmA1HCv/gxQSbMLt8amjacrk2wfOiZZ2t6zbghVpOEI6Pl
-         +u7w==
-X-Gm-Message-State: APjAAAVbTVLXsmWp3mrlBgLaN6VyP2ILjd7xt4PrqOGkMLbOX22r9Ori
-        7hF0NPnDp//mSyBXMiqyDm4A6A==
-X-Google-Smtp-Source: APXvYqzmhklHEURmGoUCV7OQeyLhJEQsJxjm1/nr9I2i+hrSd4AvvgtiPt3xFydR2A7cSzP/8ZkNRg==
-X-Received: by 2002:a05:6214:1745:: with SMTP id dc5mr77634297qvb.230.1578334201693;
-        Mon, 06 Jan 2020 10:10:01 -0800 (PST)
-Received: from macbook-air (weaver.eece.maine.edu. [130.111.218.23])
-        by smtp.gmail.com with ESMTPSA id r10sm21007469qkm.23.2020.01.06.10.09.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 10:10:00 -0800 (PST)
-From:   Vince Weaver <vincent.weaver@maine.edu>
-X-Google-Original-From: Vince Weaver <vince@maine.edu>
-Date:   Mon, 6 Jan 2020 13:09:56 -0500 (EST)
-X-X-Sender: vince@macbook-air
-To:     Mark Rutland <mark.rutland@arm.com>
-cc:     Vince Weaver <vincent.weaver@maine.edu>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH] perf: correctly handle failed perf_get_aux_event() (was:
- Re: [perf] perf_event_open() sometimes returning 0)
-In-Reply-To: <20200106120338.GC9630@lakrids.cambridge.arm.com>
-Message-ID: <alpine.DEB.2.21.2001061307460.24675@macbook-air>
-References: <alpine.DEB.2.21.2001021349390.11372@macbook-air> <alpine.DEB.2.21.2001021418590.11372@macbook-air> <20200106120338.GC9630@lakrids.cambridge.arm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1726757AbgAFSKL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 13:10:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40654 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726448AbgAFSKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 13:10:07 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01E0D2072C;
+        Mon,  6 Jan 2020 18:10:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578334207;
+        bh=arsveJq0EXpuHjbM0berwr0UlFHCz70bOB+vWGvE1VY=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=fVN5/OudB2YehRnliAeW+mOotlQXg7CT4j2xOmrHSU4s2qf6Hf7dB+IkYEu4VJIjH
+         uyao6GqCG7naR6fk84/zzR6YFHuv6ObBnB4QmN9Csdr9SCWFSrfj+dPT7vbC+IufqS
+         DuTAFGmx47M193lpAjUCV9cXS/csnccXeraewWtw=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id C9484352274D; Mon,  6 Jan 2020 10:10:06 -0800 (PST)
+Date:   Mon, 6 Jan 2020 10:10:06 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>
+Subject: Re: linux-next: build warning after merge of the rcu tree
+Message-ID: <20200106181006.GL13449@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191212160622.021517d3@canb.auug.org.au>
+ <CAOesGMiabP7nAPYKrmP=j_8bSj-UfUSFoiD0W+kqzaBp-6J2hQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOesGMiabP7nAPYKrmP=j_8bSj-UfUSFoiD0W+kqzaBp-6J2hQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 6 Jan 2020, Mark Rutland wrote:
+On Mon, Jan 06, 2020 at 09:51:47AM -0800, Olof Johansson wrote:
+> Hi,
+> 
+> On Wed, Dec 11, 2019 at 9:06 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Hi all,
+> >
+> > After merging the rcu (I think) tree, today's linux-next build (x86_64
+> > allnoconfig) produced this warning:
+> >
+> > kernel/time/timer.c: In function 'schedule_timeout':
+> > kernel/time/timer.c:969:20: warning: 'timer.expires' may be used uninitialized in this function [-Wmaybe-uninitialized]
+> >   969 |   long diff = timer->expires - expires;
+> >       |               ~~~~~^~~~~~~~~
+> >
+> > Introduced by (bisected to) commit
+> >
+> >   c4127fce1d02 ("timer: Use hlist_unhashed_lockless() in timer_pending()")
+> >
+> > x86_64-linux-gnu-gcc (Debian 9.2.1-21) 9.2.1 20191130
+> 
+> This is still there as of last night's -next. Any update on getting a
+> fix queued together with the offending patch?
 
-> On Thu, Jan 02, 2020 at 02:22:47PM -0500, Vince Weaver wrote:
-> > On Thu, 2 Jan 2020, Vince Weaver wrote:
-> > 
-> Vince, does the below (untested) patch work for you?
+Hello, Olof,
 
+Thank you, I had indeed lost track of this one.  :-/
 
-yes, this patch fixes things for me.
+Does Eric's patch fix things for you?
 
-Tested-by: Vince Weaver <vincent.weaver@maine.edu>
+https://lore.kernel.org/lkml/CANn89i+xomdo4HFqewrfNf_Z4Q5ayXuW6A4SjSkE46JXP9KuFw@mail.gmail.com/
 
-
-
-> ---->8----
-> From c79f31b42aaf85f3a924af9218794b3bc8b79892 Mon Sep 17 00:00:00 2001
-> From: Mark Rutland <mark.rutland@arm.com>
-> Date: Mon, 6 Jan 2020 11:51:06 +0000
-> Subject: [PATCH] perf: correctly handle failed perf_get_aux_event()
-> 
-> Vince reports a worrying issue:
-> 
-> | so I was tracking down some odd behavior in the perf_fuzzer which turns
-> | out to be because perf_even_open() sometimes returns 0 (indicating a file
-> | descriptor of 0) even though as far as I can tell stdin is still open.
-> 
-> ... and further the cause:
-> 
-> | error is triggered if aux_sample_size has non-zero value.
-> |
-> | seems to be this line in kernel/events/core.c:
-> |
-> | if (perf_need_aux_event(event) && !perf_get_aux_event(event, group_leader))
-> |                goto err_locked;
-> |
-> | (note, err is never set)
-> 
-> This seems to be a thinko in commit:
-> 
->   ab43762ef010967e ("perf: Allow normal events to output AUX data")
-> 
-> ... and we should probably return -EINVAL here, as this should only
-> happen when the new event is mis-configured or does not have a
-> compatible aux_event group leader.
-> 
-> Fixes: ab43762ef010967e ("perf: Allow normal events to output AUX data")
-> Reported-by: Vince Weaver <vincent.weaver@maine.edu>
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> ---
->  kernel/events/core.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index a1f8bde19b56..2173c23c25b4 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -11465,8 +11465,10 @@ SYSCALL_DEFINE5(perf_event_open,
->  		}
->  	}
->  
-> -	if (perf_need_aux_event(event) && !perf_get_aux_event(event, group_leader))
-> +	if (perf_need_aux_event(event) && !perf_get_aux_event(event, group_leader)) {
-> +		err = -EINVAL;
->  		goto err_locked;
-> +	}
->  
->  	/*
->  	 * Must be under the same ctx::mutex as perf_install_in_context(),
-> -- 
-> 2.11.0
-> 
-> 
-
+							Thanx, Paul
