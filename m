@@ -2,86 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 031BC13174B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:13:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A9FA131755
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:16:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbgAFSNe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 13:13:34 -0500
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:40037 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbgAFSNe (ORCPT
+        id S1726760AbgAFSQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 13:16:12 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:41916 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbgAFSQL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 13:13:34 -0500
-Received: by mail-pf1-f201.google.com with SMTP id d127so28304164pfa.7
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 10:13:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=UEDzAmAV9WaLeo9yTDqPSpBCyPNP5d0qczx1NnXY4co=;
-        b=mP7El5Q4TtrIfgk9TDJS14F2Eu9vFw0ZDs7c8H76nJtmFN5yjRrLSDguZ60lYkNcDM
-         Bkt+gDdPDI5ehXsqcQw3LrmnwYmgN8yKSw+0Q1Rk9nr5Adh1EDI01FsSsxoig0GiXpd7
-         IT8yO+IXVVRGuEOamw+VDExxiunDcKNuGPzJEzvkJPSNNWFKizAqD59OhtgfAIHOknXs
-         o7ECUMXlpuRUOt1QW5FmLC3hTyDp7kt7Rt9cYyYBnb6d0EWemY0pMCZPgYMGEN44sHj3
-         laVOuHXIuo2vbzwWcAkWnfkYmATCv3yyXYVI8kdwoRwBkgr9teI/QL34W2lxjY4j2VZ7
-         DYNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=UEDzAmAV9WaLeo9yTDqPSpBCyPNP5d0qczx1NnXY4co=;
-        b=FKx1YEyujYz+43Eot+N1SEs6plKgvWtGSbJodpEbpRboZroNzAl7Gtm6eBbOSjDXOA
-         0JkC/BAwYFGmwvKrx9athXQ3AnJRHwfFwvRWdN8bcclGJTWPOmXRLbiLRpkDx3f7N6w+
-         M04vFvcexKaUfl02Ag14oW7eh/+BKCAVaXkfUXUXxNm3eChd8bO8yDPc3mfCeWdXFgSh
-         Ipm1qMIradXfQmUon/YQGUYjF0j7eDCEU17FT/0e7r3bqjKPa9fN/4LEQxkYXB+2j0Lg
-         Y6SPG7CE6nBGRGPYjzR9Qmv/tOVz8CkZVHf4AjR71fNzGfsHIpUa2iAJ3Hwg9aol2EB4
-         YpfQ==
-X-Gm-Message-State: APjAAAXz+zVLxgLrMtM+mDaI1uoXKGBjFNrw/4xzYTy8YZEZN/b3Ov/n
-        iqx3pluGdGy9J/8klbEjvycuia9xoQs=
-X-Google-Smtp-Source: APXvYqx52b7bUUdO8CftqfX7YMxu6TRCr8DCWWok5+XVBAVJsgPd//2sZgQfRpMyhE1OKDke/Qsdly46i0c=
-X-Received: by 2002:a65:6842:: with SMTP id q2mr115275661pgt.345.1578334413511;
- Mon, 06 Jan 2020 10:13:33 -0800 (PST)
-Date:   Mon,  6 Jan 2020 10:13:29 -0800
-Message-Id: <20200106181329.167322-1-hridya@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
-Subject: [PATCH] security: selinux: allow per-file labelling for binderfs
-From:   Hridya Valsaraju <hridya@google.com>
-To:     Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     kernel-team@android.com, Hridya Valsaraju <hridya@google.com>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Mark Salyzyn <salyzyn@android.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 6 Jan 2020 13:16:11 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1ioWuo-0005eb-Mx; Mon, 06 Jan 2020 19:15:46 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 10FF11C2C34;
+        Mon,  6 Jan 2020 19:15:44 +0100 (CET)
+Date:   Mon, 06 Jan 2020 18:15:43 -0000
+From:   "tip-bot2 for Yu-cheng Yu" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/fpu] x86/fpu/xstate: Make
+ xfeature_is_supervisor()/xfeature_is_user() return bool
+Cc:     Borislav Petkov <bp@suse.de>,
+        "Yu-cheng Yu" <yu-cheng.yu@intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, "x86-ml" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191212210855.19260-3-yu-cheng.yu@intel.com>
+References: <20191212210855.19260-3-yu-cheng.yu@intel.com>
+MIME-Version: 1.0
+Message-ID: <157833454385.30329.3292220275280944464.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch allows genfscon per-file labeling for binderfs.
-This is required to have separate permissions to allow
-access to binder, hwbinder and vndbinder devices which are
-relocating to binderfs.
+The following commit has been merged into the x86/fpu branch of tip:
 
-Acked-by: Jeff Vander Stoep <jeffv@google.com>
-Acked-by: Mark Salyzyn <salyzyn@android.com>
-Signed-off-by: Hridya Valsaraju <hridya@google.com>
+Commit-ID:     158e2ee61f22b878d61de92bea5aad3d2df1c146
+Gitweb:        https://git.kernel.org/tip/158e2ee61f22b878d61de92bea5aad3d2df1c146
+Author:        Yu-cheng Yu <yu-cheng.yu@intel.com>
+AuthorDate:    Thu, 12 Dec 2019 13:08:54 -08:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Mon, 06 Jan 2020 19:08:40 +01:00
+
+x86/fpu/xstate: Make xfeature_is_supervisor()/xfeature_is_user() return bool
+
+Have both xfeature_is_supervisor()/xfeature_is_user() return bool
+because they are used only in boolean context.
+
+Suggested-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20191212210855.19260-3-yu-cheng.yu@intel.com
 ---
- security/selinux/hooks.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/fpu/xstate.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 116b4d644f68..3f0669a708e9 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -752,6 +752,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index 4588fc5..a180659 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -107,7 +107,7 @@ int cpu_has_xfeatures(u64 xfeatures_needed, const char **feature_name)
+ }
+ EXPORT_SYMBOL_GPL(cpu_has_xfeatures);
  
- 	if (!strcmp(sb->s_type->name, "debugfs") ||
- 	    !strcmp(sb->s_type->name, "tracefs") ||
-+	    !strcmp(sb->s_type->name, "binderfs") ||
- 	    !strcmp(sb->s_type->name, "pstore"))
- 		sbsec->flags |= SE_SBGENFS;
+-static int xfeature_is_supervisor(int xfeature_nr)
++static bool xfeature_is_supervisor(int xfeature_nr)
+ {
+ 	/*
+ 	 * Extended State Enumeration Sub-leaves (EAX = 0DH, ECX = n, n > 1)
+@@ -117,10 +117,10 @@ static int xfeature_is_supervisor(int xfeature_nr)
+ 	u32 eax, ebx, ecx, edx;
  
--- 
-2.24.1.735.g03f4e72817-goog
-
+ 	cpuid_count(XSTATE_CPUID, xfeature_nr, &eax, &ebx, &ecx, &edx);
+-	return !!(ecx & 1);
++	return ecx & 1;
+ }
+ 
+-static int xfeature_is_user(int xfeature_nr)
++static bool xfeature_is_user(int xfeature_nr)
+ {
+ 	return !xfeature_is_supervisor(xfeature_nr);
+ }
