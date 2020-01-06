@@ -2,104 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BAAC131A3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 22:19:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C568B131A49
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 22:20:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbgAFVTJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 16:19:09 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:54270 "EHLO gloria.sntech.de"
+        id S1726952AbgAFVT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 16:19:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726713AbgAFVTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 16:19:08 -0500
-Received: from ip5f5a5f74.dynamic.kabel-deutschland.de ([95.90.95.116] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1ioZm5-00074z-Ah; Mon, 06 Jan 2020 22:18:57 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Jonas Karlman <jonas@kwiboo.se>
-Cc:     Sandy Huang <hjc@rock-chips.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Zheng Yang <zhengyang@rock-chips.com>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 06/15] drm/rockchip: vop: limit resolution width to 3840
-Date:   Mon, 06 Jan 2020 22:18:56 +0100
-Message-ID: <3203294.bEmSZkBOq4@diego>
-In-Reply-To: <HE1PR06MB40111E90F5DA4718126E6A92AC3C0@HE1PR06MB4011.eurprd06.prod.outlook.com>
-References: <HE1PR06MB4011254424EDB4485617513CAC3C0@HE1PR06MB4011.eurprd06.prod.outlook.com> <20200106204812.5944-1-jonas@kwiboo.se> <HE1PR06MB40111E90F5DA4718126E6A92AC3C0@HE1PR06MB4011.eurprd06.prod.outlook.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1726713AbgAFVT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 16:19:59 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95D102072C;
+        Mon,  6 Jan 2020 21:19:58 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92.3)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1ioZn3-000MUV-NF; Mon, 06 Jan 2020 16:19:57 -0500
+Message-Id: <20200106211901.293910946@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Mon, 06 Jan 2020 16:19:01 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-linus][PATCH 0/7] tracing: Fixes for 5.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jonas,
 
-Am Montag, 6. Januar 2020, 21:48:25 CET schrieb Jonas Karlman:
-> Using a destination width that is more then 3840 pixels
-> is not supported in scl_vop_cal_scl_fac().
-> 
-> Work around this limitation by filtering all modes with
-> a width above 3840 pixels.
+Colin Ian King (1):
+      tracing: Fix indentation issue
 
-could you try to send the whole series to people? I only get this patch6
-of a series of 15 and that is way confusing not knowing what you want
-to actually achieve.
+Joel Fernandes (Google) (1):
+      tracing: Change offset type to s32 in preempt/irq tracepoints
 
-Hence I can also just point to rk3229, rk3328, rk3368 and rk3399 that
-report a max output of 4096x2160 , which would be larger than that
-3840 value?
+Kaitao Cheng (1):
+      kernel/trace: Fix do not unregister tracepoints when register sched_migrate_task fail
 
+Steven Rostedt (VMware) (3):
+      tracing: Initialize val to zero in parse_entry of inject code
+      tracing: Define MCOUNT_INSN_SIZE when not defined without direct calls
+      tracing: Have stack tracer compile when MCOUNT_INSN_SIZE is not defined
 
-Heiko
+Wen Yang (1):
+      ftrace: Avoid potential division by zero in function profiler
 
-
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> ---
->  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> index d04b3492bdac..f181897cbfad 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> @@ -1036,6 +1036,15 @@ static void vop_crtc_disable_vblank(struct drm_crtc *crtc)
->  	spin_unlock_irqrestore(&vop->irq_lock, flags);
->  }
->  
-> +enum drm_mode_status vop_crtc_mode_valid(struct drm_crtc *crtc,
-> +					 const struct drm_display_mode *mode)
-> +{
-> +	if (mode->hdisplay > 3840)
-> +		return MODE_BAD_HVALUE;
-> +
-> +	return MODE_OK;
-> +}
-> +
->  static bool vop_crtc_mode_fixup(struct drm_crtc *crtc,
->  				const struct drm_display_mode *mode,
->  				struct drm_display_mode *adjusted_mode)
-> @@ -1377,6 +1386,7 @@ static void vop_crtc_atomic_flush(struct drm_crtc *crtc,
->  }
->  
->  static const struct drm_crtc_helper_funcs vop_crtc_helper_funcs = {
-> +	.mode_valid = vop_crtc_mode_valid,
->  	.mode_fixup = vop_crtc_mode_fixup,
->  	.atomic_check = vop_crtc_atomic_check,
->  	.atomic_begin = vop_crtc_atomic_begin,
-> 
-
-
-
-
+----
+ include/trace/events/preemptirq.h  |  8 ++++----
+ kernel/trace/fgraph.c              | 14 ++++++++++++++
+ kernel/trace/ftrace.c              |  6 +++---
+ kernel/trace/trace_events_inject.c |  2 +-
+ kernel/trace/trace_sched_wakeup.c  |  4 +++-
+ kernel/trace/trace_seq.c           |  2 +-
+ kernel/trace/trace_stack.c         |  5 +++++
+ 7 files changed, 31 insertions(+), 10 deletions(-)
