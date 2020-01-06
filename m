@@ -2,93 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60D5A130C7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 04:21:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D0E9130C84
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 04:23:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbgAFDVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 22:21:20 -0500
-Received: from ozlabs.org ([203.11.71.1]:50219 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727307AbgAFDVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 22:21:20 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47rglJ4zJJz9s29;
-        Mon,  6 Jan 2020 14:21:16 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1578280877;
-        bh=5uJ61loontj87nlYov++gfh70xE3MbLMJJtZ52aRmh8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=rdBjeYrQGTlBUtS94fhi8tcsv67JzwI4LQfJaasMVb3bj0uxBhdqfmtcy+lDg1w/B
-         KKYtZ0MetR/emf7XZ5FE+sQE93X2qmQpx+rg8J+XnEziuSs+8K0chw/xz5GO1V17xh
-         lKxvYk+BsQ4c/Ae4dqLEl+dTV1UxAtyrFfkd6AK8EMuHpQTsesXivaUiGvh+sRNDm1
-         5oDaRG5HR8lgcL+cWWH/vxcylGA81n1u4dHnzLQaqkpFYVxxmLgjyOuzfIeaSmuYgr
-         HJ7uSO0IaZzojDMsnRZuXemSdGOH59fgDHL7WmTr+UWLb2fapBo0fWnRcBUewGNuYm
-         WNpn3dPO+PKzA==
-Date:   Mon, 6 Jan 2020 14:21:16 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Guido =?UTF-8?B?R8O8bnRoZXI=?= <agx@sigxcpu.org>
-Subject: linux-next: build failure after merge of the leds tree
-Message-ID: <20200106142116.538320e1@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/uo7NhdgcZK8Ustri2ntHTvF";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1727450AbgAFDXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 22:23:53 -0500
+Received: from conuserg-12.nifty.com ([210.131.2.79]:28701 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbgAFDXx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Jan 2020 22:23:53 -0500
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id 0063NPRQ000672;
+        Mon, 6 Jan 2020 12:23:26 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com 0063NPRQ000672
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1578281006;
+        bh=wvIIht9IjcI1sfB8BY3Nr3IRwO3XwvIvbn+5CR6Dbh8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Mpe2P6BY3kQ6AOThh2zkWSMu9ApwJEKLqNjXJsdeEnvIXrt61xJyzxt9gH+HS1otj
+         Xgop6EHssamcdbnSFCr7RvCYuLlIDchF3VHuw2ni9NJL42OGbw07nycOgOYg9ZYxSX
+         oSGOKN8p7TFabK1WYddM6pSUf5Cx+He+w3NEhYkHhpWwdPKYaONVD+S0QKKM0NQE1g
+         ViEj1s4PuFA6HcRfGyYGU3CbWwPy6zYyUJ6qsCS9SSbLGZK44vK8/s6gTyvqBll1dX
+         ePacfiyDTEXWYsCpyfqN3R/NrzFJeXwmZMgsMeC+o+b8k32LaJFey+tHJ0NcdPhM27
+         RePHblFXsYpAw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Fumiya Shigemitsu <shfy1014@gmail.com>,
+        Yongxin Liu <yongxin.liu@windriver.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kbuild: allow modules to link *.a archives
+Date:   Mon,  6 Jan 2020 12:23:24 +0900
+Message-Id: <20200106032324.3147-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/uo7NhdgcZK8Ustri2ntHTvF
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Since commit 69ea912fda74 ("kbuild: remove unneeded link_multi_deps"),
+modules cannot link *.a archives.
 
-Hi all,
+I do not see such a usecase in the upstream code, but multiple people
+reported this issue, so it seems to be a desired feature for external
+modules.
 
-After merging the leds tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+For example, libfoo.a is not linked in the following test case:
 
-drivers/leds/leds-lm3692x.c: In function 'lm3692x_max_brightness':
-drivers/leds/leds-lm3692x.c:355:9: error: 'struct lm3692x_led' has no membe=
-r named 'brightness_ctrl'
-  355 |  if (led->brightness_ctrl & LM3692X_MAP_MODE_EXP) {
-      |         ^~
-drivers/leds/leds-lm3692x.c: In function 'lm3692x_probe_dt':
-drivers/leds/leds-lm3692x.c:437:61: error: 'max_cur' undeclared (first use =
-in this function)
-  437 |  ret =3D fwnode_property_read_u32(child, "led-max-microamp", &max_c=
-ur);
-      |                                                             ^~~~~~~
+    obj-m := foo.o
+    foo-objs := foo1.o libfoo.a
 
-Caused by commit
+Instead of reverting the offending commit, I wrote slightly cleaner code.
+I added multi-m-prereqs to avoid code duplication.
 
-  ef791c4d0ce8 ("leds: lm3692x: Make sure we don't exceed the maximum LED c=
-urrent")
+Reported-by: Fumiya Shigemitsu <shfy1014@gmail.com>
+Reported-by: Yongxin Liu <yongxin.liu@windriver.com>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-I have used the leds tree from next-20191220 for today.
+ scripts/Makefile.build | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index b734ac8a654e..a8481b765ea8 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -265,8 +265,10 @@ $(obj)/%.o: $(src)/%.c $(recordmcount_source) $(objtool_dep) FORCE
+ 	$(call cmd,force_checksrc)
+ 	$(call if_changed_rule,cc_o_c)
+ 
++multi-m-prereqs = $(addprefix $(obj)/, $($*-objs) $($*-y) $($*-m))
++
+ cmd_mod = { \
+-	echo $(if $($*-objs)$($*-y)$($*-m), $(addprefix $(obj)/, $($*-objs) $($*-y) $($*-m)), $(@:.mod=.o)); \
++	echo $(if $(multi-m-prereqs), $(multi-m-prereqs), $(@:.mod=.o)); \
+ 	$(cmd_undef_syms); \
+ 	} > $@
+ 
+@@ -427,13 +429,13 @@ targets += $(obj)/lib-ksyms.o
+ endif
+ 
+ # NOTE:
+-# Do not replace $(filter %.o,^) with $(real-prereqs). When a single object
++# Do not replace $(multi-m-prereqs) with $(real-prereqs). When a single object
+ # module is turned into a multi object module, $^ will contain header file
+ # dependencies recorded in the .*.cmd file.
+ quiet_cmd_link_multi-m = LD [M]  $@
+-      cmd_link_multi-m = $(LD) $(ld_flags) -r -o $@ $(filter %.o,$^)
++      cmd_link_multi-m = $(LD) $(ld_flags) -r -o $@ $(multi-m-prereqs)
+ 
+-$(multi-used-m): FORCE
++$(multi-used-m): $(obj)/%.o: FORCE
+ 	$(call if_changed,link_multi-m)
+ $(call multi_depend, $(multi-used-m), .o, -objs -y -m)
+ 
+-- 
+2.17.1
 
---Sig_/uo7NhdgcZK8Ustri2ntHTvF
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4Sp6wACgkQAVBC80lX
-0GzxSQgAlCoWLNb6PbG3JjVeE4R4GZfZ+Jld829AHvQDYGf0qFCuhi+x/M+CLvav
-CTbw9xxlWwqD4M8uPRg4N7tMDyiiJXXCEydNt3C3wGrIAWszSOVtZEplthRG3epJ
-Rg5RULpCO2U5R2MSTQgmUTr9xSUrZXkisXSfyfww8E72921CnEgVOinX3zg+xpK1
-xpYfDh0H8gKY/IJewrskcC4jGY/vcRvieuht/YLbf5NoBa4GM6IE5uvLD6neWEqL
-G4dsxqjy8wpUAGkUvdh1ypDODxFTFm1KkLVMfi9FCvVKKL1FDAnGy/fd86etLCur
-xD1yBDi+VCvbr5n8hqbZsgeOl29cYg==
-=IPcC
------END PGP SIGNATURE-----
-
---Sig_/uo7NhdgcZK8Ustri2ntHTvF--
