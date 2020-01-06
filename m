@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B7DF1315AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 17:07:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B3271315C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 17:08:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbgAFQH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 11:07:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44830 "EHLO mail.kernel.org"
+        id S1726803AbgAFQHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 11:07:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbgAFQHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 11:07:25 -0500
+        id S1726774AbgAFQH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 11:07:29 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87975208C4;
-        Mon,  6 Jan 2020 16:07:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1873E20848;
+        Mon,  6 Jan 2020 16:07:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578326844;
-        bh=g9wZar1Zgj88/teH6zS44loQgY50JFMH1EKh60ggOTo=;
+        s=default; t=1578326848;
+        bh=BkE3hEeuxErioCDlCn9LNsQpqJrf8mXVApyiI+i8EKQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HLVZx/Rc4a2F/hjYE4JWB2pSbvzHFEYpm+YyAxPM2spEzlmOQBmBkz7lODmS3jyJ4
-         sd1CpBd1dH8cWyUud3daBZhdR/SPLLMEB8RxcQeApS6ILzNaGiiSKIjziirrMpnGw+
-         DJ8Dl7ZDU1wOL8VcdjgQ/qNreNbmbu8UcDK6dSoA=
+        b=1EeWXfMbBZkYhPch+jQwMQlU4z4Yl4JmJheD5eJ2iET1go/KAoA38JIEzDZTLh0e0
+         pLFZQsc7DBeUcNK9EpPIKuH2yQX/3OsoCnaWJtCauElneHKYYw2lzjrT5CXDwFeSgW
+         oBTck6MdwpmGgDWP8x+VfD/+0iU7T553jrzH29Cs=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -30,14 +30,13 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 02/20] perf mmap: Declare type for cpu mask of arbitrary length
-Date:   Mon,  6 Jan 2020 13:06:47 -0300
-Message-Id: <20200106160705.10899-3-acme@kernel.org>
+Subject: [PATCH 03/20] perf record: Adapt affinity to machines with #CPUs > 1K
+Date:   Mon,  6 Jan 2020 13:06:48 -0300
+Message-Id: <20200106160705.10899-4-acme@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200106160705.10899-1-acme@kernel.org>
 References: <20200106160705.10899-1-acme@kernel.org>
@@ -50,84 +49,191 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alexey Budankov <alexey.budankov@linux.intel.com>
 
-Declare a dedicated struct map_cpu_mask type for cpu masks of arbitrary
-length.
+Use struct mmap_cpu_mask type for the tool's thread and mmap data
+buffers to overcome current 1024 CPUs mask size limitation of cpu_set_t
+type.
 
-The mask is available thru bits pointer and the mask length is kept in
-nbits field. MMAP_CPU_MASK_BYTES() macro returns mask storage size in
-bytes.
+Currently glibc's cpu_set_t type has an internal mask size limit of 1024
+CPUs.
 
-The mmap_cpu_mask__scnprintf() function can be used to log text
-representation of the mask.
+Moving to the 'struct mmap_cpu_mask' type allows overcoming that limit.
+
+The tools bitmap API is used to manipulate objects of 'struct mmap_cpu_mask'
+type.
 
 Committer notes:
 
 To print the 'nbits' struct member we must use %zd, since it is a
 size_t, this fixes the build in some toolchains/arches.
 
+Reported-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 Acked-by: Jiri Olsa <jolsa@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/0fd2454f-477f-d15a-f4ee-79bcbd2585ff@linux.intel.com
+Link: http://lore.kernel.org/lkml/96d7e2ff-ce8b-c1e0-d52c-aa59ea96f0ea@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/mmap.c | 12 ++++++++++++
- tools/perf/util/mmap.h | 11 +++++++++++
- 2 files changed, 23 insertions(+)
+ tools/perf/builtin-record.c | 28 ++++++++++++++++++++++------
+ tools/perf/util/mmap.c      | 28 ++++++++++++++++++++++------
+ tools/perf/util/mmap.h      |  2 +-
+ 3 files changed, 45 insertions(+), 13 deletions(-)
 
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index fb19ef63cc35..4c301466101b 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -62,6 +62,7 @@
+ #include <linux/string.h>
+ #include <linux/time64.h>
+ #include <linux/zalloc.h>
++#include <linux/bitmap.h>
+ 
+ struct switch_output {
+ 	bool		 enabled;
+@@ -93,7 +94,7 @@ struct record {
+ 	bool			timestamp_boundary;
+ 	struct switch_output	switch_output;
+ 	unsigned long long	samples;
+-	cpu_set_t		affinity_mask;
++	struct mmap_cpu_mask	affinity_mask;
+ 	unsigned long		output_max_size;	/* = 0: unlimited */
+ };
+ 
+@@ -961,10 +962,15 @@ static struct perf_event_header finished_round_event = {
+ static void record__adjust_affinity(struct record *rec, struct mmap *map)
+ {
+ 	if (rec->opts.affinity != PERF_AFFINITY_SYS &&
+-	    !CPU_EQUAL(&rec->affinity_mask, &map->affinity_mask)) {
+-		CPU_ZERO(&rec->affinity_mask);
+-		CPU_OR(&rec->affinity_mask, &rec->affinity_mask, &map->affinity_mask);
+-		sched_setaffinity(0, sizeof(rec->affinity_mask), &rec->affinity_mask);
++	    !bitmap_equal(rec->affinity_mask.bits, map->affinity_mask.bits,
++			  rec->affinity_mask.nbits)) {
++		bitmap_zero(rec->affinity_mask.bits, rec->affinity_mask.nbits);
++		bitmap_or(rec->affinity_mask.bits, rec->affinity_mask.bits,
++			  map->affinity_mask.bits, rec->affinity_mask.nbits);
++		sched_setaffinity(0, MMAP_CPU_MASK_BYTES(&rec->affinity_mask),
++				  (cpu_set_t *)rec->affinity_mask.bits);
++		if (verbose == 2)
++			mmap_cpu_mask__scnprintf(&rec->affinity_mask, "thread");
+ 	}
+ }
+ 
+@@ -2433,7 +2439,6 @@ int cmd_record(int argc, const char **argv)
+ # undef REASON
+ #endif
+ 
+-	CPU_ZERO(&rec->affinity_mask);
+ 	rec->opts.affinity = PERF_AFFINITY_SYS;
+ 
+ 	rec->evlist = evlist__new();
+@@ -2499,6 +2504,16 @@ int cmd_record(int argc, const char **argv)
+ 
+ 	symbol__init(NULL);
+ 
++	if (rec->opts.affinity != PERF_AFFINITY_SYS) {
++		rec->affinity_mask.nbits = cpu__max_cpu();
++		rec->affinity_mask.bits = bitmap_alloc(rec->affinity_mask.nbits);
++		if (!rec->affinity_mask.bits) {
++			pr_err("Failed to allocate thread mask for %zd cpus\n", rec->affinity_mask.nbits);
++			return -ENOMEM;
++		}
++		pr_debug2("thread mask[%zd]: empty\n", rec->affinity_mask.nbits);
++	}
++
+ 	err = record__auxtrace_init(rec);
+ 	if (err)
+ 		goto out;
+@@ -2613,6 +2628,7 @@ int cmd_record(int argc, const char **argv)
+ 
+ 	err = __cmd_record(&record, argc, argv);
+ out:
++	bitmap_free(rec->affinity_mask.bits);
+ 	evlist__delete(rec->evlist);
+ 	symbol__exit();
+ 	auxtrace_record__free(rec->itr);
 diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 063d1b93c53d..2ee4faacca21 100644
+index 2ee4faacca21..3b664fa673a6 100644
 --- a/tools/perf/util/mmap.c
 +++ b/tools/perf/util/mmap.c
-@@ -23,6 +23,18 @@
- #include "mmap.h"
- #include "../perf.h"
- #include <internal/lib.h> /* page_size */
-+#include <linux/bitmap.h>
-+
-+#define MASK_SIZE 1023
-+void mmap_cpu_mask__scnprintf(struct mmap_cpu_mask *mask, const char *tag)
-+{
-+	char buf[MASK_SIZE + 1];
-+	size_t len;
-+
-+	len = bitmap_scnprintf(mask->bits, mask->nbits, buf, MASK_SIZE);
-+	buf[len] = '\0';
-+	pr_debug("%p: %s mask[%zd]: %s\n", mask, tag, mask->nbits, buf);
-+}
+@@ -219,6 +219,8 @@ static void perf_mmap__aio_munmap(struct mmap *map __maybe_unused)
  
- size_t mmap__mmap_len(struct mmap *map)
+ void mmap__munmap(struct mmap *map)
  {
++	bitmap_free(map->affinity_mask.bits);
++
+ 	perf_mmap__aio_munmap(map);
+ 	if (map->data != NULL) {
+ 		munmap(map->data, mmap__mmap_len(map));
+@@ -227,7 +229,7 @@ void mmap__munmap(struct mmap *map)
+ 	auxtrace_mmap__munmap(&map->auxtrace_mmap);
+ }
+ 
+-static void build_node_mask(int node, cpu_set_t *mask)
++static void build_node_mask(int node, struct mmap_cpu_mask *mask)
+ {
+ 	int c, cpu, nr_cpus;
+ 	const struct perf_cpu_map *cpu_map = NULL;
+@@ -240,17 +242,23 @@ static void build_node_mask(int node, cpu_set_t *mask)
+ 	for (c = 0; c < nr_cpus; c++) {
+ 		cpu = cpu_map->map[c]; /* map c index to online cpu index */
+ 		if (cpu__get_node(cpu) == node)
+-			CPU_SET(cpu, mask);
++			set_bit(cpu, mask->bits);
+ 	}
+ }
+ 
+-static void perf_mmap__setup_affinity_mask(struct mmap *map, struct mmap_params *mp)
++static int perf_mmap__setup_affinity_mask(struct mmap *map, struct mmap_params *mp)
+ {
+-	CPU_ZERO(&map->affinity_mask);
++	map->affinity_mask.nbits = cpu__max_cpu();
++	map->affinity_mask.bits = bitmap_alloc(map->affinity_mask.nbits);
++	if (!map->affinity_mask.bits)
++		return -1;
++
+ 	if (mp->affinity == PERF_AFFINITY_NODE && cpu__max_node() > 1)
+ 		build_node_mask(cpu__get_node(map->core.cpu), &map->affinity_mask);
+ 	else if (mp->affinity == PERF_AFFINITY_CPU)
+-		CPU_SET(map->core.cpu, &map->affinity_mask);
++		set_bit(map->core.cpu, map->affinity_mask.bits);
++
++	return 0;
+ }
+ 
+ int mmap__mmap(struct mmap *map, struct mmap_params *mp, int fd, int cpu)
+@@ -261,7 +269,15 @@ int mmap__mmap(struct mmap *map, struct mmap_params *mp, int fd, int cpu)
+ 		return -1;
+ 	}
+ 
+-	perf_mmap__setup_affinity_mask(map, mp);
++	if (mp->affinity != PERF_AFFINITY_SYS &&
++		perf_mmap__setup_affinity_mask(map, mp)) {
++		pr_debug2("failed to alloc mmap affinity mask, error %d\n",
++			  errno);
++		return -1;
++	}
++
++	if (verbose == 2)
++		mmap_cpu_mask__scnprintf(&map->affinity_mask, "mmap");
+ 
+ 	map->core.flush = mp->flush;
+ 
 diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index bee4e83f7109..ef51667fabcb 100644
+index ef51667fabcb..9d5f589f02ae 100644
 --- a/tools/perf/util/mmap.h
 +++ b/tools/perf/util/mmap.h
-@@ -15,6 +15,15 @@
- #include "event.h"
- 
- struct aiocb;
-+
-+struct mmap_cpu_mask {
-+	unsigned long *bits;
-+	size_t nbits;
-+};
-+
-+#define MMAP_CPU_MASK_BYTES(m) \
-+	(BITS_TO_LONGS(((struct mmap_cpu_mask *)m)->nbits) * sizeof(unsigned long))
-+
- /**
-  * struct mmap - perf's ring buffer mmap details
-  *
-@@ -52,4 +61,6 @@ int perf_mmap__push(struct mmap *md, void *to,
- 
- size_t mmap__mmap_len(struct mmap *map);
- 
-+void mmap_cpu_mask__scnprintf(struct mmap_cpu_mask *mask, const char *tag);
-+
- #endif /*__PERF_MMAP_H */
+@@ -40,7 +40,7 @@ struct mmap {
+ 		int		 nr_cblocks;
+ 	} aio;
+ #endif
+-	cpu_set_t	affinity_mask;
++	struct mmap_cpu_mask	affinity_mask;
+ 	void		*data;
+ 	int		comp_level;
+ };
 -- 
 2.21.1
 
