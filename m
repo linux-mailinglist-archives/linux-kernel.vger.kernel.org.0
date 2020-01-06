@@ -2,87 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDAF3130C2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 03:37:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13E63130C3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 03:57:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbgAFChU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 21:37:20 -0500
-Received: from ozlabs.org ([203.11.71.1]:35677 "EHLO ozlabs.org"
+        id S1727370AbgAFC5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 21:57:52 -0500
+Received: from mga11.intel.com ([192.55.52.93]:41599 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727307AbgAFChU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 21:37:20 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47rfmZ0KPFz9sQp;
-        Mon,  6 Jan 2020 13:37:18 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1578278238;
-        bh=RUzwMRldX9X4rgLYxtAezWR+csUjDKpJtEZycnfNdFE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=rAkrJkBfoQPx2lUelT8GxtQqyHYJJdcgN0Wqb5Nfd6Y2NPA8reDzc97mrA75urNen
-         SIJuES4Sx5B1CCDCRkhCNa9PS3Kp5oJSclKlXWwJ95gQJkjJMne1P7oIXzGhSof74U
-         jWdT1q6EXJ5gxZ3txENg90PdBqqTGI5BQMfbnBwfZE776LfPLPraK9DSt7Xwn8B1Ha
-         sUgNggl2TSgtub63KmF2nL264TUa5OphbmVlhJD2yvkrc9jO/1r5t8ig96nmHhoOPD
-         BUiHzoH89nkm5j/7F6TeFOSs4TMNGWr0ieP5aXVrLfW8iS2s6l0GvaKxch4MD2fnfT
-         FqRjw9S7LNqPQ==
-Date:   Mon, 6 Jan 2020 13:37:16 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: linux-next: build warning after merge of the clockevents tree
-Message-ID: <20200106133716.62ea3548@canb.auug.org.au>
+        id S1727307AbgAFC5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Jan 2020 21:57:51 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jan 2020 18:57:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,401,1571727600"; 
+   d="scan'208";a="232694802"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by orsmga002.jf.intel.com with ESMTP; 05 Jan 2020 18:57:49 -0800
+Date:   Mon, 6 Jan 2020 10:37:42 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Will Deacon <will@kernel.org>
+Cc:     mdf@kernel.org, mark.rutland@arm.com, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        atull@kernel.org, gregkh@linuxfoundation.org, yilun.xu@intel.com
+Subject: Re: [PATCH v6 0/2] add performance reporting support to FPGA DFL
+ drivers
+Message-ID: <20200106023742.GA3980@hao-dev>
+References: <1573622695-25607-1-git-send-email-hao.wu@intel.com>
+ <20191125033412.GB890@hao-dev>
+ <20191125080127.GC1809@willie-the-truck>
+ <20191125080839.GA6227@hao-dev>
+ <20191209024527.GA22625@hao-dev>
+ <20191216010104.GA32154@yilunxu-OptiPlex-7050>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/3_+B1LpcOVJvofiDIF59YQp";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191216010104.GA32154@yilunxu-OptiPlex-7050>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/3_+B1LpcOVJvofiDIF59YQp
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Dec 16, 2019 at 09:01:04AM +0800, Xu Yilum wrote:
+> On Mon, Dec 09, 2019 at 10:45:27AM +0800, Wu Hao wrote:
+> > On Mon, Nov 25, 2019 at 04:08:39PM +0800, Wu Hao wrote:
+> > > On Mon, Nov 25, 2019 at 08:01:28AM +0000, Will Deacon wrote:
+> > > > On Mon, Nov 25, 2019 at 11:34:12AM +0800, Wu Hao wrote:
+> > > > > Hi Will and Mark,
+> > > > > 
+> > > > > Could you please help us on review this patchset? as this patchset mainly 
+> > > > > introduced a new perf driver following the similar way as drivers/perf/*.
+> > > > 
+> > > > Why is it not under drivers/perf/, then?
+> > > 
+> > > Hi Will
+> > > 
+> > > Thanks for the quick response. This is one sub feature for DFL based FPGAs,
+> > > and we plan to put this sub feature together with others, including related
+> > > documentation. It only registers a standard perf pmu for its userspace
+> > > interfaces.
+> > > 
+> > > > 
+> > > > > This patchset has been submitted for a long time but didn't receive any
+> > > > > comment after v4. we appreciate any review comments! thanks in advance. :)
+> > > > 
+> > > > Hmm, not sure I saw the previous versions. Guessing I wasn't on cc?
+> > > 
+> > > We switched to perf API from v4, and started ccing you and Mark from v5. :)
+> > 
+> > Hi Will
+> > 
+> > Did you get a chance to look into this patchset?
+> > 
+> > Thanks
+> > Hao
+> 
+> Hi Will
+> 
+> Did you have time to look into this patchset? We have done review work
+> for FPGA part. And as a perf driver, we appreciate your comments.
+> 
+> Thanks
+> Yilun
 
-Hi all,
+Hi Will
 
-After merging the clockevents tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+Did you get a chance to look into this patchset these days? 
 
-drivers/clocksource/timer-ti-dm.c: In function 'omap_dm_timer_probe':
-drivers/clocksource/timer-ti-dm.c:798:13: warning: 'timer' may be used unin=
-itialized in this function [-Wmaybe-uninitialized]
-  798 |  timer->irq =3D platform_get_irq(pdev, 0);
-      |  ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+Actually we didn't receive any comments for a long time, if you are busy and
+don't have enough time on this, do you know if someone else could help with
+review and ack from perf driver point of view, or any other things we can do
+to speed up this? Thanks in advance! 
 
-Introduced by commit
+Hao
 
-  8c82723414d5 ("clocksource/drivers/timer-ti-dm: Switch to platform_get_ir=
-q")
-
-This is not a false positive ...
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/3_+B1LpcOVJvofiDIF59YQp
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4SnVwACgkQAVBC80lX
-0GyrcAgAm9T+XVKx9m+wlIi9VONAtYiA4jhdLY1q4ulOTDn1ZRWH0kzeGTwtaEvn
-Eq0Q6kJT9sXr7JV3XFz6duO/o2yaDu/aILXNOj1kbPTX5d5aneJfqtMScZHVnJgU
-r6x1fwNVxS0VjfbwZHhwq+hPWD6H+jAxguht9CwmTPP7xznd38nu7T1Ux1SHZYo5
-kozFe/ysp5311KQOZ/r38upfBOE5UybGp4EaEu4EJU30/iB3E7oaKJzS+DO+1Bok
-4nOhFpcYYFg+uaPKHlsRj+BWwnWf8H8nHK0bh7JO/vZUXWJCMmW/6nEuB2BCg4eu
-9cDcnfLWkJP0xUGK7DAgf/h2x+Ep6g==
-=6saW
------END PGP SIGNATURE-----
-
---Sig_/3_+B1LpcOVJvofiDIF59YQp--
+> 
+> > 
+> > > 
+> > > Thanks
+> > > Hao
+> > > 
+> > > > 
+> > > > Will
