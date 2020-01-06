@@ -2,119 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A2EC13179B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:40:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEFBF13179F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:41:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbgAFSkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 13:40:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39260 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726569AbgAFSkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 13:40:18 -0500
-Received: from localhost (unknown [104.132.0.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726757AbgAFSk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 13:40:59 -0500
+Received: from vulcan.natalenko.name ([104.207.131.136]:50968 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbgAFSk5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 13:40:57 -0500
+Received: from mail.natalenko.name (vulcan.natalenko.name [IPv6:fe80::5400:ff:fe0c:dfa0])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0D92208C4;
-        Mon,  6 Jan 2020 18:40:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578336018;
-        bh=Lk2b8isd4AKJZh0uG3znLmDlvurajw8PnaAef68wq2k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1Bcx7rydQDjiPxZ3nYt4l5Uc9HBnHLOnDifre9sjZr/zLAFc+MgnKi8yeB3k/pEf+
-         fLaGhfKkD73da0pEkrP41WLYiRuody5qYkX9xAEynZA5kgo7PQhwzmd36lsdgY8ZuR
-         KGEYjUJYwYAU08342QAl3Fl9NqwGd5aiKI9iVcJM=
-Date:   Mon, 6 Jan 2020 10:40:17 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     Oleksandr Natalenko <oleksandr@natalenko.name>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [f2fs-dev] Multidevice f2fs mount after disk rearrangement
-Message-ID: <20200106184017.GD50058@jaegeuk-macbookpro.roam.corp.google.com>
+        by vulcan.natalenko.name (Postfix) with ESMTPSA id 7F188683B63;
+        Mon,  6 Jan 2020 19:40:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=dkim-20170712; t=1578336055;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rp8CUrnWGAoX8TC2iOuIG764rbPn2mqZv/jvq2or5Tk=;
+        b=IjaLXYIRwuSSDDoP3AEQkfXkT3M26EZ/9Lfh+wD7HcqyriyPvB5UuIPxmJ7a2JCitX5e1+
+        GFvUj6Xs95xNou34pU8rzc0T6QijPfQ/KyFAkdxDXlCrdtswZMRz8caBzjUWzGMO34qRMK
+        CZuYApNwruZvaodV0MuczD4YHq4f/t0=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 06 Jan 2020 19:40:55 +0100
+From:   Oleksandr Natalenko <oleksandr@natalenko.name>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <chao@kernel.org>
+Subject: Re: Multidevice f2fs mount after disk rearrangement
+In-Reply-To: <20200106183450.GC50058@jaegeuk-macbookpro.roam.corp.google.com>
 References: <4c6cf8418236145f7124ac61eb2908ad@natalenko.name>
  <2c4cafd35d1595a62134203669d7c244@natalenko.name>
- <e773d576-9458-48d7-bad4-dd4f8c61ebd3@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e773d576-9458-48d7-bad4-dd4f8c61ebd3@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+ <20200106183450.GC50058@jaegeuk-macbookpro.roam.corp.google.com>
+User-Agent: Roundcube Webmail/1.4.1
+Message-ID: <ee2cb1d7a6c1b51e1c8277a8feaafe6d@natalenko.name>
+X-Sender: oleksandr@natalenko.name
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/06, Chao Yu wrote:
-> Hello,
-> 
-> Thanks for the report. :)
-> 
-> On 2020/1/5 5:52, Oleksandr Natalenko via Linux-f2fs-devel wrote:
-> > Hi.
-> > 
-> > On 04.01.2020 17:29, Oleksandr Natalenko wrote:
-> >> I was brave enough to create f2fs filesystem spanning through 2
-> >> physical device using this command:
-> >>
-> >> # mkfs.f2fs -t 0 /dev/sdc -c /dev/sdd
-> >>
-> >> It worked fine until I removed /dev/sdb from my system, so f2fs devices 
-> >> became:
-> >>
-> >> /dev/sdc -> /dev/sdb
-> >> /dev/sdd -> /dev/sdc
-> >>
-> >> Now, when I try to mount it, I get the following:
-> >>
-> >> # mount -t f2fs /dev/sdb /mnt/fs
-> >> mount: /mnt/fs: mount(2) system call failed: No such file or directory.
-> >>
-> >> In dmesg:
-> >>
-> >> [Jan 4 17:25] F2FS-fs (sdb): Mount Device [ 0]:             /dev/sdc,
-> >>   59063,        0 -  1cd6fff
-> >> [  +0,000024] F2FS-fs (sdb): Failed to find devices
-> >>
-> >> fsck also fails with the following assertion:
-> >>
-> >> [ASSERT] (init_sb_info: 908) !strcmp((char *)sb->devs[i].path, (char
-> >> *)c.devices[i].path)
-> >>
-> >> Am I doing something obviously stupid, and the device path can be
-> >> (somehow) changed so that the mount succeeds, or this is unfixable,
-> >> and f2fs relies on persistent device naming?
-> >>
-> >> Please suggest.
-> >>
-> >> Thank you.
-> > 
-> > Erm, fine. I studied f2fs-tools code a little bit and discovered that 
-> > superblock indeed had /dev/sdX paths saved as strings. So I fired up 
-> > hexedit and just changed the superblock directly on the first device, 
-> > substituting sdc with sdb and sdd with sdc (I did it twice; I guess 
-> > there are 2 copies of superblock), and after this the mount worked.
-> 
-> Alright, it works if superblock checksum feature is off...
-> 
-> > 
-> > Am I really supposed to do this manually ;)?
-> 
-> We'd better add that ability in tune.f2fs. And I guess we need to let
-> kernel/fsck to notice that case, and give hint to run tune.f2fs to
-> reconfigure primary/secondary/... device paths.
+Hi.
 
-I'm thinking to add tunesb.f2fs to edit superblock explicitly, since it has
-to edit it without getting superblock/checkpoint and other f2fs metadata.
-
-For example,
-# tunesb.f2fs -c /dev/sdb -c /dev/sdc /dev/sda
-.. superblock info ..
-.. device list ..
-.. hot/cold extensions ..
-
-Will modify the device list, if it's different from parameter.
-
+On 06.01.2020 19:34, Jaegeuk Kim wrote:
+> Thank you for investigating this ahead of me. :) Yes, the device list 
+> is stored
+> in superblock, so hacking it manually should work.
 > 
-> Thanks,
-> 
-> > 
+> Let me think about a tool to tune that.
+
+Thank you both for the replies.
+
+IIUC, tune.f2fs is not there yet. I saw a submission, but I do not see 
+it as accepted, right?
+
+Having this in tune.f2fs would be fine (assuming the assertion is 
+replaced with some meaningful hint message), but wouldn't it be more 
+convenient for an ordinary user to have implemented something like:
+
+# mount -t f2fs /dev/sdb -o nextdev=/dev/sdc /mnt/fs
+
+Hm?
+
+-- 
+   Oleksandr Natalenko (post-factum)
