@@ -2,159 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C5A3131994
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 21:46:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BDC0131997
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 21:47:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbgAFUqH convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 6 Jan 2020 15:46:07 -0500
-Received: from mail-oln040092068054.outbound.protection.outlook.com ([40.92.68.54]:16644
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726657AbgAFUqH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 15:46:07 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EBlq8OP77AVE023E3kEtFqs0Whl8Gjj9sgHYYE9B7gVr307RwGxvzdxptgz935RboZ8vQM92PSNdc1e6/RF/PZeyR71bIQuEflPn1jaU3aFTpjZVqBnROMvp1pBmCt5K4qkvTafbw3EN1AlslWH7HYCGJRN4Y+bPw8IvRjeSG9MbmtDbrkYWr2wXAIq+jOTXIh0EE/fE3jMkOhr5Vadh2/wXjQFowXTNbEuovDq8Z4CYPwbJy22tYYTI20SdFUDkRlRLhi6BiyxGDzyzDKasJf5gmFCKeN15lmmo3YX+kSoXTT3N3icHrbNIXO68uE3n45nL8vlE9Gjab4cImx6Ftw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ulw9p1L3gMXb4AJXqo5es4a5r/NKzxoZzWnYv91QgKo=;
- b=gsTyCXxvX7zFqsXqmcBievkLxprNO5c+PaMqW/VO+eliMK45aH0KsNU7EPejsC6a573nysmjH4H6fzXD48lpJ9S4WD7RENruwXiFVYHvquwNS3gIKBM82pCiCy1Y+ruTvZtYfPxiB0QhWkuBCWu98lX4L/t7zpJTSy3McNw8WIiTwr/vS8PNnWX7zn9YMwZ9N6ngOWHC5xIjmHySzQogVR9WKStF+wJ0cXbLYqXONYY4bGsJKN9ovuR3JqstkUummq1InNMX4sija6hyj5mNq6HFSdb24xTGQDylK76+Inm9q1g/W0RaetYxakaQTUfxtIppC0TnqHL9TTZIl7ERGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-Received: from VE1EUR02FT060.eop-EUR02.prod.protection.outlook.com
- (10.152.12.53) by VE1EUR02HT115.eop-EUR02.prod.protection.outlook.com
- (10.152.13.129) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2602.11; Mon, 6 Jan
- 2020 20:46:02 +0000
-Received: from HE1PR06MB4011.eurprd06.prod.outlook.com (10.152.12.60) by
- VE1EUR02FT060.mail.protection.outlook.com (10.152.13.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2602.11 via Frontend Transport; Mon, 6 Jan 2020 20:46:00 +0000
-Received: from HE1PR06MB4011.eurprd06.prod.outlook.com
- ([fe80::b957:6908:9f62:c28b]) by HE1PR06MB4011.eurprd06.prod.outlook.com
- ([fe80::b957:6908:9f62:c28b%5]) with mapi id 15.20.2602.015; Mon, 6 Jan 2020
- 20:46:00 +0000
-Received: from bionic.localdomain (98.128.173.80) by AM5PR0402CA0019.eurprd04.prod.outlook.com (2603:10a6:203:90::29) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2602.12 via Frontend Transport; Mon, 6 Jan 2020 20:45:59 +0000
-From:   Jonas Karlman <jonas@kwiboo.se>
-To:     Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>
-CC:     Jonas Karlman <jonas@kwiboo.se>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Zheng Yang <zhengyang@rock-chips.com>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 00/15] Support more HDMI modes on RK3228/RK3328
-Thread-Topic: [PATCH 00/15] Support more HDMI modes on RK3228/RK3328
-Thread-Index: AQHVxNJNNVZSJYLQbE2SQNKZv6GhtQ==
-Date:   Mon, 6 Jan 2020 20:46:00 +0000
-Message-ID: <HE1PR06MB4011254424EDB4485617513CAC3C0@HE1PR06MB4011.eurprd06.prod.outlook.com>
-Accept-Language: sv-SE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5PR0402CA0019.eurprd04.prod.outlook.com
- (2603:10a6:203:90::29) To HE1PR06MB4011.eurprd06.prod.outlook.com
- (2603:10a6:7:9c::32)
-x-incomingtopheadermarker: OriginalChecksum:CC8E993C4D3FD8CA0CD71A9CD67E907DB6949CF8D3AAE82376CAEAA6CDF308A0;UpperCasedChecksum:A2CD90775FD91933196DC12F0B0931C91DB158E95D9BB2C2A02BB5C842F00F4E;SizeAsReceived:7981;Count:49
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-tmn:  [+PzkEC5Sk+0gmq/B1zMjnaSoM5exaTwV]
-x-microsoft-original-message-id: <20200106204544.5836-1-jonas@kwiboo.se>
-x-ms-publictraffictype: Email
-x-incomingheadercount: 49
-x-eopattributedmessage: 0
-x-ms-office365-filtering-correlation-id: c69260a1-ddc4-4ef4-9f21-08d792e96ff1
-x-ms-traffictypediagnostic: VE1EUR02HT115:
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 81XcGKf1B3vW9CwbT8OKh7COlEBVNib5G4a80I+YXrLKvnnQGlwMtPPSbMATnG7lFEKVLxHBEtJnJ+0Et/elTI5TUI0yKw70Sw2hW4UxmIOXqnu8mJdmEU3ltkUjqf0vg0d/R/7zP3v6cV11avCWTD8OHUGz1rb6hTBJ6kTkrWyyreFOoL66GKfmJFTNlnas
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        id S1726932AbgAFUrS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 15:47:18 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:40514 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbgAFUrS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 15:47:18 -0500
+Received: by mail-qk1-f193.google.com with SMTP id c17so40715210qkg.7
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 12:47:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DHIwKB1SdWvG9S5/QAvd4TjIognysn5YuV1n6f7gju4=;
+        b=Ra6NkQtFY7ijfnuXcAGbxOh84AXs0GWCp722hpltolpulCuDmOLw8xBTEKXWQtdU+h
+         2OGkYYMcxBKG2t7aYoNXT7nLc6Ti0my91ZM3b+texHVG5h/wSGkOic3KAWj47Ry08SHn
+         R7Dp/dPAv3KbpsRpBkV/2WwjI1BrSDy/eZugBIFEG/6s5dE5gmiqNAkkExzhPnpE3IJI
+         jnoj1PE/njE4mZgeMqGQJfCILswzX/1AI4LO9cAS3dpvOPX5nTS6mGoC4lRRGTzVL6nY
+         dRkDX701YnWJcV1QYJYEP2mjxIraSqA6JbePQEroGvKRZGaXUwws0WuQSZZRD2tXVRit
+         dadA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DHIwKB1SdWvG9S5/QAvd4TjIognysn5YuV1n6f7gju4=;
+        b=LQkStbOAge8QHONrOkYvo0nTFt/GxcengozVNjYGeRYB1K+MyMBU05ElPioD1P14mM
+         +vKpE36EINBt2wDKai1V4Iy1nwAlaCjWbNE4sWt19ppEqcVsmKMfXi0T+83aqCZBUbEe
+         KlwFSUQvxGZwKH2H2Bn27S73B36ZB627jr0Lin1+pFbZ3nIUUhSwyq1dktRXFUD2O2KW
+         jlurBTBz1DmtI3KmsygTWf2v5n1yA1RwsBI+p61lqzTezXJ6KuRcTYIw6YgYaf1ASdf3
+         NeqnS8C1joRPbYQBIQnxjgiaNIRpLBMPJhF9xe0eHk5Vp2FpqnhEO9trfFlOxOmf+smR
+         8V8A==
+X-Gm-Message-State: APjAAAVZo/O0OqM2mshCYCLuh2oT+OaNk/ZJCHtJn17JGBYXZIKSv+Xz
+        GTy3RfpRiQtzqWekbwwh9nt95w==
+X-Google-Smtp-Source: APXvYqzEgsE5n2gRG76eAGoeg63WHVa5P6c8cDUeUTV19BhlgMQXoclCr81eaop/b4Jhnynt+RpN3A==
+X-Received: by 2002:a05:620a:143a:: with SMTP id k26mr85511562qkj.450.1578343636899;
+        Mon, 06 Jan 2020 12:47:16 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
+        by smtp.gmail.com with ESMTPSA id d184sm13598598qkb.128.2020.01.06.12.47.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 Jan 2020 12:47:16 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1ioZHP-0007G2-J2; Mon, 06 Jan 2020 16:47:15 -0400
+Date:   Mon, 6 Jan 2020 16:47:15 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        users@linux.kernel.org
+Subject: Re: [kernel.org users] [RFC] tools lib traceevent: How to do library
+ versioning being in the Linux kernel source?
+Message-ID: <20200106204715.GA22353@ziepe.ca>
+References: <20200102122004.216c85da@gandalf.local.home>
+ <20200102234950.GA14768@krava>
+ <20200102185853.0ed433e4@gandalf.local.home>
+ <20200103133640.GD9715@krava>
+ <20200103181614.7aa37f6d@gandalf.local.home>
+ <20200106151902.GB236146@krava>
+ <20200106162623.GA11285@kernel.org>
+ <20200106113615.4545e3c5@gandalf.local.home>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: c69260a1-ddc4-4ef4-9f21-08d792e96ff1
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jan 2020 20:46:00.4572
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1EUR02HT115
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200106113615.4545e3c5@gandalf.local.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series make it possible to use more HDMI modes on RK3328,
-and presumably also on RK3228. It also prepares for a future YUV420 and
-10-bit output series.
+On Mon, Jan 06, 2020 at 11:36:15AM -0500, Steven Rostedt wrote:
+> On Mon, 6 Jan 2020 13:26:23 -0300
+> Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com> wrote:
+> 
+> > So, we have:
+> > 
+> > https://www.kernel.org/pub/linux/kernel/tools/perf/
+> > 
+> > trying to mimic the kernel sources tree structure, so perhaps we could
+> > have:
+> > 
+> > https://www.kernel.org/pub/linux/kernel/tools/lib/{perf,traceevent}/
+> > 
+> > To continue that directory tree mirror?
+> 
+> Wouldn't that become a bit of manual work. Unlike perf, the versions
+> will not correspond to the Linux kernel versions. They would need to
+> follow library versioning.
+> 
+> It would at a minimum require new scripting to get this right.
 
-Part of this has been reworked from vendor BSP 4.4 kernel commits.
+If it is not tightly linked to the kernel and is just a normal
+library, you might consider using github. This is what we do for the
+rdma user space and it works well. We still take patches from the
+mailing list flow, but do use a fair amount of the github stuff too:
 
-Patch 1-5 fixes issues and shortcomings in the inno hdmi phy driver.
+https://github.com/linux-rdma/rdma-core
 
-Patch 6 filter out any mode having larger width then 3840 pixels,
-e.g 4096x2304 modes, since limitations in the scaler code trigger an error
-for a large console framebuffer.
+With github actions now able to provide a quite good CI it covers a
+lot of required stuff for a library in one place, in a way that
+doesn't silo all the build infrastucture.
 
-Patch 7 prepares for use of high TMDS bit rates used with HDMI2.0 and
-10-bit output modes.
-
-Patch 8-14 changes rk3228/rk3328 to use mode_valid functions suited for
-the inno hdmi phy instead of the dw-hdmi phy. This
-
-Patch 15 adds support for more pixel clock rates in order to support
-common DMT modes in addition to CEA modes.
-
-Note: I have only been able to build test RK322x related changes
-as I do not have any RK322x device to test on.
-
-All modes, including fractal modes, has been tested with modetest on
-a RK3328 Rock64 device.
-
-  modetest -M rockchip -s 39:3840x2160-29.97
+If you are interested in how we set it up I can write a longer email.
 
 Regards,
-Jonas
-
-Algea Cao (1):
-  phy/rockchip: inno-hdmi: Support more pre-pll configuration
-
-Huicong Xu (1):
-  phy/rockchip: inno-hdmi: force set_rate on power_on
-
-Jonas Karlman (12):
-  phy/rockchip: inno-hdmi: use correct vco_div_5 macro on rk3328
-  phy/rockchip: inno-hdmi: remove unused no_c from rk3328 recalc_rate
-  phy/rockchip: inno-hdmi: do not power on rk3328 post pll on reg write
-  drm/rockchip: vop: limit resolution width to 3840
-  drm/rockchip: dw-hdmi: allow high tmds bit rates
-  drm/rockchip: dw-hdmi: require valid vpll clock rate on rk3228/rk3328
-  clk: rockchip: set parent rate for DCLK_VOP clock on rk3228
-  arm64: dts: rockchip: increase vop clock rate on rk3328
-  arm64: dts: rockchip: add vpll clock to hdmi node on rk3328
-  ARM: dts: rockchip: add vpll clock to hdmi node on rk3228
-  drm/rockchip: dw-hdmi: limit tmds to 340mhz on rk3228/rk3328
-  drm/rockchip: dw-hdmi: remove unused plat_data on rk3228/rk3328
-
-Zheng Yang (1):
-  phy/rockchip: inno-hdmi: round fractal pixclock in rk3328 recalc_rate
-
- arch/arm/boot/dts/rk322x.dtsi                 |   4 +-
- arch/arm64/boot/dts/rockchip/rk3328.dtsi      |   6 +-
- drivers/clk/rockchip/clk-rk3228.c             |   2 +-
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c   |  47 ++++++--
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c   |  10 ++
- drivers/phy/rockchip/phy-rockchip-inno-hdmi.c | 110 ++++++++++++------
- 6 files changed, 130 insertions(+), 49 deletions(-)
-
--- 
-2.17.1
-
+Jason
