@@ -2,93 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F9FF131059
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 11:20:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1C6313107D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 11:23:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726383AbgAFKUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 05:20:10 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:53676 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727159AbgAFKUI (ORCPT
+        id S1726422AbgAFKXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 05:23:24 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41011 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726296AbgAFKXY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 05:20:08 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 006AJuP5107871;
-        Mon, 6 Jan 2020 04:19:56 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578305996;
-        bh=8W4c5imqrF7QowsJacFr1QjJhJIkYTKy/E8u2hZV+h0=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=yjXzH0OEpfNausnDA1EClVjN+w7ZC2ILvCDSfbuMKXnQhZAfbXM0wncfwbZ4TKAUO
-         d8nKJJH2kIEkkpSxW5RS3I/hDvUpnPmc2hb8oAJquKaGN+rqAuBGkGqClHbKqR4AHp
-         QJ9IDgdZzl33WqR7xPJ1SrDSs9LMWjmvorRs8ba0=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 006AJuoD103157
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 6 Jan 2020 04:19:56 -0600
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 6 Jan
- 2020 04:19:55 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 6 Jan 2020 04:19:55 -0600
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 006AIqY6118652;
-        Mon, 6 Jan 2020 04:19:52 -0600
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Murray <andrew.murray@arm.com>
-CC:     <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 14/14] MAINTAINERS: Add Kishon Vijay Abraham I for TI J721E SoC PCIe
-Date:   Mon, 6 Jan 2020 15:50:58 +0530
-Message-ID: <20200106102058.19183-15-kishon@ti.com>
+        Mon, 6 Jan 2020 05:23:24 -0500
+Received: by mail-lj1-f194.google.com with SMTP id h23so50411459ljc.8
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 02:23:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=B0/5oZmpyMpvoGdHibbnECdx+O3YaUpB8rzrVDmAk5M=;
+        b=clEtWmbh+qaBqe+He2QKgbhvUT/cLCZyyQvw1JRHZwX93MLJhhwpKITQs2A86cqhDK
+         R1FVH3Ul0Epai3TWrb4TBgeDApCtrRqtdL5z8uviLVawFn6h7LD1wEOhyhOIhlJoZWyG
+         buJC+IMocTB2ZqduPh8Ae++DtZq6endywr62f5VL1SbHV1XCSI2dyK8w4+9Yk9uG5WDb
+         1Obk37dnPqbEtjqDAQgg0HhbuiXjnk6PYm+xXNoz2bL+jcHaEC3T00YId8Qw8DL5WOMP
+         xsY5IV8vtZQBkiunVu9CGDBU3/AYduXDd5o+PUcvSUcIKORFetRxY32ZvJswqfqff3ns
+         sqvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=B0/5oZmpyMpvoGdHibbnECdx+O3YaUpB8rzrVDmAk5M=;
+        b=NIuc2OTell3ZXpwBWaNuYImHcvA7/Oq++w1DZZ0L5C/eOM5S7IM0Tad9dKF532pVGs
+         wPQ5Q9Fhs1K3XOxh/YzlEF0eIgvPrz/7KC/utXN0lZ0ZAwoKsfCK8LgJ5dk6YA1aJe5a
+         7E4vHHbNM7DMbeBZgKoXdZkHLTvveDZ6BLr3+UdUJKEyR3/wIRLW539PzKPQEvDb4qUG
+         7m29HQyhW8bDw793VQBMxq6jnKZuPghSlPcLEmPtj8bkZcS26Ej7Vqqzn/MThutV0QCd
+         FQxvrGN8fhZM7F2bNQTJaYIPsmrzspXocmkdw46VCZWPkeM110OMcaJhr+mTrZJPT2fY
+         hEyw==
+X-Gm-Message-State: APjAAAUdreMdShlczDX8ycukUUgtUe9JwT4rpIywOEVUJscsWotfrWDa
+        eWMocGel4xFbCl1/aWkwn9ICRw==
+X-Google-Smtp-Source: APXvYqylp5NiLHXERz7acxYKyV5J6DD2bC3iTYDcgMA9NVOGybslb4wcRBjNRaJF/9+lKu8tR223bA==
+X-Received: by 2002:a2e:8954:: with SMTP id b20mr44715875ljk.27.1578306202203;
+        Mon, 06 Jan 2020 02:23:22 -0800 (PST)
+Received: from localhost.localdomain ([37.157.136.193])
+        by smtp.gmail.com with ESMTPSA id u25sm28836745lfk.46.2020.01.06.02.23.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jan 2020 02:23:21 -0800 (PST)
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+To:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH] arm64: dts: qcom: msm8996: Fix venus iommu nodename error
+Date:   Mon,  6 Jan 2020 12:23:05 +0200
+Message-Id: <20200106102305.27059-1-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200106102058.19183-1-kishon@ti.com>
-References: <20200106102058.19183-1-kishon@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Kishon Vijay Abraham I as MAINTAINER for TI J721E SoC PCIe.
+Fix the following error/warn seen with make dtbs_check
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+arm,smmu-venus@d40000: $nodename:0: 'arm,smmu-venus@d40000' does not match '^iommu@[0-9a-f]*'
+arm,smmu-venus@d40000: clock-names:0: 'bus' was expected
+arm,smmu-venus@d40000: clock-names:1: 'iface' was expected
+
+by rename nodename to "iommu".
+
+Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- MAINTAINERS | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bd5847e802de..84bff97851fa 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12691,13 +12691,15 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/pci/designware-pcie.txt
- F:	drivers/pci/controller/dwc/*designware*
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 4ca2e7b44559..9bbcee31f28b 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -2267,7 +2267,7 @@
+ 			};
+ 		};
  
--PCI DRIVER FOR TI DRA7XX
-+PCI DRIVER FOR TI DRA7XX/J721E
- M:	Kishon Vijay Abraham I <kishon@ti.com>
- L:	linux-omap@vger.kernel.org
- L:	linux-pci@vger.kernel.org
-+L:	linux-arm-kernel@lists.infradead.org
- S:	Supported
- F:	Documentation/devicetree/bindings/pci/ti-pci.txt
- F:	drivers/pci/controller/dwc/pci-dra7xx.c
-+F:	drivers/pci/controller/cadence/pci-j721e.c
- 
- PCI DRIVER FOR TI KEYSTONE
- M:	Murali Karicheri <m-karicheri2@ti.com>
+-		venus_smmu: arm,smmu-venus@d40000 {
++		venus_smmu: iommu@d40000 {
+ 			compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
+ 			reg = <0xd40000 0x20000>;
+ 			#global-interrupts = <1>;
 -- 
 2.17.1
 
