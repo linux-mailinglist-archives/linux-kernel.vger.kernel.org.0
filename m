@@ -2,163 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1F3B131587
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 16:57:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BF0E13158B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 16:58:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbgAFP5b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 10:57:31 -0500
-Received: from mail.efficios.com ([167.114.142.138]:33170 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbgAFP5a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 10:57:30 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id DEDE11EA206;
-        Mon,  6 Jan 2020 10:57:28 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id KLvUN4v0cISR; Mon,  6 Jan 2020 10:57:27 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 983511EA1D4;
-        Mon,  6 Jan 2020 10:57:21 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 983511EA1D4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1578326241;
-        bh=V01sGTkdCO7SqIi8D+mEDAjTS4ndQ4TnKwFDOpxXqBA=;
-        h=From:To:Date:Message-Id;
-        b=uG6SHO5pZWLZyzrvJ+miQCWNOw3+othcNc8D+G11B4x+s8a/NnE40NAwnCnPV9a1a
-         nMf4dVo1cgWqrNkk2Ty+wUL0fsuLyYCrFPPOybJbz83WicNS/dAqIxx9W43qbX2Ly6
-         4LfJwkED7+3LD8PyOtRtVs73tO2dX1CNsir7zitNaoOWXcOH8cwoMY5Q8H3VFb2Bgp
-         zIwjMW2T8C2G3csESuMWfzfArC9UFprrDr1lKmxmI0Gw/PfOQgRRF6n9LjH3gtxx2v
-         s1xlFESfthQEnrMzF+E43fzxYaAeLY5kP+hqP9eQ/CE13r00TjfkoetsarAzHnVSQw
-         GTHE4UZALHTsg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id hQpQtE0KI3-I; Mon,  6 Jan 2020 10:57:21 -0500 (EST)
-Received: from localhost.localdomain (192-222-181-218.qc.cable.ebox.net [192.222.181.218])
-        by mail.efficios.com (Postfix) with ESMTPSA id 4D07A1EA188;
-        Mon,  6 Jan 2020 10:57:19 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Carlos O'Donell <carlos@redhat.com>
-Cc:     Florian Weimer <fweimer@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha@sourceware.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        id S1726569AbgAFP6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 10:58:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60564 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726296AbgAFP6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 10:58:23 -0500
+Received: from localhost (lfbn-ncy-1-150-155.w83-194.abo.wanadoo.fr [83.194.232.155])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05E5120707;
+        Mon,  6 Jan 2020 15:58:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578326302;
+        bh=I7AvbF0PAjywRwJPOtCae2PtkWDpsy0v/FtN2McmenQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=b6aCwXSgvkHKTGhyYAwolmwX9oXWuAQRD/xE6SB1mEQHMUZWOWY7e2NDr/30UImcC
+         tiqQ78hDQMQHzWrlyrpZaRp2mkYGK6GqJ7o5tbS0MKu026aKvUI3xSOj+hA39O4yt4
+         v2gcreS7MFPKSOSVwtA5GlAl/JAE2HAIAs/7ZZWA=
+Date:   Mon, 6 Jan 2020 16:58:20 +0100
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Borislav Petkov <bp@alien8.de>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [RFC PATCH glibc 10/13] glibc: sched_getcpu(): use rseq cpu_id TLS on Linux (v5)
-Date:   Mon,  6 Jan 2020 10:57:10 -0500
-Message-Id: <20200106155713.397-11-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200106155713.397-1-mathieu.desnoyers@efficios.com>
-References: <20200106155713.397-1-mathieu.desnoyers@efficios.com>
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: Re: [PATCH 0/2] x86/context-tracking: Remove last remaining calls to
+ exception_enter/exception_exit()
+Message-ID: <20200106155819.GC26097@lenoir>
+References: <20191227163612.10039-1-frederic@kernel.org>
+ <20200106150546.GS2810@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200106150546.GS2810@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When available, use the cpu_id field from __rseq_abi on Linux to
-implement sched_getcpu(). Fall-back on the vgetcpu vDSO if unavailable.
+On Mon, Jan 06, 2020 at 04:05:46PM +0100, Peter Zijlstra wrote:
+> On Fri, Dec 27, 2019 at 05:36:10PM +0100, Frederic Weisbecker wrote:
+> > Thanks to the cleanups from Andy Lutomirski over the years, those calls
+> > can now be removed. This will allow for nice things in the future for
+> > x86 support on full nohz:
+> > 
+> > * Remove TIF_NOHZ and use a per-cpu switch to enable, disable context
+> >   tracking.
+> > 
+> > * Avoid context tracking on housekeepers.
+> > 
+> > * Dynamically enable/disable context tracking on CPU on runtime and
+> >   therefore allow runtime enable/disable of nohz_full
+> > 
+> > * Make nohz_full a property of cpuset.
+> > 
+> > Frederic Weisbecker (2):
+> >   x86/context-tracking: Remove exception_enter/exit() from
+> >     do_page_fault()
+> >   x86/context-tracking: Remove exception_enter/exit() from
+> >     KVM_PV_REASON_PAGE_NOT_PRESENT async page fault
+> 
+> Thanks, these look good to me.
+> 
+> Did I tell you about my 'TODO' item vs text_poke_sync() ? Basically, we
+> can avoid sending the IPI to NOHZ_FULL user CPUs, provided we make their
+> enter_from_user_mode() do the sync_core().
 
-Benchmarks:
-
-x86-64: Intel E5-2630 v3@2.40GHz, 16-core, hyperthreading
-
-glibc sched_getcpu():                     13.7 ns (baseline)
-glibc sched_getcpu() using rseq:           2.5 ns (speedup:  5.5x)
-inline load cpuid from __rseq_abi TLS:     0.8 ns (speedup: 17.1x)
-
-	* sysdeps/unix/sysv/linux/sched_getcpu.c: use rseq cpu_id TLS on
-	Linux.
-
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: Carlos O'Donell <carlos@redhat.com>
-CC: Florian Weimer <fweimer@redhat.com>
-CC: Joseph Myers <joseph@codesourcery.com>
-CC: Szabolcs Nagy <szabolcs.nagy@arm.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Ben Maurer <bmaurer@fb.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Boqun Feng <boqun.feng@gmail.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Dave Watson <davejwatson@fb.com>
-CC: Paul Turner <pjt@google.com>
-CC: libc-alpha@sourceware.org
-CC: linux-kernel@vger.kernel.org
-CC: linux-api@vger.kernel.org
----
-Changes since v1:
-- rseq is only used if both __NR_rseq and RSEQ_SIG are defined.
-
-Changes since v2:
-- remove duplicated __rseq_abi extern declaration.
-
-Changes since v3:
-- update ChangeLog.
-
-Changes since v4:
-- Use atomic_load_relaxed to load the __rseq_abi.cpu_id field, a
-  consequence of the fact that __rseq_abi is not volatile anymore.
-- Include atomic.h which provides atomic_load_relaxed.
----
- sysdeps/unix/sysv/linux/sched_getcpu.c | 25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
-
-diff --git a/sysdeps/unix/sysv/linux/sched_getcpu.c b/sysdeps/unix/sysv/linux/sched_getcpu.c
-index 65dd9fdda7..6f24c1db99 100644
---- a/sysdeps/unix/sysv/linux/sched_getcpu.c
-+++ b/sysdeps/unix/sysv/linux/sched_getcpu.c
-@@ -18,14 +18,15 @@
- #include <errno.h>
- #include <sched.h>
- #include <sysdep.h>
-+#include <atomic.h>
- 
- #ifdef HAVE_GETCPU_VSYSCALL
- # define HAVE_VSYSCALL
- #endif
- #include <sysdep-vdso.h>
- 
--int
--sched_getcpu (void)
-+static int
-+vsyscall_sched_getcpu (void)
- {
- #ifdef __NR_getcpu
-   unsigned int cpu;
-@@ -37,3 +38,23 @@ sched_getcpu (void)
-   return -1;
- #endif
- }
-+
-+#ifdef __NR_rseq
-+#include <sys/rseq.h>
-+#endif
-+
-+#if defined __NR_rseq && defined RSEQ_SIG
-+int
-+sched_getcpu (void)
-+{
-+  int cpu_id = atomic_load_relaxed (&__rseq_abi.cpu_id);
-+
-+  return cpu_id >= 0 ? cpu_id : vsyscall_sched_getcpu ();
-+}
-+#else
-+int
-+sched_getcpu (void)
-+{
-+  return vsyscall_sched_getcpu ();
-+}
-+#endif
--- 
-2.17.1
-
+Yeah I believe I saw some email about that somewhere. I hope I didn't miss
+a patch about that. Anyway, whether past or future patch, I'll happily review that :-)
