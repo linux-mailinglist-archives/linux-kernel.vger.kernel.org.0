@@ -2,53 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36F76131A05
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 22:05:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E861131A09
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 22:05:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbgAFVFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 16:05:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34394 "EHLO mail.kernel.org"
+        id S1727063AbgAFVFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 16:05:18 -0500
+Received: from muru.com ([72.249.23.125]:50352 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbgAFVFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 16:05:08 -0500
-Subject: Re: [GIT PULL] regulator fixes for v5.5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578344707;
-        bh=MtwfprF12fRZGmuOyD+jEC84wM3ugYYf5PJuYPKcdrc=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Cq0SiYwuNrMwr+egMpa8TISHg7o9iskDqz0GdZm1t3UhX6AmTizhfW/D5jppNuuFa
-         SSxH4IQGnoyFNsn+UQKTCX/srIKgSh94VyaW+OY9nZ7JdbQsNK1xMiZUovdw2xGT1Y
-         Xz1IoTTTgR04b4KM+jravByqb8jKD5Ntn1Sfah3M=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200106130632.GB6448@sirena.org.uk>
-References: <20200106130632.GB6448@sirena.org.uk>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200106130632.GB6448@sirena.org.uk>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git
- tags/regulator-fix-v5.5-rc5
-X-PR-Tracked-Commit-Id: 6f1ff76154b8b36033efcbf6453a71a3d28f52cd
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5acefdc27b739e68294259c1a89c39d250246554
-Message-Id: <157834470777.27503.14880015732193891463.pr-tracker-bot@kernel.org>
-Date:   Mon, 06 Jan 2020 21:05:07 +0000
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
+        id S1726906AbgAFVFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 16:05:13 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 7509E80AA;
+        Mon,  6 Jan 2020 21:05:53 +0000 (UTC)
+Date:   Mon, 6 Jan 2020 13:05:09 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Cc:     Robert Nelson <robertcnelson@gmail.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OMAP DEVICE TREE SUPPORT" <linux-omap@vger.kernel.org>,
+        "open list:OMAP DEVICE TREE SUPPORT" <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm: dts: am335x-boneblack-common: fix memory size
+Message-ID: <20200106210509.GF5885@atomide.com>
+References: <20200106130909.7697-1-matwey@sai.msu.ru>
+ <CAOCHtYgyN+qXXX1YeEcO+nvRFrAL1HAVVMvjfeJ5nvxVjtFKtg@mail.gmail.com>
+ <CAJs94EbUL6o9sM+pwxwpqHVDkFqy7wFRirET-Vq3SNVd3grUsA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJs94EbUL6o9sM+pwxwpqHVDkFqy7wFRirET-Vq3SNVd3grUsA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 6 Jan 2020 13:06:32 +0000:
+* Matwey V. Kornilov <matwey@sai.msu.ru> [200106 20:48]:
+> пн, 6 янв. 2020 г. в 23:44, Robert Nelson <robertcnelson@gmail.com>:
+> >
+> > On Mon, Jan 6, 2020 at 7:10 AM Matwey V. Kornilov <matwey@sai.msu.ru> wrote:
+> > >
+> > > BeagleBone Black series is equipped with 512MB RAM
+> > > whereas only 256MB is included from am335x-bone-common.dtsi
+> >
+> > FYI: While all versions from the factory are 512MB, some 3rd parties
+> > offered 1GB reballing upgrades..
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v5.5-rc5
+So what's the conclusion, is it safe to bump the default size to
+512MB then?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5acefdc27b739e68294259c1a89c39d250246554
+The custom ones could use their own dts file if bootloader is not
+setting the RAM.
 
-Thank you!
+Regards,
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Tony
