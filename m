@@ -2,45 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95773130E42
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 09:01:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3421130E4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 09:04:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726264AbgAFIBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 03:01:49 -0500
-Received: from mga03.intel.com ([134.134.136.65]:32659 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725446AbgAFIBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 03:01:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jan 2020 00:01:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,401,1571727600"; 
-   d="scan'208";a="215128790"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga008.jf.intel.com with ESMTP; 06 Jan 2020 00:01:48 -0800
-Received: from [10.226.38.20] (unknown [10.226.38.20])
-        by linux.intel.com (Postfix) with ESMTP id CD9CC5802C0;
-        Mon,  6 Jan 2020 00:01:46 -0800 (PST)
-Subject: Re: [PATCH v10 0/2] phy: intel-lgm-emmc: Add support for eMMC PHY
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
-        qi-ming.wu@intel.com, peter.harliman.liem@intel.com
-References: <20191217015658.23017-1-vadivel.muruganx.ramuthevar@linux.intel.com>
- <c5df1165-5b8d-f329-582f-15553eb5eb1a@ti.com>
-From:   "Ramuthevar, Vadivel MuruganX" 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-Message-ID: <9917ebc0-656e-6539-504a-208ef375a989@linux.intel.com>
-Date:   Mon, 6 Jan 2020 16:01:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1726368AbgAFIED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 03:04:03 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:55020 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725843AbgAFIED (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 03:04:03 -0500
+Received: from [81.174.41.21] (port=40880 helo=[192.168.77.51])
+        by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1ioNMm-002TYA-SF; Mon, 06 Jan 2020 09:04:00 +0100
+Subject: Re: [PATCH 00/26] docs: i2c: rework I2C documentation, part I
+To:     linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org
+Cc:     Wolfram Sang <wsa@the-dreams.de>, Peter Rosin <peda@axentia.se>,
+        linux-kernel@vger.kernel.org
+References: <20200105224006.10321-1-luca@lucaceresoli.net>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <617f077d-1615-80a3-31f3-e6a053055e48@lucaceresoli.net>
+Date:   Mon, 6 Jan 2020 09:03:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <c5df1165-5b8d-f329-582f-15553eb5eb1a@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200105224006.10321-1-luca@lucaceresoli.net>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -48,71 +49,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On 6/1/2020 3:24 PM, Kishon Vijay Abraham I wrote:
->
-> On 17/12/19 7:26 AM, Ramuthevar,Vadivel MuruganX wrote:
->> Add eMMC-PHY support for Intel LGM SoC
-> merged now, Thanks!
+my apologies for the incorrect threading of these e-mails. I've been
+having troubles while sending them out, so I had to resend them manually
+in chunks and while doing that I didn't manage to recreate the proper
+threading.
 
-Thanks a lot!!! Kishon for the quick rely and merge.
-
----
-Regards
-Vadivel
->
-> -Kishon
->
->> changes in v10:
->>    - Rob's review comments update in YAML
->>    - drop clock-names since it is single entry
->>   
->> changes in v9:
->>    - Rob's review comments update in YAML
->>
->> changes in v8:
->>   Remove the extra Signed-of-by
->>
->> changes in v7:
->>   Rebased to maintainer kernel tree phy-tag-5.5
->>
->> changes in v6:
->>     - cobined comaptible strings
->>     - added as contiguous and can be a single entry for reg properties
->> changes in v5:
->>     - earlier Review-by tag given by Rob
->>     - rework done with syscon parent node.
->>
->>   changes in v4:
->>     - As per Rob's review: validate 5.2 and 5.3
->>     - drop unrelated items.
->>
->>   changes in v3:
->>     - resolve 'make dt_binding_check' warnings
->>
->>   changes in v2:
->>     As per Rob Herring review comments, the following updates
->>    - change GPL-2.0 -> (GPL-2.0-only OR BSD-2-Clause)
->>    - filename is the compatible string plus .yaml
->>    - LGM: Lightning Mountain
->>    - update maintainer
->>    - add intel,syscon under property list
->>    - keep one example instead of two
->>
->>
->>
->> Ramuthevar Vadivel Murugan (2):
->>    dt-bindings: phy: intel-emmc-phy: Add YAML schema for LGM eMMC PHY
->>    phy: intel-lgm-emmc: Add support for eMMC PHY
->>
->>   .../bindings/phy/intel,lgm-emmc-phy.yaml           |  56 ++++
->>   drivers/phy/Kconfig                                |   1 +
->>   drivers/phy/Makefile                               |   1 +
->>   drivers/phy/intel/Kconfig                          |   9 +
->>   drivers/phy/intel/Makefile                         |   2 +
->>   drivers/phy/intel/phy-intel-emmc.c                 | 283 +++++++++++++++++++++
->>   6 files changed, 352 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
->>   create mode 100644 drivers/phy/intel/Kconfig
->>   create mode 100644 drivers/phy/intel/Makefile
->>   create mode 100644 drivers/phy/intel/phy-intel-emmc.c
->>
+-- 
+Luca
