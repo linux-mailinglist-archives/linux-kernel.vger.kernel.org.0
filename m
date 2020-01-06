@@ -2,95 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EF40130BE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 02:50:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3524B130BDA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 02:43:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbgAFBui (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 20:50:38 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33502 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727270AbgAFBui (ORCPT
+        id S1727304AbgAFBny (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 20:43:54 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:28146 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbgAFBnx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 20:50:38 -0500
-Received: by mail-io1-f65.google.com with SMTP id z8so47054316ioh.0
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Jan 2020 17:50:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=VdfYfcG5q1NyFiFXYXaUTE1whOJmabFbb1jufVcSpNI=;
-        b=eeXy++9VzngyMEB/0k4M6iH/GjyUpFOnbDJCiIkbbm6/RIwHHyVylyEQ2emB6Jmt0B
-         Ey43n3ErHFXltbzX74bKzN7M0sKo02Op0k5a2+tkHbcxII03JSpVjmibmFpUYQZJMB+f
-         MSEGLwh5GjnwtOnqRS3o66SUc3XP2VfXwd+iDuWduOukvK+uxnkQWdYc/amwy/RpB54n
-         48jCh3KwpY3Vqc+vm8YwgTEk3Ijsr8sn5Lqs+ktIUgAmJmIl3XXVTVGw9o+0Na4lr0bZ
-         OCwFdWhovdqIrX5I0j1XznJnXhpiqn5nX4aoMz8YKxptczjgO6AXnwrg6dAhD6zrbI7l
-         YK1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=VdfYfcG5q1NyFiFXYXaUTE1whOJmabFbb1jufVcSpNI=;
-        b=c1gAsJit1/u4IYtbzD/AjfH2Y72UBhqI36A54hxR4sW/lT2RcFR51ep/DTgbKZyFCQ
-         ykVdsgkI2fUTmIPdZvAe0cJZUIVG3eqchJaoIGCIsY2vTHDfpyQQSpM08urJarnVPtcH
-         /gZXqhZjXcIk1RfcUwupdByUMzACMTmXmfv/Q+LSgY6SM8VNcNmZVaQblr9IV/46eC83
-         FQxlPM60tyWN0yHMdaECw8NqPm6Z73TYe/Cnsm+RgM6nidyNQnTd8coEIU+J4ETEMggI
-         pkdCYvPCgzj3TsReaf3+0Zjjnu1r4pQ5NjDoA3zdhhCqPKLHPi4SSeVeq5jscEkwB6N3
-         CuEg==
-X-Gm-Message-State: APjAAAVrCth8Lc4Faw0lC4vs8FYkgPBSgEDGY6SKwYZlgqoiK0KoVe0I
-        +ZnbxC3Gsn+uxyXaB8RzUTS7mQ==
-X-Google-Smtp-Source: APXvYqymJINXQwafxuveL/Fa0mW5ldqpklrKDw9WhQEWFERck5saRPT6P7hvfY9QBdWsOGkXLeRrnA==
-X-Received: by 2002:a6b:c9c6:: with SMTP id z189mr64169930iof.285.1578275437348;
-        Sun, 05 Jan 2020 17:50:37 -0800 (PST)
-Received: from localhost ([64.62.168.194])
-        by smtp.gmail.com with ESMTPSA id y18sm16204591ilm.9.2020.01.05.17.50.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jan 2020 17:50:36 -0800 (PST)
-Date:   Sun, 5 Jan 2020 17:50:35 -0800 (PST)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-cc:     Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul@pwsan.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the risc-v tree with Linus' tree
-In-Reply-To: <20200106093246.6abbb7e9@canb.auug.org.au>
-Message-ID: <alpine.DEB.2.21.9999.2001051749560.484919@viisi.sifive.com>
-References: <20200106093246.6abbb7e9@canb.auug.org.au>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        Sun, 5 Jan 2020 20:43:53 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200106014349epoutp040f89190b2b0c5a4297e875da680cefab~nKMcENvhV0623506235epoutp04k
+        for <linux-kernel@vger.kernel.org>; Mon,  6 Jan 2020 01:43:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200106014349epoutp040f89190b2b0c5a4297e875da680cefab~nKMcENvhV0623506235epoutp04k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1578275029;
+        bh=0KV/81+8NYUZoOd09j3uz5rKNhVd4P0bKNs9BXXZU2I=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=n0VtdPXMRxGvT7wxI2H+AxNGxqpjRlbuxU8SnJiSdoU2gFXoKGPMRZJi3PAjLPpXZ
+         0QH9O7yiqz7xKAEmsxrsOAQg8jTAYAzcQSZXHTDN+Enp+5d8ueDyhoVbQZ7lKmysHS
+         AF5IWftjTgA7FXFiTdTjiMPTScp/y/+31/rOZ7Dc=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20200106014349epcas1p3a9be5b37643dbb8d9972653f191c6625~nKMbpE_tg2455124551epcas1p3R;
+        Mon,  6 Jan 2020 01:43:49 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 47rdZp0WjzzMqYl2; Mon,  6 Jan
+        2020 01:43:46 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        4D.F5.48019.1D0921E5; Mon,  6 Jan 2020 10:43:45 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200106014345epcas1p220efaa80993b31c09359f5dee6931ca7~nKMYQqFAN1612316123epcas1p2C;
+        Mon,  6 Jan 2020 01:43:45 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200106014345epsmtrp1183fb04c0de0a96ce0f254aaa9992ea1~nKMYP7ENE3013530135epsmtrp1v;
+        Mon,  6 Jan 2020 01:43:45 +0000 (GMT)
+X-AuditID: b6c32a38-257ff7000001bb93-dc-5e1290d1a74d
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        2E.F8.10238.1D0921E5; Mon,  6 Jan 2020 10:43:45 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200106014345epsmtip2a827f50c8e9b1af55046c58e7ab473be~nKMYApXxr0734807348epsmtip2O;
+        Mon,  6 Jan 2020 01:43:45 +0000 (GMT)
+Subject: Re: [PATCH v2 13/20] devfreq: exynos: Rename Exynos to lowercase
+To:     Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <c3c083b4-a7f4-946b-aea0-d91940e5ba56@samsung.com>
+Date:   Mon, 6 Jan 2020 10:50:51 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200104152107.11407-14-krzk@kernel.org>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMJsWRmVeSWpSXmKPExsWy7bCmru7FCUJxBkvXWlv0P37NbHH+/AZ2
+        i7NNb9gtNj2+xmpxedccNovPvUcYLWac38dkcbtxBZsDh8emVZ1sHpuX1Hv0bVnF6PF5k1wA
+        S1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QFUoK
+        ZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpScAssCveLE3OLSvHS95PxcK0MDAyNToMKE
+        7Izf/d0sBX+UK3bMzGtgfCzbxcjJISFgIvGoZzNzFyMXh5DADkaJbduOs4IkhAQ+MUo0XtKA
+        sL8xSuw5Fg/TMOvCOSaIhr2MErtewDjvGSUefPzLDlIlLOApsXXWYzBbRMBdYsH/NWwgRcwC
+        9xgleuYtYAZJsAloSex/cYMNxOYXUJS4+uMxI4jNK2An8fzme7BmFgEViaPt08DqRQXCJE5u
+        a4GqEZQ4OfMJC4jNKWAm0f3wBdgcZgFxiVtP5jNB2PIS29/OAftNQuAzm8TiPZdYIX5wkdi4
+        diMbhC0s8er4FnYIW0riZX8blF0tsfLkETaI5g5GiS37L0A1G0vsXzoZaAMH0AZNifW79CHC
+        ihI7f89lhFjMJ/Huaw8rSImEAK9ER5sQRImyxOUHd5kgbEmJxe2dbBMYlWYheWcWkhdmIXlh
+        FsKyBYwsqxjFUguKc9NTiw0LTJAjexMjOIFqWexg3HPO5xCjAAejEg8vQ7BQnBBrYllxZe4h
+        RgkOZiUR3kY3wTgh3pTEyqrUovz4otKc1OJDjKbA0J7ILCWanA9M7nkl8YamRsbGxhYmhmam
+        hoZK4rwcPy7GCgmkJ5akZqemFqQWwfQxcXBKNTBKymrlTpjo0b4iJlb0379HzO3Mu7b2bnsv
+        IDO9rmjilTL973v3n9RZ09bJLbXir0jxszXb7RU8Hk6W/rrv+8krF/ZMWevv7SJ5pSQxcsUG
+        U/P7a/gkxf2kP0gtNvgyf1FV396IlZMK5/q5LNFmCNJpWPTpbeSF1Tv5KkRzNs+8pcbGdopP
+        JPWUEktxRqKhFnNRcSIAui4TpLYDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnkeLIzCtJLcpLzFFi42LZdlhJXvfiBKE4g9ZfMhb9j18zW5w/v4Hd
+        4mzTG3aLTY+vsVpc3jWHzeJz7xFGixnn9zFZ3G5cwebA4bFpVSebx+Yl9R59W1YxenzeJBfA
+        EsVlk5Kak1mWWqRvl8CV8bu/m6Xgj3LFjpl5DYyPZbsYOTkkBEwkZl04x9TFyMUhJLCbUWJj
+        90xGiISkxLSLR5m7GDmAbGGJw4eLIWreMkpMfPiPDaRGWMBTYuusx+wgtoiAu8SC/2vYQIqY
+        Be4xSjT/WAQ1dQujRP/B/0wgVWwCWhL7X9wA6+YXUJS4+uMx2DZeATuJ5zffg01iEVCRONo+
+        jRnEFhUIk9i55DETRI2gxMmZT1hAbE4BM4nuhy/A5jALqEv8mXeJGcIWl7j1ZD4ThC0vsf3t
+        HOYJjMKzkLTPQtIyC0nLLCQtCxhZVjFKphYU56bnFhsWGOallusVJ+YWl+al6yXn525iBEeT
+        luYOxstL4g8xCnAwKvHwrggQihNiTSwrrsw9xCjBwawkwtvoJhgnxJuSWFmVWpQfX1Sak1p8
+        iFGag0VJnPdp3rFIIYH0xJLU7NTUgtQimCwTB6dUA6Omnt5Kww2Zp49W7nr2d1HptfUaXEmv
+        LlrVTt2xat3+pu2/pyz5MWGOyj0/bnX1dx4SYXzpllZpc4+naYZL37bZdIJP4jIHRwSLdM+N
+        mwytDZf+xqosXuaxXIupOHxlzOFLOjZxU3gcJ14XEJ4XPIPJWM5vwUrnuqkHeQ/PmF0THtG7
+        +YaAx2clluKMREMt5qLiRAAyrMe9ogIAAA==
+X-CMS-MailID: 20200106014345epcas1p220efaa80993b31c09359f5dee6931ca7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200104152251epcas4p2904c6be67570b1c0fd1cc43711f24b42
+References: <20200104152107.11407-1-krzk@kernel.org>
+        <CGME20200104152251epcas4p2904c6be67570b1c0fd1cc43711f24b42@epcas4p2.samsung.com>
+        <20200104152107.11407-14-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On 1/5/20 12:21 AM, Krzysztof Kozlowski wrote:
+> Fix up inconsistent usage of upper and lowercase letters in "Exynos"
+> name.
+> 
+> "EXYNOS" is not an abbreviation but a regular trademarked name.
+> Therefore it should be written with lowercase letters starting with
+> capital letter.
+> 
+> The lowercase "Exynos" name is promoted by its manufacturer Samsung
+> Electronics Co., Ltd., in advertisement materials and on website.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/devfreq/Kconfig             | 2 +-
+>  drivers/devfreq/event/Kconfig       | 4 ++--
+>  drivers/devfreq/event/exynos-nocp.c | 2 +-
+>  drivers/devfreq/event/exynos-nocp.h | 2 +-
+>  drivers/devfreq/event/exynos-ppmu.c | 2 +-
+>  drivers/devfreq/event/exynos-ppmu.h | 2 +-
+>  6 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+> index 1526f758daeb..0b1df12e0f21 100644
+> --- a/drivers/devfreq/Kconfig
+> +++ b/drivers/devfreq/Kconfig
+> @@ -77,7 +77,7 @@ config DEVFREQ_GOV_PASSIVE
+>  comment "DEVFREQ Drivers"
+>  
+>  config ARM_EXYNOS_BUS_DEVFREQ
+> -	tristate "ARM EXYNOS Generic Memory Bus DEVFREQ Driver"
+> +	tristate "ARM Exynos Generic Memory Bus DEVFREQ Driver"
+>  	depends on ARCH_EXYNOS || COMPILE_TEST
+>  	select DEVFREQ_GOV_SIMPLE_ONDEMAND
+>  	select DEVFREQ_GOV_PASSIVE
+> diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconfig
+> index a53e0a6ffdfe..878825372f6f 100644
+> --- a/drivers/devfreq/event/Kconfig
+> +++ b/drivers/devfreq/event/Kconfig
+> @@ -15,7 +15,7 @@ menuconfig PM_DEVFREQ_EVENT
+>  if PM_DEVFREQ_EVENT
+>  
+>  config DEVFREQ_EVENT_EXYNOS_NOCP
+> -	tristate "EXYNOS NoC (Network On Chip) Probe DEVFREQ event Driver"
+> +	tristate "Exynos NoC (Network On Chip) Probe DEVFREQ event Driver"
+>  	depends on ARCH_EXYNOS || COMPILE_TEST
+>  	select PM_OPP
+>  	select REGMAP_MMIO
+> @@ -24,7 +24,7 @@ config DEVFREQ_EVENT_EXYNOS_NOCP
+>  	  (Network on Chip) Probe counters to measure the bandwidth of AXI bus.
+>  
+>  config DEVFREQ_EVENT_EXYNOS_PPMU
+> -	tristate "EXYNOS PPMU (Platform Performance Monitoring Unit) DEVFREQ event Driver"
+> +	tristate "Exynos PPMU (Platform Performance Monitoring Unit) DEVFREQ event Driver"
+>  	depends on ARCH_EXYNOS || COMPILE_TEST
+>  	select PM_OPP
+>  	help
+> diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/event/exynos-nocp.c
+> index 1c565926db9f..ccc531ee6938 100644
+> --- a/drivers/devfreq/event/exynos-nocp.c
+> +++ b/drivers/devfreq/event/exynos-nocp.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * exynos-nocp.c - EXYNOS NoC (Network On Chip) Probe support
+> + * exynos-nocp.c - Exynos NoC (Network On Chip) Probe support
+>   *
+>   * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+>   * Author : Chanwoo Choi <cw00.choi@samsung.com>
+> diff --git a/drivers/devfreq/event/exynos-nocp.h b/drivers/devfreq/event/exynos-nocp.h
+> index 55cc96284a36..2d6f08cfd0c5 100644
+> --- a/drivers/devfreq/event/exynos-nocp.h
+> +++ b/drivers/devfreq/event/exynos-nocp.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0-only */
+>  /*
+> - * exynos-nocp.h - EXYNOS NoC (Network on Chip) Probe header file
+> + * exynos-nocp.h - Exynos NoC (Network on Chip) Probe header file
+>   *
+>   * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+>   * Author : Chanwoo Choi <cw00.choi@samsung.com>
+> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+> index 055deea42c37..17ed980d9099 100644
+> --- a/drivers/devfreq/event/exynos-ppmu.c
+> +++ b/drivers/devfreq/event/exynos-ppmu.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * exynos_ppmu.c - EXYNOS PPMU (Platform Performance Monitoring Unit) support
+> + * exynos_ppmu.c - Exynos PPMU (Platform Performance Monitoring Unit) support
+>   *
+>   * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd.
+>   * Author : Chanwoo Choi <cw00.choi@samsung.com>
+> diff --git a/drivers/devfreq/event/exynos-ppmu.h b/drivers/devfreq/event/exynos-ppmu.h
+> index 284420047455..97f667d0cbdd 100644
+> --- a/drivers/devfreq/event/exynos-ppmu.h
+> +++ b/drivers/devfreq/event/exynos-ppmu.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0-only */
+>  /*
+> - * exynos_ppmu.h - EXYNOS PPMU header file
+> + * exynos_ppmu.h - Exynos PPMU header file
+>   *
+>   * Copyright (c) 2015 Samsung Electronics Co., Ltd.
+>   * Author : Chanwoo Choi <cw00.choi@samsung.com>
+> 
 
-On Mon, 6 Jan 2020, Stephen Rothwell wrote:
+Applied it. Thanks.
 
-> Today's linux-next merge of the risc-v tree got a conflict in:
-> 
->   Documentation/riscv/patch-acceptance.rst
-> 
-> between commit:
-> 
->   0e194d9da198 ("Documentation: riscv: add patch acceptance guidelines")
-> 
-> from Linus' tree and commit:
-> 
->   d89a1a16d7dc ("Documentation: riscv: add patch acceptance guidelines")
-> 
-> from the risc-v tree.
-> 
-> I fixed it up (I used the version from Linus' tree as that was committed
-> later) and can carry the fix as necessary. This is now fixed as far as
-> linux-next is concerned, but any non trivial conflicts should be mentioned
-> to your upstream maintainer when your tree is submitted for merging.
-> You may also want to consider cooperating with the maintainer of the
-> conflicting tree to minimise any particularly complex conflicts.
-
-Thanks, I just reset our for-next branch to v5.5-rc5, so this won't 
-reappear.
-
-- Paul
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
