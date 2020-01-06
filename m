@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B3271315C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 17:08:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D3241315AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 17:07:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbgAFQHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 11:07:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44982 "EHLO mail.kernel.org"
+        id S1726858AbgAFQHd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 11:07:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726774AbgAFQH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 11:07:29 -0500
+        id S1726793AbgAFQHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 11:07:31 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1873E20848;
-        Mon,  6 Jan 2020 16:07:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4A4D207FF;
+        Mon,  6 Jan 2020 16:07:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578326848;
-        bh=BkE3hEeuxErioCDlCn9LNsQpqJrf8mXVApyiI+i8EKQ=;
+        s=default; t=1578326850;
+        bh=xBs1bXw8eZRDqJb4F37NRLkVcQW6RUzdL6mWevt75ns=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1EeWXfMbBZkYhPch+jQwMQlU4z4Yl4JmJheD5eJ2iET1go/KAoA38JIEzDZTLh0e0
-         pLFZQsc7DBeUcNK9EpPIKuH2yQX/3OsoCnaWJtCauElneHKYYw2lzjrT5CXDwFeSgW
-         oBTck6MdwpmGgDWP8x+VfD/+0iU7T553jrzH29Cs=
+        b=GTiDnIry/NnpBssASCctSfzBPvIQxRDVwF/ToGp0Fz/3uHe+xfVauJuVbuu+7r+Dh
+         4EaqnJ6JrYK582E+8NqVu8HwbCVBVBd8t9/wzC2rbwaoDyN2aDwVKt8Enw/IC8/lqm
+         3z2xjQWNHdjpEblJLK8AixtB/FDagtZXNY6LOhfk=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        David Ahern <dsahern@gmail.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 03/20] perf record: Adapt affinity to machines with #CPUs > 1K
-Date:   Mon,  6 Jan 2020 13:06:48 -0300
-Message-Id: <20200106160705.10899-4-acme@kernel.org>
+Subject: [PATCH 04/20] perf sched timehist: Add support for filtering on CPU
+Date:   Mon,  6 Jan 2020 13:06:49 -0300
+Message-Id: <20200106160705.10899-5-acme@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200106160705.10899-1-acme@kernel.org>
 References: <20200106160705.10899-1-acme@kernel.org>
@@ -47,193 +44,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
+From: David Ahern <dsahern@gmail.com>
 
-Use struct mmap_cpu_mask type for the tool's thread and mmap data
-buffers to overcome current 1024 CPUs mask size limitation of cpu_set_t
-type.
+Allow user to limit output to one or more CPUs. Really helpful on
+systems with a large number of cpus.
 
-Currently glibc's cpu_set_t type has an internal mask size limit of 1024
-CPUs.
+Committer testing:
 
-Moving to the 'struct mmap_cpu_mask' type allows overcoming that limit.
+  # perf sched record -a sleep 1
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 1.765 MB perf.data (1412 samples) ]
+  [root@quaco ~]# perf sched timehist | head
+  Samples do not have callchains.
+             time    cpu  task name                       wait time  sch delay   run time
+                          [tid/pid]                          (msec)     (msec)     (msec)
+  --------------- ------  ------------------------------  ---------  ---------  ---------
+     66307.802686 [0000]  perf[13086]                         0.000      0.000      0.000
+     66307.802700 [0000]  migration/0[12]                     0.000      0.001      0.014
+     66307.802766 [0001]  perf[13086]                         0.000      0.000      0.000
+     66307.802774 [0001]  migration/1[15]                     0.000      0.001      0.007
+     66307.802841 [0002]  perf[13086]                         0.000      0.000      0.000
+     66307.802849 [0002]  migration/2[20]                     0.000      0.001      0.008
+     66307.802913 [0003]  perf[13086]                         0.000      0.000      0.000
+  #
+  # perf sched timehist --cpu 2 | head
+  Samples do not have callchains.
+             time    cpu  task name                       wait time  sch delay   run time
+                          [tid/pid]                          (msec)     (msec)     (msec)
+  --------------- ------  ------------------------------  ---------  ---------  ---------
+     66307.802841 [0002]  perf[13086]                         0.000      0.000      0.000
+     66307.802849 [0002]  migration/2[20]                     0.000      0.001      0.008
+     66307.964485 [0002]  <idle>                              0.000      0.000    161.635
+     66307.964811 [0002]  CPU 0/KVM[3589/3561]                0.000      0.056      0.325
+     66307.965477 [0002]  <idle>                              0.325      0.000      0.666
+     66307.965553 [0002]  CPU 0/KVM[3589/3561]                0.666      0.024      0.076
+     66307.966456 [0002]  <idle>                              0.076      0.000      0.903
+  #
 
-The tools bitmap API is used to manipulate objects of 'struct mmap_cpu_mask'
-type.
-
-Committer notes:
-
-To print the 'nbits' struct member we must use %zd, since it is a
-size_t, this fixes the build in some toolchains/arches.
-
-Reported-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/96d7e2ff-ce8b-c1e0-d52c-aa59ea96f0ea@linux.intel.com
+Link: http://lore.kernel.org/lkml/20191204173925.66976-1-dsahern@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-record.c | 28 ++++++++++++++++++++++------
- tools/perf/util/mmap.c      | 28 ++++++++++++++++++++++------
- tools/perf/util/mmap.h      |  2 +-
- 3 files changed, 45 insertions(+), 13 deletions(-)
+ tools/perf/Documentation/perf-sched.txt |  4 ++++
+ tools/perf/builtin-sched.c              | 13 +++++++++++++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index fb19ef63cc35..4c301466101b 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -62,6 +62,7 @@
- #include <linux/string.h>
- #include <linux/time64.h>
- #include <linux/zalloc.h>
-+#include <linux/bitmap.h>
+diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
+index 63f938b887dd..5fbe42bd599b 100644
+--- a/tools/perf/Documentation/perf-sched.txt
++++ b/tools/perf/Documentation/perf-sched.txt
+@@ -110,6 +110,10 @@ OPTIONS for 'perf sched timehist'
+ --max-stack::
+ 	Maximum number of functions to display in backtrace, default 5.
  
- struct switch_output {
- 	bool		 enabled;
-@@ -93,7 +94,7 @@ struct record {
- 	bool			timestamp_boundary;
- 	struct switch_output	switch_output;
- 	unsigned long long	samples;
--	cpu_set_t		affinity_mask;
-+	struct mmap_cpu_mask	affinity_mask;
- 	unsigned long		output_max_size;	/* = 0: unlimited */
- };
++-C=::
++--cpu=::
++	Only show events for the given CPU(s) (comma separated list).
++
+ -p=::
+ --pid=::
+ 	Only show events for given process ID (comma separated list).
+diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+index 8a12d71364c3..82fcc2c15fe4 100644
+--- a/tools/perf/builtin-sched.c
++++ b/tools/perf/builtin-sched.c
+@@ -51,6 +51,9 @@
+ #define SYM_LEN			129
+ #define MAX_PID			1024000
  
-@@ -961,10 +962,15 @@ static struct perf_event_header finished_round_event = {
- static void record__adjust_affinity(struct record *rec, struct mmap *map)
- {
- 	if (rec->opts.affinity != PERF_AFFINITY_SYS &&
--	    !CPU_EQUAL(&rec->affinity_mask, &map->affinity_mask)) {
--		CPU_ZERO(&rec->affinity_mask);
--		CPU_OR(&rec->affinity_mask, &rec->affinity_mask, &map->affinity_mask);
--		sched_setaffinity(0, sizeof(rec->affinity_mask), &rec->affinity_mask);
-+	    !bitmap_equal(rec->affinity_mask.bits, map->affinity_mask.bits,
-+			  rec->affinity_mask.nbits)) {
-+		bitmap_zero(rec->affinity_mask.bits, rec->affinity_mask.nbits);
-+		bitmap_or(rec->affinity_mask.bits, rec->affinity_mask.bits,
-+			  map->affinity_mask.bits, rec->affinity_mask.nbits);
-+		sched_setaffinity(0, MMAP_CPU_MASK_BYTES(&rec->affinity_mask),
-+				  (cpu_set_t *)rec->affinity_mask.bits);
-+		if (verbose == 2)
-+			mmap_cpu_mask__scnprintf(&rec->affinity_mask, "thread");
- 	}
- }
++static const char *cpu_list;
++static DECLARE_BITMAP(cpu_bitmap, MAX_NR_CPUS);
++
+ struct sched_atom;
  
-@@ -2433,7 +2439,6 @@ int cmd_record(int argc, const char **argv)
- # undef REASON
- #endif
+ struct task_desc {
+@@ -2008,6 +2011,9 @@ static void timehist_print_sample(struct perf_sched *sched,
+ 	char nstr[30];
+ 	u64 wait_time;
  
--	CPU_ZERO(&rec->affinity_mask);
- 	rec->opts.affinity = PERF_AFFINITY_SYS;
++	if (cpu_list && !test_bit(sample->cpu, cpu_bitmap))
++		return;
++
+ 	timestamp__scnprintf_usec(t, tstr, sizeof(tstr));
+ 	printf("%15s [%04d] ", tstr, sample->cpu);
  
- 	rec->evlist = evlist__new();
-@@ -2499,6 +2504,16 @@ int cmd_record(int argc, const char **argv)
+@@ -2994,6 +3000,12 @@ static int perf_sched__timehist(struct perf_sched *sched)
+ 	if (IS_ERR(session))
+ 		return PTR_ERR(session);
  
- 	symbol__init(NULL);
- 
-+	if (rec->opts.affinity != PERF_AFFINITY_SYS) {
-+		rec->affinity_mask.nbits = cpu__max_cpu();
-+		rec->affinity_mask.bits = bitmap_alloc(rec->affinity_mask.nbits);
-+		if (!rec->affinity_mask.bits) {
-+			pr_err("Failed to allocate thread mask for %zd cpus\n", rec->affinity_mask.nbits);
-+			return -ENOMEM;
-+		}
-+		pr_debug2("thread mask[%zd]: empty\n", rec->affinity_mask.nbits);
++	if (cpu_list) {
++		err = perf_session__cpu_bitmap(session, cpu_list, cpu_bitmap);
++		if (err < 0)
++			goto out;
 +	}
 +
- 	err = record__auxtrace_init(rec);
- 	if (err)
- 		goto out;
-@@ -2613,6 +2628,7 @@ int cmd_record(int argc, const char **argv)
+ 	evlist = session->evlist;
  
- 	err = __cmd_record(&record, argc, argv);
- out:
-+	bitmap_free(rec->affinity_mask.bits);
- 	evlist__delete(rec->evlist);
- 	symbol__exit();
- 	auxtrace_record__free(rec->itr);
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 2ee4faacca21..3b664fa673a6 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -219,6 +219,8 @@ static void perf_mmap__aio_munmap(struct mmap *map __maybe_unused)
+ 	symbol__init(&session->header.env);
+@@ -3429,6 +3441,7 @@ int cmd_sched(int argc, const char **argv)
+ 		   "analyze events only for given process id(s)"),
+ 	OPT_STRING('t', "tid", &symbol_conf.tid_list_str, "tid[,tid...]",
+ 		   "analyze events only for given thread id(s)"),
++	OPT_STRING('C', "cpu", &cpu_list, "cpu", "list of cpus to profile"),
+ 	OPT_PARENT(sched_options)
+ 	};
  
- void mmap__munmap(struct mmap *map)
- {
-+	bitmap_free(map->affinity_mask.bits);
-+
- 	perf_mmap__aio_munmap(map);
- 	if (map->data != NULL) {
- 		munmap(map->data, mmap__mmap_len(map));
-@@ -227,7 +229,7 @@ void mmap__munmap(struct mmap *map)
- 	auxtrace_mmap__munmap(&map->auxtrace_mmap);
- }
- 
--static void build_node_mask(int node, cpu_set_t *mask)
-+static void build_node_mask(int node, struct mmap_cpu_mask *mask)
- {
- 	int c, cpu, nr_cpus;
- 	const struct perf_cpu_map *cpu_map = NULL;
-@@ -240,17 +242,23 @@ static void build_node_mask(int node, cpu_set_t *mask)
- 	for (c = 0; c < nr_cpus; c++) {
- 		cpu = cpu_map->map[c]; /* map c index to online cpu index */
- 		if (cpu__get_node(cpu) == node)
--			CPU_SET(cpu, mask);
-+			set_bit(cpu, mask->bits);
- 	}
- }
- 
--static void perf_mmap__setup_affinity_mask(struct mmap *map, struct mmap_params *mp)
-+static int perf_mmap__setup_affinity_mask(struct mmap *map, struct mmap_params *mp)
- {
--	CPU_ZERO(&map->affinity_mask);
-+	map->affinity_mask.nbits = cpu__max_cpu();
-+	map->affinity_mask.bits = bitmap_alloc(map->affinity_mask.nbits);
-+	if (!map->affinity_mask.bits)
-+		return -1;
-+
- 	if (mp->affinity == PERF_AFFINITY_NODE && cpu__max_node() > 1)
- 		build_node_mask(cpu__get_node(map->core.cpu), &map->affinity_mask);
- 	else if (mp->affinity == PERF_AFFINITY_CPU)
--		CPU_SET(map->core.cpu, &map->affinity_mask);
-+		set_bit(map->core.cpu, map->affinity_mask.bits);
-+
-+	return 0;
- }
- 
- int mmap__mmap(struct mmap *map, struct mmap_params *mp, int fd, int cpu)
-@@ -261,7 +269,15 @@ int mmap__mmap(struct mmap *map, struct mmap_params *mp, int fd, int cpu)
- 		return -1;
- 	}
- 
--	perf_mmap__setup_affinity_mask(map, mp);
-+	if (mp->affinity != PERF_AFFINITY_SYS &&
-+		perf_mmap__setup_affinity_mask(map, mp)) {
-+		pr_debug2("failed to alloc mmap affinity mask, error %d\n",
-+			  errno);
-+		return -1;
-+	}
-+
-+	if (verbose == 2)
-+		mmap_cpu_mask__scnprintf(&map->affinity_mask, "mmap");
- 
- 	map->core.flush = mp->flush;
- 
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index ef51667fabcb..9d5f589f02ae 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -40,7 +40,7 @@ struct mmap {
- 		int		 nr_cblocks;
- 	} aio;
- #endif
--	cpu_set_t	affinity_mask;
-+	struct mmap_cpu_mask	affinity_mask;
- 	void		*data;
- 	int		comp_level;
- };
 -- 
 2.21.1
 
