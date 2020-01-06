@@ -2,140 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88EA61310E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 11:58:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2506A1310E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 12:00:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbgAFK6C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 05:58:02 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:42316 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbgAFK6B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 05:58:01 -0500
-Received: by mail-vs1-f67.google.com with SMTP id b79so31356330vsd.9
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 02:58:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iz48PIJknU2j/A4zRHc/Rgg36rOPCVo1fXVtuRuysh0=;
-        b=RfbOUFacPPh2IC/QVAVcCcFV4ZIDaLQYpHmb1lF3qUmFz3qo7AOG5AtHg1TtJFXdke
-         yLnJwxHe/6VGC/9EXUxJ+QjepIhJviuughwTLnXtgZ3DU8xg/sH8qXnZQqDPtCk06FFV
-         BLWCwLB2l+8h1R1mncjklU5vwAryEVaF5tko/JFGnX3k5K8e+qY6P9/R5w2FsmczJyRj
-         +9h5v5qZMABAbDKRBWy/Z2aKq8tDVTwYsPcJpRpJV4xFtOE/9DA5j6jI9BquVLv1jGWk
-         ADKFJYxXEDqxJqm600HrfHOcQUwLyff0bhoKrC8uCW0b7lLlnFj4nYl+3au9/QLXXfQa
-         q5Jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iz48PIJknU2j/A4zRHc/Rgg36rOPCVo1fXVtuRuysh0=;
-        b=HmhWx1eJxbMftEfOU6/qoq7+cjHj0SSBnnQFiIVvzRdDbuwI2mfNPgKL4ja8XMAQwM
-         YzbsCqR8mpDHIRqcuourKvkdJSV/iE4qTzFCnGmo8Z66Lg+OCIPM6zKofQu+fYAdGGBj
-         KqCKLevO/J4CoM3Adk6fQ+YA/YghjD4C/5DBsVRHBuR/Rfjrq1GIIS02YaMgqLeakRfr
-         AjOI2PSvHLPDCQNM5pEJVbRPEzi2kONQ/LyVnNMhSwGJC64MsKveiSTQJnJgrZZovcmC
-         5vaNgjFgFMkdPfgoT25rD0N3u9wV4jrlGOyS0124sf0k+QrKLfFifiyLdLFx73UR9QRe
-         T8EA==
-X-Gm-Message-State: APjAAAWs2AiGB6lqz+RBJbsQaMpI8HshZvJowdVbJBzoG/i5mwhof3K/
-        l0PDlsr8q9QXtJLMvrCvBev/I2rFE9Y9TldoZ7A=
-X-Google-Smtp-Source: APXvYqzZYEYA6D40qqN8qfRYSNveoTvP+3l+AWVJQQU5FusthP8LMTWjWcFH4nhlUSEsQov459UNeISOmykUZ+o87LE=
-X-Received: by 2002:a05:6102:535:: with SMTP id m21mr51039090vsa.95.1578308280617;
- Mon, 06 Jan 2020 02:58:00 -0800 (PST)
+        id S1726313AbgAFLAR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 06:00:17 -0500
+Received: from foss.arm.com ([217.140.110.172]:42862 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725787AbgAFLAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 06:00:16 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF869328;
+        Mon,  6 Jan 2020 03:00:15 -0800 (PST)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC7843F534;
+        Mon,  6 Jan 2020 03:00:14 -0800 (PST)
+Date:   Mon, 6 Jan 2020 11:00:07 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] firmware: arm_scmi: Make scmi core independent of
+ transport type
+Message-ID: <20200106110007.GA54466@bogus>
+References: <5c545c2866ba075ddb44907940a1dae1d823b8a1.1575019719.git.viresh.kumar@linaro.org>
+ <CABb+yY0qh-qWJWxEaB9_XxmiFb=xP0hOxpm1j54seeT3dMKt2w@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200102100230.420009-1-christian.gmeiner@gmail.com>
- <20200102100230.420009-3-christian.gmeiner@gmail.com> <5cd1dc11df43d86d9db0dc2520de9b2e839ea7cc.camel@pengutronix.de>
-In-Reply-To: <5cd1dc11df43d86d9db0dc2520de9b2e839ea7cc.camel@pengutronix.de>
-From:   Christian Gmeiner <christian.gmeiner@gmail.com>
-Date:   Mon, 6 Jan 2020 11:57:49 +0100
-Message-ID: <CAH9NwWddNNc+2rRsntm+_eYF0S9uwC0kTszpPysbzmkc4dNuNA@mail.gmail.com>
-Subject: Re: [PATCH 2/6] drm/etnaviv: determine product, customer and eco id
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        The etnaviv authors <etnaviv@lists.freedesktop.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABb+yY0qh-qWJWxEaB9_XxmiFb=xP0hOxpm1j54seeT3dMKt2w@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lucas
-
-Am Mo., 6. Jan. 2020 um 11:03 Uhr schrieb Lucas Stach <l.stach@pengutronix.de>:
->
-> On Do, 2020-01-02 at 11:02 +0100, Christian Gmeiner wrote:
-> > They will be used for extended HWDB support. The eco id logic was taken
-> > from galcore kernel driver sources.
+On Tue, Dec 31, 2019 at 02:09:27PM -0600, Jassi Brar wrote:
+> On Fri, Nov 29, 2019 at 3:32 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
 > >
-> > Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
-> > ---
-> >  drivers/gpu/drm/etnaviv/etnaviv_gpu.c | 17 +++++++++++++++++
-> >  drivers/gpu/drm/etnaviv/etnaviv_gpu.h |  6 +++---
-> >  2 files changed, 20 insertions(+), 3 deletions(-)
+> > The SCMI specification is fairly independent of the transport protocol,
+> > which can be a simple mailbox (already implemented) or anything else.
+> > The current Linux implementation however is very much dependent of the
+> > mailbox transport layer.
 > >
-> > diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> > index d47d1a8e0219..253301be9e95 100644
-> > --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> > +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> > @@ -321,6 +321,18 @@ static void etnaviv_hw_specs(struct etnaviv_gpu *gpu)
-> >               gpu->identity.varyings_count -= 1;
-> >  }
+> > This patch makes the SCMI core code (driver.c) independent of the
+> > mailbox transport layer and moves all mailbox related code to a new
+> > file: mailbox.c.
 > >
-> > +static void etnaviv_hw_eco_id(struct etnaviv_gpu *gpu)
-> > +{
-> > +     const u32 chipDate = gpu_read(gpu, VIVS_HI_CHIP_DATE);
-> > +     gpu->identity.eco_id = gpu_read(gpu, VIVS_HI_CHIP_ECO_ID);
-> > +
-> > +     if (etnaviv_is_model_rev(gpu, GC1000, 0x5037) && (chipDate == 0x20120617))
-> > +             gpu->identity.eco_id = 1;
-> > +
-> > +     if (etnaviv_is_model_rev(gpu, GC320, 0x5303) && (chipDate == 0x20140511))
-> > +             gpu->identity.eco_id = 1;
->
-> I'm not sure if those two checks warrant a separate function. Maybe
-> just place them besides the other ID fixups?
+> > We can now implement more transport protocols to transport SCMI
+> > messages.
+> >
+> > The transport protocols just need to provide struct scmi_transport_ops,
+> > with its version of the callbacks to enable exchange of SCMI messages.
+> >
+> We can either add new transport layer between SCMI and Mailbox layers,
+> or we can write new transport as a mailbox driver (which I always
+> thought could be a usecase). Right now I am of no strong opinion
+> either way.  Depends, what other transport do you have in mind?
 >
 
-This is almost a 1:1 copy of _GetEcoID(..) but will try to move the fixups.
-
-
-> > +}
-> > +
-> >  static void etnaviv_hw_identify(struct etnaviv_gpu *gpu)
-> >  {
-> >       u32 chipIdentity;
-> > @@ -362,6 +374,8 @@ static void etnaviv_hw_identify(struct etnaviv_gpu *gpu)
-> >                       }
-> >               }
-> >
-> > +             gpu->identity.product_id = gpu_read(gpu, VIVS_HI_CHIP_PRODUCT_ID);
-> > +
-> >               /*
-> >                * NXP likes to call the GPU on the i.MX6QP GC2000+, but in
-> >                * reality it's just a re-branded GC3000. We can identify this
-> > @@ -375,6 +389,9 @@ static void etnaviv_hw_identify(struct etnaviv_gpu *gpu)
-> >               }
-> >       }
-> >
-> > +     etnaviv_hw_eco_id(gpu);
-> > +     gpu->identity.customer_id = gpu_read(gpu, VIVS_HI_CHIP_CUSTOMER_ID);
->
-> I don't like this scattering of identity register reads. Please move
-> all of those reads to the else clause where we currently read
-> model/rev. I doubt that the customer ID register is available on the
-> really early cores, that only have the VIVS_HI_CHIP_IDENTITY register.
->
-
-There is feature bit for it: chipMinorFeatures5_HAS_PRODUCTID
-Will change the code to make use of it. Shall I still put it in the
-else clause then?
+To be more clear, this patch abstracts the SCMI transport so that mailbox
+can be one of the transport. The plan is to add SMC/HVC, SMC/HVC over SPCI,
+vitio based transport as alternative to mailbox. These are neither added
+as mailbox driver nor transport layer between SCMI and Mailbox. E.g.:
+we either use Peng's SMC based mailbox driver as is or add a new transport
+independent of mailbox framework here as SCMI transport.
 
 --
-greets
---
-Christian Gmeiner, MSc
-
-https://christian-gmeiner.info/privacypolicy
+Regards,
+Sudeep
