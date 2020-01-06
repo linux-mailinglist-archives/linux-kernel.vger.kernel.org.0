@@ -2,63 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C589130C72
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 04:13:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 936DB130C81
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 04:22:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbgAFDN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 Jan 2020 22:13:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36526 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727369AbgAFDN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Jan 2020 22:13:28 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B85DF21582;
-        Mon,  6 Jan 2020 03:13:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578280407;
-        bh=xp5rF0xCmJyirucp8HZboIfxMQ8XLnhsBHjxGVseJco=;
-        h=In-Reply-To:References:Cc:To:Subject:From:Date:From;
-        b=RlTrdEvsDbPNoGW9+XnBUgE2QpnFbWKcBiZ/8CGOljq+0R+M1u5xDb/26vLYnm93I
-         +cB9Ahz7XHg5BgI4a9errFsY9KD43p8eg0LNZaqLyy1D/uCAZ+aec8N/TkcdEfpol1
-         vzg/w3dG0n3Z7FLzQcc1NXK99SxjxgG46bRaqV6s=
-Content-Type: text/plain; charset="utf-8"
+        id S1727455AbgAFDWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 Jan 2020 22:22:18 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:5236 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727307AbgAFDWS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Jan 2020 22:22:18 -0500
+X-UUID: 57f54413a2e74625b881579fa3447eab-20200106
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=RDSho2ud9PkHmo+SliyxkimBGlr7TcmW+AJEdhiBnZU=;
+        b=gGXhHvdn6IEqW4MMtZ/uMz9roTigWtx+W6NAewHZn4n1fkM06PCs0Aq2Q63g/wxau/QPEXq37eRvjUyxYcA9kWY12WDVwE0qukyU5Nj2RMMSzNdO+y+IVHkAlKif3yQ1tJzo8YlGWkRaJXuf387J9hLh2dvhw+0ZBtv4L/B+pTE=;
+X-UUID: 57f54413a2e74625b881579fa3447eab-20200106
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 359625338; Mon, 06 Jan 2020 11:22:09 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs06n1.mediatek.inc (172.21.101.129) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 6 Jan 2020 11:22:09 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by mtkcas08.mediatek.inc
+ (172.21.101.126) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 6 Jan
+ 2020 11:20:16 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 6 Jan 2020 11:19:00 +0800
+Message-ID: <1578280829.5196.4.camel@mtksdaap41>
+Subject: Re: [PATCH 2/2] iommu/mediatek: add support for MT8167
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Fabien Parent <fparent@baylibre.com>
+CC:     <iommu@lists.linux-foundation.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <mark.rutland@arm.com>,
+        <matthias.bgg@gmail.com>, <joro@8bytes.org>, <robh+dt@kernel.org>
+Date:   Mon, 6 Jan 2020 11:20:29 +0800
+In-Reply-To: <20200103162632.109553-2-fparent@baylibre.com>
+References: <20200103162632.109553-1-fparent@baylibre.com>
+         <20200103162632.109553-2-fparent@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190828132306.19012-1-geert+renesas@glider.be>
-References: <20190828132306.19012-1-geert+renesas@glider.be>
-Cc:     Raman Banka <raman.k2@samsung.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v2] clk: Add support for setting clk_rate via debugfs
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Sun, 05 Jan 2020 19:13:26 -0800
-Message-Id: <20200106031327.B85DF21582@mail.kernel.org>
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2019-08-28 06:23:06)
-> For testing, it is useful to be able to specify a clock rate manually.
-> As this is a dangerous feature, it is not enabled by default.
-> Users need to modify the source directly and #define
-> CLOCK_ALLOW_WRITE_DEBUGFS.
->=20
-> This follows the spirit of commit 09c6ecd394105c48 ("regmap: Add support
-> for writing to regmap registers via debugfs").
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Stephen: you suggested this approach in
-> https://lore.kernel.org/linux-clk/153029668040.143105.2059491089047180792=
-@swboyd.mtv.corp.google.com/
-
-Ok. Let's do it!
-
-Applied to clk-next.
+SGksIEZhYmllbjoNCg0KT24gRnJpLCAyMDIwLTAxLTAzIGF0IDE3OjI2ICswMTAwLCBGYWJpZW4g
+UGFyZW50IHdyb3RlOg0KPiBBZGQgc3VwcG9ydCBmb3IgdGhlIElPTU1VIG9uIE1UODE2Nw0KPiAN
+Cj4gU2lnbmVkLW9mZi1ieTogRmFiaWVuIFBhcmVudCA8ZnBhcmVudEBiYXlsaWJyZS5jb20+DQo+
+IC0tLQ0KPiAgZHJpdmVycy9pb21tdS9tdGtfaW9tbXUuYyB8IDExICsrKysrKysrKystDQo+ICBk
+cml2ZXJzL2lvbW11L210a19pb21tdS5oIHwgIDEgKw0KPiAgMiBmaWxlcyBjaGFuZ2VkLCAxMSBp
+bnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9p
+b21tdS9tdGtfaW9tbXUuYyBiL2RyaXZlcnMvaW9tbXUvbXRrX2lvbW11LmMNCj4gaW5kZXggNmZj
+MWY1ZWNmOTFlLi41ZmM2MTc4YTgyZGMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvaW9tbXUvbXRr
+X2lvbW11LmMNCj4gKysrIGIvZHJpdmVycy9pb21tdS9tdGtfaW9tbXUuYw0KPiBAQCAtNTY5LDcg
+KzU2OSw4IEBAIHN0YXRpYyBpbnQgbXRrX2lvbW11X2h3X2luaXQoY29uc3Qgc3RydWN0IG10a19p
+b21tdV9kYXRhICpkYXRhKQ0KPiAgCQlGX0lOVF9QUkVURVRDSF9UUkFOU0FUSU9OX0ZJRk9fRkFV
+TFQ7DQo+ICAJd3JpdGVsX3JlbGF4ZWQocmVndmFsLCBkYXRhLT5iYXNlICsgUkVHX01NVV9JTlRf
+TUFJTl9DT05UUk9MKTsNCj4gIA0KPiAtCWlmIChkYXRhLT5wbGF0X2RhdGEtPm00dV9wbGF0ID09
+IE00VV9NVDgxNzMpDQo+ICsJaWYgKGRhdGEtPnBsYXRfZGF0YS0+bTR1X3BsYXQgPT0gTTRVX01U
+ODE3MyB8fA0KPiArCSAgICBkYXRhLT5wbGF0X2RhdGEtPm00dV9wbGF0ID09IE00VV9NVDgxNjcp
+DQoNCkkgZG8gbm90IGxpa2UgdG8gdXNlIG00dV9wbGF0IGZvciB0aGUgdmFyaWFudCBvZiBlYWNo
+IFNvQy4gSWYgeW91IHVzZQ0KbTR1X3BsYXQsIHlvdSBjb3VsZCBkcm9wIGhhc180Z2JfbW9kZSwg
+cmVzZXRfYXhpLCBsYXJiaWRfcmVtYXAgYmVjYXVzZQ0KeW91IGNvdWxkIHVzZSBtNHVfcGxhdCB0
+byBkZWNpZGUgdGhlIGJlaGF2aW9yIG9mIHRoZXNlIHZhcmlhYmxlIGJ1dCB0aGUNCmNvZGUgd291
+bGQgYmUgc28gZGlydHkuIFNvIEkgdGhpbmsgeW91IHNob3VsZCBkcm9wIG00dV9wbGF0IGFuZCB1
+c2UgYQ0KdmFyaWFibGUgdG8gaWRlbnRpZnkgdGhpcyBiZWhhdmlvci4NCg0KUmVnYXJkcywNCkNL
+DQoNCj4gIAkJcmVndmFsID0gKGRhdGEtPnByb3RlY3RfYmFzZSA+PiAxKSB8IChkYXRhLT5lbmFi
+bGVfNEdCIDw8IDMxKTsNCj4gIAllbHNlDQo+ICAJCXJlZ3ZhbCA9IGxvd2VyXzMyX2JpdHMoZGF0
+YS0+cHJvdGVjdF9iYXNlKSB8DQo+IEBAIC03ODIsNiArNzgzLDEzIEBAIHN0YXRpYyBjb25zdCBz
+dHJ1Y3QgbXRrX2lvbW11X3BsYXRfZGF0YSBtdDI3MTJfZGF0YSA9IHsNCj4gIAkubGFyYmlkX3Jl
+bWFwID0gezAsIDEsIDIsIDMsIDQsIDUsIDYsIDcsIDgsIDl9LA0KPiAgfTsNCj4gIA0KPiArc3Rh
+dGljIGNvbnN0IHN0cnVjdCBtdGtfaW9tbXVfcGxhdF9kYXRhIG10ODE2N19kYXRhID0gew0KPiAr
+CS5tNHVfcGxhdCAgICAgPSBNNFVfTVQ4MTY3LA0KPiArCS5oYXNfNGdiX21vZGUgPSB0cnVlLA0K
+PiArCS5yZXNldF9heGkgICAgPSB0cnVlLA0KPiArCS5sYXJiaWRfcmVtYXAgPSB7MCwgMSwgMiwg
+MywgNCwgNX0sIC8qIExpbmVhciBtYXBwaW5nLiAqLw0KPiArfTsNCj4gKw0KPiAgc3RhdGljIGNv
+bnN0IHN0cnVjdCBtdGtfaW9tbXVfcGxhdF9kYXRhIG10ODE3M19kYXRhID0gew0KPiAgCS5tNHVf
+cGxhdCAgICAgPSBNNFVfTVQ4MTczLA0KPiAgCS5oYXNfNGdiX21vZGUgPSB0cnVlLA0KPiBAQCAt
+Nzk4LDYgKzgwNiw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgbXRrX2lvbW11X3BsYXRfZGF0YSBt
+dDgxODNfZGF0YSA9IHsNCj4gIA0KPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQg
+bXRrX2lvbW11X29mX2lkc1tdID0gew0KPiAgCXsgLmNvbXBhdGlibGUgPSAibWVkaWF0ZWssbXQy
+NzEyLW00dSIsIC5kYXRhID0gJm10MjcxMl9kYXRhfSwNCj4gKwl7IC5jb21wYXRpYmxlID0gIm1l
+ZGlhdGVrLG10ODE2Ny1tNHUiLCAuZGF0YSA9ICZtdDgxNjdfZGF0YX0sDQo+ICAJeyAuY29tcGF0
+aWJsZSA9ICJtZWRpYXRlayxtdDgxNzMtbTR1IiwgLmRhdGEgPSAmbXQ4MTczX2RhdGF9LA0KPiAg
+CXsgLmNvbXBhdGlibGUgPSAibWVkaWF0ZWssbXQ4MTgzLW00dSIsIC5kYXRhID0gJm10ODE4M19k
+YXRhfSwNCj4gIAl7fQ0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pb21tdS9tdGtfaW9tbXUuaCBi
+L2RyaXZlcnMvaW9tbXUvbXRrX2lvbW11LmgNCj4gaW5kZXggZWE5NDlhMzI0ZTMzLi5jYjhmZDU5
+NzBjZDQgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvaW9tbXUvbXRrX2lvbW11LmgNCj4gKysrIGIv
+ZHJpdmVycy9pb21tdS9tdGtfaW9tbXUuaA0KPiBAQCAtMzAsNiArMzAsNyBAQCBzdHJ1Y3QgbXRr
+X2lvbW11X3N1c3BlbmRfcmVnIHsNCj4gIGVudW0gbXRrX2lvbW11X3BsYXQgew0KPiAgCU00VV9N
+VDI3MDEsDQo+ICAJTTRVX01UMjcxMiwNCj4gKwlNNFVfTVQ4MTY3LA0KPiAgCU00VV9NVDgxNzMs
+DQo+ICAJTTRVX01UODE4MywNCj4gIH07DQoNCg==
 
