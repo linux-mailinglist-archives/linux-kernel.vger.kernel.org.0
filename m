@@ -2,97 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03C54130EB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 09:36:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C480C130EBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 09:37:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725908AbgAFIfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 03:35:51 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35777 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbgAFIfu (ORCPT
+        id S1726411AbgAFIg4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 03:36:56 -0500
+Received: from conuserg-12.nifty.com ([210.131.2.79]:62462 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbgAFIgz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 03:35:50 -0500
-Received: by mail-wr1-f66.google.com with SMTP id g17so48664294wro.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 00:35:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=e0KhA/fnqWm6T6Fd1y/ycOP88g1CHs2BTbMCEvSy12Q=;
-        b=RbQpLY0JPaeobLbCh36bLbDuItz1p7hIAmNT2oGDYKGS1mgu5Kj3oPlu4mgWSw9v3V
-         RRnqMhQkSAZP8VJnl+HJQ2j/nICCe/2u6Jr9uMeBWnZHi0CKpHrVnJH3X1AieSxarvfY
-         RMfKwTlVQBKqPcnTAAPuR32zi4ywOv2KxET3xVXJreV42QVohvmVFFev/y7javZBTZyT
-         6e7rf8ctUiAhzrJjeFAycyuba+GTeIXAcc8poGc+sxGZq0JGpeHMzvjAD0UcAdgMsbvL
-         dk/9SaRwbZjFAIoiFJKp/voDRjXhW2OCJlDenxb0AT1RW+hmZFk7a8vUi4GZNQubEfVq
-         iCDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=e0KhA/fnqWm6T6Fd1y/ycOP88g1CHs2BTbMCEvSy12Q=;
-        b=kIdQnE5XEELhME+ttMquiXjGYce6CLuUJnWpL55VVMy0CAMAHJcUrr3PJ/3zrRf1Kq
-         MQLnwkUlmvkbeVZsGpJ9FiqOylgIb9FXtQb08qNDuZAWrkg9NniGcLABKHOmrH+zSCu6
-         1fK+UrHR4AHSRpf2+MxsuDxhwQSHxgScHUzjVD205ID+ijDScg0be8rZHUdpJPr1PLfl
-         WzHatSClFIYU5TjknbPmhxBptkVEgk0pDrZqoDW3mJXo7cLboRp4B83GtGUQeiDOGIMn
-         30STFvm/IKtd8Bo4E42hpVncjOBM/JYoW9eF0vBagOfsCI2wP93mDMGKKU1rbvM6sjKY
-         e0pA==
-X-Gm-Message-State: APjAAAUcW/C2rqW77wn9w1d32Owfc9LdzbCkO1mL6qeWUimWFWJFHE03
-        /c+BdxcRspzkVdtqxmGtqKH7+w==
-X-Google-Smtp-Source: APXvYqyIiOs7jWQLCFZMnVa3AtUvwaffIrFpTMgoZ+P25QYJI9FKcD+DBcRlTB3YcQs0DsS/7Kd9WQ==
-X-Received: by 2002:a5d:45c4:: with SMTP id b4mr67762298wrs.303.1578299749170;
-        Mon, 06 Jan 2020 00:35:49 -0800 (PST)
-Received: from dell ([2.27.35.135])
-        by smtp.gmail.com with ESMTPSA id m3sm70800908wrs.53.2020.01.06.00.35.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 00:35:48 -0800 (PST)
-Date:   Mon, 6 Jan 2020 08:36:03 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Sebastian Reichel <sre@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Oskari Lemmela <oskari@lemmela.net>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/9] mfd: axp20x: Mark AXP20X_VBUS_IPSOUT_MGMT as
- volatile
-Message-ID: <20200106083603.GK22390@dell>
-References: <20200105012416.23296-1-samuel@sholland.org>
- <20200105012416.23296-2-samuel@sholland.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200105012416.23296-2-samuel@sholland.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 6 Jan 2020 03:36:55 -0500
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id 0068ah5N023567;
+        Mon, 6 Jan 2020 17:36:43 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com 0068ah5N023567
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1578299803;
+        bh=63DWN+a4Yo9AmdvEMwN7wE/TiezfFvD6A8r16STUDlo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=viSyq6hNHnf63oBSIkcLIe2NrRniEqlZv9hvaNgCc2EZI0WRP9lNWR1a/5LVyd/wp
+         ruzaL4iMgwa+OTzFLJgJvx2auNy+GRiylRNnJsxb++d1+9NXjXWaGoP7JDYpLPnXsZ
+         gH+gi1c+p0drSl2CKUjtXPV6jJNL30KbT1K/iBMheoKEKPDA628ILRQe9wuMhVHIYb
+         VzAyvhytzKJW3rVTmzRVuRfJ8ySLmLs/O7jk5OzOgjDLqE9IpeYFcl2ZxFP1Hx56la
+         V1l0RafYHEXLwQgYTJvrCH0XNyk1L6fC77uvY7+4kbS6k5fKGN/v3eXJ8MhIvtxLHB
+         c4CICKpHfLAwA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kbuild: remove PYTHON2 variable
+Date:   Mon,  6 Jan 2020 17:36:28 +0900
+Message-Id: <20200106083628.29729-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 04 Jan 2020, Samuel Holland wrote:
+Python 2 has retired. There is no user of this variable.
 
-> On AXP288 and newer PMICs, bit 7 of AXP20X_VBUS_IPSOUT_MGMT can be set
-> to prevent using the VBUS input. However, when the VBUS unplugged and
-> plugged back in, the bit automatically resets to zero.
-> 
-> We need to set the register as volatile to prevent regmap from caching
-> that bit. Otherwise, regcache will think the bit is already set and not
-> write the register.
-> 
-> Fixes: cd53216625a0 ("mfd: axp20x: Fix axp288 volatile ranges")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
-> ---
->  drivers/mfd/axp20x.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-Applied, thanks.
+ Makefile | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/Makefile b/Makefile
+index 4f01de6cd43c..4a0796b05324 100644
+--- a/Makefile
++++ b/Makefile
+@@ -423,7 +423,6 @@ INSTALLKERNEL  := installkernel
+ DEPMOD		= /sbin/depmod
+ PERL		= perl
+ PYTHON		= python
+-PYTHON2		= python2
+ PYTHON3		= python3
+ CHECK		= sparse
+ BASH		= bash
+@@ -474,7 +473,7 @@ CLANG_FLAGS :=
+ 
+ export ARCH SRCARCH CONFIG_SHELL BASH HOSTCC KBUILD_HOSTCFLAGS CROSS_COMPILE AS LD CC
+ export CPP AR NM STRIP OBJCOPY OBJDUMP OBJSIZE READELF PAHOLE LEX YACC AWK INSTALLKERNEL
+-export PERL PYTHON PYTHON2 PYTHON3 CHECK CHECKFLAGS MAKE UTS_MACHINE HOSTCXX
++export PERL PYTHON PYTHON3 CHECK CHECKFLAGS MAKE UTS_MACHINE HOSTCXX
+ export KBUILD_HOSTCXXFLAGS KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS LDFLAGS_MODULE
+ 
+ export KBUILD_CPPFLAGS NOSTDINC_FLAGS LINUXINCLUDE OBJCOPYFLAGS KBUILD_LDFLAGS
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.1
+
