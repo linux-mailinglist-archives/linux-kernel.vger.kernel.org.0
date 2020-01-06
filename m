@@ -2,152 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC024131088
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 11:25:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 029F513108A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 11:25:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726382AbgAFKZa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 05:25:30 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:61083 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725446AbgAFKZa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 05:25:30 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 006AHKbC028995;
-        Mon, 6 Jan 2020 11:25:15 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=csKu8+UMH7YN+nRTevbWnuk0toNCOh+W9ovVroJG4Gs=;
- b=FC3Br8HlV5BIIQm0VeJ7roajgAUqSoCVTK35cV4/OxzRJ8jBa3EImWslq3jusdv/IP0q
- 0wQQW5tUfoEu6NU/kjF63OabrvuDcdz3Ej5qRIO+hfNCC6Eg5G3z1M5mxo3qxmCRsElD
- irbTBS3HtyRpvonV+JnmDisXOWCbdnpQEE2oTk9AUYCvhldCI//iqPh8RfXTgsoWR+oq
- GwBqTXj9ErFNmrVqEehsAu98A7yto+aGeU71hYdgWEWcvr7MYr53viCmf6gbO3d/3J9D
- itdevHZiOMndqK++SW/QI1XKm1loG8SGq0iJyxAf6xLTa1LcieR8JLo5/4mkYVwKcxZy Zw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2xakuqfaab-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Jan 2020 11:25:15 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 36A9210002A;
-        Mon,  6 Jan 2020 11:25:14 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 27F172B088F;
-        Mon,  6 Jan 2020 11:25:14 +0100 (CET)
-Received: from [10.48.0.71] (10.75.127.44) by SFHDAG5NODE3.st.com
- (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 6 Jan
- 2020 11:25:12 +0100
-Subject: Re: [PATCH] iio: adc: stm32-adc: Use dma_request_chan() instead
- dma_request_slave_channel()
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-CC:     <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <vkoul@kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Olivier MOYSAN <olivier.moysan@st.com>
-References: <20191217075153.23766-1-peter.ujfalusi@ti.com>
- <20191223154230.7fb2a988@archlinux>
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <9f190583-824c-01a6-7da3-43065fde49c7@st.com>
-Date:   Mon, 6 Jan 2020 11:25:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726467AbgAFKZk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 05:25:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50390 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726351AbgAFKZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 05:25:39 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id F2EFFAF8A;
+        Mon,  6 Jan 2020 10:25:37 +0000 (UTC)
+Date:   Mon, 6 Jan 2020 11:25:37 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2] printk: Fix preferred console selection with multiple
+ matches
+Message-ID: <20200106102537.nirnfcauqdh4olgv@pathway.suse.cz>
+References: <2712d7e2fb68bca06a33e2e062fc8e65a2652410.camel@kernel.crashing.org>
+ <20191219135053.xr67lybhycepcxkp@pathway.suse.cz>
+ <32fde8cd451ea0eaff38108d9f2f2d4a97a43097.camel@kernel.crashing.org>
+ <20191220091131.4uifcbudwppjspf4@pathway.suse.cz>
+ <20200106051508.GA17351@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20191223154230.7fb2a988@archlinux>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2020-01-06_03:2020-01-06,2020-01-06 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200106051508.GA17351@google.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/23/19 4:42 PM, Jonathan Cameron wrote:
-> On Tue, 17 Dec 2019 09:51:53 +0200
-> Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+On Mon 2020-01-06 14:15:08, Sergey Senozhatsky wrote:
+> On (19/12/20 10:11), Petr Mladek wrote:
+> [..]
+> > > > > +enum con_match {
+> > > > > +	con_matched,
+> > > > > +	con_matched_preferred,
+> > > > > +	con_braille,
+> > > > > +	con_failed,
+> > > > > +	con_no_match,
+> > > > > +};
+> > > > 
+> > > > Please, replace this with int, where:
+> > > > 
+> > > >    + con_matched -> 0
+> > > >    + con_matched_preferred -> 0 and make "has_preferred" global variable
+> > > >    + con_braile -> 0		later check for CON_BRL flag
+> > > >    + con_failed -> -EFAULT
+> > > >    + con_no_match -> -ENOENT
+> > > 
+> > > Not fan of using -EFAULT here, it's a detail since it's rather kernel
+> > > internal, but I'd rather use -ENXIO for no match and -EIO for failed
+> > > (or pass the original error code up if any). That said it's really bike
+> > > shed painting at this point :-)
+> > 
+> > Sigh, either variant is somehow confusing.
+> > 
+> > I think that -ENOENT is a bit better than -EIO. It is abbreviation of
+> > "No entry or No entity" which quite fits here. Also the device might
+> > exist but it is not used when not requested.
 > 
->> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
->> eating up the error code.
->>
->> By using dma_request_chan() directly the driver can support deferred
->> probing against DMA.
->>
->> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Hi Peter,
-> 
-> Change looks sensible to me, but I'd like to leave a little longer
-> for others to look at this.
-> 
-> Give me a poke if I seem to have lost it by the end of the first
-> week in Jan.
-> 
-> Thanks,
-> 
-> Jonathan
-> 
->> ---
->>  drivers/iio/adc/stm32-adc.c | 10 ++++++++--
->>  1 file changed, 8 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/iio/adc/stm32-adc.c b/drivers/iio/adc/stm32-adc.c
->> index 3b291d72701c..5dab23f1fdee 100644
->> --- a/drivers/iio/adc/stm32-adc.c
->> +++ b/drivers/iio/adc/stm32-adc.c
->> @@ -1746,9 +1746,15 @@ static int stm32_adc_dma_request(struct iio_dev *indio_dev)
->>  	struct dma_slave_config config;
->>  	int ret;
->>  
->> -	adc->dma_chan = dma_request_slave_channel(&indio_dev->dev, "rx");
->> -	if (!adc->dma_chan)
->> +	adc->dma_chan = dma_request_chan(&indio_dev->dev, "rx");
->> +	if (IS_ERR(adc->dma_chan)) {
->> +		if (PTR_ERR(adc->dma_chan) == -EPROBE_DEFER)
->> +			return -EPROBE_DEFER;
+> Can we please keep the enum? Enum is super self-descriptive, can't
+> get any better. Any other alternative - be it -EFAULT or -EIO or
+> -ENOENT - would force one to always look at what is actually going
+> on in try_match_new_console() and what particular errno means. None
+> of those errnos fit, they make things cryptic. IMHO.
 
-Hi Peter,
+I agree that the enums are more self-descriptive. My problem with it is
+that there are 5 values. I wanted to check how they were handled
+and neither 'con_matched' nor 'con_failed' were later used.
 
-Thanks for the patch and sorry for the late reply.
+I though how to improve it. And I ended with feeling that the enum
+did more harm then good. -E??? codes are a bit less descriptive
+but there are only two. The meaning can be explained easily by
+a comment above the function.
 
-I'd rather prefer to check explicitly for -ENODEV (as the DMA is
-optional) to use the IRQ mode and treat all other codes (including
-EPROBE_DEFER) as errors.
+If you want to keep the enum then please handle the return values
+by switch(). Or make it clear that all possible return values
+are handled properly.
 
-Rationale is: This can hide other errors e.g. like all DMA channels are
-busy/reserved for other usage. So the user may wrongly think it's
-probing the driver, with DMA. This may be a corner case, but still...
-DMA channels are assigned via device tree. I'd rather prefer to avoid
-depending of runtime (probe ordering) in such a case.
-
-Can you update the patch considering this ?
-
-Please find here an alternate proposal:
-
-	adc->dma_chan = dma_request_chan(&indio_dev->dev, "rx");
-	if (IS_ERR(adc->dma_chan)) {
-		if (PTR_ERR(adc->dma_chan) != -ENODEV)
-			return PTR_ERR(adc->dma_chan);
-
-		/* DMA is optional: fall back to IRQ mode */
-		adc->dma_chan = NULL;
-		return 0;
-	}
-
-Best regards,
-Fabrice
-
->> +
->> +		/* Ignore errors to fall back to IRQ mode */
->> +		adc->dma_chan = NULL;
->>  		return 0;
->> +	}
->>  
->>  	adc->rx_buf = dma_alloc_coherent(adc->dma_chan->device->dev,
->>  					 STM32_DMA_BUFFER_SIZE,
-> 
+Best Regards,
+Petr
