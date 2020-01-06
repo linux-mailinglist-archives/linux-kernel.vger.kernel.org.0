@@ -2,122 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27EDC131240
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 13:46:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4926E13122F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 13:35:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbgAFMpl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 07:45:41 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47089 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725787AbgAFMpl (ORCPT
+        id S1726340AbgAFMfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 07:35:21 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35951 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbgAFMfU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 07:45:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578314739;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MKqLuGW3zPtIjcBOVtUkMLFk96xKPBf0H3EtPn0x/cs=;
-        b=b0bp8o2h0LppjvI1Zhn9d1z7EyV9USTCAY7/FXqJxQcC85XQ3DQ0aY+kxiJwXPo9EFLGym
-        uuLTSkq3AckL3lzf0UKPTKifdyTG9d/0FtW0Q88IhltiMWQiOJiwev5kq4JK0cyG4ij9BZ
-        kUylusBSnSnhmHutHp6I6lahHWLr/jY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-8-V_NnNjeiOOeX1qkb3fkYUw-1; Mon, 06 Jan 2020 07:45:32 -0500
-X-MC-Unique: V_NnNjeiOOeX1qkb3fkYUw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BB261100550E;
-        Mon,  6 Jan 2020 12:45:30 +0000 (UTC)
-Received: from fuller.cnet (ovpn-116-82.gru2.redhat.com [10.97.116.82])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id ED77C272A3;
-        Mon,  6 Jan 2020 12:45:29 +0000 (UTC)
-Received: by fuller.cnet (Postfix, from userid 1000)
-        id B9C7A416C882; Fri,  3 Jan 2020 10:36:14 -0300 (-03)
-Date:   Fri, 3 Jan 2020 10:36:14 -0300
-From:   Marcelo Tosatti <mtosatti@redhat.com>
-To:     Feng Tang <feng.tang@intel.com>
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [LKP] [cpuidle] 259231a045: will-it-scale.per_process_ops -12.6%
- regression
-Message-ID: <20200103133614.GA6604@fuller.cnet>
-References: <20190918021334.GL15734@shao2-debian>
- <20191231055923.GA70013@shbuild999.sh.intel.com>
- <20200103023117.GA1313@shbuild999.sh.intel.com>
+        Mon, 6 Jan 2020 07:35:20 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z3so49438858wru.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 04:35:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=etHpp/b+tlLKLxjZ6TvTwVRA6Mmf6McMbwfMAQQfH4k=;
+        b=BXwsf8wOueR/7Su482SHlTV1NZOq9Sek0uktcbPx49LyYUqGYpdX1/KKBGw4c1qhOP
+         3VeMM6AJ295vWqtr1HogZQL2jggx/d7H9l8aTCGvsp8NO5J/KlVynSX7f+KmAcTjEnh8
+         ATDQnjZWp2xFqMUBCl1ZbIAeKap/QiobXrF3B+Jx8fgjg3Ccw9Nk+1ra6iBGNbeVGKy9
+         lZv4pqSa3IJOh3G++W23H4qvyeQL0ZJ8py2UFrWPHHrCllgLTkG8lcC95LD71Nh52b0A
+         1rQsgNiCVL5VdStupvzTG9JiWOnObcDVFW1sWWWdg6TjTs1dk4Gfpmxp4UqCABomegcq
+         i83A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=etHpp/b+tlLKLxjZ6TvTwVRA6Mmf6McMbwfMAQQfH4k=;
+        b=VqUBHuNcWRuIRJluNSoZxk3rb7cfSgDPRr6WdvYyGa4/FV/AJ18pQuE9jHKeaH59O1
+         hawfC5vfbdMhS5FSCT0m2GAFB7N/sd9ZM8q1OrPkNYCazenX6ShfG/h2fwypruZE9lpR
+         4jX8EP0/RPF693M4Kv3s1h6Q0mkxB2L2vnaV0x1+xm/2U9nHxQCjVYoGDU0l2YLj0fU7
+         AX1UHou3f2jf0EnJUC5RHpAs+HmmpUcUeZ3zO85ChZ2dn3nJwYFaI4wiir9lfuocXb+T
+         xxaKiDAT3TDbTeojZcTyJeO3rnc8QLcemNQzc/6HaE47LnRK06t4VAB1ERIG/rN4loI5
+         UtnQ==
+X-Gm-Message-State: APjAAAWdZtGMP5essZFY1qLv5dO4z1IItFMmXQShp0G8Qr+iHbobFPOv
+        iMzymWENtSO21E3wYoi972xCYkKQsj0=
+X-Google-Smtp-Source: APXvYqy3oBNdsjFPXDVHPqhQuVUEc+K3UjrdOr8x429sFlMq1oz4I+8J9YqRlNLlkhJ3y728gc9Z5Q==
+X-Received: by 2002:a5d:4045:: with SMTP id w5mr96791354wrp.59.1578314118603;
+        Mon, 06 Jan 2020 04:35:18 -0800 (PST)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id w22sm21853573wmk.34.2020.01.06.04.35.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 Jan 2020 04:35:17 -0800 (PST)
+Subject: Re: [PATCH] nvmem: core: Fix a potential use after free
+To:     Xu Wang <vulab@iscas.ac.cn>
+Cc:     linux-kernel@vger.kernel.org
+References: <1577438434-9945-1-git-send-email-vulab@iscas.ac.cn>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <a5734013-f80b-772a-7fed-b548ff98ec4b@linaro.org>
+Date:   Mon, 6 Jan 2020 12:35:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200103023117.GA1313@shbuild999.sh.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <1577438434-9945-1-git-send-email-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Feng,
 
-On Fri, Jan 03, 2020 at 10:31:17AM +0800, Feng Tang wrote:
-> On Tue, Dec 31, 2019 at 01:59:23PM +0800, Feng Tang wrote:
-> > Hi Marcelo,
-> > 
-> > On Wed, Sep 18, 2019 at 10:13:34AM +0800, kernel test robot wrote:
-> > > Greeting,
-> > > 
-> > > FYI, we noticed a -12.6% regression of will-it-scale.per_process_ops due to commit:
-> > > 
-> > > 
-> > > commit: 259231a045616c4101d023a8f4dcc8379af265a6 ("cpuidle: add poll_limit_ns to cpuidle_device structure")
-> > > https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git master
-> > 
-> > Any comments on this? We re-run the test for 5.5-rc1, and the regression remains.
-> 
-> Anyway, I found commit 259231a04 lost one "break" when moving
-> the original code, thus the semantics is changed to the last
-> enabled state's target_residency instead of the first enabled
-> one's.
-> 
-> I don't know if it's intentional, and I guess no, so here 
-> is a fix patch, please review, thanks
+Thanks for the patch.
 
-Not intentional.
+On 27/12/2019 09:20, Xu Wang wrote:
+> Free the nvmem structure only after we are done using it.
+> This patch just moves the put_device() down a bit to avoid the
+> use after free.
 
-> But even with this patch, the regression is still not recovered.
-> 
-> - Feng
+Could you explain the issue bit more here on what exactly could go wrong 
+with the exiting order?
+may be the stack trace of the use-after-free case? Or steps to reproduce 
+the issue?
 
-This has been fixed upstream already, should be on Rafael's GIT tree.
+nvmem device is protected with kref.
 
-> >From cddd6b409e18ce97a8d7b851db4400396f71d857 Mon Sep 17 00:00:00 2001
-> From: Feng Tang <feng.tang@intel.com>
-> Date: Thu, 2 Jan 2020 16:58:31 +0800
-> Subject: [PATCH] cpuidle: Add back the lost break in cpuidle_poll_time
+--srini
+
 > 
-> Commit c4cbb8b649b5 move the poll time calculation into a
-> new function cpuidle_poll_time(), during which one "break"
-> get lost, and the semantic is changed from the last enabled
-> state's target_residency instead of the first enabled one's.
-> 
-> So add it back.
-> 
-> Fixes: c4cbb8b649b5 "cpuidle: add poll_limit_ns to cpuidle_device structure"
-> Signed-off-by: Feng Tang <feng.tang@intel.com>
-> Cc: Marcelo Tosatti <mtosatti@redhat.com>
+> Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
 > ---
->  drivers/cpuidle/cpuidle.c | 1 +
->  1 file changed, 1 insertion(+)
-
-About the regression... if you only revert the 
-
-drivers/cpuidle/poll_state.c
-
-changes from 
-
-259231a045616c4101d023a8f4dcc8379af265a6
-
-Is the performance regression gone?
-
+>   drivers/nvmem/core.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+> index 9f1ee9c..7051d34 100644
+> --- a/drivers/nvmem/core.c
+> +++ b/drivers/nvmem/core.c
+> @@ -535,8 +535,8 @@ static struct nvmem_device *__nvmem_device_get(void *data,
+>   
+>   static void __nvmem_device_put(struct nvmem_device *nvmem)
+>   {
+> -	put_device(&nvmem->dev);
+>   	module_put(nvmem->owner);
+> +	put_device(&nvmem->dev);
+>   	kref_put(&nvmem->refcnt, nvmem_device_release);
+>   }
+>   
+> 
