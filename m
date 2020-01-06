@@ -2,89 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA625130D45
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 06:49:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C893F130D4A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 06:53:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbgAFFtT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 00:49:19 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:51506 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbgAFFtT (ORCPT
+        id S1726712AbgAFFxw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 00:53:52 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:37263 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726338AbgAFFxv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 00:49:19 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0065nD1d081324;
-        Sun, 5 Jan 2020 23:49:13 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578289753;
-        bh=R3i1Mbg4typ+Pc2UOirvRsZH9pZWmKV1X2eo8bAsA4M=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=oU5zQVfiS9SSdzW4TUNv90U1pdkjLl5x4r5UBkg/hZeHCOLzscNGjt0EOMLcQfr0q
-         sjvWMsXzeSu4vvRiMzxvhXDW8GDryZ+TjUwZeCT4X9gA1RaH6P3EG7NE1rKqMP6bNb
-         XMETQqYbTs2YjSg2RaLlbLf0ePLYxhs/XtNH2hqM=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0065nDLk106433
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 5 Jan 2020 23:49:13 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Sun, 5 Jan
- 2020 23:49:13 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Sun, 5 Jan 2020 23:49:13 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0065nAPa097986;
-        Sun, 5 Jan 2020 23:49:11 -0600
-Subject: Re: [PATCH v5 13/14] dt-bindings: phy: Document WIZ (SERDES wrapper)
- bindings
-To:     Rob Herring <robh@kernel.org>
-CC:     Swapnil Kashinath Jakhade <sjakhade@cadence.com>,
-        Roger Quadros <rogerq@ti.com>, Jyri Sarha <jsarha@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20191216095712.13266-14-kishon@ti.com>
- <20200102095631.1165-1-kishon@ti.com> <20200103223421.GA9017@bogus>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <769f6bdb-cc39-06fb-f7a3-3a6831d80f2d@ti.com>
-Date:   Mon, 6 Jan 2020 11:21:16 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 6 Jan 2020 00:53:51 -0500
+Received: by mail-ot1-f67.google.com with SMTP id k14so70202421otn.4
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Jan 2020 21:53:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BQszsIlQqsooj5gDAGmY6RU64iOnhfI7B772izNBsYM=;
+        b=ee8gnuGL69ozRuwZUJpSr4P6/DsEbehVpg4t432EFwemYqGGmlTb0iEdTOJmBVFpqp
+         hFp1pQTG5THio9gam+tEfphxOt7f07ndimYZ2YwRz/ZmY3sg/pApil4/ADDJeo8ldFcR
+         ZjcNeHD2cwIMauayBpfJOLip/orBSkK1pItTPLQIFIzaiCrPVbQG7TJyiqcvoV9Ndo0W
+         KHHbbmsHkoA/jg+Aakp6SGBlkhLiRmq17t11KZb4Q12IjoSmBxBD7tAWhVYgOfe9MUQS
+         ZSEipdwYIyfI7+fO/xa2fEZw3tWIRFIFGZc1c7tG0MGzCMiCdoJmOPJseJlEmHxZuY5b
+         /MnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BQszsIlQqsooj5gDAGmY6RU64iOnhfI7B772izNBsYM=;
+        b=HNdSaxxSuim0awDDfF+xA+EAZYJoq7yiZuIe8Orv48QxtxHC8B8gsuyso8lqeRCznp
+         zsr1D2APi5i1+diLl0jan9RODpXTOqlXmi42aIqtzVEsU+IAiqc1uIwAk5s/2gA7zc/E
+         cvjTUUD7hllAPE45bq5BoqLr5EYrJMsV8FtEbGGdjVhzrYCz6M63GlDLqHfWHK6GbBr6
+         2PweocJCh2Npj/CUjSQ5cEB9rnz+lKYZOKsL0Bk6zUUdSPwfMiK1frkFUjc/3SELR+3y
+         5LCFk6IJxStCNq8fiWfreU2kt9fQe3ohGfqF8wlgkD7kOxtRU24wC2xo/IKG83kA8Dml
+         vhRQ==
+X-Gm-Message-State: APjAAAVnPl2loPgx2t7RWZNL7IMStx32fjLrBAKw6bJRcqi3PSJ8foBC
+        uUHud4BajwemuFfXdJJtrXKy4rVuQ/+nEe7Dz1IcHLrA
+X-Google-Smtp-Source: APXvYqwvEfu/W18MHjO0KaiXTWnKIy6C6TWOpJ0TQ+nCHQFMUhA7Ex6gzMAlw40UpiBvZRzdtntBkOGHZbT6lSYDXYk=
+X-Received: by 2002:a05:6830:2009:: with SMTP id e9mr62849528otp.160.1578290030741;
+ Sun, 05 Jan 2020 21:53:50 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200103223421.GA9017@bogus>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20200105090537.19979-1-oshpigelman@habana.ai> <20200105090537.19979-2-oshpigelman@habana.ai>
+In-Reply-To: <20200105090537.19979-2-oshpigelman@habana.ai>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Mon, 6 Jan 2020 07:53:43 +0200
+Message-ID: <CAFCwf13-WW2FkLRF9NzGB4CYUi0U6nD1zzAXcnQUYSG+GM4a-g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] habanalabs: do not halt Coresight during hard reset
+To:     Omer Shpigelman <oshpigelman@habana.ai>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 04/01/20 4:04 AM, Rob Herring wrote:
-> On Thu, 2 Jan 2020 15:26:31 +0530, Kishon Vijay Abraham I wrote:
->> Add DT binding documentation for WIZ (SERDES wrapper). WIZ is *NOT* a
->> PHY but a wrapper used to configure some of the input signals to the
->> SERDES. It is used with both Sierra(16G) and Torrent(10G) serdes.
->>
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->> [jsarha@ti.com: Add separate compatible for Sierra(16G) and Torrent(10G)
->>  SERDES]
->> Signed-off-by: Jyri Sarha <jsarha@ti.com>
->> ---
->> Changes from v4:
->> *) Fixed the indentation as suggested by Rob v4
->>
->>  .../bindings/phy/ti,phy-j721e-wiz.yaml        | 204 ++++++++++++++++++
->>  1 file changed, 204 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
->>
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-
-Thank you Rob!
-
--Kishon
+On Sun, Jan 5, 2020 at 11:05 AM Omer Shpigelman <oshpigelman@habana.ai> wrote:
+>
+> During hard reset we must not write to the device.
+> Hence avoid halting Coresight during user context close if it is done
+> during hard reset.
+> In addition, we must not reenable clock gating afterwards as it was
+> deliberately disabled in the beginning of the hard reset flow.
+>
+> Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
+> ---
+>  drivers/misc/habanalabs/device.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
+> index 166883b64725..b680b0caa69b 100644
+> --- a/drivers/misc/habanalabs/device.c
+> +++ b/drivers/misc/habanalabs/device.c
+> @@ -598,7 +598,9 @@ int hl_device_set_debug_mode(struct hl_device *hdev, bool enable)
+>                         goto out;
+>                 }
+>
+> -               hdev->asic_funcs->halt_coresight(hdev);
+> +               if (!hdev->hard_reset_pending)
+> +                       hdev->asic_funcs->halt_coresight(hdev);
+> +
+>                 hdev->in_debug = 0;
+>
+>                 goto out;
+> --
+> 2.17.1
+>
+Both patches are:
+Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
+Applied to -next
+Thanks,
+Oded
