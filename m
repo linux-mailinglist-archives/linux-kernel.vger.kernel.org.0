@@ -2,105 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EF1C131732
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:03:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01D2D131736
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Jan 2020 19:05:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbgAFSDp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 13:03:45 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44645 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbgAFSDo (ORCPT
+        id S1726701AbgAFSFY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 13:05:24 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:61774 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbgAFSFX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 13:03:44 -0500
-Received: by mail-qt1-f194.google.com with SMTP id t3so43126061qtr.11;
-        Mon, 06 Jan 2020 10:03:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NXHuuZed9m4gmjDMxbSt8Ydx4KTmpkC7vJID6XaP7I0=;
-        b=MRrkj8EI0gCPmdFxE+7l+GK4uoJ6rM6ez9nHt6AUuGx0FMkXiOZaBPPo6v3ir/4qvC
-         UM5lPvnzAegMqlxcvWBcv3A3h05n6p3fJ4wHTpCTlugRpUV3todEv6atqHe976LnXxna
-         if18JR4BhGt+t0M9PlWIWDBou86TspPSN28Kqbqr919TE6T9gKIMe/E0zIxV3Oq3Tfnm
-         LO0AH25bvTRbBaokmYmmGonA1NFq16uTbNKa5S2pthdQ8j1nL0twPvfvOIY3HlDgZQNg
-         YZUB0rAifbrSZjdksMKGwPQs4JtyBqj9GDLvR3mBRdQiAlt/GQkvWduSfMO9EhkKG5Fy
-         FoYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NXHuuZed9m4gmjDMxbSt8Ydx4KTmpkC7vJID6XaP7I0=;
-        b=VezwHh+MIzzxCQGalTuzxr99SNZEgNC8XxVSbBV56MIyvlQkv+7LNisHa866jeX9o0
-         94nGEkGj5cejiHTRS+5gRElR3k2ZMKt2P16H1XOLPaptyhZvAOERYWH0IfR83znHbXKM
-         NSyp1+rs8rvHEX6R4EbuZKekH3/mHA0yCvFMYlYFQoJ+fVDKQ0Gx/hAJgs3DVGVJVazG
-         ij3LPm/QJVYowTN6ApfvJatJTq0dZprpBSboZOg48Hui2ALcKvRpKOAUydLWHhl7InIq
-         F9E9N7/yZrcDGu71cfQJV2qcmbcSx+/62TnrB/X6xMHvszCy+G+sPb1cexhQzkb1VyKW
-         OCBQ==
-X-Gm-Message-State: APjAAAUnId8NLkMWS+NoVkwkR6cyzkHFuplSB/95GrLUASK+KCbNJRTw
-        mIBIPCEjHK1Ler5IEW0yMAzNv7cVr28C8vvdmC4=
-X-Google-Smtp-Source: APXvYqzoJpUI0qTBtGKc5HQQ71R+sejfLNU2IySNvN3xwwd+i3ukSvzyjPMESKmBcjWfEsJ28fSXH9mWzvLYPr9q2Ko=
-X-Received: by 2002:ac8:5457:: with SMTP id d23mr72628654qtq.93.1578333823652;
- Mon, 06 Jan 2020 10:03:43 -0800 (PST)
+        Mon, 6 Jan 2020 13:05:23 -0500
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id 006I54ue013464;
+        Tue, 7 Jan 2020 03:05:05 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com 006I54ue013464
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1578333905;
+        bh=ilQorFqS+zyMuayxMN+IpKjCHeBpG/ajISHuV8eMShA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=21siazaPoePAzfB8/BUG0CJf9TlDNifIdYb4d8oCT5/8Vnhd3vpxxFN7aQnQClJcC
+         Dv1gauvi0G+OWGz64vgtgQs/NGjIuOB7wxUMnkc1/lMND0+iA1S7nirIquujt/UyXl
+         L2zZG3jh9NZhkJVlxbwtpu1rdmimspym7LRQkrwPCN5TnuNz6J8VnV51nyJ/Q5Vea1
+         vq7RJv2rkxQLP6jpPJKUEEcoYzJYJIWiJ4KiVn4OegQ2504degVDMM3HuM+j7syuQr
+         9yLZ+zEX6vG7isP50NmeVaPYLo9G+bea2WZWkZqGB6XWQGFh2dAYrJCwsfGmWA7TR7
+         p5U/l8tk+rWJg==
+X-Nifty-SrcIP: [209.85.217.48]
+Received: by mail-vs1-f48.google.com with SMTP id g15so32203108vsf.1;
+        Mon, 06 Jan 2020 10:05:05 -0800 (PST)
+X-Gm-Message-State: APjAAAX7VgDErFB2Wo08hv4xXA1bxFxUAOMou+s2T8ZSoXVjw5Dw6Rys
+        lQgR0WnrDhTnvSZ/fjEnKbnn6mIELU2v8GDbZIc=
+X-Google-Smtp-Source: APXvYqzLMthNv/omDtOFD3rCYekMf0c1Qo8cZvSZACuUeY6SdmL+pxCYSI/AmGugkfWuMqx1ZrBVHHzsnB9zi04Vhwg=
+X-Received: by 2002:a05:6102:48b:: with SMTP id n11mr44112854vsa.181.1578333903950;
+ Mon, 06 Jan 2020 10:05:03 -0800 (PST)
 MIME-Version: 1.0
-References: <20200102172413.654385-1-amanieu@gmail.com> <20200102172413.654385-3-amanieu@gmail.com>
- <20200102180130.hmpipoiiu3zsl2d6@wittgenstein> <20200106173953.GB9676@willie-the-truck>
-In-Reply-To: <20200106173953.GB9676@willie-the-truck>
-From:   "Amanieu d'Antras" <amanieu@gmail.com>
-Date:   Mon, 6 Jan 2020 19:03:32 +0100
-Message-ID: <CA+y5pbSBYLvZ46nJP0pSYZnRohtPxHitOHPEaLXq23-QrPKk2g@mail.gmail.com>
-Subject: Re: [PATCH 2/7] arm64: Implement copy_thread_tls
-To:     Will Deacon <will@kernel.org>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
-        "# 3.4.x" <stable@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <1575979754-184896-1-git-send-email-john.garry@huawei.com> <7e769634-eb22-5827-e2d8-df68134056c0@huawei.com>
+In-Reply-To: <7e769634-eb22-5827-e2d8-df68134056c0@huawei.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Tue, 7 Jan 2020 03:04:28 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS+XHGete9u2SV7fTj3HpROQmzfuJhV8tXW_xXkoPOYvg@mail.gmail.com>
+Message-ID: <CAK7LNAS+XHGete9u2SV7fTj3HpROQmzfuJhV8tXW_xXkoPOYvg@mail.gmail.com>
+Subject: Re: [PATCH] merge_config.sh: Add option for allmodconfig
+To:     John Garry <john.garry@huawei.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Anders Roxell <anders.roxell@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 6, 2020 at 6:39 PM Will Deacon <will@kernel.org> wrote:
-> I also ran the native and compat selftests but, unfortunately, they all
-> pass even without this patch. Do you reckon it would be possible to update
-> them to check the tls pointer?
+On Mon, Jan 6, 2020 at 6:18 PM John Garry <john.garry@huawei.com> wrote:
+>
+> On 10/12/2019 12:09, John Garry wrote:
+>
+> Hi Masahiro,
+>
+> Could you please consider this patch?
+>
+> Thanks,
+> John
+>
+> > Recently there has been some work in reporting and fixing bugs in booting
+> > an allmodconfig kernel - here are a few examples:
+> >
+> > https://lore.kernel.org/linux-edac/304df85b-8b56-b77e-1a11-aa23769f2e7c@huawei.com/T/#t
+> > https://lore.kernel.org/linux-ide/bdf02e03-86a1-3d35-2908-28187f504495@huawei.com/T/#t
+> > https://lore.kernel.org/netdev/CADYN=9LCPfbpwdTWKw03B22-y3Text=RWXW7XP7wJBHYsMOgrA@mail.gmail.com/
+> > https://sourceforge.net/p/openipmi/mailman/message/36871567/
+> >
+> > If we want to boot an allmodconfig kernel we may still want to force some
+> > loadable modules built-in, like UART drivers. Or just still turn off some
+> > configs.
 
-Here's the program I used for testing on arm64. I considered adding it
-to the selftests but there is no portable way of reading the TLS
-register on all architectures.
 
-#include <sys/syscall.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdint.h>
+I do not understand why you need to use merge_config.sh
+for this purpose.
 
-#define __NR_clone3 435
-struct clone_args {
-    uint64_t flags;
-    uint64_t pidfd;
-    uint64_t child_tid;
-    uint64_t parent_tid;
-    uint64_t exit_signal;
-    uint64_t stack;
-    uint64_t stack_size;
-    uint64_t tls;
-};
+KCONFIG_ALLCONFIG=<path-to-your-config-fragment> make allmodconfig
 
-#define USE_CLONE3
+should work.
 
-int main() {
-    printf("Before fork: tp = %p\n", __builtin_thread_pointer());
-#ifdef USE_CLONE3
-    struct clone_args args = {
-        .flags = CLONE_SETTLS,
-        .tls = (uint64_t)__builtin_thread_pointer(),
-    };
-    int ret = syscall(__NR_clone3, &args, sizeof(args));
-#else
-    int ret = syscall(__NR_clone, CLONE_SETTLS, 0, 0,
-__builtin_thread_pointer(), 0);
-#endif
-    printf("Fork returned %d, tp = %p\n", ret, __builtin_thread_pointer());
-}
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
