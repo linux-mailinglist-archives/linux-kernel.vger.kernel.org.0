@@ -2,150 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E19A1327D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 14:37:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CAAC1327DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 14:38:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbgAGNh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 08:37:56 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:47290 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbgAGNhz (ORCPT
+        id S1728130AbgAGNid (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 08:38:33 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52587 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727880AbgAGNic (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 08:37:55 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 007DbsqS117064;
-        Tue, 7 Jan 2020 07:37:54 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578404274;
-        bh=y7OG/HB4e1SJdhnzrFIBHuFkRinvpiow8MiLLExRC8g=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=TP0gEdiYlUHzzHL05xw6i7hvM8dCYkjnIA+wuOfaU61jB+GHvaiYMwHcWPuT9kvx8
-         8DOslR5vxE4NhgQ7Dj0neNcVqUh7Lk6VEH1VCwKCgVpN5SwHPD+RtfOUQLY1bHZsF0
-         t3tu/3PawvBJyBx+XEr7GqvrAeT7cBxgrey56+S4=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 007Dbsc3000940
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 7 Jan 2020 07:37:54 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 7 Jan
- 2020 07:37:54 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 7 Jan 2020 07:37:53 -0600
-Received: from [10.250.65.50] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 007Dbrhw047496;
-        Tue, 7 Jan 2020 07:37:53 -0600
-Subject: Re: [PATCHv4 06/14] remoteproc/omap: Initialize and assign reserved
- memory node
-To:     Tero Kristo <t-kristo@ti.com>, <bjorn.andersson@linaro.org>,
-        <ohad@wizery.com>, <linux-remoteproc@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <mathieu.poirier@linaro.org>,
-        <linux-omap@vger.kernel.org>, <s-anna@ti.com>
-References: <20200102131845.12992-1-t-kristo@ti.com>
- <20200102131845.12992-7-t-kristo@ti.com>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <f380b7a7-cef5-bf56-2344-49b83a15422e@ti.com>
-Date:   Tue, 7 Jan 2020 08:37:52 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Tue, 7 Jan 2020 08:38:32 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1iop3l-0007Jd-RU; Tue, 07 Jan 2020 14:38:13 +0100
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1iop3j-0005N2-6B; Tue, 07 Jan 2020 14:38:11 +0100
+Date:   Tue, 7 Jan 2020 14:38:11 +0100
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "andrew@aj.id.au" <andrew@aj.id.au>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "joel@jms.id.au" <joel@jms.id.au>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 3/6] dt-bindings: mfd: da9062: add regulator voltage
+ selection documentation
+Message-ID: <20200107133811.rua5i6lflzyzlh24@pengutronix.de>
+References: <20191211170918.q7kqkd4lrwwp7jl3@pengutronix.de>
+ <20191212161019.GF4310@sirena.org.uk>
+ <20191212162152.5uu3feacduetysq7@pengutronix.de>
+ <20191212165124.GJ4310@sirena.org.uk>
+ <20191216085525.csr2aglm5md4vtsw@pengutronix.de>
+ <20191216114454.GB4161@sirena.org.uk>
+ <20191217073533.GC31182@pengutronix.de>
+ <20191217125832.GF4755@sirena.org.uk>
+ <20200107083654.atgbjhrnhyax2gqq@pengutronix.de>
+ <20200107130911.GD4877@sirena.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20200102131845.12992-7-t-kristo@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200107130911.GD4877@sirena.org.uk>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 14:32:28 up 53 days,  4:51, 47 users,  load average: 0.02, 0.03,
+ 0.00
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/2/20 8:18 AM, Tero Kristo wrote:
-> From: Suman Anna <s-anna@ti.com>
+On 20-01-07 13:09, Mark Brown wrote:
+> On Tue, Jan 07, 2020 at 09:36:54AM +0100, Marco Felsch wrote:
+> > On 19-12-17 12:58, Mark Brown wrote:
 > 
-> The reserved memory nodes are not assigned to platform devices by
-> default in the driver core to avoid the lookup for every platform
-> device and incur a penalty as the real users are expected to be
-> only a few devices.
+> > > This doesn't say anything about how the GPIO input is expected to be
+> > > controlled, for voltage setting any runtime control would need to be
+> > > done by the driver and it sounds like that's all that can be controlled.
+> > > The way this reads I'd expect one use of this to be for fast voltage
+> > > setting for example (you could even combine that with suspend sequencing
+> > > using the internal sequencer if you mux back to the sequencer during
+> > > suspend).
 > 
-> OMAP remoteproc devices fall into the above category and the OMAP
-> remoteproc driver _requires_ specific CMA pools to be assigned
-> for each device at the moment to align on the location of the
-> vrings and vring buffers in the RTOS-side firmware images. So,
-
-
-Requires only at the moment due to firmware..
-
-This sounds like some firmware images hard-coded their vring addresses
-instead of getting them dynamically as they should and we are hacking
-around that on the kernel side by giving them the addresses they use as
-carveouts.
-
-Should we rather make use of the IOMMU attached to the DSP to map any
-kernel address to the DSP where the firmware expects it? Or better yet
-fixup the firmwares.
-
-DRAM carveouts should be a last resort used only for when hardware
-really requires it.
-
-Andrew
-
-
-> use the of_reserved_mem_device_init/release() API appropriately
-> to assign the corresponding reserved memory region to the OMAP
-> remoteproc device. Note that only one region per device is
-> allowed by the framework.
+> > The input signal is routed trough the da9062 gpio block to the
+> > regualtors. You can't set any voltage value using a gpio instead you
+> > decide which voltage setting is applied. The voltage values for
+> > runtime/suspend comes from the dt-data. No it's not just a fast
+> > switching option imagine the system suspend case where the cpu and soc
+> > voltage can be reduced to a very low value. Older soc's like the imx6
+> > signaling this state by a hard wired gpio line because the soc and
+> > cpu cores don't work properly on such low voltage values. This is
+> > my use case and I can't use the sequencer.
 > 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/remoteproc/omap_remoteproc.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-> index 9ca337f18ac2..8a6dd742a8b1 100644
-> --- a/drivers/remoteproc/omap_remoteproc.c
-> +++ b/drivers/remoteproc/omap_remoteproc.c
-> @@ -17,6 +17,7 @@
->  #include <linux/module.h>
->  #include <linux/err.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_reserved_mem.h>
->  #include <linux/platform_device.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/remoteproc.h>
-> @@ -480,14 +481,22 @@ static int omap_rproc_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto free_rproc;
->  
-> +	ret = of_reserved_mem_device_init(&pdev->dev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "device does not have specific CMA pool\n");
-> +		goto free_rproc;
-> +	}
-> +
->  	platform_set_drvdata(pdev, rproc);
->  
->  	ret = rproc_add(rproc);
->  	if (ret)
-> -		goto free_rproc;
-> +		goto release_mem;
->  
->  	return 0;
->  
-> +release_mem:
-> +	of_reserved_mem_device_release(&pdev->dev);
->  free_rproc:
->  	rproc_free(rproc);
->  	return ret;
-> @@ -499,6 +508,7 @@ static int omap_rproc_remove(struct platform_device *pdev)
->  
->  	rproc_del(rproc);
->  	rproc_free(rproc);
-> +	of_reserved_mem_device_release(&pdev->dev);
->  
->  	return 0;
->  }
-> 
+> My point is that I can't tell any of this from the description.
+
+Therefore I want to discuss the dt-binding documentation with you and
+the others to get this done. Is the above description better to
+understand the dt-binding?
+
+Regards,
+  Marco
