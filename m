@@ -2,94 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE2011324B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 12:21:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90ADC1324C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 12:23:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbgAGLVe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 06:21:34 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40265 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726937AbgAGLVd (ORCPT
+        id S1727941AbgAGLXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 06:23:24 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:49492 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726937AbgAGLXX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 06:21:33 -0500
-Received: by mail-lj1-f194.google.com with SMTP id u1so54290728ljk.7
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 03:21:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=zaiQ1cuqFBkIDOUkNiiYooeTwQbG4o2Cu8pdRqb86Zs=;
-        b=RLm8JWYCxRIwSDSYpzlSFaAd7SnE3v2JhkNdb0EVyINtfqLSbSqIYWfpwjtpGpUx0Y
-         ens/NJ70F9Y51ax3gMBoEmKqlegtBxozbwablZh9tshVKcfRW6J3vBpIHdSrcqr8fGot
-         xdAo9nZ61BWYFaDji4sY+138loAb7XZUsBf6e0hzx+36N5r2EBHsqT9Xg8OMyzrqLOVG
-         oXK/T3VCTTXip+1Auu8oNAEFEbp6qUS/jXAxiKHse4/8nrNV2CBt1IIeLHsoYUO7w7sJ
-         4iJSF2YnDuBKLeRMdW6D46u18jsUQxl4ToeqoB10mLSXpBqXlZ/BLm4HRE50Hr+gRizZ
-         F9zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=zaiQ1cuqFBkIDOUkNiiYooeTwQbG4o2Cu8pdRqb86Zs=;
-        b=UnwEkdjKDCoGUa0/fLtYUzibWfDGB/e9Agttu3VIVUoezFJwTxavHM4ji5YoT8OPFA
-         ioddkVsZvDzYlpe850tFuOY87M1ywbd4a2mYRjrsTiKGL4cuVsr90WsKV+Cx1BBsIVky
-         kKd8IzN9aW7WTZGb63RyuMn8d/CFMIGEaeRpEK5bRM87zO3HDVHvP8VYVTAK37Jc+djc
-         wt1OaProrjAlLrNkR/1mCG/v1JRaqmF0OdUj3Fm90DAEQQOqSAgtdJMT6I5QLyCqLpo5
-         YroqlVphUbpojPyS6eA8x78H4ZbsJuqV2G3j368g4BBPhvyTvTbjK6hmbcLMyMv69UBK
-         +pyQ==
-X-Gm-Message-State: APjAAAVQCCK05gaRm6oj9mesaN8hcgOonzn2fCugGpzbPEYysVwRU74z
-        BF4JEIo5JE3RA9FGqI4Py6IWbo5B4SaotMEb3S3g2030
-X-Google-Smtp-Source: APXvYqzSVGcttbFs27pY7emnyB5PE5zI/ATque/6L3+KBATTInLo3hoI1a9ZaKXEAkEkpMVFQWZyXGjvcfRNufjwjPc=
-X-Received: by 2002:a2e:81d0:: with SMTP id s16mr60320495ljg.166.1578396091215;
- Tue, 07 Jan 2020 03:21:31 -0800 (PST)
+        Tue, 7 Jan 2020 06:23:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=pr1OIIiYcGvrLhEd9QEUxm5iIVn4xs+eIhcYzlh+uwg=; b=DOgrVJ1jMcrYC/1BsrDiGjUNj
+        3B69F5bffHaKO700mFz0SFBtaFiGyRFTZ86WMxsUUUyPJdNHK5q8/tZvstimdnSYirWtveRhV5xXa
+        Y84FWAlbgyi3cWIixYZ5xqv7xu/RCrG5fJUTp8O4ahV20Ioc6h469fgs5+BoMyM8bDMTkaPHa1sSi
+        iDc7I5Ra7uDZpiCHID1TjjGRJGWYt9S+7uqNyzmdFJ55+xxDSTygF12P8z1mOROu06XuBXJngAUIC
+        pCMfXpsgOBP/ua9PkC52FTHpwYg2ToSZTk1pMfADbPJ0htywnGRlMAtskB3helRE+fbg6ZByV1dwZ
+        Yx2OZ8c1A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iomws-0005td-IK; Tue, 07 Jan 2020 11:22:58 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id ADCF13012C3;
+        Tue,  7 Jan 2020 12:21:22 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 368FD20D3D422; Tue,  7 Jan 2020 12:22:55 +0100 (CET)
+Date:   Tue, 7 Jan 2020 12:22:55 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>, Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Parth Shah <parth@linux.ibm.com>,
+        Rik van Riel <riel@surriel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] sched, fair: Allow a small degree of load imbalance
+ between SD_NUMA domains v2
+Message-ID: <20200107112255.GV2827@hirez.programming.kicks-ass.net>
+References: <20191220084252.GL3178@techsingularity.net>
+ <CAKfTPtDp624geHEnPmHki70L=ZrBuz6zJG3zW0VFy+_S064Etw@mail.gmail.com>
+ <20200103143051.GA3027@techsingularity.net>
+ <CAKfTPtCGm7-mq3duxi=ugy+mn=Yutw6w9c35+cSHK8aZn7rzNQ@mail.gmail.com>
+ <20200106145225.GB3466@techsingularity.net>
+ <CAKfTPtBa74nd4VP3+7V51Jv=-UpqNyEocyTzMYwjopCgfWPSXg@mail.gmail.com>
+ <20200107095655.GF3466@techsingularity.net>
 MIME-Version: 1.0
-Received: by 2002:ab3:5615:0:0:0:0:0 with HTTP; Tue, 7 Jan 2020 03:21:30 -0800 (PST)
-Reply-To: moneygramtg.togo@gmail.com
-From:   amauche david <amauchedavid022@gmail.com>
-Date:   Tue, 7 Jan 2020 03:21:30 -0800
-Message-ID: <CAJZbFkzUST1D5jCoTeDEg_5cs1c=seSY3iqqj8qgEpQo9Kd8Gg@mail.gmail.com>
-Subject: =?UTF-8?Q?Atenci=C3=B3n_Beneficiario?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200107095655.GF3466@techsingularity.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Attention Dear Beneficiary
+On Tue, Jan 07, 2020 at 09:56:55AM +0000, Mel Gorman wrote:
 
-welcome to Money Gram  this is to inform you that  We deposited the
-verification of your fund ($ 550,000,00 USD) through the Money Gram
-daily payment   after our finally meeting regarding your winning
-fund, everything you will do is to contact  Director MR, NELSON
-AGBOKO   through
-Email (moneygramtg.togo@gmail.com).
-PHONE NUMBER    +228
-  984-617-61.
+> Much more importantly, doing what you suggest allows an imbalance
+> of more CPUs than are backed by a single LLC. On high-end AMD EPYC 2
+> machines, busiest->group_weight scaled by imbalance_pct spans multiple L3
+> caches. That is going to have side-effects. While I also do not account
+> for the LLC group_weight, it's unlikely the cut-off I used would be
+> smaller than an LLC cache on a large machine as the cache.
+> 
+> These two points are why I didn't take the group weight into account.
+> 
+> Now if you want, I can do what you suggest anyway as long as you are happy
+> that the child domain weight is also taken into account and to bound the
+> largest possible allowed imbalance to deal with the case of a node having
+> multiple small LLC caches. That means that some machines will be using the
+> size of the node and some machines will use the size of an LLC. It's less
+> predictable overall as some machines will be "special" relative to others
+> making it harder to reproduce certain problems locally but it would take
+> imbalance_pct into account in a way that you're happy with.
+> 
+> Also bear in mind that whether LLC is accounted for or not, the final
+> result should be halved similar to the other imbalance calculations to
+> avoid over or under load balancing.
 
-An irrevocable   compensation  has been issued by the World Bank and
-the International Monetary Fund (IMF) on your compensation. Contact
-Money Gram daily payment   Investment center director for the  claims
-of your compensation by sending information to  the sub-departments
-Email (moneygramtg.togo@gmail.com).
+> +		/* Consider allowing a small imbalance between NUMA groups */
+> +		if (env->sd->flags & SD_NUMA) {
+> +			struct sched_domain *child = env->sd->child;
 
+This assumes sd-child exists, which should be true for NUMA domains I
+suppose.
 
-1.Your Full name:?
-2. Your home Address:?
-3. Your Nationality:?
-4. Your Telephone: ?
-5.COPY  COPY OF YOUR PASSPORT?
+> +			unsigned int imbalance_adj;
+> +
+> +			/*
+> +			 * Calculate an acceptable degree of imbalance based
+> +			 * on imbalance_adj. However, do not allow a greater
+> +			 * imbalance than the child domains weight to avoid
+> +			 * a case where the allowed imbalance spans multiple
+> +			 * LLCs.
+> +			 */
 
-However, we are pleased to inform you that based on our gratitude /
-instructions; Your entire fund, worth $ $ 550, 000,00 USD was approved
-in your favor your will receive your total fund  ,.
+That comment is a wee misleading, @child is not an LLC per se. This
+could be the NUMA distance 2 domain, in which case @child is the NUMA
+distance 1 group.
 
- You will be contacted by the director of Money Gram   payment office
- in the next 24 hours as soon as you send the necessary information,
-and you will get  your prizes sum of  $ 550,000,00 Dollars directly
-from us. Please note that your payment will be returned to the IMF
-within 72 hours if you do not cooperate with the time given
+That said, even then it probably makes sense to ensure you don't idle a
+whole smaller distance group.
 
-You are welcome to Money Gram   int'l and we stand to give you the best service.
-
-Best regards.
-
-MR, NELSON  AGBOKO
+> +			imbalance_adj = busiest->group_weight * (env->sd->imbalance_pct - 100) / 100;
+> +			imbalance_adj = min(imbalance_adj, child->span_weight);
+> +			imbalance_adj >>= 1;
+> +
+> +			/*
+> +			 * Ignore small imbalances when the busiest group has
+> +			 * low utilisation.
+> +			 */
+> +			if (busiest->sum_nr_running < imbalance_adj)
+> +				env->imbalance = 0;
+> +		}
+> +
+>  		return;
+>  	}
+>  
