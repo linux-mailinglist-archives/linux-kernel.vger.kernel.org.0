@@ -2,76 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D443A132930
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 15:45:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3894313293A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 15:47:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbgAGOpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 09:45:50 -0500
-Received: from mga03.intel.com ([134.134.136.65]:32217 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726937AbgAGOpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 09:45:50 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2020 06:45:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,406,1571727600"; 
-   d="scan'208";a="225683565"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga001.fm.intel.com with ESMTP; 07 Jan 2020 06:45:47 -0800
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1ioq7A-0005rV-AR; Tue, 07 Jan 2020 16:45:48 +0200
-Date:   Tue, 7 Jan 2020 16:45:48 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stefani Seibold <stefani@seibold.net>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kent Gibson <warthog618@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 00/13] gpiolib: add an ioctl() for monitoring line
- status changes
-Message-ID: <20200107144548.GG32742@smile.fi.intel.com>
-References: <20191224120709.18247-1-brgl@bgdev.pl>
- <CACRpkdZ_TroKCAnDWiY-jPbe0NL+ingm1pMLQLPxT1Uh78kx8g@mail.gmail.com>
- <CAMpxmJXikLw0d1e1Eq7vVzoORz3utEBxfG6nRmkngLqezVqtuA@mail.gmail.com>
- <CACRpkdY2NXNrAk9VY18YDeQ2WDfDfAyi4mgW26JuTPHdEOE-uQ@mail.gmail.com>
- <20200107144455.GF32742@smile.fi.intel.com>
+        id S1728316AbgAGOrF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 09:47:05 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:59600 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727975AbgAGOrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 09:47:04 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 3AE2830EE6EF2E3D4DC3;
+        Tue,  7 Jan 2020 22:46:54 +0800 (CST)
+Received: from localhost (10.177.98.84) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Tue, 7 Jan 2020
+ 22:46:46 +0800
+From:   weiqi <weiqi4@huawei.com>
+To:     <alexander.h.duyck@linux.intel.com>, <alex.williamson@redhat.com>
+CC:     <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <pbonzini@redhat.com>, <x86@kernel.org>, wei qi <weiqi4@huawei.com>
+Subject: [PATCH 0/2] page hinting add passthrough support
+Date:   Tue, 7 Jan 2020 22:46:37 +0800
+Message-ID: <1578408399-20092-1-git-send-email-weiqi4@huawei.com>
+X-Mailer: git-send-email 1.8.4.msysgit.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200107144455.GF32742@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.177.98.84]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 04:44:55PM +0200, Andy Shevchenko wrote:
-> On Tue, Jan 07, 2020 at 01:50:28PM +0100, Linus Walleij wrote:
-> 
-> ...
-> 
-> > Let's try to CC the actual author (Stefani Seibold) and see if the mail
-> > address works and if he can look at it. Or did you already talk to
-> > Stefani?
-> > 
-> > (git blame is always my best friend in cases like this, hehe)
-> 
-> Recently I started to be smarted in such cases, i.e. I run also
-> `git log --author='$AUTHOR'` to see if they are still active and
-> what address had been used lately.
+From: wei qi <weiqi4@huawei.com>
 
-...and another possibility to `git log --grep '$AUTHOR'`.
+
+I just implemented dynamically updating the iommu table to support pass-through,
+It seen to work fine.
+
+Test:
+start a 4G vm with 2M hugetlb and ixgbevf passthrough, 
+    GuestOS: linux-5.2.6 + 	(mm / virtio: Provide support for free page reporting)
+    HostOS: 5.5-rc4
+    Host: Intel(R) Xeon(R) Gold 6161 CPU @ 2.20GHz 
+
+after enable page hinting, free pages at GuestOS can be free at host. 
+
+
+before,
+ # cat /sys/devices/system/node/node*/hugepages/hugepages-2048kB/free_hugepages 
+ 5620
+ 5620
+after start VM,
+ # numastat -c qemu
+
+ Per-node process memory usage (in MBs)
+ PID              Node 0 Node 1 Total
+ ---------------  ------ ------ -----
+ 24463 (qemu_hotr      6      6    12
+ 24479 (qemu_tls_      0      8     8
+ 70718 (qemu-syst     58    539   597
+ ---------------  ------ ------ -----
+ Total                64    553   616
+ # cat /sys/devices/system/node/node*/hugepages/hugepages-2048kB/free_hugepages 
+ 5595
+ 5366
+
+the modify at qemu,
+ +int kvm_discard_range(struct kvm_discard_msg discard_msg)  
+ +{
+ +    return kvm_vm_ioctl(kvm_state, KVM_DISCARD_RANGE, &discard_msg);
+ +}
+
+ static void virtio_balloon_handle_report(VirtIODevice *vdev, VirtQueue *vq)
+ {
+            ..................
+ +           discard_msg.in_addr = elem->in_addr[i];
+ +           discard_msg.iov_len = elem->in_sg[i].iov_len;
+
+            ram_block_discard_range(rb, ram_offset, size);
+ +           kvm_discard_range(discard_msg);
+
+then, further test network bandwidth, performance seem ok.
+ 
+Is there any hidden problem in this implementation?
+And, is there plan to support pass-throughyour?
+
+wei qi (2):
+  vfio: add mmap/munmap API for page hinting
+  KVM: add support for page hinting
+
+ arch/x86/kvm/mmu/mmu.c          |  79 ++++++++++++++++++++
+ arch/x86/kvm/x86.c              |  96 ++++++++++++++++++++++++
+ drivers/vfio/vfio.c             | 109 ++++++++++++++++++++++++++++
+ drivers/vfio/vfio_iommu_type1.c | 157 +++++++++++++++++++++++++++++++++++++++-
+ include/linux/kvm_host.h        |  41 +++++++++++
+ include/linux/vfio.h            |  17 ++++-
+ include/uapi/linux/kvm.h        |   7 ++
+ virt/kvm/vfio.c                 |  11 ---
+ 8 files changed, 503 insertions(+), 14 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+1.8.3.1
 
 
