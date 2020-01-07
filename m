@@ -2,87 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E96B13265D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 13:38:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14BAB132667
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 13:39:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728027AbgAGMic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 07:38:32 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:43520 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727722AbgAGMic (ORCPT
+        id S1728086AbgAGMiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 07:38:55 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:54835 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726937AbgAGMiy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 07:38:32 -0500
-Received: by mail-lf1-f67.google.com with SMTP id 9so38758734lfq.10
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 04:38:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=xNdg/eGe2spHZF8Ar7NLXHqFtzVzxyf+teERuO/bVjc=;
-        b=IBgA2Em6iQG71nytT7MVKkAkSpchm34hogp9nrPDVFD2uq6bE3RLvT5EC2lmzO6J6c
-         Dbg1dYo4ATLwVPgn2RytyJdEgTF84i4p/VdfrHVBASGlIo/MAWHtdDIDJErP4DFAXMh3
-         aN4WgMRJ1rLGHzDYNjfegkvyLIlgRMuRRr2IftbxWokVUQTvks65sqQ/2lcGa1brrus0
-         50pN1du3FO+emJhqwhHyfYqrCvhVETASPAVhymc1hEnaXzq3JRmoVXDN00dq1VCT5laB
-         Q+0jWOsP1P9M4W9EabnTv4RrlSWAniEilZ7hgrBtP5rtkEooAK4qRb4b+dGg2y2mIqYi
-         dXiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=xNdg/eGe2spHZF8Ar7NLXHqFtzVzxyf+teERuO/bVjc=;
-        b=Ir0wLTNu1ZaV9BhvhX8mOBxgPBd+jhPEf9Wt+czY6VFT9gTLid9BSSpR51EDJrAZY4
-         kifs4wXp3qWvDo6T9maKiB2cqrSm7AKYn//TQ8/yttDyySLhyF8UodqtFjO8B0W8hJb1
-         bd1ZzWIrWeZa8J/SysQdaqs8NTRCz+22tmsttccGDMV38zNlHK9Q0ySn6POwipb29lIA
-         q4i+pgdbgAuI1RP8+86Lrq8TZHrSeXaLMKh0+Lh1w70nMWdBQOAEA2I9hgZj90doOzZ8
-         RXD+sF4ifeIqAgGITs2M4HZ11q39HvYLRAx4V+Y92UHWDfXxiMPpDhXFKx8211gPJNVk
-         0LkA==
-X-Gm-Message-State: APjAAAUT+c1eFgr3e6P57XosVuJrYBvEyLW2Lt9kxcDzKkI3fSDRVCjt
-        T0nNq2lgXfp8tiyPPvDIheBJIXAzMBjwZ6BjgzCMzA==
-X-Google-Smtp-Source: APXvYqyjy7HCbuFJZMBW/ujChvDuspmEEyJbLXUF8TFZisyKZFmn1M7N7wpY7pWWtfq9hM2MIuNebIt0EKDUy/5fjNI=
-X-Received: by 2002:a19:8a41:: with SMTP id m62mr59247202lfd.5.1578400710421;
- Tue, 07 Jan 2020 04:38:30 -0800 (PST)
+        Tue, 7 Jan 2020 07:38:54 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 007CbTRF018497;
+        Tue, 7 Jan 2020 13:38:35 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=LxTGVUsDWtY2YxgGD5UmI2rW8W4vNcqPH5eDldr9TMA=;
+ b=mCKy4VfifgLqBEmMC+JyM2wd8xHWWRPlfcO9tBULwvB4WSZGM7dqwD+ZdYdGjdkeABaw
+ nzDFGUMuy4C1JeFL2hIYMOJa9TcNUhsGsXov2xL5hSGELcis4+ql5PVmwdasX+JGROR8
+ QtUcRhCki+UVzJ2zYIqaNS1S9Rw4q4xtXwtoV72cBOVn8DtRPDUTgIulVvj6NMkAzxd8
+ +604ZsuyIvYnHFIQXCgHXUpZxohVMWMCIZOhUsBdP1e/Wp41MWH/CY5yXJrzzhN2gcI8
+ 3sg5Cod1EhmnclLCrwaGpj/YlTQbb+BTiZ97E4B12pWVViHkf1pZU17FgUXgqBozMSKZ wg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xakuqp4c2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 07 Jan 2020 13:38:35 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 95642100034;
+        Tue,  7 Jan 2020 13:38:31 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node3.st.com [10.75.127.18])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 67CB52AFAB3;
+        Tue,  7 Jan 2020 13:38:31 +0100 (CET)
+Received: from localhost (10.75.127.47) by SFHDAG6NODE3.st.com (10.75.127.18)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 Jan 2020 13:38:31
+ +0100
+From:   <patrice.chotard@st.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux@armlinux.org.uk>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC:     <patrice.chotard@st.com>
+Subject: [PATCH 0/2] ARM: dts: stih410-b2260: Fix ethernet PHY DT node
+Date:   Tue, 7 Jan 2020 13:38:26 +0100
+Message-ID: <20200107123828.6586-1-patrice.chotard@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20191215183047.9414-1-digetx@gmail.com> <CACRpkdYAKS50-CNmE0nRNQanFxKejoHrwxho3fZXROoLZUb4+Q@mail.gmail.com>
- <CAMpxmJVi1hy6a72M7rAHP0AXW1Z4cGp8H0O6ayLMwFm9UL3WPQ@mail.gmail.com>
- <CACRpkdaNAzpDu6uxETnuDGxnXTJTh0LhcE=9DL9-Kwi4butZLA@mail.gmail.com> <CAMpxmJXbR8=esuKhMKzD8LGFC6_Rz4uQXJ2egCXGLj_eauxS5g@mail.gmail.com>
-In-Reply-To: <CAMpxmJXbR8=esuKhMKzD8LGFC6_Rz4uQXJ2egCXGLj_eauxS5g@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 7 Jan 2020 13:38:19 +0100
-Message-ID: <CACRpkdZZc2z9_9tjwOEYCuv1fzrqJ7Eb5UK-T9GA+6BqBYe_LQ@mail.gmail.com>
-Subject: Re: [PATCH v1 0/3] Tegra GPIO: Minor code clean up
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG8NODE2.st.com (10.75.127.23) To SFHDAG6NODE3.st.com
+ (10.75.127.18)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2020-01-07_03:2020-01-06,2020-01-07 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 7, 2020 at 10:31 AM Bartosz Golaszewski
-<bgolaszewski@baylibre.com> wrote:
-> wt., 7 sty 2020 o 10:29 Linus Walleij <linus.walleij@linaro.org> napisa=
-=C5=82(a):
+From: Patrice Chotard <patrice.chotard@st.com>
 
-> > > Ugh, I now noticed I responded to Thierry only after applying this to=
- my tree.
-> > >
-> > > Anyway, it shouldn't be a problem. I'll take more care next time.
-> >
-> > OK shall I drop the patches from my tree then? No big deal.
-> >
->
-> If you're fine with this, sure!
+This series is fixing a kernel Oops and is removing deprecated PHY properties: 
 
-OK dropped them, hadn't even pushed the branch out yet.
+ - Since commit 'd3e014ec7d5e ("net: stmmac: platform: Fix MDIO init for 
+   platforms without PHY")', a kernel Oops occurs and ethernet is no more
+   functional.
 
-Soon reaching the top of my mailbox so I will be pushing the branches
-for the autobuilders and later tonight for-next.
+ - Some deprecated Synopsys phy properties was always present in DT, 
+   remove them.
 
-Yours,
-Linus Walleij
+Patrice Chotard (2):
+  ARM: dts: stih410-b2260: Fix ethernet phy DT node
+  ARM: dts: stih410-b2260: Remove deprecated snps PHY properties
+
+ arch/arm/boot/dts/stih410-b2260.dts | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+-- 
+2.17.1
+
