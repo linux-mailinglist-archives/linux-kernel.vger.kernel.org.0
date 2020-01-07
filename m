@@ -2,89 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DCB413346D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:25:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CF63133469
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:25:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728953AbgAGVZg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:25:36 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:45677 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727719AbgAGVZe (ORCPT
+        id S1729437AbgAGVZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:25:12 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:48666 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1729314AbgAGVZH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:25:34 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MYedH-1jBdkj2AHz-00Vh2O; Tue, 07 Jan 2020 22:25:10 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Cc:     Oleksandr Natalenko <oleksandr@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Wenwen Wang <wenwen@cs.uga.edu>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mtd: sm_ftl: fix NULL pointer warning
-Date:   Tue,  7 Jan 2020 22:24:52 +0100
-Message-Id: <20200107212509.4004137-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Tue, 7 Jan 2020 16:25:07 -0500
+Received: (qmail 8325 invoked by uid 2102); 7 Jan 2020 16:25:06 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 7 Jan 2020 16:25:06 -0500
+Date:   Tue, 7 Jan 2020 16:25:06 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     syzbot <syzbot+10e5f68920f13587ab12@syzkaller.appspotmail.com>
+cc:     andreyknvl@google.com, <gregkh@linuxfoundation.org>,
+        <gustavo@embeddedor.com>, <ingrassia@epigenesys.com>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: WARNING in usbhid_raw_request/usb_submit_urb (2)
+In-Reply-To: <000000000000b9ee2d059b933d37@google.com>
+Message-ID: <Pine.LNX.4.44L0.2001071624021.1567-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:ncIFui4ErDAl4vN/oGEZXMNgEj4j+k+9hJ4pY48nu5RbLc25IKy
- wvT+1dVpVSXAjxr8JMNEH6BWU5nmzh0RpjqzFua0sIzGAqz6fYLPTHVL9cy70ikbrSVcjVS
- 5ifk2tLrlvqrjRbvrxX+6Li7G68QFpqz3mBI7ar3+fzpkJgnJB3GeyN8ryWzz59jxNB3CQA
- JD2S+j3ILJZXPHyrGrhqg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:K+zk6N/AoxE=:gW0Osoe5f1+X5N4GWTz8yH
- w09mbUEW7a5i6/6NjJMJXCa3EaTI4K+XKu60VSsNh3oCxpvYc5dJItw4A8U2/7wlRMJolwvq8
- Sx3lwS/7mYRyca1pMXr+uTcxrv95i4po1Gl4qEsdSVy5GLG+zE+JsZEtIwhYcIGzvOE6iAk7F
- CFEQlXNoSsBmTl5TNyVZxi5ezNux8js1DQ5kCXW1QZPTjjrXUg+yZr5bTA9RkP2/UwhH4oWuC
- lNeoYSyqvSi9t2h8Ry/YIJlccaM1SoRjOWZmAFOBpJTvF956eLJx+giGcTt5pltxzKmzuUtJ5
- LWvm0k4eC6+5bQ08yQLBisDHsavX8aeI3z/N0ZHehgDxIlfvba3YnA2pQY4K+70UBxJbRO5BG
- GNHkur5QivKFDnuXo18fT8SpSAG3DbUblO3fp1/XLBP6nlvJLHW0gaN+ThkdFJG1KBTNkLky8
- M4P1QWVLqAIcKFN6qzUXnr+R57zNY35+ljt/n9WSpFqR1Q1FkFo9XK7thUoEvpOzkOouYQP5s
- VDitBCjgwQ3ipLT8/CpG6WpWrps/mn0TJPP8wW/wr0uvD6/ODlh4Zhj1/ZEbYn/1FN8R9RT/Q
- WPIhTMJ5wGle5WysYqUEm86bxoAY5ZpnQ36ObV930La/Y5Q92keUnr+9i7dlYCWAjNgctD0mx
- 5a5lB5+BhjHFAE5JfoBUuj14CvXWphSOEX2lej0HRD9Wd8h4aw26i+IkdxRhuERYNm5UamKRh
- nLFMu2zHexaw77cpJAm1xuo15mZxG502vpIbapME1JyHcku4fnkIHIIbPvQffE5eMv9X/p3EZ
- oSNfpG3/DNr74QuMpnFvFXO2c7hbxRWbiBzhGI1agyoi3bfEUBD+IhnNY3AltaaXpdfA7/Cia
- DTWUY+bxhNAo7K10gfww==
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With gcc -O3, we get a new warning:
+On Tue, 7 Jan 2020, syzbot wrote:
 
-In file included from arch/arm64/include/asm/processor.h:28,
-                 from drivers/mtd/sm_ftl.c:8:
-In function 'memset',
-    inlined from 'sm_read_sector.constprop' at drivers/mtd/sm_ftl.c:250:3:
-include/linux/string.h:411:9: error: argument 1 null where non-null expected [-Werror=nonnull]
-  return __builtin_memset(p, c, size);
+> Hello,
+> 
+> syzbot has tested the proposed patch but the reproducer still triggered  
+> crash:
+> WARNING in usbhid_raw_request/usb_submit_urb
 
-From all I can tell, this cannot happen (the function is called
-either with a NULL buffer or with a -1 block number but not both),
-but adding a check makes it more robust and avoids the warning.
+All right, now for a slightly larger change.
 
-Fixes: mmtom ("init/Kconfig: enable -O3 for all arches")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/mtd/sm_ftl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Alan Stern
 
-diff --git a/drivers/mtd/sm_ftl.c b/drivers/mtd/sm_ftl.c
-index 4744bf94ad9a..b9f272408c4d 100644
---- a/drivers/mtd/sm_ftl.c
-+++ b/drivers/mtd/sm_ftl.c
-@@ -247,7 +247,8 @@ static int sm_read_sector(struct sm_ftl *ftl,
+#syz test: https://github.com/google/kasan.git ecdf2214
+
+Index: usb-devel/drivers/usb/core/urb.c
+===================================================================
+--- usb-devel.orig/drivers/usb/core/urb.c
++++ usb-devel/drivers/usb/core/urb.c
+@@ -205,7 +205,7 @@ int usb_urb_ep_type_check(const struct u
  
- 	/* FTL can contain -1 entries that are by default filled with bits */
- 	if (block == -1) {
--		memset(buffer, 0xFF, SM_SECTOR_SIZE);
-+		if (buffer)
-+			memset(buffer, 0xFF, SM_SECTOR_SIZE);
- 		return 0;
- 	}
- 
--- 
-2.20.0
+ 	ep = usb_pipe_endpoint(urb->dev, urb->pipe);
+ 	if (!ep)
+-		return -EINVAL;
++		return -EBADF;
+ 	if (usb_pipetype(urb->pipe) != pipetypes[usb_endpoint_type(&ep->desc)])
+ 		return -EINVAL;
+ 	return 0;
 
