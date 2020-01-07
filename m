@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DD3713329D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:12:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19FC413323D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:09:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730084AbgAGVMe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:12:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38692 "EHLO mail.kernel.org"
+        id S1729699AbgAGVI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:08:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730056AbgAGVLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:11:04 -0500
+        id S1729691AbgAGVI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:08:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 846E62080A;
-        Tue,  7 Jan 2020 21:11:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14699222D9;
+        Tue,  7 Jan 2020 21:08:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431464;
-        bh=RHOGp9HQeQyoK17jjlwbXxaBDWuYVfp1PcCIQL9KW2g=;
+        s=default; t=1578431306;
+        bh=0CCvKei3nHFFJwXyo+dF672ro9QzS7d5NDIs9AzPEq4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U3AvVLPs9XxWGE2kdLkKF/LuojzyYN0HjzgeTB56wuCdxbFGBgYHZVtv1LKpR1HvX
-         sJeITLjfNRXouD/94WN2nv12Vg9jBjz8Bo6rb+9RD0TqzrMes4/pA1xoAcPjJLU1P+
-         d1Exdlsc9di5D9BS1KM7QoMtMR1rsNrTJY7JUwps=
+        b=LpPF2im5phnlmcuhBKddYQU9eVNIl60ajVSrRuTQi4j/6prTmZvhYKHpcjUv0iS6O
+         eU5meTTmIRtvw5bg62eJutnXKEo0dpfxw4k7WVpiYMxvjrw9n4f3lc4Glu6tuYe37Y
+         +LFvLMD+HtPbELOgBVOoB3flF4iX0LIiJ0iySXgo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shakeel Butt <shakeelb@google.com>,
-        Chris Down <chris@chrisdown.name>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 30/74] memcg: account security cred as well to kmemcg
-Date:   Tue,  7 Jan 2020 21:54:55 +0100
-Message-Id: <20200107205200.946162981@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.19 086/115] Bluetooth: btusb: fix PM leak in error case of setup
+Date:   Tue,  7 Jan 2020 21:54:56 +0100
+Message-Id: <20200107205306.230937692@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205135.369001641@linuxfoundation.org>
-References: <20200107205135.369001641@linuxfoundation.org>
+In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
+References: <20200107205240.283674026@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,66 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shakeel Butt <shakeelb@google.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 84029fd04c201a4c7e0b07ba262664900f47c6f5 upstream.
+commit 3d44a6fd0775e6215e836423e27f8eedf8c871ea upstream.
 
-The cred_jar kmem_cache is already memcg accounted in the current kernel
-but cred->security is not.  Account cred->security to kmemcg.
+If setup() fails a reference for runtime PM has already
+been taken. Proper use of the error handling in btusb_open()is needed.
+You cannot just return.
 
-Recently we saw high root slab usage on our production and on further
-inspection, we found a buggy application leaking processes.  Though that
-buggy application was contained within its memcg but we observe much
-more system memory overhead, couple of GiBs, during that period.  This
-overhead can adversely impact the isolation on the system.
-
-One source of high overhead we found was cred->security objects, which
-have a lifetime of at least the life of the process which allocated
-them.
-
-Link: http://lkml.kernel.org/r/20191205223721.40034-1-shakeelb@google.com
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
-Acked-by: Chris Down <chris@chrisdown.name>
-Reviewed-by: Roman Gushchin <guro@fb.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: ace31982585a3 ("Bluetooth: btusb: Add setup callback for chip init on USB")
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/cred.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/bluetooth/btusb.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -220,7 +220,7 @@ struct cred *cred_alloc_blank(void)
- 	new->magic = CRED_MAGIC;
- #endif
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -1138,7 +1138,7 @@ static int btusb_open(struct hci_dev *hd
+ 	if (data->setup_on_usb) {
+ 		err = data->setup_on_usb(hdev);
+ 		if (err < 0)
+-			return err;
++			goto setup_fail;
+ 	}
  
--	if (security_cred_alloc_blank(new, GFP_KERNEL) < 0)
-+	if (security_cred_alloc_blank(new, GFP_KERNEL_ACCOUNT) < 0)
- 		goto error;
+ 	data->intf->needs_remote_wakeup = 1;
+@@ -1170,6 +1170,7 @@ done:
  
- 	return new;
-@@ -279,7 +279,7 @@ struct cred *prepare_creds(void)
- 	new->security = NULL;
- #endif
- 
--	if (security_prepare_creds(new, old, GFP_KERNEL) < 0)
-+	if (security_prepare_creds(new, old, GFP_KERNEL_ACCOUNT) < 0)
- 		goto error;
- 	validate_creds(new);
- 	return new;
-@@ -654,7 +654,7 @@ struct cred *prepare_kernel_cred(struct
- #ifdef CONFIG_SECURITY
- 	new->security = NULL;
- #endif
--	if (security_prepare_creds(new, old, GFP_KERNEL) < 0)
-+	if (security_prepare_creds(new, old, GFP_KERNEL_ACCOUNT) < 0)
- 		goto error;
- 
- 	put_cred(old);
+ failed:
+ 	clear_bit(BTUSB_INTR_RUNNING, &data->flags);
++setup_fail:
+ 	usb_autopm_put_interface(data->intf);
+ 	return err;
+ }
 
 
