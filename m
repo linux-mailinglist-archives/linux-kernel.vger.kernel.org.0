@@ -2,51 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF5F2133492
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:26:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6E611334B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:27:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729126AbgAGV0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:26:37 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:38226 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbgAGV0f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:26:35 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D21AF15A16D6A;
-        Tue,  7 Jan 2020 13:26:33 -0800 (PST)
-Date:   Tue, 07 Jan 2020 13:26:33 -0800 (PST)
-Message-Id: <20200107.132633.1454816315429651325.davem@davemloft.net>
-To:     jiping.ma2@windriver.com
-Cc:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net V5] stmmac: debugfs entry name is not be changed
- when udev rename device name.
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200107063400.41666-1-jiping.ma2@windriver.com>
-References: <20200107063400.41666-1-jiping.ma2@windriver.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 07 Jan 2020 13:26:34 -0800 (PST)
+        id S1727976AbgAGV1c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:27:32 -0500
+Received: from namei.org ([65.99.196.166]:55932 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728090AbgAGV13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:27:29 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 007LR08Z015152;
+        Tue, 7 Jan 2020 21:27:00 GMT
+Date:   Wed, 8 Jan 2020 08:27:00 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     KP Singh <kpsingh@chromium.org>
+cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
+Subject: Re: [PATCH bpf-next v1 07/13] bpf: lsm: Implement attach, detach
+ and execution.
+In-Reply-To: <20191220154208.15895-8-kpsingh@chromium.org>
+Message-ID: <alpine.LRH.2.21.2001080824240.9683@namei.org>
+References: <20191220154208.15895-1-kpsingh@chromium.org> <20191220154208.15895-8-kpsingh@chromium.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiping Ma <jiping.ma2@windriver.com>
-Date: Tue, 7 Jan 2020 14:34:00 +0800
+On Fri, 20 Dec 2019, KP Singh wrote:
 
-> Add one notifier for udev changes net device name.
-> Fixes: b6601323ef9e ("net: stmmac: debugfs entry name is not be changed when udev rename")
-> 
-> Signed-off-by: Jiping Ma <jiping.ma2@windriver.com>
+>  
+> -	h_dentry = securityfs_create_file(h->name, 0600, parent,
+> -			NULL, &hook_ops);
+> +	h_dentry = securityfs_create_file(h->name, 0600,
+> +					  parent, NULL, &hook_ops);
 
-Applied.
+Minor thing to fix for the next version.
+
+
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
+
+
+-- 
+James Morris
+<jmorris@namei.org>
+
