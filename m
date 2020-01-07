@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8589D13325E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:10:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEB6D1331BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:03:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729446AbgAGVKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:10:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36122 "EHLO mail.kernel.org"
+        id S1728924AbgAGVDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:03:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729907AbgAGVKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:10:01 -0500
+        id S1728529AbgAGVD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:03:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 323C22077B;
-        Tue,  7 Jan 2020 21:10:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DDC7214D8;
+        Tue,  7 Jan 2020 21:03:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431400;
-        bh=UhKWdznl3WaIfp7JHn+VhYkc7uxuSFKGbwszSTT+IcI=;
+        s=default; t=1578431008;
+        bh=jRRNJpXoS9bXhoOpUAEeX0aM+B3fJRWVrK0HbiutWO0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i7YDSZQoVr3yXy2HUFUi1FIEof+g0afsF/KYMCrwC0oSDiZnYtpwI71D9lhag7B9s
-         vXK6mtz7JcgLtrMWtTKoRwnLUQwg1wuqT0zC4cpFXWNqShXFCmhTKK95M/1r5swaG1
-         Z65pOTTjokaqki2uL61xT0rnunnObPWaaC0E0pHA=
+        b=q+7vb4nuTjUy48/RVP8Ylp02wfoNH3unYPf/js77LLsezXrZdTGc2er+q1dmMnZyE
+         wa8QAxJu9nV5YBfPOYqY87DFy3DS09hu3KaeygZ+kMlLMYyd23WHYAVdXasq4Q2obE
+         CVIL2xWqms1x318PIyGgQTDQk0q2rwOXC2ssjRBE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 42/74] ALSA: cs4236: fix error return comparison of an unsigned integer
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 187/191] net: annotate lockless accesses to sk->sk_pacing_shift
 Date:   Tue,  7 Jan 2020 21:55:07 +0100
-Message-Id: <20200107205209.962818352@linuxfoundation.org>
+Message-Id: <20200107205342.996828677@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205135.369001641@linuxfoundation.org>
-References: <20200107205135.369001641@linuxfoundation.org>
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+References: <20200107205332.984228665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +44,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit d60229d84846a8399257006af9c5444599f64361 upstream.
+[ Upstream commit 7c68fa2bddda6d942bd387c9ba5b4300737fd991 ]
 
-The return from pnp_irq is an unsigned integer type resource_size_t
-and hence the error check for a positive non-error code is always
-going to be true.  A check for a non-failure return from pnp_irq
-should in fact be for (resource_size_t)-1 rather than >= 0.
+sk->sk_pacing_shift can be read and written without lock
+synchronization. This patch adds annotations to
+document this fact and avoid future syzbot complains.
 
-Addresses-Coverity: ("Unsigned compared against 0")
-Fixes: a9824c868a2c ("[ALSA] Add CS4232 PnP BIOS support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20191122131354.58042-1-colin.king@canonical.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This might also avoid unexpected false sharing
+in sk_pacing_shift_update(), as the compiler
+could remove the conditional check and always
+write over sk->sk_pacing_shift :
 
+if (sk->sk_pacing_shift != val)
+	sk->sk_pacing_shift = val;
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/isa/cs423x/cs4236.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/net/sock.h    | 4 ++--
+ net/core/sock.c       | 2 +-
+ net/ipv4/tcp_bbr.c    | 3 ++-
+ net/ipv4/tcp_output.c | 4 ++--
+ 4 files changed, 7 insertions(+), 6 deletions(-)
 
---- a/sound/isa/cs423x/cs4236.c
-+++ b/sound/isa/cs423x/cs4236.c
-@@ -293,7 +293,8 @@ static int snd_cs423x_pnp_init_mpu(int d
- 	} else {
- 		mpu_port[dev] = pnp_port_start(pdev, 0);
- 		if (mpu_irq[dev] >= 0 &&
--		    pnp_irq_valid(pdev, 0) && pnp_irq(pdev, 0) >= 0) {
-+		    pnp_irq_valid(pdev, 0) &&
-+		    pnp_irq(pdev, 0) != (resource_size_t)-1) {
- 			mpu_irq[dev] = pnp_irq(pdev, 0);
- 		} else {
- 			mpu_irq[dev] = -1;	/* disable interrupt */
+diff --git a/include/net/sock.h b/include/net/sock.h
+index e09e2886a836..6c5a3809483e 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -2589,9 +2589,9 @@ static inline int sk_get_rmem0(const struct sock *sk, const struct proto *proto)
+  */
+ static inline void sk_pacing_shift_update(struct sock *sk, int val)
+ {
+-	if (!sk || !sk_fullsock(sk) || sk->sk_pacing_shift == val)
++	if (!sk || !sk_fullsock(sk) || READ_ONCE(sk->sk_pacing_shift) == val)
+ 		return;
+-	sk->sk_pacing_shift = val;
++	WRITE_ONCE(sk->sk_pacing_shift, val);
+ }
+ 
+ /* if a socket is bound to a device, check that the given device
+diff --git a/net/core/sock.c b/net/core/sock.c
+index ac78a570e43a..b4d1112174c1 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -2918,7 +2918,7 @@ void sock_init_data(struct socket *sock, struct sock *sk)
+ 
+ 	sk->sk_max_pacing_rate = ~0UL;
+ 	sk->sk_pacing_rate = ~0UL;
+-	sk->sk_pacing_shift = 10;
++	WRITE_ONCE(sk->sk_pacing_shift, 10);
+ 	sk->sk_incoming_cpu = -1;
+ 
+ 	sk_rx_queue_clear(sk);
+diff --git a/net/ipv4/tcp_bbr.c b/net/ipv4/tcp_bbr.c
+index 32772d6ded4e..a6545ef0d27b 100644
+--- a/net/ipv4/tcp_bbr.c
++++ b/net/ipv4/tcp_bbr.c
+@@ -306,7 +306,8 @@ static u32 bbr_tso_segs_goal(struct sock *sk)
+ 	/* Sort of tcp_tso_autosize() but ignoring
+ 	 * driver provided sk_gso_max_size.
+ 	 */
+-	bytes = min_t(unsigned long, sk->sk_pacing_rate >> sk->sk_pacing_shift,
++	bytes = min_t(unsigned long,
++		      sk->sk_pacing_rate >> READ_ONCE(sk->sk_pacing_shift),
+ 		      GSO_MAX_SIZE - 1 - MAX_TCP_HEADER);
+ 	segs = max_t(u32, bytes / tp->mss_cache, bbr_min_tso_segs(sk));
+ 
+diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+index 0269584e9cf7..e4ba915c4bb5 100644
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -1728,7 +1728,7 @@ static u32 tcp_tso_autosize(const struct sock *sk, unsigned int mss_now,
+ 	u32 bytes, segs;
+ 
+ 	bytes = min_t(unsigned long,
+-		      sk->sk_pacing_rate >> sk->sk_pacing_shift,
++		      sk->sk_pacing_rate >> READ_ONCE(sk->sk_pacing_shift),
+ 		      sk->sk_gso_max_size - 1 - MAX_TCP_HEADER);
+ 
+ 	/* Goal is to send at least one packet per ms,
+@@ -2263,7 +2263,7 @@ static bool tcp_small_queue_check(struct sock *sk, const struct sk_buff *skb,
+ 
+ 	limit = max_t(unsigned long,
+ 		      2 * skb->truesize,
+-		      sk->sk_pacing_rate >> sk->sk_pacing_shift);
++		      sk->sk_pacing_rate >> READ_ONCE(sk->sk_pacing_shift));
+ 	if (sk->sk_pacing_status == SK_PACING_NONE)
+ 		limit = min_t(unsigned long, limit,
+ 			      sock_net(sk)->ipv4.sysctl_tcp_limit_output_bytes);
+-- 
+2.20.1
+
 
 
