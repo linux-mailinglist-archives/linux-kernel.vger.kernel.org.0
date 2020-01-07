@@ -2,122 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39A7B13229F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:37:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 603361322A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:39:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbgAGJhT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 04:37:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42666 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726485AbgAGJhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 04:37:18 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B5962080A;
-        Tue,  7 Jan 2020 09:37:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578389838;
-        bh=wfg56eQGQ83BBYfNqeCSpdlz8yZ4piJfxj1MitQPnqg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=C6DUrvEvwCgONeTEnJawdLcayKuJrqAoWblfiSpiqXBHH9BsTDvhbmnGC+C6Z/L4U
-         MCYoravqD2Wmd/f+kah0xufpNXZMmyclpazdHpBos9rWgI+DgeFFtubBJyPqK1cBH8
-         705/XpX3WavYf/xu/eFA9rZ9DIqaKkOjFOOtXaKo=
-Date:   Tue, 7 Jan 2020 10:37:15 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Lucas Stach <dev@lynxeye.de>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mmc: tegra: fix SDR50 tuning override
-Message-ID: <20200107093715.GB1028311@kroah.com>
-References: <245d569e4c258063dbd78bd30c7027638b30f059.1577960737.git.mirq-linux@rere.qmqm.pl>
- <20200106120718.GA1955714@ulmo>
- <20200106122745.GA3414443@kroah.com>
- <20200106133703.GE1955714@ulmo>
+        id S1727724AbgAGJjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 04:39:10 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:31590 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726485AbgAGJjJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 04:39:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578389947;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KTZsZnppU+2QHEms25h87mEXIcd3CR1WH++YNAVYQNY=;
+        b=CiAxq/64b9ZXwHdMaPnATKTkfAX+il2AFK/1O3h6gwg+n8rZ1ghbmhXxNTWnkyKM5jVY7Y
+        MAWsdbAkLF6hfDuRpy2/76AqZXffPE3z/xSnB5nk3lCducpHNsKMUJxvlmFu82DUUVvAQJ
+        CINpnLHw6eJImF78mxUwPfKBXry38h4=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-31-963xah0ZMei1wgHr78XEYw-1; Tue, 07 Jan 2020 04:39:06 -0500
+X-MC-Unique: 963xah0ZMei1wgHr78XEYw-1
+Received: by mail-qv1-f71.google.com with SMTP id p3so9901089qvt.9
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 01:39:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=KTZsZnppU+2QHEms25h87mEXIcd3CR1WH++YNAVYQNY=;
+        b=tBxlTTcqhq6OMk7A3qtlS/wOrrr6wPFDJWQPFhRrz0O6t+GVt9e/ZyMp0qLptAVgwm
+         14/PmHtXAANU81HlzJVvQkkoPX4RP+0aN4Mr1ZoJDmHYvZpcdJtVmMct88xOW9jaaqOz
+         leW4rsZiqNYrd0mYi2XnC0qIvuZK6EIpRwxGEgiSYCg0iORrNpa6F7H73F4s1HUKjkgz
+         8dEvff6lTMphYa18B3cUA9OJ4PSQoHKaDjDsdl/ZIMoSv612XmWcy0oJq3XV7a1WNam1
+         zCQQeKlYybQUSwRY536Iw4EAvl74/DO1hOIQUgfkgvcEnmB4H7hnB/KJ0XLLDBEpEEV8
+         D9Mw==
+X-Gm-Message-State: APjAAAUFZccMwqunX5ypZsHV5Vs8MB8TMxsrUtfKDPIiCCD4zMqEkb2M
+        wf34FKyztz5Bmx6pr5XQ+X95TqzeNQ8kHXYhR1Nq33SPVfK/oz0U9ogMx/qf7ucoYgiZ5Ogu06l
+        DnEiUKlmLTgABGGyjHbsv7Rpb
+X-Received: by 2002:ac8:1bd4:: with SMTP id m20mr80192048qtk.301.1578389946367;
+        Tue, 07 Jan 2020 01:39:06 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxNBSffjTXlW+OajOtddlXmtV11+UXzECSfu7cNC0iRx6P/v+pltqGMwIX+pamDcwsrKCW75A==
+X-Received: by 2002:ac8:1bd4:: with SMTP id m20mr80192040qtk.301.1578389946145;
+        Tue, 07 Jan 2020 01:39:06 -0800 (PST)
+Received: from redhat.com (bzq-79-183-34-164.red.bezeqint.net. [79.183.34.164])
+        by smtp.gmail.com with ESMTPSA id u57sm24900235qth.68.2020.01.07.01.39.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2020 01:39:05 -0800 (PST)
+Date:   Tue, 7 Jan 2020 04:39:00 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        Halil Pasic <pasic@linux.ibm.com>
+Subject: Re: vhost changes (batched) in linux-next after 12/13 trigger random
+ crashes in KVM guests after reboot
+Message-ID: <20200107042401-mutt-send-email-mst@kernel.org>
+References: <c022e1d6-0d57-ae07-5e6b-8e40d3b01f4b@de.ibm.com>
+ <20191218100926-mutt-send-email-mst@kernel.org>
+ <2ffdbd95-e375-a627-55a1-6990b0a0e37a@de.ibm.com>
+ <20200106054041-mutt-send-email-mst@kernel.org>
+ <08ae8d28-3d8c-04e8-bdeb-0117d06c6dc7@de.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200106133703.GE1955714@ulmo>
+In-Reply-To: <08ae8d28-3d8c-04e8-bdeb-0117d06c6dc7@de.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 02:37:03PM +0100, Thierry Reding wrote:
-> On Mon, Jan 06, 2020 at 01:27:45PM +0100, Greg Kroah-Hartman wrote:
-> > On Mon, Jan 06, 2020 at 01:07:18PM +0100, Thierry Reding wrote:
-> > > On Thu, Jan 02, 2020 at 11:30:50AM +0100, Michał Mirosław wrote:
-> > > > Commit 7ad2ed1dfcbe inadvertently mixed up a quirk flag's name and
-> > > > broke SDR50 tuning override. Use correct NVQUIRK_ name.
-> > > > 
-> > > > Fixes: 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes")
-> > > > Depends-on: 4f6aa3264af4 ("mmc: tegra: Only advertise UHS modes if IO regulator is present")
-> > > > Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-> > > > ---
-> > > >  drivers/mmc/host/sdhci-tegra.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > Oh my... good catch!
-> > > 
-> > > Reviewed-by: Thierry Reding <treding@nvidia.com>
-> > > 
-> > > I also ran this through our internal test system and all tests pass, so
-> > > also:
-> > > 
-> > > Tested-by: Thierry Reding <treding@nvidia.com>
-> > > 
-> > > I'm not sure if that "Depends-on:" tag is anything that's recognized
-> > > anywhere. It might be better to turn that into an additional "Fixes:"
-> > > line. Adding Greg to see if he has a standard way of dealing with this
-> > > kind of dependency.
-> > > 
-> > > Greg, what's your preferred way to handle these situations? I think the
-> > > intention here was to describe that the original error was introduced by
-> > > commit 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes"), but then commit
-> > > 4f6aa3264af4 ("mmc: tegra: Only advertise UHS modes if IO regulator is
-> > > present") moved that code around, so this patch here will only be back-
-> > > portable until the latter commit, but should be backported until the
-> > > former.
+On Tue, Jan 07, 2020 at 09:59:16AM +0100, Christian Borntraeger wrote:
+> 
+> 
+> On 06.01.20 11:50, Michael S. Tsirkin wrote:
+> > On Wed, Dec 18, 2019 at 04:59:02PM +0100, Christian Borntraeger wrote:
+> >> On 18.12.19 16:10, Michael S. Tsirkin wrote:
+> >>> On Wed, Dec 18, 2019 at 03:43:43PM +0100, Christian Borntraeger wrote:
+> >>>> Michael,
+> >>>>
+> >>>> with 
+> >>>> commit db7286b100b503ef80612884453bed53d74c9a16 (refs/bisect/skip-db7286b100b503ef80612884453bed53d74c9a16)
+> >>>>     vhost: use batched version by default
+> >>>> plus
+> >>>> commit 6bd262d5eafcdf8cdfae491e2e748e4e434dcda6 (HEAD, refs/bisect/bad)
+> >>>>     Revert "vhost/net: add an option to test new code"
+> >>>> to make things compile (your next tree is not easily bisectable, can you fix that as well?).
+> >>>
+> >>> I'll try.
+> >>>
+> >>>>
+> >>>> I get random crashes in my s390 KVM guests after reboot.
+> >>>> Reverting both patches together with commit decd9b8 "vhost: use vhost_desc instead of vhost_log" to
+> >>>> make it compile again) on top of linux-next-1218 makes the problem go away.
+> >>>>
+> >>>> Looks like the batched version is not yet ready for prime time. Can you drop these patches until
+> >>>> we have fixed the issues?
+> >>>>
+> >>>> Christian
+> >>>>
+> >>>
+> >>> Will do, thanks for letting me know.
+> >>
+> >> I have confirmed with the initial reporter (internal test team) that <driver name='qemu'/> 
+> >> with a known to be broken linux next kernel also fixes the problem, so it is really the
+> >> vhost changes.
 > > 
-> > The stable kernel rules document says how to handle this, but the
-> > "depends on" commit id in the comment to the right of the stable@k.o cc:
-> > line in the changelog area.
+> > OK I'm back and trying to make it more bisectable.
+> > 
+> > I pushed a new tag "batch-v2".
+> > It's same code but with this bisect should get more information.
 > 
-> That only mentions "static" prerequisites needed by the patch, but what
-> if the prerequisites change depending on version?
+> I get the following with this tag
 > 
-> Could I do something like this:
+> drivers/vhost/net.c: In function ‘vhost_net_tx_get_vq_desc’:
+> drivers/vhost/net.c:574:7: error: implicit declaration of function ‘vhost_get_vq_desc_batch’; did you mean ‘vhost_get_vq_desc’? [-Werror=implicit-function-declaration]
+>   574 |   r = vhost_get_vq_desc_batch(tvq, tvq->iov, ARRAY_SIZE(tvq->iov),
+>       |       ^~~~~~~~~~~~~~~~~~~~~~~
+>       |       vhost_get_vq_desc
 > 
-> 	Cc: <stable@vger.kernel.org> # 4.4.x: abcdef: ...
-> 	Cc: <stable@vger.kernel.org> # 4.9.x: bcdefa: ...
-> 	Cc: <stable@vger.kernel.org>
 
-Yes.
+Not sure why but I pushed a wrong commit. Sorry. Should be good now.
 
-> Would that mean that the patch is selected for all stable releases
-> (because of the last line with no version prerequisite) but when applied
-> for stable-4.4 the abcdef patch gets pulled in and for stable-4.9 the
-> bcdefa dependency is applied before the patch?
+-- 
+MST
 
-Yes.
-
-> I suppose this is perhaps a bit of an exotic case, but it might be good
-> to document it specifically because it might be fairly rare. I can draft
-> a change if you think this is useful to add.
-
-I thought this was already in there, as others have done it in the past.
-
-It's a _very_ exotic case, I wouldn't worry about it, just document it
-like this, and if I have problems applying the patches to stable I'll be
-sure to let you know and you can always tell me then.  That's usually
-the easiest thing to do anyway :)
-
-thanks,
-
-greg k-h
