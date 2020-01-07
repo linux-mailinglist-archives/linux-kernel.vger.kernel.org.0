@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A887B1332EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:15:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 673731331C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:03:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729973AbgAGVOk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:14:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34250 "EHLO mail.kernel.org"
+        id S1728966AbgAGVDm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:03:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729786AbgAGVJK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:09:10 -0500
+        id S1728223AbgAGVDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:03:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B6B02077B;
-        Tue,  7 Jan 2020 21:09:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7962E20880;
+        Tue,  7 Jan 2020 21:03:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431350;
-        bh=iBoHMJDZnbO3kqXZFkUczZBgYWQj2tfUMH+07frX/jU=;
+        s=default; t=1578431019;
+        bh=/TX7Io1N26F0YAghoqFvXunFWVmzTvMzhqhIisVRMXE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SsNqJFwGkWvSiWhXQT5nzyhR+9j22Kma2fb+q5nOq6Fk9j2535hMKCXVfSg8WiFCc
-         rvkJ2WFvdxQo3jO6E9mkUmrvJ006rZLPqzMN+R1/es3TmGcesXRhZlNOh2uC6+D5Jb
-         tmSdQ/vAVbTybZFxDfjMtuFj2gFeHwUFvd/hHnEo=
+        b=2Wgcci+WqP67UiJwF6biZ/eqwkLJdMaeOn9x9cMeHEc5I8kM4X87Lpp46JjxpUYzm
+         r6bfepmx7SaPQuPFu1otDhBeWwzomg8FrND0+9vXFXfoV+f6UeRrD0oFtxvOR2FuFj
+         X8bNzzkfT1zxLsGMYUbP/kU1U6TCKIyfYw3T0avg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+c732f8644185de340492@syzkaller.appspotmail.com,
-        Brian Foster <bfoster@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 20/74] xfs: fix mount failure crash on invalid iclog memory access
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 5.4 165/191] media: usb: fix memory leak in af9005_identify_state
 Date:   Tue,  7 Jan 2020 21:54:45 +0100
-Message-Id: <20200107205149.039516312@linuxfoundation.org>
+Message-Id: <20200107205341.811781571@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205135.369001641@linuxfoundation.org>
-References: <20200107205135.369001641@linuxfoundation.org>
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+References: <20200107205332.984228665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,47 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Foster <bfoster@redhat.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-[ Upstream commit 798a9cada4694ca8d970259f216cec47e675bfd5 ]
+commit 2289adbfa559050d2a38bcd9caac1c18b800e928 upstream.
 
-syzbot (via KASAN) reports a use-after-free in the error path of
-xlog_alloc_log(). Specifically, the iclog freeing loop doesn't
-handle the case of a fully initialized ->l_iclog linked list.
-Instead, it assumes that the list is partially constructed and NULL
-terminated.
+In af9005_identify_state when returning -EIO the allocated buffer should
+be released. Replace the "return -EIO" with assignment into ret and move
+deb_info() under a check.
 
-This bug manifested because there was no possible error scenario
-after iclog list setup when the original code was added.  Subsequent
-code and associated error conditions were added some time later,
-while the original error handling code was never updated. Fix up the
-error loop to terminate either on a NULL iclog or reaching the end
-of the list.
+Fixes: af4e067e1dcf ("V4L/DVB (5625): Add support for the AF9005 demodulator from Afatech")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Reported-by: syzbot+c732f8644185de340492@syzkaller.appspotmail.com
-Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/xfs/xfs_log.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/usb/dvb-usb/af9005.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-index dc95a49d62e7..4e768e606998 100644
---- a/fs/xfs/xfs_log.c
-+++ b/fs/xfs/xfs_log.c
-@@ -1539,6 +1539,8 @@ xlog_alloc_log(
- 		if (iclog->ic_bp)
- 			xfs_buf_free(iclog->ic_bp);
- 		kmem_free(iclog);
-+		if (prev_iclog == log->l_iclog)
-+			break;
- 	}
- 	spinlock_destroy(&log->l_icloglock);
- 	xfs_buf_free(log->l_xbuf);
--- 
-2.20.1
-
+--- a/drivers/media/usb/dvb-usb/af9005.c
++++ b/drivers/media/usb/dvb-usb/af9005.c
+@@ -976,8 +976,9 @@ static int af9005_identify_state(struct
+ 	else if (reply == 0x02)
+ 		*cold = 0;
+ 	else
+-		return -EIO;
+-	deb_info("Identify state cold = %d\n", *cold);
++		ret = -EIO;
++	if (!ret)
++		deb_info("Identify state cold = %d\n", *cold);
+ 
+ err:
+ 	kfree(buf);
 
 
