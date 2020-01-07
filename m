@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C52DC1331B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:03:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08B6613325D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:10:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728639AbgAGVD0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:03:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45210 "EHLO mail.kernel.org"
+        id S1729911AbgAGVKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:10:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727963AbgAGVDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:03:23 -0500
+        id S1729899AbgAGVJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:09:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABD95214D8;
-        Tue,  7 Jan 2020 21:03:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C00F72072A;
+        Tue,  7 Jan 2020 21:09:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431003;
-        bh=qw+nnA4BJ0MRDlYO03FDH+s5K6CRzbmFiiJjv7eTQwM=;
+        s=default; t=1578431398;
+        bh=lfWjhJOim8/hVj2RmOHfNBLhqUiZM0pgfFhdbKid6Qk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gN6lRcRhc7hk0P7foHNLpMIBzDPGlA/wqP632BBYXTHRPnpaz975/Hfy6ovtnqxA0
-         QNeHIYJvpqfAVh4lhXEp9YZ8ZxApMQVp79eSe8hn7/9hpxrJ2O+CuZZxsqEJ3x5bsn
-         /7wvx3DeE4W2lWh+Ppm6W2GG1p+23TSEWoaCI0Io=
+        b=QFdXFDQ451mima3swj4jkp+mW2VO5BswS1a5FT7y+VXtSvjAdoI+MMd9EbXTqB9ba
+         Wa5K5gT7JoCflnVBAZnDMcm06gFNyyxezrS9D3WKHCIEByrnW7FLkYl21iQk46Ncmu
+         cqxqC0UxisWYuJSb8UGfNQD6R3n94ftSwsy2yS7E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Narron <comet.berkeley@gmail.com>,
-        Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 185/191] efi: Dont attempt to map RCI2 config table if it doesnt exist
-Date:   Tue,  7 Jan 2020 21:55:05 +0100
-Message-Id: <20200107205342.891416884@linuxfoundation.org>
+        stable@vger.kernel.org, Tom Zanussi <zanussi@kernel.org>,
+        Sven Schnelle <svens@stackframe.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.14 41/74] tracing: Have the histogram compare functions convert to u64 first
+Date:   Tue,  7 Jan 2020 21:55:06 +0100
+Message-Id: <20200107205209.661060649@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
-References: <20200107205332.984228665@linuxfoundation.org>
+In-Reply-To: <20200107205135.369001641@linuxfoundation.org>
+References: <20200107205135.369001641@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,72 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ardb@kernel.org>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-[ Upstream commit a470552ee8965da0fe6fd4df0aa39c4cda652c7c ]
+commit 106f41f5a302cb1f36c7543fae6a05de12e96fa4 upstream.
 
-Commit:
+The compare functions of the histogram code would be specific for the size
+of the value being compared (byte, short, int, long long). It would
+reference the value from the array via the type of the compare, but the
+value was stored in a 64 bit number. This is fine for little endian
+machines, but for big endian machines, it would end up comparing zeros or
+all ones (depending on the sign) for anything but 64 bit numbers.
 
-  1c5fecb61255aa12 ("efi: Export Runtime Configuration Interface table to sysfs")
+To fix this, first derference the value as a u64 then convert it to the type
+being compared.
 
-... added support for a Dell specific UEFI configuration table, but
-failed to take into account that mapping the table should not be
-attempted unless the table actually exists. If it doesn't exist,
-the code usually fails silently unless pr_debug() prints are
-enabled. However, on 32-bit PAE x86, the splat below is produced due
-to the attempt to map the placeholder value EFI_INVALID_TABLE_ADDR
-which we use for non-existing UEFI configuration tables, and which
-equals ULONG_MAX.
+Link: http://lkml.kernel.org/r/20191211103557.7bed6928@gandalf.local.home
 
-   memremap attempted on mixed range 0x00000000ffffffff size: 0x1e
-   WARNING: CPU: 1 PID: 1 at kernel/iomem.c:81 memremap+0x1a3/0x1c0
-   Modules linked in:
-   CPU: 1 PID: 1 Comm: swapper/0 Not tainted 5.4.2-smp-mine #1
-   Hardware name: Hewlett-Packard HP Z400 Workstation/0B4Ch, BIOS 786G3 v03.61 03/05/2018
-   EIP: memremap+0x1a3/0x1c0
-  ...
-   Call Trace:
-    ? map_properties+0x473/0x473
-    ? efi_rci2_sysfs_init+0x2c/0x154
-    ? map_properties+0x473/0x473
-    ? do_one_initcall+0x49/0x1d4
-    ? parse_args+0x1e8/0x2a0
-    ? do_early_param+0x7a/0x7a
-    ? kernel_init_freeable+0x139/0x1c2
-    ? rest_init+0x8e/0x8e
-    ? kernel_init+0xd/0xf2
-    ? ret_from_fork+0x2e/0x38
+Cc: stable@vger.kernel.org
+Fixes: 08d43a5fa063e ("tracing: Add lock-free tracing_map")
+Acked-by: Tom Zanussi <zanussi@kernel.org>
+Reported-by: Sven Schnelle <svens@stackframe.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fix this by checking whether the table exists before attempting to map it.
-
-Reported-by: Richard Narron <comet.berkeley@gmail.com>
-Tested-by: Richard Narron <comet.berkeley@gmail.com>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-efi@vger.kernel.org
-Fixes: 1c5fecb61255aa12 ("efi: Export Runtime Configuration Interface table to sysfs")
-Link: https://lkml.kernel.org/r/20191210090945.11501-2-ardb@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/efi/rci2-table.c | 3 +++
- 1 file changed, 3 insertions(+)
+ kernel/trace/tracing_map.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/efi/rci2-table.c b/drivers/firmware/efi/rci2-table.c
-index 76b0c354a027..de1a9a1f9f14 100644
---- a/drivers/firmware/efi/rci2-table.c
-+++ b/drivers/firmware/efi/rci2-table.c
-@@ -81,6 +81,9 @@ static int __init efi_rci2_sysfs_init(void)
- 	struct kobject *tables_kobj;
- 	int ret = -ENOMEM;
- 
-+	if (rci2_table_phys == EFI_INVALID_TABLE_ADDR)
-+		return 0;
-+
- 	rci2_base = memremap(rci2_table_phys,
- 			     sizeof(struct rci2_table_global_hdr),
- 			     MEMREMAP_WB);
--- 
-2.20.1
-
+--- a/kernel/trace/tracing_map.c
++++ b/kernel/trace/tracing_map.c
+@@ -90,8 +90,8 @@ static int tracing_map_cmp_atomic64(void
+ #define DEFINE_TRACING_MAP_CMP_FN(type)					\
+ static int tracing_map_cmp_##type(void *val_a, void *val_b)		\
+ {									\
+-	type a = *(type *)val_a;					\
+-	type b = *(type *)val_b;					\
++	type a = (type)(*(u64 *)val_a);					\
++	type b = (type)(*(u64 *)val_b);					\
+ 									\
+ 	return (a > b) ? 1 : ((a < b) ? -1 : 0);			\
+ }
 
 
