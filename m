@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 106DC1332D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:14:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9407D133197
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:02:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729843AbgAGVJf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:09:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34958 "EHLO mail.kernel.org"
+        id S1728711AbgAGVCN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:02:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729829AbgAGVJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:09:29 -0500
+        id S1728690AbgAGVCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:02:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C37DE2072A;
-        Tue,  7 Jan 2020 21:09:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACCE12077B;
+        Tue,  7 Jan 2020 21:02:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431369;
-        bh=LwV0b4UswDgokCni8DGt5dsVUmNU5hsvCheqmsG4bJI=;
+        s=default; t=1578430928;
+        bh=nxVG0xH/nMQVbovLHgovXOgF85noBi++nkVrBvoedYw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k05EkfmCXjHwbL7J+nn9Ae6KD3qEuRBTNBtQxAnrp0tVada7QpEntxO+/7tndfcNI
-         LSeOzR63v4+e7rRcyTKcbvzMH6/o4fp3ScXHK9zkRb5cIF+t6xkHSw0VY/JRSt545d
-         x3QX01IQVM4GWRCuXBROGtpLb/32YlnXg5fnFdkA=
+        b=SMVH7Ly4FjuE84K+LS5uZ48ii439Wcvw3UG1oCnUUeNbGB3vlNAJbKn1qtRy/b2Rg
+         nzwRS/h5ALXiohgyU0+cE2QfOWYQfvQfBRS2qPOgxXEObY5NoFbobCHBZ5yAxWfFbh
+         MdGSCea7Za89CB4UocatX52jPBC1yuB+QwJCsXi0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <qutran@marvell.com>,
-        Himanshu Madhani <hmadhani@marvel.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        Roman Bolshakov <r.bolshakov@yadro.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 07/74] scsi: qla2xxx: Dont call qlt_async_event twice
-Date:   Tue,  7 Jan 2020 21:54:32 +0100
-Message-Id: <20200107205140.483302224@linuxfoundation.org>
+        stable@vger.kernel.org, Axel Lin <axel.lin@ingics.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 5.4 153/191] regulator: axp20x: Fix axp20x_set_ramp_delay
+Date:   Tue,  7 Jan 2020 21:54:33 +0100
+Message-Id: <20200107205341.155096010@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205135.369001641@linuxfoundation.org>
-References: <20200107205135.369001641@linuxfoundation.org>
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+References: <20200107205332.984228665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,51 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Bolshakov <r.bolshakov@yadro.com>
+From: Axel Lin <axel.lin@ingics.com>
 
-[ Upstream commit 2c2f4bed9b6299e6430a65a29b5d27b8763fdf25 ]
+commit 71dd2fe5dec171b34b71603a81bb46c24c498fde upstream.
 
-MBA_PORT_UPDATE generates duplicate log lines in target mode because
-qlt_async_event is called twice. Drop the calls within the case as the
-function will be called right after the switch statement.
+Current code set incorrect bits when set ramp_delay for AXP20X_DCDC2,
+fix it.
 
-Cc: Quinn Tran <qutran@marvell.com>
-Link: https://lore.kernel.org/r/20191125165702.1013-8-r.bolshakov@yadro.com
-Acked-by: Himanshu Madhani <hmadhani@marvel.com>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Tested-by: Hannes Reinecke <hare@suse.de>
-Acked-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Roman Bolshakov <r.bolshakov@yadro.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: d29f54df8b16 ("regulator: axp20x: add support for set_ramp_delay for AXP209")
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Link: https://lore.kernel.org/r/20191221081049.32490-1-axel.lin@ingics.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/scsi/qla2xxx/qla_isr.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/regulator/axp20x-regulator.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_isr.c b/drivers/scsi/qla2xxx/qla_isr.c
-index ebca1a470e9b..7f2da56274bd 100644
---- a/drivers/scsi/qla2xxx/qla_isr.c
-+++ b/drivers/scsi/qla2xxx/qla_isr.c
-@@ -1046,8 +1046,6 @@ qla2x00_async_event(scsi_qla_host_t *vha, struct rsp_que *rsp, uint16_t *mb)
- 			ql_dbg(ql_dbg_async, vha, 0x5011,
- 			    "Asynchronous PORT UPDATE ignored %04x/%04x/%04x.\n",
- 			    mb[1], mb[2], mb[3]);
--
--			qlt_async_event(mb[0], vha, mb);
- 			break;
+--- a/drivers/regulator/axp20x-regulator.c
++++ b/drivers/regulator/axp20x-regulator.c
+@@ -413,10 +413,13 @@ static int axp20x_set_ramp_delay(struct
+ 		int i;
+ 
+ 		for (i = 0; i < rate_count; i++) {
+-			if (ramp <= slew_rates[i])
+-				cfg = AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE(i);
+-			else
++			if (ramp > slew_rates[i])
+ 				break;
++
++			if (id == AXP20X_DCDC2)
++				cfg = AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_RATE(i);
++			else
++				cfg = AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE(i);
  		}
  
-@@ -1065,8 +1063,6 @@ qla2x00_async_event(scsi_qla_host_t *vha, struct rsp_que *rsp, uint16_t *mb)
- 		set_bit(LOOP_RESYNC_NEEDED, &vha->dpc_flags);
- 		set_bit(LOCAL_LOOP_UPDATE, &vha->dpc_flags);
- 		set_bit(VP_CONFIG_OK, &vha->vp_flags);
--
--		qlt_async_event(mb[0], vha, mb);
- 		break;
- 
- 	case MBA_RSCN_UPDATE:		/* State Change Registration */
--- 
-2.20.1
-
+ 		if (cfg == 0xff) {
 
 
