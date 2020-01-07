@@ -2,154 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE3BC132FBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 20:44:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF962132FC0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 20:44:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728739AbgAGToA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 14:44:00 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:34272 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728660AbgAGTnz (ORCPT
+        id S1728653AbgAGTok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 14:44:40 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:35323 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728358AbgAGToj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 14:43:55 -0500
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 08ACF20B479D;
-        Tue,  7 Jan 2020 11:43:55 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 08ACF20B479D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1578426235;
-        bh=vKopEemioZDxxkhIIhSrX9LVxTYuu1tqhtvTwXFOlw8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b8NkhnkW15jpOvwrsK2vCU2avcMqxoWfj7dFv01AQww+lucA4+JhSNjxL845MgVrt
-         /2zrxEA1T7oS2TqQrLBAyBpYvOXrajBEKhDihs6ARkRhYiUZ4yMHiDU5dS9RZdc8SU
-         ZRF2oHLjWMor95mHprMl9e8tm04ZaFhzcRjr2t2E=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, James.Bottomley@HansenPartnership.com,
-        linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-Subject: [PATCH 4/4] IMA: Read keyrings= option from the IMA policy
-Date:   Tue,  7 Jan 2020 11:43:50 -0800
-Message-Id: <20200107194350.3782-5-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200107194350.3782-1-nramas@linux.microsoft.com>
-References: <20200107194350.3782-1-nramas@linux.microsoft.com>
+        Tue, 7 Jan 2020 14:44:39 -0500
+Received: by mail-qt1-f194.google.com with SMTP id e12so783859qto.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 11:44:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=S9Z0mVFd2p1ZduER7Gd3T2LbO8+fNcpa0hKnMEswfbQ=;
+        b=lSJgiO8089UpAtwUJI7TvS0d/uYTm6JLSGVRP6PE2Dn5xwVb1G+jKQtkRJjJJALCqk
+         1L/xlHA0rqUvSQOLOfiBWlyc0cCqFTcu6WWyyMKKhNi+VE8zYGnoVaSNp8MOssbrvATa
+         vM4BNznD5Ooo3AkkRkdnueP8IuTM3jjO6519yNFM8MQgQCZSPc1rFNTUXvYKP7ijaSeJ
+         y3NyipPOeyoxEQCGaYWmnR2jXr29L9KbZE4PQ4m6ftaF1H9NT1ISx4CmgYGcSjlla7mT
+         uERal/5DGYECRrFbvqp6E+//BFf2WPXMT7NTjhvx0ZQrbnweKHiPI/N9hqZUv0w3FhBI
+         89Og==
+X-Gm-Message-State: APjAAAVTBuvLbZvkwao+PKAGrQzUy20Kj/SB0lx2/EGQpzwrXwQtchcW
+        oAZEE5wwLUKOik6t8XlMFAs=
+X-Google-Smtp-Source: APXvYqyHfGfSsxR7jhJcSWqmGErVMmZtoEkd6N01QijnRO2clAtMjz4v9+klE3Mw0x9E3PUcL2SgnA==
+X-Received: by 2002:ac8:86b:: with SMTP id x40mr542439qth.366.1578426278502;
+        Tue, 07 Jan 2020 11:44:38 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id s20sm280137qkg.131.2020.01.07.11.44.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2020 11:44:37 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] x86/boot/compressed/32: Simplify calculation of output address
+Date:   Tue,  7 Jan 2020 14:44:34 -0500
+Message-Id: <20200107194436.2166846-1-nivedita@alum.mit.edu>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Read "keyrings=" option, if specified in the IMA policy, and store in
-the list of IMA rules when the configured IMA policy is read.
+Condense the calculation of decompressed kernel start a little.
 
-This patch defines a new policy token enum namely Opt_keyrings
-and an option flag IMA_KEYRINGS for reading "keyrings=" option
-from the IMA policy.
-
-Updated ima_parse_rule() to parse "keyrings=" option in the policy.
-Updated ima_policy_show() to display "keyrings=" option.
-
-The following example illustrates how key measurement can be verified.
-
-Sample "key" measurement rule in the IMA policy:
-
-measure func=KEY_CHECK uid=0 keyrings=.ima|.evm template=ima-buf
-
-Display "key" measurement in the IMA measurement list:
-
-cat /sys/kernel/security/ima/ascii_runtime_measurements
-
-10 faf3...e702 ima-buf sha256:27c915b8ddb9fae7214cf0a8a7043cc3eeeaa7539bcb136f8427067b5f6c3b7b .ima 308202863082...4aee
-
-Verify "key" measurement data for a key added to ".ima" keyring:
-
-cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements | grep -m 1 "\.ima" | cut -d' ' -f 6 | xxd -r -p |tee ima-cert.der | sha256sum | cut -d' ' -f 1
-
-The output of the above command should match the template hash
-of the first "key" measurement entry in the IMA measurement list for
-the key added to ".ima" keyring.
-
-The file namely "ima-cert.der" generated by the above command
-should be a valid x509 certificate (in DER format) and should match
-the one that was used to import the key to the ".ima" keyring.
-The certificate file can be verified using openssl tool.
-
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Fixes: 2b60c0ecedf8 ("IMA: Read keyrings= option from the IMA policy")
+Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
 ---
- security/integrity/ima/ima_policy.c | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+ arch/x86/boot/compressed/head_32.S | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 7667ca546ce9..8f2ca487753b 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -34,6 +34,7 @@
- #define IMA_EUID	0x0080
- #define IMA_PCR		0x0100
- #define IMA_FSNAME	0x0200
-+#define IMA_KEYRINGS	0x0400
+diff --git a/arch/x86/boot/compressed/head_32.S b/arch/x86/boot/compressed/head_32.S
+index f2dfd6d083ef..1cc55c79d1d0 100644
+--- a/arch/x86/boot/compressed/head_32.S
++++ b/arch/x86/boot/compressed/head_32.S
+@@ -240,11 +240,9 @@ SYM_FUNC_START_LOCAL_NOALIGN(.Lrelocated)
+ 				/* push arguments for extract_kernel: */
+ 	pushl	$z_output_len	/* decompressed length, end of relocs */
  
- #define UNKNOWN		0
- #define MEASURE		0x0001	/* same as IMA_MEASURE */
-@@ -820,7 +821,8 @@ enum {
- 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
- 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
- 	Opt_appraise_type, Opt_appraise_flag,
--	Opt_permit_directio, Opt_pcr, Opt_template, Opt_err
-+	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
-+	Opt_err
- };
+-	movl    BP_init_size(%esi), %eax
+-	subl    $_end, %eax
+-	movl    %ebx, %ebp
+-	subl    %eax, %ebp
+-	pushl	%ebp		/* output address */
++	leal	_end(%ebx), %eax
++	subl    BP_init_size(%esi), %eax
++	pushl	%eax		/* output address */
  
- static const match_table_t policy_tokens = {
-@@ -856,6 +858,7 @@ static const match_table_t policy_tokens = {
- 	{Opt_permit_directio, "permit_directio"},
- 	{Opt_pcr, "pcr=%s"},
- 	{Opt_template, "template=%s"},
-+	{Opt_keyrings, "keyrings=%s"},
- 	{Opt_err, NULL}
- };
- 
-@@ -1105,6 +1108,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 			result = 0;
- 			entry->flags |= IMA_FSNAME;
- 			break;
-+		case Opt_keyrings:
-+			ima_log_string(ab, "keyrings", args[0].from);
-+
-+			if ((entry->keyrings) ||
-+			    (entry->action != MEASURE) ||
-+			    (entry->func != KEY_CHECK)) {
-+				result = -EINVAL;
-+				break;
-+			}
-+			entry->keyrings = kstrdup(args[0].from, GFP_KERNEL);
-+			if (!entry->keyrings) {
-+				result = -ENOMEM;
-+				break;
-+			}
-+			result = 0;
-+			entry->flags |= IMA_KEYRINGS;
-+			break;
- 		case Opt_fsuuid:
- 			ima_log_string(ab, "fsuuid", args[0].from);
- 
-@@ -1480,6 +1500,13 @@ int ima_policy_show(struct seq_file *m, void *v)
- 		seq_puts(m, " ");
- 	}
- 
-+	if (entry->flags & IMA_KEYRINGS) {
-+		if (entry->keyrings != NULL)
-+			snprintf(tbuf, sizeof(tbuf), "%s", entry->keyrings);
-+		seq_printf(m, pt(Opt_keyrings), tbuf);
-+		seq_puts(m, " ");
-+	}
-+
- 	if (entry->flags & IMA_PCR) {
- 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
- 		seq_printf(m, pt(Opt_pcr), tbuf);
+ 	pushl	$z_input_len	/* input_len */
+ 	leal	input_data(%ebx), %eax
 -- 
-2.17.1
+2.24.1
 
