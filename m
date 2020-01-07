@@ -2,115 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFBB7132F42
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 20:19:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96E95132F5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 20:26:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728777AbgAGTTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 14:19:10 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38008 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728649AbgAGTTJ (ORCPT
+        id S1728747AbgAGT0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 14:26:02 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:46072 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728711AbgAGT0C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 14:19:09 -0500
-Received: by mail-pf1-f193.google.com with SMTP id x185so336666pfc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 11:19:09 -0800 (PST)
+        Tue, 7 Jan 2020 14:26:02 -0500
+Received: by mail-yb1-f196.google.com with SMTP id y67so425259yba.12
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 11:26:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TU5y0uOd04v29R1ldy4aCdHRn60AIShQAfhIrYqvct4=;
-        b=KuhBgkhmzY+be0c7oA/ma8hxZhuoHjFirs176QvXXz/8TxiRr6YQ8GknYwFMLw1MtL
-         G5mycKgbz64sOLtaaTynzyLMeFAlctWwoDdtIulNgI4aCVpmcAoiQHuYr8f0bWNv+jqv
-         HMu/z7+GvtaFoAMV6thwF4A7WTUJ9Rh4KO08NaZEOaHv52TRRWsWMRLudoMK6W0PHaJx
-         OIPAG5RU+91Q4CX0/TyPnG7ydKx5ImuveytiD5wUcjBK9KGUXWJ4XHpEaDPSpM9CljDW
-         OiMqRWyN7ID3K0FkcOD4TS+Ieou2h7qp9XyN6u4X/M1xbFRYfk3/iyRYvjiQYb5MpBaN
-         fy4A==
+        d=digitalocean.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=4DKB6Qc7EQjmBiBL2Egn9+nwj/mOHqlQ9foMEYlIG8s=;
+        b=IOJjPyAyvnzuaeYvsM7svksubqWXA8Hoa7vK1bSt+tq7EJBo7VMbZS8S8OZSLwg1pG
+         36w/czHJ96ImfadkDxCEjuu2XWNf62lAMDsXNsGFKHjawBMtvJOe2BF5ITEpiN1FAxl9
+         5YiirNrNugcI13cQILvJLZwP+M6SsP86e47EU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TU5y0uOd04v29R1ldy4aCdHRn60AIShQAfhIrYqvct4=;
-        b=EojqY7JA/DthqWRPbB3Cay0pTrYsMpAmXzwv3PdPZjgyJ3HF+hHgOdtGCvqqVE1ms8
-         oD50JprDt876cUqJrk9b2rb6ShCHqTASpb3fyFb/AE1MujKWhqLWcL60h/0DWf4neV3K
-         Ujm1PtPC0WgybL6kouOGnZqVJF/QvIw4nilWkXqLAFttDX4FPU3X4WnzaDyRvM4UNJAj
-         nYfe4aAuyWD5aNuIc18/JaU0AdLBk/0WBETmSpjSNnOa84+P8o5+KDZCo9khBPd2yCed
-         Oq4LoTq6UBYufz058QgM6ViCEFq5+WQgfHb7shSivUbg4uFnglDt2RTE1Nsv/FBTysfc
-         G2yQ==
-X-Gm-Message-State: APjAAAVKMYaJNV/lLzgsExdd4MOww5eceGj1usPn1HIa1Xiq5vDQ/tya
-        zL4bePfdGpAwp6UP7opDY4anYw==
-X-Google-Smtp-Source: APXvYqz3hHvhtKQxlmnApv3yxgqZQM3teHJBcT4UloZ5gm4T7Df1KmGi/QM9c96hmThP+tfqKucIyA==
-X-Received: by 2002:a62:f94d:: with SMTP id g13mr825176pfm.60.1578424749010;
-        Tue, 07 Jan 2020 11:19:09 -0800 (PST)
-Received: from gnomeregan01.cam.corp.google.com ([2620:15c:6:14:50b7:ffca:29c4:6488])
-        by smtp.googlemail.com with ESMTPSA id i2sm485165pgi.94.2020.01.07.11.19.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jan 2020 11:19:08 -0800 (PST)
-Subject: Re: [PATCH v5 2/2] kvm: Use huge pages for DAX-backed files
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Liran Alon <liran.alon@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        linux-nvdimm@lists.01.org, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jason.zeng@intel.com
-References: <20191212182238.46535-1-brho@google.com>
- <20191212182238.46535-3-brho@google.com>
- <06108004-1720-41EB-BCAB-BFA8FEBF4772@oracle.com>
- <ED482280-CB47-4AB6-9E7E-EEE7848E0F8B@oracle.com>
- <f8e948ff-6a2a-a6d6-9d8e-92b93003354a@google.com>
- <65FB6CC1-3AD2-4D6F-9481-500BD7037203@oracle.com>
- <20191213171950.GA31552@linux.intel.com>
- <e012696f-f13e-5af1-2b14-084607d69bfa@google.com>
- <20200107190522.GA16987@linux.intel.com>
-From:   Barret Rhoden <brho@google.com>
-Message-ID: <08a36944-ad5a-ca49-99b3-d3908ce0658b@google.com>
-Date:   Tue, 7 Jan 2020 14:19:06 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <20200107190522.GA16987@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4DKB6Qc7EQjmBiBL2Egn9+nwj/mOHqlQ9foMEYlIG8s=;
+        b=HyE6egLFclR0RWmrcsXVoPoEF6hKo0iwSqkFnFIo5QSKdIQQ3/Mb5Vxu69fs0L0/BI
+         AILva48ZnUgxnzvYeTjS/uP08T/GBCeddz4pxURUeUSxaD5bpz4017hj04A4XrJS3ZzS
+         q07NLviN2ex6sTvgV1YqCXVcY3hxp8mpCdhjbUCOyebBz8HDS2kW5U2OfHYukKmih74j
+         M/PYJ7XN7HelyUTBNjPMO2lcTvDACUX9aXIoNrJBwBnnxgqzjaflV8lOalBHpJ98/3/T
+         iET9CTQrMprRIa3CqtTCe2adNJ0L1BdEdaJCZMZ2Y7qwM3D/8ekpKzQMutKoxHD0n9sx
+         jIHw==
+X-Gm-Message-State: APjAAAXsn85oAjFvZJEH6SgLnkvQ/pm6/VnOTfWeIMoIjUD4lfRc8X/m
+        1DatfdA5jtLGadG1ADd70F5v
+X-Google-Smtp-Source: APXvYqy+9ob7vtrukxOuHGC9cxGwvi0VR2CE0/vcLH7EgE5nxS3/p087frpqoeKCnXIBDamwJYeLvQ==
+X-Received: by 2002:a25:40c4:: with SMTP id n187mr909330yba.199.1578425160957;
+        Tue, 07 Jan 2020 11:26:00 -0800 (PST)
+Received: from tina-kpatch ([162.243.188.76])
+        by smtp.gmail.com with ESMTPSA id y9sm252630ywc.19.2020.01.07.11.26.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2020 11:26:00 -0800 (PST)
+From:   Tianlin Li <tli@digitalocean.com>
+To:     kernel-hardening@lists.openwall.com, keescook@chromium.org
+Cc:     Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com,
+        David1.Zhou@amd.com, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Tianlin Li <tli@digitalocean.com>
+Subject: [PATCH 0/2] drm/radeon: have the callers of set_memory_*() check the return value
+Date:   Tue,  7 Jan 2020 13:25:53 -0600
+Message-Id: <20200107192555.20606-1-tli@digitalocean.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi -
+Right now several architectures allow their set_memory_*() family of  
+functions to fail, but callers may not be checking the return values.
+If set_memory_*() returns with an error, call-site assumptions may be
+infact wrong to assume that it would either succeed or not succeed at  
+all. Ideally, the failure of set_memory_*() should be passed up the 
+call stack, and callers should examine the failure and deal with it. 
 
-On 1/7/20 2:05 PM, Sean Christopherson wrote:
-> On Mon, Dec 16, 2019 at 11:05:26AM -0500, Barret Rhoden wrote:
->> On 12/13/19 12:19 PM, Sean Christopherson wrote:
->>> Teaching thp_adjust() how to handle 1GB wouldn't be a bad thing.  It's
->>> unlikely THP itself will support 1GB pages any time soon, but having the
->>> logic there wouldn't hurt anything.
->>>
->>
->> Cool.  This was my main concern - I didn't want to break THP.
->>
->> I'll rework the series based on all of your comments.
-> 
-> Hopefully you haven't put too much effort into the rework, because I want
-> to commandeer the proposed changes and use them as the basis for a more
-> aggressive overhaul of KVM's hugepage handling.  Ironically, there's a bug
-> in KVM's THP handling that I _think_ can be avoided by using the DAX
-> approach of walking the host PTEs.
-> 
-> I'm in the process of testing, hopefully I'll get a series sent out later
-> today.  If not, I should at least be able to provide an update.
+Need to fix the callers and add the __must_check attribute. They also 
+may not provide any level of atomicity, in the sense that the memory 
+protections may be left incomplete on failure. This issue likely has a 
+few steps on effects architectures:
+1)Have all callers of set_memory_*() helpers check the return value.
+2)Add __must_check to all set_memory_*() helpers so that new uses do  
+not ignore the return value.
+3)Add atomicity to the calls so that the memory protections aren't left 
+in a partial state.
 
-Nice timing.  I was just about to get back to this, so I haven't put any 
-time in yet.  =)
+This series is part of step 1. Make drm/radeon check the return value of  
+set_memory_*().
 
-Please CC me, and I'll try your patches out on my end.
+Tianlin Li (2):
+  drm/radeon: have the callers of set_memory_*() check the return value
+  drm/radeon: change call sites to handle return value properly.
 
-Thanks,
+ drivers/gpu/drm/radeon/r100.c        |  3 ++-
+ drivers/gpu/drm/radeon/radeon.h      |  2 +-
+ drivers/gpu/drm/radeon/radeon_gart.c | 22 ++++++++++++++++++----
+ drivers/gpu/drm/radeon/rs400.c       |  3 ++-
+ 4 files changed, 23 insertions(+), 7 deletions(-)
 
-Barret
-
-
+-- 
+2.17.1
 
