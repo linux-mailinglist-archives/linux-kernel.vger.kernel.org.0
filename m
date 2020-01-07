@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B22A13330A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:16:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65B2D1331BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:03:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729790AbgAGVPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:15:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58772 "EHLO mail.kernel.org"
+        id S1728941AbgAGVDf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:03:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729556AbgAGVHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:07:38 -0500
+        id S1728929AbgAGVDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:03:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92B092087F;
-        Tue,  7 Jan 2020 21:07:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EEB92077B;
+        Tue,  7 Jan 2020 21:03:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431258;
-        bh=98EdB25M0hd6riywnLvzH6RQU1h/WAEgtkywxfwDrrQ=;
+        s=default; t=1578431012;
+        bh=RQwPlijfxf7jo2do6WvjL3xxdq2kbHIzLdvt0P3xetg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PnWtXuaxvfMy7jRljc9ozhgS0S/arRa8gaFJulb4USTd0mpb0u2Xw1ax9EV/5+EUc
-         FMUcvICnd4tW+yFekzKj1K+Q9/EgdHIAj8wYZuxKTY4vkz1Rboh/OxsXQ8yb5ufd9A
-         GDjRpmz+9gjcuCA9QMV4AXNKtzHfFFNREE3HWhiQ=
+        b=L34ZGhJ5OV0gWPeXG8qWk91hrqh6M4MvL5+E8Tt/GqxxENesz7ikoWCgrO50nSMsW
+         dgeRFASLiItw9wKJbmvMnlB6Um5Ptt8ZzgxRkKKxnQHEIXMRgsvX1IB7aRB+Mm1hqy
+         /az0Sq3wd2zRodavFYfRETZFTCYqo1GMcOVClGdU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Dave Airlie <airlied@redhat.com>,
-        Imre Deak <imre.deak@intel.com>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 099/115] drm/mst: Fix MST sideband up-reply failure handling
+Subject: [PATCH 5.4 189/191] hsr: fix error handling routine in hsr_dev_finalize()
 Date:   Tue,  7 Jan 2020 21:55:09 +0100
-Message-Id: <20200107205307.790273708@linuxfoundation.org>
+Message-Id: <20200107205343.102463024@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-References: <20200107205240.283674026@linuxfoundation.org>
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+References: <20200107205332.984228665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,81 +44,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Imre Deak <imre.deak@intel.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit d8fd3722207f154b53c80eee2cf4977c3fc25a92 ]
+[ Upstream commit 1d19e2d53e8ed9e4c98fc95e0067492cda7288b0 ]
 
-Fix the breakage resulting in the stacktrace below, due to tx queue
-being full when trying to send an up-reply. txmsg->seqno is -1 in this
-case leading to a corruption of the mstb object by
+hsr_dev_finalize() is called to create new hsr interface.
+There are some wrong error handling codes.
 
-	txmsg->dst->tx_slots[txmsg->seqno] = NULL;
+1. wrong checking return value of debugfs_create_{dir/file}.
+These function doesn't return NULL. If error occurs in there,
+it returns error pointer.
+So, it should check error pointer instead of NULL.
 
-in process_single_up_tx_qlock().
+2. It doesn't unregister interface if it fails to setup hsr interface.
+If it fails to initialize hsr interface after register_netdevice(),
+it should call unregister_netdevice().
 
-[  +0,005162] [drm:process_single_tx_qlock [drm_kms_helper]] set_hdr_from_dst_qlock: failed to find slot
-[  +0,000015] [drm:drm_dp_send_up_ack_reply.constprop.19 [drm_kms_helper]] failed to send msg in q -11
-[  +0,000939] BUG: kernel NULL pointer dereference, address: 00000000000005a0
-[  +0,006982] #PF: supervisor write access in kernel mode
-[  +0,005223] #PF: error_code(0x0002) - not-present page
-[  +0,005135] PGD 0 P4D 0
-[  +0,002581] Oops: 0002 [#1] PREEMPT SMP NOPTI
-[  +0,004359] CPU: 1 PID: 1200 Comm: kworker/u16:3 Tainted: G     U            5.2.0-rc1+ #410
-[  +0,008433] Hardware name: Intel Corporation Ice Lake Client Platform/IceLake U DDR4 SODIMM PD RVP, BIOS ICLSFWR1.R00.3175.A00.1904261428 04/26/2019
-[  +0,013323] Workqueue: i915-dp i915_digport_work_func [i915]
-[  +0,005676] RIP: 0010:queue_work_on+0x19/0x70
-[  +0,004372] Code: ff ff ff 0f 1f 40 00 66 2e 0f 1f 84 00 00 00 00 00 41 56 49 89 f6 41 55 41 89 fd 41 54 55 53 48 89 d3 9c 5d fa e8 e7 81 0c 00 <f0> 48 0f ba 2b 00 73 31 45 31 e4 f7 c5 00 02 00 00 74 13 e8 cf 7f
-[  +0,018750] RSP: 0018:ffffc900007dfc50 EFLAGS: 00010006
-[  +0,005222] RAX: 0000000000000046 RBX: 00000000000005a0 RCX: 0000000000000001
-[  +0,007133] RDX: 000000000001b608 RSI: 0000000000000000 RDI: ffffffff82121972
-[  +0,007129] RBP: 0000000000000202 R08: 0000000000000000 R09: 0000000000000001
-[  +0,007129] R10: 0000000000000000 R11: 0000000000000000 R12: ffff88847bfa5096
-[  +0,007131] R13: 0000000000000010 R14: ffff88849c08f3f8 R15: 0000000000000000
-[  +0,007128] FS:  0000000000000000(0000) GS:ffff88849dc80000(0000) knlGS:0000000000000000
-[  +0,008083] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  +0,005749] CR2: 00000000000005a0 CR3: 0000000005210006 CR4: 0000000000760ee0
-[  +0,007128] PKRU: 55555554
-[  +0,002722] Call Trace:
-[  +0,002458]  drm_dp_mst_handle_up_req+0x517/0x540 [drm_kms_helper]
-[  +0,006197]  ? drm_dp_mst_hpd_irq+0x5b/0x9c0 [drm_kms_helper]
-[  +0,005764]  drm_dp_mst_hpd_irq+0x5b/0x9c0 [drm_kms_helper]
-[  +0,005623]  ? intel_dp_hpd_pulse+0x205/0x370 [i915]
-[  +0,005018]  intel_dp_hpd_pulse+0x205/0x370 [i915]
-[  +0,004836]  i915_digport_work_func+0xbb/0x140 [i915]
-[  +0,005108]  process_one_work+0x245/0x610
-[  +0,004027]  worker_thread+0x37/0x380
-[  +0,003684]  ? process_one_work+0x610/0x610
-[  +0,004184]  kthread+0x119/0x130
-[  +0,003240]  ? kthread_park+0x80/0x80
-[  +0,003668]  ret_from_fork+0x24/0x50
+3. Ignore failure of creation of debugfs
+If creating of debugfs dir and file is failed, creating hsr interface
+will be failed. But debugfs doesn't affect actual logic of hsr module.
+So, ignoring this is more correct and this behavior is more general.
 
-Cc: Lyude Paul <lyude@redhat.com>
-Cc: Dave Airlie <airlied@redhat.com>
-Signed-off-by: Imre Deak <imre.deak@intel.com>
-Reviewed-by: Lyude Paul <lyude@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190523212433.9058-1-imre.deak@intel.com
+Fixes: c5a759117210 ("net/hsr: Use list_head (and rcu) instead of array for slave devices.")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ net/hsr/hsr_debugfs.c | 15 +++++++--------
+ net/hsr/hsr_device.c  | 19 ++++++++++---------
+ net/hsr/hsr_main.h    | 11 ++++-------
+ 3 files changed, 21 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index 65f58e23e03d..77347a258f6c 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -1582,7 +1582,11 @@ static void process_single_up_tx_qlock(struct drm_dp_mst_topology_mgr *mgr,
- 	if (ret != 1)
- 		DRM_DEBUG_KMS("failed to send msg in q %d\n", ret);
+diff --git a/net/hsr/hsr_debugfs.c b/net/hsr/hsr_debugfs.c
+index 6135706f03d5..6618a9d8e58e 100644
+--- a/net/hsr/hsr_debugfs.c
++++ b/net/hsr/hsr_debugfs.c
+@@ -77,15 +77,14 @@ static const struct file_operations hsr_fops = {
+  * When debugfs is configured this routine sets up the node_table file per
+  * hsr device for dumping the node_table entries
+  */
+-int hsr_debugfs_init(struct hsr_priv *priv, struct net_device *hsr_dev)
++void hsr_debugfs_init(struct hsr_priv *priv, struct net_device *hsr_dev)
+ {
+-	int rc = -1;
+ 	struct dentry *de = NULL;
  
--	txmsg->dst->tx_slots[txmsg->seqno] = NULL;
-+	if (txmsg->seqno != -1) {
-+		WARN_ON((unsigned int)txmsg->seqno >
-+			ARRAY_SIZE(txmsg->dst->tx_slots));
-+		txmsg->dst->tx_slots[txmsg->seqno] = NULL;
-+	}
+ 	de = debugfs_create_dir(hsr_dev->name, NULL);
+-	if (!de) {
++	if (IS_ERR(de)) {
+ 		pr_err("Cannot create hsr debugfs root\n");
+-		return rc;
++		return;
+ 	}
+ 
+ 	priv->node_tbl_root = de;
+@@ -93,13 +92,13 @@ int hsr_debugfs_init(struct hsr_priv *priv, struct net_device *hsr_dev)
+ 	de = debugfs_create_file("node_table", S_IFREG | 0444,
+ 				 priv->node_tbl_root, priv,
+ 				 &hsr_fops);
+-	if (!de) {
++	if (IS_ERR(de)) {
+ 		pr_err("Cannot create hsr node_table directory\n");
+-		return rc;
++		debugfs_remove(priv->node_tbl_root);
++		priv->node_tbl_root = NULL;
++		return;
+ 	}
+ 	priv->node_tbl_file = de;
+-
+-	return 0;
  }
  
- static void drm_dp_queue_down_tx(struct drm_dp_mst_topology_mgr *mgr,
+ /* hsr_debugfs_term - Tear down debugfs intrastructure
+diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
+index b01e1bae4ddc..e73549075a03 100644
+--- a/net/hsr/hsr_device.c
++++ b/net/hsr/hsr_device.c
+@@ -477,30 +477,31 @@ int hsr_dev_finalize(struct net_device *hsr_dev, struct net_device *slave[2],
+ 
+ 	res = hsr_add_port(hsr, hsr_dev, HSR_PT_MASTER);
+ 	if (res)
+-		goto err_add_port;
++		goto err_add_master;
+ 
+ 	res = register_netdevice(hsr_dev);
+ 	if (res)
+-		goto fail;
++		goto err_unregister;
+ 
+ 	res = hsr_add_port(hsr, slave[0], HSR_PT_SLAVE_A);
+ 	if (res)
+-		goto fail;
++		goto err_add_slaves;
++
+ 	res = hsr_add_port(hsr, slave[1], HSR_PT_SLAVE_B);
+ 	if (res)
+-		goto fail;
++		goto err_add_slaves;
+ 
++	hsr_debugfs_init(hsr, hsr_dev);
+ 	mod_timer(&hsr->prune_timer, jiffies + msecs_to_jiffies(PRUNE_PERIOD));
+-	res = hsr_debugfs_init(hsr, hsr_dev);
+-	if (res)
+-		goto fail;
+ 
+ 	return 0;
+ 
+-fail:
++err_add_slaves:
++	unregister_netdevice(hsr_dev);
++err_unregister:
+ 	list_for_each_entry_safe(port, tmp, &hsr->ports, port_list)
+ 		hsr_del_port(port);
+-err_add_port:
++err_add_master:
+ 	hsr_del_self_node(&hsr->self_node_db);
+ 
+ 	return res;
+diff --git a/net/hsr/hsr_main.h b/net/hsr/hsr_main.h
+index 96fac696a1e1..acab9c353a49 100644
+--- a/net/hsr/hsr_main.h
++++ b/net/hsr/hsr_main.h
+@@ -184,15 +184,12 @@ static inline u16 hsr_get_skb_sequence_nr(struct sk_buff *skb)
+ }
+ 
+ #if IS_ENABLED(CONFIG_DEBUG_FS)
+-int hsr_debugfs_init(struct hsr_priv *priv, struct net_device *hsr_dev);
++void hsr_debugfs_init(struct hsr_priv *priv, struct net_device *hsr_dev);
+ void hsr_debugfs_term(struct hsr_priv *priv);
+ #else
+-static inline int hsr_debugfs_init(struct hsr_priv *priv,
+-				   struct net_device *hsr_dev)
+-{
+-	return 0;
+-}
+-
++static inline void hsr_debugfs_init(struct hsr_priv *priv,
++				    struct net_device *hsr_dev)
++{}
+ static inline void hsr_debugfs_term(struct hsr_priv *priv)
+ {}
+ #endif
 -- 
 2.20.1
 
