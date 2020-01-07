@@ -2,96 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ED8C131CF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 02:03:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE990131CFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 02:03:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbgAGBDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 20:03:20 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:36893 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727431AbgAGBDT (ORCPT
+        id S1727472AbgAGBDz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 20:03:55 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:38779 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727295AbgAGBDz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 20:03:19 -0500
-Received: by mail-pj1-f65.google.com with SMTP id m13so8481155pjb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 17:03:18 -0800 (PST)
+        Mon, 6 Jan 2020 20:03:55 -0500
+Received: by mail-pj1-f68.google.com with SMTP id l35so8483756pje.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 17:03:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0W4z4C6dC01RLTeCcayXEvOAD5WKMfV6HC+a5WAWxQg=;
-        b=Nab+MQumZjbQUj+anv/iG37LLvYcp3/1rDrEncHE8box4TpfBUgmhsmMuEyWYyRM7g
-         2nIInJi4m4tpnYHmVFT2sXc810xWcAgZjxhAZ/+QIoWvbDX2e04+0Tl4aQ4vp8LY51pV
-         ubA0n0x8n89rZGpU+dvilRo8QTunJ4x6GBPbhdHGiE2WR6M0rmO9hvZTHmhW3mjtwyFj
-         fP9ImT7gsquimN0EfcS2e2Iu0myDSQXTNLqjBygSZWRvTVAVuQegC1hnTbYSkSzTkayO
-         5e3bkyZWGNRhWTqcm/OxQc3QP3UCbRJfqMXxKQHmVevGi/HpcbQwcI3BJUjC9PCKDhCL
-         T6tg==
+        h=from:to:cc:subject:date:message-id;
+        bh=01+Id1lIyq1lWtSOqQjL5VE6DOGfgbnglBNzoLWDwZI=;
+        b=Kang4SyWPDY5jwuddrU8p81GfaKbeSz3yQ17hIiij2L59bPg16XOhZM3WyhfbKAAht
+         UVvGQTh6jeztB4DppGYG/ox/57RUfe3MH5AikiQXWjypHeX7Gc4rZVuyK5DTRLP9/DGS
+         Eyv7iQXXKMglh8w4EMRVEfaxVAmqR7FNDopAwMihB3Gaoy6XKBDTNAFUsk918jxAG7dK
+         qiGiIxXpmqIlkcQtt5s/g69ZrnKRG7aZcxt1a9C5k5nTFPVPmECaiBRIcG67U8AMlXsY
+         UP+RepHtuVpERPMscMQNZrh5oYKldcYCpYPcjwuH2FK0Q6AA1qT5lEApmmbKqDxDi5Ce
+         G4hQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=0W4z4C6dC01RLTeCcayXEvOAD5WKMfV6HC+a5WAWxQg=;
-        b=OwYq4UIYqrwWjF6oXPgy2ZkB7PSgXtuhiEBtqwZlLHCHTLdzJeycQfGNOvtEJXNzTn
-         9kK5ITxIK9lLdNSnbhOO3Tr2u9ixcboqeXvtdGXtgoxooXT8dOvnYllxpsJf0Tk5ApYt
-         jbAjrXJe0jlw37q58N5i6+025QbY0ViMa3YdodFFIRVGkNQQmPkbcU4ASQrXcj7fiYkt
-         Y9mS+HtZO+wRgmATV7qNiMlhJwhWb6k2ptVRjEEzJ7S640u5qeOC4AqRW3iyfHo36eA7
-         CBU9JjfV1FnBnfIj1yTWcGZtGzv6ilpKLOrU7N7vo5tL0SgMTssH7uuLsapzouV+XiY9
-         9gGw==
-X-Gm-Message-State: APjAAAX3hTsvRi40f+usUYVtRClgYwcvNAyvytdWKl48MZjPS+Ea0Jgi
-        t5at68jo0U+m30xqXPd01cbJc9c9pYI=
-X-Google-Smtp-Source: APXvYqyv2jfqnyRBmzuLap2gU2hC5StQSLd4QLLs3VCxIscY4eumvb3CdwrH/fQwpJpUdQTzK/kqZw==
-X-Received: by 2002:a17:902:9043:: with SMTP id w3mr107498255plz.8.1578358998329;
-        Mon, 06 Jan 2020 17:03:18 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=01+Id1lIyq1lWtSOqQjL5VE6DOGfgbnglBNzoLWDwZI=;
+        b=Wf6CeETCwy6tdzBS9sJR5pUoCmKLSxUpgw2XidJ4EpnWdBHTGRT6FuulETL2HcdcZQ
+         QsQKa6kw6SBMAtpHim3mw5SaL89H+eX+Hp1uvUo5ivBHPHneV1gf3T8AFvYgprIgqSRR
+         1+t4N7M+uZwKgPu3XpGDNvnFQENwi8EfKxaEOwOiSwJRVKgAV8dTscvqDPsFOFoJw6Qo
+         Yq41h+7MYYVi3e5d72+B7OnC79PUv77bD+YSpG11q+atC2B//eyCxfrplso7xslBfvCw
+         GW2G3QY5uc/4TsabQeWVS+xt6QThzo26PLHWKSddSczjzRHuaQAHKiPtZtWcCglXgSc4
+         lBrg==
+X-Gm-Message-State: APjAAAURc43vT+t9Xozyott6LF3XxGUbLDivJxAuLJP/l7FV83WLPTIg
+        Ez2upZ0QOv0EGQpqqePhaSkByvlTdbE=
+X-Google-Smtp-Source: APXvYqxERV5CCCdzv7FfOIwUwAgigPOmIbTDxqQejSfludU/qlRYpgJ0+ZUoH/RsWHpnHuXTs4gjYw==
+X-Received: by 2002:a17:90a:b008:: with SMTP id x8mr44024945pjq.106.1578359032862;
+        Mon, 06 Jan 2020 17:03:52 -0800 (PST)
 Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id d21sm25361304pjs.25.2020.01.06.17.03.17
+        by smtp.gmail.com with ESMTPSA id s7sm26749487pjk.22.2020.01.06.17.03.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2020 17:03:17 -0800 (PST)
+        Mon, 06 Jan 2020 17:03:52 -0800 (PST)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
 Cc:     John Stultz <john.stultz@linaro.org>, Todd Kjos <tkjos@google.com>,
         Alistair Delva <adelva@google.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Amit Pundir <amit.pundir@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
-Subject: [PATCH 2/2] tty: serial: Kconfig: Allow SERIAL_QCOM_GENI_CONSOLE to be enabled if SERIAL_QCOM_GENI is a module
-Date:   Tue,  7 Jan 2020 01:03:11 +0000
-Message-Id: <20200107010311.58584-2-john.stultz@linaro.org>
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH] reset: Kconfig: Set CONFIG_RESET_QCOM_AOSS as tristate
+Date:   Tue,  7 Jan 2020 01:03:50 +0000
+Message-Id: <20200107010350.58657-1-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200107010311.58584-1-john.stultz@linaro.org>
-References: <20200107010311.58584-1-john.stultz@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to support having SERIAL_QCOM_GENI as a module while
-also still preserving serial console support, tweak the
-Kconfig requirements to not require =y
+Allow CONFIG_RESET_QCOM_AOSS to be set as as =m
+to allow for the driver to be loaded from a modules.
 
 Cc: Todd Kjos <tkjos@google.com>
 Cc: Alistair Delva <adelva@google.com>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: Amit Pundir <amit.pundir@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: linux-serial@vger.kernel.org
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
- drivers/tty/serial/Kconfig | 2 +-
+ drivers/reset/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 99f5da3bf913..4ca799198e88 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -975,7 +975,7 @@ config SERIAL_QCOM_GENI
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index 3ad7817ce1f0..45e70524af36 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -99,7 +99,7 @@ config RESET_PISTACHIO
+ 	  This enables the reset driver for ImgTec Pistachio SoCs.
  
- config SERIAL_QCOM_GENI_CONSOLE
- 	bool "QCOM GENI Serial Console support"
--	depends on SERIAL_QCOM_GENI=y
-+	depends on SERIAL_QCOM_GENI
- 	select SERIAL_CORE_CONSOLE
- 	select SERIAL_EARLYCON
+ config RESET_QCOM_AOSS
+-	bool "Qcom AOSS Reset Driver"
++	tristate "Qcom AOSS Reset Driver"
+ 	depends on ARCH_QCOM || COMPILE_TEST
  	help
+ 	  This enables the AOSS (always on subsystem) reset driver
 -- 
 2.17.1
 
