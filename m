@@ -2,152 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 398B7133044
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:06:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C638133049
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:07:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728645AbgAGUGR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 15:06:17 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:60093 "EHLO
+        id S1728728AbgAGUHN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 15:07:13 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:57105 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728358AbgAGUGR (ORCPT
+        with ESMTP id S1728358AbgAGUHM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:06:17 -0500
+        Tue, 7 Jan 2020 15:07:12 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MGzDv-1iu8AR0ysl-00E1f1; Tue, 07 Jan 2020 21:06:12 +0100
+ (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MqatE-1jSMXl0GYq-00mYDO; Tue, 07 Jan 2020 21:07:01 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Martyn Welch <martyn@welchs.me.uk>,
-        Manohar Vanga <manohar.vanga@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Oleksandr Natalenko <oleksandr@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, devel@driverdev.osuosl.org,
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Simon Horman <simon.horman@netronome.com>,
+        John Hurley <john.hurley@netronome.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Jiri Pirko <jiri@mellanox.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        oss-drivers@netronome.com, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] vme: bridges: reduce stack usage
-Date:   Tue,  7 Jan 2020 21:05:43 +0100
-Message-Id: <20200107200610.3482901-1-arnd@arndb.de>
+Subject: [PATCH] netronome: fix ipv6 link error
+Date:   Tue,  7 Jan 2020 21:06:40 +0100
+Message-Id: <20200107200659.3538375-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:JRQQj5uc/jWLmBmcsVbgZFzF/SPQfVM+WL2b7PT514fxILXtI3S
- 1UW+0uFFza6RECIGCNd8Hx8++hEDIfQQyVCpwVhkAaxHy8qmEQBTj0kGKRZW9qrBof5N+nA
- UJuZtN3GQwAYKwHFHojXiTAr3EanzGhQ1rK+aYn82mNJ/gKyVeClYCLBY3EJ5cc9YysVmW1
- dSxaajJkgyaJK5EQ12jMQ==
+X-Provags-ID: V03:K1:zpRrHEIWckVKUDf/jl0u4GVcvJzo+JZ8MOp8eKylXX9xW7MO3Qw
+ wS+MR16KEZLCb6WcAsyuH6JVF1lQcMLflE03KPA9E/pqcYj6gza2shj6XwW4xAYWfuiKh8E
+ rbbv5B1ezYEiDGJkfgyfhHrHb8f+LROjpan4CutlLbfg7Rrf7LPuImpwts4z7q3GONyaMU2
+ eNzToGrSscn9vO8zEfQ3g==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Qwc2FlRa0HY=:bo6VqV0/kfs0BM2gR1mFdl
- dLdJp0uzjwnjorHeBYlq0zCsffb9xMeDzjvVuJ3jotfiBKyZRl3lhqeAyAuMWTTT5Gf45fRVO
- HG+5L0KxA2Fw8iFofSLqeUrlzjZN7yIOHb3sQHNibgXJYnFaXNPCi8iRB65r7zAGJ/bRV3Zwl
- 2ABi8a62gC9LukUUIlNVL6QTcoOYchpm0Qf49XdXrxVi2eLmml/dUGcjd0DQURAg7A3U1lY/i
- 5ercQpXdGVMHhDzaXymAPn6TCdQJ+69TIh8CcdKKA5QBO/dQNJXtkIjdGVtqpu+H91dhcLpYR
- 1a/Dbc1uNUufSSpAAyzSXfOSZaZSAPg0WOi3usYzM3Vo4dfLCVm/GZMH9jPxyl7TJ/62dlfDc
- nQkNmoa2tyVsc62w7fHhDRAzAG80pY5LmXQZcR5GiHIIzzUtXi5rcGnCBEw4Wl6XddwrxZpVW
- 3OnIJImtvqOWso8MDDQGVWPCfZZNreoHf0vfGZuqchgevDg192GP5VC4YeQBHql9hNu08A7KD
- NfcIEZeh2gtZB6ESJ6+KkljELPF6m0gL9d1Strnhx2Uq/pt7qtrsf0yY5yfRe+FRz089zAFFr
- XzKbYOfZ5RCpWGAG3yduN5pf2j7xv1qjI6Xt0IeSIORyaTIyP1LET5uubK8kPAqVJXWdkxUuQ
- F5D8JX/BMlVZT0ouWXh6tPKJ6ubLBwJ26DkhevCJzskmO9f9LUaUUi2uJrGx62HGj/P/ci2x6
- CJ4YUbLeDkEJpRMcAlxkIJzvtzopPR+Xx2PKpCmM1n1wuGmgRE8re6ZVUMupH2+kcQzBknGt4
- xkw9nW/EUIuIuDP3tO8RU/YXMIUozhGT4ee6Wi/m8RCzpk+L2U/X0zOiX5kda8Lrr2rNu5mnD
- v6oWqffBfT9cAhb1AB1Q==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:9g6EkQsqSyQ=:qDwIYkbbnT0g7KIepwu4oo
+ rimWMRqFxYWN7DMOtm/584CrW5w6dIaJS9bmUnzMiuQM3CiErne1IW2yD7BKTFV/h5BCXl3K2
+ fItbdjAv/FRAfZu4evvPpima6k1iz4V8GcJdZCKRwhrGrJpkP70kSJmFL8JQpwLkhN7GSM1+A
+ r0aNb4mc1p7JO7wmF+2dT2AxWnxUk4rsbLenQuWxSq0Djf0gL3Yxi/k9wDZqoaJu5C+NuMuKD
+ UUHCOI9vbuh7G0wWOnEERRLp8sDv2GhG+qDcx/CulOqflofn5Bc87FkML0W44kRtAa3m5DOLa
+ m0MxliT9NDx8YGxRayIndGDNQNSX1aOK9KSbaAya1WYT6SLccUP5vG/rsfP46si33ok7SzG3+
+ +thd6zKSNGEVTwt1l+lfY7ngbiXDm5vd7sZTPmQlL5VQLHp5sFGqam4lU/YBg/gj2uG+c7JnA
+ O247EKrT7GFHEkY9H1ZvWPKHtEctJm1JOqH3dzlXqiB69toZNtAbfMzuBiRTjGZ2NCZVTBezT
+ CU91D7QSoWCW6ClAW7Npn6jReWVcZO6aTu+RmAZy7XB9jJUStuelWuAAYC1FzlCx4XNHtRwM8
+ +UaFlhpwBWA7YbdtRSHKcU0sDxJiw42p7WW/bGLck2RUgG9nl9aRfhyJ4+7iWzDJqI0mOvuTg
+ w57Wen472jIynWaXhZ2lNUD8NXJ5ErZqBjmhsIOJHJyqoGTvhtB3c22IIPrtKhhRFAwn0GXT2
+ KDqSsMvvGC536XaaM25VFuDpjdu1uPLII9JNjBsiyXfH6QGlOGhGI44VwO4KmVAWVc1LlySTs
+ jlVbT/WzZEFvGJ6n4NVXQ+dSZpozHIy73QndjyK4Y9Ay/O6vJxUbZdQIa6dYpKpMWN70UvUGM
+ z3N8QtvBdrppn4ZMCp3A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3, the stack usage in vme_fake
-grows above the warning limit:
+When the driver is built-in but ipv6 is a module, the flower
+support produces a link error:
 
-drivers/vme/bridges/vme_fake.c: In function 'fake_master_read':
-drivers/vme/bridges/vme_fake.c:610:1: error: the frame size of 1160 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
-drivers/vme/bridges/vme_fake.c: In function 'fake_master_write':
-drivers/vme/bridges/vme_fake.c:797:1: error: the frame size of 1160 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.o: In function `nfp_tunnel_keep_alive_v6':
+tunnel_conf.c:(.text+0x2aa8): undefined reference to `nd_tbl'
 
-The problem is that in some configurations, each call to
-fake_vmereadX() puts another variable on the stack.
+Add a Kconfig dependency to avoid that configuration.
 
-Reduce the amount of inlining to get back to the previous state,
-with no function using more than 200 bytes each.
-
-Fixes: mmtom ("init/Kconfig: enable -O3 for all arches")
+Fixes: 9ea9bfa12240 ("nfp: flower: support ipv6 tunnel keep-alive messages from fw")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/vme/bridges/vme_fake.c | 30 ++++++++++++++++++------------
- 1 file changed, 18 insertions(+), 12 deletions(-)
+ drivers/net/ethernet/netronome/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/vme/bridges/vme_fake.c b/drivers/vme/bridges/vme_fake.c
-index 3208a4409e44..6a1bc284f297 100644
---- a/drivers/vme/bridges/vme_fake.c
-+++ b/drivers/vme/bridges/vme_fake.c
-@@ -414,8 +414,9 @@ static void fake_lm_check(struct fake_driver *bridge, unsigned long long addr,
- 	}
- }
- 
--static u8 fake_vmeread8(struct fake_driver *bridge, unsigned long long addr,
--		u32 aspace, u32 cycle)
-+static noinline_for_stack u8 fake_vmeread8(struct fake_driver *bridge,
-+					   unsigned long long addr,
-+					   u32 aspace, u32 cycle)
- {
- 	u8 retval = 0xff;
- 	int i;
-@@ -446,8 +447,9 @@ static u8 fake_vmeread8(struct fake_driver *bridge, unsigned long long addr,
- 	return retval;
- }
- 
--static u16 fake_vmeread16(struct fake_driver *bridge, unsigned long long addr,
--		u32 aspace, u32 cycle)
-+static noinline_for_stack u16 fake_vmeread16(struct fake_driver *bridge,
-+					     unsigned long long addr,
-+					     u32 aspace, u32 cycle)
- {
- 	u16 retval = 0xffff;
- 	int i;
-@@ -478,8 +480,9 @@ static u16 fake_vmeread16(struct fake_driver *bridge, unsigned long long addr,
- 	return retval;
- }
- 
--static u32 fake_vmeread32(struct fake_driver *bridge, unsigned long long addr,
--		u32 aspace, u32 cycle)
-+static noinline_for_stack u32 fake_vmeread32(struct fake_driver *bridge,
-+					     unsigned long long addr,
-+					     u32 aspace, u32 cycle)
- {
- 	u32 retval = 0xffffffff;
- 	int i;
-@@ -609,8 +612,9 @@ static ssize_t fake_master_read(struct vme_master_resource *image, void *buf,
- 	return retval;
- }
- 
--static void fake_vmewrite8(struct fake_driver *bridge, u8 *buf,
--			   unsigned long long addr, u32 aspace, u32 cycle)
-+static noinline_for_stack void fake_vmewrite8(struct fake_driver *bridge,
-+					      u8 *buf, unsigned long long addr,
-+					      u32 aspace, u32 cycle)
- {
- 	int i;
- 	unsigned long long start, end, offset;
-@@ -639,8 +643,9 @@ static void fake_vmewrite8(struct fake_driver *bridge, u8 *buf,
- 
- }
- 
--static void fake_vmewrite16(struct fake_driver *bridge, u16 *buf,
--			    unsigned long long addr, u32 aspace, u32 cycle)
-+static noinline_for_stack void fake_vmewrite16(struct fake_driver *bridge,
-+					       u16 *buf, unsigned long long addr,
-+					       u32 aspace, u32 cycle)
- {
- 	int i;
- 	unsigned long long start, end, offset;
-@@ -669,8 +674,9 @@ static void fake_vmewrite16(struct fake_driver *bridge, u16 *buf,
- 
- }
- 
--static void fake_vmewrite32(struct fake_driver *bridge, u32 *buf,
--			    unsigned long long addr, u32 aspace, u32 cycle)
-+static noinline_for_stack void fake_vmewrite32(struct fake_driver *bridge,
-+					       u32 *buf, unsigned long long addr,
-+					       u32 aspace, u32 cycle)
- {
- 	int i;
- 	unsigned long long start, end, offset;
+diff --git a/drivers/net/ethernet/netronome/Kconfig b/drivers/net/ethernet/netronome/Kconfig
+index bac5be4d4f43..dcb02ce28460 100644
+--- a/drivers/net/ethernet/netronome/Kconfig
++++ b/drivers/net/ethernet/netronome/Kconfig
+@@ -31,6 +31,7 @@ config NFP_APP_FLOWER
+ 	bool "NFP4000/NFP6000 TC Flower offload support"
+ 	depends on NFP
+ 	depends on NET_SWITCHDEV
++	depends on IPV6 != m || NFP =m
+ 	default y
+ 	---help---
+ 	  Enable driver support for TC Flower offload on NFP4000 and NFP6000.
 -- 
 2.20.0
 
