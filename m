@@ -2,61 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5113A13226F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:33:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E900132264
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:30:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbgAGJdT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 04:33:19 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8231 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727699AbgAGJdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 04:33:19 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 6D22EDD665B5C7FEEC31;
-        Tue,  7 Jan 2020 17:33:17 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 7 Jan 2020 17:33:08 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <linux-usb@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <chenzhou10@huawei.com>
-Subject: [PATCH next 2/2] net: ch9200: remove unnecessary return
-Date:   Tue, 7 Jan 2020 17:28:56 +0800
-Message-ID: <20200107092856.97742-3-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200107092856.97742-1-chenzhou10@huawei.com>
-References: <20200107092856.97742-1-chenzhou10@huawei.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+        id S1727850AbgAGJaR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 04:30:17 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40381 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727782AbgAGJaA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 04:30:00 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c14so53064290wrn.7
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 01:29:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=RhSUzitd9bqzSRucMHlRHZmPMmbVRjLi7QePW978DUg=;
+        b=q3rFUrsPxKvzS9fnNPOWZxD91BiuFAhEHEFHG+dRcbp6+hXEW6+3w7EDRTZuJ3LJNp
+         96TUPQZR6QmjJX9OOFgIox+mQSnztYY8TpiBAHfJjPlu+ZtBh5FYh5lLKQloX9KsZYQL
+         6szNdxzqXeUNEvghT2h53EOBmGaWQ6pT/XEZ9Jtw6s+wZmmQoh183XqYpBdCQhXQSEib
+         M1PV8MgPzpmFKxw8KqLmecrxYqePYAssN+y+zTfzHc0IIGPOBrIO6JQKtM+OD/U+F2JM
+         ROBJHtn5AVHa7bVOHit7hHZ07zWoiT/MWdQ4o2nfOnh9NqFQRQYeV56Rfk9QnWzk7DWS
+         eo5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=RhSUzitd9bqzSRucMHlRHZmPMmbVRjLi7QePW978DUg=;
+        b=T+DJ7UuNTDW+4SsblWV/WPGplVf6SC/4WGCVxG2PubsXAgWEM7i9tBqwCjbrFOwt+a
+         yD6TDvxvkncW7j1cMqcf/l/iPgipgp39Qk2y5JkRQVBntUjUJoFi+/rGtOW7H/+AUAT1
+         Uw8bxPXzM3WkgIMR3/mu4IBef4bj2hhRYf2wW+AO4JMSH06waP2WxDzXmJlUiKCGQM+u
+         Rt7THdwT0MscPKCyL48TtdoHdsk7Ji6K5bV/EDpBuaeHWqe0H4p5I7O7/wNDFPpq6cdS
+         cU9WBmx22BGA/ZkBUf3ft9uLbFKAZ2bHFJTAU689KY8dqeMmVhvKJ8a/2MxpNA1zPCXS
+         aecA==
+X-Gm-Message-State: APjAAAU95QFH4EK5Xs4nwfz6GdaxdA+jQK24Wa99prP52N/C5KsQgFAl
+        BYbg1BmwopB1KCYhs4PxaUo/fQ==
+X-Google-Smtp-Source: APXvYqwu0MkMjm8FlO7vFLCAxOjtj6KrF4+fPatyYrpwmul+GvzYn2YLQwfY6aHpplsZtGXjPCZJyg==
+X-Received: by 2002:a5d:4b45:: with SMTP id w5mr113314127wrs.224.1578389399042;
+        Tue, 07 Jan 2020 01:29:59 -0800 (PST)
+Received: from localhost.localdomain (i16-les01-ntr-213-44-229-207.sfr.lns.abo.bbox.fr. [213.44.229.207])
+        by smtp.googlemail.com with ESMTPSA id x14sm25959969wmj.42.2020.01.07.01.29.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2020 01:29:58 -0800 (PST)
+From:   Khouloud Touil <ktouil@baylibre.com>
+To:     bgolaszewski@baylibre.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, srinivas.kandagatla@linaro.org,
+        baylibre-upstreaming@groups.io
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linus.walleij@linaro.org,
+        Khouloud Touil <ktouil@baylibre.com>
+Subject: [PATCH v4 3/5] dt-bindings: at24: make wp-gpios a reference to the property defined by nvmem
+Date:   Tue,  7 Jan 2020 10:29:20 +0100
+Message-Id: <20200107092922.18408-4-ktouil@baylibre.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200107092922.18408-1-ktouil@baylibre.com>
+References: <20200107092922.18408-1-ktouil@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The return is not needed, remove it.
+NVMEM framework is an interface for the at24 EEPROMs as well as for
+other drivers, instead of passing the wp-gpios over the different
+drivers each time, it would be better to pass it over the NVMEM
+subsystem once and for all.
 
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+Making wp-gpios a reference to the property defined by nvmem.
+
+Signed-off-by: Khouloud Touil <ktouil@baylibre.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/net/usb/ch9200.c | 2 --
- 1 file changed, 2 deletions(-)
+ Documentation/devicetree/bindings/eeprom/at24.yaml | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/net/usb/ch9200.c b/drivers/net/usb/ch9200.c
-index 3c2dc74..d7f3b70 100644
---- a/drivers/net/usb/ch9200.c
-+++ b/drivers/net/usb/ch9200.c
-@@ -130,8 +130,6 @@ static int control_read(struct usbnet *dev,
- 		err = -EINVAL;
- 	kfree(buf);
+diff --git a/Documentation/devicetree/bindings/eeprom/at24.yaml b/Documentation/devicetree/bindings/eeprom/at24.yaml
+index e8778560d966..767959941399 100644
+--- a/Documentation/devicetree/bindings/eeprom/at24.yaml
++++ b/Documentation/devicetree/bindings/eeprom/at24.yaml
+@@ -145,10 +145,7 @@ properties:
+       over reads to the next slave address. Please consult the manual of
+       your device.
  
--	return err;
--
- err_out:
- 	return err;
- }
+-  wp-gpios:
+-    description:
+-      GPIO to which the write-protect pin of the chip is connected.
+-    maxItems: 1
++  wp-gpios: true
+ 
+   address-width:
+     allOf:
 -- 
-2.7.4
+2.17.1
 
