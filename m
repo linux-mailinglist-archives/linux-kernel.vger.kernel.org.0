@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BAFE133208
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:07:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31C4913324A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:09:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbgAGVGc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:06:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55182 "EHLO mail.kernel.org"
+        id S1729772AbgAGVJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:09:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728994AbgAGVGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:06:20 -0500
+        id S1729740AbgAGVIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:08:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C429F2080A;
-        Tue,  7 Jan 2020 21:06:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E255B20678;
+        Tue,  7 Jan 2020 21:08:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431180;
-        bh=krv2jrWZyHuYzGfRzS0lGllzfzLns7T1oJxEL73h7zc=;
+        s=default; t=1578431328;
+        bh=u8nBtxr5Vk8ZYc+pl37NvtifH+6EGTSzMPS+Y/gMMQo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VJfgt4PEPeq3UX83xuS19eWcIPo1G47NCVKA2QRt4L7uiER151JkEiZplEP8n80Qu
-         oc/nb8vHX4uv0cXtIBBsIWTxVBIp2O3Pf6I4EFhH9b+hz+OaK6P21N/cI9tdTQGIYU
-         INlZtUu10FkNzOcKoYvGXP0jWJI9rlHYBLkCuDKQ=
+        b=T5K73ArqI9H8UGmGm8V7Z7vjKXdn4t8L7QcS/MXQKi9bJXQkiIvbis4QFiQ9d3koq
+         ZHC7bUJJ64bDD7hsEy0tsidg9edSKvpYWgiPi8uvAr8TnyNBa62pIaFURkvXvyAdje
+         K9vsqZnCF5sQhlPoCncSWuFaQbqUekBYCEQqejV0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 4.19 066/115] gpiolib: fix up emulated open drain outputs
-Date:   Tue,  7 Jan 2020 21:54:36 +0100
-Message-Id: <20200107205303.627566678@linuxfoundation.org>
+        stable@vger.kernel.org, netdev@vger.kernel.org,
+        David Miller <davem@davemloft.net>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 12/74] net: make socket read/write_iter() honor IOCB_NOWAIT
+Date:   Tue,  7 Jan 2020 21:54:37 +0100
+Message-Id: <20200107205143.809489508@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-References: <20200107205240.283674026@linuxfoundation.org>
+In-Reply-To: <20200107205135.369001641@linuxfoundation.org>
+References: <20200107205135.369001641@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,44 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Jens Axboe <axboe@kernel.dk>
 
-commit 256efaea1fdc4e38970489197409a26125ee0aaa upstream.
+[ Upstream commit ebfcd8955c0b52eb793bcbc9e71140e3d0cdb228 ]
 
-gpiolib has a corner case with open drain outputs that are emulated.
-When such outputs are outputting a logic 1, emulation will set the
-hardware to input mode, which will cause gpiod_get_direction() to
-report that it is in input mode. This is different from the behaviour
-with a true open-drain output.
+The socket read/write helpers only look at the file O_NONBLOCK. not
+the iocb IOCB_NOWAIT flag. This breaks users like preadv2/pwritev2
+and io_uring that rely on not having the file itself marked nonblocking,
+but rather the iocb itself.
 
-Unify the semantics here.
-
-Cc: <stable@vger.kernel.org>
-Suggested-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: netdev@vger.kernel.org
+Acked-by: David Miller <davem@davemloft.net>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpiolib.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ net/socket.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -217,6 +217,14 @@ int gpiod_get_direction(struct gpio_desc
- 	chip = gpiod_to_chip(desc);
- 	offset = gpio_chip_hwgpio(desc);
+diff --git a/net/socket.c b/net/socket.c
+index aab65277314d..5b134a6b6216 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -891,7 +891,7 @@ static ssize_t sock_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 			     .msg_iocb = iocb};
+ 	ssize_t res;
  
-+	/*
-+	 * Open drain emulation using input mode may incorrectly report
-+	 * input here, fix that up.
-+	 */
-+	if (test_bit(FLAG_OPEN_DRAIN, &desc->flags) &&
-+	    test_bit(FLAG_IS_OUT, &desc->flags))
-+		return 0;
-+
- 	if (!chip->get_direction)
- 		return status;
+-	if (file->f_flags & O_NONBLOCK)
++	if (file->f_flags & O_NONBLOCK || (iocb->ki_flags & IOCB_NOWAIT))
+ 		msg.msg_flags = MSG_DONTWAIT;
  
+ 	if (iocb->ki_pos != 0)
+@@ -916,7 +916,7 @@ static ssize_t sock_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	if (iocb->ki_pos != 0)
+ 		return -ESPIPE;
+ 
+-	if (file->f_flags & O_NONBLOCK)
++	if (file->f_flags & O_NONBLOCK || (iocb->ki_flags & IOCB_NOWAIT))
+ 		msg.msg_flags = MSG_DONTWAIT;
+ 
+ 	if (sock->type == SOCK_SEQPACKET)
+-- 
+2.20.1
+
 
 
