@@ -2,113 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1320132251
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:29:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B822A13227F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:34:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbgAGJ3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 04:29:42 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41508 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbgAGJ3l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 04:29:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sZXc/SFe/LDxQMr1tMtTHpfYzLnb842y8KpXben4b1s=; b=btXi/8aBR87eesFRk9rVTf7MA
-        Lo11ZldNjZKAaB6/9zJZ1gf9NCJZvkST1Vwo004YnQHoByFcCJfif+5Fqu4TzIXw5U0tGlHGJWd+a
-        uAbdPGF/hE+gJrM45w6VbyVJMLfvZdman1WMvJ7duagTokTpaTco+9foSyaY6KC4KEi1apyy3gt3Z
-        MyFzxQQ4CQ3HjQ7Ly+3LO79dRGmdWpV/ITVmEE62USnSeM4Sul7t2Qc2rcdQVThRujD+TAPDdf8sE
-        Ls2wHFbHxc87Oh04zt8FDYANAYG0ibCN0a0J7L1coZDrTWqb/7TS0AcaWpbj9k4F209mloCRCp9DM
-        w5WzTTcmg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iolBA-0000AU-Tt; Tue, 07 Jan 2020 09:29:37 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A39A4304A59;
-        Tue,  7 Jan 2020 10:28:02 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 24B232B5FBC95; Tue,  7 Jan 2020 10:29:35 +0100 (CET)
-Date:   Tue, 7 Jan 2020 10:29:35 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will@kernel.org>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-sparse@vger.kernel.org
-Subject: Re: [PATCH] locking/refcount: add sparse annotations to dec-and-lock
- functions
-Message-ID: <20200107092935.GU2844@hirez.programming.kicks-ass.net>
-References: <20191226152922.2034-1-ebiggers@kernel.org>
- <20191228114918.GU2827@hirez.programming.kicks-ass.net>
- <201912301042.FB806E1133@keescook>
- <20191230191547.GA1501@zzz.localdomain>
- <201912301131.2C7C51E8C6@keescook>
- <20191230233814.2fgmsgtnhruhklnu@ltop.local>
- <20200106154119.GV2810@hirez.programming.kicks-ass.net>
- <20200106175459.tjuhmdrsusax3s4z@ltop.local>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200106175459.tjuhmdrsusax3s4z@ltop.local>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727827AbgAGJea (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 04:34:30 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:33204 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727427AbgAGJe3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 04:34:29 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D91CC1A020C;
+        Tue,  7 Jan 2020 10:34:27 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2651A1A0342;
+        Tue,  7 Jan 2020 10:34:12 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 364B0402C4;
+        Tue,  7 Jan 2020 16:56:55 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
+        will@kernel.org, bjorn.andersson@linaro.org, olof@lixom.net,
+        maxime@cerno.tech, leonard.crestez@nxp.com, dinguyen@kernel.org,
+        marcin.juszkiewicz@linaro.org, ping.bai@nxp.com, abel.vesa@nxp.com,
+        nsekhar@ti.com, t-kristo@ti.com, peng.fan@nxp.com,
+        yuehaibing@huawei.com, aisheng.dong@nxp.com, sfr@canb.auug.org.au,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V2 1/5] clk: imx: Remove __init for imx_obtain_fixed_clk_hw() API
+Date:   Tue,  7 Jan 2020 16:53:13 +0800
+Message-Id: <1578387197-5750-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 06:54:59PM +0100, Luc Van Oostenryck wrote:
-> On Mon, Jan 06, 2020 at 04:41:19PM +0100, Peter Zijlstra wrote:
+Some of i.MX SoCs' clock driver use platform driver model,
+and they need to call imx_obtain_fixed_clk_hw() API, so
+imx_obtain_fixed_clk_hw() API should NOT be in .init section.
 
-> > extern bool spin_trylock(spinlock_t *lock) __attribute__((context(lock, 0, spin_trylock(lock));
-> 
-> Well, allowing arbitrary conditions would be hard/impossible but you're
-> only asking to have the *return value* as condition, right? That looks
-> as reasonably feasible.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+New patch.
+---
+ drivers/clk/imx/clk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Just the return value would cover all the known cases yes. At the time
-I might have been somewhat over ambitious..
+diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+index cfc05e4..e61d6d7 100644
+--- a/drivers/clk/imx/clk.c
++++ b/drivers/clk/imx/clk.c
+@@ -94,8 +94,8 @@ struct clk_hw * __init imx_obtain_fixed_clock_hw(
+ 	return __clk_get_hw(clk);
+ }
+ 
+-struct clk_hw * __init imx_obtain_fixed_clk_hw(struct device_node *np,
+-					       const char *name)
++struct clk_hw *imx_obtain_fixed_clk_hw(struct device_node *np,
++					const char *name)
+ {
+ 	struct clk *clk;
+ 
+-- 
+2.7.4
 
-> > Basically have sparse do a transform on its own expression tree and
-> > inject the very same crud we now do manually. This avoids cluttering the
-> > kernel tree with this nonsense.
-> 
-> So, a call of a function declared with __acquires() or releases() is
-> interpreted by Sparse as if the call is immediately followed by an
-> increase or a decrease of the context. It wouldn't be very hard to
-> add a new attribute (something like __cond_context) and let Sparse do
-> as if a call to a function with such attribute is directly followed
-> by a test of its return value and a corresponding change in the context.
-> It would boil down to:
-> 
-> 	extern bool spin_trylock(lock) __cond_context(lock);
-> 
-> 	if (spin_trylock(lock)) {
-> 		/* do crap */
-> 		spin_unlock();
-> 	}
-> 
-> behaving like the following code currently would:
-> 
-> 	extern bool spin_trylock(lock);
-> 
-> 	if (spin_trylock(lock)) {
-> 		__acquire(lock);
-> 		/* do crap */
-> 		spin_unlock();
-> 	}
-> 
-> 
-> Would something like this be satisfactory?
-
-Very much so, Thanks!
