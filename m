@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9256A13334A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:17:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1120D13345E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:25:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728930AbgAGVFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:05:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52060 "EHLO mail.kernel.org"
+        id S1728239AbgAGVAA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:00:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729231AbgAGVF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:05:29 -0500
+        id S1728219AbgAGU74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 15:59:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 586AA2081E;
-        Tue,  7 Jan 2020 21:05:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C53812081E;
+        Tue,  7 Jan 2020 20:59:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431128;
-        bh=7kPznYzqtayJVQHLaku8IUSKqBs1rqufABhn1E8deZc=;
+        s=default; t=1578430795;
+        bh=PW1R0kCwObUs5ugOMMm2hMtOWrAcVFJshBPjuKNsFGk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NqcwXwE6OuaQf4hpm0dubuQ+orxz2wf/QfcPfP1pgFWgBJsLVMboGhsnxQNZ/IGb3
-         Kl38GfRhHJGOc9G01G8wl5mok6Nra3wMiubGNwLOBPNVfA15jKFfgh5GBRNGw1K8ne
-         M+kyC3RSNx17g9pUai851jPwfYn1bNrNryJ14tQs=
+        b=v1nEGe/ZN8DX1/LThJnGa/Hz57RYbnCx9rdYkFpU60Hte5+mzT/YvrOFOJTB5dNlr
+         rALppzSaqXvT4qfd+yLU7hftljC+6+xfbUrA4wt9G6XX0i8q5Hfhp4DaxqzscuvypR
+         ToH9qf3Nv/FVcHAOJTDkMwvU+rCIwuCYh49j2iA4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 009/115] PM / devfreq: Dont fail devfreq_dev_release if not in list
-Date:   Tue,  7 Jan 2020 21:53:39 +0100
-Message-Id: <20200107205245.424260862@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Mason <clm@fb.com>,
+        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.4 100/191] block: fix splitting segments on boundary masks
+Date:   Tue,  7 Jan 2020 21:53:40 +0100
+Message-Id: <20200107205338.341621494@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-References: <20200107205240.283674026@linuxfoundation.org>
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+References: <20200107205332.984228665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,55 +43,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+From: Ming Lei <ming.lei@redhat.com>
 
-[ Upstream commit 42a6b25e67df6ee6675e8d1eaf18065bd73328ba ]
+commit 429120f3df2dba2bf3a4a19f4212a53ecefc7102 upstream.
 
-Right now devfreq_dev_release will print a warning and abort the rest of
-the cleanup if the devfreq instance is not part of the global
-devfreq_list. But this is a valid scenario, for example it can happen if
-the governor can't be found or on any other init error that happens
-after device_register.
+We ran into a problem with a mpt3sas based controller, where we would
+see random (and hard to reproduce) file corruption). The issue seemed
+specific to this controller, but wasn't specific to the file system.
+After a lot of debugging, we find out that it's caused by segments
+spanning a 4G memory boundary. This shouldn't happen, as the default
+setting for segment boundary masks is 4G.
 
-Initialize devfreq->node to an empty list head in devfreq_add_device so
-that list_del becomes a safe noop inside devfreq_dev_release and we can
-continue the rest of the cleanup.
+Turns out there are two issues in get_max_segment_size():
 
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+1) The default segment boundary mask is bypassed
+
+2) The segment start address isn't taken into account when checking
+   segment boundary limit
+
+Fix these two issues by removing the bypass of the segment boundary
+check even if the mask is set to the default value, and taking into
+account the actual start address of the request when checking if a
+segment needs splitting.
+
+Cc: stable@vger.kernel.org # v5.1+
+Reviewed-by: Chris Mason <clm@fb.com>
+Tested-by: Chris Mason <clm@fb.com>
+Fixes: dcebd755926b ("block: use bio_for_each_bvec() to compute multi-page bvec count")
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Dropped const on the page pointer, ppc page_to_phys() doesn't mark the
+page as const...
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/devfreq/devfreq.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ block/blk-merge.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index a47e76a62287..69bbb1e9ab23 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -575,11 +575,6 @@ static void devfreq_dev_release(struct device *dev)
- 	struct devfreq *devfreq = to_devfreq(dev);
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -157,16 +157,14 @@ static inline unsigned get_max_io_size(s
+ 	return sectors & (lbs - 1);
+ }
  
- 	mutex_lock(&devfreq_list_lock);
--	if (IS_ERR(find_device_devfreq(devfreq->dev.parent))) {
--		mutex_unlock(&devfreq_list_lock);
--		dev_warn(&devfreq->dev, "releasing devfreq which doesn't exist\n");
--		return;
--	}
- 	list_del(&devfreq->node);
- 	mutex_unlock(&devfreq_list_lock);
+-static unsigned get_max_segment_size(const struct request_queue *q,
+-				     unsigned offset)
++static inline unsigned get_max_segment_size(const struct request_queue *q,
++					    struct page *start_page,
++					    unsigned long offset)
+ {
+ 	unsigned long mask = queue_segment_boundary(q);
  
-@@ -634,6 +629,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 	devfreq->dev.parent = dev;
- 	devfreq->dev.class = devfreq_class;
- 	devfreq->dev.release = devfreq_dev_release;
-+	INIT_LIST_HEAD(&devfreq->node);
- 	devfreq->profile = profile;
- 	strncpy(devfreq->governor_name, governor_name, DEVFREQ_NAME_LEN);
- 	devfreq->previous_freq = profile->initial_freq;
--- 
-2.20.1
-
+-	/* default segment boundary mask means no boundary limit */
+-	if (mask == BLK_SEG_BOUNDARY_MASK)
+-		return queue_max_segment_size(q);
+-
+-	return min_t(unsigned long, mask - (mask & offset) + 1,
++	offset = mask & (page_to_phys(start_page) + offset);
++	return min_t(unsigned long, mask - offset + 1,
+ 		     queue_max_segment_size(q));
+ }
+ 
+@@ -201,7 +199,8 @@ static bool bvec_split_segs(const struct
+ 	unsigned seg_size = 0;
+ 
+ 	while (len && *nsegs < max_segs) {
+-		seg_size = get_max_segment_size(q, bv->bv_offset + total_len);
++		seg_size = get_max_segment_size(q, bv->bv_page,
++						bv->bv_offset + total_len);
+ 		seg_size = min(seg_size, len);
+ 
+ 		(*nsegs)++;
+@@ -404,7 +403,8 @@ static unsigned blk_bvec_map_sg(struct r
+ 
+ 	while (nbytes > 0) {
+ 		unsigned offset = bvec->bv_offset + total;
+-		unsigned len = min(get_max_segment_size(q, offset), nbytes);
++		unsigned len = min(get_max_segment_size(q, bvec->bv_page,
++					offset), nbytes);
+ 		struct page *page = bvec->bv_page;
+ 
+ 		/*
 
 
