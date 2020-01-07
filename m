@@ -2,114 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 730571328F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 15:33:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51C371328FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 15:34:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbgAGOdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 09:33:44 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39375 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727973AbgAGOdn (ORCPT
+        id S1728338AbgAGOe3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 09:34:29 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37089 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728248AbgAGOe2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 09:33:43 -0500
-Received: by mail-wr1-f65.google.com with SMTP id y11so54177884wrt.6
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 06:33:42 -0800 (PST)
+        Tue, 7 Jan 2020 09:34:28 -0500
+Received: by mail-pf1-f195.google.com with SMTP id p14so28684762pfn.4
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 06:34:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=B9kCZBzCa3OPKOxnRW9B6aJzv1zvRjaOSS6YO9GMesQ=;
-        b=sIs+fctiAHDZvO1/J//nk3hf4t/k9VgDnBJ8fooiGvnZFm5IJz3/K8auAGQVsiKqRp
-         bZwBxmWg/4kZUGed7vrb6mcIBEPFpUsmS8Puq0N1osWgGg45KyLx6ozVkA1YAel4Y7cN
-         p5FRcwNTJjlzACZixiGRyO9PpSpyGr37HETuafnI2pP5+NRSbRebqYJKKEo7/8ULnYIA
-         wtIn0vxX9sBlm9wuFaYH9QiUREBKE2MMuHmw2OnXOM+P66pYE63QNXCQPar20680vRVB
-         hqrV04wl/YLDH7k2xt9HrsVIBI96XJapKHx8ln7dw+m57FzHpQfz9F4gDfZwIzrezF1M
-         Y5NQ==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oyhzAHfoljmVmjnkI9lNRmSbLeJffd7zCPcm12fwKsY=;
+        b=Ylxjn1iFB6Nsv1iNzIrG39vSWDowFcpsxBInwnIrBFTeoOmWvlZ05SEwLKIEfxAv78
+         Wf76kEVdIZIdWo1+aJjvrOwwCe7aPRrm4gJUVlA7fmqYMbd44+qb9oNsDlJzGZelIGod
+         m8/j8ZamcQuywlsabrSQvqsGXU/2I4gn4l8q4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=B9kCZBzCa3OPKOxnRW9B6aJzv1zvRjaOSS6YO9GMesQ=;
-        b=aHmJrOTa86gJW3BrhlfoRHedtqk9vTctbxmqsLg/PnPOD9CyfQczMPsicggTS+qKv2
-         VNOsHDOvVOL5gcizjKRS9W8WDKgqSNjAibmlfn8iCcumJd8ZeBihabcERNsDQwXj+G2c
-         AhfLKFwRUTuQZMNngedIy9heAsIqSyuRZDRzrnd/Yf18IKpx3eY8l/D52151QY8J2Jb4
-         p9lMbzBIoh4B1zrSomgqBqYnkEpLuCTxmpCowN/0tZ2qZQny3wITlcl3QcNURPN6d7L4
-         dDpyTNIVD9mfLPMuQ9bcqch/LoCYSHR0ZLXh6/9j9qFr+u2ccHkD9a7igbeml5hkmPp6
-         K/nw==
-X-Gm-Message-State: APjAAAUiQd/uXHgP61OW+SZeyEL05YX8yR7PsARdvhVlavFtxe7cQoCd
-        Mi576YlOQHIHM+NNbJTi5+dnaQ==
-X-Google-Smtp-Source: APXvYqxLiq2Vxm7BymdTvGrcQbAasyqJYAawPBC+jse2yxXUYIok3KtmZ1vQbeEpibLG0Ldxa+sO6w==
-X-Received: by 2002:adf:806e:: with SMTP id 101mr7682761wrk.300.1578407621321;
-        Tue, 07 Jan 2020 06:33:41 -0800 (PST)
-Received: from dell ([2.27.35.135])
-        by smtp.gmail.com with ESMTPSA id b17sm36621wrx.15.2020.01.07.06.33.31
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oyhzAHfoljmVmjnkI9lNRmSbLeJffd7zCPcm12fwKsY=;
+        b=s5/d4a3O3K+OuWDdxsSW8asf9PSSs1bMM4sMjmneOV4gRnTVCxFpJQmZoZMyUoNSoY
+         9qMYbTIVrsz6K+JUY6IsvCdlkDodA+NLmk8fYGnI+fmfy2k46nCBn94Xrx/0w2mmLprd
+         Qwy0sQSoEdHAYR8c8XQ4oj90B5Wk+OG7z3O9+0m49j8tUTPO4GCPp3y//FgXnzM7/rgJ
+         LTaqu4TDXIGpyEsSkXBe66gMdOfb8h/nBwlarvOEWvjSznqkwngt7yfbM5azHhlQE6MC
+         HWHBSz4eK91TElJjlAvmMLg4MQ8ZEJCrkxabNy5DRIgXcp7Ws2DgbczGAGdtCRvIioRJ
+         409g==
+X-Gm-Message-State: APjAAAWTdnzusxbPUj8E8pnV1dBa4QPZKb1WmJ0PUvWT77Wf8Nlr558E
+        z34NdTOFeQC7F41z9d4hWbuYsA==
+X-Google-Smtp-Source: APXvYqzNSykcM6yoTNp/9hwi45skb77ZtLlkW7Napf7i3caLd9iZ2+B/ZPvi2kG2lFbcs84V3l7Mew==
+X-Received: by 2002:a62:1552:: with SMTP id 79mr114424104pfv.156.1578407667283;
+        Tue, 07 Jan 2020 06:34:27 -0800 (PST)
+Received: from acourbot.tok.corp.google.com ([2401:fa00:8f:203:93d9:de4d:e834:3086])
+        by smtp.gmail.com with ESMTPSA id a19sm28594808pju.11.2020.01.07.06.34.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 06:33:40 -0800 (PST)
-Date:   Tue, 7 Jan 2020 14:33:42 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Jean-Jacques Hiblot <jjhiblot@ti.com>,
-        jacek.anaszewski@gmail.com, sre@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, daniel.thompson@linaro.org, dmurphy@ti.com,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, tomi.valkeinen@ti.com
-Subject: Re: [PATCH v10 6/6] backlight: add led-backlight driver
-Message-ID: <20200107143342.GP14821@dell>
-References: <20191009085127.22843-1-jjhiblot@ti.com>
- <20191009085127.22843-7-jjhiblot@ti.com>
- <20191121181350.GN43123@atomide.com>
- <20200107102800.GG14821@dell>
- <20200107134540.x5tngzoslssesb2y@ucw.cz>
+        Tue, 07 Jan 2020 06:34:26 -0800 (PST)
+From:   Alexandre Courbot <acourbot@chromium.org>
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>
+Subject: [PATCH] arm64: dts: qcom: add Venus firmware node on Cheza
+Date:   Tue,  7 Jan 2020 23:34:02 +0900
+Message-Id: <20200107143402.122455-1-acourbot@chromium.org>
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200107134540.x5tngzoslssesb2y@ucw.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 07 Jan 2020, Pavel Machek wrote:
+Cheza boards require this node to probe, so add it.
 
-> Hi!
-> 
-> > > * Jean-Jacques Hiblot <jjhiblot@ti.com> [700101 00:00]:
-> > > > From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> > > > 
-> > > > This patch adds a led-backlight driver (led_bl), which is similar to
-> > > > pwm_bl except the driver uses a LED class driver to adjust the
-> > > > brightness in the HW. Multiple LEDs can be used for a single backlight.
-> > > ...
-> > > 
-> > > > +	ret = of_property_read_u32(node, "default-brightness", &value);
-> > > > +	if (!ret && value <= priv->max_brightness)
-> > > > +		priv->default_brightness = value;
-> > > > +	else if (!ret  && value > priv->max_brightness)
-> > > > +		dev_warn(dev, "Invalid default brightness. Ignoring it\n");
-> > > 
-> > > Hmm so just wondering.. Are we using "default-brightness" instead of the
-> > > usual "default-brightness-level" here?
-> > 
-> > Did this get answered?
-> > 
-> > > Please Cc me on the next patchset too :)
-> > 
-> > I've been waiting for v11.
-> 
-> I guess I could just remove it from a merge for now if there's no other
-> fix.
+Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+---
+ arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi | 6 ++++++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi       | 2 +-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-What do you mean, sorry?
-
-This patch should not be merged anywhere yet.
-
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+index 9a4ff57fc877..35ba65cd9822 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+@@ -1279,3 +1279,9 @@ config {
+ 		};
+ 	};
+ };
++
++&venus_codec {
++	video-firmware {
++		iommus = <&apps_smmu 0x10b2 0x0>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index ddb1f23c936f..7b913688cc6d 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -2567,7 +2567,7 @@ usb_2_dwc3: dwc3@a800000 {
+ 			};
+ 		};
+ 
+-		video-codec@aa00000 {
++		venus_codec: video-codec@aa00000 {
+ 			compatible = "qcom,sdm845-venus";
+ 			reg = <0 0x0aa00000 0 0xff000>;
+ 			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.24.1.735.g03f4e72817-goog
+
