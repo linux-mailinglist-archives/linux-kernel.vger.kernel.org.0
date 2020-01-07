@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D57891332E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:15:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76016133190
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:02:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729878AbgAGVOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:14:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34614 "EHLO mail.kernel.org"
+        id S1727339AbgAGVB7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:01:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729623AbgAGVJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:09:20 -0500
+        id S1728264AbgAGVBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:01:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A89C20678;
-        Tue,  7 Jan 2020 21:09:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45D2420880;
+        Tue,  7 Jan 2020 21:01:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431359;
-        bh=T4grm+Gyf6a3qOJuSCD/teJxU1kaNU2T/rbqhPvUWUI=;
+        s=default; t=1578430913;
+        bh=Jg4b2oudpxvcI46wrRdcoGJxfli65coHnOsvvzRkXvM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LKpIUxy5sntGWWEnFKIgYy+OY7k9t3fo1D2lP6/9RHXsLAe2KKFFVPP3SHOGVIPqm
-         VkO8wkoHSa8H4hq4AyxMGsiLUbPMCrW/1Xo1DAw25osiNYcAOj2SuEG5arucE8L4gJ
-         +edMAXJKyxwC9pOjFWdERUnkMaPjNSsifhjYk358=
+        b=c0kOpzMhW4rAkbh36IIqJdW0yJ3LuowZYyzO4JUlTpDSCbRgSWXaXt1DANuWeFhbj
+         mUKgQ3VUIAXukDlTmWlHkoaaCo5IAehC8Rdx5I2CFMiJrRlxmqqfsGNbdcWQWNb4IG
+         SeuTianTRJxwwHzM3ilw1D/nyFngUERlAP3FKL+0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 03/74] PM / devfreq: Dont fail devfreq_dev_release if not in list
+        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: [PATCH 5.4 148/191] xfs: dont check for AG deadlock for realtime files in bunmapi
 Date:   Tue,  7 Jan 2020 21:54:28 +0100
-Message-Id: <20200107205137.793147905@linuxfoundation.org>
+Message-Id: <20200107205340.891745863@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205135.369001641@linuxfoundation.org>
-References: <20200107205135.369001641@linuxfoundation.org>
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+References: <20200107205332.984228665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,55 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+From: Omar Sandoval <osandov@fb.com>
 
-[ Upstream commit 42a6b25e67df6ee6675e8d1eaf18065bd73328ba ]
+commit 69ffe5960df16938bccfe1b65382af0b3de51265 upstream.
 
-Right now devfreq_dev_release will print a warning and abort the rest of
-the cleanup if the devfreq instance is not part of the global
-devfreq_list. But this is a valid scenario, for example it can happen if
-the governor can't be found or on any other init error that happens
-after device_register.
+Commit 5b094d6dac04 ("xfs: fix multi-AG deadlock in xfs_bunmapi") added
+a check in __xfs_bunmapi() to stop early if we would touch multiple AGs
+in the wrong order. However, this check isn't applicable for realtime
+files. In most cases, it just makes us do unnecessary commits. However,
+without the fix from the previous commit ("xfs: fix realtime file data
+space leak"), if the last and second-to-last extents also happen to have
+different "AG numbers", then the break actually causes __xfs_bunmapi()
+to return without making any progress, which sends
+xfs_itruncate_extents_flags() into an infinite loop.
 
-Initialize devfreq->node to an empty list head in devfreq_add_device so
-that list_del becomes a safe noop inside devfreq_dev_release and we can
-continue the rest of the cleanup.
+Fixes: 5b094d6dac04 ("xfs: fix multi-AG deadlock in xfs_bunmapi")
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/devfreq/devfreq.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ fs/xfs/libxfs/xfs_bmap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index dc9c0032c97b..7b510ef1d0dd 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -484,11 +484,6 @@ static void devfreq_dev_release(struct device *dev)
- 	struct devfreq *devfreq = to_devfreq(dev);
- 
- 	mutex_lock(&devfreq_list_lock);
--	if (IS_ERR(find_device_devfreq(devfreq->dev.parent))) {
--		mutex_unlock(&devfreq_list_lock);
--		dev_warn(&devfreq->dev, "releasing devfreq which doesn't exist\n");
--		return;
--	}
- 	list_del(&devfreq->node);
- 	mutex_unlock(&devfreq_list_lock);
- 
-@@ -547,6 +542,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 	devfreq->dev.parent = dev;
- 	devfreq->dev.class = devfreq_class;
- 	devfreq->dev.release = devfreq_dev_release;
-+	INIT_LIST_HEAD(&devfreq->node);
- 	devfreq->profile = profile;
- 	strncpy(devfreq->governor_name, governor_name, DEVFREQ_NAME_LEN);
- 	devfreq->previous_freq = profile->initial_freq;
--- 
-2.20.1
-
+--- a/fs/xfs/libxfs/xfs_bmap.c
++++ b/fs/xfs/libxfs/xfs_bmap.c
+@@ -5300,7 +5300,7 @@ __xfs_bunmapi(
+ 		 * Make sure we don't touch multiple AGF headers out of order
+ 		 * in a single transaction, as that could cause AB-BA deadlocks.
+ 		 */
+-		if (!wasdel) {
++		if (!wasdel && !isrt) {
+ 			agno = XFS_FSB_TO_AGNO(mp, del.br_startblock);
+ 			if (prev_agno != NULLAGNUMBER && prev_agno > agno)
+ 				break;
 
 
