@@ -2,65 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABD6A1331D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:04:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC2B813328E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:12:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729039AbgAGVEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:04:22 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:36392 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728799AbgAGVEL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:04:11 -0500
-Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 007L2vFj024569
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 7 Jan 2020 16:02:58 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 67AA74207DF; Tue,  7 Jan 2020 16:02:57 -0500 (EST)
-Date:   Tue, 7 Jan 2020 16:02:57 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        "Ahmed S. Darwish" <darwish.07@gmail.com>,
-        Lennart Poettering <mzxreary@0pointer.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Alexander E. Patrakov" <patrakov@gmail.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Willy Tarreau <w@1wt.eu>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Stephan Mueller <smueller@chronox.de>
-Subject: Re: [PATCH v3 5/8] random: Make /dev/random be almost like
- /dev/urandom
-Message-ID: <20200107210257.GJ3619@mit.edu>
-References: <cover.1577088521.git.luto@kernel.org>
- <5e6ac8831c6cf2e56a7a4b39616d1732b2bdd06c.1577088521.git.luto@kernel.org>
+        id S1730150AbgAGVLs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:11:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40714 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730133AbgAGVLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:11:43 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 765872072A;
+        Tue,  7 Jan 2020 21:11:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578431502;
+        bh=FhiT8EaHccPqvOpQJLyOpYXWGn+VUnFPf/RKRsJpRuM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dtbXSp1WuBMrfdg1Xuo17aOudNG6KWpxH3PnFFg/Gwgl0KIW/FSgm1gTSlqqpA4LJ
+         LvQ7PjPvfFd48o3O4Qy+UI8WpgdT7FCK+eRTlSI7cCp5Jf36yDkiEFjKQ/CBkCf7+5
+         eEeugD+LG/J4/KFGDCzdIe6PNK2zaZpMfSokJ294=
+Date:   Tue, 7 Jan 2020 22:03:25 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     mateusznosek0@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/kernfs/dir.c: Clean code by removing always true
+ condition
+Message-ID: <20200107210325.GA2255571@kroah.com>
+References: <20191230191628.21099-1-mateusznosek0@gmail.com>
+ <20200107155110.GA2677547@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5e6ac8831c6cf2e56a7a4b39616d1732b2bdd06c.1577088521.git.luto@kernel.org>
+In-Reply-To: <20200107155110.GA2677547@devbig004.ftw2.facebook.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 23, 2019 at 12:20:48AM -0800, Andy Lutomirski wrote:
-> This patch changes the read semantics of /dev/random to be the same
-> as /dev/urandom except that reads will block until the CRNG is
-> ready.
+On Tue, Jan 07, 2020 at 07:51:10AM -0800, Tejun Heo wrote:
+> On Mon, Dec 30, 2019 at 08:16:28PM +0100, mateusznosek0@gmail.com wrote:
+> > From: Mateusz Nosek <mateusznosek0@gmail.com>
+> > 
+> > Previously there was an additional check if variable pos is not null.
+> > However, this check happens after entering while loop and only then,
+> > which can happen only if pos is not null.
+> > Therefore the additional check is redundant and can be removed.
+> > 
+> > Signed-off-by: Mateusz Nosek <mateusznosek0@gmail.com>
 > 
-> None of the cleanups that this enables have been done yet.  As a
-> result, this gives a warning about an unused function.
+> Acked-by: Tejun Heo <tj@kernel.org>
 > 
-> Signed-off-by: Andy Lutomirski <luto@kernel.org>
+> Greg, can you please route this one?
 
-Applied, thanks.
+Sure, will do, thanks.
 
-						- Ted
+greg k-h
