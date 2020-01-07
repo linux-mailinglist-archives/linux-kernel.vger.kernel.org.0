@@ -2,143 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3213F1326C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 13:53:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBAC41326C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 13:53:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbgAGMxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 07:53:02 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:45336 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727834AbgAGMxB (ORCPT
+        id S1728061AbgAGMw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 07:52:56 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33818 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727834AbgAGMw4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 07:53:01 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iooLg-00009S-7J; Tue, 07 Jan 2020 13:52:40 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D28C01C2CD0;
-        Tue,  7 Jan 2020 13:52:39 +0100 (CET)
-Date:   Tue, 07 Jan 2020 12:52:39 -0000
-From:   "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/fpu] x86/fpu: Deactivate FPU state after failure during state load
-Cc:     "Yu-cheng Yu" <yu-cheng.yu@intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, "x86-ml" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191220195906.plk6kpmsrikvbcfn@linutronix.de>
-References: <20191220195906.plk6kpmsrikvbcfn@linutronix.de>
+        Tue, 7 Jan 2020 07:52:56 -0500
+Received: by mail-lf1-f68.google.com with SMTP id l18so30629338lfc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 04:52:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=L8QAs8mXhglioLsPrlc/f2d1DW6plEBLWoC91qHtQLU=;
+        b=Yn2TyRB1A6iQIcJmRjrzeaQqGvJOWo7XoWbfKsG+WVNnyHmbbqAm3wws8axVbSrvx8
+         OYAvdEREwIT61Jq7XS24FPZabB6NFf6CBMS+nk0infpFkx8TMso1GTjbUKZSWQSBei5w
+         HeMofh8JjZTxSuMRQYKXswWZEJVsyKirJsdh84VnRNEDBHVnCQmLzMcMRmtA3ydGNgfa
+         5L30k/tpjPghGC26xYQZDChA/vk1hkf75dK9VaZF9Qi9vccEh9vpmh4STE4jsKJj/QfX
+         RrhfavmoM0fIfBpoXr4XH95IpmY9v05ug4VeNSkEk9IJolXbtwHfYdXRZEAMEgz3UTAB
+         nZ/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=L8QAs8mXhglioLsPrlc/f2d1DW6plEBLWoC91qHtQLU=;
+        b=C2PmX1Wr5LJ2896N8FLePHOMj7xlh2r/ZyD1M1rrrZTHtIOUYSrH82WQhoSRTs7ZeP
+         H2sf+sXnqLsaMtkECRZoyzBPfaRh5e9QwjPg38HAGvzk2byDuxIkxklGE5iqItf+4ZEo
+         0TkdwFeRKeuYSEQBCpBtj2eKi5sQZB4cjzVRpNRMWzXfw2419Fy1ASZyyQeF57rymGcw
+         GvZ16zuCtcpDbniONdnzdrGuiYtPSKUVOKlw+wO2TRpvlwxSJK4RXfuDJaylXI4UzMa1
+         QDp9ZDwGlOnvy/9nosWLJtn1lMVcau57xsqAVLrWUSJtvFOPeEmadPEc6fM2IHlBSehY
+         XGCQ==
+X-Gm-Message-State: APjAAAUduzvmfXTUi/9Pncu2IcyBvFL8psofXyTd2l9fUJcnTcwLIsQ7
+        X+8lwg85bNeV1wlKUjroL17TD3UC9xtwfXR2AhGFGzrlN48=
+X-Google-Smtp-Source: APXvYqzkwnIC5nKfdjXTDBBv2eSE257wx56BzcThYlaspGGuetJJ+vOHhNKo0xsogQPtM2m4KtEFsYSOjhMxMQYb2yo=
+X-Received: by 2002:ac2:4945:: with SMTP id o5mr58545952lfi.93.1578401572910;
+ Tue, 07 Jan 2020 04:52:52 -0800 (PST)
 MIME-Version: 1.0
-Message-ID: <157840155965.30329.313988118654552721.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20191218101602.2442868-1-ben.dooks@codethink.co.uk>
+ <20191218162616.qsxsltfsrxotzqhb@axis.com> <048c9653-114b-f726-44b2-9eb1d460b5b5@codethink.co.uk>
+ <CACRpkdYFzHCMLj5oU5JMCkQkMZyOvM5351tpO6iEsE8e5nBZWQ@mail.gmail.com> <20200107111836.uzvja6m4nb5hh56j@axis.com>
+In-Reply-To: <20200107111836.uzvja6m4nb5hh56j@axis.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 7 Jan 2020 13:52:41 +0100
+Message-ID: <CACRpkdau_eTe7xgSCMeE=6dv_M5Ef+Opy6EzymxewuU6aecKHQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: artpec6: fix __iomem on reg in set
+To:     Jesper Nilsson <jesper.nilsson@axis.com>
+Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
+        Jesper Nilsson <jespern@axis.com>,
+        Lars Persson <larper@axis.com>,
+        linux-arm-kernel <linux-arm-kernel@axis.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/fpu branch of tip:
+On Tue, Jan 7, 2020 at 12:18 PM Jesper Nilsson <jesper.nilsson@axis.com> wrote:
+> On Tue, Jan 07, 2020 at 10:39:34AM +0100, Linus Walleij wrote:
+> > On Wed, Dec 18, 2019 at 6:32 PM Ben Dooks <ben.dooks@codethink.co.uk> wrote:
+> > > On 18/12/2019 16:26, Jesper Nilsson wrote:
+> > > > On Wed, Dec 18, 2019 at 11:16:02AM +0100, Ben Dooks (Codethink) wrote:
+> >
+> > > >> -    unsigned int *reg;
+> > > >> +    unsigned int __iomem *reg;
+> > > >
+> > > >       void __iomem *reg;
+> > > >
+> > > > We're using as an argument to readl()?
+> > >
+> > > yes, readl() shoud take an __iomem attributed pointer.
+> >
+> > Shall I change it to void as well when applying?
+>
+> Please do, sorry that my comment wasn't clear above.
 
-Commit-ID:     bbc55341b9c67645d1a5471506370caf7dd4a203
-Gitweb:        https://git.kernel.org/tip/bbc55341b9c67645d1a5471506370caf7dd4a203
-Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate:    Fri, 20 Dec 2019 20:59:06 +01:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Tue, 07 Jan 2020 13:44:42 +01:00
+OK I did that and applied, let's see if it works :)
 
-x86/fpu: Deactivate FPU state after failure during state load
-
-In __fpu__restore_sig(), fpu_fpregs_owner_ctx needs to be reset if the
-FPU state was not fully restored. Otherwise the following may happen (on
-the same CPU):
-
-  Task A                     Task B               fpu_fpregs_owner_ctx
-  *active*                                        A.fpu
-  __fpu__restore_sig()
-                             ctx switch           load B.fpu
-                             *active*             B.fpu
-  fpregs_lock()
-  copy_user_to_fpregs_zeroing()
-    copy_kernel_to_xregs() *modify*
-    copy_user_to_xregs() *fails*
-  fpregs_unlock()
-                            ctx switch            skip loading B.fpu,
-                            *active*              B.fpu
-
-In the success case, fpu_fpregs_owner_ctx is set to the current task.
-
-In the failure case, the FPU state might have been modified by loading
-the init state.
-
-In this case, fpu_fpregs_owner_ctx needs to be reset in order to ensure
-that the FPU state of the following task is loaded from saved state (and
-not skipped because it was the previous state).
-
-Reset fpu_fpregs_owner_ctx after a failure during restore occurred, to
-ensure that the FPU state for the next task is always loaded.
-
-The problem was debugged-by Yu-cheng Yu <yu-cheng.yu@intel.com>.
-
- [ bp: Massage commit message. ]
-
-Fixes: 5f409e20b7945 ("x86/fpu: Defer FPU state load until return to userspace")
-Reported-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20191220195906.plk6kpmsrikvbcfn@linutronix.de
----
- arch/x86/kernel/fpu/signal.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 0071b79..400a05e 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -352,6 +352,7 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- 			fpregs_unlock();
- 			return 0;
- 		}
-+		fpregs_deactivate(fpu);
- 		fpregs_unlock();
- 	}
- 
-@@ -403,6 +404,8 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- 	}
- 	if (!ret)
- 		fpregs_mark_activate();
-+	else
-+		fpregs_deactivate(fpu);
- 	fpregs_unlock();
- 
- err_out:
+Yours,
+Linus Walleij
