@@ -2,103 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B8F313317B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:01:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8943D1333C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:21:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728499AbgAGVBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:01:11 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38004 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728476AbgAGVA6 (ORCPT
+        id S1728886AbgAGVDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:03:12 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:33875 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728865AbgAGVDI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:00:58 -0500
-Received: by mail-io1-f68.google.com with SMTP id v3so839108ioj.5
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 13:00:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TUCMvAlrozTSswUZRaX/kk/b3mxYfUe4t6CXtrf2o+s=;
-        b=GehBVaBAx2yLw8xmK6L9yXpZmniP/2JyAJ3/e8p9FE6da8ZcO/BGm8rhirJ906imzR
-         MyMS2cxd096Pcka3v1dxK5QOY76n81+jkNNzm92Fu1BLm12o33wIh8PuqUyvqB5JgEAT
-         kg2l9mn1owXVwnaEwiAe9SxaV14zDbe3aXQoIoZMkigADe2qBr1ShfEmJPt4DmnIkFdM
-         Nl7O3XfkSkhCda0b1Hkp1OlbetxllC5f4OMGIaWe96kCUf2NJ3z2UgdQ3Uskep4pyBmT
-         i7Kg9HyftPWed+j0nbeSEVmQxWqgcolE4dTvs6xIG2mvTDxwga0AhX4w/wDYcgT/lrhn
-         TfCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TUCMvAlrozTSswUZRaX/kk/b3mxYfUe4t6CXtrf2o+s=;
-        b=mOR2aKMVVgVDNg44QqBzBXKZMwS9IlOhgSta+NdoWY3Jsl6rpZ6wI2OAx9Vc8A5rLS
-         KYubTzwgoTjCClQRva3snUd58joBKrA4J2OhOBo9Xsnr65WFrI4XTgOuTVffVtmsKWAh
-         LEIvPcVH2Ns/TJ1Cl068B5/VNOaM87aQsrk+3sXBT8AA+VE62TwgsmPFm9mRuLLCIJVA
-         5wY7fz7td1m6vGZbNhfiD39w+uABfnIlVwtk9UJ2uza0elrANx1OSJmW5p0VcXJ5ta1E
-         kJJiOu1sQ5If4Aexw7zzTs9AEPoVIPKr9+cEfiJL6rk2aZsmlu839Ww+Ja6cjfm7TQRt
-         SdLg==
-X-Gm-Message-State: APjAAAUg7wdLT1ATde704mU+SNuahY1IFUgOzPS1/3ZHaZ5dDeof+T6J
-        wfUaumrBT60u/BC6g1TQmZHTyg==
-X-Google-Smtp-Source: APXvYqzgUwxMWRW1F7AdWKU490fmEMlII4xM/XzIv7jxVALemJiPaRzlelnhtwr2Yi1XbXw+xwNUuw==
-X-Received: by 2002:a6b:7f47:: with SMTP id m7mr789897ioq.82.1578430857516;
-        Tue, 07 Jan 2020 13:00:57 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id g62sm230208ile.39.2020.01.07.13.00.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jan 2020 13:00:57 -0800 (PST)
-Subject: Re: [PATCH 5.4 100/191] block: fix splitting segments on boundary
- masks
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tue, 7 Jan 2020 16:03:08 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MK3eI-1j87qh1y5m-00LZCF; Tue, 07 Jan 2020 22:02:57 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Oleksandr Natalenko <oleksandr@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        Jason Dillaman <dillaman@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        ceph-devel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org, Chris Mason <clm@fb.com>,
-        Ming Lei <ming.lei@redhat.com>
-References: <20200107205332.984228665@linuxfoundation.org>
- <20200107205338.341621494@linuxfoundation.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <1fc351dd-a213-3310-7611-6b8c60c209cf@kernel.dk>
-Date:   Tue, 7 Jan 2020 14:00:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+Subject: [PATCH] rbd: work around -Wuninitialized warning
+Date:   Tue,  7 Jan 2020 22:01:04 +0100
+Message-Id: <20200107210256.2426176-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <20200107205338.341621494@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:qiBbNdWqGEMMIERlxqJELgdKzb8bJCMzjAWQ9HTgak9Ff2vxvog
+ ZiKQ150VLDh9JWrAZooVqHelJQp11Bcb1+CNXSqkQDQ5sRKJxbgEOWMtteK73DtHqmRyONM
+ XuUfU69io62lViiPJ2aYJR+QXe300SyxvfaTS/q7SZo+/bVQOrCU4ddHNeGOxxBML+IUjtl
+ YruDPJn/MY3pY8Cm3Ekbw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:hziPz/VrV88=:vbym4h2BXvC60iOZqV3c2h
+ O1BEGbiDBe0xht86RpkPm2j0b5Aq9nP58yihvmdmaAs52YAMUFSJQN6lDS5neHyMnJ8CwhTyp
+ q/rUixeG4V50J54isuCECu+RaMN07YIVtYmZvSEIi7x//EvUSwn6U0Lp2n0nVWL61KTKeUK5w
+ bL1Pi3P8Ox+LtG23J3WdbLl6E4SPfOLwY1ikjkvmalIdpPCNR7lAcTG3V69SGee1CyIvLD+47
+ k3ByUp5plwat6dkBTeybDsS7BeOlk+ifWhyhS4brik6DBWh9gkd1GdTGLwsW7db43hNj1lnIv
+ 0LM7pwxPT0QkX2dHM5R/yhB/YZFNz9Sjrys2YjpseeiESAvU/6bbOJtpakDVhHUODCv+08sN6
+ WXkkcXsNc3lBp8AIvhlpjYv2bUyMaLakFP+A+0TP5bvSd1bgdhpJFLxe15QA85rfnVhZI11vk
+ wqUOtz3j4YBROukCc3nky2cbvIrab/mS+eiZBdkbPLo6Zau/Z7mZR1ZWu8AOH+ra1mUCN0/MC
+ osU6Gm2s6foPtPQsSkeP5Eo7/xVdSfyYQz4eVc2pOCS7IBm+6PYaotTcweBIcKfDoemjlimBj
+ JwT1w1u0iW5U/+Cb0PSw2IEkxma7HutNJlAbKqOID4TwiKXfIOlK7umbn/NpWSlTgh8X7H0+U
+ upd5CbeWgqxJVNAI5bNOTL4WsTdDmcKUkxS1ezhMi/4WllLaHkV1A/KAZTsa6DIWXLwR6w0fu
+ anNIdc9Z35OIyHFmhn/4oEUM93rSg8co0ZrKCI9uXiEJzQU4mPH/ve3QLrQ5Hy5LO+9T3xqOF
+ +rOFy+C8Yi7a1h56k44qj5gbp1eBFwMVG33nWa6NciNxm3PYswLJ/eCpea1WdD6UkN76PQn2e
+ LkkHj/b+AE4EjXP1YI5g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/7/20 1:53 PM, Greg Kroah-Hartman wrote:
-> From: Ming Lei <ming.lei@redhat.com>
-> 
-> commit 429120f3df2dba2bf3a4a19f4212a53ecefc7102 upstream.
-> 
-> We ran into a problem with a mpt3sas based controller, where we would
-> see random (and hard to reproduce) file corruption). The issue seemed
-> specific to this controller, but wasn't specific to the file system.
-> After a lot of debugging, we find out that it's caused by segments
-> spanning a 4G memory boundary. This shouldn't happen, as the default
-> setting for segment boundary masks is 4G.
-> 
-> Turns out there are two issues in get_max_segment_size():
-> 
-> 1) The default segment boundary mask is bypassed
-> 
-> 2) The segment start address isn't taken into account when checking
->    segment boundary limit
-> 
-> Fix these two issues by removing the bypass of the segment boundary
-> check even if the mask is set to the default value, and taking into
-> account the actual start address of the request when checking if a
-> segment needs splitting.
+gcc -O3 warns about a dummy variable that is passed
+down into rbd_img_fill_nodata without being initialized:
 
-Greg, there's a problem with this one on ARM. Should be resolved
-shortly, but probably best to defer this one until the next 5.4
-stable release.
+drivers/block/rbd.c: In function 'rbd_img_fill_nodata':
+drivers/block/rbd.c:2573:13: error: 'dummy' is used uninitialized in this function [-Werror=uninitialized]
+  fctx->iter = *fctx->pos;
 
-I'll ping you with both patches once the dust has settled.
+Since this is a dummy, I assume the warning is harmless, but
+it's better to initialize it anyway and avoid the warning.
 
+Fixes: mmtom ("init/Kconfig: enable -O3 for all arches")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/block/rbd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 29be02838b67..070edc5983df 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -2664,7 +2664,7 @@ static int rbd_img_fill_nodata(struct rbd_img_request *img_req,
+ 			       u64 off, u64 len)
+ {
+ 	struct ceph_file_extent ex = { off, len };
+-	union rbd_img_fill_iter dummy;
++	union rbd_img_fill_iter dummy = {};
+ 	struct rbd_img_fill_ctx fctx = {
+ 		.pos_type = OBJ_REQUEST_NODATA,
+ 		.pos = &dummy,
 -- 
-Jens Axboe
+2.20.0
 
