@@ -2,140 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3DEC1333C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:21:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 127191333D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:22:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbgAGVVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:21:09 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:44736 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728267AbgAGVVF (ORCPT
+        id S1729120AbgAGVVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:21:32 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:35995 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729067AbgAGVV3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:21:05 -0500
-Received: by mail-vs1-f65.google.com with SMTP id p6so464256vsj.11
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 13:21:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xSRU4qb0ZOTzAyNx1lTLU2yX2h3B/4YPYeMRUYoNUNw=;
-        b=B2c24VErfFgKcj+Y8pK4fduvG+1fQI+hXYgNkXJGbBRFwaKnQ/dBzAG8TezMb3/Q9Q
-         m6031Hs6rCtZUh7bmDnZFhiSnSqShiG0SN6iRp876eP4eOImfeY0uKJ9ZWeLETLyWqfs
-         ZvEaJ5UebA6DyfgEHhVXrAEmr3UFLR1V8Z7y4lbVghEPUprT3u9Ns75q6VXY3IBNTYmA
-         rzqG9reCI0/e6EHRkRd7LSyHIGjW03TyI6y8ltFpSP5HkFFf9fyin3FuJdsuef5nzQ4Q
-         QIreO53IIKEtcmoXxH6F+iIuZEQXYkKGC4vyb6gpMMULXGdvg7fWB2J2Zgp84mdF7ZPM
-         ofag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xSRU4qb0ZOTzAyNx1lTLU2yX2h3B/4YPYeMRUYoNUNw=;
-        b=WDC9iGj7Kv3Wc54kVt2Akbn7aZ20yPuo1j7kbh85Tt8IR6UDbJpe6IcauU/ZgQE4KO
-         manrzBLTigVqY11PUmEbFZVVgB4jJqmIa2ipIRa8CH8sIWFd/ta2ncGrYl4C7SAK6RYR
-         xIvKGf4tZ22S0FI/yvUjzoaBp61jY7VPZkDpMbwUAMXsew9xity83qoIWldCt6eR1z/0
-         hbj6ZtBNnQRuU+E02DG91py0Wlwy/DPmS8LjHIPRgk1IJtDDOt45a1tn/eLc6lvyxCyd
-         M5JdxuFgh5d0wwGU8h16JosU+8KwKNVYnD4VYL6Z616CagbKyzk12tlpwVbdnP6QwshX
-         +R2A==
-X-Gm-Message-State: APjAAAXVHB1s5HhLr9q83U3VL0aR8rq4Y8MOPgdd64aAiuS3SIjMdvis
-        Azh1hRg76pPahVufUKdBctEj40Vi7IDhVglE50ksjQ==
-X-Google-Smtp-Source: APXvYqyENOKFRASsBlhAPSr8XO5DU0ppABR3JIJu+k4Fe6D6fkhlIMmdJuGT0juY1Iv+IXC4K3kUX9+MYDhqzMADc7Y=
-X-Received: by 2002:a67:6f46:: with SMTP id k67mr906097vsc.2.1578432064703;
- Tue, 07 Jan 2020 13:21:04 -0800 (PST)
+        Tue, 7 Jan 2020 16:21:29 -0500
+Received: from mail-qk1-f176.google.com ([209.85.222.176]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MRCBm-1j0wpH32MG-00NBCp; Tue, 07 Jan 2020 22:21:27 +0100
+Received: by mail-qk1-f176.google.com with SMTP id d71so820445qkc.0;
+        Tue, 07 Jan 2020 13:21:27 -0800 (PST)
+X-Gm-Message-State: APjAAAW22VWjWv8b9Ao6dyhJ0RYF1wjEWypQJHn4ATzEZjzNxoHsu7yz
+        XHngJmWNcOd2tlMU/OjbLn0xMvkqIl3yYACs1U0=
+X-Google-Smtp-Source: APXvYqwWX14oOMnhpeDIoY9y/919XllKVczGD7LmnCZAjDLYU2w9nCEzI9WjKQKE+gbrCYDkW3aHGRLQ/VQ1GiU5OO4=
+X-Received: by 2002:a05:620a:cef:: with SMTP id c15mr1363924qkj.352.1578432086524;
+ Tue, 07 Jan 2020 13:21:26 -0800 (PST)
 MIME-Version: 1.0
-References: <20191216213901.106941-1-bgardon@google.com> <20191216213901.106941-9-bgardon@google.com>
- <20200107154227.tvex5natt7a64nzj@kamzik.brq.redhat.com>
-In-Reply-To: <20200107154227.tvex5natt7a64nzj@kamzik.brq.redhat.com>
-From:   Ben Gardon <bgardon@google.com>
-Date:   Tue, 7 Jan 2020 13:20:53 -0800
-Message-ID: <CANgfPd9VxvJYAw_cqG9X2GUAkZ9vumF8mZ1+P==mJoZgShR_rg@mail.gmail.com>
-Subject: Re: [PATCH v3 8/8] KVM: selftests: Move large memslots above KVM
- internal memslots in _vm_create
-To:     Andrew Jones <drjones@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        Peter Xu <peterx@redhat.com>
+References: <20200107201327.3863345-1-arnd@arndb.de> <CAHmME9rnevSYwWvfyv8LRitVo-=KVpPCoGLwYxo62mwnW0vjiQ@mail.gmail.com>
+In-Reply-To: <CAHmME9rnevSYwWvfyv8LRitVo-=KVpPCoGLwYxo62mwnW0vjiQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 7 Jan 2020 22:21:10 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3N=Zcq3rztj94Ty0_Fbfkw4db+-fLgASvK_UD4LTY=Ww@mail.gmail.com>
+Message-ID: <CAK8P3a3N=Zcq3rztj94Ty0_Fbfkw4db+-fLgASvK_UD4LTY=Ww@mail.gmail.com>
+Subject: Re: [PATCH] crypto: curve25519 - Work around link failure
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Andy Polyakov <appro@cryptogams.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Vitaly Chikunov <vt@altlinux.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:no2J6gE6SmsJ60PMl8NVwoArJBS4zufmwUfx8IRJAkKAr6hz8Y5
+ zoZJ4SvFDO+ERCALKL/FmdEUuHUnda9SC0AWMLF9/karNoDjKJxHuFPbPjXBndwp0uUrXT5
+ FbyvBPYSsrU3vfv9nPSYOOBCMMkR1xFUOjNW1FLoe7o/DyCzzmsMLgaZ4e5xOKgFlcOeNYq
+ ZzipicfnquO02Qmjzl2Mw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:zuwX3DRtQJ4=:MaNpG9j+Cmp3pA5lz1WiVb
+ aKjMy3lu26YwJskFp/MRd3tlKvlgV6INHCadmPqs7uyAq4v5gy1HsUdK6gRcqy+5jXEKyHTYv
+ pORuAKiUCJZ2yHohuWA1HpuYnmDp4NMYwsUQLQnW/cOc3mk85JHUE64xIQEK8lj5/x7GmnZXq
+ r2J493EsDVNbGk3wHgD+mQELeyzaXw1+27PdwQZMTcY9zD0peV9irGIwTl2gtB2ht6P33prK9
+ OapfzInJ+Q6Czxuxawj+bKdHRxRQPEH9ZMy4hgT2mOpQ8n34E8RzpeqZEOSYLbJxXJ9GQn1pM
+ 4s9zDKFNxpBldBI0ajlbXnqbuKSPniNCHokt4Y49o3z2bD0xV0fDKuSOhkYW/opbWK5KCkXgs
+ bauSWEPhj/Ogqu/eoCvq3P+rfpEnxgzFsr8lO+gHiTNJ2oIkw59cYBcXpj1s7+C2ql4DG86MA
+ ShYW4Kt4loHsg66rsFd2XvTDVIQ17Nx0VR02UGib5jVrUOg8gKOJd9PMlAX5D2e3f2irZ0sFB
+ gtIGlbDuQh1ig9Lv56jtevGbjm4nl1QSsr5kXNnw6uX90EVleoh6SlMI1IEkvOBl0z6e+M8gT
+ Iuzt9Mgcv/sRdUuvfxTMBrdy6KD0FgB4ztO4sRFuPrAzTMhdmn8NJC1KBozJpPT5nrUgEqjYl
+ drEba9p8fp85x8dve/cCyQ88TG2nLbEkrAdhfoNwelFJfkYo8K4CWjZQ8xzEDdmgEkeM/XL/d
+ oSbBMx4vFfCkVGDJ3LNgXrQTyd4S/3XhNeBGfpEPwruRIuYNsqyJ0aXyiEYsckl+YZAtLTfkn
+ ma+cIGsMspeSFUX3Dtr5mpsHO6Rxa1hZZmIpxk1nl8aTK1QgUXu/6HhtHEifobl51xLkEoEZX
+ 3TtN8KozTGMxxobMxMfw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Would it be viable to allocate at 4G be default and then add another
-interface for allocations at low memory addresses? For most tests, I
-don't think there's any value to having the backing paddrs below 3G.
+On Tue, Jan 7, 2020 at 9:26 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+> Hey Arnd,
+>
+> Another solution to this was already posted:
+>
+> https://lore.kernel.org/linux-crypto/CAHmME9pg4KWw1zNVybxn1WLGusyGCjqeAHLQXY=Dr4zznUM82g@mail.gmail.com/T/#t
+>
+> That might be slightly cleaner, though yours is shorter. I'm alright
+> with either one.
 
-On Tue, Jan 7, 2020 at 7:42 AM Andrew Jones <drjones@redhat.com> wrote:
->
-> On Mon, Dec 16, 2019 at 01:39:01PM -0800, Ben Gardon wrote:
-> > KVM creates internal memslots between 3 and 4 GiB paddrs on the first
-> > vCPU creation. If memslot 0 is large enough it collides with these
-> > memslots an causes vCPU creation to fail. When requesting more than 3G,
-> > start memslot 0 at 4G in _vm_create.
-> >
-> > Signed-off-by: Ben Gardon <bgardon@google.com>
-> > ---
-> >  tools/testing/selftests/kvm/lib/kvm_util.c | 15 +++++++++++----
-> >  1 file changed, 11 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-> > index 41cf45416060f..886d58e6cac39 100644
-> > --- a/tools/testing/selftests/kvm/lib/kvm_util.c
-> > +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-> > @@ -113,6 +113,8 @@ const char * const vm_guest_mode_string[] = {
-> >  _Static_assert(sizeof(vm_guest_mode_string)/sizeof(char *) == NUM_VM_MODES,
-> >              "Missing new mode strings?");
-> >
-> > +#define KVM_INTERNAL_MEMSLOTS_START_PADDR (3UL << 30)
-> > +#define KVM_INTERNAL_MEMSLOTS_END_PADDR (4UL << 30)
-> >  /*
-> >   * VM Create
-> >   *
-> > @@ -128,13 +130,16 @@ _Static_assert(sizeof(vm_guest_mode_string)/sizeof(char *) == NUM_VM_MODES,
-> >   *
-> >   * Creates a VM with the mode specified by mode (e.g. VM_MODE_P52V48_4K).
-> >   * When phy_pages is non-zero, a memory region of phy_pages physical pages
-> > - * is created and mapped starting at guest physical address 0.  The file
-> > - * descriptor to control the created VM is created with the permissions
-> > - * given by perm (e.g. O_RDWR).
-> > + * is created. If phy_pages is less that 3G, it is mapped starting at guest
-> > + * physical address 0. If phy_pages is greater than 3G it is mapped starting
-> > + * 4G into the guest physical address space to avoid KVM internal memslots
-> > + * which map the region between 3G and 4G. The file descriptor to control the
-> > + * created VM is created with the permissions given by perm (e.g. O_RDWR).
-> >   */
-> >  struct kvm_vm *_vm_create(enum vm_guest_mode mode, uint64_t phy_pages, int perm)
-> >  {
-> >       struct kvm_vm *vm;
-> > +     uint64_t guest_paddr = 0;
-> >
-> >       DEBUG("Testing guest mode: %s\n", vm_guest_mode_string(mode));
-> >
-> > @@ -227,9 +232,11 @@ struct kvm_vm *_vm_create(enum vm_guest_mode mode, uint64_t phy_pages, int perm)
-> >
-> >       /* Allocate and setup memory for guest. */
-> >       vm->vpages_mapped = sparsebit_alloc();
-> > +     if (guest_paddr + phy_pages > KVM_INTERNAL_MEMSLOTS_START_PADDR)
-> > +             guest_paddr = KVM_INTERNAL_MEMSLOTS_END_PADDR;
-> >       if (phy_pages != 0)
-> >               vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
-> > -                                         0, 0, phy_pages, 0);
-> > +                                         guest_paddr, 0, phy_pages, 0);
-> >
-> >       return vm;
-> >  }
-> > --
-> > 2.24.1.735.g03f4e72817-goog
-> >
->
-> I feel like this function is becoming too magic and it'll be more
-> complicated for tests that need to add additional memory regions
-> to know what physical addresses are available. Maybe we should assert
-> if we can't allocate more than 3G at offset zero and also provide
-> another interface for allocating at an offset input by the user,
-> as long as the offset is 4G or above (asserting when it isn't)?
->
-> Thanks,
-> drew
->
+Yes, I agree the other approach looks nicer. I've added that to my randconfig
+builder in place of my patch to see if it's sufficient. If not, I'll
+let you know.
+
+        Arnd
