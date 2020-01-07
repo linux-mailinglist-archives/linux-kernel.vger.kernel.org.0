@@ -2,85 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0421E133577
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 23:06:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A767133579
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 23:08:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbgAGWGd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 17:06:33 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:38017 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726793AbgAGWGd (ORCPT
+        id S1727459AbgAGWH5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 17:07:57 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42082 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726142AbgAGWH5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 17:06:33 -0500
-Received: from mail-qk1-f175.google.com ([209.85.222.175]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1N6JtR-1jmL2U1O2b-016eOK; Tue, 07 Jan 2020 23:06:31 +0100
-Received: by mail-qk1-f175.google.com with SMTP id a203so909099qkc.3;
-        Tue, 07 Jan 2020 14:06:30 -0800 (PST)
-X-Gm-Message-State: APjAAAVb410bR7aDf9atZ3/Y8cBO3H+sfO9Bh0A4fyBS5QhJSXFXDzlZ
-        FPEEQm+iejWCv/j45urnGEYwjVXrR+vlMsGCN0k=
-X-Google-Smtp-Source: APXvYqzLX1vDB9bbHKm0RIfLRmhhg3Pbbkya5hKGBWX/IIiUDGpl/J0vvUx4sgrkexjEB1wHob2sa45CjmKbtRESa5M=
-X-Received: by 2002:a05:620a:a5b:: with SMTP id j27mr1531468qka.286.1578434790062;
- Tue, 07 Jan 2020 14:06:30 -0800 (PST)
+        Tue, 7 Jan 2020 17:07:57 -0500
+Received: by mail-pg1-f196.google.com with SMTP id s64so510316pgb.9
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 14:07:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pAKe0A0NI9z/zrTMrJJQukADk0aDuPSGWmIx5vCR8B8=;
+        b=LQObYK7dHmhCe3OwuTyTylMpOVZ6ZXz3FhxMyEsp2rF56PU7I2PEv6CYuNoFKTkClB
+         V0Pw9m8gsLtvwhQDJcEIwIBmDLK+xKEXA6osI/EzTG3jYCzsJv7lXlbz++TenzUYIba4
+         Gj2Q0aEiFScRbnrzz6EBsr8jw7wkx6Mb3fWVY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pAKe0A0NI9z/zrTMrJJQukADk0aDuPSGWmIx5vCR8B8=;
+        b=YIBOAyIsCMMiumBMqqi7eT1175nvMx8VmkShu7mnUhPMa+NdRIu340/SaJaN7cLery
+         ttU4XsMSQehrF+EBYA/+LrDU1K83ONM6OA0SUd4U8YHz8WncVLqLOTfcYq753J5cnxRY
+         sDDPqXk+scd11VgrCVf+fZaDv3OrOG68hZD6AhmIy+vr5vMiIVEB5j86TIaJKzNuphQS
+         0OU6F8uhErhBUwb4cPiRMhoS8LnX2KNIa45tlUYyrjRYqGOg775vDrRuqrkmC/40DpBI
+         Pe3ucp5TcNYgkHEFBZTRcZx4+RBQ5UpBcXh5U9Qu5p2JEP94/paMtV2vakJfUJNheCBZ
+         UY0Q==
+X-Gm-Message-State: APjAAAUpqOqUTqs0FSZHpGoXcpkbVvZyDg46Ay07w1QJwfGtM9mNG+nb
+        LS70boQQ9rmaCQvFUV0wNHgg5IDfQe0=
+X-Google-Smtp-Source: APXvYqwHfTYI3edQLbXOax9AEQjHKXwQus62qiOoMKTygl1Yh/09/0nOT0YYH6LWVmJnoJuJDPONYg==
+X-Received: by 2002:a63:d411:: with SMTP id a17mr1804226pgh.333.1578434876245;
+        Tue, 07 Jan 2020 14:07:56 -0800 (PST)
+Received: from yichengli2.mtv.corp.google.com ([2620:15c:202:201:fd9f:cb79:f2f4:c8c7])
+        by smtp.gmail.com with ESMTPSA id k1sm704787pgk.90.2020.01.07.14.07.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Jan 2020 14:07:55 -0800 (PST)
+From:   Yicheng Li <yichengli@chromium.org>
+To:     LKML <linux-kernel@vger.kernel.org>, bleung@chromium.org,
+        gwendal@chromium.org
+Cc:     Yicheng Li <yichengli@chromium.org>
+Subject: [PATCH v5] platform: cros_ec: Query EC protocol version if EC transitions between RO/RW
+Date:   Tue,  7 Jan 2020 14:06:40 -0800
+Message-Id: <20200107220640.834-1-yichengli@chromium.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20200107203041.843060-1-arnd@arndb.de> <1578430874.4288.2.camel@HansenPartnership.com>
-In-Reply-To: <1578430874.4288.2.camel@HansenPartnership.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 7 Jan 2020 23:06:05 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2GbfvgWep1JGNUX7c8jrtQs40PgUfq5C3d_zYuBK5nmw@mail.gmail.com>
-Message-ID: <CAK8P3a2GbfvgWep1JGNUX7c8jrtQs40PgUfq5C3d_zYuBK5nmw@mail.gmail.com>
-Subject: Re: [PATCH] ima: make ASYMMETRIC_PUBLIC_KEY_SUBTYPE 'bool'
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:UNCZ4qhZHs2qnSxwdJ7LsP8e+/8oh0SxkGihIdlHUQ6cnEU0nWQ
- SyKEWjbvZgrzpN/ioEEhPBuxLgOJYfm9CUzbt+KRkgFUMEUMUrad6Tw1ZYApxcWIFKoVcVT
- hGrpnLs9xXVsvbf542th7RIzwOBE/3Q7oGaSaAOgUCLS0m/J6V2uiuqMKGaEFThLnq16vLX
- uYcE4Po9nPm2Ow5JoK0pw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:kVSAH9wvaGI=:l20eCZV1dCjDqukeUw4Gzf
- HbALFQ+QUIxaAJT+c0fcRA7BLMFyZ1aWywgnu3XkV56rUxEml7oiWA4D1ogEbfVNLmV90YSUl
- W5iyI+h4E1TWyI4QlHxXl4vh10xEbXTFJaOw8Rxog6QGZHsBfewji1/px19BNqGh+yuUkX6CC
- WA7DQfWn7NVZh7undBoYTURzu5PBcK4Be5wmq4e1DvJf9bEpZ+cEGxPrFOIRWxMblKfQDbran
- Rzjybl9QmOokfiin3/Vi1gRPOulOU+BTt+H+GFizvB2df7WfmTyEP7/Gmt7BlFDED1Jh+O2XF
- ESD+ZUKqb22euLMYHoBIc2tcGRNwPdVjqMdp8jlYrzyjQNOdFI/h9o/jPd0XIbTNbYjK/Wmbc
- SxCleVE0xNwUU0uI5zlb475gv+4W3L4x8MS1VwnQkl9SZxw1If+p8+JrS/cpsMDpUBdN5DYP7
- SOwaFIBuQWxEtKKfOyeV1WvCKwMTruAgh4LNA86QcpcGZDOnK8jLOGBXj3YKEttnBZpE/Fnqd
- HtIpxse/e7hn96fWRtZm9bm8A+Q6C7baP9dNReMuXYHSJpMgspOXMoBvN6yDHSjcJgJHDm/B3
- YMXGHprDt+IqvQbOrpVttEkFpjVa3aVtsO+B6zyrfhIXtZo/rl4v2J2TakXMtOmdtVLPEmgPt
- OAEKOBL5YQKtBn8xn2zpxajrvo9o8LKU9hYqg9sv2IGbMD1iWW9t/Umu9v6N8DKx6xqsUWxyZ
- bmQ6c8jdIP0mZrrzXpA94t3J394bo1idNG5E3bPhrQ3QNZ7R8M+0WQWxZfsDeLEpNF5+pn1Hd
- IRv43Ru+8jhRIfyt4E4jECocSjcVNs4ULLQn0UnHnMzPf2qiVLNAriWU2TQcynDF1RQUQ1P1P
- u9/T50iWs5OuNU0pnQyg==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 7, 2020 at 10:01 PM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
-> On Tue, 2020-01-07 at 21:30 +0100, Arnd Bergmann wrote:
+RO and RW of EC may have different EC protocol version. If EC transitions
+between RO and RW, but AP does not reboot (this is true for fingerprint
+microcontroller / cros_fp, but not true for main ec / cros_ec), the AP
+still uses the protocol version queried before transition, which can
+cause problems. In the case of fingerprint microcontroller, this causes
+AP to send the wrong version of EC_CMD_GET_NEXT_EVENT to RO in the
+interrupt handler, which in turn prevents RO to clear the interrupt
+line to AP, in an infinite loop.
 
-> >  config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
-> > -     tristate "Asymmetric public-key crypto algorithm subtype"
-> > +     bool "Asymmetric public-key crypto algorithm subtype"
->
-> I believe the crypto guys do like stuff to be modular.
->
-> However, we've already implemented this solution:
->
-> https://lore.kernel.org/linux-integrity/20200107194350.3782-2-nramas@linux.microsoft.com/
->
-> To solve the problem via an intermediate boolean config variable.
+Once an EC_HOST_EVENT_INTERFACE_READY is received, we know that there
+might have been a transition between RO and RW, so re-query the protocol.
 
-Ok, that looks good to me.
+Change-Id: I49a51cc10d22a4ab9e75204a4c0c8819d5b3d282
+Signed-off-by: Yicheng Li <yichengli@chromium.org>
+---
+ drivers/platform/chrome/cros_ec.c           | 24 +++++++++++++++++++++
+ include/linux/platform_data/cros_ec_proto.h |  3 +++
+ 2 files changed, 27 insertions(+)
 
-    Arnd
+diff --git a/drivers/platform/chrome/cros_ec.c b/drivers/platform/chrome/cros_ec.c
+index 9b2d07422e17..38ec1fb409a5 100644
+--- a/drivers/platform/chrome/cros_ec.c
++++ b/drivers/platform/chrome/cros_ec.c
+@@ -104,6 +104,23 @@ static int cros_ec_sleep_event(struct cros_ec_device *ec_dev, u8 sleep_event)
+ 	return ret;
+ }
+ 
++static int cros_ec_ready_event(struct notifier_block *nb,
++	unsigned long queued_during_suspend, void *_notify)
++{
++	struct cros_ec_device *ec_dev = container_of(nb, struct cros_ec_device,
++						     notifier_ready);
++	u32 host_event = cros_ec_get_host_event(ec_dev);
++
++	if (host_event & EC_HOST_EVENT_MASK(EC_HOST_EVENT_INTERFACE_READY)) {
++		mutex_lock(&ec_dev->lock);
++		cros_ec_query_all(ec_dev);
++		mutex_unlock(&ec_dev->lock);
++		return NOTIFY_OK;
++	}
++
++	return NOTIFY_DONE;
++}
++
+ /**
+  * cros_ec_register() - Register a new ChromeOS EC, using the provided info.
+  * @ec_dev: Device to register.
+@@ -201,6 +218,13 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+ 		dev_dbg(ec_dev->dev, "Error %d clearing sleep event to ec",
+ 			err);
+ 
++	/* Register the notifier for EC_HOST_EVENT_INTERFACE_READY event. */
++	ec_dev->notifier_ready.notifier_call = cros_ec_ready_event;
++	err = blocking_notifier_chain_register(&ec_dev->event_notifier,
++					       &ec_dev->notifier_ready);
++	if (err)
++		return err;
++
+ 	dev_info(dev, "Chrome EC device registered\n");
+ 
+ 	return 0;
+diff --git a/include/linux/platform_data/cros_ec_proto.h b/include/linux/platform_data/cros_ec_proto.h
+index 0d4e4aaed37a..a1c545c464e7 100644
+--- a/include/linux/platform_data/cros_ec_proto.h
++++ b/include/linux/platform_data/cros_ec_proto.h
+@@ -121,6 +121,8 @@ struct cros_ec_command {
+  * @event_data: Raw payload transferred with the MKBP event.
+  * @event_size: Size in bytes of the event data.
+  * @host_event_wake_mask: Mask of host events that cause wake from suspend.
++ * @notifier_ready: The notifier_block to let the kernel re-query EC
++ *      communication protocol when the EC sends EC_HOST_EVENT_INTERFACE_READY.
+  * @ec: The platform_device used by the mfd driver to interface with the
+  *      main EC.
+  * @pd: The platform_device used by the mfd driver to interface with the
+@@ -161,6 +163,7 @@ struct cros_ec_device {
+ 	int event_size;
+ 	u32 host_event_wake_mask;
+ 	u32 last_resume_result;
++	struct notifier_block notifier_ready;
+ 
+ 	/* The platform devices used by the mfd driver */
+ 	struct platform_device *ec;
+-- 
+2.21.0
+
