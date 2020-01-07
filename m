@@ -2,149 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3173131F42
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 06:25:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 041C9131F45
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 06:27:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbgAGFZs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 00:25:48 -0500
-Received: from ozlabs.org ([203.11.71.1]:40423 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725781AbgAGFZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 00:25:48 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1727174AbgAGF13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 00:27:29 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:33579 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725601AbgAGF12 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 00:27:28 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1578374847; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=vgKhB3s7JYy/GZx22dlIXelC1zIwKoYUxSawh99Gnj0=; b=aVTZXkcdjr4r8n29bdgELM6c9zF0WCvPAdtguE+KjRGGrOAVMvfAdDwwRlKPJ9VLYgJDQoQH
+ FPAS9keU8opY+aWjQKXDhLhyvHvohAmplzyavkq8pPoVm4augbAPh10yVASiemK4BN6k8zqE
+ wjSbI4tB4fUhIepV+4QvE4DUxH4=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e1416be.7f9253902c70-smtp-out-n02;
+ Tue, 07 Jan 2020 05:27:26 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 9C23CC43383; Tue,  7 Jan 2020 05:27:25 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from rocky-Inspiron-7590.qca.qualcomm.com (unknown [180.166.53.21])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47sLSS63zdz9sPn;
-        Tue,  7 Jan 2020 16:25:44 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1578374745;
-        bh=GGE2QtSyQDFIG+i6LEkAGQRmwbyt6cF/tmEM7LuTyyU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=AbABF6702TRuLnsj3lNDwGlfuOtva8ldvdQ1E04u05xuGj0lWxv8ZnLxb7iryEZ/l
-         0IKmFGPlacWH8xVrQhuIGkmuxyOov621e8ZXRVyh0j4Ok69ChBtDArfhnN7WE2AOkc
-         8fnQb4zcWkQCpw0oBxGGsjCZYputYOft3faGWHY6YiZXVNJKM9/dAfJBBj/wTP1IEZ
-         rvbT7D6apASELizuW47R/covBpKFPGQeqVEM8qonQRM0OHe5lDnGXm1ZwfA7abV+eE
-         nMMl0EQQ+njvtewtU/6oVoDZcaNia7hX7rXPA1IDeBgrG4Njwj6B6TAOUf5zl7b8gx
-         Nfc7SZ8+eeCLQ==
-Date:   Tue, 7 Jan 2020 16:25:44 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        David Sterba <dsterba@suse.cz>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dennis Zhou <dennis@kernel.org>
-Subject: linux-next: manual merge of the akpm tree with the btrfs tree
-Message-ID: <20200107162544.46fc4448@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/9C6ME+UIIoHATTCJhWIZrid";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        (Authenticated sender: rjliao)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 07A65C433CB;
+        Tue,  7 Jan 2020 05:27:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 07A65C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rjliao@codeaurora.org
+From:   Rocky Liao <rjliao@codeaurora.org>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Rocky Liao <rjliao@codeaurora.org>
+Subject: [PATCH v1] Bluetooth: hci_qca: Add qca_power_on() API to support both wcn399x and Rome power up
+Date:   Tue,  7 Jan 2020 13:26:01 +0800
+Message-Id: <20200107052601.32216-1-rjliao@codeaurora.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/9C6ME+UIIoHATTCJhWIZrid
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This patch adds a unified API qca_power_on() to support both wcn399x and
+Rome power on. For wcn399x it calls the qca_wcn3990_init() to init the
+regulators, and for Rome it pulls up the bt_en GPIO to power up the btsoc.
 
-Hi all,
+Signed-off-by: Rocky Liao <rjliao@codeaurora.org>
+---
+ drivers/bluetooth/hci_qca.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Today's linux-next merge of the akpm tree got a conflict in:
-
-  include/linux/bitmap.h
-
-between commit:
-
-  7a5ce045d17c ("bitmap: genericize percpu bitmap region iterators")
-
-from the btrfs tree and patch:
-
-  "lib: rework bitmap_parse()"
-
-from the akpm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/bitmap.h
-index cb63feb3cfbe,65994b9f68f3..000000000000
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@@ -450,47 -450,6 +450,41 @@@ static inline void bitmap_replace(unsig
-  		__bitmap_replace(dst, old, new, mask, nbits);
-  }
- =20
-- static inline int bitmap_parse(const char *buf, unsigned int buflen,
-- 			unsigned long *maskp, int nmaskbits)
-- {
-- 	return __bitmap_parse(buf, buflen, 0, maskp, nmaskbits);
-- }
--=20
- +static inline void bitmap_next_clear_region(unsigned long *bitmap,
- +					    unsigned int *rs, unsigned int *re,
- +					    unsigned int end)
- +{
- +	*rs =3D find_next_zero_bit(bitmap, end, *rs);
- +	*re =3D find_next_bit(bitmap, end, *rs + 1);
- +}
- +
- +static inline void bitmap_next_set_region(unsigned long *bitmap,
- +					  unsigned int *rs, unsigned int *re,
- +					  unsigned int end)
- +{
- +	*rs =3D find_next_bit(bitmap, end, *rs);
- +	*re =3D find_next_zero_bit(bitmap, end, *rs + 1);
- +}
- +
- +/*
- + * Bitmap region iterators.  Iterates over the bitmap between [@start, @e=
-nd).
- + * @rs and @re should be integer variables and will be set to start and e=
-nd
- + * index of the current clear or set region.
- + */
- +#define bitmap_for_each_clear_region(bitmap, rs, re, start, end)	     \
- +	for ((rs) =3D (start),						     \
- +	     bitmap_next_clear_region((bitmap), &(rs), &(re), (end));	     \
- +	     (rs) < (re);						     \
- +	     (rs) =3D (re) + 1,						     \
- +	     bitmap_next_clear_region((bitmap), &(rs), &(re), (end)))
- +
- +#define bitmap_for_each_set_region(bitmap, rs, re, start, end)		     \
- +	for ((rs) =3D (start),						     \
- +	     bitmap_next_set_region((bitmap), &(rs), &(re), (end));	     \
- +	     (rs) < (re);						     \
- +	     (rs) =3D (re) + 1,						     \
- +	     bitmap_next_set_region((bitmap), &(rs), &(re), (end)))
- +
-  /**
-   * BITMAP_FROM_U64() - Represent u64 value in the format suitable for bit=
-map.
-   * @n: u64 value
-
---Sig_/9C6ME+UIIoHATTCJhWIZrid
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4UFlgACgkQAVBC80lX
-0GzRZgf/SzplGjFNk6qZXbCi3dAid8jqPGKnTRXFtci8WDX8Wl2YQuJDtZEV0K2N
-AaweM3G8GJzRRMtH/lHMTdK9xuZwRiT5eUSHIbCA4qKzZGrl64zr3VBT1Y1d9xYi
-HsbFMbfirDDEGhvVvO1ksm+7+OPW41czfGHAGTQSCH9k3XhmKPwl7PDnPQQ7CtYg
-5mei180m/Mv34houcHTXM7BoRKT8t29w7jD+khvrW/inipVSpQxgTwXYZl/64ECZ
-PV+GxeyrkNC50SLmZ33JPePZFhko9O8okfZTYHZmGy/9YGPN8SV4AbnGv3AZO/i6
-u04WA9zdziuKA3R3foIS7H3FqZKVgw==
-=wk96
------END PGP SIGNATURE-----
-
---Sig_/9C6ME+UIIoHATTCJhWIZrid--
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index 9392cc7f9908..f6555bd1adbc 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -1532,6 +1532,27 @@ static int qca_wcn3990_init(struct hci_uart *hu)
+ 	return 0;
+ }
+ 
++static int qca_power_on(struct hci_dev *hdev)
++{
++	struct hci_uart *hu = hci_get_drvdata(hdev);
++	enum qca_btsoc_type soc_type = qca_soc_type(hu);
++	struct qca_serdev *qcadev;
++	int ret = 0;
++
++	if (qca_is_wcn399x(soc_type)) {
++		ret = qca_wcn3990_init(hu);
++	} else {
++		if (hu->serdev) {
++			qcadev = serdev_device_get_drvdata(hu->serdev);
++			gpiod_set_value_cansleep(qcadev->bt_en, 1);
++			/* Controller needs time to bootup. */
++			msleep(150);
++		}
++	}
++
++	return ret;
++}
++
+ static int qca_setup(struct hci_uart *hu)
+ {
+ 	struct hci_dev *hdev = hu->hdev;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
