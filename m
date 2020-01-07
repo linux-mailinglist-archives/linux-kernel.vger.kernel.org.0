@@ -2,93 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DB91131D7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 03:08:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 072BD131D7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 03:09:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbgAGCIo convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 6 Jan 2020 21:08:44 -0500
-Received: from mga06.intel.com ([134.134.136.31]:8223 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727250AbgAGCIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 21:08:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jan 2020 18:08:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,404,1571727600"; 
-   d="scan'208";a="217583466"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by fmsmga008.fm.intel.com with ESMTP; 06 Jan 2020 18:08:42 -0800
-Received: from fmsmsx158.amr.corp.intel.com (10.18.116.75) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 6 Jan 2020 18:08:42 -0800
-Received: from fmsmsx123.amr.corp.intel.com ([169.254.7.87]) by
- fmsmsx158.amr.corp.intel.com ([169.254.15.85]) with mapi id 14.03.0439.000;
- Mon, 6 Jan 2020 18:08:42 -0800
-From:   "Saleem, Shiraz" <shiraz.saleem@intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>, Xiyu Yang <xiyuyang19@fudan.edu.cn>
-CC:     "yuanxzhang@fudan.edu.cn" <yuanxzhang@fudan.edu.cn>,
-        "kjlu@umn.edu" <kjlu@umn.edu>, "leon@kernel.org" <leon@kernel.org>,
-        "Markus.Elfring@web.de" <Markus.Elfring@web.de>,
-        Xin Tan <tanxin.ctf@gmail.com>,
-        "Latif, Faisal" <faisal.latif@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Shannon Nelson <shannon.nelson@intel.com>,
-        "Singhai, Anjali" <anjali.singhai@intel.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v4] infiniband: i40iw: fix a potential NULL pointer
- dereference
-Thread-Topic: [PATCH v4] infiniband: i40iw: fix a potential NULL pointer
- dereference
-Thread-Index: AQHVvrhzchRnSKHHyEuZXScGHS/Gk6faLOQAgARUNiA=
-Date:   Tue, 7 Jan 2020 02:08:41 +0000
-Message-ID: <9DD61F30A802C4429A01CA4200E302A7C1DF97F0@fmsmsx123.amr.corp.intel.com>
-References: <1577672668-46499-1-git-send-email-xiyuyang19@fudan.edu.cn>
- <20200104000128.GA20711@ziepe.ca>
-In-Reply-To: <20200104000128.GA20711@ziepe.ca>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYjI0MGQ1YjMtZGMxMS00MGRlLWE1ZTctNGI2ZTdlMDk2ZTkwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibDJqaU1hdDUzbzg3MGVnT2k0a1VDenZhd2FYbnRZTUNCdkFhT2xoQ1o0UkhDTTU0aDk0ZGV1eGk3WGZGOExCaSJ9
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.1.200.106]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1727490AbgAGCJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 21:09:48 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37926 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727250AbgAGCJr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 21:09:47 -0500
+Received: by mail-lj1-f193.google.com with SMTP id w1so31046120ljh.5
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 18:09:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xPbFRTSbrgv2vsPRCZzi5SM8FM6S6F8h8auzWw8AmS4=;
+        b=CSduDkeGo0MiKWIBdBklgooJvwEsoyXlt60f1DCmYC3Qb4Vv/d8r7FGeOZTEdGBQZT
+         ValZtuzYU65N1edWR6mP6aFA/CdxoNSlJMhrxVbPx9NOXgP6t9CIlIABDHZepmj9+9PI
+         ckUqIfwABr86VYd8c8/qwsmaOkprP8EWlhg3/gchADjrujjxJ9MIjPeHOag6DxNUmpfg
+         Apr/uwlwkEIkvQTwib83+RhWRrEJwRnjcCbjP6HZD/rHtmW77XAsmnrEl6ulTxQpklrB
+         xRnSkUZnkdgxJZ32kC4eH1hfnp2PWIvr8qIhc07Hbk9RXxrIBp+siL9ZtpF2fzSSRj1D
+         1Nbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xPbFRTSbrgv2vsPRCZzi5SM8FM6S6F8h8auzWw8AmS4=;
+        b=VAlpTA/fnH07VNke6CxBspcM7BM2iAi5MReqj7Q3TbQ3+F+hTBMPwSNAfltYGri9mC
+         lrpZgFdcum7ugNGgavP5KC3vO+2MDsjF5z3o7cuvtGrL3IGKU6lnaVUwnwjtov+f07X/
+         Le1NNrTRO7GmFpznl4aAqPIKy48qOfwC+wp3+qESBH+wImYL6f951dcEiLEnHb49Y45W
+         3Ie5cuDM++c02b2ln8fnfhpTTFPNxkk9qeF5Sm9Yf5Zifq27m7gdgb//hjgWHZbuIabs
+         6hIFOKmiIiYd1aHdmgxHEZur05Cj6r3fkdqugTJrkPiVyA29qRjvYIwiHDmKOpWPjadl
+         2ASA==
+X-Gm-Message-State: APjAAAWz+gpGvjzjiPNkfFlGxmuxKAbUdrFwJ5XhE42XkEPhThpcoidq
+        zqUacrln/5yaDtI/ZqmT5cBB8MzmW+N5GZ9OKlng
+X-Google-Smtp-Source: APXvYqyQjm3v8GTrdfXnWQTa2FVkbB17+WRRz+N5LoFT1P6TzsL8gkJ/g8HhbZEgdwPXkzh1zz0rC7j903Ofs+o568E=
+X-Received: by 2002:a2e:7e11:: with SMTP id z17mr62223294ljc.117.1578362985508;
+ Mon, 06 Jan 2020 18:09:45 -0800 (PST)
 MIME-Version: 1.0
+References: <1578361158-27940-1-git-send-email-liuyang34@xiaomi.com>
+In-Reply-To: <1578361158-27940-1-git-send-email-liuyang34@xiaomi.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 6 Jan 2020 21:09:33 -0500
+Message-ID: <CAHC9VhSy_vWSaRy9xJ+Uis1h1YvqM3nhmMZYB6O0ww=tVi3nxw@mail.gmail.com>
+Subject: Re: [PATCH v2] selinuxfs: use scnprinft to get real length for inode
+To:     liuyang34 <yangliuxm34@gmail.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, liuyang34 <liuyang34@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Subject: Re: [PATCH v4] infiniband: i40iw: fix a potential NULL pointer dereference
-> 
-> On Mon, Dec 30, 2019 at 10:24:28AM +0800, Xiyu Yang wrote:
-> > A NULL pointer can be returned by in_dev_get(). Thus add a
-> > corresponding check so that a NULL pointer dereference will be avoided
-> > at this place.
-> >
-> > Fixes: 8e06af711bf2 ("i40iw: add main, hdr, status")
-> > Signed-off-by: Xiyu Yang <xiyuyang19@fudan.edu.cn>
-> > Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
-> > Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-> > ---
-> > Changes in v2:
-> > - Release rtnl lock when in_dev_get return NULL Changes in v3:
-> > - Continue the next loop when in_dev_get return NULL Changes in v4:
-> > - Change commit message
-> >
-> >  drivers/infiniband/hw/i40iw/i40iw_main.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> 
-> Applied to for-next
-> 
-> And Shiraz, Leon is right, that trylock stuff is completely wrong, let's fix it.
-> 
+On Mon, Jan 6, 2020 at 8:39 PM liuyang34 <yangliuxm34@gmail.com> wrote:
+>
+> as the return value of snprintf maybe over the size of TMPBUFLEN, use scnprintf
+> to instead of it in sel_read_class and sel_read_perm
+>
+> Signed-off-by: liuyang34 <liuyang34@xiaomi.com>
+> ---
+>  security/selinux/selinuxfs.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Sure.
+I corrected the typo in the subject line, and cleaned up the
+description a little and merged it into selinux/next - thanks!
+
+-- 
+paul moore
+www.paul-moore.com
