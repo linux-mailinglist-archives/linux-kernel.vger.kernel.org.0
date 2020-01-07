@@ -2,83 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DCC1132375
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:22:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBA3B132372
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:21:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbgAGKWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 05:22:02 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46923 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbgAGKWB (ORCPT
+        id S1727745AbgAGKVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 05:21:53 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:29106 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726565AbgAGKVx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 05:22:01 -0500
-Received: by mail-lj1-f193.google.com with SMTP id m26so51661173ljc.13
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 02:22:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=feoOXtnj/48eID5q4+nHQx+NhKQCedVmAZE1CGkwypE=;
-        b=VtGCkan5np3byUChW4aFxnm5yaN4zsovrbrrNL2pV3TXPJ8ug9aSzneEr0kuM1Tj0P
-         edzvWeTniw0GUWQofo54Pp1v4q8dV8I68CAwW2CuiGggie2uyBCFnBJNFXABB/wFknWN
-         aHv6ds9bHX7S8mm+0nC+ZNjKMsuF0rQ+cVM+sSOHXBaIob0AVlMAA6GpBALgkvTJfIbP
-         jJ285SLdjWpvbeYjQ4VK8HZgyKPdySbY5rr5DSjF4q8dsImHeDow2p8j7M6s6Hs0VnAe
-         tmf4/r7N14nCP0rjiRyD6k3uq9pQJBEracEo9Mz1Q/jiJXL0gQbJtosbb02O2M+Zk3rP
-         K2dg==
+        Tue, 7 Jan 2020 05:21:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578392512;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=wp1B0oryBnzMjpq12qEWIWdEYq7gqXTvQXjEcGcPRhM=;
+        b=fi3vK+3Q9t1nHysSns5323qTVNygfJmv8E/nEg39oLma18hzd2d9AvAbN3FDXOsXXnx3u6
+        wIdTGEF8vpgABD9MMc+KtnZk+VR4lbXrleDoLOBXwvQufe/QEJH+7B/xO+1pF2glHo+f4V
+        1H/GF6P6yMKzyXymloUokKVMHDf90ZA=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-135-JEdw7h0IPtqi2Kv3EAfLvg-1; Tue, 07 Jan 2020 05:21:51 -0500
+X-MC-Unique: JEdw7h0IPtqi2Kv3EAfLvg-1
+Received: by mail-wr1-f72.google.com with SMTP id d8so21944643wrq.12
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 02:21:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=feoOXtnj/48eID5q4+nHQx+NhKQCedVmAZE1CGkwypE=;
-        b=bGDK1WxYab/PY5uHwXnQ2KMhV8RzL8g5HtEzPEuvOS+RXGtE6QWpNk7vGlhF0CVJ3a
-         vyo9oTGkcqKZndFHdH5FvThj+RWO88eCaRtidpX92rh1RPACPAU7gCwp1NmWOzgpMQqK
-         mBJ4q+VYNdiQqYQSAalVkgKW8824KTkZCLsusEQ5Q26d/72DtBL47nfmaVaCyxOKNvcp
-         xnpany0oJb3pG6k1MSqacdqR5J9W514sjkpyk0YPpSxcA+7lTFIrYtGPZSCxyF4ioiVp
-         b1Ly4nYPo/OeD3/6E5J/l1QsIwivcgF+AAC+JvL6GBeRidHPZE0JRNGu8W6QuL2aOY6y
-         o3mw==
-X-Gm-Message-State: APjAAAWRhiTL4WGLm2o8xtVKuo+HSEQu0VISU4eCxcQkdncOshCETnLv
-        +rS6eSo3rVRKldsu1WbmOODiM+QBA071Snu8WcedKA==
-X-Google-Smtp-Source: APXvYqxXuZipIZnMlieWvK5RQa1ocYuWDkqnEH6fOTVKgMsnd3pBbW5G5g/YQfew1w9JZF43RyZBTUs4rRB/hKpVxec=
-X-Received: by 2002:a05:651c:1049:: with SMTP id x9mr61861878ljm.233.1578392519784;
- Tue, 07 Jan 2020 02:21:59 -0800 (PST)
-MIME-Version: 1.0
-References: <20191226023734.9631-1-qianggui.song@amlogic.com>
-In-Reply-To: <20191226023734.9631-1-qianggui.song@amlogic.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wp1B0oryBnzMjpq12qEWIWdEYq7gqXTvQXjEcGcPRhM=;
+        b=SiUYfFrp28KeL1z456qIoD5kpnsU8/cb4AAzb6W9WLoLYfzjn/78A4q5/EHWQZKsJO
+         hveSH5/g6IFkeqW/OqpcOB/Qf9BjpoMm+nr9KA+GcYzM3IpAOqQU+5e1rzfSQWtGoEFf
+         ynxhOGGPMRWcVLJCbfn+4F6UBTI16GduhqGBveZ3gFoqxLcYBsVJA/grh6UWhzv+ZESm
+         rBpxSE2ETN75CToYwmkU5bkuB3IDuSTNCwQxNbApuaZKEZ/Td6k+z4NbXBtJNROy/eY7
+         Gc2ngyPnR+rPuRSGyVI11evWTSxzsuiuf9CK+UKK8Ht+0l8cbR/S9L4EQ63S7LXjniW9
+         +/Ug==
+X-Gm-Message-State: APjAAAX9r0kyCSWG/frHF1rflSx0L0tW4tXAkhEUqBVjUPazi2Pi/GiG
+        Qw2dHvCONauNJ3wq7yRtX3vJew5fFz1tFKLVc3YKRAKMunUKE5e6r2JL52zl4th2cA9kU1CrfEH
+        IZow0F/FZSSiSoWhikZKWxotm
+X-Received: by 2002:a1c:4454:: with SMTP id r81mr38567194wma.117.1578392510125;
+        Tue, 07 Jan 2020 02:21:50 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzx7uwkQ39Sba+ZHZ4NO0/8s8bU3zLgUXwYFecjdGGaOLjxxil5G4HRAuahmoDCFBepsAAtOA==
+X-Received: by 2002:a1c:4454:: with SMTP id r81mr38567170wma.117.1578392509933;
+        Tue, 07 Jan 2020 02:21:49 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:c6d:4079:b74c:e329? ([2001:b07:6468:f312:c6d:4079:b74c:e329])
+        by smtp.gmail.com with ESMTPSA id d16sm81431405wrg.27.2020.01.07.02.21.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Jan 2020 02:21:49 -0800 (PST)
+Subject: Re: [PATCH 2/2] drm/i915/gvt: subsitute kvm_read/write_guest with
+ vfio_iova_rw
+To:     Yan Zhao <yan.y.zhao@intel.com>, zhenyuw@linux.intel.com
+Cc:     alex.williamson@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, intel-gvt@eclists.intel.com,
+        kevin.tian@intel.com
+References: <20200103010055.4140-1-yan.y.zhao@intel.com>
+ <20200103010349.4262-1-yan.y.zhao@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <5838d595-ba77-5506-4f2a-d555681a9cc5@redhat.com>
 Date:   Tue, 7 Jan 2020 11:21:48 +0100
-Message-ID: <CACRpkdYCGcUNuDOG2qSjRhZm-3c8eTUE4ib-tVAxsaCzU-RqfQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: meson: Fix wrong shift value when get drive-strength
-To:     Qianggui Song <qianggui.song@amlogic.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Xingyu Chen <xingyu.chen@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
+MIME-Version: 1.0
+In-Reply-To: <20200103010349.4262-1-yan.y.zhao@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 26, 2019 at 3:37 AM Qianggui Song <qianggui.song@amlogic.com> wrote:
+On 03/01/20 02:03, Yan Zhao wrote:
+> +	ret = write ? vfio_iova_rw(dev, gpa, buf, len, true) :
+> +			vfio_iova_rw(dev, gpa, buf, len, false);
+>  
+>  	return ret;
 
-> In meson_pinconf_get_drive_strength, variable bit is calculated by
-> meson_calc_reg_and_bit, this value is the offset from the first pin of a
-> certain bank to current pin, while Meson SoCs use two bits for each pin
-> to depict drive-strength. So a left shift by 1 should be done or node
-> pinconf-pins shows wrong message.
->
-> Fixes: 6ea3e3bbef37 ("pinctrl: meson: add support of drive-strength-microamp")
->
-> Signed-off-by: Qianggui Song <qianggui.song@amlogic.com>
+"Write" can be just the final argument to vfio_iova_rw, that is
 
-Patch applied.
+   return vfio_iova_rw(dev, gpa, buf, len, write):
 
-Yours,
-Linus Walleij
+Thanks,
+
+Paolo
+
