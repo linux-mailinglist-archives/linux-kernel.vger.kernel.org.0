@@ -2,106 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47AD5132720
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 14:09:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99F5B13272D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 14:09:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728126AbgAGNJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 08:09:18 -0500
-Received: from foss.arm.com ([217.140.110.172]:57516 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728109AbgAGNJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 08:09:14 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F226631B;
-        Tue,  7 Jan 2020 05:09:13 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 571BF3F703;
-        Tue,  7 Jan 2020 05:09:13 -0800 (PST)
-Date:   Tue, 7 Jan 2020 13:09:11 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "andrew@aj.id.au" <andrew@aj.id.au>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "joel@jms.id.au" <joel@jms.id.au>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 3/6] dt-bindings: mfd: da9062: add regulator voltage
- selection documentation
-Message-ID: <20200107130911.GD4877@sirena.org.uk>
-References: <AM5PR1001MB099497419E4DCA69D424EC35805A0@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <20191211170918.q7kqkd4lrwwp7jl3@pengutronix.de>
- <20191212161019.GF4310@sirena.org.uk>
- <20191212162152.5uu3feacduetysq7@pengutronix.de>
- <20191212165124.GJ4310@sirena.org.uk>
- <20191216085525.csr2aglm5md4vtsw@pengutronix.de>
- <20191216114454.GB4161@sirena.org.uk>
- <20191217073533.GC31182@pengutronix.de>
- <20191217125832.GF4755@sirena.org.uk>
- <20200107083654.atgbjhrnhyax2gqq@pengutronix.de>
+        id S1728177AbgAGNJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 08:09:50 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:35600 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727834AbgAGNJt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 08:09:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ldmliGj77Bk3OVBj9ERxJRO2ubWIHjpdcz6AoITqvp0=; b=jj1iEWw24sTXo/D0Mh2CfthJN
+        GT12pVWKqZnm/w288YM76uZfrCuqW86k7ylN7c3P1uSVcez0cHu9cBPUejMb8W5/2q5F89ayIsaeG
+        CH4TZRUn6b8L8gcVNsnpcfcUb50aHxve+/FnmfE33g8FoYMfGag2tTClFAHEEOIoXBfkPVQ+pDXXt
+        nOA9wnLSoCAQwk7+VxpoQXA8rqE1pyd7PB10j1MlFNeOqQzCb7rJLANpxwTck4TQJobHc9Yc6xcar
+        aaV7kzztv88ewDtRG2v9tWEDFsvKlNM552GSM/NUhIBUpnr41/Wu2VI+RU8MHdzhYDbHrOajqQPGB
+        Cqesm/gvw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iooc9-0003DI-4k; Tue, 07 Jan 2020 13:09:41 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9FF74305EDF;
+        Tue,  7 Jan 2020 14:08:06 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2967220D3D423; Tue,  7 Jan 2020 14:09:39 +0100 (CET)
+Date:   Tue, 7 Jan 2020 14:09:39 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH] locking/qspinlock: Fix inaccessible URL of MCS lock paper
+Message-ID: <20200107130939.GV2871@hirez.programming.kicks-ass.net>
+References: <20191223022532.14864-1-longman@redhat.com>
+ <20200107125824.GA2844@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mSxgbZZZvrAyzONB"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200107083654.atgbjhrnhyax2gqq@pengutronix.de>
-X-Cookie: Will Rogers never met you.
+In-Reply-To: <20200107125824.GA2844@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 07, 2020 at 01:58:24PM +0100, Peter Zijlstra wrote:
+> On Sun, Dec 22, 2019 at 09:25:32PM -0500, Waiman Long wrote:
+> > It turns out that the URL of the MCS lock paper listed in the source
+> > code is no longer accessible. I did got question about where the paper
+> > was. This patch updates the URL to one that is still accessible.
+> > 
+> > Signed-off-by: Waiman Long <longman@redhat.com>
+> > ---
+> >  kernel/locking/qspinlock.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+> > index 2473f10c6956..1d008d2333c0 100644
+> > --- a/kernel/locking/qspinlock.c
+> > +++ b/kernel/locking/qspinlock.c
+> > @@ -34,7 +34,7 @@
+> >   * MCS lock. The paper below provides a good description for this kind
+> >   * of lock.
+> >   *
+> > - * http://www.cise.ufl.edu/tr/DOC/REP-1992-71.pdf
+> > + * https://www.cs.rochester.edu/u/scott/papers/1991_TOCS_synch.pdf
+> 
+> Do we want to stick a copy of the paper in our bugzilla and link that
+> instead? ISTR we do something similar elsewhere, but I'm having trouble
+> finding it.
+> 
+> Thomas, Konstantin?
 
---mSxgbZZZvrAyzONB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Boris provided an example from commit:
 
-On Tue, Jan 07, 2020 at 09:36:54AM +0100, Marco Felsch wrote:
-> On 19-12-17 12:58, Mark Brown wrote:
+  018ebca8bd70 ("x86/cpufeatures: Enable a new AVX512 CPU feature")
 
-> > This doesn't say anything about how the GPIO input is expected to be
-> > controlled, for voltage setting any runtime control would need to be
-> > done by the driver and it sounds like that's all that can be controlled.
-> > The way this reads I'd expect one use of this to be for fast voltage
-> > setting for example (you could even combine that with suspend sequencing
-> > using the internal sequencer if you mux back to the sequencer during
-> > suspend).
+That puts a copy of the relevant Intel document here:
 
-> The input signal is routed trough the da9062 gpio block to the
-> regualtors. You can't set any voltage value using a gpio instead you
-> decide which voltage setting is applied. The voltage values for
-> runtime/suspend comes from the dt-data. No it's not just a fast
-> switching option imagine the system suspend case where the cpu and soc
-> voltage can be reduced to a very low value. Older soc's like the imx6
-> signaling this state by a hard wired gpio line because the soc and
-> cpu cores don't work properly on such low voltage values. This is
-> my use case and I can't use the sequencer.
-
-My point is that I can't tell any of this from the description.
-
---mSxgbZZZvrAyzONB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4UgvYACgkQJNaLcl1U
-h9AmOwf/dQI3hnspOymA8BdYOaCtzXhoiVJeMde8RKleUyfpqEoLvele7bnhJvxP
-66E8RM0aDJk6N+Jc5KzXO1mb1JWFhiGQM92q3NXPczpOyvgl/zl0UwKMnqHnj4nd
-/vDVfa60zDKTbUCS12us1kwgJNtHVRiFb8DX+9W3zSONqE5QIeNjmMMoL4EaPwJb
-clCtLm7jBckZinNOefKS6M2eElpRFFhtRON7EsaDqObH2xTP9aSNb9PEYCBy3nHq
-Cr6gYbC0cwgXL29ayf/aRtx3o9/DTC4LIAfAPZvGjDMN5vgYm3bznZKWmVzgR2Pd
-1fQ0J3Dh032Q/8ZTkaceklgsT1uGJg==
-=uLVS
------END PGP SIGNATURE-----
-
---mSxgbZZZvrAyzONB--
+  https://bugzilla.kernel.org/show_bug.cgi?id=204215
