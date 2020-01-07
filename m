@@ -2,76 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9A5A1323E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:40:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18A251323E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:40:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbgAGKjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 05:39:21 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:48555 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727589AbgAGKjU (ORCPT
+        id S1727784AbgAGKkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 05:40:23 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41757 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbgAGKkX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 05:39:20 -0500
-Received: from mail-qt1-f174.google.com ([209.85.160.174]) by
- mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1M7auJ-1ilinL2iAH-0086lr; Tue, 07 Jan 2020 11:39:18 +0100
-Received: by mail-qt1-f174.google.com with SMTP id t3so44896249qtr.11;
-        Tue, 07 Jan 2020 02:39:18 -0800 (PST)
-X-Gm-Message-State: APjAAAUgF18u2te5AjGTo76XIfn80wBmeWCyq2Va5FrPO/oI9BVz7TfP
-        lL+CX0Ya5rMr6A9LpmIhrsHNy9mfw/DFKP0+jrA=
-X-Google-Smtp-Source: APXvYqyZhmN1eLl6pt96KksAU6g7g17LqbBD1ix7k6Tl4UknhAbwyEGN+KnksbzRm55kVluXwuoazvSU6xkSWIKNn+U=
-X-Received: by 2002:ac8:47d3:: with SMTP id d19mr77340587qtr.142.1578393557482;
- Tue, 07 Jan 2020 02:39:17 -0800 (PST)
+        Tue, 7 Jan 2020 05:40:23 -0500
+Received: by mail-lj1-f193.google.com with SMTP id h23so54206039ljc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 02:40:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=DK3+eW5DzORIn3P37jfI+LVuJR6LGq8WBycD0bO5TNg=;
+        b=AuN5Zm5TVfYel7PoXrjNrkXEE7bYeRxxm3uk15TV1rzlLB/587DmIZaHED5hfnhUGF
+         TfmW7m/RIPvkki6IX1XSNpEPDBjW47+3juqFzzfjIPDMKxRAX4KpDZe1ZOYeYT0ryTGl
+         txzmdtIFnpS2+B7meCcLspNkR7VeYqPrLcyU1KO38Gb+2lO9DhO3ZmmXQ81joSf8YUsM
+         /1YxYT+369GcuAC+B6GuAYo7qIJMmtYA+d4jPINY180S8e+cnrNAl3cwtWRdYY1Y5tcz
+         7lJivsZaVSijn/1tYZcMYNI18tnAJ10AsGgmpDm/WZV83G1CZmlFCOcNkaCRFg4VN9u0
+         CNOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=DK3+eW5DzORIn3P37jfI+LVuJR6LGq8WBycD0bO5TNg=;
+        b=Scb9mTOLk1LW9HLtBuFmhNAQTSX+7I785sZhBMl2TlnTUTqBC9GJT/FIcFdJ5rRm2/
+         9GcjS3QPVAaWh7Dhx73xv7cBVK6lWnqYK4MeMpBjnGFBkkMOP/z6ZRW3paqpYO/J8TyB
+         sCrMhOKVUKBjWTuZvEOMCglmAOIuJ5eg3uxbvtHsEunBfWB0WqdOZyqlt3BLt+3J0kw3
+         HwrwD0NpMc4TtYLCyoB+Z5ZldfSCUfwrAZaP2l7oiNmO+kV6eYx4OJVgWv60ug8Wvf8s
+         WjKLtMxc/na96yrkOG8MD8fiEmYhN47PYW5g7VJdI+qloH74OWdaYu+FtwYC4woPnart
+         51lg==
+X-Gm-Message-State: APjAAAXKwegqHyxLi4eP6ELPJwgeRPi0V5spL/t5GYgFuizrGqEeZZ8G
+        zyd0wOg8rACkQjkfvNt+r5u4JbDlzdXMSOsaI0A=
+X-Google-Smtp-Source: APXvYqxPizejs/rN3yRFvqVAwpI/O3ZQ6FoJt1MqrxQr5e8oCxNjtDaavyroWbHEoOu5W2cLXA2vphm/lgzh9EXLNcY=
+X-Received: by 2002:a2e:9013:: with SMTP id h19mr63832166ljg.223.1578393621179;
+ Tue, 07 Jan 2020 02:40:21 -0800 (PST)
 MIME-Version: 1.0
-References: <20191218163701.171914-1-arnd@arndb.de> <CACRpkdbqzLUNUjx_kt3-7JLZym2RZ47edW5qp0MgXmpW4-Xf9Q@mail.gmail.com>
-In-Reply-To: <CACRpkdbqzLUNUjx_kt3-7JLZym2RZ47edW5qp0MgXmpW4-Xf9Q@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 7 Jan 2020 11:39:01 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2BoVcdgRZqYutA=_SVHLtJwQzP3mKKN-q8n1ROj_iPgw@mail.gmail.com>
-Message-ID: <CAK8P3a2BoVcdgRZqYutA=_SVHLtJwQzP3mKKN-q8n1ROj_iPgw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: lochnagar: select GPIOLIB
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>, patches@opensource.cirrus.com,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Received: by 2002:a05:6504:5f7:0:0:0:0 with HTTP; Tue, 7 Jan 2020 02:40:20
+ -0800 (PST)
+Reply-To: markbill@planetmail.com
+From:   "Mr. Mark Bill" <johnson0paul8@gmail.com>
+Date:   Tue, 7 Jan 2020 11:40:20 +0100
+Message-ID: <CAGT6c6vitP2ezEA2f+EbqZfFND1LZWcBBV2HZEMm_KP=12PMXA@mail.gmail.com>
+Subject: Thanks and wish to hera frpom you
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:ajcqhieEFeekJVb9iVY2aZbxaecN6UG7UfxqZoCtiHAaY63swd1
- T2AfV2REiE/Nk4yk4mDUPbxfCpKwuuuEJoiXmf3NSX1KSq2wqAmT5QwQSsjnn/Y/0BrusbN
- 7WwSaM76i2a3/xaRC2RpNRrMeiRvsCW0D/U72FTZoZ8sJWn1S9HNckEkhbhlO2Ghm/UOktY
- ruwXdYU4Phr/kUg11dY3g==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:W28qWyYB02w=:8wtfUerc4mBjEzIo98OY2E
- JqQxhchied/b/BRcbuFLRwxnnMVg3hreMGUIozaedeVr4saXl0nayRZS5j5UXR+JKWglqZdbf
- 4HQxFEoHgCsVD6yZDQEZHgldp5wQRGN2JhGog1harLwhuQQZu8qVoQfH6xYZ1779rycR9jowE
- 2hXyfs/DCZ/uzoP7Ew4BGEDjYl77WMETjKruYSJqmEnxph5+CrH/EyGMaJWjDtmS7UcrxGctM
- q4K1ZQtzUyTLvYN/oYe9t+ICw4ZrG9JIgGEsbUukRcsWYkicTcPqQ5tQZ+dzuxAEQqhuQjJWr
- 1jpCW7zOaBjhJdwNxjzGcMWcbyiSmCRhSoOAZvIHh54Mj6kKG8VkL1zH7NfxCI8AtMeb1klIW
- FunNXn1B8HImhbIqnTO5vSwJAk4f+gwDxNzd8d231owYMzuOnLPYqMW+D4ytatA1TyObtvhBH
- OsSZqRdfG6BitcYyHGyHfi7SFtumaguJheRF0q096ISnyMScxSDpJ+lX0DgfFBVEk8cTBiR5o
- UfnTYggYMTXfSc1L80Ut+WemFasyCr7yWDdwyJD5s1VHuk6GSOTky/STwg/FmSrha+qGznDva
- rsdFtyUMIjzKlFbnHIBAuyIV8YJSQ2mpgQPlUl0Sr9gEMrPrrzEm7Vtq5rsVe9nlYVsJuwlbV
- LJzjs+KGSx+CD5PNc2b4/h+NPjmxipe8/YKyxsenItR8fzWUrK47SkFE0Tqt2xV3wGolcCmqy
- JWeR8BPYN6b8iipvxNx+8fRLUHT8fb46B//6DaIKaL3PeZDz29OCEYNXLUsTDqM/D2Ulj+q40
- +TviVnBdWIe1Da7+2bdYtPtugTv2iiO4uynqFLsUbqKs/pkJAVIjMxYJvzsObQuC6yrR7mMy6
- uF9ErKw4ItP1FIgE8Szw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 7, 2020 at 10:45 AM Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Dec 18, 2019 at 5:37 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > I wonder if GPIOLIB should just become mandatory when enabling the pinctrl
-> > subsystem, or if there are still good reasons for leaving it disabled
-> > on any machine that uses CONFIG_PINCTRL.
->
-> Hm that is a tricky question, they almost always come in pair but are
-> technically speaking separate subsystems.
+Hello, I am Mark Bill from Chicago city and my wife is from Mexico,
+after going through the internet i saw a lot about your country in
+items of investment  i decided to search for someone who can help and
+advice me on what my only son can invest in your country
 
-I think there are a number of use cases for GPIOLIB drivers without PINCTRL, but
-are there any examples of the reverse?
+Moreover, all i need is for my son to be happy before three months the
+doctor gave me because i have cancer, i will like to know in which
+area my son can invest with $4.2 million dollars in your country and i
+will give you his whatsapp and will like you to see his face on video
+call to build more trust in this my investment proposal
 
-       Arnd
+Thanks and wish to hear from you
+Mark Bill
