@@ -2,92 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69F3C133294
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:12:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1AC51332A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:13:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730156AbgAGVMC convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 7 Jan 2020 16:12:02 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:47030 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730123AbgAGVLg (ORCPT
+        id S1727185AbgAGVMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:12:40 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:18204 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730090AbgAGVMf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:11:36 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1iow8U-0000TK-GS; Tue, 07 Jan 2020 22:11:34 +0100
-Date:   Tue, 7 Jan 2020 22:11:34 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Borislav Petkov <bp@suse.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, x86-ml <x86@kernel.org>
-Subject: Re: [tip: x86/fpu] x86/fpu: Deactivate FPU state after failure
- during state load
-Message-ID: <20200107211134.tckhc5knkthmjsj6@linutronix.de>
-References: <157840155965.30329.313988118654552721.tip-bot2@tip-bot2>
- <FA0D2929-63D0-4473-A492-42227D7A5D98@amacapital.net>
+        Tue, 7 Jan 2020 16:12:35 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e14f4310000>; Tue, 07 Jan 2020 13:12:17 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 07 Jan 2020 13:12:34 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 07 Jan 2020 13:12:34 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 Jan
+ 2020 21:12:34 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 Jan
+ 2020 21:12:30 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 7 Jan 2020 21:12:30 +0000
+Received: from rcampbell-dev.nvidia.com (Not Verified[10.110.48.66]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5e14f43e0002>; Tue, 07 Jan 2020 13:12:30 -0800
+From:   Ralph Campbell <rcampbell@nvidia.com>
+To:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+CC:     Jerome Glisse <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        "Bharata B Rao" <bharata@linux.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        Ralph Campbell <rcampbell@nvidia.com>
+Subject: [PATCH 0/3] mm/migrate: add missing check for stable
+Date:   Tue, 7 Jan 2020 13:12:05 -0800
+Message-ID: <20200107211208.24595-1-rcampbell@nvidia.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <FA0D2929-63D0-4473-A492-42227D7A5D98@amacapital.net>
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1578431537; bh=sWUpJL5MFKaYeBJeJiXe/oIRHU9XHyTRTvIePM/v+vI=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
+         Content-Type;
+        b=IBWoKXwFy2kG6cADzIn7SJLzRaH0FFSO4YcvGPP14hoM9tY+4dra7tQ+nYO7jE6u8
+         /yldNSHoAYY1xzEGG8PiYtY8JQjwONdBb+lpTxZo3Ur1xtrofgcmI59S/YREtXt6KU
+         3Z1UiyPGF+ViTbhpfBAxa+f1iYg/7nipcjafS+IE8dkmpoB2uUwP99xVdZp3irk8CJ
+         QgMC29iYnBKUFVZEHtHVFqCIzNT8ApbPEx35VyD+v8m3f11fhkZlkAE9AxoEYKWG2d
+         NUeq6R4yHRKHUFxWPfVIyOC5Saqi/+9+WRve67s6H7FSr4iA5b87tbf7+DMRo/WTG/
+         rdDNKcO/VKD8A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-01-07 10:41:52 [-1000], Andy Lutomirski wrote:
-> Wow, __fpu__restore_sig is a mess. We have __copy_from... that is
-> Obviously Incorrect (tm) even though it’s not obviously exploitable.
-> (It’s wrong because the *wrong pointer* is checked with access_ok().).
-> We have a fast path that will execute just enough of the time to make
-> debugging the slow path really annoying. (We should probably delete
-> the fast path.)  There are pagefault_disable() call in there mostly to
-> confuse people. (So we take a fault and sleep — big deal.  We have
-> temporarily corrupt state, but no one will ever read it.  The retry
-> after sleeping will clobber xstate, but lazy save is long gone and
-> this should be fine now.  The real issue is that, if we’re preempted
-> after a successful a successful restore, then the new state will get
-> lost.)
+The first two patches are preparation for the third patch which fixes a
+potential bug. This is for Andrew's tree since I don't think it will
+conflict with any of Jason Gunthorpe's patches for mmu interval
+notifiers.
 
-There is preempt_disable() as part of FPU locking since we can't change
-the content of the FPU registers (CPU's or within task's state) and get
-interrupted by task preemption. With disabled preemption we can't take a
-page fault.
+Ralph Campbell (3):
+  mm/migrate: remove useless mask of start address
+  mm/migrate: clean up some minor coding style
+  mm/migrate: add stable check in migrate_vma_insert_page()
 
-We need to load the page from userland which may fault. The context
-switch saves _current_ FPU state only if TIF_NEED_FPU_LOAD is cleared.
-This needs to happen atomic.
+ mm/migrate.c | 50 +++++++++++++++++++++++++++-----------------------
+ 1 file changed, 27 insertions(+), 23 deletions(-)
 
-The fast path may fail if stack is not faulted-in (custom stack,
-madvise(,, MADV_DONTNEED))
+--=20
+2.20.1
 
-> So either we should delete the fast path or we should make it work
-> reliably and delete the slow path.  And we should get rid of the
-> __copy. And we should have some test cases.
-
-without the fastpath the average case is too slow.
-People-complained-about-this-slow. That is why we ended up with the
-fastpath in the last revision of the series.
-
-The go people contirbuted a testcase. Maybe I should hack up it up so
-that we trigger each path and post since it obviously did not happen.
-Boris, do you remember why we did not include their testcase yet?
- 
-> BTW, how was the bug in here discovered?  It looks like it only
-> affects signal restore failure, which is usually not survivable unless
-> the user program is really trying.
-
-The glibc test suite.
-
-Sebastian
