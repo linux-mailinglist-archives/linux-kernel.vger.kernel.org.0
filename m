@@ -2,106 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E99213264F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 13:36:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C5E9132659
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 13:37:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbgAGMgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 07:36:36 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34122 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727177AbgAGMgf (ORCPT
+        id S1727976AbgAGMh0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 07:37:26 -0500
+Received: from mout.kundenserver.de ([212.227.126.133]:35257 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727664AbgAGMhZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 07:36:35 -0500
-Received: by mail-wm1-f65.google.com with SMTP id c127so14111160wme.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 04:36:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=ZigGWyR5dA/rlmY5eQN1DFgU3TyM5dNJj4wuZim4lMg=;
-        b=v1vH5ppfwwaQyU0557PdvzkzfgSmt8Qdg6In7lDLwtorTe1YQxwgrSRGTR5HVqP9vs
-         vlx8AHphmwSmzv1+rEga+lsE7Vd2hsCizbJj2B4tf8xsJZ7uJuQtemgVOHWPPV0gKk6x
-         +vAOeFTOnUCSdvEd17cltbU2Ik5HqO293wNSuEyTaYl8hUuUpRUwWgfR0ci9RMjUTcyd
-         oknu0+e6xNYP+Ispe8wDu+NASM46j93S1pyqp7bXmvjBGxs89hAedp2RdiSxBa60Mzm0
-         pb+gbmV+0HdEsjBsFQ3LYy7EZeOEYECZ/Y1UWbJ7+ur+0r+VfYvk69jdDmlHRRmP6N7E
-         WVtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ZigGWyR5dA/rlmY5eQN1DFgU3TyM5dNJj4wuZim4lMg=;
-        b=HoqQA/ZQ6qgILUGbN8I6OHzdwKem6quDLhj/zf2EKJNObr7p3YPp+fVIhdvc1pDj8N
-         5SYUaG15RTU8jtQwapPAGyw4avaUvBSxVFutExwgSF8dk5vjuU628vK5uNsZfMsd37rp
-         ma33QlgGa/bNeDUskXF7vByVq6Lq8oKdoB4x/oL07x8nicB4Hmx0U4dWTdABwBxzRkwz
-         0ws540sT7fCdmkuPzN10spYeccf4Jd923TXNJ7gJMrD9wWm0/xluhjJc1tFTvk1SdTf5
-         RwUwhLOJF2RdTmfPj4Jf+tqca69K9G8qPBUaHTgFUJn8k6j3Zaed41E51CIf8Sy1FNfV
-         2z0w==
-X-Gm-Message-State: APjAAAVWK+jZbGnA45e3RQXe+YGm3CzZJm2d/VKz2reb39ILgLjbZ0Z8
-        m9v02gzh2hueR7aWzl5Yt+W+Ng==
-X-Google-Smtp-Source: APXvYqx8hyPUO/+s6KqblUDY9P6qWopaZFPmK+OaNZfoX/P2gCtwCPDOS87mnKX8JiJIT/d3LpZ01g==
-X-Received: by 2002:a05:600c:2046:: with SMTP id p6mr40496323wmg.110.1578400594309;
-        Tue, 07 Jan 2020 04:36:34 -0800 (PST)
-Received: from dell ([2.27.35.135])
-        by smtp.gmail.com with ESMTPSA id e18sm76983844wrw.70.2020.01.07.04.36.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 04:36:33 -0800 (PST)
-Date:   Tue, 7 Jan 2020 12:36:47 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v8 04/12] mfd: bd718x7: Add compatible for BD71850
-Message-ID: <20200107123647.GH14821@dell>
-References: <cover.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
- <bd5009357c16d73d9bad52be68db74a2cfa6328f.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
+        Tue, 7 Jan 2020 07:37:25 -0500
+Received: from mail-qt1-f171.google.com ([209.85.160.171]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1N7zRz-1jkqIB1dp5-0151o3 for <linux-kernel@vger.kernel.org>; Tue, 07 Jan
+ 2020 13:37:24 +0100
+Received: by mail-qt1-f171.google.com with SMTP id l12so45106623qtq.12
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 04:37:24 -0800 (PST)
+X-Gm-Message-State: APjAAAVCEY34XySqTBUCo6fb5D+W2vLg5EAoqOhLG7g8CjXI3I0CIi3X
+        2GFgzeXZzPFVQWqLnDbES0alWQ/wC8Ie0EGef/0=
+X-Google-Smtp-Source: APXvYqwGR+1ag/FOo5lFGNP2agZe8JgiRzCUJT/p2HcrAqJ11wxrKbu23yPKHpHtix875YAxzOB8d2DOP1xgp2mKHDU=
+X-Received: by 2002:ac8:6153:: with SMTP id d19mr78188452qtm.18.1578400643312;
+ Tue, 07 Jan 2020 04:37:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bd5009357c16d73d9bad52be68db74a2cfa6328f.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <201912301716.xBUHGKTi016375@pmwg-server-01.pmwglab>
+In-Reply-To: <201912301716.xBUHGKTi016375@pmwg-server-01.pmwglab>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 7 Jan 2020 13:37:07 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1OsiUV5YuwzSJ4CsD8NHJHjedTA4K7xBKK6Q-4kA8t5g@mail.gmail.com>
+Message-ID: <CAK8P3a1OsiUV5YuwzSJ4CsD8NHJHjedTA4K7xBKK6Q-4kA8t5g@mail.gmail.com>
+Subject: kunit stack usage, was: pmwg-ci report v5.5-rc4-147-gc62d43442481
+To:     PMWG CI <pmwg-ci@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     Private Kernel Alias <private-kwg@linaro.org>,
+        Kees Cook <keescook@chromium.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Ard Biesheuvel <ardb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:Rbyd3mjfyh0X9/KMjlisXksFIavCsu8Lr+cr03ZAUvU6+HL5YqN
+ hjWvwrTt+/FrSq1tQulDLzmwtcQHP7PfsCFHrXHiuZFB9Y9P5A2wotTCOXTJjxlqdNpvjFC
+ W+lko1z7ji4Ed9svpQ+IyfsjZ7kJ2KIIeSOb8HQpLTbwXSk8kqnTxkODhFlD5C0ml5Gv/pV
+ /2olj8Vb6uGRMSNFfcDJA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:qQZAqj7OKVo=:xgkie9o5LZfBqbCKPP8Rmh
+ xYwAzMYf8vIKhL3WWX2yJ34VsGm1c+uhieNBF3Ll1hIPzLakEppOUUnlfrCBoZH7La8UhPtZH
+ cJhz4RAUpSHpEKXkKkt1BTcAoMHtz1GD5yI0+0UfzOu6pobkO2oXvQMHPvzGIW86E01aKKpFF
+ 0/WeUezw88c0ZVqZ1qkXAB1qHkem0P3UAoAzg62mxEc+r0fUWsL7iVOHbWkOzZGOYdfAm/12g
+ DSBru8C/gGfkmZzl4S/4oWPmYc5PF6KcOEQfwKLkL2xpc+LBbZJ2DjOQmycOF3ztCIQWlgSvj
+ ltyme/DLSFvov/S6a6zfNEFWRouLU7K3l/AiZ6x0bx2Uys/QTs4BYjJW0dzEPlfPxuSGdp8Cc
+ T6M9XszNHKUhNDMno62qH2YolsB7ZDMvtqZ5xbamUFLUGw3THLlrYysLDDFpFdyWyh2DraeaM
+ wSgALnCh6GPJuRzUeaOerIAWZuaONyXjQFLXFACSo/BOeEx2wKekWj+DxWi7UrSsRrDUMhwum
+ 2OBEneqI0VwACeA46mVMIYLPNAHw9Xeypy6ekAf0hI9QP3tCutdlXiG9STd2eRx1CrwS8IVCF
+ bLYevQkwB3MTSw6i781lHH+d4wLWTWFlkpiI4uHg9z1GCCliOcLN7HKX7ZkHxmY41lED1qafO
+ x+i6aZ00vjeMxDHNRllNhP5wMAU8WYbd8DYe4fTKRngBmhEO6Br0V/cMzkzmWImFX7uR9X7kM
+ GB8uUzPGatCPxg3WBKJfnT9ZezhQtdQMVHRh+DM0KQcoU5U9Atas7lBEd/WsJW8epa6lqAe6m
+ WHJ6hHR6edL0SOr8qFuLlmnyoxZPWkJ+6QoeacxesEKWP7wH9ehb5VsTNTKQvVkeABc+YA1sD
+ 95ZOr2ZgNEQGPbg/RtpQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Dec 2019, Matti Vaittinen wrote:
+On Mon, Dec 30, 2019 at 6:16 PM PMWG CI <pmwg-ci@linaro.org> wrote:
+>
+>
+> The error/warning: 1 drivers/base/test/property-entry-test.c:214:1: warning: the frame size of 3128 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+> ... was introduced by commit:
+>
+> commit c032ace71c29d513bf9df64ace1885fe5ff24981
+> Author: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Date:   Wed Dec 4 10:53:15 2019 -0800
+>
+>     software node: add basic tests for property entries
 
-> ROHM BD71850 PMIC is almost identical to BD71847. Main difference is some
-> initial voltage values for regulators. The BD71850 can be handled by
-> BD71847 driver but adding own compatible makes it clearer for one who
-> creates the DT for board containing this PMIC and allows SW to be
-> differentiating PMICs if needed.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
-> 
-> Changes from v7 - no changes
-> 
->  drivers/mfd/rohm-bd718x7.c | 4 ++++
->  1 file changed, 4 insertions(+)
+This problem is a result of the KUNIT_ASSERTION() definition that puts
+a local struct on the stack interacting badly with the structleak_plugin
+when CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL is set in
+allmodconfig:
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+pe_test_uint_arrays() contains a couple of larger variables, plus 41
+instances of KUNIT_EXPECT_*() or KUNIT_ASSERT_*(), each one
+of these adds its own copy of the structure, eventually exceeding
+the warning limit.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+We can work around this locally by splitting up the largest four
+functions in this file (pe_test_uints, pe_test_uint_arrays, pe_test_strings,
+and pe_test_reference) into smaller functions that stay below the
+warning limit, but it would be nice to find a way for kunit to not
+use as much stack space. Any suggestions?
+
+        Arnd
