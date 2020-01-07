@@ -2,104 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E23D4132D2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 18:37:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58F64132D37
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 18:38:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728513AbgAGRgn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 12:36:43 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:28372 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728470AbgAGRgn (ORCPT
+        id S1728471AbgAGRio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 12:38:44 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46237 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728408AbgAGRio (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 12:36:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578418602;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VihdCZ5GwLlSJ5I8YuEgJBv1m9R/zhpqOr0AnZl/yZE=;
-        b=YdmBOFP5CI7G2TIKS+HJjtSCf6qkbAVHrBPaq/ZKbFg9f5g3qsaRyhce/sWhyvz8zZ3pYq
-        0iTL05Rd2JaQy/C4dDT06oc2gaTRxBeAVZ8TJt0U0CGWhcZ2ysTeE0TpitImAcf+MH5pk+
-        CCIRuwiD1n/z7eTGn0KWZxsImYKodzM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-148-rzrttXOJNdWyIMZZ1M4qZw-1; Tue, 07 Jan 2020 12:36:38 -0500
-X-MC-Unique: rzrttXOJNdWyIMZZ1M4qZw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6CEE3DB34;
-        Tue,  7 Jan 2020 17:36:37 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8EA4F6106B;
-        Tue,  7 Jan 2020 17:36:36 +0000 (UTC)
-Subject: Re: [PATCH v2] locking/qspinlock: Fix inaccessible URL of MCS lock
- paper
-To:     Will Deacon <will@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-References: <20200107151619.20802-1-longman@redhat.com>
- <20200107173443.GB32009@willie-the-truck>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <dd29ceda-cc8f-f418-9cce-1be4e33ae6f1@redhat.com>
-Date:   Tue, 7 Jan 2020 12:36:36 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Tue, 7 Jan 2020 12:38:44 -0500
+Received: by mail-lf1-f68.google.com with SMTP id f15so296954lfl.13
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 09:38:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=YShlSsj6Xvg1OPo/28mdVtM8iXSk9E0UBpNiD7d4cxc=;
+        b=YazhU/1g6LwFUIZeow4DmwAk2IRXPDITZkAOr2G/j4sCa4bGbUL7sYUao55R8VZ3ZQ
+         Jv2Ml2OB7SXId3CCh1zEulZ3QjsySlL3rT53Y4ldWMtvsqes3QDo+aeIgRm+/pLEA+Tm
+         5aThR1u/u5iFNvsiBzluecy1q1OyXe9+IJ3tht63Sq7JFgqxTMRn03XZzN0fvRdggLQF
+         p//PkUf6nff51015iEzpZHBUNPubmqTws917O69DZZ+pI/GRjcKWwhKPoFEHYjjXqdnz
+         UekIRCddL2f1Z2MlbWBZJRAs1cl/r2UVmMtlSKhppAdCQdR1Iz9eiypKiHjS68jCEYSU
+         whfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=YShlSsj6Xvg1OPo/28mdVtM8iXSk9E0UBpNiD7d4cxc=;
+        b=sukbcLQrXkvumkVmgcprbjzh4xLEHQoK43LIlZ81knD/xGS0KiH3oYSlDOQzVmx9xc
+         B60qc9cwYRq8aAdpOSe3C/NngTePEerb9k4R2A3KTKaTLE/8mrAxm+zqjqGQqqYQ/rir
+         BQv2HQJiwVVhuljOfMuM7dbve+CCsA61k6u9NRSkd39Mzs3G+NPUdnHFYbi8xiNjfgg/
+         2X9mnKlOW0jJYfMYv0AlhtJTv7s0LCP1XeXnjOAmeLjqJlVDyq/SMxFuq6JYy9Sjooxa
+         Mgh0wQyOIRdRn/nWi1rmgGdFLxOWTrrJM/hog4wnhm3bxvSAKlGFiSKLZVuIr3BgD04E
+         Whjg==
+X-Gm-Message-State: APjAAAU1Rq3Fprr6ror01Vb3GGp8NpUWv0FGhDOJ4JX2qUdi5jzaNgYs
+        RqVh3c44yxtNyH1ZxNLFS6DwzPx50O0vuiyDQmELdA==
+X-Google-Smtp-Source: APXvYqzQpfWSWht2AsmDB2uHaiszhuxs88LR7mPSu6VSKvyO2MAlyzIQvfINY/+/sMaehSvr/ao1iKhlBnfVVXZebDI=
+X-Received: by 2002:ac2:54b4:: with SMTP id w20mr352825lfk.67.1578418721583;
+ Tue, 07 Jan 2020 09:38:41 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200107173443.GB32009@willie-the-truck>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 7 Jan 2020 23:08:30 +0530
+Message-ID: <CA+G9fYvMX4gMi6hmTmukzgr1xPsoJsj0WTm=AS3hC5Mq-dLvsQ@mail.gmail.com>
+Subject: Re: dma-direct: don't check swiotlb=force in dma_direct_map_resource
+To:     hch@lst.de, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Cc:     robin.murphy@arm.com, m.szyprowski@samsung.com,
+        linux- stable <stable@vger.kernel.org>,
+        iommu@lists.linux-foundation.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        lkft-triage@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/7/20 12:34 PM, Will Deacon wrote:
-> On Tue, Jan 07, 2020 at 10:16:19AM -0500, Waiman Long wrote:
->> It turns out that the URL of the MCS lock paper listed in the source
->> code is no longer accessible. I did got question about where the paper
->> was. This patch updates the URL to BZ 206115 which contains a copy of
->> the paper from
->>
->>   https://www.cs.rochester.edu/u/scott/papers/1991_TOCS_synch.pdf
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>  kernel/locking/qspinlock.c | 5 ++---
->>  1 file changed, 2 insertions(+), 3 deletions(-)
->>
->> diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
->> index 2473f10c6956..ce75b2270b58 100644
->> --- a/kernel/locking/qspinlock.c
->> +++ b/kernel/locking/qspinlock.c
->> @@ -31,10 +31,9 @@
->>  /*
->>   * The basic principle of a queue-based spinlock can best be understood
->>   * by studying a classic queue-based spinlock implementation called the
->> - * MCS lock. The paper below provides a good description for this kind
->> - * of lock.
->> + * MCS lock. A copy of the original MCS lock papaer is available at
-> s/papaer/paper/
->
-> I think I reviewed the previous patch as you sent this version, but please
-> could you reword as suggested here [1]?
->
-> Cheers,
->
-> Will
->
-> [1] https://lore.kernel.org/lkml/20200107172343.GA32009@willie-the-truck/T/#m0f9eaf53e509b87d0f6378e35514c9b120d8edc2
->
-Sure. I will send out v3 shortly.
+Following build error on stable-rc 5.4.9-rc1 for arm architecture.
 
-Cheers,
-Longman
+dma/direct.c: In function 'dma_direct_possible':
+dma/direct.c:329:3: error: too many arguments to function 'dma_capable'
+   dma_capable(dev, dma_addr, size, true);
+   ^~~~~~~~~~~
+In file included from
+/srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/include/linux/dma-direct.h:12:0,
+                 from
+/srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/kernel/dma/direct.c:10:
+/srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/arch/arm/include/asm/dma-direct.h:17:20:
+note: declared here
+ static inline bool dma_capable(struct device *dev, dma_addr_t addr,
+size_t size)
+                    ^~~~~~~~~~~
+In file included from
+/srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/include/linux/init.h:5:0,
+                 from
+/srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/include/linux/memblock.h:12,
+                 from
+/srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/kernel/dma/direct.c:7:
+dma/direct.c: In function 'dma_direct_map_resource':
+dma/direct.c:378:16: error: too many arguments to function 'dma_capable'
+  if (unlikely(!dma_capable(dev, dma_addr, size, false))) {
+                ^
+/srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/include/linux/compiler.h:78:42:
+note: in definition of macro 'unlikely'
+ # define unlikely(x) __builtin_expect(!!(x), 0)
+                                          ^
+In file included from
+/srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/include/linux/dma-direct.h:12:0,
+                 from
+/srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/kernel/dma/direct.c:10:
+/srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/arch/arm/include/asm/dma-direct.h:17:20:
+note: declared here
+ static inline bool dma_capable(struct device *dev, dma_addr_t addr,
+size_t size)
+                    ^~~~~~~~~~~
+/srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/scripts/Makefile.build:265:
+recipe for target 'kernel/dma/direct.o' failed
 
+Full build log link,
+https://ci.linaro.org/view/lkft/job/openembedded-lkft-linux-stable-rc-5.4/DISTRO=lkft,MACHINE=am57xx-evm,label=docker-lkft/44/consoleText
+
+-- 
+Linaro LKFT
+https://lkft.linaro.org
