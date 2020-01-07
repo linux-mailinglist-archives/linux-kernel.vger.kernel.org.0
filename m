@@ -2,58 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66635132013
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 07:58:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D9E2132018
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 08:00:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727565AbgAGG6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 01:58:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34902 "EHLO mail.kernel.org"
+        id S1726556AbgAGHAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 02:00:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727555AbgAGG6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 01:58:07 -0500
+        id S1725781AbgAGHAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 02:00:08 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44A80206DB;
-        Tue,  7 Jan 2020 06:58:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D92F206DB;
+        Tue,  7 Jan 2020 07:00:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578380287;
-        bh=eUsS+9OV8oq4r1RDOOiNxN07Oc34uXxH50jSTlZHufo=;
+        s=default; t=1578380407;
+        bh=mqVAhJYsDI+d9WjdV8n8DMR9ou/rAJnSZlAgkuo6W9o=;
         h=In-Reply-To:References:Cc:To:Subject:From:Date:From;
-        b=ddRYLEmAZuWH4qyfENa3JG5jla+w6ORViKKSqK7qj9qiZ77lzs96YQkq3xos+4pOh
-         bI5Vat4S6q/r0Nw3ULpSA8jpg5tUBWtAZrAAVtJI1SbALEoIZ1GY1uIfUu+whGPaMR
-         X36tcRBzzu/gd9xO1zhVwphGgELZO2aPwhV2iAXI=
+        b=aEqhSLP7UscDWt/g0rnZTzPSmOVPtuv25EZAc0MuCqYhpQrhc2QkDjuZ7QFZBnO5h
+         jYSDwkDVEbXmD91SJs+L4JIN5aokcceddk+PL+7p+gYfCcACiWmwuPH/10/4HR4ddT
+         jaN5gdi57+7Tb/DTQMbTociQ4MHJsQ+oq0Hn0+50=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190830150923.259497-13-sboyd@kernel.org>
-References: <20190830150923.259497-1-sboyd@kernel.org> <20190830150923.259497-13-sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 12/12] clk: divider: Add support for specifying parents via DT/pointers
+In-Reply-To: <4726f580-fe88-5b20-e869-4e31bd63c6e3@kernel.org>
+References: <20190918013459.15966-1-dinguyen@kernel.org> <20190918013459.15966-2-dinguyen@kernel.org> <20190918050010.74B4021848@mail.kernel.org> <4726f580-fe88-5b20-e869-4e31bd63c6e3@kernel.org>
+Cc:     devicetree@vger.kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org
+To:     Dinh Nguyen <dinguyen@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: socfpga: agilex: add clock driver for the Agilex platform
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Mon, 06 Jan 2020 22:58:06 -0800
-Message-Id: <20200107065807.44A80206DB@mail.kernel.org>
+Date:   Mon, 06 Jan 2020 23:00:06 -0800
+Message-Id: <20200107070007.6D92F206DB@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Stephen Boyd (2019-08-30 08:09:23)
-> After commit fc0c209c147f ("clk: Allow parents to be specified without
-> string names") we can use DT or direct clk_hw pointers to specify
-> parents. Create a generic function that shouldn't be used very often to
-> encode the multitude of ways of registering a divider clk with different
-> parent information. Then add a bunch of wrapper macros that only pass
-> down what needs to be passed down to the generic function to support
-> this with less arguments.
+Quoting Dinh Nguyen (2019-12-03 07:15:21)
+> Hi Stephen,
 >=20
-> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
+> On 9/18/19 12:00 AM, Stephen Boyd wrote:
+> > Quoting Dinh Nguyen (2019-09-17 18:34:59)
+> >> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> >> index 0cad76021297..ef2c96c0f1e0 100644
+> >> --- a/drivers/clk/Makefile
+> >> +++ b/drivers/clk/Makefile
+> >> @@ -18,6 +18,7 @@ endif
+> >> =20
+>=20
+> <snip>
+>=20
+> >> +struct clk *agilex_register_pll(const char *name,
+> >> +                               const char * const *parent_names,
+> >> +                               u8 num_parents, unsigned long flags,
+> >> +                               void __iomem *reg, unsigned long offse=
+t)
+> >> +{
+> >> +       struct clk *clk;
+> >> +       struct socfpga_pll *pll_clk;
+> >> +       struct clk_init_data init;
+> >> +
+> >> +       pll_clk =3D kzalloc(sizeof(*pll_clk), GFP_KERNEL);
+> >> +       if (WARN_ON(!pll_clk))
+> >> +               return NULL;
+> >> +
+> >> +       pll_clk->hw.reg =3D reg + offset;
+> >> +
+> >> +       if (streq(name, SOCFPGA_BOOT_CLK))
+> >> +               init.ops =3D &clk_boot_ops;
+> >> +       else
+> >> +               init.ops =3D &agilex_clk_pll_ops;
+> >> +
+> >> +       init.name =3D name;
+> >> +       init.flags =3D flags;
+> >> +
+> >> +       init.num_parents =3D num_parents;
+> >> +       init.parent_names =3D parent_names;
+> >=20
+> > Is it possible to use the new way of specifying clk parents here so that
+> > we don't have to keep using strings to describe the clk topology?
+> >=20
+>=20
+> Can you point me to what you mean here? Perhaps a driver that is using
+> this new way of specifying clk parents?
+>=20
 
-Applied to clk-next
+I'm supposed to write some documentation, but you can look for drivers
+that have 'struct clk_parent_data' until I write the doc up.
+
+ $ git grep 'struct clk_parent_data' -- drivers/clk/
 
