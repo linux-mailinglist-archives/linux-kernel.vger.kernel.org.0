@@ -2,71 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90720132CB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 18:11:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94FF6132CEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 18:24:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbgAGRLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 12:11:09 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:59860 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728466AbgAGRLJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 12:11:09 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iosNn-0000yc-9V; Tue, 07 Jan 2020 17:11:07 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: drxj: remove redundant assignments to variable rc
-Date:   Tue,  7 Jan 2020 17:11:07 +0000
-Message-Id: <20200107171107.120294-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.24.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        id S1728455AbgAGRYl convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 7 Jan 2020 12:24:41 -0500
+Received: from smtp1web.tin.it ([212.216.176.195]:41985 "EHLO smtp1web.tin.it"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728211AbgAGRYl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 12:24:41 -0500
+X-Greylist: delayed 507 seconds by postgrey-1.27 at vger.kernel.org; Tue, 07 Jan 2020 12:24:40 EST
+Received: from feu3 (10.192.64.13) by smtp1web.tin.it (8.6.060.43)
+        id 5D81E01E019053A8; Tue, 7 Jan 2020 18:11:46 +0100
+Received: from (95.141.36.112) by wmlighttin.pc.tim.it;  Tue, 7 Jan 2020 18:11:46 +0100
+Message-ID: <16f80fdaf24.elvejo@tin.it>
+Date:   Tue, 7 Jan 2020 18:11:46 +0100 (CET)
+From:   Bianca Durex <elvejo@tin.it>
+Reply-To: biancadurex@yahoo.com
+Subject: =?UTF-8?Q?Merci_de_me_r=C3=A9pondre_favorablement...?=
+Mime-Version: 1.0
+Content-Type: text/plain;charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: 95.141.36.112
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Bonjour mon cher correspondant et tout mes voeux de succès pour toi en 
+cette nouvelle année 2020,
+Je m'appelle Bianca Durex d'origine française et âgé de 30ans. Je 
+travail comme chargé de mission au sein d'une organisation nommée OCID 
+siégé au Canada. L'ocid est une organisation qui œuvre dans le domaine 
+du développement, de la coopération internationale et de l’aide 
+humanitaire et qui, depuis longtemps, combat la pauvreté et l’exclusion 
+au sein des communautés les plus marginalisées un peu partout dans le 
+monde. En effet, c'est en faisant quelques recherches sur le net que je 
+suis tombé sur ton adresse émail et j'ai voulu correspondre avec toi 
+afin d'établir si possible une relation plus affinée à divers niveaux 
+parce qu'une personne de plus comme ami est une bonne chose dans la vie 
+d'un être humain. Alors,je serai ravis de faire ta connaissance afin de 
+donner vie à cette nouvelle amitié qui va naître entre nous car 
+l'amitié a toujours un avantage quelque part. Merci de me répondre sur 
+mon adresse émail personnel :
+biancadurex@yahoo.com
 
-The variable rc is being initialized with a value that is never
-read and it is being updated later with a new value.  The initialization
-is redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/dvb-frontends/drx39xyj/drxj.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/dvb-frontends/drx39xyj/drxj.c b/drivers/media/dvb-frontends/drx39xyj/drxj.c
-index ac7be872f460..5de016412c42 100644
---- a/drivers/media/dvb-frontends/drx39xyj/drxj.c
-+++ b/drivers/media/dvb-frontends/drx39xyj/drxj.c
-@@ -2182,7 +2182,7 @@ int drxj_dap_atomic_read_reg32(struct i2c_device_addr *dev_addr,
- 				     u32 *data, u32 flags)
- {
- 	u8 buf[sizeof(*data)] = { 0 };
--	int rc = -EIO;
-+	int rc;
- 	u32 word = 0;
- 
- 	if (!data)
-@@ -4229,7 +4229,7 @@ int drxj_dap_scu_atomic_write_reg16(struct i2c_device_addr *dev_addr,
- 					  u16 data, u32 flags)
- {
- 	u8 buf[2];
--	int rc = -EIO;
-+	int rc;
- 
- 	buf[0] = (u8) (data & 0xff);
- 	buf[1] = (u8) ((data >> 8) & 0xff);
--- 
-2.24.0
-
+Mlle Bianca Durex
