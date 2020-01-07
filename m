@@ -2,147 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AD1513244E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:59:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98FA913245A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:59:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727905AbgAGK6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 05:58:44 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:64552 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726690AbgAGK6n (ORCPT
+        id S1727933AbgAGK7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 05:59:40 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:58596 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726937AbgAGK7k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 05:58:43 -0500
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 007AwELc026248;
-        Tue, 7 Jan 2020 05:58:14 -0500
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2046.outbound.protection.outlook.com [104.47.66.46])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2xaneaeu6u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Jan 2020 05:58:14 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=E7TOPn1X4PoLoFyRW7vatooBJViixJIaXG+qvV0bSBIvUgHCekzKAjRShjYJQU+XDEAIftt5Kes8Y0zvWgPIwC5zMNVO+7sxx2ZkLkWjwhQ0JShpmUFeVPV2UEfxOxU4ee6VypXBTxVvd9Rz1reqMX/a5Pc9XXbsw+rOHUBlEtUHKxOJl4e9K81ta9SCL+9t37VrVOTYSeTODVEwjyBCqRUMwYR5gCWyMVmiWrqNOXr1d9dl8KhLlyK/WvxL+z6/piOfKPMqZuN2Y2avxRlUrWrXZGglGhCjfI+njiUH5aW2cWhlCmr/inZH0IbKv0RjE44uGFRU7VkKwtnydMvwrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/8ar9U71tuRi7WXQ5hK95iq1Hzf9qNmjZUzQE4BOjjM=;
- b=NSI0xwFTuLIbYPAC3jypAULjPtxUbWmGR6Lou1VwzB9KcputtotoInFArT3YqtiFknSUlESnAp4DPDBUvZSrvkd5oeBQijM/sETpoIYQlJGFOaHMz3fL60es+BpViqScjw2uunXJ1guaLfwz/SZp5AVBtNanK0ZhwHVoC2l0ty/obJqf0YiJzHviFZRgxwqBuGQ6LRZ91hdo/lMYz+0PNLkrC0Q5Cg489cAGMc6ZaJMAWK6LpfhXu+9wUAdHvHn3hwdPYlDi01FeMkQu1rn8mac2+wLjyklSqMW2QSWFD9crx7g6P6HNcK7TxUXvcWztNAfOENM+dqagnW0ME4gy4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 137.71.25.55) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=analog.com;
- dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/8ar9U71tuRi7WXQ5hK95iq1Hzf9qNmjZUzQE4BOjjM=;
- b=CrkbLA0dNuZM97NOGsAYxWiZqAALwr1H9Rmafn2N2Uq5Sl4raDzSzdJi17gcBhSdBE6k2rIs9zJ0Y52ai7X03WaEqTbOmd/SSaptu7VEzRpfjylDB3vRwUjDZJWnyg0BJ3nJ4SJPoC8mOST9QmMANGRFWn5DfqDxvk2r2SrMi28=
-Received: from MWHPR03CA0019.namprd03.prod.outlook.com (2603:10b6:300:117::29)
- by CO2PR03MB2344.namprd03.prod.outlook.com (2603:10b6:100:1::25) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2602.12; Tue, 7 Jan
- 2020 10:58:12 +0000
-Received: from CY1NAM02FT043.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::204) by MWHPR03CA0019.outlook.office365.com
- (2603:10b6:300:117::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2602.12 via Frontend
- Transport; Tue, 7 Jan 2020 10:58:12 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
-Received: from nwd2mta1.analog.com (137.71.25.55) by
- CY1NAM02FT043.mail.protection.outlook.com (10.152.74.182) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2602.11
- via Frontend Transport; Tue, 7 Jan 2020 10:58:12 +0000
-Received: from ASHBMBX9.ad.analog.com (ashbmbx9.ad.analog.com [10.64.17.10])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id 007Aw0Nc030987
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 7 Jan 2020 02:58:00 -0800
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Tue, 7 Jan 2020
- 05:58:10 -0500
-Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Tue, 7 Jan 2020 05:58:10 -0500
-Received: from ben-Latitude-E6540.ad.analog.com ([10.48.65.231])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 007Avvmo002960;
-        Tue, 7 Jan 2020 05:58:07 -0500
-From:   Beniamin Bia <beniamin.bia@analog.com>
-To:     <linux-hwmon@vger.kernel.org>
-CC:     <Michael.Hennerich@analog.com>, <linux-kernel@vger.kernel.org>,
-        <jdelvare@suse.com>, <linux@roeck-us.net>, <mark.rutland@arm.com>,
-        <lgirdwood@gmail.com>, <broonie@kernel.org>,
-        <devicetree@vger.kernel.org>, <biabeniamin@outlook.com>,
-        Beniamin Bia <beniamin.bia@analog.com>
-Subject: [PATCH v3 3/3] MAINTAINERS: add entry for ADM1177 driver
-Date:   Tue, 7 Jan 2020 12:59:29 +0200
-Message-ID: <20200107105929.18938-3-beniamin.bia@analog.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200107105929.18938-1-beniamin.bia@analog.com>
-References: <20200107105929.18938-1-beniamin.bia@analog.com>
+        Tue, 7 Jan 2020 05:59:40 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 007AxVUx059569;
+        Tue, 7 Jan 2020 04:59:31 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578394771;
+        bh=D7FXGxYVTAceLEBGDbCBjzOcuiBKOxf2M1bFoAUt/NE=;
+        h=From:To:CC:Subject:Date;
+        b=O6Et+GzsFIiL8cw6eGlrabPSKqFVATT2H4cd3hUkaMmPEUtKpPfMKJFD5ZtWRZGx0
+         rz4k6ts+3nixhIrxoeL/4Vet36n+ON69/0fX5DQ4rR3RGj9wGuSqnmqY69+Ez77LHG
+         whNlFgnP4hqfmfae4oxvfaCFS76MUUddmEOsCw8U=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 007AxVbB040093
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 7 Jan 2020 04:59:31 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 7 Jan
+ 2020 04:59:31 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 7 Jan 2020 04:59:31 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 007AxSIe111229;
+        Tue, 7 Jan 2020 04:59:29 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <fabrice.gasnier@st.com>, <lee.jones@linaro.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>
+CC:     <vkoul@kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] mfd: stm32-timers: Use dma_request_chan() instead dma_request_slave_channel()
+Date:   Tue, 7 Jan 2020 12:59:59 +0200
+Message-ID: <20200107105959.18920-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(39860400002)(346002)(136003)(396003)(189003)(199004)(44832011)(54906003)(36756003)(2906002)(356004)(6666004)(246002)(86362001)(1076003)(6916009)(7636002)(316002)(26005)(186003)(7696005)(8676002)(2616005)(5660300002)(70206006)(70586007)(426003)(966005)(107886003)(4326008)(336012)(8936002)(4744005)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR03MB2344;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9aeff0ac-8efb-45d1-45f9-08d793607d39
-X-MS-TrafficTypeDiagnostic: CO2PR03MB2344:
-X-Microsoft-Antispam-PRVS: <CO2PR03MB2344F9B0C6891EC82ABBEB53F03F0@CO2PR03MB2344.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1303;
-X-Forefront-PRVS: 027578BB13
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: tPbzDqd/xtQpyYyOHAuYryr7y16HRTyuQsLgoy3ox/DC/Ku64J1Qgwyjd7QSOUrQWKM/JD+8Cljmv9eC2XD0kVm19WZychJV9tBc2TD0ei1BmFQhaqN0zZfpLs23kRSeuOztKM63Zi+zPoTXTGr44aLWSGI473I0tgoaqswn/+PNaC/m9Jt5OiMNC7nqboBMtcq6HqXcvkV1t08yK8CRRHPVxZnejN2asezKVpEVEYyycdgGK0nSxM2SZA5iPVCxPOUcs0vha11S/1KbvojMt6qWDAy1xc7qkdDTJOQt39lXORZrwb7q6XiCwhch1ua/BrEM/N4CAoJkiJ+2I9hZDYYYZ6n9Z4nNh00Dfn97wG3TwMmrYkoM4PLH1GWsGeE8/SyGdGJz8k+tcvJoP1Tqcz9E0s6ZKum5GiahkijLZTRreWjQr57sbSvo4qiqhz7m88Rw9a2zHNf94RlzMTqKQlzND+NjbsacG/L2B8FJfoKNguyh+yWTvdVoKWzxcHefaIBmqwTaW8r9rFiY8l68GA==
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jan 2020 10:58:12.1872
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9aeff0ac-8efb-45d1-45f9-08d793607d39
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR03MB2344
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2020-01-07_02:2020-01-06,2020-01-07 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 adultscore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
- spamscore=0 malwarescore=0 phishscore=0 suspectscore=1 mlxlogscore=999
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001070088
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Beniamin Bia and Michael Hennerich as a maintainer for ADM1177 ADC.
+dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+eating up the error code.
 
-Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
+By using dma_request_chan() directly the driver can support deferred
+probing against DMA.
+
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 ---
-Changes in v3:
--nothing changed
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Hi,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3ef731fc753b..bc19b624fcd5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -978,6 +978,15 @@ W:	http://ez.analog.com/community/linux-device-drivers
- F:	drivers/iio/imu/adis16460.c
- F:	Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml
+Changes since v1:
+- Fall back to PIO mode only in case of ENODEV and report all other errors
+
+Regards,
+Peter
+
+ drivers/mfd/stm32-timers.c | 32 +++++++++++++++++++++++---------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/mfd/stm32-timers.c b/drivers/mfd/stm32-timers.c
+index efcd4b980c94..add603359124 100644
+--- a/drivers/mfd/stm32-timers.c
++++ b/drivers/mfd/stm32-timers.c
+@@ -167,10 +167,11 @@ static void stm32_timers_get_arr_size(struct stm32_timers *ddata)
+ 	regmap_write(ddata->regmap, TIM_ARR, 0x0);
+ }
  
-+ANALOG DEVICES INC ADM1177 DRIVER
-+M:	Beniamin Bia <beniamin.bia@analog.com>
-+M:	Michael Hennerich <Michael.Hennerich@analog.com>
-+L:	linux-hwmon@vger.kernel.org
-+W:	http://ez.analog.com/community/linux-device-drivers
-+S:	Supported
-+F:	drivers/hwmon/adm1177.c
-+F:	Documentation/devicetree/bindings/hwmon/adi,adm1177.yaml
+-static void stm32_timers_dma_probe(struct device *dev,
++static int stm32_timers_dma_probe(struct device *dev,
+ 				   struct stm32_timers *ddata)
+ {
+ 	int i;
++	int ret = 0;
+ 	char name[4];
+ 
+ 	init_completion(&ddata->dma.completion);
+@@ -179,14 +180,23 @@ static void stm32_timers_dma_probe(struct device *dev,
+ 	/* Optional DMA support: get valid DMA channel(s) or NULL */
+ 	for (i = STM32_TIMERS_DMA_CH1; i <= STM32_TIMERS_DMA_CH4; i++) {
+ 		snprintf(name, ARRAY_SIZE(name), "ch%1d", i + 1);
+-		ddata->dma.chans[i] = dma_request_slave_channel(dev, name);
++		ddata->dma.chans[i] = dma_request_chan(dev, name);
+ 	}
+-	ddata->dma.chans[STM32_TIMERS_DMA_UP] =
+-		dma_request_slave_channel(dev, "up");
+-	ddata->dma.chans[STM32_TIMERS_DMA_TRIG] =
+-		dma_request_slave_channel(dev, "trig");
+-	ddata->dma.chans[STM32_TIMERS_DMA_COM] =
+-		dma_request_slave_channel(dev, "com");
++	ddata->dma.chans[STM32_TIMERS_DMA_UP] = dma_request_chan(dev, "up");
++	ddata->dma.chans[STM32_TIMERS_DMA_TRIG] = dma_request_chan(dev, "trig");
++	ddata->dma.chans[STM32_TIMERS_DMA_COM] = dma_request_chan(dev, "com");
 +
- ANALOG DEVICES INC ADP5061 DRIVER
- M:	Stefan Popa <stefan.popa@analog.com>
- L:	linux-pm@vger.kernel.org
++	for (i = STM32_TIMERS_DMA_CH1; i < STM32_TIMERS_MAX_DMAS; i++) {
++		if (IS_ERR(ddata->dma.chans[i])) {
++			/* Save the first error code to return */
++			if (PTR_ERR(ddata->dma.chans[i]) != -ENODEV && !ret)
++				ret = PTR_ERR(ddata->dma.chans[i]);
++
++			ddata->dma.chans[i] = NULL;
++		}
++	}
++
++	return ret;
+ }
+ 
+ static void stm32_timers_dma_remove(struct device *dev,
+@@ -230,7 +240,11 @@ static int stm32_timers_probe(struct platform_device *pdev)
+ 
+ 	stm32_timers_get_arr_size(ddata);
+ 
+-	stm32_timers_dma_probe(dev, ddata);
++	ret = stm32_timers_dma_probe(dev, ddata);
++	if (ret) {
++		stm32_timers_dma_remove(dev, ddata);
++		return ret;
++	}
+ 
+ 	platform_set_drvdata(pdev, ddata);
+ 
 -- 
-2.17.1
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
