@@ -2,74 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6E611334B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:27:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 370B41334CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:28:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727976AbgAGV1c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:27:32 -0500
-Received: from namei.org ([65.99.196.166]:55932 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728090AbgAGV13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:27:29 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 007LR08Z015152;
-        Tue, 7 Jan 2020 21:27:00 GMT
-Date:   Wed, 8 Jan 2020 08:27:00 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     KP Singh <kpsingh@chromium.org>
-cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: Re: [PATCH bpf-next v1 07/13] bpf: lsm: Implement attach, detach
- and execution.
-In-Reply-To: <20191220154208.15895-8-kpsingh@chromium.org>
-Message-ID: <alpine.LRH.2.21.2001080824240.9683@namei.org>
-References: <20191220154208.15895-1-kpsingh@chromium.org> <20191220154208.15895-8-kpsingh@chromium.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1728761AbgAGV2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:28:13 -0500
+Received: from mout.kundenserver.de ([212.227.17.24]:43877 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727569AbgAGV2H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:28:07 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MGhi0-1itpwb2ZJS-00Dn1Q; Tue, 07 Jan 2020 22:27:51 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Oleksandr Natalenko <oleksandr@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, Sam Ravnborg <sam@ravnborg.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: panel: fix excessive stack usage in td028ttec1_prepare
+Date:   Tue,  7 Jan 2020 22:27:33 +0100
+Message-Id: <20200107212747.4182515-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:oXNXLfN/VIsDQFv/SJwQtBS570cMqOiIoOPgTiSj3Dsp8Mast6V
+ a6nIAwxIdJ7QG8kqaKHVXD9UMVwHTrPE3j3Y3Y83ybDD2FhmplbMZohwEB70kjxFVxHmGZS
+ pyNK70KcneApCD8axx8ajqRUB3eSiIPdg/sGcqYEA5Rl6QBHXZ6yOtpQvGO21SI63N0Rvrq
+ 2nsYRN5jI3BB6x6CtxvLw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:wybcYGCqFeU=:v6JPZuxuKq6KdDpZhERSQB
+ IDxwXvZZ3iIThfYussrtVEboFQsYXSC7qEaAUE2XWaYfMkZWryLaflyAWfWUsATwXMg6kkTS4
+ 2fkNkoMGkNpx4MCKQifZ0nsPoKH47LK3qlyhSzjot+pm7dGqrUBzd3iRu8R5fefc2RZIZREic
+ QWSvAKtAQWM4Ojyk1h0Cv/8n+0At0t7Wag+VUislcxZY83IZULPztI7gUxC9ZGxMgNMBZzerm
+ C1FjL3xOW2Nxg609m+EefeTYjxDmVlKyYPjQgyfmSc2AJgMYU68YS05MCx13u5OZXBNWakZjl
+ /KgJ+JOuDhchGWb7s+vpjoki5rPqogRFfpHTOzCH+e3z3DlaTrUMmhBWgYv4j8qnZ0dIAjChs
+ 4I/vpmANC2amo+pw4P/G/yZzXZS3X3vd/umZZfYB5e+bV2zPMLRhZKmYQiiaKFAbPNNpHrpKi
+ gdKXp1DNdRwtC+mYFMVC9JPVQgmI8nSS6EjHfUbOFOaVjHwtkP79fOsjFMvY2ZL6aotERGia5
+ qJJl0KLotFNKZuev7SN06GiCBcyLIHv04A8yRtwa5ZX1/EnLjygKqHOMtpZjmSH+RVCLfMu8F
+ Qcj29MPNM33tUkq7Xj/XcC/l6vgOfoe7g11HPeEmG0uOuA4G+9PCOgjZgcoYfhdabasgvEtvG
+ imdpeO5Eh/+GrUr9uEn4xRcNebjiNxHFMQtiFCb8D5OP2Vp3CdiGY4qYvlMszQWLo5vk/Mgby
+ DATbiwe4fFXaHGDfofaqzQudl4XduR+bPZFgTm+Ggp36Sc1O3ogVU69gSKhZ89G4deJiSt+i5
+ X+8wsPqcTE9MHwxukKoezId5n8vFNAxzQx+tEcRaHTBRmfj1FiOVfaxLtGvlOlJIvvLEGeQAk
+ 3guOx3RvjSFld8FR+sHQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Dec 2019, KP Singh wrote:
+With gcc -O3, the compiler can inline very aggressively,
+leading to rather large stack usage:
 
->  
-> -	h_dentry = securityfs_create_file(h->name, 0600, parent,
-> -			NULL, &hook_ops);
-> +	h_dentry = securityfs_create_file(h->name, 0600,
-> +					  parent, NULL, &hook_ops);
+drivers/gpu/drm/panel/panel-tpo-td028ttec1.c: In function 'td028ttec1_prepare':
+drivers/gpu/drm/panel/panel-tpo-td028ttec1.c:233:1: error: the frame size of 2768 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
+ }
 
-Minor thing to fix for the next version.
+Marking jbt_reg_write_1() as noinline avoids the case where
+multiple instances of this function get inlined into the same
+stack frame and each one adds a copy of 'tx_buf'.
 
+Fixes: mmtom ("init/Kconfig: enable -O3 for all arches")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpu/drm/panel/panel-tpo-td028ttec1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: James Morris <jamorris@linux.microsoft.com>
-
-
+diff --git a/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c b/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
+index cf29405a2dbe..17ee5e87141f 100644
+--- a/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
++++ b/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
+@@ -105,7 +105,7 @@ static int jbt_ret_write_0(struct td028ttec1_panel *lcd, u8 reg, int *err)
+ 	return ret;
+ }
+ 
+-static int jbt_reg_write_1(struct td028ttec1_panel *lcd,
++static int noinline_for_stack jbt_reg_write_1(struct td028ttec1_panel *lcd,
+ 			   u8 reg, u8 data, int *err)
+ {
+ 	struct spi_device *spi = lcd->spi;
 -- 
-James Morris
-<jmorris@namei.org>
+2.20.0
 
