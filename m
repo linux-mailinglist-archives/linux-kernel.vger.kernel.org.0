@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CB8B1331AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:03:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCEE3133327
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:17:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728835AbgAGVCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:02:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43304 "EHLO mail.kernel.org"
+        id S1729672AbgAGVQY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:16:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728818AbgAGVCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:02:50 -0500
+        id S1729501AbgAGVHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:07:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB25524656;
-        Tue,  7 Jan 2020 21:02:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D65A20678;
+        Tue,  7 Jan 2020 21:07:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430969;
-        bh=luUGalveanDCV/qbatlB0rGynxQA+f3mN+O9TS4UBIU=;
+        s=default; t=1578431236;
+        bh=kHWeVqFe+m0kkb4VihQ/ZQA4wtRTqA+ReUP+mQlbl0k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ecv8jBvoKPNAEc2HAOhIw0fme6hoSzwT+ZaoXwLSHCycWcQwb2J/S0fh94e6rYXzf
-         IhtO/wJB5oWe+AQByXZkYa7cYKYyjY24isMbET8r7kRcIlLj2GlHGW/QrdPdrf5cO1
-         eGlzFwoorMLUIsnVUK/TA5nV/J5lHIShLYGOCGfY=
+        b=PFfDfLWzNN+yw+L3+t4utARzaihDboTm6Y8bAHjHffBttSwhK/8n2SkUoVYJ07Y5R
+         YVfBxGcJ7yOLJxYGCgK3pjQySPOvfFwCSPA2kDUmF+3Y+8Yx/48KEJP8LKC/xtNa9f
+         Eiq2d+64gReBXu1gNzuaGn60FGNUj8e1RrxDDL/c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 5.4 172/191] fix compat handling of FICLONERANGE, FIDEDUPERANGE and FS_IOC_FIEMAP
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.19 082/115] HID: i2c-hid: Reset ALPS touchpads on resume
 Date:   Tue,  7 Jan 2020 21:54:52 +0100
-Message-Id: <20200107205342.206023405@linuxfoundation.org>
+Message-Id: <20200107205305.171742306@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
-References: <20200107205332.984228665@linuxfoundation.org>
+In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
+References: <20200107205240.283674026@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,38 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit 6b2daec19094a90435abe67d16fb43b1a5527254 upstream.
+commit fd70466d37bf3fe0118d18c56ddde85b428f86cf upstream.
 
-Unlike FICLONE, all of those take a pointer argument; they do need
-compat_ptr() applied to arg.
+Commit 52cf93e63ee6 ("HID: i2c-hid: Don't reset device upon system
+resume") fixes many touchpads and touchscreens, however ALPS touchpads
+start to trigger IRQ storm after system resume.
 
-Fixes: d79bdd52d8be ("vfs: wire up compat ioctl for CLONE/CLONE_RANGE")
-Fixes: 54dbc1517237 ("vfs: hoist the btrfs deduplication ioctl to the vfs")
-Fixes: ceac204e1da9 ("fs: make fiemap work from compat_ioctl")
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Since it's total silence from ALPS, let's bring the old behavior back
+to ALPS touchpads.
+
+Fixes: 52cf93e63ee6 ("HID: i2c-hid: Don't reset device upon system resume")
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/compat_ioctl.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/hid/i2c-hid/i2c-hid-core.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -1032,10 +1032,11 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned i
- #endif
+--- a/drivers/hid/i2c-hid/i2c-hid-core.c
++++ b/drivers/hid/i2c-hid/i2c-hid-core.c
+@@ -51,6 +51,7 @@
+ #define I2C_HID_QUIRK_NO_RUNTIME_PM		BIT(2)
+ #define I2C_HID_QUIRK_DELAY_AFTER_SLEEP		BIT(3)
+ #define I2C_HID_QUIRK_BOGUS_IRQ			BIT(4)
++#define I2C_HID_QUIRK_RESET_ON_RESUME		BIT(5)
  
- 	case FICLONE:
-+		goto do_ioctl;
- 	case FICLONERANGE:
- 	case FIDEDUPERANGE:
- 	case FS_IOC_FIEMAP:
--		goto do_ioctl;
-+		goto found_handler;
+ /* flags */
+ #define I2C_HID_STARTED		0
+@@ -182,6 +183,8 @@ static const struct i2c_hid_quirks {
+ 		I2C_HID_QUIRK_NO_RUNTIME_PM },
+ 	{ USB_VENDOR_ID_ELAN, HID_ANY_ID,
+ 		 I2C_HID_QUIRK_BOGUS_IRQ },
++	{ USB_VENDOR_ID_ALPS_JP, HID_ANY_ID,
++		 I2C_HID_QUIRK_RESET_ON_RESUME },
+ 	{ 0, 0 }
+ };
  
- 	case FIBMAP:
- 	case FIGETBSZ:
+@@ -1290,8 +1293,15 @@ static int i2c_hid_resume(struct device
+ 	 * solves "incomplete reports" on Raydium devices 2386:3118 and
+ 	 * 2386:4B33 and fixes various SIS touchscreens no longer sending
+ 	 * data after a suspend/resume.
++	 *
++	 * However some ALPS touchpads generate IRQ storm without reset, so
++	 * let's still reset them here.
+ 	 */
+-	ret = i2c_hid_set_power(client, I2C_HID_PWR_ON);
++	if (ihid->quirks & I2C_HID_QUIRK_RESET_ON_RESUME)
++		ret = i2c_hid_hwreset(client);
++	else
++		ret = i2c_hid_set_power(client, I2C_HID_PWR_ON);
++
+ 	if (ret)
+ 		return ret;
+ 
 
 
