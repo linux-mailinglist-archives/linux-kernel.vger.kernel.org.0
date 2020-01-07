@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A56F2133211
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:07:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89B3A1331B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:03:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729435AbgAGVGw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:06:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56356 "EHLO mail.kernel.org"
+        id S1728893AbgAGVDR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:03:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728181AbgAGVGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:06:42 -0500
+        id S1727991AbgAGVDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:03:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2748222D9;
-        Tue,  7 Jan 2020 21:06:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B13E20678;
+        Tue,  7 Jan 2020 21:03:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431202;
-        bh=UhKWdznl3WaIfp7JHn+VhYkc7uxuSFKGbwszSTT+IcI=;
+        s=default; t=1578430993;
+        bh=wbwWhzZKRAaXl/rlWL+CNwkNSGBPiJifmzQw8fMhL7U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=msIS5wYdemwHou0STDje7o49no20zCv+ik2sySMoNDaEEHD3hjrIcCGT0Loyw4tbE
-         j0PzVw9Btu8nklTgPmwT6ike/fiUowPQP42yeG9KorYr0ncegdIyMcwWfX87V7pFqD
-         VDYwRCva8zmz7XoBAkMh6Atam+4OJ1nAUdSEgqJs=
+        b=XTjNif9C/6n72NsN5kgMUZ8sdm0kHD+YyaZNXS4ecSMhxewBytUJorcfLZwT6vmd8
+         v0fkChCowYiSvAt03VZGR+PD6J0X0sHhjz2183wdpJrUhVI60l5lx15XX8TZUhwaYR
+         ektVMBdjdVjou/ZRGMmbYZJHOMMMeP8Pu9YkewX8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 074/115] ALSA: cs4236: fix error return comparison of an unsigned integer
+        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 5.4 164/191] regulator: ab8500: Remove AB8505 USB regulator
 Date:   Tue,  7 Jan 2020 21:54:44 +0100
-Message-Id: <20200107205304.141981850@linuxfoundation.org>
+Message-Id: <20200107205341.759633123@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-References: <20200107205240.283674026@linuxfoundation.org>
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+References: <20200107205332.984228665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +44,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Stephan Gerhold <stephan@gerhold.net>
 
-commit d60229d84846a8399257006af9c5444599f64361 upstream.
+commit 99c4f70df3a6446c56ca817c2d0f9c12d85d4e7c upstream.
 
-The return from pnp_irq is an unsigned integer type resource_size_t
-and hence the error check for a positive non-error code is always
-going to be true.  A check for a non-failure return from pnp_irq
-should in fact be for (resource_size_t)-1 rather than >= 0.
+The USB regulator was removed for AB8500 in
+commit 41a06aa738ad ("regulator: ab8500: Remove USB regulator").
+It was then added for AB8505 in
+commit 547f384f33db ("regulator: ab8500: add support for ab8505").
 
-Addresses-Coverity: ("Unsigned compared against 0")
-Fixes: a9824c868a2c ("[ALSA] Add CS4232 PnP BIOS support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20191122131354.58042-1-colin.king@canonical.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+However, there was never an entry added for it in
+ab8505_regulator_match. This causes all regulators after it
+to be initialized with the wrong device tree data, eventually
+leading to an out-of-bounds array read.
+
+Given that it is not used anywhere in the kernel, it seems
+likely that similar arguments against supporting it exist for
+AB8505 (it is controlled by hardware).
+
+Therefore, simply remove it like for AB8500 instead of adding
+an entry in ab8505_regulator_match.
+
+Fixes: 547f384f33db ("regulator: ab8500: add support for ab8505")
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Link: https://lore.kernel.org/r/20191106173125.14496-1-stephan@gerhold.net
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/isa/cs423x/cs4236.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/regulator/ab8500.c       |   17 -----------------
+ include/linux/regulator/ab8500.h |    1 -
+ 2 files changed, 18 deletions(-)
 
---- a/sound/isa/cs423x/cs4236.c
-+++ b/sound/isa/cs423x/cs4236.c
-@@ -293,7 +293,8 @@ static int snd_cs423x_pnp_init_mpu(int d
- 	} else {
- 		mpu_port[dev] = pnp_port_start(pdev, 0);
- 		if (mpu_irq[dev] >= 0 &&
--		    pnp_irq_valid(pdev, 0) && pnp_irq(pdev, 0) >= 0) {
-+		    pnp_irq_valid(pdev, 0) &&
-+		    pnp_irq(pdev, 0) != (resource_size_t)-1) {
- 			mpu_irq[dev] = pnp_irq(pdev, 0);
- 		} else {
- 			mpu_irq[dev] = -1;	/* disable interrupt */
+--- a/drivers/regulator/ab8500.c
++++ b/drivers/regulator/ab8500.c
+@@ -953,23 +953,6 @@ static struct ab8500_regulator_info
+ 		.update_val_idle	= 0x82,
+ 		.update_val_normal	= 0x02,
+ 	},
+-	[AB8505_LDO_USB] = {
+-		.desc = {
+-			.name           = "LDO-USB",
+-			.ops            = &ab8500_regulator_mode_ops,
+-			.type           = REGULATOR_VOLTAGE,
+-			.id             = AB8505_LDO_USB,
+-			.owner          = THIS_MODULE,
+-			.n_voltages     = 1,
+-			.volt_table	= fixed_3300000_voltage,
+-		},
+-		.update_bank            = 0x03,
+-		.update_reg             = 0x82,
+-		.update_mask            = 0x03,
+-		.update_val		= 0x01,
+-		.update_val_idle	= 0x03,
+-		.update_val_normal	= 0x01,
+-	},
+ 	[AB8505_LDO_AUDIO] = {
+ 		.desc = {
+ 			.name		= "LDO-AUDIO",
+--- a/include/linux/regulator/ab8500.h
++++ b/include/linux/regulator/ab8500.h
+@@ -37,7 +37,6 @@ enum ab8505_regulator_id {
+ 	AB8505_LDO_AUX6,
+ 	AB8505_LDO_INTCORE,
+ 	AB8505_LDO_ADC,
+-	AB8505_LDO_USB,
+ 	AB8505_LDO_AUDIO,
+ 	AB8505_LDO_ANAMIC1,
+ 	AB8505_LDO_ANAMIC2,
 
 
