@@ -2,110 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D99EE133B7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 06:58:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5E9C133BB1
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 07:29:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726182AbgAHF6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 00:58:21 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40064 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbgAHF6U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 00:58:20 -0500
-Received: by mail-pf1-f195.google.com with SMTP id q8so1047556pfh.7
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 21:58:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Phg8y1R5IYTau943Qj+6UR9d0/QPUMjq7ucLEIys45A=;
-        b=H333vNfZtn+CPBYRjGbjwSoCT6UolP+k7JjY/9asLzrEum+Btp3wL1m7q67xG9iGPf
-         XquHXjAFfeRx0GVmDLB1X3jGI7QpLZrAVE1WxWF+1/+XvPmzqdhDqG60iBECVosP1Ip5
-         2inpz0OIyrJMg2sn2YyodCPiRHsixi650TJQvcT6nBIrFOk1uTWvfaoC5kOpAP2Wc4lC
-         0JdKgrBhgH1MlnFTLbFyn0Dg4xmUXSDGN0GJdHEQUw3Ge+TLu6WDjrNoh1WUpHTNjE8w
-         8DQdXrVP6SracHU7feuKSJY2KrzxKgb+LHgS9cxd8vway5DAW42eoQIYfByid70zpkRS
-         96Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Phg8y1R5IYTau943Qj+6UR9d0/QPUMjq7ucLEIys45A=;
-        b=e5UsSn14JSJ1kYktrRjvsHR1jUjWloATS7Wtrz285wAClYeUpNf9crpO3JirBLvQJj
-         vKEkcyNfWuQUGkEZEUqpcSV6tNOpn6j048gY/VKb1dfh3fQa9n87qyQKp9nyYRbvoDeY
-         S46JNNR4cOck+LQh6w1us/UXlb6sG9eMDt5yktNAadsmHMjtlU7vadN58xyDl/U18SrU
-         YIWwX+BrQCXklxUiBPhFC0GhNTD2yhejFzakn4o76kUWqw5rRWWohfgjS2KTO7VXKa+h
-         +loXXwsbn3zRFhAFs0mKCgLUruef+AgBG3XRiQ7CA5IhT5/bVX0t8CXTCdXP4A9GeFrP
-         thoQ==
-X-Gm-Message-State: APjAAAX3XqnexbhCWbEww3XEoPxf50xAxv7fYdT8Fv28Vv+w/sL8TsHa
-        qnS1h8AwHHgK354RPKvYpB1RRw==
-X-Google-Smtp-Source: APXvYqw5E7G1glzJF9cSgW+HhcYIsPSmF8DMa0JFZyZ0P4dKjH3ejvmGwwAQ4C12DLkT42EFOq/tnw==
-X-Received: by 2002:aa7:824d:: with SMTP id e13mr3266032pfn.247.1578463100112;
-        Tue, 07 Jan 2020 21:58:20 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id b12sm1577546pfi.157.2020.01.07.21.58.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 21:58:19 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: qcom: db410c: Update firmware-name for wcnss and mpss
-Date:   Tue,  7 Jan 2020 21:57:35 -0800
-Message-Id: <20200108055735.660475-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.24.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726443AbgAHG3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 01:29:42 -0500
+Received: from mga18.intel.com ([134.134.136.126]:23681 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725773AbgAHG3l (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 01:29:41 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2020 22:29:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,408,1571727600"; 
+   d="scan'208";a="233506770"
+Received: from kbl.sh.intel.com ([10.239.159.163])
+  by orsmga002.jf.intel.com with ESMTP; 07 Jan 2020 22:29:39 -0800
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH v3 1/4] perf util: Move block_pair_cmp to block-info
+Date:   Wed,  8 Jan 2020 07:03:51 +0800
+Message-Id: <20200107230354.30132-1-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the mpss remoteproc node and specify the firmware-name for this
-and the wcnss remoteproc on the Dragonboard 410c.
+block_pair_cmp() is a function which is used to compare
+two blocks. Moving it from builtin-diff.c to block-info.c
+to let it can be used by other builtins.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+ v3:
+ ---
+ Separate it from original patch for good tracking.
+
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
 ---
- arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi | 6 ++++++
- arch/arm64/boot/dts/qcom/msm8916.dtsi     | 2 +-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ tools/perf/builtin-diff.c    | 17 -----------------
+ tools/perf/util/block-info.c | 17 +++++++++++++++++
+ tools/perf/util/block-info.h |  2 ++
+ 3 files changed, 19 insertions(+), 17 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-index 037e26b3f8d5..298684c62cc1 100644
---- a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-@@ -494,6 +494,7 @@
+diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
+index f8b6ae557d8b..5ff1e21082cb 100644
+--- a/tools/perf/builtin-diff.c
++++ b/tools/perf/builtin-diff.c
+@@ -572,23 +572,6 @@ static void init_block_hist(struct block_hist *bh)
+ 	bh->valid = true;
+ }
  
- 		wcnss@a21b000 {
- 			status = "okay";
-+			firmware-name = "qcom/msm8916/wcnss.mdt";
- 		};
- 	};
+-static int block_pair_cmp(struct hist_entry *a, struct hist_entry *b)
+-{
+-	struct block_info *bi_a = a->block_info;
+-	struct block_info *bi_b = b->block_info;
+-	int cmp;
+-
+-	if (!bi_a->sym || !bi_b->sym)
+-		return -1;
+-
+-	cmp = strcmp(bi_a->sym->name, bi_b->sym->name);
+-
+-	if ((!cmp) && (bi_a->start == bi_b->start) && (bi_a->end == bi_b->end))
+-		return 0;
+-
+-	return -1;
+-}
+-
+ static struct hist_entry *get_block_pair(struct hist_entry *he,
+ 					 struct hists *hists_pair)
+ {
+diff --git a/tools/perf/util/block-info.c b/tools/perf/util/block-info.c
+index c4b030bf6ec2..f0f38bdd496a 100644
+--- a/tools/perf/util/block-info.c
++++ b/tools/perf/util/block-info.c
+@@ -475,3 +475,20 @@ float block_info__total_cycles_percent(struct hist_entry *he)
  
-@@ -538,6 +539,11 @@
- 	};
- };
- 
-+&mpss {
-+	status = "okay";
-+	firmware-name = "qcom/msm8916/mba.mbn", "qcom/msm8916/modem.mdt";
-+};
+ 	return 0.0;
+ }
 +
- &spmi_bus {
- 	pm8916_0: pm8916@0 {
- 		pon@800 {
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index 9c4d89319e7c..1ced09a61531 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -1054,7 +1054,7 @@
- 		};
++int block_pair_cmp(struct hist_entry *a, struct hist_entry *b)
++{
++	struct block_info *bi_a = a->block_info;
++	struct block_info *bi_b = b->block_info;
++	int cmp;
++
++	if (!bi_a->sym || !bi_b->sym)
++		return -1;
++
++	cmp = strcmp(bi_a->sym->name, bi_b->sym->name);
++
++	if ((!cmp) && (bi_a->start == bi_b->start) && (bi_a->end == bi_b->end))
++		return 0;
++
++	return -1;
++}
+diff --git a/tools/perf/util/block-info.h b/tools/perf/util/block-info.h
+index bef0d75e9819..4fa91eeae92e 100644
+--- a/tools/perf/util/block-info.h
++++ b/tools/perf/util/block-info.h
+@@ -76,4 +76,6 @@ int report__browse_block_hists(struct block_hist *bh, float min_percent,
  
+ float block_info__total_cycles_percent(struct hist_entry *he);
  
--		hexagon@4080000 {
-+		mpss: remoteproc@4080000 {
- 			compatible = "qcom,q6v5-pil";
- 			reg = <0x04080000 0x100>,
- 			      <0x04020000 0x040>;
++int block_pair_cmp(struct hist_entry *a, struct hist_entry *b);
++
+ #endif /* __PERF_BLOCK_H */
 -- 
-2.24.0
+2.17.1
 
