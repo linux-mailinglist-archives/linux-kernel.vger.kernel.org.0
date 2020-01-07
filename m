@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B7941334C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:28:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EAA31334A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:27:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbgAGU4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 15:56:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52460 "EHLO mail.kernel.org"
+        id S1727170AbgAGU6A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 15:58:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727238AbgAGU4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:56:39 -0500
+        id S1727199AbgAGU55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 15:57:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84EF220880;
-        Tue,  7 Jan 2020 20:56:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CF672187F;
+        Tue,  7 Jan 2020 20:57:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430599;
-        bh=FeMBBwF0CZhj+G8NDFZ4UpsqfiA3Hos10a4ep0BUI+Y=;
+        s=default; t=1578430676;
+        bh=ETqOKsaKnFh8ubRIRwtRQ7OHO76XvlruOB9IQrzWWYc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VTgZoeSMS58O3+vJlfus1hjoCKPTLb00J04AyvnuzIP5018P9pMfaMIiLlzukzK0P
-         qY2Kj5d5y4JWlPtl54/GaGAYNxDzqwd2iVvBD4YSJ4mlYpTDJ5XZzLjd9cBdjGZLJR
-         MmCxINPd3pMzebVcjTzi2MYOGmM/LDwddwrtM3CE=
+        b=zPtrqoJBm2ccKK0Quey9JR/FaUgA2q6Ls4YTNcuHnhHzpmmuh93qPGKJ1KB3abE7y
+         S0W3NDXuLifQVqkybVxtUP1M+QDrqb3wWmCRX0EekrDTiKGtoaS79HeuUcX030/bm4
+         wDXxcy+k3sPwKKI4+o5YM3ZJhe08imTIhywpJ4HU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Leo (Hanghong) Ma" <hanghong.ma@amd.com>,
-        Harry Wentland <Harry.Wentland@amd.com>,
-        Nikola Cornij <Nikola.Cornij@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <kbusch@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 009/191] drm/amd/display: Change the delay time before enabling FEC
-Date:   Tue,  7 Jan 2020 21:52:09 +0100
-Message-Id: <20200107205333.507167091@linuxfoundation.org>
+Subject: [PATCH 5.4 012/191] nvme/pci: Fix write and poll queue types
+Date:   Tue,  7 Jan 2020 21:52:12 +0100
+Message-Id: <20200107205333.665301104@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
 References: <20200107205332.984228665@linuxfoundation.org>
@@ -47,50 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leo (Hanghong) Ma <hanghong.ma@amd.com>
+From: Keith Busch <kbusch@kernel.org>
 
-[ Upstream commit 28fa24ad14e8f7d23c62283eaf9c79b4fd165c16 ]
+[ Upstream commit 3f68baf706ec68c4120867c25bc439c845fe3e17 ]
 
-[why]
-DP spec requires 1000 symbols delay between the end of link training
-and enabling FEC in the stream. Currently we are using 1 miliseconds
-delay which is not accurate.
+The number of poll or write queues should never be negative. Use unsigned
+types so that it's not possible to break have the driver not allocate
+any queues.
 
-[how]
-One lane RBR should have the maximum time for transmitting 1000 LL
-codes which is 6.173 us. So using 7 microseconds delay instead of
-1 miliseconds.
-
-Signed-off-by: Leo (Hanghong) Ma <hanghong.ma@amd.com>
-Reviewed-by: Harry Wentland <Harry.Wentland@amd.com>
-Reviewed-by: Nikola Cornij <Nikola.Cornij@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/nvme/host/pci.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-index 5a583707d198..0ab890c927ec 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-@@ -3492,7 +3492,14 @@ void dp_set_fec_enable(struct dc_link *link, bool enable)
- 	if (link_enc->funcs->fec_set_enable &&
- 			link->dpcd_caps.fec_cap.bits.FEC_CAPABLE) {
- 		if (link->fec_state == dc_link_fec_ready && enable) {
--			msleep(1);
-+			/* Accord to DP spec, FEC enable sequence can first
-+			 * be transmitted anytime after 1000 LL codes have
-+			 * been transmitted on the link after link training
-+			 * completion. Using 1 lane RBR should have the maximum
-+			 * time for transmitting 1000 LL codes which is 6.173 us.
-+			 * So use 7 microseconds delay instead.
-+			 */
-+			udelay(7);
- 			link_enc->funcs->fec_set_enable(link_enc, true);
- 			link->fec_state = dc_link_fec_enabled;
- 		} else if (link->fec_state == dc_link_fec_enabled && !enable) {
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 869f462e6b6e..29d7427c2b19 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -68,14 +68,14 @@ static int io_queue_depth = 1024;
+ module_param_cb(io_queue_depth, &io_queue_depth_ops, &io_queue_depth, 0644);
+ MODULE_PARM_DESC(io_queue_depth, "set io queue depth, should >= 2");
+ 
+-static int write_queues;
+-module_param(write_queues, int, 0644);
++static unsigned int write_queues;
++module_param(write_queues, uint, 0644);
+ MODULE_PARM_DESC(write_queues,
+ 	"Number of queues to use for writes. If not set, reads and writes "
+ 	"will share a queue set.");
+ 
+-static int poll_queues;
+-module_param(poll_queues, int, 0644);
++static unsigned int poll_queues;
++module_param(poll_queues, uint, 0644);
+ MODULE_PARM_DESC(poll_queues, "Number of queues to use for polled IO.");
+ 
+ struct nvme_dev;
 -- 
 2.20.1
 
