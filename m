@@ -2,129 +2,286 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE4EB132C8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 18:07:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D35F132CAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 18:10:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728428AbgAGRHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 12:07:46 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:60494 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728236AbgAGRHp (ORCPT
+        id S1728463AbgAGRKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 12:10:50 -0500
+Received: from mailoutvs62.siol.net ([185.57.226.253]:40806 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728266AbgAGRKt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 12:07:45 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 007Gxs1i108694;
-        Tue, 7 Jan 2020 17:07:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=TonZdKs5flBwONqESEptkzUdNDu8nb8volKmuzA6Cz0=;
- b=Dg5eAnULbmvdHQzXt/MZgtHB0R/zWD0HQ+5s3azeZp8EEZ34ay8U8IXHjZGsgK27rehS
- bb8ffV2JEBwuogOZg4wcANMgdMBKS97CpXpWk7KU7SVlPQgFUWlVHu1DAfnGryIv1LKI
- M5AvVllmupEsFvrHYTNamVFhNzc87ByL1gWOw0iTmEuPoX1/m7tYqFY+EvYYNZUwGLxG
- 1Lo8F+6TNJ6Q1EeRhKR2XXV7l75GPDLV1kYwFuGmzfY9nlZh5W1Im1qMYi7elyFGtzp+
- gnwn6VDCbHk8N4C5wW46kKsyxAWes1ui6aXftOTsyPgLj2wHtLqD0FgPkvrqcDbM/whH 9A== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2xajnpxvme-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 07 Jan 2020 17:07:34 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 007GxqZk067504;
-        Tue, 7 Jan 2020 17:07:34 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2xcpamx72e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 07 Jan 2020 17:07:34 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 007H7XOT027070;
-        Tue, 7 Jan 2020 17:07:33 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 07 Jan 2020 09:07:33 -0800
-Date:   Tue, 7 Jan 2020 09:07:31 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-Message-ID: <20200107170731.GA472641@magnolia>
-References: <20190821175720.25901-2-vgoyal@redhat.com>
- <20190826115152.GA21051@infradead.org>
- <20190827163828.GA6859@redhat.com>
- <20190828065809.GA27426@infradead.org>
- <20190828175843.GB912@redhat.com>
- <20190828225322.GA7777@dread.disaster.area>
- <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
- <20191216181014.GA30106@redhat.com>
- <20200107125159.GA15745@infradead.org>
- <CAPcyv4jZE35sbDo6J4ihioEUFTuekJ3_h0=2Ra4PY+xn2xn1cQ@mail.gmail.com>
+        Tue, 7 Jan 2020 12:10:49 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id BFDFE5230E8;
+        Tue,  7 Jan 2020 18:10:44 +0100 (CET)
+X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id c4f-rLiq8ZIz; Tue,  7 Jan 2020 18:10:44 +0100 (CET)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 1CC93522F8A;
+        Tue,  7 Jan 2020 18:10:44 +0100 (CET)
+Received: from jernej-laptop.localnet (cpe-194-152-20-232.static.triera.net [194.152.20.232])
+        (Authenticated sender: jernej.skrabec@siol.net)
+        by mail.siol.net (Postfix) with ESMTPA id BE7DE522FC5;
+        Tue,  7 Jan 2020 18:10:42 +0100 (CET)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     mchehab@kernel.org, mripard@kernel.org,
+        paul.kocialkowski@bootlin.com, Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     gregkh@linuxfoundation.org, wens@csie.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/4] media: cedrus: hevc: Add support for scaling matrix
+Date:   Tue, 07 Jan 2020 18:10:42 +0100
+Message-ID: <2627039.Y6S9NjorxK@jernej-laptop>
+In-Reply-To: <4ac91ed5-a220-6a04-b1da-de27a306f8f2@xs4all.nl>
+References: <20191213160428.54303-1-jernej.skrabec@siol.net> <20191213160428.54303-3-jernej.skrabec@siol.net> <4ac91ed5-a220-6a04-b1da-de27a306f8f2@xs4all.nl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4jZE35sbDo6J4ihioEUFTuekJ3_h0=2Ra4PY+xn2xn1cQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9492 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001070137
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9492 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001070137
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 06:22:54AM -0800, Dan Williams wrote:
-> On Tue, Jan 7, 2020 at 4:52 AM Christoph Hellwig <hch@infradead.org> wrote:
-> >
-> > On Mon, Dec 16, 2019 at 01:10:14PM -0500, Vivek Goyal wrote:
-> > > > Agree. In retrospect it was my laziness in the dax-device
-> > > > implementation to expect the block-device to be available.
-> > > >
-> > > > It looks like fs_dax_get_by_bdev() is an intercept point where a
-> > > > dax_device could be dynamically created to represent the subset range
-> > > > indicated by the block-device partition. That would open up more
-> > > > cleanup opportunities.
-> > >
-> > > Hi Dan,
-> > >
-> > > After a long time I got time to look at it again. Want to work on this
-> > > cleanup so that I can make progress with virtiofs DAX paches.
-> > >
-> > > I am not sure I understand the requirements fully. I see that right now
-> > > dax_device is created per device and all block partitions refer to it. If
-> > > we want to create one dax_device per partition, then it looks like this
-> > > will be structured more along the lines how block layer handles disk and
-> > > partitions. (One gendisk for disk and block_devices for partitions,
-> > > including partition 0). That probably means state belong to whole device
-> > > will be in common structure say dax_device_common, and per partition state
-> > > will be in dax_device and dax_device can carry a pointer to
-> > > dax_device_common.
-> > >
-> > > I am also not sure what does it mean to partition dax devices. How will
-> > > partitions be exported to user space.
-> >
-> > Dan, last time we talked you agreed that partitioned dax devices are
-> > rather pointless IIRC.  Should we just deprecate partitions on DAX
-> > devices and then remove them after a cycle or two?
+Hi!
+
+Dne torek, 07. januar 2020 ob 16:01:16 CET je Hans Verkuil napisal(a):
+> On 12/13/19 5:04 PM, Jernej Skrabec wrote:
+> > HEVC frames may use scaling list feature. Add support for it.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >  drivers/staging/media/sunxi/cedrus/cedrus.c   |  7 ++
+> >  drivers/staging/media/sunxi/cedrus/cedrus.h   |  1 +
+> >  .../staging/media/sunxi/cedrus/cedrus_dec.c   |  2 +
+> >  .../staging/media/sunxi/cedrus/cedrus_h265.c  | 70 ++++++++++++++++++-
+> >  .../staging/media/sunxi/cedrus/cedrus_regs.h  |  2 +
+> >  5 files changed, 81 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.c
+> > b/drivers/staging/media/sunxi/cedrus/cedrus.c index
+> > c6ddd46eff82..bf68bc6b20c8 100644
+> > --- a/drivers/staging/media/sunxi/cedrus/cedrus.c
+> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus.c
+> > @@ -116,6 +116,13 @@ static const struct cedrus_control cedrus_controls[]
+> > = {> 
+> >  		.codec		= CEDRUS_CODEC_H265,
+> >  		.required	= true,
+> >  	
+> >  	},
+> > 
+> > +	{
+> > +		.cfg = {
+> > +			.id	= 
+V4L2_CID_MPEG_VIDEO_HEVC_SCALING_MATRIX,
+> > +		},
+> > +		.codec		= CEDRUS_CODEC_H265,
+> > +		.required	= true,
 > 
-> That does seem a better plan than trying to force partition support
-> where it is not needed.
+> Should this be true? This means that existing applications are now
+> suddenly required to always pass the scaling matrix for every buffer.
+> 
+> Especially since the commit log says: 'HEVC frames *may* use scaling list
+> feature', indicating that this is an optional feature.
 
-Question: if one /did/ have a partitioned DAX device and used kpartx to
-create dm-linear devices for each partition, will DAX still work through
-that?
+True. Can you fix this when applying if this is the only issue?
 
---D
+Best regards,
+Jernej
+
+> 
+> Regards,
+> 
+> 	Hans
+> 
+> > +	},
+> > 
+> >  	{
+> >  	
+> >  		.cfg = {
+> >  		
+> >  			.id	= 
+V4L2_CID_MPEG_VIDEO_HEVC_DECODE_MODE,
+> > 
+> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.h
+> > b/drivers/staging/media/sunxi/cedrus/cedrus.h index
+> > 96765555ab8a..d945f4f0ff2d 100644
+> > --- a/drivers/staging/media/sunxi/cedrus/cedrus.h
+> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus.h
+> > @@ -73,6 +73,7 @@ struct cedrus_h265_run {
+> > 
+> >  	const struct v4l2_ctrl_hevc_sps			*sps;
+> >  	const struct v4l2_ctrl_hevc_pps			*pps;
+> >  	const struct v4l2_ctrl_hevc_slice_params	*slice_params;
+> > 
+> > +	const struct v4l2_ctrl_hevc_scaling_matrix	
+*scaling_matrix;
+> > 
+> >  };
+> >  
+> >  struct cedrus_run {
+> > 
+> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+> > b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c index
+> > 4a2fc33a1d79..327ed6c264dc 100644
+> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+> > @@ -66,6 +66,8 @@ void cedrus_device_run(void *priv)
+> > 
+> >  			V4L2_CID_MPEG_VIDEO_HEVC_PPS);
+> >  		
+> >  		run.h265.slice_params = cedrus_find_control_data(ctx,
+> >  		
+> >  			V4L2_CID_MPEG_VIDEO_HEVC_SLICE_PARAMS);
+> > 
+> > +		run.h265.scaling_matrix = cedrus_find_control_data(ctx,
+> > +			V4L2_CID_MPEG_VIDEO_HEVC_SCALING_MATRIX);
+> > 
+> >  		break;
+> >  	
+> >  	default:
+> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_h265.c
+> > b/drivers/staging/media/sunxi/cedrus/cedrus_h265.c index
+> > 6945dc74e1d7..888bfd5ca224 100644
+> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_h265.c
+> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_h265.c
+> > @@ -220,6 +220,69 @@ static void cedrus_h265_pred_weight_write(struct
+> > cedrus_dev *dev,> 
+> >  	}
+> >  
+> >  }
+> > 
+> > +static void cedrus_h265_write_scaling_list(struct cedrus_ctx *ctx,
+> > +					   struct cedrus_run 
+*run)
+> > +{
+> > +	const struct v4l2_ctrl_hevc_scaling_matrix *scaling;
+> > +	struct cedrus_dev *dev = ctx->dev;
+> > +	u32 i, j, k, val;
+> > +
+> > +	scaling = run->h265.scaling_matrix;
+> > +
+> > +	cedrus_write(dev, VE_DEC_H265_SCALING_LIST_DC_COEF0,
+> > +		     (scaling->scaling_list_dc_coef_32x32[1] << 24) |
+> > +		     (scaling->scaling_list_dc_coef_32x32[0] << 16) |
+> > +		     (scaling->scaling_list_dc_coef_16x16[1] << 8) |
+> > +		     (scaling->scaling_list_dc_coef_16x16[0] << 0));
+> > +
+> > +	cedrus_write(dev, VE_DEC_H265_SCALING_LIST_DC_COEF1,
+> > +		     (scaling->scaling_list_dc_coef_16x16[5] << 24) |
+> > +		     (scaling->scaling_list_dc_coef_16x16[4] << 16) |
+> > +		     (scaling->scaling_list_dc_coef_16x16[3] << 8) |
+> > +		     (scaling->scaling_list_dc_coef_16x16[2] << 0));
+> > +
+> > +	cedrus_h265_sram_write_offset(dev,
+> > VE_DEC_H265_SRAM_OFFSET_SCALING_LISTS); +
+> > +	for (i = 0; i < 6; i++)
+> > +		for (j = 0; j < 8; j++)
+> > +			for (k = 0; k < 8; k += 4) {
+> > +				val = ((u32)scaling-
+>scaling_list_8x8[i][j + (k + 3) * 8] << 24) |
+> > +				      ((u32)scaling-
+>scaling_list_8x8[i][j + (k + 2) * 8] << 16) |
+> > +				      ((u32)scaling-
+>scaling_list_8x8[i][j + (k + 1) * 8] << 8) |
+> > +				      scaling-
+>scaling_list_8x8[i][j + k * 8];
+> > +				cedrus_write(dev, 
+VE_DEC_H265_SRAM_DATA, val);
+> > +			}
+> > +
+> > +	for (i = 0; i < 2; i++)
+> > +		for (j = 0; j < 8; j++)
+> > +			for (k = 0; k < 8; k += 4) {
+> > +				val = ((u32)scaling-
+>scaling_list_32x32[i][j + (k + 3) * 8] << 24) |
+> > +				      ((u32)scaling-
+>scaling_list_32x32[i][j + (k + 2) * 8] << 16) |
+> > +				      ((u32)scaling-
+>scaling_list_32x32[i][j + (k + 1) * 8] << 8) |
+> > +				      scaling-
+>scaling_list_32x32[i][j + k * 8];
+> > +				cedrus_write(dev, 
+VE_DEC_H265_SRAM_DATA, val);
+> > +			}
+> > +
+> > +	for (i = 0; i < 6; i++)
+> > +		for (j = 0; j < 8; j++)
+> > +			for (k = 0; k < 8; k += 4) {
+> > +				val = ((u32)scaling-
+>scaling_list_16x16[i][j + (k + 3) * 8] << 24) |
+> > +				      ((u32)scaling-
+>scaling_list_16x16[i][j + (k + 2) * 8] << 16) |
+> > +				      ((u32)scaling-
+>scaling_list_16x16[i][j + (k + 1) * 8] << 8) |
+> > +				      scaling-
+>scaling_list_16x16[i][j + k * 8];
+> > +				cedrus_write(dev, 
+VE_DEC_H265_SRAM_DATA, val);
+> > +			}
+> > +
+> > +	for (i = 0; i < 6; i++)
+> > +		for (j = 0; j < 4; j++) {
+> > +			val = ((u32)scaling->scaling_list_4x4[i][j + 
+12] << 24) |
+> > +			      ((u32)scaling->scaling_list_4x4[i][j + 
+8] << 16) |
+> > +			      ((u32)scaling->scaling_list_4x4[i][j + 
+4] << 8) |
+> > +			      scaling->scaling_list_4x4[i][j];
+> > +			cedrus_write(dev, VE_DEC_H265_SRAM_DATA, 
+val);
+> > +		}
+> > +}
+> > +
+> > 
+> >  static void cedrus_h265_setup(struct cedrus_ctx *ctx,
+> >  
+> >  			      struct cedrus_run *run)
+> >  
+> >  {
+> > 
+> > @@ -499,7 +562,12 @@ static void cedrus_h265_setup(struct cedrus_ctx *ctx,
+> > 
+> >  	/* Scaling list. */
+> > 
+> > -	reg = VE_DEC_H265_SCALING_LIST_CTRL0_DEFAULT;
+> > +	if (sps->flags & V4L2_HEVC_SPS_FLAG_SCALING_LIST_ENABLED) {
+> > +		cedrus_h265_write_scaling_list(ctx, run);
+> > +		reg = VE_DEC_H265_SCALING_LIST_CTRL0_FLAG_ENABLED;
+> > +	} else {
+> > +		reg = VE_DEC_H265_SCALING_LIST_CTRL0_DEFAULT;
+> > +	}
+> > 
+> >  	cedrus_write(dev, VE_DEC_H265_SCALING_LIST_CTRL0, reg);
+> >  	
+> >  	/* Neightbor information address. */
+> > 
+> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
+> > b/drivers/staging/media/sunxi/cedrus/cedrus_regs.h index
+> > 7beb03d3bb39..0d9449fe2b28 100644
+> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
+> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
+> > @@ -492,6 +492,8 @@
+> > 
+> >  #define VE_DEC_H265_ENTRY_POINT_OFFSET_ADDR	(VE_ENGINE_DEC_H265 + 
+0x64)
+> >  #define VE_DEC_H265_TILE_START_CTB		(VE_ENGINE_DEC_H265 + 
+0x68)
+> >  #define VE_DEC_H265_TILE_END_CTB		(VE_ENGINE_DEC_H265 + 
+0x6c)
+> > 
+> > +#define VE_DEC_H265_SCALING_LIST_DC_COEF0	(VE_ENGINE_DEC_H265 + 
+0x78)
+> > +#define VE_DEC_H265_SCALING_LIST_DC_COEF1	(VE_ENGINE_DEC_H265 + 
+0x7c)
+> > 
+> >  #define VE_DEC_H265_LOW_ADDR			(VE_ENGINE_DEC_H265 + 
+0x80)
+
+
+
+
