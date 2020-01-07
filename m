@@ -2,131 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00233132E80
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 19:32:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D6E6132E86
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 19:33:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728658AbgAGSbP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 13:31:15 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:32820 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727925AbgAGSbO (ORCPT
+        id S1728569AbgAGSc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 13:32:59 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36054 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727925AbgAGSc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 13:31:14 -0500
-Received: by mail-wm1-f66.google.com with SMTP id d139so14782951wmd.0;
-        Tue, 07 Jan 2020 10:31:12 -0800 (PST)
+        Tue, 7 Jan 2020 13:32:58 -0500
+Received: by mail-lj1-f196.google.com with SMTP id r19so624912ljg.3;
+        Tue, 07 Jan 2020 10:32:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0F4Kd5Ywhqg4TZ9Cg5D+47SboN/4h4Ft84pZMAsNlKo=;
-        b=YafxffaoqkeQGIPgQKSLZv7Ponlme3Bk0WVdm20udVQUIgs0xAsxF0mmMa7fZd4G5K
-         Uhb0TxGXUnj4YS5k5vnpcqgKb9J3R5CIDOG4pS6bxXNa8guBkL7GqiluFnnuOI4epULH
-         VU5cW5Cnk0UL8VtrLN3KQaQQU3um2nv3/K/ZfwbvUnIMGSg7Hb8MMyc4lFU9ekUO/wUE
-         2o3lkceF2HTYw3oBjPZjqDjeXpd9BRPrZhTCf6Sm3oox7oCLbI9Kcx+ROSjdGHQLtNSi
-         EHH8UYd4qf+w1JYsZabXeRDAa4AsDjSF+syE3hs/pR0XOT5LXhWFJ9rHHcDqrLS/cswu
-         GcRA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=5yQ/2RN1Cvw3xM3qW2gJqwdhulzSTGRTZcA4yZwm3ec=;
+        b=szuMX3AMHYI0gSMY6RihsVSowNacVcfSjmGJO7Syk9LEwBnI+H7cvhmHchoj6oPnpf
+         CQgUt6FfdHpM9YDs9NRCCuvW2lMoxK8IfABvzZg2oAiIVrSeo8yp1de76qAwMtpnd3jo
+         KaAhWqFzKl8W65Ih9gTzURdlbNYLjD6YZvZ+odOSnsTzz9MURnl4L9DPAZrV+U8nTs7Z
+         HlH6YSQMlCDQEVt6lbIkSHxSiUHBI4PTZKt0jROYhjeLpny38tsMc1JVRvxWWWhx8oiF
+         oE8UUJnja9w5sFmrmhZ/FtRNuGJMcWzOu8XvHG4zqrRNZCDoFTDshhJ4CZwndmt6lgZz
+         7sNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=0F4Kd5Ywhqg4TZ9Cg5D+47SboN/4h4Ft84pZMAsNlKo=;
-        b=F4OM55/02TCqr1CWQ8h2n03IpiULDmxLJZEZDfuykWFHwUnPPcLNpFBtlO5T4PPiBE
-         snBEis+PF/YYtWiZ/0FWWo5Pn4CDTCiMUOhC5p22WlJB2uhZLa1c7MCV7P8UjIZtMymO
-         Hjx4k0AWTiexwBH08jQRPMfOMf8OsknlgVz3Bkvl+g39GCaGu2ESj96I8y85oHkJoWqQ
-         QDvOiXzVuLfD8iEi0IqV9XlF9FVt/MCOYJDAq22VGvFCNKRnLNqGx46roTtNWHC/iKpZ
-         1mX0FOXXrb9mHSjdLf4eE1hM8Da+tGd4BnVp+eyvIVu4JTZDnfePBcZhw/SUuJb9a9Lq
-         ZFKA==
-X-Gm-Message-State: APjAAAWcx+YIlSLxLwN65/rM+R1fgGXvTf/8HBORjKFmMNU/xZm0t0fr
-        TP8vazfxU0rNI+h1N8IHvRerMBgU
-X-Google-Smtp-Source: APXvYqxGPnpDm3ovMwAlFLSA5Y2lqNnDLtsjmBX4mk+5yIqPHrHdUCu55+wEtDsvnBpPB5ovF5GVXw==
-X-Received: by 2002:a1c:f001:: with SMTP id a1mr382380wmb.76.1578421871534;
-        Tue, 07 Jan 2020 10:31:11 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id r6sm842764wrq.92.2020.01.07.10.31.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 10:31:10 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Rob Herring <robh+dt@kernel.org>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=5yQ/2RN1Cvw3xM3qW2gJqwdhulzSTGRTZcA4yZwm3ec=;
+        b=IfkHpe5d4tivewWodnZ+xSK4bd0I39XfEI/iu2xlGtXiVGR8BeLir77ymdfKzlFjH9
+         kaYzarWvHYnkPxCGHUuCFA7lX/NhrpSwvcw9uu2SPpCYOnpIuwklCwNARuCURgwoImcm
+         ru/sYYHXsmPgsCPDnhl4LM2sOLlIgxdwX6WZNfu5aIvf/V6spkI2xKRrmSjVbcM9cBD3
+         fBhRjHc1uWMuoKF6v1wMU3fpe2JdPvgzO/7kMzSBzeOFCrOeMALwuwB8oynMSdEfMri3
+         8R7CKybDMA/DdJR03t0Bmi6jbbwH2wJauznhAi2/g8F0QUbsgM4mowZx5RhxL6zXHtMe
+         El4w==
+X-Gm-Message-State: APjAAAXK8YE3SV1weHjp2obpxUY8tNDHuSgH0YgwR4RjV4t87AITZP+I
+        TYoddXNKdSbxZ5rLpbyk0/b4iZB58NEtNQb1FVk=
+X-Google-Smtp-Source: APXvYqymzxa0E0fR2E3OuAmc/FP9tlpw0cmDmDeoe9mooWQr78VIdEE1uYFCuSRmYe08wrAPc9giPkKWA8L17KRVvGg=
+X-Received: by 2002:a05:651c:1b0:: with SMTP id c16mr510355ljn.236.1578421976485;
+ Tue, 07 Jan 2020 10:32:56 -0800 (PST)
+MIME-Version: 1.0
+References: <20200106130909.7697-1-matwey@sai.msu.ru> <CAOCHtYgyN+qXXX1YeEcO+nvRFrAL1HAVVMvjfeJ5nvxVjtFKtg@mail.gmail.com>
+ <CAJs94EbUL6o9sM+pwxwpqHVDkFqy7wFRirET-Vq3SNVd3grUsA@mail.gmail.com> <20200106210509.GF5885@atomide.com>
+In-Reply-To: <20200106210509.GF5885@atomide.com>
+From:   Robert Nelson <robertcnelson@gmail.com>
+Date:   Tue, 7 Jan 2020 12:32:30 -0600
+Message-ID: <CAOCHtYhKUyUwunnWDT1CuRTpzS78d7xKq3qB3Phys7RgUZnM3w@mail.gmail.com>
+Subject: Re: [PATCH] arm: dts: am335x-boneblack-common: fix memory size
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     "Matwey V. Kornilov" <matwey@sai.msu.ru>,
+        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Tejun Heo <tj@kernel.org>, Jaedon Shin <jaedon.shin@gmail.com>,
-        linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and
-        Parallel ATA drivers)),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS)
-Subject: [PATCH v3 3/3] ata: ahci_brcm: BCM7216 reset is self de-asserting
-Date:   Tue,  7 Jan 2020 10:30:22 -0800
-Message-Id: <20200107183022.26224-4-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200107183022.26224-1-f.fainelli@gmail.com>
-References: <20200107183022.26224-1-f.fainelli@gmail.com>
+        "open list:OMAP DEVICE TREE SUPPORT" <linux-omap@vger.kernel.org>,
+        "open list:OMAP DEVICE TREE SUPPORT" <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The BCM7216 reset controller line is self-deasserting, unlike other
-platforms, so make use of reset_control_reset() instead of
-reset_control_deassert().
+On Mon, Jan 6, 2020 at 3:05 PM Tony Lindgren <tony@atomide.com> wrote:
+>
+> * Matwey V. Kornilov <matwey@sai.msu.ru> [200106 20:48]:
+> > =D0=BF=D0=BD, 6 =D1=8F=D0=BD=D0=B2. 2020 =D0=B3. =D0=B2 23:44, Robert N=
+elson <robertcnelson@gmail.com>:
+> > >
+> > > On Mon, Jan 6, 2020 at 7:10 AM Matwey V. Kornilov <matwey@sai.msu.ru>=
+ wrote:
+> > > >
+> > > > BeagleBone Black series is equipped with 512MB RAM
+> > > > whereas only 256MB is included from am335x-bone-common.dtsi
+> > >
+> > > FYI: While all versions from the factory are 512MB, some 3rd parties
+> > > offered 1GB reballing upgrades..
+>
+> So what's the conclusion, is it safe to bump the default size to
+> 512MB then?
+>
+> The custom ones could use their own dts file if bootloader is not
+> setting the RAM.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/ata/ahci_brcm.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+Yeah this is safe for factory devices. Classic u-boot will update
+these for modified boards.
 
-diff --git a/drivers/ata/ahci_brcm.c b/drivers/ata/ahci_brcm.c
-index c229fea39a47..62c948e56beb 100644
---- a/drivers/ata/ahci_brcm.c
-+++ b/drivers/ata/ahci_brcm.c
-@@ -352,7 +352,10 @@ static int brcm_ahci_suspend(struct device *dev)
- 	if (ret)
- 		return ret;
- 
--	return reset_control_assert(priv->rcdev);
-+	if (priv->version != BRCM_SATA_BCM7216)
-+		ret = reset_control_assert(priv->rcdev);
-+
-+	return ret;
- }
- 
- static int brcm_ahci_resume(struct device *dev)
-@@ -362,7 +365,10 @@ static int brcm_ahci_resume(struct device *dev)
- 	struct brcm_ahci_priv *priv = hpriv->plat_data;
- 	int ret = 0;
- 
--	ret = reset_control_deassert(priv->rcdev);
-+	if (priv->version == BRCM_SATA_BCM7216)
-+		ret = reset_control_reset(priv->rcdev);
-+	else
-+		ret = reset_control_deassert(priv->rcdev);
- 	if (ret)
- 		return ret;
- 
-@@ -475,7 +481,10 @@ static int brcm_ahci_probe(struct platform_device *pdev)
- 		break;
- 	}
- 
--	ret = reset_control_deassert(priv->rcdev);
-+	if (priv->version == BRCM_SATA_BCM7216)
-+		ret = reset_control_reset(priv->rcdev);
-+	else
-+		ret = reset_control_deassert(priv->rcdev);
- 	if (ret)
- 		return ret;
- 
-@@ -520,7 +529,8 @@ static int brcm_ahci_probe(struct platform_device *pdev)
- out_disable_clks:
- 	ahci_platform_disable_clks(hpriv);
- out_reset:
--	reset_control_assert(priv->rcdev);
-+	if (priv->version != BRCM_SATA_BCM7216)
-+		reset_control_assert(priv->rcdev);
- 	return ret;
- }
- 
--- 
-2.17.1
+Regards,
 
+--=20
+Robert Nelson
+https://rcn-ee.com/
