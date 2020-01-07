@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF5A913330F
+	by mail.lfdr.de (Postfix) with ESMTP id 7C6C913330E
 	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:16:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729622AbgAGVQD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:16:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58202 "EHLO mail.kernel.org"
+        id S1729514AbgAGVP6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:15:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729537AbgAGVH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:07:26 -0500
+        id S1729542AbgAGVH2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:07:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FADD2077B;
-        Tue,  7 Jan 2020 21:07:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0FAC2087F;
+        Tue,  7 Jan 2020 21:07:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431245;
-        bh=X4Kz08PeDi2lyAuZNarTXBb78qVLzfibOtCxFYo5TjE=;
+        s=default; t=1578431248;
+        bh=zUoUxVZ4HMU1GfpgdVvtlZA8DUP4zKyLlTEL+8c6ZzM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aFMrgk/wB/mJsSBAFY31mIWxCpUO0d0JqOT2wBARb4TYXCfxDtDD8FChMZ1EjgKFZ
-         nXCw0jlMohZLeVY6jxo31Zba5mx/jVR58oy8reAHXw0jRBLVB1EjoKXWjMoTIzpbXa
-         BY93LWoRLh78unsX8I/uNh/89UjXc5qAkOl6rqF0=
+        b=nUd10dWNtIpwXUqfx28c1wdkdRN0vBmo5Jo0JDVaLi81OkCaIx1X6vc4XdwtqMwPn
+         cOPAH5gW+mCPeXNfJIV/5rFc2W4c8LHg2PJl2CG00Fh8tMeF3Eh7SwYepHMZUrpWIu
+         HQsQYd48JKMuzD5xJPYjuQz722pUQCRBqrJVYv04=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH 4.19 094/115] tty: serial: msm_serial: Fix lockup for sysrq and oops
-Date:   Tue,  7 Jan 2020 21:55:04 +0100
-Message-Id: <20200107205307.042257446@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.19 095/115] fix compat handling of FICLONERANGE, FIDEDUPERANGE and FS_IOC_FIEMAP
+Date:   Tue,  7 Jan 2020 21:55:05 +0100
+Message-Id: <20200107205307.097213619@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
 References: <20200107205240.283674026@linuxfoundation.org>
@@ -43,68 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leo Yan <leo.yan@linaro.org>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 0e4f7f920a5c6bfe5e851e989f27b35a0cc7fb7e upstream.
+commit 6b2daec19094a90435abe67d16fb43b1a5527254 upstream.
 
-As the commit 677fe555cbfb ("serial: imx: Fix recursive locking bug")
-has mentioned the uart driver might cause recursive locking between
-normal printing and the kernel debugging facilities (e.g. sysrq and
-oops).  In the commit it gave out suggestion for fixing recursive
-locking issue: "The solution is to avoid locking in the sysrq case
-and trylock in the oops_in_progress case."
+Unlike FICLONE, all of those take a pointer argument; they do need
+compat_ptr() applied to arg.
 
-This patch follows the suggestion (also used the exactly same code with
-other serial drivers, e.g. amba-pl011.c) to fix the recursive locking
-issue, this can avoid stuck caused by deadlock and print out log for
-sysrq and oops.
-
-Fixes: 04896a77a97b ("msm_serial: serial driver for MSM7K onboard serial peripheral.")
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Reviewed-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Link: https://lore.kernel.org/r/20191127141544.4277-2-leo.yan@linaro.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: d79bdd52d8be ("vfs: wire up compat ioctl for CLONE/CLONE_RANGE")
+Fixes: 54dbc1517237 ("vfs: hoist the btrfs deduplication ioctl to the vfs")
+Fixes: ceac204e1da9 ("fs: make fiemap work from compat_ioctl")
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/msm_serial.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ fs/compat_ioctl.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/serial/msm_serial.c
-+++ b/drivers/tty/serial/msm_serial.c
-@@ -1580,6 +1580,7 @@ static void __msm_console_write(struct u
- 	int num_newlines = 0;
- 	bool replaced = false;
- 	void __iomem *tf;
-+	int locked = 1;
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -1401,10 +1401,11 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned i
+ #endif
  
- 	if (is_uartdm)
- 		tf = port->membase + UARTDM_TF;
-@@ -1592,7 +1593,13 @@ static void __msm_console_write(struct u
- 			num_newlines++;
- 	count += num_newlines;
+ 	case FICLONE:
++		goto do_ioctl;
+ 	case FICLONERANGE:
+ 	case FIDEDUPERANGE:
+ 	case FS_IOC_FIEMAP:
+-		goto do_ioctl;
++		goto found_handler;
  
--	spin_lock(&port->lock);
-+	if (port->sysrq)
-+		locked = 0;
-+	else if (oops_in_progress)
-+		locked = spin_trylock(&port->lock);
-+	else
-+		spin_lock(&port->lock);
-+
- 	if (is_uartdm)
- 		msm_reset_dm_count(port, count);
- 
-@@ -1628,7 +1635,9 @@ static void __msm_console_write(struct u
- 		iowrite32_rep(tf, buf, 1);
- 		i += num_chars;
- 	}
--	spin_unlock(&port->lock);
-+
-+	if (locked)
-+		spin_unlock(&port->lock);
- }
- 
- static void msm_console_write(struct console *co, const char *s,
+ 	case FIBMAP:
+ 	case FIGETBSZ:
 
 
