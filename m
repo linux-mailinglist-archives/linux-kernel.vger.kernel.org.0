@@ -2,86 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 157A8132EB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 19:53:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ECC5132E70
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 19:30:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728656AbgAGSxY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 13:53:24 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44597 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728358AbgAGSxY (ORCPT
+        id S1728598AbgAGSaX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 13:30:23 -0500
+Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:36280 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727925AbgAGSaW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 13:53:24 -0500
-Received: by mail-wr1-f68.google.com with SMTP id q10so588596wrm.11
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 10:53:23 -0800 (PST)
+        Tue, 7 Jan 2020 13:30:22 -0500
+Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 15E72C0530;
+        Tue,  7 Jan 2020 18:30:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1578421821; bh=EaCDkZSESud0qEJDsETyfvMbxrGc3XZFp790ZPpVlK4=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=QEBjFMFL0pwipO4D5CfGH8li2E8E52Czn+L5FgHZx/7tlJYiV/p21o5VZRiXusNwS
+         6v1SxvPXPyOws/vTBauzMO0CFhj3dyscvDMGzKaMJc3coUGEpsl6wkl3yBlTN0a5R7
+         +6JFLOBKLA21HH9e+XmR8A/S2b+gLfKHr5D2fbfXoCYo/YNL8/a43BuiQqdURDDAFK
+         IRmJGZ9AMKFe7XWL/w56pdEr+1nEqq46QF60YImkwEEcgoxNZwYr98LAi/ZI0cailx
+         ZAghCc5EwE6MIZ6MtJgkl/usTbiM/QFbEI/f8QhwxEvCf8FgTAQkJ/hbyEGQ7or/7Y
+         X0ELg5muDUxKg==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id A42BBA0079;
+        Tue,  7 Jan 2020 18:30:20 +0000 (UTC)
+Received: from us01hybrid1.internal.synopsys.com (10.200.27.51) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 7 Jan 2020 10:30:19 -0800
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (10.202.3.67) by
+ mrs.synopsys.com (10.200.27.51) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Tue, 7 Jan 2020 10:30:18 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZEkSusa9Nr9dNefNMHi/j5vhu86IGYEBubsFD5ZDuIaYfUCPUvO0O2IzTWfMLSYlxCFBUPRAwapebPJchU5Ef0zKk4xReGLuexDatGOD9bxrKNcREHCowcoHnbG8l0A89eQvZrN32Syo37c9XxG+zjYtjMgqhxD0eAnC7qrKLpBkKJJ3WOG4Pd0+clEqfF/bb9vnbr+cYTBf2eTmH5hucAhKdOM56sAyk4JQ4+Hm1yjJsstaHke5Ws746mUQu1EJtmuAQgN4vqR7FAevP1YnLHlRmTtvsmTXe1s0KYW9XYkR12HCeMkm3dqWNeU8j5SqZ5tHcDYTXMrG/oY7CACQsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EaCDkZSESud0qEJDsETyfvMbxrGc3XZFp790ZPpVlK4=;
+ b=PeTYZuRzZfq27pIxPqOYxbcQTxNO2oJeo93YPTIBBdM17TygYnsIFCzWZj2gZU1+KJ8xta0sI7qwO7A4pH9oF9k45VhxnoEe2ETDbBFqkI1OJVZDVbN4XI3ZH8siDVOp9QLStS3Aun7lbUqPTHFtmP8TwB0vwBAGZPw5v+aKBBnWKLtDXgLJPPtbwtuxGZ7S83aut5uHmPZ3oagGwkTOhZ5hFCARDt7pJRQVJH6bWWovx6SL/SrPxL6uZWWBzmqKqJ7uVNqBJXG0yxXqGIsi2AfjFObbrQLXEsVLa/QmoZzAb5GHJYrBq+5vijte6bD1Dk4jJZg4uSjBqTau+CUSVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
+ dkim=pass header.d=synopsys.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AvZJ720Ntxy1DpN4pN2aoXoPdDhQLkYtp2DhP6432eg=;
-        b=mGEAhmyMJYGS9+pP7bsiOUUuI6die/6Q1s0PvPAEO4jfmAfmjoN4c+SQ3JofHfoWRt
-         Mj+u5dItf1FA78RRRFhExIxMkm6qBWnPLf5d++6MmsSPO8EorQE4Ev6jE//L+TmwXaEA
-         paNPLiiXlC1eD+dgg8+ZOKn/wfB2uC6Mdxat47lx9HoWQhgMtPdGIGTEA56nUB4C22bZ
-         WHXXRNoZ9a7LSo23UP/pgd0tCuHBJS8GZs5DNUQq5GyyrnjOGDIVYOQlQy5OI7Om+srJ
-         Y0N9LKLsY8vD0gkATgHgfL+UTFjmn1GIiP+EfxQH/UjZyrkpHqGuZQpZ1NJLG9fZaaac
-         6KgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AvZJ720Ntxy1DpN4pN2aoXoPdDhQLkYtp2DhP6432eg=;
-        b=AuHQ7BX75/a2l+maBNg49HwWGXrtjkyjy1KMTV1vdgeuE2udojxmEXl8//+4wjDP0n
-         vrN4kAz69BHIZYP00ddXvM60Xm2cS6S00LQHjocWB2b9uD7GuCow5RixOEi+XpkEfd20
-         b70fjoKTIv2GuzE4XVi+XI00qpJBOnuxDWp1tJD0p9vWApTAZ/No0g8gCcogL3bE2L+D
-         I5yFw5APn3HdJuT1GKBeTe3JB5c5T/RJBGxX9v/tzvvEW3azsPo5p+0wjQDOPncPT6y5
-         QWS9CmtrofZP5h9KT9lHAWXhCxfxJGIEJMLCIkq9107e4ZvOWuvbAZuPTDMe30MsGipS
-         bZpQ==
-X-Gm-Message-State: APjAAAXlL/I9N+AU7ziGpIUmS3TvJ2bSsgOKBA9lSNITGj8WRN+uF5M/
-        A7k9WZviDevkCh6wdGTaBDEKvkPl2VC9+Q==
-X-Google-Smtp-Source: APXvYqxFMSeCXRVjzVK6jaCYJ3GI7y8f1VONnxmyvQ8OoCjcpXw1xZWfW+baMarGWBn2HXWh+RB/1w==
-X-Received: by 2002:a5d:4a91:: with SMTP id o17mr566255wrq.232.1578423202808;
-        Tue, 07 Jan 2020 10:53:22 -0800 (PST)
-Received: from localhost.localdomain ([37.152.140.242])
-        by smtp.gmail.com with ESMTPSA id v17sm862423wrt.91.2020.01.07.10.53.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 10:53:22 -0800 (PST)
-From:   carlosteniswarrior@gmail.com
-To:     akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org,
-        Carlos Guerrero Alvarez <carlosteniswarrior@gmail.com>
-Subject: [PATCH] Init: fixed an error caused by using __initdata instead of __initconst
-Date:   Mon,  6 Jan 2020 02:02:17 +0000
-Message-Id: <20200106020217.13234-1-carlosteniswarrior@gmail.com>
-X-Mailer: git-send-email 2.24.0
+ d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EaCDkZSESud0qEJDsETyfvMbxrGc3XZFp790ZPpVlK4=;
+ b=ZWooqjMjBdNl867vYyO+sZUjue/kBvdEmekdDgSbrW/wgRK8XrtxjGMBrO9b/jsWMA5c9R7MSh9KgkSYYwe/JXJM5p8kw05EsdArPHqDmBFrsdkQjZCwEZzfEWry7VwwreUJn3DI4DBPtIHop4c+RQNhDPt2iLcjW3bmXkzbOuA=
+Received: from BYAPR12MB3592.namprd12.prod.outlook.com (20.178.54.89) by
+ BYAPR12MB2837.namprd12.prod.outlook.com (20.177.124.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2602.15; Tue, 7 Jan 2020 18:30:17 +0000
+Received: from BYAPR12MB3592.namprd12.prod.outlook.com
+ ([fe80::39a1:22ee:7030:8333]) by BYAPR12MB3592.namprd12.prod.outlook.com
+ ([fe80::39a1:22ee:7030:8333%6]) with mapi id 15.20.2623.008; Tue, 7 Jan 2020
+ 18:30:17 +0000
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey Brodkin" <Alexey.Brodkin@synopsys.com>
+Subject: Re: [PATCH 5/5] ARC: allow userspace DSP applications to use AGU
+ extensions
+Thread-Topic: [PATCH 5/5] ARC: allow userspace DSP applications to use AGU
+ extensions
+Thread-Index: AQHVvOAPMhosDdGIBkSgrV+gH9oBDKffl0SA
+Date:   Tue, 7 Jan 2020 18:30:17 +0000
+Message-ID: <f19992fb-9226-f3db-fda7-2eed0ab75188@synopsys.com>
+References: <20191227180347.3579-1-Eugeniy.Paltsev@synopsys.com>
+ <20191227180347.3579-6-Eugeniy.Paltsev@synopsys.com>
+In-Reply-To: <20191227180347.3579-6-Eugeniy.Paltsev@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=vgupta@synopsys.com; 
+x-originating-ip: [149.117.75.11]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 516fe661-92be-49dc-95c7-08d7939fa541
+x-ms-traffictypediagnostic: BYAPR12MB2837:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR12MB2837FB1EF254371317EADAEAB63F0@BYAPR12MB2837.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:632;
+x-forefront-prvs: 027578BB13
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(136003)(376002)(366004)(346002)(189003)(199004)(4326008)(54906003)(110136005)(86362001)(31696002)(8676002)(2906002)(8936002)(4744005)(107886003)(6486002)(81156014)(81166006)(36756003)(6512007)(2616005)(316002)(31686004)(5660300002)(186003)(53546011)(6506007)(26005)(64756008)(66556008)(66476007)(66446008)(66946007)(478600001)(76116006)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR12MB2837;H:BYAPR12MB3592.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: j1vplfpDQLMkbszbRDAHnZGgJir9zaYOayTt14edpQr4qht5ZhE1ZuuAB0XMWdr9/feLuZ+iMlucaptBJ7Pmrppflb+9rCmLkcUOmnosL9Nx9WjENBNwk29/dStLq/08vizYD6FRno+IbhePh8uFLiAoOwQeGv8goyNyW0MHysTxrNrn71V3QvtBfoT9f2fTfXTAflj9bBDglZxxIFn1Q4my6zHvysNNtTkxqat2IUQ/zcPnhObKGyzv4fI8ymAkSwIT06/BvbZc3XuvrGb8czaxVY15LqjIusCFSASjy7BOx3uN5bnw6lBgrbLoYqp7b/H/9wTB8D34lVc29lKROvX0M7gTkW+wY2ZAHKDfp+WMgJcom8p2OTiO2kCI+NLucERWmFhV+B8AIaYGOd74DRfcv8yCFC8IR5ptLjO3fHVG02AFZMN47+MbZ+XxmDg8
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <CCC052BC939F7B45A8A4456E2A180E68@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 516fe661-92be-49dc-95c7-08d7939fa541
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jan 2020 18:30:17.6147
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: W/v/2USdO6GWuG3+Bh7UwHNztMg4FF4gvsgE4huE5FgU0H7m46PsDVR0bziMffHbpqHFQ6YEncLSLm1v9rnMLA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2837
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Carlos Guerrero Alvarez <carlosteniswarrior@gmail.com>
-
-Fixed an error.
-
-Signed-off-by: Carlos Guerrero Alvarez <carlosteniswarrior@gmail.com>
----
- init/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/init/main.c b/init/main.c
-index 2cd736059416..bcf8aa4f7cab 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -979,7 +979,7 @@ static initcall_entry_t *initcall_levels[] __initdata = {
- };
- 
- /* Keep these in sync with initcalls in include/linux/init.h */
--static const char *initcall_level_names[] __initdata = {
-+static const char *initcall_level_names[] __initconst = {
- 	"pure",
- 	"core",
- 	"postcore",
--- 
-2.24.0
-
+T24gMTIvMjcvMTkgMTA6MDMgQU0sIEV1Z2VuaXkgUGFsdHNldiB3cm90ZToNCj4gVG8gYmUgYWJs
+ZSB0byBydW4gRFNQLWVuYWJsZWQgdXNlcnNwYWNlIGFwcGxpY2F0aW9ucyB3aXRoIEFHVQ0KPiAo
+YWRkcmVzcyBnZW5lcmF0aW9uIHVuaXQpIGV4dGVuc2lvbnMgd2UgYWRkaXRpb25hbGx5IG5lZWQg
+dG8NCj4gc2F2ZSBhbmQgcmVzdG9yZSBmb2xsb3dpbmcgcmVnaXN0ZXJzIGF0IGNvbnRleHQgc3dp
+dGNoOg0KPiAgKiBBR1VfQVAqDQo+ICAqIEFHVV9PUyoNCj4gICogQUdVX01PRCoNCj4NCj4gU2ln
+bmVkLW9mZi1ieTogRXVnZW5peSBQYWx0c2V2IDxFdWdlbml5LlBhbHRzZXZAc3lub3BzeXMuY29t
+Pg0KDQpTaW1pbGFyIGNvbW1lbnRzIGFwcGx5IHRvIHRoaXMgYXMgNC81LiBMb29rcyBnb29kIG90
+aGVyd2lzZSAhDQoNCi1WaW5lZXQNCg==
