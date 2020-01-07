@@ -2,96 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81C351334F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:38:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DFBA1334FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:38:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbgAGVh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:37:56 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:53343 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbgAGVhy (ORCPT
+        id S1727442AbgAGViA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:38:00 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:28479 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727299AbgAGVhz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:37:54 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MD9jV-1ixz5J32PZ-0095eX; Tue, 07 Jan 2020 22:37:40 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm: of: fix link error
-Date:   Tue,  7 Jan 2020 22:37:32 +0100
-Message-Id: <20200107213738.635906-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:kt5LvuirQVNweIAs+LOmABN57OTOIGByhcM0pxamuzNx7t9jGfj
- IuJeQ5d8yRjBH3cmRWomTgyvq83b74sEl/ZG5OFHfBjtYHi6ECVAhiW/szJyQgZs0PXsF8Y
- 2bBfwV3qIXFpboG4tc9S3L6eSqjFRJ0ufeIjTIs7o4j+915emX7k5ceTf8G/BPTazTZGcD1
- Mu7Yqn5XSaLqcSEspvY2g==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ALbzvMY33/E=:vdrGZwPS2OYudX0MwcB3x+
- zdBm+YD9UN+FCkIxDRmYKwhp5EK24CbV3sk3ZI5+EDfjUTsNQnaBNddyVw3cQaBRDXq8szUXO
- 1N9N7us30Xxa2Wbm2fYVhsmypwQRCMAJaphoFTNwTpZ/MnY4471u4y7kCflO5YMUJmpdeEghk
- T25qB1JSsSSAkhCqm9jY3YtETHm17lvzi7m8t0iIjtsUHsukKSlPB1n+6/ik3JoSmMJMO0QiR
- 5nUvrMVN8YJvAVATHrSCv3Q/kYuEnvlehwonB2JT84n4SPXgRm2OUMQPnCiuRA7z8SRCmhe0T
- Feje9vXwQaBaER4Sh36n8Ti6ghIYCxe/StS2AgYHJXuJMPHsWnQY1w5xYEJ9G5Lc2oEdW83b7
- ZahQ6EsuZMwK9sAEy5aBAU01mQLq/7q+XQrO5daNgbikk69cpwpc3KLOFCGO3zPyTPvSqpJJy
- UEHL03okL7S7MqEvcEcKIQqz2IpivCL8kptQv5L38EZYiNj2uwdyE2rpaKdImPMFO3LrRLT3H
- wO0RIpYUtlawNu5lH8SX3hcTKkLMJf6gcrqVn0LawRQ4SdoSVIkmHmMnZecOxgy+3s1TenpZ8
- 4vV9y/X6P8SyGiV+bLUr9dFkLBFGlyl5dNcbGyG4PwzmeAF/57GanXsuo0MwvWYOa/mgVm+vk
- 8p/n5QDBrptghnd2BBkGloBbXaXJqinfDXx37lmOm7jZlnih7m/H1hRwy9n2eMBVa9V9zwOD1
- lkSL5Weu9/Izhp+HD6w43EE1K8hakM1V9xegBGsyzgsHAExJwpjzFEvt+qN9IIDh0qHkN6KcR
- 6PxU2pvCgTaHUmFkiIn869EudWHe97f+2GmLFab3TFYDQTee9LBPPQdIrUMrwdoFkzwr/CzwI
- zsiDxNDGvGu+J69yFhzw==
+        Tue, 7 Jan 2020 16:37:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578433074;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xSFxCL3k8Q6kQpuVjvodBV8GghU6vTCrTI5PKdnHV9s=;
+        b=Wt5a7oKNSeQ7q2NZXLSWyWmlmQcm9qS9iiBWIufgGNPPUklqnugcdqpILQOpurTLGB5I7h
+        /WYDZhj1ZrVFhCCCbfD2Z2E4lkTEUzNeL4lMTNmsvRb59oHAk9iZknos9SI5AyETIoPVBz
+        3EdNYNosLvVRdC9uPzUWzyHGy0AF3Kw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-326-fmmXZbPlOemJuWh2TJdqVw-1; Tue, 07 Jan 2020 16:37:49 -0500
+X-MC-Unique: fmmXZbPlOemJuWh2TJdqVw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E3463107ACC7;
+        Tue,  7 Jan 2020 21:37:47 +0000 (UTC)
+Received: from emilne (unknown [10.18.25.205])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 455638208E;
+        Tue,  7 Jan 2020 21:37:44 +0000 (UTC)
+Message-ID: <1eb9d796f81fffbb0bfe90bff8460bcda34cb04d.camel@redhat.com>
+Subject: Re: [resend v1 5/5] drivers/scsi/sd.c: Convert to use
+ disk_set_capacity
+From:   "Ewan D. Milne" <emilne@redhat.com>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <jejb@linux.ibm.com>
+Cc:     axboe@kernel.dk, Chaitanya.Kulkarni@wdc.com, mst@redhat.com,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, ssomesh@amazon.com,
+        Balbir Singh <sblbir@amazon.com>, hch@lst.de
+Date:   Tue, 07 Jan 2020 16:37:43 -0500
+In-Reply-To: <yq1y2uj283m.fsf@oracle.com>
+References: <20200102075315.22652-1-sblbir@amazon.com>
+         <20200102075315.22652-6-sblbir@amazon.com> <yq1blrg2agh.fsf@oracle.com>
+         <1578369479.3251.31.camel@linux.ibm.com> <yq1y2uj283m.fsf@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new dummy helper is non-static, so every driver gets
-its own copy, leading to a link failure:
+On Mon, 2020-01-06 at 23:39 -0500, Martin K. Petersen wrote:
+> James,
+> 
+> > > We already emit an SDEV_EVT_CAPACITY_CHANGE_REPORTED event if device
+> > > capacity changes. However, this event does not automatically cause
+> > > revalidation.
+> > 
+> > Which I seem to remember was a deliberate choice: some change
+> > capacities occur because the path goes passive and default values get
+> > installed.
+> 
+> Yep, it's very tricky territory.
+> 
 
-drivers/gpu/drm/imx/imx-ldb.o: In function `drm_of_lvds_get_dual_link_pixel_order':
-imx-ldb.c:(.text+0x140): multiple definition of `drm_of_lvds_get_dual_link_pixel_order'
-drivers/gpu/drm/imx/imx-drm-core.o:imx-drm-core.c:(.text+0x330): first defined here
-drivers/gpu/drm/imx/dw_hdmi-imx.o: In function `drm_of_lvds_get_dual_link_pixel_order':
-dw_hdmi-imx.c:(.text+0xd0): multiple definition of `drm_of_lvds_get_dual_link_pixel_order'
-drivers/gpu/drm/imx/imx-drm-core.o:imx-drm-core.c:(.text+0x330): first defined here
-drivers/gpu/drm/bridge/synopsys/dw-hdmi.o: In function `drm_of_lvds_get_dual_link_pixel_order':
-dw-hdmi.c:(.text+0x3b90): multiple definition of `drm_of_lvds_get_dual_link_pixel_order'
-drivers/gpu/drm/imx/imx-drm-core.o:imx-drm-core.c:(.text+0x330): first defined here
-drivers/gpu/drm/etnaviv/etnaviv_drv.o: In function `drm_of_lvds_get_dual_link_pixel_order':
-etnaviv_drv.c:(.text+0x9d0): multiple definition of `drm_of_lvds_get_dual_link_pixel_order'
-drivers/gpu/drm/imx/imx-drm-core.o:imx-drm-core.c:(.text+0x330): first defined here
+Yes, there are some storage arrays that refuse a READ CAPACITY
+command in certain ALUA states so you can't get the new capacity anyway.
 
-Add the missing 'static' keyword.
+It might be nice to improve this, though, there are some cases now where
+we set the capacity to zero when we revalidate and can't get the value.
 
-Fixes: 6529007522de ("drm: of: Add drm_of_lvds_get_dual_link_pixel_order")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- include/drm/drm_of.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+-Ewan
 
-diff --git a/include/drm/drm_of.h b/include/drm/drm_of.h
-index 8ec7ca6d2369..3398be966021 100644
---- a/include/drm/drm_of.h
-+++ b/include/drm/drm_of.h
-@@ -92,7 +92,7 @@ static inline int drm_of_find_panel_or_bridge(const struct device_node *np,
- 	return -EINVAL;
- }
- 
--int drm_of_lvds_get_dual_link_pixel_order(const struct device_node *port1,
-+static inline int drm_of_lvds_get_dual_link_pixel_order(const struct device_node *port1,
- 					  const struct device_node *port2)
- {
- 	return -EINVAL;
--- 
-2.20.0
+
 
