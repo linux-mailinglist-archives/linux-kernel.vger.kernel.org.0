@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04CF1133114
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:57:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BC7F133116
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:57:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbgAGU52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 15:57:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54378 "EHLO mail.kernel.org"
+        id S1727609AbgAGU5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 15:57:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727562AbgAGU5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:57:23 -0500
+        id S1727592AbgAGU52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 15:57:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49E432081E;
-        Tue,  7 Jan 2020 20:57:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2211E2081E;
+        Tue,  7 Jan 2020 20:57:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430642;
-        bh=l6nEf4vQfBED9d1RXxUJd2BaekDpRFJovsar23ILT6Y=;
+        s=default; t=1578430647;
+        bh=uqHxD+2OSmIuTXyB391CppfgqjnldoliToKaoB41u3s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Uww4aU8TMgDOptgcUen4hMeLe+e0Vq/fGbHRtJpQD9W1+doHmjEPPWlyeBucyQX+3
-         +TieFEmHNViEXkQOzhWCqTLiTkBs9F7E8kT1fwI+V5L88zHn4eYGFj5bHTszICr0TZ
-         OY/5wNK+gix6DwROG75Mwk4R0fj7//Y9+FLyV0OU=
+        b=wph45ApUDKe5JkL2e6Zoo4luShdWeFtCf+/mw5Xu1kZCuPNah0aoKF74ZeQcMXb+B
+         vfOtwScG6ywmwadsYQMn5P8RLkCI/OwerBHgu5ltYD/6E4qHLqr0qn2Cxw0dHi1Q3Y
+         nILsxvFL609XH85ifE4IKWj4T/oOy9NBQLWXxDGQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Lyude Paul <lyude@redhat.com>, Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 036/191] drm/nouveau: Move the declaration of struct nouveau_conn_atom up a bit
-Date:   Tue,  7 Jan 2020 21:52:36 +0100
-Message-Id: <20200107205334.929300882@linuxfoundation.org>
+Subject: [PATCH 5.4 038/191] drm/nouveau/kms/nv50-: fix panel scaling
+Date:   Tue,  7 Jan 2020 21:52:38 +0100
+Message-Id: <20200107205335.035106704@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
 References: <20200107205332.984228665@linuxfoundation.org>
@@ -44,160 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Ben Skeggs <bskeggs@redhat.com>
 
-[ Upstream commit 37a68eab4cd92b507c9e8afd760fdc18e4fecac6 ]
+[ Upstream commit 3d1890ef8023e61934e070021b06cc9f417260c0 ]
 
-Place the declaration of struct nouveau_conn_atom above that of
-struct nouveau_connector. This commit makes no changes to the moved
-block what so ever, it just moves it up a bit.
+Under certain circumstances, encoder atomic_check() can be entered
+without adjusted_mode having been reset to the same as mode, which
+confuses the scaling logic and can lead to a misprogrammed display.
 
-This is a preparation patch to fix some issues with connector handling
-on pre nv50 displays (which do not use atomic modesetting).
+Fix this by checking against the user-provided mode directly.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Lyude Paul <lyude@redhat.com>
+Link: https://bugs.freedesktop.org/show_bug.cgi?id=108615
+Link: https://gitlab.freedesktop.org/xorg/driver/xf86-video-nouveau/issues/464
 Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_connector.h | 110 ++++++++++----------
- 1 file changed, 55 insertions(+), 55 deletions(-)
+ drivers/gpu/drm/nouveau/dispnv50/disp.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.h b/drivers/gpu/drm/nouveau/nouveau_connector.h
-index f43a8d63aef8..de9588420884 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.h
-@@ -29,6 +29,7 @@
- 
- #include <nvif/notify.h>
- 
-+#include <drm/drm_crtc.h>
- #include <drm/drm_edid.h>
- #include <drm/drm_encoder.h>
- #include <drm/drm_dp_helper.h>
-@@ -44,6 +45,60 @@ struct dcb_output;
- struct nouveau_backlight;
- #endif
- 
-+#define nouveau_conn_atom(p)                                                   \
-+	container_of((p), struct nouveau_conn_atom, state)
-+
-+struct nouveau_conn_atom {
-+	struct drm_connector_state state;
-+
-+	struct {
-+		/* The enum values specifically defined here match nv50/gf119
-+		 * hw values, and the code relies on this.
-+		 */
-+		enum {
-+			DITHERING_MODE_OFF = 0x00,
-+			DITHERING_MODE_ON = 0x01,
-+			DITHERING_MODE_DYNAMIC2X2 = 0x10 | DITHERING_MODE_ON,
-+			DITHERING_MODE_STATIC2X2 = 0x18 | DITHERING_MODE_ON,
-+			DITHERING_MODE_TEMPORAL = 0x20 | DITHERING_MODE_ON,
-+			DITHERING_MODE_AUTO
-+		} mode;
-+		enum {
-+			DITHERING_DEPTH_6BPC = 0x00,
-+			DITHERING_DEPTH_8BPC = 0x02,
-+			DITHERING_DEPTH_AUTO
-+		} depth;
-+	} dither;
-+
-+	struct {
-+		int mode;	/* DRM_MODE_SCALE_* */
-+		struct {
-+			enum {
-+				UNDERSCAN_OFF,
-+				UNDERSCAN_ON,
-+				UNDERSCAN_AUTO,
-+			} mode;
-+			u32 hborder;
-+			u32 vborder;
-+		} underscan;
-+		bool full;
-+	} scaler;
-+
-+	struct {
-+		int color_vibrance;
-+		int vibrant_hue;
-+	} procamp;
-+
-+	union {
-+		struct {
-+			bool dither:1;
-+			bool scaler:1;
-+			bool procamp:1;
-+		};
-+		u8 mask;
-+	} set;
-+};
-+
- struct nouveau_connector {
- 	struct drm_connector base;
- 	enum dcb_connector_type type;
-@@ -121,61 +176,6 @@ extern int nouveau_ignorelid;
- extern int nouveau_duallink;
- extern int nouveau_hdmimhz;
- 
--#include <drm/drm_crtc.h>
--#define nouveau_conn_atom(p)                                                   \
--	container_of((p), struct nouveau_conn_atom, state)
--
--struct nouveau_conn_atom {
--	struct drm_connector_state state;
--
--	struct {
--		/* The enum values specifically defined here match nv50/gf119
--		 * hw values, and the code relies on this.
--		 */
--		enum {
--			DITHERING_MODE_OFF = 0x00,
--			DITHERING_MODE_ON = 0x01,
--			DITHERING_MODE_DYNAMIC2X2 = 0x10 | DITHERING_MODE_ON,
--			DITHERING_MODE_STATIC2X2 = 0x18 | DITHERING_MODE_ON,
--			DITHERING_MODE_TEMPORAL = 0x20 | DITHERING_MODE_ON,
--			DITHERING_MODE_AUTO
--		} mode;
--		enum {
--			DITHERING_DEPTH_6BPC = 0x00,
--			DITHERING_DEPTH_8BPC = 0x02,
--			DITHERING_DEPTH_AUTO
--		} depth;
--	} dither;
--
--	struct {
--		int mode;	/* DRM_MODE_SCALE_* */
--		struct {
--			enum {
--				UNDERSCAN_OFF,
--				UNDERSCAN_ON,
--				UNDERSCAN_AUTO,
--			} mode;
--			u32 hborder;
--			u32 vborder;
--		} underscan;
--		bool full;
--	} scaler;
--
--	struct {
--		int color_vibrance;
--		int vibrant_hue;
--	} procamp;
--
--	union {
--		struct {
--			bool dither:1;
--			bool scaler:1;
--			bool procamp:1;
--		};
--		u8 mask;
--	} set;
--};
--
- void nouveau_conn_attach_properties(struct drm_connector *);
- void nouveau_conn_reset(struct drm_connector *);
- struct drm_connector_state *
+diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+index b5b1a34f896f..d735ea7e2d88 100644
+--- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+@@ -326,9 +326,9 @@ nv50_outp_atomic_check_view(struct drm_encoder *encoder,
+ 			 * same size as the native one (e.g. different
+ 			 * refresh rate)
+ 			 */
+-			if (adjusted_mode->hdisplay == native_mode->hdisplay &&
+-			    adjusted_mode->vdisplay == native_mode->vdisplay &&
+-			    adjusted_mode->type & DRM_MODE_TYPE_DRIVER)
++			if (mode->hdisplay == native_mode->hdisplay &&
++			    mode->vdisplay == native_mode->vdisplay &&
++			    mode->type & DRM_MODE_TYPE_DRIVER)
+ 				break;
+ 			mode = native_mode;
+ 			asyc->scaler.full = true;
 -- 
 2.20.1
 
