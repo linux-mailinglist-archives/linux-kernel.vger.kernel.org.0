@@ -2,90 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBA3B132372
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:21:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D48E7132379
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:22:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbgAGKVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 05:21:53 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:29106 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726565AbgAGKVx (ORCPT
+        id S1727849AbgAGKW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 05:22:29 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:3185 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726565AbgAGKW3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 05:21:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578392512;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wp1B0oryBnzMjpq12qEWIWdEYq7gqXTvQXjEcGcPRhM=;
-        b=fi3vK+3Q9t1nHysSns5323qTVNygfJmv8E/nEg39oLma18hzd2d9AvAbN3FDXOsXXnx3u6
-        wIdTGEF8vpgABD9MMc+KtnZk+VR4lbXrleDoLOBXwvQufe/QEJH+7B/xO+1pF2glHo+f4V
-        1H/GF6P6yMKzyXymloUokKVMHDf90ZA=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-135-JEdw7h0IPtqi2Kv3EAfLvg-1; Tue, 07 Jan 2020 05:21:51 -0500
-X-MC-Unique: JEdw7h0IPtqi2Kv3EAfLvg-1
-Received: by mail-wr1-f72.google.com with SMTP id d8so21944643wrq.12
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 02:21:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wp1B0oryBnzMjpq12qEWIWdEYq7gqXTvQXjEcGcPRhM=;
-        b=SiUYfFrp28KeL1z456qIoD5kpnsU8/cb4AAzb6W9WLoLYfzjn/78A4q5/EHWQZKsJO
-         hveSH5/g6IFkeqW/OqpcOB/Qf9BjpoMm+nr9KA+GcYzM3IpAOqQU+5e1rzfSQWtGoEFf
-         ynxhOGGPMRWcVLJCbfn+4F6UBTI16GduhqGBveZ3gFoqxLcYBsVJA/grh6UWhzv+ZESm
-         rBpxSE2ETN75CToYwmkU5bkuB3IDuSTNCwQxNbApuaZKEZ/Td6k+z4NbXBtJNROy/eY7
-         Gc2ngyPnR+rPuRSGyVI11evWTSxzsuiuf9CK+UKK8Ht+0l8cbR/S9L4EQ63S7LXjniW9
-         +/Ug==
-X-Gm-Message-State: APjAAAX9r0kyCSWG/frHF1rflSx0L0tW4tXAkhEUqBVjUPazi2Pi/GiG
-        Qw2dHvCONauNJ3wq7yRtX3vJew5fFz1tFKLVc3YKRAKMunUKE5e6r2JL52zl4th2cA9kU1CrfEH
-        IZow0F/FZSSiSoWhikZKWxotm
-X-Received: by 2002:a1c:4454:: with SMTP id r81mr38567194wma.117.1578392510125;
-        Tue, 07 Jan 2020 02:21:50 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzx7uwkQ39Sba+ZHZ4NO0/8s8bU3zLgUXwYFecjdGGaOLjxxil5G4HRAuahmoDCFBepsAAtOA==
-X-Received: by 2002:a1c:4454:: with SMTP id r81mr38567170wma.117.1578392509933;
-        Tue, 07 Jan 2020 02:21:49 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:c6d:4079:b74c:e329? ([2001:b07:6468:f312:c6d:4079:b74c:e329])
-        by smtp.gmail.com with ESMTPSA id d16sm81431405wrg.27.2020.01.07.02.21.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jan 2020 02:21:49 -0800 (PST)
-Subject: Re: [PATCH 2/2] drm/i915/gvt: subsitute kvm_read/write_guest with
- vfio_iova_rw
-To:     Yan Zhao <yan.y.zhao@intel.com>, zhenyuw@linux.intel.com
-Cc:     alex.williamson@redhat.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, intel-gvt@eclists.intel.com,
-        kevin.tian@intel.com
-References: <20200103010055.4140-1-yan.y.zhao@intel.com>
- <20200103010349.4262-1-yan.y.zhao@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <5838d595-ba77-5506-4f2a-d555681a9cc5@redhat.com>
-Date:   Tue, 7 Jan 2020 11:21:48 +0100
+        Tue, 7 Jan 2020 05:22:29 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e145bd30000>; Tue, 07 Jan 2020 02:22:11 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 07 Jan 2020 02:22:28 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 07 Jan 2020 02:22:28 -0800
+Received: from [10.26.11.139] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 Jan
+ 2020 10:22:25 +0000
+Subject: Re: [PATCH] of: Rework and simplify phandle cache to use a fixed size
+To:     Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <20191211232345.24810-1-robh@kernel.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <5386e959-f9c4-2748-ed08-34ab361aee2c@nvidia.com>
+Date:   Tue, 7 Jan 2020 10:22:23 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20200103010349.4262-1-yan.y.zhao@intel.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20191211232345.24810-1-robh@kernel.org>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1578392531; bh=pZOwoicuGzDQd1U0YBhLFXjqBk3xDuq3KIS9DJuzeqg=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Fu1t6kd5QjIX/WAqo0zfZpkiKHVDQsWBSLW12yIzT+3dZgyqI7cYdWggegRclRGdK
+         bYQBG4sm8FyNerWG6eQxY/LSjBvxOt7rrl1l6ImSBM+dOWaIgvi5KNCjwARzFZAU3D
+         e4+8fCWkfTYP9xidERQWD6tcefnOf/XpaRoT0UAjTi1OcsZfv+98cOftVo5TWRik08
+         bp2JgaPord3mO02jH/rs6pM0yYkbWmlxc4G/xFDCoL6UTQJIhG/v0IN4gH9mYG8cWU
+         gFWXzzCvFkxiYlidP1IVYUB3uCoDr6oZzAP4pamADOxehnm5o4105sqLlA5a/PAXtp
+         52IwzbO3Yn1ww==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/01/20 02:03, Yan Zhao wrote:
-> +	ret = write ? vfio_iova_rw(dev, gpa, buf, len, true) :
-> +			vfio_iova_rw(dev, gpa, buf, len, false);
->  
->  	return ret;
+Hi Rob,
 
-"Write" can be just the final argument to vfio_iova_rw, that is
+On 11/12/2019 23:23, Rob Herring wrote:
+> The phandle cache was added to speed up of_find_node_by_phandle() by
+> avoiding walking the whole DT to find a matching phandle. The
+> implementation has several shortcomings:
+> 
+>   - The cache is designed to work on a linear set of phandle values.
+>     This is true for dtc generated DTs, but not for other cases such as
+>     Power.
+>   - The cache isn't enabled until of_core_init() and a typical system
+>     may see hundreds of calls to of_find_node_by_phandle() before that
+>     point.
+>   - The cache is freed and re-allocated when the number of phandles
+>     changes.
+>   - It takes a raw spinlock around a memory allocation which breaks on
+>     RT.
+> 
+> Change the implementation to a fixed size and use hash_32() as the
+> cache index. This greatly simplifies the implementation. It avoids
+> the need for any re-alloc of the cache and taking a reference on nodes
+> in the cache. We only have a single source of removing cache entries
+> which is of_detach_node().
+> 
+> Using hash_32() removes any assumption on phandle values improving
+> the hit rate for non-linear phandle values. The effect on linear values
+> using hash_32() is about a 10% collision. The chances of thrashing on
+> colliding values seems to be low.
+> 
+> To compare performance, I used a RK3399 board which is a pretty typical
+> system. I found that just measuring boot time as done previously is
+> noisy and may be impacted by other things. Also bringing up secondary
+> cores causes some issues with measuring, so I booted with 'nr_cpus=1'.
+> With no caching, calls to of_find_node_by_phandle() take about 20124 us
+> for 1248 calls. There's an additional 288 calls before time keeping is
+> up. Using the average time per hit/miss with the cache, we can calculate
+> these calls to take 690 us (277 hit / 11 miss) with a 128 entry cache
+> and 13319 us with no cache or an uninitialized cache.
+> 
+> Comparing the 3 implementations the time spent in
+> of_find_node_by_phandle() is:
+> 
+> no cache:        20124 us (+ 13319 us)
+> 128 entry cache:  5134 us (+ 690 us)
+> current cache:     819 us (+ 13319 us)
+> 
+> We could move the allocation of the cache earlier to improve the
+> current cache, but that just further complicates the situation as it
+> needs to be after slab is up, so we can't do it when unflattening (which
+> uses memblock).
+> 
+> Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Segher Boessenkool <segher@kernel.crashing.org>
+> Cc: Frank Rowand <frowand.list@gmail.com>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-   return vfio_iova_rw(dev, gpa, buf, len, write):
+With next-20200106 I have noticed a regression on Tegra210 where it
+appears that only one of the eMMC devices is being registered. Bisect is
+pointing to this patch and reverting on top of next fixes the problem.
+That is as far as I have got so far, so if you have any ideas, please
+let me know. Unfortunately, there do not appear to be any obvious errors
+from the bootlog.
 
-Thanks,
+Thanks
+Jon
 
-Paolo
-
+-- 
+nvpublic
