@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 372681333EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:23:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 492521331F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:06:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbgAGVBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:01:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40002 "EHLO mail.kernel.org"
+        id S1729319AbgAGVF5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:05:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728264AbgAGVBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:01:49 -0500
+        id S1729309AbgAGVFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:05:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5445E20678;
-        Tue,  7 Jan 2020 21:01:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E41BE2077B;
+        Tue,  7 Jan 2020 21:05:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430908;
-        bh=DqfXjYHAgHZqv84WzodfCpB6d+/ao7YuK6XlquCQias=;
+        s=default; t=1578431155;
+        bh=Puf4cjTzQ89dCmtslBrHrCifQTnzFDr6sMafzpFF7P8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Txs4YoKgnb2FziPW0cl88Ubzea1Cs3XqpaZ1GWtZatUCmn8Isk3KzD6o1MSiEUn0G
-         yVVPrnZMIQ9x68em3znVhT/di12OL5jaqEsDH9wBL+iwnWen9gaySMKEVssIF/IAtN
-         pRhFhMPy+g8l5Am4V1zO+b0jxhiUSHfkh1E7lzl8=
+        b=nZd3lR51T6wc3Sbvs6xRia3qH3fbsWD2UHIYNuMVK+wXK7M7aSY2aLvd+LITHox/q
+         f3HODi7WwmHT1U5f02md7t4iBEMIU6mBgF9tMaadGCVhOsalUdu/898NYyIMflfY1t
+         Hdrraba9skC72a2EAv3EVgRn7NGrbMYCHXn2cQeQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Paulo Alcantara (SUSE)" <pc@cjr.nz>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 5.4 146/191] cifs: Fix potential softlockups while refreshing DFS cache
-Date:   Tue,  7 Jan 2020 21:54:26 +0100
-Message-Id: <20200107205340.787098324@linuxfoundation.org>
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Lukas Wunner <lukas@wunner.de>, Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.19 057/115] dmaengine: Fix access to uninitialized dma_slave_caps
+Date:   Tue,  7 Jan 2020 21:54:27 +0100
+Message-Id: <20200107205302.962415588@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
-References: <20200107205332.984228665@linuxfoundation.org>
+In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
+References: <20200107205240.283674026@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,102 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paulo Alcantara (SUSE) <pc@cjr.nz>
+From: Lukas Wunner <lukas@wunner.de>
 
-commit 84a1f5b1cc6fd7f6cd99fc5630c36f631b19fa60 upstream.
+commit 53a256a9b925b47c7e67fc1f16ca41561a7b877c upstream.
 
-We used to skip reconnects on all SMB2_IOCTL commands due to SMB3+
-FSCTL_VALIDATE_NEGOTIATE_INFO - which made sense since we're still
-establishing a SMB session.
+dmaengine_desc_set_reuse() allocates a struct dma_slave_caps on the
+stack, populates it using dma_get_slave_caps() and then accesses one
+of its members.
 
-However, when refresh_cache_worker() calls smb2_get_dfs_refer() and
-we're under reconnect, SMB2_ioctl() will not be able to get a proper
-status error (e.g. -EHOSTDOWN in case we failed to reconnect) but an
--EAGAIN from cifs_send_recv() thus looping forever in
-refresh_cache_worker().
+However dma_get_slave_caps() may fail and this isn't accounted for,
+leading to a legitimate warning of gcc-4.9 (but not newer versions):
 
-Fixes: e99c63e4d86d ("SMB3: Fix deadlock in validate negotiate hits reconnect")
-Signed-off-by: Paulo Alcantara (SUSE) <pc@cjr.nz>
-Suggested-by: Aurelien Aptel <aaptel@suse.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+   In file included from drivers/spi/spi-bcm2835.c:19:0:
+   drivers/spi/spi-bcm2835.c: In function 'dmaengine_desc_set_reuse':
+>> include/linux/dmaengine.h:1370:10: warning: 'caps.descriptor_reuse' is used uninitialized in this function [-Wuninitialized]
+     if (caps.descriptor_reuse) {
+
+Fix it, thereby also silencing the gcc-4.9 warning.
+
+The issue has been present for 4 years but surfaces only now that
+the first caller of dmaengine_desc_set_reuse() has been added in
+spi-bcm2835.c. Another user of reusable DMA descriptors has existed
+for a while in pxa_camera.c, but it sets the DMA_CTRL_REUSE flag
+directly instead of calling dmaengine_desc_set_reuse(). Nevertheless,
+tag this commit for stable in case there are out-of-tree users.
+
+Fixes: 272420214d26 ("dmaengine: Add DMA_CTRL_REUSE")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Cc: stable@vger.kernel.org # v4.3+
+Link: https://lore.kernel.org/r/ca92998ccc054b4f2bfd60ef3adbab2913171eac.1575546234.git.lukas@wunner.de
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2pdu.c |   41 +++++++++++++++++++++++++++++------------
- 1 file changed, 29 insertions(+), 12 deletions(-)
+ include/linux/dmaengine.h |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -252,7 +252,7 @@ smb2_reconnect(__le16 smb2_command, stru
- 	if (tcon == NULL)
- 		return 0;
- 
--	if (smb2_command == SMB2_TREE_CONNECT || smb2_command == SMB2_IOCTL)
-+	if (smb2_command == SMB2_TREE_CONNECT)
- 		return 0;
- 
- 	if (tcon->tidStatus == CifsExiting) {
-@@ -426,16 +426,9 @@ fill_small_buf(__le16 smb2_command, stru
-  * SMB information in the SMB header. If the return code is zero, this
-  * function must have filled in request_buf pointer.
-  */
--static int
--smb2_plain_req_init(__le16 smb2_command, struct cifs_tcon *tcon,
--		    void **request_buf, unsigned int *total_len)
-+static int __smb2_plain_req_init(__le16 smb2_command, struct cifs_tcon *tcon,
-+				  void **request_buf, unsigned int *total_len)
+--- a/include/linux/dmaengine.h
++++ b/include/linux/dmaengine.h
+@@ -1373,8 +1373,11 @@ static inline int dma_get_slave_caps(str
+ static inline int dmaengine_desc_set_reuse(struct dma_async_tx_descriptor *tx)
  {
--	int rc;
--
--	rc = smb2_reconnect(smb2_command, tcon);
--	if (rc)
--		return rc;
--
- 	/* BB eventually switch this to SMB2 specific small buf size */
- 	if (smb2_command == SMB2_SET_INFO)
- 		*request_buf = cifs_buf_get();
-@@ -456,7 +449,31 @@ smb2_plain_req_init(__le16 smb2_command,
- 		cifs_stats_inc(&tcon->num_smbs_sent);
- 	}
+ 	struct dma_slave_caps caps;
++	int ret;
  
--	return rc;
-+	return 0;
-+}
-+
-+static int smb2_plain_req_init(__le16 smb2_command, struct cifs_tcon *tcon,
-+			       void **request_buf, unsigned int *total_len)
-+{
-+	int rc;
-+
-+	rc = smb2_reconnect(smb2_command, tcon);
-+	if (rc)
-+		return rc;
-+
-+	return __smb2_plain_req_init(smb2_command, tcon, request_buf,
-+				     total_len);
-+}
-+
-+static int smb2_ioctl_req_init(u32 opcode, struct cifs_tcon *tcon,
-+			       void **request_buf, unsigned int *total_len)
-+{
-+	/* Skip reconnect only for FSCTL_VALIDATE_NEGOTIATE_INFO IOCTLs */
-+	if (opcode == FSCTL_VALIDATE_NEGOTIATE_INFO) {
-+		return __smb2_plain_req_init(SMB2_IOCTL, tcon, request_buf,
-+					     total_len);
-+	}
-+	return smb2_plain_req_init(SMB2_IOCTL, tcon, request_buf, total_len);
- }
+-	dma_get_slave_caps(tx->chan, &caps);
++	ret = dma_get_slave_caps(tx->chan, &caps);
++	if (ret)
++		return ret;
  
- /* For explanation of negotiate contexts see MS-SMB2 section 2.2.3.1 */
-@@ -2661,7 +2678,7 @@ SMB2_ioctl_init(struct cifs_tcon *tcon,
- 	int rc;
- 	char *in_data_buf;
- 
--	rc = smb2_plain_req_init(SMB2_IOCTL, tcon, (void **) &req, &total_len);
-+	rc = smb2_ioctl_req_init(opcode, tcon, (void **) &req, &total_len);
- 	if (rc)
- 		return rc;
- 
+ 	if (caps.descriptor_reuse) {
+ 		tx->flags |= DMA_CTRL_REUSE;
 
 
