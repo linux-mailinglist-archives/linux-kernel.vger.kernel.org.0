@@ -2,99 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DD0313343C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:24:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DCB413346D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:25:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728555AbgAGVYm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:24:42 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38002 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728573AbgAGVYi (ORCPT
+        id S1728953AbgAGVZg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:25:36 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:45677 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727719AbgAGVZe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:24:38 -0500
-Received: by mail-pf1-f195.google.com with SMTP id x185so493902pfc.5;
-        Tue, 07 Jan 2020 13:24:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ChcPdsdS9VGVsNLtdTOuWHWVcSN3lEieq0DFAH4Ts9s=;
-        b=CuCRGwThXc1osGY0Xfb21CElwWLVJREYbekDCFiDFhYRRZAeW/1dwjv3O0/mSzDU8F
-         R6ufgzbKArsZ8G35c+RLdwfQ6qoEZafxDEblhRLL2DS4eICBO8UJ8Ib1pnmaRO34flAv
-         vvzydiwo/KJKdRXHrSJCAgbS1fSGtydd6H6exBTnt+iqJWChu5wPOiufpIxxjYawrjfI
-         9vS+E2CtbJVUWFRMeCnJfFAEuh+LygBNhSAqd3cZyEAfQ8+zOXM6xesvPmv9qai9/D8p
-         Rwh7rR5cpPl+vGEGVCXDhJwzPJJEz70gPgANcFqmrlkhTdRgtD472SlKJydR2Gm1kbM+
-         PJVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ChcPdsdS9VGVsNLtdTOuWHWVcSN3lEieq0DFAH4Ts9s=;
-        b=j1FgVBdJ64SY6rFkoEWjH26NF/URz5E5Pg7hrUcAjIsKiGH9/knPo8Mm4Ku0v/LTny
-         38V2/OCH2c9S0CFGmwlDe9r7D5aPbjjGypAe0QgPqMGSxvcnBTB23eAOqJ0OM5wu0bRF
-         FQZWumjkaAfeV7js1RzzsqOc6tbi1xeSxmySxK+90gaClHpGSWQzodcywpEdLA8hi2N8
-         GZNk+Y6di91S7iLXjYQs8sv0rl3/WyNUSrZQo/ovukKx9v9UXWlsOxNfBIMp5iGt82jz
-         zpTSV29nhrQMu9r7eZVDgOarY2BPJN2y7p2kR1G/8uSJrsinb+WvxL5f5y1b4ywKAj3U
-         0xgg==
-X-Gm-Message-State: APjAAAWZY/0HVpO2iyd2vjiOLp1teyE+H7L1lure9AEgJbZmcNg4gae8
-        I9S+DNHf6WrHJdaaPIg3UBg=
-X-Google-Smtp-Source: APXvYqzRJMipEtd8UAW7X43YQuqABNkCkcIiKryfhUo8tJN+E6zzAZoKei3yP4vBI9cRsr7rm9QPhQ==
-X-Received: by 2002:aa7:96b6:: with SMTP id g22mr1364465pfk.206.1578432277766;
-        Tue, 07 Jan 2020 13:24:37 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 189sm515006pfw.73.2020.01.07.13.24.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Jan 2020 13:24:37 -0800 (PST)
-Date:   Tue, 7 Jan 2020 13:24:36 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.4 000/191] 5.4.9-stable review
-Message-ID: <20200107212436.GA18475@roeck-us.net>
-References: <20200107205332.984228665@linuxfoundation.org>
+        Tue, 7 Jan 2020 16:25:34 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MYedH-1jBdkj2AHz-00Vh2O; Tue, 07 Jan 2020 22:25:10 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     Oleksandr Natalenko <oleksandr@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, Wenwen Wang <wenwen@cs.uga.edu>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mtd: sm_ftl: fix NULL pointer warning
+Date:   Tue,  7 Jan 2020 22:24:52 +0100
+Message-Id: <20200107212509.4004137-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:ncIFui4ErDAl4vN/oGEZXMNgEj4j+k+9hJ4pY48nu5RbLc25IKy
+ wvT+1dVpVSXAjxr8JMNEH6BWU5nmzh0RpjqzFua0sIzGAqz6fYLPTHVL9cy70ikbrSVcjVS
+ 5ifk2tLrlvqrjRbvrxX+6Li7G68QFpqz3mBI7ar3+fzpkJgnJB3GeyN8ryWzz59jxNB3CQA
+ JD2S+j3ILJZXPHyrGrhqg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:K+zk6N/AoxE=:gW0Osoe5f1+X5N4GWTz8yH
+ w09mbUEW7a5i6/6NjJMJXCa3EaTI4K+XKu60VSsNh3oCxpvYc5dJItw4A8U2/7wlRMJolwvq8
+ Sx3lwS/7mYRyca1pMXr+uTcxrv95i4po1Gl4qEsdSVy5GLG+zE+JsZEtIwhYcIGzvOE6iAk7F
+ CFEQlXNoSsBmTl5TNyVZxi5ezNux8js1DQ5kCXW1QZPTjjrXUg+yZr5bTA9RkP2/UwhH4oWuC
+ lNeoYSyqvSi9t2h8Ry/YIJlccaM1SoRjOWZmAFOBpJTvF956eLJx+giGcTt5pltxzKmzuUtJ5
+ LWvm0k4eC6+5bQ08yQLBisDHsavX8aeI3z/N0ZHehgDxIlfvba3YnA2pQY4K+70UBxJbRO5BG
+ GNHkur5QivKFDnuXo18fT8SpSAG3DbUblO3fp1/XLBP6nlvJLHW0gaN+ThkdFJG1KBTNkLky8
+ M4P1QWVLqAIcKFN6qzUXnr+R57zNY35+ljt/n9WSpFqR1Q1FkFo9XK7thUoEvpOzkOouYQP5s
+ VDitBCjgwQ3ipLT8/CpG6WpWrps/mn0TJPP8wW/wr0uvD6/ODlh4Zhj1/ZEbYn/1FN8R9RT/Q
+ WPIhTMJ5wGle5WysYqUEm86bxoAY5ZpnQ36ObV930La/Y5Q92keUnr+9i7dlYCWAjNgctD0mx
+ 5a5lB5+BhjHFAE5JfoBUuj14CvXWphSOEX2lej0HRD9Wd8h4aw26i+IkdxRhuERYNm5UamKRh
+ nLFMu2zHexaw77cpJAm1xuo15mZxG502vpIbapME1JyHcku4fnkIHIIbPvQffE5eMv9X/p3EZ
+ oSNfpG3/DNr74QuMpnFvFXO2c7hbxRWbiBzhGI1agyoi3bfEUBD+IhnNY3AltaaXpdfA7/Cia
+ DTWUY+bxhNAo7K10gfww==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 09:52:00PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.9 release.
-> There are 191 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 09 Jan 2020 20:44:51 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.9-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
-> Pseudo-Shortlog of commits:
-> 
-[ ... ]
+With gcc -O3, we get a new warning:
 
-> Ming Lei <ming.lei@redhat.com>
->     block: fix splitting segments on boundary masks
-> 
+In file included from arch/arm64/include/asm/processor.h:28,
+                 from drivers/mtd/sm_ftl.c:8:
+In function 'memset',
+    inlined from 'sm_read_sector.constprop' at drivers/mtd/sm_ftl.c:250:3:
+include/linux/string.h:411:9: error: argument 1 null where non-null expected [-Werror=nonnull]
+  return __builtin_memset(p, c, size);
 
-This patch causes a regression. See:
+From all I can tell, this cannot happen (the function is called
+either with a NULL buffer or with a -1 block number but not both),
+but adding a check makes it more robust and avoids the warning.
 
-https://lore.kernel.org/linux-block/20200107181145.GA22076@roeck-us.net/T/#m4607a04fde9ef2ed80d45efacef01c0b0e8d2bfd
+Fixes: mmtom ("init/Kconfig: enable -O3 for all arches")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/mtd/sm_ftl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Guenter
+diff --git a/drivers/mtd/sm_ftl.c b/drivers/mtd/sm_ftl.c
+index 4744bf94ad9a..b9f272408c4d 100644
+--- a/drivers/mtd/sm_ftl.c
++++ b/drivers/mtd/sm_ftl.c
+@@ -247,7 +247,8 @@ static int sm_read_sector(struct sm_ftl *ftl,
+ 
+ 	/* FTL can contain -1 entries that are by default filled with bits */
+ 	if (block == -1) {
+-		memset(buffer, 0xFF, SM_SECTOR_SIZE);
++		if (buffer)
++			memset(buffer, 0xFF, SM_SECTOR_SIZE);
+ 		return 0;
+ 	}
+ 
+-- 
+2.20.0
+
