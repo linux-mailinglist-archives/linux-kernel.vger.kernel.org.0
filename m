@@ -2,92 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB208133560
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 23:00:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF806133565
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 23:02:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbgAGWAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 17:00:33 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:47420 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726986AbgAGWAd (ORCPT
+        id S1727335AbgAGWCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 17:02:10 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:45299 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726142AbgAGWCJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 17:00:33 -0500
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5D8E152F;
-        Tue,  7 Jan 2020 23:00:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1578434431;
-        bh=4rS/DzJoC9Up5wTZWqf2LP3WkrbP09g2YoVYgICXsqQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ep9L46KuB1PfRgMEZWiYAkvy5r9Mwi64ugX+k46uy60Kqy9KJRCUABNrPiRReTLQf
-         ZPRBe2LFiSmYXD2J745DCv8glAt8sI1irYVERQQRJ8rTJJ0hLcSDm9y8ElvyBnr5zi
-         OLXStA3GVB8Qydp+aOzS0tuIj/PIAZ+BKOwtiWsc=
-Date:   Wed, 8 Jan 2020 00:00:19 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Oleksandr Natalenko <oleksandr@redhat.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: panel: fix excessive stack usage in
- td028ttec1_prepare
-Message-ID: <20200107220019.GC7869@pendragon.ideasonboard.com>
-References: <20200107212747.4182515-1-arnd@arndb.de>
+        Tue, 7 Jan 2020 17:02:09 -0500
+Received: from mail-qk1-f174.google.com ([209.85.222.174]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1Mnq0I-1jV62E0WDK-00pJRv; Tue, 07 Jan 2020 23:02:08 +0100
+Received: by mail-qk1-f174.google.com with SMTP id c17so870958qkg.7;
+        Tue, 07 Jan 2020 14:02:07 -0800 (PST)
+X-Gm-Message-State: APjAAAVmyp6DYZFpIooyRX9xZdKLs52EKWz3pfwPDoteYdmaGUU3lebv
+        ScR+3OB84OyVfxU4b2CdI5fATdk7QjwnFVXLwS8=
+X-Google-Smtp-Source: APXvYqxUa5xLov61G7xm+YWKKvTkhYFC6JphHNq61xoPNx93avyQNM5C0YyDy1+zQvWClcWhfIrpGJ17Carlg/CFYCg=
+X-Received: by 2002:a05:620a:a5b:: with SMTP id j27mr1513012qka.286.1578434526938;
+ Tue, 07 Jan 2020 14:02:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200107212747.4182515-1-arnd@arndb.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200107200659.3538375-1-arnd@arndb.de> <20200107124417.5239a6cf@cakuba.netronome.com>
+In-Reply-To: <20200107124417.5239a6cf@cakuba.netronome.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 7 Jan 2020 23:01:50 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a27tFJpMeEuJDQWCHvGyETjM+XbPKenQwroxjc8Qpw=TQ@mail.gmail.com>
+Message-ID: <CAK8P3a27tFJpMeEuJDQWCHvGyETjM+XbPKenQwroxjc8Qpw=TQ@mail.gmail.com>
+Subject: Re: [PATCH] netronome: fix ipv6 link error
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Simon Horman <simon.horman@netronome.com>,
+        John Hurley <john.hurley@netronome.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        oss-drivers@netronome.com, Networking <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:rzlzUU8mzkmleUvVMkVLWK0UMnNe01XsywHdmS48EjSFO8XTmXF
+ f2u8Nv4DBDqci4s9VP9LxPmPZmMnFqwb1V2ebGOrvJv3L8jO/XXs7vf5AhdbLJn3vFJOui2
+ hE9XALeDuvTGn2v3N7Kc5O64dUuTLsjnkhaKxfM6z9sIzeqMH5hh69MgBaTla+nqiQ/bPCD
+ DV5hPs64dkcMoBO8kZIZQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:mIzPHufBjyk=:kN0xZSMR54Jg0jHTlHowia
+ NqrF6MUpCluK4yjnsWfPLfy/+WLOFzAsbGA52X4aCDWzOaOQWxcB0JGi2OrbyXhVGroRR/79E
+ /Mnzw3dcox/WElhgPWwOsl6Xfl78lYQ+SbLdb5YOCZ0W+4eZZMf29QT/zXl9EhpQQLsrljLX3
+ DsP/9wk6wnewDYjoarYzJzOQ8DXKorYrUotcBAlWXmnqDhGWwSfR+QV3aAh/ag6PqEkt3GEG5
+ AT1DcujCVZt+UeC2FKgdQnbv4hmlzumoIxhpc/AhROKf8M7nMV3cDwQfvy8vTyTA+9D7i6izt
+ 6dvEsQfdclPtZaB1ausqkmyw94iUSoj7rXQI6rbdTGsbkZSgTeLlDVCWjvKCbtIFRkPMSRaSD
+ IUAM++sLQa1sMK7U1QPaYizxc9rwj7rC+8edhl7Rl/Ony7v/5h2dAyxWQEeJF4lpnGL2o3Ku5
+ UPsrJdKLldcQFlxyvRkJgzKIeRMn3MIEA7OKB4qAP05JsrbIkoURNi/Py2K345/fe1ux/rJXk
+ 7PHCRHXaXDKJ9JljEAWxibhGBUULWfxpTq/UAe7qUQb/lAzv5N9KSEZIgAgXS+hHtEy6pNIKo
+ AZg3RdLMhMOn2ryocjAc2+I57O0gx/qCunbGGygCfjvtgdqBLDJ9vDJNYU/p836IZDjkWQLas
+ qUAEUiVhheraSebD3BfcTIHnbw27/dDmHYmSfZPxNb4qmjJelnl5aRMILbuqgmxePpa3JY0X1
+ dgo/p/Z+AydsAOGJN+4HA1jayZ3LsWE0y1bLpi8AVjY2snCdeO7LxNlTy49J16N6qsRxUDOGA
+ 71gFXIQrJ6u58UA0uMuTVPfM6+LjDsWs5h6/HPKZro61Zu/h/qgJtabwbwbdgeUzk2RAKjOO1
+ OLVZka63q2Ffcb24jbWQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+On Tue, Jan 7, 2020 at 9:44 PM Jakub Kicinski
+<jakub.kicinski@netronome.com> wrote:
+>
+> On Tue,  7 Jan 2020 21:06:40 +0100, Arnd Bergmann wrote:
+> > When the driver is built-in but ipv6 is a module, the flower
+> > support produces a link error:
+> >
+> > drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.o: In function `nfp_tunnel_keep_alive_v6':
+> > tunnel_conf.c:(.text+0x2aa8): undefined reference to `nd_tbl'
+>
+> Damn, I guess the v2 of that patch set did not solve _all_ v6 linking
+> issues :/ Thanks for the patch.
+>
+> > Add a Kconfig dependency to avoid that configuration.
+> >
+> > Fixes: 9ea9bfa12240 ("nfp: flower: support ipv6 tunnel keep-alive messages from fw")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > ---
+> >  drivers/net/ethernet/netronome/Kconfig | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/net/ethernet/netronome/Kconfig b/drivers/net/ethernet/netronome/Kconfig
+> > index bac5be4d4f43..dcb02ce28460 100644
+> > --- a/drivers/net/ethernet/netronome/Kconfig
+> > +++ b/drivers/net/ethernet/netronome/Kconfig
+> > @@ -31,6 +31,7 @@ config NFP_APP_FLOWER
+> >       bool "NFP4000/NFP6000 TC Flower offload support"
+> >       depends on NFP
+> >       depends on NET_SWITCHDEV
+> > +     depends on IPV6 != m || NFP =m
+>
+> Could we perhaps do the more standard:
+>
+>         depends on IPV6 || IPV6=n
 
-Thank you for the patch.
+That would have to be on CONFIG_NFP instead of CONFIG_NFP_APP_FLOWER
+then, making the entire driver a module if IPV6=m but always allowing
+CONFIG_NFP_APP_FLOWER.
 
-On Tue, Jan 07, 2020 at 10:27:33PM +0100, Arnd Bergmann wrote:
-> With gcc -O3, the compiler can inline very aggressively,
-> leading to rather large stack usage:
-> 
-> drivers/gpu/drm/panel/panel-tpo-td028ttec1.c: In function 'td028ttec1_prepare':
-> drivers/gpu/drm/panel/panel-tpo-td028ttec1.c:233:1: error: the frame size of 2768 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
->  }
-> 
-> Marking jbt_reg_write_1() as noinline avoids the case where
-> multiple instances of this function get inlined into the same
-> stack frame and each one adds a copy of 'tx_buf'.
-> 
-> Fixes: mmtom ("init/Kconfig: enable -O3 for all arches")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> The whitespace around = and != seems a little random as is..
 
-Isn't this something that should be fixed at the compiler level ?
+Yep, my mistake. I can send a fixed version, please let me know which
+version you want, or fix it up yourself if you find that easier.
 
-> ---
->  drivers/gpu/drm/panel/panel-tpo-td028ttec1.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c b/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
-> index cf29405a2dbe..17ee5e87141f 100644
-> --- a/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
-> +++ b/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
-> @@ -105,7 +105,7 @@ static int jbt_ret_write_0(struct td028ttec1_panel *lcd, u8 reg, int *err)
->  	return ret;
->  }
->  
-> -static int jbt_reg_write_1(struct td028ttec1_panel *lcd,
-> +static int noinline_for_stack jbt_reg_write_1(struct td028ttec1_panel *lcd,
->  			   u8 reg, u8 data, int *err)
->  {
->  	struct spi_device *spi = lcd->spi;
-
--- 
-Regards,
-
-Laurent Pinchart
+     Arnd
