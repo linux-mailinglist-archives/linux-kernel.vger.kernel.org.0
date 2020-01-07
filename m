@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C7EC13346E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:25:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D6F613334B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:17:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729477AbgAGVZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:25:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33402 "EHLO mail.kernel.org"
+        id S1729272AbgAGVFi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:05:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728192AbgAGU7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:59:48 -0500
+        id S1728882AbgAGVF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:05:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 898552087F;
-        Tue,  7 Jan 2020 20:59:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC1C820678;
+        Tue,  7 Jan 2020 21:05:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430788;
-        bh=86fnnZvBJPO9es3sKpAHnW2j3Q2FeWk3S/ePdnzjGS4=;
+        s=default; t=1578431126;
+        bh=ilUlpS6b8CkWE6NVzT1vSP9pLE58/XUubI2KGW9kMUM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KOY/03sSZJaKdXFkJkjQL5LetUCDovXr4WiykYD8MyfRu1AZ9iXKQpKU0V0izGIlC
-         8v8I13loMEkjdb3C4QjhkIo11NKTke9X4OQLDL6+0o684D4CWzv8ecT2oINzDPjSzi
-         +Cgb8v7ayBHbQxK1IMumr7RAJqSmRXrClce3BsWw=
+        b=rTF6sHj7dR2zzzes3ccX39clXzb7kcL7juWxLWWkSkjFdEsRZ6hoKxCdUPNHWk0d3
+         2LxWJlFZCuYNGLnDNnEoW65RUfA9yt5inGR5LilFtaDeUYTS8eUMd0UsdcjPHQqFAH
+         xPKXwNDOw5i7UjyWTpyg3haDQhN83LlgRhKl+ArQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Lukas Wunner <lukas@wunner.de>, Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 5.4 097/191] dmaengine: Fix access to uninitialized dma_slave_caps
-Date:   Tue,  7 Jan 2020 21:53:37 +0100
-Message-Id: <20200107205338.182427130@linuxfoundation.org>
+        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 008/115] PM / devfreq: Set scaling_max_freq to max on OPP notifier error
+Date:   Tue,  7 Jan 2020 21:53:38 +0100
+Message-Id: <20200107205245.059589063@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
-References: <20200107205332.984228665@linuxfoundation.org>
+In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
+References: <20200107205240.283674026@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,57 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Leonard Crestez <leonard.crestez@nxp.com>
 
-commit 53a256a9b925b47c7e67fc1f16ca41561a7b877c upstream.
+[ Upstream commit e7cc792d00049c874010b398a27c3cc7bc8fef34 ]
 
-dmaengine_desc_set_reuse() allocates a struct dma_slave_caps on the
-stack, populates it using dma_get_slave_caps() and then accesses one
-of its members.
+The devfreq_notifier_call functions will update scaling_min_freq and
+scaling_max_freq when the OPP table is updated.
 
-However dma_get_slave_caps() may fail and this isn't accounted for,
-leading to a legitimate warning of gcc-4.9 (but not newer versions):
+If fetching the maximum frequency fails then scaling_max_freq remains
+set to zero which is confusing. Set to ULONG_MAX instead so we don't
+need special handling for this case in other places.
 
-   In file included from drivers/spi/spi-bcm2835.c:19:0:
-   drivers/spi/spi-bcm2835.c: In function 'dmaengine_desc_set_reuse':
->> include/linux/dmaengine.h:1370:10: warning: 'caps.descriptor_reuse' is used uninitialized in this function [-Wuninitialized]
-     if (caps.descriptor_reuse) {
-
-Fix it, thereby also silencing the gcc-4.9 warning.
-
-The issue has been present for 4 years but surfaces only now that
-the first caller of dmaengine_desc_set_reuse() has been added in
-spi-bcm2835.c. Another user of reusable DMA descriptors has existed
-for a while in pxa_camera.c, but it sets the DMA_CTRL_REUSE flag
-directly instead of calling dmaengine_desc_set_reuse(). Nevertheless,
-tag this commit for stable in case there are out-of-tree users.
-
-Fixes: 272420214d26 ("dmaengine: Add DMA_CTRL_REUSE")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: stable@vger.kernel.org # v4.3+
-Link: https://lore.kernel.org/r/ca92998ccc054b4f2bfd60ef3adbab2913171eac.1575546234.git.lukas@wunner.de
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/dmaengine.h |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/devfreq/devfreq.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/include/linux/dmaengine.h
-+++ b/include/linux/dmaengine.h
-@@ -1364,8 +1364,11 @@ static inline int dma_get_slave_caps(str
- static inline int dmaengine_desc_set_reuse(struct dma_async_tx_descriptor *tx)
- {
- 	struct dma_slave_caps caps;
-+	int ret;
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 34e297f28fc2..a47e76a62287 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -547,8 +547,10 @@ static int devfreq_notifier_call(struct notifier_block *nb, unsigned long type,
+ 		goto out;
  
--	dma_get_slave_caps(tx->chan, &caps);
-+	ret = dma_get_slave_caps(tx->chan, &caps);
-+	if (ret)
-+		return ret;
+ 	devfreq->scaling_max_freq = find_available_max_freq(devfreq);
+-	if (!devfreq->scaling_max_freq)
++	if (!devfreq->scaling_max_freq) {
++		devfreq->scaling_max_freq = ULONG_MAX;
+ 		goto out;
++	}
  
- 	if (caps.descriptor_reuse) {
- 		tx->flags |= DMA_CTRL_REUSE;
+ 	err = update_devfreq(devfreq);
+ 
+-- 
+2.20.1
+
 
 
