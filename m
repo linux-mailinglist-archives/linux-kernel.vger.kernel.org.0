@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A40FB13347B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:26:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB1B91334A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:27:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728679AbgAGVZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:25:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60590 "EHLO mail.kernel.org"
+        id S1728010AbgAGV1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:27:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727387AbgAGU73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:59:29 -0500
+        id S1727256AbgAGU6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 15:58:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 419932081E;
-        Tue,  7 Jan 2020 20:59:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4621E24679;
+        Tue,  7 Jan 2020 20:58:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430768;
-        bh=25YGG4pEpfFDp5ONUl1u+Nokxny0vt3ZlgrL6GDtJyc=;
+        s=default; t=1578430688;
+        bh=b6hHzhhH4j4yJWEfAwTZPH2tgCJ0peR/nIhwBna9zBM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fP7NVOU0Q34dOMca8+Yeqj74d6bueXsq6+M2Obb8qsv7GcmtWqAz1OvOUrqXuV8qR
-         hu/MWOPoADGJydgY1xAtCnYeD7Sn27JZofrRd7ZKoVaa4B45fQ4d+3iXkWX2ECROHu
-         F6niOMRvs9ix80o+To2GAnvF4TMRd+G37hTQnS+E=
+        b=iH4P6A8XKKLlANHO0PxcPvMOAevNka07w/FtUq6YXLMRdy24n+vSziNAkBqyVFogD
+         CNd0RQF3bJreiI+Dy9akbUt5KccOhjBzDwZPn0cCYRWWsBzXRUPM6wHn3PpU6FoY+N
+         2FLHXaIp/uM5yJKNwC+oHoe4o1HeAGFI6qlxwzaY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrea Righi <andrea.righi@canonical.com>,
-        Andy Whitcroft <apw@canonical.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 052/191] PM / hibernate: memory_bm_find_bit(): Tighten node optimisation
-Date:   Tue,  7 Jan 2020 21:52:52 +0100
-Message-Id: <20200107205335.786051636@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 056/191] ALSA: hda: Allow HDA to be runtime suspended when dGPU is not bound to a driver
+Date:   Tue,  7 Jan 2020 21:52:56 +0100
+Message-Id: <20200107205335.996172425@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
 References: <20200107205332.984228665@linuxfoundation.org>
@@ -45,56 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Whitcroft <apw@canonical.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit da6043fe85eb5ec621e34a92540735dcebbea134 ]
+[ Upstream commit bacd861452d2be86a4df341b12e32db7dac8021e ]
 
-When looking for a bit by number we make use of the cached result from the
-preceding lookup to speed up operation.  Firstly we check if the requested
-pfn is within the cached zone and if not lookup the new zone.  We then
-check if the offset for that pfn falls within the existing cached node.
-This happens regardless of whether the node is within the zone we are
-now scanning.  With certain memory layouts it is possible for this to
-false trigger creating a temporary alias for the pfn to a different bit.
-This leads the hibernation code to free memory which it was never allocated
-with the expected fallout.
+Nvidia proprietary driver doesn't support runtime power management, so
+when a user only wants to use the integrated GPU, it's a common practice
+to let dGPU not to bind any driver, and let its upstream port to be
+runtime suspended. At the end of runtime suspension the port uses
+platform power management to disable power through _OFF method of power
+resource, which is listed by _PR3.
 
-Ensure the zone we are scanning matches the cached zone before considering
-the cached node.
+After commit b516ea586d71 ("PCI: Enable NVIDIA HDA controllers"), when
+the dGPU comes with an HDA function, the HDA won't be suspended if the
+dGPU is unbound, so the power resource can't be turned off by its
+upstream port driver.
 
-Deep thanks go to Andrea for many, many, many hours of hacking and testing
-that went into cornering this bug.
+Commit 37a3a98ef601 ("ALSA: hda - Enable runtime PM only for
+discrete GPU") only allows HDA to be runtime suspended once GPU is
+bound, to keep APU's HDA working.
 
-Reported-by: Andrea Righi <andrea.righi@canonical.com>
-Tested-by: Andrea Righi <andrea.righi@canonical.com>
-Signed-off-by: Andy Whitcroft <apw@canonical.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+However, HDA on dGPU isn't that useful if dGPU is not bound to any
+driver.  So let's relax the runtime suspend requirement for dGPU's HDA
+function, to disable the power source to save lots of power.
+
+BugLink: https://bugs.launchpad.net/bugs/1840835
+Fixes: b516ea586d71 ("PCI: Enable NVIDIA HDA controllers")
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Link: https://lore.kernel.org/r/20191018073848.14590-2-kai.heng.feng@canonical.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/power/snapshot.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ sound/pci/hda/hda_intel.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-index 83105874f255..26b9168321e7 100644
---- a/kernel/power/snapshot.c
-+++ b/kernel/power/snapshot.c
-@@ -734,8 +734,15 @@ static int memory_bm_find_bit(struct memory_bitmap *bm, unsigned long pfn,
- 	 * We have found the zone. Now walk the radix tree to find the leaf node
- 	 * for our PFN.
- 	 */
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index 86a416cdeb29..4e757aa9d322 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -1280,11 +1280,17 @@ static void init_vga_switcheroo(struct azx *chip)
+ {
+ 	struct hda_intel *hda = container_of(chip, struct hda_intel, chip);
+ 	struct pci_dev *p = get_bound_vga(chip->pci);
++	struct pci_dev *parent;
+ 	if (p) {
+ 		dev_info(chip->card->dev,
+ 			 "Handle vga_switcheroo audio client\n");
+ 		hda->use_vga_switcheroo = 1;
+-		chip->bus.keep_power = 1; /* cleared in either gpu_bound op or codec probe */
 +
-+	/*
-+	 * If the zone we wish to scan is the the current zone and the
-+	 * pfn falls into the current node then we do not need to walk
-+	 * the tree.
-+	 */
- 	node = bm->cur.node;
--	if (((pfn - zone->start_pfn) & ~BM_BLOCK_MASK) == bm->cur.node_pfn)
-+	if (zone == bm->cur.zone &&
-+	    ((pfn - zone->start_pfn) & ~BM_BLOCK_MASK) == bm->cur.node_pfn)
- 		goto node_found;
- 
- 	node      = zone->rtree;
++		/* cleared in either gpu_bound op or codec probe, or when its
++		 * upstream port has _PR3 (i.e. dGPU).
++		 */
++		parent = pci_upstream_bridge(p);
++		chip->bus.keep_power = parent ? !pci_pr3_present(parent) : 1;
+ 		chip->driver_caps |= AZX_DCAPS_PM_RUNTIME;
+ 		pci_dev_put(p);
+ 	}
 -- 
 2.20.1
 
