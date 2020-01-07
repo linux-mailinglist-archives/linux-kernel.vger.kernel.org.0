@@ -2,90 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 663AD1326BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 13:52:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3213F1326C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 13:53:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728055AbgAGMwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 07:52:08 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60108 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727869AbgAGMwE (ORCPT
+        id S1728079AbgAGMxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 07:53:02 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:45336 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727834AbgAGMxB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 07:52:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2kBnL5gA8Hu2OCxhQ/ljIeIBv2eKrh+kqk+I83yZiPg=; b=ZWBdCh+xKxFQSUSue/qfzQHsj
-        6T5S7vMsw+xLZ62ufe9Nw3VxsvMHHudJaF8KytEMMXsDhKtJIMWpsjy+CQ2AaJlNh+CZM7spuk1qi
-        /GG/VNY7ofqvL8y2h70Tkp7c2xkCRxKZ1rFFxsF9ewZVdfm5fMyeHS7JZqUgbOIVcUM4enC/7CPfL
-        YvahSVPFgA+tsvy8E7FsjcEDyCoXQ7NeHHA9vZPIY3RKwvTq97SGhEeSWoA7Sbe4ZJF+SklJGS433
-        rfYX021bytGaEdqU7+9n2lMTY4eAmfRy/GoDNiu+qsLx1wh+rUf9RelcB0PwHzVtNjAEn/Sepic4P
-        CyVpuzEdg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iooL1-0005j8-N5; Tue, 07 Jan 2020 12:51:59 +0000
-Date:   Tue, 7 Jan 2020 04:51:59 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-Message-ID: <20200107125159.GA15745@infradead.org>
-References: <20190821175720.25901-1-vgoyal@redhat.com>
- <20190821175720.25901-2-vgoyal@redhat.com>
- <20190826115152.GA21051@infradead.org>
- <20190827163828.GA6859@redhat.com>
- <20190828065809.GA27426@infradead.org>
- <20190828175843.GB912@redhat.com>
- <20190828225322.GA7777@dread.disaster.area>
- <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
- <20191216181014.GA30106@redhat.com>
+        Tue, 7 Jan 2020 07:53:01 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iooLg-00009S-7J; Tue, 07 Jan 2020 13:52:40 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D28C01C2CD0;
+        Tue,  7 Jan 2020 13:52:39 +0100 (CET)
+Date:   Tue, 07 Jan 2020 12:52:39 -0000
+From:   "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/fpu] x86/fpu: Deactivate FPU state after failure during state load
+Cc:     "Yu-cheng Yu" <yu-cheng.yu@intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Borislav Petkov <bp@suse.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, "x86-ml" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191220195906.plk6kpmsrikvbcfn@linutronix.de>
+References: <20191220195906.plk6kpmsrikvbcfn@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191216181014.GA30106@redhat.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Message-ID: <157840155965.30329.313988118654552721.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 01:10:14PM -0500, Vivek Goyal wrote:
-> > Agree. In retrospect it was my laziness in the dax-device
-> > implementation to expect the block-device to be available.
-> > 
-> > It looks like fs_dax_get_by_bdev() is an intercept point where a
-> > dax_device could be dynamically created to represent the subset range
-> > indicated by the block-device partition. That would open up more
-> > cleanup opportunities.
-> 
-> Hi Dan,
-> 
-> After a long time I got time to look at it again. Want to work on this
-> cleanup so that I can make progress with virtiofs DAX paches.
-> 
-> I am not sure I understand the requirements fully. I see that right now
-> dax_device is created per device and all block partitions refer to it. If
-> we want to create one dax_device per partition, then it looks like this
-> will be structured more along the lines how block layer handles disk and
-> partitions. (One gendisk for disk and block_devices for partitions,
-> including partition 0). That probably means state belong to whole device
-> will be in common structure say dax_device_common, and per partition state
-> will be in dax_device and dax_device can carry a pointer to
-> dax_device_common.
-> 
-> I am also not sure what does it mean to partition dax devices. How will
-> partitions be exported to user space.
+The following commit has been merged into the x86/fpu branch of tip:
 
-Dan, last time we talked you agreed that partitioned dax devices are
-rather pointless IIRC.  Should we just deprecate partitions on DAX
-devices and then remove them after a cycle or two?
+Commit-ID:     bbc55341b9c67645d1a5471506370caf7dd4a203
+Gitweb:        https://git.kernel.org/tip/bbc55341b9c67645d1a5471506370caf7dd4a203
+Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate:    Fri, 20 Dec 2019 20:59:06 +01:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Tue, 07 Jan 2020 13:44:42 +01:00
+
+x86/fpu: Deactivate FPU state after failure during state load
+
+In __fpu__restore_sig(), fpu_fpregs_owner_ctx needs to be reset if the
+FPU state was not fully restored. Otherwise the following may happen (on
+the same CPU):
+
+  Task A                     Task B               fpu_fpregs_owner_ctx
+  *active*                                        A.fpu
+  __fpu__restore_sig()
+                             ctx switch           load B.fpu
+                             *active*             B.fpu
+  fpregs_lock()
+  copy_user_to_fpregs_zeroing()
+    copy_kernel_to_xregs() *modify*
+    copy_user_to_xregs() *fails*
+  fpregs_unlock()
+                            ctx switch            skip loading B.fpu,
+                            *active*              B.fpu
+
+In the success case, fpu_fpregs_owner_ctx is set to the current task.
+
+In the failure case, the FPU state might have been modified by loading
+the init state.
+
+In this case, fpu_fpregs_owner_ctx needs to be reset in order to ensure
+that the FPU state of the following task is loaded from saved state (and
+not skipped because it was the previous state).
+
+Reset fpu_fpregs_owner_ctx after a failure during restore occurred, to
+ensure that the FPU state for the next task is always loaded.
+
+The problem was debugged-by Yu-cheng Yu <yu-cheng.yu@intel.com>.
+
+ [ bp: Massage commit message. ]
+
+Fixes: 5f409e20b7945 ("x86/fpu: Defer FPU state load until return to userspace")
+Reported-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20191220195906.plk6kpmsrikvbcfn@linutronix.de
+---
+ arch/x86/kernel/fpu/signal.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 0071b79..400a05e 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -352,6 +352,7 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 			fpregs_unlock();
+ 			return 0;
+ 		}
++		fpregs_deactivate(fpu);
+ 		fpregs_unlock();
+ 	}
+ 
+@@ -403,6 +404,8 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 	}
+ 	if (!ret)
+ 		fpregs_mark_activate();
++	else
++		fpregs_deactivate(fpu);
+ 	fpregs_unlock();
+ 
+ err_out:
