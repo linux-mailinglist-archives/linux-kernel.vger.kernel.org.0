@@ -2,147 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E02913241F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:48:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2CEC132424
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:49:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbgAGKsy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 05:48:54 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:34351 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727589AbgAGKsy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 05:48:54 -0500
-Received: by mail-ot1-f67.google.com with SMTP id a15so75887497otf.1;
-        Tue, 07 Jan 2020 02:48:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WSE97IsDt/0HNGDotMlpkWXy8wGljVOzhB0c9xp6lOQ=;
-        b=CgClBwzsglgCjFH7jdg5jX6oBmETH6CNZ+GEj6qCjKg+S5IT1Y7/ib8cFQIieikey8
-         pJX+0w5gNhGki9gAyOlAtF4nSXqvDuYEbY8EAJt1giRo6Em89z0g4ikRH5FqW7HUiMSt
-         tYmlFjowoStg++ONMkxW13NmKpjlfLPlwZlQTZDblo2N18J1cGPWwtvwbthYnvSooeNd
-         U9xF+uuecSgLhbG0Scse1mLLoIzOTMg8xhxoTbxLVU23h/IzyR0aKpAClmTJbSQ3iE2N
-         bLLfcOum6ZnYbPrIGEEbNfQganFapm+rjJWEl1LShpTUdmOkWsGKu05e1MMTqU15BBtS
-         r8YA==
-X-Gm-Message-State: APjAAAXwLPUnrJe/Hz1ggf/PN2dwevoBs2tz72bSDLKiHts7mYIjxCGK
-        JEEcgu45Y8t2b8bxc7irjAV1m8zRXrnnvkGPkIY=
-X-Google-Smtp-Source: APXvYqyb909xw3pW97wWn1+hEZa4V25wQcI/pM8kvkSjy7tVft8dVm7RxOov26ChMbLWIGhx807LcgPTRqNHsWQ5k50=
-X-Received: by 2002:a9d:7b4a:: with SMTP id f10mr12352350oto.4.1578394133504;
- Tue, 07 Jan 2020 02:48:53 -0800 (PST)
+        id S1727926AbgAGKts (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 05:49:48 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55422 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727722AbgAGKtr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 05:49:47 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 77070AC8F;
+        Tue,  7 Jan 2020 10:49:45 +0000 (UTC)
+Message-ID: <cfd3a908f7e899c8199a0e34bf9ec294f9e027d3.camel@suse.de>
+Subject: Re: [PATCH v2] mmc: bcm2835: Use dma_request_chan() instead
+ dma_request_slave_channel()
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>, ulf.hansson@linaro.org,
+        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com
+Cc:     vkoul@kernel.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Date:   Tue, 07 Jan 2020 11:49:43 +0100
+In-Reply-To: <20200107104040.14500-1-peter.ujfalusi@ti.com>
+References: <20200107104040.14500-1-peter.ujfalusi@ti.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-N+V++2Edv1iq1XaEBcoq"
+User-Agent: Evolution 3.34.2 
 MIME-Version: 1.0
-References: <1577706988-56848-1-git-send-email-wangxiongfeng2@huawei.com>
-In-Reply-To: <1577706988-56848-1-git-send-email-wangxiongfeng2@huawei.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 7 Jan 2020 11:48:42 +0100
-Message-ID: <CAJZ5v0gN4A+eRtebxY=8DYfFiRE7FWO_3=a4m9G1_sgUsGPBWA@mail.gmail.com>
-Subject: Re: [PATCH v2] ACPI/PPTT: fixed some parameter type is not right
-To:     Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        tiantao <tiantao6@huawei.com>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 30, 2019 at 1:01 PM Xiongfeng Wang
-<wangxiongfeng2@huawei.com> wrote:
->
-> From: Tian Tao <tiantao6@huawei.com>
->
-> The fourth parameter 'level' of function 'acpi_find_cache_level()' is a
-> signed interger, but its caller 'acpi_find_cache_node()' passes that
-> parameter an unsigned interger. This patch fixes the paramter type
-> inconsistency.
->
-> Signed-off-by: Tian Tao <tiantao6@huawei.com>
-> Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
->
-> ---
-> v2:     fix the conflicts in the third hunk.
->         Modify the commit information a little bit.
-> ---
->  drivers/acpi/pptt.c | 29 +++++++++++++++--------------
->  1 file changed, 15 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-> index f31544d..4ae9335 100644
-> --- a/drivers/acpi/pptt.c
-> +++ b/drivers/acpi/pptt.c
-> @@ -98,11 +98,11 @@ static inline bool acpi_pptt_match_type(int table_type, int type)
->   *
->   * Return: The cache structure and the level we terminated with.
->   */
-> -static int acpi_pptt_walk_cache(struct acpi_table_header *table_hdr,
-> -                               int local_level,
-> -                               struct acpi_subtable_header *res,
-> -                               struct acpi_pptt_cache **found,
-> -                               int level, int type)
-> +static unsigned int acpi_pptt_walk_cache(struct acpi_table_header *table_hdr,
-> +                                        unsigned int local_level,
-> +                                        struct acpi_subtable_header *res,
-> +                                        struct acpi_pptt_cache **found,
-> +                                        unsigned int level, int type)
->  {
->         struct acpi_pptt_cache *cache;
->
-> @@ -119,7 +119,7 @@ static int acpi_pptt_walk_cache(struct acpi_table_header *table_hdr,
->                         if (*found != NULL && cache != *found)
->                                 pr_warn("Found duplicate cache level/type unable to determine uniqueness\n");
->
-> -                       pr_debug("Found cache @ level %d\n", level);
-> +                       pr_debug("Found cache @ level %u\n", level);
->                         *found = cache;
->                         /*
->                          * continue looking at this node's resource list
-> @@ -132,16 +132,17 @@ static int acpi_pptt_walk_cache(struct acpi_table_header *table_hdr,
->         return local_level;
->  }
->
-> -static struct acpi_pptt_cache *acpi_find_cache_level(struct acpi_table_header *table_hdr,
-> -                                                    struct acpi_pptt_processor *cpu_node,
-> -                                                    int *starting_level, int level,
-> -                                                    int type)
-> +static struct acpi_pptt_cache *
-> +acpi_find_cache_level(struct acpi_table_header *table_hdr,
-> +                     struct acpi_pptt_processor *cpu_node,
-> +                     unsigned int *starting_level, unsigned int level,
-> +                     int type)
->  {
->         struct acpi_subtable_header *res;
-> -       int number_of_levels = *starting_level;
-> +       unsigned int number_of_levels = *starting_level;
->         int resource = 0;
->         struct acpi_pptt_cache *ret = NULL;
-> -       int local_level;
-> +       unsigned int local_level;
->
->         /* walk down from processor node */
->         while ((res = acpi_get_pptt_resource(table_hdr, cpu_node, resource))) {
-> @@ -321,12 +322,12 @@ static struct acpi_pptt_cache *acpi_find_cache_node(struct acpi_table_header *ta
->                                                     unsigned int level,
->                                                     struct acpi_pptt_processor **node)
->  {
-> -       int total_levels = 0;
-> +       unsigned int total_levels = 0;
->         struct acpi_pptt_cache *found = NULL;
->         struct acpi_pptt_processor *cpu_node;
->         u8 acpi_type = acpi_cache_type(type);
->
-> -       pr_debug("Looking for CPU %d's level %d cache type %d\n",
-> +       pr_debug("Looking for CPU %d's level %u cache type %d\n",
->                  acpi_cpu_id, level, acpi_type);
->
->         cpu_node = acpi_find_processor_node(table_hdr, acpi_cpu_id);
-> --
 
-Applied for 5.6 as "ACPI: PPTT: Consistently use unsigned int as
-parameter type" with some minor changes in the changelog.
+--=-N+V++2Edv1iq1XaEBcoq
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
+On Tue, 2020-01-07 at 12:40 +0200, Peter Ujfalusi wrote:
+> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+> eating up the error code.
+>=20
+> By using dma_request_chan() directly the driver can support deferred
+> probing against DMA.
+>=20
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> ---
+> Hi,
+>=20
+> Changes since v1:
+> - jump to err: instead of returning in case of EPROBE_DEFER
+>=20
+> Regards,
+> Peter
+
+Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+
+Thanks,
+Nicolas
+
+>=20
+>  drivers/mmc/host/bcm2835.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/mmc/host/bcm2835.c b/drivers/mmc/host/bcm2835.c
+> index 99f61fd2a658..c3d949847cbd 100644
+> --- a/drivers/mmc/host/bcm2835.c
+> +++ b/drivers/mmc/host/bcm2835.c
+> @@ -1393,7 +1393,17 @@ static int bcm2835_probe(struct platform_device *p=
+dev)
+>  	host->dma_chan =3D NULL;
+>  	host->dma_desc =3D NULL;
+> =20
+> -	host->dma_chan_rxtx =3D dma_request_slave_channel(dev, "rx-tx");
+> +	host->dma_chan_rxtx =3D dma_request_chan(dev, "rx-tx");
+> +	if (IS_ERR(host->dma_chan_rxtx)) {
+> +		ret =3D PTR_ERR(host->dma_chan_rxtx);
+> +		host->dma_chan_rxtx =3D NULL;
+> +
+> +		if (ret =3D=3D -EPROBE_DEFER)
+> +			goto err;
+> +
+> +		/* Ignore errors to fall back to PIO mode */
+> +	}
+> +
+> =20
+>  	clk =3D devm_clk_get(dev, NULL);
+>  	if (IS_ERR(clk)) {
+
+
+--=-N+V++2Edv1iq1XaEBcoq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl4UYkcACgkQlfZmHno8
+x/5e3wf/eUvwQW2b9ZB6S1muHMTUNQhpNJKwE77BmeyyDodnuNKbTzeR1TyJzEws
+JIMPSXnOKwuF2qvNLnpZrFTsCVmBqAY0M3U2M2Q1lIsiuWpRW0CpiHVWlMV3spHx
+553nQ3mxwWXTvt1mHlJ5I6YIqivfGZSoRU6c0JuGLNZanttjfapD6BDIAy0pepdb
+Xviq1Qzo5GxpLiabSs5rBPnxzZFZUtpXoLZJZv5nSW43q5xLugFxWjAY41xxFK85
+AD2V6mWKd+fQ4GXZGTaw1IaRPYDODJcskngQntKuoclCSkY2/3LKn+eu0DF7STFs
+lLPQIkggT59U+JX3iT3AoS6xf8NRWA==
+=KfEu
+-----END PGP SIGNATURE-----
+
+--=-N+V++2Edv1iq1XaEBcoq--
+
