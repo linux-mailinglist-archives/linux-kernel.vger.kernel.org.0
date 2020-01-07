@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF4CC133219
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:08:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F946133180
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:01:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729500AbgAGVHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:07:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57596 "EHLO mail.kernel.org"
+        id S1728560AbgAGVBZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:01:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729359AbgAGVHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:07:14 -0500
+        id S1727976AbgAGVBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:01:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C8982087F;
-        Tue,  7 Jan 2020 21:07:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA28B24679;
+        Tue,  7 Jan 2020 21:01:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431233;
-        bh=VctaP92xKyakZMANjrVFe+tcl8tJdI7QuXUjX3uaBjA=;
+        s=default; t=1578430877;
+        bh=jAlvcewV9U+9MHtI6CXvnOqScZyb4jj5yGm+G/+Yszw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iEk+H5h2Nt6wxve6k6FggOTWTArvd7r2UA1e8ubXjyGeJh+P7M1GzT8vbPr0Dk+gn
-         0ouujWRiwZfB84oroabx0JCW//iBYJuDNtsZtLl8brzcms2xcFEKN6tiK/k8BbTrxX
-         mgOlNWXa/sy4z+CRHxN6W9adnW5i/VICTTLtHiP8=
+        b=zST9epCOpHNKqC6bVjNRCddsWmEwgGrbZrWiDSB1l0dQM67+N1TPz6LqTZg0Pm0Fj
+         z9Iuu1Gtcl+Q8SE6lVgzALSEiD2Lubz7RsVigJ0Epszo3Af/GLEEBXzeAOuLIDb6wP
+         7Hq8Cny1ZQHc/0aUoaTkmDgPVG47C+uKKzPLL3ss=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 043/115] ALSA: usb-audio: fix set_format altsetting sanity check
-Date:   Tue,  7 Jan 2020 21:54:13 +0100
-Message-Id: <20200107205301.964001719@linuxfoundation.org>
+        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 5.4 134/191] PM / devfreq: Check NULL governor in available_governors_show
+Date:   Tue,  7 Jan 2020 21:54:14 +0100
+Message-Id: <20200107205340.140773346@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-References: <20200107205240.283674026@linuxfoundation.org>
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+References: <20200107205332.984228665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Leonard Crestez <leonard.crestez@nxp.com>
 
-commit 0141254b0a74b37aa7eb13d42a56adba84d51c73 upstream.
+commit d68adc8f85cd757bd33c8d7b2660ad6f16f7f3dc upstream.
 
-Make sure to check the return value of usb_altnum_to_altsetting() to
-avoid dereferencing a NULL pointer when the requested alternate settings
-is missing.
+The governor is initialized after sysfs attributes become visible so in
+theory the governor field can be NULL here.
 
-The format altsetting number may come from a quirk table and there does
-not seem to be any other validation of it (the corresponding index is
-checked however).
-
-Fixes: b099b9693d23 ("ALSA: usb-audio: Avoid superfluous usb_set_interface() calls")
-Cc: stable <stable@vger.kernel.org>     # 4.18
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191220093134.1248-1-johan@kernel.org
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: bcf23c79c4e46 ("PM / devfreq: Fix available_governor sysfs")
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/pcm.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/devfreq/devfreq.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/usb/pcm.c
-+++ b/sound/usb/pcm.c
-@@ -513,9 +513,9 @@ static int set_format(struct snd_usb_sub
- 	if (WARN_ON(!iface))
- 		return -EINVAL;
- 	alts = usb_altnum_to_altsetting(iface, fmt->altsetting);
--	altsd = get_iface_desc(alts);
--	if (WARN_ON(altsd->bAlternateSetting != fmt->altsetting))
-+	if (WARN_ON(!alts))
- 		return -EINVAL;
-+	altsd = get_iface_desc(alts);
- 
- 	if (fmt == subs->cur_audiofmt)
- 		return 0;
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -1196,7 +1196,7 @@ static ssize_t available_governors_show(
+ 	 * The devfreq with immutable governor (e.g., passive) shows
+ 	 * only own governor.
+ 	 */
+-	if (df->governor->immutable) {
++	if (df->governor && df->governor->immutable) {
+ 		count = scnprintf(&buf[count], DEVFREQ_NAME_LEN,
+ 				  "%s ", df->governor_name);
+ 	/*
 
 
