@@ -2,167 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81B1F13208E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 08:37:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6ADB132094
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 08:40:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbgAGHhE convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 7 Jan 2020 02:37:04 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44287 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727327AbgAGHhE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 02:37:04 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iojPs-0002Uz-Fh; Tue, 07 Jan 2020 08:36:42 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2544E1C2CCD;
-        Tue,  7 Jan 2020 08:36:40 +0100 (CET)
-Date:   Tue, 07 Jan 2020 07:36:40 -0000
-From:   "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/asm] x86/context-tracking: Remove exception_enter/exit()
- from do_page_fault()
-Cc:     Frederic Weisbecker <frederic@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, rkrcmar@redhat.com,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191227163612.10039-2-frederic@kernel.org>
-References: <20191227163612.10039-2-frederic@kernel.org>
+        id S1727327AbgAGHjz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 02:39:55 -0500
+Received: from mga07.intel.com ([134.134.136.100]:33726 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725781AbgAGHjy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 02:39:54 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jan 2020 23:39:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,404,1571727600"; 
+   d="scan'208";a="223097653"
+Received: from um.fi.intel.com (HELO um) ([10.237.72.57])
+  by orsmga003.jf.intel.com with ESMTP; 06 Jan 2020 23:39:51 -0800
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Mark Rutland <mark.rutland@arm.com>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        alexander.shishkin@linux.intel.com
+Subject: Re: [PATCH] perf: correctly handle failed perf_get_aux_event() (was: Re: [perf] perf_event_open() sometimes returning 0)
+In-Reply-To: <20200106120338.GC9630@lakrids.cambridge.arm.com>
+References: <alpine.DEB.2.21.2001021349390.11372@macbook-air> <alpine.DEB.2.21.2001021418590.11372@macbook-air> <20200106120338.GC9630@lakrids.cambridge.arm.com>
+Date:   Tue, 07 Jan 2020 09:39:51 +0200
+Message-ID: <87o8vfbtq0.fsf@ashishki-desk.ger.corp.intel.com>
 MIME-Version: 1.0
-Message-ID: <157838260004.30329.1599335012779534814.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/asm branch of tip:
+Mark Rutland <mark.rutland@arm.com> writes:
 
-Commit-ID:     ee6352b2c47a24234398e06381edd93a8e965976
-Gitweb:        https://git.kernel.org/tip/ee6352b2c47a24234398e06381edd93a8e965976
-Author:        Frederic Weisbecker <frederic@kernel.org>
-AuthorDate:    Fri, 27 Dec 2019 17:36:11 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 07 Jan 2020 08:11:23 +01:00
+> On Thu, Jan 02, 2020 at 02:22:47PM -0500, Vince Weaver wrote:
+>> On Thu, 2 Jan 2020, Vince Weaver wrote:
+>> 
+>> > so I was tracking down some odd behavior in the perf_fuzzer which turns 
+>> > out to be because perf_even_open() sometimes returns 0 (indicating a file 
+>> > descriptor of 0) even though as far as I can tell stdin is still open.
+>
+> Yikes.
+>
+>> error is triggered if aux_sample_size has non-zero value.
+>>
+>> seems to be this line in kernel/events/core.c:
+>> 
+>> 
+>>  if (perf_need_aux_event(event) && !perf_get_aux_event(event, group_leader))
+>>                 goto err_locked;
+>> 
+>> 
+>> (note, err is never set)
+>
+> Looks like that was introduced in commit:
+>
+>   ab43762ef010967e ("perf: Allow normal events to output AUX data")
+>   
+> I guess we should return -EINVAL in this case.
 
-x86/context-tracking: Remove exception_enter/exit() from do_page_fault()
+That's right. Thanks for looking into this!
 
-do_page_fault(), like other exceptions, is already covered by
-user_enter() and user_exit() when the exception triggers in userspace.
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index a1f8bde19b56..2173c23c25b4 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -11465,8 +11465,10 @@ SYSCALL_DEFINE5(perf_event_open,
+>  		}
+>  	}
+>  
+> -	if (perf_need_aux_event(event) && !perf_get_aux_event(event, group_leader))
+> +	if (perf_need_aux_event(event) && !perf_get_aux_event(event, group_leader)) {
+> +		err = -EINVAL;
+>  		goto err_locked;
+> +	}
+>  
 
-As explained in:
+FWIW,
+Acked-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-  8c84014f3bbb11 ("x86/entry: Remove exception_enter() from most trap handlers")
-
-exception_enter/exit() only remained to handle possible page fault from
-kernel mode while context tracking is in CONTEXT_USER mode, ie: on
-kernel entry before we manage to call user_exit(). The only known
-offender was do_fast_syscall_32() fetching EBP register from where
-vDSO stashed it.
-
-Meanwhile this got fixed in:
-
-  9999c8c01f34c9 ("x86/entry: Call enter_from_user_mode() with IRQs off")
-
-that moved enter_from_user_mode() before the call to get_user().
-
-So we can safely remove it now.
-
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Jim Mattson <jmattson@google.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: Wanpeng Li <wanpengli@tencent.com>
-Link: https://lkml.kernel.org/r/20191227163612.10039-2-frederic@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/mm/fault.c | 39 ++++++++++++---------------------------
- 1 file changed, 12 insertions(+), 27 deletions(-)
-
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 304d31d..2b4ab28 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -1486,27 +1486,6 @@ good_area:
- }
- NOKPROBE_SYMBOL(do_user_addr_fault);
- 
--/*
-- * Explicitly marked noinline such that the function tracer sees this as the
-- * page_fault entry point.
-- */
--static noinline void
--__do_page_fault(struct pt_regs *regs, unsigned long hw_error_code,
--		unsigned long address)
--{
--	prefetchw(&current->mm->mmap_sem);
--
--	if (unlikely(kmmio_fault(regs, address)))
--		return;
--
--	/* Was the fault on kernel-controlled part of the address space? */
--	if (unlikely(fault_in_kernel_space(address)))
--		do_kern_addr_fault(regs, hw_error_code, address);
--	else
--		do_user_addr_fault(regs, hw_error_code, address);
--}
--NOKPROBE_SYMBOL(__do_page_fault);
--
- static __always_inline void
- trace_page_fault_entries(struct pt_regs *regs, unsigned long error_code,
- 			 unsigned long address)
-@@ -1521,13 +1500,19 @@ trace_page_fault_entries(struct pt_regs *regs, unsigned long error_code,
- }
- 
- dotraplinkage void
--do_page_fault(struct pt_regs *regs, unsigned long error_code, unsigned long address)
-+do_page_fault(struct pt_regs *regs, unsigned long hw_error_code,
-+		unsigned long address)
- {
--	enum ctx_state prev_state;
-+	prefetchw(&current->mm->mmap_sem);
-+	trace_page_fault_entries(regs, hw_error_code, address);
- 
--	prev_state = exception_enter();
--	trace_page_fault_entries(regs, error_code, address);
--	__do_page_fault(regs, error_code, address);
--	exception_exit(prev_state);
-+	if (unlikely(kmmio_fault(regs, address)))
-+		return;
-+
-+	/* Was the fault on kernel-controlled part of the address space? */
-+	if (unlikely(fault_in_kernel_space(address)))
-+		do_kern_addr_fault(regs, hw_error_code, address);
-+	else
-+		do_user_addr_fault(regs, hw_error_code, address);
- }
- NOKPROBE_SYMBOL(do_page_fault);
+Thanks,
+--
+Alex
