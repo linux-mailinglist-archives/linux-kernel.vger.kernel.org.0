@@ -2,99 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 299431332BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:13:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23B931332E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:15:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728280AbgAGVN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:13:29 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:43221 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727345AbgAGVNY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:13:24 -0500
-Received: by mail-vs1-f66.google.com with SMTP id s16so453276vsc.10
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 13:13:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4bvDGD+uZFRI6wle2DQe8dNEf7/FawRKtQyhzkKp5kw=;
-        b=KQVwsStOsvUFWmEIg1vbufOPH4q4526fnFkHZKuJZrLDUdrYo7b8+m/wOLoLIxlMpQ
-         rifgkmP2r1S8nCyPcgVxzg3CxK/rOoqCa6uKsUsyMbk45IZqSPcRxtTjgKyhdO67JVw2
-         yZDfkKv5zrHZXehKokQv0Ky2Ry9W0r0NEmWM9Rra4jWzzDJNsvUjjwE0gyPp6en9iHX8
-         AB8I2xUL4Ovt8bQoDDJl5+fIYsLQn8fQBttM81wro9kWD1Jcr34on3ie4oTjb184Ifow
-         uXvWDd06kKCirdcfRYDKXGHhcP4gu4+aKneQwt/Fz8UleolmSVLsX5BA0JhjUGa/FhGm
-         ox2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4bvDGD+uZFRI6wle2DQe8dNEf7/FawRKtQyhzkKp5kw=;
-        b=uUvVSp1vhjbc+wrSKqFqVlWvwDG3BhZNC0pBjttqfkpSGM9vNvkzGdvVzRrdcmIPYM
-         DdPxLgGBYZmcIeIApsiAS92CS/9vn2YmlKe3jgx+Lc9iC6Ylv3oh0LkHNAhUWuFT9Lbn
-         S6NWWKB62qQ17ocMwWDz+qgQWST76hUeeWq1JIXccDeEC+ohPe3eTFe5ySP8GsxBs+3c
-         sIQqOYXR9ynxduEuEWBlImVDN5vzBfsHI6oASMTDZIAdeMRDCw8XZBEiF7Ri7t40Z9Bl
-         Rs1QpUh/McoagBemxEI9nBZLIJwk5VWYfNBmm74zmcUV4cxmQmvXaNu55xC2AOS8dRIv
-         ki7w==
-X-Gm-Message-State: APjAAAXCoUgc4L/UQpJi/IZHzyF6iEkr0UMThaszMKMOtb2OwBAFDqPE
-        2b9pB3wZ0i5b3JMiRt/5Hhu0tWbI7gnvjqGQlF96Rg==
-X-Google-Smtp-Source: APXvYqz4dUEEj5q+SNZ0t9tcB9nHne8gPerfQ8ARFF6iQ6Im7uIQEkt0Hpm/+TaVwjf3O0rCQAlQVrwOn4RCK0e1NUM=
-X-Received: by 2002:a67:fc46:: with SMTP id p6mr784857vsq.235.1578431603178;
- Tue, 07 Jan 2020 13:13:23 -0800 (PST)
+        id S1730099AbgAGVOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:14:10 -0500
+Received: from namei.org ([65.99.196.166]:55866 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729688AbgAGVOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:14:08 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 007LDGan012550;
+        Tue, 7 Jan 2020 21:13:16 GMT
+Date:   Wed, 8 Jan 2020 08:13:16 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     KP Singh <kpsingh@chromium.org>
+cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
+Subject: Re: [PATCH bpf-next v1 02/13] bpf: lsm: Add a skeleton and config
+ options
+In-Reply-To: <20191220154208.15895-3-kpsingh@chromium.org>
+Message-ID: <alpine.LRH.2.21.2001080812500.9683@namei.org>
+References: <20191220154208.15895-1-kpsingh@chromium.org> <20191220154208.15895-3-kpsingh@chromium.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-References: <20191216213901.106941-1-bgardon@google.com> <20191216213901.106941-3-bgardon@google.com>
- <20200107160035.GG219677@xz-x1>
-In-Reply-To: <20200107160035.GG219677@xz-x1>
-From:   Ben Gardon <bgardon@google.com>
-Date:   Tue, 7 Jan 2020 13:13:12 -0800
-Message-ID: <CANgfPd-GLFtqrWsyg6hvrMFYxWCzxAQEGZ9Ahk4ZATYWs0_VaQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/8] KVM: selftests: Add demand paging content to the
- demand paging test
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        Andrew Jones <drjones@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Done. I'll have it in the next version of the patch set I send out.
+On Fri, 20 Dec 2019, KP Singh wrote:
 
-On Tue, Jan 7, 2020 at 8:00 AM Peter Xu <peterx@redhat.com> wrote:
->
-> On Mon, Dec 16, 2019 at 01:38:55PM -0800, Ben Gardon wrote:
->
-> [...]
->
-> > +static void *uffd_handler_thread_fn(void *arg)
-> > +{
-> > +     struct uffd_handler_args *uffd_args = (struct uffd_handler_args *)arg;
-> > +     int uffd = uffd_args->uffd;
-> > +     int64_t pages = 0;
-> > +
-> > +     while (!quit_uffd_thread) {
-> > +             struct uffd_msg msg;
-> > +             struct pollfd pollfd[1];
-> > +             int r;
-> > +             uint64_t addr;
-> > +
-> > +             pollfd[0].fd = uffd;
-> > +             pollfd[0].events = POLLIN;
-> > +
-> > +             /*
-> > +              * TODO this introduces a 0.5sec delay at the end of the test.
-> > +              * Reduce the timeout or eliminate it following the example in
-> > +              * tools/testing/selftests/vm/userfaultfd.c
-> > +              */
-> > +             r = poll(pollfd, 1, 500);
->
-> Would you mind implement it instead of adding a todo?  IIUC it's as
-> simple as a few more lines than the comment itself.  Thanks,
->
-> --
-> Peter Xu
->
+> From: KP Singh <kpsingh@google.com>
+> 
+> The LSM can be enabled by CONFIG_SECURITY_BPF.
+> Without CONFIG_SECURITY_BPF_ENFORCE, the LSM will run the
+> attached eBPF programs but not enforce MAC policy based
+> on the return value of the attached programs.
+> 
+> Signed-off-by: KP Singh <kpsingh@google.com>
+
+
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
+
+
+-- 
+James Morris
+<jmorris@namei.org>
+
