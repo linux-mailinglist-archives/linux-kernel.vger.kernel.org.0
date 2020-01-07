@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9FAC1329B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 16:13:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FC021329B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 16:14:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbgAGPNu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 10:13:50 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37795 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728321AbgAGPNu (ORCPT
+        id S1728362AbgAGPNz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 10:13:55 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34316 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728321AbgAGPNv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 10:13:50 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w15so41763973wru.4
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 07:13:48 -0800 (PST)
+        Tue, 7 Jan 2020 10:13:51 -0500
+Received: by mail-wr1-f65.google.com with SMTP id t2so54355852wrr.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 07:13:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MLtZU9HpYzbZmbVfIezeBKYweFkIIWAJULqKJXUB1GQ=;
-        b=pOgpqVCfAihCsGgxWXBFJrVrMFZ9DscVFJmr2f3mWWZ2ESHLCeSot0A1QT2Zwqq1uB
-         JNVqx1wn1BCTOfYgSzizUhF8MB+89T5xL98+9IZ2l/Onwblv6Ah+1ft45QJHqzzFz16r
-         GVF8QBDWDjHomkdoBQc725ggvIXrYsB3SiB+IfjEjR+CMGv8l/XffFFMmcO1WTp9OBx8
-         GMb0G1IzIzYGpsm6WXuSx2J3shOJyrSZ5yISE4r+W/aPrXP8OSa6C2CJfUQ3McQS6CA+
-         /ND4N2huk0YC/gN9PP0Yz1yKYfh9ZT8E1/yJfyBTsqRFEzE9kYXc7r27UIRUpQqkWqMR
-         VKnw==
+        bh=0AsRjqmSddZiXaJNHfNW43Wmc9oWEosMDJEk7wL2FDo=;
+        b=YG9RW5e5joOPxoDvG6pcPCuwA5GGyBjDMtnNvp5f/ELEqUTKtwEnKSr1KC+XJFYnOz
+         eT7E63bexxp0XZrUJ7aiQmVw4+tESSdP8UGAtPPdMAd8MIsxcnj7Jpfa84Ylv2YVUfyI
+         c4TWnoRmaxbmfDYTVMg9WesEKPmYIj/cGE2Te8+GVnCh65PxuyOpD2RB5Br2kaIp/7WR
+         niPNBhOheVKA5BYpw6IgR3f7mEX3tQ0SA5enxIkkxMlPPLqDXeFFzfw9UBEKMlGYJxNE
+         rEaYaJ03vbvyNC9QVg1X5uyeULhRyfa3dIYEu1t5jQx8ZsDRySrovW7EtZ03T6je8LH8
+         aEwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MLtZU9HpYzbZmbVfIezeBKYweFkIIWAJULqKJXUB1GQ=;
-        b=eFZvTRI+Gwww7hFBEOuAc38mNMr4FXxM8ovf0r4JtY9hmpqIqFQe2Y75As2nSsUAmM
-         uzaYYt4zNGZL8P5lyVjQdI2d7Z7ac96EJHmy6HTA4K5yI69/+RGm/AKmZZtajNWv2QAq
-         yG+1ElRHQC5rFP5WDlDGUpP49TTZvBxKI5DXVracvUYnkAjeMoItJkNwo++Vzyz+f3Jo
-         DGEA8meLS7ELvvvqRwHba1f0eC+EfZVyXsj26GoZbXpxO23BUEBbi1zAo5+4Qf2+g4oz
-         Ax9iTDGCNkt2SeZ0/4dB6Bry17b3uP/UpKf25BJemgQL0rv37nIpjBOHPDfGlZ3i4cA9
-         HizA==
-X-Gm-Message-State: APjAAAW8fvvlCqqEp3kbsaJFYfYt4fkiaE4h7Eky5oBDMaLqy8Tt0hNb
-        yGxOOVtpiAm/h+XnUzDWMtw=
-X-Google-Smtp-Source: APXvYqxLU5z597JDDpIE9gTOoWpNCkFxLMEVVes6q2jNqnwwYs0Oatc3uIdlFLLqxZcWWW48Qbl5dw==
-X-Received: by 2002:a5d:6a0f:: with SMTP id m15mr109350909wru.40.1578410027672;
-        Tue, 07 Jan 2020 07:13:47 -0800 (PST)
+        bh=0AsRjqmSddZiXaJNHfNW43Wmc9oWEosMDJEk7wL2FDo=;
+        b=mo8h6e5oTxub5jkUkDSwb6QkRNFo82xGkUiq91gB8rcMpAEKftRL4RiF0pQVV/toDN
+         yDvalGMWk8xS7pEdEMU38Ld6P/xMstG2F6elwTXShF1bHU2PoxvAbnTjGOwM1JK6qMIA
+         5oCD3VBsViUMYCYr67IuVDM9j39WNvMFn7+NWag3hKt2+yNLub5B41c8jYh/YyrxHn3H
+         B5HeGdDPmVQCg6OqPCADJxylIOCX+hYJU4UOxVI1qV38/4kbCj2x3ijdMjgTGRfPvCGI
+         Qt+jRqfnD5JoEbgRyylk4+BFWpv5KpYcoVTt6h7iJ5djCuDTxFSrdofXx5qdonLMfily
+         yBCA==
+X-Gm-Message-State: APjAAAVKHjZjiLUMreylvGVUVm7c2Anwj4YjFFAT4i4c6AewGL8rbuQT
+        m8XK/WsdK6HYTE3Bxi6ldiI=
+X-Google-Smtp-Source: APXvYqw9no5TtCcHAL2JCCdsE234J86HIbQroWZ5MeM6G0gn2jqlCqz9Gj/EcaDxk+UmLF3m63z07Q==
+X-Received: by 2002:adf:e984:: with SMTP id h4mr107119108wrm.275.1578410030242;
+        Tue, 07 Jan 2020 07:13:50 -0800 (PST)
 Received: from wambui.zuku.co.ke ([197.237.61.225])
-        by smtp.googlemail.com with ESMTPSA id c4sm27076664wml.7.2020.01.07.07.13.45
+        by smtp.googlemail.com with ESMTPSA id c4sm27076664wml.7.2020.01.07.07.13.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 07:13:47 -0800 (PST)
+        Tue, 07 Jan 2020 07:13:49 -0800 (PST)
 From:   Wambui Karuga <wambui.karugax@gmail.com>
 To:     jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
         rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch
 Cc:     seanpaul@chromium.org, intel-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] drm/i915: use new struct drm_device based logging macros.
-Date:   Tue,  7 Jan 2020 18:13:31 +0300
-Message-Id: <7f3df2575ab41a052b7beea86ecc5385edf6f6da.1578409433.git.wambui.karugax@gmail.com>
+Subject: [PATCH 4/5] drm/i915: convert to using new struct drm_device logging macros
+Date:   Tue,  7 Jan 2020 18:13:32 +0300
+Message-Id: <ae253ecf3ca878fae7f1f246d75c2136fb6bd72c.1578409433.git.wambui.karugax@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.1578409433.git.wambui.karugax@gmail.com>
 References: <cover.1578409433.git.wambui.karugax@gmail.com>
@@ -63,35 +63,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace instances of printk based logging macros with the new
-struct drm_device logging macros in i915/intel_region_lmem.c.
+Replace the use of printk based debugging macros with the struct
+drm_device based logging macros in i915/intel_sideband.c.
 
 Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
 ---
- drivers/gpu/drm/i915/intel_region_lmem.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/i915/intel_sideband.c | 29 ++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/intel_region_lmem.c b/drivers/gpu/drm/i915/intel_region_lmem.c
-index e6a6b571dad4..14b59b899c9b 100644
---- a/drivers/gpu/drm/i915/intel_region_lmem.c
-+++ b/drivers/gpu/drm/i915/intel_region_lmem.c
-@@ -125,10 +125,12 @@ intel_setup_fake_lmem(struct drm_i915_private *i915)
- 					 io_start,
- 					 &intel_region_lmem_ops);
- 	if (!IS_ERR(mem)) {
--		DRM_INFO("Intel graphics fake LMEM: %pR\n", &mem->region);
--		DRM_INFO("Intel graphics fake LMEM IO start: %llx\n",
--			 (u64)mem->io_start);
--		DRM_INFO("Intel graphics fake LMEM size: %llx\n",
-+		drm_info(&i915->drm, "Intel graphics fake LMEM: %pR\n",
-+			 &mem->region);
-+		drm_info(&i915->drm,
-+			 "Intel graphics fake LMEM IO start: %llx\n",
-+			(u64)mem->io_start);
-+		drm_info(&i915->drm, "Intel graphics fake LMEM size: %llx\n",
- 			 (u64)resource_size(&mem->region));
+diff --git a/drivers/gpu/drm/i915/intel_sideband.c b/drivers/gpu/drm/i915/intel_sideband.c
+index e06b35b844a0..cbfb7171d62d 100644
+--- a/drivers/gpu/drm/i915/intel_sideband.c
++++ b/drivers/gpu/drm/i915/intel_sideband.c
+@@ -105,8 +105,8 @@ static int vlv_sideband_rw(struct drm_i915_private *i915,
+ 	if (intel_wait_for_register(uncore,
+ 				    VLV_IOSF_DOORBELL_REQ, IOSF_SB_BUSY, 0,
+ 				    5)) {
+-		DRM_DEBUG_DRIVER("IOSF sideband idle wait (%s) timed out\n",
+-				 is_read ? "read" : "write");
++		drm_dbg(&i915->drm, "IOSF sideband idle wait (%s) timed out\n",
++			is_read ? "read" : "write");
+ 		return -EAGAIN;
  	}
  
+@@ -129,8 +129,8 @@ static int vlv_sideband_rw(struct drm_i915_private *i915,
+ 			*val = intel_uncore_read_fw(uncore, VLV_IOSF_DATA);
+ 		err = 0;
+ 	} else {
+-		DRM_DEBUG_DRIVER("IOSF sideband finish wait (%s) timed out\n",
+-				 is_read ? "read" : "write");
++		drm_dbg(&i915->drm, "IOSF sideband finish wait (%s) timed out\n",
++			is_read ? "read" : "write");
+ 		err = -ETIMEDOUT;
+ 	}
+ 
+@@ -283,7 +283,8 @@ static int intel_sbi_rw(struct drm_i915_private *i915, u16 reg,
+ 	if (intel_wait_for_register_fw(uncore,
+ 				       SBI_CTL_STAT, SBI_BUSY, 0,
+ 				       100)) {
+-		DRM_ERROR("timeout waiting for SBI to become ready\n");
++		drm_err(&i915->drm,
++			"timeout waiting for SBI to become ready\n");
+ 		return -EBUSY;
+ 	}
+ 
+@@ -301,12 +302,13 @@ static int intel_sbi_rw(struct drm_i915_private *i915, u16 reg,
+ 	if (__intel_wait_for_register_fw(uncore,
+ 					 SBI_CTL_STAT, SBI_BUSY, 0,
+ 					 100, 100, &cmd)) {
+-		DRM_ERROR("timeout waiting for SBI to complete read\n");
++		drm_err(&i915->drm,
++			"timeout waiting for SBI to complete read\n");
+ 		return -ETIMEDOUT;
+ 	}
+ 
+ 	if (cmd & SBI_RESPONSE_FAIL) {
+-		DRM_ERROR("error during SBI read of reg %x\n", reg);
++		drm_err(&i915->drm, "error during SBI read of reg %x\n", reg);
+ 		return -ENXIO;
+ 	}
+ 
+@@ -426,8 +428,9 @@ int sandybridge_pcode_read(struct drm_i915_private *i915, u32 mbox,
+ 	mutex_unlock(&i915->sb_lock);
+ 
+ 	if (err) {
+-		DRM_DEBUG_DRIVER("warning: pcode (read from mbox %x) mailbox access failed for %ps: %d\n",
+-				 mbox, __builtin_return_address(0), err);
++		drm_dbg(&i915->drm,
++			"warning: pcode (read from mbox %x) mailbox access failed for %ps: %d\n",
++			mbox, __builtin_return_address(0), err);
+ 	}
+ 
+ 	return err;
+@@ -447,8 +450,9 @@ int sandybridge_pcode_write_timeout(struct drm_i915_private *i915,
+ 	mutex_unlock(&i915->sb_lock);
+ 
+ 	if (err) {
+-		DRM_DEBUG_DRIVER("warning: pcode (write of 0x%08x to mbox %x) mailbox access failed for %ps: %d\n",
+-				 val, mbox, __builtin_return_address(0), err);
++		drm_dbg(&i915->drm,
++			"warning: pcode (write of 0x%08x to mbox %x) mailbox access failed for %ps: %d\n",
++			val, mbox, __builtin_return_address(0), err);
+ 	}
+ 
+ 	return err;
+@@ -519,7 +523,8 @@ int skl_pcode_request(struct drm_i915_private *i915, u32 mbox, u32 request,
+ 	 * requests, and for any quirks of the PCODE firmware that delays
+ 	 * the request completion.
+ 	 */
+-	DRM_DEBUG_KMS("PCODE timeout, retrying with preemption disabled\n");
++	drm_dbg_kms(&i915->drm,
++		    "PCODE timeout, retrying with preemption disabled\n");
+ 	WARN_ON_ONCE(timeout_base_ms > 3);
+ 	preempt_disable();
+ 	ret = wait_for_atomic(COND, 50);
 -- 
 2.24.1
 
