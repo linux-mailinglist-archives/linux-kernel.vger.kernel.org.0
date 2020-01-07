@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1A7F13315C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:00:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E906D13315E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:00:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbgAGU75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 15:59:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33624 "EHLO mail.kernel.org"
+        id S1728271AbgAGVAK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:00:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728213AbgAGU7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:59:53 -0500
+        id S1727798AbgAGVAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:00:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EA1320880;
-        Tue,  7 Jan 2020 20:59:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9A18214D8;
+        Tue,  7 Jan 2020 21:00:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430792;
-        bh=gqnYSfqwNrGV8LATruTeoQRmL9ZsDZDtSj1epvffWdc=;
+        s=default; t=1578430807;
+        bh=3PtaTiUodMcPPffVP6nAw3FgU0zf85ORA6+K+x6Twqc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GW61qwSKlcWTU0qtF3EeOBg10E+ri47b01Jcy5AY25+leD+RySiBA4BA73tyPy0Xw
-         Ck0rKo3TragiVkDGjXP+5oPnSMG/wI2kWezzBcowgdQrRRcxDsMdzlWT4CzgBlJnI3
-         fAttFQPMc5REiaAN2MAJuhUkicUpuesKq5BcR9gY=
+        b=DChyecJJ2XYSgyZRgYQFeJcsuzffKhEYooivwgEoe1F8CE7FjRs0SLWr0wphAqNhd
+         lSXR6uZQk4U+otk8tx8n9msM3H6dWGYH+q+WQno8MztQOr41slZm9u95N3UmLp7szZ
+         XHPxDWGMYDVgSvvTG3vS3yT995Xy3CxrROUTmUCM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.4 099/191] Btrfs: fix infinite loop during nocow writeback due to race
-Date:   Tue,  7 Jan 2020 21:53:39 +0100
-Message-Id: <20200107205338.288480960@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: [PATCH 5.4 104/191] bpf: Fix precision tracking for unbounded scalars
+Date:   Tue,  7 Jan 2020 21:53:44 +0100
+Message-Id: <20200107205338.558010379@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
 References: <20200107205332.984228665@linuxfoundation.org>
@@ -44,212 +45,259 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-commit de7999afedff02c6631feab3ea726a0e8f8c3d40 upstream.
+commit f54c7898ed1c3c9331376c0337a5049c38f66497 upstream.
 
-When starting writeback for a range that covers part of a preallocated
-extent, due to a race with writeback for another range that also covers
-another part of the same preallocated extent, we can end up in an infinite
-loop.
+Anatoly has been fuzzing with kBdysch harness and reported a hang in one
+of the outcomes. Upon closer analysis, it turns out that precise scalar
+value tracking is missing a few precision markings for unknown scalars:
 
-Consider the following example where for inode 280 we have two dirty
-ranges:
+  0: R1=ctx(id=0,off=0,imm=0) R10=fp0
+  0: (b7) r0 = 0
+  1: R0_w=invP0 R1=ctx(id=0,off=0,imm=0) R10=fp0
+  1: (35) if r0 >= 0xf72e goto pc+0
+  --> only follow fallthrough
+  2: R0_w=invP0 R1=ctx(id=0,off=0,imm=0) R10=fp0
+  2: (35) if r0 >= 0x80fe0000 goto pc+0
+  --> only follow fallthrough
+  3: R0_w=invP0 R1=ctx(id=0,off=0,imm=0) R10=fp0
+  3: (14) w0 -= -536870912
+  4: R0_w=invP536870912 R1=ctx(id=0,off=0,imm=0) R10=fp0
+  4: (0f) r1 += r0
+  5: R0_w=invP536870912 R1_w=inv(id=0) R10=fp0
+  5: (55) if r1 != 0x104c1500 goto pc+0
+  --> push other branch for later analysis
+  R0_w=invP536870912 R1_w=inv273421568 R10=fp0
+  6: R0_w=invP536870912 R1_w=inv273421568 R10=fp0
+  6: (b7) r0 = 0
+  7: R0=invP0 R1=inv273421568 R10=fp0
+  7: (76) if w1 s>= 0xffffff00 goto pc+3
+  --> only follow goto
+  11: R0=invP0 R1=inv273421568 R10=fp0
+  11: (95) exit
+  6: R0_w=invP536870912 R1_w=inv(id=0) R10=fp0
+  6: (b7) r0 = 0
+  propagating r0
+  7: safe
+  processed 11 insns [...]
 
-  range A, from 294912 to 303103, 8192 bytes
-  range B, from 348160 to 438271, 90112 bytes
+In the analysis of the second path coming after the successful exit above,
+the path is being pruned at line 7. Pruning analysis found that both r0 are
+precise P0 and both R1 are non-precise scalars and given prior path with
+R1 as non-precise scalar succeeded, this one is therefore safe as well.
 
-and we have the following file extent item layout for our inode:
+However, problem is that given condition at insn 7 in the first run, we only
+followed goto and didn't push the other branch for later analysis, we've
+never walked the few insns in there and therefore dead-code sanitation
+rewrites it as goto pc-1, causing the hang depending on the skb address
+hitting these conditions. The issue is that R1 should have been marked as
+precise as well such that pruning enforces range check and conluded that new
+R1 is not in range of old R1. In insn 4, we mark R1 (skb) as unknown scalar
+via __mark_reg_unbounded() but not mark_reg_unbounded() and therefore
+regs->precise remains as false.
 
-  leaf 38895616 gen 24544 total ptrs 29 free space 13820 owner 5
-      (...)
-      item 27 key (280 108 200704) itemoff 14598 itemsize 53
-          extent data disk bytenr 0 nr 0 type 1 (regular)
-          extent data offset 0 nr 94208 ram 94208
-      item 28 key (280 108 294912) itemoff 14545 itemsize 53
-          extent data disk bytenr 10433052672 nr 81920 type 2 (prealloc)
-          extent data offset 0 nr 81920 ram 81920
+Back in b5dc0163d8fd ("bpf: precise scalar_value tracking"), this was not
+the case since marking out of __mark_reg_unbounded() had this covered as well.
+Once in both are set as precise in 4 as they should have been, we conclude
+that given R1 was in prior fall-through path 0x104c1500 and now is completely
+unknown, the check at insn 7 concludes that we need to continue walking.
+Analysis after the fix:
 
-Then the following happens:
+  0: R1=ctx(id=0,off=0,imm=0) R10=fp0
+  0: (b7) r0 = 0
+  1: R0_w=invP0 R1=ctx(id=0,off=0,imm=0) R10=fp0
+  1: (35) if r0 >= 0xf72e goto pc+0
+  2: R0_w=invP0 R1=ctx(id=0,off=0,imm=0) R10=fp0
+  2: (35) if r0 >= 0x80fe0000 goto pc+0
+  3: R0_w=invP0 R1=ctx(id=0,off=0,imm=0) R10=fp0
+  3: (14) w0 -= -536870912
+  4: R0_w=invP536870912 R1=ctx(id=0,off=0,imm=0) R10=fp0
+  4: (0f) r1 += r0
+  5: R0_w=invP536870912 R1_w=invP(id=0) R10=fp0
+  5: (55) if r1 != 0x104c1500 goto pc+0
+  R0_w=invP536870912 R1_w=invP273421568 R10=fp0
+  6: R0_w=invP536870912 R1_w=invP273421568 R10=fp0
+  6: (b7) r0 = 0
+  7: R0=invP0 R1=invP273421568 R10=fp0
+  7: (76) if w1 s>= 0xffffff00 goto pc+3
+  11: R0=invP0 R1=invP273421568 R10=fp0
+  11: (95) exit
+  6: R0_w=invP536870912 R1_w=invP(id=0) R10=fp0
+  6: (b7) r0 = 0
+  7: R0_w=invP0 R1_w=invP(id=0) R10=fp0
+  7: (76) if w1 s>= 0xffffff00 goto pc+3
+  R0_w=invP0 R1_w=invP(id=0) R10=fp0
+  8: R0_w=invP0 R1_w=invP(id=0) R10=fp0
+  8: (a5) if r0 < 0x2007002a goto pc+0
+  9: R0_w=invP0 R1_w=invP(id=0) R10=fp0
+  9: (57) r0 &= -16316416
+  10: R0_w=invP0 R1_w=invP(id=0) R10=fp0
+  10: (a6) if w0 < 0x1201 goto pc+0
+  11: R0_w=invP0 R1_w=invP(id=0) R10=fp0
+  11: (95) exit
+  11: R0=invP0 R1=invP(id=0) R10=fp0
+  11: (95) exit
+  processed 16 insns [...]
 
-1) Writeback starts for range B (from 348160 to 438271), execution of
-   run_delalloc_nocow() starts;
-
-2) The first iteration of run_delalloc_nocow()'s whil loop leaves us at
-   the extent item at slot 28, pointing to the prealloc extent item
-   covering the range from 294912 to 376831. This extent covers part of
-   our range;
-
-3) An ordered extent is created against that extent, covering the file
-   range from 348160 to 376831 (28672 bytes);
-
-4) We adjust 'cur_offset' to 376832 and move on to the next iteration of
-   the while loop;
-
-5) The call to btrfs_lookup_file_extent() leaves us at the same leaf,
-   pointing to slot 29, 1 slot after the last item (the extent item
-   we processed in the previous iteration);
-
-6) Because we are a slot beyond the last item, we call btrfs_next_leaf(),
-   which releases the search path before doing a another search for the
-   last key of the leaf (280 108 294912);
-
-7) Right after btrfs_next_leaf() released the path, and before it did
-   another search for the last key of the leaf, writeback for the range
-   A (from 294912 to 303103) completes (it was previously started at
-   some point);
-
-8) Upon completion of the ordered extent for range A, the prealloc extent
-   we previously found got split into two extent items, one covering the
-   range from 294912 to 303103 (8192 bytes), with a type of regular extent
-   (and no longer prealloc) and another covering the range from 303104 to
-   376831 (73728 bytes), with a type of prealloc and an offset of 8192
-   bytes. So our leaf now has the following layout:
-
-     leaf 38895616 gen 24544 total ptrs 31 free space 13664 owner 5
-         (...)
-         item 27 key (280 108 200704) itemoff 14598 itemsize 53
-             extent data disk bytenr 0 nr 0 type 1
-             extent data offset 0 nr 8192 ram 94208
-         item 28 key (280 108 208896) itemoff 14545 itemsize 53
-             extent data disk bytenr 10433142784 nr 86016 type 1
-             extent data offset 0 nr 86016 ram 86016
-         item 29 key (280 108 294912) itemoff 14492 itemsize 53
-             extent data disk bytenr 10433052672 nr 81920 type 1
-             extent data offset 0 nr 8192 ram 81920
-         item 30 key (280 108 303104) itemoff 14439 itemsize 53
-             extent data disk bytenr 10433052672 nr 81920 type 2
-             extent data offset 8192 nr 73728 ram 81920
-
-9) After btrfs_next_leaf() returns, we have our path pointing to that same
-   leaf and at slot 30, since it has a key we didn't have before and it's
-   the first key greater then the key that was previously the last key of
-   the leaf (key (280 108 294912));
-
-10) The extent item at slot 30 covers the range from 303104 to 376831
-    which is in our target range, so we process it, despite having already
-    created an ordered extent against this extent for the file range from
-    348160 to 376831. This is because we skip to the next extent item only
-    if its end is less than or equals to the start of our delalloc range,
-    and not less than or equals to the current offset ('cur_offset');
-
-11) As a result we compute 'num_bytes' as:
-
-    num_bytes = min(end + 1, extent_end) - cur_offset;
-              = min(438271 + 1, 376832) - 376832 = 0
-
-12) We then call create_io_em() for a 0 bytes range starting at offset
-    376832;
-
-13) Then create_io_em() enters an infinite loop because its calls to
-    btrfs_drop_extent_cache() do nothing due to the 0 length range
-    passed to it. So no existing extent maps that cover the offset
-    376832 get removed, and therefore calls to add_extent_mapping()
-    return -EEXIST, resulting in an infinite loop. This loop from
-    create_io_em() is the following:
-
-    do {
-        btrfs_drop_extent_cache(BTRFS_I(inode), em->start,
-                                em->start + em->len - 1, 0);
-        write_lock(&em_tree->lock);
-        ret = add_extent_mapping(em_tree, em, 1);
-        write_unlock(&em_tree->lock);
-        /*
-         * The caller has taken lock_extent(), who could race with us
-         * to add em?
-         */
-    } while (ret == -EEXIST);
-
-Also, each call to btrfs_drop_extent_cache() triggers a warning because
-the start offset passed to it (376832) is smaller then the end offset
-(376832 - 1) passed to it by -1, due to the 0 length:
-
-  [258532.052621] ------------[ cut here ]------------
-  [258532.052643] WARNING: CPU: 0 PID: 9987 at fs/btrfs/file.c:602 btrfs_drop_extent_cache+0x3f4/0x590 [btrfs]
-  (...)
-  [258532.052672] CPU: 0 PID: 9987 Comm: fsx Tainted: G        W         5.4.0-rc7-btrfs-next-64 #1
-  [258532.052673] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-0-ga698c8995f-prebuilt.qemu.org 04/01/2014
-  [258532.052691] RIP: 0010:btrfs_drop_extent_cache+0x3f4/0x590 [btrfs]
-  (...)
-  [258532.052695] RSP: 0018:ffffb4be0153f860 EFLAGS: 00010287
-  [258532.052700] RAX: ffff975b445ee360 RBX: ffff975b44eb3e08 RCX: 0000000000000000
-  [258532.052700] RDX: 0000000000038fff RSI: 0000000000039000 RDI: ffff975b445ee308
-  [258532.052700] RBP: 0000000000038fff R08: 0000000000000000 R09: 0000000000000001
-  [258532.052701] R10: ffff975b513c5c10 R11: 00000000e3c0cfa9 R12: 0000000000039000
-  [258532.052703] R13: ffff975b445ee360 R14: 00000000ffffffef R15: ffff975b445ee308
-  [258532.052705] FS:  00007f86a821de80(0000) GS:ffff975b76a00000(0000) knlGS:0000000000000000
-  [258532.052707] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  [258532.052708] CR2: 00007fdacf0f3ab4 CR3: 00000001f9d26002 CR4: 00000000003606f0
-  [258532.052712] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  [258532.052717] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-  [258532.052717] Call Trace:
-  [258532.052718]  ? preempt_schedule_common+0x32/0x70
-  [258532.052722]  ? ___preempt_schedule+0x16/0x20
-  [258532.052741]  create_io_em+0xff/0x180 [btrfs]
-  [258532.052767]  run_delalloc_nocow+0x942/0xb10 [btrfs]
-  [258532.052791]  btrfs_run_delalloc_range+0x30b/0x520 [btrfs]
-  [258532.052812]  ? find_lock_delalloc_range+0x221/0x250 [btrfs]
-  [258532.052834]  writepage_delalloc+0xe4/0x140 [btrfs]
-  [258532.052855]  __extent_writepage+0x110/0x4e0 [btrfs]
-  [258532.052876]  extent_write_cache_pages+0x21c/0x480 [btrfs]
-  [258532.052906]  extent_writepages+0x52/0xb0 [btrfs]
-  [258532.052911]  do_writepages+0x23/0x80
-  [258532.052915]  __filemap_fdatawrite_range+0xd2/0x110
-  [258532.052938]  btrfs_fdatawrite_range+0x1b/0x50 [btrfs]
-  [258532.052954]  start_ordered_ops+0x57/0xa0 [btrfs]
-  [258532.052973]  ? btrfs_sync_file+0x225/0x490 [btrfs]
-  [258532.052988]  btrfs_sync_file+0x225/0x490 [btrfs]
-  [258532.052997]  __x64_sys_msync+0x199/0x200
-  [258532.053004]  do_syscall_64+0x5c/0x250
-  [258532.053007]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-  [258532.053010] RIP: 0033:0x7f86a7dfd760
-  (...)
-  [258532.053014] RSP: 002b:00007ffd99af0368 EFLAGS: 00000246 ORIG_RAX: 000000000000001a
-  [258532.053016] RAX: ffffffffffffffda RBX: 0000000000000ec9 RCX: 00007f86a7dfd760
-  [258532.053017] RDX: 0000000000000004 RSI: 000000000000836c RDI: 00007f86a8221000
-  [258532.053019] RBP: 0000000000021ec9 R08: 0000000000000003 R09: 00007f86a812037c
-  [258532.053020] R10: 0000000000000001 R11: 0000000000000246 R12: 00000000000074a3
-  [258532.053021] R13: 00007f86a8221000 R14: 000000000000836c R15: 0000000000000001
-  [258532.053032] irq event stamp: 1653450494
-  [258532.053035] hardirqs last  enabled at (1653450493): [<ffffffff9dec69f9>] _raw_spin_unlock_irq+0x29/0x50
-  [258532.053037] hardirqs last disabled at (1653450494): [<ffffffff9d4048ea>] trace_hardirqs_off_thunk+0x1a/0x20
-  [258532.053039] softirqs last  enabled at (1653449852): [<ffffffff9e200466>] __do_softirq+0x466/0x6bd
-  [258532.053042] softirqs last disabled at (1653449845): [<ffffffff9d4c8a0c>] irq_exit+0xec/0x120
-  [258532.053043] ---[ end trace 8476fce13d9ce20a ]---
-
-Which results in flooding dmesg/syslog since btrfs_drop_extent_cache()
-uses WARN_ON() and not WARN_ON_ONCE().
-
-So fix this issue by changing run_delalloc_nocow()'s loop to move to the
-next extent item when the current extent item ends at at offset less than
-or equals to the current offset instead of the start offset.
-
-Fixes: 80ff385665b7fc ("Btrfs: update nodatacow code v2")
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 6754172c208d ("bpf: fix precision tracking in presence of bpf2bpf calls")
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Link: https://lore.kernel.org/bpf/20191222223740.25297-1-daniel@iogearbox.net
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/bpf/verifier.c |   43 ++++++++++++++++++++++---------------------
+ 1 file changed, 22 insertions(+), 21 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -1439,10 +1439,10 @@ next_slot:
- 			disk_num_bytes =
- 				btrfs_file_extent_disk_num_bytes(leaf, fi);
- 			/*
--			 * If extent we got ends before our range starts, skip
--			 * to next extent
-+			 * If the extent we got ends before our current offset,
-+			 * skip to the next extent.
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -852,7 +852,8 @@ static const int caller_saved[CALLER_SAV
+ 	BPF_REG_0, BPF_REG_1, BPF_REG_2, BPF_REG_3, BPF_REG_4, BPF_REG_5
+ };
+ 
+-static void __mark_reg_not_init(struct bpf_reg_state *reg);
++static void __mark_reg_not_init(const struct bpf_verifier_env *env,
++				struct bpf_reg_state *reg);
+ 
+ /* Mark the unknown part of a register (variable offset or scalar value) as
+  * known to have the value @imm.
+@@ -890,7 +891,7 @@ static void mark_reg_known_zero(struct b
+ 		verbose(env, "mark_reg_known_zero(regs, %u)\n", regno);
+ 		/* Something bad happened, let's kill all regs */
+ 		for (regno = 0; regno < MAX_BPF_REG; regno++)
+-			__mark_reg_not_init(regs + regno);
++			__mark_reg_not_init(env, regs + regno);
+ 		return;
+ 	}
+ 	__mark_reg_known_zero(regs + regno);
+@@ -999,7 +1000,8 @@ static void __mark_reg_unbounded(struct
+ }
+ 
+ /* Mark a register as having a completely unknown (scalar) value. */
+-static void __mark_reg_unknown(struct bpf_reg_state *reg)
++static void __mark_reg_unknown(const struct bpf_verifier_env *env,
++			       struct bpf_reg_state *reg)
+ {
+ 	/*
+ 	 * Clear type, id, off, and union(map_ptr, range) and
+@@ -1009,6 +1011,8 @@ static void __mark_reg_unknown(struct bp
+ 	reg->type = SCALAR_VALUE;
+ 	reg->var_off = tnum_unknown;
+ 	reg->frameno = 0;
++	reg->precise = env->subprog_cnt > 1 || !env->allow_ptr_leaks ?
++		       true : false;
+ 	__mark_reg_unbounded(reg);
+ }
+ 
+@@ -1019,19 +1023,16 @@ static void mark_reg_unknown(struct bpf_
+ 		verbose(env, "mark_reg_unknown(regs, %u)\n", regno);
+ 		/* Something bad happened, let's kill all regs except FP */
+ 		for (regno = 0; regno < BPF_REG_FP; regno++)
+-			__mark_reg_not_init(regs + regno);
++			__mark_reg_not_init(env, regs + regno);
+ 		return;
+ 	}
+-	regs += regno;
+-	__mark_reg_unknown(regs);
+-	/* constant backtracking is enabled for root without bpf2bpf calls */
+-	regs->precise = env->subprog_cnt > 1 || !env->allow_ptr_leaks ?
+-			true : false;
++	__mark_reg_unknown(env, regs + regno);
+ }
+ 
+-static void __mark_reg_not_init(struct bpf_reg_state *reg)
++static void __mark_reg_not_init(const struct bpf_verifier_env *env,
++				struct bpf_reg_state *reg)
+ {
+-	__mark_reg_unknown(reg);
++	__mark_reg_unknown(env, reg);
+ 	reg->type = NOT_INIT;
+ }
+ 
+@@ -1042,10 +1043,10 @@ static void mark_reg_not_init(struct bpf
+ 		verbose(env, "mark_reg_not_init(regs, %u)\n", regno);
+ 		/* Something bad happened, let's kill all regs except FP */
+ 		for (regno = 0; regno < BPF_REG_FP; regno++)
+-			__mark_reg_not_init(regs + regno);
++			__mark_reg_not_init(env, regs + regno);
+ 		return;
+ 	}
+-	__mark_reg_not_init(regs + regno);
++	__mark_reg_not_init(env, regs + regno);
+ }
+ 
+ #define DEF_NOT_SUBREG	(0)
+@@ -3066,7 +3067,7 @@ static int check_stack_boundary(struct b
+ 		}
+ 		if (state->stack[spi].slot_type[0] == STACK_SPILL &&
+ 		    state->stack[spi].spilled_ptr.type == SCALAR_VALUE) {
+-			__mark_reg_unknown(&state->stack[spi].spilled_ptr);
++			__mark_reg_unknown(env, &state->stack[spi].spilled_ptr);
+ 			for (j = 0; j < BPF_REG_SIZE; j++)
+ 				state->stack[spi].slot_type[j] = STACK_MISC;
+ 			goto mark;
+@@ -3706,7 +3707,7 @@ static void __clear_all_pkt_pointers(str
+ 		if (!reg)
+ 			continue;
+ 		if (reg_is_pkt_pointer_any(reg))
+-			__mark_reg_unknown(reg);
++			__mark_reg_unknown(env, reg);
+ 	}
+ }
+ 
+@@ -3734,7 +3735,7 @@ static void release_reg_references(struc
+ 		if (!reg)
+ 			continue;
+ 		if (reg->ref_obj_id == ref_obj_id)
+-			__mark_reg_unknown(reg);
++			__mark_reg_unknown(env, reg);
+ 	}
+ }
+ 
+@@ -4357,7 +4358,7 @@ static int adjust_ptr_min_max_vals(struc
+ 		/* Taint dst register if offset had invalid bounds derived from
+ 		 * e.g. dead branches.
+ 		 */
+-		__mark_reg_unknown(dst_reg);
++		__mark_reg_unknown(env, dst_reg);
+ 		return 0;
+ 	}
+ 
+@@ -4609,13 +4610,13 @@ static int adjust_scalar_min_max_vals(st
+ 		/* Taint dst register if offset had invalid bounds derived from
+ 		 * e.g. dead branches.
+ 		 */
+-		__mark_reg_unknown(dst_reg);
++		__mark_reg_unknown(env, dst_reg);
+ 		return 0;
+ 	}
+ 
+ 	if (!src_known &&
+ 	    opcode != BPF_ADD && opcode != BPF_SUB && opcode != BPF_AND) {
+-		__mark_reg_unknown(dst_reg);
++		__mark_reg_unknown(env, dst_reg);
+ 		return 0;
+ 	}
+ 
+@@ -6746,7 +6747,7 @@ static void clean_func_state(struct bpf_
+ 			/* since the register is unused, clear its state
+ 			 * to make further comparison simpler
  			 */
--			if (extent_end <= start) {
-+			if (extent_end <= cur_offset) {
- 				path->slots[0]++;
- 				goto next_slot;
- 			}
+-			__mark_reg_not_init(&st->regs[i]);
++			__mark_reg_not_init(env, &st->regs[i]);
+ 	}
+ 
+ 	for (i = 0; i < st->allocated_stack / BPF_REG_SIZE; i++) {
+@@ -6754,7 +6755,7 @@ static void clean_func_state(struct bpf_
+ 		/* liveness must not touch this stack slot anymore */
+ 		st->stack[i].spilled_ptr.live |= REG_LIVE_DONE;
+ 		if (!(live & REG_LIVE_READ)) {
+-			__mark_reg_not_init(&st->stack[i].spilled_ptr);
++			__mark_reg_not_init(env, &st->stack[i].spilled_ptr);
+ 			for (j = 0; j < BPF_REG_SIZE; j++)
+ 				st->stack[i].slot_type[j] = STACK_INVALID;
+ 		}
 
 
