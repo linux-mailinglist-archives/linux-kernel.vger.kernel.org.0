@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 889A313335E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A8651331A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:02:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729573AbgAGVSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:18:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51302 "EHLO mail.kernel.org"
+        id S1728795AbgAGVCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:02:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729223AbgAGVFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:05:15 -0500
+        id S1728772AbgAGVCi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:02:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F31F2081E;
-        Tue,  7 Jan 2020 21:05:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5DE02077B;
+        Tue,  7 Jan 2020 21:02:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431114;
-        bh=26pRNXp4y9ynyMwAZNrOVO5Yl5vRpAbkefRc+U5H31I=;
+        s=default; t=1578430957;
+        bh=jnO32xadFHrj79I6OflMLSYNfy4haaOqzZ40yCXJ4QI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kHwKKzVfnlJuVWx8jSspxVZ/hjDmsLVuJFUPqKHFOilaNc+K3T7s8js+XzGb5XXXi
-         FySW3Zp/vaNATbUTr7dzPjXxf9nX/6B/TyHG292aMhATDRzymazrvT/oEvQW1IGmOo
-         Mwc3cm98VZFOGTPt0jhpgSzTXsW5l6h5Rr1vv8f4=
+        b=v4tldp3yKCmeHnwQkLSIri0g10QU5znDTse6tvrf9e2T8RjvG7TF6xaRFv4YdxSmH
+         UJG0kbbpNRrgpNfFafQvLaNfVP3rD+NATyNKmAwrkAsi4rWkTXVbPBgCWS+sz7lTN7
+         45+CvL648rIljQP2P3ExeNRqqxMGUdRtMSM+7vY4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+c732f8644185de340492@syzkaller.appspotmail.com,
-        Brian Foster <bfoster@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 038/115] xfs: fix mount failure crash on invalid iclog memory access
-Date:   Tue,  7 Jan 2020 21:54:08 +0100
-Message-Id: <20200107205301.648935842@linuxfoundation.org>
+        stable@vger.kernel.org, chenqiwu <chenqiwu@xiaomi.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: [PATCH 5.4 129/191] exit: panic before exit_mm() on global init exit
+Date:   Tue,  7 Jan 2020 21:54:09 +0100
+Message-Id: <20200107205339.877006753@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-References: <20200107205240.283674026@linuxfoundation.org>
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+References: <20200107205332.984228665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,47 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Foster <bfoster@redhat.com>
+From: chenqiwu <chenqiwu@xiaomi.com>
 
-[ Upstream commit 798a9cada4694ca8d970259f216cec47e675bfd5 ]
+commit 43cf75d96409a20ef06b756877a2e72b10a026fc upstream.
 
-syzbot (via KASAN) reports a use-after-free in the error path of
-xlog_alloc_log(). Specifically, the iclog freeing loop doesn't
-handle the case of a fully initialized ->l_iclog linked list.
-Instead, it assumes that the list is partially constructed and NULL
-terminated.
+Currently, when global init and all threads in its thread-group have exited
+we panic via:
+do_exit()
+-> exit_notify()
+   -> forget_original_parent()
+      -> find_child_reaper()
+This makes it hard to extract a useable coredump for global init from a
+kernel crashdump because by the time we panic exit_mm() will have already
+released global init's mm.
+This patch moves the panic futher up before exit_mm() is called. As was the
+case previously, we only panic when global init and all its threads in the
+thread-group have exited.
 
-This bug manifested because there was no possible error scenario
-after iclog list setup when the original code was added.  Subsequent
-code and associated error conditions were added some time later,
-while the original error handling code was never updated. Fix up the
-error loop to terminate either on a NULL iclog or reaching the end
-of the list.
+Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+[christian.brauner@ubuntu.com: fix typo, rewrite commit message]
+Link: https://lore.kernel.org/r/1576736993-10121-1-git-send-email-qiwuchen55@gmail.com
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Reported-by: syzbot+c732f8644185de340492@syzkaller.appspotmail.com
-Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/xfs/xfs_log.c | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/exit.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-index c3b610b687d1..7bba551cbf90 100644
---- a/fs/xfs/xfs_log.c
-+++ b/fs/xfs/xfs_log.c
-@@ -1578,6 +1578,8 @@ xlog_alloc_log(
- 		if (iclog->ic_bp)
- 			xfs_buf_free(iclog->ic_bp);
- 		kmem_free(iclog);
-+		if (prev_iclog == log->l_iclog)
-+			break;
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -517,10 +517,6 @@ static struct task_struct *find_child_re
  	}
- 	spinlock_destroy(&log->l_icloglock);
- 	xfs_buf_free(log->l_xbuf);
--- 
-2.20.1
-
+ 
+ 	write_unlock_irq(&tasklist_lock);
+-	if (unlikely(pid_ns == &init_pid_ns)) {
+-		panic("Attempted to kill init! exitcode=0x%08x\n",
+-			father->signal->group_exit_code ?: father->exit_code);
+-	}
+ 
+ 	list_for_each_entry_safe(p, n, dead, ptrace_entry) {
+ 		list_del_init(&p->ptrace_entry);
+@@ -766,6 +762,14 @@ void __noreturn do_exit(long code)
+ 	acct_update_integrals(tsk);
+ 	group_dead = atomic_dec_and_test(&tsk->signal->live);
+ 	if (group_dead) {
++		/*
++		 * If the last thread of global init has exited, panic
++		 * immediately to get a useable coredump.
++		 */
++		if (unlikely(is_global_init(tsk)))
++			panic("Attempted to kill init! exitcode=0x%08x\n",
++				tsk->signal->group_exit_code ?: (int)code);
++
+ #ifdef CONFIG_POSIX_TIMERS
+ 		hrtimer_cancel(&tsk->signal->real_timer);
+ 		exit_itimers(tsk->signal);
 
 
