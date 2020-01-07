@@ -2,88 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B1BC133039
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:03:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34053133042
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:04:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728682AbgAGUDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 15:03:11 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:35737 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728358AbgAGUDL (ORCPT
+        id S1728735AbgAGUEu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 15:04:50 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:54363 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728358AbgAGUEt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:03:11 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M2wCi-1iq23L2cxw-003JkJ; Tue, 07 Jan 2020 21:02:35 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
+        Tue, 7 Jan 2020 15:04:49 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 007K31WJ002663
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 7 Jan 2020 15:03:02 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id B2F684207DF; Tue,  7 Jan 2020 15:03:01 -0500 (EST)
+Date:   Tue, 7 Jan 2020 15:03:01 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         David Sterba <dsterba@suse.com>,
-        Richard Weinberger <richard@nod.at>, Jan Kara <jack@suse.cz>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        Chandan Rajendra <chandan@linux.ibm.com>,
-        Eric Whitney <enwlinux@gmail.com>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: fix ext4 unused-variable warning
-Date:   Tue,  7 Jan 2020 21:02:12 +0100
-Message-Id: <20200107200233.3244877-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Dave Kleikamp <shaggy@kernel.org>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Jan Kara <jack@suse.com>, Eric Sandeen <sandeen@redhat.com>,
+        Namjae Jeon <linkinjeon@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: Unification of filesystem encoding options
+Message-ID: <20200107200301.GE3619@mit.edu>
+References: <20200102211855.gg62r7jshp742d6i@pali>
+ <20200107133233.GC25547@quack2.suse.cz>
+ <20200107173842.ciskn4ahuhiklycm@pali>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:nfqDsO3LApBgvoCI17Vt2kujvHVXqGUNcSRj3x/2fTZrCNeqX1M
- F9zM+mnkHdTWrc8g19vcpdlPTdaeQMGctnjAd/ioxofcHU1qTbwnfFeP/MrcEfKmHgnbhlA
- LITm7qBEBt3FmbD1j5qsxPgLTKoMbehLkBXEuegwnGIdKpbvcBlEk71cfB/ZsbNaguQPf2y
- au9r1NadicA1lx67tXQvw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:HP6fxNg0DoQ=:mI6FjMO2CLchjmhCaimz1O
- RvTpLvCYslXOk8SOGfIozC7UAaSd/0Fn3FwOPA6hXFie7ds6cDrUOQc4AxWD6tW2DGhcgBDK0
- Prf7AER5VGkDDU5zBCr4ybsNdi3+p4EbqmauBQCozrgYoEO9sOO5zr4nSqREqC2HE5wB8lXla
- Vwkx1JnVXOf83lqGdxhidkj5eQH1a3mMGpLa2hoI/R+Lr/rXtHGK9ZM6sPKQ/wunLQrIRetC1
- uEOjyC4UP8aBwuUTTtYpRWkorXX4dwUztGThaOaOje7OuQFa9sBldp2FiuY0KFlf35EwOQnZx
- utCFCNe8GAvk0iZA8xQRswEHHmldFrUb/valpP15os0S1ZA4bcLiL5nLhdU4QpAse4elN6Kfj
- jLxdPq199nk/KlA5EvUumBn4WC8qXlGL9843ZFKSdJd5+WIXXn1AaDrCGZK2lkVZgsflxVT0Y
- zn0kQueq3XYE1+QMbaWJ9FR2WoQKHc7lTQBpZq1RcppU4AYZfmY9JMcUQX4w0Hio8K/AEzr7F
- Rls7K+DW9Avm7lvoaMFI9zDfApDHV6iJPs+DFMlPilKg+O/EfM8xzF/icbp1fHsZYJC/M0HcE
- fBXJnBgZqBYJKpVhy7g/bU7ySnFEzh78m9gA7HxEoSqSxRW9vfYTCRBHknVvdbIrPzVF/FRf6
- UOrnPBaZiMCzeDclWVndxSTByA1n3S6X2W+ibi6T60PTjejvbpP4e0ZCs6CPd32Jefl5wakFd
- OB3+Ov2Ky45B709gjWM4HZ/3wO7i7/reyh/1JWo/HpvOjS1B/ur/6srUfXsDcq1/PTDcc3LwX
- wpvFjxaxwZi5cvYONTKaACbl+37cfjD6txwLtxjUHx1patvnun/UxaKmAogwFOtK4hYLC5VHC
- xB286Hgxy1QD2NDpi7ow==
+In-Reply-To: <20200107173842.ciskn4ahuhiklycm@pali>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A bugfix introduce a harmless warning:
+On Tue, Jan 07, 2020 at 06:38:42PM +0100, Pali Rohár wrote:
+> Adding support for case-insensitivity into UTF-8 NLS encoding would mean
+> to create completely new kernel NLS API (which would support variable
+> length encodings) and rewrite all NLS filesystems to use this new API.
+> Also all existing NLS encodings would be needed to port into this new
+> API.
+> 
+> It is really something which have a value? Just because of UTF-8?
+> 
+> For me it looks like better option would be to remove UTF-8 NLS encoding
+> as it is broken. Some filesystems already do not use NLS API for their
+> UTF-8 support (e.g. vfat, udf or newly prepared exfat). And others could
+> be modified/extended/fixed in similar way.
 
-fs/ext4/inode.c: In function 'ext4_page_mkwrite':
-fs/ext4/inode.c:5910:24: error: unused variable 'mapping' [-Werror=unused-variable]
+You didn't mention ext4 and f2fs, which is using the Unicode code in
+fs/unicode for its case-folding and normalization support.  Ext4 and
+f2fs only supports utf-8, so using the NLS API would have added no
+value --- and it as you pointed out, the NLS API doesn't support
+variable length encoding anyway.  In contrast the fs/unicode functions
+have support for full Unicode case folding and normalization, and
+currently has the latest Unicode 12.1 tables (released May 2019).
 
-Remove the now-unused variable.
+What I'd suggest is to create a new API, enhancing the functions in
+fs/unicode, to support those file systems that need to deal with
+UTF-16 and UTF-32 for their on-disk directory format, and that we
+assume that for the most part, userspace *will* be using a UTF-8
+encoding for the user<->kernel interface.  We can keep the existing
+NLS interface and mount options for legacy support, but in my opinion
+it's not worth the effort to try to do anything else.
 
-Fixes: 4a58d8158f6d ("fs: Fix page_mkwrite off-by-one errors")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/ext4/inode.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 9a3e8d075cd0..d0049fd0bfd4 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5907,7 +5907,6 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
- 	vm_fault_t ret;
- 	struct file *file = vma->vm_file;
- 	struct inode *inode = file_inode(file);
--	struct address_space *mapping = inode->i_mapping;
- 	handle_t *handle;
- 	get_block_t *get_block;
- 	int retries = 0;
--- 
-2.20.0
-
+					- Ted
