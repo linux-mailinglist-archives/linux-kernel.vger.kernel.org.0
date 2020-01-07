@@ -2,81 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 814091322DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:47:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDB4B1322E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:48:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbgAGJrj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 04:47:39 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:40353 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726565AbgAGJri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 04:47:38 -0500
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 47sSGb5vpxz39;
-        Tue,  7 Jan 2020 10:47:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1578390456; bh=mQhGMrMqAWw47NECxXln208dkF/GHmMTdjSqLfREAeI=;
-        h=Date:From:Subject:To:Cc:From;
-        b=RI1VjAZW/5oEzniE4siJGYElmPhb/QAKViy2c/5A3PX8nhSyhy7A8+Sb2t0XGri1N
-         9v5jifgL5K8Wt0RTqNsfbg8yZ72vpVMh0Mkb0lv8NVb2DE2QnGXH+0FmaOSmna2Fcx
-         8JQDtdvAfZjqq32gexokiMkdQzk1/syjk3Ux6gc+tHzdAW23vIvodkVo7DIvfnQ95A
-         tXLLGFJMZzuHbJd5TDroP0Rglg0d21lB51WrPzggSqM08QpqiiUWEdc3kca1aWloyI
-         rIjssdpdfZegcd9adbJ6kv1yl2GutIHps2DUj3dyDRtbtHDD2PPoq9qfKJf5azJiX/
-         aEPZ7iPtMQecA==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.101.4 at mail
-Date:   Tue, 07 Jan 2020 10:47:34 +0100
-Message-Id: <9aff1d859935e59edd81e4939e40d6c55e0b55f6.1578390388.git.mirq-linux@rere.qmqm.pl>
-From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v3] mmc: tegra: fix SDR50 tuning override
+        id S1727807AbgAGJsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 04:48:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:56802 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727273AbgAGJsb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 04:48:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=IWusUDmSIL/SB7RdbIQ699smqvgNkC7EH2eXRvFyN1c=; b=KDLRNbfURfqAdTtFDPk0X9ytm
+        epPWwWBRm7xJe7Rm31wFHqQNpguFuh4ELVCVUp38z7vZtHx/Z93vJvRLRHnXNuTzRLIKUScxHfy/v
+        U7N0u6aZDnm6cEPG4fU8M7Wn/9HGw8XD4NtnBLP7AfoEf5r3+3ofsWzwBzIaaqRFqjbMAxCKf8Cuh
+        4NdQlTC3EFmMFdeVtJvq/DUA72P5Bc8k1BZN9lOCRQhgXZfgxnQE2U1PR1qC8QDkGu17pT6q5Uu+w
+        0xwdtMUOg/gX0acaa53dos8UQ1/ePBHqiEa2akjxZZpH98ZJIv0ryPlnSyycEPcFA7Nucy2AZadIC
+        njzG+n1nw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iolSx-0000tV-9v; Tue, 07 Jan 2020 09:47:59 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3F1B93025C3;
+        Tue,  7 Jan 2020 10:46:24 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 90E112B5FB0B3; Tue,  7 Jan 2020 10:47:56 +0100 (CET)
+Date:   Tue, 7 Jan 2020 10:47:56 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Li Guanglei <guangleix.li@gmail.com>, mingo@redhat.com,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, linux-kernel@vger.kernel.org,
+        guanglei.li@unisoc.com
+Subject: Re: [PATCH v01] sched/core: uclamp: fix rq.uclamp memory size of
+ initialization
+Message-ID: <20200107094756.GW2844@hirez.programming.kicks-ass.net>
+References: <1577259844-12677-1-git-send-email-guangleix.li@gmail.com>
+ <20191229221119.oaxrygmi37cnzqas@e107158-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Lucas Stach <dev@lynxeye.de>
-Cc:     linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191229221119.oaxrygmi37cnzqas@e107158-lin.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 7ad2ed1dfcbe inadvertently mixed up a quirk flag's name and
-broke SDR50 tuning override. Use correct NVQUIRK_ name.
+On Sun, Dec 29, 2019 at 10:11:20PM +0000, Qais Yousef wrote:
+> On 12/25/19 15:44, Li Guanglei wrote:
+> > From: Li Guanglei <guanglei.li@unisoc.com>
+> > 
+> > uclamp_rq for each clamp id(UCLAMP_CNT) should be initialized when call
+> 
+> s/clamp id(UCLAMP_CNT)/UCLAMP_CNT/
+> 
+> > init_uclamp.
+> > 
+> > Signed-off-by: Li Guanglei <guanglei.li@unisoc.com>
+> 
+> This need fixes tag
+> 
+> Fixes: 69842cba9ace ("sched/uclamp: Add CPU's clamp buckets refcountinga")
+> 
+> Otherwise this looks good to me.
+> 
+> Reviewed-by: Qais Yousef <qais.yousef@arm.com>
 
-Fixes: 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes")
-Cc: <stable@vger.kernel.org> # 4f6aa3264af4: mmc: tegra: Only advertise UHS modes if IO regulator is present
-Cc: <stable@vger.kernel.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-Tested-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Thanks! It now looks something like so:
 
 ---
- v3: added Thierry's signs that were missing in v2
- v2: converted 'Depends-On' tag to proper 'Cc: stable' lines
+Subject: sched/core: Fix size of rq::uclamp initialization
+From: Li Guanglei <guanglei.li@unisoc.com>
+Date: Wed, 25 Dec 2019 15:44:04 +0800
 
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+rq::uclamp is an array of struct uclamp_rq, make sure we clear the
+whole thing.
+
+Fixes: 69842cba9ace ("sched/uclamp: Add CPU's clamp buckets refcountinga")
+Signed-off-by: Li Guanglei <guanglei.li@unisoc.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Qais Yousef <qais.yousef@arm.com>
+Link: https://lkml.kernel.org/r/1577259844-12677-1-git-send-email-guangleix.li@gmail.com
 ---
- drivers/mmc/host/sdhci-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 7bc950520fd9..403ac44a7378 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -386,7 +386,7 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
- 			misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_DDR50;
- 		if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR104)
- 			misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR104;
--		if (soc_data->nvquirks & SDHCI_MISC_CTRL_ENABLE_SDR50)
-+		if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR50)
- 			clk_ctrl |= SDHCI_CLOCK_CTRL_SDR50_TUNING_OVERRIDE;
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1253,7 +1253,8 @@ static void __init init_uclamp(void)
+ 	mutex_init(&uclamp_mutex);
+ 
+ 	for_each_possible_cpu(cpu) {
+-		memset(&cpu_rq(cpu)->uclamp, 0, sizeof(struct uclamp_rq));
++		memset(&cpu_rq(cpu)->uclamp, 0,
++				sizeof(struct uclamp_rq)*UCLAMP_CNT);
+ 		cpu_rq(cpu)->uclamp_flags = 0;
  	}
  
--- 
-2.20.1
-
