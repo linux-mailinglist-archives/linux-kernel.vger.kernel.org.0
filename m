@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A56C8133238
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:09:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5870133304
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:16:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729506AbgAGVIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:08:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60460 "EHLO mail.kernel.org"
+        id S1729682AbgAGVIZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:08:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729352AbgAGVIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:08:20 -0500
+        id S1729673AbgAGVIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:08:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7E1224684;
-        Tue,  7 Jan 2020 21:08:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D5FE20880;
+        Tue,  7 Jan 2020 21:08:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431299;
-        bh=FFnxewB0PxNjiHj9jmXU04m/t7uLXJ/DPQUka9Y/FR0=;
+        s=default; t=1578431301;
+        bh=scddgpvllI85i/98LWMYBVIE/Q5evmoMzZcNLa0aPZs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oqxtqp08rF0JkbqTPfQ2tx7zU/qwvhwBlavw0/HUUkYE/joKKZz6A0ljhcsQY9py2
-         JqXY8Y1PBMtzAR8b6PcbOcOpO4dh4lG8CuSwz41VTJlOGkEWYDYW7dwhYVZ2/LJ754
-         Vga2ca60Tln74oySA0anFbapJa5BkYiLnoCxcKvk=
+        b=qmelnMm213luoFgx4fBPKu4uQTMsKhVR1HYeVha2pe+sD74mt8HULfm3OT3HOkhJo
+         LECq9Bt9mteLRc8Pkj/FLFGzPsvb8pox3/DwUM/e4bKCt7oiuUJFPozp3yQttRb0N2
+         gwNxkk+ccGYg5vIcDmfm3qS9oQh3opeB53dsQT6k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Woodhouse <dwmw@amazon.de>,
-        Maximilian Heyne <mheyne@amazon.de>,
-        Paul Durrant <pdurrant@amazon.co.uk>,
-        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
-        SeongJae Park <sjpark@amazon.de>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 114/115] xen/blkback: Avoid unmapping unmapped grant pages
-Date:   Tue,  7 Jan 2020 21:55:24 +0100
-Message-Id: <20200107205310.616222247@linuxfoundation.org>
+Subject: [PATCH 4.19 115/115] perf/x86/intel/bts: Fix the use of page_private()
+Date:   Tue,  7 Jan 2020 21:55:25 +0100
+Message-Id: <20200107205311.271071706@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
 References: <20200107205240.283674026@linuxfoundation.org>
@@ -47,67 +49,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: SeongJae Park <sjpark@amazon.de>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-[ Upstream commit f9bd84a8a845d82f9b5a081a7ae68c98a11d2e84 ]
+[ Upstream commit ff61541cc6c1962957758ba433c574b76f588d23 ]
 
-For each I/O request, blkback first maps the foreign pages for the
-request to its local pages.  If an allocation of a local page for the
-mapping fails, it should unmap every mapping already made for the
-request.
+Commit
 
-However, blkback's handling mechanism for the allocation failure does
-not mark the remaining foreign pages as unmapped.  Therefore, the unmap
-function merely tries to unmap every valid grant page for the request,
-including the pages not mapped due to the allocation failure.  On a
-system that fails the allocation frequently, this problem leads to
-following kernel crash.
+  8062382c8dbe2 ("perf/x86/intel/bts: Add BTS PMU driver")
 
-  [  372.012538] BUG: unable to handle kernel NULL pointer dereference at 0000000000000001
-  [  372.012546] IP: [<ffffffff814071ac>] gnttab_unmap_refs.part.7+0x1c/0x40
-  [  372.012557] PGD 16f3e9067 PUD 16426e067 PMD 0
-  [  372.012562] Oops: 0002 [#1] SMP
-  [  372.012566] Modules linked in: act_police sch_ingress cls_u32
-  ...
-  [  372.012746] Call Trace:
-  [  372.012752]  [<ffffffff81407204>] gnttab_unmap_refs+0x34/0x40
-  [  372.012759]  [<ffffffffa0335ae3>] xen_blkbk_unmap+0x83/0x150 [xen_blkback]
-  ...
-  [  372.012802]  [<ffffffffa0336c50>] dispatch_rw_block_io+0x970/0x980 [xen_blkback]
-  ...
-  Decompressing Linux... Parsing ELF... done.
-  Booting the kernel.
-  [    0.000000] Initializing cgroup subsys cpuset
+brought in a warning with the BTS buffer initialization
+that is easily tripped with (assuming KPTI is disabled):
 
-This commit fixes this problem by marking the grant pages of the given
-request that didn't mapped due to the allocation failure as invalid.
+instantly throwing:
 
-Fixes: c6cc142dac52 ("xen-blkback: use balloon pages for all mappings")
+> ------------[ cut here ]------------
+> WARNING: CPU: 2 PID: 326 at arch/x86/events/intel/bts.c:86 bts_buffer_setup_aux+0x117/0x3d0
+> Modules linked in:
+> CPU: 2 PID: 326 Comm: perf Not tainted 5.4.0-rc8-00291-gceb9e77324fa #904
+> RIP: 0010:bts_buffer_setup_aux+0x117/0x3d0
+> Call Trace:
+>  rb_alloc_aux+0x339/0x550
+>  perf_mmap+0x607/0xc70
+>  mmap_region+0x76b/0xbd0
+...
 
-Reviewed-by: David Woodhouse <dwmw@amazon.de>
-Reviewed-by: Maximilian Heyne <mheyne@amazon.de>
-Reviewed-by: Paul Durrant <pdurrant@amazon.co.uk>
-Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+It appears to assume (for lost raisins) that PagePrivate() is set,
+while later it actually tests for PagePrivate() before using
+page_private().
+
+Make it consistent and always check PagePrivate() before using
+page_private().
+
+Fixes: 8062382c8dbe2 ("perf/x86/intel/bts: Add BTS PMU driver")
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Link: https://lkml.kernel.org/r/20191205142853.28894-2-alexander.shishkin@linux.intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/xen-blkback/blkback.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/events/intel/bts.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
-index fd1e19f1a49f..3666afa639d1 100644
---- a/drivers/block/xen-blkback/blkback.c
-+++ b/drivers/block/xen-blkback/blkback.c
-@@ -936,6 +936,8 @@ next:
- out_of_memory:
- 	pr_alert("%s: out of memory\n", __func__);
- 	put_free_pages(ring, pages_to_gnt, segs_to_map);
-+	for (i = last_map; i < num; i++)
-+		pages[i]->handle = BLKBACK_INVALID_HANDLE;
- 	return -ENOMEM;
+diff --git a/arch/x86/events/intel/bts.c b/arch/x86/events/intel/bts.c
+index 7139f6bf27ad..510f9461407e 100644
+--- a/arch/x86/events/intel/bts.c
++++ b/arch/x86/events/intel/bts.c
+@@ -71,9 +71,17 @@ struct bts_buffer {
+ 
+ static struct pmu bts_pmu;
+ 
++static int buf_nr_pages(struct page *page)
++{
++	if (!PagePrivate(page))
++		return 1;
++
++	return 1 << page_private(page);
++}
++
+ static size_t buf_size(struct page *page)
+ {
+-	return 1 << (PAGE_SHIFT + page_private(page));
++	return buf_nr_pages(page) * PAGE_SIZE;
  }
  
+ static void *
+@@ -91,9 +99,7 @@ bts_buffer_setup_aux(struct perf_event *event, void **pages,
+ 	/* count all the high order buffers */
+ 	for (pg = 0, nbuf = 0; pg < nr_pages;) {
+ 		page = virt_to_page(pages[pg]);
+-		if (WARN_ON_ONCE(!PagePrivate(page) && nr_pages > 1))
+-			return NULL;
+-		pg += 1 << page_private(page);
++		pg += buf_nr_pages(page);
+ 		nbuf++;
+ 	}
+ 
+@@ -117,7 +123,7 @@ bts_buffer_setup_aux(struct perf_event *event, void **pages,
+ 		unsigned int __nr_pages;
+ 
+ 		page = virt_to_page(pages[pg]);
+-		__nr_pages = PagePrivate(page) ? 1 << page_private(page) : 1;
++		__nr_pages = buf_nr_pages(page);
+ 		buf->buf[nbuf].page = page;
+ 		buf->buf[nbuf].offset = offset;
+ 		buf->buf[nbuf].displacement = (pad ? BTS_RECORD_SIZE - pad : 0);
 -- 
 2.20.1
 
