@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67A2D13334E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:17:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0168D133462
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:25:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729297AbgAGVRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:17:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52460 "EHLO mail.kernel.org"
+        id S1727639AbgAGVAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:00:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729257AbgAGVFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:05:36 -0500
+        id S1728249AbgAGVAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:00:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C7DB2081E;
-        Tue,  7 Jan 2020 21:05:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F77520880;
+        Tue,  7 Jan 2020 21:00:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431136;
-        bh=V1Q3Xuf3lHcY7QWN+8zhItJkKgV8hQvAWN7NdTrbQeQ=;
+        s=default; t=1578430802;
+        bh=xfY0Bi9UHxCB8JaSZ+qYTGH4RoqOvqbb5ZXpEwB30YU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C1u6ojmKIBVd1lhLhLoes5yurgXlSw7FamyNSOJsnMqSUl5Fu3O006FTRKoqOrRle
-         3IWaWHqz54uSuGDr+bS+Jdff9pZ3xR6PXjWhmqfPnIQZrLJp2t+0Po4oVSkczTmujU
-         hdeI9HEf9DTfTFQD3nYED0FMRasAO8d1nA044MEo=
+        b=t7lRp223wrTv1e+fdkuCGCCScZFLRr9k+pSYtoNW4fhvzAybG8APGiIjBfqcHizXH
+         G1oXEFvLuw/Q89ZZJCRHj5Vr+k/jpASSFzuMQHwDrfJwnQiMfD7s/qhQLPgJfn+n0K
+         ERVFdIUHOaOqZcDAFv6eZPpiwA3YJU2Vj7MVhcLY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 012/115] RDMA/cma: add missed unregister_pernet_subsys in init failure
+        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
+        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.4 102/191] compat_ioctl: block: handle BLKREPORTZONE/BLKRESETZONE
 Date:   Tue,  7 Jan 2020 21:53:42 +0100
-Message-Id: <20200107205247.577554699@linuxfoundation.org>
+Message-Id: <20200107205338.451108570@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-References: <20200107205240.283674026@linuxfoundation.org>
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+References: <20200107205332.984228665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 44a7b6759000ac51b92715579a7bba9e3f9245c2 ]
+commit 673bdf8ce0a387ef585c13b69a2676096c6edfe9 upstream.
 
-The driver forgets to call unregister_pernet_subsys() in the error path
-of cma_init().
-Add the missed call to fix it.
+These were added to blkdev_ioctl() but not blkdev_compat_ioctl,
+so add them now.
 
-Fixes: 4be74b42a6d0 ("IB/cma: Separate port allocation to network namespaces")
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Reviewed-by: Parav Pandit <parav@mellanox.com>
-Link: https://lore.kernel.org/r/20191206012426.12744-1-hslester96@gmail.com
-Signed-off-by: Doug Ledford <dledford@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: <stable@vger.kernel.org> # v4.10+
+Fixes: 3ed05a987e0f ("blk-zoned: implement ioctls")
+Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/infiniband/core/cma.c | 1 +
- 1 file changed, 1 insertion(+)
+ block/compat_ioctl.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
-index 1f373ba573b6..319bfef00a4a 100644
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -4658,6 +4658,7 @@ static int __init cma_init(void)
- err:
- 	unregister_netdevice_notifier(&cma_nb);
- 	ib_sa_unregister_client(&sa_client);
-+	unregister_pernet_subsys(&cma_pernet_operations);
- err_wq:
- 	destroy_workqueue(cma_wq);
- 	return ret;
--- 
-2.20.1
-
+--- a/block/compat_ioctl.c
++++ b/block/compat_ioctl.c
+@@ -355,6 +355,8 @@ long compat_blkdev_ioctl(struct file *fi
+ 	 * but we call blkdev_ioctl, which gets the lock for us
+ 	 */
+ 	case BLKRRPART:
++	case BLKREPORTZONE:
++	case BLKRESETZONE:
+ 		return blkdev_ioctl(bdev, mode, cmd,
+ 				(unsigned long)compat_ptr(arg));
+ 	case BLKBSZSET_32:
 
 
