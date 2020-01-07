@@ -2,200 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE3CE131D71
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 03:06:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89799131D7C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 03:09:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbgAGCGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 21:06:31 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38564 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727250AbgAGCGa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 21:06:30 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id ABE66277412
-Message-ID: <cfd5156f09358a428d0c40cfcd17d688e0225f2b.camel@collabora.com>
-Subject: Re: [PATCH v12 09/11] media: staging: dt-bindings: add Rockchip
- MIPI RX D-PHY yaml bindings
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Helen Koike <helen.koike@collabora.com>
-Cc:     linux-rockchip@lists.infradead.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, eddie.cai.linux@gmail.com,
-        mchehab@kernel.org, heiko@sntech.de, gregkh@linuxfoundation.org,
-        andrey.konovalov@linaro.org, linux-kernel@vger.kernel.org,
-        tfiga@chromium.org, robh+dt@kernel.org, hans.verkuil@cisco.com,
-        sakari.ailus@linux.intel.com, joacim.zetterling@gmail.com,
-        kernel@collabora.com, linux-media@vger.kernel.org,
-        jacob-chen@iotwrt.com, linux-arm-kernel@lists.infradead.org
-Date:   Mon, 06 Jan 2020 23:06:12 -0300
-In-Reply-To: <20200107001055.GE22189@pendragon.ideasonboard.com>
-References: <20191227200116.2612137-1-helen.koike@collabora.com>
-         <20191227200116.2612137-10-helen.koike@collabora.com>
-         <20200107001055.GE22189@pendragon.ideasonboard.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2 
+        id S1727474AbgAGCJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 21:09:13 -0500
+Received: from mga14.intel.com ([192.55.52.115]:26869 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727250AbgAGCJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 21:09:13 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jan 2020 18:09:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,404,1571727600"; 
+   d="asc'?scan'208";a="420896975"
+Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.13.116])
+  by fmsmga005.fm.intel.com with ESMTP; 06 Jan 2020 18:09:11 -0800
+Date:   Tue, 7 Jan 2020 10:06:37 +0800
+From:   Zhenyu Wang <zhenyuw@linux.intel.com>
+To:     Julian Stecklina <julian.stecklina@cyberus-technology.de>
+Cc:     intel-gvt-dev@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Zhenyu Wang <zhenyuw@linux.intel.com>, zhiyuan.lv@intel.com,
+        hang.yuan@intel.com
+Subject: Re: [PATCH 1/3] drm/i915/gvt: fix file paths in documentation
+Message-ID: <20200107020637.GA5894@zhen-hp.sh.intel.com>
+Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+References: <20200106140622.14393-1-julian.stecklina@cyberus-technology.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
+Content-Disposition: inline
+In-Reply-To: <20200106140622.14393-1-julian.stecklina@cyberus-technology.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
 
-Thanks a lot for reviewing this.
+--PEIAKu/WMn1b1Hv9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2020-01-07 at 02:10 +0200, Laurent Pinchart wrote:
-> Hi Helen,
-> 
-> Thank you for the patch.
-> 
-> On Fri, Dec 27, 2019 at 05:01:14PM -0300, Helen Koike wrote:
-> > Add yaml DT bindings for Rockchip MIPI D-PHY RX
-> > 
-> > This was tested and verified with:
-> > mv drivers/staging/media/phy-rockchip-dphy/Documentation/devicetree/bindings/phy/rockchip-mipi-dphy.yaml  Documentation/devicetree/bindings/phy/
-> > make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/phy/rockchip-mipi-dphy.yaml
-> > make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/phy/rockchip-mipi-dphy.yaml
-> > 
-> > Signed-off-by: Helen Koike <helen.koike@collabora.com>
-> > 
-> > ---
-> > 
-> > Changes in v12:
-> > - The commit replaces the following commit in previous series named
-> > media: staging: dt-bindings: Document the Rockchip MIPI RX D-PHY bindings
-> > This new patch adds yaml binding and was verified with
-> > make dtbs_check and make dt_binding_check
-> > 
-> > Changes in v11: None
-> > Changes in v10:
-> > - unsquash
-> > 
-> > Changes in v9:
-> > - fix title division style
-> > - squash
-> > - move to staging
-> > 
-> > Changes in v8: None
-> > Changes in v7:
-> > - updated doc with new design and tested example
-> > 
-> >  .../bindings/phy/rockchip-mipi-dphy.yaml      | 75 +++++++++++++++++++
-> >  1 file changed, 75 insertions(+)
-> >  create mode 100644 drivers/staging/media/phy-rockchip-dphy/Documentation/devicetree/bindings/phy/rockchip-mipi-dphy.yaml
-> > 
-> > diff --git a/drivers/staging/media/phy-rockchip-dphy/Documentation/devicetree/bindings/phy/rockchip-mipi-dphy.yaml b/drivers/staging/media/phy-
-> > rockchip-dphy/Documentation/devicetree/bindings/phy/rockchip-mipi-dphy.yaml
-> > new file mode 100644
-> > index 000000000000..af97f1b3e005
-> > --- /dev/null
-> > +++ b/drivers/staging/media/phy-rockchip-dphy/Documentation/devicetree/bindings/phy/rockchip-mipi-dphy.yaml
-> > @@ -0,0 +1,75 @@
-> > +# SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/phy/rockchip-mipi-dphy.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Rockchip SoC MIPI RX0 D-PHY Device Tree Bindings
-> 
-> Should this be s/RX0/RX/ ? Or do you expect different bindings for RX1 ?
+On 2020.01.06 16:06:20 +0200, Julian Stecklina wrote:
+> The documentation had some stale paths to i915 graphics virtualization
+> code. Fix them to point to existing files.
+>=20
+> Cc: Zhenyu Wang <zhenyuw@linux.intel.com>
+> Cc: zhiyuan.lv@intel.com
+> Cc: hang.yuan@intel.com
+>=20
+> Signed-off-by: Julian Stecklina <julian.stecklina@cyberus-technology.de>
+> ---
+>  Documentation/gpu/i915.rst | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/Documentation/gpu/i915.rst b/Documentation/gpu/i915.rst
+> index e539c42a3e78..d644683c5249 100644
+> --- a/Documentation/gpu/i915.rst
+> +++ b/Documentation/gpu/i915.rst
+> @@ -43,19 +43,19 @@ Interrupt Handling
+>  Intel GVT-g Guest Support(vGPU)
+>  -------------------------------
+> =20
+> -.. kernel-doc:: drivers/gpu/drm/i915/i915_vgpu.c
+> +.. kernel-doc:: drivers/gpu/drm/i915/gvt/vgpu.c
+>     :doc: Intel GVT-g guest support
+> =20
+> -.. kernel-doc:: drivers/gpu/drm/i915/i915_vgpu.c
+> +.. kernel-doc:: drivers/gpu/drm/i915/gvt/vgpu.c
+>     :internal:
+> =20
+>  Intel GVT-g Host Support(vGPU device model)
+>  -------------------------------------------
+> =20
+> -.. kernel-doc:: drivers/gpu/drm/i915/intel_gvt.c
+> +.. kernel-doc:: drivers/gpu/drm/i915/gvt/gvt.c
+>     :doc: Intel GVT-g host support
+> =20
+> -.. kernel-doc:: drivers/gpu/drm/i915/intel_gvt.c
+> +.. kernel-doc:: drivers/gpu/drm/i915/gvt/gvt.c
+>     :internal:
+>
 
-The driver currently only supports RX0, but I think you are right,
-it should say RX here. This binding could be extended for RX1.
-
-> Looking at the PHY driver, it seems to handle all PHYs with a single
-> struct device. Should we thus use #phy-cells = <1> to select the PHY ?
-> 
-
-I am not following this. The driver handles just one PHY. Each PHY
-should have its own node.
-
-> > +
-> > +maintainers:
-> > +  - Helen Koike <helen.koike@collabora.com>
-> > +  - Ezequiel Garcia <ezequiel@collabora.com>
-> > +
-> > +description: |
-> > +  The Rockchip SoC has a MIPI D-PHY bus with an RX0 entry which connects to
-> > +  the ISP1 (Image Signal Processing unit v1.0) for CSI cameras.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: rockchip,rk3399-mipi-dphy
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: Mipi d-phy ref clock
-> > +      - description: Mipi d-phy rx0 cfg clock
-> 
-> s/Mipi d-phy/MIPI D-PHY/
-> 
-
-Yep.
-
-> > +      - description: Video in/out general register file clock
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: dphy-ref
-> > +      - const: dphy-cfg
-> > +      - const: grf
-> > +
-> > +  '#phy-cells':
-> > +    const: 0
-> > +
-> > +  power-domains:
-> > +    description: Video in/out power domain.
-> > +    maxItems: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - clocks
-> > +  - clock-names
-> > +  - '#phy-cells'
-> > +  - power-domains
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +
-> > +    /*
-> > +     * MIPI RX D-PHY use registers in "general register files", it
-> > +     * should be a child of the GRF.
-> > +     *
-> > +     * grf: syscon@ff770000 {
-> > +     *  compatible = "rockchip,rk3399-grf", "syscon", "simple-mfd";
-> > +     *  ...
-> 
-> missing
-> 
-> 	* };
-> 
-
-OK.
-
-> > +     */
-> > +
-> > +    #include <dt-bindings/clock/rk3399-cru.h>
-> > +    #include <dt-bindings/power/rk3399-power.h>
-> > +
-> > +    dphy: mipi-dphy {
-> > +        compatible = "rockchip,rk3399-mipi-dphy";
-> > +        clocks = <&cru SCLK_MIPIDPHY_REF>,
-> > +                 <&cru SCLK_DPHY_RX0_CFG>,
-> > +                 <&cru PCLK_VIO_GRF>;
-> > +        clock-names = "dphy-ref", "dphy-cfg", "grf";
-> > +        power-domains = <&power RK3399_PD_VIO>;
-> > +        #phy-cells = <0>;
-> > +    };
+The i915_vgpu.c and intel_gvt.c are still there for guest
+and host part of i915 interface with gvt. We still need them
+in doc. The files in gvt/ directory are gvt device model internals.=20
 
 
+>  Workarounds
+> --=20
+> 2.24.1
+>=20
+
+--=20
+Open Source Technology Center, Intel ltd.
+
+$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
+
+--PEIAKu/WMn1b1Hv9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCXhPnrQAKCRCxBBozTXgY
+JyMvAJ9TsnqY3mHUvUBZ/z7Xk72MkvNYRwCeJH2j6DznfHpxHvpobBYCwKxej0k=
+=eCW/
+-----END PGP SIGNATURE-----
+
+--PEIAKu/WMn1b1Hv9--
