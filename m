@@ -2,74 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E4601328A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 15:16:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B7C31328A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 15:18:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728270AbgAGOQg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 09:16:36 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35640 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbgAGOQg (ORCPT
+        id S1728297AbgAGORz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 09:17:55 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:39485 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727658AbgAGORz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 09:16:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4C+pozSKNrqJiB/AIYEw3/ibuenPIrUJw/8Cd+IjSc0=; b=Lcu//VlIHBDN5lodOHG7JldpV
-        Rnhf5GDGoQSrOd9rcoa1HspuBdln1rywSG/Yd+kL1zZp/EDr5TCd3ZilrHnEWcwcPyuxUjlJSeEA2
-        5bId7shvaXSjUKSkhoKhy1H+DOuaxhenC+T0oGw20KCFLyUfv0Ym/kZGLwaWoChT+k3/PtZH0iKM6
-        DxJWIXUE3Um0KO24RR3tp6Ew2GZde4eZPWHEkUGo6vRBhD9PJz/NMxpVvxdEU/ue8cH0KF2Fb89MC
-        hXkDNqvTbO5S2JUayJlWfidr4oinpWN2tfPdGrNHq/SZ+c0iYev2qKP0Haa6Ci9vWF/lRq+QmGZZA
-        RZGjN2sqQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iopes-0004PX-EL; Tue, 07 Jan 2020 14:16:34 +0000
-Date:   Tue, 7 Jan 2020 06:16:34 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Allison Collins <allison.henderson@oracle.com>,
-        Jan Kara <jack@suse.cz>, Eric Sandeen <sandeen@sandeen.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] xfs: disallow broken ioctls without
- compat-32-bit-time
-Message-ID: <20200107141634.GC10628@infradead.org>
-References: <20191218163954.296726-1-arnd@arndb.de>
- <20191218163954.296726-2-arnd@arndb.de>
- <20191224084514.GC1739@infradead.org>
- <CAK8P3a2ANKoV1DhJMUuAr0qKW7HgRvz9LM2yLkSVWP9Rn-LUhA@mail.gmail.com>
- <20200102180749.GA1508633@magnolia>
+        Tue, 7 Jan 2020 09:17:55 -0500
+Received: from mail-qv1-f42.google.com ([209.85.219.42]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MlwJv-1jXY6E1mKJ-00iyZU; Tue, 07 Jan 2020 15:17:53 +0100
+Received: by mail-qv1-f42.google.com with SMTP id y8so20562979qvk.6;
+        Tue, 07 Jan 2020 06:17:53 -0800 (PST)
+X-Gm-Message-State: APjAAAVeY5/9RThue05d/4MfEEzkJzkPPHbNbWYwRq29moJYmxjhsmH7
+        JjOFlpn7kSl6BBezwoB7fmlENYCpthq3sMxjOFs=
+X-Google-Smtp-Source: APXvYqy51UL4Zeay2TwOyIQycEzFRWrZb+DrqwPiR6CAwZxpyKtTIzW5iI+bGs5sCSE61a3nBD3KM024WJ6UxuEBNYs=
+X-Received: by 2002:a0c:e7c7:: with SMTP id c7mr84471578qvo.222.1578406672121;
+ Tue, 07 Jan 2020 06:17:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200102180749.GA1508633@magnolia>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20200107140206.103711-1-colin.king@canonical.com>
+In-Reply-To: <20200107140206.103711-1-colin.king@canonical.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 7 Jan 2020 15:17:36 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0bJdKiX+=OMgCgmF158zEdgW9jYL85WqHWefhFk=ZF8Q@mail.gmail.com>
+Message-ID: <CAK8P3a0bJdKiX+=OMgCgmF158zEdgW9jYL85WqHWefhFk=ZF8Q@mail.gmail.com>
+Subject: Re: [PATCH][next] media: v4l2-core: fix uninitialized structure
+ fields being returned to userspace
+To:     Colin King <colin.king@canonical.com>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:DWrDb/Q0NjT0yWOGZE1jy/FzS9fcImgrM1hxfU3Oa5o8X3P7rMq
+ cJcj2cVMAfI3MqyZdRygMTvlWMQZpgI+fDUlSir2hHyixIZIWGzoFNa4RZXt56QQPLKU2tv
+ 8364jchyNM5qJXhVl2VUxL8NigDx+eB04khNQ1HExuCf/GRl44jm4Dag5pWoJWWDQ2dkAQ9
+ 9n5Oh92iUr5Fqvd4CD3vg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:xT0TWYcULic=:hkRLwd1O+0mIih0c6pRCvQ
+ e5UZCFcqGIe5UK4Mn09Cqf1pHfjVa3MvE9BMBMjfM5goz8yJhkakzSk3iFeq+gZNEz6BT6PNs
+ lwGqJZAcsCoYtIRNVSwd7eLp9U6DsfwoDVFb6VnmnZxlCnjxtciKuLhzrasawyn2mBeNZIuRb
+ ui3BG2T+Ad4K83vi7sZ86ewx7OynVP5UObhDkNqWbxfOYjQ4T14vfwbiSw5wIHUrTe2yF741D
+ xShsapng5bgtYTRTAkz8pk4JC+UkCsxjpJ54HuvWL40sJl86JJ2XEBO/+8/nVMf7UUyZ3UssU
+ tB1WEHaTtltEwe7G/TTuugVaouFWiQ4YjtyrkiOVcGqj/4/sr2BzqrbxFIcsG/Mrl/zrAQNmL
+ ThW511uvkEmea8d6D55MAultYpCWWWasyFdmDwyE0GQ0VI4HsirXY17YVFg7WMbgiAzY2cECQ
+ ztVapzX/FgDdjwLHJ+dcu1wY3MmdKu0hXAgqU7kkKRPtv53DXs+FenkoZyPrHMHWjNkmJjHne
+ LGhz1w5gaiLOokjx4IKQ3Yf/oWrg6uuvMfGIEO7phqBJarV29MToHHMdGiN/20x/DQx3Cnq+C
+ LTsDRH4ZQU+vt2DKZ1nVdV84l7dNbtWW/Lo20Xn6i7YumQzYjzTqfFt6AsT7/hFAplcyWeXN1
+ QeGJ7GdQw/mhGPqUG+FuCsw3CsSG8HvY5SxL8oSxpqAd3H28nnYzEzpUx+p7khSJFbGrqpqmt
+ Fk4sffIRhHtMa6kMwHzyXUvpsVlsglqjuyuMdcOv2iIiLhJJwfcB/8hJCvT1SDWL107YOf9Uj
+ FRlBVvQK9C3uzEwXnTVKSpHAIWMYmVfx5re/pigbxxcvSLI43013dtkmb1DGkVNBToxLR6gX8
+ X0zflAgm4pdUcZ+qYrrw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 02, 2020 at 10:07:49AM -0800, Darrick J. Wong wrote:
-> > Sorry I missed that comment earlier. I've had a fresh look now, but
-> > I think we still need to deprecate XFS_IOC_SWAPEXT and add a
-> > v5 version of it, since the comparison will fail as soon as the range
-> > of the inode timestamps is extended beyond 2038, otherwise the
-> > comparison will always be false, or require comparing the truncated
-> > time values which would add yet another representation.
-> 
-> I prefer we replace the old SWAPEXT with a new version to get rid of
-> struct xfs_bstat.  Though a SWAPEXT_V5 probably only needs to contain
-> the *stat fields that swapext actually needs to check that the file
-> hasn't been changed, which would be ino/gen/btime/ctime.
-> 
-> (Maybe I'd add an offset/length too...)
+On Tue, Jan 7, 2020 at 3:02 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> In the case where v4l2_event_dequeue fails the structure ev is not
+> being filled and this garbage data from the stack is being copied
+> to the ev32 structure and being copied back to userspace on the
+> VIDIOC_DQEVENT_TIME32 ioctl.  Fix this by ensuring the ev structure
+> is zero'd to ensure uninitialized data is not leaked back.
+>
+> Addresses-Coverity: ("Uninitialized scalar variable")
+> Fixes: 1a6c0b36dd19 ("media: v4l2-core: fix VIDIOC_DQEVENT for time64 ABI")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-And most importantly we need to lift it to the VFS instead of all the
-crazy fs specific interfaces at the moment.
+Good catch, thanks for fixing!
+
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+
+> ---
+>  drivers/media/v4l2-core/v4l2-subdev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+> index de926e311348..a376b351135f 100644
+> --- a/drivers/media/v4l2-core/v4l2-subdev.c
+> +++ b/drivers/media/v4l2-core/v4l2-subdev.c
+> @@ -394,7 +394,7 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
+>
+>         case VIDIOC_DQEVENT_TIME32: {
+>                 struct v4l2_event_time32 *ev32 = arg;
+> -               struct v4l2_event ev;
+> +               struct v4l2_event ev = { };
+>
+>                 if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
+>                         return -ENOIOCTLCMD;
+> --
+> 2.24.0
+>
