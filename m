@@ -2,166 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F1A0131DEA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 04:22:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 273DA131DEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 04:24:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbgAGDWK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 22:22:10 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:48745 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727295AbgAGDWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 22:22:10 -0500
-Received: from [IPv6:2601:646:8600:3281:b19f:287a:bb58:115c] ([IPv6:2601:646:8600:3281:b19f:287a:bb58:115c])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id 0073LmUi3203176
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Mon, 6 Jan 2020 19:21:50 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 0073LmUi3203176
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019122001; t=1578367311;
-        bh=/FJWxFmnQWfWatyrgKd0gVo3/yEc0bk99NQ6Gk5bK1U=;
-        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
-        b=uKWJDe1iemuHyEAzEU7Zf6bM5XhZk28w7prAkAj/A2n2tHCYWkySM3F5o7ldhQGx2
-         Q5U19RjwUQDEtwD04YoUiwRUdHUYdy4GqZ2i3SKt5hvSWOn7vaDgcOF9oUxvc/sihC
-         ziAdaKTiqUV7eHWBuK9Rozb2T3cXTcA/gQSfs+bdm34V+KbgwzdhAxlAwRy/jjo1QM
-         MwcIop9OosyJpzV79+sMJR03eoQBogoLSeuA0GhLI0fdWe2ZKHfgJQn3PpEugVljPv
-         XUa8SFWgej4Ipa+KGD/9nSmP6UXc5fAcBOkAaXNnJRRSCWZvgL3dRESJQ2wwWv40H4
-         fAS/gzqHI75Kw==
-Date:   Mon, 06 Jan 2020 19:21:40 -0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAK7LNAT2ai=-wbLmU2hqihbzVy7kKCGg=ipOK09XtSWiDYMW1Q@mail.gmail.com>
-References: <20200104150238.19834-1-masahiroy@kernel.org> <20200104150238.19834-5-masahiroy@kernel.org> <xr93ftgt6ndv.fsf@gthelen.svl.corp.google.com> <CAK7LNAT2ai=-wbLmU2hqihbzVy7kKCGg=ipOK09XtSWiDYMW1Q@mail.gmail.com>
+        id S1727510AbgAGDYy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 22:24:54 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:47188 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727377AbgAGDYy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 22:24:54 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 0073EXIE025855;
+        Tue, 7 Jan 2020 03:24:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=eEDEB5cRiaDaMI401AFI3YVYzUZ8UFoQLMybywdErVQ=;
+ b=QDSlbGupGflTHfqrIDNN0pRGV03FnSpuCfigptfoFqoaA1spKKkx9D4dFkT4G4dyADdK
+ KTO58n7GOAw3kOHJ5OmGz/YSqQg9fDfUNSklRPcfXSCAqcfdiNi9SqY6ibt54v1OEe8o
+ 9PP/h4km77fvB47MLrijeXfen1XxOvm/ZX15n+BOWpB/H+l1LbMKKx86T6uoq04LxhhH
+ +rbvtc5p71h5DvFiZfvaDTlRYtzajq18gFUJdRJa1d47RvZshe2sbcrWXL8ZETcIHDyY
+ Q3PgPRP0rHuCR0C+zmXK685klXj7A+DIwARvEDZYW2EhGqLzHOLmRyOBpZWxc9UyXaoV ew== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2xajnpts86-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Jan 2020 03:24:23 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 0073EOoh192221;
+        Tue, 7 Jan 2020 03:24:23 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2xb4uq6njs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Jan 2020 03:24:22 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0073ODw1027853;
+        Tue, 7 Jan 2020 03:24:14 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 06 Jan 2020 19:24:13 -0800
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>, axboe@kernel.dk,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, ming.lei@redhat.com, osandov@fb.com,
+        jthumshirn@suse.de, minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
+        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
+        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
+        chaitanya.kulkarni@wdc.com, bvanassche@acm.org,
+        dhowells@redhat.com, asml.silence@gmail.com
+Subject: Re: [PATCH RFC 1/3] block: Add support for REQ_OP_ASSIGN_RANGE operation
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <157599668662.12112.10184894900037871860.stgit@localhost.localdomain>
+        <157599696813.12112.14140818972910110796.stgit@localhost.localdomain>
+        <yq1woatc8zd.fsf@oracle.com>
+        <3f2e341b-dea4-c5d0-8eb0-568b6ad2f17b@virtuozzo.com>
+        <yq1a77oc56s.fsf@oracle.com>
+        <625c9ee4-bedb-ff60-845e-2d440c4f58aa@virtuozzo.com>
+        <yq1pngh7blx.fsf@oracle.com>
+        <405b9106-0a97-0821-c41d-58ab8d0e2d09@virtuozzo.com>
+Date:   Mon, 06 Jan 2020 22:24:09 -0500
+In-Reply-To: <405b9106-0a97-0821-c41d-58ab8d0e2d09@virtuozzo.com> (Kirill
+        Tkhai's message of "Mon, 23 Dec 2019 11:51:34 +0300")
+Message-ID: <yq1o8vg2bl2.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 04/13] initramfs: rename gen_initramfs_list.sh to gen_initramfs.sh
-To:     Masahiro Yamada <masahiroy@kernel.org>,
-        Greg Thelen <gthelen@google.com>,
-        Ben Hutchings <ben@decadent.org.uk>
-CC:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From:   hpa@zytor.com
-Message-ID: <AB861F14-0F89-4A9B-AC24-34D86DDCB935@zytor.com>
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9492 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001070025
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9492 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001070025
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On January 6, 2020 2:26:22 AM PST, Masahiro Yamada <masahiroy@kernel=2Eorg>=
- wrote:
->(+CC Ben Hutchings, H=2E Peter Anvin)
->
->In my understanding, the klibc build system is standalone=2E
->So, the change in Linux kernel does not affect klibc at all=2E
->Only the depending part is UAPI headers (make headers_install)=2E
->
->So, this patch
->(https://lore=2Ekernel=2Eorg/patchwork/patch/1175336/)
->should be OK=2E
->
->Please correct me if I am wrong=2E
->
->
->On Mon, Jan 6, 2020 at 4:43 PM Greg Thelen <gthelen@google=2Ecom> wrote:
->>
->> Masahiro Yamada <masahiroy@kernel=2Eorg> wrote:
->>
->> > The comments in usr/Makefile wrongly refer to the script name
->(twice)=2E
->> >
->> > Line 37:
->> >     # The dependency list is generated by gen_initramfs=2Esh -l
->> >
->> > Line 54:
->> >     # 4) Arguments to gen_initramfs=2Esh changes
->> >
->> > There does not exist such a script=2E
->> >
->> > I was going to fix the comments, but after some consideration, I
->thought
->> > "gen_initramfs=2Esh" would be more suitable than
->"gen_initramfs_list=2Esh"
->> > because it generates an initramfs image in the common usage=2E
->> >
->> > The script generates a list that can be fed to gen_init_cpio only
->when
->> > it is directly run without -o or -l option=2E
->> >
->> > Signed-off-by: Masahiro Yamada <masahiroy@kernel=2Eorg>
->> > ---
->> >
->> > Changes in v2: None
->> >
->> >  usr/Makefile                                    | 2 +-
->> >  usr/{gen_initramfs_list=2Esh =3D> gen_initramfs=2Esh} | 0
->> >  2 files changed, 1 insertion(+), 1 deletion(-)
->> >  rename usr/{gen_initramfs_list=2Esh =3D> gen_initramfs=2Esh} (100%)
->>
->> Will this break klibc?  It might have a ref to the old name=2E
->>
->https://git=2Ekernel=2Eorg/pub/scm/libs/klibc/klibc=2Egit/tree/usr/Kbuild=
-#n55
->
->I do not think so=2E
->
->As I stated above, the klibc build system is independent of
->any script in the Linux kernel=2E
->
->The klibc Makefile refers to
->scripts/gen_initramfs_list=2Esh, which does not exist=2E
->
->My path is renaming
->usr/gen_initramfs_list=2Esh to usr/gen_initramfs=2Esh
->
->
->If the renaming had been problematic for klibc,
->commit f6f57a46435d7253a52a1a07a58183678ad266a0
->("initramfs: move gen_initramfs_list=2Esh from scripts/ to usr/")
->would have already caused a problem=2E
->
->
->
->Ben, Hans,
->Is usr/Kbuild in klibc used?
->If it is not used, is it better to delete it to avoid confusion?
->
->
->Masahiro Yamada
->
->
->
->
->> > diff --git a/usr/Makefile b/usr/Makefile
->> > index 55c942da01cd=2E=2Ee44a66b8c051 100644
->> > --- a/usr/Makefile
->> > +++ b/usr/Makefile
->> > @@ -24,7 +24,7 @@ $(obj)/initramfs_data=2Eo: $(obj)/$(datafile_y)
->FORCE
->> >  # Generate the initramfs cpio archive
->> >
->> >  hostprogs-y :=3D gen_init_cpio
->> > -initramfs   :=3D $(CONFIG_SHELL)
->$(srctree)/$(src)/gen_initramfs_list=2Esh
->> > +initramfs   :=3D $(CONFIG_SHELL) $(srctree)/$(src)/gen_initramfs=2Es=
-h
->> >  ramfs-input :=3D $(if $(filter-out "",$(CONFIG_INITRAMFS_SOURCE)), \
->> >                       $(shell echo $(CONFIG_INITRAMFS_SOURCE)),-d)
->> >  ramfs-args  :=3D \
->> > diff --git a/usr/gen_initramfs_list=2Esh b/usr/gen_initramfs=2Esh
->> > similarity index 100%
->> > rename from usr/gen_initramfs_list=2Esh
->> > rename to usr/gen_initramfs=2Esh
 
-That is correct=2E
+Kirill,
 
-The klibc integration work was mainly fine in an actual kernel tree, which=
- pulled the klibc tree=2E
+Sorry, the holiday break got in the way.
 
-It has obviously bitrotted somewhat, but it wouldn't be all that hard to r=
-esurrect it if there is ever interest=2E
+> But I also worry about NOFALLBACK case. There are possible block
+> devices, which support write zeroes, but they can't allocate blocks
+> (block allocation are just not appliable for them, say, these are all
+> ordinary hdd).
 
---=20
-Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
+Correct. We shouldn't go down this path unless a device is thinly
+provisioned (i.e. max_discard_sectors > 0).
+
+> But won't it be a good thing to return EOPNOTSUPP right from
+> __blkdev_issue_write_zeroes() in case of block device can't allocate
+> blocks (q->limits.write_zeroes_can_allocate in the patch below)? Here
+> is just a way to underline block devices, which support write zeroes,
+> but allocation of blocks is meant nothing for them (wasting of time).
+
+I don't like "write_zeroes_can_allocate" because that makes assumptions
+about WRITE ZEROES being the command of choice. I suggest we call it
+"max_allocate_sectors" to mirror "max_discard_sectors". I.e. put
+emphasis on the semantic operation and not the plumbing.
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
