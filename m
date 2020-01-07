@@ -2,116 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89799131D7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 03:09:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06389131D75
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 03:07:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbgAGCJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 21:09:13 -0500
-Received: from mga14.intel.com ([192.55.52.115]:26869 "EHLO mga14.intel.com"
+        id S1727482AbgAGCHM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 21:07:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727250AbgAGCJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 21:09:13 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jan 2020 18:09:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,404,1571727600"; 
-   d="asc'?scan'208";a="420896975"
-Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.13.116])
-  by fmsmga005.fm.intel.com with ESMTP; 06 Jan 2020 18:09:11 -0800
-Date:   Tue, 7 Jan 2020 10:06:37 +0800
-From:   Zhenyu Wang <zhenyuw@linux.intel.com>
-To:     Julian Stecklina <julian.stecklina@cyberus-technology.de>
-Cc:     intel-gvt-dev@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Zhenyu Wang <zhenyuw@linux.intel.com>, zhiyuan.lv@intel.com,
-        hang.yuan@intel.com
-Subject: Re: [PATCH 1/3] drm/i915/gvt: fix file paths in documentation
-Message-ID: <20200107020637.GA5894@zhen-hp.sh.intel.com>
-Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
-References: <20200106140622.14393-1-julian.stecklina@cyberus-technology.de>
+        id S1727250AbgAGCHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 21:07:11 -0500
+Received: from localhost (unknown [104.132.0.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3698220715;
+        Tue,  7 Jan 2020 02:07:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578362831;
+        bh=YcE7t3XTXnWAd1OgFRbOFUYls33MgydieLk49V9wlMo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=vezTOWd0ixvoWWuFn6wO4gzSDKGJRXQvt1n2BqRAjS8PVfRmy0K8SnTvPzk9CaTXw
+         xQza6b7eSgZWexdMy5yb6m1KH7ZsjPIN6ljLDCOcDSjIzMuxtJWXNew12Bh3xusjbO
+         fooTSb3l4VsR17zcbyftv/q16FxjU+TEDedPzOjY=
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: add a way to turn off ipu bio cache
+Date:   Mon,  6 Jan 2020 18:07:09 -0800
+Message-Id: <20200107020709.73568-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.24.0.525.g8f36a354ae-goog
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
-Content-Disposition: inline
-In-Reply-To: <20200106140622.14393-1-julian.stecklina@cyberus-technology.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Setting 0x40 in /sys/fs/f2fs/dev/ipu_policy gives a way to turn off
+bio cache, which is useufl to check whether block layer using hardware
+encryption engine merges IOs correctly.
 
---PEIAKu/WMn1b1Hv9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ Documentation/filesystems/f2fs.txt | 1 +
+ fs/f2fs/segment.c                  | 2 +-
+ fs/f2fs/segment.h                  | 1 +
+ 3 files changed, 3 insertions(+), 1 deletion(-)
 
-On 2020.01.06 16:06:20 +0200, Julian Stecklina wrote:
-> The documentation had some stale paths to i915 graphics virtualization
-> code. Fix them to point to existing files.
->=20
-> Cc: Zhenyu Wang <zhenyuw@linux.intel.com>
-> Cc: zhiyuan.lv@intel.com
-> Cc: hang.yuan@intel.com
->=20
-> Signed-off-by: Julian Stecklina <julian.stecklina@cyberus-technology.de>
-> ---
->  Documentation/gpu/i915.rst | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/Documentation/gpu/i915.rst b/Documentation/gpu/i915.rst
-> index e539c42a3e78..d644683c5249 100644
-> --- a/Documentation/gpu/i915.rst
-> +++ b/Documentation/gpu/i915.rst
-> @@ -43,19 +43,19 @@ Interrupt Handling
->  Intel GVT-g Guest Support(vGPU)
->  -------------------------------
-> =20
-> -.. kernel-doc:: drivers/gpu/drm/i915/i915_vgpu.c
-> +.. kernel-doc:: drivers/gpu/drm/i915/gvt/vgpu.c
->     :doc: Intel GVT-g guest support
-> =20
-> -.. kernel-doc:: drivers/gpu/drm/i915/i915_vgpu.c
-> +.. kernel-doc:: drivers/gpu/drm/i915/gvt/vgpu.c
->     :internal:
-> =20
->  Intel GVT-g Host Support(vGPU device model)
->  -------------------------------------------
-> =20
-> -.. kernel-doc:: drivers/gpu/drm/i915/intel_gvt.c
-> +.. kernel-doc:: drivers/gpu/drm/i915/gvt/gvt.c
->     :doc: Intel GVT-g host support
-> =20
-> -.. kernel-doc:: drivers/gpu/drm/i915/intel_gvt.c
-> +.. kernel-doc:: drivers/gpu/drm/i915/gvt/gvt.c
->     :internal:
->
+diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+index 41b5aa94b30f..cd93bcc34726 100644
+--- a/Documentation/filesystems/f2fs.txt
++++ b/Documentation/filesystems/f2fs.txt
+@@ -335,6 +335,7 @@ Files in /sys/fs/f2fs/<devname>
+                                0x01: F2FS_IPU_FORCE, 0x02: F2FS_IPU_SSR,
+                                0x04: F2FS_IPU_UTIL,  0x08: F2FS_IPU_SSR_UTIL,
+                                0x10: F2FS_IPU_FSYNC.
++			       0x40: F2FS_IPU_NOCACHE disables bio caches.
+ 
+  min_ipu_util                 This parameter controls the threshold to trigger
+                               in-place-updates. The number indicates percentage
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index a9519532c029..311fe4937f6a 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3289,7 +3289,7 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
+ 
+ 	stat_inc_inplace_blocks(fio->sbi);
+ 
+-	if (fio->bio)
++	if (fio->bio && !(SM_I(sbi)->ipu_policy & (1 << F2FS_IPU_NOCACHE)))
+ 		err = f2fs_merge_page_bio(fio);
+ 	else
+ 		err = f2fs_submit_page_bio(fio);
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index a1b3951367cd..02e620470eef 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -623,6 +623,7 @@ enum {
+ 	F2FS_IPU_SSR_UTIL,
+ 	F2FS_IPU_FSYNC,
+ 	F2FS_IPU_ASYNC,
++	F2FS_IPU_NOCACHE,
+ };
+ 
+ static inline unsigned int curseg_segno(struct f2fs_sb_info *sbi,
+-- 
+2.24.0.525.g8f36a354ae-goog
 
-The i915_vgpu.c and intel_gvt.c are still there for guest
-and host part of i915 interface with gvt. We still need them
-in doc. The files in gvt/ directory are gvt device model internals.=20
-
-
->  Workarounds
-> --=20
-> 2.24.1
->=20
-
---=20
-Open Source Technology Center, Intel ltd.
-
-$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
-
---PEIAKu/WMn1b1Hv9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCXhPnrQAKCRCxBBozTXgY
-JyMvAJ9TsnqY3mHUvUBZ/z7Xk72MkvNYRwCeJH2j6DznfHpxHvpobBYCwKxej0k=
-=eCW/
------END PGP SIGNATURE-----
-
---PEIAKu/WMn1b1Hv9--
