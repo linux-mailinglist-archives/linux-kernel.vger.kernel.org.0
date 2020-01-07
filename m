@@ -2,102 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29F8F132E83
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 19:33:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DA26132E8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 19:33:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728506AbgAGScy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 13:32:54 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36484 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727925AbgAGScy (ORCPT
+        id S1728610AbgAGSdT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 13:33:19 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:43099 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728584AbgAGSdT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 13:32:54 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z3so585775wru.3;
-        Tue, 07 Jan 2020 10:32:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version;
-        bh=9rUb//wruX/PB3VMyS1Pm9EFxT4vC3jruLB5BaMw4AA=;
-        b=U7PiWz1dhOity7JtewGh+kA6b171KSeF+f4TsOl/3aGPyTrcklmpup9Mjb1QYAkXyE
-         9NmZjBrof9L/C8Fee0ak6XXBT7eC30C2k8LT6Spvpcd12gwaSMgkkIKBy9K4r7yLarDK
-         HF0CS2ZJF27yzhZ4NMP3gEirELZ5sptnvhYDZno5E5GHG5qD9Cq+bc2Fprt+zrAMtuzi
-         mpUZP3/7ZQ1q5SzFxdEdJC/lN0jzBQpZnoXT0uC/0pLeOzZLHsfHO+jRdeAB9aDcIl0J
-         5QSJyQeB4ef1tiV8ctw3Z6llBjPNUpqDguRf3J4cM72I3SiX1GTtVLo3o/7RMJcoe/K9
-         1CPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:references:date
-         :in-reply-to:message-id:user-agent:mime-version;
-        bh=9rUb//wruX/PB3VMyS1Pm9EFxT4vC3jruLB5BaMw4AA=;
-        b=A3vbsyoYBsTlLEeFWx9ezVo1iIiBQJ675GChex/Yw0WvoQbHFBPWo/t4j91d8J1mWW
-         xtM7gR2W1ML8XuwGc1XxiWq/j7+LdDk82WADTVr6uwzQx69vPJJj08IqSzxkhMF3woA8
-         v+i2DQsUA8+G2SeHOXVRL2IvobUbLWqADN4xMb7gcU4hTOKzthvnAg2J4w3UcRrfjpGq
-         6BStENIQXLqWJ7YbEYa2xsmmCYrif5Rk7HLdLoqcHVQoaM0239Vyh11H/xeZCi/Jn5fU
-         fNs6Y4muNw6ltKHRX7YzV0UxGm+3hpd+Xd7VNLBRVHZIdayp7TKmliPa36pFqwYxwYbj
-         l+NA==
-X-Gm-Message-State: APjAAAUlNVg1PdrytCTl4iS+C30IBlO4A1dyKSD9l/9VQCN6xJgigIsp
-        quEnHnNCR4AlZgpCAdZPWAh0hLQI
-X-Google-Smtp-Source: APXvYqyyGK9YIuqCIQZXVWfTT0UHxgqa4A6ZbpvORQgkIz5E4dv6EIaXr340vnSbordut5Y5FhEXSg==
-X-Received: by 2002:a5d:4651:: with SMTP id j17mr420989wrs.237.1578421971891;
-        Tue, 07 Jan 2020 10:32:51 -0800 (PST)
-Received: from dell.be.48ers.dk (d51A5BC31.access.telenet.be. [81.165.188.49])
-        by smtp.gmail.com with ESMTPSA id i5sm532246wml.31.2020.01.07.10.32.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 10:32:51 -0800 (PST)
-Received: from peko by dell.be.48ers.dk with local (Exim 4.92)
-        (envelope-from <peter@korsgaard.com>)
-        id 1iotes-0003GA-Gq; Tue, 07 Jan 2020 19:32:50 +0100
-From:   Peter Korsgaard <peter@korsgaard.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/12] i2c: ocores: convert to use i2c_new_client_device()
-References: <20200107174748.9616-1-wsa+renesas@sang-engineering.com>
-        <20200107174748.9616-5-wsa+renesas@sang-engineering.com>
-Date:   Tue, 07 Jan 2020 19:32:50 +0100
-In-Reply-To: <20200107174748.9616-5-wsa+renesas@sang-engineering.com> (Wolfram
-        Sang's message of "Tue, 7 Jan 2020 18:47:38 +0100")
-Message-ID: <87muazjewd.fsf@dell.be.48ers.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 7 Jan 2020 13:33:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578421998;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=o2v5kMDPXg2q4+QAcC/kCbrlQj05oGBBvgK3JOC1J3M=;
+        b=V5yCte4rgcV861M9EVonxcDrm4wSuMO88Pv89b56oH6H5TI1UJBW5wlFwnh1BvhLVIy7bB
+        lwqM/AbP+s/ulR/og01ufS2BoxLmnLGVuwqjF1Xw2kI2OD944YXT/ifniYXiZPuPkNF5uP
+        tuOCLRg7gEeRrU3NEC1n+dKU3qKSsVg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-149-U97v-XCQMkax5zcCnuUoeQ-1; Tue, 07 Jan 2020 13:33:14 -0500
+X-MC-Unique: U97v-XCQMkax5zcCnuUoeQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2A55418C8C31;
+        Tue,  7 Jan 2020 18:33:13 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E0E4F7C35A;
+        Tue,  7 Jan 2020 18:33:07 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 6FF242202E9; Tue,  7 Jan 2020 13:33:07 -0500 (EST)
+Date:   Tue, 7 Jan 2020 13:33:07 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 01/19] dax: remove block device dependencies
+Message-ID: <20200107183307.GD15920@redhat.com>
+References: <20190828175843.GB912@redhat.com>
+ <20190828225322.GA7777@dread.disaster.area>
+ <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
+ <20191216181014.GA30106@redhat.com>
+ <20200107125159.GA15745@infradead.org>
+ <CAPcyv4jZE35sbDo6J4ihioEUFTuekJ3_h0=2Ra4PY+xn2xn1cQ@mail.gmail.com>
+ <20200107170731.GA472641@magnolia>
+ <CAPcyv4ggH7-QhYg+YOOWn_m25uds+-0L46=N09ap-LALeGuU_A@mail.gmail.com>
+ <20200107180101.GC15920@redhat.com>
+ <CAPcyv4gmdoqpwwwy4dS3D2eZFjmJ_Zi39k=1a4wn-_ksm-UV4A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4gmdoqpwwwy4dS3D2eZFjmJ_Zi39k=1a4wn-_ksm-UV4A@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>>>> "Wolfram" == Wolfram Sang <wsa+renesas@sang-engineering.com> writes:
+On Tue, Jan 07, 2020 at 10:07:18AM -0800, Dan Williams wrote:
+> On Tue, Jan 7, 2020 at 10:02 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > On Tue, Jan 07, 2020 at 09:29:17AM -0800, Dan Williams wrote:
+> > > On Tue, Jan 7, 2020 at 9:08 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> > > >
+> > > > On Tue, Jan 07, 2020 at 06:22:54AM -0800, Dan Williams wrote:
+> > > > > On Tue, Jan 7, 2020 at 4:52 AM Christoph Hellwig <hch@infradead.org> wrote:
+> > > > > >
+> > > > > > On Mon, Dec 16, 2019 at 01:10:14PM -0500, Vivek Goyal wrote:
+> > > > > > > > Agree. In retrospect it was my laziness in the dax-device
+> > > > > > > > implementation to expect the block-device to be available.
+> > > > > > > >
+> > > > > > > > It looks like fs_dax_get_by_bdev() is an intercept point where a
+> > > > > > > > dax_device could be dynamically created to represent the subset range
+> > > > > > > > indicated by the block-device partition. That would open up more
+> > > > > > > > cleanup opportunities.
+> > > > > > >
+> > > > > > > Hi Dan,
+> > > > > > >
+> > > > > > > After a long time I got time to look at it again. Want to work on this
+> > > > > > > cleanup so that I can make progress with virtiofs DAX paches.
+> > > > > > >
+> > > > > > > I am not sure I understand the requirements fully. I see that right now
+> > > > > > > dax_device is created per device and all block partitions refer to it. If
+> > > > > > > we want to create one dax_device per partition, then it looks like this
+> > > > > > > will be structured more along the lines how block layer handles disk and
+> > > > > > > partitions. (One gendisk for disk and block_devices for partitions,
+> > > > > > > including partition 0). That probably means state belong to whole device
+> > > > > > > will be in common structure say dax_device_common, and per partition state
+> > > > > > > will be in dax_device and dax_device can carry a pointer to
+> > > > > > > dax_device_common.
+> > > > > > >
+> > > > > > > I am also not sure what does it mean to partition dax devices. How will
+> > > > > > > partitions be exported to user space.
+> > > > > >
+> > > > > > Dan, last time we talked you agreed that partitioned dax devices are
+> > > > > > rather pointless IIRC.  Should we just deprecate partitions on DAX
+> > > > > > devices and then remove them after a cycle or two?
+> > > > >
+> > > > > That does seem a better plan than trying to force partition support
+> > > > > where it is not needed.
+> > > >
+> > > > Question: if one /did/ have a partitioned DAX device and used kpartx to
+> > > > create dm-linear devices for each partition, will DAX still work through
+> > > > that?
+> > >
+> > > The device-mapper support will continue, but it will be limited to
+> > > whole device sub-components. I.e. you could use kpartx to carve up
+> > > /dev/pmem0 and still have dax, but not partitions of /dev/pmem0.
+> >
+> > So we can't use fdisk/parted to partition /dev/pmem0. Given /dev/pmem0
+> > is a block device, I thought tools will expect it to be partitioned.
+> > Sometimes I create those partitions and use /dev/pmem0. So what's
+> > the replacement for this. People often have tools/scripts which might
+> > want to partition the device and these will start failing.
+> 
+> Partitioning will still work, but dax operation will be declined and
+> fall back to page-cache.
 
- > Move away from the deprecated API and return the shiny new ERRPTR where
- > useful.
+Ok, so if I mount /dev/pmem0p1 with dax enabled, that might fail or
+filesystem will fall back to using page cache. (But dax will not be
+enabled).
 
- > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> > IOW, I do not understand that why being able to partition /dev/pmem0
+> > (which is a block device from user space point of view), is pointless.
+> 
+> How about s/pointless/redundant/. Persistent memory can already be
+> "partitioned" via namespace boundaries.
 
-I didn't follow the discussion, but I don't see any returns anywhere?
+But that's an entirely different way of partitioning. To me being able
+to use block devices (with dax capability) in same way as any other
+block device makes sense.
 
- > ---
- > Build tested only.
+> Block device partitioning is
+> then redundant and needlessly complicates, as you have found, the
+> kernel implementation.
 
- >  drivers/i2c/busses/i2c-ocores.c | 2 +-
- >  1 file changed, 1 insertion(+), 1 deletion(-)
+It does complicate kernel implementation. Is it too hard to solve the
+problem in kernel.
 
- > diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
- > index ca8b3ecfa93d..f5fc75b65a19 100644
- > --- a/drivers/i2c/busses/i2c-ocores.c
- > +++ b/drivers/i2c/busses/i2c-ocores.c
- > @@ -731,7 +731,7 @@ static int ocores_i2c_probe(struct platform_device *pdev)
- >  	/* add in known devices to the bus */
- >  	if (pdata) {
- >  		for (i = 0; i < pdata->num_devices; i++)
- > -			i2c_new_device(&i2c->adap, pdata->devices + i);
- > +			i2c_new_client_device(&i2c->adap, pdata->devices + i);
- >  	}
- 
- >  	return 0;
- > -- 
- > 2.20.1
+W.r.t partitioning, bdev_dax_pgoff() seems to be the pain point where
+dax code refers back to block device to figure out partition offset in
+dax device. If we create a dax object corresponding to "struct block_device"
+and store sector offset in that, then we could pass that object to dax
+code and not worry about referring back to bdev. I have written some
+proof of concept code and called that object "dax_handle". I can post
+that code if there is interest.
 
+IMHO, it feels useful to be able to partition and use a dax capable
+block device in same way as non-dax block device. It will be really
+odd to think that if filesystem is on /dev/pmem0p1, then dax can't
+be enabled but if filesystem is on /dev/mapper/pmem0p1, then dax
+will work.
 
--- 
-Bye, Peter Korsgaard
+Thanks
+Vivek
+
+> 
+> The problem will be people that were on dax+ext4 on partitions. Those
+> people will see a hard failure at mount whereas XFS will fallback to
+> page cache with a warning in the log. I think ext4 must convert to the
+> xfs dax handling model before partition support is dropped.
+> 
+
