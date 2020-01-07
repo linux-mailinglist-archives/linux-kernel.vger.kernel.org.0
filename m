@@ -2,112 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43935132432
+	by mail.lfdr.de (Postfix) with ESMTP id B5E92132433
 	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:55:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbgAGKzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 05:55:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58114 "EHLO mx2.suse.de"
+        id S1727895AbgAGKzC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 05:55:02 -0500
+Received: from verein.lst.de ([213.95.11.211]:43807 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727273AbgAGKzB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726690AbgAGKzB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 7 Jan 2020 05:55:01 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 3E7A7AD05;
-        Tue,  7 Jan 2020 10:54:58 +0000 (UTC)
-Message-ID: <9fde9b416b281648e99b3ce430229e89c5b1a653.camel@suse.de>
-Subject: Re: [PATCH 25/32] pwm: brcmstb: convert to
- devm_platform_ioremap_resource
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Yangtao Li <tiny.windzz@gmail.com>, claudiu.beznea@microchip.com,
-        thierry.reding@gmail.com, u.kleine-koenig@pengutronix.de,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        ludovic.desroches@microchip.com, rjui@broadcom.com,
-        sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-        f.fainelli@gmail.com, shc_work@mail.ru, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, vz@mleia.com, slemieux.tyco@gmail.com,
-        khilman@baylibre.com, matthias.bgg@gmail.com, heiko@sntech.de,
-        palmer@dabbelt.com, paul.walmsley@sifive.com, mripard@kernel.org,
-        wens@csie.org, jonathanh@nvidia.com, linux@prisktech.co.nz,
-        linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-riscv@lists.infradead.org, linux-tegra@vger.kernel.org
-Date:   Tue, 07 Jan 2020 11:54:53 +0100
-In-Reply-To: <20191229080610.7597-25-tiny.windzz@gmail.com>
-References: <20191229080610.7597-1-tiny.windzz@gmail.com>
-         <20191229080610.7597-25-tiny.windzz@gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-PicWM6Keq9fqFpxdhA9f"
-User-Agent: Evolution 3.34.2 
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id DE1FD68AFE; Tue,  7 Jan 2020 11:54:58 +0100 (CET)
+Date:   Tue, 7 Jan 2020 11:54:58 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     David Rientjes <rientjes@google.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Grimm, Jon" <jon.grimm@amd.com>, baekhw@google.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [rfc] dma-mapping: preallocate unencrypted DMA atomic pool
+Message-ID: <20200107105458.GA3139@lst.de>
+References: <alpine.DEB.2.21.1912311738130.68206@chino.kir.corp.google.com> <3213a6ac-5aad-62bc-bf95-fae8ba088b9e@arm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3213a6ac-5aad-62bc-bf95-fae8ba088b9e@arm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jan 06, 2020 at 05:34:00PM +0000, Robin Murphy wrote:
+> On 01/01/2020 1:54 am, David Rientjes via iommu wrote:
+>> Christoph, Thomas, is something like this (without the diagnosic
+>> information included in this patch) acceptable for these allocations?
+>> Adding expansion support when the pool is half depleted wouldn't be *that*
+>> hard.
+>>
+>> Or are there alternatives we should consider?  Thanks!
+>
+> Are there any platforms which require both non-cacheable remapping *and* 
+> unencrypted remapping for distinct subsets of devices?
+>
+> If not (and I'm assuming there aren't, because otherwise this patch is 
+> incomplete in covering only 2 of the 3 possible combinations), then 
+> couldn't we keep things simpler by just attributing both properties to the 
+> single "atomic pool" on the basis that one or the other will always be a 
+> no-op? In other words, basically just tweaking the existing "!coherent" 
+> tests to "!coherent || force_dma_unencrypted()" and doing 
+> set_dma_unencrypted() unconditionally in atomic_pool_init().
 
---=-PicWM6Keq9fqFpxdhA9f
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, 2019-12-29 at 08:06 +0000, Yangtao Li wrote:
-> Use devm_platform_ioremap_resource() to simplify code.
->=20
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
-
-Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-
-Thanks!
-
->  drivers/pwm/pwm-brcmstb.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->=20
-> diff --git a/drivers/pwm/pwm-brcmstb.c b/drivers/pwm/pwm-brcmstb.c
-> index fea612c45f20..8b66f9d2f589 100644
-> --- a/drivers/pwm/pwm-brcmstb.c
-> +++ b/drivers/pwm/pwm-brcmstb.c
-> @@ -234,7 +234,6 @@ MODULE_DEVICE_TABLE(of, brcmstb_pwm_of_match);
->  static int brcmstb_pwm_probe(struct platform_device *pdev)
->  {
->  	struct brcmstb_pwm *p;
-> -	struct resource *res;
->  	int ret;
-> =20
->  	p =3D devm_kzalloc(&pdev->dev, sizeof(*p), GFP_KERNEL);
-> @@ -262,8 +261,7 @@ static int brcmstb_pwm_probe(struct platform_device *=
-pdev)
->  	p->chip.base =3D -1;
->  	p->chip.npwm =3D 2;
-> =20
-> -	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	p->base =3D devm_ioremap_resource(&pdev->dev, res);
-> +	p->base =3D devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(p->base)) {
->  		ret =3D PTR_ERR(p->base);
->  		goto out_clk;
-
-
---=-PicWM6Keq9fqFpxdhA9f
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl4UY30ACgkQlfZmHno8
-x/7/aAf7BW2itFl3TLtG03hnquQwqo+DGR4GEFXlXS0y7tCwQNw/r7LWRi5SHWqI
-Fq6j3OYwhEhv1zZNfDN+lUmZdX10MHKOrnk6wdu89kgT1ebWaQ2Pwf6TCqZtwWia
-y/2eh5++1G9168GQTuyG3BjaSaVFwwVKe4+gbtIMc6RPU9xWbQSC6LsIq+a66EvW
-3sXdIQJUp0WcQuFcnQhD9OUgVRZedCRpu7rj7Tezr5Ks+lL91fItKsOwdSKyTfWh
-ZLbQ3yaz45FUSkZVP9388WNvi2lUIEn2VaX9QX3PrmhyKlwlyhfioTTj47wDotkU
-KLQMm16Gyns5z+15tvGm5+m8oZ61FA==
-=Sn4O
------END PGP SIGNATURE-----
-
---=-PicWM6Keq9fqFpxdhA9f--
-
+I think that would make most sense.
