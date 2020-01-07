@@ -2,54 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1343713287A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 15:10:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BD01132882
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 15:11:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728110AbgAGOKq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 09:10:46 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:60814 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727658AbgAGOKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 09:10:46 -0500
-Received: from ip5f5a5f74.dynamic.kabel-deutschland.de ([95.90.95.116] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1iopZ3-0002o4-In; Tue, 07 Jan 2020 15:10:33 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Jose Abreu <Jose.Abreu@synopsys.com>
-Cc:     netdev@vger.kernel.org, Joao Pinto <Joao.Pinto@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "kernelci . org bot" <bot@kernelci.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sriram Dash <sriram.dash@samsung.com>
-Subject: Re: [PATCH net] net: stmmac: Fixed link does not need MDIO Bus
-Date:   Tue, 07 Jan 2020 15:10:32 +0100
-Message-ID: <10785975.EuRkUOQc5v@diego>
-In-Reply-To: <5764e60da6d3af7e76c30f63b07f1a12b4787918.1578400471.git.Jose.Abreu@synopsys.com>
-References: <5764e60da6d3af7e76c30f63b07f1a12b4787918.1578400471.git.Jose.Abreu@synopsys.com>
+        id S1728143AbgAGOLo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 09:11:44 -0500
+Received: from out28-53.mail.aliyun.com ([115.124.28.53]:40631 "EHLO
+        out28-53.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727658AbgAGOLn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 09:11:43 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2630506|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.0462607-0.000847061-0.952892;DS=CONTINUE|ham_enroll_verification|0.0179212-0.000885296-0.981194;FP=0|0|0|0|0|-1|-1|-1;HT=e01a16378;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=5;RT=5;SR=0;TI=SMTPD_---.GXyTd0B_1578406289;
+Received: from 192.168.1.7(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GXyTd0B_1578406289)
+          by smtp.aliyun-inc.com(10.147.41.143);
+          Tue, 07 Jan 2020 22:11:30 +0800
+Subject: Re: [PATCH 0/5] pinctrl: ingenic: cleanups
+To:     Paul Cercueil <paul@crapouillou.net>,
+        Linus Walleij <linus.walleij@linaro.org>
+References: <20200106232711.559727-1-paul@crapouillou.net>
+Cc:     od@zcrc.me, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
+Message-ID: <5E149191.9020905@wanyeetech.com>
+Date:   Tue, 7 Jan 2020 22:11:29 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20200106232711.559727-1-paul@crapouillou.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, 7. Januar 2020, 13:35:42 CET schrieb Jose Abreu:
-> When using fixed link we don't need the MDIO bus support.
-> 
-> Reported-by: Heiko Stuebner <heiko@sntech.de>
-> Reported-by: kernelci.org bot <bot@kernelci.org>
-> Fixes: d3e014ec7d5e ("net: stmmac: platform: Fix MDIO init for platforms without PHY")
-> Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
+Hi Linus,
 
-On px30
-Tested-by: Heiko Stuebner <heiko@sntech.de>
+On 2020年01月07日 07:27, Paul Cercueil wrote:
+> Hi Linus,
+>
+> I saw you merged Zhou's patchset, here are some cleanup patches for
+> pinctrl-ingenic that should be applied on top of his commits.
 
+I agree with Paul, these cleanups look pretty good.
+
+>
+> Cheers,
+> -Paul
+>
 
