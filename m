@@ -2,138 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B872131DDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 04:11:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2835D131DD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 04:03:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbgAGDLX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 22:11:23 -0500
-Received: from mga14.intel.com ([192.55.52.115]:30988 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727503AbgAGDLV (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 22:11:21 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jan 2020 19:11:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,404,1571727600"; 
-   d="scan'208";a="217009587"
-Received: from kbl.sh.intel.com ([10.239.159.163])
-  by fmsmga007.fm.intel.com with ESMTP; 06 Jan 2020 19:11:19 -0800
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v2 3/3] perf util: Support color ops to print block percents in color
-Date:   Tue,  7 Jan 2020 03:45:25 +0800
-Message-Id: <20200106194525.12228-3-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200106194525.12228-1-yao.jin@linux.intel.com>
-References: <20200106194525.12228-1-yao.jin@linux.intel.com>
+        id S1727512AbgAGDDC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 22:03:02 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:59314 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727416AbgAGDDC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 22:03:02 -0500
+Received: from [192.168.4.242] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1iof8v-0008BM-Ii; Tue, 07 Jan 2020 03:02:53 +0000
+Received: from ben by deadeye with local (Exim 4.93)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1iof8v-0059ry-4n; Tue, 07 Jan 2020 03:02:53 +0000
+Message-ID: <3d7ba1397e3af10e9e79082437da60a2c759e08c.camel@decadent.org.uk>
+Subject: Re: [PATCH v2 04/13] initramfs: rename gen_initramfs_list.sh to
+ gen_initramfs.sh
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Masahiro Yamada <masahiroy@kernel.org>,
+        Greg Thelen <gthelen@google.com>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 07 Jan 2020 03:02:47 +0000
+In-Reply-To: <CAK7LNAT2ai=-wbLmU2hqihbzVy7kKCGg=ipOK09XtSWiDYMW1Q@mail.gmail.com>
+References: <20200104150238.19834-1-masahiroy@kernel.org>
+         <20200104150238.19834-5-masahiroy@kernel.org>
+         <xr93ftgt6ndv.fsf@gthelen.svl.corp.google.com>
+         <CAK7LNAT2ai=-wbLmU2hqihbzVy7kKCGg=ipOK09XtSWiDYMW1Q@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-pydIA3pqIthWuyOSi5Sx"
+User-Agent: Evolution 3.34.1-2+b1 
+MIME-Version: 1.0
+X-SA-Exim-Connect-IP: 192.168.4.242
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It would be nice to print the block percents with colors.
 
-This patch supports the 'Sampled Cycles%' and 'Avg Cycles%'
-printed in colors.
+--=-pydIA3pqIthWuyOSi5Sx
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For example,
+On Mon, 2020-01-06 at 19:26 +0900, Masahiro Yamada wrote:
+> (+CC Ben Hutchings, H. Peter Anvin)
+>=20
+> In my understanding, the klibc build system is standalone.
+> So, the change in Linux kernel does not affect klibc at all.
+> Only the depending part is UAPI headers (make headers_install).
+>=20
+> So, this patch
+> (https://lore.kernel.org/patchwork/patch/1175336/)
+> should be OK.
+>=20
+> Please correct me if I am wrong.
 
-perf record -b ...
-perf report --total-cycles or perf report --total-cycles --stdio
+I think you're right.
 
-percent > 5%, colored in red
-percent > 0.5%, colored in green
-percent < 0.5%, default color
+[...]
+> I do not think so.
+>=20
+> As I stated above, the klibc build system is independent of
+> any script in the Linux kernel.
+>=20
+> The klibc Makefile refers to
+> scripts/gen_initramfs_list.sh, which does not exist.
+[...]
 
- v2:
- ---
- No functional change
+Right.  I believe the original intent was to include klibc in the
+kernel tree, so this would have existed because of that.
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/util/block-info.c | 25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
+There's no sign of that in the current klibc.git, but I think it might
+have gone through "git filter-branch" at some point after it was
+decided not to include it upstream.  In any case, this was already
+broken for as long as klibc has been separate.
 
-diff --git a/tools/perf/util/block-info.c b/tools/perf/util/block-info.c
-index 0818db17b3f2..60b3a0107177 100644
---- a/tools/perf/util/block-info.c
-+++ b/tools/perf/util/block-info.c
-@@ -185,6 +185,17 @@ static int block_column_width(struct perf_hpp_fmt *fmt,
- 	return block_fmt->width;
- }
- 
-+static int color_pct(struct perf_hpp *hpp, int width, double pct)
-+{
-+#ifdef HAVE_SLANG_SUPPORT
-+	if (use_browser) {
-+		return __hpp__slsmg_color_printf(hpp, "%*.2f%%",
-+						 width - 1, pct);
-+	}
-+#endif
-+	return hpp_color_scnprintf(hpp, "%*.2f%%", width - 1, pct);
-+}
-+
- static int block_total_cycles_pct_entry(struct perf_hpp_fmt *fmt,
- 					struct perf_hpp *hpp,
- 					struct hist_entry *he)
-@@ -192,14 +203,11 @@ static int block_total_cycles_pct_entry(struct perf_hpp_fmt *fmt,
- 	struct block_fmt *block_fmt = container_of(fmt, struct block_fmt, fmt);
- 	struct block_info *bi = he->block_info;
- 	double ratio = 0.0;
--	char buf[16];
- 
- 	if (block_fmt->total_cycles)
- 		ratio = (double)bi->cycles / (double)block_fmt->total_cycles;
- 
--	sprintf(buf, "%.2f%%", 100.0 * ratio);
--
--	return scnprintf(hpp->buf, hpp->size, "%*s", block_fmt->width, buf);
-+	return color_pct(hpp, block_fmt->width, 100.0 * ratio);
- }
- 
- static int64_t block_total_cycles_pct_sort(struct perf_hpp_fmt *fmt,
-@@ -252,16 +260,13 @@ static int block_cycles_pct_entry(struct perf_hpp_fmt *fmt,
- 	struct block_info *bi = he->block_info;
- 	double ratio = 0.0;
- 	u64 avg;
--	char buf[16];
- 
- 	if (block_fmt->block_cycles && bi->num_aggr) {
- 		avg = bi->cycles_aggr / bi->num_aggr;
- 		ratio = (double)avg / (double)block_fmt->block_cycles;
- 	}
- 
--	sprintf(buf, "%.2f%%", 100.0 * ratio);
--
--	return scnprintf(hpp->buf, hpp->size, "%*s", block_fmt->width, buf);
-+	return color_pct(hpp, block_fmt->width, 100.0 * ratio);
- }
- 
- static int block_avg_cycles_entry(struct perf_hpp_fmt *fmt,
-@@ -348,7 +353,7 @@ static void hpp_register(struct block_fmt *block_fmt, int idx,
- 
- 	switch (idx) {
- 	case PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_PCT:
--		fmt->entry = block_total_cycles_pct_entry;
-+		fmt->color = block_total_cycles_pct_entry;
- 		fmt->cmp = block_info__cmp;
- 		fmt->sort = block_total_cycles_pct_sort;
- 		break;
-@@ -356,7 +361,7 @@ static void hpp_register(struct block_fmt *block_fmt, int idx,
- 		fmt->entry = block_cycles_lbr_entry;
- 		break;
- 	case PERF_HPP_REPORT__BLOCK_CYCLES_PCT:
--		fmt->entry = block_cycles_pct_entry;
-+		fmt->color = block_cycles_pct_entry;
- 		break;
- 	case PERF_HPP_REPORT__BLOCK_AVG_CYCLES:
- 		fmt->entry = block_avg_cycles_entry;
--- 
-2.17.1
+Ben.
 
+--=20
+Ben Hutchings
+Larkinson's Law: All laws are basically false.
+
+
+
+--=-pydIA3pqIthWuyOSi5Sx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAl4T9NgACgkQ57/I7JWG
+EQkZsRAAgNCsDnpcylyh73hEce5L27rBxfMFOjHE4D2QElm1z72pQcVYL1eT/02S
+FM0GgKvjugyofvRM3JAcPh11jptJR3qWFpyE6tILyJ5ThIqxFA0sYPeGngkVRhbJ
+sN6yrLIujw6NZKrfrpHFz9t91vKstR0QoHtW3AAJ3129vxRAXRzih15FLm++Sfyg
+Wuv28Qrlf/zWkXiHNwbcp+VpbMQ0eMg2N1PVIgZdmsNsxdtfeT5qOkkt7e/VvGwn
+yRcJQZrMZgjE7gWVN7RNqdNB31gy6Dre4RfQ/gIhy4DWFWxI4hWZWCBtQsMKEMHd
+j+ulHSlaX2IN4mSqE5fmDi/DUjY/DPyGd61k4sevwiWJfbI8eGxo7FBMuzvF5wV0
+D2VROXpeCqgEwy7Hmw3XQzPkUTAtlOVq/cHeGEvuo5i2CBfSQ4U8VYmmvbseV+JE
+dpkkZSZsctRbPJZJ0Id/5CPwwaof2b5Sy5qmmbdLtHXy246SqNeQ9NDZ2PdQZpus
+5C9XDlHtil3EPuUHITHf0ELW0zY3DVSLnn/MKYbBvF5mfxInf+l278ZBT4z1DlLl
+DtMfFdtHPT/iRCeyoodu/+supeQawrqUkDgL4QRnfBvxr1UTPlIZLfdMD3cF6j4G
+U9ndHUg0R7Air23eCWIvnutD9xY9NSYeqQu8ZibuixU+nGp/4GQ=
+=oLsl
+-----END PGP SIGNATURE-----
+
+--=-pydIA3pqIthWuyOSi5Sx--
