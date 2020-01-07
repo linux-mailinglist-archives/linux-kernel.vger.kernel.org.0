@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 131EB133265
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:10:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FB741332B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:13:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729943AbgAGVKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:10:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36642 "EHLO mail.kernel.org"
+        id S1729961AbgAGVK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:10:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729937AbgAGVKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:10:15 -0500
+        id S1729942AbgAGVKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:10:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD58D2080A;
-        Tue,  7 Jan 2020 21:10:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41ED120880;
+        Tue,  7 Jan 2020 21:10:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431415;
-        bh=J2LAd74nz1EcG7XUaiods4G6rL7IaKdXblBVr60qVLg=;
+        s=default; t=1578431417;
+        bh=rFSnAJvGaGBJ223eZhfvSst8ZYZ1pjx/lTrwIqMI/eA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NAbYVz93ZVlBGD5nz1E3hENte/6ZkP7GNhfinMU0KAU3U6o0hNkvjcg6+x9ejhbna
-         t9dpdP/AllRjC8Wly06nLUUyafc+BBFR/zfRql7/2bQHq1yx129DptvWu6H3NKfDXQ
-         D5Oh0FJgKr0QI88ySeNCdq3UWaorsChgq6hQJiuA=
+        b=XdqAWMi4YtTBrG17Yct+lJuXio8GnsxfRslLpP7T8o0UlHxQ0ysdhe1QZQfpaWJXG
+         Ci2gb2CCxvZTjy9yInWnSnP6rQDBHXaGIOVDnfuneCdE5SS55RbLf93bMGZhImKSq4
+         gPIfD86CD/ij5MaMYVX1yPViDmjs7mKzb7C+ON8A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 4.14 47/74] PM / devfreq: Check NULL governor in available_governors_show
-Date:   Tue,  7 Jan 2020 21:55:12 +0100
-Message-Id: <20200107205214.385436100@linuxfoundation.org>
+        stable@vger.kernel.org, Scott Mayhew <smayhew@redhat.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.14 48/74] nfsd4: fix up replay_matches_cache()
+Date:   Tue,  7 Jan 2020 21:55:13 +0100
+Message-Id: <20200107205215.249446795@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205135.369001641@linuxfoundation.org>
 References: <20200107205135.369001641@linuxfoundation.org>
@@ -44,34 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+From: Scott Mayhew <smayhew@redhat.com>
 
-commit d68adc8f85cd757bd33c8d7b2660ad6f16f7f3dc upstream.
+commit 6e73e92b155c868ff7fce9d108839668caf1d9be upstream.
 
-The governor is initialized after sysfs attributes become visible so in
-theory the governor field can be NULL here.
+When running an nfs stress test, I see quite a few cached replies that
+don't match up with the actual request.  The first comment in
+replay_matches_cache() makes sense, but the code doesn't seem to
+match... fix it.
 
-Fixes: bcf23c79c4e46 ("PM / devfreq: Fix available_governor sysfs")
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+This isn't exactly a bugfix, as the server isn't required to catch every
+case of a false retry.  So, we may as well do this, but if this is
+fixing a problem then that suggests there's a client bug.
+
+Fixes: 53da6a53e1d4 ("nfsd4: catch some false session retries")
+Signed-off-by: Scott Mayhew <smayhew@redhat.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/devfreq/devfreq.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/nfsd/nfs4state.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -974,7 +974,7 @@ static ssize_t available_governors_show(
- 	 * The devfreq with immutable governor (e.g., passive) shows
- 	 * only own governor.
- 	 */
--	if (df->governor->immutable) {
-+	if (df->governor && df->governor->immutable) {
- 		count = scnprintf(&buf[count], DEVFREQ_NAME_LEN,
- 				   "%s ", df->governor_name);
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -3058,12 +3058,17 @@ static bool replay_matches_cache(struct
+ 	    (bool)seq->cachethis)
+ 		return false;
  	/*
+-	 * If there's an error than the reply can have fewer ops than
+-	 * the call.  But if we cached a reply with *more* ops than the
+-	 * call you're sending us now, then this new call is clearly not
+-	 * really a replay of the old one:
++	 * If there's an error then the reply can have fewer ops than
++	 * the call.
+ 	 */
+-	if (slot->sl_opcnt < argp->opcnt)
++	if (slot->sl_opcnt < argp->opcnt && !slot->sl_status)
++		return false;
++	/*
++	 * But if we cached a reply with *more* ops than the call you're
++	 * sending us now, then this new call is clearly not really a
++	 * replay of the old one:
++	 */
++	if (slot->sl_opcnt > argp->opcnt)
+ 		return false;
+ 	/* This is the only check explicitly called by spec: */
+ 	if (!same_creds(&rqstp->rq_cred, &slot->sl_cred))
 
 
