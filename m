@@ -2,93 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F12C131CD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 01:40:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C685131CDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 01:56:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbgAGAjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 19:39:51 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:49793 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727326AbgAGAju (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 19:39:50 -0500
-Received: from dread.disaster.area (pa49-180-68-255.pa.nsw.optusnet.com.au [49.180.68.255])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id B1B7B3A1347;
-        Tue,  7 Jan 2020 11:39:44 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iocuO-0006tT-25; Tue, 07 Jan 2020 11:39:44 +1100
-Date:   Tue, 7 Jan 2020 11:39:44 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Chris Down <chris@chrisdown.name>
-Cc:     linux-mm@kvack.org, Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH v5 2/2] tmpfs: Support 64-bit inums per-sb
-Message-ID: <20200107003944.GN23195@dread.disaster.area>
-References: <cover.1578225806.git.chris@chrisdown.name>
- <ae9306ab10ce3d794c13b1836f5473e89562b98c.1578225806.git.chris@chrisdown.name>
- <20200107001039.GM23195@dread.disaster.area>
- <20200107001643.GA485121@chrisdown.name>
+        id S1727376AbgAGA4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 19:56:25 -0500
+Received: from mga12.intel.com ([192.55.52.136]:59613 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727233AbgAGA4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 19:56:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jan 2020 16:56:24 -0800
+X-IronPort-AV: E=Sophos;i="5.69,404,1571727600"; 
+   d="scan'208";a="233001479"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jan 2020 16:56:24 -0800
+Subject: [PATCH v4 0/4] efi: Fix handling of multiple efi_fake_mem= entries
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     mingo@redhat.com
+Cc:     Taku Izumi <izumi.taku@jp.fujitsu.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Young <dyoung@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Michael Weiser <michael@weiser.dinsnail.net>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-efi@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kexec@lists.infradead.org
+Date:   Mon, 06 Jan 2020 16:40:22 -0800
+Message-ID: <157835762222.1456824.290100196815539830.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-3-g996c
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200107001643.GA485121@chrisdown.name>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=sbdTpStuSq8iNQE8viVliQ==:117 a=sbdTpStuSq8iNQE8viVliQ==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Jdjhy38mL1oA:10
-        a=7-415B0cAAAA:8 a=CqsqYK7GuNR5ViALEa4A:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22 a=pHzHmUro8NiASowvMSCR:22
-        a=6VlIyEUom7LUIeUMNQJH:22
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 12:16:43AM +0000, Chris Down wrote:
-> Dave Chinner writes:
-> > It took 15 years for us to be able to essentially deprecate
-> > inode32 (inode64 is the default behaviour), and we were very happy
-> > to get that albatross off our necks.  In reality, almost everything
-> > out there in the world handles 64 bit inodes correctly
-> > including 32 bit machines and 32bit binaries on 64 bit machines.
-> > And, IMNSHO, there no excuse these days for 32 bit binaries that
-> > don't using the *64() syscall variants directly and hence support
-> > 64 bit inodes correctlyi out of the box on all platforms.
-> > 
-> > I don't think we should be repeating past mistakes by trying to
-> > cater for broken 32 bit applications on 64 bit machines in this day
-> > and age.
-> 
-> I'm very glad to hear that. I strongly support moving to 64-bit inums in all
-> cases if there is precedent that it's not a compatibility issue, but from
-> the comments on my original[0] patch (especially that they strayed from the
-> original patches' change to use ino_t directly into slab reuse), I'd been
-> given the impression that it was known to be one.
-> 
-> From my perspective I have no evidence that inode32 is needed other than the
-> comment from Jeff above get_next_ino. If that turns out not to be a problem,
-> I am more than happy to just wholesale migrate 64-bit inodes per-sb in
-> tmpfs.
+Changes since v3 [1]:
+- Rather than pass a reference to a new flags argument, pass a common
+  data structure ('struct efi_memory_map_data'), between
+  efi_memmap_alloc() and efi_memmap_install(). (Ard)
 
-Well, that's my comment above about 32 bit apps using non-LFS
-compliant interfaces in this day and age. It's essentially a legacy
-interface these days, and anyone trying to access a modern linux
-filesystem (btrfs, XFS, ext4, etc) ion 64 bit systems need to handle
-64 bit inodes because they all can create >32bit inode numbers
-in their default configurations.
+- Arrange for EFI_MEMMAP_SLAB to be clear if EFI_MEMMAP_MEMBLOCK was set
+  and vice versa (Ard).
 
-Cheers,
+[1]: http://lore.kernel.org/r/157793839827.977550.7845382457971215205.stgit@dwillia2-desk3.amr.corp.intel.com
+---
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+While testing an upcoming patchset to enhance the "soft reservation"
+implementation it started crashing when rebased on v5.5-rc3. This
+uncovered a few bugs in the efi_fake_mem= handling and
+efi_memmap_alloc() leaks.
+
+---
+
+Copied from patch4:
+
+Dave noticed that when specifying multiple efi_fake_mem= entries only
+the last entry was successfully being reflected in the efi memory map.
+This is due to the fact that the efi_memmap_insert() is being called
+multiple times, but on successive invocations the insertion should be
+applied to the last new memmap rather than the original map at
+efi_fake_memmap() entry.
+
+Rework efi_fake_memmap() to install the new memory map after each
+efi_fake_mem= entry is parsed.
+
+This also fixes an issue in efi_fake_memmap() that caused it to litter
+emtpy entries into the end of the efi memory map. An empty entry causes
+efi_memmap_insert() to attempt more memmap splits / copies than
+efi_memmap_split_count() accounted for when sizing the new map. When
+that happens efi_memmap_insert() may overrun its allocation, and if you
+are lucky will spill over to an unmapped page leading to crash
+signature like the following rather than silent corruption:
+
+    BUG: unable to handle page fault for address: ffffffffff281000
+    [..]
+    RIP: 0010:efi_memmap_insert+0x11d/0x191
+    [..]
+    Call Trace:
+     ? bgrt_init+0xbe/0xbe
+     ? efi_arch_mem_reserve+0x1cb/0x228
+     ? acpi_parse_bgrt+0xa/0xd
+     ? acpi_table_parse+0x86/0xb8
+     ? acpi_boot_init+0x494/0x4e3
+     ? acpi_parse_x2apic+0x87/0x87
+     ? setup_acpi_sci+0xa2/0xa2
+     ? setup_arch+0x8db/0x9e1
+     ? start_kernel+0x6a/0x547
+     ? secondary_startup_64+0xb6/0xc0
+
+Commit af1648984828 "x86/efi: Update e820 with reserved EFI boot
+services data to fix kexec breakage" is listed in Fixes: since it
+introduces more occurrences where efi_memmap_insert() is invoked after
+an efi_fake_mem= configuration has been parsed. Previously the side
+effects of vestigial empty entries were benign, but with commit
+af1648984828 that follow-on efi_memmap_insert() invocation triggers
+efi_memmap_insert() overruns.
+
+---
+
+Dan Williams (4):
+      efi: Add a flags parameter to efi_memory_map
+      efi: Add tracking for dynamically allocated memmaps
+      efi: Fix efi_memmap_alloc() leaks
+      efi: Fix handling of multiple efi_fake_mem= entries
+
+
+ arch/x86/platform/efi/efi.c     |   10 +++-
+ arch/x86/platform/efi/quirks.c  |   23 ++++------
+ drivers/firmware/efi/fake_mem.c |   43 +++++++++---------
+ drivers/firmware/efi/memmap.c   |   94 ++++++++++++++++++++++++++-------------
+ include/linux/efi.h             |   17 +++++--
+ 5 files changed, 113 insertions(+), 74 deletions(-)
