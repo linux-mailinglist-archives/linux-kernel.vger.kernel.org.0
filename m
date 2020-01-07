@@ -2,125 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA06113305E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:10:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3050C13306A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:14:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728721AbgAGUKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 15:10:50 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:40203 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728358AbgAGUKu (ORCPT
+        id S1728738AbgAGUO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 15:14:29 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:59605 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728379AbgAGUO3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:10:50 -0500
-Received: by mail-oi1-f196.google.com with SMTP id c77so588301oib.7;
-        Tue, 07 Jan 2020 12:10:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mMtlIZa0y1wMWULM7T02c5kOQ94NS/LmFmoyuL6SjJE=;
-        b=ipo6xBhH2acKVHlyYxdHQkoQUg0JzAd0C9+knqbtGYJgdFxy+T6uAn/caDhJJSsyoF
-         VXywa6NXM/0REB8YYUsjzOfiAckbNoKjyGUrPFKzCV0d11p5A9Plu1QkJaGjafgRnSlC
-         /nq4IZEUknC02QVqmjYx6x2dfkUEuNbF75dgT4CFQ5caCT9hzs5/lAOU7SkohzMIoahr
-         1m+1Wd7agbbRI06G5l1KPpufYXEFhIQhcEEFanJxVx4posJeSVLGYq3q5SRLg3BJ3utS
-         A8XJQK1+ZKNDCSCIz6JCZX3d5hYLhYLl8Wbdm0jnjRNzGFJRtOjYmhvGlNFFNVqUx1Sf
-         lLcQ==
-X-Gm-Message-State: APjAAAWqRv7H+3LRRlF76uAKlidJt5X/cHfPMjaI6QekXh0VZNyTnFZV
-        YOsr1LRy5XbKEvu9vWb3X5nmG8Eq1JKzMjlhab60O4GD
-X-Google-Smtp-Source: APXvYqww2ga10axfUo/emP70OkVnz0TJIWK5SEU2uk8Z5LVrQZkcf7+zP/6NaIsVAXw4xlVpv6qLj27XkqQVtBBmf70=
-X-Received: by 2002:aca:1a06:: with SMTP id a6mr138816oia.148.1578427849295;
- Tue, 07 Jan 2020 12:10:49 -0800 (PST)
+        Tue, 7 Jan 2020 15:14:29 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MTfgb-1jGb592rZl-00U0gY; Tue, 07 Jan 2020 21:13:34 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Andy Polyakov <appro@cryptogams.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Vitaly Chikunov <vt@altlinux.org>,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: curve25519 - Work around link failure
+Date:   Tue,  7 Jan 2020 21:12:52 +0100
+Message-Id: <20200107201327.3863345-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-References: <1578416218-11112-1-git-send-email-krzk@kernel.org>
-In-Reply-To: <1578416218-11112-1-git-send-email-krzk@kernel.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 7 Jan 2020 21:10:37 +0100
-Message-ID: <CAMuHMdXZGqqu+rWmemzxYtSNXofeCwLwerCeb-hEoubTvBqwXw@mail.gmail.com>
-Subject: Re: [PATCH] spi: sh-msiof: Do not redefine STR while compile testing
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:pH50uSqCPXHunlRYi6L8CL6v1F+HPRpeGWLVm1siLpp01pLtaYn
+ 2PDMeX31+oZWljGNiyUjWfyxUAFZwK/QAfPI1wCcfZl5GAPYJx5qHOhEpBctrIl2uSjelXj
+ i1UTXn5i/CNQUw0e09IOKdcp8GXAp2bsUdxECMYVmA0h1keXVYE+yFYXhAL5ixNOMrFMeQw
+ TFVM2igKOFrWWhhnU2NUg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:tDcVV9wxuqU=:t8AUGn6nGKs3yyta8KcKP9
+ YezldtC334Khb/zyCxX4Fu431iOpWdOxOc9G3oFdit+QZ2W3BW4i7FDBhGMWSDe/eF1m0hCHt
+ oXUfPnslXBwdE5ok7fJkCYAQM9UDMAp0hKGIge5Wpk+ygXLgA0ob73HjQRi0YzRXC1tKogWq+
+ H6Kit0nwKikgOhDWy+1aHIO681UnKANQgTn1Ni8AnssmzzAWOuSwF6QiTyyjQyJLwD4o8GtQo
+ wS/yE6dJrhWtHYpUMAaoU1UfjiYtt1MR5FYhRNMTRNh87Zvr2rFixrKANALKT1mf3rk9uC8d4
+ i6YuQwE7HI/bGAHs3jKN/QOIXJJ1FRruNQVhTL/zEZujMszjaLc6R03kNW2XQIf7p4nO42U/W
+ FiFkMy1iV7GZ5rwv38Xy9YeDyrLjT1wrWWOclFTgof+QoMdfsYFFhXeu7rUysNAoFhO+9RfOg
+ t2KxGnJV/Q9wx9PRTY0/e5VHmarkx8Zx/sJUhU7azenscql3gXSITqJkGmGBvjVP00LZNwrKA
+ EStlkmVMa3GgKb1tPQhMRcNaRwKGAGSQbFNVHMV5Vc1IMuX713DOS6JusgMuGAKyA+GsPFaoa
+ ZyxVll8+IOIJCw8bMPb7sUNWWvoCexA5E2hdmeQxuauQZ5BEI3f3sOvFNTYemcv+8ma6Spg1g
+ h0VllTvNpGHXiww1strijITU48e7q/RmxzKm5dK8z+WcPT+iRZmcjkgghcv++j0aX6i7cpIb9
+ O1NRNJ3fyT2sshmooUf71rr1om2p6WjYb5qRDNHEO6RJOxw2xjsEzH5xsJHgFlKjeJs9m7Ljj
+ Urp5ZSnywq+FNozooUpaW/j2zFufIRrtkNpG4N3lDDlGhdEO1W5qCWR38VhXtov6MNnNNim3T
+ 5zcMACR9nlBNHY2eU8KA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
+The curve25519 selftest causes a link failure when one of the two
+implementations is built-in and the other one is a loadable module,
+as then the library gets built in as well but cannot call into the
+module:
 
-On Tue, Jan 7, 2020 at 5:57 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> STR is a well-known stringify macro so it should be avoided in drivers
-> to avoid warnings like this (MIPS architecture while compile testing):
->
->     drivers/spi/spi-sh-msiof.c:76:0: warning: "STR" redefined
->      #define STR 0x40 /* Status Register */
->     arch/mips/include/asm/mipsregs.h:30:0: note: this is the location of the previous definition
->      #define STR(x) __STR(x)
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+lib/crypto/curve25519-selftest.o: In function `curve25519_selftest':
+curve25519-selftest.c:(.init.text+0x5c): undefined reference to `curve25519_arch'
+curve25519-selftest.c:(.init.text+0xfd): undefined reference to `curve25519_base_arch'
+curve25519-selftest.c:(.init.text+0x15a): undefined reference to `curve25519_arch'
 
-Thanks for your patch!
+There is probably a better fix, but this is the local workaround
+that I used to get a clean randconfig build again, using Makefile
+tricks to make all the curve25519 code built-in if any of the
+implementations are.
 
-> --- a/drivers/spi/spi-sh-msiof.c
-> +++ b/drivers/spi/spi-sh-msiof.c
-> @@ -73,7 +73,7 @@ struct sh_msiof_spi_priv {
->  #define RSCR   0x22    /* Receive Clock Select Register (SH, A1, APE6) */
->  #define CTR    0x28    /* Control Register */
->  #define FCTR   0x30    /* FIFO Control Register */
-> -#define STR    0x40    /* Status Register */
-> +#define STATR  0x40    /* Status Register */
+Fixes: aa127963f1ca ("crypto: lib/curve25519 - re-add selftests")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/crypto/Makefile | 4 +++-
+ arch/x86/crypto/Makefile | 4 +++-
+ crypto/Makefile          | 5 ++++-
+ 3 files changed, 10 insertions(+), 3 deletions(-)
 
-The datasheets call this register "SISTR", so I prefer to use that instead.
-Actually all registers have this "SI" ("Serial Interface"?) prefix.
-Shall I add this to my TODO-list?
-
->  #define IER    0x44    /* Interrupt Enable Register */
->  #define TDR1   0x48    /* Transmit Control Data Register 1 (SH, A1) */
->  #define TDR2   0x4c    /* Transmit Control Data Register 2 (SH, A1) */
-> @@ -161,19 +161,19 @@ struct sh_msiof_spi_priv {
->  #define FCTR_RFUA_SHIFT        4
->  #define FCTR_RFUA(i)   ((i) << FCTR_RFUA_SHIFT)
->
-> -/* STR */
-> -#define STR_TFEMP      BIT(29) /* Transmit FIFO Empty */
-> -#define STR_TDREQ      BIT(28) /* Transmit Data Transfer Request */
-> -#define STR_TEOF       BIT(23) /* Frame Transmission End */
-> -#define STR_TFSERR     BIT(21) /* Transmit Frame Synchronization Error */
-> -#define STR_TFOVF      BIT(20) /* Transmit FIFO Overflow */
-> -#define STR_TFUDF      BIT(19) /* Transmit FIFO Underflow */
-> -#define STR_RFFUL      BIT(13) /* Receive FIFO Full */
-> -#define STR_RDREQ      BIT(12) /* Receive Data Transfer Request */
-> -#define STR_REOF       BIT(7)  /* Frame Reception End */
-> -#define STR_RFSERR     BIT(5)  /* Receive Frame Synchronization Error */
-> -#define STR_RFUDF      BIT(4)  /* Receive FIFO Underflow */
-> -#define STR_RFOVF      BIT(3)  /* Receive FIFO Overflow */
-> +/* STATR */
-> +#define STATR_TFEMP    BIT(29) /* Transmit FIFO Empty */
-> +#define STATR_TDREQ    BIT(28) /* Transmit Data Transfer Request */
-> +#define STATR_TEOF     BIT(23) /* Frame Transmission End */
-> +#define STATR_TFSERR   BIT(21) /* Transmit Frame Synchronization Error */
-> +#define STATR_TFOVF    BIT(20) /* Transmit FIFO Overflow */
-> +#define STATR_TFUDF    BIT(19) /* Transmit FIFO Underflow */
-> +#define STATR_RFFUL    BIT(13) /* Receive FIFO Full */
-> +#define STATR_RDREQ    BIT(12) /* Receive Data Transfer Request */
-> +#define STATR_REOF     BIT(7)  /* Frame Reception End */
-> +#define STATR_RFSERR   BIT(5)  /* Receive Frame Synchronization Error */
-> +#define STATR_RFUDF    BIT(4)  /* Receive FIFO Underflow */
-> +#define STATR_RFOVF    BIT(3)  /* Receive FIFO Overflow */
-
-[...]
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/crypto/Makefile b/arch/arm/crypto/Makefile
+index b745c17d356f..a7b3957aca58 100644
+--- a/arch/arm/crypto/Makefile
++++ b/arch/arm/crypto/Makefile
+@@ -12,7 +12,9 @@ obj-$(CONFIG_CRYPTO_SHA512_ARM) += sha512-arm.o
+ obj-$(CONFIG_CRYPTO_CHACHA20_NEON) += chacha-neon.o
+ obj-$(CONFIG_CRYPTO_POLY1305_ARM) += poly1305-arm.o
+ obj-$(CONFIG_CRYPTO_NHPOLY1305_NEON) += nhpoly1305-neon.o
+-obj-$(CONFIG_CRYPTO_CURVE25519_NEON) += curve25519-neon.o
++ifdef CONFIG_CRYPTO_CURVE25519_NEON
++obj-$(CONFIG_CRYPTO_LIB_CURVE25519_GENERIC) += curve25519-neon.o
++endif
+ 
+ obj-$(CONFIG_CRYPTO_AES_ARM_CE) += aes-arm-ce.o
+ obj-$(CONFIG_CRYPTO_SHA1_ARM_CE) += sha1-arm-ce.o
+diff --git a/arch/x86/crypto/Makefile b/arch/x86/crypto/Makefile
+index 958440eae27e..7546c276e2f0 100644
+--- a/arch/x86/crypto/Makefile
++++ b/arch/x86/crypto/Makefile
+@@ -39,7 +39,9 @@ obj-$(CONFIG_CRYPTO_AEGIS128_AESNI_SSE2) += aegis128-aesni.o
+ 
+ obj-$(CONFIG_CRYPTO_NHPOLY1305_SSE2) += nhpoly1305-sse2.o
+ obj-$(CONFIG_CRYPTO_NHPOLY1305_AVX2) += nhpoly1305-avx2.o
+-obj-$(CONFIG_CRYPTO_CURVE25519_X86) += curve25519-x86_64.o
++ifdef CONFIG_CRYPTO_CURVE25519_X86
++obj-$(CONFIG_CRYPTO_LIB_CURVE25519_GENERIC) += curve25519-x86_64.o
++endif
+ 
+ # These modules require assembler to support AVX.
+ ifeq ($(avx_supported),yes)
+diff --git a/crypto/Makefile b/crypto/Makefile
+index 4ca12b6044f7..93ecbfe50285 100644
+--- a/crypto/Makefile
++++ b/crypto/Makefile
+@@ -166,7 +166,10 @@ obj-$(CONFIG_CRYPTO_ZSTD) += zstd.o
+ obj-$(CONFIG_CRYPTO_OFB) += ofb.o
+ obj-$(CONFIG_CRYPTO_ECC) += ecc.o
+ obj-$(CONFIG_CRYPTO_ESSIV) += essiv.o
+-obj-$(CONFIG_CRYPTO_CURVE25519) += curve25519-generic.o
++
++ifdef CONFIG_CRYPTO_CURVE25519
++obj-$(CONFIG_CRYPTO_LIB_CURVE25519_GENERIC) += curve25519-generic.o
++endif
+ 
+ ecdh_generic-y += ecdh.o
+ ecdh_generic-y += ecdh_helper.o
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.20.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
