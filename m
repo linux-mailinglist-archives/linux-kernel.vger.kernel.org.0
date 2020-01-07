@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ACD31333FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:23:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AED9D133253
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:09:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbgAGVWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:22:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40356 "EHLO mail.kernel.org"
+        id S1729697AbgAGVJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:09:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728667AbgAGVB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:01:56 -0500
+        id S1729674AbgAGVJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:09:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A70CD20678;
-        Tue,  7 Jan 2020 21:01:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 932AF2077B;
+        Tue,  7 Jan 2020 21:09:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430916;
-        bh=kQG2NmVnqlvSpcEBxhVGFGo+zFzV3jRfRwpVE4asfow=;
+        s=default; t=1578431362;
+        bh=d8wRk7T6ysTFGPcOPju/2JZbQD8sgNQgpLFSwlkVAAs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GIt+41W4txdzEGBErZQnc4xmTZ8m7Mq8LIscqd/FksXsV3vOaMJiO77W0LpS7N+Pf
-         ahnGdobdCDIw1K9oQfes+LDofqxuSRzDd81UNK7fTv87q/A32PShPD0Pepgqs413xF
-         2+B6AJGFnjxKlmIEGPQ9cFN0zr9vyP4szTQkfeIE=
+        b=Y4bWxYf8ED9wqMT9+aeQgvbZfnVhsFdeUc+YO2wgbC4pZ69a1PR/cbfVVOBXcx7IM
+         j1d7FlUsx7fE7KLThOBZFnPUndPlT2Srs6ATBqtjfpW5GRagZpkshpMlHopNMqTvD2
+         U0qJEJfmr5FMiOe0GhtDh0Xy62+ghXczoDTxIwMA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Michael Haener <michael.haener@siemens.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 5.4 149/191] platform/x86: pmc_atom: Add Siemens CONNECT X300 to critclk_systems DMI table
+        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 04/74] RDMA/cma: add missed unregister_pernet_subsys in init failure
 Date:   Tue,  7 Jan 2020 21:54:29 +0100
-Message-Id: <20200107205340.944264324@linuxfoundation.org>
+Message-Id: <20200107205138.245988594@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
-References: <20200107205332.984228665@linuxfoundation.org>
+In-Reply-To: <20200107205135.369001641@linuxfoundation.org>
+References: <20200107205135.369001641@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Haener <michael.haener@siemens.com>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-commit e8796c6c69d129420ee94a1906b18d86b84644d4 upstream.
+[ Upstream commit 44a7b6759000ac51b92715579a7bba9e3f9245c2 ]
 
-The CONNECT X300 uses the PMC clock for on-board components and gets
-stuck during boot if the clock is disabled. Therefore, add this
-device to the critical systems list.
-Tested on CONNECT X300.
+The driver forgets to call unregister_pernet_subsys() in the error path
+of cma_init().
+Add the missed call to fix it.
 
-Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
-Signed-off-by: Michael Haener <michael.haener@siemens.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 4be74b42a6d0 ("IB/cma: Separate port allocation to network namespaces")
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Reviewed-by: Parav Pandit <parav@mellanox.com>
+Link: https://lore.kernel.org/r/20191206012426.12744-1-hslester96@gmail.com
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/pmc_atom.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/infiniband/core/cma.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/platform/x86/pmc_atom.c
-+++ b/drivers/platform/x86/pmc_atom.c
-@@ -429,6 +429,14 @@ static const struct dmi_system_id critcl
- 			DMI_MATCH(DMI_PRODUCT_VERSION, "6AV7882-0"),
- 		},
- 	},
-+	{
-+		.ident = "CONNECT X300",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "SIEMENS AG"),
-+			DMI_MATCH(DMI_PRODUCT_VERSION, "A5E45074588"),
-+		},
-+	},
-+
- 	{ /*sentinel*/ }
- };
- 
+diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
+index f698c6a28c14..fc4630e4acdd 100644
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -4568,6 +4568,7 @@ static int __init cma_init(void)
+ 	unregister_netdevice_notifier(&cma_nb);
+ 	rdma_addr_unregister_client(&addr_client);
+ 	ib_sa_unregister_client(&sa_client);
++	unregister_pernet_subsys(&cma_pernet_operations);
+ err_wq:
+ 	destroy_workqueue(cma_wq);
+ 	return ret;
+-- 
+2.20.1
+
 
 
