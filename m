@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D768E133130
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:58:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C30F3133147
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:59:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbgAGU62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 15:58:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57626 "EHLO mail.kernel.org"
+        id S1728117AbgAGU7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 15:59:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727859AbgAGU60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:58:26 -0500
+        id S1728107AbgAGU7R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 15:59:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30FF42087F;
-        Tue,  7 Jan 2020 20:58:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CABB4214D8;
+        Tue,  7 Jan 2020 20:59:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430705;
-        bh=5r1Q8nbDUxC71h9s7mcYWX05RWLrI6p1AJIXVWfWwFE=;
+        s=default; t=1578430756;
+        bh=7h6wTwiJ2begePAr4ik0cVNuBQz3xLHltNZ7KwOMq7E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vLCX3Csn9naHKhty5kWVDfFamLIn3BPGWsUGO25L6ZnbqBEejdoPghsTOyLbW80IP
-         6+oXVtRaXWdqc/ZmyAtVrNmasCE169sZ9FWXKAwIwDm9iVBGHpYziEu+llFTKO8saP
-         3v2fdDnShuURFa8x2PwOoCDSgUv4uuCD6I3e1OJk=
+        b=HBBGQO5g7VabpPSj9qwHhRkCzXdcShWYXKDxZJAk88UvsPtWmZvYJJ6CBo49JdR3c
+         WkVrTqQjNG/gmjeE7bh9UoJgi3JYwJDpJCaPwhqOJ1/Dt1FXQm6/1CGgr1gXF4JXli
+         DReUF09noRZyzsjvHMoR7lVuB4wW1QG79ZcvIRso=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
+        stable@vger.kernel.org, Mark Zhang <markz@mellanox.com>,
+        Maor Gottlieb <maorg@mellanox.com>,
+        Ido Kalir <idok@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 045/191] s390/cpum_sf: Adjust sampling interval to avoid hitting sample limits
-Date:   Tue,  7 Jan 2020 21:52:45 +0100
-Message-Id: <20200107205335.404192099@linuxfoundation.org>
+Subject: [PATCH 5.4 047/191] RDMA/counter: Prevent auto-binding a QP which are not tracked with res
+Date:   Tue,  7 Jan 2020 21:52:47 +0100
+Message-Id: <20200107205335.511134640@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
 References: <20200107205332.984228665@linuxfoundation.org>
@@ -44,73 +47,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Mark Zhang <markz@mellanox.com>
 
-[ Upstream commit 39d4a501a9ef55c57b51e3ef07fc2aeed7f30b3b ]
+[ Upstream commit 33df2f1929df4a1cb13303e344fbf8a75f0dc41f ]
 
-Function perf_event_ever_overflow() and perf_event_account_interrupt()
-are called every time samples are processed by the interrupt handler.
-However function perf_event_account_interrupt() has checks to avoid being
-flooded with interrupts (more then 1000 samples are received per
-task_tick).  Samples are then dropped and a PERF_RECORD_THROTTLED is
-added to the perf data. The perf subsystem limit calculation is:
+Some QPs (e.g. XRC QP) are not tracked in kernel, in this case they have
+an invalid res and should not be bound to any dynamically-allocated
+counter in auto mode.
 
-    maximum sample frequency := 100000 --> 1 samples per 10 us
-    task_tick = 10ms = 10000us --> 1000 samples per task_tick
+This fixes below call trace:
+BUG: kernel NULL pointer dereference, address: 0000000000000390
+PGD 80000001a7233067 P4D 80000001a7233067 PUD 1a7215067 PMD 0
+Oops: 0000 [#1] SMP PTI
+CPU: 2 PID: 24822 Comm: ibv_xsrq_pingpo Not tainted 5.4.0-rc5+ #21
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-2.fc27 04/01/2014
+RIP: 0010:rdma_counter_bind_qp_auto+0x142/0x270 [ib_core]
+Code: e1 48 85 c0 48 89 c2 0f 84 bc 00 00 00 49 8b 06 48 39 42 48 75 d6 40 3a aa 90 00 00 00 75 cd 49 8b 86 00 01 00 00 48 8b 4a 28 <8b> 80 90 03 00 00 39 81 90 03 00 00 75 b4 85 c0 74 b0 48 8b 04 24
+RSP: 0018:ffffc900003f39c0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
+RDX: ffff88820020ec00 RSI: 0000000000000004 RDI: ffffffffffffffc0
+RBP: 0000000000000001 R08: ffff888224149ff0 R09: ffffc900003f3968
+R10: ffffffffffffffff R11: ffff8882249c5848 R12: ffffffffffffffff
+R13: ffff88821d5aca50 R14: ffff8881f7690800 R15: ffff8881ff890000
+FS:  00007fe53a3e1740(0000) GS:ffff888237b00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000390 CR3: 00000001a7292006 CR4: 00000000003606a0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ _ib_modify_qp+0x3a4/0x3f0 [ib_core]
+ ? lookup_get_idr_uobject.part.8+0x23/0x40 [ib_uverbs]
+ modify_qp+0x322/0x3e0 [ib_uverbs]
+ ib_uverbs_modify_qp+0x43/0x70 [ib_uverbs]
+ ib_uverbs_handler_UVERBS_METHOD_INVOKE_WRITE+0xb1/0xf0 [ib_uverbs]
+ ib_uverbs_run_method+0x6be/0x760 [ib_uverbs]
+ ? uverbs_disassociate_api+0xd0/0xd0 [ib_uverbs]
+ ib_uverbs_cmd_verbs+0x18d/0x3a0 [ib_uverbs]
+ ? get_acl+0x1a/0x120
+ ? __alloc_pages_nodemask+0x15d/0x2c0
+ ib_uverbs_ioctl+0xa7/0x110 [ib_uverbs]
+ do_vfs_ioctl+0xa5/0x610
+ ksys_ioctl+0x60/0x90
+ __x64_sys_ioctl+0x16/0x20
+ do_syscall_64+0x48/0x110
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-The work flow is
-
-measurement_alert() uses SDBT head and each SBDT points to 511
- SDB pages, each with 126 sample entries. After processing 8 SBDs
- and for each valid sample calling:
-
-     perf_event_overflow()
-       perf_event_account_interrupts()
-
-there is a considerable amount of samples being dropped, especially when
-the sample frequency is very high and near the 100000 limit.
-
-To avoid the high amount of samples being dropped near the end of a
-task_tick time frame, increment the sampling interval in case of
-dropped events. The CPU Measurement sampling facility on the s390
-supports only intervals, specifiing how many CPU cycles have to be
-executed before a sample is generated. Increase the interval when the
-samples being generated hit the task_tick limit.
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Fixes: 99fa331dc862 ("RDMA/counter: Add "auto" configuration mode support")
+Signed-off-by: Mark Zhang <markz@mellanox.com>
+Reviewed-by: Maor Gottlieb <maorg@mellanox.com>
+Reviewed-by: Ido Kalir <idok@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Link: https://lore.kernel.org/r/20191212091214.315005-2-leon@kernel.org
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kernel/perf_cpum_sf.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/infiniband/core/counters.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
-index 7511b71d2931..47515c96032e 100644
---- a/arch/s390/kernel/perf_cpum_sf.c
-+++ b/arch/s390/kernel/perf_cpum_sf.c
-@@ -1325,6 +1325,22 @@ static void hw_perf_event_update(struct perf_event *event, int flush_all)
- 	if (sampl_overflow)
- 		OVERFLOW_REG(hwc) = DIV_ROUND_UP(OVERFLOW_REG(hwc) +
- 						 sampl_overflow, 1 + num_sdb);
+diff --git a/drivers/infiniband/core/counters.c b/drivers/infiniband/core/counters.c
+index 680ad27f497d..023478107f0e 100644
+--- a/drivers/infiniband/core/counters.c
++++ b/drivers/infiniband/core/counters.c
+@@ -282,6 +282,9 @@ int rdma_counter_bind_qp_auto(struct ib_qp *qp, u8 port)
+ 	struct rdma_counter *counter;
+ 	int ret;
+ 
++	if (!qp->res.valid)
++		return 0;
 +
-+	/* Perf_event_overflow() and perf_event_account_interrupt() limit
-+	 * the interrupt rate to an upper limit. Roughly 1000 samples per
-+	 * task tick.
-+	 * Hitting this limit results in a large number
-+	 * of throttled REF_REPORT_THROTTLE entries and the samples
-+	 * are dropped.
-+	 * Slightly increase the interval to avoid hitting this limit.
-+	 */
-+	if (event_overflow) {
-+		SAMPL_RATE(hwc) += DIV_ROUND_UP(SAMPL_RATE(hwc), 10);
-+		debug_sprintf_event(sfdbg, 1, "%s: rate adjustment %ld\n",
-+				    __func__,
-+				    DIV_ROUND_UP(SAMPL_RATE(hwc), 10));
-+	}
-+
- 	if (sampl_overflow || event_overflow)
- 		debug_sprintf_event(sfdbg, 4, "hw_perf_event_update: "
- 				    "overflow stats: sample=%llu event=%llu\n",
+ 	if (!rdma_is_port_valid(dev, port))
+ 		return -EINVAL;
+ 
 -- 
 2.20.1
 
