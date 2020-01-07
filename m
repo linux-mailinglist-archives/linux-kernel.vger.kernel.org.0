@@ -2,103 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C312C133468
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:25:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B8F313317B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:01:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729239AbgAGVZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:25:06 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:51280 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727257AbgAGVAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:00:16 -0500
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1iovxO-0007vy-Fh; Tue, 07 Jan 2020 14:00:09 -0700
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1iovxJ-0001zP-94; Tue, 07 Jan 2020 14:00:01 -0700
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-mm@kvack.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Eric Badger <ebadger@gigaio.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Date:   Tue,  7 Jan 2020 13:59:59 -0700
-Message-Id: <20200107205959.7575-9-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200107205959.7575-1-logang@deltatee.com>
-References: <20200107205959.7575-1-logang@deltatee.com>
+        id S1728499AbgAGVBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:01:11 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:38004 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728476AbgAGVA6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:00:58 -0500
+Received: by mail-io1-f68.google.com with SMTP id v3so839108ioj.5
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 13:00:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TUCMvAlrozTSswUZRaX/kk/b3mxYfUe4t6CXtrf2o+s=;
+        b=GehBVaBAx2yLw8xmK6L9yXpZmniP/2JyAJ3/e8p9FE6da8ZcO/BGm8rhirJ906imzR
+         MyMS2cxd096Pcka3v1dxK5QOY76n81+jkNNzm92Fu1BLm12o33wIh8PuqUyvqB5JgEAT
+         kg2l9mn1owXVwnaEwiAe9SxaV14zDbe3aXQoIoZMkigADe2qBr1ShfEmJPt4DmnIkFdM
+         Nl7O3XfkSkhCda0b1Hkp1OlbetxllC5f4OMGIaWe96kCUf2NJ3z2UgdQ3Uskep4pyBmT
+         i7Kg9HyftPWed+j0nbeSEVmQxWqgcolE4dTvs6xIG2mvTDxwga0AhX4w/wDYcgT/lrhn
+         TfCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TUCMvAlrozTSswUZRaX/kk/b3mxYfUe4t6CXtrf2o+s=;
+        b=mOR2aKMVVgVDNg44QqBzBXKZMwS9IlOhgSta+NdoWY3Jsl6rpZ6wI2OAx9Vc8A5rLS
+         KYubTzwgoTjCClQRva3snUd58joBKrA4J2OhOBo9Xsnr65WFrI4XTgOuTVffVtmsKWAh
+         LEIvPcVH2Ns/TJ1Cl068B5/VNOaM87aQsrk+3sXBT8AA+VE62TwgsmPFm9mRuLLCIJVA
+         5wY7fz7td1m6vGZbNhfiD39w+uABfnIlVwtk9UJ2uza0elrANx1OSJmW5p0VcXJ5ta1E
+         kJJiOu1sQ5If4Aexw7zzTs9AEPoVIPKr9+cEfiJL6rk2aZsmlu839Ww+Ja6cjfm7TQRt
+         SdLg==
+X-Gm-Message-State: APjAAAUg7wdLT1ATde704mU+SNuahY1IFUgOzPS1/3ZHaZ5dDeof+T6J
+        wfUaumrBT60u/BC6g1TQmZHTyg==
+X-Google-Smtp-Source: APXvYqzgUwxMWRW1F7AdWKU490fmEMlII4xM/XzIv7jxVALemJiPaRzlelnhtwr2Yi1XbXw+xwNUuw==
+X-Received: by 2002:a6b:7f47:: with SMTP id m7mr789897ioq.82.1578430857516;
+        Tue, 07 Jan 2020 13:00:57 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id g62sm230208ile.39.2020.01.07.13.00.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Jan 2020 13:00:57 -0800 (PST)
+Subject: Re: [PATCH 5.4 100/191] block: fix splitting segments on boundary
+ masks
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, Chris Mason <clm@fb.com>,
+        Ming Lei <ming.lei@redhat.com>
+References: <20200107205332.984228665@linuxfoundation.org>
+ <20200107205338.341621494@linuxfoundation.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <1fc351dd-a213-3310-7611-6b8c60c209cf@kernel.dk>
+Date:   Tue, 7 Jan 2020 14:00:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-mm@kvack.org, dan.j.williams@intel.com, akpm@linux-foundation.org, hch@lst.de, catalin.marinas@arm.com, benh@kernel.crashing.org, tglx@linutronix.de, david@redhat.com, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, mhocko@kernel.org, will@kernel.org, luto@kernel.org, peterz@infradead.org, ebadger@gigaio.com, logang@deltatee.com, jgg@ziepe.ca
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
-        version=3.4.2
-Subject: [PATCH v2 8/8] mm/memremap: Set caching mode for PCI P2PDMA memory to WC
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+In-Reply-To: <20200107205338.341621494@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI BAR IO memory should never be mapped as WB, however prior to this
-the PAT bits were set WB and it was typically overridden by MTRR
-registers set by the firmware.
+On 1/7/20 1:53 PM, Greg Kroah-Hartman wrote:
+> From: Ming Lei <ming.lei@redhat.com>
+> 
+> commit 429120f3df2dba2bf3a4a19f4212a53ecefc7102 upstream.
+> 
+> We ran into a problem with a mpt3sas based controller, where we would
+> see random (and hard to reproduce) file corruption). The issue seemed
+> specific to this controller, but wasn't specific to the file system.
+> After a lot of debugging, we find out that it's caused by segments
+> spanning a 4G memory boundary. This shouldn't happen, as the default
+> setting for segment boundary masks is 4G.
+> 
+> Turns out there are two issues in get_max_segment_size():
+> 
+> 1) The default segment boundary mask is bypassed
+> 
+> 2) The segment start address isn't taken into account when checking
+>    segment boundary limit
+> 
+> Fix these two issues by removing the bypass of the segment boundary
+> check even if the mask is set to the default value, and taking into
+> account the actual start address of the request when checking if a
+> segment needs splitting.
 
-Set PCI P2PDMA memory to be WC (writecombining) as the only current
-user (the NVMe CMB) was originally mapped WC before the P2PDMA code
-replaced the mapping with devm_memremap_pages().
+Greg, there's a problem with this one on ARM. Should be resolved
+shortly, but probably best to defer this one until the next 5.4
+stable release.
 
-Future use-cases may need to generalize this by adding flags to
-select the caching type, as some P2PDMA cases will not want WC.
-However, those use-cases are not upstream yet and this can be changed
-when they arrive.
+I'll ping you with both patches once the dust has settled.
 
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
----
- mm/memremap.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/mm/memremap.c b/mm/memremap.c
-index 45ab4ef0643d..d36ff688b768 100644
---- a/mm/memremap.c
-+++ b/mm/memremap.c
-@@ -187,7 +187,10 @@ void *memremap_pages(struct dev_pagemap *pgmap, int nid)
- 		}
- 		break;
- 	case MEMORY_DEVICE_DEVDAX:
-+		need_devmap_managed = false;
-+		break;
- 	case MEMORY_DEVICE_PCI_P2PDMA:
-+		modifiers.pgprot = pgprot_writecombine(modifiers.pgprot);
- 		need_devmap_managed = false;
- 		break;
- 	default:
 -- 
-2.20.1
+Jens Axboe
 
