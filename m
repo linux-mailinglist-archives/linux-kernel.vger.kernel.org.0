@@ -2,89 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7560713299B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 16:06:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AC281329A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 16:08:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728146AbgAGPG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 10:06:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48938 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727880AbgAGPG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 10:06:28 -0500
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83D012087F;
-        Tue,  7 Jan 2020 15:06:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578409588;
-        bh=+y+aWqsEqk2+D9Baxc1ravTEaKC6Hg6OrUKouQASJFI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aGcPyhZnC7+FqmaURKzkdbH8gwRkbCGrcv15/QY0sFaTSSpSdUJzt3yF0mMK/Qg3E
-         EwdVYzY5dcdj451Mrzm/4tIYZK4MZvAqdm2+nCKxgG7wJSry8pui+CAxbpdkd4mW2v
-         T28gft04vtvzuNXQCXdxGba1rPmhNJy7/DbrV5YY=
-Date:   Tue, 7 Jan 2020 16:06:25 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Chen-Yu Tsai <wens@kernel.org>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] drm/sun4i: tcon: Set RGB DCLK min. divider based on
- hardware model
-Message-ID: <20200107150625.sj6x4u67diac3v5p@gilmour>
-References: <20200107070113.28951-1-wens@kernel.org>
+        id S1728278AbgAGPIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 10:08:21 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:51537 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727880AbgAGPIU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 10:08:20 -0500
+Received: from [109.168.11.45] (port=53390 helo=[192.168.101.73])
+        by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1ioqSv-00EzCX-CP; Tue, 07 Jan 2020 16:08:17 +0100
+Subject: Re: [PATCH 3/5] i2c: highlander: Use proper printk format for iomem
+ pointer
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Jean Delvare <jdelvare@suse.de>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Max Staudt <max@enpas.org>,
+        Juergen Fitschen <jfi@ssv-embedded.de>,
+        Elie Morisse <syniurge@gmail.com>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20191230172751.17985-1-krzk@kernel.org>
+ <20191230172751.17985-3-krzk@kernel.org>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <dcfa47af-9c7f-4c57-b178-62611c8c21bc@lucaceresoli.net>
+Date:   Tue, 7 Jan 2020 16:08:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xezwhxxbc3anpsth"
-Content-Disposition: inline
-In-Reply-To: <20200107070113.28951-1-wens@kernel.org>
+In-Reply-To: <20191230172751.17985-3-krzk@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---xezwhxxbc3anpsth
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 30/12/19 18:27, Krzysztof Kozlowski wrote:
+> iomem pointers should be printed with pointer format to hide the
 
-On Tue, Jan 07, 2020 at 03:01:13PM +0800, Chen-Yu Tsai wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
->
-> In commit 0b8e7bbde5e7 ("drm/sun4i: tcon: Set min division of TCON0_DCLK
-> to 1.") it was assumed that all TCON variants support a minimum divider
-> of 1 if only DCLK was used.
->
-> However, the oldest generation of hardware only supports minimum divider
-> of 4 if only DCLK is used. If a divider of 1 was used on this old
-> hardware, some scrolling artifact would appear. A divider of 2 seemed
-> OK, but a divider of 3 had artifacts as well.
->
-> Set the minimum divider when outputing to parallel RGB based on the
-> hardware model, with a minimum of 4 for the oldest (A10/A10s/A13/A20)
-> hardware, and a minimum of 1 for the rest. A value is not set for the
-> TCON variants lacking channel 0.
->
-> This fixes the scrolling artifacts seen on my A13 tablet.
->
-> Fixes: 0b8e7bbde5e7 ("drm/sun4i: tcon: Set min division of TCON0_DCLK to 1.")
-> Cc: <stable@vger.kernel.org> # 5.4.x
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+s/iomem/size_t/ (in the subject too)
 
-Applied, thanks
+The whole commit message needs rewording accordingly.
 
-Maxime
+> actual value and fix warnings when compiling on 64-bit platform (e.g. with
+> COMPILE_TEST):
+> 
+>     drivers/i2c/busses/i2c-highlander.c: In function ‘highlander_i2c_smbus_xfer’:
+>     drivers/i2c/busses/i2c-highlander.c:325:22: warning:
+>         format ‘%d’ expects argument of type ‘int’,
+>         but argument 3 has type ‘size_t {aka long unsigned int}’ [-Wformat=]
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/i2c/busses/i2c-highlander.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-highlander.c b/drivers/i2c/busses/i2c-highlander.c
+> index abfe3094c047..803dad70e2a7 100644
+> --- a/drivers/i2c/busses/i2c-highlander.c
+> +++ b/drivers/i2c/busses/i2c-highlander.c
+> @@ -322,7 +322,7 @@ static int highlander_i2c_smbus_xfer(struct i2c_adapter *adap, u16 addr,
+>  		tmp |= (SMMR_MODE0 | SMMR_MODE1);
+>  		break;
+>  	default:
+> -		dev_err(dev->dev, "unsupported xfer size %d\n", dev->buf_len);
+> +		dev_err(dev->dev, "unsupported xfer size %zu\n", dev->buf_len);
+>  		return -EINVAL;
+>  	}
+>  
+> 
 
---xezwhxxbc3anpsth
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXhSecQAKCRDj7w1vZxhR
-xQFaAP9wLF9udsuevqjGAE3LAn6TCRsCdWejtoRRsX5mYATyzgEA6SE+BSoFd/Ct
-dU/RYO3cR8I6jmK7T2SuD3yh1MdfgAE=
-=Ruky
------END PGP SIGNATURE-----
-
---xezwhxxbc3anpsth--
+-- 
+Luca
