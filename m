@@ -2,69 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41A7E132280
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:34:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E06CC13226C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:33:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbgAGJea (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 04:34:30 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:57420 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726485AbgAGJe3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 04:34:29 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D9637200734;
-        Tue,  7 Jan 2020 10:34:27 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2479E200303;
-        Tue,  7 Jan 2020 10:34:12 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 14F77402D9;
-        Tue,  7 Jan 2020 16:57:05 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
-        will@kernel.org, bjorn.andersson@linaro.org, olof@lixom.net,
-        maxime@cerno.tech, leonard.crestez@nxp.com, dinguyen@kernel.org,
-        marcin.juszkiewicz@linaro.org, ping.bai@nxp.com, abel.vesa@nxp.com,
-        nsekhar@ti.com, t-kristo@ti.com, peng.fan@nxp.com,
-        yuehaibing@huawei.com, aisheng.dong@nxp.com, sfr@canb.auug.org.au,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V2 5/5] arm64: defconfig: Enable CONFIG_CLK_IMX8MP by default
-Date:   Tue,  7 Jan 2020 16:53:17 +0800
-Message-Id: <1578387197-5750-5-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1578387197-5750-1-git-send-email-Anson.Huang@nxp.com>
-References: <1578387197-5750-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727734AbgAGJdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 04:33:14 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8229 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726485AbgAGJdO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 04:33:14 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 476879CBD0B7BC2E67E0;
+        Tue,  7 Jan 2020 17:33:12 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 7 Jan 2020 17:33:04 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <linux-usb@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <chenzhou10@huawei.com>
+Subject: [PATCH next 0/2] net: ch9200: code cleanup
+Date:   Tue, 7 Jan 2020 17:28:54 +0800
+Message-ID: <20200107092856.97742-1-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Select CONFIG_CLK_IMX8MP by default to support i.MX8MP clock driver.
+patch 1 introduce __func__ in debug message.
+patch 2 remove unnecessary return.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-No change.
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Chen Zhou (2):
+  net: ch9200: use __func__ in debug message
+  net: ch9200: remove unnecessary return
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index c7a94c4ff..8d9b9ce 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -701,6 +701,7 @@ CONFIG_COMMON_CLK_PWM=y
- CONFIG_CLK_RASPBERRYPI=m
- CONFIG_CLK_IMX8MM=y
- CONFIG_CLK_IMX8MN=y
-+CONFIG_CLK_IMX8MP=y
- CONFIG_CLK_IMX8MQ=y
- CONFIG_CLK_IMX8QXP=y
- CONFIG_TI_SCI_CLK=y
+ drivers/net/usb/ch9200.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
+
 -- 
 2.7.4
 
