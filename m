@@ -2,140 +2,246 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 186C2132C94
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 18:09:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AD08132C69
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 18:03:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728447AbgAGRJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 12:09:01 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:37117 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728266AbgAGRJB (ORCPT
+        id S1728413AbgAGRDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 12:03:08 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:41727 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728321AbgAGRDI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 12:09:01 -0500
-Received: by mail-qt1-f193.google.com with SMTP id w47so370875qtk.4
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 09:09:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o8VDYNz3D8dzr8Paverc5SjU9MC05Ui8WU/rBztnqAI=;
-        b=HnbD9TgpM1gX8/yRRcibYGO3YaJoMfAeK9M7RCCQ0MlaLha3X6NaZSAWW3HgddClRb
-         n0qcgRfMHAYSdNg08AemgGd2qXtJtLTMOumHMhz+5a4acHL7osi0nrjKd3wRNdo3i4Ix
-         X/Z3F6AqBA+4Qt0LupTfAThBFaIGZpqMpEWjxy6Ps9eKd8Ur7scj6em3JSTDqOfdfhGG
-         uBDJSM+MRyFsqCzZMvt5HPR4WZ8E7eNDKTwW+TiZROg4Bd7ighfCaI4sP0Z6A8mI7B2c
-         xAIfHs2ji+odU9V+F9FZ5xtt8I+v2vLRgZHZxj74raQZh4XIuO0p4qmSxISS5x4QOOuG
-         JisA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o8VDYNz3D8dzr8Paverc5SjU9MC05Ui8WU/rBztnqAI=;
-        b=KmIXp5BnAOkj3bfrjiKycBOOb/l84ekODe+s5V1nGng6Hu43C6P1KY2N/Nt9zQ7see
-         c1RifSwP5iiogeaZxXkXYPmDCZNC8p4Pb2PHTBTyRAVtIYptfjQT5oO1P+f/NmKA9xYN
-         TRqlSmrdrmdjGmpZ8Wcng5tsEnln08UZw2SsGqfAjRzBN2kLr2el2lD76lQA4YK6rbY1
-         Ldal//1Kx+2/ZMKO6/Kmx5ByUug9uMjhb6jTuO1cuw32WXFNddau1HdTYHQiUOTWLSKW
-         DouOC+xLL+sHMOdscjz5YRwDfMR4A/AZTy4/czrNKnUbkE6I3zBurIszXl+6yaIGTA77
-         Mx/g==
-X-Gm-Message-State: APjAAAXF880DyisvXknFO/oB/JUV1Y8CdyRSTQnygXJCfuJo0AEkTnc9
-        OfpsVlUPRcpzpXua+EH+qiKbPmaG4I/SbpMHWHdDI/h7ZOU=
-X-Google-Smtp-Source: APXvYqzpUiVk7KT8Gp/mQaZeAy1KjNia+efSxzvYBnoxAmHInYKLRwGZcy/W2SG1L66erDvVET+jWUaqNY7zhusmYkY=
-X-Received: by 2002:ac8:71d7:: with SMTP id i23mr81437675qtp.50.1578416540765;
- Tue, 07 Jan 2020 09:02:20 -0800 (PST)
+        Tue, 7 Jan 2020 12:03:08 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=wenyang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0Tn6D..0_1578416563;
+Received: from localhost(mailfrom:wenyang@linux.alibaba.com fp:SMTPD_---0Tn6D..0_1578416563)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 08 Jan 2020 01:02:51 +0800
+From:   Wen Yang <wenyang@linux.alibaba.com>
+To:     Julia Lawall <Julia.Lawall@lip6.fr>
+Cc:     Wen Yang <wenyang@linux.alibaba.com>,
+        Julia Lawall <julia.lawall@inria.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Matthias Maennich <maennich@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thomas Gleixner <tglx@linutronix.de>, cocci@systeme.lip6.fr,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] coccinelle: semantic patch to check for inappropriate do_div() calls
+Date:   Wed,  8 Jan 2020 01:02:40 +0800
+Message-Id: <20200107170240.47207-1-wenyang@linux.alibaba.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <00000000000053539a0599173973@google.com> <20191212105701.GB1476206@kroah.com>
- <CACT4Y+ZeR=z-3CSXFazmngUhs9DqfxgZLKBNhzvfg49Nrw=EzA@mail.gmail.com>
- <20191213093357.GB2135612@kroah.com> <CACT4Y+beoeY9XwbQX7nDY_5EPMQwK+j3JZ9E-k6vhiZudEA1LA@mail.gmail.com>
- <20191213101021.GA2141429@kroah.com> <CACT4Y+ZW8oLfupDbQuk-Q-J=WtsXPEXTsqeZAPGhXXPu4gGrmg@mail.gmail.com>
- <20191213112648.GA2257852@kroah.com> <CACT4Y+aC+Phfj91wdWJPH+zKcHLXPXQE9Ycn--qKboFHPnMW+g@mail.gmail.com>
-In-Reply-To: <CACT4Y+aC+Phfj91wdWJPH+zKcHLXPXQE9Ycn--qKboFHPnMW+g@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 7 Jan 2020 18:02:09 +0100
-Message-ID: <CACT4Y+YigHSLOM-e1O0bxf_8D4jkM51jQW4ReWRZgcp9xfqp_w@mail.gmail.com>
-Subject: Re: BUG: unable to handle kernel NULL pointer dereference in mem_serial_out
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     syzkaller <syzkaller@googlegroups.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot <syzbot+f4f1e871965064ae689e@syzkaller.appspotmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        asierra@xes-inc.com, ext-kimmo.rautkoski@vaisala.com,
-        Jiri Slaby <jslaby@suse.com>,
-        kai heng feng <kai.heng.feng@canonical.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-serial <linux-serial@vger.kernel.org>,
-        mika.westerberg@linux.intel.com, o.barta89@gmail.com,
-        paulburton@kernel.org, sr@denx.de,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        yegorslists@googlemail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 11:48 AM Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> On Fri, Dec 13, 2019 at 10:48 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Fri, Dec 13, 2019 at 11:39:54AM +0100, Dmitry Vyukov wrote:
-> > > On Fri, Dec 13, 2019 at 11:10 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > > > > > You set up a dubious memory base for your uart and then get upset when
-> > > > > > > > you write to that location.
-> > > > > > > >
-> > > > > > > > I don't know what to really do about this, this is a root-only operation
-> > > > > > > > and you are expected to know what you are doing when you attempt this.
-> > > > > > >
-> > > > > > > Hi Greg,
-> > > > > > >
-> > > > > > > Thanks for looking into this!
-> > > > > > > Should we restrict the fuzzer from accessing /dev/ttyS* entirely?
-> > > > > >
-> > > > > > No, not at all.
-> > > > > >
-> > > > > > > Or only restrict TIOCSSERIAL on them? Something else?
-> > > > > >
-> > > > > > Try running not as root.  if you have CAP_SYS_ADMIN you can do a lot of
-> > > > > > pretty bad things with tty ports, as you see here.  There's a reason the
-> > > > > > LOCKDOWN_TIOCSSERIAL "security lockdown" check was added :)
-> > > > > >
-> > > > > > The TIOCSSERIAL ioctl is a nice one for a lot of things that are able to
-> > > > > > be done as a normal user (baud rate changes, etc.), but there are also
-> > > > > > things like setting io port memory locations that can cause random
-> > > > > > hardware accesses and kernel crashes, as you instantly found out here :)
-> > > > > >
-> > > > > > So restrict the fuzzer to only run as a "normal" user of the serial
-> > > > > > port, and if you find problems there, I'll be glad to look at them.
-> > > > >
-> > > > > Easier said than done. "normal user of the serial port" is not really
-> > > > > a thing in Linux, right? You either have CAP_SYS_ADMIN or not, that's
-> > > > > not per-device...
-> > > >
-> > > > Not true, there's lots of users of serial port devices that do not have
-> > > > CAP_SYS_ADMIN set.  That's why we have groups :)
-> > > >
-> > > > You can change the baud rate of your usb-serial device without root
-> > > > permissions, right?  That's a "normal" user right there.
-> > >
-> > > Yes, but this requires dropping CAP_SYS_ADMIN. And one can't drop
-> > > CAP_SYS_ADMIN only for ttyS. If it would be a separate capability, we
-> > > could drop just that, but not CAP_SYS_ADMIN.
-> >
-> > Ok, I think we are talking past each other here.  I am saying that it is
-> > fine to talk to a serial port without CAP_SYS_ADMIN.  That should be
-> > "safe" and not cause bad things to happen.
-> >
-> > But if you do have CAP_SYS_ADMIN, you can do a lot more "bad" things
-> > with a serial port (like setting memory addresses).
-> >
-> > Your tool always has this capability, which is fine, but does not mean
-> > that serial port accesses by everyone has to have that capability, which
-> > is what I thought you were saying.
->
-> I mean that I don't see a realistic way to apply your "Try running not
-> as root" suggestion.
-> We can drop root, but that will dramatic effect on lots of other
-> things that has nothing to do with serial console.
+do_div() does a 64-by-32 division.
+When the divisor is unsigned long, u64, or s64,
+do_div() truncates it to 32 bits, this means it
+can test non-zero and be truncated to zero for division.
+This semantic patch is inspired by Mateusz Guzik's patch:
+commit b0ab99e7736a ("sched: Fix possible divide by zero in avg_atom() calculation")
 
-I've disabled testing of TIOCSSERIAL in syzkaller:
-https://github.com/google/syzkaller/commit/af9047c60a3db32d5e43c29321f8f531db051a63
+Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
+Cc: Julia Lawall <julia.lawall@inria.fr>
+Cc: Gilles Muller <Gilles.Muller@lip6.fr>
+Cc: Nicolas Palix <nicolas.palix@imag.fr>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Matthias Maennich <maennich@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: cocci@systeme.lip6.fr
+Cc: linux-kernel@vger.kernel.org
+---
+v2:
+- add a special case for constants and checking whether the value is obviously safe and no warning is needed.
+- fix 'WARNING:' twice in each case.
+- extend the warning to say "consider using div64_xxx instead".
 
-#syz invalid
+ scripts/coccinelle/misc/do_div.cocci | 169 +++++++++++++++++++++++++++
+ 1 file changed, 169 insertions(+)
+ create mode 100644 scripts/coccinelle/misc/do_div.cocci
+
+diff --git a/scripts/coccinelle/misc/do_div.cocci b/scripts/coccinelle/misc/do_div.cocci
+new file mode 100644
+index 000000000000..0fd904b9157f
+--- /dev/null
++++ b/scripts/coccinelle/misc/do_div.cocci
+@@ -0,0 +1,169 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/// do_div() does a 64-by-32 division.
++/// When the divisor is long, unsigned long, u64, or s64,
++/// do_div() truncates it to 32 bits, this means it can test
++/// non-zero and be truncated to 0 for division on 64bit platforms.
++///
++//# This makes an effort to find those inappropriate do_div() calls.
++//
++// Confidence: Moderate
++// Copyright: (C) 2020 Wen Yang, Alibaba.
++// Comments:
++// Options: --no-includes --include-headers
++
++virtual context
++virtual org
++virtual report
++
++@initialize:python@
++@@
++
++def get_digit_type_and_value(str):
++    is_digit = False
++    value = 0
++
++    try:
++        if (str.isdigit()):
++           is_digit = True
++           value =  int(str, 0)
++        elif (str.upper().endswith('ULL')):
++           is_digit = True
++           value = int(str[:-3], 0)
++        elif (str.upper().endswith('LL')):
++           is_digit = True
++           value = int(str[:-2], 0)
++        elif (str.upper().endswith('UL')):
++           is_digit = True
++           value = int(str[:-2], 0)
++        elif (str.upper().endswith('L')):
++           is_digit = True
++           value = int(str[:-1], 0)
++        elif (str.upper().endswith('U')):
++           is_digit = True
++           value = int(str[:-1], 0)
++    except Exception as e:
++          print('Error:',e)
++          is_digit = False
++          value = 0
++    finally:
++        return is_digit, value
++
++def construct_warnings(str, suggested_fun):
++    msg="WARNING: do_div() does a 64-by-32 division, please consider using %s instead."
++    is_digit, value = get_digit_type_and_value(str)
++    if (is_digit):
++        if (value >= 0x100000000):
++            return  msg %(suggested_fun)
++        else:
++            return None
++    else:
++        return  msg % suggested_fun
++
++@depends on context@
++expression f;
++long l;
++unsigned long ul;
++u64 ul64;
++s64 sl64;
++
++@@
++(
++* do_div(f, l);
++|
++* do_div(f, ul);
++|
++* do_div(f, ul64);
++|
++* do_div(f, sl64);
++)
++
++@r depends on (org || report)@
++expression f;
++long l;
++unsigned long ul;
++position p;
++u64 ul64;
++s64 sl64;
++@@
++(
++do_div@p(f, l);
++|
++do_div@p(f, ul);
++|
++do_div@p(f, ul64);
++|
++do_div@p(f, sl64);
++)
++
++@script:python depends on org@
++p << r.p;
++ul << r.ul;
++@@
++
++warnings = construct_warnings(ul, "div64_ul")
++if warnings != None:
++   coccilib.org.print_todo(p[0], warnings)
++
++@script:python depends on org@
++p << r.p;
++l << r.l;
++@@
++
++warnings = construct_warnings(l, "div64_long")
++if warnings != None:
++   coccilib.org.print_todo(p[0], warnings)
++
++@script:python depends on org@
++p << r.p;
++ul64 << r.ul64;
++@@
++
++warnings = construct_warnings(ul64, "div64_u64")
++if warnings != None:
++   coccilib.org.print_todo(p[0], warnings)
++
++@script:python depends on org@
++p << r.p;
++sl64 << r.sl64;
++@@
++
++warnings = construct_warnings(sl64, "div64_s64")
++if warnings != None:
++   coccilib.org.print_todo(p[0], warnings)
++
++
++@script:python depends on report@
++p << r.p;
++ul << r.ul;
++@@
++
++warnings = construct_warnings(ul, "div64_ul")
++if warnings != None:
++   coccilib.report.print_report(p[0], warnings)
++
++@script:python depends on report@
++p << r.p;
++l << r.l;
++@@
++
++warnings = construct_warnings(l, "div64_long")
++if warnings != None:
++   coccilib.report.print_report(p[0], warnings)
++
++@script:python depends on report@
++p << r.p;
++sl64 << r.sl64;
++@@
++
++warnings = construct_warnings(sl64, "div64_s64")
++if warnings != None:
++   coccilib.report.print_report(p[0], warnings)
++
++@script:python depends on report@
++p << r.p;
++ul64 << r.ul64;
++@@
++
++warnings = construct_warnings(ul64, "div64_u64")
++if warnings != None:
++   coccilib.report.print_report(p[0], warnings)
+-- 
+2.23.0
+
