@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8E9C1333EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:23:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF6A7133346
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:17:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728636AbgAGVBv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:01:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39884 "EHLO mail.kernel.org"
+        id S1729345AbgAGVR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:17:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728198AbgAGVBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:01:47 -0500
+        id S1729302AbgAGVFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:05:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB44F214D8;
-        Tue,  7 Jan 2020 21:01:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22C402087F;
+        Tue,  7 Jan 2020 21:05:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430906;
-        bh=YfJojMYmFBRmvjmDVhNyyI6ol4s3eXlLwuaoetSSiGg=;
+        s=default; t=1578431150;
+        bh=T5q8XmvfkrOeq1v43/KZZja5ORt8vWv1s+v4WUe0hjQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vNSkCxj9n5xYWUtG6DFdPjJdw1ZEecNFc3PZK+jhjLE1o979LLmrj6q/+/SLE8Xwp
-         9UMY0wGGMNfDajvInhuczovMlewB70Obwu04dGUqN4a+1DCuHRhV0STj6QXVYTbo38
-         BArFQxWt9I99Lso2a6naU2P9H7QK65t+/2RIWnRM=
+        b=rytqw2IjzGNyr4LkzuVMoqNRdLkuX3wPTWgY1SZzocJuFiclMPdQgazt+b727bjra
+         85R6oJtqaKm8uTAXYHLCQ/jaoKLg5eMA1kOv8QSPhzxh7f/goit/hrO5lXkYjPBp1p
+         VySOHqww4oTdZQOAjY/oilBmpXyTgRUprnmFx2Hg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 5.4 145/191] of: overlay: add_changeset_property() memory leak
+        Aleksandr Yashkin <a.yashkin@inango-systems.com>,
+        Nikolay Merinov <n.merinov@inango-systems.com>,
+        Ariel Gilman <a.gilman@inango-systems.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.19 055/115] pstore/ram: Write new dumps to start of recycled zones
 Date:   Tue,  7 Jan 2020 21:54:25 +0100
-Message-Id: <20200107205340.734502711@linuxfoundation.org>
+Message-Id: <20200107205302.839255144@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
-References: <20200107205332.984228665@linuxfoundation.org>
+In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
+References: <20200107205240.283674026@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,104 +46,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
+From: Aleksandr Yashkin <a.yashkin@inango-systems.com>
 
-commit 637392a8506a3a7dd24ab9094a14f7522adb73b4 upstream.
+commit 9e5f1c19800b808a37fb9815a26d382132c26c3d upstream.
 
-No changeset entries are created for #address-cells and #size-cells
-properties, but the duplicated properties are never freed.  This
-results in a memory leak which is detected by kmemleak:
+The ram_core.c routines treat przs as circular buffers. When writing a
+new crash dump, the old buffer needs to be cleared so that the new dump
+doesn't end up in the wrong place (i.e. at the end).
 
- unreferenced object 0x85887180 (size 64):
-   backtrace:
-     kmem_cache_alloc_trace+0x1fb/0x1fc
-     __of_prop_dup+0x25/0x7c
-     add_changeset_property+0x17f/0x370
-     build_changeset_next_level+0x29/0x20c
-     of_overlay_fdt_apply+0x32b/0x6b4
-     ...
+The solution to this problem is to reset the circular buffer state before
+writing a new Oops dump.
 
-Fixes: 6f75118800ac ("of: overlay: validate overlay properties #address-cells and #size-cells")
-Reported-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-Tested-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Aleksandr Yashkin <a.yashkin@inango-systems.com>
+Signed-off-by: Nikolay Merinov <n.merinov@inango-systems.com>
+Signed-off-by: Ariel Gilman <a.gilman@inango-systems.com>
+Link: https://lore.kernel.org/r/20191223133816.28155-1-n.merinov@inango-systems.com
+Fixes: 896fc1f0c4c6 ("pstore/ram: Switch to persistent_ram routines")
+Cc: stable@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/of/overlay.c |   37 ++++++++++++++++++++-----------------
- 1 file changed, 20 insertions(+), 17 deletions(-)
+ fs/pstore/ram.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -305,7 +305,6 @@ static int add_changeset_property(struct
- {
- 	struct property *new_prop = NULL, *prop;
- 	int ret = 0;
--	bool check_for_non_overlay_node = false;
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -437,6 +437,17 @@ static int notrace ramoops_pstore_write(
  
- 	if (target->in_livetree)
- 		if (!of_prop_cmp(overlay_prop->name, "name") ||
-@@ -318,6 +317,25 @@ static int add_changeset_property(struct
- 	else
- 		prop = NULL;
+ 	prz = cxt->dprzs[cxt->dump_write_cnt];
  
-+	if (prop) {
-+		if (!of_prop_cmp(prop->name, "#address-cells")) {
-+			if (!of_prop_val_eq(prop, overlay_prop)) {
-+				pr_err("ERROR: changing value of #address-cells is not allowed in %pOF\n",
-+				       target->np);
-+				ret = -EINVAL;
-+			}
-+			return ret;
++	/*
++	 * Since this is a new crash dump, we need to reset the buffer in
++	 * case it still has an old dump present. Without this, the new dump
++	 * will get appended, which would seriously confuse anything trying
++	 * to check dump file contents. Specifically, ramoops_read_kmsg_hdr()
++	 * expects to find a dump header in the beginning of buffer data, so
++	 * we must to reset the buffer values, in order to ensure that the
++	 * header will be written to the beginning of the buffer.
++	 */
++	persistent_ram_zap(prz);
 +
-+		} else if (!of_prop_cmp(prop->name, "#size-cells")) {
-+			if (!of_prop_val_eq(prop, overlay_prop)) {
-+				pr_err("ERROR: changing value of #size-cells is not allowed in %pOF\n",
-+				       target->np);
-+				ret = -EINVAL;
-+			}
-+			return ret;
-+		}
-+	}
-+
- 	if (is_symbols_prop) {
- 		if (prop)
- 			return -EINVAL;
-@@ -330,33 +348,18 @@ static int add_changeset_property(struct
- 		return -ENOMEM;
- 
- 	if (!prop) {
--		check_for_non_overlay_node = true;
- 		if (!target->in_livetree) {
- 			new_prop->next = target->np->deadprops;
- 			target->np->deadprops = new_prop;
- 		}
- 		ret = of_changeset_add_property(&ovcs->cset, target->np,
- 						new_prop);
--	} else if (!of_prop_cmp(prop->name, "#address-cells")) {
--		if (!of_prop_val_eq(prop, new_prop)) {
--			pr_err("ERROR: changing value of #address-cells is not allowed in %pOF\n",
--			       target->np);
--			ret = -EINVAL;
--		}
--	} else if (!of_prop_cmp(prop->name, "#size-cells")) {
--		if (!of_prop_val_eq(prop, new_prop)) {
--			pr_err("ERROR: changing value of #size-cells is not allowed in %pOF\n",
--			       target->np);
--			ret = -EINVAL;
--		}
- 	} else {
--		check_for_non_overlay_node = true;
- 		ret = of_changeset_update_property(&ovcs->cset, target->np,
- 						   new_prop);
- 	}
- 
--	if (check_for_non_overlay_node &&
--	    !of_node_check_flag(target->np, OF_OVERLAY))
-+	if (!of_node_check_flag(target->np, OF_OVERLAY))
- 		pr_err("WARNING: memory leak will occur if overlay removed, property: %pOF/%s\n",
- 		       target->np, new_prop->name);
- 
+ 	/* Build header and append record contents. */
+ 	hlen = ramoops_write_kmsg_hdr(prz, record);
+ 	size = record->size;
 
 
