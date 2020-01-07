@@ -2,96 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6527F132E40
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 19:18:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20ADE132E47
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 19:21:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728568AbgAGSSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 13:18:32 -0500
-Received: from foss.arm.com ([217.140.110.172]:32770 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727925AbgAGSSb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 13:18:31 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E472831B;
-        Tue,  7 Jan 2020 10:18:30 -0800 (PST)
-Received: from [10.1.196.37] (e121345-lin.cambridge.arm.com [10.1.196.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 956783F534;
-        Tue,  7 Jan 2020 10:18:29 -0800 (PST)
-Subject: Re: dma-direct: don't check swiotlb=force in dma_direct_map_resource
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>, hch@lst.de,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Cc:     m.szyprowski@samsung.com, linux- stable <stable@vger.kernel.org>,
-        iommu@lists.linux-foundation.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        lkft-triage@lists.linaro.org
-References: <CA+G9fYvMX4gMi6hmTmukzgr1xPsoJsj0WTm=AS3hC5Mq-dLvsQ@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <2c401e83-99d2-925f-66fe-fffe04415e1a@arm.com>
-Date:   Tue, 7 Jan 2020 18:18:28 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728464AbgAGSV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 13:21:29 -0500
+Received: from asavdk3.altibox.net ([109.247.116.14]:48194 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727925AbgAGSV3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 13:21:29 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id C5AF020033;
+        Tue,  7 Jan 2020 19:21:25 +0100 (CET)
+Date:   Tue, 7 Jan 2020 19:21:24 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Lee Jones <lee.jones@linaro.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc:     Claudiu Beznea <claudiu.beznea@microchip.com>,
+        boris.brezillon@bootlin.com, airlied@linux.ie,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        peda@axentia.se, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] Immutable branch between MFD and DRM due for the v5.6
+ merge window
+Message-ID: <20200107182124.GB20555@ravnborg.org>
+References: <1576672109-22707-1-git-send-email-claudiu.beznea@microchip.com>
+ <20200107101748.GC14821@dell>
 MIME-Version: 1.0
-In-Reply-To: <CA+G9fYvMX4gMi6hmTmukzgr1xPsoJsj0WTm=AS3hC5Mq-dLvsQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200107101748.GC14821@dell>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=eMA9ckh1 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=VwQbUJbxAAAA:8
+        a=htO-QbRAU_hgi8wv2wEA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/01/2020 5:38 pm, Naresh Kamboju wrote:
-> Following build error on stable-rc 5.4.9-rc1 for arm architecture.
-> 
-> dma/direct.c: In function 'dma_direct_possible':
-> dma/direct.c:329:3: error: too many arguments to function 'dma_capable'
->     dma_capable(dev, dma_addr, size, true);
->     ^~~~~~~~~~~
+Hi Maarten.
 
-Not sure that $SUBJECT comes into it at all, but by the look of it I 
-guess "dma-direct: exclude dma_direct_map_resource from the min_low_pfn 
-check" implicitly depends on 130c1ccbf553 ("dma-direct: unify the 
-dma_capable definitions") too.
-
-Robin.
-
-> In file included from
-> /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/include/linux/dma-direct.h:12:0,
->                   from
-> /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/kernel/dma/direct.c:10:
-> /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/arch/arm/include/asm/dma-direct.h:17:20:
-> note: declared here
->   static inline bool dma_capable(struct device *dev, dma_addr_t addr,
-> size_t size)
->                      ^~~~~~~~~~~
-> In file included from
-> /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/include/linux/init.h:5:0,
->                   from
-> /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/include/linux/memblock.h:12,
->                   from
-> /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/kernel/dma/direct.c:7:
-> dma/direct.c: In function 'dma_direct_map_resource':
-> dma/direct.c:378:16: error: too many arguments to function 'dma_capable'
->    if (unlikely(!dma_capable(dev, dma_addr, size, false))) {
->                  ^
-> /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/include/linux/compiler.h:78:42:
-> note: in definition of macro 'unlikely'
->   # define unlikely(x) __builtin_expect(!!(x), 0)
->                                            ^
-> In file included from
-> /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/include/linux/dma-direct.h:12:0,
->                   from
-> /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/kernel/dma/direct.c:10:
-> /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/arch/arm/include/asm/dma-direct.h:17:20:
-> note: declared here
->   static inline bool dma_capable(struct device *dev, dma_addr_t addr,
-> size_t size)
->                      ^~~~~~~~~~~
-> /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/scripts/Makefile.build:265:
-> recipe for target 'kernel/dma/direct.o' failed
+On Tue, Jan 07, 2020 at 10:17:48AM +0000, Lee Jones wrote:
+> The MFD parts for testing:
 > 
-> Full build log link,
-> https://ci.linaro.org/view/lkft/job/openembedded-lkft-linux-stable-rc-5.4/DISTRO=lkft,MACHINE=am57xx-evm,label=docker-lkft/44/consoleText
+> The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 > 
+>   Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-drm-v5.6
+> 
+> for you to fetch changes up to 10f9167664362bac6f44813687cf52fec9d15845:
+> 
+>   mfd: atmel-hlcdc: Return in case of error (2020-01-07 10:08:58 +0000)
+> 
+> ----------------------------------------------------------------
+> Immutable branch between MFD and DRM due for the v5.6 merge window
+> 
+> ----------------------------------------------------------------
+> Claudiu Beznea (2):
+>       mfd: atmel-hlcdc: Add struct device member to struct atmel_hlcdc_regmap
+>       mfd: atmel-hlcdc: Return in case of error
+> 
+>  drivers/mfd/atmel-hlcdc.c | 18 ++++++++++++++----
+>  1 file changed, 14 insertions(+), 4 deletions(-)
+
+Can we get this into drm-misc-next?
+
+I am not familiar with the process how to do this, and hope you can
+help.
+
+Thanks in advance,
+
+	Sam
