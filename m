@@ -2,39 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0BC31332FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:16:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE8F51331BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:03:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729406AbgAGVHo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:07:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58910 "EHLO mail.kernel.org"
+        id S1728465AbgAGVDl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:03:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729562AbgAGVHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:07:41 -0500
+        id S1727652AbgAGVDi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:03:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3C6A2077B;
-        Tue,  7 Jan 2020 21:07:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12A522077B;
+        Tue,  7 Jan 2020 21:03:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431260;
-        bh=0y7q3eKZ31rdwoO7MlSiyPnTfKXIsMYBH5vomT503Yw=;
+        s=default; t=1578431017;
+        bh=GRYJdEGuIdd2YyOwLqaW6WZ4KcT616LYXKdXQA3Ua44=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AqA4ub2TBiRi2+1TDoxhh1Awsd3IGdn6AxZPaySSkvUlXxsFltXjzoBcutUfijPO7
-         6tBWB3PiVRmhM7rnUwWIJ5QyBoLcgw+TWEM2/UIjg1w2We6NhYLPsnOJOYkDLpqcdB
-         0tSHZika379XOixYsWc/AOjnq3muaZySmu+oQLik=
+        b=QuJNm5cVKVjgoKS9ts9BMdq18MImMST03tD+7XVGJxG14oODeaUCdQvKAz7jRps/G
+         3Kxk9Rs356jLJiZrT4NShCruCh14bo/PKN3Ele5jZeuePL5HaGT5tpyKav8iM94eby
+         VbtXkOm3Sfl7DnJIdHluDfcZ0QIKk6NAduWsgCbQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Axtens <dja@axtens.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 100/115] powerpc/pseries/hvconsole: Fix stack overread via udbg
-Date:   Tue,  7 Jan 2020 21:55:10 +0100
-Message-Id: <20200107205307.901226814@linuxfoundation.org>
+Subject: [PATCH 5.4 191/191] mm/hugetlb: defer freeing of huge pages if in non-task context
+Date:   Tue,  7 Jan 2020 21:55:11 +0100
+Message-Id: <20200107205343.209319955@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-References: <20200107205240.283674026@linuxfoundation.org>
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+References: <20200107205332.984228665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,114 +52,178 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Axtens <dja@axtens.net>
+From: Waiman Long <longman@redhat.com>
 
-[ Upstream commit 934bda59f286d0221f1a3ebab7f5156a996cc37d ]
+[ Upstream commit c77c0a8ac4c522638a8242fcb9de9496e3cdbb2d ]
 
-While developing KASAN for 64-bit book3s, I hit the following stack
-over-read.
+The following lockdep splat was observed when a certain hugetlbfs test
+was run:
 
-It occurs because the hypercall to put characters onto the terminal
-takes 2 longs (128 bits/16 bytes) of characters at a time, and so
-hvc_put_chars() would unconditionally copy 16 bytes from the argument
-buffer, regardless of supplied length. However, udbg_hvc_putc() can
-call hvc_put_chars() with a single-byte buffer, leading to the error.
+  ================================
+  WARNING: inconsistent lock state
+  4.18.0-159.el8.x86_64+debug #1 Tainted: G        W --------- -  -
+  --------------------------------
+  inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
+  swapper/30/0 [HC0[0]:SC1[1]:HE1:SE0] takes:
+  ffffffff9acdc038 (hugetlb_lock){+.?.}, at: free_huge_page+0x36f/0xaa0
+  {SOFTIRQ-ON-W} state was registered at:
+    lock_acquire+0x14f/0x3b0
+    _raw_spin_lock+0x30/0x70
+    __nr_hugepages_store_common+0x11b/0xb30
+    hugetlb_sysctl_handler_common+0x209/0x2d0
+    proc_sys_call_handler+0x37f/0x450
+    vfs_write+0x157/0x460
+    ksys_write+0xb8/0x170
+    do_syscall_64+0xa5/0x4d0
+    entry_SYSCALL_64_after_hwframe+0x6a/0xdf
+  irq event stamp: 691296
+  hardirqs last  enabled at (691296): [<ffffffff99bb034b>] _raw_spin_unlock_irqrestore+0x4b/0x60
+  hardirqs last disabled at (691295): [<ffffffff99bb0ad2>] _raw_spin_lock_irqsave+0x22/0x81
+  softirqs last  enabled at (691284): [<ffffffff97ff0c63>] irq_enter+0xc3/0xe0
+  softirqs last disabled at (691285): [<ffffffff97ff0ebe>] irq_exit+0x23e/0x2b0
 
-  ==================================================================
-  BUG: KASAN: stack-out-of-bounds in hvc_put_chars+0xdc/0x110
-  Read of size 8 at addr c0000000023e7a90 by task swapper/0
+  other info that might help us debug this:
+   Possible unsafe locking scenario:
 
-  CPU: 0 PID: 0 Comm: swapper Not tainted 5.2.0-rc2-next-20190528-02824-g048a6ab4835b #113
+         CPU0
+         ----
+    lock(hugetlb_lock);
+    <Interrupt>
+      lock(hugetlb_lock);
+
+   *** DEADLOCK ***
+      :
   Call Trace:
-    dump_stack+0x104/0x154 (unreliable)
-    print_address_description+0xa0/0x30c
-    __kasan_report+0x20c/0x224
-    kasan_report+0x18/0x30
-    __asan_report_load8_noabort+0x24/0x40
-    hvc_put_chars+0xdc/0x110
-    hvterm_raw_put_chars+0x9c/0x110
-    udbg_hvc_putc+0x154/0x200
-    udbg_write+0xf0/0x240
-    console_unlock+0x868/0xd30
-    register_console+0x970/0xe90
-    register_early_udbg_console+0xf8/0x114
-    setup_arch+0x108/0x790
-    start_kernel+0x104/0x784
-    start_here_common+0x1c/0x534
+   <IRQ>
+   __lock_acquire+0x146b/0x48c0
+   lock_acquire+0x14f/0x3b0
+   _raw_spin_lock+0x30/0x70
+   free_huge_page+0x36f/0xaa0
+   bio_check_pages_dirty+0x2fc/0x5c0
+   clone_endio+0x17f/0x670 [dm_mod]
+   blk_update_request+0x276/0xe50
+   scsi_end_request+0x7b/0x6a0
+   scsi_io_completion+0x1c6/0x1570
+   blk_done_softirq+0x22e/0x350
+   __do_softirq+0x23d/0xad8
+   irq_exit+0x23e/0x2b0
+   do_IRQ+0x11a/0x200
+   common_interrupt+0xf/0xf
+   </IRQ>
 
-  Memory state around the buggy address:
-   c0000000023e7980: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-   c0000000023e7a00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1
-  >c0000000023e7a80: f1 f1 01 f2 f2 f2 00 00 00 00 00 00 00 00 00 00
-                           ^
-   c0000000023e7b00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-   c0000000023e7b80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ==================================================================
+Both the hugetbl_lock and the subpool lock can be acquired in
+free_huge_page().  One way to solve the problem is to make both locks
+irq-safe.  However, Mike Kravetz had learned that the hugetlb_lock is
+held for a linear scan of ALL hugetlb pages during a cgroup reparentling
+operation.  So it is just too long to have irq disabled unless we can
+break hugetbl_lock down into finer-grained locks with shorter lock hold
+times.
 
-Document that a 16-byte buffer is requred, and provide it in udbg.
+Another alternative is to defer the freeing to a workqueue job.  This
+patch implements the deferred freeing by adding a free_hpage_workfn()
+work function to do the actual freeing.  The free_huge_page() call in a
+non-task context saves the page to be freed in the hpage_freelist linked
+list in a lockless manner using the llist APIs.
 
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+The generic workqueue is used to process the work, but a dedicated
+workqueue can be used instead if it is desirable to have the huge page
+freed ASAP.
+
+Thanks to Kirill Tkhai <ktkhai@virtuozzo.com> for suggesting the use of
+llist APIs which simplfy the code.
+
+Link: http://lkml.kernel.org/r/20191217170331.30893-1-longman@redhat.com
+Signed-off-by: Waiman Long <longman@redhat.com>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+Acked-by: Davidlohr Bueso <dbueso@suse.de>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/platforms/pseries/hvconsole.c |  2 +-
- drivers/tty/hvc/hvc_vio.c                  | 16 +++++++++++++++-
- 2 files changed, 16 insertions(+), 2 deletions(-)
+ mm/hugetlb.c | 51 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 50 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/platforms/pseries/hvconsole.c b/arch/powerpc/platforms/pseries/hvconsole.c
-index 74da18de853a..73ec15cd2708 100644
---- a/arch/powerpc/platforms/pseries/hvconsole.c
-+++ b/arch/powerpc/platforms/pseries/hvconsole.c
-@@ -62,7 +62,7 @@ EXPORT_SYMBOL(hvc_get_chars);
-  * @vtermno: The vtermno or unit_address of the adapter from which the data
-  *	originated.
-  * @buf: The character buffer that contains the character data to send to
-- *	firmware.
-+ *	firmware. Must be at least 16 bytes, even if count is less than 16.
-  * @count: Send this number of characters.
-  */
- int hvc_put_chars(uint32_t vtermno, const char *buf, int count)
-diff --git a/drivers/tty/hvc/hvc_vio.c b/drivers/tty/hvc/hvc_vio.c
-index 59eaa620bf13..80fd06fbd712 100644
---- a/drivers/tty/hvc/hvc_vio.c
-+++ b/drivers/tty/hvc/hvc_vio.c
-@@ -107,6 +107,14 @@ static int hvterm_raw_get_chars(uint32_t vtermno, char *buf, int count)
- 	return got;
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index b45a95363a84..e0afd582ca01 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -27,6 +27,7 @@
+ #include <linux/swapops.h>
+ #include <linux/jhash.h>
+ #include <linux/numa.h>
++#include <linux/llist.h>
+ 
+ #include <asm/page.h>
+ #include <asm/pgtable.h>
+@@ -1255,7 +1256,7 @@ static inline void ClearPageHugeTemporary(struct page *page)
+ 	page[2].mapping = NULL;
  }
  
-+/**
-+ * hvterm_raw_put_chars: send characters to firmware for given vterm adapter
-+ * @vtermno: The virtual terminal number.
-+ * @buf: The characters to send. Because of the underlying hypercall in
-+ *       hvc_put_chars(), this buffer must be at least 16 bytes long, even if
-+ *       you are sending fewer chars.
-+ * @count: number of chars to send.
-+ */
- static int hvterm_raw_put_chars(uint32_t vtermno, const char *buf, int count)
+-void free_huge_page(struct page *page)
++static void __free_huge_page(struct page *page)
  {
- 	struct hvterm_priv *pv = hvterm_privs[vtermno];
-@@ -219,6 +227,7 @@ static const struct hv_ops hvterm_hvsi_ops = {
- static void udbg_hvc_putc(char c)
- {
- 	int count = -1;
-+	unsigned char bounce_buffer[16];
+ 	/*
+ 	 * Can't pass hstate in here because it is called from the
+@@ -1318,6 +1319,54 @@ void free_huge_page(struct page *page)
+ 	spin_unlock(&hugetlb_lock);
+ }
  
- 	if (!hvterm_privs[0])
- 		return;
-@@ -229,7 +238,12 @@ static void udbg_hvc_putc(char c)
- 	do {
- 		switch(hvterm_privs[0]->proto) {
- 		case HV_PROTOCOL_RAW:
--			count = hvterm_raw_put_chars(0, &c, 1);
-+			/*
-+			 * hvterm_raw_put_chars requires at least a 16-byte
-+			 * buffer, so go via the bounce buffer
-+			 */
-+			bounce_buffer[0] = c;
-+			count = hvterm_raw_put_chars(0, bounce_buffer, 1);
- 			break;
- 		case HV_PROTOCOL_HVSI:
- 			count = hvterm_hvsi_put_chars(0, &c, 1);
++/*
++ * As free_huge_page() can be called from a non-task context, we have
++ * to defer the actual freeing in a workqueue to prevent potential
++ * hugetlb_lock deadlock.
++ *
++ * free_hpage_workfn() locklessly retrieves the linked list of pages to
++ * be freed and frees them one-by-one. As the page->mapping pointer is
++ * going to be cleared in __free_huge_page() anyway, it is reused as the
++ * llist_node structure of a lockless linked list of huge pages to be freed.
++ */
++static LLIST_HEAD(hpage_freelist);
++
++static void free_hpage_workfn(struct work_struct *work)
++{
++	struct llist_node *node;
++	struct page *page;
++
++	node = llist_del_all(&hpage_freelist);
++
++	while (node) {
++		page = container_of((struct address_space **)node,
++				     struct page, mapping);
++		node = node->next;
++		__free_huge_page(page);
++	}
++}
++static DECLARE_WORK(free_hpage_work, free_hpage_workfn);
++
++void free_huge_page(struct page *page)
++{
++	/*
++	 * Defer freeing if in non-task context to avoid hugetlb_lock deadlock.
++	 */
++	if (!in_task()) {
++		/*
++		 * Only call schedule_work() if hpage_freelist is previously
++		 * empty. Otherwise, schedule_work() had been called but the
++		 * workfn hasn't retrieved the list yet.
++		 */
++		if (llist_add((struct llist_node *)&page->mapping,
++			      &hpage_freelist))
++			schedule_work(&free_hpage_work);
++		return;
++	}
++
++	__free_huge_page(page);
++}
++
+ static void prep_new_huge_page(struct hstate *h, struct page *page, int nid)
+ {
+ 	INIT_LIST_HEAD(&page->lru);
 -- 
 2.20.1
 
