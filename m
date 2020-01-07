@@ -2,111 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 960E613321D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:08:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4F9E1332F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:15:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729536AbgAGVH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:07:29 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:39024 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729513AbgAGVHX (ORCPT
+        id S1729724AbgAGVIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:08:40 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:37159 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729389AbgAGVIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:07:23 -0500
-Received: from dread.disaster.area (pa49-180-68-255.pa.nsw.optusnet.com.au [49.180.68.255])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 9EC533A3117;
-        Wed,  8 Jan 2020 08:07:17 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iow4J-0005jX-QL; Wed, 08 Jan 2020 08:07:15 +1100
-Date:   Wed, 8 Jan 2020 08:07:15 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Hugh Dickins <hughd@google.com>, Chris Down <chris@chrisdown.name>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com
-Subject: Re: [PATCH v5 2/2] tmpfs: Support 64-bit inums per-sb
-Message-ID: <20200107210715.GQ23195@dread.disaster.area>
-References: <cover.1578225806.git.chris@chrisdown.name>
- <ae9306ab10ce3d794c13b1836f5473e89562b98c.1578225806.git.chris@chrisdown.name>
- <20200107001039.GM23195@dread.disaster.area>
- <20200107001643.GA485121@chrisdown.name>
- <20200107003944.GN23195@dread.disaster.area>
- <CAOQ4uxjvH=UagqjHP_71_p9_dW9wKqiaWujzY1xKe7yZVFPoTA@mail.gmail.com>
- <alpine.LSU.2.11.2001070002040.1496@eggly.anvils>
- <CAOQ4uxiMQ3Oz4M0wKo5FA_uamkMpM1zg7ydD8FXv+sR9AH_eFA@mail.gmail.com>
+        Tue, 7 Jan 2020 16:08:35 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 007L7OUj026037
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 7 Jan 2020 16:07:27 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id BA95E4207DF; Tue,  7 Jan 2020 16:07:24 -0500 (EST)
+Date:   Tue, 7 Jan 2020 16:07:24 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Qian Cai <cai@lca.pw>
+Cc:     arnd@arndb.de, gregkh@linuxfoundation.org,
+        sergey.senozhatsky.work@gmail.com, pmladek@suse.com,
+        rostedt@goodmis.org, catalin.marinas@arm.com, will@kernel.org,
+        dan.j.williams@intel.com, peterz@infradead.org, longman@redhat.com,
+        tglx@linutronix.de, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] char/random: silence a lockdep splat with printk()
+Message-ID: <20200107210724.GN3619@mit.edu>
+References: <1573679785-21068-1-git-send-email-cai@lca.pw>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxiMQ3Oz4M0wKo5FA_uamkMpM1zg7ydD8FXv+sR9AH_eFA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=sbdTpStuSq8iNQE8viVliQ==:117 a=sbdTpStuSq8iNQE8viVliQ==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Jdjhy38mL1oA:10
-        a=1XWaLZrsAAAA:8 a=7-415B0cAAAA:8 a=qLVrV9dGIdnuQ3zi2hkA:9
-        a=jPg9kqVogik6UUPB:21 a=Tmguthn7wsSX_SwC:21 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <1573679785-21068-1-git-send-email-cai@lca.pw>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 12:12:00PM +0200, Amir Goldstein wrote:
-> On Tue, Jan 7, 2020 at 10:36 AM Hugh Dickins <hughd@google.com> wrote:
-> >
-> > On Tue, 7 Jan 2020, Amir Goldstein wrote:
-> > > On Tue, Jan 7, 2020 at 2:40 AM Dave Chinner <david@fromorbit.com> wrote:
-> > > > On Tue, Jan 07, 2020 at 12:16:43AM +0000, Chris Down wrote:
-> > > > > Dave Chinner writes:
-> > > > > > It took 15 years for us to be able to essentially deprecate
-> > > > > > inode32 (inode64 is the default behaviour), and we were very happy
-> > > > > > to get that albatross off our necks.  In reality, almost everything
-> > > > > > out there in the world handles 64 bit inodes correctly
-> > > > > > including 32 bit machines and 32bit binaries on 64 bit machines.
-> > > > > > And, IMNSHO, there no excuse these days for 32 bit binaries that
-> > > > > > don't using the *64() syscall variants directly and hence support
-> > > > > > 64 bit inodes correctlyi out of the box on all platforms.
-> >
-> > Interesting take on it.  I'd all along imagined we would have to resort
-> > to a mount option for safety, but Dave is right that I was too focused on
-> > avoiding tmpfs regressions, without properly realizing that people were
-> > very unlikely to have written such tools for tmpfs in particular, but
-> > written them for all filesystems, and already encountered and fixed
-> > such EOVERFLOWs for other filesystems.
-> >
-> > Hmm, though how readily does XFS actually reach the high inos on
-> > ordinary users' systems?
-> >
+On Wed, Nov 13, 2019 at 04:16:25PM -0500, Qian Cai wrote:
+> From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 > 
-> Define 'ordinary'
-> I my calculations are correct, with default mkfs.xfs any inode allocated
-> from logical offset > 2TB on a volume has high ino bits set.
-> Besides, a deployment with more than 4G inodes shouldn't be hard to find.
+> Sergey didn't like the locking order,
+> 
+> uart_port->lock  ->  tty_port->lock
+> 
+> uart_write (uart_port->lock)
+>   __uart_start
+>     pl011_start_tx
+>       pl011_tx_chars
+>         uart_write_wakeup
+>           tty_port_tty_wakeup
+>             tty_port_default
+>               tty_port_tty_get (tty_port->lock)
+> 
+> but those code is so old, and I have no clue how to de-couple it after
+> checking other locks in the splat. There is an onging effort to make all
+> printk() as deferred, so until that happens, workaround it for now as a
+> short-term fix.
 
-You don't need to allocate 4 billion inodes to get >32bit inodes in
-XFS - the inode number is an encoding of the physical location of
-the inode in the filesystem. Hence we just have to allocate the
-inode at a disk address higher than 2TB into the device and we
-overflow 32bits.
+Applied, thanks.
 
-e.g. make a sparse fs image file of 10TB, mount it, create 50
-subdirs, then start creating zero length files spread across the 50
-separate subdirectories. You should see >32bit inode numbers almost
-immediately. (i.e. as soon as we allocate inodes in AG 2 or higher)
-
-IOWs, there are *lots* of 64bit inode numbers out there on XFS
-filesystems....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+					- Ted
