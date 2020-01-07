@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2030133189
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:01:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 329FA1333F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:23:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbgAGVBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:01:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39320 "EHLO mail.kernel.org"
+        id S1728922AbgAGVWf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:22:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728606AbgAGVBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:01:37 -0500
+        id S1728671AbgAGVCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:02:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26834214D8;
-        Tue,  7 Jan 2020 21:01:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDE572077B;
+        Tue,  7 Jan 2020 21:02:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430896;
-        bh=VsAKcuwz34bLlP+Y3q+0drDh08CUdjD6iUtyB1R+Apc=;
+        s=default; t=1578430923;
+        bh=u1ijtqyYYwOMDo0bCfRl85cXKA5Ng3PJa34eRlUH728=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ijOWSk6lpN9p3aIuO4kJkv5FuNnaOqQ78POgi1boe3qfmIn+3R3YSMPQf9Fi6LrvW
-         ebMB6aOW9A+t+4U2fK17fJqbgcZe2mVf5QYo/8eDMh5oax8u2u/mDWQE4eFA676Msm
-         V7yByWWi9aP463wu+kZx5UEh2Si9v2+ahQp+b6nE=
+        b=Lq+xoIG6a/WG2TVxgMRk5MDDQlXPlfYMtnD50dpHmYDtb7FO5xfLctsCdlPOWikyY
+         0kdzJn7AzfwPkg5JX65vRIUQ4vEBL3fttPwQR0FU42zMPUWG2z7BYULUqycjuIJ/4S
+         1+ad0pWj67zL8x4oV/AOuIN4YTMaqa2I3S8opMWs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Jory A. Pratt" <anarchy@gentoo.org>,
-        Masahiro Yamada <masahiroy@kernel.org>
-Subject: [PATCH 5.4 124/191] gen_initramfs_list.sh: fix bad variable name error
-Date:   Tue,  7 Jan 2020 21:54:04 +0100
-Message-Id: <20200107205339.616130663@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.4 125/191] ALSA: cs4236: fix error return comparison of an unsigned integer
+Date:   Tue,  7 Jan 2020 21:54:05 +0100
+Message-Id: <20200107205339.668661614@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
 References: <20200107205332.984228665@linuxfoundation.org>
@@ -43,48 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <masahiroy@kernel.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit cc976614f59bd8e45de8ce988a6bcb5de711d994 upstream.
+commit d60229d84846a8399257006af9c5444599f64361 upstream.
 
-Prior to commit 858805b336be ("kbuild: add $(BASH) to run scripts with
-bash-extension"), this shell script was almost always run by bash since
-bash is usually installed on the system by default.
+The return from pnp_irq is an unsigned integer type resource_size_t
+and hence the error check for a positive non-error code is always
+going to be true.  A check for a non-failure return from pnp_irq
+should in fact be for (resource_size_t)-1 rather than >= 0.
 
-Now, this script is run by sh, which might be a symlink to dash. On such
-distributions, the following code emits an error:
-
-  local dev=`LC_ALL=C ls -l "${location}"`
-
-You can reproduce the build error, for example by setting
-CONFIG_INITRAMFS_SOURCE="/dev".
-
-    GEN     usr/initramfs_data.cpio.gz
-  ./usr/gen_initramfs_list.sh: 131: local: 1: bad variable name
-  make[1]: *** [usr/Makefile:61: usr/initramfs_data.cpio.gz] Error 2
-
-This is because `LC_ALL=C ls -l "${location}"` contains spaces.
-Surrounding it with double-quotes fixes the error.
-
-Fixes: 858805b336be ("kbuild: add $(BASH) to run scripts with bash-extension")
-Reported-by: Jory A. Pratt <anarchy@gentoo.org>
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: a9824c868a2c ("[ALSA] Add CS4232 PnP BIOS support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20191122131354.58042-1-colin.king@canonical.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- usr/gen_initramfs_list.sh |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/isa/cs423x/cs4236.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/usr/gen_initramfs_list.sh
-+++ b/usr/gen_initramfs_list.sh
-@@ -128,7 +128,7 @@ parse() {
- 			str="${ftype} ${name} ${location} ${str}"
- 			;;
- 		"nod")
--			local dev=`LC_ALL=C ls -l "${location}"`
-+			local dev="`LC_ALL=C ls -l "${location}"`"
- 			local maj=`field 5 ${dev}`
- 			local min=`field 6 ${dev}`
- 			maj=${maj%,}
+--- a/sound/isa/cs423x/cs4236.c
++++ b/sound/isa/cs423x/cs4236.c
+@@ -278,7 +278,8 @@ static int snd_cs423x_pnp_init_mpu(int d
+ 	} else {
+ 		mpu_port[dev] = pnp_port_start(pdev, 0);
+ 		if (mpu_irq[dev] >= 0 &&
+-		    pnp_irq_valid(pdev, 0) && pnp_irq(pdev, 0) >= 0) {
++		    pnp_irq_valid(pdev, 0) &&
++		    pnp_irq(pdev, 0) != (resource_size_t)-1) {
+ 			mpu_irq[dev] = pnp_irq(pdev, 0);
+ 		} else {
+ 			mpu_irq[dev] = -1;	/* disable interrupt */
 
 
