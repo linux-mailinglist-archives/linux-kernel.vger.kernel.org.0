@@ -2,82 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 248F6131FDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 07:36:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCFD4131FE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 07:39:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbgAGGgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 01:36:19 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:54583 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbgAGGgT (ORCPT
+        id S1727509AbgAGGjW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 01:39:22 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43994 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbgAGGjW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 01:36:19 -0500
-Received: by mail-pj1-f68.google.com with SMTP id kx11so8580806pjb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 22:36:19 -0800 (PST)
+        Tue, 7 Jan 2020 01:39:22 -0500
+Received: by mail-lf1-f68.google.com with SMTP id 9so38060326lfq.10;
+        Mon, 06 Jan 2020 22:39:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=tTZbqF4ps+HLBqOMSUsrvwOLXqstbl63mT0iHeyM9jM=;
-        b=gIn750bJf524SYp9mT+vfcFuPZJLCQOYdp4DR/EX3JpLjbjtvN80SdzE/K5oP7F3Uj
-         Wq5IMqbumPO41Oz2JlKJdMuY+5pGuUur99UCc9jfX+ln1z6jxKTF3L2jxeL7NDCv5tvr
-         9xD5f68svYzmJ2DJApVOB4ZLpKh6SvL2vsa434c/ZPIZ8GSN08RSAy87fBc9RSkJUvO9
-         3ion1e2VdkFljqrfdi/s/WB90VAVQmSrM5OzMxBkMbiS+1V1gfpuOFP/Nq2CAi35dUuK
-         N1PyrzXZLKfZSgsPbWkwb9gKzEdD3QUhIaWPoUxdUJWJ+2yZDDJUTUqfP4DBZNl8HNR+
-         NFAQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SB8O/5JIMzYKiSuEZZhJIz1BTBaOY4SFu2N4rg13oQw=;
+        b=rSTuzj7r+Cfs1/Wvl40AY39m7ODXOwes5dphdCGuNtzSMVxkCIjozPNhi+QtLMja4F
+         Svcmc86MaR0XOjVCWWgYHlXzkUKj+FqslOPiM0q0Op3aOM1QbrIL/E8LKlzcxaNoBBFH
+         nk+HOAP82/ETwqNc/RHhxeRrs8oeEjkRPhwsNSqobliN8IbXPenAvwHkA7IkbqEKpn9W
+         FYva/rgdcIZuWtn0b5DcUJXueOyp9vYqoFJQXGh+uBf1dBiu76prSgQv41zVcakrV0IT
+         asghGM+Bw6KRNOZnifh37TMyJd1japsgTddWLZ/4PY4Bm2ibcQ5aWe9qAdFn9tyZe359
+         oa+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=tTZbqF4ps+HLBqOMSUsrvwOLXqstbl63mT0iHeyM9jM=;
-        b=m5Z60GhV3svZ4dG52mLLvfpGl4xdJrRrbJKpbe9pJZ0Cw0g7x2MA0ZTlu4+LHt9bJJ
-         T9sxKSrKoA5Pt54K/HjiXkd4knaksso0b9vAGU2C8dP053sHMudE5Kh6rVNsMq/FqZVc
-         AL1SnmFkyalaBUD+dqB6uk6QWOLdEwpwYNONyCup1VVaP7xSnuDDlGKpUBBsD5eVwnPC
-         M9HPsrnkES7Y74OF4xjMjuOH7SYdbvxJvDZHiLbpmMYqI5YfF0N0xtrzFXZzg9pYRo1V
-         kQCA+tjy7daMSiG1zc6QenJzLAoi1IJYCUPN60Iu+50N1yPcmBA4grHGX3ihWDdp027s
-         74rQ==
-X-Gm-Message-State: APjAAAXb/obvi2ukooCgHCC2R2ALw16f/UhTi9eLvMbgr1DmXZFeAYIj
-        Hu9Gxd4S/yv6FFUzVnBWWgd9b8o0/yY=
-X-Google-Smtp-Source: APXvYqyQ4bRJk5uq7MSi/mXacpXV5m3p/gkpAeQ6/tnMd4dRcssIsiOPw2AcqLSK3K4v0pCaqqLQhQ==
-X-Received: by 2002:a17:90a:8902:: with SMTP id u2mr47740347pjn.85.1578378978847;
-        Mon, 06 Jan 2020 22:36:18 -0800 (PST)
-Received: from localhost ([122.172.26.121])
-        by smtp.gmail.com with ESMTPSA id f127sm83164189pfa.112.2020.01.06.22.36.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Jan 2020 22:36:18 -0800 (PST)
-Date:   Tue, 7 Jan 2020 12:06:16 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] opp: fix of_node leak for unsupported entries
-Message-ID: <20200107063616.a3qpepc46viejxhw@vireshk-i7>
-References: <a8060fe5b23929e2e5c9bf5735e63b302124f66c.1578077228.git.mirq-linux@rere.qmqm.pl>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SB8O/5JIMzYKiSuEZZhJIz1BTBaOY4SFu2N4rg13oQw=;
+        b=cfxcy0sPxDqXJKATBn+xxV6agi+VVmjIRYLKJ8GOFCUWtvjJOyaA3qj1TTNxLjV25s
+         e/SaSmaeSAcmIGmu/A6183z3eM/uj5G1b1To2VW8zPhddCFcvpkv5yv2s6J+7Po8K3G9
+         X7mPhNxs0yjAhybgaN4YViP7DhCNYR36FJmwFO79BycxrQUd2Vvl+oem8BiPjRdRQ7K/
+         r13XPvVfxxGNwCAfNg5HfffhmKg85U7/XvFw/d4l7PBzg8f6/3XMO6VhrHd4p478V/rb
+         mim9aZ/no4sgo0ldZ3ydyftL0Wq568mPlLeCMSIniysEvrWDWCDCBCXmVt1vdshvpyBV
+         yZFw==
+X-Gm-Message-State: APjAAAUmL0Thr4q5BUW/sWh0ch9O+d854o6M1oHIF5dhdRFWF87ALVNA
+        qXoBACIH9UzCHHqJcenXX1LCBDvhnSoOSQwCxJw=
+X-Google-Smtp-Source: APXvYqy0lJXQV/MFyNa8/f6IaFQpoBMXBPmOnZmlJZ17/dmbIJbjTf10vbzRwRN3lBuqRkZpk7hYfpS2Vsy0oLYUrgI=
+X-Received: by 2002:ac2:51a4:: with SMTP id f4mr62079590lfk.76.1578379159255;
+ Mon, 06 Jan 2020 22:39:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a8060fe5b23929e2e5c9bf5735e63b302124f66c.1578077228.git.mirq-linux@rere.qmqm.pl>
-User-Agent: NeoMutt/20180716-391-311a52
+References: <20191211223344.165549-1-brianvv@google.com> <20191211223344.165549-6-brianvv@google.com>
+ <ba15746b-2cd8-5a04-08fa-3c85b94db15b@fb.com>
+In-Reply-To: <ba15746b-2cd8-5a04-08fa-3c85b94db15b@fb.com>
+From:   Brian Vazquez <brianvv.kernel@gmail.com>
+Date:   Tue, 7 Jan 2020 00:39:07 -0600
+Message-ID: <CABCgpaUHEWg6nwEEy47rF=aeK0AtNpAp3+pJVnObZU87FuUMgw@mail.gmail.com>
+Subject: Re: [PATCH v3 bpf-next 05/11] bpf: add generic_batch_ops to lpm_trie map
+To:     Yonghong Song <yhs@fb.com>
+Cc:     Brian Vazquez <brianvv@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stanislav Fomichev <sdf@google.com>,
+        Petar Penkov <ppenkov@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Discard my earlier reply, it wasn't accurate/correct.
+Hi Yonghong, thanks for reviewing it and sorry for the late reply I
+had been traveling.
 
-On 03-01-20, 20:36, Michał Mirosław wrote:
-> When parsing OPP v2 table, unsupported entries return NULL from
-> _opp_add_static_v2().
+On Fri, Dec 13, 2019 at 11:46 AM Yonghong Song <yhs@fb.com> wrote:
+>
+>
+>
+> On 12/11/19 2:33 PM, Brian Vazquez wrote:
+> > This adds the generic batch ops functionality to bpf lpm_trie.
+> >
+> > Signed-off-by: Brian Vazquez <brianvv@google.com>
+> > ---
+> >   kernel/bpf/lpm_trie.c | 4 ++++
+> >   1 file changed, 4 insertions(+)
+> >
+> > diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
+> > index 56e6c75d354d9..92c47b4f03337 100644
+> > --- a/kernel/bpf/lpm_trie.c
+> > +++ b/kernel/bpf/lpm_trie.c
+> > @@ -743,4 +743,8 @@ const struct bpf_map_ops trie_map_ops = {
+> >       .map_update_elem = trie_update_elem,
+> >       .map_delete_elem = trie_delete_elem,
+> >       .map_check_btf = trie_check_btf,
+> > +     .map_lookup_batch = generic_map_lookup_batch,
+> > +     .map_lookup_and_delete_batch = generic_map_lookup_and_delete_batch,
+>
+> Not 100% sure whether trie should use generic map
+> lookup/lookup_and_delete or not. If the key is not available,
+> the get_next_key will return the 'leftmost' node which roughly
+> corresponding to the first node in the hash table.
+>
 
-Right, as we don't want parsing to fail here.
+I think you're right, we shouldn't use generic
+lookup/lookup_and_delete for lpm_trie. That being said, would you be
+ok, if we don't add lpm_trie support in this patch series? Also we can
+drop the generic_map_lookup_and_delete implementation in this patch
+series and add it in the future, if needed. What do you think?
 
-> In this case node reference is leaked.
-
-Why do you think so ?
-
--- 
-viresh
+> > +     .map_delete_batch = generic_map_delete_batch,
+> > +     .map_update_batch = generic_map_update_batch,with efault
+> >   };
+> >
