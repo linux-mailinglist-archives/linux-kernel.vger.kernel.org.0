@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3CE013311F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:58:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15EAC133101
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:57:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbgAGU5z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 15:57:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55882 "EHLO mail.kernel.org"
+        id S1727319AbgAGU4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 15:56:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727723AbgAGU5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:57:52 -0500
+        id S1727287AbgAGU4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 15:56:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51833208C4;
-        Tue,  7 Jan 2020 20:57:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E318C24672;
+        Tue,  7 Jan 2020 20:56:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430671;
-        bh=zehCim+mbE5Zwzd1nUwk8vKFQX8jEI+Gz7yP6WDgERQ=;
+        s=default; t=1578430606;
+        bh=3LQTQLau0COdzUYzcCjCQs+p0oOs4r5SsqHDMBvNqcg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MmeB0P8UGsW/8I/hrkR/M7TVsRsYnRJcAI0Z/oQmvkJq2souJKO39g5wmmxHlXeUd
-         xcI0vW1hMk7oxV7Tw1uWusI66lgfGEsX4sWfcNkUMCd5vQSkMh3tQjs68wlJ3EJmVY
-         LfkO3iK5PeCOaATQ8yFTBcoCLEycl2lLI68rRpl8=
+        b=iv/GQuOJgOy5gnl6OyhFmWhvnzBp4F1mUhfytBdWll1nhQtIAvIJrtfHmwx3J/K0U
+         /m5jMJQNALbG34YD5rxVc7cCwRfi9SF0XIR3VckTAoYC2uHjOh5DvT7H0lsqyBcb/1
+         U0V9FzEqYezoppZZfu4ep5JmU6IvabnZLBKA7FdM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        stable@vger.kernel.org, Steve Wise <larrystevenwise@gmail.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 020/191] afs: Fix SELinux setting security label on /afs
-Date:   Tue,  7 Jan 2020 21:52:20 +0100
-Message-Id: <20200107205334.086622523@linuxfoundation.org>
+Subject: [PATCH 5.4 022/191] rxe: correctly calculate iCRC for unaligned payloads
+Date:   Tue,  7 Jan 2020 21:52:22 +0100
+Message-Id: <20200107205334.190976846@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
 References: <20200107205332.984228665@linuxfoundation.org>
@@ -45,40 +44,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+From: Steve Wise <larrystevenwise@gmail.com>
 
-[ Upstream commit bcbccaf2edcf1b76f73f890e968babef446151a4 ]
+[ Upstream commit 2030abddec6884aaf5892f5724c48fc340e6826f ]
 
-Make the AFS dynamic root superblock R/W so that SELinux can set the
-security label on it.  Without this, upgrades to, say, the Fedora
-filesystem-afs RPM fail if afs is mounted on it because the SELinux label
-can't be (re-)applied.
+If RoCE PDUs being sent or received contain pad bytes, then the iCRC
+is miscalculated, resulting in PDUs being emitted by RXE with an incorrect
+iCRC, as well as ingress PDUs being dropped due to erroneously detecting
+a bad iCRC in the PDU.  The fix is to include the pad bytes, if any,
+in iCRC computations.
 
-It might be better to make it possible to bypass the R/O check for LSM
-label application through setxattr.
+Note: This bug has caused broken on-the-wire compatibility with actual
+hardware RoCE devices since the soft-RoCE driver was first put into the
+mainstream kernel.  Fixing it will create an incompatibility with the
+original soft-RoCE devices, but is necessary to be compatible with real
+hardware devices.
 
-Fixes: 4d673da14533 ("afs: Support the AFS dynamic root")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
-cc: selinux@vger.kernel.org
-cc: linux-security-module@vger.kernel.org
+Fixes: 8700e3e7c485 ("Soft RoCE driver")
+Signed-off-by: Steve Wise <larrystevenwise@gmail.com>
+Link: https://lore.kernel.org/r/20191203020319.15036-2-larrystevenwise@gmail.com
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/afs/super.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/infiniband/sw/rxe/rxe_recv.c | 2 +-
+ drivers/infiniband/sw/rxe/rxe_req.c  | 6 ++++++
+ drivers/infiniband/sw/rxe/rxe_resp.c | 7 +++++++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/fs/afs/super.c b/fs/afs/super.c
-index 488641b1a418..d9a6036b70b9 100644
---- a/fs/afs/super.c
-+++ b/fs/afs/super.c
-@@ -448,7 +448,6 @@ static int afs_fill_super(struct super_block *sb, struct afs_fs_context *ctx)
- 	/* allocate the root inode and dentry */
- 	if (as->dyn_root) {
- 		inode = afs_iget_pseudo_dir(sb, true);
--		sb->s_flags	|= SB_RDONLY;
- 	} else {
- 		sprintf(sb->s_id, "%llu", as->volume->vid);
- 		afs_activate_volume(as->volume);
+diff --git a/drivers/infiniband/sw/rxe/rxe_recv.c b/drivers/infiniband/sw/rxe/rxe_recv.c
+index f9a492ed900b..831ad578a7b2 100644
+--- a/drivers/infiniband/sw/rxe/rxe_recv.c
++++ b/drivers/infiniband/sw/rxe/rxe_recv.c
+@@ -389,7 +389,7 @@ void rxe_rcv(struct sk_buff *skb)
+ 
+ 	calc_icrc = rxe_icrc_hdr(pkt, skb);
+ 	calc_icrc = rxe_crc32(rxe, calc_icrc, (u8 *)payload_addr(pkt),
+-			      payload_size(pkt));
++			      payload_size(pkt) + bth_pad(pkt));
+ 	calc_icrc = (__force u32)cpu_to_be32(~calc_icrc);
+ 	if (unlikely(calc_icrc != pack_icrc)) {
+ 		if (skb->protocol == htons(ETH_P_IPV6))
+diff --git a/drivers/infiniband/sw/rxe/rxe_req.c b/drivers/infiniband/sw/rxe/rxe_req.c
+index c5d9b558fa90..e5031172c019 100644
+--- a/drivers/infiniband/sw/rxe/rxe_req.c
++++ b/drivers/infiniband/sw/rxe/rxe_req.c
+@@ -500,6 +500,12 @@ static int fill_packet(struct rxe_qp *qp, struct rxe_send_wqe *wqe,
+ 			if (err)
+ 				return err;
+ 		}
++		if (bth_pad(pkt)) {
++			u8 *pad = payload_addr(pkt) + paylen;
++
++			memset(pad, 0, bth_pad(pkt));
++			crc = rxe_crc32(rxe, crc, pad, bth_pad(pkt));
++		}
+ 	}
+ 	p = payload_addr(pkt) + paylen + bth_pad(pkt);
+ 
+diff --git a/drivers/infiniband/sw/rxe/rxe_resp.c b/drivers/infiniband/sw/rxe/rxe_resp.c
+index 1cbfbd98eb22..c4a8195bf670 100644
+--- a/drivers/infiniband/sw/rxe/rxe_resp.c
++++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+@@ -732,6 +732,13 @@ static enum resp_states read_reply(struct rxe_qp *qp,
+ 	if (err)
+ 		pr_err("Failed copying memory\n");
+ 
++	if (bth_pad(&ack_pkt)) {
++		struct rxe_dev *rxe = to_rdev(qp->ibqp.device);
++		u8 *pad = payload_addr(&ack_pkt) + payload;
++
++		memset(pad, 0, bth_pad(&ack_pkt));
++		icrc = rxe_crc32(rxe, icrc, pad, bth_pad(&ack_pkt));
++	}
+ 	p = payload_addr(&ack_pkt) + payload + bth_pad(&ack_pkt);
+ 	*p = ~icrc;
+ 
 -- 
 2.20.1
 
