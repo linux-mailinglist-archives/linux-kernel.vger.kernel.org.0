@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0117133241
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:09:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E3C21332DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:15:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729733AbgAGVIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:08:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33052 "EHLO mail.kernel.org"
+        id S1729872AbgAGVJv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:09:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729715AbgAGVIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:08:36 -0500
+        id S1729557AbgAGVJq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:09:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CAC062077B;
-        Tue,  7 Jan 2020 21:08:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FA812087F;
+        Tue,  7 Jan 2020 21:09:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431316;
-        bh=8+CaKwhRUt1xhJwAYRCUH2PySM5nPiC2GuV92tLAg/g=;
+        s=default; t=1578431386;
+        bh=vcovTOHbKP78JFWf13jdL/gXq0Zxg4qPHG5JDYfThhw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gk//+XURxK/a/bVtuZG3u6ZdS/bkLG46eY93O1l7ByqwKO7qL6GVeV+jPQYrHIpBl
-         kKtX/QMOo6pfF9ie1MkbeoctwYF370z81KZ6QT+bptwFE2/cr2+8HLJKa5HBT9KAHz
-         mme8bZdTvR1uTYiuOXyT21HJIpbW5EUaLMwdn3cM=
+        b=tQRVmluml1UvUCs2DjNUllA3+SmQekbY/g5kQmLntO3l94535fSj36g7g9uu36kLx
+         Dp+gq/5mccUeClCed4G8f6/ACFGxkZd+ztK4RPnr3YGg1uyVXhDWiWhcuDc8rF+4Un
+         qsqE96ciKixNO6dviWgfXo3pSJwqEqpf6TXImtOA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.19 090/115] regulator: ab8500: Remove AB8505 USB regulator
-Date:   Tue,  7 Jan 2020 21:55:00 +0100
-Message-Id: <20200107205306.737970845@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 36/74] ata: libahci_platform: Export again ahci_platform_<en/dis>able_phys()
+Date:   Tue,  7 Jan 2020 21:55:01 +0100
+Message-Id: <20200107205206.461044849@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-References: <20200107205240.283674026@linuxfoundation.org>
+In-Reply-To: <20200107205135.369001641@linuxfoundation.org>
+References: <20200107205135.369001641@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,75 +44,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephan Gerhold <stephan@gerhold.net>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-commit 99c4f70df3a6446c56ca817c2d0f9c12d85d4e7c upstream.
+commit 84b032dbfdf1c139cd2b864e43959510646975f8 upstream.
 
-The USB regulator was removed for AB8500 in
-commit 41a06aa738ad ("regulator: ab8500: Remove USB regulator").
-It was then added for AB8505 in
-commit 547f384f33db ("regulator: ab8500: add support for ab8505").
+This reverts commit 6bb86fefa086faba7b60bb452300b76a47cde1a5
+("libahci_platform: Staticize ahci_platform_<en/dis>able_phys()") we are
+going to need ahci_platform_{enable,disable}_phys() in a subsequent
+commit for ahci_brcm.c in order to properly control the PHY
+initialization order.
 
-However, there was never an entry added for it in
-ab8505_regulator_match. This causes all regulators after it
-to be initialized with the wrong device tree data, eventually
-leading to an out-of-bounds array read.
+Also make sure the function prototypes are declared in
+include/linux/ahci_platform.h as a result.
 
-Given that it is not used anywhere in the kernel, it seems
-likely that similar arguments against supporting it exist for
-AB8505 (it is controlled by hardware).
-
-Therefore, simply remove it like for AB8500 instead of adding
-an entry in ab8505_regulator_match.
-
-Fixes: 547f384f33db ("regulator: ab8500: add support for ab8505")
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Link: https://lore.kernel.org/r/20191106173125.14496-1-stephan@gerhold.net
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/regulator/ab8500.c       |   17 -----------------
- include/linux/regulator/ab8500.h |    1 -
- 2 files changed, 18 deletions(-)
+ drivers/ata/libahci_platform.c |    6 ++++--
+ include/linux/ahci_platform.h  |    2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/regulator/ab8500.c
-+++ b/drivers/regulator/ab8500.c
-@@ -956,23 +956,6 @@ static struct ab8500_regulator_info
- 		.update_val_idle	= 0x82,
- 		.update_val_normal	= 0x02,
- 	},
--	[AB8505_LDO_USB] = {
--		.desc = {
--			.name           = "LDO-USB",
--			.ops            = &ab8500_regulator_mode_ops,
--			.type           = REGULATOR_VOLTAGE,
--			.id             = AB8505_LDO_USB,
--			.owner          = THIS_MODULE,
--			.n_voltages     = 1,
--			.volt_table	= fixed_3300000_voltage,
--		},
--		.update_bank            = 0x03,
--		.update_reg             = 0x82,
--		.update_mask            = 0x03,
--		.update_val		= 0x01,
--		.update_val_idle	= 0x03,
--		.update_val_normal	= 0x01,
--	},
- 	[AB8505_LDO_AUDIO] = {
- 		.desc = {
- 			.name		= "LDO-AUDIO",
---- a/include/linux/regulator/ab8500.h
-+++ b/include/linux/regulator/ab8500.h
-@@ -38,7 +38,6 @@ enum ab8505_regulator_id {
- 	AB8505_LDO_AUX6,
- 	AB8505_LDO_INTCORE,
- 	AB8505_LDO_ADC,
--	AB8505_LDO_USB,
- 	AB8505_LDO_AUDIO,
- 	AB8505_LDO_ANAMIC1,
- 	AB8505_LDO_ANAMIC2,
+--- a/drivers/ata/libahci_platform.c
++++ b/drivers/ata/libahci_platform.c
+@@ -46,7 +46,7 @@ EXPORT_SYMBOL_GPL(ahci_platform_ops);
+  * RETURNS:
+  * 0 on success otherwise a negative error code
+  */
+-static int ahci_platform_enable_phys(struct ahci_host_priv *hpriv)
++int ahci_platform_enable_phys(struct ahci_host_priv *hpriv)
+ {
+ 	int rc, i;
+ 
+@@ -71,6 +71,7 @@ disable_phys:
+ 	}
+ 	return rc;
+ }
++EXPORT_SYMBOL_GPL(ahci_platform_enable_phys);
+ 
+ /**
+  * ahci_platform_disable_phys - Disable PHYs
+@@ -78,7 +79,7 @@ disable_phys:
+  *
+  * This function disables all PHYs found in hpriv->phys.
+  */
+-static void ahci_platform_disable_phys(struct ahci_host_priv *hpriv)
++void ahci_platform_disable_phys(struct ahci_host_priv *hpriv)
+ {
+ 	int i;
+ 
+@@ -87,6 +88,7 @@ static void ahci_platform_disable_phys(s
+ 		phy_exit(hpriv->phys[i]);
+ 	}
+ }
++EXPORT_SYMBOL_GPL(ahci_platform_disable_phys);
+ 
+ /**
+  * ahci_platform_enable_clks - Enable platform clocks
+--- a/include/linux/ahci_platform.h
++++ b/include/linux/ahci_platform.h
+@@ -23,6 +23,8 @@ struct ahci_host_priv;
+ struct platform_device;
+ struct scsi_host_template;
+ 
++int ahci_platform_enable_phys(struct ahci_host_priv *hpriv);
++void ahci_platform_disable_phys(struct ahci_host_priv *hpriv);
+ int ahci_platform_enable_clks(struct ahci_host_priv *hpriv);
+ void ahci_platform_disable_clks(struct ahci_host_priv *hpriv);
+ int ahci_platform_enable_regulators(struct ahci_host_priv *hpriv);
 
 
