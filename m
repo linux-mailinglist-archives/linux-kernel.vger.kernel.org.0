@@ -2,188 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04C2D13275F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 14:15:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2809132758
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 14:14:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbgAGNPh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 08:15:37 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:21128 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727814AbgAGNPg (ORCPT
+        id S1728099AbgAGNOw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 08:14:52 -0500
+Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:42188 "EHLO
+        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726937AbgAGNOw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 08:15:36 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 007DDfmE027011;
-        Tue, 7 Jan 2020 14:15:18 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=li6ezDvrHh0BrI2TE1aJR9vEsp/p3KUXcBDfIP/q9gY=;
- b=XFUvFkJPgoC8agOMstZgvClqhGtvbMov/+SHsowk73GSMOfvpCnaeJBFHBDG58koE1PF
- v3i7nPxHlaL4sf73exmzgZPRNE6x/Aj3EGatmOeyIJKuwYEj2XWZYpWDIip/KmQFSp5x
- EUUVIbImc0CvRd0vA58HXZLuA8I7K3J/redcYYIIpDHlbYTUfTMdTmkHptjEr9poXl4r
- nXjti9IOx7VgQRHNej02huOVXeiBSEbTwcen7ui0kIyn7ozQVz4+KEa1kV4tQ+U+oSOA
- 1H9SG4sMttH+ioXFs99ykwN6KIB0+FI2eXkK4DP6QOsvSdOdOiK7Ijy+bgbL1OTV5qSu iw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2xakkapf45-1
+        Tue, 7 Jan 2020 08:14:52 -0500
+Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
+        by mx0b-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 007D4oRM004440;
+        Tue, 7 Jan 2020 08:14:32 -0500
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2175.outbound.protection.outlook.com [104.47.58.175])
+        by mx0b-00128a01.pphosted.com with ESMTP id 2xawstxjsb-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Jan 2020 14:15:18 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 49005100038;
-        Tue,  7 Jan 2020 14:15:14 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag4node1.st.com [10.75.127.10])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EE60B2B4534;
-        Tue,  7 Jan 2020 14:15:13 +0100 (CET)
-Received: from SFHDAG6NODE3.st.com (10.75.127.18) by SFHDAG4NODE1.st.com
- (10.75.127.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 Jan
- 2020 14:15:13 +0100
-Received: from SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6]) by
- SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6%20]) with mapi id
- 15.00.1473.003; Tue, 7 Jan 2020 14:15:13 +0100
-From:   Patrice CHOTARD <patrice.chotard@st.com>
-To:     Sriram Dash <sriram.dash@samsung.com>,
-        =?utf-8?B?J0hlaWtvIFN0w7xibmVyJw==?= <heiko@sntech.de>,
-        'Florian Fainelli' <f.fainelli@gmail.com>,
-        'David Miller' <davem@davemloft.net>
-CC:     "Jose.Abreu@synopsys.com" <Jose.Abreu@synopsys.com>,
-        "jayati.sahu@samsung.com" <jayati.sahu@samsung.com>,
-        "rcsekar@samsung.com" <rcsekar@samsung.com>,
-        "pankaj.dubey@samsung.com" <pankaj.dubey@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "p.rajanbabu@samsung.com" <p.rajanbabu@samsung.com>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Peppe CAVALLARO <peppe.cavallaro@st.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [Linux-stm32] [PATCH] net: stmmac: platform: Fix MDIO init for
- platforms without PHY
-Thread-Topic: [Linux-stm32] [PATCH] net: stmmac: platform: Fix MDIO init for
- platforms without PHY
-Thread-Index: AQHVxRwlt8RIEIlxKkCYUiQBp2D2SqffHgAA
-Date:   Tue, 7 Jan 2020 13:15:13 +0000
-Message-ID: <6c657b5e-b4fb-551c-080a-18f04ac2dba3@st.com>
-References: <CGME20191219102407epcas5p103b26e6fb191f7135d870a3449115c89@epcas5p1.samsung.com>
- <1700835.tBzmY8zkgn@diego> <c25fbdb3-0e60-6e54-d58a-b05e8b805a58@gmail.com>
- <1599392.7x4dJXGyiB@diego> <011901d5c51c$1f93be30$5ebb3a90$@samsung.com>
-In-Reply-To: <011901d5c51c$1f93be30$5ebb3a90$@samsung.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.49]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B825CB237B931948921570B6797794EC@st.com>
-Content-Transfer-Encoding: base64
+        Tue, 07 Jan 2020 08:14:32 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JeevS0UdG24n95AqYNw/2IvsR1y8BxfZLR1gaXxHrxwntWqFX7l+iC3r4RMqALmQW6thvlN+VSzqMDLVW2WhybXv1sZUGXcuAmHnzSOdyHgg70rivDNqBa9Iz3M/DAmXZBMFv/Y5m+Ruz6EPTpzpyj5GMy2U+X0bB9EctBzmh+BkEZfTYh53qazqr4XgD4lB2TzUdxDxvYvYbXX7iQ57MKLawIKto0szXv70lTs6H1rfgXJPFVT5B9Zywjc3IB7i9uV1cm8imOXO+8/9ab15J6XPYLN5jZvR33hBCL7lnMVa9jLmCzgC7UdU6MoVEiKbO+nerFcQH73ULGlz+LWBpw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ohdjSubfuKJzy0ho+q3GNCS+KZlRUqCGky5qlUPniQs=;
+ b=YteAvBicv1/FadBBi/y58oyVyNsFhl2e06Wfaz5Z020Qoy3Cj62DPht+S3CuWSDBuBgqBfio38+YEB8I+APMMcv73+zIMjpusEEVroAPyk2u0JOKnSfOnfSSm9v/m8tgsVQZg+YqAnSPqapZM/qnpmPOH8eA3VrTxQLZ3l/cusThuMs1w9K70GLvTPuELbnaIOXqo/rQXAnZAczOEA6810s9hdxdjngtjp98kqh+Wwg9OVohRHLqMXNcysqk3DNCCrtMZwVlzrPTpte0Eif53KitT4JwQhildVOKDibFzWu9ZYupND6+wmQ4vuBV+OIEsx368zjIIULIY/ZLt3KPpw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 137.71.25.55) smtp.rcpttodomain=kernel.org smtp.mailfrom=analog.com;
+ dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ohdjSubfuKJzy0ho+q3GNCS+KZlRUqCGky5qlUPniQs=;
+ b=Bx55O99t+iAonMIJqsevBE4sKG3OmvAeZK0E6F/bmPxaSyN9NPgz7+o74fzcJ3E5zzrfNSUS7CRPGUI8QbpCiwmowxbX/S5FUueoPQvB6Aa4IPdx8I6fG54j9OptWDOXgnSGYFkgioc2fb43g0GBL85VwGEAdTa3Y2rBaTXH3Xk=
+Received: from BN6PR03CA0094.namprd03.prod.outlook.com (2603:10b6:405:6f::32)
+ by DM5PR03MB3017.namprd03.prod.outlook.com (2603:10b6:3:11f::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2602.15; Tue, 7 Jan
+ 2020 13:14:31 +0000
+Received: from CY1NAM02FT059.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::209) by BN6PR03CA0094.outlook.office365.com
+ (2603:10b6:405:6f::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2602.10 via Frontend
+ Transport; Tue, 7 Jan 2020 13:14:30 +0000
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
+Received: from nwd2mta1.analog.com (137.71.25.55) by
+ CY1NAM02FT059.mail.protection.outlook.com (10.152.74.211) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2602.11
+ via Frontend Transport; Tue, 7 Jan 2020 13:14:30 +0000
+Received: from ASHBMBX8.ad.analog.com (ashbmbx8.ad.analog.com [10.64.17.5])
+        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id 007DEIxo030797
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 7 Jan 2020 05:14:18 -0800
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Tue, 7 Jan 2020
+ 08:14:28 -0500
+Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Tue, 7 Jan 2020 08:14:28 -0500
+Received: from ben-Latitude-E6540.ad.analog.com ([10.48.65.231])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 007DEIei000913;
+        Tue, 7 Jan 2020 08:14:19 -0500
+From:   Beniamin Bia <beniamin.bia@analog.com>
+To:     <jic23@kernel.org>
+CC:     <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <biabeniamin@outlook.com>,
+        <knaack.h@gmx.de>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Beniamin Bia <beniamin.bia@analog.com>
+Subject: [PATCH] iio: frequency: adf4371: Fix divide by zero exception bug
+Date:   Tue, 7 Jan 2020 15:15:59 +0200
+Message-ID: <20200107131559.17772-1-beniamin.bia@analog.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(136003)(396003)(346002)(376002)(199004)(189003)(8676002)(36756003)(26005)(8936002)(246002)(2906002)(86362001)(6666004)(356004)(7636002)(6916009)(4326008)(1076003)(5660300002)(2616005)(478600001)(426003)(316002)(54906003)(44832011)(70206006)(70586007)(7696005)(186003)(107886003)(336012);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB3017;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ffa6c55e-526c-4e79-e0a9-08d7937387af
+X-MS-TrafficTypeDiagnostic: DM5PR03MB3017:
+X-Microsoft-Antispam-PRVS: <DM5PR03MB30176899F74A72D3D80655EBF03F0@DM5PR03MB3017.namprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+X-Forefront-PRVS: 027578BB13
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: DWbLDLLScjXYY0WMhl91LzxJyMHJhP+UyFeQXsXej6MrTbWP1O0ZZJF+ED681Lad0Fnr558WeXz39lSpm3w35mVfaPHWwMYfAp+yNSVmIfU1dHGJQK5bKOCoYdvtERgPcSUAhL2JZw//fEwkZKZ/R3Ko0W/IzI4vOUbJjPG9KSscIHhuNoGr9MmkglgboHl2TFxoW4u9JVIn0tacCONcxt6i7+srgXQa85tTT794jhe2IImL0fgICzg6X1aCW0BHhNSbWiDHaFsCXZ5JznbiX+U6YYAhs0W60/fnkAJPKgoTuGOU2KZgxQph15G6k/RivdKOfHSWqn0VaP6Fw/7mYSC2vnAklrwTadLBCrX/SM1mum9ZEul38UHeOsKMV8VWNyyN8rLtXdgLhOyM2ULOZOcJ4JuZAhOhk8v9cng/yZ3CqxDR0c0JZG2raAak+2Qx
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jan 2020 13:14:30.1826
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ffa6c55e-526c-4e79-e0a9-08d7937387af
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB3017
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
  definitions=2020-01-07_03:2020-01-06,2020-01-07 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ impostorscore=0 clxscore=1011 suspectscore=1 spamscore=0 mlxscore=0
+ priorityscore=1501 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001070109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQWxsDQoNCk9uIDEvNy8yMCA2OjM0IEFNLCBTcmlyYW0gRGFzaCB3cm90ZToNCj4+IEZyb206
-IEhlaWtvIFN0w7xibmVyIDxoZWlrb0BzbnRlY2guZGU+DQo+PiBTdWJqZWN0OiBSZTogW1BBVENI
-XSBuZXQ6IHN0bW1hYzogcGxhdGZvcm06IEZpeCBNRElPIGluaXQgZm9yIHBsYXRmb3Jtcw0KPiB3
-aXRob3V0DQo+PiBQSFkNCj4+DQo+PiBIaSBGbG9yaWFuLA0KPj4NCj4+IEFtIFNvbm50YWcsIDUu
-IEphbnVhciAyMDIwLCAyMzoyMjowMCBDRVQgc2NocmllYiBGbG9yaWFuIEZhaW5lbGxpOg0KPj4+
-IE9uIDEvNS8yMDIwIDEyOjQzIFBNLCBIZWlrbyBTdMO8Ym5lciB3cm90ZToNCj4+Pj4gQW0gU2Ft
-c3RhZywgMjEuIERlemVtYmVyIDIwMTksIDA2OjI5OjE4IENFVCBzY2hyaWViIERhdmlkIE1pbGxl
-cjoNCj4+Pj4+IEZyb206IFBhZG1hbmFiaGFuIFJhamFuYmFidSA8cC5yYWphbmJhYnVAc2Ftc3Vu
-Zy5jb20+DQo+Pj4+PiBEYXRlOiBUaHUsIDE5IERlYyAyMDE5IDE1OjQ3OjAxICswNTMwDQo+Pj4+
-Pg0KPj4+Pj4+IFRoZSBjdXJyZW50IGltcGxlbWVudGF0aW9uIG9mICJzdG1tYWNfZHRfcGh5IiBm
-dW5jdGlvbiBpbml0aWFsaXplcw0KPj4+Pj4+IHRoZSBNRElPIHBsYXRmb3JtIGJ1cyBkYXRhLCBl
-dmVuIGluIHRoZSBhYnNlbmNlIG9mIFBIWS4gVGhpcyBmaXgNCj4+Pj4+PiB3aWxsIHNraXAgTURJ
-TyBpbml0aWFsaXphdGlvbiBpZiB0aGVyZSBpcyBubyBQSFkgcHJlc2VudC4NCj4+Pj4+Pg0KPj4+
-Pj4+IEZpeGVzOiA3NDM3MTI3ICgibmV0OiBzdG1tYWM6IENvbnZlcnQgdG8gcGh5bGluayBhbmQg
-cmVtb3ZlIHBoeWxpYg0KPj4+Pj4+IGxvZ2ljIikNCj4+Pj4+PiBBY2tlZC1ieTogSmF5YXRpIFNh
-aHUgPGpheWF0aS5zYWh1QHNhbXN1bmcuY29tPg0KPj4+Pj4+IFNpZ25lZC1vZmYtYnk6IFNyaXJh
-bSBEYXNoIDxzcmlyYW0uZGFzaEBzYW1zdW5nLmNvbT4NCj4+Pj4+PiBTaWduZWQtb2ZmLWJ5OiBQ
-YWRtYW5hYmhhbiBSYWphbmJhYnUgPHAucmFqYW5iYWJ1QHNhbXN1bmcuY29tPg0KPj4+Pj4gQXBw
-bGllZCBhbmQgcXVldWVkIHVwIGZvciAtc3RhYmxlLCB0aGFua3MuDQo+Pj4+IHdpdGggdGhpcyBw
-YXRjaCBhcHBsaWVkIEkgbm93IHJ1biBpbnRvIGlzc3VlcyBvbiBtdWx0aXBsZSByb2NrY2hpcA0K
-Pj4+PiBwbGF0Zm9ybXMgdXNpbmcgYSBnbWFjIGludGVyZmFjZS4NCj4+PiBEbyB5b3UgaGF2ZSBh
-IGxpc3Qgb2YgRFRTIGZpbGVzIHRoYXQgYXJlIGFmZmVjdGVkIGJ5IGFueSBjaGFuY2U/IEZvcg0K
-Pj4+IHRoZSAzMi1iaXQgcGxhdGZvcm1zIHRoYXQgSSBsb29rZWQgaXQsIGl0IHNlZW1zIGxpa2U6
-DQo+Pj4NCj4gSGkgRmxvcmlhbiwgDQo+IFdlIGhhdmUgbGlzdGVkIGRvd24gdGhlIHBsYXRmb3Jt
-cyB3aGljaCB3aWxsIGJyZWFrIGZvciBhcyB0aGV5IGRvbid0IGhhdmUNCj4gdGhlIG1kaW8gLyBz
-bnBzLGR3bWFjLW1kaW8gbm9kZS4NCj4gQXJtMzIgc3BlYXIqICwgQXJtMzIgb3g4MjAqLCBhcm0z
-MiBydjExMDgsIGFyYyBhYmlsaXMqICwgYXJjIGF4czEweCosIGFyYw0KPiB2ZGtfYXhzMTB4Kiwg
-bWlwcyBwaXN0YWNoaW8sIGFybTY0IHJvY2tjaGlwL3B4MzAqIFRoZXJlIG1pZ2h0IGJlIG1vcmUN
-Cj4gcGxhdGZvcm1zLg0KDQpTVGlINDEwLUIyMjYwIGlzIGFmZmVjdGVkIGJ5IHRoaXMgcGF0Y2gs
-IGkgcHJvcG9zZWQgYSBmaXggZm9yIHRoaXMgYm9hcmQgOg0KDQpodHRwczovL3BhdGNod29yay5r
-ZXJuZWwub3JnL3Byb2plY3QvbGludXgtYXJtLWtlcm5lbC9saXN0Lz9zZXJpZXM9MjI0NjM5DQoN
-CkRhdmlkLCB3aWxsIHlvdSBhcHBsaWVkIHRoaXMgRFQgc2VyaWVzIGluIHlvdXIgdHJlZSA/DQoN
-ClRoYW5rcw0KDQpQYXRyaWNlDQoNCg0KPg0KPj4+IGFyY2gvYXJtL2Jvb3QvZHRzL3JrMzIyOC1l
-dmIuZHRzIGlzIE9LIGJlY2F1c2UgaXQgaGFzIGEgTURJTyBidXMgbm9kZQ0KPj4+IGFyY2gvYXJt
-L2Jvb3QvZHRzL3JrMzIyOS14bXM2LmR0cyBpcyBhbHNvIE9LDQo+Pj4NCj4+PiBhcmNoL2FybS9i
-b290L2R0cy9yazMyMjktZXZiLmR0cyBpcyBwcm9iYWJseSBicm9rZW4sIHRoZXJlIGlzIG5vDQo+
-Pj4gcGh5LWhhbmRsZSBwcm9wZXJ0eSBvciBNRElPIGJ1cyBub2RlLCBzbyBpdCBtdXN0IGJlIHJl
-bHlpbmcgb24NCj4+PiBhdXRvLXNjYW5uaW5nIG9mIHRoZSBidXMgc29tZWhvdyB0aGF0IHRoaXMg
-cGF0Y2ggYnJva2UuDQo+Pj4NCj4+PiBBbmQgbGlrZXdpc2UgZm9yIG1vc3QgNjQtYml0IHBsYXRm
-b3JtcyBleGNlcHQgYTEgYW5kIG5hbm9waTQuDQo+PiBJIHByaW1hcmlseSBub3RpY2VkIHRoYXQg
-b24gdGhlIHB4MzAtZXZiLmR0cyBhbmQgdGhlIGludGVybmFsIGJvYXJkIEknbQ0KPiB3b3JraW5n
-DQo+PiBvbiByaWdodCBub3cuIEJvdGggZG9uJ3QgaGF2ZSB0aGF0IG1kaW8gYnVzIG5vZGUgcmln
-aHQgbm93Lg0KPj4NCj4+DQo+Pj4+IFdoZW4gcHJvYmluZyB0aGUgZHJpdmVyIGFuZCB0cnlpbmcg
-dG8gZXN0YWJsaXNoIGEgY29ubmVjdGlvbiBmb3IgYQ0KPj4+PiBuZnNyb290IGl0IGFsd2F5cyBy
-dW5zIGludG8gYSBudWxsIHBvaW50ZXIgaW4gbWRpb2J1c19nZXRfcGh5KCk6DQo+Pj4+DQo+Pj4+
-IFsgICAyNi44Nzg4MzldIHJrX2dtYWMtZHdtYWMgZmYzNjAwMDAuZXRoZXJuZXQ6IElSUSBldGhf
-d2FrZV9pcnEgbm90DQo+PiBmb3VuZA0KPj4+PiBbICAgMjYuODg2MzIyXSBya19nbWFjLWR3bWFj
-IGZmMzYwMDAwLmV0aGVybmV0OiBJUlEgZXRoX2xwaSBub3QgZm91bmQNCj4+Pj4gWyAgIDI2Ljg5
-NDUwNV0gcmtfZ21hYy1kd21hYyBmZjM2MDAwMC5ldGhlcm5ldDogUFRQIHVzZXMgbWFpbiBjbG9j
-aw0KPj4+PiBbICAgMjYuOTA4MjA5XSBya19nbWFjLWR3bWFjIGZmMzYwMDAwLmV0aGVybmV0OiBj
-bG9jayBpbnB1dCBvciBvdXRwdXQ/DQo+PiAob3V0cHV0KS4NCj4gLi4uIHNuaXAgLi4uDQo+DQo+
-Pj4+DQo+Pj4+IFRoaXMgaXMgdG9ydmFsZHMgZ2l0IGhlYWQgYW5kIGl0IHdhcyBzdGlsbCB3b3Jr
-aW5nIGF0IC1yYzEgYW5kIGFsbA0KPj4+PiBrZXJuZWxzIGJlZm9yZSB0aGF0LiBXaGVuIEkganVz
-dCByZXZlcnQgdGhpcyBjb21taXQsIHRoaW5ncyBhbHNvDQo+Pj4+IHN0YXJ0IHdvcmtpbmcgYWdh
-aW4sIHNvIEkgZ3Vlc3Mgc29tZXRoaW5nIG11c3QgYmUgd3JvbmcgaGVyZT8NCj4+PiBZZXMsIHRo
-aXMgd2FzIGFsc28gaWRlbnRpZmllZCB0byBiZSBwcm9ibGVtYXRpYyBieSB0aGUga2VybmVsY2kg
-Ym9vdA0KPj4+IGZhcm1zIG9uIGFub3RoZXIgcGxhdGZvcm0sIHNlZSBbMV0uDQo+Pj4NCj4+PiBb
-MV06DQo+Pj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtYXJtLWtlcm5lbC81ZTAzMTRk
-YS4xYzY5ZmI4MS5hN2Q2My4yOWMxQA0KPj4+IG14Lmdvb2dsZS5jb20vDQo+Pj4NCj4+PiBEbyB5
-b3UgbWluZCB0cnlpbmcgdGhpcyBwYXRjaCBhbmQgbGV0dGluZyBtZSBrbm93IGlmIGl0IHdvcmtz
-IGZvciB5b3UuDQo+Pj4gU3JpcmFtLCBwbGVhc2UgYWxzbyB0cnkgaXQgb24geW91ciBwbGF0Zm9y
-bXMgYW5kIGxldCBtZSBrbm93IGlmIHNvbHZlcw0KPj4+IHRoZSBwcm9ibGVtIHlvdSB3ZXJlIGFm
-dGVyLiBUaGFua3MNCj4+IFdvcmtzIG9uIGJvdGggYm9hcmRzIEkgaGFkIHRoYXQgd2VyZSBhZmZl
-Y3RlZCwgc28NCj4+IFRlc3RlZC1ieTogSGVpa28gU3R1ZWJuZXIgPGhlaWtvQHNudGVjaC5kZT4N
-Cj4gTmFja2VkLWJ5IDogU3JpcmFtIERhc2ggPFNyaXJhbS5kYXNoQHNhbXN1bmcuY29tPg0KPg0K
-Pj4NCj4+IFRoYW5rcw0KPj4gSGVpa28NCj4+DQo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0
-L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL3N0bW1hY19wbGF0Zm9ybS5jDQo+Pj4gYi9kcml2ZXJz
-L25ldC9ldGhlcm5ldC9zdG1pY3JvL3N0bW1hYy9zdG1tYWNfcGxhdGZvcm0uYw0KPj4+IGluZGV4
-IGNjOGQ3ZTdiZjlhYy4uZTE5MmI4ZTA4MDllIDEwMDY0NA0KPj4+IC0tLSBhL2RyaXZlcnMvbmV0
-L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL3N0bW1hY19wbGF0Zm9ybS5jDQo+Pj4gKysrIGIvZHJp
-dmVycy9uZXQvZXRoZXJuZXQvc3RtaWNyby9zdG1tYWMvc3RtbWFjX3BsYXRmb3JtLmMNCj4+PiBA
-QCAtMzIwLDcgKzMyMCw3IEBAIHN0YXRpYyBpbnQgc3RtbWFjX210bF9zZXR1cChzdHJ1Y3QgcGxh
-dGZvcm1fZGV2aWNlDQo+Pj4gKnBkZXYsICBzdGF0aWMgaW50IHN0bW1hY19kdF9waHkoc3RydWN0
-IHBsYXRfc3RtbWFjZW5ldF9kYXRhICpwbGF0LA0KPj4+ICAgICAgICAgICAgICAgICAgICAgICAg
-ICBzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wLCBzdHJ1Y3QgZGV2aWNlICpkZXYpDQo+Pj4gew0KPj4+
-IC0gICAgICAgYm9vbCBtZGlvID0gZmFsc2U7DQo+Pj4gKyAgICAgICBib29sIG1kaW8gPSB0cnVl
-Ow0KPj4+ICAgICAgICAgc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgbmVlZF9tZGlv
-X2lkc1tdID0gew0KPj4+ICAgICAgICAgICAgICAgICB7IC5jb21wYXRpYmxlID0gInNucHMsZHdj
-LXFvcy1ldGhlcm5ldC00LjEwIiB9LA0KPj4+ICAgICAgICAgICAgICAgICB7fSwNCj4+PiBAQCAt
-MzQxLDggKzM0MSw5IEBAIHN0YXRpYyBpbnQgc3RtbWFjX2R0X3BoeShzdHJ1Y3QNCj4+PiBwbGF0
-X3N0bW1hY2VuZXRfZGF0YSAqcGxhdCwNCj4+PiAgICAgICAgIH0NCj4+Pg0KPj4+ICAgICAgICAg
-aWYgKHBsYXQtPm1kaW9fbm9kZSkgew0KPiBGb3IgdGhlIHBsYXRmb3JtcyB3aGljaCBuZWl0aGVy
-IGhhdmUgbWRpbyBub3Igc25wcyxkd21hYy1tZGlvIHByb3BlcnR5IGluDQo+IGR0LCB0aGV5IHdp
-bGwgbm90IGVudGVyIHRoZSBibG9jay4NCj4gcGxhdC0+bWRpb19ub2RlIHdpbGwgYWx3YXlzIGJl
-IGZhbHNlIGZvciB0aGVtLiBXaGljaCwgZXNzZW50aWFsbHksIHByZXNlcnZlcw0KPiB0aGUgbWRp
-byB2YXJpYWJsZSBCb29sZWFuIHZhbHVlIGRlZmluZWQgYXQgdGhlIHN0YXJ0IG9mIHRoZSBmdW5j
-dGlvbi4NCj4NCj4+PiAtICAgICAgICAgICAgICAgZGV2X2RiZyhkZXYsICJGb3VuZCBNRElPIHN1
-Ym5vZGVcbiIpOw0KPj4+IC0gICAgICAgICAgICAgICBtZGlvID0gdHJ1ZTsNCj4+PiArICAgICAg
-ICAgICAgICAgbWRpbyA9IG9mX2RldmljZV9pc19hdmFpbGFibGUocGxhdC0+bWRpb19ub2RlKTsN
-Cj4+PiArICAgICAgICAgICAgICAgZGV2X2RiZyhkZXYsICJGb3VuZCBNRElPIHN1Ym5vZGUsIHN0
-YXR1czogJXNhYmxlZFxuIiwNCj4+PiArICAgICAgICAgICAgICAgICAgICAgICBtZGlvID8gImVu
-IiA6ICJkaXMiKTsNCj4+PiAgICAgICAgIH0NCj4+Pg0KPj4+ICAgICAgICAgaWYgKG1kaW8pIHsN
-Cj4+Pg0KPj4NCj4+DQo+IFRoZXJlIGlzIGEgcHJvcG9zYWwgZm9yIHRoaXMgcHJvYmxlbSBzb2x1
-dGlvbi4gWW91IGNhbiByZWZlciBpdCBhdCA6DQo+IGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDIw
-LzEvNy8xNA0KPg0KPg0KPg0KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXw0KPiBMaW51eC1zdG0zMiBtYWlsaW5nIGxpc3QNCj4gTGludXgtc3RtMzJAc3Qt
-bWQtbWFpbG1hbi5zdG9ybXJlcGx5LmNvbQ0KPiBodHRwczovL3N0LW1kLW1haWxtYW4uc3Rvcm1y
-ZXBseS5jb20vbWFpbG1hbi9saXN0aW5mby9saW51eC1zdG0zMg==
+From: Michael Hennerich <michael.hennerich@analog.com>
+
+During initialization adf4371_pll_fract_n_get_rate() is called on all
+output channels to determine if the device was setup. In this case
+mod2 is zero which can cause a divide by zero exception.
+Return before that can happen.
+
+Fixes: 7f699bd149134 ("iio: frequency: adf4371: Add support for ADF4371 PLL")
+Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
+---
+ drivers/iio/frequency/adf4371.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/iio/frequency/adf4371.c b/drivers/iio/frequency/adf4371.c
+index e2a599b912e5..c21462238314 100644
+--- a/drivers/iio/frequency/adf4371.c
++++ b/drivers/iio/frequency/adf4371.c
+@@ -191,6 +191,9 @@ static unsigned long long adf4371_pll_fract_n_get_rate(struct adf4371_state *st,
+ 	unsigned long long val, tmp;
+ 	unsigned int ref_div_sel;
+ 
++	if (st->mod2 == 0)
++		return 0;
++
+ 	val = (((u64)st->integer * ADF4371_MODULUS1) + st->fract1) * st->fpfd;
+ 	tmp = (u64)st->fract2 * st->fpfd;
+ 	do_div(tmp, st->mod2);
+-- 
+2.17.1
+
