@@ -2,93 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9532613222B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:19:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3894D132235
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:23:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbgAGJTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 04:19:55 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2232 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726327AbgAGJTz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 04:19:55 -0500
-Received: from lhreml706-cah.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 0BE4F60C090931229475;
-        Tue,  7 Jan 2020 09:19:54 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- lhreml706-cah.china.huawei.com (10.201.108.47) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 7 Jan 2020 09:19:53 +0000
-Received: from [127.0.0.1] (10.202.226.43) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 7 Jan 2020
- 09:19:53 +0000
-Subject: Re: [PATCH] merge_config.sh: Add option for allmodconfig
-To:     Masahiro Yamada <masahiroy@kernel.org>
-CC:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        Anders Roxell <anders.roxell@linaro.org>
-References: <1575979754-184896-1-git-send-email-john.garry@huawei.com>
- <7e769634-eb22-5827-e2d8-df68134056c0@huawei.com>
- <CAK7LNAS+XHGete9u2SV7fTj3HpROQmzfuJhV8tXW_xXkoPOYvg@mail.gmail.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <538733b2-19af-9a66-f8d2-03e0f6ca7b25@huawei.com>
-Date:   Tue, 7 Jan 2020 09:19:52 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1727710AbgAGJX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 04:23:27 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:43591 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726327AbgAGJX1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 04:23:27 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0079HUtg001703;
+        Tue, 7 Jan 2020 10:22:53 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=STMicroelectronics;
+ bh=xFQQE6kgeKNO6UlYOlui/VsGLZg0eOZacGJld0hOGcs=;
+ b=xbWxsZpm4thxEojwsKJ0Eqn9TdnF1G3Kigv0zNNlo7HHz17GSXo3BTHc877V37dlRcnU
+ g2K6pHj4YsYGzzPn1MVfJmMDUrH6p4sKD30bC/XhPX41O5CEKyqa8jrVbGwb1thYClK/
+ U24hfn/QlhSZGYwkuUyTMBHI8dfIclL4FrW+b3Rh39r5HYTbSmFhmBYK9qOaGytuyu9X
+ VB8iRS0/TenxLsIn1gQj1y6VxjejRzgA4xUGEuzDRNg6knd+NtTy4nIdO71gd2kXfgGO
+ pZy9ca4Kxd8MAfskWEn4QImFVCTRqqxGWrrHYwMES83YW9baXvt1DUdrvPFMgyXhVIeE fw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xakuqn095-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 07 Jan 2020 10:22:53 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5D81F100039;
+        Tue,  7 Jan 2020 10:22:47 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E63122A790F;
+        Tue,  7 Jan 2020 10:22:46 +0100 (CET)
+Received: from lshz10676 (10.75.127.45) by SFHDAG5NODE3.st.com (10.75.127.15)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 Jan 2020 10:22:41
+ +0100
+Message-ID: <dc9a1a6a32b0e028837a315834c4723ed44dbac5.camel@st.com>
+Subject: Re: [PATCH] tracing: Fix printing ptrs in preempt/irq
+ enable/disable events
+From:   Antonio Borneo <antonio.borneo@st.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joel@joelfernandes.org>
+CC:     Ingo Molnar <mingo@redhat.com>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Date:   Tue, 7 Jan 2020 10:21:55 +0100
+In-Reply-To: <20191223151301.20be63f7@gandalf.local.home>
+References: <20191127154428.191095-1-antonio.borneo@st.com>
+         <20191204092115.30ef75c9@gandalf.local.home>
+         <20191221234741.GA116648@google.com>
+         <20191223151301.20be63f7@gandalf.local.home>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNAS+XHGete9u2SV7fTj3HpROQmzfuJhV8tXW_xXkoPOYvg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-ClientProxiedBy: lhreml729-chm.china.huawei.com (10.201.108.80) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2020-01-07_02:2020-01-06,2020-01-07 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/01/2020 18:04, Masahiro Yamada wrote:
-> On Mon, Jan 6, 2020 at 6:18 PM John Garry <john.garry@huawei.com> wrote:
->>
->> On 10/12/2019 12:09, John Garry wrote:
->>
->> Hi Masahiro,
->>
->> Could you please consider this patch?
->>
->> Thanks,
->> John
->>
->>> Recently there has been some work in reporting and fixing bugs in booting
->>> an allmodconfig kernel - here are a few examples:
->>>
->>> https://lore.kernel.org/linux-edac/304df85b-8b56-b77e-1a11-aa23769f2e7c@huawei.com/T/#t
->>> https://lore.kernel.org/linux-ide/bdf02e03-86a1-3d35-2908-28187f504495@huawei.com/T/#t
->>> https://lore.kernel.org/netdev/CADYN=9LCPfbpwdTWKw03B22-y3Text=RWXW7XP7wJBHYsMOgrA@mail.gmail.com/
->>> https://sourceforge.net/p/openipmi/mailman/message/36871567/
->>>
->>> If we want to boot an allmodconfig kernel we may still want to force some
->>> loadable modules built-in, like UART drivers. Or just still turn off some
->>> configs.
+On Mon, 2019-12-23 at 15:13 -0500, Steven Rostedt wrote:
+> On Sat, 21 Dec 2019 18:47:41 -0500
+> Joel Fernandes <joel@joelfernandes.org> wrote:
 > 
+> > On Wed, Dec 04, 2019 at 09:21:15AM -0500, Steven Rostedt wrote:
+> > > Joel,
+> > > 
+> > > Any comments on this patch?  
+> > 
+> > Steve, it looks like this issue happens with trace-cmd not knowing what
+> > _stext is. If I do cat trace_pipe , then I don't see the issue as _stext is
+> > looked up correctly but the reporter of the bug is using trace-cmd. Is there
+> > a way to solve this within trace-cmd? Not knowing much about trace-cmd
+> > internals, I will have to defer to you on this though..
+> > 
+> > Other than this, I need to make the offset to _stext as s32 instead of u32
+> > type so that the problem of the symbol location being before _stext does not
+> > cause overflow.
+> > 
+> > Lastly, I am not super convinced that we need to store the full pointer just
+> > to handle a case where the offset of the symbol might be more than +-2G from
+> > _stext. Once we see such issue, then we can handle it. But right now the size
+> > of the trace buffer is utilized better by just storing the offset IMHO.
+> > 
 > 
-> I do not understand why you need to use merge_config.sh
-> for this purpose.
+> Does this fix it for you?
 > 
-> KCONFIG_ALLCONFIG=<path-to-your-config-fragment> make allmodconfig
-> 
-> should work.
-> 
+> -- Steve
 > 
 
-Right, I could use that. But generally some people like to use 
-merge_config.sh directly:
+Steve,
 
-./scripts/kconfig/merge_config.sh [-a] fragment
+this patch fixes the issue for me, thanks!
+Tested-by: Antonio Borneo <antonio.borneo@st.com>
 
-so nice to have -a option for completeness.
+There are other cases where the trace buffer is under stress, e.g. during function tracing.
+Would it be useful to only store the offset in such cases too?
 
-Thanks,
-john
+Regards,
+Antonio
+
 
