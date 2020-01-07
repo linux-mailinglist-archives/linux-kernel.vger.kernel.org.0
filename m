@@ -2,44 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C12BB1333B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:21:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B9F113330C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:16:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728915AbgAGVDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:03:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45342 "EHLO mail.kernel.org"
+        id S1729836AbgAGVPy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:15:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728724AbgAGVD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:03:27 -0500
+        id S1729514AbgAGVHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:07:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 126C82077B;
-        Tue,  7 Jan 2020 21:03:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCA5B2077B;
+        Tue,  7 Jan 2020 21:07:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431005;
-        bh=BDI6/WTSkk2GpBJxGXBqEQbdfqRIM0rGrvfopXGfmMc=;
+        s=default; t=1578431253;
+        bh=1NcdiNwnH7To/Iqx5SZD2vBXi3MHmzy7tb1EB9E8u9g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kKStGFheJ//jkRIFQVpX4ISKqIM/UMlKBdnMqnFjbkF7qty8mppt0/2YQFHgYhFtq
-         MNV7E13rOQ181kvnH2rSuW785Rfb2NsyYPP2SHGF4LraHF5QbCv5wJMnytxvGA0/y8
-         gx5l0PX8EbQIR4ZLfa5NqIroqcE+Rcdrfuwg/uP4=
+        b=gdJoLCkWZqNtBMiqhQtxZR8ZO7golz9ZH7rNB/2H0mOhOCf09wLKRXWwVXcr4/vju
+         DoYOJDXW3bd6Jdujd51yyvOYtRtfqALn+LPIL5S+YLh/3iQjx8SbN23KD9JWr8Psv5
+         34eNf/FUZND9Ht+s1eSddNugKdBpZX+YC/j3wRHg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 186/191] perf/x86/intel/bts: Fix the use of page_private()
-Date:   Tue,  7 Jan 2020 21:55:06 +0100
-Message-Id: <20200107205342.943849559@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.19 097/115] bdev: Refresh bdev size for disks without partitioning
+Date:   Tue,  7 Jan 2020 21:55:07 +0100
+Message-Id: <20200107205307.375255965@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
-References: <20200107205332.984228665@linuxfoundation.org>
+In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
+References: <20200107205240.283674026@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,95 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Jan Kara <jack@suse.cz>
 
-[ Upstream commit ff61541cc6c1962957758ba433c574b76f588d23 ]
+commit cba22d86e0a10b7070d2e6a7379dbea51aa0883c upstream.
 
-Commit
+Currently, block device size in not updated on second and further open
+for block devices where partition scan is disabled. This is particularly
+annoying for example for DVD drives as that means block device size does
+not get updated once the media is inserted into a drive if the device is
+already open when inserting the media. This is actually always the case
+for example when pktcdvd is in use.
 
-  8062382c8dbe2 ("perf/x86/intel/bts: Add BTS PMU driver")
+Fix the problem by revalidating block device size on every open even for
+devices with partition scan disabled.
 
-brought in a warning with the BTS buffer initialization
-that is easily tripped with (assuming KPTI is disabled):
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-instantly throwing:
-
-> ------------[ cut here ]------------
-> WARNING: CPU: 2 PID: 326 at arch/x86/events/intel/bts.c:86 bts_buffer_setup_aux+0x117/0x3d0
-> Modules linked in:
-> CPU: 2 PID: 326 Comm: perf Not tainted 5.4.0-rc8-00291-gceb9e77324fa #904
-> RIP: 0010:bts_buffer_setup_aux+0x117/0x3d0
-> Call Trace:
->  rb_alloc_aux+0x339/0x550
->  perf_mmap+0x607/0xc70
->  mmap_region+0x76b/0xbd0
-...
-
-It appears to assume (for lost raisins) that PagePrivate() is set,
-while later it actually tests for PagePrivate() before using
-page_private().
-
-Make it consistent and always check PagePrivate() before using
-page_private().
-
-Fixes: 8062382c8dbe2 ("perf/x86/intel/bts: Add BTS PMU driver")
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Link: https://lkml.kernel.org/r/20191205142853.28894-2-alexander.shishkin@linux.intel.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/intel/bts.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ fs/block_dev.c |   19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/events/intel/bts.c b/arch/x86/events/intel/bts.c
-index 5ee3fed881d3..741540d849f3 100644
---- a/arch/x86/events/intel/bts.c
-+++ b/arch/x86/events/intel/bts.c
-@@ -63,9 +63,17 @@ struct bts_buffer {
- 
- static struct pmu bts_pmu;
- 
-+static int buf_nr_pages(struct page *page)
-+{
-+	if (!PagePrivate(page))
-+		return 1;
-+
-+	return 1 << page_private(page);
-+}
-+
- static size_t buf_size(struct page *page)
- {
--	return 1 << (PAGE_SHIFT + page_private(page));
-+	return buf_nr_pages(page) * PAGE_SIZE;
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -1328,11 +1328,7 @@ static void flush_disk(struct block_devi
+ 		       "resized disk %s\n",
+ 		       bdev->bd_disk ? bdev->bd_disk->disk_name : "");
+ 	}
+-
+-	if (!bdev->bd_disk)
+-		return;
+-	if (disk_part_scan_enabled(bdev->bd_disk))
+-		bdev->bd_invalidated = 1;
++	bdev->bd_invalidated = 1;
  }
  
- static void *
-@@ -83,9 +91,7 @@ bts_buffer_setup_aux(struct perf_event *event, void **pages,
- 	/* count all the high order buffers */
- 	for (pg = 0, nbuf = 0; pg < nr_pages;) {
- 		page = virt_to_page(pages[pg]);
--		if (WARN_ON_ONCE(!PagePrivate(page) && nr_pages > 1))
--			return NULL;
--		pg += 1 << page_private(page);
-+		pg += buf_nr_pages(page);
- 		nbuf++;
- 	}
+ /**
+@@ -1432,10 +1428,15 @@ static void __blkdev_put(struct block_de
  
-@@ -109,7 +115,7 @@ bts_buffer_setup_aux(struct perf_event *event, void **pages,
- 		unsigned int __nr_pages;
+ static void bdev_disk_changed(struct block_device *bdev, bool invalidate)
+ {
+-	if (invalidate)
+-		invalidate_partitions(bdev->bd_disk, bdev);
+-	else
+-		rescan_partitions(bdev->bd_disk, bdev);
++	if (disk_part_scan_enabled(bdev->bd_disk)) {
++		if (invalidate)
++			invalidate_partitions(bdev->bd_disk, bdev);
++		else
++			rescan_partitions(bdev->bd_disk, bdev);
++	} else {
++		check_disk_size_change(bdev->bd_disk, bdev, !invalidate);
++		bdev->bd_invalidated = 0;
++	}
+ }
  
- 		page = virt_to_page(pages[pg]);
--		__nr_pages = PagePrivate(page) ? 1 << page_private(page) : 1;
-+		__nr_pages = buf_nr_pages(page);
- 		buf->buf[nbuf].page = page;
- 		buf->buf[nbuf].offset = offset;
- 		buf->buf[nbuf].displacement = (pad ? BTS_RECORD_SIZE - pad : 0);
--- 
-2.20.1
-
+ /*
 
 
