@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54ABF1330FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:56:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A06A1330F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:56:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbgAGU4n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 15:56:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52348 "EHLO mail.kernel.org"
+        id S1727046AbgAGU4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 15:56:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727225AbgAGU4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:56:37 -0500
+        id S1726142AbgAGU4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 15:56:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21E1124656;
-        Tue,  7 Jan 2020 20:56:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C59220880;
+        Tue,  7 Jan 2020 20:56:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430596;
-        bh=UEpYZBGqNQReg916eMUc/K4UbcdQlGQLzBjcf9djdHQ=;
+        s=default; t=1578430577;
+        bh=ly/rn/Ukf4dQDBwDwrobZPKBf4kNn7H0xXc1rCJuA/A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1awwPcJNUdBRwCLm0mDuXJihzf8J8Hg3ky7/yyPmBcxc47W66hKHIbJd3paQUJXnE
-         T/Y3xYB/ADMZ+oV6tClyYrwl08UCnC9DXGlVHHQTvXYW4Vr1vDUlROS4BEychJ0x18
-         RzT/OKfJ5R29nc4cKuuzKXHlUNp1YTiRUmP6GlLA=
+        b=mo/JgtDWwNDE6AVO65cTeAc8k78dVXi/T0edcMAv7/v41KTxf4FsKr12q8wgULZaX
+         JfJGn4/cisE0T1VUGM87KpcAJaPgCBBYayQFgSwrY+Vi09nr7KYVF3VIyac2lIhvoJ
+         s6tNwb++5eJ7wqB3cgWop0+VzfuOOwbC5/xXFXgQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Galiffi <David.Galiffi@amd.com>,
+        stable@vger.kernel.org, Nikola Cornij <nikola.cornij@amd.com>,
         Tony Cheng <Tony.Cheng@amd.com>, Leo Li <sunpeng.li@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 008/191] drm/amd/display: Fixed kernel panic when booting with DP-to-HDMI dongle
-Date:   Tue,  7 Jan 2020 21:52:08 +0100
-Message-Id: <20200107205333.454512056@linuxfoundation.org>
+Subject: [PATCH 5.4 010/191] drm/amd/display: Reset steer fifo before unblanking the stream
+Date:   Tue,  7 Jan 2020 21:52:10 +0100
+Message-Id: <20200107205333.560146630@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
 References: <20200107205332.984228665@linuxfoundation.org>
@@ -45,40 +45,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Galiffi <David.Galiffi@amd.com>
+From: Nikola Cornij <nikola.cornij@amd.com>
 
-[ Upstream commit a51d9f8fe756beac51ce26ef54195da00a260d13 ]
+[ Upstream commit 87de6cb2f28153bc74d0a001ca099c29453e145f ]
 
-[Why]
-In dc_link_is_dp_sink_present, if dal_ddc_open fails, then
-dal_gpio_destroy_ddc is called, destroying pin_data and pin_clock. They
-are created only on dc_construct, and next aux access will cause a panic.
+[why]
+During mode transition steer fifo could overflow. Quite often it
+recovers by itself, but sometimes it doesn't.
 
-[How]
-Instead of calling dal_gpio_destroy_ddc, call dal_ddc_close.
+[how]
+Add steer fifo reset before unblanking the stream. Also add a short
+delay when resetting dig resync fifo to make sure register writes
+don't end up back-to-back, in which case the HW might miss the reset
+request.
 
-Signed-off-by: David Galiffi <David.Galiffi@amd.com>
+Signed-off-by: Nikola Cornij <nikola.cornij@amd.com>
 Reviewed-by: Tony Cheng <Tony.Cheng@amd.com>
 Acked-by: Leo Li <sunpeng.li@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_link.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../drm/amd/display/dc/dcn20/dcn20_stream_encoder.c  | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-index 067f5579f452..793aa8e8ec9a 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-@@ -373,7 +373,7 @@ bool dc_link_is_dp_sink_present(struct dc_link *link)
- 
- 	if (GPIO_RESULT_OK != dal_ddc_open(
- 		ddc, GPIO_MODE_INPUT, GPIO_DDC_CONFIG_TYPE_MODE_I2C)) {
--		dal_gpio_destroy_ddc(&ddc);
-+		dal_ddc_close(ddc);
- 
- 		return present;
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_stream_encoder.c b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_stream_encoder.c
+index 5ab9d6240498..e95025b1d14d 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_stream_encoder.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_stream_encoder.c
+@@ -492,15 +492,23 @@ void enc2_stream_encoder_dp_unblank(
+ 				DP_VID_N_MUL, n_multiply);
  	}
+ 
+-	/* set DIG_START to 0x1 to reset FIFO */
++	/* make sure stream is disabled before resetting steer fifo */
++	REG_UPDATE(DP_VID_STREAM_CNTL, DP_VID_STREAM_ENABLE, false);
++	REG_WAIT(DP_VID_STREAM_CNTL, DP_VID_STREAM_STATUS, 0, 10, 5000);
+ 
++	/* set DIG_START to 0x1 to reset FIFO */
+ 	REG_UPDATE(DIG_FE_CNTL, DIG_START, 1);
++	udelay(1);
+ 
+ 	/* write 0 to take the FIFO out of reset */
+ 
+ 	REG_UPDATE(DIG_FE_CNTL, DIG_START, 0);
+ 
+-	/* switch DP encoder to CRTC data */
++	/* switch DP encoder to CRTC data, but reset it the fifo first. It may happen
++	 * that it overflows during mode transition, and sometimes doesn't recover.
++	 */
++	REG_UPDATE(DP_STEER_FIFO, DP_STEER_FIFO_RESET, 1);
++	udelay(10);
+ 
+ 	REG_UPDATE(DP_STEER_FIFO, DP_STEER_FIFO_RESET, 0);
+ 
 -- 
 2.20.1
 
