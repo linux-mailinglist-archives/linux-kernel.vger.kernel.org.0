@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64D6E13349B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:27:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E968133486
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:26:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727890AbgAGU6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 15:58:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57732 "EHLO mail.kernel.org"
+        id S1727465AbgAGU6n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 15:58:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727884AbgAGU62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:58:28 -0500
+        id S1727412AbgAGU6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 15:58:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90E1B208C4;
-        Tue,  7 Jan 2020 20:58:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35AC0208C4;
+        Tue,  7 Jan 2020 20:58:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430708;
-        bh=X/6xvICbw8hI0o2RYXjRcQM+iteqfLO9+pizoBcrLNY=;
+        s=default; t=1578430717;
+        bh=w7x2HHVjQ86zAJ3fEYgFx+ap+WObzLzXfqLF4nzZdeM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c6qF07BYK1UKf5afeqixTZ4eyQ1+CkEHTLH2md63V/eK1piUL/zGoYmhosQka03dx
-         +MmtJ6zxslm5qxeYLiV3di5dTfGMPMYOLlGcS7Gf0C8YB0WwAx3eWYc9EPOhQ6/7U+
-         nFxK6MRjKAONptj45EUWG+K3ukNc5b1axsYyaOQg=
+        b=wcGNlMzS0u8yEpYy6L2hefdMGY2iYSU/FIU4p2DEx5sKi8pNGOjNI5D4LhPeFEFtb
+         ixYvHdowjdEnDhvl8e3sG23hqLDw1tzrhIcbV8kh6N5xmmhDsOEjuHK9Qhlue38+kH
+         G4boimqms4ZQ7LeH9riEdlJpemUJd/QWmw/g+n58=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phil Sutter <phil@nwl.cc>,
-        Florian Westphal <fw@strlen.de>,
-        =?UTF-8?q?M=C3=A1t=C3=A9=20Eckl?= <ecklm94@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 063/191] netfilter: nft_tproxy: Fix port selector on Big Endian
-Date:   Tue,  7 Jan 2020 21:53:03 +0100
-Message-Id: <20200107205336.364946007@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.4 067/191] ALSA: usb-audio: fix set_format altsetting sanity check
+Date:   Tue,  7 Jan 2020 21:53:07 +0100
+Message-Id: <20200107205336.576580613@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
 References: <20200107205332.984228665@linuxfoundation.org>
@@ -46,48 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phil Sutter <phil@nwl.cc>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 8cb4ec44de42b99b92399b4d1daf3dc430ed0186 ]
+commit 0141254b0a74b37aa7eb13d42a56adba84d51c73 upstream.
 
-On Big Endian architectures, u16 port value was extracted from the wrong
-parts of u32 sreg_port, just like commit 10596608c4d62 ("netfilter:
-nf_tables: fix mismatch in big-endian system") describes.
+Make sure to check the return value of usb_altnum_to_altsetting() to
+avoid dereferencing a NULL pointer when the requested alternate settings
+is missing.
 
-Fixes: 4ed8eb6570a49 ("netfilter: nf_tables: Add native tproxy support")
-Signed-off-by: Phil Sutter <phil@nwl.cc>
-Acked-by: Florian Westphal <fw@strlen.de>
-Acked-by: Máté Eckl <ecklm94@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The format altsetting number may come from a quirk table and there does
+not seem to be any other validation of it (the corresponding index is
+checked however).
+
+Fixes: b099b9693d23 ("ALSA: usb-audio: Avoid superfluous usb_set_interface() calls")
+Cc: stable <stable@vger.kernel.org>     # 4.18
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191220093134.1248-1-johan@kernel.org
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/netfilter/nft_tproxy.c | 4 ++--
+ sound/usb/pcm.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/netfilter/nft_tproxy.c b/net/netfilter/nft_tproxy.c
-index f92a82c73880..95980154ef02 100644
---- a/net/netfilter/nft_tproxy.c
-+++ b/net/netfilter/nft_tproxy.c
-@@ -50,7 +50,7 @@ static void nft_tproxy_eval_v4(const struct nft_expr *expr,
- 	taddr = nf_tproxy_laddr4(skb, taddr, iph->daddr);
+--- a/sound/usb/pcm.c
++++ b/sound/usb/pcm.c
+@@ -506,9 +506,9 @@ static int set_format(struct snd_usb_sub
+ 	if (WARN_ON(!iface))
+ 		return -EINVAL;
+ 	alts = usb_altnum_to_altsetting(iface, fmt->altsetting);
+-	altsd = get_iface_desc(alts);
+-	if (WARN_ON(altsd->bAlternateSetting != fmt->altsetting))
++	if (WARN_ON(!alts))
+ 		return -EINVAL;
++	altsd = get_iface_desc(alts);
  
- 	if (priv->sreg_port)
--		tport = regs->data[priv->sreg_port];
-+		tport = nft_reg_load16(&regs->data[priv->sreg_port]);
- 	if (!tport)
- 		tport = hp->dest;
- 
-@@ -117,7 +117,7 @@ static void nft_tproxy_eval_v6(const struct nft_expr *expr,
- 	taddr = *nf_tproxy_laddr6(skb, &taddr, &iph->daddr);
- 
- 	if (priv->sreg_port)
--		tport = regs->data[priv->sreg_port];
-+		tport = nft_reg_load16(&regs->data[priv->sreg_port]);
- 	if (!tport)
- 		tport = hp->dest;
- 
--- 
-2.20.1
-
+ 	if (fmt == subs->cur_audiofmt)
+ 		return 0;
 
 
