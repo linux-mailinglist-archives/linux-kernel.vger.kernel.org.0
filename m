@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75520133350
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:18:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B289D13336F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:19:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbgAGVFK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:05:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50402 "EHLO mail.kernel.org"
+        id S1729118AbgAGVSt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:18:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729152AbgAGVE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:04:58 -0500
+        id S1729162AbgAGVFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:05:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB03D208C4;
-        Tue,  7 Jan 2020 21:04:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E2F920880;
+        Tue,  7 Jan 2020 21:04:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431097;
-        bh=2bMuPcYA2w0T53ycVmNUWOVXw+mh99/IzF25dFyGyK4=;
+        s=default; t=1578431099;
+        bh=0qfrtZ5NmyJsBBCly+ROPI0/m910v0h1Lcw9xY4CtBA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G/VV+c2QHactD3ednw27Hhi5P19Gc7rUiYSMLAaONe8BNPsgp8COQIU9BKMwYg9II
-         DlbFaMz2yyf9Jfnfnc4XFdOzm6yjQY/7NurZpv1Otzfmq9cAflsMiJIFiHrRHDOz7I
-         7fqMN13SE6EiApjV2HSFnR3GoTxAbuTNPVNvv1Mg=
+        b=qpk5pChCM+3YAYS3NdzWr1hZ7nt0EGNeplw46PYxBkFeDvm8+/wnrO67P7G/6X9kN
+         s3C6u1KaesFrSHa5RqexEA2UMD+qT2rovD654uZylNoSShtgsDgaWBY6FfapBjb6SC
+         vkNoc9irgq5yLY6HOC25X1/xjN2X4XGtjuL3Gi7Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Durrant <pdurrant@amazon.com>,
-        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+        stable@vger.kernel.org,
+        Nicholas Tsirakis <niko.tsirakis@gmail.com>,
         Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 032/115] xen-blkback: prevent premature module unload
-Date:   Tue,  7 Jan 2020 21:54:02 +0100
-Message-Id: <20200107205301.243348778@linuxfoundation.org>
+Subject: [PATCH 4.19 033/115] xen/balloon: fix ballooned page accounting without hotplug enabled
+Date:   Tue,  7 Jan 2020 21:54:03 +0100
+Message-Id: <20200107205301.310423800@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
 References: <20200107205240.283674026@linuxfoundation.org>
@@ -45,54 +46,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Durrant <pdurrant@amazon.com>
+From: Juergen Gross <jgross@suse.com>
 
-[ Upstream commit fa2ac657f9783f0891b2935490afe9a7fd29d3fa ]
+[ Upstream commit c673ec61ade89bf2f417960f986bc25671762efb ]
 
-Objects allocated by xen_blkif_alloc come from the 'blkif_cache' kmem
-cache. This cache is destoyed when xen-blkif is unloaded so it is
-necessary to wait for the deferred free routine used for such objects to
-complete. This necessity was missed in commit 14855954f636 "xen-blkback:
-allow module to be cleanly unloaded". This patch fixes the problem by
-taking/releasing extra module references in xen_blkif_alloc/free()
-respectively.
+When CONFIG_XEN_BALLOON_MEMORY_HOTPLUG is not defined
+reserve_additional_memory() will set balloon_stats.target_pages to a
+wrong value in case there are still some ballooned pages allocated via
+alloc_xenballooned_pages().
 
-Signed-off-by: Paul Durrant <pdurrant@amazon.com>
-Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
+This will result in balloon_process() no longer be triggered when
+ballooned pages are freed in batches.
+
+Reported-by: Nicholas Tsirakis <niko.tsirakis@gmail.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/xen-blkback/xenbus.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/xen/balloon.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-index 55869b362fdf..25c41ce070a7 100644
---- a/drivers/block/xen-blkback/xenbus.c
-+++ b/drivers/block/xen-blkback/xenbus.c
-@@ -179,6 +179,15 @@ static struct xen_blkif *xen_blkif_alloc(domid_t domid)
- 	blkif->domid = domid;
- 	atomic_set(&blkif->refcnt, 1);
- 	init_completion(&blkif->drain_complete);
-+
-+	/*
-+	 * Because freeing back to the cache may be deferred, it is not
-+	 * safe to unload the module (and hence destroy the cache) until
-+	 * this has completed. To prevent premature unloading, take an
-+	 * extra module reference here and release only when the object
-+	 * has been freed back to the cache.
-+	 */
-+	__module_get(THIS_MODULE);
- 	INIT_WORK(&blkif->free_work, xen_blkif_deferred_free);
- 
- 	return blkif;
-@@ -328,6 +337,7 @@ static void xen_blkif_free(struct xen_blkif *blkif)
- 
- 	/* Make sure everything is drained before shutting down */
- 	kmem_cache_free(xen_blkif_cachep, blkif);
-+	module_put(THIS_MODULE);
+diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+index 747a15acbce3..6fa7209f24f4 100644
+--- a/drivers/xen/balloon.c
++++ b/drivers/xen/balloon.c
+@@ -395,7 +395,8 @@ static struct notifier_block xen_memory_nb = {
+ #else
+ static enum bp_state reserve_additional_memory(void)
+ {
+-	balloon_stats.target_pages = balloon_stats.current_pages;
++	balloon_stats.target_pages = balloon_stats.current_pages +
++				     balloon_stats.target_unpopulated;
+ 	return BP_ECANCELED;
  }
- 
- int __init xen_blkif_interface_init(void)
+ #endif /* CONFIG_XEN_BALLOON_MEMORY_HOTPLUG */
 -- 
 2.20.1
 
