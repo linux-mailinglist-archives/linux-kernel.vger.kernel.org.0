@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7E9E1332B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:13:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D7641332B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:13:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729976AbgAGVKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:10:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37050 "EHLO mail.kernel.org"
+        id S1729985AbgAGVKf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:10:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729949AbgAGVKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:10:25 -0500
+        id S1729957AbgAGVK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:10:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CF2C2072A;
-        Tue,  7 Jan 2020 21:10:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DAEFE208C4;
+        Tue,  7 Jan 2020 21:10:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431424;
-        bh=GxdSfhBqdz7SBcFoNt6JEff3WqZ2sYPeWhFqyuzxB4Q=;
+        s=default; t=1578431427;
+        bh=Du2QUUW3B3tz0fz3NBcjVpXpdDBoPzKjdz0jyzQXXJw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O3tmiYL7TcotsAG81zxvJrwycmECdUEqIth2k11swh66mtz/mHBC9rcC4D+N/WyZj
-         /ZnBSHoNHtLJbMV5KiXS2wJwK6Wn9r/m2+/x6jPIUefqwRpklpM+mkDqV2k2jszL+W
-         I28VeZ+XDdJArGQ6BQ2Xi9/lRcBdELny/P3/R5b0=
+        b=Res4NANhLiVKS8K5K3ZCnqadVDrCVMfT5DLXCI+S3Od5ptwoLRkAXzgvv8jBDIYoW
+         WvZHT0F6/8MAans8d228266ZpC+Y4X/fFNfvLrWW1mSqzssRYPSoEGeNDPYqr2FozI
+         c0xjy2IzTRGC+s8oE4cUNE75oaCX96DdkPLJJIbQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Michael Haener <michael.haener@siemens.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.14 51/74] platform/x86: pmc_atom: Add Siemens CONNECT X300 to critclk_systems DMI table
-Date:   Tue,  7 Jan 2020 21:55:16 +0100
-Message-Id: <20200107205217.422380999@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.14 52/74] Bluetooth: btusb: fix PM leak in error case of setup
+Date:   Tue,  7 Jan 2020 21:55:17 +0100
+Message-Id: <20200107205218.150605138@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205135.369001641@linuxfoundation.org>
 References: <20200107205135.369001641@linuxfoundation.org>
@@ -44,40 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Haener <michael.haener@siemens.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit e8796c6c69d129420ee94a1906b18d86b84644d4 upstream.
+commit 3d44a6fd0775e6215e836423e27f8eedf8c871ea upstream.
 
-The CONNECT X300 uses the PMC clock for on-board components and gets
-stuck during boot if the clock is disabled. Therefore, add this
-device to the critical systems list.
-Tested on CONNECT X300.
+If setup() fails a reference for runtime PM has already
+been taken. Proper use of the error handling in btusb_open()is needed.
+You cannot just return.
 
-Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
-Signed-off-by: Michael Haener <michael.haener@siemens.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Fixes: ace31982585a3 ("Bluetooth: btusb: Add setup callback for chip init on USB")
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/platform/x86/pmc_atom.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/bluetooth/btusb.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/platform/x86/pmc_atom.c
-+++ b/drivers/platform/x86/pmc_atom.c
-@@ -482,6 +482,14 @@ static const struct dmi_system_id critcl
- 			DMI_MATCH(DMI_PRODUCT_VERSION, "6ES7647-8B"),
- 		},
- 	},
-+	{
-+		.ident = "CONNECT X300",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "SIEMENS AG"),
-+			DMI_MATCH(DMI_PRODUCT_VERSION, "A5E45074588"),
-+		},
-+	},
-+
- 	{ /*sentinel*/ }
- };
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -1123,7 +1123,7 @@ static int btusb_open(struct hci_dev *hd
+ 	if (data->setup_on_usb) {
+ 		err = data->setup_on_usb(hdev);
+ 		if (err < 0)
+-			return err;
++			goto setup_fail;
+ 	}
  
+ 	data->intf->needs_remote_wakeup = 1;
+@@ -1155,6 +1155,7 @@ done:
+ 
+ failed:
+ 	clear_bit(BTUSB_INTR_RUNNING, &data->flags);
++setup_fail:
+ 	usb_autopm_put_interface(data->intf);
+ 	return err;
+ }
 
 
