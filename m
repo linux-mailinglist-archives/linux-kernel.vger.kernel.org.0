@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0F6D133243
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:09:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5D061331CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:04:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729738AbgAGVIr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:08:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33174 "EHLO mail.kernel.org"
+        id S1729003AbgAGVEC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:04:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729722AbgAGVIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:08:39 -0500
+        id S1728043AbgAGVDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:03:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3ADE920678;
-        Tue,  7 Jan 2020 21:08:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7B7E2081E;
+        Tue,  7 Jan 2020 21:03:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431318;
-        bh=uVBvV2Nb/uTe5XdSsCAhOEwc3wM/BVjBR7QlHHVPaRU=;
+        s=default; t=1578431034;
+        bh=qQqkLG6E4zlxNyW71ejH7Xg6ZNSF3zn+NcXKNezev8k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZkzHk+8PXiPM5S5tkNz4dMJnWfncJ0u39XmT01/qXu8p1K7Wf9w9zXQyj5sPOa99I
-         o6us/7DsMrYp2pxGd+Tjqq7WD6PPiVy+LrkmlkuwNxOfhIyhvo77qX2/TQyDW0fLH9
-         WwZQ0bzlEliYWu6IFWXdkrnj0mZdLWc1ER8ArKHU=
+        b=RiIr8yTyknmDAemZk5w80NFsfxsIcumO2e5cFw5mi8kurtfVb2Byb1TllYNA4dmdu
+         FZF634h8InI+9byBlAZ8pWtIpWHgUgbnytCUaLTmJt++swdxufgR1cJcOFts4yfppA
+         HMprsuvWtqvAXEfw8Lryus4dHzD4M6a8L+XllpWo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Mayhew <smayhew@redhat.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.19 081/115] nfsd4: fix up replay_matches_cache()
+        stable@vger.kernel.org, Deepa Dinamani <deepa.kernel@gmail.com>,
+        stfrench@microsoft.com, linux-cifs@vger.kernel.org
+Subject: [PATCH 5.4 171/191] fs: cifs: Fix atime update check vs mtime
 Date:   Tue,  7 Jan 2020 21:54:51 +0100
-Message-Id: <20200107205304.751841084@linuxfoundation.org>
+Message-Id: <20200107205342.153253181@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-References: <20200107205240.283674026@linuxfoundation.org>
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+References: <20200107205332.984228665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Scott Mayhew <smayhew@redhat.com>
+From: Deepa Dinamani <deepa.kernel@gmail.com>
 
-commit 6e73e92b155c868ff7fce9d108839668caf1d9be upstream.
+commit 69738cfdfa7032f45d9e7462d24490e61cf163dd upstream.
 
-When running an nfs stress test, I see quite a few cached replies that
-don't match up with the actual request.  The first comment in
-replay_matches_cache() makes sense, but the code doesn't seem to
-match... fix it.
+According to the comment in the code and commit log, some apps
+expect atime >= mtime; but the introduced code results in
+atime==mtime.  Fix the comparison to guard against atime<mtime.
 
-This isn't exactly a bugfix, as the server isn't required to catch every
-case of a false retry.  So, we may as well do this, but if this is
-fixing a problem then that suggests there's a client bug.
-
-Fixes: 53da6a53e1d4 ("nfsd4: catch some false session retries")
-Signed-off-by: Scott Mayhew <smayhew@redhat.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Fixes: 9b9c5bea0b96 ("cifs: do not return atime less than mtime")
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+Cc: stfrench@microsoft.com
+Cc: linux-cifs@vger.kernel.org
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfsd/nfs4state.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ fs/cifs/inode.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -3072,12 +3072,17 @@ static bool replay_matches_cache(struct
- 	    (bool)seq->cachethis)
- 		return false;
- 	/*
--	 * If there's an error than the reply can have fewer ops than
--	 * the call.  But if we cached a reply with *more* ops than the
--	 * call you're sending us now, then this new call is clearly not
--	 * really a replay of the old one:
-+	 * If there's an error then the reply can have fewer ops than
-+	 * the call.
- 	 */
--	if (slot->sl_opcnt < argp->opcnt)
-+	if (slot->sl_opcnt < argp->opcnt && !slot->sl_status)
-+		return false;
-+	/*
-+	 * But if we cached a reply with *more* ops than the call you're
-+	 * sending us now, then this new call is clearly not really a
-+	 * replay of the old one:
-+	 */
-+	if (slot->sl_opcnt > argp->opcnt)
- 		return false;
- 	/* This is the only check explicitly called by spec: */
- 	if (!same_creds(&rqstp->rq_cred, &slot->sl_cred))
+--- a/fs/cifs/inode.c
++++ b/fs/cifs/inode.c
+@@ -163,7 +163,7 @@ cifs_fattr_to_inode(struct inode *inode,
+ 
+ 	spin_lock(&inode->i_lock);
+ 	/* we do not want atime to be less than mtime, it broke some apps */
+-	if (timespec64_compare(&fattr->cf_atime, &fattr->cf_mtime))
++	if (timespec64_compare(&fattr->cf_atime, &fattr->cf_mtime) < 0)
+ 		inode->i_atime = fattr->cf_mtime;
+ 	else
+ 		inode->i_atime = fattr->cf_atime;
 
 
