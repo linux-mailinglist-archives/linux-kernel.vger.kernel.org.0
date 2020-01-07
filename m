@@ -2,216 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32155132089
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 08:36:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72BF5132090
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 08:37:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbgAGHgh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 02:36:37 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:45909 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725781AbgAGHgh (ORCPT
+        id S1727648AbgAGHhH convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 7 Jan 2020 02:37:07 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44289 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727328AbgAGHhF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 02:36:37 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 52F6F5B5D;
-        Tue,  7 Jan 2020 02:36:35 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Tue, 07 Jan 2020 02:36:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm1; bh=Mg4fIAkD6eFfbiT3IolICMGiWQ
-        TzkVNAbk4h1mfqhog=; b=Pa/g/f8oo4cQx9NkhcnuK8oTgbYSBRDaiA5Q/MH5Dn
-        Tyj9WAlBUWXg917wPOzrzbbIEFEFdHvLleHYIVvyHNPiXdiSdT6oUCBRFVeJ7cMd
-        XZ7mlIPhEQPRwr4EW4lrAMuiVFPD5SXhyBu7SrDtLLzvPkjsNUVthk0Cy9PRr6EZ
-        zh6ZSzE+8e00pS+47Lehc/cLNgld80r97Ps3NJFWnb5dTUZlPM0QVfWzybNiXib1
-        /0Pkltn9mps8wt5PukVxuXiX3yeiS7nh85dNhBBvXGjh25zq3Fji7HHKip/OECqK
-        ceaM46nMTk1Zh2w0BqMSc2h/kutYOUeelfbAcBwDMDBQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=Mg4fIAkD6eFfbiT3I
-        olICMGiWQTzkVNAbk4h1mfqhog=; b=jlJR6u0A/S33tF2m/zZWkOsttnXnfuJ+e
-        L+aKvoe2H7OWbk6FOK2wI/RHpPQlBxsw1eCeHR95uRzAvPJQnx/W+DT2p8MUywVA
-        CmjhhC9JHiBFiU2CZLnYH3QqZzyCWyUPogn60BAXuTcF6sER9nUbMQEIs83wUEUk
-        zkS6wuyqzRVfoyCuNYRPM8HPERo0QDQbfjRn3g7dlZYZoMGIgWTmVw2lLTMc80Fd
-        ZBtnz3n1LYS3o52FrBhDLBIh/jNb04leVsFxEzvNztCbAsrEaEUkVOfYk2QQHvY+
-        fgaCRfkaMXI98rGsmagsdxdA45Qq3y9JN7QlrDwxGyGUYxSNU4yfQ==
-X-ME-Sender: <xms:ATUUXtC04Pdby9YlFx0yTeLRcoW0Su3lNt9A_bMy9TgabagrtshVIg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdehuddguddutdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucffohhmrghinh
-    eplhhipheirdhfrhenucfkphepledtrdekledrieekrdejieenucfrrghrrghmpehmrghi
-    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthhenucevlhhushhtvghrufhiii
-    gvpedt
-X-ME-Proxy: <xmx:ATUUXpCMr6x-uR8_vveBYfxKvomej8cH-ut68a0jQSNptSbroHAJUg>
-    <xmx:ATUUXkpPPb7QkGwGwZ0__9vL0nBechXn8-ktFuoxYAlvmMR9r7Et0w>
-    <xmx:ATUUXlAmAPjIPjr1xTXdhqsNWchEq2CoJxyYQAUSc_mznsbGafTqqA>
-    <xmx:AzUUXjXxKnjhbOWv9HT4Yi9lplYR8mokbJy0dRWgmk-V2iitaoC5HA>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 2B71880061;
-        Tue,  7 Jan 2020 02:36:33 -0500 (EST)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Julia.Lawall@lip6.fr, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr,
-        michal.lkml@markovi.net
-Cc:     cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
-        Maxime Ripard <maxime@cerno.tech>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH] coccinnelle: Remove ptr_ret script
-Date:   Tue,  7 Jan 2020 08:36:29 +0100
-Message-Id: <20200107073629.325249-1-maxime@cerno.tech>
-X-Mailer: git-send-email 2.24.1
+        Tue, 7 Jan 2020 02:37:05 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iojPs-0002Uy-A7; Tue, 07 Jan 2020 08:36:42 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id ECC161C2818;
+        Tue,  7 Jan 2020 08:36:39 +0100 (CET)
+Date:   Tue, 07 Jan 2020 07:36:39 -0000
+From:   "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/asm] x86/context-tracking: Remove exception_enter/exit()
+ from KVM_PV_REASON_PAGE_NOT_PRESENT async page fault
+Cc:     Frederic Weisbecker <frederic@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, rkrcmar@redhat.com,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191227163612.10039-3-frederic@kernel.org>
+References: <20191227163612.10039-3-frederic@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <157838259976.30329.2361880432274714654.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ptr_ret script script addresses a number of situations where we end up
-testing an error pointer, and if it's an error returning it, or return 0
-otherwise to transform it into a PTR_ERR_OR_ZERO call.
+The following commit has been merged into the x86/asm branch of tip:
 
-So it will convert a block like this:
+Commit-ID:     50cc02e599ef1e049473358604dc07d32b751e2c
+Gitweb:        https://git.kernel.org/tip/50cc02e599ef1e049473358604dc07d32b751e2c
+Author:        Frederic Weisbecker <frederic@kernel.org>
+AuthorDate:    Fri, 27 Dec 2019 17:36:12 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 07 Jan 2020 08:11:23 +01:00
 
-if (IS_ERR(err))
-    return PTR_ERR(err);
+x86/context-tracking: Remove exception_enter/exit() from KVM_PV_REASON_PAGE_NOT_PRESENT async page fault
 
-return 0;
+This is a leftover. Page faults, just like most other exceptions,
+are protected inside user_exit() / user_enter() calls in x86 entry code
+when we fault from userspace. So this pair of calls is now superfluous.
 
-into
-
-return PTR_ERR_OR_ZERO(err);
-
-While this is technically correct, it has a number of drawbacks. First, it
-merges the error and success path, which will make it harder for a reviewer
-or reader to grasp.
-
-It's also more difficult to extend if we were to add some code between the
-error check and the function return, making the author essentially revert
-that patch before adding new lines, while it would have been a trivial
-addition otherwise for the rewiever.
-
-Therefore, since that script is only about cosmetic in the first place,
-let's remove it since it's not worth it.
-
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Mark Brown <broonie@kernel.org>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jim Mattson <jmattson@google.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Wanpeng Li <wanpengli@tencent.com>
+Link: https://lkml.kernel.org/r/20191227163612.10039-3-frederic@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- scripts/coccinelle/api/ptr_ret.cocci | 97 ----------------------------
- 1 file changed, 97 deletions(-)
- delete mode 100644 scripts/coccinelle/api/ptr_ret.cocci
+ arch/x86/kernel/kvm.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/scripts/coccinelle/api/ptr_ret.cocci b/scripts/coccinelle/api/ptr_ret.cocci
-deleted file mode 100644
-index e76cd5d90a8a..000000000000
---- a/scripts/coccinelle/api/ptr_ret.cocci
-+++ /dev/null
-@@ -1,97 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--///
--/// Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
--///
--// Confidence: High
--// Copyright: (C) 2012 Julia Lawall, INRIA/LIP6.
--// Copyright: (C) 2012 Gilles Muller, INRIA/LiP6.
--// URL: http://coccinelle.lip6.fr/
--// Options: --no-includes --include-headers
--//
--// Keywords: ERR_PTR, PTR_ERR, PTR_ERR_OR_ZERO
--// Version min: 2.6.39
--//
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index 32ef1ee..81045aa 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -245,17 +245,13 @@ NOKPROBE_SYMBOL(kvm_read_and_reset_pf_reason);
+ dotraplinkage void
+ do_async_page_fault(struct pt_regs *regs, unsigned long error_code, unsigned long address)
+ {
+-	enum ctx_state prev_state;
 -
--virtual context
--virtual patch
--virtual org
--virtual report
--
--@depends on patch@
--expression ptr;
--@@
--
--- if (IS_ERR(ptr)) return PTR_ERR(ptr); else return 0;
--+ return PTR_ERR_OR_ZERO(ptr);
--
--@depends on patch@
--expression ptr;
--@@
--
--- if (IS_ERR(ptr)) return PTR_ERR(ptr); return 0;
--+ return PTR_ERR_OR_ZERO(ptr);
--
--@depends on patch@
--expression ptr;
--@@
--
--- (IS_ERR(ptr) ? PTR_ERR(ptr) : 0)
--+ PTR_ERR_OR_ZERO(ptr)
--
--@r1 depends on !patch@
--expression ptr;
--position p1;
--@@
--
--* if@p1 (IS_ERR(ptr)) return PTR_ERR(ptr); else return 0;
--
--@r2 depends on !patch@
--expression ptr;
--position p2;
--@@
--
--* if@p2 (IS_ERR(ptr)) return PTR_ERR(ptr); return 0;
--
--@r3 depends on !patch@
--expression ptr;
--position p3;
--@@
--
--* IS_ERR@p3(ptr) ? PTR_ERR(ptr) : 0
--
--@script:python depends on org@
--p << r1.p1;
--@@
--
--coccilib.org.print_todo(p[0], "WARNING: PTR_ERR_OR_ZERO can be used")
--
--
--@script:python depends on org@
--p << r2.p2;
--@@
--
--coccilib.org.print_todo(p[0], "WARNING: PTR_ERR_OR_ZERO can be used")
--
--@script:python depends on org@
--p << r3.p3;
--@@
--
--coccilib.org.print_todo(p[0], "WARNING: PTR_ERR_OR_ZERO can be used")
--
--@script:python depends on report@
--p << r1.p1;
--@@
--
--coccilib.report.print_report(p[0], "WARNING: PTR_ERR_OR_ZERO can be used")
--
--@script:python depends on report@
--p << r2.p2;
--@@
--
--coccilib.report.print_report(p[0], "WARNING: PTR_ERR_OR_ZERO can be used")
--
--@script:python depends on report@
--p << r3.p3;
--@@
--
--coccilib.report.print_report(p[0], "WARNING: PTR_ERR_OR_ZERO can be used")
--- 
-2.24.1
-
+ 	switch (kvm_read_and_reset_pf_reason()) {
+ 	default:
+ 		do_page_fault(regs, error_code, address);
+ 		break;
+ 	case KVM_PV_REASON_PAGE_NOT_PRESENT:
+ 		/* page is swapped out by the host. */
+-		prev_state = exception_enter();
+ 		kvm_async_pf_task_wait((u32)address, !user_mode(regs));
+-		exception_exit(prev_state);
+ 		break;
+ 	case KVM_PV_REASON_PAGE_READY:
+ 		rcu_irq_enter();
