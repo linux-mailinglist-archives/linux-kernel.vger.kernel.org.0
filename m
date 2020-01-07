@@ -2,87 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBAC41326C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 13:53:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70C031326CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 13:57:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbgAGMw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 07:52:56 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33818 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727834AbgAGMw4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 07:52:56 -0500
-Received: by mail-lf1-f68.google.com with SMTP id l18so30629338lfc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 04:52:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L8QAs8mXhglioLsPrlc/f2d1DW6plEBLWoC91qHtQLU=;
-        b=Yn2TyRB1A6iQIcJmRjrzeaQqGvJOWo7XoWbfKsG+WVNnyHmbbqAm3wws8axVbSrvx8
-         OYAvdEREwIT61Jq7XS24FPZabB6NFf6CBMS+nk0infpFkx8TMso1GTjbUKZSWQSBei5w
-         HeMofh8JjZTxSuMRQYKXswWZEJVsyKirJsdh84VnRNEDBHVnCQmLzMcMRmtA3ydGNgfa
-         5L30k/tpjPghGC26xYQZDChA/vk1hkf75dK9VaZF9Qi9vccEh9vpmh4STE4jsKJj/QfX
-         RrhfavmoM0fIfBpoXr4XH95IpmY9v05ug4VeNSkEk9IJolXbtwHfYdXRZEAMEgz3UTAB
-         nZ/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L8QAs8mXhglioLsPrlc/f2d1DW6plEBLWoC91qHtQLU=;
-        b=C2PmX1Wr5LJ2896N8FLePHOMj7xlh2r/ZyD1M1rrrZTHtIOUYSrH82WQhoSRTs7ZeP
-         H2sf+sXnqLsaMtkECRZoyzBPfaRh5e9QwjPg38HAGvzk2byDuxIkxklGE5iqItf+4ZEo
-         0TkdwFeRKeuYSEQBCpBtj2eKi5sQZB4cjzVRpNRMWzXfw2419Fy1ASZyyQeF57rymGcw
-         GvZ16zuCtcpDbniONdnzdrGuiYtPSKUVOKlw+wO2TRpvlwxSJK4RXfuDJaylXI4UzMa1
-         QDp9ZDwGlOnvy/9nosWLJtn1lMVcau57xsqAVLrWUSJtvFOPeEmadPEc6fM2IHlBSehY
-         XGCQ==
-X-Gm-Message-State: APjAAAUduzvmfXTUi/9Pncu2IcyBvFL8psofXyTd2l9fUJcnTcwLIsQ7
-        X+8lwg85bNeV1wlKUjroL17TD3UC9xtwfXR2AhGFGzrlN48=
-X-Google-Smtp-Source: APXvYqzkwnIC5nKfdjXTDBBv2eSE257wx56BzcThYlaspGGuetJJ+vOHhNKo0xsogQPtM2m4KtEFsYSOjhMxMQYb2yo=
-X-Received: by 2002:ac2:4945:: with SMTP id o5mr58545952lfi.93.1578401572910;
- Tue, 07 Jan 2020 04:52:52 -0800 (PST)
+        id S1727967AbgAGM5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 07:57:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41284 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727722AbgAGM5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 07:57:05 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6ECAC2080A;
+        Tue,  7 Jan 2020 12:57:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578401823;
+        bh=S6eYAHEAnh56A6/rf0Ao/cnAVOv+g+TUtiatVw4xlbw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aklwGojMnsmTZt+FSLulrblSYJnFXVxmqgP1t00LJFC5aUw+SVWMxEDZaB7lA7lum
+         LR7UiAfwS9IBMk7zcndin8jpfFFeFAa9cyRsjpt4+Chlh/OGDMpXrQLXbCHTjL8aa9
+         4LMWu8z31+jZY35hEqtPIWxqU1smPMsgi5oLkZBs=
+Date:   Tue, 7 Jan 2020 13:57:00 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Lucas Stach <dev@lynxeye.de>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mmc: tegra: fix SDR50 tuning override
+Message-ID: <20200107125700.GA1035344@kroah.com>
+References: <245d569e4c258063dbd78bd30c7027638b30f059.1577960737.git.mirq-linux@rere.qmqm.pl>
+ <20200106120718.GA1955714@ulmo>
+ <20200106122745.GA3414443@kroah.com>
+ <20200106133703.GE1955714@ulmo>
+ <20200107093715.GB1028311@kroah.com>
+ <20200107095359.GA3515@qmqm.qmqm.pl>
 MIME-Version: 1.0
-References: <20191218101602.2442868-1-ben.dooks@codethink.co.uk>
- <20191218162616.qsxsltfsrxotzqhb@axis.com> <048c9653-114b-f726-44b2-9eb1d460b5b5@codethink.co.uk>
- <CACRpkdYFzHCMLj5oU5JMCkQkMZyOvM5351tpO6iEsE8e5nBZWQ@mail.gmail.com> <20200107111836.uzvja6m4nb5hh56j@axis.com>
-In-Reply-To: <20200107111836.uzvja6m4nb5hh56j@axis.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 7 Jan 2020 13:52:41 +0100
-Message-ID: <CACRpkdau_eTe7xgSCMeE=6dv_M5Ef+Opy6EzymxewuU6aecKHQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: artpec6: fix __iomem on reg in set
-To:     Jesper Nilsson <jesper.nilsson@axis.com>
-Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
-        Jesper Nilsson <jespern@axis.com>,
-        Lars Persson <larper@axis.com>,
-        linux-arm-kernel <linux-arm-kernel@axis.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200107095359.GA3515@qmqm.qmqm.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 7, 2020 at 12:18 PM Jesper Nilsson <jesper.nilsson@axis.com> wrote:
-> On Tue, Jan 07, 2020 at 10:39:34AM +0100, Linus Walleij wrote:
-> > On Wed, Dec 18, 2019 at 6:32 PM Ben Dooks <ben.dooks@codethink.co.uk> wrote:
-> > > On 18/12/2019 16:26, Jesper Nilsson wrote:
-> > > > On Wed, Dec 18, 2019 at 11:16:02AM +0100, Ben Dooks (Codethink) wrote:
-> >
-> > > >> -    unsigned int *reg;
-> > > >> +    unsigned int __iomem *reg;
-> > > >
-> > > >       void __iomem *reg;
-> > > >
-> > > > We're using as an argument to readl()?
-> > >
-> > > yes, readl() shoud take an __iomem attributed pointer.
-> >
-> > Shall I change it to void as well when applying?
->
-> Please do, sorry that my comment wasn't clear above.
+On Tue, Jan 07, 2020 at 10:53:59AM +0100, Michał Mirosław wrote:
+> On Tue, Jan 07, 2020 at 10:37:15AM +0100, Greg Kroah-Hartman wrote:
+> > On Mon, Jan 06, 2020 at 02:37:03PM +0100, Thierry Reding wrote:
+> > > On Mon, Jan 06, 2020 at 01:27:45PM +0100, Greg Kroah-Hartman wrote:
+> > > > On Mon, Jan 06, 2020 at 01:07:18PM +0100, Thierry Reding wrote:
+> > > > > On Thu, Jan 02, 2020 at 11:30:50AM +0100, Michał Mirosław wrote:
+> > > > > > Commit 7ad2ed1dfcbe inadvertently mixed up a quirk flag's name and
+> > > > > > broke SDR50 tuning override. Use correct NVQUIRK_ name.
+> > > > > > 
+> > > > > > Fixes: 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes")
+> > > > > > Depends-on: 4f6aa3264af4 ("mmc: tegra: Only advertise UHS modes if IO regulator is present")
+> > > > > > Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+> > > > > > ---
+> > > > > >  drivers/mmc/host/sdhci-tegra.c | 2 +-
+> > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > 
+> > > > > Oh my... good catch!
+> > > > > 
+> > > > > Reviewed-by: Thierry Reding <treding@nvidia.com>
+> > > > > 
+> > > > > I also ran this through our internal test system and all tests pass, so
+> > > > > also:
+> > > > > 
+> > > > > Tested-by: Thierry Reding <treding@nvidia.com>
+> > > > > 
+> > > > > I'm not sure if that "Depends-on:" tag is anything that's recognized
+> > > > > anywhere. It might be better to turn that into an additional "Fixes:"
+> > > > > line. Adding Greg to see if he has a standard way of dealing with this
+> > > > > kind of dependency.
+> > > > > 
+> > > > > Greg, what's your preferred way to handle these situations? I think the
+> > > > > intention here was to describe that the original error was introduced by
+> > > > > commit 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes"), but then commit
+> > > > > 4f6aa3264af4 ("mmc: tegra: Only advertise UHS modes if IO regulator is
+> > > > > present") moved that code around, so this patch here will only be back-
+> > > > > portable until the latter commit, but should be backported until the
+> > > > > former.
+> > > > 
+> > > > The stable kernel rules document says how to handle this, but the
+> > > > "depends on" commit id in the comment to the right of the stable@k.o cc:
+> > > > line in the changelog area.
+> > > 
+> > > That only mentions "static" prerequisites needed by the patch, but what
+> > > if the prerequisites change depending on version?
+> > > 
+> > > Could I do something like this:
+> > > 
+> > > 	Cc: <stable@vger.kernel.org> # 4.4.x: abcdef: ...
+> > > 	Cc: <stable@vger.kernel.org> # 4.9.x: bcdefa: ...
+> > > 	Cc: <stable@vger.kernel.org>
+> > 
+> > Yes.
+> > 
+> > > Would that mean that the patch is selected for all stable releases
+> > > (because of the last line with no version prerequisite) but when applied
+> > > for stable-4.4 the abcdef patch gets pulled in and for stable-4.9 the
+> > > bcdefa dependency is applied before the patch?
+> > 
+> > Yes.
+> > 
+> > > I suppose this is perhaps a bit of an exotic case, but it might be good
+> > > to document it specifically because it might be fairly rare. I can draft
+> > > a change if you think this is useful to add.
+> > 
+> > I thought this was already in there, as others have done it in the past.
+> > 
+> > It's a _very_ exotic case, I wouldn't worry about it, just document it
+> > like this, and if I have problems applying the patches to stable I'll be
+> > sure to let you know and you can always tell me then.  That's usually
+> > the easiest thing to do anyway :)
+> 
+> I understood the wording in stable-kernel-rules.rst as meaning that
+> comments on Cc: lines make mentioned commit pulled in (cherry-picked).
+> In this case I think this is ok, but in case the pulled-in patch changes
+> something else (the dependency is only because of touching nearby code),
+> how would I specify this and avoid the hint to include the other patch?
 
-OK I did that and applied, let's see if it works :)
+I really do not understand what you are asking for here.
 
-Yours,
-Linus Walleij
+Worst case, just say:
+	cc: stable... # 4.4.x
+
+and if you know that fails to apply or build, then just wait for my
+email saying something failed and then respond with the needed commit
+ids or backported patches.
+
+It's not rocket science, and this isn't all that automated, I _can_
+handle free-form text :)
+
+thanks,
+
+greg k-h
