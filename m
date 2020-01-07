@@ -2,90 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 370B41334CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:28:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1B9113355D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:58:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728761AbgAGV2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:28:13 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:43877 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727569AbgAGV2H (ORCPT
+        id S1727319AbgAGV6g convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 7 Jan 2020 16:58:36 -0500
+Received: from 9.mo177.mail-out.ovh.net ([46.105.72.238]:55808 "EHLO
+        9.mo177.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbgAGV6g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:28:07 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MGhi0-1itpwb2ZJS-00Dn1Q; Tue, 07 Jan 2020 22:27:51 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Oleksandr Natalenko <oleksandr@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Sam Ravnborg <sam@ravnborg.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm: panel: fix excessive stack usage in td028ttec1_prepare
-Date:   Tue,  7 Jan 2020 22:27:33 +0100
-Message-Id: <20200107212747.4182515-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:oXNXLfN/VIsDQFv/SJwQtBS570cMqOiIoOPgTiSj3Dsp8Mast6V
- a6nIAwxIdJ7QG8kqaKHVXD9UMVwHTrPE3j3Y3Y83ybDD2FhmplbMZohwEB70kjxFVxHmGZS
- pyNK70KcneApCD8axx8ajqRUB3eSiIPdg/sGcqYEA5Rl6QBHXZ6yOtpQvGO21SI63N0Rvrq
- 2nsYRN5jI3BB6x6CtxvLw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:wybcYGCqFeU=:v6JPZuxuKq6KdDpZhERSQB
- IDxwXvZZ3iIThfYussrtVEboFQsYXSC7qEaAUE2XWaYfMkZWryLaflyAWfWUsATwXMg6kkTS4
- 2fkNkoMGkNpx4MCKQifZ0nsPoKH47LK3qlyhSzjot+pm7dGqrUBzd3iRu8R5fefc2RZIZREic
- QWSvAKtAQWM4Ojyk1h0Cv/8n+0At0t7Wag+VUislcxZY83IZULPztI7gUxC9ZGxMgNMBZzerm
- C1FjL3xOW2Nxg609m+EefeTYjxDmVlKyYPjQgyfmSc2AJgMYU68YS05MCx13u5OZXBNWakZjl
- /KgJ+JOuDhchGWb7s+vpjoki5rPqogRFfpHTOzCH+e3z3DlaTrUMmhBWgYv4j8qnZ0dIAjChs
- 4I/vpmANC2amo+pw4P/G/yZzXZS3X3vd/umZZfYB5e+bV2zPMLRhZKmYQiiaKFAbPNNpHrpKi
- gdKXp1DNdRwtC+mYFMVC9JPVQgmI8nSS6EjHfUbOFOaVjHwtkP79fOsjFMvY2ZL6aotERGia5
- qJJl0KLotFNKZuev7SN06GiCBcyLIHv04A8yRtwa5ZX1/EnLjygKqHOMtpZjmSH+RVCLfMu8F
- Qcj29MPNM33tUkq7Xj/XcC/l6vgOfoe7g11HPeEmG0uOuA4G+9PCOgjZgcoYfhdabasgvEtvG
- imdpeO5Eh/+GrUr9uEn4xRcNebjiNxHFMQtiFCb8D5OP2Vp3CdiGY4qYvlMszQWLo5vk/Mgby
- DATbiwe4fFXaHGDfofaqzQudl4XduR+bPZFgTm+Ggp36Sc1O3ogVU69gSKhZ89G4deJiSt+i5
- X+8wsPqcTE9MHwxukKoezId5n8vFNAxzQx+tEcRaHTBRmfj1FiOVfaxLtGvlOlJIvvLEGeQAk
- 3guOx3RvjSFld8FR+sHQ==
+        Tue, 7 Jan 2020 16:58:36 -0500
+X-Greylist: delayed 25226 seconds by postgrey-1.27 at vger.kernel.org; Tue, 07 Jan 2020 16:58:36 EST
+Received: from player718.ha.ovh.net (unknown [10.109.143.3])
+        by mo177.mail-out.ovh.net (Postfix) with ESMTP id 9438A11BEDE
+        for <linux-kernel@vger.kernel.org>; Tue,  7 Jan 2020 20:29:22 +0100 (CET)
+Received: from armadeus.com (91-171-241-78.subs.proxad.net [91.171.241.78])
+        (Authenticated sender: sebastien.szymanski@armadeus.com)
+        by player718.ha.ovh.net (Postfix) with ESMTPSA id 08099DDDD523;
+        Tue,  7 Jan 2020 19:29:13 +0000 (UTC)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
+Subject: Re: [PATCH AUTOSEL 4.19 102/177] nvmem: imx-ocotp: reset error status
+ on probe
+From:   =?utf-8?Q?S=C3=A9bastien_Szymanski?= 
+        <sebastien.szymanski@armadeus.com>
+In-Reply-To: <2dc7001f362358dfdcbef080118b23cabaa03a40.camel@pengutronix.de>
+Date:   Tue, 7 Jan 2020 20:29:12 +0100
+Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Fabio Estevam <festevam@gmail.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <CF40B493-27C8-4DF4-BB43-624CC797B12C@armadeus.com>
+References: <20191210213221.11921-1-sashal@kernel.org>
+ <20191210213221.11921-102-sashal@kernel.org>
+ <dd048e02-81f7-8aed-34a7-f95a70859391@armadeus.com>
+ <2dc7001f362358dfdcbef080118b23cabaa03a40.camel@pengutronix.de>
+To:     Lucas Stach <l.stach@pengutronix.de>
+X-Mailer: Apple Mail (2.3608.40.2.2.4)
+X-Ovh-Tracer-Id: 15857737239658386631
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrvdehiedgtdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurheptggguffhjgffgffkfhfvofesthhqmhdthhdtjeenucfhrhhomhepuforsggrshhtihgvnhgpufiihihmrghnshhkihcuoehsvggsrghsthhivghnrdhsiiihmhgrnhhskhhisegrrhhmrgguvghushdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpphgrshhtvggsihhnrdgtohhmnecukfhppedtrddtrddtrddtpdeluddrudejuddrvdeguddrjeeknecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejudekrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshgvsggrshhtihgvnhdrshiihihmrghnshhkihesrghrmhgruggvuhhsrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With gcc -O3, the compiler can inline very aggressively,
-leading to rather large stack usage:
+Hi Lucas,
 
-drivers/gpu/drm/panel/panel-tpo-td028ttec1.c: In function 'td028ttec1_prepare':
-drivers/gpu/drm/panel/panel-tpo-td028ttec1.c:233:1: error: the frame size of 2768 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
- }
+> On 7 Jan 2020, at 18:53, Lucas Stach <l.stach@pengutronix.de> wrote:
+> 
+> Hi Sébastien,
+> 
+> On Di, 2020-01-07 at 15:50 +0100, Sébastien Szymanski wrote:
+>> On 12/10/19 10:31 PM, Sasha Levin wrote:
+>>> From: Lucas Stach <l.stach@pengutronix.de>
+>>> 
+>>> [ Upstream commit c33c585f1b3a99d53920bdac614aca461d8db06f ]
+>>> 
+>>> If software running before the OCOTP driver is loaded left the
+>>> controller with the error status pending, the driver will never
+>>> be able to complete the read timing setup. Reset the error status
+>>> on probe to make sure the controller is in usable state.
+>>> 
+>>> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+>>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>>> Link: https://lore.kernel.org/r/20191029114240.14905-6-srinivas.kandagatla@linaro.org
+>>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>>> ---
+>>> drivers/nvmem/imx-ocotp.c | 4 ++++
+>>> 1 file changed, 4 insertions(+)
+>>> 
+>>> diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
+>>> index afb429a417fe0..926d9cc080cf4 100644
+>>> --- a/drivers/nvmem/imx-ocotp.c
+>>> +++ b/drivers/nvmem/imx-ocotp.c
+>>> @@ -466,6 +466,10 @@ static int imx_ocotp_probe(struct platform_device *pdev)
+>>> 	if (IS_ERR(priv->clk))
+>>> 		return PTR_ERR(priv->clk);
+>>> 
+>>> +	clk_prepare_enable(priv->clk);
+>>> +	imx_ocotp_clr_err_if_set(priv->base);
+>>> +	clk_disable_unprepare(priv->clk);
+>>> +
+>>> 	priv->params = of_device_get_match_data(&pdev->dev);
+>>> 	imx_ocotp_nvmem_config.size = 4 * priv->params->nregs;
+>>> 	imx_ocotp_nvmem_config.dev = dev;
+>>> 
+>> 
+>> Hi,
+>> 
+>> This patch makes kernel 4.19.{92,93} hang at boot on my i.MX6ULL based
+>> board. It hanks at
+>> 
+>> [    3.730078] cpu cpu0: Linked as a consumer to regulator.2
+>> [    3.737760] cpu cpu0: Linked as a consumer to regulator.3
+>> 
+>> Full boot log is here: https://pastebin.com/TS8EFxkr
+>> 
+>> The config is imx_v6_v7_defconfig.
+>> 
+>> Reverting it makes the kernels boot again.
+> 
+> Can you check if it actually hangs in imx_ocotp_clr_err_if_set(), or if
+> the clk_disable_unprepare() is the culprit?
+> 
+> If the clock disable hangs the system there is a missing clock
+> reference somewhere else that we need to track down.
 
-Marking jbt_reg_write_1() as noinline avoids the case where
-multiple instances of this function get inlined into the same
-stack frame and each one adds a copy of 'tx_buf'.
+Yes, the system hangs in the imx6q-cpufreq driver, here:
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/cpufreq/imx6q-cpufreq.c?h=v4.19.93#n322
 
-Fixes: mmtom ("init/Kconfig: enable -O3 for all arches")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpu/drm/panel/panel-tpo-td028ttec1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Kernel 5.4.8 works thanks to commits:
 
-diff --git a/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c b/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
-index cf29405a2dbe..17ee5e87141f 100644
---- a/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
-+++ b/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
-@@ -105,7 +105,7 @@ static int jbt_ret_write_0(struct td028ttec1_panel *lcd, u8 reg, int *err)
- 	return ret;
- }
- 
--static int jbt_reg_write_1(struct td028ttec1_panel *lcd,
-+static int noinline_for_stack jbt_reg_write_1(struct td028ttec1_panel *lcd,
- 			   u8 reg, u8 data, int *err)
- {
- 	struct spi_device *spi = lcd->spi;
+2733fb0d0699 (“cpufreq: imx6q: read OCOTP through nvmem for imx6ul/imx6ull”)
+92f0eb08c66a ("ARM: dts: imx6ul: use nvmem-cells for cpu speed grading”)
+
+Regards,
+
 -- 
-2.20.0
+Sébastien Szymanski, Armadeus Systems
+Software engineer
+
+> 
+> Regards,
+> Lucas
+> 
 
