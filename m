@@ -2,80 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5098A132D61
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 18:46:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF918132D6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 18:48:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728546AbgAGRqf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 12:46:35 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:36858 "EHLO mail.skyhub.de"
+        id S1728504AbgAGRsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 12:48:09 -0500
+Received: from sauhun.de ([88.99.104.3]:53300 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728292AbgAGRqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 12:46:34 -0500
-Received: from zn.tnic (p200300EC2F0FB400396D31B560FFF95B.dip0.t-ipconnect.de [IPv6:2003:ec:2f0f:b400:396d:31b5:60ff:f95b])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7EFC11EC0CD3;
-        Tue,  7 Jan 2020 18:46:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1578419192;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=8goxpw3j//lKsOPB5Ju+xSGr7snlVBx4ue2F2yqHxQM=;
-        b=pr1jTCYieK5XA20cshoM7ZUqUw9mwUwvPGhB01bfMrinWfiSEq/OTu3WUgw2gfQd9d0OBT
-        3v8luk3B0x78SRb1o4MtbuqxeIiefigXugjlDzKJM7+OUbX698pgbMG3xoBMbTNhSC28lL
-        LRqxRlob0wwfkVObHWRPC5eO+JAAwpo=
-Date:   Tue, 7 Jan 2020 18:46:25 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Kim Phillips <kim.phillips@amd.com>
-Cc:     Vijay Thakkar <vijaythakkar@me.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Kim Phillips <kim.phillips@amd.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Martin =?utf-8?B?TGnFoWth?= <mliska@suse.cz>,
-        Jon Grimm <jon.grimm@amd.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 0/3] perf vendor events amd: latest PMU events for
- zen1/zen2
-Message-ID: <20200107174625.GI29542@zn.tnic>
-References: <20191227125536.1091387-1-vijaythakkar@me.com>
- <20200106221754.GB16851@kernel.org>
+        id S1728211AbgAGRsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 12:48:08 -0500
+Received: from localhost (p5486CF8B.dip0.t-ipconnect.de [84.134.207.139])
+        by pokefinder.org (Postfix) with ESMTPSA id D79E72C05BA;
+        Tue,  7 Jan 2020 18:48:05 +0100 (CET)
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 00/12] i2c: convert subsystem to use i2c_new_client_device()
+Date:   Tue,  7 Jan 2020 18:47:34 +0100
+Message-Id: <20200107174748.9616-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200106221754.GB16851@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 07:17:54PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Fri, Dec 27, 2019 at 07:55:33AM -0500, Vijay Thakkar escreveu:
-> > This series of patches brings the PMU events for AMD family 17h series
-> > of processors up to date with the latest versions of the AMD processor
-> > programming reference manuals.
-> > 
-> > The first patch changes the pmu events mapfile to be more selective for
-> > the model number rather than blanket detecting all f17h processors to
-> > have the same events directory. This is required for the later patch
-> > where we add events for zen2 based processors.
-> > 
-> > The second patch adds the PMU events for zen2.
-> 
-> Borislav, can you ack these, or point to someone who can double check
-> this and the other 2 patches?
+This patch series converts the I2C subsystem to use the new API. Drivers
+have been build tested. There is one user left in the SMBus part of the
+core which will need a seperate series because all users of this
+function need to be checked/converted, too.
 
-Hey acme, HNY! :-)
+Except for documentation patches, the conversion has been done with a
+coccinelle script and further simplification have been applied when
+proofreading the patches.
 
-That should be Kim who's already on the Cc list.
+A branch is here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/new_client_device
+
+Looking forward to comments...
+
+Wolfram Sang (12):
+  i2c: cht-wc: convert to use i2c_new_client_device()
+  i2c: i801: convert to use i2c_new_client_device()
+  i2c: nvidia-gpu: convert to use i2c_new_client_device()
+  i2c: ocores: convert to use i2c_new_client_device()
+  i2c: powermac: convert to use i2c_new_client_device()
+  i2c: taos-evm: convert to use i2c_new_client_device()
+  i2c: xiic: convert to use i2c_new_client_device()
+  i2c: i2c-core-acpi: convert to use i2c_new_client_device()
+  i2c: i2c-core-base: convert to use i2c_new_client_device()
+  i2c: i2c-core-of: convert to use i2c_new_client_device()
+  docs: i2c: use the new API in 'instantiating-devices.rst'
+  docs: i2c: use the new API in 'writing-clients'
+
+ Documentation/i2c/instantiating-devices.rst |  8 ++++----
+ Documentation/i2c/writing-clients.rst       | 20 ++++++++++----------
+ drivers/i2c/busses/i2c-cht-wc.c             |  6 +++---
+ drivers/i2c/busses/i2c-i801.c               |  6 +++---
+ drivers/i2c/busses/i2c-nvidia-gpu.c         |  6 +++---
+ drivers/i2c/busses/i2c-ocores.c             |  2 +-
+ drivers/i2c/busses/i2c-powermac.c           |  8 ++++----
+ drivers/i2c/busses/i2c-taos-evm.c           |  4 ++--
+ drivers/i2c/busses/i2c-xiic.c               |  2 +-
+ drivers/i2c/i2c-core-acpi.c                 | 12 ++++--------
+ drivers/i2c/i2c-core-base.c                 | 13 ++++++-------
+ drivers/i2c/i2c-core-of.c                   |  7 +++----
+ 12 files changed, 44 insertions(+), 50 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.20.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
