@@ -2,62 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5EF1132D23
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 18:35:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E23D4132D2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 18:37:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbgAGRfa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 12:35:30 -0500
-Received: from fieldses.org ([173.255.197.46]:53664 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728321AbgAGRfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 12:35:30 -0500
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 19CA11C7B; Tue,  7 Jan 2020 12:35:30 -0500 (EST)
-Date:   Tue, 7 Jan 2020 12:35:30 -0500
-To:     Chris Down <chris@chrisdown.name>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH] fs: inode: Reduce volatile inode wraparound risk when
- ino_t is 64 bit
-Message-ID: <20200107173530.GC944@fieldses.org>
-References: <20191220024936.GA380394@chrisdown.name>
- <20191220213052.GB7476@magnolia>
- <20191221101652.GA494948@chrisdown.name>
+        id S1728513AbgAGRgn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 12:36:43 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:28372 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728470AbgAGRgn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 12:36:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578418602;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=VihdCZ5GwLlSJ5I8YuEgJBv1m9R/zhpqOr0AnZl/yZE=;
+        b=YdmBOFP5CI7G2TIKS+HJjtSCf6qkbAVHrBPaq/ZKbFg9f5g3qsaRyhce/sWhyvz8zZ3pYq
+        0iTL05Rd2JaQy/C4dDT06oc2gaTRxBeAVZ8TJt0U0CGWhcZ2ysTeE0TpitImAcf+MH5pk+
+        CCIRuwiD1n/z7eTGn0KWZxsImYKodzM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-148-rzrttXOJNdWyIMZZ1M4qZw-1; Tue, 07 Jan 2020 12:36:38 -0500
+X-MC-Unique: rzrttXOJNdWyIMZZ1M4qZw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6CEE3DB34;
+        Tue,  7 Jan 2020 17:36:37 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8EA4F6106B;
+        Tue,  7 Jan 2020 17:36:36 +0000 (UTC)
+Subject: Re: [PATCH v2] locking/qspinlock: Fix inaccessible URL of MCS lock
+ paper
+To:     Will Deacon <will@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+References: <20200107151619.20802-1-longman@redhat.com>
+ <20200107173443.GB32009@willie-the-truck>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <dd29ceda-cc8f-f418-9cce-1be4e33ae6f1@redhat.com>
+Date:   Tue, 7 Jan 2020 12:36:36 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191221101652.GA494948@chrisdown.name>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-From:   bfields@fieldses.org (J. Bruce Fields)
+In-Reply-To: <20200107173443.GB32009@willie-the-truck>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 21, 2019 at 10:16:52AM +0000, Chris Down wrote:
-> Darrick J. Wong writes:
-> >On Fri, Dec 20, 2019 at 02:49:36AM +0000, Chris Down wrote:
-> >>In general, userspace applications expect that (device, inodenum) should
-> >>be enough to be uniquely point to one inode, which seems fair enough.
-> >
-> >Except that it's not.  (dev, inum, generation) uniquely points to an
-> >instance of an inode from creation to the last unlink.
+On 1/7/20 12:34 PM, Will Deacon wrote:
+> On Tue, Jan 07, 2020 at 10:16:19AM -0500, Waiman Long wrote:
+>> It turns out that the URL of the MCS lock paper listed in the source
+>> code is no longer accessible. I did got question about where the paper
+>> was. This patch updates the URL to BZ 206115 which contains a copy of
+>> the paper from
+>>
+>>   https://www.cs.rochester.edu/u/scott/papers/1991_TOCS_synch.pdf
+>>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>  kernel/locking/qspinlock.c | 5 ++---
+>>  1 file changed, 2 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+>> index 2473f10c6956..ce75b2270b58 100644
+>> --- a/kernel/locking/qspinlock.c
+>> +++ b/kernel/locking/qspinlock.c
+>> @@ -31,10 +31,9 @@
+>>  /*
+>>   * The basic principle of a queue-based spinlock can best be understood
+>>   * by studying a classic queue-based spinlock implementation called the
+>> - * MCS lock. The paper below provides a good description for this kind
+>> - * of lock.
+>> + * MCS lock. A copy of the original MCS lock papaer is available at
+> s/papaer/paper/
+>
+> I think I reviewed the previous patch as you sent this version, but please
+> could you reword as suggested here [1]?
+>
+> Cheers,
+>
+> Will
+>
+> [1] https://lore.kernel.org/lkml/20200107172343.GA32009@willie-the-truck/T/#m0f9eaf53e509b87d0f6378e35514c9b120d8edc2
+>
+Sure. I will send out v3 shortly.
 
-I thought that (dev, inum) was supposed to be unique from creation to
-last unlink (and last close), and (dev, inum, generation) was supposed
-to be unique for all time.
+Cheers,
+Longman
 
-> I didn't mention generation because, even though it's set on tmpfs
-> (to prandom_u32()), it's not possible to evaluate it from userspace
-> since `ioctl` returns ENOTTY. We can't ask userspace applications to
-> introspect on an inode attribute that they can't even access :-)
-
-Is there any reason not to add IOC_GETVERSION support to tmpfs?
-
-I wonder if statx should return it too?
-
---b.
