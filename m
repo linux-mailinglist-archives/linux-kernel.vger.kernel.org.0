@@ -2,92 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7341132279
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:34:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3662613228D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:35:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbgAGJd6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 04:33:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37506 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726565AbgAGJd5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 04:33:57 -0500
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D9B7206DB;
-        Tue,  7 Jan 2020 09:33:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578389637;
-        bh=0RwFzwAEmrIP5sG0tKGrxv2D/cxDWEkx4BvAxCF7YcY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=H4MhWpEv9OaFCgT3pOtwNa8691FoPe9u0TYSCg/+0HvXNb3xrg8Z0UMTp3WlgCN9V
-         sZneQrxj1cZTzcdnNMP4HyRW3GUYvhQYxpSdzhrj9w+ugT+W+e09aturGqr6jVjdnQ
-         EuPegGrp4+ChfhOaNGONnb4I074kMSLOP/LCXt6g=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1iolFL-000143-D1; Tue, 07 Jan 2020 09:33:55 +0000
+        id S1727877AbgAGJeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 04:34:36 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:35388 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727851AbgAGJef (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 04:34:35 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id D70361C24DF; Tue,  7 Jan 2020 10:34:31 +0100 (CET)
+Date:   Tue, 7 Jan 2020 10:34:31 +0100
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Pavel Machek <pavel@denx.de>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, Jiri Slaby <jslaby@suse.com>,
+        kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] leds: trigger: implement a tty trigger
+Message-ID: <20200107093431.GA21375@amd>
+References: <20191219093947.15502-1-u.kleine-koenig@pengutronix.de>
+ <20191219093947.15502-4-u.kleine-koenig@pengutronix.de>
+ <20191221184047.GC32732@amd>
+ <20191223100828.bqtda4zilc74fqfk@pengutronix.de>
+ <20200106185918.GB597279@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 07 Jan 2020 09:33:55 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Jianyong Wu <Jianyong.Wu@arm.com>, netdev@vger.kernel.org,
-        yangbo.lu@nxp.com, john.stultz@linaro.org, tglx@linutronix.de,
-        sean.j.christopherson@intel.com, richardcochran@gmail.com,
-        Mark Rutland <Mark.Rutland@arm.com>, will@kernel.org,
-        Suzuki Poulose <Suzuki.Poulose@arm.com>,
-        Steven Price <Steven.Price@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
-        Steve Capper <Steve.Capper@arm.com>,
-        Kaly Xin <Kaly.Xin@arm.com>, Justin He <Justin.He@arm.com>,
-        nd <nd@arm.com>
-Subject: Re: [RFC PATCH v9 0/8] Enable ptp_kvm for arm64
-In-Reply-To: <bf333cdc-3455-7c64-89c2-014639614904@redhat.com>
-References: <20191210034026.45229-1-jianyong.wu@arm.com>
- <HE1PR0801MB1676CFC9A06B6CE800052A99F43C0@HE1PR0801MB1676.eurprd08.prod.outlook.com>
- <bf333cdc-3455-7c64-89c2-014639614904@redhat.com>
-Message-ID: <7a589be6dc0d5562caf8c8f795b31efc@kernel.org>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/1.3.8
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: pbonzini@redhat.com, Jianyong.Wu@arm.com, netdev@vger.kernel.org, yangbo.lu@nxp.com, john.stultz@linaro.org, tglx@linutronix.de, sean.j.christopherson@intel.com, richardcochran@gmail.com, Mark.Rutland@arm.com, will@kernel.org, Suzuki.Poulose@arm.com, Steven.Price@arm.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org, Steve.Capper@arm.com, Kaly.Xin@arm.com, Justin.He@arm.com, nd@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="pWyiEgJYm5f9v55/"
+Content-Disposition: inline
+In-Reply-To: <20200106185918.GB597279@kroah.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-01-07 08:15, Paolo Bonzini wrote:
-> On 06/01/20 10:38, Jianyong Wu wrote:
->> Ping ...
->> Any comments to this patch set?
-> 
-> Marc, Will, can you ack it?  Since the sticky point was the detection 
-> of
-> the clocksource and it was solved by Thomas's patch, I don't have any
-> more problems including it.
 
-Boo. I had forgotten about this series. :-(
+--pWyiEgJYm5f9v55/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Going back to it, there is a few ugly points in the arm-specific code
-(I'm OK with the generic changes though).
+Hi!
 
-Another thing is that the whole series depends on three patches that 
-have
-never been posted to any list, hence never reviewed.
+> > > > +static ssize_t dev_store(struct device *dev,
+> > > > +			 struct device_attribute *attr, const char *buf,
+> > > > +			 size_t size)
+> > > > +{
+> > > > +	struct ledtrig_tty_data *trigger_data =3D led_trigger_get_drvdata=
+(dev);
+> > > > +	struct tty_struct *tty;
+> > > > +	unsigned major, minor;
+> > > > +	int ret;
+> > > > +
+> > > > +	if (size =3D=3D 0 || (size =3D=3D 1 && buf[0] =3D=3D '\n')) {
+> > > > +		tty =3D NULL;
+> > > > +	} else {
+> > > > +		ret =3D sscanf(buf, "%u:%u", &major, &minor);
+> > > > +		if (ret < 2)
+> > > > +			return -EINVAL;
+> > >=20
+> > > If user writes 1:2:badparsingofdata into the file, it will pass, righ=
+t?
+> >=20
+> > Yes, and it will have the same effect as writing 1:2. I wonder if this
+> > is bad.
 
-Jianyong: Please repost this series *with* the dependencies so that they
-can be reviewed, once you've addressed my comments on two of the 
-patches.
+It is.
 
-Thanks,
+> > > > +static void ledtrig_tty_work(struct work_struct *work)
+> > > > +{
+> > > > +	struct ledtrig_tty_data *trigger_data =3D
+> > > > +		container_of(work, struct ledtrig_tty_data, dwork.work);
+> > > > +	struct serial_icounter_struct icount;
+> > > > +	int ret;
+> > > > +
+> > > > +	if (!trigger_data->tty) {
+> > > > +		led_set_brightness(trigger_data->led_cdev, LED_OFF);
+> > > > +		return;
+> > > > +	}
+> > > > +
+> > > > +	ret =3D tty_get_icount(trigger_data->tty, &icount);
+> > > > +	if (ret)
+> > > > +		return;
+> > > > +
+> > > > +	if (icount.rx !=3D trigger_data->rx ||
+> > > > +	    icount.tx !=3D trigger_data->tx) {
+> > > > +		unsigned long delay_on =3D 100, delay_off =3D 100;
+> > > > +
+> > > > +		led_blink_set_oneshot(trigger_data->led_cdev,
+> > > > +				      &delay_on, &delay_off, 0);
+> > > > +
+> > > > +		trigger_data->rx =3D icount.rx;
+> > > > +		trigger_data->tx =3D icount.tx;
+> > > > +	}
+> > >=20
+> > > Since you are polling this, anyway, can you just manipulate brightness
+> > > directly instead of using _oneshot()? _oneshot() will likely invoke
+> > > another set of workqueues.
+> >=20
+> > I copied that from the netdev trigger. I failed to find a suitable
+> > helper function, did I miss that or does it need creating?
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+You don't need helper function. You are periodically checking the
+statistics, anyway, so use it to turn the LED on/off directly, without
+oneshot helper, which uses another workqueue internally.
+
+> > > LED triggers were meant to operate directly from the events, not based
+> > > on statistics like this.
+> >=20
+> > Ditto; just copied from the netdev trigger. I tried to find a suitable
+> > place to add a trigger in the core, but this is hard without having to
+> > modify all drivers; additionally this is in thier hot path. So I
+> > considered using statistics a good idea. Greg also liked it and someone
+> > before us for the network trigger, too ...
+>=20
+> This still looks ok to me, any objections to me merging it in my tty
+> tree?
+
+Yes.
+
+I guess using statistics is kind-off acceptable, but the stuff I quote
+above is not.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--pWyiEgJYm5f9v55/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl4UUKcACgkQMOfwapXb+vL5uQCeNvf67t8PqZ5q4MRcA2WOqY84
+aLAAn27T5jw20c56A+HcP426wvkLKthd
+=02sm
+-----END PGP SIGNATURE-----
+
+--pWyiEgJYm5f9v55/--
