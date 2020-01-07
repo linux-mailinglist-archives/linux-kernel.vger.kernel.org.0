@@ -2,31 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A308131E8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 05:16:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77214131E83
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 05:16:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727619AbgAGEPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 23:15:40 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:4681 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727591AbgAGEOa (ORCPT
+        id S1727824AbgAGEPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 23:15:31 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:6510 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727605AbgAGEOb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 23:14:30 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e1405940000>; Mon, 06 Jan 2020 20:14:12 -0800
+        Mon, 6 Jan 2020 23:14:31 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e1405950000>; Mon, 06 Jan 2020 20:14:13 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 06 Jan 2020 20:14:29 -0800
+  Mon, 06 Jan 2020 20:14:30 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 06 Jan 2020 20:14:29 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 Jan
- 2020 04:14:28 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+        by hqpgpgate101.nvidia.com on Mon, 06 Jan 2020 20:14:30 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 Jan
+ 2020 04:14:30 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 Jan
+ 2020 04:14:29 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
  Transport; Tue, 7 Jan 2020 04:14:29 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.171.88]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e1405a40000>; Mon, 06 Jan 2020 20:14:28 -0800
+        id <B5e1405a40004>; Mon, 06 Jan 2020 20:14:29 -0800
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <broonie@kernel.org>,
@@ -40,9 +43,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <markz@nvidia.com>, <devicetree@vger.kernel.org>,
         <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 07/19] dt-bindings: soc: tegra-pmc: Add id for Tegra PMC 32KHz blink clock
-Date:   Mon, 6 Jan 2020 20:14:06 -0800
-Message-ID: <1578370458-3686-8-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v6 08/19] soc: tegra: Add support for 32KHz blink clock
+Date:   Mon, 6 Jan 2020 20:14:07 -0800
+Message-ID: <1578370458-3686-9-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1578370458-3686-1-git-send-email-skomatineni@nvidia.com>
 References: <1578370458-3686-1-git-send-email-skomatineni@nvidia.com>
@@ -50,61 +53,258 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1578370452; bh=SVw0z7VvyH8xZGJohgA/Uv/IgF0lsEigsqZQ/UWw8Bs=;
+        t=1578370453; bh=+qLSeQPYiPeVFXxGhdUTpzAFatcAth2YtxN1scIIXIM=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=EtR7HH4vOjR2mw+jtk0zN4hdIzCCqPAWkq+EaKnKunOVZRqAMRgu/tnkIEzK1DoCI
-         Ose5xhrAEGzoezRKmyyI/1xQGQTv8E3j5aclenG7ks42oz1+I4dSMzI3tJJ5t3Z8Bc
-         qMkGr4ZpZFi+Yoau6TwTW7AV+dWODw21IYVOPseIb8xd64KQV/OAyStr5SkHPayyDX
-         W6yfv1uRA+HGOwwL4GIuo2DO9Dq7uHTA4COS6KtSN35QMtsIbCwyjiPjLy5HF5yPOn
-         Zaiz2D5L+Rp37BVP7hB/p/7kP7UudKxHmnpoeaEZS3TKZqvTvlpBVq/uU6x4Tv6Dvz
-         +nnh3PS+7PncQ==
+        b=nKPYAt0Ubhnjgch59N/e2iwrzKmygEnY4weO0q/7KsduUiPth2x5Ya9j1AbKmigTR
+         5KqotR2dI6kFcffEJkeweGPDyozCR6H6S1ADIc6/xY9TmF1StLLhWV3sZFhBzXz8Fw
+         Rgo2WndHEtD8V7W1hVHFhTr6RZqfueEt91F1xlr3WoeoBo4AYg7ttWDfn8WubtCwsp
+         OB5VDEOiefH1JH3LrUC/NmWy72bYDJBW7WedqdaK3MhKNNlshQa2QPcOt++ruhBcCo
+         C8fIxfZJrnd+cjSrlgqcV068oJ6wkfDoegbD14a4bqmQjtpVbWUwwBT3BWxBgvkxzj
+         4RgXupE/WZ4MA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra PMC has blink functionality that allows 32KHz clock out to
-blink pin of the Tegra.
+Tegra PMC has blink control to output 32 Khz clock out to Tegra
+blink pin. Blink pad DPD state and enable controls are part of
+Tegra PMC register space.
 
-This patch adds id for this blink clock to use for enabling or
-disabling blink output through device tree.
+Currently Tegra clock driver registers blink control by passing
+PMC address and register offset to clk_register_gate which performs
+direct PMC access during clk_ops and with this when PMC is in secure
+mode, any access from non-secure world does not go through.
 
-Acked-by: Rob Herring <robh@kernel.org>
+This patch adds blink control registration to the Tegra PMC driver
+using PMC specific clock gate operations that use tegra_pmc_readl
+and tegra_pmc_writel to support both secure mode and non-secure
+mode PMC register access.
+
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml | 2 ++
- include/dt-bindings/soc/tegra-pmc.h                                 | 3 ++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/soc/tegra/pmc.c | 110 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 110 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
-index 5b5c42a00264..f17bb353f65e 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
-@@ -44,6 +44,8 @@ properties:
-     const: 1
-     description:
-       Tegra PMC has clk_out_1, clk_out_2, and clk_out_3.
-+      PMC also has blink control which allows 32Khz clock output to
-+      Tegra blink pad.
-       Consumer of PMC clock should specify the desired clock by having
-       the clock ID in its "clocks" phandle cell with pmc clock provider.
-       See include/dt-bindings/soc/tegra-pmc.h for the list of Tegra PMC
-diff --git a/include/dt-bindings/soc/tegra-pmc.h b/include/dt-bindings/soc/tegra-pmc.h
-index f7c866404456..a99a457471ee 100644
---- a/include/dt-bindings/soc/tegra-pmc.h
-+++ b/include/dt-bindings/soc/tegra-pmc.h
-@@ -9,7 +9,8 @@
- #define TEGRA_PMC_CLK_OUT_1		0
- #define TEGRA_PMC_CLK_OUT_2		1
- #define TEGRA_PMC_CLK_OUT_3		2
-+#define TEGRA_PMC_CLK_BLINK		3
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 2b1a709c3cb7..280f0c14e4ec 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -62,12 +62,15 @@
+ #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
+ #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
+ #define  PMC_CNTRL_PWRREQ_POLARITY	BIT(8)
++#define  PMC_CNTRL_BLINK_EN		7
+ #define  PMC_CNTRL_MAIN_RST		BIT(4)
  
--#define TEGRA_PMC_CLK_MAX		3
-+#define TEGRA_PMC_CLK_MAX		4
+ #define PMC_WAKE_MASK			0x0c
+ #define PMC_WAKE_LEVEL			0x10
+ #define PMC_WAKE_STATUS			0x14
+ #define PMC_SW_WAKE_STATUS		0x18
++#define PMC_DPD_PADS_ORIDE		0x1c
++#define  PMC_DPD_PADS_ORIDE_BLINK	20
  
- #endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
+ #define DPD_SAMPLE			0x020
+ #define  DPD_SAMPLE_ENABLE		BIT(0)
+@@ -80,6 +83,7 @@
+ 
+ #define PWRGATE_STATUS			0x38
+ 
++#define PMC_BLINK_TIMER			0x40
+ #define PMC_IMPL_E_33V_PWR		0x40
+ 
+ #define PMC_PWR_DET			0x48
+@@ -171,6 +175,14 @@ struct pmc_clk {
+ 
+ #define to_pmc_clk(_hw) container_of(_hw, struct pmc_clk, hw)
+ 
++struct pmc_clk_gate {
++	struct clk_hw	hw;
++	unsigned long	offs;
++	u32		shift;
++};
++
++#define to_pmc_clk_gate(_hw) container_of(_hw, struct pmc_clk_gate, hw)
++
+ struct pmc_clk_init_data {
+ 	char *name;
+ 	const char *const *parents;
+@@ -321,6 +333,7 @@ struct tegra_pmc_soc {
+ 
+ 	const struct pmc_clk_init_data *pmc_clks_data;
+ 	unsigned int num_pmc_clks;
++	bool has_blink_output;
+ };
+ 
+ static const char * const tegra186_reset_sources[] = {
+@@ -2334,6 +2347,60 @@ tegra_pmc_clk_out_register(struct tegra_pmc *pmc,
+ 	return clk_register(NULL, &pmc_clk->hw);
+ }
+ 
++static int pmc_clk_gate_is_enabled(struct clk_hw *hw)
++{
++	struct pmc_clk_gate *gate = to_pmc_clk_gate(hw);
++
++	return tegra_pmc_readl(pmc, gate->offs) & BIT(gate->shift) ? 1 : 0;
++}
++
++static int pmc_clk_gate_enable(struct clk_hw *hw)
++{
++	struct pmc_clk_gate *gate = to_pmc_clk_gate(hw);
++
++	pmc_clk_set_state(gate->offs, gate->shift, 1);
++
++	return 0;
++}
++
++static void pmc_clk_gate_disable(struct clk_hw *hw)
++{
++	struct pmc_clk_gate *gate = to_pmc_clk_gate(hw);
++
++	pmc_clk_set_state(gate->offs, gate->shift, 0);
++}
++
++static const struct clk_ops pmc_clk_gate_ops = {
++	.is_enabled = pmc_clk_gate_is_enabled,
++	.enable = pmc_clk_gate_enable,
++	.disable = pmc_clk_gate_disable,
++};
++
++static struct clk *
++tegra_pmc_clk_gate_register(struct tegra_pmc *pmc, const char *name,
++			    const char *parent_name, unsigned long offset,
++			    u32 shift)
++{
++	struct clk_init_data init;
++	struct pmc_clk_gate *gate;
++
++	gate = devm_kzalloc(pmc->dev, sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &pmc_clk_gate_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	init.flags = 0;
++
++	gate->hw.init = &init;
++	gate->offs = offset;
++	gate->shift = shift;
++
++	return clk_register(NULL, &gate->hw);
++}
++
+ static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
+ 				     struct device_node *np)
+ {
+@@ -2343,6 +2410,8 @@ static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
+ 	int i, err;
+ 
+ 	num_clks = pmc->soc->num_pmc_clks;
++	if (pmc->soc->has_blink_output)
++		num_clks += 1;
+ 
+ 	if (!num_clks)
+ 		return;
+@@ -2384,6 +2453,40 @@ static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
+ 		clk_data->clks[data->clk_id] = clk;
+ 	}
+ 
++	if (pmc->soc->has_blink_output) {
++		tegra_pmc_writel(pmc, 0x0, PMC_BLINK_TIMER);
++		clk = tegra_pmc_clk_gate_register(pmc, "blink_override",
++						  "clk_32k",
++						  PMC_DPD_PADS_ORIDE,
++						  PMC_DPD_PADS_ORIDE_BLINK);
++		if (IS_ERR(clk)) {
++			dev_warn(pmc->dev,
++				 "unable to register blink_override: %d\n",
++				 PTR_ERR_OR_ZERO(clk));
++			return;
++		}
++
++		clk = tegra_pmc_clk_gate_register(pmc, "blink",
++						  "blink_override",
++						  PMC_CNTRL,
++						  PMC_CNTRL_BLINK_EN);
++		if (IS_ERR(clk)) {
++			dev_warn(pmc->dev, "unable to register blink: %d\n",
++				 PTR_ERR_OR_ZERO(clk));
++			return;
++		}
++
++		err = clk_register_clkdev(clk, "blink", NULL);
++		if (err) {
++			dev_warn(pmc->dev,
++				 "unable to register blink clock lookup: %d\n",
++				 err);
++			return;
++		}
++
++		clk_data->clks[TEGRA_PMC_CLK_BLINK] = clk;
++	}
++
+ 	err = of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
+ 	if (err)
+ 		dev_warn(pmc->dev, "failed to add pmc clock provider: %d\n",
+@@ -2652,6 +2755,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
+ 	.num_reset_levels = 0,
+ 	.pmc_clks_data = NULL,
+ 	.num_pmc_clks = 0,
++	.has_blink_output = true,
+ };
+ 
+ static const char * const tegra30_powergates[] = {
+@@ -2701,6 +2805,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
+ 	.num_reset_levels = 0,
+ 	.pmc_clks_data = tegra_pmc_clks_data,
+ 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
++	.has_blink_output = true,
+ };
+ 
+ static const char * const tegra114_powergates[] = {
+@@ -2754,6 +2859,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
+ 	.num_reset_levels = 0,
+ 	.pmc_clks_data = tegra_pmc_clks_data,
+ 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
++	.has_blink_output = true,
+ };
+ 
+ static const char * const tegra124_powergates[] = {
+@@ -2867,6 +2973,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
+ 	.num_reset_levels = 0,
+ 	.pmc_clks_data = tegra_pmc_clks_data,
+ 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
++	.has_blink_output = true,
+ };
+ 
+ static const char * const tegra210_powergates[] = {
+@@ -2983,6 +3090,7 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+ 	.wake_events = tegra210_wake_events,
+ 	.pmc_clks_data = tegra_pmc_clks_data,
+ 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
++	.has_blink_output = true,
+ };
+ 
+ #define TEGRA186_IO_PAD_TABLE(_pad)					     \
+@@ -3114,6 +3222,7 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
+ 	.wake_events = tegra186_wake_events,
+ 	.pmc_clks_data = NULL,
+ 	.num_pmc_clks = 0,
++	.has_blink_output = false,
+ };
+ 
+ static const struct tegra_io_pad_soc tegra194_io_pads[] = {
+@@ -3233,6 +3342,7 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
+ 	.wake_events = tegra194_wake_events,
+ 	.pmc_clks_data = NULL,
+ 	.num_pmc_clks = 0,
++	.has_blink_output = false,
+ };
+ 
+ static const struct of_device_id tegra_pmc_match[] = {
 -- 
 2.7.4
 
