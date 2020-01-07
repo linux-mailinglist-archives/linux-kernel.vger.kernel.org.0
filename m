@@ -2,112 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B1DB132536
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 12:52:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46499132540
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 12:52:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbgAGLwG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 06:52:06 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54588 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726690AbgAGLwG (ORCPT
+        id S1728021AbgAGLwp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 06:52:45 -0500
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:8834 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727963AbgAGLwo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 06:52:06 -0500
-Received: by mail-wm1-f67.google.com with SMTP id b19so18581088wmj.4;
-        Tue, 07 Jan 2020 03:52:04 -0800 (PST)
+        Tue, 7 Jan 2020 06:52:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=1IdCp+152V00WOErsRkB6rIy+yW5jX9FlF/zgyki7Lc=;
-        b=Tb/pEh7m9Jj4VrIvPmRy9mhjGxM/6ucedJ+SjAZKLVTQBNGwyEcvjeiVJ7FMwZFYSb
-         SMi7DjXMxrWfJFtvgdk7/2HrKdgjskBKFNWFkvBgr6hn68LuztLJ5rW4IpvZvuAzo1z1
-         7Q4IK2JBNJZjyVzNS3DiIgaepKAFc2y5p5UTGbUjFyw+K7XmxR+9hmxSH7LLUHaL5MqZ
-         uMAb30l1cgvfGDS+SNahOyWU27KpSkmjZo8UYvSpGBj4E0F5aJRjKTx5bDVdsIPlYc68
-         olmu6TY09muhPu3kSdCGyvSdEUxYQsBttyMf59RyVC3iRtO5L4Ea1KIgEEY+TG53OUG4
-         3jBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=1IdCp+152V00WOErsRkB6rIy+yW5jX9FlF/zgyki7Lc=;
-        b=RLxQv55bnMfQetXQofgl9dZXzvUXTuhIh8qf6/TIOQPZY4juLTI2Oy2KWN3exs/d+y
-         9U0o4sGYJuOQ0fslqVsEpLej/Hovt0KwXnCHh5kXl4WmrWbhxbKETYvH/8k16WaDPMl+
-         c3YFoA0tjX6cKxqhgB3f/3wMcwszFqjXp6awCARESDh/eAk0tSGiCHohJoFnxGkHHgMm
-         qdRQuovGOO070PazpIFvoZd2Ja0kysrurvihuPQS9O0FVHhzCQF2CVJtC1siyIhG7WNK
-         7xCFmFIZvV9zNXDDS81QWlYxRvM8fUfFAmm22sk4l3zLDbjoNmb5m/tKOSV8eH+8z4XP
-         DZYA==
-X-Gm-Message-State: APjAAAWIo4+Gr5cXW/KSyCXl2YHW39J4+VQihOgj2ynnQiglW0F7Tgec
-        S4Z4XpUbHEcoiTCtcw6plMA=
-X-Google-Smtp-Source: APXvYqzGkqsU4rE5bx3mL5nGETgA3WSI91fdY+KKbLOlbZK81M5sfoX009kOMr39/exXSQAOF7iU+g==
-X-Received: by 2002:a7b:c190:: with SMTP id y16mr40399910wmi.107.1578397924103;
-        Tue, 07 Jan 2020 03:52:04 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id s10sm76968698wrw.12.2020.01.07.03.52.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 03:52:03 -0800 (PST)
-Date:   Tue, 7 Jan 2020 12:52:02 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, linkinjeon@gmail.com, tytso@mit.edu
-Subject: Re: [PATCH v9 10/13] exfat: add nls operations
-Message-ID: <20200107115202.shjpp6g3gsrhhkuy@pali>
-References: <20200102082036.29643-1-namjae.jeon@samsung.com>
- <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com>
- <20200102082036.29643-11-namjae.jeon@samsung.com>
- <20200105165115.37dyrcwtgf6zgc6r@pali>
- <85woa4jrl2.fsf@collabora.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1578397965; x=1609933965;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   in-reply-to:content-transfer-encoding;
+  bh=M87RnN37XgwXCD+GEsg/u8hPt4iEW8Ew/QPEy5zhFjc=;
+  b=WUm+TZCIN8JyIo+4P1Wg/Q8pD46hMvNdHThqLY0Na62VWJVy2aR+hBTR
+   tCnA4/lRCWSNH+B1gtO0yNUm7V9CkF8ZwozQeaqTpjqzCHCBitQ1s8QWP
+   6AjaRbZu4SDYGYlXRzyevVKOkbMTsHpc0IcMROeEuB+FI/5oZlfgJTbRS
+   c=;
+IronPort-SDR: 9QW/w+s9Ty8UIMq8ZXzz9RtmmatTtG46bWiI0BW3qfPCmLMb8lsJBYJTfSKsyz+Ts+Ge3lJETh
+ vKyf0SJ9FXSw==
+X-IronPort-AV: E=Sophos;i="5.69,406,1571702400"; 
+   d="scan'208";a="10389039"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2b-8cc5d68b.us-west-2.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 07 Jan 2020 11:52:43 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2b-8cc5d68b.us-west-2.amazon.com (Postfix) with ESMTPS id 0609FA1F9C;
+        Tue,  7 Jan 2020 11:52:41 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 7 Jan 2020 11:52:41 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.119) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 7 Jan 2020 11:52:37 +0000
+From:   SeongJae Park <sjpark@amazon.com>
+To:     Bernd Petrovitsch <bernd@petrovitsch.priv.at>
+CC:     SeongJae Park <sjpark@amazon.com>, <brendanhiggins@google.com>,
+        <linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
+        <linux-kernel@vger.kernel.org>, SeongJae Park <sj38.park@gmail.com>
+Subject: Re: Re: What is the best way to compare an unsigned and a constant?
+Date:   Tue, 7 Jan 2020 12:52:20 +0100
+Message-ID: <20200107115220.25574-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <688d8f4b-266f-2c47-d4e9-d0336316a0a9@petrovitsch.priv.at>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <85woa4jrl2.fsf@collabora.com>
-User-Agent: NeoMutt/20180716
+X-Originating-IP: [10.43.162.119]
+X-ClientProxiedBy: EX13D33UWB004.ant.amazon.com (10.43.161.225) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 06 January 2020 14:46:33 Gabriel Krisman Bertazi wrote:
-> Pali Rohár <pali.rohar@gmail.com> writes:
-> 
-> > What do you think what should kernel's exfat driver do in this case?
-> >
-> > To prevent such thing we need to use some kind of Unicode normalization
-> > form here.
-> >
-> > CCing Gabriel as he was implementing some Unicode normalization for ext4
-> > driver and maybe should bring some light to new exfat driver too.
-> 
-> We have an in-kernel implementation of the canonical decomposition
-> normalization (NFD) in fs/unicode, which is what we use for f2fs and
-> ext4.  It is heated argument what is the best form for filesystem usage,
-> and from what I researched, every proprietary filesystem does a
-> different (and crazy in their unique way) thing.
-> 
-> For exfat, even though the specification is quite liberal, I think the
-> reasonable answer is to follow closely whatever behavior the Windows
-> implementation has, whether it does normalization at all or not. Even if
-> it is just an in-memory format used internally for lookups, assuming a
-> different format or treating differently invalid file names can result
-> in awkward results in a filesystem created on another operating system,
-> like filename collisions or false misses in lookups.
-> 
+On   Fri, 27 Dec 2019 13:52:27 +0100   Bernd Petrovitsch <bernd@petrovitsch.priv.at> wrote:
 
-Hi Gabriel! Thank you for your input. AFAIK Windows exfat implementation
-does not do any Unicode normalization and allow to store any sequence of
-16bit numbers excluding some "bad chars" as filename (so including also
-unpaired half of UTF-16 surrogate pair) if such upper cased filename
-(according to upcase table stored in FS) does not conflict with another
-upper cased filename already stored in directory.
+> This is a multi-part message in MIME format.
+> --------------D98A0A31D62B0BC2939BAEE9
+> Content-Type: text/plain; charset=utf-8
+> Content-Transfer-Encoding: quoted-printable
+> 
+> Hi all!
+> 
+> On 27/12/2019 13:39, SeongJae Park wrote:
+> [...]
+> > I have a function returning 'unsigned long', and would like to write a =
+> kunit
+> > test for the function, as below.
+> >=20
+> >     unsigned long foo(void)
+> >     {
+> >     	return 42;
+> >     }
+> >=20
+> >     static void foo_test(struct kunit *test)
+> >     {
+> >         KUNIT_EXPECT_EQ(test, 42, foo());
+> >     }
+> 
+> For this case: shouldn't=20
+> ----  snip  ----
+> static void foo_test(struct kunit *test)
+> {
+>      KUNIT_EXPECT_EQ(test, 42ul, foo());
+> }
+> ----  snip  ----
+> do the trick?
 
-So based on your suggestion, I understood that we should not do any
-Unicode Normalization even just for comparing filenames if it exists.
+Unfortunately, it doesn't works.
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+    [13:04:58] Building KUnit Kernel ...
+    In file included from /.../linux/include/linux/list.h:9:0,
+                     from /.../linux/include/linux/wait.h:7,
+                     from /.../linux/include/linux/wait_bit.h:8,
+                     from /.../linux/include/linux/fs.h:6,
+                     from /.../linux/include/linux/debugfs.h:15,
+                     from /.../linux/mm/damon.c:12:
+    /.../linux/mm/damon-test.h: In function ‘damon_test_foo’:
+    /.../linux/include/linux/kernel.h:842:29: warning: comparison of distinct pointer types lacks a cast
+       (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+                                 ^
+    /.../linux/include/kunit/test.h:493:9: note: in expansion of macro ‘__typecheck’
+      ((void)__typecheck(__left, __right));           \
+             ^~~~~~~~~~~
+    /.../linux/include/kunit/test.h:517:2: note: in expansion of macro ‘KUNIT_BASE_BINARY_ASSERTION’
+      KUNIT_BASE_BINARY_ASSERTION(test,           \
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /.../linux/include/kunit/test.h:606:2: note: in expansion of macro ‘KUNIT_BASE_EQ_MSG_ASSERTION’
+      KUNIT_BASE_EQ_MSG_ASSERTION(test,           \
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /.../linux/include/kunit/test.h:616:2: note: in expansion of macro ‘KUNIT_BINARY_EQ_MSG_ASSERTION’
+      KUNIT_BINARY_EQ_MSG_ASSERTION(test,           \
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /.../linux/include/kunit/test.h:979:2: note: in expansion of macro ‘KUNIT_BINARY_EQ_ASSERTION’
+      KUNIT_BINARY_EQ_ASSERTION(test, KUNIT_EXPECTATION, left, right)
+      ^~~~~~~~~~~~~~~~~~~~~~~~~
+    /.../linux/mm/damon-test.h:565:2: note: in expansion of macro ‘KUNIT_EXPECT_EQ’
+      KUNIT_EXPECT_EQ(test, 42ul, (int)foo());
+      ^~~~~~~~~~~~~~~
+
+Some other thoughts?
+
+
+Thanks,
+SeongJae Park
+
+
+> 
+> MfG,
+> 	Bernd
+> --=20
+> "I dislike type abstraction if it has no real reason. And saving
+> on typing is not a good reason - if your typing speed is the main
+> issue when you're coding, you're doing something seriously wrong."
+>     - Linus Torvalds
