@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C5581330F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:56:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BAD71330FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:57:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbgAGU4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 15:56:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51506 "EHLO mail.kernel.org"
+        id S1727305AbgAGU4s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 15:56:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726142AbgAGU4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:56:20 -0500
+        id S1727262AbgAGU4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 15:56:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CF862081E;
-        Tue,  7 Jan 2020 20:56:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76F6524677;
+        Tue,  7 Jan 2020 20:56:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430579;
-        bh=S4qaK4LSPhlFubINRDmXg3oVTW5c2uKHGKu+W2JMl1s=;
+        s=default; t=1578430603;
+        bh=qXkXWon+vpJ0+yvohpa9KFWplyMU9gRUZh3Nw3PpWAw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qV1CjR5q2YIB0yA/RaDXL6fFlldGoqfeBf1KYO87Z4rrmUbNZCrjI1do6ItXM3Anc
-         i0ML3J1vNLFfe1DvwAc2sp3SfiO49d/ME0+0ftbRuKGjFwVjNDiX5qIr/Q82kuobTI
-         yJsSQo18FB35VKIH2OXji0SWzdXL93WexnkXlkeE=
+        b=Ua7+nq5MfKKHabLF0RG7slyAjX5K1Tme9RTbdhTtwb+mth6QDkVoyNH8Jx6bpXAfC
+         rAXwApAXuWuLqZETibG/R0aFF8Stq51YjzRSkuX8i3BtojmLDddXqI0Zmvrpk0bbQM
+         NDo/sRDHch49fLmcwLwGlDsat5n1rvvujgZz2k8o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Yang <Eric.Yang2@amd.com>,
-        Tony Cheng <Tony.Cheng@amd.com>, Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <kbusch@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 011/191] drm/amd/display: update dispclk and dppclk vco frequency
-Date:   Tue,  7 Jan 2020 21:52:11 +0100
-Message-Id: <20200107205333.613297948@linuxfoundation.org>
+Subject: [PATCH 5.4 013/191] nvme/pci: Fix read queue count
+Date:   Tue,  7 Jan 2020 21:52:13 +0100
+Message-Id: <20200107205333.718077864@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
 References: <20200107205332.984228665@linuxfoundation.org>
@@ -45,36 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Yang <Eric.Yang2@amd.com>
+From: Keith Busch <kbusch@kernel.org>
 
-[ Upstream commit 44ce6c3dc8479bb3ed68df13b502b0901675e7d6 ]
+[ Upstream commit 7e4c6b9a5d22485acf009b3c3510a370f096dd54 ]
 
-Value obtained from DV is not allowing 8k60 CTA mode with DSC to
-pass, after checking real value being used in hw, find out that
-correct value is 3600, which will allow that mode.
+If nvme.write_queues equals the number of CPUs, the driver had decreased
+the number of interrupts available such that there could only be one read
+queue even if the controller could support more. Remove the interrupt
+count reduction in this case. The driver wouldn't request more IRQs than
+it wants queues anyway.
 
-Signed-off-by: Eric Yang <Eric.Yang2@amd.com>
-Reviewed-by: Tony Cheng <Tony.Cheng@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvme/host/pci.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c b/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c
-index de182185fe1f..b0e5e64df212 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c
-@@ -258,7 +258,7 @@ struct _vcs_dpi_soc_bounding_box_st dcn2_1_soc = {
- 	.vmm_page_size_bytes = 4096,
- 	.dram_clock_change_latency_us = 23.84,
- 	.return_bus_width_bytes = 64,
--	.dispclk_dppclk_vco_speed_mhz = 3550,
-+	.dispclk_dppclk_vco_speed_mhz = 3600,
- 	.xfc_bus_transport_time_us = 4,
- 	.xfc_xbuf_latency_tolerance_us = 4,
- 	.use_urgent_burst_bw = 1,
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 29d7427c2b19..14d513087a14 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2060,7 +2060,6 @@ static int nvme_setup_irqs(struct nvme_dev *dev, unsigned int nr_io_queues)
+ 		.priv		= dev,
+ 	};
+ 	unsigned int irq_queues, this_p_queues;
+-	unsigned int nr_cpus = num_possible_cpus();
+ 
+ 	/*
+ 	 * Poll queues don't need interrupts, but we need at least one IO
+@@ -2071,10 +2070,7 @@ static int nvme_setup_irqs(struct nvme_dev *dev, unsigned int nr_io_queues)
+ 		this_p_queues = nr_io_queues - 1;
+ 		irq_queues = 1;
+ 	} else {
+-		if (nr_cpus < nr_io_queues - this_p_queues)
+-			irq_queues = nr_cpus + 1;
+-		else
+-			irq_queues = nr_io_queues - this_p_queues + 1;
++		irq_queues = nr_io_queues - this_p_queues + 1;
+ 	}
+ 	dev->io_queues[HCTX_TYPE_POLL] = this_p_queues;
+ 
 -- 
 2.20.1
 
