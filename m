@@ -2,46 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8536133342
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:17:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A48EE13324B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:09:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729575AbgAGVRI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:17:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55470 "EHLO mail.kernel.org"
+        id S1729417AbgAGVJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:09:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728481AbgAGVGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:06:25 -0500
+        id S1729590AbgAGVIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:08:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8372F2080A;
-        Tue,  7 Jan 2020 21:06:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A72A22077B;
+        Tue,  7 Jan 2020 21:08:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431185;
-        bh=QsJ20k1VVZJ10/BTHoJeI+2CvvnJtI6kiGbeTCKQi6w=;
+        s=default; t=1578431333;
+        bh=UcHpKJl6PsKK6e+oSbmbpIDx26PxKKmsRzq5pfrhOXI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NTWSMu+T8uG+uIa5H0PYfzetWlmLOWZagS79flcVlnPtn0vXsDGU/Tm19cK91Yamb
-         11Do0MVTD7fE+COrwvFQjAXVE4OgKQKF12oE2mB5TrKlkh99lc1SbiR4V4hy7LQtgx
-         gYaB0X3CfMB1jaOdTI2t5hwhqTSvDDVkvLHtbwvI=
+        b=boN8Kim9OmoSBRlLAEsc21r4ZaaPf/HwPR68OYt8V2mxB1fuMdL0TE9dtPCSe6MAW
+         uCsnlXaZwI6NcD8ypKUzWBJbK+MnIbJ0khG8sNuEDjRN3LMJVebhU5OaWQFGKiBmRl
+         Rg1v+xSVN9Ceqsj1JqGnaVmWre27OmfjAq1YcYhc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Tommi T. Rantala" <tommi.t.rantala@nokia.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Paul Turner <pjt@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>
-Subject: [PATCH 4.19 068/115] rseq/selftests: Fix: Namespace gettid() for compatibility with glibc 2.30
-Date:   Tue,  7 Jan 2020 21:54:38 +0100
-Message-Id: <20200107205303.746563145@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 14/74] s390/cpum_sf: Adjust sampling interval to avoid hitting sample limits
+Date:   Tue,  7 Jan 2020 21:54:39 +0100
+Message-Id: <20200107205145.640285828@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-References: <20200107205240.283674026@linuxfoundation.org>
+In-Reply-To: <20200107205135.369001641@linuxfoundation.org>
+References: <20200107205135.369001641@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,101 +44,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-commit 8df34c56321479bfa1ec732c675b686c2b4df412 upstream.
+[ Upstream commit 39d4a501a9ef55c57b51e3ef07fc2aeed7f30b3b ]
 
-glibc 2.30 introduces gettid() in public headers, which clashes with
-the internal static definition within rseq selftests.
+Function perf_event_ever_overflow() and perf_event_account_interrupt()
+are called every time samples are processed by the interrupt handler.
+However function perf_event_account_interrupt() has checks to avoid being
+flooded with interrupts (more then 1000 samples are received per
+task_tick).  Samples are then dropped and a PERF_RECORD_THROTTLED is
+added to the perf data. The perf subsystem limit calculation is:
 
-Rename gettid() to rseq_gettid() to eliminate this symbol name clash.
+    maximum sample frequency := 100000 --> 1 samples per 10 us
+    task_tick = 10ms = 10000us --> 1000 samples per task_tick
 
-Reported-by: Tommi T. Rantala <tommi.t.rantala@nokia.com>
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Tommi T. Rantala <tommi.t.rantala@nokia.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: Paul Turner <pjt@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: <stable@vger.kernel.org>	# v4.18+
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The work flow is
 
+measurement_alert() uses SDBT head and each SBDT points to 511
+ SDB pages, each with 126 sample entries. After processing 8 SBDs
+ and for each valid sample calling:
+
+     perf_event_overflow()
+       perf_event_account_interrupts()
+
+there is a considerable amount of samples being dropped, especially when
+the sample frequency is very high and near the 100000 limit.
+
+To avoid the high amount of samples being dropped near the end of a
+task_tick time frame, increment the sampling interval in case of
+dropped events. The CPU Measurement sampling facility on the s390
+supports only intervals, specifiing how many CPU cycles have to be
+executed before a sample is generated. Increase the interval when the
+samples being generated hit the task_tick limit.
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/rseq/param_test.c |   18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ arch/s390/kernel/perf_cpum_sf.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---- a/tools/testing/selftests/rseq/param_test.c
-+++ b/tools/testing/selftests/rseq/param_test.c
-@@ -15,7 +15,7 @@
- #include <errno.h>
- #include <stddef.h>
- 
--static inline pid_t gettid(void)
-+static inline pid_t rseq_gettid(void)
- {
- 	return syscall(__NR_gettid);
- }
-@@ -373,11 +373,12 @@ void *test_percpu_spinlock_thread(void *
- 		rseq_percpu_unlock(&data->lock, cpu);
- #ifndef BENCHMARK
- 		if (i != 0 && !(i % (reps / 10)))
--			printf_verbose("tid %d: count %lld\n", (int) gettid(), i);
-+			printf_verbose("tid %d: count %lld\n",
-+				       (int) rseq_gettid(), i);
- #endif
- 	}
- 	printf_verbose("tid %d: number of rseq abort: %d, signals delivered: %u\n",
--		       (int) gettid(), nr_abort, signals_delivered);
-+		       (int) rseq_gettid(), nr_abort, signals_delivered);
- 	if (!opt_disable_rseq && thread_data->reg &&
- 	    rseq_unregister_current_thread())
- 		abort();
-@@ -454,11 +455,12 @@ void *test_percpu_inc_thread(void *arg)
- 		} while (rseq_unlikely(ret));
- #ifndef BENCHMARK
- 		if (i != 0 && !(i % (reps / 10)))
--			printf_verbose("tid %d: count %lld\n", (int) gettid(), i);
-+			printf_verbose("tid %d: count %lld\n",
-+				       (int) rseq_gettid(), i);
- #endif
- 	}
- 	printf_verbose("tid %d: number of rseq abort: %d, signals delivered: %u\n",
--		       (int) gettid(), nr_abort, signals_delivered);
-+		       (int) rseq_gettid(), nr_abort, signals_delivered);
- 	if (!opt_disable_rseq && thread_data->reg &&
- 	    rseq_unregister_current_thread())
- 		abort();
-@@ -605,7 +607,7 @@ void *test_percpu_list_thread(void *arg)
- 	}
- 
- 	printf_verbose("tid %d: number of rseq abort: %d, signals delivered: %u\n",
--		       (int) gettid(), nr_abort, signals_delivered);
-+		       (int) rseq_gettid(), nr_abort, signals_delivered);
- 	if (!opt_disable_rseq && rseq_unregister_current_thread())
- 		abort();
- 
-@@ -796,7 +798,7 @@ void *test_percpu_buffer_thread(void *ar
- 	}
- 
- 	printf_verbose("tid %d: number of rseq abort: %d, signals delivered: %u\n",
--		       (int) gettid(), nr_abort, signals_delivered);
-+		       (int) rseq_gettid(), nr_abort, signals_delivered);
- 	if (!opt_disable_rseq && rseq_unregister_current_thread())
- 		abort();
- 
-@@ -1011,7 +1013,7 @@ void *test_percpu_memcpy_buffer_thread(v
- 	}
- 
- 	printf_verbose("tid %d: number of rseq abort: %d, signals delivered: %u\n",
--		       (int) gettid(), nr_abort, signals_delivered);
-+		       (int) rseq_gettid(), nr_abort, signals_delivered);
- 	if (!opt_disable_rseq && rseq_unregister_current_thread())
- 		abort();
- 
+diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
+index 45304085b6ee..95c047bf4a12 100644
+--- a/arch/s390/kernel/perf_cpum_sf.c
++++ b/arch/s390/kernel/perf_cpum_sf.c
+@@ -1306,6 +1306,22 @@ static void hw_perf_event_update(struct perf_event *event, int flush_all)
+ 	if (sampl_overflow)
+ 		OVERFLOW_REG(hwc) = DIV_ROUND_UP(OVERFLOW_REG(hwc) +
+ 						 sampl_overflow, 1 + num_sdb);
++
++	/* Perf_event_overflow() and perf_event_account_interrupt() limit
++	 * the interrupt rate to an upper limit. Roughly 1000 samples per
++	 * task tick.
++	 * Hitting this limit results in a large number
++	 * of throttled REF_REPORT_THROTTLE entries and the samples
++	 * are dropped.
++	 * Slightly increase the interval to avoid hitting this limit.
++	 */
++	if (event_overflow) {
++		SAMPL_RATE(hwc) += DIV_ROUND_UP(SAMPL_RATE(hwc), 10);
++		debug_sprintf_event(sfdbg, 1, "%s: rate adjustment %ld\n",
++				    __func__,
++				    DIV_ROUND_UP(SAMPL_RATE(hwc), 10));
++	}
++
+ 	if (sampl_overflow || event_overflow)
+ 		debug_sprintf_event(sfdbg, 4, "hw_perf_event_update: "
+ 				    "overflow stats: sample=%llu event=%llu\n",
+-- 
+2.20.1
+
 
 
