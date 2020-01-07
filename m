@@ -2,94 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BE17132851
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 15:02:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3607C132848
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 15:01:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728264AbgAGOB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 09:01:26 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42148 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728243AbgAGOBZ (ORCPT
+        id S1728217AbgAGOBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 09:01:18 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:46209 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728080AbgAGOBS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 09:01:25 -0500
-Received: by mail-ed1-f66.google.com with SMTP id e10so50430260edv.9;
-        Tue, 07 Jan 2020 06:01:24 -0800 (PST)
+        Tue, 7 Jan 2020 09:01:18 -0500
+Received: by mail-ed1-f65.google.com with SMTP id m8so50383059edi.13
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 06:01:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1DdkH/5E1tsHkzF5jhXew/z+AFPdpz7/Gvbqbl9G+dg=;
-        b=d098/Ap5WZLDYOVx0LUlRnuUilSy+QZyFpM2S+2zMcaSMbQYhJs7Zsv6FI/Ks5jxXv
-         dQO2dtGfqCwe9noHFs3y6uhVVyyaaGYPvZwl65t38wPj+hyImcuTHeqj5VyIA4f2lLWb
-         UFEa9gC++l0TOhMPwTDLWof0xt/wpRXKZdRfavRYAv8KnTTjshhiZxdDSWfOtyFbT1Bv
-         ymkgIQhCEUdCHX9AxIdCz7QsLJrymPx3I4pwcbwTXRCmuq1rwukCSqsog4onHzB8ED3B
-         As0e8Ppu27OLG9hHYWl1FLz5+jvWgt0sYgd2BvjO6PTzcD9XD4qEGylhNQzi6oZNCc0p
-         +UOg==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+90cyf4uCue1WitBn6EURq8L8npermjRUJaY8IVQ3o0=;
+        b=DBUN+/LNYToXvlGc4wur3eoDDfxXHaJxAQSC9h9hO+wuGf3aIOmi/NIuVnQ9YZuGDC
+         OhkfM24emqJgy+MHAaLzlG1xjwkAPI+xun02gWQ5VtJieumgdSsLpxuKusWSe6jn8m6V
+         udwif7qLa6nGrXmBWlmhIP9Krk2+mAGVW3Pltww1RNeqFBv+wZZD5dsOAmCMSb3S5RMK
+         PrgY36/tpph59ezpzzSXS+VV+/Nb9v0xw+UYiCrJwAEKpNPKl439WHgtFZzrVlyVOtV8
+         hKNcNKJXq6w8XatSbefPePpj7Mb0fiHw6ST1dmgFcjtPSncF0fj+ChjvAWeR7lPLfJsQ
+         FX5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1DdkH/5E1tsHkzF5jhXew/z+AFPdpz7/Gvbqbl9G+dg=;
-        b=lq8YThUGlMsKIZE4i7vF5A4PutyGuvXe/5S7kgV9OZc8TYBk+KTfidY0yQtEUEmYPO
-         MgpXrKAp6VowgAy3e/sg2DQmsIbNLHWbV7iLGWfZ9lbz/bftTyIQyFOJMqmRC+wOJkfy
-         VnwB/JTjglqEPLGSgf76Wg47yJgEnDabWwiAj7U94XuBc/5jCWe3boDjHE7PxpJFxdbT
-         IH9sX3QBgVDlFldBHcIruhf+NHh6XlCoZZ4ycDHC/c7k/dIJO8+NVJwdF9tAQLxYBSEU
-         4htvJU7i5PhP232KFhK+bGpkn02LRTq12rrfvcwH9/H3svyReTc4Hm41aT9t8aX/NimN
-         FWVg==
-X-Gm-Message-State: APjAAAWcXviDAnnAqK+FAGCeNRjwFr1GP4Z3FweORL89ja7TPCMgWF/S
-        yZfDdjK2xZXbUqDicadoGo8z9NXqSCT6N0j3A4I=
-X-Google-Smtp-Source: APXvYqyj/Sjok9k+8DFvLcnokJSMsKngAK+B55iujYFUBH+0eeHn408PpI8AyVvrp43iXISHPpiSNBLhnBPRapSUjiQ=
-X-Received: by 2002:aa7:c80b:: with SMTP id a11mr115581083edt.240.1578405684201;
- Tue, 07 Jan 2020 06:01:24 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+90cyf4uCue1WitBn6EURq8L8npermjRUJaY8IVQ3o0=;
+        b=b2STIxFyz6fPbAZDyr39GsLG0gPLiz/H0gbpwQ6ouvqQmWOfxAqHy1fMuocfT234Dt
+         2WafGYHWkxQe9I8u2UE6N2ywci+FV5h+vNYWTNSPQYsslccPaN3HDUiq9wtbB/GSkPjJ
+         SM6mFA1GoxZv+wBOO58YyAUVz8g5fTwSXTRC9Gul3QQK2xtgBnBsrcEVKV35F1FF9Py8
+         5W4QyOxD2LJubvdunYJogwSk5ftkry2kRS8hyJjho5oDWPfPEmFAVIY84LIVO5ZkQ4MD
+         VB/Fzq7+gDVQl8WeR+qcW2Cm3JMSCfgd7thNPBeyrgwUMsNZNTGJlI6vK/VVc+c60I3s
+         VPfg==
+X-Gm-Message-State: APjAAAU2leS1zJe/0IOXgIg2VXhm5kkkgrNW+S0BqsY1ILNLzohQk5Hv
+        ygz1dT5ynOvvI1/HGEn80W3evw==
+X-Google-Smtp-Source: APXvYqwDb/Sw2bFEL+GZhLau62Pc/gbapCMPuZYvYm7i6neHzkD2rdCQTSQR01s2I5Z2FEmRbMdEfw==
+X-Received: by 2002:a17:906:4e07:: with SMTP id z7mr113972530eju.201.1578405676355;
+        Tue, 07 Jan 2020 06:01:16 -0800 (PST)
+Received: from [192.168.27.209] ([37.157.136.193])
+        by smtp.googlemail.com with ESMTPSA id b4sm6809527ejb.37.2020.01.07.06.01.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Jan 2020 06:01:15 -0800 (PST)
+Subject: Re: [PATCH V3 4/4] arm64: dts: sc7180: Add Venus firmware subnode
+To:     Dikshita Agarwal <dikshita@codeaurora.org>,
+        linux-media@vger.kernel.org, stanimir.varbanov@linaro.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, vgarodia@codeaurora.org
+References: <1577971501-3732-1-git-send-email-dikshita@codeaurora.org>
+ <1577971501-3732-5-git-send-email-dikshita@codeaurora.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <7bf626f2-e943-5538-7405-b6edeb02bfba@linaro.org>
+Date:   Tue, 7 Jan 2020 16:01:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <20191226203655.4046170-1-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20191226203655.4046170-1-martin.blumenstingl@googlemail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 7 Jan 2020 15:01:13 +0100
-Message-ID: <CAFBinCBJwHmQaHMEdZziD=qopqzG6sc2PABkt4E5Hrf927ussQ@mail.gmail.com>
-Subject: Re: [RFC v1 0/2] dwmac-meson8b Ethernet RX delay configuration
-To:     jianxin.pan@amlogic.com
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        andrew@lunn.ch, f.fainelli@gmail.com,
-        linux-amlogic@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1577971501-3732-5-git-send-email-dikshita@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Jianxin,
 
-On Thu, Dec 26, 2019 at 9:37 PM Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
->
-> The Ethernet TX performance has been historically bad on Meson8b and
-> Meson8m2 SoCs because high packet loss was seen. I found out that this
-> was related (yet again) to the RGMII TX delay configuration.
-> In the process of discussing the big picture (and not just a single
-> patch) [0] with Andrew I discovered that the IP block behind the
-> dwmac-meson8b driver actually seems to support the configuration of the
-> RGMII RX delay (at least on the Meson8b SoC generation).
->
-> The goal of this series is to start the discussion around how to
-> implement the RGMII RX delay on this IP block. Additionally it seems
-> that the RX delay can also be applied for RMII PHYs?
->
-> @Jianxin: can you please add the Amlogic internal Ethernet team to this
-> discussion? My questions are documented in the patch description of
-> patch #2.
-do you already have an update for me on this topic?
+On 1/2/20 3:25 PM, Dikshita Agarwal wrote:
+> This adds Venus firmware subnode for non-TZ platform.
+> 
+> Signed-off-by: Dikshita Agarwal <dikshita@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7180-idp.dts | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-while we're discussing unknown bits of the Ethernet controller I also
-remembered that we're currently not describing the relation between
-the "fclk_div2" clock and the Ethernet controller. however, as
-described in commit 72e1f230204039 ("clk: meson: meson8b: mark
-fclk_div2 gate clocks as CLK_IS_CRITICAL") this is needed for RGMII
-mode.
-it would be great to know the relation between fclk_div2 and RGMII
-mode on the Ethernet controller!
+Reviewed-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> index 388f50a..2f82510 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> @@ -287,6 +287,12 @@
+>  	vdda-pll-supply = <&vreg_l4a_0p8>;
+>  };
+>  
+> +&venus {
+> +	video-firmware {
+> +		iommus = <&apps_smmu 0x0c42 0x0>;
+> +	};
+> +};
+> +
+>  /* PINCTRL - additions to nodes defined in sc7180.dtsi */
+>  
+>  &qspi_clk {
+> 
 
-Thank you!
-Martin
+-- 
+regards,
+Stan
