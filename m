@@ -2,105 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB057132A97
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 17:00:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5FFB132AA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 17:02:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728340AbgAGQAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 11:00:43 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:24622 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728052AbgAGQAm (ORCPT
+        id S1728351AbgAGQCJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 11:02:09 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41916 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728173AbgAGQCJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 11:00:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578412841;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=2tgaAOxuK+BpANAaDpR2VlivTHiWdjlqBTqnI3DjVok=;
-        b=YcQd5OxhDD93m32hoAsJJoehZAPLC2/9IdXjfP+OoZPBljEkOKcm5xF4kfcfVjxsjt//EM
-        rBBv7C5GMQc3Nl0PBo8UXgcHQRE3jnCi4FrvxkvWwUQIPHdHq+DjvofrT8bpzIxAitjdvz
-        ejxJr7gtSHt/Kc5Ivuv1i2rtXrE+MdU=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-219-QlwyI2DuNjCUj8HwU1u-1Q-1; Tue, 07 Jan 2020 11:00:38 -0500
-X-MC-Unique: QlwyI2DuNjCUj8HwU1u-1Q-1
-Received: by mail-qt1-f198.google.com with SMTP id m18so73503qtq.8
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 08:00:38 -0800 (PST)
+        Tue, 7 Jan 2020 11:02:09 -0500
+Received: by mail-qk1-f194.google.com with SMTP id x129so43070719qke.8
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 08:02:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m5L2Z7dBLaHFaGhh6t90np+r+vB2C1fkHc9c1XkE5eA=;
+        b=SRKTOX73kQ0C7bZJyVEQPX5lrHCfn6wtB+TUgnlKYaqAcPOJxRX9W33hvgPLf/Cqni
+         20bWZcvpVtp+u3kVVCy8Pr6p5WX771zG/aaYNm3a43PBoZMEWPkVUdafi6z8zdNbP875
+         wtMMQXxTZrS4EHq5APXk2wYx3oJy+7yGEHag0xh0L78KeLuZ6Up0ZEKAeisMiKKEo5bD
+         GnoA9zsPeHtXte1J8C12L3Ve4R2yJhPrmNnqIh1xILeh06Iq5UCkFiirkFczmkS1Durt
+         VPuB0v7XEVsThI6kRHNHza1+1T1XUR1zTV2kSimviYK2TK4yxqHmw1gQJk9t+jf8ah8+
+         YhdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=2tgaAOxuK+BpANAaDpR2VlivTHiWdjlqBTqnI3DjVok=;
-        b=CBJ87Y2u5VtlA7EkPojP+DbLDtOd1wPVhuPyYgrQyXbiz6dZ8gSBwWx6eVBTNzsdwp
-         lK38rbAmuLvUgxhYFqpUv1EwCHUlJSsz/f4cxQMNqlfclZOTPUegaL2HlyLJS4jMSJ9n
-         lTt6yrPiVNyuhkgXrEPmUM/gCBgfxi6go2AYHSjzdoF3RIRCahgr4d3UztsV42LxtDyf
-         1nvBEIAF3QuLQ7qeJjOAqcfE0S1aRtwPaxALoDMm7edzoCBULpW6Sx3P7OT3zQ6AErPg
-         iVWJRF/eFd3AneYuHyCQUpsUpUfcIjA7d63CcC18B4tAOV0sQcnXeDXzMAZA/Oadu5+n
-         cagw==
-X-Gm-Message-State: APjAAAWVZKGss1zK0t2q9lKDrVMCHUp+PO12tc4Gkm+Bd5LfoCcXA11u
-        E7VFsmuhoX5JNa5Cl6D5GwqrzMSfKizT20mqLLH4QR7paSWq4I8xNnOfkMOsnGz3do2Jlv0hBbL
-        4lPavxu5P+4FEil7sJoaod/mE
-X-Received: by 2002:ad4:5614:: with SMTP id ca20mr77314qvb.43.1578412838104;
-        Tue, 07 Jan 2020 08:00:38 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxco4tN6LuFo9JPmqxefJvTz1h/hHztoZLdPyxjrU9NmEQbj/K8aPW34C5/taBpDrO7OrLbbw==
-X-Received: by 2002:ad4:5614:: with SMTP id ca20mr77269qvb.43.1578412837710;
-        Tue, 07 Jan 2020 08:00:37 -0800 (PST)
-Received: from xz-x1 ([104.156.64.74])
-        by smtp.gmail.com with ESMTPSA id t1sm20365985qkt.129.2020.01.07.08.00.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 08:00:37 -0800 (PST)
-Date:   Tue, 7 Jan 2020 11:00:35 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Ben Gardon <bgardon@google.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        Andrew Jones <drjones@redhat.com>
-Subject: Re: [PATCH v3 2/8] KVM: selftests: Add demand paging content to the
- demand paging test
-Message-ID: <20200107160035.GG219677@xz-x1>
-References: <20191216213901.106941-1-bgardon@google.com>
- <20191216213901.106941-3-bgardon@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m5L2Z7dBLaHFaGhh6t90np+r+vB2C1fkHc9c1XkE5eA=;
+        b=jV2F+j5BstkhS7WmyAlpYu/6Zw1INEQKvI1QDhJ5D8YKKQTEYBFrisdDfDkR1Y8Jmu
+         fKdPdIgSBNldckkyOFJDVG9yjv8RpKfWSG0Qq6rgGW83WM6961PBupuPFLggKjCSeZr5
+         ECgATYJWAwMGaidWYVe4OX9RF7vJCzyTim3eFSFtFM8wFUmOUiluMdS+z/nDwYbZrYZL
+         N4bUYOLIAbsvVbyS1/NSubmG7/P2P3Ciq1BJI0M5oMZ16f3kIpPukAeE8MwYNG9e2Ryn
+         lag+Mb1XXlALXr/I5K3oSAnoHbA4f4XTKxlYszCiw5i5stQKaduPw+enOI0S9snvIWha
+         +1YA==
+X-Gm-Message-State: APjAAAXjVfrCvZsFRcVRCka8ByiYH4QA8YhR7/CUEnODKtuy3wzI9vHT
+        yy6suuIqZOguHtkDLAKHN1/bUGcBZDiI1JbrrqMGRA==
+X-Google-Smtp-Source: APXvYqzUW7seMxUlfo6okJae/fU1ZwL/kM+/uzTVDw6txhjzZH1cXINZE4qkaz5ynFXQaozCcU2Y+HQm3/FNG88d/6Y=
+X-Received: by 2002:a37:e312:: with SMTP id y18mr18264qki.250.1578412928223;
+ Tue, 07 Jan 2020 08:02:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191216213901.106941-3-bgardon@google.com>
+References: <00000000000082b80f059a56da1f@google.com> <0000000000002074ef059a5c86e2@google.com>
+ <20200107154755.GB43062@phenom.ffwll.local>
+In-Reply-To: <20200107154755.GB43062@phenom.ffwll.local>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 7 Jan 2020 17:01:56 +0100
+Message-ID: <CACT4Y+arQyPjzHSFy1MkVF2jNPJbu262_FTL5ma9AnWkXosY1g@mail.gmail.com>
+Subject: Re: INFO: task hung in fb_release
+To:     syzbot <syzbot+d130c4a0890561cfac5b@syzkaller.appspotmail.com>,
+        Rex.Zhu@amd.com, David Airlie <airlied@linux.ie>,
+        alexander.deucher@amd.com, amd-gfx@lists.freedesktop.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        christian.koenig@amd.com, david1.zhou@amd.com,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 01:38:55PM -0800, Ben Gardon wrote:
+On Tue, Jan 7, 2020 at 4:48 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+>
+> On Mon, Dec 23, 2019 at 02:31:01AM -0800, syzbot wrote:
+> > syzbot has bisected this bug to:
+> >
+> > commit e3933f26b657c341055443103bad331f4537b113
+> > Author: Rex Zhu <Rex.Zhu@amd.com>
+> > Date:   Tue Jan 16 10:35:15 2018 +0000
+> >
+> >     drm/amd/pp: Add edit/commit/show OD clock/voltage support in sysfs
+>
+> Pretty sure you don't even have that driver loaded ... from the config:
+>
+> # CONFIG_DRM_AMDGPU is not set
+>
+> :-)
 
-[...]
+Yes, it seems the bug is very flaky and flakiness changes over time.
+And this is combined with non-deterministic kernel build bug:
+https://github.com/google/syzkaller/issues/1271#issuecomment-559093018
+It builds the same kernel, but gets a different result, so it's like
+"nope, this commit very much affects the kernel so could be the root
+cause"...
 
-> +static void *uffd_handler_thread_fn(void *arg)
-> +{
-> +	struct uffd_handler_args *uffd_args = (struct uffd_handler_args *)arg;
-> +	int uffd = uffd_args->uffd;
-> +	int64_t pages = 0;
-> +
-> +	while (!quit_uffd_thread) {
-> +		struct uffd_msg msg;
-> +		struct pollfd pollfd[1];
-> +		int r;
-> +		uint64_t addr;
-> +
-> +		pollfd[0].fd = uffd;
-> +		pollfd[0].events = POLLIN;
-> +
-> +		/*
-> +		 * TODO this introduces a 0.5sec delay at the end of the test.
-> +		 * Reduce the timeout or eliminate it following the example in
-> +		 * tools/testing/selftests/vm/userfaultfd.c
-> +		 */
-> +		r = poll(pollfd, 1, 500);
 
-Would you mind implement it instead of adding a todo?  IIUC it's as
-simple as a few more lines than the comment itself.  Thanks,
 
--- 
-Peter Xu
 
+> Cheers, Daniel
+> >
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12b5a799e00000
+> > start commit:   c6017471 Merge tag 'xfs-5.5-fixes-2' of git://git.kernel.o..
+> > git tree:       upstream
+> > final crash:    https://syzkaller.appspot.com/x/report.txt?x=11b5a799e00000
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=16b5a799e00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=7f6119e2e3675a73
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=d130c4a0890561cfac5b
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=169b1925e00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b9623ee00000
+> >
+> > Reported-by: syzbot+d130c4a0890561cfac5b@syzkaller.appspotmail.com
+> > Fixes: e3933f26b657 ("drm/amd/pp: Add edit/commit/show OD clock/voltage
+> > support in sysfs")
+> >
+> > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20200107154755.GB43062%40phenom.ffwll.local.
