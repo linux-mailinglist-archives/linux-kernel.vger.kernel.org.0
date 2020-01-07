@@ -2,73 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A03F132F7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 20:31:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8726132F88
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 20:32:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728812AbgAGTa6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 14:30:58 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:35054 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728307AbgAGTa5 (ORCPT
+        id S1728829AbgAGTb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 14:31:29 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:32783 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728307AbgAGTb2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 14:30:57 -0500
-Received: from ip-109-41-1-29.web.vodafone.de ([109.41.1.29] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iouZ2-0004Mw-9L; Tue, 07 Jan 2020 19:30:52 +0000
-Date:   Tue, 7 Jan 2020 20:30:54 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Will Deacon <will@kernel.org>,
-        Amanieu d'Antras <amanieu@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
-        "# 3.4.x" <stable@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 2/7] arm64: Implement copy_thread_tls
-Message-ID: <20200107193054.t2d4txgz3fnrw3gn@wittgenstein>
-References: <20200102172413.654385-1-amanieu@gmail.com>
- <20200102172413.654385-3-amanieu@gmail.com>
- <20200102180130.hmpipoiiu3zsl2d6@wittgenstein>
- <20200106173953.GB9676@willie-the-truck>
- <CA+y5pbSBYLvZ46nJP0pSYZnRohtPxHitOHPEaLXq23-QrPKk2g@mail.gmail.com>
- <20200107090219.jl4py4u2zvofwnbh@wittgenstein>
- <20200107174508.GC32009@willie-the-truck>
- <202001071011.9517D9C0D@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202001071011.9517D9C0D@keescook>
-User-Agent: NeoMutt/20180716
+        Tue, 7 Jan 2020 14:31:28 -0500
+Received: by mail-pg1-f194.google.com with SMTP id 6so356397pgk.0;
+        Tue, 07 Jan 2020 11:31:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=3ST/dj3po+BlNeYM5PMnB4Z+srpzBM2wonPJAfu44pg=;
+        b=ayegAG88ic4ZMzTrQ5veoMKLjpAiwBmaJgBtFHY14G+/hkJWblccaas0os4TVCGKU0
+         JGskHw2/EF9g9oqgXWRZsQu4bwEUv/mzKh0vtW8N5JbfoEpH5mc0iHPYBSMiPx+kQ2Ii
+         UuR8zZmrVymnRwa0240MOFfMrmIM7RKUC65YyifibGP5k6UoAFQFrFilwcrjFwwEBxtx
+         G+FprGREsEVGy+JsYmWUJV4/xv8NtSNKW/yHeoQktpOY5C/saZF2HMvWjOEQKzWmNd40
+         +W24LHsjIQZ/DDnBiyXvFxhjBBjSMsYlbxPM5KLkvs/s/edJ/HDUCfqpw616E4/D+1Rq
+         114g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3ST/dj3po+BlNeYM5PMnB4Z+srpzBM2wonPJAfu44pg=;
+        b=eiM8jxS1sZV0LGCHkUP0NhJ7At+2L6Z3TgBUjjey4wYO4LdbkiDDmyk7hkhV9uER38
+         Qot/y4vJf1HiMSzh+J67JvD5UJ4R5Y629lm1vY+3FOhqGCM2YeuuAolIlzsTedwGMCNs
+         DL5eY4d2/e2LiETM/4Y5X917ui4smL/kEqYGPTz5lzbcDVdfOYdjxkpK4LauICbHVlT0
+         zrbp1ZKOWiQ84EAv6DgmgpkCWJNNmfNDRlXCia+6dbcyNFoINePcu0kT9P82x/EhsPPE
+         RzQVS1X2tQvRD1Dh1Vqw644Sgc9jaZ4wxAM7wcIf6jxiuaN+gOcGXojSge10yaktmivX
+         1nWw==
+X-Gm-Message-State: APjAAAUhRv5MsMqVHymJmE2+t39jQFYNTxSgsnC2t/4uENrGPc82i/hG
+        445rNiPe4j44pzgOMnJHNDk=
+X-Google-Smtp-Source: APXvYqwEJ4DGXraHQ+XTpgucybYYLANGWqLS0H5FRZ2LWC/vCHUIp2l5InPQcrZS3vIu3NDqkcJVHA==
+X-Received: by 2002:a62:1548:: with SMTP id 69mr837034pfv.239.1578425487834;
+        Tue, 07 Jan 2020 11:31:27 -0800 (PST)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:1ee3:fd53:8500:6ea8:4ef2:c9be])
+        by smtp.gmail.com with ESMTPSA id b4sm365817pfd.18.2020.01.07.11.31.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2020 11:31:26 -0800 (PST)
+From:   madhuparnabhowmik04@gmail.com
+To:     dennis.dalessandro@intel.com, mike.marciniszyn@intel.com,
+        dledford@redhat.com, paulmck@kernel.org
+Cc:     rcu@vger.kernel.org, joel@joelfernandes.org, frextrite@gmail.com,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+Subject: [PATCH 3/3] infiniband: sw: rdmavt: mcast.c: Use built-in RCU list checking
+Date:   Wed,  8 Jan 2020 01:01:19 +0530
+Message-Id: <20200107193119.22915-1-madhuparnabhowmik04@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 10:12:39AM -0800, Kees Cook wrote:
-> On Tue, Jan 07, 2020 at 05:45:09PM +0000, Will Deacon wrote:
-> > On Tue, Jan 07, 2020 at 10:02:27AM +0100, Christian Brauner wrote:
-> > > [Cc Kees in case he knows something about where arch specific tests live
-> > >  or whether we have a framework for this]
-> > > [...]
-> > > It feels like we must've run into the "this is architecture
-> > > specific"-and-we-want-to-test-this issue before... Do we have a place
-> > > where architecture specific selftests live?
-> > 
-> > For arch-specific selftests there are tools/testing/selftests/$ARCH
-> > directories, although in this case maybe it's better to have an #ifdef
-> > in a header so that architectures with __builtin_thread_pointer can use
-> > that.
-> 
-> Yup, I agree: that's the current best-practice for arch-specific
-> selftests.
+From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
 
-Thanks! I think using #ifdef in this case with __builtin_thread_pointer
-sounds good.
-So the tests can be moved into the clone3() test-suite for those
-architectures.
+Use built-in RCU and lock-checking for list_for_each_entry_rcu()
+by passing the cond argument.
 
-Christian
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+---
+ drivers/infiniband/sw/rdmavt/mcast.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/sw/rdmavt/mcast.c b/drivers/infiniband/sw/rdmavt/mcast.c
+index dd11c6fcd060..983cf6d06dfc 100644
+--- a/drivers/infiniband/sw/rdmavt/mcast.c
++++ b/drivers/infiniband/sw/rdmavt/mcast.c
+@@ -224,7 +224,8 @@ static int rvt_mcast_add(struct rvt_dev_info *rdi, struct rvt_ibport *ibp,
+ 		}
+ 
+ 		/* Search the QP list to see if this is already there. */
+-		list_for_each_entry_rcu(p, &tmcast->qp_list, list) {
++		list_for_each_entry_rcu(p, &tmcast->qp_list, list,
++					lock_is_held(&(ibp->lock).dep_map)) {
+ 			if (p->qp == mqp->qp) {
+ 				ret = ESRCH;
+ 				goto bail;
+-- 
+2.17.1
+
