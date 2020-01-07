@@ -2,175 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86AB11327C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 14:36:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3859B1327BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 14:35:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbgAGNf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 08:35:58 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38555 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728291AbgAGNfz (ORCPT
+        id S1728056AbgAGNfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 08:35:23 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:50916 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727559AbgAGNfX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 08:35:55 -0500
-Received: by mail-pf1-f196.google.com with SMTP id x185so28623001pfc.5;
-        Tue, 07 Jan 2020 05:35:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4wTOIHrS76ztlN3KfH9i8gs4zRLMioZUYiN9KHxWPxk=;
-        b=DK1RRGZ6+F0r13BqGpMCz6Pu98WI7dNO5BNklZ3n/ef9iloc10egRlswnm05l8MD35
-         QEIwr/Dys/BMPlt1KgsaRS0zrDsJ087JSA47NgMZtKnZumWlF2xR3HvKSI7LJ4WDAv/e
-         SA/GauV9G767x7KOB11J47fOfVsG1Ge21oyg3GOwlL3gjDmTHpYyDBUPowXYiyvk03iz
-         i3/US3CHYWLXe5VBMsMaU0yeoJgFMGql1Qdu3KU+4Tj9wv8ZO8S0mZBOlyZbhVRiy/eo
-         pPQsh4EgaCHWMcGxNJhhJm6lSvN+vmFpXBvfdcWBek5EKC0Je2/MxmAX8WsePzdr4F+T
-         anWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=4wTOIHrS76ztlN3KfH9i8gs4zRLMioZUYiN9KHxWPxk=;
-        b=nwD0DLLxcYuYeTaR8+dFT9aDdcsRmQj32juct48sDhp+ph4hdJK3RrXr5Sl+/RqeoL
-         +UiW6Yx4bghccYWxkkq6mnd4ARfF5iXdIlhKBlyseSb6k23zlVN22vKcAeKpQkQIYZqR
-         CKhFpNzu42DsQ3iGNMkIfb3tk0/2AmIIv0VH1qP18ra+WL5yDbz3Yt2ymN0QkG+D0uSc
-         NgZvkeQwQQIiGOJyzXHex+xXxsxx2RbKguddzFderfdDwoNmfdQWnOyYRQYHcouMfNU3
-         DtS7GT2WhROTv5+lzEnWQugX5jYMPZSx10uJwQQaQ53ifaiA2OH27Zn0Z1K83EBEpNx8
-         699A==
-X-Gm-Message-State: APjAAAVocQoJU2NOBJ4YegIgWknhmLOKwC2Fg+Eo4u7/0qaa2ZL64Lx6
-        C4wbJm4WXfMnTw/ZWRgqLgc=
-X-Google-Smtp-Source: APXvYqyb2jTFCiUMcddJ10y9QK5iHNRPF83RuLGqPIdKmroDDQ0SXO/1FWkCY7o165xA6AB8XZZ5jQ==
-X-Received: by 2002:aa7:92c2:: with SMTP id k2mr90391734pfa.93.1578404154560;
-        Tue, 07 Jan 2020 05:35:54 -0800 (PST)
-Received: from gaurie.seo.corp.google.com ([2401:fa00:d:1:4eb0:a5ef:3975:7440])
-        by smtp.gmail.com with ESMTPSA id p17sm80358484pfn.31.2020.01.07.05.35.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 05:35:54 -0800 (PST)
-From:   Namhyung Kim <namhyung@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephane Eranian <eranian@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-Subject: [PATCH 9/9] perf script: Add --show-cgroup-events option
-Date:   Tue,  7 Jan 2020 22:35:01 +0900
-Message-Id: <20200107133501.327117-10-namhyung@kernel.org>
-X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
-In-Reply-To: <20200107133501.327117-1-namhyung@kernel.org>
-References: <20200107133501.327117-1-namhyung@kernel.org>
+        Tue, 7 Jan 2020 08:35:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LNR/sdifkLYBQN1o5vH9UJw/7uhmyLBfESVcRAGK3Sc=; b=Rs2n8vtgDhDr8N3x8HocNbNln
+        MpRWLfHF8kmAhNlkNLXrqJ2lN0vCvCZTCmuVbeeZp6mqqhxyzLedI4rx3hV9fA+7yHgt1vHDPBB/d
+        ewfn/OaAei/LvMStzPsYNrNHquMB95JbAmlymsPZgJR6rHlmEzcGVUBTk0dLCaDxexOm8CJ7SoE7b
+        hgRfUlwQ5oXj2+BlWGW1sRXp+XqZoqiajsEy/OOqyrgWkaBOkxSDGx8KdYcdh0mCw4+6xXtn968ov
+        K6JrfaASHi4CUgNYogNFxFp5E+cGKZpq0+frPSQgC7+Un7QZiztYFzEadakKRalwsfUSQrN9FiBWZ
+        dO1GP4zQg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iop0r-00076D-VB; Tue, 07 Jan 2020 13:35:14 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 4341730025A;
+        Tue,  7 Jan 2020 14:33:38 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BDB262B2835F0; Tue,  7 Jan 2020 14:35:10 +0100 (CET)
+Date:   Tue, 7 Jan 2020 14:35:10 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-tip-commits <linux-tip-commits@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
+        stable <stable@vger.kernel.org>
+Subject: Re: [tip: core/urgent] rseq: Reject unknown flags on rseq unregister
+Message-ID: <20200107133510.GB2844@hirez.programming.kicks-ass.net>
+References: <20191211161713.4490-2-mathieu.desnoyers@efficios.com>
+ <157727033331.30329.17206832903007175600.tip-bot2@tip-bot2>
+ <20191225113932.GD18098@zn.tnic>
+ <1460494267.15769.1577399533860.JavaMail.zimbra@efficios.com>
+ <1732849021.873.1578338087928.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1732849021.873.1578338087928.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The --show-cgroup-events option is to print CGROUP events in the
-output like others.
+On Mon, Jan 06, 2020 at 02:14:47PM -0500, Mathieu Desnoyers wrote:
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/Documentation/perf-script.txt |  3 ++
- tools/perf/builtin-script.c              | 41 ++++++++++++++++++++++++
- 2 files changed, 44 insertions(+)
+> For the records, I had stable in CC in my original patch submission. The stable CC has
+> been stripped when it was merged into the tip tree.
 
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index 2599b057e47b..3dd297600427 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -319,6 +319,9 @@ OPTIONS
- --show-bpf-events
- 	Display bpf events i.e. events of type PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT.
- 
-+--show-cgroup-events
-+	Display cgroup events i.e. events of type PERF_RECORD_CGROUP.
-+
- --demangle::
- 	Demangle symbol names to human readable form. It's enabled by default,
- 	disable with --no-demangle.
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index e2406b291c1c..3db4afc29430 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1681,6 +1681,7 @@ struct perf_script {
- 	bool			show_lost_events;
- 	bool			show_round_events;
- 	bool			show_bpf_events;
-+	bool			show_cgroup_events;
- 	bool			allocated;
- 	bool			per_event_dump;
- 	struct evswitch		evswitch;
-@@ -2199,6 +2200,41 @@ static int process_namespaces_event(struct perf_tool *tool,
- 	return ret;
- }
- 
-+static int process_cgroup_event(struct perf_tool *tool,
-+				union perf_event *event,
-+				struct perf_sample *sample,
-+				struct machine *machine)
-+{
-+	struct thread *thread;
-+	struct perf_script *script = container_of(tool, struct perf_script, tool);
-+	struct perf_session *session = script->session;
-+	struct evsel *evsel = perf_evlist__id2evsel(session->evlist, sample->id);
-+	int ret = -1;
-+
-+	thread = machine__findnew_thread(machine, sample->pid, sample->tid);
-+	if (thread == NULL) {
-+		pr_debug("problem processing CGROUP event, skipping it.\n");
-+		return -1;
-+	}
-+
-+	if (perf_event__process_cgroup(tool, event, sample, machine) < 0)
-+		goto out;
-+
-+	if (!evsel->core.attr.sample_id_all) {
-+		sample->cpu = 0;
-+		sample->time = 0;
-+	}
-+	if (!filter_cpu(sample)) {
-+		perf_sample__fprintf_start(sample, thread, evsel,
-+					   PERF_RECORD_CGROUP, stdout);
-+		perf_event__fprintf(event, stdout);
-+	}
-+	ret = 0;
-+out:
-+	thread__put(thread);
-+	return ret;
-+}
-+
- static int process_fork_event(struct perf_tool *tool,
- 			      union perf_event *event,
- 			      struct perf_sample *sample,
-@@ -2538,6 +2574,8 @@ static int __cmd_script(struct perf_script *script)
- 		script->tool.context_switch = process_switch_event;
- 	if (script->show_namespace_events)
- 		script->tool.namespaces = process_namespaces_event;
-+	if (script->show_cgroup_events)
-+		script->tool.cgroup = process_cgroup_event;
- 	if (script->show_lost_events)
- 		script->tool.lost = process_lost_event;
- 	if (script->show_round_events) {
-@@ -3463,6 +3501,7 @@ int cmd_script(int argc, const char **argv)
- 			.mmap2		 = perf_event__process_mmap2,
- 			.comm		 = perf_event__process_comm,
- 			.namespaces	 = perf_event__process_namespaces,
-+			.cgroup		 = perf_event__process_cgroup,
- 			.exit		 = perf_event__process_exit,
- 			.fork		 = perf_event__process_fork,
- 			.attr		 = process_attr,
-@@ -3563,6 +3602,8 @@ int cmd_script(int argc, const char **argv)
- 		    "Show context switch events (if recorded)"),
- 	OPT_BOOLEAN('\0', "show-namespace-events", &script.show_namespace_events,
- 		    "Show namespace events (if recorded)"),
-+	OPT_BOOLEAN('\0', "show-cgroup-events", &script.show_cgroup_events,
-+		    "Show cgroup events (if recorded)"),
- 	OPT_BOOLEAN('\0', "show-lost-events", &script.show_lost_events,
- 		    "Show lost events (if recorded)"),
- 	OPT_BOOLEAN('\0', "show-round-events", &script.show_round_events,
--- 
-2.24.1.735.g03f4e72817-goog
+Argh, lemme go fix my scripts _again_..
 
+I was recently made aware that we should not have spurious Cc: tags in
+commit messages, but obviously the stable thing is an exception there.
