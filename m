@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F7E7133368
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:19:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A0AE133177
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:01:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728452AbgAGVEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:04:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49554 "EHLO mail.kernel.org"
+        id S1727906AbgAGVA7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:00:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729079AbgAGVEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:04:43 -0500
+        id S1727953AbgAGVAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:00:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 687CF20678;
-        Tue,  7 Jan 2020 21:04:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B132B20880;
+        Tue,  7 Jan 2020 21:00:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431082;
-        bh=yvSUdJhR7bHfZSJeyF6n2xh+oZ3xjRsEN5JHfOLFMfU=;
+        s=default; t=1578430841;
+        bh=33Bi1yVAAsVNi7Ev68V72KZgAWblLjCh7fQukOoLmBo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QgsJ1A/f/ZY9gdICzS8cx3OdJER0eUM9GmyxrbKJPmszBqMh2rZCPfGv1/QmhYujx
-         GCq/QgnKgYx+o0i5XErXdf5GK8M3X7akPhDuEJc7eqmZA6AtVnXEHr1Cmes68reifr
-         gNKWHLuhiZqfHijsbQAYBISIcXkR4g89Jg4S/o6Q=
+        b=DoaJIFdJ8VcqQReEhjVO5qofah310mcVUaEmTSuF9wJGqRLG+fL+/UBuV8VG34o+H
+         mNhPgiu6LK140ExA9yd1Kni8fQ5X9zMg0ZWKIpFPvxsT0PNdtaH22CQYSWoPiUny7S
+         pV30zKQ+D7sqc5k+moqpyRUrcViamz7/f2Ijkccg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Jonathan Billings <jsbillings@jsbillings.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 026/115] afs: Fix creation calls in the dynamic root to fail with EOPNOTSUPP
-Date:   Tue,  7 Jan 2020 21:53:56 +0100
-Message-Id: <20200107205259.109355598@linuxfoundation.org>
+        stable@vger.kernel.org, Tom Zanussi <zanussi@kernel.org>,
+        Sven Schnelle <svens@stackframe.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 5.4 117/191] tracing: Have the histogram compare functions convert to u64 first
+Date:   Tue,  7 Jan 2020 21:53:57 +0100
+Message-Id: <20200107205339.243118226@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-References: <20200107205240.283674026@linuxfoundation.org>
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+References: <20200107205332.984228665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-[ Upstream commit 1da4bd9f9d187f53618890d7b66b9628bbec3c70 ]
+commit 106f41f5a302cb1f36c7543fae6a05de12e96fa4 upstream.
 
-Fix the lookup method on the dynamic root directory such that creation
-calls, such as mkdir, open(O_CREAT), symlink, etc. fail with EOPNOTSUPP
-rather than failing with some odd error (such as EEXIST).
+The compare functions of the histogram code would be specific for the size
+of the value being compared (byte, short, int, long long). It would
+reference the value from the array via the type of the compare, but the
+value was stored in a 64 bit number. This is fine for little endian
+machines, but for big endian machines, it would end up comparing zeros or
+all ones (depending on the sign) for anything but 64 bit numbers.
 
-lookup() itself tries to create automount directories when it is invoked.
-These are cached locally in RAM and not committed to storage.
+To fix this, first derference the value as a u64 then convert it to the type
+being compared.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
-Tested-by: Jonathan Billings <jsbillings@jsbillings.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Link: http://lkml.kernel.org/r/20191211103557.7bed6928@gandalf.local.home
+
+Cc: stable@vger.kernel.org
+Fixes: 08d43a5fa063e ("tracing: Add lock-free tracing_map")
+Acked-by: Tom Zanussi <zanussi@kernel.org>
+Reported-by: Sven Schnelle <svens@stackframe.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/afs/dynroot.c | 3 +++
- 1 file changed, 3 insertions(+)
+ kernel/trace/tracing_map.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
-index f29c6dade7f6..069273a2483f 100644
---- a/fs/afs/dynroot.c
-+++ b/fs/afs/dynroot.c
-@@ -145,6 +145,9 @@ static struct dentry *afs_dynroot_lookup(struct inode *dir, struct dentry *dentr
- 
- 	ASSERTCMP(d_inode(dentry), ==, NULL);
- 
-+	if (flags & LOOKUP_CREATE)
-+		return ERR_PTR(-EOPNOTSUPP);
-+
- 	if (dentry->d_name.len >= AFSNAMEMAX) {
- 		_leave(" = -ENAMETOOLONG");
- 		return ERR_PTR(-ENAMETOOLONG);
--- 
-2.20.1
-
+--- a/kernel/trace/tracing_map.c
++++ b/kernel/trace/tracing_map.c
+@@ -148,8 +148,8 @@ static int tracing_map_cmp_atomic64(void
+ #define DEFINE_TRACING_MAP_CMP_FN(type)					\
+ static int tracing_map_cmp_##type(void *val_a, void *val_b)		\
+ {									\
+-	type a = *(type *)val_a;					\
+-	type b = *(type *)val_b;					\
++	type a = (type)(*(u64 *)val_a);					\
++	type b = (type)(*(u64 *)val_b);					\
+ 									\
+ 	return (a > b) ? 1 : ((a < b) ? -1 : 0);			\
+ }
 
 
