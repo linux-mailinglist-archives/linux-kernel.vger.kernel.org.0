@@ -2,143 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 384401323CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:38:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9A5A1323E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:40:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbgAGKij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 05:38:39 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:56494 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbgAGKij (ORCPT
+        id S1727953AbgAGKjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 05:39:21 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:48555 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727589AbgAGKjU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 05:38:39 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 007AcTBQ052064;
-        Tue, 7 Jan 2020 04:38:29 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578393509;
-        bh=BSpms8vYzmAl/YFEGgI8wzX4uGpMNJOd+zSnFgxFaP0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=MKjc8aAF40U5qjbdM4l/1SABZ0JniIFWxtHuneoS4v0G7TPEk0yLjiPYPP36egmvR
-         ja1LaMDtkIm4jF81pIDJpn4/wHbw8TX78YJZ+w0Jr3G+t6LIusO81C2Iy7/mxq0ewj
-         tCHIdn1VvkIz+qwHIec8EhRlRho2N/kIyP3sfgm4=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 007AcTZo112928
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 7 Jan 2020 04:38:29 -0600
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 7 Jan
- 2020 04:38:28 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 7 Jan 2020 04:38:28 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 007AcPAU005113;
-        Tue, 7 Jan 2020 04:38:27 -0600
-Subject: Re: [PATCH] media: stm32-dcmi: Use dma_request_chan() instead
- dma_request_slave_channel()
-To:     Hugues FRUCHET <hugues.fruchet@st.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-CC:     "vkoul@kernel.org" <vkoul@kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20191217104135.23554-1-peter.ujfalusi@ti.com>
- <84946ffd-8e90-7b6a-6667-a10e27d31655@st.com>
- <8229c7ed-b513-6bf8-5684-60d87a92d41f@st.com>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <a4682783-e966-6176-4ab5-cc9345e3508f@ti.com>
-Date:   Tue, 7 Jan 2020 12:38:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 7 Jan 2020 05:39:20 -0500
+Received: from mail-qt1-f174.google.com ([209.85.160.174]) by
+ mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1M7auJ-1ilinL2iAH-0086lr; Tue, 07 Jan 2020 11:39:18 +0100
+Received: by mail-qt1-f174.google.com with SMTP id t3so44896249qtr.11;
+        Tue, 07 Jan 2020 02:39:18 -0800 (PST)
+X-Gm-Message-State: APjAAAUgF18u2te5AjGTo76XIfn80wBmeWCyq2Va5FrPO/oI9BVz7TfP
+        lL+CX0Ya5rMr6A9LpmIhrsHNy9mfw/DFKP0+jrA=
+X-Google-Smtp-Source: APXvYqyZhmN1eLl6pt96KksAU6g7g17LqbBD1ix7k6Tl4UknhAbwyEGN+KnksbzRm55kVluXwuoazvSU6xkSWIKNn+U=
+X-Received: by 2002:ac8:47d3:: with SMTP id d19mr77340587qtr.142.1578393557482;
+ Tue, 07 Jan 2020 02:39:17 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <8229c7ed-b513-6bf8-5684-60d87a92d41f@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20191218163701.171914-1-arnd@arndb.de> <CACRpkdbqzLUNUjx_kt3-7JLZym2RZ47edW5qp0MgXmpW4-Xf9Q@mail.gmail.com>
+In-Reply-To: <CACRpkdbqzLUNUjx_kt3-7JLZym2RZ47edW5qp0MgXmpW4-Xf9Q@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 7 Jan 2020 11:39:01 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2BoVcdgRZqYutA=_SVHLtJwQzP3mKKN-q8n1ROj_iPgw@mail.gmail.com>
+Message-ID: <CAK8P3a2BoVcdgRZqYutA=_SVHLtJwQzP3mKKN-q8n1ROj_iPgw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: lochnagar: select GPIOLIB
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>, patches@opensource.cirrus.com,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:ajcqhieEFeekJVb9iVY2aZbxaecN6UG7UfxqZoCtiHAaY63swd1
+ T2AfV2REiE/Nk4yk4mDUPbxfCpKwuuuEJoiXmf3NSX1KSq2wqAmT5QwQSsjnn/Y/0BrusbN
+ 7WwSaM76i2a3/xaRC2RpNRrMeiRvsCW0D/U72FTZoZ8sJWn1S9HNckEkhbhlO2Ghm/UOktY
+ ruwXdYU4Phr/kUg11dY3g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:W28qWyYB02w=:8wtfUerc4mBjEzIo98OY2E
+ JqQxhchied/b/BRcbuFLRwxnnMVg3hreMGUIozaedeVr4saXl0nayRZS5j5UXR+JKWglqZdbf
+ 4HQxFEoHgCsVD6yZDQEZHgldp5wQRGN2JhGog1harLwhuQQZu8qVoQfH6xYZ1779rycR9jowE
+ 2hXyfs/DCZ/uzoP7Ew4BGEDjYl77WMETjKruYSJqmEnxph5+CrH/EyGMaJWjDtmS7UcrxGctM
+ q4K1ZQtzUyTLvYN/oYe9t+ICw4ZrG9JIgGEsbUukRcsWYkicTcPqQ5tQZ+dzuxAEQqhuQjJWr
+ 1jpCW7zOaBjhJdwNxjzGcMWcbyiSmCRhSoOAZvIHh54Mj6kKG8VkL1zH7NfxCI8AtMeb1klIW
+ FunNXn1B8HImhbIqnTO5vSwJAk4f+gwDxNzd8d231owYMzuOnLPYqMW+D4ytatA1TyObtvhBH
+ OsSZqRdfG6BitcYyHGyHfi7SFtumaguJheRF0q096ISnyMScxSDpJ+lX0DgfFBVEk8cTBiR5o
+ UfnTYggYMTXfSc1L80Ut+WemFasyCr7yWDdwyJD5s1VHuk6GSOTky/STwg/FmSrha+qGznDva
+ rsdFtyUMIjzKlFbnHIBAuyIV8YJSQ2mpgQPlUl0Sr9gEMrPrrzEm7Vtq5rsVe9nlYVsJuwlbV
+ LJzjs+KGSx+CD5PNc2b4/h+NPjmxipe8/YKyxsenItR8fzWUrK47SkFE0Tqt2xV3wGolcCmqy
+ JWeR8BPYN6b8iipvxNx+8fRLUHT8fb46B//6DaIKaL3PeZDz29OCEYNXLUsTDqM/D2Ulj+q40
+ +TviVnBdWIe1Da7+2bdYtPtugTv2iiO4uynqFLsUbqKs/pkJAVIjMxYJvzsObQuC6yrR7mMy6
+ uF9ErKw4ItP1FIgE8Szw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hugues,
+On Tue, Jan 7, 2020 at 10:45 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Dec 18, 2019 at 5:37 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > I wonder if GPIOLIB should just become mandatory when enabling the pinctrl
+> > subsystem, or if there are still good reasons for leaving it disabled
+> > on any machine that uses CONFIG_PINCTRL.
+>
+> Hm that is a tricky question, they almost always come in pair but are
+> technically speaking separate subsystems.
 
-On 07/01/2020 11.46, Hugues FRUCHET wrote:
-> Hi Peter,
-> 
-> If not too late, could you change trace to only trig error trace when
-> error is not "probe defered" ? See below:
-> 
-> -	chan = dma_request_slave_channel(&pdev->dev, "tx");
-> -	if (!chan) {
-> -		dev_info(&pdev->dev, "Unable to request DMA channel, defer probing\n");
-> -		return -EPROBE_DEFER;
-> +	chan = dma_request_chan(&pdev->dev, "tx");
-> +	if (IS_ERR(chan)) {
-> +		if (PTR_ERR(chan) != -EPROBE_DEFER)
-> +			dev_err(&pdev->dev, "Unable to request DMA channel\n");
-> +		return PTR_ERR(chan);
+I think there are a number of use cases for GPIOLIB drivers without PINCTRL, but
+are there any examples of the reverse?
 
-Sure, I don't know how I missed it.
-
-Regards,
-- Péter
-
-> 
-> Best regards,
-> Hugues.
-> 
-> On 12/18/19 11:52 AM, Hugues FRUCHET wrote:
->> Thanks for patching Peter,
->>
->> No regression observed on my side.
->>
->> Acked-by: Hugues Fruchet <hugues.fruchet@st.com>
->>
->> Best regards,
->> Hugues.
->>
->> On 12/17/19 11:41 AM, Peter Ujfalusi wrote:
->>> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
->>> eating up the error code.
->>>
->>> By using dma_request_chan() directly the driver can support deferred
->>> probing against DMA.
->>>
->>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
->>> ---
->>>   drivers/media/platform/stm32/stm32-dcmi.c | 6 +++---
->>>   1 file changed, 3 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/media/platform/stm32/stm32-dcmi.c 
->>> b/drivers/media/platform/stm32/stm32-dcmi.c
->>> index 9392e3409fba..55351872b0c7 100644
->>> --- a/drivers/media/platform/stm32/stm32-dcmi.c
->>> +++ b/drivers/media/platform/stm32/stm32-dcmi.c
->>> @@ -1910,10 +1910,10 @@ static int dcmi_probe(struct platform_device 
->>> *pdev)
->>>           return PTR_ERR(mclk);
->>>       }
->>> -    chan = dma_request_slave_channel(&pdev->dev, "tx");
->>> -    if (!chan) {
->>> +    chan = dma_request_chan(&pdev->dev, "tx");
->>> +    if (IS_ERR(chan)) {
->>>           dev_info(&pdev->dev, "Unable to request DMA channel, defer 
->>> probing\n");
->>> -        return -EPROBE_DEFER;
->>> +        return PTR_ERR(chan);
->>>       }
->>>       spin_lock_init(&dcmi->irqlock);
->> >
-
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+       Arnd
