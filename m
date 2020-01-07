@@ -2,151 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D3B5132D65
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 18:48:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5E67132D86
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 18:50:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728437AbgAGRsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 12:48:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728211AbgAGRsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 12:48:00 -0500
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728529AbgAGRte (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 12:49:34 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:25570 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728391AbgAGRtd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 12:49:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578419372;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=X+zqo0NbHh5cbkQHmKFsPVtgZKvFsxqLBaaKTc1KGTI=;
+        b=UTt5Y2pKK5G8ShW6amUmHulXjbU8/Rg1nloKe9kJbkrcLzDCGM5rNpeBSX+BHquwhjxGYY
+        r8odEF4PU317VnEX5FNj2rf4UsQDppDEWWjqGxO9MuIVwaE7Ni5ncMP+Pd2c7bOkbNbkXt
+        bI/79LlsNn2y8lq1uioVrN5VGk7q/Wg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-404-KEbdmgX_N8WQZT4ApkC5rA-1; Tue, 07 Jan 2020 12:49:28 -0500
+X-MC-Unique: KEbdmgX_N8WQZT4ApkC5rA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8CD42087F;
-        Tue,  7 Jan 2020 17:47:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578419278;
-        bh=kTXZQjN173fCqmgTGewLyg98W69N0GpFT+kNBfLzEDI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=HR3USh9sYG0VnEHrfsPVmJUywzTogMyMYEoiNpLU76gdgueuJ+hqo4f+x0mdgy3ez
-         a955S7kulz4m4Aw8Cz8VcHYLtd0Y+CG7ab1Eo59tMeOLC1h8hYoPndsAytRDkOYrwG
-         l6KSatU+wBe8syQ3hDKKaOYpHyelebkEduEGuKo4=
-Received: by mail-qv1-f47.google.com with SMTP id z3so239583qvn.0;
-        Tue, 07 Jan 2020 09:47:58 -0800 (PST)
-X-Gm-Message-State: APjAAAVCPKd0dHXDscERiZkbv9AS3Wcn/3TQDxN31a7UakC2nYQN6HiG
-        PGm11aPYg8P1YqrfM1U2xxj0S1UOM7vQegqFWg==
-X-Google-Smtp-Source: APXvYqy2gvndoftu+Svzdtgi4ocpDnEG+xgfxqRliZPMO1eJIZNuzlk7B27b+jq5NQ2EWa4xSJ8ybWKNGOelefYwehQ=
-X-Received: by 2002:a0c:f68f:: with SMTP id p15mr518790qvn.79.1578419277767;
- Tue, 07 Jan 2020 09:47:57 -0800 (PST)
-MIME-Version: 1.0
-References: <20200107130903.14421-1-benjamin.gaignard@st.com> <20200107130903.14421-2-benjamin.gaignard@st.com>
-In-Reply-To: <20200107130903.14421-2-benjamin.gaignard@st.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 7 Jan 2020 11:47:46 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKDqea2r-ocsj4U6Uv8p4zoANzWgq6a49F3EvBEeRqD0w@mail.gmail.com>
-Message-ID: <CAL_JsqKDqea2r-ocsj4U6Uv8p4zoANzWgq6a49F3EvBEeRqD0w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: touchscreen: Add touchscreen schema
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux Input <linux-input@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Yannick Fertre <yannick.fertre@st.com>
-Content-Type: text/plain; charset="UTF-8"
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 59FD18024E9;
+        Tue,  7 Jan 2020 17:49:27 +0000 (UTC)
+Received: from llong.com (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E5C367DB5D;
+        Tue,  7 Jan 2020 17:49:23 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v3] locking/qspinlock: Fix inaccessible URL of MCS lock paper
+Date:   Tue,  7 Jan 2020 12:49:14 -0500
+Message-Id: <20200107174914.4187-1-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 7, 2020 at 7:09 AM Benjamin Gaignard
-<benjamin.gaignard@st.com> wrote:
->
-> Add touchscreen schema for common properties
->
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
->  .../bindings/input/touchscreen/touchscreen.yaml    | 63 ++++++++++++++++++++++
->  1 file changed, 63 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/touchscreen.yaml
+It turns out that the URL of the MCS lock paper listed in the source
+code is no longer accessible. I did got question about where the paper
+was. This patch updates the URL to BZ 206115 which contains a copy of
+the paper from
 
-Don't just add schema. Remove the old definitions. To avoid updating a
-bunch of references to touchscreen.txt, I just put a 'see
-touchscreen.yaml' in it.
+  https://www.cs.rochester.edu/u/scott/papers/1991_TOCS_synch.pdf
 
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.yaml b/Documentation/devicetree/bindings/input/touchscreen/touchscreen.yaml
-> new file mode 100644
-> index 000000000000..f6e7c73ef14e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/touchscreen/touchscreen.yaml
-> @@ -0,0 +1,63 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/input/touchscreen/touchscreen.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Common touchscreen Bindings
-> +
-> +maintainers:
-> +  - Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> +
-> +properties:
-> +  touchscreen-min-x:
-> +    description: minimum x coordinate reported (0 if not set)
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ kernel/locking/qspinlock.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-You need a type reference on a bunch of these. And "(0 if not set)"
-sounds like a 'default' constraint.
+diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+index 2473f10c6956..b9515fcc9b29 100644
+--- a/kernel/locking/qspinlock.c
++++ b/kernel/locking/qspinlock.c
+@@ -31,14 +31,15 @@
+ /*
+  * The basic principle of a queue-based spinlock can best be understood
+  * by studying a classic queue-based spinlock implementation called the
+- * MCS lock. The paper below provides a good description for this kind
+- * of lock.
++ * MCS lock. A copy of the original MCS lock paper ("Algorithms for Scalable
++ * Synchronization on Shared-Memory Multiprocessors by Mellor-Crummey and
++ * Scott") is available at
+  *
+- * http://www.cise.ufl.edu/tr/DOC/REP-1992-71.pdf
++ * https://bugzilla.kernel.org/show_bug.cgi?id=206115
+  *
+- * This queued spinlock implementation is based on the MCS lock, however to make
+- * it fit the 4 bytes we assume spinlock_t to be, and preserve its existing
+- * API, we must modify it somehow.
++ * This queued spinlock implementation is based on the MCS lock, however to
++ * make it fit the 4 bytes we assume spinlock_t to be, and preserve its
++ * existing API, we must modify it somehow.
+  *
+  * In particular; where the traditional MCS lock consists of a tail pointer
+  * (8 bytes) and needs the next pointer (another 8 bytes) of its own node to
+-- 
+2.18.1
 
-> +
-> +  touchscreen-min-y:
-> +    description: minimum y coordinate reported (0 if not set)
-> +
-> +  touchscreen-size-x:
-> +    description: horizontal resolution of touchscreen (maximum x coordinate reported + 1)
-> +
-> +  touchscreen-size-y:
-> +    description: vertical resolution of touchscreen (maximum y coordinate reported + 1)
-
-I don't think it makes sense if both of these aren't present, so you need:
-
-dependencies:
-  touchscreen-size-x: [ touchscreen-size-y ]
-  touchscreen-size-y: [ touchscreen-size-x ]
-
-> +
-> +  touchscreen-max-pressure:
-> +    description: maximum reported pressure (arbitrary range dependent on the controller)
-> +
-> +  touchscreen-min-pressure:
-> +    description: minimum pressure on the touchscreen to be achieved in order for the
-> +                 touchscreen driver to report a touch event.
-> +
-> +  touchscreen-fuzz-x:
-> +    description: horizontal noise value of the absolute input device (in pixels)
-> +
-> +  touchscreen-fuzz-y:
-> +    description: vertical noise value of the absolute input device (in pixels)
-> +
-> +  touchscreen-fuzz-pressure:
-> +    description: pressure noise value of the absolute input device (arbitrary range
-> +                 dependent on the controller)
-> +
-> +  touchscreen-average-samples:
-> +    description: Number of data samples which are averaged for each read (valid values
-> +                 dependent on the controller)
-> +
-> +  touchscreen-inverted-x:
-> +    description: X axis is inverted (boolean)
-> +    type: boolean
-> +
-> +  touchscreen-inverted-y:
-> +    description: Y axis is inverted (boolean)
-> +    type: boolean
-> +
-> +  touchscreen-swapped-x-y:
-> +    description: X and Y axis are swapped (boolean)
-> +                 Swapping is done after inverting the axis
-> +    type: boolean
-> +
-> +  touchscreen-x-mm:
-> +    description: horizontal length in mm of the touchscreen
-> +
-> +  touchscreen-y-mm:
-> +    description: vertical length in mm of the touchscreen
-
-Same dependencies here.
-
-Rob
