@@ -2,47 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67BF0132256
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:30:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BE4413225A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:30:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbgAGJ37 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 04:29:59 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34200 "EHLO
+        id S1727810AbgAGJaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 04:30:03 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45461 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727177AbgAGJ36 (ORCPT
+        with ESMTP id S1727589AbgAGJ37 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 04:29:58 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t2so53079881wrr.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 01:29:56 -0800 (PST)
+        Tue, 7 Jan 2020 04:29:59 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j42so53041496wrj.12
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 01:29:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=ZhKekxLTP92RphP15HP22YKK/XHkNOZwqR3Bm0RWNn4=;
-        b=ZJhcPv9VdZ/7VIGypWEKwM5EncUxXp0fNe+4lYsmyU2Qk/MlORWzXDCDpxYwo/f8c5
-         nWI1WyE1jWYp1JRiQ5XcqZMB7lirXbLDe+NJQSrfFpLQgyqjU7wmB8o3qTDtJkUrdPoA
-         6Oc+IcB4gUH0jIpPkhx+4Ewbd5S0UfrpTA1iWpAsv058Buk1FKKxfIof+Fqf/zslP+yu
-         u3mw0lfzhZdZkbBfw4Yf4PtDoCvBDckD5etJlXfebZIepenqHlVSy+W2OVFnKDKQFUCP
-         y7HgQzbrwCmrTA5Om423DjuyBs6dRNz4JxViQtkE5o4qphLd0gwGlZbjfK6t5p9D8qe8
-         PYFA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=tY1YFADtaZKXzMf5Ie7W6ruxIu2Bb0htwIWWuGbAKcM=;
+        b=BT+XiI7KL8AbXEnRoUphi5RAur5dTOV2WYkSXxsNVg5uOoY16h3spUJNcw+WDN0eE8
+         Q5Kuu9cKqxAScKglzuKOu9ImlN2vUCvsl7yUQkB/+PQewkGeMlrzdbeof2gkRE4kl5zh
+         OZkGw2QPofaOfrL2yT/LE33DZCsOLM9J01mUix2D/Mb8FCxKGdcHOrzi8LpHxe8qAmSJ
+         aRUJu/umX8XmfRMveLIccd9z17jBvwTdrkyBYwrT5bSu7B3aRoNZLNMOBdfkQMBlrZlU
+         WEsMzFveyXDtc4CMtzTcDQoIqKI659lvX2nsG90szJDM8GoXJFs8Rgx/PqZf/++kn8wo
+         nywQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ZhKekxLTP92RphP15HP22YKK/XHkNOZwqR3Bm0RWNn4=;
-        b=sImF/xkQNVKaGw2s93pPKK1UTpshopvGDcvBeaP0Av5h9uiKaeqsuFxKekofdgBANM
-         Qn4zShimEgl/R3JF0zp8oylAbbYZ71gYbV7/iGf2UnJTW4YBs97NF+MMGYg/l+4ZLMoO
-         jBxGRrp0FIGcu6tdRqa7e74q2ay/aZCpzE0n9XB9YmPrd0EHIxkP9zdDrfroLQm5JYud
-         0BKZ5fuEm0UrWAHa/8lKOpBmgOE0/3csEBE5IyKaHfHhCmWmXZrOiObXPuZgnRds3tUv
-         EaqWYHdFSAcxgnUgN6+kbDUblXSwKUy/sjbzawjucv2fnB0lMXqjFqqMegUTZIATU1Bv
-         eC9Q==
-X-Gm-Message-State: APjAAAXSq2TmeFq55tSDZQUjAj+m03uWE/HN6e4Ru+yJzxBAb8noydA6
-        II3gD6wx7lwzbrTp18ztMYzYTQ==
-X-Google-Smtp-Source: APXvYqyBJgLVBMFmDPjle8pjsXE/Ihg1UOVL/twyltX1BaSO63tN2499JJk0LQeLW1FMO53qx3nADw==
-X-Received: by 2002:adf:a141:: with SMTP id r1mr109570212wrr.285.1578389396079;
-        Tue, 07 Jan 2020 01:29:56 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=tY1YFADtaZKXzMf5Ie7W6ruxIu2Bb0htwIWWuGbAKcM=;
+        b=Mk4ESIB5DYdU/IE3v1jiexcuKtIdy78LiMObnlogKwV5haLs77kl/dZLBe3Y38VefZ
+         LyYm2adbt6O8tip9Xm6W5piWrZIPxDKuqbVtDlRF3M6v2u+MrU0bZEo6zocnaYIe4SOe
+         +rmkkDN9hYC22WZvTd3Pl9ZFp2ub/Jz8+6W6f+ZlKesv/cq2dthJmlVLgl6Zmz4+mRDL
+         8Fj2ZiaEjeOaqe8Lg/dFsj07+rmMHwphHW+hGHWUOtTiWLKf2QB4V98Re610u4QKRSr3
+         49Z7Y5VJc/MC1EMRsh7ZbBqS8Ht4X1gMjf5ZFjxds7xZf9m2ep1fk/Rb6Orn++OxD0ed
+         ciTA==
+X-Gm-Message-State: APjAAAUrpvyns0LpoDIUz225Uh+qLmlryy7BvBd8HasgyQVFQ0x4x1WZ
+        O2nHgJ7vrUC+tYecLm1uI7U6Ug==
+X-Google-Smtp-Source: APXvYqzy3e+NBXWEgKTFoS1SiHNnkRdl0I49RIxZsPjJ4sAcAAmVjJYUj/X9oh9KyDQxC6Yp84I43Q==
+X-Received: by 2002:a5d:4e0a:: with SMTP id p10mr106677513wrt.229.1578389397032;
+        Tue, 07 Jan 2020 01:29:57 -0800 (PST)
 Received: from localhost.localdomain (i16-les01-ntr-213-44-229-207.sfr.lns.abo.bbox.fr. [213.44.229.207])
-        by smtp.googlemail.com with ESMTPSA id x14sm25959969wmj.42.2020.01.07.01.29.54
+        by smtp.googlemail.com with ESMTPSA id x14sm25959969wmj.42.2020.01.07.01.29.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 01:29:55 -0800 (PST)
+        Tue, 07 Jan 2020 01:29:56 -0800 (PST)
 From:   Khouloud Touil <ktouil@baylibre.com>
 To:     bgolaszewski@baylibre.com, robh+dt@kernel.org,
         mark.rutland@arm.com, srinivas.kandagatla@linaro.org,
@@ -50,67 +51,70 @@ To:     bgolaszewski@baylibre.com, robh+dt@kernel.org,
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-i2c@vger.kernel.org, linus.walleij@linaro.org,
         Khouloud Touil <ktouil@baylibre.com>
-Subject: [PATCH v4 0/5] at24: move write-protect pin handling to nvmem core
-Date:   Tue,  7 Jan 2020 10:29:17 +0100
-Message-Id: <20200107092922.18408-1-ktouil@baylibre.com>
+Subject: [PATCH v4 1/5] dt-bindings: nvmem: new optional property wp-gpios
+Date:   Tue,  7 Jan 2020 10:29:18 +0100
+Message-Id: <20200107092922.18408-2-ktouil@baylibre.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200107092922.18408-1-ktouil@baylibre.com>
+References: <20200107092922.18408-1-ktouil@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The write-protect pin handling looks like a standard property that
-could benefit other users if available in the core nvmem framework.
+Several memories have a write-protect pin, that when pulled high, it
+blocks the write operation.
 
-Instead of modifying all the drivers to check this pin, make the
-nvmem subsystem check if the write-protect GPIO being passed
+On some boards, this pin is connected to a GPIO and pulled high by
+default, which forces the user to manually change its state before
+writing.
+
+Instead of modifying all the memory drivers to check this pin, make
+the NVMEM subsystem check if the write-protect GPIO being passed
 through the nvmem_config or defined in the device tree and pull it
 low whenever writing to the memory.
 
-This patchset:
+Add a new optional property to the device tree binding document, which
+allows to specify the GPIO line to which the write-protect pin is
+connected.
 
-- adds support for the write-protect pin split into two parts.
-The first patch modifies modifies the relevant binding document,
-while the second modifies the nvmem code to pull the write-protect
-GPIO low (if present) during write operations.
+Signed-off-by: Khouloud Touil <ktouil@baylibre.com>
+---
+ Documentation/devicetree/bindings/nvmem/nvmem.yaml | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-- removes support for the write-protect pin split into two parts.
-The first patch modifies the relevant binding document to make the
-wp-gpio a reference to the property defined by nvmem , while the
-second removes the relevant code in the at24 driver.
-
-- adds reference in the at25 binding document for the wp-gpios property
-as it uses nvmem subsystem.
-
-Changes since v1:
--Add an explenation on how the wp-gpios works
--Keep reference to the wp-gpios in the at24 binding
-
-Changes since v2:
--Use the flag GPIO_ACTIVE_HIGH instead of 0
-
-Changes since v3:
--Keep the example of the wp-gpios in the at25 bindings
--Add reference for the wp-gpios property in the at25 binding
-
-
-Khouloud Touil (5):
-  dt-bindings: nvmem: new optional property wp-gpios
-  nvmem: add support for the write-protect pin
-  dt-bindings: at24: make wp-gpios a reference to the property defined
-    by nvmem
-  dt-bindings: at25: add reference for the wp-gpios property
-  eeprom: at24: remove the write-protect pin support
-
- .../devicetree/bindings/eeprom/at24.yaml      |  5 +----
- .../devicetree/bindings/eeprom/at25.txt       |  2 ++
- .../devicetree/bindings/nvmem/nvmem.yaml      | 11 +++++++++++
- drivers/misc/eeprom/at24.c                    |  9 ---------
- drivers/nvmem/core.c                          | 19 +++++++++++++++++--
- drivers/nvmem/nvmem.h                         |  2 ++
- include/linux/nvmem-provider.h                |  3 +++
- 7 files changed, 36 insertions(+), 15 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/nvmem/nvmem.yaml b/Documentation/devicetree/bindings/nvmem/nvmem.yaml
+index 1c75a059206c..b43c6c65294e 100644
+--- a/Documentation/devicetree/bindings/nvmem/nvmem.yaml
++++ b/Documentation/devicetree/bindings/nvmem/nvmem.yaml
+@@ -34,6 +34,14 @@ properties:
+     description:
+       Mark the provider as read only.
+ 
++  wp-gpios:
++    description:
++      GPIO to which the write-protect pin of the chip is connected.
++      The write-protect GPIO is asserted, when it's driven high
++      (logical '1') to block the write operation. It's deasserted,
++      when it's driven low (logical '0') to allow writing.
++    maxItems: 1
++
+ patternProperties:
+   "^.*@[0-9a-f]+$":
+     type: object
+@@ -63,9 +71,12 @@ patternProperties:
+ 
+ examples:
+   - |
++      #include <dt-bindings/gpio/gpio.h>
++
+       qfprom: eeprom@700000 {
+           #address-cells = <1>;
+           #size-cells = <1>;
++          wp-gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
+ 
+           /* ... */
+ 
 -- 
 2.17.1
 
