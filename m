@@ -2,87 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEC991325A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 13:07:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A8F41325BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 13:10:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbgAGMHa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 07:07:30 -0500
-Received: from mga18.intel.com ([134.134.136.126]:63952 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727834AbgAGMHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 07:07:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2020 04:07:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,406,1571727600"; 
-   d="scan'208";a="303173288"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by orsmga001.jf.intel.com with ESMTP; 07 Jan 2020 04:07:27 -0800
-Subject: Re: BUG: KASAN: use-after-free in
- xhci_trb_virt_to_dma.part.24+0x1c/0x80
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Paul Menzel <pmenzel@molgen.mpg.de>
-Cc:     Greg KH <greg@kroah.com>, Mathias Nyman <mathias.nyman@intel.com>,
-        linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <95b4bdb2-962f-561e-ac14-79cd44395915@molgen.mpg.de>
- <20180720095410.GA11904@kroah.com>
- <107dbdd1-4e45-836f-7f8f-85bc63374e4f@molgen.mpg.de>
- <30b069b5-63f6-dd9e-b323-668f06bff6cf@molgen.mpg.de>
- <20200103110451.GJ465886@lahna.fi.intel.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <81c6f906-3f5a-729d-f3b4-1ac6ac607c05@linux.intel.com>
-Date:   Tue, 7 Jan 2020 14:09:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727949AbgAGMKl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 07:10:41 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:54696 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbgAGMKk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 07:10:40 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 007C4jgC070313;
+        Tue, 7 Jan 2020 12:10:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=fSKSjlLTPjWUAzNU/T9Nml0/rwLj5FBYEeuVAecNbms=;
+ b=QrGRTgNZh/Q51zDbQ+Ta514KXQS2KfaBVXsHvx6h1K89k6sDwBKV1MHn0kabLGwcXT97
+ RbFwJfrbLVljkf5WqHpb6z3WuixBpldjTmk0IDgOrpN9lHxCE3XDiZNS/ndSWzOimvBl
+ bogBlh8g1J/xDB719aE9qKJdWbijvfvXrtGrIxb8sJftZLmWKrU9g2P2bAy+LQd+Fc/F
+ Z0WCjvO1YaHD0CLTx3vKw06sId+//vUgJskX1VV5cTvDV/kO5QnHI2dlAaZWUG+JYY2c
+ Jg/cCx+Tu9S+xHSSsVY93Q+5ko3rUkvsuOydB6mjWgkig/LVfP6YEyXy1tEqx1RXb4NH bA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2xaj4tw7tx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Jan 2020 12:10:23 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 007C9IGp187178;
+        Tue, 7 Jan 2020 12:10:23 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2xcjvd1cr7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Jan 2020 12:10:23 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 007CAKYA017404;
+        Tue, 7 Jan 2020 12:10:20 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 07 Jan 2020 04:10:19 -0800
+Date:   Tue, 7 Jan 2020 15:10:10 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][V2] usb: ohci-da8xx: ensure error return on variable
+ error is set
+Message-ID: <20200107121010.GN3911@kadam>
+References: <20200107103035.19481-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <20200103110451.GJ465886@lahna.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200107103035.19481-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9492 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001070100
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9492 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001070100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3.1.2020 13.04, Mika Westerberg wrote:
-> On Thu, Jan 02, 2020 at 03:10:14PM +0100, Paul Menzel wrote:
->> Mika, as you fixed the other leak, any idea, how to continue from the
->> kmemleak log below?
->>
->> ```
->> unreferenced object 0xffff8c207a1e1408 (size 8):
->>    comm "systemd-udevd", pid 183, jiffies 4294667978 (age 752.292s)
->>    hex dump (first 8 bytes):
->>      34 01 05 00 00 00 00 00                          4.......
->>    backtrace:
->>      [<00000000aea7b46d>] xhci_mem_init+0xcfa/0xec0 [xhci_hcd]
+On Tue, Jan 07, 2020 at 10:30:35AM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> There are probably better ways for doing this but you can use objdump
-> for example:
+> Currently when an error in da8xx_ohci->oc_gpio occurs it causes an
+> uninitialized error return in variable 'error' to be returned.  Fix
+> this by ensuring the error variable is set to the error value in
+> da8xx_ohci->oc_gpio.
 > 
->    $ objdump -l --prefix-addresses -j .text --disassemble=xhci_mem_init drivers/usb/host/xhci-hcd.ko
+> Addresses-Coverity: ("Uninitialized scalar variable")
+> Fixes: d193abf1c913 ("usb: ohci-da8xx: add vbus and overcurrent gpios")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
 > 
-> then find the offset xhci_mem_init+0xcfa. It should show you the line
-> numbers as well if you have compiled your kernel with debug info. This
-> should be close to the line that allocated the memory that was leaked.
+> V2: fix typo and grammar in commit message
 > 
+> ---
+>  drivers/usb/host/ohci-da8xx.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/host/ohci-da8xx.c b/drivers/usb/host/ohci-da8xx.c
+> index 38183ac438c6..9cdf787055b7 100644
+> --- a/drivers/usb/host/ohci-da8xx.c
+> +++ b/drivers/usb/host/ohci-da8xx.c
+> @@ -415,8 +415,10 @@ static int ohci_da8xx_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	da8xx_ohci->oc_gpio = devm_gpiod_get_optional(dev, "oc", GPIOD_IN);
+> -	if (IS_ERR(da8xx_ohci->oc_gpio))
+> +	if (IS_ERR(da8xx_ohci->oc_gpio)) {
+> +		error = PTR_ERR(da8xx_ohci->oc_gpio);
+>  		goto err;
+> +	}
+>  
+>  	if (da8xx_ohci->oc_gpio) {
+>  		oc_irq = gpiod_to_irq(da8xx_ohci->oc_gpio);
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Also uninitialized here.
 
-Paul, it possible that your xhci controller has several
-supported protocol extended capabilities for usb 3 ports, each
-with their own custom protocol speed ID table.
+regards,
+dan carpenter
 
-xhci driver assumes there is only one custome PSI table per roothub,
-and we will end up allocating the second PSI table on top of the first,
-leaking the first.
-
-Could you boot with xhci dynamic debug enabled, and show dmesg after boot, add:
-xhci_hcd.dyndbg=+p
-to you kernel cmdline.
-
-Or as an alternative, show output of:
-
-sudo cat /sys/kernel/debug/usb/xhci/*/reg-ext-protocol*
-
--Mathias
