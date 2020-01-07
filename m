@@ -2,54 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA312132800
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 14:44:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFEAC1327F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 14:42:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728164AbgAGNod (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 08:44:33 -0500
-Received: from mail-front2.tctwest.net ([67.215.21.198]:45282 "EHLO
-        mail.tctwest.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727932AbgAGNod (ORCPT
+        id S1728145AbgAGNmK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 08:42:10 -0500
+Received: from www84.your-server.de ([213.133.104.84]:53176 "EHLO
+        www84.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727858AbgAGNmJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 08:44:33 -0500
-X-Greylist: delayed 4375 seconds by postgrey-1.27 at vger.kernel.org; Tue, 07 Jan 2020 08:44:33 EST
-Received: (qmail 11747 invoked from network); 7 Jan 2020 12:12:14 -0000
-Received: from localhost (HELO mail.tctwest.net) (mikelmoser@tctwest.net@127.0.0.1)
-        by magicmail-front2.tctwest.net with SMTP
-        (f05572d4-3146-11ea-8e74-005056ad0036); Tue, 07 Jan 2020 05:12:14 -0700
-Received: from unknown ([104.143.84.27])
-        (SquirrelMail authenticated user mikelmoser@tctwest.net)
-        by mail.tctwest.net with HTTP;
-        Tue, 7 Jan 2020 05:12:14 -0700
-Message-ID: <7f54d3ee764278b38bce32a1eaf76da1.squirrel@mail.tctwest.net>
-Date:   Tue, 7 Jan 2020 05:12:14 -0700
-Subject: Job Offer!
-From:   "Yokohama Rubber Co., Ltd" <info@info.net>
-Reply-To: tadanagu@yahoo.com
-User-Agent: SquirrelMail/1.4.15
+        Tue, 7 Jan 2020 08:42:09 -0500
+X-Greylist: delayed 1564 seconds by postgrey-1.27 at vger.kernel.org; Tue, 07 Jan 2020 08:42:08 EST
+Received: from [188.192.102.182] (helo=[192.168.0.7])
+        by www84.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <stefani@seibold.net>)
+        id 1iooiI-0003xj-OC; Tue, 07 Jan 2020 14:16:02 +0100
+Message-ID: <10721bebc81144c25e53b55c8cd086a34d4fd1f8.camel@seibold.net>
+Subject: Re: [PATCH v4 00/13] gpiolib: add an ioctl() for monitoring line
+ status changes
+From:   Stefani Seibold <stefani@seibold.net>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kent Gibson <warthog618@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Tue, 07 Jan 2020 14:15:59 +0100
+In-Reply-To: <CACRpkdY2NXNrAk9VY18YDeQ2WDfDfAyi4mgW26JuTPHdEOE-uQ@mail.gmail.com>
+References: <20191224120709.18247-1-brgl@bgdev.pl>
+         <CACRpkdZ_TroKCAnDWiY-jPbe0NL+ingm1pMLQLPxT1Uh78kx8g@mail.gmail.com>
+         <CAMpxmJXikLw0d1e1Eq7vVzoORz3utEBxfG6nRmkngLqezVqtuA@mail.gmail.com>
+         <CACRpkdY2NXNrAk9VY18YDeQ2WDfDfAyi4mgW26JuTPHdEOE-uQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Priority: 3 (Normal)
-Importance: Normal
-X-MagicMail-OS: MagicMail 3.0-Devel
-X-MagicMail-UUID: f05572d4-3146-11ea-8e74-005056ad0036
-X-MagicMail-Authenticated: mikelmoser@tctwest.net
-X-MagicMail-SourceIP: 127.0.0.1
-X-MagicMail-RegexMatch: 2
-X-MagicMail-EnvelopeFrom: <info@info.net>
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: stefani@seibold.net
+X-Virus-Scanned: Clear (ClamAV 0.101.4/25687/Tue Jan  7 10:56:22 2020)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good Day,
-Our Company Yokohama Rubber Company is interested in Employing your
-Services in Payment Collections from CANADA/USA Customers as a part time
-job for you which entitles you 20% and other benefits you will make from
-the part time offer. If you know you are interest and ready to work with
-us.kindly reply to: tadanagu@yahoo.com
-Your Sincerely
-Ms. Lisa Arashiro
+Am Dienstag, den 07.01.2020, 13:50 +0100 schrieb Linus Walleij:
+> On Tue, Jan 7, 2020 at 11:38 AM Bartosz Golaszewski
+> <bgolaszewski@baylibre.com> wrote:
+> > wt., 7 sty 2020 o 11:07 Linus Walleij <linus.walleij@linaro.org>
+> > napisał(a):
+> > > The patch set overall looks good to me, I don't understand the
+> > > kfifo
+> > > parts but I trust you on this, though we need review from a FIFO
+> > > maintainer.
+> > 
+> > Ha! This may be a problem - there doesn't seem to be one. This is
+> > why
+> > I Cc'd Greg.
+> 
+> I was under the impression that KFIFO was part of the driver core.
+> Let's try to CC the actual author (Stefani Seibold) and see if the
+> mail
+> address works and if he can look at it. Or did you already talk to
+> Stefani?
+> 
+> (git blame is always my best friend in cases like this, hehe)
+> 
+> Yours,
+> Linus Walleij
+
+I have looked around for the patches and I found the following patches 
+
+[PATCH v4 07/13] kfifo: provide noirqsave variants of spinlocked in and out helpers
+[PATCH v4 08/13] kfifo: provide kfifo_is_empty_spinlocked()
+
+dated on 24 Dec 2019.
+
+Both seems to be okay. The patch is non intrusive to KFIFO adding only
+spinlock wrapper functions for the contemporary kfifo functions.
+
+So...
+
+Acked by Stefani Seibold <stefani@seibold.net>
+
 
