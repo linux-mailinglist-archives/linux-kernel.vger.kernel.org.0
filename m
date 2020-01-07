@@ -2,156 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5392133046
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:07:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D080213304B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:07:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728678AbgAGUHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 15:07:05 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:1316 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728358AbgAGUHF (ORCPT
+        id S1728761AbgAGUHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 15:07:50 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:55461 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728379AbgAGUHu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:07:05 -0500
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 007K5Fvr068647
-        for <linux-kernel@vger.kernel.org>; Tue, 7 Jan 2020 15:07:03 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xapd6rmex-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 15:07:03 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <hbathini@linux.ibm.com>;
-        Tue, 7 Jan 2020 20:07:01 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 7 Jan 2020 20:06:58 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 007K6v8G49348720
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 7 Jan 2020 20:06:57 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4DBBA5204E;
-        Tue,  7 Jan 2020 20:06:57 +0000 (GMT)
-Received: from [9.85.95.152] (unknown [9.85.95.152])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 6847952054;
-        Tue,  7 Jan 2020 20:06:55 +0000 (GMT)
-Subject: Re: [PATCH v6 1/6] Documentation/ABI: add ABI documentation for
- /sys/kernel/fadump_*
-To:     Sourabh Jain <sourabhjain@linux.ibm.com>, mpe@ellerman.id.au
-Cc:     mahesh@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@ozlabs.org, corbet@lwn.net, linux-doc@vger.kernel.org,
-        gregkh@linuxfoundation.org
-References: <20191211160910.21656-1-sourabhjain@linux.ibm.com>
- <20191211160910.21656-2-sourabhjain@linux.ibm.com>
-From:   Hari Bathini <hbathini@linux.ibm.com>
-Date:   Wed, 8 Jan 2020 01:36:54 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 7 Jan 2020 15:07:50 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MhULz-1jKQPM1LcJ-00eay6; Tue, 07 Jan 2020 21:07:43 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Oleksandr Natalenko <oleksandr@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] wireless: wext: avoid gcc -O3 warning
+Date:   Tue,  7 Jan 2020 21:07:35 +0100
+Message-Id: <20200107200741.3588770-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <20191211160910.21656-2-sourabhjain@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20010720-0008-0000-0000-000003474AD0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20010720-0009-0000-0000-00004A678D08
-Message-Id: <e1e2b967-2e21-cda4-eb0b-ca2b94da3020@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-07_07:2020-01-07,2020-01-07 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 clxscore=1011 suspectscore=0 adultscore=0 phishscore=0
- priorityscore=1501 bulkscore=0 mlxlogscore=999 mlxscore=0 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001070157
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:OJr2mJSwCElifh7i0B7h1tOzyHAQp2FUNVpAYKr3i1g/pntO5sP
+ eZUXHLCDl+k4KqZkBByoHwxeVT/CASxI1iuyW7d2UHnbMxpb2p0+ZG2LqktoShycU9cgl7V
+ B0Fq6xQ683cgyVPNqEyOVutBUacfbrL14QHnwv7uuG68Jxih0I0mjsEH9ki37cxRsKWagLJ
+ OKQkHehfch217Xf3Twl9g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/elu+XAKXtw=:DQXqmMWVs2DUnsIjgF110Z
+ yUQA7xIPowjY/T9udFmw2ijdOwVLH1JoeZLdytihWjXv3ogHwI8v230dSkEaVeggcEI0r1Bn/
+ rsHzV2grVlYmEGZ0tqczENFYarIf1KDmAK77++IxutnzHBRuR9kJEAlver5xlITrtlfUoFS1N
+ cSkRkQPwszAY0PVa45gfg5S8sbllKkHxq5wAhrLX1n9SQiyAd5h1Q0ASc3tX5QdiEz3urbOX1
+ S2xFKf1nAla7OV32ePpzalCY1LJ662ORqaFPl2KLRBB7XwCg9jaQjN5uyRc2JIpsY19a/TbCf
+ 8ysPWPWPn05cNI3IA2aWgrCToJ0R0RkiONtKNBzr1E2dEe88+Fyr1TDzIB1OZdezcNLladNnP
+ EDhbnYm99nQPsiGlJr+LJq4QWe4helWPOPK8S6uBU3cjtYnlo/qRNV7ZG7XLUDb2dRILLC368
+ qYHvHUcL5RltRO1IhSzU18GB0NNYHNwUK8JwKmJi+UyUgfjb9tsf40sIG+xHVJNjBfhwtNJ0W
+ kxLBYfdhfdnPbYO1CvFzRQbJjxEiZri7hUwtjB5ybPjT+gavSktqNWDAu/jfULVwI8AoK3DM2
+ 2oEy4YqAYoboT2yYbYvW+x/vXtqTmrGweqxxeOCs0CoW4wuip3B4El+dx/EL50fXoJVQId0zB
+ Bi029kDPPOCfrF2V4vMXs0GWNlWGyOvKT4N9H0XQ2z3nssalXkTsEa7BJt8LmI8rMPOnYdwLj
+ A2jyzb1dIzEKFJKxkMKr0ZDZoA3hXNySoKWNGu+798c727qf6jJ+fVMlifcVoEBtA0QiiIKUe
+ GSoCYi/XnFZp0xTZg9cQaE4XwxURywfposLTFnSY9R5bi7K2bRDGH6oFqkT0Qbr67baI++AWy
+ 5ez5Lm3fU/M2WeWciIEw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+After the introduction of CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3,
+the wext code produces a bogus warning:
 
-On 11/12/19 9:39 PM, Sourabh Jain wrote:
-> Add missing ABI documentation for existing FADump sysfs files.
-> 
-> Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
+In function 'iw_handler_get_iwstats',
+    inlined from 'ioctl_standard_call' at net/wireless/wext-core.c:1015:9,
+    inlined from 'wireless_process_ioctl' at net/wireless/wext-core.c:935:10,
+    inlined from 'wext_ioctl_dispatch.part.8' at net/wireless/wext-core.c:986:8,
+    inlined from 'wext_handle_ioctl':
+net/wireless/wext-core.c:671:3: error: argument 1 null where non-null expected [-Werror=nonnull]
+   memcpy(extra, stats, sizeof(struct iw_statistics));
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from arch/x86/include/asm/string.h:5,
+net/wireless/wext-core.c: In function 'wext_handle_ioctl':
+arch/x86/include/asm/string_64.h:14:14: note: in a call to function 'memcpy' declared here
 
-The patch series adds a new sysfs attribute that provides the amount of memory
-reserved for FADump. It also streamlines FADump specific sysfs interfaces.
-Thanks for looking into this.
+The problem is that ioctl_standard_call() sometimes calls the handler
+with a NULL argument that would cause a problem for iw_handler_get_iwstats.
+However, iw_handler_get_iwstats never actually gets called that way.
 
-For the series...
+Marking that function as noinline avoids the warning and leads
+to slightly smaller object code as well.
 
-Reviewed-by: Hari Bathini <hbathini@linux.ibm.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ net/wireless/wext-core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> ---
->  Documentation/ABI/testing/sysfs-kernel-fadump_enabled     | 7 +++++++
->  Documentation/ABI/testing/sysfs-kernel-fadump_registered  | 8 ++++++++
->  Documentation/ABI/testing/sysfs-kernel-fadump_release_mem | 8 ++++++++
->  .../ABI/testing/sysfs-kernel-fadump_release_opalcore      | 7 +++++++
->  4 files changed, 30 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-kernel-fadump_enabled
->  create mode 100644 Documentation/ABI/testing/sysfs-kernel-fadump_registered
->  create mode 100644 Documentation/ABI/testing/sysfs-kernel-fadump_release_mem
->  create mode 100644 Documentation/ABI/testing/sysfs-kernel-fadump_release_opalcore
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-kernel-fadump_enabled b/Documentation/ABI/testing/sysfs-kernel-fadump_enabled
-> new file mode 100644
-> index 000000000000..f73632b1c006
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-kernel-fadump_enabled
-> @@ -0,0 +1,7 @@
-> +What:		/sys/kernel/fadump_enabled
-> +Date:		Feb 2012
-> +Contact:	linuxppc-dev@lists.ozlabs.org
-> +Description:	read only
-> +		Primarily used to identify whether the FADump is enabled in
-> +		the kernel or not.
-> +User:		Kdump service
-> diff --git a/Documentation/ABI/testing/sysfs-kernel-fadump_registered b/Documentation/ABI/testing/sysfs-kernel-fadump_registered
-> new file mode 100644
-> index 000000000000..dcf925e53f0f
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-kernel-fadump_registered
-> @@ -0,0 +1,8 @@
-> +What:		/sys/kernel/fadump_registered
-> +Date:		Feb 2012
-> +Contact:	linuxppc-dev@lists.ozlabs.org
-> +Description:	read/write
-> +		Helps to control the dump collect feature from userspace.
-> +		Setting 1 to this file enables the system to collect the
-> +		dump and 0 to disable it.
-> +User:		Kdump service
-> diff --git a/Documentation/ABI/testing/sysfs-kernel-fadump_release_mem b/Documentation/ABI/testing/sysfs-kernel-fadump_release_mem
-> new file mode 100644
-> index 000000000000..9c20d64ab48d
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-kernel-fadump_release_mem
-> @@ -0,0 +1,8 @@
-> +What:		/sys/kernel/fadump_release_mem
-> +Date:		Feb 2012
-> +Contact:	linuxppc-dev@lists.ozlabs.org
-> +Description:	write only
-> +		This is a special sysfs file and only available when
-> +		the system is booted to capture the vmcore using FADump.
-> +		It is used to release the memory reserved by FADump to
-> +		save the crash dump.
-> diff --git a/Documentation/ABI/testing/sysfs-kernel-fadump_release_opalcore b/Documentation/ABI/testing/sysfs-kernel-fadump_release_opalcore
-> new file mode 100644
-> index 000000000000..53313c1d4e7a
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-kernel-fadump_release_opalcore
-> @@ -0,0 +1,7 @@
-> +What:		/sys/kernel/fadump_release_opalcore
-> +Date:		Sep 2019
-> +Contact:	linuxppc-dev@lists.ozlabs.org
-> +Description:	write only
-> +		The sysfs file is available when the system is booted to
-> +		collect the dump on OPAL based machine. It used to release
-> +		the memory used to collect the opalcore.
-> 
-
+diff --git a/net/wireless/wext-core.c b/net/wireless/wext-core.c
+index 5e677dac2a0c..69102fda9ebd 100644
+--- a/net/wireless/wext-core.c
++++ b/net/wireless/wext-core.c
+@@ -657,7 +657,8 @@ struct iw_statistics *get_wireless_stats(struct net_device *dev)
+ 	return NULL;
+ }
+ 
+-static int iw_handler_get_iwstats(struct net_device *		dev,
++/* noinline to avoid a bogus warning with -O3 */
++static noinline int iw_handler_get_iwstats(struct net_device *	dev,
+ 				  struct iw_request_info *	info,
+ 				  union iwreq_data *		wrqu,
+ 				  char *			extra)
 -- 
-- Hari
+2.20.0
 
