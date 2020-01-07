@@ -2,108 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC0EF132F15
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 20:13:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14511132F2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 20:16:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728714AbgAGTNe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 14:13:34 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42226 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728633AbgAGTNe (ORCPT
+        id S1728826AbgAGTPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 14:15:40 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44955 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728651AbgAGTPj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 14:13:34 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 4so321291pfz.9
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 11:13:34 -0800 (PST)
+        Tue, 7 Jan 2020 14:15:39 -0500
+Received: by mail-lj1-f195.google.com with SMTP id u71so684488lje.11
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 11:15:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=6RBmiJn3vvepXtqRcMGLSKLPe+MyPC3dovzqBwEizXA=;
-        b=wFzZCC2hB33q5nY3rpG9BYRlJ/DYhNrwDyCwXgKONEPUKS3BXUkldZiReSMok1g6v9
-         fWKk3uH02Nhtz7bLWpvywVrDn74I5xa2e+HMjMvAQBQqBk2JzcCCfXxuV/+pta4RicV9
-         9+/Uk/RapzTX40UqT/ywy5aGPY0ZiidgpkqtUUFHJXA+p5+syoJfCyqjGWFWUCK/EP5a
-         bLB5Mz9BSZiYjVA6QDtUroljmr8EB2fYBv8md/VRlfgPmdv2JHJLD3MpcqlUklE2FBk2
-         9e/tBHYTzeVxbN1+/N4vrbGU8/9d5G16pWwvC/FNYDEcymXw7awACZ+MmJRgmFwD3uR6
-         CXuQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=f1zqqKzCp+fQXlk6LschxocOmKVvhkA/tqAPfE1DRwg=;
+        b=EDhJgHdD+dDxLcD1C/3itQ2bO29EgOrdBk/t20nJfDdtrlsPNTIDxDbM+Ez0gX8F+0
+         k4fZo6HGwZo+GOY7ukLPoURF/FqujJ5g1MhjZOKRRohMhjOqBs0fgWToJLdXqWCwmVTj
+         RI1rFaO2sYMwFiks9NCAHqPrqQO/BQ/LhGA7o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6RBmiJn3vvepXtqRcMGLSKLPe+MyPC3dovzqBwEizXA=;
-        b=W0b2KN8CnNijm9xLxw1nI780TktxDcyLajXIlYudDQOH92NaesKiV8cZO1Jc0KGDsi
-         B8z8WFyl/uZ42/caHDji+JY5yMVvcvvYpHOK0K8Xc+DtSouZ6/6NW1aQMa3sHch3+WLZ
-         sp08AgFMivBPRlfcZMc7D5tJzwNtSJDPUddL61k43cC/JikO8AnEaUwoy0owyGOiQ2cr
-         DFr0FIyG0P829vDqIXOF2P8CBS8wbTyAcl5nU+iwzdmi6BaHswqdYNdLfChUosl1tIxX
-         SBtfxJ4ibm9DHi/+FDrzkgU+qfbkBPfzpEZWDmnKsDJRAxXSWh0jSf/J00JaJgdBK9I5
-         PpZw==
-X-Gm-Message-State: APjAAAUSE26mTS7KAnKo5p/T1m0phqVpO5gtizasfn7Qfo5g42qfo7Ft
-        QnyHBKNQGkc5Kql7xpk2SKBZoW6Xt1Y=
-X-Google-Smtp-Source: APXvYqwbkBG/N2jhyFRdAjvg2n/kSukzsNcutGD97tUBd4I9jnC9OLL5RLn4BeXSX8pova0uoKEnmQ==
-X-Received: by 2002:a62:e80b:: with SMTP id c11mr830599pfi.28.1578424413489;
-        Tue, 07 Jan 2020 11:13:33 -0800 (PST)
-Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id x132sm296324pfc.148.2020.01.07.11.13.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 11:13:33 -0800 (PST)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     John Stultz <john.stultz@linaro.org>, Todd Kjos <tkjos@google.com>,
-        Alistair Delva <adelva@google.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f1zqqKzCp+fQXlk6LschxocOmKVvhkA/tqAPfE1DRwg=;
+        b=NHdMHT9tltp50Q5f5zHOaP+DqycGqV80Gpzg1ZIHdaA3UFvxEETsQCg1YmHCmsar+M
+         vzXev5kLLmwPZFeSfSyIBaPgfBhZAtd2gjqOLyZgHVwXXGxza8r7SvoTBnngBstAuu6D
+         /OHDDMXwNxTEFEwvpI/U9Ru+1M9cZ7Bai7CYDBGV7q39I6PMUDy2+dJWKmvdYKWcYhEl
+         JkfKLmCgDKohPldhAKuXTdti2XWVZ4yp7e0fy82D8Y8ZUbkULCLesGMHGhvLFetGzDHZ
+         Dom6AsiPt8v1CRwRJWd8al3qTn7ByRYHhb7+nTEkCNS++AZ0e42+P/gXQn2hlNyLjPkh
+         3rQw==
+X-Gm-Message-State: APjAAAUGrH7EiURBELB5zYGUv1hlOS/UKlJjLjnMdx6aX6IpuaHIMFar
+        xru4/2uCsgtiROLBcuhG8qZg57ksXOc=
+X-Google-Smtp-Source: APXvYqxkUmRfOP0DYiPFebKhtieCeeME4ucQXnYLrXl2L3CLcJEULq/zfYUYggRxHabeUXcmp6h57A==
+X-Received: by 2002:a2e:580c:: with SMTP id m12mr587609ljb.150.1578424537146;
+        Tue, 07 Jan 2020 11:15:37 -0800 (PST)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id i1sm216126lji.71.2020.01.07.11.15.35
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Jan 2020 11:15:35 -0800 (PST)
+Received: by mail-lj1-f170.google.com with SMTP id y6so770573lji.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 11:15:35 -0800 (PST)
+X-Received: by 2002:a05:651c:232:: with SMTP id z18mr497045ljn.85.1578424535265;
+ Tue, 07 Jan 2020 11:15:35 -0800 (PST)
+MIME-Version: 1.0
+References: <20191118154435.20357-1-sibis@codeaurora.org> <0101016e7f30ad15-18908ef0-a2b9-4a2a-bf32-6cb3aa447b01-000000@us-west-2.amazonses.com>
+ <CAE=gft5jGagsFS2yBeJCLt9R26RQjx9bfMxhQu8Jj4uc4ca40w@mail.gmail.com>
+ <0101016e83897442-ecc4c00f-c0d1-4c2c-92ed-ce78e65c0935-000000@us-west-2.amazonses.com>
+ <0101016eac068d05-761f0d60-b1ef-400f-bf84-3164c2a26d2e-000000@us-west-2.amazonses.com>
+ <CAE=gft5cS54qn0JjxO58xL6sFyQk4t=8ofLFWPUSVQ9sdU4XpQ@mail.gmail.com> <b11c2116-f247-17c5-69ca-071183365a01@codeaurora.org>
+In-Reply-To: <b11c2116-f247-17c5-69ca-071183365a01@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Tue, 7 Jan 2020 11:14:58 -0800
+X-Gmail-Original-Message-ID: <CAE=gft6Dr_=zQ1h93qdxzi-GsZv3caddyOGaGQpSi+8BmBSO+Q@mail.gmail.com>
+Message-ID: <CAE=gft6Dr_=zQ1h93qdxzi-GsZv3caddyOGaGQpSi+8BmBSO+Q@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] interconnect: qcom: Add OSM L3 interconnect
+ provider support
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH v2] reset: qcom-aoss: Allow CONFIG_RESET_QCOM_AOSS to be a tristate
-Date:   Tue,  7 Jan 2020 19:13:31 +0000
-Message-Id: <20200107191331.8930-1-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Andy Gross <agross@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Dai <daidavid1@codeaurora.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow CONFIG_RESET_QCOM_AOSS to be set as as =m
-to allow for the driver to be loaded from a modules.
+On Mon, Dec 16, 2019 at 10:30 AM Sibi Sankar <sibis@codeaurora.org> wrote:
+>
+> Hey Evan,
+>
+> On 12/7/19 12:46 AM, Evan Green wrote:
+> > On Wed, Nov 27, 2019 at 12:42 AM Sibi Sankar <sibis@codeaurora.org> wrote:
+> >>
+> >> Hey Evan/Georgi,
+> >>
+> >> https://git.linaro.org/people/georgi.djakov/linux.git/commit/?h=icc-dev&id=9197da7d06e88666d1588e3c21a743e60381264d
+> >>
+> >> With the "Redefine interconnect provider
+> >> DT nodes for SDM845" series, wouldn't it
+> >> make more sense to define the OSM_L3 icc
+> >> nodes in the sdm845.c icc driver and have
+> >> the common helpers in osm_l3 driver? Though
+> >> we don't plan on linking the OSM L3 nodes
+> >> to the other nodes on SDM845/SC7180, we
+> >> might have GPU needing to be linked to the
+> >> OSM L3 nodes on future SoCs. Let me know
+> >> how you want this done.
+> >>
+> >> Anyway I'll re-spin the series once the
+> >> SDM845 icc re-work gets re-posted.
+> >
+> > I don't have a clear picture of the proposal. You'd put the couple of
+> > extra defines in sdm845.c for the new nodes. But then you'd need to do
+> > something in icc_set() of sdm845. Is that when you'd call out to the
+> > osm_l3 driver?
+>
+> with sdm845 icc rework "https://patchwork.kernel.org/cover/11293399/"
+> osm l3 icc provider needs to know the total number of rsc icc nodes,
+> i.e I can define the total number of rsc nodes and continue using the
+> same design as v3 since on sdm845/sc7180 gpu is not cache coherent.
+>
+> or have the osm l3 table population logic and osm icc_set as helpers
+> and have it called from the sdm845/sc7180 icc driver so that we would
+> be able to link osm_l3 with rsc nodes on future qcom SoCs.
 
-Also replaces the builtin_platform_driver() line with
-module_platform_driver()
-
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Alistair Delva <adelva@google.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Amit Pundir <amit.pundir@linaro.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
-v2: Fix builtin_platform_driver line in driver code
----
- drivers/reset/Kconfig           | 2 +-
- drivers/reset/reset-qcom-aoss.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 3ad7817ce1f0..45e70524af36 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -99,7 +99,7 @@ config RESET_PISTACHIO
- 	  This enables the reset driver for ImgTec Pistachio SoCs.
- 
- config RESET_QCOM_AOSS
--	bool "Qcom AOSS Reset Driver"
-+	tristate "Qcom AOSS Reset Driver"
- 	depends on ARCH_QCOM || COMPILE_TEST
- 	help
- 	  This enables the AOSS (always on subsystem) reset driver
-diff --git a/drivers/reset/reset-qcom-aoss.c b/drivers/reset/reset-qcom-aoss.c
-index 36db96750450..76367f17fc73 100644
---- a/drivers/reset/reset-qcom-aoss.c
-+++ b/drivers/reset/reset-qcom-aoss.c
-@@ -127,7 +127,7 @@ static struct platform_driver qcom_aoss_reset_driver = {
- 	},
- };
- 
--builtin_platform_driver(qcom_aoss_reset_driver);
-+module_platform_driver(qcom_aoss_reset_driver);
- 
- MODULE_DESCRIPTION("Qualcomm AOSS Reset Driver");
- MODULE_LICENSE("GPL v2");
--- 
-2.17.1
-
+I see, so if we use the same design as v3, then the number of nodes is
+established at compile-time, and ends up being specific to sdm845. I'm
+fine with either approach, maybe leaning towards the hardcoded
+#defines you have now, and waiting to do the refactoring until you
+actually have two SoCs that can use this.
+-Evan
