@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5D061331CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:04:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 848BB13326D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:10:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729003AbgAGVEC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:04:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46958 "EHLO mail.kernel.org"
+        id S1729669AbgAGVKk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:10:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728043AbgAGVDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:03:54 -0500
+        id S1729834AbgAGVKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:10:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7B7E2081E;
-        Tue,  7 Jan 2020 21:03:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6DCF2072A;
+        Tue,  7 Jan 2020 21:10:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431034;
-        bh=qQqkLG6E4zlxNyW71ejH7Xg6ZNSF3zn+NcXKNezev8k=;
+        s=default; t=1578431432;
+        bh=UqSgkSoypGxpx/dHNDDedIwHHPBiqT261SUJweTrzec=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RiIr8yTyknmDAemZk5w80NFsfxsIcumO2e5cFw5mi8kurtfVb2Byb1TllYNA4dmdu
-         FZF634h8InI+9byBlAZ8pWtIpWHgUgbnytCUaLTmJt++swdxufgR1cJcOFts4yfppA
-         HMprsuvWtqvAXEfw8Lryus4dHzD4M6a8L+XllpWo=
+        b=ao3MlVlRJY4M9fGXHXzIu054KhbCOKPIsfBjI9U8ruz4NnARUtu9PPMq6oFULYfPw
+         c2ucYcRlwKQta5m5xyidNMYc5QGoWXULN7jzAvZC0QmTHiSiDrCxoon+Dqp4houhuS
+         iPdHfnpSpPSniic6lkmW2nn6ekAbSrkmDw9Nt5Rg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Deepa Dinamani <deepa.kernel@gmail.com>,
-        stfrench@microsoft.com, linux-cifs@vger.kernel.org
-Subject: [PATCH 5.4 171/191] fs: cifs: Fix atime update check vs mtime
-Date:   Tue,  7 Jan 2020 21:54:51 +0100
-Message-Id: <20200107205342.153253181@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Subject: [PATCH 4.14 27/74] media: cec: CEC 2.0-only bcast messages were ignored
+Date:   Tue,  7 Jan 2020 21:54:52 +0100
+Message-Id: <20200107205157.081526932@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
-References: <20200107205332.984228665@linuxfoundation.org>
+In-Reply-To: <20200107205135.369001641@linuxfoundation.org>
+References: <20200107205135.369001641@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Deepa Dinamani <deepa.kernel@gmail.com>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-commit 69738cfdfa7032f45d9e7462d24490e61cf163dd upstream.
+commit cec935ce69fc386f13959578deb40963ebbb85c3 upstream.
 
-According to the comment in the code and commit log, some apps
-expect atime >= mtime; but the introduced code results in
-atime==mtime.  Fix the comparison to guard against atime<mtime.
+Some messages are allowed to be a broadcast message in CEC 2.0
+only, and should be ignored by CEC 1.4 devices.
 
-Fixes: 9b9c5bea0b96 ("cifs: do not return atime less than mtime")
-Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: stfrench@microsoft.com
-Cc: linux-cifs@vger.kernel.org
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Unfortunately, the check was wrong, causing such messages to be
+marked as invalid under CEC 2.0.
+
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: <stable@vger.kernel.org>      # for v4.10 and up
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/inode.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/cec/cec-adap.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/cifs/inode.c
-+++ b/fs/cifs/inode.c
-@@ -163,7 +163,7 @@ cifs_fattr_to_inode(struct inode *inode,
- 
- 	spin_lock(&inode->i_lock);
- 	/* we do not want atime to be less than mtime, it broke some apps */
--	if (timespec64_compare(&fattr->cf_atime, &fattr->cf_mtime))
-+	if (timespec64_compare(&fattr->cf_atime, &fattr->cf_mtime) < 0)
- 		inode->i_atime = fattr->cf_mtime;
- 	else
- 		inode->i_atime = fattr->cf_atime;
+--- a/drivers/media/cec/cec-adap.c
++++ b/drivers/media/cec/cec-adap.c
+@@ -1031,11 +1031,11 @@ void cec_received_msg_ts(struct cec_adap
+ 			valid_la = false;
+ 		else if (!cec_msg_is_broadcast(msg) && !(dir_fl & DIRECTED))
+ 			valid_la = false;
+-		else if (cec_msg_is_broadcast(msg) && !(dir_fl & BCAST1_4))
++		else if (cec_msg_is_broadcast(msg) && !(dir_fl & BCAST))
+ 			valid_la = false;
+ 		else if (cec_msg_is_broadcast(msg) &&
+-			 adap->log_addrs.cec_version >= CEC_OP_CEC_VERSION_2_0 &&
+-			 !(dir_fl & BCAST2_0))
++			 adap->log_addrs.cec_version < CEC_OP_CEC_VERSION_2_0 &&
++			 !(dir_fl & BCAST1_4))
+ 			valid_la = false;
+ 	}
+ 	if (valid_la && min_len) {
 
 
