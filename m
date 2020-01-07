@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 732BB1331CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:04:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E000E1331D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:04:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbgAGVEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:04:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47404 "EHLO mail.kernel.org"
+        id S1728220AbgAGVEQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:04:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727340AbgAGVEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:04:02 -0500
+        id S1729007AbgAGVEE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:04:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D4BC214D8;
-        Tue,  7 Jan 2020 21:04:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5C5B2081E;
+        Tue,  7 Jan 2020 21:04:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431041;
-        bh=hOngF0NIEZ911Ya5pNIzRrZOqlZ9qqWel3xdXaqnWzw=;
+        s=default; t=1578431044;
+        bh=MZZ42UtXtrlSSzh05RznfsTZCUgbTGr4eFjSid97aMw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=npc3g+qzp0n9DiuspG9mN+plarOIyfxUB7vJQrVAcZS4DQLbP1Ipx2GLgsMhR4HGS
-         D4RvoJmnoOBEyEiCIRJ7VCTeW2b9DQVTszoZmTyHuRVZshm4ul1XdAHO14iHrluFcT
-         uI/89A1ii4qehu545V9IDc+ZyAh8DxfI4YhTp9CI=
+        b=XNROtmbuYig6CQ33Zv8JzpNCamjBEf/5xNe+qUbHROUSEa53/jaA3BFKHTDTegvXc
+         KayPLAFFqAbbsWCKbR5cO2RRhqvv9LpslPmslDF2iB+Hf/N+OeOPkmZ2RwbR+qhVn1
+         8BF13v9Q2WidJmPlAzq1zwzh5LQO6+K7EyVTkHKM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Himanshu Madhani <hmadhani@marvell.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        James Smart <jsmart2021@gmail.com>,
-        Keith Busch <kbusch@kernel.org>,
+        stable@vger.kernel.org, Guchun Chen <guchun.chen@amd.com>,
+        Hawking Zhang <Hawking.Zhang@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 002/115] nvme-fc: fix double-free scenarios on hw queues
-Date:   Tue,  7 Jan 2020 21:53:32 +0100
-Message-Id: <20200107205241.393386348@linuxfoundation.org>
+Subject: [PATCH 4.19 003/115] drm/amdgpu: add check before enabling/disabling broadcast mode
+Date:   Tue,  7 Jan 2020 21:53:33 +0100
+Message-Id: <20200107205241.886092324@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
 References: <20200107205240.283674026@linuxfoundation.org>
@@ -46,78 +45,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+From: Guchun Chen <guchun.chen@amd.com>
 
-[ Upstream commit c869e494ef8b5846d9ba91f1e922c23cd444f0c1 ]
+[ Upstream commit 6e807535dae5dbbd53bcc5e81047a20bf5eb08ea ]
 
-If an error occurs on one of the ios used for creating an
-association, the creating routine has error paths that are
-invoked by the command failure and the error paths will free
-up the controller resources created to that point.
+When security violation from new vbios happens, data fabric is
+risky to stop working. So prevent the direct access to DF
+mmFabricConfigAccessControl from the new vbios and onwards.
 
-But... the io was ultimately determined by an asynchronous
-completion routine that detected the error and which
-unconditionally invokes the error_recovery path which calls
-delete_association. Delete association deletes all outstanding
-io then tears down the controller resources. So the
-create_association thread can be running in parallel with
-the error_recovery thread. What was seen was the LLDD received
-a call to delete a queue, causing the LLDD to do a free of a
-resource, then the transport called the delete queue again
-causing the driver to repeat the free call. The second free
-routine corrupted the allocator. The transport shouldn't be
-making the duplicate call, and the delete queue is just one
-of the resources being freed.
-
-To fix, it is realized that the create_association path is
-completely serialized with one command at a time. So the
-failed io completion will always be seen by the create_association
-path and as of the failure, there are no ios to terminate and there
-is no reason to be manipulating queue freeze states, etc.
-The serialized condition stays true until the controller is
-transitioned to the LIVE state. Thus the fix is to change the
-error recovery path to check the controller state and only
-invoke the teardown path if not already in the CONNECTING state.
-
-Reviewed-by: Himanshu Madhani <hmadhani@marvell.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: James Smart <jsmart2021@gmail.com>
-Signed-off-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Guchun Chen <guchun.chen@amd.com>
+Reviewed-by: Hawking Zhang <Hawking.Zhang@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/fc.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/df_v3_6.c | 38 ++++++++++++++++------------
+ 1 file changed, 22 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
-index d567035571bf..1875f6b8a907 100644
---- a/drivers/nvme/host/fc.c
-+++ b/drivers/nvme/host/fc.c
-@@ -2894,10 +2894,22 @@ nvme_fc_reconnect_or_delete(struct nvme_fc_ctrl *ctrl, int status)
- static void
- __nvme_fc_terminate_io(struct nvme_fc_ctrl *ctrl)
+diff --git a/drivers/gpu/drm/amd/amdgpu/df_v3_6.c b/drivers/gpu/drm/amd/amdgpu/df_v3_6.c
+index d5ebe566809b..a1c941229f4b 100644
+--- a/drivers/gpu/drm/amd/amdgpu/df_v3_6.c
++++ b/drivers/gpu/drm/amd/amdgpu/df_v3_6.c
+@@ -75,23 +75,29 @@ static void df_v3_6_update_medium_grain_clock_gating(struct amdgpu_device *adev,
  {
--	nvme_stop_keep_alive(&ctrl->ctrl);
-+	/*
-+	 * if state is connecting - the error occurred as part of a
-+	 * reconnect attempt. The create_association error paths will
-+	 * clean up any outstanding io.
-+	 *
-+	 * if it's a different state - ensure all pending io is
-+	 * terminated. Given this can delay while waiting for the
-+	 * aborted io to return, we recheck adapter state below
-+	 * before changing state.
-+	 */
-+	if (ctrl->ctrl.state != NVME_CTRL_CONNECTING) {
-+		nvme_stop_keep_alive(&ctrl->ctrl);
+ 	u32 tmp;
  
--	/* will block will waiting for io to terminate */
--	nvme_fc_delete_association(ctrl);
-+		/* will block will waiting for io to terminate */
-+		nvme_fc_delete_association(ctrl);
-+	}
+-	/* Put DF on broadcast mode */
+-	adev->df_funcs->enable_broadcast_mode(adev, true);
+-
+-	if (enable && (adev->cg_flags & AMD_CG_SUPPORT_DF_MGCG)) {
+-		tmp = RREG32_SOC15(DF, 0, mmDF_PIE_AON0_DfGlobalClkGater);
+-		tmp &= ~DF_PIE_AON0_DfGlobalClkGater__MGCGMode_MASK;
+-		tmp |= DF_V3_6_MGCG_ENABLE_15_CYCLE_DELAY;
+-		WREG32_SOC15(DF, 0, mmDF_PIE_AON0_DfGlobalClkGater, tmp);
+-	} else {
+-		tmp = RREG32_SOC15(DF, 0, mmDF_PIE_AON0_DfGlobalClkGater);
+-		tmp &= ~DF_PIE_AON0_DfGlobalClkGater__MGCGMode_MASK;
+-		tmp |= DF_V3_6_MGCG_DISABLE;
+-		WREG32_SOC15(DF, 0, mmDF_PIE_AON0_DfGlobalClkGater, tmp);
++	if (adev->cg_flags & AMD_CG_SUPPORT_DF_MGCG) {
++		/* Put DF on broadcast mode */
++		adev->df_funcs->enable_broadcast_mode(adev, true);
++
++		if (enable) {
++			tmp = RREG32_SOC15(DF, 0,
++					mmDF_PIE_AON0_DfGlobalClkGater);
++			tmp &= ~DF_PIE_AON0_DfGlobalClkGater__MGCGMode_MASK;
++			tmp |= DF_V3_6_MGCG_ENABLE_15_CYCLE_DELAY;
++			WREG32_SOC15(DF, 0,
++					mmDF_PIE_AON0_DfGlobalClkGater, tmp);
++		} else {
++			tmp = RREG32_SOC15(DF, 0,
++					mmDF_PIE_AON0_DfGlobalClkGater);
++			tmp &= ~DF_PIE_AON0_DfGlobalClkGater__MGCGMode_MASK;
++			tmp |= DF_V3_6_MGCG_DISABLE;
++			WREG32_SOC15(DF, 0,
++					mmDF_PIE_AON0_DfGlobalClkGater, tmp);
++		}
++
++		/* Exit broadcast mode */
++		adev->df_funcs->enable_broadcast_mode(adev, false);
+ 	}
+-
+-	/* Exit broadcast mode */
+-	adev->df_funcs->enable_broadcast_mode(adev, false);
+ }
  
- 	if (ctrl->ctrl.state != NVME_CTRL_CONNECTING &&
- 	    !nvme_change_ctrl_state(&ctrl->ctrl, NVME_CTRL_CONNECTING))
+ static void df_v3_6_get_clockgating_state(struct amdgpu_device *adev,
 -- 
 2.20.1
 
