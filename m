@@ -2,93 +2,224 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79C1C132A93
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 16:59:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA7C4132A9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 17:00:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728327AbgAGP65 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 10:58:57 -0500
-Received: from mga14.intel.com ([192.55.52.115]:26224 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727974AbgAGP65 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 10:58:57 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2020 07:58:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,406,1571727600"; 
-   d="scan'208";a="370629795"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga004.jf.intel.com with ESMTP; 07 Jan 2020 07:58:54 -0800
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1iorFu-0006gd-RA; Tue, 07 Jan 2020 17:58:54 +0200
-Date:   Tue, 7 Jan 2020 17:58:54 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stefani Seibold <stefani@seibold.net>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kent Gibson <warthog618@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 00/13] gpiolib: add an ioctl() for monitoring line
- status changes
-Message-ID: <20200107155854.GK32742@smile.fi.intel.com>
-References: <20191224120709.18247-1-brgl@bgdev.pl>
- <CACRpkdZ_TroKCAnDWiY-jPbe0NL+ingm1pMLQLPxT1Uh78kx8g@mail.gmail.com>
- <CAMpxmJXikLw0d1e1Eq7vVzoORz3utEBxfG6nRmkngLqezVqtuA@mail.gmail.com>
- <CACRpkdY2NXNrAk9VY18YDeQ2WDfDfAyi4mgW26JuTPHdEOE-uQ@mail.gmail.com>
- <20200107144455.GF32742@smile.fi.intel.com>
- <20200107144548.GG32742@smile.fi.intel.com>
- <CAMpxmJWkKPQYAE3_JdWVkdtSZLeky=bouOyyJ+c2ySMc+1LFyw@mail.gmail.com>
+        id S1728376AbgAGQAq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 11:00:46 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43674 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728173AbgAGQAp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 11:00:45 -0500
+Received: by mail-lf1-f66.google.com with SMTP id 9so67015lfq.10
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 08:00:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=G5IGKqgnnqHj2l5aFpISL9b2AZ+28RDzzoNGsHjiypA=;
+        b=RxK80YoGgCKJzRzKDOZCCZlyvJ0AzC4vc1fmXE+EmdXarFZ6oOXSY7NjRykxTDRoPo
+         hTqOctU+iKEpI+aGO/tOUb7JS6AiJHiMjBiiMHgZqqpuqguw/+oUyDhctYhZguJ8IJgL
+         /bH6EvUoI1biGO9sPtz3X2v/UfaM7l0aEozfaLhzqp36vSamvA+ZMIs/0YOEwbmBGmLx
+         4NtR/qKtwwQbnic+lX1mQyPnBVSMjXNAlNki6fDoG+HjQ3+mB3suNZPhjUeBWAfNGF+u
+         KCJYtxGGuMHDy1Pp9s/IhrpoJLRKcVHDPbry7Le8pM31t+gIit/w5IHHgHeNb8Ngg++e
+         9sOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G5IGKqgnnqHj2l5aFpISL9b2AZ+28RDzzoNGsHjiypA=;
+        b=Qzu87rOYbi8wi5EqVgawKySJ4MTgrf7vVlr0udkdyXtW4JZBq3mXC/lYSbmdkV0huB
+         r2GVhtEHZqav75ebFAyzwEQY6L+1qgtM9nz07jJ1mcTgofL/vBytioJeK4rAPo/Uy073
+         yxe/qSMmmxceOo9RNB/ZXEPh817Vc9YTt3kZ8vBFZsocHFacGEp/IrdfZPqHV8DfslE9
+         xz+fZ+k+mCiFQl143rbJ4mHvQ8lKkEuK2YQttvXbVMSK3BoUrKIk+t9DO1U+WYUsaLlc
+         kW6CaBWKRD76QrIURjF3bTlJ/yu03ghtzZfL1m1LZ9xzqEhWE7VHgKPEbBobBedxydct
+         QJgw==
+X-Gm-Message-State: APjAAAXP9dpc93FaPPk6Vvav8QXh5k7RMCFoVKq+mELAIMyRWAP4rarA
+        7zr0+4jgE79WFDDNGBNZ4y3hiZDFmC14zQVk6qffZg==
+X-Google-Smtp-Source: APXvYqwh6r4ZT1gmuB4kDBHibCAmORzXwEFYl++P2qh/I8n6DOrgDh3MObKp/7emtrKEOWWoCP/x3nD4JWM6pScQrI8=
+X-Received: by 2002:a19:c80a:: with SMTP id y10mr80643lff.177.1578412842021;
+ Tue, 07 Jan 2020 08:00:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMpxmJWkKPQYAE3_JdWVkdtSZLeky=bouOyyJ+c2ySMc+1LFyw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191220084252.GL3178@techsingularity.net> <CAKfTPtDp624geHEnPmHki70L=ZrBuz6zJG3zW0VFy+_S064Etw@mail.gmail.com>
+ <20200103143051.GA3027@techsingularity.net> <CAKfTPtCGm7-mq3duxi=ugy+mn=Yutw6w9c35+cSHK8aZn7rzNQ@mail.gmail.com>
+ <20200106145225.GB3466@techsingularity.net> <CAKfTPtBa74nd4VP3+7V51Jv=-UpqNyEocyTzMYwjopCgfWPSXg@mail.gmail.com>
+ <20200107095655.GF3466@techsingularity.net> <CAKfTPtAtJSWGPC1t+0xj_Daid0fZaWnN+b53WQ_a1-Js5fJ6sg@mail.gmail.com>
+ <20200107115646.GI3466@techsingularity.net>
+In-Reply-To: <20200107115646.GI3466@techsingularity.net>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Tue, 7 Jan 2020 17:00:29 +0100
+Message-ID: <CAKfTPtAacdmxniM9yZUrQPW39LAvhpBQt6ZiGiwk5qpEx7zicA@mail.gmail.com>
+Subject: Re: [PATCH] sched, fair: Allow a small degree of load imbalance
+ between SD_NUMA domains v2
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Parth Shah <parth@linux.ibm.com>,
+        Rik van Riel <riel@surriel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 04:19:59PM +0100, Bartosz Golaszewski wrote:
-> wt., 7 sty 2020 o 15:45 Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> napisał(a):
-> >
-> > On Tue, Jan 07, 2020 at 04:44:55PM +0200, Andy Shevchenko wrote:
-> > > On Tue, Jan 07, 2020 at 01:50:28PM +0100, Linus Walleij wrote:
+ busiest->group_weight * (env->sd->imbalance_pct - 100) / 100;
+
+On Tue, 7 Jan 2020 at 12:56, Mel Gorman <mgorman@techsingularity.net> wrote:
+>
+> On Tue, Jan 07, 2020 at 12:17:12PM +0100, Vincent Guittot wrote:
+> > On Tue, 7 Jan 2020 at 10:56, Mel Gorman <mgorman@techsingularity.net> wrote:
 > > >
-> > > ...
-> > >
-> > > > Let's try to CC the actual author (Stefani Seibold) and see if the mail
-> > > > address works and if he can look at it. Or did you already talk to
-> > > > Stefani?
+> > > On Tue, Jan 07, 2020 at 09:38:26AM +0100, Vincent Guittot wrote:
+> > > > > > This looks weird to me because you use imbalance_pct, which is
+> > > > > > meaningful only compare a ratio, to define a number that will be then
+> > > > > > compared to a number of tasks without taking into account the weight
+> > > > > > of the node. So whatever the node size, 32 or 128 CPUs, the
+> > > > > > imbalance_adj will be the same: 3 with the default imbalance_pct of
+> > > > > > NUMA level which is 125 AFAICT
+> > > > > >
+> > > > >
+> > > > > The intent in this version was to only cover the low utilisation case
+> > > > > regardless of the NUMA node size. There were too many corner cases
+> > > > > where the tradeoff of local memory latency versus local memory bandwidth
+> > > > > cannot be quantified. See Srikar's report as an example but it's a general
+> > > > > problem. The use of imbalance_pct was simply to find the smallest number of
+> > > > > running tasks were (imbalance_pct - 100) would be 1 running task and limit
 > > > >
-> > > > (git blame is always my best friend in cases like this, hehe)
+> > > > But using imbalance_pct alone doesn't mean anything.
 > > >
-> > > Recently I started to be smarted in such cases, i.e. I run also
-> > > `git log --author='$AUTHOR'` to see if they are still active and
-> > > what address had been used lately.
+> > > Other than figuring out "how many running tasks are required before
+> > > imbalance_pct is roughly equivalent to one fully active CPU?". Even then,
 > >
-> > ...and another possibility to `git log --grep '$AUTHOR'`.
+> > sorry, I don't see how you deduct this from only using imbalance_pct
+> > which is mainly there to say how much percent of difference is
+> > significant
+> >
+>
+> Because if the difference is 25% then 1 CPU out of 4 active is enough
+> for imbalance_pct to potentially be a factor. Anyway, the approach seems
+> almost universally disliked so even if I had reasons for not scaling
+> this by the group_weight, no one appears to agree with them :P
+>
+> > > it's a bit weak as imbalance_pct makes hard-coded assumptions on what
+> > > the tradeoff of cross-domain migration is without considering the hardware.
+> > >
+> > > > Using similar to the below
+> > > >
+> > > >     busiest->group_weight * (env->sd->imbalance_pct - 100) / 100
+> > > >
+> > > > would be more meaningful
+> > > >
+> > >
+> > > It's meaningful to some sense from a conceptual point of view but
+> > > setting the low utilisation cutoff depending on the number of CPUs on
+> > > the node does not account for any local memory latency vs bandwidth.
+> > > i.e. on a small or mid-range machine the cutoff will make sense. On
+> > > larger machines, the cutoff could be at the point where memory bandwidth
+> > > is saturated leading to a scenario whereby upgrading to a larger
+> > > machine performs worse than the smaller machine.
+> > >
+> > > Much more importantly, doing what you suggest allows an imbalance
+> > > of more CPUs than are backed by a single LLC. On high-end AMD EPYC 2
+> > > machines, busiest->group_weight scaled by imbalance_pct spans multiple L3
+> > > caches. That is going to have side-effects. While I also do not account
+> > > for the LLC group_weight, it's unlikely the cut-off I used would be
+> > > smaller than an LLC cache on a large machine as the cache.
+> > >
+> > > These two points are why I didn't take the group weight into account.
+> > >
+> > > Now if you want, I can do what you suggest anyway as long as you are happy
+> > > that the child domain weight is also taken into account and to bound the
+> >
+> > Taking into account child domain makes sense to me, but shouldn't we
+> > take into account the number of child group instead ? This should
+> > reflect the number of different LLC caches.
+>
+> I guess it would but why is it inherently better? The number of domains
+> would yield a similar result if we assume that all the lower domains
+> have equal weight so it simply because the weight of the SD_NUMA domain
+> divided by the number of child domains.
 
-> So if some module doesn't have an official maintainer listed in
-> MAINTAINERS, we should still get a review from the original author?
+but that's not what you are doing in your proposal. You are using
+directly child->span_weight which reflects the number of CPUs in the
+child and not the number of group
 
-If you asking me, I do it in a way of playing good citizen. It's not required,
-but may give a good feedback.
+you should do something like  sds->busiest->span_weight /
+sds->busiest->child->span_weight which gives you an approximation of
+the number of independent group inside the busiest numa node from a
+shared resource pov
 
-> KFIFO lives in lib/ - is there even an official maintainer for all
-> library helpers?
-
-lib/ is (in most cases) under akpm@ realm.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+>
+> Now, I could be missing something with asymmetric setups. I don't know
+> if it's possible for child domains of a NUMA domain to have different
+> sizes. I would be somewhat surprised if they did but I also do not work
+> on such machines nor have I ever accessed one (to my knowledge).
+>
+> > IIUC your reasoning, we want to make sure that tasks will not start to
+> > fight for using same resources which is the connection between LLC
+> > cache and memory in this case
+> >
+>
+> Yep. I don't want a case where the allowed imbalance causes the load
+> balancer to have to balance between the lower domains. *Maybe* that is
+> actually better in some cases but it's far from intuitive so I would
+> prefer that change would be a patch on its own with a big fat comment
+> explaining the reasoning behind the additional complexity.
+>
+> > > largest possible allowed imbalance to deal with the case of a node having
+> > > multiple small LLC caches. That means that some machines will be using the
+> > > size of the node and some machines will use the size of an LLC. It's less
+> > > predictable overall as some machines will be "special" relative to others
+> > > making it harder to reproduce certain problems locally but it would take
+> > > imbalance_pct into account in a way that you're happy with.
+> > >
+> > > Also bear in mind that whether LLC is accounted for or not, the final
+> > > result should be halved similar to the other imbalance calculations to
+> > > avoid over or under load balancing.
+> > >
+> > > > Or you could use the util_avg so you will take into account if the
+> > > > tasks are short running ones or long running ones
+> > > >
+> > >
+> > > util_avg can be skewed if there are big outliers. Even then, it's not
+> > > a great metric for the low utilisation cutoff. Large numbers of mostly
+> > > idle but running tasks would be treated similarly to small numbers of
+> > > fully active tasks. It's less predictable and harder to reason about how
+> >
+> > Yes but this also have the advantage of reflecting more accurately how
+> > the system is used.
+> > with nr_running, we consider that mostly idle and fully active tasks
+> > will have the exact same impact on the memory
+> >
+>
+> Maybe, maybe not. When there is spare capacity in the domain overall and
+> we are only interested in the low utilisation case, it seems to me that
+> we should consider the most obvious and understandable metric. Now, if we
+> were talking about a nearly fully loaded domain or an overloaded domain
+> then I would fully agree with you as balancing utilisation in that case
+> becomes critical.
+>
+> > > load balancing behaves across a variety of workloads.
+> > >
+> > > Based on what you suggest, the result looks like this (build tested
+> > > only)
+> >
+> > I'm going to make a try of this patch
+> >
+>
+> Thanks. I've queued the same patch on one machine to see what falls out.
+> I don't want to tie up half my test grid until we get some sort of
+> consensus.
+>
+> --
+> Mel Gorman
+> SUSE Labs
