@@ -2,79 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BE68132967
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 15:56:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31391132A06
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 16:28:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbgAGO4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 09:56:18 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:56794 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727559AbgAGO4S (ORCPT
+        id S1728323AbgAGP2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 10:28:09 -0500
+Received: from 3.mo173.mail-out.ovh.net ([46.105.34.1]:50589 "EHLO
+        3.mo173.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728229AbgAGP2I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 09:56:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578408977;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AMsY+5AfULXXQPieaO9m1OwQcv8Xr5ZMsyyOrT8Fw9k=;
-        b=bUFCjzqC7th5UypWPVL/1R7VapYKerroS15saH+gE4GAJK5OEumhVeq5moKrYVC2LvXkpt
-        GWc5BgGELct9Hj8cJShD1lRICmmLYbMwU/yaI0Mp7fLa07ZwLHvqta7LRB8wisGgwxgNEX
-        E5UT1V0IyVvZbPqegwgoXUScMnL9mLw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-330-2BCXJcVsMTWMhcag17A0mg-1; Tue, 07 Jan 2020 09:56:15 -0500
-X-MC-Unique: 2BCXJcVsMTWMhcag17A0mg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 49303100550E;
-        Tue,  7 Jan 2020 14:56:14 +0000 (UTC)
-Received: from kamzik.brq.redhat.com (unknown [10.43.2.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CDB4C5D9CA;
-        Tue,  7 Jan 2020 14:56:10 +0000 (UTC)
-Date:   Tue, 7 Jan 2020 15:56:08 +0100
-From:   Andrew Jones <drjones@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Ben Gardon <bgardon@google.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Cannon Matthews <cannonmatthews@google.com>
-Subject: Re: [PATCH v3 1/8] KVM: selftests: Create a demand paging test
-Message-ID: <20200107145608.ogi34nkyh2abdgrq@kamzik.brq.redhat.com>
-References: <20191216213901.106941-1-bgardon@google.com>
- <20191216213901.106941-2-bgardon@google.com>
- <20200107143334.GF219677@xz-x1>
+        Tue, 7 Jan 2020 10:28:08 -0500
+X-Greylist: delayed 1199 seconds by postgrey-1.27 at vger.kernel.org; Tue, 07 Jan 2020 10:28:07 EST
+Received: from player791.ha.ovh.net (unknown [10.108.1.191])
+        by mo173.mail-out.ovh.net (Postfix) with ESMTP id D843412ABB9
+        for <linux-kernel@vger.kernel.org>; Tue,  7 Jan 2020 15:50:46 +0100 (CET)
+Received: from armadeus.com (lfbn-str-1-12-36.w92-140.abo.wanadoo.fr [92.140.139.36])
+        (Authenticated sender: sebastien.szymanski@armadeus.com)
+        by player791.ha.ovh.net (Postfix) with ESMTPSA id 53895DE73092;
+        Tue,  7 Jan 2020 14:50:38 +0000 (UTC)
+To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>
+References: <20191210213221.11921-1-sashal@kernel.org>
+ <20191210213221.11921-102-sashal@kernel.org>
+From:   =?UTF-8?Q?S=c3=a9bastien_Szymanski?= 
+        <sebastien.szymanski@armadeus.com>
+Autocrypt: addr=sebastien.szymanski@armadeus.com; prefer-encrypt=mutual;
+ keydata=
+ mQENBFNfZLEBCACv1lqSePHJNpRgcnER+3emy+Arjz84zFax3XkogjY/e3ZneihIgWrVKe5M
+ ql16pX4KTkzNgMUKz4bG/XwT3kjcrXshxFLlg7KrHMl287C+W+QOUjnjVeRi/su+SPmjz8VD
+ yr11h+ZkVLAWhS+uQJ93jy1NwG8M4t1kBLAVHHD5Vw4FJ+3ouaVYIp1X1Cr8bVKQw33Q1aTd
+ ro0kMBb96B9vNu7ciJZ3gvlaBzUEKOgNnq9KaywuLnqrqr4HUIn5JuxZjCjJzt9kTAKcTfp2
+ cJM8qpp+2FF5qtbkse9fZ6M64qozgOPr9Tk4Amf9fZEUQ6UNw14mmBZuXSzoHe75gI7TABEB
+ AAG0N1PDqWJhc3RpZW4gU1pZTUFOU0tJIDxzZWJhc3RpZW4uc3p5bWFuc2tpQGFybWFkZXVz
+ LmNvbT6JAVAEEwEIADoCGyMHCwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgBYhBJwGygpYm/1C
+ /GCmwbCaKeiBMmTiBQJdhIHLAAoJELCaKeiBMmTixXIH/2W3kbzRG0UF81jtRRnp0H83rjDT
+ v0H+8fgFMRL/7HCJ1QPArkfRJlM2wlJkN+ChP09CCarYfUEHfRCHlTb7At6Yyrz1jziD7ZwX
+ 8IWHYRXnZkY5eZc5DsiUgq6JH49kt+GPzK8UVP9MTa6zkBpPCUf7LzZ4pD3FihdkT52BU3gI
+ d9P49fSI0TYySlb/VKn815aOhvwEr7+Dh3mZUjSh7saofbRmVUOr7p+R3MvvGI19/IJZjeOE
+ ZWliODDOt6HnBOtoGSXMcNIFF6snH52D5N5gY88njZjTwhgGGUBix1bsgf/EY0v4R5itZBXB
+ B/Ze4Tm++YHaB75hZK6PQu/YRv65AQ0EU19ksQEIALo7jhXddrXBTRu5SAjelV53jyHBJTX/
+ vN4nL/VbbW/saca+NJjDSxx5DBmotZbQdWIyZiSIjU/xnTREvtDrl6ZeSsKWd7ZqiuiY4fSR
+ zwuQp9rd0yqRuxesrWeyJB1zCSdEvLyKASERt+nxkOA+IzJ4y1qLtvnWr+SL1AXgTMw+Tkyw
+ KIDCRWHTIYas11ldGj82gOIpYeXnapeNLHfT4EQwg0NeWYHynJxAQWiX5aPlw0uSpAQSsBXQ
+ FIe3fpoveMSnXK+PG2BBOzexYv7r4S70a6sF9sgTTPpfKqUaqqC+u1+bUX6alTAKhGKJywaF
+ 6ViqLlgY8PfwohSyAlqlTRMAEQEAAYkBNgQYAQgAIAIbDBYhBJwGygpYm/1C/GCmwbCaKeiB
+ MmTiBQJdhIHSAAoJELCaKeiBMmTitU8IAK7NQM3fEwaF5XaKtepYWsVka44CD8A9e4r7NVK9
+ ugirKvXirIxBSDmN/Db862NmVpITsZ6ERNSNZLm/7k55N+TexKYiFZeU7G92TEfAM6qPElvx
+ DLEcrkNMq9r08YZeUloacsq31AL5fK4LW+xdvXudkdiKRMJsdTpmff3x5kIziGOHjwFP9wve
+ ZgEH52gpbRsP8Whx/Z2lNX/BBRmFM8OnEXFsjjqDzYThdxTq85wGPpkgvvUGyPNRD7TpbB1C
+ pajOUUkPxgj5LKt77HD1afeZNudWhgcdkbtT5PMQTT0WY6wvMEj9S1+bGPeXRGWLYB7gHQ+L
+ JNoSD7Kz6Y9qnKo=
+Subject: Re: [PATCH AUTOSEL 4.19 102/177] nvmem: imx-ocotp: reset error status
+ on probe
+Message-ID: <dd048e02-81f7-8aed-34a7-f95a70859391@armadeus.com>
+Date:   Tue, 7 Jan 2020 15:50:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200107143334.GF219677@xz-x1>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20191210213221.11921-102-sashal@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 11152601528748758226
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrvdehgedgvdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepvfhfhffukffffgggjggtgfesthekredttdefjeenucfhrhhomhepuforsggrshhtihgvnhgpufiihihmrghnshhkihcuoehsvggsrghsthhivghnrdhsiiihmhgrnhhskhhisegrrhhmrgguvghushdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpphgrshhtvggsihhnrdgtohhmnecukfhppedtrddtrddtrddtpdelvddrudegtddrudefledrfeeinecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejledurdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshgvsggrshhtihgvnhdrshiihihmrghnshhkihesrghrmhgruggvuhhsrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 09:33:34AM -0500, Peter Xu wrote:
-> On Mon, Dec 16, 2019 at 01:38:54PM -0800, Ben Gardon wrote:
-> > While userfaultfd, KVM's demand paging implementation, is not specific
-> > to KVM, having a benchmark for its performance will be useful for
-> > guiding performance improvements to KVM. As a first step towards creating
-> > a userfaultfd demand paging test, create a simple memory access test,
-> > based on dirty_log_test.
-> > 
-> > Signed-off-by: Ben Gardon <bgardon@google.com>
+On 12/10/19 10:31 PM, Sasha Levin wrote:
+> From: Lucas Stach <l.stach@pengutronix.de>
 > 
-> It's fine to start with x86-only for this test, but imho it would be
-> better to mention that in cover letter, or reply to reviewer comments
-> on that you removed aarch64 from previous post.
+> [ Upstream commit c33c585f1b3a99d53920bdac614aca461d8db06f ]
+> 
+> If software running before the OCOTP driver is loaded left the
+> controller with the error status pending, the driver will never
+> be able to complete the read timing setup. Reset the error status
+> on probe to make sure the controller is in usable state.
+> 
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Link: https://lore.kernel.org/r/20191029114240.14905-6-srinivas.kandagatla@linaro.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  drivers/nvmem/imx-ocotp.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
+> index afb429a417fe0..926d9cc080cf4 100644
+> --- a/drivers/nvmem/imx-ocotp.c
+> +++ b/drivers/nvmem/imx-ocotp.c
+> @@ -466,6 +466,10 @@ static int imx_ocotp_probe(struct platform_device *pdev)
+>  	if (IS_ERR(priv->clk))
+>  		return PTR_ERR(priv->clk);
+>  
+> +	clk_prepare_enable(priv->clk);
+> +	imx_ocotp_clr_err_if_set(priv->base);
+> +	clk_disable_unprepare(priv->clk);
+> +
+>  	priv->params = of_device_get_match_data(&pdev->dev);
+>  	imx_ocotp_nvmem_config.size = 4 * priv->params->nregs;
+>  	imx_ocotp_nvmem_config.dev = dev;
+> 
 
-I'd also prefer that if it's x86-only that it be put in the x86_64
-subdirectory and drop the arch #ifdefs. The question is why is it
-x86-only for now though? Will it take a lot of work to port it to
-other architectures? Or does it just need testing by someone with
-the hardware?
+Hi,
 
-Thanks,
-drew
+This patch makes kernel 4.19.{92,93} hang at boot on my i.MX6ULL based
+board. It hanks at
 
+[    3.730078] cpu cpu0: Linked as a consumer to regulator.2
+[    3.737760] cpu cpu0: Linked as a consumer to regulator.3
+
+Full boot log is here: https://pastebin.com/TS8EFxkr
+
+The config is imx_v6_v7_defconfig.
+
+Reverting it makes the kernels boot again.
+
+Regards,
+
+-- 
+Sébastien Szymanski, Armadeus Systems
+Software engineer
