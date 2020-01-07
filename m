@@ -2,82 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1405F131FD4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 07:31:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29E35131FFA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 07:48:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727324AbgAGGbw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 01:31:52 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38446 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbgAGGbv (ORCPT
+        id S1726142AbgAGGsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 01:48:00 -0500
+Received: from smtp.eckelmann.de ([217.19.183.80]:14592 "EHLO
+        smtp.eckelmann.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbgAGGsA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 01:31:51 -0500
-Received: by mail-pl1-f193.google.com with SMTP id f20so22800956plj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 22:31:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=rIt7/qOuxCe+bTr1Wnd2LRcC3pVPsjTSIxV83hfUP1Y=;
-        b=HTLGfKa3fcTvK5gwY2o/RhPYWBbfO/ht2LBc/0A5ZDV6Jl8DQmMireZs4lpyFet+1s
-         bWrgKbUuN6rQ6bVsRI4UERCWy8WFDJcvggmt6lz8Xsj3daREfzHifvcpWTO9vr01l0Qu
-         VpZBxP7hbYdDqbPmJft6S67k8jF43dSwLDAmEM3+yHLRoHwBMVIxNKeIgIjIYXPjxfh9
-         viMDW1JHQEfDu+A5CPOdvKfVJQbuTIDUw7imlnnb4X+DdrH6MWPMTOb9qs3UguN/ZMZA
-         yyiovwMX+DLfQmF6P9Up/D/AKAgLTW97bionDPYA2+Lo3akC6dhfV3n1tdkM5kKON18H
-         WaYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=rIt7/qOuxCe+bTr1Wnd2LRcC3pVPsjTSIxV83hfUP1Y=;
-        b=UCYm23bGn9RUmol4hLp0ZapVqxSkk1Nkhi9MPEELZOGsG8DxlK+XuW51v/p6+a9RNW
-         RrsspxW0HgBWlTo24JlnotiGahYXF5RL/JfBUiPjnQRWyyndfVC2CcJKe1njHQH1vKGQ
-         1lZyNtERieok0p8cKWk2RG32WS5yegODdM+DmqZWYjQp5GIAyevFjW//Kk8S274++0aI
-         x9fGQk5cwcppns+WVwE86KogMbn/nKwkkHgD4YaAkGofgiyMlEBI2GC2GJS1u7WYWbXp
-         ht9CewFo6eoLJZ0jOCwuFj3qmz5Da/u3OOJuzkOWQT4NHn65eGC5nDl0oxxEvAcSREqS
-         ZHjQ==
-X-Gm-Message-State: APjAAAWXd9uX5VPY7MuHPwOQxXKWLKmmgJAFqKLW50qW8FI7pFzOq5uD
-        E8UBbh/aG0VBOuIUbHn9od7NjA==
-X-Google-Smtp-Source: APXvYqwyymqg/dX8KMgo+H2hSC9clUay904mRdykr8CUp58TUkBswxSnHXPz+dMPSgZpbGd/FzVFiQ==
-X-Received: by 2002:a17:90b:3004:: with SMTP id hg4mr47499847pjb.52.1578378711131;
-        Mon, 06 Jan 2020 22:31:51 -0800 (PST)
-Received: from localhost ([122.172.26.121])
-        by smtp.gmail.com with ESMTPSA id y197sm81887026pfc.79.2020.01.06.22.31.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Jan 2020 22:31:50 -0800 (PST)
-Date:   Tue, 7 Jan 2020 12:01:48 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] opp: fix of_node leak for unsupported entries
-Message-ID: <20200107063148.lr2s65igfncbkpxx@vireshk-i7>
-References: <a8060fe5b23929e2e5c9bf5735e63b302124f66c.1578077228.git.mirq-linux@rere.qmqm.pl>
+        Tue, 7 Jan 2020 01:48:00 -0500
+X-Greylist: delayed 902 seconds by postgrey-1.27 at vger.kernel.org; Tue, 07 Jan 2020 01:47:59 EST
+Received: from ws067.eckelmann.group (2a00:1f08:4007:5c00:1a60:24ff:fe97:84c9)
+ by EX-SRV2.eckelmann.group (2a00:1f08:4007:e035:172:18:35:5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1591.10; Tue, 7 Jan 2020 07:32:55 +0100
+Date:   Tue, 7 Jan 2020 07:32:50 +0100
+From:   Thorsten Scherer <thorsten.scherer@eckelmann.de>
+To:     Nishad Kamdar <nishadkamdar@gmail.com>
+CC:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joe Perches <joe@perches.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] siox: Use the correct style for SPDX License
+ Identifier
+Message-ID: <20200107063250.GA30387@ws067.eckelmann.group>
+References: <20200101131418.GA3110@nishad>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a8060fe5b23929e2e5c9bf5735e63b302124f66c.1578077228.git.mirq-linux@rere.qmqm.pl>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20200101131418.GA3110@nishad>
+X-Originating-IP: [2a00:1f08:4007:5c00:1a60:24ff:fe97:84c9]
+X-ClientProxiedBy: EX-SRV2.eckelmann.group (2a00:1f08:4007:e035:172:18:35:5)
+ To EX-SRV2.eckelmann.group (2a00:1f08:4007:e035:172:18:35:5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03-01-20, 20:36, MichaÅ‚ MirosÅ‚aw wrote:
-> When parsing OPP v2 table, unsupported entries return NULL from
-> _opp_add_static_v2().
+On Wed, Jan 01, 2020 at 06:44:23PM +0530, Nishad Kamdar wrote:
+> This patch corrects the SPDX License Identifier style in
+> header file related to Eckelmann SIOX driver.
+> For C header files Documentation/process/license-rules.rst
+> mandates C-like comments (opposed to C source files where
+> C++ style should be used).
+> 
+> Changes made by using a script provided by Joe Perches here:
+> https://lkml.org/lkml/2019/2/7/46.
+> 
+> Suggested-by: Joe Perches <joe@perches.com>
+> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Please fix that and return something sensible from there.
+Acked-by: Thorsten Scherer <thorsten.scherer@eckelmann.de>
 
-> In this case node reference is leaked.
-> Make _opp_add_static_v2() always assume ownership of the reference
-> to fix this.
+> ---
+> Changes in v2:
+>   - Correct the spelling of the word Eckelmann.
+> ---
+>  drivers/siox/siox.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/siox/siox.h b/drivers/siox/siox.h
+> index c674bf6fb119..f08b43b713c5 100644
+> --- a/drivers/siox/siox.h
+> +++ b/drivers/siox/siox.h
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> +/* SPDX-License-Identifier: GPL-2.0 */
+>  /*
+>   * Copyright (C) 2015-2017 Pengutronix, Uwe Kleine-König <kernel@pengutronix.de>
+>   */
+> -- 
+> 2.17.1
+> 
 
-The ownership lies with the routine which took the reference in the first place.
+Kind regards
+Thorsten
 
--- 
-viresh
+--
+Thorsten Scherer | Eckelmann AG | www.eckelmann.de |
