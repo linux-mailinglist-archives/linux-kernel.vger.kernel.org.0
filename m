@@ -2,53 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C73A133513
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:42:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A301813351F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:44:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727324AbgAGVm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:42:26 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:38476 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726470AbgAGVmZ (ORCPT
+        id S1727276AbgAGVoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:44:08 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:33119 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726594AbgAGVoI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:42:25 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 9C97B15A17458;
-        Tue,  7 Jan 2020 13:42:24 -0800 (PST)
-Date:   Tue, 07 Jan 2020 13:42:24 -0800 (PST)
-Message-Id: <20200107.134224.1676825160556917131.davem@davemloft.net>
-To:     f.fainelli@gmail.com
-Cc:     Jose.Abreu@synopsys.com, netdev@vger.kernel.org,
-        Joao.Pinto@synopsys.com, peppe.cavallaro@st.com,
-        alexandre.torgue@st.com, mcoquelin.stm32@gmail.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        heiko@sntech.de, bot@kernelci.org, sriram.dash@samsung.com
-Subject: Re: [PATCH net] net: stmmac: Fixed link does not need MDIO Bus
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <5d4a30a5-7af5-7147-11a9-bb5ca3564baa@gmail.com>
-References: <5764e60da6d3af7e76c30f63b07f1a12b4787918.1578400471.git.Jose.Abreu@synopsys.com>
-        <5d4a30a5-7af5-7147-11a9-bb5ca3564baa@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 07 Jan 2020 13:42:25 -0800 (PST)
+        Tue, 7 Jan 2020 16:44:08 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MqJyX-1jTAsg2bXn-00nOpV; Tue, 07 Jan 2020 22:43:57 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Oleksandr Natalenko <oleksandr@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Colin Ian King <colin.king@canonical.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: host: oxu210hp-hcd: fix gcc warning
+Date:   Tue,  7 Jan 2020 22:43:46 +0100
+Message-Id: <20200107214354.1008937-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:u/ytrvgdvpHgxcX8GjwpWa6Af54BI3w1VDFyYZI9vnfeynUjOy3
+ ofGBPPWyyjdYVlh872IwYSN7PvKXmMh0PRXqYLWKWO5881hshyH2kNXawfh/aSluCSu2J+Z
+ XWYRqos4HKG1iWxAjXnJQm79u3Oms+nN5h8cCzFzvrY0Q14c4qYYxxBSWqQvVU7SgjuxzIc
+ i7TGH5kInsgBc3rkL8bWw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ZMoTU0wa2ac=:lvE9Be0DhiEfjAyWJoDnPO
+ qYN/G9FRzWWHg4OyIzjCfzC5K6R3ylqkk7fp531bS+lsK2HLb0zkXpnvdXn9tkHWCZjeC5uqx
+ cPJkGyD3ZoXwi8hORzkLCMVmXV4GdzEDW+XoTXKvv4VQIv/BMyzTmgjAUZqXMCn5wKDLICIFI
+ e0Kjof50BTUdEpLjGJwU8yzG+HGVCRrV056H734Nt3Jw4sWCrWdvf+amUbYIqObr85oNAGt49
+ H3ca/1Op3PgiFiqwMFb/yTVSv2VN5FXSGw3Ab2A44RXB9YzYXXhNFH5i6kuPOdPqEFT01QFkc
+ YEdugzRemJxdJeBjZLyJ0NPJ8CgfTkoFI9FJp7NTNqm1qvDyjM/jdtKhuJQAuJrs6V0wobWk1
+ VebsZQm15DVkfb6UxSxr8JlVcPsTiIlkpgXyIlVnvsYCTsGPtFT8EZm4V7Gsu+wl9MRfqI/0q
+ 6/cV3rYlg0XJbxMh2UGX9/DTPO9Xk++rKtthJ8v0JtUkm33t/0MTMjsdgxR5z8y5/aWpbcESU
+ MN3jQVWkHh2aC59Pl3kCE0u5f/mCrAs+/1C4DT5Mr94XsNSb1eE09NnoTE2ovEJMUQ3RM+PhC
+ Zm04nmceuVCGZlTLHBc2Y5KwmwOWNip4H9t5ks9ugG3vb8OsqgZY2IPfy+uChMZukkW+CcPfz
+ qDzJouVKzJxBUwtPu/1EI5DuMiiAEPyqBSoWeucfSR9iDCmDq/O9jVr2fP6JyWfsoFWRGTS0+
+ b/+22nr9dEZYovv/+YBBousiscNu/O3DzhFsSSrK9OIAHxK3b/QOTBdNAAYVeL1Yb3XRg7Zbv
+ 7ON7v17xYK/ol8gwun7NuiRjsPoCtKvfDhnwS/h+qe44oXtwK597sxmjE6wedArQAz/Bbb022
+ QzMNkx7ahA9JoNmzsLNw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Tue, 7 Jan 2020 11:05:07 -0800
+gcc -O3 warns about correct code:
 
-> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-> Tested-by: Florian Fainelli <f.fainelli@gmail> # Lamobo R1 (fixed-link +
-> MDIO sub node for roboswitch).
+    inlined from 'oxu_hub_control.constprop' at drivers/usb/host/oxu210hp-hcd.c:3652:3:
+include/linux/string.h:411:9: error: argument 1 null where non-null expected [-Werror=nonnull]
+  return __builtin_memset(p, c, size);
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/usb/host/oxu210hp-hcd.c: In function 'oxu_hub_control.constprop':
+include/linux/string.h:411:9: note: in a call to built-in function '__builtin_memset'
 
-Florian please be careful not to let individual tags split into
-multiple lines, I had to hand edit the second part of the Tested-by:
-tag into the commit message.
+Expand the code slightly to let gcc better understand it and
+not warn any more.
+
+Fixes: mmtom ("init/Kconfig: enable -O3 for all arches")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/usb/host/oxu210hp-hcd.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/usb/host/oxu210hp-hcd.c b/drivers/usb/host/oxu210hp-hcd.c
+index fe09b8626329..120666a0d590 100644
+--- a/drivers/usb/host/oxu210hp-hcd.c
++++ b/drivers/usb/host/oxu210hp-hcd.c
+@@ -2783,11 +2783,15 @@ static void ehci_port_power(struct oxu_hcd *oxu, int is_on)
+ 		return;
+ 
+ 	oxu_dbg(oxu, "...power%s ports...\n", is_on ? "up" : "down");
+-	for (port = HCS_N_PORTS(oxu->hcs_params); port > 0; )
+-		(void) oxu_hub_control(oxu_to_hcd(oxu),
+-				is_on ? SetPortFeature : ClearPortFeature,
+-				USB_PORT_FEAT_POWER,
+-				port--, NULL, 0);
++	for (port = HCS_N_PORTS(oxu->hcs_params); port > 0; ) {
++		if (is_on)
++			oxu_hub_control(oxu_to_hcd(oxu), SetPortFeature,
++				USB_PORT_FEAT_POWER, port--, NULL, 0);
++		else
++			oxu_hub_control(oxu_to_hcd(oxu), ClearPortFeature,
++				USB_PORT_FEAT_POWER, port--, NULL, 0);
++	}
++
+ 	msleep(20);
+ }
+ 
+-- 
+2.20.0
+
