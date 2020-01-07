@@ -2,70 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CBDB1333FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:23:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABD6A1331D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:04:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728976AbgAGVXD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:23:03 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:38018 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728134AbgAGVBh (ORCPT
+        id S1729039AbgAGVEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:04:22 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:36392 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728799AbgAGVEL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:01:37 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id B237515A15B85;
-        Tue,  7 Jan 2020 13:01:35 -0800 (PST)
-Date:   Tue, 07 Jan 2020 13:01:33 -0800 (PST)
-Message-Id: <20200107.130133.1900367587695369052.davem@davemloft.net>
-To:     Jiping.Ma2@windriver.com
-Cc:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] stmmac: debugfs entry name is not be changed when udev
- rename device name.
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <99d183bc-7668-7749-54d6-3649c549dec8@windriver.com>
-References: <15aedd71-e077-4c6c-e30c-9396d16eaeec@windriver.com>
-        <20200106.182259.1907306689510314367.davem@davemloft.net>
-        <99d183bc-7668-7749-54d6-3649c549dec8@windriver.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 07 Jan 2020 13:01:36 -0800 (PST)
+        Tue, 7 Jan 2020 16:04:11 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 007L2vFj024569
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 7 Jan 2020 16:02:58 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 67AA74207DF; Tue,  7 Jan 2020 16:02:57 -0500 (EST)
+Date:   Tue, 7 Jan 2020 16:02:57 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Stephan Mueller <smueller@chronox.de>
+Subject: Re: [PATCH v3 5/8] random: Make /dev/random be almost like
+ /dev/urandom
+Message-ID: <20200107210257.GJ3619@mit.edu>
+References: <cover.1577088521.git.luto@kernel.org>
+ <5e6ac8831c6cf2e56a7a4b39616d1732b2bdd06c.1577088521.git.luto@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5e6ac8831c6cf2e56a7a4b39616d1732b2bdd06c.1577088521.git.luto@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiping Ma <Jiping.Ma2@windriver.com>
-Date: Tue, 7 Jan 2020 10:59:22 +0800
-
+On Mon, Dec 23, 2019 at 12:20:48AM -0800, Andy Lutomirski wrote:
+> This patch changes the read semantics of /dev/random to be the same
+> as /dev/urandom except that reads will block until the CRNG is
+> ready.
 > 
+> None of the cleanups that this enables have been done yet.  As a
+> result, this gives a warning about an unused function.
 > 
-> On 01/07/2020 10:22 AM, David Miller wrote:
->> From: Jiping Ma <Jiping.Ma2@windriver.com>
->> Date: Tue, 7 Jan 2020 09:00:53 +0800
->>
->>>
->>> On 01/07/2020 05:45 AM, David Miller wrote:
->>>> From: Jiping Ma <jiping.ma2@windriver.com>
->>>> Date: Mon, 6 Jan 2020 10:33:41 +0800
->>>>
->>>>> Add one notifier for udev changes net device name.
->>>>>
->>>>> Signed-off-by: Jiping Ma <jiping.ma2@windriver.com>
->>>> This doesn't apply to 'net' and since this is a bug fix that is where
->>>> you should target this change.
->>> What's the next step that I can do?
->> Respin your patch against the net GIT tree so that it applies clean.y
-> OK, I will generate the new patch based on the latest linux kernel
-> code.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> Signed-off-by: Andy Lutomirski <luto@kernel.org>
 
-That's not the networking GIT tree.
+Applied, thanks.
+
+						- Ted
