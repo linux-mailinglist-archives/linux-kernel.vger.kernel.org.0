@@ -2,131 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFF98132422
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:49:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97A9D13242A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:53:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbgAGKtq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 05:49:46 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43190 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727589AbgAGKtq (ORCPT
+        id S1727763AbgAGKxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 05:53:13 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39266 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727427AbgAGKxN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 05:49:46 -0500
-Received: by mail-lj1-f194.google.com with SMTP id a13so54202160ljm.10;
-        Tue, 07 Jan 2020 02:49:44 -0800 (PST)
+        Tue, 7 Jan 2020 05:53:13 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 77so75880307oty.6;
+        Tue, 07 Jan 2020 02:53:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=igqXhyBK3Tw7qA7fPi39REnLMkJjJzXKeEqTbYMsdYc=;
-        b=l0jHNItq2YYyLLI71+2CMZbLiSREa/SoFLNKA8bzoB5kmQTT4AZExaG9MAYUFi1Po7
-         G6ojapTgMtFvQ6+siaUyi+408Bh3dj3w6eY9Q/IQ1+1IkltZ9edHl6u/5XfXFjOQFyOf
-         R4CtJFR+AhtvrFPOO2+o+JPJCV8AitRFi35ViK0yFexuCyiX6RYpnykK7iFVeYxU8TPd
-         Rlq7pS9nUSlwPZXdmSmxBEz3nUJixt5bLz4fAkUNNMCb5e0umTjXbkNkgshi+6xSyxF6
-         0bKn7EF+gTbBCjab6/1lRV/Jj7Ob5oX5LGQD+tTZgzP0tXVkPx8lUHvem3kQi7cFOnFy
-         8MLA==
-X-Gm-Message-State: APjAAAUrsf6YQOJOgeHuI3DlizmWBCyq2Wy74vpkEG7X3OQM3DDla77Y
-        mjVDxSQUuk87UqDds9gRZUCTIlLC
-X-Google-Smtp-Source: APXvYqyk7taw7aH61gPaO4/Bcm/IwyyD5N215qxAFhujxVFAEo3QZ8nXKpzfCjkOxDNawX2QfScHWg==
-X-Received: by 2002:a2e:a168:: with SMTP id u8mr54938973ljl.5.1578394183491;
-        Tue, 07 Jan 2020 02:49:43 -0800 (PST)
-Received: from xi.terra (c-14b8e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.184.20])
-        by smtp.gmail.com with ESMTPSA id i4sm30438434ljg.102.2020.01.07.02.49.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 02:49:42 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.92.3)
-        (envelope-from <johan@kernel.org>)
-        id 1iomQo-0005N9-Nw; Tue, 07 Jan 2020 11:49:50 +0100
-Date:   Tue, 7 Jan 2020 11:49:50 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Brant Merryman <Brant.Merryman@silabs.com>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Richard Hendricks <Richard.Hendricks@silabs.com>
-Subject: Re: [PATCH] Proper RTS control when buffers fill
-Message-ID: <20200107104950.GD30908@localhost>
-References: <4C7B31CD-2DD2-4824-AE67-9280199703BE@silabs.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zQgMxIq/VfvRE3nG5UqBet/nAdYddLHDXbcSwRzGXB8=;
+        b=X7HHS3MYKnwUqyuAHO1GUAqQ97zQoNwtf9JHphX17XNdLTQpWyvvPhRRYrSxF2Rxw0
+         PggIhTLv1+bW5SyR4R+nBqiJcQR6zRG6BQmUYQuPmALeXkfNvuZQ3fQhXIKyRbKlKZhf
+         CCQHLWX6SbQoIT/n3QmvHJdq60Kt30/392G1EhocSDb0FgcqcFPBrBH6z7rdjwPFkfCN
+         4LHxRwoEqYqU4IzLjVEqpGVGjO7xZM4deO+D0Z5WQWKAHLcvbfyaquJWtMr+m0GYjuMd
+         Z8ChJQzW681NnREVVmyyYrvmdeSoo3kYwIa4BU0VHuUYSatGZC7H+g3guNZutIwqYbti
+         qOvg==
+X-Gm-Message-State: APjAAAUaW2rzHkGa82AeKwRsl7P+1DSFqey3OavPXdWxM9KdRSZcLL2c
+        sSpv7kpn5mdxANk3lnmKU1965fEsWdm627ymXX0=
+X-Google-Smtp-Source: APXvYqy0cMm1oxIX74m7J9Bap5GaDWP72fzfk1QKMa8V/r3WF4XJqww8DNutMlLPLM0vZKb7GMzTU+Le3mgFzN7L7W8=
+X-Received: by 2002:a05:6830:1651:: with SMTP id h17mr114686171otr.167.1578394392565;
+ Tue, 07 Jan 2020 02:53:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4C7B31CD-2DD2-4824-AE67-9280199703BE@silabs.com>
+References: <20191206175409.335568-1-jason@jlekstrand.net> <20200102202754.24028-1-jason@jlekstrand.net>
+ <7eba4578-42e2-69da-99a3-2fc316a588b8@redhat.com>
+In-Reply-To: <7eba4578-42e2-69da-99a3-2fc316a588b8@redhat.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 7 Jan 2020 11:53:01 +0100
+Message-ID: <CAJZ5v0iBbHQ=jeKpsq45eQzNMS+xxH_8kCUS-T-VLVFT-tZDzw@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: button: Add a DMI quirk for Razer Blade Stealth 13
+ late 2019 lid-switch
+To:     Hans de Goede <hdegoede@redhat.com>,
+        Jason Ekstrand <jason@jlekstrand.net>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 08:40:48PM +0000, Brant Merryman wrote:
+On Thu, Jan 2, 2020 at 10:27 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Hi,
+>
+> On 02-01-2020 21:27, Jason Ekstrand wrote:
+> > Running evemu-record on the lid switch event shows that the lid reports
+> > the first close but then never reports an open.  This causes systemd to
+> > continuously re-suspend the laptop every 30s.  Resetting the _LID to
+> > open fixes the issue.
+> >
+> > v2: Updated the comment to better describe the behavior of ACPI
+> >
+> > Signed-off-by: Jason Ekstrand <jason@jlekstrand.net>
+>
+> Thanks, looks good to me now:
+>
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-You forgot to add the Subject prefix.
-
-> CP210x hardware disables auto-RTS but leaves auto-CTS when
-> in hardware flow control mode and UART on cp210x hardware
-> is disabled. This allows data to flow out, but new data
-> will not come into the port. When re-opening the port, if
-> auto-CTS is enabled on the cp210x, then auto-RTS must be
-> re-enabled in the driver.
-> 
-> Signed-off-by: Brant Merryman <brant.merryman@silabs.com>
-> ---
->  drivers/usb/serial/cp210x.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
-> index bcceb4ad8be0..74c9f3822bd2 100644
-> --- a/drivers/usb/serial/cp210x.c
-> +++ b/drivers/usb/serial/cp210x.c
-> @@ -917,6 +917,7 @@ static void cp210x_get_termios_port(struct usb_serial_port *port,
->  	u32 baud;
->  	u16 bits;
->  	u32 ctl_hs;
-> +	u32 flow_repl;
->  
->  	cp210x_read_u32_reg(port, CP210X_GET_BAUDRATE, &baud);
->  
-> @@ -1015,8 +1016,24 @@ static void cp210x_get_termios_port(struct usb_serial_port *port,
->  	cp210x_read_reg_block(port, CP210X_GET_FLOW, &flow_ctl,
->  			sizeof(flow_ctl));
->  	ctl_hs = le32_to_cpu(flow_ctl.ulControlHandshake);
-> +	flow_repl = le32_to_cpu(flow_ctl.ulFlowReplace);
-
-Move inside the if block (after the comment).
-
->  	if (ctl_hs & CP210X_SERIAL_CTS_HANDSHAKE) {
->  		dev_dbg(dev, "%s - flow control = CRTSCTS\n", __func__);
-> +		/*
-> +		 * CP210x hardware disables auto-RTS but leaves auto-CTS when
-> +		 * in hardware flow control mode and UART on cp210x hardware
-> +		 * is disabled. This allows data to flow out, but new data
-> +		 * will not come into the port. When re-opening the port, if
-> +		 * auto-CTS is enabled on the cp210x, then auto-RTS must be
-> +		 * re-enabled in the driver.
-> +		 */
-
-Maybe drop the "allows data to flow out" bit, the uart has been disabled
-after all, right? And RTS is asserted on open by the TTY layer anyway so
-data should flow in once opened.
-
-As I asked you before, could you be more specific about what state
-RTS-line end up in when disabling the UART (e.g. 0x00: statically
-inactive)?
-
-> +		flow_repl &= ~CP210X_SERIAL_RTS_MASK;
-> +		flow_repl |= CP210X_SERIAL_RTS_SHIFT(CP210X_SERIAL_RTS_FLOW_CTL);
-> +
-> +		flow_ctl.ulControlHandshake = cpu_to_le32(ctl_hs);
-
-Again, this line is not needed.
-
-> +		flow_ctl.ulFlowReplace = cpu_to_le32(flow_repl);
-> +		cp210x_write_reg_block(port, CP210X_SET_FLOW, &flow_ctl, sizeof(flow_ctl));
-
-You still need to break this line. 
-
-> +
->  		cflag |= CRTSCTS;
->  	} else {
->  		dev_dbg(dev, "%s - flow control = NONE\n", __func__);
-
-Johan
+Applied as 5.6 material, thanks!
