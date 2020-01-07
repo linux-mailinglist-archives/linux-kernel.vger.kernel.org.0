@@ -2,80 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB2B2132B97
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 17:54:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3250132B69
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 17:51:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728475AbgAGQxf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 11:53:35 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:33086 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728386AbgAGQxe (ORCPT
+        id S1728416AbgAGQvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 11:51:15 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:46662 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728173AbgAGQvP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 11:53:34 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 007GrVCC021331;
-        Tue, 7 Jan 2020 10:53:31 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578416011;
-        bh=ijxKYPu7aitvqea0/41zctHTvqZLXaM+vZDKrOkjRsQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ykqA+fap61DZYsXo07WKHpClVOPNL9neXBRncMFLINcuPdiv7MgVq7vts1HNv5bNM
-         g36WbCu01UBSCG+v4aTcXVf6P8vOTLR1+kH5oh6LEJuMFd8qCmpIkonEWA0k+W3VTv
-         n7bi/kHuYnhqrUMz5Brode7Jw+/h7EtW+FMcvV4I=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 007GrVur112005
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 7 Jan 2020 10:53:31 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 7 Jan
- 2020 10:53:30 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 7 Jan 2020 10:53:30 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 007GrUni017504;
-        Tue, 7 Jan 2020 10:53:30 -0600
-Subject: Re: [PATCH v2 1/3] power_supply: Add additional health properties to
- the header
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>
-CC:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20191029200201.24483-1-dmurphy@ti.com>
- <20191219171910.wbx4ry6hgip6g4fm@earth.universe>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <852a3e66-3773-0bfe-33b9-87cc514a4a11@ti.com>
-Date:   Tue, 7 Jan 2020 10:50:42 -0600
+        Tue, 7 Jan 2020 11:51:15 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 4BAC02732ED
+Subject: Re: [PATCH v4 2/2] mfd: cros_ec: Add cros-usbpd-notify subdevice
+To:     Prashant Malani <pmalani@chromium.org>
+Cc:     Guenter Roeck <groeck@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20191220193843.47182-1-pmalani@chromium.org>
+ <20191220193843.47182-2-pmalani@chromium.org>
+ <7eecafb2-4686-b448-2837-4181188365b1@collabora.com>
+ <CACeCKadFKWUNHHT-vs686Sz2-CcD0kNeUgqkJT5Q2ATji4L58w@mail.gmail.com>
+ <CACeCKadAJE-ayisXOib4ZV9_BDORp-dpoT_KSMnJj3Y30dF_6A@mail.gmail.com>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <d825c0ec-8fbd-b23b-2125-bdfccb623dd7@collabora.com>
+Date:   Tue, 7 Jan 2020 17:51:09 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20191219171910.wbx4ry6hgip6g4fm@earth.universe>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACeCKadAJE-ayisXOib4ZV9_BDORp-dpoT_KSMnJj3Y30dF_6A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sebastian
+Hi Prashant,
 
-On 12/19/19 11:19 AM, Sebastian Reichel wrote:
-> Hi Dan,
->
-> On Tue, Oct 29, 2019 at 03:01:59PM -0500, Dan Murphy wrote:
->> Add HEALTH_WARM, HEALTH_COOL and HEALTH_HOT to the health enum.
+On 3/1/20 0:52, Prashant Malani wrote:
+> Hi Enric,
+> 
+> 
+> On Mon, Dec 23, 2019 at 12:29 PM Prashant Malani <pmalani@chromium.org> wrote:
 >>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
-> This needs to update /sys/class/power_supply/<supply_name>/health
-> entry in Documentation/ABI/testing/sysfs-class-power. Also it needs
+>> Hi Enric,
+>>
+>> On Sun, Dec 22, 2019 at 11:25 PM Enric Balletbo i Serra
+>> <enric.balletbo@collabora.com> wrote:
+>>>
+>>> Hi Prashant,
+>>>
+>>> On 20/12/19 20:38, Prashant Malani wrote:
+>>>> Add the cros-usbpd-notify driver as a subdevice on non-ACPI platforms
+>>>> that support the EC_FEATURE_USB_PD EC feature flag.
+>>>>
+>>>> This driver allows other cros-ec devices to receive PD event
+>>>> notifications from the Chrome OS Embedded Controller (EC) via a
+>>>> notification chain.
+>>>>
+>>>> Signed-off-by: Prashant Malani <pmalani@chromium.org>
+>>>> ---
+>>>>
+>>>> Changes in v4:
+>>>> - Removed #ifndef usage; instead, moved cros-usbpd-notify to a separate
+>>>>   mfd_cell and used an IS_ENABLED() check.
+>>>> - Changed commit title and description slightly to reflect change in
+>>>>   code.
+>>>>
+>>>>  drivers/mfd/cros_ec_dev.c | 21 +++++++++++++++++++++
+>>>>  1 file changed, 21 insertions(+)
+>>>>
+>>>> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+>>>> index c4b977a5dd966..da198abe2b0a6 100644
+>>>> --- a/drivers/mfd/cros_ec_dev.c
+>>>> +++ b/drivers/mfd/cros_ec_dev.c
+>>>> @@ -5,6 +5,7 @@
+>>>>   * Copyright (C) 2014 Google, Inc.
+>>>>   */
+>>>>
+>>>> +#include <linux/kconfig.h>
+>>>>  #include <linux/mfd/core.h>
+>>>>  #include <linux/mfd/cros_ec.h>
+>>>>  #include <linux/module.h>
+>>>> @@ -87,6 +88,10 @@ static const struct mfd_cell cros_usbpd_charger_cells[] = {
+>>>>       { .name = "cros-usbpd-logger", },
+>>>>  };
+>>>>
+>>>> +static const struct mfd_cell cros_usbpd_notify_cells[] = {
+>>>> +     { .name = "cros-usbpd-notify", },
+>>>> +};
+>>>> +
+>>>>  static const struct cros_feature_to_cells cros_subdevices[] = {
+>>>>       {
+>>>>               .id             = EC_FEATURE_CEC,
+>>>> @@ -202,6 +207,22 @@ static int ec_device_probe(struct platform_device *pdev)
+>>>>               }
+>>>>       }
+>>>>
+>>>> +     /*
+>>>> +      * The PD notifier driver cell is separate since it only needs to be
+>>>> +      * explicitly added on non-ACPI platforms.
+>>>
+>>>
+>>> Sorry to not catch this before, but a worry arose. Is non-ACPI platforms or
+>>> non-X86 platforms or on OF platforms?
+>>>
+>>> ARM64 for example has the CONFIG_ACPI symbol set to yes, with the below
+>>> condition condition will not work on Kevin for example and IIUC this is not what
+>>> we want, I think we want IS_ENABLED(CONFIG_OF)?
+>> Thanks for noting this. I will check with a kevin, and with the
+>> internal build flags to verify whether there are ARM64 which have the
+>> GOOG0003 PD notification device.
+>> I'll update this thread with my findings.
+> AFAICT from the Chrome OS kernel build step .config output, kevin
+> doesn't have CONFIG_ACPI enabled (it is marked as "# CONFIG_ACPI is
+> not set"), and it doesn't look like there are Chrome OS ARM devices
+> that use ACPI (I believe it's only used on Chrome OS x86-based
+> devices). So perhaps it is not a concern?
+> 
 
-I noticed "Over Current" was missing from the ABI doc.  Do you want that 
-addition in a separate patch or can I add it in my update?
+The problem is, although it is not used in your configs, it can be selected, and
+fwiw some defconfigs in mainline have it enabled, i.e the arm64 defconfig.
 
-Dan
+I think you're testing the patch on x86 but I suspect we want also the notifier
+on some arm64 platforms (like kevin) right? In such case I won't get the
+notifier because CONFIG_OF and CONFIG_ACPI is enabled on my defconfig.
 
-<snip>
+My guess is that the logic should be if IS_ENABLED(CONFIG_OF) call
+cros_ec_check_features, otherwise ACPI will do the magic instead of
+(!IS_ENABLED(CONFIG_ACPI))
 
+Best,
+ Enric
+
+>>
+>> Best,
+>>
+>>>
+>>> Thanks,
+>>>  Enric
+>>>
+>>>> +      */
+>>>> +     if (!IS_ENABLED(CONFIG_ACPI)) {
+>>>> +             if (cros_ec_check_features(ec, EC_FEATURE_USB_PD)) {
+>>>> +                     retval = mfd_add_hotplug_devices(ec->dev,
+>>>> +                                     cros_usbpd_notify_cells,
+>>>> +                                     ARRAY_SIZE(cros_usbpd_notify_cells));
+>>>> +                     if (retval)
+>>>> +                             dev_err(ec->dev,
+>>>> +                                     "failed to add PD notify devices: %d\n",
+>>>> +                                     retval);
+>>>> +             }
+>>>> +     }
+>>>> +
+>>>>       /*
+>>>>        * The following subdevices cannot be detected by sending the
+>>>>        * EC_FEATURE_GET_CMD to the Embedded Controller device.
+>>>>
