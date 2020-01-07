@@ -2,90 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A05C9132343
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:11:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8608D13234A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 11:12:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbgAGKLS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 05:11:18 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:48940 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbgAGKLR (ORCPT
+        id S1727821AbgAGKMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 05:12:13 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:44804 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbgAGKMM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 05:11:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=71YTHE2SxkQte5Ih4VB8vKNNOje4NwvaBBWwBAvETq4=; b=wbCjzFXmzPpPKGJq23+eCErPc
-        25KAySIlI1k7SSMfqzwbmTlkfY0F6BrPQ02qX0rxgLhFj/RmssKiOzBZpT11PJpGqp2briE4v8/q8
-        cQPNC9yuir9e/FcIkSO+j4dAY3mFfkdXs8gNgY43674RoT/7PqF1Cl6w9cFPqFC0Mte3oNF8+S451
-        ADdXWcYxqE2F/2q6ZAeqYNyP8TsqmYhysJ+VEYxfiLtjTzcCR1LxawWeE5sFSBYw4TGZMxVDkAE33
-        /2ERp1huFEVNE8Pnh3VvdKSbGx2OMTbigHdH595ie/gHXgrscaDzuOKMC6pxowyjzPgMlYt/EOVo9
-        fDYq4wUcQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iolpB-0005HG-1z; Tue, 07 Jan 2020 10:10:58 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9410930025A;
-        Tue,  7 Jan 2020 11:09:22 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 152102B5FB0B6; Tue,  7 Jan 2020 11:10:55 +0100 (CET)
-Date:   Tue, 7 Jan 2020 11:10:55 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Tejun Heo <tj@kernel.org>, surenb@google.com,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Doug Smythies <dsmythies@telus.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/uclamp: Fix a bug in propagating uclamp value in
- new cgroups
-Message-ID: <20200107101055.GX2844@hirez.programming.kicks-ass.net>
-References: <20191224115405.30622-1-qais.yousef@arm.com>
+        Tue, 7 Jan 2020 05:12:12 -0500
+Received: by mail-io1-f68.google.com with SMTP id b10so51989466iof.11;
+        Tue, 07 Jan 2020 02:12:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PbyQyZ9o+Ro7E6bXOC6SCrk7HuZRr+h0vUWe4gZ98uQ=;
+        b=mE+vclw3cfYF8tFzCALd6ffjBbn9elwbyo2EMwffZsN59D8gkO888bX94L0BigDx7F
+         v4pyG7hhBxC13kJmfR5Yx8yFLrRgTbf53DgRK+6BNulX4LVJ88/uqtPDurJ+IbRaAmKe
+         8EWtlB5diKEI3JJzHIL8tmpDSqiLcfuZhHLn6DioccebewAhH/tDiUTWY3XPDQVBh5ZG
+         rvl714eo8s/x6NhqpZbqD0JRkjrfe02kKiYkAiEV5zMYyvV91xk04MCXKgcpnnVq4paH
+         LtkyG1gx+IMCw52HZAq5gzXbppsUW0ZEga4mS2tYjQn9/QgoxTukRxnnCE3/iT4jmU9B
+         09xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PbyQyZ9o+Ro7E6bXOC6SCrk7HuZRr+h0vUWe4gZ98uQ=;
+        b=fNWl0PPULz+gTBaZQtSSdEY6kQW403O0mhiHGQplPgu4/CkIPagZzL6EpGywS1uXsQ
+         tnZIpkZnQFCjNWxiuH7+iMFBSsYO9UsW0mNC/nBLYz41Ksw9z8SDmDrPiWO0VP4xLdy3
+         shVqUd+98Z6FWtMdVoqLXdbn4dLmVp0nN7UHceccNE6Chfb6mEhHT5qmVn8HyJN3yvyb
+         /kwtaonwNrVu8xr/6oVqv1iLKj9HikVGe1Ku5NW5TXdIKCeZR7bdWP8AZD6F7Pevm6L+
+         7sXgt0DroheBEPCExPgkGilCSLji7gHnLCcch4195mk3CUkIe0LNAPniGxlRJ7xy/uYP
+         r3jQ==
+X-Gm-Message-State: APjAAAUfjhrMX3HbMOIzLc4sXmGuSK+SUWgbgYoHAJqKvFGJC2AlDmm0
+        A6umI48uuI8oMhFPzbmgf8/gqwLFErumDDSfle1wgw==
+X-Google-Smtp-Source: APXvYqx3r2qgxfq0fEj3TX01n99so2jqPkAzW5BeIfMPMxERNE6WNcSTMhTdDGboy4GGuyjRN9uytisFExuwcaccWaw=
+X-Received: by 2002:a02:81cc:: with SMTP id r12mr80549653jag.93.1578391931918;
+ Tue, 07 Jan 2020 02:12:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191224115405.30622-1-qais.yousef@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1578225806.git.chris@chrisdown.name> <ae9306ab10ce3d794c13b1836f5473e89562b98c.1578225806.git.chris@chrisdown.name>
+ <20200107001039.GM23195@dread.disaster.area> <20200107001643.GA485121@chrisdown.name>
+ <20200107003944.GN23195@dread.disaster.area> <CAOQ4uxjvH=UagqjHP_71_p9_dW9wKqiaWujzY1xKe7yZVFPoTA@mail.gmail.com>
+ <alpine.LSU.2.11.2001070002040.1496@eggly.anvils>
+In-Reply-To: <alpine.LSU.2.11.2001070002040.1496@eggly.anvils>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 7 Jan 2020 12:12:00 +0200
+Message-ID: <CAOQ4uxiMQ3Oz4M0wKo5FA_uamkMpM1zg7ydD8FXv+sR9AH_eFA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] tmpfs: Support 64-bit inums per-sb
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Chris Down <chris@chrisdown.name>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 24, 2019 at 11:54:04AM +0000, Qais Yousef wrote:
-> When a new cgroup is created, the effective uclamp value wasn't updated
-> with a call to cpu_util_update_eff() that looks at the hierarchy and
-> update to the most restrictive values.
-> 
-> Fix it by ensuring to call cpu_util_update_eff() when a new cgroup
-> becomes online.
-> 
-> Without this change, the newly created cgroup uses the default
-> root_task_group uclamp values, which is 1024 for both uclamp_{min, max},
-> which will cause the rq to to be clamped to max, hence cause the
-> system to run at max frequency.
-> 
-> The problem was observed on Ubuntu server and was reproduced on Debian
-> and Buildroot rootfs.
-> 
-> By default, Ubuntu and Debian create a cpu controller cgroup hierarchy
-> and add all tasks to it - which creates enough noise to keep the rq
-> uclamp value at max most of the time. Imitating this behavior makes the
-> problem visible in Buildroot too which otherwise looks fine since it's a
-> minimal userspace.
-> 
-> Reported-by: Doug Smythies <dsmythies@telus.net>
-> Tested-by: Doug Smythies <dsmythies@telus.net>
-> Fixes: 0b60ba2dd342 ("sched/uclamp: Propagate parent clamps")
-> Link: https://lore.kernel.org/lkml/000701d5b965$361b6c60$a2524520$@net/
-> Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+On Tue, Jan 7, 2020 at 10:36 AM Hugh Dickins <hughd@google.com> wrote:
+>
+> On Tue, 7 Jan 2020, Amir Goldstein wrote:
+> > On Tue, Jan 7, 2020 at 2:40 AM Dave Chinner <david@fromorbit.com> wrote:
+> > > On Tue, Jan 07, 2020 at 12:16:43AM +0000, Chris Down wrote:
+> > > > Dave Chinner writes:
+> > > > > It took 15 years for us to be able to essentially deprecate
+> > > > > inode32 (inode64 is the default behaviour), and we were very happy
+> > > > > to get that albatross off our necks.  In reality, almost everything
+> > > > > out there in the world handles 64 bit inodes correctly
+> > > > > including 32 bit machines and 32bit binaries on 64 bit machines.
+> > > > > And, IMNSHO, there no excuse these days for 32 bit binaries that
+> > > > > don't using the *64() syscall variants directly and hence support
+> > > > > 64 bit inodes correctlyi out of the box on all platforms.
+>
+> Interesting take on it.  I'd all along imagined we would have to resort
+> to a mount option for safety, but Dave is right that I was too focused on
+> avoiding tmpfs regressions, without properly realizing that people were
+> very unlikely to have written such tools for tmpfs in particular, but
+> written them for all filesystems, and already encountered and fixed
+> such EOVERFLOWs for other filesystems.
+>
+> Hmm, though how readily does XFS actually reach the high inos on
+> ordinary users' systems?
+>
 
-Thanks!
+Define 'ordinary'
+I my calculations are correct, with default mkfs.xfs any inode allocated
+from logical offset > 2TB on a volume has high ino bits set.
+Besides, a deployment with more than 4G inodes shouldn't be hard to find.
+
+Thanks,
+Amir.
