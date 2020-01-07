@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DBDF133216
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:07:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB476133187
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:01:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729488AbgAGVHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:07:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57088 "EHLO mail.kernel.org"
+        id S1728600AbgAGVBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:01:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729462AbgAGVHC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:07:02 -0500
+        id S1727671AbgAGVBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:01:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3282C20678;
-        Tue,  7 Jan 2020 21:07:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB42720678;
+        Tue,  7 Jan 2020 21:01:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431221;
-        bh=FvAHbcoWqATo0vcYGrp4Vf8OlzqnBzekWMoDdjm14cU=;
+        s=default; t=1578430889;
+        bh=zTcBiJ776ZmoyF0xxIU0eFvQt5XSeW4yAov5XItHXKo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yb9MdwkbExQ6zNde+g/nIbuKczyE7p9NIi3ipz+d2/L/GSBrTH1RSdUNY5XB4p8qI
-         56pGql4VdcxIPSjsJ9k6HTOZZQ2u2BgwT/FetzNi/MUmvTq1Sjl+/Hw/eO/a9VBnzc
-         XKwhYv9dSSdACnohmJlrC9wxLvAVX68EtmvY9gd8=
+        b=MHlwfEJVpgyX3izKRq6gMPaRlAkkweON8mqMQz/Lyzb4c86AkwntEHGbDdy+uEWX9
+         U+5T5/ukGPzRvyC7rUtxyNipiExKCePyG8fppm5OKmnbM7G/baN2Den7s0YSFAww2b
+         udYf4ftuIqtAXaGxCoRgGifNVdFH+ramq+zO7n3w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 4.19 048/115] media: pulse8-cec: fix lost cec_transmit_attempt_done() call
-Date:   Tue,  7 Jan 2020 21:54:18 +0100
-Message-Id: <20200107205302.324393223@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 5.4 139/191] HID: i2c-hid: Reset ALPS touchpads on resume
+Date:   Tue,  7 Jan 2020 21:54:19 +0100
+Message-Id: <20200107205340.416115795@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-References: <20200107205240.283674026@linuxfoundation.org>
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+References: <20200107205332.984228665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,81 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit e5a52a1d15c79bb48a430fb263852263ec1d3f11 upstream.
+commit fd70466d37bf3fe0118d18c56ddde85b428f86cf upstream.
 
-The periodic PING command could interfere with the result of
-a CEC transmit, causing a lost cec_transmit_attempt_done()
-call.
+Commit 52cf93e63ee6 ("HID: i2c-hid: Don't reset device upon system
+resume") fixes many touchpads and touchscreens, however ALPS touchpads
+start to trigger IRQ storm after system resume.
 
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: <stable@vger.kernel.org>      # for v4.10 and up
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Since it's total silence from ALPS, let's bring the old behavior back
+to ALPS touchpads.
+
+Fixes: 52cf93e63ee6 ("HID: i2c-hid: Don't reset device upon system resume")
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/pulse8-cec/pulse8-cec.c |   17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ drivers/hid/i2c-hid/i2c-hid-core.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/drivers/media/usb/pulse8-cec/pulse8-cec.c
-+++ b/drivers/media/usb/pulse8-cec/pulse8-cec.c
-@@ -121,6 +121,7 @@ struct pulse8 {
- 	unsigned int vers;
- 	struct completion cmd_done;
- 	struct work_struct work;
-+	u8 work_result;
- 	struct delayed_work ping_eeprom_work;
- 	struct cec_msg rx_msg;
- 	u8 data[DATA_SIZE];
-@@ -142,8 +143,10 @@ static void pulse8_irq_work_handler(stru
- {
- 	struct pulse8 *pulse8 =
- 		container_of(work, struct pulse8, work);
-+	u8 result = pulse8->work_result;
+--- a/drivers/hid/i2c-hid/i2c-hid-core.c
++++ b/drivers/hid/i2c-hid/i2c-hid-core.c
+@@ -48,6 +48,7 @@
+ #define I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV	BIT(0)
+ #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
+ #define I2C_HID_QUIRK_BOGUS_IRQ			BIT(4)
++#define I2C_HID_QUIRK_RESET_ON_RESUME		BIT(5)
  
--	switch (pulse8->data[0] & 0x3f) {
-+	pulse8->work_result = 0;
-+	switch (result & 0x3f) {
- 	case MSGCODE_FRAME_DATA:
- 		cec_received_msg(pulse8->adap, &pulse8->rx_msg);
- 		break;
-@@ -177,12 +180,12 @@ static irqreturn_t pulse8_interrupt(stru
- 		pulse8->escape = false;
- 	} else if (data == MSGEND) {
- 		struct cec_msg *msg = &pulse8->rx_msg;
-+		u8 msgcode = pulse8->buf[0];
+ /* flags */
+ #define I2C_HID_STARTED		0
+@@ -174,6 +175,8 @@ static const struct i2c_hid_quirks {
+ 		I2C_HID_QUIRK_NO_IRQ_AFTER_RESET },
+ 	{ USB_VENDOR_ID_ELAN, HID_ANY_ID,
+ 		 I2C_HID_QUIRK_BOGUS_IRQ },
++	{ USB_VENDOR_ID_ALPS_JP, HID_ANY_ID,
++		 I2C_HID_QUIRK_RESET_ON_RESUME },
+ 	{ 0, 0 }
+ };
  
- 		if (debug)
- 			dev_info(pulse8->dev, "received: %*ph\n",
- 				 pulse8->idx, pulse8->buf);
--		pulse8->data[0] = pulse8->buf[0];
--		switch (pulse8->buf[0] & 0x3f) {
-+		switch (msgcode & 0x3f) {
- 		case MSGCODE_FRAME_START:
- 			msg->len = 1;
- 			msg->msg[0] = pulse8->buf[1];
-@@ -191,14 +194,20 @@ static irqreturn_t pulse8_interrupt(stru
- 			if (msg->len == CEC_MAX_MSG_SIZE)
- 				break;
- 			msg->msg[msg->len++] = pulse8->buf[1];
--			if (pulse8->buf[0] & MSGCODE_FRAME_EOM)
-+			if (msgcode & MSGCODE_FRAME_EOM) {
-+				WARN_ON(pulse8->work_result);
-+				pulse8->work_result = msgcode;
- 				schedule_work(&pulse8->work);
-+				break;
-+			}
- 			break;
- 		case MSGCODE_TRANSMIT_SUCCEEDED:
- 		case MSGCODE_TRANSMIT_FAILED_LINE:
- 		case MSGCODE_TRANSMIT_FAILED_ACK:
- 		case MSGCODE_TRANSMIT_FAILED_TIMEOUT_DATA:
- 		case MSGCODE_TRANSMIT_FAILED_TIMEOUT_LINE:
-+			WARN_ON(pulse8->work_result);
-+			pulse8->work_result = msgcode;
- 			schedule_work(&pulse8->work);
- 			break;
- 		case MSGCODE_HIGH_ERROR:
+@@ -1214,8 +1217,15 @@ static int i2c_hid_resume(struct device
+ 	 * solves "incomplete reports" on Raydium devices 2386:3118 and
+ 	 * 2386:4B33 and fixes various SIS touchscreens no longer sending
+ 	 * data after a suspend/resume.
++	 *
++	 * However some ALPS touchpads generate IRQ storm without reset, so
++	 * let's still reset them here.
+ 	 */
+-	ret = i2c_hid_set_power(client, I2C_HID_PWR_ON);
++	if (ihid->quirks & I2C_HID_QUIRK_RESET_ON_RESUME)
++		ret = i2c_hid_hwreset(client);
++	else
++		ret = i2c_hid_set_power(client, I2C_HID_PWR_ON);
++
+ 	if (ret)
+ 		return ret;
+ 
 
 
