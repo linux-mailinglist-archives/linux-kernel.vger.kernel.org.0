@@ -2,89 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C5EC132E6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 19:30:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 367D3132E73
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 19:31:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728579AbgAGSaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 13:30:21 -0500
-Received: from foss.arm.com ([217.140.110.172]:32924 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727925AbgAGSaU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 13:30:20 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E226631B;
-        Tue,  7 Jan 2020 10:30:19 -0800 (PST)
-Received: from [10.1.196.37] (e121345-lin.cambridge.arm.com [10.1.196.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3EC223F534;
-        Tue,  7 Jan 2020 10:30:19 -0800 (PST)
-Subject: Re: rk3399 rockchip pcie power domain is saying unsupported
-To:     Anand Moon <linux.amoon@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        linux-rockchip@lists.infradead.org
-References: <CANAwSgRXd=w87CKO4WQz7ZRAk+un7ctTPCi5XSa7GfNDhjy0YQ@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <6b476f25-e3b9-2aaf-c46f-c28118924120@arm.com>
-Date:   Tue, 7 Jan 2020 18:30:18 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <CANAwSgRXd=w87CKO4WQz7ZRAk+un7ctTPCi5XSa7GfNDhjy0YQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1728602AbgAGSbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 13:31:05 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52367 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727925AbgAGSbF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 13:31:05 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p9so596931wmc.2;
+        Tue, 07 Jan 2020 10:31:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=2AIBgXOTt+FNqRRQOGxbKR2OzFOPesMCKgzqENIefV4=;
+        b=lN3qgW8Qjj/SN4TmaX+IEt8cLdHHR8EZJq1ielL4kn36yIfUTERAeNCdt8N7sTRe97
+         9N44NTiraiWuWiWKLyKlZXdJ5umc5eZ2MdGMAKg8EjAdZ88P2KvOHAdSBTDBaMfgwwCi
+         3QrNbL5AksqFdnWnmCOcl2qm5c3rHq2fJ2s5W8zamNbld+kyO3A7QyUXr+/r57Qto8NA
+         LhtjeEkQDGSFu5L7m7GVy60+gqQ5pFa89nTAeax7cBPhkf0tg+xNjuS1FXZbjpA/KoBJ
+         Tg4arrl2eNDaOqUJztjHe3uWXGSZLk6Nrz5wMBn7AzX4xLJiZSEsgDVkge/M5lYLpAjG
+         L2Gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=2AIBgXOTt+FNqRRQOGxbKR2OzFOPesMCKgzqENIefV4=;
+        b=IMIZ1DUxLWqZm29BRKHLXx5SQf/mrhal6sWxDQXaScOFkNOE0xDc41KbTaLglJq4om
+         uZDTv//dF6BLtJ/Ie9iseUzC80QUDG+LIUkfG833wyCIRZpv0c16MO+T/RicH84t6qbI
+         cph/xogL66f7rCYruXiFAUedncSy1wpAwuEFdBINqbnmKXOBt8iv0IYWh6BPuLbsDyOf
+         cMqK58KnTA02/z2E74XtcXj1dr0U0/zWiaCYiG3c553YcdNSln+BTcA3Xwelik+8n0ln
+         LDQdkZYEkKQNXwfs+fDTxwS8iafR2jgnlgqSo/vt1EarAmynYyY9tZhjnDJLadBjTUQ3
+         j1yQ==
+X-Gm-Message-State: APjAAAUdKQvEUhsgAA42CraQzOQTEdamgIfAqqKKV3NciXGYLEO95w9W
+        7zb2oLbugL+aKZhdUo4DW8zKnF/7
+X-Google-Smtp-Source: APXvYqzQ3lG8ltsrcEOxs4u9sQW97RuaPH6OBwhNcSTS9/SdGRiUtgahvHGzweT6zmMBZnU0oHXYsA==
+X-Received: by 2002:a05:600c:2c2:: with SMTP id 2mr347879wmn.155.1578421862498;
+        Tue, 07 Jan 2020 10:31:02 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id r6sm842764wrq.92.2020.01.07.10.30.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2020 10:31:01 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Tejun Heo <tj@kernel.org>, Jaedon Shin <jaedon.shin@gmail.com>,
+        linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and
+        Parallel ATA drivers)),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS)
+Subject: [PATCH v3 0/3] ata: ahci_brcm: Follow-up changes for BCM7216
+Date:   Tue,  7 Jan 2020 10:30:19 -0800
+Message-Id: <20200107183022.26224-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/01/2020 6:00 pm, Anand Moon wrote:
-> Hi All,
-> 
-> On my rock960 I want to add power domain feature for pcie node using
-> following patch. [0] https://patchwork.kernel.org/patch/9322549/
-> I also tried to add some more cru to see below
-> but the power domain summary shows unsupported
+Hi Jens, Philipp,
 
-Doesn't that just mean that the EHCI and PCIe drivers haven't enabled 
-RPM (or have explicitly disabled it)?
+These three patches are a follow-up to my previous series titled: ata:
+ahci_brcm: Fixes and new device support.
 
-Robin.
+After submitting the BCM7216 RESCAL reset driver, Philipp the reset
+controller maintained indicated that the reset line should be self
+de-asserting and so reset_control_reset() should be used instead.
 
-> # cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
-> ...
-> pd_sdioaudio                    off-0
->      /devices/platform/fe310000.dwmmc                    suspended
->      /devices/platform/ff8a0000.i2s                      suspended
-> pd_perihp                       on
->      /devices/platform/fe380000.usb                      unsupported
->      /devices/platform/fe3c0000.usb                      unsupported
->      /devices/platform/fe3a0000.usb                      suspended
->      /devices/platform/fe3e0000.usb                      suspended
->      /devices/platform/f8000000.pcie                     unsupported
-> pd_sd                           on
->      /devices/platform/fe320000.dwmmc                    active
-> pd_gmac                         off-0
-> ...
-> can any one share more inputs.
-> ----
-> @@ -1049,6 +1056,19 @@
->                                           <&cru SCLK_SDMMC>;
->                                  pm_qos = <&qos_sd>;
->                          };
-> +                       pd_perihp@RK3399_PD_PERIHP {
-> +                               reg = <RK3399_PD_PERIHP>;
-> +                               clocks = <&cru ACLK_PERIHP>,
-> +                                        <&cru SCLK_PCIEPHY_REF>,
-> +                                        <&cru ACLK_PERF_PCIE>,
-> +                                        <&cru ACLK_PCIE>,
-> +                                        <&cru PCLK_PCIE>,
-> +                                        <&cru SCLK_PCIE_PM>;
-> +                               pm_qos = <&qos_perihp>,
-> +                                        <&qos_pcie>,
-> +                                        <&qos_usb_host0>,
-> +                                        <&qos_usb_host1>;
-> +                       };
-> 
-> -Anand
-> 
+These three patches update the driver in that regard. It would be great if
+you could apply those and get them queued up for 5.6 since they are
+directly related to the previous series.
+
+Changes in v3:
+- introduced a preliminary patch making use of the proper reset control
+  API in order to manage the optional reset controller line
+- updated patches after introducing that preliminary patch
+
+Changes in v2:
+- updated error path after moving the reset line control
+
+Thanks!
+
+Florian Fainelli (3):
+  ata: ahci_brcm: Correct reset control API usage
+  ata: ahci_brcm: Perform reset after obtaining resources
+  ata: ahci_brcm: BCM7216 reset is self de-asserting
+
+ drivers/ata/ahci_brcm.c | 42 +++++++++++++++++++++++++----------------
+ 1 file changed, 26 insertions(+), 16 deletions(-)
+
+-- 
+2.17.1
+
