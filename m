@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47C8D13310C
+	by mail.lfdr.de (Postfix) with ESMTP id B712413310D
 	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 21:57:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbgAGU5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 15:57:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53336 "EHLO mail.kernel.org"
+        id S1727489AbgAGU5M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 15:57:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727376AbgAGU5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:57:01 -0500
+        id S1727419AbgAGU5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 15:57:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86B0621744;
-        Tue,  7 Jan 2020 20:57:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65879214D8;
+        Tue,  7 Jan 2020 20:57:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430621;
-        bh=EEWf92paQeWatAARwqxwbuW4tXFAiCDjh9sBkB1fywg=;
+        s=default; t=1578430625;
+        bh=5iePZfUEZunjoNLkBaYgCmYBqwNYY481W0P0hx6+A4k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0ioMARYD+XbHMiOKXaKBwa0mREHn2pl6yNoWHELM1NHea7NxMv29/iRXw1v6lZpgN
-         w1C93slDf/XbbOUfYpaLKC8Eh9//0mtbdpRh20lLtl538NF4wvoXLd55Em6C8XwBop
-         HAn/WlfSIIEbPzPleIEv762XWFRVdLmyG56ia7Sw=
+        b=ljR5s1GvS/hQADxzCNqX20sdPlGEh5TZ/N+Y6Z9RyOO/nxCtixP6/9tgvdYpmYCAG
+         mLRQOfMs7Du8/hvnUkcC/vLgllU4d/ZD/eWLFu60o81ru2o8B/422JY4UiGsUdsj3p
+         gn+oAAMa64OIXRj4S8KqE3dl5LW/JbU11VLlOtSw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <qutran@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
+        stable@vger.kernel.org, Himanshu Madhani <hmadhani@marvell.com>,
+        Quinn Tran <qutran@marvell.com>,
         Hannes Reinecke <hare@suse.de>,
         Roman Bolshakov <r.bolshakov@yadro.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 028/191] scsi: qla2xxx: Configure local loop for N2N target
-Date:   Tue,  7 Jan 2020 21:52:28 +0100
-Message-Id: <20200107205334.507262764@linuxfoundation.org>
+Subject: [PATCH 5.4 030/191] scsi: qla2xxx: Dont defer relogin unconditonally
+Date:   Tue,  7 Jan 2020 21:52:30 +0100
+Message-Id: <20200107205334.613230532@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
 References: <20200107205332.984228665@linuxfoundation.org>
@@ -49,53 +49,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Roman Bolshakov <r.bolshakov@yadro.com>
 
-[ Upstream commit fd1de5830a5abaf444cc4312871e02c41e24fdc1 ]
+[ Upstream commit dabc5ec915f3a2c657ecfb529cd3d4ec303a4412 ]
 
-qla2x00_configure_local_loop initializes PLOGI payload for PLOGI ELS using
-Get Parameters mailbox command.
+qla2x00_configure_local_loop sets RELOGIN_NEEDED bit and calls
+qla24xx_fcport_handle_login to perform the login. This bit triggers a wake
+up of DPC later after a successful login.
 
-In the case when the driver is running in target mode, the topology is N2N
-and the target port has higher WWPN, LOCAL_LOOP_UPDATE bit is cleared too
-early and PLOGI payload is not initialized by the Get Parameters
-command. That causes a failure of ELS IOCB carrying the PLOGI with 0x15 aka
-Data Underrun error.
+The deferred call is not needed if login succeeds, and it's set in
+qla24xx_fcport_handle_login in case of errors, hence it should be safe to
+drop.
 
-LOCAL_LOOP_UPDATE has to be set to initialize PLOGI payload.
-
-Fixes: 48acad099074 ("scsi: qla2xxx: Fix N2N link re-connect")
-Link: https://lore.kernel.org/r/20191125165702.1013-10-r.bolshakov@yadro.com
-Acked-by: Quinn Tran <qutran@marvell.com>
+Link: https://lore.kernel.org/r/20191125165702.1013-12-r.bolshakov@yadro.com
 Acked-by: Himanshu Madhani <hmadhani@marvell.com>
+Acked-by: Quinn Tran <qutran@marvell.com>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 Tested-by: Hannes Reinecke <hare@suse.de>
 Signed-off-by: Roman Bolshakov <r.bolshakov@yadro.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla2xxx/qla_init.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/scsi/qla2xxx/qla_init.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
-index 5d31e3d52b6b..4e424f1ce5de 100644
+index 4e424f1ce5de..80f276d67c14 100644
 --- a/drivers/scsi/qla2xxx/qla_init.c
 +++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -4927,14 +4927,8 @@ qla2x00_configure_loop(scsi_qla_host_t *vha)
- 		set_bit(RSCN_UPDATE, &flags);
- 		clear_bit(LOCAL_LOOP_UPDATE, &flags);
- 
--	} else if (ha->current_topology == ISP_CFG_N) {
--		clear_bit(RSCN_UPDATE, &flags);
--		if (qla_tgt_mode_enabled(vha)) {
--			/* allow the other side to start the login */
--			clear_bit(LOCAL_LOOP_UPDATE, &flags);
--			set_bit(RELOGIN_NEEDED, &vha->dpc_flags);
--		}
--	} else if (ha->current_topology == ISP_CFG_NL) {
-+	} else if (ha->current_topology == ISP_CFG_NL ||
-+		   ha->current_topology == ISP_CFG_N) {
- 		clear_bit(RSCN_UPDATE, &flags);
- 		set_bit(LOCAL_LOOP_UPDATE, &flags);
- 	} else if (!vha->flags.online ||
+@@ -5045,7 +5045,6 @@ qla2x00_configure_local_loop(scsi_qla_host_t *vha)
+ 				memcpy(&ha->plogi_els_payld.data,
+ 				    (void *)ha->init_cb,
+ 				    sizeof(ha->plogi_els_payld.data));
+-				set_bit(RELOGIN_NEEDED, &vha->dpc_flags);
+ 			} else {
+ 				ql_dbg(ql_dbg_init, vha, 0x00d1,
+ 				    "PLOGI ELS param read fail.\n");
 -- 
 2.20.1
 
