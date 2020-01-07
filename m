@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24AF5133194
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:02:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B19B1331FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:06:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbgAGVCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:02:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40480 "EHLO mail.kernel.org"
+        id S1729349AbgAGVGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:06:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728671AbgAGVB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:01:59 -0500
+        id S1729163AbgAGVGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:06:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1828020880;
-        Tue,  7 Jan 2020 21:01:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99F362077B;
+        Tue,  7 Jan 2020 21:06:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430918;
-        bh=LVHlhaH2JHDjFAV5ozkwZF1smnOnCg8syukcjsnWf4U=;
+        s=default; t=1578431163;
+        bh=3YajkWlGnlVSLlsI8KWCB4f2UnTJCeARHNTYQIc7B3E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UuZnSHae5aeDLNhnLNxBYNnJ9YG715zWgbd/9kORr21mA2NGXkN6LZlEuHCh5y2mL
-         Q+gvqy2y5wGRmtbP++Pee+B4V7nJvqnr+RWXtSf5xquv5eSu65ZIGJjzaOZjHz5B3a
-         mxqJ6UfpOzamWFY9PdaPbLAPLOZXPrMlHLVPeMgU=
+        b=Va9ksbbgY0PnNbBSNGCcuTIsO3HAOqUiswXW8kn0HcTf4s4D0/rlHgLPm1aee1DQo
+         Nq6Al3g0eEhaHWy5Cj5FB6AdJKoa6fKHJqgXURRXaBB8NVdCxwourAbyDmgqUZ4zy3
+         oik5Xk+aLSj1b9Wbsoh+RgdWLdIMNitM5NfFwkP8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marco Oliverio <marco.oliverio@tanaza.com>,
-        Rocco Folino <rocco.folino@tanaza.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 5.4 150/191] netfilter: nf_queue: enqueue skbs with NULL dst
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.19 060/115] ata: libahci_platform: Export again ahci_platform_<en/dis>able_phys()
 Date:   Tue,  7 Jan 2020 21:54:30 +0100
-Message-Id: <20200107205340.996503436@linuxfoundation.org>
+Message-Id: <20200107205303.221949031@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
-References: <20200107205332.984228665@linuxfoundation.org>
+In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
+References: <20200107205240.283674026@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +44,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marco Oliverio <marco.oliverio@tanaza.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-commit 0b9173f4688dfa7c5d723426be1d979c24ce3d51 upstream.
+commit 84b032dbfdf1c139cd2b864e43959510646975f8 upstream.
 
-Bridge packets that are forwarded have skb->dst == NULL and get
-dropped by the check introduced by
-b60a77386b1d4868f72f6353d35dabe5fbe981f2 (net: make skb_dst_force
-return true when dst is refcounted).
+This reverts commit 6bb86fefa086faba7b60bb452300b76a47cde1a5
+("libahci_platform: Staticize ahci_platform_<en/dis>able_phys()") we are
+going to need ahci_platform_{enable,disable}_phys() in a subsequent
+commit for ahci_brcm.c in order to properly control the PHY
+initialization order.
 
-To fix this we check skb_dst() before skb_dst_force(), so we don't
-drop skb packet with dst == NULL. This holds also for skb at the
-PRE_ROUTING hook so we remove the second check.
+Also make sure the function prototypes are declared in
+include/linux/ahci_platform.h as a result.
 
-Fixes: b60a77386b1d ("net: make skb_dst_force return true when dst is refcounted")
-Signed-off-by: Marco Oliverio <marco.oliverio@tanaza.com>
-Signed-off-by: Rocco Folino <rocco.folino@tanaza.com>
-Acked-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: stable@vger.kernel.org
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_queue.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ata/libahci_platform.c |    6 ++++--
+ include/linux/ahci_platform.h  |    2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
---- a/net/netfilter/nf_queue.c
-+++ b/net/netfilter/nf_queue.c
-@@ -189,7 +189,7 @@ static int __nf_queue(struct sk_buff *sk
- 		goto err;
- 	}
+--- a/drivers/ata/libahci_platform.c
++++ b/drivers/ata/libahci_platform.c
+@@ -47,7 +47,7 @@ EXPORT_SYMBOL_GPL(ahci_platform_ops);
+  * RETURNS:
+  * 0 on success otherwise a negative error code
+  */
+-static int ahci_platform_enable_phys(struct ahci_host_priv *hpriv)
++int ahci_platform_enable_phys(struct ahci_host_priv *hpriv)
+ {
+ 	int rc, i;
  
--	if (!skb_dst_force(skb) && state->hook != NF_INET_PRE_ROUTING) {
-+	if (skb_dst(skb) && !skb_dst_force(skb)) {
- 		status = -ENETDOWN;
- 		goto err;
+@@ -72,6 +72,7 @@ disable_phys:
  	}
+ 	return rc;
+ }
++EXPORT_SYMBOL_GPL(ahci_platform_enable_phys);
+ 
+ /**
+  * ahci_platform_disable_phys - Disable PHYs
+@@ -79,7 +80,7 @@ disable_phys:
+  *
+  * This function disables all PHYs found in hpriv->phys.
+  */
+-static void ahci_platform_disable_phys(struct ahci_host_priv *hpriv)
++void ahci_platform_disable_phys(struct ahci_host_priv *hpriv)
+ {
+ 	int i;
+ 
+@@ -88,6 +89,7 @@ static void ahci_platform_disable_phys(s
+ 		phy_exit(hpriv->phys[i]);
+ 	}
+ }
++EXPORT_SYMBOL_GPL(ahci_platform_disable_phys);
+ 
+ /**
+  * ahci_platform_enable_clks - Enable platform clocks
+--- a/include/linux/ahci_platform.h
++++ b/include/linux/ahci_platform.h
+@@ -23,6 +23,8 @@ struct ahci_host_priv;
+ struct platform_device;
+ struct scsi_host_template;
+ 
++int ahci_platform_enable_phys(struct ahci_host_priv *hpriv);
++void ahci_platform_disable_phys(struct ahci_host_priv *hpriv);
+ int ahci_platform_enable_clks(struct ahci_host_priv *hpriv);
+ void ahci_platform_disable_clks(struct ahci_host_priv *hpriv);
+ int ahci_platform_enable_regulators(struct ahci_host_priv *hpriv);
 
 
