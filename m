@@ -2,301 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C01013284C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 15:01:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 268BA132855
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 15:02:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728241AbgAGOBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 09:01:24 -0500
-Received: from mga01.intel.com ([192.55.52.88]:30700 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727993AbgAGOBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 09:01:23 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2020 06:01:22 -0800
-X-IronPort-AV: E=Sophos;i="5.69,406,1571727600"; 
-   d="scan'208";a="303202691"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2020 06:01:17 -0800
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id D7C07209AE; Tue,  7 Jan 2020 16:01:15 +0200 (EET)
-Date:   Tue, 7 Jan 2020 16:01:15 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Helen Koike <helen.koike@collabora.com>
-Cc:     linux-rockchip@lists.infradead.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, eddie.cai.linux@gmail.com,
-        mchehab@kernel.org, heiko@sntech.de, gregkh@linuxfoundation.org,
-        andrey.konovalov@linaro.org, linux-kernel@vger.kernel.org,
-        tfiga@chromium.org, robh+dt@kernel.org, hans.verkuil@cisco.com,
-        laurent.pinchart@ideasonboard.com, joacim.zetterling@gmail.com,
-        kernel@collabora.com, ezequiel@collabora.com,
-        linux-media@vger.kernel.org, jacob-chen@iotwrt.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v12 08/11] media: staging: dt-bindings: add Rockchip ISP1
- yaml bindings
-Message-ID: <20200107140115.GQ19828@paasikivi.fi.intel.com>
-References: <20191227200116.2612137-1-helen.koike@collabora.com>
- <20191227200116.2612137-9-helen.koike@collabora.com>
+        id S1728276AbgAGOCA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 09:02:00 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:47506 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727858AbgAGOB7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 09:01:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578405718;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KMSZRJ2KkrIcw9LBhIKUV3xr6gpPQCCmKje4ZsF/tOI=;
+        b=OZa3hb5dbIT8qyp0tQwuTNlbrgmxaALGzz5pKjTtxi0sPR02/54DgCIrkB/3TaJQpX2u4r
+        NlSYwZ153pdgYPU7waCZHu0SIQL8LwwFiYzWT2mau3/9nNWKmVp70kH3Ak2geXEjPWKJpi
+        wTeexx7/GLOTRtvCnTu9MkDsyMKNwyE=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-155-Y_1qOG1zOraWf08cUilgjw-1; Tue, 07 Jan 2020 09:01:57 -0500
+X-MC-Unique: Y_1qOG1zOraWf08cUilgjw-1
+Received: by mail-wm1-f71.google.com with SMTP id c4so4135961wmb.8
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 06:01:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:cc:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KMSZRJ2KkrIcw9LBhIKUV3xr6gpPQCCmKje4ZsF/tOI=;
+        b=AW9zRx6O6/NtJ2hO52aNeFmrKQzJV3xZfW3HLHgyF0fwu3HS/u/tC6slCLd0yu+33Y
+         ObxietCi2mtnqzyexbDiSdQiiACUptGxaqX2Y4Ivu7xf7boBoUWWTCr/iqrhB2mwfLTd
+         Uh76rpzHAMWXA4GEIJuk4gaoL7s83LD9d0qlsCV27cCZohMHbE9iiDRBfJ5tGXePlABu
+         NMv+iJJ3cINb9PwD8NNc49WQmJEDKgCfXDbNPq42qRmCzdpB33b2IwYE8E7TN3QJpFFp
+         on7BZndRtzexLnzBaITSDxXLfhGiyVlVAjZ5s+grhoNycMOu4vozb0WvyiKZkZimpcse
+         VKYA==
+X-Gm-Message-State: APjAAAV8N/VEExvewki7yEdRA4PRz8jEAVj7vtA3FVxBjQf1vdUJEkvK
+        4B66VurNYcH70Ch8w6kHbbcoxJFawHjTDk+fZUEVYjnvlxh56BZEGLvTK5lw6XXrHRr/IZvbs+j
+        MBMHmm5EWmPNsCK4L18asmzft
+X-Received: by 2002:a5d:62c8:: with SMTP id o8mr108263621wrv.316.1578405716542;
+        Tue, 07 Jan 2020 06:01:56 -0800 (PST)
+X-Google-Smtp-Source: APXvYqw4yWFbCHF76xC6f0TK81BtgyxtfyF+k91myZ31pvCNwbLGkiIy/kUhV3eL9xK6uQBOxoXugw==
+X-Received: by 2002:a5d:62c8:: with SMTP id o8mr108263582wrv.316.1578405716256;
+        Tue, 07 Jan 2020 06:01:56 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:c6d:4079:b74c:e329? ([2001:b07:6468:f312:c6d:4079:b74c:e329])
+        by smtp.gmail.com with ESMTPSA id x7sm75775317wrq.41.2020.01.07.06.01.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Jan 2020 06:01:55 -0800 (PST)
+Subject: Re: [PATCH next] KVM: Fix debugfs_simple_attr.cocci warnings
+To:     Chen Wandun <chenwandun@huawei.com>, rkrcmar@redhat.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1577151674-67949-1-git-send-email-chenwandun@huawei.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Nicolai Stange <nstange@suse.de>
+Message-ID: <4f193d99-ee9b-5217-c2f6-3a8a96bf1534@redhat.com>
+Date:   Tue, 7 Jan 2020 15:01:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191227200116.2612137-9-helen.koike@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1577151674-67949-1-git-send-email-chenwandun@huawei.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Helen,
+On 24/12/19 02:41, Chen Wandun wrote:
+> Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
+> for debugfs files.
+> 
+> Semantic patch information:
+> Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
+> imposes some significant overhead as compared to
+> DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
+> 
+> Signed-off-by: Chen Wandun <chenwandun@huawei.com>
 
-On Fri, Dec 27, 2019 at 05:01:13PM -0300, Helen Koike wrote:
-> Add yaml DT bindings for Rockchip ISP1.
-> 
-> This was tested and verified with:
-> mv drivers/staging/media/rkisp1/Documentation/devicetree/bindings/media/rockchip-isp1.yaml Documentation/devicetree/bindings/media/
-> make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/media/rockchip-isp1.yaml
-> make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/media/rockchip-isp1.yaml
-> 
-> Signed-off-by: Helen Koike <helen.koike@collabora.com>
-> 
-> ---
-> 
-> Changes in v12:
-> - The commit replaces the following commit in previous series named
-> media: staging: dt-bindings: Document the Rockchip ISP1 bindings
-> This new patch adds yaml binding and was verified with
-> make dtbs_check and make dt_binding_check
-> 
-> Changes in v11:
-> - add clock-names values
-> 
-> Changes in v10:
-> - unsquash
-> 
-> Changes in v9:
-> - squash
-> - move to staging
-> 
-> Changes in v8:
-> - fix title division style
-> 
-> Changes in v7:
-> - update document with new design and tested example
-> 
->  .../bindings/media/rockchip-isp1.yaml         | 193 ++++++++++++++++++
->  1 file changed, 193 insertions(+)
->  create mode 100644 drivers/staging/media/rkisp1/Documentation/devicetree/bindings/media/rockchip-isp1.yaml
-> 
-> diff --git a/drivers/staging/media/rkisp1/Documentation/devicetree/bindings/media/rockchip-isp1.yaml b/drivers/staging/media/rkisp1/Documentation/devicetree/bindings/media/rockchip-isp1.yaml
-> new file mode 100644
-> index 000000000000..4d1b2c67a4cd
-> --- /dev/null
-> +++ b/drivers/staging/media/rkisp1/Documentation/devicetree/bindings/media/rockchip-isp1.yaml
-> @@ -0,0 +1,193 @@
-> +# SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/rockchip-isp1.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Rockchip SoC Image Signal Processing unit v1
-> +
-> +maintainers:
-> +  - Helen Koike <helen.koike@collabora.com>
-> +
-> +description: |
-> +  Rockchip ISP1 is the Camera interface for the Rockchip series of SoCs
-> +  which contains image processing, scaling, and compression funcitons.
+This patch was sent probably already two or three times, and every time
+I've not been able to understand what is this significant overhead.
 
-"functions"
+With DEFINE_DEBUGFS_ATTRIBUTE:
 
-> +
-> +properties:
-> +  compatible:
-> +    const: rockchip,rk3399-cif-isp
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  phys:
-> +    maxItems: 1
-> +    description: phandle for the PHY port
-> +
-> +  phy-names:
-> +    const: dphy
-> +
-> +  clocks:
-> +    items:
-> +      - description: ISP clock
-> +      - description: ISP aclk clock
-> +      - description: ISP aclk wrapper clock
-> +      - description: ISP hclk clock
-> +      - description: ISP hclk wrapper clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: clk_isp
-> +      - const: aclk_isp
-> +      - const: aclk_isp_wrap
-> +      - const: hclk_isp
-> +      - const: hclk_isp_wrap
-> +
-> +  # See ./video-interfaces.txt for details
-> +  ports:
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      "#address-cells":
-> +        const: 1
-> +
-> +      "#size-cells":
-> +        const: 0
-> +
-> +      port@0:
+- the fops member is debugfs_open_proxy_file_operations, which calls
+replace_fops so that the fops->read member is debugfs_attr_read on the
+opened file
 
-If you only have a single port node, you could drop reg as well as @0 on
-the port node.
+- debugfs_attr_read does
 
-> +        type: object
-> +        additionalProperties: false
-> +
-> +        properties:
-> +          "#address-cells":
-> +            const: 1
-> +
-> +          "#size-cells":
-> +            const: 0
-> +
-> +          reg:
-> +            const: 0
-> +            description: port identifier.
-> +
-> +        patternProperties:
-> +          endpoint:
-> +            type: object
-> +            additionalProperties: false
-> +
-> +            properties:
-> +              reg:
-> +                maxItems: 1
-> +                description: endpoint identifier.
-> +
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +
-> +              remote-endpoint: true
-> +
-> +    required:
-> +      - port@0
-> +
-> +required:
-> +  - compatible
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - power-domains
-> +  - iommus
-> +  - phys
-> +  - phy-names
-> +  - ports
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +
-> +    #include <dt-bindings/clock/rk3399-cru.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/power/rk3399-power.h>
-> +
-> +    parent0: parent@0 {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        isp0: isp0@ff910000 {
-> +            compatible = "rockchip,rk3399-cif-isp";
-> +            reg = <0x0 0xff910000 0x0 0x4000>;
-> +            interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH 0>;
-> +            clocks = <&cru SCLK_ISP0>,
-> +                     <&cru ACLK_ISP0>, <&cru ACLK_ISP0_WRAPPER>,
-> +                     <&cru HCLK_ISP0>, <&cru HCLK_ISP0_WRAPPER>;
-> +            clock-names = "clk_isp",
-> +                          "aclk_isp", "aclk_isp_wrap",
-> +                          "hclk_isp", "hclk_isp_wrap";
-> +            power-domains = <&power RK3399_PD_ISP0>;
-> +            iommus = <&isp0_mmu>;
-> +            phys = <&dphy>;
-> +            phy-names = "dphy";
-> +
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                port@0 {
-> +                    #address-cells = <1>;
-> +                    #size-cells = <0>;
-> +                    reg = <0>;
-> +
-> +                    mipi_in_wcam: endpoint@0 {
-> +                        reg = <0>;
-> +                        remote-endpoint = <&wcam_out>;
-> +                        data-lanes = <1 2>;
-> +                    };
-> +
-> +                    mipi_in_ucam: endpoint@1 {
-> +                        reg = <1>;
-> +                        remote-endpoint = <&ucam_out>;
-> +                        data-lanes = <1>;
-> +                    };
-> +                };
-> +            };
-> +        };
-> +
-> +        i2c7: i2c@ff160000 {
-> +            clock-frequency = <400000>;
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            wcam: camera@36 {
-> +                compatible = "ovti,ov5695";
-> +                reg = <0x36>;
-> +
-> +                port {
-> +                    wcam_out: endpoint {
-> +                        remote-endpoint = <&mipi_in_wcam>;
-> +                        data-lanes = <1 2>;
-> +                    };
-> +                };
-> +            };
-> +
-> +            ucam: camera@3c {
-> +                compatible = "ovti,ov2685";
-> +                reg = <0x3c>;
-> +
-> +                  port {
-> +                      ucam_out: endpoint {
-> +                          remote-endpoint = <&mipi_in_ucam>;
-> +                          data-lanes = <1>;
-> +                      };
-> +                  };
-> +            };
-> +        };
-> +    };
+        ret = debugfs_file_get(dentry);
+        if (unlikely(ret))
+                return ret;
+        ret = simple_attr_read(file, buf, len, ppos);
+        debugfs_file_put(dentry);
 
--- 
-Kind regards,
+With DEFINE_SIMPLE_ATTRIBUTE:
 
-Sakari Ailus
+- the fops member is debugfs_full_proxy_open, and after
+__full_proxy_fops_init fops->read is initialized to full_proxy_read
+
+- full_proxy_read does
+
+        r = debugfs_file_get(dentry);
+        if (unlikely(r))
+                return r;
+        real_fops = debugfs_real_fops(filp);
+        r = real_fops->name(args);
+        debugfs_file_put(dentry);
+        return r;
+
+where real_fops->name is again just simple_attr_read.
+
+So the overhead is really just one kzalloc every time the file is opened.
+
+I could just apply the patch, but it wouldn't solve the main issue,
+which is that there is a function with a scary name
+("debugfs_create_file_unsafe") that can be used in very common
+circumstances (with DEFINE_DEBUGFS_ATTRIBUTE.  Therefore, we could
+instead fix the root cause and avoid using the scary API:
+
+- remove from the .cocci patch the change from debugfs_create_file to
+debugfs_create_file_unsafe.  Only switch DEFINE_SIMPLE_ATTRIBUTE to
+DEFINE_DEBUGFS_ATTRIBUTE
+
+- change debugfs_create_file to automatically detect the "easy" case
+that does not need proxying of fops; something like this:
+
+	const struct file_operations *proxy_fops;
+
+	/*
+	 * Any struct file_operations defined by means of
+	 * DEFINE_DEBUGFS_ATTRIBUTE() is protected against file removals
+	 * and thus does not need proxying of read and write fops.
+	 */
+	if (!fops ||
+	    (fops->llseek == no_llseek &&
+	     ((!fops->read && !fops->read_iter) ||
+	      fops->read == debugfs_attr_read) &&
+	     ((!fops->write && !fops->write_iter) ||
+	      fops->write == debugfs_attr_write) &&
+	     !fops->poll && !fops->unlocked_ioctl)
+		return debugfs_create_file_unsafe(name, mode, parent,
+						  data, fops);
+
+	/* These are not supported by __full_proxy_fops_init.  */
+	WARN_ON_ONCE(fops->read_iter || fops->write_iter);
+	return __debugfs_create_file(name, mode, parent, data,
+				    &debugfs_full_proxy_file_operations,
+				     fops);
+
+CCing Nicolai Stange who first introduced debugfs_create_file_unsafe.
+
+Thanks,
+
+Paolo
+
