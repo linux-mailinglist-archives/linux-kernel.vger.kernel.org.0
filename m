@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4589B133364
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:18:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 372BE133378
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:19:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729187AbgAGVFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:05:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50116 "EHLO mail.kernel.org"
+        id S1729292AbgAGVTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:19:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729127AbgAGVEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:04:53 -0500
+        id S1729146AbgAGVEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:04:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22524214D8;
-        Tue,  7 Jan 2020 21:04:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 893202081E;
+        Tue,  7 Jan 2020 21:04:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431092;
-        bh=lEY/zFf0tyWfGy/nxIHf5jfmXXYqHFoUkKhKAbPKaZs=;
+        s=default; t=1578431095;
+        bh=vDVEt7Mf+XY6mEu0glb5xopxIm6eAglJTX3TunM2s5Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eCVKnuExa+0qclsvjjcPuQHCZYAMbAYch5Ju52+FzNhhyHDfMoo/I9xaHNjAj2yfL
-         aSL86NkrOOspzWQII3cIlniv5HuhshKkGYtHEupVauTImNgFvTTAali7Hrd3ivvEkw
-         2AgAagO1FSHuZBGa9rq1eMFAOuZ9ekonl0Wb9tIA=
+        b=QxbrAnFTUN/Px6I+JXnO2flw39AB0kHOXH3HQz8lnWPoyjUIbseZ/x33Y77fMlKn2
+         Manwsw3t12GkaIpeqp3gd/D0rHtXgXYPXUeHZM/do5eooS+x6VenihMdXo+809ZdPc
+         FAHOvz9Kl9XNn0PCbP30ZlP5dt3fkBJLElEMt3go=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
-        Maor Gottlieb <maorg@mellanox.com>,
+        stable@vger.kernel.org, Maor Gottlieb <maorg@mellanox.com>,
+        Raed Salem <raeds@mellanox.com>,
         Leon Romanovsky <leonro@mellanox.com>,
         Doug Ledford <dledford@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 030/115] IB/mlx4: Follow mirror sequence of device add during device removal
-Date:   Tue,  7 Jan 2020 21:54:00 +0100
-Message-Id: <20200107205301.127959222@linuxfoundation.org>
+Subject: [PATCH 4.19 031/115] IB/mlx5: Fix steering rule of drop and count
+Date:   Tue,  7 Jan 2020 21:54:01 +0100
+Message-Id: <20200107205301.187172110@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
 References: <20200107205240.283674026@linuxfoundation.org>
@@ -46,64 +46,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Parav Pandit <parav@mellanox.com>
+From: Maor Gottlieb <maorg@mellanox.com>
 
-[ Upstream commit 89f988d93c62384758b19323c886db917a80c371 ]
+[ Upstream commit ed9085fed9d95d5921582e3c8474f3736c5d2782 ]
 
-Current code device add sequence is:
+There are two flow rule destinations: QP and packet. While users are
+setting DROP packet rule, the QP should not be set as a destination.
 
-ib_register_device()
-ib_mad_init()
-init_sriov_init()
-register_netdev_notifier()
-
-Therefore, the remove sequence should be,
-
-unregister_netdev_notifier()
-close_sriov()
-mad_cleanup()
-ib_unregister_device()
-
-However it is not above.
-Hence, make do above remove sequence.
-
-Fixes: fa417f7b520ee ("IB/mlx4: Add support for IBoE")
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Reviewed-by: Maor Gottlieb <maorg@mellanox.com>
+Fixes: 3b3233fbf02e ("IB/mlx5: Add flow counters binding support")
+Signed-off-by: Maor Gottlieb <maorg@mellanox.com>
+Reviewed-by: Raed Salem <raeds@mellanox.com>
 Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Link: https://lore.kernel.org/r/20191212091214.315005-3-leon@kernel.org
+Link: https://lore.kernel.org/r/20191212091214.315005-4-leon@kernel.org
 Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/mlx4/main.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/infiniband/hw/mlx5/main.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-index 0bbeaaae47e0..9386bb57b3d7 100644
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -3069,16 +3069,17 @@ static void mlx4_ib_remove(struct mlx4_dev *dev, void *ibdev_ptr)
- 	ibdev->ib_active = false;
- 	flush_workqueue(wq);
- 
--	mlx4_ib_close_sriov(ibdev);
--	mlx4_ib_mad_cleanup(ibdev);
--	ib_unregister_device(&ibdev->ib_dev);
--	mlx4_ib_diag_cleanup(ibdev);
- 	if (ibdev->iboe.nb.notifier_call) {
- 		if (unregister_netdevice_notifier(&ibdev->iboe.nb))
- 			pr_warn("failure unregistering notifier\n");
- 		ibdev->iboe.nb.notifier_call = NULL;
+diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
+index f4ffdc588ea0..df5be462dd28 100644
+--- a/drivers/infiniband/hw/mlx5/main.c
++++ b/drivers/infiniband/hw/mlx5/main.c
+@@ -3286,10 +3286,6 @@ static struct mlx5_ib_flow_handler *_create_flow_rule(struct mlx5_ib_dev *dev,
  	}
  
-+	mlx4_ib_close_sriov(ibdev);
-+	mlx4_ib_mad_cleanup(ibdev);
-+	ib_unregister_device(&ibdev->ib_dev);
-+	mlx4_ib_diag_cleanup(ibdev);
+ 	INIT_LIST_HEAD(&handler->list);
+-	if (dst) {
+-		memcpy(&dest_arr[0], dst, sizeof(*dst));
+-		dest_num++;
+-	}
+ 
+ 	for (spec_index = 0; spec_index < flow_attr->num_of_specs; spec_index++) {
+ 		err = parse_flow_attr(dev->mdev, spec->match_criteria,
+@@ -3303,6 +3299,11 @@ static struct mlx5_ib_flow_handler *_create_flow_rule(struct mlx5_ib_dev *dev,
+ 		ib_flow += ((union ib_flow_spec *)ib_flow)->size;
+ 	}
+ 
++	if (dst && !(flow_act.action & MLX5_FLOW_CONTEXT_ACTION_DROP)) {
++		memcpy(&dest_arr[0], dst, sizeof(*dst));
++		dest_num++;
++	}
 +
- 	mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
- 			      ibdev->steer_qpn_count);
- 	kfree(ibdev->ib_uc_qpns_bitmap);
+ 	if (!flow_is_multicast_only(flow_attr))
+ 		set_underlay_qp(dev, spec, underlay_qpn);
+ 
+@@ -3340,10 +3341,8 @@ static struct mlx5_ib_flow_handler *_create_flow_rule(struct mlx5_ib_dev *dev,
+ 	}
+ 
+ 	if (flow_act.action & MLX5_FLOW_CONTEXT_ACTION_DROP) {
+-		if (!(flow_act.action & MLX5_FLOW_CONTEXT_ACTION_COUNT)) {
++		if (!dest_num)
+ 			rule_dst = NULL;
+-			dest_num = 0;
+-		}
+ 	} else {
+ 		if (is_egress)
+ 			flow_act.action |= MLX5_FLOW_CONTEXT_ACTION_ALLOW;
 -- 
 2.20.1
 
