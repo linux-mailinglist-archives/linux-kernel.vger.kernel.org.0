@@ -2,60 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC2B813328E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:12:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BAF01333A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:20:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730150AbgAGVLs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:11:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40714 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730133AbgAGVLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:11:43 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 765872072A;
-        Tue,  7 Jan 2020 21:11:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431502;
-        bh=FhiT8EaHccPqvOpQJLyOpYXWGn+VUnFPf/RKRsJpRuM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dtbXSp1WuBMrfdg1Xuo17aOudNG6KWpxH3PnFFg/Gwgl0KIW/FSgm1gTSlqqpA4LJ
-         LvQ7PjPvfFd48o3O4Qy+UI8WpgdT7FCK+eRTlSI7cCp5Jf36yDkiEFjKQ/CBkCf7+5
-         eEeugD+LG/J4/KFGDCzdIe6PNK2zaZpMfSokJ294=
-Date:   Tue, 7 Jan 2020 22:03:25 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     mateusznosek0@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/kernfs/dir.c: Clean code by removing always true
- condition
-Message-ID: <20200107210325.GA2255571@kroah.com>
-References: <20191230191628.21099-1-mateusznosek0@gmail.com>
- <20200107155110.GA2677547@devbig004.ftw2.facebook.com>
+        id S1727764AbgAGVUP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:20:15 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:36466 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728167AbgAGVEh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:04:37 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 007L3U6Q024697
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 7 Jan 2020 16:03:31 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 4E9094207DF; Tue,  7 Jan 2020 16:03:30 -0500 (EST)
+Date:   Tue, 7 Jan 2020 16:03:30 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Stephan Mueller <smueller@chronox.de>
+Subject: Re: [PATCH v3 6/8] random: Remove the blocking pool
+Message-ID: <20200107210330.GK3619@mit.edu>
+References: <cover.1577088521.git.luto@kernel.org>
+ <511225a224bf0a291149d3c0b8b45393cd03ab96.1577088521.git.luto@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200107155110.GA2677547@devbig004.ftw2.facebook.com>
+In-Reply-To: <511225a224bf0a291149d3c0b8b45393cd03ab96.1577088521.git.luto@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 07:51:10AM -0800, Tejun Heo wrote:
-> On Mon, Dec 30, 2019 at 08:16:28PM +0100, mateusznosek0@gmail.com wrote:
-> > From: Mateusz Nosek <mateusznosek0@gmail.com>
-> > 
-> > Previously there was an additional check if variable pos is not null.
-> > However, this check happens after entering while loop and only then,
-> > which can happen only if pos is not null.
-> > Therefore the additional check is redundant and can be removed.
-> > 
-> > Signed-off-by: Mateusz Nosek <mateusznosek0@gmail.com>
+On Mon, Dec 23, 2019 at 12:20:49AM -0800, Andy Lutomirski wrote:
+> There is no longer any interface to read data from the blocking
+> pool, so remove it.
 > 
-> Acked-by: Tejun Heo <tj@kernel.org>
+> This enables quite a bit of code deletion, much of which will be
+> done in subsequent patches.
 > 
-> Greg, can you please route this one?
+> Signed-off-by: Andy Lutomirski <luto@kernel.org>
 
-Sure, will do, thanks.
+Applied, thanks.
 
-greg k-h
+					- Ted
