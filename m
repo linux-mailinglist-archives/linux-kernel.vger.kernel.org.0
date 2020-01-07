@@ -2,88 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 463C013353F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:52:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21D9313353C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:51:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbgAGVwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:52:11 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:47273 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbgAGVwL (ORCPT
+        id S1727473AbgAGVvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:51:43 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:38578 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727020AbgAGVvn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:52:11 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1Ml6Zo-1jXrM32fs4-00lT3G; Tue, 07 Jan 2020 22:51:59 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Anson Huang <Anson.Huang@nxp.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: imx: only select ARM_ERRATA_814220 for ARMv7-A
-Date:   Tue,  7 Jan 2020 22:51:39 +0100
-Message-Id: <20200107215157.1450319-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:IOTDqnkpbH8/vAmKOC5zE6L15ys1fxtzqis6/HShFAh2u0AZB8g
- K/VjWhwqUgdufgU1FpFXCGc4KMN7nwf9Ru1cKgdewNw7/2tiqwVpuBW/Ng5b1FMo/h3Ffd2
- gFSlWK3VZiNHUV9J2h9dxIrrCGtwUVS6dTMwvt74SUirIZsD7HYWDtFkDM8VIzW/PShSXvb
- q9FqOZ4A6286lyMWibtag==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:agKvm2/8XaQ=:aHsB/iqpC114ScSlWlkfMd
- iDCZuvbSFh0o9sTvsBP11KDeJ9FH/mDWRiO2vMU8oabdc0eL8IuziuaUn0m+GOOG2SOgwsqnD
- OoQHSODU/VpooIWc8xAyCMamMdQMqYv3Hq33k6bBOZw7LjUKrf1WCDER8bvV204TX1pvHtBuI
- nkfYxfImoyybXa41lHQikzPCWaKjA5d4KmVdfv2kWakdh4iZGYwTsY5mX6SBV7pHhGRm8tAyn
- +WG0FH1VUteguMfzDtiBjgHmQ/Yx9QYM/IfBWMo99vZK5w7tm7q6c0DrwLgb7u+F39ixvYVg/
- xTjB1qlnZi/sDDJuOg2l5xrZEaSYzBjqcGtAWjCW5uilXMu/DUwJDdRRzHL4Yffgny10eDEdE
- utRGOKCZwW2JMLw9EY7MnpwlJXXey3twbw6LySMdvM6IIWL9aguWFRKlPDu/gSo//u5DkkF34
- 9TkTdiTmcUM9nn3HIwLOSMi782dvJaw/xah+rTGkE1wnQWb5PbMbKwdgYWXSGCm5UMCUTRyQi
- xq03kcX/wYxM5yItjq1BBdkfyhAsTqLipTcMknH5Dftwey06/eNNvJX9leQrwkRbxK0zH697z
- wMzLG2EEudylQl5VvJ3+tCjSKVVrAD9R0prXu4D6zF6xZodT78oe0Xgur5Y2bj/ovunfJeP2r
- khHzPQ0+7wfCP2k1pa5FtuFqWFbHLRuH1EFI/j7j4ke2BTayIgmNaXS5miI7JbLr+lKSpMxdg
- VtD7FzZyr7XjzI9jHcKgp2RmXjmr9mqmihJorRiKArz1egbwtYOzxN+7CylgEOGbZNEJLu8Fs
- 2PrpYRWjEYCqJqyv6vX7hqdqjnshZHWyWRew60qFFpQO7kbrP7kMw7qMVeECDW6WUkjX0EdcC
- hmhY8bRT/1NYjcIFGbdQ==
+        Tue, 7 Jan 2020 16:51:43 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 744F515A17608;
+        Tue,  7 Jan 2020 13:51:42 -0800 (PST)
+Date:   Tue, 07 Jan 2020 13:51:41 -0800 (PST)
+Message-Id: <20200107.135141.2097652772096652883.davem@davemloft.net>
+To:     vincent.cheng.xh@renesas.com
+Cc:     richardcochran@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 net-next 1/1] ptp: clockmatrix: Rework clockmatrix
+ version information.
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1578408477-4650-2-git-send-email-vincent.cheng.xh@renesas.com>
+References: <1578408477-4650-1-git-send-email-vincent.cheng.xh@renesas.com>
+        <1578408477-4650-2-git-send-email-vincent.cheng.xh@renesas.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 07 Jan 2020 13:51:42 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i.MX7D is supported for either the v7-A or the v7-M cores,
-but the latter causes a warning:
+From: vincent.cheng.xh@renesas.com
+Date: Tue,  7 Jan 2020 09:47:57 -0500
 
-WARNING: unmet direct dependencies detected for ARM_ERRATA_814220
-  Depends on [n]: CPU_V7 [=n]
-  Selected by [y]:
-  - SOC_IMX7D [=y] && ARCH_MXC [=y] && (ARCH_MULTI_V7 [=n] || ARM_SINGLE_ARMV7M [=y])
+> From: Vincent Cheng <vincent.cheng.xh@renesas.com>
+> 
+> Simplify and fix the version information displayed by the driver.
+> The new info better relects what is needed to support the hardware.
+> 
+> Prev:
+> Version: 4.8.0, Pipeline 22169 0x4001, Rev 0, Bond 5, CSR 311, IRQ 2
+> 
+> New:
+> Version: 4.8.0, Id: 0x4001  Hw Rev: 5  OTP Config Select: 15
+> 
+> - Remove pipeline, CSR and IRQ because version x.y.z already incorporates
+>   this information.
+> - Remove bond number because it is not used.
+> - Remove rev number because register was not implemented, always 0
+> - Add HW Rev ID register to replace rev number
+> - Add OTP config select to show the user configuration chosen by
+>   the configurable GPIO pins on start-up
+> 
+> Signed-off-by: Vincent Cheng <vincent.cheng.xh@renesas.com>
 
-Make the select statement conditional.
-
-Fixes: 4562fa4c86c9 ("ARM: imx: Enable ARM_ERRATA_814220 for i.MX6UL and i.MX7D")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/mach-imx/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
-index 4326c8f53462..95584ee02b55 100644
---- a/arch/arm/mach-imx/Kconfig
-+++ b/arch/arm/mach-imx/Kconfig
-@@ -557,7 +557,7 @@ config SOC_IMX7D
- 	select PINCTRL_IMX7D
- 	select SOC_IMX7D_CA7 if ARCH_MULTI_V7
- 	select SOC_IMX7D_CM4 if ARM_SINGLE_ARMV7M
--	select ARM_ERRATA_814220
-+	select ARM_ERRATA_814220 if ARCH_MULTI_V7
- 	help
- 		This enables support for Freescale i.MX7 Dual processor.
- 
--- 
-2.20.0
-
+Applied.
