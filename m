@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F9E313338E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:20:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2C17133434
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:24:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729498AbgAGVT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:19:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49746 "EHLO mail.kernel.org"
+        id S1726556AbgAGVYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:24:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728938AbgAGVEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:04:45 -0500
+        id S1728433AbgAGVAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:00:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEC8B2081E;
-        Tue,  7 Jan 2020 21:04:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2883F2087F;
+        Tue,  7 Jan 2020 21:00:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431085;
-        bh=LtnLZqxqa9KVYGO9KsosNrdJ2myMos+6/nDOCSbmJqE=;
+        s=default; t=1578430843;
+        bh=rjfiq6c//nGl2IPh016mKpsk1jDqtQkxkkZfg1r3eVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lr+kKQo7rSpOxQbrT7poe69f9rdvNBWAfhwKm6bCwlNklFT5d4QxzjgER54YgU9CD
-         JBxEZq2XCI89IMsD+UKbdTSsThd1q39fszJusXnp4HUsilGr533uOGELW+ihUfFdF9
-         xjin2aAnAdXtMxsNIzTGk0lHBuaJBBCBa0GUnrwY=
+        b=g6nTYgSXRP/MG5YXW7V5nHKC5d9oZ3/K9/KiS3jdqAD53yUh1ue03S3dIZwKkm2V+
+         JCu91bHTDVfp/znImIZRh52ZSPfgcIYkQLocWDqi1NREj0iRIpFeq2ZIi7FuNMkYY2
+         gfAICVX7OltAyPXymMAEqLBQRdMqH4LBqvvrJcuY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhiqiang Liu <liuzhiqiang26@huawei.com>,
-        Song Liu <songliubraving@fb.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 027/115] md: raid1: check rdev before reference in raid1_sync_request func
-Date:   Tue,  7 Jan 2020 21:53:57 +0100
-Message-Id: <20200107205300.426308790@linuxfoundation.org>
+        stable@vger.kernel.org, Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 5.4 118/191] tracing: Fix endianness bug in histogram trigger
+Date:   Tue,  7 Jan 2020 21:53:58 +0100
+Message-Id: <20200107205339.295739293@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-References: <20200107205240.283674026@linuxfoundation.org>
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+References: <20200107205332.984228665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+From: Sven Schnelle <svens@linux.ibm.com>
 
-[ Upstream commit 028288df635f5a9addd48ac4677b720192747944 ]
+commit fe6e096a5bbf73a142f09c72e7aa2835026eb1a3 upstream.
 
-In raid1_sync_request func, rdev should be checked before reference.
+At least on PA-RISC and s390 synthetic histogram triggers are failing
+selftests because trace_event_raw_event_synth() always writes a 64 bit
+values, but the reader expects a field->size sized value. On little endian
+machines this doesn't hurt, but on big endian this makes the reader always
+read zero values.
 
-Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Link: http://lore.kernel.org/linux-trace-devel/20191218074427.96184-4-svens@linux.ibm.com
+
+Cc: stable@vger.kernel.org
+Fixes: 4b147936fa509 ("tracing: Add support for 'synthetic' events")
+Acked-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/md/raid1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_events_hist.c |   21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 6800dcd50a11..abcb4c3a76c1 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -2756,7 +2756,7 @@ static sector_t raid1_sync_request(struct mddev *mddev, sector_t sector_nr,
- 				write_targets++;
- 			}
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -911,7 +911,26 @@ static notrace void trace_event_raw_even
+ 			strscpy(str_field, str_val, STR_VAR_LEN_MAX);
+ 			n_u64 += STR_VAR_LEN_MAX / sizeof(u64);
+ 		} else {
+-			entry->fields[n_u64] = var_ref_vals[var_ref_idx + i];
++			struct synth_field *field = event->fields[i];
++			u64 val = var_ref_vals[var_ref_idx + i];
++
++			switch (field->size) {
++			case 1:
++				*(u8 *)&entry->fields[n_u64] = (u8)val;
++				break;
++
++			case 2:
++				*(u16 *)&entry->fields[n_u64] = (u16)val;
++				break;
++
++			case 4:
++				*(u32 *)&entry->fields[n_u64] = (u32)val;
++				break;
++
++			default:
++				entry->fields[n_u64] = val;
++				break;
++			}
+ 			n_u64++;
  		}
--		if (bio->bi_end_io) {
-+		if (rdev && bio->bi_end_io) {
- 			atomic_inc(&rdev->nr_pending);
- 			bio->bi_iter.bi_sector = sector_nr + rdev->data_offset;
- 			bio_set_dev(bio, rdev->bdev);
--- 
-2.20.1
-
+ 	}
 
 
