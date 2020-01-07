@@ -2,100 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9B67133414
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:24:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CBDB1333FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:23:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728692AbgAGVXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:23:36 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:51488 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728521AbgAGVBR (ORCPT
+        id S1728976AbgAGVXD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:23:03 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:38018 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728134AbgAGVBh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:01:17 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 5F18A8EE105;
-        Tue,  7 Jan 2020 13:01:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1578430876;
-        bh=5nkpePHUcSUhoPkX858UIhz0z07V7G0lUgNBG3ZeUKE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=dJP4nyfSqEMdbel5HbM1+ys5w61xBuazOrWII0ss4Jjqy5OHi5dsbTf88scjxZ1MW
-         ++vUvHuuRwZZMdW999ecyDAebpSRrrSbWjbHL/C6wEhZTuWt2Y0YOJuqaut0CUiotI
-         xXf9zLynZpT4Y/NdswGb79UiN7KJBPXG6W8SBLf0=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id vgHvvARI9W0c; Tue,  7 Jan 2020 13:01:16 -0800 (PST)
-Received: from jarvis.lan (unknown [50.35.76.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7EE488EE0F8;
-        Tue,  7 Jan 2020 13:01:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1578430876;
-        bh=5nkpePHUcSUhoPkX858UIhz0z07V7G0lUgNBG3ZeUKE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=dJP4nyfSqEMdbel5HbM1+ys5w61xBuazOrWII0ss4Jjqy5OHi5dsbTf88scjxZ1MW
-         ++vUvHuuRwZZMdW999ecyDAebpSRrrSbWjbHL/C6wEhZTuWt2Y0YOJuqaut0CUiotI
-         xXf9zLynZpT4Y/NdswGb79UiN7KJBPXG6W8SBLf0=
-Message-ID: <1578430874.4288.2.camel@HansenPartnership.com>
-Subject: Re: [PATCH] ima: make ASYMMETRIC_PUBLIC_KEY_SUBTYPE 'bool'
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Arnd Bergmann <arnd@arndb.de>, David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        Tue, 7 Jan 2020 16:01:37 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id B237515A15B85;
+        Tue,  7 Jan 2020 13:01:35 -0800 (PST)
+Date:   Tue, 07 Jan 2020 13:01:33 -0800 (PST)
+Message-Id: <20200107.130133.1900367587695369052.davem@davemloft.net>
+To:     Jiping.Ma2@windriver.com
+Cc:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
+        joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
         linux-kernel@vger.kernel.org
-Date:   Tue, 07 Jan 2020 13:01:14 -0800
-In-Reply-To: <20200107203041.843060-1-arnd@arndb.de>
-References: <20200107203041.843060-1-arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
+Subject: Re: [PATCH] stmmac: debugfs entry name is not be changed when udev
+ rename device name.
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <99d183bc-7668-7749-54d6-3649c549dec8@windriver.com>
+References: <15aedd71-e077-4c6c-e30c-9396d16eaeec@windriver.com>
+        <20200106.182259.1907306689510314367.davem@davemloft.net>
+        <99d183bc-7668-7749-54d6-3649c549dec8@windriver.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 07 Jan 2020 13:01:36 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-01-07 at 21:30 +0100, Arnd Bergmann wrote:
-> The asymmetric key subtype is only used by the key subsystem that
-> cannot itself be a loadable module, so when
-> ASYMMETRIC_PUBLIC_KEY_SUBTYPE is set to =m, it just does not get
-> used. It also produces a compile-time
-> warning:
+From: Jiping Ma <Jiping.Ma2@windriver.com>
+Date: Tue, 7 Jan 2020 10:59:22 +0800
+
 > 
-> WARNING: modpost: missing MODULE_LICENSE() in
-> security/integrity/ima/ima_asymmetric_keys.o
 > 
-> Make this a 'bool' symbol to avoid both problems.
-> 
-> Fixes: 88e70da170e8 ("IMA: Define an IMA hook to measure keys")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  crypto/asymmetric_keys/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/crypto/asymmetric_keys/Kconfig
-> b/crypto/asymmetric_keys/Kconfig
-> index 1f1f004dc757..f2846293e4d5 100644
-> --- a/crypto/asymmetric_keys/Kconfig
-> +++ b/crypto/asymmetric_keys/Kconfig
-> @@ -11,7 +11,7 @@ menuconfig ASYMMETRIC_KEY_TYPE
->  if ASYMMETRIC_KEY_TYPE
->  
->  config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
-> -	tristate "Asymmetric public-key crypto algorithm subtype"
-> +	bool "Asymmetric public-key crypto algorithm subtype"
+> On 01/07/2020 10:22 AM, David Miller wrote:
+>> From: Jiping Ma <Jiping.Ma2@windriver.com>
+>> Date: Tue, 7 Jan 2020 09:00:53 +0800
+>>
+>>>
+>>> On 01/07/2020 05:45 AM, David Miller wrote:
+>>>> From: Jiping Ma <jiping.ma2@windriver.com>
+>>>> Date: Mon, 6 Jan 2020 10:33:41 +0800
+>>>>
+>>>>> Add one notifier for udev changes net device name.
+>>>>>
+>>>>> Signed-off-by: Jiping Ma <jiping.ma2@windriver.com>
+>>>> This doesn't apply to 'net' and since this is a bug fix that is where
+>>>> you should target this change.
+>>> What's the next step that I can do?
+>> Respin your patch against the net GIT tree so that it applies clean.y
+> OK, I will generate the new patch based on the latest linux kernel
+> code.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-I believe the crypto guys do like stuff to be modular.
-
-However, we've already implemented this solution:
-
-https://lore.kernel.org/linux-integrity/20200107194350.3782-2-nramas@linux.microsoft.com/
-
-To solve the problem via an intermediate boolean config variable.
-
-James
-
+That's not the networking GIT tree.
