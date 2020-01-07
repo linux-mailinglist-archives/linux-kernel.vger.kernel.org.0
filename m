@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32B821331B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:03:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE21C1333D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:22:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728878AbgAGVDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:03:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44090 "EHLO mail.kernel.org"
+        id S1728566AbgAGVDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:03:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728864AbgAGVDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:03:05 -0500
+        id S1728579AbgAGVDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:03:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6ED192077B;
-        Tue,  7 Jan 2020 21:03:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD51720678;
+        Tue,  7 Jan 2020 21:03:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578430983;
-        bh=GgGVwCWbQ9nlzJnjk/IihxvBlobSVnNIm4oZ416sa3E=;
+        s=default; t=1578430986;
+        bh=EalipMvaHargs8oiMQRMWjYPuRgauFjP5NRZQ/eBQpU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0MVt2+kN2Tvh7EGespbqgtCEahicAlQt/ALiaaCepidTcH3xyMb0DFjLb1fAWHHBe
-         ag5ESQANSl2SMbNXx66DK8zOm20gwnLt1qDPdJtEdLQ7z0swfr6Gkf+RAg0lZA91Qh
-         PDF1FEoaiFkMtzP6y8zhVWnSQWDasVkzi2EvEXgA=
+        b=vv2zd4cD8v87MAj1sJM63rblpZ5lWQA/4lxp6HY3nr3X8+D3xVaTl8wXayycvG9D4
+         BYQ65Dq4OyfJ/TP+BxgD1evRIJ14lzwyV7zA3n7JJnw+UKF6sLsGL87a0Lgl13vPZF
+         excFXE9f7XkIk/gXiKyXlBcL0SC6S49Z83c/dmH8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhihao Cheng <chengzhihao1@huawei.com>,
-        Richard Weinberger <richard@nod.at>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        Omar Sandoval <osandov@fb.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 178/191] ubifs: ubifs_tnc_start_commit: Fix OOB in layout_in_gaps
-Date:   Tue,  7 Jan 2020 21:54:58 +0100
-Message-Id: <20200107205342.522960488@linuxfoundation.org>
+Subject: [PATCH 5.4 179/191] btrfs: get rid of unique workqueue helper functions
+Date:   Tue,  7 Jan 2020 21:54:59 +0100
+Message-Id: <20200107205342.575773923@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
 References: <20200107205332.984228665@linuxfoundation.org>
@@ -44,152 +46,515 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhihao Cheng <chengzhihao1@huawei.com>
+From: Omar Sandoval <osandov@fb.com>
 
-[ Upstream commit 6abf57262166b4f4294667fb5206ae7ba1ba96f5 ]
+[ Upstream commit a0cac0ec961f0d42828eeef196ac2246a2f07659 ]
 
-Running stress-test test_2 in mtd-utils on ubi device, sometimes we can
-get following oops message:
+Commit 9e0af2376434 ("Btrfs: fix task hang under heavy compressed
+write") worked around the issue that a recycled work item could get a
+false dependency on the original work item due to how the workqueue code
+guarantees non-reentrancy. It did so by giving different work functions
+to different types of work.
 
-  BUG: unable to handle page fault for address: ffffffff00000140
-  #PF: supervisor read access in kernel mode
-  #PF: error_code(0x0000) - not-present page
-  PGD 280a067 P4D 280a067 PUD 0
-  Oops: 0000 [#1] SMP
-  CPU: 0 PID: 60 Comm: kworker/u16:1 Kdump: loaded Not tainted 5.2.0 #13
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0
-  -0-ga698c8995f-prebuilt.qemu.org 04/01/2014
-  Workqueue: writeback wb_workfn (flush-ubifs_0_0)
-  RIP: 0010:rb_next_postorder+0x2e/0xb0
-  Code: 80 db 03 01 48 85 ff 0f 84 97 00 00 00 48 8b 17 48 83 05 bc 80 db
-  03 01 48 83 e2 fc 0f 84 82 00 00 00 48 83 05 b2 80 db 03 01 <48> 3b 7a
-  10 48 89 d0 74 02 f3 c3 48 8b 52 08 48 83 05 a3 80 db 03
-  RSP: 0018:ffffc90000887758 EFLAGS: 00010202
-  RAX: ffff888129ae4700 RBX: ffff888138b08400 RCX: 0000000080800001
-  RDX: ffffffff00000130 RSI: 0000000080800024 RDI: ffff888138b08400
-  RBP: ffff888138b08400 R08: ffffea0004a6b920 R09: 0000000000000000
-  R10: ffffc90000887740 R11: 0000000000000001 R12: ffff888128d48000
-  R13: 0000000000000800 R14: 000000000000011e R15: 00000000000007c8
-  FS:  0000000000000000(0000) GS:ffff88813ba00000(0000)
-  knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: ffffffff00000140 CR3: 000000013789d000 CR4: 00000000000006f0
-  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-  Call Trace:
-    destroy_old_idx+0x5d/0xa0 [ubifs]
-    ubifs_tnc_start_commit+0x4fe/0x1380 [ubifs]
-    do_commit+0x3eb/0x830 [ubifs]
-    ubifs_run_commit+0xdc/0x1c0 [ubifs]
+However, the fixes in the previous few patches are more complete, as
+they prevent a work item from being recycled at all (except for a tiny
+window that the kernel workqueue code handles for us). This obsoletes
+the previous fix, so we don't need the unique helpers for correctness.
+The only other reason to keep them would be so they show up in stack
+traces, but they always seem to be optimized to a tail call, so they
+don't show up anyways. So, let's just get rid of the extra indirection.
 
-Above Oops are due to the slab-out-of-bounds happened in do-while of
-function layout_in_gaps indirectly called by ubifs_tnc_start_commit. In
-function layout_in_gaps, there is a do-while loop placing index nodes
-into the gaps created by obsolete index nodes in non-empty index LEBs
-until rest index nodes can totally be placed into pre-allocated empty
-LEBs. @c->gap_lebs points to a memory area(integer array) which records
-LEB numbers used by 'in-the-gaps' method. Whenever a fitable index LEB
-is found, corresponding lnum will be incrementally written into the
-memory area pointed by @c->gap_lebs. The size
-((@c->lst.idx_lebs + 1) * sizeof(int)) of memory area is allocated before
-do-while loop and can not be changed in the loop. But @c->lst.idx_lebs
-could be increased by function ubifs_change_lp (called by
-layout_leb_in_gaps->ubifs_find_dirty_idx_leb->get_idx_gc_leb) during the
-loop. So, sometimes oob happens when number of cycles in do-while loop
-exceeds the original value of @c->lst.idx_lebs. See detail in
-https://bugzilla.kernel.org/show_bug.cgi?id=204229.
-This patch fixes oob in layout_in_gaps.
+While we're here, rename normal_work_helper() to the more informative
+btrfs_work_helper().
 
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ubifs/tnc_commit.c | 34 +++++++++++++++++++++++++++-------
- 1 file changed, 27 insertions(+), 7 deletions(-)
+ fs/btrfs/async-thread.c  | 58 +++++++++-------------------------------
+ fs/btrfs/async-thread.h  | 33 ++---------------------
+ fs/btrfs/block-group.c   |  3 +--
+ fs/btrfs/delayed-inode.c |  4 +--
+ fs/btrfs/disk-io.c       | 34 ++++++++---------------
+ fs/btrfs/inode.c         | 36 ++++++++-----------------
+ fs/btrfs/ordered-data.c  |  1 -
+ fs/btrfs/qgroup.c        |  1 -
+ fs/btrfs/raid56.c        |  5 ++--
+ fs/btrfs/reada.c         |  3 +--
+ fs/btrfs/scrub.c         | 14 +++++-----
+ fs/btrfs/volumes.c       |  3 +--
+ 12 files changed, 50 insertions(+), 145 deletions(-)
 
-diff --git a/fs/ubifs/tnc_commit.c b/fs/ubifs/tnc_commit.c
-index a384a0f9ff32..234be1c4dc87 100644
---- a/fs/ubifs/tnc_commit.c
-+++ b/fs/ubifs/tnc_commit.c
-@@ -212,7 +212,7 @@ static int is_idx_node_in_use(struct ubifs_info *c, union ubifs_key *key,
- /**
-  * layout_leb_in_gaps - layout index nodes using in-the-gaps method.
-  * @c: UBIFS file-system description object
-- * @p: return LEB number here
-+ * @p: return LEB number in @c->gap_lebs[p]
-  *
-  * This function lays out new index nodes for dirty znodes using in-the-gaps
-  * method of TNC commit.
-@@ -221,7 +221,7 @@ static int is_idx_node_in_use(struct ubifs_info *c, union ubifs_key *key,
-  * This function returns the number of index nodes written into the gaps, or a
-  * negative error code on failure.
-  */
--static int layout_leb_in_gaps(struct ubifs_info *c, int *p)
-+static int layout_leb_in_gaps(struct ubifs_info *c, int p)
+diff --git a/fs/btrfs/async-thread.c b/fs/btrfs/async-thread.c
+index 10a04b99798a..3f3110975f88 100644
+--- a/fs/btrfs/async-thread.c
++++ b/fs/btrfs/async-thread.c
+@@ -53,16 +53,6 @@ struct btrfs_workqueue {
+ 	struct __btrfs_workqueue *high;
+ };
+ 
+-static void normal_work_helper(struct btrfs_work *work);
+-
+-#define BTRFS_WORK_HELPER(name)					\
+-noinline_for_stack void btrfs_##name(struct work_struct *arg)		\
+-{									\
+-	struct btrfs_work *work = container_of(arg, struct btrfs_work,	\
+-					       normal_work);		\
+-	normal_work_helper(work);					\
+-}
+-
+ struct btrfs_fs_info *
+ btrfs_workqueue_owner(const struct __btrfs_workqueue *wq)
  {
- 	struct ubifs_scan_leb *sleb;
- 	struct ubifs_scan_node *snod;
-@@ -236,7 +236,7 @@ static int layout_leb_in_gaps(struct ubifs_info *c, int *p)
- 		 * filled, however we do not check there at present.
- 		 */
- 		return lnum; /* Error code */
--	*p = lnum;
-+	c->gap_lebs[p] = lnum;
- 	dbg_gc("LEB %d", lnum);
- 	/*
- 	 * Scan the index LEB.  We use the generic scan for this even though
-@@ -355,7 +355,7 @@ static int get_leb_cnt(struct ubifs_info *c, int cnt)
-  */
- static int layout_in_gaps(struct ubifs_info *c, int cnt)
- {
--	int err, leb_needed_cnt, written, *p;
-+	int err, leb_needed_cnt, written, p = 0, old_idx_lebs, *gap_lebs;
- 
- 	dbg_gc("%d znodes to write", cnt);
- 
-@@ -364,9 +364,9 @@ static int layout_in_gaps(struct ubifs_info *c, int cnt)
- 	if (!c->gap_lebs)
- 		return -ENOMEM;
- 
--	p = c->gap_lebs;
-+	old_idx_lebs = c->lst.idx_lebs;
- 	do {
--		ubifs_assert(c, p < c->gap_lebs + c->lst.idx_lebs);
-+		ubifs_assert(c, p < c->lst.idx_lebs);
- 		written = layout_leb_in_gaps(c, p);
- 		if (written < 0) {
- 			err = written;
-@@ -392,9 +392,29 @@ static int layout_in_gaps(struct ubifs_info *c, int cnt)
- 		leb_needed_cnt = get_leb_cnt(c, cnt);
- 		dbg_gc("%d znodes remaining, need %d LEBs, have %d", cnt,
- 		       leb_needed_cnt, c->ileb_cnt);
-+		/*
-+		 * Dynamically change the size of @c->gap_lebs to prevent
-+		 * oob, because @c->lst.idx_lebs could be increased by
-+		 * function @get_idx_gc_leb (called by layout_leb_in_gaps->
-+		 * ubifs_find_dirty_idx_leb) during loop. Only enlarge
-+		 * @c->gap_lebs when needed.
-+		 *
-+		 */
-+		if (leb_needed_cnt > c->ileb_cnt && p >= old_idx_lebs &&
-+		    old_idx_lebs < c->lst.idx_lebs) {
-+			old_idx_lebs = c->lst.idx_lebs;
-+			gap_lebs = krealloc(c->gap_lebs, sizeof(int) *
-+					       (old_idx_lebs + 1), GFP_NOFS);
-+			if (!gap_lebs) {
-+				kfree(c->gap_lebs);
-+				c->gap_lebs = NULL;
-+				return -ENOMEM;
-+			}
-+			c->gap_lebs = gap_lebs;
-+		}
- 	} while (leb_needed_cnt > c->ileb_cnt);
- 
--	*p = -1;
-+	c->gap_lebs[p] = -1;
- 	return 0;
+@@ -89,29 +79,6 @@ bool btrfs_workqueue_normal_congested(const struct btrfs_workqueue *wq)
+ 	return atomic_read(&wq->normal->pending) > wq->normal->thresh * 2;
  }
  
+-BTRFS_WORK_HELPER(worker_helper);
+-BTRFS_WORK_HELPER(delalloc_helper);
+-BTRFS_WORK_HELPER(flush_delalloc_helper);
+-BTRFS_WORK_HELPER(cache_helper);
+-BTRFS_WORK_HELPER(submit_helper);
+-BTRFS_WORK_HELPER(fixup_helper);
+-BTRFS_WORK_HELPER(endio_helper);
+-BTRFS_WORK_HELPER(endio_meta_helper);
+-BTRFS_WORK_HELPER(endio_meta_write_helper);
+-BTRFS_WORK_HELPER(endio_raid56_helper);
+-BTRFS_WORK_HELPER(endio_repair_helper);
+-BTRFS_WORK_HELPER(rmw_helper);
+-BTRFS_WORK_HELPER(endio_write_helper);
+-BTRFS_WORK_HELPER(freespace_write_helper);
+-BTRFS_WORK_HELPER(delayed_meta_helper);
+-BTRFS_WORK_HELPER(readahead_helper);
+-BTRFS_WORK_HELPER(qgroup_rescan_helper);
+-BTRFS_WORK_HELPER(extent_refs_helper);
+-BTRFS_WORK_HELPER(scrub_helper);
+-BTRFS_WORK_HELPER(scrubwrc_helper);
+-BTRFS_WORK_HELPER(scrubnc_helper);
+-BTRFS_WORK_HELPER(scrubparity_helper);
+-
+ static struct __btrfs_workqueue *
+ __btrfs_alloc_workqueue(struct btrfs_fs_info *fs_info, const char *name,
+ 			unsigned int flags, int limit_active, int thresh)
+@@ -302,12 +269,13 @@ static void run_ordered_work(struct __btrfs_workqueue *wq,
+ 			 * original work item cannot depend on the recycled work
+ 			 * item in that case (see find_worker_executing_work()).
+ 			 *
+-			 * Note that the work of one Btrfs filesystem may depend
+-			 * on the work of another Btrfs filesystem via, e.g., a
+-			 * loop device. Therefore, we must not allow the current
+-			 * work item to be recycled until we are really done,
+-			 * otherwise we break the above assumption and can
+-			 * deadlock.
++			 * Note that different types of Btrfs work can depend on
++			 * each other, and one type of work on one Btrfs
++			 * filesystem may even depend on the same type of work
++			 * on another Btrfs filesystem via, e.g., a loop device.
++			 * Therefore, we must not allow the current work item to
++			 * be recycled until we are really done, otherwise we
++			 * break the above assumption and can deadlock.
+ 			 */
+ 			free_self = true;
+ 		} else {
+@@ -331,8 +299,10 @@ static void run_ordered_work(struct __btrfs_workqueue *wq,
+ 	}
+ }
+ 
+-static void normal_work_helper(struct btrfs_work *work)
++static void btrfs_work_helper(struct work_struct *normal_work)
+ {
++	struct btrfs_work *work = container_of(normal_work, struct btrfs_work,
++					       normal_work);
+ 	struct __btrfs_workqueue *wq;
+ 	void *wtag;
+ 	int need_order = 0;
+@@ -362,15 +332,13 @@ static void normal_work_helper(struct btrfs_work *work)
+ 		trace_btrfs_all_work_done(wq->fs_info, wtag);
+ }
+ 
+-void btrfs_init_work(struct btrfs_work *work, btrfs_work_func_t uniq_func,
+-		     btrfs_func_t func,
+-		     btrfs_func_t ordered_func,
+-		     btrfs_func_t ordered_free)
++void btrfs_init_work(struct btrfs_work *work, btrfs_func_t func,
++		     btrfs_func_t ordered_func, btrfs_func_t ordered_free)
+ {
+ 	work->func = func;
+ 	work->ordered_func = ordered_func;
+ 	work->ordered_free = ordered_free;
+-	INIT_WORK(&work->normal_work, uniq_func);
++	INIT_WORK(&work->normal_work, btrfs_work_helper);
+ 	INIT_LIST_HEAD(&work->ordered_list);
+ 	work->flags = 0;
+ }
+diff --git a/fs/btrfs/async-thread.h b/fs/btrfs/async-thread.h
+index 7861c9feba5f..c5bf2b117c05 100644
+--- a/fs/btrfs/async-thread.h
++++ b/fs/btrfs/async-thread.h
+@@ -29,42 +29,13 @@ struct btrfs_work {
+ 	unsigned long flags;
+ };
+ 
+-#define BTRFS_WORK_HELPER_PROTO(name)					\
+-void btrfs_##name(struct work_struct *arg)
+-
+-BTRFS_WORK_HELPER_PROTO(worker_helper);
+-BTRFS_WORK_HELPER_PROTO(delalloc_helper);
+-BTRFS_WORK_HELPER_PROTO(flush_delalloc_helper);
+-BTRFS_WORK_HELPER_PROTO(cache_helper);
+-BTRFS_WORK_HELPER_PROTO(submit_helper);
+-BTRFS_WORK_HELPER_PROTO(fixup_helper);
+-BTRFS_WORK_HELPER_PROTO(endio_helper);
+-BTRFS_WORK_HELPER_PROTO(endio_meta_helper);
+-BTRFS_WORK_HELPER_PROTO(endio_meta_write_helper);
+-BTRFS_WORK_HELPER_PROTO(endio_raid56_helper);
+-BTRFS_WORK_HELPER_PROTO(endio_repair_helper);
+-BTRFS_WORK_HELPER_PROTO(rmw_helper);
+-BTRFS_WORK_HELPER_PROTO(endio_write_helper);
+-BTRFS_WORK_HELPER_PROTO(freespace_write_helper);
+-BTRFS_WORK_HELPER_PROTO(delayed_meta_helper);
+-BTRFS_WORK_HELPER_PROTO(readahead_helper);
+-BTRFS_WORK_HELPER_PROTO(qgroup_rescan_helper);
+-BTRFS_WORK_HELPER_PROTO(extent_refs_helper);
+-BTRFS_WORK_HELPER_PROTO(scrub_helper);
+-BTRFS_WORK_HELPER_PROTO(scrubwrc_helper);
+-BTRFS_WORK_HELPER_PROTO(scrubnc_helper);
+-BTRFS_WORK_HELPER_PROTO(scrubparity_helper);
+-
+-
+ struct btrfs_workqueue *btrfs_alloc_workqueue(struct btrfs_fs_info *fs_info,
+ 					      const char *name,
+ 					      unsigned int flags,
+ 					      int limit_active,
+ 					      int thresh);
+-void btrfs_init_work(struct btrfs_work *work, btrfs_work_func_t helper,
+-		     btrfs_func_t func,
+-		     btrfs_func_t ordered_func,
+-		     btrfs_func_t ordered_free);
++void btrfs_init_work(struct btrfs_work *work, btrfs_func_t func,
++		     btrfs_func_t ordered_func, btrfs_func_t ordered_free);
+ void btrfs_queue_work(struct btrfs_workqueue *wq,
+ 		      struct btrfs_work *work);
+ void btrfs_destroy_workqueue(struct btrfs_workqueue *wq);
+diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
+index 0d2da2366869..7dcfa7d7632a 100644
+--- a/fs/btrfs/block-group.c
++++ b/fs/btrfs/block-group.c
+@@ -695,8 +695,7 @@ int btrfs_cache_block_group(struct btrfs_block_group_cache *cache,
+ 	caching_ctl->block_group = cache;
+ 	caching_ctl->progress = cache->key.objectid;
+ 	refcount_set(&caching_ctl->count, 1);
+-	btrfs_init_work(&caching_ctl->work, btrfs_cache_helper,
+-			caching_thread, NULL, NULL);
++	btrfs_init_work(&caching_ctl->work, caching_thread, NULL, NULL);
+ 
+ 	spin_lock(&cache->lock);
+ 	/*
+diff --git a/fs/btrfs/delayed-inode.c b/fs/btrfs/delayed-inode.c
+index 57a9ad3e8c29..c7a53e79c66d 100644
+--- a/fs/btrfs/delayed-inode.c
++++ b/fs/btrfs/delayed-inode.c
+@@ -1367,8 +1367,8 @@ static int btrfs_wq_run_delayed_node(struct btrfs_delayed_root *delayed_root,
+ 		return -ENOMEM;
+ 
+ 	async_work->delayed_root = delayed_root;
+-	btrfs_init_work(&async_work->work, btrfs_delayed_meta_helper,
+-			btrfs_async_run_delayed_root, NULL, NULL);
++	btrfs_init_work(&async_work->work, btrfs_async_run_delayed_root, NULL,
++			NULL);
+ 	async_work->nr = nr;
+ 
+ 	btrfs_queue_work(fs_info->delayed_workers, &async_work->work);
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 3895c21853cc..bae334212ee2 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -706,43 +706,31 @@ static void end_workqueue_bio(struct bio *bio)
+ 	struct btrfs_end_io_wq *end_io_wq = bio->bi_private;
+ 	struct btrfs_fs_info *fs_info;
+ 	struct btrfs_workqueue *wq;
+-	btrfs_work_func_t func;
+ 
+ 	fs_info = end_io_wq->info;
+ 	end_io_wq->status = bio->bi_status;
+ 
+ 	if (bio_op(bio) == REQ_OP_WRITE) {
+-		if (end_io_wq->metadata == BTRFS_WQ_ENDIO_METADATA) {
++		if (end_io_wq->metadata == BTRFS_WQ_ENDIO_METADATA)
+ 			wq = fs_info->endio_meta_write_workers;
+-			func = btrfs_endio_meta_write_helper;
+-		} else if (end_io_wq->metadata == BTRFS_WQ_ENDIO_FREE_SPACE) {
++		else if (end_io_wq->metadata == BTRFS_WQ_ENDIO_FREE_SPACE)
+ 			wq = fs_info->endio_freespace_worker;
+-			func = btrfs_freespace_write_helper;
+-		} else if (end_io_wq->metadata == BTRFS_WQ_ENDIO_RAID56) {
++		else if (end_io_wq->metadata == BTRFS_WQ_ENDIO_RAID56)
+ 			wq = fs_info->endio_raid56_workers;
+-			func = btrfs_endio_raid56_helper;
+-		} else {
++		else
+ 			wq = fs_info->endio_write_workers;
+-			func = btrfs_endio_write_helper;
+-		}
+ 	} else {
+-		if (unlikely(end_io_wq->metadata ==
+-			     BTRFS_WQ_ENDIO_DIO_REPAIR)) {
++		if (unlikely(end_io_wq->metadata == BTRFS_WQ_ENDIO_DIO_REPAIR))
+ 			wq = fs_info->endio_repair_workers;
+-			func = btrfs_endio_repair_helper;
+-		} else if (end_io_wq->metadata == BTRFS_WQ_ENDIO_RAID56) {
++		else if (end_io_wq->metadata == BTRFS_WQ_ENDIO_RAID56)
+ 			wq = fs_info->endio_raid56_workers;
+-			func = btrfs_endio_raid56_helper;
+-		} else if (end_io_wq->metadata) {
++		else if (end_io_wq->metadata)
+ 			wq = fs_info->endio_meta_workers;
+-			func = btrfs_endio_meta_helper;
+-		} else {
++		else
+ 			wq = fs_info->endio_workers;
+-			func = btrfs_endio_helper;
+-		}
+ 	}
+ 
+-	btrfs_init_work(&end_io_wq->work, func, end_workqueue_fn, NULL, NULL);
++	btrfs_init_work(&end_io_wq->work, end_workqueue_fn, NULL, NULL);
+ 	btrfs_queue_work(wq, &end_io_wq->work);
+ }
+ 
+@@ -835,8 +823,8 @@ blk_status_t btrfs_wq_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
+ 	async->mirror_num = mirror_num;
+ 	async->submit_bio_start = submit_bio_start;
+ 
+-	btrfs_init_work(&async->work, btrfs_worker_helper, run_one_async_start,
+-			run_one_async_done, run_one_async_free);
++	btrfs_init_work(&async->work, run_one_async_start, run_one_async_done,
++			run_one_async_free);
+ 
+ 	async->bio_offset = bio_offset;
+ 
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index bc6e7d15577a..dc14fc2e4206 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -1268,10 +1268,8 @@ static int cow_file_range_async(struct inode *inode, struct page *locked_page,
+ 		async_chunk[i].write_flags = write_flags;
+ 		INIT_LIST_HEAD(&async_chunk[i].extents);
+ 
+-		btrfs_init_work(&async_chunk[i].work,
+-				btrfs_delalloc_helper,
+-				async_cow_start, async_cow_submit,
+-				async_cow_free);
++		btrfs_init_work(&async_chunk[i].work, async_cow_start,
++				async_cow_submit, async_cow_free);
+ 
+ 		nr_pages = DIV_ROUND_UP(cur_end - start, PAGE_SIZE);
+ 		atomic_add(nr_pages, &fs_info->async_delalloc_pages);
+@@ -2264,8 +2262,7 @@ int btrfs_writepage_cow_fixup(struct page *page, u64 start, u64 end)
+ 
+ 	SetPageChecked(page);
+ 	get_page(page);
+-	btrfs_init_work(&fixup->work, btrfs_fixup_helper,
+-			btrfs_writepage_fixup_worker, NULL, NULL);
++	btrfs_init_work(&fixup->work, btrfs_writepage_fixup_worker, NULL, NULL);
+ 	fixup->page = page;
+ 	btrfs_queue_work(fs_info->fixup_workers, &fixup->work);
+ 	return -EBUSY;
+@@ -3258,7 +3255,6 @@ void btrfs_writepage_endio_finish_ordered(struct page *page, u64 start,
+ 	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+ 	struct btrfs_ordered_extent *ordered_extent = NULL;
+ 	struct btrfs_workqueue *wq;
+-	btrfs_work_func_t func;
+ 
+ 	trace_btrfs_writepage_end_io_hook(page, start, end, uptodate);
+ 
+@@ -3267,16 +3263,12 @@ void btrfs_writepage_endio_finish_ordered(struct page *page, u64 start,
+ 					    end - start + 1, uptodate))
+ 		return;
+ 
+-	if (btrfs_is_free_space_inode(BTRFS_I(inode))) {
++	if (btrfs_is_free_space_inode(BTRFS_I(inode)))
+ 		wq = fs_info->endio_freespace_worker;
+-		func = btrfs_freespace_write_helper;
+-	} else {
++	else
+ 		wq = fs_info->endio_write_workers;
+-		func = btrfs_endio_write_helper;
+-	}
+ 
+-	btrfs_init_work(&ordered_extent->work, func, finish_ordered_fn, NULL,
+-			NULL);
++	btrfs_init_work(&ordered_extent->work, finish_ordered_fn, NULL, NULL);
+ 	btrfs_queue_work(wq, &ordered_extent->work);
+ }
+ 
+@@ -8213,18 +8205,14 @@ static void __endio_write_update_ordered(struct inode *inode,
+ 	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+ 	struct btrfs_ordered_extent *ordered = NULL;
+ 	struct btrfs_workqueue *wq;
+-	btrfs_work_func_t func;
+ 	u64 ordered_offset = offset;
+ 	u64 ordered_bytes = bytes;
+ 	u64 last_offset;
+ 
+-	if (btrfs_is_free_space_inode(BTRFS_I(inode))) {
++	if (btrfs_is_free_space_inode(BTRFS_I(inode)))
+ 		wq = fs_info->endio_freespace_worker;
+-		func = btrfs_freespace_write_helper;
+-	} else {
++	else
+ 		wq = fs_info->endio_write_workers;
+-		func = btrfs_endio_write_helper;
+-	}
+ 
+ 	while (ordered_offset < offset + bytes) {
+ 		last_offset = ordered_offset;
+@@ -8232,9 +8220,8 @@ static void __endio_write_update_ordered(struct inode *inode,
+ 							   &ordered_offset,
+ 							   ordered_bytes,
+ 							   uptodate)) {
+-			btrfs_init_work(&ordered->work, func,
+-					finish_ordered_fn,
+-					NULL, NULL);
++			btrfs_init_work(&ordered->work, finish_ordered_fn, NULL,
++					NULL);
+ 			btrfs_queue_work(wq, &ordered->work);
+ 		}
+ 		/*
+@@ -10119,8 +10106,7 @@ static struct btrfs_delalloc_work *btrfs_alloc_delalloc_work(struct inode *inode
+ 	init_completion(&work->completion);
+ 	INIT_LIST_HEAD(&work->list);
+ 	work->inode = inode;
+-	btrfs_init_work(&work->work, btrfs_flush_delalloc_helper,
+-			btrfs_run_delalloc_work, NULL, NULL);
++	btrfs_init_work(&work->work, btrfs_run_delalloc_work, NULL, NULL);
+ 
+ 	return work;
+ }
+diff --git a/fs/btrfs/ordered-data.c b/fs/btrfs/ordered-data.c
+index 24b6c72b9a59..6240a5a1f2c0 100644
+--- a/fs/btrfs/ordered-data.c
++++ b/fs/btrfs/ordered-data.c
+@@ -547,7 +547,6 @@ u64 btrfs_wait_ordered_extents(struct btrfs_root *root, u64 nr,
+ 		spin_unlock(&root->ordered_extent_lock);
+ 
+ 		btrfs_init_work(&ordered->flush_work,
+-				btrfs_flush_delalloc_helper,
+ 				btrfs_run_ordered_extent_work, NULL, NULL);
+ 		list_add_tail(&ordered->work_list, &works);
+ 		btrfs_queue_work(fs_info->flush_workers, &ordered->flush_work);
+diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+index 3ad151655eb8..27a903aaf43b 100644
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -3280,7 +3280,6 @@ qgroup_rescan_init(struct btrfs_fs_info *fs_info, u64 progress_objectid,
+ 	memset(&fs_info->qgroup_rescan_work, 0,
+ 	       sizeof(fs_info->qgroup_rescan_work));
+ 	btrfs_init_work(&fs_info->qgroup_rescan_work,
+-			btrfs_qgroup_rescan_helper,
+ 			btrfs_qgroup_rescan_worker, NULL, NULL);
+ 	return 0;
+ }
+diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
+index 57a2ac721985..8f47a85944eb 100644
+--- a/fs/btrfs/raid56.c
++++ b/fs/btrfs/raid56.c
+@@ -190,7 +190,7 @@ static void scrub_parity_work(struct btrfs_work *work);
+ 
+ static void start_async_work(struct btrfs_raid_bio *rbio, btrfs_func_t work_func)
+ {
+-	btrfs_init_work(&rbio->work, btrfs_rmw_helper, work_func, NULL, NULL);
++	btrfs_init_work(&rbio->work, work_func, NULL, NULL);
+ 	btrfs_queue_work(rbio->fs_info->rmw_workers, &rbio->work);
+ }
+ 
+@@ -1743,8 +1743,7 @@ static void btrfs_raid_unplug(struct blk_plug_cb *cb, bool from_schedule)
+ 	plug = container_of(cb, struct btrfs_plug_cb, cb);
+ 
+ 	if (from_schedule) {
+-		btrfs_init_work(&plug->work, btrfs_rmw_helper,
+-				unplug_work, NULL, NULL);
++		btrfs_init_work(&plug->work, unplug_work, NULL, NULL);
+ 		btrfs_queue_work(plug->info->rmw_workers,
+ 				 &plug->work);
+ 		return;
+diff --git a/fs/btrfs/reada.c b/fs/btrfs/reada.c
+index dd4f9c2b7107..1feaeadc8cf5 100644
+--- a/fs/btrfs/reada.c
++++ b/fs/btrfs/reada.c
+@@ -819,8 +819,7 @@ static void reada_start_machine(struct btrfs_fs_info *fs_info)
+ 		/* FIXME we cannot handle this properly right now */
+ 		BUG();
+ 	}
+-	btrfs_init_work(&rmw->work, btrfs_readahead_helper,
+-			reada_start_machine_worker, NULL, NULL);
++	btrfs_init_work(&rmw->work, reada_start_machine_worker, NULL, NULL);
+ 	rmw->fs_info = fs_info;
+ 
+ 	btrfs_queue_work(fs_info->readahead_workers, &rmw->work);
+diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+index a0770a6aee00..a7b043fd7a57 100644
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -598,8 +598,8 @@ static noinline_for_stack struct scrub_ctx *scrub_setup_ctx(
+ 		sbio->index = i;
+ 		sbio->sctx = sctx;
+ 		sbio->page_count = 0;
+-		btrfs_init_work(&sbio->work, btrfs_scrub_helper,
+-				scrub_bio_end_io_worker, NULL, NULL);
++		btrfs_init_work(&sbio->work, scrub_bio_end_io_worker, NULL,
++				NULL);
+ 
+ 		if (i != SCRUB_BIOS_PER_SCTX - 1)
+ 			sctx->bios[i]->next_free = i + 1;
+@@ -1720,8 +1720,7 @@ static void scrub_wr_bio_end_io(struct bio *bio)
+ 	sbio->status = bio->bi_status;
+ 	sbio->bio = bio;
+ 
+-	btrfs_init_work(&sbio->work, btrfs_scrubwrc_helper,
+-			 scrub_wr_bio_end_io_worker, NULL, NULL);
++	btrfs_init_work(&sbio->work, scrub_wr_bio_end_io_worker, NULL, NULL);
+ 	btrfs_queue_work(fs_info->scrub_wr_completion_workers, &sbio->work);
+ }
+ 
+@@ -2203,8 +2202,7 @@ static void scrub_missing_raid56_pages(struct scrub_block *sblock)
+ 		raid56_add_scrub_pages(rbio, spage->page, spage->logical);
+ 	}
+ 
+-	btrfs_init_work(&sblock->work, btrfs_scrub_helper,
+-			scrub_missing_raid56_worker, NULL, NULL);
++	btrfs_init_work(&sblock->work, scrub_missing_raid56_worker, NULL, NULL);
+ 	scrub_block_get(sblock);
+ 	scrub_pending_bio_inc(sctx);
+ 	raid56_submit_missing_rbio(rbio);
+@@ -2742,8 +2740,8 @@ static void scrub_parity_bio_endio(struct bio *bio)
+ 
+ 	bio_put(bio);
+ 
+-	btrfs_init_work(&sparity->work, btrfs_scrubparity_helper,
+-			scrub_parity_bio_endio_worker, NULL, NULL);
++	btrfs_init_work(&sparity->work, scrub_parity_bio_endio_worker, NULL,
++			NULL);
+ 	btrfs_queue_work(fs_info->scrub_parity_workers, &sparity->work);
+ }
+ 
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index e04409f85063..d8d7b1ee83ca 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -6676,8 +6676,7 @@ struct btrfs_device *btrfs_alloc_device(struct btrfs_fs_info *fs_info,
+ 	else
+ 		generate_random_uuid(dev->uuid);
+ 
+-	btrfs_init_work(&dev->work, btrfs_submit_helper,
+-			pending_bios_fn, NULL, NULL);
++	btrfs_init_work(&dev->work, pending_bios_fn, NULL, NULL);
+ 
+ 	return dev;
+ }
 -- 
 2.20.1
 
