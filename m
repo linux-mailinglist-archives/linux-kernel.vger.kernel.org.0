@@ -2,169 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4A5013216A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 09:31:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6074132172
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 09:32:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727627AbgAGIbR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 03:31:17 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:50002 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727167AbgAGIbR (ORCPT
+        id S1727669AbgAGIcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 03:32:18 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:33017 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726485AbgAGIcS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 03:31:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578385876;
+        Tue, 7 Jan 2020 03:32:18 -0500
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 2AB7622F00;
+        Tue,  7 Jan 2020 09:32:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1578385936;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vF6sDbkc+WEm8XglHdUKDkPI3i4BPn8PiMseQ0QvR8o=;
-        b=ATkBGevdHF68SFb3kVeSSpt4S3vcDwjQeBFhLGoFB5Py39I3GdGKTrDHnIi39Ko17WBMlu
-        PIediQfsu2PiOsSkMil8RyizaNEvs18+htygO8Nthc2GAiUUVu2fqUx3BMs2HySpnBK/A6
-        IPtQYykVowxDxcWS8PfYoLAAKaJc03M=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-167-0qH6OMJ0PnqNauFDKp8scQ-1; Tue, 07 Jan 2020 03:31:14 -0500
-X-MC-Unique: 0qH6OMJ0PnqNauFDKp8scQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0B10F1807465;
-        Tue,  7 Jan 2020 08:31:13 +0000 (UTC)
-Received: from [10.72.12.248] (ovpn-12-248.pek2.redhat.com [10.72.12.248])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8FE3F85EE6;
-        Tue,  7 Jan 2020 08:31:07 +0000 (UTC)
-Subject: Re: [PATCH v2] virtio_net: CTRL_GUEST_OFFLOADS depends on CTRL_VQ
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Alistair Delva <adelva@google.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-References: <20200105132120.92370-1-mst@redhat.com>
- <2d7053b5-295c-4051-a722-7656350bdb74@redhat.com>
- <20200106074426-mutt-send-email-mst@kernel.org>
- <eab75b06-453d-2e17-1e77-439a66c3c86a@redhat.com>
- <20200107020303-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <6febe3fd-f243-13d2-b3cf-efd172f229c7@redhat.com>
-Date:   Tue, 7 Jan 2020 16:31:14 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        bh=xIchMiGIp29bT82F2Y0+NI6NWGwK/LliKCzA+IwwlEk=;
+        b=EDBGnW8O7tKNpRfhAz6CsqJoW3j76RnF6Et/sFgmFqKddMO7t8aZledqEEJfDdbERWBZVi
+        l8rg0Wr954XX5It7MRUzWoYl1QYk3fA9IScTkJUa2oglQE7AHr/ULcuDiwSojff1q51ymw
+        eshPGLElEFNUHzwWhP6t+2ios/z1av0=
 MIME-Version: 1.0
-In-Reply-To: <20200107020303-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 07 Jan 2020 09:32:15 +0100
+From:   Michael Walle <michael@walle.cc>
+To:     Kuldeep Singh <kuldeep.singh@nxp.com>
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yogesh Gaur <yogeshgaur.83@gmail.com>,
+        Ashish Kumar <ashish.kumar@nxp.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [EXT] [PATCH] spi: nxp-fspi: Ensure width is respected in spi-mem
+ operations
+In-Reply-To: <AM0PR0402MB3556E16D1027FB5D6C3FDC88E03F0@AM0PR0402MB3556.eurprd04.prod.outlook.com>
+References: <20191211195730.26794-1-michael@walle.cc>
+ <AM0PR0402MB3556E16D1027FB5D6C3FDC88E03F0@AM0PR0402MB3556.eurprd04.prod.outlook.com>
+Message-ID: <650f957c95e2ee99db646fe620268ff9@walle.cc>
+X-Sender: michael@walle.cc
+User-Agent: Roundcube Webmail/1.3.8
+X-Spamd-Bar: +
+X-Spam-Level: *
+X-Rspamd-Server: web
+X-Spam-Status: No, score=1.40
+X-Spam-Score: 1.40
+X-Rspamd-Queue-Id: 2AB7622F00
+X-Spamd-Result: default: False [1.40 / 15.00];
+         ARC_NA(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         FREEMAIL_ENVRCPT(0.00)[gmail.com];
+         TAGGED_RCPT(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         RCPT_COUNT_FIVE(0.00)[6];
+         DKIM_SIGNED(0.00)[];
+         NEURAL_HAM(-0.00)[-0.218];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,nxp.com,kernel.org];
+         MID_RHS_MATCH_FROM(0.00)[];
+         SUSPICIOUS_RECIPS(1.50)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Am 2020-01-07 06:39, schrieb Kuldeep Singh:
+> Hi Michael,
+> 
+>> -----Original Message-----
+>> From: linux-kernel-owner@vger.kernel.org <linux-kernel-
+>> owner@vger.kernel.org> On Behalf Of Michael Walle
+>> Sent: Thursday, December 12, 2019 1:28 AM
+>> To: linux-spi@vger.kernel.org; linux-kernel@vger.kernel.org
+>> Cc: Yogesh Gaur <yogeshgaur.83@gmail.com>; Ashish Kumar
+>> <ashish.kumar@nxp.com>; Mark Brown <broonie@kernel.org>; Michael
+>> Walle <michael@walle.cc>
+>> Subject: [EXT] [PATCH] spi: nxp-fspi: Ensure width is respected in 
+>> spi-mem
+>> operations
+>> 
+>> Caution: EXT Email
+>> 
+>> Make use of a core helper to ensure the desired width is respected 
+>> when
+>> calling spi-mem operators.
+>> 
+>> Otherwise only the SPI controller will be matched with the flash chip, 
+>> which
+>> might lead to wrong widths. Also consider the width specified by the 
+>> user in
+>> the device tree.
+> 
+> Could you please mention the flash and modes you tested. Does it
+> support DUAL/QUAD mode?
+> I couldn't test these modes as NXP LS1028ARDB has "mt35xu02g" which
+> supports SINGLE and OCTAL modes only.
 
-On 2020/1/7 =E4=B8=8B=E5=8D=883:06, Michael S. Tsirkin wrote:
-> On Tue, Jan 07, 2020 at 10:29:08AM +0800, Jason Wang wrote:
->> On 2020/1/6 =E4=B8=8B=E5=8D=888:54, Michael S. Tsirkin wrote:
->>> On Mon, Jan 06, 2020 at 10:47:35AM +0800, Jason Wang wrote:
->>>> On 2020/1/5 =E4=B8=8B=E5=8D=889:22, Michael S. Tsirkin wrote:
->>>>> The only way for guest to control offloads (as enabled by
->>>>> VIRTIO_NET_F_CTRL_GUEST_OFFLOADS) is by sending commands
->>>>> through CTRL_VQ. So it does not make sense to
->>>>> acknowledge VIRTIO_NET_F_CTRL_GUEST_OFFLOADS without
->>>>> VIRTIO_NET_F_CTRL_VQ.
->>>>>
->>>>> The spec does not outlaw devices with such a configuration, so we h=
-ave
->>>>> to support it. Simply clear VIRTIO_NET_F_CTRL_GUEST_OFFLOADS.
->>>>> Note that Linux is still crashing if it tries to
->>>>> change the offloads when there's no control vq.
->>>>> That needs to be fixed by another patch.
->>>>>
->>>>> Reported-by: Alistair Delva <adelva@google.com>
->>>>> Reported-by: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
->>>>> Fixes: 3f93522ffab2 ("virtio-net: switch off offloads on demand if =
-possible on XDP set")
->>>>> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
->>>>> ---
->>>>>
->>>>> Same patch as v1 but update documentation so it's clear it's not
->>>>> enough to fix the crash.
->>>>>
->>>>>     drivers/net/virtio_net.c | 9 +++++++++
->>>>>     1 file changed, 9 insertions(+)
->>>>>
->>>>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
->>>>> index 4d7d5434cc5d..7b8805b47f0d 100644
->>>>> --- a/drivers/net/virtio_net.c
->>>>> +++ b/drivers/net/virtio_net.c
->>>>> @@ -2971,6 +2971,15 @@ static int virtnet_validate(struct virtio_de=
-vice *vdev)
->>>>>     	if (!virtnet_validate_features(vdev))
->>>>>     		return -EINVAL;
->>>>> +	/* VIRTIO_NET_F_CTRL_GUEST_OFFLOADS does not work without
->>>>> +	 * VIRTIO_NET_F_CTRL_VQ. Unfortunately spec forgot to
->>>>> +	 * specify that VIRTIO_NET_F_CTRL_GUEST_OFFLOADS depends
->>>>> +	 * on VIRTIO_NET_F_CTRL_VQ so devices can set the later but
->>>>> +	 * not the former.
->>>>> +	 */
->>>>> +	if (!virtio_has_feature(vdev, VIRTIO_NET_F_CTRL_VQ))
->>>>> +			__virtio_clear_bit(vdev, VIRTIO_NET_F_CTRL_GUEST_OFFLOADS);
->>>> If it's just because a bug of spec, should we simply fix the bug and=
- fail
->>>> the negotiation in virtnet_validate_feature()?
->>> One man's bug is another man's feature: arguably leaving the features
->>> independent in the spec might allow reuse of the feature bit without
->>> breaking guests.
->>>
->>> And even if we say it's a bug we can't simply fix the bug in the
->>> spec: changing the text for a future version does not change the fact
->>> that devices behaving according to the spec exist.
->>>
->>>> Otherwise there would be inconsistency in handling feature dependenc=
-ies for
->>>> ctrl vq.
->>>>
->>>> Thanks
->>> That's a cosmetic problem ATM. It might be a good idea to generally
->>> change our handling of dependencies, and clear feature bits instead o=
-f
->>> failing probe on a mismatch.
->>
->> Something like I proposed in the past ? [1]
->>
->> [1] https://lore.kernel.org/patchwork/patch/519074/
->
-> No that still fails probe.
->
-> I am asking whether it's more future proof to fail probe
-> on feature combinations disallowed by spec, or to clear bits
-> to get to an expected combination.
+That commit is already upstream. But FWIW, it was a Winbond W25Q32FW in 
+dual i/o mode.
 
-
-Sorry wrong link.
-
-It should be: https://lkml.org/lkml/2014/11/17/82
-
-
->
-> In any case, we should probably document in the spec how
-> drivers behave on such combinations.
-
-
-Yes.
-
-Thanks
-
-
->
->
->>>    It's worth thinking  - at the spec level -
->>> how we can best make the configuration extensible.
->>> But that's not something spec should worry about.
->>>
->>>
->>>>> +
->>>>>     	if (virtio_has_feature(vdev, VIRTIO_NET_F_MTU)) {
->>>>>     		int mtu =3D virtio_cread16(vdev,
->>>>>     					 offsetof(struct virtio_net_config,
+-michael
 
