@@ -2,57 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11C1E132893
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 15:15:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BC3A132898
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 15:15:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728227AbgAGOO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 09:14:56 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35128 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbgAGOO4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 09:14:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=oxnpZlweeXLARmHVCduVEjYXm
-        UJwBFn/mjKd1S1ruyE/f1KsqVMAYNi4126R2k87136Zf7rsPQ3OPiJRaF6kCLpVghkznvYh61U1ND
-        rZFIKZ+pXRN7d457Y0epgijxxv9boY7tBc148WZRYPGYlPjCrXXTZ/857wZSxI8NLKQAKK+bQ7lqp
-        FMKlckYZSt+TlPlEPUsOlWKiHSJYX7XHiL16NZ9LYKneZAIV05xfUHI0PLO5c6DrOGI3mofkPSifJ
-        UmGdJK2taBGyo0+giVGNT3iEDiYCyFIqWWnXHIesRAF2qTr7si5V4JKnsK3ijvvBPtD+zbtq6ocBR
-        oDOfYhusg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iopdF-00030g-3t; Tue, 07 Jan 2020 14:14:53 +0000
-Date:   Tue, 7 Jan 2020 06:14:53 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        Brian Foster <bfoster@redhat.com>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        Pavel Reichl <preichl@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Allison Collins <allison.henderson@oracle.com>,
-        Eric Sandeen <sandeen@sandeen.net>, Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Subject: Re: [PATCH v3 2/2] xfs: quota: move to time64_t interfaces
-Message-ID: <20200107141453.GA10628@infradead.org>
-References: <20200102204058.2005468-1-arnd@arndb.de>
- <20200102204058.2005468-2-arnd@arndb.de>
+        id S1728265AbgAGOP1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 09:15:27 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57200 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727658AbgAGOPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 09:15:25 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id BB622E7F510142F69EB6;
+        Tue,  7 Jan 2020 22:15:22 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Tue, 7 Jan 2020
+ 22:15:15 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <claudiu.manoil@nxp.com>, <davem@davemloft.net>,
+        <vladimir.oltean@nxp.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] enetc: Fix inconsistent IS_ERR and PTR_ERR
+Date:   Tue, 7 Jan 2020 22:14:54 +0800
+Message-ID: <20200107141454.44420-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200102204058.2005468-2-arnd@arndb.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good,
+The proper pointer to be passed as argument is hw
+Detected using Coccinelle.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Fixes: 6517798dd343 ("enetc: Make MDIO accessors more generic and export to include/linux/fsl")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/freescale/enetc/enetc_pci_mdio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_pci_mdio.c b/drivers/net/ethernet/freescale/enetc/enetc_pci_mdio.c
+index 87c0e96..ebc635f 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc_pci_mdio.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc_pci_mdio.c
+@@ -27,7 +27,7 @@ static int enetc_pci_mdio_probe(struct pci_dev *pdev,
+ 	}
+ 
+ 	hw = enetc_hw_alloc(dev, port_regs);
+-	if (IS_ERR(enetc_hw_alloc)) {
++	if (IS_ERR(hw)) {
+ 		err = PTR_ERR(hw);
+ 		goto err_hw_alloc;
+ 	}
+-- 
+2.7.4
+
+
