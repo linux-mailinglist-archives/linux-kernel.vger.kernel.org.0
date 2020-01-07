@@ -2,87 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAEFC1336FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 00:04:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F723133700
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 00:05:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbgAGXEM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 18:04:12 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:42557 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727077AbgAGXEM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 18:04:12 -0500
-Received: by mail-qt1-f196.google.com with SMTP id j5so1207500qtq.9
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 15:04:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Bs8NMK22XFYTZSerY7vskoSjOxNnBJD2Ihu3wEWVhiM=;
-        b=KHSzv6OcnM/lD9cXjfh1QY6Utyr6U+BewTRmitfCAKu9tmhVaXaTm1UonO7xOOV3db
-         s5IMztrbLGEDSq3uKqXqD7e8NTqay07L5LfGHBTAvCd+n2onFJOHpGrG3siJfuqEzM3X
-         ttpP+UTjLnRaWQVtd7ZGLrWCElGEbLI8dh1WEhTkxIsCbgqDkzuqk9J1jDABJ2XGuGl5
-         SUycf9na5D50X1sJNy1r+XUJoG3DbusmGtV4V1tvCQFCpD3NUPub0K7gdrAJx2QRRknq
-         JtgzcFhIzLeWar1kF9DWie1G8h65Hpow+e04Ut+xIT5L+m70NO8WbA85FDaqcz6F11hr
-         GZeg==
-X-Gm-Message-State: APjAAAW0hg2OoK5CzHACKSHtTewqMb7cEBKk7ZjeTqbvxAmK3AVFvXwA
-        nQjLd6wOQi/o253Iy6RUk5M=
-X-Google-Smtp-Source: APXvYqzInlnLnPYZHZBnzOfUecua986pJo1JuorqPqmzDTMi8FfncC409DpdnVK+S8A9nKRoKdHqlg==
-X-Received: by 2002:ac8:4a11:: with SMTP id x17mr1217967qtq.226.1578438251469;
-        Tue, 07 Jan 2020 15:04:11 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id k184sm568617qke.2.2020.01.07.15.04.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 15:04:10 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Christopher Head <bugs@chead.ca>
-Subject: [PATCH] x86/sysfb: Fix check for bad VRAM size
-Date:   Tue,  7 Jan 2020 18:04:10 -0500
-Message-Id: <20200107230410.2291947-1-nivedita@alum.mit.edu>
-X-Mailer: git-send-email 2.24.1
+        id S1727484AbgAGXEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 18:04:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34012 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727077AbgAGXEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 18:04:24 -0500
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 599CB2072A;
+        Tue,  7 Jan 2020 23:04:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578438263;
+        bh=zKdukV38l1KtyXdcWoPM86hXcKY/+oxlv2OrUMNI2vE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KGXTtl/x+Q6PPjHP8G3bFP+QfBF+JvWyTeZyG79qarhp5mMcFBzpm5js0OpxdJ2cD
+         BoColFbUccjeZ1H6QTqU/twgYno0hGc8+zlUp3+pB6ykVJsPcB5ERfOzA8soTA/67Q
+         K1px87lnvxqP9mtIEOVnkwzPvBCH9xacOIl5XdtQ=
+Received: by mail-qk1-f179.google.com with SMTP id j9so1050345qkk.1;
+        Tue, 07 Jan 2020 15:04:23 -0800 (PST)
+X-Gm-Message-State: APjAAAVzkQtbOlZvqiNUW14iU8x/+mfo/7a/F+2467PNOZthzxD0TdLV
+        ujt10Z+yRvEMqHmobF4Pr9tsmE6AcR3p3af6Ow==
+X-Google-Smtp-Source: APXvYqypMp1YvCAnvRLYK0n8h2AoOEfsjNGRjZvjWA9oVL8NeuOJojQR+6JSl6kEe46bz5HE6afLLdy/0Yk0IElNOTg=
+X-Received: by 2002:a05:620a:135b:: with SMTP id c27mr1538529qkl.119.1578438262529;
+ Tue, 07 Jan 2020 15:04:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200107220938.2412463-1-arnd@arndb.de>
+In-Reply-To: <20200107220938.2412463-1-arnd@arndb.de>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 7 Jan 2020 17:04:11 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ0bVEkDfUw9+8gf=EVN=xjH4F1uyrmtWQfgc80FsTvew@mail.gmail.com>
+Message-ID: <CAL_JsqJ0bVEkDfUw9+8gf=EVN=xjH4F1uyrmtWQfgc80FsTvew@mail.gmail.com>
+Subject: Re: [PATCH] of: add dummy of_platform_device_destroy
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Frank Rowand <frowand.list@gmail.com>, Jyri Sarha <jsarha@ti.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When checking whether the reported lfb_size makes sense, we PAGE_ALIGN
-height * stride before seeing whether it exceeds the reported size.
+On Tue, Jan 7, 2020 at 4:09 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> The new phy-j721e-wiz driver causes a link failure without CONFIG_OF:
+>
+> drivers/phy/ti/phy-j721e-wiz.o: In function `wiz_remove':
+> phy-j721e-wiz.c:(.text+0x40): undefined reference to `of_platform_device_destroy'
+>
+> Add a dummy version of this function to avoid having to add Kconfig
+> dependencies for the driver.
+>
+> Fixes: 42440de5438a ("phy: ti: j721e-wiz: Add support for WIZ module present in TI J721E SoC")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  include/linux/of_platform.h | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/include/linux/of_platform.h b/include/linux/of_platform.h
+> index 84a966623e78..2551c263e57d 100644
+> --- a/include/linux/of_platform.h
+> +++ b/include/linux/of_platform.h
+> @@ -54,11 +54,16 @@ extern struct platform_device *of_device_alloc(struct device_node *np,
+>                                          struct device *parent);
+>  #ifdef CONFIG_OF
+>  extern struct platform_device *of_find_device_by_node(struct device_node *np);
+> +extern int of_platform_device_destroy(struct device *dev, void *data);
 
-This doesn't work if height * stride is not an exact number of pages.
-For example, as reported in kernel bugzilla linked, an 800x600x32 EFI
-framebuffer gets skipped because of this.
+This is already declared, so don't you want to remove the existing one.
 
-Move the PAGE_ALIGN to after the check vs size.
+>  #else
+>  static inline struct platform_device *of_find_device_by_node(struct device_node *np)
+>  {
+>         return NULL;
+>  }
+> +static inline int of_platform_device_destroy(struct device *dev, void *data)
+> +{
+> +       return 0;
+> +}
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=206051
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
----
- arch/x86/kernel/sysfb_simplefb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'm curious why this is needed, but of_platform_device_create() is not?
 
-diff --git a/arch/x86/kernel/sysfb_simplefb.c b/arch/x86/kernel/sysfb_simplefb.c
-index 01f0e2263b86..298fc1edd9c9 100644
---- a/arch/x86/kernel/sysfb_simplefb.c
-+++ b/arch/x86/kernel/sysfb_simplefb.c
-@@ -90,11 +90,11 @@ __init int create_simplefb(const struct screen_info *si,
- 	if (si->orig_video_isVGA == VIDEO_TYPE_VLFB)
- 		size <<= 16;
- 	length = mode->height * mode->stride;
--	length = PAGE_ALIGN(length);
- 	if (length > size) {
- 		printk(KERN_WARNING "sysfb: VRAM smaller than advertised\n");
- 		return -EINVAL;
- 	}
-+	length = PAGE_ALIGN(length);
- 
- 	/* setup IORESOURCE_MEM as framebuffer memory */
- 	memset(&res, 0, sizeof(res));
--- 
-2.24.1
-
+>  #endif
+>
+>  /* Platform devices and busses creation */
+> --
+> 2.20.0
+>
