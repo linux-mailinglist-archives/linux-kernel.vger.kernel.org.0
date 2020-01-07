@@ -2,313 +2,987 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D0B713260F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 13:22:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C983132618
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 13:23:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728219AbgAGMWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 07:22:00 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35088 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727852AbgAGMV6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 07:21:58 -0500
-Received: by mail-wr1-f66.google.com with SMTP id g17so53671480wro.2;
-        Tue, 07 Jan 2020 04:21:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=shpceOEfdarRoqP11/e7Yq88J78Q+i/AvmABKRQXbbk=;
-        b=UO3gKbQZAw31IfhCSSrraMTFNOphX9WnhMUHWpHSnxomgVWL82QkfE1vqMO5UlUctZ
-         0+OB4FcpHTw9cqQXIujxE3QsD18PB10DClV6d6OQYbEU+lYUEYb+8fEUIdGwYSDaAvPT
-         rhorBa/grCiV7cxSTDGqc5t80KJtDSg08LshY+lJdoml2v503DclN2UiDtIM6cMnR80F
-         PfS4CUQS36Qc17TX9yXL0qb2QgkbNg3KTfuy362lW6/2BeP0aOTUWrd1Fy1dUVIHolDU
-         d1jO4W0JSyJCA66WdLtoOVUgsVrzAmzdN0WEsSXBfOPN6/bbv24OtZeuZvemVbCjMXBE
-         b/Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=shpceOEfdarRoqP11/e7Yq88J78Q+i/AvmABKRQXbbk=;
-        b=EVuvUc8IYIkaK3eionbko3WsvUnDxlXMhbUcJEcl0+xk35i933lXtBNxPK7hBVgzZH
-         KVij5fjwaetloCP5s8KssUDvUilmhXAZRGrcg4tpLbyvJ6fbAhvBT+vDT+Ollt4SB+bY
-         9qgMSqMWepyEciVpIscmrGDtqxQGcJRYKIVtLkbc81dudltQv8izJfTP3SFfMOZ10rmD
-         bpYiNfRYoElQXlmFjAIDaUcMF32XzORHxQlF5Zpm/7rTVZPsbxtagc1tQGK9CHhQ9lfW
-         XKNgAscTzqjbKzG3/TzO6D5sXkLrBp71wK1tQp3l/I6C9WnxCXhfDElsr5Ind2p2MDB4
-         Qc0Q==
-X-Gm-Message-State: APjAAAWwMqcIb4QuuRIUQaseNrMBrBlLnqkBI6kbbNWi30iKXeUJNrLM
-        tv1DstrjaO3dbImeXQHOoww=
-X-Google-Smtp-Source: APXvYqwm8Aw/NTMvaHnWXFzmw9jVcA4qr+JT5wrkagP44TnMQJVzxKRg3oEFRDZFWtSPtTBkdENsMw==
-X-Received: by 2002:a5d:5091:: with SMTP id a17mr107838653wrt.362.1578399714391;
-        Tue, 07 Jan 2020 04:21:54 -0800 (PST)
-Received: from localhost (p2E5BEF3F.dip0.t-ipconnect.de. [46.91.239.63])
-        by smtp.gmail.com with ESMTPSA id d14sm78455719wru.9.2020.01.07.04.21.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 04:21:52 -0800 (PST)
-Date:   Tue, 7 Jan 2020 13:21:52 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com,
-        perex@perex.cz, tiwai@suse.com, digetx@gmail.com,
-        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
-        josephl@nvidia.com, daniel.lezcano@linaro.org,
-        mmaddireddy@nvidia.com, markz@nvidia.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 00/19] Move PMC clocks into Tegra PMC driver
-Message-ID: <20200107122152.GD1964183@ulmo>
-References: <1578370458-3686-1-git-send-email-skomatineni@nvidia.com>
+        id S1728070AbgAGMXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 07:23:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43182 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727939AbgAGMXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 07:23:03 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 528E3B137;
+        Tue,  7 Jan 2020 12:22:57 +0000 (UTC)
+Subject: Re: [PATCH RFC v1 2/6] drm/sprd: add Unisoc's drm kms master
+To:     tang pengchuan <kevin3.tang@gmail.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        Orson Zhai <orsonzhai@gmail.com>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>
+References: <1576496419-12409-1-git-send-email-kevin3.tang@gmail.com>
+ <1576496419-12409-3-git-send-email-kevin3.tang@gmail.com>
+ <f540df4e-5869-8a7d-612a-49b57dc44efc@suse.de>
+ <CAFPSGXbNqZ+GmSdfDnzobxYAx8yQaw+S1N3R3wAQF+GFNTcjZg@mail.gmail.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ mQENBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAG0J1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPokBVAQTAQgAPhYh
+ BHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsDBQkDwmcABQsJCAcCBhUKCQgLAgQWAgMB
+ Ah4BAheAAAoJEGgNwR1TC3ojR80H/jH+vYavwQ+TvO8ksXL9JQWc3IFSiGpuSVXLCdg62AmR
+ irxW+qCwNncNQyb9rd30gzdectSkPWL3KSqEResBe24IbA5/jSkPweJasgXtfhuyoeCJ6PXo
+ clQQGKIoFIAEv1s8l0ggPZswvCinegl1diyJXUXmdEJRTWYAtxn/atut1o6Giv6D2qmYbXN7
+ mneMC5MzlLaJKUtoH7U/IjVw1sx2qtxAZGKVm4RZxPnMCp9E1MAr5t4dP5gJCIiqsdrVqI6i
+ KupZstMxstPU//azmz7ZWWxT0JzgJqZSvPYx/SATeexTYBP47YFyri4jnsty2ErS91E6H8os
+ Bv6pnSn7eAq5AQ0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRH
+ UE9eosYbT6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgT
+ RjP+qbU63Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+R
+ dhgATnWWGKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zb
+ ehDda8lvhFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r
+ 12+lqdsAEQEAAYkBPAQYAQgAJhYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsMBQkD
+ wmcAAAoJEGgNwR1TC3ojpfcIAInwP5OlcEKokTnHCiDTz4Ony4GnHRP2fXATQZCKxmu4AJY2
+ h9ifw9Nf2TjCZ6AMvC3thAN0rFDj55N9l4s1CpaDo4J+0fkrHuyNacnT206CeJV1E7NYntxU
+ n+LSiRrOdywn6erjxRi9EYTVLCHcDhBEjKmFZfg4AM4GZMWX1lg0+eHbd5oL1as28WvvI/uI
+ aMyV8RbyXot1r/8QLlWldU3NrTF5p7TMU2y3ZH2mf5suSKHAMtbE4jKJ8ZHFOo3GhLgjVrBW
+ HE9JXO08xKkgD+w6v83+nomsEuf6C6LYrqY/tsZvyEX6zN8CtirPdPWu/VXNRYAl/lat7lSI
+ 3H26qrE=
+Message-ID: <208ae136-e0f9-20d6-f92a-03639ee4d380@suse.de>
+Date:   Tue, 7 Jan 2020 13:22:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
+In-Reply-To: <CAFPSGXbNqZ+GmSdfDnzobxYAx8yQaw+S1N3R3wAQF+GFNTcjZg@mail.gmail.com>
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2Z2K0IlrPCVsbNpk"
-Content-Disposition: inline
-In-Reply-To: <1578370458-3686-1-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+ protocol="application/pgp-signature";
+ boundary="TBzYoV7aIZqwlnfP0Q6EER3fBq5KIP5GV"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--TBzYoV7aIZqwlnfP0Q6EER3fBq5KIP5GV
+Content-Type: multipart/mixed; boundary="EyUU3eN6Bc0s2E8OfD2Vc5fqvgH4jCl8C";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: tang pengchuan <kevin3.tang@gmail.com>
+Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+ robh+dt@kernel.org, mark.rutland@arm.com, Orson Zhai <orsonzhai@gmail.com>,
+ ML dri-devel <dri-devel@lists.freedesktop.org>,
+ "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+ Chunyan Zhang <zhang.lyra@gmail.com>, Baolin Wang <baolin.wang@linaro.org>
+Message-ID: <208ae136-e0f9-20d6-f92a-03639ee4d380@suse.de>
+Subject: Re: [PATCH RFC v1 2/6] drm/sprd: add Unisoc's drm kms master
+References: <1576496419-12409-1-git-send-email-kevin3.tang@gmail.com>
+ <1576496419-12409-3-git-send-email-kevin3.tang@gmail.com>
+ <f540df4e-5869-8a7d-612a-49b57dc44efc@suse.de>
+ <CAFPSGXbNqZ+GmSdfDnzobxYAx8yQaw+S1N3R3wAQF+GFNTcjZg@mail.gmail.com>
+In-Reply-To: <CAFPSGXbNqZ+GmSdfDnzobxYAx8yQaw+S1N3R3wAQF+GFNTcjZg@mail.gmail.com>
 
---2Z2K0IlrPCVsbNpk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--EyUU3eN6Bc0s2E8OfD2Vc5fqvgH4jCl8C
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 06, 2020 at 08:13:59PM -0800, Sowjanya Komatineni wrote:
-> This patch series moves Tegra PMC clocks from clock driver to pmc driver
-> along with the device trees changes and audio driver which uses one of
-> the pmc clock for audio mclk.
->=20
-> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
-> are currently registered by Tegra clock driver using clk_regiser_mux and
-> clk_register_gate which performs direct Tegra PMC register access.
->=20
-> When Tegra PMC is in secure mode, any access from non-secure world will
-> not go through.
->=20
-> This patch series adds these Tegra PMC clocks and blink controls to Tegra
-> PMC driver with PMC as clock provider and removes them from Tegra clock
-> driver.
->=20
-> PMC clock clk_out_1 is dedicated for audio mclk from Tegra30 thru Tegra210
-> and clock driver does inital parent configuration for it and enables them.
-> But this clock should be taken care by audio driver as there is no need
-> to have this clock pre enabled.
->=20
-> So, this series also includes patch that updates ASoC driver to take
-> care of parent configuration for mclk if device tree don't specify
-> initial parent configuration using assigned-clock-parents and controls
-> audio mclk enable/disable during ASoC machine startup and shutdown.
->=20
-> DTs are also updated to use clk_out_1 as audio mclk rather than extern1.
->=20
-> This series also includes a patch for mclk fallback to extern1 when
-> retrieving mclk fails to have this backward compatible of new DT with
-> old kernels.
+Hi
 
-Hi Sowjanya,
+Am 07.01.20 um 12:36 schrieb tang pengchuan:
+> Hi Thomas,
+> Our soc needs to support both cma and iommu, but our iommu is not ready=
 
-this looks like it's almost ready to merge. Can you highlight if there
-are any build-time or runtime dependencies between the patches? The
-audio driver changes seem to be mostly isolated from the rest by the
-fallback implementation for legacy device trees.
+> for upload, so i remove it from sprd_gem.c
+> So=C2=A0can i upload the cma code first=EF=BC=9F and add iommu support =
+later
 
-Is there anything that I need to keep in mind when applying these? And
-would it be fine for Mark to pick up the ASoC patches separately from
-the rest?
+This might be possible, but I cannot make the decision. I'd suggest a
+different strategy.
 
-Thierry
+ 1) Convert to generic CMA handlers and submit. You'd want the least
+amount of code in your patches, so they go in quickly and easily.
+
+ 2) Duplicate CMA handlers into your driver and add IOMMU support.
+Submit this patchset at a later point when it's ready.
+
+Just an untested idea: Is it a generic IOMMU or a GART? With a generic
+IOMMU it could be possible to implement dma_map_ops for your platform.
+CMA helpers will use the IOMMU in their call to dma_alloc_wc(). [1] If
+this works, you would not have to maintain you own GEM code and can
+merge IOMMU support at any time.
+
+Best regards
+Thomas
+
+[1] https://elixir.bootlin.com/linux/latest/source/kernel/dma/mapping.c#L=
+298
+
 
 >=20
-> [v6]:	Changes between v5 and v6 are
-> 	- v5 feedback
-> 	- Added ASoC machine startup and shutdown callbacks to control audio
-> 	  mclk enable/disable and removed default mclk enable from clock driver.
-> 	- Updated tegra_asoc_utils_set_rate to disable mclk only during PLLA
-> 	  rate change and removed disabling PLLA as its already taken care by
-> 	  pll clock driver.
-> 	- Removed tegra_asoc_utils_set_rate call from utils_init as set_rate
-> 	  is set during machine hw_params and during utils_init mclk is
-> 	  already in disabled state and this causes warning during mclk disable
-> 	  in utils_set_rate.
+> On Mon, Jan 6, 2020 at 6:11 PM Thomas Zimmermann <tzimmermann@suse.de
+> <mailto:tzimmermann@suse.de>> wrote:
 >=20
-> [v5]:	Changes between v4 and v5 are
-> 	- v4 feedback
-> 	- updated dt-binding pmc YAML schema with more description on power
-> 	  gate nodes and pad configuration state nodes.
-> 	- update tegra_asoc_utils_set_rate to disable audio mclk only if
-> 	  its in enable state.
+>     Hi Kevin
 >=20
-> [v4]:	Changes between v3 and v4 are
-> 	- v3 Feedback
-> 	- Updated clocks clk_m_div2 and clk_m_div4 as osc_div2 and osc_div4.
-> 	  Tegra don't have clk_m_div2, clk_m_div4 and they should actually
-> 	  be osc_div2 and osc_div4 clocks from osc pads.
-> 	- Fixed PMC clock parents to use osc, osc_div2, osc_div4.
-> 	- Register each PMC clock as single clock rather than separate
-> 	  mux and gate clocks.
-> 	- Update ASoC utils to use resource managed APIs rather than
-> 	  using clk_get and clk_put.
-> 	- Updated device tree and ASoC driver to use clk_out_1 instead of
-> 	  clk_out_1_mux as PMC clocks are registered as single clock.
-> 	- Update clock driver init_table to not enable audio related clocks
-> 	  as ASoC utils will do audio clock enables.
+>     Am 16.12.19 um 12:40 schrieb Kevin Tang:
+>     > From: Kevin Tang <kevin.tang@unisoc.com
+>     <mailto:kevin.tang@unisoc.com>>
+>     >
+>     > Adds drm support for the Unisoc's display subsystem.
+>     >
+>     > This is drm device and gem driver. This driver provides support
+>     for the
+>     > Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher=
+=2E
+>     >
+>     > Cc: Orson Zhai <orsonzhai@gmail.com <mailto:orsonzhai@gmail.com>>=
+
+>     > Cc: Baolin Wang <baolin.wang@linaro.org
+>     <mailto:baolin.wang@linaro.org>>
+>     > Cc: Chunyan Zhang <zhang.lyra@gmail.com <mailto:zhang.lyra@gmail.=
+com>>
+>     > Signed-off-by: Kevin Tang <kevin.tang@unisoc.com
+>     <mailto:kevin.tang@unisoc.com>>
+>     > ---
+>     >=C2=A0 drivers/gpu/drm/Kconfig=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0|=C2=
+=A0 =C2=A02 +
+>     >=C2=A0 drivers/gpu/drm/Makefile=C2=A0 =C2=A0 =C2=A0 =C2=A0 |=C2=A0=
+ =C2=A01 +
+>     >=C2=A0 drivers/gpu/drm/sprd/Kconfig=C2=A0 =C2=A0 |=C2=A0 14 ++
+>     >=C2=A0 drivers/gpu/drm/sprd/Makefile=C2=A0 =C2=A0|=C2=A0 =C2=A08 +=
++
+>     >=C2=A0 drivers/gpu/drm/sprd/sprd_drm.c | 286
+>     ++++++++++++++++++++++++++++++++++++++++
+>     >=C2=A0 drivers/gpu/drm/sprd/sprd_drm.h |=C2=A0 16 +++
+>     >=C2=A0 drivers/gpu/drm/sprd/sprd_gem.c | 178 +++++++++++++++++++++=
+++++
+>     >=C2=A0 drivers/gpu/drm/sprd/sprd_gem.h |=C2=A0 30 +++++
+>     >=C2=A0 8 files changed, 535 insertions(+)
+>     >=C2=A0 create mode 100644 drivers/gpu/drm/sprd/Kconfig
+>     >=C2=A0 create mode 100644 drivers/gpu/drm/sprd/Makefile
+>     >=C2=A0 create mode 100644 drivers/gpu/drm/sprd/sprd_drm.c
+>     >=C2=A0 create mode 100644 drivers/gpu/drm/sprd/sprd_drm.h
+>     >=C2=A0 create mode 100644 drivers/gpu/drm/sprd/sprd_gem.c
+>     >=C2=A0 create mode 100644 drivers/gpu/drm/sprd/sprd_gem.h
+>     >
+>     > diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+>     > index bfdadc3..cead12c 100644
+>     > --- a/drivers/gpu/drm/Kconfig
+>     > +++ b/drivers/gpu/drm/Kconfig
+>     > @@ -387,6 +387,8 @@ source "drivers/gpu/drm/aspeed/Kconfig"
+>     >=C2=A0
+>     >=C2=A0 source "drivers/gpu/drm/mcde/Kconfig"
+>     >=C2=A0
+>     > +source "drivers/gpu/drm/sprd/Kconfig"
+>     > +
+>     >=C2=A0 # Keep legacy drivers last
+>     >=C2=A0
+>     >=C2=A0 menuconfig DRM_LEGACY
+>     > diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+>     > index 9f1c7c4..85ca211 100644
+>     > --- a/drivers/gpu/drm/Makefile
+>     > +++ b/drivers/gpu/drm/Makefile
+>     > @@ -122,3 +122,4 @@ obj-$(CONFIG_DRM_LIMA)=C2=A0 +=3D lima/
+>     >=C2=A0 obj-$(CONFIG_DRM_PANFROST) +=3D panfrost/
+>     >=C2=A0 obj-$(CONFIG_DRM_ASPEED_GFX) +=3D aspeed/
+>     >=C2=A0 obj-$(CONFIG_DRM_MCDE) +=3D mcde/
+>     > +obj-$(CONFIG_DRM_SPRD) +=3D sprd/
+>     > diff --git a/drivers/gpu/drm/sprd/Kconfig
+>     b/drivers/gpu/drm/sprd/Kconfig
+>     > new file mode 100644
+>     > index 0000000..79f286b
+>     > --- /dev/null
+>     > +++ b/drivers/gpu/drm/sprd/Kconfig
+>     > @@ -0,0 +1,14 @@
+>     > +config DRM_SPRD
+>     > +=C2=A0 =C2=A0 =C2=A0tristate "DRM Support for Unisoc SoCs Platfo=
+rm"
+>     > +=C2=A0 =C2=A0 =C2=A0depends on ARCH_SPRD
+>     > +=C2=A0 =C2=A0 =C2=A0depends on DRM && OF
+>     > +=C2=A0 =C2=A0 =C2=A0select DRM_KMS_HELPER
+>     > +=C2=A0 =C2=A0 =C2=A0select DRM_GEM_CMA_HELPER
+>     > +=C2=A0 =C2=A0 =C2=A0select DRM_KMS_CMA_HELPER
+>     > +=C2=A0 =C2=A0 =C2=A0select DRM_MIPI_DSI
+>     > +=C2=A0 =C2=A0 =C2=A0select DRM_PANEL
+>     > +=C2=A0 =C2=A0 =C2=A0select VIDEOMODE_HELPERS
+>     > +=C2=A0 =C2=A0 =C2=A0select BACKLIGHT_CLASS_DEVICE
+>     > +=C2=A0 =C2=A0 =C2=A0help
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0Choose this option if you have a Unis=
+oc chipsets.
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0If M is selected the module will be c=
+alled sprd-drm.
+>     > \ No newline at end of file
+>     > diff --git a/drivers/gpu/drm/sprd/Makefile
+>     b/drivers/gpu/drm/sprd/Makefile
+>     > new file mode 100644
+>     > index 0000000..df0b316
+>     > --- /dev/null
+>     > +++ b/drivers/gpu/drm/sprd/Makefile
+>     > @@ -0,0 +1,8 @@
+>     > +# SPDX-License-Identifier: GPL-2.0
+>     > +
+>     > +ccflags-y +=3D -Iinclude/drm
+>     > +
+>     > +subdir-ccflags-y +=3D -I$(src)
+>     > +
+>     > +obj-y :=3D sprd_drm.o \
+>     > +=C2=A0 =C2=A0 =C2=A0sprd_gem.o
+>     > \ No newline at end of file
+>     > diff --git a/drivers/gpu/drm/sprd/sprd_drm.c
+>     b/drivers/gpu/drm/sprd/sprd_drm.c
+>     > new file mode 100644
+>     > index 0000000..4aee25fa4
+>     > --- /dev/null
+>     > +++ b/drivers/gpu/drm/sprd/sprd_drm.c
+>     > @@ -0,0 +1,286 @@
+>     > +// SPDX-License-Identifier: GPL-2.0
+>     > +/*
+>     > + * Copyright (C) 2019 Unisoc Inc.
+>     > + */
+>     > +
+>     > +#include <linux/component.h>
+>     > +#include <linux/dma-mapping.h>
+>     > +#include <linux/module.h>
+>     > +#include <linux/mutex.h>
+>     > +#include <linux/of_graph.h>
+>     > +#include <linux/of_platform.h>
+>     > +
+>     > +#include <drm/drm_atomic_helper.h>
+>     > +#include <drm/drm_crtc_helper.h>
+>     > +#include <drm/drm_drv.h>
+>     > +#include <drm/drm_gem_cma_helper.h>
+>     > +#include <drm/drm_gem_framebuffer_helper.h>
+>     > +#include <drm/drm_probe_helper.h>
+>     > +#include <drm/drm_vblank.h>
+>     > +
+>     > +#include "sprd_drm.h"
+>     > +#include "sprd_gem.h"
+>     > +
+>     > +#define DRIVER_NAME=C2=A0 "sprd"
+>     > +#define DRIVER_DESC=C2=A0 "Spreadtrum SoCs' DRM Driver"
+>     > +#define DRIVER_DATE=C2=A0 "20191101"
+>     > +#define DRIVER_MAJOR 1
+>     > +#define DRIVER_MINOR 0
+>     > +
+>     > +static const struct drm_mode_config_helper_funcs
+>     sprd_drm_mode_config_helper =3D {
+>     > +=C2=A0 =C2=A0 =C2=A0.atomic_commit_tail =3D drm_atomic_helper_co=
+mmit_tail_rpm,
+>     > +};
+>     > +
+>     > +static const struct drm_mode_config_funcs
+>     sprd_drm_mode_config_funcs =3D {
+>     > +=C2=A0 =C2=A0 =C2=A0.fb_create =3D drm_gem_fb_create,
+>     > +=C2=A0 =C2=A0 =C2=A0.atomic_check =3D drm_atomic_helper_check,
+>     > +=C2=A0 =C2=A0 =C2=A0.atomic_commit =3D drm_atomic_helper_commit,=
+
+>     > +};
+>     > +
+>     > +static void sprd_drm_mode_config_init(struct drm_device *drm)
+>     > +{
+>     > +=C2=A0 =C2=A0 =C2=A0drm_mode_config_init(drm);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0drm->mode_config.min_width =3D 0;
+>     > +=C2=A0 =C2=A0 =C2=A0drm->mode_config.min_height =3D 0;
+>     > +=C2=A0 =C2=A0 =C2=A0drm->mode_config.max_width =3D 8192;
+>     > +=C2=A0 =C2=A0 =C2=A0drm->mode_config.max_height =3D 8192;
+>     > +=C2=A0 =C2=A0 =C2=A0drm->mode_config.allow_fb_modifiers =3D true=
+;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0drm->mode_config.funcs =3D &sprd_drm_mode_co=
+nfig_funcs;
+>     > +=C2=A0 =C2=A0 =C2=A0drm->mode_config.helper_private =3D &sprd_dr=
+m_mode_config_helper;
+>     > +}
+>     > +
+>     > +static const struct file_operations sprd_drm_fops =3D {
+>     > +=C2=A0 =C2=A0 =C2=A0.owner=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D=
+ THIS_MODULE,
+>     > +=C2=A0 =C2=A0 =C2=A0.open=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+=3D drm_open,
+>     > +=C2=A0 =C2=A0 =C2=A0.release=C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D drm_=
+release,
+>     > +=C2=A0 =C2=A0 =C2=A0.unlocked_ioctl =3D drm_ioctl,
+>     > +=C2=A0 =C2=A0 =C2=A0.compat_ioctl=C2=A0 =C2=A0=3D drm_compat_ioc=
+tl,
+>     > +=C2=A0 =C2=A0 =C2=A0.poll=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+=3D drm_poll,
+>     > +=C2=A0 =C2=A0 =C2=A0.read=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+=3D drm_read,
+>     > +=C2=A0 =C2=A0 =C2=A0.llseek=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D=
+ no_llseek,
+>     > +=C2=A0 =C2=A0 =C2=A0.mmap=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+=3D sprd_gem_mmap,
+>     > +};
+>     > +
+>     > +static struct drm_driver sprd_drm_drv =3D {
+>     > +=C2=A0 =C2=A0 =C2=A0.driver_features=C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=3D DRIVER_GEM | DRIVER_ATOMIC,
+>     > +=C2=A0 =C2=A0 =C2=A0.fops=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D &sprd_drm_fops,
+>     > +=C2=A0 =C2=A0 =C2=A0.gem_vm_ops=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0=3D &drm_gem_cma_vm_ops,
+>     > +=C2=A0 =C2=A0 =C2=A0.gem_free_object_unlocked=C2=A0 =C2=A0 =C2=A0=
+ =C2=A0=3D sprd_gem_free_object,
+>     > +=C2=A0 =C2=A0 =C2=A0.dumb_create=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =3D sprd_gem_dumb_create,
+>     > +=C2=A0 =C2=A0 =C2=A0.prime_fd_to_handle=C2=A0 =C2=A0 =C2=A0=3D d=
+rm_gem_prime_fd_to_handle,
+>     > +=C2=A0 =C2=A0 =C2=A0.gem_prime_import=C2=A0 =C2=A0 =C2=A0 =C2=A0=
+=3D drm_gem_prime_import,
+>     > +=C2=A0 =C2=A0 =C2=A0.gem_prime_import_sg_table =3D sprd_gem_prim=
+e_import_sg_table,
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0.name=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D DRIVER_NAME,
+>     > +=C2=A0 =C2=A0 =C2=A0.desc=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D DRIVER_DESC,
+>     > +=C2=A0 =C2=A0 =C2=A0.date=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D DRIVER_DATE,
+>     > +=C2=A0 =C2=A0 =C2=A0.major=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =3D DRIVER_MAJOR,
+>     > +=C2=A0 =C2=A0 =C2=A0.minor=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =3D DRIVER_MINOR,
+>     > +};
+>     > +
+>     > +static int sprd_drm_bind(struct device *dev)
+>     > +{
+>     > +=C2=A0 =C2=A0 =C2=A0struct drm_device *drm;
+>     > +=C2=A0 =C2=A0 =C2=A0struct sprd_drm *sprd;
+>     > +=C2=A0 =C2=A0 =C2=A0int err;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0drm =3D drm_dev_alloc(&sprd_drm_drv, dev);
+>     > +=C2=A0 =C2=A0 =C2=A0if (IS_ERR(drm))
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return PTR_ERR(d=
+rm);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0dev_set_drvdata(dev, drm);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0sprd =3D devm_kzalloc(drm->dev, sizeof(*sprd=
+), GFP_KERNEL);
+>     > +=C2=A0 =C2=A0 =C2=A0if (!sprd) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0err =3D -ENOMEM;=
+
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto err_free_dr=
+m;
+>     > +=C2=A0 =C2=A0 =C2=A0}
+>     > +=C2=A0 =C2=A0 =C2=A0drm->dev_private =3D sprd;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0sprd_drm_mode_config_init(drm);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0/* bind and init sub drivers */
+>     > +=C2=A0 =C2=A0 =C2=A0err =3D component_bind_all(drm->dev, drm);
+>     > +=C2=A0 =C2=A0 =C2=A0if (err) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0DRM_ERROR("faile=
+d to bind all component.\n");
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto err_dc_clea=
+nup;
+>     > +=C2=A0 =C2=A0 =C2=A0}
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0/* vblank init */
+>     > +=C2=A0 =C2=A0 =C2=A0err =3D drm_vblank_init(drm, drm->mode_confi=
+g.num_crtc);
+>     > +=C2=A0 =C2=A0 =C2=A0if (err) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0DRM_ERROR("faile=
+d to initialize vblank.\n");
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto err_unbind_=
+all;
+>     > +=C2=A0 =C2=A0 =C2=A0}
+>     > +=C2=A0 =C2=A0 =C2=A0/* with irq_enabled =3D true, we can use the=
+ vblank feature. */
+>     > +=C2=A0 =C2=A0 =C2=A0drm->irq_enabled =3D true;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0/* reset all the states of crtc/plane/encode=
+r/connector */
+>     > +=C2=A0 =C2=A0 =C2=A0drm_mode_config_reset(drm);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0/* init kms poll for handling hpd */
+>     > +=C2=A0 =C2=A0 =C2=A0drm_kms_helper_poll_init(drm);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0err =3D drm_dev_register(drm, 0);
+>     > +=C2=A0 =C2=A0 =C2=A0if (err < 0)
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto err_kms_hel=
+per_poll_fini;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0return 0;
+>     > +
+>     > +err_kms_helper_poll_fini:
+>     > +=C2=A0 =C2=A0 =C2=A0drm_kms_helper_poll_fini(drm);
+>     > +err_unbind_all:
+>     > +=C2=A0 =C2=A0 =C2=A0component_unbind_all(drm->dev, drm);
+>     > +err_dc_cleanup:
+>     > +=C2=A0 =C2=A0 =C2=A0drm_mode_config_cleanup(drm);
+>     > +err_free_drm:
+>     > +=C2=A0 =C2=A0 =C2=A0drm_dev_put(drm);
+>     > +=C2=A0 =C2=A0 =C2=A0return err;
+>     > +}
+>     > +
+>     > +static void sprd_drm_unbind(struct device *dev)
+>     > +{
+>     > +=C2=A0 =C2=A0 =C2=A0drm_put_dev(dev_get_drvdata(dev));
+>     > +}
+>     > +
+>     > +static const struct component_master_ops sprd_drm_component_ops =
+=3D {
+>     > +=C2=A0 =C2=A0 =C2=A0.bind =3D sprd_drm_bind,
+>     > +=C2=A0 =C2=A0 =C2=A0.unbind =3D sprd_drm_unbind,
+>     > +};
+>     > +
+>     > +static int compare_of(struct device *dev, void *data)
+>     > +{
+>     > +=C2=A0 =C2=A0 =C2=A0struct device_node *np =3D data;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0DRM_DEBUG("compare %s\n", np->full_name);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0return dev->of_node =3D=3D np;
+>     > +}
+>     > +
+>     > +static int sprd_drm_component_probe(struct device *dev,
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 const struct component_master_ops *m_ops)
+>     > +{
+>     > +=C2=A0 =C2=A0 =C2=A0struct device_node *ep, *port, *remote;
+>     > +=C2=A0 =C2=A0 =C2=A0struct component_match *match =3D NULL;
+>     > +=C2=A0 =C2=A0 =C2=A0int i;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0if (!dev->of_node)
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -EINVAL;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0/*
+>     > +=C2=A0 =C2=A0 =C2=A0 * Bind the crtc's ports first, so that
+>     drm_of_find_possible_crtcs()
+>     > +=C2=A0 =C2=A0 =C2=A0 * called from encoder's .bind callbacks wor=
+ks as expected
+>     > +=C2=A0 =C2=A0 =C2=A0 */
+>     > +=C2=A0 =C2=A0 =C2=A0for (i =3D 0; ; i++) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0port =3D of_pars=
+e_phandle(dev->of_node, "ports", i);
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (!port)
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0break;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (!of_device_i=
+s_available(port->parent)) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0of_node_put(port);
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0continue;
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0component_match_=
+add(dev, &match, compare_of,
+>     port->parent);
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0of_node_put(port=
+);
+>     > +=C2=A0 =C2=A0 =C2=A0}
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0if (i =3D=3D 0) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev_err(dev, "mi=
+ssing 'ports' property\n");
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -ENODEV;
+>     > +=C2=A0 =C2=A0 =C2=A0}
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0if (!match) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev_err(dev, "no=
+ available port\n");
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -ENODEV;
+>     > +=C2=A0 =C2=A0 =C2=A0}
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0/*
+>     > +=C2=A0 =C2=A0 =C2=A0 * For bound crtcs, bind the encoders attach=
+ed to their
+>     remote endpoint
+>     > +=C2=A0 =C2=A0 =C2=A0 */
+>     > +=C2=A0 =C2=A0 =C2=A0for (i =3D 0; ; i++) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0port =3D of_pars=
+e_phandle(dev->of_node, "ports", i);
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (!port)
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0break;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (!of_device_i=
+s_available(port->parent)) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0of_node_put(port);
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0continue;
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0for_each_child_o=
+f_node(port, ep) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0remote =3D of_graph_get_remote_port_parent(ep);
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0if (!remote ||
+>     !of_device_is_available(remote)) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0of_node_put(remote);
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0continue;
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0} else if
+>     (!of_device_is_available(remote->parent)) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev_warn(dev, "parent device of %s
+>     is not available\n",
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 remote=
+->full_name);
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0of_node_put(remote);
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0continue;
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0}
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0component_match_add(dev, &match, compare_of,
+>     remote);
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0of_node_put(remote);
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0of_node_put(port=
+);
+>     > +=C2=A0 =C2=A0 =C2=A0}
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0return component_master_add_with_match(dev, =
+m_ops, match);
+>     > +}
+>     > +
+>     > +static int sprd_drm_probe(struct platform_device *pdev)
+>     > +{
+>     > +=C2=A0 =C2=A0 =C2=A0int ret;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0ret =3D dma_set_mask_and_coherent(&pdev->dev=
+, ~0);
+>     > +=C2=A0 =C2=A0 =C2=A0if (ret) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0DRM_ERROR("dma_s=
+et_mask_and_coherent failed (%d)\n",
+>     ret);
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;
+>     > +=C2=A0 =C2=A0 =C2=A0}
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0return sprd_drm_component_probe(&pdev->dev,
+>     &sprd_drm_component_ops);
+>     > +}
+>     > +
+>     > +static int sprd_drm_remove(struct platform_device *pdev)
+>     > +{
+>     > +=C2=A0 =C2=A0 =C2=A0component_master_del(&pdev->dev, &sprd_drm_c=
+omponent_ops);
+>     > +=C2=A0 =C2=A0 =C2=A0return 0;
+>     > +}
+>     > +
+>     > +static void sprd_drm_shutdown(struct platform_device *pdev)
+>     > +{
+>     > +=C2=A0 =C2=A0 =C2=A0struct drm_device *drm =3D platform_get_drvd=
+ata(pdev);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0if (!drm) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0DRM_WARN("drm de=
+vice is not available, no shutdown\n");
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return;
+>     > +=C2=A0 =C2=A0 =C2=A0}
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0drm_atomic_helper_shutdown(drm);
+>     > +}
+>     > +
+>     > +static const struct of_device_id sprd_drm_match_table[] =3D {
+>     > +=C2=A0 =C2=A0 =C2=A0{ .compatible =3D "sprd,display-subsystem",}=
+,
+>     > +=C2=A0 =C2=A0 =C2=A0{},
+>     > +};
+>     > +MODULE_DEVICE_TABLE(of, sprd_drm_match_table);
+>     > +
+>     > +static struct platform_driver sprd_drm_driver =3D {
+>     > +=C2=A0 =C2=A0 =C2=A0.probe =3D sprd_drm_probe,
+>     > +=C2=A0 =C2=A0 =C2=A0.remove =3D sprd_drm_remove,
+>     > +=C2=A0 =C2=A0 =C2=A0.shutdown =3D sprd_drm_shutdown,
+>     > +=C2=A0 =C2=A0 =C2=A0.driver =3D {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.name =3D "sprd-=
+drm-drv",
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.of_match_table =
+=3D sprd_drm_match_table,
+>     > +=C2=A0 =C2=A0 =C2=A0},
+>     > +};
+>     > +
+>     > +module_platform_driver(sprd_drm_driver);
+>     > +
+>     > +MODULE_AUTHOR("Leon He <leon.he@unisoc.com
+>     <mailto:leon.he@unisoc.com>>");
+>     > +MODULE_AUTHOR("Kevin Tang <kevin.tang@unisoc.com
+>     <mailto:kevin.tang@unisoc.com>>");
+>     > +MODULE_DESCRIPTION("Unisoc DRM KMS Master Driver");
+>     > +MODULE_LICENSE("GPL v2");
+>     > diff --git a/drivers/gpu/drm/sprd/sprd_drm.h
+>     b/drivers/gpu/drm/sprd/sprd_drm.h
+>     > new file mode 100644
+>     > index 0000000..137cb27
+>     > --- /dev/null
+>     > +++ b/drivers/gpu/drm/sprd/sprd_drm.h
+>     > @@ -0,0 +1,16 @@
+>     > +/* SPDX-License-Identifier: GPL-2.0 */
+>     > +/*
+>     > + * Copyright (C) 2019 Unisoc Inc.
+>     > + */
+>     > +
+>     > +#ifndef _SPRD_DRM_H_
+>     > +#define _SPRD_DRM_H_
+>     > +
+>     > +#include <drm/drm_atomic.h>
+>     > +#include <drm/drm_print.h>
+>     > +
+>     > +struct sprd_drm {
+>     > +=C2=A0 =C2=A0 =C2=A0struct drm_device *drm;
+>     > +};
+>     > +
+>     > +#endif /* _SPRD_DRM_H_ */
+>     > diff --git a/drivers/gpu/drm/sprd/sprd_gem.c
+>     b/drivers/gpu/drm/sprd/sprd_gem.c
+>     > new file mode 100644
+>     > index 0000000..9aec78e
+>     > --- /dev/null
+>     > +++ b/drivers/gpu/drm/sprd/sprd_gem.c
+>     > @@ -0,0 +1,178 @@
+>     > +// SPDX-License-Identifier: GPL-2.0
+>     > +/*
+>     > + * Copyright (C) 2019 Unisoc Inc.
+>     > + */
+>     > +
+>     > +#include <linux/dma-buf.h>
+>     > +#include <linux/pm_runtime.h>
+>     > +
+>     > +#include <drm/drm_prime.h>
+>     > +
+>     > +#include "sprd_drm.h"
+>     > +#include "sprd_gem.h"
+>     > +
+>     > +static struct sprd_gem_obj *sprd_gem_obj_create(struct drm_devic=
+e
+>     *drm,
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0unsigned long size)
+>     > +{
+>     > +=C2=A0 =C2=A0 =C2=A0struct sprd_gem_obj *sprd_gem;
+>     > +=C2=A0 =C2=A0 =C2=A0int ret;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0sprd_gem =3D kzalloc(sizeof(*sprd_gem), GFP_=
+KERNEL);
+>     > +=C2=A0 =C2=A0 =C2=A0if (!sprd_gem)
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ERR_PTR(-=
+ENOMEM);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0ret =3D drm_gem_object_init(drm, &sprd_gem->=
+base, size);
+>     > +=C2=A0 =C2=A0 =C2=A0if (ret < 0) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0DRM_ERROR("faile=
+d to initialize gem object\n");
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto error;
+>     > +=C2=A0 =C2=A0 =C2=A0}
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0ret =3D drm_gem_create_mmap_offset(&sprd_gem=
+->base);
+>     > +=C2=A0 =C2=A0 =C2=A0if (ret) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0drm_gem_object_r=
+elease(&sprd_gem->base);
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto error;
+>     > +=C2=A0 =C2=A0 =C2=A0}
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0return sprd_gem;
+>     > +
+>     > +error:
+>     > +=C2=A0 =C2=A0 =C2=A0kfree(sprd_gem);
+>     > +=C2=A0 =C2=A0 =C2=A0return ERR_PTR(ret);
+>     > +}
+>     > +
+>     > +void sprd_gem_free_object(struct drm_gem_object *obj)
+>     > +{
+>     > +=C2=A0 =C2=A0 =C2=A0struct sprd_gem_obj *sprd_gem =3D to_sprd_ge=
+m_obj(obj);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0DRM_DEBUG("gem =3D %p\n", obj);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0if (sprd_gem->vaddr)
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dma_free_wc(obj-=
+>dev->dev, obj->size,
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0sprd_gem->vaddr, sprd_gem->dma_addr);
+>     > +=C2=A0 =C2=A0 =C2=A0else if (sprd_gem->sgtb)
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0drm_prime_gem_de=
+stroy(obj, sprd_gem->sgtb);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0drm_gem_object_release(obj);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0kfree(sprd_gem);
+>     > +}
+>     > +
+>     > +int sprd_gem_dumb_create(struct drm_file *file_priv, struct
+>     drm_device *drm,
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0struct drm_mode_create_dumb *args)
+>     > +{
+>     > +=C2=A0 =C2=A0 =C2=A0struct sprd_gem_obj *sprd_gem;
+>     > +=C2=A0 =C2=A0 =C2=A0int ret;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0args->pitch =3D DIV_ROUND_UP(args->width * a=
+rgs->bpp, 8);
+>     > +=C2=A0 =C2=A0 =C2=A0args->size =3D round_up(args->pitch * args->=
+height, PAGE_SIZE);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0sprd_gem =3D sprd_gem_obj_create(drm, args->=
+size);
+>     > +=C2=A0 =C2=A0 =C2=A0if (IS_ERR(sprd_gem))
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return PTR_ERR(s=
+prd_gem);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0sprd_gem->vaddr =3D dma_alloc_wc(drm->dev, a=
+rgs->size,
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0&sprd_gem->dma_addr, GFP_KERNEL |
+>     __GFP_NOWARN | GFP_DMA);
 >=20
-> [v3]:	Changes between v2 and v3 are
-> 	- Removes set parent of clk_out_1_mux to extern1 and enabling
-> 	  extern1 from the clock driver.
-> 	- Doesn't enable clk_out_1 and blink by default in pmc driver
-> 	- Updates ASoC driver to take care of audio mclk parent
-> 	  configuration incase if device tree don't specify assigned
-> 	  clock parent properties and enables mclk using both clk_out_1
-> 	  and extern1.
-> 	- updates all device trees using extern1 as mclk in sound node
-> 	  to use clk_out_1 from pmc.
-> 	- patch for YAML format pmc dt-binding
-> 	- Includes v2 feedback
+>     I might be missing something, but I still don't understand why all =
+this
+>     GEM code is necessary. I quickly compared with the CMA helpers and =
+the
+>     only meaningful difference is the use of the GFP_DMA flag.
 >=20
-> [v2]:	Changes between v1 and v2 are
-> 	- v2 includes patches for adding clk_out_1, clk_out_2, clk_out_3,
-> 	  blink controls to Tegra PMC driver and removing clk-tegra-pmc.
-> 	- feedback related to pmc clocks in Tegra PMC driver from v1
-> 	- Removed patches for WB0 PLLM overrides and PLLE IDDQ PMC programming
-> 	  by the clock driver using helper functions from Tegra PMC.
+>     Rather than duplicating the CMA code, it's better to change the CMA=
+
+>     helpers to provide a way of setting this flag.
 >=20
->  	  Note:
-> 	  To use helper functions from PMC driver, PMC early init need to
-> 	  happen prior to using helper functions and these helper functions are
-> 	  for PLLM Override and PLLE IDDQ programming in PMC during PLLM/PLLE
-> 	  clock registration which happen in clock_init prior to Tegra PMC
-> 	  probe.
-> 	  Moving PLLM/PLLE clocks registration to happen after Tegra PMC
-> 	  impacts other clocks EMC, MC and corresponding tegra_emc_init and
-> 	  tegra_mc_init.
-> 	  This implementation of configuring PMC registers thru helper
-> 	  functions in clock driver needs proper changes across PMC, Clock,
-> 	  EMC and MC inits to have it work across all Tegra platforms.
+>     Best regards
+>     Thomas
 >=20
-> 	  Currently PLLM Override is not enabled in the bootloader so proper
-> 	  patches for this fix will be taken care separately.
+>     > +=C2=A0 =C2=A0 =C2=A0if (!sprd_gem->vaddr) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0DRM_ERROR("faile=
+d to allocate buffer with size %llu\n",
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0args->size);
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D -ENOMEM;=
+
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto error;
+>     > +=C2=A0 =C2=A0 =C2=A0}
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0ret =3D drm_gem_handle_create(file_priv, &sp=
+rd_gem->base,
+>     &args->handle);
+>     > +=C2=A0 =C2=A0 =C2=A0if (ret)
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto error;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0drm_gem_object_put_unlocked(&sprd_gem->base)=
+;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0return 0;
+>     > +
+>     > +error:
+>     > +=C2=A0 =C2=A0 =C2=A0sprd_gem_free_object(&sprd_gem->base);
+>     > +=C2=A0 =C2=A0 =C2=A0return ret;
+>     > +}
+>     > +
+>     > +static int sprd_gem_object_mmap(struct drm_gem_object *obj,
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct vm_area_struct *vma)=
+
+>     > +
+>     > +{
+>     > +=C2=A0 =C2=A0 =C2=A0int ret;
+>     > +=C2=A0 =C2=A0 =C2=A0struct sprd_gem_obj *sprd_gem =3D to_sprd_ge=
+m_obj(obj);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0vma->vm_flags &=3D ~VM_PFNMAP;
+>     > +=C2=A0 =C2=A0 =C2=A0vma->vm_pgoff =3D 0;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0ret =3D dma_mmap_wc(obj->dev->dev, vma,
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0sprd_gem->vaddr, sprd=
+_gem->dma_addr,
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0vma->vm_end - vma->vm=
+_start);
+>     > +=C2=A0 =C2=A0 =C2=A0if (ret)
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0drm_gem_vm_close=
+(vma);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0return ret;
+>     > +}
+>     > +
+>     > +int sprd_gem_mmap(struct file *filp, struct vm_area_struct *vma)=
+
+>     > +{
+>     > +=C2=A0 =C2=A0 =C2=A0struct drm_gem_object *obj;
+>     > +=C2=A0 =C2=A0 =C2=A0int ret;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0ret =3D drm_gem_mmap(filp, vma);
+>     > +=C2=A0 =C2=A0 =C2=A0if (ret)
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0obj =3D vma->vm_private_data;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0return sprd_gem_object_mmap(obj, vma);
+>     > +}
+>     > +
+>     > +int sprd_gem_prime_mmap(struct drm_gem_object *obj,
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0struct vm_area_struct *vma)
+>     > +{
+>     > +=C2=A0 =C2=A0 =C2=A0int ret;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0ret =3D drm_gem_mmap_obj(obj, obj->size, vma=
+);
+>     > +=C2=A0 =C2=A0 =C2=A0if (ret)
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0return sprd_gem_object_mmap(obj, vma);
+>     > +}
+>     > +
+>     > +struct sg_table *sprd_gem_prime_get_sg_table(struct
+>     drm_gem_object *obj)
+>     > +{
+>     > +=C2=A0 =C2=A0 =C2=A0struct sprd_gem_obj *sprd_gem =3D to_sprd_ge=
+m_obj(obj);
+>     > +=C2=A0 =C2=A0 =C2=A0struct sg_table *sgtb;
+>     > +=C2=A0 =C2=A0 =C2=A0int ret;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0sgtb =3D kzalloc(sizeof(*sgtb), GFP_KERNEL);=
+
+>     > +=C2=A0 =C2=A0 =C2=A0if (!sgtb)
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ERR_PTR(-=
+ENOMEM);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0ret =3D dma_get_sgtable(obj->dev->dev, sgtb,=
+ sprd_gem->vaddr,
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0sprd_gem->dma_addr, obj->size);
+>     > +=C2=A0 =C2=A0 =C2=A0if (ret) {
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0DRM_ERROR("faile=
+d to allocate sg_table, %d\n", ret);
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0kfree(sgtb);
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ERR_PTR(r=
+et);
+>     > +=C2=A0 =C2=A0 =C2=A0}
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0return sgtb;
+>     > +}
+>     > +
+>     > +struct drm_gem_object *sprd_gem_prime_import_sg_table(struct
+>     drm_device *drm,
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0struct dma_buf_a=
+ttachment *attach, struct sg_table
+>     *sgtb)
+>     > +{
+>     > +=C2=A0 =C2=A0 =C2=A0struct sprd_gem_obj *sprd_gem;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0sprd_gem =3D sprd_gem_obj_create(drm, attach=
+->dmabuf->size);
+>     > +=C2=A0 =C2=A0 =C2=A0if (IS_ERR(sprd_gem))
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ERR_CAST(=
+sprd_gem);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0DRM_DEBUG("gem =3D %p\n", &sprd_gem->base);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0if (sgtb->nents =3D=3D 1)
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0sprd_gem->dma_ad=
+dr =3D sg_dma_address(sgtb->sgl);
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0sprd_gem->sgtb =3D sgtb;
+>     > +
+>     > +=C2=A0 =C2=A0 =C2=A0return &sprd_gem->base;
+>     > +}
+>     > diff --git a/drivers/gpu/drm/sprd/sprd_gem.h
+>     b/drivers/gpu/drm/sprd/sprd_gem.h
+>     > new file mode 100644
+>     > index 0000000..b6740bd
+>     > --- /dev/null
+>     > +++ b/drivers/gpu/drm/sprd/sprd_gem.h
+>     > @@ -0,0 +1,30 @@
+>     > +/* SPDX-License-Identifier: GPL-2.0 */
+>     > +/*
+>     > + * Copyright (C) 2019 Unisoc Inc.
+>     > + */
+>     > +
+>     > +#ifndef _SPRD_GEM_H_
+>     > +#define _SPRD_GEM_H_
+>     > +
+>     > +#include <drm/drm_gem.h>
+>     > +
+>     > +struct sprd_gem_obj {
+>     > +=C2=A0 =C2=A0 =C2=A0struct drm_gem_object=C2=A0 =C2=A0base;
+>     > +=C2=A0 =C2=A0 =C2=A0dma_addr_t=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 dma_addr;
+>     > +=C2=A0 =C2=A0 =C2=A0struct sg_table=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0*sgtb;
+>     > +=C2=A0 =C2=A0 =C2=A0void=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 *vaddr;
+>     > +};
+>     > +
+>     > +#define to_sprd_gem_obj(x)=C2=A0 =C2=A0container_of(x, struct sp=
+rd_gem_obj,
+>     base)
+>     > +
+>     > +void sprd_gem_free_object(struct drm_gem_object *gem);
+>     > +int sprd_gem_dumb_create(struct drm_file *file_priv, struct
+>     drm_device *dev,
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0struct drm_mode_create_dumb *args);
+>     > +int sprd_gem_mmap(struct file *filp, struct vm_area_struct *vma)=
+;
+>     > +int sprd_gem_prime_mmap(struct drm_gem_object *obj,
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 struct vm_area_struct *vma);
+>     > +struct sg_table *sprd_gem_prime_get_sg_table(struct
+>     drm_gem_object *obj);
+>     > +struct drm_gem_object *sprd_gem_prime_import_sg_table(struct
+>     drm_device *dev,
+>     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0struct dma_buf_a=
+ttachment *attach, struct sg_table
+>     *sgtb);
+>     > +
+>     > +#endif
+>     >
 >=20
-> [v1]:	v1 includes patches for below fixes.
-> 	- adding clk_out_1, clk_out_2, clk_out_3, blink controls to Tegra PMC
-> 	  driver and removing clk-tegra-pmc.
-> 	- updated clock provider from tegra_car to pmc in the device tree
-> 	  tegra210-smaug.dts that uses clk_out_2.
-> 	- Added helper functions in PMC driver for WB0 PLLM overrides and PLLE
-> 	  IDDQ programming to use by clock driver and updated clock driver to
-> 	  use these helper functions and removed direct PMC access from clock
-> 	  driver and all pmc base address references in clock driver.
->=20
->=20
->=20
->=20
-> Sowjanya Komatineni (19):
->   dt-bindings: clock: tegra: Change CLK_M_DIV to OSC_DIV clocks
->   clk: tegra: Change CLK_M_DIV clocks to OSC_DIV clocks
->   clk: tegra: Fix Tegra PMC clock out parents
->   dt-bindings: tegra: Convert Tegra PMC bindings to YAML
->   dt-bindings: soc: tegra-pmc: Add Tegra PMC clock bindings
->   soc: tegra: Add Tegra PMC clocks registration into PMC driver
->   dt-bindings: soc: tegra-pmc: Add id for Tegra PMC 32KHz blink clock
->   soc: tegra: Add support for 32KHz blink clock
->   clk: tegra: Remove tegra_pmc_clk_init along with clk ids
->   dt-bindings: clock: tegra: Remove pmc clock ids from clock dt-bindings
->   ASoC: tegra: Use device managed resource APIs to get the clock
->   ASoC: tegra: Add audio mclk configuration
->   ASoC: tegra: Add fallback implementation for audio mclk
->   clk: tegra: Remove audio related clock enables from init_table
->   ARM: dts: tegra: Add clock-cells property to pmc
->   arm64: tegra: Add clock-cells property to Tegra PMC node
->   ARM: tegra: Update sound node clocks in device tree
->   arm64: tegra: smaug: Change clk_out_2 provider to pmc
->   ASoC: nau8825: change Tegra clk_out_2 provider from tegra_car to pmc
->=20
->  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 300 ---------------=
---
->  .../bindings/arm/tegra/nvidia,tegra20-pmc.yaml     | 354 +++++++++++++++=
-++++++
->  .../devicetree/bindings/sound/nau8825.txt          |   2 +-
->  arch/arm/boot/dts/tegra114-dalmore.dts             |   8 +-
->  arch/arm/boot/dts/tegra114.dtsi                    |   4 +-
->  arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi        |   8 +-
->  arch/arm/boot/dts/tegra124-apalis.dtsi             |   8 +-
->  arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   8 +-
->  arch/arm/boot/dts/tegra124-nyan.dtsi               |   8 +-
->  arch/arm/boot/dts/tegra124-venice2.dts             |   8 +-
->  arch/arm/boot/dts/tegra124.dtsi                    |   4 +-
->  arch/arm/boot/dts/tegra20.dtsi                     |   4 +-
->  arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi         |   8 +-
->  arch/arm/boot/dts/tegra30-apalis.dtsi              |   8 +-
->  arch/arm/boot/dts/tegra30-beaver.dts               |   8 +-
->  arch/arm/boot/dts/tegra30-cardhu.dtsi              |   8 +-
->  arch/arm/boot/dts/tegra30-colibri.dtsi             |   8 +-
->  arch/arm/boot/dts/tegra30.dtsi                     |   4 +-
->  arch/arm64/boot/dts/nvidia/tegra132.dtsi           |   4 +-
->  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |   2 +-
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   6 +-
->  drivers/clk/tegra/Makefile                         |   1 -
->  drivers/clk/tegra/clk-id.h                         |  11 +-
->  drivers/clk/tegra/clk-tegra-fixed.c                |  32 +-
->  drivers/clk/tegra/clk-tegra-pmc.c                  | 122 -------
->  drivers/clk/tegra/clk-tegra114.c                   |  41 +--
->  drivers/clk/tegra/clk-tegra124.c                   |  46 +--
->  drivers/clk/tegra/clk-tegra20.c                    |   9 +-
->  drivers/clk/tegra/clk-tegra210.c                   |  30 +-
->  drivers/clk/tegra/clk-tegra30.c                    |  31 +-
->  drivers/clk/tegra/clk.h                            |   1 -
->  drivers/soc/tegra/pmc.c                            | 352 +++++++++++++++=
-+++++
->  include/dt-bindings/clock/tegra114-car.h           |  18 +-
->  include/dt-bindings/clock/tegra124-car-common.h    |  18 +-
->  include/dt-bindings/clock/tegra20-car.h            |   2 +-
->  include/dt-bindings/clock/tegra210-car.h           |  18 +-
->  include/dt-bindings/clock/tegra30-car.h            |  18 +-
->  include/dt-bindings/soc/tegra-pmc.h                |  16 +
->  sound/soc/tegra/tegra_alc5632.c                    |  28 +-
->  sound/soc/tegra/tegra_asoc_utils.c                 | 125 ++++----
->  sound/soc/tegra/tegra_asoc_utils.h                 |   3 +-
->  sound/soc/tegra/tegra_max98090.c                   |  43 ++-
->  sound/soc/tegra/tegra_rt5640.c                     |  43 ++-
->  sound/soc/tegra/tegra_rt5677.c                     |  28 +-
->  sound/soc/tegra/tegra_sgtl5000.c                   |  28 +-
->  sound/soc/tegra/tegra_wm8753.c                     |  43 ++-
->  sound/soc/tegra/tegra_wm8903.c                     |  43 ++-
->  sound/soc/tegra/tegra_wm9712.c                     |   8 +-
->  sound/soc/tegra/trimslice.c                        |  39 ++-
->  49 files changed, 1192 insertions(+), 777 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,te=
-gra20-pmc.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,te=
-gra20-pmc.yaml
->  delete mode 100644 drivers/clk/tegra/clk-tegra-pmc.c
->  create mode 100644 include/dt-bindings/soc/tegra-pmc.h
->=20
-> --=20
-> 2.7.4
+>     --=20
+>     Thomas Zimmermann
+>     Graphics Driver Developer
+>     SUSE Software Solutions Germany GmbH
+>     Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+>     (HRB 36809, AG N=C3=BCrnberg)
+>     Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
 >=20
 
---2Z2K0IlrPCVsbNpk
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+(HRB 36809, AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+
+
+--EyUU3eN6Bc0s2E8OfD2Vc5fqvgH4jCl8C--
+
+--TBzYoV7aIZqwlnfP0Q6EER3fBq5KIP5GV
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4Ud98ACgkQ3SOs138+
-s6EhnBAAmCJGVRkP51O/g1hcpMO3AZqTUpz1Kutfyu1r47KF93K8/Tc4JgxT8CpA
-h6ZC96DQDZX4YJ8FGNm/WlVm9gaLwArLfMOXwz/VMN6db0kATyiV1D4Gw1c4WVBB
-3aDvs9T5E3qyUuM+5aUZ0ZFNRRbt40VFl/ICRD/uR+Q5i5+aRU2C0Kj5hFsCJL2P
-+KjXyH/87lV/wSwAFVxPrdaFjkSWhBD0abRvvVex69XJk6jWQE9JN/sO6elrYBHh
-jrjoL4a6qeMMq09XtQoKtkmwRi5FMHHVR3ZrEoMpSnRXdpd3W2X9XWYlvgAl78t7
-pIfxIMdM8nSqdDi6DS58QgdJNJhU3R7fOSBEy3Lrb9/n2hx6SoEgPHFJQYBAwugq
-lSEnirh/dfS5OMiN+lu0tPQadQ8qLNaLNEegiky6t7WPFQbvAdKaNka4O5UERD37
-kAG789KtFbhjF93qIjScCvbKVhlYsfhAmu/y5W4JHAZU6YwLALkt5q8p8++OHsc7
-+JgeHCy6Gc6eHpqvv9ASUmj8tGIH/SS3VjnagsO2JRxzeMZ5UPE0KitF/WKDMMcI
-L6YLk4RMW09in7Z2/GOTrv1vR2hO9Cl/xymKWsfWzr3b6lcM7ZOuOBwHKICaFfb1
-S79fsNEJjB0spwwVNtYTdXVZIxqyXSRwCp+A3lix60RAspBM7hs=
-=8tEv
+iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl4UeB8ACgkQaA3BHVML
+eiOOLAgAv3YjCWjyMPV8oZW7GoFN1frlz3A1oOzSqqZpXkaZEu1bu36umKGc7C+l
+63cGlkJqp/ojl7LwqnDf1kn/QcV/lWelCC6F40+1HuOK15lUXUsqdvICXexOiq/I
+iR3KgyrKqBwqvzV5dPmT1gv6OV0rv0M0xweafb1dTXmrQcmbQU5J4QcN9+zI+tWC
+xPox8PrwIVvGRPq/aJHOucZgM4TVIss5u1uRoK/RNWtumCWtjoVS4tEMbPz0UdL1
+cbTh3AXt42BbfmL21TKf/D2JRPiLkTUNUlg5vMj/JAODCOE7IR1WGfF/z9DKSB0J
+VE5pu1sipuMewL5QrpY2PLfNbhlyOw==
+=DcKV
 -----END PGP SIGNATURE-----
 
---2Z2K0IlrPCVsbNpk--
+--TBzYoV7aIZqwlnfP0Q6EER3fBq5KIP5GV--
