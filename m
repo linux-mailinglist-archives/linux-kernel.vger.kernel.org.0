@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 347D6133227
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:08:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89F9A133268
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:10:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729586AbgAGVHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:07:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59358 "EHLO mail.kernel.org"
+        id S1729952AbgAGVKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:10:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728208AbgAGVHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:07:50 -0500
+        id S1729944AbgAGVKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:10:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4E522077B;
-        Tue,  7 Jan 2020 21:07:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A24452080A;
+        Tue,  7 Jan 2020 21:10:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578431270;
-        bh=W+ewjJ2Jn42luW3zaCJNXkWRnC/jh25sJQvQGYDWDnI=;
+        s=default; t=1578431420;
+        bh=GghM542/5An/xAVWZ1zB34NTn3sFJq1kzYBrhM2IJPk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WGXoSGflreA51mro/Hp8IGrU1EDbFnFhc+ZXirl+5rKA7pkbRUVdYgrN4woxNvXGn
-         w5Zhf5cy6w0aihUUjPXWQ53m1SX1//qYibdtM3BZExdiSaggXSK/mrkQ4K96wZBdaP
-         RXHXJeRiZi6wP2IDHti/TT6BuQFajW1qQkIS++Xw=
+        b=tyNuQz1qFol0iRpYrC4Cbhvrjv+kZNaZiBJMBZ5KqcQlRV3kb6Qzz1MHMasvtb3jW
+         Q5GhjsakfuoxueEVyEQuPh4s8kY2wVrJLsppByOIJX9CbaZDTjdJ32TQzecMwYVZu1
+         8eY1c2mlahjbiJivjZNpRi3N4jHtkYVaRsUQkZhI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 103/115] coresight: etb10: Do not call smp_processor_id from preemptible
-Date:   Tue,  7 Jan 2020 21:55:13 +0100
-Message-Id: <20200107205308.383005810@linuxfoundation.org>
+        stable@vger.kernel.org, Quinn Tran <qutran@marvell.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Roman Bolshakov <r.bolshakov@yadro.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 49/74] scsi: qla2xxx: Drop superfluous INIT_WORK of del_work
+Date:   Tue,  7 Jan 2020 21:55:14 +0100
+Message-Id: <20200107205216.096086745@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-References: <20200107205240.283674026@linuxfoundation.org>
+In-Reply-To: <20200107205135.369001641@linuxfoundation.org>
+References: <20200107205135.369001641@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +47,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Roman Bolshakov <r.bolshakov@yadro.com>
 
-[ Upstream commit 730766bae3280a25d40ea76a53dc6342e84e6513 ]
+commit 600954e6f2df695434887dfc6a99a098859990cf upstream.
 
-During a perf session we try to allocate buffers on the "node" associated
-with the CPU the event is bound to. If it is not bound to a CPU, we
-use the current CPU node, using smp_processor_id(). However this is unsafe
-in a pre-emptible context and could generate the splats as below :
+del_work is already initialized inside qla2x00_alloc_fcport, there's no
+need to overwrite it. Indeed, it might prevent complete traversal of
+workqueue list.
 
- BUG: using smp_processor_id() in preemptible [00000000] code: perf/2544
-
-Use NUMA_NO_NODE hint instead of using the current node for events
-not bound to CPUs.
-
-Fixes: 2997aa4063d97fdb39 ("coresight: etb10: implementing AUX API")
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: stable <stable@vger.kernel.org> # 4.6+
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Link: https://lore.kernel.org/r/20190620221237.3536-5-mathieu.poirier@linaro.org
+Fixes: a01c77d2cbc45 ("scsi: qla2xxx: Move session delete to driver work queue")
+Cc: Quinn Tran <qutran@marvell.com>
+Link: https://lore.kernel.org/r/20191125165702.1013-5-r.bolshakov@yadro.com
+Acked-by: Himanshu Madhani <hmadhani@marvell.com>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+Tested-by: Hannes Reinecke <hare@suse.de>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Roman Bolshakov <r.bolshakov@yadro.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- drivers/hwtracing/coresight/coresight-etb10.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/scsi/qla2xxx/qla_target.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
-index 0dad8626bcfb..0a59bf3af40b 100644
---- a/drivers/hwtracing/coresight/coresight-etb10.c
-+++ b/drivers/hwtracing/coresight/coresight-etb10.c
-@@ -275,9 +275,7 @@ static void *etb_alloc_buffer(struct coresight_device *csdev, int cpu,
- 	int node;
- 	struct cs_buffers *buf;
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -1210,7 +1210,6 @@ void qlt_schedule_sess_for_deletion(stru
+ 	    "Scheduling sess %p for deletion %8phC\n",
+ 	    sess, sess->port_name);
  
--	if (cpu == -1)
--		cpu = smp_processor_id();
--	node = cpu_to_node(cpu);
-+	node = (event->cpu == -1) ? NUMA_NO_NODE : cpu_to_node(event->cpu);
+-	INIT_WORK(&sess->del_work, qla24xx_delete_sess_fn);
+ 	queue_work(sess->vha->hw->wq, &sess->del_work);
+ }
  
- 	buf = kzalloc_node(sizeof(struct cs_buffers), GFP_KERNEL, node);
- 	if (!buf)
--- 
-2.20.1
-
 
 
