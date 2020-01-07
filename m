@@ -2,382 +2,369 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD1F61327E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 14:39:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 962261327BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 14:36:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728224AbgAGNjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 08:39:06 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:1188 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728187AbgAGNjF (ORCPT
+        id S1728119AbgAGNf2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 08:35:28 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:54470 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727559AbgAGNf0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 08:39:05 -0500
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 007DU1Yk007209;
-        Tue, 7 Jan 2020 08:38:35 -0500
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2051.outbound.protection.outlook.com [104.47.36.51])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2xaneaf5ys-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Jan 2020 08:38:35 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ca1FR1SlpNU3HxuLsSBtOG1RIf9iHF4JYFus+i6Iz6Z78KNXOdWswWLOIZYpZKiqcCnjH6BvJACUp0TknOaHUpQNyE9kNL5fbquyq2gicP/Oze9/K67yk8DnKgMbRrYV16soz82VVmRmnVPiKsqKmBZShXx9RsHD9JatZuVMovHtvaFEZVarm+ONJGFLAsO8cOHURpNszV3Wm72e4uuVyg2l6t4bTO5qETfyg72PyI3PKEk+WqEC0P8gUetR9WLHo4b1QbRaRi9//0HumRD3Ro8SLZlqZMBrZqTWe99+sa6hmjdybKOwAIjYnxI+0lXJu7OYQB7Ss0xs4jVNyRcJZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P7qH5Q3FPpfJvyBZLBo5+lIS71LXTYC0j91i9astl8c=;
- b=hz737KlevpEWKjCk4AclHcChz+v8dHXysBUFEvQQn1UMSXM0QrfMLste2KFqTwyCkj7C69kKEM5rmgn/hdp7v1XhIcGlPjQ137kBPJd/yCOBEhU4WwRxTyU/UUYHGTN9EIgHWA1fwU6HAcbFW1ikltfw2H3QD5TaxCzoQg9TLvNfonnGYeqWnTlBqiNhBrLza4S2S150MqegZ8MP6harkEmE3SS7y+3ruP61TyJUOamRXppeBc7UC+0QLPLkt5OfJ1MZP0hUH32Q+Z3r9LuaQ2owTB+nTC48sJp+ZybMaOOPDsoWMDQKn3o0/LClER23/i2ud+nkYTUl9WY/6IUEyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 137.71.25.57) smtp.rcpttodomain=lists.freedesktop.org
- smtp.mailfrom=analog.com; dmarc=bestguesspass action=none
- header.from=analog.com; dkim=none (message not signed); arc=none
+        Tue, 7 Jan 2020 08:35:26 -0500
+Received: by mail-pj1-f68.google.com with SMTP id kx11so9036768pjb.4;
+        Tue, 07 Jan 2020 05:35:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P7qH5Q3FPpfJvyBZLBo5+lIS71LXTYC0j91i9astl8c=;
- b=dGA9tHVG368AmHbiN9VPDHzn5paZvHCecoSmI17WluTtCUoCWY0NEN9axPxwmnLrM90JNA9qw4je7/TVpMCX/fW3Kj8gXBYpG10VvrfpbXAsj7C0/jb1jyW9R5x2z6iuhUxPFGgHoEEm5G8ijGJbV4z3rOvHaCpN44kZpOPLLx8=
-Received: from CH2PR03CA0027.namprd03.prod.outlook.com (2603:10b6:610:59::37)
- by BYAPR03MB3653.namprd03.prod.outlook.com (2603:10b6:a02:aa::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2602.13; Tue, 7 Jan
- 2020 13:38:32 +0000
-Received: from CY1NAM02FT025.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::205) by CH2PR03CA0027.outlook.office365.com
- (2603:10b6:610:59::37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2602.12 via Frontend
- Transport; Tue, 7 Jan 2020 13:38:32 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
-Received: from nwd2mta2.analog.com (137.71.25.57) by
- CY1NAM02FT025.mail.protection.outlook.com (10.152.75.148) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2602.11
- via Frontend Transport; Tue, 7 Jan 2020 13:38:31 +0000
-Received: from SCSQMBX11.ad.analog.com (scsqmbx11.ad.analog.com [10.77.17.10])
-        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id 007DcTmU017740
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 7 Jan 2020 05:38:30 -0800
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by SCSQMBX11.ad.analog.com
- (10.77.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Tue, 7 Jan 2020
- 05:38:29 -0800
-Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Tue, 7 Jan 2020 08:38:28 -0500
-Received: from btogorean-pc.ad.analog.com ([10.48.65.146])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 007DbflR002280;
-        Tue, 7 Jan 2020 08:38:25 -0500
-From:   Bogdan Togorean <bogdan.togorean@analog.com>
-To:     <dri-devel@lists.freedesktop.org>
-CC:     <airlied@linux.ie>, <daniel@ffwll.ch>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <a.hajda@samsung.com>,
-        <narmstrong@baylibre.com>, <Laurent.pinchart@ideasonboard.com>,
-        <jonas@kwiboo.se>, <jernej.skrabec@siol.net>,
-        <gregkh@linuxfoundation.org>, <tglx@linutronix.de>,
-        <sam@ravnborg.org>, <alexander.deucher@amd.com>,
-        <matt.redfearn@thinci.com>, <robdclark@chromium.org>,
-        <wsa+renesas@sang-engineering.com>, <linux-kernel@vger.kernel.org>,
-        Bogdan Togorean <bogdan.togorean@analog.com>
-Subject: [RESEND v3 2/2] drm: bridge: adv7511: Add support for ADV7535
-Date:   Tue, 7 Jan 2020 15:34:34 +0200
-Message-ID: <20200107133431.5201-3-bogdan.togorean@analog.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200107133431.5201-1-bogdan.togorean@analog.com>
-References: <20200107133431.5201-1-bogdan.togorean@analog.com>
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LgLKqwmlNN4Mr0eDg0yf4FKDSvMJLZg0nMWsSJUvFPU=;
+        b=FBGIL/UVilYyRZhq/DwOW78LnN7jI2/Xn3EWnkDWC/QkPGhmHMU3og21ak3ER4uUr+
+         FAzMbIGt79D2l/AHNU2v5ZlGC2eOR5et1tJ1hnTQ6YIcGVF4ayXJAkXznfQJyhBaIGn0
+         d64K84q89XLmXsy/+Eoh7WVnU6KjwcGeWLIcYJqbzE6dWpv+mSR4ijsyhk1N5hwsJ+rh
+         dQUDMQos42OJS6PTRUEHjWn0f8+o9+l290sW+PjXRvqijUC8+YtCCAn+Gm3R+4u93WSG
+         DC8rxOtY0SnGoKnCy/RedA0uhgPbTkBhhnoHeocYSWIEJUwmIsKeu5KfQmmXwnCLzT45
+         pctw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=LgLKqwmlNN4Mr0eDg0yf4FKDSvMJLZg0nMWsSJUvFPU=;
+        b=Q5H0zszP7iymZxf9Lc1OkIMYR/DVrrVmvtNIqsvfXKhjWurOMAJonT3U/GVvc/VjV/
+         dUUBmB9nVnmwOaG5Fpfi5PBhMukYg3d67zxh8rDG0hW5vqRhx/Uf83sjVWIwbzfrZJpz
+         /uIm5pY4NCh9DfZC0JkWysGyhMRHhAK5nATLCTI23lzxUKngUIklFOQ+PhLMQSFvb3vC
+         /46Ohmxd3OzZTQQo4eUT5RZeGh+fs9yF876fzdeZPxqOrJEZGq/tVnGivpGu94j91Zln
+         0qHBymlsU8vxJbhj6V/5hlrNRtrGkVAu0diKQCNfvDKBjKPoTk4AnOc56fuy+huuqHvZ
+         CHzQ==
+X-Gm-Message-State: APjAAAXkxcfG1qBH2qtexCer5nnLY6RXGn2kyRh19C+z7fFsf86h2Jcb
+        IQ8EJiDyTfItToU9YcHYnso=
+X-Google-Smtp-Source: APXvYqyerrLA2H8IC8zw9hF+PmLIhK+JPVE9wt+mkNq4KDajfJoSA8M1b+PteQQiRiiKCh3KLZMiSA==
+X-Received: by 2002:a17:902:bd96:: with SMTP id q22mr62709260pls.94.1578404125852;
+        Tue, 07 Jan 2020 05:35:25 -0800 (PST)
+Received: from gaurie.seo.corp.google.com ([2401:fa00:d:1:4eb0:a5ef:3975:7440])
+        by smtp.gmail.com with ESMTPSA id p17sm80358484pfn.31.2020.01.07.05.35.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2020 05:35:25 -0800 (PST)
+From:   Namhyung Kim <namhyung@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephane Eranian <eranian@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Subject: [PATCHSET 0/9] perf: Improve cgroup profiling (v4)
+Date:   Tue,  7 Jan 2020 22:34:52 +0900
+Message-Id: <20200107133501.327117-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(346002)(39860400002)(189003)(199004)(5660300002)(7416002)(1076003)(6666004)(7696005)(356004)(426003)(336012)(478600001)(26005)(186003)(70586007)(70206006)(6916009)(54906003)(316002)(8676002)(4326008)(44832011)(8936002)(36756003)(107886003)(2906002)(246002)(86362001)(7636002)(2616005)(16060500001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB3653;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3b2cd019-a717-4a01-a30f-08d79376e2d0
-X-MS-TrafficTypeDiagnostic: BYAPR03MB3653:
-X-Microsoft-Antispam-PRVS: <BYAPR03MB3653CBA21FB5BAB4B1C46A2A9B3F0@BYAPR03MB3653.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
-X-Forefront-PRVS: 027578BB13
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: dKYvsbrtj3ChTi4nJFR7sW6PO8VzqE4vwCqYFS4LmriFaEJyui/eM78iI8Py+eZ5zKi4PHaEv8/BHUgfVExKel2JGYT9Ol5qDK/hWsLrpA3rTij41YH8FwX3p4aMGB2RvQ2MmB1C/UNR4sQdTVU6yZOEd2xVlEA6sWjM9GL/65fnCM1Et7MTut0Wk1CsD48M0wpc/9fslgyqvOE+d8iKnk2Sex1H7TNrXH3ImeTv1FKxQcnNJT7eLPBNU10PiyCW8++H+t9nprit3kX+36CkzvT7PBegPoUxKJUSVtNW+v7yaOYqJ8o8vrcAC7V7lCx13KOslynD2VVCXr8U1R+Dq1w1YID5WBvXGWq8CtG+Mex32kgfR17UpYqBso+hky+N4O9w9yU35gCKSnuajyYrpgTd24hHkV9JWHnEFMQggPPxWIu7NL9/RlB4ncRwcnzpMkvmCxzBs5d89wl/ZIaFYBtzE49VGet2LwiAK+ns1NAT1Icr34JrHVvzdAFO76N+
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jan 2020 13:38:31.5391
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b2cd019-a717-4a01-a30f-08d79376e2d0
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB3653
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2020-01-07_03:2020-01-06,2020-01-07 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 adultscore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
- spamscore=0 malwarescore=0 phishscore=0 suspectscore=1 mlxlogscore=999
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001070112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ADV7535 is a DSI to HDMI bridge chip like ADV7533 but it allows
-1080p@60Hz. v1p2 is fixed to 1.8V on ADV7535 but on ADV7533 can be 1.2V
-or 1.8V and is configurable in a register.
+Hello,
 
-Signed-off-by: Bogdan Togorean <bogdan.togorean@analog.com>
----
- drivers/gpu/drm/bridge/adv7511/Kconfig       | 13 ++----
- drivers/gpu/drm/bridge/adv7511/Makefile      |  3 +-
- drivers/gpu/drm/bridge/adv7511/adv7511.h     | 44 +++-----------------
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 35 ++++++++++------
- 4 files changed, 32 insertions(+), 63 deletions(-)
+This work is to improve cgroup profiling in perf.  Currently it only
+supports profiling tasks in a specific cgroup and there's no way to
+identify which cgroup the current sample belongs to.  So I added
+PERF_SAMPLE_CGROUP to add cgroup id into each sample.  It's a 64-bit
+integer having file handle of the cgroup.  And kernel also generates
+PERF_RECORD_CGROUP event for new groups to correlate the cgroup id and
+cgroup name (path in the cgroup filesystem).  The cgroup id can be
+read from userspace by name_to_handle_at() system call so it can
+synthesize the CGROUP event for existing groups.
 
-diff --git a/drivers/gpu/drm/bridge/adv7511/Kconfig b/drivers/gpu/drm/bridge/adv7511/Kconfig
-index 8a56ff81f4fb..47d4eb9e845d 100644
---- a/drivers/gpu/drm/bridge/adv7511/Kconfig
-+++ b/drivers/gpu/drm/bridge/adv7511/Kconfig
-@@ -4,8 +4,9 @@ config DRM_I2C_ADV7511
- 	depends on OF
- 	select DRM_KMS_HELPER
- 	select REGMAP_I2C
-+	select DRM_MIPI_DSI
- 	help
--	  Support for the Analog Device ADV7511(W) and ADV7513 HDMI encoders.
-+	  Support for the Analog Device ADV7511(W)/13/33/35 HDMI encoders.
- 
- config DRM_I2C_ADV7511_AUDIO
- 	bool "ADV7511 HDMI Audio driver"
-@@ -15,16 +16,8 @@ config DRM_I2C_ADV7511_AUDIO
- 	  Support the ADV7511 HDMI Audio interface. This is used in
- 	  conjunction with the AV7511  HDMI driver.
- 
--config DRM_I2C_ADV7533
--	bool "ADV7533 encoder"
--	depends on DRM_I2C_ADV7511
--	select DRM_MIPI_DSI
--	default y
--	help
--	  Support for the Analog Devices ADV7533 DSI to HDMI encoder.
--
- config DRM_I2C_ADV7511_CEC
--	bool "ADV7511/33 HDMI CEC driver"
-+	bool "ADV7511/33/35 HDMI CEC driver"
- 	depends on DRM_I2C_ADV7511
- 	select CEC_CORE
- 	default y
-diff --git a/drivers/gpu/drm/bridge/adv7511/Makefile b/drivers/gpu/drm/bridge/adv7511/Makefile
-index b46ebeb35fd4..d8ceb534b51f 100644
---- a/drivers/gpu/drm/bridge/adv7511/Makefile
-+++ b/drivers/gpu/drm/bridge/adv7511/Makefile
-@@ -1,6 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
--adv7511-y := adv7511_drv.o
-+adv7511-y := adv7511_drv.o adv7533.o
- adv7511-$(CONFIG_DRM_I2C_ADV7511_AUDIO) += adv7511_audio.o
- adv7511-$(CONFIG_DRM_I2C_ADV7511_CEC) += adv7511_cec.o
--adv7511-$(CONFIG_DRM_I2C_ADV7533) += adv7533.o
- obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511.o
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511.h b/drivers/gpu/drm/bridge/adv7511/adv7511.h
-index 52b2adfdc877..ed9cfd944098 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511.h
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511.h
-@@ -220,6 +220,10 @@
- 
- #define ADV7533_REG_CEC_OFFSET		0x70
- 
-+#define ADV7533_REG_SUPPLY_SELECT	0xe4
-+
-+#define ADV7533_V1P2_ENABLE		BIT(7)
-+
- enum adv7511_input_clock {
- 	ADV7511_INPUT_CLOCK_1X,
- 	ADV7511_INPUT_CLOCK_2X,
-@@ -320,6 +324,7 @@ struct adv7511_video_config {
- enum adv7511_type {
- 	ADV7511,
- 	ADV7533,
-+	ADV7535,
- };
- 
- #define ADV7511_MAX_ADDRS 3
-@@ -393,7 +398,6 @@ static inline int adv7511_cec_init(struct device *dev, struct adv7511 *adv7511)
- }
- #endif
- 
--#ifdef CONFIG_DRM_I2C_ADV7533
- void adv7533_dsi_power_on(struct adv7511 *adv);
- void adv7533_dsi_power_off(struct adv7511 *adv);
- void adv7533_mode_set(struct adv7511 *adv, const struct drm_display_mode *mode);
-@@ -402,44 +406,6 @@ int adv7533_patch_cec_registers(struct adv7511 *adv);
- int adv7533_attach_dsi(struct adv7511 *adv);
- void adv7533_detach_dsi(struct adv7511 *adv);
- int adv7533_parse_dt(struct device_node *np, struct adv7511 *adv);
--#else
--static inline void adv7533_dsi_power_on(struct adv7511 *adv)
--{
--}
--
--static inline void adv7533_dsi_power_off(struct adv7511 *adv)
--{
--}
--
--static inline void adv7533_mode_set(struct adv7511 *adv,
--				    const struct drm_display_mode *mode)
--{
--}
--
--static inline int adv7533_patch_registers(struct adv7511 *adv)
--{
--	return -ENODEV;
--}
--
--static inline int adv7533_patch_cec_registers(struct adv7511 *adv)
--{
--	return -ENODEV;
--}
--
--static inline int adv7533_attach_dsi(struct adv7511 *adv)
--{
--	return -ENODEV;
--}
--
--static inline void adv7533_detach_dsi(struct adv7511 *adv)
--{
--}
--
--static inline int adv7533_parse_dt(struct device_node *np, struct adv7511 *adv)
--{
--	return -ENODEV;
--}
--#endif
- 
- #ifdef CONFIG_DRM_I2C_ADV7511_AUDIO
- int adv7511_audio_init(struct device *dev, struct adv7511 *adv7511);
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-index 9e13e466e72c..35595472e771 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-@@ -367,7 +367,7 @@ static void adv7511_power_on(struct adv7511 *adv7511)
- 	 */
- 	regcache_sync(adv7511->regmap);
- 
--	if (adv7511->type == ADV7533)
-+	if (adv7511->type == ADV7533 || adv7511->type == ADV7535)
- 		adv7533_dsi_power_on(adv7511);
- 	adv7511->powered = true;
- }
-@@ -387,7 +387,7 @@ static void __adv7511_power_off(struct adv7511 *adv7511)
- static void adv7511_power_off(struct adv7511 *adv7511)
- {
- 	__adv7511_power_off(adv7511);
--	if (adv7511->type == ADV7533)
-+	if (adv7511->type == ADV7533 || adv7511->type == ADV7535)
- 		adv7533_dsi_power_off(adv7511);
- 	adv7511->powered = false;
- }
-@@ -761,7 +761,7 @@ static void adv7511_mode_set(struct adv7511 *adv7511,
- 	regmap_update_bits(adv7511->regmap, 0x17,
- 		0x60, (vsync_polarity << 6) | (hsync_polarity << 5));
- 
--	if (adv7511->type == ADV7533)
-+	if (adv7511->type == ADV7533 || adv7511->type == ADV7535)
- 		adv7533_mode_set(adv7511, adj_mode);
- 
- 	drm_mode_copy(&adv7511->curr_mode, adj_mode);
-@@ -874,7 +874,7 @@ static int adv7511_bridge_attach(struct drm_bridge *bridge)
- 				 &adv7511_connector_helper_funcs);
- 	drm_connector_attach_encoder(&adv->connector, bridge->encoder);
- 
--	if (adv->type == ADV7533)
-+	if (adv->type == ADV7533 || adv->type == ADV7535)
- 		ret = adv7533_attach_dsi(adv);
- 
- 	if (adv->i2c_main->irq)
-@@ -903,6 +903,7 @@ static const char * const adv7511_supply_names[] = {
- 	"dvdd-3v",
- };
- 
-+/* The order of entries is important. If changed update hardcoded indices */
- static const char * const adv7533_supply_names[] = {
- 	"avdd",
- 	"dvdd",
-@@ -952,7 +953,7 @@ static bool adv7511_cec_register_volatile(struct device *dev, unsigned int reg)
- 	struct i2c_client *i2c = to_i2c_client(dev);
- 	struct adv7511 *adv7511 = i2c_get_clientdata(i2c);
- 
--	if (adv7511->type == ADV7533)
-+	if (adv7511->type == ADV7533 || adv7511->type == ADV7535)
- 		reg -= ADV7533_REG_CEC_OFFSET;
- 
- 	switch (reg) {
-@@ -994,7 +995,7 @@ static int adv7511_init_cec_regmap(struct adv7511 *adv)
- 		goto err;
- 	}
- 
--	if (adv->type == ADV7533) {
-+	if (adv->type == ADV7533 || adv->type == ADV7535) {
- 		ret = adv7533_patch_cec_registers(adv);
- 		if (ret)
- 			goto err;
-@@ -1094,8 +1095,9 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
- 	struct adv7511_link_config link_config;
- 	struct adv7511 *adv7511;
- 	struct device *dev = &i2c->dev;
-+	struct regulator *reg_v1p2;
- 	unsigned int val;
--	int ret;
-+	int ret, reg_v1p2_uV;
- 
- 	if (!dev->of_node)
- 		return -EINVAL;
-@@ -1163,6 +1165,17 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
- 	if (ret)
- 		goto uninit_regulators;
- 
-+	if (adv7511->type == ADV7533) {
-+		reg_v1p2 = adv7511->supplies[5].consumer;
-+		reg_v1p2_uV = regulator_get_voltage(reg_v1p2);
-+
-+		if (reg_v1p2_uV == 1200000) {
-+			regmap_update_bits(adv7511->regmap,
-+				ADV7533_REG_SUPPLY_SELECT, ADV7533_V1P2_ENABLE,
-+				ADV7533_V1P2_ENABLE);
-+		}
-+	}
-+
- 	adv7511_packet_disable(adv7511, 0xffff);
- 
- 	adv7511->i2c_edid = i2c_new_ancillary_device(i2c, "edid",
-@@ -1242,7 +1255,7 @@ static int adv7511_remove(struct i2c_client *i2c)
- {
- 	struct adv7511 *adv7511 = i2c_get_clientdata(i2c);
- 
--	if (adv7511->type == ADV7533)
-+	if (adv7511->type == ADV7533 || adv7511->type == ADV7535)
- 		adv7533_detach_dsi(adv7511);
- 	i2c_unregister_device(adv7511->i2c_cec);
- 	if (adv7511->cec_clk)
-@@ -1266,9 +1279,8 @@ static const struct i2c_device_id adv7511_i2c_ids[] = {
- 	{ "adv7511", ADV7511 },
- 	{ "adv7511w", ADV7511 },
- 	{ "adv7513", ADV7511 },
--#ifdef CONFIG_DRM_I2C_ADV7533
- 	{ "adv7533", ADV7533 },
--#endif
-+	{ "adv7535", ADV7535 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, adv7511_i2c_ids);
-@@ -1277,9 +1289,8 @@ static const struct of_device_id adv7511_of_ids[] = {
- 	{ .compatible = "adi,adv7511", .data = (void *)ADV7511 },
- 	{ .compatible = "adi,adv7511w", .data = (void *)ADV7511 },
- 	{ .compatible = "adi,adv7513", .data = (void *)ADV7511 },
--#ifdef CONFIG_DRM_I2C_ADV7533
- 	{ .compatible = "adi,adv7533", .data = (void *)ADV7533 },
--#endif
-+	{ .compatible = "adi,adv7535", .data = (void *)ADV7535 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, adv7511_of_ids);
+So why do we want this?  Systems running a large number of jobs in
+different cgroups want to profiling such jobs precisely. This includes
+container hosting systems widely used today. Currently perf supports
+namespace tracking but the systems may not use (cgroup) namespace for
+their jobs. Also it'd be more intuitive to see cgroup names (as
+they're given by user or sysadmin) rather than numeric
+cgroup/namespace id even if they use the namespaces.
+
+From Stephane Eranian:
+> In data centers you care about attributing samples to a job not such
+> much to a process.  A job may have multiple processes which may come
+> and go. The cgroup on the other hand stays around for the entire
+> lifetime of the job. It is much easier to map a cgroup name to a
+> particular job than it is to map a pid back to a job name,
+> especially for offline post-processing.
+
+Note that this only works for "perf_event" cgroups (obviously) so if
+users are still using cgroup-v1 interface, they need to have same
+hierarchy for subsystem(s) want to profile with it.
+
+ * Changes from v3:
+  - staticize perf_event_cgroup()
+  - fix sample parsing test
+
+ * Changes from v2:
+  - remove path_len from cgroup_event
+  - bail out if kernel doesn't support cgroup sampling
+  - add some description in the Kconfig
+
+ * Changes from v1:
+  - use new cgroup id (= file handle)
+
+The code is available at perf/cgroup-v4 branch in
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
+
+
+The testing result looks something like this:
+
+  [root@qemu build]# ./perf record --all-cgroups ./cgtest
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.009 MB perf.data (150 samples) ]
+  
+  [root@qemu build]# ./perf report -s cgroup,comm --stdio
+  # To display the perf.data header info, please use --header/--header-only options.
+  #
+  #
+  # Total Lost Samples: 0
+  #
+  # Samples: 150  of event 'cpu-clock:pppH'
+  # Event count (approx.): 37500000
+  #
+  # Overhead  cgroup      Command
+  # ........  ..........  .......
+  #
+      32.00%  /sub/cgrp2  looper2
+      28.00%  /sub/cgrp1  looper1
+      25.33%  /sub        looper0
+       4.00%  /           cgtest 
+       4.00%  /sub        cgtest 
+       3.33%  /sub/cgrp2  cgtest 
+       2.67%  /sub/cgrp1  cgtest 
+       0.67%  /           looper0
+
+
+The test program (cgtest) follows.
+
+Thanks,
+Namhyung
+
+
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Li Zefan <lizefan@huawei.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+
+
+-------8<-----------------------------------------8<----------------
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sched.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <sys/prctl.h>
+#include <sys/mount.h>
+
+char cgbase[] = "/sys/fs/cgroup/perf_event";
+
+void mkcgrp(char *name) {
+  char buf[256];
+
+  snprintf(buf, sizeof(buf), "%s%s", cgbase, name);
+  if (mkdir(buf, 0755) < 0)
+    perror("mkdir");
+}
+
+void rmcgrp(char *name) {
+  char buf[256];
+
+  snprintf(buf, sizeof(buf), "%s%s", cgbase, name);
+  if (rmdir(buf) < 0)
+    perror("rmdir");
+}
+
+void setcgrp(char *name) {
+  char buf[256];
+  int fd;
+
+  snprintf(buf, sizeof(buf), "%s%s/tasks", cgbase, name);
+
+  fd = open(buf, O_WRONLY);
+  if (fd > 0) {
+    if (write(fd, "0\n", 2) != 2)
+      perror("write");
+    close(fd);
+  }
+}
+
+void create_sub_cgroup(int idx) {
+  char buf[128];
+
+  snprintf(buf, sizeof(buf), "/sub/cgrp%d", idx);
+  mkcgrp(buf);
+}
+
+void remove_sub_cgroup(int idx) {
+  char buf[128];
+
+  snprintf(buf, sizeof(buf), "/sub/cgrp%d", idx);
+  rmcgrp(buf);
+}
+
+void set_sub_cgroup(int idx) {
+  char buf[128];
+
+  snprintf(buf, sizeof(buf), "/sub/cgrp%d", idx);
+  setcgrp(buf);
+}
+
+void set_task_name(int idx) {
+  char buf[16];
+
+  snprintf(buf, sizeof(buf), "looper%d", idx);
+  prctl(PR_SET_NAME, buf, 0, 0, 0);
+}
+
+void loop(unsigned max) {
+  volatile unsigned int count = 1;
+
+  while (count++ != max) {
+    asm volatile ("pause");
+  }
+}
+
+void worker(int idx, unsigned cnt, int new_ns) {
+  int oldns;
+
+  create_sub_cgroup(idx);
+  set_sub_cgroup(idx);
+
+  if (new_ns) {
+    if (unshare(CLONE_NEWCGROUP) < 0)
+      perror("unshare");
+
+#if 0  /* FIXME */
+    if (unshare(CLONE_NEWNS) < 0)
+      perror("unshare");
+
+    if (mount("none", "/sys", NULL, MS_REMOUNT | MS_REC | MS_SLAVE, NULL) < 0)
+      perror("mount --make-rslave");
+
+    sleep(1);
+    if (umount("/sys/fs/cgroup/perf_event") < 0)
+      perror("umount");
+
+    if (mount("cgroup", "/sys/fs/cgroup/perf_event", "cgroup",
+              MS_NODEV | MS_NOEXEC | MS_NOSUID, "perf_event") < 0)
+      perror("mount again");
+#endif
+  }
+
+  if (fork() == 0) {
+    set_task_name(idx);
+    loop(cnt);
+    exit(0);
+  }
+  wait(NULL);
+}
+
+int main(int argc, char *argv[])
+{
+  int i, nr = 2;
+  int new_ns = 1;
+  unsigned cnt = 1000000;
+  int fd;
+
+  if (argc > 1)
+    nr = atoi(argv[1]);
+  if (argc > 2)
+    cnt = atoi(argv[2]);
+  if (argc > 3)
+    new_ns = atoi(argv[3]);
+
+  mkcgrp("/sub");
+  setcgrp("/sub");
+
+  for (i = 0; i < nr; i++) {
+    if (fork() == 0) {
+      worker(i+1, cnt, new_ns);
+      exit(0);
+    }
+  }
+
+  set_task_name(0);
+  loop(cnt);
+
+  for (i = 0; i < nr; i++)
+    wait(NULL);
+
+  for (i = 0; i < nr; i++)
+    remove_sub_cgroup(i+1);
+
+  setcgrp("/");
+  rmcgrp("/sub");
+
+  return 0;
+}
+-------8<-----------------------------------------8<----------------
+
+
+Namhyung Kim (9):
+  perf/core: Add PERF_RECORD_CGROUP event
+  perf/core: Add PERF_SAMPLE_CGROUP feature
+  perf tools: Basic support for CGROUP event
+  perf tools: Maintain cgroup hierarchy
+  perf report: Add 'cgroup' sort key
+  perf record: Support synthesizing cgroup events
+  perf record: Add --all-cgroups option
+  perf top: Add --all-cgroups option
+  perf script: Add --show-cgroup-events option
+
+ include/linux/perf_event.h                |   1 +
+ include/uapi/linux/perf_event.h           |  16 ++-
+ init/Kconfig                              |   3 +-
+ kernel/events/core.c                      | 133 ++++++++++++++++++++++
+ tools/include/uapi/linux/perf_event.h     |  16 ++-
+ tools/lib/perf/include/perf/event.h       |   7 ++
+ tools/perf/Documentation/perf-record.txt  |   5 +-
+ tools/perf/Documentation/perf-report.txt  |   1 +
+ tools/perf/Documentation/perf-script.txt  |   3 +
+ tools/perf/Documentation/perf-top.txt     |   4 +
+ tools/perf/builtin-diff.c                 |   1 +
+ tools/perf/builtin-record.c               |  10 ++
+ tools/perf/builtin-report.c               |   1 +
+ tools/perf/builtin-script.c               |  41 +++++++
+ tools/perf/builtin-top.c                  |   9 ++
+ tools/perf/tests/sample-parsing.c         |   6 +-
+ tools/perf/util/cgroup.c                  |  75 +++++++++++-
+ tools/perf/util/cgroup.h                  |  16 ++-
+ tools/perf/util/event.c                   |  19 ++++
+ tools/perf/util/event.h                   |   6 +
+ tools/perf/util/evsel.c                   |  17 ++-
+ tools/perf/util/evsel.h                   |   1 +
+ tools/perf/util/hist.c                    |   7 ++
+ tools/perf/util/hist.h                    |   1 +
+ tools/perf/util/machine.c                 |  19 ++++
+ tools/perf/util/machine.h                 |   3 +
+ tools/perf/util/perf_event_attr_fprintf.c |   2 +
+ tools/perf/util/record.h                  |   1 +
+ tools/perf/util/session.c                 |   8 ++
+ tools/perf/util/sort.c                    |  31 +++++
+ tools/perf/util/sort.h                    |   2 +
+ tools/perf/util/synthetic-events.c        | 127 +++++++++++++++++++++
+ tools/perf/util/synthetic-events.h        |   1 +
+ tools/perf/util/tool.h                    |   2 +
+ 34 files changed, 581 insertions(+), 14 deletions(-)
+
+
+base-commit: 6c4798d3f08b81c2c52936b10e0fa872590c96ae
 -- 
-2.23.0
+2.24.1.735.g03f4e72817-goog
 
