@@ -2,435 +2,821 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B01A132A05
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 16:28:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99CB5132A15
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 16:33:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728258AbgAGP2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 10:28:04 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:26108 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727559AbgAGP2D (ORCPT
+        id S1728273AbgAGPdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 10:33:24 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35628 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727994AbgAGPdY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 10:28:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578410881;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=qm299QUixuaaBgBwxzYETjvXK86HrilknWdcDk9AtjE=;
-        b=a/9xXvy43UGCaFG3CTPbnbflIjz6Ou8fWJhjZ4MexAnysLY5qhBuwWDw2wtsIvW5KZD8r8
-        YpoCkBrd6j+Uq5oV4K4+HqjnWv2dIKdhK7VNepZj6LotJqjCt7z8+oP8LgUPogmPUygdLY
-        uIlUyDUROkPyBZ5aS45vTMC2Wlpw+oQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-154-gJWaBtf4P4WITUnTiEQHVg-1; Tue, 07 Jan 2020 10:27:58 -0500
-X-MC-Unique: gJWaBtf4P4WITUnTiEQHVg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 097391052177;
-        Tue,  7 Jan 2020 15:27:57 +0000 (UTC)
-Received: from kamzik.brq.redhat.com (unknown [10.43.2.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 65B145C1BB;
-        Tue,  7 Jan 2020 15:27:52 +0000 (UTC)
-Date:   Tue, 7 Jan 2020 16:27:49 +0100
-From:   Andrew Jones <drjones@redhat.com>
-To:     Ben Gardon <bgardon@google.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        Peter Xu <peterx@redhat.com>
-Subject: Re: [PATCH v3 6/8] KVM: selftests: Support multiple vCPUs in demand
- paging test
-Message-ID: <20200107152749.nlh7cehr3yicijxv@kamzik.brq.redhat.com>
-References: <20191216213901.106941-1-bgardon@google.com>
- <20191216213901.106941-7-bgardon@google.com>
+        Tue, 7 Jan 2020 10:33:24 -0500
+Received: by mail-pg1-f194.google.com with SMTP id l24so63705pgk.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 07:33:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=b/IfZd9OcxXXNOuoeglq3gbLeaR3ZBvMEeP77XeT8SM=;
+        b=rUml7BOFvaU7+iQWI004f6o2tIlCa+mRct3/kWH21d8NoI7QHqIVNidGE78A5Xwuos
+         FOhvbTDGF2mU8+N/58xG76vclmHG13TZpspUMJ4MP8pUg1K9LygSMtU98MPJzwWdVqKV
+         JsK/HXrpFC/eZFytSYVo7doFvym2uRLaqO7/jU1FY79htDRzOg51notWJSRxUes+RuD2
+         rq0DT9sthmhFg9Eo+f24wp8HxyOAZ82AoUcLmnbfr/oNvURFwUp1BCl5HlbxT0NllkJc
+         o5/bNGE290HzGl14BUx3vOxO7C5tQZqHbn3k0+JbjANX/obRHJt/+wjnRoZmo50qTipA
+         Zk5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=b/IfZd9OcxXXNOuoeglq3gbLeaR3ZBvMEeP77XeT8SM=;
+        b=PpEVP+9XdmtYDh8/QwQdJ6qbPyuRe1KhUEF9jbcu5hwre8e5lPeUlV/cAnr0SC+jzi
+         o1jjyRlyUYQf2L14u/LtNGeJ7//eIE+vRjkePanOUBGsQ+bbSo/7xJL/kIot5YP4EHMX
+         g8PVscDHujYD9R8BDqtluGt5Hp7yumUvUlMeFlmf+afLIzkgZvW3GgBEiSfDiF14+B6N
+         9e3O/1ZH6WakSLT+EXECsvexDXDkOVOY8QwqyX8Gi0HItFBAzini60VR1djKROqs/eQZ
+         EAxaw0m2Ne9yq8/5n5e0230nSnWLQrxBrrGrDbPfQMoMgB+k57V9GfxHj9ceDAc2PSpY
+         qB3A==
+X-Gm-Message-State: APjAAAWUTIo3WyUJxZxvLSpAgclM02/KjLmmIg2oJ+WDeNGyEAlfbNC2
+        iCGnPKhmZ94U9w9gbRSKDlM=
+X-Google-Smtp-Source: APXvYqwSc4iH9up5RMbylrm1FpQChFOjLnVDjmkeIPZB/asA2kxbehAl9CFbi+4e03XGzTk3rDoEmw==
+X-Received: by 2002:a62:3086:: with SMTP id w128mr81191786pfw.58.1578411202768;
+        Tue, 07 Jan 2020 07:33:22 -0800 (PST)
+Received: from localhost.localdomain ([123.241.77.25])
+        by smtp.gmail.com with ESMTPSA id z30sm85865725pfq.154.2020.01.07.07.33.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 07 Jan 2020 07:33:22 -0800 (PST)
+From:   Gene Chen <gene.chen.richtek@gmail.com>
+To:     lee.jones@linaro.org, matthias.bgg@gmail.com
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        gene_chen@richtek.com, Wilma.Wu@mediatek.com,
+        shufan_lee@richtek.com, cy_huang@richtek.com
+Subject: [PATCH v7] mfd: mt6360: add pmic mt6360 driver
+Date:   Tue,  7 Jan 2020 23:33:14 +0800
+Message-Id: <20200107153314.21486-1-gene.chen.richtek@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191216213901.106941-7-bgardon@google.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 01:38:59PM -0800, Ben Gardon wrote:
-> Most VMs have multiple vCPUs, the concurrent execution of which has a
-> substantial impact on demand paging performance. Add an option to create
-> multiple vCPUs to each access disjoint regions of memory.
-> 
-> Signed-off-by: Ben Gardon <bgardon@google.com>
-> ---
->  .../selftests/kvm/demand_paging_test.c        | 199 ++++++++++++------
->  1 file changed, 136 insertions(+), 63 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/demand_paging_test.c b/tools/testing/selftests/kvm/demand_paging_test.c
-> index 8ede26e088ab6..2b80f614dd537 100644
-> --- a/tools/testing/selftests/kvm/demand_paging_test.c
-> +++ b/tools/testing/selftests/kvm/demand_paging_test.c
-> @@ -24,8 +24,6 @@
->  #include "kvm_util.h"
->  #include "processor.h"
->  
-> -#define VCPU_ID				1
-> -
->  /* The memory slot index demand page */
->  #define TEST_MEM_SLOT_INDEX		1
->  
-> @@ -34,6 +32,12 @@
->  
->  #define DEFAULT_GUEST_TEST_MEM_SIZE (1 << 30) /* 1G */
->  
-> +#ifdef PRINT_PER_VCPU_UPDATES
-> +#define PER_VCPU_DEBUG(...) DEBUG(__VA_ARGS__)
-> +#else
-> +#define PER_VCPU_DEBUG(...)
-> +#endif
-> +
->  /*
->   * Guest/Host shared variables. Ensure addr_gva2hva() and/or
->   * sync_global_to/from_guest() are used when accessing from
-> @@ -76,10 +80,6 @@ static void guest_code(uint64_t gva, uint64_t pages)
->  	GUEST_SYNC(1);
->  }
->  
-> -/* Points to the test VM memory region on which we are doing demand paging */
-> -static void *host_test_mem;
-> -static uint64_t host_num_pages;
-> -
->  struct vcpu_thread_args {
->  	uint64_t gva;
->  	uint64_t pages;
-> @@ -113,18 +113,32 @@ static void *vcpu_worker(void *data)
->  	return NULL;
->  }
->  
-> -static struct kvm_vm *create_vm(enum vm_guest_mode mode, uint32_t vcpuid,
-> -				uint64_t extra_mem_pages, void *guest_code)
-> +#define PAGE_SHIFT_4K  12
-> +#define PTES_PER_PT 512
-> +
-> +static struct kvm_vm *create_vm(enum vm_guest_mode mode, int vcpus,
-> +				uint64_t vcpu_wss)
->  {
->  	struct kvm_vm *vm;
-> -	uint64_t extra_pg_pages = extra_mem_pages / 512 * 2;
-> +	uint64_t pages = DEFAULT_GUEST_PHY_PAGES;
->  
-> -	vm = _vm_create(mode, DEFAULT_GUEST_PHY_PAGES + extra_pg_pages, O_RDWR);
-> +	/* Account for a few pages per-vCPU for stacks */
-> +	pages += DEFAULT_STACK_PGS * vcpus;
-> +
-> +	/*
-> +	 * Reserve twice the ammount of memory needed to map the test region and
-> +	 * the page table / stacks region, at 4k, for page tables. Do the
-> +	 * calculation with 4K page size: the smallest of all archs. (e.g., 64K
-> +	 * page size guest will need even less memory for page tables).
-> +	 */
-> +	pages += (2 * pages) / PTES_PER_PT;
-> +	pages += ((2 * vcpus * vcpu_wss) >> PAGE_SHIFT_4K) / PTES_PER_PT;
-> +
-> +	vm = _vm_create(mode, pages, O_RDWR);
->  	kvm_vm_elf_load(vm, program_invocation_name, 0, 0);
->  #ifdef __x86_64__
->  	vm_create_irqchip(vm);
->  #endif
-> -	vm_vcpu_add_default(vm, vcpuid, guest_code);
->  	return vm;
->  }
->  
-> @@ -232,15 +246,13 @@ static void *uffd_handler_thread_fn(void *arg)
->  
->  static int setup_demand_paging(struct kvm_vm *vm,
->  			       pthread_t *uffd_handler_thread,
-> -			       useconds_t uffd_delay)
-> +			       useconds_t uffd_delay,
-> +			       struct uffd_handler_args *uffd_args,
-> +			       void *hva, uint64_t len)
->  {
->  	int uffd;
->  	struct uffdio_api uffdio_api;
->  	struct uffdio_register uffdio_register;
-> -	struct uffd_handler_args uffd_args;
-> -
-> -	guest_data_prototype = malloc(host_page_size);
-> -	memset(guest_data_prototype, 0xAB, host_page_size);
->  
->  	uffd = syscall(__NR_userfaultfd, O_CLOEXEC | O_NONBLOCK);
->  	if (uffd == -1) {
-> @@ -255,8 +267,8 @@ static int setup_demand_paging(struct kvm_vm *vm,
->  		return -1;
->  	}
->  
-> -	uffdio_register.range.start = (uint64_t)host_test_mem;
-> -	uffdio_register.range.len = host_num_pages * host_page_size;
-> +	uffdio_register.range.start = (uint64_t)hva;
-> +	uffdio_register.range.len = len;
->  	uffdio_register.mode = UFFDIO_REGISTER_MODE_MISSING;
->  	if (ioctl(uffd, UFFDIO_REGISTER, &uffdio_register) == -1) {
->  		DEBUG("ioctl uffdio_register failed\n");
-> @@ -269,42 +281,37 @@ static int setup_demand_paging(struct kvm_vm *vm,
->  		return -1;
->  	}
->  
-> -	uffd_args.uffd = uffd;
-> -	uffd_args.delay = uffd_delay;
-> +	uffd_args->uffd = uffd;
-> +	uffd_args->delay = uffd_delay;
->  	pthread_create(uffd_handler_thread, NULL, uffd_handler_thread_fn,
-> -		       &uffd_args);
-> +		       uffd_args);
-> +
-> +	PER_VCPU_DEBUG("Created uffd thread for HVA range [%p, %p)\n",
-> +		       hva, hva + len);
->  
->  	return 0;
->  }
->  
-> -#define PAGE_SHIFT_4K  12
-> -
->  static void run_test(enum vm_guest_mode mode, bool use_uffd,
-> -		     useconds_t uffd_delay, uint64_t vcpu_wss)
-> +		     useconds_t uffd_delay, int vcpus, uint64_t vcpu_wss)
->  {
-> -	pthread_t vcpu_thread;
-> -	pthread_t uffd_handler_thread;
-> +	pthread_t *vcpu_threads;
-> +	pthread_t *uffd_handler_threads = NULL;
-> +	struct uffd_handler_args *uffd_args = NULL;
->  	struct kvm_vm *vm;
-> -	struct vcpu_thread_args vcpu_args;
-> +	struct vcpu_thread_args *vcpu_args;
->  	uint64_t guest_num_pages;
-> +	int vcpu_id;
->  	int r;
->  
-> -	/*
-> -	 * We reserve page table for twice the ammount of memory we intend
-> -	 * to use in the test region for demand paging. Here we do the
-> -	 * calculation with 4K page size which is the smallest so the page
-> -	 * number will be enough for all archs. (e.g., 64K page size guest
-> -	 * will need even less memory for page tables).
-> -	 */
-> -	vm = create_vm(mode, VCPU_ID, (2 * vcpu_wss) >> PAGE_SHIFT_4K,
-> -		       guest_code);
-> +	vm = create_vm(mode, vcpus, vcpu_wss);
->  
->  	guest_page_size = vm_get_page_size(vm);
->  
->  	TEST_ASSERT(vcpu_wss % guest_page_size == 0,
->  		    "Guest memory size is not guest page size aligned.");
->  
-> -	guest_num_pages = vcpu_wss / guest_page_size;
-> +	guest_num_pages = (vcpus * vcpu_wss) / guest_page_size;
->  
->  #ifdef __s390x__
->  	/* Round up to multiple of 1M (segment size) */
-> @@ -316,13 +323,12 @@ static void run_test(enum vm_guest_mode mode, bool use_uffd,
->  	 */
->  	TEST_ASSERT(guest_num_pages < vm_get_max_gfn(vm),
->  		    "Requested more guest memory than address space allows.\n"
-> -		    "    guest pages: %lx max gfn: %lx\n",
-> -		    guest_num_pages, vm_get_max_gfn(vm));
-> +		    "    guest pages: %lx max gfn: %lx vcpus: %d wss: %lx]\n",
-> +		    guest_num_pages, vm_get_max_gfn(vm), vcpus, vcpu_wss);
->  
->  	host_page_size = getpagesize();
->  	TEST_ASSERT(vcpu_wss % host_page_size == 0,
->  		    "Guest memory size is not host page size aligned.");
-> -	host_num_pages = vcpu_wss / host_page_size;
->  
->  	guest_test_phys_mem = (vm_get_max_gfn(vm) - guest_num_pages) *
->  			      guest_page_size;
-> @@ -347,43 +353,102 @@ static void run_test(enum vm_guest_mode mode, bool use_uffd,
->  	virt_map(vm, guest_test_virt_mem, guest_test_phys_mem,
->  		 guest_num_pages * guest_page_size, 0);
->  
-> -	/* Cache the HVA pointer of the region */
-> -	host_test_mem = addr_gpa2hva(vm, (vm_paddr_t)guest_test_phys_mem);
-> +	/* Export the shared variables to the guest */
-> +	sync_global_to_guest(vm, host_page_size);
-> +	sync_global_to_guest(vm, guest_page_size);
-> +
-> +	guest_data_prototype = malloc(host_page_size);
-> +	TEST_ASSERT(guest_data_prototype, "Memory allocation failed");
-> +	memset(guest_data_prototype, 0xAB, host_page_size);
-> +
-> +	vcpu_threads = malloc(vcpus * sizeof(*vcpu_threads));
-> +	TEST_ASSERT(vcpu_threads, "Memory allocation failed");
->  
->  	if (use_uffd) {
-> -		/* Set up user fault fd to handle demand paging requests. */
->  		quit_uffd_thread = false;
-> -		r = setup_demand_paging(vm, &uffd_handler_thread,
-> -					uffd_delay);
-> -		if (r < 0)
-> -			exit(-r);
-> +
-> +		uffd_handler_threads =
-> +			malloc(vcpus * sizeof(*uffd_handler_threads));
-> +		TEST_ASSERT(uffd_handler_threads, "Memory allocation failed");
-> +
-> +		uffd_args = malloc(vcpus * sizeof(*uffd_args));
-> +		TEST_ASSERT(uffd_args, "Memory allocation failed");
->  	}
->  
-> +	vcpu_args = malloc(vcpus * sizeof(*vcpu_args));
-> +	TEST_ASSERT(vcpu_args, "Memory allocation failed");
-> +
-> +	for (vcpu_id = 0; vcpu_id < vcpus; vcpu_id++) {
-> +		vm_paddr_t vcpu_gpa;
-> +		void *vcpu_hva;
-> +
-> +		vm_vcpu_add_default(vm, vcpu_id, guest_code);
-> +
-> +		vcpu_gpa = guest_test_phys_mem + (vcpu_id * vcpu_wss);
-> +		PER_VCPU_DEBUG("Added VCPU %d with test mem gpa [%lx, %lx)\n",
-> +			       vcpu_id, vcpu_gpa, vcpu_gpa + vcpu_wss);
-> +
-> +		/* Cache the HVA pointer of the region */
-> +		vcpu_hva = addr_gpa2hva(vm, vcpu_gpa);
-> +
-> +		if (use_uffd) {
-> +			/*
-> +			 * Set up user fault fd to handle demand paging
-> +			 * requests.
-> +			 */
-> +			r = setup_demand_paging(vm,
-> +						&uffd_handler_threads[vcpu_id],
-> +						uffd_delay, &uffd_args[vcpu_id],
-> +						vcpu_hva, vcpu_wss);
-> +			if (r < 0)
-> +				exit(-r);
-> +		}
-> +
->  #ifdef __x86_64__
-> -	vcpu_set_cpuid(vm, VCPU_ID, kvm_get_supported_cpuid());
-> +		vcpu_set_cpuid(vm, vcpu_id, kvm_get_supported_cpuid());
->  #endif
->  
-> -	/* Export the shared variables to the guest */
-> -	sync_global_to_guest(vm, host_page_size);
-> -	sync_global_to_guest(vm, guest_page_size);
-> +		vcpu_args[vcpu_id].vm = vm;
-> +		vcpu_args[vcpu_id].vcpu_id = vcpu_id;
-> +		vcpu_args[vcpu_id].gva = guest_test_virt_mem +
-> +					 (vcpu_id * vcpu_wss);
-> +		vcpu_args[vcpu_id].pages = vcpu_wss / guest_page_size;
-> +	}
-> +
-> +	DEBUG("Finished creating vCPUs and starting uffd threads\n");
-> +
-> +	for (vcpu_id = 0; vcpu_id < vcpus; vcpu_id++) {
-> +		pthread_create(&vcpu_threads[vcpu_id], NULL, vcpu_worker,
-> +			       &vcpu_args[vcpu_id]);
-> +	}
-> +
-> +	DEBUG("Started all vCPUs\n");
->  
-> -	vcpu_args.vm = vm;
-> -	vcpu_args.vcpu_id = VCPU_ID;
-> -	vcpu_args.gva = guest_test_virt_mem;
-> -	vcpu_args.pages = guest_num_pages;
-> -	pthread_create(&vcpu_thread, NULL, vcpu_worker, &vcpu_args);
-> +	/* Wait for the vcpu threads to quit */
-> +	for (vcpu_id = 0; vcpu_id < vcpus; vcpu_id++) {
-> +		pthread_join(vcpu_threads[vcpu_id], NULL);
-> +		PER_VCPU_DEBUG("Joined thread for vCPU %d\n", vcpu_id);
-> +	}
->  
-> -	/* Wait for the vcpu thread to quit */
-> -	pthread_join(vcpu_thread, NULL);
-> +	DEBUG("All vCPU threads joined\n");
->  
->  	if (use_uffd) {
-> -		/* Tell the user fault fd handler thread to quit */
-> +		/* Tell the user fault fd handler threads to quit */
->  		quit_uffd_thread = true;
-> -		pthread_join(uffd_handler_thread, NULL);
-> +		for (vcpu_id = 0; vcpu_id < vcpus; vcpu_id++)
-> +			pthread_join(uffd_handler_threads[vcpu_id], NULL);
->  	}
->  
->  	ucall_uninit(vm);
->  	kvm_vm_free(vm);
-> +
-> +	free(guest_data_prototype);
-> +	free(vcpu_threads);
-> +	if (use_uffd) {
-> +		free(uffd_handler_threads);
-> +		free(uffd_args);
-> +	}
-> +	free(vcpu_args);
->  }
->  
->  struct vm_guest_mode_params {
-> @@ -404,7 +469,7 @@ static void help(char *name)
->  
->  	puts("");
->  	printf("usage: %s [-h] [-m mode] [-u] [-d uffd_delay_usec]\n"
-> -	       "          [-b bytes test memory]\n", name);
-> +	       "          [-b bytes test memory] [-v vcpus]\n", name);
->  	printf(" -m: specify the guest mode ID to test\n"
->  	       "     (default: test all supported modes)\n"
->  	       "     This option may be used multiple times.\n"
-> @@ -419,6 +484,7 @@ static void help(char *name)
->  	       "     FD handler to simulate demand paging\n"
->  	       "     overheads. Ignored without -u.\n");
->  	printf(" -b: specify the working set size, in bytes for each vCPU.\n");
-> +	printf(" -v: specify the number of vCPUs to run.\n");
->  	puts("");
->  	exit(0);
->  }
-> @@ -427,6 +493,7 @@ int main(int argc, char *argv[])
->  {
->  	bool mode_selected = false;
->  	uint64_t vcpu_wss = DEFAULT_GUEST_TEST_MEM_SIZE;
-> +	int vcpus = 1;
->  	unsigned int mode;
->  	int opt, i;
->  	bool use_uffd = false;
-> @@ -439,7 +506,7 @@ int main(int argc, char *argv[])
->  	vm_guest_mode_params_init(VM_MODE_P40V48_4K, true, true);
->  #endif
->  
-> -	while ((opt = getopt(argc, argv, "hm:ud:b:")) != -1) {
-> +	while ((opt = getopt(argc, argv, "hm:ud:b:v:")) != -1) {
->  		switch (opt) {
->  		case 'm':
->  			if (!mode_selected) {
-> @@ -462,6 +529,12 @@ int main(int argc, char *argv[])
->  			break;
->  		case 'b':
->  			vcpu_wss = strtoull(optarg, NULL, 0);
-> +			break;
+From: Gene Chen <gene_chen@richtek.com>
 
-There's that missing break. It's good to test each patch to ensure
-bisectability.
+Add mfd driver for mt6360 pmic chip include
+Battery Charger/USB_PD/Flash LED/RGB LED/LDO/Buck
 
-> +		case 'v':
-> +			vcpus = atoi(optarg);
-> +			TEST_ASSERT(vcpus > 0,
-> +				    "Must have a positive number of vCPUs");
-> +			break;
->  		case 'h':
->  		default:
->  			help(argv[0]);
-> @@ -475,7 +548,7 @@ int main(int argc, char *argv[])
->  		TEST_ASSERT(vm_guest_mode_params[i].supported,
->  			    "Guest mode ID %d (%s) not supported.",
->  			    i, vm_guest_mode_string(i));
-> -		run_test(i, use_uffd, uffd_delay, vcpu_wss);
-> +		run_test(i, use_uffd, uffd_delay, vcpus, vcpu_wss);
->  	}
->  
->  	return 0;
-> -- 
-> 2.24.1.735.g03f4e72817-goog
->
+Signed-off-by: Gene Chen <gene_chen@richtek.com
+---
+ drivers/mfd/Kconfig        |  12 ++
+ drivers/mfd/Makefile       |   1 +
+ drivers/mfd/mt6360-core.c  | 424 +++++++++++++++++++++++++++++++++++++
+ include/linux/mfd/mt6360.h | 240 +++++++++++++++++++++
+ 4 files changed, 677 insertions(+)
+ create mode 100644 drivers/mfd/mt6360-core.c
+ create mode 100644 include/linux/mfd/mt6360.h
 
-Thanks,
-drew 
+changelogs between v1 & v2
+- include missing header file
+
+changelogs between v2 & v3
+- add changelogs
+
+changelogs between v3 & v4
+- fix Kconfig description
+- replace mt6360_pmu_info with mt6360_pmu_data
+- replace probe with probe_new
+- remove unnecessary irq_chip variable
+- remove annotation
+- replace MT6360_MFD_CELL with OF_MFD_CELL
+
+changelogs between v4 & v5
+- remove unnecessary parse dt function
+- use devm_i2c_new_dummy_device
+- add base-commit message
+
+changelogs between v5 & v6
+- review return value
+- remove i2c id_table
+- use GPL license v2
+
+changelogs between v6 & v7
+- add author description
+- replace MT6360_REGMAP_IRQ_REG by REGMAP_IRQ_REG_LINE
+- remove mt6360-private.h
+
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 420900852166..e6df91d55405 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -856,6 +856,18 @@ config MFD_MAX8998
+ 	  additional drivers must be enabled in order to use the functionality
+ 	  of the device.
+ 
++config MFD_MT6360
++	tristate "Mediatek MT6360 SubPMIC"
++	select MFD_CORE
++	select REGMAP_I2C
++	select REGMAP_IRQ
++	depends on I2C
++	help
++	  Say Y here to enable MT6360 PMU/PMIC/LDO functional support.
++	  PMU part includes Charger, Flashlight, RGB LED
++	  PMIC part includes 2-channel BUCKs and 2-channel LDOs
++	  LDO part includes 4-channel LDOs
++
+ config MFD_MT6397
+ 	tristate "MediaTek MT6397 PMIC Support"
+ 	select MFD_CORE
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index aed99f08739f..f5f80d75ee53 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -237,6 +237,7 @@ obj-$(CONFIG_INTEL_SOC_PMIC)	+= intel-soc-pmic.o
+ obj-$(CONFIG_INTEL_SOC_PMIC_BXTWC)	+= intel_soc_pmic_bxtwc.o
+ obj-$(CONFIG_INTEL_SOC_PMIC_CHTWC)	+= intel_soc_pmic_chtwc.o
+ obj-$(CONFIG_INTEL_SOC_PMIC_CHTDC_TI)	+= intel_soc_pmic_chtdc_ti.o
++obj-$(CONFIG_MFD_MT6360)	+= mt6360-core.o
+ mt6397-objs	:= mt6397-core.o mt6397-irq.o
+ obj-$(CONFIG_MFD_MT6397)	+= mt6397.o
+ obj-$(CONFIG_INTEL_SOC_PMIC_MRFLD)	+= intel_soc_pmic_mrfld.o
+diff --git a/drivers/mfd/mt6360-core.c b/drivers/mfd/mt6360-core.c
+new file mode 100644
+index 000000000000..9a0a0584d3ba
+--- /dev/null
++++ b/drivers/mfd/mt6360-core.c
+@@ -0,0 +1,424 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2019 MediaTek Inc.
++ *
++ * Author: Gene Chen <gene_chen@richtek.com>
++ */
++
++#include <linux/i2c.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/mfd/core.h>
++#include <linux/module.h>
++#include <linux/of_irq.h>
++#include <linux/of_platform.h>
++#include <linux/version.h>
++
++#include <linux/mfd/mt6360.h>
++
++/* reg 0 -> 0 ~ 7 */
++#define MT6360_CHG_TREG_EVT		(4)
++#define MT6360_CHG_AICR_EVT		(5)
++#define MT6360_CHG_MIVR_EVT		(6)
++#define MT6360_PWR_RDY_EVT		(7)
++/* REG 1 -> 8 ~ 15 */
++#define MT6360_CHG_BATSYSUV_EVT		(9)
++#define MT6360_FLED_CHG_VINOVP_EVT	(11)
++#define MT6360_CHG_VSYSUV_EVT		(12)
++#define MT6360_CHG_VSYSOV_EVT		(13)
++#define MT6360_CHG_VBATOV_EVT		(14)
++#define MT6360_CHG_VBUSOV_EVT		(15)
++/* REG 2 -> 16 ~ 23 */
++/* REG 3 -> 24 ~ 31 */
++#define MT6360_WD_PMU_DET		(25)
++#define MT6360_WD_PMU_DONE		(26)
++#define MT6360_CHG_TMRI			(27)
++#define MT6360_CHG_ADPBADI		(29)
++#define MT6360_CHG_RVPI			(30)
++#define MT6360_OTPI			(31)
++/* REG 4 -> 32 ~ 39 */
++#define MT6360_CHG_AICCMEASL		(32)
++#define MT6360_CHGDET_DONEI		(34)
++#define MT6360_WDTMRI			(35)
++#define MT6360_SSFINISHI		(36)
++#define MT6360_CHG_RECHGI		(37)
++#define MT6360_CHG_TERMI		(38)
++#define MT6360_CHG_IEOCI		(39)
++/* REG 5 -> 40 ~ 47 */
++#define MT6360_PUMPX_DONEI		(40)
++#define MT6360_BAT_OVP_ADC_EVT		(41)
++#define MT6360_TYPEC_OTP_EVT		(42)
++#define MT6360_ADC_WAKEUP_EVT		(43)
++#define MT6360_ADC_DONEI		(44)
++#define MT6360_BST_BATUVI		(45)
++#define MT6360_BST_VBUSOVI		(46)
++#define MT6360_BST_OLPI			(47)
++/* REG 6 -> 48 ~ 55 */
++#define MT6360_ATTACH_I			(48)
++#define MT6360_DETACH_I			(49)
++#define MT6360_QC30_STPDONE		(51)
++#define MT6360_QC_VBUSDET_DONE		(52)
++#define MT6360_HVDCP_DET		(53)
++#define MT6360_CHGDETI			(54)
++#define MT6360_DCDTI			(55)
++/* REG 7 -> 56 ~ 63 */
++#define MT6360_FOD_DONE_EVT		(56)
++#define MT6360_FOD_OV_EVT		(57)
++#define MT6360_CHRDET_UVP_EVT		(58)
++#define MT6360_CHRDET_OVP_EVT		(59)
++#define MT6360_CHRDET_EXT_EVT		(60)
++#define MT6360_FOD_LR_EVT		(61)
++#define MT6360_FOD_HR_EVT		(62)
++#define MT6360_FOD_DISCHG_FAIL_EVT	(63)
++/* REG 8 -> 64 ~ 71 */
++#define MT6360_USBID_EVT		(64)
++#define MT6360_APWDTRST_EVT		(65)
++#define MT6360_EN_EVT			(66)
++#define MT6360_QONB_RST_EVT		(67)
++#define MT6360_MRSTB_EVT		(68)
++#define MT6360_OTP_EVT			(69)
++#define MT6360_VDDAOV_EVT		(70)
++#define MT6360_SYSUV_EVT		(71)
++/* REG 9 -> 72 ~ 79 */
++#define MT6360_FLED_STRBPIN_EVT		(72)
++#define MT6360_FLED_TORPIN_EVT		(73)
++#define MT6360_FLED_TX_EVT		(74)
++#define MT6360_FLED_LVF_EVT		(75)
++#define MT6360_FLED2_SHORT_EVT		(78)
++#define MT6360_FLED1_SHORT_EVT		(79)
++/* REG 10 -> 80 ~ 87 */
++#define MT6360_FLED2_STRB_EVT		(80)
++#define MT6360_FLED1_STRB_EVT		(81)
++#define MT6360_FLED2_STRB_TO_EVT	(82)
++#define MT6360_FLED1_STRB_TO_EVT	(83)
++#define MT6360_FLED2_TOR_EVT		(84)
++#define MT6360_FLED1_TOR_EVT		(85)
++/* REG 11 -> 88 ~ 95 */
++/* REG 12 -> 96 ~ 103 */
++#define MT6360_BUCK1_PGB_EVT		(96)
++#define MT6360_BUCK1_OC_EVT		(100)
++#define MT6360_BUCK1_OV_EVT		(101)
++#define MT6360_BUCK1_UV_EVT		(102)
++/* REG 13 -> 104 ~ 111 */
++#define MT6360_BUCK2_PGB_EVT		(104)
++#define MT6360_BUCK2_OC_EVT		(108)
++#define MT6360_BUCK2_OV_EVT		(109)
++#define MT6360_BUCK2_UV_EVT		(110)
++/* REG 14 -> 112 ~ 119 */
++#define MT6360_LDO1_OC_EVT		(113)
++#define MT6360_LDO2_OC_EVT		(114)
++#define MT6360_LDO3_OC_EVT		(115)
++#define MT6360_LDO5_OC_EVT		(117)
++#define MT6360_LDO6_OC_EVT		(118)
++#define MT6360_LDO7_OC_EVT		(119)
++/* REG 15 -> 120 ~ 127 */
++#define MT6360_LDO1_PGB_EVT		(121)
++#define MT6360_LDO2_PGB_EVT		(122)
++#define MT6360_LDO3_PGB_EVT		(123)
++#define MT6360_LDO5_PGB_EVT		(125)
++#define MT6360_LDO6_PGB_EVT		(126)
++#define MT6360_LDO7_PGB_EVT		(127)
++
++static const struct regmap_irq mt6360_pmu_irqs[] =  {
++	REGMAP_IRQ_REG_LINE(MT6360_CHG_TREG_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHG_AICR_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHG_MIVR_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_PWR_RDY_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHG_BATSYSUV_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FLED_CHG_VINOVP_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHG_VSYSUV_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHG_VSYSOV_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHG_VBATOV_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHG_VBUSOV_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_WD_PMU_DET, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_WD_PMU_DONE, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHG_TMRI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHG_ADPBADI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHG_RVPI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_OTPI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHG_AICCMEASL, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHGDET_DONEI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_WDTMRI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_SSFINISHI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHG_RECHGI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHG_TERMI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHG_IEOCI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_PUMPX_DONEI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHG_TREG_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_BAT_OVP_ADC_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_TYPEC_OTP_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_ADC_WAKEUP_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_ADC_DONEI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_BST_BATUVI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_BST_VBUSOVI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_BST_OLPI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_ATTACH_I, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_DETACH_I, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_QC30_STPDONE, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_QC_VBUSDET_DONE, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_HVDCP_DET, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHGDETI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_DCDTI, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FOD_DONE_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FOD_OV_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHRDET_UVP_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHRDET_OVP_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_CHRDET_EXT_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FOD_LR_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FOD_HR_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FOD_DISCHG_FAIL_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_USBID_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_APWDTRST_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_EN_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_QONB_RST_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_MRSTB_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_OTP_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_VDDAOV_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_SYSUV_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FLED_STRBPIN_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FLED_TORPIN_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FLED_TX_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FLED_LVF_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FLED2_SHORT_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FLED1_SHORT_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FLED2_STRB_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FLED1_STRB_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FLED2_STRB_TO_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FLED1_STRB_TO_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FLED2_TOR_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_FLED1_TOR_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_BUCK1_PGB_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_BUCK1_OC_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_BUCK1_OV_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_BUCK1_UV_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_BUCK2_PGB_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_BUCK2_OC_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_BUCK2_OV_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_BUCK2_UV_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_LDO1_OC_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_LDO2_OC_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_LDO3_OC_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_LDO5_OC_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_LDO6_OC_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_LDO7_OC_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_LDO1_PGB_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_LDO2_PGB_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_LDO3_PGB_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_LDO5_PGB_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_LDO6_PGB_EVT, 8),
++	REGMAP_IRQ_REG_LINE(MT6360_LDO7_PGB_EVT, 8),
++};
++
++static int mt6360_pmu_handle_post_irq(void *irq_drv_data)
++{
++	struct mt6360_pmu_data *mpd = irq_drv_data;
++
++	return regmap_update_bits(mpd->regmap,
++		MT6360_PMU_IRQ_SET, MT6360_IRQ_RETRIG, MT6360_IRQ_RETRIG);
++}
++
++static struct regmap_irq_chip mt6360_pmu_irq_chip = {
++	.irqs = mt6360_pmu_irqs,
++	.num_irqs = ARRAY_SIZE(mt6360_pmu_irqs),
++	.num_regs = MT6360_PMU_IRQ_REGNUM,
++	.mask_base = MT6360_PMU_CHG_MASK1,
++	.status_base = MT6360_PMU_CHG_IRQ1,
++	.ack_base = MT6360_PMU_CHG_IRQ1,
++	.init_ack_masked = true,
++	.use_ack = true,
++	.handle_post_irq = mt6360_pmu_handle_post_irq,
++};
++
++static const struct regmap_config mt6360_pmu_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = MT6360_PMU_MAXREG,
++};
++
++static const struct resource mt6360_adc_resources[] = {
++	DEFINE_RES_IRQ_NAMED(MT6360_ADC_DONEI, "adc_donei"),
++};
++
++static const struct resource mt6360_chg_resources[] = {
++	DEFINE_RES_IRQ_NAMED(MT6360_CHG_TREG_EVT, "chg_treg_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_PWR_RDY_EVT, "pwr_rdy_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_CHG_BATSYSUV_EVT, "chg_batsysuv_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_CHG_VSYSUV_EVT, "chg_vsysuv_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_CHG_VSYSOV_EVT, "chg_vsysov_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_CHG_VBATOV_EVT, "chg_vbatov_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_CHG_VBUSOV_EVT, "chg_vbusov_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_CHG_AICCMEASL, "chg_aiccmeasl"),
++	DEFINE_RES_IRQ_NAMED(MT6360_WDTMRI, "wdtmri"),
++	DEFINE_RES_IRQ_NAMED(MT6360_CHG_RECHGI, "chg_rechgi"),
++	DEFINE_RES_IRQ_NAMED(MT6360_CHG_TERMI, "chg_termi"),
++	DEFINE_RES_IRQ_NAMED(MT6360_CHG_IEOCI, "chg_ieoci"),
++	DEFINE_RES_IRQ_NAMED(MT6360_PUMPX_DONEI, "pumpx_donei"),
++	DEFINE_RES_IRQ_NAMED(MT6360_ATTACH_I, "attach_i"),
++	DEFINE_RES_IRQ_NAMED(MT6360_CHRDET_EXT_EVT, "chrdet_ext_evt"),
++};
++
++static const struct resource mt6360_led_resources[] = {
++	DEFINE_RES_IRQ_NAMED(MT6360_FLED_CHG_VINOVP_EVT, "fled_chg_vinovp_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_FLED_LVF_EVT, "fled_lvf_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_FLED2_SHORT_EVT, "fled2_short_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_FLED1_SHORT_EVT, "fled1_short_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_FLED2_STRB_TO_EVT, "fled2_strb_to_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_FLED1_STRB_TO_EVT, "fled1_strb_to_evt"),
++};
++
++static const struct resource mt6360_pmic_resources[] = {
++	DEFINE_RES_IRQ_NAMED(MT6360_BUCK1_PGB_EVT, "buck1_pgb_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_BUCK1_OC_EVT, "buck1_oc_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_BUCK1_OV_EVT, "buck1_ov_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_BUCK1_UV_EVT, "buck1_uv_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_BUCK2_PGB_EVT, "buck2_pgb_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_BUCK2_OC_EVT, "buck2_oc_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_BUCK2_OV_EVT, "buck2_ov_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_BUCK2_UV_EVT, "buck2_uv_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_LDO6_OC_EVT, "ldo6_oc_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_LDO7_OC_EVT, "ldo7_oc_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_LDO6_PGB_EVT, "ldo6_pgb_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_LDO7_PGB_EVT, "ldo7_pgb_evt"),
++};
++
++static const struct resource mt6360_ldo_resources[] = {
++	DEFINE_RES_IRQ_NAMED(MT6360_LDO1_OC_EVT, "ldo1_oc_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_LDO2_OC_EVT, "ldo2_oc_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_LDO3_OC_EVT, "ldo3_oc_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_LDO5_OC_EVT, "ldo5_oc_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_LDO1_PGB_EVT, "ldo1_pgb_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_LDO2_PGB_EVT, "ldo2_pgb_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_LDO3_PGB_EVT, "ldo3_pgb_evt"),
++	DEFINE_RES_IRQ_NAMED(MT6360_LDO5_PGB_EVT, "ldo5_pgb_evt"),
++};
++
++static const struct mfd_cell mt6360_devs[] = {
++	OF_MFD_CELL("mt6360_adc", mt6360_adc_resources,
++		    NULL, 0, 0, "mediatek,mt6360_adc"),
++	OF_MFD_CELL("mt6360_chg", mt6360_chg_resources,
++		    NULL, 0, 0, "mediatek,mt6360_chg"),
++	OF_MFD_CELL("mt6360_led", mt6360_led_resources,
++		    NULL, 0, 0, "mediatek,mt6360_led"),
++	OF_MFD_CELL("mt6360_pmic", mt6360_pmic_resources,
++		    NULL, 0, 0, "mediatek,mt6360_pmic"),
++	OF_MFD_CELL("mt6360_ldo", mt6360_ldo_resources,
++		    NULL, 0, 0, "mediatek,mt6360_ldo"),
++	OF_MFD_CELL("mt6360_tcpc", NULL,
++		    NULL, 0, 0, "mediatek,mt6360_tcpc"),
++};
++
++static const unsigned short mt6360_slave_addr[MT6360_SLAVE_MAX] = {
++	MT6360_PMU_SLAVEID,
++	MT6360_PMIC_SLAVEID,
++	MT6360_LDO_SLAVEID,
++	MT6360_TCPC_SLAVEID,
++};
++
++static int mt6360_pmu_probe(struct i2c_client *client)
++{
++	struct mt6360_pmu_data *mpd;
++	unsigned int reg_data;
++	int i, ret;
++
++	mpd = devm_kzalloc(&client->dev, sizeof(*mpd), GFP_KERNEL);
++	if (!mpd)
++		return -ENOMEM;
++
++	mpd->dev = &client->dev;
++	i2c_set_clientdata(client, mpd);
++
++	mpd->regmap = devm_regmap_init_i2c(client, &mt6360_pmu_regmap_config);
++	if (IS_ERR(mpd->regmap)) {
++		dev_err(&client->dev, "Failed to register regmap\n");
++		return PTR_ERR(mpd->regmap);
++	}
++
++	ret = regmap_read(mpd->regmap, MT6360_PMU_DEV_INFO, &reg_data);
++	if (ret) {
++		dev_err(&client->dev, "Device not found\n");
++		return ret;
++	}
++
++	mpd->chip_rev = reg_data & CHIP_REV_MASK;
++	if (mpd->chip_rev != CHIP_VEN_MT6360) {
++		dev_err(&client->dev, "Device not supported\n");
++		return -ENODEV;
++	}
++
++	mt6360_pmu_irq_chip.irq_drv_data = mpd;
++	ret = devm_regmap_add_irq_chip(&client->dev, mpd->regmap, client->irq,
++				       IRQF_TRIGGER_FALLING, 0,
++				       &mt6360_pmu_irq_chip, &mpd->irq_data);
++	if (ret) {
++		dev_err(&client->dev, "Failed to add Regmap IRQ Chip\n");
++		return ret;
++	}
++
++	mpd->i2c[0] = client;
++	for (i = 1; i < MT6360_SLAVE_MAX; i++) {
++		mpd->i2c[i] = devm_i2c_new_dummy_device(&client->dev,
++							client->adapter,
++							mt6360_slave_addr[i]);
++		if (IS_ERR(mpd->i2c[i])) {
++			dev_err(&client->dev,
++				"Failed to get new dummy I2C device for address 0x%x",
++				mt6360_slave_addr[i]);
++			return PTR_ERR(mpd->i2c[i]);
++		}
++		i2c_set_clientdata(mpd->i2c[i], mpd);
++	}
++
++	ret = devm_mfd_add_devices(&client->dev, PLATFORM_DEVID_AUTO,
++				   mt6360_devs, ARRAY_SIZE(mt6360_devs), NULL,
++				   0, regmap_irq_get_domain(mpd->irq_data));
++	if (ret) {
++		dev_err(&client->dev,
++			"Failed to register subordinate devices\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++static int __maybe_unused mt6360_pmu_suspend(struct device *dev)
++{
++	struct i2c_client *i2c = to_i2c_client(dev);
++
++	if (device_may_wakeup(dev))
++		enable_irq_wake(i2c->irq);
++
++	return 0;
++}
++
++static int __maybe_unused mt6360_pmu_resume(struct device *dev)
++{
++
++	struct i2c_client *i2c = to_i2c_client(dev);
++
++	if (device_may_wakeup(dev))
++		disable_irq_wake(i2c->irq);
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(mt6360_pmu_pm_ops,
++			 mt6360_pmu_suspend, mt6360_pmu_resume);
++
++static const struct of_device_id __maybe_unused mt6360_pmu_of_id[] = {
++	{ .compatible = "mediatek,mt6360_pmu", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, mt6360_pmu_of_id);
++
++static struct i2c_driver mt6360_pmu_driver = {
++	.driver = {
++		.pm = &mt6360_pmu_pm_ops,
++		.of_match_table = of_match_ptr(mt6360_pmu_of_id),
++	},
++	.probe_new = mt6360_pmu_probe,
++};
++module_i2c_driver(mt6360_pmu_driver);
++
++MODULE_AUTHOR("Gene Chen <gene_chen@richtek.com>");
++MODULE_DESCRIPTION("MT6360 PMU I2C Driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/mfd/mt6360.h b/include/linux/mfd/mt6360.h
+new file mode 100644
+index 000000000000..c03e6d1d9a02
+--- /dev/null
++++ b/include/linux/mfd/mt6360.h
+@@ -0,0 +1,240 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2019 MediaTek Inc.
++ */
++
++#ifndef __MT6360_H__
++#define __MT6360_H__
++
++#include <linux/regmap.h>
++
++enum {
++	MT6360_SLAVE_PMU = 0,
++	MT6360_SLAVE_PMIC,
++	MT6360_SLAVE_LDO,
++	MT6360_SLAVE_TCPC,
++	MT6360_SLAVE_MAX,
++};
++
++#define MT6360_PMU_SLAVEID	(0x34)
++#define MT6360_PMIC_SLAVEID	(0x1A)
++#define MT6360_LDO_SLAVEID	(0x64)
++#define MT6360_TCPC_SLAVEID	(0x4E)
++
++struct mt6360_pmu_data {
++	struct i2c_client *i2c[MT6360_SLAVE_MAX];
++	struct device *dev;
++	struct regmap *regmap;
++	struct regmap_irq_chip_data *irq_data;
++	unsigned int chip_rev;
++};
++
++/* PMU register defininition */
++#define MT6360_PMU_DEV_INFO			(0x00)
++#define MT6360_PMU_CORE_CTRL1			(0x01)
++#define MT6360_PMU_RST1				(0x02)
++#define MT6360_PMU_CRCEN			(0x03)
++#define MT6360_PMU_RST_PAS_CODE1		(0x04)
++#define MT6360_PMU_RST_PAS_CODE2		(0x05)
++#define MT6360_PMU_CORE_CTRL2			(0x06)
++#define MT6360_PMU_TM_PAS_CODE1			(0x07)
++#define MT6360_PMU_TM_PAS_CODE2			(0x08)
++#define MT6360_PMU_TM_PAS_CODE3			(0x09)
++#define MT6360_PMU_TM_PAS_CODE4			(0x0A)
++#define MT6360_PMU_IRQ_IND			(0x0B)
++#define MT6360_PMU_IRQ_MASK			(0x0C)
++#define MT6360_PMU_IRQ_SET			(0x0D)
++#define MT6360_PMU_SHDN_CTRL			(0x0E)
++#define MT6360_PMU_TM_INF			(0x0F)
++#define MT6360_PMU_I2C_CTRL			(0x10)
++#define MT6360_PMU_CHG_CTRL1			(0x11)
++#define MT6360_PMU_CHG_CTRL2			(0x12)
++#define MT6360_PMU_CHG_CTRL3			(0x13)
++#define MT6360_PMU_CHG_CTRL4			(0x14)
++#define MT6360_PMU_CHG_CTRL5			(0x15)
++#define MT6360_PMU_CHG_CTRL6			(0x16)
++#define MT6360_PMU_CHG_CTRL7			(0x17)
++#define MT6360_PMU_CHG_CTRL8			(0x18)
++#define MT6360_PMU_CHG_CTRL9			(0x19)
++#define MT6360_PMU_CHG_CTRL10			(0x1A)
++#define MT6360_PMU_CHG_CTRL11			(0x1B)
++#define MT6360_PMU_CHG_CTRL12			(0x1C)
++#define MT6360_PMU_CHG_CTRL13			(0x1D)
++#define MT6360_PMU_CHG_CTRL14			(0x1E)
++#define MT6360_PMU_CHG_CTRL15			(0x1F)
++#define MT6360_PMU_CHG_CTRL16			(0x20)
++#define MT6360_PMU_CHG_AICC_RESULT		(0x21)
++#define MT6360_PMU_DEVICE_TYPE			(0x22)
++#define MT6360_PMU_QC_CONTROL1			(0x23)
++#define MT6360_PMU_QC_CONTROL2			(0x24)
++#define MT6360_PMU_QC30_CONTROL1		(0x25)
++#define MT6360_PMU_QC30_CONTROL2		(0x26)
++#define MT6360_PMU_USB_STATUS1			(0x27)
++#define MT6360_PMU_QC_STATUS1			(0x28)
++#define MT6360_PMU_QC_STATUS2			(0x29)
++#define MT6360_PMU_CHG_PUMP			(0x2A)
++#define MT6360_PMU_CHG_CTRL17			(0x2B)
++#define MT6360_PMU_CHG_CTRL18			(0x2C)
++#define MT6360_PMU_CHRDET_CTRL1			(0x2D)
++#define MT6360_PMU_CHRDET_CTRL2			(0x2E)
++#define MT6360_PMU_DPDN_CTRL			(0x2F)
++#define MT6360_PMU_CHG_HIDDEN_CTRL1		(0x30)
++#define MT6360_PMU_CHG_HIDDEN_CTRL2		(0x31)
++#define MT6360_PMU_CHG_HIDDEN_CTRL3		(0x32)
++#define MT6360_PMU_CHG_HIDDEN_CTRL4		(0x33)
++#define MT6360_PMU_CHG_HIDDEN_CTRL5		(0x34)
++#define MT6360_PMU_CHG_HIDDEN_CTRL6		(0x35)
++#define MT6360_PMU_CHG_HIDDEN_CTRL7		(0x36)
++#define MT6360_PMU_CHG_HIDDEN_CTRL8		(0x37)
++#define MT6360_PMU_CHG_HIDDEN_CTRL9		(0x38)
++#define MT6360_PMU_CHG_HIDDEN_CTRL10		(0x39)
++#define MT6360_PMU_CHG_HIDDEN_CTRL11		(0x3A)
++#define MT6360_PMU_CHG_HIDDEN_CTRL12		(0x3B)
++#define MT6360_PMU_CHG_HIDDEN_CTRL13		(0x3C)
++#define MT6360_PMU_CHG_HIDDEN_CTRL14		(0x3D)
++#define MT6360_PMU_CHG_HIDDEN_CTRL15		(0x3E)
++#define MT6360_PMU_CHG_HIDDEN_CTRL16		(0x3F)
++#define MT6360_PMU_CHG_HIDDEN_CTRL17		(0x40)
++#define MT6360_PMU_CHG_HIDDEN_CTRL18		(0x41)
++#define MT6360_PMU_CHG_HIDDEN_CTRL19		(0x42)
++#define MT6360_PMU_CHG_HIDDEN_CTRL20		(0x43)
++#define MT6360_PMU_CHG_HIDDEN_CTRL21		(0x44)
++#define MT6360_PMU_CHG_HIDDEN_CTRL22		(0x45)
++#define MT6360_PMU_CHG_HIDDEN_CTRL23		(0x46)
++#define MT6360_PMU_CHG_HIDDEN_CTRL24		(0x47)
++#define MT6360_PMU_CHG_HIDDEN_CTRL25		(0x48)
++#define MT6360_PMU_BC12_CTRL			(0x49)
++#define MT6360_PMU_CHG_STAT			(0x4A)
++#define MT6360_PMU_RESV1			(0x4B)
++#define MT6360_PMU_TYPEC_OTP_TH_SEL_CODEH	(0x4E)
++#define MT6360_PMU_TYPEC_OTP_TH_SEL_CODEL	(0x4F)
++#define MT6360_PMU_TYPEC_OTP_HYST_TH		(0x50)
++#define MT6360_PMU_TYPEC_OTP_CTRL		(0x51)
++#define MT6360_PMU_ADC_BAT_DATA_H		(0x52)
++#define MT6360_PMU_ADC_BAT_DATA_L		(0x53)
++#define MT6360_PMU_IMID_BACKBST_ON		(0x54)
++#define MT6360_PMU_IMID_BACKBST_OFF		(0x55)
++#define MT6360_PMU_ADC_CONFIG			(0x56)
++#define MT6360_PMU_ADC_EN2			(0x57)
++#define MT6360_PMU_ADC_IDLE_T			(0x58)
++#define MT6360_PMU_ADC_RPT_1			(0x5A)
++#define MT6360_PMU_ADC_RPT_2			(0x5B)
++#define MT6360_PMU_ADC_RPT_3			(0x5C)
++#define MT6360_PMU_ADC_RPT_ORG1			(0x5D)
++#define MT6360_PMU_ADC_RPT_ORG2			(0x5E)
++#define MT6360_PMU_BAT_OVP_TH_SEL_CODEH		(0x5F)
++#define MT6360_PMU_BAT_OVP_TH_SEL_CODEL		(0x60)
++#define MT6360_PMU_CHG_CTRL19			(0x61)
++#define MT6360_PMU_VDDASUPPLY			(0x62)
++#define MT6360_PMU_BC12_MANUAL			(0x63)
++#define MT6360_PMU_CHGDET_FUNC			(0x64)
++#define MT6360_PMU_FOD_CTRL			(0x65)
++#define MT6360_PMU_CHG_CTRL20			(0x66)
++#define MT6360_PMU_CHG_HIDDEN_CTRL26		(0x67)
++#define MT6360_PMU_CHG_HIDDEN_CTRL27		(0x68)
++#define MT6360_PMU_RESV2			(0x69)
++#define MT6360_PMU_USBID_CTRL1			(0x6D)
++#define MT6360_PMU_USBID_CTRL2			(0x6E)
++#define MT6360_PMU_USBID_CTRL3			(0x6F)
++#define MT6360_PMU_FLED_CFG			(0x70)
++#define MT6360_PMU_RESV3			(0x71)
++#define MT6360_PMU_FLED1_CTRL			(0x72)
++#define MT6360_PMU_FLED_STRB_CTRL		(0x73)
++#define MT6360_PMU_FLED1_STRB_CTRL2		(0x74)
++#define MT6360_PMU_FLED1_TOR_CTRL		(0x75)
++#define MT6360_PMU_FLED2_CTRL			(0x76)
++#define MT6360_PMU_RESV4			(0x77)
++#define MT6360_PMU_FLED2_STRB_CTRL2		(0x78)
++#define MT6360_PMU_FLED2_TOR_CTRL		(0x79)
++#define MT6360_PMU_FLED_VMIDTRK_CTRL1		(0x7A)
++#define MT6360_PMU_FLED_VMID_RTM		(0x7B)
++#define MT6360_PMU_FLED_VMIDTRK_CTRL2		(0x7C)
++#define MT6360_PMU_FLED_PWSEL			(0x7D)
++#define MT6360_PMU_FLED_EN			(0x7E)
++#define MT6360_PMU_FLED_Hidden1			(0x7F)
++#define MT6360_PMU_RGB_EN			(0x80)
++#define MT6360_PMU_RGB1_ISNK			(0x81)
++#define MT6360_PMU_RGB2_ISNK			(0x82)
++#define MT6360_PMU_RGB3_ISNK			(0x83)
++#define MT6360_PMU_RGB_ML_ISNK			(0x84)
++#define MT6360_PMU_RGB1_DIM			(0x85)
++#define MT6360_PMU_RGB2_DIM			(0x86)
++#define MT6360_PMU_RGB3_DIM			(0x87)
++#define MT6360_PMU_RESV5			(0x88)
++#define MT6360_PMU_RGB12_Freq			(0x89)
++#define MT6360_PMU_RGB34_Freq			(0x8A)
++#define MT6360_PMU_RGB1_Tr			(0x8B)
++#define MT6360_PMU_RGB1_Tf			(0x8C)
++#define MT6360_PMU_RGB1_TON_TOFF		(0x8D)
++#define MT6360_PMU_RGB2_Tr			(0x8E)
++#define MT6360_PMU_RGB2_Tf			(0x8F)
++#define MT6360_PMU_RGB2_TON_TOFF		(0x90)
++#define MT6360_PMU_RGB3_Tr			(0x91)
++#define MT6360_PMU_RGB3_Tf			(0x92)
++#define MT6360_PMU_RGB3_TON_TOFF		(0x93)
++#define MT6360_PMU_RGB_Hidden_CTRL1		(0x94)
++#define MT6360_PMU_RGB_Hidden_CTRL2		(0x95)
++#define MT6360_PMU_RESV6			(0x97)
++#define MT6360_PMU_SPARE1			(0x9A)
++#define MT6360_PMU_SPARE2			(0xA0)
++#define MT6360_PMU_SPARE3			(0xB0)
++#define MT6360_PMU_SPARE4			(0xC0)
++#define MT6360_PMU_CHG_IRQ1			(0xD0)
++#define MT6360_PMU_CHG_IRQ2			(0xD1)
++#define MT6360_PMU_CHG_IRQ3			(0xD2)
++#define MT6360_PMU_CHG_IRQ4			(0xD3)
++#define MT6360_PMU_CHG_IRQ5			(0xD4)
++#define MT6360_PMU_CHG_IRQ6			(0xD5)
++#define MT6360_PMU_QC_IRQ			(0xD6)
++#define MT6360_PMU_FOD_IRQ			(0xD7)
++#define MT6360_PMU_BASE_IRQ			(0xD8)
++#define MT6360_PMU_FLED_IRQ1			(0xD9)
++#define MT6360_PMU_FLED_IRQ2			(0xDA)
++#define MT6360_PMU_RGB_IRQ			(0xDB)
++#define MT6360_PMU_BUCK1_IRQ			(0xDC)
++#define MT6360_PMU_BUCK2_IRQ			(0xDD)
++#define MT6360_PMU_LDO_IRQ1			(0xDE)
++#define MT6360_PMU_LDO_IRQ2			(0xDF)
++#define MT6360_PMU_CHG_STAT1			(0xE0)
++#define MT6360_PMU_CHG_STAT2			(0xE1)
++#define MT6360_PMU_CHG_STAT3			(0xE2)
++#define MT6360_PMU_CHG_STAT4			(0xE3)
++#define MT6360_PMU_CHG_STAT5			(0xE4)
++#define MT6360_PMU_CHG_STAT6			(0xE5)
++#define MT6360_PMU_QC_STAT			(0xE6)
++#define MT6360_PMU_FOD_STAT			(0xE7)
++#define MT6360_PMU_BASE_STAT			(0xE8)
++#define MT6360_PMU_FLED_STAT1			(0xE9)
++#define MT6360_PMU_FLED_STAT2			(0xEA)
++#define MT6360_PMU_RGB_STAT			(0xEB)
++#define MT6360_PMU_BUCK1_STAT			(0xEC)
++#define MT6360_PMU_BUCK2_STAT			(0xED)
++#define MT6360_PMU_LDO_STAT1			(0xEE)
++#define MT6360_PMU_LDO_STAT2			(0xEF)
++#define MT6360_PMU_CHG_MASK1			(0xF0)
++#define MT6360_PMU_CHG_MASK2			(0xF1)
++#define MT6360_PMU_CHG_MASK3			(0xF2)
++#define MT6360_PMU_CHG_MASK4			(0xF3)
++#define MT6360_PMU_CHG_MASK5			(0xF4)
++#define MT6360_PMU_CHG_MASK6			(0xF5)
++#define MT6360_PMU_QC_MASK			(0xF6)
++#define MT6360_PMU_FOD_MASK			(0xF7)
++#define MT6360_PMU_BASE_MASK			(0xF8)
++#define MT6360_PMU_FLED_MASK1			(0xF9)
++#define MT6360_PMU_FLED_MASK2			(0xFA)
++#define MT6360_PMU_FAULTB_MASK			(0xFB)
++#define MT6360_PMU_BUCK1_MASK			(0xFC)
++#define MT6360_PMU_BUCK2_MASK			(0xFD)
++#define MT6360_PMU_LDO_MASK1			(0xFE)
++#define MT6360_PMU_LDO_MASK2			(0xFF)
++#define MT6360_PMU_MAXREG			(MT6360_PMU_LDO_MASK2)
++
++/* MT6360_PMU_IRQ_SET */
++#define MT6360_PMU_IRQ_REGNUM	(MT6360_PMU_LDO_IRQ2 - MT6360_PMU_CHG_IRQ1 + 1)
++#define MT6360_IRQ_RETRIG	BIT(2)
++
++#define CHIP_VEN_MASK				(0xF0)
++#define CHIP_VEN_MT6360				(0x50)
++#define CHIP_REV_MASK				(0x0F)
++
++#endif /* __MT6360_H__ */
+-- 
+2.23.0
 
