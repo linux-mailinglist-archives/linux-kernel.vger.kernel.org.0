@@ -2,75 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A60913223C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:26:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C7C9132240
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 10:28:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbgAGJ0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 04:26:41 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:48466 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726327AbgAGJ0k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 04:26:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7LXGKqEB8d1jaEq0t+nYJyGnQP5F5/lyG/MXlObSLcI=; b=k4d4RCpD+3eGCW08wcNKYwDKO
-        yJ+LaKgFv1cAf/68MIBFpUvSvzQJrf5DDI3s8eCXrcwoEdrMkIsEt0qJZmPek51HutwKAHFFMKQTN
-        rmT4kiPk4/lLVf68pMbpZgrLNDriLjVoA4ucIXEjz1FjTE6ijHAC4UVKtvf+REcrn4A+gyxXopOfv
-        iYKsDF280hZUJswjy+CFeSMVSM/fbgpP/N5OaR8aIAK6F6pPz9Kl63LB4S46tiW3kEgHMS5W8aV6c
-        Y6LMrJssw7xvaRHYGVVV03Z/hYV5U7gSyShFfgNPQtyZyvEUWpLFviL8dwbDYeQ2QV6AsSV0jXT/I
-        EvHAoMTnA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iol8F-0004dF-2s; Tue, 07 Jan 2020 09:26:35 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S1727630AbgAGJ2b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 04:28:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56176 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726690AbgAGJ2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 04:28:31 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5E4143012C3;
-        Tue,  7 Jan 2020 10:25:01 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CBB302B2BC31A; Tue,  7 Jan 2020 10:26:33 +0100 (CET)
-Date:   Tue, 7 Jan 2020 10:26:33 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Scott Wood <swood@redhat.com>
-Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] timers/nohz: Update nohz load in remote tick
-Message-ID: <20200107092633.GT2844@hirez.programming.kicks-ass.net>
-References: <1576538545-13274-1-git-send-email-swood@redhat.com>
- <1576538545-13274-4-git-send-email-swood@redhat.com>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 116C320656;
+        Tue,  7 Jan 2020 09:28:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578389310;
+        bh=3av3o+vC/vXC6oh+TQ7c+u0WMkeu1eoqIgNTIIZ8n9g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JPabrsknAjdJFKlBlhOK1aD5Uj1XZ3Ir0YPv2aVh5S/poZyyQ+xBezCYhiYZqWw6p
+         PTYHGALXbN1f9H59xWVEiLyWfVUdE/vkmKFkk4o688m042XuQrnv8ulzaXYnZIsbuO
+         4UO3rr0KVmD7GQWZ+9XNJl9DW2nDwxq9GDnAKz/I=
+Date:   Tue, 7 Jan 2020 10:28:27 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     "Kim, David" <david.kim@ncipher.com>
+Cc:     "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Magee, Tim" <tim.magee@ncipher.com>
+Subject: Re: [PATCH v2] drivers: misc: Add support for nCipher HSM devices
+Message-ID: <20200107092827.GB1021817@kroah.com>
+References: <20191220154738.31448-1-david.kim@ncipher.com>
+ <20191220213036.GA27120@kroah.com>
+ <46e2f36d770c462db487d0e918ad2b0b@exukdagfar01.INTERNAL.ROOT.TES>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1576538545-13274-4-git-send-email-swood@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <46e2f36d770c462db487d0e918ad2b0b@exukdagfar01.INTERNAL.ROOT.TES>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 06:22:25PM -0500, Scott Wood wrote:
-> From: Peter Zijlstra <peterz@infradead.org>
+On Tue, Jan 07, 2020 at 08:50:50AM +0000, Kim, David wrote:
 > 
-> The way loadavg is tracked during nohz only pays attention to the load
-> upon entering nohz.  This can be particularly noticeable if full nohz is
-> entered while non-idle, and then the cpu goes idle and stays that way for
-> a long time.
+> > >
+> > > This is the driver for nCipher’s Solo and Solo XC hardware security modules.
+> > > These modules implement a proprietary command set (the ’nCore API’) to
+> > > perform cryptographic operations - key generation, signature, and so
+> > > on. HSM commands and their replies are passed in a serialised binary
+> > > format over the PCIe bus via a shared memory region. Multiple commands
+> > > may be in-flight at any one time - command processing is
+> > > multi-threaded and asynchronous. A write operation may, therefore,
+> > > deliver multiple commands, and multiple replies may be retrieved in one
+> > read operation.
+> > 
+> > If this is "just" a crypto accelerator, why isn't this driver using the existing in-
+> > kernel hardware crypto api?  What is lacking from it that you need here?
 > 
-> Use the remote tick to ensure that full nohz cpus report their deltas
-> within a reasonable time.
+> Hi Greg,
 > 
-> [swood: added changelog and removed recheck of stopped tick]
-> Signed-off-by: Scott Wood <swood@redhat.com>
-> ---
-> This patch was provided by Peter in an unsigned email reply --
-> Peter, can I get a signoff?
+> A cryptographic accelerator uses key material which is stored on, and managed by, the host machine. Hardware security modules, such as nCipher’s Solo products, retain key material (i.e. secrets) within the secure boundary of the device, and implement various forms of access control to restrict use of that key material.
+> 
+> nCipher's product range started, in the early 1990s, as cryptographic accelerators.  The series of hardware security modules served by this driver still does do cryptography but their main function is the generation, management and use of keys within a secure boundary.
+> 
+> The driver doesn't do any cryptography. It provides the link between the userspace software and the HSM's firmware. Cryptography is done within the HSM's secure boundary.
 
-Here goes, glad it works :-)
+So this should tie into the correct crypto/key apis that the kernel has
+and not create a brand new user/kernel api, right?
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Please work with the crypto kernel developers to get this right, I can't
+take this until they agree that this code and api is correct.
+
+thanks,
+
+greg k-h
