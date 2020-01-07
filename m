@@ -2,137 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FABC131CDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 01:55:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2009131CEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 01:57:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbgAGAz2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 Jan 2020 19:55:28 -0500
-Received: from mga17.intel.com ([192.55.52.151]:4762 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727233AbgAGAz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Jan 2020 19:55:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jan 2020 16:55:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,404,1571727600"; 
-   d="scan'208";a="210958509"
-Received: from shao2-debian.sh.intel.com (HELO [10.239.13.6]) ([10.239.13.6])
-  by orsmga007.jf.intel.com with ESMTP; 06 Jan 2020 16:55:25 -0800
-Subject: Re: [kbuild-all] Re: [PATCH v2 9/9] drm/bridge: ti-sn65dsi86: Avoid
- invalid rates
-To:     Doug Anderson <dianders@chromium.org>,
-        kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Clark <robdclark@chromium.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20191217164702.v2.9.Ib59207b66db377380d13748752d6fce5596462c5@changeid>
- <201912212109.ehZOyrlG%lkp@intel.com>
- <CAD=FV=Ui=ZbzdyV6SjLvrL-zj6e+upog_wZMG4seOsdgZpF6tg@mail.gmail.com>
-From:   Rong Chen <rong.a.chen@intel.com>
-Message-ID: <997d40ad-2a86-7a21-b16c-f33f4e2ebca8@intel.com>
-Date:   Tue, 7 Jan 2020 08:55:08 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727370AbgAGA5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 Jan 2020 19:57:52 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33635 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727233AbgAGA5w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Jan 2020 19:57:52 -0500
+Received: by mail-pl1-f194.google.com with SMTP id c13so22502391pls.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Jan 2020 16:57:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KXZVzkgAmBeNBoD0youM63rm0kvw0AcVHzhcDhyN5ug=;
+        b=tFDK3Yuzl1ZnMFsAfICZjFhnOTWEee51fYZ1v103NJknaKzP4Ej8jZf1xQ7mnzrVwN
+         +wXujRCCoUaNdLEraxwjLb2icDOU0kwLu0X8XJAuceBI4HVtQNhOqUBGhnSzmaDXJih4
+         /fOs5pB8XMgn5l3iKeDWA/28Lw55C2hVtSxxe+5m003WVX2rMb/VNVUSMHdgXnoH1y8n
+         f1uvnJGYkRBFwO0J6GS9dwa04Z330mK5TS+52jTBVVxO+FpJMxjePpNKuB6O+RLNdzbT
+         cJPg45AQvtn45SsJrH8CTCjx3YdX4zlUFQAET2iHDp/efUeT+Psx7Uw9DOLz4hPFkorg
+         jqWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KXZVzkgAmBeNBoD0youM63rm0kvw0AcVHzhcDhyN5ug=;
+        b=iNhIhbYlo7j/kOo0fnXac97z6JAVlUpM5aPvey06fGc0RNb1AeqmEDKQZDsUccI8Ce
+         N73fwn/WYjurmsYlZK8pYI38wuLNWLGOU2Gho+PofPBkXhmj/fSscCkapYvii/84kSOq
+         m5raGpugey0swg6/Wgd2xOIsdH1DgJzBC36E8UEHM3O3t7b6zF/fNC2IqmYnAvX4ZDGe
+         xe5meRFU8yZ0+4hNP2p2Bnc9wUzPoLlz9RoHgO+DdBe36NlRB4Utz9hhbAFo1w0k+g54
+         oUj9AX6zsQvTOYNW8m5qS328TtR9RxJAYqQZ3l1QExpQLn2rOLM2ZLLn3LGu+QMWOGL/
+         DCmQ==
+X-Gm-Message-State: APjAAAWVRjq0n211RaH98/UOp+tBllEaFFeok47MkdFzioBKjUzLwdB4
+        RVqdcVPUV1kHFKQ2MtM84yI7qA==
+X-Google-Smtp-Source: APXvYqyVCTfOG3gjhXVhapmKbaXSUQztl3zUuSquVZ1znCmK7M/5aeCSWk9AWORDaFwxuAReibIfTQ==
+X-Received: by 2002:a17:902:bd95:: with SMTP id q21mr14609584pls.49.1578358671310;
+        Mon, 06 Jan 2020 16:57:51 -0800 (PST)
+Received: from leoy-ThinkPad-X240s ([2600:3c01::f03c:91ff:fe8a:bb03])
+        by smtp.gmail.com with ESMTPSA id d129sm57999335pfd.115.2020.01.06.16.57.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 Jan 2020 16:57:50 -0800 (PST)
+Date:   Tue, 7 Jan 2020 08:57:45 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf parse: Copy string to perf_evsel_config_term
+Message-ID: <20200107005745.GB5320@leoy-ThinkPad-X240s>
+References: <20200102151326.31342-1-leo.yan@linaro.org>
+ <20200106151241.GA236146@krava>
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=Ui=ZbzdyV6SjLvrL-zj6e+upog_wZMG4seOsdgZpF6tg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200106151241.GA236146@krava>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jiri,
 
+On Mon, Jan 06, 2020 at 04:12:41PM +0100, Jiri Olsa wrote:
 
-On 1/7/20 6:43 AM, Doug Anderson wrote:
-> Dear Robot,
->
-> On Sat, Dec 21, 2019 at 5:57 AM kbuild test robot <lkp@intel.com> wrote:
->> Hi Douglas,
->>
->> I love your patch! Perhaps something to improve:
->>
->> [auto build test WARNING on linus/master]
->> [also build test WARNING on v5.5-rc2 next-20191220]
->> [if your patch is applied to the wrong git tree, please drop us a note to help
->> improve the system. BTW, we also suggest to use '--base' option to specify the
->> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
->>
->> url:    https://github.com/0day-ci/linux/commits/Douglas-Anderson/drm-bridge-ti-sn65dsi86-Improve-support-for-AUO-B116XAK01-other-DP/20191221-083448
->> base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 7e0165b2f1a912a06e381e91f0f4e495f4ac3736
->> config: sh-allmodconfig (attached as .config)
->> compiler: sh4-linux-gcc (GCC) 7.5.0
->> reproduce:
->>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>          chmod +x ~/bin/make.cross
->>          # save the attached .config to linux build tree
->>          GCC_VERSION=7.5.0 make.cross ARCH=sh
->>
->> If you fix the issue, kindly add following tag
->> Reported-by: kbuild test robot <lkp@intel.com>
->>
->> Note: it may well be a FALSE warning. FWIW you are at least aware of it now.
->> http://gcc.gnu.org/wiki/Better_Uninitialized_Warnings
->>
->> All warnings (new ones prefixed by >>):
->>
->>     drivers/gpu/drm/bridge/ti-sn65dsi86.c: In function 'ti_sn_bridge_enable':
->>>> drivers/gpu/drm/bridge/ti-sn65dsi86.c:543:18: warning: 'rate_valid' may be used uninitialized in this function [-Wmaybe-uninitialized]
->>         if (rate_valid[i])
->>             ~~~~~~~~~~^~~
-> I love your report!  Interestingly I had already noticed this problem
-> myself and v3 of the patch fixes the issue.  See:
->
-> https://lore.kernel.org/r/20191218143416.v3.9.Ib59207b66db377380d13748752d6fce5596462c5@changeid
->
->
-> If the maintainer of the robot is reading this, something to improve
-> about your robot is that it could have noticed v3 of the patch (which
-> was posted several days before your report) and skipped analyzing v2
-> of the patch.  I'm currently using Change-Ids embedded in my
-> Message-Id to help automation relate one version of my patches to the
-> next.  Specifically you compare the Message-Id of v2 and v3 of this
-> patch:
->
-> 20191217164702.v2.9.Ib59207b66db377380d13748752d6fce5596462c5@changeid
-> 20191218143416.v3.9.Ib59207b66db377380d13748752d6fce5596462c5@changeid
->
-> Since the last section before the "@changeid" remained constant it
-> could be assumed that this patch replaced the v2.  I know there's not
-> too much usage of this technique yet, but if only more tools supported
-> it then maybe more people would use it.
+[...]
 
-Hi Doug,
+> > diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+> > index ed7c008b9c8b..5972acdd40d6 100644
+> > --- a/tools/perf/util/parse-events.c
+> > +++ b/tools/perf/util/parse-events.c
+> > @@ -1220,7 +1220,6 @@ static int get_config_terms(struct list_head *head_config,
+> >  			    struct list_head *head_terms __maybe_unused)
+> >  {
+> >  #define ADD_CONFIG_TERM(__type, __name, __val)			\
+> > -do {								\
+> >  	struct perf_evsel_config_term *__t;			\
+> >  								\
+> >  	__t = zalloc(sizeof(*__t));				\
+> > @@ -1229,9 +1228,19 @@ do {								\
+> >  								\
+> >  	INIT_LIST_HEAD(&__t->list);				\
+> >  	__t->type       = PERF_EVSEL__CONFIG_TERM_ ## __type;	\
+> > -	__t->val.__name = __val;				\
+> >  	__t->weak	= term->weak;				\
+> > -	list_add_tail(&__t->list, head_terms);			\
+> > +	list_add_tail(&__t->list, head_terms)
+> > +
+> > +#define ADD_CONFIG_TERM_VAL(__type, __name, __val)		\
+> > +do {								\
+> > +	ADD_CONFIG_TERM(__type, __name, __val);			\
+> > +	__t->val.__name = __val;				\
+> > +} while (0)
+> > +
+> > +#define ADD_CONFIG_TERM_STR(__type, __name, __val)		\
+> > +do {								\
+> > +	ADD_CONFIG_TERM(__type, __name, __val);			\
+> > +	__t->val.__name = strdup(__val);			\
+> 
+> ok, I understand now.. we move the pointer to the perf_evsel_config_term,
+> but release it after in parse_events_terms__purge
+> 
+> the change seems ok, but please check on the strdup return value
+> and cleanup and return -ENOMEM if it fails in here
 
-Thanks for your suggestion, the root cause is that the v3 wasn't handled 
-before this report.
-We'll definitely give serious thought to your suggestion.
+Thanks for suggestion.  Will do it.
 
-   v2: 
-Douglas-Anderson/drm-bridge-ti-sn65dsi86-Improve-support-for-AUO-B116XAK01-other-DP/20191221-083448
-   v3: 
-Douglas-Anderson/drm-bridge-ti-sn65dsi86-Improve-support-for-AUO-B116XAK01-other-DP/20191222-062646
-
-Best Regards,
-Rong Chen
-
->
->
-> -Doug
-> _______________________________________________
-> kbuild-all mailing list -- kbuild-all@lists.01.org
-> To unsubscribe send an email to kbuild-all-leave@lists.01.org
-
+Thanks,
+Leo
