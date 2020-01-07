@@ -2,90 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D15A5133402
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:23:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DD0313343C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Jan 2020 22:24:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729226AbgAGVXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 16:23:13 -0500
-Received: from namei.org ([65.99.196.166]:55898 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728855AbgAGVXC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 16:23:02 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 007LMRpJ014254;
-        Tue, 7 Jan 2020 21:22:27 GMT
-Date:   Wed, 8 Jan 2020 08:22:27 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     KP Singh <kpsingh@chromium.org>
-cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: Re: [PATCH bpf-next v1 06/13] bpf: lsm: Init Hooks and create files
- in securityfs
-In-Reply-To: <20191220154208.15895-7-kpsingh@chromium.org>
-Message-ID: <alpine.LRH.2.21.2001080822090.9683@namei.org>
-References: <20191220154208.15895-1-kpsingh@chromium.org> <20191220154208.15895-7-kpsingh@chromium.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1728555AbgAGVYm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 16:24:42 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38002 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728573AbgAGVYi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 16:24:38 -0500
+Received: by mail-pf1-f195.google.com with SMTP id x185so493902pfc.5;
+        Tue, 07 Jan 2020 13:24:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ChcPdsdS9VGVsNLtdTOuWHWVcSN3lEieq0DFAH4Ts9s=;
+        b=CuCRGwThXc1osGY0Xfb21CElwWLVJREYbekDCFiDFhYRRZAeW/1dwjv3O0/mSzDU8F
+         R6ufgzbKArsZ8G35c+RLdwfQ6qoEZafxDEblhRLL2DS4eICBO8UJ8Ib1pnmaRO34flAv
+         vvzydiwo/KJKdRXHrSJCAgbS1fSGtydd6H6exBTnt+iqJWChu5wPOiufpIxxjYawrjfI
+         9vS+E2CtbJVUWFRMeCnJfFAEuh+LygBNhSAqd3cZyEAfQ8+zOXM6xesvPmv9qai9/D8p
+         Rwh7rR5cpPl+vGEGVCXDhJwzPJJEz70gPgANcFqmrlkhTdRgtD472SlKJydR2Gm1kbM+
+         PJVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ChcPdsdS9VGVsNLtdTOuWHWVcSN3lEieq0DFAH4Ts9s=;
+        b=j1FgVBdJ64SY6rFkoEWjH26NF/URz5E5Pg7hrUcAjIsKiGH9/knPo8Mm4Ku0v/LTny
+         38V2/OCH2c9S0CFGmwlDe9r7D5aPbjjGypAe0QgPqMGSxvcnBTB23eAOqJ0OM5wu0bRF
+         FQZWumjkaAfeV7js1RzzsqOc6tbi1xeSxmySxK+90gaClHpGSWQzodcywpEdLA8hi2N8
+         GZNk+Y6di91S7iLXjYQs8sv0rl3/WyNUSrZQo/ovukKx9v9UXWlsOxNfBIMp5iGt82jz
+         zpTSV29nhrQMu9r7eZVDgOarY2BPJN2y7p2kR1G/8uSJrsinb+WvxL5f5y1b4ywKAj3U
+         0xgg==
+X-Gm-Message-State: APjAAAWZY/0HVpO2iyd2vjiOLp1teyE+H7L1lure9AEgJbZmcNg4gae8
+        I9S+DNHf6WrHJdaaPIg3UBg=
+X-Google-Smtp-Source: APXvYqzRJMipEtd8UAW7X43YQuqABNkCkcIiKryfhUo8tJN+E6zzAZoKei3yP4vBI9cRsr7rm9QPhQ==
+X-Received: by 2002:aa7:96b6:: with SMTP id g22mr1364465pfk.206.1578432277766;
+        Tue, 07 Jan 2020 13:24:37 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 189sm515006pfw.73.2020.01.07.13.24.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 Jan 2020 13:24:37 -0800 (PST)
+Date:   Tue, 7 Jan 2020 13:24:36 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 5.4 000/191] 5.4.9-stable review
+Message-ID: <20200107212436.GA18475@roeck-us.net>
+References: <20200107205332.984228665@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Dec 2019, KP Singh wrote:
-
-> From: KP Singh <kpsingh@google.com>
+On Tue, Jan 07, 2020 at 09:52:00PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.9 release.
+> There are 191 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> The LSM creates files in securityfs for each hook registered with the
-> LSM.
+> Responses should be made by Thu, 09 Jan 2020 20:44:51 +0000.
+> Anything received after that time might be too late.
 > 
->     /sys/kernel/security/bpf/<h_name>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.9-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
 > 
-> The list of LSM hooks are maintained in an internal header "hooks.h"
-> Eventually, this list should either be defined collectively in
-> include/linux/lsm_hooks.h or auto-generated from it.
+> thanks,
 > 
-> * Creation of a file for the hook in the securityfs.
-> * Allocation of a bpf_lsm_hook data structure which stores
->   a pointer to the dentry of the newly created file in securityfs.
-> * Creation of a typedef for the hook so that BTF information
->   can be generated for the LSM hooks to:
+> greg k-h
 > 
->   - Make them "Compile Once, Run Everywhere".
->   - Pass the right arguments when the attached programs are run.
->   - Verify the accesses made by the program by using the BTF
->     information.
+> -------------
+> Pseudo-Shortlog of commits:
 > 
-> Signed-off-by: KP Singh <kpsingh@google.com>
+[ ... ]
 
+> Ming Lei <ming.lei@redhat.com>
+>     block: fix splitting segments on boundary masks
+> 
 
-Reviewed-by: James Morris <jamorris@linux.microsoft.com>
+This patch causes a regression. See:
 
+https://lore.kernel.org/linux-block/20200107181145.GA22076@roeck-us.net/T/#m4607a04fde9ef2ed80d45efacef01c0b0e8d2bfd
 
--- 
-James Morris
-<jmorris@namei.org>
-
+Guenter
