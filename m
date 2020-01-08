@@ -2,75 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2394B1349B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 18:47:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF6171349B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 18:47:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728699AbgAHRrV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 12:47:21 -0500
-Received: from mga07.intel.com ([134.134.136.100]:15312 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726556AbgAHRrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 12:47:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 09:47:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,410,1571727600"; 
-   d="scan'208";a="303619448"
-Received: from tstruk-mobl1.jf.intel.com (HELO [10.7.196.67]) ([10.7.196.67])
-  by orsmga001.jf.intel.com with ESMTP; 08 Jan 2020 09:47:19 -0800
-Subject: Re: [PATCH] tpm: handle negative priv->response_len in
- tpm_common_read
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, linux-integrity@vger.kernel.org,
-        labbott@redhat.com
-References: <b85fa669-d3aa-f6c9-9631-988ae47e392c@redhat.com>
- <157843468820.24718.10808226634364669421.stgit@tstruk-mobl1>
- <b469b7e8454a69402529cc8e25244860e136308e.camel@linux.intel.com>
- <80272f0259d967fe61dacd1036cbbd9f555b8402.camel@linux.intel.com>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Autocrypt: addr=tadeusz.struk@intel.com; keydata=
- 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
-Message-ID: <d1ee03ce-c8bd-75ab-e348-8a05fb6be69d@intel.com>
-Date:   Wed, 8 Jan 2020 09:47:31 -0800
+        id S1728975AbgAHRrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 12:47:41 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:57369 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728955AbgAHRrl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 12:47:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578505659;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kPVctA+/beiB2tgYujpzj4QWpCakHQu/CLjfG7f6imE=;
+        b=YjNF2Q271RqEeKFA9rSopFg51fkU9R4qR/HpDYRn74y//OgfnfhavPhKxlvomG8WFqDXR8
+        7MEnyQrpZG+E+unrZ7yS7ev2e1D4c1hhy6B4mO8btgtnlMGDdzk3ip3E/8lFnJ0ejL7WYK
+        ShLefnc7S+kxt/oJU/lG1p7npkd9X+Q=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-262-1VVaDlJjNky3r6FcoqzIYQ-1; Wed, 08 Jan 2020 12:47:38 -0500
+X-MC-Unique: 1VVaDlJjNky3r6FcoqzIYQ-1
+Received: by mail-wm1-f71.google.com with SMTP id w205so1109391wmb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 09:47:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kPVctA+/beiB2tgYujpzj4QWpCakHQu/CLjfG7f6imE=;
+        b=cDdeKmNZD0gt4QPPRsTLIOytAewkXoXvFUKgpP20H7x+G7jg7KFjfbkyHvYPZwjfOA
+         7bl4+xD3R3EBGEg798Z+1vcW1U+3V0/xui+OeyH2XMNbNJUF+xTALhvRSMah6K1U9Hs4
+         0DEb3B3B+XJU+ayxy26P1ZMcV3AM32/D/cRyesu29l1STvrdg2n1DpibYGHyF4g5MOIY
+         XSlFb/l40ojRQP4Kl1RAfnaGgCUhsVFxE42HWIaQtEwgNhh3/PO7/XBYUC4A1e5QAsxf
+         ZLv7NoIswK4vhlA989syHsmqyUg4ex4ALBJFabj6mRHYP76AvKq+FL2XllrGZC2msjUg
+         Q6bQ==
+X-Gm-Message-State: APjAAAWFRK033+ES6HXNmbzn+7osSZKL5z6kKdKTd5Y4AkfKlNlce7Zw
+        62JU28sofqyvg3Bl/5R+LUX+pouNAtwCulMe7j8wZbZ+kWJ/BAny9302hz/yGa2OQ/oONnWkPpX
+        VsaX8ax2m6pF/xumNcp7/ydeT
+X-Received: by 2002:a1c:7dc4:: with SMTP id y187mr5114639wmc.161.1578505656808;
+        Wed, 08 Jan 2020 09:47:36 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwK4smqOHHZ61RcHhcQZCij9FjfLEL0lRlGmAMs4ej7ug5KpPtW7nqSUmqikVekUsUPp0OLAg==
+X-Received: by 2002:a1c:7dc4:: with SMTP id y187mr5114613wmc.161.1578505656566;
+        Wed, 08 Jan 2020 09:47:36 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:c6d:4079:b74c:e329? ([2001:b07:6468:f312:c6d:4079:b74c:e329])
+        by smtp.gmail.com with ESMTPSA id j12sm5358156wrw.54.2020.01.08.09.47.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jan 2020 09:47:35 -0800 (PST)
+Subject: Re: [PATCH RESEND v2 06/17] KVM: Pass in kvm pointer into
+ mark_page_dirty_in_slot()
+To:     Peter Xu <peterx@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+References: <20191221014938.58831-1-peterx@redhat.com>
+ <20191221014938.58831-7-peterx@redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <8d784ead-44f8-8ebc-6192-be1b4eec6ff8@redhat.com>
+Date:   Wed, 8 Jan 2020 18:47:34 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <80272f0259d967fe61dacd1036cbbd9f555b8402.camel@linux.intel.com>
+In-Reply-To: <20191221014938.58831-7-peterx@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -79,12 +79,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/8/20 8:04 AM, Jarkko Sakkinen wrote:
-> Applied but had to fix bunch of typos, missing punctaction and
-> missing parentheses in the commit message. Even checkpatch.pl
-> was complaining :-/
+On 21/12/19 02:49, Peter Xu wrote:
+> The context will be needed to implement the kvm dirty ring.
+> 
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> ---
+>  virt/kvm/kvm_main.c | 24 ++++++++++++++----------
+>  1 file changed, 14 insertions(+), 10 deletions(-)
+> 
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index c80a363831ae..17969cf110dd 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -144,7 +144,9 @@ static void hardware_disable_all(void);
+>  
+>  static void kvm_io_bus_destroy(struct kvm_io_bus *bus);
+>  
+> -static void mark_page_dirty_in_slot(struct kvm_memory_slot *memslot, gfn_t gfn);
+> +static void mark_page_dirty_in_slot(struct kvm *kvm,
+> +				    struct kvm_memory_slot *memslot,
+> +				    gfn_t gfn);
+>  
+>  __visible bool kvm_rebooting;
+>  EXPORT_SYMBOL_GPL(kvm_rebooting);
+> @@ -2053,8 +2055,9 @@ int kvm_vcpu_read_guest_atomic(struct kvm_vcpu *vcpu, gpa_t gpa,
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_vcpu_read_guest_atomic);
+>  
+> -static int __kvm_write_guest_page(struct kvm_memory_slot *memslot, gfn_t gfn,
+> -			          const void *data, int offset, int len,
+> +static int __kvm_write_guest_page(struct kvm *kvm,
+> +				  struct kvm_memory_slot *memslot, gfn_t gfn,
+> +				  const void *data, int offset, int len,
+>  				  bool track_dirty)
+>  {
+>  	int r;
+> @@ -2067,7 +2070,7 @@ static int __kvm_write_guest_page(struct kvm_memory_slot *memslot, gfn_t gfn,
+>  	if (r)
+>  		return -EFAULT;
+>  	if (track_dirty)
+> -		mark_page_dirty_in_slot(memslot, gfn);
+> +		mark_page_dirty_in_slot(kvm, memslot, gfn);
+>  	return 0;
+>  }
+>  
+> @@ -2077,7 +2080,7 @@ int kvm_write_guest_page(struct kvm *kvm, gfn_t gfn,
+>  {
+>  	struct kvm_memory_slot *slot = gfn_to_memslot(kvm, gfn);
+>  
+> -	return __kvm_write_guest_page(slot, gfn, data, offset, len,
+> +	return __kvm_write_guest_page(kvm, slot, gfn, data, offset, len,
+>  				      track_dirty);
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_write_guest_page);
+> @@ -2087,7 +2090,7 @@ int kvm_vcpu_write_guest_page(struct kvm_vcpu *vcpu, gfn_t gfn,
+>  {
+>  	struct kvm_memory_slot *slot = kvm_vcpu_gfn_to_memslot(vcpu, gfn);
+>  
+> -	return __kvm_write_guest_page(slot, gfn, data, offset,
+> +	return __kvm_write_guest_page(vcpu->kvm, slot, gfn, data, offset,
+>  				      len, true);
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_vcpu_write_guest_page);
+> @@ -2202,7 +2205,7 @@ int kvm_write_guest_offset_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+>  	r = __copy_to_user((void __user *)ghc->hva + offset, data, len);
+>  	if (r)
+>  		return -EFAULT;
+> -	mark_page_dirty_in_slot(ghc->memslot, gpa >> PAGE_SHIFT);
+> +	mark_page_dirty_in_slot(kvm, ghc->memslot, gpa >> PAGE_SHIFT);
+>  
+>  	return 0;
+>  }
+> @@ -2269,7 +2272,8 @@ int kvm_clear_guest(struct kvm *kvm, gpa_t gpa, unsigned long len)
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_clear_guest);
+>  
+> -static void mark_page_dirty_in_slot(struct kvm_memory_slot *memslot,
+> +static void mark_page_dirty_in_slot(struct kvm *kvm,
+> +				    struct kvm_memory_slot *memslot,
+>  				    gfn_t gfn)
+>  {
+>  	if (memslot && memslot->dirty_bitmap) {
+> @@ -2284,7 +2288,7 @@ void mark_page_dirty(struct kvm *kvm, gfn_t gfn)
+>  	struct kvm_memory_slot *memslot;
+>  
+>  	memslot = gfn_to_memslot(kvm, gfn);
+> -	mark_page_dirty_in_slot(memslot, gfn);
+> +	mark_page_dirty_in_slot(kvm, memslot, gfn);
+>  }
+>  EXPORT_SYMBOL_GPL(mark_page_dirty);
+>  
+> @@ -2293,7 +2297,7 @@ void kvm_vcpu_mark_page_dirty(struct kvm_vcpu *vcpu, gfn_t gfn)
+>  	struct kvm_memory_slot *memslot;
+>  
+>  	memslot = kvm_vcpu_gfn_to_memslot(vcpu, gfn);
+> -	mark_page_dirty_in_slot(memslot, gfn);
+> +	mark_page_dirty_in_slot(vcpu->kvm, memslot, gfn);
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_vcpu_mark_page_dirty);
+>  
+> 
 
-Forgot about the checkpatch.pl thing. Sorry.
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
 
--- 
-Tadeusz
