@@ -2,104 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F64A134167
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 13:04:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C50E4134175
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 13:12:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbgAHMEq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 07:04:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41704 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726252AbgAHMEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 07:04:45 -0500
-Received: from localhost (c-98-234-77-170.hsd1.ca.comcast.net [98.234.77.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0270C206DA;
-        Wed,  8 Jan 2020 12:04:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578485085;
-        bh=8Ibxjwt6kC+hGFr1IDrRoG3a1vKrpplBnsa/l24ADGY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qqe7RbJUrhsfFDWUr1VAjV9s+B+nCgyhyRUUxC3WVvcThiR+pl5QeR+MkEMuYDolu
-         NdYxE5lfSt6NpK3W8TY3uKgGk2GxMNbf9s7SBlfxye4Qhy9ijEnjMaXdkFxMI6EOdK
-         gK9SGEFaHxbXxvyd0XTkOZyI8j3pFaBXLm6oCSc0=
-Date:   Wed, 8 Jan 2020 04:04:44 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add a way to turn off ipu bio cache
-Message-ID: <20200108120444.GC28331@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20200107020709.73568-1-jaegeuk@kernel.org>
- <afddac87-b7c5-f68c-4e55-3705be311cf6@huawei.com>
+        id S1727526AbgAHML6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 07:11:58 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8244 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726252AbgAHML5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 07:11:57 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 8C116BDF79AC0C0834EB;
+        Wed,  8 Jan 2020 20:11:55 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Wed, 8 Jan 2020
+ 20:11:45 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>
+CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] gpiolib: remove set but not used variable 'config'
+Date:   Wed, 8 Jan 2020 20:11:17 +0800
+Message-ID: <20200108121117.45060-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <afddac87-b7c5-f68c-4e55-3705be311cf6@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/08, Chao Yu wrote:
-> On 2020/1/7 10:07, Jaegeuk Kim wrote:
-> > Setting 0x40 in /sys/fs/f2fs/dev/ipu_policy gives a way to turn off
-> > bio cache, which is useufl to check whether block layer using hardware
-> > encryption engine merges IOs correctly.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  Documentation/filesystems/f2fs.txt | 1 +
-> >  fs/f2fs/segment.c                  | 2 +-
-> >  fs/f2fs/segment.h                  | 1 +
-> >  3 files changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-> > index 41b5aa94b30f..cd93bcc34726 100644
-> > --- a/Documentation/filesystems/f2fs.txt
-> > +++ b/Documentation/filesystems/f2fs.txt
-> > @@ -335,6 +335,7 @@ Files in /sys/fs/f2fs/<devname>
-> >                                 0x01: F2FS_IPU_FORCE, 0x02: F2FS_IPU_SSR,
-> >                                 0x04: F2FS_IPU_UTIL,  0x08: F2FS_IPU_SSR_UTIL,
-> >                                 0x10: F2FS_IPU_FSYNC.
-> 
-> . -> ,
+drivers/gpio/gpiolib.c: In function gpio_set_config:
+drivers/gpio/gpiolib.c:3053:16: warning:
+ variable config set but not used [-Wunused-but-set-variable]
 
-Actually, we can't do it. I revised it a bit instead.
+commit d90f36851d65 ("gpiolib: have a single place
+of calling set_config()") left behind this unused variable.
 
-> 
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> 
-> Thanks,
-> 
-> > +			       0x40: F2FS_IPU_NOCACHE disables bio caches.
-> >  
-> >   min_ipu_util                 This parameter controls the threshold to trigger
-> >                                in-place-updates. The number indicates percentage
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index a9519532c029..311fe4937f6a 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -3289,7 +3289,7 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
-> >  
-> >  	stat_inc_inplace_blocks(fio->sbi);
-> >  
-> > -	if (fio->bio)
-> > +	if (fio->bio && !(SM_I(sbi)->ipu_policy & (1 << F2FS_IPU_NOCACHE)))
-> >  		err = f2fs_merge_page_bio(fio);
-> >  	else
-> >  		err = f2fs_submit_page_bio(fio);
-> > diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> > index a1b3951367cd..02e620470eef 100644
-> > --- a/fs/f2fs/segment.h
-> > +++ b/fs/f2fs/segment.h
-> > @@ -623,6 +623,7 @@ enum {
-> >  	F2FS_IPU_SSR_UTIL,
-> >  	F2FS_IPU_FSYNC,
-> >  	F2FS_IPU_ASYNC,
-> > +	F2FS_IPU_NOCACHE,
-> >  };
-> >  
-> >  static inline unsigned int curseg_segno(struct f2fs_sb_info *sbi,
-> > 
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpio/gpiolib.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 9fd2dfb..aabf801 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3050,7 +3050,6 @@ static int gpio_do_set_config(struct gpio_chip *gc, unsigned int offset,
+ static int gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+ 			   enum pin_config_param mode)
+ {
+-	unsigned long config;
+ 	unsigned arg;
+ 
+ 	switch (mode) {
+@@ -3064,7 +3063,6 @@ static int gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+ 		arg = 0;
+ 	}
+ 
+-	config = PIN_CONF_PACKED(mode, arg);
+ 	return gpio_do_set_config(gc, offset, mode);
+ }
+ 
+-- 
+2.7.4
+
+
