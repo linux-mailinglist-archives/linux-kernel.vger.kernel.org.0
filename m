@@ -2,187 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D05AB13404C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:20:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D859134053
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:22:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbgAHLTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 06:19:52 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44796 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbgAHLTw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 06:19:52 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 195so1450786pfw.11
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 03:19:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cOGvD7y5HQkBlYF9N0NkWtEGiRyDw5Hk/20diZQAQAA=;
-        b=I/QT89u9dGq6KzbLwqtEEmn/0AiFljz/rRwWBalIGmgNls+lZ9nYd5DXSIv9m05O2Z
-         SZKKVkwM3oOOZODQB1o592LcPoEvG7Ja7SL0pSrPQSloyXq9KBwWsHOBATXFlx7mrNEE
-         oueZQP/zINGY37BWRcZ+BZGgNt4BEFuYBFhqDFY6DfFXYINZNNIAqjsij2h7BhluqmYJ
-         MY6lk9SKV67tqYvS4NcOvT9FKs9ZrmuKS9g/3KM15PGlNE3DI3Z/rk8NOG6z66HOAwAM
-         Yi0mLF/L6qJBN1ZQDoWMOAzD8/Nno07zII52xCpgJ/ah9SXNXLBZf707rByTlpFQ5ldx
-         R8Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cOGvD7y5HQkBlYF9N0NkWtEGiRyDw5Hk/20diZQAQAA=;
-        b=RTQFT9HKrwnAZeaCyTa0g+vfzdop0CcadIrhS3+OUSmE+aa9OmpSC9Dv5j4xVPhsck
-         9ZegTQLX28HZWmYGLFLDHNb/NnjjJN9M8yY7RwrWetkjVnjQ2s7Zz3mGBksDhIE1/xJX
-         b7ueUIyySwWq9k+w5ucHdGteJ3vfW1ovleF3z85r+WkaNtyTfUAmH4pzsjxiJUcbxBqG
-         4kfXok4tjR+bgrhhQQ0SXSKYOdU6AqY1EAaC/loASGHv6J9WGEbcEpoque7pSN9mPEux
-         /PDfwh0wUis4pMlsrOYUaXlTRbrQ1hDm7FGcHgWzpuLHsvnxeV9wpjJIWWxDV2E/YIb/
-         ws0g==
-X-Gm-Message-State: APjAAAWaSWkLybAeO2cuIZxpCGhen5WfSgVvNfdVSB5bPFogwI/gfBaz
-        kaPCiEAxvOS8XiYtZO2h/+OGhQ==
-X-Google-Smtp-Source: APXvYqzywDkjkEjHqoRKd7VAHnkY87bW3tIFt9/TraoWF+Ti+CuLoHpFVbqgQ0f1lIJZz3L5tlYXog==
-X-Received: by 2002:a63:201d:: with SMTP id g29mr4778115pgg.427.1578482390987;
-        Wed, 08 Jan 2020 03:19:50 -0800 (PST)
-Received: from localhost ([122.172.26.121])
-        by smtp.gmail.com with ESMTPSA id o7sm3513384pfg.138.2020.01.08.03.19.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Jan 2020 03:19:49 -0800 (PST)
-Date:   Wed, 8 Jan 2020 16:49:47 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        vincent.guittot@linaro.org, seansw@qti.qualcomm.com,
-        daidavid1@codeaurora.org, adharmap@codeaurora.org,
-        Rajendra Nayak <rnayak@codeaurora.org>, sibis@codeaurora.org,
-        bjorn.andersson@linaro.org, evgreen@chromium.org,
-        kernel-team@android.com, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 3/3] OPP: Add helper function for bandwidth OPP tables
-Message-ID: <20200108111947.q5aafrlz26tnk3nq@vireshk-i7>
-References: <20191207002424.201796-1-saravanak@google.com>
- <20191207002424.201796-4-saravanak@google.com>
+        id S1726793AbgAHLWf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 06:22:35 -0500
+Received: from foss.arm.com ([217.140.110.172]:42756 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726107AbgAHLWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 06:22:35 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9AAFD30E;
+        Wed,  8 Jan 2020 03:22:34 -0800 (PST)
+Received: from arm.com (e112269-lin.cambridge.arm.com [10.1.194.52])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 22C303F703;
+        Wed,  8 Jan 2020 03:22:30 -0800 (PST)
+Date:   Wed, 8 Jan 2020 11:22:22 +0000
+From:   Steven Price <steven.price@arm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alexandre Ghiti <alex@ghiti.fr>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Hogan <jhogan@kernel.org>,
+        James Morse <James.Morse@arm.com>,
+        "Liang, Kan" <kan.liang@linux.intel.com>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Will Deacon <will@kernel.org>, Zong Li <zong.li@sifive.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm: pagewalk: fix unused variable warning
+Message-ID: <20200108112221.GA37977@arm.com>
+References: <20200107204607.1533842-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191207002424.201796-4-saravanak@google.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20200107204607.1533842-1-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-12-19, 16:24, Saravana Kannan wrote:
-> The frequency OPP tables have helper functions to search for entries in the
-> table based on frequency and get the frequency values for a given (or
-> suspend) OPP entry.
+On Tue, Jan 07, 2020 at 08:45:50PM +0000, Arnd Bergmann wrote:
+> One of the pagewalk patches introduced a harmless warning:
 > 
-> Add similar helper functions for bandwidth OPP tables to search for entries
-> in the table based on peak bandwidth and to get the peak and average
-> bandwidth for a given (or suspend) OPP entry.
+> mm/hmm.c: In function 'hmm_vma_walk_pud':
+> mm/hmm.c:478:9: error: unused variable 'pmdp' [-Werror=unused-variable]
+>   pmd_t *pmdp;
+>          ^~~~
+> mm/hmm.c:477:30: error: unused variable 'next' [-Werror=unused-variable]
+>   unsigned long addr = start, next;
+>                               ^~~~
 > 
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> Remove both of the now-unused variables.
+> 
+> Fixes: cb4d03d5fb4c ("mm: pagewalk: add p4d_entry() and pgd_entry()")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Gah! Sorry about that, thanks for fixing it up.
+
+Reviewed-by: Steven Price <steven.price@arm.com>
+
 > ---
->  drivers/opp/core.c     | 301 +++++++++++++++++++++++++++++++++++------
->  include/linux/pm_opp.h |  43 ++++++
->  2 files changed, 305 insertions(+), 39 deletions(-)
+>  mm/hmm.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index c79bbfac7289..3ff33a08198e 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -127,6 +127,29 @@ unsigned long dev_pm_opp_get_freq(struct dev_pm_opp *opp)
->  }
->  EXPORT_SYMBOL_GPL(dev_pm_opp_get_freq);
->  
-> +/**
-> + * dev_pm_opp_get_bw() - Gets the bandwidth corresponding to an available opp
-> + * @opp:	opp for which peak bandwidth has to be returned for
-
-s/peak //
-
-> + * @avg_bw:	Pointer where the corresponding average bandwidth is stored.
-> + *		Can be NULL.
-> + *
-> + * Return: Peak bandwidth in kBps corresponding to the opp, else
-> + * return 0
-> + */
-> +unsigned long dev_pm_opp_get_bw(struct dev_pm_opp *opp, unsigned long *avg_bw)
-> +{
-> +	if (IS_ERR_OR_NULL(opp) || !opp->available) {
-> +		pr_err("%s: Invalid parameters\n", __func__);
-> +		return 0;
-> +	}
-> +
-> +	if (avg_bw)
-
-Do you see this being NULL in practice ? If no, then we can make it
-mandatory for now ?
-
-> +		*avg_bw = opp->avg_bw;
-> +
-> +	return opp->peak_bw;
-> +}
-> +EXPORT_SYMBOL_GPL(dev_pm_opp_get_bw);
-> +
->  /**
->   * dev_pm_opp_get_level() - Gets the level corresponding to an available opp
->   * @opp:	opp for which level value has to be returned for
-> @@ -299,6 +322,34 @@ unsigned long dev_pm_opp_get_suspend_opp_freq(struct device *dev)
->  }
->  EXPORT_SYMBOL_GPL(dev_pm_opp_get_suspend_opp_freq);
->  
-> +/**
-> + * dev_pm_opp_get_suspend_opp_bw() - Get peak bandwidth of suspend opp in kBps
-
-Hmm, I wasn't expecting this. So the interconnects will also have a
-suspend OPP ?
-
-> + * @dev:	device for which we do this operation
-> + * @avg_bw:	Pointer where the corresponding average bandwidth is stored.
-> + *		Can be NULL.
-> + *
-> + * Return: This function returns the peak bandwidth of the OPP marked as
-> + * suspend_opp if one is available, else returns 0;
-> + */
-> +unsigned long dev_pm_opp_get_suspend_opp_bw(struct device *dev,
-> +					    unsigned long *avg_bw)
-> +{
-> +	struct opp_table *opp_table;
-> +	unsigned long peak_bw = 0;
-> +
-> +	opp_table = _find_opp_table(dev);
-> +	if (IS_ERR(opp_table))
-> +		return 0;
-> +
-> +	if (opp_table->suspend_opp && opp_table->suspend_opp->available)
-> +		peak_bw = dev_pm_opp_get_bw(opp_table->suspend_opp, avg_bw);
-> +
-> +	dev_pm_opp_put_opp_table(opp_table);
-> +
-> +	return peak_bw;
-> +}
-> +EXPORT_SYMBOL_GPL(dev_pm_opp_get_suspend_opp_bw);
-> +
->  int _get_opp_count(struct opp_table *opp_table)
+> diff --git a/mm/hmm.c b/mm/hmm.c
+> index a71295e99968..72e5a6d9a417 100644
+> --- a/mm/hmm.c
+> +++ b/mm/hmm.c
+> @@ -474,8 +474,7 @@ static int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,
 >  {
->  	struct dev_pm_opp *opp;
-> @@ -343,6 +394,40 @@ int dev_pm_opp_get_opp_count(struct device *dev)
->  }
->  EXPORT_SYMBOL_GPL(dev_pm_opp_get_opp_count);
->  
-
-I think we should add function header here instead of the helpers
-which get exact match for freq, bw or level. And then pass a enum
-value to it, which tells what we are looking to compare. After that
-rest of the routines will be just one liners, make them macros in
-header file itself.
-
-> +struct dev_pm_opp *dev_pm_opp_find_opp_exact(struct device *dev,
-> +					      struct dev_pm_opp *opp_key,
-> +					      bool available)
-
--- 
-viresh
+>  	struct hmm_vma_walk *hmm_vma_walk = walk->private;
+>  	struct hmm_range *range = hmm_vma_walk->range;
+> -	unsigned long addr = start, next;
+> -	pmd_t *pmdp;
+> +	unsigned long addr = start;
+>  	pud_t pud;
+>  	int ret = 0;
+>  	spinlock_t *ptl = pud_trans_huge_lock(pudp, walk->vma);
+> -- 
+> 2.20.0
+> 
