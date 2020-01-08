@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71D4C133E07
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:14:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33B13133E1E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:17:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbgAHJOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 04:14:16 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:52073 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727549AbgAHJON (ORCPT
+        id S1727714AbgAHJOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 04:14:39 -0500
+Received: from mail-il1-f198.google.com ([209.85.166.198]:46460 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727505AbgAHJON (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 8 Jan 2020 04:14:13 -0500
-Received: by mail-il1-f197.google.com with SMTP id v13so1627760ili.18
+Received: by mail-il1-f198.google.com with SMTP id a2so1636903ill.13
         for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 01:14:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=F/P15y+45Tei818irWpEYcChAf5MbUWYAiT/aHn7HYM=;
-        b=XNiW6UfrjRrfMHTXfIaM5rqbHlQxiDKn/TNHv5BTWZuwmrwZKkdpnbP9FsT5041vQ+
-         4zEb7DQgWQZiW2bo+2cKiQVVZZ8hBftJfQ6ucY8THDymYyzr2eSNmtsvXQTfcHrG+z1j
-         Be8I5Qt5OJvpuoEh460prOerq+lVH8GHIB+PIGhFWolnVx4syKy42cTW/pi4ZwDsJm46
-         qq6mL/cKAUDyJf+WfhuEIJMpUx5dmN823H3H7uPmbNQbk0QY9+Pu49589Lrb2EmnjOWS
-         tLNJAfP+UR1QfW/v2jaJ5LEbolB/MhryL/Ma2BX502VQS2LIAwdf304VIkVq7JBQSFiV
-         GQwA==
-X-Gm-Message-State: APjAAAUtdZiC0h9x60RLpWBqCvGbll4I6DSopvqzlb/WfJDmpAlWF2ww
-        JjLGD4mtdZV7buvPx/tMF14C2wJE39a8WWtDfouWkuNcTUrr
-X-Google-Smtp-Source: APXvYqxUcNzrjW0BysF6oHz3h1UVdbiXZWFrmKdX8ldU2I6Bcc+gqGARURnjCYr353FoFciNtk5dmF6MQ20T0gJ0qVS17CPmA7RC
+        bh=FT33tEfkvMIpM8nwKiXW4vOEy6gcoBd6uE3ed+Lj2r8=;
+        b=n18V/mNxzKq8Ncm0IBC51JT7Tzu0FLEGd9t2jH04gjQ7jt548xjmblF8imMN6+eh+h
+         dAebLOxiXVNn1ouz5jnZpMtU38iIj0cukKgcM/IBvlzcij5xIEQUIeiYuCMAZHzUlY5p
+         6tNCSEMwZRMsn1B47hjE1tT+W07UIAVRj5tyRwn2rl7tviuRsgJg6Pq58By8xV5Dec04
+         8iKsw2QB0cNEN2JnI1VJ7mCTe8kBwmGtLjGmPqT+qabJmW7OT/WYm2qU/STDKNE0JKX/
+         899lDd110NigT2EbUYOD3qMFzWWPOswN4d5kBOrfEuOV7Q7p38rnPBmN1XYYqoclXSFO
+         ZvMQ==
+X-Gm-Message-State: APjAAAVlqsETtCo0FWeWEbLbSJs5b3KjI2PVZwq/dDeZxF6IiBv8QqhO
+        TQcKspcwZ4upxHDNVEguCpUeczhMkhV90otQU04ENDFv/xRA
+X-Google-Smtp-Source: APXvYqxbMIKjRvFuosKghfGoy3BjVGmmXy4mMhp+xL43bQLhsiTEfyIcmZlRjEy4TItFtlDewE06NUgjqXH1S69+SJt2YSZtSI69
 MIME-Version: 1.0
-X-Received: by 2002:a02:c951:: with SMTP id u17mr3362349jao.27.1578474852557;
+X-Received: by 2002:a6b:f404:: with SMTP id i4mr2576079iog.175.1578474852194;
  Wed, 08 Jan 2020 01:14:12 -0800 (PST)
 Date:   Wed, 08 Jan 2020 01:14:12 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dfa984059b9d50f8@google.com>
-Subject: general protection fault in hash_netnet4_uadt
-From:   syzbot <syzbot+654d1074cc322943fbba@syzkaller.appspotmail.com>
+Message-ID: <000000000000da2154059b9d5055@google.com>
+Subject: general protection fault in hash_ip6_uadt
+From:   syzbot <syzbot+7f87c1e8811ab0c1ca1f@syzkaller.appspotmail.com>
 To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
-        info@metux.net, jeremy@azazel.net, kadlec@netfilter.org,
-        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de
+        gregkh@linuxfoundation.org, info@metux.net, jeremy@azazel.net,
+        kadlec@netfilter.org, kstewart@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -54,36 +54,35 @@ syzbot found the following crash on:
 
 HEAD commit:    ae608821 Merge tag 'trace-v5.5-rc5' of git://git.kernel.or..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11714949e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10fe1469e00000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=18698c0c240ba616
-dashboard link: https://syzkaller.appspot.com/bug?extid=654d1074cc322943fbba
+dashboard link: https://syzkaller.appspot.com/bug?extid=7f87c1e8811ab0c1ca1f
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a79485e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13090dfee00000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1483fec6e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10fd2325e00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+654d1074cc322943fbba@syzkaller.appspotmail.com
+Reported-by: syzbot+7f87c1e8811ab0c1ca1f@syzkaller.appspotmail.com
 
 kasan: CONFIG_KASAN_INLINE enabled
 kasan: GPF could be caused by NULL-ptr deref or user memory access
 general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 9713 Comm: syz-executor012 Not tainted 5.5.0-rc5-syzkaller #0
+CPU: 1 PID: 9593 Comm: syz-executor705 Not tainted 5.5.0-rc5-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:hash_netnet4_uadt+0x1ff/0xdf0  
-net/netfilter/ipset/ip_set_hash_netnet.c:174
-Code: 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 e8 09 00 00 48 89  
-da 45 8b 6d 04 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <0f> b6 14 02 48  
-89 d8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 ad
-RSP: 0018:ffffc90001d67180 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff868394cc RDI: ffff88809afd9464
-RBP: ffffc90001d672b8 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffed1015d2703c R11: ffff8880ae9381e3 R12: ffffc90001d67320
-R13: 00000000d3650000 R14: ffffc90001d67200 R15: ffff8880a7fb0b00
-FS:  00000000006dd880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+RIP: 0010:hash_ip6_uadt+0x1f2/0x670 net/netfilter/ipset/ip_set_hash_ip.c:242
+Code: 11 48 89 fa 83 e2 07 83 c2 03 38 ca 7c 08 84 c9 0f 85 c2 03 00 00 4c  
+89 f2 8b 48 04 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <0f> b6 14 02 4c  
+89 f0 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 80
+RSP: 0018:ffffc90001dd71b0 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: 1ffff920003bae3a RCX: 0000000002000000
+RDX: 0000000000000000 RSI: ffffffff8679051b RDI: ffff8880a24000e0
+RBP: ffffc90001dd72b8 R08: 0000000000000000 R09: 0000000000000000
+R10: ffffed1015d2703c R11: ffff8880ae9381e3 R12: ffffc90001dd7320
+R13: ffff8880a6731200 R14: 0000000000000000 R15: ffffc90001dd7200
+FS:  0000000001d64880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000f86 CR3: 00000000a8cc9000 CR4: 00000000001406e0
+CR2: 0000000020000058 CR3: 00000000a85bc000 CR4: 00000000001406e0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
@@ -104,32 +103,31 @@ Call Trace:
   __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2424
   do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440939
+RIP: 0033:0x4403a9
 Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
 ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffd199baef8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440939
-RDX: 0000000020000000 RSI: 0000000020000140 RDI: 0000000000000004
-RBP: 00000000006cb018 R08: 0000000000000008 R09: 00000000004002c8
-R10: 000000000000000c R11: 0000000000000246 R12: 00000000004021c0
-R13: 0000000000402250 R14: 0000000000000000 R15: 0000000000000000
+RSP: 002b:00007ffcb1400f28 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004403a9
+RDX: 0000000020000000 RSI: 0000000020000180 RDI: 0000000000000004
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000246 R12: 0000000000401c30
+R13: 0000000000401cc0 R14: 0000000000000000 R15: 0000000000000000
 Modules linked in:
----[ end trace 9a567dbaf42c9317 ]---
-RIP: 0010:hash_netnet4_uadt+0x1ff/0xdf0  
-net/netfilter/ipset/ip_set_hash_netnet.c:174
-Code: 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 e8 09 00 00 48 89  
-da 45 8b 6d 04 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <0f> b6 14 02 48  
-89 d8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 ad
-RSP: 0018:ffffc90001d67180 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff868394cc RDI: ffff88809afd9464
-RBP: ffffc90001d672b8 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffed1015d2703c R11: ffff8880ae9381e3 R12: ffffc90001d67320
-R13: 00000000d3650000 R14: ffffc90001d67200 R15: ffff8880a7fb0b00
-FS:  00000000006dd880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+---[ end trace 2613125a52c78203 ]---
+RIP: 0010:hash_ip6_uadt+0x1f2/0x670 net/netfilter/ipset/ip_set_hash_ip.c:242
+Code: 11 48 89 fa 83 e2 07 83 c2 03 38 ca 7c 08 84 c9 0f 85 c2 03 00 00 4c  
+89 f2 8b 48 04 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <0f> b6 14 02 4c  
+89 f0 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 80
+RSP: 0018:ffffc90001dd71b0 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: 1ffff920003bae3a RCX: 0000000002000000
+RDX: 0000000000000000 RSI: ffffffff8679051b RDI: ffff8880a24000e0
+RBP: ffffc90001dd72b8 R08: 0000000000000000 R09: 0000000000000000
+R10: ffffed1015d2703c R11: ffff8880ae9381e3 R12: ffffc90001dd7320
+R13: ffff8880a6731200 R14: 0000000000000000 R15: ffffc90001dd7200
+FS:  0000000001d64880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000f86 CR3: 00000000a8cc9000 CR4: 00000000001406e0
+CR2: 0000000020000058 CR3: 00000000a85bc000 CR4: 00000000001406e0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
