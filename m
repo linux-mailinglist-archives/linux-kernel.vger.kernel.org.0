@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 843561340B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:42:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C0E4134107
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:45:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727316AbgAHLmI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 06:42:08 -0500
-Received: from mga09.intel.com ([134.134.136.24]:62271 "EHLO mga09.intel.com"
+        id S1727400AbgAHLmK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 06:42:10 -0500
+Received: from mga04.intel.com ([192.55.52.120]:7736 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726411AbgAHLmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727303AbgAHLmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 8 Jan 2020 06:42:07 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 03:42:06 -0800
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 03:42:07 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,409,1571727600"; 
-   d="scan'208";a="422891864"
+   d="scan'208";a="395716519"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga006.fm.intel.com with ESMTP; 08 Jan 2020 03:42:02 -0800
+  by orsmga005.jf.intel.com with ESMTP; 08 Jan 2020 03:42:02 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id EAEB0202; Wed,  8 Jan 2020 13:42:01 +0200 (EET)
+        id F40C92FB; Wed,  8 Jan 2020 13:42:01 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Darren Hart <dvhart@infradead.org>,
@@ -38,9 +38,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 02/36] platform/x86: intel_scu_ipcutil: Remove default y from Kconfig
-Date:   Wed,  8 Jan 2020 14:41:27 +0300
-Message-Id: <20200108114201.27908-3-mika.westerberg@linux.intel.com>
+Subject: [PATCH v2 03/36] platform/x86: intel_scu_ipc: Add constants for register offsets
+Date:   Wed,  8 Jan 2020 14:41:28 +0300
+Message-Id: <20200108114201.27908-4-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200108114201.27908-1-mika.westerberg@linux.intel.com>
 References: <20200108114201.27908-1-mika.westerberg@linux.intel.com>
@@ -51,26 +51,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver is by no means essential for system to boot up so remove
-default y from it.
+This makes the code more readable. These are taken from intel_pmc_ipc.c
+which implements the same thing.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/platform/x86/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/platform/x86/intel_scu_ipc.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 27d5b40fb717..dd4326736d11 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -997,7 +997,6 @@ config INTEL_SCU_IPC
- config INTEL_SCU_IPC_UTIL
- 	tristate "Intel SCU IPC utility driver"
- 	depends on INTEL_SCU_IPC
--	default y
- 	---help---
- 	  The IPC Util driver provides an interface with the SCU enabling
- 	  low level access for debug work and updating the firmware. Say
+diff --git a/drivers/platform/x86/intel_scu_ipc.c b/drivers/platform/x86/intel_scu_ipc.c
+index cdab916fbf92..a8be5bcb9832 100644
+--- a/drivers/platform/x86/intel_scu_ipc.c
++++ b/drivers/platform/x86/intel_scu_ipc.c
+@@ -99,11 +99,15 @@ struct intel_scu_ipc_dev {
+ 
+ static struct intel_scu_ipc_dev  ipcdev; /* Only one for now */
+ 
++#define IPC_STATUS		0x04
++#define IPC_STATUS_ERR		BIT(1)
++#define IPC_STATUS_BUSY		BIT(0)
++
+ /*
+- * IPC Read Buffer (Read Only):
+- * 16 byte buffer for receiving data from SCU, if IPC command
+- * processing results in response data
++ * IPC Write/Read Buffers:
++ * 16 byte buffer for sending and receiving data to and from SCU.
+  */
++#define IPC_WRITE_BUFFER	0x80
+ #define IPC_READ_BUFFER		0x90
+ 
+ #define IPC_I2C_CNTRL_ADDR	0
+@@ -135,7 +139,7 @@ static inline void ipc_command(struct intel_scu_ipc_dev *scu, u32 cmd)
+  */
+ static inline void ipc_data_writel(struct intel_scu_ipc_dev *scu, u32 data, u32 offset)
+ {
+-	writel(data, scu->ipc_base + 0x80 + offset);
++	writel(data, scu->ipc_base + IPC_WRITE_BUFFER + offset);
+ }
+ 
+ /*
+@@ -147,7 +151,7 @@ static inline void ipc_data_writel(struct intel_scu_ipc_dev *scu, u32 data, u32
+  */
+ static inline u8 ipc_read_status(struct intel_scu_ipc_dev *scu)
+ {
+-	return __raw_readl(scu->ipc_base + 0x04);
++	return __raw_readl(scu->ipc_base + IPC_STATUS);
+ }
+ 
+ /* Read ipc byte data */
+@@ -169,17 +173,17 @@ static inline int busy_loop(struct intel_scu_ipc_dev *scu)
+ 	u32 loop_count = 100000;
+ 
+ 	/* break if scu doesn't reset busy bit after huge retry */
+-	while ((status & BIT(0)) && --loop_count) {
++	while ((status & IPC_STATUS_BUSY) && --loop_count) {
+ 		udelay(1); /* scu processing time is in few u secods */
+ 		status = ipc_read_status(scu);
+ 	}
+ 
+-	if (status & BIT(0)) {
++	if (status & IPC_STATUS_BUSY) {
+ 		dev_err(scu->dev, "IPC timed out");
+ 		return -ETIMEDOUT;
+ 	}
+ 
+-	if (status & BIT(1))
++	if (status & IPC_STATUS_ERR)
+ 		return -EIO;
+ 
+ 	return 0;
+@@ -196,7 +200,7 @@ static inline int ipc_wait_for_interrupt(struct intel_scu_ipc_dev *scu)
+ 	}
+ 
+ 	status = ipc_read_status(scu);
+-	if (status & BIT(1))
++	if (status & IPC_STATUS_ERR)
+ 		return -EIO;
+ 
+ 	return 0;
 -- 
 2.24.1
 
