@@ -2,92 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B8E1133C5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 08:33:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1498B133C64
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 08:41:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbgAHHdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 02:33:43 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43309 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbgAHHdm (ORCPT
+        id S1726837AbgAHHky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 02:40:54 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:23072 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726087AbgAHHkx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 02:33:42 -0500
-Received: by mail-pf1-f193.google.com with SMTP id x6so1161223pfo.10
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 23:33:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=UqnEPALWHzZA1XyArIe54gSIpTfBlxJBhMMEH98tgUE=;
-        b=UEpDwj3j2VI8L9aqT88S/h054nZlI+rPpR+RVksa4qB0/BkrDmo7PWRnGBnfMVpPAG
-         0QgCFIB3H6aVWAN4MsySPOgKSPLx69qB6rr0Sb8m5YITjqWhWlntgj01rWc6AcFigyJB
-         PZgQBRl3HLdR/QIpfDLhqbXF5J+6hC9Ck7L/qTqyz1HEW+Y59yG8NNx9/vVsu2GzwO99
-         iOpCyt8jszQJI+8L/YjaEhFRh2izKxZYgJaERCP2dZbduV5jh/8jIjHKqloD9pfoAOH5
-         mlyEgoognJTOGCQv8wLeclE6DYnk2zdS2leE9rT1jOe5jRJet78D8wjlHKlGrCPIgtuv
-         wt5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=UqnEPALWHzZA1XyArIe54gSIpTfBlxJBhMMEH98tgUE=;
-        b=Q1T4Y50t7NYG4q/wfwfjKrf0MpMk8IrW5R7IZ5ILxKKcITkM1Tvy0dPFY+EE8kab5H
-         38nr92ZTcSW2FiiBdLGPg+Dhe8Cxwr8HChHpiaP17DhYpg97fgmPGjumKnBFo/SS/6Ys
-         fKSLeoO+glOlKa9038PdKiZaKvPT+tNuF689BMv9KHLs+Q3+EWse3k9SF6ya9Fb7Q7Xj
-         5WBJXGm4Gdgk37EjvwTBPgLI+6mP8dP16+ScSuAq4C4atR6o2CS3GiaPoTWKwue66/eY
-         hA/FELYl/tMIKEw69yDr7uzmb3xhdVBjFqVGddZ5jO58x03CBUJ4Z5U+OvkcaEN37T8W
-         BqPw==
-X-Gm-Message-State: APjAAAXNGxNFo+9fcSOGTJKST0nUjmwjm+PyuOLkk9ukQMc0TexM1PDa
-        cUXbJ0+RLSN+PDUJQex03CfirA==
-X-Google-Smtp-Source: APXvYqxwVBPZqqbgaYvff2juBz4dLlvAIoJIWaijz/+a7wJ8MfYjW2y6dqFWKfa03fsQ9NmnU2HUZA==
-X-Received: by 2002:aa7:951c:: with SMTP id b28mr3530292pfp.97.1578468822078;
-        Tue, 07 Jan 2020 23:33:42 -0800 (PST)
-Received: from localhost ([122.172.26.121])
-        by smtp.gmail.com with ESMTPSA id s1sm2169870pgv.87.2020.01.07.23.33.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Jan 2020 23:33:41 -0800 (PST)
-Date:   Wed, 8 Jan 2020 13:03:38 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] opp: fix of_node leak for unsupported entries
-Message-ID: <20200108073338.4z6gktglduigfo5p@vireshk-i7>
-References: <a8060fe5b23929e2e5c9bf5735e63b302124f66c.1578077228.git.mirq-linux@rere.qmqm.pl>
- <20200107063616.a3qpepc46viejxhw@vireshk-i7>
- <20200107140449.GB20159@qmqm.qmqm.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200107140449.GB20159@qmqm.qmqm.pl>
-User-Agent: NeoMutt/20180716-391-311a52
+        Wed, 8 Jan 2020 02:40:53 -0500
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0087bDQt027165
+        for <linux-kernel@vger.kernel.org>; Wed, 8 Jan 2020 02:40:53 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xaq7yxgh2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 02:40:52 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <svens@linux.ibm.com>;
+        Wed, 8 Jan 2020 07:40:50 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 8 Jan 2020 07:40:47 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0087ejGg32047290
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 8 Jan 2020 07:40:45 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8EF45A4054;
+        Wed,  8 Jan 2020 07:40:45 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7E000A405F;
+        Wed,  8 Jan 2020 07:40:45 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed,  8 Jan 2020 07:40:45 +0000 (GMT)
+Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55390)
+        id 3C548E0264; Wed,  8 Jan 2020 08:40:45 +0100 (CET)
+From:   Sven Schnelle <svens@linux.ibm.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Sven Schnelle <svens@linux.ibm.com>
+Subject: [PATCH v3] selftests/ftrace: fix glob selftest
+Date:   Wed,  8 Jan 2020 08:40:43 +0100
+X-Mailer: git-send-email 2.17.1
+X-TM-AS-GCONF: 00
+x-cbid: 20010807-0016-0000-0000-000002DB65CE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20010807-0017-0000-0000-0000333DDF8D
+Message-Id: <20200108074043.21580-1-svens@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-08_01:2020-01-07,2020-01-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 phishscore=0 malwarescore=0 clxscore=1015 bulkscore=0
+ mlxscore=0 lowpriorityscore=0 suspectscore=0 adultscore=0 impostorscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001080065
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07-01-20, 15:04, Michał Mirosław wrote:
-> On Tue, Jan 07, 2020 at 12:06:16PM +0530, Viresh Kumar wrote:
-> > Discard my earlier reply, it wasn't accurate/correct.
-> > 
-> > On 03-01-20, 20:36, Michał Mirosław wrote:
-> > > When parsing OPP v2 table, unsupported entries return NULL from
-> > > _opp_add_static_v2().
-> > 
-> > Right, as we don't want parsing to fail here.
-> > 
-> > > In this case node reference is leaked.
-> > 
-> > Why do you think so ?
-> 
-> for_each_available_child_of_node() returns nodes with refcount
-> increased
+test.d/ftrace/func-filter-glob.tc is failing on s390 because it has
+ARCH_INLINE_SPIN_LOCK and friends set to 'y'. So the usual
+__raw_spin_lock symbol isn't in the ftrace function list. Change
+'*aw*lock' to '*spin*lock' which would hopefully match some of the
+locking functions on all platforms.
 
-I believe it also drops the refcount of the previous node everytime the loop
-goes to the next element. Else we would be required do that from within that
-loop itself, isn't it ?
+Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
+---
 
+Changes in v3:
+  change '*spin*lock' to '*pin*lock' to not match the beginning
+
+Changes in v2:
+  use '*spin*lock' instead of '*ktime*ns'
+
+ .../testing/selftests/ftrace/test.d/ftrace/func-filter-glob.tc  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-glob.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-glob.tc
+index 27a54a17da65..f4e92afab14b 100644
+--- a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-glob.tc
++++ b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-glob.tc
+@@ -30,7 +30,7 @@ ftrace_filter_check '*schedule*' '^.*schedule.*$'
+ ftrace_filter_check 'schedule*' '^schedule.*$'
+ 
+ # filter by *mid*end
+-ftrace_filter_check '*aw*lock' '.*aw.*lock$'
++ftrace_filter_check '*pin*lock' '.*pin.*lock$'
+ 
+ # filter by start*mid*
+ ftrace_filter_check 'mutex*try*' '^mutex.*try.*'
 -- 
-viresh
+2.17.1
+
