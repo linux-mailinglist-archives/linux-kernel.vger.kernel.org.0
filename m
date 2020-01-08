@@ -2,100 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A47B4133BBF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 07:39:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BB00133BCB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 07:41:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726389AbgAHGi6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 01:38:58 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:47853 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbgAHGi6 (ORCPT
+        id S1726734AbgAHGlk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 01:41:40 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:12583 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726492AbgAHGlj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 01:38:58 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ip4z9-0007YA-Nu; Wed, 08 Jan 2020 07:38:31 +0100
-Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ip4z6-0001lR-90; Wed, 08 Jan 2020 07:38:28 +0100
-Date:   Wed, 8 Jan 2020 07:38:28 +0100
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     fengping yu <fengping.yu@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Thierry Reding <treding@nvidia.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Stefan Agner <stefan@agner.cn>, Jacky Bai <ping.bai@nxp.com>,
-        linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com
-Subject: Re: Resend [PATCH V2] dt-bindings:input:keyboard:add MediaTek keypad
- controller binding
-Message-ID: <20200108063828.6t4r7wkkptfdnvxj@pengutronix.de>
-References: <20200108062923.14684-1-fengping.yu@mediatek.com>
+        Wed, 8 Jan 2020 01:41:39 -0500
+X-UUID: d48d1627e97748339e8ae3cd6ced0515-20200108
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=kUH+CKXvuuCJ+JNqIK5cYBkD6I+QkoxV5z2ZPjtbIdw=;
+        b=cmiWMPmrq5YXnnn05av+eeh40o0vf2kJ7ru64ZAIHHoi48SnWqNjxjezWh9LOhyZSrwvK89hdIry4+HY6Y5RL5cTYANUi01ueaogtuvVN0Qh3Kjp/2sT2bgfxulCtzg7ISH+PYRorwJ+DyhEc8bvKnI6niJU2hH3Bb9ajNg9YL0=;
+X-UUID: d48d1627e97748339e8ae3cd6ced0515-20200108
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <ming-fan.chen@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1494828545; Wed, 08 Jan 2020 14:41:33 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 8 Jan 2020 14:41:05 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 8 Jan 2020 14:39:59 +0800
+From:   Ming-Fan Chen <ming-fan.chen@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Yong Wu <yong.wu@mediatek.com>, Evan Green <evgreen@chromium.org>,
+        Joerg Roedel <jroedel@suse.de>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>
+Subject: memory: mtk-smi: Add bandwidth initial golden setting for MT6779
+Date:   Wed, 8 Jan 2020 14:41:27 +0800
+Message-ID: <1578465691-30692-1-git-send-email-ming-fan.chen@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200108062923.14684-1-fengping.yu@mediatek.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 07:37:17 up 53 days, 21:55, 46 users,  load average: 0.03, 0.05,
- 0.00
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+VGhpcyBwYXRjaCBhZGQgZGVzY3JpcHRpb24sIGJhc2ljIG5vZGVzLCBjb25maWdfcG9ydCBhbmQN
+CmJhbmR3aWR0aCBpbml0aWFsIGdvbGRlbiBzZXR0aW5nIGZvciBNVDY3NzkgU01JIGJvdGggc21p
+LWxhcmIgYW5kIHNtaS1jb21tb24uDQpUaGUgc2V0dGluZyBtYWtlIGJldHRlciBwZXJmb3JtYW5j
+ZSBvZiBtZW1vcnkgY29udHJvbCBmb3IgbXVsdGltZWRpYSBtb2R1bGVzLg0KDQpjaGFuZ2Vsb2cg
+c2luY2UgdjI6DQpBZGQgR0FMUyBmb3IgbXQ2Nzc5IGluIHNtaS1jb21tb24udHh0DQpTcGxpdCBi
+YXNpYyBub2RlcyBhbmQgY29uZmlnX3BvcnQgc3VwcG9ydCBmcm9tIGluaXRpYWwgZ29sZGVuIHNl
+dHRpbmcgcGF0Y2gNCkRlZmluZSBsb2NhbCB2YXJpYWJsZSBmcm9tIGxvbmcgdG8gc2hvcnQNCk1l
+cmdlIHdyaXRlbF9yZWxheGVkIGludG8gb25lIGxpbmUNClJlbW92ZSBTTUlfTEFSQl9TV19GTEFH
+IGluIHNtaS1sYXJiDQoNCg0KTWluZy1GYW4gQ2hlbiAoMyk6DQogIGR0LWJpbmRpbmdzOiBtZWRp
+YXRlazogQWRkIGJpbmRpbmcgZm9yIE1UNjc3OSBTTUkNCiAgbWVtb3J5OiBtdGstc21pOiBBZGQg
+YmFzaWMgc3VwcG9ydCBmb3IgTVQ2Nzc5DQogIG1lbW9yeTogbXRrLXNtaTogQWRkIGJhbmR3aWR0
+aCBpbml0aWFsIGdvbGRlbiBzZXR0aW5nDQoNCiAuLi4vbWVtb3J5LWNvbnRyb2xsZXJzL21lZGlh
+dGVrLHNtaS1jb21tb24udHh0ICAgICB8ICAgIDUgKy0NCiAuLi4vbWVtb3J5LWNvbnRyb2xsZXJz
+L21lZGlhdGVrLHNtaS1sYXJiLnR4dCAgICAgICB8ICAgIDMgKy0NCiBkcml2ZXJzL21lbW9yeS9t
+dGstc21pLmMgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAxNDAgKysrKysrKysrKysrKysr
+KysrKy0NCiAzIGZpbGVzIGNoYW5nZWQsIDE0NCBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygt
+KQ==
 
-thanks for your patches. Please can you write something into the cover
-letter if you use it?
-
-Regards,
-  Marco
-
-On 20-01-08 14:29, fengping yu wrote:
-> 
-> fengping.yu (2):
->   Documentation: devicetree: bindings: input
->   drivers: input: keyboard
-> 
->  .../devicetree/bindings/input/mtk-kpd.txt     |  52 +++
->  arch/arm64/configs/defconfig                  |   1 +
->  drivers/input/keyboard/Kconfig                |   8 +
->  drivers/input/keyboard/Makefile               |   1 +
->  drivers/input/keyboard/mtk-kpd.c              | 357 ++++++++++++++++++
->  5 files changed, 419 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/mtk-kpd.txt
->  create mode 100644 drivers/input/keyboard/mtk-kpd.c
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
