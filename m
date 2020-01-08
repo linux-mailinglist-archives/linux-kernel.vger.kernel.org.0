@@ -2,111 +2,237 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 582C713497D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 18:39:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BDCF134989
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 18:41:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729838AbgAHRja (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 12:39:30 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36357 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726803AbgAHRja (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 12:39:30 -0500
-Received: by mail-pf1-f193.google.com with SMTP id x184so1981561pfb.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 09:39:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=bKjvwLoHlC29TnvYqxLfJzXQCusKrCOIAaFwwH7cSJ0=;
-        b=GTNCpgnTvYnInEtO3QFpRZVybeL6CBYzJJx27ePUFw0/SafUvNxEYcOYQfvASQ6xqX
-         6j+5vDN0aFTy3n2vQk6NkoWpkjjM2jUwkxQaSbL/wj3TBgA2VXvX2hZcLRoUwLWwSopL
-         JoZOKKbVLSYcz5PbBGPmd9fCF6ZxmqIR6YilM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=bKjvwLoHlC29TnvYqxLfJzXQCusKrCOIAaFwwH7cSJ0=;
-        b=AEfx0rnZMAh5yn2I4OQbuoLOBGbeb0OF43XlDv+ftuc9ta17ilI5VeuToGQTFRNeF7
-         N1c0BQCWRcLoQup9VqIw4j2FXp1ClUts4q0a6U4sqS2+YZ+jo7aru6MjiffO32sc+xFf
-         nOTco6fp+m/s7JXnCuQGF/zoV9AL5Wi992Cna+lA9fqXHsCOpO0wEEQGEUzZoX8LEWK3
-         8FPg0l9z7YxkxxOJR2fnSVy0RX9C2JifVooN2EiOKPiiUG2VuynP74gh29BvNMflR7e2
-         7azx7qFoLjPcliet4tQwMwWbPnJGvQqzUuN0hqz9I9GGJejJhT5bmuubdQ50l3yycd7Q
-         RSIg==
-X-Gm-Message-State: APjAAAWuHEHv9tx2wNPQrEdNoLkZpzLURmFxWbkl2P54nwHb9JaZpkt/
-        0fezphkSWW7kJAFK2A8qclfbRQ==
-X-Google-Smtp-Source: APXvYqxdgwKREsz1YZeH4VDxSzla/QubcfkdDOAeGwicuj/jBB+4Si/iUY0qR/AhKo7jBTllsOCHfg==
-X-Received: by 2002:a65:63ce:: with SMTP id n14mr6602246pgv.282.1578505169677;
-        Wed, 08 Jan 2020 09:39:29 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id l8sm3901278pjy.24.2020.01.08.09.39.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2020 09:39:28 -0800 (PST)
-Date:   Wed, 8 Jan 2020 09:39:27 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc:     Tianlin Li <tli@digitalocean.com>,
-        kernel-hardening@lists.openwall.com,
-        Alex Deucher <alexander.deucher@amd.com>, David1.Zhou@amd.com,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 0/2] drm/radeon: have the callers of set_memory_*() check
- the return value
-Message-ID: <202001080936.A36005F1@keescook>
-References: <20200107192555.20606-1-tli@digitalocean.com>
- <b5984995-7276-97d3-a604-ddacfb89bd89@amd.com>
+        id S1729907AbgAHRkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 12:40:52 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:44790 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729877AbgAHRkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 12:40:46 -0500
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1ipFJt-0004hW-AP; Wed, 08 Jan 2020 10:40:45 -0700
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1ipFJq-0000uC-Hr; Wed, 08 Jan 2020 10:40:34 -0700
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Stephen Bates <sbates@raithlin.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Wed,  8 Jan 2020 10:40:21 -0700
+Message-Id: <20200108174030.3430-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b5984995-7276-97d3-a604-ddacfb89bd89@amd.com>
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, hch@lst.de, sagi@grimberg.me, kbusch@kernel.org, axboe@fb.com, Chaitanya.Kulkarni@wdc.com, maxg@mellanox.com, sbates@raithlin.com, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
+        version=3.4.2
+Subject: [PATCH v10 0/9] nvmet: add target passthru commands support
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 08, 2020 at 01:56:47PM +0100, Christian König wrote:
-> Am 07.01.20 um 20:25 schrieb Tianlin Li:
-> > Right now several architectures allow their set_memory_*() family of
-> > functions to fail, but callers may not be checking the return values.
-> > If set_memory_*() returns with an error, call-site assumptions may be
-> > infact wrong to assume that it would either succeed or not succeed at
-> > all. Ideally, the failure of set_memory_*() should be passed up the
-> > call stack, and callers should examine the failure and deal with it.
-> > 
-> > Need to fix the callers and add the __must_check attribute. They also
-> > may not provide any level of atomicity, in the sense that the memory
-> > protections may be left incomplete on failure. This issue likely has a
-> > few steps on effects architectures:
-> > 1)Have all callers of set_memory_*() helpers check the return value.
-> > 2)Add __must_check to all set_memory_*() helpers so that new uses do
-> > not ignore the return value.
-> > 3)Add atomicity to the calls so that the memory protections aren't left
-> > in a partial state.
-> > 
-> > This series is part of step 1. Make drm/radeon check the return value of
-> > set_memory_*().
-> 
-> I'm a little hesitate merge that. This hardware is >15 years old and nobody
-> of the developers have any system left to test this change on.
+Hi,
 
-If that's true it should be removed from the tree. We need to be able to
-correctly make these kinds of changes in the kernel.
+This is just a resend seeing it probably got missed with the holiday.
 
-> Would it be to much of a problem to just add something like: r =
-> set_memory_*(); (void)r; /* Intentionally ignored */.
+This is v10 of the passthru patchset. This addresses the vast majority
+of Christoph's feedback from v9 and rebases onto v5.5-rc1. There were
+a couple issues that were not addressed discussed below.
 
-This seems like a bad idea -- we shouldn't be papering over failures
-like this when there is logic available to deal with it.
+I don't think cloning the ctrl_id or the subsysnqn is a good idea.
+I sent an email trying to explain why here[1] but there was no response.
+In short, I think cloning the ctrl_id will break multipathing over
+fabrics and copying the subsysnqn only has the effect of breaking
+loopback; the user can always copy the underlying subsysnqn if it
+makes sense for their overall system.
 
-> Apart from that certainly a good idea to add __must_check to the functions.
+I maintain overriding the CMIC bit in the ctrl id is necessary to
+allow multipath over fabrics even if the underlying device did
+not support multipath.
 
-Agreed!
+I also think the black list for admin commands is appropriate, and I
+added it based on Sagi's feedback[2]. There are plenty of commands that
+may be dangerous like firmware update and format NVM commands, and NS
+attach commands won't work out of the box because we don't copy the
+ctrl_id. It seems like there's more commands to be careful of than ones
+that are that are obviously acceptable. So, I think the prudent course
+is blacklisting by default until someone has a usecase and can show
+the command is safe seems and makes sense. For our present use cases,
+the identify, log page and vendor specific commands are all that we
+care about.
 
--Kees
+A git branch is available here:
 
--- 
-Kees Cook
+https://github.com/sbates130272/linux-p2pmem nvmet_passthru_v10
+
+Thanks,
+
+Logan
+
+[1] https://lore.kernel.org/linux-block/247eca47-c3bc-6452-fb19-f7aa27b05a60@deltatee.com/
+[2] https://lore.kernel.org/linux-block/e4430207-7def-8776-0289-0d58689dc0cd@grimberg.me/
+
+--
+
+v10 Changes:
+  1. Rebased onto v5.5-rc1
+  2. Disable all exports in core nvme if CONFIG_NVME_TARGET_PASSTHRU is
+     not set and put them near the end of the file with a big fat
+     comment (per Christoph)
+  3. Don't fake up the vs field: pass it through as is and bump
+     it to 1.2.1 if it is below that (per Christoph)
+  4. Rework how passthru requests are submitted into the core
+     with proper nvme_passthru_start/end handling (per Christoph)
+  5. Rework how commands are parsed with passthru hooks in
+     parse_admin_cmd() and nvmet_parse_io_cmd() (per Christoph)
+  6. Rework commands are handled so they are only done in a work
+     item if absolutely necessary (per Christoph)
+  7. The data_len hack was dropped as a patchset was introduced to
+     remove data_len altogether (per Christoph)
+  8. The passthru accounting changes are now in v5.5-rc1
+  9. A large number of other minor cleanups that were pointed out by
+     Christoph
+
+v9 Changes:
+  1. Rebased onto v5.4-rc2 (required adjusting nvme_identify_ns() usage)
+  2. Collected Sagi's Reviewed-By Tags
+  3. Squashed seperate Kconfig patch into passthru patch (Per Sagi)
+  4. Set REQ_FUA for flush requests and remove special casing
+     on RQF_IO_STAT (Per Sagi)
+
+v8 Changes:
+  1. Rebased onto v5.3-rc6
+  2. Collected Max's Reviewed-By tags
+  3. Converted admin command black-list to a white-list, but
+     allow all vendor specific commands. With this, we feel
+     it's safe to allow multiple connections from hosts.
+     (As per Sagi's feedback)
+
+v7 Changes:
+  1. Rebased onto v5.3-rc2
+  2. Rework nvme_ctrl_get_by_path() to use filp_open() instead of
+     the cdev changes that were in v6. (Per Al)
+  3. Override the cmic bit to allow multipath and allow
+     multiple connections from the same hostnqn. (At the same
+     time I cleaned up the method of rejecting multiple connections.)
+     See Patch 8)
+  4. Found a bug when used with the tcp transport (See Patch 10)
+
+v6 Changes:
+  1. Rebased onto v5.3-rc1
+  2. Rework configfs interface to simply be a passthru directory
+     within the existing subsystem. The directory is similar to
+     and consistent with a namespace directory.
+  3. Have the configfs take a path instead of a bare controller name
+  4. Renamed the main passthru file to io-cmd-passthru.c for consistency
+     with the file and block-dev methods.
+  5. Cleaned up all the CONFIG_NVME_TARGET_PASSTHRU usage to remove
+     all the inline #ifdefs
+  6. Restructured nvmet_passthru_make_request() a bit for clearer code
+  7. Moved nvme_find_get_ns() call into nvmet_passthru_execute_cmd()
+     seeing calling it in nvmet_req_init() causes a lockdep warning
+     due to nvme_find_get_ns() being able to sleep.
+  8. Added a check in nvmet_passthru_execute_cmd() to ensure we don't
+     violate queue_max_segments or queue_max_hw_sectors and overrode
+     mdts to ensure hosts don't intentionally submit commands
+     that will exceed these limits.
+  9. Reworked the code which ensures there's only one subsystem per
+     passthru controller to use an xarray instead of a list as this is
+     simpler and more easily fixed some bugs triggered by disabling
+     subsystems that weren't enabled.
+ 10. Removed the overide of the target cntlid with the passthru cntlid;
+     this seemed like a really bad idea especially in the presence of
+     mixed systems as you could end up with two ctrlrs with the same
+     cntlid. For now, commands that depend on cntlid are black listed.
+ 11. Implement block accounting for passthru so the target can track
+     usage using /proc/diskstats
+ 12. A number of other minor bug fixes and cleanups
+
+v5 Changes (not sent to list, from Chaitanya):
+  1. Added workqueue for admin commands.
+  2. Added kconfig option for the pass-thru feature.
+  3. Restructure the parsing code according to your suggestion,
+     call nvmet_xxx_parse_cmd() from nvmet_passthru_parse_cmd().
+  4. Use pass-thru instead of pt.
+  5. Several cleanups and add comments at the appropriate locations.
+  6. Minimize the code for checking pass-thru ns across all the subsystems.
+  7. Removed the delays in the ns related admin commands since I was
+     not able to reproduce the previous bug.
+
+v4 Changes:
+  1. Add request polling interface to the block layer.
+  2. Use request polling interface in the NVMEoF target passthru code
+     path.
+  3. Add checks suggested by Sagi for creating one target ctrl per
+     passthru ctrl.
+  4. Don't enable the namespace if it belongs to the configured passthru
+     ctrl.
+  5. Adjust the code latest kernel.
+
+v3 Changes:
+  1. Split the addition of passthru command handlers and integration
+     into two different patches since we add guards to create one target
+     controller per passthru controller. This way it will be easier to
+     review the code.
+  2. Adjust the code for 4.18.
+
+v2 Changes:
+  1. Update the new nvme core controller find API naming and
+     changed the string comparison of the ctrl.
+  2. Get rid of the newly added #defines for target ctrl values.
+  3. Use the newly added structure members in the same patch where
+     they are used. Aggregate the passthru command handling support
+     and integration with nvmet-core into one patch.
+  4. Introduce global NVMe Target subsystem list for connected and
+     not connected subsystems on the target side.
+  5. Add check when configuring the target ns and target
+     passthru ctrl to allow only one target controller to be created
+     for one passthru subsystem.
+  6. Use the passthru ctrl cntlid when creating the
+     target controller.
+
+Chaitanya Kulkarni (1):
+  nvmet-passthru: Introduce NVMet passthru Kconfig option
+
+Logan Gunthorpe (8):
+  nvme-core: Clear any SGL flags in passthru commands
+  nvme: Create helper function to obtain command effects
+  nvme: Move nvme_passthru_[start|end]() calls to common helper
+  nvme-core: Introduce nvme_ctrl_get_by_path()
+  nvme: Export existing nvme core functions
+  nvmet-passthru: Add passthru code to process commands
+  nvmet-passthru: Add enable/disable helpers
+  nvmet-configfs: Introduce passthru configfs interface
+
+ drivers/nvme/host/core.c        | 229 ++++++++++-------
+ drivers/nvme/host/nvme.h        |  14 +
+ drivers/nvme/target/Kconfig     |  10 +
+ drivers/nvme/target/Makefile    |   1 +
+ drivers/nvme/target/admin-cmd.c |   7 +-
+ drivers/nvme/target/configfs.c  | 102 ++++++++
+ drivers/nvme/target/core.c      |  13 +-
+ drivers/nvme/target/nvmet.h     |  52 ++++
+ drivers/nvme/target/passthru.c  | 435 ++++++++++++++++++++++++++++++++
+ include/linux/nvme.h            |   1 +
+ 10 files changed, 771 insertions(+), 93 deletions(-)
+ create mode 100644 drivers/nvme/target/passthru.c
+
+--
+2.20.1
