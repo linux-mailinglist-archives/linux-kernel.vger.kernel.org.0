@@ -2,103 +2,328 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20CF1134340
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 14:03:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72441134349
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 14:03:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbgAHNCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 08:02:48 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:36626 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726144AbgAHNCs (ORCPT
+        id S1727701AbgAHNDx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 08:03:53 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55389 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726144AbgAHNDx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 08:02:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=RXfvehcFVw1Nh6t+COz9jrJFT3gPfoC+ft4FWH5Fqh0=; b=QLaS4+ore1Vs3ckMV89u4kwcu
-        VuW8rUH3zNVGDoB9e1x8fxxsursBtS5eitYRjPrFpng5SC5A8EjacHrlhelh9O8yQQkOFbLjH8eYs
-        tzZLk3mlwMgat/tQOAfk6TzGj8VVfg5TDuaXSZQcrSkcuT9jryQ6kRAWcxpoK+BsyOTvrD5DE0CnT
-        R5keSu+W3FVbKnt1mTTRBJslgusvNHRn/pXtJUOi+ElGednQXbi5wzriWbolAN1fWxRHB8OuowDYQ
-        OieDV2dtHHP7i2E3q1urMXjgJvnMO6xjffGZP5juxswsbfy2CHPxlCnarOfF9Sfh4i16QYCk4UbWv
-        qILm+kV3w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ipAyZ-0002HO-Q9; Wed, 08 Jan 2020 13:02:19 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 704573012C3;
-        Wed,  8 Jan 2020 14:00:37 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 707A420B79C80; Wed,  8 Jan 2020 14:02:10 +0100 (CET)
-Date:   Wed, 8 Jan 2020 14:02:10 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     chenying <chen.ying153@zte.com.cn>, mingo@redhat.com,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
-        wang.yi59@zte.com.cn, jiang.xuexin@zte.com.cn
-Subject: Re: [PATCH] fix share rt runtime with offline rq
-Message-ID: <20200108130210.GF2844@hirez.programming.kicks-ass.net>
-References: <1576894812-36688-1-git-send-email-chen.ying153@zte.com.cn>
- <20191223114030.1800b4c1@gandalf.local.home>
+        Wed, 8 Jan 2020 08:03:53 -0500
+Received: by mail-wm1-f67.google.com with SMTP id q9so2374743wmj.5
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 05:03:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:autocrypt:organization:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=n4SuohFliAR68uRFvA6ewgdyHzsBcdLea3DzG/JEPWk=;
+        b=WKT3KGgiYMiNYBhwG7linS+lZkS0NzRA4WFsbJb2vRhhRuOkJWSnsp8Bolfl80ZtI6
+         jhm2rxOplyA0bZeiu6CKkodwoFFPpZxJSbcg6SlyQKr0gqw9EXiQe/kWN6SoO8x9l1Jw
+         IQTe/wfZQ6C/UvHmCbywnUB4fgQWh0ArDiERbqfNczRx9h5K6hjaarKbRzyZXYhqA2sz
+         MJ+6peTeMQZNQ9tn09H/bOsmcey2F94ldVsIPJY2UdDvKMwKO57sQp8MRMcDiee488kb
+         M96WtG2S9EeDmY6C5/1NWQKpQcqKb62HmzP6oELT0+NQ9v1FJHkj9ITjONXAEwKTt9mo
+         qMpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=n4SuohFliAR68uRFvA6ewgdyHzsBcdLea3DzG/JEPWk=;
+        b=JJrMxRAeQJLdBsnCLENOk9DwnrHnx9PSpJ+jPQI9NuBLy24/DPM4ExU+osJLAEAAfm
+         QKvinc+pGeOI5TIaHzo7AZ/lpnzbdR2itl4OpSMtCnvTnrcwHhgVSwK86LaHFUiSbQhY
+         QZJvYmChitJMDXk8IqxU1o0lhuo4lEOlDRIzHHW/XjroZD7mrIZdaEzAqln2+pe6tRhl
+         peOj/MpYPpOI5sofDR2CopGaKz04wR8adENsjQpcbswy3AUTqMdPk22NNx3Eo3XDnuC1
+         G7XuqM4kyggLJ9+keGDJxH9CMifWjJYGh8JXM9dDDqo0RDII/SvmLy6XgOcbgDTCLM3H
+         1bog==
+X-Gm-Message-State: APjAAAXzWentTeA1bDt/3egeAksc0/7x0HL0ZPcuhiLLIo0CjXKra859
+        w35PMKji21J1OBjd5Ts0v4cI/A==
+X-Google-Smtp-Source: APXvYqyKYc8iWuvd4WY21NUSG30KLQQcT+kh/uUBwb5F0Y3gWI5pR/xzpB9m8Rr6jVW1mqtWGFW72g==
+X-Received: by 2002:a7b:c450:: with SMTP id l16mr3581671wmi.166.1578488629623;
+        Wed, 08 Jan 2020 05:03:49 -0800 (PST)
+Received: from [10.1.2.12] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id b10sm4264131wrt.90.2020.01.08.05.03.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jan 2020 05:03:49 -0800 (PST)
+Subject: Re: [PATCH] i2c: meson: implement the master_xfer_atomic callback
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-i2c@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        wsa@the-dreams.de
+Cc:     khilman@baylibre.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, b.galvani@gmail.com,
+        jian.hu@amlogic.com
+References: <20200107232901.891177-1-martin.blumenstingl@googlemail.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ BSwxi7g3Mu7u5kUByanqHyA=
+Organization: Baylibre
+Message-ID: <b516a6aa-f1b9-1e01-916e-7fd582f9a6e5@baylibre.com>
+Date:   Wed, 8 Jan 2020 14:03:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191223114030.1800b4c1@gandalf.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200107232901.891177-1-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 23, 2019 at 11:40:30AM -0500, Steven Rostedt wrote:
-> >  kernel/sched/rt.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> > index a532558..d20dc86 100644
-> > --- a/kernel/sched/rt.c
-> > +++ b/kernel/sched/rt.c
-> > @@ -648,8 +648,12 @@ static void do_balance_runtime(struct rt_rq *rt_rq)
-> >  	rt_period = ktime_to_ns(rt_b->rt_period);
-> >  	for_each_cpu(i, rd->span) {
-> >  		struct rt_rq *iter = sched_rt_period_rt_rq(rt_b, i);
-> > +		struct rq *rq = rq_of_rt_rq(iter);
-> >  		s64 diff;
-> >  
-> > +		if (!rq->online)
-> > +			continue;
-> > +
+On 08/01/2020 00:29, Martin Blumenstingl wrote:
+> Boards with some of the 32-bit SoCs (mostly Meson8 and Meson8m2) use a
+> Ricoh RN5T618 PMU which acts as system power controller. The driver for
+> the system power controller may need to the I2C bus just before shutting
+> down or rebooting the system. At this stage the interrupts may be
+> disabled already.
 > 
-> I think this might be papering over the real issue. Perhaps
-> rq_offline_rt() needs to be called for CPUs not being brought online?
+> Implement the master_xfer_atomic callback so the driver for the RN5T618
+> PMU can communicate properly with the PMU when shutting down or
+> rebooting the board. The CTRL register has a status bit which can be
+> polled to determine when processing has completed. According to the
+> public S805 datasheet the value 0 means "idle" and 1 means "running".
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  drivers/i2c/busses/i2c-meson.c | 97 +++++++++++++++++++++++-----------
+>  1 file changed, 65 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-meson.c b/drivers/i2c/busses/i2c-meson.c
+> index 1e2647f9a2a7..7486b46e475f 100644
+> --- a/drivers/i2c/busses/i2c-meson.c
+> +++ b/drivers/i2c/busses/i2c-meson.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/i2c.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+> +#include <linux/iopoll.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> @@ -213,6 +214,30 @@ static void meson_i2c_prepare_xfer(struct meson_i2c *i2c)
+>  	writel(i2c->tokens[1], i2c->regs + REG_TOK_LIST1);
+>  }
+>  
+> +static void meson_i2c_transfer_complete(struct meson_i2c *i2c, u32 ctrl)
+> +{
+> +	if (ctrl & REG_CTRL_ERROR) {
+> +		/*
+> +		 * The bit is set when the IGNORE_NAK bit is cleared
+> +		 * and the device didn't respond. In this case, the
+> +		 * I2C controller automatically generates a STOP
+> +		 * condition.
+> +		 */
+> +		dev_dbg(i2c->dev, "error bit set\n");
+> +		i2c->error = -ENXIO;
+> +		i2c->state = STATE_IDLE;
+> +	} else {
+> +		if (i2c->state == STATE_READ && i2c->count)
+> +			meson_i2c_get_data(i2c, i2c->msg->buf + i2c->pos,
+> +					   i2c->count);
+> +
+> +		i2c->pos += i2c->count;
+> +
+> +		if (i2c->pos >= i2c->msg->len)
+> +			i2c->state = STATE_IDLE;
+> +	}
+> +}
+> +
+>  static irqreturn_t meson_i2c_irq(int irqno, void *dev_id)
+>  {
+>  	struct meson_i2c *i2c = dev_id;
+> @@ -232,27 +257,9 @@ static irqreturn_t meson_i2c_irq(int irqno, void *dev_id)
+>  		return IRQ_NONE;
+>  	}
+>  
+> -	if (ctrl & REG_CTRL_ERROR) {
+> -		/*
+> -		 * The bit is set when the IGNORE_NAK bit is cleared
+> -		 * and the device didn't respond. In this case, the
+> -		 * I2C controller automatically generates a STOP
+> -		 * condition.
+> -		 */
+> -		dev_dbg(i2c->dev, "error bit set\n");
+> -		i2c->error = -ENXIO;
+> -		i2c->state = STATE_IDLE;
+> -		complete(&i2c->done);
+> -		goto out;
+> -	}
+> -
+> -	if (i2c->state == STATE_READ && i2c->count)
+> -		meson_i2c_get_data(i2c, i2c->msg->buf + i2c->pos, i2c->count);
+> +	meson_i2c_transfer_complete(i2c, ctrl);
+>  
+> -	i2c->pos += i2c->count;
+> -
+> -	if (i2c->pos >= i2c->msg->len) {
+> -		i2c->state = STATE_IDLE;
+> +	if (i2c->state == STATE_IDLE) {
+>  		complete(&i2c->done);
+>  		goto out;
+>  	}
+> @@ -279,10 +286,11 @@ static void meson_i2c_do_start(struct meson_i2c *i2c, struct i2c_msg *msg)
+>  }
+>  
+>  static int meson_i2c_xfer_msg(struct meson_i2c *i2c, struct i2c_msg *msg,
+> -			      int last)
+> +			      int last, bool atomic)
+>  {
+>  	unsigned long time_left, flags;
+>  	int ret = 0;
+> +	u32 ctrl;
+>  
+>  	i2c->msg = msg;
+>  	i2c->last = last;
+> @@ -300,13 +308,24 @@ static int meson_i2c_xfer_msg(struct meson_i2c *i2c, struct i2c_msg *msg,
+>  
+>  	i2c->state = (msg->flags & I2C_M_RD) ? STATE_READ : STATE_WRITE;
+>  	meson_i2c_prepare_xfer(i2c);
+> -	reinit_completion(&i2c->done);
+> +
+> +	if (!atomic)
+> +		reinit_completion(&i2c->done);
+>  
+>  	/* Start the transfer */
+>  	meson_i2c_set_mask(i2c, REG_CTRL, REG_CTRL_START, REG_CTRL_START);
+>  
+> -	time_left = msecs_to_jiffies(I2C_TIMEOUT_MS);
+> -	time_left = wait_for_completion_timeout(&i2c->done, time_left);
+> +	if (atomic) {
+> +		ret = readl_poll_timeout_atomic(i2c->regs + REG_CTRL, ctrl,
+> +						!(ctrl & REG_CTRL_STATUS),
+> +						10, I2C_TIMEOUT_MS * 1000);
+> +	} else {
+> +		time_left = msecs_to_jiffies(I2C_TIMEOUT_MS);
+> +		time_left = wait_for_completion_timeout(&i2c->done, time_left);
+> +
+> +		if (!time_left)
+> +			ret = -ETIMEDOUT;
+> +	}
+>  
+>  	/*
+>  	 * Protect access to i2c struct and registers from interrupt
+> @@ -315,13 +334,14 @@ static int meson_i2c_xfer_msg(struct meson_i2c *i2c, struct i2c_msg *msg,
+>  	 */
+>  	spin_lock_irqsave(&i2c->lock, flags);
+>  
+> +	if (atomic && !ret)
+> +		meson_i2c_transfer_complete(i2c, ctrl);
+> +
+>  	/* Abort any active operation */
+>  	meson_i2c_set_mask(i2c, REG_CTRL, REG_CTRL_START, 0);
+>  
+> -	if (!time_left) {
+> +	if (ret)
+>  		i2c->state = STATE_IDLE;
+> -		ret = -ETIMEDOUT;
+> -	}
+>  
+>  	if (i2c->error)
+>  		ret = i2c->error;
+> @@ -331,8 +351,8 @@ static int meson_i2c_xfer_msg(struct meson_i2c *i2c, struct i2c_msg *msg,
+>  	return ret;
+>  }
+>  
+> -static int meson_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+> -			  int num)
+> +static int meson_i2c_xfer_messages(struct i2c_adapter *adap,
+> +				   struct i2c_msg *msgs, int num, bool atomic)
+>  {
+>  	struct meson_i2c *i2c = adap->algo_data;
+>  	int i, ret = 0;
+> @@ -340,7 +360,7 @@ static int meson_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+>  	clk_enable(i2c->clk);
+>  
+>  	for (i = 0; i < num; i++) {
+> -		ret = meson_i2c_xfer_msg(i2c, msgs + i, i == num - 1);
+> +		ret = meson_i2c_xfer_msg(i2c, msgs + i, i == num - 1, atomic);
+>  		if (ret)
+>  			break;
+>  	}
+> @@ -350,14 +370,27 @@ static int meson_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+>  	return ret ?: i;
+>  }
+>  
+> +static int meson_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+> +			  int num)
+> +{
+> +	return meson_i2c_xfer_messages(adap, msgs, num, false);
+> +}
+> +
+> +static int meson_i2c_xfer_atomic(struct i2c_adapter *adap,
+> +				 struct i2c_msg *msgs, int num)
+> +{
+> +	return meson_i2c_xfer_messages(adap, msgs, num, true);
+> +}
+> +
+>  static u32 meson_i2c_func(struct i2c_adapter *adap)
+>  {
+>  	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
+>  }
+>  
+>  static const struct i2c_algorithm meson_i2c_algorithm = {
+> -	.master_xfer	= meson_i2c_xfer,
+> -	.functionality	= meson_i2c_func,
+> +	.master_xfer		= meson_i2c_xfer,
+> +	.master_xfer_atomic	= meson_i2c_xfer_atomic,
+> +	.functionality		= meson_i2c_func,
+>  };
+>  
+>  static int meson_i2c_probe(struct platform_device *pdev)
+> 
 
-Yeah, very much that. Something like the below perhaps. But I really
-want to rip out the whole RT_CGROUP_SCHED stuff so we can start over.
+Looks fine
 
-Perhaps the poster can explain what he's using this stuff for?
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 
----
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 4043abe45459..96a0320cfadb 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -208,7 +208,13 @@ int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent)
- 			goto err_free_rq;
- 
- 		init_rt_rq(rt_rq);
-+
-+		cpus_read_lock();
- 		rt_rq->rt_runtime = tg->rt_bandwidth.rt_runtime;
-+		if (!cpu_online(i))
-+			rt_rq->rt_runtime = RUNTIME_INF;
-+		cpus_read_unlock();
-+
- 		init_tg_rt_entry(tg, rt_rq, rt_se, i, parent->rt_se[i]);
- 	}
- 
+Neil
