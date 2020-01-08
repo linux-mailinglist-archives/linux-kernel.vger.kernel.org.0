@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16471134AD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 19:47:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDEDD134ACB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 19:47:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729362AbgAHSqt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 13:46:49 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:59916 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730250AbgAHSqq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 13:46:46 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: koike)
-        with ESMTPSA id A5F8829131A
-From:   Helen Koike <helen.koike@collabora.com>
-To:     linux-rockchip@lists.infradead.org
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        eddie.cai.linux@gmail.com, mchehab@kernel.org, heiko@sntech.de,
-        gregkh@linuxfoundation.org, andrey.konovalov@linaro.org,
-        linux-kernel@vger.kernel.org, tfiga@chromium.org,
-        robh+dt@kernel.org, hans.verkuil@cisco.com,
-        laurent.pinchart@ideasonboard.com, sakari.ailus@linux.intel.com,
-        joacim.zetterling@gmail.com, kernel@collabora.com,
-        ezequiel@collabora.com, linux-media@vger.kernel.org,
-        jacob-chen@iotwrt.com, linux-arm-kernel@lists.infradead.org,
-        Helen Koike <helen.koike@collabora.com>
-Subject: [PATCH v13 11/11] MAINTAINERS: add entry for Rockchip ISP1 driver
-Date:   Wed,  8 Jan 2020 15:44:54 -0300
-Message-Id: <20200108184454.825725-12-helen.koike@collabora.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200108184454.825725-1-helen.koike@collabora.com>
-References: <20200108184454.825725-1-helen.koike@collabora.com>
+        id S1730251AbgAHSqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 13:46:31 -0500
+Received: from mga02.intel.com ([134.134.136.20]:31946 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729068AbgAHSq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 13:46:28 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 10:46:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,411,1571727600"; 
+   d="scan'208";a="223009616"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga006.jf.intel.com with ESMTP; 08 Jan 2020 10:46:13 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 4C68E14A; Wed,  8 Jan 2020 20:46:12 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Yury Norov <yury.norov@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/2] lib/test_bitmap: Correct test data offsets for 32-bit
+Date:   Wed,  8 Jan 2020 20:46:10 +0200
+Message-Id: <20200108184611.7065-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -40,42 +40,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MAINTAINERS entry for the rockchip isp1 driver.
+On 32-bit platform the size of long is only 32 bits which makes wrong offset
+in the array of 64 bit size.
 
-Signed-off-by: Helen Koike <helen.koike@collabora.com>
+Calculate offset based on BITS_PER_LONG.
 
+Fixes: 30544ed5de43 ("lib/bitmap: introduce bitmap_replace() helper")
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
+ lib/test_bitmap.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Changes in v13: None
-Changes in v12: None
-Changes in v11: None
-Changes in v10: None
-Changes in v9:
-- Move to staging
-
-Changes in v8: None
-Changes in v7: None
-
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 87f3d89d44a2..5ed1287cbb1c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14117,6 +14117,12 @@ F:	drivers/hid/hid-roccat*
- F:	include/linux/hid-roccat*
- F:	Documentation/ABI/*/sysfs-driver-hid-roccat*
+diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
+index 5cb35a734462..af522577a76e 100644
+--- a/lib/test_bitmap.c
++++ b/lib/test_bitmap.c
+@@ -275,22 +275,23 @@ static void __init test_copy(void)
+ static void __init test_replace(void)
+ {
+ 	unsigned int nbits = 64;
++	unsigned int step = DIV_ROUND_UP(nbits, BITS_PER_LONG);
+ 	DECLARE_BITMAP(bmap, 1024);
  
-+ROCKCHIP ISP V1 DRIVER
-+M:	Helen Koike <helen.koike@collabora.com>
-+L:	linux-media@vger.kernel.org
-+S:	Maintained
-+F:	drivers/staging/media/rkisp1/
-+
- ROCKCHIP RASTER 2D GRAPHIC ACCELERATION UNIT DRIVER
- M:	Jacob Chen <jacob-chen@iotwrt.com>
- M:	Ezequiel Garcia <ezequiel@collabora.com>
+ 	bitmap_zero(bmap, 1024);
+-	bitmap_replace(bmap, &exp2[0], &exp2[1], exp2_to_exp3_mask, nbits);
++	bitmap_replace(bmap, &exp2[0 * step], &exp2[1 * step], exp2_to_exp3_mask, nbits);
+ 	expect_eq_bitmap(bmap, exp3_0_1, nbits);
+ 
+ 	bitmap_zero(bmap, 1024);
+-	bitmap_replace(bmap, &exp2[1], &exp2[0], exp2_to_exp3_mask, nbits);
++	bitmap_replace(bmap, &exp2[1 * step], &exp2[0 * step], exp2_to_exp3_mask, nbits);
+ 	expect_eq_bitmap(bmap, exp3_1_0, nbits);
+ 
+ 	bitmap_fill(bmap, 1024);
+-	bitmap_replace(bmap, &exp2[0], &exp2[1], exp2_to_exp3_mask, nbits);
++	bitmap_replace(bmap, &exp2[0 * step], &exp2[1 * step], exp2_to_exp3_mask, nbits);
+ 	expect_eq_bitmap(bmap, exp3_0_1, nbits);
+ 
+ 	bitmap_fill(bmap, 1024);
+-	bitmap_replace(bmap, &exp2[1], &exp2[0], exp2_to_exp3_mask, nbits);
++	bitmap_replace(bmap, &exp2[1 * step], &exp2[0 * step], exp2_to_exp3_mask, nbits);
+ 	expect_eq_bitmap(bmap, exp3_1_0, nbits);
+ }
+ 
 -- 
-2.24.0
+2.24.1
 
