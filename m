@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A12E11346D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 16:59:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CF1F1346D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 16:59:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728288AbgAHP6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 10:58:53 -0500
-Received: from foss.arm.com ([217.140.110.172]:46582 "EHLO foss.arm.com"
+        id S1729195AbgAHP64 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 10:58:56 -0500
+Received: from foss.arm.com ([217.140.110.172]:46604 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727746AbgAHP6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 10:58:52 -0500
+        id S1727746AbgAHP6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 10:58:54 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 26176328;
-        Wed,  8 Jan 2020 07:58:52 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F6CEDA7;
+        Wed,  8 Jan 2020 07:58:54 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 828FC3F534;
-        Wed,  8 Jan 2020 07:58:51 -0800 (PST)
-Date:   Wed, 08 Jan 2020 15:58:50 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CAA9A3F534;
+        Wed,  8 Jan 2020 07:58:53 -0800 (PST)
+Date:   Wed, 08 Jan 2020 15:58:52 +0000
 From:   Mark Brown <broonie@kernel.org>
 To:     Saravanan Sekar <sravanhome@gmail.com>
 Cc:     broonie@kernel.org, davem@davemloft.net,
@@ -28,9 +28,9 @@ Cc:     broonie@kernel.org, davem@davemloft.net,
         mark.rutland@arm.com, mchehab+samsung@kernel.org,
         mripard@kernel.org, robh+dt@kernel.org, sam@ravnborg.org,
         shawnguo@kernel.org, sravanhome@gmail.com
-Subject: Applied "MAINTAINERS: Add entry for mpq7920 PMIC driver" to the regulator tree
-In-Reply-To: <20200108131234.24128-5-sravanhome@gmail.com>
-Message-Id: <applied-20200108131234.24128-5-sravanhome@gmail.com>
+Subject: Applied "regulator: bindings: add document bindings for mpq7920" to the regulator tree
+In-Reply-To: <20200108131234.24128-3-sravanhome@gmail.com>
+Message-Id: <applied-20200108131234.24128-3-sravanhome@gmail.com>
 X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -39,7 +39,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   MAINTAINERS: Add entry for mpq7920 PMIC driver
+   regulator: bindings: add document bindings for mpq7920
 
 has been applied to the regulator tree at
 
@@ -64,38 +64,230 @@ to this mail.
 Thanks,
 Mark
 
-From c5bae95b4e60a07dd4f06452ccae5805ed16b40d Mon Sep 17 00:00:00 2001
+From f5fa59a61ecac5efcb77b294a10134aab358bb5c Mon Sep 17 00:00:00 2001
 From: Saravanan Sekar <sravanhome@gmail.com>
-Date: Wed, 8 Jan 2020 14:12:34 +0100
-Subject: [PATCH] MAINTAINERS: Add entry for mpq7920 PMIC driver
+Date: Wed, 8 Jan 2020 14:12:32 +0100
+Subject: [PATCH] regulator: bindings: add document bindings for mpq7920
 
-Add MAINTAINERS entry for Monolithic Power Systems mpq7920 PMIC driver.
+Add device tree binding information for mpq7920 regulator driver.
+Example bindings for mpq7920 are added.
 
 Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
-Link: https://lore.kernel.org/r/20200108131234.24128-5-sravanhome@gmail.com
+Link: https://lore.kernel.org/r/20200108131234.24128-3-sravanhome@gmail.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ .../bindings/regulator/mps,mpq7920.yaml       | 202 ++++++++++++++++++
+ 1 file changed, 202 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bd5847e802de..73780dbd60a6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11138,6 +11138,13 @@ S:	Maintained
- F:	Documentation/driver-api/serial/moxa-smartio.rst
- F:	drivers/tty/mxser.*
- 
-+MONOLITHIC POWER SYSTEM PMIC DRIVER
-+M:	Saravanan Sekar <sravanhome@gmail.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/regulator/mpq7920.yaml
-+F:	drivers/regulator/mpq7920.c
-+F:	drivers/regulator/mpq7920.h
+diff --git a/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml b/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml
+new file mode 100644
+index 000000000000..598f3ea070c9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml
+@@ -0,0 +1,202 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/regulator/mps,mpq7920.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- MR800 AVERMEDIA USB FM RADIO DRIVER
- M:	Alexey Klimov <klimov.linux@gmail.com>
- L:	linux-media@vger.kernel.org
++title: Monolithic Power System MPQ7920 PMIC
++
++maintainers:
++  - Saravanan Sekar <sravanhome@gmail.com>
++
++properties:
++  $nodename:
++    pattern: "pmic@[0-9a-f]{1,2}"
++  compatible:
++    enum:
++      - mps,mpq7920
++
++  reg:
++    maxItems: 1
++
++  regulators:
++    type: object
++    description: |
++      list of regulators provided by this controller, must be named
++      after their hardware counterparts BUCK[1-4], one LDORTC, and LDO[2-5]
++
++      mps,switch-freq:
++        description: |
++          switching frequency must be one of following corresponding value
++          1.1MHz, 1.65MHz, 2.2MHz, 2.75MHz
++        $ref: "/schemas/types.yaml#/definitions/uint8"
++        enum: [ 0, 1, 2, 3 ]
++        default: 2
++
++      buck1:
++        type: object
++        $ref: "regulator.yaml#"
++        description: |
++          4.5A DC-DC step down converter
++
++        mps,buck-softstart:
++           $ref: "/schemas/types.yaml#/definitions/uint8"
++           enum: [ 0, 1, 2, 3 ]
++           default: 1
++           description: |
++             defines the soft start time of this buck, must be one of the following
++             corresponding values 150us, 300us, 610us, 920us
++
++         mps,buck-phase-delay:
++           $ref: "/schemas/types.yaml#/definitions/uint8"
++           enum: [ 0, 1, 2, 3 ]
++           default: 0
++           description: |
++             defines the phase delay of this buck, must be one of the following
++             corresponding values 0deg, 90deg, 180deg, 270deg
++
++         mps,buck-ovp-disable:
++           type: boolean
++           description: |
++             disables over voltage protection of this buck
++
++      buck2:
++        type: object
++        $ref: "regulator.yaml#"
++        description: |
++          2.5A DC-DC step down converter
++
++        mps,buck-softstart:
++          description: |
++            defines the soft start time of this buck, must be one of the following
++            corresponding values 150us, 300us, 610us, 920us
++          $ref: "/schemas/types.yaml#/definitions/uint8"
++          enum: [ 0, 1, 2, 3 ]
++          default: 1
++
++        mps,buck-phase-delay:
++          description: |
++            defines the phase delay of this buck, must be one of the following
++            corresponding values 0deg, 90deg, 180deg, 270deg
++          $ref: "/schemas/types.yaml#/definitions/uint8"
++          enum: [ 0, 1, 2, 3 ]
++          default: 0
++
++        mps,buck-ovp-disable:
++          description: |
++            disables over voltage protection of this buck
++          type: boolean
++
++      buck3:
++        type: object
++        $ref: "regulator.yaml#"
++        description: |
++          4.5A DC-DC step down converter
++
++        mps,buck-softstart:
++           description: |
++             defines the soft start time of this buck, must be one of the following
++             corresponding values 150us, 300us, 610us, 920us
++           $ref: "/schemas/types.yaml#/definitions/uint8"
++           enum: [ 0, 1, 2, 3 ]
++           default: 1
++
++         mps,buck-phase-delay:
++           description: |
++             defines the phase delay of this buck, must be one of the following
++             corresponding values 0deg, 90deg, 180deg, 270deg
++           $ref: "/schemas/types.yaml#/definitions/uint8"
++           enum: [ 0, 1, 2, 3 ]
++           default: 1
++
++         mps,buck-ovp-disable:
++           description: |
++             disables over voltage protection of this buck
++           type: boolean
++
++      buck4:
++        type: object
++        $ref: "regulator.yaml#"
++        description: |
++          2.5A DC-DC step down converter
++
++        mps,buck-softstart:
++          description: |
++            defines the soft start time of this buck, must be one of the following
++            corresponding values 150us, 300us, 610us, 920us
++          $ref: "/schemas/types.yaml#/definitions/uint8"
++          enum: [ 0, 1, 2, 3 ]
++          default: 1
++
++        mps,buck-phase-delay:
++          description: |
++            defines the phase delay of this buck, must be one of the following
++            corresponding values 0deg, 90deg, 180deg, 270deg
++          $ref: "/schemas/types.yaml#/definitions/uint8"
++          enum: [ 0, 1, 2, 3 ]
++          default: 1
++
++        mps,buck-ovp-disable:
++          description: |
++            disables over voltage protection of this buck
++          type: boolean
++
++      ldortc:
++        $ref: "regulator.yaml#"
++        description: |
++          regulator with 0.65V-3.5875V for RTC, always enabled
++
++      ldo2:
++        $ref: "regulator.yaml#"
++        description: |
++          regulator with 0.65V-3.5875V
++
++      ldo3:
++        $ref: "regulator.yaml#"
++        description: |
++          regulator with 0.65V-3.5875V
++
++      ldo4:
++        $ref: "regulator.yaml#"
++        description: |
++          regulator with 0.65V-3.5875V
++
++      ldo5:
++        $ref: "regulator.yaml#"
++        description: |
++          regulator with 0.65V-3.5875V
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        pmic@69 {
++          compatible = "mps,mpq7920";
++          reg = <0x69>;
++
++          regulators {
++            mps,switch-freq = <1>;
++
++            buck1 {
++             regulator-name = "buck1";
++             regulator-min-microvolt = <400000>;
++             regulator-max-microvolt = <3587500>;
++             regulator-min-microamp  = <460000>;
++             regulator-max-microamp  = <7600000>;
++             regulator-boot-on;
++             mps,buck-ovp-disable;
++             mps,buck-phase-delay = <2>;
++             mps,buck-softstart = <1>;
++            };
++
++            ldo2 {
++             regulator-name = "ldo2";
++             regulator-min-microvolt = <650000>;
++             regulator-max-microvolt = <3587500>;
++            };
++         };
++       };
++     };
++...
 -- 
 2.20.1
 
