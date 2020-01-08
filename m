@@ -2,84 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4118134689
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 16:45:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12D2313468E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 16:45:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbgAHPoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 10:44:21 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33286 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727158AbgAHPoU (ORCPT
+        id S1728763AbgAHPoe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 10:44:34 -0500
+Received: from lists.gateworks.com ([108.161.130.12]:49049 "EHLO
+        lists.gateworks.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726900AbgAHPoe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 10:44:20 -0500
-Received: by mail-pg1-f194.google.com with SMTP id 6so1785090pgk.0;
-        Wed, 08 Jan 2020 07:44:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GJIUFZ+IRbGLtnqTgbLaM/lLGOdp/TzPHfM+NWXgIB4=;
-        b=PoGThj/M8e0D220466gOL8uaJLCWsDgZJ4z9NWUS+hmVG5RRFBYVv+Z/ZW346/VDcs
-         6yUrGeVV+9tJfjs8I9PaDyzZF8HQ25P/GsjWA1r84AR831HQ9vpX+kY2iCM1oByGT54P
-         zChMcaS04GgcsccTQt6h67APhPlGJjJI9j9q5OydmTLFhHmWmgZIGHpVpJHCEj4TTS7G
-         v+747D8JP6u+QVyiTKANpMxVzRl4lpNlM8n3mH8W39W7c9Bt3eHgPxYLdp7jZ/tzGbbE
-         Eifq/oNkan21Gn71XyZcdpJfMQlUia0aQFuScm36ktwQeWatJ/omrCZgx0qKmh/agDfn
-         VqMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GJIUFZ+IRbGLtnqTgbLaM/lLGOdp/TzPHfM+NWXgIB4=;
-        b=Rn7nMFHbiiL0zCQ3YEQM9khSPaR7z73nJJa0GEFd8o/nm/DkB+OkDZopzKUMX53JE2
-         MCIXJDqHK1JxOBVDgZu8pYMkC987k10skmobEH6kGH4X1fxza+xg0zsIqw97n2jy9h+S
-         yHwhWTSiuuEfyq02AnYa1azDXuRtvaZbyWapIZiDUMRu6W2zk2DbfKrHgzOxIG0HxPx5
-         s58Y5BRjlax6vD0PhXzQk2wiyu4NhNQw3rJLQeikDDBX3GRvtlCboP9Wmi5OpA3FcVcy
-         7OcQ6s5a7RoB+m1rPx8o8/TSYiEFQ1LS8UgN1phuVclQ5VEzWKCjFvzkanwF/xUz7UNw
-         Pnhw==
-X-Gm-Message-State: APjAAAX2W/NeHwzpEqzmffsLQ1FRMpXnvpNu/UFsBTheomV+EQuYXDHS
-        cuhL9/IERWWHtHhN1X+OCtcVXWY6
-X-Google-Smtp-Source: APXvYqyBe5QZczPDXdFMiiD33WOGJgqlWk9R9U7xRWHCoEeIxPMhmdiV/0SFlc1QfXy2vFscjT0EVw==
-X-Received: by 2002:aa7:9af1:: with SMTP id y17mr5670137pfp.21.1578498260196;
-        Wed, 08 Jan 2020 07:44:20 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 200sm4165387pfz.121.2020.01.08.07.44.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 Jan 2020 07:44:19 -0800 (PST)
-Date:   Wed, 8 Jan 2020 07:44:18 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.4 000/191] 5.4.9-stable review
-Message-ID: <20200108154418.GC28993@roeck-us.net>
-References: <20200107205332.984228665@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200107205332.984228665@linuxfoundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 8 Jan 2020 10:44:34 -0500
+Received: from 68-189-91-139.static.snlo.ca.charter.com ([68.189.91.139] helo=rjones.pdc.gateworks.com)
+        by lists.gateworks.com with esmtp (Exim 4.82)
+        (envelope-from <rjones@gateworks.com>)
+        id 1ipDVX-0007s2-Rx; Wed, 08 Jan 2020 15:44:31 +0000
+From:   Robert Jones <rjones@gateworks.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Robert Jones <rjones@gateworks.com>
+Subject: [PATCH v7 0/5] ARM: dts: imx: Add GW59xx Gateworks specials
+Date:   Wed,  8 Jan 2020 07:44:19 -0800
+Message-Id: <20200108154424.15736-1-rjones@gateworks.com>
+X-Mailer: git-send-email 2.9.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 09:52:00PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.9 release.
-> There are 191 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 09 Jan 2020 20:44:51 +0000.
-> Anything received after that time might be too late.
-> 
+This series adds board support for the GW59xx Gateworks Ventana family
+specials.
 
-For v5.4.8-191-gdd269ce619cb:
+Changes in v2:
+ - Generalized node names
+ - Removed unnecessary labels
+ - Expanded patch subject
+ - Removed undocumented compatible string in dts
 
-Build results:
-	total: 158 pass: 158 fail: 0
-Qemu test results:
-	total: 385 pass: 385 fail: 0
+Changes in v3:
+ - Fixed a conflict in arch/arm/boot/dts/Makefile
 
-Guenter
+Changes in v4:
+ - Clarified authorship
+ - Added dt-bindings compatible entries
+
+Changes in v5:
+ - Added documentation schema permutations for all gateworks ventana boards
+ - Added back compatible strings from dts removed in v2
+
+Changes in v6:
+ - Reorganized dt-bindings schema into new items entry
+
+Changes in v7:
+ - Separated dt-bindings to two entries for DL/Q variants
+
+Robert Jones (4):
+  dt-bindings: arm: fsl: Add Gateworks Ventana i.MX6DL/Q compatibles
+  ARM: dts: imx: Add GW5907 board support
+  ARM: dts: imx: Add GW5913 board support
+  ARM: dts: imx: Add GW5912 board support
+
+Tim Harvey (1):
+  ARM: dts: imx: Add GW5910 board support
+
+ Documentation/devicetree/bindings/arm/fsl.yaml |  41 +++
+ arch/arm/boot/dts/Makefile                     |   8 +
+ arch/arm/boot/dts/imx6dl-gw5907.dts            |  14 +
+ arch/arm/boot/dts/imx6dl-gw5910.dts            |  14 +
+ arch/arm/boot/dts/imx6dl-gw5912.dts            |  13 +
+ arch/arm/boot/dts/imx6dl-gw5913.dts            |  14 +
+ arch/arm/boot/dts/imx6q-gw5907.dts             |  14 +
+ arch/arm/boot/dts/imx6q-gw5910.dts             |  14 +
+ arch/arm/boot/dts/imx6q-gw5912.dts             |  13 +
+ arch/arm/boot/dts/imx6q-gw5913.dts             |  14 +
+ arch/arm/boot/dts/imx6qdl-gw5907.dtsi          | 399 ++++++++++++++++++++
+ arch/arm/boot/dts/imx6qdl-gw5910.dtsi          | 491 +++++++++++++++++++++++++
+ arch/arm/boot/dts/imx6qdl-gw5912.dtsi          | 461 +++++++++++++++++++++++
+ arch/arm/boot/dts/imx6qdl-gw5913.dtsi          | 348 ++++++++++++++++++
+ 14 files changed, 1858 insertions(+)
+ create mode 100644 arch/arm/boot/dts/imx6dl-gw5907.dts
+ create mode 100644 arch/arm/boot/dts/imx6dl-gw5910.dts
+ create mode 100644 arch/arm/boot/dts/imx6dl-gw5912.dts
+ create mode 100644 arch/arm/boot/dts/imx6dl-gw5913.dts
+ create mode 100644 arch/arm/boot/dts/imx6q-gw5907.dts
+ create mode 100644 arch/arm/boot/dts/imx6q-gw5910.dts
+ create mode 100644 arch/arm/boot/dts/imx6q-gw5912.dts
+ create mode 100644 arch/arm/boot/dts/imx6q-gw5913.dts
+ create mode 100644 arch/arm/boot/dts/imx6qdl-gw5907.dtsi
+ create mode 100644 arch/arm/boot/dts/imx6qdl-gw5910.dtsi
+ create mode 100644 arch/arm/boot/dts/imx6qdl-gw5912.dtsi
+ create mode 100644 arch/arm/boot/dts/imx6qdl-gw5913.dtsi
+
+-- 
+2.9.2
+
