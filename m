@@ -2,123 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA0EA134D42
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 21:27:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 596AE134D34
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 21:26:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727438AbgAHU1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 15:27:13 -0500
-Received: from mga06.intel.com ([134.134.136.31]:45246 "EHLO mga06.intel.com"
+        id S1727205AbgAHU0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 15:26:39 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:53215 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727388AbgAHU1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 15:27:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 12:27:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,411,1571727600"; 
-   d="scan'208";a="211658401"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by orsmga007.jf.intel.com with ESMTP; 08 Jan 2020 12:27:07 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Paul Mackerras <paulus@ozlabs.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        syzbot+c9d1fb51ac9d0d10c39d@syzkaller.appspotmail.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Barret Rhoden <brho@google.com>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Zeng <jason.zeng@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Subject: [PATCH 14/14] KVM: x86/mmu: Use huge pages for DAX-backed files
-Date:   Wed,  8 Jan 2020 12:24:48 -0800
-Message-Id: <20200108202448.9669-15-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200108202448.9669-1-sean.j.christopherson@intel.com>
-References: <20200108202448.9669-1-sean.j.christopherson@intel.com>
+        id S1725446AbgAHU0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 15:26:38 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47tLPS07cRz9sPJ;
+        Thu,  9 Jan 2020 07:26:35 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1578515196;
+        bh=qtqQsfsb2WUiSdrCNexZ5+okx6btpBO9RQhZm9Cq9hE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=fQqtl4VOSZYzB9G7bj671U6OzCdh+xaLyfGUaoyMMYZyVHzbJKMrvSuJE+ybk+Zup
+         PLciHZtz89tc8SnOMqF+unOkE9DV3e9G2zBAmk6AkxTwZrKN4zZfT+euPC1QGMTfiK
+         FzB99j8zkKrrDg/GPH7iXl3uEjvjoQnDRmpBtExHYlwIjQ2BxeK9cHVf76Mve/7xqD
+         dGJONNNufsuVXJLrlIBixEdF+QI1Ld18YkqitE+wE5ozQ0/Llm/dWTCVSX7wvlNx9I
+         LtarZBr+V7S8MDmRDDEqFqIKwY4NG5B4Gv1ky6vroDLJhRpE+Df8YESuLFDWmvcxkc
+         LmfWWkGa5FKAg==
+Date:   Thu, 9 Jan 2020 07:26:20 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the v4l-dvb-fixes
+ tree
+Message-ID: <20200109072620.6df67c98@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/Fe0Ejl.HRUgqhHS/udTLhWC";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Walk the host page tables to identify hugepage mappings for ZONE_DEVICE
-pfns, i.e. DAX pages.  Explicitly query kvm_is_zone_device_pfn() when
-deciding whether or not to bother walking the host page tables, as DAX
-pages do not set up the head/tail infrastructure, i.e. will return false
-for PageCompound() even when using huge pages.
+--Sig_/Fe0Ejl.HRUgqhHS/udTLhWC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Zap ZONE_DEVICE sptes when disabling dirty logging, e.g. if live
-migration fails, to allow KVM to rebuild large pages for DAX-based
-mappings.  Presumably DAX favors large pages, and worst case scenario is
-a minor performance hit as KVM will need to re-fault all DAX-based
-pages.
+Hi all,
 
-Suggested-by: Barret Rhoden <brho@google.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Jason Zeng <jason.zeng@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Liran Alon <liran.alon@oracle.com>
-Cc: linux-nvdimm <linux-nvdimm@lists.01.org>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kvm/mmu/mmu.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+Commit
 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 1e4e0ac169a7..324e1919722f 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -3250,7 +3250,7 @@ static int host_pfn_mapping_level(struct kvm_vcpu *vcpu, gfn_t gfn,
- 		     PT_DIRECTORY_LEVEL != (int)PG_LEVEL_2M ||
- 		     PT_PDPE_LEVEL != (int)PG_LEVEL_1G);
- 
--	if (!PageCompound(pfn_to_page(pfn)))
-+	if (!PageCompound(pfn_to_page(pfn)) && !kvm_is_zone_device_pfn(pfn))
- 		return PT_PAGE_TABLE_LEVEL;
- 
- 	/*
-@@ -3282,8 +3282,7 @@ static int kvm_mmu_hugepage_adjust(struct kvm_vcpu *vcpu, gfn_t gfn,
- 	if (unlikely(max_level == PT_PAGE_TABLE_LEVEL))
- 		return PT_PAGE_TABLE_LEVEL;
- 
--	if (is_error_noslot_pfn(pfn) || kvm_is_reserved_pfn(pfn) ||
--	    kvm_is_zone_device_pfn(pfn))
-+	if (is_error_noslot_pfn(pfn) || kvm_is_reserved_pfn(pfn))
- 		return PT_PAGE_TABLE_LEVEL;
- 
- 	slot = kvm_vcpu_gfn_to_memslot(vcpu, gfn);
-@@ -5910,8 +5909,8 @@ static bool kvm_mmu_zap_collapsible_spte(struct kvm *kvm,
- 		 * mapping if the indirect sp has level = 1.
- 		 */
- 		if (sp->role.direct && !kvm_is_reserved_pfn(pfn) &&
--		    !kvm_is_zone_device_pfn(pfn) &&
--		    PageCompound(pfn_to_page(pfn))) {
-+		    (kvm_is_zone_device_pfn(pfn) ||
-+		     PageCompound(pfn_to_page(pfn)))) {
- 			pte_list_remove(rmap_head, sptep);
- 
- 			if (kvm_available_flush_tlb_with_range())
--- 
-2.24.1
+  21d116949e95 ("Revert "media: pulse8-cec: fix lost cec_transmit_attempt_d=
+one() call"")
 
+is missing a Signed-off-by from its author and committer.
+
+Reverts are commits too and, as such, should have reasonable commit
+messages and be signed off.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Fe0Ejl.HRUgqhHS/udTLhWC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4WOuwACgkQAVBC80lX
+0GxoEgf/SFBTJRQPDWLB2Sjt8QltGnKLzWi3uRvPqcBoj9NWArXP0FDcj1VS0cWO
+yPCbijtuMnAjTLdKpNu+Y2KhvfanjBLG+uKfiZCVtGhv/tmhqHwRZIBSb/fYY31A
+gKgZbIURYUKbDkYhlF2NBZTKMw0cHeeYm8LUNAmDNgGwpay/zkvDeCHYtuahHXHi
+N+TiPv6p1+Rwya3CAVCwSTQT0QmB0tua2DNEraA1vgs2hP7EmoL1VSBMPN4tP64b
+lyG0ezXBsi6Rr0Gx40nQh4QzWc7+3MC73mFzaycFPI2Rus3nWoKIfhLPLdwQYuNp
+YCCVJsBX/L1YkfhG7Tjq/MbgVlQ/tg==
+=yrTV
+-----END PGP SIGNATURE-----
+
+--Sig_/Fe0Ejl.HRUgqhHS/udTLhWC--
