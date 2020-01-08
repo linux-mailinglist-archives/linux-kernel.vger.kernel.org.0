@@ -2,127 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA472133C63
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 08:40:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03B7C133C6D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 08:48:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbgAHHk2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 02:40:28 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:49892 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbgAHHk2 (ORCPT
+        id S1726793AbgAHHsd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 02:48:33 -0500
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:58109 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726443AbgAHHsd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 02:40:28 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0087eRqe108249;
-        Wed, 8 Jan 2020 01:40:27 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578469227;
-        bh=t6kH3Q6Cv8V4dWBay2w80i2s3pxJj3Q2bnCsRXtwt2c=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=P+4dJJNWga11VNKjPOfoOM+txkip/5P9ESxlGOxXSyomKGbuSAaTkD4ee+kJD9kLz
-         5kcDXAm/70kphh+Gud0ILws0Ev5aDTwxoBc21aKSkBqgNs1yIKnfc4UDJdD3DhEQ9G
-         DGiwWbW6EJJ9+ytRhcHrU9s8pyYMGBAr8J6NK4Qo=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0087eRUt029953
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 8 Jan 2020 01:40:27 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 8 Jan
- 2020 01:40:27 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 8 Jan 2020 01:40:27 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0087ePIs129435;
-        Wed, 8 Jan 2020 01:40:25 -0600
-Subject: Re: [PATCH v5 0/3] phy: cadence: j721e-wiz: Add Type-C plug flip
- support
-To:     Roger Quadros <rogerq@ti.com>
-CC:     <nsekhar@ti.com>, <jsarha@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20200106130622.29703-1-rogerq@ti.com>
- <6390dd78-92bd-711b-f153-ae73c959a665@ti.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <952bd59a-5998-9cc2-d438-4a7185ad480f@ti.com>
-Date:   Wed, 8 Jan 2020 13:12:31 +0530
+        Wed, 8 Jan 2020 02:48:33 -0500
+Received: from [192.168.2.10] ([62.249.185.68])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id p64iiZca3T6sRp64niGj5G; Wed, 08 Jan 2020 08:48:31 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1578469711; bh=xtNwc5IfKrwfQUKrHwCTvQzYkoWCY+xfQHgdy/TuFfA=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=cKsmt6ptKe8rmZ3M5DfNPORxnghlyTukfpvDVlr5xs958YNpwd8sawStoYR631BzY
+         3AN11LRYWIw7OSu4i/7ecVereC+lCfHOPm+8jFTZ/eSwMJQbdSmfUqhyiJ1f7B1zrt
+         W5uISl8yEH1JiPB/WeoI4dazTgE6jgSErj2gzBoFsA80Na4P8NHmRPYLYG/TW0vi36
+         l7eLp8EovbH9v2iXTuESbD/hGHwd887/rdX16KPP3aeQ/GOoHV9WywY9srl+RHCIoR
+         Z1AS7b8J8YU+uvSOJq7Oog6fVY2UGObK2BMVuqPwtId0KzOkUWAcbzscX9Ixs94GR9
+         zPQq+egnV5rbg==
+Subject: Re: [PATCH v2 2/4] media: cedrus: hevc: Add support for scaling
+ matrix
+To:     =?UTF-8?Q?Jernej_=c5=a0krabec?= <jernej.skrabec@siol.net>,
+        mchehab@kernel.org, mripard@kernel.org,
+        paul.kocialkowski@bootlin.com
+Cc:     gregkh@linuxfoundation.org, wens@csie.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org
+References: <20191213160428.54303-1-jernej.skrabec@siol.net>
+ <20191213160428.54303-3-jernej.skrabec@siol.net>
+ <4ac91ed5-a220-6a04-b1da-de27a306f8f2@xs4all.nl>
+ <2627039.Y6S9NjorxK@jernej-laptop>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <96703589-15c1-0ce8-10dc-81996cac9875@xs4all.nl>
+Date:   Wed, 8 Jan 2020 08:48:19 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <6390dd78-92bd-711b-f153-ae73c959a665@ti.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <2627039.Y6S9NjorxK@jernej-laptop>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-CMAE-Envelope: MS4wfCPPd8rbiZD36So4MR0BPIFX90J8IGWdlAbPEr1wlkVaRNcyZs7sjBwhi76joK6Pl2987dpiW7hadXr971MUho0RLuWfygrekxWuNkn08ZgadsBkn8vv
+ ewxVX3JNjBpQw4bfd05TUdeDHSnoGpB1QuifsgI6LR7yBjF7EEpfU02eajqtHNbrORtbOHOirWFJTcuddAxPgvetNBkzypDTbDSFC2uCLHvBsjpkP8p/KBaM
+ Q4Ya/CJOFmLiMgA7UKoF7lhNUQ1cX7WIETzySN9jIWjC2SfILbGI7uzDL9xyJB5vsOAj7Ri3x6orEJJ05gCU4yEonD/00RFi0yHNcoyLsZB/FpyPkU0n/onD
+ OMjeORGX3h8ao6vTzJsup0ka6s6XX23aWEVG33DMaMKzFUGY304H1WwTruoES2OOXUrc6+E8N2bb8oLYj7vKZ2mqsWJ8PCb07JHNzxQ6Hj2ZmfAZASCbxd0c
+ C4k3DLVDfB6wyjfCl4Q4hea6VElGPeMGlkuhWmyQYsXlbUm2WH3Cti8pVpY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 06/01/20 6:37 PM, Roger Quadros wrote:
+On 1/7/20 6:10 PM, Jernej Škrabec wrote:
+> Hi!
 > 
+> Dne torek, 07. januar 2020 ob 16:01:16 CET je Hans Verkuil napisal(a):
+>> On 12/13/19 5:04 PM, Jernej Skrabec wrote:
+>>> HEVC frames may use scaling list feature. Add support for it.
+>>>
+>>> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>>> ---
+>>>
+>>>  drivers/staging/media/sunxi/cedrus/cedrus.c   |  7 ++
+>>>  drivers/staging/media/sunxi/cedrus/cedrus.h   |  1 +
+>>>  .../staging/media/sunxi/cedrus/cedrus_dec.c   |  2 +
+>>>  .../staging/media/sunxi/cedrus/cedrus_h265.c  | 70 ++++++++++++++++++-
+>>>  .../staging/media/sunxi/cedrus/cedrus_regs.h  |  2 +
+>>>  5 files changed, 81 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.c
+>>> b/drivers/staging/media/sunxi/cedrus/cedrus.c index
+>>> c6ddd46eff82..bf68bc6b20c8 100644
+>>> --- a/drivers/staging/media/sunxi/cedrus/cedrus.c
+>>> +++ b/drivers/staging/media/sunxi/cedrus/cedrus.c
+>>> @@ -116,6 +116,13 @@ static const struct cedrus_control cedrus_controls[]
+>>> = {> 
+>>>  		.codec		= CEDRUS_CODEC_H265,
+>>>  		.required	= true,
+>>>  	
+>>>  	},
+>>>
+>>> +	{
+>>> +		.cfg = {
+>>> +			.id	= 
+> V4L2_CID_MPEG_VIDEO_HEVC_SCALING_MATRIX,
+>>> +		},
+>>> +		.codec		= CEDRUS_CODEC_H265,
+>>> +		.required	= true,
+>>
+>> Should this be true? This means that existing applications are now
+>> suddenly required to always pass the scaling matrix for every buffer.
+>>
+>> Especially since the commit log says: 'HEVC frames *may* use scaling list
+>> feature', indicating that this is an optional feature.
 > 
-> On 06/01/2020 15:06, Roger Quadros wrote:
->> Hi,
->>
->> On J721e platform, the 2 lanes of SERDES PHY are used to achieve
->> USB Type-C plug flip support without any additional MUX component
->> by using a lane swap feature.
->>
->> However, the driver needs to know the Type-C plug orientation before
->> it can decide whether to swap the lanes or not. This is achieved via a
->> GPIO named DIR.
->>
->> Another constraint is that the lane swap must happen only when the PHY
->> is in inactive state. This is achieved by sampling the GPIO and
->> programming the lane swap before bringing the PHY out of reset.
->>
->> This series adds support to read the GPIO and accordingly program
->> the Lane swap for Type-C plug flip support.
->>
->> Series must be applied on top of
->> https://patchwork.kernel.org/cover/11293671/
->>
->> cheers,
->> -roger
->>
->> Changelog:
-> v5
->  - rebased on phy/next
+> True. Can you fix this when applying if this is the only issue?
 
-merged now, thanks!
+I'll do that.
 
--Kishon
+Regards,
 
-> 
->> v4
->> - fixes in dt-binding document
->>    - fix typo
->>    - change to typec-dir-debounce-ms and add min/max/default values
->>    - drop reference to uint32 type
->> - fixes in driver
->>    - change to updated typec-dir-debounce-ms property
->>    - add limit checks and use default value if not specified
->>
->> v3
->> - Rebase on v2 of PHY series and update DT binding to yaml
->>
->> v2
->> - revise commit log of patch 1
->> - use regmap_field in patch 3
->>
->>
->> Roger Quadros (3):
->>    phy: cadence: Sierra: add phy_reset hook
->>    dt-bindings: phy: ti,phy-j721e-wiz: Add Type-C dir GPIO
->>    phy: ti: j721e-wiz: Manage typec-gpio-dir
->>
->>   .../bindings/phy/ti,phy-j721e-wiz.yaml        | 17 ++++++
->>   drivers/phy/cadence/phy-cadence-sierra.c      | 10 +++
->>   drivers/phy/ti/phy-j721e-wiz.c                | 61 +++++++++++++++++++
->>   3 files changed, 88 insertions(+)
->>
-> 
+	Hans
