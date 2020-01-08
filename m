@@ -2,111 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7AD1133B21
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 06:26:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAB3B133B37
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 06:34:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbgAHF0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 00:26:41 -0500
-Received: from mail-eopbgr1320085.outbound.protection.outlook.com ([40.107.132.85]:43038
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725773AbgAHF0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 00:26:40 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=C6uwzobp8HRtdDGga45xAYUFBMDNDjJzAd85ao4qRdPppVOdO/BPgDWce+ydEj2/pP/AhSeZKVNPPsst2qHzfMps8gO6cueSlRg3vzl3ORWZHmslA1A9M6iVC0jDABMy+iJf9ycgKQDATsQA9qJnD4Qagn/xCm9KdPBGoLTK37yK7OKgspX9LpucmCvilb5G6KfevAf/6si7nWyu9s23vL/Po8kY0zrTpidZK2lR8bFPAI8JREnuvcO8BKEquU++4SP5to0KR+xe1WVcdVOZVChZxKBRqH9rJht/2dGhPcwpnNlLWwbLwna7T3J8yiJdhGfjjZLFhAiORz7pe2oPOw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CXQoVL/S7SaSvlwGd6hgUlFgPaanNGOjOCAtLzV7NzM=;
- b=PHFs8ChoisSogk1kugVe5rL/qCRxsdeZ5Ikc9EtPp99Gt51lU/OGRuo+63jL2lIaQxtskqAVCWK7jDhtnNX76WqhU9/qLsur5ddafVH6tCi/6OVsQCIEl6wfI2A48DrTMwLVjq5cQxm1XYw9Y+rm1YQdHbUAhwulimxHpnhhgCrd8YCqjTcey567VkZnInb+DaNJu40swNOoxAT7jmvuWzgn4wZYTu4DTiLiurmBPoFloROlHLb74dtI1klN6sAUWRkzv8awAiVNJPEtfZNFhthpqCsSwfEnaPP6jX7rOtvbEROEwICPPfyqGVbPB0+Lx2EFrj2rKisYFuZtHrRLpQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=moxa.com; dmarc=pass action=none header.from=moxa.com;
- dkim=pass header.d=moxa.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Moxa.onmicrosoft.com;
- s=selector2-Moxa-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CXQoVL/S7SaSvlwGd6hgUlFgPaanNGOjOCAtLzV7NzM=;
- b=RYeUe/rxX/AO1ZLHTTZcO1xoJjj2866WaY972OGuTQqc/8BKmPtfjNk3Q8ED8OMRA+u26cku9R9pZvfQ3XtchGAraGkmeziXwkCEjjM14IVGdr1cZ5PnLNwzj/U1SAC6gIEK/xbbKWch8r5XiB5FZYMFG9VctSuyzlvNI8keJ+I=
-Received: from HK0PR01MB3521.apcprd01.prod.exchangelabs.com (52.132.237.22) by
- HK0PR01MB1972.apcprd01.prod.exchangelabs.com (52.133.157.143) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2602.12; Wed, 8 Jan 2020 05:26:36 +0000
-Received: from HK0PR01MB3521.apcprd01.prod.exchangelabs.com
- ([fe80::3433:35cd:2be4:d042]) by HK0PR01MB3521.apcprd01.prod.exchangelabs.com
- ([fe80::3433:35cd:2be4:d042%6]) with mapi id 15.20.2602.016; Wed, 8 Jan 2020
- 05:26:36 +0000
-From:   =?utf-8?B?Sm9obnNvbiBDSCBDaGVuICjpmbPmmK3li7Mp?= 
-        <JohnsonCH.Chen@moxa.com>
-To:     Fabio Estevam <festevam@gmail.com>, Andrew Lunn <andrew@lunn.ch>
-CC:     "claudiu.manoil@nxp.com" <claudiu.manoil@nxp.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "zero19850401@gmail.com" <zero19850401@gmail.com>
-Subject: RE: [PATCH] gianfar: Solve ethernet TX/RX problems for ls1021a
-Thread-Topic: [PATCH] gianfar: Solve ethernet TX/RX problems for ls1021a
-Thread-Index: AdXFRAcg+ooT8TPrTsG92JEuKMTbqwAGWQoAAAHzV4AAH6igEA==
-Date:   Wed, 8 Jan 2020 05:26:35 +0000
-Message-ID: <HK0PR01MB3521CA38E57FA1A5860349DDFA3E0@HK0PR01MB3521.apcprd01.prod.exchangelabs.com>
-References: <HK0PR01MB3521C806FE109E04FA72858CFA3F0@HK0PR01MB3521.apcprd01.prod.exchangelabs.com>
- <20200107132150.GB23819@lunn.ch>
- <CAOMZO5AE1eFjfHwh5HQjn3XmA=_tYZ2qjcU-sX63qFuV=f8ccw@mail.gmail.com>
-In-Reply-To: <CAOMZO5AE1eFjfHwh5HQjn3XmA=_tYZ2qjcU-sX63qFuV=f8ccw@mail.gmail.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=JohnsonCH.Chen@moxa.com; 
-x-originating-ip: [122.146.92.136]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 856f3a51-4518-4232-19fd-08d793fb548b
-x-ms-traffictypediagnostic: HK0PR01MB1972:
-x-microsoft-antispam-prvs: <HK0PR01MB1972F3F65E11DAE7CC67E1C1FA3E0@HK0PR01MB1972.apcprd01.prod.exchangelabs.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 02760F0D1C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(136003)(39850400004)(346002)(396003)(366004)(199004)(189003)(43544003)(478600001)(66446008)(6506007)(76116006)(64756008)(66556008)(8936002)(33656002)(55016002)(5660300002)(7696005)(110136005)(54906003)(9686003)(71200400001)(2906002)(53546011)(4326008)(86362001)(26005)(52536014)(66476007)(81166006)(8676002)(81156014)(66946007)(316002)(186003)(85182001);DIR:OUT;SFP:1101;SCL:1;SRVR:HK0PR01MB1972;H:HK0PR01MB3521.apcprd01.prod.exchangelabs.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: moxa.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: vwCGII9QfVxfEbMvVr2dnFs0+/VpFc1Gj9TC/qTf+DHzXNNTsOTdv2j31jNUUJp2GH/4Pr0ytDlNaQhd4l6yw6HwyeVQgBa+CCSNB2maIiIdQvamHlDL2FHxrQQ2HFb9Zk36Hw/JWqt4SQjzkh56gGqa3ORydDatI8rN66WgZAgOanzp6VarJx8MfwBAPuuZ0TPc4wHbhfnCzkpy0YDo5TBJ7aYYIRCHy29vsduGqdWk+idWcKVy2XyNAkRdNSrjtFizfbv8kNPMUmOY014/Mki+RTc7xdmAt+SB3xV29FsQXvE8KqXwlFVzcj6eMHlM8LL+DO0GsGnnflA7m6TyXGW9ZZQMjK5qvxRXyY4IVDyuH4dvfg08xnrpTg/9o57RUnLGN+6yZlCb3rOF1f1vj9pM+sTdXF290VIz99mghTt7D1i1RLP7sg6thXKJcZgkBeRMti9EPLpzva8179unFktaJikls7f5QgoBQLsa936mS8NdMBMt3wJIeHXtS1iM
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726492AbgAHFem (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 00:34:42 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:44314 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726079AbgAHFem (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 00:34:42 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 0085TZAE073063;
+        Wed, 8 Jan 2020 05:34:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=Y0nRxvFnlwm/w8fldZ84iPvdgUL+DTApQsSuDHD8AsM=;
+ b=mwJJ5uC2acnj6s3YSsWWpSCE0E/pwqD7nT7W7vlTBTU4bbJy4sQT5jxgAiQBiAy5HRF8
+ h16OlD44RutT0UJEc9TkA5MRY+Nc8kQWGBFZBgnSDbF8u3AdzSuvdtS3cD4pDQOhbsh1
+ yU/YcKhFaERv5vsEROy3/058cY7dtqxzsCa8tBqmSARM9C2t8hvsgoiykhNTkI9Ab0d9
+ h9hVDYffOdmIvotqBQqNz6S4vax8RQA1X49q0B/RWpc2XQ2sn+SLW1EQ9JudMEnlnbQt
+ eaWcu3ATtTsaOIirb9z5r6LfhoZnZ8p44lwCZfBxR7xMOI5K1GK51TmMzyvGMLWGbnr/ nw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2xajnq1mud-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 08 Jan 2020 05:34:32 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 0085YA2c014405;
+        Wed, 8 Jan 2020 05:34:31 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2xcjvesuxb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 08 Jan 2020 05:34:31 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0085YTN6010818;
+        Wed, 8 Jan 2020 05:34:29 GMT
+Received: from kili.mountain (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 07 Jan 2020 21:34:29 -0800
+Date:   Wed, 8 Jan 2020 08:34:18 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Andy Gross <agross@kernel.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>, Nishanth Menon <nm@ti.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] power: avs: qcom-cpr: Fix error code in
+ cpr_fuse_corner_init()
+Message-ID: <20200108053418.tjc62uppube6q4q3@kili.mountain>
 MIME-Version: 1.0
-X-OriginatorOrg: moxa.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 856f3a51-4518-4232-19fd-08d793fb548b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2020 05:26:35.8572
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5571c7d4-286b-47f6-9dd5-0aa688773c8e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1FAUhKGyl8ORk88fLMSZMAMvclYFKQTjU9RatYWGO8FvOp5xhgdpECkwg/XI2B/SU1OpLwr6f0Vr8q79NAqayQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0PR01MB1972
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9493 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001080048
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9493 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001080048
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksDQoNCkZhYmlvIEVzdGV2YW0gPGZlc3RldmFtQGdtYWlsLmNvbT4g5pa8IDIwMjDlubQx5pyI
-N+aXpSDpgLHkuowg5LiL5Y2IMTA6MTflr6vpgZPvvJoNCj4NCj4gT24gVHVlLCBKYW4gNywgMjAy
-MCBhdCAxMToxMyBBTSBBbmRyZXcgTHVubiA8YW5kcmV3QGx1bm4uY2g+IHdyb3RlOg0KPiA+DQo+
-ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvZnJlZXNjYWxlL2dpYW5mYXIu
-YyANCj4gPiA+IGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvZnJlZXNjYWxlL2dpYW5mYXIuYw0KPiA+
-ID4gaW5kZXggNzI4NjhhMjhiNjIxLi5hYjRlNDUxOTlkZjkgMTAwNjQ0DQo+ID4gPiAtLS0gYS9k
-cml2ZXJzL25ldC9ldGhlcm5ldC9mcmVlc2NhbGUvZ2lhbmZhci5jDQo+ID4gPiArKysgYi9kcml2
-ZXJzL25ldC9ldGhlcm5ldC9mcmVlc2NhbGUvZ2lhbmZhci5jDQo+ID4gPiBAQCAtODMzLDYgKzgz
-Myw3IEBAIHN0YXRpYyBpbnQgZ2Zhcl9vZl9pbml0KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgDQo+
-ID4gPiAqb2ZkZXYsIHN0cnVjdCBuZXRfZGV2aWNlICoqcGRldikNCj4gPiA+DQo+ID4gPiAgICAg
-ICAvKiBGaW5kIHRoZSBUQkkgUEhZLiAgSWYgaXQncyBub3QgdGhlcmUsIHdlIGRvbid0IHN1cHBv
-cnQgU0dNSUkgKi8NCj4gPiA+ICAgICAgIHByaXYtPnRiaV9ub2RlID0gb2ZfcGFyc2VfcGhhbmRs
-ZShucCwgInRiaS1oYW5kbGUiLCAwKTsNCj4gPiA+ICsgICAgIHByaXYtPmRtYV9lbmRpYW5fbGUg
-PSBvZl9wcm9wZXJ0eV9yZWFkX2Jvb2wobnAsIA0KPiA+ID4gKyAiZnNsLGRtYS1lbmRpYW4tbGUi
-KTsNCj4gPg0KPiA+IEhpIEpvaG5zb24NCj4gPg0KPiA+IFlvdSBuZWVkIHRvIGRvY3VtZW50IHRo
-aXMgbmV3IHByb3BlcnR5IGluIHRoZSBiaW5kaW5nLg0KDQpUaGFua3MgeXVvciByZW1pbmQsIEkn
-bGwgdGFrZSBjYXJlIG9mIGl0IGxhdGVyDQo+DQo+IFllcywgYnV0IHdoYXQgYWJvdXQgY2FsbGlu
-ZyBpdCAnbGl0dGxlLWVuZGlhbicgd2hpY2ggaXMgY29tbW9ubHkgdXNlZCANCj4gaW4gYXJjaC9h
-cm02NC9ib290L2R0cy9mcmVlc2NhbGUvZnNsLWxzeHh4IGRldmljZSB0cmVlcz8NCkl0IHNvdW5k
-cyBnb29kLCB1c2UgImRtYS1lbmRpYW4tbGUiIGJlY2F1c2UgaXQncyBmcm9tIGZyZWVzY2FsZSdz
-IFNESyBmb3IgYXJtICgzMmJpdCkuDQoNClRoYW5rcyB5b3VyIHN1Z2dlc3Rpb25zIQ0KDQpCZXN0
-IHJlZ2FyZHMsDQpKb2huc29uDQo=
+We're returning the wrong variable.  "ret" isn't initialized.
+
+Fixes: bf6910abf548 ("power: avs: Add support for CPR (Core Power Reduction)")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/power/avs/qcom-cpr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/power/avs/qcom-cpr.c b/drivers/power/avs/qcom-cpr.c
+index 9247f53550b3..0321729431a5 100644
+--- a/drivers/power/avs/qcom-cpr.c
++++ b/drivers/power/avs/qcom-cpr.c
+@@ -922,7 +922,7 @@ static int cpr_fuse_corner_init(struct cpr_drv *drv)
+ 		uV = cpr_read_fuse_uV(desc, fdata, fuses->init_voltage,
+ 				      step_volt, drv);
+ 		if (uV < 0)
+-			return ret;
++			return uV;
+ 
+ 		fuse->min_uV = fdata->min_uV;
+ 		fuse->max_uV = fdata->max_uV;
+-- 
+2.11.0
+
