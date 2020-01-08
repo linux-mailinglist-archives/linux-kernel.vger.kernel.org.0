@@ -2,122 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14F35134504
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 15:31:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3773C13450C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 15:33:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728825AbgAHObn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 09:31:43 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:36984 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbgAHObi (ORCPT
+        id S1727684AbgAHOdP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 09:33:15 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:36730 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbgAHOdP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 09:31:38 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 008EVaPl065332;
-        Wed, 8 Jan 2020 08:31:36 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578493896;
-        bh=zHIIrACqLL9VHEPM34U/A7g8x9YWRzxHUu+RtrxLOpU=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=rHLrLx3+7zgCDGRnKuFbMhHB0jluNBDt0xdLAC9eCqqLlHnp4Ncr2HsQN2uJl5aL8
-         Jo4buNXbiXNpaUvlFG2py6Yl/hpLD19+s77Ksgkwcjoekv5qiBSNxOri48f9t+/EV2
-         0JJjichGF1dQOc4hLmi3J8BU4W1iD3pt//+Gij5g=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 008EVaZE049289;
-        Wed, 8 Jan 2020 08:31:36 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 8 Jan
- 2020 08:31:36 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 8 Jan 2020 08:31:36 -0600
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 008EVS9X112013;
-        Wed, 8 Jan 2020 08:31:34 -0600
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
-CC:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
-        <faiz_abbas@ti.com>
-Subject: [PATCH 3/3] mmc: sdhci_am654: Fix Command Queuing in AM65x
-Date:   Wed, 8 Jan 2020 20:03:01 +0530
-Message-ID: <20200108143301.1929-4-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20200108143301.1929-1-faiz_abbas@ti.com>
-References: <20200108143301.1929-1-faiz_abbas@ti.com>
+        Wed, 8 Jan 2020 09:33:15 -0500
+Received: by mail-oi1-f195.google.com with SMTP id c16so2782548oic.3;
+        Wed, 08 Jan 2020 06:33:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Gt5l5oW7BvC/mIpqIR4dhr5zJ89efNCOAMpU+ZM12Dc=;
+        b=NAVlmmalYDq3O6wg7vc55R5x+f+KdJqkdndSqGJVogQAQgBWWVblmRq+8uXoFFY8Zb
+         11/kQglqK1JcGXlBNk9PFRWvZZkyHtYX3Ouac90MyEoRwISpgkM2UosFqmnMpb109A/z
+         KhFEIq6Z37JTpi5Zvx6MSeBbYGtIlxXIwEbA0rBoXNvya59Z+6gWIwCuIQ2DDh6hHZDU
+         OhzLDVKDicSrvAHgXw22TuY2YcUAFAT5bWs0Cz6IOf95S9CuFzQl3gypf5riQ7z5a43z
+         wOXa9ADqpFdfj27TtIoljAQU43+4BLrwbeSNYgDtw+rWD3iDKw8r8ENM6M2E4wUUU9eR
+         EJHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Gt5l5oW7BvC/mIpqIR4dhr5zJ89efNCOAMpU+ZM12Dc=;
+        b=cTJKFBR1QtCQi6jeh7Rnoupy2ACmteRVlhSAL5mJrAvGwmNAERSK9vN0YrgLv2aVoz
+         WHjiXrcXxKMARSGqnzylh0Ktx7omqv8afuP7A0tVcoQnTc9Uc6DAr8yRsQcuzt2mf9RZ
+         R5n+xAHw1G2ZmhznhWjp3Iul5VRcxZEI8navpg98O+GJgKahmylHS1mt0pmO7WS/j17I
+         kIIteQpQAGshW4Fw/4FXIjNvJb06ddBJehaOksFGNZCAtWkuKl2bFsPIJWbOBoNIiJ3S
+         hSaUWF9SdAgDc/pS7pq05Mn7UlDe4DhSRsRAFp5MypWsaqMaAPFdcj7iOajR/ry3mrhX
+         AwFw==
+X-Gm-Message-State: APjAAAVqKtCCJL2IPcPKpb28AC96lmaMfaUPq5AK5GMaP6szoy+hmWsc
+        BMskrvZ6RUDgsLHaJNIvcHvkRvj0qXzY89LLHb0eE8/H
+X-Google-Smtp-Source: APXvYqxH3FaBBajpQgXoLkcvI7TaBy7ZABU95YvvOEi8apxiNSjJUz+IR50c2jPfK53Chf3/5jI4LvBz1jn2kdZdlyE=
+X-Received: by 2002:a54:4396:: with SMTP id u22mr3315338oiv.128.1578493994294;
+ Wed, 08 Jan 2020 06:33:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <CAHhAz+ijBTp55gZYAejWthnvdmR_qyQJpVV4r1gyQ-Kud6t9qg@mail.gmail.com>
+In-Reply-To: <CAHhAz+ijBTp55gZYAejWthnvdmR_qyQJpVV4r1gyQ-Kud6t9qg@mail.gmail.com>
+From:   Muni Sekhar <munisekharrms@gmail.com>
+Date:   Wed, 8 Jan 2020 20:03:02 +0530
+Message-ID: <CAHhAz+jYdJnh26GU+8xcE4vcpCo-4Sudj7OEZ=y+hCOdz9FQ1g@mail.gmail.com>
+Subject: Re: pcie: xilinx: kernel hang - ISR readl()
+To:     linux-pci@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Command Queuing was enabled completely for J721e controllers which lead
-to partial enablement even for Am65x. Complete CQ implementation for
-AM65x by adding the irq callback.
+On Tue, Jan 7, 2020 at 9:45 PM Muni Sekhar <munisekharrms@gmail.com> wrote:
+>
+> Hi,
+>
+> I have module with Xilinx FPGA. It implements UART(s), SPI(s),
+> parallel I/O and interfaces them to the Host CPU via PCI Express bus.
+> I see that my system freezes without capturing the crash dump for
+> certain tests. I debugged this issue and it was tracked down to the
+> below mentioned interrupt handler code.
+>
+>
+> In ISR, first reads the Interrupt Status register using =E2=80=98readl()=
+=E2=80=99 as
+> given below.
+>     status =3D readl(ctrl->reg + INT_STATUS);
+>
+>
+> And then clears the pending interrupts using =E2=80=98writel()=E2=80=99 a=
+s given blow.
+>         writel(status, ctrl->reg + INT_STATUS);
+>
+>
+> I've noticed a kernel hang if INT_STATUS register read again after
+> clearing the pending interrupts.
+>
+> Can someone clarify me why the kernel hangs without crash dump incase
+> if I read the INT_STATUS register using readl() after clearing the
+> pending bits?
+>
+> Can readl() block?
+>
+>
+> Snippet of the ISR code is given blow:
+>
+> https://pastebin.com/WdnZJZF5
+The correct snippet of the ISR code is here: https://pastebin.com/as2tSPwE
+>
+>
+>
+> static irqreturn_t pcie_isr(int irq, void *dev_id)
+>
+> {
+>
+>         struct test_device *ctrl =3D data;
+>
+>         u32 status;
+>
+> =E2=80=A6
+>
+>
+>
+>         status =3D readl(ctrl->reg + INT_STATUS);
+>
+>         /*
+>
+>          * Check to see if it was our interrupt
+>
+>          */
+>
+>         if (!(status & 0x000C))
+>
+>                 return IRQ_NONE;
+>
+>
+>
+>         /* Clear the interrupt */
+>
+>         writel(status, ctrl->reg + INT_STATUS);
+>
+>
+>
+>         if (status & 0x0004) {
+>
+>                 /*
+>
+>                  * Tx interrupt pending.
+>
+>                  */
+>
+>                  ....
+>
+>        }
+>
+>
+>
+>         if (status & 0x0008) {
+>
+>                 /* Rx interrupt Pending */
+>
+>                 /* The system freezes if I read again the INT_STATUS
+> register as given below */
+>
+>                 status =3D readl(ctrl->reg + INT_STATUS);
+>
+>                 ....
+>
+>         }
+>
+> ..
+>
+>         return IRQ_HANDLED;
+> }
+>
+>
+>
+> --
+> Thanks,
+> Sekhar
 
-Fixes: f545702b74f9 ("mmc: sdhci_am654: Add Support for Command Queuing Engine to J721E")
-Cc: stable@vger.kernel.org
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- drivers/mmc/host/sdhci_am654.c | 27 ++++++++++++++-------------
- 1 file changed, 14 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-index 59c0c41b3739..b8fe94fd9525 100644
---- a/drivers/mmc/host/sdhci_am654.c
-+++ b/drivers/mmc/host/sdhci_am654.c
-@@ -256,6 +256,19 @@ static int sdhci_am654_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 	return 0;
- }
- 
-+static u32 sdhci_am654_cqhci_irq(struct sdhci_host *host, u32 intmask)
-+{
-+	int cmd_error = 0;
-+	int data_error = 0;
-+
-+	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
-+		return intmask;
-+
-+	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-+
-+	return 0;
-+}
-+
- static struct sdhci_ops sdhci_am654_ops = {
- 	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
- 	.get_timeout_clock = sdhci_pltfm_clk_get_max_clock,
-@@ -264,6 +277,7 @@ static struct sdhci_ops sdhci_am654_ops = {
- 	.set_power = sdhci_am654_set_power,
- 	.set_clock = sdhci_am654_set_clock,
- 	.write_b = sdhci_am654_write_b,
-+	.irq = sdhci_am654_cqhci_irq,
- 	.reset = sdhci_reset,
- };
- 
-@@ -278,19 +292,6 @@ static const struct sdhci_am654_driver_data sdhci_am654_drvdata = {
- 	.flags = IOMUX_PRESENT | FREQSEL_2_BIT | STRBSEL_4_BIT | DLL_PRESENT,
- };
- 
--static u32 sdhci_am654_cqhci_irq(struct sdhci_host *host, u32 intmask)
--{
--	int cmd_error = 0;
--	int data_error = 0;
--
--	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
--		return intmask;
--
--	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
--
--	return 0;
--}
--
- static struct sdhci_ops sdhci_j721e_8bit_ops = {
- 	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
- 	.get_timeout_clock = sdhci_pltfm_clk_get_max_clock,
--- 
-2.19.2
 
+--=20
+Thanks,
+Sekhar
