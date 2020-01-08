@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D71D1346F4
+	by mail.lfdr.de (Postfix) with ESMTP id E054A1346F5
 	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 17:00:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729333AbgAHP73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 10:59:29 -0500
+        id S1729341AbgAHP7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 10:59:30 -0500
 Received: from mga11.intel.com ([192.55.52.93]:64327 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729314AbgAHP70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 10:59:26 -0500
+        id S1726670AbgAHP73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 10:59:29 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 07:59:26 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 07:59:28 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,410,1571727600"; 
-   d="scan'208";a="395782709"
+   d="scan'208";a="395782718"
 Received: from xshen14-linux.bj.intel.com ([10.238.155.105])
-  by orsmga005.jf.intel.com with ESMTP; 08 Jan 2020 07:59:24 -0800
+  by orsmga005.jf.intel.com with ESMTP; 08 Jan 2020 07:59:26 -0800
 From:   Xiaochen Shen <xiaochen.shen@intel.com>
 To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
         tony.luck@intel.com, fenghua.yu@intel.com,
         reinette.chatre@intel.com
 Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, pei.p.jia@intel.com,
         xiaochen.shen@intel.com
-Subject: [PATCH 2/4] x86/resctrl: Fix use-after-free due to inaccurate refcount of rdtgroup
-Date:   Thu,  9 Jan 2020 00:28:04 +0800
-Message-Id: <1578500886-21771-3-git-send-email-xiaochen.shen@intel.com>
+Subject: [PATCH 3/4] x86/resctrl: Fix a deadlock due to inaccurate active reference of kernfs node
+Date:   Thu,  9 Jan 2020 00:28:05 +0800
+Message-Id: <1578500886-21771-4-git-send-email-xiaochen.shen@intel.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1578500886-21771-1-git-send-email-xiaochen.shen@intel.com>
 References: <1578500886-21771-1-git-send-email-xiaochen.shen@intel.com>
@@ -37,115 +37,209 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a race condition in following scenario which results in
-use-after-free issue when reading a monitoring file and deleting the
-parent ctrl_mon group concurrently:
+There is a race condition which results in a deadlock when rmdir and
+mkdir concurrently:
 
-Thread 1 calls atomic_inc() to take refcount of rdtgrp and then calls
-kernfs_break_active_protection() to drop the active reference of kernfs
-node in rdtgroup_kn_lock_live().
+$ ls /sys/fs/resctrl/c1/mon_groups/m1/
+cpus  cpus_list  mon_data  tasks
 
-In Thread 2, kernfs_remove() is a blocking routine. It waits on all sub
-kernfs nodes to drop the active reference when removing all subtree
-kernfs nodes recursively. Thread 2 could block on kernfs_remove() until
-Thread 1 calls kernfs_break_active_protection(). Only after
-kernfs_remove() completes the refcount of rdtgrp could be trusted.
+Thread 1: rmdir /sys/fs/resctrl/c1
+Thread 2: mkdir /sys/fs/resctrl/c1/mon_groups/m1
 
-Before Thread 1 calls atomic_inc() and kernfs_break_active_protection(),
-Thread 2 could call kfree() when the refcount of rdtgrp (sentry) is 0
-instead of 1 due to the race.
+3 locks held by mkdir/48649:
+ #0:  (sb_writers#17){.+.+}, at: [<ffffffffb4ca2aa0>] mnt_want_write+0x20/0x50
+ #1:  (&type->i_mutex_dir_key#8/1){+.+.}, at: [<ffffffffb4c8c13b>] filename_create+0x7b/0x170
+ #2:  (rdtgroup_mutex){+.+.}, at: [<ffffffffb4a4389d>] rdtgroup_kn_lock_live+0x3d/0x70
 
-In Thread 1, in rdtgroup_kn_unlock(), referring to earlier rdtgrp memory
-(rdtgrp->waitcount) which was already freed in Thread 2 results in
-use-after-free issue.
+4 locks held by rmdir/48652:
+ #0:  (sb_writers#17){.+.+}, at: [<ffffffffb4ca2aa0>] mnt_want_write+0x20/0x50
+ #1:  (&type->i_mutex_dir_key#8/1){+.+.}, at: [<ffffffffb4c8c3cf>] do_rmdir+0x13f/0x1e0
+ #2:  (&type->i_mutex_dir_key#8){++++}, at: [<ffffffffb4c86d5d>] vfs_rmdir+0x4d/0x120
+ #3:  (rdtgroup_mutex){+.+.}, at: [<ffffffffb4a4389d>] rdtgroup_kn_lock_live+0x3d/0x70
 
-Thread 1 (rdtgroup_mondata_show)  Thread 2 (rdtgroup_rmdir)
---------------------------------  -------------------------
-rdtgroup_kn_lock_live
-  /*
-   * kn active protection until
-   * kernfs_break_active_protection(kn)
-   */
-  rdtgrp = kernfs_to_rdtgroup(kn)
-                                  rdtgroup_kn_lock_live
-                                    atomic_inc(&rdtgrp->waitcount)
-                                    mutex_lock
-                                  rdtgroup_rmdir_ctrl
-                                    free_all_child_rdtgrp
+Thread 1 is deleting control group "c1". Holding rdtgroup_mutex,
+kernfs_remove() removes all kernfs nodes under directory "c1"
+recursively, then waits for sub kernfs node "mon_groups" to drop active
+reference.
+
+Thread 2 is trying to create a subdirectory "m1" in the "mon_groups"
+directory. The wrapper kernfs_iop_mkdir() takes an active reference to
+the "mon_groups" directory but the code drops the active reference to
+the parent directory "c1" instead.
+
+As a result, Thread 1 is blocked on waiting for active reference to drop
+and never release rdtgroup_mutex, while Thread 2 is also blocked on
+trying to get rdtgroup_mutex.
+
+Thread 1 (rdtgroup_rmdir)   Thread 2 (rdtgroup_mkdir)
+(rmdir /sys/fs/resctrl/c1)  (mkdir /sys/fs/resctrl/c1/mon_groups/m1)
+-------------------------   -------------------------
+                            kernfs_iop_mkdir
+                              /*
+                               * kn: "m1", parent_kn: "mon_groups",
+                               * prgrp_kn: parent_kn->parent: "c1",
+                               *
+                               * "mon_groups", parent_kn->active++: 1
+                               */
+                              kernfs_get_active(parent_kn)
+kernfs_iop_rmdir
+  /* "c1", kn->active++ */
+  kernfs_get_active(kn)
+
+  rdtgroup_kn_lock_live
+    atomic_inc(&rdtgrp->waitcount)
+    /* "c1", kn->active-- */
+    kernfs_break_active_protection(kn)
+    mutex_lock
+
+  rdtgroup_rmdir_ctrl
+    free_all_child_rdtgrp
+      sentry->flags = RDT_DELETED
+
+    rdtgroup_ctrl_remove
+      rdtgrp->flags = RDT_DELETED
+      kernfs_get(kn)
+      kernfs_remove(rdtgrp->kn)
+        __kernfs_remove
+          /* "mon_groups", sub_kn */
+          atomic_add(KN_DEACTIVATED_BIAS, &sub_kn->active)
+          kernfs_drain(sub_kn)
+            /*
+             * sub_kn->active == KN_DEACTIVATED_BIAS + 1,
+             * waiting on sub_kn->active to drop, but it
+             * never drops in Thread 2 which is blocked
+             * on getting rdtgroup_mutex.
+             */
+Thread 1 hangs here ---->
+            wait_event(sub_kn->active == KN_DEACTIVATED_BIAS)
+            ...
+                              rdtgroup_mkdir
+                                rdtgroup_mkdir_mon(parent_kn, prgrp_kn)
+                                  mkdir_rdt_prepare(parent_kn, prgrp_kn)
+                                    rdtgroup_kn_lock_live(prgrp_kn)
+                                      atomic_inc(&rdtgrp->waitcount)
                                       /*
-                                       * sentry->waitcount should be 1
-                                       * but is 0 now due to the race.
+                                       * "c1", prgrp_kn->active--
+                                       *
+                                       * The active reference on "c1" is
+                                       * dropped, but not matching the
+                                       * actual active reference taken
+                                       * on "mon_groups", thus causing
+                                       * Thread 1 to wait forever while
+                                       * holding rdtgroup_mutex.
                                        */
-                                      kfree(sentry)*[1]
-  /*
-   * Only after kernfs_remove()
-   * completes, the refcount of
-   * rdtgrp could be trusted.
-   */
-  atomic_inc(&rdtgrp->waitcount)
-  /* kn->active-- */
-  kernfs_break_active_protection(kn)
-                                    rdtgroup_ctrl_remove
-                                      rdtgrp->flags = RDT_DELETED
+                                      kernfs_break_active_protection(
+                                                               prgrp_kn)
                                       /*
-                                       * Blocking routine, wait for
-                                       * all sub kernfs nodes to drop
-                                       * active reference in
-                                       * kernfs_break_active_protection.
+                                       * Trying to get rdtgroup_mutex
+                                       * which is held by Thread 1.
                                        */
-                                      kernfs_remove(rdtgrp->kn)
-                                  rdtgroup_kn_unlock
-                                    mutex_unlock
-                                    atomic_dec_and_test(
-                                                &rdtgrp->waitcount)
-                                    && (flags & RDT_DELETED)
-                                      kernfs_unbreak_active_protection(kn)
-                                      kfree(rdtgrp)
-  mutex_lock
-mon_event_read
-rdtgroup_kn_unlock
-  mutex_unlock
-  /*
-   * Use-after-free: refer to earlier rdtgrp
-   * memory which was freed in [1].
-   */
-  atomic_dec_and_test(&rdtgrp->waitcount)
-  && (flags & RDT_DELETED)
-    /* kn->active++ */
-    kernfs_unbreak_active_protection(kn)
-    kfree(rdtgrp)
+Thread 2 hangs here ---->             mutex_lock
+                                      ...
 
-Fix it by moving free_all_child_rdtgrp() to after kernfs_remove() in
-rdtgroup_rmdir_ctrl() to ensure it has the accurate refcount of rdtgrp.
+The problem is that the creation of a subdirectory in the "mon_groups"
+directory incorrectly releases the active protection of its parent
+directory instead of itself before it starts waiting for rdtgroup_mutex.
+This is triggered by the rdtgroup_mkdir() flow calling
+rdtgroup_kn_lock_live()/rdtgroup_kn_unlock() with kernfs node of the
+parent control group ("c1") as argument. It should be called with kernfs
+node "mon_groups" instead. What is currently missing is that the
+kn->priv of "mon_groups" is NULL instead of pointing to the rdtgrp.
+
+Fix it by pointing kn->priv to rdtgrp when "mon_groups" is created. Then
+it could be passed to rdtgroup_kn_lock_live()/rdtgroup_kn_unlock()
+instead. And then it operates on the same rdtgroup structure but handles
+the active reference of kernfs node "mon_groups" to prevent deadlock.
+The same changes are also made to the "mon_data" directories.
+
+This patch results in some unused function parameters that will be
+cleaned up in follow-up patch, this patch focuses on the fix only in
+support of backport efforts.
 
 Cc: stable@vger.kernel.org
-Fixes: f3cbeacaa06e ("x86/intel_rdt/cqm: Add rmdir support")
+Fixes: c7d9aac61311 ("x86/intel_rdt/cqm: Add mkdir support for RDT monitoring")
 Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Xiaochen Shen <xiaochen.shen@intel.com>
 Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 Reviewed-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index e1df86da48cf..bb911c8f7cac 100644
+index bb911c8f7cac..2c79fcd83271 100644
 --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
 +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -2964,13 +2964,13 @@ static int rdtgroup_rmdir_ctrl(struct kernfs_node *kn, struct rdtgroup *rdtgrp,
- 	closid_free(rdtgrp->closid);
- 	free_rmid(rdtgrp->mon.rmid);
+@@ -1974,7 +1974,7 @@ static int rdt_get_tree(struct fs_context *fc)
  
-+	rdtgroup_ctrl_remove(kn, rdtgrp);
-+
+ 	if (rdt_mon_capable) {
+ 		ret = mongroup_create_dir(rdtgroup_default.kn,
+-					  NULL, "mon_groups",
++					  &rdtgroup_default, "mon_groups",
+ 					  &kn_mongrp);
+ 		if (ret < 0)
+ 			goto out_info;
+@@ -2458,7 +2458,7 @@ static int mkdir_mondata_all(struct kernfs_node *parent_kn,
  	/*
- 	 * Free all the child monitor group rmids.
+ 	 * Create the mon_data directory first.
  	 */
- 	free_all_child_rdtgrp(rdtgrp);
+-	ret = mongroup_create_dir(parent_kn, NULL, "mon_data", &kn);
++	ret = mongroup_create_dir(parent_kn, prgrp, "mon_data", &kn);
+ 	if (ret)
+ 		return ret;
  
--	rdtgroup_ctrl_remove(kn, rdtgrp);
--
+@@ -2657,7 +2657,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 	uint files = 0;
+ 	int ret;
+ 
+-	prdtgrp = rdtgroup_kn_lock_live(prgrp_kn);
++	prdtgrp = rdtgroup_kn_lock_live(parent_kn);
+ 	if (!prdtgrp) {
+ 		ret = -ENODEV;
+ 		goto out_unlock;
+@@ -2730,7 +2730,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 	kernfs_activate(kn);
+ 
+ 	/*
+-	 * The caller unlocks the prgrp_kn upon success.
++	 * The caller unlocks the parent_kn upon success.
+ 	 */
  	return 0;
+ 
+@@ -2741,7 +2741,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ out_free_rgrp:
+ 	kfree(rdtgrp);
+ out_unlock:
+-	rdtgroup_kn_unlock(prgrp_kn);
++	rdtgroup_kn_unlock(parent_kn);
+ 	return ret;
+ }
+ 
+@@ -2779,7 +2779,7 @@ static int rdtgroup_mkdir_mon(struct kernfs_node *parent_kn,
+ 	 */
+ 	list_add_tail(&rdtgrp->mon.crdtgrp_list, &prgrp->mon.crdtgrp_list);
+ 
+-	rdtgroup_kn_unlock(prgrp_kn);
++	rdtgroup_kn_unlock(parent_kn);
+ 	return ret;
+ }
+ 
+@@ -2822,7 +2822,7 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
+ 		 * Create an empty mon_groups directory to hold the subset
+ 		 * of tasks and cpus to monitor.
+ 		 */
+-		ret = mongroup_create_dir(kn, NULL, "mon_groups", NULL);
++		ret = mongroup_create_dir(kn, rdtgrp, "mon_groups", NULL);
+ 		if (ret) {
+ 			rdt_last_cmd_puts("kernfs subdir error\n");
+ 			goto out_del_list;
+@@ -2838,7 +2838,7 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
+ out_common_fail:
+ 	mkdir_rdt_prepare_clean(rdtgrp);
+ out_unlock:
+-	rdtgroup_kn_unlock(prgrp_kn);
++	rdtgroup_kn_unlock(parent_kn);
+ 	return ret;
  }
  
 -- 
