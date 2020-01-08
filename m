@@ -2,65 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6171133EDB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 11:06:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF117133ED4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 11:04:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727566AbgAHKGR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 05:06:17 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:41304 "EHLO mail.skyhub.de"
+        id S1727392AbgAHKEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 05:04:52 -0500
+Received: from mga12.intel.com ([192.55.52.136]:15579 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726368AbgAHKGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 05:06:16 -0500
-Received: from zn.tnic (p4FED3198.dip0.t-ipconnect.de [79.237.49.152])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 335B91EC0315;
-        Wed,  8 Jan 2020 11:06:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1578477975;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=HRy92KTbbU70jc0LLnw8pGWEknrWuFHy3eJP7nHa+Fk=;
-        b=qWL7A4sqv5HWOIPWSeYhHYjsonqCIVGtM1N0zOa2ySvWNP5L+jB7cDGCfLIkmn6RjncJ7x
-        5ws1bYGo7NvXrhW7j0RZleURnOKeHx/nKbTiN6cGsqPxOKiXlCdJb3+1YbyWNduQ1n2XRt
-        RIGsM3ERe5ODQmDXtlCVI+lYB9aCaTU=
-Date:   Wed, 8 Jan 2020 11:03:56 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc:     Jan =?utf-8?Q?H=2E_Sch=C3=B6nherr?= <jschoenh@amazon.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH v2 6/6] x86/mce: Dynamically register default MCE handler
-Message-ID: <20200108100356.GA27363@zn.tnic>
-References: <20200103150722.20313-1-jschoenh@amazon.de>
- <20200103150722.20313-7-jschoenh@amazon.de>
- <20200103220328.GF5099@zn.tnic>
- <BN6PR12MB16670832D78F2799730FB95FF83E0@BN6PR12MB1667.namprd12.prod.outlook.com>
+        id S1726567AbgAHKEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 05:04:52 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 02:04:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,409,1571727600"; 
+   d="scan'208";a="225872894"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 08 Jan 2020 02:04:49 -0800
+Received: by lahna (sSMTP sendmail emulation); Wed, 08 Jan 2020 12:04:49 +0200
+Date:   Wed, 8 Jan 2020 12:04:49 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/12] i2c: i2c-core-acpi: convert to use
+ i2c_new_client_device()
+Message-ID: <20200108100449.GT465886@lahna.fi.intel.com>
+References: <20200107174748.9616-1-wsa+renesas@sang-engineering.com>
+ <20200107174748.9616-9-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BN6PR12MB16670832D78F2799730FB95FF83E0@BN6PR12MB1667.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200107174748.9616-9-wsa+renesas@sang-engineering.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 08, 2020 at 04:24:33AM +0000, Ghannam, Yazen wrote:
-> I've encountered an issue where EDAC didn't load (either due to a
-> bug or missing hardware enablement) and the MCE got swallowed by the
-> mcelog notifier. The mcelog utility wasn't in use, so there was no
-> record of the MCE.
+On Tue, Jan 07, 2020 at 06:47:42PM +0100, Wolfram Sang wrote:
+> Move away from the deprecated API and return the shiny new ERRPTR where
+> useful.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Can you reproduce this using the injector?
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
