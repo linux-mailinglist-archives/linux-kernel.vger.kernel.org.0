@@ -2,134 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAED3134446
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 14:49:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82BBF13444B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 14:51:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbgAHNto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 08:49:44 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:54747 "EHLO
+        id S1728422AbgAHNvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 08:51:36 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:50617 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727158AbgAHNto (ORCPT
+        with ESMTP id S1727158AbgAHNvg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 08:49:44 -0500
+        Wed, 8 Jan 2020 08:51:36 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MUGmJ-1jFpMw3wu3-00RIIe; Wed, 08 Jan 2020 14:49:38 +0100
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1M1HmG-1irvZ64Bre-002q6O; Wed, 08 Jan 2020 14:51:19 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Jyri Sarha <jsarha@ti.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] [v2] of: add more dummy helper functions
-Date:   Wed,  8 Jan 2020 14:49:28 +0100
-Message-Id: <20200108134936.3617013-1-arnd@arndb.de>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Oleksandr Natalenko <oleksandr@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, Sam Ravnborg <sam@ravnborg.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [v2] drm: panel: fix excessive stack usage in td028ttec1_prepare
+Date:   Wed,  8 Jan 2020 14:51:05 +0100
+Message-Id: <20200108135116.3687988-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:JQOAbVK0LWH8+kGq3OdUd50ufs2YEZV3baqlPgyjnJ1EKClaWfd
- 3RQXwmRqR6iIRfGAw0SJ6ykQeTSDGMKgHSCbCWFQmagnm4q8JsA4OZv2kn6aO/2YbFoOexC
- a0EbrrHdfgzLnQ7iOLnvVORt0r2SlDlgWGY5Hk2Jyx/wHu7LKeT53tI+XkSjtiMeoR/DuIC
- TcX6eu2WCN17t6VfERARw==
+X-Provags-ID: V03:K1:tKeoXcUsVKacqijm/XBhh86H/1egpokkSRB3oJsHcu9HgP2Y928
+ 1GSfviPvOtLi8YZQaeX23+XqClPiJrywRCkJJRGjf8vAfQfiopAva7YFo0tnacKJDhyia6v
+ nYYGyu/22VW3xwc/I5Kcaf1stwZOTbn9Uk/fdCdpa1CSzmYXbgEVMI+3dfKJEF4pjqd14+w
+ b59uP2AOjmLkOyP7/qYkg==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:2pHzSasBQPo=:KLVRXx6QyUgV/cEWTC5tkr
- /QQavo2hzouhq7JHsZQS9eVUwqmQ8ifQwgwycTIC9ask6pVnFnkRXCfuIVhXHSSbnoTsFe3+3
- jZww/noej6zIfZ2qurhMV2XaIe8gwcGRwg5MOKx5YvoUbTTAyQS6w7URRm3NINnydKDOelVh0
- KhssziFYqRk0q+k1SUh+So2ZPKnQBrG/HZuW6pC5ySkdNyNs/MZRSgT1BPYi7QmiKZZQwtQFT
- k3/2RIwWI4Ya2+vbsK3DOCeyAGreJrMvIlbHT6WnTyVY7IT+zer/LmOrRwxFz3bY8/0/qLtLB
- mwlRsPOIpe/l2OHnxlc+zW9fIGPA5w3q2TsbbvGpaxJkSNRy0g4T15kgsrWPq0QYOPfIA8xrv
- tBJYisaY1J83fk+spOaoAqJYM4C/jKcPl5/IbK0qqeHOcJhzsrKEC4ZPE3H0WN6ogWH/tKgt7
- LdYwNIkYBSdJ+upWFTJbYxxU46mSkzm1DIT1FunawjyOSdoO6X/j32/HdhubicCRvKPaz75Ni
- 4HTX/XbhVm3SjlcBOVf/RVY9maywbgOJcY9QzSAltGPWvjOkw2iA93Sym2R0k3d9umC5KGbFF
- 3uvSjFD5m6FUPLi6frVfZSrdm8TSb3lNsEEs6WCyu5n6Q8Zx9See4yEv127ki/G6npw1cz67s
- aQmenEh+CUaj6eZh5Q6+WwjEnLlUoa6ejO6k9+dqVwsmZlXGO2SKwX0V2x4rxDQRASRZFNr5y
- CF+GYclP67xC4CxoEYk+P6LQQqDlWXZHnV56TDMv83UCeijBgoUkbgT6qr6X3PMU2cDfAqL/q
- 8L7JtdN+u9EWyJPelSangHh88Pw2FI1UY8wCMbACpijNVF9l2xqYYCd5Z0uqKaqrsEv0aKF/d
- bdmh3RFFZmZUSA4cFL8Q==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:NnEmuwJCtxs=:oQlhA3d15KmrDDp73DbB0R
+ U7msgIXTj8DRZ7ZrBKZLKvIrfwFqeca2gA0mT+PqYsfFdPcEnp1ZC3zWHC2xBcgDPOGZsWzzl
+ qb9ZLn7st+2WRFQrYuQsWDjlkVaspQM0B2WnTx9It2RRS3DGhV2Lkjs0Q2vU1fx/7MGIF5WSu
+ kGYCMb53pgJ2HYcovEzYuid8cYXX5/861XJdOaPAXdL5I5AYqSqwCjmAH1xbT6kY0yhicMryT
+ cTcsoqUh/Sf8/BApRfpBnwB4vTkPcsYoV37klsMNv3YDr1lNikGT2CBGAECCHH8o8OS4Zx+JP
+ 9o6EtHjZiD8Imdqw7d8LS6Vml+HSqm3lkjMaDtvspGnHhJGPj64qq7TXeu0GgxQehWo1GgeSu
+ flj2aAqmHkdG7eYGvjjYx5E5lY1/IWPnPIN2jGMDhgJi13/pW0PEpUivk0tVeA1/5OQ+hj3/0
+ DTc+8bYQ7WuKfeZNk2MGF9IJjLF0MYutC2lFJFOdlzG2M776WmWxFm7GR/u3uICcm1kSmujZh
+ 5L42Hmf5xYNNx30ORmqdu5YbxxLV8/EBWjuY7L/fGaftxxaZGzsRUBQAD9Ro84w7CqMfro/cm
+ X9q7to4wGHu+fHoSsKpEau53GNaifrLcUkuNzoWP6xhMpOv9d5YVdUEEXH5TX6aQaRL/qKWm1
+ Nk6bhDXJIn5iPWO48+ktnkqEh0poK9EHaarqjycpI5kXXEQkgcUhr5So2Hv03gyEkn2wFZhrP
+ f5HEks8KlKwNE9KrnrOZNyoT5MhJIyo7U9S/PVV93Ai76ZRiXjstI+6ncpHTgecskFFMuJ08e
+ 3YPWm8AhJ3af1iLELo/25DOT5sDSUb/WvM7woQSnDhHYFHo2D2ePg1+iyjmPmTULo/FjB7xSS
+ oHJev4NpXbZzpWwc309w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new phy-j721e-wiz driver causes a link failure without CONFIG_OF:
+With gcc -O3 in combination with the structleak plug, the compiler can
+inline very aggressively, leading to rather large stack usage:
 
-drivers/phy/ti/phy-j721e-wiz.o: In function `wiz_remove':
-phy-j721e-wiz.c:(.text+0x40): undefined reference to `of_platform_device_destroy'
+drivers/gpu/drm/panel/panel-tpo-td028ttec1.c: In function 'td028ttec1_prepare':
+drivers/gpu/drm/panel/panel-tpo-td028ttec1.c:233:1: error: the frame size of 2768 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
+ }
 
-Add a dummy version of of_platform_device_destroy to avoid having to add
-Kconfig dependencies for the driver. As there are a few other functions
-without dummy implementations, add those as well for completeness.
+Marking jbt_reg_write_*() as noinline avoids the case where
+multiple instances of this function get inlined into the same
+stack frame and each one adds a copy of 'tx_buf'.
 
-Fixes: 42440de5438a ("phy: ti: j721e-wiz: Add support for WIZ module present in TI J721E SoC")
+The compiler is clearly making some bad decisions here, but I
+did not open a new bug report as this only happens in combination
+with the structleak plugin.
+
+Link: https://lore.kernel.org/lkml/CAK8P3a3jAnFZA3GFRtdYdg1-i-oih3pOQzkkrK-X3BGsFrMiZQ@mail.gmail.com/
+Fixes: mmtom ("init/Kconfig: enable -O3 for all arches")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/linux/of_platform.h | 39 ++++++++++++++++++++++++++++---------
- 1 file changed, 30 insertions(+), 9 deletions(-)
+v2:
+- mark all three functions as noinlien
+- add code comment
+- add link to more detailed analysis
+---
+ drivers/gpu/drm/panel/panel-tpo-td028ttec1.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/of_platform.h b/include/linux/of_platform.h
-index 84a966623e78..f5dea3de4856 100644
---- a/include/linux/of_platform.h
-+++ b/include/linux/of_platform.h
-@@ -48,28 +48,49 @@ struct of_dev_auxdata {
+diff --git a/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c b/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
+index cf29405a2dbe..5034db8b55de 100644
+--- a/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
++++ b/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
+@@ -86,7 +86,12 @@ struct td028ttec1_panel {
  
- extern const struct of_device_id of_default_bus_match_table[];
+ #define to_td028ttec1_device(p) container_of(p, struct td028ttec1_panel, panel)
  
-+#ifdef CONFIG_OF
- /* Platform drivers register/unregister */
- extern struct platform_device *of_device_alloc(struct device_node *np,
- 					 const char *bus_id,
- 					 struct device *parent);
--#ifdef CONFIG_OF
- extern struct platform_device *of_find_device_by_node(struct device_node *np);
--#else
--static inline struct platform_device *of_find_device_by_node(struct device_node *np)
--{
--	return NULL;
--}
--#endif
--
- /* Platform devices and busses creation */
- extern struct platform_device *of_platform_device_create(struct device_node *np,
- 						   const char *bus_id,
- 						   struct device *parent);
--
- extern int of_platform_device_destroy(struct device *dev, void *data);
- extern int of_platform_bus_probe(struct device_node *root,
- 				 const struct of_device_id *matches,
- 				 struct device *parent);
-+#else
-+static inline struct platform_device *of_device_alloc(struct device_node *np,
-+						      const char *bus_id,
-+						      struct device *parent)
-+{
-+	return NULL;
-+}
-+static inline struct platform_device *of_find_device_by_node(struct device_node *np)
-+{
-+	return NULL;
-+}
-+static inline struct platform_device *of_platform_device_create(struct device_node *np,
-+								const char *bus_id,
-+								struct device *parent)
-+{
-+	return NULL;
-+}
-+static inline int of_platform_device_destroy(struct device *dev, void *data)
-+{
-+	return 0;
-+}
-+static inline int of_platform_bus_probe(struct device_node *root,
-+					const struct of_device_id *matches,
-+					struct device *parent)
-+{
-+	return -ENODEV;
-+}
-+#endif
-+
- #ifdef CONFIG_OF_ADDRESS
- extern int of_platform_populate(struct device_node *root,
- 				const struct of_device_id *matches,
+-static int jbt_ret_write_0(struct td028ttec1_panel *lcd, u8 reg, int *err)
++/*
++ * noinline_for_stack so we don't get multiple copies of tx_buf
++ * on the stack in case of gcc-plugin-structleak
++ */
++static int noinline_for_stack
++jbt_ret_write_0(struct td028ttec1_panel *lcd, u8 reg, int *err)
+ {
+ 	struct spi_device *spi = lcd->spi;
+ 	u16 tx_buf = JBT_COMMAND | reg;
+@@ -105,7 +110,8 @@ static int jbt_ret_write_0(struct td028ttec1_panel *lcd, u8 reg, int *err)
+ 	return ret;
+ }
+ 
+-static int jbt_reg_write_1(struct td028ttec1_panel *lcd,
++static int noinline_for_stack
++jbt_reg_write_1(struct td028ttec1_panel *lcd,
+ 			   u8 reg, u8 data, int *err)
+ {
+ 	struct spi_device *spi = lcd->spi;
+@@ -128,7 +134,8 @@ static int jbt_reg_write_1(struct td028ttec1_panel *lcd,
+ 	return ret;
+ }
+ 
+-static int jbt_reg_write_2(struct td028ttec1_panel *lcd,
++static int noinline_for_stack
++jbt_reg_write_2(struct td028ttec1_panel *lcd,
+ 			   u8 reg, u16 data, int *err)
+ {
+ 	struct spi_device *spi = lcd->spi;
 -- 
 2.20.0
 
