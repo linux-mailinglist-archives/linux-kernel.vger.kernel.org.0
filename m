@@ -2,65 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 978F1134405
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 14:39:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA37E134424
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 14:44:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728204AbgAHNj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 08:39:28 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36162 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727533AbgAHNj1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 08:39:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=clEJSHFzJxXTF/L+L5nG3nazAWlUuBe7SRBk68jFd6s=; b=eOHK9Q8mtURBJ1nEoguBU3qKa
-        ZnVSAnrg+EqlnzxvAjfSGzELcp+uZSRMg31svloblilttWFy1vMeY5F0IOyN1aUtOpMnnq2V6XmNt
-        i98z3Tt9by8DN/Zm/QCgMRNbQruA/gxnYiy6BcXOJv1ym/nubqVxjHwJwh9FUAYgGB82hJ2eHuHn5
-        SSG0Le+CU5/Rq/wAV07qadpuVni8SN2Z7vIlgWecghpt8diUZRzxVW9lpO0BIewrLZ95y8sBP8ZHo
-        BPTN9iBHhC+36BP6Xfj04eQxoPvCDayHj7FuEnFZHsvVwF22MGETmfpqNIdDv/8mFP/IT5HVeMB2L
-        Cb6qq4GoQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ipBYU-0004Yn-Gk; Wed, 08 Jan 2020 13:39:26 +0000
-Date:   Wed, 8 Jan 2020 05:39:26 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Nikolai Merinov <n.merinov@inango-systems.com>
-Cc:     Davidlohr Bueso <dave@stgolabs.net>, Jens Axboe <axboe@kernel.dk>,
-        linux-efi@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] partitions/efi: Fix partition name parsing in GUID
- partition entry
-Message-ID: <20200108133926.GC4455@infradead.org>
-References: <20181124162123.21300-1-n.merinov@inango-systems.com>
- <20191224092119.4581-1-n.merinov@inango-systems.com>
+        id S1728336AbgAHNoW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 08:44:22 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47158 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726556AbgAHNoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 08:44:22 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id DAEC7D65DF3EF50D2D83;
+        Wed,  8 Jan 2020 21:44:15 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 8 Jan 2020 21:44:09 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <jeffrey.t.kirsher@intel.com>, <davem@davemloft.net>
+CC:     <intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <chenzhou10@huawei.com>
+Subject: [PATCH next] igc: make non-global functions static
+Date:   Wed, 8 Jan 2020 21:39:59 +0800
+Message-ID: <20200108133959.93035-1-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191224092119.4581-1-n.merinov@inango-systems.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> index db2fef7dfc47..51287a8a3bea 100644
-> --- a/block/partitions/efi.c
-> +++ b/block/partitions/efi.c
-> @@ -715,7 +715,7 @@ int efi_partition(struct parsed_partitions *state)
->  				ARRAY_SIZE(ptes[i].partition_name));
->  		info->volname[label_max] = 0;
->  		while (label_count < label_max) {
-> -			u8 c = ptes[i].partition_name[label_count] & 0xff;
-> +			u8 c = le16_to_cpu(ptes[i].partition_name[label_count]) & 0xff;
->  			if (c && !isprint(c))
->  				c = '!';
->
-This adds an overly long line.  Please add a an efi_char_from_cpu or
-similarly named helper to encapsulate this logic.
+Fix sparse warning:
+drivers/net/ethernet/intel/igc/igc_ptp.c:512:6:
+	warning: symbol 'igc_ptp_tx_work' was not declared. Should it be static?
+drivers/net/ethernet/intel/igc/igc_ptp.c:644:6:
+	warning: symbol 'igc_ptp_suspend' was not declared. Should it be static?
 
-Otherwise the change looks good.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+---
+ drivers/net/ethernet/intel/igc/igc_ptp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/igc/igc_ptp.c b/drivers/net/ethernet/intel/igc/igc_ptp.c
+index 6935065..389a969 100644
+--- a/drivers/net/ethernet/intel/igc/igc_ptp.c
++++ b/drivers/net/ethernet/intel/igc/igc_ptp.c
+@@ -509,7 +509,7 @@ static void igc_ptp_tx_hwtstamp(struct igc_adapter *adapter)
+  * This work function polls the TSYNCTXCTL valid bit to determine when a
+  * timestamp has been taken for the current stored skb.
+  */
+-void igc_ptp_tx_work(struct work_struct *work)
++static void igc_ptp_tx_work(struct work_struct *work)
+ {
+ 	struct igc_adapter *adapter = container_of(work, struct igc_adapter,
+ 						   ptp_tx_work);
+@@ -641,7 +641,7 @@ void igc_ptp_init(struct igc_adapter *adapter)
+  * This function stops the overflow check work and PTP Tx timestamp work, and
+  * will prepare the device for OS suspend.
+  */
+-void igc_ptp_suspend(struct igc_adapter *adapter)
++static void igc_ptp_suspend(struct igc_adapter *adapter)
+ {
+ 	if (!(adapter->ptp_flags & IGC_PTP_ENABLED))
+ 		return;
+-- 
+2.7.4
 
