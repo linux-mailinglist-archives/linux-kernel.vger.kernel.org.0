@@ -2,106 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2758B13451B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 15:35:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 690F5134529
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 15:38:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbgAHOfe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 09:35:34 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:54339 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726411AbgAHOfe (ORCPT
+        id S1728342AbgAHOiQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 09:38:16 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:35845 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbgAHOiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 09:35:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578494132;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fP+WPZXzfTrcd6wkGC25b1jea+qaX/5G0Sorwuc2/9o=;
-        b=iXYX0Y2slOdtiqHLYimPUSe6gCR0YYAt92PSQN3edcZxMnIDYkroqUHPzS3KYMfnRTwHJ5
-        eHw2TSlUlVABeVDSzqYRY26fktqDavvPqIHLNQLGumomFsBmY4TiH2un/KGUtsa9CN/TEP
-        s2btbIstJQtNWbqNJYGMTp3K5LpIaSM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-336-4AOAtzb6MzC3zwH2BoJp3g-1; Wed, 08 Jan 2020 09:35:30 -0500
-X-MC-Unique: 4AOAtzb6MzC3zwH2BoJp3g-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 55C971005502;
-        Wed,  8 Jan 2020 14:35:28 +0000 (UTC)
-Received: from krava (ovpn-204-186.brq.redhat.com [10.40.204.186])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7B07886C5E;
-        Wed,  8 Jan 2020 14:35:25 +0000 (UTC)
-Date:   Wed, 8 Jan 2020 15:35:22 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     "Jin, Yao" <yao.jin@linux.intel.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com, tmricht@linux.ibm.com
-Subject: Re: [PATCH] perf report: Fix no libunwind compiled warning break
- s390 issue
-Message-ID: <20200108143522.GE387467@krava>
-References: <20200107191745.18415-1-yao.jin@linux.intel.com>
- <20200108102708.GC360164@krava>
- <7b88fdcc-9603-d3e1-d43b-b8fb8b394f70@linux.intel.com>
+        Wed, 8 Jan 2020 09:38:15 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MC2o9-1iymor10Tl-00CVYi; Wed, 08 Jan 2020 15:36:44 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Russell King <linux@armlinux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        ard.biesheuvel@linaro.org, james.morse@arm.com, rabin@rab.in,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Enrico Weigelt <info@metux.net>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm/ftrace: fix building on BE32
+Date:   Wed,  8 Jan 2020 15:36:30 +0100
+Message-Id: <20200108143640.1034808-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7b88fdcc-9603-d3e1-d43b-b8fb8b394f70@linux.intel.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:DNg/f0DgH2AuFmls4CuTuds+KyudRqDqzfh6viVMfvvGdk8u9Q0
+ yf8f7lprW7tAoIgat71ySCreHfiHJ7a5EY2p18mcMrgmgGEusFJ2Rrv8CsB/Ny/NyVIb4/H
+ DGohQLlUBZmTTu2qasznjvrU7nxq3aTas5zlEKj5QdHDUqZ/6Lni94HX/qlXoZi7UJe6wZN
+ SZqt2en9FiTgT8KNvLZyg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WFVEuGhsmHc=:5Ehnd9BB2/wv3L7ZBxOOvK
+ mBdj2KEKMtBAdFCvY2s40Q0UYqQsPm6WgiazzK3pEpOVb/GxiSZ303UtK2p7YHf9T8aptaISS
+ tFgKevI6rbeQYrGBRMSDKZQo6/4HQ6LUPFpD1Wl3/y+j9YLyPyMASie8IbgG66er9A6CP66Gh
+ rqLsDX92RbSBROptuOQvte6u0DmBzb740TgAybw8BBSWzOreRtrxPZVxCqAJh1cOPkCHYEKf2
+ +OzUY2/KeHDE0kfnz7u/Nz0IrtuS5j9FY8ck64ssj/FBt9Qs4/DAWMlRg6tLT4/OW0Oh2cFMk
+ M0UXudFGyWfwJQTUgNPkpE4LgUTHkbCoOoA30eLL82nHNavUgIuCUi6DEWyPaTRUthkvU40nE
+ 9D/RH80jyejtR2/gGXmaPuXNFJu1REfPrs/03nqv5ECbkF/oDdYZEIT1PMjkEKMjVSU2OOOGn
+ YArsYMaOGmywUc4nFK1Mlj+wc9P4YAtW35LedEY5+lOr4+l9TnHw10ze2h/IAii82/AAZ17Tv
+ Eb9ERvxeJ1gy1Y/0cKhUKH1+onKYwHaibjqu6+4hjm+BJlwbxO6gs8w5AapcKxFFTxf3/NTA3
+ GCQmgyEBVWQYUM3O886BshWTgLmAMN/0gj3p+eBWck5PeDJnG3fjPQ2VJqWJQf42zEMYd7zrs
+ An4ndfsWn0eHKchauHovwoUwasGxBJdHwOZblS4J7qzGXF/Jw1Z2ee1K2hMKDiNSGsdf8Fi/w
+ JWwn7D3ieXPbYhCUNVYgbfxQxZO42Cwvye018COjOKoCuZeVTHqIvRJeViNOcC42iDmOKQR8a
+ T9CuH0XYQgH3JoN6YVdGxAaDh7mCAaBwyO7DpF02xwGMgjkgmbdL2APK7dVUwXm9HRexhivu9
+ EgbBF0i++dXX0ftUQ5nA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 08, 2020 at 09:02:02PM +0800, Jin, Yao wrote:
-> 
-> 
-> On 1/8/2020 6:27 PM, Jiri Olsa wrote:
-> > On Wed, Jan 08, 2020 at 03:17:45AM +0800, Jin Yao wrote:
-> > > Commit 800d3f561659 ("perf report: Add warning when libunwind not compiled in")
-> > > breaks the s390 platform. S390 uses libdw-dwarf-unwind for call chain
-> > > unwinding and had no support for libunwind.
-> > > 
-> > > So the warning "Please install libunwind development packages during the perf build."
-> > > caused the confusion even if the call-graph is displayed correctly.
-> > > 
-> > > This patch adds checking for HAVE_DWARF_SUPPORT, which is set when
-> > > libdw-dwarf-unwind is compiled in.
-> > > 
-> > > Fixes: 800d3f561659 ("perf report: Add warning when libunwind not compiled in")
-> > > 
-> > > Reviewed-by: Thomas Richter <tmricht@linux.ibm.com>
-> > > Tested-by: Thomas Richter <tmricht@linux.ibm.com>
-> > > Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-> > 
-> > perfect, I have the same change prepared for sending, but it's
-> > together with making libdw default dwarf unwinder, which I'm still
-> > not sure we want to do, so it all got posponed ;-)
-> >  > would you guys be ok with that? with having libdw picked up as
-> default dwarf unwinder..
-> > 
-> 
-> I've roughly compared the performance between libunwind-dev and libdw-dev.
-> While in my test (on KBL desktop), for the same perf report command-line, it
-> looks the perf built with libunwind-dev is much faster than the perf built
-> with libdw-dev.
+Compiling patch.c on BE32 fails because there is no definition
+of __opcode_to_mem_thumb32()
 
-ok, that's valid point.. the reason we start discussing it, was that
-libunwind does not seem to support compressed ELF debug sections,
-which works via libdw unwind
+arch/arm/kernel/patch.c: In function '__patch_text_real':
+arch/arm/kernel/patch.c:94:11: error: implicit declaration of function '__opcode_to_mem_thumb32' [-Werror=implicit-function-declaration]
 
-> 
-> The command line is as following:
-> 
-> perf record --call-graph dwarf ./div
-> perf report -g graph --stdio
+Since we don't actually call it, only a declaration is required
+here, add one without a definition that fixes the build here
+but will cause a link failure if someone actually relies on the
+result.
 
-I'll try to do some profiling and check with outr contact in libdw
-to comment/check on that
+Fixes: 5a735583b764 ("arm/ftrace: Use __patch_text()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+Not sure if this version is any less ugly than the first
+approach of adding an #ifdef in patch.c
+---
+ arch/arm/include/asm/opcodes.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-thanks,
-jirka
+diff --git a/arch/arm/include/asm/opcodes.h b/arch/arm/include/asm/opcodes.h
+index 6bff94b2372b..f75f59c1257a 100644
+--- a/arch/arm/include/asm/opcodes.h
++++ b/arch/arm/include/asm/opcodes.h
+@@ -110,14 +110,19 @@ extern asmlinkage unsigned int arm_check_condition(u32 opcode, u32 psr);
+ #define __opcode_to_mem_thumb16(x) ___opcode_identity16(x)
+ #define ___asm_opcode_to_mem_arm(x) ___asm_opcode_identity32(x)
+ #define ___asm_opcode_to_mem_thumb16(x) ___asm_opcode_identity16(x)
+-#ifndef CONFIG_CPU_ENDIAN_BE32
+ /*
+  * On BE32 systems, using 32-bit accesses to store Thumb instructions will not
+  * work in all cases, due to alignment constraints.  For now, a correct
+- * version is not provided for BE32.
++ * version is not provided for BE32, only an extern declaration to allow
++ * compiling patch.c
+  */
++#ifndef CONFIG_CPU_ENDIAN_BE32
+ #define __opcode_to_mem_thumb32(x) ___opcode_swahw32(x)
+ #define ___asm_opcode_to_mem_thumb32(x) ___asm_opcode_swahw32(x)
++#else
++#ifndef __ASSEMBLY__
++extern unsigned __opcode_to_mem_thumb32(unsigned);
++#endif
+ #endif
+ 
+ #endif /* ! CONFIG_CPU_ENDIAN_BE8 */
+-- 
+2.20.0
 
