@@ -2,100 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C490613405D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:24:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8686213407C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:29:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbgAHLYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 06:24:46 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36067 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbgAHLYq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 06:24:46 -0500
-Received: by mail-oi1-f195.google.com with SMTP id c16so2317583oic.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 03:24:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=QFQ9MzNR3N8+jCKSFbC/snv1ofUy7bS229pDEsG4jtU=;
-        b=BfSBKC9urrCfL+mnO1wDRiAIf3kvrUAK0zCMfKv3A2Nivl2OaQw1dNxFOIBX86ylrP
-         rYgOOTUO/HQDnD/zc1XkjpuUASqyWQI9CzirZWviiktrYETdU6r8etl0Y0yxJGsSviuU
-         wEv2TR39OsGQRTp/K2XmYVevlUrZnvFmRFVreWJzXgegipHdKA0P+N4yFTPhBxkxC02D
-         M8s5WP2PPW04v+VK8lSTJQEU55xtHHLdyNrniaRMQ4K9BbYSHtJXAHHsiCfaJ3cElKzJ
-         9i0vt0PDlUiG9abu4hOGc/li01v0s9DqA8NBYZ9ycI3KftuOhCcz/h7nGEj14pX8YSu7
-         76EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=QFQ9MzNR3N8+jCKSFbC/snv1ofUy7bS229pDEsG4jtU=;
-        b=EO4HZJuL3VKD4EVVaBO/vjEdGf70BLNTNyvqcI/6LYHl8PYQgg+DzEgf+izEPR3LvF
-         CICNZwnio4epzzfgOgymoZMnDUcIOtauW4+iFlcV1CDfckOqBJTbQtTvxMxDx3wagsaB
-         w8e5sRPfsMzSDSLjloitTEbdmTpliu7pM3QaIyt3+kjL2w4I96pZY6syuQjoB0o/NP3s
-         AEV2Cxc5+tvgB1DH/YsLLDr1QXd6qwfIybrdMFb8a3ii+utob78a2Re/13kxa+CvEsdE
-         ZT5eWbbHAzK3x+t+1jYPN6C80Q4WAJK2xEnnqPZBqIYjWdfiQ1RGxN+8re+LOff2QsbP
-         EOXQ==
-X-Gm-Message-State: APjAAAVBHj1xh+ph2+lbmagq/Qw9yMOkgvOM9vdER7AM1f0DqysUtXqe
-        pmZj7KM7V5Jh1ymxe6BSwWioAA==
-X-Google-Smtp-Source: APXvYqzOWV+sbUpUBdYUxYwIk/nJwIoBL6vcjOmXeYbyU08FMkPZ2OYEZkrYkv7PKP8zAf5XscqRDw==
-X-Received: by 2002:aca:ab0e:: with SMTP id u14mr2709116oie.1.1578482685125;
-        Wed, 08 Jan 2020 03:24:45 -0800 (PST)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id a74sm1002436oii.37.2020.01.08.03.24.43
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 08 Jan 2020 03:24:44 -0800 (PST)
-Date:   Wed, 8 Jan 2020 03:24:42 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Chris Mason <clm@fb.com>
-cc:     Dave Chinner <david@fromorbit.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Hugh Dickins <hughd@google.com>,
-        Chris Down <chris@chrisdown.name>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH v5 2/2] tmpfs: Support 64-bit inums per-sb
-In-Reply-To: <4E9DF932-C46C-4331-B88D-6928D63B8267@fb.com>
-Message-ID: <alpine.LSU.2.11.2001080259350.1884@eggly.anvils>
-References: <cover.1578225806.git.chris@chrisdown.name> <ae9306ab10ce3d794c13b1836f5473e89562b98c.1578225806.git.chris@chrisdown.name> <20200107001039.GM23195@dread.disaster.area> <20200107001643.GA485121@chrisdown.name> <20200107003944.GN23195@dread.disaster.area>
- <CAOQ4uxjvH=UagqjHP_71_p9_dW9wKqiaWujzY1xKe7yZVFPoTA@mail.gmail.com> <alpine.LSU.2.11.2001070002040.1496@eggly.anvils> <CAOQ4uxiMQ3Oz4M0wKo5FA_uamkMpM1zg7ydD8FXv+sR9AH_eFA@mail.gmail.com> <20200107210715.GQ23195@dread.disaster.area>
- <4E9DF932-C46C-4331-B88D-6928D63B8267@fb.com>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        id S1727149AbgAHL3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 06:29:34 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9125 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726098AbgAHL3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 06:29:33 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 8AAB3A4388C290F79247;
+        Wed,  8 Jan 2020 19:29:31 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 8 Jan 2020 19:29:24 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
+        <jmorris@namei.org>
+CC:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <chenzhou10@huawei.com>
+Subject: [PATCH] ima: use kmemdup
+Date:   Wed, 8 Jan 2020 19:25:13 +0800
+Message-ID: <20200108112513.39715-1-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 7 Jan 2020, Chris Mason wrote:
-> On 7 Jan 2020, at 16:07, Dave Chinner wrote:
-> 
-> > IOWs, there are *lots* of 64bit inode numbers out there on XFS
-> > filesystems....
-> 
-> It's less likely in btrfs but +1 to all of Dave's comments.  I'm happy 
-> to run a scan on machines in the fleet and see how many have 64 bit 
-> inodes (either buttery or x-y), but it's going to be a lot.
+Fix memdup.cocci warnings:
+./security/integrity/ima/ima_policy.c:268:10-17: WARNING opportunity for kmemdup
 
-Dave, Amir, Chris, many thanks for the info you've filled in -
-and absolutely no need to run any scan on your fleet for this,
-I think we can be confident that even if fb had some 15-year-old tool
-in use on its fleet of 2GB-file filesystems, it would not be the one
-to insist on a kernel revert of 64-bit tmpfs inos.
+Use kmemdup rather than duplicating its implementation.
 
-The picture looks clear now: while ChrisD does need to hold on to his
-config option and inode32/inode64 mount option patch, it is much better
-left out of the kernel until (very unlikely) proved necessary.
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+---
+ security/integrity/ima/ima_policy.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks,
-Hugh
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index ef8dfd4..e31649c 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -265,7 +265,7 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+ 	struct ima_rule_entry *nentry;
+ 	int i, result;
+ 
+-	nentry = kmalloc(sizeof(*nentry), GFP_KERNEL);
++	nentry = kmemdup(entry, sizeof(*nentry), GFP_KERNEL);
+ 	if (!nentry)
+ 		return NULL;
+ 
+@@ -273,7 +273,6 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+ 	 * Immutable elements are copied over as pointers and data; only
+ 	 * lsm rules can change
+ 	 */
+-	memcpy(nentry, entry, sizeof(*nentry));
+ 	memset(nentry->lsm, 0, sizeof_field(struct ima_rule_entry, lsm));
+ 
+ 	for (i = 0; i < MAX_LSM_RULES; i++) {
+-- 
+2.7.4
+
