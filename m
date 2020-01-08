@@ -2,182 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9B51133BCD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 07:41:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0AF3133BDC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 07:43:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbgAHGln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 01:41:43 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:25005 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726149AbgAHGll (ORCPT
+        id S1726318AbgAHGm6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 01:42:58 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:51677 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbgAHGm5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 01:41:41 -0500
-X-UUID: 36b76f185e054e4ebcbd9c66463b0225-20200108
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=YZUHtY5Et7Z+h9F0lLzp+7QIBnsI3mM9pQonsoRaQYM=;
-        b=L1A838OjFA2IX14aD5laPK+mJLV1rHLhjxJItjiETEnOIz4qigoKhFaxPMgo3UGp+zl0VKGLD73yLzPPYS1/Ws5z8nu6tqvy1PDu16QCjEredy5jpqj/TbsOFdZgwNwOMI1qi4HLA1m2vj8U/Rr0WJzfmYcMfOBOXSCoYsDq6Zo=;
-X-UUID: 36b76f185e054e4ebcbd9c66463b0225-20200108
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <ming-fan.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 174346311; Wed, 08 Jan 2020 14:41:34 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 8 Jan 2020 14:41:08 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 8 Jan 2020 14:39:59 +0800
-From:   Ming-Fan Chen <ming-fan.chen@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Yong Wu <yong.wu@mediatek.com>, Evan Green <evgreen@chromium.org>,
-        Joerg Roedel <jroedel@suse.de>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        Ming-Fan Chen <ming-fan.chen@mediatek.com>
-Subject: [PATCH v3 3/3] memory: mtk-smi: Add bandwidth initial golden setting
-Date:   Wed, 8 Jan 2020 14:41:31 +0800
-Message-ID: <1578465691-30692-5-git-send-email-ming-fan.chen@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1578465691-30692-1-git-send-email-ming-fan.chen@mediatek.com>
-References: <1578465691-30692-1-git-send-email-ming-fan.chen@mediatek.com>
+        Wed, 8 Jan 2020 01:42:57 -0500
+Received: by mail-pj1-f68.google.com with SMTP id j11so633596pjs.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 22:42:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZtpTwioIOHM3oKkj4WmZlLgVZB4n/R3M1TPcRqo5YDc=;
+        b=fCNtPRJsOjRbRXG9dM5lPebrDi5XFbj5wFzvUtS7aBxMCM3GJiJ2tJAwKOvnnHQmL7
+         2pFpW2lGzCNd74SpFMEosQJysPE6RFXsAtKMevjA6KVRF5h34IcVTSx8/ulpKlpqlVHW
+         YRK7QEysuZ6P7b5TaeNHucq1RZbUXmLRYdPUiNChUyir28glJdilnudQ7lPXKymkkwMa
+         2UUYeJucOJ5mEQqnYfXjIjeBxMq9mpwYjK2P5W5M3Tot0G9c5ct68P5vBzuHrvevmx1O
+         rOxvoXJClMJneIrD2WUQVKCi/ZFM0w09P0UyQ5h+nXnCObd8KAMu0mO34G0alpIT1fCK
+         lwng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZtpTwioIOHM3oKkj4WmZlLgVZB4n/R3M1TPcRqo5YDc=;
+        b=NwH8pH1y4tAoydhYyYwCn8ScRX0fs+NKPPvwO0pJ4mU8aIrxRMDnmheVlmjz5NL0jT
+         CpjD0HMwGCuDtT8xpvqLz7ZsiXrpPrPK72lW1+ONypQv6GZ8mArt7jOSfducAKNIrd1l
+         7Y61+LZf8z46goEzcPD92RG+rFHJ9zhCHi3XpsIEG4xe4zP+/IdvY4Tpuy2vKXu1h8V3
+         2ciGozn1SJyE7jR23WbCtCE4rGpHACU+pJeJQqLZksEsj9bjWsXizCDsF+u17aK4qXLV
+         NDnDguaSQ0LhdsnlxzrxHrB5KAqil1arQisKCvBtJTCvZSH9u3RweMb2YNO9GNm/IlWl
+         iluw==
+X-Gm-Message-State: APjAAAX9ZMZ0L7LmxkIEgQagRS1XwoIOkTT+UBUU8NmYZHQjSTQs307l
+        HyI1dgoCnDSkWCLICy+xybb9GA==
+X-Google-Smtp-Source: APXvYqxEMgW5Ysr4BiXkXBvEQfuE5aIyNEvFeF9EZwEf4kwIrghAa3H5pB9v4fkrPabT/JnTvpm9Iw==
+X-Received: by 2002:a17:902:d909:: with SMTP id c9mr3678116plz.337.1578465776541;
+        Tue, 07 Jan 2020 22:42:56 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id d129sm1917695pfd.115.2020.01.07.22.42.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2020 22:42:55 -0800 (PST)
+Date:   Tue, 7 Jan 2020 22:42:53 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Elliot Berman <eberman@codeaurora.org>
+Cc:     agross@kernel.org, swboyd@chromium.org,
+        Stephan Gerhold <stephan@gerhold.net>,
+        saiprakash.ranjan@codeaurora.org, tsoni@codeaurora.org,
+        sidgup@codeaurora.org, psodagud@codeaurora.org,
+        Brian Masney <masneyb@onstation.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 00/17] Restructure, improve target support for
+ qcom_scm driver
+Message-ID: <20200108064253.GB4023550@builder>
+References: <1578431066-19600-1-git-send-email-eberman@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1578431066-19600-1-git-send-email-eberman@codeaurora.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-U01JIGJhbmR3aWR0aCBpbml0aWFsIGdvbGRlbiBzZXR0aW5nIGZvciBNVDY3NzkgbWFrZSBzdXJl
-DQpiZXR0ZXIgcGVyZm9ybWFuY2Ugb2YgbWVtb3J5IGNvbnRyb2wgZm9yIG11bHRpbWVkaWEgbW9k
-dWxlcy4NCg0KY2hhbmdlbG9nIHNpbmNlIHYyOg0KRGVmaW5lIGxvY2FsIHZhcmlhYmxlIGZyb20g
-bG9uZyB0byBzaG9ydA0KTWVyZ2Ugd3JpdGVsX3JlbGF4ZWQgaW50byBvbmUgbGluZQ0KUmVtb3Zl
-IFNNSV9MQVJCX1NXX0ZMQUcgaW4gc21pLWxhcmINCg0KU2lnbmVkLW9mZi1ieTogTWluZy1GYW4g
-Q2hlbiA8bWluZy1mYW4uY2hlbkBtZWRpYXRlay5jb20+DQotLS0NCiBkcml2ZXJzL21lbW9yeS9t
-dGstc21pLmMgfCAgMTE4ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKy0NCiAxIGZpbGUgY2hhbmdlZCwgMTE3IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkN
-Cg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVtb3J5L210ay1zbWkuYyBiL2RyaXZlcnMvbWVtb3J5
-L210ay1zbWkuYw0KaW5kZXggZDBiNzQ3YS4uMjIyYWM3ZSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMv
-bWVtb3J5L210ay1zbWkuYw0KKysrIGIvZHJpdmVycy9tZW1vcnkvbXRrLXNtaS5jDQpAQCAtNDEs
-MjEgKzQxLDQ3IEBADQogI2RlZmluZSBTTUlfTEFSQl9OT05TRUNfQ09OKGlkKQkoMHgzODAgKyAo
-KGlkKSAqIDQpKQ0KICNkZWZpbmUgRl9NTVVfRU4JCUJJVCgwKQ0KIA0KKyNkZWZpbmUgU01JX0xB
-UkJfQ01EX1RIUlRfQ09OCSAweDI0DQorI2RlZmluZSBTTUlfTEFSQl9PU1RETF9QT1JUCSAweDIw
-MA0KKyNkZWZpbmUgU01JX0xBUkJfT1NURExfUE9SVHgoaWQpIChTTUlfTEFSQl9PU1RETF9QT1JU
-ICsgKCgoaWQpICYgMHgxZikgPDwgMikpDQorDQogLyogU01JIENPTU1PTiAqLw0KKyNkZWZpbmUg
-U01JX0wxTEVOCQkJMHgxMDANCisjZGVmaW5lIFNNSV9MMUFSQjAJCQkweDEwNA0KKyNkZWZpbmUg
-U01JX0wxQVJCKGlkKQkJCShTTUlfTDFBUkIwICsgKCgoaWQpICYgMHg3KSA8PCAyKSkNCisNCiAj
-ZGVmaW5lIFNNSV9CVVNfU0VMCQkJMHgyMjANCiAjZGVmaW5lIFNNSV9CVVNfTEFSQl9TSElGVChs
-YXJiaWQpCSgobGFyYmlkKSA8PCAxKQ0KIC8qIEFsbCBhcmUgTU1VMCBkZWZhdWx0bHkuIE9ubHkg
-c3BlY2lhbGl6ZSBtbXUxIGhlcmUuICovDQogI2RlZmluZSBGX01NVTFfTEFSQihsYXJiaWQpCQko
-MHgxIDw8IFNNSV9CVVNfTEFSQl9TSElGVChsYXJiaWQpKQ0KIA0KKyNkZWZpbmUgU01JX000VV9U
-SAkJCTB4MjM0DQorI2RlZmluZSBTTUlfRklGT19USDEJCQkweDIzOA0KKyNkZWZpbmUgU01JX0ZJ
-Rk9fVEgyCQkJMHgyM2MNCisjZGVmaW5lIFNNSV9EQ00JCQkJMHgzMDANCisjZGVmaW5lIFNNSV9E
-VU1NWQkJCTB4NDQ0DQorDQorI2RlZmluZSBTTUlfTEFSQl9QT1JUX05SX01BWAkJMzINCisjZGVm
-aW5lIFNNSV9MQVJCX01JU0NfTlIJCTENCisNCiBlbnVtIG10a19zbWlfZ2VuIHsNCiAJTVRLX1NN
-SV9HRU4xLA0KIAlNVEtfU01JX0dFTjINCiB9Ow0KIA0KK3N0cnVjdCBtdGtfc21pX3JlZ19wYWly
-IHsNCisJdTE2CW9mZnNldDsNCisJdTMyCXZhbHVlOw0KK307DQorDQogc3RydWN0IG10a19zbWlf
-Y29tbW9uX3BsYXQgew0KIAllbnVtIG10a19zbWlfZ2VuIGdlbjsNCiAJYm9vbCAgICAgICAgICAg
-ICBoYXNfZ2FsczsNCiAJdTMyICAgICAgICAgICAgICBidXNfc2VsOyAvKiBCYWxhbmNlIHNvbWUg
-bGFyYnMgdG8gZW50ZXIgbW11MCBvciBtbXUxICovDQorCWJvb2wgICAgICAgICAgICAgICAgICAg
-ICAgICAgIGhhc19id2M7DQorCXU4ICAgICAgICAgICAgICAgICAgICAgICAgICAgIGxhcmJfbnI7
-DQorCWNvbnN0IHUxNiAgICAgICAgICAgICAgICAgICAgICpsMWFyYjsNCisJY29uc3Qgc3RydWN0
-IG10a19zbWlfcmVnX3BhaXIgKm1pc2M7DQogfTsNCiANCiBzdHJ1Y3QgbXRrX3NtaV9sYXJiX2dl
-biB7DQpAQCAtNjMsNiArODksOSBAQCBzdHJ1Y3QgbXRrX3NtaV9sYXJiX2dlbiB7DQogCXZvaWQg
-KCpjb25maWdfcG9ydCkoc3RydWN0IGRldmljZSAqKTsNCiAJdW5zaWduZWQgaW50CQkJbGFyYl9k
-aXJlY3RfdG9fY29tbW9uX21hc2s7DQogCWJvb2wJCQkJaGFzX2dhbHM7DQorCWJvb2wJCQkJaGFz
-X2J3YzsNCisJY29uc3QgdTgJCQkoKm9zdGRsKVtTTUlfTEFSQl9QT1JUX05SX01BWF07DQorCWNv
-bnN0IHN0cnVjdCBtdGtfc21pX3JlZ19wYWlyCSgqbWlzYylbU01JX0xBUkJfTUlTQ19OUl07DQog
-fTsNCiANCiBzdHJ1Y3QgbXRrX3NtaSB7DQpAQCAtMTU5LDYgKzE4OCw4IEBAIHZvaWQgbXRrX3Nt
-aV9sYXJiX3B1dChzdHJ1Y3QgZGV2aWNlICpsYXJiZGV2KQ0KIHN0YXRpYyB2b2lkIG10a19zbWlf
-bGFyYl9jb25maWdfcG9ydF9nZW4yX2dlbmVyYWwoc3RydWN0IGRldmljZSAqZGV2KQ0KIHsNCiAJ
-c3RydWN0IG10a19zbWlfbGFyYiAqbGFyYiA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOw0KKwljb25z
-dCBzdHJ1Y3QgbXRrX3NtaV9yZWdfcGFpciAqbWlzYzsNCisJY29uc3QgdTggKm9zdGRsOw0KIAl1
-MzIgcmVnOw0KIAlpbnQgaTsNCiANCkBAIC0xNzAsNiArMjAxLDE4IEBAIHN0YXRpYyB2b2lkIG10
-a19zbWlfbGFyYl9jb25maWdfcG9ydF9nZW4yX2dlbmVyYWwoc3RydWN0IGRldmljZSAqZGV2KQ0K
-IAkJcmVnIHw9IEZfTU1VX0VOOw0KIAkJd3JpdGVsKHJlZywgbGFyYi0+YmFzZSArIFNNSV9MQVJC
-X05PTlNFQ19DT04oaSkpOw0KIAl9DQorDQorCWlmICghbGFyYi0+bGFyYl9nZW4tPmhhc19id2Mp
-DQorCQlyZXR1cm47DQorDQorCWZvciAoaSA9IDAsIG9zdGRsID0gbGFyYi0+bGFyYl9nZW4tPm9z
-dGRsW2xhcmItPmxhcmJpZF07DQorCQlpIDwgU01JX0xBUkJfUE9SVF9OUl9NQVg7IGkrKykNCisJ
-CXdyaXRlbF9yZWxheGVkKG9zdGRsW2ldLCBsYXJiLT5iYXNlICsgU01JX0xBUkJfT1NURExfUE9S
-VHgoaSkpOw0KKw0KKwlmb3IgKGkgPSAwLCBtaXNjID0gbGFyYi0+bGFyYl9nZW4tPm1pc2NbbGFy
-Yi0+bGFyYmlkXTsNCisJCWkgPCBTTUlfTEFSQl9NSVNDX05SOyBpKyspDQorCQl3cml0ZWxfcmVs
-YXhlZChtaXNjW2ldLnZhbHVlLCBsYXJiLT5iYXNlICsgbWlzY1tpXS5vZmZzZXQpOw0KKwl3bWIo
-KTsgLyogbWFrZSBzdXJlIHNldHRpbmdzIGFyZSB3cml0dGVuICovDQogfQ0KIA0KIHN0YXRpYyB2
-b2lkIG10a19zbWlfbGFyYl9jb25maWdfcG9ydF9tdDgxNzMoc3RydWN0IGRldmljZSAqZGV2KQ0K
-QEAgLTIzOSwxMSArMjgyLDUzIEBAIHN0YXRpYyB2b2lkIG10a19zbWlfbGFyYl9jb25maWdfcG9y
-dF9nZW4xKHN0cnVjdCBkZXZpY2UgKmRldikNCiAJLmxhcmJfZGlyZWN0X3RvX2NvbW1vbl9tYXNr
-ID0gQklUKDgpIHwgQklUKDkpLCAgICAgIC8qIGJkcHN5cyAqLw0KIH07DQogDQorc3RhdGljIGNv
-bnN0IHU4IG10a19zbWlfbGFyYl9tdDY3Nzlfb3N0ZGxbXVtTTUlfTEFSQl9QT1JUX05SX01BWF0g
-PSB7DQorCXsweDI4LCAweDI4LCAweDAxLCAweDI4LCAweDAxLCAweDAxLCAweDBhLCAweDBhLCAw
-eDI4LH0sDQorCXsweDI4LCAweDAxLCAweDI4LCAweDI4LCAweDBhLCAweDAxLCAweDAxLCAweDBk
-LCAweDBkLCAweDA3LA0KKwkgMHgwMSwgMHgwNywgMHgwMSwgMHgyOCx9LA0KKwl7MHgxOCwgMHgw
-MSwgMHgwOCwgMHgwMSwgMHgwMSwgMHgwMSwgMHgwMSwgMHgwMSwgMHgwMSwgMHgwMiwNCisJIDB4
-MDEsIDB4MDF9LA0KKwl7MHgwMSwgMHgwMywgMHgwMiwgMHgwMSwgMHgwMSwgMHgwMSwgMHgwMSwg
-MHgwNCwgMHgwMiwgMHgwMSwNCisJIDB4MDQsIDB4MDEsIDB4MDEsIDB4MDEsIDB4MDEsIDB4MDQs
-IDB4MGIsIDB4MTMsIDB4MTQsfSwNCisJe30sDQorCXsweDEzLCAweDBmLCAweDBkLCAweDA3LCAw
-eDA3LCAweDA0LCAweDAzLCAweDAxLCAweDAzLCAweDAxLA0KKwkgMHgwNSwgMHgwYywgMHgwMSwg
-MHgwMSwgMHgwOCwgMHgwNiwgMHgwMiwgMHgwMSwgMHgwOCwgMHgwOCwNCisJIDB4MDEsIDB4MDEs
-IDB4MDEsIDB4MDEsIDB4MDEsIDB4MDEsfSwNCisJezB4MDEsIDB4MDEsIDB4MDEsfSwNCisJezB4
-MDEsIDB4MDEsIDB4MDEsIDB4MDEsfSwNCisJezB4MDEsIDB4MDEsIDB4MDEsIDB4MDEsIDB4MDEs
-IDB4MDEsIDB4MDEsIDB4MDEsIDB4MDEsIDB4MDEsfSwNCisJezB4MWYsIDB4MWEsIDB4MDIsIDB4
-MDQsIDB4MWYsIDB4MDIsIDB4MTQsIDB4MDEsIDB4MWYsIDB4MDQsDQorCSAweDA0LCAweDAxLCAw
-eDAxLCAweDAxLCAweDAyLCAweDAyLCAweDA0LCAweDAyLCAweDAxLCAweDAyLA0KKwkgMHgwNCwg
-MHgwMiwgMHgwMiwgMHgwMSx9LA0KKwl7MHgxZiwgMHgxYSwgMHgwMiwgMHgwNCwgMHgxZiwgMHgw
-MiwgMHgxNCwgMHgwMSwgMHgxZiwgMHgxYSwNCisJIDB4MDIsIDB4MDQsIDB4MWYsIDB4MDIsIDB4
-MTQsIDB4MDEsIDB4MDEsIDB4MDIsIDB4MDIsIDB4MDQsDQorCSAweDAyLCAweDBhLCAweDAyLCAw
-eDAyLCAweDA0LCAweDAyLCAweDBhLCAweDAyLCAweDA0LCAweDAyLCAweDA0LH0sDQorCXsweDAx
-LCAweDAxLCAweDAxLCAweDAxLCAweDAxLH0sDQorfTsNCisNCitzdGF0aWMgY29uc3Qgc3RydWN0
-IG10a19zbWlfcmVnX3BhaXINCittdGtfc21pX2xhcmJfbXQ2Nzc5X21pc2NbXVtTTUlfTEFSQl9N
-SVNDX05SXSA9IHsNCisJe3tTTUlfTEFSQl9DTURfVEhSVF9DT04sIDB4MzcwMjU2fSx9LA0KKwl7
-e1NNSV9MQVJCX0NNRF9USFJUX0NPTiwgMHgzMDAyNTZ9LH0sDQorCXt7U01JX0xBUkJfQ01EX1RI
-UlRfQ09OLCAweDM3MDI1Nn0sfSwNCisJe30sDQorCXt7U01JX0xBUkJfQ01EX1RIUlRfQ09OLCAw
-eDMwMDI1Nn0sfSwNCisJe3tTTUlfTEFSQl9DTURfVEhSVF9DT04sIDB4MzAwMjU2fSx9LA0KKwl7
-e1NNSV9MQVJCX0NNRF9USFJUX0NPTiwgMHgzMDAyNTZ9LH0sDQorCXt7U01JX0xBUkJfQ01EX1RI
-UlRfQ09OLCAweDMwMDI1Nn0sfSwNCisJe3tTTUlfTEFSQl9DTURfVEhSVF9DT04sIDB4MzcwMjU2
-fSx9LA0KKwl7e1NNSV9MQVJCX0NNRF9USFJUX0NPTiwgMHgzNzAyNTZ9LH0sDQorCXt7U01JX0xB
-UkJfQ01EX1RIUlRfQ09OLCAweDM3MDI1Nn0sfSwNCit9Ow0KKw0KIHN0YXRpYyBjb25zdCBzdHJ1
-Y3QgbXRrX3NtaV9sYXJiX2dlbiBtdGtfc21pX2xhcmJfbXQ2Nzc5ID0gew0KIAkuY29uZmlnX3Bv
-cnQgID0gbXRrX3NtaV9sYXJiX2NvbmZpZ19wb3J0X2dlbjJfZ2VuZXJhbCwNCiAJLmxhcmJfZGly
-ZWN0X3RvX2NvbW1vbl9tYXNrID0NCiAJCUJJVCg0KSB8IEJJVCg2KSB8IEJJVCgxMSkgfCBCSVQo
-MTIpIHwgQklUKDEzKSwNCiAJCS8qIERVTU1ZIHwgSVBVMCB8IElQVTEgfCBDQ1UgfCBNRExBICov
-DQorCS5oYXNfYndjID0gdHJ1ZSwNCisJLm9zdGRsICAgPSBtdGtfc21pX2xhcmJfbXQ2Nzc5X29z
-dGRsLA0KKwkubWlzYyAgICA9IG10a19zbWlfbGFyYl9tdDY3NzlfbWlzYywNCiB9Ow0KIA0KIHN0
-YXRpYyBjb25zdCBzdHJ1Y3QgbXRrX3NtaV9sYXJiX2dlbiBtdGtfc21pX2xhcmJfbXQ4MTgzID0g
-ew0KQEAgLTM5NywxMSArNDgyLDMwIEBAIHN0YXRpYyBpbnQgX19tYXliZV91bnVzZWQgbXRrX3Nt
-aV9sYXJiX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQ0KIAkuZ2VuID0gTVRLX1NNSV9HRU4y
-LA0KIH07DQogDQorc3RhdGljIGNvbnN0IHUxNiBtdGtfc21pX2NvbW1vbl9tdDY3NzlfbDFhcmJb
-XSA9IHsNCisJMHgxMDAwLCAweDEwMDAsIDB4MTAwMCwgMHgxMDAwLCAweDEwMDAsIDB4MTAwMCwg
-MHgxMDAwLCAweDEwMDAsDQorfTsNCisNCitzdGF0aWMgY29uc3Qgc3RydWN0DQorbXRrX3NtaV9y
-ZWdfcGFpciBtdGtfc21pX2NvbW1vbl9tdDY3NzlfbWlzY1tTTUlfQ09NTU9OX01JU0NfTlJdID0g
-ew0KKwl7U01JX0wxTEVOLCAweGJ9LA0KKwl7U01JX000VV9USCwgMHhlMTAwZTEwfSwNCisJe1NN
-SV9GSUZPX1RIMSwgMHg1MDYwOTBhfSwNCisJe1NNSV9GSUZPX1RIMiwgMHg1MDYwOTBhfSwNCisJ
-e1NNSV9EQ00sIDB4NGYxfSwNCisJe1NNSV9EVU1NWSwgMHgxfSwNCit9Ow0KKw0KIHN0YXRpYyBj
-b25zdCBzdHJ1Y3QgbXRrX3NtaV9jb21tb25fcGxhdCBtdGtfc21pX2NvbW1vbl9tdDY3NzkgPSB7
-DQogCS5nZW4JCT0gTVRLX1NNSV9HRU4yLA0KIAkuaGFzX2dhbHMJPSB0cnVlLA0KIAkuYnVzX3Nl
-bAk9IEZfTU1VMV9MQVJCKDEpIHwgRl9NTVUxX0xBUkIoMikgfCBGX01NVTFfTEFSQig0KSB8DQog
-CQkJICBGX01NVTFfTEFSQig1KSB8IEZfTU1VMV9MQVJCKDYpIHwgRl9NTVUxX0xBUkIoNyksDQor
-CS5oYXNfYndjCT0gdHJ1ZSwNCisJLmxhcmJfbnIJPSBBUlJBWV9TSVpFKG10a19zbWlfY29tbW9u
-X210Njc3OV9sMWFyYiksDQorCS5sMWFyYgkJPSBtdGtfc21pX2NvbW1vbl9tdDY3NzlfbDFhcmIs
-DQorCS5taXNjX25yCT0gQVJSQVlfU0laRShtdGtfc21pX2NvbW1vbl9tdDY3NzlfbWlzYyksDQor
-CS5taXNjCQk9IG10a19zbWlfY29tbW9uX210Njc3OV9taXNjLA0KIH07DQogDQogc3RhdGljIGNv
-bnN0IHN0cnVjdCBtdGtfc21pX2NvbW1vbl9wbGF0IG10a19zbWlfY29tbW9uX210ODE4MyA9IHsN
-CkBAIC01MDYsNyArNjEwLDcgQEAgc3RhdGljIGludCBfX21heWJlX3VudXNlZCBtdGtfc21pX2Nv
-bW1vbl9yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQ0KIHsNCiAJc3RydWN0IG10a19zbWkgKmNv
-bW1vbiA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOw0KIAl1MzIgYnVzX3NlbCA9IGNvbW1vbi0+cGxh
-dC0+YnVzX3NlbDsNCi0JaW50IHJldDsNCisJaW50IGksIHJldDsNCiANCiAJcmV0ID0gbXRrX3Nt
-aV9jbGtfZW5hYmxlKGNvbW1vbik7DQogCWlmIChyZXQpIHsNCkBAIC01MTYsNiArNjIwLDE4IEBA
-IHN0YXRpYyBpbnQgX19tYXliZV91bnVzZWQgbXRrX3NtaV9jb21tb25fcmVzdW1lKHN0cnVjdCBk
-ZXZpY2UgKmRldikNCiANCiAJaWYgKGNvbW1vbi0+cGxhdC0+Z2VuID09IE1US19TTUlfR0VOMiAm
-JiBidXNfc2VsKQ0KIAkJd3JpdGVsKGJ1c19zZWwsIGNvbW1vbi0+YmFzZSArIFNNSV9CVVNfU0VM
-KTsNCisNCisJaWYgKCFjb21tb24tPnBsYXQtPmhhc19id2MpDQorCQlyZXR1cm4gMDsNCisNCisJ
-Zm9yIChpID0gMDsgaSA8IGNvbW1vbi0+cGxhdC0+bGFyYl9ucjsgaSsrKQ0KKwkJd3JpdGVsX3Jl
-bGF4ZWQoY29tbW9uLT5wbGF0LT5sMWFyYltpXSwNCisJCQkgICAgICAgY29tbW9uLT5iYXNlICsg
-U01JX0wxQVJCKGkpKTsNCisNCisJZm9yIChpID0gMDsgaSA8IGNvbW1vbi0+cGxhdC0+bWlzY19u
-cjsgaSsrKQ0KKwkJd3JpdGVsX3JlbGF4ZWQoY29tbW9uLT5wbGF0LT5taXNjW2ldLnZhbHVlLA0K
-KwkJCSAgICAgICBjb21tb24tPmJhc2UgKyBjb21tb24tPnBsYXQtPm1pc2NbaV0udmFsdWUpOw0K
-Kwl3bWIoKTsgLyogbWFrZSBzdXJlIHNldHRpbmdzIGFyZSB3cml0dGVuICovDQogCXJldHVybiAw
-Ow0KIH0NCiANCi0tIA0KMS43LjkuNQ0K
+On Tue 07 Jan 13:04 PST 2020, Elliot Berman wrote:
 
+> This series improves support for 32-bit Qualcomm targets on qcom_scm driver and cleans
+> up the driver for 64-bit implementations.
+> 
+> Currently, the qcom_scm driver supports only 64-bit Qualcomm targets and very
+> old 32-bit Qualcomm targets. Newer 32-bit targets use ARM's SMC Calling
+> Convention to communicate with secure world. Older 32-bit targets use a
+> "buffer-based" legacy approach for communicating with secure world (as
+> implemented in qcom_scm-32.c). All arm64 Qualcomm targets use ARM SMCCC.
+> Currently, SMCCC-based communication is enabled only on ARM64 config and
+> buffer-based communication only on ARM config. This patch-series combines SMCCC
+> and legacy conventions and selects the correct convention by querying the secure
+> world [1].
+> 
+> We decided to take the opportunity as well to clean up the driver rather than
+> try to patch together qcom_scm-32 and qcom_scm-64.
+> 
+
+Series applied.
+
+Thank you,
+Bjorn
+
+> Patches 1-3 and 15 improve macro names, reorder macros/functions, and prune unused
+>             macros/functions. No functional changes were introduced.
+> Patches 4-8 clears up the SCM abstraction in qcom_scm-64.
+> Patches 9-14 clears up the SCM abstraction in qcom_scm-32.
+> Patches 16-17 enable dynamically using the different calling conventions.
+> 
+> [1]: https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/soc/qcom/scm.c?h=kernel.lnx.4.9.r28-rel#n555
+> 
+> Changes since v4:
+>  - Restored missing arginfo/args to pas_auth_and_reset
+> 
+> Changes since v3:
+>  - Updated recepients
+> 
+> Changes since v2:
+>  - Addressed Stephen's comments throughout v2.
+>  - Rebased onto latest for-next branch
+>  - Removed v2 08/18 (firmware: qcom_scm-64: Remove qcom_scm_call_do_smccc)
+>  - Cleaned up the convention query from v2 to align with [1].
+> 
+> Changes since v1:
+>  - Renamed functions/variables per Vinod's suggestions
+>  - Split v1 01/17 into v2 [01,02,03]/18 per Vinod's suggestion
+>  - Fix suggestions by Bjorn in v1 09/18 (now v2 10/18)
+>  - Refactor last 3 commits per Bjorn suggestions in v1 17/18 and v1 10/18
+> 
+> Changes since RFC:
+>  - Fixed missing return values in qcom_scm_call_smccc
+>  - Fixed order of arguments in qcom_scm_set_warm_boot_addr
+>  - Adjusted logic of SMC convention to properly support older QCOM secure worlds
+>  - Boot tested on IFC6410 based on linaro kernel tag:
+>    debian-qcom-dragonboard410c-18.01 (which does basic verification of legacy
+>    SCM calls: at least warm_boot_addr, cold_boot_addr, and power_down)
+> 
+> Elliot Berman (17):
+>   firmware: qcom_scm: Rename macros and structures
+>   firmware: qcom_scm: Apply consistent naming scheme to command IDs
+>   firmware: qcom_scm: Remove unused qcom_scm_get_version
+>   firmware: qcom_scm-64: Make SMC macros less magical
+>   firmware: qcom_scm-64: Move svc/cmd/owner into qcom_scm_desc
+>   firmware: qcom_scm-64: Add SCM results struct
+>   firmware: qcom_scm-64: Move SMC register filling to
+>     qcom_scm_call_smccc
+>   firmware: qcom_scm-64: Improve SMC convention detection
+>   firmware: qcom_scm-32: Use SMC arch wrappers
+>   firmware: qcom_scm-32: Add funcnum IDs
+>   firmware: qcom_scm-32: Use qcom_scm_desc in non-atomic calls
+>   firmware: qcom_scm-32: Move SMCCC register filling to qcom_scm_call
+>   firmware: qcom_scm-32: Create common legacy atomic call
+>   firmware: qcom_scm-32: Add device argument to atomic calls
+>   firmware: qcom_scm: Order functions, definitions by service/command
+>   firmware: qcom_scm: Remove thin wrappers
+>   firmware: qcom_scm: Dynamically support SMCCC and legacy conventions
+> 
+>  drivers/firmware/Kconfig           |   8 -
+>  drivers/firmware/Makefile          |   5 +-
+>  drivers/firmware/qcom_scm-32.c     | 671 -----------------------------
+>  drivers/firmware/qcom_scm-64.c     | 579 -------------------------
+>  drivers/firmware/qcom_scm-legacy.c | 242 +++++++++++
+>  drivers/firmware/qcom_scm-smc.c    | 151 +++++++
+>  drivers/firmware/qcom_scm.c        | 854 +++++++++++++++++++++++++++++--------
+>  drivers/firmware/qcom_scm.h        | 178 ++++----
+>  include/linux/qcom_scm.h           | 125 +++---
+>  9 files changed, 1232 insertions(+), 1581 deletions(-)
+>  delete mode 100644 drivers/firmware/qcom_scm-32.c
+>  delete mode 100644 drivers/firmware/qcom_scm-64.c
+>  create mode 100644 drivers/firmware/qcom_scm-legacy.c
+>  create mode 100644 drivers/firmware/qcom_scm-smc.c
+> 
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
