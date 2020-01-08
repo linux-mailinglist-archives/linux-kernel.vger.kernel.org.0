@@ -2,116 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94463133B3D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 06:34:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A3F6133B31
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 06:33:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbgAHFe6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 00:34:58 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15278 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbgAHFe5 (ORCPT
+        id S1726313AbgAHFdL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 00:33:11 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:47308 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725773AbgAHFdL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 00:34:57 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e1569ef0000>; Tue, 07 Jan 2020 21:34:39 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 07 Jan 2020 21:34:56 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 07 Jan 2020 21:34:56 -0800
-Received: from [10.24.44.157] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 8 Jan
- 2020 05:34:50 +0000
-Subject: Re: [PATCH v7 15/21] ASoC: tegra: Add fallback implementation for
- audio mclk
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
-        <tiwai@suse.com>, <digetx@gmail.com>, <mperttunen@nvidia.com>,
-        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <josephl@nvidia.com>, <daniel.lezcano@linaro.org>,
-        <mmaddireddy@nvidia.com>, <markz@nvidia.com>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
- <1578457515-3477-16-git-send-email-skomatineni@nvidia.com>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <f3f550a2-c6e0-7a78-5c83-da3e54dab309@nvidia.com>
-Date:   Wed, 8 Jan 2020 11:04:47 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Wed, 8 Jan 2020 00:33:11 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0085WxXx099545;
+        Tue, 7 Jan 2020 23:32:59 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578461579;
+        bh=keL4LWQIupCJg61mpAvGVJuErN5R0nhMOq3fzzLzC4o=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=u+Pu69gIiJ/hwHWNHI8SeHHO4V5yf0FMv088Qty0DiZSjYNMpsRctPy97zPPOfWj+
+         mUrnvS5OJUA3r/5RfIqlX7118w+Pia5L97WwCxypojX27DFKWdnefVfFIpBdNKCHaa
+         gMDjwq1b7UOA6SP9u9jl96tf31a6L477cS2dTTbE=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0085WxKt000705
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 7 Jan 2020 23:32:59 -0600
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 7 Jan
+ 2020 23:32:59 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 7 Jan 2020 23:32:59 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0085Wtx9127819;
+        Tue, 7 Jan 2020 23:32:56 -0600
+Subject: Re: [PATCH v2 01/14] dt-bindings: PCI: cadence: Add PCIe RC/EP DT
+ schema for Cadence PCIe
+To:     Rob Herring <robh@kernel.org>
+CC:     Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrew Murray <andrew.murray@arm.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20200106102058.19183-1-kishon@ti.com>
+ <20200106102058.19183-2-kishon@ti.com> <20200108034314.GA5412@bogus>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <3e2bfa1b-ff9e-93a0-a6b9-7985e0a76bf0@ti.com>
+Date:   Wed, 8 Jan 2020 11:05:01 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <1578457515-3477-16-git-send-email-skomatineni@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20200108034314.GA5412@bogus>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1578461679; bh=ooJxGk1Mj4xaggKc+sBCL1z4jOUVJa4U4iUSojVi5Pc=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=GZuc0rwo2hc8I1wHVYCC44JBPoD1pyB+PuI2wWCn5ErgMpXDuZctfA22ZZmFmDzXJ
-         H6jaH0bnOh5sPy2XvJkLRF8xr7kmn9CPhxBgKBYoIXl9Bw3un8hYQtMmdQ9RFGViX1
-         0epv7NMFAcF//b8SY6CfgZh7PQe7Ttihomu7WYr7I9e1+q+A5FMCdOsvA3qmKys58u
-         FdTrNm7FrryoDjlf1CL8HGr6w1u8JOjf1+Sc91ZAwQRFZFU/43xDdpgolxgDMYj/Gr
-         15AvZvhiUciGg4rT/rFJtw7jer4DOM5IaNjP8Ke9vo7UmO5+3IMEFud65EVi/z7s2N
-         Zk5bRaxCnBEnA==
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Rob,
 
-On 1/8/2020 9:55 AM, Sowjanya Komatineni wrote:
-> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
-> are moved to Tegra PMC driver with pmc as clock provider and using pmc
-> clock ids.
->
-> New device tree uses clk_out_1 from pmc clock provider.
->
-> So, this patch adds implementation for mclk fallback to extern1 when
-> retrieving mclk returns -ENOENT to be backward compatible of new device
-> tree with older kernels.
->
-> Tested-by: Dmitry Osipenko <digetx@gmail.com>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->   sound/soc/tegra/tegra_asoc_utils.c | 11 ++++++++++-
->   1 file changed, 10 insertions(+), 1 deletion(-)
->
-> diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
-> index 9cfebef74870..9a5f81039491 100644
-> --- a/sound/soc/tegra/tegra_asoc_utils.c
-> +++ b/sound/soc/tegra/tegra_asoc_utils.c
-> @@ -183,7 +183,16 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
->   	data->clk_cdev1 = devm_clk_get(dev, "mclk");
->   	if (IS_ERR(data->clk_cdev1)) {
->   		dev_err(data->dev, "Can't retrieve clk cdev1\n");
+On 08/01/20 9:13 AM, Rob Herring wrote:
+> On Mon, Jan 06, 2020 at 03:50:45PM +0530, Kishon Vijay Abraham I wrote:
+>> Add PCIe Host (RC) and Endpoint (EP) device tree schema for Cadence
+>> PCIe core library. Platforms using Cadence PCIe core can include the
+>> schemas added here in the platform specific schemas.
+>>
+>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>> ---
+>>  .../devicetree/bindings/pci/cdns-pcie-ep.yaml | 20 ++++++++++++
+>>  .../bindings/pci/cdns-pcie-host.yaml          | 30 +++++++++++++++++
+>>  .../devicetree/bindings/pci/cdns-pcie.yaml    | 32 +++++++++++++++++++
+>>  3 files changed, 82 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/pci/cdns-pcie-ep.yaml
+>>  create mode 100644 Documentation/devicetree/bindings/pci/cdns-pcie-host.yaml
+>>  create mode 100644 Documentation/devicetree/bindings/pci/cdns-pcie.yaml
+> 
+> Need to remove the old files.
+> 
+> Note that I posted a conversion of Cadence host[1]. Yours goes further, 
+> but please compare and add anything mine has that yours doesn't.
+> 
+> [1] https://lore.kernel.org/linux-pci/20191231193903.15929-2-robh@kernel.org/
 
-This error print can be moved inside below if, when this actually meant 
-to be an error condition.
+Sure, I'll look at this.
 
-> -		return PTR_ERR(data->clk_cdev1);
-> +		if (PTR_ERR(data->clk_cdev1) != -ENOENT)
-> +			return PTR_ERR(data->clk_cdev1);
-> +		/* Fall back to extern1 */
-> +		data->clk_cdev1 = devm_clk_get(dev, "extern1");
-> +		if (IS_ERR(data->clk_cdev1)) {
-> +			dev_err(data->dev, "Can't retrieve clk extern1\n");
-> +			return PTR_ERR(data->clk_cdev1);
-> +		}
-> +
-> +		dev_err(data->dev, "Falling back to extern1\n");
+Recently we converted Cadence driver to a library since the same Cadence
+core can be used by multiple vendors. Here I'm trying to add the
+bindings for Cadence core which can be included in the platform specific
+schema.
 
-This can be a info print?
+So the existing cdns,cdns-pcie-host.yaml which is a Cadence platform
+using Cadence core should include cdns-pcie-host.yaml.
 
->   	}
->   
->   	/*
+"[PATCH v2 10/14] dt-bindings: PCI: Add host mode dt-bindings for TI's
+J721E SoC" in this series includes "cdns-pcie-host.yaml" for TI platform
+using Cadence core.
+
+That's why in the schema added here you don't see the compatible since
+that will be added in platform specific schema.
+> 
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/cdns-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/cdns-pcie-ep.yaml
+>> new file mode 100644
+>> index 000000000000..36aaae5931c3
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pci/cdns-pcie-ep.yaml
+>> @@ -0,0 +1,20 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +# Copyright (C) 2020 Texas Instruments Incorporated - http://www.ti.com/
+>> +%YAML 1.2
+>> +--
+>> +$id: "http://devicetree.org/schemas/pci/cdns-pcie-ep.yaml#"
+>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>> +
+>> +title: Cadence PCIe Endpoint
+>> +
+>> +maintainers:
+>> +  - Tom Joseph <tjoseph@cadence.com>
+>> +
+>> +allOf:
+>> +  - $ref: "cdns-pcie.yaml#"
+>> +
+>> +properties:
+>> +  max-functions:
+>> +    description: Maximum number of functions that can be configured (default 1)
+>> +    allOf:
+>> +      - $ref: /schemas/types.yaml#/definitions/uint8
+>> diff --git a/Documentation/devicetree/bindings/pci/cdns-pcie-host.yaml b/Documentation/devicetree/bindings/pci/cdns-pcie-host.yaml
+>> new file mode 100644
+>> index 000000000000..78261bc4f0c5
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pci/cdns-pcie-host.yaml
+>> @@ -0,0 +1,30 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +# Copyright (C) 2020 Texas Instruments Incorporated - http://www.ti.com/
+>> +%YAML 1.2
+>> +---
+>> +$id: "http://devicetree.org/schemas/pci/cdns-pcie-host.yaml#"
+>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>> +
+>> +title: Cadence PCIe Host
+>> +
+>> +maintainers:
+>> +  - Tom Joseph <tjoseph@cadence.com>
+>> +
+>> +allOf:
+>> +  - $ref: "/schemas/pci/pci-bus.yaml#"
+>> +  - $ref: "cdns-pcie.yaml#"
+>> +
+>> +properties:
+>> +  vendor-id:
+>> +    description: The PCI vendor ID (16 bits, default is design dependent)
+>> +
+>> +  device-id:
+>> +    description: The PCI device ID (16 bits, default is design dependent)
+> 
+> While these got defined here as 16-bits, these should be fixed to 32-bit 
+> because they are established properties for a long time.
+> 
+>> +
+>> +  cdns,no-bar-match-nbits:
+>> +    description: Set into the no BAR match register to configure the number
+>> +      of least significant bits kept during inbound (PCIe -> AXI) address
+>> +      translations (default 32)
+>> +    allOf:
+>> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> 
+> What about compatible?
+> 
+>> +
+>> diff --git a/Documentation/devicetree/bindings/pci/cdns-pcie.yaml b/Documentation/devicetree/bindings/pci/cdns-pcie.yaml
+>> new file mode 100644
+>> index 000000000000..497d3dc2e6f2
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pci/cdns-pcie.yaml
+>> @@ -0,0 +1,32 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +# Copyright (C) 2020 Texas Instruments Incorporated - http://www.ti.com/
+>> +%YAML 1.2
+>> +---
+>> +$id: "http://devicetree.org/schemas/pci/cdns-pcie.yaml#"
+>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>> +
+>> +title: Cadence PCIe Core
+>> +
+>> +maintainers:
+>> +  - Tom Joseph <tjoseph@cadence.com>
+>> +
+>> +properties:
+>> +  max-link-speed:
+>> +    minimum: 1
+>> +    maximum: 3
+>> +
+>> +  num-lanes:
+>> +    minimum: 1
+>> +    maximum: 2
+> 
+> Needs a type.
+> 
+> The Cadence IP can't support x4, x8, or x16?
+
+I'll fix this. I assume these can be overwritten in platform specific
+schema files?
+
+Thanks
+Kishon
