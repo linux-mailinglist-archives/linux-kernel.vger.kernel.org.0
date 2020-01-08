@@ -2,197 +2,346 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64D12133D12
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 09:27:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 270E5133D2E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 09:33:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbgAHI1R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 03:27:17 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:38251 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726290AbgAHI1R (ORCPT
+        id S1727275AbgAHIdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 03:33:14 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:55176 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726313AbgAHIdN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 03:27:17 -0500
-Received: by mail-pj1-f66.google.com with SMTP id l35so753774pje.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 00:27:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Msod3mRVT9tJQexgvtHelBQzsmC3LbzZpFMhO8EK+Q8=;
-        b=QtY+C22hxjxOJew7IsLFFRzks5ODsTo8qYxAJ7s0pphQHcLSzg+9J1AR1Hy+uYSouO
-         92jEhG/YY+mI91x6FHhKuVjLid2LhvBKm9mCIt4tDBhgkxq6kEqyEQul2dT5wBnUH0jX
-         9uC84PBOF5528QkMAS/6cl+O4Kqtg52R6+PvRefpcE5/E5gcolTQVcR0ffKXnbhjbsyK
-         aTQPRuK+UcsXuLvKndly/1FJLearfiI5klwd9JFL96zdsjjK55j7rWKQ6NpUDoTKviiO
-         PeMisQ/RVu6Npf8lKXq7VVC11ML6ODhgCGhzvoWUZgVLpW2u2neVqgKR6o5QJRPa2xZy
-         yBEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Msod3mRVT9tJQexgvtHelBQzsmC3LbzZpFMhO8EK+Q8=;
-        b=jAp+A1DQfUFZ8rH97T64xPyCWZ+j2KaAsjqYB7YPy0LZ3z/NZ8bBedD1AHYMbdYOl3
-         JBLk8qyPoeNhy5n1ZYIj+1S1QFa1kJ7EOVW5VIj9DiFYsbvNmmDxyAKxv4M3CojMnNBL
-         Cchln2h7XchWPRGR23XjH+3E5B22kaGAlTPI1ppfP5XMDI4HmsmKCCUwBRu9NX1P+bXI
-         vuPPJbNV0BUXclekKhMqwRgbsteC1EWXGNdYdEWuBm1VMynjGuUzcNJfbjr+uKZgtOXu
-         IGDOHqwc6aJnRV7Vf4/NY9WxBw97m47esxa02C1zKInOq5j72oEVJyiwnhRYKfbssMXk
-         wt2g==
-X-Gm-Message-State: APjAAAW+7aWCYHQeOSaolCSMkaYEhN1g5UH7dNVvjqMMdJFnCULl4Hkl
-        HKQ6BPzWIqp8hqqUy5Wo1G0yQw==
-X-Google-Smtp-Source: APXvYqw0GOQFou/cbA1Ys2K5eQPVa8Y+shvCnV8vfoR2jYv1U4p3Y49fzrgaWG4pJuwNf4EP0vlH1A==
-X-Received: by 2002:a17:902:7c0f:: with SMTP id x15mr4226160pll.267.1578472035995;
-        Wed, 08 Jan 2020 00:27:15 -0800 (PST)
-Received: from localhost ([122.172.26.121])
-        by smtp.gmail.com with ESMTPSA id d24sm2457626pfq.75.2020.01.08.00.27.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Jan 2020 00:27:15 -0800 (PST)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V2] sched/fair: Load balance aggressively for SCHED_IDLE CPUs
-Date:   Wed,  8 Jan 2020 13:57:04 +0530
-Message-Id: <e485827eb8fe7db0943d6f3f6e0f5a4a70272781.1578471925.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.21.0.rc0.269.g1a574e7a288b
+        Wed, 8 Jan 2020 03:33:13 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0088RbCH062712;
+        Wed, 8 Jan 2020 02:27:37 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578472057;
+        bh=wFg73YVwQfnxGOrhgZ1oB4k+pVwwAVzHuobXhZs/WPE=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=s6jPSG/Dg7LeFnTjKRbwqQIh9PM+sh+yDM6we0Zo690JXIvyTuaotMEfXRN7/ARpr
+         U9JfbMMwPcA7KgR10n0ENhW3q5w+rpf32s80He+JexKznrCnC7Qv62G9QEQKvwFjvH
+         WX3gri9IZjCUknueOUlRsrfA32yaVNeVTR7K788o=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0088Rb7n103987
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 8 Jan 2020 02:27:37 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 8 Jan
+ 2020 02:27:36 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 8 Jan 2020 02:27:36 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0088RY1H106131;
+        Wed, 8 Jan 2020 02:27:34 -0600
+Subject: Re: [PATCH 2/2] arm: use swiotlb for bounce buffer on LPAE configs
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     Christoph Hellwig <hch@lst.de>
+CC:     Vignesh Raghavendra <vigneshr@ti.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        <linux-kernel@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Roger Quadros <rogerq@ti.com>
+References: <20190709142011.24984-1-hch@lst.de>
+ <20190709142011.24984-3-hch@lst.de>
+ <9bbd87c2-5b6c-069c-dd22-5105dc827428@ti.com> <20191219150259.GA3003@lst.de>
+ <20106a84-8247-fa78-2381-2c94fad9cb6a@ti.com>
+Message-ID: <eca457b6-c685-59ac-1dec-5b28e4430e1d@ti.com>
+Date:   Wed, 8 Jan 2020 10:28:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <20106a84-8247-fa78-2381-2c94fad9cb6a@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The fair scheduler performs periodic load balance on every CPU to check
-if it can pull some tasks from other busy CPUs. The duration of this
-periodic load balance is set to sd->balance_interval for the idle CPUs
-and is calculated by multiplying the sd->balance_interval with the
-sd->busy_factor (set to 32 by default) for the busy CPUs. The
-multiplication is done for busy CPUs to avoid doing load balance too
-often and rather spend more time executing actual task. While that is
-the right thing to do for the CPUs busy with SCHED_OTHER or SCHED_BATCH
-tasks, it may not be the optimal thing for CPUs running only SCHED_IDLE
-tasks.
+Hi Christoph,
 
-With the recent enhancements in the fair scheduler around SCHED_IDLE
-CPUs, we now prefer to enqueue a newly-woken task to a SCHED_IDLE
-CPU instead of other busy or idle CPUs. The same reasoning should be
-applied to the load balancer as well to make it migrate tasks more
-aggressively to a SCHED_IDLE CPU, as that will reduce the scheduling
-latency of the migrated (SCHED_OTHER) tasks.
+On 19/12/2019 17.20, Peter Ujfalusi wrote:
+> Hi Christoph,
+> 
+> On 19/12/2019 17.02, Christoph Hellwig wrote:
+>> Hi Peter,
+>>
+>> can you try the patch below (it will need to be split into two):
+> 
+> Thank you!
+> 
+> Unfortunately it does not help:
+> [    0.596208] edma: probe of 2700000.edma failed with error -5
+> [    0.596626] edma: probe of 2728000.edma failed with error -5
+> ...
+> [    2.108602] sdhci-omap 23000000.mmc: Got CD GPIO
+> [    2.113899] mmc0: Failed to set 32-bit DMA mask.
+> [    2.118592] mmc0: No suitable DMA available - falling back to PIO
+> [    2.159038] mmc0: SDHCI controller on 23000000.mmc [23000000.mmc]
+> using PIO
+> [    2.167531] mmc1: Failed to set 32-bit DMA mask.
+> [    2.172192] mmc1: No suitable DMA available - falling back to PIO
+> [    2.213841] mmc1: SDHCI controller on 23100000.mmc [23100000.mmc]
+> using PIO
 
-This patch makes minimal changes to the fair scheduler to do the next
-load balance soon after the last non SCHED_IDLE task is dequeued from a
-runqueue, i.e. making the CPU SCHED_IDLE. Also the sd->busy_factor is
-ignored while calculating the balance_interval for such CPUs. This is
-done to avoid delaying the periodic load balance by few hundred
-milliseconds for SCHED_IDLE CPUs.
+Do you have idea on how to fix this in a proper way?
 
-This is tested on ARM64 Hikey620 platform (octa-core) with the help of
-rt-app and it is verified, using kernel traces, that the newly
-SCHED_IDLE CPU does load balancing shortly after it becomes SCHED_IDLE
-and pulls tasks from other busy CPUs.
+IMHO when drivers are setting the dma_mask and coherent_mask the
+dma_pfn_offset should not be applied to the mask at all.
 
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-V2->
-- Updated conditional statement based on Peter's suggestion.
-- Added Reviewed-by from Vincent.
+If I understand it correctly for EDMA as example:
 
- kernel/sched/fair.c | 32 +++++++++++++++++++++-----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
+I set dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
+since it can only address memory in this range.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 83500b5b93dc..2255c4d69d02 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5210,6 +5210,18 @@ static inline void update_overutilized_status(struct rq *rq)
- static inline void update_overutilized_status(struct rq *rq) { }
- #endif
- 
-+/* Runqueue only has SCHED_IDLE tasks enqueued */
-+static int sched_idle_rq(struct rq *rq)
-+{
-+	return unlikely(rq->nr_running == rq->cfs.idle_h_nr_running &&
-+			rq->nr_running);
-+}
-+
-+static int sched_idle_cpu(int cpu)
-+{
-+	return sched_idle_rq(cpu_rq(cpu));
-+}
-+
- /*
-  * The enqueue_task method is called before nr_running is
-  * increased. Here we update the fair scheduling stats and
-@@ -5324,6 +5336,7 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 	struct sched_entity *se = &p->se;
- 	int task_sleep = flags & DEQUEUE_SLEEP;
- 	int idle_h_nr_running = task_has_idle_policy(p);
-+	bool was_sched_idle = sched_idle_rq(rq);
- 
- 	for_each_sched_entity(se) {
- 		cfs_rq = cfs_rq_of(se);
-@@ -5370,6 +5383,10 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 	if (!se)
- 		sub_nr_running(rq, 1);
- 
-+	/* balance early to pull high priority tasks */
-+	if (unlikely(!was_sched_idle && sched_idle_rq(rq)))
-+		rq->next_balance = jiffies;
-+
- 	util_est_dequeue(&rq->cfs, p, task_sleep);
- 	hrtick_update(rq);
- }
-@@ -5392,15 +5409,6 @@ static struct {
- 
- #endif /* CONFIG_NO_HZ_COMMON */
- 
--/* CPU only has SCHED_IDLE tasks enqueued */
--static int sched_idle_cpu(int cpu)
--{
--	struct rq *rq = cpu_rq(cpu);
--
--	return unlikely(rq->nr_running == rq->cfs.idle_h_nr_running &&
--			rq->nr_running);
--}
--
- static unsigned long cpu_load(struct rq *rq)
- {
- 	return cfs_rq_load_avg(&rq->cfs);
-@@ -9531,6 +9539,7 @@ static void rebalance_domains(struct rq *rq, enum cpu_idle_type idle)
- {
- 	int continue_balancing = 1;
- 	int cpu = rq->cpu;
-+	int busy = idle != CPU_IDLE && !sched_idle_cpu(cpu);
- 	unsigned long interval;
- 	struct sched_domain *sd;
- 	/* Earliest time when we have to do rebalance again */
-@@ -9567,7 +9576,7 @@ static void rebalance_domains(struct rq *rq, enum cpu_idle_type idle)
- 			break;
- 		}
- 
--		interval = get_sd_balance_interval(sd, idle != CPU_IDLE);
-+		interval = get_sd_balance_interval(sd, busy);
- 
- 		need_serialize = sd->flags & SD_SERIALIZE;
- 		if (need_serialize) {
-@@ -9583,9 +9592,10 @@ static void rebalance_domains(struct rq *rq, enum cpu_idle_type idle)
- 				 * state even if we migrated tasks. Update it.
- 				 */
- 				idle = idle_cpu(cpu) ? CPU_IDLE : CPU_NOT_IDLE;
-+				busy = idle != CPU_IDLE && !sched_idle_cpu(cpu);
- 			}
- 			sd->last_balance = jiffies;
--			interval = get_sd_balance_interval(sd, idle != CPU_IDLE);
-+			interval = get_sd_balance_interval(sd, busy);
- 		}
- 		if (need_serialize)
- 			spin_unlock(&balancing);
--- 
-2.21.0.rc0.269.g1a574e7a288b
+It does not matter if dma_pfn_offset is 0 or not 0 (like in k2g, where
+it is 0x780000) the EDMA still can only address within 32 bits.
 
+The dma_pfn_offset will tell us that the memory location's physical
+address is seen by the DMA at (phys_pfn - dma_pfn_offset) -> dma_pfn.
+
+The dma_mask should be checked against the dma_pfn.
+
+We can not 'move' the dma_mask with dma_pfn_offset when setting the mask
+since it is not correct. The DMA can access in 32 bits range and we have
+the peripherals under 0x8000 0000.
+
+I might be missing something, but it looks to me that the way we set the
+dma_mask and the coherent_mask is the place where this can be fixed.
+
+Best regards,
+- Péter
+
+> 
+> - Péter
+> 
+> 
+>> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+>> index e822af0d9219..30b9c6786ce3 100644
+>> --- a/arch/arm/mm/dma-mapping.c
+>> +++ b/arch/arm/mm/dma-mapping.c
+>> @@ -221,7 +221,8 @@ EXPORT_SYMBOL(arm_coherent_dma_ops);
+>>  
+>>  static int __dma_supported(struct device *dev, u64 mask, bool warn)
+>>  {
+>> -	unsigned long max_dma_pfn = min(max_pfn, arm_dma_pfn_limit);
+>> +	unsigned long max_dma_pfn =
+>> +		min_t(unsigned long, max_pfn, zone_dma_limit >> PAGE_SHIFT);
+>>  
+>>  	/*
+>>  	 * Translate the device's DMA mask to a PFN limit.  This
+>> diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+>> index 3ef204137e73..dd0e169a1bb1 100644
+>> --- a/arch/arm/mm/init.c
+>> +++ b/arch/arm/mm/init.c
+>> @@ -19,6 +19,7 @@
+>>  #include <linux/gfp.h>
+>>  #include <linux/memblock.h>
+>>  #include <linux/dma-contiguous.h>
+>> +#include <linux/dma-direct.h>
+>>  #include <linux/sizes.h>
+>>  #include <linux/stop_machine.h>
+>>  #include <linux/swiotlb.h>
+>> @@ -84,15 +85,6 @@ static void __init find_limits(unsigned long *min, unsigned long *max_low,
+>>  phys_addr_t arm_dma_zone_size __read_mostly;
+>>  EXPORT_SYMBOL(arm_dma_zone_size);
+>>  
+>> -/*
+>> - * The DMA mask corresponding to the maximum bus address allocatable
+>> - * using GFP_DMA.  The default here places no restriction on DMA
+>> - * allocations.  This must be the smallest DMA mask in the system,
+>> - * so a successful GFP_DMA allocation will always satisfy this.
+>> - */
+>> -phys_addr_t arm_dma_limit;
+>> -unsigned long arm_dma_pfn_limit;
+>> -
+>>  static void __init arm_adjust_dma_zone(unsigned long *size, unsigned long *hole,
+>>  	unsigned long dma_size)
+>>  {
+>> @@ -108,14 +100,14 @@ static void __init arm_adjust_dma_zone(unsigned long *size, unsigned long *hole,
+>>  
+>>  void __init setup_dma_zone(const struct machine_desc *mdesc)
+>>  {
+>> -#ifdef CONFIG_ZONE_DMA
+>> -	if (mdesc->dma_zone_size) {
+>> +	if (!IS_ENABLED(CONFIG_ZONE_DMA)) {
+>> +		zone_dma_limit = ((phys_addr_t)~0);
+>> +	} else if (mdesc->dma_zone_size) {
+>>  		arm_dma_zone_size = mdesc->dma_zone_size;
+>> -		arm_dma_limit = PHYS_OFFSET + arm_dma_zone_size - 1;
+>> -	} else
+>> -		arm_dma_limit = 0xffffffff;
+>> -	arm_dma_pfn_limit = arm_dma_limit >> PAGE_SHIFT;
+>> -#endif
+>> +		zone_dma_limit = PHYS_OFFSET + arm_dma_zone_size - 1;
+>> +	} else {
+>> +		zone_dma_limit = 0xffffffff;
+>> +	}
+>>  }
+>>  
+>>  static void __init zone_sizes_init(unsigned long min, unsigned long max_low,
+>> @@ -279,7 +271,7 @@ void __init arm_memblock_init(const struct machine_desc *mdesc)
+>>  	early_init_fdt_scan_reserved_mem();
+>>  
+>>  	/* reserve memory for DMA contiguous allocations */
+>> -	dma_contiguous_reserve(arm_dma_limit);
+>> +	dma_contiguous_reserve(zone_dma_limit);
+>>  
+>>  	arm_memblock_steal_permitted = false;
+>>  	memblock_dump_all();
+>> diff --git a/arch/arm/mm/mm.h b/arch/arm/mm/mm.h
+>> index 88c121ac14b3..7dbd77554273 100644
+>> --- a/arch/arm/mm/mm.h
+>> +++ b/arch/arm/mm/mm.h
+>> @@ -82,14 +82,6 @@ extern __init void add_static_vm_early(struct static_vm *svm);
+>>  
+>>  #endif
+>>  
+>> -#ifdef CONFIG_ZONE_DMA
+>> -extern phys_addr_t arm_dma_limit;
+>> -extern unsigned long arm_dma_pfn_limit;
+>> -#else
+>> -#define arm_dma_limit ((phys_addr_t)~0)
+>> -#define arm_dma_pfn_limit (~0ul >> PAGE_SHIFT)
+>> -#endif
+>> -
+>>  extern phys_addr_t arm_lowmem_limit;
+>>  
+>>  void __init bootmem_init(void);
+>> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+>> index b65dffdfb201..7a7501acd763 100644
+>> --- a/arch/arm64/mm/init.c
+>> +++ b/arch/arm64/mm/init.c
+>> @@ -441,7 +441,7 @@ void __init arm64_memblock_init(void)
+>>  	early_init_fdt_scan_reserved_mem();
+>>  
+>>  	if (IS_ENABLED(CONFIG_ZONE_DMA)) {
+>> -		zone_dma_bits = ARM64_ZONE_DMA_BITS;
+>> +		zone_dma_limit = DMA_BIT_MASK(ARM64_ZONE_DMA_BITS);
+>>  		arm64_dma_phys_limit = max_zone_phys(ARM64_ZONE_DMA_BITS);
+>>  	}
+>>  
+>> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+>> index 9488b63dfc87..337ace03d3f0 100644
+>> --- a/arch/powerpc/mm/mem.c
+>> +++ b/arch/powerpc/mm/mem.c
+>> @@ -223,7 +223,7 @@ static int __init mark_nonram_nosave(void)
+>>   * everything else. GFP_DMA32 page allocations automatically fall back to
+>>   * ZONE_DMA.
+>>   *
+>> - * By using 31-bit unconditionally, we can exploit zone_dma_bits to inform the
+>> + * By using 31-bit unconditionally, we can exploit zone_dma_limit to inform the
+>>   * generic DMA mapping code.  32-bit only devices (if not handled by an IOMMU
+>>   * anyway) will take a first dip into ZONE_NORMAL and get otherwise served by
+>>   * ZONE_DMA.
+>> @@ -257,18 +257,20 @@ void __init paging_init(void)
+>>  	printk(KERN_DEBUG "Memory hole size: %ldMB\n",
+>>  	       (long int)((top_of_ram - total_ram) >> 20));
+>>  
+>> +#ifdef CONFIG_ZONE_DMA
+>>  	/*
+>>  	 * Allow 30-bit DMA for very limited Broadcom wifi chips on many
+>>  	 * powerbooks.
+>>  	 */
+>> -	if (IS_ENABLED(CONFIG_PPC32))
+>> -		zone_dma_bits = 30;
+>> -	else
+>> -		zone_dma_bits = 31;
+>> -
+>> -#ifdef CONFIG_ZONE_DMA
+>> -	max_zone_pfns[ZONE_DMA]	= min(max_low_pfn,
+>> -				      1UL << (zone_dma_bits - PAGE_SHIFT));
+>> +	if (IS_ENABLED(CONFIG_PPC32)) {
+>> +		zone_dma_limit = DMA_BIT_MASK(30);
+>> +		max_zone_pfns[ZONE_DMA]	= min(max_low_pfn,
+>> +					      1UL << (30 - PAGE_SHIFT));
+>> +	} else {
+>> +		zone_dma_limit = DMA_BIT_MASK(31);
+>> +		max_zone_pfns[ZONE_DMA]	= min(max_low_pfn,
+>> +					      1UL << (31 - PAGE_SHIFT));
+>> +	}
+>>  #endif
+>>  	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
+>>  #ifdef CONFIG_HIGHMEM
+>> diff --git a/arch/s390/mm/init.c b/arch/s390/mm/init.c
+>> index f0ce22220565..c403f61cb56b 100644
+>> --- a/arch/s390/mm/init.c
+>> +++ b/arch/s390/mm/init.c
+>> @@ -118,7 +118,7 @@ void __init paging_init(void)
+>>  
+>>  	sparse_memory_present_with_active_regions(MAX_NUMNODES);
+>>  	sparse_init();
+>> -	zone_dma_bits = 31;
+>> +	zone_dma_limit = DMA_BIT_MASK(31);
+>>  	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
+>>  	max_zone_pfns[ZONE_DMA] = PFN_DOWN(MAX_DMA_ADDRESS);
+>>  	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
+>> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
+>> index 24b8684aa21d..20d56d597506 100644
+>> --- a/include/linux/dma-direct.h
+>> +++ b/include/linux/dma-direct.h
+>> @@ -6,7 +6,7 @@
+>>  #include <linux/memblock.h> /* for min_low_pfn */
+>>  #include <linux/mem_encrypt.h>
+>>  
+>> -extern unsigned int zone_dma_bits;
+>> +extern phys_addr_t zone_dma_limit;
+>>  
+>>  #ifdef CONFIG_ARCH_HAS_PHYS_TO_DMA
+>>  #include <asm/dma-direct.h>
+>> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+>> index 6af7ae83c4ad..5ea1bed2ba6f 100644
+>> --- a/kernel/dma/direct.c
+>> +++ b/kernel/dma/direct.c
+>> @@ -21,7 +21,7 @@
+>>   * it for entirely different regions. In that case the arch code needs to
+>>   * override the variable below for dma-direct to work properly.
+>>   */
+>> -unsigned int zone_dma_bits __ro_after_init = 24;
+>> +phys_addr_t zone_dma_limit __ro_after_init = DMA_BIT_MASK(24);
+>>  
+>>  static void report_addr(struct device *dev, dma_addr_t dma_addr, size_t size)
+>>  {
+>> @@ -74,7 +74,7 @@ static gfp_t __dma_direct_optimal_gfp_mask(struct device *dev, u64 dma_mask,
+>>  	 * Note that GFP_DMA32 and GFP_DMA are no ops without the corresponding
+>>  	 * zones.
+>>  	 */
+>> -	if (*phys_limit <= DMA_BIT_MASK(zone_dma_bits))
+>> +	if (*phys_limit <= zone_dma_limit)
+>>  		return GFP_DMA;
+>>  	if (*phys_limit <= DMA_BIT_MASK(32))
+>>  		return GFP_DMA32;
+>> @@ -483,7 +483,7 @@ int dma_direct_supported(struct device *dev, u64 mask)
+>>  	u64 min_mask;
+>>  
+>>  	if (IS_ENABLED(CONFIG_ZONE_DMA))
+>> -		min_mask = DMA_BIT_MASK(zone_dma_bits);
+>> +		min_mask = zone_dma_limit;
+>>  	else
+>>  		min_mask = DMA_BIT_MASK(32);
+>>  
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>
+> 
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
