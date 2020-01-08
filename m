@@ -2,98 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C32341340C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:43:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 341F81340EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:44:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727858AbgAHLmb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 06:42:31 -0500
-Received: from mga09.intel.com ([134.134.136.24]:62294 "EHLO mga09.intel.com"
+        id S1728118AbgAHLne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 06:43:34 -0500
+Received: from mga04.intel.com ([192.55.52.120]:7832 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727771AbgAHLmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 06:42:20 -0500
+        id S1726852AbgAHLnc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 06:43:32 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 03:42:19 -0800
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 03:43:32 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,409,1571727600"; 
-   d="scan'208";a="422891954"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga006.fm.intel.com with ESMTP; 08 Jan 2020 03:42:15 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 70745727; Wed,  8 Jan 2020 13:42:03 +0200 (EET)
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        "David E . Box" <david.e.box@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 36/36] MAINTAINERS: Update entry for Intel Broxton PMC driver
-Date:   Wed,  8 Jan 2020 14:42:01 +0300
-Message-Id: <20200108114201.27908-37-mika.westerberg@linux.intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200108114201.27908-1-mika.westerberg@linux.intel.com>
-References: <20200108114201.27908-1-mika.westerberg@linux.intel.com>
+   d="scan'208";a="370923917"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
+  by orsmga004.jf.intel.com with ESMTP; 08 Jan 2020 03:43:30 -0800
+Subject: Re: [PATCH 0/3] Fix issues with command queuing in arasan controllers
+To:     Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Cc:     ulf.hansson@linaro.org, shawn.lin@rock-chips.com
+References: <20191230092343.30692-1-faiz_abbas@ti.com>
+ <837996b2-c69f-1446-fda4-5577e28ba8e1@ti.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <a1b75d07-17ab-5dec-aa40-b9cff247eabf@intel.com>
+Date:   Wed, 8 Jan 2020 13:42:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <837996b2-c69f-1446-fda4-5577e28ba8e1@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver lives now under MFD so split the current entry into two parts
-and add me as co-maintainer of the Intel Broxton PMC driver. While there
-correct formatting of Zha Qipeng's email address.
+On 8/01/20 1:30 pm, Faiz Abbas wrote:
+> Hi,
+> 
+> On 30/12/19 2:53 pm, Faiz Abbas wrote:
+>> In some Arasan SDHCI controllers, after tuning, the tuning pattern data
+>> is leftover in the sdhci buffer. This leads to issues with future data
+>> commands, especially when command queuing is enabled. The following
+>> patches help fix this issue by resetting data lines after tuning is
+>> finished. The first two patches have been tested with TI's am65x and
+>> j721e SoCs using the sdhci_am654 driver.
+>>
+>> I have a strong suspicion that this is the same issue with
+>> the sdhci-of-arasan driver where they are forced to dump data from the
+>> buffer before enabling command queuing. I need help from someone with a
+>> compatible platform to test this.
+>>
+> 
+> I had some discussions with our hardware team and they say we should be
+> asserting both SRC and SRD reset after tuning to start from a clean
+> state. Will update the patches to do that in v2.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- MAINTAINERS | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8982c6e013b3..11b8bb4e2867 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8280,6 +8280,13 @@ L:	platform-driver-x86@vger.kernel.org
- S:	Maintained
- F:	drivers/platform/x86/intel_atomisp2_pm.c
- 
-+INTEL BROXTON PMC DRIVER
-+M:	Mika Westerberg <mika.westerberg@linux.intel.com>
-+M:	Zha Qipeng <qipeng.zha@intel.com>
-+S:	Maintained
-+F:	drivers/mfd/intel_pmc_bxt.c
-+F:	include/linux/mfd/intel_pmc_bxt.h
-+
- INTEL C600 SERIES SAS CONTROLLER DRIVER
- M:	Intel SCU Linux support <intel-linux-scu@intel.com>
- M:	Artur Paszkiewicz <artur.paszkiewicz@intel.com>
-@@ -8488,13 +8495,11 @@ L:	platform-driver-x86@vger.kernel.org
- S:	Maintained
- F:	drivers/platform/x86/intel_pmc_core*
- 
--INTEL PMC/P-Unit IPC DRIVER
--M:	Zha Qipeng<qipeng.zha@intel.com>
-+INTEL P-Unit IPC DRIVER
-+M:	Zha Qipeng <qipeng.zha@intel.com>
- L:	platform-driver-x86@vger.kernel.org
- S:	Maintained
--F:	drivers/platform/x86/intel_pmc_ipc.c
- F:	drivers/platform/x86/intel_punit_ipc.c
--F:	arch/x86/include/asm/intel_pmc_ipc.h
- F:	arch/x86/include/asm/intel_punit_ipc.h
- 
- INTEL PMIC GPIO DRIVERS
--- 
-2.24.1
-
+Can you use the ->execute_tuning() for that instead of a quirk?
