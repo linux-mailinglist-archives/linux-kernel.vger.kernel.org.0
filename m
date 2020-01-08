@@ -2,113 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A653A13399C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 04:24:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC73213399E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 04:24:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbgAHDYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 22:24:18 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:33204 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726594AbgAHDYO (ORCPT
+        id S1726781AbgAHDYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 22:24:33 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36682 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbgAHDYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 22:24:14 -0500
-Received: by mail-pj1-f65.google.com with SMTP id u63so5839670pjb.0;
-        Tue, 07 Jan 2020 19:24:14 -0800 (PST)
+        Tue, 7 Jan 2020 22:24:33 -0500
+Received: by mail-lj1-f194.google.com with SMTP id r19so1806297ljg.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 19:24:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=lK0hzpi7lOKx/+vwwnIUmfL08coFZ79d+GQbKJpzbuw=;
-        b=kCaReHFA/2m4OEHT4jLNp5pVtd/t9O5G9JwqiJ9+UasprWNPIFZUCmMOvsTtwblCZy
-         BLFANaRq6BoJXO5M9gMEMwZE9QeERUxmzCV4qePVIyDEpeI6rq/wKc1JndkKLkHdQyz7
-         hEWRhfORw2kWqCwEPOoxoE87VSxmB9c1PBOmwOjKTUlXcaTZErdZEKImufCRM1rMYjw1
-         242c6PO2wGpRhUz4RFm+B5mp6KEjdzG/3LVq49PTdSSISIczQ99tN122UCiW8EhJux8D
-         FVsDzdwYQE3IIgBXx+Qaul/MeyXhAOjtKWroaViiEZ3emMHIlnf8YZDLqhNjK25uPJp7
-         M+mg==
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=3/HLCQdvOct5vYdGl7M0YVN4HPhLYYUEFvzbqlTIGO8=;
+        b=NaFPP6UPgWIDwcZDai4QTFmNQCOinsJ7E/JqdgC8tJYpwyX1GAoWgYOOcS86Zr72nv
+         Wqjj3ZCXJzBwU8bB98G+j39JlmjRzkReUA43Mj2vobq1p0tZ06yTJYpc4MN6Y5jyRFqt
+         +ABxaBXFpdMsj8TF12oN1ALGoGgdDyifkUMMfQdxiu9BaVwtk1L7Ff5lB4F8Q4f2YLDu
+         Qmt9ThdeEPYQLWhwpG9JrkG9SmYjPv2wrfXbnMBg71gOcf4T7u/GaycNemg76SQ5L730
+         V3t1ikQVjbrJ3zNrfNBIbQs7QuYWaAvHHiJAxlOgxYoviXXxvgYKk7jjwiQN5ldEUoNK
+         NCnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=lK0hzpi7lOKx/+vwwnIUmfL08coFZ79d+GQbKJpzbuw=;
-        b=ZFnMAiVFZfxyPtvBe6T22q6NrvqGCy45y6H29eN20/2a2wQNVQbp9kpwynlbt/kjbc
-         TN3r2gMaEYwBC4064F3gwqCK7HnQDLAiSrRYwB+WtBukWor7R/J1OiArcu7hVgDn9eo9
-         7k9GPhWIUXorB02cxTIEo0g5Q9byly+/mtVmMAJhhwsR7qtEs4DP5waYqct/mxq0LeU5
-         TeGjsp+W9kyaUtlBJrqLtoylFEiHHb0xNBcsTYdODQxxzHTTRCtcxjRcMDek8JzMiqj1
-         DMYKyr5q+krf7xb/YQSiL5GuomOa8TAudjQGK71K9SjY2HV4ej5ZO8wxSTKnT2PJnvKP
-         TElQ==
-X-Gm-Message-State: APjAAAW7DYXJ9mvay4TJHoADDFbgB7qwy61oVwJ3qKrF24rq0dCmnkcf
-        Fs/6aQ8BLVouGPHCUzBooLE=
-X-Google-Smtp-Source: APXvYqyf1gLmB4hhnarUAfaBLruqzaaorl1nD7HJculUE1wIQqdTMKqw2LGQwDmGsTse2kht9lXJvQ==
-X-Received: by 2002:a17:90a:8a12:: with SMTP id w18mr2028423pjn.68.1578453854183;
-        Tue, 07 Jan 2020 19:24:14 -0800 (PST)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id g7sm1077875pfq.33.2020.01.07.19.24.10
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 07 Jan 2020 19:24:13 -0800 (PST)
-From:   Baolin Wang <baolin.wang7@gmail.com>
-To:     ohad@wizery.com, bjorn.andersson@linaro.org, baohua@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, baolin.wang7@gmail.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND 3/3] hwspinlock: sirf: Use devm_hwspin_lock_register() to register hwlock controller
-Date:   Wed,  8 Jan 2020 11:23:46 +0800
-Message-Id: <8f94e67b5f9af20a93418a2fc9cc71b194f1285c.1578453662.git.baolin.wang7@gmail.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1578453662.git.baolin.wang7@gmail.com>
-References: <cover.1578453662.git.baolin.wang7@gmail.com>
-In-Reply-To: <cover.1578453662.git.baolin.wang7@gmail.com>
-References: <cover.1578453662.git.baolin.wang7@gmail.com>
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=3/HLCQdvOct5vYdGl7M0YVN4HPhLYYUEFvzbqlTIGO8=;
+        b=bBSZ5lsEhQH5ng2zJMexAccgnTyQMYNueKXlCwVMefdO/4C+Biv6cdHz+prwVkD9xt
+         9PqBZaF+6StdzU+B0+ZeLAYj0u/OM8rSrujurw8IIcqRGY29rL3NWPbP482XthowKub+
+         XL3dZwbNv/l67NdVCjrO7z9w/FB5v8q9PwEZ60UYYQ4Kxq6kqLRQmg4iSDT68h2Au+hh
+         9E44PtlWsvAplePxvUFXsswMPwa/isJ2O85D+vf8oPk8ofAsTfvu5jvVo9+4l1S6g0bk
+         ZsRRk+EkzuujhQX+ir7Yusla7EZB+NLvnsab8x11kzqM+E+X0mkRRWVN00dVdmZCeZwl
+         TkTw==
+X-Gm-Message-State: APjAAAVXkel00LpsoYNwRa38Glw9bYNUcHRFjKFUArA9iVrOZuLBWWFQ
+        TiB+LTkNfsPY0wfWCK8R6MdE1/MVOIT0fHVRH/g=
+X-Google-Smtp-Source: APXvYqxctOTiHWQUElkgz7FkRh2on6241ZpVW/N1wTBikubPjZLn2sHyJ7+2ju4RiC9JWd0inKdPJC2HvKxX0LGYsvo=
+X-Received: by 2002:a2e:990e:: with SMTP id v14mr1595997lji.23.1578453871342;
+ Tue, 07 Jan 2020 19:24:31 -0800 (PST)
+MIME-Version: 1.0
+Reply-To: salifnaba85@gmail.com
+Received: by 2002:a19:983:0:0:0:0:0 with HTTP; Tue, 7 Jan 2020 19:24:30 -0800 (PST)
+From:   "Mr.Salif Naba" <mrsalifnaba5@gmail.com>
+Date:   Wed, 8 Jan 2020 04:24:30 +0100
+X-Google-Sender-Auth: oS86kL35cLaFJ8OfRORY58edG00
+Message-ID: <CADhJwMNT=W-vpAPoJaVb3+pPSQOvisJ_QUkofBx3TkV7CedXag@mail.gmail.com>
+Subject: TREAT WITH CONFIDENCE PLEASE.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_hwspin_lock_register() to register the hwlock controller instead of
-unregistering the hwlock controller explicitly when removing the device.
+Dear Friend,
 
-Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
----
- drivers/hwspinlock/sirf_hwspinlock.c |   21 +++------------------
- 1 file changed, 3 insertions(+), 18 deletions(-)
+My name is  Mr.Salif Naba and I am a banker. It is true
+that we have not met each other in person, but I strongly believe that
+on trust, no friendship in every business. I have a deceased
+customer=E2=80=99s abandoned fund, which I am his personal financial advise=
+r
+before his accidental death, that being the main reason why I alone
+working in the bank here, know much about the existence of this fund
+and the secrets surrounding this money.
 
-diff --git a/drivers/hwspinlock/sirf_hwspinlock.c b/drivers/hwspinlock/sirf_hwspinlock.c
-index d62462e..823d3c4 100644
---- a/drivers/hwspinlock/sirf_hwspinlock.c
-+++ b/drivers/hwspinlock/sirf_hwspinlock.c
-@@ -79,23 +79,9 @@ static int sirf_hwspinlock_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, hwspin);
- 
--	return hwspin_lock_register(&hwspin->bank, &pdev->dev,
--				    &sirf_hwspinlock_ops, 0,
--				    HW_SPINLOCK_NUMBER);
--}
--
--static int sirf_hwspinlock_remove(struct platform_device *pdev)
--{
--	struct sirf_hwspinlock *hwspin = platform_get_drvdata(pdev);
--	int ret;
--
--	ret = hwspin_lock_unregister(&hwspin->bank);
--	if (ret) {
--		dev_err(&pdev->dev, "%s failed: %d\n", __func__, ret);
--		return ret;
--	}
--
--	return 0;
-+	return devm_hwspin_lock_register(&pdev->dev, &hwspin->bank,
-+					 &sirf_hwspinlock_ops, 0,
-+					 HW_SPINLOCK_NUMBER);
- }
- 
- static const struct of_device_id sirf_hwpinlock_ids[] = {
-@@ -106,7 +92,6 @@ static int sirf_hwspinlock_remove(struct platform_device *pdev)
- 
- static struct platform_driver sirf_hwspinlock_driver = {
- 	.probe = sirf_hwspinlock_probe,
--	.remove = sirf_hwspinlock_remove,
- 	.driver = {
- 		.name = "atlas7_hwspinlock",
- 		.of_match_table = of_match_ptr(sirf_hwpinlock_ids),
--- 
-1.7.9.5
+I got your email information through the Burkina's Chamber of Commerce
+and industry on foreign business relations here in Ouagadougou Burkina
+Faso I hoped that you will not expose or betray this trust and
+confident that I am about to establish with you for the mutual benefit
+of you and I. I need your urgent assistance in transferring the sum of
+$15.5) millions dollars into your account within 14 working banking
+days.
 
+This money has been dormant for years in our bank without claim due to
+the owner of this fund died along with his entire family and supposed
+next of kin in an air crash. But before I disclose the full details to
+you, I will like to know your interest and willingness to assist me by
+reverting back to me with your:
+
+1. Full Name: .........
+2. Telephone Numbers: ...........
+3. Your Age: ........
+4. Your Sex: ...........
+5. Your Occupation: ............
+6. Your Country: ............
+7. City: ...........
+8. Your Home Address: ................
+9. Marital Status: ................
+
+Please note that if you must get in touch with me then you must reply
+me back through my private box  (salifnaba85@gmail.com)and please
+if you are not interested do not waste your time to reply kindly
+delete my message from your box ok.
+
+Regards
+Mr.Salif Naba
