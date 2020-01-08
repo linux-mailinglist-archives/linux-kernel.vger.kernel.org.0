@@ -2,251 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB360133C73
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 08:49:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFA87133C83
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 08:57:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbgAHHtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 02:49:33 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:35758 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbgAHHtc (ORCPT
+        id S1726789AbgAHH5a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 02:57:30 -0500
+Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:53288 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725944AbgAHH53 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 02:49:32 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200108074928epoutp01cb3829db240e7676aa07b9d9983d3394~n2eRJ3kFO1374913749epoutp01C
-        for <linux-kernel@vger.kernel.org>; Wed,  8 Jan 2020 07:49:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200108074928epoutp01cb3829db240e7676aa07b9d9983d3394~n2eRJ3kFO1374913749epoutp01C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1578469768;
-        bh=584aCk63e5RA1sUDbXlX9a2aW2l9YA7m6z16yqgJX6A=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=ZPfneF+46JXkshCG1wuIZGK4SkFScDHEDHEdlvEA0B2kVg5UtqtkBw0CDOpTxPoOj
-         9Wy4kaZi7xlc7pCprXgfCfaO57a58TObDffo3cnAIS3kSLKGLCWcyp74uPAlTonOCb
-         xAHG88eSTHzYATDn+2u0PoMb55ftLHgfHDyO2kM4=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200108074928epcas1p1990be9c2c6e1a00e8f3c43464a8640ce~n2eQvGCcc1326313263epcas1p1M;
-        Wed,  8 Jan 2020 07:49:28 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.153]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 47t1bn5xZBzMqYkb; Wed,  8 Jan
-        2020 07:49:25 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        56.59.48498.589851E5; Wed,  8 Jan 2020 16:49:25 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200108074924epcas1p29f306b5822b708e7cb49a486e320ec4e~n2eNfEaD30550105501epcas1p2Z;
-        Wed,  8 Jan 2020 07:49:24 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200108074924epsmtrp14165ba136856d964b19f112cd90c8658~n2eNeP2Pv1352513525epsmtrp1U;
-        Wed,  8 Jan 2020 07:49:24 +0000 (GMT)
-X-AuditID: b6c32a36-a55ff7000001bd72-27-5e15898563fd
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A8.56.10238.489851E5; Wed,  8 Jan 2020 16:49:24 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200108074924epsmtip1635caef54c86d2336297feca6ed0e951~n2eNLBgav2771127711epsmtip1T;
-        Wed,  8 Jan 2020 07:49:24 +0000 (GMT)
-Subject: Re: [PATCH 1/2] PM / devfreq: Add debugfs support with
- devfreq_summary file
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        leonard.crestez@nxp.com, lukasz.luba@arm.com, a.swigon@samsung.com,
-        m.szyprowski@samsung.com, enric.balletbo@collabora.com,
-        hl@rock-chips.com, digetx@gmail.com, jcrouse@codeaurora.org,
-        chanwoo@kernel.org, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <19fd2201-2a7d-46df-09cf-e39f6668b488@samsung.com>
-Date:   Wed, 8 Jan 2020 16:56:32 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
-MIME-Version: 1.0
-In-Reply-To: <20200107211558.GA738324@yoga>
+        Wed, 8 Jan 2020 02:57:29 -0500
+Received: from mailhost.synopsys.com (badc-mailhost2.synopsys.com [10.192.0.18])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 542AAC0094;
+        Wed,  8 Jan 2020 07:57:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1578470248; bh=rdpIj5Q2mFtZNLegJ/FDpcIDbFpk68d55dEhY77CYRM=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=JZIPctlb66fWQuKarJu8FruyW+4S8FQguLcZIhhWUfDaYjRjFuFZvyczZfkiH1zSE
+         vZZMb+Ww4+YbTXij3dFqCUiMtEuUTP3dywYu3+VY/S00ZtJ9LJUbGzg7LgYJOt1kSw
+         xRd+ppyInVpsr6zTOrmUSaDJgZ8lREnIxH/vibvYaGMZ+SNRThWNOECc6hOfDGNg9v
+         qxMW0+zo2CD62rXSmXPOEwbciSxdM3pWIvR9rVaw+XGDVBU3HSobS3wNxlKtUorx4c
+         eBgTJSpZ2QaetSAZafLDpYPGWMBzgCLmCszc3c9t9ZKj8T/eTuKMPLhhPZ7IifDYyS
+         ItKY9/vDX4k+g==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 7EF6BA006A;
+        Wed,  8 Jan 2020 07:57:16 +0000 (UTC)
+Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 7 Jan 2020 23:57:16 -0800
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (10.202.3.67) by
+ mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Tue, 7 Jan 2020 23:57:16 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MylaaYMTP+a5nhKjLgtz7R1aFArliv6QzGHXmObDnK+HgOXhCQhIXIAQfPe6eCbN2YjEkqsx7lDFs5jGyddnib323Bgh4AN5HhrG0Wdgh7EHsmHTgheuWmuy6FagEGYMgqy8aqnUvtAHh/SSdBvJcbhg8ZQSAahy3DPVOo/m84d++hJIJWJXKJkU/VZoHwG5nAXxu1+2QE5C4MLJiCqA9be/cfxHQNbFAsKYacZCnN3BN+e+BsNUQoY76tGBXBTUekgELXSjYu6b2JubFqSu72O46yrmjlCkYwen/0KV5wbbmgnyam556fm5LOUlyFj7NlWHZEtff+dNv39r/LwnMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mIDMBg8T2OMnD/g6/Yf+dezWLytWG+B/8mdWKeSV0q8=;
+ b=nk//l+HwIfAix5RqZovyPO8Biwx7g8ynH/eKkZYzYOUyrCR7PIJdymqOg6eon5V5XOS/TGiql32kCpvlwwfqBInXMxqyuvP+giHD/IvfNhS2x5xnbTdVjnKWpGEcILUttRWoVgWu8Pd1ao/4E3g8SULsf4wS8P17/RY85bS1gNHlI148lK2Y/JuLGzOdcotMPMVGmpvSWB3KeGDzWgEapYDAtsEDNXShbZqGTNsYx+fZFTSIJ9vKoWk5Z1nBcBUsKxQvgExCUtH+Zg5UFF6APmChcLR5pkpalKPi4OR4gjPWZpUUB7N0HiXR8C8m2lQilQd7PT4GDeDc5AyTkM3rzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
+ dkim=pass header.d=synopsys.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mIDMBg8T2OMnD/g6/Yf+dezWLytWG+B/8mdWKeSV0q8=;
+ b=l2u7BomT9rHK28TjeIzbg4XcEjU4rR/32PckXAFkId+aUk6sIHzlZe8AOCkBzXEaTewOk6B5/e6XbEloc99b0IvSUikO/6hDvn+6mmVl6lxbyEBzfZ0a7hGDfiIYVTbJAbZogxQW1AkC+fiu6bPv/CcpxWinfs8FWGLesF+KRnE=
+Received: from BN8PR12MB3266.namprd12.prod.outlook.com (20.179.67.145) by
+ BN8PR12MB2866.namprd12.prod.outlook.com (20.179.66.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2623.9; Wed, 8 Jan 2020 07:57:14 +0000
+Received: from BN8PR12MB3266.namprd12.prod.outlook.com
+ ([fe80::c62:b247:6963:9da2]) by BN8PR12MB3266.namprd12.prod.outlook.com
+ ([fe80::c62:b247:6963:9da2%6]) with mapi id 15.20.2602.017; Wed, 8 Jan 2020
+ 07:57:14 +0000
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     Dejin Zheng <zhengdejin5@gmail.com>,
+        "peppe.cavallaro@st.com" <peppe.cavallaro@st.com>,
+        "alexandre.torgue@st.com" <alexandre.torgue@st.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        "martin.blumenstingl@googlemail.com" 
+        <martin.blumenstingl@googlemail.com>,
+        "treding@nvidia.com" <treding@nvidia.com>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "weifeng.voon@intel.com" <weifeng.voon@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 0/2] net: stmmac: remove useless code of phy_mask
+Thread-Topic: [PATCH v2 0/2] net: stmmac: remove useless code of phy_mask
+Thread-Index: AQHVxfUGgqwdWhtbcEaMF7LHLdtnx6fgZjWA
+Date:   Wed, 8 Jan 2020 07:57:14 +0000
+Message-ID: <BN8PR12MB326627D0E1F17AE7515B78E4D33E0@BN8PR12MB3266.namprd12.prod.outlook.com>
+References: <20200108072550.28613-1-zhengdejin5@gmail.com>
+In-Reply-To: <20200108072550.28613-1-zhengdejin5@gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIJsWRmVeSWpSXmKPExsWy7bCmnm5rp2icQXOLocX9ea2MFqf3v2Ox
-        mHjjCovF6o+PGS3W3D7EaPFjwylmi40Lsi3ONr1ht1hx9yOrxeVdc9gsPvceYbRY2NTCbrH2
-        yF12i9uNK9gc+DzWzFvD6HG5r5fJY8fdJYweO2fdZffYtKqTzePOtT1sHhvf7WDy+DtrP4tH
-        35ZVjB6fN8kFcEVl22SkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4
-        BOi6ZeYAfaCkUJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKbAs0CtOzC0uzUvXS87P
-        tTI0MDAyBSpMyM6YcGgxe8E+vYp5i/+yNTBeVuhi5OSQEDCReHP9KTuILSSwg1FieqtUFyMX
-        kP2JUeLjqpVMEM43RomLz3ezwnS8O/OWDSKxl1Hi4ZqvrBDOe0aJQ/9usYFUCQuESUy4PZEJ
-        xBYRMJA4euYyC0gRs8ARJoldq3+BJdgEtCT2v7gB1sAvoChx9cdjRhCbV8BO4uGOOywgNouA
-        isTsk/PA4qJAQ09ua4GqEZQ4OfMJWA2ngLbEyf6fYE8wC4hL3HoynwnClpfY/nYOM8hiCYFT
-        7BLNS7qgfnCRWHhpLxOELSzx6vgWdghbSuJlfxuUXS2x8uQRNojmDkaJLfsvQDUbS+xfOhmo
-        mQNog6bE+l36EGFFiZ2/5zJCLOaTePe1hxWkREKAV6KjTQiiRFni8oO7UGslJRa3d7JNYFSa
-        heSdWUhemIXkhVkIyxYwsqxiFEstKM5NTy02LDBCju5NjODkrWW2g3HROZ9DjAIcjEo8vD8W
-        i8QJsSaWFVfmHmKU4GBWEuHV0gEK8aYkVlalFuXHF5XmpBYfYjQFhvZEZinR5HxgZskriTc0
-        NTI2NrYwMTQzNTRUEufl+HExVkggPbEkNTs1tSC1CKaPiYNTqoGxSZpT8mL/qZUGCVdSt+Yy
-        VkvNXdm37MCixeceVz7KcGHc9/H9nZ031Sf95l1xaaFHvsH6ipLcAzb5+uZujHG26Rk7ctiv
-        2W28n199v3ifVf2iD58Wx8jfWWpnfcxwM4PhgfcV15M0AvrKOL9+3FiX2f4obY9z1vV9vnfK
-        VCS4OWasyWuolrmixFKckWioxVxUnAgA7oJ2OvQDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNIsWRmVeSWpSXmKPExsWy7bCSnG5Lp2icwfu7hhb357UyWpze/47F
-        YuKNKywWqz8+ZrRYc/sQo8WPDaeYLTYuyLY42/SG3WLF3Y+sFpd3zWGz+Nx7hNFiYVMLu8Xa
-        I3fZLW43rmBz4PNYM28No8flvl4mjx13lzB67Jx1l91j06pONo871/aweWx8t4PJ4++s/Swe
-        fVtWMXp83iQXwBXFZZOSmpNZllqkb5fAlTHh0GL2gn16FfMW/2VrYLys0MXIySEhYCLx7sxb
-        NhBbSGA3o8ShVj6IuKTEtItHmbsYOYBsYYnDh4u7GLmASt4ySiybtIYZpEZYIExiwu2JTCC2
-        iICBxNEzl1lAipgFjjBJvH15hRGi4w6jxMK1U9hBqtgEtCT2v7gBto1fQFHi6o/HjCA2r4Cd
-        xMMdd1hAbBYBFYnZJ+eBxUWBNuxc8pgJokZQ4uTMJ2A1nALaEif7f4LNZBZQl/gz7xIzhC0u
-        cevJfCYIW15i+9s5zBMYhWchaZ+FpGUWkpZZSFoWMLKsYpRMLSjOTc8tNiwwzEst1ytOzC0u
-        zUvXS87P3cQIjmItzR2Ml5fEH2IU4GBU4uH9sVgkTog1say4MvcQowQHs5IIr5YOUIg3JbGy
-        KrUoP76oNCe1+BCjNAeLkjjv07xjkUIC6YklqdmpqQWpRTBZJg5OqQZGJ/YjelcryzpYOL5c
-        6D7APneSAYOuRYZ25oGYgM9Cx+d08BhMtbPvVZkms9t+7bGYWbaum1ki7ob+mq7M9LKqX8hj
-        6ezPPea7sg9IqzxdsE25ynzLMv3ZE3lYL2UeyJrXIvuRd+fy3hcndlZxXbFRKDIV6d67vuOd
-        1M0f0ixXJvqUeVhvU5NUYinOSDTUYi4qTgQAyYGH/t4CAAA=
-X-CMS-MailID: 20200108074924epcas1p29f306b5822b708e7cb49a486e320ec4e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200107085812epcas1p12121f8ef6492ed78053dea4977216788
-References: <20200107090519.3231-1-cw00.choi@samsung.com>
-        <CGME20200107085812epcas1p12121f8ef6492ed78053dea4977216788@epcas1p1.samsung.com>
-        <20200107090519.3231-2-cw00.choi@samsung.com> <20200107211558.GA738324@yoga>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=joabreu@synopsys.com; 
+x-originating-ip: [83.174.63.141]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f546a490-8c27-4d16-47bb-08d794105fec
+x-ms-traffictypediagnostic: BN8PR12MB2866:
+x-microsoft-antispam-prvs: <BN8PR12MB2866F218CE08712B56B2C9C0D33E0@BN8PR12MB2866.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1388;
+x-forefront-prvs: 02760F0D1C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(366004)(396003)(39860400002)(136003)(189003)(199004)(2906002)(316002)(110136005)(54906003)(55016002)(9686003)(81156014)(33656002)(81166006)(8936002)(7416002)(8676002)(71200400001)(76116006)(558084003)(478600001)(66556008)(66446008)(7696005)(64756008)(66476007)(86362001)(26005)(52536014)(5660300002)(4326008)(186003)(6506007)(66946007)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR12MB2866;H:BN8PR12MB3266.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: LSScbBxyL3s4+nLoLBKcxxQsftu2GCb6KORsekJBNoq2r3r7wxU9lQesh+aMlJ4ERxIEaHQ+BiYb+dCG0vz6RJuzrM6ocBTi9lBOdGwD/O8Rhvsv69iPTy4HGvPaiKWqYhtyh8Y9U7YC+7RWZyS6RrRV5Ezs/VMi1P2nXoPHRpfYe4vBRYDYKuNWnWhCodvCEW/VKY32iAJloS9DvxRYcT2kLAgn0tABXtxgctMkqGYO8AAz28hdNlttYJQeQTzpqm1XjSH5aRccejQhvTO8RfQGUOZodr6+alI9lB8y8musFmtiH4gQrWApJ7epAHFc5+np5xXzsE6I4KxCpTV7vcplLvlFM3JtzoWbDXm/L1pNMsigKjkSKGYt8eG/XOg6dn7ZAutTiJUADzQqv3pscvW4g8UqrBAGC9EHMPMhkUplo87f45bsqXM81uhp9P+mV8BJRzUb3Viz8DSygyjbZv0tZHftXFzPBdBSUtzfEEYHbWpEMU27WYJ4pVSEA+l2
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: f546a490-8c27-4d16-47bb-08d794105fec
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2020 07:57:14.3423
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: NynmEP2QEd1CN6tyWpka2b0xiaMHE7k+yS5frUVK2JxzwGSqX83PRHP3T7bF4zNptNYlE+N9kBqp4j8pZipksw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB2866
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/8/20 6:15 AM, Bjorn Andersson wrote:
-> On Tue 07 Jan 01:05 PST 2020, Chanwoo Choi wrote:
-> 
->> Add debugfs interface to provide debugging information of devfreq device.
->> It contains 'devfreq_summary' entry to show the summary of registered
->> devfreq devices as following and the additional debugfs file will be added.
->> - /sys/kernel/debug/devfreq/devfreq_summary
->>
->> [Detailed description of each field of 'devfreq_summary' debugfs file]
->> - dev_name	: Device name of h/w.
->> - dev		: Device name made by devfreq core.
->> - parent_dev	: If devfreq device uses the passive governor,
->> 		  show parent devfreq device name.
->> - governor	: Devfreq governor.
->> - polling_ms	: If devfreq device uses the simple_ondemand governor,
->> 		  polling_ms is necessary for the period. (unit: millisecond)
->> - cur_freq_hz	: Current Frequency (unit: hz)
->> - old_freq_hz	: Frequency before changing. (unit: hz)
->> - new_freq_hz	: Frequency after changed. (unit: hz)
->>
->> [For example on Exynos5422-based Odroid-XU3 board]
->> - In order to show the multiple governors on devfreq_summay result,
->> change the governor of devfreq0 from simple_ondemand to userspace.
->>
->> $ cat /sys/kernel/debug/devfreq/devfreq_summary
->> dev_name                       dev        parent_dev governor        polling_ms cur_freq_hz  min_freq_hz  max_freq_hz
->> ------------------------------ ---------- ---------- --------------- ---------- ------------ ------------ ------------
->> 10c20000.memory-controller     devfreq0              userspace       0          206000000    165000000    825000000
->> soc:bus_wcore                  devfreq1              simple_ondemand 50         532000000    88700000     532000000
->> soc:bus_noc                    devfreq2   devfreq1   passive         0          111000000    66600000     111000000
->> soc:bus_fsys_apb               devfreq3   devfreq1   passive         0          222000000    111000000    222000000
->> soc:bus_fsys                   devfreq4   devfreq1   passive         0          200000000    75000000     200000000
->> soc:bus_fsys2                  devfreq5   devfreq1   passive         0          200000000    75000000     200000000
->> soc:bus_mfc                    devfreq6   devfreq1   passive         0          333000000    83250000     333000000
->> soc:bus_gen                    devfreq7   devfreq1   passive         0          266000000    88700000     266000000
->> soc:bus_peri                   devfreq8   devfreq1   passive         0          66600000     66600000     66600000
->> soc:bus_g2d                    devfreq9   devfreq1   passive         0          0            83250000     333000000
->> soc:bus_g2d_acp                devfreq10  devfreq1   passive         0          0            66500000     266000000
->> soc:bus_jpeg                   devfreq11  devfreq1   passive         0          0            75000000     300000000
->> soc:bus_jpeg_apb               devfreq12  devfreq1   passive         0          0            83250000     166500000
->> soc:bus_disp1_fimd             devfreq13  devfreq1   passive         0          0            120000000    200000000
->> soc:bus_disp1                  devfreq14  devfreq1   passive         0          0            120000000    300000000
->> soc:bus_gscl_scaler            devfreq15  devfreq1   passive         0          0            150000000    300000000
->> soc:bus_mscl                   devfreq16  devfreq1   passive         0          0            84000000     666000000
-> 
-> This looks quite useful.
-> 
->>
->> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> May I ask how the build test robot came up with this idea?
+From: Dejin Zheng <zhengdejin5@gmail.com>
+Date: Jan/08/2020, 07:25:48 (UTC+00:00)
 
-I'm missing the detailed what are the reported by kbuild test robot.
-It reported the possible build error. I'll add the following description
-on next version:
-	[lkp: Reported the build error]
+> Changes since v1:
+> 	1, add a new commit for remove the useless member phy_mask.
 
-> 
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> ---
->>  drivers/devfreq/devfreq.c | 80 +++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 80 insertions(+)
->>
->> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> [..]
->> +/**
->> + * devfreq_summary_show() - Show the summary of the registered devfreq devices
->> + *				via 'devfreq_summary' debugfs file.
-> 
-> Please make this proper kerneldoc, i.e:
-> 
->  * func() - short description
->  * @s:
->  * @data:
->  * 
->  * Long description
->  * 
->  * Return: foo on bar
+No, this is not useless. It's an API for developers that need only=20
+certain PHYs to be detected. Please do not remove this.
 
-OK.
-
-> 
-> [..]
->> @@ -1733,6 +1803,16 @@ static int __init devfreq_init(void)
->>  	}
->>  	devfreq_class->dev_groups = devfreq_groups;
->>  
->> +	devfreq_debugfs = debugfs_create_dir("devfreq", NULL);
->> +	if (PTR_ERR(devfreq_debugfs) != -ENODEV && IS_ERR(devfreq_debugfs)) {
-> 
-> Don't PTR_ERR() before IS_ERR().
-
-Before checking IS_ERR(), have to check the PTR_ERR(devfreq_debugfs)
-is -ENODEV or not because debugfs_create_dir return the '-ENODEV'
-if DEBUG_FS is disabled. If return the -ENODEV, it is not error.
-
-> 
->> +		devfreq_debugfs = NULL;
-> 
-> I don't think you need this, given that debugfs_create_file() will fail
-> gracefully when passed and IS_ERR()
-
-Right. Jut on patch2 checks the 'devfreq_debugfs' is NULL or not
-in order to catch the DEBUG_FS is well working for devfreq.
-Anyway, it would be better to add it to patch2 because devfreq_debugfs
-is not used when failed to create debugfs dir.
-
-> 
->> +		pr_warn("%s: couldn't create debugfs dir\n", __FILE__);
-> 
-> Afaict debugfs_create_() won't fail without printing a message already.
-
-It just print the error message when DEBUG_FS is enabled
-and debugfs_create_dir() returns the error.
-
-> 
->> +	} else {
->> +		debugfs_create_file("devfreq_summary", 0444,
->> +				devfreq_debugfs, NULL,
->> +				&devfreq_summary_fops);
->> +	}
->> +
->>  	return 0;
->>  }
->>  subsys_initcall(devfreq_init);
-> 
-> Regards,
-> Bjorn
-> 
-> 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+---
+Thanks,
+Jose Miguel Abreu
