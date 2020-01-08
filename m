@@ -2,87 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53D4C134BA8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 20:45:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B1FC134BDE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 20:49:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730350AbgAHTp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 14:45:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58924 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728502AbgAHTp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 14:45:27 -0500
-Received: from localhost.localdomain (unknown [83.218.167.187])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDD7420692;
-        Wed,  8 Jan 2020 19:45:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578512727;
-        bh=UWvJw/1tjXL2bFxBI/htLgWEov4V8RdvLBEJR/vcWsM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Ir+6rvcsIKXMUri+0JtQkKw0XIbOwB37L48UjvF9Z38NTanu5M4850mUlW7Pki3d8
-         bA0yP8katDtqs80Pn/rhIOVWexZy+Ah2QTXZToeyFEH9vxfk7uSTqohvLs5+TgsFpA
-         LoNl8svOR5wzYhG3F+8vgfWYTIkIhQ/0u02Qwp9M=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] sh: sh4a: Remove unused tmu3_device
-Date:   Wed,  8 Jan 2020 20:45:20 +0100
-Message-Id: <20200108194520.3341-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        id S1729310AbgAHTrb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 14:47:31 -0500
+Received: from mail-qk1-f169.google.com ([209.85.222.169]:44810 "EHLO
+        mail-qk1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbgAHTrW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 14:47:22 -0500
+Received: by mail-qk1-f169.google.com with SMTP id w127so3742252qkb.11
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 11:47:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=6IdzXEjAqc3SzjG3DOyHv5lZ8YNCLuWwDx3dJsNyC9M=;
+        b=IWDofTtAey2FIP2gPmZnFH9ea+/3z0vav6bCVBLb1VWPaxLPBF8NlyBSIAKQzMwx9j
+         +3kTzyGv3FHZJ/1pt1ZOXD1HP69wLPxebCb81Dks3hV84TCElepy2bzylXtMHW6WCcTw
+         2tHRkekqI+fAyF/3aVGec2Qr9PYLbpI5931q8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=6IdzXEjAqc3SzjG3DOyHv5lZ8YNCLuWwDx3dJsNyC9M=;
+        b=Ck445sOi5Y3DFp7xvs1SgKa+0oCWAgMuFzbmPkuoBr3bO8TdGmXU0fI15ZdhTMTh0S
+         RTyeHElm6TLOCRCrMISLI8gjneBqPVxVWpqwKseUP5iPl2JFGBg6Fj0Ic9P/ZeUNvMsA
+         ItF/Q45jmy2YM/z11Baufr1vxZROrWmjh4R8b0RamK28bIUFRhj1bd/Fnkha5obA4zYX
+         l1ef3Bm9Zwx6Sy+5p1gGraZzcIvRbAqCOs3K04P35a6mw4wpqSv2wzWi8F9R7ERzpgvK
+         6Y73Xh0J2T/vIe3vAvDEe7l7baGPUNgD6z6a60R8a5pSWeIL7bjKy88H29KJDsWlX67P
+         xEpg==
+X-Gm-Message-State: APjAAAVzYl5lvB6surrJgWvVfY8i3tFLs9dgdLiYCZY9EtLZETHwQyU5
+        FyDLL7S98S4GB9JFx29cg+fNTcvts5Ud7FBvmbHAL7evsuh0bg==
+X-Google-Smtp-Source: APXvYqwhh03BE0rg64u29BK8WcfTtXo3JPfaLKujwZynWURBxhgIMqo/9QtycipodBIL5ZoGIS5kNGp8ipaOf4LiDXg=
+X-Received: by 2002:a05:620a:228:: with SMTP id u8mr6030326qkm.88.1578512841317;
+ Wed, 08 Jan 2020 11:47:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From:   Ivan Babrou <ivan@cloudflare.com>
+Date:   Wed, 8 Jan 2020 11:47:10 -0800
+Message-ID: <CABWYdi25Y=zrfdnitT3sSgC3UqcFHfz6-N2YP7h2TJai=JH_zg@mail.gmail.com>
+Subject: Lower than expected CPU pressure in PSI
+To:     linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     kernel-team <kernel-team@cloudflare.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove left-over from previous cleanups to silence the warning:
+We added reporting for PSI in cgroups and results are somewhat surprising.
 
-    arch/sh/kernel/cpu/sh4a/setup-sh7786.c:243:31:
-        warning: ‘tmu3_device’ defined but not used [-Wunused-variable]
+My test setup consists of 3 services:
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/sh/kernel/cpu/sh4a/setup-sh7786.c | 21 ---------------------
- 1 file changed, 21 deletions(-)
+* stress-cpu1-no-contention.service : taskset -c 1 stress --cpu 1
+* stress-cpu2-first-half.service    : taskset -c 2 stress --cpu 1
+* stress-cpu2-second-half.service   : taskset -c 2 stress --cpu 1
 
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7786.c b/arch/sh/kernel/cpu/sh4a/setup-sh7786.c
-index 4b0db8259e3d..22d1c38f742f 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7786.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7786.c
-@@ -229,27 +229,6 @@ static struct platform_device tmu2_device = {
- 	.num_resources	= ARRAY_SIZE(tmu2_resources),
- };
- 
--static struct sh_timer_config tmu3_platform_data = {
--	.channels_mask = 7,
--};
--
--static struct resource tmu3_resources[] = {
--	DEFINE_RES_MEM(0xffde0000, 0x2c),
--	DEFINE_RES_IRQ(evt2irq(0x7c0)),
--	DEFINE_RES_IRQ(evt2irq(0x7c0)),
--	DEFINE_RES_IRQ(evt2irq(0x7c0)),
--};
--
--static struct platform_device tmu3_device = {
--	.name		= "sh-tmu",
--	.id		= 3,
--	.dev = {
--		.platform_data	= &tmu3_platform_data,
--	},
--	.resource	= tmu3_resources,
--	.num_resources	= ARRAY_SIZE(tmu3_resources),
--};
--
- static const struct sh_dmae_channel dmac0_channels[] = {
- 	{
- 		.offset = 0,
--- 
-2.17.1
+First service runs unconstrained, the other two compete for CPU.
 
+As expected, I can see 500ms/s sched delay for the latter two and
+aggregated 1000ms/s delay for /system.slice, no surprises here.
+
+However, CPU pressure reported by PSI says that none of my services
+have any pressure on them. I can see around 434ms/s pressure on
+/unified/system.slice and 425ms/s pressure on /unified cgroup, which
+is surprising for three reasons:
+
+* Pressure is absent for my services (I expect it to match scheed delay)
+* Pressure on /unified/system.slice is lower than both 500ms/s and 1000ms/s
+* Pressure on root cgroup is lower than on system.slice
+
+I'm running Linux 5.4.8 with hybrid cgroup hierarchy under systemd.
+
+P.S.: ./scripts/get_maintainer.pl kernel/sched/psi.c does not say
+Johannes Weiner is a maintainer
