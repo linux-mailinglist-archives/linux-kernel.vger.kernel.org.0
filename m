@@ -2,46 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36855133E12
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:14:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98C94133E0C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:14:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbgAHJON (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727617AbgAHJON (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 8 Jan 2020 04:14:13 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:45462 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727224AbgAHJOM (ORCPT
+Received: from mail-il1-f199.google.com ([209.85.166.199]:34720 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727340AbgAHJOM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 8 Jan 2020 04:14:12 -0500
-Received: by mail-il1-f198.google.com with SMTP id w6so1628090ill.12
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 01:14:11 -0800 (PST)
+Received: by mail-il1-f199.google.com with SMTP id l13so1663461ils.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 01:14:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=EXQiOJPWQzOdrnnnIVhQj5CxHMZ/Ttuo08w2o7RVgDg=;
-        b=AK0yPy2uaDrUN9OPuZ+X4rc2X3sJ0IoMjq3hNZ0Th+y+5b7N7mmmGC/ewYzcyzMhZV
-         3qOQDdibobVvNEyzqQrmF4hRAUxC2TQ91CQNBv+/Bql9RxdtR9+IbtKH/+m9plxA20I3
-         nc0pTW62NKk/XXfPXGZe00ZQ2FcCe1tEPmjMOwfN0tTKaleaX/DC2slGTxEofAWetPGM
-         rRfumV7qBr/K9QwLPLkAG6RTmRmblYtoR5lpIUYN0YzQbO2wlK422DEBqku4EbWgAZX3
-         k0F1/LHYkQU1sDz9f2v3rzITSpyAxBNOwr0s8gf3hLzqF6gAmADP8KzA6gEApBH3Kb2T
-         OWvQ==
-X-Gm-Message-State: APjAAAXTa9djan59JrRVKSvpKDv1QWBudHoVPbZGta7RG1DqzJ9psrK2
-        W6fndKbhaqfx03yLJKzNhWsVfHzPJL3RTq5Z/D8c9UWjMSpy
-X-Google-Smtp-Source: APXvYqwfVSkmxGwkNEiPAJpAf39zH1AilktfOrPFBR3seMwM5nBaHEO1knHovLNrxYRn0CF97VroIGlrV7tGlyYzcXvf28Ji2v3x
+        bh=/uO82xDBk2WBy3cOZ2CTJOymO5KhzS54ieTzLDz1jec=;
+        b=Ad5twehCJuoZq7m4dHnt8h95LUVz1Y1pqkOYXQgx8yBlCjY1w4m8ui22rPQws1WYwQ
+         shY9WSJ2A1ducRGMaoH1t9kzgJWJs+aeLPaEw+J4j+B4zVniRIS6kmAl2jDIb5mCbwFF
+         n4i7oD+U+lpqOBQhZkRfWLDEuUDZRYcoqSowAosw05vZkUP2Pgeklh/nTAqqxHtzcNBs
+         t8U80/ypLOMXq075bFWvDosKJPLyOnP3zumSyelaY4nfsg+sw6odEePBz9uZV2mV8lfn
+         qag4Fa55Fa35nez6x77CpHiPAr7nGmAN5EsqTqMtoKid3S/PwcpLz4eMZezIJSrlfgGz
+         oufQ==
+X-Gm-Message-State: APjAAAVSAoMesd4oy7hsIrEUe6MzdDq+RitHBjHOE2Mefev0ybZysok4
+        DwUBD8njEuoUdids845DHIkjidVES4oP42wKFm0NUW8D8u9U
+X-Google-Smtp-Source: APXvYqw2L9C8CpHA5YgsUfif3sTfs7HNFB/m8SkJCGP1SypA2Dts/yg3BoLJ7zuOOKKWnZfnElEzwF9D9GyoqRS49xmYO44EFqa8
 MIME-Version: 1.0
-X-Received: by 2002:a6b:7e02:: with SMTP id i2mr2528960iom.172.1578474851558;
+X-Received: by 2002:a92:d902:: with SMTP id s2mr3175478iln.223.1578474851824;
  Wed, 08 Jan 2020 01:14:11 -0800 (PST)
 Date:   Wed, 08 Jan 2020 01:14:11 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d06ea3059b9d5097@google.com>
-Subject: general protection fault in hash_netport4_uadt
-From:   syzbot <syzbot+83fef78f45f4342655d8@syzkaller.appspotmail.com>
-To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
-        gregkh@linuxfoundation.org, jeremy@azazel.net,
-        kadlec@netfilter.org, kstewart@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Message-ID: <000000000000d47ca7059b9d5016@google.com>
+Subject: general protection fault in hash_ip4_uadt
+From:   syzbot <syzbot+0be5fe9e46479a332a4a@syzkaller.appspotmail.com>
+To:     allison@lohutok.net, coreteam@netfilter.org, davem@davemloft.net,
+        fw@strlen.de, gregkh@linuxfoundation.org, info@metux.net,
+        jeremy@azazel.net, kadlec@blackhole.kfki.hu, kadlec@netfilter.org,
+        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,38 +53,51 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    ae608821 Merge tag 'trace-v5.5-rc5' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13cd963ee00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=18698c0c240ba616
-dashboard link: https://syzkaller.appspot.com/bug?extid=83fef78f45f4342655d8
+HEAD commit:    c101fffc Merge tag 'mlx5-fixes-2020-01-06' of git://git.ke..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=11b2e656e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f2f3ef188b7e16cf
+dashboard link: https://syzkaller.appspot.com/bug?extid=0be5fe9e46479a332a4a
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ac4076e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16f582aee00000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=114d8eb9e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1157d076e00000
+
+The bug was bisected to:
+
+commit 23c42a403a9cfdbad6004a556c927be7dd61a8ee
+Author: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Date:   Sat Oct 27 13:07:40 2018 +0000
+
+     netfilter: ipset: Introduction of new commands and protocol version 7
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10b5963ee00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=12b5963ee00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14b5963ee00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+83fef78f45f4342655d8@syzkaller.appspotmail.com
+Reported-by: syzbot+0be5fe9e46479a332a4a@syzkaller.appspotmail.com
+Fixes: 23c42a403a9c ("netfilter: ipset: Introduction of new commands and  
+protocol version 7")
 
 kasan: CONFIG_KASAN_INLINE enabled
 kasan: GPF could be caused by NULL-ptr deref or user memory access
 general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 9442 Comm: syz-executor534 Not tainted 5.5.0-rc5-syzkaller #0
+CPU: 0 PID: 9507 Comm: syz-executor675 Not tainted 5.5.0-rc4-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:hash_netport4_uadt+0x218/0xff0  
-net/netfilter/ipset/ip_set_hash_netport.c:166
-Code: 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 4d 0a 00 00 4c 89  
-e2 45 8b 6d 04 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <0f> b6 14 02 4c  
-89 e0 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 4c
-RSP: 0018:ffffc90001e07160 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: ffffc90001e07320 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff86811235 RDI: ffff888097483030
-RBP: ffffc90001e072b8 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffed1015d0703c R11: ffff8880ae8381e3 R12: 0000000000000000
-R13: 0000000004000000 R14: ffffc90001e07220 R15: 0000000000000002
-FS:  0000000002029880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+RIP: 0010:hash_ip4_uadt+0x1f5/0x7a0 net/netfilter/ipset/ip_set_hash_ip.c:108
+Code: 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 10 05 00 00 48 89  
+da 45 8b 7f 04 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <0f> b6 14 02 48  
+89 d8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 ec
+RSP: 0018:ffffc90001ec7190 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff86793b82 RDI: ffff888091ab98f4
+RBP: ffffc90001ec72b8 R08: 0000000000000000 R09: 0000000000000000
+R10: ffffed1015d0703c R11: ffff8880ae8381e3 R12: ffff8880a4b87b00
+R13: ffffc90001ec7320 R14: 0000000000000002 R15: 000000009b000000
+FS:  0000000000e7e880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000f86 CR3: 000000009d29d000 CR4: 00000000001406f0
+CR2: 0000000020000446 CR3: 000000008e30e000 CR4: 00000000001406f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
@@ -104,32 +118,31 @@ Call Trace:
   __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2424
   do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4405e9
+RIP: 0033:0x440af9
 Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
 ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffed104de78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004405e9
-RDX: 0000000000000000 RSI: 0000000020000180 RDI: 0000000000000004
-RBP: 00000000006ca018 R08: 0000000000000024 R09: 00000000004002c8
-R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000401e70
-R13: 0000000000401f00 R14: 0000000000000000 R15: 0000000000000000
+RSP: 002b:00007ffe6e1212b8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440af9
+RDX: 0000000000000000 RSI: 0000000020000500 RDI: 0000000000000005
+RBP: 00000000006cb018 R08: 0000000000000014 R09: 00000000004002c8
+R10: 0000000000000018 R11: 0000000000000246 R12: 0000000000402380
+R13: 0000000000402410 R14: 0000000000000000 R15: 0000000000000000
 Modules linked in:
----[ end trace 0f2c9f8c52df08d8 ]---
-RIP: 0010:hash_netport4_uadt+0x218/0xff0  
-net/netfilter/ipset/ip_set_hash_netport.c:166
-Code: 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 4d 0a 00 00 4c 89  
-e2 45 8b 6d 04 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <0f> b6 14 02 4c  
-89 e0 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 4c
-RSP: 0018:ffffc90001e07160 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: ffffc90001e07320 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff86811235 RDI: ffff888097483030
-RBP: ffffc90001e072b8 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffed1015d0703c R11: ffff8880ae8381e3 R12: 0000000000000000
-R13: 0000000004000000 R14: ffffc90001e07220 R15: 0000000000000002
-FS:  0000000002029880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+---[ end trace 3e5ca24b710cd584 ]---
+RIP: 0010:hash_ip4_uadt+0x1f5/0x7a0 net/netfilter/ipset/ip_set_hash_ip.c:108
+Code: 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 10 05 00 00 48 89  
+da 45 8b 7f 04 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <0f> b6 14 02 48  
+89 d8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 ec
+RSP: 0018:ffffc90001ec7190 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff86793b82 RDI: ffff888091ab98f4
+RBP: ffffc90001ec72b8 R08: 0000000000000000 R09: 0000000000000000
+R10: ffffed1015d0703c R11: ffff8880ae8381e3 R12: ffff8880a4b87b00
+R13: ffffc90001ec7320 R14: 0000000000000002 R15: 000000009b000000
+FS:  0000000000e7e880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000f86 CR3: 000000009d29d000 CR4: 00000000001406f0
+CR2: 0000000020000446 CR3: 000000008e30e000 CR4: 00000000001406f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
@@ -141,5 +154,6 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 syzbot can test patches for this bug, for details see:
 https://goo.gl/tpsmEJ#testing-patches
