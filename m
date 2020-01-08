@@ -2,100 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC73213399E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 04:24:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E044C1339A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 04:26:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbgAHDYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 22:24:33 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36682 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbgAHDYd (ORCPT
+        id S1726401AbgAHD0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 22:26:33 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36273 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726180AbgAHD0d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 22:24:33 -0500
-Received: by mail-lj1-f194.google.com with SMTP id r19so1806297ljg.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 19:24:32 -0800 (PST)
+        Tue, 7 Jan 2020 22:26:33 -0500
+Received: by mail-pf1-f194.google.com with SMTP id x184so891540pfb.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 19:26:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=3/HLCQdvOct5vYdGl7M0YVN4HPhLYYUEFvzbqlTIGO8=;
-        b=NaFPP6UPgWIDwcZDai4QTFmNQCOinsJ7E/JqdgC8tJYpwyX1GAoWgYOOcS86Zr72nv
-         Wqjj3ZCXJzBwU8bB98G+j39JlmjRzkReUA43Mj2vobq1p0tZ06yTJYpc4MN6Y5jyRFqt
-         +ABxaBXFpdMsj8TF12oN1ALGoGgdDyifkUMMfQdxiu9BaVwtk1L7Ff5lB4F8Q4f2YLDu
-         Qmt9ThdeEPYQLWhwpG9JrkG9SmYjPv2wrfXbnMBg71gOcf4T7u/GaycNemg76SQ5L730
-         V3t1ikQVjbrJ3zNrfNBIbQs7QuYWaAvHHiJAxlOgxYoviXXxvgYKk7jjwiQN5ldEUoNK
-         NCnA==
+        bh=1xOSp/kO5RUHbhgM95X1/1jyAywCmLEOyBUx87fFFtw=;
+        b=YfjvWjsaaKSbVwMhWV4e2o2UhVmKdwk3YsOZGjWpCogvoGsPWrQNsyJorRN6s8wfgN
+         A85ZEmclMJYvt2/41/sVuGiUkdi/SXwXQY6qW7HuF+q9QkWp2hRZRITST6+4z4vW9W3c
+         SONMWPY5/FwsyIQDvtO00HuOxmyjd1HOhKXis=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=3/HLCQdvOct5vYdGl7M0YVN4HPhLYYUEFvzbqlTIGO8=;
-        b=bBSZ5lsEhQH5ng2zJMexAccgnTyQMYNueKXlCwVMefdO/4C+Biv6cdHz+prwVkD9xt
-         9PqBZaF+6StdzU+B0+ZeLAYj0u/OM8rSrujurw8IIcqRGY29rL3NWPbP482XthowKub+
-         XL3dZwbNv/l67NdVCjrO7z9w/FB5v8q9PwEZ60UYYQ4Kxq6kqLRQmg4iSDT68h2Au+hh
-         9E44PtlWsvAplePxvUFXsswMPwa/isJ2O85D+vf8oPk8ofAsTfvu5jvVo9+4l1S6g0bk
-         ZsRRk+EkzuujhQX+ir7Yusla7EZB+NLvnsab8x11kzqM+E+X0mkRRWVN00dVdmZCeZwl
-         TkTw==
-X-Gm-Message-State: APjAAAVXkel00LpsoYNwRa38Glw9bYNUcHRFjKFUArA9iVrOZuLBWWFQ
-        TiB+LTkNfsPY0wfWCK8R6MdE1/MVOIT0fHVRH/g=
-X-Google-Smtp-Source: APXvYqxctOTiHWQUElkgz7FkRh2on6241ZpVW/N1wTBikubPjZLn2sHyJ7+2ju4RiC9JWd0inKdPJC2HvKxX0LGYsvo=
-X-Received: by 2002:a2e:990e:: with SMTP id v14mr1595997lji.23.1578453871342;
- Tue, 07 Jan 2020 19:24:31 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1xOSp/kO5RUHbhgM95X1/1jyAywCmLEOyBUx87fFFtw=;
+        b=BqxWf+Ha9/wcwDM6vBBSUCqL68/ECkdbA/MMcAO8fd/OlqZkC82sHQLDzbOw+jwqn9
+         e4/Ol/VPJggd5DJ+rDbWmekQtBjHxcMYNykXMVMzJI1drU0ymzfkgl9iIpEcVH3/nRLr
+         BEeOpcSCMtDZAo2y6jJNi5OhkgvBFNflEDq64K21onv9+mLdTC8XQAINbn3d9DZmTVnU
+         7/aXJseSgMmNqGwk/SuNngpIvmurellFKoi7amGf06f9xjQjIVZ/HBFmEqF6jEM8TCEG
+         9I9PtBiI9TiMCJ1AX3/D6uRfF6Lz83j8AZERVEqpELqVpc8hiPG6qId6fFqbbARO/Kjh
+         /ggQ==
+X-Gm-Message-State: APjAAAVaE4hw6fm0XcPVgWFM+vJfhzxRcFFCo8iDeI/SQ8YH+sczjNrI
+        vLcYj/0XZBuoksho34F9DDBFog==
+X-Google-Smtp-Source: APXvYqyUT6VsXxCtYuElv5Y3o6IQMdGzsPCyousxOHbeS/ntlyTO3M2XSD2NtvvArGznvirU2k991Q==
+X-Received: by 2002:a62:3086:: with SMTP id w128mr2755138pfw.58.1578453992605;
+        Tue, 07 Jan 2020 19:26:32 -0800 (PST)
+Received: from acourbot.tok.corp.google.com ([2401:fa00:8f:203:93d9:de4d:e834:3086])
+        by smtp.gmail.com with ESMTPSA id 80sm1056157pfw.123.2020.01.07.19.26.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2020 19:26:31 -0800 (PST)
+From:   Alexandre Courbot <acourbot@chromium.org>
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>
+Subject: [PATCH v2] arm64: dts: qcom: add Venus firmware node on Cheza
+Date:   Wed,  8 Jan 2020 12:26:23 +0900
+Message-Id: <20200108032623.113921-1-acourbot@chromium.org>
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
 MIME-Version: 1.0
-Reply-To: salifnaba85@gmail.com
-Received: by 2002:a19:983:0:0:0:0:0 with HTTP; Tue, 7 Jan 2020 19:24:30 -0800 (PST)
-From:   "Mr.Salif Naba" <mrsalifnaba5@gmail.com>
-Date:   Wed, 8 Jan 2020 04:24:30 +0100
-X-Google-Sender-Auth: oS86kL35cLaFJ8OfRORY58edG00
-Message-ID: <CADhJwMNT=W-vpAPoJaVb3+pPSQOvisJ_QUkofBx3TkV7CedXag@mail.gmail.com>
-Subject: TREAT WITH CONFIDENCE PLEASE.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+Cheza boards require this node to probe, so add it.
 
-My name is  Mr.Salif Naba and I am a banker. It is true
-that we have not met each other in person, but I strongly believe that
-on trust, no friendship in every business. I have a deceased
-customer=E2=80=99s abandoned fund, which I am his personal financial advise=
-r
-before his accidental death, that being the main reason why I alone
-working in the bank here, know much about the existence of this fund
-and the secrets surrounding this money.
+Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+---
+ arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi | 6 ++++++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi       | 2 +-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-I got your email information through the Burkina's Chamber of Commerce
-and industry on foreign business relations here in Ouagadougou Burkina
-Faso I hoped that you will not expose or betray this trust and
-confident that I am about to establish with you for the mutual benefit
-of you and I. I need your urgent assistance in transferring the sum of
-$15.5) millions dollars into your account within 14 working banking
-days.
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+index 9a4ff57fc877..8c2e3aeacac4 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+@@ -1279,3 +1279,9 @@ config {
+ 		};
+ 	};
+ };
++
++&venus {
++	video-firmware {
++		iommus = <&apps_smmu 0x10b2 0x0>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index ddb1f23c936f..8f1d19c5a098 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -2567,7 +2567,7 @@ usb_2_dwc3: dwc3@a800000 {
+ 			};
+ 		};
+ 
+-		video-codec@aa00000 {
++		venus: video-codec@aa00000 {
+ 			compatible = "qcom,sdm845-venus";
+ 			reg = <0 0x0aa00000 0 0xff000>;
+ 			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+-- 
+2.24.1.735.g03f4e72817-goog
 
-This money has been dormant for years in our bank without claim due to
-the owner of this fund died along with his entire family and supposed
-next of kin in an air crash. But before I disclose the full details to
-you, I will like to know your interest and willingness to assist me by
-reverting back to me with your:
-
-1. Full Name: .........
-2. Telephone Numbers: ...........
-3. Your Age: ........
-4. Your Sex: ...........
-5. Your Occupation: ............
-6. Your Country: ............
-7. City: ...........
-8. Your Home Address: ................
-9. Marital Status: ................
-
-Please note that if you must get in touch with me then you must reply
-me back through my private box  (salifnaba85@gmail.com)and please
-if you are not interested do not waste your time to reply kindly
-delete my message from your box ok.
-
-Regards
-Mr.Salif Naba
