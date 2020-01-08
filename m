@@ -2,65 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 441A2134466
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 14:58:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10F2D13446B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 14:59:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728556AbgAHN55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 08:57:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58308 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727206AbgAHN55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 08:57:57 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8BB020705;
-        Wed,  8 Jan 2020 13:57:56 +0000 (UTC)
-Date:   Wed, 8 Jan 2020 08:57:55 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Qian Cai <cai@lca.pw>
-Subject: [PATCH] tracing: Initialize ret in syscall_enter_define_fields()
-Message-ID: <20200108085755.535e7362@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727476AbgAHN70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 08:59:26 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9135 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726699AbgAHN70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 08:59:26 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id CDE15511EA4AE1C5E960;
+        Wed,  8 Jan 2020 21:59:23 +0800 (CST)
+Received: from [127.0.0.1] (10.177.131.64) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Wed, 8 Jan 2020
+ 21:59:19 +0800
+Subject: Re: [PATCH next] drm/i915/gtt: add missing include file asm/smp.h
+To:     Jani Nikula <jani.nikula@linux.intel.com>, <airlied@linux.ie>,
+        <chris@chris-wilson.co.uk>
+References: <20200108133610.92714-1-chenzhou10@huawei.com>
+ <877e22qczw.fsf@intel.com>
+CC:     <intel-gfx@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+From:   Chen Zhou <chenzhou10@huawei.com>
+Message-ID: <6081a507-c11a-749e-df6a-c59649ee5d65@huawei.com>
+Date:   Wed, 8 Jan 2020 21:59:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <877e22qczw.fsf@intel.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.131.64]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2020/1/8 21:44, Jani Nikula wrote:
+> On Wed, 08 Jan 2020, Chen Zhou <chenzhou10@huawei.com> wrote:
+>> Fix build error:
+>> lib/crypto/chacha.c: In function chacha_permute:
+>> lib/crypto/chacha.c:65:1: warning: the frame size of 3384 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>>  }
+>>   ^
+> 
+> IMO this needs a better explanation of why not having the include leads
+> to the above failure.
+> 
+> BR,
+> Jani.
+> 
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Sorry, i made a mistake. The error is as follows:
 
-If syscall_enter_define_fields() is called on a system call with no
-arguments, the return code variable "ret" will never get initialized.
-Initialize it to zero.
+drivers/gpu/drm/i915/gt/intel_ggtt.c: In function ggtt_restore_mappings:
+drivers/gpu/drm/i915/gt/intel_ggtt.c:1239:3: error: implicit declaration of function wbinvd_on_all_cpus; did you mean wrmsr_on_cpus? [-Werror=implicit-function-declaration]
+   wbinvd_on_all_cpus();
+   ^~~~~~~~~~~~~~~~~~
+   wrmsr_on_cpus
 
-Link: https://lore.kernel.org/r/0FA8C6E3-D9F5-416D-A1B0-5E4CD583A101@lca.pw
-Fixes: 04ae87a52074e ("ftrace: Rework event_create_dir()")
-Reported-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace_syscalls.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
-index 73140d80dd46..2978c29d87d4 100644
---- a/kernel/trace/trace_syscalls.c
-+++ b/kernel/trace/trace_syscalls.c
-@@ -274,7 +274,8 @@ static int __init syscall_enter_define_fields(struct trace_event_call *call)
- 	struct syscall_trace_enter trace;
- 	struct syscall_metadata *meta = call->data;
- 	int offset = offsetof(typeof(trace), args);
--	int ret, i;
-+	int ret = 0;
-+	int i;
- 
- 	for (i = 0; i < meta->nb_args; i++) {
- 		ret = trace_define_field(call, meta->types[i],
--- 
-2.20.1
+Thanks,
+Chen Zhou
+
+>>
+>> Reported-by: Hulk Robot <hulkci@huawei.com>
+>> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+>> ---
+>>  drivers/gpu/drm/i915/gt/intel_ggtt.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/gpu/drm/i915/gt/intel_ggtt.c b/drivers/gpu/drm/i915/gt/intel_ggtt.c
+>> index 1a2b5dc..9ef8ed8 100644
+>> --- a/drivers/gpu/drm/i915/gt/intel_ggtt.c
+>> +++ b/drivers/gpu/drm/i915/gt/intel_ggtt.c
+>> @@ -6,6 +6,7 @@
+>>  #include <linux/stop_machine.h>
+>>  
+>>  #include <asm/set_memory.h>
+>> +#include <asm/smp.h>
+>>  
+>>  #include "intel_gt.h"
+>>  #include "i915_drv.h"
+> 
 
