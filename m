@@ -2,109 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5CFA134525
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 15:38:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 129EC134533
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 15:40:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728226AbgAHOiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 09:38:05 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42744 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbgAHOiF (ORCPT
+        id S1728401AbgAHOks (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 09:40:48 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41706 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbgAHOkr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 09:38:05 -0500
-Received: by mail-lj1-f196.google.com with SMTP id y4so3537634ljj.9;
-        Wed, 08 Jan 2020 06:38:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=DJue8/6LAi2tlw85/kLQgrOu38pX1buqz3xnndYdkb4=;
-        b=uTkbRiLMq4uyDlANwRVvyDvo6KFM4b7xpmkLPFOfEsST7+xd21eWq0XU/PjiYqwyXR
-         qCU7bfDg7Ub3DLKcputeiysZldmRMLeslqYpoGcQ6dz+9W+1xleh62Hkn0khWkWcCD1T
-         PE7lrjGfFpBS8l9EP+uY7wD9jQovSQn7gcUvtkADOxpCbFZ6IjElU/9Uq5IQiDR47dd7
-         I4txYIFzz0iQIw7YYg6auAlRSWJ6O9hNkWP3uokOUsBABb8lmcT6HjbPEzqtSljIiN8y
-         aRhgNNk49/2FLU/LAvbKIQ66deji5cDn4jyh6CQxd6aK3wujxu5mfX3+McsqQjcuEEs7
-         uojw==
+        Wed, 8 Jan 2020 09:40:47 -0500
+Received: by mail-wr1-f68.google.com with SMTP id c9so3615917wrw.8
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 06:40:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=DJue8/6LAi2tlw85/kLQgrOu38pX1buqz3xnndYdkb4=;
-        b=Ay8VAX8A42p25klxI1jZzSOeZ8x7Brymf16UtjaoOOvBGMJ57ouUuAmLZjpnlNfdq5
-         ee2O6q3Iomv+ds932kRWVJUD59N5puTDcBi5n5SaxU4DvkSfXFVWaQ58J7rKQTeMy7ba
-         X7nfP5ogvKDbxHxIGpiqGknp0rGcoJIlG5qmvRosOc8Og0hqwHCAubeHlpX2dDv7WJXq
-         SNdv1g4UY2K4fAHTmXDOIcG8DrJhXSMrpxe38diyO99iugBBfG+CQZLkbZ3BJClmheiJ
-         Cb2EkNs95VX8CEPK7y4L3iE+fdacpd1RcZN5CkYjRh1W6lnLZp85qarNr5ZVbaC4I1Y8
-         KYXQ==
-X-Gm-Message-State: APjAAAV787eH6dQJjx6k4oN9KOMO8fLXNogX7NTmD1fpEbE+6OqKbPhy
-        HA0uan7aus2o31w3qgkpXN8=
-X-Google-Smtp-Source: APXvYqxfw2SjsgOrvnNQobjIGJ3Q2def72Hm4QfXCeKCU74uYYOI4EPLHVPaAmihbFLUuhmyxmwbow==
-X-Received: by 2002:a2e:98ca:: with SMTP id s10mr3198466ljj.160.1578494282566;
-        Wed, 08 Jan 2020 06:38:02 -0800 (PST)
-Received: from localhost.localdomain (h-88-110.A230.priv.bahnhof.se. [212.85.88.110])
-        by smtp.gmail.com with ESMTPSA id r2sm1493279lfn.13.2020.01.08.06.37.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Jan 2020 06:37:59 -0800 (PST)
-From:   Mikael Magnusson <mikachu@gmail.com>
-To:     david@fromorbit.com
-Cc:     akpm@linux-foundation.org, amir73il@gmail.com,
-        chris@chrisdown.name, hannes@cmpxchg.org, hughd@google.com,
-        jlayton@kernel.org, kernel-team@fb.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, tj@kernel.org, viro@zeniv.linux.org
-Subject: Re: [PATCH v5 2/2] tmpfs: Support 64-bit inums per-sb
-Date:   Wed,  8 Jan 2020 15:37:52 +0100
-Message-Id: <20200108143752.9475-1-mikachu@gmail.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20200107001039.GM23195@dread.disaster.area>
-References: <20200107001039.GM23195@dread.disaster.area>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kj3sdKsTZaeIbGwmm89PcRIOcawKHePAIrmjBLLY4Uw=;
+        b=pLliBDHMSB1mixddfzOHsUohwvyY+a9GXGHjUWIbnQYjedQNB+5ksBqbvaGIKY5y5y
+         RI98+Wt4TtfWeiHuz5bmJ4I54AKPjFV/SfSCxhRDsHmEHMxLSrqW4n709aQ7j905Ai8s
+         bsYWcBb37Fx8BrkkKJQZX5vvdh/HDuDDCeiBnMTAemm0oqfg/BDowGfcEgxUbYD3sD3I
+         O3MXCUko4fVF3cvpGnEVM189Qt92JLMHt1EH+Kh0l09eoztEQT8aVrgqcIbWbQB+t4Tv
+         VwymeVnBhZruJJuEKnW3SjRkbbyisWzLFBhglHQF/alIlkJvBvdP2X4V93CT0Oq8vCN0
+         Jeig==
+X-Gm-Message-State: APjAAAWOTxy630/7KtwBZayxJIKNgQqab93sKHW11VPL4J7Nvf968NXh
+        //0LO4T9YO2LhgzWwDD1nDrt+aWq
+X-Google-Smtp-Source: APXvYqz4mHG7mUJHfog9TrthVEXEGMiJMAUt0zcWnEcdnAdrTfaZ5UARWF/oHyOf5XJSPt7w0+vigQ==
+X-Received: by 2002:a5d:6886:: with SMTP id h6mr4958200wru.154.1578494446291;
+        Wed, 08 Jan 2020 06:40:46 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id a1sm3971016wmj.40.2020.01.08.06.40.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jan 2020 06:40:44 -0800 (PST)
+Date:   Wed, 8 Jan 2020 15:40:44 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        "Jin, Zhi" <zhi.jin@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH] mm/page_alloc: Skip non present sections on zone
+ initialization
+Message-ID: <20200108144044.GB30379@dhcp22.suse.cz>
+References: <20191230093828.24613-1-kirill.shutemov@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191230093828.24613-1-kirill.shutemov@linux.intel.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dave Chinner writes:
-> On Sun, Jan 05, 2020 at 12:06:05PM +0000, Chris Down wrote:
-> > The default is still set to inode32 for backwards compatibility, but
-> > system administrators can opt in to the new 64-bit inode numbers by
-> > either:
-> > 
-> > 1. Passing inode64 on the command line when mounting, or
-> > 2. Configuring the kernel with CONFIG_TMPFS_INODE64=y
-> > 
-> > The inode64 and inode32 names are used based on existing precedent from
-> > XFS.
+On Mon 30-12-19 12:38:28, Kirill A. Shutemov wrote:
+> memmap_init_zone() can be called on the ranges with holes during the
+> boot. It will skip any non-valid PFNs one-by-one. It works fine as long
+> as holes are not too big.
 > 
-> Please don't copy this misfeature of XFS.
+> But huge holes in the memory map causes a problem. It takes over 20
+> seconds to walk 32TiB hole. x86-64 with 5-level paging allows for much
+> larger holes in the memory map which would practically hang the system.
 > 
-> The inode32/inode64 XFS options were a horrible hack made more than
-> 20 years ago when NFSv2 was still in use and 64 bit inodes could
-> not be used for NFSv2 exports. It was then continued to be used
-> because 32bit NFSv3 clients were unable to handle 64 bit inodes.
+> Deferred struct page init doesn't help here. It only works on the
+> present ranges.
 > 
-> It took 15 years for us to be able to essentially deprecate
-> inode32 (inode64 is the default behaviour), and we were very happy
-> to get that albatross off our necks.  In reality, almost everything
-> out there in the world handles 64 bit inodes correctly
-> including 32 bit machines and 32bit binaries on 64 bit machines.
-> And, IMNSHO, there no excuse these days for 32 bit binaries that
-> don't using the *64() syscall variants directly and hence support
-> 64 bit inodes correctlyi out of the box on all platforms.
-> 
-> I don't think we should be repeating past mistakes by trying to
-> cater for broken 32 bit applications on 64 bit machines in this day
-> and age.
+> Skipping non-present sections would fix the issue.
 
-Hi,
+Makes sense to me.
 
-It's unfortunately not true that everything handles this correctly.
-32-bit binaries for games on Steam that use stat() without the 64 is
-so prevalent that I got tired of adding the LD_PRELOAD wrapper script
-and just patched out the EOVERFLOW return from glibc instead. (They
-obviously don't care about the inode value at all, and I don't use any
-other 32-bit binaries that do). This is probably a class of binaries
-you don't care very much about, and not very likely to be installed on
-a tmpfs that has wrapped around, but I thought it was worth mentioning
-that they do exist anyway.
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+
+That pfn inc back and forth is quite ugly TBH but whatever.
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> ---
+> 
+> The situation can be emulated using the following QEMU patch:
+> 
+> diff --git a/hw/i386/pc.c b/hw/i386/pc.c
+> index ac08e6360437..f5f2258092e1 100644
+> --- a/hw/i386/pc.c
+> +++ b/hw/i386/pc.c
+> @@ -1159,13 +1159,14 @@ void pc_memory_init(PCMachineState *pcms,
+>      memory_region_add_subregion(system_memory, 0, ram_below_4g);
+>      e820_add_entry(0, x86ms->below_4g_mem_size, E820_RAM);
+>      if (x86ms->above_4g_mem_size > 0) {
+> +        int shift = 45;
+>          ram_above_4g = g_malloc(sizeof(*ram_above_4g));
+>          memory_region_init_alias(ram_above_4g, NULL, "ram-above-4g", ram,
+>                                   x86ms->below_4g_mem_size,
+>                                   x86ms->above_4g_mem_size);
+> -        memory_region_add_subregion(system_memory, 0x100000000ULL,
+> +        memory_region_add_subregion(system_memory, 1ULL << shift,
+>                                      ram_above_4g);
+> -        e820_add_entry(0x100000000ULL, x86ms->above_4g_mem_size, E820_RAM);
+> +        e820_add_entry(1ULL << shift, x86ms->above_4g_mem_size, E820_RAM);
+>      }
+>  
+>      if (!pcmc->has_reserved_memory &&
+> diff --git a/target/i386/cpu.h b/target/i386/cpu.h
+> index cde2a16b941a..694c26947bf6 100644
+> --- a/target/i386/cpu.h
+> +++ b/target/i386/cpu.h
+> @@ -1928,7 +1928,7 @@ uint64_t cpu_get_tsc(CPUX86State *env);
+>  /* XXX: This value should match the one returned by CPUID
+>   * and in exec.c */
+>  # if defined(TARGET_X86_64)
+> -# define TCG_PHYS_ADDR_BITS 40
+> +# define TCG_PHYS_ADDR_BITS 52
+>  # else
+>  # define TCG_PHYS_ADDR_BITS 36
+>  # endif
+> 
+> ---
+>  mm/page_alloc.c | 28 +++++++++++++++++++++++++++-
+>  1 file changed, 27 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index df62a49cd09e..442dc0244bb4 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -5873,6 +5873,30 @@ overlap_memmap_init(unsigned long zone, unsigned long *pfn)
+>  	return false;
+>  }
+>  
+> +#ifdef CONFIG_SPARSEMEM
+> +/* Skip PFNs that belong to non-present sections */
+> +static inline __meminit unsigned long next_pfn(unsigned long pfn)
+> +{
+> +	unsigned long section_nr;
+> +
+> +	section_nr = pfn_to_section_nr(++pfn);
+> +	if (present_section_nr(section_nr))
+> +		return pfn;
+> +
+> +	while (++section_nr <= __highest_present_section_nr) {
+> +		if (present_section_nr(section_nr))
+> +			return section_nr_to_pfn(section_nr);
+> +	}
+> +
+> +	return -1;
+> +}
+> +#else
+> +static inline __meminit unsigned long next_pfn(unsigned long pfn)
+> +{
+> +	return pfn++;
+> +}
+> +#endif
+> +
+>  /*
+>   * Initially all pages are reserved - free ones are freed
+>   * up by memblock_free_all() once the early boot process is
+> @@ -5912,8 +5936,10 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+>  		 * function.  They do not exist on hotplugged memory.
+>  		 */
+>  		if (context == MEMMAP_EARLY) {
+> -			if (!early_pfn_valid(pfn))
+> +			if (!early_pfn_valid(pfn)) {
+> +				pfn = next_pfn(pfn) - 1;
+>  				continue;
+> +			}
+>  			if (!early_pfn_in_nid(pfn, nid))
+>  				continue;
+>  			if (overlap_memmap_init(zone, &pfn))
+> -- 
+> 2.24.1
+> 
 
 -- 
-Mikael Magnusson
+Michal Hocko
+SUSE Labs
