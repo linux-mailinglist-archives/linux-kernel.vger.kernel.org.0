@@ -2,598 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 913A3134698
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 16:45:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2363313468A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 16:45:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729128AbgAHPor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 10:44:47 -0500
-Received: from lists.gateworks.com ([108.161.130.12]:49081 "EHLO
-        lists.gateworks.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729102AbgAHPon (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 10:44:43 -0500
-Received: from 68-189-91-139.static.snlo.ca.charter.com ([68.189.91.139] helo=rjones.pdc.gateworks.com)
-        by lists.gateworks.com with esmtp (Exim 4.82)
-        (envelope-from <rjones@gateworks.com>)
-        id 1ipDVb-0007s2-Vn; Wed, 08 Jan 2020 15:44:36 +0000
-From:   Robert Jones <rjones@gateworks.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Robert Jones <rjones@gateworks.com>
-Subject: [PATCH v7 5/5] ARM: dts: imx: Add GW5912 board support
-Date:   Wed,  8 Jan 2020 07:44:24 -0800
-Message-Id: <20200108154424.15736-6-rjones@gateworks.com>
-X-Mailer: git-send-email 2.9.2
-In-Reply-To: <20200108154424.15736-1-rjones@gateworks.com>
-References: <20200108154424.15736-1-rjones@gateworks.com>
+        id S1728539AbgAHPo3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 10:44:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38564 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727158AbgAHPo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 10:44:28 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0A7D20720;
+        Wed,  8 Jan 2020 15:44:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578498267;
+        bh=530iF1c0oruLqAX+rQmI8FeaZuwQ+nNyXMj2gbOdY/E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q/9tVd+BKbR2vRQ0XF+bHkB9BaxblQ2Ntoi4fT4+yfZxU+BQ5PDO3ffPneayUaNe7
+         ORdrIWgn58OPXrUSop210CZTD8IZlKtycPMbkt3eNzhoAy6LjyTwuq908thFDys1C4
+         XxVOyKjD5J80QHb5ukZXOVaBbLsq6k0FPToxMjWI=
+Date:   Wed, 8 Jan 2020 16:44:25 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     John Garry <john.garry@huawei.com>
+Cc:     Luo Jiaxing <luojiaxing@huawei.com>, saravanak@google.com,
+        jejb@linux.ibm.com, James.Bottomley@hansenpartnership.com,
+        linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCH v1] driver core: Use list_del_init to replace list_del at
+ device_links_purge()
+Message-ID: <20200108154425.GA2448856@kroah.com>
+References: <1578483244-50723-1-git-send-email-luojiaxing@huawei.com>
+ <20200108122658.GA2365903@kroah.com>
+ <73252c08-ac46-5d0d-23ec-16c209bd9b9a@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <73252c08-ac46-5d0d-23ec-16c209bd9b9a@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Gateworks GW5912 is an IMX6 SoC based single board computer with:
- - IMX6Q or IMX6DL
- - 32bit DDR3 DRAM
- - GbE RJ45 front-panel
- - 4x miniPCIe socket with PCI Gen2, USB2
- - 1x miniPCIe socket with PCI Gen2, USB2, mSATA
- - 1x miniPCIe socket with PCI Gen2, USB2, mezzanine
- - 10V to 60V DC input barrel jack
- - 3axis accelerometer (lis2de12)
- - GPS (ublox ZOE-M8Q)
- - bi-color front-panel LED
- - 256MB NAND boot device
- - nanoSIM/microSD socket (with UHS-I support)
- - user pushbutton
- - Gateworks System Controller (hwmon, pushbutton controller, EEPROM)
- - CAN Bus transceiver (mcp2562)
- - RS232 transceiver (1x UART with flow-control or 2x UART (build option)
- - off-board SPI connector (1x chip-select)
+On Wed, Jan 08, 2020 at 02:50:54PM +0000, John Garry wrote:
+> On 08/01/2020 12:26, Greg KH wrote:
+> > On Wed, Jan 08, 2020 at 07:34:04PM +0800, Luo Jiaxing wrote:
+> > > We found that enabling kernel compilation options CONFIG_SCSI_ENCLOSURE and
+> > > CONFIG_ENCLOSURE_SERVICES, repeated initialization and deletion of the same
+> > > SCSI device will cause system panic, as follows:
+> > > [72.425705] Unable to handle kernel paging request at virtual address
+> > > dead000000000108
+> > > ...
+> > > [72.595093] Call trace:
+> > > [72.597532] device_del + 0x194 / 0x3a0
+> > > [72.601012] enclosure_remove_device + 0xbc / 0xf8
+> > > [72.605445] ses_intf_remove + 0x9c / 0xd8
+> > > [72.609185] device_del + 0xf8 / 0x3a0
+> > > [72.612576] device_unregister + 0x14 / 0x30
+> > > [72.616489] __scsi_remove_device + 0xf4 / 0x140
+> > > [72.620747] scsi_remove_device + 0x28 / 0x40
+> > > [72.624745] scsi_remove_target + 0x1c8 / 0x220
+> > > 
+> > > After analysis, we see that in the error scenario, the ses module has the
+> > > following calling sequence:
+> > > device_register() -> device_del() -> device_add() -> device_del().
+> > > The first call to device_del() is fine, but the second call to device_del()
+> > > will cause a system panic.
+> > 
+> > Is this all on the same device structure?  If so, that's not ok, you
+> > can't do that, once device_del() is called on the memory location, you
+> > can not call device_add() on it again.
+> > 
+> > How are you triggering this from userspace?
+> 
+> This can be triggered by causing the SCSI device to be lost, found, and lost
+> again:
+> 
+> root@(none)$ pwd
+> /sys/class/sas_phy/phy-0:0:2
+> root@(none)$ echo 0 > enable
+> [   48.828139] sas: smp_execute_task_sg: task to dev 500e004aaaaaaa1f
+> response: 0x0 status 0x2
+> root@(none)$
+> [   48.837040] sas: ex 500e004aaaaaaa1f phy02 change count has changed
+> [   48.846961] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+> [   48.852120] sd 0:0:0:0: [sda] Synchronize Cache(10) failed: Result:
+> hostbyte=0x04 driverbyte=0x00
+> [   48.898111] hisi_sas_v3_hw 0000:74:02.0: dev[2:1] is gone
+> 
+> root@(none)$ echo 1 > enable
+> root@(none)$
+> [   51.967416] sas: ex 500e004aaaaaaa1f phy02 change count has changed
+> [   51.974022] hisi_sas_v3_hw 0000:74:02.0: dev[7:1] found
+> [   51.991305] scsi 0:0:5:0: Direct-Access     SEAGATE  ST2000NM0045 N004
+> PQ: 0 ANSI: 6
+> [   52.003609] sd 0:0:5:0: [sda] 3907029168 512-byte logical blocks: (2.00
+> TB/1.82 TiB)
+> [   52.012010] sd 0:0:5:0: [sda] Write Protect is off
+> [   52.022643] sd 0:0:5:0: [sda] Write cache: enabled, read cache: enabled,
+> supports DPO and FUA
+> [   52.052429]  sda: sda1
+> [   52.064439] sd 0:0:5:0: [sda] Attached SCSI disk
+> 
+> root@(none)$ echo 0 > enable
+> [   54.112100] sas: smp_execute_task_sg: task to dev 500e004aaaaaaa1f
+> response: 0x0 status 0x2
+> root@(none)$ [   54.120909] sas: ex 500e004aaaaaaa1f phy02 change count has
+> changed
+> [   54.130202] Unable to handle kernel paging request at virtual address
+> dead000000000108
+> [   54.138110] Mem abort info:
+> [   54.140892]   ESR = 0x96000044
+> [   54.143936]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [   54.149236]   SET = 0, FnV = 0
+> [   54.152278]   EA = 0, S1PTW = 0
+> [   54.155408] Data abort info:
+> [   54.158275]   ISV = 0, ISS = 0x00000044
+> [   54.162098]   CM = 0, WnR = 1
+> [   54.165055] [dead000000000108] address between user and kernel address
+> ranges
+> [   54.172179] Internal error: Oops: 96000044 [#1] PREEMPT SMP
+> [   54.177737] Modules linked in:
+> [   54.180780] CPU: 5 PID: 741 Comm: kworker/u192:2 Not tainted
+> 5.5.0-rc5-dirty #1535
+> [   54.188334] Hardware name: Huawei D06 /D06, BIOS Hisilicon D06 UEFI RC0 -
+> V1.16.01 03/15/2019
+> [   54.196847] Workqueue: 0000:74:02.0_disco_q sas_revalidate_domain
+> [   54.202927] pstate: 60c00009 (nZCv daif +PAN +UAO)
+> [   54.207705] pc : device_del+0x194/0x398
+> [   54.211527] lr : device_del+0x190/0x398
+> [   54.215349] sp : ffff80001cc7bb20
+> [   54.218650] x29: ffff80001cc7bb20 x28: ffff0023be042188
+> [   54.223948] x27: ffff0023c04c0000 x26: ffff0023be042000
+> [   54.229246] x25: ffff8000119f0f30 x24: ffff0023be268a30
+> [   54.234544] x23: ffff0023be268018 x22: ffff800011879000
+> [   54.239842] x21: ffff8000119f0000 x20: ffff8000119f06e0
+> [   54.245140] x19: ffff0023be268990 x18: 0000000000000004
+> [   54.250438] x17: 0000000000000007 x16: 0000000000000001
+> [   54.255736] x15: ffff0023eac13610 x14: ffff0023eb74a7f8
+> [   54.261034] x13: 0000000000000000 x12: ffff0023eac13610
+> [   54.266332] x11: ffff0023eb74a6c8 x10: 0000000000000000
+> [   54.271630] x9 : ffff0023eac13618 x8 : 0000000040040000
+> [   54.276928] x7 : 0000000000000000 x6 : ffff0023be268a90
+> [   54.282226] x5 : ffff0023be74aa00 x4 : 0000000000000000
+> [   54.287524] x3 : ffff8000119f0f30 x2 : dead000000000100
+> [   54.292821] x1 : dead000000000122 x0 : 0000000000000000
+> [   54.298119] Call trace:
+> [   54.300553]  device_del+0x194/0x398
+> [   54.304030]  enclosure_remove_device+0xb4/0x100
+> [   54.308548]  ses_intf_remove+0x98/0xd8
+> [   54.312283]  device_del+0xfc/0x398
+> [   54.315671]  device_unregister+0x14/0x30
+> [   54.319580]  __scsi_remove_device+0xf0/0x130
+> [   54.323836]  scsi_remove_device+0x28/0x40
+> [   54.327832]  scsi_remove_target+0x1bc/0x250
+> [   54.332002]  sas_rphy_remove+0x5c/0x60
+> [   54.335738]  sas_rphy_delete+0x14/0x28
+> [   54.339473]  sas_destruct_devices+0x5c/0x98
+> [   54.343642]  sas_revalidate_domain+0xa0/0x178
+> [   54.347986]  process_one_work+0x1e0/0x358
+> [   54.351982]  worker_thread+0x40/0x488
+> [   54.355631]  kthread+0x118/0x120
+> [   54.358846]  ret_from_fork+0x10/0x18
+> [   54.362410] Code: 91028278 aa1903e0 9415f01f a94c0662 (f9000441)
+> [   54.368489] ---[ end trace 38c672fcf89c95f7 ]---
+> 
+> I tested on v5.4 and no such issue, but maybe the driver core changes have
+> exposed a ses/enclosure issue.
+> 
+> Checking:
+> 
+> int enclosure_remove_device(struct enclosure_device *edev, struct device
+> *dev)
+> {
+> 	struct enclosure_component *cdev;
+> 	int i;
+> 
+> 	if (!edev || !dev)
+> 		return -EINVAL;
+> 
+> 	for (i = 0; i < edev->components; i++) {
+> 		cdev = &edev->component[i];
+> 		if (cdev->dev == dev) {
+> 			enclosure_remove_links(cdev);
+> 			device_del(&cdev->cdev);
+> 			put_device(dev);
+> 			cdev->dev = NULL;
+> 			return device_add(&cdev->cdev);
+> 		}
+> 	}
+> 	return -ENODEV;
+> }
+> 
+> This has device_del(&cdev->cdev) followed by device_add(&cdev->cdev).
 
-Signed-off-by: Robert Jones <rjones@gateworks.com>
-Reviewed-by: Tim Harvey <tharvey@gateworks.com>
----
- arch/arm/boot/dts/Makefile            |   2 +
- arch/arm/boot/dts/imx6dl-gw5912.dts   |  13 +
- arch/arm/boot/dts/imx6q-gw5912.dts    |  13 +
- arch/arm/boot/dts/imx6qdl-gw5912.dtsi | 461 ++++++++++++++++++++++++++++++++++
- 4 files changed, 489 insertions(+)
- create mode 100644 arch/arm/boot/dts/imx6dl-gw5912.dts
- create mode 100644 arch/arm/boot/dts/imx6q-gw5912.dts
- create mode 100644 arch/arm/boot/dts/imx6qdl-gw5912.dtsi
+Ugh, that's ripe for problems, as you found.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 5b059fc..1a32a7d 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -424,6 +424,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
- 	imx6dl-gw5904.dtb \
- 	imx6dl-gw5907.dtb \
- 	imx6dl-gw5910.dtb \
-+	imx6dl-gw5912.dtb \
- 	imx6dl-gw5913.dtb \
- 	imx6dl-hummingboard.dtb \
- 	imx6dl-hummingboard-emmc-som-v15.dtb \
-@@ -498,6 +499,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
- 	imx6q-gw5904.dtb \
- 	imx6q-gw5907.dtb \
- 	imx6q-gw5910.dtb \
-+	imx6q-gw5912.dtb \
- 	imx6q-gw5913.dtb \
- 	imx6q-h100.dtb \
- 	imx6q-hummingboard.dtb \
-diff --git a/arch/arm/boot/dts/imx6dl-gw5912.dts b/arch/arm/boot/dts/imx6dl-gw5912.dts
-new file mode 100644
-index 0000000..5260e01
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6dl-gw5912.dts
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2019 Gateworks Corporation
-+ */
-+
-+/dts-v1/;
-+#include "imx6dl.dtsi"
-+#include "imx6qdl-gw5912.dtsi"
-+
-+/ {
-+	model = "Gateworks Ventana i.MX6 DualLite/Solo GW5912";
-+	compatible = "gw,imx6dl-gw5912", "gw,ventana", "fsl,imx6dl";
-+};
-diff --git a/arch/arm/boot/dts/imx6q-gw5912.dts b/arch/arm/boot/dts/imx6q-gw5912.dts
-new file mode 100644
-index 0000000..4dcbd94
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6q-gw5912.dts
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2019 Gateworks Corporation
-+ */
-+
-+/dts-v1/;
-+#include "imx6q.dtsi"
-+#include "imx6qdl-gw5912.dtsi"
-+
-+/ {
-+	model = "Gateworks Ventana i.MX6 Dual/Quad GW5912";
-+	compatible = "gw,imx6q-gw5912", "gw,ventana", "fsl,imx6q";
-+};
-diff --git a/arch/arm/boot/dts/imx6qdl-gw5912.dtsi b/arch/arm/boot/dts/imx6qdl-gw5912.dtsi
-new file mode 100644
-index 0000000..8c57fd2
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6qdl-gw5912.dtsi
-@@ -0,0 +1,461 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2019 Gateworks Corporation
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	/* these are used by bootloader for disabling nodes */
-+	aliases {
-+		led0 = &led0;
-+		led1 = &led1;
-+		led2 = &led2;
-+		nand = &gpmi;
-+		usb0 = &usbh1;
-+		usb1 = &usbotg;
-+	};
-+
-+	chosen {
-+		stdout-path = &uart2;
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpio_leds>;
-+
-+		led0: user1 {
-+			label = "user1";
-+			gpios = <&gpio4 6 GPIO_ACTIVE_HIGH>; /* MX6_PANLEDG */
-+			default-state = "on";
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		led1: user2 {
-+			label = "user2";
-+			gpios = <&gpio4 7 GPIO_ACTIVE_HIGH>; /* MX6_PANLEDR */
-+			default-state = "off";
-+		};
-+
-+		led2: user3 {
-+			label = "user3";
-+			gpios = <&gpio4 15 GPIO_ACTIVE_LOW>; /* MX6_LOCLED# */
-+			default-state = "off";
-+		};
-+	};
-+
-+	memory@10000000 {
-+		device_type = "memory";
-+		reg = <0x10000000 0x40000000>;
-+	};
-+
-+	pps {
-+		compatible = "pps-gpio";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_pps>;
-+		gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	reg_3p3v: regulator-3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3P3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
-+
-+	reg_usb_vbus: regulator-5p0v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "usb_vbus";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+	};
-+};
-+
-+&can1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_flexcan1>;
-+	status = "okay";
-+};
-+
-+&ecspi2 {
-+	cs-gpios = <&gpio2 26 GPIO_ACTIVE_HIGH>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi2>;
-+	status = "okay";
-+};
-+
-+&fec {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_enet>;
-+	phy-mode = "rgmii-id";
-+	status = "okay";
-+};
-+
-+&gpmi {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpmi_nand>;
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c1>;
-+	status = "okay";
-+
-+	gpio@23 {
-+		compatible = "nxp,pca9555";
-+		reg = <0x23>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
-+	eeprom@50 {
-+		compatible = "atmel,24c02";
-+		reg = <0x50>;
-+		pagesize = <16>;
-+	};
-+
-+	eeprom@51 {
-+		compatible = "atmel,24c02";
-+		reg = <0x51>;
-+		pagesize = <16>;
-+	};
-+
-+	eeprom@52 {
-+		compatible = "atmel,24c02";
-+		reg = <0x52>;
-+		pagesize = <16>;
-+	};
-+
-+	eeprom@53 {
-+		compatible = "atmel,24c02";
-+		reg = <0x53>;
-+		pagesize = <16>;
-+	};
-+
-+	rtc@68 {
-+		compatible = "dallas,ds1672";
-+		reg = <0x68>;
-+	};
-+};
-+
-+&i2c2 {
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c2>;
-+	status = "okay";
-+};
-+
-+&i2c3 {
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c3>;
-+	status = "okay";
-+
-+	accel@19 {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_accel>;
-+		compatible = "st,lis2de12";
-+		reg = <0x19>;
-+		st,drdy-int-pin = <1>;
-+		interrupt-parent = <&gpio7>;
-+		interrupts = <13 0>;
-+		interrupt-names = "INT1";
-+	};
-+};
-+
-+&pcie {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pcie>;
-+	reset-gpio = <&gpio1 29 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
-+&pwm1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm1>; /* MX6_DIO0 */
-+	status = "disabled";
-+};
-+
-+&pwm2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm2>; /* MX6_DIO1 */
-+	status = "disabled";
-+};
-+
-+&pwm3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm3>; /* MX6_DIO2 */
-+	status = "disabled";
-+};
-+
-+&pwm4 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm4>; /* MX6_DIO3 */
-+	status = "disabled";
-+};
-+
-+&uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart1>;
-+	rts-gpios = <&gpio7 12 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+};
-+
-+&uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart2>;
-+	status = "okay";
-+};
-+
-+&uart5 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart5>;
-+	status = "okay";
-+};
-+
-+&usbotg {
-+	vbus-supply = <&reg_usb_vbus>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usbotg>;
-+	disable-over-current;
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+&usbh1 {
-+	vbus-supply = <&reg_usb_vbus>;
-+	status = "okay";
-+};
-+
-+&usdhc3 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc3>;
-+	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
-+	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
-+	cd-gpios = <&gpio7 0 GPIO_ACTIVE_LOW>;
-+	vmmc-supply = <&reg_3p3v>;
-+	no-1-8-v; /* firmware will remove if board revision supports */
-+	status = "okay";
-+};
-+
-+&wdog1 {
-+	status = "disabled";
-+};
-+
-+&wdog2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_wdog>;
-+	fsl,ext-reset-output;
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl_accel: accelmuxgrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_18__GPIO7_IO13		0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_enet: enetgrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_RGMII_RXC__RGMII_RXC		0x1b030
-+			MX6QDL_PAD_RGMII_RD0__RGMII_RD0		0x1b030
-+			MX6QDL_PAD_RGMII_RD1__RGMII_RD1		0x1b030
-+			MX6QDL_PAD_RGMII_RD2__RGMII_RD2		0x1b030
-+			MX6QDL_PAD_RGMII_RD3__RGMII_RD3		0x1b030
-+			MX6QDL_PAD_RGMII_RX_CTL__RGMII_RX_CTL	0x1b030
-+			MX6QDL_PAD_RGMII_TXC__RGMII_TXC		0x1b030
-+			MX6QDL_PAD_RGMII_TD0__RGMII_TD0		0x1b030
-+			MX6QDL_PAD_RGMII_TD1__RGMII_TD1		0x1b030
-+			MX6QDL_PAD_RGMII_TD2__RGMII_TD2		0x1b030
-+			MX6QDL_PAD_RGMII_TD3__RGMII_TD3		0x1b030
-+			MX6QDL_PAD_RGMII_TX_CTL__RGMII_TX_CTL	0x1b030
-+			MX6QDL_PAD_ENET_REF_CLK__ENET_TX_CLK	0x1b0b0
-+			MX6QDL_PAD_ENET_MDIO__ENET_MDIO		0x1b0b0
-+			MX6QDL_PAD_ENET_MDC__ENET_MDC		0x1b0b0
-+		>;
-+	};
-+
-+	pinctrl_ecspi2: escpi2grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_EIM_CS0__ECSPI2_SCLK	0x100b1
-+			MX6QDL_PAD_EIM_CS1__ECSPI2_MOSI	0x100b1
-+			MX6QDL_PAD_EIM_OE__ECSPI2_MISO	0x100b1
-+			MX6QDL_PAD_EIM_RW__GPIO2_IO26	0x100b1
-+		>;
-+	};
-+
-+	pinctrl_flexcan1: flexcan1grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_KEY_ROW2__FLEXCAN1_RX	0x1b0b1
-+			MX6QDL_PAD_KEY_COL2__FLEXCAN1_TX	0x1b0b1
-+			MX6QDL_PAD_GPIO_2__GPIO1_IO02		0x4001b0b0
-+		>;
-+	};
-+
-+	pinctrl_gpio_leds: gpioledsgrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_KEY_COL0__GPIO4_IO06		0x1b0b0
-+			MX6QDL_PAD_KEY_ROW0__GPIO4_IO07		0x1b0b0
-+			MX6QDL_PAD_KEY_ROW4__GPIO4_IO15		0x1b0b0
-+		>;
-+	};
-+
-+	pinctrl_gpmi_nand: gpminandgrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_NANDF_CLE__NAND_CLE		0xb0b1
-+			MX6QDL_PAD_NANDF_ALE__NAND_ALE		0xb0b1
-+			MX6QDL_PAD_NANDF_WP_B__NAND_WP_B	0xb0b1
-+			MX6QDL_PAD_NANDF_RB0__NAND_READY_B	0xb000
-+			MX6QDL_PAD_NANDF_CS0__NAND_CE0_B	0xb0b1
-+			MX6QDL_PAD_SD4_CMD__NAND_RE_B		0xb0b1
-+			MX6QDL_PAD_SD4_CLK__NAND_WE_B		0xb0b1
-+			MX6QDL_PAD_NANDF_D0__NAND_DATA00	0xb0b1
-+			MX6QDL_PAD_NANDF_D1__NAND_DATA01	0xb0b1
-+			MX6QDL_PAD_NANDF_D2__NAND_DATA02	0xb0b1
-+			MX6QDL_PAD_NANDF_D3__NAND_DATA03	0xb0b1
-+			MX6QDL_PAD_NANDF_D4__NAND_DATA04	0xb0b1
-+			MX6QDL_PAD_NANDF_D5__NAND_DATA05	0xb0b1
-+			MX6QDL_PAD_NANDF_D6__NAND_DATA06	0xb0b1
-+			MX6QDL_PAD_NANDF_D7__NAND_DATA07	0xb0b1
-+		>;
-+	};
-+
-+	pinctrl_i2c1: i2c1grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_EIM_D21__I2C1_SCL		0x4001b8b1
-+			MX6QDL_PAD_EIM_D28__I2C1_SDA		0x4001b8b1
-+			MX6QDL_PAD_GPIO_4__GPIO1_IO04		0x0001b0b0
-+		>;
-+	};
-+
-+	pinctrl_i2c2: i2c2grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_KEY_COL3__I2C2_SCL		0x4001b8b1
-+			MX6QDL_PAD_KEY_ROW3__I2C2_SDA		0x4001b8b1
-+		>;
-+	};
-+
-+	pinctrl_i2c3: i2c3grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_3__I2C3_SCL		0x4001b8b1
-+			MX6QDL_PAD_GPIO_6__I2C3_SDA		0x4001b8b1
-+		>;
-+	};
-+
-+	pinctrl_pcie: pciegrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_ENET_TX_EN__GPIO1_IO28	0x1b0b0
-+			MX6QDL_PAD_ENET_TXD1__GPIO1_IO29	0x1b0b0
-+		>;
-+	};
-+
-+	pinctrl_pps: ppsgrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_5__GPIO1_IO05		0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_pwm1: pwm1grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_9__PWM1_OUT		0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_pwm2: pwm2grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD1_DAT2__PWM2_OUT		0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_pwm3: pwm3grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD4_DAT1__PWM3_OUT		0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_pwm4: pwm4grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD4_DAT2__PWM4_OUT		0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_uart1: uart1grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD3_DAT7__UART1_TX_DATA	0x1b0b1
-+			MX6QDL_PAD_SD3_DAT6__UART1_RX_DATA	0x1b0b1
-+			MX6QDL_PAD_GPIO_17__GPIO7_IO12		0x4001b0b1
-+		>;
-+	};
-+
-+	pinctrl_uart2: uart2grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD4_DAT7__UART2_TX_DATA	0x1b0b1
-+			MX6QDL_PAD_SD4_DAT4__UART2_RX_DATA	0x1b0b1
-+			MX6QDL_PAD_SD4_DAT3__GPIO2_IO11		0x4001b0b1
-+		>;
-+	};
-+
-+	pinctrl_uart5: uart5grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_KEY_COL1__UART5_TX_DATA	0x1b0b1
-+			MX6QDL_PAD_KEY_ROW1__UART5_RX_DATA	0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_usbotg: usbotggrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_1__USB_OTG_ID		0x13059
-+		>;
-+	};
-+
-+	pinctrl_usdhc3: usdhc3grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x17059
-+			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x10059
-+			MX6QDL_PAD_SD3_DAT0__SD3_DATA0		0x17059
-+			MX6QDL_PAD_SD3_DAT1__SD3_DATA1		0x17059
-+			MX6QDL_PAD_SD3_DAT2__SD3_DATA2		0x17059
-+			MX6QDL_PAD_SD3_DAT3__SD3_DATA3		0x17059
-+			MX6QDL_PAD_SD3_DAT5__GPIO7_IO00		0x17059 /* CD */
-+			MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x17059
-+		>;
-+	};
-+
-+	pinctrl_usdhc3_100mhz: usdhc3grp100mhz {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170b9
-+			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100b9
-+			MX6QDL_PAD_SD3_DAT0__SD3_DATA0		0x170b9
-+			MX6QDL_PAD_SD3_DAT1__SD3_DATA1		0x170b9
-+			MX6QDL_PAD_SD3_DAT2__SD3_DATA2		0x170b9
-+			MX6QDL_PAD_SD3_DAT3__SD3_DATA3		0x170b9
-+			MX6QDL_PAD_SD3_DAT5__GPIO7_IO00		0x170b9 /* CD */
-+			MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x170b9
-+		>;
-+	};
-+
-+	pinctrl_usdhc3_200mhz: usdhc3grp200mhz {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170f9
-+			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100f9
-+			MX6QDL_PAD_SD3_DAT0__SD3_DATA0		0x170f9
-+			MX6QDL_PAD_SD3_DAT1__SD3_DATA1		0x170f9
-+			MX6QDL_PAD_SD3_DAT2__SD3_DATA2		0x170f9
-+			MX6QDL_PAD_SD3_DAT3__SD3_DATA3		0x170f9
-+			MX6QDL_PAD_SD3_DAT5__GPIO7_IO00		0x170f9 /* CD */
-+			MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x170f9
-+		>;
-+	};
-+
-+	pinctrl_wdog: wdoggrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD1_DAT3__WDOG2_B		0x1b0b0
-+		>;
-+	};
-+};
--- 
-2.9.2
+Yes, your patch will fix this pattern, but the larger problem is that
+this sequence might not really work as something else could have had a
+reference to the structure (rare, but could happen.)
 
+> This cdev.dev memory looks to be dynamically allocated for the lifetime of
+> the enclosure_device.
+
+ick.
+
+SCSI people, what do you think?  This "enclosure" code was yours...
+
+thanks,
+
+greg k-h
