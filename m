@@ -2,157 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFAA5133FC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 11:59:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ED73133FCB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:00:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbgAHK7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 05:59:15 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:45133 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726290AbgAHK7O (ORCPT
+        id S1728008AbgAHK77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 05:59:59 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:53724 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726290AbgAHK76 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 05:59:14 -0500
-Received: by mail-oi1-f193.google.com with SMTP id n16so2206986oie.12
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 02:59:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=MN2cXAliraNErMytcQEiHA1DpubOJVOt0C1yY2AdeAE=;
-        b=wG3zHLtX0FTDuVGB48Ua3E3u7yYmSpghevtOvVV4FA5G/ldz3MPFPHyCjcCv1/DW1S
-         3+m61Tuequ2T1V3Citkfi/5gMEZjU3FSI/Cci2kszcw6QFy99z5pYpSW4vLadxT4XBUq
-         zK49Liv5klhkpMKtLP/+soDQNlmVQjvq+8yFvXjPui+S2cm0TxM+IT9iX6vW97BAuSzh
-         h+14nlny/zZkyCVmKLQslRx2wFPnKGFagzWn/c/F6YJAQkCw3LA1bq7oNGbWl1lnBeNW
-         8jTB+ryPX+AlQn50CSzsrJ/V2qa0wgZI5CHanL/68LDXJGdOrUVtOOTlpe8gX+M01BHa
-         oeHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=MN2cXAliraNErMytcQEiHA1DpubOJVOt0C1yY2AdeAE=;
-        b=X8WwiKqTqO26HCKwuhZCX7jpVjtQ5HeST3CR+Z2EWDrksIHSzlQexYl2/3HjZfvXCq
-         mlrQ2qRJACb7hZZeE6DVj+2a/CRbMnYsAQICFjNqHiEOSagVVr8eKz2xgSwjUGO7QHGL
-         svFqrZglPVk23XOYeVlUdPYauAJkEnQifHcvOm8qKB3lnoOPtlZGTpvMzxqmsFseWCGy
-         DEx0VSY55e97E8qmwAn9pWweRmPLvWr1fGHrY5wdddbIttY1XiwGE5OPWFRK40/b07bk
-         ZYD2khSTVxV/mSvVmAm7gUSCckfkHeaccLfxw0qWy8AuZZreX+L5pifG9AVaA4P5qUVr
-         JGeg==
-X-Gm-Message-State: APjAAAXi1WsTY3duFc2N/FFgFkBUpjJfKiW8/y1prrGkgG9qJvyXN1tB
-        0gu4yth3zEXMefmS8teo02cOYA==
-X-Google-Smtp-Source: APXvYqyFnh2MaLwhOU5mivxTqJaVc4PKe1i0dmQjpA70sG1oTGcfsNkyCXb/a+kE/EWP0n7fQ1lYfA==
-X-Received: by 2002:a05:6808:a11:: with SMTP id n17mr2484062oij.94.1578481153648;
-        Wed, 08 Jan 2020 02:59:13 -0800 (PST)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id r205sm973416oih.54.2020.01.08.02.59.11
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 08 Jan 2020 02:59:12 -0800 (PST)
-Date:   Wed, 8 Jan 2020 02:58:52 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Amir Goldstein <amir73il@gmail.com>
-cc:     Hugh Dickins <hughd@google.com>, Chris Down <chris@chrisdown.name>,
-        "zhengbin (A)" <zhengbin13@huawei.com>,
-        "J. R. Okajima" <hooanon05g@gmail.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com
-Subject: Re: [PATCH v5 1/2] tmpfs: Add per-superblock i_ino support
-In-Reply-To: <CAOQ4uxj_rLeQY4VXzRbM78T8O=b36-Jrh4C-jdQx_6Aiy=D1BA@mail.gmail.com>
-Message-ID: <alpine.LSU.2.11.2001080206390.1884@eggly.anvils>
-References: <cover.1578225806.git.chris@chrisdown.name> <91b4ed6727712cb6d426cf60c740fe2f473f7638.1578225806.git.chris@chrisdown.name> <4106bf3f-5c99-77a4-717e-10a0ffa6a3fa@huawei.com> <CAOQ4uxijrY7mRkAW1OEym7Xi=v6+fDjhAVBfucwtWPx6bokr5Q@mail.gmail.com>
- <alpine.LSU.2.11.2001062304500.1496@eggly.anvils> <CAOQ4uxj_rLeQY4VXzRbM78T8O=b36-Jrh4C-jdQx_6Aiy=D1BA@mail.gmail.com>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Wed, 8 Jan 2020 05:59:58 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 008AxHa3165485;
+        Wed, 8 Jan 2020 10:59:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2019-08-05; bh=TBCgm4Vu22i7I5xmbu7En49CxqUX/dPa2wmYwXIMZew=;
+ b=rKoC/5nWdIZ0+qvifgli0jvXieLDBJjYwcmIZ97OLyDNx2p3RtSfcoBU+j7lL3+q+icU
+ DIzVks/86FwTWI5pYYh4+S1yR7UNpjsv+07H0+O+3Ub0j1795hb/xyM/IIWElRrpBnJQ
+ gkTE62YjVmlqBoz+8JZqgd8l1SnbE4YCZkLxx0Hmgt1MS2CTtr2Tl191yIzrjYC8juDB
+ KEVbjkHqXEb9Fwg2ZOD0Ubp/q4adUnPR31KuAitVVOeYIE++i1E6GlcE5ePSPhsvKrWp
+ ogfRwPlb/EwWDHhAr4uxB1JGhHyLI8mOP7mqppKQ94FAEk/mEBZIF18npHdd2rAdCsU2 HQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2xaj4u39qv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 08 Jan 2020 10:59:48 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 008As6Rd139851;
+        Wed, 8 Jan 2020 10:59:47 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2xcqbmyek9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 08 Jan 2020 10:59:47 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 008Axc8s009815;
+        Wed, 8 Jan 2020 10:59:38 GMT
+Received: from kili.mountain (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 08 Jan 2020 02:59:37 -0800
+Date:   Wed, 8 Jan 2020 13:59:30 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Vandana BN <bnvandana@gmail.com>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: [PATCH] media: v4l2-core: Fix Oops in ioctl
+Message-ID: <20200108105929.7kxwf5rthxnhwbuh@kili.mountain>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000119c91059b9d092f@google.com>
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9493 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001080093
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9493 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001080094
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 7 Jan 2020, Amir Goldstein wrote:
-> 
-> I vote in favor or best of both patches to result in a simpler outcome:
-> 1. use inop approach from Hugh's patch
-> 2. use get_next_ino() instead of per-sb ino_batch for kern_mount
-> 
-> Hugh, do you have any evidence or suspect that shmem_file_setup()
-> could be contributing to depleting the global get_next_ino pool?
+Syzbot reported a crash in video_usercopy().  It turns out when we
+broke video_get_user() into a separate function then we accidentally
+moved it outside the if block so it tries to memset a user pointer.
 
-Depends on what the system is used for: on one system, it will make
-very little use of that pool, on another it will be one of the major
-depleters of the pool.  Generally, it would be kinder to the other
-users of the pool (those that might also care about ino duplication)
-if shmem were to cede all use of it; but a bigger patch, yes.
+Reported-by: syzbot+9240c422be249a8422bd@syzkaller.appspotmail.com
+Fixes: c8ef1a6076bf ("media: v4l2-core: split out data copy from video_usercopy")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not actually tested.  :(  Sorry.
 
-> Do you have an objection to the combination above?
+ drivers/media/v4l2-core/v4l2-ioctl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Objection would be too strong: I'm uncomfortable with it, and not
-tempted to replace our internal implementation by one reverting to
-use get_next_ino(); but not as uncomfortable as I am with holding
-up progress on the issue.
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index b68ff06009cd..aaf83e254272 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -3205,12 +3205,12 @@ video_usercopy(struct file *file, unsigned int orig_cmd, unsigned long arg,
+ 			parg = mbuf;
+ 		}
+ 
++		err = video_get_user((void __user *)arg, parg, orig_cmd,
++				     &always_copy);
++		if (err)
++			goto out;
+ 	}
+ 
+-	err = video_get_user((void __user *)arg, parg, orig_cmd, &always_copy);
+-	if (err)
+-		goto out;
+-
+ 	err = check_array_args(cmd, parg, &array_size, &user_ptr, &kernel_ptr);
+ 	if (err < 0)
+ 		goto out;
+-- 
+2.11.0
 
-Uncomfortable because of the "depletion" you mention.  Uncomfortable
-because half the reason for ever offering the unlimited "nr_inodes=0"
-mount option was to avoid stat_lock overhead (though, for all I know,
-maybe nobody anywhere uses that option now - and I'll be surprised if
-0-day uses it and reports any slowdown).
-
-Also uncomfortable because your (excellent, and I'd never thought
-about it that way) argument that the shm_mnt objects are internal
-and unstatable (that may not resemble how you expressed it, I've not
-gone back to search the mails to find where you made the point), is
-not entirely correct nowadays - memfd_create()d objects come from
-that same shm_mnt, and they can be fstat()ed.  What is the
-likelihood that anything would care about duplicated inos of
-memfd_create()d objects?  Fairly low, I think we'll agree; and
-we can probably also say that their inos are an odd implementation
-detail that no memfd_create() user should depend upon anyway.  But
-I mention it in case it changes your own feeling about the shm_mnt.
-
-> > Not-Yet-Signed-off-by: Hugh Dickins <hughd@google.com>
-> >
-> > 1) Probably needs minor corrections for the 32-bit kernel: I wasn't
-> >    worrying about that at the time, and expect some "unsigned long"s
-> >    I didn't need to change for the 64-bit kernel actually need to be
-> >    "u64"s or "ino_t"s now.
-> > 2) The "return 1" from shmem_encode_fh() would nowadays be written as
-> >    "return FILEID_INO32_GEN" (and overlayfs takes particular interest
-> >    in that fileid); yet it already put the high 32 bits of the ino into
-> >    the fh: probably needs a different fileid once high 32 bits are set.
-> 
-> Nice spotting, but this really isn't a problem for overlayfs.
-> I agree that it would be nice to follow the same practice as xfs with
-> XFS_FILEID_TYPE_64FLAG, but as one can see from the private
-> flag, this is by no means a standard of any sort.
-> 
-> As the name_to_handle_at() man page says:
-> "Other than the use of the handle_bytes field, the caller should treat the
->  file_handle structure as an opaque data type: the handle_type and f_handle
->  fields are needed only by a  subsequent call to open_by_handle_at()."
-> 
-> It is true that one of my initial versions was checking value returned from
-> encode_fh, but Miklos has pointed out to me that this value is arbitrary
-> and we shouldn't rely on it.
-> 
-> In current overlayfs, the value FILEID_INO32_GEN is only used internally
-> to indicate the case where filesystem has no encode_fh op (see comment
-> above ovl_can_decode_fh()).  IOW, only the special case of encoding
-> by the default export_encode_fh() is considered a proof for 32bit inodes.
-> So tmpfs has never been considered as a 32bit inodes filesystem by
-> overlayfs.
-
-Thanks, you know far more about encode_fh() than I ever shall, so for
-now I'll take your word for it that we don't need to make any change
-there for this 64-bit ino support.  One day I should look back, go
-through the encode_fh() callsites, and decide what that "return 1"
-really ought to say.
-
-It's inconvenient, I'm sorry, but I shall have to go quiet again
-for a few days - I'm here, but cannot afford to split my attention.
-
-Hugh
