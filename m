@@ -2,123 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3944F134539
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 15:41:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C91E134552
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 15:47:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728437AbgAHOlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 09:41:46 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41298 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727903AbgAHOlq (ORCPT
+        id S1728592AbgAHOrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 09:47:46 -0500
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:53946 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726697AbgAHOrq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 09:41:46 -0500
-Received: by mail-pg1-f196.google.com with SMTP id x8so1679271pgk.8
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 06:41:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Pmfr4lT+9w9idepjsVRbi3vih8NhxWk03pCzh2kY1TM=;
-        b=H37n2vyIH55gzmQlLagmHwa+ll3F9/TwM2PMzE71ifUtYXqOpcSIaHMJq1YMdsVuOy
-         4Qh6w06cGhhxeRo3z3Ib+a6XxhOf1kjpCQOojK0GCr3P9mesVRYsOuvCHmXRJ9epZNLk
-         YopMferNnK1gLz6vW0EatYwdbceYUKyXGzxrW6A2vqtV6ksiHTuk9Why+mWTCEPDj2bU
-         rsp7itq17//T03fscxF7lam4D3IPEO7IZRHSB7wBo5dCu3djjZpRTkypjWyVnECgd9f6
-         I9qaeaWx6v7hX0MkFk/y8bpqKuNPnEQCyiLExjBTOH7q05TRi66QdKaHbbUv9GnWzyma
-         wXWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Pmfr4lT+9w9idepjsVRbi3vih8NhxWk03pCzh2kY1TM=;
-        b=VskxJFjBIkLsPEvsF7Gr5Mh1dGr2ucVkGDEASsexb+aevd88wbiaAgQAKADgLMxYZq
-         K2Y0sSNcmcZGQudm0vY+k5a/7JJsDbGl7D54ni/CshKYULFs0HOnB17onqI9WfDh7YSv
-         IaA47zE3hWk1K1YSkLefTnrmp/STvwOYqTv5gyc1zdX5ZB2UktE1z/9hug6e+e6mmn5j
-         qU1skJ4dVnU02jgEoO9rx3oe5M2ep3CQvlBahTEC3QFpSJVHd7JrknDwOB/vJK1C90wb
-         TJnHlESsdaorVQdpRVjiBxRwRa5yFrPNOYW1JDJ/t2bCGQe1b54Zfhjn6EHBru6jfFN+
-         v1Uw==
-X-Gm-Message-State: APjAAAUIxsWLTVLlHB3Vu6W3eKSBstDoe24s++iSh1vMLajlseF9Dv1S
-        +AXTzOofYa6tjqFvDuJqw0KYaazynDtuKIniiUoK5A==
-X-Google-Smtp-Source: APXvYqxgRLFNG2TmAcrgc+v7RSS0iaETQOarqjz2xxveDTmD+eCmm8vd+A2S/avlEoADjQeCpeSplwQlcyX+xL17Reo=
-X-Received: by 2002:aa7:961b:: with SMTP id q27mr5376393pfg.23.1578494505168;
- Wed, 08 Jan 2020 06:41:45 -0800 (PST)
+        Wed, 8 Jan 2020 09:47:46 -0500
+X-Greylist: delayed 362 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 Jan 2020 09:47:45 EST
+X-Halon-ID: faaf162b-3224-11ea-b6d8-005056917f90
+Authorized-sender: andreas@gaisler.com
+Received: from andreas.got.gaisler.com (h-98-128-223-123.na.cust.bahnhof.se [98.128.223.123])
+        by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
+        id faaf162b-3224-11ea-b6d8-005056917f90;
+        Wed, 08 Jan 2020 15:41:39 +0100 (CET)
+Subject: Re: [PATCH 2/2] gpio: gpio-grgpio: fix possible
+ sleep-in-atomic-context bugs in grgpio_irq_map/unmap()
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20191218132605.10594-1-baijiaju1990@gmail.com>
+ <CACRpkdY4JsvOsjQvB=hb=QPV=bLXkC3ekmPUXFiPMnj1NK-Jtg@mail.gmail.com>
+From:   Andreas Larsson <andreas@gaisler.com>
+Message-ID: <74268192-4d4f-8019-804e-49b34ec52787@gaisler.com>
+Date:   Wed, 8 Jan 2020 15:41:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <201912301716.xBUHGKTi016375@pmwg-server-01.pmwglab> <CAK8P3a1OsiUV5YuwzSJ4CsD8NHJHjedTA4K7xBKK6Q-4kA8t5g@mail.gmail.com>
-In-Reply-To: <CAK8P3a1OsiUV5YuwzSJ4CsD8NHJHjedTA4K7xBKK6Q-4kA8t5g@mail.gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Wed, 8 Jan 2020 06:41:31 -0800
-Message-ID: <CAFd5g46YYiC-aeAGumqOMiNZ71h2dGH==F_bdj+pwQ5YOHo3GA@mail.gmail.com>
-Subject: Re: kunit stack usage, was: pmwg-ci report v5.5-rc4-147-gc62d43442481
-To:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>
-Cc:     PMWG CI <pmwg-ci@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Private Kernel Alias <private-kwg@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ardb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CACRpkdY4JsvOsjQvB=hb=QPV=bLXkC3ekmPUXFiPMnj1NK-Jtg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Stephen Boyd
+On 2020-01-07 10:37, Linus Walleij wrote:
+> However there is a deeper problem, this code was added by Andreas
+> Larsson in 2013 and at the time this was a hacky way to deal with
+> an interrupt that is actually hierarchical.
+> 
+> Since 2013 we have gained:
+> - Hierarchical interrupt controllers
+> - Hierarchical interrupt chip helpers in gpiolib
+> 
+> So this code really needs to be modernized using a hierarchical
+> irqchip.
+> 
+> See for example commit:
+> aa7d618ac65f ("gpio: ixp4xx: Convert to hierarchical GPIOLIB_IRQCHIP")
+> for an example.
+> 
+> Who is using grgpio these days and could work on fixing this up?
 
-On Tue, Jan 7, 2020 at 4:37 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Mon, Dec 30, 2019 at 6:16 PM PMWG CI <pmwg-ci@linaro.org> wrote:
-> >
-> >
-> > The error/warning: 1 drivers/base/test/property-entry-test.c:214:1: warning: the frame size of 3128 bytes is larger than 2048 bytes [-Wframe-larger-than=]
-> > ... was introduced by commit:
-> >
-> > commit c032ace71c29d513bf9df64ace1885fe5ff24981
-> > Author: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > Date:   Wed Dec 4 10:53:15 2019 -0800
-> >
-> >     software node: add basic tests for property entries
->
-> This problem is a result of the KUNIT_ASSERTION() definition that puts
-> a local struct on the stack interacting badly with the structleak_plugin
-> when CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL is set in
-> allmodconfig:
->
-> pe_test_uint_arrays() contains a couple of larger variables, plus 41
-> instances of KUNIT_EXPECT_*() or KUNIT_ASSERT_*(), each one
-> of these adds its own copy of the structure, eventually exceeding
-> the warning limit.
+I will put on my list to look into this. GRGPIO is used in all our 
+chips, and in most designs made by our customers.
 
-Uh oh, sorry about that.
+The main hurdle with the interrupt handling in the current driver was to 
+both allow several lines to generate the same system interrupt and at 
+the same time make sure to not register any system interrupts for any 
+lines until the user actually requests it (as in the general case all 
+interrupts would be registered leading to clashes with interrupts that 
+cannot necessarily be shared). Hopefully, the hierarchical interrupt 
+controller and chip helper functionalities can cater for these requirements.
 
-> We can work around this locally by splitting up the largest four
-> functions in this file (pe_test_uints, pe_test_uint_arrays, pe_test_strings,
-> and pe_test_reference) into smaller functions that stay below the
-> warning limit, but it would be nice to find a way for kunit to not
-> use as much stack space. Any suggestions?
-
-Agreed. I have a couple ideas. The grossest idea, which I am guessing
-most people won't like is to go back to the stream builder method,
-basically build the message as we go on the heap; however, the current
-method was created specifically to not do that which much help from
-Stephen (CC'ed), so probably not want we want to do.
-
-Another idea, the struct just exists to pack up data and ship it off
-to a function which handles the expectation/assertion. Consequently,
-the struct is only used inside the expectation/assertion macro; it is
-not needed before the macro block and is not needed after it. So could
-we maybe make some kind of expectation/assertion union so that we know
-they are all the same size, and then somehow tag the stack allocation
-so that we only ever have one copy in a stack frame? I am not sure if
-that kind of compiler magic exists. I guess one way to accomplish this
-is to make a dummy function in KUnit whose job it is to call the unit
-test function, which allocates the object, and then calls the unit
-test function with a reference to the object allocation; then we could
-just reuse that allocation and we can avoid making a bunch of
-piecemeal heap allocations.
-
-What do people think? Any other ideas?
-
-Also, sorry in advance for delayed responses: I am on vacation until
-the 13th and then I will be at LCA until the 18th.
-
-Cheers!
+Best regards,
+Andreas Larsson
