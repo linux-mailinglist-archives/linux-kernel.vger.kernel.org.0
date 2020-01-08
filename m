@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1545D1346D6
+	by mail.lfdr.de (Postfix) with ESMTP id 885CB1346D7
 	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 16:59:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729221AbgAHP7D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 10:59:03 -0500
-Received: from foss.arm.com ([217.140.110.172]:46642 "EHLO foss.arm.com"
+        id S1729231AbgAHP7F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 10:59:05 -0500
+Received: from foss.arm.com ([217.140.110.172]:46660 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729203AbgAHP67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 10:58:59 -0500
+        id S1729213AbgAHP7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 10:59:02 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 03B4911B3;
-        Wed,  8 Jan 2020 07:58:59 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 518FA328;
+        Wed,  8 Jan 2020 07:59:01 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 827393F534;
-        Wed,  8 Jan 2020 07:58:58 -0800 (PST)
-Date:   Wed, 08 Jan 2020 15:58:57 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AD6253F534;
+        Wed,  8 Jan 2020 07:59:00 -0800 (PST)
+Date:   Wed, 08 Jan 2020 15:58:59 +0000
 From:   Mark Brown <broonie@kernel.org>
-To:     Markus Reichl <m.reichl@fivetechno.de>
-Cc:     devicetree@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Applied "regulator: bindings: add MPS mp8859 voltage regulator" to the regulator tree
-In-Reply-To: <20200106211633.2882-5-m.reichl@fivetechno.de>
-Message-Id: <applied-20200106211633.2882-5-m.reichl@fivetechno.de>
+To:     Saravanan Sekar <sravanhome@gmail.com>
+Cc:     broonie@kernel.org, davem@davemloft.net,
+        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
+        heiko@sntech.de, icenowy@aosc.io, Jonathan.Cameron@huawei.com,
+        laurent.pinchart@ideasonboard.com, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        mark.rutland@arm.com, mchehab+samsung@kernel.org,
+        mripard@kernel.org, robh+dt@kernel.org,
+        Rob Herring <robh@kernel.org>, sam@ravnborg.org,
+        shawnguo@kernel.org, sravanhome@gmail.com
+Subject: Applied "dt-bindings: Add an entry for Monolithic Power System, MPS" to the regulator tree
+In-Reply-To: <20200108131234.24128-2-sravanhome@gmail.com>
+Message-Id: <applied-20200108131234.24128-2-sravanhome@gmail.com>
 X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -38,7 +40,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: bindings: add MPS mp8859 voltage regulator
+   dt-bindings: Add an entry for Monolithic Power System, MPS
 
 has been applied to the regulator tree at
 
@@ -63,50 +65,34 @@ to this mail.
 Thanks,
 Mark
 
-From 44665f7d082977e8bb1803ec0e596f141cba7196 Mon Sep 17 00:00:00 2001
-From: Markus Reichl <m.reichl@fivetechno.de>
-Date: Mon, 6 Jan 2020 22:16:27 +0100
-Subject: [PATCH] regulator: bindings: add MPS mp8859 voltage regulator
+From 9399e5dc6b679994872a6039849547c416bb6b05 Mon Sep 17 00:00:00 2001
+From: Saravanan Sekar <sravanhome@gmail.com>
+Date: Wed, 8 Jan 2020 14:12:31 +0100
+Subject: [PATCH] dt-bindings: Add an entry for Monolithic Power System, MPS
 
-The MP8859 from Monolithic Power Systems is a single output dc/dc converter
-with voltage control over i2c.
+Add an entry for Monolithic Power System, MPS
 
-Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
-Link: https://lore.kernel.org/r/20200106211633.2882-5-m.reichl@fivetechno.de
+Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Link: https://lore.kernel.org/r/20200108131234.24128-2-sravanhome@gmail.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../devicetree/bindings/regulator/mp8859.txt  | 22 +++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/mp8859.txt
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/regulator/mp8859.txt b/Documentation/devicetree/bindings/regulator/mp8859.txt
-new file mode 100644
-index 000000000000..74ad69730989
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/mp8859.txt
-@@ -0,0 +1,22 @@
-+Monolithic Power Systems MP8859 voltage regulator
-+
-+Required properties:
-+- compatible: "mps,mp8859";
-+- reg: I2C slave address.
-+
-+Optional subnode for regulator: "mp8859_dcdc", using common regulator
-+bindings given in <Documentation/devicetree/bindings/regulator/regulator.txt>.
-+
-+Example:
-+
-+	mp8859: regulator@66 {
-+		compatible = "mps,mp8859";
-+		reg = <0x66>;
-+		dc_12v: mp8859_dcdc {
-+			regulator-name = "dc_12v";
-+			regulator-min-microvolt = <12000000>;
-+			regulator-max-microvolt = <12000000>;
-+			regulator-boot-on;
-+			regulator-always-on;
-+		};
-+	};
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 6046f4555852..5eac9d08bfa8 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -605,6 +605,8 @@ patternProperties:
+     description: MiraMEMS Sensing Technology Co., Ltd.
+   "^mitsubishi,.*":
+     description: Mitsubishi Electric Corporation
++  "^mps,.*":
++    description: Monolithic Power Systems, Inc.
+   "^mosaixtech,.*":
+     description: Mosaix Technologies, Inc.
+   "^motorola,.*":
 -- 
 2.20.1
 
