@@ -2,66 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 341F81340EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:44:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67A6B1340E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:44:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbgAHLne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 06:43:34 -0500
-Received: from mga04.intel.com ([192.55.52.120]:7832 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726852AbgAHLnc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 06:43:32 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 03:43:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,409,1571727600"; 
-   d="scan'208";a="370923917"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
-  by orsmga004.jf.intel.com with ESMTP; 08 Jan 2020 03:43:30 -0800
-Subject: Re: [PATCH 0/3] Fix issues with command queuing in arasan controllers
-To:     Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org
-Cc:     ulf.hansson@linaro.org, shawn.lin@rock-chips.com
-References: <20191230092343.30692-1-faiz_abbas@ti.com>
- <837996b2-c69f-1446-fda4-5577e28ba8e1@ti.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <a1b75d07-17ab-5dec-aa40-b9cff247eabf@intel.com>
-Date:   Wed, 8 Jan 2020 13:42:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1728057AbgAHLnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 06:43:15 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:54972 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728032AbgAHLnM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 06:43:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578483790;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=bgnShBkcUouvreqGPWTdxhtBpLBwnjhEz8xa0lAL268=;
+        b=H4QIf6RCfr5DH7c/Li4/5AixWQ29LVFLpAp5dHtzPDD3gORSs2yy+Sqp8yJbwrdmRg2var
+        5fwWLXPKotZfkil7QrjeSthuO/E6wJAlNBYRFCsVpvEMrdMTXpaLDXDUhqSX/gShOw5jU/
+        ofWMeVTXnsnclyj0k76bkukeCpYq54g=
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
+ [209.85.210.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-19-Y6lfzDtCNYWgbepgS8l8Zw-1; Wed, 08 Jan 2020 06:43:04 -0500
+X-MC-Unique: Y6lfzDtCNYWgbepgS8l8Zw-1
+Received: by mail-ot1-f70.google.com with SMTP id f25so1523155otq.15
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 03:43:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bgnShBkcUouvreqGPWTdxhtBpLBwnjhEz8xa0lAL268=;
+        b=IkgdrwrWvhtMGJgICeLdWhYAOQGDKptI41nhsqbzTTUlPpehukXYSglk8Kg6zVmOzU
+         gtHEQIJBXEufX/iqf7VBU+fQogx84sAGtF4pKBZaybeiSxOT0L1+DJcoHM/AEJa2p0pP
+         8KTa/3VYPXyN5P3YmjPUN00t2GEyuXW0rmxHwz3iPeoio9xCOlcm128/zyjR2JwbMMdS
+         w4SpbD5hKC8TH15cz5yHRG2U95Qw+5TuZzEWXdn9t/1hrlOY5JHaBO23+kp4wE7DDSBw
+         BT+N8XjUgDnmsnpJtTxWbLE/AxqlDDs6IEx9nff5OzvVG9JLyaMfMTTKU5OvOv0Ji2m5
+         fw0w==
+X-Gm-Message-State: APjAAAU1WkxjAHZKqrZCusWyW/nOZUFOWl65GeQ/6ZKQKyZYhen8c2SP
+        NV++J1wbRa/pJ+nRDMqFRuVbJCynZlAlHuqekMBKOHfJ42QNVPZH9vVdJ1BwwNI9bFAG3Y4F9vs
+        iGmFAdgWnNnQWDIcCiMC1wf3eNqgGF3hQV+8GU/hk
+X-Received: by 2002:a05:6830:1481:: with SMTP id s1mr3865296otq.66.1578483783302;
+        Wed, 08 Jan 2020 03:43:03 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyzIW/S3IzTt4xWYJQDR5bYb2wj40gcNcUGat8VxN4STKqFrZIKCLdVnJDP7sTWV7fQ07vWa4yqjVpEO4JP9/s=
+X-Received: by 2002:a05:6830:1481:: with SMTP id s1mr3865274otq.66.1578483782989;
+ Wed, 08 Jan 2020 03:43:02 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <837996b2-c69f-1446-fda4-5577e28ba8e1@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200108083430.57412-1-yehs2007@zoho.com>
+In-Reply-To: <20200108083430.57412-1-yehs2007@zoho.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Wed, 8 Jan 2020 12:42:52 +0100
+Message-ID: <CAFqZXNujo1px1=JVc+Chr_trVDRpwcXv7pqWVSxi+yifvWoMuA@mail.gmail.com>
+Subject: Re: [PATCH] LSM: Delete hooks in reverse order for avoiding race
+To:     Huaisheng Ye <yehs2007@zoho.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>, efremov@ispras.ru,
+        Paul Moore <paul@paul-moore.com>,
+        David Howells <dhowells@redhat.com>, joel@joelfernandes.org,
+        tyu1@lenovo.com,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/01/20 1:30 pm, Faiz Abbas wrote:
-> Hi,
-> 
-> On 30/12/19 2:53 pm, Faiz Abbas wrote:
->> In some Arasan SDHCI controllers, after tuning, the tuning pattern data
->> is leftover in the sdhci buffer. This leads to issues with future data
->> commands, especially when command queuing is enabled. The following
->> patches help fix this issue by resetting data lines after tuning is
->> finished. The first two patches have been tested with TI's am65x and
->> j721e SoCs using the sdhci_am654 driver.
->>
->> I have a strong suspicion that this is the same issue with
->> the sdhci-of-arasan driver where they are forced to dump data from the
->> buffer before enabling command queuing. I need help from someone with a
->> compatible platform to test this.
->>
-> 
-> I had some discussions with our hardware team and they say we should be
-> asserting both SRC and SRD reset after tuning to start from a clean
-> state. Will update the patches to do that in v2.
+Hi,
 
-Can you use the ->execute_tuning() for that instead of a quirk?
+On Wed, Jan 8, 2020 at 9:51 AM Huaisheng Ye <yehs2007@zoho.com> wrote:
+> From: Huaisheng Ye <yehs1@lenovo.com>
+>
+> There is small possibility as race condition when selinux_disable
+> has been triggered. security_delete_hooks deletes all selinux hooks
+> from security_hook_heads, but there are some selinux functions which
+> are being called at the same time.
+>
+> Here is a panic accident scene from 4.18 based kernel,
+>
+> [   26.654494] SELinux:  Disabled at runtime.
+> [   26.654507] BUG: unable to handle kernel NULL pointer dereference
+> at 0000000000000020
+> [   26.654508] PGD 0 P4D 0
+> [   26.654510] Oops: 0002 [#1] SMP NOPTI
+> [   26.654512] CPU: 53 PID: 2614 Comm: systemd-cgroups Tainted: G
+>      OE    --------- -  - 4.18.0-80.el8.x86_64 #1
+> [   26.654512] Hardware name: Lenovo ThinkSystem SR850P
+>  -[7D2H]-/-[7D2H]-, BIOS -[TEE145P-1.10]- 12/06/2019
+> [   26.654519] RIP: 0010:selinux_socket_post_create+0x80/0x390
+> [   26.654520] Code: e9 95 6a 89 00 bd 16 00 00 00 c7 44 24 04 01
+>  00 00 00 45 85 c0 0f 85 f6 00 00 00 8b 56 14 85 d2 0f 84 26 01 00
+>  00 89 54 24 04 <66> 41 89 6c 24 20 31 c0 41 89 54 24 1c 41 c6 44
+>  24 22 01 49 8b 4d
+> [   26.654521] RSP: 0018:ffffbf515cc63e48 EFLAGS: 00010246
+> [   26.654522] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000019
+> [   26.654522] RDX: 0000000000000001 RSI: 0000000000000001 RDI: ffffffffab46f680
+> [   26.654523] RBP: 0000000000000019 R08: 0000000000000000 R09: ffffbf515cc63e4c
+> [   26.654523] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> [   26.654524] R13: ffff97d7bb6cbc80 R14: 0000000000000001 R15: ffff97d7bb6cbc80
+> [   26.654525] FS:  00007f5c608ea380(0000) GS:ffff97d7bf140000(0000) knlGS:0000000000000000
+> [   26.654525] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   26.654526] CR2: 0000000000000020 CR3: 0000011ebc934004 CR4: 00000000007606e0
+> [   26.654527] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [   26.654528] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [   26.654528] PKRU: 55555554
+> [   26.654528] Call Trace:
+> [   26.654535]  security_socket_post_create+0x42/0x60
+> [   26.654537] SELinux:  Unregistering netfilter hooks
+> [   26.654542]  __sock_create+0x106/0x1a0
+> [   26.654545]  __sys_socket+0x57/0xe0
+> [   26.654547]  __x64_sys_socket+0x16/0x20
+> [   26.654551]  do_syscall_64+0x5b/0x1b0
+> [   26.654554]  entry_SYSCALL_64_after_hwframe+0x65/0xca
+>
+> The root cause is that, selinux_inode_alloc_security has been deleted
+> firstly from security_hook_heads, so security_inode_alloc directly
+> return 0, that means the value of pointer inode->i_security equalling
+> to NULL.
+>
+> But selinux_socket_post_create hasn't been deleted at that moment, so
+> which would involked by mistake. Inside the function, pointer isec
+> needs to point to inode->i_security, then a NULL pointer defect happens.
+>
+> For current upstream kernel, because of commit
+> afb1cbe37440c7f38b9cf46fc331cc9dfd5cce21
+> the inode security has been moved out to LSM infrastructure from
+> individual security modules like selinux.
+>
+> But this patch still can be applied for solving similar issue when
+> security_delete_hooks has been used. Also for stable branch v4.19,
+> the inode security still need to be created in individual modules.
+
+Thank you for the patch, however there are already existing proposed
+patches to fix this issue, see [1], [2], and [3]. At the moment it
+looks like the SELinux hooks reorder approach ([1]) will be accepted
+as a temporary solution (the SELinux runtime disable is being
+deprecated [4] in favor of properly disabling SELinux by setting
+selinux=0 on the kernel command line).
+
+Your approach unfortunately isn't robust (depends on assumptions about
+how hooks are ordered by LSMs) nor complete (even the inverse order
+still has some race conditions that may lead to a crash - e.g.
+selinux_bpf_map() vs. selinux_bpf_map_alloc()).
+
+Also, please, don't forget to Cc the LSM/SELinux mailing lists
+(linux-security-module@vger.kernel.org/selinux@vger.kernel.org,
+respectively) for patches related to the LSM framework/SELinux.
+
+[1] https://lore.kernel.org/selinux/20191209075756.123157-1-omosnace@redhat.com/T/
+[2] https://lore.kernel.org/selinux/20191211140833.939845-1-omosnace@redhat.com/T/
+[3] https://lore.kernel.org/selinux/20200107133154.588958-1-omosnace@redhat.com/T/
+[4] https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git/commit/?h=next&id=89b223bfb8a89731bea4c84982b5d2ad7ba460e3
+
+>
+> The patch has been verified by Lenovo SR850P server through overnight
+> reboot cycles.
+>
+> Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+> ---
+>  include/linux/lsm_hooks.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 20d8cf1..57cb2ac 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -2164,7 +2164,7 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+>         int i;
+>
+>         for (i = 0; i < count; i++)
+> -               hlist_del_rcu(&hooks[i].list);
+> +               hlist_del_rcu(&hooks[count - 1 - i].list);
+>  }
+>  #endif /* CONFIG_SECURITY_SELINUX_DISABLE */
+>
+> --
+> 1.8.3.1
+>
+>
+
+-- 
+Ondrej Mosnacek <omosnace at redhat dot com>
+Software Engineer, Security Technologies
+Red Hat, Inc.
+
