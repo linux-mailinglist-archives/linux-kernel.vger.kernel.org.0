@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BE2513389B
+	by mail.lfdr.de (Postfix) with ESMTP id 6B83D13389C
 	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 02:40:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbgAHBkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 20:40:00 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52680 "EHLO mx2.suse.de"
+        id S1727053AbgAHBkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 20:40:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52738 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726313AbgAHBkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 20:40:00 -0500
+        id S1726313AbgAHBkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 20:40:02 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E6634AE7F;
-        Wed,  8 Jan 2020 01:39:58 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 516CBAFB0;
+        Wed,  8 Jan 2020 01:40:01 +0000 (UTC)
 From:   Davidlohr Bueso <dave@stgolabs.net>
 To:     dave@stgolabs.net
 Cc:     bigeasy@linutronix.de, bristot@redhat.com, jack@suse.com,
@@ -23,11 +23,12 @@ Cc:     bigeasy@linutronix.de, bristot@redhat.com, jack@suse.com,
         peterz@infradead.org, tglx@linutronix.de, will@kernel.org,
         williams@redhat.com, Davidlohr Bueso <dbueso@suse.de>
 Subject: [PATCH] locking/percpu-rwsem: Add might_sleep() for writer locking
-Date:   Tue,  7 Jan 2020 17:33:04 -0800
-Message-Id: <20200108013305.7732-1-dave@stgolabs.net>
+Date:   Tue,  7 Jan 2020 17:33:05 -0800
+Message-Id: <20200108013305.7732-2-dave@stgolabs.net>
 X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191115203906.fbo6t7d2n6xk3saw@linux-p48b>
+In-Reply-To: <20200108013305.7732-1-dave@stgolabs.net>
 References: <20191115203906.fbo6t7d2n6xk3saw@linux-p48b>
+ <20200108013305.7732-1-dave@stgolabs.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
