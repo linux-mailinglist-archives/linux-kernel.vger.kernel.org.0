@@ -2,124 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBD01134678
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 16:42:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8284313467D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 16:43:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729060AbgAHPmJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 10:42:09 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:52291 "EHLO
+        id S1727888AbgAHPnF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 10:43:05 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:54638 "EHLO
         mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729045AbgAHPmH (ORCPT
+        with ESMTP id S1726290AbgAHPnE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 10:42:07 -0500
-Received: by mail-pj1-f67.google.com with SMTP id a6so1236778pjh.2;
-        Wed, 08 Jan 2020 07:42:07 -0800 (PST)
+        Wed, 8 Jan 2020 10:43:04 -0500
+Received: by mail-pj1-f67.google.com with SMTP id kx11so1231956pjb.4;
+        Wed, 08 Jan 2020 07:43:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=NqcNgcBIdsIjxgPBGKJAVyvsIKyRH4Nc8ZAOSc+D0fE=;
-        b=X695sjDZ3I4ZjRLo6I24zQ/zy2+HMnhKMYzkrip6EpfcvthHq8Ax+KZkMQsZxEeUUU
-         wYJvnt0YXY/nrHPafYHkVWd3Upn3aFRB4M3ZqLt16ZC5jtWFU1b922rTKr3Zp7sFnSU/
-         XP/vOOnJ13BHHu9QXBXe2w3HKY+QbtdcXqtFZiXmYuKsYt84Wd96oZ/98gX4lrZfqzBz
-         P4WyVoM+o+lAN7Az6Ck9gNUiO4X1lzN2RQ5T3Tbh9KQj4NUq9d0C3ZFwZbKTtWWmgAgB
-         oJTzakpiEr1vCInId1dZ1l709PXO/UG7uEJXgGn2WRxilb4D3HmAAnQb70HdqSiYViZi
-         DpBQ==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VaYDiyKUVmJvWDMGJuT27lJYQZ/YihlSUlgaX0Q70Po=;
+        b=hJcPu2D7URepxUGAoP5Zwg5Bp6aGXbR+L4yQld2wRWdqm6OE4I3t17DvyFU4ACI0nf
+         g/filK0qQkmI4zqU8WKA7v3VhwnN4Z20WWi26zQX2ZcAToX97CgHZgiZX1ddSS5HVYZ+
+         4q1NHG6qH1ZZB8eAABCB2pCkNuzsfaxOJxyDZ5eaEUbqoH1knVGtZ5h8nJrz2Z2U5AuM
+         gCouVX+Z7lD6hbkHGMZHHSS7MbXJiNGgZ/VrkRY1E6Ylp8D9WwxeyRL5aNcPzsyNzYmt
+         enEh81KZgW7SL/YSkAF9cfVxaC53ZowYJrIeowKNAgKMAJI9JsEEuCuPWJ7VUfP/R5e3
+         GUFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=NqcNgcBIdsIjxgPBGKJAVyvsIKyRH4Nc8ZAOSc+D0fE=;
-        b=iOWbrqtV3gMXLeRGH+iq+3AvCwWIAtOY1p19vdLIqk0j0SPzLUeQq2WG2kiC1R678t
-         ze3Dnzxda78rkTtg8uh9+qCMR9zswAPp3hjVv7wyGuT8jvHTw2OGDZySNt33I7VJL5im
-         xr9v40K7Jhd68jxs6bB8rubjeQebtJqW+LInKk0YUNj4yr7G15dz/c9Z1l9WWhF9lQ1U
-         JZxdKY9I8RJjOjUtehambq3rvSRRbs7etLEWRJ1oSmYeRyb9zM2MA+ETgI3PyS5/nakg
-         QFRV91CtPNK+p8qtRgUWg1OzohZbiW44NdxR2m0v8/qxNsMjPASX3QzA0u6eClsBQKmm
-         3TZw==
-X-Gm-Message-State: APjAAAUBEGOsI/A++eVaDT011snrgGa5KnOKyfF3+b83dBKZ2g229rLS
-        4lngOTjtwDAQiFAhA74Q6PpK4yzt
-X-Google-Smtp-Source: APXvYqza+Ai3sj9qXmjB+8LuxnlqvhRuDxggGyIJVthk929D3XxHkipgLVT+kgJlJhcVp0zhz0eDrA==
-X-Received: by 2002:a17:902:7203:: with SMTP id ba3mr5794754plb.249.1578498126366;
-        Wed, 08 Jan 2020 07:42:06 -0800 (PST)
-Received: from localhost.localdomain (c-67-165-113-11.hsd1.wa.comcast.net. [67.165.113.11])
-        by smtp.gmail.com with ESMTPSA id e1sm4286640pfl.98.2020.01.08.07.42.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2020 07:42:05 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-crypto@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        linux-kernel@vger.kernel.org, linux-imx@nxp.com
-Subject: [PATCH v6 7/7] crypto: caam - limit single JD RNG output to maximum of 16 bytes
-Date:   Wed,  8 Jan 2020 07:40:47 -0800
-Message-Id: <20200108154047.12526-8-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200108154047.12526-1-andrew.smirnov@gmail.com>
-References: <20200108154047.12526-1-andrew.smirnov@gmail.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VaYDiyKUVmJvWDMGJuT27lJYQZ/YihlSUlgaX0Q70Po=;
+        b=pxwZyqp7G4ugSLEDSL5ylbYDTq8P08UV2LNZ/NUPo0USbdE3AgKNqu5q7y9hdLtdAj
+         piTuk8qnDvotkqLIVcirx5Rdw+EELIyLgGmQ9fmKTFpVhx8dK5QvvAR/KXTd4gm1/xe5
+         wlXLtwYE41DWbEJrPU29Dj3FvIIUPV7vuISByrGSbkbFQfuSIN2FHAfdX8LStZK8ZCd8
+         Pb4gphaUgeb9QkIIm+agDRZw/382z/kBT6CyfNTnaxlokdntcscPs1dlSfJLl6XtxR7d
+         nixmfn3F5X9HhQGm0CgvxQWNRhUv/N6exgJkZriLm0DC8ei1cang724bCNexVVoNkTd7
+         A9gQ==
+X-Gm-Message-State: APjAAAV/vVu8mHdm3pTkMu1C/N71zvOjD6cw96ICuSYZ58yAk2mKvDaK
+        74eggW6gkJM8QlKC8YSq0LmiV3ga
+X-Google-Smtp-Source: APXvYqyAhT8tiDk4AYesoJw0msEtDV3fiU7ZCmZlQtqRf0s91c5G+Ekg2BYX5wZ0+lfXG3Y2JUJ0Ow==
+X-Received: by 2002:a17:902:aa8f:: with SMTP id d15mr5505288plr.276.1578498183723;
+        Wed, 08 Jan 2020 07:43:03 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id s24sm4266709pfd.161.2020.01.08.07.43.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 08 Jan 2020 07:43:02 -0800 (PST)
+Date:   Wed, 8 Jan 2020 07:43:02 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 00/74] 4.14.163-stable review
+Message-ID: <20200108154302.GA28993@roeck-us.net>
+References: <20200107205135.369001641@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200107205135.369001641@linuxfoundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to follow recommendation in SP800-90C (section "9.4 The
-Oversampling-NRBG Construction") limit the output of "generate" JD
-submitted to CAAM. See
-https://lore.kernel.org/linux-crypto/VI1PR0402MB3485EF10976A4A69F90E5B0F98580@VI1PR0402MB3485.eurprd04.prod.outlook.com/
-for more details.
+On Tue, Jan 07, 2020 at 09:54:25PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.163 release.
+> There are 74 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 09 Jan 2020 20:44:51 +0000.
+> Anything received after that time might be too late.
+> 
 
-This change should make CAAM's hwrng driver good enough to have 999
-quality rating.
+For v4.14.162-73-g404399b2e7db:
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Horia Geantă <horia.geanta@nxp.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-imx@nxp.com
----
- drivers/crypto/caam/caamrng.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Build results:
+	total: 172 pass: 172 fail: 0
+Qemu test results:
+	total: 373 pass: 373 fail: 0
 
-diff --git a/drivers/crypto/caam/caamrng.c b/drivers/crypto/caam/caamrng.c
-index 91ccde0240fe..2b75ffffcac9 100644
---- a/drivers/crypto/caam/caamrng.c
-+++ b/drivers/crypto/caam/caamrng.c
-@@ -23,7 +23,7 @@
- #include "error.h"
- 
- /* length of descriptors */
--#define CAAM_RNG_MAX_FIFO_STORE_SIZE	U16_MAX
-+#define CAAM_RNG_MAX_FIFO_STORE_SIZE	16
- 
- #define CAAM_RNG_FIFO_LEN		SZ_32K /* Must be a multiple of 2 */
- 
-@@ -134,7 +134,7 @@ static void caam_rng_fill_async(struct caam_rng_ctx *ctx)
- 
- 	sg_init_table(sg, ARRAY_SIZE(sg));
- 	nents = kfifo_dma_in_prepare(&ctx->fifo, sg, ARRAY_SIZE(sg),
--				     CAAM_RNG_FIFO_LEN);
-+				     CAAM_RNG_MAX_FIFO_STORE_SIZE);
- 	if (!nents)
- 		return;
- 
-@@ -241,6 +241,7 @@ int caam_rng_init(struct device *ctrldev)
- 	ctx->rng.init    = caam_init;
- 	ctx->rng.cleanup = caam_cleanup;
- 	ctx->rng.read    = caam_read;
-+	ctx->rng.quality = 999;
- 
- 	dev_info(ctrldev, "registering rng-caam\n");
- 
--- 
-2.21.0
-
+Guenter
