@@ -2,86 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58985133C51
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 08:29:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F12F9133C41
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 08:26:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbgAHH3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 02:29:34 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:44368 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725944AbgAHH3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 02:29:33 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F2F7F1A03DB;
-        Wed,  8 Jan 2020 08:29:31 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 705181A0109;
-        Wed,  8 Jan 2020 08:29:23 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E6568402C1;
-        Wed,  8 Jan 2020 15:29:12 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        daniel.baluta@nxp.com, leonard.crestez@nxp.com,
-        shengjiu.wang@nxp.com, ping.bai@nxp.com, jun.li@nxp.com,
-        aford173@gmail.com, peng.fan@nxp.com, abel.vesa@nxp.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 2/2] arm64: dts: imx8mn: Memory node should be in board DT
-Date:   Wed,  8 Jan 2020 15:25:29 +0800
-Message-Id: <1578468329-9983-2-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1578468329-9983-1-git-send-email-Anson.Huang@nxp.com>
-References: <1578468329-9983-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726990AbgAHH0Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 02:26:24 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34704 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726931AbgAHH0X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 02:26:23 -0500
+Received: by mail-pg1-f195.google.com with SMTP id r11so1138982pgf.1;
+        Tue, 07 Jan 2020 23:26:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=BGo10uJ7yfot4T+e9WxjVmggP6J1wCJOQgtZDEvps6k=;
+        b=DZYTvdIW+43poxmXAWsnbKEMXfMgAYTNSNSjzrKvHcbxYUNT70lgy3dQKoQG768UuR
+         y/4QnZ41Z2U3eHE/WyeZxE7goX74Z6fTViI2rtkRlsG1+kLZX9o56Nr8Hf5pbVnmR+Lq
+         xO2XIfYh4WJYvL9FM8OKz27dOyW+woGROnWGCj+7ePioeXlCFJbDT3OrkIQzSWTxbwBK
+         C7gNn+O/JZlSIUHDuES4e78GNWe0O+MJRMUqv2PTJJQJE3V0644vAgqpYYvGB1Uo8liZ
+         etu8LY3BomXKXaUE1mhQnk/KJqmRstxgYvxUOI4+rjn8OSNRK6jpeax5YJoH6y8k6T0b
+         PYog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BGo10uJ7yfot4T+e9WxjVmggP6J1wCJOQgtZDEvps6k=;
+        b=CRZqDO//5bpavvXVCG/JHM4eWpMez9/c3pc01NdahU1pYB6bXcHR8ApFgHzarSsZqs
+         DTuUK0qIjbVudIM9gybrvNZrBVJ8TI3L/OC5LS1+irRDyegY9qSS4NDisPIPRsR64Dlo
+         RbAjgrtswY68Yf7qNJfUuWVSSTm5RGDkSdxfNWGvJC0WHXSQxaJqiUCS8pilTSBuq5Il
+         Pg642SRCAPZNrvuiFG3sqKNzkzvoXoRKDC9+dwTQOGQj+A9dgcXzQOzbnkFL68OENQ/d
+         V1VdgLcd6zsGHrRZB1BPAq9ula1Rt0iNTpMmwYSKaBO9ItrptbdWxdXoz840+yswWdQ6
+         dwaw==
+X-Gm-Message-State: APjAAAXkzX9EC3+sA5kO3qKR8rL5+tqthfsZC//eNeHoJ9xyHEp58OsM
+        RWvH/4+b5dVX9SFICEfPy4E=
+X-Google-Smtp-Source: APXvYqxghKJ14QjOwmxrl6htFh2WX6svt01e28xiCtneF71s3aUeytu3/ouF1j764HyGERYD9M/y4g==
+X-Received: by 2002:a65:4587:: with SMTP id o7mr3730787pgq.303.1578468383088;
+        Tue, 07 Jan 2020 23:26:23 -0800 (PST)
+Received: from localhost (199.168.140.36.16clouds.com. [199.168.140.36])
+        by smtp.gmail.com with ESMTPSA id o31sm2231827pgb.56.2020.01.07.23.26.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 Jan 2020 23:26:22 -0800 (PST)
+From:   Dejin Zheng <zhengdejin5@gmail.com>
+To:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
+        joabreu@synopsys.com, davem@davemloft.net,
+        mcoquelin.stm32@gmail.com, martin.blumenstingl@googlemail.com,
+        treding@nvidia.com, andrew@lunn.ch, weifeng.voon@intel.com,
+        tglx@linutronix.de
+Cc:     netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dejin Zheng <zhengdejin5@gmail.com>
+Subject: [PATCH v2 0/2] net: stmmac: remove useless code of phy_mask
+Date:   Wed,  8 Jan 2020 15:25:48 +0800
+Message-Id: <20200108072550.28613-1-zhengdejin5@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory address/size depends on board design, so memory node should
-be in board DT.
+These patches just for cleanup codes in stmmac driver.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi | 5 +++++
- arch/arm64/boot/dts/freescale/imx8mn.dtsi     | 5 -----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+Changes since v1:
+	1, add a new commit for remove the useless member phy_mask.
+	2, adjust some commit comments for the original commit.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi b/arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi
-index 7a92952..0d2ec4a 100644
---- a/arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi
-@@ -23,6 +23,11 @@
- 		};
- 	};
- 
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x40000000 0 0x80000000>;
-+	};
-+
- 	reg_usdhc2_vmmc: regulator-usdhc2 {
- 		compatible = "regulator-fixed";
- 		pinctrl-names = "default";
-diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-index cce65b9..4014029 100644
---- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-@@ -139,11 +139,6 @@
- 		};
- 	};
- 
--	memory@40000000 {
--		device_type = "memory";
--		reg = <0x0 0x40000000 0 0x80000000>;
--	};
--
- 	osc_32k: clock-osc-32k {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
+Dejin Zheng (2):
+  net: stmmac: pci: remove the duplicate code of set phy_mask
+  net: stmmac: remove the useless member phy_mask
+
+ drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c | 1 -
+ drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c  | 5 -----
+ include/linux/stmmac.h                            | 1 -
+ 3 files changed, 7 deletions(-)
+
 -- 
-2.7.4
+2.17.1
 
