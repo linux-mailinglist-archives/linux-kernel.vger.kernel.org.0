@@ -2,77 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DE43133B77
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 06:55:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DDEE133B79
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 06:56:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726276AbgAHFy4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 00:54:56 -0500
-Received: from sonic303-1.consmr.mail.bf2.yahoo.com ([74.6.131.40]:43852 "EHLO
-        sonic303-1.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725774AbgAHFy4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 00:54:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1578462894; bh=KB5k1+sCGpSRd9pTKc0P9/4ZGPy9ZVtmix5g8Hf7Eac=; h=Date:From:Reply-To:Subject:References:From:Subject; b=hS5yJo9/0S3jcVRgJQnyqDZbweGxbOFKAXFnKoRyoozEUH2hnXBh3+YgQ0ROyM7UGsOTCcQUWfw0shsLuCBEH4xPHcsGLkoXklXSw32UqbKVGKoSMfWF6KrOcgQkT/5M4x/unFpfUKFlSVKUH4SMyYbXWe/krFRU4mkSheE8ZrD3tecvg8CbVG6HVKsOiGQ2ruPf0HgdodcgSbOGOT8V1tCOyLqLTb0ZCqDO+szruTXgYrd8rdTTC90YnD6sdszp6J9aypAvcn4+McrqHfIFwy13rQ0JbxaGKZqFs9mrhkN2HanHtc2y+0fpIj5qMGGox4/vezILq82imhY8aMNLFw==
-X-YMail-OSG: OA_gZnYVM1mfQ.LV7uS_eghIqLbwj3U1qCoyQ9z9fBsqqsfZfpcOLFTR4ZUMj2g
- ywCWwQoFU9mTXRZscmjXU_BQ.V5nnLsMXaGYibS4P6M4xKGL2X6v5yXqhkoJ.g2wQ_SmYSA1eE1L
- cSHVm4mP8limYVgLcDzjkGvZmQeZne7g.y5pAKSH21bJG6kaX1ryZuEc0IUvmRYyyHB8cw5h.7zx
- 2lclEeg5RorJ25cMqxCicVHxPnmk5kQTf2FOeZS5HrWo3IJoM5o.r54vF8I.hHesFpE.VYxbcLlu
- kh851bLFzPpCwm8bepvj8bxvY_Y88SOYMvDA2XMyehSwf7_ZFh8RX.4wY35w35iVag1Gz1FXvXoH
- bgKnFcLd9okulbrtrwO0zI8vH7e6s0Rep3TVBG.5YQemEMTcxmyv1bnjOx7PFsx2gWZFqErnQzCR
- o_3WpmB3dMgUTy3V4Jg1dbR3fo6BVERw6TUTqN2867xCIvITYemzswa_pDq489lWn7AUiE3S7rLO
- vUtYNcLQDLk9uWjzstVIyXHu6rAC1FhyGeDWJvrrL3dYqBM5eTFUE6xfHuRvSE85GkyduV8oE7t8
- fc2oOlmqao6sXs.wtY61D1oVwH2CLS_3Y6FCD.KGPrrnoRS.RngYRE5vr8x7WzWwKd5Qrj9vQLVK
- 01yL9cCEibu6ErGna7RztnkmSWaIPRFCatOEngUhnICaRlJZEeaxbnaFx8_2T5Tqb5BUISicAvLW
- yAIjxIxEJgASPO10lH1ox4q9i6n0sVfd.c52crDPoDZrmrta_74JGm90QqtRtl7jpzTIpj0WqqUD
- U9XHEC9AfSSu0scoA77JulZXaqnV6i2A3M_xL8Yo0qmHxp53xRRynQ3xwErr7oMrnTfUCzfXULTr
- LUcc9HuRTuaCKLHlg5nhDj0TIWNm2gQpKDCWnzlNODnXPC650Og6xcfZX1IxLksvGDob2u6u7qkt
- GZTF4u9.82saYzyLrIbsPR3ycam8Z7IjV1sgXuXIDiC9jqxjlTX57CpzPY1hVhzvVsTxlo7pDjpt
- Lr3Zz2CcTx6Tw4Dz0rGdBmpyOWcL1EgcsnorNQnC1aLFux9wtzrblPFB2PAceT.ICoXdiPn55thu
- G3_fAcmqssQe_srknH2AOhvWX1pnBk0hUHwAzh8R2GxlGfV.3QPnketFCcsGDrPpONlmGq5HnOIP
- WimUF6AaprfNguYTAZkESUzH3yRaLkYDlz85Vr0ldqBCNb5LK7jJM2mKqYPAjMKirTcTqZZf9OX5
- ww8hV1wrw5D_NLoPRJHh92bKB6jJ5f.nDQ87G02eJ5eEtIPMpsTdtMvt7.8ZTIGj_mtIfj5hv33j
- 3adwmI6R.G.L4jtNLiOPj
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.bf2.yahoo.com with HTTP; Wed, 8 Jan 2020 05:54:54 +0000
-Date:   Wed, 8 Jan 2020 05:54:53 +0000 (UTC)
-From:   jerome njitap <jeromenjitap10@aol.com>
-Reply-To: jeromenjitap100@gmail.com
-Message-ID: <1751629494.5453446.1578462893197@mail.yahoo.com>
-Subject: SESAME SEED SUPPLY BURKINA FASO
+        id S1726346AbgAHF4D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 00:56:03 -0500
+Received: from mga11.intel.com ([192.55.52.93]:20091 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725774AbgAHF4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 00:56:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2020 21:56:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,408,1571727600"; 
+   d="scan'208";a="246243065"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga004.fm.intel.com with ESMTP; 07 Jan 2020 21:56:02 -0800
+Received: from [10.226.38.20] (unknown [10.226.38.20])
+        by linux.intel.com (Postfix) with ESMTP id 59B1E58033E;
+        Tue,  7 Jan 2020 21:56:00 -0800 (PST)
+Subject: Re: [PATCH v6 2/2] spi: cadence-quadpsi: Add support for the Cadence
+ QSPI controller
+To:     Vignesh Raghavendra <vigneshr@ti.com>, broonie@kernel.org,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     robh+dt@kernel.org, dan.carpenter@oracle.com,
+        cheol.yong.kim@intel.com, qi-ming.wu@intel.com
+References: <20191230074102.50982-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <20191230074102.50982-3-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <ac26ecfe-d45c-db70-df8f-91da32c9925a@ti.com>
+From:   "Ramuthevar, Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Message-ID: <42773e8e-3c5e-c034-a1cb-864ed63b6937@linux.intel.com>
+Date:   Wed, 8 Jan 2020 13:55:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <1751629494.5453446.1578462893197.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.14873 YMailNodin Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <ac26ecfe-d45c-db70-df8f-91da32c9925a@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Sir,
+Hi,
 
-This is to bring to your notice that we can supply your needs for
-quality Sesame seeds and other products listed below :
+Thank you for the review  comments and your time.
 
-
-Cashew nut
-Raw cotton
-Sesame seed
-Copper cathode
-Copper wire scraps
-Mazut 100 oil,D6
-Used rails
-HMS 1/2
-
-
-We offer the best quality at reasonable prices both on CIF and FOB,
-depending on the nature of your offer. Our company has been in this
-line of business for over a decade so you you can expect nothing but a
-top-notch professional touch and guarantee when you deal or trade with
-us.all communication should be through this email address for
-confidencial purpose(jeromenjitap100@gmail.com)and your whatsaap number.
-
-Look forward to your response.
-
+On 8/1/2020 1:25 PM, Vignesh Raghavendra wrote:
+> Hi,
+> [...]
+> On 30/12/19 1:11 pm, Ramuthevar,Vadivel MuruganX wrote:
+>> +static int cqspi_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct struct_cqspi *cqspi;
+>> +	struct spi_master *master;
+>> +	struct reset_control *rstc, *rstc_ocp;
+>> +	const struct cqspi_driver_platdata *ddata;
+>> +	struct cqspi_platform_data *pdata = NULL;
+>> +	struct resource *res = NULL;
+>> +	int ret;
+>> +
+>> +	master = spi_alloc_master(&pdev->dev, sizeof(*cqspi));
+>> +	if (!master) {
+>> +		dev_err(&pdev->dev, "spi_alloc_master failed\n");
+>> +		return -ENOMEM;
+>> +	}
+>> +	master->mode_bits = SPI_RX_QUAD | SPI_TX_DUAL | SPI_RX_DUAL |
+>> +				SPI_RX_OCTAL;
+>> +	master->setup = cqspi_setup;
+>> +	master->mem_ops = &cqspi_mem_ops;
+>> +	master->dev.of_node = pdev->dev.of_node;
+>> +	cqspi = spi_master_get_devdata(master);
+>> +	cqspi->pdev = pdev;
+>> +
+>> +	pdata = devm_kmalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+> devm_kzalloc()?
+Noted, will fix it.
+>> +	if (!pdata)
+>> +		return -ENOMEM;
+>> +
+>> +	pdev->dev.platform_data = pdata;
+>> +
+>> +	/* Obtain QSPI clock. */
+>> +	cqspi->clk = devm_clk_get(&pdev->dev, "qspi");
+> clock-name of "qspi" is not mandatory as per DT binding and current DT
+> files don't have clock-names property. This therefore cause probe to
+> fail. This should remain:
+>
+> 	cqspi->clk = devm_clk_get(&pdev->dev, "NULL");
+sure , I will add NULL instead of "qspi"
+>> +	if (IS_ERR(cqspi->clk)) {
+>> +		dev_err(&pdev->dev, "cannot get qspi clk\n");
+>> +		return PTR_ERR(cqspi->clk);
+>> +	}
+>> +	pdata->master_ref_clk_hz = clk_get_rate(cqspi->clk);
+>> +
+>> +	ret = clk_prepare_enable(cqspi->clk);
+>> +	if (ret < 0) {
+>> +		dev_err(&pdev->dev, "failed to enable qspi clock: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	/* Obtain configuration from OF. */
+>> +	ret = cqspi_of_get_pdata(pdev);
+>> +	if (ret) {
+>> +		dev_err(&pdev->dev, "Get platform data failed.\n");
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	cqspi->res = res;
+>> +	/* Obtain and remap controller address. */
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	cqspi->iobase = devm_ioremap_resource(&pdev->dev, res);
+>> +	if (IS_ERR(cqspi->iobase)) {
+>> +		dev_err(dev, "Cannot remap controller address.\n");
+>> +		return PTR_ERR(cqspi->iobase);
+>> +	}
+>> +
+>> +	/* Obtain and remap AHB address. */
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+>> +	cqspi->qspi_ahb_virt = devm_ioremap_resource(dev, res);
+>> +	if (IS_ERR(cqspi->qspi_ahb_virt)) {
+>> +		dev_err(dev, "Cannot remap AHB address.\n");
+>> +		return PTR_ERR(cqspi->qspi_ahb_virt);
+>> +	}
+>> +	cqspi->ahbbase = res;
+>> +	cqspi->ahb_size = resource_size(res);
+>> +
+>> +	/* Obtain QSPI reset control */
+>> +	rstc = devm_reset_control_get_optional_exclusive(dev, "qspi");
+>> +	if (IS_ERR(rstc)) {
+>> +		dev_err(dev, "Cannot get QSPI reset.\n");
+>> +		return PTR_ERR(rstc);
+>> +	}
+>> +
+>> +	rstc_ocp = devm_reset_control_get_optional_exclusive(dev, "qspi-ocp");
+>> +	if (IS_ERR(rstc_ocp)) {
+>> +		dev_err(dev, "Cannot get QSPI OCP reset.\n");
+>> +		return PTR_ERR(rstc_ocp);
+>> +	}
+>> +
+>> +	reset_control_assert(rstc);
+>> +	reset_control_deassert(rstc);
+>> +
+>> +	reset_control_assert(rstc_ocp);
+>> +	reset_control_deassert(rstc_ocp);
+>> +
+>> +	ddata  = of_device_get_match_data(dev);
+>> +	if (ddata && (ddata->quirks & CQSPI_NEEDS_WR_DELAY))
+>> +		cqspi->wr_delay = 5 * DIV_ROUND_UP(NSEC_PER_SEC,
+>> +						   pdata->master_ref_clk_hz);
+>> +
+>> +	if (ddata && (ddata->quirks & CQSPI_DISABLE_DAC_MODE))
+>> +		cqspi->use_dac_mode = false;
+>> +
+>> +	init_completion(&cqspi->transfer_complete);
+>> +
+>> +	/* Obtain IRQ line. */
+>> +	cqspi->irq = platform_get_irq(pdev, 0);
+>> +	if (cqspi->irq < 0) {
+>> +		dev_err(dev, "platform_get_irq failed.\n");
+>> +		ret = -ENXIO;
+>> +	}
+>> +	ret = devm_request_irq(dev, cqspi->irq, cqspi_irq_handler, 0,
+>> +			       pdev->name, cqspi);
+>> +	if (ret) {
+>> +		dev_err(dev, "request_irq failed.\n");
+>> +		goto out_clk_disable;
+>> +	}
+>> +
+>> +	master->bus_num = pdata->bus_num;
+>> +	master->num_chipselect = pdata->num_chipselect;
+> Where is pdata->bus_num and pdata->num_chipselect initialized? This
+> causes devm_spi_register_master() to fail randomly as num_chipselect may
+> be 0.
+Agreed!, I also observed the issue after sending the patches , will fix 
+it in the next patch-set.
 Regards
-Mr Jerome
+Vadivel
+>> +	mutex_init(&cqspi->lock);
+>> +	platform_set_drvdata(pdev, master);
+>> +	cqspi_controller_init(cqspi);
+>> +	cqspi->current_cs = -1;
+>> +
+>> +	ret = devm_spi_register_master(dev, master);
+>> +	if (ret) {
+>> +		dev_err(&pdev->dev, "devm_spi_register_master failed.\n");
+>> +		goto err_of;
+>> +	}
+>> +
+>> +	return 0;
+>> +
+>> +out_clk_disable:
+>> +	clk_disable_unprepare(cqspi->clk);
+>> +err_of:
+>> +	spi_master_put(master);
+>> +	dev_err(&pdev->dev, "Cadence QSPI controller probe failed\n");
+>> +	return ret;
+>> +}
+>> +
