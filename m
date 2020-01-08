@@ -2,93 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56443134E03
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 21:54:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87876134DF4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 21:53:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbgAHUyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 15:54:03 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34606 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727427AbgAHUx6 (ORCPT
+        id S1727225AbgAHUxl convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 8 Jan 2020 15:53:41 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:57107 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726155AbgAHUxk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 15:53:58 -0500
-Received: by mail-wr1-f67.google.com with SMTP id t2so4975767wrr.1;
-        Wed, 08 Jan 2020 12:53:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=z9FpZJlsxfrtEhSFDySWhmw47lo8JbRtU9wLQFcCMME=;
-        b=U5rGatZe//rnw7LVs9WeUyct2qy98AEqNUq+h00gKjRMmzUpzdKhHvMsn7GIEgXN7v
-         d4ZvQYcSJjIvbv5jT6sso1Y/r+OjO7J9wyD2HSjInh2ZmHYUbsWNIDiky2JowA3yfLZZ
-         LK2ZCes/u2fcKMGKO3BZw/fq/gI51a5LyGKcP83TIOENNnvKWwm824Gs++okVFTRDSPl
-         GUpsSp9AfHziV5XY7P1fvMxzAilTc7NgBqHbH0lr3AQVjC/V6nNmwuH+E7KnAYmlZZka
-         A0sxOEgo1F8MVyu5OhDr+lLjfZpb1gxbOu0YNEWGBRIwABrW+NuxPDU+PsyQkFHyeFhK
-         wwdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=z9FpZJlsxfrtEhSFDySWhmw47lo8JbRtU9wLQFcCMME=;
-        b=QMKdnB+1RIYV+L+CWpQjOkDhEbJAa97o4Lct7EAUyXh1rPwEilY2u/tmqYoZHMgjh1
-         ZFgASehUbBtLGSGuWomUvMP+00SyuQsS9P14G8QBWvdpJyRIVsovpFPgTI71KvvnLWGZ
-         bDu99GDP8YmcoNliHh6EOKyIxGiIViNHmN9q2syXDP4meO9e9E2a95xr0x/ysiT+1ag+
-         H3z4nIR6HnFcaILkaSOUbfTSDw1aqrO2XmGHpo9+Ij9KFu4ME6C01+ugojjSiqZWYtJa
-         AJPXz0IpB+T57TCIntx54wVJ59Ax/AMoP0vcMGPWefEaYgBhXNHNO4vv45o2mgGKtjDK
-         Qogg==
-X-Gm-Message-State: APjAAAUmJJTd0CtjJhaFLQlhuDMTViE8yXLBL/zJhqAfPzvPFipQT5Hq
-        qOfUmEdNTo8HdUTozMzE6Ms=
-X-Google-Smtp-Source: APXvYqwXzXwExy8tpSUlLOAGKe/8f/hfhE3ktWZZB/KjAShEe9kZZVaRqFTuXVzm07LUOTs/i9R4VQ==
-X-Received: by 2002:adf:f80c:: with SMTP id s12mr6734725wrp.1.1578516836849;
-        Wed, 08 Jan 2020 12:53:56 -0800 (PST)
-Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id c5sm311835wmd.42.2020.01.08.12.53.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Jan 2020 12:53:56 -0800 (PST)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     miquel.raynal@bootlin.com
-Cc:     richard@nod.at, vigneshr@ti.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, heiko@sntech.de,
-        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v1 10/10] ARM: dts: rockchip: rk3066a-mk808: enable nandc node
-Date:   Wed,  8 Jan 2020 21:53:38 +0100
-Message-Id: <20200108205338.11369-11-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200108205338.11369-1-jbx6244@gmail.com>
-References: <20200108205338.11369-1-jbx6244@gmail.com>
+        Wed, 8 Jan 2020 15:53:40 -0500
+Received: from marcel-macbook.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 95B02CECFA;
+        Wed,  8 Jan 2020 22:02:55 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
+Subject: Re: [PATCH v4] bluetooth: hci_bcm: enable IRQ capability from node
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <11747601-6d29-d2c8-7639-896d654280a4@baylibre.com>
+Date:   Wed, 8 Jan 2020 21:53:39 +0100
+Cc:     Johan Hovold <johan@kernel.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        BlueZ devel list <linux-bluetooth@vger.kernel.org>,
+        nsaenzjulienne@suse.de, linux-kernel@vger.kernel.org,
+        khilman@baylibre.com
+Content-Transfer-Encoding: 8BIT
+Message-Id: <EE92382A-DB56-483C-8F85-D658A654CDE6@holtmann.org>
+References: <20191213105521.4290-1-glaroque@baylibre.com>
+ <20191213111702.GX10631@localhost>
+ <162e5588-a702-6042-6934-dd41b64fa1dc@baylibre.com>
+ <20191213134404.GY10631@localhost>
+ <08ae6108-0829-3bb4-f398-7e6a58719d29@baylibre.com>
+ <8EBBCE1B-688D-4097-A2AF-6E099A0AD68B@holtmann.org>
+ <11747601-6d29-d2c8-7639-896d654280a4@baylibre.com>
+To:     guillaume La Roque <glaroque@baylibre.com>
+X-Mailer: Apple Mail (2.3608.40.2.2.4)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables the nandc node for a MK808 with rk3066 processor.
+Hi Guillaume,
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- arch/arm/boot/dts/rk3066a-mk808.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
+>>>>>>> @@ -1421,6 +1422,7 @@ static int bcm_serdev_probe(struct serdev_device *serdev)
+>>>>>>> #endif
+>>>>>>> 	bcmdev->serdev_hu.serdev = serdev;
+>>>>>>> 	serdev_device_set_drvdata(serdev, bcmdev);
+>>>>>>> +	bcmdev->irq = of_irq_get(bcmdev->dev->of_node, 0);
+>>>>>> Shouldn't you be used using of_irq_get_byname()?
+>>>>> i can use it if you prefer but no other interrupt need to be defined
+>>>> Maybe not needed then. Was just thinking it may make it more clear that
+>>>> you now have two ways to specify the "host-wakeup" interrupt (and in
+>>>> your proposed implementation the interrupts-property happens to take
+>>>> priority). Perhaps that can be sorted out when you submit the binding
+>>>> update for review.
+>>> no problem i add a "host-wakeup" interrupt-name.
+>>> you are right it will be more clear with name and we know why this interrupt is needed.
+>> have I missed the v5 or are still sending it?
+> 
+> sorry i was in chrismas holidays .
+> 
+> v5 was sent before holiday and you comment it [1] ;) , on v5 you ask me to send v6 with tag.
 
-diff --git a/arch/arm/boot/dts/rk3066a-mk808.dts b/arch/arm/boot/dts/rk3066a-mk808.dts
-index 365eff621..8928c9345 100644
---- a/arch/arm/boot/dts/rk3066a-mk808.dts
-+++ b/arch/arm/boot/dts/rk3066a-mk808.dts
-@@ -133,6 +133,15 @@
- 	status = "okay";
- };
- 
-+&nandc {
-+	status = "okay";
-+
-+	nand@0 {
-+		reg = <0>;
-+		nand-is-boot-medium;
-+	};
-+};
-+
- &pinctrl {
- 	usb-host {
- 		host_drv: host-drv {
--- 
-2.11.0
+ok, then I am waiting for v6.
+
+Regards
+
+Marcel
 
