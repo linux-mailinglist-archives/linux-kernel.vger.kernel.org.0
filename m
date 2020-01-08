@@ -2,117 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D02B4134896
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 17:55:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A71D13489C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 17:57:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729525AbgAHQzv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 11:55:51 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:42887 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729062AbgAHQzv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 11:55:51 -0500
-Received: by mail-il1-f195.google.com with SMTP id t2so3205574ilq.9
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 08:55:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=1otWToj29hMezV4JMaks8PqTBWepruh9XfV6M8TCvsU=;
-        b=nCfrnqH2TuHcWKw+gqbTFlRBtsM+1gJEXink7mJuJk0nmvtdrlFU+U/tbWkZz5lvA4
-         dh07Owg6buNjoKYNVnWOh06dY6tSCJ4FFXsMQS5xM9fY2YoZ2K8d4h0vrrk0rcKiCjDg
-         /zt7j1NoX9mNE6LKBm9rZQ0cWua+UdPI9ESaC/HRaqDM0l6Oc7Jd7kZNsC2BTgIRDFI4
-         iA+z4DrmdMyAUoIUh+NMcZ7KO4KtcZOSpubVyY/xr4AyYShePoXKrSYY/MMd1F7z27bq
-         Le9Q386olO/iPiTVvMnoWZWycMdtNI3ctdhfn+o2XKbjArzyeUB3Ou9iSd1gYdLdJO2v
-         M4GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=1otWToj29hMezV4JMaks8PqTBWepruh9XfV6M8TCvsU=;
-        b=M7AznN+QchcvLHXk5AVnmaukgVhrD8lUZHU2Rg57uVJuRXmutPm2oRnVSw134UonMi
-         4wlDgl099q/Mdmr2dNC88oZ/6UHyvpesVwdLqsI4Lr1NQUHx5DOV0Jo8PlsJT3wggWJu
-         UX1+ompCf+hOxEUy5A8MKbxy6sTObIftK4vsdBzlsqxqT6T38cHtIlabUD75QihAliw/
-         yLYnxpJCFDvo+zDR8PXFAd5XWmsvRff+dSHjehxgNKotbD6CiXC87qN91959jQLmUKsM
-         SEVMvghlmfrqibgojf2zkfDVgyjCCzNm5i0Jix+A7M3dGrPfzRDBkyqg+ybPElttv+Lp
-         3A2w==
-X-Gm-Message-State: APjAAAXhDgJ+NpFIjURzqOLQrrDviWwi1Nuzgw9uafgxx+W+Zv7ww7TC
-        CpM5gdmydIfN3Oz06lN3pTKCEUgpaQIjWwoBRndpFg==
-X-Google-Smtp-Source: APXvYqwXzt3Dr3coz5H6HOpE5yRjd+aaGYWdxOg2BItU2UZbx7shuxzvTAuTgRpxCkvnNo27mF+acMycT/1lh7iRvtU=
-X-Received: by 2002:a92:8712:: with SMTP id m18mr4760361ild.40.1578502550789;
- Wed, 08 Jan 2020 08:55:50 -0800 (PST)
-MIME-Version: 1.0
-References: <20191224120709.18247-1-brgl@bgdev.pl> <20191224120709.18247-13-brgl@bgdev.pl>
- <20200108124650.GR32742@smile.fi.intel.com>
-In-Reply-To: <20200108124650.GR32742@smile.fi.intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 8 Jan 2020 17:55:39 +0100
-Message-ID: <CAMRc=McbH7be7Y1SDO3UtSSOgYiDnHde1Au2yhsJxMcviDiJGQ@mail.gmail.com>
-Subject: Re: [PATCH v4 12/13] gpiolib: add new ioctl() for monitoring changes
- in line info
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        id S1729542AbgAHQ5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 11:57:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59166 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727308AbgAHQ5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 11:57:10 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D26F20678;
+        Wed,  8 Jan 2020 16:57:08 +0000 (UTC)
+Date:   Wed, 8 Jan 2020 11:57:07 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        ard.biesheuvel@linaro.org, james.morse@arm.com, rabin@rab.in,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Enrico Weigelt <info@metux.net>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm/ftrace: fix building on BE32
+Message-ID: <20200108115707.2419bf97@gandalf.local.home>
+In-Reply-To: <20200108143640.1034808-1-arnd@arndb.de>
+References: <20200108143640.1034808-1-arnd@arndb.de>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C5=9Br., 8 sty 2020 o 13:46 Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> napisa=C5=82(a):
->
-> On Tue, Dec 24, 2019 at 01:07:08PM +0100, Bartosz Golaszewski wrote:
-> ...
->
-> > -     } else if (cmd =3D=3D GPIO_GET_LINEINFO_IOCTL) {
-> > +     } else if (cmd =3D=3D GPIO_GET_LINEINFO_IOCTL ||
-> > +                cmd =3D=3D GPIO_GET_LINEINFO_WATCH_IOCTL) {
->
-> What about to split the functionality to something like lineinfo_get() an=
-d...
->
-> >               struct gpioline_info lineinfo;
->
-> > -             struct gpio_desc *desc;
->
-> Hmm... Is it correct patch for this change?
+On Wed,  8 Jan 2020 15:36:30 +0100
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-Yes, because instead of declaring *desc in every branch, we declare it
-once and use it twice.
+> Compiling patch.c on BE32 fails because there is no definition
+> of __opcode_to_mem_thumb32()
+> 
+> arch/arm/kernel/patch.c: In function '__patch_text_real':
+> arch/arm/kernel/patch.c:94:11: error: implicit declaration of function '__opcode_to_mem_thumb32' [-Werror=implicit-function-declaration]
+> 
+> Since we don't actually call it, only a declaration is required
+> here, add one without a definition that fixes the build here
+> but will cause a link failure if someone actually relies on the
+> result.
+> 
+> Fixes: 5a735583b764 ("arm/ftrace: Use __patch_text()")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> Not sure if this version is any less ugly than the first
+> approach of adding an #ifdef in patch.c
 
->
-> >
-> >               if (copy_from_user(&lineinfo, ip, sizeof(lineinfo)))
-> >                       return -EFAULT;
-> > @@ -1246,11 +1260,25 @@ static long gpio_ioctl(struct file *filp, unsig=
-ned int cmd, unsigned long arg)
-> >
-> >               if (copy_to_user(ip, &lineinfo, sizeof(lineinfo)))
-> >                       return -EFAULT;
-> > +
-> > +             if (cmd =3D=3D GPIO_GET_LINEINFO_WATCH_IOCTL)
-> > +                     set_bit(desc_to_gpio(desc), priv->watched_lines);
-> > +
->
-> ...simple use
->
->         } else if (cmd =3D=3D GPIO_GET_LINEINFO_IOCTL) {
->                 return lineinfo_get();
->         } else if {cmd =3D=3D GPIO_GET_LINEINFO_WATCH_IOCTL) {
->                 ret =3D lineinfo_get()
->                 set_bit();
->                 return ret;
->         }
->
-> ?
+Adding #ifdef in headers is always better than adding it in C code.
 
-You still need to retrieve *desc outside of lineinfo_get(). I think
-it's not worth the hassle.
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-Bart
+-- Steve
+
+> ---
+>  arch/arm/include/asm/opcodes.h | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/opcodes.h b/arch/arm/include/asm/opcodes.h
+> index 6bff94b2372b..f75f59c1257a 100644
+> --- a/arch/arm/include/asm/opcodes.h
+> +++ b/arch/arm/include/asm/opcodes.h
+> @@ -110,14 +110,19 @@ extern asmlinkage unsigned int arm_check_condition(u32 opcode, u32 psr);
+>  #define __opcode_to_mem_thumb16(x) ___opcode_identity16(x)
+>  #define ___asm_opcode_to_mem_arm(x) ___asm_opcode_identity32(x)
+>  #define ___asm_opcode_to_mem_thumb16(x) ___asm_opcode_identity16(x)
+> -#ifndef CONFIG_CPU_ENDIAN_BE32
+>  /*
+>   * On BE32 systems, using 32-bit accesses to store Thumb instructions will not
+>   * work in all cases, due to alignment constraints.  For now, a correct
+> - * version is not provided for BE32.
+> + * version is not provided for BE32, only an extern declaration to allow
+> + * compiling patch.c
+>   */
+> +#ifndef CONFIG_CPU_ENDIAN_BE32
+>  #define __opcode_to_mem_thumb32(x) ___opcode_swahw32(x)
+>  #define ___asm_opcode_to_mem_thumb32(x) ___asm_opcode_swahw32(x)
+> +#else
+> +#ifndef __ASSEMBLY__
+> +extern unsigned __opcode_to_mem_thumb32(unsigned);
+> +#endif
+>  #endif
+>  
+>  #endif /* ! CONFIG_CPU_ENDIAN_BE8 */
+
