@@ -2,198 +2,395 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5F39133D94
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 09:49:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91196133D62
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 09:41:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbgAHIsq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 03:48:46 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36414 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727313AbgAHIsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 03:48:46 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 5AB81AD82;
-        Wed,  8 Jan 2020 08:48:43 +0000 (UTC)
-Subject: Re: [PATCH] drm/hisilicon: add the mode_valid function
-To:     Tian Tao <tiantao6@hisilicon.com>, puck.chen@hisilicon.com,
-        airlied@linux.ie, daniel@ffwll.ch, kraxel@redhat.com,
-        alexander.deucher@amd.com, tglx@linutronix.de,
-        dri-devel@lists.freedesktop.org, xinliang.liu@linaro.org,
-        linux-kernel@vger.kernel.org
-Cc:     linuxarm@huawei.com
-References: <1578471540-43322-1-git-send-email-tiantao6@hisilicon.com>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- mQENBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAG0J1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPokBVAQTAQgAPhYh
- BHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsDBQkDwmcABQsJCAcCBhUKCQgLAgQWAgMB
- Ah4BAheAAAoJEGgNwR1TC3ojR80H/jH+vYavwQ+TvO8ksXL9JQWc3IFSiGpuSVXLCdg62AmR
- irxW+qCwNncNQyb9rd30gzdectSkPWL3KSqEResBe24IbA5/jSkPweJasgXtfhuyoeCJ6PXo
- clQQGKIoFIAEv1s8l0ggPZswvCinegl1diyJXUXmdEJRTWYAtxn/atut1o6Giv6D2qmYbXN7
- mneMC5MzlLaJKUtoH7U/IjVw1sx2qtxAZGKVm4RZxPnMCp9E1MAr5t4dP5gJCIiqsdrVqI6i
- KupZstMxstPU//azmz7ZWWxT0JzgJqZSvPYx/SATeexTYBP47YFyri4jnsty2ErS91E6H8os
- Bv6pnSn7eAq5AQ0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRH
- UE9eosYbT6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgT
- RjP+qbU63Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+R
- dhgATnWWGKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zb
- ehDda8lvhFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r
- 12+lqdsAEQEAAYkBPAQYAQgAJhYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsMBQkD
- wmcAAAoJEGgNwR1TC3ojpfcIAInwP5OlcEKokTnHCiDTz4Ony4GnHRP2fXATQZCKxmu4AJY2
- h9ifw9Nf2TjCZ6AMvC3thAN0rFDj55N9l4s1CpaDo4J+0fkrHuyNacnT206CeJV1E7NYntxU
- n+LSiRrOdywn6erjxRi9EYTVLCHcDhBEjKmFZfg4AM4GZMWX1lg0+eHbd5oL1as28WvvI/uI
- aMyV8RbyXot1r/8QLlWldU3NrTF5p7TMU2y3ZH2mf5suSKHAMtbE4jKJ8ZHFOo3GhLgjVrBW
- HE9JXO08xKkgD+w6v83+nomsEuf6C6LYrqY/tsZvyEX6zN8CtirPdPWu/VXNRYAl/lat7lSI
- 3H26qrE=
-Message-ID: <ae14b728-d2dc-282d-2fed-19bf6db4df64@suse.de>
-Date:   Wed, 8 Jan 2020 09:48:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1727344AbgAHIlr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 03:41:47 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:64572 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726368AbgAHIlq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 03:41:46 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200108084143epoutp03ea3c541d6c51735bd62408f8fc9a1bb5~n3L4aO3F90460204602epoutp03j
+        for <linux-kernel@vger.kernel.org>; Wed,  8 Jan 2020 08:41:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200108084143epoutp03ea3c541d6c51735bd62408f8fc9a1bb5~n3L4aO3F90460204602epoutp03j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1578472903;
+        bh=XwL8z7TXx+Ew9jxcqLOZWoFDtsZRTCtw35g8eeRW/a8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Qsu6IhRFrXn9DWldlKD/QItX/OqTSUPKwaLlttWSfWWjfCPZL0s5eDWJG486xCAFt
+         xrzm+FCKvp+DCNsHUii8vKyzb0aH1oVPVTudnHYeodbJa+ojX54BcSqkTjLKYpLiiI
+         zBNw+qzPzLVewaAISmgiRPjdnOvT0WsnXeCL0QCY=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200108084142epcas1p4315dcb47642c1f61f1d63fa84e27fa3e~n3L3hHCBl1694216942epcas1p4O;
+        Wed,  8 Jan 2020 08:41:42 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.158]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 47t2m31mNkzMqYkZ; Wed,  8 Jan
+        2020 08:41:39 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        EC.F6.48498.CB5951E5; Wed,  8 Jan 2020 17:41:32 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200108084132epcas1p1297db51434f1ce53371e6b6b6ddfb593~n3LuESEsJ0243702437epcas1p13;
+        Wed,  8 Jan 2020 08:41:32 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200108084132epsmtrp16326bc3691e0b663d3712fc4c80dc6dd~n3LuDeSem0974209742epsmtrp19;
+        Wed,  8 Jan 2020 08:41:32 +0000 (GMT)
+X-AuditID: b6c32a36-a55ff7000001bd72-77-5e1595bc43f4
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        88.2A.10238.CB5951E5; Wed,  8 Jan 2020 17:41:32 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200108084132epsmtip261c1d7ebac506891ae4bc2bb3f5c27ec~n3Lt06cdq1793017930epsmtip2U;
+        Wed,  8 Jan 2020 08:41:32 +0000 (GMT)
+Subject: Re: [PATCH] PM / devfreq: Add missing function description and
+ rename static functions
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     chanwoo@kernel.org, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com
+Organization: Samsung Electronics
+Message-ID: <f4acbe47-df19-b9b2-c24e-987a78a5db71@samsung.com>
+Date:   Wed, 8 Jan 2020 17:48:39 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-In-Reply-To: <1578471540-43322-1-git-send-email-tiantao6@hisilicon.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="OZ3Z0Rm1PvXry6qAkJcWesTazNMCuYBUx"
+In-Reply-To: <de7b3c55-a058-c8e8-4ebd-b2bb8dacf161@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnk+LIzCtJLcpLzFFi42LZdlhTV3fPVNE4g7+/jCwm3rjCYnG26Q27
+        xeVdc9gsPvceYbS43biCzYHVY9OqTjaPvi2rGD0+b5ILYI7KtslITUxJLVJIzUvOT8nMS7dV
+        8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBWqmkUJaYUwoUCkgsLlbSt7Mpyi8tSVXI
+        yC8usVVKLUjJKbAs0CtOzC0uzUvXS87PtTI0MDAyBSpMyM64fncba8Gt0IqDJ+czNjAudO1i
+        5OCQEDCReP7KuIuRi0NIYAejxKo5exghnE+MEpvPdbJBON8YJV5N6WeF6Tg41wMivpdRYuKM
+        aVBF7xklZn+ZyQxSJCyQKPHzIU8XIycHm4CWxP4XN9hAbBEBK4nT/zuYQWxmAW+JxW9XM4LY
+        /AKKEld/PAazeQXsJLa072cCsVkEVCROPZgKZosKhEmc3NYCVSMocXLmExYQm1PAXqL/ygNW
+        iJniEreezGeCsOUltr+dwwxym4TAZTaJNd+mgy2WEHCR2Dv/NxuELSzx6vgWdghbSuJlfxuU
+        XS2x8uQRNojmDkaJLfsvsEIkjCX2L53MBPIks4CmxPpd+hBhRYmdv+cyQizmk3j3tQcaWLwS
+        HW1CECXKEpcf3GWCsCUlFrd3sk1gVJqF5J1ZSF6YheSFWQjLFjCyrGIUSy0ozk1PLTYsMEKO
+        602M4MSoZbaDcdE5n0OMAhyMSjy8PxaLxAmxJpYVV+YeYpTgYFYS4dXSAQrxpiRWVqUW5ccX
+        leakFh9iNAWG9kRmKdHkfGDSziuJNzQ1MjY2tjAxNDM1NFQS5+X4cTFWSCA9sSQ1OzW1ILUI
+        po+Jg1OqgXGb3AwuxtfeL99emiQqUda2N/u96WeX8ur+wEJJZbfz9z/yvCgUy192XcmMR4/1
+        +erk66tUWhTE900qqNHvcpi863r3itgPWSFbYv6vswnsj7mbU+Nz+OHDP3arG9+sv5yus+6R
+        5/bdm758e7C9kDdI/emuE6cE6j797frZd6t7C8caG3uVhbpKLMUZiYZazEXFiQDLW76TogMA
+        AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFLMWRmVeSWpSXmKPExsWy7bCSvO6eqaJxBg1veCwm3rjCYnG26Q27
+        xeVdc9gsPvceYbS43biCzYHVY9OqTjaPvi2rGD0+b5ILYI7isklJzcksSy3St0vgyrh+dxtr
+        wa3QioMn5zM2MC507WLk4JAQMJE4ONeji5GLQ0hgN6PEg1MnmboYOYHikhLTLh5lhqgRljh8
+        uBgkLCTwllFiX48riC0skCjR8esUK4jNJqAlsf/FDTYQW0TASuL0/w5mEJtZwFti8dvVjBDz
+        DzNK/Ji/ASzBL6AocfXHY0YQm1fATmJL+36wvSwCKhKnHkwFs0UFwiR2LnnMBFEjKHFy5hMW
+        EJtTwF6i/8oDVogF6hJ/5l2CWiYucevJfCYIW15i+9s5zBMYhWchaZ+FpGUWkpZZSFoWMLKs
+        YpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIjhEtzR2Ml5fEH2IU4GBU4uH9sVgkTog1
+        say4MvcQowQHs5IIr5YOUIg3JbGyKrUoP76oNCe1+BCjNAeLkjjv07xjkUIC6YklqdmpqQWp
+        RTBZJg5OqQbGqjsWQfMdH2Ycba4UZGhXzcr4w1puFOu8/diXSd7ur8I85x17zLv4UoH7jqsx
+        bMqqJY/dLresXr9MaZHcvrZ6S4uJnHPvbLL80/1Yc3eVrlvfeYem86XzmeYlTf2/3KWg57NG
+        cpTCrDLD9O8LXr/6/emYZEnE48d5DF0hwWlW92Q7LkbPLHiixFKckWioxVxUnAgAMrniRo0C
+        AAA=
+X-CMS-MailID: 20200108084132epcas1p1297db51434f1ce53371e6b6b6ddfb593
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200107012826epcas1p17480af9ce779b3c17f6a815cc78ed25b
+References: <CGME20200107012826epcas1p17480af9ce779b3c17f6a815cc78ed25b@epcas1p1.samsung.com>
+        <20200107013523.27177-1-cw00.choi@samsung.com>
+        <de7b3c55-a058-c8e8-4ebd-b2bb8dacf161@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---OZ3Z0Rm1PvXry6qAkJcWesTazNMCuYBUx
-Content-Type: multipart/mixed; boundary="ujRMYAIfhnuseeewZLl362zPnio58F1kj";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Tian Tao <tiantao6@hisilicon.com>, puck.chen@hisilicon.com,
- airlied@linux.ie, daniel@ffwll.ch, kraxel@redhat.com,
- alexander.deucher@amd.com, tglx@linutronix.de,
- dri-devel@lists.freedesktop.org, xinliang.liu@linaro.org,
- linux-kernel@vger.kernel.org
-Cc: linuxarm@huawei.com
-Message-ID: <ae14b728-d2dc-282d-2fed-19bf6db4df64@suse.de>
-Subject: Re: [PATCH] drm/hisilicon: add the mode_valid function
-References: <1578471540-43322-1-git-send-email-tiantao6@hisilicon.com>
-In-Reply-To: <1578471540-43322-1-git-send-email-tiantao6@hisilicon.com>
+On 1/8/20 2:03 PM, Chanwoo Choi wrote:
+> On 1/7/20 10:35 AM, Chanwoo Choi wrote:
+>> Rename internal function name used by devfreq core without 'devfreq_'
+>> prefix in order to separate them from the exported functions.
+>> And add missing function description for improving the readability.
+>>
+>> Lastly, add the comments of devfreq_add_device to increase
+>> the understanding of behavior of devfreq_add_device.
+>>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> ---
+>>  drivers/devfreq/devfreq.c | 81 +++++++++++++++++++++++++++++++--------
+>>  1 file changed, 64 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+>> index acd21345a070..254f11b31824 100644
+>> --- a/drivers/devfreq/devfreq.c
+>> +++ b/drivers/devfreq/devfreq.c
+>> @@ -48,7 +48,7 @@ static LIST_HEAD(devfreq_list);
+>>  static DEFINE_MUTEX(devfreq_list_lock);
+>>  
+>>  /**
+>> - * find_device_devfreq() - find devfreq struct using device pointer
+>> + * find_device_devfreq() - Find devfreq struct using device pointer
+>>   * @dev:	device pointer used to lookup device devfreq.
+>>   *
+>>   * Search the list of device devfreqs and return the matched device's
+>> @@ -73,6 +73,13 @@ static struct devfreq *find_device_devfreq(struct device *dev)
+>>  	return ERR_PTR(-ENODEV);
+>>  }
+>>  
+>> +/**
+>> + * find_available_min_freq() - Find available min frequency via OPP interface
+>> + * @devfreq:	the devfreq instance
+>> + *
+>> + * Find available minimum frequency among the active OPP entries
+>> + * because could either enable or disable the frequency by using OPP interface.
+>> + */
+>>  static unsigned long find_available_min_freq(struct devfreq *devfreq)
+>>  {
+>>  	struct dev_pm_opp *opp;
+>> @@ -87,6 +94,13 @@ static unsigned long find_available_min_freq(struct devfreq *devfreq)
+>>  	return min_freq;
+>>  }
+>>  
+>> +/**
+>> + * find_available_max_freq() - Find available max frequency via OPP interface
+>> + * @devfreq:	the devfreq instance
+>> + *
+>> + * Find available maximum frequency among the active OPP entries
+>> + * because could either enable or disable the frequency by using OPP interface.
+>> + */
+>>  static unsigned long find_available_max_freq(struct devfreq *devfreq)
+>>  {
+>>  	struct dev_pm_opp *opp;
+>> @@ -150,11 +164,11 @@ static void get_freq_range(struct devfreq *devfreq,
+>>  }
+>>  
+>>  /**
+>> - * devfreq_get_freq_level() - Lookup freq_table for the frequency
+>> + * get_freq_level() - Lookup freq_table for the frequency
+>>   * @devfreq:	the devfreq instance
+>>   * @freq:	the target frequency
+>>   */
+>> -static int devfreq_get_freq_level(struct devfreq *devfreq, unsigned long freq)
+>> +static int get_freq_level(struct devfreq *devfreq, unsigned long freq)
+>>  {
+>>  	int lev;
+>>  
+>> @@ -165,6 +179,13 @@ static int devfreq_get_freq_level(struct devfreq *devfreq, unsigned long freq)
+>>  	return -EINVAL;
+>>  }
+>>  
+>> +/**
+>> + * set_freq_table() - Fill out the freq_table of devfreq instance
+>> + * @devfreq:	the devfreq instance
+>> + *
+>> + * If freq_table array is NULL, fill out the freq_table array
+>> + * by using OPP interface because OPP is mandatory.
+>> + */
+>>  static int set_freq_table(struct devfreq *devfreq)
+>>  {
+>>  	struct devfreq_dev_profile *profile = devfreq->profile;
+>> @@ -218,7 +239,7 @@ int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
+>>  	if (!devfreq->previous_freq)
+>>  		goto out;
+>>  
+>> -	prev_lev = devfreq_get_freq_level(devfreq, devfreq->previous_freq);
+>> +	prev_lev = get_freq_level(devfreq, devfreq->previous_freq);
+>>  	if (prev_lev < 0) {
+>>  		ret = prev_lev;
+>>  		goto out;
+>> @@ -227,7 +248,7 @@ int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
+>>  	devfreq->stats.time_in_state[prev_lev] +=
+>>  			cur_time - devfreq->stats.last_update;
+>>  
+>> -	lev = devfreq_get_freq_level(devfreq, freq);
+>> +	lev = get_freq_level(devfreq, freq);
+>>  	if (lev < 0) {
+>>  		ret = lev;
+>>  		goto out;
+>> @@ -246,7 +267,7 @@ int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
+>>  EXPORT_SYMBOL(devfreq_update_status);
+>>  
+>>  /**
+>> - * find_devfreq_governor() - find devfreq governor from name
+>> + * find_devfreq_governor() - Find devfreq governor from name
+>>   * @name:	name of the governor
+>>   *
+>>   * Search the list of devfreq governors and return the matched
+>> @@ -314,8 +335,17 @@ static struct devfreq_governor *try_then_request_governor(const char *name)
+>>  	return governor;
+>>  }
+>>  
+>> -static int devfreq_notify_transition(struct devfreq *devfreq,
+>> -		struct devfreq_freqs *freqs, unsigned int state)
+>> +/**
+>> + * notify_transition() - Send the transition notification
+>> + * @name:	name of the governor
+>> + * @freqs:	the data containing the both old and new frequency
+>> + * @state:	the kind of notification
+>> + *
+>> + * Send the transition notification to the registered receivers
+>> + * in order to inform the frequency change.
+>> + */
+>> +static int notify_transition(struct devfreq *devfreq,
+>> +			struct devfreq_freqs *freqs, unsigned int state)
+>>  {
+>>  	if (!devfreq)
+>>  		return -EINVAL;
+>> @@ -337,8 +367,17 @@ static int devfreq_notify_transition(struct devfreq *devfreq,
+>>  	return 0;
+>>  }
+>>  
+>> -static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
+>> -			      u32 flags)
+>> +/**
+>> + * set_target() - Set target frequency of devfreq instance
+>> + * @devfreq:	the devfreq instance
+>> + * @new_freq:	the target frequency
+>> + * @flags:	flags handed from devfreq framework
+>> + *
+>> + * Set the target frequency of which is decided by governor
+>> + * and then is adjusted with constraints.
+>> + */
+>> +static int set_target(struct devfreq *devfreq,
+>> +			unsigned long new_freq, u32 flags)
+>>  {
+>>  	struct devfreq_freqs freqs;
+>>  	unsigned long cur_freq;
+>> @@ -351,17 +390,17 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
+>>  
+>>  	freqs.old = cur_freq;
+>>  	freqs.new = new_freq;
+>> -	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_PRECHANGE);
+>> +	notify_transition(devfreq, &freqs, DEVFREQ_PRECHANGE);
+>>  
+>>  	err = devfreq->profile->target(devfreq->dev.parent, &new_freq, flags);
+>>  	if (err) {
+>>  		freqs.new = cur_freq;
+>> -		devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
+>> +		notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
+>>  		return err;
+>>  	}
+>>  
+>>  	freqs.new = new_freq;
+>> -	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
+>> +	notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
+>>  
+>>  	if (devfreq_update_status(devfreq, new_freq))
+>>  		dev_err(&devfreq->dev,
+>> @@ -413,7 +452,7 @@ int update_devfreq(struct devfreq *devfreq)
+>>  		flags |= DEVFREQ_FLAG_LEAST_UPPER_BOUND; /* Use LUB */
+>>  	}
+>>  
+>> -	return devfreq_set_target(devfreq, freq, flags);
+>> +	return set_target(devfreq, freq, flags);
+>>  
+>>  }
+>>  EXPORT_SYMBOL(update_devfreq);
+>> @@ -421,7 +460,6 @@ EXPORT_SYMBOL(update_devfreq);
+>>  /**
+>>   * devfreq_monitor() - Periodically poll devfreq objects.
+>>   * @work:	the work struct used to run devfreq_monitor periodically.
+>> - *
+>>   */
+>>  static void devfreq_monitor(struct work_struct *work)
+>>  {
+>> @@ -739,11 +777,13 @@ struct devfreq *devfreq_add_device(struct device *dev,
+>>  	static atomic_t devfreq_no = ATOMIC_INIT(-1);
+>>  	int err = 0;
+>>  
+>> +	/* Check the parameter is valid */
+>>  	if (!dev || !profile || !governor_name) {
+>>  		dev_err(dev, "%s: Invalid parameters.\n", __func__);
+>>  		return ERR_PTR(-EINVAL);
+>>  	}
+>>  
+>> +	/* Check the device is already added or not */
+>>  	mutex_lock(&devfreq_list_lock);
+>>  	devfreq = find_device_devfreq(dev);
+>>  	mutex_unlock(&devfreq_list_lock);
+>> @@ -754,6 +794,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
+>>  		goto err_out;
+>>  	}
+>>  
+>> +	/* Initialize the devfreq instance */
+>>  	devfreq = kzalloc(sizeof(struct devfreq), GFP_KERNEL);
+>>  	if (!devfreq) {
+>>  		err = -ENOMEM;
+>> @@ -798,6 +839,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
+>>  	devfreq->suspend_freq = dev_pm_opp_get_suspend_opp_freq(dev);
+>>  	atomic_set(&devfreq->suspend_count, 0);
+>>  
+>> +	/* Register a device for devfreq instance */
+>>  	dev_set_name(&devfreq->dev, "devfreq%d",
+>>  				atomic_inc_return(&devfreq_no));
+>>  	err = device_register(&devfreq->dev);
+>> @@ -807,6 +849,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
+>>  		goto err_out;
+>>  	}
+>>  
+>> +	/* Initialize the statistics of devfreq device behavior */
+>>  	devfreq->stats.trans_table = devm_kzalloc(&devfreq->dev,
+>>  			array3_size(sizeof(unsigned int),
+>>  				    devfreq->profile->max_state,
+>> @@ -831,10 +874,12 @@ struct devfreq *devfreq_add_device(struct device *dev,
+>>  	devfreq->stats.total_trans = 0;
+>>  	devfreq->stats.last_update = get_jiffies_64();
+>>  
+>> +	/* Initialize notifiers for informing the transition of devfreq */
+>>  	srcu_init_notifier_head(&devfreq->transition_notifier_list);
+>>  
+>>  	mutex_unlock(&devfreq->lock);
+>>  
+>> +	/* Initialize PM QoS for applying the constraints */
+>>  	err = dev_pm_qos_add_request(dev, &devfreq->user_min_freq_req,
+>>  				     DEV_PM_QOS_MIN_FREQUENCY, 0);
+>>  	if (err < 0)
+>> @@ -859,6 +904,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
+>>  
+>>  	mutex_lock(&devfreq_list_lock);
+>>  
+>> +	/* Find the devfreq governor and start */
+>>  	governor = try_then_request_governor(devfreq->governor_name);
+>>  	if (IS_ERR(governor)) {
+>>  		dev_err(dev, "%s: Unable to find governor for the device\n",
+>> @@ -876,6 +922,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
+>>  		goto err_init;
+>>  	}
+>>  
+>> +	/* Add the devfreq instance to global devfreq list finally */
+>>  	list_add(&devfreq->node, &devfreq_list);
+>>  
+>>  	mutex_unlock(&devfreq_list_lock);
+>> @@ -1076,7 +1123,7 @@ int devfreq_suspend_device(struct devfreq *devfreq)
+>>  
+>>  	if (devfreq->suspend_freq) {
+>>  		mutex_lock(&devfreq->lock);
+>> -		ret = devfreq_set_target(devfreq, devfreq->suspend_freq, 0);
+>> +		ret = set_target(devfreq, devfreq->suspend_freq, 0);
+>>  		mutex_unlock(&devfreq->lock);
+>>  		if (ret)
+>>  			return ret;
+>> @@ -1106,7 +1153,7 @@ int devfreq_resume_device(struct devfreq *devfreq)
+>>  
+>>  	if (devfreq->resume_freq) {
+>>  		mutex_lock(&devfreq->lock);
+>> -		ret = devfreq_set_target(devfreq, devfreq->resume_freq, 0);
+>> +		ret = set_target(devfreq, devfreq->resume_freq, 0);
+>>  		mutex_unlock(&devfreq->lock);
+>>  		if (ret)
+>>  			return ret;
+>>
+> 
+> Applied it.
+> 
 
---ujRMYAIfhnuseeewZLl362zPnio58F1kj
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+I'm sorry. Drop this patch because it is not enough to add
+the missing description for functions. I'll add the more description
+and then resend it.
 
-Hi,
-
-here are a few more nits to fix.
-
-Am 08.01.20 um 09:19 schrieb Tian Tao:
-> add mode_valid function, and we can also use it to make suse the resolu=
-tion
-> is valid.
-
-Start with capital 'Add' and make it a simple sentence. Change 'suse' to
-'sure'
-
->=20
-> Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
-> Signed-off-by: Gong junjie <gongjunjie2@huawei.com>
-> ---
->  drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_de.c | 20 ++++++++++++++++++=
-++
->  1 file changed, 20 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_de.c b/drivers/g=
-pu/drm/hisilicon/hibmc/hibmc_drm_de.c
-> index 843d784..6cb7a79 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_de.c
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_de.c
-> @@ -242,6 +242,25 @@ static void hibmc_crtc_atomic_disable(struct drm_c=
-rtc *crtc,
->  	hibmc_set_current_gate(priv, reg);
->  }
-> =20
-> +enum drm_mode_status hibmc_crtc_mode_valid(struct drm_crtc *crtc,
-> +					const struct drm_display_mode *mode)
-
-Please declare this function as static.
-
-> +{
-> +	int i =3D 0;
-> +	int vrefresh =3D drm_mode_vrefresh(mode);
-> +
-> +	if (vrefresh < 59 || vrefresh > 61)
-> +		return MODE_NOMODE;
-
-I'd return MODE_NOCLOCK or MODE_CLOCK_RANGE.
-
-> +
-> +	for (i =3D 0; i < ARRAY_SIZE(hibmc_pll_table); i++) {
-> +		if (hibmc_pll_table[i].hdisplay =3D=3D mode->hdisplay &&
-> +			hibmc_pll_table[i].vdisplay =3D=3D mode->vdisplay)
-> +			return MODE_OK;
-> +	}
-> +
-> +	return MODE_NOMODE;
-
-Maybe return MODE_BAD. MODE_NOMODE apparently refers to a descriptive
-string for the mode.
-
-> +}
-> +
-> +
-
-One one empty line please.
-
-With these fixes applied, you can add my
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-Best regards
-Thomas
-
-
->  static unsigned int format_pll_reg(void)
->  {
->  	unsigned int pllreg =3D 0;
-> @@ -510,6 +529,7 @@ static const struct drm_crtc_helper_funcs hibmc_crt=
-c_helper_funcs =3D {
->  	.atomic_flush	=3D hibmc_crtc_atomic_flush,
->  	.atomic_enable	=3D hibmc_crtc_atomic_enable,
->  	.atomic_disable	=3D hibmc_crtc_atomic_disable,
-> +	.mode_valid =3D hibmc_crtc_mode_valid,
->  };
-> =20
->  int hibmc_de_init(struct hibmc_drm_private *priv)
->=20
-
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-(HRB 36809, AG N=C3=BCrnberg)
-Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
-
-
---ujRMYAIfhnuseeewZLl362zPnio58F1kj--
-
---OZ3Z0Rm1PvXry6qAkJcWesTazNMCuYBUx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl4Vl2cACgkQaA3BHVML
-eiOtvQgAl+IKOBGin0jJPitb0wqB32GKS7u8kxNi8XOnM9YrgBAVf1kh2JEKQid4
-uwPj9RXDKcvUPvQmPL/vtbnwW4bOC6Ozd5T4hLr/LFURtvLk7KPnLrCYaiYYLlpq
-dEy+hgizVw99TzD/os1Y9YipRQcfExiNKQZwoFpNC95csJENwPZuLdQpcacisQpZ
-bIo91OvPy/U9vpmqsrNYW7S9CMguPO0fQ2giSRkvVho88zCzsxwahI/SS4Ts0RJk
-IXhjiqytFxcRonvLJR272RqdCTH8LodVCbXFbXZTYasTsQDzXHXnz9vZvEK/eZwI
-+jl149f6VR4riTxQ5uDKMT9Ei0cWmw==
-=QA9q
------END PGP SIGNATURE-----
-
---OZ3Z0Rm1PvXry6qAkJcWesTazNMCuYBUx--
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
