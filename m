@@ -2,100 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E716133E60
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:34:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D60F2133E5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:32:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727652AbgAHJds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 04:33:48 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8241 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727224AbgAHJds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 04:33:48 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E513B71813FFC5664CC6;
-        Wed,  8 Jan 2020 17:33:45 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 8 Jan 2020
- 17:33:41 +0800
-Subject: Re: [PATCH 2/4] f2fs: compress: revert error path fix
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20200106080144.52363-1-yuchao0@huawei.com>
- <20200106080144.52363-2-yuchao0@huawei.com>
- <20200106192631.GF50058@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <d2d21997-42f2-217a-a4cb-66b7fe8ef3e8@huawei.com>
-Date:   Wed, 8 Jan 2020 17:33:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727594AbgAHJcX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 04:32:23 -0500
+Received: from mga01.intel.com ([192.55.52.88]:3452 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727205AbgAHJcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 04:32:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 01:32:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,409,1571727600"; 
+   d="scan'208";a="303510529"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
+  by orsmga001.jf.intel.com with ESMTP; 08 Jan 2020 01:32:20 -0800
+Subject: Re: BUG: KASAN: use-after-free in
+ xhci_trb_virt_to_dma.part.24+0x1c/0x80
+To:     Paul Menzel <pmenzel@molgen.mpg.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Greg KH <greg@kroah.com>, Mathias Nyman <mathias.nyman@intel.com>,
+        linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <95b4bdb2-962f-561e-ac14-79cd44395915@molgen.mpg.de>
+ <20180720095410.GA11904@kroah.com>
+ <107dbdd1-4e45-836f-7f8f-85bc63374e4f@molgen.mpg.de>
+ <30b069b5-63f6-dd9e-b323-668f06bff6cf@molgen.mpg.de>
+ <20200103110451.GJ465886@lahna.fi.intel.com>
+ <81c6f906-3f5a-729d-f3b4-1ac6ac607c05@linux.intel.com>
+ <84369435-d355-0462-98ab-91bb1c5d3871@molgen.mpg.de>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <572bea6f-06d4-938a-802e-93386acf59d9@linux.intel.com>
+Date:   Wed, 8 Jan 2020 11:34:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200106192631.GF50058@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <84369435-d355-0462-98ab-91bb1c5d3871@molgen.mpg.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/1/7 3:26, Jaegeuk Kim wrote:
-> Hi Chao,
+On 7.1.2020 17.35, Paul Menzel wrote:
+> Dear Mathias, dear Mika,
 > 
-> Could you please check this out?
-> https://github.com/jaegeuk/f2fs/commits/g-dev-test
-
-Looks good to me, I add some minor comments on github.
-
-Any comments on below thread?
-
-Re: [f2fs-dev] [PATCH 3/4] f2fs: compress: fix error path in prepare_compress_overwrite()
-
-Thanks,
-
 > 
-> Thanks,
+> On 2020-01-07 13:09, Mathias Nyman wrote:
+>> On 3.1.2020 13.04, Mika Westerberg wrote:
+>>> On Thu, Jan 02, 2020 at 03:10:14PM +0100, Paul Menzel wrote:
+>>>> Mika, as you fixed the other leak, any idea, how to continue from the
+>>>> kmemleak log below?
+>>>>
+>>>> ```
+>>>> unreferenced object 0xffff8c207a1e1408 (size 8):
+>>>>     comm "systemd-udevd", pid 183, jiffies 4294667978 (age 752.292s)
+>>>>     hex dump (first 8 bytes):
+>>>>       34 01 05 00 00 00 00 00                          4.......
+>>>>     backtrace:
+>>>>       [<00000000aea7b46d>] xhci_mem_init+0xcfa/0xec0 [xhci_hcd]
+>>>
+>>> There are probably better ways for doing this but you can use objdump
+>>> for example:
+>>>
+>>>     $ objdump -l --prefix-addresses -j .text --disassemble=xhci_mem_init drivers/usb/host/xhci-hcd.ko
+>>>
+>>> then find the offset xhci_mem_init+0xcfa. It should show you the line
+>>> numbers as well if you have compiled your kernel with debug info. This
+>>> should be close to the line that allocated the memory that was leaked.
 > 
-> On 01/06, Chao Yu wrote:
->> Revert incorrect fix in ("TEMP: f2fs: support data compression - fix1")
+> Thank you. I actually remembered `script/f2addr2line`.
+> 
+>      $ scripts/faddr2line drivers/usb/host/xhci-hcd.o xhci_mem_init+0xcfa
+>      xhci_mem_init+0xcfa/0xec0:
+>      xhci_add_in_port at /mnt/drivers/usb/host/xhci-mem.c:2161
+>      (inlined by) xhci_setup_port_arrays at /mnt/drivers/usb/host/xhci-mem.c:2309
+>      (inlined by) xhci_mem_init at /mnt/drivers/usb/host/xhci-mem.c:2538
+> 
+>> Paul, it possible that your xhci controller has several
+>> supported protocol extended capabilities for usb 3 ports, each
+>> with their own custom protocol speed ID table.
 >>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/compress.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
+>> xhci driver assumes there is only one custome PSI table per roothub,
+>> and we will end up allocating the second PSI table on top of the first,
+>> leaking the first.
 >>
->> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
->> index f993b4ce1970..fc4510729654 100644
->> --- a/fs/f2fs/compress.c
->> +++ b/fs/f2fs/compress.c
->> @@ -601,7 +601,7 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
->>  							fgp_flag, GFP_NOFS);
->>  		if (!page) {
->>  			ret = -ENOMEM;
->> -			goto release_pages;
->> +			goto unlock_pages;
->>  		}
->>  
->>  		if (PageUptodate(page))
->> @@ -616,13 +616,13 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
->>  		ret = f2fs_read_multi_pages(cc, &bio, cc->cluster_size,
->>  						&last_block_in_bio, false);
->>  		if (ret)
->> -			goto unlock_pages;
->> +			goto release_pages;
->>  		if (bio)
->>  			f2fs_submit_bio(sbi, bio, DATA);
->>  
->>  		ret = f2fs_init_compress_ctx(cc);
->>  		if (ret)
->> -			goto unlock_pages;
->> +			goto release_pages;
->>  	}
->>  
->>  	for (i = 0; i < cc->cluster_size; i++) {
->> -- 
->> 2.18.0.rc1
-> .
+>> Could you boot with xhci dynamic debug enabled, and show dmesg after boot, add:
+>> xhci_hcd.dyndbg=+p
+>> to you kernel cmdline.
+>>
+>> Or as an alternative, show output of:
+>>
+>> sudo cat /sys/kernel/debug/usb/xhci/*/reg-ext-protocol*
 > 
+> `/sys/kernel/debug/` cannot be read by unprivileged users, so the wildcard does
+> not work with `sudo`.
+> 
+> ```
+> $ sudo ls /sys/kernel/debug/usb/xhci
+> 0000:12:00.0  0000:26:00.3  0000:26:00.4
+> # cat /sys/kernel/debug/usb/xhci/*/reg-ext-protocol*
+
+problematic xhci:
+capability for first four USB 2 ports
+> EXTCAP_REVISION = 0x02000402
+> EXTCAP_NAME = 0x20425355
+> EXTCAP_PORTINFO = 0x00180401
+> EXTCAP_PORTTYPE = 0x00000000
+
+capability for one USB 3.1 port (5th port)
+> EXTCAP_REVISION = 0x03100802
+> EXTCAP_NAME = 0x20425355
+> EXTCAP_PORTINFO = 0x10000105
+> EXTCAP_PORTTYPE = 0x00000000
+> EXTCAP_MANTISSA1 = 0x00050134
+capability for one USB 3.1 port (6th port)
+> EXTCAP_REVISION = 0x03100802
+> EXTCAP_NAME = 0x20425355
+> EXTCAP_PORTINFO = 0x10000106
+> EXTCAP_PORTTYPE = 0x00000000
+> EXTCAP_MANTISSA1 = 0x00050134
+capability for one USB 3.1 port (7th port)
+> EXTCAP_REVISION = 0x03100802
+> EXTCAP_NAME = 0x20425355
+> EXTCAP_PORTINFO = 0x10000107
+> EXTCAP_PORTTYPE = 0x00000000
+> EXTCAP_MANTISSA1 = 0x00050134
+capability for one USB 3.1 port (8th port)
+> EXTCAP_REVISION = 0x03100802
+> EXTCAP_NAME = 0x20425355
+> EXTCAP_PORTINFO = 0x10000108
+> EXTCAP_PORTTYPE = 0x00000000
+> EXTCAP_MANTISSA1 = 0x00050134
+
+It has eight ports.  last four of them are USB 3.1 ports.
+It has a very odd setup where each 3.1 port has their own
+supported protocol capability with a custom PSI, but all the PSI's are similar,
+telling the port only support a 5Gbps speed.
+
+We leak all the custom PSI tables for USB 3.1 ports except the last,
+these would be the EXTCAP_MANTISSA1 = 0x00050134, which is the same as
+the hex dump of the unreferenced object you posted earlier (considering byte order):
+
+hex dump (first 8 bytes):
+34 01 05 00 00 00 00 00                          4.......
+
+I'm working on a patch for this
+
+-Mathias
