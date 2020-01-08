@@ -2,92 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1950013401B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:17:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 517A213401F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:17:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728062AbgAHLRc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 06:17:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55122 "EHLO mail.kernel.org"
+        id S1728076AbgAHLRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 06:17:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728045AbgAHLRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 06:17:32 -0500
+        id S1728045AbgAHLRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 06:17:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F144320673;
-        Wed,  8 Jan 2020 11:17:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DCAD2082E;
+        Wed,  8 Jan 2020 11:17:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578482251;
-        bh=K5a1FOPcyRp0DCp/auw2go40HmDbbxw4Ibqe87jWEbc=;
+        s=default; t=1578482258;
+        bh=9eedaPIG/RcoRzKUdINlT24sZPom70kaScaV+oXhakQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=THqQZPcVvjC+wUPF3+29t3zF6xnYfYeYidcDePpV7b32VACrK9oGbLXd/UyWldH9t
-         tHrsowP1uTWquWgELlF37kxzuMxK1GRMcPT46tf5+Nxu9L+N4CxGNYaJCSEAmSq31E
-         4F8KHd8A0ugKdG9epSYOsK+CeWK557snvitFzsZA=
-Date:   Wed, 8 Jan 2020 07:24:36 +0100
+        b=wPITPVnQmeAZAtR42evmAXlnLI+qYgdRR98CrMOcGZ0z62gPrueXXBvxRSRtmWdyQ
+         IEkbCnKPOYbXVEVlT2ls1L/GjNKGiKJXDf7l7vZgJXybuVYz7/wFjtYL2z46/IiEZj
+         C8Kkuo1DFWDrobUuTBOsy5Ra+ao10Y1Hr1jvhHx4=
+Date:   Wed, 8 Jan 2020 07:41:02 +0100
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        linux-usb@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Todd Kjos <tkjos@google.com>,
-        Alistair Delva <adelva@google.com>
-Subject: Re: [PATCH v5 0/4] usb: xhci: Add support for Renesas USB controllers
-Message-ID: <20200108062436.GA2276347@kroah.com>
-References: <20191106083843.1718437-1-vkoul@kernel.org>
- <CANcMJZDqX6-+naGEbBiyM+1cZS6jfMoP9bm5Uk4ZuP_mw5aNWw@mail.gmail.com>
- <20200108040707.GU2818@vkoul-mobl>
+To:     shuah <shuah@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 5.4 000/191] 5.4.9-stable review
+Message-ID: <20200108064102.GA2278146@kroah.com>
+References: <20200107205332.984228665@linuxfoundation.org>
+ <b8349973-564b-fdff-47db-9e5f06ad5e3a@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200108040707.GU2818@vkoul-mobl>
+In-Reply-To: <b8349973-564b-fdff-47db-9e5f06ad5e3a@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 08, 2020 at 09:37:07AM +0530, Vinod Koul wrote:
-> Hi John,
-> 
-> On 07-01-20, 11:51, John Stultz wrote:
-> > On Wed, Nov 6, 2019 at 12:40 AM Vinod Koul <vkoul@kernel.org> wrote:
-> > >
-> > > This series add support for Renesas USB controllers uPD720201 and uPD720202.
-> > > These require firmware to be loaded and in case devices have ROM those can
-> > > also be programmed if empty. If ROM is programmed, it runs from ROM as well.
-> > >
-> > > This includes two patches from Christian which supported these controllers
-> > > w/o ROM and later my patches for ROM support and multiple firmware versions.
-> > >
+On Tue, Jan 07, 2020 at 07:37:56PM -0700, shuah wrote:
+> On 1/7/20 1:52 PM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.4.9 release.
+> > There are 191 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
 > > 
-> > Hey Vinod!
-> >    In pushing this series to one of the Android trees for the db845c,
-> > there was some concern raised that this series is adding a lot of
-> > renesas specific logic to the more generic xhci-pci driver. There was
-> > some question if instead that logic should be added to its own
-> > file/module? Do you have any thoughts on this?
+> > Responses should be made by Thu, 09 Jan 2020 20:44:51 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.9-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
 > 
-> TBH I have not thought about that and in previous post neither Greg or
-> Mathias gave a feedback that this was not acceptable...
-> 
-> We can think about splitting but apart from firmware load there is not
-> much extra functionality that we need to add, the controller behaviour
-> as a standard xhci-pci. So i am not sure if we gain much by splitting.
-> 
-> > Also, It seems there hasn't been much feedback on this for a few
-> > months now. Is there a newer version of the patchset I should sync
-> > with? Do you have plans to resubmit soon?
-> 
-> Well am still waiting for feedback :( I dont have any update on top of
-> this, I can repost but I dont think that really serves a purpose.
-> 
-> I would really like to hear from Greg if this series is acceptable and
-> if not what would he like to see changed.
+> Compiled and booted on my test system. No dmesg regressions.
 
-Greg is not the xhci maintainer :)
+Thanks for quickly testing all of these and letting me know.
 
-
+greg k-h
