@@ -2,91 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 759B6134157
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 13:00:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8E3D13416B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 13:05:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbgAHMAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 07:00:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38602 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbgAHMAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 07:00:39 -0500
-Received: from localhost (c-98-234-77-170.hsd1.ca.comcast.net [98.234.77.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 913C8206DA;
-        Wed,  8 Jan 2020 12:00:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578484838;
-        bh=PAeybtyZqMyHhLyEpHpzDmjvvQJloWmair75CBeupyI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KPmwl6vUKd+QXJvtZC4rdu/sLQkl/MTU7te/IU0yxKEcRppY7tWZhgHRQDSq5Djxv
-         0ni71UmBfqmN+A03d8v7yqM46L/+avh6CgeHl5qhOa13IeJVUh1fm+Jv2oha8hBWsU
-         D35ILQM6l4skaYfuFnfrUWmsGvHXD+bZ3kFnVcJY=
-Date:   Wed, 8 Jan 2020 04:00:38 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     Oleksandr Natalenko <oleksandr@natalenko.name>,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] Multidevice f2fs mount after disk rearrangement
-Message-ID: <20200108120038.GB28331@jaegeuk-macbookpro.roam.corp.google.com>
-References: <4c6cf8418236145f7124ac61eb2908ad@natalenko.name>
- <2c4cafd35d1595a62134203669d7c244@natalenko.name>
- <20200106183450.GC50058@jaegeuk-macbookpro.roam.corp.google.com>
- <ee2cb1d7a6c1b51e1c8277a8feaafe6d@natalenko.name>
- <815fbd14-0fbd-9c44-8d86-4ab13a12dc7f@huawei.com>
+        id S1727709AbgAHMFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 07:05:08 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:36843 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbgAHMFH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 07:05:07 -0500
+Received: from [192.168.1.155] ([95.114.105.36]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MF3Y8-1ivoyl0GfA-00FPKS; Wed, 08 Jan 2020 13:05:03 +0100
+Subject: Re: Improving documentation for programming interfaces
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Markus Elfring <Markus.Elfring@web.de>
+Cc:     linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <350cd156-9080-24fe-c49e-96e758d3ca45@web.de>
+ <20191220151945.GD59959@mit.edu>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <17931ddd-76ec-d342-912c-faed6084e863@metux.net>
+Date:   Wed, 8 Jan 2020 13:04:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <815fbd14-0fbd-9c44-8d86-4ab13a12dc7f@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20191220151945.GD59959@mit.edu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: tl
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:B81xQSAt90W7lKrrHbjV2P/OStxg7GmU8RRfjIZnD94fGPlyUN/
+ ECLkuwC3UHDDAAYknhhOpl1QAl2Xy7sc9ZtfITFQVmbXQHsh3DwREx9a1hCttSmo7eqTmW1
+ YqfL/rGoi/9eJGscTWr1GZ9Nf3OZQDn2ab6Z5wRutxW1oln/RAjdMZxxWBSJeyWREOz0a8j
+ vhEBidMjdWEj2dZeh0V2Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:CRH5PUTDk9Q=:i9V6hMthikniIpFD7M0JuY
+ 8rbpaLYYW5YSM+oslMj8zDgENE9stI9O8t4TyNaqDDQH27rCX/kbm39kt2GuEyXiTm84bc1Uz
+ 5dPfhv5xYU+rShdyG7SodeqiZODv11UpnTI/O6gBJLZIdK4Eg4Enom0gmCYuRZduEsjVtLUpN
+ fnbpTjouqi0wSRSpiJnLFnL1elvxQsE9X6Vzo0zQeDX1NrFCrPh9X5K52/Cysqp7y1tsbiUGA
+ w9F0ZExYweZF2yS8e8lwdbwIyR8Fm4ZlyYj4qwwYimsdAxB0H3TAa2CCuacOlepJ2O79gpsBH
+ seSXLOYR0TYqjCm/v210A0oz3PfvFQwwQeXe21GxQZ6vLsWaQE6Kvynjit3j0vyA6DbxCkXSP
+ WYJThR3FpTSTBaFhvIyLk2TxmA9E75Mp+mv6y+f72QsZB4aEUb2EEqOuBa5w7AxEqAcZayVOP
+ bCOlLDemlsa96wcOLvRHDqztiMbEyzH33RPY7Rw1nkd+VxSyOCV6fFNaNhNjfJvff6EPI5thr
+ PvgkJxpNGBwnAyeIaA/hTq9p5Z27W4Ucy0oEiP+8mIyVFmBU3DcZCIpuZEry4xyM83BcNbyVH
+ bAioHzLIYZSl4xE84r8K334nb2RQzanNLlL/uBsM7gs+Holjp6hff2Sp27HR/NPhtRl8YF0yB
+ bEnUnbkya9B9zgIhmLEaCbzD3EYCFxyQiVMpJ/XtgbU2BOxMku104jgbke99PPgQ6SbJ/nCxd
+ BWL70pRhPhvrgiIP8KbKqesNflqre5C8HPBLM/0dMtwgR0Wp5Xasdy2T1N82dwus8rSOZHFoU
+ ktn5UQvxOixr84drSRBmdE7nvnbXtUCzrcd/NElFCQON7Uy8TFIPosVqrXX5k1PqMWB+DK21N
+ MVhIqNhdsAH690qpOZDA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/08, Chao Yu wrote:
-> On 2020/1/7 2:40, Oleksandr Natalenko via Linux-f2fs-devel wrote:
-> > Hi.
-> > 
-> > On 06.01.2020 19:34, Jaegeuk Kim wrote:
-> >> Thank you for investigating this ahead of me. :) Yes, the device list 
-> >> is stored
-> >> in superblock, so hacking it manually should work.
-> >>
-> >> Let me think about a tool to tune that.
-> > 
-> > Thank you both for the replies.
-> > 
-> > IIUC, tune.f2fs is not there yet. I saw a submission, but I do not see 
-> > it as accepted, right?
-> > 
-> > Having this in tune.f2fs would be fine (assuming the assertion is 
-> > replaced with some meaningful hint message), but wouldn't it be more 
-> > convenient for an ordinary user to have implemented something like:
-> > 
-> > # mount -t f2fs /dev/sdb -o nextdev=/dev/sdc /mnt/fs
-> 
-> Hmm... sounds reasonable, however, the risk is obvious, if we mount with wrong
-> primary device, filesystem can be aware that with metadata sanity check, if we
-> mount with wrong secondary/... devices by mistake (or intentionally, people
-> may think filesystem should be aware illegal parameters....), filesystem won't
-> be aware of that, then metadata/data will be inconsistent...
-> 
-> Although that may also happen when we use tunesb.f2fs, but fsck.f2fs can be
-> followed to verify the modification of tunesb.f2fs, that would be much safer.
-> 
-> So I suggest we can do that in tools first, maybe implement nextdev mount option
-> if we have added metadata in secondary/... device.
+On 20.12.19 16:19, Theodore Y. Ts'o wrote:
 
-+1, it'd be risky for user to give the device list whenever mounting the
-filesystem. There'll be subtle corner cases where f2fs needs to deal with
-given ambiguous sets between superblock and mount option.
+Hi folks,
 
-> 
-> Thanks,
-> 
-> > 
-> > Hm?
-> > 
+> On Fri, Dec 20, 2019 at 02:30:10PM +0100, Markus Elfring wrote:
+>> Linux supports some programming interfaces. Several functions are provided
+>> as usual. Their application documentation is an ongoing development challenge.
+>>
+>> Now I would like to clarify possibilities for the specification of desired
+>> information together with data types besides properties which are handled by
+>> the programming language “C” so far.
+
+@Markus:
+
+hmm, maybe we could add some kinda-OOP-style metadata into the type
+documentation ? Or maybe extend doxygen to crossref types vs functions
+operating on them.
+
+>> It seems that no customised attributes are supported at the moment.
+>> Thus I imagine to specify helpful annotations as macros.
+
+Do you mean _attribute__(...) or comments ?
+
+<snip>
+
+> It's unclear to me what you are requesting/proposing?  Can you be a
+> bit more concrete?
+
+@Ted:
+
+I guess he's thinking about some kind of meta-language for expressing
+common things we know from oop-world, like ctors, dtors, getters, etc.
+
+
+Maybe some doxygen experts here, who could tell what we already could
+extract from existing sources ?
+
+
+For start, I'd like to propose a few rules:
+
+* consistent naming of 'release' functions (AFAIK, many of them are
+  already named <foo>_put()).
+* for each non-trivial (non-private) object/struct, there should be
+  a corresponding release function (even if it's just an alias to
+  kfree()
+* consistent nameing of list-type structs, so generic macros can
+  be used on the struct itself (instead just a container list header
+  struct)
+
+
+
+--mtx
+
+-- 
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
