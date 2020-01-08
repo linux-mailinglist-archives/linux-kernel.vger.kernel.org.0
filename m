@@ -2,89 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4CA51346F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 17:00:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DD5A1346D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 16:59:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728853AbgAHP7x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 10:59:53 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37764 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbgAHP7v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 10:59:51 -0500
-Received: by mail-io1-f66.google.com with SMTP id k24so3745796ioc.4
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 07:59:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=z4SW3YsZrYC7C7z4MOssIKys1QtDj3mTOPrqO+DqHxg=;
-        b=jvRapN2z7Ugtj0mNucj74lU2w6NUWvODfZdVWa8Tp8XYxysb0PZ1Rw1lKxyoxZ9xtC
-         suNyB0wDpdw7inNGYEIbN2R3ePE8Wd58r7cNorQYRbj0dtNxZMggS1slZHUIvcFFMCxI
-         AtjEUxeVN8kLjOcvxt+1GzfS0bsmVkkvdJJ3o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z4SW3YsZrYC7C7z4MOssIKys1QtDj3mTOPrqO+DqHxg=;
-        b=OQnFJJIHzRMQ1SkFz51OjB70eKy4VHLO/w/Wj/5iSpvcwIoeRw9cJtqleV+mApJrfJ
-         IsFrgC1hVR0O9U0Bnjw1nbQUvjvjRJkSBeP6quWCoffPi1Ysi//T5xHDuFVG6mbh64Um
-         kC9wGS9cFHjrNyTDHpxiC/30VEUP/iD7Oc2Svf16sbd/S1iFupD3nEP+EZCFc3TVl9gB
-         9MVveW50LuTHx4TI5/PfS2A20A+7ZgyCa9VuV2xN89TggVxX57gko8lcY6u0XqCKayzx
-         wDpJeXJaAOaxAYdd1Cu6+Wc4D71O+CIge+OvwNoZsvUiDcwrge3pjonvXZ8H7gU6zcfx
-         Q5HQ==
-X-Gm-Message-State: APjAAAXXPg0kvnnexpd6pHVLUYXl4gvSTe5EeMHnBW4+IYuq02juAH3S
-        as3S3UcTVQChFMr5z0dGUmBC/w==
-X-Google-Smtp-Source: APXvYqzSlNuC5lEYE9FiIHbPFA28K/XJ1x2M7+aAVqW82lIcxqkbcPkENEfm4zk+rJ7wyQpCYgayeg==
-X-Received: by 2002:a05:6638:618:: with SMTP id g24mr4669791jar.87.1578499190795;
-        Wed, 08 Jan 2020 07:59:50 -0800 (PST)
-Received: from chromium.org ([2620:15c:183:200:5d69:b29f:8fd8:6f45])
-        by smtp.gmail.com with ESMTPSA id d12sm1079889iln.63.2020.01.08.07.59.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2020 07:59:50 -0800 (PST)
-Date:   Wed, 8 Jan 2020 08:59:48 -0700
-From:   Daniel Campello <campello@chromium.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Nick Crews <ncrews@chromium.org>,
-        Benson Leung <bleung@chromium.org>
-Subject: Re: [PATCH] platform/chrome: wilco_ec: Fix keyboard backlight probing
-Message-ID: <20200108155948.GA47901@chromium.org>
-References: <20200107112400.1.Iedcdbae5a7ed79291b557882130e967f72168a9f@changeid>
- <ab377eeb-f1bc-13c2-8bbc-ccc53ecb7c4d@collabora.com>
+        id S1729174AbgAHP6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 10:58:50 -0500
+Received: from mga12.intel.com ([192.55.52.136]:43702 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727746AbgAHP6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 10:58:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 07:58:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,410,1571727600"; 
+   d="scan'208";a="303590872"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
+  by orsmga001.jf.intel.com with ESMTP; 08 Jan 2020 07:58:46 -0800
+Subject: Re: [PATCH v5 0/4] usb: xhci: Add support for Renesas USB controllers
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     John Stultz <john.stultz@linaro.org>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Christian Lamparter <chunkeey@googlemail.com>,
+        linux-usb@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Todd Kjos <tkjos@google.com>,
+        Alistair Delva <adelva@google.com>
+References: <20191106083843.1718437-1-vkoul@kernel.org>
+ <CANcMJZDqX6-+naGEbBiyM+1cZS6jfMoP9bm5Uk4ZuP_mw5aNWw@mail.gmail.com>
+ <20200108040707.GU2818@vkoul-mobl> <20200108062436.GA2276347@kroah.com>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <b0dc038b-cc25-1d37-9339-689bb5b61ff7@linux.intel.com>
+Date:   Wed, 8 Jan 2020 18:00:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ab377eeb-f1bc-13c2-8bbc-ccc53ecb7c4d@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200108062436.GA2276347@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
+On 8.1.2020 8.24, Greg Kroah-Hartman wrote:
+> On Wed, Jan 08, 2020 at 09:37:07AM +0530, Vinod Koul wrote:
+>> Hi John,
+>>
+>> On 07-01-20, 11:51, John Stultz wrote:
+>>> On Wed, Nov 6, 2019 at 12:40 AM Vinod Koul <vkoul@kernel.org> wrote:
+>>>>
+>>>> This series add support for Renesas USB controllers uPD720201 and uPD720202.
+>>>> These require firmware to be loaded and in case devices have ROM those can
+>>>> also be programmed if empty. If ROM is programmed, it runs from ROM as well.
+>>>>
+>>>> This includes two patches from Christian which supported these controllers
+>>>> w/o ROM and later my patches for ROM support and multiple firmware versions.
+>>>>
+>>>
+>>> Hey Vinod!
+>>>     In pushing this series to one of the Android trees for the db845c,
+>>> there was some concern raised that this series is adding a lot of
+>>> renesas specific logic to the more generic xhci-pci driver. There was
+>>> some question if instead that logic should be added to its own
+>>> file/module? Do you have any thoughts on this?
+>>
+>> TBH I have not thought about that and in previous post neither Greg or
+>> Mathias gave a feedback that this was not acceptable...
+>>
+>> We can think about splitting but apart from firmware load there is not
+>> much extra functionality that we need to add, the controller behaviour
+>> as a standard xhci-pci. So i am not sure if we gain much by splitting.
+>>
+>>> Also, It seems there hasn't been much feedback on this for a few
+>>> months now. Is there a newer version of the patchset I should sync
+>>> with? Do you have plans to resubmit soon?
+>>
+>> Well am still waiting for feedback :( I dont have any update on top of
+>> this, I can repost but I dont think that really serves a purpose.
+>>
+>> I would really like to hear from Greg if this series is acceptable and
+>> if not what would he like to see changed.
+> 
+> Greg is not the xhci maintainer :)
+> 
 
-On Wed, Jan 08, 2020 at 11:38:58AM +0100, Enric Balletbo i Serra wrote:
-> Hi Daniel,
->
-> Many thanks for sending the patch upstream.
->
-> On 7/1/20 19:24, Daniel Campello wrote:
-> > The EC on the Wilco platform responds with 0xFF to commands related to
-> > the keyboard backlight on the absence of a keyboard backlight module.
-> > This change allows the EC driver to continue loading even if the
-> > backlight module is not present.
-> >
->
-> Could you explain a bit more which is the problem you're trying to solve? I am
-> not sure I understand it, isn't the kbbl_exist call for that purpose? (in
-> absence of the keyboard backligh module just don't init the device?)
+Reviewing this always got bumped down on my todo list as other urgent issues
+came up.
 
-kbbl_exists is intended to return a bool based on response.status !=
-0xFF. Without this patch kbbl_exists will fail and return an -EIO
-error on any value of response.status
-
->
-> Thanks,
->  Enric
->
+I think the concern about adding this amount of renesas specific code to
+xhci-pci.c is valid. This series adds over 900 lines of Renesas FW loading
+code to a 600 line xhci-pci.c
+  
+-Mathias
