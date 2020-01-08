@@ -2,139 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1641133EBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:57:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55D7E133EC2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:58:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727723AbgAHJ5V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 04:57:21 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:60971 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727702AbgAHJ5T (ORCPT
+        id S1727727AbgAHJ6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 04:58:33 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35261 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727431AbgAHJ6c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 04:57:19 -0500
-Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ip85L-0003Ir-1U; Wed, 08 Jan 2020 10:57:07 +0100
-Received: from mfe by dude02.lab.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ip85K-00067C-3i; Wed, 08 Jan 2020 10:57:06 +0100
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     support.opensource@diasemi.com, linux@roeck-us.net,
-        robh+dt@kernel.org, lee.jones@linaro.org,
-        stwiss.opensource@diasemi.com, Adam.Thomson.Opensource@diasemi.com
-Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: [PATCH 3/3] watchdog: da9062: add power management ops
-Date:   Wed,  8 Jan 2020 10:57:04 +0100
-Message-Id: <20200108095704.23233-4-m.felsch@pengutronix.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200108095704.23233-1-m.felsch@pengutronix.de>
-References: <20200108095704.23233-1-m.felsch@pengutronix.de>
+        Wed, 8 Jan 2020 04:58:32 -0500
+Received: by mail-io1-f67.google.com with SMTP id h8so2570673iob.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 01:58:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QAtR7WNLGbja1kZFYbC1LM6r/2gOOz73oNIxwZf1sK8=;
+        b=LGhwTuIZMsvckUaUhJ+tDGp6Y0jn0LYn/xbxleZUSDMkTwotTTy+1Fg5ZHuiCgbnuW
+         ABixaa78LQAMQqSXxlOdTlfDx+n2+WrJQM9cCO+dERP4pTnItxTE5IlWAuVhshqD5D0f
+         0ZiCF95TJ+fR3w2e37nT74ePbWYE2y6TFcorU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QAtR7WNLGbja1kZFYbC1LM6r/2gOOz73oNIxwZf1sK8=;
+        b=iA18eTLhNdjMy3rEYmEJMY+DhWqNB6ApP1/fUjIOGvLldl0CwU/ch+Wv1C+2lGw3ep
+         JvzTJOLJcxtEUJ2daX8aDDgeGkzvAkXa5+AeTQTDXqFGBEIwyyj7r6fxwGYGNjUVCDHr
+         EK4/cvekipg7kp/oAcmhRIQf3zbMgEcfI10dbydnE33fzJ6Ewvf4Z6Kx1Hq9Iq1QqaRl
+         LzXfCvsUVdxjlNEvdbzmorhRrREM9RezY3ZVjpQC/vdOTmZFkVXdi3gp/50Xa8giiBrq
+         0l2Xu1w13PXsQtXygWjAWcu0DL96+c8wiA9I7+epoB2AYSD0Wc4EJEdjXKNv4Y6/J8P5
+         imIw==
+X-Gm-Message-State: APjAAAVsEddOkp+dP8jkQ3pup+UWfVJGdaoUTpdfFqEbRXv/wv+pr4kd
+        R9yeTE+Pv/P9qE+mNbZFipZJNQpzLifgnQL88Ep13A==
+X-Google-Smtp-Source: APXvYqwH5rufYzM9JfRPQjj7bRhJ6sm9RgJQyx7qvhgpJjalHtt1/UbVPcBLfTvCu23laYbDf4TKavfcetdwMpGEoRY=
+X-Received: by 2002:a6b:3845:: with SMTP id f66mr2819729ioa.102.1578477511547;
+ Wed, 08 Jan 2020 01:58:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20200103064407.19861-1-michael.kao@mediatek.com> <20200103064407.19861-7-michael.kao@mediatek.com>
+In-Reply-To: <20200103064407.19861-7-michael.kao@mediatek.com>
+From:   Hsin-Yi Wang <hsinyi@chromium.org>
+Date:   Wed, 8 Jan 2020 17:58:05 +0800
+Message-ID: <CAJMQK-hQ5BWp7isGDTz_Y4ttxfoM0guqfcAEFrh3Eq7SMcNM5w@mail.gmail.com>
+Subject: Re: [PATCH v3,6/8] thermal: mediatek: mt8183: fix bank number settings
+To:     Michael Kao <michael.kao@mediatek.com>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-pm@vger.kernel.org, srv_heupstream@mediatek.com,
+        Devicetree List <devicetree@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Disable the watchdog during suspend if it is enabled and re-enable it on
-resume. So we can sleep without the interruptions.
-
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
----
-v2:
-- add dlg,use-sw-pm check to differentiate between automatic and manual
-  disabling/enabling.
----
- drivers/watchdog/da9062_wdt.c | 37 +++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
-
-diff --git a/drivers/watchdog/da9062_wdt.c b/drivers/watchdog/da9062_wdt.c
-index e149e66a6ea9..c9b9d6394525 100644
---- a/drivers/watchdog/da9062_wdt.c
-+++ b/drivers/watchdog/da9062_wdt.c
-@@ -15,6 +15,7 @@
- #include <linux/jiffies.h>
- #include <linux/mfd/da9062/registers.h>
- #include <linux/mfd/da9062/core.h>
-+#include <linux/property.h>
- #include <linux/regmap.h>
- #include <linux/of.h>
- 
-@@ -30,6 +31,7 @@ static const unsigned int wdt_timeout[] = { 0, 2, 4, 8, 16, 32, 65, 131 };
- struct da9062_watchdog {
- 	struct da9062 *hw;
- 	struct watchdog_device wdtdev;
-+	bool use_sw_pm;
- };
- 
- static unsigned int da9062_wdt_timeout_to_sel(unsigned int secs)
-@@ -198,6 +200,8 @@ static int da9062_wdt_probe(struct platform_device *pdev)
- 	if (!wdt)
- 		return -ENOMEM;
- 
-+	wdt->use_sw_pm = device_property_present(dev, "dlg,use-sw-pm");
-+
- 	wdt->hw = chip;
- 
- 	wdt->wdtdev.info = &da9062_watchdog_info;
-@@ -212,6 +216,7 @@ static int da9062_wdt_probe(struct platform_device *pdev)
- 	watchdog_set_restart_priority(&wdt->wdtdev, 128);
- 
- 	watchdog_set_drvdata(&wdt->wdtdev, wdt);
-+	dev_set_drvdata(dev, &wdt->wdtdev);
- 
- 	ret = devm_watchdog_register_device(dev, &wdt->wdtdev);
- 	if (ret < 0)
-@@ -220,10 +225,42 @@ static int da9062_wdt_probe(struct platform_device *pdev)
- 	return da9062_wdt_ping(&wdt->wdtdev);
- }
- 
-+static int __maybe_unused da9062_wdt_suspend(struct device *dev)
-+{
-+	struct watchdog_device *wdd = dev_get_drvdata(dev);
-+	struct da9062_watchdog *wdt = watchdog_get_drvdata(wdd);
-+
-+	if (!wdt->use_sw_pm)
-+		return 0;
-+
-+	if (watchdog_active(wdd))
-+		return da9062_wdt_stop(wdd);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused da9062_wdt_resume(struct device *dev)
-+{
-+	struct watchdog_device *wdd = dev_get_drvdata(dev);
-+	struct da9062_watchdog *wdt = watchdog_get_drvdata(wdd);
-+
-+	if (!wdt->use_sw_pm)
-+		return 0;
-+
-+	if (watchdog_active(wdd))
-+		return da9062_wdt_start(wdd);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(da9062_wdt_pm_ops,
-+			 da9062_wdt_suspend, da9062_wdt_resume);
-+
- static struct platform_driver da9062_wdt_driver = {
- 	.probe = da9062_wdt_probe,
- 	.driver = {
- 		.name = "da9062-watchdog",
-+		.pm = &da9062_wdt_pm_ops,
- 		.of_match_table = da9062_compatible_id_table,
- 	},
- };
--- 
-2.20.1
-
+On Fri, Jan 3, 2020 at 2:44 PM Michael Kao <michael.kao@mediatek.com> wrote:
+>
+> MT8183_NUM_ZONES should be set to 1
+> because MT8183 doesn't have multiple banks.
+>
+> Fixes: a4ffe6b52d27 ("thermal: mediatek: add support for MT8183")
+> Signed-off-by: Michael Kao <michael.kao@mediatek.com>
+> ---
+Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
