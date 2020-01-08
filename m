@@ -2,151 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59F781348D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 18:08:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47BB51348DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 18:10:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729663AbgAHRIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 12:08:44 -0500
-Received: from verein.lst.de ([213.95.11.211]:50298 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726401AbgAHRIo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 12:08:44 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id B094668BFE; Wed,  8 Jan 2020 18:08:40 +0100 (CET)
-Date:   Wed, 8 Jan 2020 18:08:40 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, linkinjeon@gmail.com, pali.rohar@gmail.com
-Subject: Re: [PATCH v9 01/13] exfat: add in-memory and on-disk structures
- and headers
-Message-ID: <20200108170840.GB13388@lst.de>
-References: <20200102082036.29643-1-namjae.jeon@samsung.com> <CGME20200102082400epcas1p4cd0ad14967bd8d231fc0efcede8bd99c@epcas1p4.samsung.com> <20200102082036.29643-2-namjae.jeon@samsung.com>
+        id S1729657AbgAHRKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 12:10:31 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2239 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729516AbgAHRKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 12:10:30 -0500
+Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 6CC01DF89CB9F314160A;
+        Wed,  8 Jan 2020 17:10:28 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ LHREML710-CAH.china.huawei.com (10.201.108.33) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 8 Jan 2020 17:10:27 +0000
+Received: from [127.0.0.1] (10.202.226.43) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Wed, 8 Jan 2020
+ 17:10:27 +0000
+Subject: Re: [PATCH v1] driver core: Use list_del_init to replace list_del at
+ device_links_purge()
+From:   John Garry <john.garry@huawei.com>
+To:     James Bottomley <jejb@linux.ibm.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+CC:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "saravanak@google.com" <saravanak@google.com>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <1578483244-50723-1-git-send-email-luojiaxing@huawei.com>
+ <20200108122658.GA2365903@kroah.com>
+ <73252c08-ac46-5d0d-23ec-16c209bd9b9a@huawei.com>
+ <1578498695.3260.5.camel@linux.ibm.com> <20200108155700.GA2459586@kroah.com>
+ <1578499287.3260.7.camel@linux.ibm.com>
+ <4b185c9f-7fa2-349d-9f72-3c787ac30377@huawei.com>
+Message-ID: <3826a83d-a220-2f7d-59f6-efe8a4b995d7@huawei.com>
+Date:   Wed, 8 Jan 2020 17:10:26 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200102082036.29643-2-namjae.jeon@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <4b185c9f-7fa2-349d-9f72-3c787ac30377@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.202.226.43]
+X-ClientProxiedBy: lhreml729-chm.china.huawei.com (10.201.108.80) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 02, 2020 at 04:20:24PM +0800, Namjae Jeon wrote:
-> This adds in-memory and on-disk structures and headers.
+On 08/01/2020 16:08, John Garry wrote:
+> On 08/01/2020 16:01, James Bottomley wrote:
+>>>>>     cdev->dev = NULL;
+>>>>>             return device_add(&cdev->cdev);
+>>>>>         }
+>>>>>     }
+>>>>>     return -ENODEV;
+>>>>> }
+>>>> The design of the code is simply to remove the link to the inserted
+>>>> device which has been removed.
+>>>>
+>>>> I*think*  this means the calls to device_del and device_add are
+>>>> unnecessary and should go.  enclosure_remove_links and the put of
+>>>> the
+>>>> enclosed device should be sufficient.
+>>> That would make more sense than trying to "reuse" the device
+>>> structure
+>>> here by tearing it down and adding it back.
+>> OK, let's try that.  This should be the patch if someone can try it
+>> (I've compile tested it, but the enclosure system is under a heap of
+>> stuff in the garage).
 > 
-> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+> I can test it now.
+> 
 
-This looks good modulo a few cosmetic nitpicks below.
+Yeah, that looks to have worked ok. SES disk locate was also fine after 
+losing and rediscovering the disk.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Thanks,
+John
 
-> --- /dev/null
-> +++ b/fs/exfat/exfat_fs.h
-> @@ -0,0 +1,569 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/*
-> + * Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
-> + */
-> +
-> +#ifndef _EXFAT_H
-> +#define _EXFAT_H
+> But it is a bit suspicious that we had the device_del() and device_add() 
+> at all, especially since the code change makes it look a bit more like 
+> pre-43d8eb9cfd0 ("ses: add support for enclosure component hot removal")
+> 
+> John
+> 
+>>
+>> James
+>>
+>> ---
+>>
+>> diff --git a/drivers/misc/enclosure.c b/drivers/misc/enclosure.c
+>> index 6d27ccfe0680..3c2d405bc79b 100644
+>> --- a/drivers/misc/enclosure.c
+>> +++ b/drivers/misc/enclosure.c
+>> @@ -406,10 +406,9 @@ int enclosure_remove_device(struct 
+>> enclosure_device *edev, struct device *dev)
+>>           cdev = &edev->component[i];
+>>           if (cdev->dev == dev) {
+>>               enclosure_remove_links(cdev);
+>> -            device_del(&cdev->cdev);
+>>               put_device(dev);
+>>               cdev->dev = NULL;
+>> -            return device_add(&cdev->cdev);
+>> +            return 0;
+>>           }
+>>       }
+>>       return -ENODEV;
+> 
+> _______________________________________________
+> Linuxarm mailing list
+> Linuxarm@huawei.com
+> http://hulk.huawei.com/mailman/listinfo/linuxarm
+> .
 
-This should probably be _EXFAT_FS_H to match the actual file name.
-
-> +
-> +#include <linux/fs.h>
-> +#include <linux/ratelimit.h>
-> +
-> +#define EXFAT_SUPER_MAGIC       (0x2011BAB0UL)
-
-No need for the braces.
-
-> +/*
-> + * exfat common MACRO
-> + */
-
-Not sure this comment is all that helpful.
-
-> +#define CLUSTER_32(x)			((unsigned int)((x) & 0xFFFFFFFFU))
-
-This could just use lower_32_bits().
-
-> +#define EXFAT_BAD_CLUSTER		(0xFFFFFFF7U)
-> +#define EXFAT_FREE_CLUSTER		(0)
-> +/* Cluster 0, 1 are reserved, the first cluster is 2 in the cluster heap. */
-> +#define EXFAT_RESERVED_CLUSTERS		(2)
-> +#define EXFAT_FIRST_CLUSTER		(2)
-
-No need for the braces.
-
-> +/* type values */
-> +#define TYPE_UNUSED		0x0000
-> +#define TYPE_DELETED		0x0001
-> +#define TYPE_INVALID		0x0002
-> +#define TYPE_CRITICAL_PRI	0x0100
-> +#define TYPE_BITMAP		0x0101
-> +#define TYPE_UPCASE		0x0102
-> +#define TYPE_VOLUME		0x0103
-> +#define TYPE_DIR		0x0104
-> +#define TYPE_FILE		0x011F
-> +#define TYPE_CRITICAL_SEC	0x0200
-> +#define TYPE_STREAM		0x0201
-> +#define TYPE_EXTEND		0x0202
-> +#define TYPE_ACL		0x0203
-> +#define TYPE_BENIGN_PRI		0x0400
-> +#define TYPE_GUID		0x0401
-> +#define TYPE_PADDING		0x0402
-> +#define TYPE_ACLTAB		0x0403
-> +#define TYPE_BENIGN_SEC		0x0800
-> +#define TYPE_ALL		0x0FFF
-
-Shouldn't this go into exfat_raw.h?  Maybe check if a few other
-values should as well if they define an on-disk format.
-
-> +static inline sector_t exfat_cluster_to_sector(struct exfat_sb_info *sbi,
-> +		unsigned int clus)
-> +{
-> +	return ((clus - EXFAT_RESERVED_CLUSTERS) << sbi->sect_per_clus_bits)
-> +		+ sbi->data_start_sector;
-
-Nitpick: normally we put the operators at the of the previous line in
-Linux code.
-
-> +#define EXFAT_DELETE		~(0x80)
-
-The braces would more useful outside the ~.
-
-> +#define file_num_ext			dentry.file.num_ext
-> +#define file_checksum			dentry.file.checksum
-> +#define file_attr			dentry.file.attr
-> +#define file_create_time		dentry.file.create_time
-> +#define file_create_date		dentry.file.create_date
-> +#define file_modify_time		dentry.file.modify_time
-> +#define file_modify_date		dentry.file.modify_date
-> +#define file_access_time		dentry.file.access_time
-> +#define file_access_date		dentry.file.access_date
-> +#define file_create_time_ms		dentry.file.create_time_ms
-> +#define file_modify_time_ms		dentry.file.modify_time_ms
-> +#define file_create_tz			dentry.file.create_tz
-> +#define file_modify_tz			dentry.file.modify_tz
-> +#define file_access_tz			dentry.file.access_tz
-> +#define stream_flags			dentry.stream.flags
-> +#define stream_name_len			dentry.stream.name_len
-> +#define stream_name_hash		dentry.stream.name_hash
-> +#define stream_start_clu		dentry.stream.start_clu
-> +#define stream_valid_size		dentry.stream.valid_size
-> +#define stream_size			dentry.stream.size
-> +#define name_flags			dentry.name.flags
-> +#define name_unicode			dentry.name.unicode_0_14
-> +#define bitmap_flags			dentry.bitmap.flags
-> +#define bitmap_start_clu		dentry.bitmap.start_clu
-> +#define bitmap_size			dentry.bitmap.size
-> +#define upcase_start_clu		dentry.upcase.start_clu
-> +#define upcase_size			dentry.upcase.size
-> +#define upcase_checksum			dentry.upcase.checksum
-
-Personally I don't find these defines very helpful - directly seeing
-the field name makes the code much easier to read.
