@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B73C133A36
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 05:25:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38316133A8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 05:27:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbgAHEZb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 23:25:31 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:10362 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbgAHEZ0 (ORCPT
+        id S1727134AbgAHE0p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 23:26:45 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:10278 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726927AbgAHEZ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 23:25:26 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e1559a40000>; Tue, 07 Jan 2020 20:25:08 -0800
+        Tue, 7 Jan 2020 23:25:28 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e1559870000>; Tue, 07 Jan 2020 20:24:39 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 07 Jan 2020 20:25:25 -0800
+  Tue, 07 Jan 2020 20:25:27 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 07 Jan 2020 20:25:25 -0800
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 8 Jan
- 2020 04:25:25 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 8 Jan 2020 04:25:25 +0000
+        by hqpgpgate102.nvidia.com on Tue, 07 Jan 2020 20:25:27 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 8 Jan
+ 2020 04:25:27 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 8 Jan 2020 04:25:26 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.162.131]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e1559b30001>; Tue, 07 Jan 2020 20:25:24 -0800
+        id <B5e1559b50000>; Tue, 07 Jan 2020 20:25:26 -0800
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <broonie@kernel.org>,
@@ -40,9 +40,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <markz@nvidia.com>, <devicetree@vger.kernel.org>,
         <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 03/21] dt-bindings: clock: tegra: Add DT id for OSC clock
-Date:   Tue, 7 Jan 2020 20:24:57 -0800
-Message-ID: <1578457515-3477-4-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v7 04/21] clk: tegra: Add Tegra OSC to clock lookup
+Date:   Tue, 7 Jan 2020 20:24:58 -0800
+Message-ID: <1578457515-3477-5-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
 References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
@@ -50,87 +50,145 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1578457508; bh=1NvJ4YURq3GMhbv3Ehpy1wVvFQ3o290gPEqmiMK1NGc=;
+        t=1578457479; bh=GKPxhjaKJ2CxomnsrG8DSoIgQUhEXD4NQLXXH2lZWU8=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=ccXExT9iWvYiQ7/2ZwxShUnJ7tYErUgzxE0PIJXBB5pAY+x8rrvvzV8s4JkYy+Lj1
-         c6kwOrYy4WdsrAsamAy8Nkdi9RFJNQiXOlPUlogZR07T9zAyp72I8FAWolcZsdRn+5
-         q/8Gfko39Yuj2ebTvhOnXwjBWwY24BR+jJYQpahWHaYicGHOuj9nnqrPGwuvMJh6YQ
-         rUySuX4rJpa9GJ+xZmMvcvBQd55+GLYwrB3flhN/5PODcjhlEAb2EpKswIPQU0kl/f
-         +YYHANLziuVcbuxd5Qhmlk2e0d6UP8j+sQf6vJ7teG+uEXwkcJfdPazmgnhU4fxt1g
-         Mmz/qw1LUBD0g==
+        b=eCYVu+aJAUdfv6gqpE3eug68uDdb79remRyflDNqXe5skbj42tPqLSnY2Fny9AeTB
+         QlVyNaRDx3zhFMa8TSByMpaapzj6IrzOp46tZGkGDPUtiV4yADhLfgnl+bbHc29tET
+         6y3F2x6QZ8virBV57QQRdPuemLhqXEjkpu9MeEss8WaHh/ou/dBIFyYXUpfXL2rJFO
+         1QaX4PzQeTR092BVMBlQlqpRBXtGEtw8a5+dvzVm+cprhlMQReWxCR0ASRqrReD/tf
+         NkpO16mdk1b1nEJOOljbk1NDbi478rMWpO9NWThG01P1QlJX6BDLDP5qmYkbixTwaw
+         b7OYuWORIxa9A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-OSC is one of the parent for Tegra clocks clk_out_1, clk_out_2, and
-clk_out_3.
+OSC is one of the parent for Tegra clocks clk_out_1, clk_out_2,
+and clk_out_3.
 
-This patch adds DT id for OSC clock to allow parent configuration
-through device tree.
+So, this patch adds Tegra OSC to clock lookup.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- include/dt-bindings/clock/tegra114-car.h        | 2 +-
- include/dt-bindings/clock/tegra124-car-common.h | 2 +-
- include/dt-bindings/clock/tegra210-car.h        | 2 +-
- include/dt-bindings/clock/tegra30-car.h         | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/tegra/clk-id.h          | 1 +
+ drivers/clk/tegra/clk-tegra-fixed.c | 5 +++++
+ drivers/clk/tegra/clk-tegra114.c    | 2 ++
+ drivers/clk/tegra/clk-tegra124.c    | 2 ++
+ drivers/clk/tegra/clk-tegra210.c    | 2 ++
+ drivers/clk/tegra/clk-tegra30.c     | 2 ++
+ 6 files changed, 14 insertions(+)
 
-diff --git a/include/dt-bindings/clock/tegra114-car.h b/include/dt-bindings/clock/tegra114-car.h
-index f4880959b094..e3927cabccad 100644
---- a/include/dt-bindings/clock/tegra114-car.h
-+++ b/include/dt-bindings/clock/tegra114-car.h
-@@ -274,7 +274,7 @@
- #define TEGRA114_CLK_CLK_OUT_2 246
- #define TEGRA114_CLK_CLK_OUT_3 247
- #define TEGRA114_CLK_BLINK 248
--/* 249 */
-+#define TEGRA114_CLK_OSC 249
- /* 250 */
- /* 251 */
- #define TEGRA114_CLK_XUSB_HOST_SRC 252
-diff --git a/include/dt-bindings/clock/tegra124-car-common.h b/include/dt-bindings/clock/tegra124-car-common.h
-index e7e601a88d3d..45b2bada8ac0 100644
---- a/include/dt-bindings/clock/tegra124-car-common.h
-+++ b/include/dt-bindings/clock/tegra124-car-common.h
-@@ -273,7 +273,7 @@
- #define TEGRA124_CLK_CLK_OUT_2 246
- #define TEGRA124_CLK_CLK_OUT_3 247
- #define TEGRA124_CLK_BLINK 248
--/* 249 */
-+#define TEGRA124_CLK_OSC 249
- /* 250 */
- /* 251 */
- #define TEGRA124_CLK_XUSB_HOST_SRC 252
-diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-index 6f65c14bf013..383ee591ffa7 100644
---- a/include/dt-bindings/clock/tegra210-car.h
-+++ b/include/dt-bindings/clock/tegra210-car.h
-@@ -355,7 +355,7 @@
- #define TEGRA210_CLK_PLL_A_OUT_ADSP 323
- #define TEGRA210_CLK_PLL_A_OUT0_OUT_ADSP 324
- /* 325 */
--/* 326 */
-+#define TEGRA210_CLK_OSC 326
- /* 327 */
- /* 328 */
- /* 329 */
-diff --git a/include/dt-bindings/clock/tegra30-car.h b/include/dt-bindings/clock/tegra30-car.h
-index 907a8a04c280..5d71f0c0a732 100644
---- a/include/dt-bindings/clock/tegra30-car.h
-+++ b/include/dt-bindings/clock/tegra30-car.h
-@@ -243,7 +243,7 @@
- #define TEGRA30_CLK_HCLK 217
- #define TEGRA30_CLK_PCLK 218
- /* 219 */
--/* 220 */
-+#define TEGRA30_CLK_OSC 220
- /* 221 */
- /* 222 */
- /* 223 */
+diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+index 1bf21766d3e8..cf42e5995794 100644
+--- a/drivers/clk/tegra/clk-id.h
++++ b/drivers/clk/tegra/clk-id.h
+@@ -44,6 +44,7 @@ enum clk_id {
+ 	tegra_clk_clk72Mhz,
+ 	tegra_clk_clk72Mhz_8,
+ 	tegra_clk_clk_m,
++	tegra_clk_osc,
+ 	tegra_clk_osc_div2,
+ 	tegra_clk_osc_div4,
+ 	tegra_clk_clk_out_1,
+diff --git a/drivers/clk/tegra/clk-tegra-fixed.c b/drivers/clk/tegra/clk-tegra-fixed.c
+index 8304f8cf9dd2..205d1a6d3e77 100644
+--- a/drivers/clk/tegra/clk-tegra-fixed.c
++++ b/drivers/clk/tegra/clk-tegra-fixed.c
+@@ -46,7 +46,12 @@ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
+ 		return -EINVAL;
+ 	}
+ 
++	dt_clk = tegra_lookup_dt_id(tegra_clk_osc, clks);
++	if (!dt_clk)
++		return 0;
++
+ 	osc = clk_register_fixed_rate(NULL, "osc", NULL, 0, *osc_freq);
++	*dt_clk = osc;
+ 
+ 	dt_clk = tegra_lookup_dt_id(tegra_clk_clk_m, clks);
+ 	if (!dt_clk)
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 9d2ca387114c..180ddc2abfd2 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -735,6 +735,7 @@ static struct tegra_clk tegra114_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_fuse_burn] = { .dt_id = TEGRA114_CLK_FUSE_BURN, .present = true },
+ 	[tegra_clk_clk_32k] = { .dt_id = TEGRA114_CLK_CLK_32K, .present = true },
+ 	[tegra_clk_clk_m] = { .dt_id = TEGRA114_CLK_CLK_M, .present = true },
++	[tegra_clk_osc] = { .dt_id = TEGRA114_CLK_OSC, .present = true },
+ 	[tegra_clk_osc_div2] = { .dt_id = TEGRA114_CLK_OSC_DIV2, .present = true },
+ 	[tegra_clk_osc_div4] = { .dt_id = TEGRA114_CLK_OSC_DIV4, .present = true },
+ 	[tegra_clk_pll_ref] = { .dt_id = TEGRA114_CLK_PLL_REF, .present = true },
+@@ -815,6 +816,7 @@ static struct tegra_devclk devclks[] __initdata = {
+ 	{ .con_id = "clk_m", .dt_id = TEGRA114_CLK_CLK_M },
+ 	{ .con_id = "pll_ref", .dt_id = TEGRA114_CLK_PLL_REF },
+ 	{ .con_id = "clk_32k", .dt_id = TEGRA114_CLK_CLK_32K },
++	{ .con_id = "osc", .dt_id = TEGRA114_CLK_OSC },
+ 	{ .con_id = "osc_div2", .dt_id = TEGRA114_CLK_OSC_DIV2 },
+ 	{ .con_id = "osc_div4", .dt_id = TEGRA114_CLK_OSC_DIV4 },
+ 	{ .con_id = "pll_c", .dt_id = TEGRA114_CLK_PLL_C },
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 15f42718f4cb..7a16e50eb20f 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -860,6 +860,7 @@ static struct tegra_clk tegra124_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_fuse_burn] = { .dt_id = TEGRA124_CLK_FUSE_BURN, .present = true },
+ 	[tegra_clk_clk_32k] = { .dt_id = TEGRA124_CLK_CLK_32K, .present = true },
+ 	[tegra_clk_clk_m] = { .dt_id = TEGRA124_CLK_CLK_M, .present = true },
++	[tegra_clk_osc] = { .dt_id = TEGRA124_CLK_OSC, .present = true },
+ 	[tegra_clk_osc_div2] = { .dt_id = TEGRA124_CLK_OSC_DIV2, .present = true },
+ 	[tegra_clk_osc_div4] = { .dt_id = TEGRA124_CLK_OSC_DIV4, .present = true },
+ 	[tegra_clk_pll_ref] = { .dt_id = TEGRA124_CLK_PLL_REF, .present = true },
+@@ -941,6 +942,7 @@ static struct tegra_devclk devclks[] __initdata = {
+ 	{ .con_id = "clk_m", .dt_id = TEGRA124_CLK_CLK_M },
+ 	{ .con_id = "pll_ref", .dt_id = TEGRA124_CLK_PLL_REF },
+ 	{ .con_id = "clk_32k", .dt_id = TEGRA124_CLK_CLK_32K },
++	{ .con_id = "osc", .dt_id = TEGRA124_CLK_OSC },
+ 	{ .con_id = "osc_div2", .dt_id = TEGRA124_CLK_OSC_DIV2 },
+ 	{ .con_id = "osc_div4", .dt_id = TEGRA124_CLK_OSC_DIV4 },
+ 	{ .con_id = "pll_c", .dt_id = TEGRA124_CLK_PLL_C },
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 5687fcda620e..45d54ead30bc 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2371,6 +2371,7 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_fuse_burn] = { .dt_id = TEGRA210_CLK_FUSE_BURN, .present = true },
+ 	[tegra_clk_clk_32k] = { .dt_id = TEGRA210_CLK_CLK_32K, .present = true },
+ 	[tegra_clk_clk_m] = { .dt_id = TEGRA210_CLK_CLK_M, .present = true },
++	[tegra_clk_osc] = { .dt_id = TEGRA210_CLK_OSC, .present = true },
+ 	[tegra_clk_osc_div2] = { .dt_id = TEGRA210_CLK_OSC_DIV2, .present = true },
+ 	[tegra_clk_osc_div4] = { .dt_id = TEGRA210_CLK_OSC_DIV4, .present = true },
+ 	[tegra_clk_pll_ref] = { .dt_id = TEGRA210_CLK_PLL_REF, .present = true },
+@@ -2497,6 +2498,7 @@ static struct tegra_devclk devclks[] __initdata = {
+ 	{ .con_id = "clk_m", .dt_id = TEGRA210_CLK_CLK_M },
+ 	{ .con_id = "pll_ref", .dt_id = TEGRA210_CLK_PLL_REF },
+ 	{ .con_id = "clk_32k", .dt_id = TEGRA210_CLK_CLK_32K },
++	{ .con_id = "osc", .dt_id = TEGRA210_CLK_OSC },
+ 	{ .con_id = "osc_div2", .dt_id = TEGRA210_CLK_OSC_DIV2 },
+ 	{ .con_id = "osc_div4", .dt_id = TEGRA210_CLK_OSC_DIV4 },
+ 	{ .con_id = "pll_c", .dt_id = TEGRA210_CLK_PLL_C },
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 1322188edb72..ddc5ab66d09e 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -581,6 +581,7 @@ static struct tegra_devclk devclks[] __initdata = {
+ 	{ .con_id = "twd", .dt_id = TEGRA30_CLK_TWD },
+ 	{ .con_id = "emc", .dt_id = TEGRA30_CLK_EMC },
+ 	{ .con_id = "clk_32k", .dt_id = TEGRA30_CLK_CLK_32K },
++	{ .con_id = "osc", .dt_id = TEGRA30_CLK_OSC },
+ 	{ .con_id = "osc_div2", .dt_id = TEGRA30_CLK_OSC_DIV2 },
+ 	{ .con_id = "osc_div4", .dt_id = TEGRA30_CLK_OSC_DIV4 },
+ 	{ .con_id = "cml0", .dt_id = TEGRA30_CLK_CML0 },
+@@ -683,6 +684,7 @@ static struct tegra_devclk devclks[] __initdata = {
+ static struct tegra_clk tegra30_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_clk_32k] = { .dt_id = TEGRA30_CLK_CLK_32K, .present = true },
+ 	[tegra_clk_clk_m] = { .dt_id = TEGRA30_CLK_CLK_M, .present = true },
++	[tegra_clk_osc] = { .dt_id = TEGRA30_CLK_OSC, .present = true },
+ 	[tegra_clk_osc_div2] = { .dt_id = TEGRA30_CLK_OSC_DIV2, .present = true },
+ 	[tegra_clk_osc_div4] = { .dt_id = TEGRA30_CLK_OSC_DIV4, .present = true },
+ 	[tegra_clk_pll_ref] = { .dt_id = TEGRA30_CLK_PLL_REF, .present = true },
 -- 
 2.7.4
 
