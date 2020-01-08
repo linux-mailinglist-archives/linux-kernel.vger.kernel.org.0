@@ -2,103 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B75D13496C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 18:35:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1162213496F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 18:36:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728864AbgAHRff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 12:35:35 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55642 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbgAHRfe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 12:35:34 -0500
-Received: by mail-wm1-f68.google.com with SMTP id q9so3380758wmj.5
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 09:35:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qwg5hibFRVywSqJ0shEP5dA8R4/hDi63ijsidIVUsnI=;
-        b=QUoqhl67fBgCPzU+SawnnCIxZ4VeUk3dj6RARmd4tvkb3zuVnoidILFVGwXsN5UE2I
-         /F5RA4m/Ts5DWqtPY4fbEwVrFuGLvTj3ZvxdZY/KfsHA/92XiLTWNxlRvAT/l38OSrBg
-         2KSwA4YLo8d/FXx89+AyH9Iiffz0+7TqE5dms=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=qwg5hibFRVywSqJ0shEP5dA8R4/hDi63ijsidIVUsnI=;
-        b=oP5Zv1aKM6bHJO4zT2T7lNAogu+og8/4GBU+XIQrF6TC3YqscAv0SZwi0Js1bcPCWg
-         zvO/T+CcBUvwrx6+kaB54jC1dAogKFSenblXzLPDhx6tcqbpb4RtOWP4IJT7D4hSdAyG
-         ijZvYCoA2qpYhR6co43K+dNBYb93K3o9kQIixSVroVxAi4JgPvxsqxHCSeL5ZHZcOgY6
-         4wMa4HNvYX/SwC8bdT8licY/3nrocyaAE4xmBclW1+3Bfo0Kg7iwqwLJo46pjdUA8A+n
-         q7Y3N3SV2+T2W5p2fZ3C7+KDIeSknfq8iCLteVlMN7eXglnIENGFcIn74FfosK9Eeq2B
-         DCYw==
-X-Gm-Message-State: APjAAAV7hacxu/E0rYNqD98cTsePeCNcCZ82qbk2hE1r+MhwArMUebFg
-        5o//E2vGnvaNRSGJjM16APV1NQ==
-X-Google-Smtp-Source: APXvYqzL8iJjlAP6Ht35NUvrFJlYJCBylU7frfkVj8GVw/wQ1xkS3qZdMpeM79IbBg2pFJtR30DPRQ==
-X-Received: by 2002:a1c:a382:: with SMTP id m124mr5324133wme.90.1578504932671;
-        Wed, 08 Jan 2020 09:35:32 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:564b:0:7567:bb67:3d7f:f863])
-        by smtp.gmail.com with ESMTPSA id h17sm5044566wrs.18.2020.01.08.09.35.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2020 09:35:31 -0800 (PST)
-Date:   Wed, 8 Jan 2020 18:35:29 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Wambui Karuga <wambui.karugax@gmail.com>
-Cc:     tomi.valkeinen@ti.com, airlied@linux.ie, daniel@ffwll.ch,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/omapdrm: use BUG_ON macro for error debugging.
-Message-ID: <20200108173529.GG43062@phenom.ffwll.local>
-Mail-Followup-To: Wambui Karuga <wambui.karugax@gmail.com>,
-        tomi.valkeinen@ti.com, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20200102095515.7106-1-wambui.karugax@gmail.com>
+        id S1729814AbgAHRft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 12:35:49 -0500
+Received: from mga05.intel.com ([192.55.52.43]:49567 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727328AbgAHRfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 12:35:48 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 09:35:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,410,1571727600"; 
+   d="scan'208";a="395811677"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga005.jf.intel.com with ESMTP; 08 Jan 2020 09:35:42 -0800
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1ipFF6-00064R-VV; Wed, 08 Jan 2020 19:35:40 +0200
+Date:   Wed, 8 Jan 2020 19:35:40 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
+        "David E . Box" <david.e.box@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 28/36] mfd: intel_soc_pmic_mrfld: Convert to use new
+ SCU IPC API
+Message-ID: <20200108173540.GA32742@smile.fi.intel.com>
+References: <20200108114201.27908-1-mika.westerberg@linux.intel.com>
+ <20200108114201.27908-29-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200102095515.7106-1-wambui.karugax@gmail.com>
-X-Operating-System: Linux phenom 5.3.0-3-amd64 
+In-Reply-To: <20200108114201.27908-29-mika.westerberg@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 02, 2020 at 12:55:15PM +0300, Wambui Karuga wrote:
-> Since the if statement only checks for the value of the `id` variable,
-> it can be replaced by the more concise BUG_ON() macro for error
-> reporting.
-> Issue found using coccinelle.
+On Wed, Jan 08, 2020 at 02:41:53PM +0300, Mika Westerberg wrote:
+> This converts the Intel Merrifield PMIC driver over the new SCU IPC API
+> where the SCU IPC instance is passed to the functions.
+
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
 > 
-> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
-
-Tomi said he's ok with this landing in drm-misc-next on irc, so merged.
-Thanks for your patch!
--Daniel
-
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 > ---
->  drivers/gpu/drm/omapdrm/dss/dispc.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  drivers/mfd/intel_soc_pmic_mrfld.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/omapdrm/dss/dispc.c b/drivers/gpu/drm/omapdrm/dss/dispc.c
-> index 413dbdd1771e..dbb90f2d2ccd 100644
-> --- a/drivers/gpu/drm/omapdrm/dss/dispc.c
-> +++ b/drivers/gpu/drm/omapdrm/dss/dispc.c
-> @@ -393,8 +393,7 @@ static void dispc_get_reg_field(struct dispc_device *dispc,
->  				enum dispc_feat_reg_field id,
->  				u8 *start, u8 *end)
+> diff --git a/drivers/mfd/intel_soc_pmic_mrfld.c b/drivers/mfd/intel_soc_pmic_mrfld.c
+> index 26a1551c5faf..bd94c989d232 100644
+> --- a/drivers/mfd/intel_soc_pmic_mrfld.c
+> +++ b/drivers/mfd/intel_soc_pmic_mrfld.c
+> @@ -74,10 +74,11 @@ static const struct mfd_cell bcove_dev[] = {
+>  static int bcove_ipc_byte_reg_read(void *context, unsigned int reg,
+>  				    unsigned int *val)
 >  {
-> -	if (id >= dispc->feat->num_reg_fields)
-> -		BUG();
-> +	BUG_ON(id >= dispc->feat->num_reg_fields);
+> +	struct intel_soc_pmic *pmic = context;
+>  	u8 ipc_out;
+>  	int ret;
 >  
->  	*start = dispc->feat->reg_fields[id].start;
->  	*end = dispc->feat->reg_fields[id].end;
+> -	ret = intel_scu_ipc_ioread8(reg, &ipc_out);
+> +	ret = intel_scu_ipc_dev_ioread8(pmic->scu, reg, &ipc_out);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -88,10 +89,11 @@ static int bcove_ipc_byte_reg_read(void *context, unsigned int reg,
+>  static int bcove_ipc_byte_reg_write(void *context, unsigned int reg,
+>  				     unsigned int val)
+>  {
+> +	struct intel_soc_pmic *pmic = context;
+>  	u8 ipc_in = val;
+>  	int ret;
+>  
+> -	ret = intel_scu_ipc_iowrite8(reg, ipc_in);
+> +	ret = intel_scu_ipc_dev_iowrite8(pmic->scu, reg, ipc_in);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -117,6 +119,10 @@ static int bcove_probe(struct platform_device *pdev)
+>  	if (!pmic)
+>  		return -ENOMEM;
+>  
+> +	pmic->scu = devm_intel_scu_ipc_dev_get(dev);
+> +	if (!pmic->scu)
+> +		return -ENOMEM;
+> +
+>  	platform_set_drvdata(pdev, pmic);
+>  	pmic->dev = &pdev->dev;
+>  
 > -- 
-> 2.17.1
+> 2.24.1
 > 
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+With Best Regards,
+Andy Shevchenko
+
+
