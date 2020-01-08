@@ -2,114 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3E21133E61
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:37:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E017133E6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:41:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbgAHJhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 04:37:02 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:33978 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727224AbgAHJhB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 04:37:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578476220;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=68cyakBuuqykyYfuVPtYJRYgfAWVoYk6H/O1x5botQ4=;
-        b=TKWu/IjoXLrV7Dq6he93ntbiVdZ86CenNo/c+fBX4bLXanOeiXFqb4gJ+qzlyHKJs1faOe
-        QJvhQHU4yNOMz3m6u0O7JlOsThqMXRZf3+L1HbqP4/2crFI8STf26D64qHvemcT9hfPQnq
-        SiBbs+eQnxWX5EverffID/NnqyPBIls=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-384-vtPIEzLhPiu5LuqOSatMyQ-1; Wed, 08 Jan 2020 04:36:59 -0500
-X-MC-Unique: vtPIEzLhPiu5LuqOSatMyQ-1
-Received: by mail-wr1-f69.google.com with SMTP id z10so1186622wrt.21
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 01:36:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=68cyakBuuqykyYfuVPtYJRYgfAWVoYk6H/O1x5botQ4=;
-        b=WfyJ8MWrIJyXTgrOzJGk8XPNsCQ3Emw00KJZF4b2wo3yJ5UC8FkPxhacipwDxIO4rc
-         TlGxpHB3bnpHyZamfzhPKL5P9/bjks7osmECGEH9sbjkg4H14LzbmEQEoowwsZdiq37E
-         9pz1EbmmDMsucqpT56HnOFhwIuGFIH1gDRk74HD7XjVJu6qco35bK3bBBCazRalJM7kg
-         cUQdF9Ok6OC2ohJC8bWbmsg5LdVUllhrwQ4k/WwYHqM00+QuT/AE+5jXuzTJW/DRsioc
-         wEThRJu1l26Gxo5hMZ+MLk11fVEGvKqv0jxML4p1CJGRTIwMA7L4andXMwt90qvbJ5Lr
-         r1Ww==
-X-Gm-Message-State: APjAAAX5/k2xfV8jvNNUz4Ww8t4OQaRerru3Rcj8hhM5DZotnJl8BFJ1
-        keiamqjb128oVmwqMKvM4LenYPWztFBn/T8lljJvcHPxkhCobwQvGrZicY6TxwO8lzL0w5xeEkf
-        Svk/r7p6WsAqDSqRmlA0O+Gwo
-X-Received: by 2002:a05:600c:298:: with SMTP id 24mr2563067wmk.141.1578476218056;
-        Wed, 08 Jan 2020 01:36:58 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwOYbwL71jHMFOLZ5jV8xy/fR+AF+ZAxn6+Tt8MCWEEuGa8Xg+blvSitd6myXj3yx8d2Rz0jg==
-X-Received: by 2002:a05:600c:298:: with SMTP id 24mr2563033wmk.141.1578476217779;
-        Wed, 08 Jan 2020 01:36:57 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:bc4e:7fe8:2916:6a59? ([2001:b07:6468:f312:bc4e:7fe8:2916:6a59])
-        by smtp.gmail.com with ESMTPSA id q68sm3371147wme.14.2020.01.08.01.36.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jan 2020 01:36:57 -0800 (PST)
-Subject: Re: discuss about pvpanic
-To:     zhenwei pi <pizhenwei@bytedance.com>
-Cc:     "yelu@bytedance.com" <yelu@bytedance.com>,
-        Greg KH <gregkh@linuxfoundation.org>, qemu-devel@nongnu.org,
-        linux-kernel@vger.kernel.org,
-        Michal Privoznik <mprivozn@redhat.com>,
-        "libvir-list@redhat.com" <libvir-list@redhat.com>
-References: <2feff896-21fe-2bbe-6f68-9edfb476a110@bytedance.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <dd8e46c4-eac4-046a-82ec-7ae17df75035@redhat.com>
-Date:   Wed, 8 Jan 2020 10:36:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1727192AbgAHJkq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 04:40:46 -0500
+Received: from mga17.intel.com ([192.55.52.151]:42310 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726107AbgAHJkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 04:40:46 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 01:40:46 -0800
+X-IronPort-AV: E=Sophos;i="5.69,409,1571727600"; 
+   d="scan'208";a="222891061"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 01:40:43 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Wambui Karuga <wambui.karugax@gmail.com>, airlied@linux.ie,
+        daniel@ffwll.ch, rodrigo.vivi@intel.com
+Cc:     seanpaul@chromium.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] drm/i915: convert to using the drm_dbg_kms() macro.
+In-Reply-To: <157847199686.4725.87481257304852182@jlahtine-desk.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <cover.1578409433.git.wambui.karugax@gmail.com> <b79ee0f6efbf8358cbb4f2e163fa6b5bb04db794.1578409433.git.wambui.karugax@gmail.com> <157847199686.4725.87481257304852182@jlahtine-desk.ger.corp.intel.com>
+Date:   Wed, 08 Jan 2020 11:40:40 +0200
+Message-ID: <8736cqs2uf.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <2feff896-21fe-2bbe-6f68-9edfb476a110@bytedance.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/01/20 09:25, zhenwei pi wrote:
-> Hey, Paolo
-> 
-> Currently, pvpapic only supports bit 0(PVPANIC_PANICKED).
-> We usually expect that guest writes ioport (typical 0x505) in panic_notifier_list callback
-> during handling panic, then we can handle pvpapic event PVPANIC_PANICKED in QEMU.
-> 
-> On the other hand, guest wants to handle the crash by kdump-tools, and reboots without any
-> panic_notifier_list callback. So QEMU only knows that guest has rebooted (because guest
-> write 0xcf9 ioport for RCR request), but QEMU can't identify why guest resets.
-> 
-> In production environment, we hit about 100+ guest reboot event everyday, sadly we 
-> can't separate the abnormal reboot from normal operation.
-> 
-> We want to add a new bit for pvpanic event(maybe PVPANIC_CRASHLOADED) to represent the guest has crashed, 
-> and the panic is handled by the guest kernel. (here is the previous patch https://lkml.org/lkml/2019/12/14/265)
-> 
-> What do you think about this solution? Or do you have any other suggestions?
+On Wed, 08 Jan 2020, Joonas Lahtinen <joonas.lahtinen@linux.intel.com> wrote:
+> Quoting Wambui Karuga (2020-01-07 17:13:29)
+>> Convert the use of the DRM_DEBUG_KMS() logging macro to the new struct
+>> drm_device based drm_dbg_kms() logging macro in i915/intel_pch.c.
+>> 
+>> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
+>> ---
+>>  drivers/gpu/drm/i915/intel_pch.c | 46 +++++++++++++++++---------------
+>>  1 file changed, 24 insertions(+), 22 deletions(-)
+>> 
+>> diff --git a/drivers/gpu/drm/i915/intel_pch.c b/drivers/gpu/drm/i915/intel_pch.c
+>> index 43b68b5fc562..4ed60e1f01db 100644
+>> --- a/drivers/gpu/drm/i915/intel_pch.c
+>> +++ b/drivers/gpu/drm/i915/intel_pch.c
+>> @@ -12,90 +12,91 @@ intel_pch_type(const struct drm_i915_private *dev_priv, unsigned short id)
+>>  {
+>>         switch (id) {
+>>         case INTEL_PCH_IBX_DEVICE_ID_TYPE:
+>> -               DRM_DEBUG_KMS("Found Ibex Peak PCH\n");
+>> +               drm_dbg_kms(&dev_priv->drm, "Found Ibex Peak PCH\n");
+>
+> Did we at some point consider i915_dbg_kms alias? That would just take
+> dev_priv (or i915, as it's called in newer code). It would shorten many
+> of the statements.
+>
+> i915_dbg_kms(dev_priv, ...) or i915_dbg_kms(i915, ...)
 
-Hi Zhenwei,
+I'd rather use the common drm logging macros. I thought about adding
+i915 specific ones only if the drm device specific logging macros
+weren't going to be merged.
 
-the kernel-side patch certainly makes sense.  I assume that you want the
-event to propagate up from QEMU to Libvirt and so on?  The QEMU patch
-would need to declare a new event (qapi/misc.json) and send it in
-handle_event (hw/misc/pvpanic.c).  For Libvirt I'm not familiar, so I'm
-adding the respective list.
+BR,
+Jani.
 
-Another possibility is to simply not write to pvpanic if
-kexec_crash_loaded() returns true; this would match what xen_panic_event
-does for example.  The kexec kernel would then log the panic normally,
-without the need for MMIO at all.  However, I have no problem with
-adding a new bit to the pvpanic I/O port so once you post the QEMU patch
-I will certainly ack the kernel side.
 
-Thanks,
-
-Paolo
-
+-- 
+Jani Nikula, Intel Open Source Graphics Center
