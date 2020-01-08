@@ -2,68 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3E5E1340E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:44:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C934134111
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:46:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbgAHLn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 06:43:28 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44652 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726852AbgAHLn0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 06:43:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=JF05G3rkot977g2qfc7sNbF8fG7HHlZ96SCciWcuNc8=; b=e6SPGoWALp7vt4ZaOXv/Hi75I
-        piaEDXez66PSnE0qWoEJoP792McVIpkPUFfUKmSTPnWE62zSh/j8WHk2twYQcGR4bjcvvXluFlWil
-        pRgSuXlI89AFQMwvul++d1zGuS09Rgmkd6CqspXvQwAZNBpj5OY6R21M9S7/SCe2CpwBStgjLSJEJ
-        6SBA4MHQPCLw2CKFgDv8bxYlyZgwBFWnj3fvEg6pX6IjFDhvQA0I5MWQMG0ZVMyOeNnHj7vTnnqgO
-        eIoaAQt7BBHld3lhErEyqKFCC2I7sBLqM6+yq9gY0DUSIbfZjLRUsrRYHL06t252sEGQrxIWq6LGN
-        fXQmu9pQg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ip9k0-0006GW-Vg; Wed, 08 Jan 2020 11:43:13 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S1727550AbgAHLpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 06:45:50 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:57334 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726323AbgAHLpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 06:45:50 -0500
+Received: from zn.tnic (p200300EC2F0BD40029EAD32D10B1B629.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:d400:29ea:d32d:10b1:b629])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 306AC305EDF;
-        Wed,  8 Jan 2020 12:41:37 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 268E329A60326; Wed,  8 Jan 2020 12:43:10 +0100 (CET)
-Date:   Wed, 8 Jan 2020 12:43:10 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/fair : Improve update_sd_pick_busiest for spare
- capacity case
-Message-ID: <20200108114310.GD2844@hirez.programming.kicks-ass.net>
-References: <1576839893-26930-1-git-send-email-vincent.guittot@linaro.org>
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 206671EC0CC9;
+        Wed,  8 Jan 2020 12:45:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1578483948;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=SJM3P7TJUHuFQReR8fpWR/Ki+TmMG3NXbYCvLcSh8ig=;
+        b=eRAtCz8R6+9GheroYOqJ2ttJGmZC9/ghrm5BBZTSWZGFSLPI0jt1zP8pgu2PsRF++dFifr
+        V5+Ost87lUSURC/rr6ojO3NiRxM96Jk4DjEHxt8PS1P+JvBJtnsQjUFiKcG+FPn/h64hlQ
+        BCB1u+PDlaE/eokYWvM66hZKUtsKBhI=
+Date:   Wed, 8 Jan 2020 12:45:39 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, x86-ml <x86@kernel.org>
+Subject: Re: [tip: x86/fpu] x86/fpu: Deactivate FPU state after failure
+ during state load
+Message-ID: <20200108114539.GE27363@zn.tnic>
+References: <157840155965.30329.313988118654552721.tip-bot2@tip-bot2>
+ <FA0D2929-63D0-4473-A492-42227D7A5D98@amacapital.net>
+ <20200107211134.tckhc5knkthmjsj6@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1576839893-26930-1-git-send-email-vincent.guittot@linaro.org>
+In-Reply-To: <20200107211134.tckhc5knkthmjsj6@linutronix.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 12:04:53PM +0100, Vincent Guittot wrote:
-> Similarly to calculate_imbalance() and find_busiest_group(), using the
-> number of idle CPUs when there is only 1 CPU in the group is not efficient
-> because we can't make a difference between a CPU running 1 task and a CPU
-> running dozens of small tasks competing for the same CPU but not enough
-> to overload it. More generally speaking, we should use the number of
-> running tasks when there is the same number of idle CPUs in a group instead
-> of blindly select the 1st one.
-> 
-> When the groups have spare capacity and the same number of idle CPUs, we
-> compare the number of running tasks to select the busiest group.
-> 
-Thanks!
+On Tue, Jan 07, 2020 at 10:11:34PM +0100, Sebastian Andrzej Siewior wrote:
+> The go people contirbuted a testcase. Maybe I should hack up it up so
+> that we trigger each path and post since it obviously did not happen.
+
+Yes, please do.
+
+> Boris, do you remember why we did not include their testcase yet?
+
+It is in my ever-growing TODO list so if you could find some time to add
+it to selftests, I'd appreciate it a lot:
+
+https://lkml.kernel.org/r/20191126221328.GH31379@zn.tnic
+
+And Andy wants it in the slow category (see reply) and that's fine with
+me - I'm happy with some tests than none at all.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
