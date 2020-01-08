@@ -2,103 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76565133829
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 01:58:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA179133823
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 01:51:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726252AbgAHA6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 19:58:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46022 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725601AbgAHA6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 19:58:23 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06FFD20656;
-        Wed,  8 Jan 2020 00:58:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578445102;
-        bh=n1XqwT16/zPyBPZ62ev8+HYwivyuSN6tPQ8E0cRLlrY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=0yN2ZkwZ24etUHtKYoGN3f9D7JHWDUCLWz8kTAdyfV/8JrNFDGbmYSbU1ECJ+QWZc
-         3GtaVHnfzZ0Qq22b9rNsWpGQ3kSO+iGoyES2CEueDd1u58GPO++JXm9SD0GLeUxqQk
-         wlGph7jq5uQZOU2SHhSFOY60M/B/yasU2V4YHQIo=
-Date:   Wed, 8 Jan 2020 09:58:16 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
+        id S1726360AbgAHAuy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 19:50:54 -0500
+Received: from mail.emypeople.net ([216.220.167.73]:32829 "EHLO
+        mail.emypeople.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbgAHAuy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 19:50:54 -0500
+X-Greylist: delayed 740 seconds by postgrey-1.27 at vger.kernel.org; Tue, 07 Jan 2020 19:50:53 EST
+DKIM-Signature: a=rsa-sha256; t=1578443912; x=1579048712; s=mail; d=emypeople.us; c=relaxed/relaxed; v=1; bh=CvMeBons7S28jmhBTmYc6WWNwdjk4SyzYKXXN9B3/vs=; h=From:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding;
+   b=Q/E89Q0cycQthkFA97Vx4bbEU/Gzi5/+gb4Y5Jnstad5/8Y5MU4QuUWp+XPS6KzyTsvN+H/5AdAgZXq6bh6dH8zQ3juzXt4dC5aTb9W89mzRJMldHXFVF1iTHQ5RUAVwyqN1g7E0wPtwrYTlhQ0B2l8kgNGuRgp1LQuClv+9gNo=
+Received: from [192.168.1.2] ([10.12.2.17])
+        by mail.emypeople.net (12.2.0 build 2 RHEL7 x64) with ASMTP id 202001071938317657;
+        Tue, 07 Jan 2020 19:38:31 -0500
+From:   Edwin Zimmerman <edwin@211mainstreet.net>
+Subject: [PATCH] x86/boot: fix cast to pointer compiler warning
+To:     x86@kernel.org, Matthew Garrett <mjg59@google.com>,
+        linux-kernel@vger.kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Shile Zhang <shile.zhang@linux.alibaba.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86: orc: fix unused-function warning
-Message-Id: <20200108095816.76dd48134cadc997bf4c5ece@kernel.org>
-In-Reply-To: <20200107213127.209139-1-arnd@arndb.de>
-References: <20200107213127.209139-1-arnd@arndb.de>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Junichi Nomura <j-nomura@ce.jp.nec.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        Edwin Zimmerman <edwin@211mainstreet.net>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        Josh Boyer <jwboyer@redhat.com>
+Message-ID: <8dd48f03-4d7c-25bb-2a2f-27461c0004ba@211mainstreet.net>
+Date:   Wed, 8 Jan 2020 00:38:28 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  7 Jan 2020 22:31:20 +0100
-Arnd Bergmann <arnd@arndb.de> wrote:
+Fix cast-to-pointer compiler warning
 
-> The orc unwinder contains a new warning:
-> 
-> arch/x86/kernel/unwind_orc.c:210:12: error: 'orc_sort_cmp' defined but not used [-Werror=unused-function]
->  static int orc_sort_cmp(const void *_a, const void *_b)
->             ^~~~~~~~~~~~
-> arch/x86/kernel/unwind_orc.c:190:13: error: 'orc_sort_swap' defined but not used [-Werror=unused-function]
->  static void orc_sort_swap(void *_a, void *_b, int size)
->              ^~~~~~~~~~~~~
-> 
-> Move the #ifdef to hide the now unused functions.
-> 
-> Fixes: f14bf6a350df ("x86/unwind/orc: Remove boot-time ORC unwind tables sorting")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+arch/x86/boot/compressed/acpi.c: In function ‘get_acpi_srat_table’:
+arch/x86/boot/compressed/acpi.c:316:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+rsdp = (struct acpi_table_rsdp *)get_cmdline_acpi_rsdp();
+        ^
+Fixes: 41fa1ee9c6d6 ("acpi: Ignore acpi_rsdp kernel param when the kernel has been locked down")
+Signed-off-by: Edwin Zimmerman <edwin@211mainstreet.net>
+---
+arch/x86/boot/compressed/acpi.c | 2 +-
+1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looks good to me.
-
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thank you,
-
-> ---
->  arch/x86/kernel/unwind_orc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
-> index abdf8911a1fb..538152cca46b 100644
-> --- a/arch/x86/kernel/unwind_orc.c
-> +++ b/arch/x86/kernel/unwind_orc.c
-> @@ -187,6 +187,7 @@ static struct orc_entry *orc_find(unsigned long ip)
->  	return orc_ftrace_find(ip);
->  }
->  
-> +#ifdef CONFIG_MODULES
->  static void orc_sort_swap(void *_a, void *_b, int size)
->  {
->  	struct orc_entry *orc_a, *orc_b;
-> @@ -229,7 +230,6 @@ static int orc_sort_cmp(const void *_a, const void *_b)
->  	return orc_a->sp_reg == ORC_REG_UNDEFINED && !orc_a->end ? -1 : 1;
->  }
->  
-> -#ifdef CONFIG_MODULES
->  void unwind_module_init(struct module *mod, void *_orc_ip, size_t orc_ip_size,
->  			void *_orc, size_t orc_size)
->  {
-> -- 
-> 2.20.0
-> 
-
+diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+index 25019d42ae93..5d2568066d58 100644
+--- a/arch/x86/boot/compressed/acpi.c
++++ b/arch/x86/boot/compressed/acpi.c
+@@ -313,7 +313,7 @@ static unsigned long get_acpi_srat_table(void)
+* stash this in boot params because the kernel itself may have
+* different ideas about whether to trust a command-line parameter.
+*/
+- rsdp = (struct acpi_table_rsdp *)get_cmdline_acpi_rsdp();
++ rsdp = (struct acpi_table_rsdp *)(long)get_cmdline_acpi_rsdp();
+if (!rsdp)
+rsdp = (struct acpi_table_rsdp *)(long)
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.17.1
+
