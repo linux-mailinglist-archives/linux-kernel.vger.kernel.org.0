@@ -2,76 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D6141338C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 02:57:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED83F1338CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 02:57:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbgAHB5j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 20:57:39 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8236 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725601AbgAHB5j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 20:57:39 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 065854DCD4BCE0D4F0B9;
-        Wed,  8 Jan 2020 09:57:36 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 8 Jan 2020 09:57:26 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dan Murphy <dmurphy@ti.com>
-CC:     YueHaibing <yuehaibing@huawei.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] leds: leds-bd2802: remove set but not used variable 'pdata'
-Date:   Wed, 8 Jan 2020 01:53:22 +0000
-Message-ID: <20200108015322.51103-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+        id S1726793AbgAHB5u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 20:57:50 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:52374 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725601AbgAHB5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 20:57:50 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BD1402002C6;
+        Wed,  8 Jan 2020 02:57:47 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 70EFC2001C3;
+        Wed,  8 Jan 2020 02:57:32 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2478840285;
+        Wed,  8 Jan 2020 09:57:18 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
+        will@kernel.org, bjorn.andersson@linaro.org, olof@lixom.net,
+        maxime@cerno.tech, leonard.crestez@nxp.com, dinguyen@kernel.org,
+        marcin.juszkiewicz@linaro.org, ping.bai@nxp.com, abel.vesa@nxp.com,
+        nsekhar@ti.com, t-kristo@ti.com, peng.fan@nxp.com,
+        yuehaibing@huawei.com, aisheng.dong@nxp.com, sfr@canb.auug.org.au,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V3 1/4] clk: imx: gate4: Switch imx_clk_gate4_flags() to clk_hw based API
+Date:   Wed,  8 Jan 2020 09:53:34 +0800
+Message-Id: <1578448417-17760-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Switch the imx_clk_gate4_flags() function to clk_hw based API, rename
+accordingly and add a macro for clk based legacy. This allows us to
+move closer to a clear split between consumer and provider clk APIs.
 
-drivers/leds/leds-bd2802.c: In function 'bd2802_probe':
-drivers/leds/leds-bd2802.c:663:35: warning:
- variable 'pdata' set but not used [-Wunused-but-set-variable]
-
-commit 4c3718f9d6a6 ("leds: bd2802: Convert to use GPIO descriptors")
-left behind this unused variable.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/leds/leds-bd2802.c | 2 --
- 1 file changed, 2 deletions(-)
+Changes since V2:
+	- Switch to latest i.MX clock driver base to redo the patch.
+---
+ drivers/clk/imx/clk.h | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/leds-bd2802.c b/drivers/leds/leds-bd2802.c
-index bd61a823d0ca..8bbaef5a2986 100644
---- a/drivers/leds/leds-bd2802.c
-+++ b/drivers/leds/leds-bd2802.c
-@@ -660,7 +660,6 @@ static int bd2802_probe(struct i2c_client *client,
- 			const struct i2c_device_id *id)
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 65d80c6..b05213b 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -390,15 +390,18 @@ static inline struct clk_hw *imx_clk_hw_gate4(const char *name, const char *pare
+ 			reg, shift, 0x3, 0, &imx_ccm_lock, NULL);
+ }
+ 
+-static inline struct clk *imx_clk_gate4_flags(const char *name,
++static inline struct clk_hw *imx_clk_hw_gate4_flags(const char *name,
+ 		const char *parent, void __iomem *reg, u8 shift,
+ 		unsigned long flags)
  {
- 	struct bd2802_led *led;
--	struct bd2802_led_platform_data *pdata;
- 	int ret, i;
+-	return clk_register_gate2(NULL, name, parent,
++	return clk_hw_register_gate2(NULL, name, parent,
+ 			flags | CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+ 			reg, shift, 0x3, 0, &imx_ccm_lock, NULL);
+ }
  
- 	led = devm_kzalloc(&client->dev, sizeof(struct bd2802_led), GFP_KERNEL);
-@@ -668,7 +667,6 @@ static int bd2802_probe(struct i2c_client *client,
- 		return -ENOMEM;
- 
- 	led->client = client;
--	pdata = led->pdata = dev_get_platdata(&client->dev);
- 	i2c_set_clientdata(client, led);
- 
- 	/*
-
-
++#define imx_clk_gate4_flags(name, parent, reg, shift, flags) \
++	to_clk(imx_clk_hw_gate4_flags(name, parent, reg, shift, flags))
++
+ static inline struct clk_hw *imx_clk_hw_mux(const char *name, void __iomem *reg,
+ 			u8 shift, u8 width, const char * const *parents,
+ 			int num_parents)
+-- 
+2.7.4
 
