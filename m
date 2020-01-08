@@ -2,135 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E73C134D22
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 21:24:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B483134D37
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 21:27:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbgAHUYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 15:24:23 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37462 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbgAHUYW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 15:24:22 -0500
-Received: by mail-pg1-f196.google.com with SMTP id q127so2100325pga.4
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 12:24:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UIXqgaiVWae8Bhi+dC+q5rSp1vgGUZgQyrqPawYppjo=;
-        b=V7BfQX1BvUdYAxjWvcUf0XpDhT5nkjUkA7/08jlIQRhx+EBJ7vNuiDz6uNW55ElOpD
-         hsXEXbULovv6CtYsUmmP6cBFmWd6MywDjCJSYYeSc8ucQtBommmqdgUbP6EJ6zN+e1eP
-         dtZfTyZo4b40dD/x8Wkw0t+Dicv6+qPrkDRiqVXQqL1rmT4sV/U77jQgOXrxyZP5vDfp
-         4q5GRwgZS5ACG6mznYllo0kxC96dCRgRlbhgId72HAuWs2GYQim0s3NTfCVKOHLLC0K8
-         LjfoRs4N9OgE7vdhs5A0MOWe13w9B3OJN7hy28OuVnrgbcmXEyDz5l5FySrOn+8tbCBQ
-         CqLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UIXqgaiVWae8Bhi+dC+q5rSp1vgGUZgQyrqPawYppjo=;
-        b=HrV1vw1KIxD+1+hfJNzlo57Zb4iH16BwAUuohYcorRT/DubTFLlbbehEEdFc2b49P7
-         7AY6YOQpMGoXYs+7+XJB7TReOUvzfwfbERmXGtfIKWm5ot/T0lEbqRIVOT2TGWI6ZCI/
-         0JWKKvQjOHqFWpmII06xWgIVR/dlAd1pSZ65QAHIeQjFdRZaGPlQKzKDoN1OiuLmJrRb
-         2ufsTPwxJ9C26PMhUiZ+qRxMfkflB/qIGvnNOqLqlvqe/wDMYJPZ1DgDpDyycANhX+oe
-         oGRLSeTTXCW2XKWHXr3UgCYad/Vpw/A4O9UCTd+rEXQBxv12/YUxvsD5buvrezpQbZE6
-         PH7g==
-X-Gm-Message-State: APjAAAVkgNkNCZDFXJLep+EtttfT6lydfB5da8WojzI+gNmy7EyYg105
-        8TG+Dc0H56FMP36CfZc30fsIxQ==
-X-Google-Smtp-Source: APXvYqx2eKy9DIhvgEVT2MvULvpoa3Atkfrm2Z7BVw2iAsxFD2KZjXe9EH7giHcTvLfHMGKdOcqaGA==
-X-Received: by 2002:a63:1f0c:: with SMTP id f12mr7346558pgf.247.1578515061913;
-        Wed, 08 Jan 2020 12:24:21 -0800 (PST)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id b98sm135319pjc.16.2020.01.08.12.24.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2020 12:24:21 -0800 (PST)
-Date:   Wed, 8 Jan 2020 13:24:18 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: qcom: wcnss: Allow specifying firmware-name
-Message-ID: <20200108202418.GA28145@xps15>
-References: <20200108055252.639791-1-bjorn.andersson@linaro.org>
+        id S1727256AbgAHU1F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 15:27:05 -0500
+Received: from mga01.intel.com ([192.55.52.88]:57134 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725446AbgAHU1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 15:27:05 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 12:27:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,411,1571727600"; 
+   d="scan'208";a="211658348"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by orsmga007.jf.intel.com with ESMTP; 08 Jan 2020 12:27:04 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Paul Mackerras <paulus@ozlabs.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marc Zyngier <maz@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        syzbot+c9d1fb51ac9d0d10c39d@syzkaller.appspotmail.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Barret Rhoden <brho@google.com>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Zeng <jason.zeng@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Subject: [PATCH 00/14] KVM: x86/mmu: Huge page fixes, cleanup, and DAX
+Date:   Wed,  8 Jan 2020 12:24:34 -0800
+Message-Id: <20200108202448.9669-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200108055252.639791-1-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+This series is a mix of bug fixes, cleanup and new support in KVM's
+handling of huge pages.  The series initially stemmed from a syzkaller
+bug report[1], which is fixed by patch 02, "mm: thp: KVM: Explicitly
+check for THP when populating secondary MMU".
 
-On Tue, Jan 07, 2020 at 09:52:52PM -0800, Bjorn Andersson wrote:
-> Introduce a firmware-name property, in order to be able to support
-> device/platform specific firmware for the wireless connectivity
-> subsystem; in line with other Qualcomm remoteproc drivers.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  .../devicetree/bindings/remoteproc/qcom,wcnss-pil.txt     | 6 ++++++
->  drivers/remoteproc/qcom_wcnss.c                           | 8 +++++++-
->  2 files changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
-> index d420f84ddfb0..00844a5d2ccf 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
-> @@ -34,6 +34,12 @@ on the Qualcomm WCNSS core.
->  	Definition: should be "wdog", "fatal", optionally followed by "ready",
->  		    "handover", "stop-ack"
->  
-> +- firmware-name:
-> +	Usage: optional
-> +	Value type: <string>
-> +	Definition: must list the relative firmware image path for the
-> +		    WCNSS core.
+While investigating options for fixing the syzkaller bug, I realized KVM
+could reuse the approach from Barret's series to enable huge pages for DAX
+mappings in KVM[2] for all types of huge mappings, i.e. walk the host page
+tables instead of querying metadata (patches 05 - 09).
 
-Perhaps mention that if omitted the firmware name will default to "wcnss.mdt".
+Walking the host page tables sidesteps the issues with refcounting and
+identifying THP mappings (in theory), and using a common method for
+identifying huge mappings should improve (haven't actually measured) KVM's
+overall page fault latency by eliminating the vma lookup that is currently
+used to identify HugeTLB mappings.  Eliminating the HugeTLB specific code
+also allows for additional cleanup (patches 10 - 13).
 
-> +
->  - vddmx-supply:
->  - vddcx-supply:
->  - vddpx-supply:
-> diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-> index dc135754bb9c..a0468b3cc76f 100644
-> --- a/drivers/remoteproc/qcom_wcnss.c
-> +++ b/drivers/remoteproc/qcom_wcnss.c
-> @@ -457,6 +457,7 @@ static int wcnss_alloc_memory_region(struct qcom_wcnss *wcnss)
->  
->  static int wcnss_probe(struct platform_device *pdev)
->  {
-> +	const char *fw_name = WCNSS_FIRMWARE_NAME;
->  	const struct wcnss_data *data;
->  	struct qcom_wcnss *wcnss;
->  	struct resource *res;
-> @@ -474,8 +475,13 @@ static int wcnss_probe(struct platform_device *pdev)
->  		return -ENXIO;
->  	}
->  
-> +	ret = of_property_read_string(pdev->dev.of_node, "firmware-name",
-> +				      &fw_name);
-> +	if (ret < 0 && ret != -EINVAL)
-> +		return ret;
-> +
->  	rproc = rproc_alloc(&pdev->dev, pdev->name, &wcnss_ops,
-> -			    WCNSS_FIRMWARE_NAME, sizeof(*wcnss));
-> +			    fw_name, sizeof(*wcnss));
->  	if (!rproc) {
->  		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
->  		return -ENOMEM;
+Testing the page walk approach revealed several pre-existing bugs that
+are included here (patches 01, 03 and 04) because the changes interact
+with the rest of the series, e.g. without the read-only memslots fix,
+walking the host page tables without explicitly filtering out HugeTLB
+mappings would pick up read-only memslots and introduce a completely
+unintended functional change.
 
-That is in line with what was done for q6v5_mss and q6v5_pas.  With or without
-the above:
+Lastly, with the page walk infrastructure in place, supporting DAX-based
+huge mappings becomes a trivial change (patch 14).
 
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Based on kvm/queue, commit e41a90be9659 ("KVM: x86/mmu: WARN if root_hpa
+is invalid when handling a page fault")
 
-> -- 
-> 2.24.0
-> 
+Paolo, assuming I understand your workflow, patch 01 can be squashed with
+the buggy commit as it's still sitting in kvm/queue.
+
+[1] https://lkml.kernel.org/r/0000000000003cffc30599d3d1a0@google.com
+[2] https://lkml.kernel.org/r/20191212182238.46535-1-brho@google.com
+
+Sean Christopherson (14):
+  KVM: x86/mmu: Enforce max_level on HugeTLB mappings
+  mm: thp: KVM: Explicitly check for THP when populating secondary MMU
+  KVM: Use vcpu-specific gva->hva translation when querying host page
+    size
+  KVM: Play nice with read-only memslots when querying host page size
+  x86/mm: Introduce lookup_address_in_mm()
+  KVM: x86/mmu: Refactor THP adjust to prep for changing query
+  KVM: x86/mmu: Walk host page tables to find THP mappings
+  KVM: x86/mmu: Drop level optimization from fast_page_fault()
+  KVM: x86/mmu: Rely on host page tables to find HugeTLB mappings
+  KVM: x86/mmu: Remove obsolete gfn restoration in FNAME(fetch)
+  KVM: x86/mmu: Zap any compound page when collapsing sptes
+  KVM: x86/mmu: Fold max_mapping_level() into kvm_mmu_hugepage_adjust()
+  KVM: x86/mmu: Remove lpage_is_disallowed() check from set_spte()
+  KVM: x86/mmu: Use huge pages for DAX-backed files
+
+ arch/powerpc/kvm/book3s_xive_native.c |   2 +-
+ arch/x86/include/asm/pgtable_types.h  |   4 +
+ arch/x86/kvm/mmu/mmu.c                | 208 ++++++++++----------------
+ arch/x86/kvm/mmu/paging_tmpl.h        |  29 +---
+ arch/x86/mm/pageattr.c                |  11 ++
+ include/linux/huge_mm.h               |   6 +
+ include/linux/kvm_host.h              |   3 +-
+ mm/huge_memory.c                      |  11 ++
+ virt/kvm/arm/mmu.c                    |   8 +-
+ virt/kvm/kvm_main.c                   |  24 ++-
+ 10 files changed, 145 insertions(+), 161 deletions(-)
+
+-- 
+2.24.1
+
