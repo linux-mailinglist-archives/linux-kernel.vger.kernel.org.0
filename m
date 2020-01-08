@@ -2,155 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D60F2133E5B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:32:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3E21133E61
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:37:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727594AbgAHJcX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 04:32:23 -0500
-Received: from mga01.intel.com ([192.55.52.88]:3452 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727205AbgAHJcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 04:32:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 01:32:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,409,1571727600"; 
-   d="scan'208";a="303510529"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by orsmga001.jf.intel.com with ESMTP; 08 Jan 2020 01:32:20 -0800
-Subject: Re: BUG: KASAN: use-after-free in
- xhci_trb_virt_to_dma.part.24+0x1c/0x80
-To:     Paul Menzel <pmenzel@molgen.mpg.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Greg KH <greg@kroah.com>, Mathias Nyman <mathias.nyman@intel.com>,
-        linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <95b4bdb2-962f-561e-ac14-79cd44395915@molgen.mpg.de>
- <20180720095410.GA11904@kroah.com>
- <107dbdd1-4e45-836f-7f8f-85bc63374e4f@molgen.mpg.de>
- <30b069b5-63f6-dd9e-b323-668f06bff6cf@molgen.mpg.de>
- <20200103110451.GJ465886@lahna.fi.intel.com>
- <81c6f906-3f5a-729d-f3b4-1ac6ac607c05@linux.intel.com>
- <84369435-d355-0462-98ab-91bb1c5d3871@molgen.mpg.de>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <572bea6f-06d4-938a-802e-93386acf59d9@linux.intel.com>
-Date:   Wed, 8 Jan 2020 11:34:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727591AbgAHJhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 04:37:02 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:33978 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727224AbgAHJhB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 04:37:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578476220;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=68cyakBuuqykyYfuVPtYJRYgfAWVoYk6H/O1x5botQ4=;
+        b=TKWu/IjoXLrV7Dq6he93ntbiVdZ86CenNo/c+fBX4bLXanOeiXFqb4gJ+qzlyHKJs1faOe
+        QJvhQHU4yNOMz3m6u0O7JlOsThqMXRZf3+L1HbqP4/2crFI8STf26D64qHvemcT9hfPQnq
+        SiBbs+eQnxWX5EverffID/NnqyPBIls=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-384-vtPIEzLhPiu5LuqOSatMyQ-1; Wed, 08 Jan 2020 04:36:59 -0500
+X-MC-Unique: vtPIEzLhPiu5LuqOSatMyQ-1
+Received: by mail-wr1-f69.google.com with SMTP id z10so1186622wrt.21
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 01:36:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=68cyakBuuqykyYfuVPtYJRYgfAWVoYk6H/O1x5botQ4=;
+        b=WfyJ8MWrIJyXTgrOzJGk8XPNsCQ3Emw00KJZF4b2wo3yJ5UC8FkPxhacipwDxIO4rc
+         TlGxpHB3bnpHyZamfzhPKL5P9/bjks7osmECGEH9sbjkg4H14LzbmEQEoowwsZdiq37E
+         9pz1EbmmDMsucqpT56HnOFhwIuGFIH1gDRk74HD7XjVJu6qco35bK3bBBCazRalJM7kg
+         cUQdF9Ok6OC2ohJC8bWbmsg5LdVUllhrwQ4k/WwYHqM00+QuT/AE+5jXuzTJW/DRsioc
+         wEThRJu1l26Gxo5hMZ+MLk11fVEGvKqv0jxML4p1CJGRTIwMA7L4andXMwt90qvbJ5Lr
+         r1Ww==
+X-Gm-Message-State: APjAAAX5/k2xfV8jvNNUz4Ww8t4OQaRerru3Rcj8hhM5DZotnJl8BFJ1
+        keiamqjb128oVmwqMKvM4LenYPWztFBn/T8lljJvcHPxkhCobwQvGrZicY6TxwO8lzL0w5xeEkf
+        Svk/r7p6WsAqDSqRmlA0O+Gwo
+X-Received: by 2002:a05:600c:298:: with SMTP id 24mr2563067wmk.141.1578476218056;
+        Wed, 08 Jan 2020 01:36:58 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwOYbwL71jHMFOLZ5jV8xy/fR+AF+ZAxn6+Tt8MCWEEuGa8Xg+blvSitd6myXj3yx8d2Rz0jg==
+X-Received: by 2002:a05:600c:298:: with SMTP id 24mr2563033wmk.141.1578476217779;
+        Wed, 08 Jan 2020 01:36:57 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:bc4e:7fe8:2916:6a59? ([2001:b07:6468:f312:bc4e:7fe8:2916:6a59])
+        by smtp.gmail.com with ESMTPSA id q68sm3371147wme.14.2020.01.08.01.36.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jan 2020 01:36:57 -0800 (PST)
+Subject: Re: discuss about pvpanic
+To:     zhenwei pi <pizhenwei@bytedance.com>
+Cc:     "yelu@bytedance.com" <yelu@bytedance.com>,
+        Greg KH <gregkh@linuxfoundation.org>, qemu-devel@nongnu.org,
+        linux-kernel@vger.kernel.org,
+        Michal Privoznik <mprivozn@redhat.com>,
+        "libvir-list@redhat.com" <libvir-list@redhat.com>
+References: <2feff896-21fe-2bbe-6f68-9edfb476a110@bytedance.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <dd8e46c4-eac4-046a-82ec-7ae17df75035@redhat.com>
+Date:   Wed, 8 Jan 2020 10:36:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <84369435-d355-0462-98ab-91bb1c5d3871@molgen.mpg.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <2feff896-21fe-2bbe-6f68-9edfb476a110@bytedance.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7.1.2020 17.35, Paul Menzel wrote:
-> Dear Mathias, dear Mika,
+On 08/01/20 09:25, zhenwei pi wrote:
+> Hey, Paolo
 > 
+> Currently, pvpapic only supports bit 0(PVPANIC_PANICKED).
+> We usually expect that guest writes ioport (typical 0x505) in panic_notifier_list callback
+> during handling panic, then we can handle pvpapic event PVPANIC_PANICKED in QEMU.
 > 
-> On 2020-01-07 13:09, Mathias Nyman wrote:
->> On 3.1.2020 13.04, Mika Westerberg wrote:
->>> On Thu, Jan 02, 2020 at 03:10:14PM +0100, Paul Menzel wrote:
->>>> Mika, as you fixed the other leak, any idea, how to continue from the
->>>> kmemleak log below?
->>>>
->>>> ```
->>>> unreferenced object 0xffff8c207a1e1408 (size 8):
->>>>     comm "systemd-udevd", pid 183, jiffies 4294667978 (age 752.292s)
->>>>     hex dump (first 8 bytes):
->>>>       34 01 05 00 00 00 00 00                          4.......
->>>>     backtrace:
->>>>       [<00000000aea7b46d>] xhci_mem_init+0xcfa/0xec0 [xhci_hcd]
->>>
->>> There are probably better ways for doing this but you can use objdump
->>> for example:
->>>
->>>     $ objdump -l --prefix-addresses -j .text --disassemble=xhci_mem_init drivers/usb/host/xhci-hcd.ko
->>>
->>> then find the offset xhci_mem_init+0xcfa. It should show you the line
->>> numbers as well if you have compiled your kernel with debug info. This
->>> should be close to the line that allocated the memory that was leaked.
+> On the other hand, guest wants to handle the crash by kdump-tools, and reboots without any
+> panic_notifier_list callback. So QEMU only knows that guest has rebooted (because guest
+> write 0xcf9 ioport for RCR request), but QEMU can't identify why guest resets.
 > 
-> Thank you. I actually remembered `script/f2addr2line`.
+> In production environment, we hit about 100+ guest reboot event everyday, sadly we 
+> can't separate the abnormal reboot from normal operation.
 > 
->      $ scripts/faddr2line drivers/usb/host/xhci-hcd.o xhci_mem_init+0xcfa
->      xhci_mem_init+0xcfa/0xec0:
->      xhci_add_in_port at /mnt/drivers/usb/host/xhci-mem.c:2161
->      (inlined by) xhci_setup_port_arrays at /mnt/drivers/usb/host/xhci-mem.c:2309
->      (inlined by) xhci_mem_init at /mnt/drivers/usb/host/xhci-mem.c:2538
+> We want to add a new bit for pvpanic event(maybe PVPANIC_CRASHLOADED) to represent the guest has crashed, 
+> and the panic is handled by the guest kernel. (here is the previous patch https://lkml.org/lkml/2019/12/14/265)
 > 
->> Paul, it possible that your xhci controller has several
->> supported protocol extended capabilities for usb 3 ports, each
->> with their own custom protocol speed ID table.
->>
->> xhci driver assumes there is only one custome PSI table per roothub,
->> and we will end up allocating the second PSI table on top of the first,
->> leaking the first.
->>
->> Could you boot with xhci dynamic debug enabled, and show dmesg after boot, add:
->> xhci_hcd.dyndbg=+p
->> to you kernel cmdline.
->>
->> Or as an alternative, show output of:
->>
->> sudo cat /sys/kernel/debug/usb/xhci/*/reg-ext-protocol*
-> 
-> `/sys/kernel/debug/` cannot be read by unprivileged users, so the wildcard does
-> not work with `sudo`.
-> 
-> ```
-> $ sudo ls /sys/kernel/debug/usb/xhci
-> 0000:12:00.0  0000:26:00.3  0000:26:00.4
-> # cat /sys/kernel/debug/usb/xhci/*/reg-ext-protocol*
+> What do you think about this solution? Or do you have any other suggestions?
 
-problematic xhci:
-capability for first four USB 2 ports
-> EXTCAP_REVISION = 0x02000402
-> EXTCAP_NAME = 0x20425355
-> EXTCAP_PORTINFO = 0x00180401
-> EXTCAP_PORTTYPE = 0x00000000
+Hi Zhenwei,
 
-capability for one USB 3.1 port (5th port)
-> EXTCAP_REVISION = 0x03100802
-> EXTCAP_NAME = 0x20425355
-> EXTCAP_PORTINFO = 0x10000105
-> EXTCAP_PORTTYPE = 0x00000000
-> EXTCAP_MANTISSA1 = 0x00050134
-capability for one USB 3.1 port (6th port)
-> EXTCAP_REVISION = 0x03100802
-> EXTCAP_NAME = 0x20425355
-> EXTCAP_PORTINFO = 0x10000106
-> EXTCAP_PORTTYPE = 0x00000000
-> EXTCAP_MANTISSA1 = 0x00050134
-capability for one USB 3.1 port (7th port)
-> EXTCAP_REVISION = 0x03100802
-> EXTCAP_NAME = 0x20425355
-> EXTCAP_PORTINFO = 0x10000107
-> EXTCAP_PORTTYPE = 0x00000000
-> EXTCAP_MANTISSA1 = 0x00050134
-capability for one USB 3.1 port (8th port)
-> EXTCAP_REVISION = 0x03100802
-> EXTCAP_NAME = 0x20425355
-> EXTCAP_PORTINFO = 0x10000108
-> EXTCAP_PORTTYPE = 0x00000000
-> EXTCAP_MANTISSA1 = 0x00050134
+the kernel-side patch certainly makes sense.  I assume that you want the
+event to propagate up from QEMU to Libvirt and so on?  The QEMU patch
+would need to declare a new event (qapi/misc.json) and send it in
+handle_event (hw/misc/pvpanic.c).  For Libvirt I'm not familiar, so I'm
+adding the respective list.
 
-It has eight ports.  last four of them are USB 3.1 ports.
-It has a very odd setup where each 3.1 port has their own
-supported protocol capability with a custom PSI, but all the PSI's are similar,
-telling the port only support a 5Gbps speed.
+Another possibility is to simply not write to pvpanic if
+kexec_crash_loaded() returns true; this would match what xen_panic_event
+does for example.  The kexec kernel would then log the panic normally,
+without the need for MMIO at all.  However, I have no problem with
+adding a new bit to the pvpanic I/O port so once you post the QEMU patch
+I will certainly ack the kernel side.
 
-We leak all the custom PSI tables for USB 3.1 ports except the last,
-these would be the EXTCAP_MANTISSA1 = 0x00050134, which is the same as
-the hex dump of the unreferenced object you posted earlier (considering byte order):
+Thanks,
 
-hex dump (first 8 bytes):
-34 01 05 00 00 00 00 00                          4.......
+Paolo
 
-I'm working on a patch for this
-
--Mathias
