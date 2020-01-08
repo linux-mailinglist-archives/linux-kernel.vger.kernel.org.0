@@ -2,81 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3908133F87
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 11:45:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14078133F9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 11:48:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbgAHKpI convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 8 Jan 2020 05:45:08 -0500
-Received: from mail.fireflyinternet.com ([109.228.58.192]:63048 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726098AbgAHKpI (ORCPT
+        id S1727946AbgAHKsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 05:48:13 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:40689 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727874AbgAHKsJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 05:45:08 -0500
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 19806929-1500050 
-        for multiple; Wed, 08 Jan 2020 10:44:59 +0000
-Content-Type: text/plain; charset="utf-8"
+        Wed, 8 Jan 2020 05:48:09 -0500
+Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1ip8se-0000eZ-56; Wed, 08 Jan 2020 11:48:04 +0100
+Received: from mfe by dude02.lab.pengutronix.de with local (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1ip8sd-000154-Ht; Wed, 08 Jan 2020 11:48:03 +0100
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     support.opensource@diasemi.com, lee.jones@linaro.org,
+        robh+dt@kernel.org, linus.walleij@linaro.org,
+        Adam.Thomson.Opensource@diasemi.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@pengutronix.de, linux-gpio@vger.kernel.org
+Subject: [PATCH v4 0/3] Add DA9062 GPIO support
+Date:   Wed,  8 Jan 2020 11:47:43 +0100
+Message-Id: <20200108104746.1765-1-m.felsch@pengutronix.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Wambui Karuga <wambui.karugax@gmail.com>, airlied@linux.ie,
-        daniel@ffwll.ch, rodrigo.vivi@intel.com
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <8736cqs2uf.fsf@intel.com>
-Cc:     intel-gfx@lists.freedesktop.org, seanpaul@chromium.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <cover.1578409433.git.wambui.karugax@gmail.com>
- <b79ee0f6efbf8358cbb4f2e163fa6b5bb04db794.1578409433.git.wambui.karugax@gmail.com>
- <157847199686.4725.87481257304852182@jlahtine-desk.ger.corp.intel.com>
- <8736cqs2uf.fsf@intel.com>
-Message-ID: <157848029770.2273.9590955422248556735@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: [Intel-gfx] [PATCH 1/5] drm/i915: convert to using the drm_dbg_kms()
- macro.
-Date:   Wed, 08 Jan 2020 10:44:57 +0000
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jani Nikula (2020-01-08 09:40:40)
-> On Wed, 08 Jan 2020, Joonas Lahtinen <joonas.lahtinen@linux.intel.com> wrote:
-> > Quoting Wambui Karuga (2020-01-07 17:13:29)
-> >> Convert the use of the DRM_DEBUG_KMS() logging macro to the new struct
-> >> drm_device based drm_dbg_kms() logging macro in i915/intel_pch.c.
-> >> 
-> >> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
-> >> ---
-> >>  drivers/gpu/drm/i915/intel_pch.c | 46 +++++++++++++++++---------------
-> >>  1 file changed, 24 insertions(+), 22 deletions(-)
-> >> 
-> >> diff --git a/drivers/gpu/drm/i915/intel_pch.c b/drivers/gpu/drm/i915/intel_pch.c
-> >> index 43b68b5fc562..4ed60e1f01db 100644
-> >> --- a/drivers/gpu/drm/i915/intel_pch.c
-> >> +++ b/drivers/gpu/drm/i915/intel_pch.c
-> >> @@ -12,90 +12,91 @@ intel_pch_type(const struct drm_i915_private *dev_priv, unsigned short id)
-> >>  {
-> >>         switch (id) {
-> >>         case INTEL_PCH_IBX_DEVICE_ID_TYPE:
-> >> -               DRM_DEBUG_KMS("Found Ibex Peak PCH\n");
-> >> +               drm_dbg_kms(&dev_priv->drm, "Found Ibex Peak PCH\n");
-> >
-> > Did we at some point consider i915_dbg_kms alias? That would just take
-> > dev_priv (or i915, as it's called in newer code). It would shorten many
-> > of the statements.
-> >
-> > i915_dbg_kms(dev_priv, ...) or i915_dbg_kms(i915, ...)
-> 
-> I'd rather use the common drm logging macros. I thought about adding
-> i915 specific ones only if the drm device specific logging macros
-> weren't going to be merged.
+Hi,
 
-Why do they even exist? Why isn't it enough to do
-#define drm_info(drm, fmt, ...) dev_info(&(drm)->dev, fmt, ##__VA_ARGS) ?
-#define i915_info(i915, fmt, ...) drm_info(&(i915)->drm, fmt, ##__VA_ARGS)
+this v4 adds the missing PIN_CONFIG_BIAS_DISABLE support so
+pull-ups/-downs can be disconnected. I also added all git-tag already
+made on my v3 [1].
 
-The lea for &i915->drm.dev is the same as the mov, so we shave off an
-unnecessary wrapper.
--Chris
+@Lee
+checkpatch complains about the "Acked-for-MFD-by" tag. I kept it but is
+this behaviour on purpose?
+
+Regards,
+  Marco
+
+[1] https://lkml.org/lkml/2019/12/12/601
+
+Marco Felsch (3):
+  dt-bindings: mfd: da9062: add gpio bindings
+  mfd: da9062: add support for the DA9062 GPIOs in the core
+  pinctrl: da9062: add driver support
+
+ .../devicetree/bindings/mfd/da9062.txt        |  10 +
+ MAINTAINERS                                   |   1 +
+ drivers/mfd/da9062-core.c                     |  16 +-
+ drivers/pinctrl/Kconfig                       |  12 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-da9062.c              | 300 ++++++++++++++++++
+ 6 files changed, 339 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/pinctrl/pinctrl-da9062.c
+
+-- 
+2.20.1
+
