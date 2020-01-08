@@ -2,495 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41E541341B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 13:30:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA3D21341D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 13:36:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbgAHMa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 07:30:26 -0500
-Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:61001 "EHLO
-        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726967AbgAHMaZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 07:30:25 -0500
-Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 08 Jan 2020 18:00:20 +0530
-Received: from c-sanm-linux.qualcomm.com ([10.206.25.31])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 08 Jan 2020 18:00:17 +0530
-Received: by c-sanm-linux.qualcomm.com (Postfix, from userid 2343233)
-        id B61A41AA2; Wed,  8 Jan 2020 18:00:15 +0530 (IST)
-From:   Sandeep Maheswaram <sanm@codeaurora.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>,
-        Sandeep Maheswaram <sanm@codeaurora.org>
-Subject: [PATCH v2 3/3] dt-bindings: phy: qcom,qmp: Convert QMP phy bindings to yaml
-Date:   Wed,  8 Jan 2020 17:59:41 +0530
-Message-Id: <1578486581-7540-4-git-send-email-sanm@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1578486581-7540-1-git-send-email-sanm@codeaurora.org>
-References: <1578486581-7540-1-git-send-email-sanm@codeaurora.org>
+        id S1727881AbgAHMgP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 07:36:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39006 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726967AbgAHMgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 07:36:15 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82663206DB;
+        Wed,  8 Jan 2020 12:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578486973;
+        bh=W9JwVSVRItNpDbcbGietn6Cp2AuPDABok0YRBfrkW4M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=e0vTgUF32Xj1bwsEWm9WFcVNStkTjl+ziOyel/OT6B8tDK/z5F405fD4Ox6as1YfH
+         RKSYtzikLXF8huxpv5OUfo1yeU/zAp5SkKwvdjJHCfzDWR7dEObk8T+1S8z0Kauc7n
+         efXlO69a6orB+g69QYcdpbV9P9QTs91UyFlKgP8g=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1ipAZH-0008LF-Ob; Wed, 08 Jan 2020 12:36:11 +0000
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 08 Jan 2020 12:36:11 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Will Deacon <will@kernel.org>
+Cc:     Andrew Murray <andrew.murray@arm.com>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Sudeep Holla <Sudeep.Holla@arm.com>, kvm@vger.kernel.org,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 09/18] arm64: KVM: enable conditional save/restore full
+ SPE profiling buffer controls
+In-Reply-To: <20200108115816.GB15861@willie-the-truck>
+References: <20191220143025.33853-1-andrew.murray@arm.com>
+ <20191220143025.33853-10-andrew.murray@arm.com>
+ <20191221141325.5a177343@why>
+ <20200107151328.GW42593@e119886-lin.cambridge.arm.com>
+ <fc222fef381f4ada37966db0a1ec314a@kernel.org>
+ <20200108115816.GB15861@willie-the-truck>
+Message-ID: <745529f7e469b898b74dfc5153e3daf6@kernel.org>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/1.3.8
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: will@kernel.org, andrew.murray@arm.com, Catalin.Marinas@arm.com, Mark.Rutland@arm.com, Sudeep.Holla@arm.com, kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert QMP phy  bindings to DT schema format using json-schema.
+On 2020-01-08 11:58, Will Deacon wrote:
+> On Wed, Jan 08, 2020 at 11:17:16AM +0000, Marc Zyngier wrote:
+>> On 2020-01-07 15:13, Andrew Murray wrote:
+>> > On Sat, Dec 21, 2019 at 02:13:25PM +0000, Marc Zyngier wrote:
+>> > > On Fri, 20 Dec 2019 14:30:16 +0000
+>> > > Andrew Murray <andrew.murray@arm.com> wrote:
+>> > >
+>> > > [somehow managed not to do a reply all, re-sending]
+>> > >
+>> > > > From: Sudeep Holla <sudeep.holla@arm.com>
+>> > > >
+>> > > > Now that we can save/restore the full SPE controls, we can enable it
+>> > > > if SPE is setup and ready to use in KVM. It's supported in KVM only if
+>> > > > all the CPUs in the system supports SPE.
+>> > > >
+>> > > > However to support heterogenous systems, we need to move the check if
+>> > > > host supports SPE and do a partial save/restore.
+>> > >
+>> > > No. Let's just not go down that path. For now, KVM on heterogeneous
+>> > > systems do not get SPE.
+>> >
+>> > At present these patches only offer the SPE feature to VCPU's where the
+>> > sanitised AA64DFR0 register indicates that all CPUs have this support
+>> > (kvm_arm_support_spe_v1) at the time of setting the attribute
+>> > (KVM_SET_DEVICE_ATTR).
+>> >
+>> > Therefore if a new CPU comes online without SPE support, and an
+>> > existing VCPU is scheduled onto it, then bad things happen - which I
+>> > guess
+>> > must have been the intention behind this patch.
+>> 
+>> I guess that was the intent.
+>> 
+>> > > If SPE has been enabled on a guest and a CPU
+>> > > comes up without SPE, this CPU should fail to boot (same as exposing a
+>> > > feature to userspace).
+>> >
+>> > I'm unclear as how to prevent this. We can set the FTR_STRICT flag on
+>> > the sanitised register - thus tainting the kernel if such a non-SPE CPU
+>> > comes online - thought that doesn't prevent KVM from blowing up. Though
+>> > I don't believe we can prevent a CPU coming up. At the moment this is
+>> > my preferred approach.
+>> 
+>> I'd be OK with this as a stop-gap measure. Do we know of any existing
+>> design where only half of the CPUs have SPE?
+> 
+> No, but given how few CPUs implement SPE I'd say that this 
+> configuration
+> is inevitable. I certainly went out of my way to support it in the 
+> driver.
+> 
+>> > Looking at the vcpu_load and related code, I don't see a way of saying
+>> > 'don't schedule this VCPU on this CPU' or bailing in any way.
+>> 
+>> That would actually be pretty easy to implement. In vcpu_load(), check
+>> that that the CPU physical has SPE. If not, raise a request for that 
+>> vcpu.
+>> In the run loop, check for that request and abort if raised, returning
+>> to userspace.
+>> 
+>> Userspace can always check /sys/devices/arm_spe_0/cpumask and work out
+>> where to run that particular vcpu.
+> 
+> It's also worth considering systems where there are multiple 
+> implementations
+> of SPE in play. Assuming we don't want to expose this to a guest, then 
+> the
+> right interface here is probably for userspace to pick one SPE
+> implementation and expose that to the guest. That fits with your idea 
+> above,
+> where you basically get an immediate exit if we try to schedule a vCPU 
+> onto
+> a CPU that isn't part of the SPE mask.
 
-Signed-off-by: Sandeep Maheswaram <sanm@codeaurora.org>
----
- .../devicetree/bindings/phy/qcom,qmp-phy.yaml      | 201 ++++++++++++++++++
- .../devicetree/bindings/phy/qcom-qmp-phy.txt       | 227 ---------------------
- 2 files changed, 201 insertions(+), 227 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/qcom,qmp-phy.yaml
- delete mode 100644 Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+Then it means that the VM should be configured with a mask indicating
+which CPUs it is intended to run on, and setting such a mask is 
+mandatory
+for SPE.
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom,qmp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,qmp-phy.yaml
-new file mode 100644
-index 0000000..6eb00f5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/qcom,qmp-phy.yaml
-@@ -0,0 +1,201 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/phy/qcom,qmp-phy.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+
-+title: Qualcomm QMP PHY controller
-+
-+maintainers:
-+  - Manu Gautam <mgautam@codeaurora.org>
-+
-+description:
-+  QMP phy controller supports physical layer functionality for a number of
-+  controllers on Qualcomm chipsets, such as, PCIe, UFS, and USB.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,ipq8074-qmp-pcie-phy
-+      - qcom,ipq8074-qmp-pcie-phy
-+      - qcom,msm8996-qmp-pcie-phy
-+      - qcom,msm8996-qmp-usb3-phy
-+      - qcom,msm8998-qmp-usb3-phy
-+      - qcom,msm8998-qmp-ufs-phy
-+      - qcom,msm8998-qmp-pcie-phy
-+      - qcom,sc7180-qmp-usb3-phy
-+      - qcom,sdm845-qmp-usb3-phy
-+      - qcom,sdm845-qmp-usb3-uni-phy
-+      - qcom,sdm845-qmp-ufs-phy
-+      - qcom,sm8150-qmp-ufs-phy
-+
-+  reg:
-+    minItems: 1
-+    items:
-+      - description: Address and length of PHY's common serdes block.
-+      - description: Address and length of the DP_COM control block.
-+
-+  reg-names:
-+    items:
-+      - const: reg-base
-+      - const: dp_com
-+
-+  "#clock-cells":
-+     enum: [ 1, 2 ]
-+
-+  "#address-cells":
-+    enum: [ 1, 2 ]
-+
-+  "#size-cells":
-+    enum: [ 1, 2 ]
-+
-+  clocks:
-+    anyOf:
-+      - items:
-+        - description: Phy aux clock.
-+        - description: Phy config clock.
-+        - description: 19.2 MHz ref clk.
-+        - description: Phy common block aux clock.
-+      - items:
-+        - description: Phy aux clock.
-+        - description: Phy config clock.
-+        - description: 19.2 MHz ref clk.
-+      - items:
-+        - description: 19.2 MHz ref clk.
-+        - description: Phy reference aux clock.
-+      - items:
-+        - description: Phy reference aux clock.
-+
-+  clock-names:
-+    anyOf:
-+      - items:
-+        - const: aux
-+        - const: cfg_ahb
-+        - const: ref
-+        - const: com_aux
-+      - items:
-+        - const: aux
-+        - const: cfg_ahb
-+        - const: ref
-+      - items:
-+        - const: ref
-+        - const: ref_aux
-+      - items:
-+        - const: ref_aux
-+
-+  resets:
-+    anyOf:
-+      - items:
-+        - description: reset of phy block.
-+        - description: phy common block reset.
-+        - description: ahb cfg block reset.
-+      - items:
-+        - description: reset of phy block.
-+        - description: phy common block reset.
-+      - items:
-+        - description: ahb cfg block reset.
-+        - description: PHY reset in the UFS controller.
-+      - items:
-+        - description: reset of phy block.
-+      - items:
-+        - description: PHY reset in the UFS controller.
-+
-+  reset-names:
-+    anyOf:
-+      - items:
-+        - const: phy
-+        - const: common
-+        - const: cfg
-+      - items:
-+        - const: phy
-+        - const: common
-+      - items:
-+        - const: ahb
-+        - const: ufsphy
-+      - items:
-+        - const: phy
-+      - items:
-+        - const: ufsphy
-+
-+  vdda-phy-supply:
-+    description:
-+        Phandle to a regulator supply to PHY core block.
-+
-+  vdda-pll-supply:
-+    description:
-+        Phandle to 1.8V regulator supply to PHY refclk pll block.
-+
-+  vddp-ref-clk-supply:
-+    description:
-+        Phandle to a regulator supply to any specific refclk
-+        pll block.
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#clock-cells"
-+  - "#address-cells"
-+  - "#size-cells"
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+  - vdda-phy-supply
-+  - vdda-pll-supply
-+
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        anyOf:
-+          - items:
-+            - const: qcom,sdm845-qmp-usb3-phy
-+          - items:
-+            - const: qcom,sc7180-qmp-usb3-phy
-+then:
-+  required:
-+    - reg-names
-+
-+#Required nodes:
-+#Each device node of QMP phy is required to have as many child nodes as
-+#the number of lanes the PHY has.
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,gcc-sc7180.h>
-+    usb_1_qmpphy: phy-wrapper@88e9000 {
-+        compatible = "qcom,sc7180-qmp-usb3-phy";
-+        reg = <0 0x088e9000 0 0x18c>,
-+              <0 0x088e8000 0 0x38>;
-+        reg-names = "reg-base", "dp_com";
-+        #clock-cells = <1>;
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        clocks = <&gcc GCC_USB3_PRIM_PHY_AUX_CLK>,
-+                 <&gcc GCC_USB_PHY_CFG_AHB2PHY_CLK>,
-+                 <&gcc GCC_USB3_PRIM_CLKREF_CLK>,
-+                 <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>;
-+        clock-names = "aux", "cfg_ahb", "ref", "com_aux";
-+
-+        resets = <&gcc GCC_USB3_PHY_PRIM_BCR>;
-+        reset-names = "phy";
-+
-+        vdda-phy-supply = <&vreg_l3c_1p2>;
-+        vdda-pll-supply = <&vreg_l4a_0p8>;
-+
-+        usb_1_ssphy: phy@88e9200 {
-+            reg = <0 0x088e9200 0 0x128>,
-+                  <0 0x088e9400 0 0x200>,
-+                  <0 0x088e9c00 0 0x218>,
-+                  <0 0x088e9600 0 0x128>,
-+                  <0 0x088e9800 0 0x200>,
-+                  <0 0x088e9a00 0 0x18>;
-+            #clock-cells = <0>;
-+            #phy-cells = <0>;
-+            clocks = <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
-+            clock-names = "pipe0";
-+            clock-output-names = "usb3_phy_pipe_clk_src";
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-deleted file mode 100644
-index eac9ad3..0000000
---- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-+++ /dev/null
-@@ -1,227 +0,0 @@
--Qualcomm QMP PHY controller
--===========================
--
--QMP phy controller supports physical layer functionality for a number of
--controllers on Qualcomm chipsets, such as, PCIe, UFS, and USB.
--
--Required properties:
-- - compatible: compatible list, contains:
--	       "qcom,ipq8074-qmp-pcie-phy" for PCIe phy on IPQ8074
--	       "qcom,msm8996-qmp-pcie-phy" for 14nm PCIe phy on msm8996,
--	       "qcom,msm8996-qmp-usb3-phy" for 14nm USB3 phy on msm8996,
--	       "qcom,msm8998-qmp-usb3-phy" for USB3 QMP V3 phy on msm8998,
--	       "qcom,msm8998-qmp-ufs-phy" for UFS QMP phy on msm8998,
--	       "qcom,msm8998-qmp-pcie-phy" for PCIe QMP phy on msm8998,
--	       "qcom,sdm845-qmp-usb3-phy" for USB3 QMP V3 phy on sdm845,
--	       "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845,
--	       "qcom,sdm845-qmp-ufs-phy" for UFS QMP phy on sdm845,
--	       "qcom,sm8150-qmp-ufs-phy" for UFS QMP phy on sm8150.
--
--- reg:
--  - index 0: address and length of register set for PHY's common
--             serdes block.
--  - index 1: address and length of the DP_COM control block (for
--             "qcom,sdm845-qmp-usb3-phy" only).
--
--- reg-names:
--  - For "qcom,sdm845-qmp-usb3-phy":
--    - Should be: "reg-base", "dp_com"
--  - For all others:
--    - The reg-names property shouldn't be defined.
--
-- - #address-cells: must be 1
-- - #size-cells: must be 1
-- - ranges: must be present
--
-- - clocks: a list of phandles and clock-specifier pairs,
--	   one for each entry in clock-names.
-- - clock-names: "cfg_ahb" for phy config clock,
--		"aux" for phy aux clock,
--		"ref" for 19.2 MHz ref clk,
--		"com_aux" for phy common block aux clock,
--		"ref_aux" for phy reference aux clock,
--
--		For "qcom,ipq8074-qmp-pcie-phy": no clocks are listed.
--		For "qcom,msm8996-qmp-pcie-phy" must contain:
--			"aux", "cfg_ahb", "ref".
--		For "qcom,msm8996-qmp-usb3-phy" must contain:
--			"aux", "cfg_ahb", "ref".
--		For "qcom,msm8998-qmp-usb3-phy" must contain:
--			"aux", "cfg_ahb", "ref".
--		For "qcom,msm8998-qmp-ufs-phy" must contain:
--			"ref", "ref_aux".
--		For "qcom,msm8998-qmp-pcie-phy" must contain:
--			"aux", "cfg_ahb", "ref".
--		For "qcom,sdm845-qmp-usb3-phy" must contain:
--			"aux", "cfg_ahb", "ref", "com_aux".
--		For "qcom,sdm845-qmp-usb3-uni-phy" must contain:
--			"aux", "cfg_ahb", "ref", "com_aux".
--		For "qcom,sdm845-qmp-ufs-phy" must contain:
--			"ref", "ref_aux".
--		For "qcom,sm8150-qmp-ufs-phy" must contain:
--			"ref", "ref_aux".
--
-- - resets: a list of phandles and reset controller specifier pairs,
--	   one for each entry in reset-names.
-- - reset-names: "phy" for reset of phy block,
--		"common" for phy common block reset,
--		"cfg" for phy's ahb cfg block reset,
--		"ufsphy" for the PHY reset in the UFS controller.
--
--		For "qcom,ipq8074-qmp-pcie-phy" must contain:
--			"phy", "common".
--		For "qcom,msm8996-qmp-pcie-phy" must contain:
--			"phy", "common", "cfg".
--		For "qcom,msm8996-qmp-usb3-phy" must contain
--			"phy", "common".
--		For "qcom,msm8998-qmp-usb3-phy" must contain
--			"phy", "common".
--		For "qcom,msm8998-qmp-ufs-phy": must contain:
--			"ufsphy".
--		For "qcom,msm8998-qmp-pcie-phy" must contain:
--			"phy", "common".
--		For "qcom,sdm845-qmp-usb3-phy" must contain:
--			"phy", "common".
--		For "qcom,sdm845-qmp-usb3-uni-phy" must contain:
--			"phy", "common".
--		For "qcom,sdm845-qmp-ufs-phy": must contain:
--			"ufsphy".
--		For "qcom,sm8150-qmp-ufs-phy": must contain:
--			"ufsphy".
--
-- - vdda-phy-supply: Phandle to a regulator supply to PHY core block.
-- - vdda-pll-supply: Phandle to 1.8V regulator supply to PHY refclk pll block.
--
--Optional properties:
-- - vddp-ref-clk-supply: Phandle to a regulator supply to any specific refclk
--			pll block.
--
--Required nodes:
-- - Each device node of QMP phy is required to have as many child nodes as
--   the number of lanes the PHY has.
--
--Required properties for child nodes of PCIe PHYs (one child per lane):
-- - reg: list of offset and length pairs of register sets for PHY blocks -
--	tx, rx, pcs, and pcs_misc (optional).
-- - #phy-cells: must be 0
--
--Required properties for a single "lanes" child node of non-PCIe PHYs:
-- - reg: list of offset and length pairs of register sets for PHY blocks
--	For 1-lane devices:
--		tx, rx, pcs, and (optionally) pcs_misc
--	For 2-lane devices:
--		tx0, rx0, pcs, tx1, rx1, and (optionally) pcs_misc
-- - #phy-cells: must be 0
--
--Required properties for child node of PCIe and USB3 qmp phys:
-- - clocks: a list of phandles and clock-specifier pairs,
--	   one for each entry in clock-names.
-- - clock-names: Must contain following:
--		 "pipe<lane-number>" for pipe clock specific to each lane.
-- - clock-output-names: Name of the PHY clock that will be the parent for
--		       the above pipe clock.
--	For "qcom,ipq8074-qmp-pcie-phy":
--		- "pcie20_phy0_pipe_clk"	Pipe Clock parent
--			(or)
--		  "pcie20_phy1_pipe_clk"
-- - #clock-cells: must be 0
--    - Phy pll outputs pipe clocks for pipe based PHYs. These clocks are then
--      gate-controlled by the gcc.
--
--Required properties for child node of PHYs with lane reset, AKA:
--	"qcom,msm8996-qmp-pcie-phy"
-- - resets: a list of phandles and reset controller specifier pairs,
--	   one for each entry in reset-names.
-- - reset-names: Must contain following:
--		 "lane<lane-number>" for reset specific to each lane.
--
--Example:
--	phy@34000 {
--		compatible = "qcom,msm8996-qmp-pcie-phy";
--		reg = <0x34000 0x488>;
--		#address-cells = <1>;
--		#size-cells = <1>;
--		ranges;
--
--		clocks = <&gcc GCC_PCIE_PHY_AUX_CLK>,
--			<&gcc GCC_PCIE_PHY_CFG_AHB_CLK>,
--			<&gcc GCC_PCIE_CLKREF_CLK>;
--		clock-names = "aux", "cfg_ahb", "ref";
--
--		vdda-phy-supply = <&pm8994_l28>;
--		vdda-pll-supply = <&pm8994_l12>;
--
--		resets = <&gcc GCC_PCIE_PHY_BCR>,
--			<&gcc GCC_PCIE_PHY_COM_BCR>,
--			<&gcc GCC_PCIE_PHY_COM_NOCSR_BCR>;
--		reset-names = "phy", "common", "cfg";
--
--		pciephy_0: lane@35000 {
--			reg = <0x35000 0x130>,
--				<0x35200 0x200>,
--				<0x35400 0x1dc>;
--			#clock-cells = <0>;
--			#phy-cells = <0>;
--
--			clocks = <&gcc GCC_PCIE_0_PIPE_CLK>;
--			clock-names = "pipe0";
--			clock-output-names = "pcie_0_pipe_clk_src";
--			resets = <&gcc GCC_PCIE_0_PHY_BCR>;
--			reset-names = "lane0";
--		};
--
--		pciephy_1: lane@36000 {
--		...
--		...
--	};
--
--	phy@88eb000 {
--		compatible = "qcom,sdm845-qmp-usb3-uni-phy";
--		reg = <0x88eb000 0x18c>;
--		#address-cells = <1>;
--		#size-cells = <1>;
--		ranges;
--
--		clocks = <&gcc GCC_USB3_SEC_PHY_AUX_CLK>,
--			 <&gcc GCC_USB_PHY_CFG_AHB2PHY_CLK>,
--			 <&gcc GCC_USB3_SEC_CLKREF_CLK>,
--			 <&gcc GCC_USB3_SEC_PHY_COM_AUX_CLK>;
--		clock-names = "aux", "cfg_ahb", "ref", "com_aux";
--
--		resets = <&gcc GCC_USB3PHY_PHY_SEC_BCR>,
--			 <&gcc GCC_USB3_PHY_SEC_BCR>;
--		reset-names = "phy", "common";
--
--		lane@88eb200 {
--			reg = <0x88eb200 0x128>,
--			      <0x88eb400 0x1fc>,
--			      <0x88eb800 0x218>,
--			      <0x88eb600 0x70>;
--			#clock-cells = <0>;
--			#phy-cells = <0>;
--			clocks = <&gcc GCC_USB3_SEC_PHY_PIPE_CLK>;
--			clock-names = "pipe0";
--			clock-output-names = "usb3_uni_phy_pipe_clk_src";
--		};
--	};
--
--	phy@1d87000 {
--		compatible = "qcom,sdm845-qmp-ufs-phy";
--		reg = <0x1d87000 0x18c>;
--		#address-cells = <1>;
--		#size-cells = <1>;
--		ranges;
--		clock-names = "ref",
--			      "ref_aux";
--		clocks = <&gcc GCC_UFS_MEM_CLKREF_CLK>,
--			 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
--
--		lanes@1d87400 {
--			reg = <0x1d87400 0x108>,
--			      <0x1d87600 0x1e0>,
--			      <0x1d87c00 0x1dc>,
--			      <0x1d87800 0x108>,
--			      <0x1d87a00 0x1e0>;
--			#phy-cells = <0>;
--		};
--	};
+> 
+>> > One solution could be to allow scheduling onto non-SPE VCPUs but wrap
+>> > the
+>> > SPE save/restore code in a macro (much like kvm_arm_spe_v1_ready) that
+>> > reads the non-sanitised feature register. Therefore we don't go bang,
+>> > but
+>> > we also increase the size of any black-holes in SPE capturing. Though
+>> > this
+>> > feels like something that will cause grief down the line.
+>> >
+>> > Is there something else that can be done?
+>> 
+>> How does userspace deal with this? When SPE is only available on half 
+>> of
+>> the CPUs, how does perf work in these conditions?
+> 
+> Not sure about userspace, but the kernel driver works by instantiating 
+> an
+> SPE PMU instance only for the CPUs that have it and then that instance
+> profiles for only those CPUs. You also need to do something similar if
+> you had two CPU types with SPE, since the SPE configuration is likely 
+> to be
+> different between them.
+
+So that's closer to what Andrew was suggesting above (running a guest on 
+a
+non-SPE CPU creates a profiling black hole). Except that we can't really
+run a SPE-enabled guest on a non-SPE CPU, as the SPE sysregs will UNDEF
+at EL1.
+
+Conclusion: we need a mix of a cpumask to indicate which CPUs we want to
+run on (generic, not-SPE related), and a check for SPE-capable CPUs.
+If any of these condition is not satisfied, the vcpu exits for userspace
+to sort out the affinity.
+
+I hate heterogeneous systems.
+
+         M.
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
-
+Jazz is not dead. It just smells funny...
