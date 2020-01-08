@@ -2,93 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABA1F133FA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 11:48:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFF43133FAD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 11:51:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbgAHKsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 05:48:35 -0500
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:42830 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726462AbgAHKsf (ORCPT
+        id S1727957AbgAHKv2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 05:51:28 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:35100 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbgAHKv2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 05:48:35 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=shile.zhang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0Tn9hx8y_1578480506;
-Received: from ali-6c96cfdd1403.local(mailfrom:shile.zhang@linux.alibaba.com fp:SMTPD_---0Tn9hx8y_1578480506)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 08 Jan 2020 18:48:27 +0800
-Subject: Re: [PATCH] x86: orc: fix unused-function warning
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org
-References: <20200107213127.209139-1-arnd@arndb.de>
-From:   Shile Zhang <shile.zhang@linux.alibaba.com>
-Message-ID: <b977064f-f187-dfba-2765-cd9cafe1cdf2@linux.alibaba.com>
-Date:   Wed, 8 Jan 2020 18:48:26 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.1
+        Wed, 8 Jan 2020 05:51:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=UqJ+/pT3izXu8kjYbbiezAa/YocSHtlN1XVLHEFRKJs=; b=h1hY+k92RryrIdTBhr5FexAw8
+        O11fOafKK2pe28cad9xN3w5YC34MHOc8hOWB8aSF5ZjC4dagLW4Ma/0kLVb7woD8LikhFaOmCggkJ
+        tGj6ZF/m8LSvTqTKZyMP0PiFTtEWolCan0If+IvY/U+RhWEd59XTazjWez3mvFGUqz2I2uaQnIthm
+        xWGbmTwjpUTQg2ojRszkMLE7I3h5arSfW5f/vsqoPHTlTF8hBF73JlvH3LaJ8cmVuHmk/ZkvZDPlJ
+        6rlLIighU6yX4hf5dztz9In1qHEMM4u/Z2M90C6vdcHgH9EOOe687bUXiPyWnDC+dNrkWrcOJJgAm
+        fc6jza4hg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ip8uo-00019z-P9; Wed, 08 Jan 2020 10:50:19 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DE995300693;
+        Wed,  8 Jan 2020 11:48:38 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id AF2B320B79C98; Wed,  8 Jan 2020 11:50:11 +0100 (CET)
+Date:   Wed, 8 Jan 2020 11:50:11 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Anchal Agarwal <anchalag@amazon.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, boris.ostrovsky@oracle.com, jgross@suse.com,
+        linux-pm@vger.kernel.org, linux-mm@kvack.org, kamatam@amazon.com,
+        sstabellini@kernel.org, konrad.wilk@oracle.co,
+        roger.pau@citrix.com, axboe@kernel.dk, davem@davemloft.net,
+        rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz,
+        eduval@amazon.com, sblbir@amazon.com,
+        xen-devel@lists.xenproject.org, vkuznets@redhat.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Woodhouse@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com,
+        dwmw@amazon.co.uk, fllinden@amaozn.com
+Subject: Re: [RFC PATCH V2 11/11] x86: tsc: avoid system instability in
+ hibernation
+Message-ID: <20200108105011.GY2827@hirez.programming.kicks-ass.net>
+References: <20200107234526.GA19034@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
 MIME-Version: 1.0
-In-Reply-To: <20200107213127.209139-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200107234526.GA19034@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+On Tue, Jan 07, 2020 at 11:45:26PM +0000, Anchal Agarwal wrote:
+> From: Eduardo Valentin <eduval@amazon.com>
+> 
+> System instability are seen during resume from hibernation when system
+> is under heavy CPU load. This is due to the lack of update of sched
+> clock data, and the scheduler would then think that heavy CPU hog
+> tasks need more time in CPU, causing the system to freeze
+> during the unfreezing of tasks. For example, threaded irqs,
+> and kernel processes servicing network interface may be delayed
+> for several tens of seconds, causing the system to be unreachable.
 
-Thanks for you work!
-But sorry for I have been fix this warning via a delta-patch as following:
-https://lore.kernel.org/lkml/157838258393.30329.5371781726464192052.tip-bot2@tip-bot2/
+> The fix for this situation is to mark the sched clock as unstable
+> as early as possible in the resume path, leaving it unstable
+> for the duration of the resume process. This will force the
+> scheduler to attempt to align the sched clock across CPUs using
+> the delta with time of day, updating sched clock data. In a post
+> hibernation event, we can then mark the sched clock as stable
+> again, avoiding unnecessary syncs with time of day on systems
+> in which TSC is reliable.
 
-FYI.
+This makes no frigging sense what so bloody ever. If the clock is
+stable, we don't care about sched_clock_data. When it is stable you get
+a linear function of the TSC without complicated bits on.
 
-BRs
-Shile
+When it is unstable, only then do we care about the sched_clock_data.
 
-On 2020/1/8 05:31, Arnd Bergmann wrote:
-> The orc unwinder contains a new warning:
->
-> arch/x86/kernel/unwind_orc.c:210:12: error: 'orc_sort_cmp' defined but not used [-Werror=unused-function]
->   static int orc_sort_cmp(const void *_a, const void *_b)
->              ^~~~~~~~~~~~
-> arch/x86/kernel/unwind_orc.c:190:13: error: 'orc_sort_swap' defined but not used [-Werror=unused-function]
->   static void orc_sort_swap(void *_a, void *_b, int size)
->               ^~~~~~~~~~~~~
->
-> Move the #ifdef to hide the now unused functions.
->
-> Fixes: f14bf6a350df ("x86/unwind/orc: Remove boot-time ORC unwind tables sorting")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Reviewed-by: Erik Quanstrom <quanstro@amazon.com>
+> Reviewed-by: Frank van der Linden <fllinden@amazon.com>
+> Reviewed-by: Balbir Singh <sblbir@amazon.com>
+> Reviewed-by: Munehisa Kamata <kamatam@amazon.com>
+> Tested-by: Anchal Agarwal <anchalag@amazon.com>
+> Signed-off-by: Eduardo Valentin <eduval@amazon.com>
 > ---
->   arch/x86/kernel/unwind_orc.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
-> index abdf8911a1fb..538152cca46b 100644
-> --- a/arch/x86/kernel/unwind_orc.c
-> +++ b/arch/x86/kernel/unwind_orc.c
-> @@ -187,6 +187,7 @@ static struct orc_entry *orc_find(unsigned long ip)
->   	return orc_ftrace_find(ip);
->   }
->   
-> +#ifdef CONFIG_MODULES
->   static void orc_sort_swap(void *_a, void *_b, int size)
->   {
->   	struct orc_entry *orc_a, *orc_b;
-> @@ -229,7 +230,6 @@ static int orc_sort_cmp(const void *_a, const void *_b)
->   	return orc_a->sp_reg == ORC_REG_UNDEFINED && !orc_a->end ? -1 : 1;
->   }
->   
-> -#ifdef CONFIG_MODULES
->   void unwind_module_init(struct module *mod, void *_orc_ip, size_t orc_ip_size,
->   			void *_orc, size_t orc_size)
->   {
 
+NAK, the code very much relies on never getting marked stable again
+after it gets set to unstable.
+
+> diff --git a/kernel/sched/clock.c b/kernel/sched/clock.c
+> index 1152259a4ca0..374d40e5b1a2 100644
+> --- a/kernel/sched/clock.c
+> +++ b/kernel/sched/clock.c
+> @@ -116,7 +116,7 @@ static void __scd_stamp(struct sched_clock_data *scd)
+>  	scd->tick_raw = sched_clock();
+>  }
+>  
+> -static void __set_sched_clock_stable(void)
+> +void set_sched_clock_stable(void)
+>  {
+>  	struct sched_clock_data *scd;
+>  
+> @@ -236,7 +236,7 @@ static int __init sched_clock_init_late(void)
+>  	smp_mb(); /* matches {set,clear}_sched_clock_stable() */
+>  
+>  	if (__sched_clock_stable_early)
+> -		__set_sched_clock_stable();
+> +		set_sched_clock_stable();
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.15.3.AMZN
+> 
