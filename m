@@ -2,110 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8EEA133899
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 02:39:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B15D1338A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 02:43:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726199AbgAHBjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 20:39:40 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38222 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726111AbgAHBjj (ORCPT
+        id S1726492AbgAHBn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 20:43:28 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38329 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725601AbgAHBn2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 20:39:39 -0500
-Received: by mail-ot1-f68.google.com with SMTP id d7so2028894otf.5
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 17:39:39 -0800 (PST)
+        Tue, 7 Jan 2020 20:43:28 -0500
+Received: by mail-pl1-f195.google.com with SMTP id f20so438354plj.5
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 17:43:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/d9k45/z7659u+xtEjN+MYx3Q6GpIJRf/rpR3Gk/DdU=;
-        b=YgTkFvh6k7M6dHhTjbBTUDG+NIIUI6w5fWZZA+SRtfvALbUkv5kvWYonJKu3sSN8bN
-         b+37/Q5KLz31UR0SYudLvDmy3JK9UFCkDIiMhXQQj3dHQVUjo9J9ywjL/XUPmwYswP+/
-         xeZnbYsjQkynkvVrvx19nSACawRXUpVW3q/vIubfYBFV7v5sMRYWA0QCbBX53/Lh0Y7W
-         ilS3gDYmvch66jqOGL1GQp/MCtciI6dWOmQeI8tXQSnJmFLQE2FOeA4lxSiGMCYIgXRf
-         1q2zJd9/QHTXMPJFdyvYajbTtvIkBgU7ptveduecznGjcWJeA/35nNkhH+y9tInkFeK1
-         ra9w==
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=spfY7D/FNI5gIKHICDFwu+Xdo8HUZHocUVySs6C8SL8=;
+        b=QcHkucgf0gmzc/UHIlMiHT0Zs5zevnHdrAKbWR4au2r/kpOKK7wI8OSYbnhWlNRw2R
+         SwK+vwwTu3IluZDR1o5rCp0TyOJ1xWsxptsWHdNModvZElXfh2kb4Fvm8IFWS848ISVr
+         Q6xwnUH2BCxDxxKctixgdZ0YPfVJ0YFmGXHp5XD7F6PbEvwfoSVkjN0XGgtgfubdo8xp
+         BSbvoCfn+RQRe9soyTR4kgsAC3R4Xor5cWnmp4w5xcTQ1cvnMfjBFUNqBZTm1uF2MqXz
+         y4+y++4zdDH2tetig3gJQp8ZreERHgstVt9z8hwcMkSiGEia4b9wdbmiMQRf9MqMTYkf
+         vDBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/d9k45/z7659u+xtEjN+MYx3Q6GpIJRf/rpR3Gk/DdU=;
-        b=RD7LVQkFhBXBivF22wpZEpLVonmBKmVTq8G9D1+LykFBQrH1t7elrNMgO/BcX/TX2p
-         OFnM/GPsjD2w9/08fcJa3hHu/ZqNywSRjTQiltOwdB2XDpZgY1XZSM/Qd4mbDjSEL2HY
-         R1FOLxtG99LY4lKilhVNfZRwgrwXpCu4FvleIeYZrEmG0VWbeKK0tYgr1TXuepAu7j06
-         1aoLOXYoXv4Ok0aiD1bWFpIC8V3j6Q7BPlS81uWjCt4hjkmvzchCVylNwrdDO9uhBnWu
-         xPosyvxT2kkVBzzZbTJKJlz3lIL7yLh+rg7+ZuM0c57hKtC9J+8XuDBXEsarJkgIZ9sU
-         //JQ==
-X-Gm-Message-State: APjAAAV0EjsSp/ptEBLjLunkDEs821JJTCQKCaJIDfk9ouOwIC23pW7o
-        dV/MlB89Xh3nSuGLKn7fREem6kT0pukieQboX9/+Tw==
-X-Google-Smtp-Source: APXvYqxdf0Bo2pMJ9s40oQqu9673Krm3/AIHd7ihdu+tmuZao9+mHEVhrRD0TY+1uOwKKPxbusMCMUEGKxcHJtyvZxo=
-X-Received: by 2002:a9d:68cc:: with SMTP id i12mr2328311oto.207.1578447579439;
- Tue, 07 Jan 2020 17:39:39 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=spfY7D/FNI5gIKHICDFwu+Xdo8HUZHocUVySs6C8SL8=;
+        b=aNi5XlzVUnIPiZ0UUmWdNJwZ0mPDz/qN6NnMeMeC/zoHYOe4JiaFHLmDG312o1pCT1
+         l68zsTrVQN6gDrVOKx4bVg3N7z4em0PNrb9BURv6BTbTts+SlmiNmx7Nxh+mxCSsdcFZ
+         vvgZZ+xc1dY9QGzQVKrcFuSaNPZ2Qd7KY5/EUj9MA6VPkBvp1fJ6jUU+cSzFm2zzOTsE
+         LiD9ZmNOdij3278E92AIoy5EecJUUelFokaK++hiRsR+vsKzxFkkWrA/wPGNVBfa2Jqk
+         hlh6BpkzGCSe/4gQuIln5t0tjQyzSLmz8zUQgEdqOYPABpGQyEOzRALZHHQD1JGh5JJs
+         qfjg==
+X-Gm-Message-State: APjAAAVFHC+ABKTr+Wlo6RCRRbyFebmczsFL6+dH/QaHxwasO2UlgRpr
+        Qm4dBcA+e9+1AOzWcDqvC1zA5Mh4esw=
+X-Google-Smtp-Source: APXvYqx8FppAeuLTUK+Tq8ybPzIYA1EMDxjzWw/AKfeaLwmadbX8QIcZn2JZH9FVngSnCVUZpR8izQ==
+X-Received: by 2002:a17:90a:b10a:: with SMTP id z10mr1676174pjq.115.1578447807092;
+        Tue, 07 Jan 2020 17:43:27 -0800 (PST)
+Received: from localhost.localdomain (118-171-129-36.dynamic-ip.hinet.net. [118.171.129.36])
+        by smtp.gmail.com with ESMTPSA id u18sm1064511pgn.9.2020.01.07.17.43.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2020 17:43:26 -0800 (PST)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] regulator: bd718x7: Simplify the code by removing struct bd718xx_pmic_inits
+Date:   Wed,  8 Jan 2020 09:42:55 +0800
+Message-Id: <20200108014256.11282-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20191212182238.46535-1-brho@google.com> <20191212182238.46535-3-brho@google.com>
- <06108004-1720-41EB-BCAB-BFA8FEBF4772@oracle.com> <ED482280-CB47-4AB6-9E7E-EEE7848E0F8B@oracle.com>
- <f8e948ff-6a2a-a6d6-9d8e-92b93003354a@google.com> <65FB6CC1-3AD2-4D6F-9481-500BD7037203@oracle.com>
- <20191213171950.GA31552@linux.intel.com> <e012696f-f13e-5af1-2b14-084607d69bfa@google.com>
- <20200107190522.GA16987@linux.intel.com> <08a36944-ad5a-ca49-99b3-d3908ce0658b@google.com>
- <20200108012014.GF16987@linux.intel.com>
-In-Reply-To: <20200108012014.GF16987@linux.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 7 Jan 2020 17:39:28 -0800
-Message-ID: <CAPcyv4jW3HTU7mmctL_d+zTS8yT_NLxa5cx_w8nbqVSwBMdSLQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] kvm: Use huge pages for DAX-backed files
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Barret Rhoden <brho@google.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        X86 ML <x86@kernel.org>, KVM list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Zeng, Jason" <jason.zeng@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 7, 2020 at 5:20 PM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Tue, Jan 07, 2020 at 02:19:06PM -0500, Barret Rhoden wrote:
-> > On 1/7/20 2:05 PM, Sean Christopherson wrote:
-> > >Hopefully you haven't put too much effort into the rework, because I want
-> > >to commandeer the proposed changes and use them as the basis for a more
-> > >aggressive overhaul of KVM's hugepage handling.  Ironically, there's a bug
-> > >in KVM's THP handling that I _think_ can be avoided by using the DAX
-> > >approach of walking the host PTEs.
-> > >
-> > >I'm in the process of testing, hopefully I'll get a series sent out later
-> > >today.  If not, I should at least be able to provide an update.
-> >
-> > Nice timing.  I was just about to get back to this, so I haven't put any
-> > time in yet.  =)
-> >
-> > Please CC me, and I'll try your patches out on my end.
->
-> Will do.  Barring last minute hiccups, the code is ready, just need to
-> finish off a few changelogs.  Should get it out early tomorrow.
->
-> One question that may help avoid some churn: are huge DAX pages not
-> tracked as compound pages?  The comment from your/this patch is pretty
-> unequivocal, but I wanted to double check that they will really return
-> false for PageCompound(), as opposed to only returning false for
-> PageTransCompoundMap().
+Nowdays ROHM_CHIP_TYPE_AMOUNT includes not only BD71837/BD71847 but also
+BD70528/BD71828 which are not supported by this driver. So it seems not
+necessay to have pmic_regulators[ROHM_CHIP_TYPE_AMOUNT] as mapping table.
+Simplify the code by removing struct bd718xx_pmic_inits and
+pmic_regulators[ROHM_CHIP_TYPE_AMOUNT].
 
-PageCompound() returns false.
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/regulator/bd718x7-regulator.c | 34 +++++++++++----------------
+ 1 file changed, 14 insertions(+), 20 deletions(-)
 
->
->         /*
->          * DAX pages do not use compound pages.  ...
->          */
->
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index 13a43eee2e46..8f9b2d8eaf10 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -1142,28 +1142,14 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
+ 	},
+ };
+ 
+-struct bd718xx_pmic_inits {
+-	const struct bd718xx_regulator_data *r_datas;
+-	unsigned int r_amount;
+-};
+-
+ static int bd718xx_probe(struct platform_device *pdev)
+ {
+ 	struct bd718xx *mfd;
+ 	struct regulator_config config = { 0 };
+-	struct bd718xx_pmic_inits pmic_regulators[ROHM_CHIP_TYPE_AMOUNT] = {
+-		[ROHM_CHIP_TYPE_BD71837] = {
+-			.r_datas = bd71837_regulators,
+-			.r_amount = ARRAY_SIZE(bd71837_regulators),
+-		},
+-		[ROHM_CHIP_TYPE_BD71847] = {
+-			.r_datas = bd71847_regulators,
+-			.r_amount = ARRAY_SIZE(bd71847_regulators),
+-		},
+-	};
+-
+ 	int i, j, err;
+ 	bool use_snvs;
++	const struct bd718xx_regulator_data *reg_data;
++	unsigned int num_reg_data;
+ 
+ 	mfd = dev_get_drvdata(pdev->dev.parent);
+ 	if (!mfd) {
+@@ -1172,8 +1158,16 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
+-	if (mfd->chip.chip_type >= ROHM_CHIP_TYPE_AMOUNT ||
+-	    !pmic_regulators[mfd->chip.chip_type].r_datas) {
++	switch (mfd->chip.chip_type) {
++	case ROHM_CHIP_TYPE_BD71837:
++		reg_data = bd71837_regulators;
++		num_reg_data = ARRAY_SIZE(bd71837_regulators);
++		break;
++	case ROHM_CHIP_TYPE_BD71847:
++		reg_data = bd71847_regulators;
++		num_reg_data = ARRAY_SIZE(bd71847_regulators);
++		break;
++	default:
+ 		dev_err(&pdev->dev, "Unsupported chip type\n");
+ 		err = -EINVAL;
+ 		goto err;
+@@ -1215,13 +1209,13 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	for (i = 0; i < pmic_regulators[mfd->chip.chip_type].r_amount; i++) {
++	for (i = 0; i < num_reg_data; i++) {
+ 
+ 		const struct regulator_desc *desc;
+ 		struct regulator_dev *rdev;
+ 		const struct bd718xx_regulator_data *r;
+ 
+-		r = &pmic_regulators[mfd->chip.chip_type].r_datas[i];
++		r = &reg_data[i];
+ 		desc = &r->desc;
+ 
+ 		config.dev = pdev->dev.parent;
+-- 
+2.20.1
 
-None of the head / tail page infrastructure is set up for dax pages.
-They are just independent 'struct page' objects that are
-opportunistically mapped by different pte sizes in the dax core.
