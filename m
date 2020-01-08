@@ -2,121 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10AC9134ED4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 22:25:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A34B134EC7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 22:23:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbgAHVZf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 16:25:35 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:39742 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbgAHVZe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 16:25:34 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 008LI7Ef104982;
-        Wed, 8 Jan 2020 21:24:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : cc : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=p+VKUmFTYouUcdSlYAoM9Pr3W2UblwpfU8rrZp0oNbE=;
- b=CwCADtJTMEKq6lcc8O6ASV2uqvwRQzEC4ADL5xIgzmCExGamfmNc0reAl1octn6ouiGY
- hw9JkzGCjacVhZ8ieSCRgkUoAvRF8tXAi8E4F0VIDmI1Z0EOGFKpoukC9IbX2k60zKC9
- +06h9V7bbcQUFux6TOuMDtOEnmUxRuJdmb3JM+BgVvDsFp+CuME5SaRp2Cr5D+KY4NNX
- iMpP1k4VYb+C8objoHUHgAjA2b/gYN/Eaxqjrv77lUXg0lfRHGO3BZ25fALUZHDEQn44
- /23BKnwijKtX7Gwow4D7AS+5ZGpp+ynmMN3iHXmUSAQdpJ8OloVgIVZ+LB60OyGRkIQ2 IQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2xaj4u6s71-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 08 Jan 2020 21:24:59 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 008LJW5U078547;
-        Wed, 8 Jan 2020 21:24:59 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2xcpctgwug-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 08 Jan 2020 21:24:58 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 008LOuTG001519;
-        Wed, 8 Jan 2020 21:24:56 GMT
-Received: from [10.132.95.199] (/10.132.95.199)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 08 Jan 2020 13:24:56 -0800
-Subject: Re: [RESEND RFC PATCH 1/1] Selectively allow CAP_SYS_NICE capability
- inside user namespaces
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-References: <1574096478-11520-1-git-send-email-prakash.sangappa@oracle.com>
- <1574096478-11520-2-git-send-email-prakash.sangappa@oracle.com>
- <87wobszzqi.fsf@x220.int.ebiederm.org>
- <0d7fb84d-e7e8-c442-37a3-23b036fdf12c@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        tglx@linutronix.de, peterz@infradead.org, serge@hallyn.com
-From:   "prakash.sangappa" <prakash.sangappa@oracle.com>
-Message-ID: <b231b9b4-c37d-1d9f-7054-1b4be41302b4@oracle.com>
-Date:   Wed, 8 Jan 2020 13:23:22 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        id S1727385AbgAHVXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 16:23:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59692 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726836AbgAHVXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 16:23:49 -0500
+Received: from localhost (mobile-166-170-223-177.mycingular.net [166.170.223.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C99A3206DA;
+        Wed,  8 Jan 2020 21:23:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578518629;
+        bh=3o5eOcLo/avT4KVRkLtp/ebecyBmOIz2OoTMExZnZ9U=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=GAX6U5ZBSBhfL3of/JrrGOM3VkfXHC0Ss6T3n1cfux8OJShjKueO2kB2yRotSJ2JG
+         cb/qlF+pkp5jeUvFR4uziYwmdoHfZyAFTpJviZDePo0wo7AHQNa59J4DlnuNq9uotN
+         Yw8F3fAQ3mX05uPqYGK3D5g1xAVNsdzVmFzMwXB8=
+Date:   Wed, 8 Jan 2020 15:23:47 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        Kelvin.Cao@microchip.com, Eric Pilmore <epilmore@gigaio.com>,
+        Doug Meyer <dmeyer@gigaio.com>
+Subject: Re: [PATCH 09/12] PCI/switchtec: Add gen4 support in struct
+ flash_info_regs
+Message-ID: <20200108212347.GA207738@google.com>
 MIME-Version: 1.0
-In-Reply-To: <0d7fb84d-e7e8-c442-37a3-23b036fdf12c@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9494 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001080167
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9494 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001080167
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200106190337.2428-10-logang@deltatee.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jan 06, 2020 at 12:03:34PM -0700, Logan Gunthorpe wrote:
+> From: Kelvin Cao <kelvin.cao@microchip.com>
+> 
+> Add a union with gen3 and gen4 flash_info structs.
 
+This does a lot more than add a union :)
 
-On 11/21/2019 05:45 PM, Prakash Sangappa wrote:
->
->
-> On 11/21/19 1:27 PM, ebiederm@xmission.com wrote:
->> Prakash Sangappa <prakash.sangappa@oracle.com> writes:
-<..>
->> 2) If I read the other thread correctly there was talk about setting the
->>     nice levels of processes in other containers.  Ouch!
->
-> No not in other containers. Only on processes within the container 
-> which has this capability. The use case is to use it in a container 
-> with user namespace and pid namespace. So no processes from other 
-> containers should be visible. Necessary checks should be added?.
->
->
->>
->>     The only thing I can think that makes any sense at all is to allow
->>     setting the nice levels of the processes in your own container.
->
-> Yes that is the intended use.
->
->>
->>     I can totally see having a test to see if a processes credentials 
->> are
->>     in the caller's user namespace or a child of caller's user namespace
->>     and allowing admin level access if the caller has the appropriate
->>     caps in their user namespace.
->
-> Ok
->
->>     But in this case I don't see anything preventing the admin in a
->>     container from using the ordinary nice levels on a task. You are
->>     unlocking the nice levels reserved for the system administrator
->>     for special occassions.   I don't see how that makes any sense
->>     to do from inside a container.
->
-> But this is what seems to be lacking. A container could have some 
-> critical processes running which need to run at a higher priority.
+I think this looks reasonable, but I would like it even better if this
+and related patches could be split up a little bit differently:
 
-Any comments about this? What would be the recommendation for dealing 
-with such a requirement?
+  - Rename SWITCHTEC_CFG0_RUNNING to SWITCHTEC_GEN3_CFG0_RUNNING, etc
+    (purely mechanical change, so trivial and obvious).
 
+  - Add switchtec_gen and the tests where it's needed, but with only
+    SWITCHTEC_GEN3 cases for now.
 
+  - Refactor ioctl_flash_part_info() (still only supports GEN3).
+    Maybe adds struct flash_info_regs and union, but only with gen3.
+
+  - Add GEN4 support (patch basically contains only GEN4-related
+    things and doesn't touch GEN3 things at all).  Maybe it would
+    still make sense to split the GEN4 support into multiple patches
+    (as in this series), or maybe they could be squashed into a single
+    GEN4 patch?
+
+  - It seems like at least the aliasing quirk and the driver device ID
+    update could/should be squashed since they contain the same
+    constants.
+
+Bjorn
