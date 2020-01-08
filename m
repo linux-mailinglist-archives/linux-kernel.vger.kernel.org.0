@@ -2,113 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 919C31348D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 18:07:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 565F71348D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 18:09:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729650AbgAHRHU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 12:07:20 -0500
-Received: from mga01.intel.com ([192.55.52.88]:39140 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729516AbgAHRHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 12:07:19 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 09:06:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,410,1571727600"; 
-   d="scan'208";a="303609752"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga001.jf.intel.com with ESMTP; 08 Jan 2020 09:06:26 -0800
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1ipEmp-0005m3-02; Wed, 08 Jan 2020 19:06:27 +0200
-Date:   Wed, 8 Jan 2020 19:06:26 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        "David E . Box" <david.e.box@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 36/36] MAINTAINERS: Update entry for Intel Broxton PMC
- driver
-Message-ID: <20200108170626.GS32742@smile.fi.intel.com>
-References: <20200108114201.27908-1-mika.westerberg@linux.intel.com>
- <20200108114201.27908-37-mika.westerberg@linux.intel.com>
+        id S1729673AbgAHRJV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 12:09:21 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:36501 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbgAHRJV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 12:09:21 -0500
+Received: from host.242.234.23.62.rev.coltfrance.com ([62.23.234.242] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1ipEnM-00052V-PD; Wed, 08 Jan 2020 17:07:00 +0000
+Date:   Wed, 8 Jan 2020 18:07:04 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian@brauner.io>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] introduce configfd as generalisation of fsconfig
+Message-ID: <20200108170703.zhcuohzdp22y5yma@wittgenstein>
+References: <20200104201432.27320-1-James.Bottomley@HansenPartnership.com>
+ <20200105162311.sufgft6kthetsz7q@wittgenstein>
+ <1578247328.3310.36.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200108114201.27908-37-mika.westerberg@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1578247328.3310.36.camel@HansenPartnership.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 08, 2020 at 02:42:01PM +0300, Mika Westerberg wrote:
-> The driver lives now under MFD so split the current entry into two parts
-> and add me as co-maintainer of the Intel Broxton PMC driver. While there
-> correct formatting of Zha Qipeng's email address.
+[extending the Cc a bit]
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
+On Sun, Jan 05, 2020 at 10:02:08AM -0800, James Bottomley wrote:
+> On Sun, 2020-01-05 at 17:23 +0100, Christian Brauner wrote:
+> > On Sat, Jan 04, 2020 at 12:14:26PM -0800, James Bottomley wrote:
+> > > fsconfig is a very powerful configuration mechanism except that it
+> > > only works for filesystems with superblocks.  This patch series
+> > > generalises the useful concept of a multiple step configurational
+> > > mechanism carried by a file descriptor.  The object of this patch
+> > > series is to get bind mounts to be configurable in the same way
+> > > that superblock based ones are, but it should have utility beyond
+> > > the filesytem realm.  Patch 4 also reimplements fsconfig in terms
+> > > of configfd, but that's not a strictly necessary patch, it is
+> > > merely a useful demonstration that configfd is a superset of the
+> > > properties of fsconfig.
+> > 
+> > Thanks for the patch. I'm glad fsconfig() is picked back up; either
+> > by you or by David. We will need this for sure.
+> > But the configfd approach does not strike me as a great idea.
+> > Anonymous inode fds provide an abstraction mechanism for kernel
+> > objects which we built around fds such as timerfd, pidfd, mountfd and
+> > so on. When you stat an anonfd you get ANON_INODE_FS_MAGIC and you
+> > get the actual type by looking at fdinfo, or - more common - by
+> > parsing out /proc/<pid>/fd/<nr> and discovering "[fscontext]". So
+> > it's already a pretty massive abstraction layer we have. But configfd
+> > would be yet another fd abstraction based on anonfds.
+> > The idea has been that a new fd type based on anonfds comes with an
+> > api specific to that type of fd. That seems way nicer from an api
+> > design perspective than implementing new apis as part of yet another
+> > generic configfd layer.
 > 
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
->  MAINTAINERS | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
+> Really, it's just a fd that gathers config information and can reserve
+> specific errors (and we should really work out the i18n implications of
+
+It's rather a complex multiplexer intended to go beyond the realm of
+filesystems/mount api and that's something we have been burned by before.
+
+> the latter).  Whether it's a new fd type or an anonfd with a specific
+> name doesn't seem to be that significant, so the name could be set by
+> the type.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8982c6e013b3..11b8bb4e2867 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8280,6 +8280,13 @@ L:	platform-driver-x86@vger.kernel.org
->  S:	Maintained
->  F:	drivers/platform/x86/intel_atomisp2_pm.c
->  
-> +INTEL BROXTON PMC DRIVER
-> +M:	Mika Westerberg <mika.westerberg@linux.intel.com>
-> +M:	Zha Qipeng <qipeng.zha@intel.com>
-> +S:	Maintained
-> +F:	drivers/mfd/intel_pmc_bxt.c
-> +F:	include/linux/mfd/intel_pmc_bxt.h
-> +
->  INTEL C600 SERIES SAS CONTROLLER DRIVER
->  M:	Intel SCU Linux support <intel-linux-scu@intel.com>
->  M:	Artur Paszkiewicz <artur.paszkiewicz@intel.com>
-> @@ -8488,13 +8495,11 @@ L:	platform-driver-x86@vger.kernel.org
->  S:	Maintained
->  F:	drivers/platform/x86/intel_pmc_core*
->  
-> -INTEL PMC/P-Unit IPC DRIVER
-> -M:	Zha Qipeng<qipeng.zha@intel.com>
-> +INTEL P-Unit IPC DRIVER
-> +M:	Zha Qipeng <qipeng.zha@intel.com>
->  L:	platform-driver-x86@vger.kernel.org
->  S:	Maintained
-> -F:	drivers/platform/x86/intel_pmc_ipc.c
->  F:	drivers/platform/x86/intel_punit_ipc.c
-> -F:	arch/x86/include/asm/intel_pmc_ipc.h
->  F:	arch/x86/include/asm/intel_punit_ipc.h
->  
->  INTEL PMIC GPIO DRIVERS
-> -- 
-> 2.24.1
+> > Another problem is that these syscalls here would be massive
+> > multiplexing syscalls. If they are ever going to be used outside of
+> > filesystem use-cases (which is doubtful) they will quickly rival
+> > prctl(), seccomp(), and ptrace().
 > 
+> Actually, that's partly the point.  We do have several systemcalls with
 
--- 
-With Best Regards,
-Andy Shevchenko
+Actually I think that's the problem. The keyctl api itself suffers
+from the problem that it already has a complex multiplexer. That could
+either point to bad api design (sorry, David :)) or it's just a very
+complex use-case like the mount api. The good thing is that it's
+restricted to a single domain: keys. And that's good. Plumbing both e.g.
+keys and (parts of) mounts on top of another generic api is what strikes
+me as a bad idea.
 
+> variable argument parsing that would benefit from an approach like
+> this.  keyctl springs immediately to mind.
+> 
+> >  That's not a great thing. Especially, since we recently (a few
+> > months ago with Linus chiming in too) had long discussions with the
+> > conclusion that multiplexing syscalls are discouraged, from a
+> > security and api design perspective. Especially when they are not
+> > tied to a specific API (e.g. seccomp() and bpf() are at least tied to
+> > a specific API). libcs such as glibc and musl had reservations in
+> > that regard as well.
+> > 
+> > This would also spread the mount api across even more fd types than
+> > it already does now which is cumbersome for userspace.
+> > 
+> > A generic API like that also makes it hard to do interception in
+> > userspace which is important for brokers such as e.g. used in Firefox
+> > or what we do in various container use-cases.
+> > 
+> > So I have strong reservations about configfd and would strongly favor
+> > the revival of the original fsconfig() patchset.
+> 
+> Ah well, I did have plans for configfd to be self describing, so the
+> arguments accepted by each type would be typed and pre-registered and
+> thus parseable generically, so instead of being the usual anonymous
+> multiplex sink, it would at least be an introspectable multiplexed
+> sink.  The problem there was I can't make fsconfig fit into that
 
+We already have fsconfig() to configure mounts so it seems odd to now
+spread the mount api onto configfd imho.
+
+Christian
