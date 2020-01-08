@@ -2,121 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B5A1134EC3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 22:21:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10AC9134ED4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 22:25:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbgAHVVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 16:21:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56666 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726952AbgAHVVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 16:21:47 -0500
-Received: from localhost (mobile-166-170-223-177.mycingular.net [166.170.223.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14AD320705;
-        Wed,  8 Jan 2020 21:21:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578518506;
-        bh=NI/0EEDmS5QbvfbAKaMZQTWOoyjHvHDRvW8NzDitOPc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=NcCf/ebHSnRrXmFU/yRqcWrQEPUUdBzCRQnTbLB85puJkSu8GuUbGsyTYR61qeWyu
-         c7eHcutvZ1/lnpmOxdJvtXpl9ArNb7YeBg0SgJiD5qFNjtp1dhMRH0mo7sNjpZzxfz
-         WAxWKSbi/HY5DpdhFMDfl9hv/Ar1dYP2tR1BJDAs=
-Date:   Wed, 8 Jan 2020 15:21:44 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        Kelvin.Cao@microchip.com, Eric Pilmore <epilmore@gigaio.com>,
-        Doug Meyer <dmeyer@gigaio.com>
-Subject: Re: [PATCH 08/12] PCI/switchtec: Add gen4 support in struct
- sys_info_regs
-Message-ID: <20200108212144.GA209154@google.com>
+        id S1727352AbgAHVZf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 16:25:35 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:39742 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbgAHVZe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 16:25:34 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 008LI7Ef104982;
+        Wed, 8 Jan 2020 21:24:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : cc : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=p+VKUmFTYouUcdSlYAoM9Pr3W2UblwpfU8rrZp0oNbE=;
+ b=CwCADtJTMEKq6lcc8O6ASV2uqvwRQzEC4ADL5xIgzmCExGamfmNc0reAl1octn6ouiGY
+ hw9JkzGCjacVhZ8ieSCRgkUoAvRF8tXAi8E4F0VIDmI1Z0EOGFKpoukC9IbX2k60zKC9
+ +06h9V7bbcQUFux6TOuMDtOEnmUxRuJdmb3JM+BgVvDsFp+CuME5SaRp2Cr5D+KY4NNX
+ iMpP1k4VYb+C8objoHUHgAjA2b/gYN/Eaxqjrv77lUXg0lfRHGO3BZ25fALUZHDEQn44
+ /23BKnwijKtX7Gwow4D7AS+5ZGpp+ynmMN3iHXmUSAQdpJ8OloVgIVZ+LB60OyGRkIQ2 IQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2xaj4u6s71-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 08 Jan 2020 21:24:59 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 008LJW5U078547;
+        Wed, 8 Jan 2020 21:24:59 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2xcpctgwug-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 08 Jan 2020 21:24:58 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 008LOuTG001519;
+        Wed, 8 Jan 2020 21:24:56 GMT
+Received: from [10.132.95.199] (/10.132.95.199)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 08 Jan 2020 13:24:56 -0800
+Subject: Re: [RESEND RFC PATCH 1/1] Selectively allow CAP_SYS_NICE capability
+ inside user namespaces
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+References: <1574096478-11520-1-git-send-email-prakash.sangappa@oracle.com>
+ <1574096478-11520-2-git-send-email-prakash.sangappa@oracle.com>
+ <87wobszzqi.fsf@x220.int.ebiederm.org>
+ <0d7fb84d-e7e8-c442-37a3-23b036fdf12c@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        tglx@linutronix.de, peterz@infradead.org, serge@hallyn.com
+From:   "prakash.sangappa" <prakash.sangappa@oracle.com>
+Message-ID: <b231b9b4-c37d-1d9f-7054-1b4be41302b4@oracle.com>
+Date:   Wed, 8 Jan 2020 13:23:22 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200106190337.2428-9-logang@deltatee.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <0d7fb84d-e7e8-c442-37a3-23b036fdf12c@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9494 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001080167
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9494 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001080167
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 12:03:33PM -0700, Logan Gunthorpe wrote:
-> Add a union with gen3 and gen4 sys_info structs. Ensure any use of the
-> gen3 struct is gaurded by an if statement on stdev->gen.
 
-s/gaurded/guarded/
 
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> ---
->  drivers/pci/switch/switchtec.c | 41 +++++++++++++++++++++++++++---
->  include/linux/switchtec.h      | 46 +++++++++++++++++++++++++++++++++-
->  2 files changed, 82 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
-> index 21d3dd6e74f9..90d9c00984a7 100644
-> --- a/drivers/pci/switch/switchtec.c
-> +++ b/drivers/pci/switch/switchtec.c
-> @@ -317,8 +317,14 @@ static ssize_t field ## _show(struct device *dev, \
->  	struct device_attribute *attr, char *buf) \
->  { \
->  	struct switchtec_dev *stdev = to_stdev(dev); \
-> -	return io_string_show(buf, &stdev->mmio_sys_info->gen3.field, \
-> -			    sizeof(stdev->mmio_sys_info->gen3.field)); \
-> +	struct sys_info_regs __iomem *si = stdev->mmio_sys_info; \
-> +	\
-> +	if (stdev->gen == SWITCHTEC_GEN4) \
-> +		return io_string_show(buf, &si->gen4.field, \
-> +				      sizeof(si->gen4.field)); \
-> +	else \
-> +		return io_string_show(buf, &si->gen3.field, \
-> +				      sizeof(si->gen3.field)); \
->  } \
->  \
->  static DEVICE_ATTR_RO(field)
-> @@ -326,7 +332,21 @@ static DEVICE_ATTR_RO(field)
->  DEVICE_ATTR_SYS_INFO_STR(vendor_id);
->  DEVICE_ATTR_SYS_INFO_STR(product_id);
->  DEVICE_ATTR_SYS_INFO_STR(product_revision);
-> -DEVICE_ATTR_SYS_INFO_STR(component_vendor);
-> +
-> +static ssize_t component_vendor_show(struct device *dev,
-> +	struct device_attribute *attr, char *buf)
-> +{
-> +	struct switchtec_dev *stdev = to_stdev(dev);
-> +	struct sys_info_regs __iomem *si = stdev->mmio_sys_info;
-> +
-> +	/* component_vendor field not supported after gen4 */
-> +	if (stdev->gen != SWITCHTEC_GEN3)
+On 11/21/2019 05:45 PM, Prakash Sangappa wrote:
+>
+>
+> On 11/21/19 1:27 PM, ebiederm@xmission.com wrote:
+>> Prakash Sangappa <prakash.sangappa@oracle.com> writes:
+<..>
+>> 2) If I read the other thread correctly there was talk about setting the
+>>     nice levels of processes in other containers.  Ouch!
+>
+> No not in other containers. Only on processes within the container 
+> which has this capability. The use case is to use it in a container 
+> with user namespace and pid namespace. So no processes from other 
+> containers should be visible. Necessary checks should be added?.
+>
+>
+>>
+>>     The only thing I can think that makes any sense at all is to allow
+>>     setting the nice levels of the processes in your own container.
+>
+> Yes that is the intended use.
+>
+>>
+>>     I can totally see having a test to see if a processes credentials 
+>> are
+>>     in the caller's user namespace or a child of caller's user namespace
+>>     and allowing admin level access if the caller has the appropriate
+>>     caps in their user namespace.
+>
+> Ok
+>
+>>     But in this case I don't see anything preventing the admin in a
+>>     container from using the ordinary nice levels on a task. You are
+>>     unlocking the nice levels reserved for the system administrator
+>>     for special occassions.   I don't see how that makes any sense
+>>     to do from inside a container.
+>
+> But this is what seems to be lacking. A container could have some 
+> critical processes running which need to run at a higher priority.
 
-I assume the comment should say "after gen3"?  More occurrences below.
+Any comments about this? What would be the recommendation for dealing 
+with such a requirement?
 
-> +		return sprintf(buf, "none\n");
-> +
-> +	return io_string_show(buf, &si->gen3.component_vendor,
-> +			      sizeof(si->gen3.component_vendor));
-> +}
-> +static DEVICE_ATTR_RO(component_vendor);
->  
->  static ssize_t component_id_show(struct device *dev,
->  	struct device_attribute *attr, char *buf)
-> @@ -334,6 +354,10 @@ static ssize_t component_id_show(struct device *dev,
->  	struct switchtec_dev *stdev = to_stdev(dev);
->  	int id = ioread16(&stdev->mmio_sys_info->gen3.component_id);
->  
-> +	/* component_id field not supported after gen4 */
-> +	if (stdev->gen != SWITCHTEC_GEN3)
-> +		return sprintf(buf, "none\n");
-> +
->  	return sprintf(buf, "PM%04X\n", id);
->  }
->  static DEVICE_ATTR_RO(component_id);
-> @@ -344,6 +368,10 @@ static ssize_t component_revision_show(struct device *dev,
->  	struct switchtec_dev *stdev = to_stdev(dev);
->  	int rev = ioread8(&stdev->mmio_sys_info->gen3.component_revision);
->  
-> +	/* component_revision field not supported after gen4 */
-> +	if (stdev->gen != SWITCHTEC_GEN3)
-> +		return sprintf(buf, "255\n");
-> +
+
