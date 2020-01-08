@@ -2,97 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4630A133ED6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 11:05:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAF27133EE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 11:08:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbgAHKFK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 05:05:10 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34369 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726567AbgAHKFK (ORCPT
+        id S1727571AbgAHKIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 05:08:40 -0500
+Received: from asavdk4.altibox.net ([109.247.116.15]:45684 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726368AbgAHKIk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 05:05:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578477908;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=U4beEKrqHATjYJuEXNr0cR9Rg2zzgVL9SSX9UcNxrak=;
-        b=X10OJcrpcOIuM80lN01O6y1Mk/v96zh3UAbaj3YffOsnbfwk4un847pQR6IhKzRzsuLTvg
-        0gATLFa7plzA7PxrpJZJ+kWN5E/Rcydlq066E5KBwEe9LJET/an4S/ErCLDp7oBo/juPCg
-        b/V8OrKilB7tgwu8Hc/LT1k+vKkX3AU=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-215-kU4Ben72OlufA4AmQ1w6FQ-1; Wed, 08 Jan 2020 05:05:05 -0500
-X-MC-Unique: kU4Ben72OlufA4AmQ1w6FQ-1
-Received: by mail-wr1-f72.google.com with SMTP id c17so1225541wrp.10
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 02:05:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=U4beEKrqHATjYJuEXNr0cR9Rg2zzgVL9SSX9UcNxrak=;
-        b=Nl33hyuOT9rFBLgujiRJW1d8Tl9lncSv9qSA3Ayd/dTZ4XlYXNj5L/dAyO3crKzioH
-         Iqwy4p+eTSyfJyId+U4uTbpQgGGeEf4CdUTc0DWfXdTpyoJ1Tqehp0U+daAo63nz9qJJ
-         QqCRxY4nNu8WlidhGdbd0mhgQZCRZb2QPQIiOoew9GCD3lXvECTLI45OHqTHdsugO3Uk
-         aWMpB4K+79Le3cD+MRdv5aWMpxep/0ued4Js84bzC9BVYxvUuB1m57INPEk5pEKNmwCa
-         d+kXMWgBMTO6csu0E0nPYMQs7JJQwY/fwZZEUvUj1Y9Kg5oseYYbOKfUAokhOUbgmCuw
-         IkMg==
-X-Gm-Message-State: APjAAAX7nD4IQJfDwQBo3WmGrTnhdxvDNaCpFIR1yEqeevHDG0OK/EMG
-        JCIBq7i9ZcRnynLduEXlFG2a33au+RNMHF9spIMX4ik/0lBqlk7FDVBx6DhjR0u/95iIhRIEnzu
-        IPxKK+ioCLOEmECWX7HfiuRZG
-X-Received: by 2002:a7b:c957:: with SMTP id i23mr2891754wml.49.1578477904197;
-        Wed, 08 Jan 2020 02:05:04 -0800 (PST)
-X-Google-Smtp-Source: APXvYqziUmw9W8yhAHlahv30N0G04pKPNxtKR0xm2qkfb8M/Sag2dfhARGjmDQ8cmE+BiUuVDFCc+g==
-X-Received: by 2002:a7b:c957:: with SMTP id i23mr2891730wml.49.1578477904019;
-        Wed, 08 Jan 2020 02:05:04 -0800 (PST)
-Received: from [192.168.10.150] ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id q3sm3045679wmj.38.2020.01.08.02.05.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jan 2020 02:05:03 -0800 (PST)
-Subject: Re: discuss about pvpanic
-To:     Michal Privoznik <mprivozn@redhat.com>,
-        zhenwei pi <pizhenwei@bytedance.com>
-Cc:     "yelu@bytedance.com" <yelu@bytedance.com>,
-        Greg KH <gregkh@linuxfoundation.org>, qemu-devel@nongnu.org,
-        linux-kernel@vger.kernel.org,
-        "libvir-list@redhat.com" <libvir-list@redhat.com>
-References: <2feff896-21fe-2bbe-6f68-9edfb476a110@bytedance.com>
- <dd8e46c4-eac4-046a-82ec-7ae17df75035@redhat.com>
- <d0c57f84-a25c-9984-560b-2419807444e1@redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <05c5fcc0-24bd-ae6e-6bb8-23970ab0b56c@redhat.com>
-Date:   Wed, 8 Jan 2020 11:05:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Wed, 8 Jan 2020 05:08:40 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id C7B5C80566;
+        Wed,  8 Jan 2020 11:08:32 +0100 (CET)
+Date:   Wed, 8 Jan 2020 11:08:31 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Jani Nikula <jani.nikula@intel.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sean Paul <sean@poorly.run>, dri-devel@lists.freedesktop.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/drm_panel: fix export of drm_panel_of_backlight, try
+ #3
+Message-ID: <20200108100831.GA23308@ravnborg.org>
+References: <20200107203231.920256-1-arnd@arndb.de>
+ <87zheyqnla.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <d0c57f84-a25c-9984-560b-2419807444e1@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zheyqnla.fsf@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Vt2AcnKqAAAA:8
+        a=QyXUC8HyAAAA:8 a=4k1t4WDYj-Gm4IL4ZnQA:9 a=CjuIK1q_8ugA:10
+        a=v10HlyRyNeVhbzM4Lqgd:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/01/20 10:58, Michal Privoznik wrote:
->> the kernel-side patch certainly makes sense.  I assume that you want the
->> event to propagate up from QEMU to Libvirt and so on?  The QEMU patch
->> would need to declare a new event (qapi/misc.json) and send it in
->> handle_event (hw/misc/pvpanic.c).  For Libvirt I'm not familiar, so I'm
->> adding the respective list.
+Hi Jani.
+
+On Wed, Jan 08, 2020 at 11:55:29AM +0200, Jani Nikula wrote:
+> On Tue, 07 Jan 2020, Arnd Bergmann <arnd@arndb.de> wrote:
+> > Making this IS_REACHABLE() was still wrong, as that just determines
+> > whether the lower-level backlight code would be reachable from the panel
+> > driver. However, with CONFIG_DRM=y and CONFIG_BACKLIGHT_CLASS_DEVICE=m,
+> > the drm_panel_of_backlight is left out of drm_panel.o but the condition
+> > tells the driver that it is there, leading to multiple link errors such as
+> >
+> > ERROR: "drm_panel_of_backlight" [drivers/gpu/drm/panel/panel-sitronix-st7701.ko] undefined!
+> > ERROR: "drm_panel_of_backlight" [drivers/gpu/drm/panel/panel-sharp-ls043t1le01.ko] undefined!
+> > ERROR: "drm_panel_of_backlight" [drivers/gpu/drm/panel/panel-seiko-43wvf1g.ko] undefined!
+> > ERROR: "drm_panel_of_backlight" [drivers/gpu/drm/panel/panel-ronbo-rb070d30.ko] undefined!
+> > ERROR: "drm_panel_of_backlight" [drivers/gpu/drm/panel/panel-rocktech-jh057n00900.ko] undefined!
+> > ERROR: "drm_panel_of_backlight" [drivers/gpu/drm/panel/panel-panasonic-vvx10f034n00.ko] undefined!
+> > ERROR: "drm_panel_of_backlight" [drivers/gpu/drm/panel/panel-osd-osd101t2587-53ts.ko] undefined!
+> >
+> > Change the condition to check for whether the function was actually part
+> > of the drm module. This version of the patch survived a few hundred
+> > randconfig builds, so I have a good feeling this might be the last
+> > one for the export.
 > 
-> Adding an event is fairly easy, if everything you want libvirt to do is
-> report the event to upper layers. I volunteer to do it. Question is, how
-> qemu is going to report this, whether some attributes to GUEST_PANICKED
-> event or some new event.
+> Broken record, this will still be wrong, even if it builds and links. No
+> backlight support for panel despite expectations.
+> 
+> See http://mid.mail-archive.com/87d0cnynst.fsf@intel.com
+> 
+> All of this is just another hack until the backlight config usage is
+> fixed for good. Do we really want to make this the example to copy paste
+> wherever we hit the issue next?
+> 
+> I'm not naking, but I'm not acking either.
 
-I think it should be a new event, using GUEST_PANICKED could cause upper
-layers to react by shutting down or rebooting the guest.
+I will try to take a look at your old BACKLIGHT_CLASS_DEVICE patch this
+weekend. I think we need that one fixed - and then we can have this mess
+with "drm_panel_of_backlight" fixed in the right way.
 
-Thanks,
+Sigh...
 
-Paolo
-
+	Sam
