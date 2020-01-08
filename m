@@ -2,85 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A848134EF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 22:34:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22230134EFD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 22:39:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbgAHVex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 16:34:53 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:49842 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726340AbgAHVex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 16:34:53 -0500
-Received: from s0106ac1f6bb1ecac.cg.shawcable.net ([70.73.163.230] helo=[192.168.11.155])
-        by ale.deltatee.com with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <logang@deltatee.com>)
-        id 1ipIyY-0000pM-BM; Wed, 08 Jan 2020 14:34:51 -0700
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        Kelvin.Cao@microchip.com, Eric Pilmore <epilmore@gigaio.com>,
-        Doug Meyer <dmeyer@gigaio.com>
-References: <20200108212347.GA207738@google.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <02513858-4832-b971-138e-8ecc1c7730b8@deltatee.com>
-Date:   Wed, 8 Jan 2020 14:34:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1727063AbgAHVjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 16:39:25 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:58536 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbgAHVjY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 16:39:24 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ipJ2p-004STj-7R; Wed, 08 Jan 2020 21:39:15 +0000
+Date:   Wed, 8 Jan 2020 21:39:15 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Willem de Bruijn <willemb@google.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Pedro Tammela <pctammela@gmail.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [net-next] socket: fix unused-function warning
+Message-ID: <20200108213915.GG8904@ZenIV.linux.org.uk>
+References: <20200107213609.520236-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <20200108212347.GA207738@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.73.163.230
-X-SA-Exim-Rcpt-To: dmeyer@gigaio.com, epilmore@gigaio.com, Kelvin.Cao@microchip.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH 09/12] PCI/switchtec: Add gen4 support in struct
- flash_info_regs
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200107213609.520236-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 07, 2020 at 10:35:59PM +0100, Arnd Bergmann wrote:
+> When procfs is disabled, the fdinfo code causes a harmless
+> warning:
+> 
+> net/socket.c:1000:13: error: 'sock_show_fdinfo' defined but not used [-Werror=unused-function]
+>  static void sock_show_fdinfo(struct seq_file *m, struct file *f)
+> 
+> Change the preprocessor conditional to a compiler conditional
+> to avoid the warning and let the compiler throw away the
+> function itself.
+> 
+> Fixes: b4653342b151 ("net: Allow to show socket-specific information in /proc/[pid]/fdinfo/[fd]")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  net/socket.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/net/socket.c b/net/socket.c
+> index 5230c9e1bdec..444a617819f0 100644
+> --- a/net/socket.c
+> +++ b/net/socket.c
+> @@ -151,9 +151,7 @@ static const struct file_operations socket_file_ops = {
+>  	.sendpage =	sock_sendpage,
+>  	.splice_write = generic_splice_sendpage,
+>  	.splice_read =	sock_splice_read,
+> -#ifdef CONFIG_PROC_FS
+> -	.show_fdinfo =	sock_show_fdinfo,
+> -#endif
+> +	.show_fdinfo =	IS_ENABLED(CONFIG_PROC_FS) ? sock_show_fdinfo : NULL,
+>  };
 
-
-On 2020-01-08 2:23 p.m., Bjorn Helgaas wrote:
-> On Mon, Jan 06, 2020 at 12:03:34PM -0700, Logan Gunthorpe wrote:
->> From: Kelvin Cao <kelvin.cao@microchip.com>
->>
->> Add a union with gen3 and gen4 flash_info structs.
-> 
-> This does a lot more than add a union :)
-> 
-> I think this looks reasonable, but I would like it even better if this
-> and related patches could be split up a little bit differently:
-> 
->   - Rename SWITCHTEC_CFG0_RUNNING to SWITCHTEC_GEN3_CFG0_RUNNING, etc
->     (purely mechanical change, so trivial and obvious).
-> 
->   - Add switchtec_gen and the tests where it's needed, but with only
->     SWITCHTEC_GEN3 cases for now.
-> 
->   - Refactor ioctl_flash_part_info() (still only supports GEN3).
->     Maybe adds struct flash_info_regs and union, but only with gen3.
-> 
->   - Add GEN4 support (patch basically contains only GEN4-related
->     things and doesn't touch GEN3 things at all).  Maybe it would
->     still make sense to split the GEN4 support into multiple patches
->     (as in this series), or maybe they could be squashed into a single
->     GEN4 patch?
-> 
->   - It seems like at least the aliasing quirk and the driver device ID
->     update could/should be squashed since they contain the same
->     constants.
-
-Thanks for the review. Yes, I should be able to clean this up and submit
-a v2 in the next week or two.
-
-Logan
-
+Ugh...  So put that ifdef around the definition of sock_show_fdinfo,
+with #define sock_show_fdinfo NULL on the other side...
