@@ -2,65 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2994F134667
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 16:40:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EED4D13466A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 16:40:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728994AbgAHPkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 10:40:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33682 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726651AbgAHPkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 10:40:11 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 686072067D;
-        Wed,  8 Jan 2020 15:40:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578498010;
-        bh=Qt9LDIWUGUO8AwKrR+pqOOWNDm8AieMeRkfzNh2H+kc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vkdCHWTdj0Mpz7RLEyM9kW3sbDdPCR4Zw4TjYrKiptIkaeVqNtkGOPA2GsaQKOoJi
-         +Nf/Xwm7WY+ikF/av4J6vEIvqfRQ72CxKH7EKhka3a6PVn9gZgzZ6Hqi/YrzXizPTb
-         uzUkzTEHc6x6LdercfjGXe2vVwECzbevU0cGAIKU=
-Date:   Wed, 8 Jan 2020 16:40:08 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc:     pmenzel@molgen.mpg.de, mika.westerberg@linux.intel.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFT PATCH] xhci: Fix memory leak when caching protocol extended
- capability PSI tables
-Message-ID: <20200108154008.GA2448418@kroah.com>
-References: <572bea6f-06d4-938a-802e-93386acf59d9@linux.intel.com>
- <20200108151730.21022-1-mathias.nyman@linux.intel.com>
+        id S1729000AbgAHPkf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 10:40:35 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:33876 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726651AbgAHPkf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 10:40:35 -0500
+Received: by mail-qk1-f194.google.com with SMTP id j9so3034648qkk.1;
+        Wed, 08 Jan 2020 07:40:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xoQ2G52rtAlzA7YeOAcs+uhJN5/UBpPhWPg+epZhSBU=;
+        b=VMEJSmcVRO9pPe3Yn3C9XLpJEntW6seCdaRRhFsXKWE2Ir7WY3b2GTFTJpbREnX+Ve
+         V5H+U11JWEVlObj+Bt0mlAQsS/kEeADqmz8NZgHG3xodpf3vX6TMVT3JyVqwe5TFDGpL
+         QOkAdLBl5TOsSUPqxq/q5vNEe/Sjbr6x8RTS+CFZRyQM+DqtLJxonSC3UkmQwYEh7tou
+         NcnLfynvce5fVgfOG0g3CgrSXF+j2uuYuszQlQH1KSwi5MS0fr60gNY+4BjlilfIMdFk
+         dVtfLvcXO/hWNLXmFIJLEvyoNwGrT/PuKkuoe5ZFY7Q+cf3caWs7EbaL/RbHtXsYnpLK
+         qjXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xoQ2G52rtAlzA7YeOAcs+uhJN5/UBpPhWPg+epZhSBU=;
+        b=iGH3hrLmik7934zuAU/laCD4054H5w1IjYBCivVTUiBxzcaWTaLHrfJX3guNAn+t8Y
+         cFcAK3c5j2Wi+UP37SE5Lpm1l4Q1X5KqtB8J/AEjbWvBcMpqvdCyrpnf4FrncQJnkq6a
+         yeFjMo8huOSM15d6YiKrF1S1P0JWYn55MJxGQpT8YC3FgwctOZNuYk2bUQrMoHptBfnr
+         Ai7jm/2AxRjXSLHJAjmrOD/ddiTVRBBEvcS7IHxVCNa6aBI9goSlYcUbCzRUeG2MPCfg
+         sDXs8s98dZwhMeZKXvtOE3U4zoP5Z6vax7DGxrSoUZQHBFJ3ybIletGNNJYKXdIFMY3X
+         V+Vg==
+X-Gm-Message-State: APjAAAVNBhHNn2eI33KngHyuDB/BnF6BjdZ7krgProh/OYnNnQu7BcW6
+        mwYl5jrIndlJbrxGWe9uUOg=
+X-Google-Smtp-Source: APXvYqwDdYPWjunv9vkNw2spQMed16xVTf+tdB3sJ/SBF4QQ+ag/hsV0MEBLZzYzTvZkKwyL3V2zbg==
+X-Received: by 2002:ae9:ed47:: with SMTP id c68mr4723724qkg.136.1578498034152;
+        Wed, 08 Jan 2020 07:40:34 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id u7sm1723463qtg.13.2020.01.08.07.40.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jan 2020 07:40:33 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Wed, 8 Jan 2020 10:40:32 -0500
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     linux-efi@vger.kernel.org, x86@kernel.org, luto@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>
+Subject: Re: [RFC PATCH 2/3] x86/boot/compressed: force hidden visibility for
+ all symbol references
+Message-ID: <20200108154031.GA2512498@rani.riverdale.lan>
+References: <20200108102304.25800-1-ardb@kernel.org>
+ <20200108102304.25800-3-ardb@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200108151730.21022-1-mathias.nyman@linux.intel.com>
+In-Reply-To: <20200108102304.25800-3-ardb@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 08, 2020 at 05:17:30PM +0200, Mathias Nyman wrote:
-> xhci driver assumed that xHC controllers have at most one custom
-> supported speed table (PSI) for all usb 3.x ports.
-> Memory was allocated for one PSI table under the xhci hub structure.
+On Wed, Jan 08, 2020 at 11:23:03AM +0100, Ard Biesheuvel wrote:
+> Eliminate all GOT entries in the decompressor binary, by forcing hidden
+> visibility for all symbol references, which informs the compiler that
+> such references will be resolved at link time without the need for
+> allocating GOT entries.
 > 
-> Turns out this is not the case, some controllers have a separate
-> "supported protocol capability" entry with a PSI table for each port.
-> This means each usb3 port can in theory support different custom speeds.
+> To ensure that no GOT entries will creep back in, add an assertion to
+> the decompressor linker script that will fire if the .got section has
+> a non-zero size.
+> 
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> ---
+>  arch/x86/boot/compressed/Makefile      |  1 +
+>  arch/x86/boot/compressed/hidden.h      | 19 +++++++++++++++++++
+>  arch/x86/boot/compressed/vmlinux.lds.S |  1 +
+>  3 files changed, 21 insertions(+)
+> 
+> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+> index 56aa5fa0a66b..361df91b2288 100644
+> --- a/arch/x86/boot/compressed/Makefile
+> +++ b/arch/x86/boot/compressed/Makefile
+> @@ -39,6 +39,7 @@ KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+>  KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+>  KBUILD_CFLAGS += -Wno-pointer-sign
+>  KBUILD_CFLAGS += $(call cc-option,-fmacro-prefix-map=$(srctree)/=)
+> +KBUILD_CFLAGS += -include hidden.h
+>  
 
-Is there a "max" number of port capabilities that can happen?  Or this
-this truely dynamic?
-
-> +	for (i = 0; i < xhci->num_port_caps; i++) {
-> +		kfree(xhci->port_caps[i].psi);
-> +		xhci->port_caps[i].psi = NULL;
-> +	}
-
-Nit, no need to set to NULL here :)
-
-thanks,
-
-greg k-h
+This should be added to drivers/firmware/efi/libstub as well in case
+future code changes bring in global references there?
