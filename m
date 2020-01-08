@@ -2,92 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A312D133E82
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:45:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3088B133E8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:51:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbgAHJpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 04:45:53 -0500
-Received: from pio-pvt-msa1.bahnhof.se ([79.136.2.40]:46036 "EHLO
-        pio-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbgAHJpx (ORCPT
+        id S1727020AbgAHJvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 04:51:14 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46455 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726556AbgAHJvO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 04:45:53 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 2550D3F4AC;
-        Wed,  8 Jan 2020 10:45:49 +0100 (CET)
-Authentication-Results: pio-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=flawful.org header.i=@flawful.org header.b="hSnh9X1+";
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 0b6EX6t8R-PL; Wed,  8 Jan 2020 10:45:48 +0100 (CET)
-Received: from flawful.org (ua-84-217-220-205.bbcust.telenor.se [84.217.220.205])
-        (Authenticated sender: mb274189)
-        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 29CF53F322;
-        Wed,  8 Jan 2020 10:45:46 +0100 (CET)
-Received: by flawful.org (Postfix, from userid 1001)
-        id BF694234; Wed,  8 Jan 2020 10:45:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flawful.org; s=mail;
-        t=1578476745; bh=b8ABfWyk18Jn/VMg7nHgfFeaiagOwhh3UDBYQ/J+09E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hSnh9X1+rz2qVIYAFOcfVuwVtxldo91kSc4g8LK9aEstmdx7AP7hCJrLIcHtKOOVw
-         BFwBtd0SgGnYsXCvD++zJ/AWkh/PaG1B3baUHRNORGjy1Jdjg3+n0TmenXSkEtVGcf
-         C5foHsAQKMQcRLeA098+/L3Faybs5R/aDOLi+pcA=
-Date:   Wed, 8 Jan 2020 10:45:45 +0100
-From:   Niklas Cassel <nks@flawful.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Nishanth Menon <nm@ti.com>, linux-arm-msm@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] power: avs: qcom-cpr: remove duplicated include
- from qcom-cpr.c
-Message-ID: <20200108094545.o5o4tpwt4eu5fpye@flawful.org>
-References: <20200108015849.54289-1-yuehaibing@huawei.com>
+        Wed, 8 Jan 2020 04:51:14 -0500
+Received: by mail-wr1-f66.google.com with SMTP id z7so2574026wrl.13
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 01:51:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=SYIX5lCn201jIdgFI8cXaaFqyTSNVacx0tO+JKzdFG8=;
+        b=wFe4jLFlUg6FK/9/5dItkW8JnJTzFY6w0imwJZ4kbornDo9YbT0RTpZrEXYpRk3f2+
+         LbZP1U3K/1Lxn/KAIeCt9oa6+rXtwlLJqhrhfukloDcA4lwxBCaoUawe2cJnb+XvkI0s
+         MsvlKQuetVXhoYv9leB4T/Ue6x3fCj4Y6ayzOo8x2ikfD7GhXK0OjdkR2PVp8RWqF6Mx
+         ncaY+Spy4k/ppc6qECRxF3IKEUsaZEh9onRO5Wv99KmxM79jC+rfAkkKbPNf+EtVzlK2
+         7gJ+PwLkSl+PYgIqgq+DOvQL6kh3W2L6cspPM5q43ZQiUis1/byKsxDf/j9lkw5im1Ki
+         hX/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SYIX5lCn201jIdgFI8cXaaFqyTSNVacx0tO+JKzdFG8=;
+        b=E/zFG18w9M9vME83Gkwqb/ZtFeECr73eykwNNbw0OtOyUYLM6XTfKMnySkMQmlw/mo
+         AnCNDEwAqI2fP/6wH6P+TXx9glyYoBLhtKTVOfTx6+xMctwLVlSPSzSwnjFP8hAbX4Vh
+         f79q8fsXZ7ZKHZCUB3HZgVDLK8i1ioURqbtSmR3iA53M0orP2x/G9UbTV/axKhDG1YQ3
+         i3FS1hWbTwt5CeWU86+/7e6aah6zd2AKto95r4m2S7ARxONkWEDwYgM4uGQ5Pg1YzsGz
+         liEpm68k+ZT+vf9/y5D+YiXUvJsLQ87wAxtyaTrkhc1biVceE2u0+2UW8Oq15ENZzMWp
+         WjPQ==
+X-Gm-Message-State: APjAAAUyIgfAQXcWV3KCyK3dF+GXtAjFyxboLfzOW5xk32orduOGHF6d
+        0oAG5YDE3LzcR7P1QF1BM49kMQ==
+X-Google-Smtp-Source: APXvYqwpJ/qkuF9mN7qO3XblBcRL45/iYNNTuD+IaCRUy2rP1dYfdG9lOJlJx+LEbkSUEDmE7Q8jWA==
+X-Received: by 2002:adf:e3d0:: with SMTP id k16mr3557559wrm.241.1578477072161;
+        Wed, 08 Jan 2020 01:51:12 -0800 (PST)
+Received: from google.com ([2a00:79e0:d:110:d6cc:2030:37c1:9964])
+        by smtp.gmail.com with ESMTPSA id z83sm3276181wmg.2.2020.01.08.01.51.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jan 2020 01:51:11 -0800 (PST)
+Date:   Wed, 8 Jan 2020 09:51:08 +0000
+From:   Quentin Perret <qperret@google.com>
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc:     Qais Yousef <qais.yousef@arm.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        valentin.schneider@arm.com,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-team@android.com
+Subject: Re: [PATCH] sched/rt: Add a new sysctl to control uclamp_util_min
+Message-ID: <20200108095108.GA153171@google.com>
+References: <20191220164838.31619-1-qais.yousef@arm.com>
+ <20200107134234.GA158998@google.com>
+ <8bb17e84-d43f-615f-d04d-c36bb6ede5e0@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200108015849.54289-1-yuehaibing@huawei.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <8bb17e84-d43f-615f-d04d-c36bb6ede5e0@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 08, 2020 at 01:58:49AM +0000, YueHaibing wrote:
-> Remove duplicated include.
+On Tuesday 07 Jan 2020 at 20:30:36 (+0100), Dietmar Eggemann wrote:
+> On 07/01/2020 14:42, Quentin Perret wrote:
+> > Hi Qais,
+> > 
+> > On Friday 20 Dec 2019 at 16:48:38 (+0000), Qais Yousef wrote:
 > 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/power/avs/qcom-cpr.c | 1 -
->  1 file changed, 1 deletion(-)
+> [...]
 > 
-> diff --git a/drivers/power/avs/qcom-cpr.c b/drivers/power/avs/qcom-cpr.c
-> index 9247f53550b3..9b1d7d919ee9 100644
-> --- a/drivers/power/avs/qcom-cpr.c
-> +++ b/drivers/power/avs/qcom-cpr.c
-> @@ -25,7 +25,6 @@
->  #include <linux/regulator/consumer.h>
->  #include <linux/clk.h>
->  #include <linux/nvmem-consumer.h>
-> -#include <linux/bitops.h>
->  
->  /* Register Offsets for RB-CPR and Bit Definitions */
+> >> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> >> index e591d40fd645..19572dfc175b 100644
+> >> --- a/kernel/sched/rt.c
+> >> +++ b/kernel/sched/rt.c
+> >> @@ -2147,6 +2147,12 @@ static void pull_rt_task(struct rq *this_rq)
+> >>   */
+> >>  static void task_woken_rt(struct rq *rq, struct task_struct *p)
+> >>  {
+> >> +	/*
+> >> +	 * When sysctl_sched_rt_uclamp_util_min value is changed by the user,
+> >> +	 * we apply any new value on the next wakeup, which is here.
+> >> +	 */
+> >> +	uclamp_rt_sync_default_util_min(p);
+> > 
+> > The task has already been enqueued and sugov has been called by then I
+> > think, so this is a bit late. You could do that in uclamp_rq_inc() maybe?
 > 
-> 
-> 
+> That's probably better.
+> Just to be sure ...we want this feature (an existing rt task gets its
+> UCLAMP_MIN value set when the sysctl changes) because there could be rt
+> tasks running before the sysctl is set?
 
-Thank you for this fix.
+Yeah, I was wondering the same thing, but I'd expect sysadmin to want
+this. We could change the min clamp of existing RT tasks in userspace
+instead, but given how simple Qais' lazy update code is, the in-kernel
+looks reasonable to me. No strong opinion, though.
 
-Acked-by: Niklas Cassel <nks@flawful.org>
+Thanks,
+Quentin
