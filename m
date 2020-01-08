@@ -2,111 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31E4B13418C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 13:23:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E10C134195
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 13:24:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727825AbgAHMXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 07:23:20 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35438 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726967AbgAHMXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 07:23:19 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1C490AC9D5E052C803CA;
-        Wed,  8 Jan 2020 20:23:18 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 8 Jan 2020
- 20:23:16 +0800
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add a way to turn off ipu bio cache
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20200107020709.73568-1-jaegeuk@kernel.org>
- <afddac87-b7c5-f68c-4e55-3705be311cf6@huawei.com>
- <20200108120444.GC28331@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <d5555fd8-736f-cc2f-1e57-d9ac01b3d012@huawei.com>
-Date:   Wed, 8 Jan 2020 20:23:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727884AbgAHMYD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 07:24:03 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43964 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726967AbgAHMYD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 07:24:03 -0500
+Received: by mail-pg1-f194.google.com with SMTP id k197so1490926pga.10;
+        Wed, 08 Jan 2020 04:24:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FimBHJzaK0+hvUwMczWq5KMiQgEkmFVQr2l4bwrxpl4=;
+        b=fS/D3ze8BLHvhSfqLds0RkX7mXGktHNcVEswaRStYZJnSvbhdBV73qiau2+qscPAw/
+         xycIgCoaR7TsK2pJwBcdpu6Nuvf5Wgya7LEZy/ejCBFZ/3ZS0B74gngIIYAhUHjNj/zi
+         DgmWz+JaPD+4sKxXXvXbBfAaRNIMrrPZecYLwUhBj6WQgJiMMyhfdJEcuZ1+On3HkuWj
+         xurCM0haEuiqqBIkkQdgz5AMtig8lU8ZToMjYRF0aQH+nAgoE36FDoH8V+68+JKeT+o9
+         pAr+5vKjGntCFF9vMI/m4cM1vvB958SBdV/G5/KFwBj0Sj3bpfd0f94CZnQSZ7zbPlul
+         JA3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FimBHJzaK0+hvUwMczWq5KMiQgEkmFVQr2l4bwrxpl4=;
+        b=hshUb+DRe/6mpQN0nR+OXswFLXiv3W5gxdovDvH6ZKeM3QccGtdnPz1CvT9gN7/gmL
+         UurY9Mi0VgkEQc5gvd2z0aZq310qNO/ctxx+7Vq11iytwqjRCrNedZTYbHCqwVxTyoQn
+         Dhfgr8CRljklOWc7X0/6HeRB/ozFmBlxYqU7mlpbGRknm7L8Zs3DjLjfd5SqOpz/+xj5
+         BArgaoZwgKOD5c5isAnBioa3njwPAscUKmKjLoqPQ0gDHEvCaGIuZpwnKVYkRxJxIYqe
+         gwbC5jAKAyA3urGuuf5tId00h1XHG/QN2B7rvroca7X+F7OJCmmLz1kQCp97FHX9cEZI
+         bNYw==
+X-Gm-Message-State: APjAAAXvxSPDet+Ggj6WLbTPpck91rR3p0oMqDR22Z3A3TGerDbB3HjK
+        I84S/UudwfCM8EYLgFSrSwBMAVH85yfaOU8Ca3M=
+X-Google-Smtp-Source: APXvYqwgoDXCANBomqGXARmKolSKbug3Em9RM2qXD8GXaDBp3/kR8EEcBZZd8Q3yFTAZHTAHICsaspNFthhzS43Udtk=
+X-Received: by 2002:a65:5242:: with SMTP id q2mr4844790pgp.74.1578486242452;
+ Wed, 08 Jan 2020 04:24:02 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200108120444.GC28331@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+References: <20200106144219.525215-1-hdegoede@redhat.com>
+In-Reply-To: <20200106144219.525215-1-hdegoede@redhat.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 8 Jan 2020 14:23:53 +0200
+Message-ID: <CAHp75Vdqd9GQ8eM9mk+4jr54MojySH+ZKGZSJ7mNBHy567XGPQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] platform/x86: GPD pocket fan: Use default values when
+ wrong modparams are given
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Jason Anderson <jasona.594@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/1/8 20:04, Jaegeuk Kim wrote:
-> On 01/08, Chao Yu wrote:
->> On 2020/1/7 10:07, Jaegeuk Kim wrote:
->>> Setting 0x40 in /sys/fs/f2fs/dev/ipu_policy gives a way to turn off
->>> bio cache, which is useufl to check whether block layer using hardware
->>> encryption engine merges IOs correctly.
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  Documentation/filesystems/f2fs.txt | 1 +
->>>  fs/f2fs/segment.c                  | 2 +-
->>>  fs/f2fs/segment.h                  | 1 +
->>>  3 files changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
->>> index 41b5aa94b30f..cd93bcc34726 100644
->>> --- a/Documentation/filesystems/f2fs.txt
->>> +++ b/Documentation/filesystems/f2fs.txt
->>> @@ -335,6 +335,7 @@ Files in /sys/fs/f2fs/<devname>
->>>                                 0x01: F2FS_IPU_FORCE, 0x02: F2FS_IPU_SSR,
->>>                                 0x04: F2FS_IPU_UTIL,  0x08: F2FS_IPU_SSR_UTIL,
->>>                                 0x10: F2FS_IPU_FSYNC.
->>
->> . -> ,
-> 
-> Actually, we can't do it. I revised it a bit instead.
+On Mon, Jan 6, 2020 at 4:42 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Use our default values when wrong module-parameters are given, instead of
+> refusing to load. Refusing to load leaves the fan at the BIOS default
+> setting, which is "Off". The CPU's thermal throttling should protect the
+> system from damage, but not-loading is really not the best fallback in this
+> case.
+>
+> This commit fixes this by re-setting module-parameter values to their
+> defaults if they are out of range, instead of failing the probe with
+> -EINVAL.
+>
+> Cc: stable@vger.kernel.org
+> Cc: Jason Anderson <jasona.594@gmail.com>
+> Reported-by: Jason Anderson <jasona.594@gmail.com>
+> Fixes: 594ce6db326e ("platform/x86: GPD pocket fan: Use a min-speed of 2 while charging")
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+>  drivers/platform/x86/gpd-pocket-fan.c | 24 ++++++++++++++++++------
+>  1 file changed, 18 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/platform/x86/gpd-pocket-fan.c b/drivers/platform/x86/gpd-pocket-fan.c
+> index be85ed966bf3..1e6a42f2ea8a 100644
+> --- a/drivers/platform/x86/gpd-pocket-fan.c
+> +++ b/drivers/platform/x86/gpd-pocket-fan.c
+> @@ -16,17 +16,26 @@
+>
+>  #define MAX_SPEED 3
+>
+> -static int temp_limits[3] = { 55000, 60000, 65000 };
+> +#define TEMP_LIMIT0_DEFAULT    55000
+> +#define TEMP_LIMIT1_DEFAULT    60000
+> +#define TEMP_LIMIT2_DEFAULT    65000
+> +
+> +#define HYSTERESIS_DEFAULT     3000
+> +
+> +#define SPEED_ON_AC_DEFAULT    2
+> +
+> +static int temp_limits[3] = {
+> +       TEMP_LIMIT0_DEFAULT, TEMP_LIMIT1_DEFAULT, TEMP_LIMIT2_DEFAULT };
 
-One more question, why skipping 0x20 bit position?
+I would rather put }; on the next line.
+But okay, I'll do it myself when applying.
 
-Thanks,
+>  module_param_array(temp_limits, int, NULL, 0444);
+>  MODULE_PARM_DESC(temp_limits,
+>                  "Millicelsius values above which the fan speed increases");
+>
+> -static int hysteresis = 3000;
+> +static int hysteresis = HYSTERESIS_DEFAULT;
+>  module_param(hysteresis, int, 0444);
+>  MODULE_PARM_DESC(hysteresis,
+>                  "Hysteresis in millicelsius before lowering the fan speed");
+>
+> -static int speed_on_ac = 2;
+> +static int speed_on_ac = SPEED_ON_AC_DEFAULT;
+>  module_param(speed_on_ac, int, 0444);
+>  MODULE_PARM_DESC(speed_on_ac,
+>                  "minimum fan speed to allow when system is powered by AC");
+> @@ -120,18 +129,21 @@ static int gpd_pocket_fan_probe(struct platform_device *pdev)
+>                 if (temp_limits[i] < 40000 || temp_limits[i] > 70000) {
+>                         dev_err(&pdev->dev, "Invalid temp-limit %d (must be between 40000 and 70000)\n",
+>                                 temp_limits[i]);
+> -                       return -EINVAL;
+> +                       temp_limits[0] = TEMP_LIMIT0_DEFAULT;
+> +                       temp_limits[1] = TEMP_LIMIT1_DEFAULT;
+> +                       temp_limits[2] = TEMP_LIMIT2_DEFAULT;
+> +                       break;
+>                 }
+>         }
+>         if (hysteresis < 1000 || hysteresis > 10000) {
+>                 dev_err(&pdev->dev, "Invalid hysteresis %d (must be between 1000 and 10000)\n",
+>                         hysteresis);
+> -               return -EINVAL;
+> +               hysteresis = HYSTERESIS_DEFAULT;
+>         }
+>         if (speed_on_ac < 0 || speed_on_ac > MAX_SPEED) {
+>                 dev_err(&pdev->dev, "Invalid speed_on_ac %d (must be between 0 and 3)\n",
+>                         speed_on_ac);
+> -               return -EINVAL;
+> +               speed_on_ac = SPEED_ON_AC_DEFAULT;
+>         }
+>
+>         fan = devm_kzalloc(&pdev->dev, sizeof(*fan), GFP_KERNEL);
+> --
+> 2.24.1
+>
 
-> 
->>
->> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>
->> Thanks,
->>
->>> +			       0x40: F2FS_IPU_NOCACHE disables bio caches.
->>>  
->>>   min_ipu_util                 This parameter controls the threshold to trigger
->>>                                in-place-updates. The number indicates percentage
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>> index a9519532c029..311fe4937f6a 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -3289,7 +3289,7 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
->>>  
->>>  	stat_inc_inplace_blocks(fio->sbi);
->>>  
->>> -	if (fio->bio)
->>> +	if (fio->bio && !(SM_I(sbi)->ipu_policy & (1 << F2FS_IPU_NOCACHE)))
->>>  		err = f2fs_merge_page_bio(fio);
->>>  	else
->>>  		err = f2fs_submit_page_bio(fio);
->>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
->>> index a1b3951367cd..02e620470eef 100644
->>> --- a/fs/f2fs/segment.h
->>> +++ b/fs/f2fs/segment.h
->>> @@ -623,6 +623,7 @@ enum {
->>>  	F2FS_IPU_SSR_UTIL,
->>>  	F2FS_IPU_FSYNC,
->>>  	F2FS_IPU_ASYNC,
->>> +	F2FS_IPU_NOCACHE,
->>>  };
->>>  
->>>  static inline unsigned int curseg_segno(struct f2fs_sb_info *sbi,
->>>
-> .
-> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
