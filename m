@@ -2,144 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDB791340AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:39:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF1E8134108
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:45:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbgAHLj0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 06:39:26 -0500
-Received: from mail-bn8nam11on2082.outbound.protection.outlook.com ([40.107.236.82]:6215
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726098AbgAHLj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 06:39:26 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MI4AbdstTkDTHuf3eEnp3JJz8fMnTK2FNAfAPtW0bk3D8v55DPou+GkgKlrfNgwntmk8TCMIOKTqJl/CWtCNXCKdAi7mWWsvExw6xPndffX6Yg7Lf7RGAxuqBERJbIa9kDB4vNhp0yq8YOBBVa+pENI+CXXC+9PMiuwYp+VAwK0DgpnGmoA+00GVk34NKoIAadZd8j/ylaxq003d7vrRJk7djZAa5tiVRZp8aw1h7rqhBCR0H9xHpKTrfCxMeKj1/u2p/Ac7RYwToy9r/qMX4DZ9geBiM4GqfG4BxmMxsWentPQgs+7oe8fa0F2mABJ+lEoCmjkHSxyGN+9UWupU0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=86NCv4S5OfzE8NviR3BBfwuys4CPtDUq8+5VecaOG8Y=;
- b=WdlY1GNX6nqqAGJIQvY2w6rLfnMwjStOttC2p27yUE3imPZcq3DsAhqA2ZJDYdbkuAjEe+SHeRPmxlVbv9OEPKKgEkZgLbwY9/T1QdGM93fBSFlRgwwu/ANpPMPk7TNOsUGYCvi60A/jUFisjunXEigMqm/4FDH+17wyaW6dgaSrkyWgqRGaZSxOYrAmrhECNi/qaexxm3DzgoIp+WqczDLdKMBQHeD8iF5DNPOP7t3Z8v353Cpybhfa0qfRFGTKwg3BNsmYJ7P88pfjT8hxykJvor8QHIi58LLMbCydP/TpxnwN7XPPlwYOl4WiC1hgyvmAOlTgyetlJAv1wrRssw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=sang-engineering.com
- smtp.mailfrom=xilinx.com; dmarc=bestguesspass action=none
- header.from=xilinx.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=86NCv4S5OfzE8NviR3BBfwuys4CPtDUq8+5VecaOG8Y=;
- b=jgs0fFBDSdWbtg4IHIL5QlGVgZkD7l5mTUZSCReQW/Xpy/VvnhNDQC5TXesyxWqvX+Tix39I74x0ewsSZ/5WBkfr0XuC6TSRFVMq7pZL/sYH02fJlIbxkYMRsFbWQHsK3QL2eXcYglUd7Flj5vMs0wtHSmBlDf+UBYMOSL1sNIs=
-Received: from SN4PR0201CA0007.namprd02.prod.outlook.com
- (2603:10b6:803:2b::17) by BN7PR02MB5122.namprd02.prod.outlook.com
- (2603:10b6:408:2f::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2602.10; Wed, 8 Jan
- 2020 11:39:21 +0000
-Received: from SN1NAM02FT025.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::201) by SN4PR0201CA0007.outlook.office365.com
- (2603:10b6:803:2b::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2602.12 via Frontend
- Transport; Wed, 8 Jan 2020 11:39:21 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; sang-engineering.com; dkim=none (message not
- signed) header.d=none;sang-engineering.com; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT025.mail.protection.outlook.com (10.152.72.87) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2602.11
- via Frontend Transport; Wed, 8 Jan 2020 11:39:20 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1ip9gG-0005ma-9b; Wed, 08 Jan 2020 03:39:20 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1ip9gA-00077k-DL; Wed, 08 Jan 2020 03:39:14 -0800
-Received: from xsj-pvapsmtp01 (mailhost.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 008Bd5nF010571;
-        Wed, 8 Jan 2020 03:39:05 -0800
-Received: from [172.30.17.107]
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <michals@xilinx.com>)
-        id 1ip9g0-000737-On; Wed, 08 Jan 2020 03:39:04 -0800
-Subject: Re: [PATCH 07/12] i2c: xiic: convert to use i2c_new_client_device()
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, Shubhrajyoti Datta <shubhraj@xilinx.com>
-Cc:     Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "git@Xilinx.com" <git@Xilinx.com>
-References: <20200107174748.9616-1-wsa+renesas@sang-engineering.com>
- <20200107174748.9616-8-wsa+renesas@sang-engineering.com>
-From:   Michal Simek <michal.simek@xilinx.com>
-Message-ID: <b6feec89-3b3c-e0b4-afb7-5af5c4380d31@xilinx.com>
-Date:   Wed, 8 Jan 2020 12:39:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727361AbgAHLmK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 06:42:10 -0500
+Received: from mga06.intel.com ([134.134.136.31]:16436 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726411AbgAHLmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 06:42:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 03:42:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,409,1571727600"; 
+   d="scan'208";a="211513236"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga007.jf.intel.com with ESMTP; 08 Jan 2020 03:42:02 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id CF53A14B; Wed,  8 Jan 2020 13:42:01 +0200 (EET)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
+        "David E . Box" <david.e.box@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/36] platform/x86: Rework intel_scu_ipc and intel_pmc_ipc drivers
+Date:   Wed,  8 Jan 2020 14:41:25 +0300
+Message-Id: <20200108114201.27908-1-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <20200107174748.9616-8-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(376002)(346002)(136003)(199004)(189003)(478600001)(54906003)(316002)(107886003)(8676002)(186003)(4326008)(426003)(356004)(9786002)(44832011)(81166006)(81156014)(336012)(2616005)(8936002)(2906002)(110136005)(70586007)(4744005)(31696002)(6636002)(26005)(5660300002)(36756003)(31686004)(70206006);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR02MB5122;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 26675e66-34c0-4f71-73a6-08d7942f66ee
-X-MS-TrafficTypeDiagnostic: BN7PR02MB5122:
-X-Microsoft-Antispam-PRVS: <BN7PR02MB51224023B1C7794263299B40C63E0@BN7PR02MB5122.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
-X-Forefront-PRVS: 02760F0D1C
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 7TywrqFAIPgSeGQPgaVPNIn8/sJ6cah7ft+HA0zKprdLwKSbD+qNfdQp6HfCrv/1DHHuX3tpfk9DFCmAyx1dSvAD6X8b7E8UcsjyYo76wW+Sw0OCEI/aH+KaJqSx45TLaLfEfZhf8Py+Fbd7V0X1BYhPTGdNQQNs2LohXouddB3ocRMpLRjpVtoxpqYblP1FjBDdtxechzsyMo+SqHznNYCePybys/5urpgo1mnG8RxUX8JUqrAhhN2YjrwjXjSvUfN+Ar2p1i2GIUA4Luj+RUYeMICYCh1ZglZKQatPfZmaGrYIutlsRU3rQRVgx/1NLiOz9Xno2OWYId6YxnTLqPKZkFibS3nK+xcdkPMcxrq7gd5Om+A4dievh+m9NzFKgbHzufB9tzyARKUD7sWtLHYQn4rX3RoGy9gueCY3ZHs4dsM0BP17ohnRJ7htDFdl
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2020 11:39:20.6380
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 26675e66-34c0-4f71-73a6-08d7942f66ee
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR02MB5122
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07. 01. 20 18:47, Wolfram Sang wrote:
-> Move away from the deprecated API and return the shiny new ERRPTR where
-> useful.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> Build tested only.
-> 
->  drivers/i2c/busses/i2c-xiic.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
-> index d8d49f1814c7..61e081b186cc 100644
-> --- a/drivers/i2c/busses/i2c-xiic.c
-> +++ b/drivers/i2c/busses/i2c-xiic.c
-> @@ -806,7 +806,7 @@ static int xiic_i2c_probe(struct platform_device *pdev)
->  	if (pdata) {
->  		/* add in known devices to the bus */
->  		for (i = 0; i < pdata->num_devices; i++)
-> -			i2c_new_device(&i2c->adap, pdata->devices + i);
-> +			i2c_new_client_device(&i2c->adap, pdata->devices + i);
->  	}
->  
->  	return 0;
-> 
+Hi,
 
-Acked-by: Michal Simek <michal.simek@xilinx.com>
+Currently both intel_scu_ipc.c and intel_pmc_ipc.c implement the same SCU
+IPC communications with minor differences. This duplication does not make
+much sense so this series reworks the two drivers so that there is only a
+single implementation of the SCU IPC. In addition to that the API will be
+updated to take SCU instance pointer as an argument, and most of the
+callers will be converted to this new API. The old API is left there but
+the plan is to get rid the callers and then the old API as well (this is
+something we are working with Andy Shevchenko).
 
-Shubhrajyoti: Can you please retest?
+The intel_pmc_ipc.c is then moved under MFD which suits better for this
+kind of a driver that pretty much sets up the SCU IPC and then creates a
+bunch of platform devices for the things sitting behind the PMC. The driver
+is renamed to intel_pmc_bxt.c which should follow the existing conventions
+under drivers/mfd (and it is only meant for Intel Broxton derivatives).
 
-Thanks,
-Michal
+Previous version of the series:
+
+  https://www.spinics.net/lists/platform-driver-x86/msg20359.html
+
+Changes from the previous version:
+
+  * Update changelog of patch 16 according to what the patch actually does.
+  * Add kernel-doc for struct intel_soc_pmic.
+  * Move octal permission patch to be before MFD conversion.
+  * Convert the intel_pmc_bxt.c to MFD APIs whilst it is being moved under
+    drivers/mfd.
+
+I'm including all x86 maintainers just to be sure they are aware of this as
+I'm not sure if x86@kernel.org reaches them all. Let me know if you have
+issues with this series.
+
+I would prefer this to be merged through platform/x86 or MFD trees assuming
+there are no objections.
+
+I have tested this on Intel Edison (Merrifield) and Joule (Broxton-M).
+
+Mika Westerberg (36):
+  platform/x86: intel_mid_powerbtn: Take a copy of ddata
+  platform/x86: intel_scu_ipcutil: Remove default y from Kconfig
+  platform/x86: intel_scu_ipc: Add constants for register offsets
+  platform/x86: intel_scu_ipc: Remove Lincroft support
+  platform/x86: intel_scu_ipc: Drop intel_scu_ipc_i2c_cntrl()
+  platform/x86: intel_scu_ipc: Fix interrupt support
+  platform/x86: intel_scu_ipc: Sleeping is fine when polling
+  platform/x86: intel_scu_ipc: Drop unused prototype intel_scu_ipc_fw_update()
+  platform/x86: intel_scu_ipc: Drop unused macros
+  platform/x86: intel_scu_ipc: Drop intel_scu_ipc_io[read|write][8|16]()
+  platform/x86: intel_scu_ipc: Drop intel_scu_ipc_raw_command()
+  platform/x86: intel_scu_ipc: Split out SCU IPC functionality from the SCU driver
+  platform/x86: intel_scu_ipc: Reformat kernel-doc comments of exported functions
+  platform/x86: intel_scu_ipc: Introduce new SCU IPC API
+  platform/x86: intel_mid_powerbtn: Convert to use new SCU IPC API
+  watchdog: intel-mid_wdt: Convert to use new SCU IPC API
+  platform/x86: intel_scu_ipcutil: Convert to use new SCU IPC API
+  platform/x86: intel_pmc_ipc: Make intel_pmc_gcr_update() static
+  platform/x86: intel_pmc_ipc: Make intel_pmc_ipc_simple_command() static
+  platform/x86: intel_pmc_ipc: Make intel_pmc_ipc_raw_cmd() static
+  platform/x86: intel_pmc_ipc: Drop intel_pmc_gcr_read() and intel_pmc_gcr_write()
+  platform/x86: intel_pmc_ipc: Drop ipc_data_readb()
+  platform/x86: intel_pmc_ipc: Get rid of unnecessary includes
+  platform/x86: intel_scu_ipc: Add function to remove SCU IPC
+  platform/x86: intel_pmc_ipc: Start using SCU IPC
+  mfd: intel_soc_pmic: Add SCU IPC member to struct intel_soc_pmic
+  mfd: intel_soc_pmic_bxtwc: Convert to use new SCU IPC API
+  mfd: intel_soc_pmic_mrfld: Convert to use new SCU IPC API
+  platform/x86: intel_telemetry: Convert to use new SCU IPC API
+  platform/x86: intel_pmc_ipc: Drop intel_pmc_ipc_command()
+  x86/platform/intel-mid: Add empty stubs for intel_scu_devices_[create|destroy]()
+  platform/x86: intel_pmc_ipc: Move PCI IDs to intel_scu_pcidrv.c
+  platform/x86: intel_pmc_ipc: Use octal permissions in sysfs attributes
+  platform/x86: intel_pmc_ipc: Convert to MFD
+  mfd: intel_pmc_bxt: Switch to use driver->dev_groups
+  MAINTAINERS: Update entry for Intel Broxton PMC driver
+
+ MAINTAINERS                                   |   13 +-
+ arch/x86/Kconfig                              |    2 +-
+ arch/x86/include/asm/intel-mid.h              |    9 +-
+ arch/x86/include/asm/intel_pmc_ipc.h          |   91 --
+ arch/x86/include/asm/intel_scu_ipc.h          |  104 +-
+ arch/x86/include/asm/intel_scu_ipc_legacy.h   |   76 ++
+ arch/x86/include/asm/intel_telemetry.h        |    3 +
+ drivers/mfd/Kconfig                           |   18 +-
+ drivers/mfd/Makefile                          |    1 +
+ drivers/mfd/intel_pmc_bxt.c                   |  539 +++++++++
+ drivers/mfd/intel_soc_pmic_bxtwc.c            |   22 +-
+ drivers/mfd/intel_soc_pmic_mrfld.c            |   10 +-
+ drivers/platform/x86/Kconfig                  |   49 +-
+ drivers/platform/x86/Makefile                 |    2 +-
+ drivers/platform/x86/intel_mid_powerbtn.c     |   20 +-
+ drivers/platform/x86/intel_pmc_ipc.c          | 1031 -----------------
+ drivers/platform/x86/intel_scu_ipc.c          |  681 +++++------
+ drivers/platform/x86/intel_scu_ipcutil.c      |   43 +-
+ drivers/platform/x86/intel_scu_pcidrv.c       |   75 ++
+ .../platform/x86/intel_telemetry_debugfs.c    |    2 +-
+ drivers/platform/x86/intel_telemetry_pltdrv.c |  101 +-
+ drivers/usb/typec/tcpm/Kconfig                |    2 +-
+ drivers/watchdog/intel-mid_wdt.c              |   53 +-
+ include/linux/mfd/intel_pmc_bxt.h             |   50 +
+ include/linux/mfd/intel_soc_pmic.h            |   15 +
+ 25 files changed, 1319 insertions(+), 1693 deletions(-)
+ delete mode 100644 arch/x86/include/asm/intel_pmc_ipc.h
+ create mode 100644 arch/x86/include/asm/intel_scu_ipc_legacy.h
+ create mode 100644 drivers/mfd/intel_pmc_bxt.c
+ delete mode 100644 drivers/platform/x86/intel_pmc_ipc.c
+ create mode 100644 drivers/platform/x86/intel_scu_pcidrv.c
+ create mode 100644 include/linux/mfd/intel_pmc_bxt.h
+
+-- 
+2.24.1
+
