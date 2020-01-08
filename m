@@ -2,63 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E3AF134468
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 14:58:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 441A2134466
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 14:58:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbgAHN6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 08:58:05 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58532 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727206AbgAHN6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 08:58:05 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id DB3D44FDA4190C1CA6DA;
-        Wed,  8 Jan 2020 21:58:02 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 8 Jan 2020
- 21:57:55 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <kvalo@codeaurora.org>, <arend.vanspriel@broadcom.com>
-CC:     <linux-wireless@vger.kernel.org>,
-        <brcm80211-dev-list.pdl@broadcom.com>,
-        <brcm80211-dev-list@cypress.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, yuehaibing <yuehaibing@huawei.com>
-Subject: [PATCH] brcmfmac: Remove always false 'idx < 0' statement
-Date:   Wed, 8 Jan 2020 21:57:48 +0800
-Message-ID: <20200108135748.46096-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1728556AbgAHN55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 08:57:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58308 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727206AbgAHN55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 08:57:57 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8BB020705;
+        Wed,  8 Jan 2020 13:57:56 +0000 (UTC)
+Date:   Wed, 8 Jan 2020 08:57:55 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Qian Cai <cai@lca.pw>
+Subject: [PATCH] tracing: Initialize ret in syscall_enter_define_fields()
+Message-ID: <20200108085755.535e7362@gandalf.local.home>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yuehaibing <yuehaibing@huawei.com>
 
-idx is declared as u32, it will never less than 0.
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Signed-off-by: yuehaibing <yuehaibing@huawei.com>
+If syscall_enter_define_fields() is called on a system call with no
+arguments, the return code variable "ret" will never get initialized.
+Initialize it to zero.
+
+Link: https://lore.kernel.org/r/0FA8C6E3-D9F5-416D-A1B0-5E4CD583A101@lca.pw
+Fixes: 04ae87a52074e ("ftrace: Rework event_create_dir()")
+Reported-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_syscalls.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c
-index e3dd862..8bb4f1f 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c
-@@ -365,7 +365,7 @@ brcmf_msgbuf_get_pktid(struct device *dev, struct brcmf_msgbuf_pktids *pktids,
- 	struct brcmf_msgbuf_pktid *pktid;
- 	struct sk_buff *skb;
+diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
+index 73140d80dd46..2978c29d87d4 100644
+--- a/kernel/trace/trace_syscalls.c
++++ b/kernel/trace/trace_syscalls.c
+@@ -274,7 +274,8 @@ static int __init syscall_enter_define_fields(struct trace_event_call *call)
+ 	struct syscall_trace_enter trace;
+ 	struct syscall_metadata *meta = call->data;
+ 	int offset = offsetof(typeof(trace), args);
+-	int ret, i;
++	int ret = 0;
++	int i;
  
--	if (idx < 0 || idx >= pktids->array_size) {
-+	if (idx >= pktids->array_size) {
- 		brcmf_err("Invalid packet id %d (max %d)\n", idx,
- 			  pktids->array_size);
- 		return NULL;
+ 	for (i = 0; i < meta->nb_args; i++) {
+ 		ret = trace_define_field(call, meta->types[i],
 -- 
-2.7.4
-
+2.20.1
 
