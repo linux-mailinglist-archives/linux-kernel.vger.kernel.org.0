@@ -2,107 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9440E13496D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 18:35:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C266134974
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 18:37:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729762AbgAHRfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 12:35:46 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42797 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbgAHRfq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 12:35:46 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 4so1961884pfz.9
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 09:35:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rmW2SzOQEkvk2YaV0aUVml7cYubYeEYDGdw5v7jx240=;
-        b=GlavMRnkhXH1aB2TH7QtnGDlMVa6vrEtZJwggwWLFxVrwuOBizZz+pZljt4JBQyKdc
-         KA1GOVRt6HNKDDO0AE2sCJHpRDTnPglDsVR5yd3hSMsQt2LwCSDawd5SK4IEYteUVXcl
-         jPea4QR/8/1KGtjGNj1ve6lEy3ijcb0ogWGXorloja/VKpsrjw4aUgZK/6ntmhyPDQpF
-         Z3qrAK0faGmGHcUxSWLkVAeOl5QrQjhSvyupHYsFXg6K9++PEcm5gSHxNDvtQST5wTFD
-         BxD73r+q+0yqWodVVsYeJ2tkGvRIvDl1f6ll/gL+IDiiWjrld9tjorLCr5qXhuCUrlJj
-         kesA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rmW2SzOQEkvk2YaV0aUVml7cYubYeEYDGdw5v7jx240=;
-        b=ZLYXqJ+chaKgSP4OWU3Ek3dJGOg69XOtvw/uvQD0odyWbAAAEp1Srd899zW+/KZM+n
-         qS5v2zvHmJBEhZINP8ymTrLyDkt3AEp80j5+8gn3K5tl1lq67t7rEBNK9c4T0V+De2HG
-         AoBZ3z4ShsPdDmu9frkM2zq3hSBldehL0XIe1pGQTXGGPFIv9OXF2flXsSdI1uWfLIF9
-         GPliwQpqDs4ztTcbBXK/9yJWT3qhRsQJGMCCeYOkArw+mbj6Q5+DalTBXOwTf0o/LT0v
-         /C0uO5IGlPq/ZMPcw7Qs1pMQ9rYtmL+DoYhQ8UUKnbdGIY0NtBdpFoyNbNwzHGGLM0Zz
-         buoA==
-X-Gm-Message-State: APjAAAUmTXACpEnOpsGqzdSuroy4lWkxuhnM2Gd5wxuweWvNZZtZic3X
-        q/W87zrWUaJ1R8QSjnN4PUwc6hF3DhfDp0nb
-X-Google-Smtp-Source: APXvYqziV3O3a/qHFr9ZqFBNqv4rjrqR+guZ967CrjBY0tju4nXXiEOviJPP+dyc8+/P4SwholzkOw==
-X-Received: by 2002:a63:1c64:: with SMTP id c36mr5785756pgm.302.1578504945032;
-        Wed, 08 Jan 2020 09:35:45 -0800 (PST)
-Received: from gnomeregan01.cam.corp.google.com ([2620:15c:6:14:50b7:ffca:29c4:6488])
-        by smtp.googlemail.com with ESMTPSA id b12sm4257418pfi.157.2020.01.08.09.35.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jan 2020 09:35:44 -0800 (PST)
-Subject: Re: [PATCH v2 2/2] iommu/vt-d: skip invalid RMRR entries
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
+        id S1729828AbgAHRhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 12:37:02 -0500
+Received: from mga01.intel.com ([192.55.52.88]:41723 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727287AbgAHRhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 12:37:02 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 09:37:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,410,1571727600"; 
+   d="scan'208";a="254297885"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga002.fm.intel.com with ESMTP; 08 Jan 2020 09:36:57 -0800
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1ipFGL-00065H-9i; Wed, 08 Jan 2020 19:36:57 +0200
+Date:   Wed, 8 Jan 2020 19:36:57 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Lee Jones <lee.jones@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Yian Chen <yian.chen@intel.com>,
-        Sohil Mehta <sohil.mehta@intel.com>
-Cc:     iommu@lists.linux-foundation.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200107191610.178185-1-brho@google.com>
- <20200107191610.178185-3-brho@google.com>
- <bc129b51-73d3-3ed0-93a5-07df6566d535@linux.intel.com>
-From:   Barret Rhoden <brho@google.com>
-Message-ID: <c0f992fd-aaad-9250-2103-fa290db46387@google.com>
-Date:   Wed, 8 Jan 2020 12:35:41 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
+        "David E . Box" <david.e.box@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 31/36] x86/platform/intel-mid: Add empty stubs for
+ intel_scu_devices_[create|destroy]()
+Message-ID: <20200108173657.GB32742@smile.fi.intel.com>
+References: <20200108114201.27908-1-mika.westerberg@linux.intel.com>
+ <20200108114201.27908-32-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <bc129b51-73d3-3ed0-93a5-07df6566d535@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200108114201.27908-32-mika.westerberg@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/7/20 8:27 PM, Lu Baolu wrote:
->> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
->> index a8bb458845bc..32c3c6338a3d 100644
->> --- a/drivers/iommu/intel-iommu.c
->> +++ b/drivers/iommu/intel-iommu.c
->> @@ -4315,13 +4315,25 @@ static void __init init_iommu_pm_ops(void)
->>   static inline void init_iommu_pm_ops(void) {}
->>   #endif    /* CONFIG_PM */
->> +static int rmrr_validity_check(struct acpi_dmar_reserved_memory *rmrr)
->> +{
->> +    if ((rmrr->base_address & PAGE_MASK) ||
->> +        (rmrr->end_address <= rmrr->base_address) ||
->> +        ((rmrr->end_address - rmrr->base_address + 1) & PAGE_MASK)) {
->> +        pr_err(FW_BUG "Broken RMRR base: %#018Lx end: %#018Lx\n",
->> +               rmrr->base_address, rmrr->end_address);
+On Wed, Jan 08, 2020 at 02:41:56PM +0300, Mika Westerberg wrote:
+> This allows to call the functions even when CONFIG_X86_INTEL_MID is not
+> enabled.
+
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
 > 
-> Since you will WARN_TAINT below, do you still want an error message
-> here?
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+>  arch/x86/include/asm/intel-mid.h | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/intel-mid.h b/arch/x86/include/asm/intel-mid.h
+> index 8e5af119dc2d..de58391bdee0 100644
+> --- a/arch/x86/include/asm/intel-mid.h
+> +++ b/arch/x86/include/asm/intel-mid.h
+> @@ -88,11 +88,17 @@ static inline bool intel_mid_has_msic(void)
+>  	return (intel_mid_identify_cpu() == INTEL_MID_CPU_CHIP_PENWELL);
+>  }
+>  
+> +extern void intel_scu_devices_create(void);
+> +extern void intel_scu_devices_destroy(void);
+> +
+>  #else /* !CONFIG_X86_INTEL_MID */
+>  
+>  #define intel_mid_identify_cpu()	0
+>  #define intel_mid_has_msic()		0
+>  
+> +static inline void intel_scu_devices_create(void) { }
+> +static inline void intel_scu_devices_destroy(void) { }
+> +
+>  #endif /* !CONFIG_X86_INTEL_MID */
+>  
+>  enum intel_mid_timer_options {
+> @@ -115,9 +121,6 @@ extern enum intel_mid_timer_options intel_mid_timer_options;
+>  #define SFI_MTMR_MAX_NUM		8
+>  #define SFI_MRTC_MAX			8
+>  
+> -extern void intel_scu_devices_create(void);
+> -extern void intel_scu_devices_destroy(void);
+> -
+>  /* VRTC timer */
+>  #define MRST_VRTC_MAP_SZ		1024
+>  /* #define MRST_VRTC_PGOFFSET		0xc00 */
+> -- 
+> 2.24.1
+> 
 
-I'm fine either way.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-I put it in since arch_rmrr_sanity_check() also has a pr_err():
-
-	pr_err(FW_BUG "No firmware reserved region can cover this RMRR
-                [%#018Lx-%#018Lx], contact BIOS vendor for fixes\n",
-                start, end - 1);
-
-Thanks,
-
-Barret
 
