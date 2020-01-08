@@ -2,211 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20842133821
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 01:46:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A2C6133826
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 01:51:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbgAHAqp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 19:46:45 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:55404 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbgAHAqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 19:46:45 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.92)
-        (envelope-from <logang@deltatee.com>)
-        id 1iozUc-0003Wh-Ar; Tue, 07 Jan 2020 17:46:39 -0700
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        Kit Chow <kchow@gigaio.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-References: <20200108004137.GA66147@google.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <bd548e6d-4af7-45df-98ca-e16596f0cbe2@deltatee.com>
-Date:   Tue, 7 Jan 2020 17:46:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726634AbgAHAvu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 19:51:50 -0500
+Received: from mail-am6eur05on2053.outbound.protection.outlook.com ([40.107.22.53]:37089
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725601AbgAHAvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 19:51:50 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QVNxMlnmdNkpgLX4FVwf4mN9Y5RUFe0oUVdNMrizYGBiXJJAz2Jwuay0vEXj2fOGmaXXDtEQMLSlaFkkHnjQpxxbiQjIFLiK3RwbApVBL5PE/q55/jzvnC85XOCzOrq2i+ZIhY6fMs4yzlw5ewGaM86xZDWJgJxJ95azPyN9qIF9+5z2ZM/q2nwjYXXbV54ywYrCtT95wY1v/OQmDX4s8WSZbN1dwxB1he6UoqWCKfUKy5IinIs+IKMe0Iwdz0g7gXRJ4v7r+6Ka3/CHx39FM0kOxsFi1W8wOVyI7Dygi7I7A542psY6xf86P+BCJXNF697Mt55tPDA55+R3vKUTOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mIls5LWpjnWuZR40O6iyFui5L4nni4mmokAAjtRT8DM=;
+ b=iWyVTnGyBmhtOav6x/x1BSz96GQ7yqmNx9v7DqfdJ2iQJ5kg7UDjmovBAUvc+8ANiSPrhowNfQoTBVpb7qGPBXuFjOS3nMhD8w/gsDKGseV4mLFVPdtuThTfnZcyMaksaXnWorbGagqxDQBiCwIBKlgVhVnIaqBVmK5+cHm/7sQUZg86kOZx7EugVFwlYsH1oPpZdmJ+LNL18ErqNCAxR6lsQClVd9inn4NyESiSWkGxGeKt2jMQ8IAoj3ZwqIUuGftLGbuflCdsZMjAoER3iLkC7aVhXbXvfTE/IK2Bg3snMePfYuetpmOXH+tpD4UD5CvmmkU3g81QKmLo70JMhQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mIls5LWpjnWuZR40O6iyFui5L4nni4mmokAAjtRT8DM=;
+ b=bq87BfQ9D0L06ix9kqHulMJ+P6zYkVh8H5lgpi2usWcjgiqSjpwSD0jMIolQkfU+d0NUNv8ZrFAoHygmZKs0xtl7eriDSGzVt2sB3tl2rLDe/HdJiDtVUZyHHq9AH5vxVnLyTNUzeIovLfO27A1q8i5Dg9J9MjAU3ZNC/rq7SUI=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3836.eurprd04.prod.outlook.com (52.134.71.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2602.12; Wed, 8 Jan 2020 00:51:44 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d968:56ad:4c0c:616f]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d968:56ad:4c0c:616f%7]) with mapi id 15.20.2602.016; Wed, 8 Jan 2020
+ 00:51:44 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Peng Fan <peng.fan@nxp.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "maxime@cerno.tech" <maxime@cerno.tech>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "dinguyen@kernel.org" <dinguyen@kernel.org>,
+        "marcin.juszkiewicz@linaro.org" <marcin.juszkiewicz@linaro.org>,
+        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>,
+        "t-kristo@ti.com" <t-kristo@ti.com>,
+        "yuehaibing@huawei.com" <yuehaibing@huawei.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH V2 2/5] clk: imx: Add support for i.MX8M hw based clk
+ provider
+Thread-Topic: [PATCH V2 2/5] clk: imx: Add support for i.MX8M hw based clk
+ provider
+Thread-Index: AQHVxT22lCphJTTugEK2JxbHY9gYlKfe8rWAgAD+LjA=
+Date:   Wed, 8 Jan 2020 00:51:43 +0000
+Message-ID: <DB3PR0402MB3916FD8AE2F010B6FADF40DDF53E0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1578387197-5750-1-git-send-email-Anson.Huang@nxp.com>
+ <1578387197-5750-2-git-send-email-Anson.Huang@nxp.com>
+ <AM0PR04MB4481A2BBA0CCE3501F5337A6883F0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR04MB4481A2BBA0CCE3501F5337A6883F0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.67]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 144547f0-5bbb-44f6-cbe0-08d793d4eea3
+x-ms-traffictypediagnostic: DB3PR0402MB3836:|DB3PR0402MB3836:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB3PR0402MB38361E10E58ABFF34FE88E36F53E0@DB3PR0402MB3836.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:549;
+x-forefront-prvs: 02760F0D1C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(396003)(346002)(376002)(366004)(199004)(189003)(52536014)(64756008)(76116006)(186003)(66556008)(7696005)(6506007)(5660300002)(66446008)(66946007)(2906002)(4744005)(26005)(66476007)(4326008)(71200400001)(86362001)(8676002)(8936002)(55016002)(316002)(44832011)(81166006)(81156014)(966005)(9686003)(7416002)(33656002)(110136005)(478600001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3836;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: g7v/xaor+Q09Mgv/67j/kvpTS4lcOJdWg/TvsmgdhVOnLVD/L5LD5FxJ4/ACtHGXm16g+BHetzdpyz+Y+U09G8oQolskWFLrRlYfhiEVvEbnT4qDJa7u+qX2/1QTz1x3OXKb9TcJ07BDtBNkpTU3Cev297YEUInBX8+o/jlu3FU2G4GViS570Xzxk6dg+v1oJkk9IHyrFxqxQvl3DjuL9cv02ov9tbVlY7iGPzcI7nWjsb0la5BBSJiFy/UqUCUZmvW1GyKXdQ8llyqrnw35nz1qDRd0ls2PETSunUyQIIBmpo5b0SR1zH0bY5RcVUAsITBANKMkyOaNZlPNWLI+EBjIPdAH8X9pEnOJSGIrmF0Nzcrc59WPkIBCYXTk+sX6ZfK/rkAP/pjXMNrRNYh+tktNbtBztx/P+JuWaRioFQhUnJxnxKSf0Q04sMquj9rt7LOfKK0Q/n2VcwK2mgIYg3LvawkQ6qx5PqDcaYv4oy02k3X2YEo5Xfe+5Me7CkI+8Jx7JRUi05KX/RPZyvYK7AImmqxIUgVKWSRWiiPrFm9FV50yF6ITfZ96U4kGzQVSlqYfkH3Q7/9JG0AKXFyn2g==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20200108004137.GA66147@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: mika.westerberg@linux.intel.com, nicholas.johnson-opensource@outlook.com.au, benh@kernel.crashing.org, kchow@gigaio.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH v4] PCI: Fix disabling of bridge BARs when assigning bus
- resources
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 144547f0-5bbb-44f6-cbe0-08d793d4eea3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2020 00:51:43.8798
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Iw3L93Vsc8tgcrwHBYVWsmi1eOn7GCLkMKGOdcUW4d7MtsoT9JrRmDbpnFxxyBCVLHgHEzxE+eMQkXekyM48Ug==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3836
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2020-01-07 5:41 p.m., Bjorn Helgaas wrote:
-> On Tue, Jan 07, 2020 at 03:51:28PM -0700, Logan Gunthorpe wrote:
->> On 2020-01-07 2:13 p.m., Bjorn Helgaas wrote:
->>> On Tue, Jan 07, 2020 at 12:09:02PM -0700, Logan Gunthorpe wrote:
->>>> One odd quirk of PLX switches is that their upstream bridge port has
->>>> 256K of space allocated behind its BAR0 (most other bridge
->>>> implementations do not report any BAR space). The lspci for such  device
->>>> looks like:
->>>>
->>>>   04:00.0 PCI bridge: PLX Technology, Inc. PEX 8724 24-Lane, 6-Port PCI
->>>>             Express Gen 3 (8 GT/s) Switch, 19 x 19mm FCBGA (rev ca)
->>>> 	    (prog-if 00 [Normal decode])
->>>>       Physical Slot: 1
->>>>       Flags: bus master, fast devsel, latency 0, IRQ 30, NUMA node 0
->>>>       Memory at 90a00000 (32-bit, non-prefetchable) [size=256K]
->>>>       Bus: primary=04, secondary=05, subordinate=0a, sec-latency=0
->>>>       I/O behind bridge: 00002000-00003fff
->>>>       Memory behind bridge: 90000000-909fffff
->>>>       Prefetchable memory behind bridge: 0000380000800000-0000380000bfffff
->>>>       Kernel driver in use: pcieport
->>>>
->>>> It's not clear what the purpose of the memory at 0x90a00000 is, and
->>>> currently the kernel never actually uses it for anything. In most cases,
->>>> it's safely ignored and does not cause a problem.
->>>>
->>>> However, when the kernel assigns the resource addresses (with the
->>>> pci=realloc command line parameter, for example) it can inadvertently
->>>> disable the struct resource corresponding to the bar. When this happens,
->>>> lspci will report this memory as ignored:
->>>>
->>>>    Region 0: Memory at <ignored> (32-bit, non-prefetchable) [size=256K]
->>>>
->>>> This is because the kernel reports a zero start address and zero flags
->>>> in the corresponding sysfs resource file and in /proc/bus/pci/devices.
->>>> Investigation with 'lspci -x', however shows the bios-assigned address
->>>> will still be programmed in the device's BAR registers.
->>>>
->>>> It's clearly a bug that the kernel's view of the registers differs from
->>>> what's actually programmed in the BAR, but in most cases, this still
->>>> won't result in a visibile issue because nothing uses the memory,
->>>> so nothing is affected. However, a big problem shows up when an IOMMU
->>>> is in use: the IOMMU will not reserve this space in the IOVA because the
->>>> kernel no longer thinks the range is valid. (See
->>>> dmar_init_reserved_ranges() for the Intel implementation of this.)
->>>>
->>>> Without the proper reserved range, we have a situation where a DMA
->>>> mapping may occasionally allocate an IOVA which the PCI bus will actually
->>>> route to a BAR in the PLX switch. This will result in some random DMA
->>>> writes not actually writing to the RAM they are supposed to, or random
->>>> DMA reads returning all FFs from the PLX BAR when it's supposed to have
->>>> read from RAM.
->>>>
->>>> The problem is caused in pci_assign_unassigned_root_bus_resources().
->>>> When any resource from a bridge device fails to get assigned, the code
->>>> sets the resource's flags to zero. This makes sense for bridge resources,
->>>> as they will be re-enabled later, but for regular BARs, it disables them
->>>> permanently.
->>>>
->>>> The code in question seems to indent to check if "dev->subordinate" is
->>>> zero to determine whether a device is a bridge, however this is not
->>>> likely valid as there might be a bridge without a subordinate bus due to
->>>> running out of bus numbers or other cases.
->>>>
->>>> To fix these issues we instead check that the idx is in the
->>>> PCI_BRIDGE_RESOURCES range which are only used for bridge windows and
->>>> thus is sufficient for the "dev->subordinate" check and will also
->>>> prevent the bug above from clobbering PLX devices' regular BARs.
->>>
->>> s/bios/BIOS/
->>> s/bar/BAR/
->>> s/visibile/visible/
->>> s/indent/intend/
->>>
->>>> Reported-by: Kit Chow <kchow@gigaio.com>
->>>> Fixes: da7822e5ad71 ("PCI: update bridge resources to get more big ranges when allocating space (again)")
->>>> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
->>>> Cc: Bjorn Helgaas <bhelgaas@google.com>
->>>> ---
->>>>  drivers/pci/setup-bus.c | 6 +++++-
->>>>  1 file changed, 5 insertions(+), 1 deletion(-)
->>>>
->>>> This patch was last submitted back in June as part of a series. I've
->>>> dropped the first patch in the series as a similar patch from Nicholas
->>>> takes care of the bug.
->>>>
->>>> As a reminder, the previous discussion on this patch is here[1]. Per the
->>>> feedback, I've updated the patch to remove the check on
->>>> "dev->subordinate" entirely.
->>>>
->>>> The patch is based on v5.5-rc5 and a git branch is available here:
->>>>
->>>> https://github.com/sbates130272/linux-p2pmem pci_realloc_v4
->>>>
->>>> [1] https://lore.kernel.org/linux-pci/20190617135307.GA13533@google.com/
->>>>
->>>> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
->>>> index f279826204eb..23f6c95f3fd7 100644
->>>> --- a/drivers/pci/setup-bus.c
->>>> +++ b/drivers/pci/setup-bus.c
->>>> @@ -1803,11 +1803,15 @@ void pci_assign_unassigned_root_bus_resources(struct pci_bus *bus)
->>>>  	/* Restore size and flags */
->>>>  	list_for_each_entry(fail_res, &fail_head, list) {
->>>>  		struct resource *res = fail_res->res;
->>>> +		int idx;
->>>>
->>>>  		res->start = fail_res->start;
->>>>  		res->end = fail_res->end;
->>>>  		res->flags = fail_res->flags;
->>>> -		if (fail_res->dev->subordinate)
->>>> +
->>>> +		idx = res - &fail_res->dev->resource[0];
->>>> +		if (idx >= PCI_BRIDGE_RESOURCES &&
->>>> +		    idx <= PCI_BRIDGE_RESOURCE_END)
->>>>  			res->flags = 0;
->>>
->>> So I guess previously, for everything on the fail_head list, we
->>> restored flags/start/end *and* we cleared flags for every BAR and
->>> window of a bridge.
->>>
->>> Now we'll clear flags for only for bridge windows.  I'm sure that was
->>> the original intent, but I don't see why we bother.  The next thing we
->>> do is go back to "again", where we call __pci_bus_size_bridges(),
->>> where we immediately call pci_bridge_check_ranges(), which recomputes
->>> the flags.
->>>
->>> Is there actually any point in clearing res->flags, or could we just
->>> do this:
->>
->> Hmm, well removing the check doesn't seem to cause any problems on my
->> test box. But I'm not very confident that it's not required for some
->> corner case. It was clearly added by someone for a reason that is not
->> clear based on the information I can find in git blame.
->>
->> I don't agree that pci_bridge_check_ranges() recomputes the flags... it
->> only sets specific flags. So zeroing the flags may be intended to clear
->> other flags like IORESOURCE_STARTALIGN or IORESOURCE_SIZEALIGN; though
->> it's not super clear to me how those are used either.
->>
->> So I'd personally prefer to err on the side of caution here and not
->> introduce any new subtle bugs.
-> 
-> OK, I hate maintaining this sort of black magic code, but that's a
-> fair point, and we don't have to fix everything at once.
-
-Yes, I can feel that pain. It's hard enough trying to fix bugs in it.
-Seems like we need to get a unit testing suite for it built up so we can
-at least have some way to know if changes are acceptable. I keep hearing
-about bios bugs that are triggering other bugs in this code (some
-fixable and some not) and they're hard to deal with because of the mess.
-But that's a ton of work and I don't have the time to tackle it.
-
-> pci_assign_unassigned_root_bus_resources() and
-> pci_assign_unassigned_bridge_resources() both have this code fragment,
-> and I *assume* both should be changed?
-
-Oh, yes, that's probably true. I'll add that, fix up the nits above and
-send a v5 later this week.
-
-Logan
-
+DQoNCj4gPiBTdWJqZWN0OiBbUEFUQ0ggVjIgMi81XSBjbGs6IGlteDogQWRkIHN1cHBvcnQgZm9y
+IGkuTVg4TSBodyBiYXNlZCBjbGsNCj4gPiBwcm92aWRlcg0KPiA+DQo+ID4gQWRkIGh3IGJhc2Vk
+IHByb3ZpZGVyIHN1cHBvcnQgZm9yIGkuTVg4TSBjb21wb3NpdGUgY2xrLCBwbGwxNHh4IGNsaw0K
+PiA+IGFuZCBvdGhlciBnYXRlL211eCBjbGsgQVBJcywgc28gdGhhdCBuZXcgYWRkZWQgaS5NWDhN
+IFNvQ3MgY2FuIHVzZSBodw0KPiA+IGJhc2VkIGNsayBwcm92aWRlci4NCj4gDQo+IGkuTVg4TSBo
+dyBjb21wb3NpdGUgY2xrIGhhcyBiZWVuIGluIHNoYXduJ3MgdHJlZSwNCj4gaHR0cHM6Ly9naXQu
+a2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvc2hhd25ndW8vbGludXguZ2l0Lw0K
+PiBjb21taXQvP2g9Zm9yLW5leHQmaWQ9YTRiNDMxZjgwMzhhNjcyMjJmZGU4ODhhNDhiY2JkNzA0
+ZDJkYWNhMA0KPiANCj4gWW91IG1pZ2h0IGJlIHVzaW5nIGFuIG9sZCBiYXNlPw0KDQpJIHVzZWQg
+bGludXgtbmV4dC4uLiwgd2lsbCByZWRvIHRoZSBwYXRjaCBzZXJpZXMgYmFzZWQgb24gU2hhd24n
+cyB0cmVlLg0KDQpUaGFua3MsDQpBbnNvbg0K
