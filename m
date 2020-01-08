@@ -2,176 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 129EC134533
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 15:40:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35E23134536
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 15:41:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbgAHOks (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 09:40:48 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41706 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbgAHOkr (ORCPT
+        id S1728413AbgAHOlG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 09:41:06 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43630 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbgAHOlG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 09:40:47 -0500
-Received: by mail-wr1-f68.google.com with SMTP id c9so3615917wrw.8
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 06:40:46 -0800 (PST)
+        Wed, 8 Jan 2020 09:41:06 -0500
+Received: by mail-wr1-f67.google.com with SMTP id d16so3604187wre.10
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 06:41:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=S7xoAln3fOM+jvS1KIvkJxVxft9QSlWu8b5r3lNZwN8=;
+        b=eRuJFAPbzJXJYkheudLwq5PnI59MRQzkP8BGccVcMAr84cEfiUK5zgfssZpku2m2Jg
+         PgyTWI3JRaN+6F8atGmrwSX+mBPueTUxbu7HihPpVcjLHtV7ZjFpsdb1iEpcGvAGHFgm
+         x4q4CdpsqUU0mesh/9Of36wXBjySG9yTre7HAAEPNBGYUsG+u+7NNZ/YyVORfJ+QN1Kl
+         pY0tsF0Osk3dVFa0LfXqTfjHPLBCGHp0o7B1eqUzHzK5vyD4obpY5no0G8X0ZAqT02OP
+         IpQQtstYJN9NXoMdvc7KPAGFX9HrYBZlqeJDnBgGqL3SrGiFoRSPM+HyIf+7+HV1o6dZ
+         +YFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kj3sdKsTZaeIbGwmm89PcRIOcawKHePAIrmjBLLY4Uw=;
-        b=pLliBDHMSB1mixddfzOHsUohwvyY+a9GXGHjUWIbnQYjedQNB+5ksBqbvaGIKY5y5y
-         RI98+Wt4TtfWeiHuz5bmJ4I54AKPjFV/SfSCxhRDsHmEHMxLSrqW4n709aQ7j905Ai8s
-         bsYWcBb37Fx8BrkkKJQZX5vvdh/HDuDDCeiBnMTAemm0oqfg/BDowGfcEgxUbYD3sD3I
-         O3MXCUko4fVF3cvpGnEVM189Qt92JLMHt1EH+Kh0l09eoztEQT8aVrgqcIbWbQB+t4Tv
-         VwymeVnBhZruJJuEKnW3SjRkbbyisWzLFBhglHQF/alIlkJvBvdP2X4V93CT0Oq8vCN0
-         Jeig==
-X-Gm-Message-State: APjAAAWOTxy630/7KtwBZayxJIKNgQqab93sKHW11VPL4J7Nvf968NXh
-        //0LO4T9YO2LhgzWwDD1nDrt+aWq
-X-Google-Smtp-Source: APXvYqz4mHG7mUJHfog9TrthVEXEGMiJMAUt0zcWnEcdnAdrTfaZ5UARWF/oHyOf5XJSPt7w0+vigQ==
-X-Received: by 2002:a5d:6886:: with SMTP id h6mr4958200wru.154.1578494446291;
-        Wed, 08 Jan 2020 06:40:46 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id a1sm3971016wmj.40.2020.01.08.06.40.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2020 06:40:44 -0800 (PST)
-Date:   Wed, 8 Jan 2020 15:40:44 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
-        "Jin, Zhi" <zhi.jin@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH] mm/page_alloc: Skip non present sections on zone
- initialization
-Message-ID: <20200108144044.GB30379@dhcp22.suse.cz>
-References: <20191230093828.24613-1-kirill.shutemov@linux.intel.com>
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=S7xoAln3fOM+jvS1KIvkJxVxft9QSlWu8b5r3lNZwN8=;
+        b=LTgZu5gy5wxiYY78i9//COOWggT1mHBpnYeu4Kxu62dLwx1TbIOaQJ9k8DzlQ9xL1v
+         S+lecX7TYI3baimAoIVH1lKyIQw9/OOct/P8S+L2mzspCeEkyWhh2VmN0+K+v6bwHTbD
+         hjTYcsDojLar5mwhtAFAuYljLOG69FadxvjhNcFmCIwfhfflsjgSfB3JquF8OTYCHh2V
+         Td56XRJfCH4sZK8t4zPTAZmAlqtU288ltHKXhg1HbhWwwjak1Wa9FCkfWoH8Byx3XNKS
+         tKtq83TVMX4qwmzCKKLrJ8ZdGkHlFFuueiPwkWW0Rz6rGagCwsQlEOSWX8Iv2jkJaTtd
+         jU9A==
+X-Gm-Message-State: APjAAAXZipwWuwlYbky/tdvVX7rw77IQ8Xi+63AZYlG9GL2dPEtE3p03
+        IKZpQ2Tq0MWdBbKr9NrQunU9MMvh4C23Aj4qMrg=
+X-Google-Smtp-Source: APXvYqz1Up/yZ2caZhZCkehmh22v4EdfbQjqPeehfbrzYa1A1OQW260IeyrX4Gc2AyIru1e7PV+hKQ7wfL8RC8ULDKs=
+X-Received: by 2002:adf:dc86:: with SMTP id r6mr5315643wrj.68.1578494464034;
+ Wed, 08 Jan 2020 06:41:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191230093828.24613-1-kirill.shutemov@linux.intel.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Received: by 2002:a5d:6684:0:0:0:0:0 with HTTP; Wed, 8 Jan 2020 06:41:01 -0800 (PST)
+From:   "Rev. pierre claver malgo" <rev.pierreclavermalgo@gmail.com>
+Date:   Wed, 8 Jan 2020 07:41:01 -0700
+X-Google-Sender-Auth: 39DV7uiJQCYxiA-lqZulHU1wKag
+Message-ID: <CAK=koNPtFp5wT0DMS7iJc0AjYrpbfmn5dMWq5Yd-FAaBF0Rnsw@mail.gmail.com>
+Subject: Season Greetings Dear Friend.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 30-12-19 12:38:28, Kirill A. Shutemov wrote:
-> memmap_init_zone() can be called on the ranges with holes during the
-> boot. It will skip any non-valid PFNs one-by-one. It works fine as long
-> as holes are not too big.
-> 
-> But huge holes in the memory map causes a problem. It takes over 20
-> seconds to walk 32TiB hole. x86-64 with 5-level paging allows for much
-> larger holes in the memory map which would practically hang the system.
-> 
-> Deferred struct page init doesn't help here. It only works on the
-> present ranges.
-> 
-> Skipping non-present sections would fix the issue.
+Greetings to you dear friend and compliments of the Season.
 
-Makes sense to me.
+Please do welcome this letter and assist me in this charitable
+investment project in your country. My names are Rev. Pierre Claver
+Malgo, I'm diagnose with brain tumor disease which has gotten to a
+very bad stage, without any family members and no child. Therefore my
+dear, i believed that you will not expose or betray this trust and
+confident that I am about to entrust on you for the mutual benefit of
+the orphans and the less privileges ones in the world today. I have
+some funds I inherited from my late husband, the total sum of ($
+9,500,000.00, Nine Million Five Hundred Thousand Dollars) deposited
+with the Bank, with my name as the legal rightful next of kin's.
+Having known my present health status, I decided to entrust this fund
+to you believing that you will utilize it the way i am going to
+instruct herein. However I need you to assist me and reclaim this
+money out from the bank and use it for humanitarian Charity works, for
+orphanages and gives justice and help to the poor, needy and to
+promote the words of God and the effort that the house of God will be
+maintained says The Lord. Jeremiah 22:15-16.
 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+It will be my pleasure to compensate you with 35 % percent of the
+total money for your effort in handling the transaction, 5 % percent
+for any expenses that may occur during the international transfer
+process while 60% of the money will go to the charity project. Contact
+me through my private email ( rev.pierreclavermalgo@gmail.com ).
 
-That pfn inc back and forth is quite ugly TBH but whatever.
-Acked-by: Michal Hocko <mhocko@suse.com>
+I need your sincerity and ability to carry out the transaction and
+fulfill my final wish in implementing the charitable project that
+requires absolute trust and devotion without any failure. I will be
+glad to see that the bank has finally release and transfer the fund
+into your bank account in your country even before I die here in the
+hospital, because of my present health status everything need to be
+process rapidly as soon as possible. Urgently waiting to hear from
+you, if only you are interested for further details of the transaction
+and execution of this humanitarian project for the glory and honor of
+God the merciful compassionate.
 
-> ---
-> 
-> The situation can be emulated using the following QEMU patch:
-> 
-> diff --git a/hw/i386/pc.c b/hw/i386/pc.c
-> index ac08e6360437..f5f2258092e1 100644
-> --- a/hw/i386/pc.c
-> +++ b/hw/i386/pc.c
-> @@ -1159,13 +1159,14 @@ void pc_memory_init(PCMachineState *pcms,
->      memory_region_add_subregion(system_memory, 0, ram_below_4g);
->      e820_add_entry(0, x86ms->below_4g_mem_size, E820_RAM);
->      if (x86ms->above_4g_mem_size > 0) {
-> +        int shift = 45;
->          ram_above_4g = g_malloc(sizeof(*ram_above_4g));
->          memory_region_init_alias(ram_above_4g, NULL, "ram-above-4g", ram,
->                                   x86ms->below_4g_mem_size,
->                                   x86ms->above_4g_mem_size);
-> -        memory_region_add_subregion(system_memory, 0x100000000ULL,
-> +        memory_region_add_subregion(system_memory, 1ULL << shift,
->                                      ram_above_4g);
-> -        e820_add_entry(0x100000000ULL, x86ms->above_4g_mem_size, E820_RAM);
-> +        e820_add_entry(1ULL << shift, x86ms->above_4g_mem_size, E820_RAM);
->      }
->  
->      if (!pcmc->has_reserved_memory &&
-> diff --git a/target/i386/cpu.h b/target/i386/cpu.h
-> index cde2a16b941a..694c26947bf6 100644
-> --- a/target/i386/cpu.h
-> +++ b/target/i386/cpu.h
-> @@ -1928,7 +1928,7 @@ uint64_t cpu_get_tsc(CPUX86State *env);
->  /* XXX: This value should match the one returned by CPUID
->   * and in exec.c */
->  # if defined(TARGET_X86_64)
-> -# define TCG_PHYS_ADDR_BITS 40
-> +# define TCG_PHYS_ADDR_BITS 52
->  # else
->  # define TCG_PHYS_ADDR_BITS 36
->  # endif
-> 
-> ---
->  mm/page_alloc.c | 28 +++++++++++++++++++++++++++-
->  1 file changed, 27 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index df62a49cd09e..442dc0244bb4 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -5873,6 +5873,30 @@ overlap_memmap_init(unsigned long zone, unsigned long *pfn)
->  	return false;
->  }
->  
-> +#ifdef CONFIG_SPARSEMEM
-> +/* Skip PFNs that belong to non-present sections */
-> +static inline __meminit unsigned long next_pfn(unsigned long pfn)
-> +{
-> +	unsigned long section_nr;
-> +
-> +	section_nr = pfn_to_section_nr(++pfn);
-> +	if (present_section_nr(section_nr))
-> +		return pfn;
-> +
-> +	while (++section_nr <= __highest_present_section_nr) {
-> +		if (present_section_nr(section_nr))
-> +			return section_nr_to_pfn(section_nr);
-> +	}
-> +
-> +	return -1;
-> +}
-> +#else
-> +static inline __meminit unsigned long next_pfn(unsigned long pfn)
-> +{
-> +	return pfn++;
-> +}
-> +#endif
-> +
->  /*
->   * Initially all pages are reserved - free ones are freed
->   * up by memblock_free_all() once the early boot process is
-> @@ -5912,8 +5936,10 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
->  		 * function.  They do not exist on hotplugged memory.
->  		 */
->  		if (context == MEMMAP_EARLY) {
-> -			if (!early_pfn_valid(pfn))
-> +			if (!early_pfn_valid(pfn)) {
-> +				pfn = next_pfn(pfn) - 1;
->  				continue;
-> +			}
->  			if (!early_pfn_in_nid(pfn, nid))
->  				continue;
->  			if (overlap_memmap_init(zone, &pfn))
-> -- 
-> 2.24.1
-> 
-
--- 
-Michal Hocko
-SUSE Labs
+May Bless you and your family.
+Yours Rev. Pierre Claver Malgo
