@@ -2,70 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C60E71339E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 05:01:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31FA91339F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 05:07:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726290AbgAHEBv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 Jan 2020 23:01:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37038 "EHLO mail.kernel.org"
+        id S1726637AbgAHEHM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 Jan 2020 23:07:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726142AbgAHEBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Jan 2020 23:01:51 -0500
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726142AbgAHEHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Jan 2020 23:07:12 -0500
+Received: from localhost (unknown [122.167.102.68])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 477EA21744
-        for <linux-kernel@vger.kernel.org>; Wed,  8 Jan 2020 04:01:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 432B12070A;
+        Wed,  8 Jan 2020 04:07:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578456110;
-        bh=blXanwhUKF/O2mPP2xvjP8uzPc5gl9VfnG9EBi9qDXQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=dcHDEN8veVYHLRYJi2IBrEvwMLkxTqRWqWz6sGwXBCeFcgud09yLVa7PXYezDejho
-         mLSZ+x16Mo53nyCz5TfVBieWyZNPB0NEVu7g41Z1q+U8gJtxrV5e/qnCd3fEskKHUs
-         Hrsss6X++WY8JopgzjIQ5xROrGWPBcTnnIBuAx8E=
-Received: by mail-qt1-f180.google.com with SMTP id e6so1712933qtq.7
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 20:01:50 -0800 (PST)
-X-Gm-Message-State: APjAAAWC6lL/i1CJbrUJ/Yy1GpUwXtgl2oYYEPGUuMqcwSbla1RAuwLy
-        DZ/I+oH8wLyuImEHjwC71cxrOMLzWQntxW/M6g==
-X-Google-Smtp-Source: APXvYqwFJb8dLgGhcgHBSB4r4ovkIRZEnEUzKfJVSxsskY0an7OzKIiPwZU0NjgU+N9o+MZWSlzKwX9Ic9GmEnhELRI=
-X-Received: by 2002:ac8:1415:: with SMTP id k21mr1942901qtj.300.1578456109415;
- Tue, 07 Jan 2020 20:01:49 -0800 (PST)
+        s=default; t=1578456432;
+        bh=VtZDsDEpwz+n4uP+f5e+0gPqa19onC19Eezd4Lm0vnE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RZ+58PD4BE+wkzl8l9mi1tHfylBa/A3LY5uWdWymS+Gv2ss3a1SVkjWtp4wSMyTx1
+         HmhCM1uAt0Nl/H6QUUzQ5GDCHsbq6wK46D2UZdoHt+mAgBO+Cf92A2CZ6It1gnk+kS
+         wiBpYHqpHdFc8yiD03qvkImxv+gwXPivGp0pDFN8=
+Date:   Wed, 8 Jan 2020 09:37:07 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     John Stultz <john.stultz@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Mathias Nyman <mathias.nyman@intel.com>,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Christian Lamparter <chunkeey@googlemail.com>,
+        linux-usb@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Todd Kjos <tkjos@google.com>,
+        Alistair Delva <adelva@google.com>
+Subject: Re: [PATCH v5 0/4] usb: xhci: Add support for Renesas USB controllers
+Message-ID: <20200108040707.GU2818@vkoul-mobl>
+References: <20191106083843.1718437-1-vkoul@kernel.org>
+ <CANcMJZDqX6-+naGEbBiyM+1cZS6jfMoP9bm5Uk4ZuP_mw5aNWw@mail.gmail.com>
 MIME-Version: 1.0
-References: <1576845281-32675-1-git-send-email-qiangqing.zhang@nxp.com> <1576845281-32675-2-git-send-email-qiangqing.zhang@nxp.com>
-In-Reply-To: <1576845281-32675-2-git-send-email-qiangqing.zhang@nxp.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 7 Jan 2020 22:01:38 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+ZJ0asAxaPFgiuHKC2o6UP_5Mht=EascFVpJ6AUoKPvA@mail.gmail.com>
-Message-ID: <CAL_Jsq+ZJ0asAxaPFgiuHKC2o6UP_5Mht=EascFVpJ6AUoKPvA@mail.gmail.com>
-Subject: Re: [PATCH V4 1/2] dt-bindings/irq: add binding for NXP INTMUX
- interrupt multiplexer
-To:     Joakim Zhang <qiangqing.zhang@nxp.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANcMJZDqX6-+naGEbBiyM+1cZS6jfMoP9bm5Uk4ZuP_mw5aNWw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 6:38 AM Joakim Zhang <qiangqing.zhang@nxp.com> wrote:
->
-> This patch adds the DT bindings for the NXP INTMUX interrupt multiplexer
-> for i.MX8 family SoCs.
+Hi John,
 
-4 versions in 2 days? Don't do that. Give reviewers some time.
+On 07-01-20, 11:51, John Stultz wrote:
+> On Wed, Nov 6, 2019 at 12:40 AM Vinod Koul <vkoul@kernel.org> wrote:
+> >
+> > This series add support for Renesas USB controllers uPD720201 and uPD720202.
+> > These require firmware to be loaded and in case devices have ROM those can
+> > also be programmed if empty. If ROM is programmed, it runs from ROM as well.
+> >
+> > This includes two patches from Christian which supported these controllers
+> > w/o ROM and later my patches for ROM support and multiple firmware versions.
+> >
+> 
+> Hey Vinod!
+>    In pushing this series to one of the Android trees for the db845c,
+> there was some concern raised that this series is adding a lot of
+> renesas specific logic to the more generic xhci-pci driver. There was
+> some question if instead that logic should be added to its own
+> file/module? Do you have any thoughts on this?
 
-Convert this to DT schema please. And make sure to send to DT list if
-you want it reviewed. You only sent v1 to the list.
+TBH I have not thought about that and in previous post neither Greg or
+Mathias gave a feedback that this was not acceptable...
 
-Rob
+We can think about splitting but apart from firmware load there is not
+much extra functionality that we need to add, the controller behaviour
+as a standard xhci-pci. So i am not sure if we gain much by splitting.
+
+> Also, It seems there hasn't been much feedback on this for a few
+> months now. Is there a newer version of the patchset I should sync
+> with? Do you have plans to resubmit soon?
+
+Well am still waiting for feedback :( I dont have any update on top of
+this, I can repost but I dont think that really serves a purpose.
+
+I would really like to hear from Greg if this series is acceptable and
+if not what would he like to see changed.
+
+Thanks
+-- 
+~Vinod
