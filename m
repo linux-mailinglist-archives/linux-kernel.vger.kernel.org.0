@@ -2,96 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1564F133EBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:58:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 529DE133ECB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 11:00:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727392AbgAHJ60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 04:58:26 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:43455 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726199AbgAHJ60 (ORCPT
+        id S1727297AbgAHKA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 05:00:27 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:57259 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726927AbgAHKA0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 04:58:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578477504;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9sycsqZJGVnQw+EqUeY+kh0XYMo8ue/f6Kld1hcvxz8=;
-        b=d7bDlf641fthW2KYfWr2bq1BONQGNJNoc9gJ3j6jAMT2VZEhUzvXlkfHwvB1Y3CjGxKBzw
-        lc51ch227gYJeOf6iT+/oxuYUL0XXbLr+LSg5coWHRZmiJCQS4i5vDZbUN4HjJuWdaM8G7
-        8p1nQ+9lejzQWrq6ALvJ0Vq3qed7CnY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-207-Hy-c3osQPSqa5RsUENJZtg-1; Wed, 08 Jan 2020 04:58:23 -0500
-X-MC-Unique: Hy-c3osQPSqa5RsUENJZtg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 15834800D54;
-        Wed,  8 Jan 2020 09:58:22 +0000 (UTC)
-Received: from [10.43.2.30] (unknown [10.43.2.30])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6D59E5C241;
-        Wed,  8 Jan 2020 09:58:17 +0000 (UTC)
-Subject: Re: discuss about pvpanic
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        zhenwei pi <pizhenwei@bytedance.com>
-Cc:     "yelu@bytedance.com" <yelu@bytedance.com>,
-        Greg KH <gregkh@linuxfoundation.org>, qemu-devel@nongnu.org,
-        linux-kernel@vger.kernel.org,
-        "libvir-list@redhat.com" <libvir-list@redhat.com>
-References: <2feff896-21fe-2bbe-6f68-9edfb476a110@bytedance.com>
- <dd8e46c4-eac4-046a-82ec-7ae17df75035@redhat.com>
-From:   Michal Privoznik <mprivozn@redhat.com>
-Message-ID: <d0c57f84-a25c-9984-560b-2419807444e1@redhat.com>
-Date:   Wed, 8 Jan 2020 10:58:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        Wed, 8 Jan 2020 05:00:26 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MqJyX-1jSqrc1z7L-00nOpV; Wed, 08 Jan 2020 11:00:15 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     syzbot+54fd8cca4b7226c94b8e@syzkaller.appspotmail.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Vandana BN <bnvandana@gmail.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: v4l2-core: only zero-out ioctl-read buffers
+Date:   Wed,  8 Jan 2020 11:00:00 +0100
+Message-Id: <20200108100013.284108-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <dd8e46c4-eac4-046a-82ec-7ae17df75035@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:CVOlEaB3G4b+yq/fgEU8QwUgyL0mON3Gtm7AhWwU6x3RboXTNPi
+ I+WMsU653svG0Zy2qvrYMB9pLrY0OkAb/r7t/z9IDA5dtAdqZX0+hemSZsxsmdzwXGM2gnH
+ kRQWxF42lv3v/GOC9gJRxxxBCOXLM9nWEVPB1ZvwBG70y1EuCrm9TPtKyeb/Vn6Vv5vcBri
+ oyes0WkWIpWko2xvjmKBQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:H/LDq2q0KTg=:EZx+1YOXITU+Zlx3KhsF5z
+ UHJpYb2efAbCvSq3g0hvc02JH9+seYy3t1Baq19O4gwTSRRia/yBL8C8xETKt4n1NKvICnSAp
+ Hzf58RThek+qtU5fRAmu6bchog4TByWyGMCYlWb2ILCiMsCw+NZC2O0IW7bOHU3aZu/qF4eBt
+ FPa5L3fKkHmjK+CfU1+7ochQyBLxr4brRRLd3YYFo5+DhjbFViPdBbWMquXzjvEA5ALoay9cO
+ xEstnkHxCoM7qTRO6bWu+cXroBvPJqMfEtbj1EUGnH4OZGq0bioJDO/K04JcUvNuzEEKfu/uE
+ oByG76VJilkTlHgd+e74JhAVpQDcaYsLvSGdE7oeeXeDe4+NPCAnBzOJ0rC2TjJ3e8GPY7Vmf
+ yhRR8pyCuaftF6nOgTjVSrcLysSIZmqbQN0kJbI465mfc/MmUq6oG/UZsAO+N9uf4NZLjmGgY
+ MuRlJPFTkiWgA8OKZszV0Q7R9kmqf9QlOnSR2EwHMrWq/5LnYhByGezyRHXV6TgJ0xrz/UkOZ
+ LRFcl5uXTbpwkpAnBHxThulyKr6LjMOs7VLaiCNfGAtQrF4ewRQGXvFksXcU69rZkax4I6opZ
+ fFVw1rw2Zs9rEqtEXOZu0gCE3MePkCnTrxue2mpH3cWUURnmBvMbTgeOd7OMFBs3ZhAAYkaUD
+ ITrCzBsWEhwqLgDoznJxF4LUKpKceeWvYd9h/XhEX+ybPiEYwIFascEKlBwkwuvs/6UDC7DDc
+ GDKHOXDlDpvt4Ih/uWdzjZcp9Vf+/RqmNbytwprXPhfJkVy08iWqjv7bb3JLIh2ZVknjvpi1F
+ FrojwBjPpKcb2pwyhckznRcuPT1aPlW0dZB1ebzCxNIhRVTfOBW3WdVUvDVJwmp2KPYwJMABj
+ OHABREwyQ5t5D30lIOlA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/8/20 10:36 AM, Paolo Bonzini wrote:
-> On 08/01/20 09:25, zhenwei pi wrote:
->> Hey, Paolo
->>
->> Currently, pvpapic only supports bit 0(PVPANIC_PANICKED).
->> We usually expect that guest writes ioport (typical 0x505) in panic_notifier_list callback
->> during handling panic, then we can handle pvpapic event PVPANIC_PANICKED in QEMU.
->>
->> On the other hand, guest wants to handle the crash by kdump-tools, and reboots without any
->> panic_notifier_list callback. So QEMU only knows that guest has rebooted (because guest
->> write 0xcf9 ioport for RCR request), but QEMU can't identify why guest resets.
->>
->> In production environment, we hit about 100+ guest reboot event everyday, sadly we
->> can't separate the abnormal reboot from normal operation.
->>
->> We want to add a new bit for pvpanic event(maybe PVPANIC_CRASHLOADED) to represent the guest has crashed,
->> and the panic is handled by the guest kernel. (here is the previous patch https://lkml.org/lkml/2019/12/14/265)
->>
->> What do you think about this solution? Or do you have any other suggestions?
-> 
-> Hi Zhenwei,
-> 
-> the kernel-side patch certainly makes sense.  I assume that you want the
-> event to propagate up from QEMU to Libvirt and so on?  The QEMU patch
-> would need to declare a new event (qapi/misc.json) and send it in
-> handle_event (hw/misc/pvpanic.c).  For Libvirt I'm not familiar, so I'm
-> adding the respective list.
+The memset() got moved out of the check for _IOC_NONE, so passing a
+made-up command number with a size but no direction would allow clearing
+data on user-provided pointers.
 
-Adding an event is fairly easy, if everything you want libvirt to do is 
-report the event to upper layers. I volunteer to do it. Question is, how 
-qemu is going to report this, whether some attributes to GUEST_PANICKED 
-event or some new event. But more important is to merge the change into 
-kernel.
+Move video_get_user() back into the _IOC_NONE check where it belongs.
 
-Michal
+Reported-by: syzbot+54fd8cca4b7226c94b8e@syzkaller.appspotmail.com
+Fixes: 6c625c01c7a6 ("media: v4l2-core: split out data copy from video_usercopy")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/media/v4l2-core/v4l2-ioctl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index b0d670715c27..0f11fc6b5447 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -3208,12 +3208,12 @@ video_usercopy(struct file *file, unsigned int orig_cmd, unsigned long arg,
+ 			parg = mbuf;
+ 		}
+ 
++		err = video_get_user((void __user *)arg, parg, orig_cmd,
++				     &always_copy);
++		if (err)
++			goto out;
+ 	}
+ 
+-	err = video_get_user((void __user *)arg, parg, orig_cmd, &always_copy);
+-	if (err)
+-		goto out;
+-
+ 	err = check_array_args(cmd, parg, &array_size, &user_ptr, &kernel_ptr);
+ 	if (err < 0)
+ 		goto out;
+-- 
+2.20.0
 
