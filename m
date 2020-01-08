@@ -2,128 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40A10133C89
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 08:59:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66736133C93
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 09:04:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbgAHH7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 02:59:33 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:45690 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726199AbgAHH7d (ORCPT
+        id S1727006AbgAHID6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 03:03:58 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:52660 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726087AbgAHID6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 02:59:33 -0500
-Received: by mail-ed1-f65.google.com with SMTP id v28so1759909edw.12;
-        Tue, 07 Jan 2020 23:59:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cMtj+4fElMhagL+EzReN9239oHGv4iNUyK/a8PqjjnQ=;
-        b=KRjfhBH8Wc/RMzHhToQAuXOzWc3MF4+h308/OcV8JMfPTg4hy1iYM9Pqba4BkN5Yei
-         64LuyHhOPmgfZYi/TN1WmRPhL1khGd5JYU0MZ44yQk2PjSsnvXMI7D7XsBfWLM4GY/ym
-         D8+zLqJFKhMG+I8LBBI8C69k4Vzo3Te+/matx6IiCeBVf8Di/ohkl5me3V9f0o7o76R7
-         WhY6229nSyJOsTMzWRmw+PWFkotLkWtHcEuXQiiftOT9h/Q7RFs7gvLXb1fpa6Z2siLS
-         M88TaEzgAS8V87YuaMJv4l1spnZifYn3mYdiuhal+PSYv2olNH+ajG/Xn1tcORT6Sigj
-         0prw==
-X-Gm-Message-State: APjAAAUNZeoRdsfGnw0nCNQqrdTh9Y3UN1e9AjXQojpzi4kjF+LFJPQF
-        Up6qKXgHdkP1a8eA0FYqh8c=
-X-Google-Smtp-Source: APXvYqx1oeIDihha1MbvAq15cZlBUGgIhGRDf0dk1K6ypd+mZhyiUjjB1ZsQjTlzbZgvEOTKZctg/A==
-X-Received: by 2002:a17:906:1d50:: with SMTP id o16mr3510203ejh.111.1578470371251;
-        Tue, 07 Jan 2020 23:59:31 -0800 (PST)
-Received: from pi3 ([194.230.155.149])
-        by smtp.googlemail.com with ESMTPSA id bm18sm58278edb.97.2020.01.07.23.59.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 23:59:30 -0800 (PST)
-Date:   Wed, 8 Jan 2020 08:59:28 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Frank Lee <tiny.windzz@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] ARM: dts: exynos: tiny4412: add proper panel node
-Message-ID: <20200108075928.GA9911@pi3>
-References: <20200106191003.21584-1-tiny.windzz@gmail.com>
- <20200106191003.21584-2-tiny.windzz@gmail.com>
- <20200107090449.GA32007@pi3>
- <CAEExFWvJx82h1c1QBrQ+DpT4kgEZ0o3q_O7JLbk-1L-iuMGPEw@mail.gmail.com>
+        Wed, 8 Jan 2020 03:03:58 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00883lPd117939;
+        Wed, 8 Jan 2020 02:03:47 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578470627;
+        bh=e7cuocncCbuxjywazcX7HKTb/Mw4T5KMNhkOUHettWc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=nu7E+puxSqcLXcZZxc2CNxBQS58QZpLRQGpsElGO+SspowlPonvmYOddgUHYoVo+y
+         Bq3ABNJIPEyu6k5jzK+YJL+MC5bk2neg4ERCXDu1OqdndapvLKha4RF2IKj4gY4W8J
+         +vVEQRS7VIdllGZsU13DRAuLCMmQj7hHHp1Ocskw=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00883lBA104600
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 8 Jan 2020 02:03:47 -0600
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 8 Jan
+ 2020 02:03:46 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 8 Jan 2020 02:03:46 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00883i5s040553;
+        Wed, 8 Jan 2020 02:03:44 -0600
+Subject: Re: [PATCH v2] iio: adc: stm32-adc: Use dma_request_chan() instead
+ dma_request_slave_channel()
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>, <jic23@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>
+CC:     <vkoul@kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Olivier MOYSAN <olivier.moysan@st.com>
+References: <20200107114125.6095-1-peter.ujfalusi@ti.com>
+ <5146b085-d92d-7230-9a05-87926711dafa@st.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <8e706545-958d-1c34-9d6d-addd4cb6af25@ti.com>
+Date:   Wed, 8 Jan 2020 10:04:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAEExFWvJx82h1c1QBrQ+DpT4kgEZ0o3q_O7JLbk-1L-iuMGPEw@mail.gmail.com>
+In-Reply-To: <5146b085-d92d-7230-9a05-87926711dafa@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 08, 2020 at 03:07:25AM +0800, Frank Lee wrote:
-> On Tue, Jan 7, 2020 at 5:04 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > On Mon, Jan 06, 2020 at 07:10:03PM +0000, Yangtao Li wrote:
-> > > This patch add at070tn92 panel for tiny4412 board.
-> >
-> > Please fix description as in patch 1.
-> >
-> > >
-> > > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > > ---
-> > >  arch/arm/boot/dts/exynos4412-tiny4412.dts | 16 ++++++++++++++++
-> > >  1 file changed, 16 insertions(+)
-> > >
-> > > diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-> > > index 2b62cb27420c..57f9d09233ad 100644
-> > > --- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
-> > > +++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-> > > @@ -66,6 +66,16 @@
-> > >                       clock-frequency = <24000000>;
-> > >               };
-> > >       };
-> > > +
-> > > +     panel {
-> > > +             compatible = "innolux,at070tn92";
-> > > +
-> > > +             port {
-> > > +                     panel_input: endpoint {
-> > > +                             remote-endpoint = <&lcdc_output>;
-> > > +                     };
-> > > +             };
-> > > +     };
-> > >  };
-> > >
-> > >  &fimd {
-> > > @@ -74,6 +84,12 @@
-> > >       #address-cells = <1>;
-> > >       #size-cells = <0>;
-> > >       status = "okay";
-> >
-> > One empty space here.
-> >
-> > > +     port@3 {
-> > > +             reg = <3>;
-> >
-> > Why starting from "3"? Why this is port@3, not just "port"?
+Hi Fabrice,
+
+On 07/01/2020 19.15, Fabrice Gasnier wrote:
+> On 1/7/20 12:41 PM, Peter Ujfalusi wrote:
+>> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+>> eating up the error code.
+>>
+>> By using dma_request_chan() directly the driver can support deferred
+>> probing against DMA.
+>>
+>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+>> ---
+>> Hi,
+>>
+>> Changes since v1:
+>> - Fall back to IRQ mode only in case of ENODEV
+>>
+>> Regards,
+>> Peter
 > 
-> From samsung-fimd.txt:
-> ---
-> The device node can contain 'port' child nodes according to the bindings defined
-> in [2]. The following are properties specific to those nodes:
-> - reg: (required) port index, can be:
->                 0 - for CAMIF0 input,
->                 1 - for CAMIF1 input,
->                 2 - for CAMIF2 input,
->                 3 - for parallel output,
->                 4 - for write-back interface
-> ---
+> Hi Peter,
 > 
-> I guess it is influenced here.
-> https://elixir.bootlin.com/linux/v5.5-rc5/source/drivers/gpu/drm/exynos/exynos_drm_dpi.c#L170
-> Without it, lcd is completely black.
+> Thanks for the patch,
+> 
+> In case you send another version... I've just a minor suggestion
+> regarding the comment (see after). Apart from that, you can add my:
 
-Thanks for explanation.
+Thanks, I'll take your suggested update and send v3.
 
-Best regards,
-Krzysztof
+> Acked-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> 
+> Best Regards,
+> Fabrice
+> 
+>>
+>>  drivers/iio/adc/stm32-adc.c | 16 ++++++++++++++--
+>>  1 file changed, 14 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/stm32-adc.c b/drivers/iio/adc/stm32-adc.c
+>> index 3b291d72701c..df5f5d61f9f9 100644
+>> --- a/drivers/iio/adc/stm32-adc.c
+>> +++ b/drivers/iio/adc/stm32-adc.c
+>> @@ -1746,9 +1746,21 @@ static int stm32_adc_dma_request(struct iio_dev *indio_dev)
+>>  	struct dma_slave_config config;
+>>  	int ret;
+>>  
+>> -	adc->dma_chan = dma_request_slave_channel(&indio_dev->dev, "rx");
+>> -	if (!adc->dma_chan)
+>> +	adc->dma_chan = dma_request_chan(&indio_dev->dev, "rx");
+>> +	if (IS_ERR(adc->dma_chan)) {
+>> +		ret = PTR_ERR(adc->dma_chan);
+>> +		if (ret != -ENODEV) {
+>> +			if (ret != -EPROBE_DEFER)
+>> +				dev_err(&indio_dev->dev,
+>> +					"DMA channel request failed with %d\n",
+>> +					ret);
+>> +			return ret;
+>> +		}
+>> +
+>> +		/* Ignore errors to fall back to IRQ mode */
+> 		               ^
+> 		          error
+> alternate suggestion:
+> 		/* DMA is optional: fall back to IRQ mode */
 
+Makes more sense in the context.
+
+> 
+>> +		adc->dma_chan = NULL;
+>>  		return 0;
+>> +	}
+>>  
+>>  	adc->rx_buf = dma_alloc_coherent(adc->dma_chan->device->dev,
+>>  					 STM32_DMA_BUFFER_SIZE,
+>>
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
