@@ -2,119 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8E3D13416B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 13:05:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC4DC134161
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 13:03:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbgAHMFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 07:05:08 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:36843 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbgAHMFH (ORCPT
+        id S1727370AbgAHMDO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 07:03:14 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:35500 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726852AbgAHMDO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 07:05:07 -0500
-Received: from [192.168.1.155] ([95.114.105.36]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MF3Y8-1ivoyl0GfA-00FPKS; Wed, 08 Jan 2020 13:05:03 +0100
-Subject: Re: Improving documentation for programming interfaces
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <350cd156-9080-24fe-c49e-96e758d3ca45@web.de>
- <20191220151945.GD59959@mit.edu>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Message-ID: <17931ddd-76ec-d342-912c-faed6084e863@metux.net>
-Date:   Wed, 8 Jan 2020 13:04:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 8 Jan 2020 07:03:14 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 008C342V120327;
+        Wed, 8 Jan 2020 06:03:04 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578484984;
+        bh=TS4HVoZf6mCDU3VkYm2kQBuI8PTmVXqYeMVkBBo4qSo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=atpPpGq2XvtsQ//KW8+fgVuabAV6GRlgP7mE18I/Ay5fmfO8YE72K9StNDvWn+XmI
+         SZXJqfQ1/bkA65Gd7Qxjx+xSUbA1YdOrtgOlW57yoTOrym+qyZ7FLXGxbIcL+d4MQf
+         Yz4mKodE9ABZE0MgNl8olYIvGgaFEBWsuZBQNm0Y=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 008C34p1101107
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 8 Jan 2020 06:03:04 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 8 Jan
+ 2020 06:03:03 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 8 Jan 2020 06:03:03 -0600
+Received: from [172.24.190.4] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 008C31iN107760;
+        Wed, 8 Jan 2020 06:03:02 -0600
+Subject: Re: [PATCH 0/3] Fix issues with command queuing in arasan controllers
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+CC:     <ulf.hansson@linaro.org>, <shawn.lin@rock-chips.com>
+References: <20191230092343.30692-1-faiz_abbas@ti.com>
+ <837996b2-c69f-1446-fda4-5577e28ba8e1@ti.com>
+ <a1b75d07-17ab-5dec-aa40-b9cff247eabf@intel.com>
+ <b2600fd2-bcc9-19f6-8bf8-f3bb51da089f@ti.com>
+ <9c74c1b9-8ae4-49be-68e3-8e827d07cc66@intel.com>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <b34a07a7-8814-f1dd-3a90-5009af6b9eeb@ti.com>
+Date:   Wed, 8 Jan 2020 17:34:34 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191220151945.GD59959@mit.edu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: tl
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:B81xQSAt90W7lKrrHbjV2P/OStxg7GmU8RRfjIZnD94fGPlyUN/
- ECLkuwC3UHDDAAYknhhOpl1QAl2Xy7sc9ZtfITFQVmbXQHsh3DwREx9a1hCttSmo7eqTmW1
- YqfL/rGoi/9eJGscTWr1GZ9Nf3OZQDn2ab6Z5wRutxW1oln/RAjdMZxxWBSJeyWREOz0a8j
- vhEBidMjdWEj2dZeh0V2Q==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:CRH5PUTDk9Q=:i9V6hMthikniIpFD7M0JuY
- 8rbpaLYYW5YSM+oslMj8zDgENE9stI9O8t4TyNaqDDQH27rCX/kbm39kt2GuEyXiTm84bc1Uz
- 5dPfhv5xYU+rShdyG7SodeqiZODv11UpnTI/O6gBJLZIdK4Eg4Enom0gmCYuRZduEsjVtLUpN
- fnbpTjouqi0wSRSpiJnLFnL1elvxQsE9X6Vzo0zQeDX1NrFCrPh9X5K52/Cysqp7y1tsbiUGA
- w9F0ZExYweZF2yS8e8lwdbwIyR8Fm4ZlyYj4qwwYimsdAxB0H3TAa2CCuacOlepJ2O79gpsBH
- seSXLOYR0TYqjCm/v210A0oz3PfvFQwwQeXe21GxQZ6vLsWaQE6Kvynjit3j0vyA6DbxCkXSP
- WYJThR3FpTSTBaFhvIyLk2TxmA9E75Mp+mv6y+f72QsZB4aEUb2EEqOuBa5w7AxEqAcZayVOP
- bCOlLDemlsa96wcOLvRHDqztiMbEyzH33RPY7Rw1nkd+VxSyOCV6fFNaNhNjfJvff6EPI5thr
- PvgkJxpNGBwnAyeIaA/hTq9p5Z27W4Ucy0oEiP+8mIyVFmBU3DcZCIpuZEry4xyM83BcNbyVH
- bAioHzLIYZSl4xE84r8K334nb2RQzanNLlL/uBsM7gs+Holjp6hff2Sp27HR/NPhtRl8YF0yB
- bEnUnbkya9B9zgIhmLEaCbzD3EYCFxyQiVMpJ/XtgbU2BOxMku104jgbke99PPgQ6SbJ/nCxd
- BWL70pRhPhvrgiIP8KbKqesNflqre5C8HPBLM/0dMtwgR0Wp5Xasdy2T1N82dwus8rSOZHFoU
- ktn5UQvxOixr84drSRBmdE7nvnbXtUCzrcd/NElFCQON7Uy8TFIPosVqrXX5k1PqMWB+DK21N
- MVhIqNhdsAH690qpOZDA==
+In-Reply-To: <9c74c1b9-8ae4-49be-68e3-8e827d07cc66@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.12.19 16:19, Theodore Y. Ts'o wrote:
+Hi Adrian,
 
-Hi folks,
-
-> On Fri, Dec 20, 2019 at 02:30:10PM +0100, Markus Elfring wrote:
->> Linux supports some programming interfaces. Several functions are provided
->> as usual. Their application documentation is an ongoing development challenge.
+On 08/01/20 5:29 pm, Adrian Hunter wrote:
+> On 8/01/20 1:49 pm, Faiz Abbas wrote:
+>> Adrian,
 >>
->> Now I would like to clarify possibilities for the specification of desired
->> information together with data types besides properties which are handled by
->> the programming language “C” so far.
+>> On 08/01/20 5:12 pm, Adrian Hunter wrote:
+>>> On 8/01/20 1:30 pm, Faiz Abbas wrote:
+>>>> Hi,
+>>>>
+>>>> On 30/12/19 2:53 pm, Faiz Abbas wrote:
+>>>>> In some Arasan SDHCI controllers, after tuning, the tuning pattern data
+>>>>> is leftover in the sdhci buffer. This leads to issues with future data
+>>>>> commands, especially when command queuing is enabled. The following
+>>>>> patches help fix this issue by resetting data lines after tuning is
+>>>>> finished. The first two patches have been tested with TI's am65x and
+>>>>> j721e SoCs using the sdhci_am654 driver.
+>>>>>
+>>>>> I have a strong suspicion that this is the same issue with
+>>>>> the sdhci-of-arasan driver where they are forced to dump data from the
+>>>>> buffer before enabling command queuing. I need help from someone with a
+>>>>> compatible platform to test this.
+>>>>>
+>>>>
+>>>> I had some discussions with our hardware team and they say we should be
+>>>> asserting both SRC and SRD reset after tuning to start from a clean
+>>>> state. Will update the patches to do that in v2.
+>>>
+>>> Can you use the ->execute_tuning() for that instead of a quirk?
+>>>
+>>
+>> ->platform_execute_tuning() is called before __sdhci_execute_tuning(). I
+>> need this to be done after that. Should I add a post_tuning() callback?
+> 
+> I meant hook host->mmc_host_ops.execute_tuning and call
+> sdhci_execute_tuning() and then sdhci_reset(), like in intel_execute_tuning().
+> 
 
-@Markus:
+Ok. Makes sense.
 
-hmm, maybe we could add some kinda-OOP-style metadata into the type
-documentation ? Or maybe extend doxygen to crossref types vs functions
-operating on them.
-
->> It seems that no customised attributes are supported at the moment.
->> Thus I imagine to specify helpful annotations as macros.
-
-Do you mean _attribute__(...) or comments ?
-
-<snip>
-
-> It's unclear to me what you are requesting/proposing?  Can you be a
-> bit more concrete?
-
-@Ted:
-
-I guess he's thinking about some kind of meta-language for expressing
-common things we know from oop-world, like ctors, dtors, getters, etc.
-
-
-Maybe some doxygen experts here, who could tell what we already could
-extract from existing sources ?
-
-
-For start, I'd like to propose a few rules:
-
-* consistent naming of 'release' functions (AFAIK, many of them are
-  already named <foo>_put()).
-* for each non-trivial (non-private) object/struct, there should be
-  a corresponding release function (even if it's just an alias to
-  kfree()
-* consistent nameing of list-type structs, so generic macros can
-  be used on the struct itself (instead just a container list header
-  struct)
-
-
-
---mtx
-
--- 
----
-Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
-werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
-GPG/PGP-Schlüssel zu.
----
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+Thanks,
+Faiz
