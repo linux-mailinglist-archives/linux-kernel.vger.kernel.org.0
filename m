@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19865134040
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:20:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85D2B134045
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:20:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbgAHLSp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 06:18:45 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:45306 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726719AbgAHLSo (ORCPT
+        id S1727862AbgAHLSw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 06:18:52 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:47158 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726719AbgAHLSt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 06:18:44 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 008BIcgD125828;
-        Wed, 8 Jan 2020 05:18:38 -0600
+        Wed, 8 Jan 2020 06:18:49 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 008BIi2i061036;
+        Wed, 8 Jan 2020 05:18:44 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578482318;
-        bh=S9aCH6w+lTHMSHTjjMK/u1g03UbNDD3XTbwh8A0ZhHg=;
+        s=ti-com-17Q1; t=1578482324;
+        bh=W4JG4sA/Y1DkOn0HVLkeLXp6qAHQTr0CTDZr1pi4or8=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=jQN6uUg9iMSaPHY6Ig6mcusibP60ZgoolSDIVJYy1/rb1RGAHlgH0UcFLiBOyvhox
-         3rsm68EsOQLStOcBxO0iJJJJ5Wa7iJ7tCi3CDxbxS3e2pOUKLVhgoSiSEnbSEkOslz
-         tIHGDXf+rECqgdt3Fi/mrE5qZURWIS1NivGwi040=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 008BIcrK036601
+        b=rEVF1yttnU/bzaHeJBXrohE4IODn4EEYHirmyjfs+aqcVKSUp1Irm8gzEJ2jmNO56
+         lGptao1ZgBtrdTSakuVF4EItYgAlpgLYtUmZ/dXVOu3MmTGVDYidORx50VMEJqPDVu
+         9dNLi4EZG5DaqyuzbyfX4BfjoIPmk+1PccksZRsw=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 008BIioe114599
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 8 Jan 2020 05:18:38 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 8 Jan 2020 05:18:44 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 8 Jan
- 2020 05:18:37 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ 2020 05:18:39 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 8 Jan 2020 05:18:37 -0600
+ Frontend Transport; Wed, 8 Jan 2020 05:18:39 -0600
 Received: from lta0400828a.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 008BIWBq087830;
-        Wed, 8 Jan 2020 05:18:35 -0600
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 008BIWBr087830;
+        Wed, 8 Jan 2020 05:18:37 -0600
 From:   Roger Quadros <rogerq@ti.com>
 To:     <t-kristo@ti.com>
 CC:     <nm@ti.com>, <kishon@ti.com>, <nsekhar@ti.com>, <vigneshr@ti.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 1/5] arm64: dts: ti: k3-j721e-main: Add WIZ and SERDES PHY nodes
-Date:   Wed, 8 Jan 2020 13:18:26 +0200
-Message-ID: <20200108111830.8482-2-rogerq@ti.com>
+Subject: [PATCH 2/5] arm64: dts: ti: k3-j721e-main: Add serdes_ln_ctrl node to select SERDES lane mux
+Date:   Wed, 8 Jan 2020 13:18:27 +0200
+Message-ID: <20200108111830.8482-3-rogerq@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200108111830.8482-1-rogerq@ti.com>
 References: <20200108111830.8482-1-rogerq@ti.com>
@@ -59,273 +59,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kishon Vijay Abraham I <kishon@ti.com>
 
-Add DT nodes for all instances of WIZ and SERDES modules.
+Add serdes_ln_ctrl node used for selecting SERDES lane mux.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Roger Quadros <rogerq@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-j721e-main.dtsi | 241 ++++++++++++++++++++++
- 1 file changed, 241 insertions(+)
+ arch/arm64/boot/dts/ti/k3-j721e-main.dtsi | 26 +++++++++++
+ include/dt-bindings/mux/mux-j721e-wiz.h   | 53 +++++++++++++++++++++++
+ 2 files changed, 79 insertions(+)
+ create mode 100644 include/dt-bindings/mux/mux-j721e-wiz.h
 
 diff --git a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-index 1e4c2b78d66d..24cb78db28e4 100644
+index 24cb78db28e4..6741c1e67f50 100644
 --- a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
 +++ b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-@@ -4,6 +4,7 @@
-  *
+@@ -5,6 +5,8 @@
   * Copyright (C) 2016-2019 Texas Instruments Incorporated - http://www.ti.com/
   */
-+#include <dt-bindings/phy/phy.h>
+ #include <dt-bindings/phy/phy.h>
++#include <dt-bindings/mux/mux.h>
++#include <dt-bindings/mux/mux-j721e-wiz.h>
  
  &cbass_main {
  	msmc_ram: sram@70000000 {
-@@ -225,6 +226,246 @@
- 		pinctrl-single,function-mask = <0xffffffff>;
+@@ -19,6 +21,30 @@
+ 		};
  	};
  
-+	dummy_cmn_refclk: dummy_cmn_refclk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <0>;
-+	};
-+
-+	dummy_cmn_refclk1: dummy_cmn_refclk1 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <0>;
-+	};
-+
-+	serdes_wiz0: wiz@5000000 {
-+		compatible = "ti,j721e-wiz-16g";
++	scm_conf: scm_conf@100000 {
++		compatible = "syscon", "simple-mfd";
++		reg = <0 0x00100000 0 0x1c000>;
 +		#address-cells = <1>;
 +		#size-cells = <1>;
-+		power-domains = <&k3_pds 292 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 292 5>, <&k3_clks 292 11>, <&dummy_cmn_refclk>;
-+		clock-names = "fck", "core_ref_clk", "ext_ref_clk";
-+		assigned-clocks = <&k3_clks 292 11>, <&k3_clks 292 0>;
-+		assigned-clock-parents = <&k3_clks 292 15>, <&k3_clks 292 4>;
-+		num-lanes = <2>;
-+		#reset-cells = <1>;
-+		ranges = <0x5000000 0x0 0x5000000 0x10000>;
++		ranges = <0x0 0x0 0x00100000 0x1c000>;
 +
-+		wiz0_pll0_refclk: pll0-refclk {
-+			clocks = <&k3_clks 292 11>, <&dummy_cmn_refclk>;
-+			#clock-cells = <0>;
-+			assigned-clocks = <&wiz0_pll0_refclk>;
-+			assigned-clock-parents = <&k3_clks 292 11>;
-+		};
-+
-+		wiz0_pll1_refclk: pll1-refclk {
-+			clocks = <&k3_clks 292 0>, <&dummy_cmn_refclk1>;
-+			#clock-cells = <0>;
-+			assigned-clocks = <&wiz0_pll1_refclk>;
-+			assigned-clock-parents = <&k3_clks 292 0>;
-+		};
-+
-+		wiz0_refclk_dig: refclk-dig {
-+			clocks = <&k3_clks 292 11>, <&k3_clks 292 0>, <&dummy_cmn_refclk>, <&dummy_cmn_refclk1>;
-+			#clock-cells = <0>;
-+			assigned-clocks = <&wiz0_refclk_dig>;
-+			assigned-clock-parents = <&k3_clks 292 11>;
-+		};
-+
-+		wiz0_cmn_refclk_dig_div: cmn-refclk-dig-div {
-+			clocks = <&wiz0_refclk_dig>;
-+			#clock-cells = <0>;
-+		};
-+
-+		wiz0_cmn_refclk1_dig_div: cmn-refclk1-dig-div {
-+			clocks = <&wiz0_pll1_refclk>;
-+			#clock-cells = <0>;
-+		};
-+
-+		serdes0: serdes@5000000 {
-+			compatible = "ti,sierra-phy-t0";
-+			reg-names = "serdes";
-+			reg = <0x5000000 0x10000>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&serdes_wiz0 0>;
-+			reset-names = "sierra_reset";
-+			clocks = <&wiz0_cmn_refclk_dig_div>, <&wiz0_cmn_refclk1_dig_div>;
-+			clock-names = "cmn_refclk_dig_div", "cmn_refclk1_dig_div";
++		serdes_ln_ctrl: serdes_ln_ctrl@4080 {
++			compatible = "mmio-mux";
++			#mux-control-cells = <1>;
++			mux-reg-masks = <0x4080 0x3>, <0x4084 0x3>, /* SERDES0 lane0/1 select */
++					<0x4090 0x3>, <0x4094 0x3>, /* SERDES1 lane0/1 select */
++					<0x40a0 0x3>, <0x40a4 0x3>, /* SERDES2 lane0/1 select */
++					<0x40b0 0x3>, <0x40b4 0x3>, /* SERDES3 lane0/1 select */
++					<0x40c0 0x3>, <0x40c4 0x3>, <0x40c8 0x3>, <0x40cc 0x3>;
++					/* SERDES4 lane0/1/2/3 select */
++			idle-states = <SERDES0_LANE0_PCIE0_LANE0>, <SERDES0_LANE1_PCIE0_LANE1>,
++				      <SERDES1_LANE0_PCIE1_LANE0>, <SERDES1_LANE1_PCIE1_LANE1>,
++				      <SERDES2_LANE0_PCIE2_LANE0>, <SERDES2_LANE1_PCIE2_LANE1>,
++				      <MUX_IDLE_AS_IS>, <SERDES3_LANE1_USB3_0>,
++				      <SERDES4_LANE0_EDP_LANE0>, <SERDES4_LANE1_EDP_LANE1>, <SERDES4_LANE2_EDP_LANE2>, <SERDES4_LANE3_EDP_LANE3>;
 +		};
 +	};
 +
-+	serdes_wiz1: wiz@5010000 {
-+		compatible = "ti,j721e-wiz-16g";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		power-domains = <&k3_pds 293 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 293 5>, <&k3_clks 293 13>, <&dummy_cmn_refclk>;
-+		clock-names = "fck", "core_ref_clk", "ext_ref_clk";
-+		assigned-clocks = <&k3_clks 293 13>, <&k3_clks 293 0>;
-+		assigned-clock-parents = <&k3_clks 293 17>, <&k3_clks 293 4>;
-+		num-lanes = <2>;
-+		#reset-cells = <1>;
-+		ranges = <0x5010000 0x0 0x5010000 0x10000>;
+ 	gic500: interrupt-controller@1800000 {
+ 		compatible = "arm,gic-v3";
+ 		#address-cells = <2>;
+diff --git a/include/dt-bindings/mux/mux-j721e-wiz.h b/include/dt-bindings/mux/mux-j721e-wiz.h
+new file mode 100644
+index 000000000000..fd1c4ea9fc7f
+--- /dev/null
++++ b/include/dt-bindings/mux/mux-j721e-wiz.h
+@@ -0,0 +1,53 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * This header provides constants for J721E WIZ.
++ */
 +
-+		wiz1_pll0_refclk: pll0-refclk {
-+			clocks = <&k3_clks 293 13>, <&dummy_cmn_refclk>;
-+			#clock-cells = <0>;
-+			assigned-clocks = <&wiz1_pll0_refclk>;
-+			assigned-clock-parents = <&k3_clks 293 13>;
-+		};
++#ifndef _DT_BINDINGS_J721E_WIZ
++#define _DT_BINDINGS_J721E_WIZ
 +
-+		wiz1_pll1_refclk: pll1-refclk {
-+			clocks = <&k3_clks 293 0>, <&dummy_cmn_refclk1>;
-+			#clock-cells = <0>;
-+			assigned-clocks = <&wiz1_pll1_refclk>;
-+			assigned-clock-parents = <&k3_clks 293 0>;
-+		};
++#define SERDES0_LANE0_QSGMII_LANE1	0x0
++#define SERDES0_LANE0_PCIE0_LANE0	0x1
++#define SERDES0_LANE0_USB3_0_SWAP	0x2
 +
-+		wiz1_refclk_dig: refclk-dig {
-+			clocks = <&k3_clks 293 13>, <&k3_clks 293 0>, <&dummy_cmn_refclk>, <&dummy_cmn_refclk1>;
-+			#clock-cells = <0>;
-+			assigned-clocks = <&wiz1_refclk_dig>;
-+			assigned-clock-parents = <&k3_clks 293 13>;
-+		};
++#define SERDES0_LANE1_QSGMII_LANE2	0x0
++#define SERDES0_LANE1_PCIE0_LANE1	0x1
++#define SERDES0_LANE1_USB3_0		0x2
 +
-+		wiz1_cmn_refclk_dig_div: cmn-refclk-dig-div{
-+			clocks = <&wiz1_refclk_dig>;
-+			#clock-cells = <0>;
-+		};
++#define SERDES1_LANE0_QSGMII_LANE3	0x0
++#define SERDES1_LANE0_PCIE1_LANE0	0x1
++#define SERDES1_LANE0_USB3_1_SWAP	0x2
++#define SERDES1_LANE0_SGMII_LANE0	0x3
 +
-+		wiz1_cmn_refclk1_dig_div: cmn-refclk1-dig-div {
-+			clocks = <&wiz1_pll1_refclk>;
-+			#clock-cells = <0>;
-+		};
++#define SERDES1_LANE1_QSGMII_LANE4	0x0
++#define SERDES1_LANE1_PCIE1_LANE1	0x1
++#define SERDES1_LANE1_USB3_1		0x2
++#define SERDES1_LANE1_SGMII_LANE1	0x3
 +
-+		serdes1: serdes@5010000 {
-+			compatible = "ti,sierra-phy-t0";
-+			reg-names = "serdes";
-+			reg = <0x5010000 0x10000>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&serdes_wiz1 0>;
-+			reset-names = "sierra_reset";
-+			clocks = <&wiz1_cmn_refclk_dig_div>, <&wiz1_cmn_refclk1_dig_div>;
-+			clock-names = "cmn_refclk_dig_div", "cmn_refclk1_dig_div";
-+		};
-+	};
++#define SERDES2_LANE0_PCIE2_LANE0	0x1
++#define SERDES2_LANE0_SGMII_LANE0	0x3
++#define SERDES2_LANE0_USB3_1_SWAP	0x2
 +
-+	serdes_wiz2: wiz@5020000 {
-+		compatible = "ti,j721e-wiz-16g";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		power-domains = <&k3_pds 294 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 294 5>, <&k3_clks 294 11>, <&dummy_cmn_refclk>;
-+		clock-names = "fck", "core_ref_clk", "ext_ref_clk";
-+		assigned-clocks = <&k3_clks 294 11>, <&k3_clks 294 0>;
-+		assigned-clock-parents = <&k3_clks 294 15>, <&k3_clks 294 4>;
-+		num-lanes = <2>;
-+		#reset-cells = <1>;
-+		ranges = <0x5020000 0x0 0x5020000 0x10000>;
++#define SERDES2_LANE1_PCIE2_LANE1	0x1
++#define SERDES2_LANE1_USB3_1		0x2
++#define SERDES2_LANE1_SGMII_LANE1	0x3
 +
-+		wiz2_pll0_refclk: pll0-refclk {
-+			clocks = <&k3_clks 294 11>, <&dummy_cmn_refclk>;
-+			#clock-cells = <0>;
-+			assigned-clocks = <&wiz2_pll0_refclk>;
-+			assigned-clock-parents = <&k3_clks 294 11>;
-+		};
++#define SERDES3_LANE0_PCIE3_LANE0	0x1
++#define SERDES3_LANE0_USB3_0_SWAP	0x2
 +
-+		wiz2_pll1_refclk: pll1-refclk {
-+			clocks = <&k3_clks 294 0>, <&dummy_cmn_refclk1>;
-+			#clock-cells = <0>;
-+			assigned-clocks = <&wiz2_pll1_refclk>;
-+			assigned-clock-parents = <&k3_clks 294 0>;
-+		};
++#define SERDES3_LANE1_PCIE3_LANE1	0x1
++#define SERDES3_LANE1_USB3_0		0x2
 +
-+		wiz2_refclk_dig: refclk-dig {
-+			clocks = <&k3_clks 294 11>, <&k3_clks 294 0>, <&dummy_cmn_refclk>, <&dummy_cmn_refclk1>;
-+			#clock-cells = <0>;
-+			assigned-clocks = <&wiz2_refclk_dig>;
-+			assigned-clock-parents = <&k3_clks 294 11>;
-+		};
++#define SERDES4_LANE0_EDP_LANE0		0x0
++#define SERDES4_LANE0_QSGMII_LANE5	0x2
 +
-+		wiz2_cmn_refclk_dig_div: cmn-refclk-dig-div {
-+			clocks = <&wiz2_refclk_dig>;
-+			#clock-cells = <0>;
-+		};
++#define SERDES4_LANE1_EDP_LANE1		0x0
++#define SERDES4_LANE1_QSGMII_LANE6	0x2
 +
-+		wiz2_cmn_refclk1_dig_div: cmn-refclk1-dig-div {
-+			clocks = <&wiz2_pll1_refclk>;
-+			#clock-cells = <0>;
-+		};
++#define SERDES4_LANE2_EDP_LANE2		0x0
++#define SERDES4_LANE2_QSGMII_LANE7	0x2
 +
-+		serdes2: serdes@5020000 {
-+			compatible = "ti,sierra-phy-t0";
-+			reg-names = "serdes";
-+			reg = <0x5020000 0x10000>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&serdes_wiz2 0>;
-+			reset-names = "sierra_reset";
-+			clocks = <&wiz2_cmn_refclk_dig_div>, <&wiz2_cmn_refclk1_dig_div>;
-+			clock-names = "cmn_refclk_dig_div", "cmn_refclk1_dig_div";
-+		};
-+	};
++#define SERDES4_LANE3_EDP_LANE3		0x0
++#define SERDES4_LANE3_QSGMII_LANE8	0x2
 +
-+	serdes_wiz3: wiz@5030000 {
-+		compatible = "ti,j721e-wiz-16g";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		power-domains = <&k3_pds 295 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 295 5>, <&k3_clks 295 9>, <&dummy_cmn_refclk>;
-+		clock-names = "fck", "core_ref_clk", "ext_ref_clk";
-+		assigned-clocks = <&k3_clks 295 9>, <&k3_clks 295 0>;
-+		assigned-clock-parents = <&k3_clks 295 13>, <&k3_clks 295 4>;
-+		num-lanes = <2>;
-+		#reset-cells = <1>;
-+		ranges = <0x5030000 0x0 0x5030000 0x10000>;
-+
-+		wiz3_pll0_refclk: pll0-refclk {
-+			clocks = <&k3_clks 295 9>, <&dummy_cmn_refclk>;
-+			#clock-cells = <0>;
-+			assigned-clocks = <&wiz3_pll0_refclk>;
-+			assigned-clock-parents = <&k3_clks 295 9>;
-+		};
-+
-+		wiz3_pll1_refclk: pll1-refclk {
-+			clocks = <&k3_clks 295 0>, <&dummy_cmn_refclk1>;
-+			#clock-cells = <0>;
-+			assigned-clocks = <&wiz3_pll1_refclk>;
-+			assigned-clock-parents = <&k3_clks 295 0>;
-+		};
-+
-+		wiz3_refclk_dig: refclk-dig {
-+			clocks = <&k3_clks 295 9>, <&k3_clks 295 0>, <&dummy_cmn_refclk>, <&dummy_cmn_refclk1>;
-+			#clock-cells = <0>;
-+			assigned-clocks = <&wiz3_refclk_dig>;
-+			assigned-clock-parents = <&k3_clks 295 9>;
-+		};
-+
-+		wiz3_cmn_refclk_dig_div: cmn-refclk-dig-div {
-+			clocks = <&wiz3_refclk_dig>;
-+			#clock-cells = <0>;
-+		};
-+
-+		wiz3_cmn_refclk1_dig_div: cmn-refclk1-dig-div {
-+			clocks = <&wiz3_pll1_refclk>;
-+			#clock-cells = <0>;
-+		};
-+
-+		serdes3: serdes@5030000 {
-+			compatible = "ti,sierra-phy-t0";
-+			reg-names = "serdes";
-+			reg = <0x5030000 0x10000>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&serdes_wiz3 0>;
-+			reset-names = "sierra_reset";
-+			clocks = <&wiz3_cmn_refclk_dig_div>, <&wiz3_cmn_refclk1_dig_div>;
-+			clock-names = "cmn_refclk_dig_div", "cmn_refclk1_dig_div";
-+		};
-+	};
-+
- 	main_uart0: serial@2800000 {
- 		compatible = "ti,j721e-uart", "ti,am654-uart";
- 		reg = <0x00 0x02800000 0x00 0x100>;
++#endif /* _DT_BINDINGS_J721E_WIZ */
 -- 
 Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
 Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
