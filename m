@@ -2,116 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEDEF13413C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:53:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7112134140
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:54:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbgAHLxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 06:53:49 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2235 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726290AbgAHLxs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 06:53:48 -0500
-Received: from lhreml708-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 3E7AA4C5978AABF20FD3;
-        Wed,  8 Jan 2020 11:53:47 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- lhreml708-cah.china.huawei.com (10.201.108.49) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 8 Jan 2020 11:53:46 +0000
-Received: from [127.0.0.1] (10.202.226.43) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Wed, 8 Jan 2020
- 11:53:46 +0000
-Subject: Re: [PATCH v1] driver core: Use list_del_init to replace list_del at
- device_links_purge()
-To:     Luo Jiaxing <luojiaxing@huawei.com>, <gregkh@linuxfoundation.org>,
-        <saravanak@google.com>, <jejb@linux.ibm.com>,
-        <James.Bottomley@suse.de>, <James.Bottomley@HansenPartnership.com>
-CC:     <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-References: <1578483244-50723-1-git-send-email-luojiaxing@huawei.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <875eb2dc-a0d3-72e5-a27b-48fa38687c8c@huawei.com>
-Date:   Wed, 8 Jan 2020 11:53:45 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1727763AbgAHLye (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 06:54:34 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39312 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727207AbgAHLye (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 06:54:34 -0500
+Received: by mail-wm1-f66.google.com with SMTP id 20so2180326wmj.4;
+        Wed, 08 Jan 2020 03:54:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ml+uPc3URz8hniItnTAxtQ8gvJipo7FyGt8CdYgqhS8=;
+        b=S1jSzrB0kPlH6z3Px5sO4+12scG4yf1fud4c6NHOniE49Ycg3dfX2E+SvWwhsFFd6k
+         3ooZRxm/POKhHurT7o0Xzg8k2RVvspAqA5jDN2+yvZMhvIsH1EINkIujyrav26OdbSE9
+         kRk0/KDOx3vbZ9BaPasjgkMFHlJsVXZzRmd2LBQFBpTPTfJhDqBLP8S9fCtPpLR5vXar
+         Fe/hFgm3Ta5erVompNvBSJfMuaomDt5e4VNtbzROZuduEUzboB+XZZG+JheTpTQGuNUA
+         ZSJLUoiPlcaIESn6TOYnpNyNzmAzhZOEDxlOZXxwBZET2D8ucPZC6lxsAypP8mdqcyDx
+         FgsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ml+uPc3URz8hniItnTAxtQ8gvJipo7FyGt8CdYgqhS8=;
+        b=Vj4B00u5sdxvPlGKD1/P85XZvTlTZcpyS2KcUsk2OHgpsqDbDVi6kNzGOB5GwDb6UP
+         7H1HWi92nQ+HbuEsIq4YaWGCBCQ4Oz03CS5fl2gwsJ2lLu+LtBtjaXO3UA2IVAEPfcrx
+         zXBKmV1uNnPiZBYJ/MddpkQhQzBlxgMLI8kY8tBW2esVt0y0M+54rOPIPWXNWUQjcOKZ
+         qPOLkNddbnHM2zLJDHjGVhcuXMUCLaRBqVlU2+nTb8DGiSHPA636EBtReHUVzwCiVbxS
+         6S20XmphDhzHfQhoULVwhVIJc4gxh725cfYSIhfbd2df8zNc6LaYxBHLjV9Te8DptCfY
+         6+Sw==
+X-Gm-Message-State: APjAAAUZqy8pIc0gbwHD5GaFtqH4nC1RsK+BbipEi39ypYfIgFSTO2rl
+        FXEdJTKNFiOrG0bJNRZ/UnKgiFu2
+X-Google-Smtp-Source: APXvYqzExp1XsdTC1+JsEavuJpBkVRfUxmBPrxW2OHdr7wK8xqoAA2krdy6q5RhCUk2/5CLpgvTWqA==
+X-Received: by 2002:a7b:c450:: with SMTP id l16mr3438585wmi.31.1578484472103;
+        Wed, 08 Jan 2020 03:54:32 -0800 (PST)
+Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
+        by smtp.gmail.com with ESMTPSA id u24sm3528053wml.10.2020.01.08.03.54.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jan 2020 03:54:31 -0800 (PST)
+Date:   Wed, 8 Jan 2020 12:54:29 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-tip-commits@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [tip: x86/asm] x86/cpufeatures: Add support for fast short REP;
+ MOVSB
+Message-ID: <20200108115429.GA96801@gmail.com>
+References: <20191216214254.26492-1-tony.luck@intel.com>
+ <157847991723.30329.17038297307002446505.tip-bot2@tip-bot2>
 MIME-Version: 1.0
-In-Reply-To: <1578483244-50723-1-git-send-email-luojiaxing@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-ClientProxiedBy: lhreml729-chm.china.huawei.com (10.201.108.80) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <157847991723.30329.17038297307002446505.tip-bot2@tip-bot2>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/01/2020 11:34, Luo Jiaxing wrote:
 
-+ linux-scsi, Martin
+* tip-bot2 for Tony Luck <tip-bot2@linutronix.de> wrote:
 
-> We found that enabling kernel compilation options CONFIG_SCSI_ENCLOSURE and
-> CONFIG_ENCLOSURE_SERVICES, repeated initialization and deletion of the same
-> SCSI device will cause system panic, as follows:
-> [72.425705] Unable to handle kernel paging request at virtual address
-> dead000000000108
-> ...
-> [72.595093] Call trace:
-> [72.597532] device_del + 0x194 / 0x3a0
-> [72.601012] enclosure_remove_device + 0xbc / 0xf8
-> [72.605445] ses_intf_remove + 0x9c / 0xd8
-> [72.609185] device_del + 0xf8 / 0x3a0
-> [72.612576] device_unregister + 0x14 / 0x30
-> [72.616489] __scsi_remove_device + 0xf4 / 0x140
-> [72.620747] scsi_remove_device + 0x28 / 0x40
-> [72.624745] scsi_remove_target + 0x1c8 / 0x220
-
-please share the full crash stack frame and the commands used to trigger 
-it. Some people prefer the timestamp removed also.
-
+> The following commit has been merged into the x86/asm branch of tip:
 > 
-> After analysis, we see that in the error scenario, the ses module has the
-> following calling sequence:
-> device_register() -> device_del() -> device_add() -> device_del().
-> The first call to device_del() is fine, but the second call to device_del()
-> will cause a system panic.
+> Commit-ID:     f444a5ff95dce07cf4353cbb85fc3e785019d430
+> Gitweb:        https://git.kernel.org/tip/f444a5ff95dce07cf4353cbb85fc3e785019d430
+> Author:        Tony Luck <tony.luck@intel.com>
+> AuthorDate:    Mon, 16 Dec 2019 13:42:54 -08:00
+> Committer:     Borislav Petkov <bp@suse.de>
+> CommitterDate: Wed, 08 Jan 2020 11:29:25 +01:00
 > 
-> Through disassembly, we locate that panic happen when device_links_purge()
-> call list_del() to remove device_links.needs_suppliers from list, and
-> list_del() will set this list entry's prev and next pointers to poison.
-> So if INIT_LIST_HEAD() is not re-executed before the next list_del(), It
-> will cause the system to access a memory address which is posioned.
+> x86/cpufeatures: Add support for fast short REP; MOVSB
 > 
-> Therefore, replace list_del() with list_del_init() can avoid such issue.
+> >From the Intel Optimization Reference Manual:
 > 
-> Fixes: e2ae9bcc4aaa ("driver core: Add support for linking devices during device addition")
-> Signed-off-by: Luo Jiaxing <luojiaxing@huawei.com>
-> Reviewed-by: John Garry <john.garry@huawei.com>
+> 3.7.6.1 Fast Short REP MOVSB
+> Beginning with processors based on Ice Lake Client microarchitecture,
+> REP MOVSB performance of short operations is enhanced. The enhancement
+> applies to string lengths between 1 and 128 bytes long.  Support for
+> fast-short REP MOVSB is enumerated by the CPUID feature flag: CPUID
+> [EAX=7H, ECX=0H).EDX.FAST_SHORT_REP_MOVSB[bit 4] = 1. There is no change
+> in the REP STOS performance.
+> 
+> Add an X86_FEATURE_FSRM flag for this.
+> 
+> memmove() avoids REP MOVSB for short (< 32 byte) copies. Check FSRM and
+> use REP MOVSB for short copies on systems that support it.
+> 
+>  [ bp: Massage and add comment. ]
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> Signed-off-by: Borislav Petkov <bp@suse.de>
+> Link: https://lkml.kernel.org/r/20191216214254.26492-1-tony.luck@intel.com
 
-This tag was only implicitly granted, but I thought that the fix looked 
-ok, so:
+BTW., just for the record, the 32-bit version of memmove() has a similar 
+cut-off as well, at 680 bytes (!):
 
-Reviewed-by: John Garry <john.garry@huawei.com>
+                /*
+                 * movs instruction have many startup latency
+                 * so we handle small size by general register.
+                 */
+                "cmp  $680, %0\n\t"
+                "jb 3f\n\t"
 
-> ---
->   drivers/base/core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 42a6724..7b9b0d6 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -1103,7 +1103,7 @@ static void device_links_purge(struct device *dev)
->   	struct device_link *link, *ln;
->   
->   	mutex_lock(&wfs_lock);
-> -	list_del(&dev->links.needs_suppliers);
-> +	list_del_init(&dev->links.needs_suppliers);
->   	mutex_unlock(&wfs_lock);
->   
->   	/*
-> 
+...
 
+                /*
+                 * Start to prepare for backward copy.
+                 */
+                ".p2align 4\n\t"
+                "2:\n\t"
+                "cmp  $680, %0\n\t"
+                "jb 5f\n\t"
+
+This logic was introduced in 2010 via:
+
+   3b4b682becdf: ("x86, mem: Optimize memmove for small size and unaligned cases")
+
+However because those patches came without actual performance 
+measurements, I'd be inclined to switch back to the old REP MOVSB version 
+- which would also automatically improve it should anyone run 32-bit 
+kernels on the very latest CPUs.
+
+Thanks,
+
+	Ingo
