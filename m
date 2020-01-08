@@ -2,66 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E57AF134778
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 17:16:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 843A513477C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 17:16:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729289AbgAHQQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 11:16:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52040 "EHLO mx2.suse.de"
+        id S1729414AbgAHQQl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 11:16:41 -0500
+Received: from mga04.intel.com ([192.55.52.120]:28872 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728899AbgAHQQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 11:16:22 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id A76B4AAC3;
-        Wed,  8 Jan 2020 16:16:20 +0000 (UTC)
-From:   Takashi Iwai <tiwai@suse.de>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: cpia2: Fix integer overflow in mmap handling
-Date:   Wed,  8 Jan 2020 17:16:19 +0100
-Message-Id: <20200108161619.7999-1-tiwai@suse.de>
-X-Mailer: git-send-email 2.16.4
+        id S1728001AbgAHQQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 11:16:41 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 08:16:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,410,1571727600"; 
+   d="scan'208";a="254271270"
+Received: from pg-nx5.altera.com ([10.142.129.193])
+  by fmsmga002.fm.intel.com with ESMTP; 08 Jan 2020 08:16:35 -0800
+From:   "Ooi, Joyce" <joyce.ooi@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Joyce Ooi <joyce.ooi@intel.com>,
+        See Chin Liang <chin.liang.see@intel.com>,
+        Tan Ley Foon <ley.foon.tan@intel.com>, Ooi@vger.kernel.org
+Subject: [PATCH] gpio: altera: change to platform_get_irq_optional to avoid false-positive error
+Date:   Thu,  9 Jan 2020 00:16:20 +0800
+Message-Id: <20200108161620.80105-1-joyce.ooi@intel.com>
+X-Mailer: git-send-email 2.13.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The offset and size checks in cpia2_regmap_buffer() may ignore the
-integer overflow and allow local users to obtain the access to the
-kernel physical pages.
+This patch switches to platform_get_irq_optional() from
+platform_get_irq() as it causes a false-positive error such as 'IRQ
+index 0 not found' when IRQ is not used. The IRQ usage is optional in
+this gpio-altera driver, so the error log is undesirable.
 
-Fix it by modifying the check more carefully; the size value is
-already checked beforehand and guaranteed to be smaller than
-cam->frame_size*num_frames, so it's safe to subtract in the right
-hand side.
-
-This covers CVE-2019-18675.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Ooi, Joyce <joyce.ooi@intel.com>
 ---
-
-I'm submitting this since there hasn't been any action seen for this
-bug over a month.  Let me know if there is already a fix.  Thanks.
-
-
- drivers/media/usb/cpia2/cpia2_core.c | 2 +-
+ drivers/gpio/gpio-altera.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/cpia2/cpia2_core.c b/drivers/media/usb/cpia2/cpia2_core.c
-index 20c50c2d042e..26ae7a5e3783 100644
---- a/drivers/media/usb/cpia2/cpia2_core.c
-+++ b/drivers/media/usb/cpia2/cpia2_core.c
-@@ -2401,7 +2401,7 @@ int cpia2_remap_buffer(struct camera_data *cam, struct vm_area_struct *vma)
+diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
+index 9f2e6b04c361..cc4ba71e4fe3 100644
+--- a/drivers/gpio/gpio-altera.c
++++ b/drivers/gpio/gpio-altera.c
+@@ -266,7 +266,7 @@ static int altera_gpio_probe(struct platform_device *pdev)
+ 	altera_gc->mmchip.gc.owner		= THIS_MODULE;
+ 	altera_gc->mmchip.gc.parent		= &pdev->dev;
  
- 	if (size > cam->frame_size*cam->num_frames  ||
- 	    (start_offset % cam->frame_size) != 0 ||
--	    (start_offset+size > cam->frame_size*cam->num_frames))
-+	    (start_offset > cam->frame_size*cam->num_frames - size))
- 		return -EINVAL;
+-	altera_gc->mapped_irq = platform_get_irq(pdev, 0);
++	altera_gc->mapped_irq = platform_get_irq_optional(pdev, 0);
  
- 	pos = ((unsigned long) (cam->frame_buffer)) + start_offset;
+ 	if (altera_gc->mapped_irq < 0)
+ 		goto skip_irq;
 -- 
-2.16.4
+2.13.0
 
