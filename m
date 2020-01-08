@@ -2,119 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA2061344EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 15:23:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADDF51344E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 15:23:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728928AbgAHOWy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 09:22:54 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:37923 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727648AbgAHOWx (ORCPT
+        id S1728910AbgAHOWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 09:22:46 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:33153 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726736AbgAHOWp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 09:22:53 -0500
-Received: from mail-qk1-f170.google.com ([209.85.222.170]) by
- mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MCayD-1iyEm02WJP-009g9A for <linux-kernel@vger.kernel.org>; Wed, 08 Jan
- 2020 15:22:51 +0100
-Received: by mail-qk1-f170.google.com with SMTP id z76so2773937qka.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 06:22:51 -0800 (PST)
-X-Gm-Message-State: APjAAAV8q+zDK93TxOaNQU/1L4TYoN3Mq1eJxTvd4cjyqqkMcPOKTcGG
-        n1yYyvwSgP3JNuxe+9le+Oz6ArqZQQHqwi0SzBg=
-X-Google-Smtp-Source: APXvYqyfqgQD2H5+TORrgk7UjrEH2d32T6FSbyTEIj1G/XZzi/vedpcHrmeg7cndEJWWjXDeHezpKOfItgKTCtvZnNc=
-X-Received: by 2002:a37:2f02:: with SMTP id v2mr4384139qkh.3.1578493370496;
- Wed, 08 Jan 2020 06:22:50 -0800 (PST)
+        Wed, 8 Jan 2020 09:22:45 -0500
+Received: by mail-oi1-f196.google.com with SMTP id v140so2768824oie.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 06:22:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=M8y8BO0K5anvHEqPlUm8ymjBDQnclkOVB7xmvdmunFM=;
+        b=P34kRQQYNNB9f+xk3eRmaAdVVSRjh1cQIcKfadQzaOag3PhVXVEHCiHP1Lpo1314SJ
+         5MMSujqP7J+v2mus9AnNPiSq46Gt4NJjJYBQTVex+1fdVKQDaQ4eEpjiibL2+NAMbZNG
+         GwLqU5IfyqAd7BICalY+VqKg9okiP39vCpvA8G116XAW6A4wJRoar1dtbfdg87h48Yi8
+         BvXh9sELcJ+dz0pSrc+d+vUwapg222BGI8ykHKtRoahEsMc7iF8kglKEDar0nSbUebX0
+         h6mu4YnPshaAuTxsiFok1XKBm0wuwcEbb3QJvPafYr7FzBOiJO9bjG+Wb86ihdvFUzlv
+         mCAQ==
+X-Gm-Message-State: APjAAAVswK4bFS+WpjeWCFgPvooEQ7bDYSJjfG+bc3twnBx1Xluvqnly
+        tHCgJz2rkS7HQBWJK6jZ48o82vs=
+X-Google-Smtp-Source: APXvYqxddw6u3IBB6w8Vk1rIDAzFRGLMo2zlpF84oy0Wow57gSgJdcOdju2KlugnSXzourO+VZaVMQ==
+X-Received: by 2002:a05:6808:8e6:: with SMTP id d6mr3100077oic.78.1578493363968;
+        Wed, 08 Jan 2020 06:22:43 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id g25sm1149178otr.8.2020.01.08.06.22.42
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jan 2020 06:22:43 -0800 (PST)
+Received: from rob (uid 1000)
+        (envelope-from rob@rob-hp-laptop)
+        id 22001a
+        by rob-hp-laptop (DragonFly Mail Agent v0.11);
+        Wed, 08 Jan 2020 08:22:42 -0600
+Date:   Wed, 8 Jan 2020 08:22:42 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Dilip Kota <eswara.kota@linux.intel.com>
+Cc:     lorenzo.pieralisi@arm.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, andrew.murray@arm.com,
+        robh@kernel.org, linux-kernel@vger.kernel.org,
+        andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
+        Dilip Kota <eswara.kota@linux.intel.com>
+Subject: Re: [PATCH 1/1] dt-bindings: PCI: intel: Fix dt_binding_check
+ compilation failure
+Message-ID: <20200108142242.GA8585@bogus>
+References: <3319036bb29e0b25fc3b85293301e32aee0540dc.1576833842.git.eswara.kota@linux.intel.com>
 MIME-Version: 1.0
-References: <20191111131252.921588318@infradead.org> <20191111132458.220458362@infradead.org>
- <20191111164703.GA11521@willie-the-truck> <20191111171955.GO4114@hirez.programming.kicks-ass.net>
- <20191111172541.GT5671@hirez.programming.kicks-ass.net> <20191112112950.GB17835@willie-the-truck>
- <20191113092636.GG4131@hirez.programming.kicks-ass.net> <CAK8P3a0MJGpg6AkmwRL6o7TCPOQXSMDShutigvBjeOMDn0BHaA@mail.gmail.com>
- <20200108091628.7e548401@gandalf.local.home>
-In-Reply-To: <20200108091628.7e548401@gandalf.local.home>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 8 Jan 2020 15:22:33 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a0ejxNueA7dDBV103yY2j7QiLfzG96pc163miD3hKE6qA@mail.gmail.com>
-Message-ID: <CAK8P3a0ejxNueA7dDBV103yY2j7QiLfzG96pc163miD3hKE6qA@mail.gmail.com>
-Subject: Re: [PATCH -v5mkII 13/17] arm/ftrace: Use __patch_text()
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>, bristot@redhat.com,
-        Jason Baron <jbaron@akamai.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, namit@vmware.com,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Rabin Vincent <rabin@rab.in>, Nicolas Pitre <nico@fluxnic.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:biUHxl8UTZgOhX3GvGWcEFqJUAGaWoL4SLHx+vh+W2p7oNoE8/G
- DRBhhBRTZmKE/4dto4Z9z4Rq8Sdx8ph7rcS1uDMxHvcWunErXdw8tUVGPLSGzcvy5h4UXgu
- ZOi8TyDrjWd0NZTcnluaEBIhB5vxGb4VW6LbHpOcj/X6dRmo8fioovxMYQPDGd770P1EQmV
- jb1aDj7/ux57dRLLDs3Sw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:c8kA/IJVZHU=:nmtrTJ/8FJa2Z1/RTYZvEd
- V84dU2txZ82FDTtoWj+MGR/XhATia3/uvWClAaIctEnb4vpKvvgvbvEIfD0xtxMYYV6xR/u4T
- qh/q705lCv5rk6RbnTVfQIIH0YAVcbmbQjJZMnmL6enH4fjVxSz6K2eFn3EpCpLOj1HEBDj6e
- 1vFiJe0uAoMECGYH+MOXE2w/FBJ2KIyTqqX0ZY76Tjx8vyComS/O3UilqJ6a9Woax7CFhmjal
- TSC0HKmgMaeelsfh+52f9uB1HafNnsS/NUL0VLRmy+xH1SNdnc6IrHQnOe8WkMaP4n4t1mv9M
- zDh07IXXgFIsSEHA3NayPnuSW/P2k8jrJByno1Jm3t8uTWrhIXuCPHee37IatGvcqk3Mqh8il
- fuZoMq8lNBHTpewSuC0+JcKQjeeUJkP2kSJ0Xl1A124/uQ+bsLc6rogk8/dsGQ4vRHdVLvjX/
- o49U1rPh7N1Hcw1HdxOaUwn8Q+Eyni8gNEYxmruEP0LzVob6X1z85Mi8fOrzEPJn1sVVIA7uN
- /ZFYe1PvaNvFtH2wNovvJ/eSXfvWJybDUn9kd3OGGJBw0mCsG1u/bm7clLbW5+46hGscUuXLZ
- caBlMQcBywnR1JMK0aXWhWQ9NaEni02rXb09BWlZumkAh1jIxjEPxL7K4urx++or9HKg6X2Be
- bq9V3ASbjunmHj+sfJBp3SdYZkhUWR6UBQRX7vje94PPQJCu3MrPDgCB9mC91vJVGAOlpCdpT
- 16PLTfFaw36WWd5B/IbtVCCbw+jWCzQxKBKflxEuXmiUwYFWjq3Nm4T4beCGArPtHF0CAn/ww
- D70+qkzBBG7ayWWODItI4CsEl0popjurMt1/uVOeNwghHHzo8mgb8C9tyj2oZnRq2ZeU4wV8s
- J9OL6ekrsewjDc9AOj+g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3319036bb29e0b25fc3b85293301e32aee0540dc.1576833842.git.eswara.kota@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 8, 2020 at 3:16 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Wed, 8 Jan 2020 13:22:52 +0100
-> Arnd Bergmann <arnd@arndb.de> wrote:
->
-> > The problem is that we don't have a BE32 definition of
-> > __opcode_to_mem_thumb32, mostly because no hardware
-> > supports that.
-> >
-> > One possible workaround is a big ugly:
-> >
-> > diff --git a/arch/arm/kernel/patch.c b/arch/arm/kernel/patch.c
-> > index d0a05a3bdb96..1067fd122897 100644
-> > --- a/arch/arm/kernel/patch.c
-> > +++ b/arch/arm/kernel/patch.c
-> > @@ -90,9 +90,11 @@ void __kprobes __patch_text_real(void *addr,
-> > unsigned int insn, bool remap)
-> >
-> >                 size = sizeof(u32);
-> >         } else {
-> > +#ifdef CONFIG_THUMB2_KERNEL
-> >                 if (thumb2)
->
-> If we change the above to:
->
->                 if (IS_ENABLED(CONFIG_THUMB2_KERNEL) && thumb2)
->
-> Would the compiler optmize out __opcode_to_mem_thumb32(). We would need
-> to add a declaration for it, but wont need to define it. At least we
-> wont have nasty #ifdef logic in the code.
+On Fri, 20 Dec 2019 17:53:24 +0800, Dilip Kota wrote:
+> Remove <dt-bindings/clock/intel,lgm-clk.h> dependency as
+> it is not present in the mainline tree. Use numeric value
+> instead of LGM_GCLK_PCIE10 macro.
+> 
+> Signed-off-by: Dilip Kota <eswara.kota@linux.intel.com>
+> ---
+>  Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
 
-If we add a declaration for it, I think no change to patch.c is needed,
-as 'thumb2' already has compile-time constant value equal to
-IS_ENABLED(CONFIG_THUMB2_KERNEL).
-
-I'll try it out.
-
-       Arnd
+Acked-by: Rob Herring <robh@kernel.org>
