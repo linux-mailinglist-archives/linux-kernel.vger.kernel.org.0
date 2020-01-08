@@ -2,84 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B1FC134BDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 20:49:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 685C8134C30
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 20:53:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729310AbgAHTrb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 14:47:31 -0500
-Received: from mail-qk1-f169.google.com ([209.85.222.169]:44810 "EHLO
-        mail-qk1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbgAHTrW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 14:47:22 -0500
-Received: by mail-qk1-f169.google.com with SMTP id w127so3742252qkb.11
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 11:47:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=6IdzXEjAqc3SzjG3DOyHv5lZ8YNCLuWwDx3dJsNyC9M=;
-        b=IWDofTtAey2FIP2gPmZnFH9ea+/3z0vav6bCVBLb1VWPaxLPBF8NlyBSIAKQzMwx9j
-         +3kTzyGv3FHZJ/1pt1ZOXD1HP69wLPxebCb81Dks3hV84TCElepy2bzylXtMHW6WCcTw
-         2tHRkekqI+fAyF/3aVGec2Qr9PYLbpI5931q8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=6IdzXEjAqc3SzjG3DOyHv5lZ8YNCLuWwDx3dJsNyC9M=;
-        b=Ck445sOi5Y3DFp7xvs1SgKa+0oCWAgMuFzbmPkuoBr3bO8TdGmXU0fI15ZdhTMTh0S
-         RTyeHElm6TLOCRCrMISLI8gjneBqPVxVWpqwKseUP5iPl2JFGBg6Fj0Ic9P/ZeUNvMsA
-         ItF/Q45jmy2YM/z11Baufr1vxZROrWmjh4R8b0RamK28bIUFRhj1bd/Fnkha5obA4zYX
-         l1ef3Bm9Zwx6Sy+5p1gGraZzcIvRbAqCOs3K04P35a6mw4wpqSv2wzWi8F9R7ERzpgvK
-         6Y73Xh0J2T/vIe3vAvDEe7l7baGPUNgD6z6a60R8a5pSWeIL7bjKy88H29KJDsWlX67P
-         xEpg==
-X-Gm-Message-State: APjAAAVzYl5lvB6surrJgWvVfY8i3tFLs9dgdLiYCZY9EtLZETHwQyU5
-        FyDLL7S98S4GB9JFx29cg+fNTcvts5Ud7FBvmbHAL7evsuh0bg==
-X-Google-Smtp-Source: APXvYqwhh03BE0rg64u29BK8WcfTtXo3JPfaLKujwZynWURBxhgIMqo/9QtycipodBIL5ZoGIS5kNGp8ipaOf4LiDXg=
-X-Received: by 2002:a05:620a:228:: with SMTP id u8mr6030326qkm.88.1578512841317;
- Wed, 08 Jan 2020 11:47:21 -0800 (PST)
+        id S1726530AbgAHTxO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 14:53:14 -0500
+Received: from mga02.intel.com ([134.134.136.20]:37299 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726155AbgAHTxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 14:53:14 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 11:52:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,411,1571727600"; 
+   d="scan'208";a="303651399"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga001.jf.intel.com with ESMTP; 08 Jan 2020 11:52:13 -0800
+Received: from [10.251.6.5] (kliang2-mobl.ccr.corp.intel.com [10.251.6.5])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by linux.intel.com (Postfix) with ESMTPS id 9A0F85803E3;
+        Wed,  8 Jan 2020 11:52:12 -0800 (PST)
+Subject: Re: [RFC PATCH V3 2/7] perf: attach/detach PMU specific data
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        tglx@linutronix.de, bp@alien8.de, linux-kernel@vger.kernel.org,
+        eranian@google.com, alexey.budankov@linux.intel.com,
+        vitaly.slobodskoy@intel.com
+References: <1578495789-95006-1-git-send-email-kan.liang@linux.intel.com>
+ <1578495789-95006-2-git-send-email-kan.liang@linux.intel.com>
+ <20200108165009.GQ15478@tassilo.jf.intel.com>
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <78364595-78f5-f9da-1b45-a94f49f81996@linux.intel.com>
+Date:   Wed, 8 Jan 2020 14:52:10 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-From:   Ivan Babrou <ivan@cloudflare.com>
-Date:   Wed, 8 Jan 2020 11:47:10 -0800
-Message-ID: <CABWYdi25Y=zrfdnitT3sSgC3UqcFHfz6-N2YP7h2TJai=JH_zg@mail.gmail.com>
-Subject: Lower than expected CPU pressure in PSI
-To:     linux-kernel <linux-kernel@vger.kernel.org>
-Cc:     kernel-team <kernel-team@cloudflare.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200108165009.GQ15478@tassilo.jf.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We added reporting for PSI in cgroups and results are somewhat surprising.
 
-My test setup consists of 3 services:
 
-* stress-cpu1-no-contention.service : taskset -c 1 stress --cpu 1
-* stress-cpu2-first-half.service    : taskset -c 2 stress --cpu 1
-* stress-cpu2-second-half.service   : taskset -c 2 stress --cpu 1
+On 1/8/2020 11:50 AM, Andi Kleen wrote:
+>> +static int
+>> +attach_system_wide_ctx_data(size_t ctx_size)
+>> +{
+>> +	int i, num_thread, pos, nr_failed_alloc;
+>> +	unsigned long flags = GFP_ATOMIC;
+>> +	struct perf_ctx_data *tsk_data;
+>> +	struct perf_ctx_data **data;
+>> +	struct task_struct *g, *p;
+>> +	bool re_alloc = true;
+>> +
+>> +	/* Retrieve total number of threads */
+>> +	num_thread = nr_threads;
+>> +
+>> +	data = kcalloc(num_thread, sizeof(*data), GFP_KERNEL);
+> 
+> This probably needs kvcalloc for reliability and avoiding stalls.
+>
 
-First service runs unconstrained, the other two compete for CPU.
+Yes, kvcalloc looks better.
 
-As expected, I can see 500ms/s sched delay for the latter two and
-aggregated 1000ms/s delay for /system.slice, no surprises here.
+>> +	if (!data) {
+>> +		printk_once(KERN_DEBUG
+>> +			    "Failed to allocate space for LBR callstack. "
+>> +			    "The LBR callstack for all tasks may be cutoff.\n");
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	atomic_inc(&nr_task_data_sys_wide_events);
+>> +
+>> +repeat:
+>> +	/*
+>> +	 * Allocate perf_ctx_data for all existing threads.
+>> +	 * The perf_ctx_data for new threads will be allocated in
+>> +	 * perf_event_fork().
+>> +	 * Do a quick allocation in first round with GFP_ATOMIC.
+>> +	 */
+>> +	for (i = 0; i < num_thread; i++) {
+>> +		if (alloc_perf_ctx_data(ctx_size, flags, &data[i]))
+>> +			break;
+>> +	}
+>> +	num_thread = i;
+>> +	nr_failed_alloc = 0;
+>> +	pos = 0;
+>> +
+> 
+>> +	rcu_read_lock();
+>> +	for_each_process_thread(g, p) {
+>> +		raw_spin_lock(&p->perf_ctx_data_lock);
+>> +		tsk_data = p->perf_ctx_data;
+>> +		if (tsk_data) {
+> 
+> That will be a lot of locks even for tasks that don't use perf, but I guess we
+> really need it and it's bounded by the number of tasks.
 
-However, CPU pressure reported by PSI says that none of my services
-have any pressure on them. I can see around 434ms/s pressure on
-/unified/system.slice and 425ms/s pressure on /unified cgroup, which
-is surprising for three reasons:
+Right. We don't know which tasks will be monitored later. So we have to 
+attach the perf_ctx_data for all of them. The per-task lock is required 
+to sync the writers of perf_ctx_data RCU pointer.
 
-* Pressure is absent for my services (I expect it to match scheed delay)
-* Pressure on /unified/system.slice is lower than both 500ms/s and 1000ms/s
-* Pressure on root cgroup is lower than on system.slice
 
-I'm running Linux 5.4.8 with hybrid cgroup hierarchy under systemd.
-
-P.S.: ./scripts/get_maintainer.pl kernel/sched/psi.c does not say
-Johannes Weiner is a maintainer
+Thanks,
+Kan
+> 
+>> +		}
+>> +
+>> +		if (pos < num_thread) {
+>> +			refcount_set(&data[pos]->refcount, TASK_DATA_SYS_WIDE);
+>> +			rcu_assign_pointer(p->perf_ctx_data, data[pos++]);
+>> +		} else {
+>> +			/*
+>> +			 * The quick allocation in first round may be failed.
+>> +			 * Track the number in nr_failed_alloc.
+>> +			 */
+>> +			nr_failed_alloc++;
+>> +		}
+>> +		raw_spin_unlock(&p->perf_ctx_data_lock);
+>> +	}
+>> +	rcu_read_unlock();
+> 
+> 
+> -Andi
+> 
