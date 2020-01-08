@@ -2,75 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FFA61347CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 17:24:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70C621347E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 17:25:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728704AbgAHQYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 11:24:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47112 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726967AbgAHQYS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 11:24:18 -0500
-Received: from linux-8ccs (x2f7fcda.dyn.telefonica.de [2.247.252.218])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 704A02073A;
-        Wed,  8 Jan 2020 16:24:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578500657;
-        bh=AyZDBjBocC+JhoC3jD/7qgF1YLP3XWBZtmk2w6NbWac=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uyJe6V3QLr8RurNjtkir+jhSsDNMC6vX/zU8V2moHR9Fz16neK8AIDepB+eab7aX+
-         ln1RmzBoN3lSyws4rXmplzV7polKkGFNp0Pz6qt1DY/JWpUJAtOxdX+VY5YddlpimR
-         SnoyQAvDOaHowFyeg+NxHubnQxjveIzFSChawZDw=
-Date:   Wed, 8 Jan 2020 17:24:12 +0100
-From:   Jessica Yu <jeyu@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     mbenes@suse.cz, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel/module: Fix memleak in module_add_modinfo_attrs()
-Message-ID: <20200108162412.GA12869@linux-8ccs>
-References: <20191228115455.24088-1-yuehaibing@huawei.com>
+        id S1729015AbgAHQZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 11:25:27 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41164 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727148AbgAHQZY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 11:25:24 -0500
+Received: by mail-oi1-f196.google.com with SMTP id i1so3112677oie.8
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 08:25:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Yz35zFP2aSNw0+gIRfSaZMhcsEm+gudXf2tyLjffdvY=;
+        b=n7nAnZOxb1mQwuBgopgbgAIm8HNICohqDbNV4OuNrnpq7h3XcwMyhfSZKkjM9XqBK8
+         nxzMkdChSNTPypsjlkUJjw6+JwLnTV4bCU+INZAz7zWP8Dn/mPQ6Ks8IBfWF9dIIyBkL
+         vb/ME4CqU1IDWxr4IY7INEwlBQz6WQIQxT1H+tuvCF0RKWDkUa6PIh6c4DUD4zqlgavO
+         uXZbLnipAlYUr++L6HNMp+62ZeXktvIgeyp0IIGtSaddcx66FoR9ODmLHmTTQhLEZTOn
+         BefhDZcVMbbrhyXS9fX76S/u4ep5gFXvXGLoqWnxPuzNVoUs2n25tva3O+NhLVNRw7yJ
+         v9QQ==
+X-Gm-Message-State: APjAAAUfOAXx60Ol2FQQF+sfwLJhFCjNMJn94e1liV3ArgbpwTpzQIjN
+        44pXgEW7M92S2GtSIVilpa1agtc=
+X-Google-Smtp-Source: APXvYqwiNU0tpNAdErI03OO34ED/Fycyilur+zXLh4esu3yvYxOdXQlqw+NwknojVEpNub1Q6eKQuA==
+X-Received: by 2002:a05:6808:8e6:: with SMTP id d6mr3594177oic.78.1578500723393;
+        Wed, 08 Jan 2020 08:25:23 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id p83sm1204805oia.51.2020.01.08.08.25.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jan 2020 08:25:22 -0800 (PST)
+Received: from rob (uid 1000)
+        (envelope-from rob@rob-hp-laptop)
+        id 220333
+        by rob-hp-laptop (DragonFly Mail Agent v0.11);
+        Wed, 08 Jan 2020 10:25:21 -0600
+Date:   Wed, 8 Jan 2020 10:25:21 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <agross@kernel.org>, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        ath10k@lists.infradead.org
+Subject: Re: [PATCH 1/2] ath10k: Add optional qdss clk
+Message-ID: <20200108162521.GA23484@bogus>
+References: <20191223054855.3020665-1-bjorn.andersson@linaro.org>
+ <20191223054855.3020665-2-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191228115455.24088-1-yuehaibing@huawei.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.61-default x86_64
+In-Reply-To: <20191223054855.3020665-2-bjorn.andersson@linaro.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ YueHaibing [28/12/19 19:54 +0800]:
->In module_add_modinfo_attrs() if sysfs_create_file() fails
->on the first iteration of the loop (so i = 0), we forget to
->free the modinfo_attrs.
->
->Fixes: bc6f2a757d52 ("kernel/module: Fix mem leak in module_add_modinfo_attrs")
->Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+On Sun, 22 Dec 2019 21:48:54 -0800, Bjorn Andersson wrote:
+> The WiFi firmware found on sm8150 requires that the QDSS clock is
+> ticking in order to operate, so add an optional clock to the binding to
+> allow this to be specified in the sm8150 dts and add the clock to the
+> list of clocks in the driver.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt | 2 +-
+>  drivers/net/wireless/ath/ath10k/snoc.c                         | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
 
-Applied, thanks!
-
-Jessica
-
->---
-> kernel/module.c | 2 ++
-> 1 file changed, 2 insertions(+)
->
->diff --git a/kernel/module.c b/kernel/module.c
->index c3770b2..8ec670e 100644
->--- a/kernel/module.c
->+++ b/kernel/module.c
->@@ -1784,6 +1784,8 @@ static int module_add_modinfo_attrs(struct module *mod)
-> error_out:
-> 	if (i > 0)
-> 		module_remove_modinfo_attrs(mod, --i);
->+	else
->+		kfree(mod->modinfo_attrs);
-> 	return error;
-> }
->
->-- 
->2.7.4
->
->
+Acked-by: Rob Herring <robh@kernel.org>
