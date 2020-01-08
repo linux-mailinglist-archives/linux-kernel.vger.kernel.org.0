@@ -2,94 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 330E31344E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 15:22:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA2061344EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 15:23:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728902AbgAHOWA convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 8 Jan 2020 09:22:00 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2236 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726319AbgAHOV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 09:21:59 -0500
-Received: from lhreml709-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 1B4E09E0BF418F42DA76;
-        Wed,  8 Jan 2020 14:21:57 +0000 (GMT)
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- lhreml709-cah.china.huawei.com (10.201.108.32) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 8 Jan 2020 14:21:56 +0000
-Received: from localhost (10.202.226.57) by lhreml710-chm.china.huawei.com
- (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5; Wed, 8 Jan 2020
- 14:21:56 +0000
-Date:   Wed, 8 Jan 2020 14:21:54 +0000
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-CC:     Jonathan Cameron <jic23@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        <knaack.h@gmx.de>, <lars@metafoo.de>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <pmeerw@pmeerw.net>
-Subject: Re: [PATCH] iio: buffer-dmaengine: Use dma_request_chan() directly
- for channel request
-Message-ID: <20200108142154.00003ccf@Huawei.com>
-In-Reply-To: <4d4c4338-b028-e28b-a603-323eadebd261@ti.com>
-References: <20191113092453.30838-1-peter.ujfalusi@ti.com>
-        <20191114043318.GE952516@vkoul-mobl>
-        <20191116162257.550f62d6@archlinux>
-        <4d4c4338-b028-e28b-a603-323eadebd261@ti.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S1728928AbgAHOWy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 09:22:54 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:37923 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727648AbgAHOWx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 09:22:53 -0500
+Received: from mail-qk1-f170.google.com ([209.85.222.170]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MCayD-1iyEm02WJP-009g9A for <linux-kernel@vger.kernel.org>; Wed, 08 Jan
+ 2020 15:22:51 +0100
+Received: by mail-qk1-f170.google.com with SMTP id z76so2773937qka.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 06:22:51 -0800 (PST)
+X-Gm-Message-State: APjAAAV8q+zDK93TxOaNQU/1L4TYoN3Mq1eJxTvd4cjyqqkMcPOKTcGG
+        n1yYyvwSgP3JNuxe+9le+Oz6ArqZQQHqwi0SzBg=
+X-Google-Smtp-Source: APXvYqyfqgQD2H5+TORrgk7UjrEH2d32T6FSbyTEIj1G/XZzi/vedpcHrmeg7cndEJWWjXDeHezpKOfItgKTCtvZnNc=
+X-Received: by 2002:a37:2f02:: with SMTP id v2mr4384139qkh.3.1578493370496;
+ Wed, 08 Jan 2020 06:22:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [10.202.226.57]
-X-ClientProxiedBy: lhreml709-chm.china.huawei.com (10.201.108.58) To
- lhreml710-chm.china.huawei.com (10.201.108.61)
-X-CFilter-Loop: Reflected
+References: <20191111131252.921588318@infradead.org> <20191111132458.220458362@infradead.org>
+ <20191111164703.GA11521@willie-the-truck> <20191111171955.GO4114@hirez.programming.kicks-ass.net>
+ <20191111172541.GT5671@hirez.programming.kicks-ass.net> <20191112112950.GB17835@willie-the-truck>
+ <20191113092636.GG4131@hirez.programming.kicks-ass.net> <CAK8P3a0MJGpg6AkmwRL6o7TCPOQXSMDShutigvBjeOMDn0BHaA@mail.gmail.com>
+ <20200108091628.7e548401@gandalf.local.home>
+In-Reply-To: <20200108091628.7e548401@gandalf.local.home>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 8 Jan 2020 15:22:33 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0ejxNueA7dDBV103yY2j7QiLfzG96pc163miD3hKE6qA@mail.gmail.com>
+Message-ID: <CAK8P3a0ejxNueA7dDBV103yY2j7QiLfzG96pc163miD3hKE6qA@mail.gmail.com>
+Subject: Re: [PATCH -v5mkII 13/17] arm/ftrace: Use __patch_text()
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>, bristot@redhat.com,
+        Jason Baron <jbaron@akamai.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, namit@vmware.com,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Rabin Vincent <rabin@rab.in>, Nicolas Pitre <nico@fluxnic.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:biUHxl8UTZgOhX3GvGWcEFqJUAGaWoL4SLHx+vh+W2p7oNoE8/G
+ DRBhhBRTZmKE/4dto4Z9z4Rq8Sdx8ph7rcS1uDMxHvcWunErXdw8tUVGPLSGzcvy5h4UXgu
+ ZOi8TyDrjWd0NZTcnluaEBIhB5vxGb4VW6LbHpOcj/X6dRmo8fioovxMYQPDGd770P1EQmV
+ jb1aDj7/ux57dRLLDs3Sw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:c8kA/IJVZHU=:nmtrTJ/8FJa2Z1/RTYZvEd
+ V84dU2txZ82FDTtoWj+MGR/XhATia3/uvWClAaIctEnb4vpKvvgvbvEIfD0xtxMYYV6xR/u4T
+ qh/q705lCv5rk6RbnTVfQIIH0YAVcbmbQjJZMnmL6enH4fjVxSz6K2eFn3EpCpLOj1HEBDj6e
+ 1vFiJe0uAoMECGYH+MOXE2w/FBJ2KIyTqqX0ZY76Tjx8vyComS/O3UilqJ6a9Woax7CFhmjal
+ TSC0HKmgMaeelsfh+52f9uB1HafNnsS/NUL0VLRmy+xH1SNdnc6IrHQnOe8WkMaP4n4t1mv9M
+ zDh07IXXgFIsSEHA3NayPnuSW/P2k8jrJByno1Jm3t8uTWrhIXuCPHee37IatGvcqk3Mqh8il
+ fuZoMq8lNBHTpewSuC0+JcKQjeeUJkP2kSJ0Xl1A124/uQ+bsLc6rogk8/dsGQ4vRHdVLvjX/
+ o49U1rPh7N1Hcw1HdxOaUwn8Q+Eyni8gNEYxmruEP0LzVob6X1z85Mi8fOrzEPJn1sVVIA7uN
+ /ZFYe1PvaNvFtH2wNovvJ/eSXfvWJybDUn9kd3OGGJBw0mCsG1u/bm7clLbW5+46hGscUuXLZ
+ caBlMQcBywnR1JMK0aXWhWQ9NaEni02rXb09BWlZumkAh1jIxjEPxL7K4urx++or9HKg6X2Be
+ bq9V3ASbjunmHj+sfJBp3SdYZkhUWR6UBQRX7vje94PPQJCu3MrPDgCB9mC91vJVGAOlpCdpT
+ 16PLTfFaw36WWd5B/IbtVCCbw+jWCzQxKBKflxEuXmiUwYFWjq3Nm4T4beCGArPtHF0CAn/ww
+ D70+qkzBBG7ayWWODItI4CsEl0popjurMt1/uVOeNwghHHzo8mgb8C9tyj2oZnRq2ZeU4wV8s
+ J9OL6ekrsewjDc9AOj+g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 7 Jan 2020 14:19:43 +0200
-Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+On Wed, Jan 8, 2020 at 3:16 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Wed, 8 Jan 2020 13:22:52 +0100
+> Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> > The problem is that we don't have a BE32 definition of
+> > __opcode_to_mem_thumb32, mostly because no hardware
+> > supports that.
+> >
+> > One possible workaround is a big ugly:
+> >
+> > diff --git a/arch/arm/kernel/patch.c b/arch/arm/kernel/patch.c
+> > index d0a05a3bdb96..1067fd122897 100644
+> > --- a/arch/arm/kernel/patch.c
+> > +++ b/arch/arm/kernel/patch.c
+> > @@ -90,9 +90,11 @@ void __kprobes __patch_text_real(void *addr,
+> > unsigned int insn, bool remap)
+> >
+> >                 size = sizeof(u32);
+> >         } else {
+> > +#ifdef CONFIG_THUMB2_KERNEL
+> >                 if (thumb2)
+>
+> If we change the above to:
+>
+>                 if (IS_ENABLED(CONFIG_THUMB2_KERNEL) && thumb2)
+>
+> Would the compiler optmize out __opcode_to_mem_thumb32(). We would need
+> to add a declaration for it, but wont need to define it. At least we
+> wont have nasty #ifdef logic in the code.
 
-> Jonathan,
-> 
-> On 16/11/2019 18.22, Jonathan Cameron wrote:
-> > On Thu, 14 Nov 2019 10:03:18 +0530
-> > Vinod Koul <vkoul@kernel.org> wrote:
-> >   
-> >> On 13-11-19, 11:24, Peter Ujfalusi wrote:  
-> >>> dma_request_slave_channel_reason() is:
-> >>> #define dma_request_slave_channel_reason(dev, name) \
-> >>> 	dma_request_chan(dev, name)    
-> >>
-> >> Reviewed-by: Vinod Koul <vkoul@kernel.org>
-> >>  
-> > 
-> > Applied to the togreg branch of iio.git and pushed out as testing
-> > for the autobuilders to play with it.  
-> 
-> The sole user in mainline for dma_request_slave_channel_reason() is
-> industrialio-buffer-dmaengine.c (since v5.5-rc1, 5.4 had 36 users).
-> 
-> Are you planning to queue this patch for 5.6 (not sure if it could be
-> sent to -rc6) so I can retire it from the dmaengine.h?
+If we add a declaration for it, I think no change to patch.c is needed,
+as 'thumb2' already has compile-time constant value equal to
+IS_ENABLED(CONFIG_THUMB2_KERNEL).
 
-It's queued up for the 5.6 merge window. 
+I'll try it out.
 
-Jonathan
-
-> 
-> Regards,
-> - Péter
-> 
-> > 
-> > Thanks,
-> > 
-> > Jonathan
-> >   
-> 
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-
-
+       Arnd
