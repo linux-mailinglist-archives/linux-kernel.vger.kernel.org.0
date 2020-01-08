@@ -2,77 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31F9A1347FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 17:30:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43E3E1347F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 17:27:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728288AbgAHQaX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 11:30:23 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35359 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbgAHQaX (ORCPT
+        id S1727825AbgAHQ1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 11:27:34 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:36991 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727308AbgAHQ1d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 11:30:23 -0500
-Received: by mail-ot1-f67.google.com with SMTP id i15so4180460oto.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 08:30:22 -0800 (PST)
+        Wed, 8 Jan 2020 11:27:33 -0500
+Received: by mail-oi1-f194.google.com with SMTP id z64so3147561oia.4
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 08:27:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Eh1a1EgozWErHHqGLEoauZ/x7T61NxvHf+uJt4V80kQ=;
-        b=FwyWURrqIQ0C0HxAT5peIN+VFqRhdOpFnD+BnKPivVYUgZUlygwN3d43ldYCCAt4eI
-         fUX4xaVsekIOQsMGfHIVVWC2o6H+R3aGPRuCDvCjc56RXOOJ5hQc6+WMeTZMAM2Lx4fU
-         u+ir+YS5E9cpgFs0ZlGPIVMmr2FXvsS+sejKYwY1C2PNvdQs17pYlIHQqW1ZYK5iewjb
-         cCDDewZV3rD30YmiYL3aMf+ks7mH7Y2LqcO2gOz4TqpPgWFBDEjvUh/y6208PT3ho53+
-         DxfLnVyGXviK8VuH4XXmFWutM8ApIaFXEDV0LI2ppHtG9xaa4uccZi7ufCHz39x7JcZO
-         mCDA==
-X-Gm-Message-State: APjAAAVngpCv/iFtjrvhncMxkQIpyC69rB8k00478iGa19qQj4UytAm5
-        P8FoNTL+powLpvERwtU+NVf/UEs=
-X-Google-Smtp-Source: APXvYqxKsjx9+cwiBTktFXebBt0H8xPQPd+Y2hQEzTrD8HHEX023K4NyG5ueTwbyI7Aom8YgEyGMjw==
-X-Received: by 2002:a9d:4e99:: with SMTP id v25mr4923504otk.363.1578501021618;
-        Wed, 08 Jan 2020 08:30:21 -0800 (PST)
+        bh=hlPj6SA9VOkT0SEDoGb32WMgkDWrYAi1UZe0L9iyH6k=;
+        b=O7kruooCwgM1i8CZ5gECwWlq/zFRMYTwytrpEIzfvAlsHbPnnR7pkNaAmaCe+uvej0
+         icWwVJbFc9cdSA8Jeyg7vJCzQ4GrRNoqcliasbe/ukyIX5BkHSPtK2CSHuNlYmgC5CUT
+         RT+8skW8SG8hb90ae2Wmq2xz8rnMBToNWCTbSlQAICWKIq9gNizbg0MR62yOiNRHph3L
+         RLDZ5xGuPOhTI2dNTWmTFQECTFh+HFcIPbc75qH4x3nuaKOdydNUIseVrb23hKB+5lpD
+         PMHfqGxUVYNjoz4HwybjIGnH8COSc2XkwJFzzpC3WtQUyxwb3ASL6SJayJH1rVoOA8lB
+         YEzQ==
+X-Gm-Message-State: APjAAAW0ie35Iy58/mkZ/YqqF7cMIgrO/SCNfmx2j/Zfw1SBecCDzPbI
+        p+xqNbl1pC39YWe+zzoJCvmqobY=
+X-Google-Smtp-Source: APXvYqwjaEFpo1QJ05oRIvwbv+qn5yj/g2Y85HsOiDHwbFjZACs6SVZSqPvJrHcn54n3ZUGwueH/zg==
+X-Received: by 2002:aca:c7cb:: with SMTP id x194mr3738000oif.157.1578500851902;
+        Wed, 08 Jan 2020 08:27:31 -0800 (PST)
 Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id k26sm1214456oiw.34.2020.01.08.08.30.21
+        by smtp.gmail.com with ESMTPSA id h1sm1261734otn.6.2020.01.08.08.27.29
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2020 08:30:21 -0800 (PST)
+        Wed, 08 Jan 2020 08:27:30 -0800 (PST)
 Received: from rob (uid 1000)
         (envelope-from rob@rob-hp-laptop)
-        id 220333
+        id 220adc
         by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Wed, 08 Jan 2020 10:25:49 -0600
-Date:   Wed, 8 Jan 2020 10:25:49 -0600
+        Wed, 08 Jan 2020 10:27:29 -0600
+Date:   Wed, 8 Jan 2020 10:27:29 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Rajeshwari <rkambl@codeaurora.org>
-Cc:     Andy Gross <agross@kernel.org>,
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sanm@codeaurora.org, sivaa@codeaurora.org, manafm@codeaurora.org,
-        Rajeshwari <rkambl@codeaurora.org>
-Subject: Re: [PATCH 2/2] dt-bindings: thermal: tsens: Add configuration for
- sc7180 in yaml
-Message-ID: <20200108162549.GA24298@bogus>
-References: <1577106871-19863-1-git-send-email-rkambl@codeaurora.org>
- <1577106871-19863-3-git-send-email-rkambl@codeaurora.org>
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, od@zcrc.me,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 1/2] dt-bindings: sound: Convert jz47*-codec doc to YAML
+Message-ID: <20200108162729.GA26720@bogus>
+References: <20191224002708.1207884-1-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1577106871-19863-3-git-send-email-rkambl@codeaurora.org>
+In-Reply-To: <20191224002708.1207884-1-paul@crapouillou.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Dec 2019 18:44:31 +0530, Rajeshwari wrote:
-> Signed-off-by: Rajeshwari <rkambl@codeaurora.org>
+On Tue, 24 Dec 2019 01:27:07 +0100, Paul Cercueil wrote:
+> Convert ingenic,jz4740-codec.txt and ingenic,jz4725b-codec.txt to one
+> single ingenic,codec.yaml file, since they share the same binding.
+> 
+> Add the ingenic,jz4770-codec compatible string in the process.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 > ---
->  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  .../bindings/sound/ingenic,codec.yaml         | 55 +++++++++++++++++++
+>  .../bindings/sound/ingenic,jz4725b-codec.txt  | 20 -------
+>  .../bindings/sound/ingenic,jz4740-codec.txt   | 20 -------
+>  3 files changed, 55 insertions(+), 40 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/sound/ingenic,codec.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/ingenic,jz4725b-codec.txt
+>  delete mode 100644 Documentation/devicetree/bindings/sound/ingenic,jz4740-codec.txt
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
