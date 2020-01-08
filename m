@@ -2,223 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 550ED1345C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 16:08:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AB351345E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 16:15:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728978AbgAHPII (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 10:08:08 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:40878 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728969AbgAHPIF (ORCPT
+        id S1728431AbgAHPPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 10:15:30 -0500
+Received: from o1.b.az.sendgrid.net ([208.117.55.133]:16993 "EHLO
+        o1.b.az.sendgrid.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726651AbgAHPPa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 10:08:05 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 008F7vEb079329;
-        Wed, 8 Jan 2020 09:07:57 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578496077;
-        bh=4z+bifZE71KtY+TAZ/V2h1d+jTbA9mP+HP5hK+rrBaM=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=LrQIp9Lwn+24oU/6JXg7a7d2yDEbWDhSN7VTKga69eoMBAI2VqvYZlWpwv6c0YrLQ
-         gAr9EAghY1vEALmon8ZWlj7I02P3RqfMaWk8XhIvT5rP4s6qpDI3HdceC5Pk3cFnSz
-         KyITl9BwCjTzUV483/lK6K7NTYvnkqR576hn226s=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 008F7vwA105519;
-        Wed, 8 Jan 2020 09:07:57 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 8 Jan
- 2020 09:07:57 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 8 Jan 2020 09:07:57 -0600
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 008F7ln3018107;
-        Wed, 8 Jan 2020 09:07:55 -0600
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
-        <faiz_abbas@ti.com>, <robh+dt@kernel.org>
-Subject: [PATCH 3/3] mmc: sdhci_am654: Enable DLL only for some speed modes
-Date:   Wed, 8 Jan 2020 20:39:20 +0530
-Message-ID: <20200108150920.14547-4-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20200108150920.14547-1-faiz_abbas@ti.com>
-References: <20200108150920.14547-1-faiz_abbas@ti.com>
+        Wed, 8 Jan 2020 10:15:30 -0500
+X-Greylist: delayed 301 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 Jan 2020 10:15:29 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+        h=subject:references:from:mime-version:in-reply-to:to:cc:content-type:
+        content-transfer-encoding;
+        s=001; bh=FNzFi/EcyGrtsyvw5xdP4nm1o8qsGg4d42d45TMi1zc=;
+        b=JoZuPIXfmVMHmYBpgmG/X6eYGTg2lx8vIVnAZw2dcJ9rEOyo0UFUwPQmmGTGSizcnqJD
+        tupfhhweZHayNJAWCAcLHQBJTs5gIteDGEJdIH0Y4yzXG6l/Ili0cNOAn7EnZiHKYlR/Fh
+        xQaOrYTt/jL0LnX4ynVcgPqFJnSGds1J4=
+Received: by filterdrecv-p3mdw1-56c97568b5-f2xng with SMTP id filterdrecv-p3mdw1-56c97568b5-f2xng-18-5E15F0E3-59
+        2020-01-08 15:10:27.466849442 +0000 UTC m=+1952840.551967702
+Received: from [80.251.203.67] (unknown [80.251.203.67])
+        by ismtpd0005p1lon1.sendgrid.net (SG) with ESMTP id LdEapv0HQIiUSkUxFUDRww
+        Wed, 08 Jan 2020 15:10:27.165 +0000 (UTC)
+Subject: Re: [PATCH v3 2/5] media: hantro: Reduce H264 extra space for motion
+ vectors
+References: <HE1PR06MB4011EDD5F2686A05BC35F61CAC790@HE1PR06MB4011.eurprd06.prod.outlook.com>
+ <20191106223408.2176-1-jonas@kwiboo.se>
+ <HE1PR06MB4011FF930111A869E4645C8CAC790@HE1PR06MB4011.eurprd06.prod.outlook.com>
+ <CAAFQd5CSWea=DNjySJxZmVi+2c5U4EKVPa1mf3vHh70+YrAQCA@mail.gmail.com>
+ <7b92111b0c6443653de45f1eeec867645c127f32.camel@collabora.com>
+ <CAAFQd5CZo5g2gtuvU+OuoRj18ZcCH8XEinGyAjRxqUXRfSQhgg@mail.gmail.com>
+From:   Jonas Karlman <jonas@kwiboo.se>
+Message-ID: <9606106c-5c49-cbc1-cb8f-0389ff8281bd@kwiboo.se>
+Date:   Wed, 08 Jan 2020 15:10:27 +0000 (UTC)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <CAAFQd5CZo5g2gtuvU+OuoRj18ZcCH8XEinGyAjRxqUXRfSQhgg@mail.gmail.com>
+X-SG-EID: =?us-ascii?Q?TdbjyGynYnRZWhH+7lKUQJL+ZxmxpowvO2O9SQF5CwCVrYgcwUXgU5DKUU3QxA?=
+ =?us-ascii?Q?fZekEeQsTe+RrMu3cja6a0hw4wwBUrflS0pBfMy?=
+ =?us-ascii?Q?kCNRb7VG1Hvipht9ko5YRiRt2MGcELKDFGENYUR?=
+ =?us-ascii?Q?mSBZLGqIZZIsFu0QQJoCC=2F5A8McuNFH6cUvl3l4?=
+ =?us-ascii?Q?LNamw4KwZmnfVpxnGxUMBvQEDEQV5WLr19PI9Ff?=
+ =?us-ascii?Q?tqijw2OKMts7bCgsqxUPWZEFf6wwGwE8EvO0QBk?=
+ =?us-ascii?Q?op+fohN4RtdszkmzhmEUQ=3D=3D?=
+To:     Tomasz Figa <tfiga@chromium.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Language: sv
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Its recommended that DLL must only be enabled for SDR50, DDR50, DDR52,
-SDR104, HS200 and HS400 speed modes. Move DLL configuration to its own
-function and call it only in the above speed modes.
+On 2020-01-08 13:59, Tomasz Figa wrote:
+> On Tue, Dec 10, 2019 at 3:11 AM Ezequiel Garcia <ezequiel@collabora.com> wrote:
+>>
+>> On Wed, 2019-11-20 at 21:44 +0900, Tomasz Figa wrote:
+>>> Hi Jonas,
+>>>
+>>> On Thu, Nov 7, 2019 at 7:34 AM Jonas Karlman <jonas@kwiboo.se> wrote:
+>>>> A decoded 8-bit 4:2:0 frame need memory for up to 448 bytes per
+>>>> macroblock with additional 32 bytes on multi-core variants.
+>>>>
+>>>> Memory layout is as follow:
+>>>>
+>>>> +---------------------------+
+>>>>> Y-plane   256 bytes x MBs |
+>>>> +---------------------------+
+>>>>> UV-plane  128 bytes x MBs |
+>>>> +---------------------------+
+>>>>> MV buffer  64 bytes x MBs |
+>>>> +---------------------------+
+>>>>> MC sync          32 bytes |
+>>>> +---------------------------+
+>>>>
+>>>> Reduce the extra space allocated now that motion vector buffer offset no
+>>>> longer is based on the extra space.
+>>>>
+>>>> Only allocate extra space for 64 bytes x MBs of motion vector buffer
+>>>> and 32 bytes for multi-core sync.
+>>>>
+>>>> Fixes: a9471e25629b ("media: hantro: Add core bits to support H264 decoding")
+>>>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+>>>> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+>>>> ---
+>>>> Changes in v3:
+>>>>   - add memory layout to code comment (Boris)
+>>>> Changes in v2:
+>>>>   - updated commit message
+>>>> ---
+>>>>  drivers/staging/media/hantro/hantro_v4l2.c | 20 ++++++++++++++++++--
+>>>>  1 file changed, 18 insertions(+), 2 deletions(-)
+>>>>
+>>>
+>>> Thanks for the patch!
+>>>
+>>> What platform did you test it on and how? Was it tested with IOMMU enabled?
+>>
+>> Hello Tomasz,
+>>
+>> Please note that this series has been picked-up and is merged
+>> in v5.5-rc1.
+>>
+>> IIRC, we tested these patches on RK3399 and RK3288 (that means
+>> with an IOMMU). I've just ran some more extensive tests on RK3288,
+>> on media/master; and I plan to test some more on RK3399 later this week.
+>>
+>> Do you have any specific concern in mind?
+> 
+> I specifically want to know whether we're 100% sure that those sizes
+> are correct. The IOMMU still works on page granularity so it's
+> possible that the allocation could be just big enough by luck.
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- drivers/mmc/host/sdhci_am654.c | 128 +++++++++++++++++----------------
- 1 file changed, 68 insertions(+), 60 deletions(-)
+One of my RK3288 TRM [1] contains the following:
 
-diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-index bb977de43f7d..575bbab1a6ed 100644
---- a/drivers/mmc/host/sdhci_am654.c
-+++ b/drivers/mmc/host/sdhci_am654.c
-@@ -119,16 +119,80 @@ static const struct timing_data td[] = {
- 	[MMC_TIMING_MMC_HS400] = {"ti,otap-del-sel-hs400", MMC_CAP2_HS400},
- };
- 
-+static void sdhci_am654_setup_dll(struct sdhci_host *host, unsigned int clock)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
-+	int sel50, sel100, freqsel;
-+	u32 mask, val;
-+	int ret;
-+
-+	if (sdhci_am654->flags & FREQSEL_2_BIT) {
-+		switch (clock) {
-+		case 200000000:
-+			sel50 = 0;
-+			sel100 = 0;
-+			break;
-+		case 100000000:
-+			sel50 = 0;
-+			sel100 = 1;
-+			break;
-+		default:
-+			sel50 = 1;
-+			sel100 = 0;
-+		}
-+
-+		/* Configure PHY DLL frequency */
-+		mask = SEL50_MASK | SEL100_MASK;
-+		val = (sel50 << SEL50_SHIFT) | (sel100 << SEL100_SHIFT);
-+		regmap_update_bits(sdhci_am654->base, PHY_CTRL5, mask, val);
-+
-+	} else {
-+		switch (clock) {
-+		case 200000000:
-+			freqsel = 0x0;
-+			break;
-+		default:
-+			freqsel = 0x4;
-+		}
-+
-+		regmap_update_bits(sdhci_am654->base, PHY_CTRL5, FREQSEL_MASK,
-+				   freqsel << FREQSEL_SHIFT);
-+	}
-+	/* Configure DLL TRIM */
-+	mask = DLL_TRIM_ICP_MASK;
-+	val = sdhci_am654->trm_icp << DLL_TRIM_ICP_SHIFT;
-+
-+	/* Configure DLL driver strength */
-+	mask |= DR_TY_MASK;
-+	val |= sdhci_am654->drv_strength << DR_TY_SHIFT;
-+	regmap_update_bits(sdhci_am654->base, PHY_CTRL1, mask, val);
-+
-+	/* Enable DLL */
-+	regmap_update_bits(sdhci_am654->base, PHY_CTRL1, ENDLL_MASK,
-+			   0x1 << ENDLL_SHIFT);
-+	/*
-+	 * Poll for DLL ready. Use a one second timeout.
-+	 * Works in all experiments done so far
-+	 */
-+	ret = regmap_read_poll_timeout(sdhci_am654->base, PHY_STAT1, val,
-+				       val & DLLRDY_MASK, 1000, 1000000);
-+	if (ret) {
-+		dev_err(mmc_dev(host->mmc), "DLL failed to relock\n");
-+		return;
-+	}
-+
-+	sdhci_am654->dll_on = true;
-+}
-+
- static void sdhci_am654_set_clock(struct sdhci_host *host, unsigned int clock)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
- 	unsigned char timing = host->mmc->ios.timing;
--	int sel50, sel100, freqsel;
- 	u32 otap_del_sel;
- 	u32 otap_del_ena;
- 	u32 mask, val;
--	int ret;
- 
- 	if (sdhci_am654->dll_on) {
- 		regmap_update_bits(sdhci_am654->base, PHY_CTRL1, ENDLL_MASK, 0);
-@@ -163,64 +227,8 @@ static void sdhci_am654_set_clock(struct sdhci_host *host, unsigned int clock)
- 
- 		regmap_update_bits(sdhci_am654->base, PHY_CTRL4, mask, val);
- 
--		if (sdhci_am654->flags & FREQSEL_2_BIT) {
--			switch (clock) {
--			case 200000000:
--				sel50 = 0;
--				sel100 = 0;
--				break;
--			case 100000000:
--				sel50 = 0;
--				sel100 = 1;
--				break;
--			default:
--				sel50 = 1;
--				sel100 = 0;
--			}
--
--			/* Configure PHY DLL frequency */
--			mask = SEL50_MASK | SEL100_MASK;
--			val = (sel50 << SEL50_SHIFT) | (sel100 << SEL100_SHIFT);
--			regmap_update_bits(sdhci_am654->base, PHY_CTRL5, mask,
--					   val);
--		} else {
--			switch (clock) {
--			case 200000000:
--				freqsel = 0x0;
--				break;
--			default:
--				freqsel = 0x4;
--			}
--
--			regmap_update_bits(sdhci_am654->base, PHY_CTRL5,
--					   FREQSEL_MASK,
--					   freqsel << FREQSEL_SHIFT);
--		}
--
--		/* Configure DLL TRIM */
--		mask = DLL_TRIM_ICP_MASK;
--		val = sdhci_am654->trm_icp << DLL_TRIM_ICP_SHIFT;
--
--		/* Configure DLL driver strength */
--		mask |= DR_TY_MASK;
--		val |= sdhci_am654->drv_strength << DR_TY_SHIFT;
--		regmap_update_bits(sdhci_am654->base, PHY_CTRL1, mask, val);
--		/* Enable DLL */
--		regmap_update_bits(sdhci_am654->base, PHY_CTRL1, ENDLL_MASK,
--				   0x1 << ENDLL_SHIFT);
--		/*
--		 * Poll for DLL ready. Use a one second timeout.
--		 * Works in all experiments done so far
--		 */
--		ret = regmap_read_poll_timeout(sdhci_am654->base, PHY_STAT1,
--					       val, val & DLLRDY_MASK, 1000,
--					       1000000);
--		if (ret) {
--			dev_err(mmc_dev(host->mmc), "DLL failed to relock\n");
--			return;
--		}
--
--		sdhci_am654->dll_on = true;
-+		if (timing > MMC_TIMING_UHS_SDR25)
-+			sdhci_am654_setup_dll(host, clock);
- 	}
- }
- 
--- 
-2.19.2
+Direct mode motion vector write:
+  Its base addr is right after decode output picture data
+  Its length is mbwidth*mbheight*64
 
+Also both the mpp library and imx-vpu-hantro code both use mbwidth*mbheight*64.
+So I feel confident that the buffer size is correct.
+
+[1] Rockchip RK3288TRM V1.1 Part3-Graphic and multi-media.pdf
+
+Regards,
+Jonas
+
+> 
+> Best regards,
+> Tomasz
+> 
