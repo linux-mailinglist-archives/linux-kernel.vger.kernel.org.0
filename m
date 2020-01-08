@@ -2,82 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06C4F133E4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:26:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 278D8133E48
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 10:26:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbgAHJ0A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 04:26:00 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:46954 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727595AbgAHJZ7 (ORCPT
+        id S1727200AbgAHJZz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 04:25:55 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:40788 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727309AbgAHJZy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 04:25:59 -0500
-Received: by mail-qk1-f193.google.com with SMTP id r14so1961476qke.13
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 01:25:59 -0800 (PST)
+        Wed, 8 Jan 2020 04:25:54 -0500
+Received: by mail-qt1-f196.google.com with SMTP id v25so406876qto.7
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 01:25:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=d9itra/1hP66y5Vh1A/apsI7vVNMDV9CQI60fYE2iNo=;
-        b=mWqduuy/+k1H4CJ3RmxwE369OYZjbQ91El877rL/H+x8wlktANqK8kcC4voHl2Sj9F
-         BWPxcXnJgz1F9WIFJwkli10BS+NHOKcP6tM0yyKGvdBw2htSyoe13BdbGf7XPQMCdUhk
-         KKAC3xbCwpVV74ByShIV2AhcfQ7oHmaS+egzk=
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=fRFOinAO4N9dX5DotLS7iFbJrG8nFqN9gCj1vzfuoVs=;
+        b=IG2cHFmUDWGpT8KPFqac8A4sivejZFJfIt6QMcXPxOZW6R0brJE6CwxelQcOwin5cU
+         aZZzdHA6Lav4aWPqFZwNeY4FZuLRDuSpFHK6NDOeH0x9noy7WINGU8PNyTI+tnFiv44O
+         95pzFl120cw4KAiyQIdCw47ydCewJLtIhGq3bkNpyeno2d7zLwswWRF9pVio2gyD3tKn
+         4glkamwMBGYZjBtPDD2U1XAcQl8uFRmWla7iUpqHdtaA/rfP6Le8R5EPE0uvoZNC6FoE
+         WbfOQ9APqMiWzV97aaUTDsaf/igrlSedJ+8VvVGW4TI/nwAsvD1FJLwvo+3IWj8uM1qD
+         pL+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=d9itra/1hP66y5Vh1A/apsI7vVNMDV9CQI60fYE2iNo=;
-        b=Tv6oLXbpnux9kK2SMo4uBl+3Pysv1lefwZYFBljuOQMBYFTNYQ6XjTc9Je+EeqkMWC
-         4lIh0sxVmPtrQ3ee2NdIX2F+0kSoTVrw91yf/4i5LUWDsozemYgBYKJql5cheHk9PIJK
-         dqeP4PAWJuosp06y22RWLnysvMTkQ/+QL9b+vaXclWKuRfNW1ThfYrtkfPAhI/c1n2Gu
-         Yt8/LxkyYgATJXwJ4G1ihTVkuhzmO0Oi5YPqzeYC5CQ8QM7IcPwoci4c1lXIbIFTtihU
-         Rg+aURV9MQcvu7vE9njl149VIxG0G9IUG+j92GIiAZGbIvj1zThrny8NhbEWjWrG6aWv
-         ZyJQ==
-X-Gm-Message-State: APjAAAVmCbVTSLc1qzm2cXlleU4nI/xvBoq8FRyOk8YIuW490IBZwG+J
-        lINW/pyQCc1WCuaK8tdKmODoGgiuHQxteFL3LauNHg==
-X-Google-Smtp-Source: APXvYqxUSfxCpOfPQeb5k2dIYC6xmY0+WG2Ufqb4kkw22kn9ZUvrNzcvtQ2APhviNZ1LTVVT4U0dZLh1RLVsQUCsLdo=
-X-Received: by 2002:a37:6551:: with SMTP id z78mr3581807qkb.144.1578475558723;
- Wed, 08 Jan 2020 01:25:58 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=fRFOinAO4N9dX5DotLS7iFbJrG8nFqN9gCj1vzfuoVs=;
+        b=f9CPLQwAUSiFDRnk8zWJV5b+U3Ri1nAGczRPAsjV23H8X8ARuBLCg0+qTkR0lz90AX
+         lxtiK454a79cLeoAnXKw9rEdtJvoApFC3Z4diAMiyu0LWPkiKY2PlqO2N/g33qS/c0pe
+         M7Ocno+2l7DYJYW8wX62H470KJGYCxi7zfwo+M6xaYLQN2dJSOkmaDf5XArArN+z2r55
+         3tW4IyNi2pja7XmzmRUt1jAE+jvfej78yhQACXxi49wVV1NKG8HZ4rKtQyQOzogNTIL0
+         ht2lfMAfODdYUzwHqhxqLn4MSX7sgv3Wwz4B6X4xe8e1GKgLx+6fVEKtZTWT9CW/TryM
+         TNYQ==
+X-Gm-Message-State: APjAAAX3YDNgdBajmUkq6iBg8wNKJYnpl7Rid6a1zMZ3iNcmFwkBtQgH
+        KbOChwk+gRNhk0fZhTJXLz0DBzEkFa4C1vnaFdU=
+X-Google-Smtp-Source: APXvYqy/PeQPtRVyvs0Fl6HMnG7XUtNQp/h6QPr1WuJo1J4ZZqd6zf4MoE0Dx/AYAsKISH8oF+JgzcSDeMNnD6GU8hc=
+X-Received: by 2002:ac8:7b4f:: with SMTP id m15mr2785652qtu.48.1578475553536;
+ Wed, 08 Jan 2020 01:25:53 -0800 (PST)
 MIME-Version: 1.0
-References: <1578280296-18946-1-git-send-email-jiaxin.yu@mediatek.com> <1578280296-18946-3-git-send-email-jiaxin.yu@mediatek.com>
-In-Reply-To: <1578280296-18946-3-git-send-email-jiaxin.yu@mediatek.com>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Wed, 8 Jan 2020 17:25:48 +0800
-Message-ID: <CANMq1KD3n5r1ACy2acKgXTfTLHMsONzT-NscL=AoY1Jr-eqdww@mail.gmail.com>
-Subject: Re: [PATCH v10 2/2] watchdog: mtk_wdt: mt8183: Add reset controller
-To:     Jiaxin Yu <jiaxin.yu@mediatek.com>
-Cc:     Yong Liang <yong.liang@mediatek.com>, wim@linux-watchdog.org,
-        linux@roeck-us.net, Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-watchdog@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        chang-an.chen@mediatek.com, freddy.hsin@mediatek.com,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>
+Received: by 2002:a05:6214:2a9:0:0:0:0 with HTTP; Wed, 8 Jan 2020 01:25:53
+ -0800 (PST)
+Reply-To: kone.compaore20@gmail.com
+From:   Kone Compaore <abbttnbn10@gmail.com>
+Date:   Wed, 8 Jan 2020 01:25:53 -0800
+Message-ID: <CAG2DQwJWSSCjPCcJ2=ac+tXspgZB9jZAykFLpr=4EO4dj9KhLA@mail.gmail.com>
+Subject: Greetings from Kone
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 6, 2020 at 11:11 AM Jiaxin Yu <jiaxin.yu@mediatek.com> wrote:
->
-> Add reset controller API in watchdog driver.
-> Besides watchdog, MTK toprgu module alsa provide sub-system (eg, audio,
-> camera, codec and connectivity) software reset functionality.
+Greetings to you and your family.
 
-You add support for reset controller on both 8183 and 2712, do you
-want to say that in the commit title and message?
+My name is Mr. Kone Compaore, the director general with the bank,
+Africa Develop bank (ADB) Ouagadougou, Burkina Faso, in West Africa. I
+am contacting you to seek our honesty and sincere cooperation in
+confidential manner to transfer the sum of 10.5 (Ten million five
+hundred thousand Dollars) to your existing or new bank account.
 
->
-> Signed-off-by: yong.liang <yong.liang@mediatek.com>
-> Signed-off-by: Jiaxin Yu <jiaxin.yu@mediatek.com>
-> Reviewed-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> ---
->  drivers/watchdog/mtk_wdt.c | 105 ++++++++++++++++++++++++++++++++++++-
->  1 file changed, 104 insertions(+), 1 deletion(-)
+This money belongs to one of our bank client, a Libyan oil exporter
+who was working with the former Libyan government; I learn t that he
+was killed by the revolutionary forces since October 2011. Our bank is
+planning to transfer this entire fund into the government public
+treasury as unclaimed fund if nobody comes to claim the money from our
+bank after four years without account activities .
+
+We did not know each other before, but due to the fact that the
+deceased is a foreigner, the bank will welcome any claim from a
+foreigner without any suspect, that is why I decided to look for
+someone whim I can trust to come and claim the fund from our bank.
+
+I will endorse your name in the deceased client file here in my office
+which will indicate to that the deceased is your legal joint account
+business partner or family member next of kin to the deceased and
+officially the bank will transfer the fund to your bank account within
+seven working days in accordance to our banking inheritance rules and
+fund claim regulation.
+
+I will share 40% for you and 60% for me after the fund is transferred
+to your bank account, we need to act fast to complete this transaction
+within seven days. I will come to your country to collect my share
+after the fund is transferred to your bank account in your country. I
+hope that you will not disappoint me after the fund is transferred to
+your bank account in your country.
+
+Please I want you to send me your private phone number so that I can
+call you to discuss more details on how we can proceed on this project
+
+Waiting for your urgent response today
+Yours sincerely
+
+Kone Compaore
