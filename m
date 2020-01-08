@@ -2,87 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19D391349ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 18:58:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A862E1349F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 18:59:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728051AbgAHR6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 12:58:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32784 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727127AbgAHR6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 12:58:37 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 797722067D;
-        Wed,  8 Jan 2020 17:58:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578506316;
-        bh=SdtmN8vMPYr6lvvcJ19d5FHoncte7Ipmo58T/30pIBE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KahEnhp61ZYr9Kt8C5+kMPQ74X4OJW/0iqGXeJ3xTIyK7mqeMOzuAb/MC4MxIS22E
-         HPP86YtIG54fmcXdabmpLcq7fn/79xIv0ZuyMCtQKTAInevdfFigJ4Y42NSSqa19DJ
-         f/N51BQoshrnlRUZrqr78i/GNE+V7jIt/AtumAb8=
-Date:   Wed, 8 Jan 2020 18:58:34 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Chunfeng Yun <chunfeng.yun@mediatek.com>, od@zcrc.me,
-        linux-usb@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: common: usb-conn-gpio: Register charger
-Message-ID: <20200108175834.GC2546185@kroah.com>
-References: <20200107002901.940297-1-paul@crapouillou.net>
- <20200108165323.GA2506374@kroah.com>
- <1578504370.3.1@crapouillou.net>
+        id S1729099AbgAHR7F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 12:59:05 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38856 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727090AbgAHR7F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 12:59:05 -0500
+Received: by mail-ed1-f67.google.com with SMTP id i16so3323338edr.5
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 09:59:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2uEGBOLSJ2/X/0eS51RiNhJGw7wJMIxKLyleFhVXCjU=;
+        b=bNfU3pqQAxrJLz5YamHpEVqhAqbwtCyAQtia8G0VcYhNt4oMjsMyEKEFJSsaPM023k
+         WwYyZCoRFiDvgBZqyHWGBIwb33HRviCqZzPQ9Rwvnv+3mXF6zDMBX3LYLNWRmADSxWnU
+         AhTLCkfwuKN5URHZy0XQG0kOUs2ESmqZZBjf0yO6gd7DiHyWEZal/nUYAH4tnfghehRx
+         Hwhd0v7hpxd/nXxGkC6sxAB4fgSJFoTM9sld6Z/jH37HNI8+Uto9KE3qombk7p4dmMtc
+         pULM+JnTaOvu7dHzcEFKAWuMIvImdzzHZ74vUt8yadsb9zL1bvktTIkcoeJkG0CZjuJB
+         wQRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2uEGBOLSJ2/X/0eS51RiNhJGw7wJMIxKLyleFhVXCjU=;
+        b=JgI23a3MQj5dE/XeW9gnihP2X/eAtRz1mIpbqoK7TgWdnGS8hah4HO5KmFn02mo98Z
+         Zf4wKG6a0Pc6rrChdPI9i5Fd2mhiYsRUulUyl+RL3cgElSB7EThlLdpGBvMLaXkudLPm
+         zeRgq1SZ5NvfE5R14ZzMWVRqAwBVAFsgkS7HmFWfxhwmDzUFdeW45rjlxQKqrecERPOl
+         fovPMTBZXc4bqOSP8SPPEbuxULincNb4VS0L7Mhx69nqR4yTCKTJQ6FzOBkx3sXRNv0E
+         hCg9nAVwLz97NHNwfhitCPULz+h18NGw7nbb4WUThjCzrdW9kRm9WLJaD/ocIUfUrevr
+         5FFQ==
+X-Gm-Message-State: APjAAAWIw7c+yVaYvrCBxD/9vOinYh1o2epWk/rVwrTSYaJ1s4onJkbv
+        PeV3dVwBIeRjRaGmSEOeSjIxKlREVJ0IrbU8oyZ8Kw==
+X-Google-Smtp-Source: APXvYqzJNhUYj7BUDWq/b5VLfPHGhXZOH/nyV2Gie8IiGDhSBzYXZZsk8IWFKTu5blsELnHIiDrlPgfetGRZnwf7rWQ=
+X-Received: by 2002:a17:906:3798:: with SMTP id n24mr6133397ejc.15.1578506343460;
+ Wed, 08 Jan 2020 09:59:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1578504370.3.1@crapouillou.net>
+References: <20191216021247.24950-1-takahiro.akashi@linaro.org>
+ <20191216021247.24950-3-takahiro.akashi@linaro.org> <20200108174839.GB21242@willie-the-truck>
+In-Reply-To: <20200108174839.GB21242@willie-the-truck>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Date:   Wed, 8 Jan 2020 12:58:52 -0500
+Message-ID: <CA+CK2bBg2zaUONC_wf5na4CF0Tj3sThEPT7AgNmevycSZRdMeA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] arm64: kexec_file: add crash dump support
+To:     Will Deacon <will@kernel.org>
+Cc:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, robh+dt@kernel.org,
+        frowand.list@gmail.com, Bhupesh Sharma <bhsharma@redhat.com>,
+        kexec mailing list <kexec@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 08, 2020 at 02:26:10PM -0300, Paul Cercueil wrote:
-> Hi Greg,
-> 
-> 
-> Le mer., janv. 8, 2020 at 17:53, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> a écrit :
-> > On Tue, Jan 07, 2020 at 01:29:01AM +0100, Paul Cercueil wrote:
-> > >  Register a power supply charger, whose online state depends on
-> > > whether
-> > >  the USB role is set to device or not.
-> > 
-> > That says _what_ you are doing, but I have no idea _why_ you want to do
-> > this.
-> > 
-> > What is this going to cause to have happen?  What new userspace api is
-> > going to result?  What will a user do with this?
-> 
-> This is useful when the USB role is the only way to know if the device is
-> charging from USB.
-> 
-> The API is the standard power supply charger API, you get a
-> /sys/class/power_supply/xxx/online node which tells you the state of the
-> charger.
-> 
-> The sole purpose of this is to give userspace applications a way to know
-> whether or not the charger is plugged.
+Looks good to me.
 
-Ok, this is all good info that should go into the changelog text for
-when you resend this.
+Pasha
 
-> > Is this going to always show up, no matter if the role is not even
-> > relevant for a power supply?
-> 
-> I guess it'd always show up, yes. In which case would the role not be
-> relevant for a power supply? Is gpio-b-connector not always used for OTG
-> connectors?
-
-I do not know, I thought OTG was dead :)
-
-thanks,
-
-greg k-h
+On Wed, Jan 8, 2020 at 12:48 PM Will Deacon <will@kernel.org> wrote:
+>
+> On Mon, Dec 16, 2019 at 11:12:47AM +0900, AKASHI Takahiro wrote:
+> > Enabling crash dump (kdump) includes
+> > * prepare contents of ELF header of a core dump file, /proc/vmcore,
+> >   using crash_prepare_elf64_headers(), and
+> > * add two device tree properties, "linux,usable-memory-range" and
+> >   "linux,elfcorehdr", which represent respectively a memory range
+> >   to be used by crash dump kernel and the header's location
+> >
+> > Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Will Deacon <will.deacon@arm.com>
+> > Reviewed-by: James Morse <james.morse@arm.com>
+> > Tested-and-reviewed-by: Bhupesh Sharma <bhsharma@redhat.com>
+> > ---
+> >  arch/arm64/include/asm/kexec.h         |   4 +
+> >  arch/arm64/kernel/kexec_image.c        |   4 -
+> >  arch/arm64/kernel/machine_kexec_file.c | 106 ++++++++++++++++++++++++-
+> >  3 files changed, 106 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
+> > index 12a561a54128..d24b527e8c00 100644
+> > --- a/arch/arm64/include/asm/kexec.h
+> > +++ b/arch/arm64/include/asm/kexec.h
+> > @@ -96,6 +96,10 @@ static inline void crash_post_resume(void) {}
+> >  struct kimage_arch {
+> >       void *dtb;
+> >       unsigned long dtb_mem;
+> > +     /* Core ELF header buffer */
+> > +     void *elf_headers;
+> > +     unsigned long elf_headers_mem;
+> > +     unsigned long elf_headers_sz;
+> >  };
+>
+> This conflicts with the cleanup work from Pavel. Please can you check my
+> resolution? [1]
+>
+> Will
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git/diff/?h=for-kernelci&id=aef73191765a88cadc0a627cdc070e5a0086b015
+>
