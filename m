@@ -2,78 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5808F133C70
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 08:48:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAC20133C75
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 08:53:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbgAHHsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 02:48:37 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:39338 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726443AbgAHHsh (ORCPT
+        id S1726952AbgAHHw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 02:52:57 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:38135 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbgAHHw5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 02:48:37 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 91DE41C25B8; Wed,  8 Jan 2020 08:48:35 +0100 (CET)
-Date:   Wed, 8 Jan 2020 08:48:34 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        Lyude Paul <lyude@redhat.com>, Ben Skeggs <bskeggs@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 023/115] drm/nouveau: Move the declaration of struct
- nouveau_conn_atom up a bit
-Message-ID: <20200108074834.GB619@amd>
-References: <20200107205240.283674026@linuxfoundation.org>
- <20200107205255.976508438@linuxfoundation.org>
+        Wed, 8 Jan 2020 02:52:57 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ip696-0006TA-I9; Wed, 08 Jan 2020 08:52:52 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ip691-0007Fs-TD; Wed, 08 Jan 2020 08:52:47 +0100
+Date:   Wed, 8 Jan 2020 08:52:47 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, Peng Fan <peng.fan@nxp.com>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mripard@kernel.org" <mripard@kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "wens@csie.org" <wens@csie.org>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: mvebu: armada-37xx: use use platform api
+Message-ID: <20200108075247.y5ex44flp6lvqeoc@pengutronix.de>
+References: <1576672860-14420-1-git-send-email-peng.fan@nxp.com>
+ <CAOMZO5DeA24EUjr-E=V=tGNaZ7UkOEi+F5-kEBqEB288DSNSoA@mail.gmail.com>
+ <AM0PR04MB4481B3EAB2DDC42A137E8AAB88530@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <CAOMZO5BK0Pa6Aw6n7Tf+C6+Fg15WNbEUOzKCQTaWqTUu6yoPjA@mail.gmail.com>
+ <20191218145955.GE26938@lunn.ch>
+ <CAOMZO5BibF5A9sw=fLr3DXLf9LXYdxWy=aK7KCE3L0bt5eX+9Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="b5gNqxB1S1yM7hjW"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20200107205255.976508438@linuxfoundation.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOMZO5BibF5A9sw=fLr3DXLf9LXYdxWy=aK7KCE3L0bt5eX+9Q@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Fabio,
 
---b5gNqxB1S1yM7hjW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Dec 18, 2019 at 12:09:42PM -0300, Fabio Estevam wrote:
+> On Wed, Dec 18, 2019 at 12:00 PM Andrew Lunn <andrew@lunn.ch> wrote:
+> 
+> > Hi Fabio
+> >
+> > Look closer. This is not about returning an error, it is about
+> > printing an error.
+> >
+> > I think the API could better. A %ie formatter would make a lot of
+> > sense, so avoiding the ERR_PTR().
+> 
+> Yes, I think that returning the error like:
+> 
+> dev_err(dev, "Couldn't determine irq count: %d\n", nr_irq_parent);
+> 
+> would make the code cleaner.
 
-On Tue 2020-01-07 21:53:53, Greg Kroah-Hartman wrote:
-> From: Hans de Goede <hdegoede@redhat.com>
->=20
-> [ Upstream commit 37a68eab4cd92b507c9e8afd760fdc18e4fecac6 ]
->=20
-> Place the declaration of struct nouveau_conn_atom above that of
-> struct nouveau_connector. This commit makes no changes to the moved
-> block what so ever, it just moves it up a bit.
->=20
-> This is a preparation patch to fix some issues with connector handling
-> on pre nv50 displays (which do not use atomic modesetting).
+Are you aware of the semantic difference between
 
-As followup changes are not queued in v4.19-stable, should this be dropped?
+	dev_err(..., "Couldn't determine irq count: %d\n", nr_irq_parent);
 
-   	    	    	    	      	     	    	    Pavel
+and
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+	dev_err(..., "Couldn't determine irq count: %pe\n", ERR_PTR(nr_irq_parent));
 
---b5gNqxB1S1yM7hjW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+? The first yields:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+	Couldn't determine irq count: -5
 
-iEYEARECAAYFAl4ViVIACgkQMOfwapXb+vJI3QCgjU0CpkYT6r1fshAZMIkVHhZY
-M3gAnj2/GcnHewOftSaC0ajt6tGLAIWS
-=J427
------END PGP SIGNATURE-----
+while the latter yields
 
---b5gNqxB1S1yM7hjW--
+	Couldn't determine irq count: -EIO
+
+which is more expressive.
+
+I agree that having a format for printing an integer error code would be
+useful. I have this on my todo-list but having some %pe with ERR_PTR
+conversion would help me arguing my case.
+
+So I would like the patch to go in with ERR_PTR even though v2 was sent
+using %d today.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
