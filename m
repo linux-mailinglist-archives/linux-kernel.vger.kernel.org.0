@@ -2,101 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CF521347C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 17:23:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 681DD1347D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 17:25:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728532AbgAHQXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 11:23:43 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:9578 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726967AbgAHQXn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 11:23:43 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e1601dd0000>; Wed, 08 Jan 2020 08:22:53 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 08 Jan 2020 08:23:42 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 08 Jan 2020 08:23:42 -0800
-Received: from [10.26.11.166] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 8 Jan
- 2020 16:23:39 +0000
-Subject: Re: [PATCH 4.19 000/115] 4.19.94-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20200107205240.283674026@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <95416c7c-a9ce-39c7-33a7-e0f36dcbefaf@nvidia.com>
-Date:   Wed, 8 Jan 2020 16:23:37 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <20200107205240.283674026@linuxfoundation.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1578500573; bh=Xt7WMOsOvxvB39Q8L2+kTyioTOIq+Bj/6YbzKAzFUYI=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=igH5hTcaWH3lq73ghyBHWH8fp0q0Z3rbeM3fYgC0pC5H9mcdQN8rTaXIbrHbq4wCo
-         z8Y0G7NIyh1V4dqjv323fcew1VlsT0IUNZi6ewKHDS2I8E2Xoos32uElNLrigISA+v
-         k5+RejzDNVey4TbBL7ltDnLokXyUKw4pW9+5BjZuaUWBIgE2J4Br4hwiTWilWte6Wv
-         19QHS/NTzRDILKzl5rzEW9oqoSHCaEFsGrTpt8feQG7ViRoyyB5fnU2QSuw3VP1qXn
-         KpS7BWwJLhiE6Vqbrjc4vZGWWTqlkzHrMdcQxN7H+6uaCses3klKONXc+80lG3ZSZg
-         cP28iywqQVNXw==
+        id S1728872AbgAHQYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 11:24:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:32850 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727618AbgAHQYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 11:24:42 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id BD268B281;
+        Wed,  8 Jan 2020 16:24:40 +0000 (UTC)
+From:   Michal Rostecki <mrostecki@opensuse.org>
+To:     bpf@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
+        Peter Wu <peter@lekensteyn.nl>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v3 0/2] bpftool/libbpf: Add probe for large INSN limit
+Date:   Wed,  8 Jan 2020 17:23:51 +0100
+Message-Id: <20200108162428.25014-1-mrostecki@opensuse.org>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series implements a new BPF feature probe which checks for the
+commit c04c0d2b968a ("bpf: increase complexity limit and maximum program
+size"), which increases the maximum program size to 1M. It's based on
+the similar check in Cilium, although Cilium is already aiming to use
+bpftool checks and eventually drop all its custom checks.
 
-On 07/01/2020 20:53, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.94 release.
-> There are 115 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 09 Jan 2020 20:44:51 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.94-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
+Examples of outputs:
 
+# bpftool feature probe
+[...]
+Scanning miscellaneous eBPF features...
+Large complexity limit and maximum program size (1M) is available
 
-All tests for Tegra are passing ...
+# bpftool feature probe macros
+[...]
+/*** eBPF misc features ***/
+#define HAVE_HAVE_LARGE_INSN_LIMIT
 
-Test results for stable-v4.19:
-    13 builds:	13 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    32 tests:	32 pass, 0 fail
+# bpftool feature probe -j | jq '.["misc"]'
+{
+  "have_large_insn_limit": true
+}
 
-Linux version:	4.19.94-rc2-g9dcb411d44b4
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+v1 -> v2:
+- Test for 'BPF_MAXINSNS + 1' number of total insns.
+- Remove info about current 1M limit from probe's description.
 
-Cheers
-Jon
+v2 -> v3:
+- Remove the "complexity" word from probe's description.
+
+Michal Rostecki (2):
+  libbpf: Add probe for large INSN limit
+  bpftool: Add misc section and probe for large INSN limit
+
+ tools/bpf/bpftool/feature.c   | 18 ++++++++++++++++++
+ tools/lib/bpf/libbpf.h        |  1 +
+ tools/lib/bpf/libbpf.map      |  1 +
+ tools/lib/bpf/libbpf_probes.c | 21 +++++++++++++++++++++
+ 4 files changed, 41 insertions(+)
 
 -- 
-nvpublic
+2.16.4
+
