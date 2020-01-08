@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87D8C134E68
+	by mail.lfdr.de (Postfix) with ESMTP id 0AC2B134E67
 	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 22:08:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbgAHVIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 16:08:22 -0500
-Received: from o1.b.az.sendgrid.net ([208.117.55.133]:51247 "EHLO
+        id S1727469AbgAHVIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 16:08:02 -0500
+Received: from o1.b.az.sendgrid.net ([208.117.55.133]:13320 "EHLO
         o1.b.az.sendgrid.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727263AbgAHVHu (ORCPT
+        with ESMTP id S1727321AbgAHVHx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 16:07:50 -0500
+        Wed, 8 Jan 2020 16:07:53 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
         h=from:subject:in-reply-to:references:to:cc:content-type:
         content-transfer-encoding;
-        s=001; bh=mPIGzETFyK+yy6AvuQViu61rlq4EFws+y7mGZ96sfzo=;
-        b=bOdRKw3CE56+rxLYPC/ZQP0aQ2Rf8EhNnNtyg1xfcDeCqlfC+Y8ZdcNXo5BdOBR1BKlY
-        WqDNfXAsQRJ2LdiktYj4AIeThjIOyciSqqZjjg4j8zoSg1AufhAMFG7Sok6+RYC6IQzLlw
-        JrVsoVVbdovcpwOSrqoXGybXA1EsGCA7U=
-Received: by filterdrecv-p3mdw1-56c97568b5-d7vf5 with SMTP id filterdrecv-p3mdw1-56c97568b5-d7vf5-18-5E1644A6-6
-        2020-01-08 21:07:50.14129033 +0000 UTC m=+1974283.644180722
+        s=001; bh=9Jj+NAbgprA6DENYOuHp17AlmWy0xXfyrllq+OdkH7g=;
+        b=MBDdbuzSOQT00uVzFB1TeI26jQ5PDsgZnGvXzcl1mhwrxnNIJihsvibTsqsqjVFvv2AH
+        QCkPIfTMP8VrOfR9URTfX9EFYtsEXPODmCxrF/tb00YfTKt1eNZcU3EE/Q8cc6/UFIoqJ2
+        nOfv0S4+udiMZcqf23vtrLAQdCU229B/g=
+Received: by filterdrecv-p3mdw1-56c97568b5-9vfcv with SMTP id filterdrecv-p3mdw1-56c97568b5-9vfcv-17-5E1644A7-6C
+        2020-01-08 21:07:51.781361678 +0000 UTC m=+1974280.403924586
 Received: from bionic.localdomain (unknown [98.128.173.80])
-        by ismtpd0005p1lon1.sendgrid.net (SG) with ESMTP id 5gIH8ZCXQJCZxUfJPXl_Sw
-        Wed, 08 Jan 2020 21:07:49.944 +0000 (UTC)
+        by ismtpd0005p1lon1.sendgrid.net (SG) with ESMTP id hV9nQRodQD6D2W9vsowA8Q
+        Wed, 08 Jan 2020 21:07:51.581 +0000 (UTC)
 From:   Jonas Karlman <jonas@kwiboo.se>
-Subject: [PATCH v2 07/14] drm/rockchip: dw-hdmi: require valid vpll clock rate
- on rk3228/rk3328
-Date:   Wed, 08 Jan 2020 21:07:50 +0000 (UTC)
-Message-Id: <20200108210740.28769-8-jonas@kwiboo.se>
+Subject: [PATCH v2 11/14] ARM: dts: rockchip: add vpll clock to hdmi node on
+ rk3228
+Date:   Wed, 08 Jan 2020 21:07:51 +0000 (UTC)
+Message-Id: <20200108210740.28769-12-jonas@kwiboo.se>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200108210740.28769-1-jonas@kwiboo.se>
 References: <20200108210740.28769-1-jonas@kwiboo.se>
 X-SG-EID: =?us-ascii?Q?TdbjyGynYnRZWhH+7lKUQJL+ZxmxpowvO2O9SQF5CwCVrYgcwUXgU5DKUU3QxA?=
- =?us-ascii?Q?fZekEeQsTe+RrMu3cja6a0h9fq3wHH7v6C53qgA?=
- =?us-ascii?Q?YlW1v7dKuNjfj9RgmNCofuXzEMYVHRoz6lVvBjE?=
- =?us-ascii?Q?A4xTi17C8zi=2Fp2rtoJpot8cXaQLOJJaAO7vPEqA?=
- =?us-ascii?Q?ZODRulaZFl1P7H1CNJOvZQ97hAc47ldfcovtAqE?=
- =?us-ascii?Q?OeiSorFXVV8fuU9PXx8AqxoJ14Xm5Xxw1Wuze88?=
- =?us-ascii?Q?XDmdHRdrYkzhnu7r8dyiQ=3D=3D?=
+ =?us-ascii?Q?fZekEeQsTe+RrMu3cja6a0h=2FbbmpOPRsDtGkVba?=
+ =?us-ascii?Q?CkWsg18J6MAJ=2F7UNlaGwK9UO1pBiv2MXipeMHJe?=
+ =?us-ascii?Q?4mrzEuk8+FykzeKYZEmvF9diWYbEVuH3SS4sg+L?=
+ =?us-ascii?Q?HF1eYk1j6viuqpKrgD249AsIRNOjj81s8eMPt3+?=
+ =?us-ascii?Q?eGlxkZDez9YTqV3FMg5DqkJFmI9tOKe7r=2FzPqFe?=
+ =?us-ascii?Q?HZa7L5=2F93aT6sy99cSmPg=3D=3D?=
 To:     Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>
 Cc:     Jonas Karlman <jonas@kwiboo.se>,
         Kishon Vijay Abraham I <kishon@ti.com>,
@@ -53,50 +53,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RK3228/RK3328 can only support clock rates defined in the pre pll table.
-Lets validate the mode clock rate against the pre pll config and filter
-out any mode with a clock rate returning error from clk_round_rate().
+Add the hdmiphy clock as the vpll in hdmi node.
 
 Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 ---
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/arm/boot/dts/rk322x.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-index fae38b323a0c..45fcdce3f27f 100644
---- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-@@ -245,6 +245,22 @@ static void dw_hdmi_rockchip_encoder_disable(struct drm_encoder *encoder)
- {
- }
- 
-+static enum drm_mode_status
-+dw_hdmi_rockchip_encoder_mode_valid(struct drm_encoder *encoder,
-+				    const struct drm_display_mode *mode)
-+{
-+	struct rockchip_hdmi *hdmi = to_rockchip_hdmi(encoder);
-+	long rate;
-+
-+	if (hdmi->vpll_clk) {
-+		rate = clk_round_rate(hdmi->vpll_clk, mode->clock * 1000);
-+		if (rate < 0)
-+			return MODE_CLOCK_RANGE;
-+	}
-+
-+	return MODE_OK;
-+}
-+
- static bool
- dw_hdmi_rockchip_encoder_mode_fixup(struct drm_encoder *encoder,
- 				    const struct drm_display_mode *mode,
-@@ -306,6 +322,7 @@ dw_hdmi_rockchip_encoder_atomic_check(struct drm_encoder *encoder,
- }
- 
- static const struct drm_encoder_helper_funcs dw_hdmi_rockchip_encoder_helper_funcs = {
-+	.mode_valid = dw_hdmi_rockchip_encoder_mode_valid,
- 	.mode_fixup = dw_hdmi_rockchip_encoder_mode_fixup,
- 	.mode_set   = dw_hdmi_rockchip_encoder_mode_set,
- 	.enable     = dw_hdmi_rockchip_encoder_enable,
+diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
+index 340ed6ccb08f..16ad240d5f7f 100644
+--- a/arch/arm/boot/dts/rk322x.dtsi
++++ b/arch/arm/boot/dts/rk322x.dtsi
+@@ -639,8 +639,8 @@
+ 		interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
+ 		assigned-clocks = <&cru SCLK_HDMI_PHY>;
+ 		assigned-clock-parents = <&hdmi_phy>;
+-		clocks = <&cru SCLK_HDMI_HDCP>, <&cru PCLK_HDMI_CTRL>, <&cru SCLK_HDMI_CEC>;
+-		clock-names = "isfr", "iahb", "cec";
++		clocks = <&cru SCLK_HDMI_HDCP>, <&cru PCLK_HDMI_CTRL>, <&hdmi_phy>, <&cru SCLK_HDMI_CEC>;
++		clock-names = "isfr", "iahb", "vpll", "cec";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&hdmii2c_xfer &hdmi_hpd &hdmi_cec>;
+ 		resets = <&cru SRST_HDMI_P>;
 -- 
 2.17.1
 
