@@ -2,71 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47F3B134D14
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 21:21:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB9B6134D29
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 21:26:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbgAHUVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 15:21:47 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55533 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726390AbgAHUVr (ORCPT
+        id S1726932AbgAHU0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 15:26:09 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:38898 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbgAHU0J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 15:21:47 -0500
-Received: by mail-wm1-f66.google.com with SMTP id q9so297944wmj.5;
-        Wed, 08 Jan 2020 12:21:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DAChl6Ul9fKSKLSUyoPgGNo0ChhyAr0XJVth8mI90zs=;
-        b=MOPb+EvtynICKVb4YpklQxm9YdA2sGVaK1Bl47sG/ChZVWWUVkL7eP3lYVuj2dyRma
-         l91eqPosW4LgGGtMWM+7IJjQk0H8t4iLkhvyQ4RqgLNFpwaZVTO4wDwbhy9POvAPyKq2
-         G0bLrWOY/dw04ymaLWrNT1EuFJBVELceZxygSmjZIM+7MAeZP/02zkGGKyng+pX39eZo
-         FaDh5s2PT5r9ADpomlPW+uprxxyIju6zt8dgGW5r5d+EYC1zA6uwm+QXjmmz9oWpJUaE
-         i82OAbp/JkF2TA5mq/JXoWsVxEJuIw350pSWSoi7BVbO84XeQ7vDeSXlZCeLrA1QRElw
-         cGQw==
-X-Gm-Message-State: APjAAAVdbCh1Yz73cntUKfR0A5imwKzUC4JR6tApCF5vxVb2cYM+4Q3b
-        /o99l5DcktgelvzHFDMZXrSDt64tZuP12Q==
-X-Google-Smtp-Source: APXvYqzpZx5bVmQEcf1bpPT5tN7m0CBp56yBmQq5PdtRIz3mJs/1AeH+ujtV+juGwD4/yfPcficuPA==
-X-Received: by 2002:a7b:c93a:: with SMTP id h26mr408703wml.83.1578514905607;
-        Wed, 08 Jan 2020 12:21:45 -0800 (PST)
-Received: from kozik-book ([83.218.167.187])
-        by smtp.googlemail.com with ESMTPSA id q3sm238868wmj.38.2020.01.08.12.21.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 Jan 2020 12:21:44 -0800 (PST)
-Date:   Wed, 8 Jan 2020 21:21:42 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ARM: dts: exynos: tiny4412: enable fimd node and add
- proper panel node
-Message-ID: <20200108202142.GA8492@kozik-book>
-References: <20200107191020.27475-1-tiny.windzz@gmail.com>
+        Wed, 8 Jan 2020 15:26:09 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 008KQ5UH048585;
+        Wed, 8 Jan 2020 14:26:05 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578515165;
+        bh=K3zCJq0s1KUf2adHFNH9bIqtZS4ohTJdousXJK/IAkY=;
+        h=From:To:CC:Subject:Date;
+        b=YdzexfcCSyJXjAuE1TxWzvSVD/IowPIamY/kuAozM+WCuI5G9ttDLwR97RLY9puuc
+         jZwAiP7plrpebi/tYdAmhKqut7mZCuDa8XO2A5N8QQ2ZdYM0XoVpP8VeRfOKpe8AbR
+         bUbk+sUi0LA6O+kXkFqXmrY4A5YuNaN5ri74RJJQ=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 008KQ5Vn036025
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 8 Jan 2020 14:26:05 -0600
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 8 Jan
+ 2020 14:26:05 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 8 Jan 2020 14:26:05 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 008KQ4rd024896;
+        Wed, 8 Jan 2020 14:26:04 -0600
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <sebastian.reichel@collabora.com>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v3 0/4] BQ25150/155 Charger
+Date:   Wed, 8 Jan 2020 14:23:10 -0600
+Message-ID: <20200108202314.11791-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200107191020.27475-1-tiny.windzz@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 07:10:20PM +0000, Yangtao Li wrote:
-> Enable fimd device node which is a display controller, and add panel
-> node required by it.
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
-> v2:
-> -update commit msg and merge to one patch
-> ---
->  arch/arm/boot/dts/exynos4412-tiny4412.dts | 25 +++++++++++++++++++++++
+Hello
 
-Thanks, applied.
+I am introducing the TI BQ25150/155 Charge driver.
+The driver also supports the JEITA spec for Thermal battery management. This
+support for Hot, Warm and Cool are being added to the power supply class.
 
-Best regards,
-Krzysztof
+Datasheets for these devices can be found at:
+http://www.ti.com/lit/ds/symlink/bq25150.pdf
+http://www.ti.com/lit/ds/symlink/bq25155.pdf
+
+Dan Murphy (4):
+  power: supply: core: Update sysfs-class-power ABI document
+  power_supply: Add additional health properties to the header
+  dt-bindings: power: Add the bq2515x family dt bindings
+  power: supply: bq2515x: Introduce the bq2515x family
+
+ Documentation/ABI/testing/sysfs-class-power   |   3 +-
+ .../bindings/power/supply/bq2515x.yaml        |  85 ++
+ drivers/power/supply/Kconfig                  |   8 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/bq2515x_charger.c        | 739 ++++++++++++++++++
+ drivers/power/supply/power_supply_sysfs.c     |   2 +-
+ include/linux/power_supply.h                  |   3 +
+ 7 files changed, 839 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/bq2515x.yaml
+ create mode 100644 drivers/power/supply/bq2515x_charger.c
+
+-- 
+2.23.0
 
