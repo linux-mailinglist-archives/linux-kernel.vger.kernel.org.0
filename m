@@ -2,34 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06F6A1346D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 16:59:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B9211346E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 17:00:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729239AbgAHP7H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 10:59:07 -0500
-Received: from foss.arm.com ([217.140.110.172]:46678 "EHLO foss.arm.com"
+        id S1729252AbgAHP7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 10:59:12 -0500
+Received: from foss.arm.com ([217.140.110.172]:46698 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729222AbgAHP7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 10:59:04 -0500
+        id S1728736AbgAHP7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 10:59:11 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 92E9EDA7;
-        Wed,  8 Jan 2020 07:59:03 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C05F328;
+        Wed,  8 Jan 2020 07:59:10 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A67F3F534;
-        Wed,  8 Jan 2020 07:59:02 -0800 (PST)
-Date:   Wed, 08 Jan 2020 15:59:01 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 178C73F534;
+        Wed,  8 Jan 2020 07:59:09 -0800 (PST)
+Date:   Wed, 08 Jan 2020 15:59:08 +0000
 From:   Mark Brown <broonie@kernel.org>
-To:     Markus Reichl <m.reichl@fivetechno.de>
-Cc:     devicetree@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Chris Brandt <chris.brandt@renesas.com>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
         Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Applied "regulator: mp8859: add driver" to the regulator tree
-In-Reply-To: <20200106211633.2882-2-m.reichl@fivetechno.de>
-Message-Id: <applied-20200106211633.2882-2-m.reichl@fivetechno.de>
+        =?UTF-8?q?Jan=20Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>
+Subject: Applied "spi: rspi: Add support for GPIO chip selects" to the spi tree
+In-Reply-To: <20200102133822.29346-7-geert+renesas@glider.be>
+Message-Id: <applied-20200102133822.29346-7-geert+renesas@glider.be>
 X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -38,11 +35,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: mp8859: add driver
+   spi: rspi: Add support for GPIO chip selects
 
-has been applied to the regulator tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.6
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.6
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -63,184 +60,77 @@ to this mail.
 Thanks,
 Mark
 
-From 4444a1c10069e2f371fa497ba22feafafed5aada Mon Sep 17 00:00:00 2001
-From: Markus Reichl <m.reichl@fivetechno.de>
-Date: Mon, 6 Jan 2020 22:16:24 +0100
-Subject: [PATCH] regulator: mp8859: add driver
+From 144d8f9781e60d89dfd614210d2cedbefbba8885 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Thu, 2 Jan 2020 14:38:22 +0100
+Subject: [PATCH] spi: rspi: Add support for GPIO chip selects
 
-The MP8859 from Monolithic Power Systems is a single output DC/DC
-converter. The voltage can be controlled via I2C.
+Add support for GPIO chip selects using GPIO descriptors.  As the RSPI
+controller always drives a native chip select when performing a
+transfer, at least one native chip select must be left unused.
 
-Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
-Link: https://lore.kernel.org/r/20200106211633.2882-2-m.reichl@fivetechno.de
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20200102133822.29346-7-geert+renesas@glider.be
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/mp8859.c | 156 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 156 insertions(+)
- create mode 100644 drivers/regulator/mp8859.c
+ drivers/spi/spi-rspi.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/mp8859.c b/drivers/regulator/mp8859.c
-new file mode 100644
-index 000000000000..e804a5267301
---- /dev/null
-+++ b/drivers/regulator/mp8859.c
-@@ -0,0 +1,156 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (c) 2019 five technologies GmbH
-+// Author: Markus Reichl <m.reichl@fivetechno.de>
-+
-+#include <linux/module.h>
-+#include <linux/i2c.h>
-+#include <linux/of.h>
-+#include <linux/regulator/driver.h>
-+#include <linux/regmap.h>
-+
-+
-+#define VOL_MIN_IDX			0x00
-+#define VOL_MAX_IDX			0x7ff
-+
-+/* Register definitions */
-+#define MP8859_VOUT_L_REG		0    //3 lo Bits
-+#define MP8859_VOUT_H_REG		1    //8 hi Bits
-+#define MP8859_VOUT_GO_REG		2
-+#define MP8859_IOUT_LIM_REG		3
-+#define MP8859_CTL1_REG			4
-+#define MP8859_CTL2_REG			5
-+#define MP8859_RESERVED1_REG		6
-+#define MP8859_RESERVED2_REG		7
-+#define MP8859_RESERVED3_REG		8
-+#define MP8859_STATUS_REG		9
-+#define MP8859_INTERRUPT_REG		0x0A
-+#define MP8859_MASK_REG			0x0B
-+#define MP8859_ID1_REG			0x0C
-+#define MP8859_MFR_ID_REG		0x27
-+#define MP8859_DEV_ID_REG		0x28
-+#define MP8859_IC_REV_REG		0x29
-+
-+#define MP8859_MAX_REG			0x29
-+
-+#define MP8859_GO_BIT			0x01
-+
-+
-+static int mp8859_set_voltage_sel(struct regulator_dev *rdev, unsigned int sel)
-+{
-+	int ret;
-+
-+	ret = regmap_write(rdev->regmap, MP8859_VOUT_L_REG, sel & 0x7);
-+
-+	if (ret)
-+		return ret;
-+	ret = regmap_write(rdev->regmap, MP8859_VOUT_H_REG, sel >> 3);
-+
-+	if (ret)
-+		return ret;
-+	ret = regmap_update_bits(rdev->regmap, MP8859_VOUT_GO_REG,
-+					MP8859_GO_BIT, 1);
-+	return ret;
-+}
-+
-+static int mp8859_get_voltage_sel(struct regulator_dev *rdev)
-+{
-+	unsigned int val_tmp;
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(rdev->regmap, MP8859_VOUT_H_REG, &val_tmp);
-+
-+	if (ret)
-+		return ret;
-+	val = val_tmp << 3;
-+
-+	ret = regmap_read(rdev->regmap, MP8859_VOUT_L_REG, &val_tmp);
-+
-+	if (ret)
-+		return ret;
-+	val |= val_tmp & 0x07;
-+	return val;
-+}
-+
-+static const struct regulator_linear_range mp8859_dcdc_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(0, VOL_MIN_IDX, VOL_MAX_IDX, 10000),
-+};
-+
-+static const struct regmap_config mp8859_regmap = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = MP8859_MAX_REG,
-+	.cache_type = REGCACHE_RBTREE,
-+};
-+
-+static const struct regulator_ops mp8859_ops = {
-+	.set_voltage_sel = mp8859_set_voltage_sel,
-+	.get_voltage_sel = mp8859_get_voltage_sel,
-+	.list_voltage = regulator_list_voltage_linear_range,
-+};
-+
-+static const struct regulator_desc mp8859_regulators[] = {
-+	{
-+		.id = 0,
-+		.type = REGULATOR_VOLTAGE,
-+		.name = "mp8859_dcdc",
-+		.of_match = of_match_ptr("mp8859_dcdc"),
-+		.n_voltages = VOL_MAX_IDX + 1,
-+		.linear_ranges = mp8859_dcdc_ranges,
-+		.n_linear_ranges = 1,
-+		.ops = &mp8859_ops,
-+		.owner = THIS_MODULE,
-+	},
-+};
-+
-+static int mp8859_i2c_probe(struct i2c_client *i2c)
-+{
-+	int ret;
-+	struct regulator_config config = {.dev = &i2c->dev};
-+	struct regmap *regmap = devm_regmap_init_i2c(i2c, &mp8859_regmap);
-+	struct regulator_dev *rdev;
-+
-+	if (IS_ERR(regmap)) {
-+		ret = PTR_ERR(regmap);
-+		dev_err(&i2c->dev, "regmap init failed: %d\n", ret);
-+		return ret;
-+	}
-+	rdev = devm_regulator_register(&i2c->dev, &mp8859_regulators[0],
-+					&config);
-+
-+	if (IS_ERR(rdev)) {
-+		ret = PTR_ERR(rdev);
-+		dev_err(&i2c->dev, "failed to register %s: %d\n",
-+			mp8859_regulators[0].name, ret);
-+			return ret;
-+		}
-+	return 0;
-+}
-+
-+static const struct of_device_id mp8859_dt_id[] = {
-+	{.compatible =  "mps,mp8859"},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, mp8859_dt_id);
-+
-+static const struct i2c_device_id mp8859_i2c_id[] = {
-+	{ "mp8859", },
-+	{  },
-+};
-+MODULE_DEVICE_TABLE(i2c, mp8859_i2c_id);
-+
-+static struct i2c_driver mp8859_regulator_driver = {
-+	.driver = {
-+		.name = "mp8859",
-+		.of_match_table = of_match_ptr(mp8859_dt_id),
-+	},
-+	.probe_new = mp8859_i2c_probe,
-+	.id_table = mp8859_i2c_id,
-+};
-+
-+module_i2c_driver(mp8859_regulator_driver);
-+
-+MODULE_DESCRIPTION("Monolithic Power Systems MP8859 voltage regulator driver");
-+MODULE_AUTHOR("Markus Reichl <m.reichl@fivetechno.de>");
-+MODULE_LICENSE("GPL v2");
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index 2f5a856a9319..85575d45901c 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -242,6 +242,7 @@ struct spi_ops {
+ 	u16 mode_bits;
+ 	u16 flags;
+ 	u16 fifo_size;
++	u8 num_hw_ss;
+ };
+ 
+ /*
+@@ -934,7 +935,8 @@ static int rspi_prepare_message(struct spi_controller *ctlr,
+ 		rspi->spcmd |= SPCMD_CPHA;
+ 
+ 	/* Configure slave signal to assert */
+-	rspi->spcmd |= SPCMD_SSLA(spi->chip_select);
++	rspi->spcmd |= SPCMD_SSLA(spi->cs_gpiod ? rspi->ctlr->unused_native_cs
++						: spi->chip_select);
+ 
+ 	/* CMOS output mode and MOSI signal from previous transfer */
+ 	rspi->sppcr = 0;
+@@ -1123,6 +1125,7 @@ static const struct spi_ops rspi_ops = {
+ 	.mode_bits =		SPI_CPHA | SPI_CPOL | SPI_LOOP,
+ 	.flags =		SPI_CONTROLLER_MUST_TX,
+ 	.fifo_size =		8,
++	.num_hw_ss =		2,
+ };
+ 
+ static const struct spi_ops rspi_rz_ops = {
+@@ -1131,6 +1134,7 @@ static const struct spi_ops rspi_rz_ops = {
+ 	.mode_bits =		SPI_CPHA | SPI_CPOL | SPI_LOOP,
+ 	.flags =		SPI_CONTROLLER_MUST_RX | SPI_CONTROLLER_MUST_TX,
+ 	.fifo_size =		8,	/* 8 for TX, 32 for RX */
++	.num_hw_ss =		1,
+ };
+ 
+ static const struct spi_ops qspi_ops = {
+@@ -1141,6 +1145,7 @@ static const struct spi_ops qspi_ops = {
+ 				SPI_RX_DUAL | SPI_RX_QUAD,
+ 	.flags =		SPI_CONTROLLER_MUST_RX | SPI_CONTROLLER_MUST_TX,
+ 	.fifo_size =		32,
++	.num_hw_ss =		1,
+ };
+ 
+ #ifdef CONFIG_OF
+@@ -1256,6 +1261,8 @@ static int rspi_probe(struct platform_device *pdev)
+ 	ctlr->mode_bits = ops->mode_bits;
+ 	ctlr->flags = ops->flags;
+ 	ctlr->dev.of_node = pdev->dev.of_node;
++	ctlr->use_gpio_descriptors = true;
++	ctlr->max_native_cs = rspi->ops->num_hw_ss;
+ 
+ 	ret = platform_get_irq_byname_optional(pdev, "rx");
+ 	if (ret < 0) {
 -- 
 2.20.1
 
