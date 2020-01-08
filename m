@@ -2,163 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE39913457F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 15:59:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 756E0134585
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 16:00:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbgAHO71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 09:59:27 -0500
-Received: from mail.efficios.com ([167.114.142.138]:58158 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbgAHO71 (ORCPT
+        id S1728390AbgAHPAv convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 8 Jan 2020 10:00:51 -0500
+Received: from emcscan.emc.com.tw ([192.72.220.5]:30737 "EHLO
+        emcscan.emc.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726556AbgAHPAv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 09:59:27 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id A12006959E6;
-        Wed,  8 Jan 2020 09:59:25 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id uGb2HplhVTXv; Wed,  8 Jan 2020 09:59:25 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id C00A76959CD;
-        Wed,  8 Jan 2020 09:59:22 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com C00A76959CD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1578495562;
-        bh=csmXiMR894cheYBJKST2fVas13SXJ+OppF5lHATVWIs=;
-        h=From:To:Date:Message-Id;
-        b=kF/rFIjYU6pzhYQQoiLv1a+lDJ6XnzLG4nfCeapqzamCqpKamE9E1saWOkr8+ZRxU
-         sIPdkjoVurzsbTmhArqg857rMRGLSUuo4hb6UAJLKqgJY/lHV37DKSxmDxZWeU+z+i
-         lkTYGYmM8U9d3RtKbWnjokQ5ciDVv1l+P3xGKxuSoAekD8OC6POlVji7FWUaATH2xh
-         34YSL/FM4bvOXFXbl/KzP4vptXcLYW4UMfl23YK0Y6ZsxdJvzxI8XX3XTRBUq44IN5
-         JTBCnLyWAeYGFvDAOrOCoPSGV9I1mcZ/V9dbsXyYgp000jPpFnagA/aCmEKuoaZfgr
-         tqKQzFhQiG9Eg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id Js-LS6a-xGbz; Wed,  8 Jan 2020 09:59:22 -0500 (EST)
-Received: from localhost.localdomain (192-222-181-218.qc.cable.ebox.net [192.222.181.218])
-        by mail.efficios.com (Postfix) with ESMTPSA id 508216959BF;
-        Wed,  8 Jan 2020 09:59:20 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Carlos O'Donell <carlos@redhat.com>
-Cc:     Florian Weimer <fweimer@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha@sourceware.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [RFC PATCH glibc 5/8] glibc: sched_getcpu(): use rseq cpu_id TLS on Linux (v5)
-Date:   Wed,  8 Jan 2020 09:58:48 -0500
-Message-Id: <20200108145851.13594-6-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200108145851.13594-1-mathieu.desnoyers@efficios.com>
-References: <20200108145851.13594-1-mathieu.desnoyers@efficios.com>
+        Wed, 8 Jan 2020 10:00:51 -0500
+X-IronPort-AV: E=Sophos;i="5.56,253,1539619200"; 
+   d="scan'208";a="34122417"
+Received: from unknown (HELO webmail.emc.com.tw) ([192.168.10.1])
+  by emcscan.emc.com.tw with ESMTP; 08 Jan 2020 23:00:45 +0800
+Received: from 192.168.10.23
+        by webmail.emc.com.tw with MailAudit ESMTP Server V5.0(2825:0:AUTH_RELAY)
+        (envelope-from <johnny.chuang@emc.com.tw>); Wed, 08 Jan 2020 23:00:43 +0800 (CST)
+Received: from 39.10.5.22
+        by webmail.emc.com.tw with Mail2000 ESMTPA Server V7.00(2479:0:AUTH_LOGIN)
+        (envelope-from <johnny.chuang@emc.com.tw>); Wed, 08 Jan 2020 23:00:41 +0800 (CST)
+From:   "Johnny.Chuang" <johnny.chuang@emc.com.tw>
+To:     "'Dmitry Osipenko'" <digetx@gmail.com>,
+        "'Dmitry Torokhov'" <dmitry.torokhov@gmail.com>,
+        =?utf-8?Q?'Micha=C5=82_Miros=C5=82aw'?= <mirq-linux@rere.qmqm.pl>
+Cc:     <linux-input@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        "'Scott Liu'" <scott.liu@emc.com.tw>,
+        "'James Chen'" <james.chen@emc.com.tw>,
+        <linux-kernel@vger.kernel.org>,
+        "'Henrik Rydberg'" <rydberg@bitmath.org>,
+        "'Mark Rutland'" <mark.rutland@arm.com>,
+        "'Rob Herring'" <robh-dt@kernel.org>
+References: <cover.1576079249.git.mirq-linux@rere.qmqm.pl> <20191212192420.GD101194@dtor-ws> <7c67b849-369f-8a20-4f9e-9e0a7caec1cb@gmail.com>
+In-Reply-To: <7c67b849-369f-8a20-4f9e-9e0a7caec1cb@gmail.com>
+Subject: RE: [PATCH v2 0/9] input: elants: Support Asus TF300T touchscreen
+Date:   Wed, 8 Jan 2020 23:00:33 +0800
+Message-ID: <000001d5c634$655bed20$3013c760$@emc.com.tw>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AQG/wbboUgEFdZ2Q4eX8SCV758q1EAKWfXCAAgu9J8mn59GaYA==
+Content-Language: zh-tw
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcMDUwMTBcYXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRiYTI5ZTM1Ylxtc2dzXG1zZy00YjEyMDg4NC0zMjI3LTExZWEtODM0MS03YzVjZjg3NDk0NzhcYW1lLXRlc3RcNGIxMjA4ODYtMzIyNy0xMWVhLTgzNDEtN2M1Y2Y4NzQ5NDc4Ym9keS50eHQiIHN6PSI3MDMiIHQ9IjEzMjIyOTY5MDk0Mjk2MzgxMiIgaD0iU0RWQzJ5V3lBTldGRWdEVzgvaUpjQ0RGdG5BPSIgaWQ9IiIgYmw9IjAiIGJvPSIxIi8+PC9tZXRhPg==
+x-dg-rorf: true
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When available, use the cpu_id field from __rseq_abi on Linux to
-implement sched_getcpu(). Fall-back on the vgetcpu vDSO if unavailable.
+> 12.12.2019 22:24, Dmitry Torokhov пишет:
+> > On Wed, Dec 11, 2019 at 05:03:18PM +0100, Michał Mirosław wrote:
+> >> This series cleans up the driver a bit and implements changes needed
+> >> to support EKTF3624-based touchscreen used in eg. Asus TF300T tablet.
+> >
+> > Johnny, could you please take a look at this patch series?
+> >
+> > Thanks!
+> 
+> Hello Johnny,
+> 
+> Could you please let us know whether you or anyone else from Elan are going
+> to take a look at this patchset anytime soon?
 
-Benchmarks:
+Hi Dmitry Osipenko,
 
-x86-64: Intel E5-2630 v3@2.40GHz, 16-core, hyperthreading
-
-glibc sched_getcpu():                     13.7 ns (baseline)
-glibc sched_getcpu() using rseq:           2.5 ns (speedup:  5.5x)
-inline load cpuid from __rseq_abi TLS:     0.8 ns (speedup: 17.1x)
-
-	* sysdeps/unix/sysv/linux/sched_getcpu.c: use rseq cpu_id TLS on
-	Linux.
-
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: Carlos O'Donell <carlos@redhat.com>
-CC: Florian Weimer <fweimer@redhat.com>
-CC: Joseph Myers <joseph@codesourcery.com>
-CC: Szabolcs Nagy <szabolcs.nagy@arm.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Ben Maurer <bmaurer@fb.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Boqun Feng <boqun.feng@gmail.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Dave Watson <davejwatson@fb.com>
-CC: Paul Turner <pjt@google.com>
-CC: libc-alpha@sourceware.org
-CC: linux-kernel@vger.kernel.org
-CC: linux-api@vger.kernel.org
----
-Changes since v1:
-- rseq is only used if both __NR_rseq and RSEQ_SIG are defined.
-
-Changes since v2:
-- remove duplicated __rseq_abi extern declaration.
-
-Changes since v3:
-- update ChangeLog.
-
-Changes since v4:
-- Use atomic_load_relaxed to load the __rseq_abi.cpu_id field, a
-  consequence of the fact that __rseq_abi is not volatile anymore.
-- Include atomic.h which provides atomic_load_relaxed.
----
- sysdeps/unix/sysv/linux/sched_getcpu.c | 29 ++++++++++++++++++++++++--
- 1 file changed, 27 insertions(+), 2 deletions(-)
-
-diff --git a/sysdeps/unix/sysv/linux/sched_getcpu.c b/sysdeps/unix/sysv/linux/sched_getcpu.c
-index c019cfb3cf..6d3541333d 100644
---- a/sysdeps/unix/sysv/linux/sched_getcpu.c
-+++ b/sysdeps/unix/sysv/linux/sched_getcpu.c
-@@ -18,10 +18,15 @@
- #include <errno.h>
- #include <sched.h>
- #include <sysdep.h>
-+#include <atomic.h>
- #include <sysdep-vdso.h>
- 
--int
--sched_getcpu (void)
-+#ifdef HAVE_GETCPU_VSYSCALL
-+# define HAVE_VSYSCALL
-+#endif
-+
-+static int
-+vsyscall_sched_getcpu (void)
- {
-   unsigned int cpu;
-   int r = -1;
-@@ -32,3 +37,23 @@ sched_getcpu (void)
- #endif
-   return r == -1 ? r : cpu;
- }
-+
-+#ifdef __NR_rseq
-+#include <sys/rseq.h>
-+#endif
-+
-+#if defined __NR_rseq && defined RSEQ_SIG
-+int
-+sched_getcpu (void)
-+{
-+  int cpu_id = atomic_load_relaxed (&__rseq_abi.cpu_id);
-+
-+  return cpu_id >= 0 ? cpu_id : vsyscall_sched_getcpu ();
-+}
-+#else
-+int
-+sched_getcpu (void)
-+{
-+  return vsyscall_sched_getcpu ();
-+}
-+#endif
--- 
-2.17.1
+I'm sorry to reply late. James Chen will take a look at this patch set. 
 
