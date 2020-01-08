@@ -2,142 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46D47133BB4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 07:30:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BCA1133B81
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 07:04:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbgAHG3u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 01:29:50 -0500
-Received: from mga18.intel.com ([134.134.136.126]:23681 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726648AbgAHG3r (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 01:29:47 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2020 22:29:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,408,1571727600"; 
-   d="scan'208";a="233506801"
-Received: from kbl.sh.intel.com ([10.239.159.163])
-  by orsmga002.jf.intel.com with ESMTP; 07 Jan 2020 22:29:45 -0800
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v3 4/4] perf util: Support color ops to print block percents in color
-Date:   Wed,  8 Jan 2020 07:03:54 +0800
-Message-Id: <20200107230354.30132-4-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200107230354.30132-1-yao.jin@linux.intel.com>
-References: <20200107230354.30132-1-yao.jin@linux.intel.com>
+        id S1726182AbgAHGEK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 01:04:10 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:51269 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725773AbgAHGEK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 01:04:10 -0500
+Received: by mail-io1-f71.google.com with SMTP id t18so1370100iob.18
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Jan 2020 22:04:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=sXfiajJd0SBFtR8AxsIiru7JfmtGS4gym6AkvwNYLLo=;
+        b=P6W7mo6H5XH/zt6+HeO/7or6Qe9x3ynfbZSyhkTyZ0ZZGHESKmi/12MGnsRB/88mEE
+         EEfwp/YE1e0gss+A1zZoAKObwRcf6+tSJbQp2LFxwJUP+iPlmFalUzMylUtCDY2NXS5m
+         7ifkndl18Rfan+Y/j4TVZti4WS0nf4VwnisNlBx1ty+RymHQaBt0hFDl4eTObgE+uO3i
+         bQ0CxBCUAtBrEVjtztCtJJsq/wN1X+P56QoOWx2ZApWzp1P7NMlOGVZL6cXBgBHyA8pe
+         J7SqfPSNvJVvG4QISK5BUMICzWbgecoo52rV5bSDeFBS41v6nwY82GJ+4scQNwvmVe08
+         oiAQ==
+X-Gm-Message-State: APjAAAXjHLuKob0pZ6oAb9R8hqvdvcbqIjdQF/ofb1rE0ZEPOT0/rA6T
+        EMxIAd5lHvAD79WX2zl7YtmE5jj4oK00fpotIUJhlpB2aqBW
+X-Google-Smtp-Source: APXvYqz9/uae4T8VmnATWjjkDK5bCKNLbG2w3UBqNzOEHwjOeZu/Y1Ts3C2tBZ05LoR7vcfEa/iAYyos0Az6M5fPNI3+aaQRych9
+MIME-Version: 1.0
+X-Received: by 2002:a02:a898:: with SMTP id l24mr2733990jam.107.1578463449457;
+ Tue, 07 Jan 2020 22:04:09 -0800 (PST)
+Date:   Tue, 07 Jan 2020 22:04:09 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000322ad2059b9aa992@google.com>
+Subject: INFO: rcu detected stall in sys_poll (2)
+From:   syzbot <syzbot+c3ed57cd8f699826dd95@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, christian@brauner.io,
+        keescook@chromium.org, linux-kernel@vger.kernel.org,
+        luto@amacapital.net, mingo@kernel.org, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        wad@chromium.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It would be nice to print the block percents with colors.
+Hello,
 
-This patch supports the 'Sampled Cycles%' and 'Avg Cycles%'
-printed in colors.
+syzbot found the following crash on:
 
-For example,
+HEAD commit:    ae608821 Merge tag 'trace-v5.5-rc5' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=157edeb9e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=db5ff86cbb23b415
+dashboard link: https://syzkaller.appspot.com/bug?extid=c3ed57cd8f699826dd95
+compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
+80fee25776c2fb61e74c1ecb1a523375c2500b69)
 
-perf record -b ...
-perf report --total-cycles or perf report --total-cycles --stdio
+Unfortunately, I don't have any reproducer for this crash yet.
 
-percent > 5%, colored in red
-percent > 0.5%, colored in green
-percent < 0.5%, default color
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+c3ed57cd8f699826dd95@syzkaller.appspotmail.com
 
- v3:
- ---
- No change
+rcu: INFO: rcu_preempt self-detected stall on CPU
+rcu: 	0-...!: (1 GPs behind) idle=5da/1/0x4000000000000002  
+softirq=13907/13908 fqs=38
+	(t=10501 jiffies g=6889 q=136)
+rcu: rcu_preempt kthread starved for 10426 jiffies! g6889 f0x0  
+RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
+rcu: RCU grace-period kthread stack dump:
+rcu_preempt     R  running task    29032    10      2 0x80004000
+Call Trace:
+  context_switch kernel/sched/core.c:3385 [inline]
+  __schedule+0x9a0/0xcc0 kernel/sched/core.c:4081
+  schedule+0x181/0x210 kernel/sched/core.c:4155
+  schedule_timeout+0x14f/0x240 kernel/time/timer.c:1895
+  rcu_gp_fqs_loop kernel/rcu/tree.c:1661 [inline]
+  rcu_gp_kthread+0xed8/0x1770 kernel/rcu/tree.c:1821
+  kthread+0x332/0x350 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+NMI backtrace for cpu 0
+CPU: 0 PID: 8477 Comm: udevd Not tainted 5.5.0-rc5-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1fb/0x318 lib/dump_stack.c:118
+  nmi_cpu_backtrace+0xaf/0x1a0 lib/nmi_backtrace.c:101
+  nmi_trigger_cpumask_backtrace+0x174/0x290 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x10/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
+  rcu_dump_cpu_stacks+0x15a/0x220 kernel/rcu/tree_stall.h:254
+  print_cpu_stall kernel/rcu/tree_stall.h:455 [inline]
+  check_cpu_stall kernel/rcu/tree_stall.h:529 [inline]
+  rcu_pending kernel/rcu/tree.c:2827 [inline]
+  rcu_sched_clock_irq+0xe25/0x1ad0 kernel/rcu/tree.c:2271
+  update_process_times+0x12d/0x180 kernel/time/timer.c:1726
+  tick_sched_handle kernel/time/tick-sched.c:167 [inline]
+  tick_sched_timer+0x263/0x420 kernel/time/tick-sched.c:1310
+  __run_hrtimer kernel/time/hrtimer.c:1517 [inline]
+  __hrtimer_run_queues+0x403/0x840 kernel/time/hrtimer.c:1579
+  hrtimer_interrupt+0x38c/0xda0 kernel/time/hrtimer.c:1641
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1110 [inline]
+  smp_apic_timer_interrupt+0x109/0x280 arch/x86/kernel/apic/apic.c:1135
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
+  </IRQ>
+RIP: 0010:free_thread_stack+0x151/0x590 kernel/fork.c:280
+Code: 31 f6 e8 02 8d 6f 00 43 80 3c 2e 00 74 08 4c 89 e7 e8 73 94 6a 00 49  
+8b 1c 24 48 83 c3 08 48 89 d8 48 c1 e8 03 42 80 3c 28 00 <74> 08 48 89 df  
+e8 55 94 6a 00 48 8b 3b be fc ff ff ff e8 28 04 00
+RSP: 0018:ffffc90001e57760 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 1ffff11013e8ed61 RBX: ffff88809f476b08 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffea0002a59a40
+RBP: ffffc90001e57798 R08: 000000000003a728 R09: ffffed10125b3711
+R10: ffffed10125b3711 R11: 0000000000000000 R12: ffff88809f476a20
+R13: dffffc0000000000 R14: 1ffff11013e8ed44 R15: ffff888092d9b878
+  release_task_stack kernel/fork.c:440 [inline]
+  put_task_stack+0xa3/0x130 kernel/fork.c:451
+  finish_task_switch+0x3f1/0x550 kernel/sched/core.c:3256
+  context_switch kernel/sched/core.c:3388 [inline]
+  __schedule+0x9a8/0xcc0 kernel/sched/core.c:4081
+  schedule+0x181/0x210 kernel/sched/core.c:4155
+  schedule_hrtimeout_range_clock+0x3c7/0x510 kernel/time/hrtimer.c:2130
+  schedule_hrtimeout_range+0x2a/0x40 kernel/time/hrtimer.c:2175
+  poll_schedule_timeout+0x11c/0x1c0 fs/select.c:243
+  do_poll fs/select.c:951 [inline]
+  do_sys_poll+0x83f/0x1250 fs/select.c:1001
+  __do_sys_poll fs/select.c:1059 [inline]
+  __se_sys_poll+0x1b0/0x360 fs/select.c:1047
+  __x64_sys_poll+0x7b/0x90 fs/select.c:1047
+  do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7fe82049b678
+Code: 11 48 83 c8 ff eb ea 90 90 90 90 90 90 90 90 90 90 90 48 83 ec 28 8b  
+05 82 8f 2b 00 85 c0 75 17 48 63 d2 b8 07 00 00 00 0f 05 <48> 3d 00 f0 ff  
+ff 77 51 48 83 c4 28 c3 89 54 24 08 48 89 74 24 10
+RSP: 002b:00007fffd9dcc090 EFLAGS: 00000246 ORIG_RAX: 0000000000000007
+RAX: ffffffffffffffda RBX: 20c49ba5e353f7cf RCX: 00007fe82049b678
+RDX: 000000000000ee2a RSI: 0000000000000001 RDI: 00007fffd9dcc150
+RBP: 0000000000000000 R08: 00007fffd9dcc0a0 R09: 00007fffd9de50b8
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000150dc00
+R13: 000000000000214d R14: 00007fffd9dcc124 R15: 0000000001509250
 
- v2:
- ---
- No functional change
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
 ---
- tools/perf/util/block-info.c | 25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/tools/perf/util/block-info.c b/tools/perf/util/block-info.c
-index 7b654917ace0..c208f9dbb32d 100644
---- a/tools/perf/util/block-info.c
-+++ b/tools/perf/util/block-info.c
-@@ -185,6 +185,17 @@ static int block_column_width(struct perf_hpp_fmt *fmt,
- 	return block_fmt->width;
- }
- 
-+static int color_pct(struct perf_hpp *hpp, int width, double pct)
-+{
-+#ifdef HAVE_SLANG_SUPPORT
-+	if (use_browser) {
-+		return __hpp__slsmg_color_printf(hpp, "%*.2f%%",
-+						 width - 1, pct);
-+	}
-+#endif
-+	return hpp_color_scnprintf(hpp, "%*.2f%%", width - 1, pct);
-+}
-+
- static int block_total_cycles_pct_entry(struct perf_hpp_fmt *fmt,
- 					struct perf_hpp *hpp,
- 					struct hist_entry *he)
-@@ -192,14 +203,11 @@ static int block_total_cycles_pct_entry(struct perf_hpp_fmt *fmt,
- 	struct block_fmt *block_fmt = container_of(fmt, struct block_fmt, fmt);
- 	struct block_info *bi = he->block_info;
- 	double ratio = 0.0;
--	char buf[16];
- 
- 	if (block_fmt->total_cycles)
- 		ratio = (double)bi->cycles / (double)block_fmt->total_cycles;
- 
--	sprintf(buf, "%.2f%%", 100.0 * ratio);
--
--	return scnprintf(hpp->buf, hpp->size, "%*s", block_fmt->width, buf);
-+	return color_pct(hpp, block_fmt->width, 100.0 * ratio);
- }
- 
- static int64_t block_total_cycles_pct_sort(struct perf_hpp_fmt *fmt,
-@@ -252,16 +260,13 @@ static int block_cycles_pct_entry(struct perf_hpp_fmt *fmt,
- 	struct block_info *bi = he->block_info;
- 	double ratio = 0.0;
- 	u64 avg;
--	char buf[16];
- 
- 	if (block_fmt->block_cycles && bi->num_aggr) {
- 		avg = bi->cycles_aggr / bi->num_aggr;
- 		ratio = (double)avg / (double)block_fmt->block_cycles;
- 	}
- 
--	sprintf(buf, "%.2f%%", 100.0 * ratio);
--
--	return scnprintf(hpp->buf, hpp->size, "%*s", block_fmt->width, buf);
-+	return color_pct(hpp, block_fmt->width, 100.0 * ratio);
- }
- 
- static int block_avg_cycles_entry(struct perf_hpp_fmt *fmt,
-@@ -348,7 +353,7 @@ static void hpp_register(struct block_fmt *block_fmt, int idx,
- 
- 	switch (idx) {
- 	case PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_PCT:
--		fmt->entry = block_total_cycles_pct_entry;
-+		fmt->color = block_total_cycles_pct_entry;
- 		fmt->cmp = block_info__cmp;
- 		fmt->sort = block_total_cycles_pct_sort;
- 		break;
-@@ -356,7 +361,7 @@ static void hpp_register(struct block_fmt *block_fmt, int idx,
- 		fmt->entry = block_cycles_lbr_entry;
- 		break;
- 	case PERF_HPP_REPORT__BLOCK_CYCLES_PCT:
--		fmt->entry = block_cycles_pct_entry;
-+		fmt->color = block_cycles_pct_entry;
- 		break;
- 	case PERF_HPP_REPORT__BLOCK_AVG_CYCLES:
- 		fmt->entry = block_avg_cycles_entry;
--- 
-2.17.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
