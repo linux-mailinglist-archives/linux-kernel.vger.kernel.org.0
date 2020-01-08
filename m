@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5088E1340E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:44:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B9091340F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 12:44:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728100AbgAHLnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 06:43:24 -0500
-Received: from mga17.intel.com ([192.55.52.151]:51036 "EHLO mga17.intel.com"
+        id S1728144AbgAHLnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 06:43:42 -0500
+Received: from mga11.intel.com ([192.55.52.93]:44649 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727610AbgAHLmQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727541AbgAHLmQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 8 Jan 2020 06:42:16 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 03:42:16 -0800
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 03:42:16 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,409,1571727600"; 
-   d="scan'208";a="215927348"
+   d="scan'208";a="246319760"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 08 Jan 2020 03:42:12 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 08 Jan 2020 03:42:12 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id E73A95C5; Wed,  8 Jan 2020 13:42:02 +0200 (EET)
+        id F25EC5D4; Wed,  8 Jan 2020 13:42:02 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Darren Hart <dvhart@infradead.org>,
@@ -38,9 +38,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 23/36] platform/x86: intel_pmc_ipc: Get rid of unnecessary includes
-Date:   Wed,  8 Jan 2020 14:41:48 +0300
-Message-Id: <20200108114201.27908-24-mika.westerberg@linux.intel.com>
+Subject: [PATCH v2 24/36] platform/x86: intel_scu_ipc: Add function to remove SCU IPC
+Date:   Wed,  8 Jan 2020 14:41:49 +0300
+Message-Id: <20200108114201.27908-25-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200108114201.27908-1-mika.westerberg@linux.intel.com>
 References: <20200108114201.27908-1-mika.westerberg@linux.intel.com>
@@ -51,42 +51,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no point including headers that are not needed in the driver so
-drop them.
+Drivers such as intel_pmc_ipc.c can be unloaded as well so in order to
+support those in this driver add a new function that can be called to
+remove the SCU IPC if the driver is unloaded.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/platform/x86/intel_pmc_ipc.c | 10 ----------
- 1 file changed, 10 deletions(-)
+ arch/x86/include/asm/intel_scu_ipc.h |  1 +
+ drivers/platform/x86/intel_scu_ipc.c | 18 ++++++++++++++++++
+ 2 files changed, 19 insertions(+)
 
-diff --git a/drivers/platform/x86/intel_pmc_ipc.c b/drivers/platform/x86/intel_pmc_ipc.c
-index 83b106f66fa6..8527327d88c7 100644
---- a/drivers/platform/x86/intel_pmc_ipc.c
-+++ b/drivers/platform/x86/intel_pmc_ipc.c
-@@ -12,23 +12,13 @@
-  */
+diff --git a/arch/x86/include/asm/intel_scu_ipc.h b/arch/x86/include/asm/intel_scu_ipc.h
+index 9895b60386c5..250127eb1e38 100644
+--- a/arch/x86/include/asm/intel_scu_ipc.h
++++ b/arch/x86/include/asm/intel_scu_ipc.h
+@@ -32,6 +32,7 @@ struct intel_scu_ipc_pdata {
  
- #include <linux/acpi.h>
--#include <linux/atomic.h>
--#include <linux/bitops.h>
- #include <linux/delay.h>
--#include <linux/device.h>
- #include <linux/errno.h>
- #include <linux/interrupt.h>
- #include <linux/io-64-nonatomic-lo-hi.h>
--#include <linux/kernel.h>
- #include <linux/module.h>
--#include <linux/notifier.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
--#include <linux/pm.h>
--#include <linux/pm_qos.h>
--#include <linux/sched.h>
--#include <linux/spinlock.h>
--#include <linux/suspend.h>
+ struct intel_scu_ipc_dev *
+ intel_scu_ipc_probe(struct device *dev, const struct intel_scu_ipc_pdata *pdata);
++void intel_scu_ipc_remove(struct intel_scu_ipc_dev *scu);
  
- #include <asm/intel_pmc_ipc.h>
- 
+ struct intel_scu_ipc_dev *intel_scu_ipc_dev_get(void);
+ void intel_scu_ipc_dev_put(struct intel_scu_ipc_dev *scu);
+diff --git a/drivers/platform/x86/intel_scu_ipc.c b/drivers/platform/x86/intel_scu_ipc.c
+index cc29f504adcf..9fa0ea95198b 100644
+--- a/drivers/platform/x86/intel_scu_ipc.c
++++ b/drivers/platform/x86/intel_scu_ipc.c
+@@ -566,3 +566,21 @@ intel_scu_ipc_probe(struct device *dev, const struct intel_scu_ipc_pdata *pdata)
+ 	return scu;
+ }
+ EXPORT_SYMBOL_GPL(intel_scu_ipc_probe);
++
++/**
++ * intel_scu_ipc_remove() - Remove SCU IPC
++ * @scu: SCU IPC handle
++ *
++ * This unregisters the SCU IPC device and releases the interrupt.
++ */
++void intel_scu_ipc_remove(struct intel_scu_ipc_dev *scu)
++{
++	mutex_lock(&ipclock);
++	if (!WARN_ON(!scu->dev)) {
++		if (scu->irq > 0)
++			devm_free_irq(scu->dev, scu->irq, scu);
++		scu->dev = NULL;
++	}
++	mutex_unlock(&ipclock);
++}
++EXPORT_SYMBOL_GPL(intel_scu_ipc_remove);
 -- 
 2.24.1
 
