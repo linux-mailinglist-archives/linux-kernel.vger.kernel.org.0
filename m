@@ -2,95 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2591134DE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 21:50:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12D41134DE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 21:49:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbgAHUuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 15:50:51 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:41642 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbgAHUuu (ORCPT
+        id S1727077AbgAHUtv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 15:49:51 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37396 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726439AbgAHUtv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 15:50:50 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 008KoXqv057424;
-        Wed, 8 Jan 2020 14:50:33 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578516633;
-        bh=WVEF8Ogfb7hDkqRLDz1gGQX/utwfzc6iXAccVqo75WE=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=s3VHAN+aFmjus1n7UQDbxBB2qr+Jy5RAl5jHSCKjVwu0+J8fV3eQwrAO79GjABVGg
-         /l7TRFxtsPI7XO7MjBn/HABJuohG08U5a3SPGRHbEb85uxnR1DTZFBVmHnynJv1SAZ
-         jT3dgPLUx+s2WDuIf5cnqrP/Uh5l0syr5NwRlLOs=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 008KoXjq090522;
-        Wed, 8 Jan 2020 14:50:33 -0600
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 8 Jan
- 2020 14:50:32 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 8 Jan 2020 14:50:32 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 008KoWoX116524;
-        Wed, 8 Jan 2020 14:50:32 -0600
-Subject: Re: [PATCH linux-can/testing] can: tcan4x5x: Disable the INH pin
- device-state GPIO is unavailable
-To:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        <linux-kernel@vger.kernel.org>, <linux-can@vger.kernel.org>,
-        <wg@grandegger.com>, <sriram.dash@samsung.com>
-References: <20191212161536.23264-1-dmurphy@ti.com>
- <b0560413-525c-39ba-30ce-816c098e51ab@pengutronix.de>
- <afa5c681-bbd1-a6f6-2b58-4f24c924144e@pengutronix.de>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <01f16f0f-cfdf-0a3c-48b1-59e0824c83e8@ti.com>
-Date:   Wed, 8 Jan 2020 14:47:42 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Wed, 8 Jan 2020 15:49:51 -0500
+Received: by mail-oi1-f193.google.com with SMTP id z64so3939971oia.4
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 12:49:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Y2blFDS/4xPh5DF4rW8+xU8LHc7BSZTKgnRIfuXGUCs=;
+        b=pmtQC84V4vORsY8Przux8Hpue4jzbA1N+ec1YWtH4/B4sN2AtwkPz6N3U5N9VBOdjX
+         qPSV7CrxrNHzKrRPgr7VAbaFmvVBSO953rni1w+Uqb3aVZWSAR5QP6AZ1O5N54T+OLga
+         WRPd3ZxXSp1CPSjoOB40MLr0aTUiQHd7lRvHVk8Hv4xWKjr8mkQmhgglKP5vsb4/es2g
+         JqV1DBd/L6MV0Gio6yvu2wpwz8vOCPjSXzQ5oNACk+3exbm6WSt/R3zJHp1Yuwj1kzrS
+         og+EM5MmqOiqQWUnD7BuMmWUZgzsmziQzjaRG1/WwWowNrEBcW90rrHGVI/8FtkRodkJ
+         8mLQ==
+X-Gm-Message-State: APjAAAXbf/nR3hAZ2F4h7R9xnNpnxy0UJCRLIyrz6ZIi0oLkPmthbth/
+        atDsfZiD6ULaMTh1nWEhqhs0pdA=
+X-Google-Smtp-Source: APXvYqyKHW/rcfez92QXCybrOC8olgCUVILqC8E17++rJ3IB3UYBeu+SUJdOz3FLBF2z/Rij9H0ZBA==
+X-Received: by 2002:a05:6808:53:: with SMTP id v19mr455572oic.18.1578516590027;
+        Wed, 08 Jan 2020 12:49:50 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id q13sm1511630otc.5.2020.01.08.12.49.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jan 2020 12:49:49 -0800 (PST)
+Received: from rob (uid 1000)
+        (envelope-from rob@rob-hp-laptop)
+        id 220333
+        by rob-hp-laptop (DragonFly Mail Agent v0.11);
+        Wed, 08 Jan 2020 14:49:48 -0600
+Date:   Wed, 8 Jan 2020 14:49:48 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Benjamin Gaignard <benjamin.gaignard@st.com>
+Cc:     gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org,
+        hminas@synopsys.com, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com,
+        amelie.delaunay@st.com,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: Re: [PATCH v3] dt-bindings: usb: Convert DWC2 bindings to json-schema
+Message-ID: <20200108204948.GA9782@bogus>
+References: <20200107091630.12796-1-benjamin.gaignard@st.com>
 MIME-Version: 1.0
-In-Reply-To: <afa5c681-bbd1-a6f6-2b58-4f24c924144e@pengutronix.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200107091630.12796-1-benjamin.gaignard@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marc
+On Tue, 7 Jan 2020 10:16:30 +0100, Benjamin Gaignard wrote:
+> Convert DWC2 bindings to DT schema format using json-schema.
+> DWC2 is widely use but a couple of compatibles and properties
+> (vusb_d-supply,vusb_a-supply) were missing in dwc2.txt, the
+> patch add them.
+> 
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> ---
+> CC: Minas Harutyunyan <hminas@synopsys.com>
+> CC: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> changes in version 3:
+> - put Rob Herring as maintainer
+> - change the example to use one of the listed compatible
+> 
+> changes in version 2:
+> - put Minas Harutyunyan <hminas@synopsys.com> as maintainer
+> - remove type and description from phy property
+> - remove description from compatible items
+> - simplify samsung,s3c6400-hsotg compatible handling
+> 
+>  Documentation/devicetree/bindings/usb/dwc2.txt  |  64 ----------
+>  Documentation/devicetree/bindings/usb/dwc2.yaml | 151 ++++++++++++++++++++++++
+>  2 files changed, 151 insertions(+), 64 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/usb/dwc2.txt
+>  create mode 100644 Documentation/devicetree/bindings/usb/dwc2.yaml
+> 
 
-On 12/29/19 10:05 AM, Marc Kleine-Budde wrote:
-> On 12/29/19 4:32 PM, Marc Kleine-Budde wrote:
->> On 12/12/19 5:15 PM, Dan Murphy wrote:
->>>   static int tcan4x5x_parse_config(struct m_can_classdev *cdev)
->>>   {
->>>   	struct tcan4x5x_priv *tcan4x5x = cdev->device_data;
->>> @@ -383,8 +393,10 @@ static int tcan4x5x_parse_config(struct m_can_classdev *cdev)
->>>   	tcan4x5x->device_state_gpio = devm_gpiod_get_optional(cdev->dev,
->>>   							      "device-state",
->>>   							      GPIOD_IN);
->>> -	if (IS_ERR(tcan4x5x->device_state_gpio))
->>> +	if (IS_ERR(tcan4x5x->device_state_gpio)) {
->>>   		tcan4x5x->device_state_gpio = NULL;
->>> +		tcan4x5x_disable_state(cdev);
->>> +	}
->> For some reason, this hunk doesn't apply, due to the additional:
->>
->>>> 	tcan4x5x->power = devm_regulator_get_optional(cdev->dev,
->>>> 						      "vsup");
-> ...which was my fault. :) Please have a look at
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can.git/log/?h=testing
->
-> ...if I've collected every m_can related patch.
+Applied, thanks.
 
-Is this still relevant or have you pulled this in?
-
-It looks good to me.
-
-Dan
-
-
+Rob
