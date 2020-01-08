@@ -2,200 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 440D7134987
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 18:41:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15B6813498E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 18:41:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729888AbgAHRkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 12:40:47 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:44784 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729875AbgAHRkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 12:40:45 -0500
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1ipFJt-0004hf-AR; Wed, 08 Jan 2020 10:40:44 -0700
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1ipFJr-0000ud-Eo; Wed, 08 Jan 2020 10:40:35 -0700
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Stephen Bates <sbates@raithlin.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Wed,  8 Jan 2020 10:40:30 -0700
-Message-Id: <20200108174030.3430-10-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200108174030.3430-1-logang@deltatee.com>
-References: <20200108174030.3430-1-logang@deltatee.com>
+        id S1729945AbgAHRlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 12:41:13 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:49089 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727537AbgAHRlN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 12:41:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578505272;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=0sTGKEIISyGluaZPtnr2/ulkq7UdSDvBR5TeoAxjPMQ=;
+        b=BQebebDVBR/v1BThfwz7eNBJEU+3p19eqUb2fRuA/jFae/YY7O1P8QB8lEGxGOX6jKHAni
+        osk1mZRp4Kxap59x3xTieGFnhOJE+eeFqQxEC9nraonSgek/SzlY+AFa+BufXc5nIrIg5s
+        1QVnRO9gp43ZssQ9GM27PcbDrTj+Hk4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-351-mzPkE4cFN1mr2xOc0jp-iw-1; Wed, 08 Jan 2020 12:41:10 -0500
+X-MC-Unique: mzPkE4cFN1mr2xOc0jp-iw-1
+Received: by mail-wm1-f69.google.com with SMTP id 18so1105426wmp.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 09:41:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0sTGKEIISyGluaZPtnr2/ulkq7UdSDvBR5TeoAxjPMQ=;
+        b=EqbreegSDJ7NRy/hJkJaNss+yNto+uuV7BuSfN1tjJals6BS8hlkERzATiY36dExTr
+         8IaPB+obZiBWAFG0z5MzfBEzReP60s3xi3wbhN/8wqnZcIL2nPsSnHtS50Al8zxl3XQO
+         9qYQMHLDUfLNGPGo4de5KCS/LSrogKsZ7VZq+y1n5y6OWyKE1phiX0gLn4R/bP0FR4mV
+         8zuBdho03DnR+xPAOIUKJbcGch+5T9Ho2XtTaBracg8aAr70zmqgy78yE3wX+B+E3hfE
+         BIDpJe0+T2gD4QCmg+5ggQuJdWXG2D6N2ZYb1jekjIVPEXOwnwTU8EHVWqQt5Rr/pVVK
+         6zdw==
+X-Gm-Message-State: APjAAAWyohBl9bhYXfVjqzvkhxxvxzFrSwS68sXC+OCphkvRINf9J2Zb
+        EH0uHhPIEDhuYSLevrsKgOYc//xkCY2SNGH15SUCOPk14moB16rYHJ16GDpLO0cY+6k+XPQI/qc
+        iaHS8/G6khhk0X23gnmaXp0FR
+X-Received: by 2002:adf:e290:: with SMTP id v16mr6250479wri.16.1578505269428;
+        Wed, 08 Jan 2020 09:41:09 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzPQtvQ+CfdZxLPT34g2/xZ1MRZci6Z0IM3bcacXC6lg/3LGlEHM0jH40To5MeilhL7Rjg5Fg==
+X-Received: by 2002:adf:e290:: with SMTP id v16mr6250452wri.16.1578505269112;
+        Wed, 08 Jan 2020 09:41:09 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:c6d:4079:b74c:e329? ([2001:b07:6468:f312:c6d:4079:b74c:e329])
+        by smtp.gmail.com with ESMTPSA id k13sm4808771wrx.59.2020.01.08.09.41.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jan 2020 09:41:08 -0800 (PST)
+Subject: Re: [PATCH RESEND v2 08/17] KVM: X86: Implement ring-based dirty
+ memory tracking
+To:     Peter Xu <peterx@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Lei Cao <lei.cao@stratus.com>
+References: <20191221014938.58831-1-peterx@redhat.com>
+ <20191221014938.58831-9-peterx@redhat.com> <20200108155210.GA7096@xz-x1>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <9f7582b1-cfba-d096-2216-c5b06edc6ca9@redhat.com>
+Date:   Wed, 8 Jan 2020 18:41:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, hch@lst.de, sagi@grimberg.me, kbusch@kernel.org, axboe@fb.com, Chaitanya.Kulkarni@wdc.com, maxg@mellanox.com, sbates@raithlin.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_FREE,MYRULES_NO_TEXT autolearn=ham
-        autolearn_force=no version=3.4.2
-Subject: [PATCH v10 9/9] nvmet-configfs: Introduce passthru configfs interface
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+In-Reply-To: <20200108155210.GA7096@xz-x1>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_NVME_TARGET_PASSTHRU as 'passthru' directory will
-be added to each subsystem. The directory is similar to a namespace
-and has two attributes: device_path and enable. The user must set the
-path to the nvme controller's char device and write '1' to enable the
-subsystem to use passthru.
+On 08/01/20 16:52, Peter Xu wrote:
+> here, which is still a bit tricky to makeup the kvmgt issue.
+> 
+> Now we still have the waitqueue but it'll only be used for
+> no-vcpu-context dirtyings, so:
+> 
+> - For no-vcpu-context: thread could wait in the waitqueue if it makes
+>   vcpu0's ring soft-full (note, previously it was hard-full, so here
+>   we make it easier to wait so we make sure )
+> 
+> - For with-vcpu-context: we should never wait, guaranteed by the fact
+>   that KVM_RUN will return now if soft-full for that vcpu ring, and
+>   above waitqueue will make sure even vcpu0's waitqueue won't be
+>   filled up by kvmgt
+> 
+> Again this is still a workaround for kvmgt and I think it should not
+> be needed after the refactoring.  It's just a way to not depend on
+> that work so this should work even with current kvmgt.
 
-Any given subsystem is prevented from enabling both a regular namespace
-and the passthru device. If one is enabled, enabling the other will
-produce an error.
+The kvmgt patches were posted, you could just include them in your next
+series and clean everything up.  You can get them at
+https://patchwork.kernel.org/cover/11316219/.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
----
- drivers/nvme/target/configfs.c | 99 ++++++++++++++++++++++++++++++++++
- drivers/nvme/target/nvmet.h    |  1 +
- 2 files changed, 100 insertions(+)
-
-diff --git a/drivers/nvme/target/configfs.c b/drivers/nvme/target/configfs.c
-index 354d43fab8db..1ae3f87f611d 100644
---- a/drivers/nvme/target/configfs.c
-+++ b/drivers/nvme/target/configfs.c
-@@ -615,6 +615,103 @@ static const struct config_item_type nvmet_namespaces_type = {
- 	.ct_owner		= THIS_MODULE,
- };
- 
-+#ifdef CONFIG_NVME_TARGET_PASSTHRU
-+
-+static ssize_t nvmet_passthru_device_path_show(struct config_item *item,
-+		char *page)
-+{
-+	struct nvmet_subsys *subsys = to_subsys(item->ci_parent);
-+
-+	return snprintf(page, PAGE_SIZE, "%s\n", subsys->passthru_ctrl_path);
-+}
-+
-+static ssize_t nvmet_passthru_device_path_store(struct config_item *item,
-+		const char *page, size_t count)
-+{
-+	struct nvmet_subsys *subsys = to_subsys(item->ci_parent);
-+	size_t len;
-+	int ret;
-+
-+	mutex_lock(&subsys->lock);
-+
-+	ret = -EBUSY;
-+	if (subsys->passthru_ctrl)
-+		goto out_unlock;
-+
-+	ret = -EINVAL;
-+	len = strcspn(page, "\n");
-+	if (!len)
-+		goto out_unlock;
-+
-+	kfree(subsys->passthru_ctrl_path);
-+	ret = -ENOMEM;
-+	subsys->passthru_ctrl_path = kstrndup(page, len, GFP_KERNEL);
-+	if (!subsys->passthru_ctrl_path)
-+		goto out_unlock;
-+
-+	mutex_unlock(&subsys->lock);
-+
-+	return count;
-+out_unlock:
-+	mutex_unlock(&subsys->lock);
-+	return ret;
-+}
-+CONFIGFS_ATTR(nvmet_passthru_, device_path);
-+
-+static ssize_t nvmet_passthru_enable_show(struct config_item *item,
-+		char *page)
-+{
-+	struct nvmet_subsys *subsys = to_subsys(item->ci_parent);
-+
-+	return sprintf(page, "%d\n", subsys->passthru_ctrl ? 1 : 0);
-+}
-+
-+static ssize_t nvmet_passthru_enable_store(struct config_item *item,
-+		const char *page, size_t count)
-+{
-+	struct nvmet_subsys *subsys = to_subsys(item->ci_parent);
-+	bool enable;
-+	int ret = 0;
-+
-+	if (strtobool(page, &enable))
-+		return -EINVAL;
-+
-+	if (enable)
-+		ret = nvmet_passthru_ctrl_enable(subsys);
-+	else
-+		nvmet_passthru_ctrl_disable(subsys);
-+
-+	return ret ? ret : count;
-+}
-+CONFIGFS_ATTR(nvmet_passthru_, enable);
-+
-+static struct configfs_attribute *nvmet_passthru_attrs[] = {
-+	&nvmet_passthru_attr_device_path,
-+	&nvmet_passthru_attr_enable,
-+	NULL,
-+};
-+
-+static const struct config_item_type nvmet_passthru_type = {
-+	.ct_attrs		= nvmet_passthru_attrs,
-+	.ct_owner		= THIS_MODULE,
-+};
-+
-+static void nvmet_add_passthru_group(struct nvmet_subsys *subsys)
-+{
-+	config_group_init_type_name(&subsys->passthru_group,
-+				    "passthru", &nvmet_passthru_type);
-+	configfs_add_default_group(&subsys->passthru_group,
-+				   &subsys->group);
-+}
-+
-+#else /* CONFIG_NVME_TARGET_PASSTHRU */
-+
-+static void nvmet_add_passthru_group(struct nvmet_subsys *subsys)
-+{
-+}
-+
-+#endif /* CONFIG_NVME_TARGET_PASSTHRU */
-+
- static int nvmet_port_subsys_allow_link(struct config_item *parent,
- 		struct config_item *target)
- {
-@@ -918,6 +1015,8 @@ static struct config_group *nvmet_subsys_make(struct config_group *group,
- 	configfs_add_default_group(&subsys->allowed_hosts_group,
- 			&subsys->group);
- 
-+	nvmet_add_passthru_group(subsys);
-+
- 	return &subsys->group;
- }
- 
-diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
-index 9e7d492aedbd..a6b29102a925 100644
---- a/drivers/nvme/target/nvmet.h
-+++ b/drivers/nvme/target/nvmet.h
-@@ -233,6 +233,7 @@ struct nvmet_subsys {
- #ifdef CONFIG_NVME_TARGET_PASSTHRU
- 	struct nvme_ctrl	*passthru_ctrl;
- 	char			*passthru_ctrl_path;
-+	struct config_group	passthru_group;
- #endif /* CONFIG_NVME_TARGET_PASSTHRU */
- };
- 
--- 
-2.20.1
+Paolo
 
