@@ -2,67 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7FCE13477A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 17:16:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63AA6134782
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 17:17:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729412AbgAHQQ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 11:16:29 -0500
-Received: from mga03.intel.com ([134.134.136.65]:31564 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728899AbgAHQQ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 11:16:28 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 08:16:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,410,1571727600"; 
-   d="scan'208";a="211584654"
-Received: from dkurtaev-mobl.ccr.corp.intel.com (HELO localhost) ([10.252.22.167])
-  by orsmga007.jf.intel.com with ESMTP; 08 Jan 2020 08:16:25 -0800
-Date:   Wed, 8 Jan 2020 18:16:25 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        jmorris@namei.org, Tadeusz Struk <tadeusz.struk@intel.com>,
-        Laura Abbott <labbott@redhat.com>
-Subject: [GIT PULL] tpmdd fixes for Linux v5.5-rc6 part 2
-Message-ID: <20200108161625.GA16812@linux.intel.com>
+        id S1729207AbgAHQRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 11:17:30 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44121 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbgAHQR3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 11:17:29 -0500
+Received: by mail-ed1-f68.google.com with SMTP id bx28so2997927edb.11
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 08:17:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ixNLloMM7MEsta6mQM3CnnoI5zVcxQu1H3iGtxld7Kc=;
+        b=IYN11j2i2b3yDnBf7f+iDcswMuW/81T76Q/ozJTLIk0XuvyeDwwSw3JwBU6setSBRD
+         M4c1qsBA5BaTA+pUkJsOuHyJG1aegZXhnzDCpNvdaeH6L8tysTVA+ymH53FRFXXCzHiU
+         2n23JOOooOkuOKHvlQG7bnkvczZJRKZzfhG/9rjU5yNi33ZDxgUk+NO6iCTaYA+wRK0c
+         cbjaYWyjFQPc3lcQTNCdiE/v9XIjEb7FFN61NZj9FrPgxiYQgO0Y3si9ZNMp7reKiNoz
+         w9To10GYO48mMyUUwaCuHFt/lwb30c2MJRScrjk+wSHxdPfQ1dEvmurQW92dEbBsVYfC
+         nqgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ixNLloMM7MEsta6mQM3CnnoI5zVcxQu1H3iGtxld7Kc=;
+        b=VZKShel7nu06pG6rFBLBXmS6bLwwrAKylOMqWwzsmwlhbYUvY9d2CwTlYQbW0a5cwp
+         65EjWPh8m1BNeMlWvg5UR5Cv0sJBM84NWQ9gQZswXBWO+OAXPBG6FjMICc7T46aWykex
+         XKvbXsg5Q9w5/pCwyD8sn0ZvvVOaUre9WdmnEdHAwADJ5YPdgiWpZEqIKWW2FC/2ZwuE
+         PyhBTqR2vAMNIVsQv/ASPIAbv3weAOzMqRSH1ELGJQUPBhIxaD5C3IvTsaX9r/nQGyLC
+         RbvAdYA3DBk3bU8ZR6qX5Q95JfXSK+WfeMTJQf/RsktrYaSeZspSkJJvTHekUotsOnfn
+         g2AQ==
+X-Gm-Message-State: APjAAAXszQjMKICA41NTmRg4b8qwrwwYjcw/dbR3jrzZbTdc/LjcXMx6
+        Gzk4KQjf6yEVLYCjeFqqxna0JQ==
+X-Google-Smtp-Source: APXvYqyNCsBoBb6b0+/VFgEFHT6BCXMQhc38kBy0a5iYr3sUoeSElD5NnXUq55ySz//tov60JWmR9g==
+X-Received: by 2002:a17:906:229b:: with SMTP id p27mr5692899eja.21.1578500248323;
+        Wed, 08 Jan 2020 08:17:28 -0800 (PST)
+Received: from [192.168.27.209] ([37.157.136.193])
+        by smtp.googlemail.com with ESMTPSA id dn12sm89884edb.89.2020.01.08.08.17.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jan 2020 08:17:27 -0800 (PST)
+Subject: Re: [PATCH v4 06/12] dt-bindings: media: venus: Convert msm8916 to DT
+ schema
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        dikshita@codeaurora.org
+References: <20200106154929.4331-1-stanimir.varbanov@linaro.org>
+ <20200106154929.4331-7-stanimir.varbanov@linaro.org>
+ <20200106220414.GA10744@bogus>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <a224bad9-2eee-a906-80ba-573c1525afb1@linaro.org>
+Date:   Wed, 8 Jan 2020 18:17:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200106220414.GA10744@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One critical bug fix (the faulting commit is in previous rc) for the
-release.
+Hi Rob,
 
-/Jarkko
+Thanks for the review!
 
-The following changes since commit ae6088216ce4b99b3a4aaaccd2eb2dd40d473d42:
+On 1/7/20 12:04 AM, Rob Herring wrote:
+> On Mon,  6 Jan 2020 17:49:23 +0200, Stanimir Varbanov wrote:
+>> Convert qcom,msm8916-venus Venus binding to DT schema
+>>
+>> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+>> ---
+>>  .../bindings/media/qcom,msm8916-venus.yaml    | 119 ++++++++++++++++++
+>>  1 file changed, 119 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml
+>>
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
 
-  Merge tag 'trace-v5.5-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace (2020-01-06 15:38:38 -0800)
+I guess you are agree with merging dt-binding patches from this series
+through linux-media tree, right?
 
-are available in the Git repository at:
-
-  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20200108
-
-for you to fetch changes up to a430e67d9a2c62a8c7b315b99e74de02018d0a96:
-
-  tpm: Handle negative priv->response_len in tpm_common_read() (2020-01-08 18:11:09 +0200)
-
-----------------------------------------------------------------
-tpmdd fixes for Linux v5.5-rc6 part 2
-
-----------------------------------------------------------------
-Tadeusz Struk (1):
-      tpm: Handle negative priv->response_len in tpm_common_read()
-
- drivers/char/tpm/tpm-dev-common.c | 2 +-
- drivers/char/tpm/tpm-dev.h        | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+-- 
+regards,
+Stan
