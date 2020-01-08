@@ -2,129 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 666B713418B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 13:23:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A407D13418E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 13:23:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbgAHMXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 07:23:10 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:46145 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726967AbgAHMXK (ORCPT
+        id S1727864AbgAHMXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 07:23:23 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:40261 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726967AbgAHMXV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 07:23:10 -0500
-Received: from mail-lf1-f45.google.com ([209.85.167.45]) by
- mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MUXlG-1jFWw90LXE-00QSh7 for <linux-kernel@vger.kernel.org>; Wed, 08 Jan
- 2020 13:23:09 +0100
-Received: by mail-lf1-f45.google.com with SMTP id 9so2278020lfq.10
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 04:23:08 -0800 (PST)
-X-Gm-Message-State: APjAAAUTWUgAuSFWsGKV2F63gz61Xfmc2lNcxLGV70+GqE9Lh4biQl+j
-        oOWW472FpWCjfJ7E9SSZL4niPd5zBmTTPJY5JiU=
-X-Google-Smtp-Source: APXvYqxZVKL40UtTBnxwakO4BEP7Fg10DBHbrKV7AbfPjYEuAmDBjsakudNCB5AuWCx9OLiNKfD9haJZpMsPM/Lza9E=
-X-Received: by 2002:a19:22cc:: with SMTP id i195mr2827292lfi.148.1578486188600;
- Wed, 08 Jan 2020 04:23:08 -0800 (PST)
+        Wed, 8 Jan 2020 07:23:21 -0500
+Received: by mail-pj1-f66.google.com with SMTP id bg7so1000110pjb.5;
+        Wed, 08 Jan 2020 04:23:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CDt3/BmyCi3mmATBGnzyjL+1pu0FJmQfjeOFbDPbHbs=;
+        b=mr0z9Qd3OHCtlC7Y1VH+a5kwe2AtiJHdt5NH8/suy8BPRJjgUTP8848yfITr8/2Qb0
+         7Sxi9R+vcvxEEpKXOviY9Mt3vpLogXiZnsaDxKzISWnrCe2MC6ySwZsNTlOEp9e8ebJy
+         LeHjyzrSOH3NSHCYw7AFx56h0TMdX+wNvxxhQGxiVrPgHVHjkRxQy+ac3sy+yzu42Tsz
+         RNM2bS40U6yi1fHultAIDEQ8X2tw/hcntfPqB4ZcBXOTuIOfE31NDZXHPSTogDqM+ohZ
+         NvklttjOgdW6pbz3xBKPQV6L2g4O91C2N8NwcO447Jzt4TYPVwS7j9vXfaGHkdtAUccc
+         ZvKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CDt3/BmyCi3mmATBGnzyjL+1pu0FJmQfjeOFbDPbHbs=;
+        b=mr4WyFaIiXXtQAUKrtg6tNGtUPqem8ldC5I3kMivQbBr3XkcbO0wFwsFSyYDbtBMXN
+         H9ezs8Y31Q+ZbudDXgZZNxW9pr6fyYD8xH6pWBQbdKDXZcxBifPQIctCVKXt1BVGHCLh
+         OHhhvaQaEOY0CivqK/pcLKHYoS6snb7wDJXjIf6UAIdXB+Iyn0NpsEYz1bSFzuuQyjUn
+         W2hn6iWBpmyjLFLjTBqNmPb5caiSDRlcQoscfS/lykheBOlV+EevbY69tVy7JqaXfgTv
+         P+6B5XLlGvpqw0GIbacJbOtGZqmgdWpr8dmBXq2vxGxQKxYIP7ejw+HzAVKrx/vAY9ri
+         TXzQ==
+X-Gm-Message-State: APjAAAWXtLy8KcdSkpG4xNzrugynuPY1CWyRw21i1OYq4SuRgybew7nd
+        BA7dk2Nt/Ri1puatWjnYhpAADS8LCLCfjwmMTEM=
+X-Google-Smtp-Source: APXvYqwUPjcUZSMwCFvi1PiYTPG4JryE3mqB72Ywf4lMGCoFsW6uzceoa/MK0SVe6wXNAuAPSIxN9OksFbp3SExd9L8=
+X-Received: by 2002:a17:90b:3109:: with SMTP id gc9mr4033544pjb.30.1578486200238;
+ Wed, 08 Jan 2020 04:23:20 -0800 (PST)
 MIME-Version: 1.0
-References: <20191111131252.921588318@infradead.org> <20191111132458.220458362@infradead.org>
- <20191111164703.GA11521@willie-the-truck> <20191111171955.GO4114@hirez.programming.kicks-ass.net>
- <20191111172541.GT5671@hirez.programming.kicks-ass.net> <20191112112950.GB17835@willie-the-truck>
- <20191113092636.GG4131@hirez.programming.kicks-ass.net>
-In-Reply-To: <20191113092636.GG4131@hirez.programming.kicks-ass.net>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 8 Jan 2020 13:22:52 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a0MJGpg6AkmwRL6o7TCPOQXSMDShutigvBjeOMDn0BHaA@mail.gmail.com>
-Message-ID: <CAK8P3a0MJGpg6AkmwRL6o7TCPOQXSMDShutigvBjeOMDn0BHaA@mail.gmail.com>
-Subject: Re: [PATCH -v5mkII 13/17] arm/ftrace: Use __patch_text()
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Will Deacon <will@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>, bristot@redhat.com,
-        Jason Baron <jbaron@akamai.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, namit@vmware.com,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Rabin Vincent <rabin@rab.in>, Nicolas Pitre <nico@fluxnic.net>
+References: <20200106144219.525215-1-hdegoede@redhat.com> <20200106144219.525215-2-hdegoede@redhat.com>
+In-Reply-To: <20200106144219.525215-2-hdegoede@redhat.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 8 Jan 2020 14:23:11 +0200
+Message-ID: <CAHp75Ve5XF-UZw6D-OUCkgOPMYH0DgT1L5uVNGRuLmZ6Cjd1KA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] platform/x86: GPD pocket fan: Allow somewhat
+ lower/higher temperature limits
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jason Anderson <jasona.594@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:sSmR0fZx9K8ZOKVdELxlCTXbpKjNcSyt9EK5Sc76vueqKBjwAbx
- Q+qdThfTB0xkby4isKhgGjmxkw+Bf8auNRr+3PZ1hk8eMq9XeuAQm6+KAGbXuqou1LJGZw/
- TY4IBMuuoXmP2zQYPUSuKjgWQf1L05n06F3DmMD4YTlDtxMcp0FFIrvFN+lLFAQs275nMWr
- +lVFqMKrvK6KmTBS7YZ5g==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:+j8e/PRnFgU=:aCc4YJVxDVByYMxUx2ltpk
- AD7grOXeZrCDRqA+3zOcVAaoObC7m6VrczoDw0OVro2Wp3WNXDWg62vLYkQfLSifjVa0xPesi
- PPa5F53cGsgFejsqdJuc/mKIzyHRBHmjqVZAAHoxgOcUg6C9ff9wMfoCFds5di5D9K/LLWVBf
- zpUBXT6Af6xQqahblNL/xtNYjmA6ZBZ7+i9kMkO4bHf9GniWdoY/ja62BDDgMVVwyJ6lTgzHt
- RhZbye/uHoszNSfwg0TU9Zn5x4lnnj7naUj+dtxaeNfh0lETXzaeLQO3a66xZpji3E1Do76gd
- z0iK2Ew2ZuIs8mVAKy67lzrpKgwaSOqlgVOpFO27pOBr8/wLASxOruWzBrbzSlL70TSi/7XyN
- RArfBkm7ruPOVcmfo74JdE8HeV5i1nvnBuUdYsHtqnIJcYenH8HCMYfyVWaYi+EejXvGL+0Kr
- veKX/SaE2nd2NkPcOfVBlmm1gZBwWwNmibMtsC/uVourO087khEMWGUtZIiZKcrWHK8pffss4
- +c5NT5L2Xp9FqEQh8vuAaLz4WVC2uuI9Nc1Dvosrg6Fr/LZy6mKrXc0jidz3OicQCxf4Xkyks
- 2mEMlokreJy480U7PAIxCasY+9h+/tyClOfAHSCUj7KYlAea5cb6SJ0qdS9A3cGutf4Qe6ZAq
- Ljhr80O2ww7I/K5Nngf1HkS8hxRbAzUcux3iYi5jMOWVP5smHaZDzhQ+TWViQQGxcBmZv/p5Z
- X/10c0VuFni1w+hp4D6AeazO9MaWnApRUlppQnCNycaUwQ5289wsX+ai00KGTIxBsbDdqpzut
- xgDWxb7twGmzpxJD5SJSCC/63UMUyT+IhKGSwPhLGjIWRrBFFnDkcLx7R6c2D8ZB4mq0znOZn
- TYhOCZBgq99kNWIM5r5w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 10:29 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> @@ -49,8 +49,8 @@ obj-$(CONFIG_HAVE_ARM_SCU)    += smp_scu.o
->  obj-$(CONFIG_HAVE_ARM_TWD)     += smp_twd.o
->  obj-$(CONFIG_ARM_ARCH_TIMER)   += arch_timer.o
->  obj-$(CONFIG_FUNCTION_TRACER)  += entry-ftrace.o
-> -obj-$(CONFIG_DYNAMIC_FTRACE)   += ftrace.o insn.o
-> -obj-$(CONFIG_FUNCTION_GRAPH_TRACER)    += ftrace.o insn.o
-> +obj-$(CONFIG_DYNAMIC_FTRACE)   += ftrace.o insn.o patch.o
-> +obj-$(CONFIG_FUNCTION_GRAPH_TRACER)    += ftrace.o insn.o patch.o
->  obj-$(CONFIG_JUMP_LABEL)       += jump_label.o insn.o patch.o
->  obj-$(CONFIG_KEXEC)            += machine_kexec.o relocate_kernel.o
+On Mon, Jan 6, 2020 at 4:42 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Allow the user to configure the fan to turn on / speed-up at lower
+> thresholds then before (20 degrees Celcius as minimum instead of 40) and
+> likewise also allow the user to delay the fan speeding-up till the
+> temperature hits 90 degrees Celcius (was 70).
+>
+> Cc: Jason Anderson <jasona.594@gmail.com>
 
-This broke randconfig builds with big-endian ARMv5:
+> Reported-by: Jason Anderson <jasona.594@gmail.com>
 
-../arch/arm/kernel/patch.c: In function '__patch_text_real':
-../arch/arm/kernel/patch.c:94:11: error: implicit declaration of
-function '__opcode_to_mem_thumb32'
-[-Werror=implicit-function-declaration]
-    insn = __opcode_to_mem_thumb32(insn);
-           ^~~~~~~~~~~~~~~~~~~~~~~
+My understanding of this tag that the report assumes a bug to fix
+followed up with a corresponding Fixes tag.
 
-The problem is that we don't have a BE32 definition of
-__opcode_to_mem_thumb32, mostly because no hardware
-supports that.
-
-One possible workaround is a big ugly:
-
-diff --git a/arch/arm/kernel/patch.c b/arch/arm/kernel/patch.c
-index d0a05a3bdb96..1067fd122897 100644
---- a/arch/arm/kernel/patch.c
-+++ b/arch/arm/kernel/patch.c
-@@ -90,9 +90,11 @@ void __kprobes __patch_text_real(void *addr,
-unsigned int insn, bool remap)
-
-                size = sizeof(u32);
-        } else {
-+#ifdef CONFIG_THUMB2_KERNEL
-                if (thumb2)
-                        insn = __opcode_to_mem_thumb32(insn);
-                else
-+#endif
-                        insn = __opcode_to_mem_arm(insn);
-
-                *(u32 *)waddr = insn;
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+>  drivers/platform/x86/gpd-pocket-fan.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/platform/x86/gpd-pocket-fan.c b/drivers/platform/x86/gpd-pocket-fan.c
+> index 1e6a42f2ea8a..0ffcbf9bc18e 100644
+> --- a/drivers/platform/x86/gpd-pocket-fan.c
+> +++ b/drivers/platform/x86/gpd-pocket-fan.c
+> @@ -126,7 +126,7 @@ static int gpd_pocket_fan_probe(struct platform_device *pdev)
+>         int i;
+>
+>         for (i = 0; i < ARRAY_SIZE(temp_limits); i++) {
+> -               if (temp_limits[i] < 40000 || temp_limits[i] > 70000) {
+> +               if (temp_limits[i] < 20000 || temp_limits[i] > 90000) {
+>                         dev_err(&pdev->dev, "Invalid temp-limit %d (must be between 40000 and 70000)\n",
+>                                 temp_limits[i]);
+>                         temp_limits[0] = TEMP_LIMIT0_DEFAULT;
+> --
+> 2.24.1
+>
 
 
-Any other suggestions?
-
-       Arnd
+-- 
+With Best Regards,
+Andy Shevchenko
