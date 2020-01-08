@@ -2,141 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD8D4133BAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 07:29:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B172133BB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 07:30:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbgAHG3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 01:29:06 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15810 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725773AbgAHG3G (ORCPT
+        id S1726734AbgAHGaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 01:30:35 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:51730 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725838AbgAHGaf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 01:29:06 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e1576800002>; Tue, 07 Jan 2020 22:28:16 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 07 Jan 2020 22:29:05 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 07 Jan 2020 22:29:05 -0800
-Received: from [10.24.44.157] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 8 Jan
- 2020 06:28:59 +0000
-Subject: Re: [PATCH v7 15/21] ASoC: tegra: Add fallback implementation for
- audio mclk
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
-        <tiwai@suse.com>, <digetx@gmail.com>, <mperttunen@nvidia.com>,
-        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <josephl@nvidia.com>, <daniel.lezcano@linaro.org>,
-        <mmaddireddy@nvidia.com>, <markz@nvidia.com>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
- <1578457515-3477-16-git-send-email-skomatineni@nvidia.com>
- <f3f550a2-c6e0-7a78-5c83-da3e54dab309@nvidia.com>
- <d7ac6135-73b0-1087-dafa-4df558a06ef4@nvidia.com>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <a3c5293b-9ed4-3266-f792-38b980e54b1e@nvidia.com>
-Date:   Wed, 8 Jan 2020 11:58:56 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Wed, 8 Jan 2020 01:30:35 -0500
+X-UUID: df591dbc279b464287ded0fbe859fb19-20200108
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=C5uYcatcL7O3L8hFISr3vserMmDxuM/EyNyUSLNixHg=;
+        b=V1s0lAH50uITb/mMbf6zoKRKObLO8ODB3swlXB0MEvOnsPvXHCrJ314kUBwK8CM54OjzmEmUbfBRUPHXTTGNb528AnUwGYMYjxsBvAqswqZCNVYAGVsurNGNKaPEl9t8n3LyhM2Yclom4gGIwuGE4mTmcoUsl4xFC/iZ3F0Q+zk=;
+X-UUID: df591dbc279b464287ded0fbe859fb19-20200108
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <fengping.yu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 622843385; Wed, 08 Jan 2020 14:30:29 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 8 Jan 2020 14:31:03 +0800
+Received: from localhost.localdomain (10.15.20.246) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 8 Jan 2020 14:30:03 +0800
+From:   fengping yu <fengping.yu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Stefan Agner <stefan@agner.cn>, Jacky Bai <ping.bai@nxp.com>,
+        Marco Felsch <m.felsch@pengutronix.de>
+CC:     <linux-input@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>
+Subject: Resend [PATCH V2] dt-bindings:input:keyboard:add MediaTek keypad controller binding 
+Date:   Wed, 8 Jan 2020 14:29:21 +0800
+Message-ID: <20200108062923.14684-1-fengping.yu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-In-Reply-To: <d7ac6135-73b0-1087-dafa-4df558a06ef4@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-GB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1578464897; bh=OHhIle+XKX/LTcA5mmunIMXF7a5LS6VUkkqyvI0+XNg=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=ZNR7SZJgFRYaRAx4eRFJT2uN5zQzJqxtOI2lcGNIlSwFBmAEIBNAWOaBMHMhyLs39
-         AYBer1uvKCm9U/ZUrwjhcjhAATw3Je5U+v7ubgsWf+mEAd9sC3SBG6IY/bvaXTTlra
-         Vc8vOpPasi+ZKzgw+3nhm0VZmYV5OZ89xt3Vi6as2nlt5/CIiMlhzhJrtlEn4eKsLC
-         eMObyYS7kHlRN6oTWH8yCSmnodXewyv7fsEDrzsrdBD0JAVIUwrqV6+iqhkiQcVzIP
-         hlLgZOiOtDl28knHeiGM7iEYvRGtjq9YyY403f4bVVEsdJ3TjVaSBrNbnU6TDZnUJ3
-         nXcH7t0bhalBQ==
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+DQpmZW5ncGluZy55dSAoMik6DQogIERvY3VtZW50YXRpb246IGRldmljZXRyZWU6IGJpbmRpbmdz
+OiBpbnB1dA0KICBkcml2ZXJzOiBpbnB1dDoga2V5Ym9hcmQNCg0KIC4uLi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL2lucHV0L210ay1rcGQudHh0ICAgICB8ICA1MiArKysNCiBhcmNoL2FybTY0L2NvbmZp
+Z3MvZGVmY29uZmlnICAgICAgICAgICAgICAgICAgfCAgIDEgKw0KIGRyaXZlcnMvaW5wdXQva2V5
+Ym9hcmQvS2NvbmZpZyAgICAgICAgICAgICAgICB8ICAgOCArDQogZHJpdmVycy9pbnB1dC9rZXli
+b2FyZC9NYWtlZmlsZSAgICAgICAgICAgICAgIHwgICAxICsNCiBkcml2ZXJzL2lucHV0L2tleWJv
+YXJkL210ay1rcGQuYyAgICAgICAgICAgICAgfCAzNTcgKysrKysrKysrKysrKysrKysrDQogNSBm
+aWxlcyBjaGFuZ2VkLCA0MTkgaW5zZXJ0aW9ucygrKQ0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaW5wdXQvbXRrLWtwZC50eHQNCiBjcmVhdGUg
+bW9kZSAxMDA2NDQgZHJpdmVycy9pbnB1dC9rZXlib2FyZC9tdGsta3BkLmMNCg==
 
-On 1/8/2020 11:18 AM, Sowjanya Komatineni wrote:
->
-> On 1/7/20 9:34 PM, Sameer Pujar wrote:
->>
->> On 1/8/2020 9:55 AM, Sowjanya Komatineni wrote:
->>> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
->>> are moved to Tegra PMC driver with pmc as clock provider and using pmc
->>> clock ids.
->>>
->>> New device tree uses clk_out_1 from pmc clock provider.
->>>
->>> So, this patch adds implementation for mclk fallback to extern1 when
->>> retrieving mclk returns -ENOENT to be backward compatible of new device
->>> tree with older kernels.
->>>
->>> Tested-by: Dmitry Osipenko <digetx@gmail.com>
->>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>> ---
->>> =C2=A0 sound/soc/tegra/tegra_asoc_utils.c | 11 ++++++++++-
->>> =C2=A0 1 file changed, 10 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/sound/soc/tegra/tegra_asoc_utils.c=20
->>> b/sound/soc/tegra/tegra_asoc_utils.c
->>> index 9cfebef74870..9a5f81039491 100644
->>> --- a/sound/soc/tegra/tegra_asoc_utils.c
->>> +++ b/sound/soc/tegra/tegra_asoc_utils.c
->>> @@ -183,7 +183,16 @@ int tegra_asoc_utils_init(struct=20
->>> tegra_asoc_utils_data *data,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data->clk_cdev1 =3D devm_clk_get(dev, "m=
-clk");
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(data->clk_cdev1)) {
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(data->de=
-v, "Can't retrieve clk cdev1\n");
->>
->> This error print can be moved inside below if, when this actually=20
->> meant to be an error condition.
->>
-> Want to show error even if mclk retrieval returns ENOENT to clearly=20
-> indicate mclk does not exist along with message of falling back to=20
-> extern1.
-
-Yes, but falling back essentially means 'mclk' is not available and=20
-fallback print is not an error.
-Not a major issue though, you can consider updating. Otherwise LGTM.
-
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return PTR_ERR(data->clk_cd=
-ev1);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (PTR_ERR(data->clk_cdev1=
-) !=3D -ENOENT)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret=
-urn PTR_ERR(data->clk_cdev1);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Fall back to extern1 */
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data->clk_cdev1 =3D devm_cl=
-k_get(dev, "extern1");
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(data->clk_cdev1)=
-) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev=
-_err(data->dev, "Can't retrieve clk extern1\n");
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret=
-urn PTR_ERR(data->clk_cdev1);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(data->dev, "Falling=
- back to extern1\n");
->>
->> This can be a info print?
->
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
