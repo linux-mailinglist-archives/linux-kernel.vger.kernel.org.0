@@ -2,60 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A3F6133B31
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 06:33:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 290E3133B3F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Jan 2020 06:36:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbgAHFdL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 00:33:11 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:47308 "EHLO
+        id S1726482AbgAHFgS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 00:36:18 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:47590 "EHLO
         fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725773AbgAHFdL (ORCPT
+        with ESMTP id S1725907AbgAHFgS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 00:33:11 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0085WxXx099545;
-        Tue, 7 Jan 2020 23:32:59 -0600
+        Wed, 8 Jan 2020 00:36:18 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0085aCIJ100921;
+        Tue, 7 Jan 2020 23:36:12 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578461579;
-        bh=keL4LWQIupCJg61mpAvGVJuErN5R0nhMOq3fzzLzC4o=;
+        s=ti-com-17Q1; t=1578461772;
+        bh=HZPNRJuzdDiBHJDwYy9Z3EAqsCKdw2svb8xwWgVcoNQ=;
         h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=u+Pu69gIiJ/hwHWNHI8SeHHO4V5yf0FMv088Qty0DiZSjYNMpsRctPy97zPPOfWj+
-         mUrnvS5OJUA3r/5RfIqlX7118w+Pia5L97WwCxypojX27DFKWdnefVfFIpBdNKCHaa
-         gMDjwq1b7UOA6SP9u9jl96tf31a6L477cS2dTTbE=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0085WxKt000705
+        b=xq3DWXnUUHz9GP1rVPMP1Jbe6mLEkncf6PFQTjuYLiiWQ/SZk81Q3BvS9XCwtbruM
+         jHh8uHeqJVmIWBJoFSF43jJtuCtI6kCpXjYYkuS4P98sST/gCMzQ/PD7VHeEINhY+t
+         Mk+KFY5YUFfB7bk2kPvJV6mvG18YkqQrCAvQYKsU=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0085aCvP093219
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 7 Jan 2020 23:32:59 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 7 Jan 2020 23:36:12 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 7 Jan
- 2020 23:32:59 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ 2020 23:36:11 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 7 Jan 2020 23:32:59 -0600
+ Frontend Transport; Tue, 7 Jan 2020 23:36:11 -0600
 Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0085Wtx9127819;
-        Tue, 7 Jan 2020 23:32:56 -0600
-Subject: Re: [PATCH v2 01/14] dt-bindings: PCI: cadence: Add PCIe RC/EP DT
- schema for Cadence PCIe
-To:     Rob Herring <robh@kernel.org>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Murray <andrew.murray@arm.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20200106102058.19183-1-kishon@ti.com>
- <20200106102058.19183-2-kishon@ti.com> <20200108034314.GA5412@bogus>
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0085a8TV003220;
+        Tue, 7 Jan 2020 23:36:09 -0600
+Subject: Re: [PATCH v3] phy: Add DisplayPort configuration options
+To:     Jyri Sarha <jsarha@ti.com>, Yuti Amonkar <yamonkar@cadence.com>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <maxime@cerno.tech>
+CC:     <praneeth@ti.com>, <tomi.valkeinen@ti.com>, <mparab@cadence.com>,
+        <sjakhade@cadence.com>
+References: <1578313360-18124-1-git-send-email-yamonkar@cadence.com>
+ <9d849a10-493f-e297-f4c3-b34a341635ed@ti.com>
 From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <3e2bfa1b-ff9e-93a0-a6b9-7985e0a76bf0@ti.com>
-Date:   Wed, 8 Jan 2020 11:05:01 +0530
+Message-ID: <5e3853dd-719b-c6a0-4af0-04967a2c6e3a@ti.com>
+Date:   Wed, 8 Jan 2020 11:08:15 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200108034314.GA5412@bogus>
+In-Reply-To: <9d849a10-493f-e297-f4c3-b34a341635ed@ti.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -65,151 +61,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
 
-On 08/01/20 9:13 AM, Rob Herring wrote:
-> On Mon, Jan 06, 2020 at 03:50:45PM +0530, Kishon Vijay Abraham I wrote:
->> Add PCIe Host (RC) and Endpoint (EP) device tree schema for Cadence
->> PCIe core library. Platforms using Cadence PCIe core can include the
->> schemas added here in the platform specific schemas.
+
+On 08/01/20 12:22 AM, Jyri Sarha wrote:
+> On 06/01/2020 14:22, Yuti Amonkar wrote:
+>> Allow DisplayPort PHYs to be configured through the generic
+>> functions through a custom structure added to the generic union.
+>> The configuration structure is used for reconfiguration of
+>> DisplayPort PHYs during link training operation.
 >>
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->> ---
->>  .../devicetree/bindings/pci/cdns-pcie-ep.yaml | 20 ++++++++++++
->>  .../bindings/pci/cdns-pcie-host.yaml          | 30 +++++++++++++++++
->>  .../devicetree/bindings/pci/cdns-pcie.yaml    | 32 +++++++++++++++++++
->>  3 files changed, 82 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/pci/cdns-pcie-ep.yaml
->>  create mode 100644 Documentation/devicetree/bindings/pci/cdns-pcie-host.yaml
->>  create mode 100644 Documentation/devicetree/bindings/pci/cdns-pcie.yaml
-> 
-> Need to remove the old files.
-> 
-> Note that I posted a conversion of Cadence host[1]. Yours goes further, 
-> but please compare and add anything mine has that yours doesn't.
-> 
-> [1] https://lore.kernel.org/linux-pci/20191231193903.15929-2-robh@kernel.org/
-
-Sure, I'll look at this.
-
-Recently we converted Cadence driver to a library since the same Cadence
-core can be used by multiple vendors. Here I'm trying to add the
-bindings for Cadence core which can be included in the platform specific
-schema.
-
-So the existing cdns,cdns-pcie-host.yaml which is a Cadence platform
-using Cadence core should include cdns-pcie-host.yaml.
-
-"[PATCH v2 10/14] dt-bindings: PCI: Add host mode dt-bindings for TI's
-J721E SoC" in this series includes "cdns-pcie-host.yaml" for TI platform
-using Cadence core.
-
-That's why in the schema added here you don't see the compatible since
-that will be added in platform specific schema.
-> 
+>> The parameters added here are the ones defined in the DisplayPort
+>> spec v1.4 which include link rate, number of lanes, voltage swing
+>> and pre-emphasis.
 >>
->> diff --git a/Documentation/devicetree/bindings/pci/cdns-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/cdns-pcie-ep.yaml
->> new file mode 100644
->> index 000000000000..36aaae5931c3
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pci/cdns-pcie-ep.yaml
->> @@ -0,0 +1,20 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +# Copyright (C) 2020 Texas Instruments Incorporated - http://www.ti.com/
->> +%YAML 1.2
->> +--
->> +$id: "http://devicetree.org/schemas/pci/cdns-pcie-ep.yaml#"
->> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
->> +
->> +title: Cadence PCIe Endpoint
->> +
->> +maintainers:
->> +  - Tom Joseph <tjoseph@cadence.com>
->> +
->> +allOf:
->> +  - $ref: "cdns-pcie.yaml#"
->> +
->> +properties:
->> +  max-functions:
->> +    description: Maximum number of functions that can be configured (default 1)
->> +    allOf:
->> +      - $ref: /schemas/types.yaml#/definitions/uint8
->> diff --git a/Documentation/devicetree/bindings/pci/cdns-pcie-host.yaml b/Documentation/devicetree/bindings/pci/cdns-pcie-host.yaml
->> new file mode 100644
->> index 000000000000..78261bc4f0c5
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pci/cdns-pcie-host.yaml
->> @@ -0,0 +1,30 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +# Copyright (C) 2020 Texas Instruments Incorporated - http://www.ti.com/
->> +%YAML 1.2
->> +---
->> +$id: "http://devicetree.org/schemas/pci/cdns-pcie-host.yaml#"
->> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
->> +
->> +title: Cadence PCIe Host
->> +
->> +maintainers:
->> +  - Tom Joseph <tjoseph@cadence.com>
->> +
->> +allOf:
->> +  - $ref: "/schemas/pci/pci-bus.yaml#"
->> +  - $ref: "cdns-pcie.yaml#"
->> +
->> +properties:
->> +  vendor-id:
->> +    description: The PCI vendor ID (16 bits, default is design dependent)
->> +
->> +  device-id:
->> +    description: The PCI device ID (16 bits, default is design dependent)
+>> Add the DisplayPort phy mode to the generic phy_mode enum.
+>>
+>> Signed-off-by: Yuti Amonkar <yamonkar@cadence.com>
 > 
-> While these got defined here as 16-bits, these should be fixed to 32-bit 
-> because they are established properties for a long time.
+> Reviewed-by: Jyri Sarha <jsarha@ti.com>
 > 
->> +
->> +  cdns,no-bar-match-nbits:
->> +    description: Set into the no BAR match register to configure the number
->> +      of least significant bits kept during inbound (PCIe -> AXI) address
->> +      translations (default 32)
->> +    allOf:
->> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> 
-> What about compatible?
-> 
->> +
->> diff --git a/Documentation/devicetree/bindings/pci/cdns-pcie.yaml b/Documentation/devicetree/bindings/pci/cdns-pcie.yaml
->> new file mode 100644
->> index 000000000000..497d3dc2e6f2
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pci/cdns-pcie.yaml
->> @@ -0,0 +1,32 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +# Copyright (C) 2020 Texas Instruments Incorporated - http://www.ti.com/
->> +%YAML 1.2
->> +---
->> +$id: "http://devicetree.org/schemas/pci/cdns-pcie.yaml#"
->> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
->> +
->> +title: Cadence PCIe Core
->> +
->> +maintainers:
->> +  - Tom Joseph <tjoseph@cadence.com>
->> +
->> +properties:
->> +  max-link-speed:
->> +    minimum: 1
->> +    maximum: 3
->> +
->> +  num-lanes:
->> +    minimum: 1
->> +    maximum: 2
-> 
-> Needs a type.
-> 
-> The Cadence IP can't support x4, x8, or x16?
+> Kishon, can you still pick this for v5.6?
 
-I'll fix this. I assume these can be overwritten in platform specific
-schema files?
+Thank you Jyri and Maxime for reviewing this.
+
+Merged it now.
 
 Thanks
 Kishon
