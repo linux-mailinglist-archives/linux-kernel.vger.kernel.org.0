@@ -2,50 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 079C3136087
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 19:52:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D30F13608B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 19:52:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388613AbgAISwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 13:52:39 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38183 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730273AbgAISwj (ORCPT
+        id S2388624AbgAISwq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 13:52:46 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45909 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730273AbgAISwq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 13:52:39 -0500
-Received: by mail-pg1-f194.google.com with SMTP id a33so3639849pgm.5;
-        Thu, 09 Jan 2020 10:52:38 -0800 (PST)
+        Thu, 9 Jan 2020 13:52:46 -0500
+Received: by mail-pl1-f194.google.com with SMTP id b22so2894214pls.12;
+        Thu, 09 Jan 2020 10:52:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:from:to:cc:cc:cc:subject
          :references:in-reply-to;
-        bh=7KxrUB9+0m2ZmXZKSIGQNkA9bai1IRwAh0T3j87NHzs=;
-        b=WFtqfC/LVSYqbu2YCH4S783eUT/K/0aEddKYY3CMaO4XU4Kf/pjVm+ZaBc5ho969AS
-         14Wu1kPkZ6BNGvyIeOo/TuDPsYhcNcGReaSajzVvHS+0pZt8yWn12YXg3V+lPUCc3l48
-         1oQtnIHu/ck95pO6saDBRLwggRTAr3+d4WfN4yEBnpMKT6lNQ9ubdp0MOdXizKLTXkp9
-         HzjzH2txt1xM29j/G16Vpf5WN9EIBufkZfOPkB9d9v1n3eDPW91qeXcj6j03dZgLPrex
-         8ZS/KByyMwV3iEpbpIKtIRXeqm6QJBOGVTuA1e4ZTaA6LzTR63T3kEzXrNyplXkDktqz
-         q61w==
-X-Gm-Message-State: APjAAAVCU5eqDoXZCBanH1HUVHD5uG0Ro7qO0LZqfRyuYOXm4do4mc6N
-        Arv3rZn1P2xbZBGC9cweOG0=
-X-Google-Smtp-Source: APXvYqyGtSItYLk7YxkEwXMyFJ7xF53zts+ddz8toSSIK0Rp57HKEwN/kJjaBLGBmonXCEdXNM6SQA==
-X-Received: by 2002:a63:4824:: with SMTP id v36mr12895731pga.343.1578595958053;
-        Thu, 09 Jan 2020 10:52:38 -0800 (PST)
+        bh=YWCYqfZo+yiUkXEJo0FwY+2Q6KdpmhtF8II1qMD3w5k=;
+        b=Jjec1r/CNMFUJJBCh/m+XRtesB//lnxJMAppyekeVHlqP15NEgMcWSfU6FW/5GKoq3
+         XuxD4ZmWF05Ndpxedx/vI8crpQ7njgmTcGk5b6RiVxDXrKKoFcVqN/DSlo3lq7kKP0up
+         MCXaXlHpIXcAD8z5w5HjMHIXSlCEysajan2+31yHBGLam7vCPmCJwD+vILqBSqmpDfUU
+         xaaKMgTAD3TeJNAp9kTzxUQTRNAroRSRIkM78M4/URkqteEWLJ2DwH0ASH5IXkSesRkH
+         INIHLUSOFeTa57+WCzXPFl7en6xlHRsY72FPwJ/YG9mi4uzIN9Psd+TEJZo8MxlUjKex
+         qmmw==
+X-Gm-Message-State: APjAAAVW0Tvt/pZUcq/MEgMPPjB4nMucjDgeYhJCrNEZ7K5KyPNtpYXu
+        a3lF7hKlXNa2KDD9qaG2S2c=
+X-Google-Smtp-Source: APXvYqz6kbCFqPQv6OI01HzXEx4Gr4e/6HdE7v2525bi/NrdaFFVZt+RBN40AxIDTK7riYxMzQlI+A==
+X-Received: by 2002:a17:902:6ac2:: with SMTP id i2mr13212653plt.221.1578595965270;
+        Thu, 09 Jan 2020 10:52:45 -0800 (PST)
 Received: from localhost (MIPS-TECHNO.ear1.SanJose1.Level3.net. [4.15.122.74])
-        by smtp.gmail.com with ESMTPSA id f9sm8492500pfd.141.2020.01.09.10.52.37
+        by smtp.gmail.com with ESMTPSA id n26sm8757397pgd.46.2020.01.09.10.52.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 10:52:37 -0800 (PST)
-Message-ID: <5e177675.1c69fb81.61ebf.5532@mx.google.com>
-Date:   Thu, 09 Jan 2020 10:52:36 -0800
+        Thu, 09 Jan 2020 10:52:44 -0800 (PST)
+Message-ID: <5e17767c.1c69fb81.a8827.4647@mx.google.com>
+Date:   Thu, 09 Jan 2020 10:52:44 -0800
 From:   Paul Burton <paulburton@kernel.org>
-To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
-CC:     Paul Burton <paulburton@kernel.org>
-CC:     Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+To:     yu kuai <yukuai3@huawei.com>
+CC:     <john@phrozen.org>, <ralf@linux-mips.org>, <paulburton@kernel.org>,
+        <jhogan@kernel.org>
+CC:     <linux-mips@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yukuai3@huawei.com>, <zhengbin13@huawei.com>,
+        <yi.zhang@huawei.com>
 CC:     linux-mips@vger.kernel.org
-Subject: Re: [PATCH 1/3] MIPS: SGI-IP27: Fix node_distance
-References:  <20200109122331.4109-1-tbogendoerfer@suse.de>
-In-Reply-To:  <20200109122331.4109-1-tbogendoerfer@suse.de>
+Subject: Re: [PATCH] MIPS: ralink: add missing put_device in ill_acc_of_setup
+References:  <20191225131520.2505-1-yukuai3@huawei.com>
+In-Reply-To:  <20191225131520.2505-1-yukuai3@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,32 +54,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hello,
 
-Thomas Bogendoerfer wrote:
-> node_distance must return values starting from 10 up to 255. 10 means
-> local, 255 unreachable.
-
-Series applied to mips-next.
-
-> MIPS: SGI-IP27: Fix node_distance
->   commit a20ebc047a4a
->   https://git.kernel.org/mips/c/a20ebc047a4a
->   
->   Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
->   Signed-off-by: Paul Burton <paulburton@kernel.org>
+yu kuai wrote:
+> If of_find_device_by_node return 0 and ill_acc_of_setup return error,
+> pdev don't have a corresponding object release.
 > 
-> MIPS: Loongson64: Fix node_distance()
->   commit a14879e149c9
->   https://git.kernel.org/mips/c/a14879e149c9
->   
->   Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
->   Signed-off-by: Paul Burton <paulburton@kernel.org>
+> Fix it by adding put_device.
+
+Applied to mips-next.
+
+> commit defed0bbca2c
+> https://git.kernel.org/mips/c/defed0bbca2c
 > 
-> MIPS: mm: Place per_cpu on different nodes, if NUMA is enabled
->   commit f3c560a61b4e
->   https://git.kernel.org/mips/c/f3c560a61b4e
->   
->   Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
->   Signed-off-by: Paul Burton <paulburton@kernel.org>
+> Signed-off-by: yu kuai <yukuai3@huawei.com>
+> Signed-off-by: Paul Burton <paulburton@kernel.org>
 
 Thanks,
     Paul
