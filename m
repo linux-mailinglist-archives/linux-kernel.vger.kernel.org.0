@@ -2,255 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5810F135AF7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 15:06:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C91C135B0B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 15:07:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731490AbgAIOGC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 09:06:02 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44267 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730033AbgAIOGC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 09:06:02 -0500
-Received: by mail-wr1-f67.google.com with SMTP id q10so7488780wrm.11
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 06:06:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5wHV7fLu1+idd5lVfa6Y08ed98hFBV7NTBA+k+ClsUc=;
-        b=s8+lJx8XPCKl1bu/IDbDXnGALgg5kCvFvoWSnaeATdrbv9UyIVL47+GxgeX7EZzEQ/
-         CEhTmb4J1Pub+C8EdKXf49I16Fg76XlSzshUSdokReGc4W0S8ZVzYFqtiu6lCgcX1v0v
-         7E4HEtIHMZHgjfItNNZY5avIw/0bEZMUGGEF7TMzZ/RgfvttxI9cWuBeYhFx2hgu/XWO
-         kfFFJBqHxxshh+xkmV0vF8EJbO2L3D1woe3KT4K8YayKhNepIIXuq0Ub1ijiji2pBsEU
-         YdfuBxcyX1Hx9AYsgEkDmu/VZVX7oP8GDALRix0uFaa8w1zZCpzKXBMqxHQj4aRhZClv
-         b6HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5wHV7fLu1+idd5lVfa6Y08ed98hFBV7NTBA+k+ClsUc=;
-        b=t/1OLsIl8gw0i0svx2HPAYJY5rcnJ4jFQ7gpTRHprPBdNrUMZR99v/LudJE7xIyGYb
-         IK/5utKenFe0ULSv1QEbA6qUp47BuJxgcITgtfqe7RAq4qVCy49HQtsX3Gcp9DjfDv10
-         kRJKp7wCB4GUwjHoOMGj2lbNl4gArBn9kc8uG1pcftw4l7UxwhKEaKX4RPD9aC5JATA0
-         iKdsRwS77yZoGr3gXbO1nadc7G99fP8ujzt4DJZB3UNeNRyaTpF63FjXrGAxec/ziKqK
-         m8Gsbe5SZLnhRkY227jTY6ExeYA8UfUazuki4IQ3H2uM6nkrRV6F2QdsA/VFu8MO0x0Z
-         x/WQ==
-X-Gm-Message-State: APjAAAVhhxw1YRryAE0LAkysepDvDdfTT33JjqE+btt/disYhevBZo99
-        mkRriRLUiztNjxlnfbYKMvnNdA+Vcj0MK59+JUaXPw==
-X-Google-Smtp-Source: APXvYqwpjC3WHE1zynzAigSBunMBepaBFYapFG+fVgkhXZNIcZe8TqNUmQIFjSFfBzCL2JNVxbvTaTG3U6WW8FMSEEE=
-X-Received: by 2002:a5d:43c7:: with SMTP id v7mr10620602wrr.32.1578578759741;
- Thu, 09 Jan 2020 06:05:59 -0800 (PST)
+        id S1731516AbgAIOHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 09:07:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46478 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728406AbgAIOHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 09:07:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 64C12B2DFC;
+        Thu,  9 Jan 2020 14:07:35 +0000 (UTC)
+Subject: Re: SLUB: purpose of sysfs events on cache creation/removal
+To:     Christopher Lameter <cl@linux.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20191126121901.GE20912@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1911261632030.9857@www.lameter.com>
+ <20191126165420.GL20912@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1911271535560.16935@www.lameter.com>
+ <20191127162400.GT20912@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1911271625110.17727@www.lameter.com>
+ <20191127174317.GD26807@dhcp22.suse.cz>
+ <20191204132812.GF25242@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1912041524290.18825@www.lameter.com>
+ <20191204153225.GM25242@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1912041652410.29709@www.lameter.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <00126ed6-e12c-4d6f-338b-3f08897c9a13@suse.cz>
+Date:   Thu, 9 Jan 2020 15:07:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-References: <20191224044146.232713-1-saravanak@google.com>
-In-Reply-To: <20191224044146.232713-1-saravanak@google.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 9 Jan 2020 15:05:48 +0100
-Message-ID: <CAKv+Gu_yDWhvR80Wg1-bzpD1aGwGC-UA+obcgn8CEKKjMdR7rQ@mail.gmail.com>
-Subject: Re: [PATCH v2] efi: arm: defer probe of PCIe backed efifb on DT systems
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Ard Biesheuvel <ardb@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.21.1912041652410.29709@www.lameter.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Dec 2019 at 05:41, Saravana Kannan <saravanak@google.com> wrote:
->
-> From: Ard Biesheuvel <ardb@kernel.org>
->
-> The new of_devlink support breaks PCIe probing on ARM platforms booting
-> via UEFI if the firmware exposes a EFI framebuffer that is backed by a
-> PCI device. The reason is that the probing order gets reversed,
-> resulting in a resource conflict on the framebuffer memory window when
-> the PCIe probes last, causing it to give up entirely.
->
-> Given that we rely on PCI quirks to deal with EFI framebuffers that get
-> moved around in memory, we cannot simply drop the memory reservation, so
-> instead, let's use the device link infrastructure to register this
-> dependency, and force the probing to occur in the expected order.
->
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> Co-developed-by: Saravana Kannan <saravanak@google.com>
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> ---
->
-> Hi Ard,
->
-> I compile tested it and I think it should work. If you can actually run
-> and test it, that'd be nice.
->
-> You can also optimize find_pci_overlap_node() by caching the result if
-> you think that's necessary.
->
-> Right now this code will run always just like your code did. But once I
-> rename of_devlink to fw_devlink, this code won't be run if fw_devlink is
-> disabled.
->
-> v1 -> v2:
-> - Rewrote the device linking part to not depend on initcall ordering
->
->  drivers/firmware/efi/arm-init.c | 106 ++++++++++++++++++++++++++++++--
->  1 file changed, 102 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/firmware/efi/arm-init.c b/drivers/firmware/efi/arm-init.c
-> index 904fa09e6a6b..8b789ff83af0 100644
-> --- a/drivers/firmware/efi/arm-init.c
-> +++ b/drivers/firmware/efi/arm-init.c
-> @@ -10,10 +10,12 @@
->  #define pr_fmt(fmt)    "efi: " fmt
->
->  #include <linux/efi.h>
-> +#include <linux/fwnode.h>
->  #include <linux/init.h>
->  #include <linux/memblock.h>
->  #include <linux/mm_types.h>
->  #include <linux/of.h>
-> +#include <linux/of_address.h>
->  #include <linux/of_fdt.h>
->  #include <linux/platform_device.h>
->  #include <linux/screen_info.h>
-> @@ -276,15 +278,111 @@ void __init efi_init(void)
->                 efi_memmap_unmap();
+On 12/4/19 5:53 PM, Christopher Lameter wrote:
+> On Wed, 4 Dec 2019, Michal Hocko wrote:
+> 
+>> As I've said I believe it is quite risky. But if you as a maintainer
+>> believe this is the right thing to do I will not object. Care to send a
+>> patch?
+> 
+> From: Christoph Lameter <cl@linux.com>
+> Subject: slub: Remove userspace notifier for cache add/remove
+> 
+> Kmem caches are internal kernel structures so it is strange that
+> userspace notifiers would be needed. And I am not aware of any use
+> of these notifiers. These notifiers may just exist because in the
+> initial slub release the sysfs code was copied from another
+> subsystem.
+> 
+> Signed-off-by: Christoph Lameter <cl@linux.com>
+
+If anyone cares, we'll find out eventually.
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+> 
+> Index: linux/mm/slub.c
+> ===================================================================
+> --- linux.orig/mm/slub.c	2019-12-02 15:13:23.948312925 +0000
+> +++ linux/mm/slub.c	2019-12-04 16:32:34.648550310 +0000
+> @@ -5632,19 +5632,6 @@ static struct kobj_type slab_ktype = {
+>  	.release = kmem_cache_release,
+>  };
+> 
+> -static int uevent_filter(struct kset *kset, struct kobject *kobj)
+> -{
+> -	struct kobj_type *ktype = get_ktype(kobj);
+> -
+> -	if (ktype == &slab_ktype)
+> -		return 1;
+> -	return 0;
+> -}
+> -
+> -static const struct kset_uevent_ops slab_uevent_ops = {
+> -	.filter = uevent_filter,
+> -};
+> -
+>  static struct kset *slab_kset;
+> 
+>  static inline struct kset *cache_kset(struct kmem_cache *s)
+> @@ -5712,7 +5699,6 @@ static void sysfs_slab_remove_workfn(str
+>  #ifdef CONFIG_MEMCG
+>  	kset_unregister(s->memcg_kset);
+>  #endif
+> -	kobject_uevent(&s->kobj, KOBJ_REMOVE);
+>  out:
+>  	kobject_put(&s->kobj);
 >  }
->
-> +static bool efifb_overlaps_pci_range(const struct of_pci_range *range)
-> +{
-> +       u64 fb_base = screen_info.lfb_base;
-> +
-> +       if (screen_info.capabilities & VIDEO_CAPABILITY_64BIT_BASE)
-> +               fb_base |= (u64)(unsigned long)screen_info.ext_lfb_base << 32;
-> +
-> +       return fb_base >= range->cpu_addr &&
-> +              fb_base < (range->cpu_addr + range->size);
-> +}
-> +
-> +static struct device_node *find_pci_overlap_node(void)
-> +{
-> +       struct device_node *np;
-> +
-> +       for_each_node_by_type(np, "pci") {
-> +               struct of_pci_range_parser parser;
-> +               struct of_pci_range range;
-> +               int err;
-> +
-> +               err = of_pci_range_parser_init(&parser, np);
-> +               if (err) {
-> +                       pr_warn("of_pci_range_parser_init() failed: %d\n", err);
-> +                       continue;
-> +               }
-> +
-> +               for_each_of_pci_range(&parser, &range)
-> +                       if (efifb_overlaps_pci_range(&range))
-> +                               return np;
-> +       }
-> +       return NULL;
-> +}
-> +
-> +/*
-> + * If the efifb framebuffer is backed by a PCI graphics controller, we have
-> + * to ensure that this relation is expressed using a device link when
-> + * running in DT mode, or the probe order may be reversed, resulting in a
-> + * resource reservation conflict on the memory window that the efifb
-> + * framebuffer steals from the PCIe host bridge.
-> + */
-> +static int efifb_add_links(const struct fwnode_handle *fwnode,
-> +                          struct device *dev)
-> +{
-> +       struct device_node *sup_np;
-> +       struct device *sup_dev;
-> +
-> +       sup_np = find_pci_overlap_node();
-> +
-> +       /*
-> +        * If there's no PCI graphics controller backing the efifb, we are
-> +        * done here.
-> +        */
-> +       if (!sup_np)
-> +               return 0;
-> +
-> +       sup_dev = get_dev_from_fwnode(&sup_np->fwnode);
-> +       of_node_put(sup_np);
-> +
-> +       /*
-> +        * Return -ENODEV if the PCI graphics controller device hasn't been
-> +        * registered yet.  This ensures that efifb isn't allowed to probe
-> +        * and this function is retried again when new devices are
-> +        * registered.
-> +        */
-> +       if (!sup_dev)
-> +               return -ENODEV;
-> +
-> +       /*
-> +        * If this fails, retrying this function at a later point won't
-> +        * change anything. So, don't return an error after this.
-> +        */
-> +       if (!device_link_add(dev, sup_dev, 0))
-> +               dev_warn(dev, "device_link_add() failed\n");
-> +
-> +       put_device(sup_dev);
-> +
-> +       return 0;
-> +}
-> +
-> +static struct fwnode_operations efifb_fwnode_ops = {
+> @@ -5770,7 +5756,6 @@ static int sysfs_slab_add(struct kmem_ca
+>  	}
+>  #endif
+> 
+> -	kobject_uevent(&s->kobj, KOBJ_ADD);
+>  	if (!unmergeable) {
+>  		/* Setup first alias */
+>  		sysfs_slab_alias(s, s->name);
+> @@ -5851,7 +5836,7 @@ static int __init slab_sysfs_init(void)
+> 
+>  	mutex_lock(&slab_mutex);
+> 
+> -	slab_kset = kset_create_and_add("slab", &slab_uevent_ops, kernel_kobj);
+> +	slab_kset = kset_create_and_add("slab", NULL, kernel_kobj);
+>  	if (!slab_kset) {
+>  		mutex_unlock(&slab_mutex);
+>  		pr_err("Cannot register slab subsystem.\n");
+> 
 
-Please make this const
-
-> +       .add_links = efifb_add_links,
-> +};
-> +
-> +static struct fwnode_handle efifb_fwnode = {
-> +       .ops = &efifb_fwnode_ops,
-> +};
-> +
->  static int __init register_gop_device(void)
->  {
-> -       void *pd;
-> +       struct platform_device *pd;
-> +       int err;
->
->         if (screen_info.orig_video_isVGA != VIDEO_TYPE_EFI)
->                 return 0;
->
-> -       pd = platform_device_register_data(NULL, "efi-framebuffer", 0,
-> -                                          &screen_info, sizeof(screen_info));
-> -       return PTR_ERR_OR_ZERO(pd);
-> +       pd = platform_device_alloc("efi-framebuffer", 0);
-> +       if (!pd)
-> +               return -ENOMEM;
-> +
-
-Add
-
-  if (IS_ENABLED(CONFIG_PCI))
-
-here
-
-> +       pd->dev.fwnode = &efifb_fwnode;
-> +
-> +       err = platform_device_add_data(pd, &screen_info, sizeof(screen_info));
-> +       if (err)
-> +               return err;
-> +
-> +       return platform_device_add(pd);
->  }
->  subsys_initcall(register_gop_device);
-> --
-> 2.24.1.735.g03f4e72817-goog
->
-
-With the changes above
-
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-
-but it still needs testing as well.
