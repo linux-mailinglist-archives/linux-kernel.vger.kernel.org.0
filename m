@@ -2,63 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE4D3135DCF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:10:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15B42135DD2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:11:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387459AbgAIQJo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 11:09:44 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:21198 "EHLO
+        id S2387474AbgAIQKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 11:10:14 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:56414 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387437AbgAIQJn (ORCPT
+        with ESMTP id S1731792AbgAIQKN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 11:09:43 -0500
+        Thu, 9 Jan 2020 11:10:13 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578586181;
+        s=mimecast20190719; t=1578586212;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=wMGHjJl3e1P107q4BQ6psOhaStZ5a/m6KJ9UhI8WuJA=;
-        b=JJCN0t+v/h2CJOyQVEFe68+9mDvf20OIfPX5YPtmZv6lPVWdioRg/Y4PetwrYu0gZAxhJD
-        xhq1ZawJ+aIMRBNFhQipDTxoSwp2RTFwf0vMZqfk3o3N95gXFjuth15B+etX19NeAMDxZQ
-        w0Qm9dyrBIQlKwkh6+rpDO4BD9Euhhk=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-341-k0OlI9P4MKufFgpWOYhriA-1; Thu, 09 Jan 2020 11:09:39 -0500
-X-MC-Unique: k0OlI9P4MKufFgpWOYhriA-1
-Received: by mail-wr1-f70.google.com with SMTP id c6so3031059wrm.18
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:09:39 -0800 (PST)
+        bh=DAmIKVrG0XTaKJJzMfiZimG349dykVofBy5TCpIMs8E=;
+        b=ZDpa4XPNBLw32JIErfs1+ui6XRiG9h4veHx8r8OuKrvS44PxOFFPb7oz+mEQAdLeLOs77R
+        0mNJXYEjfHcf8BJchPFQ/kZrid9RFB+LFagQLl8ySWfwpGpHk4uKefKgvgawmP0nCX5T3Q
+        y/oecZNaM7enHEgWhuE5poQOOUYJcjU=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-278-vD22pYa-OVqk_lPoETbOCw-1; Thu, 09 Jan 2020 11:10:11 -0500
+X-MC-Unique: vD22pYa-OVqk_lPoETbOCw-1
+Received: by mail-wm1-f71.google.com with SMTP id t16so1104352wmt.4
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:10:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wMGHjJl3e1P107q4BQ6psOhaStZ5a/m6KJ9UhI8WuJA=;
-        b=dYJEtgy6PRqHsmRyhrDAaOAyvxPUT+DQbsZjkXkkJbLwlaqA7COX0QNV+0FTs0yKwA
-         jf62vPCNvcZhjZKdcrav/f5VcV3JAiBrnG1oC/zzXx1/6t5VMyfFUBXtOpwBE2ArQ+zC
-         isvLXIkkrbIPuo9nd7XqWyGdcl1bYI2qNVZ/SMNXGXSwPPBhUEovbhexguVqGboiicbW
-         eIzMmVoBHgtp3pwQEp1Q392sv8ugdyB9jcqmil0PdsILnPUuPtBN4clmekiSdiwwal6B
-         9G64fQZLPLTvT6Jt9l2AJI7PN3PEjPTGoyUe2orryh7LoUu+LqsjmRIU4WgA0TNu926B
-         /rTA==
-X-Gm-Message-State: APjAAAXn4hOj8K47DYcend/dYh/fGi3BE/x9e5Fiph3oAewRePlRsW4N
-        EzBacfIFJ9TkEYARyEQyFQkeBJSo1srLY8E0cVlb4bhntnLtXgGFIGOI/AWaHROsXq0Id62uvl7
-        7bFQ3b68XEO1Tx+YuU5lqbuyf
-X-Received: by 2002:a7b:c93a:: with SMTP id h26mr5626267wml.83.1578586178083;
-        Thu, 09 Jan 2020 08:09:38 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxbW0SbCoj52xkl2G5xsHM6LJP70fkM18f+faXI8eAh4PCwOpImStNR0bRzwb42NSJPmkTJoA==
-X-Received: by 2002:a7b:c93a:: with SMTP id h26mr5626254wml.83.1578586177927;
-        Thu, 09 Jan 2020 08:09:37 -0800 (PST)
+        bh=DAmIKVrG0XTaKJJzMfiZimG349dykVofBy5TCpIMs8E=;
+        b=kfTDzNDLisUF32pfLxPnwZIHVogLZajAhWLDAdracUKI6b/PIJVXAOkPTdEgMWkAd0
+         GMpChI/KqpZ84t7Dftm7YGWpEumEQ1dVJOyD8vuUB83XStkUex3Q42Zwqb1v5LCK5jKB
+         de0yAXTQo2ESxadmGRtJxBsACf5avvaXE5tY4eEq/NP5APbyiIndyzK+iEwoA0gT7uz7
+         7Jhd7bXN9Yg66pT02EVv40AGrvXhezI40k8bMTAMRsgo6v30s3d0hAKZfbo6AJGR1f4w
+         VhlgitBNEVpfi/jDyqxLSek9MrXVNZK88oQDRI8OoDOnLtCvZiWLhnRehtyjaNSiPh9J
+         FKjg==
+X-Gm-Message-State: APjAAAU9orPcgTgoucmu/mMDsf1hjN73PwcY+xdl672TWCFj0fzf1bQA
+        fJctEWdQMT4QNNBNw+Cg+mQkT/HnB/GM9POdEhJpsGtBjZkTH1rSwIM6Hhl2tt52wCwOxXYhUqh
+        f33IThYlzlBE+Nr5RuBIFXPxh
+X-Received: by 2002:a7b:cb91:: with SMTP id m17mr5844662wmi.146.1578586210077;
+        Thu, 09 Jan 2020 08:10:10 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyFva8eO8YAHVsY7yqkadvzeSK9FfRmzCmEmBFRtKNIs9P8qgXGmLAvH+I97ylIV2hDbJg/RA==
+X-Received: by 2002:a7b:cb91:: with SMTP id m17mr5844651wmi.146.1578586209923;
+        Thu, 09 Jan 2020 08:10:09 -0800 (PST)
 Received: from redfedo.redhat.com (host81-140-166-164.range81-140.btcentralplus.com. [81.140.166.164])
-        by smtp.gmail.com with ESMTPSA id e8sm8517707wrt.7.2020.01.09.08.09.36
+        by smtp.gmail.com with ESMTPSA id y17sm2820948wma.36.2020.01.09.08.10.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 08:09:37 -0800 (PST)
+        Thu, 09 Jan 2020 08:10:09 -0800 (PST)
 From:   Julien Thierry <jthierry@redhat.com>
 To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     jpoimboe@redhat.com, peterz@infradead.org, raphael.gault@arm.com,
         catalin.marinas@arm.com, will@kernel.org,
         Julien Thierry <jthierry@redhat.com>
-Subject: [RFC v5 54/57] arm64: Move constant to rodata
-Date:   Thu,  9 Jan 2020 16:02:57 +0000
-Message-Id: <20200109160300.26150-55-jthierry@redhat.com>
+Subject: [RFC v5 55/57] arm64: Mark sigreturn32.o as containing non standard code
+Date:   Thu,  9 Jan 2020 16:02:58 +0000
+Message-Id: <20200109160300.26150-56-jthierry@redhat.com>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200109160300.26150-1-jthierry@redhat.com>
 References: <20200109160300.26150-1-jthierry@redhat.com>
@@ -69,34 +69,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Constant arm64_relocate_new_kernel_size does not need to be in
-the same section as the new kernel code/data region.
+sigreturn32.o contains aarch32 getting copied to the VDSO for
+compat user tasks.
 
-Move it to ".rodata" section.
+This code shouldn't get validated by arm64 objtool.
 
 Signed-off-by: Julien Thierry <jthierry@redhat.com>
 ---
- arch/arm64/kernel/relocate_kernel.S | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/kernel/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/kernel/relocate_kernel.S b/arch/arm64/kernel/relocate_kernel.S
-index 5e08845f701a..e7a5fded59e6 100644
---- a/arch/arm64/kernel/relocate_kernel.S
-+++ b/arch/arm64/kernel/relocate_kernel.S
-@@ -122,10 +122,13 @@ ENDPROC(arm64_relocate_new_kernel)
- /* Ensure we didn't go past the limit */
- .org	KEXEC_CONTROL_PAGE_SIZE
+diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+index f5994679db5f..b978026ea368 100644
+--- a/arch/arm64/kernel/Makefile
++++ b/arch/arm64/kernel/Makefile
+@@ -31,6 +31,7 @@ obj-$(CONFIG_COMPAT)			+= sys32.o signal32.o			\
+ 					   sys_compat.o
+ ifneq ($(CONFIG_COMPAT_VDSO), y)
+ obj-$(CONFIG_COMPAT)			+= sigreturn32.o
++OBJECT_FILES_NON_STANDARD_sigreturn32.o := y
+ endif
+ obj-$(CONFIG_KUSER_HELPERS)		+= kuser32.o
  
-+.pushsection ".rodata", "a"
- /*
-  * arm64_relocate_new_kernel_size - Number of bytes to copy to the
-  * control_code_page.
-  */
- .globl arm64_relocate_new_kernel_size
-+.align 8
- arm64_relocate_new_kernel_size:
- 	.quad	.Lcopy_end - arm64_relocate_new_kernel
-+.popsection
 -- 
 2.21.0
 
