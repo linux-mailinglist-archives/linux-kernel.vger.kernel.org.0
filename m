@@ -2,138 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 143971353E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 08:55:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D7701353EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 08:55:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728340AbgAIHyz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 02:54:55 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:58274 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728184AbgAIHyy (ORCPT
+        id S1728352AbgAIHze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 02:55:34 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46714 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728184AbgAIHze (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 02:54:54 -0500
-Received: from [10.28.39.63] (10.28.39.63) by mail-sz.amlogic.com (10.28.11.5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Thu, 9 Jan
- 2020 15:55:17 +0800
-Subject: Re: [PATCH v5 3/5] clk: meson: a1: add support for Amlogic A1 PLL
- clock driver
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Chandle Zou <chandle.zou@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20191227094606.143637-1-jian.hu@amlogic.com>
- <20191227094606.143637-4-jian.hu@amlogic.com>
- <CAFBinCB2XF1unfEGbApuoXR3ZBRMwgc4EuqSjgKWKm_2G16S5g@mail.gmail.com>
-From:   Jian Hu <jian.hu@amlogic.com>
-Message-ID: <6d8b7bd4-87ea-46ad-0909-9803032580e4@amlogic.com>
-Date:   Thu, 9 Jan 2020 15:55:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        Thu, 9 Jan 2020 02:55:34 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z7so6190606wrl.13;
+        Wed, 08 Jan 2020 23:55:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RHXfR00D9x10M+a38QH4C3WYscmRe8nqh31YYkY4Uuk=;
+        b=SLOBR5fiGyw/pjLNSzbKAECZBNUnrlm0s69LFY8PyYRqcVOb86Ku0r0ccPUoUxHkVK
+         SdUvS3amS7dCj0eaxbGS6bBTucCuIG9CnkyBUq20lY/vKEfeab59EJP6oJgYjkYNJyUx
+         uK/Ey1xHvVzvhCH5/i54iNaWGauQq/+sYr7cCs/YX4jygPBzRk7WeDRsP2FqBqV4EY1W
+         52W7hKjz2VxpvI1PcC8dSWnfrF7lwPv8ulf9hoLcx/hUUYc23SbCvYyiQ23hqFx8aCc0
+         +xO/ObfsDalvLbT2pkJqyja9Iq6SyxnIllj4n58D1YZFX7pBmz2DaikkSXGjtgec4EZ0
+         e1zg==
+X-Gm-Message-State: APjAAAU23PK87YkIQg6H9nxWH3jMEmNKPI2Nf8xEQgcAb7eiB+oYosJI
+        uvXOn6dGkSGRbcAY2Bxh3wEBGkuQ22w+LDPEtaI=
+X-Google-Smtp-Source: APXvYqyzTcLoiHvDSM0IvKq6j8EEneu+thKS5ynO1fGnk8bQ0+pGHoJZ1L5atbVXLs7LHEZA1pJCJSb4XoZjsEjN1LA=
+X-Received: by 2002:adf:e2cf:: with SMTP id d15mr9232900wrj.225.1578556532209;
+ Wed, 08 Jan 2020 23:55:32 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCB2XF1unfEGbApuoXR3ZBRMwgc4EuqSjgKWKm_2G16S5g@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.39.63]
-X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
- (10.28.11.5)
+References: <20200107133501.327117-1-namhyung@kernel.org> <20200107133501.327117-9-namhyung@kernel.org>
+ <20200108222458.GF12995@krava>
+In-Reply-To: <20200108222458.GF12995@krava>
+From:   Namhyung Kim <namhyung@kernel.org>
+Date:   Thu, 9 Jan 2020 16:55:21 +0900
+Message-ID: <CAM9d7ch7t9GDu=emb9MYdTSB8hPb0adAy1iOdjyXSXVXTpGBFg@mail.gmail.com>
+Subject: Re: [PATCH 8/9] perf top: Add --all-cgroups option
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephane Eranian <eranian@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jan 9, 2020 at 7:25 AM Jiri Olsa <jolsa@redhat.com> wrote:
+>
+> On Tue, Jan 07, 2020 at 10:35:00PM +0900, Namhyung Kim wrote:
+> > The --all-cgroups option is to enable cgroup profiling support.  It
+> > tells kernel to record CGROUP events in the ring buffer so that perf
+> > report can identify task/cgroup association later.
+> >
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/perf/Documentation/perf-top.txt | 4 ++++
+> >  tools/perf/builtin-top.c              | 9 +++++++++
+> >  2 files changed, 13 insertions(+)
+> >
+> > diff --git a/tools/perf/Documentation/perf-top.txt b/tools/perf/Documentation/perf-top.txt
+> > index 5596129a71cf..c75507f50071 100644
+> > --- a/tools/perf/Documentation/perf-top.txt
+> > +++ b/tools/perf/Documentation/perf-top.txt
+> > @@ -266,6 +266,10 @@ Default is to monitor all CPUS.
+> >       Record events of type PERF_RECORD_NAMESPACES and display it with the
+> >       'cgroup_id' sort key.
+> >
+> > +--cgroup::
+> > +     Record events of type PERF_RECORD_CGROUP and display it with the
+> > +     'cgroup' sort key.
+>
+> should be '--all-cgroups' ?
 
+Oops, you're right.
 
-On 2019/12/28 1:04, Martin Blumenstingl wrote:
-> Hi Jian,
-> 
-> On Fri, Dec 27, 2019 at 10:46 AM Jian Hu <jian.hu@amlogic.com> wrote:
-> [...]
->> +               .parent_data = &(const struct clk_parent_data){
->> +                       .fw_name = "xtal_fixpll",
->> +               },
-> in the Meson8b and G12A (I assume it's the same on GXBB, I didn't
-> check it) we have a space between " clk_parent_data)" and "{"
-> this applies to at least one more occurrence below
-> 
-I have checked G12A and Meson8b, there is a space.The space is missing 
-here, the same as other place. I will fix it in next version.
-> [...]
->> +               /*
->> +                * This clock is used by APB bus which setted in Romcode
-> nit-pick: I'm not sure about the grammar here: setted -> "is set"?
-> and to make sure I understand this correctly: do you mean the "boot
-> ROM" with "Romcode"?
-You are right, it is a mistake here. 'is set' is right.
-Yes, Romcode means boot ROM. I will change it to 'boot ROM code'
-> 
-> [...]
->> +static int meson_a1_pll_probe(struct platform_device *pdev)
->> +{
->> +       const struct meson_eeclkc_data *data;
-> what do you need this "data" variable for?
-> 
->> +       struct device *dev = &pdev->dev;
->> +       struct resource *res;
->> +       void __iomem *base;
->> +       struct regmap *map;
->> +       int ret, i;
->> +
->> +       data = of_device_get_match_data(dev);
->> +       if (!data)
->> +               return -EINVAL;
->> +
->> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +
->> +       base = devm_ioremap_resource(dev, res);
->> +       if (IS_ERR(base))
->> +               return PTR_ERR(base);
->> +
->> +       map = devm_regmap_init_mmio(dev, base, &clkc_regmap_config);
->> +       if (IS_ERR(map))
->> +              return PTR_ERR(map);
->> +
->> +       /* Populate regmap for the regmap backed clocks */
->> +       for (i = 0; i < data->regmap_clk_num; i++)
->> +               data->regmap_clks[i]->map = map;
-> why can't we use a1_pll_regmaps directly here?
-> 
-OK, I will use it directly .
->> +
->> +       for (i = 0; i < data->hw_onecell_data->num; i++) {
->> +               /* array might be sparse */
->> +               if (!data->hw_onecell_data->hws[i])
->> +                       continue;
->> +
->> +               ret = devm_clk_hw_register(dev, data->hw_onecell_data->hws[i]);
-> and why can't we use a1_pll_hw_onecell_data directly here?
-> 
-OK, I will use it directly.
-> [...]
->> +static const struct meson_eeclkc_data a1_pll_data = {
->> +               .regmap_clks = a1_pll_regmaps,
->> +               .regmap_clk_num = ARRAY_SIZE(a1_pll_regmaps),
->> +               .hw_onecell_data = &a1_pll_hw_onecell_data,
->> +};
-> if _probe would access these directly then you can drop meson_eeclkc_data
-> that is a good thing in my opinion because I was confused by the
-> "eeclk" since the patch description says that there's no EE or AO
-> domain on the A1 SoCs
-> 
-OK, I will remove it and verify it.
-> 
-> Martin
-> 
-> .
-> 
+>
+> anyway, we dont have '--cgroups', why not use just this?
+
+I chose it for consistency since perf record has '--cgroup' option.
+
+Thanks
+Namhyung
