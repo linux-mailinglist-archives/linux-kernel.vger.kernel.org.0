@@ -2,167 +2,275 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7E03135198
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 03:44:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D18E1351A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 03:56:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbgAICoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 21:44:05 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:55050 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727984AbgAICoD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 21:44:03 -0500
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 1E93220B479D;
-        Wed,  8 Jan 2020 18:44:03 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1E93220B479D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1578537843;
-        bh=59YyHVNcW/QdFRQ8i/3QqqsbF0Ns+ie/nKbZAKZnaZU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T7Kl3zdZeFLZztO2dX1GYPwdNYFQhmX1U4YOogH4NuHdt4wtC1/2B8KcfnVb7Ju2a
-         LBGyKLlw5Hfqea+OA5FAUo7toQGgS/1sRaUGennmSihmpACSZmmgZUp6URNBhNL8Vq
-         mSWPN0e6rbS047N1rS68GdQnZck3o+ogJZ8WJDJw=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, James.Bottomley@HansenPartnership.com,
-        linux-integrity@vger.kernel.org
-Cc:     dhowells@redhat.com, arnd@arndb.de, matthewgarrett@google.com,
-        sashal@kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org
-Subject: [PATCH v8 3/3] IMA: Defined timer to free queued keys
-Date:   Wed,  8 Jan 2020 18:43:59 -0800
-Message-Id: <20200109024359.3410-4-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200109024359.3410-1-nramas@linux.microsoft.com>
-References: <20200109024359.3410-1-nramas@linux.microsoft.com>
+        id S1727904AbgAICwm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 21:52:42 -0500
+Received: from mga14.intel.com ([192.55.52.115]:5471 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726758AbgAICwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 21:52:42 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 18:52:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,412,1571727600"; 
+   d="scan'208";a="223739613"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by orsmga003.jf.intel.com with ESMTP; 08 Jan 2020 18:52:39 -0800
+Date:   Thu, 9 Jan 2020 10:52:40 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Rik van Riel <riel@redhat.com>,
+        Li Xinhai <lixinhai.lxh@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v2 1/2] mm/rmap: fix and simplify reusing mergeable
+ anon_vma as parent when fork
+Message-ID: <20200109025240.GA2000@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <157839239609.694.10268055713935919822.stgit@buzz>
+ <20200108023211.GC13943@richard>
+ <b019b294-61fa-85fc-cf43-c6d3e9fddc71@yandex-team.ru>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b019b294-61fa-85fc-cf43-c6d3e9fddc71@yandex-team.ru>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-keys queued for measurement should be freed if a custom IMA policy
-was not loaded. Otherwise, the keys will remain queued forever
-consuming kernel memory.
+On Wed, Jan 08, 2020 at 01:40:44PM +0300, Konstantin Khlebnikov wrote:
+>On 08/01/2020 05.32, Wei Yang wrote:
+>> On Tue, Jan 07, 2020 at 01:19:56PM +0300, Konstantin Khlebnikov wrote:
+>> > This fixes some misconceptions in commit 4e4a9eb92133 ("mm/rmap.c: reuse
+>> > mergeable anon_vma as parent when fork"). It merges anon-vma in unexpected
+>> > way but fortunately still produces valid anon-vma tree, so nothing crashes.
+>> > 
+>> > If in parent VMAs: SRC1 SRC2 .. SRCn share anon-vma ANON0, then after fork
+>> > before all patches in child process related VMAs: DST1 DST2 .. DSTn will
+>> > fork indepndent anon-vmas: ANON1 ANON2 .. ANONn (each is child of ANON0).
+>> > Before this patch only DST1 will fork new ANON1 and following DST2 .. DSTn
+>> > will share parent's ANON0 (i.e. anon-vma tree is valid but isn't optimal).
+>> > With this patch DST1 will create new ANON1 and DST2 .. DSTn will share it.
+>> > 
+>> > Root problem caused by initialization order in dup_mmap(): vma->vm_prev
+>> > is set after calling anon_vma_fork(). Thus in anon_vma_fork() it points to
+>> > previous VMA in parent mm.
+>> > 
+>> > Second problem is hidden behind first one: assumption "Parent has vm_prev,
+>> > which implies we have vm_prev" is wrong if first VMA in parent mm has set
+>> > flag VM_DONTCOPY. Luckily prev->anon_vma doesn't dereference NULL pointer
+>> > because in current code 'prev' actually is same as 'pprev'.
+>> > 
+>> > Third hidden problem is linking between VMA and anon-vmas whose pages it
+>> > could contain. Loop in anon_vma_clone() attaches only parent's anon-vmas,
+>> > shared anon-vma isn't attached. But every mapped page stays reachable in
+>> > rmap because we erroneously share anon-vma from parent's previous VMA.
+>> > 
+>> > This patch moves sharing logic out of anon_vma_clone() into more specific
+>> > anon_vma_fork() because this supposed to work only at fork() and simply
+>> > reuses anon_vma from previous VMA if it is forked from the same anon-vma.
+>> > 
+>> > Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+>> > Reported-by: Li Xinhai <lixinhai.lxh@gmail.com>
+>> > Fixes: 4e4a9eb92133 ("mm/rmap.c: reuse mergeable anon_vma as parent when fork")
+>> > Link: https://lore.kernel.org/linux-mm/CALYGNiNzz+dxHX0g5-gNypUQc3B=8_Scp53-NTOh=zWsdUuHAw@mail.gmail.com/T/#t
+>> > ---
+>> > include/linux/rmap.h |    3 ++-
+>> > kernel/fork.c        |    2 +-
+>> > mm/rmap.c            |   23 +++++++++--------------
+>> > 3 files changed, 12 insertions(+), 16 deletions(-)
+>> > 
+>> > diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+>> > index 988d176472df..560e4480dcd0 100644
+>> > --- a/include/linux/rmap.h
+>> > +++ b/include/linux/rmap.h
+>> > @@ -143,7 +143,8 @@ void anon_vma_init(void);	/* create anon_vma_cachep */
+>> > int  __anon_vma_prepare(struct vm_area_struct *);
+>> > void unlink_anon_vmas(struct vm_area_struct *);
+>> > int anon_vma_clone(struct vm_area_struct *, struct vm_area_struct *);
+>> > -int anon_vma_fork(struct vm_area_struct *, struct vm_area_struct *);
+>> > +int anon_vma_fork(struct vm_area_struct *vma, struct vm_area_struct *pvma,
+>> > +		  struct vm_area_struct *prev);
+>> > 
+>> > static inline int anon_vma_prepare(struct vm_area_struct *vma)
+>> > {
+>> > diff --git a/kernel/fork.c b/kernel/fork.c
+>> > index 2508a4f238a3..c33626993831 100644
+>> > --- a/kernel/fork.c
+>> > +++ b/kernel/fork.c
+>> > @@ -556,7 +556,7 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+>> > 			tmp->anon_vma = NULL;
+>> > 			if (anon_vma_prepare(tmp))
+>> > 				goto fail_nomem_anon_vma_fork;
+>> > -		} else if (anon_vma_fork(tmp, mpnt))
+>> > +		} else if (anon_vma_fork(tmp, mpnt, prev))
+>> > 			goto fail_nomem_anon_vma_fork;
+>> > 		tmp->vm_flags &= ~(VM_LOCKED | VM_LOCKONFAULT);
+>> > 		tmp->vm_next = tmp->vm_prev = NULL;
+>> > diff --git a/mm/rmap.c b/mm/rmap.c
+>> > index b3e381919835..3c1e04389291 100644
+>> > --- a/mm/rmap.c
+>> > +++ b/mm/rmap.c
+>> > @@ -269,19 +269,6 @@ int anon_vma_clone(struct vm_area_struct *dst, struct vm_area_struct *src)
+>> > {
+>> > 	struct anon_vma_chain *avc, *pavc;
+>> > 	struct anon_vma *root = NULL;
+>> > -	struct vm_area_struct *prev = dst->vm_prev, *pprev = src->vm_prev;
+>> > -
+>> > -	/*
+>> > -	 * If parent share anon_vma with its vm_prev, keep this sharing in in
+>> > -	 * child.
+>> > -	 *
+>> > -	 * 1. Parent has vm_prev, which implies we have vm_prev.
+>> > -	 * 2. Parent and its vm_prev have the same anon_vma.
+>> > -	 */
+>> > -	if (!dst->anon_vma && src->anon_vma &&
+>> > -	    pprev && pprev->anon_vma == src->anon_vma)
+>> > -		dst->anon_vma = prev->anon_vma;
+>> > -
+>> > 
+>> > 	list_for_each_entry_reverse(pavc, &src->anon_vma_chain, same_vma) {
+>> > 		struct anon_vma *anon_vma;
+>> > @@ -332,7 +319,8 @@ int anon_vma_clone(struct vm_area_struct *dst, struct vm_area_struct *src)
+>> >   * the corresponding VMA in the parent process is attached to.
+>> >   * Returns 0 on success, non-zero on failure.
+>> >   */
+>> > -int anon_vma_fork(struct vm_area_struct *vma, struct vm_area_struct *pvma)
+>> > +int anon_vma_fork(struct vm_area_struct *vma, struct vm_area_struct *pvma,
+>> > +		  struct vm_area_struct *prev)
+>> > {
+>> > 	struct anon_vma_chain *avc;
+>> > 	struct anon_vma *anon_vma;
+>> > @@ -342,6 +330,13 @@ int anon_vma_fork(struct vm_area_struct *vma, struct vm_area_struct *pvma)
+>> > 	if (!pvma->anon_vma)
+>> > 		return 0;
+>> > 
+>> > +	/* Share anon_vma with previous VMA if it has the same parent. */
+>> > +	if (prev && prev->anon_vma &&
+>> > +	    prev->anon_vma->parent == pvma->anon_vma) {
+>> > +		vma->anon_vma = prev->anon_vma;
+>> > +		return anon_vma_clone(vma, prev);
+>> > +	}
+>> > +
+>> 
+>> I am afraid this one change the intended behavior. Let's put a chart to
+>> describe.
+>> 
+>> Commit 4e4a9eb92133 ("mm/rmap.c: reusemergeable anon_vma as parent when
+>> fork") tries to improve the following situation.
+>> 
+>> Before the commit, the behavior is like this:
+>> 
+>> Parent process:
+>> 
+>>        +-----+
+>>        | pav |<-----------------+----------------------+
+>>        +-----+                  |                      |
+>>                                 |                      |
+>>                     +-----------+          +-----------+
+>>                     |pprev      |          |pvma       |
+>>                     +-----------+          +-----------+
+>> 
+>> Child Process
+>> 
+>> 
+>>        +-----+                     +-----+
+>>        | av1 |<-----------------+  | av2 |<------------+
+>>        +-----+                  |  +-----+             |
+>>                                 |                      |
+>>                     +-----------+          +-----------+
+>>                     |prev       |          |vma        |
+>>                     +-----------+          +-----------+
+>> 
+>> 
+>> Parent pprev and pvma share the same anon_vma due to
+>> find_mergeable_anon_vma(). While the anon_vma_clone() would pick up different
+>> anon_vma for child process's vma.
+>> 
+>> The purpose of my commit is to give child process the following shape.
+>> 
+>>        +-----+
+>>        | av  |<-----------------+----------------------+
+>>        +-----+                  |                      |
+>>                                 |                      |
+>>                     +-----------+          +-----------+
+>>                     |prev       |          |vma        |
+>>                     +-----------+          +-----------+
+>> 
+>> After this, we reduce the extra "av2" for child process. But yes, because of
+>> the two reasons you found, it didn't do the exact thing.
+>> 
+>> While if my understanding is correct, the anon_vma_clone() would pick up any
+>> anon_vma in its process tree, except parent's. If this fails to get a reusable
+>> one, anon_vma_fork() would allocate one, whose parent is pvma->anon_vma.
+>> 
+>> Let me summarise original behavior:
+>> 
+>>    * if anon_vma_clone succeed, it find one anon_vma in the process tree, but
+>>      it could not be pvma->anon_vma
+>>    * if anon_vma_clone fail, it will allocate a new anon_vma and its parent is
+>>      pvma->anon_vam
+>> 
+>> Then take a look into your code here.
+>> 
+>> "prev->anon_vma->parent == pvma->anon_vma" means prev->anon_vma parent is
+>> pvma's anon_vma. If my understanding is correct, this just match the second
+>> case. For "prev", we didn't find a reusable anon_vma and allocate a new one.
+>> 
+>> But how about the first case? prev reuse an anon_vma in the process tree which
+>> is not parent's?
+>
+>If anon_vma_clone() pick old anon-vma for first vma in sharing chain (prev)
+>then second vma (vma) will fork new anon-vma (unless pick another old anon-vma),
+>then third vma will share it. And so on.
 
-This patch defines a timer to handle the above scenario. The timer
-is setup to expire 5 minutes after IMA initialization is completed.
+No, I am afraid you are not correct here. Or I don't understand your sentence.
 
-If a custom IMA policy is loaded before the timer expires, the timer
-is removed and any queued keys are processed for measurement.
-But if a custom policy was not loaded, on timer expiration
-queued keys are just freed.
+This is my understanding about the behavior before my commit. Suppose av1 and
+av2 are both reused from old anon_vma. And if my understanding is correct,
+they are different from pvma->anon_vma. Then how your code match this
+situatioin?
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Reported-by: kernel test robot <rong.a.chen@intel.com> # sleeping
-function called from invalid context
-Reported-by: kbuild test robot <lkp@intel.com> # redefinition of
-ima_init_key_queue() function.
----
- security/integrity/ima/ima.h                 |  2 +
- security/integrity/ima/ima_asymmetric_keys.c | 42 ++++++++++++++++++--
- security/integrity/ima/ima_init.c            |  8 +++-
- 3 files changed, 48 insertions(+), 4 deletions(-)
+        +-----+                     +-----+
+        | av1 |<-----------------+  | av2 |<------------+
+        +-----+                  |  +-----+             |
+                                 |                      |
+                     +-----------+          +-----------+
+                     |prev       |          |vma        |
+                     +-----------+          +-----------+
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index c7fdf3d66b98..6bb3152b3e24 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -216,8 +216,10 @@ struct ima_key_entry {
- 	char *keyring_name;
- };
- void ima_process_queued_keys(void);
-+void ima_init_key_queue(void);
- #else
- static inline void ima_process_queued_keys(void) {}
-+static inline void ima_init_key_queue(void) {}
- #endif /* CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS */
- 
- /* LIM API function definitions */
-diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
-index eb71cbf224c1..d1fa1706e03f 100644
---- a/security/integrity/ima/ima_asymmetric_keys.c
-+++ b/security/integrity/ima/ima_asymmetric_keys.c
-@@ -11,6 +11,7 @@
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
-+#include <linux/timer.h>
- #include <keys/asymmetric-type.h>
- #include "ima.h"
- 
-@@ -26,6 +27,36 @@ static bool ima_process_keys;
- static DEFINE_SPINLOCK(ima_keys_lock);
- static LIST_HEAD(ima_keys);
- 
-+/*
-+ * If custom IMA policy is not loaded then keys queued up
-+ * for measurement should be freed. This timer is used
-+ * for handling this scenario.
-+ */
-+static long ima_key_queue_timeout = 300000; /* 5 Minutes */
-+static struct timer_list ima_key_queue_timer;
-+static bool timer_expired;
-+
-+/*
-+ * This timer callback function frees keys that may still be
-+ * queued up in case custom IMA policy was not loaded.
-+ */
-+static void ima_timer_handler(struct timer_list *timer)
-+{
-+	timer_expired = true;
-+	ima_process_queued_keys();
-+}
-+
-+/*
-+ * This function sets up a timer to free queued keys in case
-+ * custom IMA policy was never loaded.
-+ */
-+void ima_init_key_queue(void)
-+{
-+	timer_setup(&ima_key_queue_timer, ima_timer_handler, 0);
-+	mod_timer(&ima_key_queue_timer,
-+		  jiffies + msecs_to_jiffies(ima_key_queue_timeout));
-+}
-+
- static void ima_free_key_entry(struct ima_key_entry *entry)
- {
- 	if (entry) {
-@@ -120,10 +151,15 @@ void ima_process_queued_keys(void)
- 	if (!process)
- 		return;
- 
-+	del_timer(&ima_key_queue_timer);
-+
- 	list_for_each_entry_safe(entry, tmp, &ima_keys, list) {
--		process_buffer_measurement(entry->payload, entry->payload_len,
--					   entry->keyring_name, KEY_CHECK, 0,
--					   entry->keyring_name);
-+		if (!timer_expired)
-+			process_buffer_measurement(entry->payload,
-+						   entry->payload_len,
-+						   entry->keyring_name,
-+						   KEY_CHECK, 0,
-+						   entry->keyring_name);
- 		list_del(&entry->list);
- 		ima_free_key_entry(entry);
- 	}
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 5d55ade5f3b9..195cb4079b2b 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -131,5 +131,11 @@ int __init ima_init(void)
- 
- 	ima_init_policy();
- 
--	return ima_fs_init();
-+	rc = ima_fs_init();
-+	if (rc != 0)
-+		return rc;
-+
-+	ima_init_key_queue();
-+
-+	return rc;
- }
+Would you explain your understanding the second and third vma in your
+sentence? Which case you are trying to illustrate?
+
+>Fork works left to right - we don't known about next vma to predict sharing and
+>choose better options.
+>
+>But reusing old vma doesn't allocates new one. It's better to not reuse them
+
+You mean reuse old anon_vma here?
+
+>second time because this makes tree less optimal (and actually not a tree anymore).
+>This is just a trick to prevent unlimited growth anon-vma chains in background:
+>while each anon-vma has at least one vma or two childs then their count is
+>limited with count of vmas which are visible and limited.
+>
+>> 
+>> > 	/* Drop inherited anon_vma, we'll reuse existing or allocate new. */
+>> > 	vma->anon_vma = NULL;
+>> > 
+>> 
+>> --
+>> Wei Yang
+>> Help you, Help me
+>> 
+
 -- 
-2.17.1
-
+Wei Yang
+Help you, Help me
