@@ -2,87 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E7D0135543
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:12:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDE3313554E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:14:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729035AbgAIJMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 04:12:23 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:47092 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728565AbgAIJMX (ORCPT
+        id S1729165AbgAIJNX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 04:13:23 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:41161 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728862AbgAIJNW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 04:12:23 -0500
-Received: by mail-pl1-f195.google.com with SMTP id y8so2308495pll.13
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 01:12:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bD7gyya4cAOQOb9p2IS6rqFYWX0Br0cfXVNEAUUuZu0=;
-        b=CiOmSTU5BNBN1hJtADq9FoblA9dkVx8TbRrvQ4BV04gZEF7EqALG9U1zBveXUbZOyi
-         /5c94wEqSz7SFiBafS8mzocek9/LTFzp22WGhiU2fa8iRvjFvJnwVNHJ8ibzk6Gz/wRt
-         vC48MdAcH+8GVX1Q3pyPI8u/WFiWT3KasnXluCS2MuoGAxO0TygjH+doDuPVMtIdMLqV
-         3LEQMQ5gXc9Q3TeLXqX0Z4gasm5eXUm86BJIjHa88jBfyqsKlD5nACZFELC2i4WQT0Am
-         z1swX8JLT88JtLQ6fWuDeE3Tf5E1Zr38CLYrue+p3acW7SvfkW62ubrgg2fZtHH7Wz4B
-         mAow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=bD7gyya4cAOQOb9p2IS6rqFYWX0Br0cfXVNEAUUuZu0=;
-        b=N+8H2nnqK1MyKiUso16vWHJQu9zB1M65kovnaQlM5ZOCa5U5mgkbBbivbGH7VaW8Kb
-         HbQfD99mO1fT7/DYzGOXorySsjJB6dhv/AVH7f6CPnTwTR8+hdik+cfbJKnGiMgGV9DA
-         7xf/C5ULIzN+anHWkVvICjbvlOIEvRNs0BUhERUu85iqIyvVHF7riLDXeSOHRbjpbEXY
-         cj4EUYXfQsiM//t3TQGoQtNKmAr+if5yU6kk61rwBXFWT2lItR2YTjw2c9Ip+w9L8f8V
-         oU0Ii/dRlojZMEs9NOWqZo2wilq9aCCGN7oysr2lmUePV4g1GqmDeHN+Fb47k+C999SI
-         TNXQ==
-X-Gm-Message-State: APjAAAU1A4+5CXPrIMTvV4uQWhpEgDAQyDfmYDIhdMcAP/RquK2TPZWS
-        cPGnQ7CJixwsEOvU8XMiRLU=
-X-Google-Smtp-Source: APXvYqw/JpNaFke6Pcf26UCN0amj5bom7PxM+mJmP/X12nXxdLe8vKFxnV7oYLLFaOsQn34f2EUC2Q==
-X-Received: by 2002:a17:902:6b06:: with SMTP id o6mr10577664plk.138.1578561142689;
-        Thu, 09 Jan 2020 01:12:22 -0800 (PST)
-Received: from localhost ([43.224.245.180])
-        by smtp.gmail.com with ESMTPSA id o19sm3364369pjr.2.2020.01.09.01.12.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Jan 2020 01:12:22 -0800 (PST)
-From:   liuyang34 <yangliuxm34@gmail.com>
-X-Google-Original-From: liuyang34 <liuyang34@xiaomi.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     liuyang34 <liuyang34@xiaomi.com>
-Subject: [PATCH] trace: code optimization
-Date:   Thu,  9 Jan 2020 17:12:17 +0800
-Message-Id: <27225bf0ec9b4e2f3d313456aee75e294361d550.1578561009.git.liuyang34@xiaomi.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1578561009.git.liuyang34@xiaomi.com>
-References: <cover.1578561009.git.liuyang34@xiaomi.com>
+        Thu, 9 Jan 2020 04:13:22 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00997oCh021592;
+        Thu, 9 Jan 2020 10:13:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=WeMi3HpOU5AF0rGrPKqX2WxavTF7Z+TyGKSaY1oSknc=;
+ b=oWnYAgf2miTJ94ASkmeXawkZn7a43R5ZQu/HUcQXoRuUmxx/jNDbbufLprF050RfmSoc
+ FKcPzdnfhEYDHzhXBmrkPyh+9keWY1lWsMY4JdQLyhPnpfXPFlgTeELJnmhVTNG3D+pJ
+ Pcpc8ncq2IiK5n3FCOYZgVuewJ2IoIgVUP5Fbk0qa5sy/EY4fxNxesWIfLfUJGjYXAM9
+ xYiJe4UQDMYCSc0Rn5paW6LJWC6C1pyUOB/Wl9E2HsjzIbdQ/SB0H8v2I8WrCmAXFonN
+ LAzniOJggG4aIcFKZN8JWhwJN6KCquIkxooO2vPVuEI44LkUXYTcptFXxRqBv7F5/jSb xA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xakur0jsc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 09 Jan 2020 10:13:08 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 13E74100038;
+        Thu,  9 Jan 2020 10:13:04 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 033752A6184;
+        Thu,  9 Jan 2020 10:13:04 +0100 (CET)
+Received: from [10.48.0.71] (10.75.127.45) by SFHDAG5NODE3.st.com
+ (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 9 Jan
+ 2020 10:13:03 +0100
+Subject: Re: [PATCH v2] iio: adc: stm32-dfsdm: Use dma_request_chan() instead
+ dma_request_slave_channel()
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>, <jic23@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>
+CC:     <vkoul@kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Olivier MOYSAN <olivier.moysan@st.com>
+References: <20200107114532.6697-1-peter.ujfalusi@ti.com>
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+Message-ID: <eade6657-8470-0d70-b3c1-fcdddf891c6c@st.com>
+Date:   Thu, 9 Jan 2020 10:13:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20200107114532.6697-1-peter.ujfalusi@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-09_02:2020-01-08,2020-01-09 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-use scnprintf instead of snprinr and no need to check
-the return size again
+On 1/7/20 12:45 PM, Peter Ujfalusi wrote:
+> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+> eating up the error code.
+> 
+> By using dma_request_chan() directly the driver can support deferred
+> probing against DMA.
+> 
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> ---
+> Hi,
+> 
+> Changes since v1:
+> - Fall back to IRQ mode for ADC only in case of ENODEV
 
-Signed-off-by: liuyang34 <liuyang34@xiaomi.com>
----
- kernel/trace/trace_stack.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Hi Peter,
 
-diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
-index c557f42..7b15e9a 100644
---- a/kernel/trace/trace_stack.c
-+++ b/kernel/trace/trace_stack.c
-@@ -329,9 +329,7 @@ stack_max_size_read(struct file *filp, char __user *ubuf,
- 	char buf[64];
- 	int r;
- 
--	r = snprintf(buf, sizeof(buf), "%ld\n", *ptr);
--	if (r > sizeof(buf))
--		r = sizeof(buf);
-+	r = scnprintf(buf, sizeof(buf), "%ld\n", *ptr);
- 	return simple_read_from_buffer(ubuf, count, ppos, buf, r);
- }
- 
--- 
-2.7.4
+Thanks for the patch,
 
+Please find a minor comment here after. Apart from that, you can add my:
+
+Acked-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+
+
+> 
+> Regards,
+> Peter
+> 
+>  drivers/iio/adc/stm32-dfsdm-adc.c | 21 +++++++++++++++++----
+>  1 file changed, 17 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
+> index e493242c266e..74a2211bdff4 100644
+> --- a/drivers/iio/adc/stm32-dfsdm-adc.c
+> +++ b/drivers/iio/adc/stm32-dfsdm-adc.c
+> @@ -1383,9 +1383,13 @@ static int stm32_dfsdm_dma_request(struct iio_dev *indio_dev)
+>  {
+>  	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
+>  
+> -	adc->dma_chan = dma_request_slave_channel(&indio_dev->dev, "rx");
+> -	if (!adc->dma_chan)
+> -		return -EINVAL;
+> +	adc->dma_chan = dma_request_chan(&indio_dev->dev, "rx");
+> +	if (IS_ERR(adc->dma_chan)) {
+> +		int ret = PTR_ERR(adc->dma_chan);
+> +
+> +		adc->dma_chan = NULL;
+> +		return ret;
+
+You may "return PTR_ERR(adc->dma_chan);" directly here.
+
+Best Regards,
+Fabrice
+
+> +	}
+>  
+>  	adc->rx_buf = dma_alloc_coherent(adc->dma_chan->device->dev,
+>  					 DFSDM_DMA_BUFFER_SIZE,
+> @@ -1509,7 +1513,16 @@ static int stm32_dfsdm_adc_init(struct iio_dev *indio_dev)
+>  	init_completion(&adc->completion);
+>  
+>  	/* Optionally request DMA */
+> -	if (stm32_dfsdm_dma_request(indio_dev)) {
+> +	ret = stm32_dfsdm_dma_request(indio_dev);
+> +	if (ret) {
+> +		if (ret != -ENODEV) {
+> +			if (ret != -EPROBE_DEFER)
+> +				dev_err(&indio_dev->dev,
+> +					"DMA channel request failed with %d\n",
+> +					ret);
+> +			return ret;
+> +		}
+> +
+>  		dev_dbg(&indio_dev->dev, "No DMA support\n");
+>  		return 0;
+>  	}
+> 
