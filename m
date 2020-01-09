@@ -2,58 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FE96136170
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 20:52:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D6FE136144
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 20:39:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732674AbgAITwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 14:52:25 -0500
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:45282 "EHLO
+        id S1731393AbgAITj3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 14:39:29 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:57254 "EHLO
         mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730498AbgAITwZ (ORCPT
+        with ESMTP id S1730696AbgAITj3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 14:52:25 -0500
-Received: from relay1-d.mail.gandi.net (unknown [217.70.183.193])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id DBCF03A9CD6
-        for <linux-kernel@vger.kernel.org>; Thu,  9 Jan 2020 19:14:34 +0000 (UTC)
-X-Originating-IP: 91.224.148.103
+        Thu, 9 Jan 2020 14:39:29 -0500
+X-Greylist: delayed 969 seconds by postgrey-1.27 at vger.kernel.org; Thu, 09 Jan 2020 14:39:28 EST
+Received: from relay12.mail.gandi.net (unknown [217.70.178.232])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id C2ADF3AA859
+        for <linux-kernel@vger.kernel.org>; Thu,  9 Jan 2020 19:14:41 +0000 (UTC)
 Received: from localhost.localdomain (unknown [91.224.148.103])
         (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id C32EF240003;
-        Thu,  9 Jan 2020 19:14:33 +0000 (UTC)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id A6517200003;
+        Thu,  9 Jan 2020 19:14:39 +0000 (UTC)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Tudor.Ambarus@microchip.com, john.garry@huawei.com,
-        vigneshr@ti.com, richard@nod.at, miquel.raynal@bootlin.com
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mtd: spi-nor: Fix the writing of the Status Register on micron flashes
-Date:   Thu,  9 Jan 2020 20:14:23 +0100
-Message-Id: <20200109191423.10589-1-miquel.raynal@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     Oleksandr Natalenko <oleksandr@redhat.com>,
+        Wenwen Wang <wenwen@cs.uga.edu>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: sm_ftl: fix NULL pointer warning
+Date:   Thu,  9 Jan 2020 20:14:38 +0100
+Message-Id: <20200109191438.10651-1-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191203144948.15137-1-tudor.ambarus@microchip.com>
+In-Reply-To: <20200107212509.4004137-1-arnd@arndb.de>
 References: 
 MIME-Version: 1.0
 X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: 82de6a6fb67e16a30ec2f586b1f6976c2d7b4b62
+X-linux-mtd-patch-commit: de08b5ac10420db597cb24c41b4d8d06cce15ffd
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-12-03 at 14:50:01 UTC,  wrote:
-> From: Tudor Ambarus <tudor.ambarus@microchip.com>
+On Tue, 2020-01-07 at 21:24:52 UTC, Arnd Bergmann wrote:
+> With gcc -O3, we get a new warning:
 > 
-> Micron flashes do not support 16 bit writes on the Status Register.
-> According to micron datasheets, when using the Write Status Register
-> (01h) command, the chip select should be driven LOW and held LOW until
-> the eighth bit of the last data byte has been latched in, after which
-> it must be driven HIGH. If CS is not driven HIGH, the command is not
-> executed, flag status register error bits are not set, and the write enable
-> latch remains set to 1. This fixes the lock operations on micron flashes.
+> In file included from arch/arm64/include/asm/processor.h:28,
+>                  from drivers/mtd/sm_ftl.c:8:
+> In function 'memset',
+>     inlined from 'sm_read_sector.constprop' at drivers/mtd/sm_ftl.c:250:3:
+> include/linux/string.h:411:9: error: argument 1 null where non-null expected [-Werror=nonnull]
+>   return __builtin_memset(p, c, size);
 > 
-> Reported-by: John Garry <john.garry@huawei.com>
-> Fixes: 39d1e3340c73 ("mtd: spi-nor: Fix clearing of QE bit on lock()/unlock()")
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-> Tested-by: John Garry <john.garry@huawei.com>
+> >From all I can tell, this cannot happen (the function is called
+> either with a NULL buffer or with a -1 block number but not both),
+> but adding a check makes it more robust and avoids the warning.
+> 
+> Fixes: mmtom ("init/Kconfig: enable -O3 for all arches")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
 Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/fixes, thanks.
 
