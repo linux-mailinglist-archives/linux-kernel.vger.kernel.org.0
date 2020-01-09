@@ -2,156 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 658571355E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:38:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 872451355F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:42:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729720AbgAIJhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 04:37:50 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:34089 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729623AbgAIJht (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 04:37:49 -0500
-Received: by mail-wm1-f68.google.com with SMTP id w5so1600782wmi.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 01:37:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lNujAYdpWiwDXEQQdLN1Vurqjh+2ZpMtBUoUWSeq3n8=;
-        b=YlcXAhzDj0o2GO1+jPXuS4BeonCzniOnF+er1530sz+dIzmdeWuplcTmqT5TsBBJKH
-         s6MlnibNMMoty/ci7vK2oE7hZAPEdjMcXKj98KxatSz61vF191e6KOY4YUlYpeWN8Hqu
-         ITvi6p+2EU6L8OJsUAzomiGcOMYaLJkvLWu0RzKmJPq1SyuOm7PT1Ab3i0R2NHUvu3Ox
-         xHJi4hP7jHUg+rIpey2jwznyfgdlj8jRbxKEiwxhWCJSaehLyRq/iwiwHq+Zo5zmoY6V
-         Pet7pud5+ejce9NGoC1UjFg5nsLcZl8cVo/1rqwMseNv0ZkoyYpfk8h5RXLGC5NvfkV1
-         ydnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lNujAYdpWiwDXEQQdLN1Vurqjh+2ZpMtBUoUWSeq3n8=;
-        b=L4HBJdvYyoMKt+PnrYD8qzdQrs75elY944i2wvPcJ3bmjwiDbiED35nqMqiI3wcFay
-         xdgDsDquE1R+sv+AOc85sj0WqviMkFZXwbhwUoUqSywom5YroWqtH/r6Zglu+DE4C+LP
-         W+mgx3dFhSJ2FsBfmWIeHUHO7LS8+cJZ/ztgB7A2ZTl/ANFyYidSQSywhQwvanyZUHYa
-         nyJK6Y/1BxbbiW7p0XAwHXo3lK0rJgkQTRhS4K0NpUbwhRWfSqFsshlVEFhuPS0D0ffW
-         14tFzsHS1N8QijUQnI24bU3/Y6jWuZVcQowhz9D8LkeNVD0Gn78TUBgNz7Y6qDgoBq04
-         ilOw==
-X-Gm-Message-State: APjAAAVyemePUBukR8dCCJQvLcRkEPUmcd7Ne9Q16S8ZIICcHiwymwuH
-        sWQMjG9Y0XqXq1HjDv8jTXu4a9OycYL/7Oc9S4+DFg==
-X-Google-Smtp-Source: APXvYqwWGMHGzLMerqILiXKue/DvM+d1qJguUX2aVgIzTL/755mpvPEV7Kw2F5J/dWiy+YIiyXxUYYYl02ks2oxx3Ks=
-X-Received: by 2002:a1c:7205:: with SMTP id n5mr3802279wmc.9.1578562666884;
- Thu, 09 Jan 2020 01:37:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20200103113953.9571-1-ardb@kernel.org>
-In-Reply-To: <20200103113953.9571-1-ardb@kernel.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 9 Jan 2020 10:37:36 +0100
-Message-ID: <CAKv+Gu8pzDSs6G5k9JfX77NB4q2kerxSuprnzFzeGBPd2kPd5g@mail.gmail.com>
-Subject: Re: [GIT PULL 00/20] More EFI updates for v5.6
-To:     Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Matthew Garrett <mjg59@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1729786AbgAIJmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 04:42:02 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:49840 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729642AbgAIJmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 04:42:02 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 927D51A02C3;
+        Thu,  9 Jan 2020 10:41:59 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CF1A81A029E;
+        Thu,  9 Jan 2020 10:41:53 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DF5BE402C1;
+        Thu,  9 Jan 2020 17:41:46 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        andreas@kemnade.info, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V2] ARM: dts: imx6: Remove incorrect power supply assignment
+Date:   Thu,  9 Jan 2020 17:38:02 +0800
+Message-Id: <1578562682-32548-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 3 Jan 2020 at 12:40, Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> Ingo, Thomas,
->
-> This is the second batch of EFI updates for v5.6. Two things are still
-> under discussion, so I'll probably have a few more changes for this
-> cycle in a week or so.
->
-> The following changes since commit 0679715e714345d273c0e1eb78078535ffc4b2a1:
->
->   efi/libstub/x86: Avoid globals to store context during mixed mode calls (2019-12-25 10:49:26 +0100)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git tags/efi-next
->
-> for you to fetch changes up to d95e4feae5368a91775c4597a8f298ba84f31535:
->
->   efi/x86: avoid RWX mappings for all of DRAM (2020-01-03 11:46:15 +0100)
->
+The vdd3p0 LDO's input should be from external USB VBUS directly, NOT
+PMIC's power supply, the vdd3p0 LDO's target output voltage can be
+controlled by SW, and it requires input voltage to be high enough, with
+incorrect power supply assigned, if the power supply's voltage is lower
+than the LDO target output voltage, it will return fail and skip the LDO
+voltage adjustment, so remove the power supply assignment for vdd3p0 to
+avoid such scenario.
 
-Ingo, Thomas,
+Fixes: 93385546ba36 ("ARM: dts: imx6qdl-sabresd: Assign corresponding power supply for LDOs")
+Fixes: 37a4bdead109 ("ARM: dts: imx6sx-sdb: Assign corresponding power supply for LDOs")
+Fixes: 3feea8805d6f ("ARM: dts: imx6sl-evk: Assign corresponding power supply for LDOs")
+Fixes: 96a9169cf621 ("ARM: dts: imx6sll-evk: Assign corresponding power supply for vdd3p0")
+Fixes: 0b47f9201075 ("ARM: dts: add devicetree entry for Tolino Shine 3")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+Changes since V1:
+	- squash the patch set together to easy applying to other tree;
+	- imporve the commit message to provide more detail info.
+---
+ arch/arm/boot/dts/imx6qdl-sabresd.dtsi     | 4 ----
+ arch/arm/boot/dts/imx6sl-evk.dts           | 4 ----
+ arch/arm/boot/dts/imx6sl-tolino-shine3.dts | 4 ----
+ arch/arm/boot/dts/imx6sll-evk.dts          | 4 ----
+ arch/arm/boot/dts/imx6sx-sdb-reva.dts      | 4 ----
+ arch/arm/boot/dts/imx6sx-sdb.dts           | 4 ----
+ 6 files changed, 24 deletions(-)
 
-I'll be submitting another PR later today or tomorrow that goes on top
-of these changes. Please let me know if you would like a v2 of this PR
-with the new content included, or rather keep them separate.
+diff --git a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
+index 71ca76a..fe59dde 100644
+--- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
+@@ -749,10 +749,6 @@
+ 	vin-supply = <&vgen5_reg>;
+ };
+ 
+-&reg_vdd3p0 {
+-	vin-supply = <&sw2_reg>;
+-};
+-
+ &reg_vdd2p5 {
+ 	vin-supply = <&vgen5_reg>;
+ };
+diff --git a/arch/arm/boot/dts/imx6sl-evk.dts b/arch/arm/boot/dts/imx6sl-evk.dts
+index 4829aa6..bc86cfa 100644
+--- a/arch/arm/boot/dts/imx6sl-evk.dts
++++ b/arch/arm/boot/dts/imx6sl-evk.dts
+@@ -584,10 +584,6 @@
+ 	vin-supply = <&sw2_reg>;
+ };
+ 
+-&reg_vdd3p0 {
+-	vin-supply = <&sw2_reg>;
+-};
+-
+ &reg_vdd2p5 {
+ 	vin-supply = <&sw2_reg>;
+ };
+diff --git a/arch/arm/boot/dts/imx6sl-tolino-shine3.dts b/arch/arm/boot/dts/imx6sl-tolino-shine3.dts
+index 0ee4925..27143ea 100644
+--- a/arch/arm/boot/dts/imx6sl-tolino-shine3.dts
++++ b/arch/arm/boot/dts/imx6sl-tolino-shine3.dts
+@@ -290,10 +290,6 @@
+ 	vin-supply = <&dcdc2_reg>;
+ };
+ 
+-&reg_vdd3p0 {
+-	vin-supply = <&dcdc2_reg>;
+-};
+-
+ &ricoh619 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_ricoh_gpio>;
+diff --git a/arch/arm/boot/dts/imx6sll-evk.dts b/arch/arm/boot/dts/imx6sll-evk.dts
+index 3e1d32f..5ace9e6 100644
+--- a/arch/arm/boot/dts/imx6sll-evk.dts
++++ b/arch/arm/boot/dts/imx6sll-evk.dts
+@@ -265,10 +265,6 @@
+ 	status = "okay";
+ };
+ 
+-&reg_3p0 {
+-	vin-supply = <&sw2_reg>;
+-};
+-
+ &snvs_poweroff {
+ 	status = "okay";
+ };
+diff --git a/arch/arm/boot/dts/imx6sx-sdb-reva.dts b/arch/arm/boot/dts/imx6sx-sdb-reva.dts
+index 2b29ed2..dce5dcf 100644
+--- a/arch/arm/boot/dts/imx6sx-sdb-reva.dts
++++ b/arch/arm/boot/dts/imx6sx-sdb-reva.dts
+@@ -160,10 +160,6 @@
+ 	vin-supply = <&vgen6_reg>;
+ };
+ 
+-&reg_vdd3p0 {
+-	vin-supply = <&sw2_reg>;
+-};
+-
+ &reg_vdd2p5 {
+ 	vin-supply = <&vgen6_reg>;
+ };
+diff --git a/arch/arm/boot/dts/imx6sx-sdb.dts b/arch/arm/boot/dts/imx6sx-sdb.dts
+index a8ee708..5a63ca6 100644
+--- a/arch/arm/boot/dts/imx6sx-sdb.dts
++++ b/arch/arm/boot/dts/imx6sx-sdb.dts
+@@ -141,10 +141,6 @@
+ 	vin-supply = <&vgen6_reg>;
+ };
+ 
+-&reg_vdd3p0 {
+-	vin-supply = <&sw2_reg>;
+-};
+-
+ &reg_vdd2p5 {
+ 	vin-supply = <&vgen6_reg>;
+ };
+-- 
+2.7.4
 
-Thanks,
-Ard.
-
-
-
-> ----------------------------------------------------------------
-> Second batch of EFI updates for v5.6:
-> - Some followup fixes for the EFI stub changes that have been queued up
->   already.
-> - Overhaul of the x86 EFI boot/runtime code, to peel off layers of pointer
->   casting and type mangling via variadic macros and asm wrappers that made
->   the code fragile and ugly.
-> - Increase robustness for mixed mode code, by using argmaps to annotate and
->   translate function prototypes that are not mixed mode safe. (Arvind)
-> - Add the ability to disable DMA at the root port level in the EFI stub, to
->   avoid booting into the kernel proper with IOMMUs in pass through and DMA
->   enabled (suggested by Matthew)
-> - Get rid of RWX mappings in the EFI memory map, where possible.
->
-> ----------------------------------------------------------------
-> Ard Biesheuvel (17):
->       efi/libstub: fix boot argument handling in mixed mode entry code
->       efi/libstub/x86: force 'hidden' visibility for extern declarations
->       efi/x86: re-disable RT services for 32-bit kernels running on 64-bit EFI
->       efi/x86: map the entire EFI vendor string before copying it
->       efi/x86: avoid redundant cast of EFI firmware service pointer
->       efi/x86: split off some old memmap handling into separate routines
->       efi/x86: split SetVirtualAddresMap() wrappers into 32 and 64 bit versions
->       efi/x86: simplify i386 efi_call_phys() firmware call wrapper
->       efi/x86: simplify 64-bit EFI firmware call wrapper
->       efi/x86: simplify mixed mode call wrapper
->       efi/x86: drop two near identical versions of efi_runtime_init()
->       efi/x86: clean up efi_systab_init() routine for legibility
->       efi/x86: don't panic or BUG() on non-critical error conditions
->       efi/x86: remove unreachable code in kexec_enter_virtual_mode()
->       x86/mm: fix NX bit clearing issue in kernel_map_pages_in_pgd
->       efi/x86: don't map the entire kernel text RW for mixed mode
->       efi/x86: avoid RWX mappings for all of DRAM
->
-> Arvind Sankar (2):
->       efi/x86: Check number of arguments to variadic functions
->       efi/x86: Allow translating 64-bit arguments for mixed mode calls
->
-> Matthew Garrett (1):
->       efi: Allow disabling PCI busmastering on bridges during boot
->
->  Documentation/admin-guide/kernel-parameters.txt |   7 +-
->  arch/x86/boot/compressed/eboot.c                |  18 +-
->  arch/x86/boot/compressed/efi_thunk_64.S         |   4 +-
->  arch/x86/boot/compressed/head_64.S              |  17 +-
->  arch/x86/include/asm/efi.h                      | 169 ++++++++---
->  arch/x86/mm/pageattr.c                          |   8 +-
->  arch/x86/platform/efi/Makefile                  |   1 -
->  arch/x86/platform/efi/efi.c                     | 354 ++++++++----------------
->  arch/x86/platform/efi/efi_32.c                  |  22 +-
->  arch/x86/platform/efi/efi_64.c                  | 157 +++++++----
->  arch/x86/platform/efi/efi_stub_32.S             | 109 ++------
->  arch/x86/platform/efi/efi_stub_64.S             |  43 +--
->  arch/x86/platform/efi/efi_thunk_64.S            | 121 ++------
->  arch/x86/platform/uv/bios_uv.c                  |   7 +-
->  drivers/firmware/efi/Kconfig                    |  22 ++
->  drivers/firmware/efi/libstub/Makefile           |   2 +-
->  drivers/firmware/efi/libstub/efi-stub-helper.c  |  20 +-
->  drivers/firmware/efi/libstub/pci.c              | 114 ++++++++
->  include/linux/efi.h                             |  29 +-
->  19 files changed, 597 insertions(+), 627 deletions(-)
->  create mode 100644 drivers/firmware/efi/libstub/pci.c
