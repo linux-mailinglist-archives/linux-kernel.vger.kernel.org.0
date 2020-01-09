@@ -2,73 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDC30135C6F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 16:18:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA555135C74
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 16:18:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732262AbgAIPSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 10:18:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39444 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727945AbgAIPSD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 10:18:03 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 418E4206ED;
-        Thu,  9 Jan 2020 15:18:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578583082;
-        bh=wwTkulcWNrf8/WnDIcLNGlEiuiK3aNjEJ0Ao6P3jLx8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V6tQ2nfhWozNQ3WNBxLm/6dfX9TD28B9GdBZdjeTZQ6hOapDoVOaApZajf9G8DOWE
-         +eISC137+7dtioAZSNt3iRl/UVkOQKuB/W8iThl/6EcKMphY/hp2e6LQc+anmIdiEh
-         Ijd6kQgGCuGIeuG2Y5cPSqWBV0qUYoPUkn7Y/UTs=
-Date:   Thu, 9 Jan 2020 15:17:57 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Srinivas Ramana <sramana@codeaurora.org>, maz@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] arm64: Set SSBS for user threads while creation
-Message-ID: <20200109151756.GG12236@willie-the-truck>
-References: <1577106146-8999-1-git-send-email-sramana@codeaurora.org>
- <20200102180145.GE27940@arrakis.emea.arm.com>
+        id S1732273AbgAIPSc convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 9 Jan 2020 10:18:32 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:36057 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727945AbgAIPSb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 10:18:31 -0500
+X-Originating-IP: 91.224.148.103
+Received: from xps13 (unknown [91.224.148.103])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id AA51DE0009;
+        Thu,  9 Jan 2020 15:18:27 +0000 (UTC)
+Date:   Thu, 9 Jan 2020 16:18:26 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 3/3] mtd: onenand: Enable compile testing of OMAP and
+ Samsung drivers
+Message-ID: <20200109161826.7fda02a4@xps13>
+In-Reply-To: <20191231073339.GA6747@pi3>
+References: <20191229183612.22133-3-krzk@kernel.org>
+        <201912310904.9iM6MaFr%lkp@intel.com>
+        <20191231073339.GA6747@pi3>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200102180145.GE27940@arrakis.emea.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 02, 2020 at 06:01:45PM +0000, Catalin Marinas wrote:
-> On Mon, Dec 23, 2019 at 06:32:26PM +0530, Srinivas Ramana wrote:
-> > Current SSBS implementation takes care of setting the
-> > SSBS bit in start_thread() for user threads. While this works
-> > for tasks launched with fork/clone followed by execve, for cases
-> > where userspace would just call fork (eg, Java applications) this
-> > leaves the SSBS bit unset. This results in performance
-> > regression for such tasks.
+Hi Krzysztof,
+
+Krzysztof Kozlowski <krzk@kernel.org> wrote on Tue, 31 Dec 2019
+08:33:39 +0100:
+
+> On Tue, Dec 31, 2019 at 10:00:48AM +0800, kbuild test robot wrote:
+> > Hi Krzysztof,
 > > 
-> > It is understood that commit cbdf8a189a66 ("arm64: Force SSBS
-> > on context switch") masks this issue, but that was done for a
-> > different reason where heterogeneous CPUs(both SSBS supported
-> > and unsupported) are present. It is appropriate to take care
-> > of the SSBS bit for all threads while creation itself.
+> > I love your patch! Perhaps something to improve:
 > > 
-> > Fixes: 8f04e8e6e29c ("arm64: ssbd: Add support for PSTATE.SSBS rather than trapping to EL3")
-> > Signed-off-by: Srinivas Ramana <sramana@codeaurora.org>
+> > [auto build test WARNING on linus/master]
+> > [also build test WARNING on v5.5-rc4 next-20191220]
+> > [if your patch is applied to the wrong git tree, please drop us a note to help
+> > improve the system. BTW, we also suggest to use '--base' option to specify the
+> > base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+> > 
+> > url:    https://github.com/0day-ci/linux/commits/Krzysztof-Kozlowski/mtd-onenand-samsung-Fix-pointer-cast-Wpointer-to-int-cast-warnings-on-64-bit/20191230-030838
+> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git bf8d1cd4386535004c4afe7f03d37f9864c9940e
+> > reproduce:
+> >         # apt-get install sparse
+> >         # sparse version: v0.6.1-129-g341daf20-dirty
+> >         make ARCH=x86_64 allmodconfig
+> >         make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+> > 
+> > If you fix the issue, kindly add following tag
+> > Reported-by: kbuild test robot <lkp@intel.com>
+> >   
 > 
-> I suppose the parent process cleared SSBS explicitly. Isn't the child
-> after fork() supposed to be nearly identical to the parent? If we did as
-> you suggest, someone else might complain that SSBS has been set in the
-> child after fork().
+> It is not related to my patch. I'll fix it up soon.
 
-Right, I'd expect the parent SSBS to be inherited when we copy the pstate
-field along with the other regs, and I think this is the correct behaviour.
+I would like this to be fixed before enabling compile testing, is your
+fix read?
 
-Is that broken somehow?
-
-Will
+Thanks,
+Miquèl
