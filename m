@@ -2,142 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCCCD13507B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 01:32:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D5CA135098
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 01:44:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727671AbgAIAcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 19:32:41 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45779 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726438AbgAIAcl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 19:32:41 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 59so5455525otp.12
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 16:32:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JR/KjA7bK/5h1lh8mNM1kPx+FAOViYqnY1kccdyZdpw=;
-        b=j3Da9P8d6imGyd0RYW8XhpvMCLsnXjixXfOCLE3kkbxwt1ezf4AwTmT7cEHJyR3X76
-         WaENdtnmoyTLZkc9+2qBd/HwZksA2/TAv4sm0QDsCkDDKJfC5dRhEU7dSE65q/6UEJrQ
-         fTc5jJhrsn68YZmWE6QCc8hPsC49BA/vfvgwscRgULKmYnNp7Ku8jYVMZpZuQhojobWe
-         7VEhv5inC6tLvFVwc5hXLh/Ml4bMs4pxNIRenfeWVj/gWRSr1Uz3pZbw9qp8TWL/vAK/
-         OQYD+roonfdZoU4Yrnq6Lj02lb/0P9RzkTndH5AzDkPJWe6Q0xo9qBlQeikjmB5BfA1P
-         Sj0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JR/KjA7bK/5h1lh8mNM1kPx+FAOViYqnY1kccdyZdpw=;
-        b=X8WAyb6iicobhiw+waTv31h1IWxOeKaMew6F9feOtBfrAvSlrUV9XagvhX/j0BuB5Y
-         MLaSmlhXXeySbr/rquQQ9LAc2tGgUX12FoD6Zwhg8x1b+6y8f3q0+WBSWNNWjBwVBOKL
-         sIn36mLHaGTRVYe3odF2AMaSnX6CKvF9eZFG5C4UwzJgcGSUbHxDRf1Z1+LOfVeZCpHB
-         KCazfWXeZjeuld4wvxuQmR+z4MuzjEehdW5BNk6n5hdFqH+uAjyFaP2Uyj0whj9zTumO
-         pfvlFktKdaGAkM51qugiuDvA9qeVyGYNLEBNryMut6ME959oDLWkp9x6uQwhFp70iAN2
-         TfIQ==
-X-Gm-Message-State: APjAAAWl4APUE4JaLGAdWDyw5qP4xk+pIzyrZJichg0j2zoAAQpuUwTA
-        81u9sQsXbKdT6YiVhryC2G3/vqZDJ71WHhKr/Mb3+Q==
-X-Google-Smtp-Source: APXvYqwCihk5u4K5/SRutO9DNp8bfrDx57oO32s94aeDDqmeM0UX5oFd6QJyaXZ8ATE8dF9bYKlJVbqXEUPF7PCj5Xg=
-X-Received: by 2002:a05:6830:1e09:: with SMTP id s9mr6498126otr.139.1578529959892;
- Wed, 08 Jan 2020 16:32:39 -0800 (PST)
-MIME-Version: 1.0
-References: <20191207002424.201796-1-saravanak@google.com> <20191207002424.201796-2-saravanak@google.com>
- <20200108103210.oyrqxlybrdbelkne@vireshk-i7>
-In-Reply-To: <20200108103210.oyrqxlybrdbelkne@vireshk-i7>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Wed, 8 Jan 2020 16:32:03 -0800
-Message-ID: <CAGETcx-fcKmMj4YF7U+zqr47zhAVoSTG_2R-1szik6nVqLykhg@mail.gmail.com>
-Subject: Re: [PATCH v6 1/3] dt-bindings: opp: Introduce opp-peak-kBps and
- opp-avg-kBps bindings
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
-        David Dai <daidavid1@codeaurora.org>, adharmap@codeaurora.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>
+        id S1727629AbgAIAoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 19:44:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33382 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726654AbgAIAoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 19:44:02 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5ABD2070E;
+        Thu,  9 Jan 2020 00:44:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578530642;
+        bh=Go188rL5tikNt03I4uWv26oj+FUof0Vk+S7a6HlvT1A=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=wVjR5/sPmfzWsNjUYs7iAFkDuAiMFnOpPCjdP+oU0s+4tHE0RLgbXYKiXuSJulplY
+         WZVBvVyNaV7D1gkAtlMQFENto0ov9x31m3PyRs1uW7fKs78RbYeEqMnDd0yifwYvyL
+         QJQ799I/TfvKrDuKHFPYFjkL73uGZt3h28MFnhyU=
+Message-ID: <064b5f5318fd433f03242ed234fe7c370899e224.camel@kernel.org>
+Subject: Re: [PATCH v5 2/2] tmpfs: Support 64-bit inums per-sb
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Hugh Dickins <hughd@google.com>, Chris Mason <clm@fb.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Chris Down <chris@chrisdown.name>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>
+Date:   Wed, 08 Jan 2020 19:43:52 -0500
+In-Reply-To: <alpine.LSU.2.11.2001080259350.1884@eggly.anvils>
+References: <cover.1578225806.git.chris@chrisdown.name>
+         <ae9306ab10ce3d794c13b1836f5473e89562b98c.1578225806.git.chris@chrisdown.name>
+         <20200107001039.GM23195@dread.disaster.area>
+         <20200107001643.GA485121@chrisdown.name>
+         <20200107003944.GN23195@dread.disaster.area>
+         <CAOQ4uxjvH=UagqjHP_71_p9_dW9wKqiaWujzY1xKe7yZVFPoTA@mail.gmail.com>
+         <alpine.LSU.2.11.2001070002040.1496@eggly.anvils>
+         <CAOQ4uxiMQ3Oz4M0wKo5FA_uamkMpM1zg7ydD8FXv+sR9AH_eFA@mail.gmail.com>
+         <20200107210715.GQ23195@dread.disaster.area>
+         <4E9DF932-C46C-4331-B88D-6928D63B8267@fb.com>
+         <alpine.LSU.2.11.2001080259350.1884@eggly.anvils>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 8, 2020 at 2:32 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 06-12-19, 16:24, Saravana Kannan wrote:
-> > Interconnects often quantify their performance points in terms of
-> > bandwidth. So, add opp-peak-kBps (required) and opp-avg-kBps (optional) to
-> > allow specifying Bandwidth OPP tables in DT.
-> >
-> > opp-peak-kBps is a required property that replaces opp-hz for Bandwidth OPP
-> > tables.
-> >
-> > opp-avg-kBps is an optional property that can be used in Bandwidth OPP
-> > tables.
-> >
-> > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  Documentation/devicetree/bindings/opp/opp.txt     | 15 ++++++++++++---
-> >  .../devicetree/bindings/property-units.txt        |  4 ++++
-> >  2 files changed, 16 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/opp/opp.txt b/Documentation/devicetree/bindings/opp/opp.txt
-> > index 68592271461f..dbad8eb6c746 100644
-> > --- a/Documentation/devicetree/bindings/opp/opp.txt
-> > +++ b/Documentation/devicetree/bindings/opp/opp.txt
-> > @@ -83,9 +83,14 @@ properties.
-> >
-> >  Required properties:
-> >  - opp-hz: Frequency in Hz, expressed as a 64-bit big-endian integer. This is a
-> > -  required property for all device nodes but devices like power domains. The
-> > -  power domain nodes must have another (implementation dependent) property which
-> > -  uniquely identifies the OPP nodes.
-> > +  required property for all device nodes except for devices like power domains
-> > +  or bandwidth opp tables.
->
-> Fine until here.
->
-> > The power domain nodes must have another
-> > +  (implementation dependent) property which uniquely identifies the OPP nodes.
-> > +  The interconnect opps are required to have the opp-peak-kBps property.
->
-> Maybe rewrite it as:
->
-> The devices which don't have this property must have another
-> (implementation dependent) property which uniquely identifies the OPP
-> nodes.
->
-> So we won't be required to update this again for another property.
->
-> > +
-> > +- opp-peak-kBps: Peak bandwidth in kilobytes per second, expressed as a 32-bit
-> > +  big-endian integer.
->
-> > This is a required property for all devices that don't
-> > +  have opp-hz.
->
-> This statement is surely incorrect, isn't it ? What about power-domain
-> tables ?
->
-> Suggest rewriting it as:
->
-> This is a required property for bandwidth OPP tables.
->
+On Wed, 2020-01-08 at 03:24 -0800, Hugh Dickins wrote:
+> On Tue, 7 Jan 2020, Chris Mason wrote:
+> > On 7 Jan 2020, at 16:07, Dave Chinner wrote:
+> > 
+> > > IOWs, there are *lots* of 64bit inode numbers out there on XFS
+> > > filesystems....
+> > 
+> > It's less likely in btrfs but +1 to all of Dave's comments.  I'm happy 
+> > to run a scan on machines in the fleet and see how many have 64 bit 
+> > inodes (either buttery or x-y), but it's going to be a lot.
+> 
+> Dave, Amir, Chris, many thanks for the info you've filled in -
+> and absolutely no need to run any scan on your fleet for this,
+> I think we can be confident that even if fb had some 15-year-old tool
+> in use on its fleet of 2GB-file filesystems, it would not be the one
+> to insist on a kernel revert of 64-bit tmpfs inos.
+> 
+> The picture looks clear now: while ChrisD does need to hold on to his
+> config option and inode32/inode64 mount option patch, it is much better
+> left out of the kernel until (very unlikely) proved necessary.
 
-Agree with all the suggestions. Will fix in the next version.
+This approach seems like the best course to me.
 
--Saravana
+FWIW, at the time we capped this at 32-bits (2007), 64-bit machines were
+really just becoming widely available, and it was quite common to run
+32-bit, non-LFS apps on a 64-bit kernel. Users were hitting spurious
+EOVERFLOW errors all over the place so this seemed like the best way to
+address it.
+
+The world has changed a lot since then though, and one would hope that
+almost everything these days is compiled with FILE_OFFSET_BITS=64.
+
+Fingers crossed!
+-- 
+Jeff Layton <jlayton@kernel.org>
+
