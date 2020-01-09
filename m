@@ -2,97 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DEFA1354BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 09:50:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F8F01354CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 09:53:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728845AbgAIIub (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 03:50:31 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:47144 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728792AbgAIIua (ORCPT
+        id S1728902AbgAIIwi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 03:52:38 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51969 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728690AbgAIIwh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 03:50:30 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0098oMEB107738;
-        Thu, 9 Jan 2020 02:50:22 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578559822;
-        bh=BmZz4GM008QcVUfmXOfqaIwBn3aJlcL0leg79D9LVbc=;
-        h=From:To:CC:Subject:Date;
-        b=PBJuGVD4APjXiqg5yVm2jm2kE686Ss/0yy8YL8/wnbe6WqursScxnydg6qEV+ISlL
-         l7413nX2pi+v+PQu0TGngxBYQpgjWVqmTsSswrVCFY1PNOn6G7AFigVV37h/tNOGDz
-         eSkyKr94s8rP/kSA+j08kQ4n3a2xU5k84fBgh4Fc=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0098oMhY073027
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Jan 2020 02:50:22 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 9 Jan
- 2020 02:50:22 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 9 Jan 2020 02:50:22 -0600
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0098oJc7055573;
-        Thu, 9 Jan 2020 02:50:20 -0600
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <mark.rutland@arm.com>, <robh+dt@kernel.org>, <nm@ti.com>,
-        <t-kristo@ti.com>, <faiz_abbas@ti.com>
-Subject: [PATCH] arm: dts: ti: k3-am654-main: Update otap-del-sel values
-Date:   Thu, 9 Jan 2020 14:21:52 +0530
-Message-ID: <20200109085152.10573-1-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.19.2
+        Thu, 9 Jan 2020 03:52:37 -0500
+Received: by mail-wm1-f67.google.com with SMTP id d73so1938873wmd.1;
+        Thu, 09 Jan 2020 00:52:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3UC+FyBaxdvKcy8S6MwxaGbPaUPYnnimn1+HUbTZZ1I=;
+        b=qC64sf1xAlDktRkhCL5dnmg8OJ/xcLFfGXFkViGCkzMqD7YerY7tv7Fj/kwuLrA5r0
+         LbHPdylWkUO1KBOqeNBpbmBzoKtMxlo8xybIqssvrvLwT/5OFap443Z/U9Q9j3DiSzFo
+         9+aWnyTlLXvsgJvQ/jUsQCNfM3UyjqmcYUoiZ56zidYpQuFIF9a/QTUXjMa3C6UAFHXD
+         VbhFznLTU7ktnO726IyRe2MFwVr1JZxDTq0Bt5Xpc3HH5/BZMIs9NH4ozwUc3rC99wIo
+         4ukUk4X8gt7Ju1nDP1JpAGkWo9Yh+iipjqLJsxuytnRF+OuIm0Q7h/l0j64iRAmST1zW
+         Wk7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3UC+FyBaxdvKcy8S6MwxaGbPaUPYnnimn1+HUbTZZ1I=;
+        b=j066cgqNt/jfw54tqABDl9tC4K9a3Nd36YO9nFP47LhxOfxVfvXTdOWXpqXV5ipLey
+         BluVBt+xwu1wWIDNHm2sfRtcQF8LND+eltxlwjn5K2qwAWYrjlUsaMSDN6C67x4zN2/4
+         je7mmXQ+DBdIS89yHfZHYpTlvdow47Jl73YDahpQy/CzErBLo1HUd1wBJG0fxSW6Ns69
+         ZcyiB0yEQAGKICJzV+CmMNeifQaiJm4XvIWKsebvqC5nevPCyCHH9ZXJgZaYoYOn+Z1i
+         uhEuCu8vukmnY4UP4sydnUQXHaBmwWpQyLWVL+S86atjzQrDRGl10t4pLWUCJwrnz/w3
+         u0Qw==
+X-Gm-Message-State: APjAAAUF4oaBm74gKICT2EiQv+ZD3IMhJLb1hXCBtMHF79cifD/Bi9Ab
+        I+O79U5l9rgRSb0Bxb42AE4=
+X-Google-Smtp-Source: APXvYqzYXWh8VSyjzGZqoZsWgKwcqDzfcvDVzynWCy3+JIXEn4rpC9McK/lf7GDfkBNH1GAubm6PyA==
+X-Received: by 2002:a1c:6a07:: with SMTP id f7mr3488669wmc.171.1578559955600;
+        Thu, 09 Jan 2020 00:52:35 -0800 (PST)
+Received: from [192.168.2.41] ([46.227.18.67])
+        by smtp.gmail.com with ESMTPSA id i5sm7422343wrv.34.2020.01.09.00.52.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Jan 2020 00:52:35 -0800 (PST)
+Subject: Re: [PATCH] tty/serial: atmel: RS485 & ISO7816: wait for TXRDY before
+ sending data
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Codrin.Ciubotariu@microchip.com, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, alexandre.belloni@bootlin.com,
+        Ludovic.Desroches@microchip.com, jslaby@suse.com
+References: <20200107111656.26308-1-codrin.ciubotariu@microchip.com>
+ <b11e47c3-8b94-7915-ae5a-d9e8f5b02047@gmail.com>
+ <20200109073305.yn5y6sgomjniwwj6@pengutronix.de>
+From:   Richard Genoud <richard.genoud@gmail.com>
+Message-ID: <0ea33918-2845-a750-faa7-fec729976136@gmail.com>
+Date:   Thu, 9 Jan 2020 09:52:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
+In-Reply-To: <20200109073305.yn5y6sgomjniwwj6@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the latest AM65x Data Manual[1], a different output tap
-delay value is optimum for a given speed mode. Update these values.
+Le 09/01/2020 à 08:33, Uwe Kleine-König a écrit :
+> Hello,
+> 
+> On Wed, Jan 08, 2020 at 02:45:05PM +0100, Richard Genoud wrote:
+>> NB: MS exchange has added some =3D and =20 here and there, but git am
+>> doesn't seems to be bothered by them.
+> 
+> Unless I missed something I cannot confirm. In mutt I don't see any =3D
+> or =20.
+It's strange indeed. I double check under thunderbird and directly on my
+webmail (posteo.de), there're =3D lying around in the message source.
+But not on the other patches from linux-serial.
+weird...
 
-[1] http://www.ti.com/lit/gpn/am6526
-
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
-
-This patch depends on my two kernel series posted here:
-https://patchwork.kernel.org/project/linux-mmc/list/?series=225425
-https://patchwork.kernel.org/project/linux-mmc/list/?series=225459
-
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-index efb24579922c..c8d812fdfa0a 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-@@ -253,7 +253,17 @@
- 		interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
- 		mmc-ddr-1_8v;
- 		mmc-hs200-1_8v;
--		ti,otap-del-sel = <0x2>;
-+		ti,otap-del-sel-legacy = <0x0>;
-+		ti,otap-del-sel-mmc-hs = <0x0>;
-+		ti,otap-del-sel-sd-hs = <0x0>;
-+		ti,otap-del-sel-sdr12 = <0x0>;
-+		ti,otap-del-sel-sdr25 = <0x0>;
-+		ti,otap-del-sel-sdr50 = <0x8>;
-+		ti,otap-del-sel-sdr104 = <0x5>;
-+		ti,otap-del-sel-ddr50 = <0x5>;
-+		ti,otap-del-sel-ddr52 = <0x5>;
-+		ti,otap-del-sel-hs200 = <0x5>;
-+		ti,otap-del-sel-hs400 = <0x0>;
- 		ti,trm-icp = <0x8>;
- 		dma-coherent;
- 	};
--- 
-2.19.2
+> 
+> Best regards
+> Uwe
+> 
 
