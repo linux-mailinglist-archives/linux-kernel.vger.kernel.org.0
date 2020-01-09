@@ -2,62 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72BB3135572
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:18:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A593B135579
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:19:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729311AbgAIJSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 04:18:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40412 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728946AbgAIJSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 04:18:12 -0500
-Received: from T480 (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729371AbgAIJTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 04:19:21 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:37932 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729035AbgAIJTU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 04:19:20 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1578561560; h=Message-Id: Date: Subject: To: From: Sender;
+ bh=Hu9qqYaZoI6+5+2Lw05UTvgV7v1yjGAb7GeM8gI205E=; b=XENCkjTvtQPoK8FUIjGx4i5/kdHg/ITZtQjR+zRfihs3wRECOl5tGxZ96rYWT8A3Fg2zkPEJ
+ SyHNd8Y4G6bLxA2ovLV+6asLAjiatsg/0CrDe3j1bCi5/ndhcL+b1ol3g7FgBSQ7eLgriii0
+ LbYDV9oUy6ARP7wDQOT5cdQt6ck=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e16f015.7f39f238d810-smtp-out-n03;
+ Thu, 09 Jan 2020 09:19:17 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id AA9EDC433CB; Thu,  9 Jan 2020 09:19:15 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from srichara1-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBDAC206ED;
-        Thu,  9 Jan 2020 09:18:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578561491;
-        bh=SptgEpC6uBoCgIiwV8qQCok3tqCD2QV/W7Pb1LSHw4k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eQ/5B9lgXSzYjka9B4bj6vKedRzeeydEOcjwX9NXHRKjsE6taNt9sGg5YYlY/NxMK
-         QDGKoGxdmrsirdwC9qeE+OsStInPBdnQz04lKZpUfrkV793gmc0Rk1veZhWTRFThHF
-         VUgz83tCglEcNJXdYuS0eQ79VlUG46uck9wDLXB8=
-Date:   Thu, 9 Jan 2020 17:18:01 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Joris Offouga <offougajoris@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Fabio Estevam <festevam@gmail.com>,
-        Otavio Salvador <otavio@ossystems.com.br>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V4] ARM: dts: imx7d-pico: Add LCD support
-Message-ID: <20200109091800.GL4456@T480>
-References: <20200101235719.21466-1-offougajoris@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200101235719.21466-1-offougajoris@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        (Authenticated sender: sricharan)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8F032C43383;
+        Thu,  9 Jan 2020 09:19:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F032C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+From:   Sricharan R <sricharan@codeaurora.org>
+To:     agross@kernel.org, devicetree@vger.kernel.org,
+        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
+        robh+dt@kernel.org, sivaprak@codeaurora.org,
+        sricharan@codeaurora.org
+Subject: [PATCH V4 0/5] Add minimal boot support for IPQ6018
+Date:   Thu,  9 Jan 2020 14:48:58 +0530
+Message-Id: <1578561543-23132-1-git-send-email-sricharan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 02, 2020 at 12:57:18AM +0100, Joris Offouga wrote:
-> From: Fabio Estevam <festevam@gmail.com>
-> 
-> Add support for the VXT VL050-8048NT-C01 panel connected through
-> the 24 bit parallel LCDIF interface.
-> 
-> Signed-off-by: Fabio Estevam <festevam@gmail.com>
-> Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
-> Signed-off-by: Joris Offouga <offougajoris@gmail.com>
+The IPQ6018 is Qualcomm\u2019s 802.11ax SoC for Routers,
+Gateways and Access Points.
 
-Applied, thanks.
+This series adds minimal board boot support for ipq6018-cp01 board.
+
+[v4]
+ * Addressed review comments in pinctrl bindings from Rob.
+ * Ran make dt_binding_check and no issues was reported.
+ * Deleted absahu email id from patch 4, since its bouncing now.
+ * Patch 4 arm64: dts: Add ipq6018 SoC and CP01 board support has build
+   dependency with,
+	https://lkml.org/lkml/2020/1/9/84
+
+[V3]
+ * Removed clock driver and bindings from this patch series, and added them
+   as a different series.
+ * Removed qpic_padN from pinctrl driver.
+ * Addressed review comments in dts, and added the remaining fixed clocks their
+ * Fixed review comments in pinctrl bindings
+ * Patch 4 arm64: dts: Add ipq6018 SoC and CP01 board support has build
+   dependency with,
+	https://patchwork.ozlabs.org/patch/1217293/
+
+[v2]
+ * Splitted dt bindings  and driver into different patches. Added missing bindings
+   and some style changes.
+ * Added ipq6018 schema
+ * Addressed review comments for gcc clock bindings.
+ * Removed all clk critical flags, removed 1/1 factor clocks, moved to new
+   way of specifying clk parents, and addressed other review comments.
+ * Sorted nodes based on address, name, label. Removed unused clock nodes,
+   Addressed other review comments.
+
+Sricharan R (5):
+  dt-bindings: pinctrl: qcom: Add ipq6018 pinctrl bindings
+  pinctrl: qcom: Add ipq6018 pinctrl driver
+  dt-bindings: qcom: Add ipq6018 bindings
+  arm64: dts: Add ipq6018 SoC and CP01 board support
+  arm64: defconfig: Enable qcom ipq6018 clock and pinctrl
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    8 +
+ .../bindings/pinctrl/qcom,ipq6018-pinctrl.yaml     |  174 +++
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts       |   30 +
+ arch/arm64/boot/dts/qcom/ipq6018.dtsi              |  263 +++++
+ arch/arm64/configs/defconfig                       |    3 +
+ drivers/pinctrl/qcom/Kconfig                       |   10 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-ipq6018.c             | 1107 ++++++++++++++++++++
+ 9 files changed, 1597 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq6018.dtsi
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq6018.c
+
+-- 
+1.9.1
