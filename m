@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA91A1361C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 21:28:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAE441361C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 21:28:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730288AbgAIU1T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 15:27:19 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:10230 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728661AbgAIU1S (ORCPT
+        id S1730219AbgAIU1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 15:27:16 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:26986 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730126AbgAIU1P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 15:27:18 -0500
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 009KPGwB015318
-        for <linux-kernel@vger.kernel.org>; Thu, 9 Jan 2020 12:27:17 -0800
+        Thu, 9 Jan 2020 15:27:15 -0500
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 009KPj7t008585
+        for <linux-kernel@vger.kernel.org>; Thu, 9 Jan 2020 12:27:14 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=E3d8gHLBDOSZn6famP4DibpAMVOOAGc7zyC42ywswbo=;
- b=oQcoUK4Ly7LT5TLEgQfJAjZDRAaTvEK03YUoM01i0yYD7J2sY46luo8bcx4D5MU9Ese5
- piuvNNSqtLuwcxcH2l1Z5SU9ZFesaiF+m/dg97surcZtVVwIDMAe6SgVwNYINVQvuZn4
- AZwZGfNDYRnl+yxIJZ0WgRXvj11zmXr/VLw= 
+ content-type; s=facebook; bh=rGgsGS/tWVyE9cLqfKHGOpozGq26BhblSUTNzP60qEo=;
+ b=qvy8RHJxnWK0iFQeV6FyoWTS0n1jg9FUpzEANDuAdbu8T8n8CGHdPbhTICnsU7xF/KGu
+ d9b6YS6KnEGnUC7anvzEb73BqWS2BM4dr132OB0gTy9J/4T8s8dj8qkHNALfpBNkm6t2
+ 1l9Xr2Gm6Bvtjmvq7mPhC3UcXTCGdYE/sX4= 
 Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2xdrj8nhkm-3
+        by mx0a-00082601.pphosted.com with ESMTP id 2xe2exu210-3
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 12:27:17 -0800
-Received: from intmgw002.06.prn3.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::128) with Microsoft SMTP Server
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 12:27:14 -0800
+Received: from intmgw001.06.prn3.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::129) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
- Thu, 9 Jan 2020 12:27:16 -0800
+ Thu, 9 Jan 2020 12:27:12 -0800
 Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id 2DD091D2F0DC8; Thu,  9 Jan 2020 12:27:07 -0800 (PST)
+        id 31F3B1D2F0DCA; Thu,  9 Jan 2020 12:27:07 -0800 (PST)
 Smtp-Origin-Hostprefix: devvm
 From:   Roman Gushchin <guro@fb.com>
 Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
@@ -42,9 +42,9 @@ CC:     Michal Hocko <mhocko@kernel.org>,
         <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
         Roman Gushchin <guro@fb.com>
 Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH v2 3/6] mm: kmem: rename memcg_kmem_(un)charge() into memcg_kmem_(un)charge_page()
-Date:   Thu, 9 Jan 2020 12:26:56 -0800
-Message-ID: <20200109202659.752357-4-guro@fb.com>
+Subject: [PATCH v2 4/6] mm: kmem: switch to nr_pages in (__)memcg_kmem_charge_memcg()
+Date:   Thu, 9 Jan 2020 12:26:57 -0800
+Message-ID: <20200109202659.752357-5-guro@fb.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200109202659.752357-1-guro@fb.com>
 References: <20200109202659.752357-1-guro@fb.com>
@@ -53,198 +53,112 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-01-09_04:2020-01-09,2020-01-09 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 suspectscore=2
- adultscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0 phishscore=0
- clxscore=1015 mlxscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001090168
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 phishscore=0
+ impostorscore=0 spamscore=0 suspectscore=0 malwarescore=0
+ priorityscore=1501 mlxlogscore=999 mlxscore=0 clxscore=1015 adultscore=0
+ bulkscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-2001090168
 X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename (__)memcg_kmem_(un)charge() into (__)memcg_kmem_(un)charge_page()
-to better reflect what they are actually doing:
-1) call __memcg_kmem_(un)charge_memcg() to actually charge or
-uncharge the current memcg
-2) set or clear the PageKmemcg flag
+These functions are charging the given number of kernel pages to the
+given memory cgroup. The number doesn't have to be a power of two.
+Let's make them to take the unsigned int nr_pages as an argument
+instead of the page order.
+
+It makes them look consistent with the corresponding uncharge
+functions and functions like: mem_cgroup_charge_skmem(memcg, nr_pages).
 
 Signed-off-by: Roman Gushchin <guro@fb.com>
 ---
- fs/pipe.c                  |  2 +-
- include/linux/memcontrol.h | 23 +++++++++++++----------
- kernel/fork.c              |  9 +++++----
+ include/linux/memcontrol.h | 11 ++++++-----
  mm/memcontrol.c            |  8 ++++----
- mm/page_alloc.c            |  4 ++--
- 5 files changed, 25 insertions(+), 21 deletions(-)
+ mm/slab.h                  |  2 +-
+ 3 files changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 57502c3c0fba..f1851f7ecbd6 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -143,7 +143,7 @@ static int anon_pipe_buf_steal(struct pipe_inode_info *pipe,
- 	struct page *page = buf->page;
- 
- 	if (page_count(page) == 1) {
--		memcg_kmem_uncharge(page, 0);
-+		memcg_kmem_uncharge_page(page, 0);
- 		__SetPageLocked(page);
- 		return 0;
- 	}
 diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 900a9f884260..4ee0c345e905 100644
+index 4ee0c345e905..851c373edb74 100644
 --- a/include/linux/memcontrol.h
 +++ b/include/linux/memcontrol.h
-@@ -1362,8 +1362,8 @@ struct kmem_cache *memcg_kmem_get_cache(struct kmem_cache *cachep);
- void memcg_kmem_put_cache(struct kmem_cache *cachep);
- 
+@@ -1364,7 +1364,8 @@ void memcg_kmem_put_cache(struct kmem_cache *cachep);
  #ifdef CONFIG_MEMCG_KMEM
--int __memcg_kmem_charge(struct page *page, gfp_t gfp, int order);
--void __memcg_kmem_uncharge(struct page *page, int order);
-+int __memcg_kmem_charge_page(struct page *page, gfp_t gfp, int order);
-+void __memcg_kmem_uncharge_page(struct page *page, int order);
- int __memcg_kmem_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp, int order);
+ int __memcg_kmem_charge_page(struct page *page, gfp_t gfp, int order);
+ void __memcg_kmem_uncharge_page(struct page *page, int order);
+-int __memcg_kmem_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp, int order);
++int __memcg_kmem_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp,
++			      unsigned int nr_pages);
  void __memcg_kmem_uncharge_memcg(struct mem_cgroup *memcg,
  				 unsigned int nr_pages);
-@@ -1388,17 +1388,18 @@ static inline bool memcg_kmem_enabled(void)
- 	return static_branch_unlikely(&memcg_kmem_enabled_key);
- }
  
--static inline int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
-+static inline int memcg_kmem_charge_page(struct page *page, gfp_t gfp,
-+					 int order)
- {
- 	if (memcg_kmem_enabled())
--		return __memcg_kmem_charge(page, gfp, order);
-+		return __memcg_kmem_charge_page(page, gfp, order);
- 	return 0;
- }
- 
--static inline void memcg_kmem_uncharge(struct page *page, int order)
-+static inline void memcg_kmem_uncharge_page(struct page *page, int order)
- {
- 	if (memcg_kmem_enabled())
--		__memcg_kmem_uncharge(page, order);
-+		__memcg_kmem_uncharge_page(page, order);
+@@ -1403,18 +1404,18 @@ static inline void memcg_kmem_uncharge_page(struct page *page, int order)
  }
  
  static inline int memcg_kmem_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp,
-@@ -1428,21 +1429,23 @@ static inline int memcg_cache_id(struct mem_cgroup *memcg)
- 
- #else
- 
--static inline int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
-+static inline int memcg_kmem_charge_page(struct page *page, gfp_t gfp,
-+					 int order)
+-					  int order)
++					  unsigned int nr_pages)
  {
+ 	if (memcg_kmem_enabled())
+-		return __memcg_kmem_charge_memcg(memcg, gfp, order);
++		return __memcg_kmem_charge_memcg(memcg, gfp, nr_pages);
  	return 0;
  }
  
--static inline void memcg_kmem_uncharge(struct page *page, int order)
-+static inline void memcg_kmem_uncharge_page(struct page *page, int order)
+ static inline void memcg_kmem_uncharge_memcg(struct mem_cgroup *memcg,
+-					     int order)
++					     unsigned int nr_pages)
  {
+ 	if (memcg_kmem_enabled())
+-		__memcg_kmem_uncharge_memcg(memcg, 1 << order);
++		__memcg_kmem_uncharge_memcg(memcg, nr_pages);
  }
  
--static inline int __memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
-+static inline int __memcg_kmem_charge_page(struct page *page, gfp_t gfp,
-+					   int order)
- {
- 	return 0;
- }
- 
--static inline void __memcg_kmem_uncharge(struct page *page, int order)
-+static inline void __memcg_kmem_uncharge_page(struct page *page, int order)
- {
- }
- 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 2508a4f238a3..6e410a189683 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -281,7 +281,7 @@ static inline void free_thread_stack(struct task_struct *tsk)
- 					     MEMCG_KERNEL_STACK_KB,
- 					     -(int)(PAGE_SIZE / 1024));
- 
--			memcg_kmem_uncharge(vm->pages[i], 0);
-+			memcg_kmem_uncharge_page(vm->pages[i], 0);
- 		}
- 
- 		for (i = 0; i < NR_CACHED_STACKS; i++) {
-@@ -413,12 +413,13 @@ static int memcg_charge_kernel_stack(struct task_struct *tsk)
- 
- 		for (i = 0; i < THREAD_SIZE / PAGE_SIZE; i++) {
- 			/*
--			 * If memcg_kmem_charge() fails, page->mem_cgroup
--			 * pointer is NULL, and both memcg_kmem_uncharge()
-+			 * If memcg_kmem_charge_page() fails, page->mem_cgroup
-+			 * pointer is NULL, and both memcg_kmem_uncharge_page()
- 			 * and mod_memcg_page_state() in free_thread_stack()
- 			 * will ignore this page. So it's safe.
- 			 */
--			ret = memcg_kmem_charge(vm->pages[i], GFP_KERNEL, 0);
-+			ret = memcg_kmem_charge_page(vm->pages[i], GFP_KERNEL,
-+						     0);
- 			if (ret)
- 				return ret;
- 
+ /*
 diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 6ef38f669923..6bdf040e4615 100644
+index 6bdf040e4615..8dbfb9fed9d8 100644
 --- a/mm/memcontrol.c
 +++ b/mm/memcontrol.c
-@@ -2855,14 +2855,14 @@ int __memcg_kmem_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp, int order)
- }
- 
- /**
-- * __memcg_kmem_charge: charge a kmem page to the current memory cgroup
-+ * __memcg_kmem_charge_page: charge a kmem page to the current memory cgroup
-  * @page: page to charge
+@@ -2822,13 +2822,13 @@ void memcg_kmem_put_cache(struct kmem_cache *cachep)
+  * __memcg_kmem_charge_memcg: charge a kmem page
+  * @memcg: memory cgroup to charge
   * @gfp: reclaim mode
-  * @order: allocation order
+- * @order: allocation order
++ * @nr_pages: number of pages to charge
   *
   * Returns 0 on success, an error code on failure.
   */
--int __memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
-+int __memcg_kmem_charge_page(struct page *page, gfp_t gfp, int order)
+-int __memcg_kmem_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp, int order)
++int __memcg_kmem_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp,
++			      unsigned int nr_pages)
  {
- 	struct mem_cgroup *memcg;
- 	int ret = 0;
-@@ -2898,11 +2898,11 @@ void __memcg_kmem_uncharge_memcg(struct mem_cgroup *memcg,
- 		page_counter_uncharge(&memcg->memsw, nr_pages);
- }
- /**
-- * __memcg_kmem_uncharge: uncharge a kmem page
-+ * __memcg_kmem_uncharge_page: uncharge a kmem page
-  * @page: page to uncharge
-  * @order: allocation order
-  */
--void __memcg_kmem_uncharge(struct page *page, int order)
-+void __memcg_kmem_uncharge_page(struct page *page, int order)
- {
- 	struct mem_cgroup *memcg = page->mem_cgroup;
- 	unsigned int nr_pages = 1 << order;
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 4785a8a2040e..8fca5b806139 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1159,7 +1159,7 @@ static __always_inline bool free_pages_prepare(struct page *page,
- 	if (PageMappingFlags(page))
- 		page->mapping = NULL;
- 	if (memcg_kmem_enabled() && PageKmemcg(page))
--		__memcg_kmem_uncharge(page, order);
-+		__memcg_kmem_uncharge_page(page, order);
- 	if (check_free)
- 		bad += free_pages_check(page);
- 	if (bad)
-@@ -4777,7 +4777,7 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+-	unsigned int nr_pages = 1 << order;
+ 	struct page_counter *counter;
+ 	int ret;
  
- out:
- 	if (memcg_kmem_enabled() && (gfp_mask & __GFP_ACCOUNT) && page &&
--	    unlikely(__memcg_kmem_charge(page, gfp_mask, order) != 0)) {
-+	    unlikely(__memcg_kmem_charge_page(page, gfp_mask, order) != 0)) {
- 		__free_pages(page, order);
- 		page = NULL;
+@@ -2872,7 +2872,7 @@ int __memcg_kmem_charge_page(struct page *page, gfp_t gfp, int order)
+ 
+ 	memcg = get_mem_cgroup_from_current();
+ 	if (!mem_cgroup_is_root(memcg)) {
+-		ret = __memcg_kmem_charge_memcg(memcg, gfp, order);
++		ret = __memcg_kmem_charge_memcg(memcg, gfp, 1 << order);
+ 		if (!ret) {
+ 			page->mem_cgroup = memcg;
+ 			__SetPageKmemcg(page);
+diff --git a/mm/slab.h b/mm/slab.h
+index e7da63fb8211..d96c87a30a9b 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -365,7 +365,7 @@ static __always_inline int memcg_charge_slab(struct page *page,
+ 		return 0;
  	}
+ 
+-	ret = memcg_kmem_charge_memcg(memcg, gfp, order);
++	ret = memcg_kmem_charge_memcg(memcg, gfp, 1 << order);
+ 	if (ret)
+ 		goto out;
+ 
 -- 
 2.21.1
 
