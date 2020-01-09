@@ -2,107 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3C611355F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:42:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45C4C1355FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:42:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729769AbgAIJl4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 04:41:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53758 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729642AbgAIJl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 04:41:56 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BB2A20678;
-        Thu,  9 Jan 2020 09:41:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578562915;
-        bh=XeGxp62T1pZACZokfTvyGsRVQwaMnNA33mQ9b7jPwto=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZSBiZxWNRSrilNm9ZiDnvGgQgXNqA1lNoNgOnQDIx4IGEHr1rjCUlYrJC4exyvPaS
-         Me9UPZM88ZeTCnPAHJ41V9djDhGc8pjkc3QLtMp8k57wdsAQoQIEHH8Or1LXH6TksT
-         cFjpXL0gS8/p8Ak5Y8H3egvIeQTSN22r12EyeUvc=
-Date:   Thu, 9 Jan 2020 10:41:53 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Scott Cheloha <cheloha@linux.vnet.ibm.com>,
-        nathanl@linux.ibm.com, ricklind@linux.vnet.ibm.com,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v3] drivers/base/memory.c: cache blocks in radix tree to
- accelerate lookup
-Message-ID: <20200109094153.GA45666@kroah.com>
-References: <20191121195952.3728-1-cheloha@linux.vnet.ibm.com>
- <20191217193238.3098-1-cheloha@linux.vnet.ibm.com>
- <20200107214801.GN32178@dhcp22.suse.cz>
- <20200109084955.GI4951@dhcp22.suse.cz>
- <20200109085623.GB2583500@kroah.com>
- <20200109091934.GK4951@dhcp22.suse.cz>
- <4a0e4024-b4a1-f6aa-ae2b-7951a72b90aa@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a0e4024-b4a1-f6aa-ae2b-7951a72b90aa@redhat.com>
+        id S1728871AbgAIJmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 04:42:36 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35564 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728635AbgAIJmf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 04:42:35 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p17so2059117wmb.0;
+        Thu, 09 Jan 2020 01:42:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=x/rJsrzAFN1SHOY1ywcZnWjYD9yWmdldMlh5f03XRYg=;
+        b=l7n3Me2CEVGR8p5a6YW0NNtdcTDn9ZDVgj4YDu6Cl4Kif/Plbh9xiOT5YRyZ7xRTe1
+         E5H3y4vlS/PAPJvfMTXpBk7W1aX0vf/JSBniLv5yMnE9WtvQAA5zv0ZjGsDZQO8ZOXs1
+         xmDE5aMNv6e/0tWG4RgYVIqEUor25w0M+2Pch+0E8c45C3X/HU5G+To1CTwW5J3cLYA/
+         SjHjxo84gnQgT16WkbPApY15KlgcBvYHOCTq/SggQUSf2/b9jhpcyvU5VQINfyabWHfH
+         5bJkNepes33nKKUn5T5Ifoke5iVS9EI7IQZKz+z2uv9Js1rr8hlL0ALfEMeOzCIDvr7L
+         pYmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=x/rJsrzAFN1SHOY1ywcZnWjYD9yWmdldMlh5f03XRYg=;
+        b=YcsWhqmgClmQ3y9TPnUyRWASYK16GJunnY4wTe2ksdDPEaLYyejO7hvX5uNI6Lx1YE
+         QHQZ+19gAXrjnMMWw2tuII1FETnkP4zn4GgnhFZw6Jf4wLRw4DG/kjydtDpjnKTtNRgZ
+         wAEemDvvWol8sIbQgfOrfAYYrp+THAj6JBESm8wysZ1NnsfosDZtMv6hZOSnlptVI5sB
+         XfZV4duH1YS0vl+8T23uMFwkQ62q7GAtD1XPQQbYCfdNoN63gNVhS62u4PvDQVslw1ya
+         RSoubQC9QZy2HmQVm3hjSc7QGXF2R9n7hp7EJ/WPFhBcs7oqzzu/I8TBnuJuw8I/hnwW
+         9DqQ==
+X-Gm-Message-State: APjAAAURraVC/jW4ExuYqWiwTTAd3icnf067d9B/DwH/aAMwzX7F7+pa
+        nQ619vgqr3nuNyTrrkeGcbI=
+X-Google-Smtp-Source: APXvYqzutBXNb9l/OLivyPXT06DnycTvFXLnYG/Z5uxCovB+J7j2p4azD6X6kG/WwBfIrjj1YXBhog==
+X-Received: by 2002:a1c:ddd7:: with SMTP id u206mr3920334wmg.159.1578562953501;
+        Thu, 09 Jan 2020 01:42:33 -0800 (PST)
+Received: from localhost.localdomain ([197.254.95.38])
+        by smtp.googlemail.com with ESMTPSA id y7sm3219435wmd.1.2020.01.09.01.42.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jan 2020 01:42:33 -0800 (PST)
+From:   Wambui Karuga <wambui.karugax@gmail.com>
+To:     robdclark@gmail.com, sean@poorly.run, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/msm: use BUG_ON macro for debugging.
+Date:   Thu,  9 Jan 2020 12:42:26 +0300
+Message-Id: <20200109094226.4967-1-wambui.karugax@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 10:31:21AM +0100, David Hildenbrand wrote:
-> On 09.01.20 10:19, Michal Hocko wrote:
-> > On Thu 09-01-20 09:56:23, Greg KH wrote:
-> >> On Thu, Jan 09, 2020 at 09:49:55AM +0100, Michal Hocko wrote:
-> >>> On Tue 07-01-20 22:48:04, Michal Hocko wrote:
-> >>>> [Cc Andrew]
-> >>>>
-> >>>> On Tue 17-12-19 13:32:38, Scott Cheloha wrote:
-> >>>>> Searching for a particular memory block by id is slow because each block
-> >>>>> device is kept in an unsorted linked list on the subsystem bus.
-> >>>>
-> >>>> Noting that this is O(N^2) would be useful.
-> >>>>
-> >>>>> Lookup is much faster if we cache the blocks in a radix tree.
-> >>>>
-> >>>> While this is really easy and straightforward, is there any reason why
-> >>>> subsys_find_device_by_id has to use such a slow lookup? I suspect nobody
-> >>>> simply needed a more optimized data structure for that purpose yet.
-> >>>> Would it be too hard to use radix tree for all lookups rather than
-> >>>> adding a shadow copy for memblocks?
-> >>>
-> >>> Greg, Rafael, this seems to be your domain. Do you have any opinion on
-> >>> this?
-> >>
-> >> No one has cared about the speed of that call as it has never been on
-> >> any "fast path" that I know of.  And it should just be O(N), isn't it
-> >> just walking the list of devices in order?
-> > 
-> > Which means that if you have to call it N times then it is O(N^2) and
-> > that is the case here because you are adding N memblocks. See
-> > memory_dev_init
-> >   for each memblock
-> >     add_memory_block
-> >       init_memory_block
-> >         find_memory_block_by_id # checks all existing devices
-> >         register_memory
-> > 	  device_register # add new device
-> >   
-> > In this particular case find_memory_block_by_id is called mostly to make
-> > sure we are no re-registering something multiple times which shouldn't
-> > happen so it sucks to spend a lot of time on that. We might think of
-> > removing that for boot time but who knows what kind of surprises we
-> > might see from crazy HW setups.
-> 
-> Oh, and please note (as discussed in v1 or v2 of this patch as well)
-> that the lookup is also performed in walk_memory_blocks() for each
-> memory block in the range, e.g., via link_mem_sections() on system boot.
-> There we have O(N^2) as well.
+As the if statement only checks for the value of the offset_name
+variable, it can be replaced by the more conscise BUG_ON macro for error
+reporting.
 
-Ok, again self-inflicted, I suggest you all roll your own logic for this
-highly accessed set of things :)
+v2: format expression to less than 80 characters for each line.
 
-thanks,
+Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
+---
+ drivers/gpu/drm/msm/adreno/adreno_gpu.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-greg k-h
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+index c7441fb8313e..d1843abc3ac7 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+@@ -315,10 +315,8 @@ OUT_PKT7(struct msm_ringbuffer *ring, uint8_t opcode, uint16_t cnt)
+ static inline bool adreno_reg_check(struct adreno_gpu *gpu,
+ 		enum adreno_regs offset_name)
+ {
+-	if (offset_name >= REG_ADRENO_REGISTER_MAX ||
+-			!gpu->reg_offsets[offset_name]) {
+-		BUG();
+-	}
++	BUG_ON(offset_name >= REG_ADRENO_REGISTER_MAX ||
++	       !gpu->reg_offsets[offset_name]);
+ 
+ 	/*
+ 	 * REG_SKIP is a special value that tell us that the register in
+-- 
+2.17.1
+
