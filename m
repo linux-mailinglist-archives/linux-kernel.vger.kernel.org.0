@@ -2,157 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 076AA1360CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 20:11:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DF1B1360F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 20:20:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388746AbgAITLf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 14:11:35 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46760 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388682AbgAITLf (ORCPT
+        id S1729488AbgAITUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 14:20:13 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:42359 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726048AbgAITUN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 14:11:35 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z7so8523308wrl.13
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 11:11:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VCnERlNOb8YhgeYQ/pqHHRSiRgRe3Wo0NvX3JaaKcS8=;
-        b=DhUG7DVSwPgwTWwTuQqa+9ac/15/zkq8KDq1LyXt9P2r/hB4jgPF/wdkpAwwitW1w/
-         Yw1ncdxhj1h1xmR3bnTVGYgx9vqeZ9TOp8Q5YfaeApe9I12PJZzgFMURzpY+OPgI15a4
-         Fexvw8F5wcZmKpTYiVdv+PZVy/+Kym+/wM6Mo=
+        Thu, 9 Jan 2020 14:20:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578597610;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=U6pv4fiagmi8mGdwv9aqgS69jPV3Df3FlAPRGguwysE=;
+        b=PN6273ikkhruNdHausamVg8wQ4WLOsG34prXod4H8tkgn5BOZ4qqLFfFE6R92wpDGehYqU
+        f5i5D39aWwNvkF2mN+HdtvFcRev6rcJYBPJ1gA0yXCKj+VWwME5OR4KQu+sjUuAN8nTHZE
+        gjTqjN93vJq7J/oNriArv9WtVLCsVis=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-356-lgtqhaldNC6r5ii43DDg_Q-1; Thu, 09 Jan 2020 14:14:01 -0500
+X-MC-Unique: lgtqhaldNC6r5ii43DDg_Q-1
+Received: by mail-qk1-f199.google.com with SMTP id d1so4814761qkk.15
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 11:14:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VCnERlNOb8YhgeYQ/pqHHRSiRgRe3Wo0NvX3JaaKcS8=;
-        b=PH9NgD2nQ70TiSnqj8FASn+yeJX7cHnozqF9iLG6TBweda5FC7g+a7nHECcRfhertd
-         9GLoxRIdCjYf2Bvy6xeHi16q+AbetJct4gdOtRg3U8rWcNLIFfOrColOrF34mZTpMtzU
-         hu1n7wH6u2x1n4maosUenMgncf3ciWqR9IcOZGdMH+dMIolPnMKYqOe9n/FaMs57KA0+
-         t4xZmzGSjz1ZWsW4n/7BBeRv2+uB+VEmDabU1pC7NC6ZbTkMkO+j4MA22eoXq5fNoMNk
-         PI0ReGJ5fasgVaYI6NRMEwfk4n5SwjzojThwalDMMwwIS5GmXhbPpwP5IraKDIsmhu0s
-         8PUg==
-X-Gm-Message-State: APjAAAVxoSA/uXCmlDPgynJ9QNgCIAzNhVZszc9jOxwPEU1RaR9Dtdrh
-        X1bq6cZvKopBX5PK4RAbltDp4Q==
-X-Google-Smtp-Source: APXvYqxxWo37fIJf5Xfz49p7PCsn9MSEishKBdsp6/eF79xvuIAU/pnDyQmSV2/kSQfLuhQi+KsjjQ==
-X-Received: by 2002:adf:f5cb:: with SMTP id k11mr11962302wrp.71.1578597092527;
-        Thu, 09 Jan 2020 11:11:32 -0800 (PST)
-Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id q3sm3689862wmc.47.2020.01.09.11.11.30
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=U6pv4fiagmi8mGdwv9aqgS69jPV3Df3FlAPRGguwysE=;
+        b=BT/ss6elrN/Fr5hK9VbIBNbjqS2AXZQISjzeSu+lQy/jI0TWGOHMJfM3VXAbsUrwn8
+         29I/HnhEhFuTIqAM3RAJVQXWPMPEN90cupcRxFDV5ew3yaAd7MfiCnuEOV1z4SvA3v85
+         5Q9QALkzlpUQJoY6kK0eZiKSyYINkLFQtKk6uQzdwM8H+lfzQUBYMpazqSG5Arsqh5RR
+         8HWrslnDjWAG36FM1vx7ZJPGqJsuLXXn+wriu4urEO8uj688zXYot85lh9I7YzGv0NbK
+         dxXkjvpg2IBlJYcEQgSvzoXQHqcsErXMeMqurXvEQvr3SvYL37WGwyAcygkxFkla7XuS
+         Ke0w==
+X-Gm-Message-State: APjAAAUwpBX3QvbxFSMkTt0blqQfnEwAdH+Y/MKedO2s0bJz5r4CKPpB
+        7q0ZLQcpBUJfrmI5ufL1I147+t0Ed7Rhn6yp1clRnTMcjzHZbT/MDUZXweHSxILNgC4UipoxxvB
+        dIB3xtG3Y7z0Bz0ED7tr7F1eG
+X-Received: by 2002:ad4:5888:: with SMTP id dz8mr10291678qvb.204.1578597241411;
+        Thu, 09 Jan 2020 11:14:01 -0800 (PST)
+X-Google-Smtp-Source: APXvYqx+U3DV2/GGnsOTUJjf+AEHnjgjwkEHejl70teHqLECH8EwIX4KxcbMcG8JIZf4rcDh5tGOUg==
+X-Received: by 2002:ad4:5888:: with SMTP id dz8mr10291651qvb.204.1578597241147;
+        Thu, 09 Jan 2020 11:14:01 -0800 (PST)
+Received: from redhat.com (bzq-79-183-34-164.red.bezeqint.net. [79.183.34.164])
+        by smtp.gmail.com with ESMTPSA id l44sm2823904qtb.48.2020.01.09.11.13.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 11:11:31 -0800 (PST)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Thu, 9 Jan 2020 20:11:48 +0100
-To:     James Morris <jmorris@namei.org>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>,
-        Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH bpf-next v1 00/13] MAC and Audit policy using eBPF (KRSI)
-Message-ID: <20200109191148.GA1894@chromium.org>
-References: <20191220154208.15895-1-kpsingh@chromium.org>
- <95036040-6b1c-116c-bd6b-684f00174b4f@schaufler-ca.com>
- <CACYkzJ5nYh7eGuru4vQ=2ZWumGPszBRbgqxmhd4WQRXktAUKkQ@mail.gmail.com>
- <201912301112.A1A63A4@keescook>
- <c4e6cdf2-1233-fc82-ca01-ba84d218f5aa@tycho.nsa.gov>
- <alpine.LRH.2.21.2001090551000.27794@namei.org>
- <e59607cc-1a84-cbdd-5117-7efec86b11ff@tycho.nsa.gov>
- <alpine.LRH.2.21.2001100437550.21515@namei.org>
+        Thu, 09 Jan 2020 11:14:00 -0800 (PST)
+Date:   Thu, 9 Jan 2020 14:13:54 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Alex Williamson <alex.williamson@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Kevin Kevin <kevin.tian@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+Subject: Re: [PATCH v3 00/21] KVM: Dirty ring interface
+Message-ID: <20200109140948-mutt-send-email-mst@kernel.org>
+References: <20200109145729.32898-1-peterx@redhat.com>
+ <20200109094711.00eb96b1@w520.home>
+ <20200109175808.GC36997@xz-x1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.21.2001100437550.21515@namei.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200109175808.GC36997@xz-x1>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10-Jan 05:11, James Morris wrote:
-> On Wed, 8 Jan 2020, Stephen Smalley wrote:
+On Thu, Jan 09, 2020 at 12:58:08PM -0500, Peter Xu wrote:
+> On Thu, Jan 09, 2020 at 09:47:11AM -0700, Alex Williamson wrote:
+> > On Thu,  9 Jan 2020 09:57:08 -0500
+> > Peter Xu <peterx@redhat.com> wrote:
+> > 
+> > > Branch is here: https://github.com/xzpeter/linux/tree/kvm-dirty-ring
+> > > (based on kvm/queue)
+> > > 
+> > > Please refer to either the previous cover letters, or documentation
+> > > update in patch 12 for the big picture.  Previous posts:
+> > > 
+> > > V1: https://lore.kernel.org/kvm/20191129213505.18472-1-peterx@redhat.com
+> > > V2: https://lore.kernel.org/kvm/20191221014938.58831-1-peterx@redhat.com
+> > > 
+> > > The major change in V3 is that we dropped the whole waitqueue and the
+> > > global lock. With that, we have clean per-vcpu ring and no default
+> > > ring any more.  The two kvmgt refactoring patches were also included
+> > > to show the dependency of the works.
+> > 
+> > Hi Peter,
 > 
-> > The cover letter subject line and the Kconfig help text refer to it as a
-> > BPF-based "MAC and Audit policy".  It has an enforce config option that
-> > enables the bpf programs to deny access, providing access control. IIRC, in
-> > the earlier discussion threads, the BPF maintainers suggested that Smack and
-> > other LSMs could be entirely re-implemented via it in the future, and that
-> > such an implementation would be more optimal.
+> Hi, Alex,
 > 
-> In this case, the eBPF code is similar to a kernel module, rather than a 
-> loadable policy file.  It's a loadable mechanism, rather than a policy, in 
-> my view.
+> > 
+> > Would you recommend this style of interface for vfio dirty page
+> > tracking as well?  This mechanism seems very tuned to sparse page
+> > dirtying, how well does it handle fully dirty, or even significantly
+> > dirty regions?
 > 
-> This would be similar to the difference between iptables rules and 
-> loadable eBPF networking code.  I'd be interested to know how the 
-> eBPF networking scenarios are handled wrt kernel ABI.
+> That's truely the point why I think the dirty bitmap can still be used
+> and should be kept.  IIUC the dirty ring starts from COLO where (1)
+> dirty rate is very low, and (2) sync happens frequently.  That's a
+> perfect ground for dirty ring.  However it for sure does not mean that
+> dirty ring can solve all the issues.  As you said, I believe the full
+> dirty is another extreme in that dirty bitmap could perform better.
 > 
+> > We also don't really have "active" dirty page tracking
+> > in vfio, we simply assume that if a page is pinned or otherwise mapped
+> > that it's dirty, so I think we'd constantly be trying to re-populate
+> > the dirty ring with pages that we've seen the user consume, which
+> > doesn't seem like a good fit versus a bitmap solution.  Thanks,
 > 
-> > Again, not arguing for or against, but wondering if people fully understand
-> > the implications.  If it ends up being useful, people will build access
-> > control systems with it, and it directly exposes a lot of kernel internals to
-> > userspace.  There was a lot of concern originally about the LSM hook interface
-> > becoming a stable ABI and/or about it being misused.  Exposing that interface
-> > along with every kernel data structure exposed through it to userspace seems
-> > like a major leap.
-> 
-> Agreed this is a leap, although I'm not sure I'd characterize it as 
-> exposure to userspace -- it allows dynamic extension of the LSM API from 
-> userland, but the code is executed in the kernel.
-> 
-> KP: One thing I'd like to understand better is the attack surface 
-> introduced by this.  IIUC, the BTF fields are read only, so the eBPF code 
-> should not be able to modify any LSM parameters, correct?
-> 
+> Right, so I confess I don't know whether dirty ring is the ideal
+> solutioon for vfio either.  Actually if we're tracking by page maps or
+> pinnings, then IMHO it also means that it could be more suitable to
+> use an modified version of dirty ring buffer (as you suggested in the
+> other thread), in that we can track dirty using (addr, len) range
+> rather than a single page address.  That could be hard for KVM because
+> in KVM the page will be mostly trapped in 4K granularity in page
+> faults, and it'll also be hard to merge continuous entries with
+> previous ones because the userspace could be reading the entries (so
+> after we publish the previous 4K dirty page, we should not modify the
+> entry any more).
 
-That's correct, the verifier does not allow writes to BTF types:
+An easy way would be to keep a couple of entries around, not pushing
+them into the ring until later.  In fact deferring queue write until
+there's a bunch of data to be pushed is a very handy optimization.
 
-from kernel/bpf/verifier.c:
+When building UAPI's it makes sense to try and keep them generic
+rather than tying them to a given implementation.
 
-        case PTR_TO_BTF_ID:
-	if (type == BPF_WRITE) {
-	        verbose(env, "Writes through BTF pointers are not allowed\n");
-		return -EINVAL;
-	}
+That's one of the reasons I called for using something
+resembling vring_packed_desc.
 
-We can also add additional checks on top of those added by the
-verifier using the verifier_ops that each BPF program type can define. 
 
-- KP
-
+> VFIO should not have this restriction because the
+> marking of dirty page range can be atomic when the range of pages are
+> mapped or pinned.
 > 
-> >  Even if the mainline kernel doesn't worry about any kind
-> > of stable interface guarantees for it, the distros might be forced to provide
-> > some kABI guarantees for it to appease ISVs and users...
-> 
-> How is this handled currently for other eBPF use-cases?
+> Thanks,
 > 
 > -- 
-> James Morris
-> <jmorris@namei.org>
-> 
+> Peter Xu
+
