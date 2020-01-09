@@ -2,123 +2,369 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05575135422
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 09:09:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C418E13541A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 09:07:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbgAIIJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 03:09:12 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:39969 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728331AbgAIIJM (ORCPT
+        id S1728413AbgAIIHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 03:07:11 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:12604 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728347AbgAIIHL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 03:09:12 -0500
-Received: by mail-il1-f199.google.com with SMTP id e4so4092887ilm.7
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 00:09:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=e+d+e8nGm4aBm9xvvYGM+RbFjleehaxe1qFBJx6UrUY=;
-        b=YqAz6tt1z89PYCJ6AhKoo+GwAf+ZM3690cD6l28yb1U8giLPH9Ewfv3xrDNCSnXDQs
-         mrexgxhsteU5Y8NwQw8f+UcGY6OXiSelphvakd7F5JYUdodOWzXLR4+5W/Og/fvOHqru
-         a83wLLnhkZjLsdH+0Z5KAKgJzhVNt8jdGX42akgH4+ulSZ/gY2wobpBB2gavPdKYarPp
-         5n9/5pSSXQ8arbafZYYfg9AJ6ae7IQ4B44q1VDIrDasjyLBLDJXqGduoMViBHdtuc+6e
-         Vw4jI09SRYX2EDKqBTUkJKR9z3ZXfz+LJ4C/GAr0YlG+BoBTfOXxbTFkeva2u9LfPA7c
-         IJZw==
-X-Gm-Message-State: APjAAAWM+gWJPKR0GHhkzEbb+zUQpQEIOMVbo1WbkdNjaljn6JPUoL9P
-        Wp/jw7lQAQ5kIrYSGOGwnX0/rv6cSi+t90sioFDBIaCHbuY8
-X-Google-Smtp-Source: APXvYqye2PGwKG0s6kHv8IwkWNUh5Iw1M8KVF+cnSnCCHxHiyksiziMz8AF4xEWD/kbsafaVbk/SsQFhC+uXQoXxX8VVRU5RXIRC
+        Thu, 9 Jan 2020 03:07:11 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200109080705epoutp03f746675cc9fbfdbba6cd4050975a91ed~oKW7uY5ZU0053700537epoutp031
+        for <linux-kernel@vger.kernel.org>; Thu,  9 Jan 2020 08:07:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200109080705epoutp03f746675cc9fbfdbba6cd4050975a91ed~oKW7uY5ZU0053700537epoutp031
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1578557225;
+        bh=4ThduY/fg6mZlY+PVL3B/X7vQCitjlaP5x5WJFS+V38=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=LrgTtUFB6ik2LgsgUPB5N3eLOLU9tD6lEDZm0TICK1McBCUq8KJm5PmlAiXGvGRm1
+         Qs2STZJZuyb5a46F+gkyU7NMGZpM3CfvMl1mWCI9Gzsl9Vck87Uaz5HlapGq4RIeFH
+         ZciHQ58zQOdyHKU9FOq5/a0uGXi3mRdyJpXllLu0=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200109080705epcas1p209c9d492a0c19c33fc6075c961bc105f~oKW7GNARm2460424604epcas1p2k;
+        Thu,  9 Jan 2020 08:07:05 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.152]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 47tdxf53QNzMqYkY; Thu,  9 Jan
+        2020 08:07:02 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        57.14.57028.42FD61E5; Thu,  9 Jan 2020 17:07:00 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200109080659epcas1p36c6cc38f37f567525bd8ab94c1022e92~oKW1y-kRR0469504695epcas1p32;
+        Thu,  9 Jan 2020 08:06:59 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200109080659epsmtrp1b519d36034bbcb95de5310a9e82cb2e4~oKW1yMp3E1532815328epsmtrp1j;
+        Thu,  9 Jan 2020 08:06:59 +0000 (GMT)
+X-AuditID: b6c32a35-4f3ff7000001dec4-35-5e16df2497b4
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        AC.26.10238.32FD61E5; Thu,  9 Jan 2020 17:06:59 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200109080659epsmtip295c589f711704220604bdafa85277bac~oKW1iKvk80180801808epsmtip2q;
+        Thu,  9 Jan 2020 08:06:59 +0000 (GMT)
+Subject: Re: [PATCH 2/2] PM / devfreq: Add devfreq_transitions debugfs file
+To:     Dmitry Osipenko <digetx@gmail.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     leonard.crestez@nxp.com, lukasz.luba@arm.com, a.swigon@samsung.com,
+        m.szyprowski@samsung.com, enric.balletbo@collabora.com,
+        hl@rock-chips.com, bjorn.andersson@linaro.org,
+        jcrouse@codeaurora.org, chanwoo@kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <e9895970-7f73-0ac4-c9cd-4ad85d464e11@samsung.com>
+Date:   Thu, 9 Jan 2020 17:14:05 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:c990:: with SMTP id y16mr8021354iln.105.1578557351976;
- Thu, 09 Jan 2020 00:09:11 -0800 (PST)
-Date:   Thu, 09 Jan 2020 00:09:11 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000038e517059bb08615@google.com>
-Subject: KASAN: null-ptr-deref Read in insert_char
-From:   syzbot <syzbot+7416b988c249396c5e2c@syzkaller.appspotmail.com>
-To:     daniel.vetter@ffwll.ch, ghalat@redhat.com,
-        gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-kernel@vger.kernel.org, nico@fluxnic.net, sam@ravnborg.org,
-        syzkaller-bugs@googlegroups.com, textshell@uchuujin.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <e93f6e16-e18d-bafd-5761-ffc8a2642149@gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIJsWRmVeSWpSXmKPExsWy7bCmvq7KfbE4g+YTLBb357UyWpze/47F
+        YuKNKywWqz8+ZrRYc/sQo8WPDaeYLTYuyLY42/SG3WLF3Y+sFpd3zWGz+Nx7hNFiYVMLu8Xa
+        I3fZLW43rmBz4PNYM28No8flvl4mjx13lzB67Jx1l91j06pONo871/aweWx8t4PJ4++s/Swe
+        fVtWMXp83iQXwBWVbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+Ti
+        E6DrlpkD9IGSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CyQK84Mbe4NC9dLzk/
+        18rQwMDIFKgwITvjz/4u5oKzwRUbZq9kbmB86NDFyMkhIWAi8XzfWXYQW0hgB6PEi0UCXYxc
+        QPYnRokbq6eyQTjfGCUOdC9mg+nof7KOHSKxl1Hi9JdVUFXvGSVmvf7JAlIlLOAtMb9rCZgt
+        IpAgceTPPyaQImaBKUwSc0/3MoMk2AS0JPa/uAE2ll9AUeLqj8eMIDavgJ3EtBdbmUBsFgEV
+        iY+bvoDViAqESZzc1gJVIyhxcuYTsAWcArYSv/c8AJvJLCAucevJfCYIW16ieetsZpDFEgLH
+        2CUu3noH9YOLxNS7U9khbGGJV8e3QNlSEi/726DsaomVJ4+wQTR3MEps2X+BFSJhLLF/6WSg
+        DRxAGzQl1u/ShwgrSuz8PZcRYjGfxLuvPawgJRICvBIdbUIQJcoSlx/cZYKwJSUWt3eyTWBU
+        moXknVlIXpiF5IVZCMsWMLKsYhRLLSjOTU8tNiwwRI7uTYzg5K1luoNxyjmfQ4wCHIxKPLwM
+        SmJxQqyJZcWVuYcYJTiYlUR4j94ACvGmJFZWpRblxxeV5qQWH2I0BYb2RGYp0eR8YGbJK4k3
+        NDUyNja2MDE0MzU0VBLn5fhxMVZIID2xJDU7NbUgtQimj4mDU6qBMWXDl3dNFYw3OEQMe5yN
+        c6J5eormnTu/cM7tiw8Ldy1QWmb962CQdGLE4oBDuQ+E8iQ+7M9Or3Wd6nth/rTFV/stnrkt
+        /7Kp7h1foKNOX/PGZ3PWPV7ivFz7QwXPBt2Xl73ZGsRWzZv7QG7Sgs28GbuiL8/zURGWe3oz
+        qsFPZNI6u+OeHyr7I5VYijMSDbWYi4oTATsMM5n0AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJIsWRmVeSWpSXmKPExsWy7bCSvK7yfbE4g283RCzuz2tltDi9/x2L
+        xcQbV1gsVn98zGix5vYhRosfG04xW2xckG1xtukNu8WKux9ZLS7vmsNm8bn3CKPFwqYWdou1
+        R+6yW9xuXMHmwOexZt4aRo/Lfb1MHjvuLmH02DnrLrvHplWdbB53ru1h89j4bgeTx99Z+1k8
+        +rasYvT4vEkugCuKyyYlNSezLLVI3y6BK+PP/i7mgrPBFRtmr2RuYHzo0MXIySEhYCLR/2Qd
+        O4gtJLCbUWLHhFiIuKTEtItHmbsYOYBsYYnDh4shSt4ySvScdgGxhQW8JeZ3LWEBsUUEEiT+
+        /v/I2MXIxcEsMIVJYk7vLUaIhhtMEme6pUBsNgEtif0vbrCB2PwCihJXfzwGq+EVsJOY9mIr
+        E4jNIqAi8XHTF7AaUYEwiZ1LHjNB1AhKnJz5BGwZp4CtxO89D5hBbGYBdYk/8y5B2eISt57M
+        Z4Kw5SWat85mnsAoPAtJ+ywkLbOQtMxC0rKAkWUVo2RqQXFuem6xYYFhXmq5XnFibnFpXrpe
+        cn7uJkZwBGtp7mC8vCT+EKMAB6MSDy+DklicEGtiWXFl7iFGCQ5mJRHeozeAQrwpiZVVqUX5
+        8UWlOanFhxilOViUxHmf5h2LFBJITyxJzU5NLUgtgskycXBKNTBacazbyMgZsNlvx6LGlwnT
+        knWen4v++9xr1q5NApOvv77rHM2d1Cp74t0GD+8DQdOS5reZ3BJYa6r/b3GHtv2nI9WNSrP2
+        9xyXuKH4K3cma16R+ORnK1Un9p57w3KpWfWcq+C5510vJ1xS1NQ3WRikInrR6csX14xfn72+
+        RTTHl72TdlQtlXmrxFKckWioxVxUnAgAyuPIU9wCAAA=
+X-CMS-MailID: 20200109080659epcas1p36c6cc38f37f567525bd8ab94c1022e92
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200107085812epcas1p4670ae2265573d887aa75cab36c04b1ea
+References: <20200107090519.3231-1-cw00.choi@samsung.com>
+        <CGME20200107085812epcas1p4670ae2265573d887aa75cab36c04b1ea@epcas1p4.samsung.com>
+        <20200107090519.3231-3-cw00.choi@samsung.com>
+        <b64bf3d4-5b46-243b-495a-e1060af7a266@gmail.com>
+        <9cfbdb8a-1326-e7e3-3a65-c3f8c45eaf19@samsung.com>
+        <e93f6e16-e18d-bafd-5761-ffc8a2642149@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 1/8/20 11:10 PM, Dmitry Osipenko wrote:
+> 08.01.2020 14:22, Chanwoo Choi пишет:
+>> On 1/8/20 6:56 AM, Dmitry Osipenko wrote:
+>>> 07.01.2020 12:05, Chanwoo Choi пишет:
+>>>> Add new devfreq_transitions debugfs file to track the frequency transitions
+>>>> of all devfreq devices for the simple profiling as following:
+>>>> - /sys/kernel/debug/devfreq/devfreq_transitions
+>>>>
+>>>> And the user can decide the storage size (CONFIG_NR_DEVFREQ_TRANSITIONS)
+>>>> in Kconfig in order to save the transition history.
+>>>>
+>>>> [Detailed description of each field of 'devfreq_transitions' debugfs file]
+>>>> - time_ms	: Change time of frequency transition. (unit: millisecond)
+>>>> - dev_name	: Device name of h/w.
+>>>> - dev		: Device name made by devfreq core.
+>>>> - parent_dev	: If devfreq device uses the passive governor,
+>>>> 		  show parent devfreq device name.
+>>>> - load_%	: If devfreq device uses the simple_ondemand governor,
+>>>> 		  load is used by governor whene deciding the new frequency.
+>>>> 		  (unit: percentage)
+>>>> - old_freq_hz	: Frequency before changing. (unit: hz)
+>>>> - new_freq_hz	: Frequency after changed. (unit: hz)
+>>>>
+>>>> [For example on Exynos5422-based Odroid-XU3 board]
+>>>> $ cat /sys/kernel/debug/devfreq/devfreq_transitions
+>>>> time_ms    dev_name                       dev        parent_dev load_% old_freq_hz  new_freq_hz
+>>>> ---------- ------------------------------ ---------- ---------- ---------- ------------ ------------
+>>>> 14600      soc:bus_noc                    devfreq2   devfreq1   0      100000000    67000000
+>>>> 14600      soc:bus_fsys_apb               devfreq3   devfreq1   0      200000000    100000000
+>>>> 14600      soc:bus_fsys                   devfreq4   devfreq1   0      200000000    100000000
+>>>> 14600      soc:bus_fsys2                  devfreq5   devfreq1   0      150000000    75000000
+>>>> 14602      soc:bus_mfc                    devfreq6   devfreq1   0      222000000    96000000
+>>>> 14602      soc:bus_gen                    devfreq7   devfreq1   0      267000000    89000000
+>>>> 14602      soc:bus_g2d                    devfreq9   devfreq1   0      300000000    84000000
+>>>> 14602      soc:bus_g2d_acp                devfreq10  devfreq1   0      267000000    67000000
+>>>> 14602      soc:bus_jpeg                   devfreq11  devfreq1   0      300000000    75000000
+>>>> 14602      soc:bus_jpeg_apb               devfreq12  devfreq1   0      167000000    84000000
+>>>> 14603      soc:bus_disp1_fimd             devfreq13  devfreq1   0      200000000    120000000
+>>>> 14603      soc:bus_disp1                  devfreq14  devfreq1   0      300000000    120000000
+>>>> 14606      soc:bus_gscl_scaler            devfreq15  devfreq1   0      300000000    150000000
+>>>> 14606      soc:bus_mscl                   devfreq16  devfreq1   0      333000000    84000000
+>>>> 14608      soc:bus_wcore                  devfreq1              9      333000000    84000000
+>>>> 14783      10c20000.memory-controller     devfreq0              35     825000000    633000000
+>>>> 15873      soc:bus_wcore                  devfreq1              41     84000000     400000000
+>>>> 15873      soc:bus_noc                    devfreq2   devfreq1   0      67000000     100000000
+>>>> [snip]
+>>>>
+>>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>>> ---
+>>>>  drivers/devfreq/Kconfig            |  13 +++
+>>>>  drivers/devfreq/devfreq.c          | 126 +++++++++++++++++++++++++++++
+>>>>  drivers/devfreq/governor.h         |   3 +
+>>>>  drivers/devfreq/governor_passive.c |   2 +
+>>>>  include/linux/devfreq.h            |   1 +
+>>>>  5 files changed, 145 insertions(+)
+>>>>
+>>>> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+>>>> index 0b1df12e0f21..84936eec0ef9 100644
+>>>> --- a/drivers/devfreq/Kconfig
+>>>> +++ b/drivers/devfreq/Kconfig
+>>>> @@ -74,6 +74,19 @@ config DEVFREQ_GOV_PASSIVE
+>>>>  	  through sysfs entries. The passive governor recommends that
+>>>>  	  devfreq device uses the OPP table to get the frequency/voltage.
+>>>>  
+>>>> +comment "DEVFREQ Debugging"
+>>>> +
+>>>> +config NR_DEVFREQ_TRANSITIONS
+>>>> +	int "Maximum storage size to save DEVFREQ Transitions (10-1000)"
+>>>> +	depends on DEBUG_FS
+>>>> +	range 10 1000
+>>>> +	default "100"
+>>>> +	help
+>>>> +	  Show the frequency transitions of all devfreq devices via
+>>>> +	  '/sys/kernel/debug/devfreq/devfreq_transitions' for the simple
+>>>> +	  profiling. It needs to decide the storage size to save transition
+>>>> +	  history of all devfreq devices.
+>>>> +
+>>>>  comment "DEVFREQ Drivers"
+>>>>  
+>>>>  config ARM_EXYNOS_BUS_DEVFREQ
+>>>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+>>>> index c7f5e4e06420..7abaae06fa65 100644
+>>>> --- a/drivers/devfreq/devfreq.c
+>>>> +++ b/drivers/devfreq/devfreq.c
+>>>> @@ -268,6 +268,57 @@ int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
+>>>>  }
+>>>>  EXPORT_SYMBOL(devfreq_update_status);
+>>>>  
+>>>> +/**
+>>>> + * devfreq_update_transitions() - Update frequency transitions for debugfs file
+>>>> + * @devfreq:	the devfreq instance
+>>>> + * @old_freq:	the previous frequency before changing the frequency
+>>>> + * @new_freq:	the new frequency after frequency is changed
+>>>> + */
+>>>> +struct devfreq_transitions {
+>>>> +	struct devfreq *devfreq;
+>>>> +	struct devfreq_freqs freqs;
+>>>> +	unsigned long load;
+>>>> +} debugfs_transitions[CONFIG_NR_DEVFREQ_TRANSITIONS];
+>>>> +
+>>>> +static spinlock_t devfreq_debugfs_lock;
+>>>> +static int debugfs_transitions_index;
+>>>> +
+>>>> +void devfreq_update_transitions(struct devfreq *devfreq,
+>>>> +			unsigned long old_freq, unsigned long new_freq,
+>>>> +			unsigned long busy_time, unsigned long total_time)
+>>>> +{
+>>>> +	unsigned long load;
+>>>> +	int i;
+>>>> +
+>>>> +	if (!devfreq_debugfs || !devfreq || (old_freq == new_freq))
+>>>> +		return;
+>>>> +
+>>>> +	spin_lock_nested(&devfreq_debugfs_lock, SINGLE_DEPTH_NESTING);
+>>>> +
+>>>> +	i = debugfs_transitions_index;
+>>>> +
+>>>> +	/*
+>>>> +	 * Calculate the load and if load is larger than 100,
+>>>> +	 * initialize to 100 because the unit of load is percentage.
+>>>> +	 */
+>>>> +	load = (total_time == 0 ? 0 : (100 * busy_time) / total_time);
+>>>> +	if (load > 100)
+>>>> +		load = 100;
+>>>> +
+>>>> +	debugfs_transitions[i].devfreq = devfreq;
+>>>> +	debugfs_transitions[i].freqs.time = ktime_to_ms(ktime_get());
+>>>> +	debugfs_transitions[i].freqs.old = old_freq;
+>>>> +	debugfs_transitions[i].freqs.new = new_freq;
+>>>> +	debugfs_transitions[i].load = load;
+>>>> +
+>>>> +	if (++i == CONFIG_NR_DEVFREQ_TRANSITIONS)
+>>>> +		i = 0;
+>>>> +	debugfs_transitions_index = i;
+>>>> +
+>>>> +	spin_unlock(&devfreq_debugfs_lock);
+>>>> +}
+>>>> +EXPORT_SYMBOL(devfreq_update_transitions);
+>>>> +
+>>>>  /**
+>>>>   * find_devfreq_governor() - Find devfreq governor from name
+>>>>   * @name:	name of the governor
+>>>> @@ -401,6 +452,10 @@ static int set_target(struct devfreq *devfreq,
+>>>>  		return err;
+>>>>  	}
+>>>>  
+>>>> +	devfreq_update_transitions(devfreq, cur_freq, new_freq,
+>>>> +					devfreq->last_status.busy_time,
+>>>> +					devfreq->last_status.total_time);
+>>>> +
+>>>>  	freqs.new = new_freq;
+>>>>  	notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
+>>>>  
+>>>> @@ -1787,6 +1842,72 @@ static int devfreq_summary_show(struct seq_file *s, void *data)
+>>>>  }
+>>>>  DEFINE_SHOW_ATTRIBUTE(devfreq_summary);
+>>>>  
+>>>> +/**
+>>>> + * devfreq_transitions_show() - Show the frequency transitions of the registered
+>>>> + *			devfreq devices via 'devfreq_transitions' debugfs file.
+>>>> + */
+>>>> +static int devfreq_transitions_show(struct seq_file *s, void *data)
+>>>> +{
+>>>> +	struct devfreq *devfreq = NULL;
+>>>> +	struct devfreq *p_devfreq = NULL;
+>>>> +	struct devfreq_freqs *freqs = NULL;
+>>>> +	unsigned long load;
+>>>> +	int i = debugfs_transitions_index;
+>>>> +	int count;
+>>>> +
+>>>> +	seq_printf(s, "%-10s %-30s %-10s %-10s %-6s %-12s %-12s\n",
+>>>> +			"time_ms",
+>>>> +			"dev_name",
+>>>> +			"dev",
+>>>> +			"parent_dev",
+>>>> +			"load_%",
+>>>> +			"old_freq_hz",
+>>>> +			"new_freq_hz");
+>>>> +	seq_printf(s, "%-10s %-30s %-10s %-10s %-6s %-12s %-12s\n",
+>>>> +			"----------",
+>>>> +			"------------------------------",
+>>>> +			"----------",
+>>>> +			"----------",
+>>>> +			"----------",
+>>>> +			"------------",
+>>>> +			"------------");
+>>>
+>>> Isn't this needed here?
+>>>
+>>> mutex_lock(&devfreq_list_lock);
+>>
+>> It doesn't touch the devfreq instance of devfreq_list.
+>> So, it is not necessary locked of devfreq_list_lock.
+> 
+> What stops devfreq device to be removed by another CPU thread while this
+> function is in a process of execution?
+> 
+> This condition is unlikely to happen in practice ever, but technically
+> it should be possible to happen.
+> 
+>>>> +	spin_lock(&devfreq_debugfs_lock);
+>>>> +	for (count = 0; count < CONFIG_NR_DEVFREQ_TRANSITIONS; count++) {
+>>>> +		devfreq = debugfs_transitions[i].devfreq;
+>>>> +		freqs = &debugfs_transitions[i].freqs;
+>>>> +		load = debugfs_transitions[i].load;
+>>>> +
+>>>> +		i = (CONFIG_NR_DEVFREQ_TRANSITIONS == ++i) ? 0 : i;
+>>>> +		if (!devfreq)
+>>>> +			continue;
+>>>
+>>> I suppose debugfs_transitions[i].devfreq should be set to NULL when
+>>> devfreq device is removed, but I don't see it happening anywhere in this
+>>> patch.
+>>
+>> When debugfs_transitions[] array is not fully filled out
+>> by devfreq_update_transitions(), debugfs_transitions[i].devfreq is NULL.
+>> In this case, if user execute 'cat /sys/kernel/debug/devfreq/devfreq_transitions',
+>> devfreq_transitions_show() need to check the debugfs_transitions[i].devfreq
+>> is NULL or not.
+>>
+>> After filled out the debugfs_transitions[] array,
+>> actually, 'if(!devfreq)' is not necessary. Maybe, this style is inefficient
+>> It need to rework. I'll think again.
+> 
+> Imagine this situation:
+> 
+> 1. there is a devfreq device, let's name it defreq123
+> 
+> 2. the debugfs_transitions array is getting filled and now it has this
+> entry:
+> 
+> 	debugfs_transitions[0].devfreq = defreq123
+> 
+> 3. user removes defreq123 driver module
+> 
+> 	# rmmod defreq123
+> 
+> 4. the defreq123 is released now
+> 
+> 5. at what memory location debugfs_transitions[0].devfreq is pointing now?
+> 
+> 
 
-syzbot found the following crash on:
+You're right. It is my missing point.
+Instead of storing the devfreq pointer into debugfs_transitions[].devfreq,
+It is better to copy the necessary information to debugfs_transitions[]
+for preventing the mentioned situation.
 
-HEAD commit:    b07f636f Merge tag 'tpmdd-next-20200108' of git://git.infr..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16214d15e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=18698c0c240ba616
-dashboard link: https://syzkaller.appspot.com/bug?extid=7416b988c249396c5e2c
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+7416b988c249396c5e2c@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: null-ptr-deref in memmove include/linux/string.h:395 [inline]
-BUG: KASAN: null-ptr-deref in scr_memmovew include/linux/vt_buffer.h:68  
-[inline]
-BUG: KASAN: null-ptr-deref in insert_char+0x206/0x400  
-drivers/tty/vt/vt.c:839
-Read of size 4294967294 at addr 0000000000000010 by task  
-syz-executor.1/10976
-
-CPU: 0 PID: 10976 Comm: syz-executor.1 Not tainted 5.5.0-rc5-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  __kasan_report.cold+0x5/0x41 mm/kasan/report.c:510
-  kasan_report+0x12/0x20 mm/kasan/common.c:639
-  check_memory_region_inline mm/kasan/generic.c:185 [inline]
-  check_memory_region+0x134/0x1a0 mm/kasan/generic.c:192
-  memmove+0x24/0x50 mm/kasan/common.c:116
-  memmove include/linux/string.h:395 [inline]
-  scr_memmovew include/linux/vt_buffer.h:68 [inline]
-  insert_char+0x206/0x400 drivers/tty/vt/vt.c:839
-  csi_at drivers/tty/vt/vt.c:1964 [inline]
-  do_con_trol+0x41a6/0x61b0 drivers/tty/vt/vt.c:2431
-  do_con_write.part.0+0xfd9/0x1ef0 drivers/tty/vt/vt.c:2797
-  do_con_write drivers/tty/vt/vt.c:2565 [inline]
-  con_write+0x46/0xd0 drivers/tty/vt/vt.c:3135
-  process_output_block drivers/tty/n_tty.c:595 [inline]
-  n_tty_write+0x40e/0x1080 drivers/tty/n_tty.c:2333
-  do_tty_write drivers/tty/tty_io.c:962 [inline]
-  tty_write+0x496/0x7f0 drivers/tty/tty_io.c:1046
-  __vfs_write+0x8a/0x110 fs/read_write.c:494
-  vfs_write+0x268/0x5d0 fs/read_write.c:558
-  ksys_write+0x14f/0x290 fs/read_write.c:611
-  __do_sys_write fs/read_write.c:623 [inline]
-  __se_sys_write fs/read_write.c:620 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:620
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45af49
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f540b476c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000000000045af49
-RDX: 0000000000000078 RSI: 0000000020000000 RDI: 0000000000000003
-RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f540b4776d4
-R13: 00000000004cce19 R14: 00000000004e81c0 R15: 00000000ffffffff
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
