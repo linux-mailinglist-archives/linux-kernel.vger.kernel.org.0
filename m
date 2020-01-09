@@ -2,63 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A690135DC2
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:09:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FC81135DC3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:09:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733306AbgAIQJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S2387400AbgAIQJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 9 Jan 2020 11:09:02 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:23092 "EHLO
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:26125 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1733294AbgAIQJA (ORCPT
+        by vger.kernel.org with ESMTP id S1733300AbgAIQJC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 11:09:00 -0500
+        Thu, 9 Jan 2020 11:09:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578586139;
+        s=mimecast20190719; t=1578586141;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=GX1HWyW2RBViA1jhSt+OmG2SA1mVF9hKLd9ureUedGg=;
-        b=aTSsRJ6IgqQEh5knQz0FQy2z1kFC1Ts3do/5PzbuU53TGLFDiRFY63RZ3UqTZLzNR2UZMQ
-        93Pv1lu5STjFa/upjQ3/bgFFxasAfa0SrUQj77hKKWXtFxolP/mF9hc+53unCqum1phgS2
-        0paDjcUx+KhZoVD2KbICEe2/zSBBKFI=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-154-e9hcG7msPNmwT6IxcyufyQ-1; Thu, 09 Jan 2020 11:08:58 -0500
-X-MC-Unique: e9hcG7msPNmwT6IxcyufyQ-1
-Received: by mail-wr1-f72.google.com with SMTP id b13so3031949wrx.22
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:08:58 -0800 (PST)
+        bh=kEfbHgsVU9eDoIkKPm/bUyQidxKwrK2z05bxXpj07hQ=;
+        b=Qe09McnFhMy5DL6rGU1IruhX+EF8DypSZDafMSjzwam/+FMECMbprppyREzfYJnQzVcEZI
+        ZHmheZbEBH3J9cq+BGfsSAfF2DAxznCQQKgWku/gxqTbMRUifoByy/f1B567m1TofxCWNx
+        mPjoCj3IyvTA0ZuPQM0UP7EIz8ygx3g=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-392-jD3QavGYMq-dWS1hAy2coQ-1; Thu, 09 Jan 2020 11:09:00 -0500
+X-MC-Unique: jD3QavGYMq-dWS1hAy2coQ-1
+Received: by mail-wr1-f70.google.com with SMTP id f15so3079858wrr.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:08:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=GX1HWyW2RBViA1jhSt+OmG2SA1mVF9hKLd9ureUedGg=;
-        b=IHb6bPPjHT0BmZFRLGOKdkdyyn0U2+F/HE6EH6JKwM8Oe/5kbKPROtmwqM06L28pUl
-         6aH8ru3utK4rs6SRTj+fbnFtsZ1aKGUcJsHoAEww4U4GUurnbstbuTNWeq/dHcso32Ey
-         seR+2xUHU6AzUdwELVGC6COZIJHoZ4ftpsBMMesSTBn0RpStbVK01QMjr1blC8406pza
-         YDSGT1BQmfCydWHmHmbF8jnaY+sPnBL0D0dFsqa+CQOe2yFNCJBsMq/65igSQ8TNtYSQ
-         RkRXQXgc1NTXlsPe73RsNYyFkkX9RGw0xsQ+glU5JUhTq+DcKCUCyR+AmY8ZIlvXR2Xh
-         3Yvw==
-X-Gm-Message-State: APjAAAXDg2cUR94OfRVI7T1eGKgaDSFd5956YrWnC1tz6s7xvikBgjZc
-        ih1S5zOT9McXJe+OtYlL8kSMpUggLhe6E/lh0UkyQPfxRELwaVjr566PZqZT5qkQ7wYK/kniRJU
-        DBLsLvE1CovbWsh5TRO70JOKD
-X-Received: by 2002:a7b:c750:: with SMTP id w16mr6091430wmk.46.1578586137410;
-        Thu, 09 Jan 2020 08:08:57 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwjCp+Y4dd1UCQgpsIRC3EeNqpxSOKmFBNBlJEwGBmeaO0pEch53HDZj8tK+YxsBYtcqb3jbQ==
-X-Received: by 2002:a7b:c750:: with SMTP id w16mr6091403wmk.46.1578586137235;
-        Thu, 09 Jan 2020 08:08:57 -0800 (PST)
+        bh=kEfbHgsVU9eDoIkKPm/bUyQidxKwrK2z05bxXpj07hQ=;
+        b=Cxzcmaw5LfBMZ95Xsrye4Z7uQ1+wfubw3irpyVcD0noxzR7zW7j8fIP0J6ye/a7cv9
+         kjAs4nl9QQ7/u2K4E0CY7hmeM/LMkHtl9b0CDDxZH20LVPr86JVXPgM/XwWIdxq4I/Z1
+         8idlgNhrG7hpDjm8sJVlpRQL/oJIbZE0ErubRCVbX6F2G01SZxhsQQmLi2zg43ajxq9l
+         hMQPXssrnKkxp4Ktc6EN9m7blwSaOkc0UfIvzYULXTgCwplaKv/lvaHzVi6VkY2d2oSF
+         JDHXwiNSmyIDsuRfXEC7cjdrUyERv8BoV12o9G0Fn6vdFCHwYZtiiIUiEuvZOFkffxVb
+         Z2cA==
+X-Gm-Message-State: APjAAAXHh6sOhko+swX6KUohT0bDbjCD9qfT519JOBtVFI27rbe9Beq4
+        ebneqeyhpYX95m2aFL57gefNrn+yMk+Cg7CseWIK1aFTj7qY0LfeG7JYPpFqaTo5qgSFr4R8nSD
+        7PtPFXUyXUxu97iJTDFQQvu6Q
+X-Received: by 2002:adf:e3d0:: with SMTP id k16mr12018284wrm.241.1578586138794;
+        Thu, 09 Jan 2020 08:08:58 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzSLia58QbEuzIUwye/7K2S8R5lieQsiVKxVvK2wzbrjNJr4CLjCo4Rn4vyl1YI3pmhsGWMjA==
+X-Received: by 2002:adf:e3d0:: with SMTP id k16mr12018264wrm.241.1578586138549;
+        Thu, 09 Jan 2020 08:08:58 -0800 (PST)
 Received: from redfedo.redhat.com (host81-140-166-164.range81-140.btcentralplus.com. [81.140.166.164])
-        by smtp.gmail.com with ESMTPSA id v8sm8403505wrw.2.2020.01.09.08.08.56
+        by smtp.gmail.com with ESMTPSA id v8sm8403505wrw.2.2020.01.09.08.08.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 08:08:56 -0800 (PST)
+        Thu, 09 Jan 2020 08:08:58 -0800 (PST)
 From:   Julien Thierry <jthierry@redhat.com>
 To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     jpoimboe@redhat.com, peterz@infradead.org, raphael.gault@arm.com,
         catalin.marinas@arm.com, will@kernel.org,
         Julien Thierry <jthierry@redhat.com>
-Subject: [RFC v5 47/57] arm64: assembler: Add macro to annotate asm function having non standard stack-frame.
-Date:   Thu,  9 Jan 2020 16:02:50 +0000
-Message-Id: <20200109160300.26150-48-jthierry@redhat.com>
+Subject: [RFC v5 48/57] arm64: sleep: Prevent stack frame warnings from objtool
+Date:   Thu,  9 Jan 2020 16:02:51 +0000
+Message-Id: <20200109160300.26150-49-jthierry@redhat.com>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200109160300.26150-1-jthierry@redhat.com>
 References: <20200109160300.26150-1-jthierry@redhat.com>
@@ -71,54 +71,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Raphael Gault <raphael.gault@arm.com>
 
-Some functions don't have standard stack-frames but are intended
-this way. In order for objtool to ignore those particular cases
-we add a macro that enables us to annotate the cases we chose
-to mark as particular.
+This code doesn't respect the Arm PCS but it is intended this
+way. Adapting it to respect the PCS would result in altering the
+behaviour.
+
+In order to suppress objtool's warnings, we setup a stack frame
+for __cpu_suspend_enter and annotate cpu_resume and _cpu_resume
+as having non-standard stack frames.
 
 Signed-off-by: Raphael Gault <raphael.gault@arm.com>
 Signed-off-by: Julien Thierry <jthierry@redhat.com>
 ---
- include/linux/frame.h | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ arch/arm64/kernel/sleep.S | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/include/linux/frame.h b/include/linux/frame.h
-index 02d3ca2d9598..1e35e58ab259 100644
---- a/include/linux/frame.h
-+++ b/include/linux/frame.h
-@@ -11,14 +11,31 @@
-  *
-  * For more information, see tools/objtool/Documentation/stack-validation.txt.
-  */
-+#ifndef __ASSEMBLY__
- #define STACK_FRAME_NON_STANDARD(func) \
- 	static void __used __section(.discard.func_stack_frame_non_standard) \
- 		*__func_stack_frame_non_standard_##func = func
-+#else
-+	/*
-+	 * This macro is the arm64 assembler equivalent of the
-+	 * macro STACK_FRAME_NON_STANDARD define at
-+	 * ~/include/linux/frame.h
-+	 */
-+	.macro	asm_stack_frame_non_standard	func
-+	.pushsection ".discard.func_stack_frame_non_standard"
-+	.quad	\func
-+	.popsection
-+	.endm
-
-+#endif /* __ASSEMBLY__ */
- #else /* !CONFIG_STACK_VALIDATION */
-
-+#ifndef __ASSEMBLY__
- #define STACK_FRAME_NON_STANDARD(func)
--
-+#else
-+	.macro	asm_stack_frame_non_standard	func
-+	.endm
-+#endif /* __ASSEMBLY__ */
- #endif /* CONFIG_STACK_VALIDATION */
-
- #endif /* _LINUX_FRAME_H */
---
+diff --git a/arch/arm64/kernel/sleep.S b/arch/arm64/kernel/sleep.S
+index f5b04dd8a710..55c7c099d32c 100644
+--- a/arch/arm64/kernel/sleep.S
++++ b/arch/arm64/kernel/sleep.S
+@@ -1,5 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ #include <linux/errno.h>
++#include <linux/frame.h>
+ #include <linux/linkage.h>
+ #include <asm/asm-offsets.h>
+ #include <asm/assembler.h>
+@@ -90,6 +91,7 @@ ENTRY(__cpu_suspend_enter)
+ 	str	x0, [x1]
+ 	add	x0, x0, #SLEEP_STACK_DATA_SYSTEM_REGS
+ 	stp	x29, lr, [sp, #-16]!
++	mov	x29, sp
+ 	bl	cpu_do_suspend
+ 	ldp	x29, lr, [sp], #16
+ 	mov	x0, #1
+@@ -146,3 +148,6 @@ ENTRY(_cpu_resume)
+ 	mov	x0, #0
+ 	ret
+ ENDPROC(_cpu_resume)
++
++	asm_stack_frame_non_standard cpu_resume
++	asm_stack_frame_non_standard _cpu_resume
+-- 
 2.21.0
 
