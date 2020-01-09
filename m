@@ -2,119 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CFAB135EA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:47:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B916B135EA5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:48:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387831AbgAIQri (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 11:47:38 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:60618 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730602AbgAIQri (ORCPT
+        id S2387857AbgAIQrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 11:47:51 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:42460 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730602AbgAIQrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 11:47:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578588457;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=U9FIl7rDMUNIt3w4+k0tpPrJircKZXQ1T/Tj9bbLmLY=;
-        b=eQVu7+IakbEhvvuTQvJ1E2YaqRP5Q2rwiY6oPMwpVXh8Nhq4QEwVnMd6c3maA8NaonvA5D
-        4iLxD3773TqmpRTpsD3GuMxvhSNnp/0ahAFDTgV+3WXvbqiG3S384kUL4R25QmXw4CLbyK
-        nw/653vxPa4m88CFTIbV8xvs6nVI29o=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-49-gF7Ek3tiMP2QLdbAGqY0bA-1; Thu, 09 Jan 2020 11:47:32 -0500
-X-MC-Unique: gF7Ek3tiMP2QLdbAGqY0bA-1
-Received: by mail-qk1-f199.google.com with SMTP id 12so4497255qkf.20
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:47:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=U9FIl7rDMUNIt3w4+k0tpPrJircKZXQ1T/Tj9bbLmLY=;
-        b=Ovqv7jtfervpIFDorTNxITnTXDuFVacnXH64uBYSBseqJjRiTPrWzJ7mgxrcUbUxB6
-         SlszWa6wRyX++eLuUru5Kaa30VVQgi55m9Cwj6aEmHrllqTPD+PEeKBv+tKS1AyjSuf2
-         lfdXlizTdPm2L+C64rquanPv1Vpl9aRxxZgAj7nJ/BzdWWKGY3+XaRBfAm24p7f2YrOU
-         vcOHs0ayN386A9RVaoMZW51NvFIkfnA0RYyg926+B6wYfKLbmRgEIQm5kaMfABWh7TS9
-         mZX7E0GSd0r7g1cYwis+TsB3FitQXxydiElWr7kQZzzdC/szBLHc0EhDBa7CVWy0o8om
-         yrpw==
-X-Gm-Message-State: APjAAAW6jZ7+vWixmpAhT7dzxp4Ramlv6BiPjBg/85u6uIJWLQv/gG5B
-        fUsCKVhofAnWC3zxKciStmd4H5jT7ofkhYiFuvBtLdZFGphwbSiP26PRwZrn5Jm/5jOQI8fAdQp
-        DrIqJ0F7699P6BUQdkSI6TkT+
-X-Received: by 2002:ac8:5548:: with SMTP id o8mr8935323qtr.338.1578588452255;
-        Thu, 09 Jan 2020 08:47:32 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwAKBfw/mcHeuQ026GQ49p5hdE4B6gg9fnX8ron2h9YThB1fl/A2F3tWZ+1vWN8URbak9EJFg==
-X-Received: by 2002:ac8:5548:: with SMTP id o8mr8935302qtr.338.1578588452030;
-        Thu, 09 Jan 2020 08:47:32 -0800 (PST)
-Received: from redhat.com (bzq-79-183-34-164.red.bezeqint.net. [79.183.34.164])
-        by smtp.gmail.com with ESMTPSA id o55sm3628837qtf.46.2020.01.09.08.47.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 08:47:31 -0800 (PST)
-Date:   Thu, 9 Jan 2020 11:47:25 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     "Liu, Jiang" <gerry@linux.alibaba.com>
-Cc:     Jason Wang <jasowang@redhat.com>,
-        Zha Bin <zhabin@linux.alibaba.com>,
-        linux-kernel@vger.kernel.org, slp@redhat.com,
-        virtio-dev@lists.oasis-open.org, jing2.liu@intel.com,
-        chao.p.peng@intel.com
-Subject: Re: [PATCH v1 2/2] virtio-mmio: add features for virtio-mmio
- specification version 3
-Message-ID: <20200109114209-mutt-send-email-mst@kernel.org>
-References: <cover.1577240905.git.zhabin@linux.alibaba.com>
- <a11d4c616158c9fb1ca4575ca0530b2e17b952fa.1577240905.git.zhabin@linux.alibaba.com>
- <229e689d-10f1-2bfb-c393-14dfa9c78971@redhat.com>
- <0460F92A-3DF6-4F7A-903B-6434555577CC@linux.alibaba.com>
- <f8b46502-a5a5-c5c6-88df-101dbfd02fda@redhat.com>
- <56703BDA-B7AE-4656-8061-85FD1A130597@linux.alibaba.com>
- <20200105054142-mutt-send-email-mst@kernel.org>
- <02D38CC0-8DD5-44E1-92B2-0F9E97A112CE@linux.alibaba.com>
+        Thu, 9 Jan 2020 11:47:51 -0500
+Received: from [10.137.112.108] (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id EDBF720B4798;
+        Thu,  9 Jan 2020 08:47:49 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EDBF720B4798
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1578588470;
+        bh=LW9r8q2BLTAvuoOoNc++KjWmbMuRSSbPiPkebfGA588=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=oA97qXMRNlJuZjxe0Nn1daIjBuYzhdOG1OJvN7g0EzxuxWeoCW6nIrStONG+aznMH
+         q/DbK0L09y2WFd2MW5EFetlXbbV8A6pCEB5w3PfvU9W+6sjySx26clkWylY5Poy80b
+         3Hf8Cq88+nKDl5wUrhzbwk8fNCxJKg2L8a0NpkeQ=
+Subject: Re: [PATCH v8 0/3] IMA: Deferred measurement of keys
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        James.Bottomley@HansenPartnership.com,
+        linux-integrity@vger.kernel.org
+Cc:     dhowells@redhat.com, arnd@arndb.de, matthewgarrett@google.com,
+        sashal@kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org
+References: <20200109024359.3410-1-nramas@linux.microsoft.com>
+ <1578546442.5147.37.camel@linux.ibm.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <259affae-d579-d7b8-7fff-ff6ef440ac29@linux.microsoft.com>
+Date:   Thu, 9 Jan 2020 08:47:49 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <1578546442.5147.37.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <02D38CC0-8DD5-44E1-92B2-0F9E97A112CE@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 12:06:06AM +0800, Liu, Jiang wrote:
-> On Jan 5, 2020, at 6:42 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> > 
-> > On Thu, Dec 26, 2019 at 09:16:19PM +0800, Liu, Jiang wrote:
-> >>> 2) The mask and unmask control is missed
-> >>> 
-> >>> 
-> >>>> but the extension doesn’t support 3) because
-> >>>> we noticed that the Linux virtio subsystem doesn’t really make use of interrupt masking/unmasking.
-> > 
-> > Linux uses masking/unmasking in order to migrate interrupts between
-> > CPUs.
-> This is a limitation of the PCI MSI/MSIx spec.
-> To update the MSI/MSIx vector configuration, we need to write to msg_high/msg_low/msg_data registers.
-> Because write to three 32-bit registers is not an atomic operation on PCI bus, so it may cause incorrect interrupt delivery if interrupt happens after writing 1 or 2 registers.
-> When Intel remapping is enabled on x86 platforms, we don’t need to mask/unmask PCI MSI/MSIx interrupts when setting affinity.
-> For MMIO MSI extension, we have special design to solve this race window. The flow to update MMIO MSI vector configuration is:
-> 1) write msg_high
-> 2) write msg_low
-> 3) write msg_data
-> 4) write the command register to update the vector configuration.
-> During step 1-3, the hardware/device backend driver only caches the value written. And update the vector configuration in step 4, so it’s an atomic operation now.
-> So mask/unmask becomes optional for MMIO MSI interrupts.
+On 1/8/20 9:07 PM, Mimi Zohar wrote:
 
-Oh I see. That needs some documentation I guess.
+> On Wed, 2020-01-08 at 18:43 -0800, Lakshmi Ramasubramanian wrote:
+> 
+>> Changelog:
+>>
+>>    v8
+>>
+>>    => Rebased the changes to linux-next
+>>    => Need to apply the following patch first
+>>    https://lore.kernel.org/linux-integrity/20200108160508.5938-1-nramas@linux.microsoft.com/
+> 
+> Unless you made some other changes, the previous version of this patch
+> set is already in next-integrity-testing.  There's no reason to re-
+> post these patches again, and definitely not against linux-next.
+> 
+> Mimi
+> 
 
-One question though: how do you block VQ from generating interrupts?
+The change was to integrate the changes from the patch for the CONFIG issue:
 
-There's value in doing that for performance since then device can avoid
-re-checking interrupt enable/event idx values in memory.
+https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/commit/?h=next-integrity-testing&id=50a2506e069fc71f4be1bbcc2c5534bf58ed94ab
 
+The following commit needs to be updated to use the new config 
+CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS instead of 
+CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE
 
+https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/commit/?h=next-integrity-testing&id=e164a1695a5705c24c897b0bc7e9b97abb0830c8
 
-> > 
-> > -- 
-> > MST
+Please let me know if I can clone next-integrity-testing and make the 
+above update. I'll post the updated patch today.
 
+thanks,
+  -lakshmi
