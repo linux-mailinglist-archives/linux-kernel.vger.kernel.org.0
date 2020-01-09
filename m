@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7777213595F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 13:37:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 276E5135962
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 13:37:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729741AbgAIMh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 07:37:27 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44118 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728925AbgAIMh1 (ORCPT
+        id S1729809AbgAIMhc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 07:37:32 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38832 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729693AbgAIMh2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 07:37:27 -0500
-Received: by mail-lj1-f195.google.com with SMTP id u71so7000689lje.11
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 04:37:25 -0800 (PST)
+        Thu, 9 Jan 2020 07:37:28 -0500
+Received: by mail-lj1-f193.google.com with SMTP id w1so7069729ljh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 04:37:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5KD/2e75f6x17C/yWNN9lJ6c3FFXNUAEGSK6KA9QyHc=;
-        b=hwBDdSr7WL1hbEYdEVYShfN5tXgJMyByGcTrycNP2NCiZWYa90T0uSS1duVBeG3wcx
-         VEf173mbnI0xtaCYhSi1yzw1x9GuXvVtzOuZ0MVQV1ni5e+CkgjRTOU2mcQrmEDKHdYr
-         /c4NLAM1byBcwZW3JcI2GYsSy7/H81ElDtzCqLnu5tkWOMs7/JbtUopyJhb8CZ7Jszmh
-         jfvSBHtxTZrLUZA0TxfCTlwzq6/8isYtjh5o+OwM4QGGxxI6TssUZmdmFtjAludyJfpy
-         X2vYkFI+d4CRjOKouiSwvHGC0SBMITmOooONoFAzwZdLuKuJ5cL0MHbkwRe2QUN0AoEj
-         Tlkg==
+        bh=8ATHHjw+2Gy5yajVd+lnqDYNhxrLs6riTR9Mwxkks8o=;
+        b=XtU4jQnydjSlY5UiCiIDnULQB3GGRWkrFSqkjSTah25E1N6OmyawSK0/eVhu3jr8+0
+         P+vx5XGy92SaJyqNbn+M9/gPmL1lhk5CJbSaoKVI4LffA4BZfkMtBJCdFMXkF1+wiD/Z
+         YDNhXI04n3cAzziqQ8mQr9icPRjEeF2LE6I6t8EJXN4fb/mtwa79D1JGKqmA6sJzuFMY
+         pcoHLWIjkNvJBCQkK8JqoIXAcaI1CTybClbKkPq3FeWVYbFpEwh9T5ZEBM8dd4c+0n0f
+         kGzweqD9K9LfpH02QBhTyfj4/YR7fNTV0cyfT1h7J1DU6WYIPN4QvmXFvKkBZj8bV0L2
+         Ps1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=5KD/2e75f6x17C/yWNN9lJ6c3FFXNUAEGSK6KA9QyHc=;
-        b=N/+CVHXnabF3NIdWhIm9NF1mfdg+FqTpJ0PTGGMmnO6DLnwkhqu/L2FI57R3zoKgzN
-         P4MhpK01/sWtkKkPd7zR2XysaHLcBz2R9jKLrdng7TGPt1tD9aqGoo2t5n5tnLidbwoU
-         E6KeqCJn5mXUH5SVWWMPuY2J6wyJIYB3rabqIwTUSzw62dNdIkNIGDiVO91KSURHTIOf
-         r1LLbWPK2fesn1aVsFDXu83pPdZyMwK7M0zlG7Ief9C4eFtOJvOXuP5T/ifSqMxklH8z
-         S5nPb+CYsDtAvco8TQ2rhlSYDBxP0ZZzisd5UcgVRc+YVNdvYGWSGQ105Z3z6mY91FRo
-         fenw==
-X-Gm-Message-State: APjAAAVDMIqupcU/IrvJ0kg0L7mrPxX+QoR2ogePdkT9YtF52YsrvGAU
-        O1JusNAGFssr+wfM9ecn2qws4Q==
-X-Google-Smtp-Source: APXvYqwlnulDrn/OVZFEfC7A4zhXwL1W37Gitw/kGfEymgF8YDh/GDiCLwd1otNIZu/BEzr4CAOWuQ==
-X-Received: by 2002:a2e:9a04:: with SMTP id o4mr6722903lji.214.1578573445054;
-        Thu, 09 Jan 2020 04:37:25 -0800 (PST)
+        bh=8ATHHjw+2Gy5yajVd+lnqDYNhxrLs6riTR9Mwxkks8o=;
+        b=QxO0+UDrMquGiqP2dBPKEF0pQ6pIsh1mKaZU/fvYQl7J7zixo5mGkp/IqUc8gjqYxC
+         dQe05UZpPYzmphB/BHCIDwKkhvUlOA6NtlU1Rc0Y0cOilw0y4Hg2J6sJYW3hko/JmUUj
+         nHFWErD1GDkDr8/vmuM+5BecWAbDd2pl60ntV7J2nOUXU3bTJL3b2vQFjSumLsoMFmfA
+         o8jlnNeUnFac305zDDnDis+SN6gJiNFtdbrlRszSMkShjFp3FYj16jsAEaeR1B63IhRW
+         /fN1+CwLehtp2oCgKC6XdDuNNLzJIyJH4GgtQjIp2ThmQDlcIHlUOaYCZeCC4BhsqYjQ
+         MIxg==
+X-Gm-Message-State: APjAAAVVd+a4Cd4ndVzW/Hp++p1NVCOHfiyK5W6e9MIIXB7VlFK8r6Bq
+        JsyKTqFFQFA2CBEMxmVenNDcQQ==
+X-Google-Smtp-Source: APXvYqy1v3d2ghtjGUWiKLpY1rGIOcgwimh1XzPO0dR+S8rDWD2Crtx18Akdr4phIA9CHYviog6Bmg==
+X-Received: by 2002:a05:651c:1110:: with SMTP id d16mr6601261ljo.86.1578573446657;
+        Thu, 09 Jan 2020 04:37:26 -0800 (PST)
 Received: from jax.urgonet (h-249-223.A175.priv.bahnhof.se. [98.128.249.223])
-        by smtp.gmail.com with ESMTPSA id u16sm2887724ljo.22.2020.01.09.04.37.23
+        by smtp.gmail.com with ESMTPSA id u16sm2887724ljo.22.2020.01.09.04.37.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 04:37:24 -0800 (PST)
+        Thu, 09 Jan 2020 04:37:25 -0800 (PST)
 From:   Jens Wiklander <jens.wiklander@linaro.org>
 To:     tee-dev@lists.linaro.org, linux-kernel@vger.kernel.org
 Cc:     Jerome Forissier <jerome@forissier.org>,
@@ -52,9 +52,9 @@ Cc:     Jerome Forissier <jerome@forissier.org>,
         Rijo Thomas <Rijo-john.Thomas@amd.com>,
         Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
         Jens Wiklander <jens.wiklander@linaro.org>
-Subject: [PATCH 4/5] tee: remove redundant teedev in struct tee_shm
-Date:   Thu,  9 Jan 2020 13:36:50 +0100
-Message-Id: <20200109123651.18520-5-jens.wiklander@linaro.org>
+Subject: [PATCH 5/5] tee: tee_shm_op_mmap(): use TEE_SHM_USER_MAPPED
+Date:   Thu,  9 Jan 2020 13:36:51 +0100
+Message-Id: <20200109123651.18520-6-jens.wiklander@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200109123651.18520-1-jens.wiklander@linaro.org>
 References: <20200109123651.18520-1-jens.wiklander@linaro.org>
@@ -63,76 +63,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ctx element in struct tee_shm is always valid. So remove the now
-redundant teedev element.
+tee_shm_op_mmap() uses the TEE_SHM_USER_MAPPED flag instead of the
+TEE_SHM_REGISTER flag to tell if a shared memory object is originating
+from registered user space memory.
 
 Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
 ---
- drivers/tee/tee_shm.c   | 7 ++-----
- include/linux/tee_drv.h | 4 +---
- 2 files changed, 3 insertions(+), 8 deletions(-)
+ drivers/tee/tee_shm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
-index e636cf82acdb..c64ec5c5e464 100644
+index c64ec5c5e464..deb22f877881 100644
 --- a/drivers/tee/tee_shm.c
 +++ b/drivers/tee/tee_shm.c
-@@ -13,7 +13,7 @@
+@@ -81,7 +81,7 @@ static int tee_shm_op_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
+ 	size_t size = vma->vm_end - vma->vm_start;
  
- static void tee_shm_release(struct tee_shm *shm)
- {
--	struct tee_device *teedev = shm->teedev;
-+	struct tee_device *teedev = shm->ctx->teedev;
+ 	/* Refuse sharing shared memory provided by application */
+-	if (shm->flags & TEE_SHM_REGISTER)
++	if (shm->flags & TEE_SHM_USER_MAPPED)
+ 		return -EINVAL;
  
- 	if (shm->flags & TEE_SHM_DMA_BUF) {
- 		mutex_lock(&teedev->mutex);
-@@ -44,8 +44,7 @@ static void tee_shm_release(struct tee_shm *shm)
- 		kfree(shm->pages);
- 	}
- 
--	if (shm->ctx)
--		teedev_ctx_put(shm->ctx);
-+	teedev_ctx_put(shm->ctx);
- 
- 	kfree(shm);
- 
-@@ -132,7 +131,6 @@ struct tee_shm *tee_shm_alloc(struct tee_context *ctx, size_t size, u32 flags)
- 	}
- 
- 	shm->flags = flags | TEE_SHM_POOL;
--	shm->teedev = teedev;
- 	shm->ctx = ctx;
- 	if (flags & TEE_SHM_DMA_BUF)
- 		poolm = teedev->pool->dma_buf_mgr;
-@@ -221,7 +219,6 @@ struct tee_shm *tee_shm_register(struct tee_context *ctx, unsigned long addr,
- 	}
- 
- 	shm->flags = flags | TEE_SHM_REGISTER;
--	shm->teedev = teedev;
- 	shm->ctx = ctx;
- 	shm->id = -1;
- 	addr = untagged_addr(addr);
-diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
-index 42687f6c546d..1412e9cc79ce 100644
---- a/include/linux/tee_drv.h
-+++ b/include/linux/tee_drv.h
-@@ -167,8 +167,7 @@ void tee_device_unregister(struct tee_device *teedev);
- 
- /**
-  * struct tee_shm - shared memory object
-- * @teedev:	device used to allocate the object
-- * @ctx:	context using the object, if NULL the context is gone
-+ * @ctx:	context using the object
-  * @paddr:	physical address of the shared memory
-  * @kaddr:	virtual address of the shared memory
-  * @size:	size of shared memory
-@@ -183,7 +182,6 @@ void tee_device_unregister(struct tee_device *teedev);
-  * subsystem and from drivers that implements their own shm pool manager.
-  */
- struct tee_shm {
--	struct tee_device *teedev;
- 	struct tee_context *ctx;
- 	phys_addr_t paddr;
- 	void *kaddr;
+ 	return remap_pfn_range(vma, vma->vm_start, shm->paddr >> PAGE_SHIFT,
 -- 
 2.17.1
 
