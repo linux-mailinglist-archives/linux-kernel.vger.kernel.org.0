@@ -2,143 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83401135F7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 18:40:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38778135FB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 18:51:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388226AbgAIRkn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 12:40:43 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2244 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730235AbgAIRkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 12:40:42 -0500
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id BB3077B600EED500EEA3;
-        Thu,  9 Jan 2020 17:40:41 +0000 (GMT)
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- LHREML713-CAH.china.huawei.com (10.201.108.36) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 9 Jan 2020 17:40:41 +0000
-Received: from localhost (10.202.226.57) by lhreml710-chm.china.huawei.com
- (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Thu, 9 Jan 2020
- 17:40:40 +0000
-Date:   Thu, 9 Jan 2020 17:40:39 +0000
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Zhangfei Gao <zhangfei.gao@linaro.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        <grant.likely@arm.com>, jean-philippe <jean-philippe@linaro.org>,
-        "Jerome Glisse" <jglisse@redhat.com>,
-        <ilias.apalodimas@linaro.org>, <francois.ozog@linaro.org>,
-        <kenneth-lee-2012@foxmail.com>, Wangzhou <wangzhou1@hisilicon.com>,
-        "haojian . zhuang" <haojian.zhuang@linaro.org>,
-        <guodong.xu@linaro.org>, <linux-accelerators@lists.ozlabs.org>,
-        <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <iommu@lists.linux-foundation.org>
-Subject: Re: [PATCH v10 3/4] crypto: hisilicon - Remove module_param
- uacce_mode
-Message-ID: <20200109174039.0000338c@Huawei.com>
-In-Reply-To: <1576465697-27946-4-git-send-email-zhangfei.gao@linaro.org>
-References: <1576465697-27946-1-git-send-email-zhangfei.gao@linaro.org>
-        <1576465697-27946-4-git-send-email-zhangfei.gao@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S2388349AbgAIRu5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 12:50:57 -0500
+Received: from mail1.fiberby.net ([193.104.135.124]:40390 "EHLO
+        mail1.fiberby.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730326AbgAIRu4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 12:50:56 -0500
+X-Greylist: delayed 554 seconds by postgrey-1.27 at vger.kernel.org; Thu, 09 Jan 2020 12:50:55 EST
+Received: from x201s.roaming.asbjorn.biz (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+        by mail1.fiberby.net (Postfix) with ESMTPSA id A759A6010C;
+        Thu,  9 Jan 2020 17:41:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+        s=201905; t=1578591697;
+        bh=aO90ZkWcNxvVfMQ699FY54Oi71pyX/FoCIGUYqP1+0U=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ZGdO3bXag3oQlpfK+0ry+F2q+jK9NIvMoyCTZ+8g9s+A5xN6ZwndRz+s0AzM6Hjri
+         vJT0o0qp16Oooy5k36E16sHSREKf2SpYLk9WYAvXLgDD3Td2OBAqG/oGyh6Woxe45k
+         irwutle4gtBzSVE4jfjejfDbJxyt1hg9bhjwymFPIh68o9032/zKqmSOQuYI/ly/Zx
+         4EWS9aTpVexV78lZonSKKVul6ey7gZofKsCB1Q7ocC89MNvl3Ar2fS/7Wn3OpB2t4D
+         aa6nMdpgdh89WFlMINxTgHHCo6ZSVzFTtGr7B2KcwudgJilzAt9zEnqlfE9EZY9aDG
+         V5wfaYA+QQ33A==
+Received: from x201s.roaming.asbjorn.biz (localhost [127.0.0.1])
+        by x201s.roaming.asbjorn.biz (Postfix) with ESMTP id 0AC5020023E;
+        Thu,  9 Jan 2020 17:41:34 +0000 (UTC)
+Subject: Re: [Bridge] [RFC net-next Patch 0/3] net: bridge: mrp: Add support
+ for Media Redundancy Protocol(MRP)
+To:     Stephen Hemminger <stephen@networkplumber.org>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc:     andrew@lunn.ch, jakub.kicinski@netronome.com,
+        nikolay@cumulusnetworks.com, netdev@vger.kernel.org,
+        roopa@cumulusnetworks.com, bridge@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, vivien.didelot@gmail.com,
+        UNGLinuxDriver@microchip.com, anirudh.venkataramanan@intel.com,
+        jiri@mellanox.com, jeffrey.t.kirsher@intel.com, dsahern@gmail.com,
+        olteanv@gmail.com, davem@davemloft.net,
+        Jesper Dangaard Brouer <brouer@redhat.com>
+References: <20200109150640.532-1-horatiu.vultur@microchip.com>
+ <20200109081907.06281c0f@hermes.lan>
+From:   =?UTF-8?Q?Asbj=c3=b8rn_Sloth_T=c3=b8nnesen?= <ast@fiberby.net>
+Message-ID: <da02006c-dc9d-ce1a-861e-4fc1c1dc2830@fiberby.net>
+Date:   Thu, 9 Jan 2020 17:41:33 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.57]
-X-ClientProxiedBy: lhreml711-chm.china.huawei.com (10.201.108.62) To
- lhreml710-chm.china.huawei.com (10.201.108.61)
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200109081907.06281c0f@hermes.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Dec 2019 11:08:16 +0800
-Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
+Hi Horatiu and Stephen,
 
-> Remove the module_param uacce_mode, which is not used currently.
+Horatiu, thanks for giving this a try. I am looking forward to maybe someday
+be able to run ERPS on white box switches.
+
+On 1/9/20 4:19 PM, Stephen Hemminger wrote:
+> Can this be implemented in userspace?
 > 
-> Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
-> Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
+> Putting STP in the kernel was a mistake (even original author says so).
+> Adding more control protocols in kernel is a security and stability risk.
 
+Another case is VRRP, ERPS (ITU-T G.8032), VRRP group.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+My use-case might not be common, but I have machines with about 10k net_dev (QinQ),
+I would like to be able to do VRRP group on the outer VLANs, which are only a few
+hundred instances without excessive context switching. I would then keep the the
+normal keep-alive state machine in kernel, basically a BPF-based timed periodic
+packet emitter facility and a XDP recieve hook. So only setup and event handling
+has to context switched to user-space.
 
-> ---
->  drivers/crypto/hisilicon/zip/zip_main.c | 31 ++++++-------------------------
->  1 file changed, 6 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
-> index e1bab1a..93345f0 100644
-> --- a/drivers/crypto/hisilicon/zip/zip_main.c
-> +++ b/drivers/crypto/hisilicon/zip/zip_main.c
-> @@ -297,9 +297,6 @@ static u32 pf_q_num = HZIP_PF_DEF_Q_NUM;
->  module_param_cb(pf_q_num, &pf_q_num_ops, &pf_q_num, 0444);
->  MODULE_PARM_DESC(pf_q_num, "Number of queues in PF(v1 1-4096, v2 1-1024)");
->  
-> -static int uacce_mode;
-> -module_param(uacce_mode, int, 0);
-> -
->  static u32 vfs_num;
->  module_param(vfs_num, uint, 0444);
->  MODULE_PARM_DESC(vfs_num, "Number of VFs to enable(1-63)");
-> @@ -791,6 +788,7 @@ static int hisi_zip_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  	pci_set_drvdata(pdev, hisi_zip);
->  
->  	qm = &hisi_zip->qm;
-> +	qm->use_dma_api = true;
->  	qm->pdev = pdev;
->  	qm->ver = rev_id;
->  
-> @@ -798,20 +796,6 @@ static int hisi_zip_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  	qm->dev_name = hisi_zip_name;
->  	qm->fun_type = (pdev->device == PCI_DEVICE_ID_ZIP_PF) ? QM_HW_PF :
->  								QM_HW_VF;
-> -	switch (uacce_mode) {
-> -	case 0:
-> -		qm->use_dma_api = true;
-> -		break;
-> -	case 1:
-> -		qm->use_dma_api = false;
-> -		break;
-> -	case 2:
-> -		qm->use_dma_api = true;
-> -		break;
-> -	default:
-> -		return -EINVAL;
-> -	}
-> -
->  	ret = hisi_qm_init(qm);
->  	if (ret) {
->  		dev_err(&pdev->dev, "Failed to init qm!\n");
-> @@ -1010,12 +994,10 @@ static int __init hisi_zip_init(void)
->  		goto err_pci;
->  	}
->  
-> -	if (uacce_mode == 0 || uacce_mode == 2) {
-> -		ret = hisi_zip_register_to_crypto();
-> -		if (ret < 0) {
-> -			pr_err("Failed to register driver to crypto.\n");
-> -			goto err_crypto;
-> -		}
-> +	ret = hisi_zip_register_to_crypto();
-> +	if (ret < 0) {
-> +		pr_err("Failed to register driver to crypto.\n");
-> +		goto err_crypto;
->  	}
->  
->  	return 0;
-> @@ -1030,8 +1012,7 @@ static int __init hisi_zip_init(void)
->  
->  static void __exit hisi_zip_exit(void)
->  {
-> -	if (uacce_mode == 0 || uacce_mode == 2)
-> -		hisi_zip_unregister_from_crypto();
-> +	hisi_zip_unregister_from_crypto();
->  	pci_unregister_driver(&hisi_zip_pci_driver);
->  	hisi_zip_unregister_debugfs();
->  }
+Unfortunately I haven't had time to explore this yet, but I think such an approach
+could solve a few of the reasons that scalable bridge/ring/ha protocols have to wait
+20 years before being implemented in Linux.
 
-
+-- 
+Best regards
+Asbjørn Sloth Tønnesen
+Network Engineer
+Fiberby ApS - AS42541
