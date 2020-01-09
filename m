@@ -2,121 +2,233 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FAB51351CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 04:17:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E86C1351D6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 04:18:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbgAIDRr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 22:17:47 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:56110 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726913AbgAIDRq (ORCPT
+        id S1727922AbgAIDSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 22:18:05 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:39373 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726913AbgAIDSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 22:17:46 -0500
-Received: by mail-pj1-f65.google.com with SMTP id d5so494331pjz.5
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 19:17:46 -0800 (PST)
+        Wed, 8 Jan 2020 22:18:03 -0500
+Received: by mail-oi1-f194.google.com with SMTP id a67so4676979oib.6;
+        Wed, 08 Jan 2020 19:18:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=nxZyqBXaqg/tT8nIMuw+ak702y+nxZf3L89bHA/qCks=;
-        b=myeQGSLe0d8bhNYOD+O0U7D3LTzqg+3ZDENr8vata5COP/HzIwMIjTBG2wyPtBHiG1
-         jZp+xDkgGEq1vujRwxK+y+5o5E8Sux2i9Z25bx3dzyCvKq7ma2lar9BpNRnjdYxcAJc8
-         RXDYM0cTLxY2SfJfHzTr/vH42lALj9GgEHvEUp+iaS6/Rmew2JfvIipxkCM1jwsiOcC0
-         6Imv3fj13ZlG6wuzqjmOtCuVCig9bn2xtJzNoHaGzgVIHQ2cpzKDNX1Xpi3h7To1HRtX
-         sh47cHsjX01t0qX8/dm+ZjRoEIiIxhfAgRbaOf5IdhFjWNXHpPZi91HOqBOnOKfDvqTH
-         pA4A==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=kMxWLP5AvH5IYgX1VCW6zdr/ftmh1hngWdvNnRgFFEo=;
+        b=VORrxRgUgexswE69vnqeV3cEteMR/wL4/MP/ugnNqwzaG8qb0/EYuGXD9dfy0ok58Q
+         szjzntt3xTayYNs2JivFfdo1bGiD74e1tJLw9EGPHRkbsSZR0KdeuuH/vFN/I99iQhoE
+         /AHdT3JZxfO1ktbSFwNfB9V6h1qxLc+m3tnho1LY6k+uCwcez4GWD/ZSHpsf59YPlkJa
+         rkI/I/WW+Ynurv98B8yetNiECHrpsuRp3kBTccow53UrxzD8M6bGnk9zsxGXMup8T7Ei
+         ZQm3qizDkrUC2Seuc4o51Iw0ObBc386cTUfRqgNg4xNbw7Ywr4r/Ca378xm/5D2bQRBR
+         SNeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=nxZyqBXaqg/tT8nIMuw+ak702y+nxZf3L89bHA/qCks=;
-        b=t1/CWwFwt6MvL7n71/FiNUgV49iVCry2UbU/l08It8+LWaXF3sxeo3zYK2gfWUWqOa
-         xWW+7AnfGkdU6gvgBJ4bVHJKuD9y1v3M2BC/tveTBA+/ZdYIMoyCBLRQUsD8eWRNrXFF
-         NQ7Dt4Fe3UMR5SomrTH2ZmEIvHOqhq873MRg8FzoMqOUuNTr8AvBHeee6yI4lPQpX3Uy
-         gAbKsPeR6ptOiCyz4TRB2XJ5qOHJxKkLXCECNRU5JpjiIPlAgwDekET5XSGjtJwAHEkL
-         Tc3nM+shcJ8G8/o0mSVofkEejmNewPx2GR62xFJHqupmAyAdT6ebaEEgMjm5noFw6FC5
-         1hcw==
-X-Gm-Message-State: APjAAAXxrekux6toSj5RgRF3+BeF+JGEAmebdM/R1cstkzyjiIZfpyNg
-        brtz8xJwMWJl7lkjqoKjo4eE/g==
-X-Google-Smtp-Source: APXvYqxCbKCHB3TlOqqbLRksmu4fkPDvL6e4D8XhJiW3qaBJy/tqYfRllbl+A3f1/Lic0mF6BNgy7g==
-X-Received: by 2002:a17:90a:28a5:: with SMTP id f34mr2543811pjd.79.1578539866002;
-        Wed, 08 Jan 2020 19:17:46 -0800 (PST)
-Received: from greentime-VirtualBox.internal.sifive.com (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
-        by smtp.gmail.com with ESMTPSA id l21sm5345383pff.100.2020.01.08.19.17.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2020 19:17:45 -0800 (PST)
-From:   Greentime Hu <greentime.hu@sifive.com>
-To:     green.hu@gmail.com, greentime@kernel.org, paul.walmsley@sifive.com,
-        palmer@dabbelt.com, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Greentime Hu <greentime.hu@sifive.com>
-Subject: [PATCH] riscv: set pmp configuration if kernel is running in M-mode
-Date:   Thu,  9 Jan 2020 11:17:40 +0800
-Message-Id: <20200109031740.29717-1-greentime.hu@sifive.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=kMxWLP5AvH5IYgX1VCW6zdr/ftmh1hngWdvNnRgFFEo=;
+        b=EW2nWBFcgEklz08gt9XiQOi1eoL77zNlVjp/mWqXh8ZKC6h0Yhge49WvIiL+WcZO5n
+         al1vJguCBpDg5APX86tZSJaeaZuyYaRXSfVvO6MQtBWLCM9PlNcwpNC9ttecVH8jmzc5
+         4Wuso+eo0z8p40dUc2vRJsPIty7fh8qak5NQPPwKnbZNx7meQl/k/giDCDMzlZG+YGmU
+         NIiWlizsz4lb0MT4p5v9rUw1mB4ktVug6KVxOt+bOAy33kU2Ba8eqPEpuR6+VCYTBmVj
+         SktIPS9AJSYZekhpG2VzjpHuqHl/vSiS6MTxAMDTV85q4OoCRFYM7gvzGws8sX//wvA+
+         hubg==
+X-Gm-Message-State: APjAAAXTOLx5x9z+T4GDG5hTgnU8pfCfFRz7NGGOey6xZOXBa1uC/GxB
+        O37+YxjSzz9P4HowiNlfC7OtiP7vhucMZWdudSCqSTua
+X-Google-Smtp-Source: APXvYqwdVp2OHdNEgJxcl5S2pNXZoxvcSAVzYDvDyacbeid2izqY0SHOzen+JhS83JzgsuXoF9HZSqLjnIC+rselkPY=
+X-Received: by 2002:aca:c3c4:: with SMTP id t187mr1533945oif.89.1578539883135;
+ Wed, 08 Jan 2020 19:18:03 -0800 (PST)
+MIME-Version: 1.0
+References: <CAHhAz+ijBTp55gZYAejWthnvdmR_qyQJpVV4r1gyQ-Kud6t9qg@mail.gmail.com>
+ <20200108201511.GA195980@google.com>
+In-Reply-To: <20200108201511.GA195980@google.com>
+From:   Muni Sekhar <munisekharrms@gmail.com>
+Date:   Thu, 9 Jan 2020 08:47:51 +0530
+Message-ID: <CAHhAz+iy9b8Cyc6O=tjzjjixUQqKpTchrQWc+Y4JicAxB_HY5A@mail.gmail.com>
+Subject: Re: pcie: xilinx: kernel hang - ISR readl()
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the kernel is running in S-mode, the expectation is that the
-bootloader or SBI layer will configure the PMP to allow the kernel to
-access physical memory.  But, when the kernel is running in M-mode and is
-started with the ELF "loader", there's probably no bootloader or SBI layer
-involved to configure the PMP.  Thus, we need to configure the PMP
-ourselves to enable the kernel to access all regions.
+On Thu, Jan 9, 2020 at 1:45 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
+>
+> On Tue, Jan 07, 2020 at 09:45:13PM +0530, Muni Sekhar wrote:
+> > Hi,
+> >
+> > I have module with Xilinx FPGA. It implements UART(s), SPI(s),
+> > parallel I/O and interfaces them to the Host CPU via PCI Express bus.
+> > I see that my system freezes without capturing the crash dump for
+> > certain tests. I debugged this issue and it was tracked down to the
+> > below mentioned interrupt handler code.
+> >
+> >
+> > In ISR, first reads the Interrupt Status register using =E2=80=98readl(=
+)=E2=80=99 as
+> > given below.
+> >     status =3D readl(ctrl->reg + INT_STATUS);
+> >
+> >
+> > And then clears the pending interrupts using =E2=80=98writel()=E2=80=99=
+ as given blow.
+> >         writel(status, ctrl->reg + INT_STATUS);
+> >
+> >
+> > I've noticed a kernel hang if INT_STATUS register read again after
+> > clearing the pending interrupts.
+> >
+> > Can someone clarify me why the kernel hangs without crash dump incase
+> > if I read the INT_STATUS register using readl() after clearing the
+> > pending bits?
+> >
+> > Can readl() block?
+>
+> readl() should not block in software.  Obviously at the hardware CPU
+> instruction level, the read instruction has to wait for the result of
+> the read.  Since that data is provided by the device, i.e., your FPGA,
+> it's possible there's a problem there.
 
-Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
----
- arch/riscv/include/asm/csr.h | 12 ++++++++++++
- arch/riscv/kernel/head.S     |  6 ++++++
- 2 files changed, 18 insertions(+)
+Thank you very much for your reply.
+Where can I find the details about what is protocol for reading the
+=E2=80=98memory mapped IO=E2=80=99? Can you point me to any useful links..
+I tried locate the exact point of the kernel code where CPU waits for
+read instruction as given below.
+readl() -> __raw_readl() -> return *(const volatile u32 __force *)add
+Do I need to check for the assembly instructions, here?
 
-diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-index 0a62d2d68455..0f25e6c4e45c 100644
---- a/arch/riscv/include/asm/csr.h
-+++ b/arch/riscv/include/asm/csr.h
-@@ -72,6 +72,16 @@
- #define EXC_LOAD_PAGE_FAULT	13
- #define EXC_STORE_PAGE_FAULT	15
- 
-+/* PMP configuration */
-+#define PMP_R			0x01
-+#define PMP_W			0x02
-+#define PMP_X			0x04
-+#define PMP_A			0x18
-+#define PMP_A_TOR		0x08
-+#define PMP_A_NA4		0x10
-+#define PMP_A_NAPOT		0x18
-+#define PMP_L			0x80
-+
- /* symbolic CSR names: */
- #define CSR_CYCLE		0xc00
- #define CSR_TIME		0xc01
-@@ -100,6 +110,8 @@
- #define CSR_MCAUSE		0x342
- #define CSR_MTVAL		0x343
- #define CSR_MIP			0x344
-+#define CSR_PMPCFG0		0x3a0
-+#define CSR_PMPADDR0		0x3b0
- #define CSR_MHARTID		0xf14
- 
- #ifdef CONFIG_RISCV_M_MODE
-diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-index 5c8b24bf4e4e..f8f996916c5b 100644
---- a/arch/riscv/kernel/head.S
-+++ b/arch/riscv/kernel/head.S
-@@ -60,6 +60,12 @@ _start_kernel:
- 	/* Reset all registers except ra, a0, a1 */
- 	call reset_regs
- 
-+	/* Setup a PMP to permit access to all of memory. */
-+	li a0, -1
-+	csrw CSR_PMPADDR0, a0
-+	li a0, (PMP_A_NAPOT | PMP_R | PMP_W | PMP_X)
-+	csrw CSR_PMPCFG0, a0
-+
- 	/*
- 	 * The hartid in a0 is expected later on, and we have no firmware
- 	 * to hand it to us.
--- 
-2.17.1
+>
+> Can you tell whether the FPGA has received the Memory Read for
+> INT_STATUS and sent the completion?
 
+Is there a way to know this with the help of software debugging(either
+enabling dynamic debugging or adding new debug prints)? Can you please
+point some tools\hw needed to find this?
+
+
+>
+> On the architectures I'm familiar with, if a device doesn't respond,
+> something would eventually time out so the CPU doesn't wait forever.
+
+What is timeout here? I mean how long CPU waits for completion? Since
+this code runs from interrupt context, does it causes the system to
+freeze if timeout is more?
+
+lspci output:
+$ lspci
+00:00.0 Host bridge: Intel Corporation Atom Processor Z36xxx/Z37xxx
+Series SoC Transaction Register (rev 11)
+00:02.0 VGA compatible controller: Intel Corporation Atom Processor
+Z36xxx/Z37xxx Series Graphics & Display (rev 11)
+00:13.0 SATA controller: Intel Corporation Atom Processor E3800 Series
+SATA AHCI Controller (rev 11)
+00:14.0 USB controller: Intel Corporation Atom Processor
+Z36xxx/Z37xxx, Celeron N2000 Series USB xHCI (rev 11)
+00:1a.0 Encryption controller: Intel Corporation Atom Processor
+Z36xxx/Z37xxx Series Trusted Execution Engine (rev 11)
+00:1b.0 Audio device: Intel Corporation Atom Processor Z36xxx/Z37xxx
+Series High Definition Audio Controller (rev 11)
+00:1c.0 PCI bridge: Intel Corporation Atom Processor E3800 Series PCI
+Express Root Port 1 (rev 11)
+00:1c.2 PCI bridge: Intel Corporation Atom Processor E3800 Series PCI
+Express Root Port 3 (rev 11)
+00:1c.3 PCI bridge: Intel Corporation Atom Processor E3800 Series PCI
+Express Root Port 4 (rev 11)
+00:1d.0 USB controller: Intel Corporation Atom Processor Z36xxx/Z37xxx
+Series USB EHCI (rev 11)
+00:1f.0 ISA bridge: Intel Corporation Atom Processor Z36xxx/Z37xxx
+Series Power Control Unit (rev 11)
+00:1f.3 SMBus: Intel Corporation Atom Processor E3800 Series SMBus
+Controller (rev 11)
+01:00.0 RAM memory: PLDA Device 5555
+03:00.0 Ethernet controller: Intel Corporation I210 Gigabit Network
+Connection (rev 03)
+
+>
+> > Snippet of the ISR code is given blow:
+> >
+> > https://pastebin.com/WdnZJZF5
+> >
+> >
+> >
+> > static irqreturn_t pcie_isr(int irq, void *dev_id)
+> >
+> > {
+> >
+> >         struct test_device *ctrl =3D data;
+> >
+> >         u32 status;
+> >
+> > =E2=80=A6
+> >
+> >
+> >
+> >         status =3D readl(ctrl->reg + INT_STATUS);
+> >
+> >         /*
+> >
+> >          * Check to see if it was our interrupt
+> >
+> >          */
+> >
+> >         if (!(status & 0x000C))
+> >
+> >                 return IRQ_NONE;
+> >
+> >
+> >
+> >         /* Clear the interrupt */
+> >
+> >         writel(status, ctrl->reg + INT_STATUS);
+> >
+> >
+> >
+> >         if (status & 0x0004) {
+> >
+> >                 /*
+> >
+> >                  * Tx interrupt pending.
+> >
+> >                  */
+> >
+> >                  ....
+> >
+> >        }
+> >
+> >
+> >
+> >         if (status & 0x0008) {
+> >
+> >                 /* Rx interrupt Pending */
+> >
+> >                 /* The system freezes if I read again the INT_STATUS
+> > register as given below */
+> >
+> >                 status =3D readl(ctrl->reg + INT_STATUS);
+> >
+> >                 ....
+> >
+> >         }
+> >
+> > ..
+> >
+> >         return IRQ_HANDLED;
+> > }
+> >
+> >
+> >
+> > --
+> > Thanks,
+> > Sekhar
+
+
+
+--=20
+Thanks,
+Sekhar
