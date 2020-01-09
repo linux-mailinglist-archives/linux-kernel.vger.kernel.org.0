@@ -2,63 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15B72135DA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:07:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F24D135DAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:07:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733139AbgAIQHM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 11:07:12 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:26903 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1733124AbgAIQHK (ORCPT
+        id S1733190AbgAIQHn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 11:07:43 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:60436 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1733175AbgAIQHk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 11:07:10 -0500
+        Thu, 9 Jan 2020 11:07:40 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578586028;
+        s=mimecast20190719; t=1578586059;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Io3pe+yXhkH0XtVt81FPsOl3c54xtZQ9M8pNFcB3Jec=;
-        b=eakVklX4Yk90th1XKoqsSl+xz4aJSaNAUwuMNW6RZv4t5Hyd6YkcnwQVEdOVAWDI5U8h8B
-        q6s0FqwWzqt814ScYAjoqtFYtvh1JPb4weAcbY3+d2JPu80D4wnfueMpCis8Gd08wfqyqh
-        dpckURhAW7cuzLgOIDbiAIuxQBXQqoM=
+        bh=V80sKnfPgpuJ2PN6PlqMSnAckHTRWhZvUDB6P0wLWgc=;
+        b=FaOTU52C15TiFR108zY1GEeUiAaWnmXt0qDEUp6GYzfWCTD4LzjukO4LYySLeUhOa2+bRy
+        JxJA5ahj1i0ThjajltmMqAcFPYGL+i1D5rjRw6tl9PO6m8JNbJeVIRUl+sSjcpaqnaRAVm
+        8BDGi9JDvN1moqiRdcWjY4w25IYE0/k=
 Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
  [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-392-qPNo7MnlMrmQeF8BtaDGBg-1; Thu, 09 Jan 2020 11:07:06 -0500
-X-MC-Unique: qPNo7MnlMrmQeF8BtaDGBg-1
-Received: by mail-wr1-f71.google.com with SMTP id z15so3077059wrw.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:07:06 -0800 (PST)
+ us-mta-317-kft19r4nOCKqCi6v_TGSSA-1; Thu, 09 Jan 2020 11:07:38 -0500
+X-MC-Unique: kft19r4nOCKqCi6v_TGSSA-1
+Received: by mail-wr1-f71.google.com with SMTP id d8so3036829wrq.12
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:07:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Io3pe+yXhkH0XtVt81FPsOl3c54xtZQ9M8pNFcB3Jec=;
-        b=Q+iM0KmppR0rFkxsUnRUJK+GtJs8O6EcVYv+Gu/n43Lnlshn1U9AAGHkf0hWPOqS5n
-         EzdILijBgAGpCNKzltt03TYrdRvL57HMvl5T0MXMePBdOn8VFkvx0sHw8EBV7zumdLMH
-         c9cQ+favrgD4wJuYd32MKfcyWL7w7AMFVJQXRpga76/0YodyQJfaZE+O6lex06++q5HV
-         ObEZJ4BYIf3YS5xoRisvpiI+OSFQmbbzcdNN84QJhYvQ0klaYKrvLBF8nAcoofR23HNV
-         qkoZ3S9MNME+EP9OS1dyt2X/1YFzFL44C2tgK3jJqxdVpPaGf5u3Fx5NhbIB7whgGbqy
-         1koA==
-X-Gm-Message-State: APjAAAUxp2N+a1fq9XAEa4Ihz00hOt0wrnIgR/JAQDuhecHJGWhfaSVi
-        6S1zBWHKJGPSb3B/hWwfNrM9K1LGdHI+8pvlV2X34/iBl+eDzSv+XRhtIpj3DAtaILkZDbRrwbX
-        A1F5PYnQ7pGaxbPVlGd27I7UI
-X-Received: by 2002:a5d:5273:: with SMTP id l19mr12042234wrc.175.1578586024905;
-        Thu, 09 Jan 2020 08:07:04 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyhV2DNPneDJ3INZRmEMT5LfpnDkTy4hQ+cTQKOs/UrhpfRFlyh+43dh8pZyrUb2ibu33ow8w==
-X-Received: by 2002:a5d:5273:: with SMTP id l19mr12042205wrc.175.1578586024671;
-        Thu, 09 Jan 2020 08:07:04 -0800 (PST)
+        bh=V80sKnfPgpuJ2PN6PlqMSnAckHTRWhZvUDB6P0wLWgc=;
+        b=IitlDNCD/LdCDJgmWOeEN5J+OVIBcqEc+rrrJUMVvDLKOlGYyZQhDnHiDnGY3RxiPo
+         N+bcix1/c6SKSdDDn8hwXhD4eUlg5ItC0XVrPnJ/mfDoJT78IHQ8XOke9o1S5h18jf+9
+         baOOLIt2UV1PraM7pZNUJWaGiMnOLuOu0MM6LejXNeP0GGWbsMOYM/hAm3aN4QyMCwFJ
+         ndZ1YX49lKo4O0SSZ5ohwFluzGGfgTY57DJoxMnRxQQKFdxRwNXTfZudsuH6M/1MUDX0
+         ARsQgNqLzHE3BSOx2fAtxcMUd35A283yU4zcMgthbjQbGjA3C8K6NiU2Xw81VNGbADEp
+         9d8g==
+X-Gm-Message-State: APjAAAU5bo+XeJDCM3qoymQRWOiE4EOEtCBOX1O2HSzfr7mKsCHHogc6
+        KJ9t8SKDU1OHS3woy8pm3SGup21k29ClO7/7xIEdONz41gHqdm4zRTfVtxVynA8Qj0FIzAphnqS
+        pjtmv9azx4lwmuUc9dXANAD0V
+X-Received: by 2002:a1c:96c4:: with SMTP id y187mr5972344wmd.112.1578586057204;
+        Thu, 09 Jan 2020 08:07:37 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwc4TaEWjCmUkmfkOmwGRLIgB1O+Rz/bvnkIEzkSOYGeyv8HJLRBacELGQ/7+dBBu8TEZebjw==
+X-Received: by 2002:a1c:96c4:: with SMTP id y187mr5972312wmd.112.1578586057002;
+        Thu, 09 Jan 2020 08:07:37 -0800 (PST)
 Received: from redfedo.redhat.com (host81-140-166-164.range81-140.btcentralplus.com. [81.140.166.164])
-        by smtp.gmail.com with ESMTPSA id q3sm9123252wrn.33.2020.01.09.08.07.03
+        by smtp.gmail.com with ESMTPSA id h2sm8591413wrv.66.2020.01.09.08.07.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 08:07:04 -0800 (PST)
+        Thu, 09 Jan 2020 08:07:36 -0800 (PST)
 From:   Julien Thierry <jthierry@redhat.com>
 To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     jpoimboe@redhat.com, peterz@infradead.org, raphael.gault@arm.com,
         catalin.marinas@arm.com, will@kernel.org,
         Julien Thierry <jthierry@redhat.com>
-Subject: [RFC v5 34/57] objtool: arm64: Decode load/store exclusive
-Date:   Thu,  9 Jan 2020 16:02:37 +0000
-Message-Id: <20200109160300.26150-35-jthierry@redhat.com>
+Subject: [RFC v5 35/57] objtool: arm64: Decode atomic load/store
+Date:   Thu,  9 Jan 2020 16:02:38 +0000
+Message-Id: <20200109160300.26150-36-jthierry@redhat.com>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200109160300.26150-1-jthierry@redhat.com>
 References: <20200109160300.26150-1-jthierry@redhat.com>
@@ -69,186 +69,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Decode load/store exclusive instructions. From objtool's point
-of view there aren't particular semantics to these operations.
+Decode v8.1 atomic load/store instructions.
 
 Suggested-by: Raphael Gault <raphael.gault@arm.com>
 Signed-off-by: Julien Thierry <jthierry@redhat.com>
 ---
- tools/objtool/arch/arm64/decode.c             | 140 ++++++++++++++++++
- .../objtool/arch/arm64/include/insn_decode.h  |   3 +
- 2 files changed, 143 insertions(+)
+ tools/objtool/arch/arm64/decode.c             | 86 +++++++++++++++++++
+ .../objtool/arch/arm64/include/insn_decode.h  |  2 +
+ 2 files changed, 88 insertions(+)
 
 diff --git a/tools/objtool/arch/arm64/decode.c b/tools/objtool/arch/arm64/decode.c
-index 7d480efe0bc2..e3f77d68b282 100644
+index e3f77d68b282..1897f62987fa 100644
 --- a/tools/objtool/arch/arm64/decode.c
 +++ b/tools/objtool/arch/arm64/decode.c
-@@ -830,6 +830,11 @@ static struct aarch64_insn_decoder ld_st_decoder[] = {
- 		.value = 0b000011100000000,
- 		.decode_func = arm_decode_adv_simd_single_post,
+@@ -875,6 +875,11 @@ static struct aarch64_insn_decoder ld_st_decoder[] = {
+ 		.value = 0b001100000000011,
+ 		.decode_func = arm_decode_ld_st_imm_pre,
  	},
 +	{
-+		.mask = 0b001111000000000,
-+		.value = 0b000000000000000,
-+		.decode_func = arm_decode_ld_st_exclusive,
++		.mask = 0b001101010000011,
++		.value = 0b001100010000000,
++		.decode_func = arm_decode_atomic,
 +	},
  	{
- 		.mask = 0b001101100000000,
- 		.value = 0b001000000000000,
-@@ -1190,6 +1195,141 @@ int arm_decode_adv_simd_single_post(u32 instr, enum insn_type *type,
- 	return ret;
+ 		.mask = 0b001101010000011,
+ 		.value = 0b001100010000010,
+@@ -1667,6 +1672,87 @@ int arm_decode_ld_st_imm_unpriv(u32 instr, enum insn_type *type,
+ 	return 0;
  }
  
-+#define ST_EXCL_UNALLOC_1 0b001010
-+#define ST_EXCL_UNALLOC_2 0b000010
-+
-+#define LDXRB		0b000100
-+#define LDAXRB		0b000101
-+#define LDLARB		0b001100
-+#define LDARB		0b001101
-+#define LDXRH		0b010100
-+#define LDAXRH		0b010101
-+#define LDLARH		0b011100
-+#define LDARH		0b011101
-+#define LDXR		0b100100
-+#define LDAXR		0b100101
-+#define LDXP		0b100110
-+#define LDAXP		0b100111
-+#define LDLAR		0b101100
-+#define LDAR		0b101101
-+#define LDXR_64		0b110100
-+#define LDAXR_64	0b110101
-+#define LDXP_64		0b110110
-+#define LDAXP_64	0b110111
-+#define LDLAR_64	0b111100
-+#define LDAR_64		0b111101
-+
-+#define LD_EXCL_NUMBER	20
-+
-+static int ld_excl_masks[] = {
-+	LDXRB,
-+	LDAXRB,
-+	LDLARB,
-+	LDARB,
-+	LDXRH,
-+	LDAXRH,
-+	LDLARH,
-+	LDARH,
-+	LDXR,
-+	LDAXR,
-+	LDXP,
-+	LDAXP,
-+	LDLAR,
-+	LDAR,
-+	LDXR_64,
-+	LDAXR_64,
-+	LDXP_64,
-+	LDAXP_64,
-+	LDLAR_64,
-+	LDAR_64,
++static struct aarch64_insn_decoder atom_unallocs_decoder[] = {
++	{
++		.mask = 0b1001111,
++		.value = 0b0001001,
++	},
++	{
++		.mask = 0b1001110,
++		.value = 0b0001010,
++	},
++	{
++		.mask = 0b1001111,
++		.value = 0b0001101,
++	},
++	{
++		.mask = 0b1001110,
++		.value = 0b0001110,
++	},
++	{
++		.mask = 0b1101111,
++		.value = 0b0001100,
++	},
++	{
++		.mask = 0b1111111,
++		.value = 0b0111100,
++	},
++	{
++		.mask = 0b1000000,
++		.value = 0b1000000,
++	},
 +};
 +
-+int arm_decode_ld_st_exclusive(u32 instr, enum insn_type *type,
-+			       unsigned long *immediate,
-+			       struct list_head *ops_list)
++int arm_decode_atomic(u32 instr, enum insn_type *type,
++		      unsigned long *immediate,
++		      struct list_head *ops_list)
 +{
-+	unsigned char size = 0, o2 = 0, L = 0, o1 = 0, o0 = 0;
-+	unsigned char rt = 0, rt2 = 0, rn = 0;
++	unsigned char V = 0, A = 0, R = 0, o3 = 0, opc = 0;
++	unsigned char rn = 0, rt = 0;
 +	unsigned char decode_field = 0;
 +	struct stack_op *op;
 +	int i = 0;
 +
-+	size = (instr >> 30) & ONES(2);
-+	o2 = EXTRACT_BIT(instr, 23);
-+	L = EXTRACT_BIT(instr, 22);
-+	o1 = EXTRACT_BIT(instr, 21);
-+	o0 = EXTRACT_BIT(instr, 15);
++	V = EXTRACT_BIT(instr, 26);
++	A = EXTRACT_BIT(instr, 23);
++	R = EXTRACT_BIT(instr, 22);
++	o3 = EXTRACT_BIT(instr, 15);
++	opc = (instr >> 12) & ONES(3);
 +
-+	rt2 = (instr >> 10) & ONES(5);
++	decode_field = (V << 6) | (A << 5) | (R << 4) | (o3 << 3) | opc;
++
++	for (i = 0; i < ARRAY_SIZE(atom_unallocs_decoder); i++) {
++		if ((decode_field & atom_unallocs_decoder[i].mask) ==
++		    atom_unallocs_decoder[i].value) {
++			return arm_decode_unknown(instr,
++						  type,
++						  immediate,
++						  ops_list);
++		}
++	}
++
 +	rn = (instr >> 5) & ONES(5);
 +	rt = instr & ONES(5);
-+
-+	decode_field = (size << 4) | (o2 << 3) | (L << 2) | (o1 << 1) | o0;
-+
-+	if ((decode_field & ST_EXCL_UNALLOC_1) == ST_EXCL_UNALLOC_1 ||
-+	    (decode_field & 0b101010) == ST_EXCL_UNALLOC_2) {
-+		if (rt2 != 31)
-+			return arm_decode_unknown(instr, type, immediate,
-+						  ops_list);
-+	}
 +
 +	if (!stack_related_reg(rn)) {
 +		*type = INSN_OTHER;
 +		return 0;
 +	}
-+
 +	*type = INSN_STACK;
++
 +	op = calloc(1, sizeof(*op));
 +	list_add_tail(&op->list, ops_list);
 +
-+	for (i = 0; i < LD_EXCL_NUMBER; i++) {
-+		if ((decode_field & 0b111111) == ld_excl_masks[i]) {
-+			op->src.type = OP_SRC_REG_INDIRECT;
-+			op->src.reg = rn;
-+			op->src.offset = 0;
-+			op->dest.type = OP_DEST_REG;
-+			op->dest.reg = rt;
-+			op->dest.offset = 0;
-+			return 0;
-+		}
-+	}
-+
-+	op->dest.type = OP_DEST_REG_INDIRECT;
-+	op->dest.reg = rn;
-+	op->dest.offset = 0;
-+	op->src.type = OP_SRC_REG;
-+	op->src.reg = rt;
++	op->src.reg = rn;
++	op->src.type = OP_DEST_REG_INDIRECT;
 +	op->src.offset = 0;
++	op->dest.type = OP_DEST_REG;
++	op->dest.reg = rt;
++	op->dest.offset = 0;
 +
 +	return 0;
 +}
 +
-+#undef ST_EXCL_UNALLOC_1
-+#undef ST_EXCL_UNALLOC_2
-+
-+#undef LD_EXCL_NUMBER
-+
-+#undef LDXRB
-+#undef LDAXRB
-+#undef LDLARB
-+#undef LDARB
-+#undef LDXRH
-+#undef LDAXRH
-+#undef LDLARH
-+#undef LDARH
-+#undef LDXR
-+#undef LDAXR
-+#undef LDXP
-+#undef LDAXP
-+#undef LDLAR
-+#undef LDAR
-+#undef LDXR_64
-+#undef LDAXR_64
-+#undef LDXP_64
-+#undef LDAXP_64
-+#undef LDLAR_64
-+#undef LDAR_64
-+
- int arm_decode_ld_st_regs_unsc_imm(u32 instr, enum insn_type *type,
- 				   unsigned long *immediate,
- 				   struct list_head *ops_list)
+ int arm_decode_ld_st_regs_off(u32 instr, enum insn_type *type,
+ 			      unsigned long *immediate,
+ 			      struct list_head *ops_list)
 diff --git a/tools/objtool/arch/arm64/include/insn_decode.h b/tools/objtool/arch/arm64/include/insn_decode.h
-index 7fd333f88612..61152b4aa42a 100644
+index 61152b4aa42a..89488c5df5e9 100644
 --- a/tools/objtool/arch/arm64/include/insn_decode.h
 +++ b/tools/objtool/arch/arm64/include/insn_decode.h
-@@ -136,4 +136,7 @@ int arm_decode_ld_st_regs_off(u32 instr, enum insn_type *type,
- int arm_decode_ld_st_regs_unsigned(u32 instr, enum insn_type *type,
- 				   unsigned long *immediate,
- 				   struct list_head *ops_list);
-+int arm_decode_ld_st_exclusive(u32 instr, enum insn_type *type,
-+			       unsigned long *immediate,
-+			       struct list_head *ops_list);
- #endif /* _ARM_INSN_DECODE_H */
+@@ -130,6 +130,8 @@ int arm_decode_ld_st_imm_unpriv(u32 instr, enum insn_type *type,
+ int arm_decode_ld_st_imm_pre(u32 instr, enum insn_type *type,
+ 			     unsigned long *immediate,
+ 			     struct list_head *ops_list);
++int arm_decode_atomic(u32 instr, enum insn_type *type,
++		      unsigned long *immediate, struct list_head *ops_list);
+ int arm_decode_ld_st_regs_off(u32 instr, enum insn_type *type,
+ 			      unsigned long *immediate,
+ 			      struct list_head *ops_list);
 -- 
 2.21.0
 
