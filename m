@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4826C135F51
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 18:29:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44B2C135F53
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 18:29:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388147AbgAIR22 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 12:28:28 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:50810 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388126AbgAIR20 (ORCPT
+        id S2388177AbgAIR2c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 12:28:32 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:48254 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730111AbgAIR2b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 12:28:26 -0500
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 009HS8F6025262
-        for <linux-kernel@vger.kernel.org>; Thu, 9 Jan 2020 09:28:25 -0800
+        Thu, 9 Jan 2020 12:28:31 -0500
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 009HQZv6015920
+        for <linux-kernel@vger.kernel.org>; Thu, 9 Jan 2020 09:28:30 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=KF+G+5MGSSib1j/y16MoaGVIL2x224fhh1Xrxl1wcBY=;
- b=KQnPmDwbLfhDBLXNEa5tidPjixsL3mnuvchCjmWjfVZ/BpF1bzNXWkfkol/tRDDw9bLI
- LbUtHH1sNAyC/O/xao+8ICOxvCi2qfh83BSZ2dbx9Gn2QbObIsQABjAURj7JSTYGX8Fc
- l6sq610ugdCxJc6vfUgwX4Qq+rf2+pZRt+w= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by m0001303.ppops.net with ESMTP id 2xdrhwvg2u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 09:28:25 -0800
-Received: from intmgw001.41.prn1.facebook.com (2620:10d:c085:208::11) by
- mail.thefacebook.com (2620:10d:c085:21d::4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Thu, 9 Jan 2020 09:28:23 -0800
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=facebook; bh=jnlgsDdtYVJveaI0G6Q7dmewjsI31Dp2x/oUOXsEp0g=;
+ b=Xci64heNvHp7/gmXUk5+Uzkig0u46Vd6/Gt2x3k8ZiufYiQNyh5ma26pXDmYFZ0Kz4U/
+ a+LaLjJvE/v4beM/6k3M8Sd04UtXorYhpKAl+401BWfqP5MZvzILS+1IwiZRjfMSIx8u
+ WJg98a9jPyEO/YRa9WZnKrudgBh1SCQs31c= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2xdtwdbwdb-12
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 09:28:30 -0800
+Received: from intmgw002.06.prn3.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
+ Thu, 9 Jan 2020 09:28:20 -0800
 Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id 728CE1D2DC5D4; Thu,  9 Jan 2020 09:28:18 -0800 (PST)
+        id 74D281D2DC5D6; Thu,  9 Jan 2020 09:28:18 -0800 (PST)
 Smtp-Origin-Hostprefix: devvm
 From:   Roman Gushchin <guro@fb.com>
 Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
@@ -42,69 +42,56 @@ CC:     Michal Hocko <mhocko@kernel.org>,
         <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
         Roman Gushchin <guro@fb.com>
 Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH 0/7] mm: memcg: kmem API cleanup
-Date:   Thu, 9 Jan 2020 09:27:38 -0800
-Message-ID: <20200109172745.285585-1-guro@fb.com>
+Subject: [PATCH 1/7] mm: kmem: remove duplicate definitions of __memcg_kmem_(un)charge()
+Date:   Thu, 9 Jan 2020 09:27:39 -0800
+Message-ID: <20200109172745.285585-2-guro@fb.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200109172745.285585-1-guro@fb.com>
+References: <20200109172745.285585-1-guro@fb.com>
 X-FB-Internal: Safe
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-01-09_03:2020-01-09,2020-01-09 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 phishscore=0
- lowpriorityscore=0 priorityscore=1501 spamscore=0 impostorscore=0
- mlxscore=0 mlxlogscore=589 malwarescore=0 adultscore=0 suspectscore=0
- clxscore=1015 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001090143
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxscore=0
+ lowpriorityscore=0 spamscore=0 suspectscore=0 bulkscore=0 adultscore=0
+ impostorscore=0 clxscore=1015 malwarescore=0 priorityscore=1501
+ mlxlogscore=730 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-2001090143
 X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset aims to clean up the kernel memory charging API.
-It doesn't bring any functional changes, just removes unused
-arguments, duplicate definitions, renames some functions and
-fixes some comments.
+For some reason these inline functions are defined twice. Remove
+the second identical copy.
 
-Currently it's not obvious which functions are most basic
-(memcg_kmem_(un)charge_memcg()) and which are based on them
-(memcg_kmem_(un)charge()). The patchset renames these functions
-and removes unused arguments:
+Signed-off-by: Roman Gushchin <guro@fb.com>
+---
+ include/linux/memcontrol.h | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-TL;DR:
-was:
-  memcg_kmem_charge_memcg(page, gfp, order, memcg)
-  memcg_kmem_uncharge_memcg(memcg, nr_pages)
-  memcg_kmem_charge(page, gfp, order)
-  memcg_kmem_uncharge(page, order)
-
-now:
-  memcg_kmem_charge(memcg, gfp, nr_pages)
-  memcg_kmem_uncharge(memcg, nr_pages)
-  memcg_kmem_charge_page(page, gfp, order)
-  memcg_kmem_uncharge_page(page, order)
-
-
-Roman Gushchin (7):
-  mm: kmem: remove duplicate definitions of __memcg_kmem_(un)charge()
-  mm: kmem: cleanup (__)memcg_kmem_charge_memcg() arguments
-  mm: kmem: cleanup memcg_kmem_uncharge_memcg() arguments
-  mm: kmem: rename memcg_kmem_(un)charge() into
-    memcg_kmem_(un)charge_page()
-  mm: kmem: switch to nr_pages in (__)memcg_kmem_charge_memcg()
-  mm: memcg/slab: cache page number in memcg_(un)charge_slab()
-  mm: kmem: rename (__)memcg_kmem_(un)charge_memcg() to
-    __memcg_kmem_(un)charge()
-
- fs/pipe.c                  |  2 +-
- include/linux/memcontrol.h | 46 ++++++++++++++------------------
- kernel/fork.c              |  9 ++++---
- mm/memcontrol.c            | 54 ++++++++++++++++++--------------------
- mm/page_alloc.c            |  4 +--
- mm/slab.h                  | 22 +++++++++-------
- 6 files changed, 65 insertions(+), 72 deletions(-)
-
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index a7a0a1a5c8d5..9745d172ba18 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -1438,15 +1438,6 @@ static inline void memcg_kmem_uncharge(struct page *page, int order)
+ {
+ }
+ 
+-static inline int __memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
+-{
+-	return 0;
+-}
+-
+-static inline void __memcg_kmem_uncharge(struct page *page, int order)
+-{
+-}
+-
+ #define for_each_memcg_cache_index(_idx)	\
+ 	for (; NULL; )
+ 
 -- 
 2.21.1
 
