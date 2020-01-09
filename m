@@ -2,53 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94816135A91
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 14:51:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6307135A9B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 14:52:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731293AbgAINvb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 08:51:31 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37942 "EHLO
+        id S1731315AbgAINw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 08:52:26 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42398 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729707AbgAINvb (ORCPT
+        with ESMTP id S1729476AbgAINw0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 08:51:31 -0500
-Received: by mail-wr1-f68.google.com with SMTP id y17so7498255wrh.5
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 05:51:29 -0800 (PST)
+        Thu, 9 Jan 2020 08:52:26 -0500
+Received: by mail-wr1-f68.google.com with SMTP id q6so7442479wro.9
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 05:52:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=monstr-eu.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=XDCI6TLpdeIYPij5yOHYCifq+NjQyJfwW4dyJEujviU=;
-        b=G3hIUulK4TgEq82wz5GNtf5wS7Mq2sgiYrOa/+OvqMHJJNB+YkDsyumIDlcCCGezFj
-         HhXGOIkHJkDvYMuJCmaFP8yZYz5J0m9VCj1xx+9Me5O68XQr8zMuMvFsy7n1V5NfOBAg
-         yKDeiHq/64ozhgaPBvsuPgK3un1Cz9HQs2Tl1dcS7eCeC2XIdGcwXpWz+1yAvfQw09vX
-         vtKx6J1uFA2d5uG0T9Wr3TFZoFQAPMlNG5WDxJ9tQBnJu1G+Ghd/unu/ESnKGg1BcK2P
-         mnhyOGn3lLylsBqzjiUj360YW3DdgotpRceA50aZfwY32TVnatQod9+G/+iR0BX4Vs6u
-         tyIQ==
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vmHw6Rztk1LgVkwramcXLwEMbfT/KPvyudxKdtElSqM=;
+        b=hU1Mn+ipMihLL4KLrkeIpBebma65ax6OVx/CZ7BMWMJ7lkiVPGfRvuGNDb+rOkVZlT
+         CMhcMe9oKcneUvShrYwP0MqHMcHPUdR1UY0XrSxfYU8lwwqgfCZkOQuaAaHfHRHu72Su
+         HNOoSVZDaEq+nyADGyYORh3MddsE2t/0JeQyV8dN6e7ouM4cmVGC+CH/wyF7r8qZBYmf
+         Z5UdGMTNB9eHuDxiZpopOpMID3V4bttz7E5u6m37m1ira7tSHyhMOnYHsd14XiEQRNqr
+         x7gKpM4AxlEpWENMj1rNooOmhT0Z8vfkEO5rzzCFgXp+UrRkzpaxEIABkJ2BPdzdLh1+
+         EAtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=XDCI6TLpdeIYPij5yOHYCifq+NjQyJfwW4dyJEujviU=;
-        b=NtAkXjxSxUVZ/ontNVSe5c0ZU/3H7buJmNaw0K2lyXvdzB4paM3/fveSe43zGXDgxb
-         90+CJsDbNmLXahXdmNMUbcVUkN2nF4YHpi/byIA18izgr9GT7fI6/OAZ1nYmyvMNEueJ
-         kiBZOM1yuRiJHiy0VC+JK9CNwSCy93so7EEegQpLoHxJmWLlYtYfWTmO19vIuuGPLrxf
-         F5fwrsA6pVknPI6IpeoyrB6cdbzbqJSlcK+R+G2eTVfYsL5vtPLFwPlBmgLQ8GIdSMzG
-         WruSpo/pQinJ1uUm4Z8jTIO1YenmJjCN26oIojYvcDVQ5CJkhcDRJ2vI9fzpBIM6HGY1
-         10dQ==
-X-Gm-Message-State: APjAAAXXAd0C45Zy/wYMxKa9kyDeBs2IRSOKmlc3SqIas9sBllYDblEB
-        CoPlAD9YscJFBl7dBcnLQw1Rhb1Op2VWDR79xOm1Ow==
-X-Google-Smtp-Source: APXvYqz8e1hxJpaPqVsNsHKM5ImeIdIGCduTba279//zephv/DVYc8tIyk0DE067Xb7xRCg7Bq0x3Ng81eVOKS4awRo=
-X-Received: by 2002:a5d:44cd:: with SMTP id z13mr11245464wrr.104.1578577889103;
- Thu, 09 Jan 2020 05:51:29 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1578577147.git.michal.simek@xilinx.com>
-In-Reply-To: <cover.1578577147.git.michal.simek@xilinx.com>
-From:   Michal Simek <monstr@monstr.eu>
-Date:   Thu, 9 Jan 2020 14:51:18 +0100
-Message-ID: <CAHTX3dJDuoXjX4CJJ88Vf_uUWSi7GDMGM5vYmxwNFB+9Sqw7cg@mail.gmail.com>
-Subject: Re: [PATCH 0/6] arm64: zynqmp: Various DT fixes
-To:     linux-arm <linux-arm-kernel@lists.infradead.org>
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=vmHw6Rztk1LgVkwramcXLwEMbfT/KPvyudxKdtElSqM=;
+        b=QosA5FFRgx+DsAOQY6SON1R9/X2i++QLnYqNke4JcKmkD+U3egVg5FHmmCrLriPAbD
+         cwFt5QSlmGXxIPSWWXsZw1cKNMjSPIQvjrL5QjYo+7Sr9pDXwKTbOfLPcTYmOrFzpt0n
+         Lo42YDJyymumPyXh9cCNpUDghxGxjA0ioQYtWTQpmISPFsNCwdhX8ao1nFme/hxSLHfr
+         OlKL5X5naWiAKyb3vPD5I4o+iwErOUwyBbf3ZhrXqEB5o+fU+NDV82lA5/2NhrTXpSfv
+         LC26ik9fA1728nBtStzC+j8TmV0aWxZJz7OemRuSUqSqC+x41vOYwWSFFeY3MQQCsARQ
+         QLDQ==
+X-Gm-Message-State: APjAAAX2j4XHahDvczAaeGPBVl4U5N3kOnxXIJae0GwU93Xvhy8MATPL
+        xpwYeFnsAKJ8q0i2S6gXti1b9Q==
+X-Google-Smtp-Source: APXvYqz+VUgDWR5JboQ+8bL+OdFFBBWwy95DgHFHZ12Ed6yWxa7cNlhqpM6SgsefPSWzNDnk6l65FA==
+X-Received: by 2002:adf:dfc2:: with SMTP id q2mr10759562wrn.251.1578577944116;
+        Thu, 09 Jan 2020 05:52:24 -0800 (PST)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id j12sm8350363wrt.55.2020.01.09.05.52.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 Jan 2020 05:52:23 -0800 (PST)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-arm-kernel@lists.infradead.org, git@xilinx.com
 Cc:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
         Harini Katakam <harini.katakam@xilinx.com>,
         Jan Kiszka <jan.kiszka@siemens.com>,
@@ -57,59 +55,56 @@ Cc:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
         Rob Herring <robh+dt@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Venkatesh Yadav Abbarapu <venkatesh.abbarapu@xilinx.com>,
-        DTML <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/8] arm64: zynqmp: Various DT fixes
+Date:   Thu,  9 Jan 2020 14:52:14 +0100
+Message-Id: <cover.1578577931.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C4=8Dt 9. 1. 2020 v 14:39 odes=C3=ADlatel Michal Simek <michal.simek@xilin=
-x.com> napsal:
->
-> Hi,
->
-> I am sending various DT fixes which have been found over the xilinx
-> release.
-> 1-2 patches are fixing reported description issues
-> 3-6 patches are actual fixes.
->
-> Thanks,
-> Michal
->
->
-> Michal Simek (5):
->   arm64: zynqmp: Fix address for tca6416_u97 chip on zcu104
->   arm64: zynqmp: Turn comment to gpio-line-names
->   arm64: zynqmp: Setup clock-output-names for si570 chips
->   arm64: zynqmp: Remove broken-cd from zcu100-revC
->   arm64: zynqmp: Setup default number of chipselects for zcu100
->
-> Venkatesh Yadav Abbarapu (1):
->   arm64: zynqmp: Fix the si570 clock frequency on zcu111
->
->  .../boot/dts/xilinx/zynqmp-zcu100-revC.dts    |  3 +-
->  .../boot/dts/xilinx/zynqmp-zcu102-revA.dts    | 45 +++++--------------
->  .../boot/dts/xilinx/zynqmp-zcu104-revA.dts    |  4 +-
->  .../boot/dts/xilinx/zynqmp-zcu106-revA.dts    |  2 +
->  .../boot/dts/xilinx/zynqmp-zcu111-revA.dts    |  4 +-
->  5 files changed, 20 insertions(+), 38 deletions(-)
->
-> --
-> 2.24.0
->
+Hi,
 
-Please ignore this patchset. I sent just 6 patches instead of 8 that's
-why description here is not correct.
+I am sending various DT fixes which have been found over the xilinx
+release.
+1-2 patches are fixing reported description issues
+3-8 patches are actual fixes.
 
 Thanks,
 Michal
 
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal SoCs
+Changes in v2:
+- Add missing patch
+- Add missing patch
+
+Michal Simek (7):
+  arm64: zynqmp: Use ethernet-phy as node name for ethernet phys
+  arm64: zynqmp: Remove addition number in node name
+  arm64: zynqmp: Fix address for tca6416_u97 chip on zcu104
+  arm64: zynqmp: Turn comment to gpio-line-names
+  arm64: zynqmp: Setup clock-output-names for si570 chips
+  arm64: zynqmp: Remove broken-cd from zcu100-revC
+  arm64: zynqmp: Setup default number of chipselects for zcu100
+
+Venkatesh Yadav Abbarapu (1):
+  arm64: zynqmp: Fix the si570 clock frequency on zcu111
+
+ .../dts/xilinx/zynqmp-zc1751-xm015-dc1.dts    |  2 +-
+ .../dts/xilinx/zynqmp-zc1751-xm016-dc2.dts    |  6 +--
+ .../dts/xilinx/zynqmp-zc1751-xm017-dc3.dts    |  2 +-
+ .../dts/xilinx/zynqmp-zc1751-xm019-dc5.dts    |  2 +-
+ .../boot/dts/xilinx/zynqmp-zcu100-revC.dts    |  3 +-
+ .../boot/dts/xilinx/zynqmp-zcu102-revA.dts    | 47 +++++--------------
+ .../boot/dts/xilinx/zynqmp-zcu102-revB.dts    |  4 +-
+ .../boot/dts/xilinx/zynqmp-zcu104-revA.dts    |  6 +--
+ .../boot/dts/xilinx/zynqmp-zcu106-revA.dts    |  4 +-
+ .../boot/dts/xilinx/zynqmp-zcu111-revA.dts    |  6 ++-
+ 10 files changed, 32 insertions(+), 50 deletions(-)
+
+-- 
+2.24.0
+
