@@ -2,100 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42EF913569F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 11:15:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 582AC1356AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 11:17:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730049AbgAIKPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 05:15:47 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55404 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728922AbgAIKPn (ORCPT
+        id S1730072AbgAIKR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 05:17:27 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:52376 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728862AbgAIKR1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 05:15:43 -0500
-Received: by mail-wm1-f67.google.com with SMTP id q9so2224636wmj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 02:15:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WhPSwUwjAsJRbhdmE0cVGRUouZ5x8oaruQHda5jd55I=;
-        b=HC8fxqJPjClPxESQg+0LexxqsyidMnZOoLeiIdUEVFGcSScR8sksKA8q5LQ6QyhVV5
-         8VBJIJEry4vesoZt4jAg9/kBIHnwcETmPNkSAADxYybXsQR/UKd+wa/m6lVPDPd+B5Td
-         13QrybTcCngrUVdXwb58E0/eQaDP0flCvPnqLulrWUvepPx7EUeHe6eJDQ+QsW/oV4nx
-         UNraPa50rixC4EH+olOkJKgpoKEFvFWN84EiB+XcVbTNqZKlwa/0ZNfV6ER5mLkg7z2Y
-         zKAK6QA2B0KAQrZgSg7oNulTVVT9aO0/LHgomXjDA78sQrB4Q2h6fm2yZ4gkNPBy8vY0
-         8XRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WhPSwUwjAsJRbhdmE0cVGRUouZ5x8oaruQHda5jd55I=;
-        b=L+d5aOEij5EioVMem9j3XlUk4FkmCVPLOJCmI3/3GfLo94gofNKK7xMYcvZ4q8M3z2
-         Hego4Nw8BQsQwTWlGD+ZuVGNksJ+/H11aBoOu57AiUrbuU8Q+euF4UDr4KtXgwVznV8E
-         qxlRVZtThhCUSPwvP77qwCv1dEWYFkZMe4aDnlqGGxkbLAe7SQNea+aLRW5zt4oXSyaU
-         8KmwPcwfoLDExKwro2fvoaGTCaZ1S+9eBTHldoqsKFIMeLSKMHgGRJJKqFC3UBVsKU2d
-         woFEz2i+5pIQZGpR9lq2h8ZT0dgApOVjJLDhYHiJKiTOEyYYDxPvoBxNuxCsMGka5aEB
-         rcvw==
-X-Gm-Message-State: APjAAAUPW/gs5+12MCkwPv03XfwrC072m6fKvShYN2HjhYVlBnu3JXUY
-        BAIa7ZnLEZtSU11f/ppP1PJKWg==
-X-Google-Smtp-Source: APXvYqweHN/a/x3NQ1r25V7h01jTBfRaAmdv+1exRitS5eU4c76wXJrzSyRMerZ3vIWt3dYZVjp/ng==
-X-Received: by 2002:a7b:c5d8:: with SMTP id n24mr3822007wmk.124.1578564941075;
-        Thu, 09 Jan 2020 02:15:41 -0800 (PST)
-Received: from bender.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id q19sm2250460wmc.12.2020.01.09.02.15.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 02:15:40 -0800 (PST)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     balbi@kernel.org, khilman@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-usb@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dongjin Kim <tobetter@gmail.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>, Tim <elatllat@gmail.com>
-Subject: [PATCH v2 3/3] arm64: dts: g12-common: add parkmode_disable_ss_quirk on DWC3 controller
-Date:   Thu,  9 Jan 2020 11:15:35 +0100
-Message-Id: <20200109101535.26812-4-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20200109101535.26812-1-narmstrong@baylibre.com>
-References: <20200109101535.26812-1-narmstrong@baylibre.com>
+        Thu, 9 Jan 2020 05:17:27 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 009AHE2v100029;
+        Thu, 9 Jan 2020 04:17:14 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578565034;
+        bh=dD1YFWbC0Y7B9niXQWfTUrQg3FwDw851xh9FQ221VB4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=SnN5SH8XX4JhKyx1d11va8cV5XIYCpZYj8XzJ34POQo+nTFWbMTuOZOHeNfFdwhz5
+         pyYIZDxSVOIwZ/nZd4dChG2ylyd/1gAuzC+YBCStLALcCyGMzOlwy487aA4bm/tQIy
+         F/GMlX1I+jzhBTqKrl1AB8Uu9x2lObjqwmyaDjWU=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 009AHDkc039244
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 9 Jan 2020 04:17:14 -0600
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 9 Jan
+ 2020 04:17:13 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 9 Jan 2020 04:17:13 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 009AH9k0024424;
+        Thu, 9 Jan 2020 04:17:10 -0600
+Subject: Re: [PATCH 0/4] Redesign MSI-X support in PCIe Endpoint Core
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Jingoo Han <jingoohan1@gmail.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20191211224636.GA122332@google.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <a971c0b1-ed66-fd4c-5a1d-7aef9d410866@ti.com>
+Date:   Thu, 9 Jan 2020 15:49:17 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191211224636.GA122332@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When high load on the DWC3 SuperSpee port, the controller crashed as:
-[  221.141621] xhci-hcd xhci-hcd.0.auto: xHCI host not responding to stop endpoint command.
-[  221.157631] xhci-hcd xhci-hcd.0.auto: Host halt failed, -110
-[  221.157635] xhci-hcd xhci-hcd.0.auto: xHCI host controller not responding, assume dead
-[  221.159901] xhci-hcd xhci-hcd.0.auto: xHCI host not responding to stop endpoint command.
-[  221.159961] hub 2-1.1:1.0: hub_ext_port_status failed (err = -22)
-[  221.160076] xhci-hcd xhci-hcd.0.auto: HC died; cleaning up
-[  221.165946] usb 2-1.1-port1: cannot reset (err = -22)
+Hi,
 
-Setting the parkmode_disable_ss_quirk quirk fixes the issue.
+On 12/12/19 4:16 AM, Bjorn Helgaas wrote:
+> On Wed, Dec 11, 2019 at 06:16:04PM +0530, Kishon Vijay Abraham I wrote:
+>> Existing MSI-X support in Endpoint core has limitations:
+>>  1) MSIX table (which is mapped to a BAR) is not allocated by
+>>     anyone. Ideally this should be allocated by endpoint
+>>     function driver.
+>>  2) Endpoint controller can choose any random BARs for MSIX
+>>     table (irrespective of whether the endpoint function driver
+>>     has allocated memory for it or not)
+>>
+>> In order to avoid these limitations, pci_epc_set_msix() is
+>> modified to include BAR Indicator register (BIR) configuration
+>> and MSIX table offset as arguments. This series also fixed MSIX
+>> support in dwc driver and add MSI-X support in Cadence PCIe driver.
+>>
+>> The previous version of Cadence EP MSI-X support is @ [1].
+>> This series is created on top of [2]
+>>
+>> [1] -> https://patchwork.ozlabs.org/patch/971160/
+>> [2] -> http://lore.kernel.org/r/20191209092147.22901-1-kishon@ti.com
+>>
+>> Alan Douglas (1):
+>>   PCI: cadence: Add MSI-X support to Endpoint driver
+>>
+>> Kishon Vijay Abraham I (3):
+>>   PCI: endpoint: Fix ->set_msix() to take BIR and offset as arguments
+>>   PCI: dwc: Fix dw_pcie_ep_raise_msix_irq() to get correct MSIX table
+>>     address
+>>   PCI: keystone: Add AM654 PCIe Endpoint to raise MSIX interrupt
+> 
+> Trivial nits:
+> 
+>   - There's a mix of "MSI-X" and "MSIX" in the subjects, commit logs,
+>     and comments.  I prefer "MSI-X" to match usage in the spec.
+> 
+>   - "Fixes:" tags need not include "commit".  It doesn't *hurt*
+>     anything, but it takes up space that could be used for the
+>     subject.
+> 
+>   - Commit references typically use a 12-char SHA1.  Again, doesn't
+>     hurt anything.
 
-CC: Dongjin Kim <tobetter@gmail.com>
-Cc: Jianxin Pan <jianxin.pan@amlogic.com>
-Reported-by: Tim <elatllat@gmail.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+I'll fix all this in my next revision.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-index 3f39e020f74e..4b002e799e5c 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-@@ -2381,6 +2381,7 @@
- 				dr_mode = "host";
- 				snps,dis_u2_susphy_quirk;
- 				snps,quirk-frame-length-adjustment;
-+				snps,parkmode-disable-ss-quirk;
- 			};
- 		};
- 
--- 
-2.22.0
+Xiaowei, Gustavo,
 
+The issues we discussed in  [1] should be fixed with this series. Can
+you help test this in your platforms?
+
+[1] -> https://lkml.org/lkml/2019/11/6/678
+
+Thanks
+Kishon
+> 
