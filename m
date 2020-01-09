@@ -2,132 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3C12135550
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:14:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDCB913555C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:15:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729190AbgAIJN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 04:13:26 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34663 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728793AbgAIJNZ (ORCPT
+        id S1729269AbgAIJOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 04:14:14 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38046 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729093AbgAIJOO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 04:13:25 -0500
-Received: by mail-pf1-f196.google.com with SMTP id i6so3087703pfc.1;
-        Thu, 09 Jan 2020 01:13:24 -0800 (PST)
+        Thu, 9 Jan 2020 04:14:14 -0500
+Received: by mail-wm1-f68.google.com with SMTP id u2so1945887wmc.3;
+        Thu, 09 Jan 2020 01:14:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VPrFCrM6KwJYTjriuFL5VoYsunJfk+aWDMKtdLsKHkg=;
-        b=ADzd4sIziesJUzuW0zPL+tj6sFWHWdzNFWYaXMAfaAAmk2fy8URqPsDg3FSPySGryj
-         KuQDPTE+LWWx71s48stbNMXZgVzhQTWRhl47EZ4EgIJ7FHPKpikCcxosgWoYDVza4/bz
-         rTSW7QsxCfKygveR3QmoJjAKi6PKYLz4mgaVXUIb4XHbULfaFX1pYzma3qR0y3Rh1z6y
-         svTDVpRihIjj5KsV9M3DUjubgDT260OocPYvbKV1F6Dra/8gT1kxWnXQ4IbcnxyOu+oa
-         6be8EzbW/hJGbDMju3YtPe+8FSUi8KHvFfyuSXQ17sMkGz0vmO6ZpstLs+d13X4ATwL4
-         R3ig==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=q4yS4IGenv3/gEDlUctN0Q4HaJsYtWMJsBPlv/baTQU=;
+        b=TX/GkSfEBRFP1nnhEGSi1wG0knrm+FxWatwSTMUMCvy+sv3/OvCCdKYr514Rd4b26n
+         bc3lSc93r52GhiMh5kA99zMZUkeAEzfDY8/rjSjX5k5zK6pMiECY/p8KP/Yd2TMC3Gs1
+         +omuXnbsBSgCiiKB7yConsjrX5IVZCb85IQnavHVnJ832Z+fLBAHBSSEl3dyCKyiCT2A
+         dc8XLcEyp6PFwH+NxnXYFstx5gn79ZyDu9ckL96qgdY+xxVFmztKeaqI5szIxrbAOWvg
+         zVtqTHdPLi3pCW+UI39ml4oiAkgfOhqIooRm4oXpndCyXskqYHyneztO3bYD0iYQSKod
+         76PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VPrFCrM6KwJYTjriuFL5VoYsunJfk+aWDMKtdLsKHkg=;
-        b=MX9mBduprtAiaWRXFYQ8OMWQ0/TNQZFtfNknwa4XgykNqJMkzHvTKLLrHdvPvkhb0A
-         Urbm/IbJNpvNVdPvzwgWuvAL5HRae+U6QSF/hMud7aSZJUi4QX7sr/krvv88DtYmKug/
-         SqfinwP0R6pOT4Jo53Tlz/Q94bF/TKvVr64mJmLQD1i0f/i34wQ1LRO9KI2hhyH/GzxK
-         LxSnJbP36LK1otCQ6Hz8482JR09d/opZMM3x5JIc/63sLGaYSSH3S1bRWHk4d/NbqJ2S
-         /m7R87ZkjfuG580yUYroi8keL8yzcx3i4L/omCQLwinANsR0NyFkrtfgWmxIfJorhtM8
-         6FZQ==
-X-Gm-Message-State: APjAAAWNep4k80pNmf2sPG7lE1gD+QuQdtmLX4Go6h0N9M8vZMqNerxt
-        BGq9guMiSWBq8Uf79TRcxWU=
-X-Google-Smtp-Source: APXvYqySz2w9/3ai890d7I4StxP6IqCN+p2I1wmGSQZP39LMR4sqY07Z8cJtvB/v7uOhLbY8qHJtFQ==
-X-Received: by 2002:aa7:9816:: with SMTP id e22mr10311252pfl.229.1578561204341;
-        Thu, 09 Jan 2020 01:13:24 -0800 (PST)
-Received: from gli-arch.genesyslogic.com.tw (60-251-58-169.HINET-IP.hinet.net. [60.251.58.169])
-        by smtp.gmail.com with ESMTPSA id t23sm6951429pfq.106.2020.01.09.01.13.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 01:13:23 -0800 (PST)
-From:   Ben Chuang <benchuanggli@gmail.com>
-To:     adrian.hunter@intel.com, ulf.hansson@linaro.org
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        greg.tu@genesyslogic.com.tw, ben.chuang@genesyslogic.com.tw,
-        Ben Chuang <benchuanggli@gmail.com>
-Subject: [RFC PATCH v2 0/6] Add support UHS-II for GL9755
-Date:   Thu,  9 Jan 2020 17:13:17 +0800
-Message-Id: <cover.1578560282.git.benchuanggli@gmail.com>
-X-Mailer: git-send-email 2.24.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=q4yS4IGenv3/gEDlUctN0Q4HaJsYtWMJsBPlv/baTQU=;
+        b=JI1f7EQWp1knWCU/ECB5cQn76e4Xjvbm9TQs3Ujzw/A6N66+YXgov6A3FNHnafP61o
+         8kK50YUIrTwDSuvYnX+gynUf7PgVGTB2B40W35+1XIflCtW3LQQe5UakVBsdj70wF/gN
+         ksevCdFZB9zsmVpVKW+wdxE8K5s6+M/WgvJ94sg+MQKle2dGC/bg9t+ns0l99XZlobHw
+         McYG2znoc+SSy4iDZPDidjJIgPJHgF+TVFT6+RtcQJ9w1vJtG4DavluYM6l5/zIknCmR
+         VwUiokbPHoYmMw2q8ZPd3dVSX3FSWW+qpIrbLI6fJuncvSXDq7wtbMDT2G80lyUShTEP
+         l34Q==
+X-Gm-Message-State: APjAAAXp1GjsHN2cJlCp1gR/qkH1nMyGqFKmKk/JZqkWcHXX+wpqBv0c
+        CD1lAj/SAlKdHdZ1OwtbSBBmnfVHk5v+WzHm63E=
+X-Google-Smtp-Source: APXvYqw1Dr8ZnFhNDYyE8/xD6l0tv796f3qQo2kP+dYqYva7kvb44dgGurdSMGFOvo08reMnzvFpWtQqUZta7f406XM=
+X-Received: by 2002:a1c:44d:: with SMTP id 74mr3638479wme.53.1578561252011;
+ Thu, 09 Jan 2020 01:14:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200109072735.GA22886@embeddedor> <20200109074445.73n3vapjl4vfjtsu@pengutronix.de>
+In-Reply-To: <20200109074445.73n3vapjl4vfjtsu@pengutronix.de>
+From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date:   Thu, 9 Jan 2020 10:14:00 +0100
+Message-ID: <CAJiuCcdFiXVtECtVGz3N9oUM38ca=MDmdK4+T+peUKKzNr_5KQ@mail.gmail.com>
+Subject: Re: [PATCH] pwm: sun4i: Fix inconsistent IS_ERR and PTR_ERR
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uffe and Adrian,
+Hi Uwe, Gustavo,
 
-These patches support UHS-II and fix GL9755 UHS-II compatibility.
+On Thu, 9 Jan 2020 at 08:44, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+>
+> Hello Gustavo,
+>
+> On Thu, Jan 09, 2020 at 01:27:35AM -0600, Gustavo A. R. Silva wrote:
+> > Fix inconsistent IS_ERR and PTR_ERR in sun4i_pwm_probe().
+> >
+> > The proper pointers to be passed as arguments are pwm->clk and pwm->bus=
+_clk.
 
-The parts of UHS-II are based on [1][2] and porting to Linux 5.5-rc5.
-I have seen that Uffe comment that splitting the UHS-II parts into smaller
-patches. Other than splitting into small patches, could you give me some 
-suggestions for refactoring/splitting files?
+Thanks for the catch.
 
-Best regards,
-Ben
+As these patches are still in next should we update them or apply a fix ?
 
-References:
-1. [RFC,1/2] mmc: core: support UHS-II in core stack.
-   (https://patchwork.kernel.org/patch/5544441/)
-2. [RFC,2/2] mmc: sdhci: support UHS-II in SDHCI host. 
-   (https://patchwork.kernel.org/patch/5544451/)
+Regards,
+Clement
 
-v2:
-  - base on Linux v5.5-rc5
-
-Ben Chuang (6):
-  mmc: Add UHS-II support in public headers
-  mmc: core: Add UHS-II support in core layer
-  mmc: host: Add UHS-II support in host layer
-  mmc: uhs2: Introduce a uhs2_post_attach_sd function
-  mmc: sdhci-uhs2: Introduce a uhs2_pre_detect_init function
-  mmc: sdhci-pci-gli: Fix power/reset/ZC/timeout for GL9755 UHS-II mode
-
- drivers/mmc/core/Makefile                  |   3 +-
- drivers/mmc/core/block.c                   |   7 +-
- drivers/mmc/core/bus.c                     |   5 +-
- drivers/mmc/core/core.c                    |  65 +-
- drivers/mmc/core/core.h                    |   3 +-
- drivers/mmc/core/regulator.c               |  14 +
- drivers/mmc/core/sd.c                      |  27 +-
- drivers/mmc/core/sd_ops.c                  |  12 +
- drivers/mmc/core/uhs2.c                    | 995 +++++++++++++++++++++
- drivers/mmc/core/uhs2.h                    |  23 +
- drivers/mmc/host/Makefile                  |   1 +
- drivers/mmc/host/{sdhci.c => sdhci-core.c} | 285 +++++-
- drivers/mmc/host/sdhci-milbeaut.c          |   4 +-
- drivers/mmc/host/sdhci-of-arasan.c         |   4 +-
- drivers/mmc/host/sdhci-of-at91.c           |   4 +-
- drivers/mmc/host/sdhci-omap.c              |   2 +-
- drivers/mmc/host/sdhci-pci-core.c          |   4 +-
- drivers/mmc/host/sdhci-pci-gli.c           | 361 +++++++-
- drivers/mmc/host/sdhci-pxav3.c             |   4 +-
- drivers/mmc/host/sdhci-uhs2.c              | 754 ++++++++++++++++
- drivers/mmc/host/sdhci-uhs2.h              |  34 +
- drivers/mmc/host/sdhci-xenon.c             |   4 +-
- drivers/mmc/host/sdhci.h                   | 286 +++++-
- drivers/mmc/host/sdhci_am654.c             |   4 +-
- include/linux/mmc/card.h                   |   1 +
- include/linux/mmc/core.h                   |   6 +
- include/linux/mmc/host.h                   |  31 +
- include/linux/mmc/uhs2.h                   | 270 ++++++
- 28 files changed, 3137 insertions(+), 76 deletions(-)
- create mode 100644 drivers/mmc/core/uhs2.c
- create mode 100644 drivers/mmc/core/uhs2.h
- rename drivers/mmc/host/{sdhci.c => sdhci-core.c} (94%)
- create mode 100644 drivers/mmc/host/sdhci-uhs2.c
- create mode 100644 drivers/mmc/host/sdhci-uhs2.h
- create mode 100644 include/linux/mmc/uhs2.h
-
-
-base-commit: c79f46a282390e0f5b306007bf7b11a46d529538
--- 
-2.24.1
-
+> >
+> > This bug was detected with the help of Coccinelle.
+> >
+> > Fixes: b8d74644f34a ("pwm: sun4i: Prefer "mod" clock to unnamed")
+> > Fixes: 5b090b430d75 ("pwm: sun4i: Add an optional probe for bus clock")
+> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> > ---
+> >  drivers/pwm/pwm-sun4i.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
+> > index 1afd41ebd3fd..a805c347ee84 100644
+> > --- a/drivers/pwm/pwm-sun4i.c
+> > +++ b/drivers/pwm/pwm-sun4i.c
+> > @@ -423,7 +423,7 @@ static int sun4i_pwm_probe(struct platform_device *=
+pdev)
+> >        */
+> >       pwm->clk =3D devm_clk_get_optional(&pdev->dev, "mod");
+> >       if (IS_ERR(pwm->clk)) {
+> > -             if (PTR_ERR(pwm->rst) !=3D -EPROBE_DEFER)
+> > +             if (PTR_ERR(pwm->clk) !=3D -EPROBE_DEFER)
+>
+> How embarrassing that I didn't notice these. Thanks for catching.
+>
+> Reviewed-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+>
+> Best regards
+> Uwe
+>
+> --
+> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
+     |
+> Industrial Linux Solutions                 | https://www.pengutronix.de/ =
+|
