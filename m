@@ -2,128 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3A3E135239
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 05:42:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9F5F13523F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 05:43:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727974AbgAIEl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 23:41:57 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45164 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727876AbgAIEl5 (ORCPT
+        id S1727985AbgAIEnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 23:43:42 -0500
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:42869 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726913AbgAIEnm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 23:41:57 -0500
-Received: by mail-pl1-f196.google.com with SMTP id b22so2013218pls.12
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 20:41:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TRjoVo3zj4W4LfAs9dMN4fOiIUDjAiTixS2yPeXgoDQ=;
-        b=muJ29tPvUK4BsxxgLvfXC/FDpAogqeNb4Yj0qnWwm3nQ5iHzd0PKghtKldnrwY4Asu
-         R9cMGIY1nMK4gqmHJRBCFzunPvtZ1aCuNfMKGuPpOcAJkWUl9LINrRQtCqLLE47NCqjg
-         sYTgbvZESm5lF9IUwWFAr7O8lCrPd1Lvwn2UrddOtwnUXLbvU/PgEFVxlc6kjaMFmZ/n
-         y8OoG+fKyEX9Su9Fl54aMGkD1yPcJBC8lYi0/74jl7qyf6RBghWfE0RXNJH2nTcFpbms
-         2U69QHRHaTBnPbhn1LpD82CuTXJ08AQ+fG4uK+J4boK3G2+CdK1sxstEeD2h7iq0TFPX
-         jNJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TRjoVo3zj4W4LfAs9dMN4fOiIUDjAiTixS2yPeXgoDQ=;
-        b=nKlUVbJKfFEMXfGEemLRcGcbbZT9KAEQVhj8xfrBrV4qolv3WfGF72q3pcygkXJ53t
-         8qoGfOSiagB3jBHiT50Qgn7v52xzQEP1ymU0DkmbfF9umXjGVwaUZds8FRsH6BAk1Xys
-         q2DODfO4K5SocJI5qNoBhAQhpc5LIigiiGbR8bLLprOQIEn3Za72bQXVOtid8AlY4ZXg
-         T2mBFT8BkavjlJy+Vnr0hRiFnLbVvGjlaU9gNd2yiOVQptzs488/YldIUJsCOJfkiKGx
-         aKPfTi7iR+Qq8Kk0DDfkm4EbODR/SLf+W+RQaNGGLvHP1ULiZn87c5ZZprebNX0eEltp
-         iRMw==
-X-Gm-Message-State: APjAAAU8PEtZ5k65XKYokhnTZbi67mgMel+t/Fqa/lU/X1zPEiviBCae
-        q99irEJm5v2su6TidT7ooQVQ+A==
-X-Google-Smtp-Source: APXvYqxjIkobJfEbVA0G149IgU2oFp/wmK3lj3C8cMWvXPKRJq96IVC+8GTQRvil/pY8LRz/7BA/FQ==
-X-Received: by 2002:a17:90a:d804:: with SMTP id a4mr2930341pjv.11.1578544916616;
-        Wed, 08 Jan 2020 20:41:56 -0800 (PST)
-Received: from localhost ([122.172.140.51])
-        by smtp.gmail.com with ESMTPSA id r7sm5584790pfg.34.2020.01.08.20.41.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Jan 2020 20:41:55 -0800 (PST)
-Date:   Thu, 9 Jan 2020 10:11:54 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
-        David Dai <daidavid1@codeaurora.org>, adharmap@codeaurora.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 3/3] OPP: Add helper function for bandwidth OPP tables
-Message-ID: <20200109044154.u3ypodoulygemaa6@vireshk-i7>
-References: <20191207002424.201796-1-saravanak@google.com>
- <20191207002424.201796-4-saravanak@google.com>
- <20200108111947.q5aafrlz26tnk3nq@vireshk-i7>
- <CAGETcx_T7VONkSd-r9CY-5OpZBZ2iD0tFoCf0+d8CY2b5zgr9g@mail.gmail.com>
- <CAGETcx8cro3FHqZhbia6ZUy41XGHwMMSTZgX7QN_2wToWa-Yww@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGETcx8cro3FHqZhbia6ZUy41XGHwMMSTZgX7QN_2wToWa-Yww@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+        Wed, 8 Jan 2020 23:43:42 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 347CE21FC3;
+        Wed,  8 Jan 2020 23:43:41 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Wed, 08 Jan 2020 23:43:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm1; bh=taiDRc8Qpn+ljKa3v+JJ2VH/VhF+HU9
+        gTcCq/CXJk/Q=; b=Y4QFUcdAPhs5F1NtsVAMZJ2NWEOAQ3L/WrrnMLss4MSII0p
+        QiI5kEHAFxW5H2fKyD3JX3qWjq6ym8typst52yTTaPLyv3JTY4gzC3EnnQ6TyFOG
+        IjC2tY1dbW25noiZcxj219g6P+yxs86qmtmv7BGORj2SFjOXHqOCUdH+XhxSxuyt
+        nCqGAcuObjKawHVOUdItpRGZhHI87J/S4gJiUyYncjJubrZ/aoTW1UGaDqvwmOtp
+        MZvpF9gg2MqV/6Meq0UIryB7hRoG6fCpwdh2gAxEnfXYuKGKlh7+BHT2Q0Y+zqgC
+        wSNaoJV1lL+d0Mh79GhT9Is8bNZQ6OU/WXqMX/A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=taiDRc
+        8Qpn+ljKa3v+JJ2VH/VhF+HU9gTcCq/CXJk/Q=; b=p/1AR8Sj4FRNX27JOUsn4p
+        aUcnnvRcxVuKz/3S3MYDjDCNh0iw2uCKc+uwND2IOU/NZJbdVkTR8PyNS8l7n+6g
+        CY1lj5cUJ/AKcZ/gi/DnoQIJlTL5PBS96s/oda4UbS6wlBTIUaF0ZIQVuRs2c7zO
+        fjWkosezJSirHrGyvMJMqgllF1OeX0YiT1QrjJYLdSDqWqWVlXjAxB9Ttr8BkaKE
+        J/2kDa53QU8wNXl4bWBw0kDH/YUd4A5ghjgF3bTwAcRhsRs92KpLYrOyiYvYBA8i
+        DDG0Bl69O8JBjl43BQQd3E4fzwqp0c0uaAudGHizyDmXTbPbzl1j6gC4j7+6i1xw
+        ==
+X-ME-Sender: <xms:e68WXtp7DRwcGksY0anL9lWdG07_eQplFUzX1X8U6c0lX63E1mv0xg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdehledgieeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
+    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
+    rhfuihiivgeptd
+X-ME-Proxy: <xmx:e68WXkiLTErI05O4GuCxW-TaO8gGcLJexpQ3xM5oxeB1_NfEjZahVw>
+    <xmx:e68WXnwORpaCJmSfvwt4kT0n3K9dtJhAEua37HFmM9qO3QdTFpSfag>
+    <xmx:e68WXq9iyttuAOaajY1Xx-_jTjrBeCFxBDx8JIpPac5GhwP-qhWIpg>
+    <xmx:fa8WXiCG33PCe2CDF5pZawSJe8ZqQxsu0hb66VbLIG8wUmp62xBwWA>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id AC54CE00A2; Wed,  8 Jan 2020 23:43:39 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-740-g7d9d84e-fmstable-20200109v1
+Mime-Version: 1.0
+Message-Id: <3cc1006c-c107-4864-b652-118e84060c38@www.fastmail.com>
+In-Reply-To: <1577993276-2184-6-git-send-email-eajames@linux.ibm.com>
+References: <1577993276-2184-1-git-send-email-eajames@linux.ibm.com>
+ <1577993276-2184-6-git-send-email-eajames@linux.ibm.com>
+Date:   Thu, 09 Jan 2020 15:15:38 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Eddie James" <eajames@linux.ibm.com>,
+        linux-aspeed@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, "Jason Cooper" <jason@lakedaemon.net>,
+        "Marc Zyngier" <maz@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>, tglx@linutronix.de,
+        "Joel Stanley" <joel@jms.id.au>
+Subject: Re: [PATCH v4 05/12] dt-bindings: soc: Add Aspeed XDMA Engine
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08-01-20, 19:36, Saravana Kannan wrote:
-> On Wed, Jan 8, 2020 at 4:58 PM Saravana Kannan <saravanak@google.com> wrote:
-> >
-> > On Wed, Jan 8, 2020 at 3:19 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > >
-> > > On 06-12-19, 16:24, Saravana Kannan wrote:
-> > > > The frequency OPP tables have helper functions to search for entries in the
-> > > > table based on frequency and get the frequency values for a given (or
-> > > > suspend) OPP entry.
-> > > >
-> > > > Add similar helper functions for bandwidth OPP tables to search for entries
-> > > > in the table based on peak bandwidth and to get the peak and average
-> > > > bandwidth for a given (or suspend) OPP entry.
-> > > >
-> > > > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > > > ---
-> > > >  drivers/opp/core.c     | 301 +++++++++++++++++++++++++++++++++++------
-> > > >  include/linux/pm_opp.h |  43 ++++++
-> > > >  2 files changed, 305 insertions(+), 39 deletions(-)
-> > > >
-> > > > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> > > > index c79bbfac7289..3ff33a08198e 100644
-> > > > --- a/drivers/opp/core.c
-> > > > +++ b/drivers/opp/core.c
-> > > > @@ -127,6 +127,29 @@ unsigned long dev_pm_opp_get_freq(struct dev_pm_opp *opp)
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(dev_pm_opp_get_freq);
-> > > >
-> > > > +/**
-> > > > + * dev_pm_opp_get_bw() - Gets the bandwidth corresponding to an available opp
-> > > > + * @opp:     opp for which peak bandwidth has to be returned for
-> > >
-> > > s/peak //
-> >
-> > Ack
+
+
+On Fri, 3 Jan 2020, at 05:57, Eddie James wrote:
+> Document the bindings for the Aspeed AST25XX and AST26XX XDMA engine.
 > 
-> Actually, isn't this correct as is? peak bandwidth is "returned".
-> Average bandwidth is updated through the pointer.
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+> Changes since v3:
+>  - Switch "scu" property to "aspeed,scu"
+> 
+>  .../devicetree/bindings/soc/aspeed/xdma.txt   | 40 +++++++++++++++++++
+>  MAINTAINERS                                   |  6 +++
+>  2 files changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/aspeed/xdma.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/aspeed/xdma.txt 
+> b/Documentation/devicetree/bindings/soc/aspeed/xdma.txt
+> new file mode 100644
+> index 000000000000..e0740ccfa910
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/aspeed/xdma.txt
+> @@ -0,0 +1,40 @@
+> +Aspeed AST25XX and AST26XX XDMA Engine
+> +
+> +The XDMA Engine embedded in the AST2500 and AST2600 SOCs can perform 
+> automatic
+> +DMA operations over PCI between the SOC (acting as a BMC) and a host 
+> processor.
+> +
+> +Required properties:
+> + - compatible		: must be "aspeed,ast2500-xdma" or
+> +			  "aspeed,ast2600-xdma"
+> + - reg			: contains the address and size of the memory region
+> +			  associated with the XDMA engine registers
+> + - clocks		: clock specifier for the clock associated with the
+> +			  XDMA engine
+> + - resets		: reset specifier for the syscon reset associated with
+> +			  the XDMA engine
+> + - interrupts-extended	: two interrupt cells; the first specifies the 
+> global
+> +			  interrupt for the XDMA engine and the second
+> +			  specifies the PCI-E reset or PERST interrupt.
+> + - aspeed,scu		: a phandle to the syscon node for the system control
+> +			  unit of the SOC
+> + - memory		: contains the address and size of the memory area to
+> +			  be used by the XDMA engine for DMA operations
+> +
+> +Optional properties:
+> + - pcie-device		: should be either "bmc" or "vga", corresponding to
+> +			  which device should be used by the XDMA engine for
+> +			  DMA operations. If this property is not set, the XDMA
+> +			  engine will use the BMC PCI-E device.
+> +
+> +Example:
+> +
+> +    xdma@1e6e7000 {
+> +        compatible = "aspeed,ast2500-xdma";
+> +        reg = <0x1e6e7000 0x100>;
+> +        clocks = <&syscon ASPEED_CLK_GATE_BCLK>;
+> +        resets = <&syscon ASPEED_RESET_XDMA>;
+> +        interrupts-extended = <&vic 6>, <&scu_ic 
+> ASPEED_AST2500_SCU_IC_PCIE_RESET_LO_TO_HI>;
+> +        scu = <&syscon>;
 
-I think we return two values here, peak and avg bw. Just that we can't
-return two values from a routine, and so one is returned using a
-pointer. And so I though writing just bw may be better.
+You missed fixing the example :)
 
--- 
-viresh
+Andrew
