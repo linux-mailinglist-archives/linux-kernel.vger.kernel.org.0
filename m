@@ -2,63 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2334135D8A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:06:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B04A135D8D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:06:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732984AbgAIQFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 11:05:46 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:49816 "EHLO
+        id S1733015AbgAIQFw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 11:05:52 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:58298 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728333AbgAIQFq (ORCPT
+        by vger.kernel.org with ESMTP id S1728584AbgAIQFv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 11:05:46 -0500
+        Thu, 9 Jan 2020 11:05:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578585945;
+        s=mimecast20190719; t=1578585949;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Mml1mzhjK5wtC17nLrEN5fR+Z9py7ETGWVYItyxd8Hw=;
-        b=Cw2pKt+uCS6ccZ3pbvbq+lPxL76Ehlews1z8KMHDikFhryLwngZ0AQGZlhsJNcIFHuMJLg
-        f17bFjEfGk5jAIrUVYA8i7L5tjzHKPrrZYn1VEMWGz2vNWagtA33Y5FKmC8hMWJXRmmjjA
-        z03bHc2nbTOA/lqyt4If/7/YWJFlZMw=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-155-0svSFX6FP6GaJ0z4bIEDQQ-1; Thu, 09 Jan 2020 11:05:44 -0500
-X-MC-Unique: 0svSFX6FP6GaJ0z4bIEDQQ-1
-Received: by mail-wr1-f69.google.com with SMTP id z14so3074870wrs.4
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:05:44 -0800 (PST)
+        bh=5AHYV2UMb6QFH2KrZdQF90S4dwnJAUXmqxV2bgFAoj4=;
+        b=N89t4tjXjOxRl7daN2LnYJirp32GTCBLzQ7cgfoZ5OZkhiaq91acRleE7zp/yJiZpLOWg/
+        mINEvVU5wy0SaAGWrMn0jE1VpiDxKcN6jV6oOAOG+tMT915NlSOJiQ0EOyIiXHiCXVJMum
+        4iyLB6cxIhlp7Q35dqEQ4NZjqBJ9Fh8=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-235-NkQLUOjOM22M4QRIHq31tA-1; Thu, 09 Jan 2020 11:05:47 -0500
+X-MC-Unique: NkQLUOjOM22M4QRIHq31tA-1
+Received: by mail-wm1-f72.google.com with SMTP id t4so1102144wmf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:05:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Mml1mzhjK5wtC17nLrEN5fR+Z9py7ETGWVYItyxd8Hw=;
-        b=KP1YI649o2pqOP9rY8pQh267yMoq/wiZDUdVmCY1AVVkjj8hjrpi4393Y8IzSZ7cM4
-         fuc9OZPp9rIhi5FugUU7TdFvl4v1wxSLWqKn2tfiuD05MQT6Yga931fSCUZGGOf0zuYQ
-         Kj+Ce4+XRTWDhe0YuebxCpkTU6ppTj0vpyH3wadMKQBPvokn7wrCQ3YneA9W6CsiVLza
-         EqklD9Jkv6TOr1j6sDbRJiA9OmdGe1uqrSIN3hPqTj9FQUMFUEKCyvRZe42gS3fNH0lf
-         wSZs8qGiEyVbCA90Emry2nkxYZbxtAsMSjuuyp+KJn5Mn8kN1UvLE0wJFG/f5wWDsy7w
-         67xw==
-X-Gm-Message-State: APjAAAUL7MpLS07JtP8MGIacUu8L/yVS6h69iX3+06Bug1H6JC5VZ6xO
-        K5js/RRGB+4Hu+6sSZyE2oYG0kfXe9D/bMtHWZZF+plnFHshciMPlBA8uJThqLP1Fpc43Ytw4Fl
-        UKTUTobq0YVy6+Qu5IPA8kkcu
-X-Received: by 2002:a1c:2089:: with SMTP id g131mr5957476wmg.63.1578585943126;
-        Thu, 09 Jan 2020 08:05:43 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyw4kwWJhsfey2tGM6eLUUWESwCEkAPg51xba9MD4w398rYCfFbg3NiYZBgdd7WT6pDYqRluw==
-X-Received: by 2002:a1c:2089:: with SMTP id g131mr5957442wmg.63.1578585942891;
-        Thu, 09 Jan 2020 08:05:42 -0800 (PST)
+        bh=5AHYV2UMb6QFH2KrZdQF90S4dwnJAUXmqxV2bgFAoj4=;
+        b=Qv/G3JBn2BWuSvcx35ciQs5WDGZrEkBlbUGUq2BDGm3emQu8sOhVNAEpL1J1EYIISJ
+         1qXhjJvSNJTfM4xWrNjWnNojR5b+i1aOp+r1CDTAFXeBOObGep0W1jGDyXvqc8J6sqIm
+         lYpItXdYFA21vI4Z4gNzXmavdKBWaJt4bydCQ/azLprw9tjnpUbUsiwyWo7cE9nGeFHX
+         W4tjSmIrcyI7WoP9yIfKxz3PPd9MxUw3lHfuKuPd1mCpljdU2I+p1E+RNJtw2kiKszOR
+         4piZcT2EBoMGnkP3whSjikE9HUQp8U9CqcANV9e8mRvZo/u4TezrRnKZvbgUc/nQVRqX
+         8sCw==
+X-Gm-Message-State: APjAAAWFyQ41OIRbyiJQTKG01Yjgp6w0hIQGEwnsQWFspSV1v+ZTc/ji
+        65+uVK4jIobhJlf81HTDGL94Sgwvu8IcsCjgrr9dBYo7Bltk7Rx4GV3oxqtiEKf8YHvW39qfG60
+        Z7Opa4cWArMMlakax4EREiJBl
+X-Received: by 2002:adf:ee88:: with SMTP id b8mr12352667wro.249.1578585944493;
+        Thu, 09 Jan 2020 08:05:44 -0800 (PST)
+X-Google-Smtp-Source: APXvYqziyrPjjwc6jFBPwhewcMunWuDhPtWfMzeeejSLNUTdBAiUMf1lRurJ4PQYCUI/+LBPOsBfYw==
+X-Received: by 2002:adf:ee88:: with SMTP id b8mr12352633wro.249.1578585944225;
+        Thu, 09 Jan 2020 08:05:44 -0800 (PST)
 Received: from redfedo.redhat.com (host81-140-166-164.range81-140.btcentralplus.com. [81.140.166.164])
-        by smtp.gmail.com with ESMTPSA id a16sm8545544wrt.37.2020.01.09.08.05.41
+        by smtp.gmail.com with ESMTPSA id a16sm8545544wrt.37.2020.01.09.08.05.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 08:05:42 -0800 (PST)
+        Thu, 09 Jan 2020 08:05:43 -0800 (PST)
 From:   Julien Thierry <jthierry@redhat.com>
 To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     jpoimboe@redhat.com, peterz@infradead.org, raphael.gault@arm.com,
         catalin.marinas@arm.com, will@kernel.org,
         Julien Thierry <jthierry@redhat.com>
-Subject: [RFC v5 20/57] objtool: arm64: Decode unknown instructions
-Date:   Thu,  9 Jan 2020 16:02:23 +0000
-Message-Id: <20200109160300.26150-21-jthierry@redhat.com>
+Subject: [RFC v5 21/57] objtool: arm64: Decode simple data processing instructions
+Date:   Thu,  9 Jan 2020 16:02:24 +0000
+Message-Id: <20200109160300.26150-22-jthierry@redhat.com>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200109160300.26150-1-jthierry@redhat.com>
 References: <20200109160300.26150-1-jthierry@redhat.com>
@@ -69,120 +69,173 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For aarch64, it is possible to have byte sequences that aren't valid
-opcodes in the code sections. Do not report an error when the decoder
-finds such a sequence, but make sure that those bytes cannot be reached
-in the execution flow.
+Decode data processing instructions that do not constitute stack
+operations.
 
 Suggested-by: Raphael Gault <raphael.gault@arm.com>
 Signed-off-by: Julien Thierry <jthierry@redhat.com>
 ---
- tools/objtool/arch.h                          |  1 +
- tools/objtool/arch/arm64/decode.c             | 22 ++++++++++++++++++-
- .../objtool/arch/arm64/include/insn_decode.h  |  7 ++++++
- tools/objtool/check.c                         | 10 ++++++++-
- 4 files changed, 38 insertions(+), 2 deletions(-)
+ tools/objtool/arch/arm64/decode.c             | 104 ++++++++++++++++++
+ .../objtool/arch/arm64/include/insn_decode.h  |  18 +++
+ 2 files changed, 122 insertions(+)
 
-diff --git a/tools/objtool/arch.h b/tools/objtool/arch.h
-index f9883c431949..0336efecb9d9 100644
---- a/tools/objtool/arch.h
-+++ b/tools/objtool/arch.h
-@@ -28,6 +28,7 @@ enum insn_type {
- 	INSN_STD,
- 	INSN_CLD,
- 	INSN_OTHER,
-+	INSN_INVALID,
- };
- 
- enum op_dest_type {
 diff --git a/tools/objtool/arch/arm64/decode.c b/tools/objtool/arch/arm64/decode.c
-index 4d0ab2acca27..04358f41ef1d 100644
+index 04358f41ef1d..6c8db9335fc9 100644
 --- a/tools/objtool/arch/arm64/decode.c
 +++ b/tools/objtool/arch/arm64/decode.c
-@@ -78,7 +78,9 @@ static int is_arm64(struct elf *elf)
-  *				 struct list_head *ops_list);
-  */
- static arm_decode_class aarch64_insn_class_decode_table[NR_INSN_CLASS] = {
--	NULL,
-+	[INSN_RESERVED]			= arm_decode_unknown,
-+	[INSN_UNKNOWN]			= arm_decode_unknown,
-+	[INSN_UNALLOC]			= arm_decode_unknown,
+@@ -81,6 +81,7 @@ static arm_decode_class aarch64_insn_class_decode_table[NR_INSN_CLASS] = {
+ 	[INSN_RESERVED]			= arm_decode_unknown,
+ 	[INSN_UNKNOWN]			= arm_decode_unknown,
+ 	[INSN_UNALLOC]			= arm_decode_unknown,
++	[0b1000 ... INSN_DP_IMM]	= arm_decode_dp_imm,
  };
  
  /*
-@@ -125,3 +127,21 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
- 		WARN_FUNC("Unsupported instruction", sec, offset);
- 	return res;
+@@ -145,3 +146,106 @@ int arm_decode_unknown(u32 instr, enum insn_type *type,
+ 
+ 	return 0;
  }
 +
-+int arm_decode_unknown(u32 instr, enum insn_type *type,
-+		       unsigned long *immediate, struct list_head *ops_list)
++#define NR_DP_IMM_SUBCLASS	8
++#define INSN_DP_IMM_SUBCLASS(opcode)			\
++	(((opcode) >> 23) & (NR_DP_IMM_SUBCLASS - 1))
++
++static arm_decode_class aarch64_insn_dp_imm_decode_table[NR_DP_IMM_SUBCLASS] = {
++	[0 ... INSN_PCREL]	= arm_decode_pcrel,
++	[INSN_MOVE_WIDE]	= arm_decode_move_wide,
++	[INSN_BITFIELD]		= arm_decode_bitfield,
++	[INSN_EXTRACT]		= arm_decode_extract,
++};
++
++int arm_decode_dp_imm(u32 instr, enum insn_type *type,
++		      unsigned long *immediate, struct list_head *ops_list)
 +{
-+	/*
-+	 * There are a few reasons we might have non-valid opcodes in
-+	 * code sections:
-+	 * - For load literal, assembler can generate the data to be loaded in
-+	 *   the code section
-+	 * - Compiler/assembler can generate zeroes to pad function that do not
-+	 *   end on 8-byte alignment
-+	 * - Hand written assembly code might contain constants in the code
-+	 *   section
-+	 */
-+	*type = INSN_INVALID;
++	arm_decode_class decode_fun;
++
++	decode_fun = aarch64_insn_dp_imm_decode_table[INSN_DP_IMM_SUBCLASS(instr)];
++	if (!decode_fun)
++		return -1;
++	return decode_fun(instr, type, immediate, ops_list);
++}
++
++int arm_decode_pcrel(u32 instr, enum insn_type *type,
++		     unsigned long *immediate, struct list_head *ops_list)
++{
++	unsigned char page = 0;
++	u32 immhi = 0, immlo = 0;
++
++	page = EXTRACT_BIT(instr, 31);
++	immhi = (instr >> 5) & ONES(19);
++	immlo = (instr >> 29) & ONES(2);
++
++	*immediate = SIGN_EXTEND((immhi << 2) | immlo, 21);
++
++	if (page)
++		*immediate = SIGN_EXTEND(*immediate << 12, 33);
++
++	*type = INSN_OTHER;
 +
 +	return 0;
 +}
++
++int arm_decode_move_wide(u32 instr, enum insn_type *type,
++			 unsigned long *immediate, struct list_head *ops_list)
++{
++	u32 imm16 = 0;
++	unsigned char hw = 0, opc = 0, sf = 0;
++
++	sf = EXTRACT_BIT(instr, 31);
++	opc = (instr >> 29) & ONES(2);
++	hw = (instr >> 21) & ONES(2);
++	imm16 = (instr >> 5) & ONES(16);
++
++	if ((sf == 0 && (hw & 0x2)) || opc == 0x1)
++		return arm_decode_unknown(instr, type, immediate, ops_list);
++
++	*type = INSN_OTHER;
++	*immediate = imm16;
++
++	return 0;
++}
++
++int arm_decode_bitfield(u32 instr, enum insn_type *type,
++			unsigned long *immediate, struct list_head *ops_list)
++{
++	unsigned char sf = 0, opc = 0, N = 0;
++
++	sf = EXTRACT_BIT(instr, 31);
++	opc = (instr >> 29) & ONES(2);
++	N = EXTRACT_BIT(instr, 22);
++
++	if (opc == 0x3 || sf != N)
++		return arm_decode_unknown(instr, type, immediate, ops_list);
++
++	*type = INSN_OTHER;
++
++	return 0;
++}
++
++int arm_decode_extract(u32 instr, enum insn_type *type,
++		       unsigned long *immediate, struct list_head *ops_list)
++{
++	unsigned char sf = 0, op21 = 0, N = 0, o0 = 0;
++	unsigned char imms = 0;
++	unsigned char decode_field = 0;
++
++	sf = EXTRACT_BIT(instr, 31);
++	op21 = (instr >> 29) & ONES(2);
++	N = EXTRACT_BIT(instr, 22);
++	o0 = EXTRACT_BIT(instr, 21);
++	imms = (instr >> 10) & ONES(6);
++
++	decode_field = (sf << 4) | (op21 << 2) | (N << 1) | o0;
++	*type = INSN_OTHER;
++	*immediate = imms;
++
++	if ((decode_field == 0 && !EXTRACT_BIT(imms, 5)) ||
++	    decode_field == 0b10010)
++		return 0;
++
++	return arm_decode_unknown(instr, type, immediate, ops_list);
++}
 diff --git a/tools/objtool/arch/arm64/include/insn_decode.h b/tools/objtool/arch/arm64/include/insn_decode.h
-index c56b72ac4633..16066f8fca0d 100644
+index 16066f8fca0d..06235d81300c 100644
 --- a/tools/objtool/arch/arm64/include/insn_decode.h
 +++ b/tools/objtool/arch/arm64/include/insn_decode.h
-@@ -5,6 +5,10 @@
+@@ -8,15 +8,33 @@
+ #define INSN_RESERVED	0b0000
+ #define INSN_UNKNOWN	0b0001
+ #define INSN_UNALLOC	0b0011
++#define INSN_DP_IMM	0b1001	//0x100x
  
- #include "../../../arch.h"
- 
-+#define INSN_RESERVED	0b0000
-+#define INSN_UNKNOWN	0b0001
-+#define INSN_UNALLOC	0b0011
-+
  #define NR_INSN_CLASS	16
  #define INSN_CLASS(opcode)	(((opcode) >> 25) & (NR_INSN_CLASS - 1))
  
-@@ -12,4 +16,7 @@ typedef int (*arm_decode_class)(u32 instr, enum insn_type *type,
++#define INSN_PCREL	0b001	//0b00x
++#define INSN_MOVE_WIDE	0b101
++#define INSN_BITFIELD	0b110
++#define INSN_EXTRACT	0b111
++
+ typedef int (*arm_decode_class)(u32 instr, enum insn_type *type,
  				unsigned long *immediate,
  				struct list_head *ops_list);
  
-+/* arm64 instruction classes */
-+int arm_decode_unknown(u32 instr, enum insn_type *type,
+ /* arm64 instruction classes */
++int arm_decode_dp_imm(u32 instr, enum insn_type *type,
++		      unsigned long *immediate, struct list_head *ops_list);
+ int arm_decode_unknown(u32 instr, enum insn_type *type,
+ 		       unsigned long *immediate, struct list_head *ops_list);
++
++/* arm64 data processing -- immediate subclasses */
++int arm_decode_pcrel(u32 instr, enum insn_type *type,
++		     unsigned long *immediate, struct list_head *ops_list);
++int arm_decode_move_wide(u32 instr, enum insn_type *type,
++			 unsigned long *immediate, struct list_head *ops_list);
++int arm_decode_bitfield(u32 instr, enum insn_type *type,
++			unsigned long *immediate, struct list_head *ops_list);
++int arm_decode_extract(u32 instr, enum insn_type *type,
 +		       unsigned long *immediate, struct list_head *ops_list);
  #endif /* _ARM_INSN_DECODE_H */
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 48aec56a7760..52a8e64e15ca 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -1818,6 +1818,13 @@ static int validate_branch_alt_safe(struct objtool_file *file,
- 	while (1) {
- 		next_insn = next_insn_same_sec(file, insn);
- 
-+		if (insn->type == INSN_INVALID) {
-+			WARN("%s+0x%lx non-executable instruction, should never be reached",
-+			     insn->sec->name,
-+			     insn->offset);
-+			return 1;
-+		}
-+
- 		if (file->c_file && func && insn->func && func != insn->func->pfunc) {
- 			WARN("%s() falls through to next function %s()",
- 			     func->name, insn->func->name);
-@@ -2137,7 +2144,8 @@ static bool ignore_unreachable_insn(struct instruction *insn)
- {
- 	int i;
- 
--	if (insn->ignore || insn->type == INSN_NOP)
-+	if (insn->ignore || insn->type == INSN_NOP ||
-+	    insn->type == INSN_INVALID)
- 		return true;
- 
- 	/*
 -- 
 2.21.0
 
