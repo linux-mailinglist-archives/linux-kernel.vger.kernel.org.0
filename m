@@ -2,107 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61D6A1356E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 11:31:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0871F1356E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 11:32:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730117AbgAIKba (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 05:31:30 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:36387 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728614AbgAIKba (ORCPT
+        id S1730148AbgAIKcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 05:32:05 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39983 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728614AbgAIKcF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 05:31:30 -0500
-Received: by mail-qk1-f195.google.com with SMTP id a203so5490857qkc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 02:31:29 -0800 (PST)
+        Thu, 9 Jan 2020 05:32:05 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c14so6795767wrn.7
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 02:32:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=SIH3Ne6v4PFkZV6VUGUzjoFVUhaLqB+lgrvUawjrMYc=;
-        b=oSAFRUuI/WV+Ymxkmqk+o2KoSZNYBI6zkdW782vrphCc7w6DF+HXx4WL5QcCrgPKWM
-         w8Zd/vouvnJom/empxWRyjT//3ljh5eDMjX4BoLsXZMMApwg2XAB0d21u1NeFWjdnKC3
-         NqfR7arNPf2N1W64klSU7LmQqd3JBdciWX4Li4fXnwDgI5UiPILsQ6zrMtpaFqbsTqpV
-         tDuMxNUZukDdIqFswXLJMym1lcVhhkamC87dUCGPwRslHSDiMh7/6A81uVST37sgAlJY
-         TrjuFjdzJI+b9MUPZ89sAu5kMrZpG7AqfI57rwrbSc7qKO1FNy436ko+mA33nMcLvne0
-         G3bg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gKOjXoXUmMkVLHPqpRRdxvzHegVqL9k6dIgoFzOzfdA=;
+        b=G9gDyHJflfuiDJk23URo02ck7jlHsQ9ueEmJxO6KzNTwxjznlQk1OShugDNSSpOufM
+         7IsSuPZqf6u8KEq1WfsvkS6q/zJpnrTP1kKggBjAYZ/BjtYKEmtYZvJ2gq7ADI1PrU7s
+         V+FkHLsqI0D3xNEc+qQ0SHEfPKGSAbqnILEyMGYH+1gn6RJlp9WL/4iU6F7V4/APxUrP
+         jP48GQQUmuFXlb/zG7e/1znyVaqVjar73l2Jl45c3uFuvYUKq1LC5e9oyCJudkAmW3lf
+         QlCOZKALQIxEXWkt5pL1V9jFbMei25/5C0EvcUILvN0O45NzuhjECcV6bBBjM2N5YDxG
+         ejlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=SIH3Ne6v4PFkZV6VUGUzjoFVUhaLqB+lgrvUawjrMYc=;
-        b=CPnbs9LbCcuZtjs2f4sZoiwtz7Q+uNFEGRqP5HblUcyL0JiU7YZGs9GbZpUIDcdscT
-         NbaNN4pKeurli1+qcyB/Zmqj1o1Va/Nf4ht4bpx6QxhOt48nD/8rrPYmTCgCETVShQzn
-         TV6jYGUQ6ys2FyZ37wVSzT9Xe+4EXmMw6bNRCV2nTxcXe5Qhwc7vZdWfmD9mhVb/Rlj+
-         y+e04IJ7kijL28dfr9XVeTG5+Ug4JCHn4BBuGgKg8fdSB5viq2bCJ8/Mdk6fnpXqMlm4
-         M0fMPm981NbEblrm0r2weRqi7PE01z1h03GJLAbXwhXddl9r1l2Q3w+SrqP79coh8NNA
-         cYYg==
-X-Gm-Message-State: APjAAAUlvZFpdoLHEFl+SBVriKoa6hXwHJeRtP78i0zDsfJyVmyHhpq4
-        9EbtvlwYP0E9zbtKdXqr0xXEdE4ToRNtx/+UgU2JsA==
-X-Google-Smtp-Source: APXvYqyuv1+zcik5Km8uc+VG5tVlFqozxu7U9959A+DWpFFqIOkOabtR5WlV1vnJUCEyIZ0zqLgdQUhYhHYvx+7h6dk=
-X-Received: by 2002:a37:6255:: with SMTP id w82mr8824719qkb.330.1578565889528;
- Thu, 09 Jan 2020 02:31:29 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gKOjXoXUmMkVLHPqpRRdxvzHegVqL9k6dIgoFzOzfdA=;
+        b=eOFXljPpwc4QpVehQFrb1H+p7LSh0xWHZM+fOIL9guFftepY1NEEbwS6LjPDCMRMDS
+         KyhhXGRX5r9iN3VbIO4uTrAOgd2xVecgBW8bin9cXW9wQrZkkmhmKo7LRRO3Fh0CI3Cf
+         FsEtJ+bJwoy740ka9zgYoP1Kt/YuWqkRNLnTHt1TNnWdGVWo2/OUCzf3dLlyeB1sqz1N
+         4cSDH4dgkNqfTf0l2ISdR8KsBlkuJAG5k9wMlqFGuHtdoN1pVqyVy4TDGXj1TKa+Z74d
+         N68M+xhVDHqw1wiZ4VcpdrofV01H7tXdwu9zhUSSJ765koxNYQlMTiMQWoOQh7XtBN+X
+         ZQ5w==
+X-Gm-Message-State: APjAAAXkx08M0pCbWyJwZSQ1JpYRrNp5g1VnIwSGGNo8kcQdiqtH1C2Y
+        R9pr7iaFDW7H89Qk4LDWr4jtvg==
+X-Google-Smtp-Source: APXvYqxLOl8XWBWGvHRCBJ13HtAncHNohxPiZ2zPtSJsHz9hTbzjLukruLfFJBbz4BLj4CPF80Wa5A==
+X-Received: by 2002:a5d:5708:: with SMTP id a8mr10665392wrv.79.1578565923314;
+        Thu, 09 Jan 2020 02:32:03 -0800 (PST)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id z83sm2473830wmg.2.2020.01.09.02.32.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jan 2020 02:32:02 -0800 (PST)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 0/4] slimbus: patches for 5.6
+Date:   Thu,  9 Jan 2020 10:31:44 +0000
+Message-Id: <20200109103148.5612-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20200107092922.18408-1-ktouil@baylibre.com>
-In-Reply-To: <20200107092922.18408-1-ktouil@baylibre.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Thu, 9 Jan 2020 11:31:18 +0100
-Message-ID: <CAMpxmJVj3DHXFq9D5HUD0j7t=Q7gFNF1eQsg2jUa4PEFrFas4w@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] at24: move write-protect pin handling to nvmem core
-To:     Khouloud Touil <ktouil@baylibre.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        baylibre-upstreaming@groups.io,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 7 sty 2020 o 10:29 Khouloud Touil <ktouil@baylibre.com> napisa=C5=82(a=
-):
->
-> The write-protect pin handling looks like a standard property that
-> could benefit other users if available in the core nvmem framework.
->
-> Instead of modifying all the drivers to check this pin, make the
-> nvmem subsystem check if the write-protect GPIO being passed
-> through the nvmem_config or defined in the device tree and pull it
-> low whenever writing to the memory.
->
-> This patchset:
->
-> - adds support for the write-protect pin split into two parts.
-> The first patch modifies modifies the relevant binding document,
-> while the second modifies the nvmem code to pull the write-protect
-> GPIO low (if present) during write operations.
->
-> - removes support for the write-protect pin split into two parts.
-> The first patch modifies the relevant binding document to make the
-> wp-gpio a reference to the property defined by nvmem , while the
-> second removes the relevant code in the at24 driver.
->
-> - adds reference in the at25 binding document for the wp-gpios property
-> as it uses nvmem subsystem.
->
-> Changes since v1:
-> -Add an explenation on how the wp-gpios works
-> -Keep reference to the wp-gpios in the at24 binding
->
-> Changes since v2:
-> -Use the flag GPIO_ACTIVE_HIGH instead of 0
->
-> Changes since v3:
-> -Keep the example of the wp-gpios in the at25 bindings
-> -Add reference for the wp-gpios property in the at25 binding
+Hi Greg,
 
-I picked up patches 1-3 & 5 into the at24 tree.
+Here are some trival SLIMBus fixes + a new bindings for 5.6.
 
-Patch 4 will need an Ack from Greg.
+Can you please queue them up for 5.6.
 
-Bart
+thanks,
+Srini
+
+
+Chuhong Yuan (1):
+  slimbus: qcom: add missed clk_disable_unprepare in remove
+
+Nishad Kamdar (1):
+  slimbus: Use the correct style for SPDX License Identifier
+
+Peter Ujfalusi (1):
+  slimbus: qcom-ngd-ctrl: Use dma_request_chan() instead
+    dma_request_slave_channel()
+
+Srinivas Kandagatla (1):
+  dt-bindings: SLIMBus: add slim devices optional properties
+
+ .../devicetree/bindings/slimbus/bus.txt       | 10 ++++++++++
+ drivers/slimbus/qcom-ctrl.c                   |  2 ++
+ drivers/slimbus/qcom-ngd-ctrl.c               | 20 +++++++++++--------
+ drivers/slimbus/slimbus.h                     |  2 +-
+ 4 files changed, 25 insertions(+), 9 deletions(-)
+
+-- 
+2.21.0
+
