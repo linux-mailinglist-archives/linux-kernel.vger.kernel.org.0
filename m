@@ -2,198 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55951135A1B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 14:29:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16F1B135A2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 14:32:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731147AbgAIN3n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 08:29:43 -0500
-Received: from foss.arm.com ([217.140.110.172]:59056 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731054AbgAIN3n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 08:29:43 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6179E31B;
-        Thu,  9 Jan 2020 05:29:42 -0800 (PST)
-Received: from arm.com (e112269-lin.cambridge.arm.com [10.1.194.52])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 65F263F534;
-        Thu,  9 Jan 2020 05:29:40 -0800 (PST)
-Date:   Thu, 9 Jan 2020 13:29:35 +0000
-From:   Steven Price <steven.price@arm.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        David Airlie <airlied@linux.ie>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        "hsinyi@chromium.org" <hsinyi@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 0/7] Add dts for mt8183 GPU (and misc panfrost patches)
-Message-ID: <20200109132934.GA6198@arm.com>
-References: <20200108052337.65916-1-drinkcat@chromium.org>
- <79fe7055-c11b-c9f6-64e5-48e3d5687dfe@arm.com>
- <ca77cd74-b747-20c4-b07c-60df23421690@arm.com>
+        id S1731159AbgAINb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 08:31:58 -0500
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:44213 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730471AbgAINb6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 08:31:58 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R311e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0TnFa0Xr_1578576712;
+Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TnFa0Xr_1578576712)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 09 Jan 2020 21:31:52 +0800
+Subject: Re: [PATCH 2/3] sched/cputime: code cleanup in
+ irqtime_account_process_tick
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Wanpeng Li <wanpeng.li@hotmail.com>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org
+References: <1577959674-255537-1-git-send-email-alex.shi@linux.alibaba.com>
+ <1577959674-255537-2-git-send-email-alex.shi@linux.alibaba.com>
+ <20200106155350.GB26097@lenoir>
+ <20200107091315.GS2844@hirez.programming.kicks-ass.net>
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Message-ID: <835fd412-544a-1bdd-e75f-f557e299a50a@linux.alibaba.com>
+Date:   Thu, 9 Jan 2020 21:30:40 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ca77cd74-b747-20c4-b07c-60df23421690@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200107091315.GS2844@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 01:10:33PM +0000, Robin Murphy wrote:
-> On 09/01/2020 12:01 pm, Steven Price wrote:
-> > On 08/01/2020 05:23, Nicolas Boichat wrote:
-> >> Hi!
-> >>
-> >> Sorry for the long delay since 
-> >> https://patchwork.kernel.org/patch/11132381/,
-> >> finally got around to give this a real try.
-> >>
-> >> The main purpose of this series is to upstream the dts change and the 
-> >> binding
-> >> document, but I wanted to see how far I could probe the GPU, to check 
-> >> that the
-> >> binding is indeed correct. The rest of the patches are 
-> >> RFC/work-in-progress, but
-> >> I think some of them could already be picked up.
-> >>
-> >> So this is tested on MT8183 with a chromeos-4.19 kernel, and a ton of
-> >> backports to get the latest panfrost driver (I should probably try on
-> >> linux-next at some point but this was the path of least resistance).
-> >>
-> >> I tested it as a module as it's more challenging (originally probing 
-> >> would
-> >> work built-in, on boot, but not as a module, as I didn't have the power
-> >> domain changes, and all power domains are on by default during boot).
-> >>
-> >> Probing logs looks like this, currently:
-> >> [  221.867726] panfrost 13040000.gpu: clock rate = 511999970
-> >> [  221.867929] panfrost 13040000.gpu: Linked as a consumer to 
-> >> regulator.14
-> >> [  221.868600] panfrost 13040000.gpu: Linked as a consumer to 
-> >> regulator.31
-> >> [  221.870586] panfrost 13040000.gpu: Linked as a consumer to 
-> >> genpd:0:13040000.gpu
-> >> [  221.871492] panfrost 13040000.gpu: Linked as a consumer to 
-> >> genpd:1:13040000.gpu
-> >> [  221.871866] panfrost 13040000.gpu: Linked as a consumer to 
-> >> genpd:2:13040000.gpu
-> >> [  221.872427] panfrost 13040000.gpu: mali-g72 id 0x6221 major 0x0 
-> >> minor 0x3 status 0x0
-> >> [  221.872439] panfrost 13040000.gpu: features: 00000000,13de77ff, 
-> >> issues: 00000000,00000400
-> >> [  221.872445] panfrost 13040000.gpu: Features: L2:0x07120206 
-> >> Shader:0x00000000 Tiler:0x00000809 Mem:0x1 MMU:0x00002830 AS:0xff JS:0x7
-> >> [  221.872449] panfrost 13040000.gpu: shader_present=0x7 l2_present=0x1
-> >> [  221.873526] panfrost 13040000.gpu: error powering up gpu stack
-> >> [  221.878088] [drm] Initialized panfrost 1.1.0 20180908 for 
-> >> 13040000.gpu on minor 2
-> >> [  221.940817] panfrost 13040000.gpu: error powering up gpu stack
-> >> [  222.018233] panfrost 13040000.gpu: error powering up gpu stack
-> >> (repeated)
-> > 
-> > It's interesting that it's only the stack that is failing. In hardware 
-> > there's a dependency: L2->stack->shader - so in theory the shader cores 
-> > shouldn't be able to power up either. There are some known hardware bugs 
-> > here though[1]:
-> > 
-> >      MODULE_PARM_DESC(corestack_driver_control,
-> >              "Let the driver power on/off the GPU core stack 
-> > independently "
-> >              "without involving the Power Domain Controller. This should "
-> >              "only be enabled on platforms for which integration of the 
-> > PDC "
-> >              "to the Mali GPU is known to be problematic.");
-> > 
-> > [1] 
-> > https://github.com/ianmacd/d2s/blob/master/drivers/gpu/arm/b_r16p0/backend/gpu/mali_kbase_pm_driver.c#L57 
-> > 
-> > 
-> > It might be worth just dropping the code for powering up/down stacks and 
-> > let the GPU's own dependency management handle it.
+
+>> I fear we can't really play the exact same game as account_process_tick() here.
+>> Since this is irqtime precise accounting, we have already computed the
+>> irqtime delta in account_other_time() (or we will at some point in the future)
+>> and substracted it from the ticks to account. This means that the remaining cputime
+>> to account has to be either utime/stime/gtime/idle-time but not interrupt time, or
+>> we may account interrupt time twice. And account_system_time() tries to account
+>> irq time, for example if we interrupt a softirq.
 > 
-> FWIW I remember digging into that same message a while back (although 
-> I've forgotten which particular GPU I was playing with at the time), and 
-> concluded that the STACK_PWRON/STACK_READY registers might just not be 
-> implemented on some GPUs,
-
-They are indeed not implemented on some GPUs. Specifically none of the
-Midgard GPUs. I believe G71 also doesn't have it. However the register
-addresses were picked so that on these older GPUs they should
-read-as-zero and write-ignore so this shouldn't actually cause any
-problems.
-
-> and/or this easy-to-overlook register bit 
-> could be some kind of enable for the functionality:
+> OK, I've dropped 2 and 3. Thanks Frederic!
 > 
-> https://github.com/ianmacd/d2s/blob/master/drivers/gpu/arm/b_r16p0/backend/gpu/mali_kbase_pm_driver.c#L1631
-> 
-> Since even in kbase this is all behind an 'expert' config option, I'm 
-> inclined to agree that just dropping it from panfrost unless and until 
-> it proves necessary is probably preferable to adding more logic and 
-> inscrutable register-magic.
 
-Indeed - I'll post a patch removing it.
+Hi Frederic & Peter,
 
-Thanks,
+Thanks a lot for the comments and review! 
+It's my fault to mess up the account_system_time details. And seems there is no easy way to replace irqtime_account_process_tick or account_process_tick with each other.
 
-Steve
+but on the other side, the account_idle_ticks could be replaced by irqtime_account_process_tick, or at least to remove irqtime_account_idle_ticks function. Any comments?
 
-> Robin.
-> 
-> > 
-> > Steve
-> > 
-> >>
-> >> So the GPU is probed, but there's an issue when powering up the STACK, 
-> >> not
-> >> quite sure why, I'll try to have a deeper look, at some point.
-> >>
-> >> Thanks!
-> >>
-> >> Nicolas
-> >>
-> >> v2:
-> >>   - Use sram instead of mali_sram as SRAM supply name.
-> >>   - Rename mali@ to gpu@.
-> >>   - Add dt-bindings changes
-> >>   - Stacking patches after the device tree change that allow basic
-> >>     probing (still incomplete and broken).
-> >>
-> >> Nicolas Boichat (7):
-> >>    dt-bindings: gpu: mali-bifrost: Add Mediatek MT8183
-> >>    arm64: dts: mt8183: Add node for the Mali GPU
-> >>    drm/panfrost: Improve error reporting in panfrost_gpu_power_on
-> >>    drm/panfrost: Add support for a second regulator for the GPU
-> >>    drm/panfrost: Add support for multiple power domain support
-> >>    RFC: drm/panfrost: Add bifrost compatible string
-> >>    RFC: drm/panfrost: devfreq: Add support for 2 regulators
-> >>
-> >>   .../bindings/gpu/arm,mali-bifrost.yaml        |  20 ++++
-> >>   arch/arm64/boot/dts/mediatek/mt8183-evb.dts   |   7 ++
-> >>   arch/arm64/boot/dts/mediatek/mt8183.dtsi      | 104 +++++++++++++++++
-> >>   drivers/gpu/drm/panfrost/panfrost_devfreq.c   |  18 +++
-> >>   drivers/gpu/drm/panfrost/panfrost_device.c    | 108 ++++++++++++++++--
-> >>   drivers/gpu/drm/panfrost/panfrost_device.h    |   7 ++
-> >>   drivers/gpu/drm/panfrost/panfrost_drv.c       |   1 +
-> >>   drivers/gpu/drm/panfrost/panfrost_gpu.c       |  15 ++-
-> >>   8 files changed, 267 insertions(+), 13 deletions(-)
-> >>
-> > 
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Thanks
+Alex
+
+---
+
+From 7073e60babc3b42a987b4e89f380956887734233 Mon Sep 17 00:00:00 2001
+From: Alex Shi <alex.shi@linux.alibaba.com>
+Date: Thu, 9 Jan 2020 20:32:55 +0800
+Subject: [PATCH] sched/cputime: remove irqtime_account_idle_ticks
+
+irqtime_account_idle_ticks and irqtime_account_process_tick use in same
+condition. We don't bother to name and use a irqtime_account_idle_ticks
+for only one calling. Remove the function to simply code and reduce a
+bit object size of kernel.
+
+And further more, we could replace account_idle_ticks by
+irqtime_account_process_tick too. But feed and check 'current' looks weird.
+So this is ok.
+
+Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com> 
+Cc: Peter Zijlstra <peterz@infradead.org> 
+Cc: linux-kernel@vger.kernel.org 
+---
+ kernel/sched/cputime.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+index cff3e656566d..17640d145e44 100644
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -390,12 +390,7 @@ static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+ 	}
+ }
+ 
+-static void irqtime_account_idle_ticks(int ticks)
+-{
+-	irqtime_account_process_tick(current, 0, ticks);
+-}
+ #else /* CONFIG_IRQ_TIME_ACCOUNTING */
+-static inline void irqtime_account_idle_ticks(int ticks) { }
+ static inline void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+ 						int nr_ticks) { }
+ #endif /* CONFIG_IRQ_TIME_ACCOUNTING */
+@@ -505,7 +500,7 @@ void account_idle_ticks(unsigned long ticks)
+ 	u64 cputime, steal;
+ 
+ 	if (sched_clock_irqtime) {
+-		irqtime_account_idle_ticks(ticks);
++		irqtime_account_process_tick(current, 0, ticks);
+ 		return;
+ 	}
+ 
+-- 
+1.8.3.1
+
