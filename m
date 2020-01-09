@@ -2,63 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD31D135D6E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:03:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47CEA135D73
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:04:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732836AbgAIQDV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 11:03:21 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:25934 "EHLO
+        id S1732857AbgAIQD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 11:03:28 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:26357 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732830AbgAIQDU (ORCPT
+        by vger.kernel.org with ESMTP id S1731296AbgAIQDX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 11:03:20 -0500
+        Thu, 9 Jan 2020 11:03:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578585799;
+        s=mimecast20190719; t=1578585802;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=IEmOZ+3NX8EHnBrXs7JpcZGqiWky8RDzrGpjGW3JhOk=;
-        b=DXCePTCWInDtAxsKhXGtfOlVWTgK8CsFnNwGv8PdBMrdqlO43gk59ESidIZCOC4KZ285RK
-        EuR7cprxUeM3UW6epbHV6aSPYQwX4swFrfm+HbdIufoaB2n4RUCE5sxwVWkGky8T1D6SmL
-        RadKqu7KAyGS7pDD+U647XLSygjPWiA=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-397-xvrP_q_nMJ-feEtbshWW6A-1; Thu, 09 Jan 2020 11:03:17 -0500
-X-MC-Unique: xvrP_q_nMJ-feEtbshWW6A-1
-Received: by mail-wr1-f72.google.com with SMTP id v17so3033461wrm.17
+        bh=+U+nGKdjMx0B4G/fm6acyvjMMXdjwiUkB11cChVUwvw=;
+        b=DwCnLZNPUdqRx93VvGsc0D0Hg7SNXi0oOu+yNg6mgkt2NOrdEtJjrwtibqmX40jkDmXksZ
+        m0VdFiQbXRRcNXQxBGtrA6CefZ1F8MTMzwMGg4ITdHw6VlWwXzpx79o/qoG/Os7N3BK0rw
+        04u/vSBUmaeVCaRd90JoY53A6PCE85k=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-300-VgLJAzLcOvSJ0roM2BW5Kw-1; Thu, 09 Jan 2020 11:03:18 -0500
+X-MC-Unique: VgLJAzLcOvSJ0roM2BW5Kw-1
+Received: by mail-wm1-f71.google.com with SMTP id p2so1097970wma.3
         for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:03:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=IEmOZ+3NX8EHnBrXs7JpcZGqiWky8RDzrGpjGW3JhOk=;
-        b=bbs8hKrIzyvPRU7Ip3cAGiTSPg4B1bzmrNRXdtnwPjqMLI5QTW9LJbZ9NLfiwkhd2U
-         nbZSPptbcyWn4chcmcPei/6jsdyXGD+rlfiBjSZtzvUxEbY/ON881dKJPsiUDm88zh8X
-         WW+NdinvfBdYdKc8rGIwupAepWATwG06B/e8gWSwnZ2YtqUpwjVNPEM+qo5ZYYoezSiZ
-         tl0z6bYsEyKwEyDjXB31vb4cxnzicrzSFw97SueLSX/H7AFv0L90+VllT+14CZ/TF4Tk
-         dbm7OLeC9meoBcqeIVy9wnQrmdD5o+FQTgXaic1+0gE71k1aYvAso1usMYbWVZnv1MsY
-         bvig==
-X-Gm-Message-State: APjAAAXmIGV41/Bp1ycfF4HcpXvflmm5BL/GjhJEgp7my7dmB5kYiJx8
-        tqhrgxWhU8f2DiBwKm6H0vgVTiZYaHgZ/EBJkTUfzzdfaEfgp8S0/CIQQS1KGRBWdKh8n/qAUed
-        I2dgULSGK6M+euP8GPBXWf8r3
-X-Received: by 2002:adf:806e:: with SMTP id 101mr12284641wrk.300.1578585795601;
-        Thu, 09 Jan 2020 08:03:15 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxhJw7oN3KdrwJWeebHQd7OtKE/MeC5SWWnNta8sWE9upFVwuTQwP5gOrTZf1dc7nb4l3igCQ==
-X-Received: by 2002:adf:806e:: with SMTP id 101mr12284536wrk.300.1578585794619;
-        Thu, 09 Jan 2020 08:03:14 -0800 (PST)
+        bh=+U+nGKdjMx0B4G/fm6acyvjMMXdjwiUkB11cChVUwvw=;
+        b=Lc6MsJE3EVTpxD25hAB1mhaNT6BjwYT9zRudQHx3tXVcS4eo/9Maj8L7T/pnAnBiaz
+         +DZJSPtai+5N2ehtWnmTcYj9UutCwZO7lOEG7eUgUiK3j7By1VtCuAhYcRINlLGJ9Gbo
+         3e3/5HD5wT5m4AZfKCftYnH5tfjxzn5bKvMzNvbNHzd1mfXHv6kGSmPZaI3NHu8fSzhv
+         8EQGPYWsLe/UxZLeQ21G1y6UqO/7WmC128/joahahaH1i/3ARGXaPa/zwVUj3ccxeBGG
+         e8lNocdM9CoQpCZta05B7d5bK3ko9+KJQZoURZqiZqBGeEH8047IuQd3EKqNtY7qsP3E
+         7BOA==
+X-Gm-Message-State: APjAAAX1Tb3qt8+jruKqTv4h8eHjG3eKlbV0ieLkUhxjWpar7MkRINz4
+        TinfwnK+uGKwr2r0qv2b55g298bicoXr7xZrlB8Shpc09Sg5L8hlHKsH9RAjUeyxwvL3MO73yu0
+        NH7aWRrrTdChH99ax8Tnq0vHi
+X-Received: by 2002:adf:ef0b:: with SMTP id e11mr11689567wro.128.1578585796273;
+        Thu, 09 Jan 2020 08:03:16 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxcaCDsW9bbAJtdhxvEAdTTp7rkMopW6pzF8N23b9naHbPtWUffbUGHw5DVwkRvjunTIXO26A==
+X-Received: by 2002:adf:ef0b:: with SMTP id e11mr11689532wro.128.1578585796043;
+        Thu, 09 Jan 2020 08:03:16 -0800 (PST)
 Received: from redfedo.redhat.com (host81-140-166-164.range81-140.btcentralplus.com. [81.140.166.164])
-        by smtp.gmail.com with ESMTPSA id z21sm3258969wml.5.2020.01.09.08.03.13
+        by smtp.gmail.com with ESMTPSA id z21sm3258969wml.5.2020.01.09.08.03.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 08:03:14 -0800 (PST)
+        Thu, 09 Jan 2020 08:03:15 -0800 (PST)
 From:   Julien Thierry <jthierry@redhat.com>
 To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     jpoimboe@redhat.com, peterz@infradead.org, raphael.gault@arm.com,
         catalin.marinas@arm.com, will@kernel.org,
         Julien Thierry <jthierry@redhat.com>
-Subject: [RFC v5 03/57] objtool: check: Use arch specific values in restore_reg()
-Date:   Thu,  9 Jan 2020 16:02:06 +0000
-Message-Id: <20200109160300.26150-4-jthierry@redhat.com>
+Subject: [RFC v5 04/57] objtool: check: Ignore empty alternative groups
+Date:   Thu,  9 Jan 2020 16:02:07 +0000
+Message-Id: <20200109160300.26150-5-jthierry@redhat.com>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200109160300.26150-1-jthierry@redhat.com>
 References: <20200109160300.26150-1-jthierry@redhat.com>
@@ -69,30 +69,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initial register state is set up by arch specific code. Use the value
-the arch code has set when restoring registers from the stack.
+Atlernative section can contain entries for alternatives with no
+instructions. Objtool will currently crash when handling such an entry.
 
-Suggested-by: Raphael Gault <raphael.gault@arm.com>
+Just skip that entry, but still give a warning to discourage useless
+entries.
+
 Signed-off-by: Julien Thierry <jthierry@redhat.com>
 ---
- tools/objtool/check.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/objtool/check.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 4784f0f6a3ae..5968e6f08891 100644
+index 5968e6f08891..27e5380e0e0b 100644
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -1437,8 +1437,8 @@ static void save_reg(struct insn_state *state, unsigned char reg, int base,
+@@ -866,6 +866,13 @@ static int add_special_section_alts(struct objtool_file *file)
+ 		}
  
- static void restore_reg(struct insn_state *state, unsigned char reg)
- {
--	state->regs[reg].base = CFI_UNDEFINED;
--	state->regs[reg].offset = 0;
-+	state->regs[reg].base = initial_func_cfi.regs[reg].base;
-+	state->regs[reg].offset = initial_func_cfi.regs[reg].offset;
- }
- 
- /*
+ 		if (special_alt->group) {
++			if (!special_alt->orig_len) {
++				WARN("empty alternative entry at %s+0x%lx",
++				     orig_insn->sec->name,
++				     orig_insn->offset);
++				continue;
++			}
++
+ 			ret = handle_group_alt(file, special_alt, orig_insn,
+ 					       &new_insn);
+ 			if (ret)
 -- 
 2.21.0
 
