@@ -2,84 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD147136239
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 22:05:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94EDA136235
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 22:05:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbgAIVFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 16:05:44 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55732 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728052AbgAIVFo (ORCPT
+        id S1726267AbgAIVFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 16:05:11 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34180 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbgAIVFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 16:05:44 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1ipez7-0008OC-Ij; Thu, 09 Jan 2020 22:04:53 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 0AA1A105BCE; Thu,  9 Jan 2020 22:04:53 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Paul Mackerras <paulus@ozlabs.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        syzbot+c9d1fb51ac9d0d10c39d@syzkaller.appspotmail.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Barret Rhoden <brho@google.com>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Zeng <jason.zeng@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Subject: Re: [PATCH 05/14] x86/mm: Introduce lookup_address_in_mm()
-In-Reply-To: <20200108202448.9669-6-sean.j.christopherson@intel.com>
-References: <20200108202448.9669-1-sean.j.christopherson@intel.com> <20200108202448.9669-6-sean.j.christopherson@intel.com>
-Date:   Thu, 09 Jan 2020 22:04:53 +0100
-Message-ID: <871rs8batm.fsf@nanos.tec.linutronix.de>
+        Thu, 9 Jan 2020 16:05:11 -0500
+Received: by mail-pg1-f194.google.com with SMTP id r11so3806815pgf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 13:05:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pg5x4483JWBqI1Bbmsf56qLvZ2BmXpfD9hK5FoGuIvo=;
+        b=Imm5wHycOANnogJCYNNwbbJaqTm625dEYfX4VQOjq9pFSv916dng3G49QQbwyY2BzT
+         Grevd5V6/Jybn20m5HflcBraYzK8f5XW3mm8/SWakJYJ17fVJmbAq0uB+52gjNOnHewx
+         9TpVqOLinrbAovJQDb9QIUh3eGag/TD7cdaWC/l+52We0/XGgSukM5KOX7D2KzsvhzNs
+         9kY1xSyF9/rMUBct72PgUAINShfpIj8yi1ODaNxbTGGUUWS3V+Ea9RuFT6hAFspLG63P
+         Sp3TP1LZE4pvhQYkNr0Q4oRD+wuK3ASAG0j5Xmfh4HMGHlGjw+JxVk71gPaACsFdFq8I
+         9wHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pg5x4483JWBqI1Bbmsf56qLvZ2BmXpfD9hK5FoGuIvo=;
+        b=ZgG+lyq/IWUtQuWtHkBg31PPlz4YTMxw5N1pknCMEp4hAEgkuqXs0m3mdyc1FBCgDd
+         sYK6vejJ4QlKNy+NZliWFGk1JwfN/lSwI3JHgIPK/LfTjWk2BKR32ewlkCiam85adSTT
+         HRRjFVoYFfOAos0MRQAl0aGQ+Y/nSTbexq4ZWmRaj3LhQ9O+cFYn6S/bggwRyAGG6hKi
+         X3dewEM3p8hNJjCUDL4kpFhKmqbJFPVZvJZ28fzER2eCg/FUCceP8uSKpx+gru//lzgi
+         Zd/dgtzoPrPaDqj7vOOnB3r39bz9ggneNaMkWbx+9mjlUYEWp5MGj4wvLfEcIYes9AxE
+         U9rw==
+X-Gm-Message-State: APjAAAWZZNlxCfASQ59TQPRMOj/JwUexU2mdkjWIRSMIjfG1k01tF88l
+        DrArLf3dJ5m8LX37swbrB8R9k7Cldy9h0sHMitc=
+X-Google-Smtp-Source: APXvYqyOUOiQvWbT7Mn0s0sPosqtwKuh6AnBMFpJdGNTkY1X/QC3QN6ZJ+HiH8AYFddn/3ay2Z5mpcF+px2qqS4QxD4=
+X-Received: by 2002:aa7:9474:: with SMTP id t20mr507237pfq.241.1578603910412;
+ Thu, 09 Jan 2020 13:05:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20200109103601.45929-1-andriy.shevchenko@linux.intel.com>
+ <20200109103601.45929-2-andriy.shevchenko@linux.intel.com> <20200109120814.27198f300bbe209cdc411fc6@linux-foundation.org>
+In-Reply-To: <20200109120814.27198f300bbe209cdc411fc6@linux-foundation.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 9 Jan 2020 23:04:59 +0200
+Message-ID: <CAHp75Vd6JLjPfrA4f2ugwfiZS3fBSxN48ja7OjnZ4s_pqWJZng@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] lib/test_bitmap: Fix address space when test user buffer
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Yury Norov <yury.norov@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+On Thu, Jan 9, 2020 at 10:53 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Thu,  9 Jan 2020 12:36:01 +0200 Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+>
+> > Force address space to avoid the following warning:
+> >
+> > lib/test_bitmap.c:461:53: warning: incorrect type in argument 1 (different address spaces)
+> > lib/test_bitmap.c:461:53:    expected char const [noderef] <asn:1> *ubuf
+> > lib/test_bitmap.c:461:53:    got char const *in
+>
+> We did this in
+>
+> commit 17b6753ff08bc47f50da09f5185849172c598315
+> Author:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> AuthorDate: Wed Dec 4 16:53:06 2019 -0800
+> Commit:     Linus Torvalds <torvalds@linux-foundation.org>
+> CommitDate: Wed Dec 4 19:44:14 2019 -0800
+>
+>     lib/test_bitmap: force argument of bitmap_parselist_user() to proper address space
 
-> diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-> index b5e49e6bac63..400ac8da75e8 100644
-> --- a/arch/x86/include/asm/pgtable_types.h
-> +++ b/arch/x86/include/asm/pgtable_types.h
-> @@ -561,6 +561,10 @@ static inline void update_page_count(int level, unsigned long pages) { }
->  extern pte_t *lookup_address(unsigned long address, unsigned int *level);
->  extern pte_t *lookup_address_in_pgd(pgd_t *pgd, unsigned long address,
->  				    unsigned int *level);
-> +
-> +struct mm_struct;
-> +pte_t *lookup_address_in_mm(struct mm_struct *mm, unsigned long address,
-> +			    unsigned int *level);
+This is for "parseLIST", while new patch for "parse".
 
-Please keep the file consistent and use extern even if not required.
+>
+> > --- a/lib/test_bitmap.c
+> > +++ b/lib/test_bitmap.c
+> > @@ -458,7 +458,8 @@ static void __init __test_bitmap_parse(int is_user)
+> >
+> >                       set_fs(KERNEL_DS);
+> >                       time = ktime_get();
+> > -                     err = bitmap_parse_user(test.in, len, bmap, test.nbits);
+> > +                     err = bitmap_parse_user((__force const char __user *)test.in, len,
+> > +                                             bmap, test.nbits);
+> >                       time = ktime_get() - time;
+> >                       set_fs(orig_fs);
+> >               } else {
+>
+> Except your tree has `test' where mainline has `ptest'.  I'm not sure
+> what has happened here?
+>
 
-Other than that:
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+-- 
+With Best Regards,
+Andy Shevchenko
