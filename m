@@ -2,63 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66FD8135DCC
+	by mail.lfdr.de (Postfix) with ESMTP id CFFC5135DCD
 	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:10:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387431AbgAIQJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 11:09:38 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23239 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387417AbgAIQJg (ORCPT
+        id S2387439AbgAIQJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 11:09:40 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:20093 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387430AbgAIQJi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 11:09:36 -0500
+        Thu, 9 Jan 2020 11:09:38 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578586176;
+        s=mimecast20190719; t=1578586177;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=x/rxJnoz2dp9/OgwOSiXn1XXvPb+lm1fPDfoPO+TlzQ=;
-        b=HDCsoXgB1j3chip68L6QzJI6/Db6kEhxr6J20Hxml6/KMZ5xSNHYINJONxx8zC5p3LH8Gp
-        cMUPcvPUgHON8GLND6cdj3eOdYKwo9BRLDahfB8Av7sJMo2/gYbc7dZgwhLds3GQgE8+sh
-        +cmGYkrAN3XQ7TwtF9sLDIFlxC7rwYg=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-151-NZVXg3HMO-GjOyFFuN746g-1; Thu, 09 Jan 2020 11:09:35 -0500
-X-MC-Unique: NZVXg3HMO-GjOyFFuN746g-1
-Received: by mail-wm1-f69.google.com with SMTP id b9so1098965wmj.6
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:09:34 -0800 (PST)
+        bh=NXlvrJt6z83MLX+WxwdFOCINB+GcX+Yj981D0b2qPGQ=;
+        b=AoQiNHr/kMk+jVWM21dkD/M1ITTKfOgLtEEWGY6GoMQr20bGUG2bIsybpij6MRJFSgS47+
+        8eMlX+wcqT46PUskfqiH9l8SHQ5/C2FSmvj2vijx1xDgdgQS/ZejiuOV61WeyEEy5ZE5bk
+        I3Wpk9SLOuoA0WcmWargHlkr65EkEMI=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-215-UztTS9imPWWleT3bvJwlBA-1; Thu, 09 Jan 2020 11:09:36 -0500
+X-MC-Unique: UztTS9imPWWleT3bvJwlBA-1
+Received: by mail-wr1-f72.google.com with SMTP id o6so3042297wrp.8
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:09:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=x/rxJnoz2dp9/OgwOSiXn1XXvPb+lm1fPDfoPO+TlzQ=;
-        b=XtnBYs3QFYJpnnKmlbSEUl8o9xAaOIUz/hc7xuB23e0D10tMZo5CFNTiOuUOljvtv/
-         FZd0Q4bWDggJM2eZGgIhaPD3LvS5YJMlg8HSZlfElpodqPfMtfBTOJ/F5d43GhYtasv+
-         6y/eAZSsvfka4Bcy100D8qM4rfdJdvlZ1ZydYrRFBEelCTQOJdYAjLyjZSe8tyjhYH4c
-         03WsKoLtyTin7uykTOGg3YiLDkRSs9BafRAm28Eis28xCvrgW7O3f9yP2aDvDd0KxpRS
-         UYRUofyO2d9oQbXqkr+95tJ8aQGhAnQQsG8viIE4Fo48Hq9tHXzSSi8gcGonjrO5a75J
-         +zxw==
-X-Gm-Message-State: APjAAAWgLar1+cxgRMA3AX7NhCOxQgJo6uOfOM9lbdMLhYt76DSM6orh
-        5gAVojtf0r9hrtgz9hbDLouUI7nA9Mzp6Ebv5+HsJMWOllEDGAgHlnAk80tYq1sxPXk2QUHX9fV
-        Z/9LGxUePcpzcE2rWa7vzwv6l
-X-Received: by 2002:a5d:6a88:: with SMTP id s8mr11396383wru.173.1578586173702;
-        Thu, 09 Jan 2020 08:09:33 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzzBZ0BLVEYI65yhSFFLKAZJl16GgmFQUcOJvP3sjdvkoaxTwI5EQ3O12ZHhk4lBNKmTURtAg==
-X-Received: by 2002:a5d:6a88:: with SMTP id s8mr11396364wru.173.1578586173488;
-        Thu, 09 Jan 2020 08:09:33 -0800 (PST)
+        bh=NXlvrJt6z83MLX+WxwdFOCINB+GcX+Yj981D0b2qPGQ=;
+        b=h7fRAMYetl7TZDHtPuqkVBE3todtoqaE0eyv4tZhkQS+Pvtp4t7qRnHTDz2HWhjoHb
+         vjQKsW8KtjqASPzn8tQ60MqLGOnbnQaeYPXtO0tizJiqpr5/FOhLORslShiwDOvMukCV
+         xi4AySVAzOghMOmIMaf29vC6rDBHc8jS90r6WyZfAZRkqt6pICNoJBQOpFs+TaPGFcTe
+         ImH0iRIIN6mt+Bmq7egIesXLtJH7obzDnVZ8aHE9RZpdZ4pgQa9xdhfk6LmjzP70yW9y
+         FnuGlelaDIjDYYjQ0mzaSCkbzUtwecWZBuduVmc6WoH3be74RdcTPlcXatX8hgPeRjxl
+         2UaA==
+X-Gm-Message-State: APjAAAUqBWJBPOlHi27+SWvMgeHpspG/sfA5AKEPP60dmZFn9vL4RReD
+        b7oZuLi2S2Muv3NMBbX10vI6I2MJSXDPqGMdsiHjxnTm56d7th9Y8q6BT53jh/bLQC/MdVM64Ka
+        HLF6b5Hm0Sr0JOnKiD++10OFZ
+X-Received: by 2002:a7b:cbc9:: with SMTP id n9mr5807749wmi.89.1578586175319;
+        Thu, 09 Jan 2020 08:09:35 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzmBZZfDXBq6RqR3Rkcb9sOH+t9Q3MfPwQWoV78KSevOPVEW0amjALm+VNPMHJy5/8IKwjOOA==
+X-Received: by 2002:a7b:cbc9:: with SMTP id n9mr5807724wmi.89.1578586175172;
+        Thu, 09 Jan 2020 08:09:35 -0800 (PST)
 Received: from redfedo.redhat.com (host81-140-166-164.range81-140.btcentralplus.com. [81.140.166.164])
-        by smtp.gmail.com with ESMTPSA id e8sm8517707wrt.7.2020.01.09.08.09.32
+        by smtp.gmail.com with ESMTPSA id e8sm8517707wrt.7.2020.01.09.08.09.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 08:09:32 -0800 (PST)
+        Thu, 09 Jan 2020 08:09:34 -0800 (PST)
 From:   Julien Thierry <jthierry@redhat.com>
 To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     jpoimboe@redhat.com, peterz@infradead.org, raphael.gault@arm.com,
         catalin.marinas@arm.com, will@kernel.org,
-        Julien Thierry <jthierry@redhat.com>
-Subject: [RFC v5 51/57] arm64: crypto: Add exceptions for crypto object to prevent stack analysis
-Date:   Thu,  9 Jan 2020 16:02:54 +0000
-Message-Id: <20200109160300.26150-52-jthierry@redhat.com>
+        Julien Thierry <jthierry@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        kvmarm@lists.cs.columbia.edu
+Subject: [RFC v5 52/57] arm64: kernel: Annotate non-standard stack frame functions
+Date:   Thu,  9 Jan 2020 16:02:55 +0000
+Message-Id: <20200109160300.26150-53-jthierry@redhat.com>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200109160300.26150-1-jthierry@redhat.com>
 References: <20200109160300.26150-1-jthierry@redhat.com>
@@ -71,44 +75,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Raphael Gault <raphael.gault@arm.com>
 
-Some crypto modules contain `.word` of data in the .text section.
-Since objtool can't make the distinction between data and incorrect
-instruction, it gives a warning about the instruction being unknown
-and stops the analysis of the object file.
-
-The exception can be removed if the data are moved to another section
-or if objtool is tweaked to handle this particular case.
+Annotate assembler functions which are callable but do not
+setup a correct stack frame.
 
 Signed-off-by: Raphael Gault <raphael.gault@arm.com>
 Signed-off-by: Julien Thierry <jthierry@redhat.com>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: James Morse <james.morse@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: kvmarm@lists.cs.columbia.edu
 ---
- arch/arm64/crypto/Makefile | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/kernel/hyp-stub.S | 3 +++
+ arch/arm64/kvm/hyp-init.S    | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/arch/arm64/crypto/Makefile b/arch/arm64/crypto/Makefile
-index d0901e610df3..576a19923185 100644
---- a/arch/arm64/crypto/Makefile
-+++ b/arch/arm64/crypto/Makefile
-@@ -43,9 +43,11 @@ aes-neon-blk-y := aes-glue-neon.o aes-neon.o
- 
- obj-$(CONFIG_CRYPTO_SHA256_ARM64) += sha256-arm64.o
- sha256-arm64-y := sha256-glue.o sha256-core.o
-+OBJECT_FILES_NON_STANDARD_sha256-core.o := y
- 
- obj-$(CONFIG_CRYPTO_SHA512_ARM64) += sha512-arm64.o
- sha512-arm64-y := sha512-glue.o sha512-core.o
-+OBJECT_FILES_NON_STANDARD_sha512-core.o := y
- 
- obj-$(CONFIG_CRYPTO_CHACHA20_NEON) += chacha-neon.o
- chacha-neon-y := chacha-neon-core.o chacha-neon-glue.o
-@@ -62,6 +64,7 @@ aes-arm64-y := aes-cipher-core.o aes-cipher-glue.o
- 
- obj-$(CONFIG_CRYPTO_AES_ARM64_BS) += aes-neon-bs.o
- aes-neon-bs-y := aes-neonbs-core.o aes-neonbs-glue.o
-+OBJECT_FILES_NON_STANDARD_aes-neonbs-core.o := y
- 
- CFLAGS_aes-glue-ce.o	:= -DUSE_V8_CRYPTO_EXTENSIONS
- 
--- 
+diff --git a/arch/arm64/kernel/hyp-stub.S b/arch/arm64/kernel/hyp-stub.S
+index 73d46070b315..8917d42f38c7 100644
+--- a/arch/arm64/kernel/hyp-stub.S
++++ b/arch/arm64/kernel/hyp-stub.S
+@@ -6,6 +6,7 @@
+  * Author:	Marc Zyngier <marc.zyngier@arm.com>
+  */
+
++#include <linux/frame.h>
+ #include <linux/init.h>
+ #include <linux/linkage.h>
+ #include <linux/irqchip/arm-gic-v3.h>
+@@ -42,6 +43,7 @@ ENTRY(__hyp_stub_vectors)
+ 	ventry	el1_fiq_invalid			// FIQ 32-bit EL1
+ 	ventry	el1_error_invalid		// Error 32-bit EL1
+ ENDPROC(__hyp_stub_vectors)
++asm_stack_frame_non_standard __hyp_stub_vectors
+
+ 	.align 11
+
+@@ -69,6 +71,7 @@ el1_sync:
+ 9:	mov	x0, xzr
+ 	eret
+ ENDPROC(el1_sync)
++asm_stack_frame_non_standard el1_sync
+
+ .macro invalid_vector	label
+ \label:
+diff --git a/arch/arm64/kvm/hyp-init.S b/arch/arm64/kvm/hyp-init.S
+index 160be2b4696d..63deea39313d 100644
+--- a/arch/arm64/kvm/hyp-init.S
++++ b/arch/arm64/kvm/hyp-init.S
+@@ -12,6 +12,7 @@
+ #include <asm/pgtable-hwdef.h>
+ #include <asm/sysreg.h>
+ #include <asm/virt.h>
++#include <linux/frame.h>
+
+ 	.text
+ 	.pushsection	.hyp.idmap.text, "ax"
+@@ -118,6 +119,7 @@ CPU_BE(	orr	x4, x4, #SCTLR_ELx_EE)
+ 	/* Hello, World! */
+ 	eret
+ ENDPROC(__kvm_hyp_init)
++asm_stack_frame_non_standard __kvm_hyp_init
+
+ ENTRY(__kvm_handle_stub_hvc)
+ 	cmp	x0, #HVC_SOFT_RESTART
+@@ -159,6 +161,7 @@ reset:
+ 	eret
+
+ ENDPROC(__kvm_handle_stub_hvc)
++asm_stack_frame_non_standard __kvm_handle_stub_hvc
+
+ 	.ltorg
+
+--
 2.21.0
 
