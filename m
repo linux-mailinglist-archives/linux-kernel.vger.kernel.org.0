@@ -2,202 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B9BF13609A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 19:58:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59A651360A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 20:02:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732240AbgAIS6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 13:58:39 -0500
-Received: from USFB19PA36.eemsg.mail.mil ([214.24.26.199]:7387 "EHLO
-        USFB19PA36.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729054AbgAIS6j (ORCPT
+        id S2388667AbgAITB6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 14:01:58 -0500
+Received: from us03-smtprelay2.synopsys.com ([149.117.87.133]:50314 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729054AbgAITB6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 13:58:39 -0500
-X-EEMSG-check-017: 42691197|USFB19PA36_ESA_OUT06.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.69,414,1571702400"; 
-   d="scan'208";a="42691197"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by USFB19PA36.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 09 Jan 2020 18:58:34 +0000
+        Thu, 9 Jan 2020 14:01:58 -0500
+Received: from mailhost.synopsys.com (badc-mailhost2.synopsys.com [10.192.0.18])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 676CCC00BD;
+        Thu,  9 Jan 2020 19:01:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1578596517; bh=6rX1QNqgN7AIyl1Um8POPl1F749eAXZl193MTnB6RFA=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=cbpQbDHR+jdJg68PJXy3QsLkYdX+wb8rjzoKRWcdyxpE3LE/Kusjir9FCgG787A6b
+         oJq7rlD0EahdppJ37wkxKpStKgbFgX1ntdxIiwNwkoXbIBod23eXrKKZDyoo54s3vi
+         UN8EwfVUg+aGDkq5D7Ti5GMDsaLA9hFDMqySMrdPBIGpCAs7YTLBX2jQeJIOzP4G3B
+         tlR7JLLe03vohZSNvYjTbMiR7k6Y3tzatRJSAxz/n56qLfTFtJetZI8S44YZm8YQZd
+         l5CUb3kugw3nXgUEknnqF/TSgqGtXjrw8jjnH6QEq7mYGyJjKAuvIybxVYg5JhweFg
+         ceZFrwyJxOCcw==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id CA3E4A0067;
+        Thu,  9 Jan 2020 19:01:56 +0000 (UTC)
+Received: from us01hybrid1.internal.synopsys.com (10.200.27.51) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 9 Jan 2020 11:01:48 -0800
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (10.202.3.67) by
+ mrs.synopsys.com (10.200.27.51) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 9 Jan 2020 11:01:47 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=a3oldwCDtTTVhI/zRqKDZb754YVWmWZhR4GAO1hZOdNO4NvDAUoas5Bv66Z2sDi562mNrCadPsv+t8CdyGYUQsteq3q//1lw1eL/E9c1OSc2z/kpHkHgnPIpzG+16oG0Z6IuozRU8z550eLPLZ3idm/02O4Q6liSs/W0LqLvPLO99R0fXg2OOpzr89QlJw534eBcOBjy5OpJVqRYl1wE3mEIidX+nnf6dXAuuEO60Q3XJ4+w+K33kL8uWQRChnL5h8KZBcppcs8xWzu+9UN0Mdn9glAx8I3YOiaI6sAVtce3vKmcWGvaCgZC/4OVydpaPXw1pYZxtr35aTOFJHmjqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h78LBTdhwF6Kx+B/2HSfM0atsLKkT730Nn+BguLQMgY=;
+ b=kbGIzsdxM2xaGbeCoDfFPbYPARRDl8FrMElSaZVfenHjHlEExXoiP7F/ojLh4d7H02Rhe+lT448+2VEeRrPZ0LC+MvS8gvSOCacnw2O59KStTnW/6PN8w0AlZZ0zzuRIKW0+g72yKwm4al9okp5MQSeJJJ+dqf77YLbg9aaJVnxCu4RcnPrdhsleDJkoeWF2hpcYdLYfKc6q2Gfs3gOHS6xyu6jP2Hqi2npsgH3Hu+ClNBBo3Xfu+q2Ll7zyFGm04pGf/qZVtcHkd7vqY3tJ5TQCuwZegdbf0fg7ly0GUhyxeZcgfDdfvMcQd4NFP8OI/8RA0RQN775ujmM2p7i4qA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
+ dkim=pass header.d=synopsys.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1578596315; x=1610132315;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=ZPmZF83oIB329lW4as9cdr4MSFrWPuk7yQcwDUdxaTs=;
-  b=ArJM0kfnQmQfIveCnEnGnxsVm0ApRvfR6Bfs+PTei5RwobTwdfDVcbjL
-   kw9U1xSY3iFWsQVsYzVVG2KnzuIq/Tszv3Celfr3JpY7b9x9OV0GFSxob
-   wyWjQbQ3bd7JYN4EBjishM66J/j2Y5U/dvqc85cAzMBoU4Io4DQSbGsvT
-   Ldv6lUEF7fuIa7LwXs7IbUql33d6ppuY5Zti/Dha3lh7760uT1jpWVhTd
-   90HoLqibmPCnRO8iIaMJpz4G1ilYZG4UnFArJPkjcd4AvIhSIFl/ZidE+
-   J7WJe/P9UZ+2AP2HV2/i/HT6aB11p0hHhpGyM+UDEXzuWVYrC/IZo6IUe
-   w==;
-X-IronPort-AV: E=Sophos;i="5.69,414,1571702400"; 
-   d="scan'208";a="31783925"
-IronPort-PHdr: =?us-ascii?q?9a23=3ApTpPtBcddllUzr+Pmi3P4rINlGMj4u6mDksu8p?=
- =?us-ascii?q?Mizoh2WeGdxc6/ZhON2/xhgRfzUJnB7Loc0qyK6vumAzJZqsbY+Fk5M7V0Hy?=
- =?us-ascii?q?cfjssXmwFySOWkMmbcaMDQUiohAc5ZX0Vk9XzoeWJcGcL5ekGA6ibqtW1aFR?=
- =?us-ascii?q?rwLxd6KfroEYDOkcu3y/qy+5rOaAlUmTaxe7x/IAi4oAnLqMUbgJZuJqkyxx?=
- =?us-ascii?q?fUv3BFZ/lYyWR0KFyJgh3y/N2w/Jlt8yRRv/Iu6ctNWrjkcqo7ULJVEi0oP3?=
- =?us-ascii?q?g668P3uxbDSxCP5mYHXWUNjhVIGQnF4wrkUZr3ryD3q/By2CiePc3xULA0RT?=
- =?us-ascii?q?Gv5LplRRP0lCsKMSMy/XrJgcJskq1UvBOhpwR+w4HKZoGVKOF+db7Zcd8DWG?=
- =?us-ascii?q?ZNQtpdWylHD4yydYsPC/cKM/heoYfzulACqQKyCAmoCe/qzDJDm3340rAg0+?=
- =?us-ascii?q?k5DA/IwgIgEdINvnraotr6O6UdXvy6wqTT0TXObelb1Svh5IXGcB0sp+yHU7?=
- =?us-ascii?q?JqccrWzEkiDx7LjkmOpoz9PzOayOINuHWG4eplT+2vj2onpB9xozOywcoskZ?=
- =?us-ascii?q?TGhpkOx1DY9SR23IY1JdqiRE59et6rCoFcty6dN4toW84vRXxjtiUiyrAepJ?=
- =?us-ascii?q?K2cycHxI4nyhLCcfCLbYeF7gz5WOqMJzpzmWhrd6ilhxmo9Eit0uj8Vs6p31?=
- =?us-ascii?q?lUtidFidzMtmwV1xzU98iHVuNx/ke/1jaL0ADe8v1ELloularaNp4h2aQ8lp?=
- =?us-ascii?q?sVsUTNGS/2g1v5g7OMekU4+umn9+TnYrL8qp+aK4B0kR3xPr4rmsy+BeQ0Kg?=
- =?us-ascii?q?kOX26F9uSgzLDv4EL0TbpQgvA2j6XVqo7WKMsFqqKjHgNZyoMj5Ay+Dzei3t?=
- =?us-ascii?q?QYh34HLFdddRKckofpIErDIOz4DPijg1Ssly1nx/bdPrL7GJnNIX/DkKn5cb?=
- =?us-ascii?q?Zn90Fc0BYzzcxY559MCLEBJfXzWlXrtNzZFR80KAq0zPziCNpj14MSQ2WPAr?=
- =?us-ascii?q?WWMKnKq1+H+vovI/WQZI8SoDv9KOYq6OD1jXAlnl8deqqp0IALZ3C4BPRmJE?=
- =?us-ascii?q?CZYXvxgtcEC2sKuRA+TOPygl2YTTFTf2qyX7475jwjC4KmFZzDRoGrgLyO3C?=
- =?us-ascii?q?e2BYFZZmBcClCLFHfodpiEW/IWZCKVOM9hnSQOVaK9RI85yRGuqAj6xqJ7Ie?=
- =?us-ascii?q?XO4S0Xq5Li2cNu5+LPlRE97yF0D8qZ026TVWF4h38HSCUs0K9jpkx9z0+J0b?=
- =?us-ascii?q?JkjPxACdxT+/RJXx8+NZ7dyex6Ft/zVhvCftiXUlamRMupATUqQ9IvzN8BfV?=
- =?us-ascii?q?x9F8+hjh/dxSqqBaEal7iRCJwz6KLc0GD7J9xhxHbeyKkhk14mT9NUOm2+iK?=
- =?us-ascii?q?5y7BbTB4HXnEWDjaqqdroT3DTL9GidyWqCpkZYUBR/Ua/dR3AQelPWrcjl5k?=
- =?us-ascii?q?PFV7KuDbUnMg1cyc+NM6dKccPmgklbRPf5OdTef2Kwl361BRaP27yMcY7qdH?=
- =?us-ascii?q?sG0SXDB0gLjRoT8WyFNQcgHCehpXzRDDh0GVLoeUPs/vF0qGmnQU8s0wGKc0?=
- =?us-ascii?q?ph2qKv9R4OmfyRUPAT0aweuCcntTp0GEyx39XMC9qPvwBhZrlTYcsh4Fdb0m?=
- =?us-ascii?q?LUrxFyMYamL6BjmFEedx96v0Lp1xV4FIpPi9Iqo2gtzAt9M66Y1k1Ody+A15?=
- =?us-ascii?q?DqJrLXMnXy/Ayoa6POxlHe0NmW9b0V6PQ+qlXsohqkGVYi83V91NlV1nqc5o?=
- =?us-ascii?q?jPDAYIVpLxSEk3/QBgp77Geik9+5/U1Xp0PKmxsj/NwdYpC/c/yhancdZSK6?=
- =?us-ascii?q?yEFAj1E80VA8ihNvYmlESubhIBJOpS7rI7P9u6d/ua366mJP5gnDC6jWlc74?=
- =?us-ascii?q?B91UWM9yV4SuHWxZoK3/aY3g6fXTfmkFihqtz3mZxDZTwKBWW/0zbrBIhMaa?=
- =?us-ascii?q?Joe4YHE3qhL9e4xtVkmZHtVHFY+UWsB1MDwsCpeB6SY0bh0g1X0EQduWanlj?=
- =?us-ascii?q?egzzxojzEpqbKS3C7UzOTkchoHOnVGRGZljVfrLoi0i84VUFK0YAgukRuv/V?=
- =?us-ascii?q?z6yLRDpKRjM2nTRl9Ffy30L2FtUqa9sqGPY8FI6JMvviVXVPqzbUqGRb76ph?=
- =?us-ascii?q?sQyznjEHdGxDAnazGqvY30kAB6iGKHLXZzt2bZecBqyhfZ/9HTXuRR0SAbRC?=
- =?us-ascii?q?l+lzbXHEKwP9iu/d+MjZfMrvi+V369Vp1UaSTryIKAuzeg6GJ3AB2/kPGzmt?=
- =?us-ascii?q?7gEQcnyyP70cdlVTnQphbmfobrz7i6Mf5gfkRwHl/z9dR6FZ9lkossn5wfxX?=
- =?us-ascii?q?gaho+S/XoCkGfzLNBb1bj5bHoXSj4B28TV7xT92E1/MnKJwJr0VneHzcR9ZN?=
- =?us-ascii?q?m6Z3kZ2iQm4M1RFKiU7KZEnSxwolq5sALRZOJxnjAHyfsh8HQamf0GuBIxzi?=
- =?us-ascii?q?WBBbAfBUpYMjbilxuS7tCzt6tXa321fbes00p+mMirDKuerQFERHb5ZpAiED?=
- =?us-ascii?q?dr7sV4NlLM33nz6oD5eNbLd9IcrAOUkxbGj+haM58xmOEFiTB7NmL6uH0v0/?=
- =?us-ascii?q?Q7ggB23ZGmoIiHLH1g/aK5Ah5DLTD1adgc9ivxgqZZm8acx5qvEYl5GjUXQJ?=
- =?us-ascii?q?voSuqlECkMuvT9OAaBDiYxqneBFrrbGQ+e6EFmo2jTHJCsMnGdPGMZwsl6RB?=
- =?us-ascii?q?mBOExfhxgZXDAmkZ45CA+qxNbuf1x+6jAK/FH4rwBMyv9uNxnwSWrfpxmnai?=
- =?us-ascii?q?0ySJeBKBpa9AZC513aMcaG9OJ8AzlY/oG9rAyKMmGUeh5HDX8XVUyBHF3sI6?=
- =?us-ascii?q?Oh5cfe/OidAuq+KPXOYamUpexYSfiI2Yql0pF68DaUKsWPIn5iAuU02kpZQ3?=
- =?us-ascii?q?95FMfZmzUURiwTliLNadObpRiy+i1ws8C/9unkVxjz5YuODLtSN89j+xesga?=
- =?us-ascii?q?eML+SQnjp2KS5E1pMQwn/F0L4f3F8OhCFpczmiC68AuTTDTK3OgK9XFQAUZj?=
- =?us-ascii?q?h2NMtJ8608xA5NNtLbitP0zr50lOI6C1BAVVb5gMGmedQKI32hNFPAHEuLL6?=
- =?us-ascii?q?mJJTPQzsH4ZqO8TrJQjOFKuBGqpTmbFErjNCyZlzb1TxCvLf1MjCaDMRxHpY?=
- =?us-ascii?q?GybBBtCXTiTNLgcBG7Ndh3jTswwbIqmnPHLmgcPiZgc0NXqb2Q6yRYgvBhFG?=
- =?us-ascii?q?Bb8nVlKuyEkT6D7+bEMpYWredrAiNsmuJA/Xs6zaFa4TpKRPNugifdstluo1?=
- =?us-ascii?q?S+mOmV1jVnSAZOqipMhI+Tv0ViPrvW+4JOWHne+hIC8H+cCxIUqNt5ENHvva?=
- =?us-ascii?q?FRwMDVlK3vMDdC787U/cwECsjMMs2HLX4hPAHxGDHOEQsFSSenNWTYh0xaiv?=
- =?us-ascii?q?Gd6GeZoYQ9qpjpy9IyTep5XVk4Dbs/DV5/HcdKdJVyWSk+kKWziscN6Hv4qw?=
- =?us-ascii?q?PeEpZ0pJfCA8mODO3vJTDRtrxNYx8F0PusNogIHpHq0ExlLF9hlcLFHFSGDo?=
- =?us-ascii?q?MFmTFocgJh+BYFy3N5VGBmnhu4Ow4=3D?=
-X-IPAS-Result: =?us-ascii?q?A2DWBACbdhde/wHyM5BlHQEBAQkBEQUFAYF7gX2BbAEgE?=
- =?us-ascii?q?oQziQOGYQEBAQEBAQaBN4lukUgJAQEBAQEBAQEBNwEBhEACghM4EwIQAQEBB?=
- =?us-ascii?q?AEBAQEBBQMBAWyFCwgwgjspAYJ5AQEBAQIBIxVBBQsLDgoCAiYCAlcGDQgBA?=
- =?us-ascii?q?YJjP4JXBSCqfnWBMoVJgz6BPYEOKIlQgmN5gQeBEScPgl0+h1mCXgSNT4I7h?=
- =?us-ascii?q?xVGl0eCQIJFk1wGG4JHjEGLXKtVIoFYKwgCGAghD4MoTxgNgRSaYiMDkUUBA?=
- =?us-ascii?q?Q?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 09 Jan 2020 18:58:33 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 009IvkX8259016;
-        Thu, 9 Jan 2020 13:57:48 -0500
-Subject: Re: [PATCH bpf-next v1 00/13] MAC and Audit policy using eBPF (KRSI)
-To:     James Morris <jmorris@namei.org>
-Cc:     Kees Cook <keescook@chromium.org>, KP Singh <kpsingh@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>,
-        Paul Moore <paul@paul-moore.com>
-References: <20191220154208.15895-1-kpsingh@chromium.org>
- <95036040-6b1c-116c-bd6b-684f00174b4f@schaufler-ca.com>
- <CACYkzJ5nYh7eGuru4vQ=2ZWumGPszBRbgqxmhd4WQRXktAUKkQ@mail.gmail.com>
- <201912301112.A1A63A4@keescook>
- <c4e6cdf2-1233-fc82-ca01-ba84d218f5aa@tycho.nsa.gov>
- <alpine.LRH.2.21.2001090551000.27794@namei.org>
- <e59607cc-1a84-cbdd-5117-7efec86b11ff@tycho.nsa.gov>
- <alpine.LRH.2.21.2001100437550.21515@namei.org>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <e90e03e3-b92f-6e1a-132f-1b648d9d2139@tycho.nsa.gov>
-Date:   Thu, 9 Jan 2020 13:58:58 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
-MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.2001100437550.21515@namei.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+ d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h78LBTdhwF6Kx+B/2HSfM0atsLKkT730Nn+BguLQMgY=;
+ b=D+U11gff8XXpU/ZD/lmUhFRjeWCUQmHjeEXt7VgcMX0PHEgcxT71l66Kg4mInzUcNBkaiToMmzyryi1czHQLcGqNIR4iMaq4hoxC3RGzzfX3UsRu0zEGHWQ9jWu5Bf3MT64jek1W1tfFRxAdbxklrIHsrZkoY897276RO9Fvv5E=
+Received: from BY5PR12MB4034.namprd12.prod.outlook.com (52.135.53.73) by
+ BY5PR12MB4308.namprd12.prod.outlook.com (52.135.54.137) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2623.10; Thu, 9 Jan 2020 19:01:46 +0000
+Received: from BY5PR12MB4034.namprd12.prod.outlook.com
+ ([fe80::21e8:207a:f5a0:e090]) by BY5PR12MB4034.namprd12.prod.outlook.com
+ ([fe80::21e8:207a:f5a0:e090%4]) with mapi id 15.20.2623.010; Thu, 9 Jan 2020
+ 19:01:46 +0000
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey Brodkin" <Alexey.Brodkin@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: [PATCH 4/5] ARC: add support for DSP-enabled userspace
+ applications
+Thread-Topic: [PATCH 4/5] ARC: add support for DSP-enabled userspace
+ applications
+Thread-Index: AQHVvOALEgJG1jhHKUKrXAMj7igcXqfflg6AgAMuUuk=
+Date:   Thu, 9 Jan 2020 19:01:46 +0000
+Message-ID: <BY5PR12MB403419E2722BE80E329D3409DE390@BY5PR12MB4034.namprd12.prod.outlook.com>
+References: <20191227180347.3579-1-Eugeniy.Paltsev@synopsys.com>
+ <20191227180347.3579-5-Eugeniy.Paltsev@synopsys.com>,<a3890ccb-e948-6ad6-c2ea-5b77b9d3a289@synopsys.com>
+In-Reply-To: <a3890ccb-e948-6ad6-c2ea-5b77b9d3a289@synopsys.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=paltsev@synopsys.com; 
+x-originating-ip: [84.204.78.101]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3d49ddd5-c26d-4957-4334-08d795365fa5
+x-ms-traffictypediagnostic: BY5PR12MB4308:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BY5PR12MB43081D31E752B00F64B839BCDE390@BY5PR12MB4308.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
+x-forefront-prvs: 02778BF158
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(346002)(39860400002)(396003)(136003)(189003)(199004)(91956017)(81156014)(81166006)(2906002)(478600001)(8676002)(64756008)(66446008)(66556008)(66476007)(66946007)(33656002)(76116006)(86362001)(8936002)(7696005)(186003)(71200400001)(4326008)(6862004)(52536014)(5660300002)(6506007)(26005)(316002)(55016002)(6636002)(54906003)(9686003);DIR:OUT;SFP:1102;SCL:1;SRVR:BY5PR12MB4308;H:BY5PR12MB4034.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: UHUn0szkWPWILP3AvYf7cTkSnzBjzteT9UaLCeJIP+DQ6kOdzRqWTmRH7RWLDGMh82fHtnw2/R3KZaLWWhFfLHYfkCjjeEDoT0cFmazMnKidKBkrlcBQXlQ2J1imkhTTLobTIdwyfHejSUoIjDpB8Nt77wKOq1/IlocbJkCfFjoeCWQNvPw5M9b6Y4DXy0T9sJNX95qjtxh9NVREEBSQEpZKnru2uOnyGC/2qvY1g39bKgjcJd1qkowQuQTpO3+Q5PMgTUUz+WplJwpFFR26cRB2Ug9oYkPZJvE32MVPpSwrVuSSxj1ixE0Xr7Q1i6PHlcgaBgyami6liwEiS9xYZtqP72GLQWni6yHMU9kH2UJWSXqbgahGj0fdZ7yzy3u1VMMFq/olj1wVjRkx8IHoe4WvIjIus84LEiNPP6h+iWbOkAuH98Z+smxGjy/3tyFt
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d49ddd5-c26d-4957-4334-08d795365fa5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jan 2020 19:01:46.1324
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: uK9jkxH9C+MhoxRlU+TRJqFwTN32wnPinLNem5+c1gu4Wx/vQ65wkpHcHxXMPJuhisMXlhRq+XoOTnh0mGQvtw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4308
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/9/20 1:11 PM, James Morris wrote:
-> On Wed, 8 Jan 2020, Stephen Smalley wrote:
-> 
->> The cover letter subject line and the Kconfig help text refer to it as a
->> BPF-based "MAC and Audit policy".  It has an enforce config option that
->> enables the bpf programs to deny access, providing access control. IIRC, in
->> the earlier discussion threads, the BPF maintainers suggested that Smack and
->> other LSMs could be entirely re-implemented via it in the future, and that
->> such an implementation would be more optimal.
-> 
-> In this case, the eBPF code is similar to a kernel module, rather than a
-> loadable policy file.  It's a loadable mechanism, rather than a policy, in
-> my view.
-
-I thought you frowned on dynamically loadable LSMs for both security and 
-correctness reasons? And a traditional security module would necessarily 
-fall under GPL; is the eBPF code required to be likewise?  If not, KRSI 
-is a gateway for proprietary LSMs...
-
-> This would be similar to the difference between iptables rules and
-> loadable eBPF networking code.  I'd be interested to know how the
-> eBPF networking scenarios are handled wrt kernel ABI.
-> 
-> 
->> Again, not arguing for or against, but wondering if people fully understand
->> the implications.  If it ends up being useful, people will build access
->> control systems with it, and it directly exposes a lot of kernel internals to
->> userspace.  There was a lot of concern originally about the LSM hook interface
->> becoming a stable ABI and/or about it being misused.  Exposing that interface
->> along with every kernel data structure exposed through it to userspace seems
->> like a major leap.
-> 
-> Agreed this is a leap, although I'm not sure I'd characterize it as
-> exposure to userspace -- it allows dynamic extension of the LSM API from
-> userland, but the code is executed in the kernel.
-> 
-> KP: One thing I'd like to understand better is the attack surface
-> introduced by this.  IIUC, the BTF fields are read only, so the eBPF code
-> should not be able to modify any LSM parameters, correct?
-> 
-> 
->>   Even if the mainline kernel doesn't worry about any kind
->> of stable interface guarantees for it, the distros might be forced to provide
->> some kABI guarantees for it to appease ISVs and users...
-> 
-> How is this handled currently for other eBPF use-cases?
-> 
-
+Hi Vineet,=0A=
+=0A=
+>From: Vineet Gupta <vgupta@synopsys.com>=0A=
+>On 12/27/19 10:03 AM, Eugeniy Paltsev wrote:=0A=
+>> To be able to run DSP-enabled userspace applications we need to=0A=
+>> save and restore following DSP-related registers:=0A=
+>> At IRQ/exception entry/exit:=0A=
+>>  * ACC0_GLO, ACC0_GHI, DSP_CTRL=0A=
+>>  * ACC0_LO, ACC0_HI (we already save them as r58, r59 pair)=0A=
+>> At context switch:=0A=
+>>  * DSP_BFLY0, DSP_FFT_CTRL=0A=
+[snip]=0A=
+>> +=0A=
+>> +#ifndef __ASSEMBLY__=0A=
+>> +=0A=
+>> +/* some defines to simplify config sanitize in kernel/setup.c */=0A=
+>> +#if defined(CONFIG_ARC_DSP_KERNEL)    || \=0A=
+>> +    defined(CONFIG_ARC_DSP_USERSPACE)=0A=
+>> +#define ARC_DSP_HANDLED                      1=0A=
+>> +#else=0A=
+>> +#define ARC_DSP_HANDLED                      0=0A=
+>> +#endif=0A=
+>=0A=
+>This is a really bad idea - u r introducing explicit include dependencies =
+which=0A=
+>can change even outside of arch changes !=0A=
+>We've dealt with enough of these problems with current.h, so best to avoid=
+, even=0A=
+>if there is some code clutter.=0A=
+=0A=
+Hmm, would it be OK if I add this option as a private kconfig option?=0A=
+I.E (for ARC_DSP_HANDLED):=0A=
+=0A=
+---------------->8----------------------=0A=
+config ARC_DSP_HANDLED=0A=
+	def_bool n=0A=
+=0A=
+choice=0A=
+	prompt "DSP support"=0A=
+	default ARC_DSP_NONE=0A=
+	help=0A=
+	  Depending on the configuration, CPU can contain DSP registers=0A=
+	  (ACC0_GLO, ACC0_GHI, DSP_BFLY0, DSP_CTRL, DSP_FFT_CTRL).=0A=
+	  Bellow is options describing how to handle these registers in=0A=
+	  interrupt entry / exit and in context switch.=0A=
+=0A=
+config ARC_DSP_NONE=0A=
+	bool "No DSP extension presence in HW"=0A=
+	help=0A=
+	  No DSP extension presence in HW=0A=
+=0A=
+config ARC_DSP_KERNEL=0A=
+	bool "DSP extension in HW, no support for userspace"=0A=
+	select ARC_HAS_ACCL_REGS=0A=
+	select ARC_DSP_HANDLED=0A=
+	help=0A=
+	  DSP extension presence in HW, no support for DSP-enabled userspace=0A=
+	  applications. We don't save / restore DSP registers and only do=0A=
+	  some minimal preparations so userspace won't be able to break kernel=0A=
+=0A=
+config ARC_DSP_USERSPACE=0A=
+	bool "Support DSP for userspace apps"=0A=
+	select ARC_HAS_ACCL_REGS=0A=
+	select ARC_DSP_HANDLED=0A=
+	help=0A=
+	  DSP extension presence in HW, support save / restore DSP registers to=0A=
+	  run DSP-enabled userspace applications=0A=
+endchoice=0A=
+---------------->8----------------------=0A=
+=0A=
+---=0A=
+ Eugeniy Paltsev=
