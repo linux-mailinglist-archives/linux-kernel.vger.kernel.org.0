@@ -2,135 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC5E91363F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 00:42:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3699F1363F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 00:42:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729589AbgAIXlz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 18:41:55 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:18507 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729544AbgAIXlz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 18:41:55 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200109234152epoutp036db192af8c6a6cc7213be0abdde31652~oXHG51JS_3102331023epoutp03g
-        for <linux-kernel@vger.kernel.org>; Thu,  9 Jan 2020 23:41:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200109234152epoutp036db192af8c6a6cc7213be0abdde31652~oXHG51JS_3102331023epoutp03g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1578613312;
-        bh=KwyYt9GohRntySXnK1nN8DCmHASlL3/7ZQc7K5hba4g=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=SSOqtpNr99HIA6KIMnl0k16OlC4nU5+z99FQUMDefzRgbAq8HmcQVO785aRQDKUEF
-         mFWvGWxZybFtaDteksIAqctWTYCS1ISxkOnd+s8adUnjjqnDLSm/Ij7ttdKq1eByIi
-         hjo0CoTG0IYfRrpC7eUAKw1apJG2T1CnHR/1H9jc=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200109234151epcas1p2177dc9e8d2a0f44d2f4ba639379dcee7~oXHF-vHtE2487224872epcas1p2R;
-        Thu,  9 Jan 2020 23:41:51 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.159]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 47v2hH1QpMzMqYkg; Thu,  9 Jan
-        2020 23:41:51 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        32.B0.57028.F3AB71E5; Fri, 10 Jan 2020 08:41:51 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200109234150epcas1p2be9eb338c0cdb94ab8c8594cc9e205d6~oXHE3z_uE2487224872epcas1p2Q;
-        Thu,  9 Jan 2020 23:41:50 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200109234150epsmtrp10d10937bf24957fee0833d9ce424a66e~oXHE24gqt2767527675epsmtrp1M;
-        Thu,  9 Jan 2020 23:41:50 +0000 (GMT)
-X-AuditID: b6c32a35-50bff7000001dec4-5a-5e17ba3f9993
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D9.07.10238.E3AB71E5; Fri, 10 Jan 2020 08:41:50 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200109234150epsmtip259f3d7e226ebc814761b3f66dd66cece~oXHEumi0c2087320873epsmtip2a;
-        Thu,  9 Jan 2020 23:41:50 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     =?utf-8?Q?'Valdis_Kl=C4=93tnieks'?= <valdis.kletnieks@gmail.com>
-Cc:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <hch@lst.de>,
-        <sj1557.seo@samsung.com>, <linkinjeon@gmail.com>, <tytso@mit.edu>
-In-Reply-To: <47625.1578607455@turing-police>
-Subject: RE: [PATCH v9 09/13] exfat: add misc operations
-Date:   Fri, 10 Jan 2020 08:41:50 +0900
-Message-ID: <002101d5c746$5d69a360$183cea20$@samsung.com>
+        id S1729667AbgAIXmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 18:42:35 -0500
+Received: from mail-mw2nam10on2044.outbound.protection.outlook.com ([40.107.94.44]:38073
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728241AbgAIXmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 18:42:35 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GQGSA46BrxGsUvRJPhYtUVQhmV6MxHCLepVMxjLgkkaqR2vr4vhGPpveCCdr4Bvn3Vmd5eFPQo9vOFE+lW/Ia6ikzCg/1XLz0hnzrrRa9nAalO8Ox0uOSSgxG7FyMxJ2N9i55BHIKc3VQ4k0KC+x281ZLHjL8nkWgAQa5O8dWaIDDExICiiTUh+Zu+8Yz47sdUKUos2Aq9Tzk9u0Ic5jrU/+ZssrdkKBrodl0p5RU1Epy52gKgSIR18Di6f2unIvw+7M1ST0y5tYTbnpek6tR9BlLQukAPrTjCQKG8OT0SBY9yEuNFhmlHhSQmVgWaK/FSvaPQav+6OcW27XjuAjkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6Z3/3+BVYq85rJ6I5WQv1t0AeYjwClFb1bFylfI1Ljo=;
+ b=MhF+C54QfsLmIOkNbdww4xEy15n2KdQm5VffstWrLozOFYNtK+5LLOIzUEpU08cH8KYf0mwdMwreO0TOr+iv27nauZ37hzL19lsYTLgSWu7l5K+ectXPt6b3bvdVFLfOvWCvLVa1uyISSOLTNfheRrXroP8ip3kiXPj+pAJGIcZsNGg+MijWqPKne7+9zPI3woHfb/HH967wlfOW5488b7i4AFgw+58HH0RzBV9chW+6HPiWxFi691XWTXbdvvZnApeJinHzgf6AtzqdncVWwFITr3NCahsiVlA//1BX0vEBUZHpkGEaofjKTxZyrQLCeBjRs5u75W5BuO3Mt17qMQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6Z3/3+BVYq85rJ6I5WQv1t0AeYjwClFb1bFylfI1Ljo=;
+ b=iGd7gBdlD8cmo8rSTTPidnZLGjwPiAH2Vp7MIFJvC7GltTKpalZoRFnlAp6rp8mq+eVPXNgUSzfd1nhhPJo5PH6x3IrCG2UX3nCrETFfEe1A6muAdkplBdiwWEbHGPp4GGcmVcKj9ubR2OPat3hGTu21j+Vu90QVqNaSFDRsDik=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Thomas.Lendacky@amd.com; 
+Received: from BN8PR12MB3154.namprd12.prod.outlook.com (20.179.67.74) by
+ BN8PR12MB3028.namprd12.prod.outlook.com (20.178.210.222) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2623.9; Thu, 9 Jan 2020 23:42:30 +0000
+Received: from BN8PR12MB3154.namprd12.prod.outlook.com
+ ([fe80::19c8:ed30:f4ea:a010]) by BN8PR12MB3154.namprd12.prod.outlook.com
+ ([fe80::19c8:ed30:f4ea:a010%3]) with mapi id 15.20.2623.011; Thu, 9 Jan 2020
+ 23:42:30 +0000
+From:   Tom Lendacky <thomas.lendacky@amd.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Brijesh Singh <brijesh.singh@amd.com>
+Subject: [PATCH v4] KVM: SVM: Override default MMIO mask if memory encryption is enabled
+Date:   Thu,  9 Jan 2020 17:42:16 -0600
+Message-Id: <4021c4be45a62e5382e81c22cb130dfeea32bc5f.1578613335.git.thomas.lendacky@amd.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: SN4PR0701CA0042.namprd07.prod.outlook.com
+ (2603:10b6:803:2d::16) To BN8PR12MB3154.namprd12.prod.outlook.com
+ (2603:10b6:408:6d::10)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJSGi/S1M7UFBjz5N3SW71o+eawLwHz+Lr1AtmMBwQCEsM+eAKdGL6aAbsqjWgBsAu59qaDEkNw
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0gUURjtOrMzY7Q1reZ+aNQ2YKGg7bStjqU90GqhInsRKGmTTq60L3ZW
-        ySKSyq1M7IGQrVaW9Fq1DVFzfWCZEpYlFplWFkSBGloZPcxeuztG/jvfuef7zj33fhSmqCKC
-        qUyTTbCaeANDTMXr7oZFRixvUKaoO3/6c4fKXQR3vaLdj3vW/xzjmpo7cO5JQynB1fxuk3F5
-        BWMkV3D1KbGC0rkd/aSu5VwlqWvsyyV0BzvbMV1hjRPpPlfPSSSSDLF6gU8XrCrBlGZOzzRl
-        xDFrN6fGp2qj1GwEG8NFMyoTbxTimIR1iRGrMw2eCzGqbN6Q5aESeVFkFi6LtZqzbIJKbxZt
-        cYxgSTdYWLUlUuSNYpYpIzLNbFzCqtWLtB7lDoP+5aNXfpZccs/pih94LnLL8pE/BfRiaLYP
-        E/loKqWg6xGMlTgnilEEL1pKZFLxFUHbvVo8H1G+liM9GyS+GUFf7YWJjkEExR+6Se9cgo6A
-        3z9bCC8OpBOg53g55hVhdB2Ci/VdvgN/j6hspMeHA2gO3rfdJrwOOB0Kfzo5Ly2nY+D17RtI
-        wjOh4+xb3Isxei7cGi7FpAwqGHt3ReZtDaSToPI6SJJAKDlm99kCPU5A8TfXhD4BjnfnIQkH
-        wNC9GlLCwTB4wk5KIffBp5YJ+VEEA9/iJKyBPtdNnxVGh4GrYaFEzwP3+Dkk2U6HkS8FMmmK
-        HI7aFZIkFAof3/WTcAjkH/lInkSMY1Iux6RcjkkBHP/NyhDuREGCRTRmCCJrYSd/dTXyrWq4
-        th4VPVrXimgKMdPk+gBlikLGZ4s5xlYEFMYEytt7g1IU8nQ+Z69gNadaswyC2Iq0nlc/hQXP
-        SjN7Ft9kS2W1izQaDbc4KjpKq2GUcup793YFncHbhN2CYBGs//r8KP/gXFTUJuYlX3owY4tF
-        WBX6oOowD2HRvV/JpUNKmxnbOP/gFSKlWrmra0GnfrTJ0dhR1T8dz97kzEkoe3g+XHF/wzb7
-        5YFf5bM1Qc3rQwY5bOdWIj5v5YJrA12bhva/dv1on2KsfTKSpFpz4M/IIcKd1oOcpcNR45fd
-        yb3sDkXBmTtvGFzU82w4ZhX5v0JdbcLAAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsWy7bCSvK7dLvE4gxtdmhbNi9ezWaxcfZTJ
-        4vrdW8wWe/aeZLG4vGsOm8WWf0dYLVp7frJb9Cy/yubA4bFz1l12j/1z17B77L7ZwObRdOYo
-        s0ffllWMHp83yQWwRXHZpKTmZJalFunbJXBl3Dl3j6mggb1i0upfLA2MO1m7GDk4JARMJNqv
-        +XcxcnEICexmlLj/7RZzFyMnUFxa4tiJM8wQNcIShw8XQ9Q8Z5RYvG09I0gNm4CuxL8/+9lA
-        bBEBF4lr3YuZQYqYBfYxSjy4eIQZouMck8Tl90tYQao4gToWvLsG1iEsYCHx+sgBNpANLAKq
-        Ev/PWICEeQUsJe4fWMcIYQtKnJz5hAXEZhbQlnh68ymULS+x/e0cqEMVJH4+XQb2jIhAlMSa
-        lRIQJSISszvbmCcwCs9CMmkWkkmzkEyahaRlASPLKkbJ1ILi3PTcYsMCw7zUcr3ixNzi0rx0
-        veT83E2M4PjS0tzBeHlJ/CFGAQ5GJR7eDGHxOCHWxLLiytxDjBIczEoivEdviMUJ8aYkVlal
-        FuXHF5XmpBYfYpTmYFES532adyxSSCA9sSQ1OzW1ILUIJsvEwSnVwKhkeVx18+PWqKYMhYWT
-        mUSuWOwzkJ77y+9Y1AQz7fSlth/9M8NmKJkukJJ0zMvz/PDw4HHTveVCpjybz89/7/mTw1/x
-        7Q4DP4srNdnPTBNiRZg3eRZLzIriSj3qZvN4ttW5pdvkpHVl8zimPFkZ9CeHY6OYgyizlH38
-        xFUfeOQ1FS/ONzzLpsRSnJFoqMVcVJwIAAaOprqrAgAA
-X-CMS-MailID: 20200109234150epcas1p2be9eb338c0cdb94ab8c8594cc9e205d6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05
-References: <20200102082036.29643-1-namjae.jeon@samsung.com>
-        <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com>
-        <20200102082036.29643-11-namjae.jeon@samsung.com>
-        <20200105165115.37dyrcwtgf6zgc6r@pali> <85woa4jrl2.fsf@collabora.com>
-        <20200107115202.shjpp6g3gsrhhkuy@pali> <47625.1578607455@turing-police>
+Received: from tlendack-t1.amd.com (165.204.77.1) by SN4PR0701CA0042.namprd07.prod.outlook.com (2603:10b6:803:2d::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2623.8 via Frontend Transport; Thu, 9 Jan 2020 23:42:29 +0000
+X-Mailer: git-send-email 2.17.1
+X-Originating-IP: [165.204.77.1]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 33ebf1b2-5398-4b3e-b25e-08d7955d9737
+X-MS-TrafficTypeDiagnostic: BN8PR12MB3028:|BN8PR12MB3028:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <BN8PR12MB30280F52F4915D4C78E8F0CBEC390@BN8PR12MB3028.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Forefront-PRVS: 02778BF158
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(366004)(39850400004)(346002)(136003)(199004)(189003)(956004)(186003)(6486002)(81156014)(52116002)(66476007)(66556008)(7696005)(16526019)(54906003)(316002)(26005)(2906002)(2616005)(36756003)(8936002)(66946007)(4326008)(81166006)(5660300002)(8676002)(478600001)(86362001)(6666004);DIR:OUT;SFP:1101;SCL:1;SRVR:BN8PR12MB3028;H:BN8PR12MB3154.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: kqC0bf5tLdyjsOr+gHJUPXiK91Zc0Ufxo8NksrB6inyXY2Mxa9BkLz/b7EuRAU4wTEai8lJ6GmYFGaZYHUJuXuzxjkayuiR0ouoVDUWmpBAQUjy8vXb/zYRnao0WNaa0MWMtKSpUjYk4YnP9Sg0OjpFYuQcJVtapHZenERc7K4YBIPSA8GdEvxoMmDAP+KruKmgySbX9KOpM/PHWAfo4VGETzl5kTIIGnwZ5Ec1U/lTDtiDg+EoHFw5bMIzZ0oLFlL/JP3P8Moa2JQhEJxuJKCC1NZuLbsV1vjV+c7vhFWNdsLCfCewemPUioFmwtoQKXzxioJtYyVkN11Lmvo482oSRimmRP+sn543urFbEGt44vxi0Hg9xYMul9+DcID3y0wgcVM69zLu/rZDVxh1Sx45H98V7xQ8PvZH2UKH10rZkf0ZxEo52RGgY/eh5BQr1
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33ebf1b2-5398-4b3e-b25e-08d7955d9737
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jan 2020 23:42:29.9320
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yqpxh5OQfEu1sEQYxerbJMdMwIaQ3QYAevRxihve+8Z9jA02a5FvkDfQxyj4gDmg0LYAJR6UY2w43tKIcatwEg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3028
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> When compiling on a 32-bit system like Raspian on an RPi4, the compile
-> dies:
-> 
->   CC [M]  fs/exfat/misc.o
-> fs/exfat/misc.c: In function 'exfat_time_unix2fat':
-> fs/exfat/misc.c:157:16: error: 'UNIX_SECS_2108' undeclared (first use in
-> this function); did you mean 'UNIX_SECS_1980'?
->   if (second >= UNIX_SECS_2108) {
->                 ^~~~~~~~~~~~~~
->                 UNIX_SECS_1980
-> fs/exfat/misc.c:157:16: note: each undeclared identifier is reported only
-> once for each function it appears in
-> make[2]: *** [scripts/Makefile.build:266: fs/exfat/misc.o] Error 1
-> 
-> The problem is that the definition of UNIX_SECS_2108  is wrapped:
-> 
-> +#if BITS_PER_LONG == 64
-> +#define UNIX_SECS_2108    4354819200L
-> +#endif
-> 
-> but the usage isn't.
-My mistake, Thanks for your check. I already fixed it on my git through
-the Pali's report.
-It will be in v10 patch.
+The KVM MMIO support uses bit 51 as the reserved bit to cause nested page
+faults when a guest performs MMIO. The AMD memory encryption support uses
+a CPUID function to define the encryption bit position. Given this, it is
+possible that these bits can conflict.
+
+Use svm_hardware_setup() to override the MMIO mask if memory encryption
+support is enabled. Various checks are performed to ensure that the mask
+is properly defined and rsvd_bits() is used to generate the new mask (as
+was done prior to the change that necessitated this patch).
+
+Fixes: 28a1f3ac1d0c ("kvm: x86: Set highest physical address bits in non-present/reserved SPTEs")
+Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+
+---
+
+Changes in v4:
+- Use an MMIO mask of all zeroes if no reserved bits are available.
+- Use the PT_PRESENT_MASK define instead of hardcoding the bit
+  position.
+
+Changes in v3:
+- Add additional checks to ensure there are no conflicts between the
+  encryption bit position and physical address setting.
+- Use rsvd_bits() generated mask (as was previously used) instead of
+  setting a single bit.
+
+Changes in v2:
+- Use of svm_hardware_setup() to override MMIO mask rather than adding an
+  override callback routine.
+---
+ arch/x86/kvm/svm.c | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 122d4ce3b1ab..9612364267fb 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -1307,6 +1307,47 @@ static void shrink_ple_window(struct kvm_vcpu *vcpu)
+ 	}
+ }
+ 
++/*
++ * The default MMIO mask is a single bit (excluding the present bit),
++ * which could conflict with the memory encryption bit. Check for
++ * memory encryption support and override the default MMIO mask if
++ * memory encryption is enabled.
++ */
++static __init void svm_adjust_mmio_mask(void)
++{
++	unsigned int enc_bit, mask_bit;
++	u64 msr, mask;
++
++	/* If there is no memory encryption support, use existing mask */
++	if (cpuid_eax(0x80000000) < 0x8000001f)
++		return;
++
++	/* If memory encryption is not enabled, use existing mask */
++	rdmsrl(MSR_K8_SYSCFG, msr);
++	if (!(msr & MSR_K8_SYSCFG_MEM_ENCRYPT))
++		return;
++
++	enc_bit = cpuid_ebx(0x8000001f) & 0x3f;
++	mask_bit = boot_cpu_data.x86_phys_bits;
++
++	/* Increment the mask bit if it is the same as the encryption bit */
++	if (enc_bit == mask_bit)
++		mask_bit++;
++
++	/*
++	 * If the mask bit location is below 52, then some bits above the
++	 * physical addressing limit will always be reserved, so use the
++	 * rsvd_bits() function to generate the mask. This mask, along with
++	 * the present bit, will be used to generate a page fault with
++	 * PFER.RSV = 1.
++	 *
++	 * If the mask bit location is 52 (or above), then clear the mask.
++	 */
++	mask = (mask_bit < 52) ? rsvd_bits(mask_bit, 51) | PT_PRESENT_MASK : 0;
++
++	kvm_mmu_set_mmio_spte_mask(mask, mask, PT_WRITABLE_MASK | PT_USER_MASK);
++}
++
+ static __init int svm_hardware_setup(void)
+ {
+ 	int cpu;
+@@ -1361,6 +1402,8 @@ static __init int svm_hardware_setup(void)
+ 		}
+ 	}
+ 
++	svm_adjust_mmio_mask();
++
+ 	for_each_possible_cpu(cpu) {
+ 		r = svm_cpu_init(cpu);
+ 		if (r)
+-- 
+2.17.1
 
