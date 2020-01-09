@@ -2,88 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3FDF1353FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 09:01:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97C131353FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 09:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728352AbgAIIBo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 03:01:44 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36683 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728284AbgAIIBo (ORCPT
+        id S1728401AbgAIIAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 03:00:36 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43500 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728273AbgAIIAg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 03:01:44 -0500
-Received: by mail-pg1-f195.google.com with SMTP id k3so2843689pgc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 00:01:44 -0800 (PST)
+        Thu, 9 Jan 2020 03:00:36 -0500
+Received: by mail-lj1-f194.google.com with SMTP id a13so6133727ljm.10
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 00:00:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=rnct3rScuo5UCOrZPVZUn6yaCZ4Hz2wyB5PJl2dXsyQ=;
-        b=lepqg45iW0x0wIXzB9W1OISEWmZF8wGXjcpktX5kTjFE9A/zNltobhwCGrIT9SCeZT
-         vbTg1L38xmQ7S2IjvKnDbq6OTnY8mNqWjopnVUclb6wn1psZgD8QUaNBV1qeHbpmqE9M
-         DWWZtCsiW2J18ax3sTRNO0HoiATt/m6isRFl62RXJlfEvLnm2wk0lBumEX4jWDaTsIrZ
-         J6ZVYRFs85Rr6WVN6Nv+pQ4DZG5piMclU/QWVnlbdeeHN5PcRV0E6zxz8/eJPbE1wXuv
-         a4nlnUTY+ZO5MDAsnS7CTYnLI55KZw3DBOWwwkCCLvqLqWVy8iZRXrpYFEGfE+gW5gt8
-         ylVg==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=A61mlbXcqrKdd5rStxbk5SJq+xs374rVplv9rHnuEP4=;
+        b=hEsM2tuB5gASNIKUuOtABTGFoYfR3+E2m7M8Se42SgJzhP7VGQNS2oWmB5aJml2VHb
+         bU2NxmQBsVBlVGYOQlp7CzAbfKqHivEf6mxcnAEpFtm1hBIjPhceZ6GPYCffJiJnsfvJ
+         cWox2QpxQ2KgYd7U1Ciwu2UvQ+ZgfU1AkMqFDRr7zr5004ebb4Qq90KA7GGD+gZ+1WWp
+         d00cNK8Ss486XXpoRGjnHhZ6rfZ6nwNVk6IAbug4AYJ9Fp+W5yxWHY8pIj/9E6DyFnAJ
+         pC2/Tp0vWTOEoncW0u4CUxRCGzHZ/V8o/z7GeAwr/d1/bYR8bzz78H53rC3m11SSrBZP
+         o97A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=rnct3rScuo5UCOrZPVZUn6yaCZ4Hz2wyB5PJl2dXsyQ=;
-        b=odbZH77EfUcnkIwATnzLBgYVJ4ob2vHOBgd2EK6ov+yd6/sG7ZmLBrcw3F+25NUziB
-         sqJJP0bHOAsxY1TUAcMJv99aBkqspmUHJLeSv412stTOrTmb53WumtlSD1RKIdlmEYRK
-         o9rxchPbB7QE4ridt7QHjkeUVqYxgBXGI/mbdQBRbbO0t8tfN6mNR2b3PaafkMHFYQ6M
-         F1FsN5xFSquxg5VxO6sOhQS+D2xos+u/YvJnsYzEC6yxUI82Q6JzgsOg7BMqZIsXT1PN
-         w1VZP4q4TSRV5/TOc2qO6klXXS7Xwis90e01mBYUTHzlTxisQUySo320igawwRZ+97UA
-         crkA==
-X-Gm-Message-State: APjAAAVNCMRX0QFGFQKW94dGp91D7BetqARm3WhjtG588Vbvd6y0w1aK
-        rfS4dyIqZevqpJLTBSO4lhKUMjkYVmtGUw==
-X-Google-Smtp-Source: APXvYqyXZgRI88AzUaKA5gkc6klLUtcliBwJ8O3HqkjQM5lsLt+BQzm1FAYECTQpDgENRC+rUjLFww==
-X-Received: by 2002:a63:7705:: with SMTP id s5mr9628789pgc.379.1578556903816;
-        Thu, 09 Jan 2020 00:01:43 -0800 (PST)
-Received: from localhost.localdomain ([240e:379:970:fa70::fa3])
-        by smtp.gmail.com with ESMTPSA id 100sm1861175pjo.17.2020.01.09.00.01.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 00:01:43 -0800 (PST)
-From:   Chuanhong Guo <gch981213@gmail.com>
-To:     devel@driverdev.osuosl.org
-Cc:     Chuanhong Guo <gch981213@gmail.com>,
-        Weijie Gao <hackpascal@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        NeilBrown <neil@brown.name>, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: mt7621-dts: fix register range of memc node in mt7621.dtsi
-Date:   Thu,  9 Jan 2020 16:00:03 +0800
-Message-Id: <20200109080120.362110-1-gch981213@gmail.com>
-X-Mailer: git-send-email 2.24.1
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=A61mlbXcqrKdd5rStxbk5SJq+xs374rVplv9rHnuEP4=;
+        b=knMBMmxVDvjq+/H5PO1fQ1sDiuFURkTiNCwK+BEAQ+SIPgjUJjKBo9ZveSuGJiKWlo
+         pIHB71XKf/99GhsuWDL+cPqnW93HX2FGGuy2bBTV15Q27ujWK9Nky/RrFGErAMPP+kKe
+         riwMbQ7FXH5M2GCZuHVVAvkZGSRRa9jDmeyqvCW60DQQWv+Q+egwOGc2GYlKcMOiqxcM
+         LyJ6Q5VVJNijn0JkBJGRuuvHpHj3w8EcdjPvNWpRmHG3ZZLNhjdw9lk9GlUwC7ZVptZg
+         3UUTaNboMSlhB/PHZ/wwzfGE4l2DXizXo7dPpTVb+yXiQcjkLxnyPML634LrkCwPq9Uz
+         4UmQ==
+X-Gm-Message-State: APjAAAW9wGXQQd5b3WhsuwLn/P7bgD/PCRZudSYDoWB9feTQI36eJ42B
+        6KDzwX6Z/fqoN500ZYv+sQx3yQfn4DypzUQLgS8=
+X-Google-Smtp-Source: APXvYqxzy22kMDyiNoXHogpd3H0rv7xJy0jnzBWq/t7jgxTO7SF3OHrd3i4iGVCXVHPi6hK9UJKJC09OztxhFlMgbYw=
+X-Received: by 2002:a2e:556:: with SMTP id 83mr5720801ljf.127.1578556834378;
+ Thu, 09 Jan 2020 00:00:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a19:86c2:0:0:0:0:0 with HTTP; Thu, 9 Jan 2020 00:00:33 -0800 (PST)
+Reply-To: ibrahimiismma@gmail.com
+From:   Ibrahim Ismma <elhamabunur@gmail.com>
+Date:   Thu, 9 Jan 2020 00:00:33 -0800
+Message-ID: <CADvdcOnwxBzT4BqUeNwZVeXtGk6CbS45oboa2SW3hcGHh5zKjw@mail.gmail.com>
+Subject: Waiting for your urgent reply,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The memc node from mt7621.dtsi has incorrect register resource.
-Fix it according to the programming guide.
+Greetings Friend
 
-Signed-off-by: Weijie Gao <hackpascal@gmail.com>
-Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
----
- drivers/staging/mt7621-dts/mt7621.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Forgive me for writing you this letter , I will like to bring to your
+that (8.5.million Euro claims ) This is a legitimate transaction and
+The money will be shared 60% for me and 40% for you .   get back to
+me, I will give you full details on how the money will be transfer to
+you,
+Waiting for your reply,
 
-diff --git a/drivers/staging/mt7621-dts/mt7621.dtsi b/drivers/staging/mt7621-dts/mt7621.dtsi
-index a4c08110094b..d89d68ffa7bc 100644
---- a/drivers/staging/mt7621-dts/mt7621.dtsi
-+++ b/drivers/staging/mt7621-dts/mt7621.dtsi
-@@ -138,7 +138,7 @@ i2s: i2s@a00 {
- 
- 		memc: memc@5000 {
- 			compatible = "mtk,mt7621-memc";
--			reg = <0x300 0x100>;
-+			reg = <0x5000 0x1000>;
- 		};
- 
- 		cpc: cpc@1fbf0000 {
--- 
-2.24.1
+Your Full Name .........
+Your Sex ..............
+Your Age ..................
+Your Country ...........
+Passport / driving license .......
+Marital Status ...........
+Your Occupation .......
+Your Personal Mobile Number .....
+Your Personal Fax Number .........
 
+Thanks
+Ibrahim Ismma
+Audits & Accounts Manager
+E-Mail Address (ismmomussa@gmail.com)
