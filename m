@@ -2,101 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48B8D13534F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 07:38:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80050135351
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 07:39:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728223AbgAIGir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 01:38:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60460 "EHLO mail.kernel.org"
+        id S1728157AbgAIGjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 01:39:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728057AbgAIGir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 01:38:47 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1726541AbgAIGju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 01:39:50 -0500
+Received: from T480 (98.142.130.235.16clouds.com [98.142.130.235])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BFEC2053B;
-        Thu,  9 Jan 2020 06:38:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFF052053B;
+        Thu,  9 Jan 2020 06:39:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578551926;
-        bh=kx0FBh7fXm7nuS+UvEjGXaT9xM73CIiasJUFYyjrCx0=;
+        s=default; t=1578551990;
+        bh=PzkmDwuLxg6i1Lv7mg1bZi42vACHL6CpISAFG/lE7II=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tn1RAqqa/hTvw683sRj7pMWNaKbv1tnnh1nMEB5b02Z+Tr92Iwyp1fnROK7T1JGhJ
-         098zWzaXl2aV23l8kpU8hJ0R2uZyN3vYMWSgDpgW8AT2aCBi7KyDRRPxW8K0hWQKI2
-         v6oSgbt7bQOAPIQKRxJu5QqC/6TSQL7L7lBQ+4tY=
-Date:   Thu, 9 Jan 2020 07:38:41 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Pawel Laszczak <pawell@cadence.com>
-Cc:     "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "rogerq@ti.com" <rogerq@ti.com>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jayshri Dajiram Pawar <jpawar@cadence.com>,
-        Rahul Kumar <kurahul@cadence.com>,
-        Sanket Parmar <sparmar@cadence.com>,
-        Peter Chan <peter.chan@nxp.com>
-Subject: Re: [PATCH] usb: cdns3: Fix: ARM core hang after connect/disconnect
- operation.
-Message-ID: <20200109063841.GA2579094@kroah.com>
-References: <20200108113719.21551-1-pawell@cadence.com>
- <20200108142829.GB2383861@kroah.com>
- <BYAPR07MB4709983A2DF70AA0058C737FDD390@BYAPR07MB4709.namprd07.prod.outlook.com>
+        b=vZdTpy6H9hUgnvR8ew1cTmAEURZTbZVGreLozb8akRHKWW9iRilK0MJaYA2HEe4lh
+         OX/9Hb8Klj2J1ZGqS6KObwrhUFdoOH89tQe/CmRzYZl7GTmgxJczpsS7UpWJHtRGnW
+         DJrjIZ+geEv8FWFEx4gJY9d7UwFoWGdQVp1/ew20=
+Date:   Thu, 9 Jan 2020 14:39:41 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     s.hauer@pengutronix.de, robh+dt@kernel.org, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com,
+        darshak.patel@einfochips.com, prajose.john@einfochips.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] Add support for Thor96 board
+Message-ID: <20200109063940.GA4456@T480>
+References: <20191030090124.24900-1-manivannan.sadhasivam@linaro.org>
+ <20200109033342.GA3281@Mani-XPS-13-9360>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BYAPR07MB4709983A2DF70AA0058C737FDD390@BYAPR07MB4709.namprd07.prod.outlook.com>
+In-Reply-To: <20200109033342.GA3281@Mani-XPS-13-9360>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 06:27:02AM +0000, Pawel Laszczak wrote:
-> >> +	writel(EP_CMD_EPRST, &priv_dev->regs->ep_cmd);
-> >> +
-> >> +	ret = readl_poll_timeout_atomic(&priv_dev->regs->ep_cmd, val,
-> >> +					!(val & (EP_CMD_CSTALL | EP_CMD_EPRST)),
-> >> +					1, 1000);
-> >> +
-> >> +	if (unlikely(ret))
-> >
-> >Unless you can measure the difference of using/not using a
-> >unlikely/likely mark, NEVER use it.  The compiler and cpu can almost
-> >always do better than you can, we have the tests to prove it.
-> >
+On Thu, Jan 09, 2020 at 09:03:42AM +0530, Manivannan Sadhasivam wrote:
+> Hi Shawn,
 > 
-> The both of the above timeout should never occur. If they occurred it would be a 
-> critical controller bug. In this case driver can only inform  about this event. 
-
-"Should never occur" is a fun thing to say :)
-
-If it can never occur, then don't even check for it.
-
-If it can, then check for it and handle it properly.
-
-What about this controller in systems with removable busses (like PCI?)
-What happens then (hint, I bet this could occur...)
-
-> For timeouts used in driver I've never see an errors. Because debugging these 
-> kind of errors is very hard I decided to leave dev_err in such case to inform that
-> probably something is wrong in HW project. 
+> On Wed, Oct 30, 2019 at 02:31:20PM +0530, Manivannan Sadhasivam wrote:
+> > Hello,
+> > 
+> > This patchset adds support for Thor96 board from Einfochips. This board is
+> > one of the 96Boards Consumer Edition platform powered by the NXP i.MX8MQ
+> > SoC.
+> > 
+> > Following are the features supported currently:
+> > 
+> > 1. uSD
+> > 2. WiFi/BT
+> > 3. Ethernet
+> > 4. EEPROM (M24256)
+> > 5. NOR Flash (W25Q256JW)
+> > 6. 2xUSB3.0 ports and 1xUSB2.0 port at HS expansion
+> > 
+> > More information about this board can be found in Arrow website:
+> > https://www.arrow.com/en/products/i.imx8-thor96/arrow-development-tools
+> > 
+> > Link to 96Boards CE Specification: https://linaro.co/ce-specification
+> > 
+> > Expecting patch 1 to go through LED/Rob's tree, 4 through MTD tree
+> > and 2,3 through Freescale tree.
+> > 
 > 
-> I will remove unlikely.  
-> 
-> >> +		dev_err(priv_dev->dev, "Timeout: %s resetting failed.\n",
-> >> +			priv_ep->name);
-> >> +
-> >> +	priv_ep->flags |= EP_HW_RESETED;
-> >
-> >So an error happens, but you still claim the device is reset?  What can
-> >a user do about this error?
-> 
-> The error should never occur. 
+> Any update here? Patch 4 is already merged.
 
-Then no need to warn anyone, just wait and move on.
+Just applied patch #2 and #3.  For patch #1, it should go via LED or DT
+tree, I think.
 
-Or properly handle it.
-
-thanks,
-
-greg k-h
+Shawn
