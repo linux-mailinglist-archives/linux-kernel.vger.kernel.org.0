@@ -2,148 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2242E13593B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 13:32:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7F5713593F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 13:34:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730948AbgAIMcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 07:32:36 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:43011 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729237AbgAIMcg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 07:32:36 -0500
-Received: by mail-lf1-f67.google.com with SMTP id 9so5062150lfq.10
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 04:32:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dNz1YuP2AfKv0aZ9saeylvptSi351fPnO7qobVoMRPk=;
-        b=GdGm/gg9gF45ctnIoiAyLlkYKo33jPT+zrPTv/pl2hZZ6QaHmJO21KrwGt9KvHGEPL
-         //3gnS3w08b6zS0fqIkZcsw+5+z208KqUol6784i8GL/QEg+CwD7bGpWP8TKHNMEw3AT
-         kitiLOeLTZOAAh9T6yv1uyFzyKsQdxBfd6i86nW/UbbqsD7b6UUmtBXDvtT5mXGYgnjQ
-         ie+iZLuLh5X8YOp+QYnqkj7ZD2iLV7FCRda9ffCMsV5hoZzIuJ9FSyMF7JvM/ufUUT0q
-         SqWgIvk6mXNh40JIkwcoh0gH+Lu3Abav4EJh5zXCjUcvALpxwPLOQUKTuFBvi5WPYaMe
-         lxjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dNz1YuP2AfKv0aZ9saeylvptSi351fPnO7qobVoMRPk=;
-        b=kMBgiRInHhq2Bxed6Ww080q2VuGdyNsodCUQXeUgOi87WWaXrzqpSNI2xL6NOAJQWm
-         3owBLQqM3VP95f+XJsV4UwYsy95Z5YZG3i9trTXefZHMTUPxcX2ebJWnXlI9NI++m1li
-         wsfZWSG1hjvz8krI9knR7uzkXhUAe6otCnC4hD/VdEu2kWP9Y4HTGF3ug/8x7L/5P+op
-         sOrs8TbfPxi5bH10/JUzVAm8G517w+UJ1FVFqGqnOy5Ol97P6ZEO39mfVWoSs9yc/w33
-         xalueg6DIzo+qiQZUQLQDqWD5tzJ8TNyjyuZ4iU2mM7dw7NLAAlNirHAevfuaUXAUVur
-         C7gQ==
-X-Gm-Message-State: APjAAAVd1jBH4h3WI7C8CmAfOduwdZ8+FnSS8HDxsPxy3G4QkgUukOc2
-        TBtPysgEdca2t9oqfrWzLq3deg==
-X-Google-Smtp-Source: APXvYqwcL80LZwTLfyb+q6lO6S1d/bO/4ZzrS9E/1X9t7wr0uSPvxZEh1sXI5zuaBEWWE9Xv5oU83Q==
-X-Received: by 2002:ac2:5dc7:: with SMTP id x7mr6079826lfq.24.1578573154370;
-        Thu, 09 Jan 2020 04:32:34 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id b19sm3000589ljk.25.2020.01.09.04.32.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 04:32:33 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 7095B1007DB; Thu,  9 Jan 2020 15:32:33 +0300 (+03)
-Date:   Thu, 9 Jan 2020 15:32:33 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        richard.weiyang@gmail.com
-Subject: Re: [RFC PATCH] mm/rmap.c: finer hwpoison granularity for PTE-mapped
- THP
-Message-ID: <20200109123233.ye2h4dxaubu4ad22@box>
-References: <20200102030421.30799-1-richardw.yang@linux.intel.com>
+        id S1730982AbgAIMeL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 07:34:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37970 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730950AbgAIMeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 07:34:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 50FEFB2204;
+        Thu,  9 Jan 2020 12:34:03 +0000 (UTC)
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Paul Burton <paulburton@kernel.org>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 00/14] Cleanup SGI-IP27 and prepare for SGI-IP35 support
+Date:   Thu,  9 Jan 2020 13:33:37 +0100
+Message-Id: <20200109123353.5656-1-tbogendoerfer@suse.de>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200102030421.30799-1-richardw.yang@linux.intel.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 02, 2020 at 11:04:21AM +0800, Wei Yang wrote:
-> Currently we behave differently between PMD-mapped THP and PTE-mapped
-> THP on memory_failure.
-> 
-> User detected difference:
-> 
->     For PTE-mapped THP, the whole 2M range will trigger MCE after
->     memory_failure(), while only 4K range for PMD-mapped THP will.
-> 
-> Direct reason:
-> 
->     All the 512 PTE entry will be marked as hwpoison entry for a PTE-mapped
->     THP while only one PTE will be marked for a PMD-mapped THP.
-> 
-> Root reason:
-> 
->     The root cause is PTE-mapped page doesn't need to split pmd which skip
->     the SPLIT_FREEZE process.
+SGI-IP35 alias SN1 is very similair to SGI-IP27 alias SN0, so most of the
+IP27 code could also be used for IP35. The differences will mostly be in
+header files, which are selected by CONFIG option. This series cleans up
+IP27 code/headers and prepares them for IP35 integration.
 
-I don't follow how SPLIT_FREEZE is related to pisoning. Cold you
-laraborate?
+Thomas Bogendoerfer (14):
+  MIPS: SGI-IP27: use nodemask instead of cpumask
+  MIPS: SGI-IP27: use cpu physid already present while scanning for CPUs
+  MIPS: SGI-IP27: use asm/sn/agent.h for including HUB related stuff
+  MIPS: SGI-IP27: get rid of asm/sn/sn0/ip27.h
+  MIPS: SGI-IP27: move IP27 specific macro to IP27 specific header file
+  MIPS: SGI-IP27: Move get_nasid() to a IP27 specific file
+  MIPS: SGI-IP27: Split kldir.h into generic SN and IP27 parts
+  MIPS: SGI-IP27: Use union instead of typedef
+  MIPS: SGI-IP27: Use structs for decoding error status registers
+  MIPS: SGI-IP27: Use specific get_region_shift
+  MIPS: SGI-IP27: Move all shared IP27 declarations to ip27-common.h
+  MIPS: SGI-IP27: Only reserve interrupts used in Linux
+  MIPS: SGI-IP27: Store cpu speed when scanning for CPUs and use it
+    later
+  MIPS: SGI-IP27: No need for slice_map
 
->     This makes try_to_unmap_one() do its job when
->     the THP is not splited. And since page is HWPOISON, all the entries in
->     THP is marked as hwpoison entry.
-> 
->     While for the PMD-mapped THP, SPLIT_FREEZE will save migration entry to
->     pte and this skip try_to_unmap_one() before THP splited. And then only
->     the affected 4k page is marked as hwpoison entry.
-> 
-> This patch tries to provide a finer granularity for PTE-mapped THP by
-> only mark the affected subpage as hwpoison entry when THP is not
-> split.
-> 
-> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
-> 
-> ---
-> This complicates the picture a little, while I don't find a better way to
-> improve. 
-> 
-> Also I may miss some case or not handle this properly.
-> 
-> Look forward your comments.
-> ---
->  mm/rmap.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index b3e381919835..90229917dd64 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1554,10 +1554,11 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
->  				set_huge_swap_pte_at(mm, address,
->  						     pvmw.pte, pteval,
->  						     vma_mmu_pagesize(vma));
-> -			} else {
-> +			} else if (!PageAnon(page) || page == subpage) {
->  				dec_mm_counter(mm, mm_counter(page));
->  				set_pte_at(mm, address, pvmw.pte, pteval);
-> -			}
-> +			} else
-> +				goto freeze;
->  
->  		} else if (pte_unused(pteval) && !userfaultfd_armed(vma)) {
->  			/*
-> @@ -1579,6 +1580,7 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
->  			swp_entry_t entry;
->  			pte_t swp_pte;
->  
-> +freeze:
->  			if (arch_unmap_one(mm, vma, address, pteval) < 0) {
->  				set_pte_at(mm, address, pvmw.pte, pteval);
->  				ret = false;
-> -- 
-> 2.17.1
-> 
-> 
+ .../include/asm/mach-ip27/kernel-entry-init.h |  12 +-
+ arch/mips/include/asm/mach-ip27/mmzone.h      |   4 +-
+ arch/mips/include/asm/mach-ip27/topology.h    |   2 +-
+ arch/mips/include/asm/sn/arch.h               |   3 -
+ arch/mips/include/asm/sn/hub.h                |  17 --
+ arch/mips/include/asm/sn/intr.h               |  17 --
+ arch/mips/include/asm/sn/klconfig.h           |   4 -
+ arch/mips/include/asm/sn/kldir.h              | 193 +-----------------
+ arch/mips/include/asm/sn/sn0/hub.h            |  22 ++
+ arch/mips/include/asm/sn/sn0/hubni.h          |   8 +
+ arch/mips/include/asm/sn/sn0/ip27.h           |  85 --------
+ arch/mips/include/asm/sn/sn0/kldir.h          | 186 +++++++++++++++++
+ arch/mips/include/asm/sn/sn_private.h         |  19 --
+ arch/mips/include/asm/sn/types.h              |   4 +
+ arch/mips/pci/pci-ip27.c                      |   2 +-
+ arch/mips/sgi-ip27/ip27-berr.c                |  40 ++--
+ arch/mips/sgi-ip27/ip27-common.h              |  12 +-
+ arch/mips/sgi-ip27/ip27-console.c             |   5 +-
+ arch/mips/sgi-ip27/ip27-hubio.c               |   8 +-
+ arch/mips/sgi-ip27/ip27-init.c                |  25 +--
+ arch/mips/sgi-ip27/ip27-irq.c                 |   5 +-
+ arch/mips/sgi-ip27/ip27-klconfig.c            |  51 -----
+ arch/mips/sgi-ip27/ip27-klnuma.c              |  16 +-
+ arch/mips/sgi-ip27/ip27-memory.c              |  39 ++--
+ arch/mips/sgi-ip27/ip27-nmi.c                 |   5 +-
+ arch/mips/sgi-ip27/ip27-reset.c               |   2 +-
+ arch/mips/sgi-ip27/ip27-smp.c                 |  33 +--
+ arch/mips/sgi-ip27/ip27-timer.c               |  28 +--
+ arch/mips/sgi-ip27/ip27-xtalk.c               |   1 -
+ 29 files changed, 315 insertions(+), 533 deletions(-)
+ delete mode 100644 arch/mips/include/asm/sn/hub.h
+ delete mode 100644 arch/mips/include/asm/sn/sn0/ip27.h
+ create mode 100644 arch/mips/include/asm/sn/sn0/kldir.h
+ delete mode 100644 arch/mips/include/asm/sn/sn_private.h
 
 -- 
- Kirill A. Shutemov
+2.24.1
+
