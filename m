@@ -2,164 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 341791358AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 12:59:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D76901358CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 13:05:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730622AbgAIL7T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 06:59:19 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36306 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728737AbgAIL7T (ORCPT
+        id S1730761AbgAIMEz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 07:04:55 -0500
+Received: from mx.mylinuxtime.de ([195.201.174.144]:54518 "EHLO
+        mx.mylinuxtime.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728653AbgAIMEv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 06:59:19 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z3so7126144wru.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 03:59:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8qgyCkOSQKeCmlBYEJ5jmOjKYQ9DTi4lFJhE0jLfM4E=;
-        b=WuDHSPmiSqRii0JdayN2W1f4PEYcB7MB+g/CWpwCvmzW4tJu1h8nIeI+Aoue0Bj1mk
-         Fig/Rebg7kU3kW/RH/5TgXABNCkskqZgk/jae1RFeQC/zga9T/CClMcBNFMDmg3LSAD9
-         SAHVUtePOx5+G9iFhDNdMloTf4Wz3KxpXV3wvTMqvupfWXURe4BMr9uz0QrmpZ/eGAD/
-         YCZRCxx71DFfse8QEmuZ1L2SPNsluEJY1xq5RbpbMBGyDAJV0NZ1UWl3VXeliGA074+P
-         8nIZns5Kpt4Pc9997JdtlyqBky57RXmlKIukvVAg4oalKHvUFvMAnwyVhAZBJ/45GcbE
-         rSaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=8qgyCkOSQKeCmlBYEJ5jmOjKYQ9DTi4lFJhE0jLfM4E=;
-        b=nXKGqndGVk+XCOSVjC6JpmV3otCVUpN7tgLT32O9CtQGd7tuTKiV1El7ZwayI5g1e0
-         fVIrB1+23Yofr188kiqBvdv3oTpuOfRHjyw+GfUTXCqnz4LHt0CZ5lblv6FHB3aTrX0s
-         tzp5tQTWVPpssxvwa8rF9iDIu3m0VoapwYaozEsMS2bMmE5Co1LvHQluRY50+pAJRRiB
-         Q/H/D5Sy8VZJ2+QS/Y0r2p2qwG3qhpZtsfJHo7CrrcUwJfOwzFnhBcFiOuZbG/0tF7dX
-         1M61xaPIDKtykrNeHDaik7iE38dRULeUbyi9j3nLUx0jCrZISu2qx0afliFTX8oRCahX
-         C4PQ==
-X-Gm-Message-State: APjAAAUsLf1UIdh2iT8YfYMHGnX98ZUGpyBYNDB/hPD9QAyyqV7XP466
-        ZGHAGn0IZUM3Ww1Q8jU+1DifcnsHzYH9Iw==
-X-Google-Smtp-Source: APXvYqxPdTzBN4mQCT2y6W4fn3s13fo9sjfpiczwTb9UDsWgXjANyOm8DT+bwPOO0QcRdny4T40FVA==
-X-Received: by 2002:a5d:4651:: with SMTP id j17mr10947837wrs.237.1578571156657;
-        Thu, 09 Jan 2020 03:59:16 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:f1d5:61e0:e9d8:1c3d? ([2a01:e34:ed2f:f020:f1d5:61e0:e9d8:1c3d])
-        by smtp.googlemail.com with ESMTPSA id l15sm7471314wrv.39.2020.01.09.03.59.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jan 2020 03:59:16 -0800 (PST)
-Subject: Re: [PATCH] clocksource/drivers/timer-microchip-pit64b: fix sparse
- warning
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>, tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org
-References: <1578304688-14882-1-git-send-email-claudiu.beznea@microchip.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <362407a3-036a-c38d-1dc4-2730d616592b@linaro.org>
-Date:   Thu, 9 Jan 2020 12:59:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Thu, 9 Jan 2020 07:04:51 -0500
+X-Greylist: delayed 450 seconds by postgrey-1.27 at vger.kernel.org; Thu, 09 Jan 2020 07:04:48 EST
+Received: from leda (unknown [87.190.244.126])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mx.mylinuxtime.de (Postfix) with ESMTPSA id D8FAC161CD;
+        Thu,  9 Jan 2020 12:57:16 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mx.mylinuxtime.de D8FAC161CD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=eworm.de; s=mail;
+        t=1578571037; bh=yDW5OXfsyfPA2O+R/QtY0RW4PXky6Q2CoezhkgVRdAU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=Mxrbs8CfKRJNzqcU/5JHpeHKuF9e3M9IKFY1zW0GX9fAsb+BFC1o/nLrT2GlHKe1H
+         BIRfadgVIoqlYdhXx5mpQ0/ligSDI2MitUkXBLVDMKS4gmhbveg2ujvOH+7pqW7Mij
+         1PR202lOkzfCkAGhRa1nhk4jG8QjnzMVXl8mLfQ4=
+Date:   Thu, 9 Jan 2020 12:57:11 +0100
+From:   Christian Hesse <list@eworm.de>
+To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Cc:     StableKernel <stable@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: What happend to 5.4.9??? Kernel.org showing 5.4.10!!
+Message-ID: <20200109125711.26b31965@leda>
+In-Reply-To: <20200109114330.GC19235@Gentoo>
+References: <20200109114330.GC19235@Gentoo>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+X-Face: %O:rCSk<c"<MpJ:yn<>HSKf7^4uF|FD$9$I0}g$nbnS1{DYPvs#:,~e`).mzj\$P9]V!WCveE/XdbL,L!{)6v%x4<jA|JaB-SKm74~Wa1m;|\QFlOg>\Bt!b#{;dS&h"7l=ow'^({02!2%XOugod|u*mYBVm-OS:VpZ"ZrRA4[Q&zye,^j;ftj!Hxx\1@;LM)Pz)|B%1#sfF;s;,N?*K*^)
+Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAGFBMVEUZFRFENy6KVTKEd23CiGHeqofJvrX4+vdHgItOAAAACXBIWXMAAA3XAAAN1wFCKJt4AAACUklEQVQ4y2VUTZeqMAxNxXG2Io5uGd64L35unbF9ax0b3OLxgFs4PcLff0lBHeb1QIq5uelNCEJNq/TIFGyeC+iugH0WJr+B1MvzWASpuP4CYHOB0VfoDdddwA7OIFQIEHjXDiCtV5e9QX0WMu8AG0mB7g7WP4GqeqVdsi4vv/5kFBvaF/zD7zDquL4DxbrDGDyAsgNYOsJOYzth4Q9ZF6iLV+6TLAT1pi2kuvgAtZxSjoG8cL+8vIn251uoe1OOEWwbIPU04gHsmMsoxyyhYsD2FdIigF1yxaVbBuSOCAlCoX324I7wNMhrO1bhOLsRoA6DC6wQ5eQiSG5BiWQfM4gN+uItQTRDMaJUhVbGyKWCuaaUGSVFVKpl4PdoDn3yY8J+YxQxyhlHfoYOyPgyDcO+cSQK6Bvabjcy2nwRo3pxgA8jslnCuYw23ESOzHAPYwo4ITNQMaOO+RGPEGhSlPEZBh2jmBEjQ5cKbxmr0ruAe/WCriUxW76I8T3h7vqY5VR5wXLdERodg2rHEzdxxk5KpXTL4FwnarvndKM5/MWDY5CuBBdQ+3/0ivsUJHicuHd+Xh3jOdBL+FjSGq4SPCwco+orpWlERRTNo7BHCvbNXFVSIQMp+P5QsIL9upmr8kMTUOfxEHoanwzKRcNAe76WbjBwex/RkdHu48xT5YqP70DaMOhBcTHmAVDxLaBdle93oJy1QKFUh2GXT4am+YH/GGel1CeI98GdMXsytjCKIq/9cMrlgxFCROv+3/BU1fijNpcVD6DxE8VfLBaxUGr1D5usgDYdjwiPAAAAAElFTkSuQmCC
 MIME-Version: 1.0
-In-Reply-To: <1578304688-14882-1-git-send-email-claudiu.beznea@microchip.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/2dGIV2c6u+ANjJGMtiP.9jX";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Authentication-Results: mx.mylinuxtime.de;
+        auth=pass smtp.auth=mail@eworm.de smtp.mailfrom=list@eworm.de
+X-Rspamd-Server: mx
+X-Spam-Status: No, score=-4.39
+X-Stat-Signature: pdrbf1o7khm7y1zxqh34t1k518w8h68h
+X-Rspamd-Queue-Id: D8FAC161CD
+X-Spamd-Result: default: False [-4.39 / 15.00];
+         ARC_NA(0.00)[];
+         BAYES_SPAM(0.29)[69.85%];
+         FROM_HAS_DN(0.00)[];
+         RCPT_COUNT_THREE(0.00)[4];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         FREEMAIL_ENVRCPT(0.00)[gmail.com];
+         MIME_GOOD(-0.20)[multipart/signed,text/plain];
+         TO_DN_SOME(0.00)[];
+         NEURAL_HAM(-2.98)[-0.992,0];
+         SUBJECT_ENDS_EXCLAIM(0.00)[];
+         SIGNED_PGP(-2.00)[];
+         FREEMAIL_TO(0.00)[gmail.com];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MID_RHS_NOT_FQDN(0.50)[];
+         MIME_TRACE(0.00)[0:+,1:+,2:~];
+         ASN(0.00)[asn:3320, ipnet:87.128.0.0/10, country:DE];
+         SUBJECT_HAS_QUESTION(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/01/2020 10:58, Claudiu Beznea wrote:
-> Fix sparse warning.
+--Sig_/2dGIV2c6u+ANjJGMtiP.9jX
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Mind to give the warning?
+Bhaskar Chowdhury <unixbhaskar@gmail.com> on Thu, 2020/01/09 17:13:
+> I am wondering, it might be lack of morning coffee for Greg  :)=20
 
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  drivers/clocksource/timer-microchip-pit64b.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clocksource/timer-microchip-pit64b.c b/drivers/clocksource/timer-microchip-pit64b.c
-> index 27a389a7e078..bd63d3484838 100644
-> --- a/drivers/clocksource/timer-microchip-pit64b.c
-> +++ b/drivers/clocksource/timer-microchip-pit64b.c
-> @@ -248,6 +248,8 @@ static int __init mchp_pit64b_init_mode(struct mchp_pit64b_timer *timer,
->  	if (!pclk_rate)
->  		return -EINVAL;
->  
-> +	timer->mode = 0;
-> +
->  	/* Try using GCLK. */
->  	gclk_round = clk_round_rate(timer->gclk, max_rate);
->  	if (gclk_round < 0)
-> @@ -360,7 +362,7 @@ static int __init mchp_pit64b_dt_init_timer(struct device_node *node,
->  					    bool clkevt)
->  {
->  	u32 freq = clkevt ? MCHP_PIT64B_DEF_CE_FREQ : MCHP_PIT64B_DEF_CS_FREQ;
-> -	struct mchp_pit64b_timer timer = { 0 };
-> +	struct mchp_pit64b_timer timer;
->  	unsigned long clk_rate;
->  	u32 irq = 0;
->  	int ret;
-> 
+Just see what's in git:
 
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/log/?h=3Dl=
+inux-5.4.y
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Version 5.4.9 suffered a crash on powerpc. Not sure if coffee could have
+prevented. :-p
+--=20
+main(a){char*c=3D/*    Schoene Gruesse                         */"B?IJj;MEH"
+"CX:;",b;for(a/*    Best regards             my address:    */=3D0;b=3Dc[a+=
++];)
+putchar(b-1/(/*    Chris            cc -ox -xc - && ./x    */b/42*2-3)*42);}
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--Sig_/2dGIV2c6u+ANjJGMtiP.9jX
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEXHmveYAHrRp+prOviUUh18yA9HYFAl4XFRcACgkQiUUh18yA
+9HaOzgf/UQ3ItscDbzDqpZ9TTHCJafCB+Qox6x8emjr5LO0GZV5Nv4z1qpTPh8U9
+UkVr47YrP70SX6YlQT1Mnua8zuK9zkIyNnGVkC//4b8DDnPHexURSfk8rj1iijah
+G3SCUi//Ar58Fs4nERF6VNfise0bOAehW9ZH6t1YGqUmjQDImDCy8+NSD82Kyb5U
+Wdc+eYCaORMIBwnac3sn0grpP1F2XPb2T4DypTpn6m9VnJP6rfHT0TmbDjKEIyAg
+9vbJG7hosEEGgi/7/wuMxwZ6dOPt9IZv3I2bbpPKmI00LRgy8Vfshke9bWhNRRam
+fgZPOfVkxTSveDVlrx2Oj0wuRZL6ww==
+=Mn31
+-----END PGP SIGNATURE-----
+
+--Sig_/2dGIV2c6u+ANjJGMtiP.9jX--
