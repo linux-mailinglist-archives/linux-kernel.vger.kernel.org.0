@@ -2,89 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13E241359EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 14:19:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECE201359F5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 14:20:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730987AbgAINSq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 08:18:46 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:33123 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729409AbgAINSq (ORCPT
+        id S1731032AbgAINUB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 08:20:01 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:40478 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729180AbgAINUB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 08:18:46 -0500
-X-Originating-IP: 90.76.143.236
-Received: from localhost (lfbn-tou-1-1075-236.w90-76.abo.wanadoo.fr [90.76.143.236])
-        (Authenticated sender: antoine.tenart@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 192431C0004;
-        Thu,  9 Jan 2020 13:18:42 +0000 (UTC)
-Date:   Thu, 9 Jan 2020 14:18:42 +0100
-From:   Antoine Tenart <antoine.tenart@bootlin.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     antoine.tenart@bootlin.com, sd@queasysnail.net, andrew@lunn.ch,
-        f.fainelli@gmail.com, hkallweit1@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        alexandre.belloni@bootlin.com, allan.nielsen@microchip.com,
-        camelia.groza@nxp.com, Simon.Edelhaus@aquantia.com,
-        Igor.Russkikh@aquantia.com, jakub.kicinski@netronome.com
-Subject: Re: [PATCH net-next v4 08/15] net: phy: mscc: macsec initialization
-Message-ID: <20200109131842.GC5472@kwain>
-References: <20191219105515.78400-1-antoine.tenart@bootlin.com>
- <20191219105515.78400-9-antoine.tenart@bootlin.com>
- <20191219.121117.1826219046339114907.davem@davemloft.net>
+        Thu, 9 Jan 2020 08:20:01 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1ipXj7-0000gk-Fu; Thu, 09 Jan 2020 13:19:53 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Tony Lindgren <tony@atomide.com>, dmaengine@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next][V2] dmaengine: ti: omap-dma: don't allow a null od->plat pointer to be dereferenced
+Date:   Thu,  9 Jan 2020 13:19:53 +0000
+Message-Id: <20200109131953.157154-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191219.121117.1826219046339114907.davem@davemloft.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello David,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Thu, Dec 19, 2019 at 12:11:17PM -0800, David Miller wrote:
-> From: Antoine Tenart <antoine.tenart@bootlin.com>
-> Date: Thu, 19 Dec 2019 11:55:08 +0100
-> 
-> > +static u32 __vsc8584_macsec_phy_read(struct phy_device *phydev,
-> > +				     enum macsec_bank bank, u32 reg, bool init)
-> > +{
-> > +	u32 val, val_l = 0, val_h = 0;
-> > +	unsigned long deadline;
-> > +	int rc;
-> > +
-> > +	if (!init) {
-> > +		rc = phy_select_page(phydev, MSCC_PHY_PAGE_MACSEC);
-> > +		if (rc < 0)
-> > +			goto failed;
-> > +	} else {
-> > +		__phy_write_page(phydev, MSCC_PHY_PAGE_MACSEC);
-> > +	}
-> 
-> Having to export __phy_write_page() in the previous patch looked like
-> a huge red flag to me, and indeed on top of it you're using it to do
-> conditional locking here.
-> 
-> I'm going to unfortunately have to push back on this, please sanitize
-> the locking here so that you can use the existing exports properly.
+Currently when the call to dev_get_platdata returns null the driver issues
+a warning and then later dereferences the null pointer.  Avoid this issue
+by returning -ENODEV errror rather when the platform data is null and
+change the warning to an appropriate error message.
 
-I do agree this conditional locking is not very good. We had discussions
-with Andrew about how bad this is, but there are no easy fix for this.
-At least the condition is consistent depending on if we're in the init
-step or not, which is better than having different values in the same
-context. The idea was not to duplicate hundreds of lines.
+Addresses-Coverity: ("Dereference after null check")
+Fixes: 211010aeb097 ("dmaengine: ti: omap-dma: Pass sdma auxdata to driver and use it")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
 
-Having said that, the reason we had to do this is we have multiple PHYs
-inside the same package and some steps are to be done for all PHYs at a
-time. I had another look at this and, for MACsec only, we might be able
-not to have a single common part. I'll test the changes and if that's
-successful I'll be able to fix this in a clean way.
+V2: return -ENODEV and change warning to an error message as suggested by
+    Peter Ujfalusi.
+---
+ drivers/dma/ti/omap-dma.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Thanks!
-Antoine
-
+diff --git a/drivers/dma/ti/omap-dma.c b/drivers/dma/ti/omap-dma.c
+index fc8f7b2fc7b3..a93515015dce 100644
+--- a/drivers/dma/ti/omap-dma.c
++++ b/drivers/dma/ti/omap-dma.c
+@@ -1658,8 +1658,10 @@ static int omap_dma_probe(struct platform_device *pdev)
+ 	if (conf) {
+ 		od->cfg = conf;
+ 		od->plat = dev_get_platdata(&pdev->dev);
+-		if (!od->plat)
+-			dev_warn(&pdev->dev, "no sdma auxdata needed?\n");
++		if (!od->plat) {
++			dev_err(&pdev->dev, "omap_system_dma_plat_info is missing");
++			return -ENODEV;
++		}
+ 	} else {
+ 		od->cfg = &default_cfg;
+ 
 -- 
-Antoine Ténart, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.24.0
+
