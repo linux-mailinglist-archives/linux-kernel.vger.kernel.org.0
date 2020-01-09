@@ -2,93 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62FF71354AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 09:48:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF6731354B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 09:49:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728690AbgAIIsB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 03:48:01 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:47331 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728448AbgAIIsB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 03:48:01 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1Mw99Y-1jey8c0CyC-00s2rY; Thu, 09 Jan 2020 09:47:46 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Artemy Kovalyov <artemyko@mellanox.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Moni Shoua <monis@mellanox.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Shiraz Saleem <shiraz.saleem@intel.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] IB/core: Fix build failure without hugepages
-Date:   Thu,  9 Jan 2020 09:47:30 +0100
-Message-Id: <20200109084740.2872079-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        id S1728749AbgAIIs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 03:48:59 -0500
+Received: from mail.manjaro.org ([176.9.38.148]:46310 "EHLO manjaro.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728511AbgAIIs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 03:48:59 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by manjaro.org (Postfix) with ESMTP id 1D01636E4E4F;
+        Thu,  9 Jan 2020 09:48:58 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at manjaro.org
+Received: from manjaro.org ([127.0.0.1])
+        by localhost (manjaro.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id YfbeHlYlYRpT; Thu,  9 Jan 2020 09:48:55 +0100 (CET)
+From:   Tobias Schramm <t.schramm@manjaro.org>
+To:     Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Tobias Schramm <t.schramm@manjaro.org>
+Subject: [PATCH 0/1] Regression in analogix_anx78xx
+Date:   Thu,  9 Jan 2020 09:48:00 +0100
+Message-Id: <20200109084801.3117-1-t.schramm@manjaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:mkrhrw40NErOvP8CxwUXSW4llRsS42HydBRTLlnckgzOAZHs4E/
- hAw/7GSlComduAO87UIxsrWBEWcIF+7ft/buqQtfeeqxApMdprqOpGlFDlfIhDQNy1E1LEd
- 2Q9J9QMoA8Lp7KAaqUzbTAxbc2w0PjVgVJZEnlMdjvNGiewGek9MojVygyqKU2Zpmx+rZW7
- 7C0RDFSmDuAbfH6Rn18MA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:03kATHjJVDc=:OV0JtzVoDE39MIMzD9tJrj
- IYkYlVS89skmK73I+iAs19WcYvxf9Z3w+YV/Ly32JQYhnaTysEDXIRG85ttV280GphHPno7A9
- 3PW7EbmUUQJPqSFUyVfjJ/P4WnmW4i4SN4iSDyJgP7cowHA9cyTtQTeDYN9xArJwqXuHp0GA4
- LdK+cF8PEE1b03EtnlVrhibhltwQm+zEG/RI8fLHpv8GMRdRB4SjN/M5+acPjjwnirz1sHU9O
- mb8hDzwVWeI6jP/52JbUbyOV4RRoITZkIC1BKNkCWO7/AI+1hwxAevhCO6Htqy7R1HV+WqHzq
- Ruq174DQRlJuJxTHTJnylvvjr2pC1UAKFQcD4s8VqiVgnJK9t4NrtblGD3tNP/Zj0Fhi1fK2p
- NJkTKkMWoojSKEFeSKrvLgtAGJl1LCHM8wuWeK1142iS1f20/rF0+VPldBCkJZjFtvagAkucB
- KePnVLLnAjgjR44CI1Op9TGJSzd2ndiwVrl7hdgYJ0LtmvlIrPnPhExQ86wJ248dtRTYng6Bt
- sD0+tdqXMuEQo5Hk/6KcuoRZiwj3O9jWKE/OwLNiDb/vfzaeUw4vEfdGsY3nkxD5FsuEMQx28
- HRYnUBRCaiWan6Ikit6MNNwROhFc1m2EAW72evrSNRuu4CyL1kT6XOlAFiiCFBq8srPZaum1C
- bUOoouGoI3+15NHBpOBq58N6eqWzMzjVvHLwdYnBlUYKTAbFCigx2iBzS0P4N7CIrbjH1V+ue
- v+/LDRj2iLUivulKIWDOtN9fM6AAbBSHEM9rldw1UXeTz8lSM9IfBr5KkeNAg3nrdslG5BlCn
- FZhY52Vgf+zP4b2XZgIrgxxqfYFlIvJdnFFlDFIB6w206b8OEh2tDP31rfqCl2hnRZL8wwK2J
- xMKRZdN0K9IHPNvz8lfg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HPAGE_SHIFT is only defined on architectures that support hugepages:
+commit ff1e8fb68ea0 ("drm/bridge: analogix-anx78xx: Avoid drm_dp_link helpers")
+stores the max link rate in a u8, overflowing it.
+This will probably prevent the link training from working properly.
 
-drivers/infiniband/core/umem_odp.c: In function 'ib_umem_odp_get':
-drivers/infiniband/core/umem_odp.c:245:26: error: 'HPAGE_SHIFT' undeclared (first use in this function); did you mean 'PAGE_SHIFT'?
+I've not tested this patch beyond a simple compile test since I do not own
+any devices containing an anx78xx. So please test!
 
-Enclose this in an #ifdef.
+Tobias
 
-Fixes: 9ff1b6466a29 ("IB/core: Fix ODP with IB_ACCESS_HUGETLB handling")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/infiniband/core/umem_odp.c | 5 +++--
+Tobias Schramm (1):
+  drm/bridge: anx78xx: fix integer type used for storing dp link rate
+
+ drivers/gpu/drm/bridge/analogix-anx78xx.c | 5 +++--
  1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
-index f42fa31c24a2..b9baf7d0a5cb 100644
---- a/drivers/infiniband/core/umem_odp.c
-+++ b/drivers/infiniband/core/umem_odp.c
-@@ -241,10 +241,11 @@ struct ib_umem_odp *ib_umem_odp_get(struct ib_udata *udata, unsigned long addr,
- 	umem_odp->umem.owning_mm = mm = current->mm;
- 	umem_odp->notifier.ops = ops;
- 
-+	umem_odp->page_shift = PAGE_SHIFT;
-+#ifdef CONFIG_HUGETLB_PAGE
- 	if (access & IB_ACCESS_HUGETLB)
- 		umem_odp->page_shift = HPAGE_SHIFT;
--	else
--		umem_odp->page_shift = PAGE_SHIFT;
-+#endif
- 
- 	umem_odp->tgid = get_task_pid(current->group_leader, PIDTYPE_PID);
- 	ret = ib_init_umem_odp(umem_odp, ops);
 -- 
-2.20.0
+2.24.1
 
