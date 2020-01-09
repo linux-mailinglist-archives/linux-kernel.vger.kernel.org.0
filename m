@@ -2,154 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24E59135D04
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 16:43:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C82C135D0F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 16:44:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732538AbgAIPnv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 10:43:51 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:10928 "EHLO pegase1.c-s.fr"
+        id S1732573AbgAIPol (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 10:44:41 -0500
+Received: from mga09.intel.com ([134.134.136.24]:4559 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728098AbgAIPnu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 10:43:50 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 47tr4g08pGz9v3p8;
-        Thu,  9 Jan 2020 16:43:47 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=ilmuuzlF; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 6FBkiugPM--3; Thu,  9 Jan 2020 16:43:46 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 47tr4f66Yyz9v3p6;
-        Thu,  9 Jan 2020 16:43:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1578584626; bh=iw8kkZomOhkO3o0LAtBm1SIFpsx8uEZAgoFK9Pp3LQw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ilmuuzlFcmIFuyVy1qltF6zJgIcY/QacfPR0xgx+hahGZEzf7+zkFRtCPK4jF6ltQ
-         nRWBOULOE0hyYF+PcbYtJB7Kir2kWT7xsuCcCiEPJbWT5u/ZFWxD61ZGmkkD+SGawA
-         ICWLD/eJM+3BG7VMgWcfX+y95rICvukbD7i5WdGw=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 62C3B8B82B;
-        Thu,  9 Jan 2020 16:43:48 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id Dt_XbitFJ43g; Thu,  9 Jan 2020 16:43:48 +0100 (CET)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 266608B828;
-        Thu,  9 Jan 2020 16:43:47 +0100 (CET)
-Subject: Re: [RFC PATCH v2 01/10] lib: vdso: ensure all arches have 32bit
- fallback
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-References: <cover.1577111363.git.christophe.leroy@c-s.fr>
- <47701b5fb73cf536db074031db8e6e3fa3695168.1577111365.git.christophe.leroy@c-s.fr>
- <CAK8P3a0QGtjygLJUWX_1-s1vfCzE6UoOzrb+OZWwjaBdh=RpVQ@mail.gmail.com>
- <CAK8P3a1gHvW2XEMDSHCcdOQ8NSs3iHk9GpujwkWZnnZ0dnw96w@mail.gmail.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <0d8ffa6f-00fa-aefe-d255-b635fb90497f@c-s.fr>
-Date:   Thu, 9 Jan 2020 16:43:46 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1732548AbgAIPoi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 10:44:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 07:44:37 -0800
+X-IronPort-AV: E=Sophos;i="5.69,414,1571727600"; 
+   d="scan'208";a="396128612"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 07:44:35 -0800
+Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
+        by paasikivi.fi.intel.com (Postfix) with ESMTP id 12DAF204FD;
+        Thu,  9 Jan 2020 17:44:33 +0200 (EET)
+Received: from sailus by punajuuri.localdomain with local (Exim 4.92)
+        (envelope-from <sakari.ailus@linux.intel.com>)
+        id 1ipa01-000553-BJ; Thu, 09 Jan 2020 17:45:29 +0200
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     Wolfram Sang <wsa@the-dreams.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rajmohan.mani@intel.com, Tomasz Figa <tfiga@chromium.org>
+Subject: [PATCH v3 0/5] Support running driver's probe for a device powered off
+Date:   Thu,  9 Jan 2020 17:45:24 +0200
+Message-Id: <20200109154529.19484-1-sakari.ailus@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1gHvW2XEMDSHCcdOQ8NSs3iHk9GpujwkWZnnZ0dnw96w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
+
+These patches enable calling (and finishing) a driver's probe function
+without powering on the respective device on busses where the practice is
+to power on the device for probe. While it generally is a driver's job to
+check the that the device is there, there are cases where it might be
+undesirable. (In this case it stems from a combination of hardware design
+and user expectations; see below.) The downside with this change is that
+if there is something wrong with the device, it will only be found at the
+time the device is used. In this case (the camera sensors + EEPROM in a
+sensor) I don't see any tangible harm from that though.
+
+An indication both from the driver and the firmware is required to allow
+the device's power state to remain off during probe (see the first patch).
 
 
-Le 02/01/2020 à 12:29, Arnd Bergmann a écrit :
-> On Mon, Dec 30, 2019 at 1:27 PM Arnd Bergmann <arnd@arndb.de> wrote:
->> On Mon, Dec 23, 2019 at 3:31 PM Christophe Leroy <christophe.leroy@c-s.fr> wrote:
->>> +static __always_inline
->>> +long clock_getres32_fallback(clockid_t _clkid, struct old_timespec32 *_ts)
->>> +{
->>> +       struct __kernel_timespec ts;
->>> +       int ret = clock_getres_fallback(clock, &ts);
->>> +
->>> +       if (likely(!ret && _ts)) {
->>> +               _ts->tv_sec = ts.tv_sec;
->>> +               _ts->tv_nsec = ts.tv_nsec;
->>> +       }
->>> +       return ret;
->>> +}
->>
->> Please change these to call __NR_clock_gettime and __NR_clock_getres_time
->> instead of __NR_clock_gettime64/__NR_clock_getres_time64 for multiple reasons.
->>
->> - When doing migration between containers, the vdso may get copied into
->>    an application running on a kernel that does not support the time64
->>    variants, and then the fallback fails.
->>
->> - When CONFIG_COMPAT_32BIT_TIME is disabled, the time32 syscalls
->>    return -ENOSYS, and the vdso version should have the exact same behavior
->>    to avoid surprises. In particular an application that checks clock_gettime()
->>    to see if the time32 are in part of the kernel would get an incorrect result
->>    here.
->>
->> arch/arm64/include/asm/vdso/compat_gettimeofday.h already does this,
->> I think you can just copy the implementation or find a way to share it.
-> 
-> There was a related discussion on this after a vdso regression on mips,
-> and I suggested to drop the time32 functions completely from the
-> vdso when CONFIG_COMPAT_32BIT_TIME is disabled, such as
-> 
-> diff --git a/arch/powerpc/kernel/vdso32/vdso32.lds.S
-> b/arch/powerpc/kernel/vdso32/vdso32.lds.S
-> index 00c025ba4a92..605f259fa24c 100644
-> --- a/arch/powerpc/kernel/vdso32/vdso32.lds.S
-> +++ b/arch/powerpc/kernel/vdso32/vdso32.lds.S
-> @@ -145,10 +145,12 @@ VERSION
-> 
->                  __kernel_get_syscall_map;
->   #ifndef CONFIG_PPC_BOOK3S_601
-> +#ifdef CONFIG_COMPAT_32BIT_TIME
->                  __kernel_gettimeofday;
->                  __kernel_clock_gettime;
->                  __kernel_clock_getres;
->                  __kernel_time;
-> +#endif
->                  __kernel_get_tbfreq;
->   #endif
->                  __kernel_sync_dicache;
-> 
-> Any opinions on this? If everyone agrees with that approach, I can
-> send a cross-architecture patch to do this everywhere. It's probably
-> best though if Christophe adds that to his series as it touches a lot
-> of the same files and I would prefer to avoid conflicting changes.
-> 
+The use case is such that there is a privacy LED next to an integrated
+user-facing laptop camera, and this LED is there to signal the user that
+the camera is recording a video or capturing images. That LED also happens
+to be wired to one of the power supplies of the camera, so whenever you
+power on the camera, the LED will be lit, whether images are captured from
+the camera --- or not. There's no way to implement this differently
+without additional software control (allowing of which is itself a
+hardware design decision) on most CSI-2-connected camera sensors as they
+simply have no pin to signal the camera streaming state.
 
-I guess it would be wise.
+This is also what happens during driver probe: the camera will be powered
+on by the I²C subsystem calling dev_pm_domain_attach() and the device is
+already powered on when the driver's own probe function is called. To the
+user this visible during the boot process as a blink of the privacy LED,
+suggesting that the camera is recording without the user having used an
+application to do that. From the end user's point of view the behaviour is
+not expected and for someone unfamiliar with internal workings of a
+computer surely seems quite suspicious --- even if images are not being
+actually captured.
 
-I don't think my series to switch powerpc to C VDSO will get ready 
-anytime soon, because (in addition to the performance impact) I'm having 
-hard time with the 32 bits VDSO for PPC64. Many of the powerpc header 
-files used by lib/vdso/gettimeofday.c are not ready for generating 32 
-bits code for PPC64. Main problem is that at many places, #ifdef 
-CONFIG_PPC64 is used instead of #ifdef __powerpc64__. There are also 
-some CONFIG options like CONFIG_GENERIC_ATOMIC64 that are selected only 
-when CONFIG_PPC32 is set, but which are required for building the 32 
-bits VDSO. For that I don't even know how to deal with it.
+v2 can be found here:
 
-So, feel free to send your patch, and if my series comes early enough to 
-conflict, I'll manage it.
+<URL:https://patchwork.kernel.org/cover/11114255/>
 
-Christophe
+since v2:
+
+- Remove extra CONFIG_PM ifdefs; these are not needed.
+
+- Move the checks for power state hints from drivers/base/dd.c to
+  drivers/i2c/i2c-base-core.c; these are I²C devices anyway.
+
+- Move the probe_low_power field from struct device_driver to struct
+  i2c_driver.
+
+since v1:
+
+- Rename probe_powered_off struct device field as probe_low_power and
+  reflect the similar naming to the patches overall.
+
+- Work with CONFIG_PM disabled, too.
+
+Rajmohan Mani (1):
+  media: i2c: imx319: Support probe while the device is off
+
+Sakari Ailus (4):
+  i2c: Allow driver to manage the device's power state during probe
+  ACPI: Add a convenience function to tell a device is suspended in
+    probe
+  ov5670: Support probe whilst the device is in a low power state
+  at24: Support probing while off
+
+ drivers/acpi/device_pm.c    | 35 +++++++++++++++++++++++++++++++++++
+ drivers/i2c/i2c-core-base.c | 15 ++++++++++++---
+ drivers/media/i2c/imx319.c  | 23 ++++++++++++++---------
+ drivers/media/i2c/ov5670.c  | 23 ++++++++++++++---------
+ drivers/misc/eeprom/at24.c  | 31 +++++++++++++++++++++----------
+ include/linux/acpi.h        |  5 +++++
+ include/linux/i2c.h         |  3 +++
+ 7 files changed, 104 insertions(+), 31 deletions(-)
+
+-- 
+2.20.1
+
