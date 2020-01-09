@@ -2,454 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C9EC135F92
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 18:46:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82ADF135FDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 18:52:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388263AbgAIRqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 12:46:21 -0500
-Received: from mga14.intel.com ([192.55.52.115]:9321 "EHLO mga14.intel.com"
+        id S2388362AbgAIRwh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 12:52:37 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:55070 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728724AbgAIRqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 12:46:21 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 09:46:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,414,1571727600"; 
-   d="scan'208";a="235592525"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga002.jf.intel.com with ESMTP; 09 Jan 2020 09:46:20 -0800
-Date:   Thu, 9 Jan 2020 09:51:23 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v8 02/10] iommu/vt-d: Add nested translation helper
- function
-Message-ID: <20200109095123.17ed5e6b@jacob-builder>
-In-Reply-To: <eeb67c06-a66c-fbbc-e273-09c4ab1f62b1@linux.intel.com>
-References: <1576524252-79116-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1576524252-79116-3-git-send-email-jacob.jun.pan@linux.intel.com>
-        <eeb67c06-a66c-fbbc-e273-09c4ab1f62b1@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1730326AbgAIRwh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 12:52:37 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 47ttxG2WM3z9txHp;
+        Thu,  9 Jan 2020 18:52:34 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=F2yrOYUt; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id D9ctLdBUZqbw; Thu,  9 Jan 2020 18:52:34 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 47ttxG1NMwz9txHl;
+        Thu,  9 Jan 2020 18:52:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1578592354; bh=FYx4kyu0guKehGok9fASqGVuxxVoy/XJcQO7YPTYaQc=;
+        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
+        b=F2yrOYUt44TvH+5O/nMl5vMshj2XKIRHohr5s+oeadn2dM2WIQzI2nCl/M7lAIkXW
+         JxBLJ5s3We6Cyg3fWHtSz+ys/3or+bNkpzqXxrzX1drGWe8AHYgvp4LxAr7x2nNkum
+         EEx91AF9jbgNwX3yge3UCqm+YIsT3UIhyIUywk4Y=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E09AE8B82E;
+        Thu,  9 Jan 2020 18:52:35 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id za-1hAB_sfui; Thu,  9 Jan 2020 18:52:35 +0100 (CET)
+Received: from po14934vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0F7B48B82D;
+        Thu,  9 Jan 2020 18:52:35 +0100 (CET)
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: Surprising code generated for vdso_read_begin()
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, arnd@arndb.de,
+        tglx@linutronix.de, vincenzo.frascino@arm.com, luto@kernel.org,
+        Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     x86@kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org
+References: <cover.1577111363.git.christophe.leroy@c-s.fr>
+Message-ID: <bd4557a7-9715-59aa-5d8e-488c5e516a98@c-s.fr>
+Date:   Thu, 9 Jan 2020 17:52:34 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <cover.1577111363.git.christophe.leroy@c-s.fr>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Baolu,
+Wondering why we get something so complicated/redundant for 
+vdso_read_begin() <include/vdso/helpers.h>
 
-Appreciate the review. Comments inline below.
+static __always_inline u32 vdso_read_begin(const struct vdso_data *vd)
+{
+	u32 seq;
 
-On Wed, 18 Dec 2019 10:01:17 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+	while ((seq = READ_ONCE(vd->seq)) & 1)
+		cpu_relax();
 
-> Hi Jacob,
-> 
-> On 12/17/19 3:24 AM, Jacob Pan wrote:
-> > Nested translation mode is supported in VT-d 3.0 Spec.CH 3.8.
-> > With PASID granular translation type set to 0x11b, translation
-> > result from the first level(FL) also subject to a second level(SL)
-> > page table translation. This mode is used for SVA virtualization,
-> > where FL performs guest virtual to guest physical translation and
-> > SL performs guest physical to host physical translation.
-> > 
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
-> > ---
-> >   drivers/iommu/intel-pasid.c | 213
-> > ++++++++++++++++++++++++++++++++++++++++++++
-> > drivers/iommu/intel-pasid.h |  12 +++ include/linux/intel-iommu.h
-> > |   3 + include/uapi/linux/iommu.h  |   5 +-
-> >   4 files changed, 232 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iommu/intel-pasid.c
-> > b/drivers/iommu/intel-pasid.c index 3cb569e76642..b178ad9e47ae
-> > 100644 --- a/drivers/iommu/intel-pasid.c
-> > +++ b/drivers/iommu/intel-pasid.c
-> > @@ -359,6 +359,76 @@ pasid_set_flpm(struct pasid_entry *pe, u64
-> > value) pasid_set_bits(&pe->val[2], GENMASK_ULL(3, 2), value << 2);
-> >   }
-> >   
-> > +/*
-> > + * Setup the Extended Memory Type(EMT) field (Bits 91-93)
-> > + * of a scalable mode PASID entry.
-> > + */
-> > +static inline void
-> > +pasid_set_emt(struct pasid_entry *pe, u64 value)
-> > +{
-> > +	pasid_set_bits(&pe->val[1], GENMASK_ULL(29, 27), value <<
-> > 27); +}
-> > +
-> > +/*
-> > + * Setup the Page Attribute Table (PAT) field (Bits 96-127)
-> > + * of a scalable mode PASID entry.
-> > + */
-> > +static inline void
-> > +pasid_set_pat(struct pasid_entry *pe, u64 value)
-> > +{
-> > +	pasid_set_bits(&pe->val[1], GENMASK_ULL(63, 32), value <<
-> > 27);  
-> 
-> The last input should be "value << 32".
-> 
-you are right. will fix.
-> > +}
-> > +
-> > +/*
-> > + * Setup the Cache Disable (CD) field (Bit 89)
-> > + * of a scalable mode PASID entry.
-> > + */
-> > +static inline void
-> > +pasid_set_cd(struct pasid_entry *pe)
-> > +{
-> > +	pasid_set_bits(&pe->val[1], 1 << 25, 1);  
-> 
-> The last input should be "1 << 25".
-> 
-right, i misunderstood the argument of pasid_set_bits(), same for the
-other bits below.
-> > +}
-> > +
-> > +/*
-> > + * Setup the Extended Memory Type Enable (EMTE) field (Bit 90)
-> > + * of a scalable mode PASID entry.
-> > + */
-> > +static inline void
-> > +pasid_set_emte(struct pasid_entry *pe)
-> > +{
-> > +	pasid_set_bits(&pe->val[1], 1 << 26, 1);  
-> 
-> The last input should be "1 << 26".
-> 
-> > +}
-> > +
-> > +/*
-> > + * Setup the Extended Access Flag Enable (EAFE) field (Bit 135)
-> > + * of a scalable mode PASID entry.
-> > + */
-> > +static inline void
-> > +pasid_set_eafe(struct pasid_entry *pe)
-> > +{
-> > +	pasid_set_bits(&pe->val[2], 1 << 7, 1);  
-> 
-> The last input should be "1 << 7".
-> 
-> > +}
-> > +
-> > +/*
-> > + * Setup the Page-level Cache Disable (PCD) field (Bit 95)
-> > + * of a scalable mode PASID entry.
-> > + */
-> > +static inline void
-> > +pasid_set_pcd(struct pasid_entry *pe)
-> > +{
-> > +	pasid_set_bits(&pe->val[1], 1 << 31, 1);  
-> 
-> The last input should be "1 << 31".
-> 
-> > +}
-> > +
-> > +/*
-> > + * Setup the Page-level Write-Through (PWT)) field (Bit 94)
-> > + * of a scalable mode PASID entry.
-> > + */
-> > +static inline void
-> > +pasid_set_pwt(struct pasid_entry *pe)
-> > +{
-> > +	pasid_set_bits(&pe->val[1], 1 << 30, 1);  
-> 
-> The last input should be "1 << 30".
-> 
-> > +}
-> > +
-> >   static void
-> >   pasid_cache_invalidation_with_pasid(struct intel_iommu *iommu,
-> >   				    u16 did, int pasid)
-> > @@ -599,3 +669,146 @@ int intel_pasid_setup_pass_through(struct
-> > intel_iommu *iommu, 
-> >   	return 0;
-> >   }
-> > +
-> > +static int intel_pasid_setup_bind_data(struct intel_iommu *iommu,
-> > +				struct pasid_entry *pte,
-> > +				struct iommu_gpasid_bind_data_vtd
-> > *pasid_data) +{
-> > +	/*
-> > +	 * Not all guest PASID table entry fields are passed down
-> > during bind,
-> > +	 * here we only set up the ones that are dependent on
-> > guest settings.
-> > +	 * Execution related bits such as NXE, SMEP are not
-> > meaningful to IOMMU,
-> > +	 * therefore not set. Other fields, such as snoop related,
-> > are set based
-> > +	 * on host needs regardless of  guest settings.
-> > +	 */
-> > +	if (pasid_data->flags & IOMMU_SVA_VTD_GPASID_SRE) {
-> > +		if (!ecap_srs(iommu->ecap)) {
-> > +			pr_err("No supervisor request support on
-> > %s\n",
-> > +			       iommu->name);
-> > +			return -EINVAL;
-> > +		}
-> > +		pasid_set_sre(pte);
-> > +	}
-> > +
-> > +	if (pasid_data->flags & IOMMU_SVA_VTD_GPASID_EAFE) {
-> > +		if (!ecap_eafs(iommu->ecap)) {
-> > +			pr_err("No extended access flag support on
-> > %s\n",
-> > +				iommu->name);
-> > +			return -EINVAL;
-> > +		}
-> > +		pasid_set_eafe(pte);
-> > +	}
-> > +
-> > +	/*
-> > +	 * Memory type is only applicable to devices inside
-> > processor coherent
-> > +	 * domain. PCIe devices are not included. We can skip the
-> > rest of the
-> > +	 * flags if IOMMU does not support MTS.
-> > +	 */
-> > +	if (ecap_mts(iommu->ecap)) {
-> > +		if (pasid_data->flags & IOMMU_SVA_VTD_GPASID_EMTE)
-> > {
-> > +			pasid_set_emte(pte);
-> > +			pasid_set_emt(pte, pasid_data->emt);
-> > +		}
-> > +		if (pasid_data->flags & IOMMU_SVA_VTD_GPASID_PCD)
-> > +			pasid_set_pcd(pte);
-> > +		if (pasid_data->flags & IOMMU_SVA_VTD_GPASID_PWT)
-> > +			pasid_set_pwt(pte);
-> > +		if (pasid_data->flags & IOMMU_SVA_VTD_GPASID_CD)
-> > +			pasid_set_cd(pte);
-> > +		pasid_set_pat(pte, pasid_data->pat);
-> > +	} else if (pasid_data->flags &
-> > IOMMU_SVA_VTD_GPASID_EMT_MASK) {
-> > +		pr_warn("No memory type support for bind guest
-> > PASID on %s\n",
-> > +			iommu->name);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	return 0;
-> > +
-> > +}
-> > +
-> > +/**
-> > + * intel_pasid_setup_nested() - Set up PASID entry for nested
-> > translation
-> > + * which is used for vSVA. The first level page tables are used
-> > for  
-> 
-> Please remove "which is used for vSVA". It should be a generic
-> interface for setting up nested translation mode?
-> 
-Right, perhaps just mention vSVA as an example such that readers can
-have some idea of how nested translation can be used? e.g.
-"
- * intel_pasid_setup_nested() - Set up PASID entry for nested translation.
- * This could be used for guest shared virtual address. In this case, the
- * first level page tables are used for GVA-GPA translation in the guest,
- * second level page tables are used for GPA-HPA translation.
-"
+	smp_rmb();
+	return seq;
+}
 
-> > + * GVA-GPA or GIOVA-GPA translation in the guest, second level
-> > page tables
-> > + *  are used for GPA-HPA translation.  
-> 
-> Nit: align with the last line.
-> 
-Will do.
-> > + *
-> > + * @iommu:      Iommu which the device belong to
-> > + * @dev:        Device to be set up for translation
-> > + * @gpgd:       FLPTPTR: First Level Page translation pointer in
-> > GPA
-> > + * @pasid:      PASID to be programmed in the device PASID table
-> > + * @pasid_data: Additional PASID info from the guest bind request
-> > + * @domain:     Domain info for setting up second level page tables
-> > + * @addr_width: Address width of the first level (guest)
-> > + */
-> > +int intel_pasid_setup_nested(struct intel_iommu *iommu,
-> > +			struct device *dev, pgd_t *gpgd,
-> > +			int pasid, struct
-> > iommu_gpasid_bind_data_vtd *pasid_data,
-> > +			struct dmar_domain *domain,
-> > +			int addr_width)
-> > +{
-> > +	struct pasid_entry *pte;
-> > +	struct dma_pte *pgd;
-> > +	u64 pgd_val;
-> > +	int agaw;
-> > +	u16 did;
-> > +
-> > +	if (!ecap_nest(iommu->ecap)) {
-> > +		pr_err("IOMMU: %s: No nested translation
-> > support\n",
-> > +		       iommu->name);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	pte = intel_pasid_get_entry(dev, pasid);
-> > +	if (WARN_ON(!pte))
-> > +		return -EINVAL;
-> > +
-> > +	pasid_clear_entry(pte);
-> > +
-> > +	/* Sanity checking performed by caller to make sure address
-> > +	 * width matching in two dimensions:
-> > +	 * 1. CPU vs. IOMMU
-> > +	 * 2. Guest vs. Host.
-> > +	 */
-> > +	switch (addr_width) {
-> > +	case ADDR_WIDTH_5LEVEL:
-> > +		pasid_set_flpm(pte, 1);
-> > +		break;
-> > +	case ADDR_WIDTH_4LEVEL:
-> > +		pasid_set_flpm(pte, 0);
-> > +		break;
-> > +	default:
-> > +		dev_err(dev, "Invalid paging mode %d\n",
-> > addr_width);  
-> 
-> Invalid guest address width?
-> 
-Sounds better, will do.
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	pasid_set_flptr(pte, (u64)gpgd);
-> > +
-> > +	intel_pasid_setup_bind_data(iommu, pte, pasid_data);  
-> 
-> Do you want to check and handle the errors returned from this
-> function?
-> 
-yes, that would be necessary in case of unsupported bind data. Thanks!
-> > +
-> > +	/* Setup the second level based on the given domain */
-> > +	pgd = domain->pgd;
-> > +
-> > +	for (agaw = domain->agaw; agaw != iommu->agaw; agaw--) {
-> > +		pgd = phys_to_virt(dma_pte_addr(pgd));
-> > +		if (!dma_pte_present(pgd)) {
-> > +			pasid_clear_entry(pte);
-> > +			dev_err(dev, "Invalid domain page
-> > table\n");
-> > +			return -EINVAL;
-> > +		}
-> > +	}
-> > +	pgd_val = virt_to_phys(pgd);
-> > +	pasid_set_slptr(pte, pgd_val);
-> > +	pasid_set_fault_enable(pte);
-> > +
-> > +	did = domain->iommu_did[iommu->seq_id];
-> > +	pasid_set_domain_id(pte, did);
-> > +
-> > +	pasid_set_address_width(pte, agaw);
-> > +	pasid_set_page_snoop(pte, !!ecap_smpwc(iommu->ecap));
-> > +
-> > +	pasid_set_translation_type(pte, PASID_ENTRY_PGTT_NESTED);
-> > +	pasid_set_present(pte);
-> > +	pasid_flush_caches(iommu, pte, pasid, did);
-> > +
-> > +	return 0;
-> > +}
-> > diff --git a/drivers/iommu/intel-pasid.h
-> > b/drivers/iommu/intel-pasid.h index fc8cd8f17de1..95ed160b1947
-> > 100644 --- a/drivers/iommu/intel-pasid.h
-> > +++ b/drivers/iommu/intel-pasid.h
-> > @@ -36,6 +36,7 @@
-> >    * to vmalloc or even module mappings.
-> >    */
-> >   #define PASID_FLAG_SUPERVISOR_MODE	BIT(0)
-> > +#define PASID_FLAG_NESTED		BIT(1)
-> >   
-> >   struct pasid_dir_entry {
-> >   	u64 val;
-> > @@ -45,6 +46,11 @@ struct pasid_entry {
-> >   	u64 val[8];
-> >   };
-> >   
-> > +#define PASID_ENTRY_PGTT_FL_ONLY	(1)
-> > +#define PASID_ENTRY_PGTT_SL_ONLY	(2)
-> > +#define PASID_ENTRY_PGTT_NESTED		(3)
-> > +#define PASID_ENTRY_PGTT_PT		(4)
-> > +
-> >   /* The representative of a PASID table */
-> >   struct pasid_table {
-> >   	void			*table;		/*
-> > pasid table pointer */ @@ -93,6 +99,12 @@ int
-> > intel_pasid_setup_second_level(struct intel_iommu *iommu, int
-> > intel_pasid_setup_pass_through(struct intel_iommu *iommu, struct
-> > dmar_domain *domain, struct device *dev, int pasid);
-> > +int intel_pasid_setup_nested(struct intel_iommu *iommu,
-> > +			struct device *dev, pgd_t *pgd,
-> > +			int pasid,
-> > +			struct iommu_gpasid_bind_data_vtd
-> > *pasid_data,
-> > +			struct dmar_domain *domain,
-> > +			int addr_width);
-> >   void intel_pasid_tear_down_entry(struct intel_iommu *iommu,
-> >   				 struct device *dev, int pasid);
-> >   
-> > diff --git a/include/linux/intel-iommu.h
-> > b/include/linux/intel-iommu.h index 74b79e2e6a73..19bf9ff180ae
-> > 100644 --- a/include/linux/intel-iommu.h
-> > +++ b/include/linux/intel-iommu.h
-> > @@ -34,6 +34,9 @@
-> >   #define VTD_STRIDE_SHIFT        (9)
-> >   #define VTD_STRIDE_MASK         (((u64)-1) << VTD_STRIDE_SHIFT)
-> >   
-> > +#define ADDR_WIDTH_5LEVEL	(57)
-> > +#define ADDR_WIDTH_4LEVEL	(48)
-> > +
-> >   #define DMA_PTE_READ (1)
-> >   #define DMA_PTE_WRITE (2)
-> >   #define DMA_PTE_LARGE_PAGE (1 << 7)
-> > diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
-> > index 4ad3496e5c43..fcafb6401430 100644
-> > --- a/include/uapi/linux/iommu.h
-> > +++ b/include/uapi/linux/iommu.h
-> > @@ -284,7 +284,10 @@ struct iommu_gpasid_bind_data_vtd {
-> >   	__u32 pat;
-> >   	__u32 emt;
-> >   };
-> > -
-> > +#define IOMMU_SVA_VTD_GPASID_EMT_MASK
-> > (IOMMU_SVA_VTD_GPASID_CD | \
-> > +					 IOMMU_SVA_VTD_GPASID_EMTE
-> > | \
-> > +					 IOMMU_SVA_VTD_GPASID_PCD
-> > |  \
-> > +
-> > IOMMU_SVA_VTD_GPASID_PWT)  
-> 
-> Might need a seperated patch?
-> 
-Sure. I have other uapi changes, may group them as a separate series.
 
-> >   /**
-> >    * struct iommu_gpasid_bind_data - Information about device and
-> > guest PASID binding
-> >    * @version:	Version of this data structure
-> >   
-> 
-> Best regards,
-> baolu
+  6e0:   81 05 00 f0     lwz     r8,240(r5)
+  6e4:   71 09 00 01     andi.   r9,r8,1
+  6e8:   41 82 00 10     beq     6f8 <__c_kernel_clock_gettime+0x158>
+  6ec:   81 05 00 f0     lwz     r8,240(r5)
+  6f0:   71 0a 00 01     andi.   r10,r8,1
+  6f4:   40 82 ff f8     bne     6ec <__c_kernel_clock_gettime+0x14c>
+  6f8:
 
-[Jacob Pan]
+r5 being vd pointer
+
+Why the first triplet, not only the second triplet ? Something wrong 
+with using READ_ONCE() for that ?
+
+Christophe
