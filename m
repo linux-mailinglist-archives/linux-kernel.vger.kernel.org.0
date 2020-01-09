@@ -2,150 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E0B813587B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 12:51:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A920135881
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 12:52:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729367AbgAILvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 06:51:33 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55770 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728618AbgAILvc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 06:51:32 -0500
-Received: by mail-wm1-f66.google.com with SMTP id q9so2565814wmj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 03:51:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kl2MTIeJMU1iQBgeRNaRu3TA7s6vXGZZw5P4CMy8fhI=;
-        b=BMFuya7MEsXMazjcNdJZ9J1GwzMeTkVvtUi+75T8Ao1dOpZVB1nESH4srZNCTPWlb1
-         Wdd+bsR2/L6iIfqqQLa0flhZ+TIsW4pW6bxihiKwDlRWXqNzgx0YyO7wCanglTaAZ5kA
-         YdvnC//DGV9UUbcvliEdERxJYfmcpxwGjbddx6OvhEBDw4MczcNlnetE1+WP2vwEPMdF
-         lkg/auFUngS2NfDGf+FKhiOUOdkssvVrtFWGf3DP1OJGWT/gSNUAOMGA/acsDvUfv0MU
-         fs3vZVQNooB1YmbBPm/3dmHJ6u76Xg/YIN7xFSQHrD13JZPIygDm69VbyRz5Podinwe6
-         Cfow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=kl2MTIeJMU1iQBgeRNaRu3TA7s6vXGZZw5P4CMy8fhI=;
-        b=lnYAkrVqi6nCffbiQe9+MFvVqfLzSSt0Du4WgOynvWN/zlyADc/X/pKgBB/TMJElXC
-         JDhcsxlMPM2uEUJbh+TpXMdEX+tdC78iZYqE5TYl9/gnl0dTj9rz5F7PbaSdNXuZcEC6
-         jBGQC6agy7miphA2r8NqM3oA8CA6DCg6f9y7IJFFy7e2To65D2pzIfjTc7Nyum1N9tEP
-         3oQOMezM4XDE6mSeODxl8YiIhjAB1SHo6y37+FcaZqTKY7RC3o9X+shfuQfLtwkK3jW0
-         XMZklnFa/v7xV6jxzNvDlRemTN7idd4HgAysEHyeUtMigpFM6wpTxdVSnMKkFgTm0CAn
-         u5Ow==
-X-Gm-Message-State: APjAAAXxXlWgYJFxFQYWJsr/JYm9gY4qAgkJfYEIeT/IU4jKROjd//+G
-        myhNs6WdfvcilqQStaaMZk68BA==
-X-Google-Smtp-Source: APXvYqwTshqSv9A6F8d2MMvmoqOT+WHhze5YCGY0HK5n2ufql7Ypp2c07THfNFJhHXamz2mfr9BbaA==
-X-Received: by 2002:a05:600c:54b:: with SMTP id k11mr4363524wmc.63.1578570689468;
-        Thu, 09 Jan 2020 03:51:29 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:f1d5:61e0:e9d8:1c3d? ([2a01:e34:ed2f:f020:f1d5:61e0:e9d8:1c3d])
-        by smtp.googlemail.com with ESMTPSA id s128sm2686191wme.39.2020.01.09.03.51.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jan 2020 03:51:28 -0800 (PST)
-Subject: Re: [PATCH v2 2/2] ARM: dts: sun8i-r40: Add thermal sensor and
- thermal zones
-To:     Maxime Ripard <mripard@kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org,
-        anarsoul@gmail.com, rui.zhang@intel.com,
-        amit.kucheria@verdurent.com, megous@megous.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20200106174639.20862-1-tiny.windzz@gmail.com>
- <20200106174639.20862-2-tiny.windzz@gmail.com>
- <20200107075816.ly6exfd4qtvfxxua@gilmour.lan>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <662e157a-603f-7423-0491-f26f0fc8d7b6@linaro.org>
-Date:   Thu, 9 Jan 2020 12:51:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1729897AbgAILwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 06:52:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52422 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728740AbgAILwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 06:52:16 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 6867AB1D96;
+        Thu,  9 Jan 2020 11:51:43 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 204101E0798; Thu,  9 Jan 2020 12:51:41 +0100 (CET)
+Date:   Thu, 9 Jan 2020 12:51:41 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Likai <li.kai4@h3c.com>
+Cc:     "tytso@mit.edu" <tytso@mit.edu>, "jack@suse.cz" <jack@suse.cz>,
+        "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
+        "liu.song11@zte.com.cn" <liu.song11@zte.com.cn>,
+        "xiaoguang.wang@linux.alibaba.com" <xiaoguang.wang@linux.alibaba.com>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] jbd2: update log tail info after journal recovery
+Message-ID: <20200109115141.GB22232@quack2.suse.cz>
+References: <1f1a15b7d09c4e7896274ca352e7b1e1@h3c.com>
 MIME-Version: 1.0
-In-Reply-To: <20200107075816.ly6exfd4qtvfxxua@gilmour.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f1a15b7d09c4e7896274ca352e7b1e1@h3c.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/01/2020 08:58, Maxime Ripard wrote:
-> On Mon, Jan 06, 2020 at 05:46:39PM +0000, Yangtao Li wrote:
->> There are two sensors, sensor0 for CPU, sensor1 for GPU.
->>
->> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
->> Tested-by: Corentin Labbe <clabbe.montjoie@gmail.com>
->> Tested-on: sun8i-r40-bananapi-m2-ultra
+Hello!
+
+On Wed 04-12-19 03:47:52, Likai wrote:
+> Hi,  I meet a new problem that file may be lost althougth it is recorded in the jbd2 journal
+> with ocfs2 file system in one node scene(like ext4). Can you give some suggestions for this problem
+> and modification patch?
 > 
-> As far as I know, tested-on is not documented anywhere (and isn't
-> really used either). I've removed it and applied, thanks!
+> Test method:
+> 1. touch some files after mount
+> 2. emergency restart
+> 3. mount again, then log tail will not be updated
+> 4. touch a new file and confirm that it is recorded in the journal area
+> 5.emergency restart again
+> 6. the new log will not be replayed becasuse its seq and blknum are not consistent with journal super block although it is an unbroken commit.
+> 
+> After analizing the codes, its cause is as follow:
+> 
+> Journal->j_flags will be set JBD2_ABORT in journal_init_common first when mount.
+> if this flag is not cleared before journal_reset in journal recovery
+> scene, super log tail cannot be updated, then the new commit trans in
+> the journal may not be replayed because new commit recover old trans area.
+> 
+> logdump:
+> Block 0: Journal Superblock
+> Seq: 0   Type: 4 (JBD2_SUPERBLOCK_V2)
+> Blocksize: 4096   Total Blocks: 32768   First Block: 1
+> First Commit ID: 13   Start Log Blknum: 1
+> Error: 0
+> Feature Compat: 0
+> Feature Incompat: 2 block64
+> Feature RO compat: 0
+> Journal UUID: 4ED3822C54294467A4F8E87D2BA4BC36
+> FS Share Cnt: 1   Dynamic Superblk Blknum: 0
+> Per Txn Block Limit    Journal: 0    Data: 0
+> 
+> Block 1: Journal Commit Block
+> Seq: 14   Type: 2 (JBD2_COMMIT_BLOCK)
+> 
+> Block 2: Journal Descriptor
+> Seq: 15   Type: 1 (JBD2_DESCRIPTOR_BLOCK)
+> No. Blocknum        Flags
+> 0. 587             none
+> UUID: 00000000000000000000000000000000
+> 1. 8257792         JBD2_FLAG_SAME_UUID
+> 2. 619             JBD2_FLAG_SAME_UUID
+> 3. 24772864        JBD2_FLAG_SAME_UUID
+> 4. 8257802         JBD2_FLAG_SAME_UUID
+> 5. 513             JBD2_FLAG_SAME_UUID JBD2_FLAG_LAST_TAG
+> ...
+> Block 7: Inode
+> Inode: 8257802   Mode: 0640   Generation: 57157641 (0x3682809)
+> FS Generation: 2839773110 (0xa9437fb6)
+> CRC32: 00000000   ECC: 0000
+> Type: Regular   Attr: 0x0   Flags: Valid
+> Dynamic Features: (0x1) InlineData
+> User: 0 (root)   Group: 0 (root)   Size: 7
+> Links: 1   Clusters: 0
+> ctime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
+> atime: 0x5de5d870 0x113181a1 -- Tue Dec  3 11:37:20.288457121 2019
+> mtime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
+> dtime: 0x0 -- Thu Jan  1 08:00:00 1970
+> ...
+> Block 9: Journal Commit Block
+> Seq: 15   Type: 2 (JBD2_COMMIT_BLOCK)
+> 
+> syslog:
+> Dec  3 11:41:05 cvknode02 kernel: [ 2265.648622] ocfs2: File system on device (252,1) was not unmounted cleanly, recovering it.
+> Dec  3 11:41:05 cvknode02 kernel: [ 2265.649695] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 0
+> Dec  3 11:41:05 cvknode02 kernel: [ 2265.650407] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 1
+> Dec  3 11:41:05 cvknode02 kernel: [ 2265.650409] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 2
+> Dec  3 11:41:05 cvknode02 kernel: [ 2265.650410] fs/jbd2/recovery.c:(jbd2_journal_recover, 278): JBD2: recovery, exit status 0, recovered transactions 13 to 13
+> 
+> Seq 15 is an unbroken commit, but it cannot be replayed, inode 8257802
+> is a new file and it will be lost.
+> 
+> 
+> To fix this problem, I clear JBD2_ABORT flag before journal_reset so that jbd2_journal_update_sb_log_tail
+> can update log tail later. After test, it is ok now.
 
-I think this patch should go through my tree as it refers to a commit in
-my branch.
+Thanks for the report and the patch! I agree with the analysis and the fix.
+This seems to be a bug introduced by commit 85e0c4e89c1b8 "jbd2: if the
+journal is aborted then don't allow update of the log tail". So can you
+please create a patch with proper changelog, your signed-off-by, unmangled
+white-spaces, and also
 
+Fixes: 85e0c4e89c1b "jbd2: if the journal is aborted then don't allow update of the log tail"
 
+tag and resubmit it? Thank you!
+
+								Honza
+
+> 
+> ---
+> fs/jbd2/journal.c | 6 +++++-
+> 1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index 593f3e31fb21..6fc9fd41830e 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -1685,6 +1685,11 @@ int jbd2_journal_load(journal_t *journal)
+>                        journal->j_devname);
+>                 return -EFSCORRUPTED;
+>        }
+> +       /*
+> +       * clear JBD2_ABORT flag which was initialized in journal_init_common
+> +       * here to update log tail information with the newest seq.
+> +       */
+> +       journal->j_flags &= ~JBD2_ABORT;
+>         /* OK, we've finished with the dynamic journal bits:
+>         * reinitialise the dynamic contents of the superblock in memory
+> @@ -1692,7 +1697,6 @@ int jbd2_journal_load(journal_t *journal)
+>        if (journal_reset(journal))
+>                 goto recovery_error;
+> -        journal->j_flags &= ~JBD2_ABORT;
+>        journal->j_flags |= JBD2_LOADED;
+>        return 0;
+> -------------------------------------------------------------------------------------------------------------------------------------
+> ?????????????????????????????????
+> ????????????????????????????????????????
+> ????????????????????????????????????????
+> ???
+> This e-mail and its attachments contain confidential information from New H3C, which is
+> intended only for the person or entity whose address is listed above. Any use of the
+> information contained herein in any way (including, but not limited to, total or partial
+> disclosure, reproduction, or dissemination) by persons other than the intended
+> recipient(s) is prohibited. If you receive this e-mail in error, please notify the sender
+> by phone or email immediately and delete it!
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
