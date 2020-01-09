@@ -2,169 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BA591354BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 09:50:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2260D1354C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 09:51:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728817AbgAIIu0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 03:50:26 -0500
-Received: from mail-qv1-f67.google.com ([209.85.219.67]:44711 "EHLO
-        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728792AbgAIIuZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 03:50:25 -0500
-Received: by mail-qv1-f67.google.com with SMTP id n8so2616443qvg.11
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 00:50:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wloqhRoEICQ+k5+VnPqK5Heg13aiPvech9Fyx9hUKYs=;
-        b=sgrs6iYbSodbyCgULyUl+1/bfBjdKlzd2fMgFQnFg4u0F7Lkrl9+F4ge6qZUQ1RAs1
-         r1nLB8snyzT1IW2FxgJ6uFpDVwUONTq9R4zLvF8pQNUXLnXBqtkBHRCf7YQHWgXMKY8+
-         Zeb8Wc7XYHCmN5mowNHDSiJpMHYqpcbBWkSyPAIl3gg3aORjkTLLqHrS9x685/ZtF8BT
-         31NsNBSAfyO0F2jXViW1QWdFqrAO6DpEmqtVIkeowmoRjPbaudexYgyCuiOQnTHbiZWd
-         DbV48PhWZtxqO9Vlxe5448IW9oestTVypzZO6ew24weG7axDkB6LTRBcaES2CAfkSWD1
-         ihpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wloqhRoEICQ+k5+VnPqK5Heg13aiPvech9Fyx9hUKYs=;
-        b=rTv2RuFLaZyejmIcGfMzHwIf1Y/ziCfXzQPOp2PZqFBDHHOgyevIca7mIEDjz1AdKx
-         ua6OG198v3qVFmgVKxKjBlSkUZANhq+uFdT6eWdRypsKmauc7zhj42aubYvhE1M4nk3E
-         U8VLkOJsyr51b1EtCSf0Ckn2AK5geKgKhcxb66R63DqyLRa81I8vlZRy1AmYppfREOnE
-         MrJ0UGeAwbY6XWTECh6m2NZ1k17s3BGMbjCNuX8KcRadPzxkr1iCAbMNlmF8V8A696t5
-         8lG/pZ0nbpzYlnaRZg0fl15p1WOfzdcnxRKHQKQeDWa0QnWRyQq/K6yt5Q8NXpUv+Jjg
-         P3dA==
-X-Gm-Message-State: APjAAAXHShz94xc6WUNhJ3nQWrU8ZxNCf3EzWKOJ4RrOiFU4xEqQRmAf
-        1eIop2pszo21pBIU1wsHgxQYFuu7vt/W5ojqXOUH5g==
-X-Google-Smtp-Source: APXvYqxlaasH3wah/44boniAGnInXKdsP+A6/JY1Fc4PKVzY32l8BPLX4SHihM5+35Fk0GI5xBBg4bqUEmgyz7gZcbs=
-X-Received: by 2002:ad4:4810:: with SMTP id g16mr7563219qvy.22.1578559824505;
- Thu, 09 Jan 2020 00:50:24 -0800 (PST)
+        id S1728876AbgAIIv0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 03:51:26 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:54056 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728604AbgAIIvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 03:51:25 -0500
+Received: from ip5f5a5f74.dynamic.kabel-deutschland.de ([95.90.95.116] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1ipTXE-0005bd-IY; Thu, 09 Jan 2020 09:51:20 +0100
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-rockchip@lists.infradead.org,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: rockchip: Use ABI name for recovery mode pin on veyron fievel/tiger
+Date:   Thu, 09 Jan 2020 09:51:19 +0100
+Message-ID: <4961361.gyzMsJYQDa@diego>
+In-Reply-To: <20200108092908.1.I3afd3535b65460e79f3976e9ebfa392a0dd75e01@changeid>
+References: <20200108092908.1.I3afd3535b65460e79f3976e9ebfa392a0dd75e01@changeid>
 MIME-Version: 1.0
-References: <00000000000036decf0598c8762e@google.com> <CACT4Y+YVMUxeLcFMray9n0+cXbVibj5X347LZr8YgvjN5nC8pw@mail.gmail.com>
- <CACT4Y+asdED7tYv462Ui2OhQVKXVUnC+=fumXR3qM1A4d6AvOQ@mail.gmail.com>
- <f7758e0a-a157-56a2-287e-3d4452d72e00@schaufler-ca.com> <87a787ekd0.fsf@dja-thinkpad.axtens.net>
- <87h81zax74.fsf@dja-thinkpad.axtens.net> <CACT4Y+b+Vx1FeCmhMAYq-g3ObHdMPOsWxouyXXUr7S5OjNiVGQ@mail.gmail.com>
- <0b60c93e-a967-ecac-07e7-67aea1a0208e@I-love.SAKURA.ne.jp>
- <6d009462-74d9-96e9-ab3f-396842a58011@schaufler-ca.com> <CACT4Y+bURugCpLm5TG37-7voFEeEoXo_Gb=3sy75_RELZotXHw@mail.gmail.com>
-In-Reply-To: <CACT4Y+bURugCpLm5TG37-7voFEeEoXo_Gb=3sy75_RELZotXHw@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 9 Jan 2020 09:50:12 +0100
-Message-ID: <CACT4Y+avizeUd=nY2w1B_LbEC1cP5prBfpnANYaxhgS_fcL6ag@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in sys_kill
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Alexander Potapenko <glider@google.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot <syzbot+de8d933e7d153aa0c1bb@syzkaller.appspotmail.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 9, 2020 at 9:19 AM Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> On Wed, Jan 8, 2020 at 6:19 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >
-> > On 1/8/2020 2:25 AM, Tetsuo Handa wrote:
-> > > On 2020/01/08 15:20, Dmitry Vyukov wrote:
-> > >> I temporarily re-enabled smack instance and it produced another 50
-> > >> stalls all over the kernel, and now keeps spewing a dozen every hour.
-> >
-> > Do I have to be using clang to test this? I'm setting up to work on this,
-> > and don't want to waste time using my current tool chain if the problem
-> > is clang specific.
->
-> Humm, interesting. Initially I was going to say that most likely it's
-> not clang-related. Bug smack instance is actually the only one that
-> uses clang as well (except for KMSAN of course). So maybe it's indeed
-> clang-related rather than smack-related. Let me try to build a kernel
-> with clang.
+Am Mittwoch, 8. Januar 2020, 18:29:33 CET schrieb Matthias Kaehlcke:
+> The recovery mode pin is currently named 'REC_MODE_L', which is
+> how the signal is called in the schematics. The Chrome OS ABI
+> requires the pin to be named 'RECOVERY_SW_L', which is also how
+> it is called on all other veyron devices. Rename the pin to match
+> the ABI.
+> 
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 
-+clang-built-linux, glider
+applied for 5.6
 
-[clang-built linux is severe broken since early Dec]
-
-Building kernel with clang I can immediately reproduce this locally:
-
-$ syz-manager
-2020/01/09 09:27:15 loading corpus...
-2020/01/09 09:27:17 serving http on http://0.0.0.0:50001
-2020/01/09 09:27:17 serving rpc on tcp://[::]:45851
-2020/01/09 09:27:17 booting test machines...
-2020/01/09 09:27:17 wait for the connection from test machine...
-2020/01/09 09:29:23 machine check:
-2020/01/09 09:29:23 syscalls                : 2961/3195
-2020/01/09 09:29:23 code coverage           : enabled
-2020/01/09 09:29:23 comparison tracing      : enabled
-2020/01/09 09:29:23 extra coverage          : enabled
-2020/01/09 09:29:23 setuid sandbox          : enabled
-2020/01/09 09:29:23 namespace sandbox       : enabled
-2020/01/09 09:29:23 Android sandbox         : /sys/fs/selinux/policy
-does not exist
-2020/01/09 09:29:23 fault injection         : enabled
-2020/01/09 09:29:23 leak checking           : CONFIG_DEBUG_KMEMLEAK is
-not enabled
-2020/01/09 09:29:23 net packet injection    : enabled
-2020/01/09 09:29:23 net device setup        : enabled
-2020/01/09 09:29:23 concurrency sanitizer   : /sys/kernel/debug/kcsan
-does not exist
-2020/01/09 09:29:23 devlink PCI setup       : PCI device 0000:00:10.0
-is not available
-2020/01/09 09:29:27 corpus                  : 50226 (0 deleted)
-2020/01/09 09:29:27 VMs 20, executed 0, cover 0, crashes 0, repro 0
-2020/01/09 09:29:37 VMs 20, executed 45, cover 0, crashes 0, repro 0
-2020/01/09 09:29:47 VMs 20, executed 74, cover 0, crashes 0, repro 0
-2020/01/09 09:29:57 VMs 20, executed 80, cover 0, crashes 0, repro 0
-2020/01/09 09:30:07 VMs 20, executed 80, cover 0, crashes 0, repro 0
-2020/01/09 09:30:17 VMs 20, executed 80, cover 0, crashes 0, repro 0
-2020/01/09 09:30:27 VMs 20, executed 80, cover 0, crashes 0, repro 0
-2020/01/09 09:30:37 VMs 20, executed 80, cover 0, crashes 0, repro 0
-2020/01/09 09:30:47 VMs 20, executed 80, cover 0, crashes 0, repro 0
-2020/01/09 09:30:57 VMs 20, executed 80, cover 0, crashes 0, repro 0
-2020/01/09 09:31:07 VMs 20, executed 80, cover 0, crashes 0, repro 0
-2020/01/09 09:31:17 VMs 20, executed 80, cover 0, crashes 0, repro 0
-2020/01/09 09:31:26 vm-10: crash: INFO: rcu detected stall in do_idle
-2020/01/09 09:31:27 VMs 13, executed 80, cover 0, crashes 0, repro 0
-2020/01/09 09:31:28 vm-1: crash: INFO: rcu detected stall in sys_futex
-2020/01/09 09:31:29 vm-4: crash: INFO: rcu detected stall in sys_futex
-2020/01/09 09:31:31 vm-0: crash: INFO: rcu detected stall in sys_getsockopt
-2020/01/09 09:31:33 vm-18: crash: INFO: rcu detected stall in sys_clone3
-2020/01/09 09:31:35 vm-3: crash: INFO: rcu detected stall in sys_futex
-2020/01/09 09:31:36 vm-8: crash: INFO: rcu detected stall in do_idle
-2020/01/09 09:31:37 VMs 7, executed 80, cover 0, crashes 6, repro 0
-2020/01/09 09:31:38 vm-19: crash: INFO: rcu detected stall in schedule_tail
-2020/01/09 09:31:40 vm-6: crash: INFO: rcu detected stall in schedule_tail
-2020/01/09 09:31:42 vm-2: crash: INFO: rcu detected stall in schedule_tail
-2020/01/09 09:31:44 vm-12: crash: INFO: rcu detected stall in sys_futex
-2020/01/09 09:31:46 vm-15: crash: INFO: rcu detected stall in sys_nanosleep
-2020/01/09 09:31:47 VMs 1, executed 80, cover 0, crashes 11, repro 0
-2020/01/09 09:31:48 vm-16: crash: INFO: rcu detected stall in sys_futex
-2020/01/09 09:31:50 vm-9: crash: INFO: rcu detected stall in schedule
-2020/01/09 09:31:52 vm-13: crash: INFO: rcu detected stall in schedule_tail
-2020/01/09 09:31:54 vm-11: crash: INFO: rcu detected stall in schedule_tail
-2020/01/09 09:31:56 vm-17: crash: INFO: rcu detected stall in sys_futex
-2020/01/09 09:31:57 VMs 0, executed 80, cover 0, crashes 16, repro 0
-2020/01/09 09:31:58 vm-7: crash: INFO: rcu detected stall in sys_futex
-2020/01/09 09:32:00 vm-5: crash: INFO: rcu detected stall in dput
-2020/01/09 09:32:02 vm-14: crash: INFO: rcu detected stall in sys_nanosleep
+Thanks
+Heiko
 
 
-Then I switched LSM to selinux and I _still_ can reproduce this. So,
-Casey, you may relax, this is not smack-specific :)
-
-Then I disabled CONFIG_KASAN_VMALLOC and CONFIG_VMAP_STACK and it
-started working normally.
-
-So this is somehow related to both clang and KASAN/VMAP_STACK.
-
-The clang I used is:
-https://storage.googleapis.com/syzkaller/clang-kmsan-362913.tar.gz
-(the one we use on syzbot).
