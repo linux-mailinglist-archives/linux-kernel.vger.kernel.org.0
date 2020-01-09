@@ -2,279 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 964E6136005
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 19:16:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F975136017
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 19:21:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388434AbgAISQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 13:16:42 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:26334 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730866AbgAISQm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 13:16:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578593799;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=PuQZ01JccUJ9Y5jwRCJ72PmwXiqdqAnX2460fvsPeis=;
-        b=DI+KVUfgnEVvKVN0OpTvxfeOmbdtKFJbWlAluedsh6eBNtDRp+KfpNWMDeNx2XZApaOSob
-        A9JajGwgUXQ6mOVWIdFLteKdZrEt1PfgBL/7VypRFtKxgb0SyHYfcd/8mv+ZwjKmz3KuBU
-        Vplwst++6NtJUJX9VE732I6gS4kpgZk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-104-F7aFNrvhMs6PmI2LQyT55w-1; Thu, 09 Jan 2020 13:16:38 -0500
-X-MC-Unique: F7aFNrvhMs6PmI2LQyT55w-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2388456AbgAISVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 13:21:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34368 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730290AbgAISVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 13:21:40 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 41EDC18B9F80;
-        Thu,  9 Jan 2020 18:16:37 +0000 (UTC)
-Received: from w520.home (ovpn-116-128.phx2.redhat.com [10.3.116.128])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CC09760E3E;
-        Thu,  9 Jan 2020 18:16:36 +0000 (UTC)
-Date:   Thu, 9 Jan 2020 11:16:36 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Yan Zhao <yan.y.zhao@intel.com>
-Cc:     zhenyuw@linux.intel.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        kevin.tian@intel.com
-Subject: Re: [PATCH 1/2] vfio: introduce vfio_iova_rw to read/write a range
- of IOVAs
-Message-ID: <20200109111636.2158b24c@w520.home>
-In-Reply-To: <20200103010217.4201-1-yan.y.zhao@intel.com>
-References: <20200103010055.4140-1-yan.y.zhao@intel.com>
- <20200103010217.4201-1-yan.y.zhao@intel.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 655DE2072A;
+        Thu,  9 Jan 2020 18:21:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578594097;
+        bh=+sBgitQL3mchSzP4Zk7erYJ9ZJ5ThhSnczn5fnQvSkY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qFHa0o+FuNFrYUBweK+4sytw7pvbDe8ilh4PEgH8e0aoeuk84pqZuF/CKpz2edZfr
+         mupIUv4nVDn+sooFYGrIG/xXBlmXBR/gSAwEfF3UM2dntd9XVzj1yYk+Rjei2nobkJ
+         gkdIy7JMsz81pP7LvYZ/l5J6mi+KI3F5Jhv9VCpY=
+Date:   Thu, 9 Jan 2020 19:17:58 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Will Deacon <will@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, iommu@lists.linuxfoundation.org,
+        kernel-team@android.com,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        John Garry <john.garry@huawei.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Saravana Kannan <saravanak@google.com>,
+        "Isaac J. Manjarres" <isaacm@codeaurora.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v4 05/16] drivers/iommu: Take a ref to the IOMMU driver
+ prior to ->add_device()
+Message-ID: <20200109181758.GD589933@kroah.com>
+References: <20191219120352.382-1-will@kernel.org>
+ <20191219120352.382-6-will@kernel.org>
+ <20191219144437.GA1959534@kroah.com>
+ <20200109141602.GA12236@willie-the-truck>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200109141602.GA12236@willie-the-truck>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  2 Jan 2020 20:02:17 -0500
-Yan Zhao <yan.y.zhao@intel.com> wrote:
-
-> vfio_iova_rw will read/write a range of userspace memory (starting form
-> device iova to iova + len -1) into a kenrel buffer without pinning the
-> userspace memory.
+On Thu, Jan 09, 2020 at 02:16:03PM +0000, Will Deacon wrote:
+> Hi Greg,
 > 
-> TODO: vfio needs to mark the iova dirty if vfio_iova_rw(write) is
-> called.
+> On Thu, Dec 19, 2019 at 03:44:37PM +0100, Greg Kroah-Hartman wrote:
+> > On Thu, Dec 19, 2019 at 12:03:41PM +0000, Will Deacon wrote:
+> > > diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> > > index f2223cbb5fd5..e9f94d3f7a04 100644
+> > > --- a/include/linux/iommu.h
+> > > +++ b/include/linux/iommu.h
+> > > @@ -246,9 +246,10 @@ struct iommu_iotlb_gather {
+> > >   * @sva_get_pasid: Get PASID associated to a SVA handle
+> > >   * @page_response: handle page request response
+> > >   * @cache_invalidate: invalidate translation caches
+> > > - * @pgsize_bitmap: bitmap of all possible supported page sizes
+> > >   * @sva_bind_gpasid: bind guest pasid and mm
+> > >   * @sva_unbind_gpasid: unbind guest pasid and mm
+> > > + * @pgsize_bitmap: bitmap of all possible supported page sizes
+> > > + * @owner: Driver module providing these ops
+> > >   */
+> > >  struct iommu_ops {
+> > >  	bool (*capable)(enum iommu_cap);
+> > > @@ -318,6 +319,7 @@ struct iommu_ops {
+> > >  	int (*sva_unbind_gpasid)(struct device *dev, int pasid);
+> > >  
+> > >  	unsigned long pgsize_bitmap;
+> > > +	struct module *owner;
+> > 
+> > Everyone is always going to forget to set this field.  I don't think you
+> > even set it for all of the different iommu_ops possible in this series,
+> > right?
 > 
-> Cc: Kevin Tian <kevin.tian@intel.com>
-> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> ---
->  drivers/vfio/vfio.c             | 45 ++++++++++++++++++
->  drivers/vfio/vfio_iommu_type1.c | 81 +++++++++++++++++++++++++++++++++
->  include/linux/vfio.h            |  5 ++
->  3 files changed, 131 insertions(+)
+> I only initialised the field for those drivers which can actually be built
+> as a module, but I take your point about this being error-prone.
 > 
-> diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
-> index c8482624ca34..36e91e647ed5 100644
-> --- a/drivers/vfio/vfio.c
-> +++ b/drivers/vfio/vfio.c
-> @@ -1961,6 +1961,51 @@ int vfio_unpin_pages(struct device *dev, unsigned long *user_pfn, int npage)
->  }
->  EXPORT_SYMBOL(vfio_unpin_pages);
->  
-> +/*
-> + * Read/Write a range of userspace IOVAs for a device into/from a kernel
-> + * buffer without pinning the userspace memory
-> + * @dev [in]  : device
-> + * @iova [in] : base IOVA of a userspace buffer
-> + * @data [in] : pointer to kernel buffer
-> + * @len [in]  : kernel buffer length
-> + * @write     : indicate read or write
-> + * Return error on failure or 0 on success.
-> + */
-> +int vfio_iova_rw(struct device *dev, unsigned long iova, void *data,
-> +		   unsigned long len, bool write)
-
-Shouldn't iova be a dma_addr_t and len be a size_t?  AIUI this function
-performs the equivalent behavior of the device itself performing a DMA.
-Hmm, should the interface be named vfio_dma_rw()?
-
-> +{
-> +	struct vfio_container *container;
-> +	struct vfio_group *group;
-> +	struct vfio_iommu_driver *driver;
-> +	int ret = 0;
-> +
-> +	if (!dev || !data || len <= 0)
-> +		return -EINVAL;
-> +
-> +	group = vfio_group_get_from_dev(dev);
-> +	if (!group)
-> +		return -ENODEV;
-> +
-> +	ret = vfio_group_add_container_user(group);
-> +	if (ret)
-> +		goto out;
-> +
-> +	container = group->container;
-> +	driver = container->iommu_driver;
-> +
-> +	if (likely(driver && driver->ops->iova_rw))
-> +		ret = driver->ops->iova_rw(container->iommu_data,
-> +					   iova, data, len, write);
-> +	else
-> +		ret = -ENOTTY;
-> +
-> +	vfio_group_try_dissolve_container(group);
-> +out:
-> +	vfio_group_put(group);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL(vfio_iova_rw);
-> +
->  static int vfio_register_iommu_notifier(struct vfio_group *group,
->  					unsigned long *events,
->  					struct notifier_block *nb)
-> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> index 2ada8e6cdb88..aee191077235 100644
-> --- a/drivers/vfio/vfio_iommu_type1.c
-> +++ b/drivers/vfio/vfio_iommu_type1.c
-> @@ -27,6 +27,7 @@
->  #include <linux/iommu.h>
->  #include <linux/module.h>
->  #include <linux/mm.h>
-> +#include <linux/mmu_context.h>
->  #include <linux/rbtree.h>
->  #include <linux/sched/signal.h>
->  #include <linux/sched/mm.h>
-> @@ -2326,6 +2327,85 @@ static int vfio_iommu_type1_unregister_notifier(void *iommu_data,
->  	return blocking_notifier_chain_unregister(&iommu->notifier, nb);
->  }
->  
-> +static int next_segment(unsigned long len, int offset)
-> +{
-> +	if (len > PAGE_SIZE - offset)
-> +		return PAGE_SIZE - offset;
-> +	else
-> +		return len;
-> +}
-> +
-> +static int vfio_iommu_type1_rw_iova_seg(struct vfio_iommu *iommu,
-> +					  unsigned long iova, void *data,
-> +					  unsigned long seg_len,
-> +					  unsigned long offset,
-> +					  bool write)
-> +{
-> +	struct mm_struct *mm;
-> +	unsigned long vaddr;
-> +	struct vfio_dma *dma;
-> +	bool kthread = current->mm == NULL;
-> +	int ret = 0;
-> +
-> +	dma = vfio_find_dma(iommu, iova, PAGE_SIZE);
-> +	if (!dma)
-> +		return -EINVAL;
-> +
-> +	mm = get_task_mm(dma->task);
-> +
-> +	if (!mm)
-> +		return -ENODEV;
-> +
-> +	if (kthread)
-> +		use_mm(mm);
-> +	else if (current->mm != mm) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	vaddr = dma->vaddr + iova - dma->iova + offset;
-
-Parenthesis here would be useful and might prevent overflow, ie:
-
-  dma->vaddr + (iova - dma->iova) + offset
-
-> +
-> +	ret = write ? __copy_to_user((void __user *)vaddr,
-> +			data, seg_len) :
-> +		__copy_from_user(data, (void __user *)vaddr,
-> +				seg_len);
-> +	if (ret)
-> +		ret = -EFAULT;
-> +
-> +	if (kthread)
-> +		unuse_mm(mm);
-> +out:
-> +	mmput(mm);
-> +	return ret;
-> +}
-> +
-> +static int vfio_iommu_type1_iova_rw(void *iommu_data, unsigned long iova,
-> +				    void *data, unsigned long len, bool write)
-> +{
-> +	struct vfio_iommu *iommu = iommu_data;
-> +	int offset = iova & ~PAGE_MASK;
-> +	int seg_len;
-> +	int ret = 0;
-> +
-> +	iova = iova & PAGE_MASK;
-> +
-> +	mutex_lock(&iommu->lock);
-> +	while ((seg_len = next_segment(len, offset)) > 0) {
-> +		ret = vfio_iommu_type1_rw_iova_seg(iommu, iova, data,
-> +						   seg_len, offset, write);
-
-Why do we need to split operations at page boundaries?  It seems really
-inefficient that at each page crossing we need to lookup the vfio_dma
-again (probably the same one), switch to the mm (probably the same one),
-and perform another copy_{to,from}_user() when potentially have
-everything we need to perform a larger copy.  Thanks,
-
-Alex
-
-> +		if (ret)
-> +			break;
-> +
-> +		offset = 0;
-> +		len -= seg_len;
-> +		data += seg_len;
-> +		iova += PAGE_SIZE;
-> +	}
-> +
-> +	mutex_unlock(&iommu->lock);
-> +	return ret;
-> +}
-> +
->  static const struct vfio_iommu_driver_ops vfio_iommu_driver_ops_type1 = {
->  	.name			= "vfio-iommu-type1",
->  	.owner			= THIS_MODULE,
-> @@ -2338,6 +2418,7 @@ static const struct vfio_iommu_driver_ops vfio_iommu_driver_ops_type1 = {
->  	.unpin_pages		= vfio_iommu_type1_unpin_pages,
->  	.register_notifier	= vfio_iommu_type1_register_notifier,
->  	.unregister_notifier	= vfio_iommu_type1_unregister_notifier,
-> +	.iova_rw		= vfio_iommu_type1_iova_rw,
+> > The "trick" we did to keep people from having to remember this is to do
+> > what we did for the bus registering functions.
+> > 
+> > Look at pci_register_driver in pci.h:
+> > #define pci_register_driver(driver)             \
+> >         __pci_register_driver(driver, THIS_MODULE, KBUILD_MODNAME)
+> > 
+> > Then we set the .owner field in the "real" __pci_register_driver() call.
+> > 
+> > Same thing for USB and lots, if not all, other driver register
+> > functions.
+> > 
+> > You can do the same thing here, and I would recommend it.
+> 
+> Yes, that makes sense, cheers. Diff below. I'll send it to Joerg along
+> with some other SMMU patches that have come in since the holiday.
+> 
+> Will
+> 
+> --->8
+> 
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index 03dc97842875..e82997a705a8 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -2733,7 +2733,6 @@ static struct iommu_ops arm_smmu_ops = {
+>  	.get_resv_regions	= arm_smmu_get_resv_regions,
+>  	.put_resv_regions	= arm_smmu_put_resv_regions,
+>  	.pgsize_bitmap		= -1UL, /* Restricted during device attach */
+> -	.owner			= THIS_MODULE,
 >  };
 >  
->  static int __init vfio_iommu_type1_init(void)
-> diff --git a/include/linux/vfio.h b/include/linux/vfio.h
-> index e42a711a2800..7bf18a31bbcf 100644
-> --- a/include/linux/vfio.h
-> +++ b/include/linux/vfio.h
-> @@ -82,6 +82,8 @@ struct vfio_iommu_driver_ops {
->  					     struct notifier_block *nb);
->  	int		(*unregister_notifier)(void *iommu_data,
->  					       struct notifier_block *nb);
-> +	int		(*iova_rw)(void *iommu_data, unsigned long iova,
-> +				   void *data, unsigned long len, bool write);
+>  /* Probing and initialisation functions */
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index 5ef1f2e100d7..93d332423f6f 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -1623,7 +1623,6 @@ static struct iommu_ops arm_smmu_ops = {
+>  	.get_resv_regions	= arm_smmu_get_resv_regions,
+>  	.put_resv_regions	= arm_smmu_put_resv_regions,
+>  	.pgsize_bitmap		= -1UL, /* Restricted during device attach */
+> -	.owner			= THIS_MODULE,
 >  };
 >  
->  extern int vfio_register_iommu_driver(const struct vfio_iommu_driver_ops *ops);
-> @@ -107,6 +109,9 @@ extern int vfio_pin_pages(struct device *dev, unsigned long *user_pfn,
->  extern int vfio_unpin_pages(struct device *dev, unsigned long *user_pfn,
->  			    int npage);
+>  static void arm_smmu_device_reset(struct arm_smmu_device *smmu)
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index e9f94d3f7a04..90007c92ad2d 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -388,12 +388,19 @@ void iommu_device_sysfs_remove(struct iommu_device *iommu);
+>  int  iommu_device_link(struct iommu_device   *iommu, struct device *link);
+>  void iommu_device_unlink(struct iommu_device *iommu, struct device *link);
 >  
-> +extern int vfio_iova_rw(struct device *dev, unsigned long iova, void *data,
-> +			unsigned long len, bool write);
+> -static inline void iommu_device_set_ops(struct iommu_device *iommu,
+> -					const struct iommu_ops *ops)
+> +static inline void __iommu_device_set_ops(struct iommu_device *iommu,
+> +					  const struct iommu_ops *ops)
+>  {
+>  	iommu->ops = ops;
+>  }
+>  
+> +#define iommu_device_set_ops(iommu, ops)				\
+> +do {									\
+> +	struct iommu_ops *__ops = (struct iommu_ops *)(ops);		\
+> +	__ops->owner = THIS_MODULE;					\
+> +	__iommu_device_set_ops(iommu, __ops);				\
+> +} while (0)
 > +
->  /* each type has independent events */
->  enum vfio_notify_type {
->  	VFIO_IOMMU_NOTIFY = 0,
+>  static inline void iommu_device_set_fwnode(struct iommu_device *iommu,
+>  					   struct fwnode_handle *fwnode)
+>  {
 
+Looks good:
+
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
