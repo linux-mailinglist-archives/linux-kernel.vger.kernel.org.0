@@ -2,63 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FCC1135DA0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:07:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89950135DA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:07:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733131AbgAIQHJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 11:07:09 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:39684 "EHLO
+        id S1733149AbgAIQHQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 11:07:16 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:26501 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1733111AbgAIQHG (ORCPT
+        by vger.kernel.org with ESMTP id S1728567AbgAIQHH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 11:07:06 -0500
+        Thu, 9 Jan 2020 11:07:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578586025;
+        s=mimecast20190719; t=1578586026;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=y8iVqwlPqx8D0v6wn+sNinncmvzZmA9bOrVw84GrFXg=;
-        b=ahrSL2tCBD59ZtH991n0E40VoyxroaxQ0r7wtMA8p64cB+P5EbiKejXlXsQbLMb4rq2vK2
-        3qjSZUlIJ+BKwtQcdZvV1lPSA0X4AOm3P7YrkSclzJsDS9xPe0MgFKNWGiiPM+SO+qcPHf
-        xZe0LsJN5OeOv8b96eyTkXa4rBb2DRQ=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-244-PI_0MAUtP9ClNROskyqSHA-1; Thu, 09 Jan 2020 11:07:03 -0500
-X-MC-Unique: PI_0MAUtP9ClNROskyqSHA-1
-Received: by mail-wm1-f69.google.com with SMTP id s25so621397wmj.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:07:03 -0800 (PST)
+        bh=674vedoaHlOK+sohBzVeKsD1bt4H4p7wzQDNyJHcuUU=;
+        b=iEq3Ww9EAhSLRGT8UdPLYM3Gu+mPpQy8W5sEgRuLSlVM4AeKXldoR6fUS8Hai+JQgYwrPg
+        2QBBX+t04HNILn9qc/EdxqBG274tnAH4QymgfGqCbe7IFuWqYKdd50Y/Ezh8dWnXd8ovju
+        186JilA3Uc5LFS120Fs8PIzIDGh7ql4=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-130-wrW-gCq-N1K_H6MS82nJtw-1; Thu, 09 Jan 2020 11:07:05 -0500
+X-MC-Unique: wrW-gCq-N1K_H6MS82nJtw-1
+Received: by mail-wr1-f69.google.com with SMTP id o6so3039907wrp.8
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:07:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=y8iVqwlPqx8D0v6wn+sNinncmvzZmA9bOrVw84GrFXg=;
-        b=VjUjx7MYA0q8lOfGIOWVskO3mic6LD207BxEu11/Dr43UYfJLiKDEqDWMKHTGuffIX
-         yXNjRWbbiTeAPnIhTPDAP46BdevJsHlPMCcjkl3qZBsh813PbV4cZ/2b7L/b7Vj6o7HJ
-         u/1nZ3Y4odpqm75BnFmbSNEtujus84s1cuqQLL9jN/E4faa/wLDeW5GaJ2tceAXs9f6Q
-         fcbh1sni4YoxZ+uFuveWdNbZjCb7NqbeeI1WrABFi9Lie4oq4CCeKtKCLGyb803gU55o
-         N2j97OPoph5AgcSlhitr26rfDp+GElPmbFJHATpk3yUaa1Mc/cZUjt2Gx3asRvJpQC8t
-         gR9Q==
-X-Gm-Message-State: APjAAAVMHDUitMElR8n55Yr2xOQkYuF4r/2brPSwcOwn6QC2/F3YDIay
-        PX9C+046n7umGKJmMd/R2M2q6KyargjqLHGfraYu/Ed2lYXN+QY4Ju3ncNECMd2/yq1ybecpgHx
-        yRxqW2x8g+aNm0PYXFJ4yLZ9W
-X-Received: by 2002:adf:fd43:: with SMTP id h3mr11468140wrs.169.1578586022089;
-        Thu, 09 Jan 2020 08:07:02 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwUxQHjrf4FRdDbNfOTNXug87kNQAURNGlHTw3u5DPgWcuL7CdH67/0NDbY/vvhci1xsXh2QA==
-X-Received: by 2002:adf:fd43:: with SMTP id h3mr11468101wrs.169.1578586021736;
-        Thu, 09 Jan 2020 08:07:01 -0800 (PST)
+        bh=674vedoaHlOK+sohBzVeKsD1bt4H4p7wzQDNyJHcuUU=;
+        b=ZPxv3qG6NP8e0DU6BT6Jygo61Vcqj62KugrojlnQHRmi11xVe/XJ5PEe6QoeQgeusW
+         CtsV9Ie5Bik8catuXJ5+i8Yr7y7Af5SjMkBgHL+q0qH9iiKtNNCreA4NjaewxIsk7u6A
+         gZHfHyLtY8hWJQGacjAe5u02NRZPJ1Wy+hSBnZU8LlG47tck2NnbROZpe4EsoVgrbnVM
+         VapjfFtDg8NpzlyVBFNe9+0zuo7coV22L+bD4jw6+lbg6kx4e+ARQtet0bU3ws+YrJTp
+         S+uGP1fewr6wPIBVFix+1tD5w5XPX4P+yoTiNNOOggjjjiVGBA2opchMxJY4gxCtW2UC
+         JbAw==
+X-Gm-Message-State: APjAAAUtURxYvzzKnNULfi8ClSvhnBBcr0PTBWj5hWGTCl+IWcj3nkRu
+        DYU5AXu7Xd1k1UgeP8rAv34ACJxmW14f5IkrQ6FptM1osqFz6AXS1z6zlJpe8iWwT9tkQGCe8iB
+        rwITh77GaA5pZDsSNhqp10Zc7
+X-Received: by 2002:a7b:cbcd:: with SMTP id n13mr5750927wmi.104.1578586023795;
+        Thu, 09 Jan 2020 08:07:03 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyYyTRISBUXfTdMjMVF0DyWCzXa8gRzRagckK39rZstNu1/RnqpteCWutzTgpkE45cGgf1BEw==
+X-Received: by 2002:a7b:cbcd:: with SMTP id n13mr5750895wmi.104.1578586023548;
+        Thu, 09 Jan 2020 08:07:03 -0800 (PST)
 Received: from redfedo.redhat.com (host81-140-166-164.range81-140.btcentralplus.com. [81.140.166.164])
-        by smtp.gmail.com with ESMTPSA id q3sm9123252wrn.33.2020.01.09.08.07.00
+        by smtp.gmail.com with ESMTPSA id q3sm9123252wrn.33.2020.01.09.08.07.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 08:07:01 -0800 (PST)
+        Thu, 09 Jan 2020 08:07:03 -0800 (PST)
 From:   Julien Thierry <jthierry@redhat.com>
 To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     jpoimboe@redhat.com, peterz@infradead.org, raphael.gault@arm.com,
         catalin.marinas@arm.com, will@kernel.org,
         Julien Thierry <jthierry@redhat.com>
-Subject: [RFC v5 32/57] objtool: arm64: Decode load/store register pair instructions
-Date:   Thu,  9 Jan 2020 16:02:35 +0000
-Message-Id: <20200109160300.26150-33-jthierry@redhat.com>
+Subject: [RFC v5 33/57] objtool: arm64: Decode FP/SIMD load/store instructions
+Date:   Thu,  9 Jan 2020 16:02:36 +0000
+Message-Id: <20200109160300.26150-34-jthierry@redhat.com>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200109160300.26150-1-jthierry@redhat.com>
 References: <20200109160300.26150-1-jthierry@redhat.com>
@@ -69,18 +69,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Decode load/store instruction to a pair of registers. Split the
-instruction into two stack operations, one for each register.
+Decode load/store instruction acting on floating point and SIMD
+registers.
 
 Suggested-by: Raphael Gault <raphael.gault@arm.com>
 Signed-off-by: Julien Thierry <jthierry@redhat.com>
 ---
- tools/objtool/arch/arm64/decode.c             | 220 ++++++++++++++++++
+ tools/objtool/arch/arm64/decode.c             | 301 ++++++++++++++++++
  .../objtool/arch/arm64/include/insn_decode.h  |  12 +
- 2 files changed, 232 insertions(+)
+ 2 files changed, 313 insertions(+)
 
 diff --git a/tools/objtool/arch/arm64/decode.c b/tools/objtool/arch/arm64/decode.c
-index 00d5d627af08..2aaac4e3786c 100644
+index 2aaac4e3786c..7d480efe0bc2 100644
 --- a/tools/objtool/arch/arm64/decode.c
 +++ b/tools/objtool/arch/arm64/decode.c
 @@ -810,6 +810,26 @@ int arm_decode_br_uncond_reg(u32 instr, enum insn_type *type,
@@ -88,255 +88,339 @@ index 00d5d627af08..2aaac4e3786c 100644
  
  static struct aarch64_insn_decoder ld_st_decoder[] = {
 +	{
-+		.mask = 0b001101100000000,
-+		.value = 0b001000000000000,
-+		.decode_func = arm_decode_ld_st_noalloc_pair_off,
++		.mask = 0b101111111111100,
++		.value = 0b000010000000000,
++		.decode_func = arm_decode_adv_simd_mult,
 +	},
 +	{
-+		.mask = 0b001101100000000,
-+		.value = 0b001000100000000,
-+		.decode_func = arm_decode_ld_st_regs_pair_post,
++		.mask = 0b101111110000000,
++		.value = 0b000010100000000,
++		.decode_func = arm_decode_adv_simd_mult_post,
 +	},
 +	{
-+		.mask = 0b001101100000000,
-+		.value = 0b001001000000000,
-+		.decode_func = arm_decode_ld_st_regs_pair_off,
++		.mask = 0b101111101111100,
++		.value = 0b000011000000000,
++		.decode_func = arm_decode_adv_simd_single,
 +	},
 +	{
-+		.mask = 0b001101100000000,
-+		.value = 0b001001100000000,
-+		.decode_func = arm_decode_ld_st_regs_pair_pre,
++		.mask = 0b101111100000000,
++		.value = 0b000011100000000,
++		.decode_func = arm_decode_adv_simd_single_post,
 +	},
  	{
- 		.mask = 0b001101010000011,
- 		.value = 0b001100000000000,
-@@ -1234,3 +1254,203 @@ int arm_decode_ld_st_regs_off(u32 instr, enum insn_type *type,
- 
- 	return 0;
+ 		.mask = 0b001101100000000,
+ 		.value = 0b001000000000000,
+@@ -889,6 +909,287 @@ int arm_decode_ld_st(u32 instr, enum insn_type *type,
+ 	return arm_decode_unknown(instr, type, immediate, ops_list);
  }
+ 
++static int adv_simd_mult_fields[] = {
++	0b00000,
++	0b00010,
++	0b00100,
++	0b00110,
++	0b00111,
++	0b01000,
++	0b01010,
++	0b10000,
++	0b10010,
++	0b10100,
++	0b10110,
++	0b10111,
++	0b11000,
++	0b11010,
++};
 +
-+int arm_decode_ld_st_noalloc_pair_off(u32 instr, enum insn_type *type,
-+				      unsigned long *immediate,
-+				      struct list_head *ops_list)
++int arm_decode_adv_simd_mult(u32 instr, enum insn_type *type,
++			     unsigned long *immediate,
++			     struct list_head *ops_list)
 +{
-+	unsigned char opc = 0, V = 0, L = 0;
++	unsigned char L = 0, opcode = 0, rn = 0;
 +	unsigned char decode_field = 0;
++	int i = 0;
 +
-+	opc = (instr >> 30) & ONES(2);
-+	V = EXTRACT_BIT(instr, 26);
 +	L = EXTRACT_BIT(instr, 22);
++	opcode = (instr >> 12) & ONES(4);
 +
-+	decode_field = (opc << 2) | (V << 1) | L;
-+
-+	if (decode_field == 0x4 ||
-+	    decode_field == 0x5 ||
-+	    decode_field >= 12) {
-+		return arm_decode_unknown(instr, type, immediate, ops_list);
-+	}
-+	return arm_decode_ld_st_regs_pair_off(instr, type, immediate, ops_list);
-+}
-+
-+int arm_decode_ld_st_regs_pair_off(u32 instr, enum insn_type *type,
-+				   unsigned long *immediate,
-+				   struct list_head *ops_list)
-+{
-+	unsigned char opc = 0, V = 0, L = 0, bit = 0;
-+	unsigned char imm7 = 0, rt2 = 0, rt = 0, rn = 0;
-+	unsigned char decode_field = 0;
-+	struct stack_op *op;
-+	int scale = 0;
-+
-+	opc = (instr >> 30) & ONES(2);
-+	V = EXTRACT_BIT(instr, 26);
-+	L = EXTRACT_BIT(instr, 22);
-+	imm7 = (instr >> 15) & ONES(7);
-+	rt2 = (instr >> 10) & ONES(5);
++	decode_field = (L << 4) | opcode;
 +	rn = (instr >> 5) & ONES(5);
-+	rt = instr & ONES(5);
-+	bit = EXTRACT_BIT(opc, 1);
-+	scale = 2 + bit;
++	*type = INSN_OTHER;
 +
-+	decode_field = (opc << 2) | (V << 1) | L;
-+
-+	if (decode_field >= 0xC)
-+		return arm_decode_unknown(instr, type, immediate, ops_list);
-+
-+	*immediate = (SIGN_EXTEND(imm7, 7)) << scale;
-+
-+	if (!stack_related_reg(rn)) {
-+		*type = INSN_OTHER;
-+		return 0;
++	for (i = 0; i < ARRAY_SIZE(adv_simd_mult_fields); i++) {
++		if ((decode_field & 0b11111) == adv_simd_mult_fields[i]) {
++			if (!stack_related_reg(rn))
++				return 0;
++		}
 +	}
 +
-+	*type = INSN_STACK;
-+
-+	op = calloc(1, sizeof(*op));
-+	list_add_tail(&op->list, ops_list);
-+	switch (decode_field) {
-+	case 1:
-+	case 3:
-+	case 5:
-+	case 7:
-+	case 9:
-+	case 11:
-+		/* load */
-+		op->src.type = OP_SRC_REG_INDIRECT;
-+		op->src.reg = rn;
-+		op->src.offset = *immediate;
-+		op->dest.type = OP_DEST_REG;
-+		op->dest.reg = rt;
-+		op->dest.offset = 0;
-+		{
-+			struct stack_op *extra;
-+
-+			extra = malloc(sizeof(*extra));
-+			extra->src.type = OP_SRC_REG_INDIRECT;
-+			extra->src.reg = rn;
-+			extra->src.offset = (int)*immediate + 8;
-+			extra->dest.type = OP_DEST_REG;
-+			extra->dest.reg = rt2;
-+			extra->dest.offset = 0;
-+
-+			list_add_tail(&extra->list, ops_list);
-+		}
-+		break;
-+	default:
-+		op->dest.type = OP_DEST_REG_INDIRECT;
-+		op->dest.reg = rn;
-+		op->dest.offset = (int)*immediate + 8;
-+		op->src.type = OP_SRC_REG;
-+		op->src.reg = rt2;
-+		op->src.offset = 0;
-+		{
-+			struct stack_op *extra;
-+
-+			extra = malloc(sizeof(*extra));
-+			extra->dest.type = OP_DEST_REG_INDIRECT;
-+			extra->dest.reg = rn;
-+			extra->dest.offset = *immediate;
-+			extra->src.type = OP_SRC_REG;
-+			extra->src.reg = rt;
-+			extra->src.offset = 0;
-+
-+			list_add_tail(&extra->list, ops_list);
-+		}
-+		/* store */
-+	}
-+	return 0;
++	return arm_decode_unknown(instr, type, immediate, ops_list);
 +}
 +
-+int arm_decode_ld_st_regs_pair_post(u32 instr, enum insn_type *type,
-+				    unsigned long *immediate,
-+				    struct list_head *ops_list)
++int arm_decode_adv_simd_mult_post(u32 instr, enum insn_type *type,
++				  unsigned long *immediate,
++				  struct list_head *ops_list)
 +{
++	/* same opcode as for the no offset variant */
 +	int ret = 0;
-+	unsigned int base_reg;
-+	bool base_is_src;
-+	struct stack_op *op;
-+	struct stack_op *post_inc;
 +
-+	ret = arm_decode_ld_st_regs_pair_off(instr, type, immediate, ops_list);
-+	if (ret < 0 || *type == INSN_OTHER)
-+		return ret;
++	ret = arm_decode_adv_simd_mult(instr, type, immediate, ops_list);
 +
-+	op = list_first_entry(ops_list, typeof(*op), list);
-+	if (op->dest.type == OP_DEST_REG_INDIRECT) {
-+		base_reg = op->dest.reg;
-+		base_is_src = false;
-+	} else if (op->src.type == OP_SRC_REG_INDIRECT) {
-+		base_reg = op->src.reg;
-+		base_is_src = true;
-+	} else {
-+		WARN("Unexpected base type");
-+		return -1;
-+	}
-+
-+	post_inc = malloc(sizeof(*post_inc));
-+	post_inc->dest.type = OP_DEST_REG;
-+	post_inc->dest.reg = base_reg;
-+	post_inc->src.reg = base_reg;
-+	post_inc->src.type = OP_SRC_ADD;
-+	post_inc->src.offset = (int)*immediate;
-+
-+	/* Adapt offsets */
-+	list_for_each_entry(op, ops_list, list) {
-+		if (!base_is_src)
-+			op->dest.offset -= post_inc->src.offset;
-+		else
-+			op->src.offset -= post_inc->src.offset;
-+	}
-+	list_add_tail(&post_inc->list, ops_list);
-+
++	/* TODO: Create stack_op for post increment with immediate */
 +	return ret;
 +}
 +
-+int arm_decode_ld_st_regs_pair_pre(u32 instr, enum insn_type *type,
-+				   unsigned long *immediate,
-+				   struct list_head *ops_list)
++static struct aarch64_insn_decoder simd_single_decoder[] = {
++	{
++		.mask = 0b11111000,
++		.value = 0b00000000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111000,
++		.value = 0b00001000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111001,
++		.value = 0b00010000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111001,
++		.value = 0b00011000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111011,
++		.value = 0b00100000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111111,
++		.value = 0b00100001,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111011,
++		.value = 0b00101000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111111,
++		.value = 0b00101001,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111000,
++		.value = 0b01000000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111000,
++		.value = 0b01001000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111001,
++		.value = 0b01010000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111001,
++		.value = 0b01011000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111011,
++		.value = 0b01100000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111111,
++		.value = 0b01100001,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111011,
++		.value = 0b01101000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111111,
++		.value = 0b01101001,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111000,
++		.value = 0b10000000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111000,
++		.value = 0b10001000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111001,
++		.value = 0b10010000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111001,
++		.value = 0b10011000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111011,
++		.value = 0b10100000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111111,
++		.value = 0b10100001,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111011,
++		.value = 0b10101000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111111,
++		.value = 0b10101001,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111100,
++		.value = 0b10110000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111100,
++		.value = 0b10111000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11000000,
++		.value = 0b11111000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111000,
++		.value = 0b11001000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111001,
++		.value = 0b11010000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111001,
++		.value = 0b11011000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111011,
++		.value = 0b11100000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111111,
++		.value = 0b11100001,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111011,
++		.value = 0b11101000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111111,
++		.value = 0b11101001,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111100,
++		.value = 0b11110000,
++		.decode_func = NULL,
++	},
++	{
++		.mask = 0b11111100,
++		.value = 0b11111000,
++		.decode_func = NULL,
++	},
++};
++
++int arm_decode_adv_simd_single(u32 instr, enum insn_type *type,
++			       unsigned long *immediate,
++			       struct list_head *ops_list)
 +{
-+	int ret = 0;
-+	unsigned int base_reg;
-+	bool base_is_src;
-+	struct stack_op *op;
-+	struct stack_op *pre_inc;
++	unsigned char L = 0, R = 0, S = 0, opcode = 0, size = 0;
++	unsigned char rn = 0, dfield = 0;
++	int i = 0;
 +
-+	ret = arm_decode_ld_st_regs_pair_off(instr, type, immediate, ops_list);
-+	if (ret < 0 || *type == INSN_OTHER)
-+		return ret;
++	L = EXTRACT_BIT(instr, 22);
++	R = EXTRACT_BIT(instr, 21);
++	S = EXTRACT_BIT(instr, 12);
++	opcode = (instr >> 13) & ONES(3);
++	size = (instr >> 10) & ONES(2);
 +
-+	op = list_first_entry(ops_list, typeof(*op), list);
-+	if (op->dest.type == OP_DEST_REG_INDIRECT) {
-+		base_reg = op->dest.reg;
-+		base_is_src = false;
-+	} else if (op->src.type == OP_SRC_REG_INDIRECT) {
-+		base_reg = op->src.reg;
-+		base_is_src = true;
-+	} else {
-+		WARN("Unexpected base type");
-+		return -1;
++	dfield = (L << 7) | (R << 6) | (opcode << 3) | (S << 2) | size;
++
++	*type = INSN_OTHER;
++	rn = (instr << 5) & ONES(5);
++
++	for (i = 0; i < ARRAY_SIZE(simd_single_decoder); i++) {
++		if ((dfield & simd_single_decoder[i].mask) ==
++		    simd_single_decoder[i].value) {
++			if (!stack_related_reg(rn))
++				return 0;
++		}
 +	}
 +
-+	pre_inc = malloc(sizeof(*pre_inc));
-+	pre_inc->dest.type = OP_DEST_REG;
-+	pre_inc->dest.reg = base_reg;
-+	pre_inc->src.type = OP_SRC_ADD;
-+	pre_inc->src.reg = base_reg;
-+	pre_inc->src.offset = (int)*immediate;
-+
-+	/* Adapt offsets */
-+	list_for_each_entry(op, ops_list, list) {
-+		if (!base_is_src)
-+			op->dest.offset -= pre_inc->src.offset;
-+		else
-+			op->src.offset -= pre_inc->src.offset;
-+	}
-+	list_add(&pre_inc->list, ops_list);
-+
-+	return 0;
++	return arm_decode_unknown(instr, type, immediate, ops_list);
 +}
++
++int arm_decode_adv_simd_single_post(u32 instr, enum insn_type *type,
++				    unsigned long *immediate,
++				    struct list_head *ops_list)
++{
++	/* same opcode as for the no offset variant */
++	int ret = 0;
++
++	ret = arm_decode_adv_simd_single(instr, type, immediate, ops_list);
++
++	/* TODO: Create stack_op for post increment with immediate */
++	return ret;
++}
++
+ int arm_decode_ld_st_regs_unsc_imm(u32 instr, enum insn_type *type,
+ 				   unsigned long *immediate,
+ 				   struct list_head *ops_list)
 diff --git a/tools/objtool/arch/arm64/include/insn_decode.h b/tools/objtool/arch/arm64/include/insn_decode.h
-index 9043ca6f6708..caeb40942b18 100644
+index caeb40942b18..7fd333f88612 100644
 --- a/tools/objtool/arch/arm64/include/insn_decode.h
 +++ b/tools/objtool/arch/arm64/include/insn_decode.h
 @@ -94,6 +94,18 @@ int arm_decode_br_uncond_reg(u32 instr, enum insn_type *type,
  			     struct list_head *ops_list);
  
  /* arm64 load/store instructions */
-+int arm_decode_ld_st_noalloc_pair_off(u32 instr, enum insn_type *type,
-+				      unsigned long *immediate,
-+				      struct list_head *ops_list);
-+int arm_decode_ld_st_regs_pair_post(u32 instr, enum insn_type *type,
++int arm_decode_adv_simd_mult(u32 instr, enum insn_type *type,
++			     unsigned long *immediate,
++			     struct list_head *ops_list);
++int arm_decode_adv_simd_mult_post(u32 instr, enum insn_type *type,
++				  unsigned long *immediate,
++				  struct list_head *ops_list);
++int arm_decode_adv_simd_single(u32 instr, enum insn_type *type,
++			       unsigned long *immediate,
++			       struct list_head *ops_list);
++int arm_decode_adv_simd_single_post(u32 instr, enum insn_type *type,
 +				    unsigned long *immediate,
 +				    struct list_head *ops_list);
-+int arm_decode_ld_st_regs_pair_off(u32 instr, enum insn_type *type,
-+				   unsigned long *immediate,
-+				   struct list_head *ops_list);
-+int arm_decode_ld_st_regs_pair_pre(u32 instr, enum insn_type *type,
-+				   unsigned long *immediate,
-+				   struct list_head *ops_list);
- int arm_decode_ld_st_regs_unsc_imm(u32 instr, enum insn_type *type,
- 				   unsigned long *immediate,
- 				   struct list_head *ops_list);
+ int arm_decode_ld_st_noalloc_pair_off(u32 instr, enum insn_type *type,
+ 				      unsigned long *immediate,
+ 				      struct list_head *ops_list);
 -- 
 2.21.0
 
