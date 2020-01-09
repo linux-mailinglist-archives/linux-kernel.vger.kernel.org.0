@@ -2,73 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4293D1362F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 23:00:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E36D1362F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 23:01:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729083AbgAIWAG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 17:00:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36362 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725775AbgAIWAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 17:00:05 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5B9020656;
-        Thu,  9 Jan 2020 22:00:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578607205;
-        bh=q2xLvaGoyKJySIfa5H/56/Txq2IoQyySUYKwsDkm/t4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=xFu2sFgSng3Oh5L/QhhdSaFswmLd5QFevFtpMGRKLCTm888o7PTfP8maChh21vsC7
-         DpRGSg7PI9jlVTfPXmlCmyH35i3X50uBnufWmH8DhLI1RfSPV40DYz9j6jLSnilPKw
-         1aV77MFDW0xD7mz2qoB1WKrrA668O9U9abCx/ug8=
-Date:   Thu, 9 Jan 2020 14:00:04 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Scott Cheloha <cheloha@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Hildenbrand <david@redhat.com>, nathanl@linux.ibm.com,
-        ricklind@linux.vnet.ibm.com, mhocko@suse.com,
-        Scott Cheloha <cheloha@linux.ibm.com>
-Subject: Re: [PATCH v4] drivers/base/memory.c: cache blocks in radix tree to
- accelerate lookup
-Message-Id: <20200109140004.d5e6dc581b62d6e078dcca4c@linux-foundation.org>
-In-Reply-To: <20200109212516.17849-1-cheloha@linux.vnet.ibm.com>
-References: <20191217193238-1-cheloha@linux.vnet.ibm.com>
-        <20200109212516.17849-1-cheloha@linux.vnet.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1729163AbgAIWBC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 17:01:02 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40481 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbgAIWBC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 17:01:02 -0500
+Received: by mail-lf1-f66.google.com with SMTP id i23so6385330lfo.7
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 14:01:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=Mi3sk3TlD65TjPJS6t+i6kqtarlRrjgY8N4j6OEE+Sc=;
+        b=lupy590s587XYo30Rgt0h/B5lxayn4BmVjvmVFaElEgBVOnGNKHxDhSxNzxyih7w1Q
+         hSdB9U+AQGOGSbf4nqVd7mLLCMfJe2wHbg9dKTBMOLgszAFwm3btFQVD1iv2V3GWEa2r
+         VG4IGpPBPPye2ee0Iquh/MEw1ixTrza6K0RnXjwIDWqSXa/2SA5JiZhg+pr4Sf+Nq6O3
+         C7eRlIVj6/A3vMl5FtW6lrKzq2MD7AEN568JwhZCF0vcel0UmkAxB/AzyGSEBZsAKBme
+         oQeUGUsFTy2piLpuutukxu7dTq5LUDqidGPSekE2suuICUFGfqHm6+L+Pd3IE92pKUd3
+         t1Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=Mi3sk3TlD65TjPJS6t+i6kqtarlRrjgY8N4j6OEE+Sc=;
+        b=Egus9Hj9h0ZRgko+Q5LTGm/11y7frY92QOdF4W14k22q2D8z3QAK5spQuwmOYJI42L
+         fiFy9Rv7XlYf8T4Ny4I3mVvcFc6wflVQG6blB+mBSyC2uPhlpy40csvnW9/wB2Phdi7Y
+         RYJyYl7Pbl8TaP08c5dNtkcI1hax/hQzP+f9TbRf23yTomVtR8LZ5+QwApEj8nNGodjs
+         NfqUKYzmNBpOgA/HKz1SgZYx7/pdJkE9Fu/D8rUMqIkVmi2et2N74et2l9WeqYwkRnhO
+         BrzdK0QAdNPlulyUo//RCHU1XxAy0sD2tHUYu5q4176xkfKI9njKH3RFAdeM74hX7Oog
+         XWzg==
+X-Gm-Message-State: APjAAAXJVrLBR8UBnhx+diMU5keii1rcRJPBwD9KstCKT6HbSbECOeKc
+        Hlj4NsiMPZnd42PWN7ywh7AVBVjufpN4FnXVDFzwmQ==
+X-Google-Smtp-Source: APXvYqzRI6RTJONfr++1e8TbnhwKAJWFgwOFxp3yxWshXsnym/ktIJLACYbuwcrWWHDSdmj91kgsFwt6HJtQ+1bo0m8=
+X-Received: by 2002:ac2:5e78:: with SMTP id a24mr7472412lfr.5.1578607260191;
+ Thu, 09 Jan 2020 14:01:00 -0800 (PST)
+MIME-Version: 1.0
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 9 Jan 2020 23:00:49 +0100
+Message-ID: <CACRpkdaUEAxP8Q9iLR+DBuDAkq0U9mAhSwJsrqT7dCF3zAC8vA@mail.gmail.com>
+Subject: [GIT PULL] GPIO fixes for v5.5
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  9 Jan 2020 15:25:16 -0600 Scott Cheloha <cheloha@linux.vnet.ibm.com> wrote:
+Hi Linus,
 
-> Searching for a particular memory block by id is an O(n) operation
-> because each memory block's underlying device is kept in an unsorted
-> linked list on the subsystem bus.
-> 
-> We can cut the lookup cost to O(log n) if we cache the memory blocks in
-> a radix tree.  With a radix tree cache in place both memory subsystem
-> initialization and memory hotplug run palpably faster on systems with a
-> large number of memory blocks.
-> 
-> ...
->
-> @@ -56,6 +57,13 @@ static struct bus_type memory_subsys = {
->  	.offline = memory_subsys_offline,
->  };
->  
-> +/*
-> + * Memory blocks are cached in a local radix tree to avoid
-> + * a costly linear search for the corresponding device on
-> + * the subsystem bus.
-> + */
-> +static RADIX_TREE(memory_blocks, GFP_KERNEL);
+here is a host of GPIO fixes for the v5.5 series. The
+ACPI fix is especially important, see the signed tag
+and commit for details.
 
-What protects this tree from racy accesses?
+There is also a coding whitespace style fix on the
+mockup device maybe I shouldn't have merged that here
+for fixes, it was more of a -rc1 thing, it just slipped
+in through the winter vacation returning to duties window.
+So sorry about that, if you insist I can rebase the lot and
+take it out.
+
+Please pull it in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit fd6988496e79a6a4bdb514a4655d2920209eb85d:
+
+  Linux 5.5-rc4 (2019-12-29 15:29:16 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v5.5-3
+
+for you to fetch changes up to aa23ca3d98f756d5b1e503fb140665fb24a41a38:
+
+  gpiolib: acpi: Add honor_wakeup module-option + quirk mechanism
+(2020-01-07 12:58:15 +0100)
+
+----------------------------------------------------------------
+GPIO fixes for the v5.5 kernel cycle:
+
+- Select GPIOLIB_IRQCHIP on the max77620 GPIO expander
+- Fix context restore in the Zynq driver
+- Create a new ACPI quirk handler for disabling wakeups on
+  problematic hardware.
+- Fix a coding style issue on the mockup device.
+
+----------------------------------------------------------------
+Bartosz Golaszewski (1):
+      gpio: mockup: fix coding style
+
+Dmitry Osipenko (1):
+      gpio: max77620: Add missing dependency on GPIOLIB_IRQCHIP
+
+Hans de Goede (2):
+      gpiolib: acpi: Turn dmi_system_id table into a generic quirk table
+      gpiolib: acpi: Add honor_wakeup module-option + quirk mechanism
+
+Linus Walleij (1):
+      Merge tag 'gpio-fixes-for-v5.5-rc5' of
+git://git.kernel.org/.../brgl/linux into fixes
+
+Swapna Manupati (1):
+      gpio: zynq: Fix for bug in zynq_gpio_restore_context API
+
+ drivers/gpio/Kconfig        |  1 +
+ drivers/gpio/gpio-mockup.c  |  4 ++--
+ drivers/gpio/gpio-zynq.c    |  8 ++++---
+ drivers/gpio/gpiolib-acpi.c | 51 ++++++++++++++++++++++++++++++++++++++++-----
+ 4 files changed, 54 insertions(+), 10 deletions(-)
