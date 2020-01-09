@@ -2,87 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 451651363F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 00:42:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17B831363FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 00:47:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729621AbgAIXm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 18:42:29 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46363 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728241AbgAIXm2 (ORCPT
+        id S1729411AbgAIXr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 18:47:29 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:35242 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbgAIXr2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 18:42:28 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z124so52258pgb.13
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 15:42:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:subject:cc:to:in-reply-to:references:message-id
-         :mime-version:content-transfer-encoding;
-        bh=YoRMhkZec9G754MeMpA3qyugr+9dP1r59sqNei59Bxc=;
-        b=D35Tnx2qGOx5wYEODGub+OOGjjHIMqMro6ZmZhmjSXbAHjXU4M5d+fM8W0jNKs7+j2
-         pjfHSASWvUBuPPbYqX1zPamNaz8n/fgfkW3ia4D0vunpEH3G+pn7KYoDTYQ/gG/mJmiI
-         yvZhtWf9RkHB/m27NI/0O95YWzWaozyWygAmOBOOH9UhFnVVrTjxMRW8ZbQn1QaP3OEX
-         rNaAhVf79aDKtq/2Xk6l1ta2KLUAW21SNVr+6upC4MdJCHtaXtPWLfl6yWgm8BV8UqeO
-         loFErmafn0is/MVcTxKX6E3dgn4/Latu0qWQMrtB1090RsCxe1i3fPvJhggAfshogVe1
-         3jtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:cc:to:in-reply-to:references
-         :message-id:mime-version:content-transfer-encoding;
-        bh=YoRMhkZec9G754MeMpA3qyugr+9dP1r59sqNei59Bxc=;
-        b=bmsBhDnKIhBLoGwPHXZFUDxSkOH7B6AvvM36XZZ2ApOJImTX4RlXiRKiH2oxXmdxXw
-         UVnWUCfqXRqNkL/LfHf4YY7Y7NOrQlIs8BRLbqzkZkuz/WrAKZARZ4V2rrhwO0JFA24A
-         NEoa66EhgEKi00eq5LkwQe43TH2eoZaj5wr9rJDUKiOroRcKWkOcOCHz7c2jnPvEDez/
-         fNFWEeJgdNTIUFqc5TF06sc1//u/lztzgFw/EDScDiGnXGttOhPER+KwSZWdQet9fjnX
-         o5M3cOMl5b59DyjhFtqBtxTCms6siyGVt6BlhDXoRsNke2LCkX6UNn67znZkS4EKl1Nk
-         iGKg==
-X-Gm-Message-State: APjAAAXuqfi6sWIei2NT0OuacBbFn6FeMrTVw510IQCghFN1K3nbPhlh
-        2nWz1/2H7Y4uJQL64LQK7+6Gkg==
-X-Google-Smtp-Source: APXvYqymalA5zmwiQNv0P8QaSMt5qB4BiTihWTnSZaqORKmMdLg29qW7g8n0TfOd8rT3pRf6yvOpUg==
-X-Received: by 2002:a65:5281:: with SMTP id y1mr575543pgp.327.1578613347669;
-        Thu, 09 Jan 2020 15:42:27 -0800 (PST)
-Received: from localhost ([2620:0:1000:2514:7f69:cd98:a2a2:a03d])
-        by smtp.gmail.com with ESMTPSA id o14sm38329pgm.67.2020.01.09.15.42.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 15:42:27 -0800 (PST)
-Date:   Thu, 09 Jan 2020 15:42:27 -0800 (PST)
-X-Google-Original-Date: Thu, 09 Jan 2020 15:34:58 PST (-0800)
-From:   Palmer Dabbelt <palmerdabbelt@google.com>
-X-Google-Original-From: Palmer Dabbelt <palmer@dabbelt.com>
-Subject:     Re: [PATCH] RISC-V: Typo fixes in image header and documentation.
-CC:     Atish Patra <Atish.Patra@wdc.com>, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org, merker@debian.org,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        aou@eecs.berkeley.edu, linux-doc@vger.kernel.org,
-        palmer@sifive.com, mchehab+samsung@kernel.org
-To:     corbet@lwn.net
-In-Reply-To: <20191210072947.7018340c@lwn.net>
-References: <20191210072947.7018340c@lwn.net>
-  <4912c007ab6c19321c8c988ae2328efbfb3e582d.camel@wdc.com> <mhng-3a815562-1222-4737-a77c-6dab9948db79@palmerdabbelt-glaptop>
-Message-ID: <mhng-94b9cad5-0d14-480f-b428-8752630064d2@palmerdabbelt-glaptop>
-Mime-Version: 1.0 (MHng)
+        Thu, 9 Jan 2020 18:47:28 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 009NccQb003715;
+        Thu, 9 Jan 2020 23:46:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=nRKnwHomok/PpPFwHMvZtyTJWnTH8Av6uYkXPJFr5L0=;
+ b=A+1qXt2wKxmM3O0bCR4wk11/+OHX6zPymnH2xGsRDPxDOgPP36J7gWvT50+GAborHaRr
+ orzlH4nhv17YJJZ1HUyBcRJBd5lQoRsr+SW68bga+0ez4jaFItUmrfPRU+7hOnoPk877
+ Zi4WLc7wwbvqV/f4UCx80CugqpR9UEx7Hs5Cr0JynkTioE453a2Dw7u9+iijqk7AGlP4
+ S7kclCvN7Tfb9M9TKQIyH+WXWGlb7G9rbVVJGssLyMxgGJ1dCgU+F9py4/iHPta9u/nl
+ fs3NAZrv+JwM/acsSR+todj4Km0Ok/PckbiUPQC+IhFyH+1Sp5ISntCzDbNM1aJZvbQF WA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2xaj4ue8qa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 Jan 2020 23:46:23 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 009Nd1pj089807;
+        Thu, 9 Jan 2020 23:46:23 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2xdms0b9ew-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 Jan 2020 23:46:22 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 009NkKGp001333;
+        Thu, 9 Jan 2020 23:46:20 GMT
+Received: from bostrovs-us.us.oracle.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 09 Jan 2020 15:46:20 -0800
+Subject: Re: [RFC PATCH V2 01/11] xen/manage: keep track of the on-going
+ suspend mode
+To:     Anchal Agarwal <anchalag@amazon.com>, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        jgross@suse.com, linux-pm@vger.kernel.org, linux-mm@kvack.org,
+        kamatam@amazon.com, sstabellini@kernel.org, konrad.wilk@oracle.co,
+        roger.pau@citrix.com, axboe@kernel.dk, davem@davemloft.net,
+        rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz,
+        peterz@infradead.org, eduval@amazon.com, sblbir@amazon.com,
+        xen-devel@lists.xenproject.org, vkuznets@redhat.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Woodhouse@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com,
+        dwmw@amazon.co.uk, fllinden@amaozn.com
+References: <20200107233720.GA17906@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <88721569-d425-8df3-2ab2-3aa9155b326c@oracle.com>
+Date:   Thu, 9 Jan 2020 18:46:16 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
+MIME-Version: 1.0
+In-Reply-To: <20200107233720.GA17906@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9495 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001090198
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9495 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001090198
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Dec 2019 06:29:47 PST (-0800), corbet@lwn.net wrote:
-> On Thu, 05 Dec 2019 15:03:10 -0800 (PST)
-> Palmer Dabbelt <palmerdabbelt@google.com> wrote:
->
->> Reviewed-by: Palmer Dabbelt <palmerdabbelt@google.com>
->>
->> I'm assuming this is not going in through the RISC-V tree as it mostly touches
->> Documentation/.
->
-> I was assuming it was going through the risc-v tree since it touches arch
-> code :)  I can go ahead and apply it.
 
-I don't see this in 5.5-rc5.
 
+On 1/7/20 6:37 PM, Anchal Agarwal wrote:
+> +
+> +static int xen_setup_pm_notifier(void)
+> +{
+> +	if (!xen_hvm_domain())
+> +		return -ENODEV;
+
+ARM guests are also HVM domains. Is it OK for them to register the 
+notifier? The diffstat suggests that you are supporting ARM.
+
+-boris
+
+> +
+> +	return register_pm_notifier(&xen_pm_notifier_block);
+> +}
 >
-> Thanks,
->
-> jon
+
