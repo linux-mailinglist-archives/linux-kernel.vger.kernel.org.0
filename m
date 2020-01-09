@@ -2,164 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7744B135CCA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 16:32:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8838C135CD3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 16:32:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732440AbgAIPcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 10:32:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38670 "EHLO mail.kernel.org"
+        id S1732467AbgAIPc3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 10:32:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732374AbgAIPcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 10:32:01 -0500
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1729589AbgAIPc2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 10:32:28 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40E992075D;
-        Thu,  9 Jan 2020 15:32:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FFE92072A;
+        Thu,  9 Jan 2020 15:32:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578583920;
-        bh=Hn4tjjgwi3+in4jXN65JjSaynghmcVXRXyVZVHU3QjE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZSQIHVCMCfpRCRvlV7H1IfAqc59b3kdLkhnvouwDuvdeAOhByg1FmPx46KN9AgHws
-         GzYomRmbxTpIsBADwRCUwpn6jgiXMUipwWkV4NRmCsCT5v2iKP1Q5nobXMDufWCV7Z
-         gTJ4/FsVhIvW6L7qtepbFVqHRb395qBcWj/SkAGk=
-Received: by mail-qk1-f180.google.com with SMTP id c16so6316439qko.6;
-        Thu, 09 Jan 2020 07:32:00 -0800 (PST)
-X-Gm-Message-State: APjAAAWU5MNAaKhcNC/YctENhD5o3ugfgZb/9VQ6qdRyhFqBnqyt4+e0
-        yFd42qm7K0eFof88K/0LpTHZVh0LFyV/4CLzsQ==
-X-Google-Smtp-Source: APXvYqz562TZ5Zfx7NktA0xTJngmgvoVxt/eH+oL4dBz+HGBSFqhzyA8cfEzhcZqQUpS3wTBPt+I1VqF9W6GqJf8o/E=
-X-Received: by 2002:a37:a70b:: with SMTP id q11mr9940102qke.393.1578583919273;
- Thu, 09 Jan 2020 07:31:59 -0800 (PST)
+        s=default; t=1578583947;
+        bh=e+8teUutDcTrOf1C5tq1dzQr8Tjsy4MZMpCRFIYHJuc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=x0+zT5fu5S2nCgP35Kc9swptcQDkCVh27Z9qnkoMWKBJy5yQ7KwHux13C4WwVsxeU
+         kXmNgtSCnHfhTbdZsigqPxu8OO2SYXWmcDvaPxHkFWk+T1D9WIDDjy+IBzf6h0yK1r
+         0e/PzjaCU6YFd00U72+HOKb8jUFv5SL+NSoSDeTs=
+Date:   Thu, 9 Jan 2020 10:32:26 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux- stable <stable@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        Firo Yang <firo.yang@suse.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        rcu@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        lkft-triage@lists.linaro.org
+Subject: Re: [PATCH AUTOSEL 4.19 46/84] tcp/dccp: fix possible race
+ __inet_lookup_established()
+Message-ID: <20200109153226.GG1706@sasha-vm>
+References: <20191227174352.6264-1-sashal@kernel.org>
+ <20191227174352.6264-46-sashal@kernel.org>
+ <CA+G9fYv8o4he83kqpxB9asT7eUMAeODyX3MBbmwsCdgqLcXPWw@mail.gmail.com>
 MIME-Version: 1.0
-References: <1577165532-28772-1-git-send-email-sthella@codeaurora.org>
- <20200108163943.GA26863@bogus> <8aeb91730552357db340f8bfb21e6d15@codeaurora.org>
-In-Reply-To: <8aeb91730552357db340f8bfb21e6d15@codeaurora.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 9 Jan 2020 09:31:46 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL5Gh2A3KfCgRFv+B50Y4PPF1b+qq8vY6yKhbea6KPAkw@mail.gmail.com>
-Message-ID: <CAL_JsqL5Gh2A3KfCgRFv+B50Y4PPF1b+qq8vY6yKhbea6KPAkw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: nvmem: add binding for QTI SPMI SDAM
-To:     sthella@codeaurora.org
-Cc:     Andy Gross <agross@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYv8o4he83kqpxB9asT7eUMAeODyX3MBbmwsCdgqLcXPWw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 9, 2020 at 4:57 AM <sthella@codeaurora.org> wrote:
+On Thu, Jan 02, 2020 at 01:31:22PM +0530, Naresh Kamboju wrote:
+>On Fri, 27 Dec 2019 at 23:17, Sasha Levin <sashal@kernel.org> wrote:
+>>
+>> From: Eric Dumazet <edumazet@google.com>
+>>
+>> [ Upstream commit 8dbd76e79a16b45b2ccb01d2f2e08dbf64e71e40 ]
+>>
+>> Michal Kubecek and Firo Yang did a very nice analysis of crashes
+>> happening in __inet_lookup_established().
+>>
+>> Since a TCP socket can go from TCP_ESTABLISH to TCP_LISTEN
+>> (via a close()/socket()/listen() cycle) without a RCU grace period,
+>> I should not have changed listeners linkage in their hash table.
+>>
+>> They must use the nulls protocol (Documentation/RCU/rculist_nulls.txt),
+>> so that a lookup can detect a socket in a hash list was moved in
+>> another one.
+>>
+>> Since we added code in commit d296ba60d8e2 ("soreuseport: Resolve
+>> merge conflict for v4/v6 ordering fix"), we have to add
+>> hlist_nulls_add_tail_rcu() helper.
 >
-> On 2020-01-08 22:09, Rob Herring wrote:
-> > On Tue, Dec 24, 2019 at 11:02:12AM +0530, Shyam Kumar Thella wrote:
-> >> QTI SDAM allows PMIC peripherals to access the shared memory that is
-> >> available on QTI PMICs. Add documentation for it.
-> >>
-> >> Signed-off-by: Shyam Kumar Thella <sthella@codeaurora.org>
-> >> ---
-> >>  .../devicetree/bindings/nvmem/qcom,spmi-sdam.yaml  | 79
-> >> ++++++++++++++++++++++
-> >>  1 file changed, 79 insertions(+)
-> >>  create mode 100644
-> >> Documentation/devicetree/bindings/nvmem/qcom,spmi-sdam.yaml
-> >>
-> >> diff --git
-> >> a/Documentation/devicetree/bindings/nvmem/qcom,spmi-sdam.yaml
-> >> b/Documentation/devicetree/bindings/nvmem/qcom,spmi-sdam.yaml
-> >> new file mode 100644
-> >> index 0000000..8961a99
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/nvmem/qcom,spmi-sdam.yaml
-> >> @@ -0,0 +1,79 @@
-> >> +# SPDX-License-Identifier: GPL-2.0
-> >
-> > Dual license new bindings:
-> >
-> > (GPL-2.0-only OR BSD-2-Clause)
-> >
-> > Please spread the word in QCom.
-> Sure. I will add Dual license in next patchset.
-> >
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: http://devicetree.org/schemas/nvmem/qcom,spmi-sdam.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: Qualcomm Technologies, Inc. SPMI SDAM DT bindings
-> >> +
-> >> +maintainers:
-> >> +  - Shyam Kumar Thella <sthella@codeaurora.org>
-> >> +
-> >> +description: |
-> >> +  The SDAM provides scratch register space for the PMIC clients. This
-> >> +  memory can be used by software to store information or communicate
-> >> +  to/from the PBUS.
-> >> +
-> >> +allOf:
-> >> +  - $ref: "nvmem.yaml#"
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    enum:
-> >> +      - qcom,spmi-sdam
-> >> +
-> >> +  reg:
-> >> +    maxItems: 1
-> >> +
-> >> +  "#address-cells":
-> >> +    const: 1
-> >> +
-> >> +  "#size-cells":
-> >> +    const: 1
-> >
-> > ranges? The child addresses should be translateable I assume.
-> The addresses are not memory mapped on the CPU's address domain. They
-> are the SPMI addresses which can be accessed over SPMI controller.
+>The kernel panic reported on all devices,
+>While running LTP syscalls accept* test cases on stable-rc-4.19 branch kernel.
+>This report log extracted from qemu_x86_64.
+>
+>Reverting this patch re-solved kernel crash.
 
-Doesn't have to be a CPU address. Are the child offsets within the
-range defined in the parent 'reg'? If so, then it should have
-'ranges'.
+I'll drop it until we can look into what's happening here, thanks!
 
-> >
-> >> +
-> >> +required:
-> >> +  - compatible
-> >> +  - reg
-> >> +
-> >> +patternProperties:
-> >> +  "^.*@[0-9a-f]+$":
-> >> +    type: object
-> >> +
-> >> +    properties:
-> >> +      reg:
-> >> +        maxItems: 1
-> >> +        description:
-> >> +          Offset and size in bytes within the storage device.
-> >> +
-> >> +      bits:
-> >
-> > Needs a type reference.
-> Yes. I will add a reference in the next patch set.
-> >
-> >> +        maxItems: 1
-> >> +        items:
-> >> +          items:
-> >> +            - minimum: 0
-> >> +              maximum: 7
-> >> +              description:
-> >> +                Offset in bit within the address range specified by
-> >> reg.
-> >> +            - minimum: 1
-> >
-> > max is 7?
-> I don't think it is limited to 7 as it is the size within the address
-> range specified by reg. If the address range is more than a byte size
-> can be more.
-
-Then why is the maximum offset 7?
-
-Rob
+-- 
+Thanks,
+Sasha
