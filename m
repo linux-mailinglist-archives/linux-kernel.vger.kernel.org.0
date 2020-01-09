@@ -2,113 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44E64136313
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 23:10:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F9821362FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 23:04:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729207AbgAIWKs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 17:10:48 -0500
-Received: from excelsior.roeckx.be ([195.234.45.115]:36751 "EHLO
-        excelsior.roeckx.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbgAIWKs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 17:10:48 -0500
-X-Greylist: delayed 493 seconds by postgrey-1.27 at vger.kernel.org; Thu, 09 Jan 2020 17:10:46 EST
-Received: from intrepid.roeckx.be (localhost [127.0.0.1])
-        by excelsior.roeckx.be (Postfix) with ESMTP id 3842EA8A05A9;
-        Thu,  9 Jan 2020 22:02:31 +0000 (UTC)
-Received: by intrepid.roeckx.be (Postfix, from userid 1000)
-        id EB6ED1FE0C79; Thu,  9 Jan 2020 23:02:30 +0100 (CET)
-Date:   Thu, 9 Jan 2020 23:02:30 +0100
-From:   Kurt Roeckx <kurt@roeckx.be>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Stephan Mueller <smueller@chronox.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        "Ahmed S. Darwish" <darwish.07@gmail.com>,
-        Lennart Poettering <mzxreary@0pointer.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Alexander E. Patrakov" <patrakov@gmail.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Willy Tarreau <w@1wt.eu>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>
-Subject: Re: [PATCH v3 0/8] Rework random blocking
-Message-ID: <20200109220230.GA39185@roeckx.be>
-References: <20191226140423.GB3158@mit.edu>
- <4048434.Q8HajmOrkZ@tauon.chronox.de>
- <20191227130436.GC70060@mit.edu>
- <15817620.rmTN4T87Wr@tauon.chronox.de>
- <20191227220857.GD70060@mit.edu>
+        id S1729035AbgAIWED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 17:04:03 -0500
+Received: from mga09.intel.com ([134.134.136.24]:49496 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725840AbgAIWEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 17:04:02 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 14:04:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,414,1571727600"; 
+   d="scan'208";a="246804087"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by fmsmga004.fm.intel.com with ESMTP; 09 Jan 2020 14:04:01 -0800
+Date:   Thu, 9 Jan 2020 14:04:01 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Barret Rhoden <brho@google.com>
+Cc:     pbonzini@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: squelch uninitialized variable warning
+Message-ID: <20200109220401.GA2682@linux.intel.com>
+References: <20200109195855.17353-1-brho@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191227220857.GD70060@mit.edu>
+In-Reply-To: <20200109195855.17353-1-brho@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 27, 2019 at 05:08:57PM -0500, Theodore Y. Ts'o wrote:
-> On Fri, Dec 27, 2019 at 10:22:23PM +0100, Stephan Mueller wrote:
-> > > So let's take a step back and ask the question: "Exactly what _value_
-> > > do you want to provide by creating some kind of true random
-> > > interface?"  What does this enable?  What applications does this
-> > > really help?
-> > 
-> > There are simply cryptographers who have use cases for such random numbers. 
-> > The core use case is to seed other DRNGs and avoiding the chaining of free-
-> > running DRNGs.
+On Thu, Jan 09, 2020 at 02:58:55PM -0500, Barret Rhoden wrote:
+> If gfn_to_hva_many() fails, __kvm_gfn_to_hva_cache_init() will return an
+> error.  Before it does, it might use nr_pages_avail, which my compiler
+> complained about:
 > 
-> For this very specialized use case, what I think the kernel should
-> provide is maximal transparency; that is, given the DRBG direct access
-> to the TPM's random number generator, or direct access to the
-> ChaosKey, and the userspace DRBG should be able to get a list of the
-> various hardware RNG's, and select one, with the characterization
-> being done userspace, not in the kernel.
+> 	virt/kvm/kvm_main.c:2193:13: warning: 'nr_pages_avail' may be
+> 	used uninitialized in this function [-Wmaybe-uninitialized]
+> 
+> 	   start_gfn += nr_pages_avail;
 
-One thing the NIST DRBGs have is prediction resistance, which is
-done by reseeding. If you chain DRBGs, you tell your parent DRBG
-that you want prediction resistance, so your parent will also
-reseed. There currently is no way to tell the kernel to reseed.
+Ugh, this whole flow is funky.  The change is correct, and is certainly the
+minimal change if we want to backport this to stable, but IMO it's putting
+lipstick on a pig.  I'd rather fix the underlying issues and make the code
+more readable in the process.  I'll send a patch.
 
-This reseed option might be something that some people would like
-to see. If such an option is added, I expect that the kernel might
-block until it has gotten enough new entropy from it's entropy
-sources. But I don't actually see a need to add such an option.
+If we want to take this as a minimal fix,
 
-If the kernel provides a good RNG, the only reason I can see why
-you would like to have direct access to a hwrng is to verify that
-it's working correctly. That might mean that you put it in some
-special mode where it returns raw unprocessed values. If the device
-is in such a mode, it's output will not provide the same entropy
-per bit, and so I would expect the kernel to stop using it directly.
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 
-I guess there might be people who would like to use it directly,
-but I think we should instead encourage them kernel RNG.
-
-> You can talk about providing tools that try to make these estimations
-> --- but these sorts of things would have to be done on each user's
-> hardware, and for most distro users, it's just not practical.
-
-I would check my own hardware if such an option was available. I
-think it can be useful to see if the current estimates in the
-kernel are conservative enough or not. But it would require that
-you can know what the entropy source is, like the keyboard or
-harddisk.
-
-> So if it's just for cryptographers, then let it all be done in
-> userspace, and let's not make it easy for GPG, OpenSSL, etc., to all
-> say, "We want TrueRandom(tm); we won't settle for less".
-
-I don't think we want that. As far as I know, the only reason for
-using /dev/random is that /dev/urandom returns data before it
-has sufficient entropy.
-
-
-Kurt
-
+> Signed-off-by: Barret Rhoden <brho@google.com>
+> ---
+>  virt/kvm/kvm_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index d9aced677ddd..f8249b153d33 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -2172,7 +2172,7 @@ static int __kvm_gfn_to_hva_cache_init(struct kvm_memslots *slots,
+>  	gfn_t start_gfn = gpa >> PAGE_SHIFT;
+>  	gfn_t end_gfn = (gpa + len - 1) >> PAGE_SHIFT;
+>  	gfn_t nr_pages_needed = end_gfn - start_gfn + 1;
+> -	gfn_t nr_pages_avail;
+> +	gfn_t nr_pages_avail = 0;
+>  	int r = start_gfn <= end_gfn ? 0 : -EINVAL;
+>  
+>  	ghc->gpa = gpa;
+> -- 
+> 2.25.0.rc1.283.g88dfdc4193-goog
+> 
