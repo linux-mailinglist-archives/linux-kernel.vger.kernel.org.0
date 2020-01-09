@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD4E0136254
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 22:17:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 369DF136257
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 22:17:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728377AbgAIVRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 16:17:00 -0500
+        id S1728618AbgAIVRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 16:17:06 -0500
 Received: from mga09.intel.com ([134.134.136.24]:44432 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725775AbgAIVQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 16:16:59 -0500
+        id S1727854AbgAIVRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 16:17:00 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
   by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 13:16:59 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,414,1571727600"; 
-   d="scan'208";a="212025752"
+   d="scan'208";a="212025756"
 Received: from yyu32-desk.sc.intel.com ([143.183.136.51])
-  by orsmga007.jf.intel.com with ESMTP; 09 Jan 2020 13:16:58 -0800
+  by orsmga007.jf.intel.com with ESMTP; 09 Jan 2020 13:16:59 -0800
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         "H. Peter Anvin" <hpa@zytor.com>,
@@ -35,9 +35,9 @@ To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         Fenghua Yu <fenghua.yu@intel.com>,
         Peter Zijlstra <peterz@infradead.org>
 Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 1/3] x86/fpu/xstate: Fix last_good_offset in setup_xstate_features()
-Date:   Thu,  9 Jan 2020 13:14:50 -0800
-Message-Id: <20200109211452.27369-2-yu-cheng.yu@intel.com>
+Subject: [PATCH 2/3] x86/fpu/xstate: Fix XSAVES offsets in setup_xstate_comp()
+Date:   Thu,  9 Jan 2020 13:14:51 -0800
+Message-Id: <20200109211452.27369-3-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20200109211452.27369-1-yu-cheng.yu@intel.com>
 References: <20200109211452.27369-1-yu-cheng.yu@intel.com>
@@ -48,61 +48,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function setup_xstate_features() uses CPUID to find each xfeature's
-standard-format offset and size.  Since XSAVES always uses the compacted
-format, supervisor xstates are *NEVER* in the standard-format and their
-offsets are left as -1's.  However, they are still being tracked as
-last_good_offset.
+In setup_xstate_comp(), each XSAVES component offset starts from the end of
+its preceding component plus alignment.  A disabled feature does not take
+space and its offset should be set to the end of its preceding one with no
+alignment.  However, in this case, alignment is incorrectly added to the
+offset, which can cause the next component to have a wrong offset.
 
-Fix it by tracking only user xstate offsets.
+This problem has not been visible because currently there is no xfeature
+requiring alignment.
+
+Fix it by tracking the next starting offset only from enabled xfeatures.
+To make it clear, also change the function name to setup_xstate_comp_
+offsets().
 
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
 ---
- arch/x86/kernel/fpu/xstate.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ arch/x86/kernel/fpu/xstate.c | 30 +++++++++++-------------------
+ 1 file changed, 11 insertions(+), 19 deletions(-)
 
 diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index a1806598aaa4..3ef3603bcfc5 100644
+index 3ef3603bcfc5..73314e8fce02 100644
 --- a/arch/x86/kernel/fpu/xstate.c
 +++ b/arch/x86/kernel/fpu/xstate.c
-@@ -265,22 +265,26 @@ static void __init setup_xstate_features(void)
+@@ -344,9 +344,9 @@ static int xfeature_is_aligned(int xfeature_nr)
+  * xsave area. This supports both standard format and compacted format
+  * of the xsave aread.
+  */
+-static void __init setup_xstate_comp(void)
++static void __init setup_xstate_comp_offsets(void)
+ {
+-	unsigned int xstate_comp_sizes[XFEATURE_MAX];
++	unsigned int next_offset;
+ 	int i;
  
- 		cpuid_count(XSTATE_CPUID, i, &eax, &ebx, &ecx, &edx);
+ 	/*
+@@ -360,31 +360,23 @@ static void __init setup_xstate_comp(void)
  
-+		xstate_sizes[i] = eax;
-+
- 		/*
- 		 * If an xfeature is supervisor state, the offset
- 		 * in EBX is invalid. We leave it to -1.
- 		 */
--		if (xfeature_is_user(i))
-+		if (xfeature_is_user(i)) {
- 			xstate_offsets[i] = ebx;
+ 	if (!boot_cpu_has(X86_FEATURE_XSAVES)) {
+ 		for (i = FIRST_EXTENDED_XFEATURE; i < XFEATURE_MAX; i++) {
+-			if (xfeature_enabled(i)) {
++			if (xfeature_enabled(i))
+ 				xstate_comp_offsets[i] = xstate_offsets[i];
+-				xstate_comp_sizes[i] = xstate_sizes[i];
+-			}
+ 		}
+ 		return;
+ 	}
  
--		xstate_sizes[i] = eax;
--		/*
--		 * In our xstate size checks, we assume that the
--		 * highest-numbered xstate feature has the
--		 * highest offset in the buffer.  Ensure it does.
--		 */
--		WARN_ONCE(last_good_offset > xstate_offsets[i],
--			"x86/fpu: misordered xstate at %d\n", last_good_offset);
--		last_good_offset = xstate_offsets[i];
-+			/*
-+			 * In our xstate size checks, we assume that the
-+			 * highest-numbered xstate feature has the
-+			 * highest offset in the buffer.  Ensure it does.
-+			 */
-+			WARN_ONCE(last_good_offset > xstate_offsets[i],
-+				"x86/fpu: misordered xstate at %d\n",
-+				last_good_offset);
-+
-+			last_good_offset = xstate_offsets[i];
-+		}
+-	xstate_comp_offsets[FIRST_EXTENDED_XFEATURE] =
+-		FXSAVE_SIZE + XSAVE_HDR_SIZE;
++	next_offset = FXSAVE_SIZE + XSAVE_HDR_SIZE;
+ 
+ 	for (i = FIRST_EXTENDED_XFEATURE; i < XFEATURE_MAX; i++) {
+-		if (xfeature_enabled(i))
+-			xstate_comp_sizes[i] = xstate_sizes[i];
+-		else
+-			xstate_comp_sizes[i] = 0;
++		if (!xfeature_enabled(i))
++			continue;
+ 
+-		if (i > FIRST_EXTENDED_XFEATURE) {
+-			xstate_comp_offsets[i] = xstate_comp_offsets[i-1]
+-					+ xstate_comp_sizes[i-1];
++		if (xfeature_is_aligned(i))
++			next_offset = ALIGN(next_offset, 64);
+ 
+-			if (xfeature_is_aligned(i))
+-				xstate_comp_offsets[i] =
+-					ALIGN(xstate_comp_offsets[i], 64);
+-		}
++		xstate_comp_offsets[i] = next_offset;
++		next_offset += xstate_sizes[i];
  	}
  }
  
+@@ -778,7 +770,7 @@ void __init fpu__init_system_xstate(void)
+ 
+ 	fpu__init_prepare_fx_sw_frame();
+ 	setup_init_fpu_buf();
+-	setup_xstate_comp();
++	setup_xstate_comp_offsets();
+ 	print_xstate_offset_size();
+ 
+ 	pr_info("x86/fpu: Enabled xstate features 0x%llx, context size is %d bytes, using '%s' format.\n",
 -- 
 2.21.0
 
