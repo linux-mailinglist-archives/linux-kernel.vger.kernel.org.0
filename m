@@ -2,88 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38778135FB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 18:51:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92EDC135F82
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 18:42:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388349AbgAIRu5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 12:50:57 -0500
-Received: from mail1.fiberby.net ([193.104.135.124]:40390 "EHLO
-        mail1.fiberby.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730326AbgAIRu4 (ORCPT
+        id S2388230AbgAIRm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 12:42:29 -0500
+Received: from mail-ot1-f47.google.com ([209.85.210.47]:33476 "EHLO
+        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728724AbgAIRm3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 12:50:56 -0500
-X-Greylist: delayed 554 seconds by postgrey-1.27 at vger.kernel.org; Thu, 09 Jan 2020 12:50:55 EST
-Received: from x201s.roaming.asbjorn.biz (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-        by mail1.fiberby.net (Postfix) with ESMTPSA id A759A6010C;
-        Thu,  9 Jan 2020 17:41:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-        s=201905; t=1578591697;
-        bh=aO90ZkWcNxvVfMQ699FY54Oi71pyX/FoCIGUYqP1+0U=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ZGdO3bXag3oQlpfK+0ry+F2q+jK9NIvMoyCTZ+8g9s+A5xN6ZwndRz+s0AzM6Hjri
-         vJT0o0qp16Oooy5k36E16sHSREKf2SpYLk9WYAvXLgDD3Td2OBAqG/oGyh6Woxe45k
-         irwutle4gtBzSVE4jfjejfDbJxyt1hg9bhjwymFPIh68o9032/zKqmSOQuYI/ly/Zx
-         4EWS9aTpVexV78lZonSKKVul6ey7gZofKsCB1Q7ocC89MNvl3Ar2fS/7Wn3OpB2t4D
-         aa6nMdpgdh89WFlMINxTgHHCo6ZSVzFTtGr7B2KcwudgJilzAt9zEnqlfE9EZY9aDG
-         V5wfaYA+QQ33A==
-Received: from x201s.roaming.asbjorn.biz (localhost [127.0.0.1])
-        by x201s.roaming.asbjorn.biz (Postfix) with ESMTP id 0AC5020023E;
-        Thu,  9 Jan 2020 17:41:34 +0000 (UTC)
-Subject: Re: [Bridge] [RFC net-next Patch 0/3] net: bridge: mrp: Add support
- for Media Redundancy Protocol(MRP)
-To:     Stephen Hemminger <stephen@networkplumber.org>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc:     andrew@lunn.ch, jakub.kicinski@netronome.com,
-        nikolay@cumulusnetworks.com, netdev@vger.kernel.org,
-        roopa@cumulusnetworks.com, bridge@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, vivien.didelot@gmail.com,
-        UNGLinuxDriver@microchip.com, anirudh.venkataramanan@intel.com,
-        jiri@mellanox.com, jeffrey.t.kirsher@intel.com, dsahern@gmail.com,
-        olteanv@gmail.com, davem@davemloft.net,
-        Jesper Dangaard Brouer <brouer@redhat.com>
-References: <20200109150640.532-1-horatiu.vultur@microchip.com>
- <20200109081907.06281c0f@hermes.lan>
-From:   =?UTF-8?Q?Asbj=c3=b8rn_Sloth_T=c3=b8nnesen?= <ast@fiberby.net>
-Message-ID: <da02006c-dc9d-ce1a-861e-4fc1c1dc2830@fiberby.net>
-Date:   Thu, 9 Jan 2020 17:41:33 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Thu, 9 Jan 2020 12:42:29 -0500
+Received: by mail-ot1-f47.google.com with SMTP id b18so8131001otp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 09:42:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qJQU304VHQkkMGXJtC4nL1fGnD1E/KBCjfdV3OkjqvE=;
+        b=Jdjv0vumGKpoWvbhDWnOYKT+r59dphPUdtZSJO+DpyW86Et0F9M1LiWghsUG4FyL0m
+         U7DeXekNc4KmZppbSf+4H9Ilr3Jd3XAnwJwMaq02llFrzRM+Ns0Wo5Q78PZf2x0kBmon
+         8QStIbwrywUl7/x88A3nAWAlLrIaJdmPZhMIfXWIJVWPSIgCGdlOjXRPRSp1GImhEJ/z
+         jHOID0XSe19SJb5AKTKfjDpY8r5bh6AnFIitKtfVAPwCgsRRqHd+bpKgg8i9ltCCe6+f
+         IrN75sxKirfMujc3f4F4F1u/VCqoyDc4jGFfAdnuWPLmP87jxfm4pcSR0Fnu1A0BU2yV
+         jCQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qJQU304VHQkkMGXJtC4nL1fGnD1E/KBCjfdV3OkjqvE=;
+        b=PZA/pwtNZMh1pGzPAiORS5Miss+QGOZB/4s0+Qej0EBqx3pvyTpQE92tpFaIyUx3b/
+         IQSbcuLShztyWYxvNvEfX4L/L2XhEPxC2KGs4IwDq6Xmwxnx08WeZA89X7CUbJtSdzY7
+         UQ0fqs6bN8F5JqQVufanITDPnifSnFfEzb2CO29ZQwqkb4ECOsJTy7h7NkTJ74z90PAM
+         IiB6AMglv/UF4HXkQaJKDRmtGSRmKlmHFFnUZrhvYOvEgd9NFtjaVfBBRiE4gwDGbp3S
+         TEQevkhji7gyUFIVbMLkx1RsI9TfVI2bulgCjGSyFFJJ7L7G5viElejQZxhF/SnVY5Gm
+         ixpw==
+X-Gm-Message-State: APjAAAUTfde9xUA03yff+0wSRbIbG554/fUESJzBS+zN5p8GmFRBdsNm
+        HktVvXx3FYZppl/vodtGYVdGFDAztMz/LiY+QPI3HA==
+X-Google-Smtp-Source: APXvYqzaK1XUgBGCRWkdnqBb5GMv5jiVMA9a2b83aw2Rpd12IJH5G/xkFbGqJ7MyCXSVl2seyYbRvCPDN3lR5pPzmx8=
+X-Received: by 2002:a05:6830:1d6a:: with SMTP id l10mr9858656oti.233.1578591748089;
+ Thu, 09 Jan 2020 09:42:28 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200109081907.06281c0f@hermes.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200109152322.104466-1-elver@google.com> <20200109162739.GS13449@paulmck-ThinkPad-P72>
+ <CANpmjNOR4oT+yuGsjajMjWduKjQOGg9Ybd97L2jwY2ZJN8hgqg@mail.gmail.com> <20200109173127.GU13449@paulmck-ThinkPad-P72>
+In-Reply-To: <20200109173127.GU13449@paulmck-ThinkPad-P72>
+From:   Marco Elver <elver@google.com>
+Date:   Thu, 9 Jan 2020 18:42:16 +0100
+Message-ID: <CANpmjNP=8cfqgXkz7f8D6STTn1-2h9qzUery4qMHeTTeNJOdxQ@mail.gmail.com>
+Subject: Re: [PATCH -rcu 0/2] kcsan: Improvements to reporting
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Horatiu and Stephen,
+On Thu, 9 Jan 2020 at 18:31, Paul E. McKenney <paulmck@kernel.org> wrote:
+>
+> On Thu, Jan 09, 2020 at 06:03:39PM +0100, Marco Elver wrote:
+> > On Thu, 9 Jan 2020 at 17:27, Paul E. McKenney <paulmck@kernel.org> wrote:
+> > >
+> > > On Thu, Jan 09, 2020 at 04:23:20PM +0100, Marco Elver wrote:
+> > > > Improvements to KCSAN data race reporting:
+> > > > 1. Show if access is marked (*_ONCE, atomic, etc.).
+> > > > 2. Rate limit reporting to avoid spamming console.
+> > > >
+> > > > Marco Elver (2):
+> > > >   kcsan: Show full access type in report
+> > > >   kcsan: Rate-limit reporting per data races
+> > >
+> > > Queued and pushed, thank you!  I edited the commit logs a bit, so could
+> > > you please check to make sure that I didn't mess anything up?
+> >
+> > Looks good to me, thank you.
+> >
+> > > At some point, boot-time-allocated per-CPU arrays might be needed to
+> > > avoid contention on large systems, but one step at a time.  ;-)
+> >
+> > I certainly hope the rate of fixing/avoiding data races will not be
+> > eclipsed by the rate at which new ones are introduced. :-)
+>
+> Me too!
+>
+> However, on a large system, duplicate reports might happen quite
+> frequently, which might cause slowdowns given the single global
+> array.  Or maybe not -- I guess we will find out soon enough. ;-)
+>
+> But I must confess that I am missing how concurrent access to the
+> report_times[] array is handled.  I would have expected that
+> rate_limit_report() would choose a random starting entry and
+> search circularly.  And I would expect that the code at the end
+> of that function would instead look something like this:
+>
+>         if (ktime_before(oldtime, invalid_before) &&
+>             cmpxchg(&use_entry->time, oldtime, now) == oldtime) {
+>                 use_entry->frame1 = frame1;
+>                 use_entry->frame2 = frame2;
+>         } else {
+>                 // Too bad, next duplicate report won't be suppressed.
+>         }
+>
+> Where "oldtime" is captured from the entry during the scan, and from the
+> first entry scanned.  This cmpxchg() approach is of course vulnerable
+> to the ->frame1 and ->frame2 assignments taking more than three seconds
+> (by default), but if that becomes a problem, a WARN_ON() could be added:
+>
+>         if (ktime_before(oldtime, invalid_before) &&
+>             cmpxchg(&use_entry->time, oldtime, now) == oldtime) {
+>                 use_entry->frame1 = frame1;
+>                 use_entry->frame2 = frame2;
+>                 WARN_ON_ONCE(use_entry->time != now);
+>         } else {
+>                 // Too bad, next duplicate report won't be suppressed.
+>         }
+>
+> So what am I missing here?
 
-Horatiu, thanks for giving this a try. I am looking forward to maybe someday
-be able to run ERPS on white box switches.
+Ah right, sorry, I should have clarified or commented in the code that
+all of this is happening under 'report_lock' (taken in prepare_report,
+held in print_report->rate_limit_report, released in release_report).
+That also means that any optimization here won't matter until
+report_lock is removed.
 
-On 1/9/20 4:19 PM, Stephen Hemminger wrote:
-> Can this be implemented in userspace?
-> 
-> Putting STP in the kernel was a mistake (even original author says so).
-> Adding more control protocols in kernel is a security and stability risk.
+Thanks,
+-- Marco
 
-Another case is VRRP, ERPS (ITU-T G.8032), VRRP group.
-
-My use-case might not be common, but I have machines with about 10k net_dev (QinQ),
-I would like to be able to do VRRP group on the outer VLANs, which are only a few
-hundred instances without excessive context switching. I would then keep the the
-normal keep-alive state machine in kernel, basically a BPF-based timed periodic
-packet emitter facility and a XDP recieve hook. So only setup and event handling
-has to context switched to user-space.
-
-Unfortunately I haven't had time to explore this yet, but I think such an approach
-could solve a few of the reasons that scalable bridge/ring/ha protocols have to wait
-20 years before being implemented in Linux.
-
--- 
-Best regards
-Asbjørn Sloth Tønnesen
-Network Engineer
-Fiberby ApS - AS42541
+>                                                         Thanx, Paul
+>
+> > Thanks,
+> > -- Marco
+> >
+> > >                                                         Thanx, Paul
+> > >
+> > > >  kernel/kcsan/core.c   |  15 +++--
+> > > >  kernel/kcsan/kcsan.h  |   2 +-
+> > > >  kernel/kcsan/report.c | 153 +++++++++++++++++++++++++++++++++++-------
+> > > >  lib/Kconfig.kcsan     |  10 +++
+> > > >  4 files changed, 148 insertions(+), 32 deletions(-)
+> > > >
+> > > > --
+> > > > 2.25.0.rc1.283.g88dfdc4193-goog
+> > > >
+> > >
+> > > --
+> > > You received this message because you are subscribed to the Google Groups "kasan-dev" group.
+> > > To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
+> > > To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20200109162739.GS13449%40paulmck-ThinkPad-P72.
