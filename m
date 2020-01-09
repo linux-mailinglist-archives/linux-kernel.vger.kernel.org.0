@@ -2,58 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D57DE1356F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 11:32:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB1381356EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 11:32:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730203AbgAIKcQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 05:32:16 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36772 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730159AbgAIKcI (ORCPT
+        id S1730186AbgAIKcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 05:32:10 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39693 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730138AbgAIKcJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 05:32:08 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z3so6828756wru.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 02:32:07 -0800 (PST)
+        Thu, 9 Jan 2020 05:32:09 -0500
+Received: by mail-wm1-f67.google.com with SMTP id 20so2211600wmj.4
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 02:32:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZiyT8hwvH3cU7wQHlzEyrwouYDKnzGuvicSuE25MKEE=;
-        b=kDYbUtGvtpoqFjdUiPy/Qs+FxsV+7IrisdZ1CN4ZtVeUMF0Qr8yloG0sEfVd77Jyrp
-         ZinMo3r9p0JZnO1AZybj77R0K5pf96++LO+0WodXA/155//yNUIKY8ktawiqGkjPCeyU
-         UVdnbPfFbmp8lL8ak0bMEwr5LP1hzwiuIcsA1Bd56U/lFBnRZclDNWEDebgSWx8I540G
-         BT+9YuzrHH71OmSCqRkjPcmm34f18Fy897LBxsXoPZ3/fP8SHmKNkoJ13JjQbmaWttmK
-         GfPRMcNYBgE9sSRr7OeT2OzRYCLQqDeOY1nlZ466AfdmCYpEUBcc+Q2tUUGjuCd8gvAZ
-         URZQ==
+        bh=gjni1yUPgeoynRgPUWk+P0YDXuyIvqiTixESDz/Z+m0=;
+        b=dwgwaikHX8ina6DBaaaKnL5D7dXdIc0l52Vuu0oDvMrC7uaNrYaiy8hcNEcL6gOeau
+         79pzoshQQ1GQWwR/XT0ieDIxQXzKMHdprKreOSBduV8uii8xuzhUf7XRLRsu+Zfeyo88
+         4xIj/u4bJ/lO6xHPo9HU6orB/WlrxP4595SNmwHYFI/txUtxWEKpiiM+sv0/dS8no5Xk
+         LdRMAr5QORBqYTh4RBX3MXthIXt7HUumFltv4fiNbLBCwuYXBOATDqPyFRI0XTZC9/ey
+         b0fc3J1tz8QdMUQpIAMVu/mZKA+Qs/vsXmmOJYl6tYl0/DdLCyFF84Of3FGYmDcaDzIa
+         TNwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZiyT8hwvH3cU7wQHlzEyrwouYDKnzGuvicSuE25MKEE=;
-        b=DWhhyCSTiteY0wtK5mJopWRzTjSC3tf+62PgNENtf3S09b55dmweWy/zctbUzI6VYT
-         z4QjlYImXfpDljG9+yLTfWXm4eSO121OquDKB6g+TwjONondwwwSIcaHnJIA/p6Iv7WX
-         y0PLSZu1rMNQ8LfnnfMRm7JbJWuNw3V3WvPQkcuZ40vTFVfhDoIpjRKUBQ/+4GozBMaI
-         252HF5fjjTLy3padC7JVw0GJtJZTU8YQI5bjZruZ8QXyga/EEes1y1GbB9EAE8OzM9xD
-         uUd+/zJrAm8MMvZBULgD4HVlKSlBvw8Pkd8/svxkWlFxlbbEp56Xz3slDk1b+L60BAom
-         +fpQ==
-X-Gm-Message-State: APjAAAVPkuWJtEhq2gdBO4D/SGyG2Uddx6pcDDOmddefL09kNWZ1uygR
-        9sJbyAXq1R9/idY1aylXXTskPA==
-X-Google-Smtp-Source: APXvYqzVJu0yS1smPrcIKa/S/XC2ZAl7Oi98yjPRNSdY+O8HRcZBxqK3CaskQy1Wa6EHH7ZKPHqgGQ==
-X-Received: by 2002:adf:ea05:: with SMTP id q5mr10286093wrm.48.1578565926637;
-        Thu, 09 Jan 2020 02:32:06 -0800 (PST)
+        bh=gjni1yUPgeoynRgPUWk+P0YDXuyIvqiTixESDz/Z+m0=;
+        b=FWWQSNvS9A2gU84VFjWuF94+v52eb3fXY+FrloNcVbcNCu9qF3Hs2r0ZG6Frmh01//
+         +f6vnUjq4u2yptBJr7gZljDfOxXvMT++ASUktj8JcV+y/xkzHnp/zgEYgvogwqEQZp8B
+         LznVXWmUwWDzxytQY/emrJh+dFa4Y9FwyKT3VB1i5uzqa46eS9/BJXdupib3cIjFORqm
+         GsjKWEeumXGTJdSvvN+a2lewFbzR76sOCLLff0GoODWxDcFBVr7y5KjIOsZyRObdxPuP
+         3jD6J9lpy3FkVI0Fb8XJYtyXU1dXk99d8k7GbkeQa9XQeo5q2CbBPsOA2ha1WjhmmkK2
+         qvjA==
+X-Gm-Message-State: APjAAAUsawy+NPK1TEHk+PTBkyNEAezkjbd2IdZcsmnVYKZAFPq1cyES
+        2nKEE1Z0Ny1Z84iwwZh7EqaV5Q==
+X-Google-Smtp-Source: APXvYqwCJyu9rvfAH+A6MJIJLhKQsFFZrh5ee9wtGXcZLZ1I6bTHPNhzvfklSYq/RXswn6fcs5QvQA==
+X-Received: by 2002:a05:600c:1050:: with SMTP id 16mr4222451wmx.20.1578565927694;
+        Thu, 09 Jan 2020 02:32:07 -0800 (PST)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id z83sm2473830wmg.2.2020.01.09.02.32.05
+        by smtp.gmail.com with ESMTPSA id z83sm2473830wmg.2.2020.01.09.02.32.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 02:32:05 -0800 (PST)
+        Thu, 09 Jan 2020 02:32:07 -0800 (PST)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org,
-        Nishad Kamdar <nishadkamdar@gmail.com>,
-        Joe Perches <joe@perches.com>,
+Cc:     linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 3/4] slimbus: Use the correct style for SPDX License Identifier
-Date:   Thu,  9 Jan 2020 10:31:47 +0000
-Message-Id: <20200109103148.5612-4-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 4/4] slimbus: qcom: add missed clk_disable_unprepare in remove
+Date:   Thu,  9 Jan 2020 10:31:48 +0000
+Message-Id: <20200109103148.5612-5-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20200109103148.5612-1-srinivas.kandagatla@linaro.org>
 References: <20200109103148.5612-1-srinivas.kandagatla@linaro.org>
@@ -64,34 +62,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nishad Kamdar <nishadkamdar@gmail.com>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-This patch corrects the SPDX License Identifier style in
-header file related to SLIMbus driver.
-For C header files Documentation/process/license-rules.rst
-mandates C-like comments (opposed to C source files where
-C++ style should be used).
+The remove misses to disable and unprepare rclk and hclk.
+Add calls to clk_disable_unprepare to fix it.
 
-Changes made by using a script provided by Joe Perches here:
-https://lkml.org/lkml/2019/2/7/46.
-
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/slimbus/slimbus.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/slimbus/qcom-ctrl.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/slimbus/slimbus.h b/drivers/slimbus/slimbus.h
-index b2f013bfe42e..c73035915f1d 100644
---- a/drivers/slimbus/slimbus.h
-+++ b/drivers/slimbus/slimbus.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2011-2017, The Linux Foundation
-  */
+diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
+index a444badd8df5..4aad2566f52d 100644
+--- a/drivers/slimbus/qcom-ctrl.c
++++ b/drivers/slimbus/qcom-ctrl.c
+@@ -641,6 +641,8 @@ static int qcom_slim_remove(struct platform_device *pdev)
+ 
+ 	pm_runtime_disable(&pdev->dev);
+ 	slim_unregister_controller(&ctrl->ctrl);
++	clk_disable_unprepare(ctrl->rclk);
++	clk_disable_unprepare(ctrl->hclk);
+ 	destroy_workqueue(ctrl->rxwq);
+ 	return 0;
+ }
 -- 
 2.21.0
 
