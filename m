@@ -2,107 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64FE6135A0D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 14:29:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55951135A1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 14:29:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731117AbgAIN3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 08:29:11 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45595 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727861AbgAIN3K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 08:29:10 -0500
-Received: by mail-lj1-f195.google.com with SMTP id j26so7192039ljc.12;
-        Thu, 09 Jan 2020 05:29:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ErcL1N2fmNI636PPVQLs5GTMAwUgd2f5seuvakUioCs=;
-        b=QcitNdlnK1P8XDsxpOgCJEwk8BBeULze+HvJMfvdQLstUAogkO0HRDXMxt23Xq8ZEq
-         omkD9d+73f49SLK0dpWF2+fyJogSQb2sKjnkQBllazj9K6sfP8TeYqHSq99dZoJRfxeP
-         Tz6FdqVBlVBOSt/NlFQ4up89rRSZDcpstAKFUNs6Y1MbzVpWcxo35CoafZdsFoA1rrYg
-         THdYG47CGQWjWNMDbwQwTjtmQJqV2rYRVIvXvSqMTpkpGebkIaKBhL9jXhOI8VY+6pBg
-         k4sa6qDKRscAFBfZAaYInptVWWKwfQwbgFVEeUd6tjLB5dji3vmnIOLzZJeyXGnUQ8Gn
-         h4dA==
-X-Gm-Message-State: APjAAAX78+2GfWTcxOvQaXm0qmiM0y/RFuy8LSFbHhNHA+chhijaJxmg
-        IH7YTBYrvbYPecAnFjVQoLU=
-X-Google-Smtp-Source: APXvYqw1hcidTUPsXmbfZ5E6ekSaUosd6Z+QbgYKjFwaIPR65Yk0gkHBGblfoIvMFxRv4YpPXS00DQ==
-X-Received: by 2002:a2e:84d0:: with SMTP id q16mr6321120ljh.138.1578576547878;
-        Thu, 09 Jan 2020 05:29:07 -0800 (PST)
-Received: from xi.terra (c-14b8e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.184.20])
-        by smtp.gmail.com with ESMTPSA id y25sm3094435lfy.59.2020.01.09.05.29.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 05:29:07 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.92.3)
-        (envelope-from <johan@kernel.org>)
-        id 1ipXsD-0004Te-LT; Thu, 09 Jan 2020 14:29:17 +0100
-Date:   Thu, 9 Jan 2020 14:29:17 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     guillaume La Roque <glaroque@baylibre.com>
-Cc:     Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>,
-        marcel@holtmann.org, johan.hedberg@gmail.com,
-        devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        nsaenzjulienne@suse.de, linux-kernel@vger.kernel.org,
-        khilman@baylibre.com
-Subject: Re: [PATCH v6 1/2] dt-bindings: net: bluetooth: add interrupts
- properties
-Message-ID: <20200109132917.GM30908@localhost>
-References: <20200109104257.6942-1-glaroque@baylibre.com>
- <20200109104257.6942-2-glaroque@baylibre.com>
- <20200109105305.GL30908@localhost>
- <a33f9c30-03a8-ea12-e9d3-5e050e41318e@baylibre.com>
+        id S1731147AbgAIN3n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 08:29:43 -0500
+Received: from foss.arm.com ([217.140.110.172]:59056 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731054AbgAIN3n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 08:29:43 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6179E31B;
+        Thu,  9 Jan 2020 05:29:42 -0800 (PST)
+Received: from arm.com (e112269-lin.cambridge.arm.com [10.1.194.52])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 65F263F534;
+        Thu,  9 Jan 2020 05:29:40 -0800 (PST)
+Date:   Thu, 9 Jan 2020 13:29:35 +0000
+From:   Steven Price <steven.price@arm.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        "hsinyi@chromium.org" <hsinyi@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 0/7] Add dts for mt8183 GPU (and misc panfrost patches)
+Message-ID: <20200109132934.GA6198@arm.com>
+References: <20200108052337.65916-1-drinkcat@chromium.org>
+ <79fe7055-c11b-c9f6-64e5-48e3d5687dfe@arm.com>
+ <ca77cd74-b747-20c4-b07c-60df23421690@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <a33f9c30-03a8-ea12-e9d3-5e050e41318e@baylibre.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ca77cd74-b747-20c4-b07c-60df23421690@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 02:13:23PM +0100, guillaume La Roque wrote:
-> 
-> On 1/9/20 11:53 AM, Johan Hovold wrote:
-> > On Thu, Jan 09, 2020 at 11:42:56AM +0100, Guillaume La Roque wrote:
-> >> add interrupts and interrupt-names as optional properties
-> >> to support host-wakeup by interrupt properties instead of
-> >> host-wakeup-gpios.
+On Thu, Jan 09, 2020 at 01:10:33PM +0000, Robin Murphy wrote:
+> On 09/01/2020 12:01 pm, Steven Price wrote:
+> > On 08/01/2020 05:23, Nicolas Boichat wrote:
+> >> Hi!
 > >>
-> >> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-> >> ---
-> >>  Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 4 +++-
-> >>  1 file changed, 3 insertions(+), 1 deletion(-)
+> >> Sorry for the long delay since 
+> >> https://patchwork.kernel.org/patch/11132381/,
+> >> finally got around to give this a real try.
 > >>
-> >> diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> >> index c44a30dbe43d..d33bbc998687 100644
-> >> --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> >> +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> >> @@ -37,7 +37,9 @@ Optional properties:
-> >>      - pcm-frame-type: short, long
-> >>      - pcm-sync-mode: slave, master
-> >>      - pcm-clock-mode: slave, master
-> >> -
-> >> + - interrupts: must be one, used to wakeup the host processor if
-> >> +   gpiod_to_irq function not supported
-> >> + - interrupt-names: must be "host-wakeup"
-> > Looks like you forgot to address Rob's comment. If I understood him
-> > correctly you either need to stick with "host-wakeup-gpios" (and fix
-> > your platform) or deprecate it in favour of "interrupts":
-> >
-> > 	https://lkml.kernel.org/r/20191218203818.GA8009@bogus
+> >> The main purpose of this series is to upstream the dts change and the 
+> >> binding
+> >> document, but I wanted to see how far I could probe the GPU, to check 
+> >> that the
+> >> binding is indeed correct. The rest of the patches are 
+> >> RFC/work-in-progress, but
+> >> I think some of them could already be picked up.
+> >>
+> >> So this is tested on MT8183 with a chromeos-4.19 kernel, and a ton of
+> >> backports to get the latest panfrost driver (I should probably try on
+> >> linux-next at some point but this was the path of least resistance).
+> >>
+> >> I tested it as a module as it's more challenging (originally probing 
+> >> would
+> >> work built-in, on boot, but not as a module, as I didn't have the power
+> >> domain changes, and all power domains are on by default during boot).
+> >>
+> >> Probing logs looks like this, currently:
+> >> [  221.867726] panfrost 13040000.gpu: clock rate = 511999970
+> >> [  221.867929] panfrost 13040000.gpu: Linked as a consumer to 
+> >> regulator.14
+> >> [  221.868600] panfrost 13040000.gpu: Linked as a consumer to 
+> >> regulator.31
+> >> [  221.870586] panfrost 13040000.gpu: Linked as a consumer to 
+> >> genpd:0:13040000.gpu
+> >> [  221.871492] panfrost 13040000.gpu: Linked as a consumer to 
+> >> genpd:1:13040000.gpu
+> >> [  221.871866] panfrost 13040000.gpu: Linked as a consumer to 
+> >> genpd:2:13040000.gpu
+> >> [  221.872427] panfrost 13040000.gpu: mali-g72 id 0x6221 major 0x0 
+> >> minor 0x3 status 0x0
+> >> [  221.872439] panfrost 13040000.gpu: features: 00000000,13de77ff, 
+> >> issues: 00000000,00000400
+> >> [  221.872445] panfrost 13040000.gpu: Features: L2:0x07120206 
+> >> Shader:0x00000000 Tiler:0x00000809 Mem:0x1 MMU:0x00002830 AS:0xff JS:0x7
+> >> [  221.872449] panfrost 13040000.gpu: shader_present=0x7 l2_present=0x1
+> >> [  221.873526] panfrost 13040000.gpu: error powering up gpu stack
+> >> [  221.878088] [drm] Initialized panfrost 1.1.0 20180908 for 
+> >> 13040000.gpu on minor 2
+> >> [  221.940817] panfrost 13040000.gpu: error powering up gpu stack
+> >> [  222.018233] panfrost 13040000.gpu: error powering up gpu stack
+> >> (repeated)
+> > 
+> > It's interesting that it's only the stack that is failing. In hardware 
+> > there's a dependency: L2->stack->shader - so in theory the shader cores 
+> > shouldn't be able to power up either. There are some known hardware bugs 
+> > here though[1]:
+> > 
+> >      MODULE_PARM_DESC(corestack_driver_control,
+> >              "Let the driver power on/off the GPU core stack 
+> > independently "
+> >              "without involving the Power Domain Controller. This should "
+> >              "only be enabled on platforms for which integration of the 
+> > PDC "
+> >              "to the Mali GPU is known to be problematic.");
+> > 
+> > [1] 
+> > https://github.com/ianmacd/d2s/blob/master/drivers/gpu/arm/b_r16p0/backend/gpu/mali_kbase_pm_driver.c#L57 
+> > 
+> > 
+> > It might be worth just dropping the code for powering up/down stacks and 
+> > let the GPU's own dependency management handle it.
 > 
-> not forgot marcel ask me a v6
+> FWIW I remember digging into that same message a while back (although 
+> I've forgotten which particular GPU I was playing with at the time), and 
+> concluded that the STACK_PWRON/STACK_READY registers might just not be 
+> implemented on some GPUs,
 
-Not much point in sending v6 before addressing feedback on v5.
-Especially as Marcel asked for a v6 with acks. ;)
+They are indeed not implemented on some GPUs. Specifically none of the
+Midgard GPUs. I believe G71 also doesn't have it. However the register
+addresses were picked so that on these older GPUs they should
+read-as-zero and write-ignore so this shouldn't actually cause any
+problems.
 
-> for rob comment ok but it's not possible to support gpiod_to_irq on my
-> platform.
+> and/or this easy-to-overlook register bit 
+> could be some kind of enable for the functionality:
 > 
-> if i deprecated it i need to update all DT with good interrupt number
-> right?
+> https://github.com/ianmacd/d2s/blob/master/drivers/gpu/arm/b_r16p0/backend/gpu/mali_kbase_pm_driver.c#L1631
+> 
+> Since even in kbase this is all behind an 'expert' config option, I'm 
+> inclined to agree that just dropping it from panfrost unless and until 
+> it proves necessary is probably preferable to adding more logic and 
+> inscrutable register-magic.
 
-Not sure. Perhaps just updating the binding is enough. Rob?
+Indeed - I'll post a patch removing it.
 
-Johan
+Thanks,
+
+Steve
+
+> Robin.
+> 
+> > 
+> > Steve
+> > 
+> >>
+> >> So the GPU is probed, but there's an issue when powering up the STACK, 
+> >> not
+> >> quite sure why, I'll try to have a deeper look, at some point.
+> >>
+> >> Thanks!
+> >>
+> >> Nicolas
+> >>
+> >> v2:
+> >>   - Use sram instead of mali_sram as SRAM supply name.
+> >>   - Rename mali@ to gpu@.
+> >>   - Add dt-bindings changes
+> >>   - Stacking patches after the device tree change that allow basic
+> >>     probing (still incomplete and broken).
+> >>
+> >> Nicolas Boichat (7):
+> >>    dt-bindings: gpu: mali-bifrost: Add Mediatek MT8183
+> >>    arm64: dts: mt8183: Add node for the Mali GPU
+> >>    drm/panfrost: Improve error reporting in panfrost_gpu_power_on
+> >>    drm/panfrost: Add support for a second regulator for the GPU
+> >>    drm/panfrost: Add support for multiple power domain support
+> >>    RFC: drm/panfrost: Add bifrost compatible string
+> >>    RFC: drm/panfrost: devfreq: Add support for 2 regulators
+> >>
+> >>   .../bindings/gpu/arm,mali-bifrost.yaml        |  20 ++++
+> >>   arch/arm64/boot/dts/mediatek/mt8183-evb.dts   |   7 ++
+> >>   arch/arm64/boot/dts/mediatek/mt8183.dtsi      | 104 +++++++++++++++++
+> >>   drivers/gpu/drm/panfrost/panfrost_devfreq.c   |  18 +++
+> >>   drivers/gpu/drm/panfrost/panfrost_device.c    | 108 ++++++++++++++++--
+> >>   drivers/gpu/drm/panfrost/panfrost_device.h    |   7 ++
+> >>   drivers/gpu/drm/panfrost/panfrost_drv.c       |   1 +
+> >>   drivers/gpu/drm/panfrost/panfrost_gpu.c       |  15 ++-
+> >>   8 files changed, 267 insertions(+), 13 deletions(-)
+> >>
+> > 
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
