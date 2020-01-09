@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3820C135526
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:07:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7DDA135529
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:07:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729197AbgAIJHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 04:07:07 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43442 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729182AbgAIJHF (ORCPT
+        id S1729234AbgAIJHN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 04:07:13 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36377 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729193AbgAIJHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 04:07:05 -0500
-Received: by mail-wr1-f67.google.com with SMTP id d16so6460415wre.10
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 01:07:04 -0800 (PST)
+        Thu, 9 Jan 2020 04:07:08 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p17so1930799wma.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 01:07:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=OZjGs6UaTVRsqD7bMcmmmmdB5ZvGFZd3+9egdXlSicM=;
-        b=mTrUtVuUIgMGMeKiU3qViZO4W1gDjq0b1y5RuoDM/aFt4XoqNTHLGJQVabcB1LrKIQ
-         iwC6NKhxaZQbazMlWOJ/Ng3mHn7vj29OSM0Vqor+RkQiWPTI8pVMCCcYEJcc7GqItlkL
-         jOXRR1Jjn7htMPtWKITbvLNrboggGbVRebPzRg9ZfR73/heOcRifuOIjp6m+4RgM3qSK
-         rNBmkYt2Wsr39XhhMLkTcWBYMSySDDdVOlVHa/l+Vh14E5HOhnJ5hsy/KlCqDCP2xHDT
-         dkvr65sEz90V4v7jR/SUITLIkCcGpX7+GcEm/fwwcmCPdGl4HiHF37+YVNXxHcEfGv5A
-         sGjA==
+        bh=srJzvMMQdpxyH00NoNIv1SdEKNzlKV0X21LyZXL6/tY=;
+        b=eeOkVav3QtkOQrSyAYP34ttKjtKRxUKJhIuZS0/TC1uLiiy5EpnkIUgVGpyXGCiKPt
+         y0rwRvQFOx9fIYvgn7CmD5L54YaTt/zNKp5DfCABveJgki3N46zSurPNPLaXPOHLX8VF
+         CH9uC3bE5Ty8npPc4AyAkwYkN84BJzhmq/1cnwn6Z04aqzSH/9c4AZauXO1E4lrkm/dQ
+         BFwFDS0W9DbkoQMGul67giCNYsI0hidenVfSl8/2ZeLQ2I/AM/x8Jo3qaT4JvTYrb0fO
+         SSx0G6KQzB7gBHDVz0w1SsBk8hOc81svJhFYAQS/DACCT92W6KpJXM3a2AFjKQgrSQTb
+         lsmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=OZjGs6UaTVRsqD7bMcmmmmdB5ZvGFZd3+9egdXlSicM=;
-        b=kOnpRc4J6ZDgO1VV9yBr6BKeoRmDbZhsk1K7ncJL9ALefWtS76pxKLZdq5fYutrJD0
-         gfjiCAHoWkbqw4C2OGaHJi1642P9ATNq92qWcT550nXv4RBtMJHNDov9hCoIu6g0uHJU
-         uW5qjyUCUd1BCqX1465ahOASsLBuhJDdOAxCiKhs2zhI39FU6KwIZyjauMLkiXVav3vb
-         uLBNdFSAz6twELPYoBzzo9goEN9VkB4YntKYlpo0gzt3i6ibkjjORvH+/MMkbzX1IyeB
-         tZGWpl8nysx5FIFcVkUALDKyCVJCR5StZO0YePYZ7goyUGB6VXafsFHB6UjccO/6Lq60
-         0ipQ==
-X-Gm-Message-State: APjAAAXbrZW0eeXGO2UVLKj6xIPnge5rS1bWvBW3Llao1JL2aM6IOyxy
-        Wf2aGK0Hcv+KDvpI43d+SW0=
-X-Google-Smtp-Source: APXvYqyy6dELvru4OOP3T6y3Yj7E8EV8t3vnuNoSlszG4R1U2avG9l79QFwVBUUis2bzJ3P8u3dXpA==
-X-Received: by 2002:a5d:690e:: with SMTP id t14mr9518982wru.65.1578560823717;
-        Thu, 09 Jan 2020 01:07:03 -0800 (PST)
+        bh=srJzvMMQdpxyH00NoNIv1SdEKNzlKV0X21LyZXL6/tY=;
+        b=Vn+NGMJUsbtSE49Ag8+WTPBBvL4bGO1t70eYpCmK8yApygB77qEAz85oK6HZUGEnBM
+         OZHjBVkkqQYrZ+J9GiNTwdnBgflYT/AotobXml995FdcIk2r1VO3iB7/dKdUWqVWinQW
+         nS2xiMYTNgFCqlgeYLQVfGsK/vqYJ7tGMle0n9LtnQl6e6uhpPNufome+nYiVEklOdzn
+         7eh4QmM/Y5ECoaRtj4QqdD43AclG+mGoB/i7OiD8qPagJoHDhpDFeOb5ABxLkLv6dGnF
+         VFrGNFc785xjH1WF4QJ8dPW36IkgFtfR1t08T87bw1i7Q79ncmKC1DrmYqV0Zga16CVN
+         tOYQ==
+X-Gm-Message-State: APjAAAWP2aP0BXSNRNywJOc2oe2q5CCBiIDw9ldH91qiKk01mdzoq18O
+        YWEIlwx6olKGKB0DgGGBUFo=
+X-Google-Smtp-Source: APXvYqw3p1tNZvJ6wGQcHlYj+kueCXToKBOgAY9fxM9CWd7N+g8KXeUHmFyiTOoSrXAf60CTyuKZYw==
+X-Received: by 2002:a05:600c:2c50:: with SMTP id r16mr3398556wmg.74.1578560826373;
+        Thu, 09 Jan 2020 01:07:06 -0800 (PST)
 Received: from wambui.zuku.co.ke ([197.237.61.225])
-        by smtp.googlemail.com with ESMTPSA id i8sm8004734wro.47.2020.01.09.01.07.01
+        by smtp.googlemail.com with ESMTPSA id i8sm8004734wro.47.2020.01.09.01.07.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 01:07:03 -0800 (PST)
+        Thu, 09 Jan 2020 01:07:05 -0800 (PST)
 From:   Wambui Karuga <wambui.karugax@gmail.com>
 To:     jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
         rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch
 Cc:     sean@poorly.run, intel-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] drm/i915: convert to new logging macros in i915/intel_gvt.c
-Date:   Thu,  9 Jan 2020 12:06:45 +0300
-Message-Id: <44f3839820a32ed03d73dc56a6ef3581994802c9.1578560355.git.wambui.karugax@gmail.com>
+Subject: [PATCH 5/5] drm/i915: convert to new logging macros in i915/intel_memory_region.c
+Date:   Thu,  9 Jan 2020 12:06:46 +0300
+Message-Id: <1bf4d362e72c619843d44aac96c3561f54e4b23a.1578560355.git.wambui.karugax@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.1578560355.git.wambui.karugax@gmail.com>
 References: <cover.1578560355.git.wambui.karugax@gmail.com>
@@ -63,57 +63,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This converts the use of printk based logging macros in i915/intel_gvt.c
-with the new struct drm_device based logging macros.
+Replace the use of printk based logging macros with the new struct
+drm_device based logging macro in i915/intel_memory_region.c.
 
 Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
 ---
- drivers/gpu/drm/i915/intel_gvt.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/i915/intel_memory_region.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/intel_gvt.c b/drivers/gpu/drm/i915/intel_gvt.c
-index 2b6c016387c2..38ebd5562c7c 100644
---- a/drivers/gpu/drm/i915/intel_gvt.c
-+++ b/drivers/gpu/drm/i915/intel_gvt.c
-@@ -67,12 +67,13 @@ void intel_gvt_sanitize_options(struct drm_i915_private *dev_priv)
- 		return;
+diff --git a/drivers/gpu/drm/i915/intel_memory_region.c b/drivers/gpu/drm/i915/intel_memory_region.c
+index d0d038b3cd79..6b5e9d88646d 100644
+--- a/drivers/gpu/drm/i915/intel_memory_region.c
++++ b/drivers/gpu/drm/i915/intel_memory_region.c
+@@ -265,7 +265,9 @@ int intel_memory_regions_hw_probe(struct drm_i915_private *i915)
  
- 	if (intel_vgpu_active(dev_priv)) {
--		DRM_INFO("GVT-g is disabled for guest\n");
-+		drm_info(&dev_priv->drm, "GVT-g is disabled for guest\n");
- 		goto bail;
- 	}
- 
- 	if (!is_supported_device(dev_priv)) {
--		DRM_INFO("Unsupported device. GVT-g is disabled\n");
-+		drm_info(&dev_priv->drm,
-+			 "Unsupported device. GVT-g is disabled\n");
- 		goto bail;
- 	}
- 
-@@ -99,18 +100,20 @@ int intel_gvt_init(struct drm_i915_private *dev_priv)
- 		return -ENODEV;
- 
- 	if (!i915_modparams.enable_gvt) {
--		DRM_DEBUG_DRIVER("GVT-g is disabled by kernel params\n");
-+		drm_dbg(&dev_priv->drm,
-+			"GVT-g is disabled by kernel params\n");
- 		return 0;
- 	}
- 
- 	if (USES_GUC_SUBMISSION(dev_priv)) {
--		DRM_ERROR("i915 GVT-g loading failed due to Graphics virtualization is not yet supported with GuC submission\n");
-+		drm_err(&dev_priv->drm,
-+			"i915 GVT-g loading failed due to Graphics virtualization is not yet supported with GuC submission\n");
- 		return -EIO;
- 	}
- 
- 	ret = intel_gvt_init_device(dev_priv);
- 	if (ret) {
--		DRM_DEBUG_DRIVER("Fail to init GVT device\n");
-+		drm_dbg(&dev_priv->drm, "Fail to init GVT device\n");
- 		goto bail;
- 	}
+ 		if (IS_ERR(mem)) {
+ 			err = PTR_ERR(mem);
+-			DRM_ERROR("Failed to setup region(%d) type=%d\n", err, type);
++			drm_err(&i915->drm,
++				"Failed to setup region(%d) type=%d\n",
++				err, type);
+ 			goto out_cleanup;
+ 		}
  
 -- 
 2.24.1
