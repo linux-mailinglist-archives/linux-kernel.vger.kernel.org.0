@@ -2,99 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28205135A56
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 14:39:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9621E135A6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 14:41:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731280AbgAINjc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 08:39:32 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53709 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731266AbgAINjb (ORCPT
+        id S1731073AbgAINlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 08:41:50 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:54343 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725839AbgAINlt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 08:39:31 -0500
-Received: by mail-wm1-f66.google.com with SMTP id m24so2959589wmc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 05:39:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3uTRVYc3CwuaK7vmscKhsuq+TjWl2SbzmcNvk0jneyE=;
-        b=NzBNdntB5n+8cI1SL4hqMv75gF5qlYVZoch0u5XZUNN4uJshZpMC51TbpQMMmZfbz4
-         /2T+YoXIspoZOzWP7ZZp2UN/RCcGF882X7PoCZ86N8BWE6MXAmqVVqSbBKbeYE0XmQZM
-         tESlcMvjCBE24H8bTMS5E1AGelx5r61vXOojuK8GbCRdchRQ7lVB++1TT7gVfM0usSD/
-         iS2T3WgMxXxWXF8QWlfW6xUiRoJsABW+Z/uoss5qUGF9PvrlI5gZR64dLhTr351ioKeX
-         mZoxh4DBVAjdM3a6aLJzGN/bXBq4dBjShu18PMl/Dt1UcljrSlVPQpSfzbDbBmJc7DPu
-         FEpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=3uTRVYc3CwuaK7vmscKhsuq+TjWl2SbzmcNvk0jneyE=;
-        b=sZkd08fzbmtFjeyk35jaEeFk06Lk7MkgmKvruQpIOeB/fj8bEBYzTCS0MWySVhHlwO
-         Oc7rNST9iSx4CEPoTynX9/V2Tf8DCbieTcEvWHAHkrJBJx+rOjujP+WY6KzEszj2A3it
-         fyRLhZYUvUnYlpFQN5tnG74ZJZjGXJ6RK9hit93nkw7XIMIkyypsOJjmK3d95QRjR3wQ
-         fRjvpZvXLAx4ONz8s1s2XoquqcE28pByluXCAyKxquBJkn8RBnOidBm4shl89oHnjHvU
-         Esdbt4F4Mcu7DgCd29nN5t5d8XDofqZKlZllBu+Jz7+fKAAEfSmNrIaJ2g4oYDJXKa3r
-         i6mA==
-X-Gm-Message-State: APjAAAVq5A7Y/7+5yVM0hRK2Ru2xVk47kBQvGiPMaZIzCW5HulYDiI/e
-        rgfW9zdwLlDOAWC2pvM6/Dhw5A==
-X-Google-Smtp-Source: APXvYqxf0QTNnxUA/HlCe/Xc2QU9JGp9/9H2D79UhXJ9ShL1knOd6pTuDj94GA14KOuiRGe/kR1Lvw==
-X-Received: by 2002:a1c:720a:: with SMTP id n10mr4856590wmc.74.1578577168009;
-        Thu, 09 Jan 2020 05:39:28 -0800 (PST)
-Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id s8sm7846492wrt.57.2020.01.09.05.39.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Jan 2020 05:39:27 -0800 (PST)
-From:   Michal Simek <michal.simek@xilinx.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] arm64: zynqmp: Setup default number of chipselects for zcu100
-Date:   Thu,  9 Jan 2020 14:39:15 +0100
-Message-Id: <0565b9a88830f0d995d666a9c4bf346641a2b040.1578577147.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1578577147.git.michal.simek@xilinx.com>
-References: <cover.1578577147.git.michal.simek@xilinx.com>
+        Thu, 9 Jan 2020 08:41:49 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1ipY4D-0002uw-9l; Thu, 09 Jan 2020 14:41:41 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B22C31C2CDE;
+        Thu,  9 Jan 2020 14:41:40 +0100 (CET)
+Date:   Thu, 09 Jan 2020 13:41:40 -0000
+From:   "tip-bot2 for Benjamin Thiel" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cleanups] x86/cpu: Add a missing prototype for arch_smt_update()
+Cc:     Benjamin Thiel <b.thiel@posteo.de>, Borislav Petkov <bp@suse.de>,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200109121723.8151-1-b.thiel@posteo.de>
+References: <20200109121723.8151-1-b.thiel@posteo.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <157857730052.30329.4376004076938160494.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is only one chipselect on each connector.
-Define it directly in board dts file.
-There should be an option to use more chipselects via gpios.
+The following commit has been merged into the x86/cleanups branch of tip:
 
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Commit-ID:     b47a36982dbdcd9d96fdce5169af984ef5bdd110
+Gitweb:        https://git.kernel.org/tip/b47a36982dbdcd9d96fdce5169af984ef5bdd110
+Author:        Benjamin Thiel <b.thiel@posteo.de>
+AuthorDate:    Thu, 09 Jan 2020 13:17:23 +01:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Thu, 09 Jan 2020 14:31:53 +01:00
+
+x86/cpu: Add a missing prototype for arch_smt_update()
+
+.. in order to fix a -Wmissing-prototype warning.
+
+No functional change.
+
+Signed-off-by: Benjamin Thiel <b.thiel@posteo.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/20200109121723.8151-1-b.thiel@posteo.de
 ---
+ arch/x86/kernel/cpu/common.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-index 2b3757dd74cc..a109e82982ae 100644
---- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-+++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-@@ -250,11 +250,13 @@ wlcore: wifi@2 {
- &spi0 { /* Low Speed connector */
- 	status = "okay";
- 	label = "LS-SPI0";
-+	num-cs = <1>;
- };
- 
- &spi1 { /* High Speed connector */
- 	status = "okay";
- 	label = "HS-SPI1";
-+	num-cs = <1>;
- };
- 
- &uart0 {
--- 
-2.24.0
-
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 2e4d902..6b95f18 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -14,6 +14,7 @@
+ #include <linux/sched/mm.h>
+ #include <linux/sched/clock.h>
+ #include <linux/sched/task.h>
++#include <linux/sched/smt.h>
+ #include <linux/init.h>
+ #include <linux/kprobes.h>
+ #include <linux/kgdb.h>
