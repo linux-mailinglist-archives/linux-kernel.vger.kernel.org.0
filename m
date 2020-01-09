@@ -2,111 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1FD51355DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:34:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D89B91355DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:34:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729661AbgAIJeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 04:34:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42184 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729577AbgAIJeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 04:34:02 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE69D2072A;
-        Thu,  9 Jan 2020 09:34:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578562441;
-        bh=qY4HFfA903QkzmdrSxz+dUyVuwkP0B4l+IilQQzsYuI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k4OYJCmAgq8JXkpUp8l52tVn4Qpi5A2jfGUVko689wmJEx92UmDybjWinH/650FBN
-         gU/uoPx2eM99/pW1cty04TLlUQ2bxZPZASez37bVkmqOQ5o69ZdVjqPmbqTNLiRd81
-         Ydvd7Z64G9SPVVUvoxD71c0gGjduVKAGqhb3DtEA=
-Date:   Thu, 9 Jan 2020 10:33:59 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Scott Cheloha <cheloha@linux.vnet.ibm.com>,
-        David Hildenbrand <david@redhat.com>, nathanl@linux.ibm.com,
-        ricklind@linux.vnet.ibm.com,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v3] drivers/base/memory.c: cache blocks in radix tree to
- accelerate lookup
-Message-ID: <20200109093359.GA44349@kroah.com>
-References: <20191121195952.3728-1-cheloha@linux.vnet.ibm.com>
- <20191217193238.3098-1-cheloha@linux.vnet.ibm.com>
- <20200107214801.GN32178@dhcp22.suse.cz>
- <20200109084955.GI4951@dhcp22.suse.cz>
- <20200109085623.GB2583500@kroah.com>
- <20200109091934.GK4951@dhcp22.suse.cz>
+        id S1729687AbgAIJeq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 04:34:46 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33589 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729623AbgAIJeq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 04:34:46 -0500
+Received: by mail-pl1-f194.google.com with SMTP id ay11so2325445plb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 01:34:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=L9XB5AN+fravHpIS0JAibGbZsaJ2BHkQqcH0VnEvYUE=;
+        b=PorJPIogHEcRiQQYYPYQA93p0KSOs7yXFv+DdBN6acem8TD7Q8Gdw/GBdgjYOLD2n+
+         7PVACTQFrcSvfZzuHf00SmwP9JzAHHXkWuqN8iZFHMERgQWA+66Ps8WgZotTIb+J3Ipi
+         0erZX5Z6d+JOwrdoC0tGEjNJ5DTnri5NPSEtKZEBu5KczVTo9PkhQn718ncCtZMKizlq
+         uGqRveykBhnuLY/k/qj17tJNcCy/1wwPUR8VebD6NpWzeedf71pvVoDAw4ELbcD4tLbR
+         syKYkI1jnRsv28E+lqRM/dUpTMB9+3nVY3yptr8p4W0KjreyhDatY9+WIfWXrcmOUj97
+         mJbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=L9XB5AN+fravHpIS0JAibGbZsaJ2BHkQqcH0VnEvYUE=;
+        b=Bv3kgd8dI8l9W7Ts/iB5J61pksproAag67mRTw0fQFFhs2D8x8UGEpcrn3Fg3HZa+V
+         yv58zsGLT5/AEw/rTHt4wj1ae+ekzZ+ql7jlvyH1LfOk0kdZeUx4Lbt0BzFFXz02fbVU
+         OSy79Ai49jWLloryzW1sdeRu6fAYb4GSO6QjysOemC5YEoYxWni3uKGJ5LcQebZbdlpm
+         keBIDvoGj7ERdZ5ZgoEHK3znkigCAOla4w78Z+oH/SLI7JPOUyqqIDUiKiD/4zWJOCc8
+         DLlvwWwgnv0r9Pe55p//NWk+QLrw7XKT8FCOGQl/KWxRlMikOe/PY8xVH84AqOb5DMzu
+         qKZg==
+X-Gm-Message-State: APjAAAUEBJgE0zPNzy6DkmjFPX0FIbaAZtOGHgnhu0LPGy3vJHec6AZo
+        ivxXEKW31pjZjvur8VZkHANQ5Q==
+X-Google-Smtp-Source: APXvYqzBfewSQPZvAwkpT36xnTY57nZ7Sz3UFzijvnhCeEbYI1srm+RA/XMXe2Dpmu86TBCiFsqYnQ==
+X-Received: by 2002:a17:90a:778a:: with SMTP id v10mr4042349pjk.26.1578562485403;
+        Thu, 09 Jan 2020 01:34:45 -0800 (PST)
+Received: from localhost ([122.172.140.51])
+        by smtp.gmail.com with ESMTPSA id e16sm6522308pgk.77.2020.01.09.01.34.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 Jan 2020 01:34:44 -0800 (PST)
+Date:   Thu, 9 Jan 2020 15:04:42 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>, peng.fan@nxp.com,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] firmware: arm_scmi: Make scmi core independent of
+ transport type
+Message-ID: <20200109093442.4jt44eu2zlmjaq3f@vireshk-i7>
+References: <5c545c2866ba075ddb44907940a1dae1d823b8a1.1575019719.git.viresh.kumar@linaro.org>
+ <CAK8P3a3=q2zX9xQo7eZKp7e70rAeNB8VoSjg2aE06QJuSw8y3Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200109091934.GK4951@dhcp22.suse.cz>
+In-Reply-To: <CAK8P3a3=q2zX9xQo7eZKp7e70rAeNB8VoSjg2aE06QJuSw8y3Q@mail.gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 10:19:34AM +0100, Michal Hocko wrote:
-> On Thu 09-01-20 09:56:23, Greg KH wrote:
-> > On Thu, Jan 09, 2020 at 09:49:55AM +0100, Michal Hocko wrote:
-> > > On Tue 07-01-20 22:48:04, Michal Hocko wrote:
-> > > > [Cc Andrew]
-> > > > 
-> > > > On Tue 17-12-19 13:32:38, Scott Cheloha wrote:
-> > > > > Searching for a particular memory block by id is slow because each block
-> > > > > device is kept in an unsorted linked list on the subsystem bus.
-> > > > 
-> > > > Noting that this is O(N^2) would be useful.
-> > > > 
-> > > > > Lookup is much faster if we cache the blocks in a radix tree.
-> > > > 
-> > > > While this is really easy and straightforward, is there any reason why
-> > > > subsys_find_device_by_id has to use such a slow lookup? I suspect nobody
-> > > > simply needed a more optimized data structure for that purpose yet.
-> > > > Would it be too hard to use radix tree for all lookups rather than
-> > > > adding a shadow copy for memblocks?
-> > > 
-> > > Greg, Rafael, this seems to be your domain. Do you have any opinion on
-> > > this?
-> > 
-> > No one has cared about the speed of that call as it has never been on
-> > any "fast path" that I know of.  And it should just be O(N), isn't it
-> > just walking the list of devices in order?
+On 09-01-20, 09:18, Arnd Bergmann wrote:
+> On Fri, Nov 29, 2019 at 10:32 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >
+> > The SCMI specification is fairly independent of the transport protocol,
+> > which can be a simple mailbox (already implemented) or anything else.
+> > The current Linux implementation however is very much dependent of the
+> > mailbox transport layer.
+> >
+> > This patch makes the SCMI core code (driver.c) independent of the
+> > mailbox transport layer and moves all mailbox related code to a new
+> > file: mailbox.c.
+> >
+> > We can now implement more transport protocols to transport SCMI
+> > messages.
+> >
+> > The transport protocols just need to provide struct scmi_transport_ops,
+> > with its version of the callbacks to enable exchange of SCMI messages.
+> >
+> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > 
-> Which means that if you have to call it N times then it is O(N^2) and
-> that is the case here because you are adding N memblocks. See
-> memory_dev_init
->   for each memblock
->     add_memory_block
->       init_memory_block
->         find_memory_block_by_id # checks all existing devices
->         register_memory
-> 	  device_register # add new device
->   
-> In this particular case find_memory_block_by_id is called mostly to make
-> sure we are no re-registering something multiple times which shouldn't
-> happen so it sucks to spend a lot of time on that. We might think of
-> removing that for boot time but who knows what kind of surprises we
-> might see from crazy HW setups.
+> Conceptually I think this is fine, but as others have said, it would be
+> better to have another transport implementation posted along with this
+> to see if the interfaces actually work out.
 
-Ok, so this is a self-inflicted issue, not a driver core issue :)
+@Sudeep/Vincent: Do you think we can add another transport
+implementation something right away for it ?
 
-> > If the "memory subsystem" wants a faster lookup for their objects,
-> > there's nothing stopping you from using your own data structure for the
-> > pointers to the objects if you want.  Just be careful about the lifetime
-> > rules.
+@Peng ?
+
+> > +/**
+> > + * struct scmi_chan_info - Structure representing a SCMI channel information
+> > + *
+> > + * @payload: Transmit/Receive payload area
+> > + * @dev: Reference to device in the SCMI hierarchy corresponding to this
+> > + *      channel
+> > + * @handle: Pointer to SCMI entity handle
+> > + * @transport_info: Transport layer related information
+> > + */
+> > +struct scmi_chan_info {
+> > +       void __iomem *payload;
+> > +       struct device *dev;
+> > +       struct scmi_handle *handle;
+> > +       void *transport_info;
+> > +};
 > 
-> The main question is whether replacing the linked list with a radix tree
-> in the generic code is something more meaningful.
+> I would assume that with another transport, the 'payload' pointer would
+> not be __iomem
 
-I strongly doubt it, it looks like you all are doing something very
-specific to your subsystem that would need this type of speed/lookup.  I
-suggest doing it on your own for now.
+Hmm, okay. I just separated things based on the current transport and
+didn't add much changes on top of it as I wasn't sure how things are
+going to look with next transport and so left the changes for then.
 
-thanks,
+I can now drop it though.
 
-greg k-h
+> > +static int scmi_set_transport_ops(struct scmi_info *info)
+> > +{
+> > +       struct scmi_transport_ops *ops;
+> > +       struct device *dev = info->dev;
+> > +
+> > +       /* Only mailbox method supported for now */
+> > +       ops = scmi_mailbox_get_ops(dev);
+> > +       if (!ops) {
+> > +               dev_err(dev, "Transport protocol not found in %pOF\n",
+> > +                       dev->of_node);
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       info->transport_ops = ops;
+> > +       return 0;
+> > +}
+> 
+> This looks odd: rather than guessing the transport type based on
+> random DT properties, I would prefer to have it determined by
+> the device compatible string, and have different drivers bind
+> to one of them each, with each driver linking against a common
+> base implementation, either as separate modules or in one file.
+
+Since there are no platforms using the scmi binding in mainline kernel
+for now, it won't be difficult to add new compatible strings. So
+should this be done like:
+
+        compatible = "arm,scmi", "arm,scmi-mailbox";
+
+or just
+        compatible = "arm,scmi-mailbox";
+
+?
+-- 
+viresh
