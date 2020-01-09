@@ -2,106 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77F76135D3C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 16:54:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBDFA135D49
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 16:59:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732672AbgAIPyk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 10:54:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33410 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729591AbgAIPyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 10:54:40 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA078206ED;
-        Thu,  9 Jan 2020 15:54:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578585279;
-        bh=CO2oAXeI60Yqe46XfH5899cbMwfHKmsfrdFWFp4IkwY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ChgxqELAE5vIbirpB/5834tX0zLmq/6Qkuwk3PhP6YsOSsJDsGlEhIyTXox1JsuJN
-         B1OIZI0Cw440zjgdeGT0HZFi52lZIWWtxsYhHreFRGpfMlj3sPcQYGOOAw2rt9a52Q
-         sqj3ztbeMWxnUDTLUqyEnMlliuBSWr8muk4dTo5Y=
-Date:   Thu, 9 Jan 2020 16:54:37 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-Cc:     mchehab@kernel.org, sean@mess.org, tglx@linutronix.de,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH 1/1] media: dvb_dummy_tuner: implement driver skeleton
-Message-ID: <20200109155437.GA568342@kroah.com>
-References: <20200109152408.919325-1-dwlsalmeida@gmail.com>
- <20200109152408.919325-2-dwlsalmeida@gmail.com>
+        id S1732690AbgAIP7C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 10:59:02 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:51239 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728488AbgAIP7C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 10:59:02 -0500
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id 009FwiPo026239;
+        Fri, 10 Jan 2020 00:58:45 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com 009FwiPo026239
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1578585525;
+        bh=AqJ/xCc4C+EoY9ZSnwE5jiP6hg2Sr1yHiLOvcetf/bQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=dSABy3Fr9rRGVz/zvukRpgXU5BVu5Z6BG0JLUvmN+FgQfRisxUQ4O7pdVq8IKGJlC
+         Q0SMySoHBKWHqDiZZiqN44caYJ9/Yt7Q9Ud5lycWuz4fSXhEQOGYNEw6TSFgg0HHzz
+         2y6XMq/bRkLdI48/yaFhENpqKpeqhlV7ngOzZ0Ynl+XBmIWlVe4DFByTXI0Bzm7c5v
+         8XPw7QANBo+/qpZHQPObF/vDyL+HOgkTiegqox4DngP3FiXm2bDEBA4mMs19T1AAfZ
+         HjnQ9tP/3g7bCCZ+MilrymB6hBuPHEYeG6XyVNvg5Xpxmx9ELx/5DPfIBznuQYK4D6
+         fyUnosw9lndHA==
+X-Nifty-SrcIP: [209.85.221.177]
+Received: by mail-vk1-f177.google.com with SMTP id t129so2086199vkg.6;
+        Thu, 09 Jan 2020 07:58:44 -0800 (PST)
+X-Gm-Message-State: APjAAAVVqrWm9DDt9Tef/zEHawzH0MrYBuY2yBMFbBJ3x4uqTKw+gqnb
+        UxkBmqzHP/Uom2LZm44Cyvv+oDAhGAgSwzVtwJI=
+X-Google-Smtp-Source: APXvYqzruv7RWg+pfK/b0ETXr/aI70RSHd3Q1CFedSeqhCKKB6AqzsA1lPUseZ5PEpdmHMMD8giiTzu6KZv++mGANAA=
+X-Received: by 2002:a1f:18b:: with SMTP id 133mr7051654vkb.73.1578585523664;
+ Thu, 09 Jan 2020 07:58:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200109152408.919325-2-dwlsalmeida@gmail.com>
+References: <20200109125627.24654-1-brgl@bgdev.pl>
+In-Reply-To: <20200109125627.24654-1-brgl@bgdev.pl>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Fri, 10 Jan 2020 00:58:07 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASBLXzgy2=fGfyrGbbWq2wL7Y9uaSh-MQQcd7tpvUBbMg@mail.gmail.com>
+Message-ID: <CAK7LNASBLXzgy2=fGfyrGbbWq2wL7Y9uaSh-MQQcd7tpvUBbMg@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: fix an "implicit declaration of function" warning
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 12:24:08PM -0300, Daniel W. S. Almeida wrote:
-> +static int dvb_dummy_tuner_i2c_probe(struct i2c_client *client,
-> +				     const struct i2c_device_id *id)
-> +{
-> +	int ret = 0;
-> +	struct dvb_dummy_tuner_config *config = client->dev.platform_data;
-> +	struct dvb_frontend *fe = config->fe;
-> +	struct dvb_dummy_tuner_dev *tuner_dev = NULL;
-> +
-> +	tuner_dev = kzalloc(sizeof(*tuner_dev), GFP_KERNEL);
-> +	if (!tuner_dev) {
-> +		ret = -ENOMEM;
-> +		goto err;
-> +	}
-> +
-> +	i2c_set_clientdata(client, tuner_dev);
-> +	tuner_dev->fe = config->fe;
-> +
-> +	memcpy(&fe->ops.tuner_ops,
-> +	       &dvb_dummy_tuner_ops,
-> +	       sizeof(struct dvb_tuner_ops));
-> +
-> +	fe->tuner_priv = client;
-> +
-> +	pr_debug("%s: Successfully probed %s\n", __func__, client->name);
+On Thu, Jan 9, 2020 at 9:56 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> strncasecmp() & strcasecmp() functions are declared in strings.h, not
+> string.h. On most environments the former is implicitly included by
+> the latter but on some setups, building menuconfig results in the
+> following warning:
+>
+>   HOSTCC  scripts/kconfig/mconf.o
+> scripts/kconfig/mconf.c: In function =E2=80=98search_conf=E2=80=99:
+> scripts/kconfig/mconf.c:423:6: warning: implicit declaration of function =
+=E2=80=98strncasecmp=E2=80=99 [-Wimplicit-function-declaration]
+>   if (strncasecmp(dialog_input_result, CONFIG_, strlen(CONFIG_)) =3D=3D 0=
+)
+>       ^~~~~~~~~~~
+> scripts/kconfig/mconf.c: In function =E2=80=98main=E2=80=99:
+> scripts/kconfig/mconf.c:1021:8: warning: implicit declaration of function=
+ =E2=80=98strcasecmp=E2=80=99 [-Wimplicit-function-declaration]
+>    if (!strcasecmp(mode, "single_menu"))
+>         ^~~~~~~~~~
+>
+> Fix it by explicitly including strings.h.
+>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-As you are a driver, you should never need to call any pr_* calls,
-instead use dev_*().  For this, you can use dev_dbg(), but really, why
-is that even needed except for your debugging bringup.  And for that,
-you can use ftrace, right?  So no need for any printing of anything
-here.
+Thanks.
 
-> +	return ret;
-> +
-> +err:
-> +	pr_err("%s: failed\n", __func__);
+I see strncasecmp() in
+scripts/kconfig/nconf.c too.
 
-Again, dev_err() would be proper, but there's no need for any error
-message here.
+Could you fix both in a single patch?
+
+You can try it with "make nconfig".
 
 
-Don't you need to register the tuner ops with something in this
-function?
 
-> +	return ret;
-> +}
-> +
-> +static int dvb_dummy_tuner_i2c_remove(struct i2c_client *client)
-> +{
-> +	struct dvb_dummy_tuner_dev *tuner_dev = i2c_get_clientdata(client);
-> +	struct dvb_frontend *fe = tuner_dev->fe;
-> +
-> +	memset(&fe->ops.tuner_ops, 0, sizeof(struct dvb_tuner_ops));
-> +	fe->tuner_priv = NULL;
-> +	kfree(tuner_dev);
-> +
+> ---
+>  scripts/kconfig/mconf.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/scripts/kconfig/mconf.c b/scripts/kconfig/mconf.c
+> index 49c26ea9dd98..4063dbc1b927 100644
+> --- a/scripts/kconfig/mconf.c
+> +++ b/scripts/kconfig/mconf.c
+> @@ -15,6 +15,7 @@
+>  #include <stdarg.h>
+>  #include <stdlib.h>
+>  #include <string.h>
+> +#include <strings.h>
+>  #include <signal.h>
+>  #include <unistd.h>
+>
+> --
+> 2.23.0
+>
 
-Don't you need to unregister the tuner ops in here?
 
-thanks,
-
-greg k-h
+--=20
+Best Regards
+Masahiro Yamada
