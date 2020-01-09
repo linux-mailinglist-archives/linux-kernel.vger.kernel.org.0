@@ -2,140 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5752C135261
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 06:05:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C24D13526A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 06:07:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725971AbgAIFFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 00:05:25 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:5380 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725308AbgAIFFZ (ORCPT
+        id S1726449AbgAIFHd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 00:07:33 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44592 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726121AbgAIFHc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 00:05:25 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e16b4820000>; Wed, 08 Jan 2020 21:05:06 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 08 Jan 2020 21:05:24 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 08 Jan 2020 21:05:24 -0800
-Received: from [10.24.44.157] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 9 Jan
- 2020 05:05:22 +0000
-Subject: Re: [PATCH v2] regmap: add iopoll-like atomic polling macro
-To:     <broonie@kernel.org>
-CC:     <jonathanh@nvidia.com>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-References: <1578546077-764-1-git-send-email-spujar@nvidia.com>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <9dced231-0392-5ac2-d4a2-e176e8cebba5@nvidia.com>
-Date:   Thu, 9 Jan 2020 10:35:19 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
-MIME-Version: 1.0
-In-Reply-To: <1578546077-764-1-git-send-email-spujar@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1578546306; bh=9pxIGRcRpFz5U1sIQ7X+fvwdOF3ktVPzrYBjiWdP/dg=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=dPz0K3KYgKwBBZmOvg95lnp1dNox43hJV8C7KclZOlOAbEoqSCA7qsJsvOSZQts89
-         JHUeosGzW2WmSRuq+qStTB59JxN6zGUi/3E+HPLsNgINstsgxjV0D+4nnbVhffpJMh
-         UO3hBwT9FnouIx4mo30OPf9OMPSVz4/e+/xzerWZ/ipOk+5h8+/T4S9xjbmApx+/7a
-         jcjiloye7mQKCYA5QbG9VGPkGbAYrYAgq1GlJ492LXW7FRw/bprjQFshlgiXd+LI58
-         234WUcLx6Fu416lnguI9aZVFe1DNxDGD/qMhwWPuucw2W2FJHirdmMvtrksex0NfZy
-         oEcIXYIeJsFjA==
+        Thu, 9 Jan 2020 00:07:32 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0094qP5T041057
+        for <linux-kernel@vger.kernel.org>; Thu, 9 Jan 2020 00:07:31 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xde0pe6uc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 00:07:31 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 9 Jan 2020 05:07:28 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 9 Jan 2020 05:07:25 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00957OP652887766
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 9 Jan 2020 05:07:24 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1387FAE053;
+        Thu,  9 Jan 2020 05:07:24 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EA146AE056;
+        Thu,  9 Jan 2020 05:07:22 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.236.182])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  9 Jan 2020 05:07:22 +0000 (GMT)
+Subject: Re: [PATCH v8 0/3] IMA: Deferred measurement of keys
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        James.Bottomley@HansenPartnership.com,
+        linux-integrity@vger.kernel.org
+Cc:     dhowells@redhat.com, arnd@arndb.de, matthewgarrett@google.com,
+        sashal@kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org
+Date:   Thu, 09 Jan 2020 00:07:22 -0500
+In-Reply-To: <20200109024359.3410-1-nramas@linux.microsoft.com>
+References: <20200109024359.3410-1-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20010905-0016-0000-0000-000002DBC5B5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20010905-0017-0000-0000-0000333E435A
+Message-Id: <1578546442.5147.37.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-08_07:2020-01-08,2020-01-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ spamscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
+ clxscore=1015 impostorscore=0 malwarescore=0 suspectscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001090044
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 2020-01-08 at 18:43 -0800, Lakshmi Ramasubramanian wrote:
 
-On 1/9/2020 10:31 AM, Sameer Pujar wrote:
-> This patch adds a macro 'regmap_read_poll_timeout_atomic' that works
-> similar to 'readx_poll_timeout_atomic' defined in linux/iopoll.h; This
-> is atomic version of already available 'regmap_read_poll_timeout' macro.
->
-> It should be noted that above atomic macro cannot be used by all regmaps.
-> If the regmap is set up for atomic use (flat or no cache and MMIO) then
-> only it can use.
->
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> ---
->   include/linux/regmap.h | 45 +++++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 45 insertions(+)
->
-> diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-> index dfe493a..aaf0ed1 100644
-> --- a/include/linux/regmap.h
-> +++ b/include/linux/regmap.h
-> @@ -119,6 +119,10 @@ struct reg_sequence {
->    * from atomic context if sleep_us or timeout_us are used.
->    *
->    * This is modelled after the readx_poll_timeout macros in linux/iopoll.h.
-> + *
-> + * Note: In general regmap cannot be used in atomic context. If you want to use
-> + * this macro then first setup your regmap for atomic use (flat or no cache
-> + * and MMIO regmap).
+> Changelog:
+> 
+>   v8
+> 
+>   => Rebased the changes to linux-next
+>   => Need to apply the following patch first
+>   https://lore.kernel.org/linux-integrity/20200108160508.5938-1-nramas@linux.microsoft.com/
 
-oops! Sorry!
-Wrong place, will fix in next revision.
+Unless you made some other changes, the previous version of this patch
+set is already in next-integrity-testing.  There's no reason to re-
+post these patches again, and definitely not against linux-next.
 
->    */
->   #define regmap_read_poll_timeout(map, addr, val, cond, sleep_us, timeout_us) \
->   ({ \
-> @@ -145,6 +149,47 @@ struct reg_sequence {
->   })
->   
->   /**
-> + * regmap_read_poll_timeout_atomic - Poll until a condition is met or a timeout occurs
-> + *
-> + * @map: Regmap to read from
-> + * @addr: Address to poll
-> + * @val: Unsigned integer variable to read the value into
-> + * @cond: Break condition (usually involving @val)
-> + * @delay_us: Time to udelay between reads in us (0 tight-loops).
-> + *            Should be less than ~10us since udelay is used
-> + *            (see Documentation/timers/timers-howto.rst).
-> + * @timeout_us: Timeout in us, 0 means never timeout
-> + *
-> + * Returns 0 on success and -ETIMEDOUT upon a timeout or the regmap_read
-> + * error return value in case of a error read. In the two former cases,
-> + * the last read value at @addr is stored in @val.
-> + *
-> + * This is modelled after the readx_poll_timeout_atomic macros in linux/iopoll.h.
-> + */
-> +#define regmap_read_poll_timeout_atomic(map, addr, val, cond, delay_us, timeout_us) \
-> +({ \
-> +	u64 __timeout_us = (timeout_us); \
-> +	unsigned long __delay_us = (delay_us); \
-> +	ktime_t __timeout = ktime_add_us(ktime_get(), __timeout_us); \
-> +	int __ret; \
-> +	for (;;) { \
-> +		__ret = regmap_read((map), (addr), &(val)); \
-> +		if (__ret) \
-> +			break; \
-> +		if (cond) \
-> +			break; \
-> +		if ((__timeout_us) && \
-> +		    ktime_compare(ktime_get(), __timeout) > 0) { \
-> +			__ret = regmap_read((map), (addr), &(val)); \
-> +			break; \
-> +		} \
-> +		if (__delay_us) \
-> +			udelay(__delay_us); \
-> +	} \
-> +	__ret ?: ((cond) ? 0 : -ETIMEDOUT); \
-> +})
-> +
-> +/**
->    * regmap_field_read_poll_timeout - Poll until a condition is met or timeout
->    *
->    * @field: Regmap field to read from
+Mimi
+
