@@ -2,63 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30076135DC1
+	by mail.lfdr.de (Postfix) with ESMTP id 9A690135DC2
 	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:09:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733296AbgAIQJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 11:09:00 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:47872 "EHLO
+        id S1733306AbgAIQJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 11:09:02 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:23092 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729201AbgAIQI7 (ORCPT
+        by vger.kernel.org with ESMTP id S1733294AbgAIQJA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 11:08:59 -0500
+        Thu, 9 Jan 2020 11:09:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578586138;
+        s=mimecast20190719; t=1578586139;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=SOQjJaPeQ6AkeMaBkCNADMS/kyh8erzQiBDqDRYV0Ec=;
-        b=EUL0vCJ8ZrnWjvsaczDdGHnKKVKoNO7Bdnqk53iDOGWRBr+ILjB8qsqBbEmx3MlTNdea2Y
-        vcIDXFIp9JvqsbnWKYgEtcvmghYEi1+PsUMuilTtBBeeL3wULQJwND4U02q9IpJeaoSXSp
-        uAAbKFjVhDSz3BLOcZykcO1vlzddjXo=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-323-s1m8si7nP72QKk9XVYs6DA-1; Thu, 09 Jan 2020 11:08:57 -0500
-X-MC-Unique: s1m8si7nP72QKk9XVYs6DA-1
-Received: by mail-wm1-f70.google.com with SMTP id g26so622299wmk.6
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:08:56 -0800 (PST)
+        bh=GX1HWyW2RBViA1jhSt+OmG2SA1mVF9hKLd9ureUedGg=;
+        b=aTSsRJ6IgqQEh5knQz0FQy2z1kFC1Ts3do/5PzbuU53TGLFDiRFY63RZ3UqTZLzNR2UZMQ
+        93Pv1lu5STjFa/upjQ3/bgFFxasAfa0SrUQj77hKKWXtFxolP/mF9hc+53unCqum1phgS2
+        0paDjcUx+KhZoVD2KbICEe2/zSBBKFI=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-154-e9hcG7msPNmwT6IxcyufyQ-1; Thu, 09 Jan 2020 11:08:58 -0500
+X-MC-Unique: e9hcG7msPNmwT6IxcyufyQ-1
+Received: by mail-wr1-f72.google.com with SMTP id b13so3031949wrx.22
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:08:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SOQjJaPeQ6AkeMaBkCNADMS/kyh8erzQiBDqDRYV0Ec=;
-        b=XiznIvTvpSGPFlX9Ozz34tEoBJMRgjZLKVXSloBX+C0hr54xAB/2We2cP59yzQlrDe
-         rO0+3lZCwj7oGOtnRPKUQMFK9Yy+MP9J6Lc6FMkXiQ0RBORk5HVHgUkNnlOsnVIhk5i8
-         sW/RB2364qeO1PDVQxHT93CwljkP6xuEhk2W/OCQ+hM1xRcdm5ZmgPHhY0ZFbXgbx04Q
-         +DWHscBkzDhh5s1fFKta7S5aPwhxjwcFVKlmf8ywHV4OELRPn6TfnftV4is/E77V76bA
-         nGE3ptLKnY9oqIjfITtXNA1uahMnqiimu8YnhfVj9FIPoF76QQwqjFol+H/SaDAhvdq+
-         VZ5A==
-X-Gm-Message-State: APjAAAWU0cuCB3WZrI8Oq7GDNKxPDeLD+AIIOqumvcQtTDSPZg871npg
-        kzwWC2AISLTPEK0A30z9MNk97r7qgrUE/6QmsCM3yxQMY9iEDnM9oyQnE9Z4biVScwGYaTCcRfE
-        o4DhHcbXVTQD8tAuxiXiQa7Aw
-X-Received: by 2002:a1c:8095:: with SMTP id b143mr5978376wmd.7.1578586135883;
-        Thu, 09 Jan 2020 08:08:55 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxEszMufKupL2p3ncLrB7YUBRc575U8Mr//L6Fw6AnOA6p/ZOQdu3ZNuVMIx6ccyJ0DT1HBiQ==
-X-Received: by 2002:a1c:8095:: with SMTP id b143mr5978353wmd.7.1578586135722;
-        Thu, 09 Jan 2020 08:08:55 -0800 (PST)
+        bh=GX1HWyW2RBViA1jhSt+OmG2SA1mVF9hKLd9ureUedGg=;
+        b=IHb6bPPjHT0BmZFRLGOKdkdyyn0U2+F/HE6EH6JKwM8Oe/5kbKPROtmwqM06L28pUl
+         6aH8ru3utK4rs6SRTj+fbnFtsZ1aKGUcJsHoAEww4U4GUurnbstbuTNWeq/dHcso32Ey
+         seR+2xUHU6AzUdwELVGC6COZIJHoZ4ftpsBMMesSTBn0RpStbVK01QMjr1blC8406pza
+         YDSGT1BQmfCydWHmHmbF8jnaY+sPnBL0D0dFsqa+CQOe2yFNCJBsMq/65igSQ8TNtYSQ
+         RkRXQXgc1NTXlsPe73RsNYyFkkX9RGw0xsQ+glU5JUhTq+DcKCUCyR+AmY8ZIlvXR2Xh
+         3Yvw==
+X-Gm-Message-State: APjAAAXDg2cUR94OfRVI7T1eGKgaDSFd5956YrWnC1tz6s7xvikBgjZc
+        ih1S5zOT9McXJe+OtYlL8kSMpUggLhe6E/lh0UkyQPfxRELwaVjr566PZqZT5qkQ7wYK/kniRJU
+        DBLsLvE1CovbWsh5TRO70JOKD
+X-Received: by 2002:a7b:c750:: with SMTP id w16mr6091430wmk.46.1578586137410;
+        Thu, 09 Jan 2020 08:08:57 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwjCp+Y4dd1UCQgpsIRC3EeNqpxSOKmFBNBlJEwGBmeaO0pEch53HDZj8tK+YxsBYtcqb3jbQ==
+X-Received: by 2002:a7b:c750:: with SMTP id w16mr6091403wmk.46.1578586137235;
+        Thu, 09 Jan 2020 08:08:57 -0800 (PST)
 Received: from redfedo.redhat.com (host81-140-166-164.range81-140.btcentralplus.com. [81.140.166.164])
-        by smtp.gmail.com with ESMTPSA id v8sm8403505wrw.2.2020.01.09.08.08.54
+        by smtp.gmail.com with ESMTPSA id v8sm8403505wrw.2.2020.01.09.08.08.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 08:08:55 -0800 (PST)
+        Thu, 09 Jan 2020 08:08:56 -0800 (PST)
 From:   Julien Thierry <jthierry@redhat.com>
 To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     jpoimboe@redhat.com, peterz@infradead.org, raphael.gault@arm.com,
         catalin.marinas@arm.com, will@kernel.org,
         Julien Thierry <jthierry@redhat.com>
-Subject: [RFC v5 46/57] arm64: alternative: Mark .altinstr_replacement as containing executable instructions
-Date:   Thu,  9 Jan 2020 16:02:49 +0000
-Message-Id: <20200109160300.26150-47-jthierry@redhat.com>
+Subject: [RFC v5 47/57] arm64: assembler: Add macro to annotate asm function having non standard stack-frame.
+Date:   Thu,  9 Jan 2020 16:02:50 +0000
+Message-Id: <20200109160300.26150-48-jthierry@redhat.com>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200109160300.26150-1-jthierry@redhat.com>
 References: <20200109160300.26150-1-jthierry@redhat.com>
@@ -71,29 +71,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Raphael Gault <raphael.gault@arm.com>
 
-Until now, the section .altinstr_replacement wasn't marked as containing
-executable instructions on arm64. This patch changes that so that it is
-coherent with what is done on x86.
+Some functions don't have standard stack-frames but are intended
+this way. In order for objtool to ignore those particular cases
+we add a macro that enables us to annotate the cases we chose
+to mark as particular.
 
 Signed-off-by: Raphael Gault <raphael.gault@arm.com>
 Signed-off-by: Julien Thierry <jthierry@redhat.com>
 ---
- arch/arm64/include/asm/alternative.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/frame.h | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/alternative.h b/arch/arm64/include/asm/alternative.h
-index b9f8d787eea9..e9e6b81e3eb4 100644
---- a/arch/arm64/include/asm/alternative.h
-+++ b/arch/arm64/include/asm/alternative.h
-@@ -71,7 +71,7 @@ static inline void apply_alternatives_module(void *start, size_t length) { }
- 	ALTINSTR_ENTRY(feature,cb)					\
- 	".popsection\n"							\
- 	" .if " __stringify(cb) " == 0\n"				\
--	".pushsection .altinstr_replacement, \"a\"\n"			\
-+	".pushsection .altinstr_replacement, \"ax\"\n"			\
- 	"663:\n\t"							\
- 	newinstr "\n"							\
- 	"664:\n\t"							\
+diff --git a/include/linux/frame.h b/include/linux/frame.h
+index 02d3ca2d9598..1e35e58ab259 100644
+--- a/include/linux/frame.h
++++ b/include/linux/frame.h
+@@ -11,14 +11,31 @@
+  *
+  * For more information, see tools/objtool/Documentation/stack-validation.txt.
+  */
++#ifndef __ASSEMBLY__
+ #define STACK_FRAME_NON_STANDARD(func) \
+ 	static void __used __section(.discard.func_stack_frame_non_standard) \
+ 		*__func_stack_frame_non_standard_##func = func
++#else
++	/*
++	 * This macro is the arm64 assembler equivalent of the
++	 * macro STACK_FRAME_NON_STANDARD define at
++	 * ~/include/linux/frame.h
++	 */
++	.macro	asm_stack_frame_non_standard	func
++	.pushsection ".discard.func_stack_frame_non_standard"
++	.quad	\func
++	.popsection
++	.endm
+
++#endif /* __ASSEMBLY__ */
+ #else /* !CONFIG_STACK_VALIDATION */
+
++#ifndef __ASSEMBLY__
+ #define STACK_FRAME_NON_STANDARD(func)
+-
++#else
++	.macro	asm_stack_frame_non_standard	func
++	.endm
++#endif /* __ASSEMBLY__ */
+ #endif /* CONFIG_STACK_VALIDATION */
+
+ #endif /* _LINUX_FRAME_H */
 --
 2.21.0
 
