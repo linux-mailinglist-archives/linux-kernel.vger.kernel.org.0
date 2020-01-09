@@ -2,141 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E996E13634C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 23:37:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53031136353
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 23:41:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbgAIWhp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 17:37:45 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:37169 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbgAIWhp (ORCPT
+        id S1728707AbgAIWlc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 17:41:32 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:58864 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725807AbgAIWlb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 17:37:45 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200109223742epoutp04793a3697113b3df287f5b85bc75d1cb9~oWPFMgiMR2153421534epoutp04b
-        for <linux-kernel@vger.kernel.org>; Thu,  9 Jan 2020 22:37:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200109223742epoutp04793a3697113b3df287f5b85bc75d1cb9~oWPFMgiMR2153421534epoutp04b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1578609462;
-        bh=kpZeS9gmOjU0iGT7GVawXCel1IcV5HDhplVN94HkDiU=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=N6pwx5l1sjkNxaQmk49Q4bFPvQSU1UUKj1yDNVF8viQUG3UrgcKQP9vwpOzgj4RXN
-         G1cIltokhNLAWjwsnH+2TJ6s0uEBAxd5U8BmCfK2x14hANNh5Gqf0WWHC3Wu4gJtSj
-         xK2M0eTjiFl5bYl6hSEg95tQgzJ+GYLGOUN1ouHM=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200109223742epcas1p33f9c699329d55b14b611ca19c69a053b~oWPErdRI20785107851epcas1p35;
-        Thu,  9 Jan 2020 22:37:42 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.162]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 47v1GF2XrszMqYlp; Thu,  9 Jan
-        2020 22:37:41 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4F.A6.57028.53BA71E5; Fri, 10 Jan 2020 07:37:41 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200109223740epcas1p14a99323e0a0a2fecc3805359380a975e~oWPDQfLIV1000710007epcas1p1p;
-        Thu,  9 Jan 2020 22:37:40 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200109223740epsmtrp1092591eab065dc9844808e82fd63f46a~oWPDPwri-2593825938epsmtrp1h;
-        Thu,  9 Jan 2020 22:37:40 +0000 (GMT)
-X-AuditID: b6c32a35-4f3ff7000001dec4-cd-5e17ab35215a
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        EE.A5.06569.43BA71E5; Fri, 10 Jan 2020 07:37:40 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200109223740epsmtip21ef3f9239c77d681b231ffb58aa31ef0~oWPDDJMX21908619086epsmtip2w;
-        Thu,  9 Jan 2020 22:37:40 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     =?utf-8?Q?'Pali_Roh=C3=A1r'?= <pali.rohar@gmail.com>
-Cc:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <valdis.kletnieks@vt.edu>,
-        <hch@lst.de>, <sj1557.seo@samsung.com>, <linkinjeon@gmail.com>,
-        <tytso@mit.edu>,
-        "'Gabriel Krisman Bertazi'" <krisman@collabora.com>
-In-Reply-To: <20200105165115.37dyrcwtgf6zgc6r@pali>
-Subject: RE: [PATCH v9 10/13] exfat: add nls operations
-Date:   Fri, 10 Jan 2020 07:37:40 +0900
-Message-ID: <001501d5c73d$66954a10$33bfde30$@samsung.com>
+        Thu, 9 Jan 2020 17:41:31 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 009MeBo3011340
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 9 Jan 2020 17:40:12 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 57CE24207DF; Thu,  9 Jan 2020 17:40:11 -0500 (EST)
+Date:   Thu, 9 Jan 2020 17:40:11 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Kurt Roeckx <kurt@roeckx.be>
+Cc:     Stephan Mueller <smueller@chronox.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>
+Subject: Re: [PATCH v3 0/8] Rework random blocking
+Message-ID: <20200109224011.GD41242@mit.edu>
+References: <20191226140423.GB3158@mit.edu>
+ <4048434.Q8HajmOrkZ@tauon.chronox.de>
+ <20191227130436.GC70060@mit.edu>
+ <15817620.rmTN4T87Wr@tauon.chronox.de>
+ <20191227220857.GD70060@mit.edu>
+ <20200109220230.GA39185@roeckx.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJSGi/S1M7UFBjz5N3SW71o+eawLwHz+Lr1AtmMBwQCEsM+eKazQ8Cw
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAJsWRmVeSWpSXmKPExsWy7bCmnq7pavE4g+k9whbNi9ezWaxcfZTJ
-        YtHR6ywW1+/eYrbYs/cki8XlXXPYLCae/s1kseXfEVaL1p6f7BaX3n9gceDy2HF3CaPHzll3
-        2T32z13D7rH7ZgObR9OZo8wefVtWMXp83iTncWj7G7YAjqgcm4zUxJTUIoXUvOT8lMy8dFsl
-        7+B453hTMwNDXUNLC3MlhbzE3FRbJRefAF23zBygI5UUyhJzSoFCAYnFxUr6djZF+aUlqQoZ
-        +cUltkqpBSk5BYYGBXrFibnFpXnpesn5uVaGBgZGpkCVCTkZX6/3MBV0clbs3NfA2sA4ib2L
-        kYNDQsBEYsZcli5GLg4hgR2MEnvnNLNDOJ8YJV5132LsYuQEcr4xSnTuDIBpWLg5GaJmL6PE
-        ya9nobpfMkq07rjCAtLAJqAr8e/PfjYQW0TAQmLH0e9sIEXMAh1MEte3gDgcHJwCxhJvv1WB
-        1AgLmEu8WXqXHcRmEVCVmPRlJZjNK2Ap8eXEVChbUOLkzCdg85kF5CW2v53DDGJLCChI/Hy6
-        jBVil5vEljlb2SBqRCRmd7Yxg+yVEJjMLtF+YScrRIOLxKfZ56CahSVeHd/CDmFLSbzsb4MG
-        S7XEx/1QJR2MEi++20LYxhI3129gBSlhFtCUWL9LHyKsKLHz91xGiLV8Eu++9rBCTOGV6GgT
-        gihRlei7dJgJwpaW6Gr/wD6BUWkWksdmIXlsFpIHZiEsW8DIsopRLLWgODc9tdiwwBA5pjcx
-        glOvlukOxinnfA4xCnAwKvHwZgiLxwmxJpYVV+YeYpTgYFYS4T16QyxOiDclsbIqtSg/vqg0
-        J7X4EKMpMNwnMkuJJucD80JeSbyhqZGxsbGFiZm5mamxkjgvx4+LsUIC6YklqdmpqQWpRTB9
-        TBycUg2MTcma79dKHw7t/x48P/jPkm+c929fKWjpDw3KilKPO+dZcEgyneHhh88/pu85/+34
-        xsdad5/9O19w0nFZt4r11KW26S1q7351LWDk2e9UIz9ja5NU7nZH//3qApe+pcZOU/3T6m/k
-        vWTzZMH4rkOPt/xXzm4ofd9ueFlkanXA3v5NdSeV/MLfKLEUZyQaajEXFScCAPVv7sHTAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLIsWRmVeSWpSXmKPExsWy7bCSvK7JavE4g+WHlS2aF69ns1i5+iiT
-        xaKj11ksrt+9xWyxZ+9JFovLu+awWUw8/ZvJYsu/I6wWrT0/2S0uvf/A4sDlsePuEkaPnbPu
-        snvsn7uG3WP3zQY2j6YzR5k9+rasYvT4vEnO49D2N2wBHFFcNimpOZllqUX6dglcGV+v9zAV
-        dHJW7NzXwNrAOIm9i5GDQ0LARGLh5uQuRi4OIYHdjBLd3z4AxTmB4tISx06cYYaoEZY4fLgY
-        ouY5o8SFfc/ZQGrYBHQl/v3ZD2aLCFhI7Dj6nQ2kiFlgEpNE08ff7HAdj+4tYgOZxClgLPH2
-        WxVIg7CAucSbpXfBlrEIqEpM+rISzOYVsJT4cmIqlC0ocXLmExYQm1lAW+LpzadQtrzE9rdz
-        mCEOVZD4+XQZK8QRbhJb5mxlg6gRkZjd2cY8gVF4FpJRs5CMmoVk1CwkLQsYWVYxSqYWFOem
-        5xYbFhjlpZbrFSfmFpfmpesl5+duYgRHopbWDsYTJ+IPMQpwMCrx8GYIi8cJsSaWFVfmHmKU
-        4GBWEuE9ekMsTog3JbGyKrUoP76oNCe1+BCjNAeLkjivfP6xSCGB9MSS1OzU1ILUIpgsEwen
-        VANjm8yvV89VpkVrC9yoff38YN4kNetvh/wF47eK9Cv5mX77dn7rqmepl84yJ8zR7c8JmLwz
-        t3/u4x+d3HIfL136ff/S3zNn9PobledaiBcYl6SwHUzSSItx3hA7ZbOOJXOn0dawgqiAzXem
-        uDYkXnzh8f3uPKMPe0++3By5t8yVw01r7WT9sD/HlViKMxINtZiLihMBLynsqMACAAA=
-X-CMS-MailID: 20200109223740epcas1p14a99323e0a0a2fecc3805359380a975e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05
-References: <20200102082036.29643-1-namjae.jeon@samsung.com>
-        <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com>
-        <20200102082036.29643-11-namjae.jeon@samsung.com>
-        <20200105165115.37dyrcwtgf6zgc6r@pali>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200109220230.GA39185@roeckx.be>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Thursday 02 January 2020 16:20:33 Namjae Jeon wrote:
-> > This adds the implementation of nls operations for exfat.
+On Thu, Jan 09, 2020 at 11:02:30PM +0100, Kurt Roeckx wrote:
 > 
-> Hello! In whole patch series are different naming convention for
-> nls/Unicode related terms. E.g. uni16s, utf16s, nls, vfsname, ...
-> 
-> Could this be fixed, so it would be unambiguously named? "uni16s" name is
-> misleading as Unicode does not fit into 16byte type.
-> 
-> Based on what is in nls.h I would propose following names:
-> 
-> * unicode_t *utf32s always for strings in UTF-32/UCS-4 encoding (host
->   endianity) (or "unicode_t *unis" as this is the fixed-width encoding
->   for all Unicode codepoints)
-> 
-> * wchar_t *utf16s always for strings in UTF-16 encoding (host endianity)
-> 
-> * u8 *utf8s always for strings in UTF-8 encoding
-> 
-> * wchar_t *ucs2s always for strings in UCS-2 encoding (host endianity)
-> 
-> Plus in the case you need to work with UTF-16 or UCS-2 in little endian,
-> add appropriate naming suffixes.
-> 
-> And use e.g. "vfsname" (char * OR unsigned char * OR u8 *) like you
-> already have on some places for strings in iocharset= encoding.
-Will rename them on v10.
+> One thing the NIST DRBGs have is prediction resistance, which is
+> done by reseeding. If you chain DRBGs, you tell your parent DRBG
+> that you want prediction resistance, so your parent will also
+> reseed. There currently is no way to tell the kernel to reseed.
 
-Thanks!
+It would be simple enough to add a new flag, perhaps GRND_RESEED, to
+getrandom() which requests that the kernel reseed first.  This would
+require sufficient amounts of entropy in the input pool to do the
+reseed; if there is not enough, the getrandom() call would block until
+there was enough.  If GRND_NONBLOCK is supplied, then getrandom()
+would return EAGAIN if there wasn't sufficient entropy.
+
+Is this what you want?
+
+What should happen if two racing processes simultaneously call
+getrandom(2) with GRND_RESEED?  Do they need to be serialized with a
+separate reseed for each one?  Does it matter whether, after the
+reseed, some other process calling getrandom(2) manages to get output
+from the CRNG before the process requesting the RESEED gets a chance
+to use the reseeded CRNG?
+
+This can all be fixed by adding more locking, of course, but then the
+crazy people who think that:
+
+      dd if=/dev/random of=/dev/sdb
+
+needs to be able to work at HDD, SSD, or networking line speeds, will
+complain that all of this locking has slowed down /dev/[u]random, and
+they can't get their hundreds of megabytes/second out of the CRNG....
+
+> I would check my own hardware if such an option was available. I
+> think it can be useful to see if the current estimates in the
+> kernel are conservative enough or not. But it would require that
+> you can know what the entropy source is, like the keyboard or
+> harddisk.
+
+Creating such an interface is not high on my priority list.  If
+someone wants to send a proposal for such an interface, followed by a
+patch, I'm happy to take a look at it.  I am worried about the
+potential information leakage that such an interface might provide,
+though.  So at the very least, it should be something that can be
+disabled via build-time config, and perhaps hidden behind
+CONFIG_EXPERIMENTAL.  I really would want to make it clear that it's
+only for use by experts who are interesting in tinkering, and not
+something which is enabled in a distro kernel.
+
+> I don't think we want that. As far as I know, the only reason for
+> using /dev/random is that /dev/urandom returns data before it
+> has sufficient entropy.
+
+Is there any objections to just using getrandom(2)?
+
+   	     		   	      - Ted
 
