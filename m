@@ -2,161 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C719D135222
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 05:17:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5EA5135234
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 05:40:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727907AbgAIEQn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 23:16:43 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:62910 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727417AbgAIEQn (ORCPT
+        id S1727933AbgAIEkz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 23:40:55 -0500
+Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:57393 "EHLO
+        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727749AbgAIEkz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 23:16:43 -0500
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0094F2ie021000;
-        Wed, 8 Jan 2020 20:16:28 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=proofpoint;
- bh=gqd8kDyiNWjov9R7Xvryp/rFu0JGZ+ZcDYmXO05ugQY=;
- b=mH7lfthJzGNIASoFzhO0BoGu4iXHwLTB6rAsYpPMnb1dTAYHiP/1dxpF0QxhAmQtax+L
- jkI/jq6YHU+/IRqczPTYyZ3jm/gRfeKzRRueH/RLTMoArI5T2GZQyBmMmMlQ9zDweF4B
- EPEmgjRYNs7POATBuxEpwDIVE6OEolKXC1IhlAs+3lKQ8jLYS8LAuJD2GWJwl096VfNm
- oN1E5jqTdC1DeoK5dK7ZUummAPAzdlvv5LKVMqcLSTl1wXI6HamMcNQx9cZDiy7dDn2K
- L66QoyL4nZ/VhVYQmVd7/W9IAugfscOwx2G/iqjaGpWgLp6w8mj37tfcWeT/APN13MnK Rw== 
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2172.outbound.protection.outlook.com [104.47.57.172])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2xaq620e9n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 08 Jan 2020 20:16:28 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XYO1SZrLME6QPcphSSlhUzlXQsfpOraiz0N59rA1kHPcm3AtZH8iq24AS/Uoab6OHBnm7e3loXndvQsJcq32Ux+MR32dXlAkSnKnoXlpzmjsczvSLZVRqetNBCcDxebtIC34n0hsp3LyQvhP1KsKtNptO8kn2SQNN4u4f18XMenIn8ICbiqhaZiKrWQj2ApaW6ugSf7uGDSBs4kBatPwVq7T7W3sw54tXNLQ9qj+ZSYz44814knCqU6X12JunEgI32wzZiVebhMtcEOLoYzajv3VYOAZoDD4WTANvOPq4sQPw4hu1bvKXMpC0vI4rROULADrZcmSXeHpn3WSdVh4WA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gqd8kDyiNWjov9R7Xvryp/rFu0JGZ+ZcDYmXO05ugQY=;
- b=JIJGsOBRuu1ew050VB2OiaMoj4PYKROgeCVqy6twQ4szsBFaGUyUKa5m4REAYU0YKSZ9WJn9/hS7Ttc+mKgLiT88v195i9iIyB3McresRRkzqXtA5BGRNOAH9Qr7LUMeA1r06IXI7P0PZ7pUDtd1Vo5H0Gp60Aj/x3IG/CjcRwBb7HEIbjIJwWVARxsjn/AH1IJEd8KJtycx7LUBYoTTWVWzfQMAlrlqfP0pXmrurX8U5Rcw1AfbHFVOH8VGcozut7xYprwfAiKwULNLxsQoleoBT5/vbGc3JpeOJUq8aIucWVDoETW7sjPywk6WnBFIjTXjL9Fzr7TCObfhJsik4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cadence.com; dmarc=pass action=none header.from=cadence.com;
- dkim=pass header.d=cadence.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gqd8kDyiNWjov9R7Xvryp/rFu0JGZ+ZcDYmXO05ugQY=;
- b=zCGoKrhwWr6/NNQ1W/hk1w3ewesAtw4dLpfRrqIy+6j+z1g9kty1CLZE+Zp/gyAl9a94z9FJNVhO0E/K7A5DIbOZlJcSZQPWhiLAOBIbp1ib01XY5KvFv/bEnJ06mR/Jh5xS9r1RzRbjRf10doqFeElpfcImVmb8EAFbrJQRkeE=
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
- BYAPR07MB5096.namprd07.prod.outlook.com (20.177.125.75) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2602.15; Thu, 9 Jan 2020 04:16:26 +0000
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::d01d:9089:7310:db3a]) by BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::d01d:9089:7310:db3a%6]) with mapi id 15.20.2623.008; Thu, 9 Jan 2020
- 04:16:26 +0000
-From:   Pawel Laszczak <pawell@cadence.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "rogerq@ti.com" <rogerq@ti.com>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jayshri Dajiram Pawar <jpawar@cadence.com>,
-        Rahul Kumar <kurahul@cadence.com>,
-        Sanket Parmar <sparmar@cadence.com>,
-        Peter Chan <peter.chan@nxp.com>
-Subject: RE: [PATCH] usb: cdns3: Fix: ARM core hang after connect/disconnect
- operation.
-Thread-Topic: [PATCH] usb: cdns3: Fix: ARM core hang after connect/disconnect
- operation.
-Thread-Index: AQHVxhgd/L7cK1vWyke0JuU/54YkXqfg0gYAgADnxWA=
-Date:   Thu, 9 Jan 2020 04:16:26 +0000
-Message-ID: <BYAPR07MB4709DB56EF568E410881E7EFDD390@BYAPR07MB4709.namprd07.prod.outlook.com>
-References: <20200108113719.21551-1-pawell@cadence.com>
- <20200108142250.GA2383861@kroah.com>
-In-Reply-To: <20200108142250.GA2383861@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctY2IzY2ZkZGQtMzI5Ni0xMWVhLTg3NTItMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XGNiM2NmZGRmLTMyOTYtMTFlYS04NzUyLTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMTQ1MyIgdD0iMTMyMjMwMTY5ODM0Njc2MjA5IiBoPSJjTnA2T3ZJajdraWVwWnpjaWV4ZldXaTg4QjA9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: true
-x-originating-ip: [185.217.253.59]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2c843d81-9b7c-47d6-4fc3-08d794bab1b7
-x-ms-traffictypediagnostic: BYAPR07MB5096:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR07MB509660050736DA61CA5A71A1DD390@BYAPR07MB5096.namprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 02778BF158
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(376002)(346002)(366004)(396003)(199004)(36092001)(189003)(71200400001)(81156014)(8676002)(478600001)(7696005)(8936002)(52536014)(2906002)(9686003)(316002)(4326008)(33656002)(55016002)(66446008)(66946007)(6506007)(76116006)(186003)(5660300002)(6916009)(26005)(54906003)(81166006)(86362001)(66476007)(64756008)(66556008);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB5096;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: cadence.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: h3eRbb7wlZBiwt5IvzF7ElUhk6dfOJLhzX2q/Bmg9FnkqYBbZir8AlDTBHRx27XMIKdRM3a/kyjq+MGkDW3CWdzF2nbezyDMfAag1atNFykuU9bZV9DKnsmHxu62cSfSrW+QJhdkUfUEOrROGGZ43ZJE4V1E52uNIIFXV9BmuHa+1drS2SzTy67NDUsOHI5sNQIvsRo1XJ+UMijDGy81C2ONCZ4hiXBu0GpyYvB8gXXiK4xcggSoXlkEC+XtxXabg2Futqo3bO1t9bidmxyDoqDgSi3v8TasgsbkxWiVyDwKN7tlDqY9q3ucZnABOj47Kv1qt46v8qGfpLGe3mFNl8rFSfD/LFLuA4EJDpdzI6iazlp85fqPk7puoONjpOy+c0mMxDc5x1iK0XzmJXnn/1pGFyEvJfiFqkyU/VegSKmTStpv2ktpskXGJABDblOq46Zcxw0er9fMRCE4bGZLy51JjtiNT9GYGksnxWHxEiqTAUvHfd42OVXT9E2p5b3h
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 8 Jan 2020 23:40:55 -0500
+X-Greylist: delayed 600 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 Jan 2020 23:40:54 EST
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.west.internal (Postfix) with ESMTP id 9CFC29EA;
+        Wed,  8 Jan 2020 23:30:52 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Wed, 08 Jan 2020 23:30:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm3; bh=T3IpaNh6tON7Z0J6BNGMp35jqP
+        cvLlQMXYRa9Ey0PUY=; b=FxKTRHnD4I2nmGm01m/Qrb7EJgiipwTTvsfnKL6dV1
+        s0MFPFrsqYdD/E2cCt1VASFOwPnVIlTZxSM92nSFR73g8+4JM/0W7mAW3VE57ybY
+        8kAIr2bKxW2SS9RZhd9VK9bw+rPXsxUaZ/Cn6njZugYT/xQx+cF8ADbc/ZzQEhn9
+        iB/LLcvpQKtr7hAMWub89RtK9s4VqZnb1FDk1mvo19Onz5GZKzsX9iqAdoW9aIyl
+        Uk7P4j179XNu7Fi1xikWDAAuc2/vN9lm72M8zlZjYMQrVnCFngWXDyRBR1xb2AXo
+        YJj7s8aI1J7JTuZE+c//ir9wTL7GdY7soVP2BbxO3KmQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=T3IpaNh6tON7Z0J6B
+        NGMp35jqPcvLlQMXYRa9Ey0PUY=; b=fzf7yeMtz23cZcpTYXNROyfZXuDYDWxSM
+        PrUF7lFIuia0DLnBZypneihyxytRmi06aatmvWAKbjk5+rxA9cqhjB9+I7J+VYNk
+        wdbdj/5sECQyAdmjDgRSPT8NVCJe3uQLG2UE43TaFHzkA1QkZ/iS4OetQGK+vlfR
+        tj7fJ27E2115LaDLdhmNIXLdybDXM3DN9me9XJZFZMLBSWWpmxlnikGPlUjoR9lR
+        YxSxLULWNWymcB5S4DLQbncxclBg5ZnPyjzIQxA3u0119jPwyOzdTHicJwA3ODHD
+        c7Y3jrAANeBWFcVGwbOAxIghUZkyL3JsD16HrwIXs6rIX7Yo7fJjQ==
+X-ME-Sender: <xms:e6wWXgvKKBsGJIcyFg7XNPj2Fpaa9yHUz2p4azCKG6cfevK2A3v6UQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdehledgieefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeetnhgurhgvshcu
+    hfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucfkphepieejrd
+    duiedtrddvudejrddvhedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurhgvshes
+    rghnrghrrgiivghlrdguvgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:e6wWXi8Ip0xs3ExUbEn6_9lmGFVpX4sgqniUjJ4ffg-xivB2EQW_HQ>
+    <xmx:e6wWXkFN52PjyGQMnUJyW7wiWB99xdtKUqigRjwjvJv7C_iiYVCRHA>
+    <xmx:e6wWXhQKh4qxHJX8Y8BEpDpYMy-HE9WCfzkoBqEjyDVRPRFCsYkaHA>
+    <xmx:fKwWXmg-rKXlkTEMzsYzgteBs8zX7wYegz_5Gte9QyygyYdBetCcyB2m6Vs>
+Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 272E18005B;
+        Wed,  8 Jan 2020 23:30:51 -0500 (EST)
+From:   Andres Freund <andres@anarazel.de>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Andres Freund <andres@anarazel.de>,
+        Jiri Olsa <jolsa@kernel.org>, Andi Kleen <ak@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, stable@vger.kernel.org
+Subject: [PATCH] perf c2c: Fix sorting.
+Date:   Wed,  8 Jan 2020 20:30:30 -0800
+Message-Id: <20200109043030.233746-1-andres@anarazel.de>
+X-Mailer: git-send-email 2.25.0.rc1
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c843d81-9b7c-47d6-4fc3-08d794bab1b7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jan 2020 04:16:26.1453
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sLS/ynXNB7W2abAimK0DVK78MdPPbftMvsCz7blsv9qw618yp+YSfrVi73cguelH39IBkGWsWvywVlpmqRF+RVb5yVA2Xu1N8+3mtMcF5v0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB5096
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-08_07:2020-01-08,2020-01-08 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 mlxlogscore=999
- impostorscore=0 suspectscore=0 clxscore=1011 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001090037
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Commit 722ddfde366f ("perf tools: Fix time sorting") changed -
+correctly so - hist_entry__sort to return int64. Unfortunately several
+of the builtin-c2c.c comparison routines only happened to work due the
+cast caused by the wrong return type.
 
->
->
->On Wed, Jan 08, 2020 at 12:37:18PM +0100, Pawel Laszczak wrote:
->> The ARM core hang when access USB register after tens of thousands
->> connect/disconnect operation.
->>
->> The issue was observed on platform with android system and is not easy
->> to reproduce. During test controller works at HS device mode with host
->> connected.
->>
->> The test is based on continuous disabling/enabling USB device function
->> what cause continuous setting DEVDS/DEVEN bit in USB_CONF register.
->>
->> For testing was used composite device consisting from ADP and RNDIS
->> function.
->>
->> Presumably the problem was caused by DMA transfer made after setting
->> DEVDS bit. To resolve this issue fix stops all DMA transfer before
->> setting DEVDS bit.
->>
->> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
->> Signed-off-by: Peter Chan <peter.chan@nxp.com>
->> Reported-by: Peter Chan <peter.chan@nxp.com>
->> Fixes: 7733f6c32e36 ("usb: cdns3: Add Cadence USB3 DRD Driver")
->> ---
->>  drivers/usb/cdns3/gadget.c | 84 ++++++++++++++++++++++++++------------
->>  drivers/usb/cdns3/gadget.h |  1 +
->>  2 files changed, 58 insertions(+), 27 deletions(-)
->
->Any reason to forget linux-usb@vger.kernel.org for usb patches?
+This causes meaningless ordering of both the cacheline list, and the
+cacheline details page. E.g a simple
+  perf c2c record -a sleep 3
+  perf c2c report
+will result in cacheline table like
+  =================================================
+             Shared Data Cache Line Table
+  =================================================
+  #
+  #        ----------- Cacheline ----------    Total      Tot  ----- LLC Load Hitm -----  ---- Store Reference ----  --- Load Dram ----      LLC    Total  ----- Core Load Hit -----  -- LLC Load Hit --
+  # Index             Address  Node  PA cnt  records     Hitm    Total      Lcl      Rmt    Total    L1Hit   L1Miss       Lcl       Rmt  Ld Miss    Loads       FB       L1       L2       Llc       Rmt
+  # .....  ..................  ....  ......  .......  .......  .......  .......  .......  .......  .......  .......  ........  ........  .......  .......  .......  .......  .......  ........  ........
+  #
+        0      0x7f0d27ffba00   N/A       0       52    0.12%       13        6        7       12       12        0         0         7       14       40        4       16        0         0         0
+        1      0x7f0d27ff61c0   N/A       0     6353   14.04%     1475      801      674      779      779        0         0       718     1392     5574     1299     1967        0       115         0
+        2      0x7f0d26d3ec80   N/A       0       71    0.15%       16        4       12       13       13        0         0        12       24       58        1       20        0         9         0
+        3      0x7f0d26d3ec00   N/A       0       98    0.22%       23       17        6       19       19        0         0         6       12       79        0       40        0        10         0
+i.e. with the list not being ordered by Total Hitm.
 
-No reason. I missed it.=20
-+ linux-usb@vger.kernel.org
+Fixes: 722ddfde366f ("perf tools: Fix time sorting")
+Signed-off-by: Andres Freund <andres@anarazel.de>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org # v3.16+
+---
+ tools/perf/builtin-c2c.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Thanks,
-Pawell
+diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+index e69f44941aad..f2e9d2b1b913 100644
+--- a/tools/perf/builtin-c2c.c
++++ b/tools/perf/builtin-c2c.c
+@@ -595,8 +595,8 @@ tot_hitm_cmp(struct perf_hpp_fmt *fmt __maybe_unused,
+ {
+ 	struct c2c_hist_entry *c2c_left;
+ 	struct c2c_hist_entry *c2c_right;
+-	unsigned int tot_hitm_left;
+-	unsigned int tot_hitm_right;
++	uint64_t tot_hitm_left;
++	uint64_t tot_hitm_right;
+ 
+ 	c2c_left  = container_of(left, struct c2c_hist_entry, he);
+ 	c2c_right = container_of(right, struct c2c_hist_entry, he);
+@@ -629,7 +629,8 @@ __f ## _cmp(struct perf_hpp_fmt *fmt __maybe_unused,			\
+ 									\
+ 	c2c_left  = container_of(left, struct c2c_hist_entry, he);	\
+ 	c2c_right = container_of(right, struct c2c_hist_entry, he);	\
+-	return c2c_left->stats.__f - c2c_right->stats.__f;		\
++	return (uint64_t) c2c_left->stats.__f -				\
++	       (uint64_t) c2c_right->stats.__f;				\
+ }
+ 
+ #define STAT_FN(__f)		\
+@@ -682,7 +683,8 @@ ld_llcmiss_cmp(struct perf_hpp_fmt *fmt __maybe_unused,
+ 	c2c_left  = container_of(left, struct c2c_hist_entry, he);
+ 	c2c_right = container_of(right, struct c2c_hist_entry, he);
+ 
+-	return llc_miss(&c2c_left->stats) - llc_miss(&c2c_right->stats);
++	return (uint64_t) llc_miss(&c2c_left->stats) -
++	       (uint64_t) llc_miss(&c2c_right->stats);
+ }
+ 
+ static uint64_t total_records(struct c2c_stats *stats)
+-- 
+2.25.0.rc1
 
->
->thanks,
->
->greg k-h
