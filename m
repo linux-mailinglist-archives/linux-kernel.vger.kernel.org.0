@@ -2,105 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65A1F1362CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 22:45:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E8651362D3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 22:51:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728293AbgAIVpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 16:45:36 -0500
-Received: from mga11.intel.com ([192.55.52.93]:48715 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725763AbgAIVpg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 16:45:36 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 13:45:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,414,1571727600"; 
-   d="scan'208";a="218476526"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by fmsmga008.fm.intel.com with ESMTP; 09 Jan 2020 13:45:35 -0800
-Date:   Thu, 9 Jan 2020 13:50:38 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v8 04/10] iommu/vt-d: Support flushing more translation
- cache types
-Message-ID: <20200109135038.7608d059@jacob-builder>
-In-Reply-To: <24cc06da-14ec-908d-361d-a8b321b10852@linux.intel.com>
-References: <1576524252-79116-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1576524252-79116-5-git-send-email-jacob.jun.pan@linux.intel.com>
-        <24cc06da-14ec-908d-361d-a8b321b10852@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1728923AbgAIVvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 16:51:18 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36417 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbgAIVvR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 16:51:17 -0500
+Received: by mail-lf1-f67.google.com with SMTP id n12so6368917lfe.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 13:51:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=pSJuCv0q0/z1FIFOdOKkUBldJYopo2x6Df2DsyN6P7E=;
+        b=ieR+qxqTsANxu9KU5tWvLhl0Mvyhhs134onZh4oxgiuiYnDaI00xsh7R4b8zmrZO7C
+         8ISLUpepGZmuHi71A542ASURhzsBRrjZWenRDQuFFx3ZcZfnuv2LQVb8KHEi4NZprJcp
+         2iEAW2ufL+CvgdswRTShu6qWP3kYnkIIZh4PTCpIWvMqc7ga4peCC1RcAHSAc7di1Dh0
+         MPIe4QLEIs29g9aSugBTsYe2rC3mc/koptJ6bZMKayeriQ6mROz2r5XbkBEJ0JcpZysp
+         bdGhnwr9KjVEbLGvdNWPbh3uhrKOZOlRRVYXl3vevQ31CwpbpAZKEbyfVKL9iW9N4abT
+         J8Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=pSJuCv0q0/z1FIFOdOKkUBldJYopo2x6Df2DsyN6P7E=;
+        b=lTBapmpvSSLuHvVWliVdinmFLGkOQ4Evzxr7/wxI3+NUzhXJHdMimFEoVT+6wK3Zwj
+         P83LTlwxYxEfsP2H7LJ+EVt2DkFKkcZm4BOxIKUSVWyZPkvmB5xgZ1AkfmE2cAW4bGaL
+         JBklOk0wJtFZCkB6rUqgcP1ZHKmn8CC4Fni/UoNmcDV1RQtXMzXl5+rdMkOWC5OMnIZa
+         54AE3eCGaPLWo3nMaKGpdYIAVS3V2IefLzBfBvLluR7UzJtFbqPnUsFCL7lHXH9zOpUL
+         qvhrj8iRHNUlvkVV+062DxIrvd0JCkyYHBn5PbjFdLqZotVIRoE1TYRh6SezkhGSZLto
+         iAnQ==
+X-Gm-Message-State: APjAAAV5pffWKqy8RrkotRBADzOq8yUEOGAsg4L2dfRXG+tuA4BiFm8v
+        DFeM8y5nzx9rTI5nqSAazY1021Oieb2kCbSUvmI67g==
+X-Google-Smtp-Source: APXvYqww+xa/shqmj3ALY2JAcM4t2Oi9yfUMtjGqluc3+ah50x+EtFXlht3Em5G6Av0vEY0z2OhZ80T5Hgfzp+ShcR4=
+X-Received: by 2002:ac2:5c4b:: with SMTP id s11mr7373029lfp.133.1578606675739;
+ Thu, 09 Jan 2020 13:51:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 9 Jan 2020 22:51:04 +0100
+Message-ID: <CACRpkdbR2Ssr1WWfS2HZ-jd6XFgEvEsqrjVAcgPsR8RerE-xfQ@mail.gmail.com>
+Subject: [GIT PULL] pin control fixes for v5.5
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Qianggui Song <qianggui.song@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Dec 2019 10:46:51 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+Hi Linus,
 
-> Hi,
-> 
-> On 12/17/19 3:24 AM, Jacob Pan wrote:
-> > When Shared Virtual Memory is exposed to a guest via vIOMMU,
-> > scalable IOTLB invalidation may be passed down from outside IOMMU
-> > subsystems. This patch adds invalidation functions that can be used
-> > for additional translation cache types.
-> > 
-> > Signed-off-by: Jacob Pan<jacob.jun.pan@linux.intel.com>
-> > ---
-> >   drivers/iommu/dmar.c        | 46
-> > +++++++++++++++++++++++++++++++++++++++++++++
-> > drivers/iommu/intel-pasid.c |  3 ++- include/linux/intel-iommu.h |
-> > 21 +++++++++++++++++---- 3 files changed, 65 insertions(+), 5
-> > deletions(-)
-> > 
-> > diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-> > index 3acfa6a25fa2..f2f5d75da94a 100644
-> > --- a/drivers/iommu/dmar.c
-> > +++ b/drivers/iommu/dmar.c
-> > @@ -1348,6 +1348,20 @@ void qi_flush_iotlb(struct intel_iommu
-> > *iommu, u16 did, u64 addr, qi_submit_sync(&desc, iommu);
-> >   }
-> >   
-> > +/* PASID-based IOTLB Invalidate */
-> > +void qi_flush_iotlb_pasid(struct intel_iommu *iommu, u16 did, u64
-> > addr, u32 pasid,
-> > +		unsigned int size_order, u64 granu, int ih)
-> > +{
-> > +	struct qi_desc desc = {.qw2 = 0, .qw3 = 0};
-> > +
-> > +	desc.qw0 = QI_EIOTLB_PASID(pasid) | QI_EIOTLB_DID(did) |
-> > +		QI_EIOTLB_GRAN(granu) | QI_EIOTLB_TYPE;
-> > +	desc.qw1 = QI_EIOTLB_ADDR(addr) | QI_EIOTLB_IH(ih) |
-> > +		QI_EIOTLB_AM(size_order);
-> > +
-> > +	qi_submit_sync(&desc, iommu);
-> > +}  
-> 
-> There's another version of pasid-based iotlb invalidation.
-> 
-> https://lkml.org/lkml/2019/12/10/2128
-> 
-> Let's consider merging them.
-> 
-Absolutely, the difference i see is that the granularity is explicit
-here. Here we do invalidation request from the guest. Perhaps, we can
-look at consolidation once this use case is supported?
+some two fixes for pin control, not much to say about
+it, it's just regular driver fixes.
 
-> Best regards,
-> baolu
+Please pull them in!
 
-[Jacob Pan]
+Yours,
+Linus Walleij
+
+The following changes since commit fd6988496e79a6a4bdb514a4655d2920209eb85d:
+
+  Linux 5.5-rc4 (2019-12-29 15:29:16 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v5.5-4
+
+for you to fetch changes up to 35c60be220572de7d6605c4318f640d133982040:
+
+  pinctrl: meson: Fix wrong shift value when get drive-strength
+(2020-01-07 11:21:07 +0100)
+
+----------------------------------------------------------------
+Pin control fixes for the v5.5 kernel cycle:
+
+- Fix erroneous shift in the Meson driver
+
+- Make Lochnagar select the GPIOLIB Kconfig symbol
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      pinctrl: lochnagar: select GPIOLIB
+
+Qianggui Song (1):
+      pinctrl: meson: Fix wrong shift value when get drive-strength
+
+ drivers/pinctrl/cirrus/Kconfig        | 1 +
+ drivers/pinctrl/meson/pinctrl-meson.c | 1 +
+ 2 files changed, 2 insertions(+)
