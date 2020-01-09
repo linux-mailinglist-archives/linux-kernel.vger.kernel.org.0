@@ -2,87 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE6521352E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 06:58:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C64801352EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 07:00:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727916AbgAIF6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 00:58:01 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:48037 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725893AbgAIF6B (ORCPT
+        id S1728059AbgAIGAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 01:00:25 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44018 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728017AbgAIGAV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 00:58:01 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id E833321F18;
-        Thu,  9 Jan 2020 00:57:59 -0500 (EST)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Thu, 09 Jan 2020 00:57:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm1; bh=EsMKsMKI6HhF0F0RtD4RD5a7b8gvE2C
-        1Qv6MEtScRc0=; b=EYJ8qXOpV4/5J8MYiMmaa8eIayd6/H1HHxWVnf/tlbBRNto
-        fm3Q4Fh9cgfTPSjK9rNLBrbApDVyxe12FJ6FoZMKKIfI/o35oYFzeLu6sT3doOGF
-        rcFXwT1B87faUViSKpFIk5dp7w9b6b1ZbDQ4lcHqWbsPGsGFCNIi50of4Bw6cWKU
-        ekZNyPTwr+pi3KXXZta4A2ce3LNLVAaV0OFbWJcyw2t1UHsHCXy3s2gDwynYWvRX
-        khyCdm6jNGvzlO5JxDtVtSxAqmv3uvntP1ADUTyt4LTp4CGPiTFl2pqOWJz6EZGB
-        mR5+2YEur68wjgp6AuSFr0OGMqhiZkdVDAWLygQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=EsMKsM
-        KI6HhF0F0RtD4RD5a7b8gvE2C1Qv6MEtScRc0=; b=Xs3rnUenGEIz7PHXDH/03Y
-        bensMd8MOXuP70PFSP5rGOVCtoYjI+24kyTIhCofx5Aqx37f1gC8jDgU15/oRQUd
-        LdgzprFRmP6YgEaSB6lLnuNbfNW3pO09P62Hu6WmhW9NKc/2G8ZMhDDh4NcyD/kc
-        x/+D9ZQL1v3ELOxcigJB7vzlM8ZdqvIWhKBpyhdUa+QF/ftdqx4EOa1zwJm00Q42
-        rnYIihXXh7Brqo2zg998zDTNBBSQRzqkqmKrzKUPyx0xfIhNmeVai8XZihgMrY0F
-        ZPtGCB8EsSjwlYlgGNE3ykKDD1Hf0eQZ7hORs5R/cBp4zp/GOxtnCeIiucAwzsDw
-        ==
-X-ME-Sender: <xms:5sAWXqSUlHYgKeyBAM34X3wt_YQWCvCZVjGTSY5TXCy87amJcWywmw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdehledgkedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
-    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
-    rhfuihiivgeptd
-X-ME-Proxy: <xmx:5sAWXsGOqfvR6Phd36-p-3SnwtH8TSSKIX3Rmt3T9d1006Y7MkK_mw>
-    <xmx:5sAWXqk3XoSaA_SeoBMr0RsoC56Drn_goMsUKLUjsyJUFe72GHz8ng>
-    <xmx:5sAWXn0of7jeys2u1opLc6hpZ4gTFaloF-tefoSgxIkX7eh0ckpCpw>
-    <xmx:58AWXpMqXvEOp__CoPwm3O8ewgPsyAqYxgS_SfH0SUTGJEdmdW4OHg>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id BD6ACE00A2; Thu,  9 Jan 2020 00:57:58 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-740-g7d9d84e-fmstable-20200109v1
-Mime-Version: 1.0
-Message-Id: <cb602d43-7e00-4d7b-8f05-6b774d573901@www.fastmail.com>
-In-Reply-To: <1577993276-2184-9-git-send-email-eajames@linux.ibm.com>
-References: <1577993276-2184-1-git-send-email-eajames@linux.ibm.com>
- <1577993276-2184-9-git-send-email-eajames@linux.ibm.com>
-Date:   Thu, 09 Jan 2020 16:29:57 +1030
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Eddie James" <eajames@linux.ibm.com>,
-        linux-aspeed@lists.ozlabs.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com, "Jason Cooper" <jason@lakedaemon.net>,
-        "Marc Zyngier" <maz@kernel.org>,
-        "Rob Herring" <robh+dt@kernel.org>, tglx@linutronix.de,
-        "Joel Stanley" <joel@jms.id.au>
-Subject: Re: [PATCH v4 08/12] soc: aspeed: xdma: Add reset ioctl
-Content-Type: text/plain
+        Thu, 9 Jan 2020 01:00:21 -0500
+Received: by mail-lj1-f193.google.com with SMTP id a13so5825562ljm.10;
+        Wed, 08 Jan 2020 22:00:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jdjS6K2dIf4AKtftWVFNoSuaQ6gkNryIMRphxB0WPic=;
+        b=r3DqpCgsfrrcRXkqqgjNkSRcJV6mAIHAXcB/Es/dGepwDboRjHlTRB50mEbmSRav0h
+         oA/zMRGTcAgZHj0jlwpU0TZVMS7ylSdCX8z++bWi7WG5MxsKwSRiVT8I/7VLFqRdShDE
+         fzAG1hfJsN0hoCtd93RkjyUg0YD/WLfBIBfXzXc1yE0hlNH8Ai5V1guSuC7JZn/Y53Qw
+         zZ0nHX59S8fuORc/P7dAnvXh/kbzFIDflq/ntCpGsjAr9ihxAWdgkpze7YGm1nV0Ds69
+         UyDmoFuXeaCqnER4R51ZQH9Mfype/zxLBg9zzimVtIRnlLD5pdZi0yJpmEFq+xyPSVzG
+         8R5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jdjS6K2dIf4AKtftWVFNoSuaQ6gkNryIMRphxB0WPic=;
+        b=mp/4aYu99NJ80uDaU8oWzi+QfxYLZRE3us3NsYsGEy/AdbIqTR9CCubs6BeNz390Zq
+         EsOZPlVAZr6WGJOwgKPpq2FUPY5LUFMrUo2YIghAcYlxa9pkL10AWadodo0ROFxF4Erl
+         Vfg7uHzHLtXnsHke3/55b/SRVkqiEjiqON7VGrCqTVbFd0Py7p46g2yB7+zC0/w1mEOM
+         thCrUYUc6gPB0Hy7qCxUe88oP27Z6cE9zuGCx1GnWwcFjRvSNd05iLgmF7UfuSkLcAkw
+         Fw67+/ZWHHMn4V1qQes5iRmjKAnstC4DKZYzRZ2UlSMrGupsD/oIzJMbHEWnApEzUe20
+         HvKw==
+X-Gm-Message-State: APjAAAXUcNZERb8DPgwqR0LKhWHhS9SkWaANUR+c+FjuvsRNsTO5glJx
+        kfd9xU0ph4lOn9UdK33xU9hbNeSU
+X-Google-Smtp-Source: APXvYqxu08nOLwdO35di1kCgbajKiCZxvikl5+mhzPOA7uD3hfkdbIDcg4B0CkCG30IfZCp2pVL84w==
+X-Received: by 2002:a2e:b4cf:: with SMTP id r15mr5368398ljm.52.1578549618663;
+        Wed, 08 Jan 2020 22:00:18 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id z5sm2305493lji.40.2020.01.08.22.00.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jan 2020 22:00:18 -0800 (PST)
+Subject: Re: [PATCH v3] regmap: add iopoll-like atomic polling macro
+To:     Sameer Pujar <spujar@nvidia.com>, broonie@kernel.org
+Cc:     jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <1578546590-24737-1-git-send-email-spujar@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <fa5198bf-0001-3a57-017f-1b40e0188606@gmail.com>
+Date:   Thu, 9 Jan 2020 09:00:17 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
+MIME-Version: 1.0
+In-Reply-To: <1578546590-24737-1-git-send-email-spujar@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Fri, 3 Jan 2020, at 05:57, Eddie James wrote:
-> Users of the XDMA engine need a way to reset it if something goes wrong.
-> Problems on the host side, or user error, such as incorrect host
-> address, may result in the DMA operation never completing and no way to
-> determine what went wrong. Therefore, add an ioctl to reset the engine
-> so that users can recover in this situation.
+09.01.2020 08:09, Sameer Pujar пишет:
+> This patch adds a macro 'regmap_read_poll_timeout_atomic' that works
+> similar to 'readx_poll_timeout_atomic' defined in linux/iopoll.h; This
+> is atomic version of already available 'regmap_read_poll_timeout' macro.
 > 
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> It should be noted that above atomic macro cannot be used by all regmaps.
+> If the regmap is set up for atomic use (flat or no cache and MMIO) then
+> only it can use.
+> 
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> ---
 
-Acked-by: Andrew Jeffery <andrew@aj.id.au>
+Could you please explain what is the targeted use-case here?
