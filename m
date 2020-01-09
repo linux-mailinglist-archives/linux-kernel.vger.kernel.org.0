@@ -2,89 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA174136414
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 00:56:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 481BE13641A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 00:57:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729834AbgAIX4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 18:56:24 -0500
-Received: from mga05.intel.com ([192.55.52.43]:55945 "EHLO mga05.intel.com"
+        id S1729905AbgAIX5u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 18:57:50 -0500
+Received: from ozlabs.org ([203.11.71.1]:34947 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729649AbgAIX4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 18:56:23 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 15:56:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,414,1571727600"; 
-   d="scan'208";a="246828491"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by fmsmga004.fm.intel.com with ESMTP; 09 Jan 2020 15:56:22 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jim Mattson <jmattson@google.com>,
-        Andrew Honig <ahonig@google.com>,
-        Barret Rhoden <brho@google.com>
-Subject: [PATCH 3/3] KVM: Return immediately if __kvm_gfn_to_hva_cache_init() fails
-Date:   Thu,  9 Jan 2020 15:56:20 -0800
-Message-Id: <20200109235620.6536-4-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200109235620.6536-1-sean.j.christopherson@intel.com>
-References: <20200109235620.6536-1-sean.j.christopherson@intel.com>
+        id S1729706AbgAIX5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 18:57:49 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47v32d5WMzz9sPJ;
+        Fri, 10 Jan 2020 10:57:44 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1578614265;
+        bh=TD8bO5jX3Cr1I+bGYFerSH/F4hLEBVl6YkrtZuz68zM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=LsQyQfMlP1tgYGBZJgmTIEEz5R1UP4JmnyNqf8bBsjEzii9VSjUr3hvHaVyGT7aU5
+         GemcnYx75IR4YAWxpC6B75fahuRcIofOMbLX9FryEFfokKgjQ0VLmNG4NwP+pR7/3X
+         2ecdPXeJnJKqDBQf+Ah703P0P3Mo/3Zwn6BXh+xlMsyekJTnLHoef577NnFvgwTj4Q
+         2cpowU1NwBf/UxOOw85XLkrGb3aaND3+14ipaoxgmXbaqYRtLYKDTvGIWc2uG7exvS
+         0QrLfyqJTTvUqeu5jHN2iO031Z2tnalqQtxKnWJ3rWNIbEvY0wvWxwujx5VWcaDsSz
+         +mFuIAINK+Lvg==
+Date:   Fri, 10 Jan 2020 10:57:38 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Petr Machata <petrm@mellanox.com>
+Subject: linux-next: build failure after merge of the net-next tree
+Message-ID: <20200110105738.2b20cbad@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/=q81v8uInKOM8jRoLd774bH";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check the result of __kvm_gfn_to_hva_cache_init() and return immediately
-instead of relying on the kvm_is_error_hva() check to detect errors so
-that it's abundantly clear KVM intends to immediately bail on an error.
+--Sig_/=q81v8uInKOM8jRoLd774bH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Note, the hva check is still mandatory to handle errors on subqeuesnt
-calls with the same generation.  Similarly, always return -EFAULT on
-error so that multiple (bad) calls for a given generation will get the
-same result, e.g. on an illegal gfn wrap, propagating the return from
-__kvm_gfn_to_hva_cache_init() would cause the initial call to return
--EINVAL and subsequent calls to return -EFAULT.
+Hi all,
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+After merging the net-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/net/ethernet/mellanox/mlxsw/spectrum_qdisc.c: In function '__mlxsw_=
+sp_qdisc_ets_graft':
+drivers/net/ethernet/mellanox/mlxsw/spectrum_qdisc.c:770:7: error: 'p' unde=
+clared (first use in this function); did you mean 'up'?
+  770 |  if (!p->child_handle) {
+      |       ^
+      |       up
+
+Caused by commit
+
+  345457a6e2cd ("Merge remote-tracking branch 'net-next/master'")
+
+i.e. an incorrect automatic merge between commit
+
+  3971a535b839 ("mlxsw: spectrum_qdisc: Ignore grafting of invisible FIFO")
+
+from Linus' tree and commit
+
+  7917f52ae188 ("mlxsw: spectrum_qdisc: Generalize PRIO offload to support =
+ETS")
+
+from the net-next tree.
+
+I have applied the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 10 Jan 2020 10:52:33 +1100
+Subject: [PATCH] mlxws: fix up for "mlxsw: spectrum_qdisc: Ignore grafting =
+of invisible FIFO"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- virt/kvm/kvm_main.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_qdisc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index e8d8fc1d72b4..4479dc9ba00a 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -2205,8 +2205,10 @@ int kvm_write_guest_offset_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
- 
- 	BUG_ON(len + offset > ghc->len);
- 
--	if (slots->generation != ghc->generation)
--		__kvm_gfn_to_hva_cache_init(slots, ghc, ghc->gpa, ghc->len);
-+	if (slots->generation != ghc->generation) {
-+		if (__kvm_gfn_to_hva_cache_init(slots, ghc, ghc->gpa, ghc->len))
-+			return -EFAULT;
-+	}
- 
- 	if (kvm_is_error_hva(ghc->hva))
- 		return -EFAULT;
-@@ -2238,8 +2240,10 @@ int kvm_read_guest_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
- 
- 	BUG_ON(len > ghc->len);
- 
--	if (slots->generation != ghc->generation)
--		__kvm_gfn_to_hva_cache_init(slots, ghc, ghc->gpa, ghc->len);
-+	if (slots->generation != ghc->generation) {
-+		if (__kvm_gfn_to_hva_cache_init(slots, ghc, ghc->gpa, ghc->len))
-+			return -EFAULT;
-+	}
- 
- 	if (kvm_is_error_hva(ghc->hva))
- 		return -EFAULT;
--- 
-2.24.1
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_qdisc.c b/drivers=
+/net/ethernet/mellanox/mlxsw/spectrum_qdisc.c
+index 17b29e2d19ed..54807b4930fe 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_qdisc.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_qdisc.c
+@@ -767,7 +767,7 @@ __mlxsw_sp_qdisc_ets_graft(struct mlxsw_sp_port *mlxsw_=
+sp_port,
+ 	    mlxsw_sp_port->tclass_qdiscs[tclass_num].handle =3D=3D child_handle)
+ 		return 0;
+=20
+-	if (!p->child_handle) {
++	if (!child_handle) {
+ 		/* This is an invisible FIFO replacing the original Qdisc.
+ 		 * Ignore it--the original Qdisc's destroy will follow.
+ 		 */
+--=20
+2.24.0
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/=q81v8uInKOM8jRoLd774bH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4XvfIACgkQAVBC80lX
+0Gyy6Af/dR6/7p0+dYPXSjL00vZvIfMYEflpo+BHgiCVgt/cElOmeuOZhlz287x7
+RgdjhIBDD0LrYn+zmUmIgIrSxtv46bKvFaxJ17T7Fjf+jdWuWKfL4JJL0cLwidov
+Z5kQTG8zS67f0+nnE/P24XzHWK4Ds+d6lPbDqHgyJWo3Xk0e97XbpwvCX38WwSBu
+0nFiToIbHMYA2a5z/NmfL3m/DVjwFEQiX5KT7kBP9LRe30pwu8Sd/PmKF4ndNE1v
+NhWB98zQ5idy3YSJmMVZcqa3HxEGOZkSqbBBvJgwXF3VgY1beBiDhRVvqKZzV+il
+FFHo8f+J7QOeT/S5uNk6G+3TYmWR7A==
+=vAoK
+-----END PGP SIGNATURE-----
+
+--Sig_/=q81v8uInKOM8jRoLd774bH--
