@@ -2,89 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3766E1362FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 23:04:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F04BA1362F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 23:01:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729265AbgAIWER (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 17:04:17 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:44849 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbgAIWER (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 17:04:17 -0500
-Received: by mail-qt1-f195.google.com with SMTP id t3so157454qtr.11;
-        Thu, 09 Jan 2020 14:04:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:in-reply-to:references:mime-version
-         :content-transfer-encoding:date:message-id;
-        bh=mYYRhkuZDGTmH8A/CCqbCYP6JuoA0cdwzxVenF2dSZ0=;
-        b=mzvJVX2Fzp1VjDakSF1A3fw4acUf2/LmE9/zEVaKYRjFMR5cyyMv1i5cn/Xp+s17in
-         98O8giPhUma6YpWQCU5SPHho/8G1XTqYihjcsajX4QJ2ZIXtN7OaS47J5e4nOYOdb1gQ
-         pVJtfFnioZmXAlAg3/g7REynbCcXdkNOxZnAtpp/Nt3Q7YpFVbqNIsu+MhGPUfcCS6Ll
-         OH7zYFGJJSCWYR2l1kDpKwO+dYwu3U+HM9Hoq/l4p3Kbtuj9jOEzOIPsQByL3tLlnUSP
-         mB8mBDHdS5NZTrDQ8fKGMC1cnQd237JraSFfaMhdlXJ7pjaM6DAqp070a8bh0/DcwqNe
-         ZmIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=mYYRhkuZDGTmH8A/CCqbCYP6JuoA0cdwzxVenF2dSZ0=;
-        b=JCC3mfEGXz02RZ0YQ7YnW1MSugYw5UpL966qawSdFmjBtmo5o3BML3J551P7TWiZ+K
-         TFUTi6lFuQvUI8DuT10kobvmD/jy7el2wYstXNugMnN2DPRxb/1HViU8I4L47ZXLEEU5
-         5SEVIqxgJl1V5RM1u8I04Ix5AUSP+IfQRtftraFEKqUdYEh3SGVo8Ht6pJg4nMGeLsHq
-         +RwkgW/Y8ec6zYIrM1vd0neszejIozLsDPyHcygRGhJyrgHgy8aJN8UfIt/Ndh/6Sps4
-         14TS5GuhsO+Du9HgRl7dfiT92AZiLdKXbsan4cvF4Kj9Vgmnu0E1yXBRw4oC0xfArcDe
-         2LGA==
-X-Gm-Message-State: APjAAAXfTR+0zmBO6oZrKRK87hyZn00nj8tzkMks7KhSwyzyGCdZbS4M
-        Rs1zhtU+TQBdIkeSmt5LwpY=
-X-Google-Smtp-Source: APXvYqziswXcvy80PCLg3bRmvFEdbmL7ZjtsrARb5PD7IgYC3Br7236xOmWBD7EZ8pYdqM3OvY4sgg==
-X-Received: by 2002:ac8:1e05:: with SMTP id n5mr9883387qtl.227.1578607456681;
-        Thu, 09 Jan 2020 14:04:16 -0800 (PST)
-Received: from turing-police ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id r12sm3678459qkm.94.2020.01.09.14.04.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 14:04:16 -0800 (PST)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@gmail.com>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@gmail.com>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, hch@lst.de, sj1557.seo@samsung.com,
-        linkinjeon@gmail.com, tytso@mit.edu
-Subject: Re: [PATCH v9 09/13] exfat: add misc operations
-In-reply-to: <20200107115202.shjpp6g3gsrhhkuy@pali>
-References: <20200102082036.29643-1-namjae.jeon@samsung.com> <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com> <20200102082036.29643-11-namjae.jeon@samsung.com> <20200105165115.37dyrcwtgf6zgc6r@pali> <85woa4jrl2.fsf@collabora.com>
- <20200107115202.shjpp6g3gsrhhkuy@pali>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 09 Jan 2020 17:04:15 -0500
-Message-ID: <47625.1578607455@turing-police>
+        id S1729239AbgAIWB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 17:01:27 -0500
+Received: from mga18.intel.com ([134.134.136.126]:65401 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729194AbgAIWB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 17:01:26 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 14:01:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,414,1571727600"; 
+   d="scan'208";a="371424636"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga004.jf.intel.com with ESMTP; 09 Jan 2020 14:01:25 -0800
+Date:   Thu, 9 Jan 2020 14:06:29 -0800
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v8 08/10] iommu/vt-d: Add custom allocator for IOASID
+Message-ID: <20200109140629.0e15c3f3@jacob-builder>
+In-Reply-To: <9c9c818c-ccb1-544d-2041-cf7017c4d898@linux.intel.com>
+References: <1576524252-79116-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1576524252-79116-9-git-send-email-jacob.jun.pan@linux.intel.com>
+        <9c9c818c-ccb1-544d-2041-cf7017c4d898@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When compiling on a 32-bit system like Raspian on an RPi4, the compile di=
-es:
+On Wed, 18 Dec 2019 12:10:55 +0800
+Lu Baolu <baolu.lu@linux.intel.com> wrote:
 
-  CC =5BM=5D  fs/exfat/misc.o
-fs/exfat/misc.c: In function 'exfat_time_unix2fat':
-fs/exfat/misc.c:157:16: error: 'UNIX_SECS_2108' undeclared (first use in =
-this function); did you mean 'UNIX_SECS_1980'?
-  if (second >=3D UNIX_SECS_2108) =7B
-                =5E=7E=7E=7E=7E=7E=7E=7E=7E=7E=7E=7E=7E=7E
-                UNIX_SECS_1980
-fs/exfat/misc.c:157:16: note: each undeclared identifier is reported only=
- once for each function it appears in
-make=5B2=5D: *** =5Bscripts/Makefile.build:266: fs/exfat/misc.o=5D Error =
-1
+> Hi,
+> 
+> On 12/17/19 3:24 AM, Jacob Pan wrote:
+> > When VT-d driver runs in the guest, PASID allocation must be
+> > performed via virtual command interface. This patch registers a
+> > custom IOASID allocator which takes precedence over the default
+> > XArray based allocator. The resulting IOASID allocation will always
+> > come from the host. This ensures that PASID namespace is system-
+> > wide.
+> > 
+> > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> > Signed-off-by: Liu, Yi L <yi.l.liu@intel.com>
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > ---
+> >   drivers/iommu/intel-iommu.c | 75
+> > +++++++++++++++++++++++++++++++++++++++++++++
+> > include/linux/intel-iommu.h |  2 ++ 2 files changed, 77
+> > insertions(+)
+> > 
+> > diff --git a/drivers/iommu/intel-iommu.c
+> > b/drivers/iommu/intel-iommu.c index e90102c7540d..b0c0bb6f740e
+> > 100644 --- a/drivers/iommu/intel-iommu.c
+> > +++ b/drivers/iommu/intel-iommu.c
+> > @@ -1700,6 +1700,9 @@ static void free_dmar_iommu(struct
+> > intel_iommu *iommu) if (ecap_prs(iommu->ecap))
+> >   			intel_svm_finish_prq(iommu);
+> >   	}
+> > +	if (ecap_vcs(iommu->ecap) && vccap_pasid(iommu->vccap))
+> > +
+> > ioasid_unregister_allocator(&iommu->pasid_allocator); +
+> >   #endif
+> >   }
+> >   
+> > @@ -3181,6 +3184,75 @@ static int copy_translation_tables(struct
+> > intel_iommu *iommu) return ret;
+> >   }
+> >   
+> > +#ifdef CONFIG_INTEL_IOMMU_SVM
+> > +static ioasid_t intel_ioasid_alloc(ioasid_t min, ioasid_t max,
+> > void *data) +{
+> > +	struct intel_iommu *iommu = data;
+> > +	ioasid_t ioasid;
+> > +  
+> 
+> Check !iommu just like the free api?
+> 
+sounds good, will return INVALID_IOASID if NULL.
 
-The problem is that the definition of UNIX_SECS_2108  is wrapped:
+> > +	/*
+> > +	 * VT-d virtual command interface always uses the full 20
+> > bit
+> > +	 * PASID range. Host can partition guest PASID range based
+> > on
+> > +	 * policies but it is out of guest's control.
+> > +	 */
+> > +	if (min < PASID_MIN || max > intel_pasid_max_id)
+> > +		return INVALID_IOASID;
+> > +
+> > +	if (vcmd_alloc_pasid(iommu, &ioasid))
+> > +		return INVALID_IOASID;
+> > +
+> > +	return ioasid;
+> > +}
+> > +
+> > +static void intel_ioasid_free(ioasid_t ioasid, void *data)
+> > +{
+> > +	struct intel_iommu *iommu = data;
+> > +
+> > +	if (!iommu)
+> > +		return;
+> > +	/*
+> > +	 * Sanity check the ioasid owner is done at upper layer,
+> > e.g. VFIO
+> > +	 * We can only free the PASID when all the devices are
+> > unbound.
+> > +	 */
+> > +	if (ioasid_find(NULL, ioasid, NULL)) {
+> > +		pr_alert("Cannot free active IOASID %d\n", ioasid);
+> > +		return;
+> > +	}
+> > +	vcmd_free_pasid(iommu, ioasid);
+> > +}
+> > +
+> > +static void register_pasid_allocator(struct intel_iommu *iommu)
+> > +{
+> > +	if (!intel_iommu_sm) {  
+> 
+> Use sm_supported(iommu) instead.
+> 
+sounds good, seems we could separate the sm code more cleanly in the
+future to avoid all these checks.
 
-+=23if BITS_PER_LONG =3D=3D 64
-+=23define UNIX_SECS_2108    4354819200L
-+=23endif
+> > +		pr_warn("VT-d scalable mode not enabled\n");
+> > +		return;
+> > +	}
+> > +
+> > +	/*
+> > +	 * Register a custom PASID allocator if we are running in
+> > a guest,
+> > +	 * guest PASID must be obtained via virtual command
+> > interface.
+> > +	 * There can be multiple vIOMMUs in each guest but only
+> > one allocator
+> > +	 * is active. All vIOMMU allocators will eventually be
+> > calling the same
+> > +	 * host allocator.
+> > +	 */
+> > +	if (ecap_vcs(iommu->ecap) && vccap_pasid(iommu->vccap)) {
+> > +		pr_info("Register custom PASID allocator\n");
+> > +		iommu->pasid_allocator.alloc = intel_ioasid_alloc;
+> > +		iommu->pasid_allocator.free = intel_ioasid_free;
+> > +		iommu->pasid_allocator.pdata = (void *)iommu;
+> > +		if
+> > (!ioasid_register_allocator(&iommu->pasid_allocator)) {
+> > +			pr_warn("Custom PASID allocator failed,
+> > scalable mode disabled\n");
+> > +			/*
+> > +			 * Disable scalable mode on this IOMMU if
+> > there
+> > +			 * is no custom allocator. Mixing SM
+> > capable vIOMMU
+> > +			 * and non-SM vIOMMU are not supported.
+> > +			 */
+> > +			intel_iommu_sm = 0;
+> > +		}
+> > +	}
+> > +}
+> > +#endif
+> > +
+> >   static int __init init_dmars(void)
+> >   {
+> >   	struct dmar_drhd_unit *drhd;
+> > @@ -3298,6 +3370,9 @@ static int __init init_dmars(void)
+> >   	 */
+> >   	for_each_active_iommu(iommu, drhd) {
+> >   		iommu_flush_write_buffer(iommu);
+> > +#ifdef CONFIG_INTEL_IOMMU_SVM
+> > +		register_pasid_allocator(iommu);
+> > +#endif
+> >   		iommu_set_root_entry(iommu);
+> >   		iommu->flush.flush_context(iommu, 0, 0, 0,
+> > DMA_CCMD_GLOBAL_INVL); iommu->flush.flush_iotlb(iommu, 0, 0, 0,
+> > DMA_TLB_GLOBAL_FLUSH); diff --git a/include/linux/intel-iommu.h
+> > b/include/linux/intel-iommu.h index 1e11560b0e59..8c30b23bd838
+> > 100644 --- a/include/linux/intel-iommu.h
+> > +++ b/include/linux/intel-iommu.h
+> > @@ -19,6 +19,7 @@
+> >   #include <linux/iommu.h>
+> >   #include <linux/io-64-nonatomic-lo-hi.h>
+> >   #include <linux/dmar.h>
+> > +#include <linux/ioasid.h>
+> >   
+> >   #include <asm/cacheflush.h>
+> >   #include <asm/iommu.h>
+> > @@ -557,6 +558,7 @@ struct intel_iommu {
+> >   #ifdef CONFIG_INTEL_IOMMU_SVM
+> >   	struct page_req_dsc *prq;
+> >   	unsigned char prq_name[16];    /* Name for PRQ interrupt
+> > */
+> > +	struct ioasid_allocator_ops pasid_allocator; /* Custom
+> > allocator for PASIDs */ #endif
+> >   	struct q_inval  *qi;            /* Queued invalidation
+> > info */ u32 *iommu_state; /* Store iommu states between suspend and
+> > resume.*/ 
+> 
+> Best regards,
+> baolu
 
-but the usage isn't.
+[Jacob Pan]
