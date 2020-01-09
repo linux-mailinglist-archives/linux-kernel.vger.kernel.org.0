@@ -2,116 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C5AE1361F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 21:46:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A417A1361F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 21:46:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728503AbgAIUqp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 15:46:45 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46591 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728241AbgAIUqo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 15:46:44 -0500
-Received: by mail-qt1-f195.google.com with SMTP id g1so7011574qtr.13
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 12:46:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=DWM0j5tZLR3359c+a2rA4wyZv8TrqZcQKkaM1KEojEY=;
-        b=mGmbTjKXlVt1lompbLHwd/o0loS1Ui1RASNS3ZCwAby7hncY8DP4zZqRNWujbFiPVQ
-         1Yre3YqeeOUg/RQ0swG4m3uPf4VRMXn2Egv5Bkn2Tc9MmRzAZBJf8iw/NdKj9DBFRAb0
-         8qFVdaEZaxzDO5k+ssPER1RiYQ2K7p+1U/mtE4SyLk3ZUrpsMtbkhton/QRPRKx/XS6g
-         NiXbAUQTpmU1ctkhjmm2lpp7Ci4nuMX0i6NEJonIASaB/eOhaBAKm9efbNKMvAvUWLJn
-         0hSo2EQ4C8g5Fkz3Wu0LWh7Ri5gmJuxmoTw3Ob7uSiP+CXFjEKJ1mKyTJpwNLd8kVWF2
-         ZMow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=DWM0j5tZLR3359c+a2rA4wyZv8TrqZcQKkaM1KEojEY=;
-        b=QxszFA5u6/TGpKsVbE8J815GqksFUmGRvXj+kVerx9+cxOCsL08JDLvsfIepWH8kZD
-         0Ome96lNwo1a+lnGNM8LJYOPZDUCFh7vBFfVUz3BqT6wlge7STmuLzvc3bPa+9UHJr0j
-         LY1K6+nZf1dywTfMVEiNSBc4OsSVMRnzdhsHTY77i+VGwO9L8Iumo6t4lwWOq7xwsR+p
-         3045/4l4Q7/flyT8gAAp3IOzuXjIgnMku2mwVfzVa3zLG1c7e0NgZ4Gq6N/M1+H5sbgQ
-         WI8syLeTyjxv0tHaKfQKD4vpWvUeEJCpbuUBe8hx7VUcVzf5lFaGl/GaReGa+2Uyu6dl
-         oPWw==
-X-Gm-Message-State: APjAAAWzURR+ld/yFumLGF0xyZLaMoxzhy+CNhLje/OH2/gwOklLWUPL
-        r6zLQKe4NY8AE3EHILh6h+6yw4PSG0Y=
-X-Google-Smtp-Source: APXvYqxybzWgUcYhtudbjmkLjeD3PtY/3I527wBsTWBCp1KPrdCi6Bg9T8RpSrIBmxeFmTbGWdc/HQ==
-X-Received: by 2002:ac8:37d3:: with SMTP id e19mr3173027qtc.361.1578602803027;
-        Thu, 09 Jan 2020 12:46:43 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id f26sm3846724qtv.77.2020.01.09.12.46.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 12:46:42 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Thu, 9 Jan 2020 15:46:41 -0500
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Zhenzhong Duan <zhenzhong.duan@gmail.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@suse.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH v2] x86/boot/KASLR: Fix unused variable warning
-Message-ID: <20200109204638.GA523773@rani.riverdale.lan>
-References: <20200103033929.4956-1-zhenzhong.duan@gmail.com>
- <20200109184055.GI5603@zn.tnic>
+        id S1728157AbgAIUqn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 15:46:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58134 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726267AbgAIUqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 15:46:42 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA6F820721;
+        Thu,  9 Jan 2020 20:46:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578602801;
+        bh=6J063jnpyCXZpSUr94ai5NB8cJFOa/nnW0mo8gZm2qI=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=TJDZxhO9TM8TPFdfXvYo1lFxFcxpTRV5xGRwmeKBmSoQt0R+JlEb/OFxDywKrjPW9
+         K+J+6KU6WVkwk+Ki3GL8GBangaQSkEErFV/A1/MGOj6s96QVP+XSqg6zgvknZ5H/3g
+         lzIAwhfKRjeEcKliXGJeBaLLZ7zP8ra5vC8u59Dg=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 7775D352272E; Thu,  9 Jan 2020 12:46:41 -0800 (PST)
+Date:   Thu, 9 Jan 2020 12:46:41 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Marco Elver <elver@google.com>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -rcu 0/2] kcsan: Improvements to reporting
+Message-ID: <20200109204641.GW13449@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200109152322.104466-1-elver@google.com>
+ <20200109162739.GS13449@paulmck-ThinkPad-P72>
+ <CANpmjNOR4oT+yuGsjajMjWduKjQOGg9Ybd97L2jwY2ZJN8hgqg@mail.gmail.com>
+ <20200109173127.GU13449@paulmck-ThinkPad-P72>
+ <CANpmjNP=8cfqgXkz7f8D6STTn1-2h9qzUery4qMHeTTeNJOdxQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200109184055.GI5603@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CANpmjNP=8cfqgXkz7f8D6STTn1-2h9qzUery4qMHeTTeNJOdxQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 07:40:55PM +0100, Borislav Petkov wrote:
-> On Fri, Jan 03, 2020 at 11:39:29AM +0800, Zhenzhong Duan wrote:
-> > Local variable 'i' is referenced only when CONFIG_MEMORY_HOTREMOVE and
-> > CONFIG_ACPI are defined, but definition of variable 'i' is out of guard.
-> > If any of the two macros is undefined, below warning triggers during
-> > build, fix it by moving 'i' in the guard.
-> > 
-> > arch/x86/boot/compressed/kaslr.c:698:6: warning: unused variable ‘i’ [-Wunused-variable]
+On Thu, Jan 09, 2020 at 06:42:16PM +0100, Marco Elver wrote:
+> On Thu, 9 Jan 2020 at 18:31, Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > On Thu, Jan 09, 2020 at 06:03:39PM +0100, Marco Elver wrote:
+> > > On Thu, 9 Jan 2020 at 17:27, Paul E. McKenney <paulmck@kernel.org> wrote:
+> > > >
+> > > > On Thu, Jan 09, 2020 at 04:23:20PM +0100, Marco Elver wrote:
+> > > > > Improvements to KCSAN data race reporting:
+> > > > > 1. Show if access is marked (*_ONCE, atomic, etc.).
+> > > > > 2. Rate limit reporting to avoid spamming console.
+> > > > >
+> > > > > Marco Elver (2):
+> > > > >   kcsan: Show full access type in report
+> > > > >   kcsan: Rate-limit reporting per data races
+> > > >
+> > > > Queued and pushed, thank you!  I edited the commit logs a bit, so could
+> > > > you please check to make sure that I didn't mess anything up?
+> > >
+> > > Looks good to me, thank you.
+> > >
+> > > > At some point, boot-time-allocated per-CPU arrays might be needed to
+> > > > avoid contention on large systems, but one step at a time.  ;-)
+> > >
+> > > I certainly hope the rate of fixing/avoiding data races will not be
+> > > eclipsed by the rate at which new ones are introduced. :-)
+> >
+> > Me too!
+> >
+> > However, on a large system, duplicate reports might happen quite
+> > frequently, which might cause slowdowns given the single global
+> > array.  Or maybe not -- I guess we will find out soon enough. ;-)
+> >
+> > But I must confess that I am missing how concurrent access to the
+> > report_times[] array is handled.  I would have expected that
+> > rate_limit_report() would choose a random starting entry and
+> > search circularly.  And I would expect that the code at the end
+> > of that function would instead look something like this:
+> >
+> >         if (ktime_before(oldtime, invalid_before) &&
+> >             cmpxchg(&use_entry->time, oldtime, now) == oldtime) {
+> >                 use_entry->frame1 = frame1;
+> >                 use_entry->frame2 = frame2;
+> >         } else {
+> >                 // Too bad, next duplicate report won't be suppressed.
+> >         }
+> >
+> > Where "oldtime" is captured from the entry during the scan, and from the
+> > first entry scanned.  This cmpxchg() approach is of course vulnerable
+> > to the ->frame1 and ->frame2 assignments taking more than three seconds
+> > (by default), but if that becomes a problem, a WARN_ON() could be added:
+> >
+> >         if (ktime_before(oldtime, invalid_before) &&
+> >             cmpxchg(&use_entry->time, oldtime, now) == oldtime) {
+> >                 use_entry->frame1 = frame1;
+> >                 use_entry->frame2 = frame2;
+> >                 WARN_ON_ONCE(use_entry->time != now);
+> >         } else {
+> >                 // Too bad, next duplicate report won't be suppressed.
+> >         }
+> >
+> > So what am I missing here?
 > 
-> How do you trigger this?
-> 
-> I have:
-> 
-> $  grep -E "(CONFIG_MEMORY_HOTREMOVE|CONFIG_ACPI)" .config
-> # CONFIG_ACPI is not set
-> 
-> but no warning. Neither with gcc 8 nor with gcc 9.
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
+> Ah right, sorry, I should have clarified or commented in the code that
+> all of this is happening under 'report_lock' (taken in prepare_report,
+> held in print_report->rate_limit_report, released in release_report).
+> That also means that any optimization here won't matter until
+> report_lock is removed.
 
-The boot/compressed Makefile resets KBUILD_CFLAGS.  Following hack and
-building with W=1 shows it, or just add -Wunused in there.
+Got it, thank you!  And yes, lock contention on report_lock might be
+a problem on large systems.  But let's see how it goes.
 
-diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index 56aa5fa0a66b..791c0d5a952a 100644
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -35,6 +35,9 @@ KBUILD_CFLAGS += $(cflags-y)
- KBUILD_CFLAGS += -mno-mmx -mno-sse
- KBUILD_CFLAGS += $(call cc-option,-ffreestanding)
- KBUILD_CFLAGS += $(call cc-option,-fno-stack-protector)
-+
-+include scripts/Makefile.extrawarn
-+
- KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
- KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
- KBUILD_CFLAGS += -Wno-pointer-sign
+							Thanx, Paul
+
+> Thanks,
+> -- Marco
+> 
+> >                                                         Thanx, Paul
+> >
+> > > Thanks,
+> > > -- Marco
+> > >
+> > > >                                                         Thanx, Paul
+> > > >
+> > > > >  kernel/kcsan/core.c   |  15 +++--
+> > > > >  kernel/kcsan/kcsan.h  |   2 +-
+> > > > >  kernel/kcsan/report.c | 153 +++++++++++++++++++++++++++++++++++-------
+> > > > >  lib/Kconfig.kcsan     |  10 +++
+> > > > >  4 files changed, 148 insertions(+), 32 deletions(-)
+> > > > >
+> > > > > --
+> > > > > 2.25.0.rc1.283.g88dfdc4193-goog
+> > > > >
+> > > >
+> > > > --
+> > > > You received this message because you are subscribed to the Google Groups "kasan-dev" group.
+> > > > To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
+> > > > To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20200109162739.GS13449%40paulmck-ThinkPad-P72.
