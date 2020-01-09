@@ -2,109 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94185136323
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 23:17:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F45F136328
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 23:18:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729319AbgAIWRP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 17:17:15 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:56578 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725840AbgAIWRP (ORCPT
+        id S1729438AbgAIWSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 17:18:40 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:59279 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729378AbgAIWSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 17:17:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578608233;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=cNdhyzOeLVi3WoKic6P82W86k4Iy9Vwc7SGXsxI3f0c=;
-        b=h5WrVbYN/OwGiigKoqs55QbnuakjaoxkSWkuzhv823tTJVzsZI8AseTZHbO+RZ6dwRo+CW
-        XFs2Z2Q0pMpVbLSDCzJ7gxlVcpIS1TtV8IFGFPBWtdzH/s1IvRcdvP8i2cW2vb9/RjO+tY
-        lzpkbBW1wysV7fLZyN0YNre1Zo0UWdg=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-407-PgJfqZcsMHCTAxwaKM-_1w-1; Thu, 09 Jan 2020 17:17:12 -0500
-X-MC-Unique: PgJfqZcsMHCTAxwaKM-_1w-1
-Received: by mail-wr1-f71.google.com with SMTP id u18so3422540wrn.11
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 14:17:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=cNdhyzOeLVi3WoKic6P82W86k4Iy9Vwc7SGXsxI3f0c=;
-        b=t6nm4jkg9ajNB6dkeDEsAsqO9qkWlv0uIao84ebERH2iHYqI01hbOtSzE/jlmmUmNU
-         ccK98zahg7o8USqXjciVnA7FPSNC6pLi+kuBNF6+BeW+t44POwNwqtVJM6utEnbEkya2
-         85fMez+ffcLIXYx24m0qzpmEpfYHKmde8q89kgum68n1mtgpwVTzvAdTbRnB7loLomI/
-         4AC3TDFgB8nB6h2KVhvp3WpPfCaqYmdaiG0sOmAKW4vZ8RnIWpsRRbWcUAarQag62QAc
-         FDxE4Vz7Bnmt1IKElVVqzlumS4OSyUhkXbuLIWINYtETC3jIBumQOwkiS/NliCObvWA1
-         iFug==
-X-Gm-Message-State: APjAAAV8yLLzZRviee2ledrdxPKHWihR+QVCC9XWS3cDqeqBuJCzX+nF
-        sJqZiX0w/yCVNb3sJayVIjwsoJ/zasUInUmNy3vtt1fy12zj6vVneIFEP8+XEI4Ut2NzqVL3qth
-        VXvmA4QdqmtuuTlz1/LL4fBnd
-X-Received: by 2002:a05:600c:2207:: with SMTP id z7mr158659wml.138.1578608231535;
-        Thu, 09 Jan 2020 14:17:11 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzGgG+zdReeEQS/nMSxy1x2Y3qZeVhuNTD0Ox+Ud68xCaogVcxJC/WD6f/iGqdfCRn5/jFA8g==
-X-Received: by 2002:a05:600c:2207:: with SMTP id z7mr158633wml.138.1578608231341;
-        Thu, 09 Jan 2020 14:17:11 -0800 (PST)
-Received: from [192.168.3.122] (p5B0C6BE2.dip0.t-ipconnect.de. [91.12.107.226])
-        by smtp.gmail.com with ESMTPSA id d8sm9586735wre.13.2020.01.09.14.17.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jan 2020 14:17:10 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   David Hildenbrand <david@redhat.com>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v4] drivers/base/memory.c: cache blocks in radix tree to accelerate lookup
-Date:   Thu, 9 Jan 2020 23:17:09 +0100
-Message-Id: <A7C7E3ED-3A02-43C7-B739-53A7756822D4@redhat.com>
-References: <20200109140004.d5e6dc581b62d6e078dcca4c@linux-foundation.org>
-Cc:     Scott Cheloha <cheloha@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Hildenbrand <david@redhat.com>, nathanl@linux.ibm.com,
-        ricklind@linux.vnet.ibm.com, mhocko@suse.com,
-        Scott Cheloha <cheloha@linux.ibm.com>
-In-Reply-To: <20200109140004.d5e6dc581b62d6e078dcca4c@linux-foundation.org>
+        Thu, 9 Jan 2020 17:18:38 -0500
+Received: from mail-qt1-f169.google.com ([209.85.160.169]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1Mq2vS-1jSZJP0ovS-00n6Ym for <linux-kernel@vger.kernel.org>; Thu, 09 Jan
+ 2020 23:18:37 +0100
+Received: by mail-qt1-f169.google.com with SMTP id w47so225934qtk.4
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 14:18:37 -0800 (PST)
+X-Gm-Message-State: APjAAAWP9ILqA70Cmrto0pJXDS+dcvTB5ByvYXOpVZTdasiJdJKflxKo
+        oMNGjl43mFE3FDxM1R+e1YXKf5R1kajbuagOc/0=
+X-Google-Smtp-Source: APXvYqyCldy0Ka9H3KPZOYA/NiPXlHDkyyuq1q6gfwdEk/9ehsfCQhAByOxz/z9x1AuUpDN4mQv3MJjohH3WzwWquts=
+X-Received: by 2002:ac8:709a:: with SMTP id y26mr9914629qto.304.1578608316155;
+ Thu, 09 Jan 2020 14:18:36 -0800 (PST)
+MIME-Version: 1.0
+References: <20200107214042.855757-1-arnd@arndb.de> <20200108102602.43d4c5433eb495cdbf387e9b@kernel.org>
+ <20200109140202.fd5488a2ac02f81b25d83b88@linux-foundation.org>
+In-Reply-To: <20200109140202.fd5488a2ac02f81b25d83b88@linux-foundation.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 9 Jan 2020 23:18:19 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3Cy_WwtJGLF96tXrqT=hYw50NHy+DbaW2=DEbf_iXUeg@mail.gmail.com>
+Message-ID: <CAK8P3a3Cy_WwtJGLF96tXrqT=hYw50NHy+DbaW2=DEbf_iXUeg@mail.gmail.com>
+Subject: Re: [PATCH] kallsyms: work around bogus -Wrestrict warning
 To:     Andrew Morton <akpm@linux-foundation.org>
-X-Mailer: iPhone Mail (17C54)
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Oleksandr Natalenko <oleksandr@redhat.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Will Deacon <will@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:7oQeWIkDz/xeONWkuH08TW/fhgCNfyEJenQmQnyYVH4ESAhCGcU
+ dzQzGlyqwS1k/1JHHfR7VwQg1r3NVFJBeS8WOWgyb90wK74zrowzqSuYdYsEOWQRMkmm3sJ
+ TxdGjg6SmrUmNCVfg2FNz4PjvHCWHG7mlHj7ItzyICJ4HlDDC2wCYQ7iRI+5zQxEh/nt2Qo
+ uBRnn9p+ekYy96LdmOzoQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:xeCGWV+87QM=:eeAbxhyQGbIu/n2lATDe+3
+ rmAQlG4BXJgII18JeC3jtH0cu1hsv3EMAye3YWhyft3wgbgb/PFYxFgVBlQqFDnKOKCszXwrP
+ Wjs2qakO0CD4pz2Qh9v2QJ7iB069NQ62IGj7InAxxywuQkN6t8MP+EbUN/Md1r3iCTBsCcDlB
+ Ddfsytr59FmRSUaZDK/+k6/qyn4g5cH+q+zUsJzso2QYJSLOj95vmrB9zJojM3wrS98emVY1N
+ Dsae4zRYTXoJA3YZuIvMN7Y5iz4NFarvOfHeovCkCdizHs4zF7CGi9W+v2D2t2FF0sOZTkvYK
+ D7khcPCOmcwHAqGLTxrmU4C9ALj3npDqHNg6GcgmdbsnuQdYISUzeoaJQIDX0akdPTm6O1fgM
+ trrtlkQna4exF6RnQJTCMsaL+YnqDfgn/qADRtsTXiNuemnRwy67ZLobtPVkaI2FYtGjn9EK+
+ NIx9glXKmMRHGyqAVD8/AbznHLBGGrm8/zhmjh8ixBCWEJsyezpuVRdSVvfOxi//FH1QQGs3Y
+ fvZEgBoOQBpflTGejTVcg++2ojRLzgSluh1FMQdtjCRVzyxWja4w2qpH4PzgOTTSBfTkjr4gW
+ +Rnc1y/tzAnfbDa94yIRrEq1Z3hDbo3a0bmFsx/Ye1B/uX7df/BvS2n9EBj6GR/HSQ41B/C3h
+ S7Mu5CfnlScEPwXQZK3ECs8eKS+qFY143YmjQOWWncwyTKS9vzutIMUEau7OClS328G9nJGIc
+ Ae5KYt5cNBy9FDku3WtoAZHvHdndvPlFvHPYuxkzv9wOf4/QUhJwjEQt+rabX51KmPrea8RF0
+ X7mVBffFg0BrCS+c2L15jt/5tbSAuMfEEI1LxnCgIGyJ+bIs8ogb/TivzfB2f+/fHoG0Fto93
+ /RIH7gVk9aN9KXsVtVXQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jan 9, 2020 at 11:02 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Wed, 8 Jan 2020 10:26:02 +0900 Masami Hiramatsu <mhiramat@kernel.org> wrote:
+>
+> > Hi Arnd,
+> >
+> > On Tue,  7 Jan 2020 22:40:26 +0100
+> > Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > > gcc -O3 produces some really odd warnings for this file:
+> > >
+> > > kernel/kallsyms.c: In function 'sprint_symbol':
+> > > kernel/kallsyms.c:369:3: error: 'strcpy' source argument is the same as destination [-Werror=restrict]
+> > >    strcpy(buffer, name);
+> > >    ^~~~~~~~~~~~~~~~~~~~
+> > > kernel/kallsyms.c: In function 'sprint_symbol_no_offset':
+> > > kernel/kallsyms.c:369:3: error: 'strcpy' source argument is the same as destination [-Werror=restrict]
+> > >    strcpy(buffer, name);
+> > >    ^~~~~~~~~~~~~~~~~~~~
+> > > kernel/kallsyms.c: In function 'sprint_backtrace':
+> > > kernel/kallsyms.c:369:3: error: 'strcpy' source argument is the same as destination [-Werror=restrict]
+> > >    strcpy(buffer, name);
+> > >    ^~~~~~~~~~~~~~~~~~~~
+> > >
+> > > This obviously cannot be since it is preceded by an 'if (name != buffer)'
+> > > check.
+> >
+> > Hmm, this looks like a bug in gcc.
+>
+> Yes, we're getting a lot of such reports.  I don't think current gcc is
+> ready for this patch so I'll drop it, sorry.
 
+I've been building with gcc-8 and got around 20 false positive
+warnings, three real bugs
+and a few files that introduce increased stack usage. I have sent
+patches for every one
+of these and have a clean randconfig builds again on arm, arm64 and
+x86 (a few thousand
+so far).
 
-> Am 09.01.2020 um 23:00 schrieb Andrew Morton <akpm@linux-foundation.org>:
->=20
-> =EF=BB=BFOn Thu,  9 Jan 2020 15:25:16 -0600 Scott Cheloha <cheloha@linux.v=
-net.ibm.com> wrote:
->=20
->> Searching for a particular memory block by id is an O(n) operation
->> because each memory block's underlying device is kept in an unsorted
->> linked list on the subsystem bus.
->>=20
->> We can cut the lookup cost to O(log n) if we cache the memory blocks in
->> a radix tree.  With a radix tree cache in place both memory subsystem
->> initialization and memory hotplug run palpably faster on systems with a
->> large number of memory blocks.
->>=20
->> ...
->>=20
->> @@ -56,6 +57,13 @@ static struct bus_type memory_subsys =3D {
->>    .offline =3D memory_subsys_offline,
->> };
->>=20
->> +/*
->> + * Memory blocks are cached in a local radix tree to avoid
->> + * a costly linear search for the corresponding device on
->> + * the subsystem bus.
->> + */
->> +static RADIX_TREE(memory_blocks, GFP_KERNEL);
->=20
-> What protects this tree from racy accesses?
+Most of the false-positive warnings are for understandable reasons and easy to
+work around, the one above is probably the most blatant screwup by gcc.
 
-I think the device hotplug lock currently (except during boot where no races=
- can happen).=
+My feeling is that we can deal with the warnings here and I wouldn't
+mind getting
+it enabled in mainline from that perspective, but there are two caveats:
 
+- v5.6 is probably too early since we're close to the merge window and a lot of
+  my fixups have not been merged yet
+
+- I have no good estimate of how many runtime failures there will be.
+  Oleksandr hasn't found any issues after running with -O3 kernels for
+  a longer time, but any significant change to the toolchain likely causes
+  problems for somebody.
+
+        Arnd
