@@ -2,98 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65E9B13504F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 01:11:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2D4113505B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 01:16:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbgAIAKy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 19:10:54 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:50473 "EHLO ozlabs.org"
+        id S1727652AbgAIAQO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 19:16:14 -0500
+Received: from mga07.intel.com ([134.134.136.100]:43048 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726654AbgAIAKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 19:10:53 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47tRNC0Vcfz9sRW;
-        Thu,  9 Jan 2020 11:10:50 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1578528651;
-        bh=TIL2BzsbLT37ukoZt3FF9QagMGrIFtxVOy965LicdpA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=M2JjPQusn/oSk7nO3x8OHAfLfiD7dA3xyxZNcajNlW09KGAoEvxq7WnVV3hHBrk/a
-         yU1Iif4TN7nUnebSEuWGtg/MwxOT6OwXu4/ZNK67PpcrFg9iv9D0Ddg9CtzKgNPSut
-         UqCJt+d+Y9Uj7rq7bhDuzGOKhYgf205Fw6uU4nw71RxxDmcoVfTOqD54hEMbeOARMt
-         cemZNZK+6tQfGrUJ4q0Hb+7+lyyU5zIrxAhISQTS3Gj9vm+6IPpz4dSsVr6Imo7iSJ
-         Ka7/J6/4c6i1BfYhcdpVpG768kB8ZDDNOHP21k7K7nmstnFA8SccSuQOXdZnL/gyFP
-         cn+Dpa8xzcHuw==
-Date:   Thu, 9 Jan 2020 11:10:50 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Subject: linux-next: manual merge of the v4l-dvb tree with the v4l-dvb-fixes
- tree
-Message-ID: <20200109111050.3a547549@canb.auug.org.au>
+        id S1726438AbgAIAQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Jan 2020 19:16:14 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 16:16:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,411,1571727600"; 
+   d="scan'208";a="217653155"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 08 Jan 2020 16:16:12 -0800
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id BC1C25803E3;
+        Wed,  8 Jan 2020 16:16:12 -0800 (PST)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v11 1/8] PCI/ERR: Update error status after reset_link()
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com
+References: <20200104025414.GA85401@google.com>
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <7f7fdfec-5060-bcaa-38c4-6b973149e5cc@linux.intel.com>
+Date:   Wed, 8 Jan 2020 16:14:09 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/JunZ+6IJb61MvYi9+Mu9cD9";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <20200104025414.GA85401@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/JunZ+6IJb61MvYi9+Mu9cD9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Bjorn,
 
-Hi all,
+Thanks for the comments.
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in:
+On 1/3/20 6:54 PM, Bjorn Helgaas wrote:
+> On Fri, Jan 03, 2020 at 05:03:03PM -0800, Kuppuswamy Sathyanarayanan wrote:
+>> On 1/3/20 4:34 PM, Bjorn Helgaas wrote:
+>>> On Thu, Dec 26, 2019 at 04:39:07PM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+>>>> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>>>
+>>>> Commit bdb5ac85777d ("PCI/ERR: Handle fatal error recovery") uses
+>>>> reset_link() to recover from fatal errors. But, if the reset is
+>>>> successful there is no need to continue the rest of the error recovery
+>>>> checks. Also, during fatal error recovery, if the initial value of error
+>>>> status is PCI_ERS_RESULT_DISCONNECT or PCI_ERS_RESULT_NO_AER_DRIVER then
+>>>> even after successful recovery (using reset_link()) pcie_do_recovery()
+>>>> will report the recovery result as failure. So update the status of
+>>>> error after reset_link().
+>>> I like the part about updating "status" with the result of
+>>> reset_link(), and I split that into its own patch because it
+>>> seems like a fix that *can* be separated.
+>>>
+>>> But I'm not convinced that we should skip the ->slot_reset()
+>>> callbacks if the reset_link() was successful.
+>> If reset_link() call is successful then the result value will be
+>> "PCI_ERS_RESULT_RECOVERED". So even if you proceed with
+>> rest of the code, slot_reset() will never get called right ?
+> The current code:
+>
+>          if (state == pci_channel_io_frozen &&
+>              reset_link(dev, service) != PCI_ERS_RESULT_RECOVERED)
+>                  goto failed;
+>          ...
+>          if (status == PCI_ERS_RESULT_NEED_RESET) {
+>                  status = PCI_ERS_RESULT_RECOVERED;
+>                  pci_walk_bus(bus, report_slot_reset, &status);
+>
+> doesn't save the result of reset_link(), so if status was
+> PCI_ERS_RESULT_NEED_RESET and the reset succeeds, we will call
+> ->slot_reset().
+>
+> After your patch, if "state == pci_channel_io_frozen", we *never* call
+> ->slot_reset().
+>
+> Do you think that matches pci-error-recovery.rst?  It doesn't seem
+> like it to me, but perhaps I haven't read it closely enough.
+Documentation does not have clear details on what to do with return
+value of reset_link() ( step 3). But IMO, if step 3 recovers the device and
+returns PCI_ERS_RESULT_RECOVERED then there is no need to proceed
+to slot reset (step 4). May be we should update the Documentation ?
 
-  drivers/media/usb/pulse8-cec/pulse8-cec.c
+Keith,
+You have any comments ?
+>
+>>> According to
+>>> Documentation/PCI/pci-error-recovery.rst, we should call
+>>> ->slot_reset() after completion of the reset.
+>>>
+>>> For example, rsxx_err_handler implements ->slot_reset(), but
+>>> not ->resume().  If we reset the device, we'll claim success and
+>>> return, but we won't call rsxx_slot_reset(), which does a bunch
+>>> of important-looking recovery stuff.
+>>>
+>>> If pci-error-recovery.rst is wrong, we should fix that (after
+>>> auditing all the drivers to make sure they match).
+>>>
+>>>> Fixes: bdb5ac85777d ("PCI/ERR: Handle fatal error recovery")
+>>>> Cc: Ashok Raj <ashok.raj@intel.com>
+>>>> Cc: Keith Busch <keith.busch@intel.com>
+>>>> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>>> Acked-by: Keith Busch <keith.busch@intel.com>
+>>>> ---
+>>>>    drivers/pci/pcie/err.c | 10 +++++++---
+>>>>    1 file changed, 7 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+>>>> index b0e6048a9208..53cd9200ec2c 100644
+>>>> --- a/drivers/pci/pcie/err.c
+>>>> +++ b/drivers/pci/pcie/err.c
+>>>> @@ -204,9 +204,12 @@ void pcie_do_recovery(struct pci_dev *dev, enum pci_channel_state state,
+>>>>    	else
+>>>>    		pci_walk_bus(bus, report_normal_detected, &status);
+>>>> -	if (state == pci_channel_io_frozen &&
+>>>> -	    reset_link(dev, service) != PCI_ERS_RESULT_RECOVERED)
+>>>> -		goto failed;
+>>>> +	if (state == pci_channel_io_frozen) {
+>>>> +		status = reset_link(dev, service);
+>>>> +		if (status != PCI_ERS_RESULT_RECOVERED)
+>>>> +			goto failed;
+>>>> +		goto done;
+>>>> +	}
+>>>>    	if (status == PCI_ERS_RESULT_CAN_RECOVER) {
+>>>>    		status = PCI_ERS_RESULT_RECOVERED;
+>>>> @@ -228,6 +231,7 @@ void pcie_do_recovery(struct pci_dev *dev, enum pci_channel_state state,
+>>>>    	if (status != PCI_ERS_RESULT_RECOVERED)
+>>>>    		goto failed;
+>>>> +done:
+>>>>    	pci_dbg(dev, "broadcast resume message\n");
+>>>>    	pci_walk_bus(bus, report_resume, &status);
+>>>> -- 
+>>>> 2.21.0
+>>>>
+>> -- 
+>> Sathyanarayanan Kuppuswamy
+>> Linux kernel developer
+>>
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
-between commit:
-
-  21d116949e95 ("Revert "media: pulse8-cec: fix lost cec_transmit_attempt_d=
-one() call"")
-
-from the v4l-dvb-fixes tree and commit:
-
-  c4e8f760581b ("media: pulse8-cec: fix lost cec_transmit_attempt_done() ca=
-ll")
-
-and some other commits from the v4l-dvb tree.  The conflicts arise
-mostly because the above commit was cherry-picked into Linus' tree
-(before being reverted above).
-
-I fixed it up (I just used the vl4-dvb tree version on the assumption that
-you will fix it up properly) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/JunZ+6IJb61MvYi9+Mu9cD9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4Wb4oACgkQAVBC80lX
-0GynDggAh2qebxW1/g9EcK9cjOd3v6+WSNb/FDnKOJx0ixLDDcJo7adAjpAv/h/0
-Uw3gainwMbTl2cEJuDG3iRWA8aWY6VbkZEYIrU59EVCuf0D385XjYOcVAZJeNePZ
-HEoxVMSfC1b06x+W0V6pQFhNbivuonajm0wmfyOArIhk8rrpw1dAXZJkaz//TefR
-wgX6/6llXzqzxxfaG5GiaxtmkQqQuXg6K+bGHChg+hF4bq3t9c3GkyV4pmxkrZQ3
-0kELJsC6CfNmWgzVxXVp9/OiHzFbvegqXF9qVt0oW6DfWKVqjOLZ3e09L1wFSzIL
-26Rzmgjmq0LN2MfH8w/YBrKFJaeqgg==
-=F3xr
------END PGP SIGNATURE-----
-
---Sig_/JunZ+6IJb61MvYi9+Mu9cD9--
