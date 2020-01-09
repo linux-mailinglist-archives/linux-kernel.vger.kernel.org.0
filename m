@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6233D135AA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 14:53:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52AB1135AAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 14:53:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731381AbgAINwi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 08:52:38 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46502 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731370AbgAINwg (ORCPT
+        id S1731399AbgAINwl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 08:52:41 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33476 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731375AbgAINwj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 08:52:36 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z7so7400532wrl.13
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 05:52:36 -0800 (PST)
+        Thu, 9 Jan 2020 08:52:39 -0500
+Received: by mail-wr1-f67.google.com with SMTP id b6so7547009wrq.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 05:52:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=monstr-eu.20150623.gappssmtp.com; s=20150623;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=cY7VEq1SDPcCbR2gLted+yBjAeKIqKC5FGvxBvtyOjU=;
-        b=YJV0pzx6ld6r0Ittxt8eGiqDQWelxWmJaXiOraeu7kqgy6yUKEl5CjC6krtJ4rrrxp
-         4houNQ8Q8UXHox536aXCM7bWjnJil2sW4Ifwt+ACXDVydt8XuYEkC39UKfu0kzF+FufS
-         a7g15u0+b0YHpt7dOUYfYHYD9xA5DZpLdHpNvgf6yEZzC8ttI2NzhYTjJyAOiloqwbaj
-         bPWnY4DxpIgqUaZwfq9y210ggcbkH6fn+qB9lXXlVSK68lp3bFhfX08XzhhjgVZ3q8r6
-         30Q/n6atlyOxZY/9UzXlCX2VifEXBhYnOQqhehai/Oesy1RbkJkDpih43bF3FMS6g507
-         pd+A==
+        bh=NCu2jl/XHfUALT1gSW/oUJuMvhaIfk+GEmxRnskvRww=;
+        b=WBiZ04BGf0FD0e3HDXi2zqqJES7l8wIRo5kwT1O3LHGWVo0iDVBf5TA5HzIEFbutg7
+         kpUTzFJjPnmXM0h7ETEg8JmgFtf9UqRhqAwlpTTalIxffO2dLm3XPZqNfKopczBXC7Ui
+         ZKKE1w56+xR9VK3Caa08qsUnp5SyN/JD2wztdynHE9OsL0DSLgZvIJXQcZDWKWUKe+6o
+         4M4CPAxrnDG28z7o53mVHI+9oaaB/qPWXgX4HRF0NniezhiF1ffsTNCtNwaOOei7ovM6
+         KZlLbV8Y6Tj6OZw7zDmN/ZsoQdWmTJDRQqwIUCIASQ2Tc+Jk0C/AiaZvY4NVyl2kDn6c
+         vYiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=cY7VEq1SDPcCbR2gLted+yBjAeKIqKC5FGvxBvtyOjU=;
-        b=oBcwU1P1CqAw2qLEYJcBSEZf8fWcCrMwet2tTIyGv7p8I0O8j2EzlQy7x2DigS0rOp
-         fCWXDU4r0zcxFd/OGT6xEXi+vYvmtI57VUMBGFsxXvNEf6wsagmAfgPNd0j+mP4qL6bF
-         uusoDB9ekeE0iDS69StH7K1QWsrgEpNSfdDjcJdt9dMv8s9ewIbT9neaEMlccL3MOV9Q
-         JHF5JlLUoplZyqyqOOFGoAu1Pe7BHNiXk9+WpYzKihgwdaIsIVjmyTZA8oFbuD6ezAyP
-         l1emZloL7NbJlyL9fx57AJatHc+7ZX/3x8gFTzH1U0CpheT2yG8J3w4Qegu+wMd2S1g5
-         p2cg==
-X-Gm-Message-State: APjAAAUdZ11pt6sRsg3i1CyZ8NJrfLptMj9h4pANzo+JJIyi1vZu5Hko
-        20QNVA/NHcbGZ2mHFyTEYorIwA==
-X-Google-Smtp-Source: APXvYqxIdhdkFDDM3qDOhD9CTVBp8Wso36d/Vi3BKD/mngqoG1YAwUgO6ZuEWuzzKIDn2YcQz8XRbw==
-X-Received: by 2002:a5d:6ca1:: with SMTP id a1mr10795256wra.36.1578577955315;
-        Thu, 09 Jan 2020 05:52:35 -0800 (PST)
+        bh=NCu2jl/XHfUALT1gSW/oUJuMvhaIfk+GEmxRnskvRww=;
+        b=o/1wL1ESlKf+LBNNrBqkXET9laW+aYTwNiSQZ0luO30v0q7gBRRbHl4osC5EzHq8LU
+         Zfem2OphmnRDPMWX3TjPcJpdrX1LhrU+w0KXPZbTyWDOBiwpUDuuy7u5ZdaULCTAXqf3
+         SudhCGQ8RnoRPKzbxirIjAtArqvBlBlASsE8rCvk9InqqaWs8IcAc3axeveMeWrE82ea
+         bnuTA32kNKCeJUerxN5FFH9B93kXvcqKEJhBJ2qsf9EAboYkLSao3Wz3W4SToW67cQ4r
+         Zh/vw4yBRcVB1DoPs0zxTgqZt6mnHBVBBfoeFycF6ONx6kpja90M6OrjXbOuHoCwg5Ke
+         ZmBg==
+X-Gm-Message-State: APjAAAVZ8eeoyJqnzDJaOM8Le6uhdlV8AgzRKcq9nJM+rwM8PxeVot4A
+        /BPTb3hX09EyaWpqPFEHz2CERA==
+X-Google-Smtp-Source: APXvYqzlZUNpCtgZo0eIHsRriyQS9df0EhD997mMpVJO2gscTH1ejvVUUg0WzAxElifJzEkjuAAYQQ==
+X-Received: by 2002:adf:e6c5:: with SMTP id y5mr10940641wrm.210.1578577957079;
+        Thu, 09 Jan 2020 05:52:37 -0800 (PST)
 Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id e6sm8476868wru.44.2020.01.09.05.52.34
+        by smtp.gmail.com with ESMTPSA id l7sm8332605wrq.61.2020.01.09.05.52.36
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Jan 2020 05:52:34 -0800 (PST)
+        Thu, 09 Jan 2020 05:52:36 -0800 (PST)
 From:   Michal Simek <michal.simek@xilinx.com>
 To:     linux-arm-kernel@lists.infradead.org, git@xilinx.com
 Cc:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
@@ -54,9 +54,9 @@ Cc:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
         Rob Herring <robh+dt@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/8] arm64: zynqmp: Remove broken-cd from zcu100-revC
-Date:   Thu,  9 Jan 2020 14:52:21 +0100
-Message-Id: <b068e60d4058ccb0d784a0cc35e8aecf5ffb98fd.1578577931.git.michal.simek@xilinx.com>
+Subject: [PATCH v2 8/8] arm64: zynqmp: Setup default number of chipselects for zcu100
+Date:   Thu,  9 Jan 2020 14:52:22 +0100
+Message-Id: <227c68a635b031ce20ba2a48a950bf4407c01359.1578577931.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1578577931.git.michal.simek@xilinx.com>
 References: <cover.1578577931.git.michal.simek@xilinx.com>
@@ -67,29 +67,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Card detect bit was broken on revA and it is working fine with revC
-board that's why this property can be removed.
+There is only one chipselect on each connector.
+Define it directly in board dts file.
+There should be an option to use more chipselects via gpios.
 
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
 
 Changes in v2: None
 
- arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-index dd60f7d85cc8..2b3757dd74cc 100644
+index 2b3757dd74cc..a109e82982ae 100644
 --- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
 +++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-@@ -226,7 +226,6 @@ &rtc {
- &sdhci0 {
+@@ -250,11 +250,13 @@ wlcore: wifi@2 {
+ &spi0 { /* Low Speed connector */
  	status = "okay";
- 	no-1-8-v;
--	broken-cd; /* CD has to be enabled by default */
- 	disable-wp;
+ 	label = "LS-SPI0";
++	num-cs = <1>;
  };
  
+ &spi1 { /* High Speed connector */
+ 	status = "okay";
+ 	label = "HS-SPI1";
++	num-cs = <1>;
+ };
+ 
+ &uart0 {
 -- 
 2.24.0
 
