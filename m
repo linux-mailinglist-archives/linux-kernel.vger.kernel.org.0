@@ -2,64 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49D14135902
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 13:17:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BC26135907
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 13:17:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730854AbgAIMRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 07:17:30 -0500
-Received: from mout02.posteo.de ([185.67.36.66]:53923 "EHLO mout02.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728974AbgAIMRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 07:17:30 -0500
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout02.posteo.de (Postfix) with ESMTPS id 3428E240100
-        for <linux-kernel@vger.kernel.org>; Thu,  9 Jan 2020 13:17:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1578572248; bh=a/CFMKZd5EKbE2w3uLeWxRa2LN6InqDmBM5OcZ4GtjM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=OzKMvUKHtoVecQwMMFo6iijLbY98whrMSFqegtI9mh8ET4RkUih4HPdgSS0xqtI4D
-         N2Wima9eiE2mBrEVre9nEYfVot5pn+YPLAwPPlBJ+CtGx6PUWE6OfuMB2E5xS2C+P+
-         HkOSni1AfnYnlMm9axOWXDqSwbKii8hzDTBLJurx+V1PtzG5NTDX7kuR+PXZRf/Pz6
-         PuAPnHl5+5J9/Al2ZBPdw4ByMbUR3Vfb9XCCWHQe8vTJJhgRVgSyUUFhJrQkVzi3oO
-         90orb00SuO3KVaEjYvyzUfOdr82EeSoBc0zzYIVvGNFYuO8VJCOAtO18gw3uW6GhuH
-         OVyXHh5Cyd37A==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 47tlVb53nPz9rxD;
-        Thu,  9 Jan 2020 13:17:27 +0100 (CET)
-From:   Benjamin Thiel <b.thiel@posteo.de>
-To:     bp@alien8.de
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Benjamin Thiel <b.thiel@posteo.de>
-Subject: [PATCH] x86/cpu: Add a missing prototype for arch_smt_update()
-Date:   Thu,  9 Jan 2020 13:17:23 +0100
-Message-Id: <20200109121723.8151-1-b.thiel@posteo.de>
-X-Mailer: git-send-email 2.17.1
+        id S1730873AbgAIMRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 07:17:50 -0500
+Received: from mail-lj1-f169.google.com ([209.85.208.169]:43837 "EHLO
+        mail-lj1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728974AbgAIMRt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 07:17:49 -0500
+Received: by mail-lj1-f169.google.com with SMTP id a13so6962841ljm.10;
+        Thu, 09 Jan 2020 04:17:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kJr9DdZZf2/ANld+Ul9RudgAsohen5RqZzNVnbAqTsg=;
+        b=mjvHnzbEaIbsQ0NrLtzCJRIhUTVzBGpQVrz43beSCllrFgzbAODIdEWPM6fiwSkcIu
+         xD/gC+72yKJXiV0m/oD9K9IyhwgwpCMl2rrp0ynPOetXgn3z4+wy5Frbb36/2PqTqZHn
+         HcHBVnCKltDcjjTRy+NsKATYq8umfzgbRbIroF1FYyTOLdBhKJsARpLUQ/uDGdqqtnRj
+         x6IL2kwuJCygf3xZtI5IguBxcK4MlZjaYTVcrO9+PrG2dTV90SlbpjXZByf6qskfTMDL
+         OqSqTQJLRYLbZkRDtN7X6jbLlHh+aBwkl7O0axkckjmj46m89yeyNbKH73C2Pohga2Pk
+         CpfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kJr9DdZZf2/ANld+Ul9RudgAsohen5RqZzNVnbAqTsg=;
+        b=mmnLCRenYuIpPcCYNIcskTbby5qXek840Tuo5PVMhsabt/6hLGMiFda6f0AtuoWMOv
+         4tgklh8KVwQerUkA9xC54GCqeOHfxSqiMjxF3ky46RV/9x9rkBJePy6zGAvSn3Wo2NcP
+         uK6MZaaayT2g70Ol0SErzZKaIs8C1WxxAzj87AuIJM9J2Jjd0C595kCwwzaBL3cjl+Uj
+         qIAbfHvIzYWtEXtO6SQDSXssZ6O+vZqNNjQ8lDjAurxIeOiG47DDj0FFAbFh+DgMLPG4
+         OLkRG6iFzaX9oYn+VzNxeP80kk2QiGzTn7zy7JLxdU5jf9BJUbplX69fe9w/c2Jq7gyH
+         +dOw==
+X-Gm-Message-State: APjAAAWsOdZ/DKgQL8pGsPnLn6IdT/t3ACzHPs4IDw6bdsFSPcdHohcX
+        J7ttc8iXIwwhS8LTPTu4PRCuF/IP6UIVthhCeQE=
+X-Google-Smtp-Source: APXvYqwTcIlvIE0lUCJi3FRLOlS1u3VgGMOmgYWiU57KWCLBT1IzZv7XrENayxwaVo2Wm+OfP7BbhpaMMuEa7apsGDA=
+X-Received: by 2002:a2e:943:: with SMTP id 64mr6356480ljj.17.1578572266871;
+ Thu, 09 Jan 2020 04:17:46 -0800 (PST)
+MIME-Version: 1.0
+References: <08794fde-cdd0-287c-62bf-e2e3b8c80686@gmail.com>
+ <20191203101509.wte47aad5k4mqu2y@pengutronix.de> <CAOMZO5Cn993y9VeFN6hPO3-cfNnUKiuFd_rqAZ8htz=dO6t6ig@mail.gmail.com>
+ <CAOMZO5BniszDhWKkoWY=P62kv9cY160r9P=pjpbSOZasxJvdBA@mail.gmail.com> <77fff313-3f40-6b5e-fe30-5a65a189bdff@gmail.com>
+In-Reply-To: <77fff313-3f40-6b5e-fe30-5a65a189bdff@gmail.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Thu, 9 Jan 2020 09:17:35 -0300
+Message-ID: <CAOMZO5DyJ_niuoBX62B1NLkKRpYQQtKUiX06L62TmA6PNMKO5A@mail.gmail.com>
+Subject: Re: Issue with imx_get_temp()
+To:     Igor Plyatov <plyatov@gmail.com>
+Cc:     Marco Felsch <m.felsch@pengutronix.de>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>, linux-pm@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-.. in order to fix a -Wmissing-prototype warning.
+Hi Igor,
 
-No functional change.
+On Tue, Dec 3, 2019 at 11:36 AM Igor Plyatov <plyatov@gmail.com> wrote:
+>
+> Dear Fabio,
+>
+> > Does the following patch help?
+> > http://code.bulix.org/l3rz2e-982595
+>
+> Thank you!
+>
+> Patch applied and will be tested.
+>
+> I will inform you about results.
 
-Signed-off-by: Benjamin Thiel <b.thiel@posteo.de>
----
- arch/x86/kernel/cpu/common.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 2e4d90294fe6..6b95f18255fa 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -14,6 +14,7 @@
- #include <linux/sched/mm.h>
- #include <linux/sched/clock.h>
- #include <linux/sched/task.h>
-+#include <linux/sched/smt.h>
- #include <linux/init.h>
- #include <linux/kprobes.h>
- #include <linux/kgdb.h>
--- 
-2.17.1
-
+Have you had a chance to test the patch?
