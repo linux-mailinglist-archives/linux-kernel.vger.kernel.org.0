@@ -2,86 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75E02135574
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:18:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1966013556F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:18:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729350AbgAIJSR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 04:18:17 -0500
-Received: from mga18.intel.com ([134.134.136.126]:8755 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729319AbgAIJSQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 04:18:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 01:18:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,413,1571727600"; 
-   d="scan'208";a="246606171"
-Received: from chenyu-office.sh.intel.com ([10.239.158.173])
-  by fmsmga004.fm.intel.com with ESMTP; 09 Jan 2020 01:18:14 -0800
-From:   Chen Yu <yu.c.chen@intel.com>
-To:     Len Brown <lenb@kernel.org>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rui Zhang <rui.zhang@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Chen Yu <yu.c.chen@intel.com>
-Subject: [PATCH] tools/power turbostat: Add Elkhart Lake support
-Date:   Thu,  9 Jan 2020 17:17:01 +0800
-Message-Id: <20200109091701.8197-1-yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729269AbgAIJSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 04:18:03 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:56082 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729122AbgAIJSC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 04:18:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578561482;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=AhaeYA2g23tahw81bCX4+JNhyu6u4RRAwh7IDkx1918=;
+        b=bGnDETQzzeZax0eCTDGKnCN0Ta1vUPJN28FTE3ah/o77oHtmA4j1EQmbAKwKABitgfncwh
+        voCrtFnPZF87SQnG+WADQxcJuF6gOwkpESHufl++GRoGLh9ThmOG1xt5Rjj3aFKC3PqxRQ
+        Vjo+iRJDr7EKLQCkH9BkdtOboFlaCKU=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-27-_TT9qMnqO5KMXmmWHK9tcA-1; Thu, 09 Jan 2020 04:18:00 -0500
+X-MC-Unique: _TT9qMnqO5KMXmmWHK9tcA-1
+Received: by mail-wr1-f71.google.com with SMTP id l20so2643621wrc.13
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 01:18:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AhaeYA2g23tahw81bCX4+JNhyu6u4RRAwh7IDkx1918=;
+        b=Yld40TMs0DCwVJsnwiC7rnSIi6aT+idiQ+2gik/NsG5syPBY4/csymQcgMXIybpHcc
+         igaJNlt1NZvR/SFFpCzN9LsoRvM6iSSbcA6o3ybzx6DqUqnexJZI2b3TaPHjPoYnyadg
+         rC3mfemuF1Sy8m16MC5Hf7pGFYzmo/6K2PZ4T9ZYkHOSt3uvzbUCvVE55sBs8q32oqsp
+         N8vkred5Xzio/mKW7C2oU5OhBdxjpEd4YUemGtQ0KCCjV0yF+HX0NbSIcZCWor7ZRN7h
+         GTSJQscwiC46FpHR8G5Bg0kJ5duWj3k2HVkYhaCzhShL5NJAhOhClw0kiBh6DJhYhxu5
+         xIrQ==
+X-Gm-Message-State: APjAAAX1hL83XPH33hyu3NAHhXYHdEFTypwx3vDcEO8oJLGabHk5jgNZ
+        f36dOjC8F6SFk3ZtXP3sA7y16/o/ghKyK8KrIqH8VDii8zwqPx8q8Vmn0f8WTAzSlgKLZoUFY2c
+        5HJs6/US4QSvUxyO2SlRZ3bDb
+X-Received: by 2002:a7b:c750:: with SMTP id w16mr3790727wmk.46.1578561479820;
+        Thu, 09 Jan 2020 01:17:59 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwO/dp4Cv+K4wJ8IJ78LS47uYQP/OWWxk4SqeWOvUxwR2mRP46F42N3prbiEGm8IMPofT1Feg==
+X-Received: by 2002:a7b:c750:: with SMTP id w16mr3790701wmk.46.1578561479621;
+        Thu, 09 Jan 2020 01:17:59 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:c6d:4079:b74c:e329? ([2001:b07:6468:f312:c6d:4079:b74c:e329])
+        by smtp.gmail.com with ESMTPSA id b18sm7575835wru.50.2020.01.09.01.17.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Jan 2020 01:17:59 -0800 (PST)
+Subject: Re: [PATCH next] KVM: Fix debugfs_simple_attr.cocci warnings
+To:     Nicolai Stange <nstange@suse.de>
+Cc:     Chen Wandun <chenwandun@huawei.com>, rkrcmar@redhat.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1577151674-67949-1-git-send-email-chenwandun@huawei.com>
+ <4f193d99-ee9b-5217-c2f6-3a8a96bf1534@redhat.com> <87h816nsv9.fsf@suse.de>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <5d75e57a-4d04-e6b9-1bbd-a01072bfa6b1@redhat.com>
+Date:   Thu, 9 Jan 2020 10:17:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
+MIME-Version: 1.0
+In-Reply-To: <87h816nsv9.fsf@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Elkhart Lake(TREMONT) succeed GOLDMONT, reuse the code.
+On 08/01/20 11:29, Nicolai Stange wrote:
+> 
+> How about introducing a
+>   #define debugfs_create_attr debugfs_create_file_unsafe
+> instead to make those
+> s/DEFINE_SIMPLE_ATTRIBUTE/DEFINE_DEBUGFS_ATTRIBUTE/
+> patches look less scary?
 
-Elkhart Lake does not support group turbo limit counter
-register and might trigger failure in has_turbo_ratio_group_limits(),
-so it is not applicable to reuse GOLDMONT cpuid in intel_model_duplicates().
+I agree that could be worthwhile.  My main complaint is the "scariness
+factor" of the patches that convert DEFINE_SIMPLE_ATTRIBUTE to
+DEFINE_DEBUGFS_ATTRIBUTE, and this change would alleviate that problem.
 
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
----
- tools/power/x86/turbostat/turbostat.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks,
 
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-index 5d0fddda842c..2d3d0a3d5e07 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -3265,6 +3265,7 @@ int probe_nhm_msrs(unsigned int family, unsigned int model)
- 	case INTEL_FAM6_ATOM_GOLDMONT:	/* BXT */
- 	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
- 	case INTEL_FAM6_ATOM_GOLDMONT_D:	/* DNV */
-+	case INTEL_FAM6_ATOM_TREMONT:	/* ELK */
- 		pkg_cstate_limits = glm_pkg_cstate_limits;
- 		break;
- 	default:
-@@ -3888,6 +3889,7 @@ void rapl_probe_intel(unsigned int family, unsigned int model)
- 		break;
- 	case INTEL_FAM6_ATOM_GOLDMONT:	/* BXT */
- 	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
-+	case INTEL_FAM6_ATOM_TREMONT:	/* ELK */
- 		do_rapl = RAPL_PKG | RAPL_PKG_POWER_INFO;
- 		if (rapl_joules)
- 			BIC_PRESENT(BIC_Pkg_J);
-@@ -4295,6 +4297,7 @@ int has_snb_msrs(unsigned int family, unsigned int model)
- 	case INTEL_FAM6_ATOM_GOLDMONT:		/* BXT */
- 	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
- 	case INTEL_FAM6_ATOM_GOLDMONT_D:	/* DNV */
-+	case INTEL_FAM6_ATOM_TREMONT:		/* ELK */
- 		return 1;
- 	}
- 	return 0;
-@@ -4324,6 +4327,7 @@ int has_c8910_msrs(unsigned int family, unsigned int model)
- 	case INTEL_FAM6_CANNONLAKE_L:	/* CNL */
- 	case INTEL_FAM6_ATOM_GOLDMONT:	/* BXT */
- 	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
-+	case INTEL_FAM6_ATOM_TREMONT:	/* ELK */
- 		return 1;
- 	}
- 	return 0;
--- 
-2.17.1
+Paolo
 
