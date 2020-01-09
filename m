@@ -2,128 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04EBC135D12
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 16:44:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51F5F135D2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 16:47:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732585AbgAIPon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 10:44:43 -0500
-Received: from mga02.intel.com ([134.134.136.20]:3757 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732548AbgAIPol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 10:44:41 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 07:44:41 -0800
-X-IronPort-AV: E=Sophos;i="5.69,414,1571727600"; 
-   d="scan'208";a="227826443"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 07:44:38 -0800
-Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
-        by paasikivi.fi.intel.com (Postfix) with ESMTP id 2F22220F4E;
-        Thu,  9 Jan 2020 17:44:33 +0200 (EET)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.92)
-        (envelope-from <sakari.ailus@linux.intel.com>)
-        id 1ipa01-00055H-HW; Thu, 09 Jan 2020 17:45:29 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        rajmohan.mani@intel.com, Tomasz Figa <tfiga@chromium.org>
-Subject: [PATCH v3 5/5] at24: Support probing while off
-Date:   Thu,  9 Jan 2020 17:45:29 +0200
-Message-Id: <20200109154529.19484-6-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200109154529.19484-1-sakari.ailus@linux.intel.com>
-References: <20200109154529.19484-1-sakari.ailus@linux.intel.com>
+        id S1732637AbgAIPr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 10:47:26 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33104 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731177AbgAIPr0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 10:47:26 -0500
+Received: by mail-wm1-f65.google.com with SMTP id d139so2345561wmd.0;
+        Thu, 09 Jan 2020 07:47:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding;
+        bh=CSAMl7EJyJdjDOiZuTQVDV1QpeNUTxwttHREdqKFpyc=;
+        b=LrbCWyCE0Gmdqj0Qh+r8b7I8gCmbR1dcVglZTbkyYaKZ8iH1OY23+R1ls3qZEALJR1
+         6m2vf8yTUu2/MwLVf74OhYJdJozzURDnW3jBtH3DwZw4ijGgIVDcPkg4n5KLNAu1kVvb
+         W2kLATfHltArjqdUWgTNkbdiGb+BHWFMy7jDJ/6/aX8iFeY+0ez39HpRTnRBShWopW8a
+         VNG6Ya2CyQaKXXxY9cIgMARBIz9nvN7I3lvMZnBwal+ytNy9oqf1dFNVsNClSR6PsN7U
+         sErFKs3PvtnWMJWttPdVbGcVZL/E7ouhKjUbECYse/OVcE02VLac2ihRfSYUUOcYyYiR
+         GKbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:content-transfer-encoding;
+        bh=CSAMl7EJyJdjDOiZuTQVDV1QpeNUTxwttHREdqKFpyc=;
+        b=Z3Cc1YC0R/DuOYl/PF/nQBKT9EntluBq5Mt3xS4sfDo0T7fPmU8SpEByjWWbZjo5FT
+         dl54NG1QSu0t8WWTDolRBGYRcjqeTyzzm2Y+N/KYh+rBQuMBvnROsKW3ZDzI7p36SNRH
+         zgQNKjMAGYky9WvuTlE6oWKPBck9qAsRC/CEsi9OKnfZ/r+6brcYK9v3GvV+rClJgcq8
+         yTUuixVLjaskfRaO4gZAAKLl2BY7QiyvjkBmNh1tQUdTPVenBquhubmIDjBsYrnNP4jr
+         Gw4DOh0RO4gIwz+fvKgu0ls7C4Qe0YbbGT+rCCrDx0N4av/DKFU95rQgAN4ia2Zoxywc
+         E7ww==
+X-Gm-Message-State: APjAAAXt3iLxieqyHhlma9b25F/e1oN6UlJnaE8pEHoSZgIgh+/UolKD
+        73kDX0DvZWSXM22/i71NfkkfPp04lS8=
+X-Google-Smtp-Source: APXvYqwlxttXlwPbdfYUVkStfQe5gJvHYsAJdjYHSKIuR7oonq+gT9OLezsdvJLbNudRSmjtk7/nqQ==
+X-Received: by 2002:a1c:1b41:: with SMTP id b62mr5530422wmb.53.1578584844152;
+        Thu, 09 Jan 2020 07:47:24 -0800 (PST)
+Received: from eldamar (80-218-24-251.dclient.hispeed.ch. [80.218.24.251])
+        by smtp.gmail.com with ESMTPSA id i5sm8570367wrv.34.2020.01.09.07.47.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jan 2020 07:47:22 -0800 (PST)
+Date:   Thu, 9 Jan 2020 16:47:21 +0100
+From:   Salvatore Bonaccorso <carnil@debian.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ganapathi Bhat <gbhat@marvell.com>, ganapathi.bhat@nxp.com,
+        linux-wireless@vger.kernel.org
+Subject: MAINTAINERS: Marvell adresses might need update
+Message-ID: <20200109154721.GA282857@eldamar.local>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In certain use cases (where the chip is part of a camera module, and the
-camera module is wired together with a camera privacy LED), powering on
-the device during probe is undesirable. Add support for the at24 to
-execute probe while being powered off. For this to happen, a hint in form
-of a device property is required from the firmware.
+Hi
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/misc/eeprom/at24.c | 31 +++++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 10 deletions(-)
+While replying to patch review request for 3.16.81-rc1 in
+https://lore.kernel.org/lkml/20200109121117.GB1270@lorien.valinor.li/
+including Ganapathi Bhat, I got a notification that NXP has acquired
+Marvell’s Wireless business unit and Ganapathi can be reached under
+ganapathi.bhat@nxp.com .
 
-diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-index 0681d5fdd538a..41ac65d1e5d41 100644
---- a/drivers/misc/eeprom/at24.c
-+++ b/drivers/misc/eeprom/at24.c
-@@ -564,6 +564,7 @@ static int at24_probe(struct i2c_client *client)
- 	bool i2c_fn_i2c, i2c_fn_block;
- 	unsigned int i, num_addresses;
- 	struct at24_data *at24;
-+	bool low_power;
- 	struct regmap *regmap;
- 	bool writable;
- 	u8 test_byte;
-@@ -701,19 +702,24 @@ static int at24_probe(struct i2c_client *client)
- 
- 	i2c_set_clientdata(client, at24);
- 
--	/* enable runtime pm */
--	pm_runtime_set_active(dev);
-+	low_power = acpi_dev_low_power_state_probe(&client->dev);
-+	if (!low_power)
-+		pm_runtime_set_active(dev);
-+
- 	pm_runtime_enable(dev);
- 
- 	/*
--	 * Perform a one-byte test read to verify that the
--	 * chip is functional.
-+	 * Perform a one-byte test read to verify that the chip is functional,
-+	 * unless powering on the device is to be avoided during probe (i.e.
-+	 * it's powered off right now).
- 	 */
--	err = at24_read(at24, 0, &test_byte, 1);
--	pm_runtime_idle(dev);
--	if (err) {
--		pm_runtime_disable(dev);
--		return -ENODEV;
-+	if (!low_power) {
-+		err = at24_read(at24, 0, &test_byte, 1);
-+		pm_runtime_idle(dev);
-+		if (err) {
-+			pm_runtime_disable(dev);
-+			return -ENODEV;
-+		}
- 	}
- 
- 	if (writable)
-@@ -728,8 +734,12 @@ static int at24_probe(struct i2c_client *client)
- 
- static int at24_remove(struct i2c_client *client)
- {
-+	bool low_power;
-+
- 	pm_runtime_disable(&client->dev);
--	pm_runtime_set_suspended(&client->dev);
-+	low_power = acpi_dev_low_power_state_probe(&client->dev);
-+	if (!low_power)
-+		pm_runtime_set_suspended(&client->dev);
- 
- 	return 0;
- }
-@@ -743,6 +753,7 @@ static struct i2c_driver at24_driver = {
- 	.probe_new = at24_probe,
- 	.remove = at24_remove,
- 	.id_table = at24_ids,
-+	.probe_low_power = true,
- };
- 
- static int __init at24_init(void)
--- 
-2.20.1
+This probably means that at least the entry for Ganapathi Bhat in the
+MAINTAINERS file needs an update and the .mailcap file.
 
+This is as well the address as used in
+https://lore.kernel.org/lkml/DB7PR04MB5242BEB1F917B1FDB21DF3DF8F3F0@DB7PR04MB5242.eurprd04.prod.outlook.com/
+.
+
+Regards,
+Salvatore
