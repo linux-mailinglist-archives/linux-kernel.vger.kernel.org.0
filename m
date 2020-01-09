@@ -2,149 +2,294 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5EA5135234
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 05:40:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC45013522E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 05:31:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727933AbgAIEkz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 23:40:55 -0500
-Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:57393 "EHLO
-        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727749AbgAIEkz (ORCPT
+        id S1727821AbgAIEbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 23:31:13 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35125 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727701AbgAIEbN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 23:40:55 -0500
-X-Greylist: delayed 600 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 Jan 2020 23:40:54 EST
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.west.internal (Postfix) with ESMTP id 9CFC29EA;
-        Wed,  8 Jan 2020 23:30:52 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Wed, 08 Jan 2020 23:30:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm3; bh=T3IpaNh6tON7Z0J6BNGMp35jqP
-        cvLlQMXYRa9Ey0PUY=; b=FxKTRHnD4I2nmGm01m/Qrb7EJgiipwTTvsfnKL6dV1
-        s0MFPFrsqYdD/E2cCt1VASFOwPnVIlTZxSM92nSFR73g8+4JM/0W7mAW3VE57ybY
-        8kAIr2bKxW2SS9RZhd9VK9bw+rPXsxUaZ/Cn6njZugYT/xQx+cF8ADbc/ZzQEhn9
-        iB/LLcvpQKtr7hAMWub89RtK9s4VqZnb1FDk1mvo19Onz5GZKzsX9iqAdoW9aIyl
-        Uk7P4j179XNu7Fi1xikWDAAuc2/vN9lm72M8zlZjYMQrVnCFngWXDyRBR1xb2AXo
-        YJj7s8aI1J7JTuZE+c//ir9wTL7GdY7soVP2BbxO3KmQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=T3IpaNh6tON7Z0J6B
-        NGMp35jqPcvLlQMXYRa9Ey0PUY=; b=fzf7yeMtz23cZcpTYXNROyfZXuDYDWxSM
-        PrUF7lFIuia0DLnBZypneihyxytRmi06aatmvWAKbjk5+rxA9cqhjB9+I7J+VYNk
-        wdbdj/5sECQyAdmjDgRSPT8NVCJe3uQLG2UE43TaFHzkA1QkZ/iS4OetQGK+vlfR
-        tj7fJ27E2115LaDLdhmNIXLdybDXM3DN9me9XJZFZMLBSWWpmxlnikGPlUjoR9lR
-        YxSxLULWNWymcB5S4DLQbncxclBg5ZnPyjzIQxA3u0119jPwyOzdTHicJwA3ODHD
-        c7Y3jrAANeBWFcVGwbOAxIghUZkyL3JsD16HrwIXs6rIX7Yo7fJjQ==
-X-ME-Sender: <xms:e6wWXgvKKBsGJIcyFg7XNPj2Fpaa9yHUz2p4azCKG6cfevK2A3v6UQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdehledgieefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeetnhgurhgvshcu
-    hfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucfkphepieejrd
-    duiedtrddvudejrddvhedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurhgvshes
-    rghnrghrrgiivghlrdguvgenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:e6wWXi8Ip0xs3ExUbEn6_9lmGFVpX4sgqniUjJ4ffg-xivB2EQW_HQ>
-    <xmx:e6wWXkFN52PjyGQMnUJyW7wiWB99xdtKUqigRjwjvJv7C_iiYVCRHA>
-    <xmx:e6wWXhQKh4qxHJX8Y8BEpDpYMy-HE9WCfzkoBqEjyDVRPRFCsYkaHA>
-    <xmx:fKwWXmg-rKXlkTEMzsYzgteBs8zX7wYegz_5Gte9QyygyYdBetCcyB2m6Vs>
-Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 272E18005B;
-        Wed,  8 Jan 2020 23:30:51 -0500 (EST)
-From:   Andres Freund <andres@anarazel.de>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Andres Freund <andres@anarazel.de>,
-        Jiri Olsa <jolsa@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, stable@vger.kernel.org
-Subject: [PATCH] perf c2c: Fix sorting.
-Date:   Wed,  8 Jan 2020 20:30:30 -0800
-Message-Id: <20200109043030.233746-1-andres@anarazel.de>
-X-Mailer: git-send-email 2.25.0.rc1
+        Wed, 8 Jan 2020 23:31:13 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i23so2729322pfo.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 20:31:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RbHjM0wg62cWEianIkLtCJW1X5EzJpKvrs71soaeoPo=;
+        b=xy0GMMRi3LpivqEhjmd3Niy/3CDXdyzZc4meM+jjBObf/6hOF1cWTN7l/ZdK4B41sQ
+         kxXIhOG0+DqTmlX5BoJvnO70csEiuOfsQgIWnoTF9z+xjKfquLw0G2HPYQUhRgWkZrbm
+         RmERBCidfmC6Sad+LyNZ2MHl5KvGin5CuBlvbsv5fN8uj8NotL5S5Rhj1mPf9BqM56bL
+         QjOfXz9hod/P/9shnZCXDktla8gpMQOqscKKwAJXk15FUSXRNrEtvJ867yY0rnV+0zV/
+         3mhA29y1DdjTlw9UrctKvz3GD28jt1IwmfROrCx9vctZGTiBqMnCvOE0HWwhXxbVGstY
+         PAyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RbHjM0wg62cWEianIkLtCJW1X5EzJpKvrs71soaeoPo=;
+        b=U/IdIx0HV1f3N59wU2E0Kqhc3ehnoM6diejAKzRloRxj+YX7eExlLTypEocUDSZubp
+         gjoPYz6058ox5N2pN/CWzxlUEZ3mCEU9c4+kkyPz3z9j6C51s8ghRgvKgrd5So1GgXeO
+         6TRVQZz0d0ke6+WnSDewYf0FpbJugOWXaLSXfjUoR+kC2A8KZGHHyTUPMFRPph1KdDBi
+         0CpBqTnjT0OYu5jpCxMCe4UjHaTrZRUnDXnJAKRH+LpzpceKukK9OXBqvPJaHkiitm/P
+         +Y5KQv+6OCqOXprvHqBaHxNRcgSrTqSy/xLYLTToIAaVbGZbO3r9GfikNDIqA9078JXf
+         dNIA==
+X-Gm-Message-State: APjAAAXCPjBXt8eCYNxtdqe6VL4skg72Mlr9LdAn27YULRk87ZJJ8IGV
+        8oWvPO55FmFYatUSRn5//TDINg==
+X-Google-Smtp-Source: APXvYqyPPlKBAwfC//N4cbCcGppvgRthgjc5wns7FMRVy/ezHB4QROyqdIP/FxTlFcM7wvRUTUXQjQ==
+X-Received: by 2002:a63:2ac2:: with SMTP id q185mr9172175pgq.417.1578544271706;
+        Wed, 08 Jan 2020 20:31:11 -0800 (PST)
+Received: from localhost ([122.172.140.51])
+        by smtp.gmail.com with ESMTPSA id w11sm5647434pfi.77.2020.01.08.20.31.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 Jan 2020 20:31:10 -0800 (PST)
+Date:   Thu, 9 Jan 2020 10:01:08 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
+        David Dai <daidavid1@codeaurora.org>, adharmap@codeaurora.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 2/3] OPP: Add support for bandwidth OPP tables
+Message-ID: <20200109043108.fzvk3hp7vodtw6zy@vireshk-i7>
+References: <20191207002424.201796-1-saravanak@google.com>
+ <20191207002424.201796-3-saravanak@google.com>
+ <20200108105348.p4y3s2mbuchiu4mf@vireshk-i7>
+ <CAGETcx8QEV+_+d2yt_+bE09mi4qyHZDHPJqPiDXv_HgJPgQJoQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGETcx8QEV+_+d2yt_+bE09mi4qyHZDHPJqPiDXv_HgJPgQJoQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 722ddfde366f ("perf tools: Fix time sorting") changed -
-correctly so - hist_entry__sort to return int64. Unfortunately several
-of the builtin-c2c.c comparison routines only happened to work due the
-cast caused by the wrong return type.
+On 08-01-20, 16:58, Saravana Kannan wrote:
+> On Wed, Jan 8, 2020 at 2:53 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >
+> > On 06-12-19, 16:24, Saravana Kannan wrote:
+> > > Not all devices quantify their performance points in terms of frequency.
+> > > Devices like interconnects quantify their performance points in terms of
+> > > bandwidth. We need a way to represent these bandwidth levels in OPP. So,
+> > > add support for parsing bandwidth OPPs from DT.
+> > >
+> > > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> > > ---
+> > >  drivers/opp/core.c | 15 +++++++++--
+> > >  drivers/opp/of.c   | 63 ++++++++++++++++++++++++++++++++--------------
+> > >  drivers/opp/opp.h  |  5 ++++
+> > >  3 files changed, 62 insertions(+), 21 deletions(-)
+> > >
+> > > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> > > index be7a7d332332..c79bbfac7289 100644
+> > > --- a/drivers/opp/core.c
+> > > +++ b/drivers/opp/core.c
+> > > @@ -1282,11 +1282,21 @@ static bool _opp_supported_by_regulators(struct dev_pm_opp *opp,
+> > >       return true;
+> > >  }
+> > >
+> > > +int opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2)
+> > > +{
+> > > +     if (opp1->rate != opp2->rate)
+> > > +             return opp1->rate < opp2->rate ? -1 : 1;
+> > > +     if (opp1->peak_bw != opp2->peak_bw)
+> > > +             return opp1->peak_bw < opp2->peak_bw ? -1 : 1;
+> >
+> > Please also add level here.
+> 
+> I can, but I vaguely remember finding opp-levels could have
+> duplicates? Am I wrong? If so I can add the opp-level comparison too.
 
-This causes meaningless ordering of both the cacheline list, and the
-cacheline details page. E.g a simple
-  perf c2c record -a sleep 3
-  perf c2c report
-will result in cacheline table like
-  =================================================
-             Shared Data Cache Line Table
-  =================================================
-  #
-  #        ----------- Cacheline ----------    Total      Tot  ----- LLC Load Hitm -----  ---- Store Reference ----  --- Load Dram ----      LLC    Total  ----- Core Load Hit -----  -- LLC Load Hit --
-  # Index             Address  Node  PA cnt  records     Hitm    Total      Lcl      Rmt    Total    L1Hit   L1Miss       Lcl       Rmt  Ld Miss    Loads       FB       L1       L2       Llc       Rmt
-  # .....  ..................  ....  ......  .......  .......  .......  .......  .......  .......  .......  .......  ........  ........  .......  .......  .......  .......  .......  ........  ........
-  #
-        0      0x7f0d27ffba00   N/A       0       52    0.12%       13        6        7       12       12        0         0         7       14       40        4       16        0         0         0
-        1      0x7f0d27ff61c0   N/A       0     6353   14.04%     1475      801      674      779      779        0         0       718     1392     5574     1299     1967        0       115         0
-        2      0x7f0d26d3ec80   N/A       0       71    0.15%       16        4       12       13       13        0         0        12       24       58        1       20        0         9         0
-        3      0x7f0d26d3ec00   N/A       0       98    0.22%       23       17        6       19       19        0         0         6       12       79        0       40        0        10         0
-i.e. with the list not being ordered by Total Hitm.
+No they can't have duplicates.
 
-Fixes: 722ddfde366f ("perf tools: Fix time sorting")
-Signed-off-by: Andres Freund <andres@anarazel.de>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: stable@vger.kernel.org # v3.16+
----
- tools/perf/builtin-c2c.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+> > > +     return 0;
+> > > +}
+> > > +
+> > >  static int _opp_is_duplicate(struct device *dev, struct dev_pm_opp *new_opp,
+> > >                            struct opp_table *opp_table,
+> > >                            struct list_head **head)
+> > >  {
+> > >       struct dev_pm_opp *opp;
+> > > +     int opp_cmp;
+> > >
+> > >       /*
+> > >        * Insert new OPP in order of increasing frequency and discard if
+> > > @@ -1297,12 +1307,13 @@ static int _opp_is_duplicate(struct device *dev, struct dev_pm_opp *new_opp,
+> > >        * loop.
+> > >        */
+> > >       list_for_each_entry(opp, &opp_table->opp_list, node) {
+> > > -             if (new_opp->rate > opp->rate) {
+> > > +             opp_cmp = opp_compare_key(new_opp, opp);
+> > > +             if (opp_cmp > 0) {
+> > >                       *head = &opp->node;
+> > >                       continue;
+> > >               }
+> > >
+> > > -             if (new_opp->rate < opp->rate)
+> > > +             if (opp_cmp < 0)
+> > >                       return 0;
+> > >
+> > >               /* Duplicate OPPs */
+> > > diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+> > > index 1cbb58240b80..b565da5a2b1f 100644
+> > > --- a/drivers/opp/of.c
+> > > +++ b/drivers/opp/of.c
+> > > @@ -521,6 +521,44 @@ void dev_pm_opp_of_remove_table(struct device *dev)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(dev_pm_opp_of_remove_table);
+> > >
+> > > +static int _read_opp_key(struct dev_pm_opp *new_opp, struct device_node *np,
+> > > +                      bool *rate_not_available)
+> > > +{
+> > > +     int ret;
+> > > +     u64 rate;
+> > > +     u32 bw;
+> > > +
+> > > +     ret = of_property_read_u64(np, "opp-hz", &rate);
+> > > +     if (!ret) {
+> > > +             /*
+> > > +              * Rate is defined as an unsigned long in clk API, and so
+> > > +              * casting explicitly to its type. Must be fixed once rate is 64
+> > > +              * bit guaranteed in clk API.
+> > > +              */
+> > > +             new_opp->rate = (unsigned long)rate;
+> > > +             goto out;
+> > > +     }
+> > > +
+> > > +     ret = of_property_read_u32(np, "opp-peak-kBps", &bw);
+> > > +     if (!ret) {
+> > > +             new_opp->peak_bw = bw;
+> > > +
+> > > +             if (!of_property_read_u32(np, "opp-avg-kBps", &bw))
+> > > +                     new_opp->avg_bw = bw;
+> >
+> > Maybe
+> >                 of_property_read_u32(np, "opp-avg-kBps", &new_opp->avg_bw);
+> >
+> > and same for opp-peak-kbps as well.
+> 
+> But those are not u32. Is it always safe to directly read into it
+> across all endian-ness and unsigned int sizes? I get tripped up by
+> that occasionally.
 
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index e69f44941aad..f2e9d2b1b913 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -595,8 +595,8 @@ tot_hitm_cmp(struct perf_hpp_fmt *fmt __maybe_unused,
- {
- 	struct c2c_hist_entry *c2c_left;
- 	struct c2c_hist_entry *c2c_right;
--	unsigned int tot_hitm_left;
--	unsigned int tot_hitm_right;
-+	uint64_t tot_hitm_left;
-+	uint64_t tot_hitm_right;
- 
- 	c2c_left  = container_of(left, struct c2c_hist_entry, he);
- 	c2c_right = container_of(right, struct c2c_hist_entry, he);
-@@ -629,7 +629,8 @@ __f ## _cmp(struct perf_hpp_fmt *fmt __maybe_unused,			\
- 									\
- 	c2c_left  = container_of(left, struct c2c_hist_entry, he);	\
- 	c2c_right = container_of(right, struct c2c_hist_entry, he);	\
--	return c2c_left->stats.__f - c2c_right->stats.__f;		\
-+	return (uint64_t) c2c_left->stats.__f -				\
-+	       (uint64_t) c2c_right->stats.__f;				\
- }
- 
- #define STAT_FN(__f)		\
-@@ -682,7 +683,8 @@ ld_llcmiss_cmp(struct perf_hpp_fmt *fmt __maybe_unused,
- 	c2c_left  = container_of(left, struct c2c_hist_entry, he);
- 	c2c_right = container_of(right, struct c2c_hist_entry, he);
- 
--	return llc_miss(&c2c_left->stats) - llc_miss(&c2c_right->stats);
-+	return (uint64_t) llc_miss(&c2c_left->stats) -
-+	       (uint64_t) llc_miss(&c2c_right->stats);
- }
- 
- static uint64_t total_records(struct c2c_stats *stats)
+It may not be safe.
+
+> > > +     }
+> > > +
+> > > +out:
+> > > +     *rate_not_available = !!ret;
+> > > +     /*
+> > > +      * If ret is 0 at this point, we have already found a key. If we
+> > > +      * haven't found a key yet, then ret already has an error value. In
+> > > +      * either case, we don't need to update ret.
+> > > +      */
+> > > +     of_property_read_u32(np, "opp-level", &new_opp->level);
+> >
+> > Yes, it wasn't done earlier but we should do it now. Check level as
+> > well and treat it as any other key.
+> >
+> > I think add a preparatory patch first which does all the cleanup
+> > before bandwidth thing is added.
+> 
+> Ah come on man! You are making this too painful. It's okay to add a
+> few more error checks as part of implementing a new feature. Please
+> don't make me add more patches before this.
+
+It will only make your life easier and not painful in my opinion as
+the reviews are getting mixed/confused between the new things and the
+old fields right now. With a separate patch introducing just the
+bandwidth part, it will get reviewed in maximum 1-2 versions, else you
+will keep updating the unrelated patch and I will keep reviewing it as
+it is all a single patch.
+
+It is always suggested to break patches into the smallest possible
+meaningful separate things you want to achieve. You are introducing
+something here and adding cleanup to that.
+
+> > > +
+> > > +     return ret;
+> > > +}
+> > > +
+> > >  /**
+> > >   * _opp_add_static_v2() - Allocate static OPPs (As per 'v2' DT bindings)
+> > >   * @opp_table:       OPP table
+> > > @@ -558,26 +596,12 @@ static struct dev_pm_opp *_opp_add_static_v2(struct opp_table *opp_table,
+> > >       if (!new_opp)
+> > >               return ERR_PTR(-ENOMEM);
+> > >
+> > > -     ret = of_property_read_u64(np, "opp-hz", &rate);
+> > > -     if (ret < 0) {
+> > > -             /* "opp-hz" is optional for devices like power domains. */
+> > > -             if (!opp_table->is_genpd) {
+> > > -                     dev_err(dev, "%s: opp-hz not found\n", __func__);
+> > > -                     goto free_opp;
+> > > -             }
+> > > -
+> > > -             rate_not_available = true;
+> > > -     } else {
+> > > -             /*
+> > > -              * Rate is defined as an unsigned long in clk API, and so
+> > > -              * casting explicitly to its type. Must be fixed once rate is 64
+> > > -              * bit guaranteed in clk API.
+> > > -              */
+> > > -             new_opp->rate = (unsigned long)rate;
+> > > +     ret = _read_opp_key(new_opp, np, &rate_not_available);
+> > > +     if (ret) {
+> > > +             dev_err(dev, "%s: opp key field not found\n", __func__);
+> > > +             goto free_opp;
+> > >       }
+> > >
+> > > -     of_property_read_u32(np, "opp-level", &new_opp->level);
+> > > -
+> > >       /* Check if the OPP supports hardware's hierarchy of versions or not */
+> > >       if (!_opp_is_supported(dev, opp_table, np)) {
+> > >               dev_dbg(dev, "OPP not supported by hardware: %llu\n", rate);
+> > > @@ -616,7 +640,8 @@ static struct dev_pm_opp *_opp_add_static_v2(struct opp_table *opp_table,
+> > >       if (of_property_read_bool(np, "opp-suspend")) {
+> > >               if (opp_table->suspend_opp) {
+> > >                       /* Pick the OPP with higher rate as suspend OPP */
+> > > -                     if (new_opp->rate > opp_table->suspend_opp->rate) {
+> > > +                     if (opp_compare_key(new_opp,
+> > > +                                         opp_table->suspend_opp) > 1) {
+> >
+> > Maybe leave this place as is as we never want to compare anything else
+> > but rate.
+> 
+> We do want to support suspend bandwidth.
+
+Yeah, I understood that from a later patch.
+
+> So I think I should have this
+> fix here so it works in general. Also, why not suspend opp-level?
+
+Because we don't want/need to set a specific value to the
+voltage-corners during suspend directly from the PM domain driver.
+This should happen automatically via a call from the underlying
+cpufreq or device driver.
+
+And that's what I expected out of the interconnect thing. For example,
+say during suspend you put the interconnect or PM domains to a low
+bandwidth/level value, while the underlying device driver (which uses
+the interconnect or domain) never requested for it. Who will be
+responsible to restore the value during resume as we would be out of
+sync here.
+
 -- 
-2.25.0.rc1
-
+viresh
