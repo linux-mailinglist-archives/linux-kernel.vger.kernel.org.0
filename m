@@ -2,89 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32B8113640E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 00:53:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D31A136411
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 00:56:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729649AbgAIXxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 18:53:16 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57566 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729591AbgAIXxQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 18:53:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MlF5dQoK0dle1ZtWDZdBf2+ZpHH+83Dr5WwoqzcG/Ug=; b=jhAriIhFGALIxRRRCqZHcRAxO
-        bf4QTy+4gxMC39a/tlgJyZemUmAPzGWDjdYo3FHiNCnYh8JuaJUOUAqTcnkrixja9wAfclkGZmZtZ
-        OiGYE3YLWVzXSN7R3Vf+GYLfFMDkJgubsYVgRPn1DL9zPq2/5vdltjhWxA0qgJ6h0DLzBaHWqmeWI
-        HOIXJlomwE073znZL/WcTeVayoFFFIjuYZfMH/47g17s7JvjFwiHqnoOefTdRbJjnANQOgy68NXNA
-        CBi9tnvH+bvoAl54/o9oGGG/HslohH6KEl7s/DCI+6/8jUsdX9veYo9gyCunxXFQ5VPrcsWtaI4wO
-        C5UPITnAQ==;
-Received: from [2601:1c0:6280:3f0::ed68]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iphc3-0000H5-40; Thu, 09 Jan 2020 23:53:15 +0000
-Subject: Re: [PATCH-next 3/3] serial/sysrq: Add MAGIC_SYSRQ_SERIAL_SEQUENCE
-To:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Vasiliy Khoruzhick <vasilykh@arista.com>,
-        linux-serial@vger.kernel.org
-References: <20200109215444.95995-1-dima@arista.com>
- <20200109215444.95995-4-dima@arista.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <9e622d11-0eb7-274e-8f0a-132d296420fe@infradead.org>
-Date:   Thu, 9 Jan 2020 15:53:14 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1729753AbgAIX4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 18:56:23 -0500
+Received: from mga05.intel.com ([192.55.52.43]:55945 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729649AbgAIX4W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 18:56:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 15:56:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,414,1571727600"; 
+   d="scan'208";a="246828479"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by fmsmga004.fm.intel.com with ESMTP; 09 Jan 2020 15:56:21 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jim Mattson <jmattson@google.com>,
+        Andrew Honig <ahonig@google.com>,
+        Barret Rhoden <brho@google.com>
+Subject: [PATCH 0/3] KVM: Clean up guest/host cache read/write code
+Date:   Thu,  9 Jan 2020 15:56:17 -0800
+Message-Id: <20200109235620.6536-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <20200109215444.95995-4-dima@arista.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Minor cleanup to fix the underlying crustiness that led to an uninitialized
+variable warning reported by Barret.
 
-On 1/9/20 1:54 PM, Dmitry Safonov wrote:
-> 
-> Based-on-patch-by: Vasiliy Khoruzhick <vasilykh@arista.com>
-> Signed-off-by: Dmitry Safonov <dima@arista.com>
-> ---
->  drivers/tty/serial/serial_core.c | 52 ++++++++++++++++++++++++++++----
->  include/linux/serial_core.h      |  2 +-
->  lib/Kconfig.debug                |  8 +++++
->  3 files changed, 55 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-> index 6ac9dfed3423..f70eba032d0b 100644
-> --- a/drivers/tty/serial/serial_core.c
-> +++ b/drivers/tty/serial/serial_core.c
-> @@ -3081,6 +3081,38 @@ void uart_insert_char(struct uart_port *port, unsigned int status,
->  }
->  EXPORT_SYMBOL_GPL(uart_insert_char);
->  
-> +const char sysrq_toggle_seq[] = CONFIG_MAGIC_SYSRQ_SERIAL_SEQUENCE;
-> +
-> +static void uart_sysrq_on(struct work_struct *w)
-> +{
-> +	sysrq_toggle_support(1);
-> +	pr_info("SysRq is enabled by magic sequience on serial\n");
+The first two patches are tagged with Fixes:, but I don't know that they're
+actually worth backporting to stable.  Functionally, everthing works, it's
+just a bit weird and AFAICT not what is intended.  It might be preferable
+to take Barret's patch[*] first and only mark that for stable, as it fixes
+the immediate issue without revamping __kvm_gfn_to_hva_cache_init().
 
-typo:	                                   sequence
+[*] https://lkml.kernel.org/r/20200109195855.17353-1-brho@google.com
 
-> +}
-> +static DECLARE_WORK(sysrq_enable_work, uart_sysrq_on);
+Sean Christopherson (3):
+  KVM: Check for a bad hva before dropping into the ghc slow path
+  KVM: Clean up __kvm_gfn_to_hva_cache_init() and its callers
+  KVM: Return immediately if __kvm_gfn_to_hva_cache_init() fails
 
-
+ virt/kvm/kvm_main.c | 45 ++++++++++++++++++++++++++-------------------
+ 1 file changed, 26 insertions(+), 19 deletions(-)
 
 -- 
-~Randy
+2.24.1
 
