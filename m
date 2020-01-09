@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AB09135963
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 13:37:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A890D135961
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 13:37:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729875AbgAIMhg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 07:37:36 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38824 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728660AbgAIMhY (ORCPT
+        id S1729682AbgAIMh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 07:37:27 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:32773 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729607AbgAIMhZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 07:37:24 -0500
-Received: by mail-lj1-f194.google.com with SMTP id w1so7069552ljh.5
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 04:37:23 -0800 (PST)
+        Thu, 9 Jan 2020 07:37:25 -0500
+Received: by mail-lj1-f195.google.com with SMTP id y6so7112332lji.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 04:37:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0SiPYkpY1LZoKU7ldF/7ST/2p0dy5rt5wH0O4CV27+M=;
-        b=ut+WtLUt+pWdeMMS9uQnf0695MJcJzhFVZPGp6n2yJdGkJ63SPUSLX4YBjOWUmrlIj
-         BYLV6R2eblFlnMpmHaVqXJGo/a2vvA9RQ0B92Deq5J3ohCgvYoKqX1n365g6UuwlFLxl
-         CXA+SZwkGhaZbA+vWNQ/h7yqHF5QMMDSLPgo6Rl9sLb/5dR88cl2MZ2wgJeMvI2EEktR
-         /xopYHyiZQiQRB4v/RM7KhNRhZzp3c+krDQH0p9W6oJYE2IzsXD/1xCHjPCczkcQHDKj
-         JuEDnTMRf6uOVGxyWGtvFc1SZKZLJUiITLGcAq5N0N5PNNGnXlShsF+DhKJgeHrKgbNO
-         PcXA==
+        bh=m+zKWVO9TLVpTp9i0f9ernZ1zXoj4gKi+YUbC7Ltz2s=;
+        b=cEQgiXqa3+cQZm1ve97A9JbfnBQCFSW56kelcwbCfUGFz42EsDR7jdt4LPz2WzwsNw
+         l9VZmKvHCuBYwpiEVMBvE6DLIiCMyi4vHxIcRMhWG7S/ICjsMbdSSDf7XzUevUup3qSa
+         WiGQINg4a2RNJBMXQA5rZNinxCHmlZ7CRepc2Tf2ByDmCX/2rME0g9tovfpmEXpFdAGk
+         h09PNJcRFV+G+5nMjYKrsUfYZ/qg00LWzssvCt8sA5CUPt3JJuz6njSqXecLQSpIt8FJ
+         U5F2L7f0EEHd7KTf1zwVoPCW5+nyuOiAi6G4lgf1eiUsooewg+HD9WIBopdbitWckREE
+         kDEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=0SiPYkpY1LZoKU7ldF/7ST/2p0dy5rt5wH0O4CV27+M=;
-        b=Kt8RWJCEo3ivl+Fd7Z9FVud7WRZ6YfeEXcxD0dp0nkvLLCNWKWJJ7VgPI3AaGvVIw3
-         POxaRDPrmtle51VkcDx5iPdDkAUSHntgu3h1ALwIgu6RJNfvj4mY69XdgEL/+F+pbxhm
-         mg5KFeuBNwn0BD0GxAe7A074WhsyZpDbf2Ch1AIX/nPXHG6v8RB1iU7h/NxX/zPU6G3X
-         1aw3QPXVzOewkW2kErCmP6nnGpBgi/gb6F9jYbad4e5M6CCV1BsyZ1emTIT2faZGypjx
-         CeH7Z5Cb7sxctdGpY8LpvUOBCUWvChT+FuMMtz0O0DSO1K8qbl1PgZa1x0rwI4P2GwUH
-         vZ7w==
-X-Gm-Message-State: APjAAAUQsjsYfGBpL7AtosamuZ2XUNr44axEkVz/tdZxUSpL3JYmshJf
-        TR5+r/uVia60csCKTbi5D+dEnQ==
-X-Google-Smtp-Source: APXvYqwSidHTC+rWtz8NqvtvCCR/vrebJWl9LIeuT91aGsl+rvCSvHfRSiC9O+qKFLNlyR0MMzuH0A==
-X-Received: by 2002:a05:651c:20a:: with SMTP id y10mr6452038ljn.216.1578573442603;
-        Thu, 09 Jan 2020 04:37:22 -0800 (PST)
+        bh=m+zKWVO9TLVpTp9i0f9ernZ1zXoj4gKi+YUbC7Ltz2s=;
+        b=khhKPOg1vK/Wc00HxXv/F3s4ld9ohNQ5ALHk734dPTo4Ll1XEvNd/bpMV6o/xzWFF0
+         70xaoW7yM/msl5kVcpPgojRnzcU+4WYhUEJ3TDozvk+YtZa4SvRGvsXOHdENrgDqzTIA
+         2yYuGfHwoDnfOY6jqP12M4NZSsr3cbWuo/mIY80bX9Gl/eczgruKdFmYsACv+/IkmZ/a
+         8pXLr3uhrMrJ9Urtt5km+kXzrYXc60pOqv3jB2DKtdCxUYAGnOgghs/6wPrQKgmwYcmx
+         +bu00c9M054CGzswAMCLy8dqU5mdSgb2qxqyx1q10ChZnFTIz82cRyQsyeJM8lpEO8OC
+         KyiQ==
+X-Gm-Message-State: APjAAAUVj5LDs61l9UJbBXQmabxG3T0lBHPrFqPua/mdcFD1cWcuIPZ7
+        CbV2cAlAqcjy9Km75Ram2Lr0lQ==
+X-Google-Smtp-Source: APXvYqyclBcFxWDYkwVsygkW+EYYaSYSeckiu3GjZmonF/L3lUd7nc+VX3DKEGGQzUvnzL+mDTyhQQ==
+X-Received: by 2002:a05:651c:1b3:: with SMTP id c19mr6660158ljn.115.1578573443839;
+        Thu, 09 Jan 2020 04:37:23 -0800 (PST)
 Received: from jax.urgonet (h-249-223.A175.priv.bahnhof.se. [98.128.249.223])
-        by smtp.gmail.com with ESMTPSA id u16sm2887724ljo.22.2020.01.09.04.37.21
+        by smtp.gmail.com with ESMTPSA id u16sm2887724ljo.22.2020.01.09.04.37.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 04:37:22 -0800 (PST)
+        Thu, 09 Jan 2020 04:37:23 -0800 (PST)
 From:   Jens Wiklander <jens.wiklander@linaro.org>
 To:     tee-dev@lists.linaro.org, linux-kernel@vger.kernel.org
 Cc:     Jerome Forissier <jerome@forissier.org>,
@@ -52,9 +52,9 @@ Cc:     Jerome Forissier <jerome@forissier.org>,
         Rijo Thomas <Rijo-john.Thomas@amd.com>,
         Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
         Jens Wiklander <jens.wiklander@linaro.org>
-Subject: [PATCH 2/5] tee: remove unused tee_shm_priv_alloc()
-Date:   Thu,  9 Jan 2020 13:36:48 +0100
-Message-Id: <20200109123651.18520-3-jens.wiklander@linaro.org>
+Subject: [PATCH 3/5] tee: don't assign shm id for private shms
+Date:   Thu,  9 Jan 2020 13:36:49 +0100
+Message-Id: <20200109123651.18520-4-jens.wiklander@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200109123651.18520-1-jens.wiklander@linaro.org>
 References: <20200109123651.18520-1-jens.wiklander@linaro.org>
@@ -63,97 +63,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tee_shm_priv_alloc() isn't useful in the current state and it's also not
-not used so remove it.
+Private shared memory object must not be referenced from user space. To
+guarantee that, don't assign an id to shared memory objects which are
+driver private.
 
 Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
 ---
- drivers/tee/tee_shm.c   | 33 ++-------------------------------
- include/linux/tee_drv.h | 12 ------------
- 2 files changed, 2 insertions(+), 43 deletions(-)
+ drivers/tee/tee_private.h |  3 ++-
+ drivers/tee/tee_shm.c     | 31 ++++++++++++++++++-------------
+ 2 files changed, 20 insertions(+), 14 deletions(-)
 
+diff --git a/drivers/tee/tee_private.h b/drivers/tee/tee_private.h
+index f797171f0434..e55204df31ce 100644
+--- a/drivers/tee/tee_private.h
++++ b/drivers/tee/tee_private.h
+@@ -37,7 +37,8 @@ struct tee_shm_pool {
+  * @num_users:	number of active users of this device
+  * @c_no_user:	completion used when unregistering the device
+  * @mutex:	mutex protecting @num_users and @idr
+- * @idr:	register of shared memory object allocated on this device
++ * @idr:	register of user space shared memory objects allocated or
++ *		registered on this device
+  * @pool:	shared memory pool
+  */
+ struct tee_device {
 diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
-index 6cabb834db7d..8afe08b23242 100644
+index 8afe08b23242..e636cf82acdb 100644
 --- a/drivers/tee/tee_shm.c
 +++ b/drivers/tee/tee_shm.c
-@@ -95,20 +95,14 @@ static const struct dma_buf_ops tee_shm_dma_buf_ops = {
- 	.mmap = tee_shm_op_mmap,
- };
- 
--static struct tee_shm *__tee_shm_alloc(struct tee_context *ctx,
--				       struct tee_device *teedev,
--				       size_t size, u32 flags)
-+struct tee_shm *tee_shm_alloc(struct tee_context *ctx, size_t size, u32 flags)
+@@ -15,9 +15,11 @@ static void tee_shm_release(struct tee_shm *shm)
  {
-+	struct tee_device *teedev = ctx->teedev;
- 	struct tee_shm_pool_mgr *poolm = NULL;
- 	struct tee_shm *shm;
- 	void *ret;
- 	int rc;
+ 	struct tee_device *teedev = shm->teedev;
  
--	if (ctx && ctx->teedev != teedev) {
--		dev_err(teedev->dev.parent, "ctx and teedev mismatch\n");
--		return ERR_PTR(-EINVAL);
+-	mutex_lock(&teedev->mutex);
+-	idr_remove(&teedev->idr, shm->id);
+-	mutex_unlock(&teedev->mutex);
++	if (shm->flags & TEE_SHM_DMA_BUF) {
++		mutex_lock(&teedev->mutex);
++		idr_remove(&teedev->idr, shm->id);
++		mutex_unlock(&teedev->mutex);
++	}
+ 
+ 	if (shm->flags & TEE_SHM_POOL) {
+ 		struct tee_shm_pool_mgr *poolm;
+@@ -143,17 +145,18 @@ struct tee_shm *tee_shm_alloc(struct tee_context *ctx, size_t size, u32 flags)
+ 		goto err_kfree;
+ 	}
+ 
+-	mutex_lock(&teedev->mutex);
+-	shm->id = idr_alloc(&teedev->idr, shm, 1, 0, GFP_KERNEL);
+-	mutex_unlock(&teedev->mutex);
+-	if (shm->id < 0) {
+-		ret = ERR_PTR(shm->id);
+-		goto err_pool_free;
 -	}
--
- 	if (!(flags & TEE_SHM_MAPPED)) {
- 		dev_err(teedev->dev.parent,
- 			"only mapped allocations supported\n");
-@@ -188,31 +182,8 @@ static struct tee_shm *__tee_shm_alloc(struct tee_context *ctx,
- 	tee_device_put(teedev);
- 	return ret;
- }
--
--/**
-- * tee_shm_alloc() - Allocate shared memory
-- * @ctx:	Context that allocates the shared memory
-- * @size:	Requested size of shared memory
-- * @flags:	Flags setting properties for the requested shared memory.
-- *
-- * Memory allocated as global shared memory is automatically freed when the
-- * TEE file pointer is closed. The @flags field uses the bits defined by
-- * TEE_SHM_* in <linux/tee_drv.h>. TEE_SHM_MAPPED must currently always be
-- * set. If TEE_SHM_DMA_BUF global shared memory will be allocated and
-- * associated with a dma-buf handle, else driver private memory.
-- */
--struct tee_shm *tee_shm_alloc(struct tee_context *ctx, size_t size, u32 flags)
--{
--	return __tee_shm_alloc(ctx, ctx->teedev, size, flags);
--}
- EXPORT_SYMBOL_GPL(tee_shm_alloc);
  
--struct tee_shm *tee_shm_priv_alloc(struct tee_device *teedev, size_t size)
--{
--	return __tee_shm_alloc(NULL, teedev, size, TEE_SHM_MAPPED);
--}
--EXPORT_SYMBOL_GPL(tee_shm_priv_alloc);
--
- struct tee_shm *tee_shm_register(struct tee_context *ctx, unsigned long addr,
- 				 size_t length, u32 flags)
- {
-diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
-index cbddb883a7f8..42687f6c546d 100644
---- a/include/linux/tee_drv.h
-+++ b/include/linux/tee_drv.h
-@@ -315,18 +315,6 @@ void *tee_get_drvdata(struct tee_device *teedev);
-  */
- struct tee_shm *tee_shm_alloc(struct tee_context *ctx, size_t size, u32 flags);
+ 	if (flags & TEE_SHM_DMA_BUF) {
+ 		DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
  
--/**
-- * tee_shm_priv_alloc() - Allocate shared memory privately
-- * @dev:	Device that allocates the shared memory
-- * @size:	Requested size of shared memory
-- *
-- * Allocates shared memory buffer that is not associated with any client
-- * context. Such buffers are owned by TEE driver and used for internal calls.
-- *
-- * @returns a pointer to 'struct tee_shm'
-- */
--struct tee_shm *tee_shm_priv_alloc(struct tee_device *teedev, size_t size);
--
- /**
-  * tee_shm_register() - Register shared memory buffer
-  * @ctx:	Context that registers the shared memory
++		mutex_lock(&teedev->mutex);
++		shm->id = idr_alloc(&teedev->idr, shm, 1, 0, GFP_KERNEL);
++		mutex_unlock(&teedev->mutex);
++		if (shm->id < 0) {
++			ret = ERR_PTR(shm->id);
++			goto err_pool_free;
++		}
++
+ 		exp_info.ops = &tee_shm_dma_buf_ops;
+ 		exp_info.size = shm->size;
+ 		exp_info.flags = O_RDWR;
+@@ -171,9 +174,11 @@ struct tee_shm *tee_shm_alloc(struct tee_context *ctx, size_t size, u32 flags)
+ 
+ 	return shm;
+ err_rem:
+-	mutex_lock(&teedev->mutex);
+-	idr_remove(&teedev->idr, shm->id);
+-	mutex_unlock(&teedev->mutex);
++	if (flags & TEE_SHM_DMA_BUF) {
++		mutex_lock(&teedev->mutex);
++		idr_remove(&teedev->idr, shm->id);
++		mutex_unlock(&teedev->mutex);
++	}
+ err_pool_free:
+ 	poolm->ops->free(poolm, shm);
+ err_kfree:
 -- 
 2.17.1
 
