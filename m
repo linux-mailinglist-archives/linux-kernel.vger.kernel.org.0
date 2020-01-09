@@ -2,220 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F04BA1362F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 23:01:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D39C136301
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 23:07:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729239AbgAIWB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 17:01:27 -0500
-Received: from mga18.intel.com ([134.134.136.126]:65401 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729194AbgAIWB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 17:01:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 14:01:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,414,1571727600"; 
-   d="scan'208";a="371424636"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga004.jf.intel.com with ESMTP; 09 Jan 2020 14:01:25 -0800
-Date:   Thu, 9 Jan 2020 14:06:29 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v8 08/10] iommu/vt-d: Add custom allocator for IOASID
-Message-ID: <20200109140629.0e15c3f3@jacob-builder>
-In-Reply-To: <9c9c818c-ccb1-544d-2041-cf7017c4d898@linux.intel.com>
-References: <1576524252-79116-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1576524252-79116-9-git-send-email-jacob.jun.pan@linux.intel.com>
-        <9c9c818c-ccb1-544d-2041-cf7017c4d898@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1729273AbgAIWHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 17:07:41 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:12965 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbgAIWHk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 17:07:40 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e17a4190000>; Thu, 09 Jan 2020 14:07:21 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 09 Jan 2020 14:07:39 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 09 Jan 2020 14:07:39 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 9 Jan
+ 2020 22:07:38 +0000
+Subject: Re: [PATCH v12 00/22] mm/gup: prereqs to track dma-pinned pages:
+ FOLL_PIN
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20200107224558.2362728-1-jhubbard@nvidia.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <2a9145d4-586e-6489-64e4-0c54f47afaa1@nvidia.com>
+Date:   Thu, 9 Jan 2020 14:07:38 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200107224558.2362728-1-jhubbard@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1578607641; bh=+NEvkiCKN4muU9xEMv7O0vL5DDgA+srq0dD5KyM2g5Y=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=pAGT+6E4t/5Sgzls83W8rrhD73PbNnbQX0v+uLgN6NdK6ox1s0YILXA5+Q9WkB7U5
+         Qgdq4MfQKXM00HXiVUvw/MN1+0Npjsn2yckDImY4OPUy9vKTHUQrRr5b/32qyPv6Y4
+         G8uphKhloBfTQ9ova5uKctNKv/z/ybtCLuSP2dniMP6oLwVdc9frqv+uSdiahegES7
+         HZtKpaUzMnUGCyRfUKLB2LXhSyGZIEwOR/UkaAhKUOx0B4NaRtt8Qz56svVPCLTYZD
+         6dBjR9cwNa9He9WTH1/ZpC5nBgZ5v8YIJX6cYUd/1MLjMgnC8wrJfdT7uC+HoO76Fq
+         StnhQb6FNJNXA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Dec 2019 12:10:55 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
-
+On 1/7/20 2:45 PM, John Hubbard wrote:
 > Hi,
 > 
-> On 12/17/19 3:24 AM, Jacob Pan wrote:
-> > When VT-d driver runs in the guest, PASID allocation must be
-> > performed via virtual command interface. This patch registers a
-> > custom IOASID allocator which takes precedence over the default
-> > XArray based allocator. The resulting IOASID allocation will always
-> > come from the host. This ensures that PASID namespace is system-
-> > wide.
-> > 
-> > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> > Signed-off-by: Liu, Yi L <yi.l.liu@intel.com>
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > ---
-> >   drivers/iommu/intel-iommu.c | 75
-> > +++++++++++++++++++++++++++++++++++++++++++++
-> > include/linux/intel-iommu.h |  2 ++ 2 files changed, 77
-> > insertions(+)
-> > 
-> > diff --git a/drivers/iommu/intel-iommu.c
-> > b/drivers/iommu/intel-iommu.c index e90102c7540d..b0c0bb6f740e
-> > 100644 --- a/drivers/iommu/intel-iommu.c
-> > +++ b/drivers/iommu/intel-iommu.c
-> > @@ -1700,6 +1700,9 @@ static void free_dmar_iommu(struct
-> > intel_iommu *iommu) if (ecap_prs(iommu->ecap))
-> >   			intel_svm_finish_prq(iommu);
-> >   	}
-> > +	if (ecap_vcs(iommu->ecap) && vccap_pasid(iommu->vccap))
-> > +
-> > ioasid_unregister_allocator(&iommu->pasid_allocator); +
-> >   #endif
-> >   }
-> >   
-> > @@ -3181,6 +3184,75 @@ static int copy_translation_tables(struct
-> > intel_iommu *iommu) return ret;
-> >   }
-> >   
-> > +#ifdef CONFIG_INTEL_IOMMU_SVM
-> > +static ioasid_t intel_ioasid_alloc(ioasid_t min, ioasid_t max,
-> > void *data) +{
-> > +	struct intel_iommu *iommu = data;
-> > +	ioasid_t ioasid;
-> > +  
+> The "track FOLL_PIN pages" would have been the very next patch, but it is
+> not included here because I'm still debugging a bug report from Leon.
+> Let's get all of the prerequisite work (it's been reviewed) into the tree
+> so that future reviews are easier. It's clear that any fixes that are
+> required to the tracking patch, won't affect these patches here.
 > 
-> Check !iommu just like the free api?
+> This implements an API naming change (put_user_page*() -->
+> unpin_user_page*()), and also adds FOLL_PIN page support, up to
+> *but not including* actually tracking FOLL_PIN pages. It extends
+> the FOLL_PIN support to a few select subsystems. More subsystems will
+> be added in follow up work.
 > 
-sounds good, will return INVALID_IOASID if NULL.
 
-> > +	/*
-> > +	 * VT-d virtual command interface always uses the full 20
-> > bit
-> > +	 * PASID range. Host can partition guest PASID range based
-> > on
-> > +	 * policies but it is out of guest's control.
-> > +	 */
-> > +	if (min < PASID_MIN || max > intel_pasid_max_id)
-> > +		return INVALID_IOASID;
-> > +
-> > +	if (vcmd_alloc_pasid(iommu, &ioasid))
-> > +		return INVALID_IOASID;
-> > +
-> > +	return ioasid;
-> > +}
-> > +
-> > +static void intel_ioasid_free(ioasid_t ioasid, void *data)
-> > +{
-> > +	struct intel_iommu *iommu = data;
-> > +
-> > +	if (!iommu)
-> > +		return;
-> > +	/*
-> > +	 * Sanity check the ioasid owner is done at upper layer,
-> > e.g. VFIO
-> > +	 * We can only free the PASID when all the devices are
-> > unbound.
-> > +	 */
-> > +	if (ioasid_find(NULL, ioasid, NULL)) {
-> > +		pr_alert("Cannot free active IOASID %d\n", ioasid);
-> > +		return;
-> > +	}
-> > +	vcmd_free_pasid(iommu, ioasid);
-> > +}
-> > +
-> > +static void register_pasid_allocator(struct intel_iommu *iommu)
-> > +{
-> > +	if (!intel_iommu_sm) {  
-> 
-> Use sm_supported(iommu) instead.
-> 
-sounds good, seems we could separate the sm code more cleanly in the
-future to avoid all these checks.
+Hi Andrew and all,
 
-> > +		pr_warn("VT-d scalable mode not enabled\n");
-> > +		return;
-> > +	}
-> > +
-> > +	/*
-> > +	 * Register a custom PASID allocator if we are running in
-> > a guest,
-> > +	 * guest PASID must be obtained via virtual command
-> > interface.
-> > +	 * There can be multiple vIOMMUs in each guest but only
-> > one allocator
-> > +	 * is active. All vIOMMU allocators will eventually be
-> > calling the same
-> > +	 * host allocator.
-> > +	 */
-> > +	if (ecap_vcs(iommu->ecap) && vccap_pasid(iommu->vccap)) {
-> > +		pr_info("Register custom PASID allocator\n");
-> > +		iommu->pasid_allocator.alloc = intel_ioasid_alloc;
-> > +		iommu->pasid_allocator.free = intel_ioasid_free;
-> > +		iommu->pasid_allocator.pdata = (void *)iommu;
-> > +		if
-> > (!ioasid_register_allocator(&iommu->pasid_allocator)) {
-> > +			pr_warn("Custom PASID allocator failed,
-> > scalable mode disabled\n");
-> > +			/*
-> > +			 * Disable scalable mode on this IOMMU if
-> > there
-> > +			 * is no custom allocator. Mixing SM
-> > capable vIOMMU
-> > +			 * and non-SM vIOMMU are not supported.
-> > +			 */
-> > +			intel_iommu_sm = 0;
-> > +		}
-> > +	}
-> > +}
-> > +#endif
-> > +
-> >   static int __init init_dmars(void)
-> >   {
-> >   	struct dmar_drhd_unit *drhd;
-> > @@ -3298,6 +3370,9 @@ static int __init init_dmars(void)
-> >   	 */
-> >   	for_each_active_iommu(iommu, drhd) {
-> >   		iommu_flush_write_buffer(iommu);
-> > +#ifdef CONFIG_INTEL_IOMMU_SVM
-> > +		register_pasid_allocator(iommu);
-> > +#endif
-> >   		iommu_set_root_entry(iommu);
-> >   		iommu->flush.flush_context(iommu, 0, 0, 0,
-> > DMA_CCMD_GLOBAL_INVL); iommu->flush.flush_iotlb(iommu, 0, 0, 0,
-> > DMA_TLB_GLOBAL_FLUSH); diff --git a/include/linux/intel-iommu.h
-> > b/include/linux/intel-iommu.h index 1e11560b0e59..8c30b23bd838
-> > 100644 --- a/include/linux/intel-iommu.h
-> > +++ b/include/linux/intel-iommu.h
-> > @@ -19,6 +19,7 @@
-> >   #include <linux/iommu.h>
-> >   #include <linux/io-64-nonatomic-lo-hi.h>
-> >   #include <linux/dmar.h>
-> > +#include <linux/ioasid.h>
-> >   
-> >   #include <asm/cacheflush.h>
-> >   #include <asm/iommu.h>
-> > @@ -557,6 +558,7 @@ struct intel_iommu {
-> >   #ifdef CONFIG_INTEL_IOMMU_SVM
-> >   	struct page_req_dsc *prq;
-> >   	unsigned char prq_name[16];    /* Name for PRQ interrupt
-> > */
-> > +	struct ioasid_allocator_ops pasid_allocator; /* Custom
-> > allocator for PASIDs */ #endif
-> >   	struct q_inval  *qi;            /* Queued invalidation
-> > info */ u32 *iommu_state; /* Store iommu states between suspend and
-> > resume.*/ 
-> 
-> Best regards,
-> baolu
+To clarify: I'm hoping that this series can go into 5.6.
 
-[Jacob Pan]
+Meanwhile, I'm working on tracking down and solving the problem that Leon
+reported, in the "track FOLL_PIN pages" patch, and that patch is not part of
+this series.
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
