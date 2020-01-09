@@ -2,80 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F5161362FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 23:02:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44E64136313
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 23:10:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729299AbgAIWCE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 17:02:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40794 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725919AbgAIWCE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 17:02:04 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BF9F2075D;
-        Thu,  9 Jan 2020 22:02:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578607323;
-        bh=88y37HxDUMffX0HsWQMZbo0p/Dn1R5k39rJxWhAGkv8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RR5TIJx35kahaEVAxbdZSd2dD4wvvD8AygQIteNvGlhu412PcwBHI8AA++92FE7LS
-         vzWA2mF2npuuF4AhWN+5xyBED2EGGDYnXNcNBvr/hY+Hz8EZplxNFIix9KXqE8N71x
-         B3NTTHoTPXneC2tJYdwo7CNOgOrCKoT755DN3CLY=
-Date:   Thu, 9 Jan 2020 14:02:02 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Oleksandr Natalenko <oleksandr@redhat.com>, linux-mm@kvack.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Will Deacon <will@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kallsyms: work around bogus -Wrestrict warning
-Message-Id: <20200109140202.fd5488a2ac02f81b25d83b88@linux-foundation.org>
-In-Reply-To: <20200108102602.43d4c5433eb495cdbf387e9b@kernel.org>
-References: <20200107214042.855757-1-arnd@arndb.de>
-        <20200108102602.43d4c5433eb495cdbf387e9b@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1729207AbgAIWKs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 17:10:48 -0500
+Received: from excelsior.roeckx.be ([195.234.45.115]:36751 "EHLO
+        excelsior.roeckx.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbgAIWKs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 17:10:48 -0500
+X-Greylist: delayed 493 seconds by postgrey-1.27 at vger.kernel.org; Thu, 09 Jan 2020 17:10:46 EST
+Received: from intrepid.roeckx.be (localhost [127.0.0.1])
+        by excelsior.roeckx.be (Postfix) with ESMTP id 3842EA8A05A9;
+        Thu,  9 Jan 2020 22:02:31 +0000 (UTC)
+Received: by intrepid.roeckx.be (Postfix, from userid 1000)
+        id EB6ED1FE0C79; Thu,  9 Jan 2020 23:02:30 +0100 (CET)
+Date:   Thu, 9 Jan 2020 23:02:30 +0100
+From:   Kurt Roeckx <kurt@roeckx.be>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Stephan Mueller <smueller@chronox.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>
+Subject: Re: [PATCH v3 0/8] Rework random blocking
+Message-ID: <20200109220230.GA39185@roeckx.be>
+References: <20191226140423.GB3158@mit.edu>
+ <4048434.Q8HajmOrkZ@tauon.chronox.de>
+ <20191227130436.GC70060@mit.edu>
+ <15817620.rmTN4T87Wr@tauon.chronox.de>
+ <20191227220857.GD70060@mit.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191227220857.GD70060@mit.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 8 Jan 2020 10:26:02 +0900 Masami Hiramatsu <mhiramat@kernel.org> wrote:
-
-> Hi Arnd,
-> 
-> On Tue,  7 Jan 2020 22:40:26 +0100
-> Arnd Bergmann <arnd@arndb.de> wrote:
-> 
-> > gcc -O3 produces some really odd warnings for this file:
+On Fri, Dec 27, 2019 at 05:08:57PM -0500, Theodore Y. Ts'o wrote:
+> On Fri, Dec 27, 2019 at 10:22:23PM +0100, Stephan Mueller wrote:
+> > > So let's take a step back and ask the question: "Exactly what _value_
+> > > do you want to provide by creating some kind of true random
+> > > interface?"  What does this enable?  What applications does this
+> > > really help?
 > > 
-> > kernel/kallsyms.c: In function 'sprint_symbol':
-> > kernel/kallsyms.c:369:3: error: 'strcpy' source argument is the same as destination [-Werror=restrict]
-> >    strcpy(buffer, name);
-> >    ^~~~~~~~~~~~~~~~~~~~
-> > kernel/kallsyms.c: In function 'sprint_symbol_no_offset':
-> > kernel/kallsyms.c:369:3: error: 'strcpy' source argument is the same as destination [-Werror=restrict]
-> >    strcpy(buffer, name);
-> >    ^~~~~~~~~~~~~~~~~~~~
-> > kernel/kallsyms.c: In function 'sprint_backtrace':
-> > kernel/kallsyms.c:369:3: error: 'strcpy' source argument is the same as destination [-Werror=restrict]
-> >    strcpy(buffer, name);
-> >    ^~~~~~~~~~~~~~~~~~~~
-> > 
-> > This obviously cannot be since it is preceded by an 'if (name != buffer)'
-> > check.
+> > There are simply cryptographers who have use cases for such random numbers. 
+> > The core use case is to seed other DRNGs and avoiding the chaining of free-
+> > running DRNGs.
 > 
-> Hmm, this looks like a bug in gcc.
+> For this very specialized use case, what I think the kernel should
+> provide is maximal transparency; that is, given the DRBG direct access
+> to the TPM's random number generator, or direct access to the
+> ChaosKey, and the userspace DRBG should be able to get a list of the
+> various hardware RNG's, and select one, with the characterization
+> being done userspace, not in the kernel.
 
-Yes, we're getting a lot of such reports.  I don't think current gcc is
-ready for this patch so I'll drop it, sorry.
+One thing the NIST DRBGs have is prediction resistance, which is
+done by reseeding. If you chain DRBGs, you tell your parent DRBG
+that you want prediction resistance, so your parent will also
+reseed. There currently is no way to tell the kernel to reseed.
+
+This reseed option might be something that some people would like
+to see. If such an option is added, I expect that the kernel might
+block until it has gotten enough new entropy from it's entropy
+sources. But I don't actually see a need to add such an option.
+
+If the kernel provides a good RNG, the only reason I can see why
+you would like to have direct access to a hwrng is to verify that
+it's working correctly. That might mean that you put it in some
+special mode where it returns raw unprocessed values. If the device
+is in such a mode, it's output will not provide the same entropy
+per bit, and so I would expect the kernel to stop using it directly.
+
+I guess there might be people who would like to use it directly,
+but I think we should instead encourage them kernel RNG.
+
+> You can talk about providing tools that try to make these estimations
+> --- but these sorts of things would have to be done on each user's
+> hardware, and for most distro users, it's just not practical.
+
+I would check my own hardware if such an option was available. I
+think it can be useful to see if the current estimates in the
+kernel are conservative enough or not. But it would require that
+you can know what the entropy source is, like the keyboard or
+harddisk.
+
+> So if it's just for cryptographers, then let it all be done in
+> userspace, and let's not make it easy for GPG, OpenSSL, etc., to all
+> say, "We want TrueRandom(tm); we won't settle for less".
+
+I don't think we want that. As far as I know, the only reason for
+using /dev/random is that /dev/urandom returns data before it
+has sufficient entropy.
+
+
+Kurt
 
