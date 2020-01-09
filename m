@@ -2,126 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D01A2135DAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:07:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0B47135DB5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:08:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733179AbgAIQHk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 11:07:40 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39046 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731715AbgAIQHj (ORCPT
+        id S1733235AbgAIQIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 11:08:12 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50694 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731574AbgAIQIL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 11:07:39 -0500
-Received: by mail-wr1-f66.google.com with SMTP id y11so7982237wrt.6;
-        Thu, 09 Jan 2020 08:07:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3AWQiS1Zy6xD+kqiY62PtsMGlLIsVKYglepV2PLY5WE=;
-        b=uh+CBswbvtCPNh1hlhVkH/Ph0wRPSugaz3YEurZK7cKbqGkvIZOnmtmDQ4wyajpVx2
-         EN6geoDbJMy8H0Io+wBme/w/7Y274SxrNJOuVtaCJeIB5EXP0UsTbigVuH9T/rN83c1Y
-         Ga4FZDhVH935YvDlD+ihmHAqgT16gUuzWHde78h1A9wpd1mwpDaH/oH8IPeI/g5AE541
-         kW1s4B6bsh0Kijdiz3R6nEoNKabLnTDVllJO3ut2wq5TcCCyHMLCMWfLo5jfZeCCi0iZ
-         jJrMyDYIXC+bnIu5MI3kkGKo4x7/UmuGygs0F/JuMN9BT2CM1Rlo8AYwG3THr2NqQB/L
-         W09A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3AWQiS1Zy6xD+kqiY62PtsMGlLIsVKYglepV2PLY5WE=;
-        b=ruN+yfSrtWIUSPt0sFFyqAslOy01/YRW8s9xlishp753e0fseuIQIPxQSs2IW3Tomr
-         OpE2gJXqKgOxQwm4JRbSvUsxn9HcSl6mgigDU4DVcXufKlk7YpUTH+k2lhayesio4UCm
-         +pjl1/kq36PEWIdbMffTVKJdGJ3jMyMT5JACf6V1QtvK2/fF5NJU9a2YZdkp+BFKz+Zc
-         wC/EwTfNw8n2NTfugZhN6pa4OWmm1BmVZqGH422YzUTq3ufsYXeF/tPXz0gmi3clNs6J
-         r81UWADPntvVfRoxTnNfWDATcv80J5wmvcChnGQEaSx1SyIYJ+WzErmlOKnh7y2P/dV2
-         CoNw==
-X-Gm-Message-State: APjAAAWutNiHoB0TnVK9GFMxenXJY85tlIP7rokYSTqiMF82rjZdVz43
-        ccALDYXxdnmfBhc9C2ZYl/dWXLHiv/rIwHsk
-X-Google-Smtp-Source: APXvYqxurew2u5x1QxhGzoQaJcd/oK2QHCo+4OOqk9SbHR/tmT8N9goDItJsbNGkGarjVVGtJrWIEA==
-X-Received: by 2002:adf:ebc1:: with SMTP id v1mr11416827wrn.351.1578586057318;
-        Thu, 09 Jan 2020 08:07:37 -0800 (PST)
-Received: from andrea.access.network ([159.253.226.36])
-        by smtp.gmail.com with ESMTPSA id d14sm8615867wru.9.2020.01.09.08.07.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 08:07:36 -0800 (PST)
-From:   Andrea Parri <parri.andrea@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org
-Cc:     "K . Y . Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dexuan Cui <decui@microsoft.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Andrea Parri <parri.andrea@gmail.com>
-Subject: [PATCH v2 2/2] clocksource/hyperv: Set TSC clocksource as default w/ InvariantTSC
-Date:   Thu,  9 Jan 2020 17:06:50 +0100
-Message-Id: <20200109160650.16150-3-parri.andrea@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200109160650.16150-1-parri.andrea@gmail.com>
-References: <20200109160650.16150-1-parri.andrea@gmail.com>
+        Thu, 9 Jan 2020 11:08:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=IHiuUsn5x8+hiu8CxLUMdbdUcfmsxZzyXrApUMHtaDc=; b=CWCJbqBRyIQUt33VTPMZVKBsP
+        hMHVgPQ821IZtbcp9abRpDJFStNCQNngD4JC4a3u+4mxKRjb9t3Kkj7eSgMfjfDGlpo29fv4PMwiM
+        wky/mYPaXfKQApNYReyXIrcZGZMODpRy7FmNQo0RY3pcxnFnf9FdxHTXgtvc+q4zrm0bVI5CniMap
+        FXpB0ur1XPkoILyQQ15/JUl9KX8m4fuJtSOT7dNqomhnqQvCy96r6y+JtmVFHWwBhmUUNF71Xvlgm
+        Znc8UoZ9Rf1gUhWU2O1eCPVCSP2I7hxl4/SPNdJ576bFXuMQKmFiKhOPPNQfaSQz+7wAY53c1GGbV
+        85cl460Yw==;
+Received: from 177.206.132.169.dynamic.adsl.gvt.net.br ([177.206.132.169] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ipaLs-0000tB-Sb; Thu, 09 Jan 2020 16:08:06 +0000
+Date:   Thu, 9 Jan 2020 17:07:50 +0100
+From:   Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+Cc:     sean@mess.org, tglx@linutronix.de, gregkh@linuxfoundation.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH 0/1] Implement a DVB Dummy Tuner
+Message-ID: <20200109170750.12746fcc@kernel.org>
+In-Reply-To: <20200109152408.919325-1-dwlsalmeida@gmail.com>
+References: <20200109152408.919325-1-dwlsalmeida@gmail.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the Hyper-V clocksource ratings to 250, below the TSC clocksource
-rating of 300.  In configurations where Hyper-V offers an InvariantTSC,
-the TSC is not marked "unstable", so the TSC clocksource is available
-and preferred.  With the higher rating, it will be the default.  On
-older hardware and Hyper-V versions, the TSC is marked "unstable", so no
-TSC clocksource is created and the selected Hyper-V clocksource will be
-the default.
+Em Thu,  9 Jan 2020 12:24:07 -0300
+"Daniel W. S. Almeida" <dwlsalmeida@gmail.com> escreveu:
 
-Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
----
- drivers/clocksource/hyperv_timer.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+> From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+> 
+> This patch series should implement a dummy DVB tuner as part of ongoing work
+> on a virtual DVB test driver under the 2020 Spring Linux Kernel Mentorship Program.
 
-diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
-index be98d201d585d..3881c2bf987e4 100644
---- a/drivers/clocksource/hyperv_timer.c
-+++ b/drivers/clocksource/hyperv_timer.c
-@@ -208,6 +208,14 @@ EXPORT_SYMBOL_GPL(hv_stimer_global_cleanup);
-  * the other that uses the TSC reference page feature as defined in the
-  * TLFS.  The MSR version is for compatibility with old versions of
-  * Hyper-V and 32-bit x86.  The TSC reference page version is preferred.
-+ *
-+ * The Hyper-V clocksource ratings of 250 are chosen to be below the
-+ * TSC clocksource rating of 300.  In configurations where Hyper-V offers
-+ * an InvariantTSC, the TSC is not marked "unstable", so the TSC clocksource
-+ * is available and preferred.  With the higher rating, it will be the
-+ * default.  On older hardware and Hyper-V versions, the TSC is marked
-+ * "unstable", so no TSC clocksource is created and the selected Hyper-V
-+ * clocksource will be the default.
-  */
- 
- u64 (*hv_read_reference_counter)(void);
-@@ -269,7 +277,7 @@ static void resume_hv_clock_tsc(struct clocksource *arg)
- 
- static struct clocksource hyperv_cs_tsc = {
- 	.name	= "hyperv_clocksource_tsc_page",
--	.rating	= 400,
-+	.rating	= 250,
- 	.read	= read_hv_clock_tsc_cs,
- 	.mask	= CLOCKSOURCE_MASK(64),
- 	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
-@@ -301,7 +309,7 @@ static u64 read_hv_sched_clock_msr(void)
- 
- static struct clocksource hyperv_cs_msr = {
- 	.name	= "hyperv_clocksource_msr",
--	.rating	= 400,
-+	.rating	= 250,
- 	.read	= read_hv_clock_msr_cs,
- 	.mask	= CLOCKSOURCE_MASK(64),
- 	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
--- 
-2.24.0
+No need for a patch 0/1. If you want to send just one patch, just sent it
+directly as:
 
+	[PATCH] foo
+
+> 
+> as 
+> Daniel W. S. Almeida (1):
+>   media: dvb_dummy_tuner: implement driver skeleton
+> 
+>  drivers/media/tuners/Kconfig           |   7 ++
+>  drivers/media/tuners/Makefile          |   1 +
+>  drivers/media/tuners/dvb_dummy_tuner.c | 153 +++++++++++++++++++++++++
+>  drivers/media/tuners/dvb_dummy_tuner.h |  20 ++++
+>  4 files changed, 181 insertions(+)
+>  create mode 100644 drivers/media/tuners/dvb_dummy_tuner.c
+>  create mode 100644 drivers/media/tuners/dvb_dummy_tuner.h
+> 
+
+
+
+
+Cheers,
+Mauro
