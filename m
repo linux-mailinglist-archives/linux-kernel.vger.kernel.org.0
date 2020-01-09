@@ -2,45 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41BF61362DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 22:54:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4293D1362F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 23:00:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729068AbgAIVyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 16:54:01 -0500
-Received: from mga05.intel.com ([192.55.52.43]:47477 "EHLO mga05.intel.com"
+        id S1729083AbgAIWAG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 17:00:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbgAIVyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 16:54:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 13:54:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,414,1571727600"; 
-   d="scan'208";a="236219578"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga002.jf.intel.com with ESMTP; 09 Jan 2020 13:54:00 -0800
-Date:   Thu, 9 Jan 2020 13:59:03 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v8 06/10] iommu/vt-d: Cache virtual command capability
- register
-Message-ID: <20200109135903.74b0220f@jacob-builder>
-In-Reply-To: <0f704b87-aad7-c864-91ac-423a05287f21@linux.intel.com>
-References: <1576524252-79116-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1576524252-79116-7-git-send-email-jacob.jun.pan@linux.intel.com>
-        <0f704b87-aad7-c864-91ac-423a05287f21@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
+        id S1725775AbgAIWAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 17:00:05 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5B9020656;
+        Thu,  9 Jan 2020 22:00:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578607205;
+        bh=q2xLvaGoyKJySIfa5H/56/Txq2IoQyySUYKwsDkm/t4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=xFu2sFgSng3Oh5L/QhhdSaFswmLd5QFevFtpMGRKLCTm888o7PTfP8maChh21vsC7
+         DpRGSg7PI9jlVTfPXmlCmyH35i3X50uBnufWmH8DhLI1RfSPV40DYz9j6jLSnilPKw
+         1aV77MFDW0xD7mz2qoB1WKrrA668O9U9abCx/ug8=
+Date:   Thu, 9 Jan 2020 14:00:04 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Scott Cheloha <cheloha@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Hildenbrand <david@redhat.com>, nathanl@linux.ibm.com,
+        ricklind@linux.vnet.ibm.com, mhocko@suse.com,
+        Scott Cheloha <cheloha@linux.ibm.com>
+Subject: Re: [PATCH v4] drivers/base/memory.c: cache blocks in radix tree to
+ accelerate lookup
+Message-Id: <20200109140004.d5e6dc581b62d6e078dcca4c@linux-foundation.org>
+In-Reply-To: <20200109212516.17849-1-cheloha@linux.vnet.ibm.com>
+References: <20191217193238-1-cheloha@linux.vnet.ibm.com>
+        <20200109212516.17849-1-cheloha@linux.vnet.ibm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -48,54 +47,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Dec 2019 11:25:27 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+On Thu,  9 Jan 2020 15:25:16 -0600 Scott Cheloha <cheloha@linux.vnet.ibm.com> wrote:
 
-> Hi,
+> Searching for a particular memory block by id is an O(n) operation
+> because each memory block's underlying device is kept in an unsorted
+> linked list on the subsystem bus.
 > 
-> On 12/17/19 3:24 AM, Jacob Pan wrote:
-> > Virtual command registers are used in the guest only, to prevent
-> > vmexit cost, we cache the capability and store it during
-> > initialization.
-> > 
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > ---
-> >   drivers/iommu/dmar.c        | 1 +
-> >   include/linux/intel-iommu.h | 4 ++++
-> >   2 files changed, 5 insertions(+)
-> > 
-> > diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-> > index f2f5d75da94a..3f98dd9ad004 100644
-> > --- a/drivers/iommu/dmar.c
-> > +++ b/drivers/iommu/dmar.c
-> > @@ -953,6 +953,7 @@ static int map_iommu(struct intel_iommu *iommu,
-> > u64 phys_addr) warn_invalid_dmar(phys_addr, " returns all ones");
-> >   		goto unmap;
-> >   	}
-> > +	iommu->vccap = dmar_readq(iommu->reg + DMAR_VCCAP_REG);
-> >   
-> >   	/* the registers might be more than one page */
-> >   	map_size = max_t(int, ecap_max_iotlb_offset(iommu->ecap),
-> > diff --git a/include/linux/intel-iommu.h
-> > b/include/linux/intel-iommu.h index ee26989df008..4d25141ec3df
-> > 100644 --- a/include/linux/intel-iommu.h
-> > +++ b/include/linux/intel-iommu.h
-> > @@ -189,6 +189,9 @@
-> >   #define ecap_max_handle_mask(e) ((e >> 20) & 0xf)
-> >   #define ecap_sc_support(e)	((e >> 7) & 0x1) /* Snooping
-> > Control */ 
-> > +/* Virtual command interface capabilities */
-> > +#define vccap_pasid(v)		((v & DMA_VCS_PAS)) /* PASID
-> > allocation */  
+> We can cut the lookup cost to O(log n) if we cache the memory blocks in
+> a radix tree.  With a radix tree cache in place both memory subsystem
+> initialization and memory hotplug run palpably faster on systems with a
+> large number of memory blocks.
 > 
-> Has DMA_VCS_PAS ever been defined?
-> 
-Good catch, it is in the next patch, need to move the #define here.
-Thanks!
+> ...
+>
+> @@ -56,6 +57,13 @@ static struct bus_type memory_subsys = {
+>  	.offline = memory_subsys_offline,
+>  };
+>  
+> +/*
+> + * Memory blocks are cached in a local radix tree to avoid
+> + * a costly linear search for the corresponding device on
+> + * the subsystem bus.
+> + */
+> +static RADIX_TREE(memory_blocks, GFP_KERNEL);
 
-> Best regards,
-> baolu
-> 
->  [...]  
-
-[Jacob Pan]
+What protects this tree from racy accesses?
