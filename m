@@ -2,120 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDCB913555C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:15:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC659135552
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:14:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729269AbgAIJOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 04:14:14 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38046 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729093AbgAIJOO (ORCPT
+        id S1729214AbgAIJNo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 04:13:44 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36572 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728793AbgAIJNn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 04:14:14 -0500
-Received: by mail-wm1-f68.google.com with SMTP id u2so1945887wmc.3;
-        Thu, 09 Jan 2020 01:14:12 -0800 (PST)
+        Thu, 9 Jan 2020 04:13:43 -0500
+Received: by mail-pf1-f196.google.com with SMTP id x184so3087121pfb.3;
+        Thu, 09 Jan 2020 01:13:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=q4yS4IGenv3/gEDlUctN0Q4HaJsYtWMJsBPlv/baTQU=;
-        b=TX/GkSfEBRFP1nnhEGSi1wG0knrm+FxWatwSTMUMCvy+sv3/OvCCdKYr514Rd4b26n
-         bc3lSc93r52GhiMh5kA99zMZUkeAEzfDY8/rjSjX5k5zK6pMiECY/p8KP/Yd2TMC3Gs1
-         +omuXnbsBSgCiiKB7yConsjrX5IVZCb85IQnavHVnJ832Z+fLBAHBSSEl3dyCKyiCT2A
-         dc8XLcEyp6PFwH+NxnXYFstx5gn79ZyDu9ckL96qgdY+xxVFmztKeaqI5szIxrbAOWvg
-         zVtqTHdPLi3pCW+UI39ml4oiAkgfOhqIooRm4oXpndCyXskqYHyneztO3bYD0iYQSKod
-         76PQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=DqDsLNhtHSIHGhQiEDBjDopbKzdEsy6WnRJA/WOwF8s=;
+        b=bfNqxbwLulwnB7ovW01Fbc47QgGlS8+7gNV1zqUpls8dXgz19q34q9gHAclH2c2Wkd
+         /dZRyFL7cYMnY+KzhzYiLPNKDNL5raDykS+u72AVOOcl6OFjF70kx1WzXzSAEH94ZgFY
+         HwOVjsreGST3zsDthQ5LAfn+w6KJLD5Gl3TB5OQkahQ8cRx4xDt8tJULcD3St2niH8H/
+         uYF+KsRsPapftuse32xeMzDiMNlHL6N7JmXU9G7cPmL1gqlI5Te5vtHA6mcTNq3Tbtpg
+         P6oIrkvpr+zl3oqi0UFFcGGh7e6DdMqX0h+f/wi8Bmj6bZHHO8DMO4NVwNhp57g+gds6
+         WzIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=q4yS4IGenv3/gEDlUctN0Q4HaJsYtWMJsBPlv/baTQU=;
-        b=JI1f7EQWp1knWCU/ECB5cQn76e4Xjvbm9TQs3Ujzw/A6N66+YXgov6A3FNHnafP61o
-         8kK50YUIrTwDSuvYnX+gynUf7PgVGTB2B40W35+1XIflCtW3LQQe5UakVBsdj70wF/gN
-         ksevCdFZB9zsmVpVKW+wdxE8K5s6+M/WgvJ94sg+MQKle2dGC/bg9t+ns0l99XZlobHw
-         McYG2znoc+SSy4iDZPDidjJIgPJHgF+TVFT6+RtcQJ9w1vJtG4DavluYM6l5/zIknCmR
-         VwUiokbPHoYmMw2q8ZPd3dVSX3FSWW+qpIrbLI6fJuncvSXDq7wtbMDT2G80lyUShTEP
-         l34Q==
-X-Gm-Message-State: APjAAAXp1GjsHN2cJlCp1gR/qkH1nMyGqFKmKk/JZqkWcHXX+wpqBv0c
-        CD1lAj/SAlKdHdZ1OwtbSBBmnfVHk5v+WzHm63E=
-X-Google-Smtp-Source: APXvYqw1Dr8ZnFhNDYyE8/xD6l0tv796f3qQo2kP+dYqYva7kvb44dgGurdSMGFOvo08reMnzvFpWtQqUZta7f406XM=
-X-Received: by 2002:a1c:44d:: with SMTP id 74mr3638479wme.53.1578561252011;
- Thu, 09 Jan 2020 01:14:12 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=DqDsLNhtHSIHGhQiEDBjDopbKzdEsy6WnRJA/WOwF8s=;
+        b=A/O0tqhKS8LyQDZfWYNJDEcicNlbqgJpjsrpxnAAru/f6QYRJxAuuEnw52jLdLibIp
+         yLFNRHZFIu9pmaiBxAyR7jGhNdgS0hoKZ6SrZsnhvof8nr/WfTTwtQ9qqZm+8Fbc59u1
+         0seFuU6sQ397ZI6/DhiwsviGv8Sinf8CizGsx1XPc3CaEPjlgoMlXJthizhTI69VAUft
+         tfH6HKJXziUof6blNauzvd6JrIo/sKm0K9tZbiuSvIyTmTz2DcXpQAZ/3OZzawg2rqpo
+         RsQ125YSmsHBUsd2+7MuQuyuNWK22ia/Q/Ukuy1UmwDtFgh1kNnuGNMOYeuQksJSdPVi
+         WM+A==
+X-Gm-Message-State: APjAAAW48yPqC28qi6ezV8MjIVWQzPNupT3rrV9Iyr+SPcfPJelwdNzg
+        ctqxyVqRLymzVkQAxIHYrW4=
+X-Google-Smtp-Source: APXvYqwb8DBYx/dLiDqVmhat2ATuO33hRnqOp+WcD+JS4DLFWGeLDUhc6kyvsy7YW3CDEmOjUNzlrA==
+X-Received: by 2002:a62:7c54:: with SMTP id x81mr9812667pfc.180.1578561222602;
+        Thu, 09 Jan 2020 01:13:42 -0800 (PST)
+Received: from gli-arch.genesyslogic.com.tw ([122.146.30.3])
+        by smtp.gmail.com with ESMTPSA id m3sm6707916pfh.116.2020.01.09.01.13.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jan 2020 01:13:42 -0800 (PST)
+From:   Ben Chuang <benchuanggli@gmail.com>
+To:     adrian.hunter@intel.com, ulf.hansson@linaro.org
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        greg.tu@genesyslogic.com.tw, ben.chuang@genesyslogic.com.tw,
+        Ben Chuang <benchuanggli@gmail.com>
+Subject: [RFC PATCH v2 1/6] mmc: Add UHS-II support in public headers
+Date:   Thu,  9 Jan 2020 17:14:04 +0800
+Message-Id: <085ce316d536fef5d19184f0f2b71c478fe3a709.1578560282.git.benchuanggli@gmail.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <cover.1578560282.git.benchuanggli@gmail.com>
+References: <cover.1578560282.git.benchuanggli@gmail.com>
 MIME-Version: 1.0
-References: <20200109072735.GA22886@embeddedor> <20200109074445.73n3vapjl4vfjtsu@pengutronix.de>
-In-Reply-To: <20200109074445.73n3vapjl4vfjtsu@pengutronix.de>
-From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date:   Thu, 9 Jan 2020 10:14:00 +0100
-Message-ID: <CAJiuCcdFiXVtECtVGz3N9oUM38ca=MDmdK4+T+peUKKzNr_5KQ@mail.gmail.com>
-Subject: Re: [PATCH] pwm: sun4i: Fix inconsistent IS_ERR and PTR_ERR
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uwe, Gustavo,
+From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
 
-On Thu, 9 Jan 2020 at 08:44, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
->
-> Hello Gustavo,
->
-> On Thu, Jan 09, 2020 at 01:27:35AM -0600, Gustavo A. R. Silva wrote:
-> > Fix inconsistent IS_ERR and PTR_ERR in sun4i_pwm_probe().
-> >
-> > The proper pointers to be passed as arguments are pwm->clk and pwm->bus=
-_clk.
+Add UHS-II support in public headers
 
-Thanks for the catch.
+Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+---
+ include/linux/mmc/card.h |  1 +
+ include/linux/mmc/core.h |  6 ++++++
+ include/linux/mmc/host.h | 30 ++++++++++++++++++++++++++++++
+ 3 files changed, 37 insertions(+)
 
-As these patches are still in next should we update them or apply a fix ?
+diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+index cf3780a6ccc4..988f46638317 100644
+--- a/include/linux/mmc/card.h
++++ b/include/linux/mmc/card.h
+@@ -180,6 +180,7 @@ struct sd_switch_caps {
+ #define SD_SET_CURRENT_LIMIT_400	1
+ #define SD_SET_CURRENT_LIMIT_600	2
+ #define SD_SET_CURRENT_LIMIT_800	3
++#define SD_SET_CURRENT_LIMIT_1000       4
+ #define SD_SET_CURRENT_NO_CHANGE	(-1)
+ 
+ #define SD_MAX_CURRENT_200	(1 << SD_SET_CURRENT_LIMIT_200)
+diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
+index b7ba8810a3b5..cd294a1c31c6 100644
+--- a/include/linux/mmc/core.h
++++ b/include/linux/mmc/core.h
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/completion.h>
+ #include <linux/types.h>
++#include <linux/mmc/uhs2.h>
+ 
+ struct mmc_data;
+ struct mmc_request;
+@@ -112,6 +113,11 @@ struct mmc_command {
+ 
+ 	struct mmc_data		*data;		/* data segment associated with cmd */
+ 	struct mmc_request	*mrq;		/* associated request */
++
++	struct uhs2_command	*uhs2_cmd;	/* UHS2 command */
++	u8			*uhs2_resp;	/* UHS2 native cmd resp */
++	u8			uhs2_resp_len;	/* UHS2 native cmd resp len */
++	u8			uhs2_tmode0_flag; /* UHS2 transfer mode flag */
+ };
+ 
+ struct mmc_data {
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index ba703384bea0..3d6a7c9b534f 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -15,10 +15,12 @@
+ #include <linux/mmc/card.h>
+ #include <linux/mmc/pm.h>
+ #include <linux/dma-direction.h>
++#include <linux/mmc/uhs2.h>
+ 
+ struct mmc_ios {
+ 	unsigned int	clock;			/* clock rate */
+ 	unsigned short	vdd;
++	unsigned short	vdd2;			/* UHS2 VDD2 power supply */
+ 	unsigned int	power_delay_ms;		/* waiting for stable power */
+ 
+ /* vdd stores the bit number of the selected voltage range from below. */
+@@ -60,6 +62,7 @@ struct mmc_ios {
+ #define MMC_TIMING_MMC_DDR52	8
+ #define MMC_TIMING_MMC_HS200	9
+ #define MMC_TIMING_MMC_HS400	10
++#define MMC_TIMING_UHS2		11
+ 
+ 	unsigned char	signal_voltage;		/* signalling voltage (1.8V or 3.3V) */
+ 
+@@ -169,6 +172,11 @@ struct mmc_host_ops {
+ 	 */
+ 	int	(*multi_io_quirk)(struct mmc_card *card,
+ 				  unsigned int direction, int blk_size);
++	/* UHS2 interfaces */
++	int	(*uhs2_detect_init)(struct mmc_host *host);
++	int	(*uhs2_set_reg)(struct mmc_host *host, enum uhs2_act act);
++	void    (*uhs2_disable_clk)(struct mmc_host *host);
++	void    (*uhs2_enable_clk)(struct mmc_host *host);
+ };
+ 
+ struct mmc_cqe_ops {
+@@ -261,6 +269,7 @@ struct mmc_pwrseq;
+ 
+ struct mmc_supply {
+ 	struct regulator *vmmc;		/* Card power supply */
++	struct regulator *vmmc2;	/* UHS2 VDD2 power supply */
+ 	struct regulator *vqmmc;	/* Optional Vccq supply */
+ };
+ 
+@@ -281,12 +290,14 @@ struct mmc_host {
+ 	u32			ocr_avail_sdio;	/* SDIO-specific OCR */
+ 	u32			ocr_avail_sd;	/* SD-specific OCR */
+ 	u32			ocr_avail_mmc;	/* MMC-specific OCR */
++	u32			ocr_avail_uhs2;	/* UHS2-specific OCR */
+ #ifdef CONFIG_PM_SLEEP
+ 	struct notifier_block	pm_notify;
+ #endif
+ 	u32			max_current_330;
+ 	u32			max_current_300;
+ 	u32			max_current_180;
++	u32			max_current_180_vdd2; /* UHS2 vdd2 max curt. */
+ 
+ #define MMC_VDD_165_195		0x00000080	/* VDD voltage 1.65 - 1.95 */
+ #define MMC_VDD_20_21		0x00000100	/* VDD voltage 2.0 ~ 2.1 */
+@@ -305,6 +316,7 @@ struct mmc_host {
+ #define MMC_VDD_33_34		0x00200000	/* VDD voltage 3.3 ~ 3.4 */
+ #define MMC_VDD_34_35		0x00400000	/* VDD voltage 3.4 ~ 3.5 */
+ #define MMC_VDD_35_36		0x00800000	/* VDD voltage 3.5 ~ 3.6 */
++#define MMC_VDD2_165_195	0x00000080	/* UHS2 VDD2 1.65 ~ 1.95 */
+ 
+ 	u32			caps;		/* Host capabilities */
+ 
+@@ -336,6 +348,7 @@ struct mmc_host {
+ #define MMC_CAP_DRIVER_TYPE_A	(1 << 23)	/* Host supports Driver Type A */
+ #define MMC_CAP_DRIVER_TYPE_C	(1 << 24)	/* Host supports Driver Type C */
+ #define MMC_CAP_DRIVER_TYPE_D	(1 << 25)	/* Host supports Driver Type D */
++#define MMC_CAP_UHS2		(1 << 26)	/* Host supports UHS2 mode */
+ #define MMC_CAP_DONE_COMPLETE	(1 << 27)	/* RW reqs can be completed within mmc_request_done() */
+ #define MMC_CAP_CD_WAKE		(1 << 28)	/* Enable card detect wake */
+ #define MMC_CAP_CMD_DURING_TFR	(1 << 29)	/* Commands during data transfer */
+@@ -374,6 +387,17 @@ struct mmc_host {
+ 
+ 	mmc_pm_flag_t		pm_caps;	/* supported pm features */
+ 
++	struct uhs2_host_caps	uhs2_caps;	/* UHS2 host capabilities */
++	struct uhs2_card_prop	uhs2_dev_prop;	/* UHS2 device properties */
++	u32			group_desc;	/* UHS2 property */
++	int			flags;
++#define MMC_UHS2_SUPPORT	(1 << 0)
++#define MMC_UHS2_INITIALIZED	(1 << 1)
++#define MMC_UHS2_2L_HD		(1 << 2)
++#define MMC_UHS2_APP_CMD	(1 << 3)
++#define MMC_UHS2_SPEED_B	(1 << 4)
++#define MMC_SUPPORT_ADMA3	(1 << 5)
++
+ 	/* host specific block data */
+ 	unsigned int		max_seg_size;	/* see blk_queue_max_segment_size */
+ 	unsigned short		max_segs;	/* see blk_queue_max_segments */
+@@ -566,6 +590,12 @@ static inline int mmc_card_uhs(struct mmc_card *card)
+ 		card->host->ios.timing <= MMC_TIMING_UHS_DDR50;
+ }
+ 
++static inline bool mmc_card_uhs2(struct mmc_card *card)
++{
++	return (card->host->flags & MMC_UHS2_SUPPORT) &&
++		(card->host->flags & MMC_UHS2_INITIALIZED);
++}
++
+ void mmc_retune_timer_stop(struct mmc_host *host);
+ 
+ static inline void mmc_retune_needed(struct mmc_host *host)
+-- 
+2.24.1
 
-Regards,
-Clement
-
-> >
-> > This bug was detected with the help of Coccinelle.
-> >
-> > Fixes: b8d74644f34a ("pwm: sun4i: Prefer "mod" clock to unnamed")
-> > Fixes: 5b090b430d75 ("pwm: sun4i: Add an optional probe for bus clock")
-> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> > ---
-> >  drivers/pwm/pwm-sun4i.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
-> > index 1afd41ebd3fd..a805c347ee84 100644
-> > --- a/drivers/pwm/pwm-sun4i.c
-> > +++ b/drivers/pwm/pwm-sun4i.c
-> > @@ -423,7 +423,7 @@ static int sun4i_pwm_probe(struct platform_device *=
-pdev)
-> >        */
-> >       pwm->clk =3D devm_clk_get_optional(&pdev->dev, "mod");
-> >       if (IS_ERR(pwm->clk)) {
-> > -             if (PTR_ERR(pwm->rst) !=3D -EPROBE_DEFER)
-> > +             if (PTR_ERR(pwm->clk) !=3D -EPROBE_DEFER)
->
-> How embarrassing that I didn't notice these. Thanks for catching.
->
-> Reviewed-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
->
-> Best regards
-> Uwe
->
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
-     |
-> Industrial Linux Solutions                 | https://www.pengutronix.de/ =
-|
