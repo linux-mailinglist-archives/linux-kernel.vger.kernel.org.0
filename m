@@ -2,62 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02AD3136225
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 22:00:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3298813622F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 22:02:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729076AbgAIVAW convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 9 Jan 2020 16:00:22 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55701 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729064AbgAIVAV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 16:00:21 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1ipeuU-0008IA-0O; Thu, 09 Jan 2020 22:00:06 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 730CF105BCE; Thu,  9 Jan 2020 22:00:05 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Zhenzhong Duan <zhenzhong.duan@gmail.com>,
+        id S1728585AbgAIVCe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 16:02:34 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:34362 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725775AbgAIVCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 16:02:33 -0500
+Received: from zn.tnic (p200300EC2F0C57004DD84C0E473AA3AE.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:5700:4dd8:4c0e:473a:a3ae])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 659911EC0CAD;
+        Thu,  9 Jan 2020 22:02:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1578603752;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=L9ctHWAEoAxB6qWkfJNvezN/3ut+326++8UFDKa+VH0=;
+        b=mimi3IN90JDCdnLLXjFsXBwc2bpx9kyR9bbApbdRZ9MjN4zWTKOP7tRm0fjmvU9NCPLj6P
+        dwjkaG0KeVdmrygkWwgzFjFSuv+2Bmv/r7ISR35sTWfKCYVl4N8Ts0ZxxoZ5x1FLVvK16I
+        +8Wh4GBKmmfe8XFixCRqVJo42MUWihQ=
+Date:   Thu, 9 Jan 2020 22:02:25 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Changbin Du <changbin.du@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>, hpa@zytor.com, x86@kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, Zhenzhong Duan <zhenzhong.duan@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@suse.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH v2] x86/boot/KASLR: Fix unused variable warning
-In-Reply-To: <20200103033929.4956-1-zhenzhong.duan@gmail.com>
-References: <20200103033929.4956-1-zhenzhong.duan@gmail.com>
-Date:   Thu, 09 Jan 2020 22:00:05 +0100
-Message-ID: <874kx4bb1m.fsf@nanos.tec.linutronix.de>
+Subject: Re: [PATCH] x86/nmi: remove the irqwork from long duration nmi
+ handler
+Message-ID: <20200109210225.GK5603@zn.tnic>
+References: <20200101072017.82990-1-changbin.du@gmail.com>
+ <877e20bb8o.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Disposition: inline
+In-Reply-To: <877e20bb8o.fsf@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Zhenzhong Duan <zhenzhong.duan@gmail.com> writes:
+On Thu, Jan 09, 2020 at 09:55:51PM +0100, Thomas Gleixner wrote:
+> Changbin Du <changbin.du@gmail.com> writes:
+> 
+> > First, printk is NMI context safe now since the safe printk has been
+> > implemented. The safe printk already has an irqwork to make NMI context
+> > safe.
+> >
+> > Second, the NMI irqwork actually does not work if a NMI handler causes
+> > panic by watchdog timeout. This NMI irqwork have no chance to run in such
+> > case, while the safe printk will flush its per-cpu buffer before panic.
+> >
+> > Signed-off-by: Changbin Du <changbin.du@gmail.com>
+> 
+> Looks about right.
+> 
+> Acked-by: Thomas Gleixner <tglx@linutronix.de>
 
-> Local variable 'i' is referenced only when CONFIG_MEMORY_HOTREMOVE and
-> CONFIG_ACPI are defined, but definition of variable 'i' is out of guard.
-> If any of the two macros is undefined, below warning triggers during
-> build, fix it by moving 'i' in the guard.
->
-> arch/x86/boot/compressed/kaslr.c:698:6: warning: unused variable ‘i’ [-Wunused-variable]
->
-> Also use true/false instead of 1/0 for boolean return.
+I'm wondering why is this thing being moved:
 
-No. This is not the scope of the unused variable issue. This want's to
-be a separate patch.
+-             if (delta < nmi_longest_ns || delta < a->max_duration)
+-                     continue;
 
-Thanks,
+into nmi_check_duration() and not remaining where it is?
 
-        tglx
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
