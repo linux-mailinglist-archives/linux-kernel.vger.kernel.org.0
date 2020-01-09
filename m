@@ -2,84 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD8D41362D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 22:52:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C384C1362CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 22:46:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728888AbgAIVwp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 16:52:45 -0500
-Received: from shells.gnugeneration.com ([66.240.222.126]:60058 "EHLO
-        shells.gnugeneration.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbgAIVwp (ORCPT
+        id S1728871AbgAIVqW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 16:46:22 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:23814 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725763AbgAIVqW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 16:52:45 -0500
-X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Thu, 09 Jan 2020 16:52:45 EST
-Received: by shells.gnugeneration.com (Postfix, from userid 1000)
-        id 09BEB1A40239; Thu,  9 Jan 2020 13:46:04 -0800 (PST)
-Date:   Thu, 9 Jan 2020 13:46:04 -0800
-From:   Vito Caputo <vcaputo@pengaru.com>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@osdl.org>, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-Subject: Re: OOM killer not nearly agressive enough?
-Message-ID: <20200109214604.nfzsksyv3okj3ec2@shells.gnugeneration.com>
-References: <20200107204412.GA29562@amd>
- <20200109115633.GR4951@dhcp22.suse.cz>
- <20200109210307.GA1553@duo.ucw.cz>
+        Thu, 9 Jan 2020 16:46:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578606381;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZbAF9d7fjB7aZO4keNV6FYG7yhXE6/ctJ0M/uR6RLjI=;
+        b=AC/NQy55Tph1GZL0hgGWTMCqWxVo1kdDpPPwf7nPaUrIUgjsCVdMSumnYDcPNY78m2tAc0
+        yp1eOdO7VuEouXqxALyS2mSyxBK/fkAMil/Ajag8p7I/FsxYf2ZFSzXDqwSgsaU2wUaY8t
+        W0k+OZbId2cUYtx3+4y+6Mk9QfJZKMI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-276--ATCng3CP3KnlYqAzwkAQA-1; Thu, 09 Jan 2020 16:46:17 -0500
+X-MC-Unique: -ATCng3CP3KnlYqAzwkAQA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5709010054E3;
+        Thu,  9 Jan 2020 21:46:16 +0000 (UTC)
+Received: from krava (ovpn-204-81.brq.redhat.com [10.40.204.81])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2DD59620A6;
+        Thu,  9 Jan 2020 21:46:13 +0000 (UTC)
+Date:   Thu, 9 Jan 2020 22:46:11 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Andres Freund <andres@anarazel.de>
+Cc:     linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, stable@vger.kernel.org
+Subject: Re: [PATCH] perf c2c: Fix sorting.
+Message-ID: <20200109214611.GC82989@krava>
+References: <20200109043030.233746-1-andres@anarazel.de>
+ <20200109084822.GD52936@krava>
+ <20200109170041.wgvxcci3mkjh4uee@alap3.anarazel.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200109210307.GA1553@duo.ucw.cz>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20200109170041.wgvxcci3mkjh4uee@alap3.anarazel.de>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 10:03:07PM +0100, Pavel Machek wrote:
-> On Thu 2020-01-09 12:56:33, Michal Hocko wrote:
-> > On Tue 07-01-20 21:44:12, Pavel Machek wrote:
-> > > Hi!
+On Thu, Jan 09, 2020 at 09:00:41AM -0800, Andres Freund wrote:
+
+SNIP
+
+> > >  tools/perf/builtin-c2c.c | 10 ++++++----
+> > >  1 file changed, 6 insertions(+), 4 deletions(-)
 > > > 
-> > > I updated my userspace to x86-64, and now chromium likes to eat all
-> > > the memory and bring the system to standstill.
-> > > 
-> > > Unfortunately, OOM killer does not react:
-> > > 
-> > > I'm now running "ps aux", and it prints one line every 20 seconds or
-> > > more. Do we agree that is "unusable" system? I attempted to do kill
-> > > from other session.
+> > > diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+> > > index e69f44941aad..f2e9d2b1b913 100644
+> > > --- a/tools/perf/builtin-c2c.c
+> > > +++ b/tools/perf/builtin-c2c.c
+> > > @@ -595,8 +595,8 @@ tot_hitm_cmp(struct perf_hpp_fmt *fmt __maybe_unused,
+> > >  {
+> > >  	struct c2c_hist_entry *c2c_left;
+> > >  	struct c2c_hist_entry *c2c_right;
+> > > -	unsigned int tot_hitm_left;
+> > > -	unsigned int tot_hitm_right;
+> > > +	uint64_t tot_hitm_left;
+> > > +	uint64_t tot_hitm_right;
 > > 
-> > Does sysrq+f help?
-> 
-> May try that next time.
-> 
-> > > Do we agree that OOM killer should have reacted way sooner?
+> > that change looks right, but I can't see how that could
+> > happened because of change in Fixes: tag
 > > 
-> > This is impossible to answer without knowing what was going on at the
-> > time. Was the system threshing over page cache/swap? In other words, is
-> > the system completely out of memory or refaulting the working set all
-> > the time because it doesn't fit into memory?
+> > was the return statement of this function:
+> > 
+> >         return tot_hitm_left - tot_hitm_right;
+> > 
+> > considered to be 'unsigned int' and then converted to int64_t,
+> > which would treat negative 'unsigned int' as big positive 'int64_t'?
 > 
-> Swap was full, so "completely out of memory", I guess. Chromium does
-> that fairly often :-(.
-> 
+> Correct. So e.g. when comparing 1 and 2 tot_hitm, we'd get (int64_t)
+> UINT_MAX as a result, which is obviously wrong. However, due to
+> hist_entry__sort() returning int at the time, this was masked, as the
+> int64_t was cast to int. Thereby again yielding a negative number for
+> the comparisons of hist_entry__sort()'s result.  After
+> hist_entry__sort() was fixed however, there never could be negative
+> return values (but 0's are possible) of hist_entry__sort() for c2c.
 
-Have you considered restricting its memory limits a la `ulimit -m`?
+I see.. ok
 
-I've taken to running browsers in nspawn containers for general
-isolation improvements, but this also makes it easy to set cgroup
-resource limits like memcg.  i.e. --property MemoryMax=2G
+Acked-by: Jiri Olsa <jolsa@redhat.com>
 
-This prevents the browser from bogging down the entire system, but it
-doesn't prevent thrashing before FF OOMs within its control group.
+thanks,
+jirka
 
-I do feel there's a problem with the kernel's reclaim algorithm, it
-seems far too willing to evict file-backed pages that are recently in
-use.  But at least with memcg this behavior is isolated to the cgroup,
-though it still generates a crapload of disk reads from all the
-thrashing.
-
-Regards,
-Vito Caputo
