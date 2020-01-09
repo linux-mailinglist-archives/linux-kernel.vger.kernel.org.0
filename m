@@ -2,123 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3C24136025
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 19:26:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B309136031
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 19:34:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729648AbgAIS02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 13:26:28 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:33036 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbgAIS01 (ORCPT
+        id S2388494AbgAISeL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 13:34:11 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33235 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbgAISeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 13:26:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1578594385; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=n7mnA1zFIIsxMJSYYMGqbzDcRJ8RmSW6DGKrWFZCfvA=;
-        b=JdbcOcAY3g06/e5/0YsGPLkQVsnDdF/aKwC7FJWvdZbsmeFgwOhT+626zzRRxXFe+Fnjyt
-        efYxXjOC+VRe0vkxDm55lDNbPdcKjmyJXSdzoZ1BNTgPOyu+0WYDlWCzrB76Rzyk2kIUTe
-        Ke150XU3SJRfit7WG159rmlllHxumyk=
-Date:   Thu, 09 Jan 2020 15:26:09 -0300
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 2/2] clocksource: Add driver for the Ingenic JZ47xx OST
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>, od@zcrc.me,
-        linux-kernel@vger.kernel.org,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Artur Rojek <contact@artur-rojek.eu>
-Message-Id: <1578594369.3.0@crapouillou.net>
-In-Reply-To: <87a76wln67.fsf@nanos.tec.linutronix.de>
-References: <20200107010630.954648-1-paul@crapouillou.net>
-        <20200107010630.954648-2-paul@crapouillou.net>
-        <87a76wln67.fsf@nanos.tec.linutronix.de>
+        Thu, 9 Jan 2020 13:34:10 -0500
+Received: by mail-wr1-f67.google.com with SMTP id b6so8550435wrq.0;
+        Thu, 09 Jan 2020 10:34:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=VFJ3xIIkT+cbdzjfutrDdpZrJagndmFNonhtgg/BtSw=;
+        b=kWzpCcgAYo8/OuCHxa1VIYf7367unZ2vOvPriiOgVi7nNHR0TkkCls/j6I+GHT0u76
+         JQEP9meZhsw6Om2B7V733N+h06H6Emv2GZdLL6Yde62GoVUienAmFnxqxRuMIVipqvob
+         XkY1fs8ee3dhNACbPHklqCCTRPtSTYoGOtutiX9fbp31ufm3jDMInN3woX6s5EMUAn/2
+         xO9oGwWhLpfqJDgU4tZcAjmXrwS41BLJ6kchsn43lYnn5gTTGl7xCXWaaejfu/HFC0Wa
+         /NJcCZAu4h2fgAwpuggaSP/V0UQ9d2IcS3zByvX6NAOVSBMZIalzS63VC1xgd9NXzdSL
+         BA8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=VFJ3xIIkT+cbdzjfutrDdpZrJagndmFNonhtgg/BtSw=;
+        b=B8ZSVrv84Wuclj1eGQXXIT8T+w9eazkTnlfhEyplDzk7t/MuvuM7qs8yT62ZYydfQ6
+         VUPesQg3nlEsuT1v1czbfWNPw4OQT7LDU53v6nZZ8zs97YajFuDA0nVekqFWNddSAtcp
+         k70JF03D0C6wwC8FKdB9ZgTiFRNqn5BF69ThqVkL3GT4HTnaOseefl+ZobxlOiuoV2jh
+         ABI+YEnlQq/rTrTPAruXd0pkEBea9CNR29C7OvS3RVPfXw9iQtrmivc76qRVZb1jmyrA
+         41erHt5lCGt7E3t962JN5ilvtzpGuqlwAzziL6FEaIShdkorKdN78QyDLynG7lHDe7KA
+         7u+Q==
+X-Gm-Message-State: APjAAAXhzuiqlCiglGYN30YziOuGDDAKHd2mcZCR/kdlnRk7PeJjVLru
+        DwAsiYrBohvKZ4ETeziW3ep+ZhlyEeS9yg==
+X-Google-Smtp-Source: APXvYqyV2/5QuIoHe8526NZbLMVS26GP/nzlygEIgvgVJ9vpwNkjMdmQir4WQq8vYpJnSxE4X7Bp/w==
+X-Received: by 2002:a5d:6211:: with SMTP id y17mr12239983wru.344.1578594848706;
+        Thu, 09 Jan 2020 10:34:08 -0800 (PST)
+Received: from [192.168.0.104] (p5B3F655B.dip0.t-ipconnect.de. [91.63.101.91])
+        by smtp.gmail.com with ESMTPSA id x10sm9784016wrp.58.2020.01.09.10.34.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Jan 2020 10:34:07 -0800 (PST)
+Subject: Re: [PATCH v6 3/4] regulator: mpq7920: add mpq7920 regulator driver
+To:     Mark Brown <broonie@kernel.org>
+Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        mripard@kernel.org, shawnguo@kernel.org, heiko@sntech.de,
+        sam@ravnborg.org, icenowy@aosc.io,
+        laurent.pinchart@ideasonboard.com, gregkh@linuxfoundation.org,
+        Jonathan.Cameron@huawei.com, davem@davemloft.net,
+        mchehab+samsung@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200109112548.23914-1-sravanhome@gmail.com>
+ <20200109112548.23914-4-sravanhome@gmail.com>
+ <20200109132835.GA7768@sirena.org.uk>
+From:   saravanan sekar <sravanhome@gmail.com>
+Message-ID: <aefe7c78-6bd9-bafd-9215-5784f8168400@gmail.com>
+Date:   Thu, 9 Jan 2020 19:34:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200109132835.GA7768@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
 
+On 09/01/20 2:28 pm, Mark Brown wrote:
+> On Thu, Jan 09, 2020 at 12:25:47PM +0100, Saravanan Sekar wrote:
+>> Adding regulator driver for the device mpq7920.
+>> The MPQ7920 PMIC device contains four DC-DC buck converters and
+>> five regulators, is designed for automotive and accessed over I2C.
+> This doesn't apply against current code, please check and resend.
 
-Le jeu., janv. 9, 2020 at 15:28, Thomas Gleixner <tglx@linutronix.de> a=20
-=E9crit :
-> Paul Cercueil <paul@crapouillou.net> writes:
->>  +static u64 notrace ingenic_ost_clocksource_read64(struct=20
->> clocksource *cs)
->>  +{
->>  +	u32 val1, val2;
->>  +	u64 count, recount;
->>  +	s64 diff;
->>  +
->>  +	/*
->>  +	 * The buffering of the upper 32 bits of the timer prevents wrong
->>  +	 * results from the bottom 32 bits overflowing due to the timer=20
->> ticking
->>  +	 * along. However, it does not prevent wrong results from=20
->> simultaneous
->>  +	 * reads of the timer, which could reset the buffer mid-read.
->>  +	 * Since this kind of wrong read can happen only when the bottom=20
->> bits
->>  +	 * overflow, there will be minutes between wrong reads, so if we=20
->> read
->>  +	 * twice in succession, at least one of the reads will be correct.
->>  +	 */
->>  +
->>  +	/* Bypass the regmap here as we must return as soon as possible */
->=20
-> I have a hard time to understand this comment. "Bypass the regmap ..."
-> and then use a regmap function?
+Means should I rebase this v6 patch to linux-next and send, or
+of_parse_cb callback changes as separate patch on top of v5?
 
-Ah, sorry, it's a leftover from a previous version of the patch. It=20
-used to bypass the regmap in order to complete as fast as possible.
-
->=20
->>  +	regmap_read(ingenic_ost->map, TCU_REG_OST_CNTL, &val1);
->>  +	regmap_read(ingenic_ost->map, TCU_REG_OST_CNTHBUF, &val2);
->>  +	count =3D (u64)val1 | (u64)val2 << 32;
->>  +
->>  +	regmap_read(ingenic_ost->map, TCU_REG_OST_CNTL, &val1);
->>  +	regmap_read(ingenic_ost->map, TCU_REG_OST_CNTHBUF, &val2);
->>  +	recount =3D (u64)val1 | (u64)val2 << 32;
->>  +
->>  +	/*
->>  +	 * A wrong read will produce a result that is 1<<32 too high: the=20
->> bottom
->>  +	 * part from before overflow and the upper part from after=20
->> overflow.
->>  +	 * Therefore, the lower value of the two reads is the correct=20
->> value.
->>  +	 */
->>  +
->>  +	diff =3D (s64)(recount - count);
->>  +	if (unlikely(diff < 0))
->>  +		count =3D recount;
->=20
-> Is this really the right approach here? What is the 64bit readout=20
-> buying
-> you?
->=20
-> The timekeeping code can handle a 32bit counter perfectly fine and the
-> only advantage you get is that your maximum possible idle time will be
-> longer with a 64bit counter.
->=20
-> But is that really worth the overhead of four MMIO reads versus one=20
-> in a
-> hotpath?
-
-The timer is 64-bit so I thought it made sense to register it as such.=20
-Using it as just a 32-bit counter sounds better indeed.
-
-Thanks,
--Paul
-
-
-=
 
