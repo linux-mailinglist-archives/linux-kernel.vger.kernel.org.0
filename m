@@ -2,94 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A385C135ABF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 14:57:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65C43135ACC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 15:00:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730688AbgAIN5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 08:57:08 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:56172 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbgAIN5I (ORCPT
+        id S1731403AbgAIOAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 09:00:43 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42394 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730444AbgAIOAn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 08:57:08 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 009Dv07b034023;
-        Thu, 9 Jan 2020 07:57:00 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578578220;
-        bh=1TMtTjCmCOQvk0/KYtiyqoakyNuPU5JopEa33VjdmNo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=rG0mAqjUXNic9c38dJv5JnTvoFWWjMt1L99eOncZbTmHK9DiG6xDWuY5P3iMv69V7
-         C8WRRAzNzyNhnQJzTln3YK/fjpTrhx69x/ILebB8XkOxqmXnLEQwuyTtEOK8O3PStZ
-         Exc/geNURmUbkdE4ay/zq/dChFvtJ9f8oy1Ifapo=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 009Dv07F123940
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Jan 2020 07:57:00 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 9 Jan
- 2020 07:56:59 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 9 Jan 2020 07:56:59 -0600
-Received: from [172.24.190.4] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 009DuuFt014859;
-        Thu, 9 Jan 2020 07:56:57 -0600
-Subject: Re: [PATCH] arm: dts: Move am33xx and am43xx mmc nodes to sdhci-omap
- driver
-To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        "tony@atomide.com >> Tony Lindgren" <tony@atomide.com>
-CC:     <mark.rutland@arm.com>, <robh+dt@kernel.org>,
-        <bcousson@baylibre.com>, <kishon@ti.com>
-References: <20200106111517.15158-1-faiz_abbas@ti.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <ab908007-fd7d-9dd5-c822-f4058c793d7d@ti.com>
-Date:   Thu, 9 Jan 2020 19:28:29 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Thu, 9 Jan 2020 09:00:43 -0500
+Received: by mail-wr1-f67.google.com with SMTP id q6so7471768wro.9
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 06:00:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=b8xbfR1e+uIythd38166wCVY5KnjUVf+wZJ6jFWaQhg=;
+        b=wQpb3FJkQMvVRdPTLz/ZEeOxsu9Om4MJxR1KRtPYR5JbY+7EuRwAbGeEmQe7twR+fg
+         7z5ww8hk7wZpIF52etX2RsjS0jhKsWl5LI+eq9DMciZX0adY4/KfVzkwlsy4veLC9zWH
+         1SZwYGAdfy5uLmSn5+uCPz35k9qJcHwtxtTEedlQTUDC2qZx/aquR+9ndc1kmBJfeg1z
+         oRLeLE0PvIP82BDJ4f6twG7ILqFJkO9Ze0GkXrVj9x7C998Nce4kZvk8rZBnq9g89Mut
+         2IrC6AbyAUuL8Flh2irof4z2acmkGF4Kl0GEE/1Jri6DfibaUPz/pmcUXMYx/PR/BU/m
+         XTYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=b8xbfR1e+uIythd38166wCVY5KnjUVf+wZJ6jFWaQhg=;
+        b=SGhj/E28by/PNck51jAud9U6Apo650hSdqW64OQTGqbUMaTKbAcp6IjI0yDygvp9Wv
+         fy0tmpqbWRCTG7yN0HbLT/DOlt2xgYZQbvp5qiXilVjKyPbbm02yH99hcefAwErLN3yF
+         hEAXloLbPVcylv9kxdUEGDE4BA8dQ8Ofg3ZRQE5uENQ3ADEdXuRp3hOM56M5tnwdemG+
+         KYk9ipneoLEs+1rKfjTlG/wPgnm99KqIO7A1Ez84ulMkIKAgUgS0dq72kSgTuOTitYBA
+         dqmrUDVcD3rM698YJZD5sOOggTlV17MZ7sfZQviKaT3njGX27ZxHj3vNmOEj3/vMOg7O
+         b8bw==
+X-Gm-Message-State: APjAAAV9jDvvvOCh7ZZyQZsPrDFaNQQrjt8E/SNvJ7jEu2UHNBqXjUqT
+        u47AygcgNyqWJEc+iB8qpXk2r8Njbu5xrLeCt9gxOA==
+X-Google-Smtp-Source: APXvYqxWquiIBHbuG6bV1XMbdGm6bS/RcE2rvYNATF5+D9Tep5mXvc7r+Liq4irXwUqNWK0IilpoNfAGru9LuFbNsFQ=
+X-Received: by 2002:adf:cf0a:: with SMTP id o10mr10711881wrj.325.1578578441234;
+ Thu, 09 Jan 2020 06:00:41 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200106111517.15158-1-faiz_abbas@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20191224044146.232713-1-saravanak@google.com> <201912252258.5LQtnCYg%lkp@intel.com>
+ <CAGETcx90nkOQXgKWtTSg7SRZCTmH9RQijYsZLP6CWpHCmW1Mxw@mail.gmail.com>
+In-Reply-To: <CAGETcx90nkOQXgKWtTSg7SRZCTmH9RQijYsZLP6CWpHCmW1Mxw@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 9 Jan 2020 15:00:30 +0100
+Message-ID: <CAKv+Gu_3CGrWwMeP5tWYusD8p99r54KFsK4SvWn3zU=Q8X9jcQ@mail.gmail.com>
+Subject: Re: [PATCH v2] efi: arm: defer probe of PCIe backed efifb on DT systems
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
+        Ard Biesheuvel <ardb@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, 9 Jan 2020 at 03:23, Saravana Kannan <saravanak@google.com> wrote:
+>
+> On Wed, Dec 25, 2019 at 6:46 AM kbuild test robot <lkp@intel.com> wrote:
+> >
+> > Hi Saravana,
+> >
+> > I love your patch! Yet something to improve:
+> >
+> > [auto build test ERROR on efi/next]
+> > [cannot apply to rockchip/for-next keystone/next arm64/for-next/core arm-soc/for-next shawnguo/for-next clk/clk-next arm/for-next linux-rpi/for-rpi-next at91/at91-next v5.5-rc3 next-20191220]
+> > [if your patch is applied to the wrong git tree, please drop us a note to help
+> > improve the system. BTW, we also suggest to use '--base' option to specify the
+> > base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+> >
+> > url:    https://github.com/0day-ci/linux/commits/Saravana-Kannan/efi-arm-defer-probe-of-PCIe-backed-efifb-on-DT-systems/20191225-182253
+> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git next
+> > config: arm64-alldefconfig (attached as .config)
+> > compiler: aarch64-linux-gcc (GCC) 7.5.0
+> > reproduce:
+> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+> >         chmod +x ~/bin/make.cross
+> >         # save the attached .config to linux build tree
+> >         GCC_VERSION=7.5.0 make.cross ARCH=arm64
+> >
+> > If you fix the issue, kindly add following tag
+> > Reported-by: kbuild test robot <lkp@intel.com>
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> >    drivers/firmware/efi/arm-init.o: In function `efifb_add_links':
+> > >> arm-init.c:(.text+0x64): undefined reference to `of_pci_range_parser_init'
+> >    arm-init.c:(.text+0x64): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `of_pci_range_parser_init'
+> > >> arm-init.c:(.text+0x78): undefined reference to `of_pci_range_parser_one'
+> >    arm-init.c:(.text+0x78): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `of_pci_range_parser_one'
+>
+> Ard,
+>
+> Not sure what's going on here. of_pci_range_parser_init() and
+> of_pci_range_parser_one() has a stub if CONFIG_OF_ADDRESS isn't
+> defined. So not sure why the bot is reporting "undefined symbol".
+> Thoughts?
+>
 
-On 06/01/20 4:45 pm, Faiz Abbas wrote:
-> Move mmc nodes to be compatible with the sdhci-omap driver. The following
-> modifications are required for omap_hsmmc specific properties:
-> 
-> ti,non-removable: convert to the generic mmc non-removable
-> ti,needs-special-reset:  co-opted into the sdhci-omap driver
-> ti,dual-volt: removed. Legacy property not used in am335x or am43xx
-> ti,needs-special-hs-handling: removed. Legacy property not used in am335x or am43xx
-> 
-> Also since the sdhci-omap driver does not support runtime PM, explicitly
-> disable the mmc3 instance in the dtsi.
-> 
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> ---
-> 
-> Driver modifications have been posted separately:
-> https://patchwork.kernel.org/project/linux-mmc/list/?series=224053
-> 
-> Tested on: am335x-evm, am335x-boneblack, am335x-sk, am335x-bone, am437x-idk,
-> am43xx-gp-evm, am43xx-epos-evm.
-> 
-> I need some help with testing all other am335x variants and SDIO cards.
-> 
-> Here's a branch for testing: https://github.com/faizinator/linux/tree/sdhci-omap_v4_2
-> 
+You'll need a #ifdef CONFIG_PCI somewhere, I guess.
 
-Tony, can you help test some of these boards?
+> Also, thoughts on my patch?
+>
 
-Thanks,
-Faiz
+Looks ok to me, but I haven't had a chance to test it yet.
