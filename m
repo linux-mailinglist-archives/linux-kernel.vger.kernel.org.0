@@ -2,75 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B3AB1362A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 22:37:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FEFC1362C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 22:41:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbgAIVh0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 16:37:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46266 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725763AbgAIVh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 16:37:26 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CBE220721;
-        Thu,  9 Jan 2020 21:37:24 +0000 (UTC)
-Date:   Thu, 9 Jan 2020 16:37:22 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        id S1728866AbgAIVlc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 16:41:32 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:59947 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725763AbgAIVlc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 16:41:32 -0500
+X-Originating-IP: 90.65.92.102
+Received: from localhost (lfbn-lyo-1-1913-102.w90-65.abo.wanadoo.fr [90.65.92.102])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id B26101C0003;
+        Thu,  9 Jan 2020 21:41:29 +0000 (UTC)
+Date:   Thu, 9 Jan 2020 22:41:28 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 05/22] proc: bootconfig: Add /proc/bootconfig to show
- boot config list
-Message-ID: <20200109163722.7678998e@gandalf.local.home>
-In-Reply-To: <157736908816.11126.18219614958177954231.stgit@devnote2>
-References: <157736902773.11126.2531161235817081873.stgit@devnote2>
-        <157736908816.11126.18219614958177954231.stgit@devnote2>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Subject: Re: [PATCH] clk: at91: add sama5d3 pmc driver
+Message-ID: <20200109214128.GB1027187@piout.net>
+References: <20191229202907.335931-1-alexandre.belloni@bootlin.com>
+ <20200106030905.8643221582@mail.kernel.org>
+ <20200108110218.GT3040@piout.net>
+ <20200109181910.59B2B206ED@mail.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200109181910.59B2B206ED@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Dec 2019 23:04:48 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
-
-> Add /proc/bootconfig which shows the list of key-value pairs
-> in boot config. Since after boot, all boot configs and tree
-> are removed, this interface just keep a copy of key-value
-> pairs in text.
+On 09/01/2020 10:19:09-0800, Stephen Boyd wrote:
+> Quoting Alexandre Belloni (2020-01-08 03:02:18)
+> > On 05/01/2020 19:09:04-0800, Stephen Boyd wrote:
+> > > > +       return;
+> > > > +
+> > > > +err_free:
+> > > > +       pmc_data_free(sama5d3_pmc);
+> > > > +}
+> > > > +CLK_OF_DECLARE_DRIVER(sama5d3_pmc, "atmel,sama5d3-pmc", sama5d3_pmc_setup);
+> > > 
+> > > Any reason this can't be a platform driver?
+> > > 
+> > 
+> > As for the other PMC driver, we need a few of the peripheral clocks very
+> > early which means that we would have to register most of the clock tree
+> > registered early leaving only a few clocks to be registered by a
+> > platform driver.
+> > 
 > 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> ---
->  Changes in v4:
->   - Remove ; in the end of lines.
->   - Rename /proc/supp_cmdline to /proc/bootconfig
->   - Simplify code.
-> ---
->  0 files changed
-
-Starting with this patch, your diffstat shows no changes :-/
-
--- Steve
-
+> What peripheral clks? Can you add a comment to the code?
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0a0acbc968d6..9dc69bb6856f 100644
+
+The TCB is used as the clocksource so its clock is needed. Its parent is
+the master clock which has UTMI, PLLA, the mainclock and the slow clock
+as parents so by that point, most of the tree is registered.
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
