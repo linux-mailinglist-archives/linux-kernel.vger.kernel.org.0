@@ -2,59 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 686E5135B62
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 15:31:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4401135B69
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 15:33:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731690AbgAIObL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 09:31:11 -0500
-Received: from verein.lst.de ([213.95.11.211]:54956 "EHLO verein.lst.de"
+        id S1731701AbgAIOdB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 9 Jan 2020 09:33:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727854AbgAIObK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 09:31:10 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 7011068BFE; Thu,  9 Jan 2020 15:31:08 +0100 (CET)
-Date:   Thu, 9 Jan 2020 15:31:08 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "Grimm, Jon" <jon.grimm@amd.com>, baekhw@google.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [rfc] dma-mapping: preallocate unencrypted DMA atomic pool
-Message-ID: <20200109143108.GA22656@lst.de>
-References: <alpine.DEB.2.21.1912311738130.68206@chino.kir.corp.google.com> <3213a6ac-5aad-62bc-bf95-fae8ba088b9e@arm.com> <20200107105458.GA3139@lst.de> <alpine.DEB.2.21.2001071152020.183706@chino.kir.corp.google.com>
+        id S1727854AbgAIOdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 09:33:00 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B8BF2072E;
+        Thu,  9 Jan 2020 14:32:59 +0000 (UTC)
+Date:   Thu, 9 Jan 2020 09:32:57 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     yangliuxm34@gmail.com, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, liuyang34@xiaomi.com,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH] trace: code optimization
+Message-ID: <20200109093257.681271c9@gandalf.local.home>
+In-Reply-To: <4f4bed1d-9dc0-0665-4b61-8afc9ebf8201@web.de>
+References: <27225bf0ec9b4e2f3d313456aee75e294361d550.1578561009.git.liuyang34@xiaomi.com>
+        <4f4bed1d-9dc0-0665-4b61-8afc9ebf8201@web.de>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2001071152020.183706@chino.kir.corp.google.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 11:57:24AM -0800, David Rientjes wrote:
-> I'll rely on Thomas to chime in if this doesn't make sense for the SEV 
-> usecase.
+On Thu, 9 Jan 2020 14:16:46 +0100
+Markus Elfring <Markus.Elfring@web.de> wrote:
+
+> > use scnprintf instead of snprinr and no need to check  
 > 
-> I think the sizing of the single atomic pool needs to be determined.  Our 
-> peak usage that we have measured from NVMe is ~1.4MB and atomic_pool is 
-> currently sized to 256KB by default.  I'm unsure at this time if we need 
-> to be able to dynamically expand this pool with a kworker.
->
-> Maybe when CONFIG_AMD_MEM_ENCRYPT is enabled this atomic pool should be 
-> sized to 2MB or so and then when it reaches half capacity we schedule some 
-> background work to dynamically increase it?  That wouldn't be hard unless 
-> the pool can be rapidly depleted.
+> Will a typo be avoided in the final change description?
+> 
+> 
+> > Signed-off-by: liuyang34 …  
+> 
+> Will this information need also an adjustment for the desired specification
+> of a real name?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=b07f636fca1c8fbba124b0082487c0b3890a0e0c#n458
 > 
 
-Note that a non-coherent architecture with the same workload would need
-the same size.
+Correct. Please resend the patch with the typo fix and a real name for
+the Signed-off-by.
 
-> Do we want to increase the atomic pool size by default and then do 
-> background dynamic expansion?
+Thanks!
 
-For now I'd just scale with system memory size.
+-- Steve
