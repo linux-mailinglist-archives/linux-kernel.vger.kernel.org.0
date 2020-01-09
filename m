@@ -2,157 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 872451355F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:42:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76EA11355ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:38:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729786AbgAIJmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 04:42:02 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:49840 "EHLO inva020.nxp.com"
+        id S1729746AbgAIJiS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 04:38:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729642AbgAIJmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 04:42:02 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 927D51A02C3;
-        Thu,  9 Jan 2020 10:41:59 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CF1A81A029E;
-        Thu,  9 Jan 2020 10:41:53 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DF5BE402C1;
-        Thu,  9 Jan 2020 17:41:46 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        andreas@kemnade.info, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V2] ARM: dts: imx6: Remove incorrect power supply assignment
-Date:   Thu,  9 Jan 2020 17:38:02 +0800
-Message-Id: <1578562682-32548-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729727AbgAIJiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 04:38:15 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1217220678;
+        Thu,  9 Jan 2020 09:38:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578562694;
+        bh=B8Vy7Qc/JmhHxytf6QW/GNyZc4W736SnXEDytIHhZaE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hIRDGUFEScKQC8f2kDjY16KIhbuSJj5ICaJWJfXBbOKqwqWx16O/JeVmayvc9EMbF
+         vLo/yMCUXL8WXkaqBvM+8TJ87FL4EqbGdtZStq6nrzKxx6gkecYr1DmJm/jnpwZrhS
+         /OUvAVwax6WXEhP1+L/6vKhizuywUAtt6zqzwAR4=
+Date:   Thu, 9 Jan 2020 10:38:12 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Pawel Laszczak <pawell@cadence.com>
+Cc:     "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "rogerq@ti.com" <rogerq@ti.com>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jayshri Dajiram Pawar <jpawar@cadence.com>,
+        Rahul Kumar <kurahul@cadence.com>,
+        Sanket Parmar <sparmar@cadence.com>,
+        Peter Chan <peter.chan@nxp.com>
+Subject: Re: [PATCH] usb: cdns3: Fix: ARM core hang after connect/disconnect
+ operation.
+Message-ID: <20200109093812.GC44349@kroah.com>
+References: <20200108113719.21551-1-pawell@cadence.com>
+ <20200108142829.GB2383861@kroah.com>
+ <BYAPR07MB4709983A2DF70AA0058C737FDD390@BYAPR07MB4709.namprd07.prod.outlook.com>
+ <20200109063841.GA2579094@kroah.com>
+ <BYAPR07MB4709AA109700B4BCAD1C1ED8DD390@BYAPR07MB4709.namprd07.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BYAPR07MB4709AA109700B4BCAD1C1ED8DD390@BYAPR07MB4709.namprd07.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vdd3p0 LDO's input should be from external USB VBUS directly, NOT
-PMIC's power supply, the vdd3p0 LDO's target output voltage can be
-controlled by SW, and it requires input voltage to be high enough, with
-incorrect power supply assigned, if the power supply's voltage is lower
-than the LDO target output voltage, it will return fail and skip the LDO
-voltage adjustment, so remove the power supply assignment for vdd3p0 to
-avoid such scenario.
+On Thu, Jan 09, 2020 at 08:34:12AM +0000, Pawel Laszczak wrote:
+> >
+> >On Thu, Jan 09, 2020 at 06:27:02AM +0000, Pawel Laszczak wrote:
+> >> >> +	writel(EP_CMD_EPRST, &priv_dev->regs->ep_cmd);
+> >> >> +
+> >> >> +	ret = readl_poll_timeout_atomic(&priv_dev->regs->ep_cmd, val,
+> >> >> +					!(val & (EP_CMD_CSTALL | EP_CMD_EPRST)),
+> >> >> +					1, 1000);
+> >> >> +
+> >> >> +	if (unlikely(ret))
+> >> >
+> >> >Unless you can measure the difference of using/not using a
+> >> >unlikely/likely mark, NEVER use it.  The compiler and cpu can almost
+> >> >always do better than you can, we have the tests to prove it.
+> >> >
+> >>
+> >> The both of the above timeout should never occur. If they occurred it would be a
+> >> critical controller bug. In this case driver can only inform  about this event.
+> >
+> >"Should never occur" is a fun thing to say :)
+> >
+> >If it can never occur, then don't even check for it.
+> 
+> Yes, on existing platforms it can never occur. 
+> 
+> >
+> >If it can, then check for it and handle it properly.
+> >
+> >What about this controller in systems with removable busses (like PCI?)
+> >What happens then (hint, I bet this could occur...)
+> 
+> It's good question.  Nobody from our customer currently use such system. 
+> The only platform with PCI is used by me for testing purpose.  
 
-Fixes: 93385546ba36 ("ARM: dts: imx6qdl-sabresd: Assign corresponding power supply for LDOs")
-Fixes: 37a4bdead109 ("ARM: dts: imx6sx-sdb: Assign corresponding power supply for LDOs")
-Fixes: 3feea8805d6f ("ARM: dts: imx6sl-evk: Assign corresponding power supply for LDOs")
-Fixes: 96a9169cf621 ("ARM: dts: imx6sll-evk: Assign corresponding power supply for vdd3p0")
-Fixes: 0b47f9201075 ("ARM: dts: add devicetree entry for Tolino Shine 3")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-Changes since V1:
-	- squash the patch set together to easy applying to other tree;
-	- imporve the commit message to provide more detail info.
----
- arch/arm/boot/dts/imx6qdl-sabresd.dtsi     | 4 ----
- arch/arm/boot/dts/imx6sl-evk.dts           | 4 ----
- arch/arm/boot/dts/imx6sl-tolino-shine3.dts | 4 ----
- arch/arm/boot/dts/imx6sll-evk.dts          | 4 ----
- arch/arm/boot/dts/imx6sx-sdb-reva.dts      | 4 ----
- arch/arm/boot/dts/imx6sx-sdb.dts           | 4 ----
- 6 files changed, 24 deletions(-)
+So if you do have a PCI device, then you need to handle PCI reads
+failing and returning all 1s.  Hopefully you can gracefully handle this :)
 
-diff --git a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-index 71ca76a..fe59dde 100644
---- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-@@ -749,10 +749,6 @@
- 	vin-supply = <&vgen5_reg>;
- };
- 
--&reg_vdd3p0 {
--	vin-supply = <&sw2_reg>;
--};
--
- &reg_vdd2p5 {
- 	vin-supply = <&vgen5_reg>;
- };
-diff --git a/arch/arm/boot/dts/imx6sl-evk.dts b/arch/arm/boot/dts/imx6sl-evk.dts
-index 4829aa6..bc86cfa 100644
---- a/arch/arm/boot/dts/imx6sl-evk.dts
-+++ b/arch/arm/boot/dts/imx6sl-evk.dts
-@@ -584,10 +584,6 @@
- 	vin-supply = <&sw2_reg>;
- };
- 
--&reg_vdd3p0 {
--	vin-supply = <&sw2_reg>;
--};
--
- &reg_vdd2p5 {
- 	vin-supply = <&sw2_reg>;
- };
-diff --git a/arch/arm/boot/dts/imx6sl-tolino-shine3.dts b/arch/arm/boot/dts/imx6sl-tolino-shine3.dts
-index 0ee4925..27143ea 100644
---- a/arch/arm/boot/dts/imx6sl-tolino-shine3.dts
-+++ b/arch/arm/boot/dts/imx6sl-tolino-shine3.dts
-@@ -290,10 +290,6 @@
- 	vin-supply = <&dcdc2_reg>;
- };
- 
--&reg_vdd3p0 {
--	vin-supply = <&dcdc2_reg>;
--};
--
- &ricoh619 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_ricoh_gpio>;
-diff --git a/arch/arm/boot/dts/imx6sll-evk.dts b/arch/arm/boot/dts/imx6sll-evk.dts
-index 3e1d32f..5ace9e6 100644
---- a/arch/arm/boot/dts/imx6sll-evk.dts
-+++ b/arch/arm/boot/dts/imx6sll-evk.dts
-@@ -265,10 +265,6 @@
- 	status = "okay";
- };
- 
--&reg_3p0 {
--	vin-supply = <&sw2_reg>;
--};
--
- &snvs_poweroff {
- 	status = "okay";
- };
-diff --git a/arch/arm/boot/dts/imx6sx-sdb-reva.dts b/arch/arm/boot/dts/imx6sx-sdb-reva.dts
-index 2b29ed2..dce5dcf 100644
---- a/arch/arm/boot/dts/imx6sx-sdb-reva.dts
-+++ b/arch/arm/boot/dts/imx6sx-sdb-reva.dts
-@@ -160,10 +160,6 @@
- 	vin-supply = <&vgen6_reg>;
- };
- 
--&reg_vdd3p0 {
--	vin-supply = <&sw2_reg>;
--};
--
- &reg_vdd2p5 {
- 	vin-supply = <&vgen6_reg>;
- };
-diff --git a/arch/arm/boot/dts/imx6sx-sdb.dts b/arch/arm/boot/dts/imx6sx-sdb.dts
-index a8ee708..5a63ca6 100644
---- a/arch/arm/boot/dts/imx6sx-sdb.dts
-+++ b/arch/arm/boot/dts/imx6sx-sdb.dts
-@@ -141,10 +141,6 @@
- 	vin-supply = <&vgen6_reg>;
- };
- 
--&reg_vdd3p0 {
--	vin-supply = <&sw2_reg>;
--};
--
- &reg_vdd2p5 {
- 	vin-supply = <&vgen6_reg>;
- };
--- 
-2.7.4
+Adding timeout handling here, where it is totally obvious to do so,
+would be a good thing.
 
+thanks,
+
+greg k-h
