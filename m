@@ -2,92 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE5A135EA3
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:47:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 534BE135E9F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:47:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387844AbgAIQrs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 11:47:48 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:60687 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730602AbgAIQrr (ORCPT
+        id S2387821AbgAIQra convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 9 Jan 2020 11:47:30 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:48001 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730602AbgAIQra (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 11:47:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578588466;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=H7yvRcnHtdyGEcTJgOAUtJzzkjbm96l99F3Bt+eWI8s=;
-        b=eLOkx0/25wcZZXqItnaKFHUKg4gnQ+XN0EhVox4w+7ko7reHjUcVtS/fD8zfKQ3wa3NS/m
-        ys8tGcyi0X23Lxa0jQjGa3xyav8Iqx+7+7+ijBkoJMm0U/BaO8q2hfcs6OPXP0+cpaO4Tz
-        mb5nPxB/NYMzcu0+xBkwCP2r5KvDffc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-178-PPGhbvvvOrSIrVG1C-5OsQ-1; Thu, 09 Jan 2020 11:47:22 -0500
-X-MC-Unique: PPGhbvvvOrSIrVG1C-5OsQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 965E51132C9E;
-        Thu,  9 Jan 2020 16:47:20 +0000 (UTC)
-Received: from w520.home (ovpn-116-128.phx2.redhat.com [10.3.116.128])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C1E1A10013A7;
-        Thu,  9 Jan 2020 16:47:12 +0000 (UTC)
-Date:   Thu, 9 Jan 2020 09:47:11 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christophe de Dinechin <dinechin@redhat.com>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Yan Zhao <yan.y.zhao@intel.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Kevin Kevin <kevin.tian@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>
-Subject: Re: [PATCH v3 00/21] KVM: Dirty ring interface
-Message-ID: <20200109094711.00eb96b1@w520.home>
-In-Reply-To: <20200109145729.32898-1-peterx@redhat.com>
-References: <20200109145729.32898-1-peterx@redhat.com>
+        Thu, 9 Jan 2020 11:47:30 -0500
+X-Originating-IP: 91.224.148.103
+Received: from xps13 (unknown [91.224.148.103])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 58A56E000F;
+        Thu,  9 Jan 2020 16:47:14 +0000 (UTC)
+Date:   Thu, 9 Jan 2020 17:47:13 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Mason Yang <masonccyang@mxic.com.tw>
+Cc:     richard@nod.at, marek.vasut@gmail.com, dwmw2@infradead.org,
+        bbrezillon@kernel.org, computersforpeace@gmail.com,
+        vigneshr@ti.com, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+Subject: Re: [PATCH v2 2/4] mtd: rawnand: Add support Macronix Block
+ Protection function
+Message-ID: <20200109174713.71ea377b@xps13>
+In-Reply-To: <1572256527-5074-3-git-send-email-masonccyang@mxic.com.tw>
+References: <1572256527-5074-1-git-send-email-masonccyang@mxic.com.tw>
+        <1572256527-5074-3-git-send-email-masonccyang@mxic.com.tw>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  9 Jan 2020 09:57:08 -0500
-Peter Xu <peterx@redhat.com> wrote:
+Hi Mason,
 
-> Branch is here: https://github.com/xzpeter/linux/tree/kvm-dirty-ring
-> (based on kvm/queue)
+Mason Yang <masonccyang@mxic.com.tw> wrote on Mon, 28 Oct 2019 17:55:25
++0800:
+
+> Macronix AC series support using SET_FEATURES to change
+> Block Protection and Unprotection.
 > 
-> Please refer to either the previous cover letters, or documentation
-> update in patch 12 for the big picture.  Previous posts:
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> ---
+>  drivers/mtd/nand/raw/nand_macronix.c | 69 +++++++++++++++++++++++++++++++++---
+>  1 file changed, 65 insertions(+), 4 deletions(-)
 > 
-> V1: https://lore.kernel.org/kvm/20191129213505.18472-1-peterx@redhat.com
-> V2: https://lore.kernel.org/kvm/20191221014938.58831-1-peterx@redhat.com
-> 
-> The major change in V3 is that we dropped the whole waitqueue and the
-> global lock. With that, we have clean per-vcpu ring and no default
-> ring any more.  The two kvmgt refactoring patches were also included
-> to show the dependency of the works.
+> diff --git a/drivers/mtd/nand/raw/nand_macronix.c b/drivers/mtd/nand/raw/nand_macronix.c
+> index 58511ae..13929bf 100644
+> --- a/drivers/mtd/nand/raw/nand_macronix.c
+> +++ b/drivers/mtd/nand/raw/nand_macronix.c
+> @@ -11,6 +11,10 @@
+>  #define MACRONIX_READ_RETRY_BIT BIT(0)
+>  #define MACRONIX_NUM_READ_RETRY_MODES 6
+>  
+> +#define ONFI_FEATURE_ADDR_MXIC_PROTECTION 0xA0
+> +#define MXIC_BLOCK_PROTECTION_ALL_LOCK 0x38
+> +#define MXIC_BLOCK_PROTECTION_ALL_UNLOCK 0x0
+> +
+>  struct nand_onfi_vendor_macronix {
+>  	u8 reserved;
+>  	u8 reliability_func;
+> @@ -57,7 +61,7 @@ static void macronix_nand_onfi_init(struct nand_chip *chip)
+>   * the timings unlike what is declared in the parameter page. Unflag
+>   * this feature to avoid unnecessary downturns.
+>   */
+> -static void macronix_nand_fix_broken_get_timings(struct nand_chip *chip)
+> +static int macronix_nand_fix_broken_get_timings(struct nand_chip *chip)
+>  {
+>  	unsigned int i;
+>  	static const char * const broken_get_timings[] = {
+> @@ -78,7 +82,7 @@ static void macronix_nand_fix_broken_get_timings(struct nand_chip *chip)
+>  	};
+>  
+>  	if (!chip->parameters.supports_set_get_features)
+> -		return;
+> +		return 0;
+>  
+>  	for (i = 0; i < ARRAY_SIZE(broken_get_timings); i++) {
+>  		if (!strcmp(broken_get_timings[i], chip->parameters.model))
+> @@ -86,22 +90,79 @@ static void macronix_nand_fix_broken_get_timings(struct nand_chip *chip)
+>  	}
+>  
+>  	if (i == ARRAY_SIZE(broken_get_timings))
+> -		return;
+> +		return 0;
+>  
+>  	bitmap_clear(chip->parameters.get_feature_list,
+>  		     ONFI_FEATURE_ADDR_TIMING_MODE, 1);
+>  	bitmap_clear(chip->parameters.set_feature_list,
+>  		     ONFI_FEATURE_ADDR_TIMING_MODE, 1);
+> +	return 1;
+> +}
+> +
+> +/*
+> + * Macronix NAND supports Block Protection by Protectoin(PT) pin;
+> + * active high at power-on which protects the entire chip even the #WP is
+> + * disabled. Lock/unlock protection area can be partition according to
+> + * protection bits, i.e. upper 1/2 locked, upper 1/4 locked and so on.
+> + */
+> +static int mxic_nand_lock(struct nand_chip *chip, loff_t ofs, uint64_t len)
+> +{
+> +	u8 feature[ONFI_SUBFEATURE_PARAM_LEN];
+> +	int ret;
+> +
+> +	feature[0] = MXIC_BLOCK_PROTECTION_ALL_LOCK;
+> +	nand_select_target(chip, 0);
+> +	ret = nand_set_features(chip, ONFI_FEATURE_ADDR_MXIC_PROTECTION,
+> +				feature);
+> +	nand_deselect_target(chip);
+> +	if (ret)
+> +		pr_err("%s all blocks failed\n", __func__);
+> +
+> +	return ret;
+> +}
+> +
+> +static int mxic_nand_unlock(struct nand_chip *chip, loff_t ofs, uint64_t len)
+> +{
+> +	u8 feature[ONFI_SUBFEATURE_PARAM_LEN];
+> +	int ret;
+> +
+> +	feature[0] = MXIC_BLOCK_PROTECTION_ALL_UNLOCK;
+> +	nand_select_target(chip, 0);
+> +	ret = nand_set_features(chip, ONFI_FEATURE_ADDR_MXIC_PROTECTION,
+> +				feature);
+> +	nand_deselect_target(chip);
+> +	if (ret)
+> +		pr_err("%s all blocks failed\n", __func__);
+> +
+> +	return ret;
+>  }
+>  
+> +/*
+> + * Macronix NAND AC series support Block Protection by SET_FEATURES
+> + * to lock/unlock blocks.
+> + */
+>  static int macronix_nand_init(struct nand_chip *chip)
+>  {
+> +	bool blockprotected = false;
+> +
+>  	if (nand_is_slc(chip))
+>  		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE;
+>  
+> -	macronix_nand_fix_broken_get_timings(chip);
+> +	if (macronix_nand_fix_broken_get_timings(chip))
+> +		blockprotected = true;
 
-Hi Peter,
+I don't like this at all :)
 
-Would you recommend this style of interface for vfio dirty page
-tracking as well?  This mechanism seems very tuned to sparse page
-dirtying, how well does it handle fully dirty, or even significantly
-dirty regions?  We also don't really have "active" dirty page tracking
-in vfio, we simply assume that if a page is pinned or otherwise mapped
-that it's dirty, so I think we'd constantly be trying to re-populate
-the dirty ring with pages that we've seen the user consume, which
-doesn't seem like a good fit versus a bitmap solution.  Thanks,
+Please create a helper which detects which part is broken/protected
+then create helpers to act in this case.
 
-Alex
+If the list is absolutely identical, you can share the detection
+helper. Otherwise, if you think the list can diverge, please only share
+the list for now and create two detection helpers.
 
+> +
+>  	macronix_nand_onfi_init(chip);
+>  
+> +	if (blockprotected) {
+> +		bitmap_set(chip->parameters.set_feature_list,
+> +			   ONFI_FEATURE_ADDR_MXIC_PROTECTION, 1);
+> +		bitmap_set(chip->parameters.get_feature_list,
+> +			   ONFI_FEATURE_ADDR_MXIC_PROTECTION, 1);
+> +
+> +		chip->_lock = mxic_nand_lock;
+> +		chip->_unlock = mxic_nand_unlock;
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+
+
+Thanks,
+Miquèl
