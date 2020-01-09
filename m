@@ -2,78 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97C131353FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 09:00:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35684135403
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 09:03:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbgAIIAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 03:00:36 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43500 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728273AbgAIIAg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 03:00:36 -0500
-Received: by mail-lj1-f194.google.com with SMTP id a13so6133727ljm.10
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 00:00:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=A61mlbXcqrKdd5rStxbk5SJq+xs374rVplv9rHnuEP4=;
-        b=hEsM2tuB5gASNIKUuOtABTGFoYfR3+E2m7M8Se42SgJzhP7VGQNS2oWmB5aJml2VHb
-         bU2NxmQBsVBlVGYOQlp7CzAbfKqHivEf6mxcnAEpFtm1hBIjPhceZ6GPYCffJiJnsfvJ
-         cWox2QpxQ2KgYd7U1Ciwu2UvQ+ZgfU1AkMqFDRr7zr5004ebb4Qq90KA7GGD+gZ+1WWp
-         d00cNK8Ss486XXpoRGjnHhZ6rfZ6nwNVk6IAbug4AYJ9Fp+W5yxWHY8pIj/9E6DyFnAJ
-         pC2/Tp0vWTOEoncW0u4CUxRCGzHZ/V8o/z7GeAwr/d1/bYR8bzz78H53rC3m11SSrBZP
-         o97A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=A61mlbXcqrKdd5rStxbk5SJq+xs374rVplv9rHnuEP4=;
-        b=knMBMmxVDvjq+/H5PO1fQ1sDiuFURkTiNCwK+BEAQ+SIPgjUJjKBo9ZveSuGJiKWlo
-         pIHB71XKf/99GhsuWDL+cPqnW93HX2FGGuy2bBTV15Q27ujWK9Nky/RrFGErAMPP+kKe
-         riwMbQ7FXH5M2GCZuHVVAvkZGSRRa9jDmeyqvCW60DQQWv+Q+egwOGc2GYlKcMOiqxcM
-         LyJ6Q5VVJNijn0JkBJGRuuvHpHj3w8EcdjPvNWpRmHG3ZZLNhjdw9lk9GlUwC7ZVptZg
-         3UUTaNboMSlhB/PHZ/wwzfGE4l2DXizXo7dPpTVb+yXiQcjkLxnyPML634LrkCwPq9Uz
-         4UmQ==
-X-Gm-Message-State: APjAAAW9wGXQQd5b3WhsuwLn/P7bgD/PCRZudSYDoWB9feTQI36eJ42B
-        6KDzwX6Z/fqoN500ZYv+sQx3yQfn4DypzUQLgS8=
-X-Google-Smtp-Source: APXvYqxzy22kMDyiNoXHogpd3H0rv7xJy0jnzBWq/t7jgxTO7SF3OHrd3i4iGVCXVHPi6hK9UJKJC09OztxhFlMgbYw=
-X-Received: by 2002:a2e:556:: with SMTP id 83mr5720801ljf.127.1578556834378;
- Thu, 09 Jan 2020 00:00:34 -0800 (PST)
+        id S1728360AbgAIIDf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 03:03:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50974 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728267AbgAIIDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 03:03:35 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A40B206ED;
+        Thu,  9 Jan 2020 08:03:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578557014;
+        bh=7XvTC5kB36KuLK7zd1wFe8Scqv4MqoW/teqSDD+VGqw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QG5X6xnQaJ7jCwtwIMFpR8dQA+hRdkOodGTB/0ZXTscE2zalO7KLx7eghDIrzl+Ku
+         KYscjlBRzUw5d+7OHmubqvfV0GtcfSwKWJyFN1nnfUSFDUuqUgcb25SzWlxv5LxkFl
+         7B3Km2ffEZ3/Z1PPvJtcbrzEJjmu5QYtFsxHkKDk=
+Date:   Thu, 9 Jan 2020 09:03:30 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     liuyang34 <yangliuxm34@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Richard Fontana <rfontana@redhat.com>,
+        Allison Randal <allison@lohutok.net>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        liuyang34 <liuyang34@xiaomi.com>
+Subject: Re: [PATCH] x86: event, use scnprintf instead of snprintf
+Message-ID: <20200109080330.GA2579993@kroah.com>
+References: <cover.1578550730.git.liuyang34@xiaomi.com>
+ <5fc0611a37b6c73fb524b8469cced8fd4cefc6a1.1578550730.git.liuyang34@xiaomi.com>
 MIME-Version: 1.0
-Received: by 2002:a19:86c2:0:0:0:0:0 with HTTP; Thu, 9 Jan 2020 00:00:33 -0800 (PST)
-Reply-To: ibrahimiismma@gmail.com
-From:   Ibrahim Ismma <elhamabunur@gmail.com>
-Date:   Thu, 9 Jan 2020 00:00:33 -0800
-Message-ID: <CADvdcOnwxBzT4BqUeNwZVeXtGk6CbS45oboa2SW3hcGHh5zKjw@mail.gmail.com>
-Subject: Waiting for your urgent reply,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5fc0611a37b6c73fb524b8469cced8fd4cefc6a1.1578550730.git.liuyang34@xiaomi.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings Friend
+On Thu, Jan 09, 2020 at 02:36:26PM +0800, liuyang34 wrote:
+> the return size will low than PAGE_SIZE but maybe over 40 in show_sysctl_tfa,
+> so use scnprintf instead of snprintf to get real size
+> 
+> Signed-off-by: liuyang34 <liuyang34@xiaomi.com>
+> ---
+>  arch/x86/events/intel/core.c    | 6 +++---
+>  arch/x86/events/intel/pt.c      | 2 +-
+>  arch/x86/platform/uv/uv_sysfs.c | 4 ++--
+>  3 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> index 3be51aa..bf287b4 100644
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -4372,7 +4372,7 @@ static ssize_t show_sysctl_tfa(struct device *cdev,
+>  			      struct device_attribute *attr,
+>  			      char *buf)
+>  {
+> -	return snprintf(buf, 40, "%d\n", allow_tsx_force_abort);
+> +	return scnprintf(buf, 40, "%d\n", allow_tsx_force_abort);
 
-Forgive me for writing you this letter , I will like to bring to your
-that (8.5.million Euro claims ) This is a legitimate transaction and
-The money will be shared 60% for me and 40% for you .   get back to
-me, I will give you full details on how the money will be transfer to
-you,
-Waiting for your reply,
+No, just use sprintf() for all of these.  We "know" the buffer size is
+big enough for a single number.  There's no need for fancy checks for
+any sysfs file.
 
-Your Full Name .........
-Your Sex ..............
-Your Age ..................
-Your Country ...........
-Passport / driving license .......
-Marital Status ...........
-Your Occupation .......
-Your Personal Mobile Number .....
-Your Personal Fax Number .........
+thanks,
 
-Thanks
-Ibrahim Ismma
-Audits & Accounts Manager
-E-Mail Address (ismmomussa@gmail.com)
+greg k-h
