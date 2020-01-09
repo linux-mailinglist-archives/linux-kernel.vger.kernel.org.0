@@ -2,97 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDC55136097
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 19:58:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E042213609E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 19:58:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732044AbgAIS6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 13:58:17 -0500
-Received: from mail-pj1-f53.google.com ([209.85.216.53]:34177 "EHLO
-        mail-pj1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729054AbgAIS6Q (ORCPT
+        id S2388603AbgAIS6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 13:58:49 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39576 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729054AbgAIS6t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 13:58:16 -0500
-Received: by mail-pj1-f53.google.com with SMTP id s94so1126244pjc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 10:58:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=8miCelK+kNkKyg1qAxJi49qKtsPH/zr98yoCqmNSeCw=;
-        b=UakHrUekXPvlhCN2k/yNKWdf6usnysaDd+tYSh6J/VljjRWDx9a59SsyGmX96QhIFj
-         OKSesuYx23CaVWYQTi31UZZzrSMkJaFKhlWeuhjwpvu2qv3eUaN9g6OJzd+0f0VyZCHh
-         OLNGIXwlAh9IkzClpP2/N7U76W/HoyV6lpOs0Tw58/4/NDZ8Opr0wA0qZSR0Xeyf4gIw
-         pwr03WAKyRciGBUPeHx3TAeZ3uC5UQm14YKab/y5VrSmPi8mleFB47ickO5eCoVVLfvi
-         Bjzf24VswqWNJ/ih5GdLUGY5fATnjx18Y+Qt2oBpqgrtP4ARyC0LO4uSVoYEv1Be8oqJ
-         4rpw==
+        Thu, 9 Jan 2020 13:58:49 -0500
+Received: by mail-wm1-f67.google.com with SMTP id 20so4018496wmj.4;
+        Thu, 09 Jan 2020 10:58:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=8miCelK+kNkKyg1qAxJi49qKtsPH/zr98yoCqmNSeCw=;
-        b=qdFgUK2KX5KyFgRgBj9xXYYV00fDeBNA/kN0Uvey/LaMDt830YuaBGtzd03iOoCzaI
-         Vbiadpoo4EPpIxE35BnIHkVEAKeN27vjrg9KNcDpsnDRcR+vhXm4+o6K3nAkMi8flv4a
-         H0I7tBS7tXS5bDkaLK/94rDv+fDcH1PzAn28CZPnRYlvzPzHqcZ+9IL1Aj5RbQ7mQhfy
-         ilrlGzGvexOKIaVXY9rLjCFpNCxVa5ASKjIl3r6H2H3fsIW7fwY6hXa9PMu1HuQt67+f
-         AB/Ilm6Vx6KHNbIDnnHrHfhL/z1YhG/CglZLooktPkY7ELe9gv0l+46T8yjT8iHxDesu
-         5XtQ==
-X-Gm-Message-State: APjAAAWsy6le8avDhQfk6hNlIs5pmutyOf0lYeBGPoSuGf2fMwMo3cBQ
-        mXBe88ABKLh2w3aeYC6ky/cpAXbBo98=
-X-Google-Smtp-Source: APXvYqwWn6ivHvumB6Z57+qSecJtCaKEtnrUN0AqGN8qOc5VMfrTeUW9687xwzPRUZBc8kk16zHu6w==
-X-Received: by 2002:a17:902:47:: with SMTP id 65mr13852948pla.130.1578596295719;
-        Thu, 09 Jan 2020 10:58:15 -0800 (PST)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id b185sm9152254pfa.102.2020.01.09.10.58.14
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MLlNWsBXrOryBNtAajsP6p+tnqNK4xK0vs1yNExUT74=;
+        b=dXpGQDDRjIlA+gLoIO93LYwxU1Y3f0diNv9ORZMRHK7jKbQTMTjT5D1ewnvkK6Nhu2
+         Kb3xIZ3ErRMeqoKcXC7X20g/E6GtJnb/yzGcNVgNLIVnzSHiR9fUCfNk9cezky0hmtrK
+         fhMH1A7xwmRNHLYewxSACECZVg0jx0QwpOVyN8Wg916K449RG4nstfu2o9GtJQL2Qol5
+         LehQ319GGwSoRsobCfNAPYfZvWy07RCock6CgXNnORwve13m+1zagA5oLZmjVIZ9rFU0
+         ZOaB8wGfVEN5kZvlWEFYBWRZwGZwL9q6X6nPIQ2nUA/kPIBAE6zZ8VVCj89DrUjyVb3J
+         L17w==
+X-Gm-Message-State: APjAAAVH89ZqYZKg2fsw8gWARow2VdL/H8/IuqDvJ+NWtnepSLCAFTOM
+        d9kBbTYxQoKgCCu56VvO/AU=
+X-Google-Smtp-Source: APXvYqxJvw5/CUhjdAN8kmCIJe1AG6KRvRw2pvb/+xrKwKH1l+cWQxudUwXlSn+EWHzV35YjdU4xBA==
+X-Received: by 2002:a7b:cd0a:: with SMTP id f10mr6730175wmj.56.1578596327589;
+        Thu, 09 Jan 2020 10:58:47 -0800 (PST)
+Received: from localhost (ip-37-188-146-105.eurotel.cz. [37.188.146.105])
+        by smtp.gmail.com with ESMTPSA id q19sm3631897wmc.12.2020.01.09.10.58.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 10:58:15 -0800 (PST)
-Date:   Thu, 9 Jan 2020 10:58:14 -0800 (PST)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Christoph Hellwig <hch@lst.de>
-cc:     Robin Murphy <robin.murphy@arm.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "Grimm, Jon" <jon.grimm@amd.com>, baekhw@google.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [rfc] dma-mapping: preallocate unencrypted DMA atomic pool
-In-Reply-To: <20200109143108.GA22656@lst.de>
-Message-ID: <alpine.DEB.2.21.2001091055460.57374@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1912311738130.68206@chino.kir.corp.google.com> <3213a6ac-5aad-62bc-bf95-fae8ba088b9e@arm.com> <20200107105458.GA3139@lst.de> <alpine.DEB.2.21.2001071152020.183706@chino.kir.corp.google.com> <20200109143108.GA22656@lst.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 09 Jan 2020 10:58:46 -0800 (PST)
+Date:   Thu, 9 Jan 2020 19:58:44 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Wei Yang <richardw.yang@linux.intel.com>
+Cc:     hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        akpm@linux-foundation.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kirill.shutemov@linux.intel.com, yang.shi@linux.alibaba.com,
+        alexander.duyck@gmail.com, rientjes@google.com
+Subject: Re: [Patch v2] mm: thp: grab the lock before manipulation defer list
+Message-ID: <20200109185844.GW4951@dhcp22.suse.cz>
+References: <20200109143054.13203-1-richardw.yang@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200109143054.13203-1-richardw.yang@linux.intel.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 9 Jan 2020, Christoph Hellwig wrote:
+On Thu 09-01-20 22:30:54, Wei Yang wrote:
+> As all the other places, we grab the lock before manipulate the defer list.
+> Current implementation may face a race condition.
+> 
+> For example, the potential race would be:
+> 
+>     CPU1                      CPU2
+>     mem_cgroup_move_account   split_huge_page_to_list
+>       !list_empty
+>                                 lock
+>                                 !list_empty
+>                                 list_del
+>                                 unlock
+>       lock
+>       # !list_empty might not hold anymore
+>       list_del_init
+>       unlock
+> 
+> When this sequence happens, the list_del_init() in
+> mem_cgroup_move_account() would crash if CONFIG_DEBUG_LIST since the
+> page is already been removed by list_del in split_huge_page_to_list().
+> 
+> Fixes: 87eaceb3faa5 ("mm: thp: make deferred split shrinker memcg aware")
+> 
+> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+> Acked-by: David Rientjes <rientjes@google.com>
 
-> > I'll rely on Thomas to chime in if this doesn't make sense for the SEV 
-> > usecase.
-> > 
-> > I think the sizing of the single atomic pool needs to be determined.  Our 
-> > peak usage that we have measured from NVMe is ~1.4MB and atomic_pool is 
-> > currently sized to 256KB by default.  I'm unsure at this time if we need 
-> > to be able to dynamically expand this pool with a kworker.
-> >
-> > Maybe when CONFIG_AMD_MEM_ENCRYPT is enabled this atomic pool should be 
-> > sized to 2MB or so and then when it reaches half capacity we schedule some 
-> > background work to dynamically increase it?  That wouldn't be hard unless 
-> > the pool can be rapidly depleted.
-> > 
-> 
-> Note that a non-coherent architecture with the same workload would need
-> the same size.
-> 
-> > Do we want to increase the atomic pool size by default and then do 
-> > background dynamic expansion?
-> 
-> For now I'd just scale with system memory size.
-> 
+Thanks a lot for the changelog approvements!
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-Thanks Christoph and Robin for the help, we're running some additional 
-stress tests to double check that our required amount of memory from this 
-pool is accurate.  Once that's done, I'll refresh the patch with th 
-suggestions and propose it formally.
+> 
+> ---
+> v2:
+>   * move check on compound outside suggested by Alexander
+>   * an example of the race condition, suggested by Michal
+> ---
+>  mm/memcontrol.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index bc01423277c5..1492eefe4f3c 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -5368,10 +5368,12 @@ static int mem_cgroup_move_account(struct page *page,
+>  	}
+>  
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -	if (compound && !list_empty(page_deferred_list(page))) {
+> +	if (compound) {
+>  		spin_lock(&from->deferred_split_queue.split_queue_lock);
+> -		list_del_init(page_deferred_list(page));
+> -		from->deferred_split_queue.split_queue_len--;
+> +		if (!list_empty(page_deferred_list(page))) {
+> +			list_del_init(page_deferred_list(page));
+> +			from->deferred_split_queue.split_queue_len--;
+> +		}
+>  		spin_unlock(&from->deferred_split_queue.split_queue_lock);
+>  	}
+>  #endif
+> @@ -5385,11 +5387,13 @@ static int mem_cgroup_move_account(struct page *page,
+>  	page->mem_cgroup = to;
+>  
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -	if (compound && list_empty(page_deferred_list(page))) {
+> +	if (compound) {
+>  		spin_lock(&to->deferred_split_queue.split_queue_lock);
+> -		list_add_tail(page_deferred_list(page),
+> -			      &to->deferred_split_queue.split_queue);
+> -		to->deferred_split_queue.split_queue_len++;
+> +		if (list_empty(page_deferred_list(page))) {
+> +			list_add_tail(page_deferred_list(page),
+> +				      &to->deferred_split_queue.split_queue);
+> +			to->deferred_split_queue.split_queue_len++;
+> +		}
+>  		spin_unlock(&to->deferred_split_queue.split_queue_lock);
+>  	}
+>  #endif
+> -- 
+> 2.17.1
+
+-- 
+Michal Hocko
+SUSE Labs
