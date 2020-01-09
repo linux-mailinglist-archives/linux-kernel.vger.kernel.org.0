@@ -2,145 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB5E21351FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 04:37:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BF4D135213
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 04:59:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbgAIDh0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 22:37:26 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:62572 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727671AbgAIDh0 (ORCPT
+        id S1727854AbgAID7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 22:59:38 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:35446 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726913AbgAID7h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 22:37:26 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1578541045; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=8NOMDbCsSCIKS4CuNp07DjdS52l2WkgyDWT2pjLqvKM=;
- b=Ac4EtxraYub8QYrtDYNfvdaDAmcnNX9UIbhVzjyLmXD/n1uoWwNO5PSzsnB0LKyQ6+ByKtuU
- oQNXowsebBGRzWuYS3l47h0GVhI6g1DE5PTCBU5A4dojBbIHbMeAkl7cM1AUoCvfyj7Rb66k
- PV6wgA+jzm07EnglE3l0awrV2Hg=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e169fed.7fdadd788f48-smtp-out-n02;
- Thu, 09 Jan 2020 03:37:17 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 65B0FC4479C; Thu,  9 Jan 2020 03:37:16 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: rjliao)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D03C9C43383;
-        Thu,  9 Jan 2020 03:37:15 +0000 (UTC)
+        Wed, 8 Jan 2020 22:59:37 -0500
+X-UUID: 680714b8ecd04aeeb45eaea5ad274877-20200109
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=KCps6BgWrvdtsekJVTQpLbQ7cnpqG3IPNr8iggRA7dM=;
+        b=ho+sL122t//pXEShp7xu2qqXD4Jfem52dZMrA54A+CSHK9bzs7t7EzmRvsCTlml02icv1dXggfeysvFkwekJS7wbAPuk72kVutgjrx7bNSIdfvHQkJf7NMeSq2GwAVhOhQk4zhZb7l/E3XgRW1lLIfFsEN7Ern/85328KKXL6+4=;
+X-UUID: 680714b8ecd04aeeb45eaea5ad274877-20200109
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <yong.liang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 363496259; Thu, 09 Jan 2020 11:59:32 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N1.mediatek.inc
+ (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 9 Jan
+ 2020 11:58:19 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 9 Jan 2020 11:59:40 +0800
+Message-ID: <1578542359.20923.16.camel@mhfsdcap03>
+Subject: Re: [PATCH v3 1/2] amr64: dts: modify mt8183.dtsi
+From:   Yong Liang <yong.liang@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+Date:   Thu, 9 Jan 2020 11:59:19 +0800
+In-Reply-To: <CANMq1KB4PzAUdp03go0Ur_khi2bM3+oNUhHtMK=--V6DmGXiDA@mail.gmail.com>
+References: <20191227141405.3396-1-yong.liang@mediatek.com>
+         <20191227141405.3396-2-yong.liang@mediatek.com>
+         <CANMq1KD=jAPn4Y7zQZrsg9FB7Cq6tNX0R8OF4qX21Sjy2=0Naw@mail.gmail.com>
+         <CANMq1KB4PzAUdp03go0Ur_khi2bM3+oNUhHtMK=--V6DmGXiDA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Thu, 09 Jan 2020 11:37:15 +0800
-From:   Rocky Liao <rjliao@codeaurora.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-bluetooth-owner@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] Bluetooth: hci_qca: Add qca_power_on() API to
- support both wcn399x and Rome power up
-In-Reply-To: <671e08d94aa70dc315fbaae0ba3429e4@codeaurora.org>
-References: <20200107052601.32216-1-rjliao@codeaurora.org>
- <20200108090804.22889-1-rjliao@codeaurora.org>
- <20200108183427.GE89495@google.com>
- <671e08d94aa70dc315fbaae0ba3429e4@codeaurora.org>
-Message-ID: <24228a5c46c0fc811735e48b1efdcb4f@codeaurora.org>
-X-Sender: rjliao@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+X-TM-SNTS-SMTP: 54C315E0B98D2A87DB338729E419450348F525FF59E3EDFD3BC0ECB9CBA3B6422000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2020-01-09 11:22，Rocky Liao 写道：
-> Hi Matt,
-> 
-> 在 2020-01-09 02:34，Matthias Kaehlcke 写道：
->> Hi Rocky,
->> 
->> On Wed, Jan 08, 2020 at 05:08:02PM +0800, Rocky Liao wrote:
->>> This patch adds a unified API qca_power_on() to support both wcn399x 
->>> and
->>> Rome power on. For wcn399x it calls the qca_wcn3990_init() to init 
->>> the
->>> regulators, and for Rome it pulls up the bt_en GPIO to power up the 
->>> btsoc.
->>> 
->>> Signed-off-by: Rocky Liao <rjliao@codeaurora.org>
->>> ---
->>> 
->>> Changes in v2: None
->>> 
->>>  drivers/bluetooth/hci_qca.c | 21 +++++++++++++++++++++
->>>  1 file changed, 21 insertions(+)
->>> 
->>> diff --git a/drivers/bluetooth/hci_qca.c 
->>> b/drivers/bluetooth/hci_qca.c
->>> index 9392cc7f9908..f6555bd1adbc 100644
->>> --- a/drivers/bluetooth/hci_qca.c
->>> +++ b/drivers/bluetooth/hci_qca.c
->>> @@ -1532,6 +1532,27 @@ static int qca_wcn3990_init(struct hci_uart 
->>> *hu)
->>>  	return 0;
->>>  }
->>> 
->>> +static int qca_power_on(struct hci_dev *hdev)
->>> +{
->>> +	struct hci_uart *hu = hci_get_drvdata(hdev);
->>> +	enum qca_btsoc_type soc_type = qca_soc_type(hu);
->>> +	struct qca_serdev *qcadev;
->>> +	int ret = 0;
->>> +
->>> +	if (qca_is_wcn399x(soc_type)) {
->> 
->> Why not include the qca_regulator_enable() call from qca_open() here?
->> It is clearly part of power on.
->> 
-> OK
-> 
-qca_wcn3990_init() already have the qca_regulator_enable() call, so we 
-just
-need to remove it from qca_open().
+T24gV2VkLCAyMDIwLTAxLTA4IGF0IDE3OjE0ICswODAwLCBOaWNvbGFzIEJvaWNoYXQgd3JvdGU6
+DQo+IE9uIFdlZCwgSmFuIDgsIDIwMjAgYXQgNDo1NiBQTSBOaWNvbGFzIEJvaWNoYXQgPGRyaW5r
+Y2F0QGNocm9taXVtLm9yZz4gd3JvdGU6DQo+ID4NCj4gPiBtaW5vciBuaXQsIHMvYW1yNjQvYXJt
+NjQvIGluIHRoZSBjb21taXQgdGl0bGUuDQo+ID4NCj4gPiBPbiBGcmksIERlYyAyNywgMjAxOSBh
+dCAxMDoxNSBQTSBZb25nIExpYW5nIDx5b25nLmxpYW5nQG1lZGlhdGVrLmNvbT4gd3JvdGU6DQo+
+ID4gPg0KPiA+ID4gRnJvbTogInlvbmcubGlhbmciIDx5b25nLmxpYW5nQG1lZGlhdGVrLmNvbT4N
+Cj4gPiA+DQo+ID4gPiAxLiBJbmNsdWRlIG10ODE4My1yZXNldC5oIGFuZCBhZGQgcmVzZXQtY2Vs
+bHMgaW4gaW5mcmFjZmcNCj4gPiA+IGluIGR0c2kgZmlsZQ0KPiANCj4gRXJyLCB3YWl0LCBkb2Vz
+bid0IHRoaXMgZGVwZW5kIG9uDQo+IGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL3BpcGVybWFp
+bC9saW51eC1tZWRpYXRlay8yMDIwLUphbnVhcnkvMDI2MTcwLmh0bWwNCj4gPw0KPiANCiAgWWVz
+LCBidXQgdGhpcyBwYXRjaCBjYW4gYmUgZGVsYXkgYSB3aGlsZSwgV2Ugd2lsbCBlbnN1cmUgamlh
+eGluJ3MNCnBhdGNoIGJlIHNlbmQgb3V0IHByaW9yaXRseS4NCg0KICBZb25nLkxpYW5nDQoNCj4g
+PiA+IDIuIEFkZCB3YXRjaGRvZyBkZXZpY2Ugbm9kZQ0KPiANCj4gQ2FuIHdlIGhhdmUgYSBwYXRj
+aCB3aXRoIGp1c3QgdGhpcyBjaGFuZ2UgaW5zdGVhZCwgc2luY2UgeW91J3JlDQo+IHNlbmRpbmcg
+dGhlIGJpbmRpbmcgd2l0aCBpdC4NCg0KICBJIHdpbGwgcmVtb3ZlIGJpbmRpbmcgdHh0IGZpbGUg
+ZnJvbSB0aGlzIHBhdGNoLg0KICBBbmQgd2Ugd2lsbCBlbnN1cmUgamlheGluJ3MgcGF0Y2ggYmUg
+c2VuZCBvdXQgcHJpb3JpdGx5Lg0KDQo+IA0KPiA+ID4NCj4gPiA+IFNpZ25lZC1vZmYtYnk6IHlv
+bmcubGlhbmcgPHlvbmcubGlhbmdAbWVkaWF0ZWsuY29tPg0KPiA+DQo+ID4gVGVzdGVkLWJ5OiBO
+aWNvbGFzIEJvaWNoYXQgPGRyaW5rY2F0QGNocm9taXVtLm9yZz4NCj4gPg0KPiA+ID4gLS0tDQo+
+ID4gPiAgYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9tdDgxODMuZHRzaSB8IDggKysrKysr
+KysNCj4gPiA+ICAxIGZpbGUgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspDQo+ID4gPiBbc25pcF0N
+Cj4gDQo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+
+IExpbnV4LW1lZGlhdGVrIG1haWxpbmcgbGlzdA0KPiBMaW51eC1tZWRpYXRla0BsaXN0cy5pbmZy
+YWRlYWQub3JnDQo+IGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8v
+bGludXgtbWVkaWF0ZWsNCg0K
 
->>> +		ret = qca_wcn3990_init(hu);
->>> +	} else {
->>> +		if (hu->serdev) {
->> 
->> nit: you could save a level of indentation (and IMO improve
->> readability) by doing:
->> 
->>      	       if (!hu->serdev)
->> 	            	return 0;
->> 
-> OK
-> 
->>> +			qcadev = serdev_device_get_drvdata(hu->serdev);
->>> +			gpiod_set_value_cansleep(qcadev->bt_en, 1);
->>> +			/* Controller needs time to bootup. */
->>> +			msleep(150);
->>> +		}
->>> +	}
->>> +
->>> +	return ret;
->>> +}
->>> +
->> 
->> I think common practice would be to combine the 3 patches of this 
->> series
->> into one. The new function doesn't really add any new functionality, 
->> but
->> is a refactoring. This is more evident if you see in a single diff 
->> that
->> the pieces in qca_power_on() are removed elsewhere.
-> OK
