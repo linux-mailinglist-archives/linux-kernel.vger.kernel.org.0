@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94AF61360EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 20:17:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1715E1360D4
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 20:15:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729342AbgAITR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 14:17:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729205AbgAITR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 14:17:26 -0500
-Subject: Re: [GIT PULL] HID fixes
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578597307;
-        bh=xgijvTkewxtHJTvruQidXzNftFoGIOfZMNR2GwYO8hU=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=1s8IKAMhbf08t4hT1dkrpBBut5VVQvR8jx1DENpyaRv+g6pYaB82DOUEDwHE6nMJ6
-         LFSK63LwTBq1iGrGTO0yM/AdG9Pm6SqAdDNIRdtK5/5pY8sYq3hP+AIYcDpfXtpbZU
-         ZoSvBoE8Wvh4+PZSBRuDBd7TtL+Ws20bfu8M17Vg=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <nycvar.YFH.7.76.2001091519080.31058@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.2001091519080.31058@cbobk.fhfr.pm>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <nycvar.YFH.7.76.2001091519080.31058@cbobk.fhfr.pm>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-linus
-X-PR-Tracked-Commit-Id: 20eee6e5af35d9586774e80b6e0b1850e7cc9899
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e69ec487b2c7c82ef99b4b15122f58a2a99289a3
-Message-Id: <157859730696.26179.16266411918607310032.pr-tracker-bot@kernel.org>
-Date:   Thu, 09 Jan 2020 19:15:06 +0000
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+        id S1725807AbgAITPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 14:15:16 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:47143 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbgAITPP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 14:15:15 -0500
+X-Originating-IP: 91.224.148.103
+Received: from localhost.localdomain (unknown [91.224.148.103])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id DCB0E24000B;
+        Thu,  9 Jan 2020 19:15:12 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Christophe Kerello <christophe.kerello@st.com>,
+        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: mtd: rawnand: stm32_fmc2: avoid to lock the CPU bus
+Date:   Thu,  9 Jan 2020 20:15:10 +0100
+Message-Id: <20200109191510.10963-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <1576486915-7517-1-git-send-email-christophe.kerello@st.com>
+References: 
+MIME-Version: 1.0
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: 4114b17af41272e14939b000ce8f3ed7ba937e3c
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 9 Jan 2020 15:23:09 +0100 (CET):
+On Mon, 2019-12-16 at 09:01:55 UTC, Christophe Kerello wrote:
+> We are currently using nand_soft_waitrdy to poll the status of the NAND
+> flash. FMC2 enables the wait feature bit (this feature is mandatory for
+> the sequencer mode). By enabling this feature, we can't poll the status
+> of the NAND flash, the read status command is stucked in FMC2 pipeline
+> until R/B# signal is high, and locks the CPU bus.
+> To avoid to lock the CPU bus, we poll FMC2 ISR register. This register
+> reports the status of the R/B# signal.
+> 
+> Fixes: 2cd457f328c1 ("mtd: rawnand: stm32_fmc2: add STM32 FMC2 NAND flash controller driver")
+> Signed-off-by: Christophe Kerello <christophe.kerello@st.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-linus
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/fixes, thanks.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e69ec487b2c7c82ef99b4b15122f58a2a99289a3
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Miquel
