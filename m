@@ -2,68 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68AC31361CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 21:28:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 275971361DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 21:35:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730454AbgAIU1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 15:27:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47236 "EHLO mail.kernel.org"
+        id S1729009AbgAIUfu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 15:35:50 -0500
+Received: from foss.arm.com ([217.140.110.172]:36536 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728588AbgAIU13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 15:27:29 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FAA72072A;
-        Thu,  9 Jan 2020 20:27:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578601649;
-        bh=kONMymtiH/9dXPtXqzdEAzqFnZQb1jMMHojTiC7QWTY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=y6eBk9/Re7rJJGM25qiR9Nlept3qf4sl7P63+Dos2+xFPyJUMePODHyXEgzg1HKC0
-         JlieXNKelOuU0wgQJLqv1j3v4vqNJkIJZMaBDlV9tmngxDh4FaJwjWS4aiW/nKrqaf
-         71eWE2uzXJgh7S8BwP+Ia7JMJ8Z/2HsoqR0V8iCI=
-Date:   Thu, 9 Jan 2020 21:27:27 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 5.4.10
-Message-ID: <20200109202727.GB7962@kroah.com>
-References: <20200109202717.GA7962@kroah.com>
+        id S1727738AbgAIUft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 15:35:49 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 782AD31B;
+        Thu,  9 Jan 2020 12:35:49 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EDF083F534;
+        Thu,  9 Jan 2020 12:35:48 -0800 (PST)
+Date:   Thu, 9 Jan 2020 20:35:47 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Peter Seiderer <ps.report@gmx.net>
+Cc:     linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        Annaliese McDermond <nh6z@nh6z.net>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Subject: Re: [PATCH v1] ASoC: tlv320aic32x4: handle regmap_read error
+ gracefully
+Message-ID: <20200109203547.GF3702@sirena.org.uk>
+References: <20191227152056.9903-1-ps.report@gmx.net>
+ <20191227225204.GQ27497@sirena.org.uk>
+ <20200106214534.39378927@gmx.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="cz6wLo+OExbGG7q/"
 Content-Disposition: inline
-In-Reply-To: <20200109202717.GA7962@kroah.com>
+In-Reply-To: <20200106214534.39378927@gmx.net>
+X-Cookie: Killing turkeys causes winter.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/Makefile b/Makefile
-index 3ba15c3528c8..726bb3dacd5b 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- VERSION = 5
- PATCHLEVEL = 4
--SUBLEVEL = 9
-+SUBLEVEL = 10
- EXTRAVERSION =
- NAME = Kleptomaniac Octopus
- 
-diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-index 460afa415434..d30a2e6e68b4 100644
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@ -120,7 +120,7 @@ static void flush_dcache_range_chunked(unsigned long start, unsigned long stop,
- 	unsigned long i;
- 
- 	for (i = start; i < stop; i += chunk) {
--		flush_dcache_range(i, min(stop, start + chunk));
-+		flush_dcache_range(i, min(stop, i + chunk));
- 		cond_resched();
- 	}
- }
+
+--cz6wLo+OExbGG7q/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Jan 06, 2020 at 09:45:34PM +0100, Peter Seiderer wrote:
+> On Fri, 27 Dec 2019 22:52:04 +0000, Mark Brown <broonie@kernel.org> wrote:
+> > On Fri, Dec 27, 2019 at 04:20:56PM +0100, Peter Seiderer wrote:
+
+> > Please think hard before including complete backtraces in upstream
+> > reports, they are very large and contain almost no useful information
+> > relative to their size so often obscure the relevant content in your
+> > message. If part of the backtrace is usefully illustrative then it's
+> > usually better to pull out the relevant sections.
+
+> Thanks for review..., but a little disagree here, do not know much which
+> is more informative than a complete back trace for a division by zero (and
+> which is the complete information/starting point for investigating the
+> reason therefore) and it would be a pity to loose this valuable information?
+
+Right, some backtrace is definitely often useful for understanding where
+things broke and helping people search for problems - it's just
+providing the *full* backtrace that can be an issue as a lot of it can
+end up being redundant.  As a rule of thumb I'd tend to say that once
+you get out of the driver or subsystem you're starting to loose
+relevance.  For example with a probe failure like this once you get out
+of the driver probe function it almost never matters exactly what the
+stack in the device model core is, it's not adding anything and it's
+usually more than a screenful that needs to be paged through.  Cutting
+that out helps people focus on the bits that matter.
+
+> Maybe I should have added more information about why and how the failing
+> regmap_read() call leads to a division by zero?
+
+Any analysis you've done about why things got confused and broken is
+definitely good to include!
+
+--cz6wLo+OExbGG7q/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4XjqIACgkQJNaLcl1U
+h9Cp2wf/YJiRtkQvhbTHYFHL1Nxg5pueZnzeL+EEaSw+j+5E4OSX+sWbuf16NXYq
+k+HWa02py4PZcKYQVmxf9b4PTjmpqcGiMWOtjDVj6/TafOEs0ovOwLQLAwuUb9By
+oh/jsZ2VwIhBVTAKxmEOyFvy+eYBMonIv4QVAD9Mv8vLpuHGm9FUEPw3D2uy/33s
+1PFU4BscfvDufOHEIe3afqutQNzPYb2KTZXqmYuEw5hUgf1h0vxBIAtO5YTwhvGT
+cTCbYdzVq1cwTlzH3EpiQZGhXUJ11agI5gaNys662gzIvtq7kIpx20N2Kuy0+kif
+9L3c5IlUHB3yAzpoowuDrrRqIKWI+g==
+=VKVc
+-----END PGP SIGNATURE-----
+
+--cz6wLo+OExbGG7q/--
