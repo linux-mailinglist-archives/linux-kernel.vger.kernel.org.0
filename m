@@ -2,155 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFFC9135ED4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 18:00:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 986BD135ED7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 18:01:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387947AbgAIRAp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 12:00:45 -0500
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:50517 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731320AbgAIRAo (ORCPT
+        id S1728280AbgAIRBd convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 9 Jan 2020 12:01:33 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:50081 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729533AbgAIRBc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 12:00:44 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 55153214DB;
-        Thu,  9 Jan 2020 12:00:43 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Thu, 09 Jan 2020 12:00:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=hcgptnGOQIZIIhyQtpsCyNNyBT2
-        /xi/KbtsQbbxl1sM=; b=i6cV77nSAvfaICP1k5kwwfHKme5Q8VKHkYjvdeDpe0o
-        nS8qxapgapFts3bc/uQ86OmWjwKa5yulhHZ9+L69WgwC93cot5MryFjhWCrFD/Xd
-        ZgdEDf/R700vhY5ZLZvijQMkEIt28TLIYXR0gMpzJdX1ptSGCp52HoytAVcm2qzv
-        zwqcqnmpAgUDUGZ/VwGYTZnwWagNnW9Mfs0tpIXLdVyW8JTfjOZNrXditk73sI8t
-        wtIO1HJMCTS5JFI7a514Gy4SRgaVuy0u3w6YcfjWGp2R603vzZhQ7vvTuqMiINUh
-        xEE9x4n4Mhe6L8Spn+aeOcjaUfShy8+zbCDU9BWdryA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=hcgptn
-        GOQIZIIhyQtpsCyNNyBT2/xi/KbtsQbbxl1sM=; b=cxjk8PuoU8UAskb2Z2/zjc
-        Z0MkVcdGI7jx5d1ehOUaFu9u2RQquQOdE6TdiVrN0AE1yKlzLYfo2TtzXtqoM/ow
-        ihn87wsNsspehcHIBZCb35O7iKjku/A4O/9byOccNllNEuCfnI1pzQmpj2oCTdhU
-        H4uQnBtuDoly+cM5vIjDmM10DAsrGNrhLMex4dEtFgRoEGlEPKypwZqRAGUX0Pgz
-        X1mSN/rw88fT5OIlHPhoesKVspmeTFdn9LhKdaylwwPfMPplXtolI60H7ADb0GXC
-        +xlCVTp1QEZf1Je7Hlerd89G/J8fZv1OLgGgJHUm84VkD690Oyyw/h9/STNqIWLg
-        ==
-X-ME-Sender: <xms:OlwXXtmLU14-7_RSAqAhLzFI2_BAY4A5V82oqQwME8tH6iZCLNgiYQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdeiuddgiedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgv
-    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucfkphepie
-    ejrdduiedtrddvudejrddvhedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurhgv
-    shesrghnrghrrgiivghlrdguvgenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:OlwXXq0WR0PtvZ_ri4vjXj1z9EuQmBTaPdxMeO12uG29VsZNasvPkQ>
-    <xmx:OlwXXn4AgxPb70QLFkm9qv61C2iHasXHiDx1XM8DF7mvqaORJeFaXA>
-    <xmx:OlwXXogv4koC5IyRXtFSAPeTTqMdAeVM4M-VQq9egBq_BqgCREpNUQ>
-    <xmx:O1wXXnyvNMVU5h6qFXSyJKt46evGJQD7-ISV31neF0E-Y-ST2rlQUA>
-Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id B960830602DE;
-        Thu,  9 Jan 2020 12:00:42 -0500 (EST)
-Date:   Thu, 9 Jan 2020 09:00:41 -0800
-From:   Andres Freund <andres@anarazel.de>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] perf c2c: Fix sorting.
-Message-ID: <20200109170041.wgvxcci3mkjh4uee@alap3.anarazel.de>
-References: <20200109043030.233746-1-andres@anarazel.de>
- <20200109084822.GD52936@krava>
+        Thu, 9 Jan 2020 12:01:32 -0500
+X-Originating-IP: 91.224.148.103
+Received: from xps13 (unknown [91.224.148.103])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id E5541240004;
+        Thu,  9 Jan 2020 17:01:29 +0000 (UTC)
+Date:   Thu, 9 Jan 2020 18:01:28 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Mason Yang <masonccyang@mxic.com.tw>
+Cc:     richard@nod.at, marek.vasut@gmail.com, dwmw2@infradead.org,
+        bbrezillon@kernel.org, computersforpeace@gmail.com,
+        vigneshr@ti.com, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+Subject: Re: [PATCH v2 4/4] mtd: rawnand: Add support Macronix deep power
+ down mode
+Message-ID: <20200109180128.0f3e7b99@xps13>
+In-Reply-To: <1572256527-5074-5-git-send-email-masonccyang@mxic.com.tw>
+References: <1572256527-5074-1-git-send-email-masonccyang@mxic.com.tw>
+        <1572256527-5074-5-git-send-email-masonccyang@mxic.com.tw>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200109084822.GD52936@krava>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Mason,
 
-On 2020-01-09 09:48:22 +0100, Jiri Olsa wrote:
-> On Wed, Jan 08, 2020 at 08:30:30PM -0800, Andres Freund wrote:
-> > Commit 722ddfde366f ("perf tools: Fix time sorting") changed -
-> > correctly so - hist_entry__sort to return int64. Unfortunately several
-> > of the builtin-c2c.c comparison routines only happened to work due the
-> > cast caused by the wrong return type.
-> > 
-> > This causes meaningless ordering of both the cacheline list, and the
-> > cacheline details page. E.g a simple
-> >   perf c2c record -a sleep 3
-> >   perf c2c report
-> > will result in cacheline table like
-> >   =================================================
-> >              Shared Data Cache Line Table
-> >   =================================================
-> >   #
-> >   #        ----------- Cacheline ----------    Total      Tot  ----- LLC Load Hitm -----  ---- Store Reference ----  --- Load Dram ----      LLC    Total  ----- Core Load Hit -----  -- LLC Load Hit --
-> >   # Index             Address  Node  PA cnt  records     Hitm    Total      Lcl      Rmt    Total    L1Hit   L1Miss       Lcl       Rmt  Ld Miss    Loads       FB       L1       L2       Llc       Rmt
-> >   # .....  ..................  ....  ......  .......  .......  .......  .......  .......  .......  .......  .......  ........  ........  .......  .......  .......  .......  .......  ........  ........
-> >   #
-> >         0      0x7f0d27ffba00   N/A       0       52    0.12%       13        6        7       12       12        0         0         7       14       40        4       16        0         0         0
-> >         1      0x7f0d27ff61c0   N/A       0     6353   14.04%     1475      801      674      779      779        0         0       718     1392     5574     1299     1967        0       115         0
-> >         2      0x7f0d26d3ec80   N/A       0       71    0.15%       16        4       12       13       13        0         0        12       24       58        1       20        0         9         0
-> >         3      0x7f0d26d3ec00   N/A       0       98    0.22%       23       17        6       19       19        0         0         6       12       79        0       40        0        10         0
-> > i.e. with the list not being ordered by Total Hitm.
-> > 
-> > Fixes: 722ddfde366f ("perf tools: Fix time sorting")
-> > Signed-off-by: Andres Freund <andres@anarazel.de>
-> > Cc: Jiri Olsa <jolsa@kernel.org>
-> > Cc: Andi Kleen <ak@linux.intel.com>
-> > Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> > Cc: Michael Petlan <mpetlan@redhat.com>
-> > Cc: Namhyung Kim <namhyung@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: stable@vger.kernel.org # v3.16+
-> > ---
-> >  tools/perf/builtin-c2c.c | 10 ++++++----
-> >  1 file changed, 6 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-> > index e69f44941aad..f2e9d2b1b913 100644
-> > --- a/tools/perf/builtin-c2c.c
-> > +++ b/tools/perf/builtin-c2c.c
-> > @@ -595,8 +595,8 @@ tot_hitm_cmp(struct perf_hpp_fmt *fmt __maybe_unused,
-> >  {
-> >  	struct c2c_hist_entry *c2c_left;
-> >  	struct c2c_hist_entry *c2c_right;
-> > -	unsigned int tot_hitm_left;
-> > -	unsigned int tot_hitm_right;
-> > +	uint64_t tot_hitm_left;
-> > +	uint64_t tot_hitm_right;
+Mason Yang <masonccyang@mxic.com.tw> wrote on Mon, 28 Oct 2019 17:55:27
++0800:
+
+> Macronix AD series support deep power down mode for a minimum
+> power consumption state.
 > 
-> that change looks right, but I can't see how that could
-> happened because of change in Fixes: tag
+> Patch nand_suspend() & nand_resume() by Macronix specific
+> deep power down mode command and exit it.
 > 
-> was the return statement of this function:
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> ---
+>  drivers/mtd/nand/raw/nand_macronix.c | 72 +++++++++++++++++++++++++++++++++++-
+>  1 file changed, 70 insertions(+), 2 deletions(-)
 > 
->         return tot_hitm_left - tot_hitm_right;
-> 
-> considered to be 'unsigned int' and then converted to int64_t,
-> which would treat negative 'unsigned int' as big positive 'int64_t'?
+> diff --git a/drivers/mtd/nand/raw/nand_macronix.c b/drivers/mtd/nand/raw/nand_macronix.c
+> index 13929bf..3098bc0 100644
+> --- a/drivers/mtd/nand/raw/nand_macronix.c
+> +++ b/drivers/mtd/nand/raw/nand_macronix.c
+> @@ -15,6 +15,8 @@
+>  #define MXIC_BLOCK_PROTECTION_ALL_LOCK 0x38
+>  #define MXIC_BLOCK_PROTECTION_ALL_UNLOCK 0x0
+>  
+> +#define NAND_CMD_POWER_DOWN 0xB9
 
-Correct. So e.g. when comparing 1 and 2 tot_hitm, we'd get (int64_t)
-UINT_MAX as a result, which is obviously wrong. However, due to
-hist_entry__sort() returning int at the time, this was masked, as the
-int64_t was cast to int. Thereby again yielding a negative number for
-the comparisons of hist_entry__sort()'s result.  After
-hist_entry__sort() was fixed however, there never could be negative
-return values (but 0's are possible) of hist_entry__sort() for c2c.
+I suppose this value is Macronix specific, and hence should have a
+MACRONIX_ or MXIC_ prefix instead of NAND_.
 
-I briefly looked for places outside of c2c for similar issues in
-hist_entry comparison routines, but didn't find any.
+> +
+>  struct nand_onfi_vendor_macronix {
+>  	u8 reserved;
+>  	u8 reliability_func;
+> @@ -137,13 +139,66 @@ static int mxic_nand_unlock(struct nand_chip *chip, loff_t ofs, uint64_t len)
+>  	return ret;
+>  }
+>  
+> +int nand_power_down_op(struct nand_chip *chip)
+> +{
+> +	int ret;
+> +
+> +	if (nand_has_exec_op(chip)) {
+> +		struct nand_op_instr instrs[] = {
+> +			NAND_OP_CMD(NAND_CMD_POWER_DOWN, 0),
+> +		};
+> +
+> +		struct nand_operation op = NAND_OPERATION(chip->cur_cs, instrs);
+> +
+> +		ret = nand_exec_op(chip, &op);
+> +		if (ret)
+> +			return ret;
+> +
+> +	} else {
+> +		chip->legacy.cmdfunc(chip, NAND_CMD_POWER_DOWN, -1, -1);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int mxic_nand_suspend(struct nand_chip *chip)
+> +{
+> +	int ret;
+> +
+> +	nand_select_target(chip, 0);
+> +	ret = nand_power_down_op(chip);
+> +	if (ret < 0)
+> +		pr_err("%s called for chip into suspend failed\n", __func__);
 
-Greetings,
+What about something more specific?
 
-Andres Freund
+       "Suspending MXIC NAND chip failed (%)\n", ret
+
+> +	nand_deselect_target(chip);
+> +
+> +	return ret;
+> +}
+> +
+> +static void mxic_nand_resume(struct nand_chip *chip)
+> +{
+> +	/*
+> +	 * Toggle #CS pin to resume NAND device and don't care
+> +	 * of the others CLE, #WE, #RE pins status.
+> +	 * Here sending power down command to toggle #CS line.
+
+The first sentence seems right, the second could be upgraded:
+
+           The purpose of doing a power down operation is just to
+           ensure some bytes will be sent over the NAND bus so that #CS
+           gets toggled because this is why the chip is woken up.
+	   The content of the bytes sent on the NAND bus are not
+	   relevant at this time. Sending bytes on the bus is mandatory
+	   for a lot of NAND controllers otherwise they are not able to
+	   just assert/de-assert #CS.
+
+> +	 */
+> +	nand_select_target(chip, 0);
+> +	nand_power_down_op(chip);
+
+Are you sure sending a power_down_op will not be interpreted by the
+chip?
+
+I would expect a sleeping delay here, even small.
+
+> +	nand_deselect_target(chip);
+> +}
+> +
+>  /*
+> - * Macronix NAND AC series support Block Protection by SET_FEATURES
+> + * Macronix NAND AC & AD series support Block Protection by SET_FEATURES
+>   * to lock/unlock blocks.
+>   */
+>  static int macronix_nand_init(struct nand_chip *chip)
+>  {
+> -	bool blockprotected = false;
+> +	unsigned int i;
+> +	bool blockprotected = false, powerdown = false;
+> +	static const char * const power_down_dev[] = {
+> +		"MX30LF1G28AD",
+> +		"MX30LF2G28AD",
+> +		"MX30LF4G28AD",
+> +	};
+>  
+>  	if (nand_is_slc(chip))
+>  		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE;
+> @@ -153,6 +208,14 @@ static int macronix_nand_init(struct nand_chip *chip)
+>  
+>  	macronix_nand_onfi_init(chip);
+>  
+> +	for (i = 0; i < ARRAY_SIZE(power_down_dev); i++) {
+> +		if (!strcmp(power_down_dev[i], chip->parameters.model)) {
+> +			blockprotected = true;
+> +			powerdown = true;
+> +			break;
+> +		}
+> +	}
+> +
+>  	if (blockprotected) {
+>  		bitmap_set(chip->parameters.set_feature_list,
+>  			   ONFI_FEATURE_ADDR_MXIC_PROTECTION, 1);
+> @@ -163,6 +226,11 @@ static int macronix_nand_init(struct nand_chip *chip)
+>  		chip->_unlock = mxic_nand_unlock;
+>  	}
+>  
+> +	if (powerdown) {
+> +		chip->_suspend = mxic_nand_suspend;
+> +		chip->_resume = mxic_nand_resume;
+> +	}
+
+See my comment on patch 2.
+
+> +
+>  	return 0;
+>  }
+>  
+
+Thanks,
+Miquèl
