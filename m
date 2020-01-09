@@ -2,103 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21627135A44
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 14:36:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C09B1135A66
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 14:41:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731194AbgAINgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 08:36:35 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36041 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728974AbgAINge (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 08:36:34 -0500
-Received: by mail-pf1-f195.google.com with SMTP id x184so3410092pfb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 05:36:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cf95WORT6GX1WJSn8Af/G1OCB1Irn/cMBwQxwXC43X4=;
-        b=rmPFqplFiG2J23km4wRX/Ng/4kLCh6mrZt9F0tbMq9Fkk952L8sqSIO4o7LgYULfwU
-         1KtC1gWAKTfa0XSUUAQOR/AmiotKOiyRCtMVmsyZgWl7wiNros6lsyIzVBKk/lEPxX0N
-         5O4IjgJWkFY0lyOJzBgBeSNBDQagktLXZMzfFMLURXzGXfLJjyf9u7JhjvdvJVIPPoIV
-         +FpzI1GmzdsT0mwz6RfBwpQvN5KYst18bnDXEZX/R66raaG4xngUb7fMMFDFr4XRrHLC
-         HS0EaXm5BYy8/MMd3k9yPgsTCotJx3MtIWFki3GxVm5+umLuLYzDRu1kI/QqXQdGnzea
-         4fzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cf95WORT6GX1WJSn8Af/G1OCB1Irn/cMBwQxwXC43X4=;
-        b=ESoiF44ANtBrD2REWUY99BRe3TRL3cTTuQKjwlGy1oGtiDvosD9C6KdCu5euc7C/D5
-         6kSr1U701C/DqciSlHTLlyCfTIyWuvVB/JzC9ZUkKaLxA9XFZ2BdzP++y634GbfvBBjn
-         2sisN3TyVvwx9QBun5Xop7N7Z996gwXNplFMaFIqVZg9JHO/erp6EsfMh/gFUGTe8rYZ
-         aMoY60g+FnU0X4crnrK/61CsipqTDx6yExdmU0x8OmzsHT0qhDd6QQQVQPvSVERbgwPG
-         iJ8GKCqSlMlTirTkEe0NGc4c3+vUllDITWMCS9uykbxk4g8/zrACUx3kGI3X45GoY/qM
-         H4Tw==
-X-Gm-Message-State: APjAAAVExdD493MjGGKdIj86Tyv0tvYA1mRyA30+hdiPiV2jyEauEwoq
-        maMv8YEf8YND0pAR0P7p8DHhUV8dtXuASl2mIGU=
-X-Google-Smtp-Source: APXvYqzYs38vcWA8XTYQ6/bQR6VN+il7W5RyHWICEMlfnkK4VOVNx6yJKOpUbeM/o/gNmhfTvQD92qFBUgw0+jdnlik=
-X-Received: by 2002:a63:3dc6:: with SMTP id k189mr10954174pga.396.1578576993895;
- Thu, 09 Jan 2020 05:36:33 -0800 (PST)
+        id S1730617AbgAINk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 08:40:57 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8247 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725839AbgAINk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 08:40:57 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A5C634568D018053A16A;
+        Thu,  9 Jan 2020 21:40:54 +0800 (CST)
+Received: from huawei.com (10.175.113.25) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Thu, 9 Jan 2020
+ 21:40:47 +0800
+From:   Wang ShaoBo <bobo.shaobowang@huawei.com>
+To:     <mark.rutland@arm.com>, <hch@infradead.org>,
+        <linux@dominikbrodowski.net>
+CC:     <cj.chengjian@huawei.com>, <huawei.libin@huawei.com>,
+        <xiexiuqi@huawei.com>, <yangyingliang@huawei.com>,
+        <bobo.shaobowang@huawei.com>, <guohanjun@huawei.com>,
+        <wcohen@redhat.com>, <linux-kernel@vger.kernel.org>,
+        <mtk.manpages@gmail.com>, <wezhang@redhat.com>
+Subject: [PATCH v2] sys_personality: Add a optional arch hook arch_check_personality() for common sys_personality()
+Date:   Thu, 9 Jan 2020 21:36:34 +0800
+Message-ID: <20200109133634.176483-1-bobo.shaobowang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20200108152100.7630-1-sergey.dyasli@citrix.com> <20200108152100.7630-5-sergey.dyasli@citrix.com>
-In-Reply-To: <20200108152100.7630-5-sergey.dyasli@citrix.com>
-From:   Paul Durrant <pdurrant@gmail.com>
-Date:   Thu, 9 Jan 2020 13:36:22 +0000
-Message-ID: <CACCGGhCGcdEq7CC3J0201ETvAd+PZ2fTDNUS3mo599Tuf-61yA@mail.gmail.com>
-Subject: Re: [PATCH v1 4/4] xen/netback: Fix grant copy across page boundary
- with KASAN
-To:     Sergey Dyasli <sergey.dyasli@citrix.com>
-Cc:     xen-devel@lists.xen.org, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        George Dunlap <george.dunlap@citrix.com>,
-        Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Wei Liu <wei.liu@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 8 Jan 2020 at 15:21, Sergey Dyasli <sergey.dyasli@citrix.com> wrote:
->
-> From: Ross Lagerwall <ross.lagerwall@citrix.com>
->
-> When KASAN (or SLUB_DEBUG) is turned on, the normal expectation that
-> allocations are aligned to the next power of 2 of the size does not
-> hold. Therefore, handle grant copies that cross page boundaries.
->
-> Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-> Signed-off-by: Sergey Dyasli <sergey.dyasli@citrix.com>
-> ---
-> RFC --> v1:
-> - Added BUILD_BUG_ON to the netback patch
-> - xenvif_idx_release() now located outside the loop
->
-> CC: Wei Liu <wei.liu@kernel.org>
-> CC: Paul Durrant <paul@xen.org>
-[snip]
->
-> +static void __init __maybe_unused build_assertions(void)
-> +{
-> +       BUILD_BUG_ON(sizeof(struct xenvif_tx_cb) > 48);
+currently arm64 use __arm64_sys_arm64_personality() as its default
+syscall. But using a normal hook arch_check_personality() can reject
+personality settings for special case of different archs.
 
-FIELD_SIZEOF(struct sk_buff, cb) rather than a magic '48' I think.
+Signed-off-by: Wang ShaoBo <bobo.shaobowang@huawei.com>
+---
+ Changes in v2:
+  - Delete inline ksys_personality() definition.
+  - Update sys_personality() definition.
+ Changes in v1:
+  - Delete macro __arm64_sys_personality.
+  - Add hook arch_check_personality() and update sys_personality().
+---
+ arch/arm64/kernel/sys.c  |  7 +++----
+ include/linux/syscalls.h | 10 ----------
+ kernel/exec_domain.c     | 14 +++++++++++++-
+ 3 files changed, 16 insertions(+), 15 deletions(-)
 
-  Paul
+diff --git a/arch/arm64/kernel/sys.c b/arch/arm64/kernel/sys.c
+index d5ffaaab31a7..5c01816d7a77 100644
+--- a/arch/arm64/kernel/sys.c
++++ b/arch/arm64/kernel/sys.c
+@@ -28,12 +28,13 @@ SYSCALL_DEFINE6(mmap, unsigned long, addr, unsigned long, len,
+ 	return ksys_mmap_pgoff(addr, len, prot, flags, fd, off >> PAGE_SHIFT);
+ }
+ 
+-SYSCALL_DEFINE1(arm64_personality, unsigned int, personality)
++int arch_check_personality(unsigned int personality)
+ {
+ 	if (personality(personality) == PER_LINUX32 &&
+ 		!system_supports_32bit_el0())
+ 		return -EINVAL;
+-	return ksys_personality(personality);
++
++	return 0;
+ }
+ 
+ asmlinkage long sys_ni_syscall(void);
+@@ -46,8 +47,6 @@ asmlinkage long __arm64_sys_ni_syscall(const struct pt_regs *__unused)
+ /*
+  * Wrappers to pass the pt_regs argument.
+  */
+-#define __arm64_sys_personality		__arm64_sys_arm64_personality
+-
+ #undef __SYSCALL
+ #define __SYSCALL(nr, sym)	asmlinkage long __arm64_##sym(const struct pt_regs *);
+ #include <asm/unistd.h>
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 2960dedcfde8..b7ead4c933d5 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -1389,16 +1389,6 @@ static inline long ksys_truncate(const char __user *pathname, loff_t length)
+ 	return do_sys_truncate(pathname, length);
+ }
+ 
+-static inline unsigned int ksys_personality(unsigned int personality)
+-{
+-	unsigned int old = current->personality;
+-
+-	if (personality != 0xffffffff)
+-		set_personality(personality);
+-
+-	return old;
+-}
+-
+ /* for __ARCH_WANT_SYS_IPC */
+ long ksys_semtimedop(int semid, struct sembuf __user *tsops,
+ 		     unsigned int nsops,
+diff --git a/kernel/exec_domain.c b/kernel/exec_domain.c
+index 33f07c5f2515..1e70b41bf348 100644
+--- a/kernel/exec_domain.c
++++ b/kernel/exec_domain.c
+@@ -35,9 +35,21 @@ static int __init proc_execdomains_init(void)
+ module_init(proc_execdomains_init);
+ #endif
+ 
++int __weak arch_check_personality(unsigned int personality)
++{
++	return 0;
++}
++
+ SYSCALL_DEFINE1(personality, unsigned int, personality)
+ {
+-	unsigned int old = current->personality;
++	int check;
++	unsigned int old;
++
++	check = arch_check_personality(personality);
++	if (check)
++		return check;
++
++	old = current->personality;
+ 
+ 	if (personality != 0xffffffff)
+ 		set_personality(personality);
+-- 
+2.20.1
 
-> +}
-> +
->  MODULE_LICENSE("Dual BSD/GPL");
->  MODULE_ALIAS("xen-backend:vif");
-> --
-> 2.17.1
->
