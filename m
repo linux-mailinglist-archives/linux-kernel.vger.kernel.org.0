@@ -2,176 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CA9913561A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:47:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DF7C135621
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:48:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729821AbgAIJri (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 04:47:38 -0500
-Received: from foss.arm.com ([217.140.110.172]:55898 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728755AbgAIJrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 04:47:37 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB55D31B;
-        Thu,  9 Jan 2020 01:47:36 -0800 (PST)
-Received: from [10.37.12.111] (unknown [10.37.12.111])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 399463F6C4;
-        Thu,  9 Jan 2020 01:47:33 -0800 (PST)
-Subject: Re: [PATCH v2 01/11] PM / devfreq: Add devfreq_get_devfreq_by_node
- function
-To:     Chanwoo Choi <cw00.choi@samsung.com>, robh+dt@kernel.org,
-        krzk@kernel.org, heiko@sntech.de, leonard.crestez@nxp.com
-Cc:     mark.rutland@arm.com, a.swigon@samsung.com,
-        m.szyprowski@samsung.com, kgene@kernel.org,
-        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20191220002430.11995-1-cw00.choi@samsung.com>
- <CGME20191220001759epcas1p4bbbcf6a84c09229db0ddae86be294405@epcas1p4.samsung.com>
- <20191220002430.11995-2-cw00.choi@samsung.com>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <71da0ef9-1e72-dddc-dcb4-e4cb28b67183@arm.com>
-Date:   Thu, 9 Jan 2020 09:47:31 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1729836AbgAIJsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 04:48:09 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:33457 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729826AbgAIJsI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 04:48:08 -0500
+Received: by mail-qk1-f195.google.com with SMTP id d71so5431893qkc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 01:48:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=kFt5sINwCshN7f9XPeO36FD74hM2+ZVDRrYbGF8loWg=;
+        b=MC9xf9MeaTGS0ORWl9iQ4wapynYiCn/Ktx+vvFlfK7odU2KpzoA3/BD2X7r+BBwEUj
+         AJ+a/oeCIJjWrmW+5Jkmq9Yz9BZKT3Bmjjfzm56uBKhiMmmYCEBALZMqSORH3orOG9Qe
+         TAgbPzK5lBIgc+Er5fKe809mLb5nhY4ThWFYcg73GSGOAZbFnxeBRDy1jP/4ew9PsA3N
+         K5n2c3kN97ulvkzH79saWCh2c62itzxld2703wwno5bBSesTGCIUGJHKceWczsTpMIz1
+         GFHWXdjGPtiqukwIyrP4OipPnI1rXSeO7ZUlKGAtio6wR4aDkXYfl3sLVndplD62fp2K
+         TjWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=kFt5sINwCshN7f9XPeO36FD74hM2+ZVDRrYbGF8loWg=;
+        b=qDUKcSIaw7EX/egsUmb5BEYdQhivGbfpr1svYbM5sS7G2+ytE0D04tZOXl9t6PWdtg
+         Lpysa5p3qaUkcX+wjS1gXWUsox5twWIL/SCBEvcr6jhBMv/d5+ds3USf1jej9QVC7ijO
+         lSeNHmZEps8VROIQYm/+83RLyxiLegNxWuA2lbTbjfT/WevaEQHei1WcbCUkytsaJ26g
+         3MezNiWVsRyNxVRyv+Jq6xRszF5SOT47xJE6E59PWHvyj3VlHM9HhGcKQCb8pJwedO8P
+         nQU7IyjA8HFh+n39wGPs5bWrX1ifCzx0IMPfS8MyTYpyHte0MsAzU0whpvhTA0kZs60a
+         kxNA==
+X-Gm-Message-State: APjAAAXIqkGVt7fCl0NORm7RDjsQsp+UixiFqNgFLD+fwZulgK3qZM18
+        oK0P/QEftqDclRLW8+QfrrfkmfK+WhEDmvPGfIWLGw==
+X-Google-Smtp-Source: APXvYqwtJLDiExkWMnInqbVktQr9vDV/d5lmAhlTP7G0mBpb6RfrkdSR6eG91YtmQ+x9YK8qMe3vwS9aE/HYkSbCbkg=
+X-Received: by 2002:a05:620a:12cf:: with SMTP id e15mr8766111qkl.120.1578563287029;
+ Thu, 09 Jan 2020 01:48:07 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191220002430.11995-2-cw00.choi@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200107092922.18408-1-ktouil@baylibre.com> <20200107092922.18408-5-ktouil@baylibre.com>
+ <20200108205447.GA16981@bogus>
+In-Reply-To: <20200108205447.GA16981@bogus>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Thu, 9 Jan 2020 10:47:56 +0100
+Message-ID: <CAMpxmJXffr-S51udNmUyMHz687jAoBKrYspNypfUUqjOD45zxQ@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] dt-bindings: at25: add reference for the wp-gpios property
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Khouloud Touil <ktouil@baylibre.com>,
+        baylibre-upstreaming@groups.io,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chanwoo,
+=C5=9Br., 8 sty 2020 o 21:54 Rob Herring <robh@kernel.org> napisa=C5=82(a):
+>
+> On Tue,  7 Jan 2020 10:29:21 +0100, Khouloud Touil wrote:
+> > As the at25 uses the NVMEM subsystem, and the property is now being
+> > handled, adding reference for it in the device tree binding document,
+> > which allows to specify the GPIO line to which the write-protect pin
+> > is connected.
+> >
+> > Signed-off-by: Khouloud Touil <ktouil@baylibre.com>
+> > ---
+> >  Documentation/devicetree/bindings/eeprom/at25.txt | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
+Hi Greg,
 
-On 12/20/19 12:24 AM, Chanwoo Choi wrote:
-> From: Leonard Crestez <leonard.crestez@nxp.com>
-> 
-> Split off part of devfreq_get_devfreq_by_phandle into a separate
-> function. This allows callers to fetch devfreq instances by enumerating
-> devicetree instead of explicit phandles.
-> 
-> [lkp: Reported the build error]
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> [cw00.choi: Export devfreq_get_devfreq_by_node function and
->   add function to devfreq.h when CONFIG_PM_DEVFREQ is enabled.]
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->   drivers/devfreq/devfreq.c | 46 +++++++++++++++++++++++++++++----------
->   include/linux/devfreq.h   |  6 +++++
->   2 files changed, 41 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index 89260b17598f..cb8ca81c8973 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -966,6 +966,32 @@ struct devfreq *devm_devfreq_add_device(struct device *dev,
->   EXPORT_SYMBOL(devm_devfreq_add_device);
->   
->   #ifdef CONFIG_OF
-> +/*
-> + * devfreq_get_devfreq_by_node - Get the devfreq device from devicetree
-> + * @node - pointer to device_node
-> + *
-> + * return the instance of devfreq device
-> + */
-> +struct devfreq *devfreq_get_devfreq_by_node(struct device_node *node)
-> +{
-> +	struct devfreq *devfreq;
-> +
-> +	if (!node)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	mutex_lock(&devfreq_list_lock);
-> +	list_for_each_entry(devfreq, &devfreq_list, node) {
-> +		if (devfreq->dev.parent
-> +			&& devfreq->dev.parent->of_node == node) {
-> +			mutex_unlock(&devfreq_list_lock);
-> +			return devfreq;
-> +		}
-> +	}
-> +	mutex_unlock(&devfreq_list_lock);
-> +
-> +	return ERR_PTR(-ENODEV);
-> +}
-> +
->   /*
->    * devfreq_get_devfreq_by_phandle - Get the devfreq device from devicetree
->    * @dev - instance to the given device
-> @@ -988,26 +1014,24 @@ struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev, int index)
->   	if (!node)
->   		return ERR_PTR(-ENODEV);
->   
-> -	mutex_lock(&devfreq_list_lock);
-> -	list_for_each_entry(devfreq, &devfreq_list, node) {
-> -		if (devfreq->dev.parent
-> -			&& devfreq->dev.parent->of_node == node) {
-> -			mutex_unlock(&devfreq_list_lock);
-> -			of_node_put(node);
-> -			return devfreq;
-> -		}
-> -	}
-> -	mutex_unlock(&devfreq_list_lock);
-> +	devfreq = devfreq_get_devfreq_by_node(node);
->   	of_node_put(node);
->   
-> -	return ERR_PTR(-EPROBE_DEFER);
-> +	return devfreq;
->   }
-> +
->   #else
-> +struct devfreq *devfreq_get_devfreq_by_node(struct device_node *node)
-> +{
-> +	return ERR_PTR(-ENODEV);
-> +}
-> +
->   struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev, int index)
->   {
->   	return ERR_PTR(-ENODEV);
->   }
->   #endif /* CONFIG_OF */
-> +EXPORT_SYMBOL_GPL(devfreq_get_devfreq_by_node);
->   EXPORT_SYMBOL_GPL(devfreq_get_devfreq_by_phandle);
->   
->   /**
-> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
-> index c6f82d4bec9f..1dccc47acbce 100644
-> --- a/include/linux/devfreq.h
-> +++ b/include/linux/devfreq.h
-> @@ -253,6 +253,7 @@ extern void devm_devfreq_unregister_notifier(struct device *dev,
->   				struct devfreq *devfreq,
->   				struct notifier_block *nb,
->   				unsigned int list);
-> +extern struct devfreq *devfreq_get_devfreq_by_node(struct device_node *node);
+AT25 patches usually go through the char-misc tree. In this case
+however, the change depends on the other patches in this series. Can
+you ack this and I'll take it through the AT24 tree exceptionally?
 
-It can go without 'extern' in the header.
-
->   extern struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev,
->   						int index);
->   
-> @@ -407,6 +408,11 @@ static inline void devm_devfreq_unregister_notifier(struct device *dev,
->   {
->   }
->   
-> +static inline struct devfreq *devfreq_get_devfreq_by_node(struct device_node *node)
-> +{
-> +	return ERR_PTR(-ENODEV);
-> +}
-> +
->   static inline struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev,
->   							int index)
->   {
-> 
-
-Apart from this minor thing, looks good to me.
-When you fix it, feel free to add
-
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
-
-Regards,
-Lukasz
+Best regards,
+Bartosz Golaszewski
