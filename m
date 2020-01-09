@@ -2,90 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D7701353EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 08:55:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEE011353F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 08:58:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728352AbgAIHze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 02:55:34 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46714 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728184AbgAIHze (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 02:55:34 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z7so6190606wrl.13;
-        Wed, 08 Jan 2020 23:55:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RHXfR00D9x10M+a38QH4C3WYscmRe8nqh31YYkY4Uuk=;
-        b=SLOBR5fiGyw/pjLNSzbKAECZBNUnrlm0s69LFY8PyYRqcVOb86Ku0r0ccPUoUxHkVK
-         SdUvS3amS7dCj0eaxbGS6bBTucCuIG9CnkyBUq20lY/vKEfeab59EJP6oJgYjkYNJyUx
-         uK/Ey1xHvVzvhCH5/i54iNaWGauQq/+sYr7cCs/YX4jygPBzRk7WeDRsP2FqBqV4EY1W
-         52W7hKjz2VxpvI1PcC8dSWnfrF7lwPv8ulf9hoLcx/hUUYc23SbCvYyiQ23hqFx8aCc0
-         +xO/ObfsDalvLbT2pkJqyja9Iq6SyxnIllj4n58D1YZFX7pBmz2DaikkSXGjtgec4EZ0
-         e1zg==
-X-Gm-Message-State: APjAAAU23PK87YkIQg6H9nxWH3jMEmNKPI2Nf8xEQgcAb7eiB+oYosJI
-        uvXOn6dGkSGRbcAY2Bxh3wEBGkuQ22w+LDPEtaI=
-X-Google-Smtp-Source: APXvYqyzTcLoiHvDSM0IvKq6j8EEneu+thKS5ynO1fGnk8bQ0+pGHoJZ1L5atbVXLs7LHEZA1pJCJSb4XoZjsEjN1LA=
-X-Received: by 2002:adf:e2cf:: with SMTP id d15mr9232900wrj.225.1578556532209;
- Wed, 08 Jan 2020 23:55:32 -0800 (PST)
-MIME-Version: 1.0
-References: <20200107133501.327117-1-namhyung@kernel.org> <20200107133501.327117-9-namhyung@kernel.org>
- <20200108222458.GF12995@krava>
-In-Reply-To: <20200108222458.GF12995@krava>
-From:   Namhyung Kim <namhyung@kernel.org>
-Date:   Thu, 9 Jan 2020 16:55:21 +0900
-Message-ID: <CAM9d7ch7t9GDu=emb9MYdTSB8hPb0adAy1iOdjyXSXVXTpGBFg@mail.gmail.com>
-Subject: Re: [PATCH 8/9] perf top: Add --all-cgroups option
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        id S1728349AbgAIH6n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 02:58:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40234 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728276AbgAIH6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 02:58:42 -0500
+Received: from T480 (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CC10206ED;
+        Thu,  9 Jan 2020 07:58:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578556721;
+        bh=IxIDaYwn1hYLk4AjZMN5Qonq1h8D5Y/VRrDjQJUKNq0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q9FuoXicRdmdy8u3f4kO6XoaxwV4LHUFXa/jXJ1M8Hb5Kaj4P8nFNuYO0ld5JUzTP
+         LcKNnf/QO//ezjudN3G2NSzz0chy2/HbRRoosjYXlp156GJc5Vdueu/ym2rJfKJ55t
+         GoYrUkNzy6tzqDqUe8nm5NwIbog2TM9mBg9cNOVo=
+Date:   Thu, 9 Jan 2020 15:58:33 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Aapo Vienamo <aapo.vienamo@iki.fi>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Stephane Eranian <eranian@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users <linux-perf-users@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: mxs: Enable usbphy1 and usb1 on apx4devkit DTS
+Message-ID: <20200109075832.GG4456@T480>
+References: <20191229131503.20843-1-aapo.vienamo@iki.fi>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191229131503.20843-1-aapo.vienamo@iki.fi>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 9, 2020 at 7:25 AM Jiri Olsa <jolsa@redhat.com> wrote:
->
-> On Tue, Jan 07, 2020 at 10:35:00PM +0900, Namhyung Kim wrote:
-> > The --all-cgroups option is to enable cgroup profiling support.  It
-> > tells kernel to record CGROUP events in the ring buffer so that perf
-> > report can identify task/cgroup association later.
-> >
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> >  tools/perf/Documentation/perf-top.txt | 4 ++++
-> >  tools/perf/builtin-top.c              | 9 +++++++++
-> >  2 files changed, 13 insertions(+)
-> >
-> > diff --git a/tools/perf/Documentation/perf-top.txt b/tools/perf/Documentation/perf-top.txt
-> > index 5596129a71cf..c75507f50071 100644
-> > --- a/tools/perf/Documentation/perf-top.txt
-> > +++ b/tools/perf/Documentation/perf-top.txt
-> > @@ -266,6 +266,10 @@ Default is to monitor all CPUS.
-> >       Record events of type PERF_RECORD_NAMESPACES and display it with the
-> >       'cgroup_id' sort key.
-> >
-> > +--cgroup::
-> > +     Record events of type PERF_RECORD_CGROUP and display it with the
-> > +     'cgroup' sort key.
->
-> should be '--all-cgroups' ?
+On Sun, Dec 29, 2019 at 03:15:03PM +0200, Aapo Vienamo wrote:
+> Enable the USB host port on the APx4 development board.
+> 
+> Signed-off-by: Aapo Vienamo <aapo.vienamo@iki.fi>
+> ---
+>  arch/arm/boot/dts/imx28-apx4devkit.dts | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/imx28-apx4devkit.dts b/arch/arm/boot/dts/imx28-apx4devkit.dts
+> index 3a184d13887b..f00d201ce242 100644
+> --- a/arch/arm/boot/dts/imx28-apx4devkit.dts
+> +++ b/arch/arm/boot/dts/imx28-apx4devkit.dts
+> @@ -183,6 +183,12 @@ auart2: serial@8006e000 {
+>  				pinctrl-0 = <&auart2_2pins_a>;
+>  				status = "okay";
+>  			};
+> +
+> +			usbphy1: usbphy@8007e000 {
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&usb1_pins_a>;
+> +				status = "okay";
+> +			};
+>  		};
+>  	};
+>  
+> @@ -193,6 +199,10 @@ mac0: ethernet@800f0000 {
+>  			pinctrl-0 = <&mac0_pins_a>;
+>  			status = "okay";
+>  		};
+> +
+> +		usb1: usb@80090000 {
 
-Oops, you're right.
+We want to keep nodes with unit-address sorted in that address.  That
+said, usb@80090000 should go before ethernet@800f0000.
 
->
-> anyway, we dont have '--cgroups', why not use just this?
+Shawn
 
-I chose it for consistency since perf record has '--cgroup' option.
-
-Thanks
-Namhyung
+> +		      status = "okay";
+> +		};
+>  	};
+>  
+>  	regulators {
+> -- 
+> 2.24.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
