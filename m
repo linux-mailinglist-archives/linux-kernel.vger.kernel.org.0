@@ -2,149 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79F761354AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 09:48:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 576CA1354B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 09:50:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728733AbgAIIsd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 03:48:33 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:48838 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728448AbgAIIsd (ORCPT
+        id S1728782AbgAIIt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 03:49:59 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35452 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728538AbgAIIt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 03:48:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578559711;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7gUnYXOKmpS/NEpT+R2hURrL5sPZKcFBzwobZVjhnkk=;
-        b=NJBHtW0xn5JCsHSIrKofmXfYHFcT/Cj7wYlK/MRvwsGAL9dzFHl2TWBcsr0awMLL7fsUJ6
-        fpW3LAChVTAht3vZQyRLppbzV4IvVo5et+MZPceHpsF+jgXJNkR75JO5yCDxWdmHxxhmhH
-        BLuoRudaTt8ErKUjjD/OpYdur4i1b/8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-405-CnYy1Ns1Od6kEkzjCocMXg-1; Thu, 09 Jan 2020 03:48:28 -0500
-X-MC-Unique: CnYy1Ns1Od6kEkzjCocMXg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AAA79107ACC4;
-        Thu,  9 Jan 2020 08:48:26 +0000 (UTC)
-Received: from krava (unknown [10.43.17.48])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AA83A10013A7;
-        Thu,  9 Jan 2020 08:48:24 +0000 (UTC)
-Date:   Thu, 9 Jan 2020 09:48:22 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Andres Freund <andres@anarazel.de>
-Cc:     linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] perf c2c: Fix sorting.
-Message-ID: <20200109084822.GD52936@krava>
-References: <20200109043030.233746-1-andres@anarazel.de>
+        Thu, 9 Jan 2020 03:49:59 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p17so1876033wmb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 00:49:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HkmT/H0ZhfS407bD4aO1lzA4ZzACMKMDaTVuBlwXUwY=;
+        b=i+tZkfsRd6n4MPXMiX0FhgEX3RVA/p7vBeZrccxLkz5/vBJXX6kSRRzKu0QJe1Zn8A
+         63OdOB+lC1Yp/0vSkwfUx3mjipt8KZDrBXClaIMa8Mp3hsgC9w5rNph7abA54jhhXIa8
+         MK+aaFE6PNAKlJD3cEOlkZsHXbmkmPPhHIbsBlXsZI3WMvl1GpaPBTzpW9vaoetluyKp
+         nQYCjOhok38qdxMagm9ZWLtHUH0qgwYLTADPJaboe+50+gXU8jl+InVI71Jp5vLAUVQf
+         t5LZgdBDpSOwGdvLd8naQf9l9IjpwPfDZ0H4VQ2w+Ee3eUa/Pw3EceByJYGyaAGcX47u
+         JBIA==
+X-Gm-Message-State: APjAAAVQK0Do11Q7BPOcI0ynIUStGgA9vCpIWyfVm5rVudgc/HimVA/O
+        edqihxb6HaPgdKHtmqtfmlc=
+X-Google-Smtp-Source: APXvYqw0aY48Yfv1vThwdEkfwH0Fqeh8X5myKMWsTmTCpivL/2veh03vVB5fRl0y5PDjBfiq0Idn2w==
+X-Received: by 2002:a1c:740b:: with SMTP id p11mr3643069wmc.78.1578559797116;
+        Thu, 09 Jan 2020 00:49:57 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id u18sm6793493wrt.26.2020.01.09.00.49.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jan 2020 00:49:56 -0800 (PST)
+Date:   Thu, 9 Jan 2020 09:49:55 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Scott Cheloha <cheloha@linux.vnet.ibm.com>,
+        David Hildenbrand <david@redhat.com>, nathanl@linux.ibm.com,
+        ricklind@linux.vnet.ibm.com,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3] drivers/base/memory.c: cache blocks in radix tree to
+ accelerate lookup
+Message-ID: <20200109084955.GI4951@dhcp22.suse.cz>
+References: <20191121195952.3728-1-cheloha@linux.vnet.ibm.com>
+ <20191217193238.3098-1-cheloha@linux.vnet.ibm.com>
+ <20200107214801.GN32178@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200109043030.233746-1-andres@anarazel.de>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <20200107214801.GN32178@dhcp22.suse.cz>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 08, 2020 at 08:30:30PM -0800, Andres Freund wrote:
-> Commit 722ddfde366f ("perf tools: Fix time sorting") changed -
-> correctly so - hist_entry__sort to return int64. Unfortunately several
-> of the builtin-c2c.c comparison routines only happened to work due the
-> cast caused by the wrong return type.
+On Tue 07-01-20 22:48:04, Michal Hocko wrote:
+> [Cc Andrew]
 > 
-> This causes meaningless ordering of both the cacheline list, and the
-> cacheline details page. E.g a simple
->   perf c2c record -a sleep 3
->   perf c2c report
-> will result in cacheline table like
->   =================================================
->              Shared Data Cache Line Table
->   =================================================
->   #
->   #        ----------- Cacheline ----------    Total      Tot  ----- LLC Load Hitm -----  ---- Store Reference ----  --- Load Dram ----      LLC    Total  ----- Core Load Hit -----  -- LLC Load Hit --
->   # Index             Address  Node  PA cnt  records     Hitm    Total      Lcl      Rmt    Total    L1Hit   L1Miss       Lcl       Rmt  Ld Miss    Loads       FB       L1       L2       Llc       Rmt
->   # .....  ..................  ....  ......  .......  .......  .......  .......  .......  .......  .......  .......  ........  ........  .......  .......  .......  .......  .......  ........  ........
->   #
->         0      0x7f0d27ffba00   N/A       0       52    0.12%       13        6        7       12       12        0         0         7       14       40        4       16        0         0         0
->         1      0x7f0d27ff61c0   N/A       0     6353   14.04%     1475      801      674      779      779        0         0       718     1392     5574     1299     1967        0       115         0
->         2      0x7f0d26d3ec80   N/A       0       71    0.15%       16        4       12       13       13        0         0        12       24       58        1       20        0         9         0
->         3      0x7f0d26d3ec00   N/A       0       98    0.22%       23       17        6       19       19        0         0         6       12       79        0       40        0        10         0
-> i.e. with the list not being ordered by Total Hitm.
+> On Tue 17-12-19 13:32:38, Scott Cheloha wrote:
+> > Searching for a particular memory block by id is slow because each block
+> > device is kept in an unsorted linked list on the subsystem bus.
 > 
-> Fixes: 722ddfde366f ("perf tools: Fix time sorting")
-> Signed-off-by: Andres Freund <andres@anarazel.de>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Andi Kleen <ak@linux.intel.com>
-> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Michael Petlan <mpetlan@redhat.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: stable@vger.kernel.org # v3.16+
-> ---
->  tools/perf/builtin-c2c.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+> Noting that this is O(N^2) would be useful.
 > 
-> diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-> index e69f44941aad..f2e9d2b1b913 100644
-> --- a/tools/perf/builtin-c2c.c
-> +++ b/tools/perf/builtin-c2c.c
-> @@ -595,8 +595,8 @@ tot_hitm_cmp(struct perf_hpp_fmt *fmt __maybe_unused,
->  {
->  	struct c2c_hist_entry *c2c_left;
->  	struct c2c_hist_entry *c2c_right;
-> -	unsigned int tot_hitm_left;
-> -	unsigned int tot_hitm_right;
-> +	uint64_t tot_hitm_left;
-> +	uint64_t tot_hitm_right;
-
-that change looks right, but I can't see how that could
-happened because of change in Fixes: tag
-
-was the return statement of this function:
-
-        return tot_hitm_left - tot_hitm_right;
-
-considered to be 'unsigned int' and then converted to int64_t,
-which would treat negative 'unsigned int' as big positive 'int64_t'?
-
-thanks,
-jirka
-
->  
->  	c2c_left  = container_of(left, struct c2c_hist_entry, he);
->  	c2c_right = container_of(right, struct c2c_hist_entry, he);
-> @@ -629,7 +629,8 @@ __f ## _cmp(struct perf_hpp_fmt *fmt __maybe_unused,			\
->  									\
->  	c2c_left  = container_of(left, struct c2c_hist_entry, he);	\
->  	c2c_right = container_of(right, struct c2c_hist_entry, he);	\
-> -	return c2c_left->stats.__f - c2c_right->stats.__f;		\
-> +	return (uint64_t) c2c_left->stats.__f -				\
-> +	       (uint64_t) c2c_right->stats.__f;				\
->  }
->  
->  #define STAT_FN(__f)		\
-> @@ -682,7 +683,8 @@ ld_llcmiss_cmp(struct perf_hpp_fmt *fmt __maybe_unused,
->  	c2c_left  = container_of(left, struct c2c_hist_entry, he);
->  	c2c_right = container_of(right, struct c2c_hist_entry, he);
->  
-> -	return llc_miss(&c2c_left->stats) - llc_miss(&c2c_right->stats);
-> +	return (uint64_t) llc_miss(&c2c_left->stats) -
-> +	       (uint64_t) llc_miss(&c2c_right->stats);
->  }
->  
->  static uint64_t total_records(struct c2c_stats *stats)
-> -- 
-> 2.25.0.rc1
+> > Lookup is much faster if we cache the blocks in a radix tree.
 > 
+> While this is really easy and straightforward, is there any reason why
+> subsys_find_device_by_id has to use such a slow lookup? I suspect nobody
+> simply needed a more optimized data structure for that purpose yet.
+> Would it be too hard to use radix tree for all lookups rather than
+> adding a shadow copy for memblocks?
 
+Greg, Rafael, this seems to be your domain. Do you have any opinion on
+this?
+-- 
+Michal Hocko
+SUSE Labs
