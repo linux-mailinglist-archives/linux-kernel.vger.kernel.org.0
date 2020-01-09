@@ -2,80 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E9BC135152
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 03:28:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40D8B135179
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 03:37:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbgAIC2K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 21:28:10 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:17409 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726758AbgAIC2K (ORCPT
+        id S1727864AbgAIChM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 21:37:12 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42988 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726913AbgAIChM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 21:28:10 -0500
-X-UUID: 8efac21a52b6424690e94ac0a754df04-20200109
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=838Cc8+KqcxYDVnAL0XU6OJBKM3nfNiVLnoFblbQyZw=;
-        b=ljvBMHd1pKAcKBG1lWVx336Jjl2GJ+HSNn4bHAqZjzvEAtBA8fS687I9MTAn/dOT3eo5UttZinpAJXlWMHKeiEGLmf8JNvTt8bO5FYb6UX/MFiyEsx5vLgswg2xwG7s6J+DxVvqY/6dk5NfiQ2dZ4EtHa6iSOenNMAp19GJ2/Wk=;
-X-UUID: 8efac21a52b6424690e94ac0a754df04-20200109
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1912375700; Thu, 09 Jan 2020 10:27:57 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33DR.mediatek.inc
- (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 9 Jan
- 2020 10:24:17 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 9 Jan 2020 10:28:13 +0800
-Message-ID: <1578536872.21256.25.camel@mhfsdcap03>
-Subject: Re: [PATCH] usb: common: usb-conn-gpio: Register charger
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Paul Cercueil <paul@crapouillou.net>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>, <od@zcrc.me>,
-        <linux-usb@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Date:   Thu, 9 Jan 2020 10:27:52 +0800
-In-Reply-To: <1578504370.3.1@crapouillou.net>
-References: <20200107002901.940297-1-paul@crapouillou.net>
-         <20200108165323.GA2506374@kroah.com> <1578504370.3.1@crapouillou.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Wed, 8 Jan 2020 21:37:12 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 4so2583879pfz.9;
+        Wed, 08 Jan 2020 18:37:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Zb0XpDdzhr2HSaCU2kbgbQrO7aw5OHk2GOMpmnAv0rw=;
+        b=ZWJ0u+DIjR48pCEpu4933sMA128ctTEGce5OoG+LclUFtc8ny1N9d9GkrQN8wz4/j9
+         z/2iyrT0vHtDVeVLBYYMuu1waVJbVgQKFim5jMQMx9A1tT31eRpQtC/Fkxyry7jH62KL
+         GdQW4PrfmhBdAhqWx23xs6KnKr61vAzJJTCXw8YuqeTGCNZ7F6CmXWqhE/wtmakLUVts
+         EInw/HpWzWPNFHp0GHOj1mOsN2yQ2u0+i5HoJZRIDhccZQXDzeXWgiR/Feetsx0zS4NW
+         K8jJOZc2SHuYyhluS0ugoN53mtgcTqb96KHHXG7NWBNExA2RCLumcwQKIsDW/5AJNoCg
+         u+Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Zb0XpDdzhr2HSaCU2kbgbQrO7aw5OHk2GOMpmnAv0rw=;
+        b=f7Ax4Y8++HKZwNIkiY3Tgk2mUc+iA2/Al5Z9WEw3/G3vcGFkgu4NdOz0TzG+r2uwp3
+         LxC1bhJucucZPrsmpmU2qZ/5euU/ineD4RoAgPz4YBg+Bt+PDqxciu/04WL1m41ScdX9
+         SO/f0kO/XGmIrBnfNUtuKCSry840thsuIyOTm+TyLuM2gbI5lyCf44FMQk5dnlP0vCir
+         korDjsd/SFysHi0vcUsfqk3HRZkn1iD6s4X2V/N31mn9n9UgrKH/kWa+t0fYOYrAmPB6
+         bndU4gsnJcIwUTH6yu26otXIQf4hVeXnapk0/NXE4gGalBiSZMeBnFhq/wXAUMB+VMUG
+         wAMw==
+X-Gm-Message-State: APjAAAWZGDv0IhX58QFT0inOKpOffzEq2v/yMFBEW0Ldq7UyULTY16Se
+        fm8OlKcthFu9HFcExfhZoy2Z6vJI
+X-Google-Smtp-Source: APXvYqzmsBDRySn86DX3ytKuvHh1LQOPcTi7GJlphbL9+4pdnS2HjV3bAw6dF8BBoqDcxlcoHQHg+g==
+X-Received: by 2002:a63:2a8b:: with SMTP id q133mr8478254pgq.72.1578537431296;
+        Wed, 08 Jan 2020 18:37:11 -0800 (PST)
+Received: from [192.168.1.60] (59-120-186-245.HINET-IP.hinet.net. [59.120.186.245])
+        by smtp.gmail.com with ESMTPSA id v9sm625959pja.26.2020.01.08.18.37.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 Jan 2020 18:37:10 -0800 (PST)
+Subject: Re: [PATCH V2 5/7] USB: serial: f81232: Set F81534A serial port with
+ RS232 mode
+To:     Johan Hovold <johan@kernel.org>
+Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peter_hong@fintek.com.tw,
+        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
+References: <20190923022449.10952-1-hpeter+linux_kernel@gmail.com>
+ <20190923022449.10952-6-hpeter+linux_kernel@gmail.com>
+ <20191023115300.GU24768@localhost>
+ <f3a8b0bd-79f7-3bef-4d07-69774c87873a@gmail.com>
+ <20200108143502.GJ30908@localhost>
+From:   "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
+Message-ID: <3c79f786-de34-550e-3964-d7fb334f6d56@gmail.com>
+Date:   Thu, 9 Jan 2020 10:37:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: 40D221BFADE0B52CB83D97C4692C5266B11D679C287C449086D5AC23C5A64CFC2000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+In-Reply-To: <20200108143502.GJ30908@localhost>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgUGF1bCwNCg0KT24gV2VkLCAyMDIwLTAxLTA4IGF0IDE0OjI2IC0wMzAwLCBQYXVsIENlcmN1
-ZWlsIHdyb3RlOg0KPiBIaSBHcmVnLA0KPiANCj4gDQo+IExlIG1lci4sIGphbnYuIDgsIDIwMjAg
-YXQgMTc6NTMsIEdyZWcgS3JvYWgtSGFydG1hbiANCj4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24u
-b3JnPiBhIMOpY3JpdCA6DQo+ID4gT24gVHVlLCBKYW4gMDcsIDIwMjAgYXQgMDE6Mjk6MDFBTSAr
-MDEwMCwgUGF1bCBDZXJjdWVpbCB3cm90ZToNCj4gPj4gIFJlZ2lzdGVyIGEgcG93ZXIgc3VwcGx5
-IGNoYXJnZXIsIHdob3NlIG9ubGluZSBzdGF0ZSBkZXBlbmRzIG9uIA0KPiA+PiB3aGV0aGVyDQo+
-ID4+ICB0aGUgVVNCIHJvbGUgaXMgc2V0IHRvIGRldmljZSBvciBub3QuDQo+ID4gDQo+ID4gVGhh
-dCBzYXlzIF93aGF0XyB5b3UgYXJlIGRvaW5nLCBidXQgSSBoYXZlIG5vIGlkZWEgX3doeV8geW91
-IHdhbnQgdG8gDQo+ID4gZG8NCj4gPiB0aGlzLg0KPiA+IA0KPiA+IFdoYXQgaXMgdGhpcyBnb2lu
-ZyB0byBjYXVzZSB0byBoYXZlIGhhcHBlbj8gIFdoYXQgbmV3IHVzZXJzcGFjZSBhcGkgaXMNCj4g
-PiBnb2luZyB0byByZXN1bHQ/ICBXaGF0IHdpbGwgYSB1c2VyIGRvIHdpdGggdGhpcz8NCj4gDQo+
-IFRoaXMgaXMgdXNlZnVsIHdoZW4gdGhlIFVTQiByb2xlIGlzIHRoZSBvbmx5IHdheSB0byBrbm93
-IGlmIHRoZSBkZXZpY2UgDQo+IGlzIGNoYXJnaW5nIGZyb20gVVNCLg0KVGhlcmUgaXMgbm8gY2hh
-cmdlciBJQyBvbiB5b3VyIHBsYXRmb3JtPw0KDQo+IA0KPiBUaGUgQVBJIGlzIHRoZSBzdGFuZGFy
-ZCBwb3dlciBzdXBwbHkgY2hhcmdlciBBUEksIHlvdSBnZXQgYSANCj4gL3N5cy9jbGFzcy9wb3dl
-cl9zdXBwbHkveHh4L29ubGluZSBub2RlIHdoaWNoIHRlbGxzIHlvdSB0aGUgc3RhdGUgb2YgDQo+
-IHRoZSBjaGFyZ2VyLg0KPiANCj4gVGhlIHNvbGUgcHVycG9zZSBvZiB0aGlzIGlzIHRvIGdpdmUg
-dXNlcnNwYWNlIGFwcGxpY2F0aW9ucyBhIHdheSB0byANCj4ga25vdyB3aGV0aGVyIG9yIG5vdCB0
-aGUgY2hhcmdlciBpcyBwbHVnZ2VkLg0KPiANCj4gPiBJcyB0aGlzIGdvaW5nIHRvIGFsd2F5cyBz
-aG93IHVwLCBubyBtYXR0ZXIgaWYgdGhlIHJvbGUgaXMgbm90IGV2ZW4NCj4gPiByZWxldmFudCBm
-b3IgYSBwb3dlciBzdXBwbHk/DQo+IA0KPiBJIGd1ZXNzIGl0J2QgYWx3YXlzIHNob3cgdXAsIHll
-cy4gSW4gd2hpY2ggY2FzZSB3b3VsZCB0aGUgcm9sZSBub3QgYmUgDQo+IHJlbGV2YW50IGZvciBh
-IHBvd2VyIHN1cHBseT8gDQpEbyB5b3UgYWxzbyBuZWVkIGl0IGlmIHRoZSBwbGF0Zm9ybSBkb24n
-dCBoYXZlIGJhdHRlcnk/DQoNCg0KPiBJcyBncGlvLWItY29ubmVjdG9yIG5vdCBhbHdheXMgdXNl
-ZCBmb3IgDQo+IE9URyBjb25uZWN0b3JzPw0KSXQgYWxzbyBzdXBwb3J0cyBkZXZpY2Ugb25seSBt
-b2RlLCB1c3VhbGx5IHVzZXMgdkJ1cyBwaW4gdG8NCmVuYWJsZS9kaXNhYmxlIGNvbnRyb2xsZXIN
-Cg0KPiANCj4gQ2hlZXJzLA0KPiAtUGF1bA0KPiANCj4gDQo+ID4gWW91IG5lZWQgYSBsb3QgbW9y
-ZSB0ZXh0IGhlcmUgdG8gbWFrZSB0aGlzIG1lcmdhYmxlLg0KPiA+IA0KPiA+IHRoYW5rcywNCj4g
-PiANCj4gPiBncmVnIGstaA0KPiANCj4gDQoNCg==
+Hi Johan,
 
+Johan Hovold 於 2020/1/8 下午 10:35 寫道:
+>> Yes, when 1 F81534A connect to Host, it'll report device as following.
+>> 	virtual HUB
+>> 		GPIO Device.
+>> 		serial port 1
+>> 		...
+>> 		serial port n
+> 
+> Could you post lsusb -v output for this with a couple of UARTs enabled?
+
+The following lsusb log is F81536 informations
+2c42:1608 => HUB
+2c42:16f8 => GPIO device
+2c42:163x => UART (need driver enable)
+
+*before insmod driver
+Bus 002 Device 003: ID 05e3:0620 Genesys Logic, Inc.
+Bus 002 Device 002: ID 05e3:0620 Genesys Logic, Inc.
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 007: ID 0603:00f2 Novatek Microelectronics Corp. Keyboard 
+(Labtec Ultra Flat Keyboard)
+Bus 001 Device 005: ID 046d:c05a Logitech, Inc. M90/M100 Optical Mouse
+Bus 001 Device 044: ID 2c42:16f8
+Bus 001 Device 043: ID 2c42:1608
+Bus 001 Device 003: ID 05e3:0610 Genesys Logic, Inc. 4-port hub
+Bus 001 Device 002: ID 05e3:0610 Genesys Logic, Inc. 4-port hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+
+*after insmod driver and wait for complete
+Bus 002 Device 003: ID 05e3:0620 Genesys Logic, Inc.
+Bus 002 Device 002: ID 05e3:0620 Genesys Logic, Inc.
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 007: ID 0603:00f2 Novatek Microelectronics Corp. Keyboard 
+(Labtec Ultra Flat Keyboard)
+Bus 001 Device 005: ID 046d:c05a Logitech, Inc. M90/M100 Optical Mouse
+Bus 001 Device 052: ID 2c42:1636
+Bus 001 Device 051: ID 2c42:1636
+Bus 001 Device 050: ID 2c42:1636
+Bus 001 Device 049: ID 2c42:1636
+Bus 001 Device 048: ID 2c42:1636
+Bus 001 Device 047: ID 2c42:1636
+Bus 001 Device 046: ID 2c42:1636
+Bus 001 Device 045: ID 2c42:1636
+Bus 001 Device 056: ID 2c42:1636
+Bus 001 Device 055: ID 2c42:1636
+Bus 001 Device 054: ID 2c42:1636
+Bus 001 Device 053: ID 2c42:1636
+Bus 001 Device 044: ID 2c42:16f8
+Bus 001 Device 043: ID 2c42:1608
+Bus 001 Device 003: ID 05e3:0610 Genesys Logic, Inc. 4-port hub
+Bus 001 Device 002: ID 05e3:0610 Genesys Logic, Inc. 4-port hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+
+>> The link are F81534A pin-out:
+>> 	https://imgur.com/a/AZHqQ1N
+> 
+> Do you have a datasheet for the device?
+> 
+> I think I'm starting to get an idea of how this work, but I really don't
+> like having to spend this much time on detective work just to understand
+> how the hw works.
+
+The following link is F81536 spec:
+https://drive.google.com/drive/folders/1oA8DvpevFXoTLCDfPZHzaBWKr32ch5xc?usp=sharing
+
+>> So we can control F81534A series all GPIO pins via GPIO Device.
+>> Serial ports are also control MODE0_x,  MODE1_x,  MODE2_x
+>> (e.g. UART1 MODE0_1,  MODE1_1,  MODE2_1), but when Serial ports
+>> is h/w disabled (DTR pull low), the mode pin will change to GPIO pin.
+> 
+> So you tie a ports DTR pin, even though it's normally an output, and use
+> that at boot to determine whether the UART should be enabled or not?
+> 
+> And the GPIO device can only control a pin if the corresponding port is
+> disabled?
+> 
+> Can you read back the enable state of each port?
+
+DTR pin of the F81534A series are strap pin on power on, when IC detect
+it pulled to low, the UART device can't enable and DTR change to input
+mode.
+
+I can read the UART enable state from GPIO Device, so I can do when the
+GPIO is associated with UART enabled, change it as output only otherwise
+can be set to input/output. Is this OK ??
+
+> What about devices using a different tranceiver? Should the state of the
+> mode pins ultimately be tied to VID/PID (can your customers change
+> VID/PID)?
+> 
+
+Our device VID/PID is changeable, but we assume don't change it.
+
+-- 
+With Best Regards,
+Peter Hong
