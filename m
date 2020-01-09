@@ -2,61 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7B5D135ADA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 15:02:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD2EB135AD6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 15:02:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731455AbgAIOCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 09:02:40 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52779 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731415AbgAIOCj (ORCPT
+        id S1731422AbgAIOCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 09:02:33 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44822 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731414AbgAIOCc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 09:02:39 -0500
-Received: by mail-wm1-f67.google.com with SMTP id p9so3055164wmc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 06:02:38 -0800 (PST)
+        Thu, 9 Jan 2020 09:02:32 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q10so7475979wrm.11
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 06:02:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=monstr-eu.20150623.gappssmtp.com; s=20150623;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=i4WlGl2APfpv2lRrFN39WYIWl+QrT3wDSJtharCyfCg=;
-        b=XOd9sP1TVktE8HKqQnu820uW9CLDKpXDc2oLvP44cMRM1nVI9dp/EfqStuDVL0IaOK
-         2GUgfxZa7fXsM7IVB86GRA6c41WAZMuz110w9wE5mJyVcPgPp+LJjM5ljrczxbmqSqGF
-         wLmAQsZvC1Cfihj7Sl8c8yBFck1sfS1QNIZgw3x5VWZtRGy1dLctuWBu0RcXMFmyHSE3
-         8WrSmubYKBptazOrGeObwN71AAJURhXhKaf+13ZyoIfKI8/EdQENUhpU2gTej7A1gGDv
-         wCEr5rPovhdtEomoiruOvOlacyPmscFE39UEnRJMsVv+HOb/AKi8jrk+fuKxaB7ITv/5
-         i6PQ==
+        bh=DhI3OrQE978IeGvYgeHUGeY+2EytoVG3JIxosQ7S0uM=;
+        b=q1e/dUvDF5SwCkBSTmdDLuBJ4Wf3yj1t2FDmQz4FjaMyXo1uUixu59+C+93seyRo8+
+         mkbS5SUrRC9OO3HByXA9KHVds6Bgdndwexx+fzNLALdDrtPuYL1Gr9PKsnB9iN2IN80Q
+         iUwxJu15Zlia4DNkOkqCHVGmkJVu7vttMztitsO+SiHbT8RacVPIkZ3z+6y1WlyoRnVB
+         FHIFsRsfApT14glNH/DAg8WTmZyaOnNgtRGbABY6RAWNZBd+tZmYhf/3TOWYN7Ah56Ot
+         o1WniFhkij0fzxcj3nm4Y8RXu4Ts6SXSJm5u/st5Z+FpxRPP/issLnh2FI+UJAqZldZM
+         A/Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=i4WlGl2APfpv2lRrFN39WYIWl+QrT3wDSJtharCyfCg=;
-        b=hP3ew8Txkn7lwD6JdPDLj5wt37vYWjZUY4bQIfaT5rJKUOiVH42B9Af2uDnrY8bzhL
-         4zhmotJTFfad9TXE7jO9mg/zl2PD0Znas3Gvykc515R4Fu+IxHSHQafjiCLr9yJev1Vk
-         MXLAEFu8faJVUbSZkYTOTHbpfRKUlDyiklgGVm9BrjaleGWCMjJkq4+NxZQMyTMJhFht
-         7uvT9azsTvUs3AGkik4+OJ7jrsLVELQU+pgimHivq8mMPoRIC6wrzEk68P8bMx9vUonV
-         MeuDP+JbCgSjPinZiG+YthM8qCHRxVaRlCVFA4rdFLr6GJDvxDzvd3rV3hZz2Mp2f8b+
-         0gMw==
-X-Gm-Message-State: APjAAAVbUOhXk3MqcwmeKNj+XYc/nQclNOG6JUJlS8HLiCuxCN+xa6w1
-        2CS/3T5stzEyb4Izt77THTShJg==
-X-Google-Smtp-Source: APXvYqz3DqsI5MGZY3ATZ/jamxaASkH6cwXd4RR901fnZTW0429qYhylN5IHhyTmlow651Pues0jVQ==
-X-Received: by 2002:a1c:1bc3:: with SMTP id b186mr5092722wmb.79.1578578545543;
-        Thu, 09 Jan 2020 06:02:25 -0800 (PST)
+        bh=DhI3OrQE978IeGvYgeHUGeY+2EytoVG3JIxosQ7S0uM=;
+        b=RFIDD1AHTzntCP+a/NOfuHaGw9GHjw/ue72m6oKjv9lkb0RgzAD4c+bqRlrr4V6JbC
+         Xxi3eHgWg1ZgZuWbhNXqcbrpNbEV8c0+Vq+//KQO6ERjylqZaO/Ak+5c0U9EZdu4qnjn
+         gptG833dpzMk/lWV3vr2bI4qBTt836QQlJFGmM234mIGBo8zMgNWNeWFW8/9tQ2fgU1q
+         8Qj0nwZH+lNNlddK/c7Xtbr1PVQR7A0DlCmf5BAzyXWDI9lpQr3zbWWWnnevmlzBO34x
+         TLH5X85VJsFg7L89/TJw1XiIrEzYCmNnkFc1Uoc+ggouORFgIbAn1EeXOzNAOyN1rtpy
+         GiCw==
+X-Gm-Message-State: APjAAAVHUDEKgc0xBNPsVANzvsn1RlJ1t57WkOrr5C0nS1HHc7qbAKdL
+        R/ZQQV+BhNZJ+joDavTo0vGZqQ==
+X-Google-Smtp-Source: APXvYqxicSUIyD6DM92gqQMlGx6+Yh1zxSYrFW/HOYZapL4yyPGgk4+gp4fqtd/WsIK+tSupGCCd7A==
+X-Received: by 2002:a5d:5592:: with SMTP id i18mr10529597wrv.55.1578578550404;
+        Thu, 09 Jan 2020 06:02:30 -0800 (PST)
 Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id x17sm7971846wrt.74.2020.01.09.06.02.24
+        by smtp.gmail.com with ESMTPSA id k82sm3099143wmf.10.2020.01.09.06.02.28
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Jan 2020 06:02:24 -0800 (PST)
+        Thu, 09 Jan 2020 06:02:29 -0800 (PST)
 From:   Michal Simek <michal.simek@xilinx.com>
 To:     linux-arm-kernel@lists.infradead.org, git@xilinx.com
 Cc:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
+        Harini Katakam <harini.katakam@xilinx.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Rajan Vaja <rajan.vaja@xilinx.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        Venkatesh Yadav Abbarapu <venkatesh.abbarapu@xilinx.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/7] arm64: zynqmp: Enable iio-hwmon for ina226 on zcu100
-Date:   Thu,  9 Jan 2020 15:02:15 +0100
-Message-Id: <3697b726f12df89d6fc222b64672f8fc3779ec3c.1578578535.git.michal.simek@xilinx.com>
+Subject: [PATCH 2/7] arm64: zynqmp: Enable iio-hwmon for ina226 on zcu111
+Date:   Thu,  9 Jan 2020 15:02:16 +0100
+Message-Id: <cca3e4bbc5441bca051f274fe19c3328f0027eca.1578578535.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1578578535.git.michal.simek@xilinx.com>
 References: <cover.1578578535.git.michal.simek@xilinx.com>
@@ -75,36 +75,179 @@ package.
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
 
- arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ .../boot/dts/xilinx/zynqmp-zcu111-revA.dts    | 99 ++++++++++++++++---
+ 1 file changed, 85 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-index a109e82982ae..d60110ad8367 100644
---- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-+++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-@@ -103,6 +103,11 @@ sdio_pwrseq: sdio-pwrseq {
- 		reset-gpios = <&gpio 7 GPIO_ACTIVE_LOW>; /* WIFI_EN */
- 		post-power-on-delay-ms = <10>;
+diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu111-revA.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu111-revA.dts
+index cb2e46833a7b..df2bc5a41c8d 100644
+--- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu111-revA.dts
++++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu111-revA.dts
+@@ -59,6 +59,63 @@ heartbeat-led {
+ 			linux,default-trigger = "heartbeat";
+ 		};
  	};
 +
-+	ina226 {
++	ina226-u67 {
 +		compatible = "iio-hwmon";
-+		io-channels = <&u35 0>, <&u35 1>, <&u35 2>, <&u35 3>;
++		io-channels = <&u67 0>, <&u67 1>, <&u67 2>, <&u67 3>;
++	};
++	ina226-u59 {
++		compatible = "iio-hwmon";
++		io-channels = <&u59 0>, <&u59 1>, <&u59 2>, <&u59 3>;
++	};
++	ina226-u61 {
++		compatible = "iio-hwmon";
++		io-channels = <&u61 0>, <&u61 1>, <&u61 2>, <&u61 3>;
++	};
++	ina226-u60 {
++		compatible = "iio-hwmon";
++		io-channels = <&u60 0>, <&u60 1>, <&u60 2>, <&u60 3>;
++	};
++	ina226-u64 {
++		compatible = "iio-hwmon";
++		io-channels = <&u64 0>, <&u64 1>, <&u64 2>, <&u64 3>;
++	};
++	ina226-u69 {
++		compatible = "iio-hwmon";
++		io-channels = <&u69 0>, <&u69 1>, <&u69 2>, <&u69 3>;
++	};
++	ina226-u66 {
++		compatible = "iio-hwmon";
++		io-channels = <&u66 0>, <&u66 1>, <&u66 2>, <&u66 3>;
++	};
++	ina226-u65 {
++		compatible = "iio-hwmon";
++		io-channels = <&u65 0>, <&u65 1>, <&u65 2>, <&u65 3>;
++	};
++	ina226-u63 {
++		compatible = "iio-hwmon";
++		io-channels = <&u63 0>, <&u63 1>, <&u63 2>, <&u63 3>;
++	};
++	ina226-u3 {
++		compatible = "iio-hwmon";
++		io-channels = <&u3 0>, <&u3 1>, <&u3 2>, <&u3 3>;
++	};
++	ina226-u71 {
++		compatible = "iio-hwmon";
++		io-channels = <&u71 0>, <&u71 1>, <&u71 2>, <&u71 3>;
++	};
++	ina226-u77 {
++		compatible = "iio-hwmon";
++		io-channels = <&u77 0>, <&u77 1>, <&u77 2>, <&u77 3>;
++	};
++	ina226-u73 {
++		compatible = "iio-hwmon";
++		io-channels = <&u73 0>, <&u73 1>, <&u73 2>, <&u73 3>;
++	};
++	ina226-u79 {
++		compatible = "iio-hwmon";
++		io-channels = <&u79 0>, <&u79 1>, <&u79 2>, <&u79 3>;
 +	};
  };
  
  &dcc {
-@@ -191,8 +196,9 @@ i2csw_5: i2c@5 {
- 			#size-cells = <0>;
- 			reg = <5>;
+@@ -152,73 +209,87 @@ i2c@0 {
+ 			reg = <0>;
  			/* PS_PMBUS */
--			ina226@40 { /* u35 */
-+			u35: ina226@40 { /* u35 */
+ 			/* PMBUS_ALERT done via pca9544 */
+-			ina226@40 { /* u67 */
++			u67: ina226@40 { /* u67 */
  				compatible = "ti,ina226";
 +				#io-channel-cells = <1>;
  				reg = <0x40>;
- 				shunt-resistor = <10000>;
- 				/* MIO31 is alert which should be routed to PMUFW */
+ 				shunt-resistor = <2000>;
+ 			};
+-			ina226@41 { /* u59 */
++			u59: ina226@41 { /* u59 */
+ 				compatible = "ti,ina226";
++				#io-channel-cells = <1>;
+ 				reg = <0x41>;
+ 				shunt-resistor = <5000>;
+ 			};
+-			ina226@42 { /* u61 */
++			u61: ina226@42 { /* u61 */
+ 				compatible = "ti,ina226";
++				#io-channel-cells = <1>;
+ 				reg = <0x42>;
+ 				shunt-resistor = <5000>;
+ 			};
+-			ina226@43 { /* u60 */
++			u60: ina226@43 { /* u60 */
+ 				compatible = "ti,ina226";
++				#io-channel-cells = <1>;
+ 				reg = <0x43>;
+ 				shunt-resistor = <5000>;
+ 			};
+-			ina226@45 { /* u64 */
++			u64: ina226@45 { /* u64 */
+ 				compatible = "ti,ina226";
++				#io-channel-cells = <1>;
+ 				reg = <0x45>;
+ 				shunt-resistor = <5000>;
+ 			};
+-			ina226@46 { /* u69 */
++			u69: ina226@46 { /* u69 */
+ 				compatible = "ti,ina226";
++				#io-channel-cells = <1>;
+ 				reg = <0x46>;
+ 				shunt-resistor = <2000>;
+ 			};
+-			ina226@47 { /* u66 */
++			u66: ina226@47 { /* u66 */
+ 				compatible = "ti,ina226";
++				#io-channel-cells = <1>;
+ 				reg = <0x47>;
+ 				shunt-resistor = <5000>;
+ 			};
+-			ina226@48 { /* u65 */
++			u65: ina226@48 { /* u65 */
+ 				compatible = "ti,ina226";
++				#io-channel-cells = <1>;
+ 				reg = <0x48>;
+ 				shunt-resistor = <5000>;
+ 			};
+-			ina226@49 { /* u63 */
++			u63: ina226@49 { /* u63 */
+ 				compatible = "ti,ina226";
++				#io-channel-cells = <1>;
+ 				reg = <0x49>;
+ 				shunt-resistor = <5000>;
+ 			};
+-			ina226@4a { /* u3 */
++			u3: ina226@4a { /* u3 */
+ 				compatible = "ti,ina226";
++				#io-channel-cells = <1>;
+ 				reg = <0x4a>;
+ 				shunt-resistor = <5000>;
+ 			};
+-			ina226@4b { /* u71 */
++			u71: ina226@4b { /* u71 */
+ 				compatible = "ti,ina226";
++				#io-channel-cells = <1>;
+ 				reg = <0x4b>;
+ 				shunt-resistor = <5000>;
+ 			};
+-			ina226@4c { /* u77 */
++			u77: ina226@4c { /* u77 */
+ 				compatible = "ti,ina226";
++				#io-channel-cells = <1>;
+ 				reg = <0x4c>;
+ 				shunt-resistor = <5000>;
+ 			};
+-			ina226@4d { /* u73 */
++			u73: ina226@4d { /* u73 */
+ 				compatible = "ti,ina226";
++				#io-channel-cells = <1>;
+ 				reg = <0x4d>;
+ 				shunt-resistor = <5000>;
+ 			};
+-			ina226@4e { /* u79 */
++			u79: ina226@4e { /* u79 */
+ 				compatible = "ti,ina226";
++				#io-channel-cells = <1>;
+ 				reg = <0x4e>;
+ 				shunt-resistor = <5000>;
+ 			};
 -- 
 2.24.0
 
