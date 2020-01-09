@@ -2,53 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2C8013502C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 00:57:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A1E3135042
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 01:06:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbgAHX5b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 Jan 2020 18:57:31 -0500
-Received: from mail-40130.protonmail.ch ([185.70.40.130]:12173 "EHLO
-        mail-40130.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726721AbgAHX5b (ORCPT
+        id S1727631AbgAIAGq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 Jan 2020 19:06:46 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:50054 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726438AbgAIAGq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Jan 2020 18:57:31 -0500
-Date:   Wed, 08 Jan 2020 23:57:24 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1578527849;
-        bh=2mBjCMOXhAHMBa+Efon0uQ+ZprV5kdCnojIljFPFPYI=;
-        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
-        b=yeEsI3+STbLr69No0cgaGtbJVmE5shikY27cfUcPg4n4Qa01ztVyCpq/1jrUNLQIP
-         9vHVdtqK2SqGWA4KTBJT3hCyU73MRjsKDc6aV6Zgq2I+YDszGYtHqdwVueUV5VkC8y
-         +5vrI3z1OhIPHPIBXW+sOzeUj3Cp94zbJoTi20cc=
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Subject: was: Fair Pay
-Message-ID: <3RGxEF0NjauO-ruarAMWXFkxgdP3YdWwitD7qxtSUtMlwMoJgglcVNM-jd6-dtFHx5UOdn0zt-lkwJjsmMtltUGhMKSE93gJRibZviWmws0=@protonmail.com>
-Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM shortcircuit=no
-        autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
+        Wed, 8 Jan 2020 19:06:46 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4F0BE1539F83E;
+        Wed,  8 Jan 2020 16:06:45 -0800 (PST)
+Date:   Wed, 08 Jan 2020 16:06:44 -0800 (PST)
+Message-Id: <20200108.160644.387751419406283854.davem@davemloft.net>
+To:     arnd@arndb.de
+Cc:     vladimir.oltean@nxp.com, claudiu.manoil@nxp.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: dsa: felix: fix link error
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20200108124844.1348395-1-arnd@arndb.de>
+References: <20200108124844.1348395-1-arnd@arndb.de>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 08 Jan 2020 16:06:45 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I thought about these names with typical associations. Maybe one can just g=
-eneralize this all to I/T? An interesting thought about Information & Techn=
-ology is that this was ofcourse once what the christian religion so critizi=
-sed here was about.
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed,  8 Jan 2020 13:48:38 +0100
 
-And correct information about such things can be sought online.
+> When the enetc driver is disabled, the mdio support fails to
+> get built:
+> 
+> drivers/net/dsa/ocelot/felix_vsc9959.o: In function `vsc9959_mdio_bus_alloc':
+> felix_vsc9959.c:(.text+0x19c): undefined reference to `enetc_hw_alloc'
+> felix_vsc9959.c:(.text+0x1d1): undefined reference to `enetc_mdio_read'
+> felix_vsc9959.c:(.text+0x1d8): undefined reference to `enetc_mdio_write'
+> 
+> Change the Makefile to enter the subdirectory for this as well.
+> 
+> Fixes: bdeced75b13f ("net: dsa: felix: Add PCS operations for PHYLINK")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-I think I am just going to call this I/T sys, which potentianlly could upgr=
-ade=C2=A0 the whole christian idea of an economic model.
-
-Peace!
-Y.C.
-The Fair Pay Initiative.
-https://www.youtube.com/channel/UCR3gmLVjHS5A702wo4bol_Q
+Applied.
