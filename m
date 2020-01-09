@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79F5F1356EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 11:32:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 682CA1356EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 11:32:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730160AbgAIKcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 05:32:07 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39683 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730138AbgAIKcG (ORCPT
+        id S1730173AbgAIKcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 05:32:10 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53618 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728614AbgAIKcH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 05:32:06 -0500
-Received: by mail-wm1-f65.google.com with SMTP id 20so2211381wmj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 02:32:05 -0800 (PST)
+        Thu, 9 Jan 2020 05:32:07 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m24so2299794wmc.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 02:32:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4kehVIjAHriar2YTBKhxGT8qow3PLLc5BwohGlX0qC4=;
-        b=qOrtFJtLIaXW++SFF/qMAXRFmybsQ2xQvkpdc/HMCFtIOWlqSnwZ13LLtMECWM7g9y
-         dv8RHKpkZvpbpXTkFUEebLw35UjOs/8k3nfXbXvBYvprekm0MrsfJc4AK/TfUZUOyvkZ
-         DmPCtKiYedPw/lJppMAhQEhvx2Ji9KXfPJAweDfaPsLU/K1UQARQWluwpSd8kj+vMUP7
-         5HftOWc0FQgRaGfS6lzBAW5BluFQAphPQ+73f4sSsf7J9+mp4IYSGlxs7SGTao8acxnP
-         IOtqZXJbdnmdymg6WdvQcNjtYQckSC/wqi+MItjtXtC8Ae0CT/Nt+oIqJ5MForUlbIdk
-         HT5A==
+        bh=0b+aMIWgaqOGNLhH5jThwdZY8oNLzZ6JoyOvUDXTde8=;
+        b=HuDbXpFBD3WuhbTSxy2ZahTGpjjyL2g284NrIyhv0FmCNx2NqyjpMn0GOIsxlEZkg4
+         KWOnKfnCWiCqK7978KPycWLJ1f9oCfHJXi3629C2ognUFMA9tyYV5k5qpM2GP8mpM5L0
+         wI+RcZmjgCezlD6aGL03X43fkDKd/SbPYHXgKDuYa+9Gbv0NH06eomko8XY5ISmIRMld
+         aN8pEuVuQgHb/VMS6d93dY7rK9KaM0ZbCq1az5O+FX4sktWAX/CSB2cpAORKY1SVWT3g
+         p2OgK8VCA2DoDfUl/ZLS/m4P37/5L90ImzaOs0zgfyKpU/BG/+nXF5mSazeqpOxuo3Oe
+         2Rfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4kehVIjAHriar2YTBKhxGT8qow3PLLc5BwohGlX0qC4=;
-        b=Fk3CVNa4HMB++eD8oZQRGa+aTJFzgMAB0fO9s07rjTdoCwkMNpVONiuUJgbv9Rad4W
-         tp839DYUxUoT3tRaCdLJ7poXS665BP3dzUly4gZVR//TvAOe4gsHSjlBOXGsOLIjW4Z+
-         O/Nob+KYKilDmzTQGh656YINTm4GTfHT+Cbby4vp4DFPujUispeAuaY01DufVmg2DIMv
-         whKwKeY0/MY41gskQf4tHt56m43V/M2+p/ctqJkrx2riroXZ8T5AEqRIED7+wmiTUtCu
-         Cq6tRDFlUpolNDQByzMqydQFLw/PXUXyEvDzmPyHBS7/30eKOB5JkU/EaBxSZZmdDWme
-         GsZQ==
-X-Gm-Message-State: APjAAAXaO0JKBCnwccPQIqWSOo7mC60BWdoRG+aGcCY0YbcS4mY62771
-        IX/WxnkqfuR55nZW0UK4WEYTcw==
-X-Google-Smtp-Source: APXvYqzK+Wb3+g1lUqNuslmW/ldsTQjMHl9M1Zw97Swn6ARQbBwTnHgOCMerBMrf3DPJpc3J3JdZrA==
-X-Received: by 2002:a05:600c:230d:: with SMTP id 13mr4053004wmo.13.1578565924298;
-        Thu, 09 Jan 2020 02:32:04 -0800 (PST)
+        bh=0b+aMIWgaqOGNLhH5jThwdZY8oNLzZ6JoyOvUDXTde8=;
+        b=UOC/1PnnOpsPhckDHv4aUYViCBwLipN//+mZxXvjQB6F44s/6iUTxsz9eOKzKPvJV/
+         Yiw7jwqUj+Jg1PuqNM/eOmwNpjLWdInmwKN4NadWYN8+ZUDMGpEvaQ5y5gFAK6jK4Tv1
+         JD6hzQbej5MRCbPoTn+Y6vNbiQ0J7i/c9b3DQFanry/5CeuHX5ExC6FlxeKdt30PTZNg
+         FQ8LIav90ANnRxDcclJ2wjI1DUISNWQp5MPlIePgIf1TzpXBb9CyFA+UjWs2Lgapa8OT
+         sVoWTBRyg64Yr9d+leAVOlGa6SqIdi05Z+fcIES+37UwtPL2KSv44PL63QgSjnpaNsLk
+         02LA==
+X-Gm-Message-State: APjAAAUONsFzW8sSmxcXb+prXawzGhU9E3Azz1bz4aDFTs1OYdNAgzc9
+        X2zXNli1JgYLgBdbc8xovs/yNw==
+X-Google-Smtp-Source: APXvYqyz/wYHZpdMR1qsoovmpqHI+yfop5dqpsJS2BFGsCABoFISXSZTtsAcI+fAvwuhcEvqr+6pyg==
+X-Received: by 2002:a1c:2355:: with SMTP id j82mr4073740wmj.135.1578565925414;
+        Thu, 09 Jan 2020 02:32:05 -0800 (PST)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id z83sm2473830wmg.2.2020.01.09.02.32.03
+        by smtp.gmail.com with ESMTPSA id z83sm2473830wmg.2.2020.01.09.02.32.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 02:32:03 -0800 (PST)
+        Thu, 09 Jan 2020 02:32:04 -0800 (PST)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 1/4] dt-bindings: SLIMBus: add slim devices optional properties
-Date:   Thu,  9 Jan 2020 10:31:45 +0000
-Message-Id: <20200109103148.5612-2-srinivas.kandagatla@linaro.org>
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 2/4] slimbus: qcom-ngd-ctrl: Use dma_request_chan() instead dma_request_slave_channel()
+Date:   Thu,  9 Jan 2020 10:31:46 +0000
+Message-Id: <20200109103148.5612-3-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20200109103148.5612-1-srinivas.kandagatla@linaro.org>
 References: <20200109103148.5612-1-srinivas.kandagatla@linaro.org>
@@ -63,48 +63,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds an optional SLIMBus Interface device phandle property
-that could be used by some of the SLIMBus devices.
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-Interface device is mostly used with devices that are dealing
-with streaming.
+dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+eating up the error code.
 
+By using dma_request_chan() directly the driver can support deferred
+probing against DMA.
+
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/slimbus/bus.txt | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/slimbus/qcom-ngd-ctrl.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/slimbus/bus.txt b/Documentation/devicetree/bindings/slimbus/bus.txt
-index 52fa6426388c..bbe871f82a8b 100644
---- a/Documentation/devicetree/bindings/slimbus/bus.txt
-+++ b/Documentation/devicetree/bindings/slimbus/bus.txt
-@@ -32,6 +32,10 @@ Required property for SLIMbus child node if it is present:
- 	 	  Product Code, shall be in lower case hexadecimal with leading
- 		  zeroes suppressed
+diff --git a/drivers/slimbus/qcom-ngd-ctrl.c b/drivers/slimbus/qcom-ngd-ctrl.c
+index 29fbab55c3b3..e3f5ebc0c05e 100644
+--- a/drivers/slimbus/qcom-ngd-ctrl.c
++++ b/drivers/slimbus/qcom-ngd-ctrl.c
+@@ -666,10 +666,12 @@ static int qcom_slim_ngd_init_rx_msgq(struct qcom_slim_ngd_ctrl *ctrl)
+ 	struct device *dev = ctrl->dev;
+ 	int ret, size;
  
-+Optional property for SLIMbus child node if it is present:
-+- slim-ifc-dev	- Should be phandle to SLIMBus Interface device.
-+		  Required for devices which deal with streams.
-+
- SLIMbus example for Qualcomm's slimbus manager component:
+-	ctrl->dma_rx_channel = dma_request_slave_channel(dev, "rx");
+-	if (!ctrl->dma_rx_channel) {
+-		dev_err(dev, "Failed to request dma channels");
+-		return -EINVAL;
++	ctrl->dma_rx_channel = dma_request_chan(dev, "rx");
++	if (IS_ERR(ctrl->dma_rx_channel)) {
++		dev_err(dev, "Failed to request RX dma channel");
++		ret = PTR_ERR(ctrl->dma_rx_channel);
++		ctrl->dma_rx_channel = NULL;
++		return ret;
+ 	}
  
- 	slim@28080000 {
-@@ -43,8 +47,14 @@ SLIMbus example for Qualcomm's slimbus manager component:
- 		#address-cells = <2>;
- 		#size-cell = <0>;
+ 	size = QCOM_SLIM_NGD_DESC_NUM * SLIM_MSGQ_BUF_LEN;
+@@ -703,10 +705,12 @@ static int qcom_slim_ngd_init_tx_msgq(struct qcom_slim_ngd_ctrl *ctrl)
+ 	int ret = 0;
+ 	int size;
  
-+		codec_ifd: ifd@0,0{
-+			compatible = "slim217,60";
-+			reg = <0 0>;
-+		};
-+
- 		codec: wcd9310@1,0{
- 			compatible = "slim217,60";
- 			reg = <1 0>;
-+			slim-ifc-dev  = <&codec_ifd>;
- 		};
- 	};
+-	ctrl->dma_tx_channel = dma_request_slave_channel(dev, "tx");
+-	if (!ctrl->dma_tx_channel) {
+-		dev_err(dev, "Failed to request dma channels");
+-		return -EINVAL;
++	ctrl->dma_tx_channel = dma_request_chan(dev, "tx");
++	if (IS_ERR(ctrl->dma_tx_channel)) {
++		dev_err(dev, "Failed to request TX dma channel");
++		ret = PTR_ERR(ctrl->dma_tx_channel);
++		ctrl->dma_tx_channel = NULL;
++		return ret;
+ 	}
+ 
+ 	size = ((QCOM_SLIM_NGD_DESC_NUM + 1) * SLIM_MSGQ_BUF_LEN);
 -- 
 2.21.0
 
