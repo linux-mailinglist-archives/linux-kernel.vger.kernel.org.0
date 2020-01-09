@@ -2,63 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1121135D74
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:04:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C8AA135D78
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:04:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732711AbgAIQDx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 11:03:53 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38453 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731296AbgAIQDx (ORCPT
+        id S1732880AbgAIQEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 11:04:06 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:33072 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731296AbgAIQDz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 11:03:53 -0500
+        Thu, 9 Jan 2020 11:03:55 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578585832;
+        s=mimecast20190719; t=1578585834;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=aRwsZXslrF8qlI5MyK0VLDbXIL7BVk96fwOyF4VyYbw=;
-        b=DSlvDtmpDmwbVfzwyBtjcR+SnSNVvnfEAz5DGW0zCn+H+p2uJxxF2OjmTdxzJq8aM9YY7a
-        w1KGU3MvkdHrjh0q3HRc6Y+uJJ2BnkGw9PHAf3uTYXDENU0DueX/B92Wd0ObQHun93UIgd
-        xu+GwY2Q/DWUuNbZig4WoeGAVfElBKE=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-181-49f7B0j3P2yvqkbWD8-3Cg-1; Thu, 09 Jan 2020 11:03:51 -0500
-X-MC-Unique: 49f7B0j3P2yvqkbWD8-3Cg-1
-Received: by mail-wr1-f70.google.com with SMTP id v17so3034516wrm.17
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:03:51 -0800 (PST)
+        bh=PUQsxLHZdxOzSqZcrip37lVsIDHbyPZSVWhfrajhS7w=;
+        b=AD95XnznR98uYbtZ+bbNpUiKiy8FkW7ZqRDi760G6Gf3orHzmqMSH9nf5PRysdO16GHG3+
+        1at8s1GJdqLs0DrdnweEcSxh8E0SUTCsK6h3BqpoywNVWTP63j7NacV5o+ZJQ7x1pG3RR4
+        QYc40lBQp7b+uRw2HazN89J3RitLavs=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-339-N92JGBg_MLOZgBVJltSR8w-1; Thu, 09 Jan 2020 11:03:52 -0500
+X-MC-Unique: N92JGBg_MLOZgBVJltSR8w-1
+Received: by mail-wm1-f70.google.com with SMTP id z2so615642wmf.5
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:03:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=aRwsZXslrF8qlI5MyK0VLDbXIL7BVk96fwOyF4VyYbw=;
-        b=fNXsDTmLDNI35xHy/JvbQp1s0Wk4LLbsV60zqskCOvSHOmuoBZy/LP7YYTDijyOBp+
-         CUOsVMvukuEkNOoYQDxnmvYJhfty0Tg2u00Fhroxca7QgV+1vzrLJjpalT1KvxzCWxgK
-         FPIeiZPPDYvsGRe/Lyn8R0/FmLS9QUsTpyQ1Rff/39yuVpirwty/P4HsOr81ovdZE+f7
-         P/GpUblO734dbz23j5MtePSGPBnt3u2VhwLAhTKIHKTgHyuqwZuH/4g6wb5vRgRXeGDm
-         gh5FtyB8JJz6d0sFVixubHC7Y/2kFwJoh+TgC4XxnXMtiG6l3CVh8Xow9xe2bn6iZlpn
-         wPYw==
-X-Gm-Message-State: APjAAAVeNeTQwp16XnwLDjav9y3/mZl2ci25znWnx58r4LzdhQY8VA4J
-        i/faPBzhJ3rtIGJA86jcmHhxCRL4xnXI9YXcZSpMLWEYMacLt3nwiJKaT874KH/3+aukXiiJ/JO
-        Iap+xQANOfA969cimL5iSElS7
-X-Received: by 2002:a5d:6a0f:: with SMTP id m15mr11697760wru.40.1578585830109;
-        Thu, 09 Jan 2020 08:03:50 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwdTwKmwk+TMSvNrwowSzjOiXNj+qkJd4Gz4AqQII7UyixaAnIcNddNNeu3UQ7anmhP/LotHQ==
-X-Received: by 2002:a5d:6a0f:: with SMTP id m15mr11697736wru.40.1578585829847;
-        Thu, 09 Jan 2020 08:03:49 -0800 (PST)
+        bh=PUQsxLHZdxOzSqZcrip37lVsIDHbyPZSVWhfrajhS7w=;
+        b=dXKLwh3CxNawuNu+iWm1Q4b02ng/YYupJZmuofkQLX8KrD9Ba3UfuGPqW4xiuE1d5P
+         oN359uc24VcW/P3advKAyKFnDVO+S8GOaVTUPDbhwNZEEmp3DFGDMjhSK54nCYtvCh+O
+         rOvMcNU/LxAuCWUMaw9zQKNGUk1tOEvCilxth/jEayQEpibmn6kyc5yf62gUTn/ELrRF
+         nQ1HxUulx20uVru2QBHepg3Gi4T5QgzCNVZZsu2WS6C1bN8hyPYdecasHrE42RiRWsAa
+         qzXqlL1Up03gLcZswz5GaRH8NtChOkfha1yROYq8rovZgCBuqI+I6Nk1RN6XbnFZMtDD
+         Jx/Q==
+X-Gm-Message-State: APjAAAUFzro7sw+0MVpaRTrcS49iS6Oj3XvFuIDZKdzaQHaA5OwlrWg+
+        2LyupUI7NIiMQrmo9QMs0E4H72ZxuuFGafYQ5wpPOlJ89vWRQ2BM30JJI5xH0DkcKOnqI/lh2Pi
+        03rysOCT/HIv5I+JnCPQLHELj
+X-Received: by 2002:a1c:730d:: with SMTP id d13mr5646508wmb.126.1578585831427;
+        Thu, 09 Jan 2020 08:03:51 -0800 (PST)
+X-Google-Smtp-Source: APXvYqy3yDnYzwz4QZqxuPmNwe/gs/CcDoWlTDjZeGXTzwLU8hTdjO+MTW0olGHnh14bqNw8fn6M5w==
+X-Received: by 2002:a1c:730d:: with SMTP id d13mr5646471wmb.126.1578585831111;
+        Thu, 09 Jan 2020 08:03:51 -0800 (PST)
 Received: from redfedo.redhat.com (host81-140-166-164.range81-140.btcentralplus.com. [81.140.166.164])
-        by smtp.gmail.com with ESMTPSA id m126sm3321546wmf.7.2020.01.09.08.03.48
+        by smtp.gmail.com with ESMTPSA id m126sm3321546wmf.7.2020.01.09.08.03.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 08:03:49 -0800 (PST)
+        Thu, 09 Jan 2020 08:03:50 -0800 (PST)
 From:   Julien Thierry <jthierry@redhat.com>
 To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     jpoimboe@redhat.com, peterz@infradead.org, raphael.gault@arm.com,
         catalin.marinas@arm.com, will@kernel.org,
         Julien Thierry <jthierry@redhat.com>
-Subject: [RFC v5 06/57] objtool: Give ORC functions consistent name
-Date:   Thu,  9 Jan 2020 16:02:09 +0000
-Message-Id: <20200109160300.26150-7-jthierry@redhat.com>
+Subject: [RFC v5 07/57] objtool: orc: Refactor ORC API for other architectures to implement.
+Date:   Thu,  9 Jan 2020 16:02:10 +0000
+Message-Id: <20200109160300.26150-8-jthierry@redhat.com>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200109160300.26150-1-jthierry@redhat.com>
 References: <20200109160300.26150-1-jthierry@redhat.com>
@@ -69,105 +69,344 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename ORC manipulating functions to have more consistent name. Have
-"orc_" as a prefix for all of them.
+From: Raphael Gault <raphael.gault@arm.com>
 
-No functionality change.
+The ORC unwinder is only supported on x86 at the moment and should thus be
+in the x86 architecture code. In order not to break the whole structure in
+case another architecture decides to support the ORC unwinder via objtool,
+move the implementation be done in the architecture dependent code.
 
-Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Raphael Gault <raphael.gault@arm.com>
+[J.T. Rebase on orc name changes,
+      Move arch_orc_read_unwind_hints() to orc.h,
+      Reword commit message to use imperative language]
 Signed-off-by: Julien Thierry <jthierry@redhat.com>
 ---
- tools/objtool/check.c   |  4 ++--
- tools/objtool/orc.h     |  4 ++--
- tools/objtool/orc_gen.c | 14 +++++++-------
- 3 files changed, 11 insertions(+), 11 deletions(-)
+ tools/objtool/Build                     |   2 -
+ tools/objtool/arch/x86/Build            |   2 +
+ tools/objtool/{ => arch/x86}/orc_dump.c |   4 +-
+ tools/objtool/{ => arch/x86}/orc_gen.c  | 104 ++++++++++++++++++++++--
+ tools/objtool/check.c                   |  99 +---------------------
+ tools/objtool/orc.h                     |   5 +-
+ 6 files changed, 109 insertions(+), 107 deletions(-)
+ rename tools/objtool/{ => arch/x86}/orc_dump.c (98%)
+ rename tools/objtool/{ => arch/x86}/orc_gen.c (66%)
 
+diff --git a/tools/objtool/Build b/tools/objtool/Build
+index 8dc4f0848362..d069d26d97fa 100644
+--- a/tools/objtool/Build
++++ b/tools/objtool/Build
+@@ -2,8 +2,6 @@ objtool-y += arch/$(SRCARCH)/
+ objtool-y += builtin-check.o
+ objtool-y += builtin-orc.o
+ objtool-y += check.o
+-objtool-y += orc_gen.o
+-objtool-y += orc_dump.o
+ objtool-y += elf.o
+ objtool-y += special.o
+ objtool-y += objtool.o
+diff --git a/tools/objtool/arch/x86/Build b/tools/objtool/arch/x86/Build
+index 7c5004008e97..e43fd6fa0ee1 100644
+--- a/tools/objtool/arch/x86/Build
++++ b/tools/objtool/arch/x86/Build
+@@ -1,4 +1,6 @@
+ objtool-y += decode.o
++objtool-y += orc_dump.o
++objtool-y += orc_gen.o
+ 
+ inat_tables_script = ../arch/x86/tools/gen-insn-attr-x86.awk
+ inat_tables_maps = ../arch/x86/lib/x86-opcode-map.txt
+diff --git a/tools/objtool/orc_dump.c b/tools/objtool/arch/x86/orc_dump.c
+similarity index 98%
+rename from tools/objtool/orc_dump.c
+rename to tools/objtool/arch/x86/orc_dump.c
+index 13ccf775a83a..cfe8f96bdd68 100644
+--- a/tools/objtool/orc_dump.c
++++ b/tools/objtool/arch/x86/orc_dump.c
+@@ -4,8 +4,8 @@
+  */
+ 
+ #include <unistd.h>
+-#include "orc.h"
+-#include "warn.h"
++#include "../../orc.h"
++#include "../../warn.h"
+ 
+ static const char *reg_name(unsigned int reg)
+ {
+diff --git a/tools/objtool/orc_gen.c b/tools/objtool/arch/x86/orc_gen.c
+similarity index 66%
+rename from tools/objtool/orc_gen.c
+rename to tools/objtool/arch/x86/orc_gen.c
+index 29bee7bd212a..e8be41a1bf94 100644
+--- a/tools/objtool/orc_gen.c
++++ b/tools/objtool/arch/x86/orc_gen.c
+@@ -6,11 +6,11 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#include "orc.h"
+-#include "check.h"
+-#include "warn.h"
++#include "../../orc.h"
++#include "../../check.h"
++#include "../../warn.h"
+ 
+-int orc_init(struct objtool_file *file)
++int arch_orc_init(struct objtool_file *file)
+ {
+ 	struct instruction *insn;
+ 
+@@ -116,7 +116,7 @@ static int orc_create_entry(struct section *u_sec, struct section *ip_relasec,
+ 	return 0;
+ }
+ 
+-int orc_create_sections(struct objtool_file *file)
++int arch_orc_create_sections(struct objtool_file *file)
+ {
+ 	struct instruction *insn, *prev_insn;
+ 	struct section *sec, *u_sec, *ip_relasec;
+@@ -209,3 +209,97 @@ int orc_create_sections(struct objtool_file *file)
+ 
+ 	return 0;
+ }
++
++int arch_orc_read_unwind_hints(struct objtool_file *file)
++{
++	struct section *sec, *relasec;
++	struct rela *rela;
++	struct unwind_hint *hint;
++	struct instruction *insn;
++	struct cfi_reg *cfa;
++	int i;
++
++	sec = find_section_by_name(file->elf, ".discard.unwind_hints");
++	if (!sec)
++		return 0;
++
++	relasec = sec->rela;
++	if (!relasec) {
++		WARN("missing .rela.discard.unwind_hints section");
++		return -1;
++	}
++
++	if (sec->len % sizeof(struct unwind_hint)) {
++		WARN("struct unwind_hint size mismatch");
++		return -1;
++	}
++
++	file->hints = true;
++
++	for (i = 0; i < sec->len / sizeof(struct unwind_hint); i++) {
++		hint = (struct unwind_hint *)sec->data->d_buf + i;
++
++		rela = find_rela_by_dest(sec, i * sizeof(*hint));
++		if (!rela) {
++			WARN("can't find rela for unwind_hints[%d]", i);
++			return -1;
++		}
++
++		insn = find_insn(file, rela->sym->sec, rela->addend);
++		if (!insn) {
++			WARN("can't find insn for unwind_hints[%d]", i);
++			return -1;
++		}
++
++		cfa = &insn->state.cfa;
++
++		if (hint->type == UNWIND_HINT_TYPE_SAVE) {
++			insn->save = true;
++			continue;
++
++		} else if (hint->type == UNWIND_HINT_TYPE_RESTORE) {
++			insn->restore = true;
++			insn->hint = true;
++			continue;
++		}
++
++		insn->hint = true;
++
++		switch (hint->sp_reg) {
++		case ORC_REG_UNDEFINED:
++			cfa->base = CFI_UNDEFINED;
++			break;
++		case ORC_REG_SP:
++			cfa->base = CFI_SP;
++			break;
++		case ORC_REG_BP:
++			cfa->base = CFI_BP;
++			break;
++		case ORC_REG_SP_INDIRECT:
++			cfa->base = CFI_SP_INDIRECT;
++			break;
++		case ORC_REG_R10:
++			cfa->base = CFI_R10;
++			break;
++		case ORC_REG_R13:
++			cfa->base = CFI_R13;
++			break;
++		case ORC_REG_DI:
++			cfa->base = CFI_DI;
++			break;
++		case ORC_REG_DX:
++			cfa->base = CFI_DX;
++			break;
++		default:
++			WARN_FUNC("unsupported unwind_hint sp base reg %d",
++				  insn->sec, insn->offset, hint->sp_reg);
++			return -1;
++		}
++
++		cfa->offset = hint->sp_offset;
++		insn->state.type = hint->type;
++		insn->state.end = hint->end;
++	}
++
++	return 0;
++}
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 6a5f78cca27c..dd155095251c 100644
+index dd155095251c..2c5ccf61510a 100644
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -2481,11 +2481,11 @@ int check(const char *_objname, bool orc)
+@@ -1167,99 +1167,6 @@ static int add_jump_table_alts(struct objtool_file *file)
+ 	return 0;
+ }
+ 
+-static int read_unwind_hints(struct objtool_file *file)
+-{
+-	struct section *sec, *relasec;
+-	struct rela *rela;
+-	struct unwind_hint *hint;
+-	struct instruction *insn;
+-	struct cfi_reg *cfa;
+-	int i;
+-
+-	sec = find_section_by_name(file->elf, ".discard.unwind_hints");
+-	if (!sec)
+-		return 0;
+-
+-	relasec = sec->rela;
+-	if (!relasec) {
+-		WARN("missing .rela.discard.unwind_hints section");
+-		return -1;
+-	}
+-
+-	if (sec->len % sizeof(struct unwind_hint)) {
+-		WARN("struct unwind_hint size mismatch");
+-		return -1;
+-	}
+-
+-	file->hints = true;
+-
+-	for (i = 0; i < sec->len / sizeof(struct unwind_hint); i++) {
+-		hint = (struct unwind_hint *)sec->data->d_buf + i;
+-
+-		rela = find_rela_by_dest(sec, i * sizeof(*hint));
+-		if (!rela) {
+-			WARN("can't find rela for unwind_hints[%d]", i);
+-			return -1;
+-		}
+-
+-		insn = find_insn(file, rela->sym->sec, rela->addend);
+-		if (!insn) {
+-			WARN("can't find insn for unwind_hints[%d]", i);
+-			return -1;
+-		}
+-
+-		cfa = &insn->state.cfa;
+-
+-		if (hint->type == UNWIND_HINT_TYPE_SAVE) {
+-			insn->save = true;
+-			continue;
+-
+-		} else if (hint->type == UNWIND_HINT_TYPE_RESTORE) {
+-			insn->restore = true;
+-			insn->hint = true;
+-			continue;
+-		}
+-
+-		insn->hint = true;
+-
+-		switch (hint->sp_reg) {
+-		case ORC_REG_UNDEFINED:
+-			cfa->base = CFI_UNDEFINED;
+-			break;
+-		case ORC_REG_SP:
+-			cfa->base = CFI_SP;
+-			break;
+-		case ORC_REG_BP:
+-			cfa->base = CFI_BP;
+-			break;
+-		case ORC_REG_SP_INDIRECT:
+-			cfa->base = CFI_SP_INDIRECT;
+-			break;
+-		case ORC_REG_R10:
+-			cfa->base = CFI_R10;
+-			break;
+-		case ORC_REG_R13:
+-			cfa->base = CFI_R13;
+-			break;
+-		case ORC_REG_DI:
+-			cfa->base = CFI_DI;
+-			break;
+-		case ORC_REG_DX:
+-			cfa->base = CFI_DX;
+-			break;
+-		default:
+-			WARN_FUNC("unsupported unwind_hint sp base reg %d",
+-				  insn->sec, insn->offset, hint->sp_reg);
+-			return -1;
+-		}
+-
+-		cfa->offset = hint->sp_offset;
+-		insn->state.type = hint->type;
+-		insn->state.end = hint->end;
+-	}
+-
+-	return 0;
+-}
+ 
+ static int read_retpoline_hints(struct objtool_file *file)
+ {
+@@ -1359,7 +1266,7 @@ static int decode_sections(struct objtool_file *file)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = read_unwind_hints(file);
++	ret = arch_orc_read_unwind_hints(file);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -2481,11 +2388,11 @@ int check(const char *_objname, bool orc)
  	}
  
  	if (orc) {
--		ret = create_orc(&file);
-+		ret = orc_init(&file);
+-		ret = orc_init(&file);
++		ret = arch_orc_init(&file);
  		if (ret < 0)
  			goto out;
  
--		ret = create_orc_sections(&file);
-+		ret = orc_create_sections(&file);
+-		ret = orc_create_sections(&file);
++		ret = arch_orc_create_sections(&file);
  		if (ret < 0)
  			goto out;
  
 diff --git a/tools/objtool/orc.h b/tools/objtool/orc.h
-index ee2832221e62..cd44417487e4 100644
+index cd44417487e4..ffda072cf4ad 100644
 --- a/tools/objtool/orc.h
 +++ b/tools/objtool/orc.h
-@@ -10,8 +10,8 @@
+@@ -10,8 +10,9 @@
  
  struct objtool_file;
  
--int create_orc(struct objtool_file *file);
--int create_orc_sections(struct objtool_file *file);
-+int orc_init(struct objtool_file *file);
-+int orc_create_sections(struct objtool_file *file);
+-int orc_init(struct objtool_file *file);
+-int orc_create_sections(struct objtool_file *file);
++int arch_orc_init(struct objtool_file *file);
++int arch_orc_create_sections(struct objtool_file *file);
++int arch_orc_read_unwind_hints(struct objtool_file *file);
  
  int orc_dump(const char *objname);
  
-diff --git a/tools/objtool/orc_gen.c b/tools/objtool/orc_gen.c
-index 27a4112848c2..29bee7bd212a 100644
---- a/tools/objtool/orc_gen.c
-+++ b/tools/objtool/orc_gen.c
-@@ -10,7 +10,7 @@
- #include "check.h"
- #include "warn.h"
- 
--int create_orc(struct objtool_file *file)
-+int orc_init(struct objtool_file *file)
- {
- 	struct instruction *insn;
- 
-@@ -81,9 +81,9 @@ int create_orc(struct objtool_file *file)
- 	return 0;
- }
- 
--static int create_orc_entry(struct section *u_sec, struct section *ip_relasec,
--				unsigned int idx, struct section *insn_sec,
--				unsigned long insn_off, struct orc_entry *o)
-+static int orc_create_entry(struct section *u_sec, struct section *ip_relasec,
-+			    unsigned int idx, struct section *insn_sec,
-+			    unsigned long insn_off, struct orc_entry *o)
- {
- 	struct orc_entry *orc;
- 	struct rela *rela;
-@@ -116,7 +116,7 @@ static int create_orc_entry(struct section *u_sec, struct section *ip_relasec,
- 	return 0;
- }
- 
--int create_orc_sections(struct objtool_file *file)
-+int orc_create_sections(struct objtool_file *file)
- {
- 	struct instruction *insn, *prev_insn;
- 	struct section *sec, *u_sec, *ip_relasec;
-@@ -182,7 +182,7 @@ int create_orc_sections(struct objtool_file *file)
- 			if (!prev_insn || memcmp(&insn->orc, &prev_insn->orc,
- 						 sizeof(struct orc_entry))) {
- 
--				if (create_orc_entry(u_sec, ip_relasec, idx,
-+				if (orc_create_entry(u_sec, ip_relasec, idx,
- 						     insn->sec, insn->offset,
- 						     &insn->orc))
- 					return -1;
-@@ -194,7 +194,7 @@ int create_orc_sections(struct objtool_file *file)
- 
- 		/* section terminator */
- 		if (prev_insn) {
--			if (create_orc_entry(u_sec, ip_relasec, idx,
-+			if (orc_create_entry(u_sec, ip_relasec, idx,
- 					     prev_insn->sec,
- 					     prev_insn->offset + prev_insn->len,
- 					     &empty))
 -- 
 2.21.0
 
