@@ -2,91 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12C69136272
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 22:28:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27248136274
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 22:28:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbgAIV2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 16:28:14 -0500
-Received: from mail-wr1-f41.google.com ([209.85.221.41]:35680 "EHLO
-        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725763AbgAIV2O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 16:28:14 -0500
-Received: by mail-wr1-f41.google.com with SMTP id g17so9003129wro.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 13:28:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gB1RyhHtTQ+0s49bn15C7GeS8pX+9LNGVaVb1fuNcDI=;
-        b=ltTqTJ2ga31fvB4Rmlw1tLP+UwDfe33U1U0vCua8WSOme48ZKf37l0vqRP2abw4S6l
-         3sQ/q7DFA6lU+WHd1X+diLsIIhyEe5Pn3tuRqSMcI0BbpR7ieQz3wcaZvKpTyVUvjhTg
-         VBL48pQiitpShc2bsmNswbna7S3uKFYC+sx4wuJ60WZqF4gZt5PNhwYWL6RCnNXotdbG
-         boguOaI56IhRhtNhwdfjSBO8kUi29BvhtNqRigpzWB54MOxUwvUhvz28JzYNqo4v6O1D
-         yvMbELx7q7kcIBdzfEzBNkc+XSMKpmf+so2yL0Qx/eyiqwCLZTqY4s0xJAKeno1iw2Df
-         zhEQ==
-X-Gm-Message-State: APjAAAV7nsSfYzYQFE6/VGqe37/tuaA4bxtPwezrUW4koLhyUP5dd8JC
-        qEfKruXmaE4O1IOPaUXiiOOuEgZx
-X-Google-Smtp-Source: APXvYqwO+ulr8Tt8Z+t+GNTy8Emz4YPzNlUPFTfJHu6q5twl2eR5obmCRkLLYDpKcEuNLan/EZNlwA==
-X-Received: by 2002:a5d:4392:: with SMTP id i18mr13654938wrq.199.1578605292416;
-        Thu, 09 Jan 2020 13:28:12 -0800 (PST)
-Received: from localhost (ip-37-188-146-105.eurotel.cz. [37.188.146.105])
-        by smtp.gmail.com with ESMTPSA id z4sm4225820wma.2.2020.01.09.13.28.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 13:28:11 -0800 (PST)
-Date:   Thu, 9 Jan 2020 22:28:10 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@osdl.org>, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-Subject: Re: OOM killer not nearly agressive enough?
-Message-ID: <20200109212810.GB23620@dhcp22.suse.cz>
-References: <20200107204412.GA29562@amd>
- <20200109115633.GR4951@dhcp22.suse.cz>
- <20200109210535.GB1553@duo.ucw.cz>
+        id S1728584AbgAIV2p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 16:28:45 -0500
+Received: from foss.arm.com ([217.140.110.172]:36910 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725763AbgAIV2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 16:28:44 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4802A31B;
+        Thu,  9 Jan 2020 13:28:44 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C301F3F534;
+        Thu,  9 Jan 2020 13:28:43 -0800 (PST)
+Date:   Thu, 9 Jan 2020 21:28:42 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     John Garry <john.garry@huawei.com>
+Cc:     marek.vasut@gmail.com, tudor.ambarus@microchip.com,
+        linuxarm@huawei.com, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
+        xuejiancheng@hisilicon.com, fengsheng5@huawei.com,
+        chenxiang66@hisilicon.com
+Subject: Re: [PATCH v2 2/3] spi: Add HiSilicon v3xx SPI NOR flash controller
+ driver
+Message-ID: <20200109212842.GK3702@sirena.org.uk>
+References: <1575900490-74467-1-git-send-email-john.garry@huawei.com>
+ <1575900490-74467-3-git-send-email-john.garry@huawei.com>
+ <0dc5cb2e-b765-9e13-b05e-9e3c835c5985@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yiup30KVCQiHUZFC"
 Content-Disposition: inline
-In-Reply-To: <20200109210535.GB1553@duo.ucw.cz>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <0dc5cb2e-b765-9e13-b05e-9e3c835c5985@huawei.com>
+X-Cookie: Killing turkeys causes winter.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 09-01-20 22:05:36, Pavel Machek wrote:
-> On Thu 2020-01-09 12:56:33, Michal Hocko wrote:
-> > On Tue 07-01-20 21:44:12, Pavel Machek wrote:
-> > > Hi!
-> > > 
-> > > I updated my userspace to x86-64, and now chromium likes to eat all
-> > > the memory and bring the system to standstill.
-> > > 
-> > > Unfortunately, OOM killer does not react:
-> > > 
-> > > I'm now running "ps aux", and it prints one line every 20 seconds or
-> > > more. Do we agree that is "unusable" system? I attempted to do kill
-> > > from other session.
-> > 
-> > Does sysrq+f help?
-> > 
-> > > Do we agree that OOM killer should have reacted way sooner?
-> > 
-> > This is impossible to answer without knowing what was going on at the
-> > time. Was the system threshing over page cache/swap? In other words, is
-> > the system completely out of memory or refaulting the working set all
-> > the time because it doesn't fit into memory?
-> 
-> What statistics are best to collect? Would the memory lines from top
-> do the trick? I normally have gkrellm running, but I found its results
-> hard to interpret.
 
-/proc/vmstat (and collecting it periodically) gives the most
-comprehensive picture about the state of MM. Interpreting numbers is far
-from trivial though. It requires to analyze multiple snapshots usually
-to see how the situation evolves.
+--yiup30KVCQiHUZFC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Michal Hocko
-SUSE Labs
+On Thu, Jan 09, 2020 at 03:54:00PM +0000, John Garry wrote:
+
+> From checking acpi_spi_add_resource() or anywhere else, I cannot see how
+> SPI_RX_DUAL or the others are set for spi_device.mode. What am I missing?
+> Are these just not supported yet for ACPI? Or should the spi-nor code not be
+> relying on this since we should be able to get this info from the SPI NOR
+> part?
+
+I'm not aware of any work on integrating this sort of stuff into ACPI
+platforms so I think it's just not yet supported in ACPI.  I'm not
+really sure what would be idiomatic for ACPI, figuring it out from what
+the part supports might well be idiomatic there though I don't know how
+common it is for people not to wire up all the data lines even if both
+controller and device support wider transfers.  I've got a horrible
+feeling that the idiomatic thing is a combination of that and a bunch of
+per-device quirks.  There may be a spec I'm not aware of though I'd be a
+bit surprised.
+
+--yiup30KVCQiHUZFC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4XmwkACgkQJNaLcl1U
+h9DSmwf/cxqR58GjrThK9SdQjRi/lDgE2Zvu+klgcyq4qaE5CzctPqfdcJvyMn3D
+8dnuZ0QZ/u4P/6nbc1FfGXfqeV7B0KeZ7yZbzklrjD1ehohvg3H46K52oVsVjF4H
+xsjPdJDNeTtFBIgHGy1M4AIYVC58nRYX/6S7qLRKdyE5OOL4uHv/ZXSzBfhh+XPe
+UtVTZNNfcXxdkWOTsmFo3qo0hnb8FxD/K0Rg++9C6XHLftNqmsXJcpzLaYKEBkor
+FuQEwWTfDc4x3bq3cjsBqEURrEBAhUSMwZlfwgBJgX4GZfgR7pBv1IDZvXCwff0W
+o8LOG/PgA593X83a55IjHs2w5oIGoQ==
+=Vjtj
+-----END PGP SIGNATURE-----
+
+--yiup30KVCQiHUZFC--
