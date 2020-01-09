@@ -2,174 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 122A413552E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:08:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DC76135528
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:07:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbgAIJIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 04:08:09 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:23198 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728782AbgAIJIJ (ORCPT
+        id S1729214AbgAIJHM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 04:07:12 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39265 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729182AbgAIJHJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 04:08:09 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 009943ki002842;
-        Thu, 9 Jan 2020 10:07:35 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=is6x6Xsavc4DrmaKIz9Vu39SoGM1pxSmkBDyOwyjfa0=;
- b=tljAdzLxNcuZNYbois3hdLfVjFYmM+a7XJR2qA4cbheXmLFBmwcvO4Tyd2PSUhPfrtUP
- dGkXZNfXXiMRik0oqLpd8MMkk8w2vph+qXFWX5RpZTzayz/MwKQUvtzaBUn9oB6DT/Xm
- fVEv5X/L+HfQinfv8d96XpjqpEwy/iu0DE07SVJbdbPA87ilcpoRnzVpAXrYHE5Ni44y
- DJi6tT4FeDBqo7qcL13pXZdGwr4mzsDAarBKJ4WnFg3E+4MH/wyWFxBwMPYr+oBUvd4n
- G3fWAxEmEzxBt2tq0Ajwg2Ez0Tt/KIWcBff3mLkHMpLMYIQAOsvVE1LNdaplPElsnl3P 1Q== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2xakm5rk43-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Jan 2020 10:07:35 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A573A10003B;
-        Thu,  9 Jan 2020 10:07:32 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 84DD02A4D87;
-        Thu,  9 Jan 2020 10:07:32 +0100 (CET)
-Received: from SFHDAG5NODE3.st.com (10.75.127.15) by SFHDAG3NODE3.st.com
- (10.75.127.9) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 9 Jan
- 2020 10:07:32 +0100
-Received: from SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47]) by
- SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47%20]) with mapi id
- 15.00.1473.003; Thu, 9 Jan 2020 10:07:32 +0100
-From:   Christophe ROULLIER <christophe.roullier@st.com>
-To:     Maxime Ripard <mripard@kernel.org>
-CC:     "davem@davemloft.net" <davem@davemloft.net>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "martin.blumenstingl@googlemail.com" 
-        <martin.blumenstingl@googlemail.com>,
-        "alexandru.ardelean@analog.com" <alexandru.ardelean@analog.com>,
-        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] dt-bindings: net: dwmac: increase 'maxItems' for
- 'clocks', 'clock-names' properties
-Thread-Topic: [PATCH 1/2] dt-bindings: net: dwmac: increase 'maxItems' for
- 'clocks', 'clock-names' properties
-Thread-Index: AQHVljS9qESSyYnraEKgryyZ/0O5A6eL1WwAgFaFz4A=
-Date:   Thu, 9 Jan 2020 09:07:32 +0000
-Message-ID: <009e8c0e-6a72-7e14-699e-8a897199ae16@st.com>
-References: <20191108103526.22254-1-christophe.roullier@st.com>
- <20191108103526.22254-2-christophe.roullier@st.com>
- <20191108104231.GE4345@gilmour.lan>
- <f934df21-ac57-50ad-3e7b-b3b337daabe1@st.com>
- <20191115075008.GY4345@gilmour.lan>
-In-Reply-To: <20191115075008.GY4345@gilmour.lan>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.51]
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <23EE773BFEB22B40A7851F2EFDD3C50A@st.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 9 Jan 2020 04:07:09 -0500
+Received: by mail-lj1-f193.google.com with SMTP id l2so6372172lja.6;
+        Thu, 09 Jan 2020 01:07:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=7ijlsxO5qpHVbbD9AH/UiDDCD0d1uP1ULQl/KoHVbKE=;
+        b=mbvN23WkxkzyAeGFGMmksrguPrkbgtLRHlUSGLJ2rjr+Tfv+gTdV7LfXta4iNLkyOz
+         rDHnPfyWQArKbuHLsWLGxOnNh0E/Cu0cHVqO5/AObYI8LiqD4bNTgqGGQKREJ/I3krAq
+         puX04Kgpz6Fh3lyosjFj86UyRUvc04x/IL0EvkLfacRRb9NQZ3Fb/SSlUYwTOqETsIOY
+         o799IFfe9cGY1lynomvjgLdZYkhm/TpUYB46wAgy2kFXcVXxgTEw0Q6/xLyVuQyAlYla
+         Ba9BIJEdBBMOZr+7aLONbfSuv57BbbwQIuiaUi+YD27mlpdC/1aDgd9x4CKWHTJpEVuL
+         VhvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :date:message-id:mime-version;
+        bh=7ijlsxO5qpHVbbD9AH/UiDDCD0d1uP1ULQl/KoHVbKE=;
+        b=M8La2w3CzR0v5Dsl6X7mUA++JS2+lDJBxM0CPYkiYnnCTcRasR3Mtkc4zRYb2jmJ3y
+         SV9M9q7o4avSC/48lIyS6ViXpKzgZ9iwDisGf6oqAJWCDiwwGn8Sz2lS13xolP4XozKK
+         UPY8leyPcsMr6XCWYHfd/HqniaHBX7PaD5PwcWGynLuef1zzfufENOLrtSZZOzBlQX9J
+         OIsxmVfkM6Zq6RSWvRpR7fiXcaboNGikR0ed8mQQhX9IfkogkUKgEiE8cjfRPO+/YiW2
+         LoZRxPSC0fl8c/8esqccuzYW5Pwo1FvsUWqrtCrT/DsM5nLIVpT6pFANr+14wqZXoVe3
+         jqoQ==
+X-Gm-Message-State: APjAAAWsAyrC6uHvu83+2UmW1tJKcI48ysjyIHPDQ3fEbwL1aT0rXakd
+        hovbvkTe9iJ6OewdCfLPwihRPcXcq6I=
+X-Google-Smtp-Source: APXvYqzjxyoI8lpPmUnidfRlJULNwJVBfodIWtKVM612k4LVbYMzVcl7WPlOIz/LFzq71vTKGKgbGw==
+X-Received: by 2002:a2e:9ad8:: with SMTP id p24mr5878891ljj.148.1578560827442;
+        Thu, 09 Jan 2020 01:07:07 -0800 (PST)
+Received: from saruman (88-113-215-33.elisa-laajakaista.fi. [88.113.215.33])
+        by smtp.gmail.com with ESMTPSA id w17sm2691756lfn.22.2020.01.09.01.07.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jan 2020 01:07:06 -0800 (PST)
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: dwc3: use proper initializers for property entries
+In-Reply-To: <f2f41b28-2ca5-7fad-5b19-2ad51c689e5a@samsung.com>
+References: <20191213174623.GA20267@dtor-ws> <CGME20191215164117eucas1p159471bd0b90b76b6ff64f26f17a6580e@eucas1p1.samsung.com> <2a8a5e6b-9372-978e-03d0-350ab65a2d0a@redhat.com> <f2f41b28-2ca5-7fad-5b19-2ad51c689e5a@samsung.com>
+Date:   Thu, 09 Jan 2020 11:08:00 +0200
+Message-ID: <87tv55ro9b.fsf@kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-09_02:2020-01-08,2020-01-09 signatures=0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/11/2019 08:50, Maxime Ripard wrote:
-> On Fri, Nov 08, 2019 at 01:02:14PM +0000, Christophe ROULLIER wrote:
->> On 11/8/19 11:42 AM, Maxime Ripard wrote:
->>> Hi,
->>>
->>> On Fri, Nov 08, 2019 at 11:35:25AM +0100, Christophe Roullier wrote:
->>>> This change is needed for some soc based on snps,dwmac, which have
->>>> more than 3 clocks.
->>>>
->>>> Signed-off-by: Christophe Roullier <christophe.roullier@st.com>
->>>> ---
->>>>    Documentation/devicetree/bindings/net/snps,dwmac.yaml | 8 +++++++-
->>>>    1 file changed, 7 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/D=
-ocumentation/devicetree/bindings/net/snps,dwmac.yaml
->>>> index 4845e29411e4..376a531062c2 100644
->>>> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
->>>> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
->>>> @@ -27,6 +27,7 @@ select:
->>>>              - snps,dwmac-3.710
->>>>              - snps,dwmac-4.00
->>>>              - snps,dwmac-4.10a
->>>> +          - snps,dwmac-4.20a
->>>>              - snps,dwxgmac
->>>>              - snps,dwxgmac-2.10
->>>>
->>>> @@ -62,6 +63,7 @@ properties:
->>>>            - snps,dwmac-3.710
->>>>            - snps,dwmac-4.00
->>>>            - snps,dwmac-4.10a
->>>> +        - snps,dwmac-4.20a
->>>>            - snps,dwxgmac
->>>>            - snps,dwxgmac-2.10
->>>>
->>>> @@ -87,7 +89,8 @@ properties:
->>>>
->>>>      clocks:
->>>>        minItems: 1
->>>> -    maxItems: 3
->>>> +    maxItems: 5
->>>> +    additionalItems: true
->>> Those additional clocks should be documented
->>>
->>> Maxime
->> Hi Maxime,
->>
->> The problem it is specific to our soc, so is it possible to
->>
->> propose "optional clock" for 2 extras clocks in snps,dwmac.yaml
->>
->> and "official" description in soc yaml file (stm32-dwmac.yaml) ?
->>
->>   =A0 clocks:
->>   =A0=A0=A0 minItems: 1
->>   =A0=A0=A0 maxItems: 5
->>   =A0=A0=A0 additionalItems: true
->>   =A0=A0=A0 items:
->>   =A0=A0=A0=A0=A0 - description: GMAC main clock
->>   =A0=A0=A0=A0=A0 - description: Peripheral registers interface clock
->>   =A0=A0=A0=A0=A0 - description:
->>   =A0=A0=A0=A0=A0=A0=A0=A0=A0 PTP reference clock. This clock is used fo=
-r programming the
->>   =A0=A0=A0=A0=A0=A0=A0=A0=A0 Timestamp Addend Register. If not passed t=
-hen the system
->>   =A0=A0=A0=A0=A0=A0=A0=A0=A0 clock will be used and this is fine on som=
-e platforms.
->>
->> +=A0=A0=A0=A0=A0 - description: optional clock
->>
->> +=A0=A0=A0=A0=A0 - description: optional clock
-> I guess we'd really need to figure out what those clocks are doing,
-> they are probably helpful (and used, under a different name) by
-> others.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+
+Hi,
+
+Marek Szyprowski <m.szyprowski@samsung.com> writes:
+
+> Hi All,
 >
-> Hopefully the questions Rob asked will clear that out
+> On 15.12.2019 17:41, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 13-12-2019 18:46, Dmitry Torokhov wrote:
+>>> We should not be reaching into property entries and initialize them by
+>>> hand, but rather use proper initializer macros. This way we can alter
+>>> internal representation of property entries with no visible changes to
+>>> their users.
+>>>
+>>> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>>> ---
+>>>
+>>> It would be good if this could go through Rafael's tree as it is needed
+>>> for the rest of my software_node/property_entry rework patch series
+>>> which I would love not to delay till 5.6.
+>>
+>> Patch looks good to me:
+>>
+>> Acked-by: Hans de Goede <hdegoede@redhat.com>
+>
+> This patch is instantly needed as the issue it fixes is again triggered=20
+> in current (20200107) linux-next by commit e6bff4665c59 "software node:=20
+> replace is_array with is_inline".
+>
+> Felipe: could You ack it, so it could be merged via Rafael's tree=20
+> together with related device property changes?
 
-Rob, do you have any ideas, suggestions ?
+Here you go:
 
-Thanks
+Acked-by: Felipe Balbi <balbi@kernel.org>
 
-> Maxime=
+cheers
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl4W7XAACgkQzL64meEa
+mQZvdhAAsehbAbHtoUuojeSDyiU+fSa02kFNFXtBkJFnvQED6w3Z9z0aNs4hyUnT
+jQQB9AI84fnR6u8c1XbuMSaQbpfdlzynqfUqEvVTgAizKsyQu4+I10E1/DM6Axhx
+1o79WwM31uQbp96+C4BdJGLeSmgKMZLezYY+Sh63DwbTPH4oUg0VNUgVVA4wSD4r
+nz8XZ3dRDjD/neCMqAJh1ILGh9RDMle+LRBRzgNCeDlRIilkRq0WpyNev1aNvc7Q
+DxvS4AUt1vI0CNsLj4aatjUOaLaMsVRXX1Yszn8sG7EotSxMrqzxBFDQJKAuyYkI
+lsL9uDA+daI173P26eELf0rCrsv0E7FGCefW2qKMNr1SD7rx7Bz/5ZiC34xLKKab
+IHf/2B6al5psi/eqmGa1Sby0noY+kfPMZYLsPOjlahl7HPz1Ecq2L20DHI3uqsfs
+sRBiz6oGKsvbQ5ht2vG7aKG1MIunklhUj/gpVxyA8A2ax7PMC4/ytXFL/qImMeTI
+dRBXgiGWG4G4z1aeuJ0xMe5PMLQ62xwLe5orhsQx+Z/D8vgKyKfFGHV4bK7E5aU/
+If0dW7VWGfo83ZmnzcXzCmfdr8f3vwNO5kuV3ChEJWNMFHXa2Yl/zLKAbMjOR3Gv
+nn5wrZ3Hlsv788ebZgai13E3LwkO98HuFyhtEsNlhdW1axqbx9Y=
+=m1L8
+-----END PGP SIGNATURE-----
+--=-=-=--
