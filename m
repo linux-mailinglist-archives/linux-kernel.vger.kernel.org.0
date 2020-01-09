@@ -2,112 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0914E135E06
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:17:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C248135E0C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:19:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387594AbgAIQRv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 11:17:51 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:47963 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730483AbgAIQRt (ORCPT
+        id S1732917AbgAIQTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 11:19:06 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:57517 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729722AbgAIQTE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 11:17:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578586669;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=utdlm/aKlY7xAQfEyR3w7Eafs4aRDid1gJnviBYktXw=;
-        b=b412CnJIyZx0RcnAjmPw1hVXuHrWKydt40cxRNZhmiEfn9bDrBoR/LFo4SdbNXv/C3UF6b
-        cq1nsF6Uhi8ewafwQz9Kb3bL4kMQ3d7m+CJUDzTH0QSN3ogelNOo38m9Ayipl9X6m3M9w/
-        LlhxPuMRKNaQH6xM+p1hmQ/xWZWABcE=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-49-8gmgBvSWP3-oSv7hUfqH4A-1; Thu, 09 Jan 2020 11:17:45 -0500
-X-MC-Unique: 8gmgBvSWP3-oSv7hUfqH4A-1
-Received: by mail-qk1-f199.google.com with SMTP id x127so4477017qkb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:17:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=utdlm/aKlY7xAQfEyR3w7Eafs4aRDid1gJnviBYktXw=;
-        b=FOeoHBxZiQFYWH3WnSfR1vO/j8ft9vBqxAXN9ACKZQdan78wabhPPD3R1NQg2Sneev
-         vVDW6QmD8RxzvCo6ezvBN9Ad2zffyVNSXG8bhuXSaUjxNsBCfWdYMCgsouvVt0qU/250
-         l3X49dzcCoR8nGyWAGNeNRXQLsf2fwT7gylGYQgY8zEip595ht30j9nOyPwvRAw4wrwT
-         0IE4UfPXsuFZiw0yDHWqj7RMp+C3bupB/KpU/Y+/qUrNSrm2E8tXIuFP08klNF9VVRia
-         Lsw2PzTdpAhLyWUqawBVg6GaYnvKnOXOeb4XYylY7KNH2HT4PAy6IsX5OD0/d0eXPGem
-         7uWQ==
-X-Gm-Message-State: APjAAAXBFiVKI1hLl7zwoYmaci+px9s2ybYNstZTlFQAoXFCEmrV9MF0
-        w9/8SVpQd5d61XVH/tEZHTDaZa7bCWrdKJSveqO1Je7vnnhs+vZlai0S2laUFlCPr/oVL1T8sYe
-        Ut+Ftad7BPRpmMoN/e/xPF6zq
-X-Received: by 2002:ac8:544f:: with SMTP id d15mr8718695qtq.53.1578586665331;
-        Thu, 09 Jan 2020 08:17:45 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxOO77lSOX4HB1VsYJg95F5t9IBQf4gOicmO1+VK8TA5tARhYVtiz9nWGF7JPyZNSOqo/KKIw==
-X-Received: by 2002:ac8:544f:: with SMTP id d15mr8718671qtq.53.1578586665141;
-        Thu, 09 Jan 2020 08:17:45 -0800 (PST)
-Received: from xz-x1 ([104.156.64.74])
-        by smtp.gmail.com with ESMTPSA id m8sm3602484qtk.60.2020.01.09.08.17.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 08:17:43 -0800 (PST)
-Date:   Thu, 9 Jan 2020 11:17:42 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christophe de Dinechin <dinechin@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Yan Zhao <yan.y.zhao@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Kevin Kevin <kevin.tian@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v3 00/21] KVM: Dirty ring interface
-Message-ID: <20200109161742.GC15671@xz-x1>
-References: <20200109145729.32898-1-peterx@redhat.com>
- <20200109105443-mutt-send-email-mst@kernel.org>
+        Thu, 9 Jan 2020 11:19:04 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 009G7nSU029953;
+        Thu, 9 Jan 2020 17:18:48 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=idKaq3yf7AW1Ooj8i11PIIlN4aaycLYtIV7dTwDVLvA=;
+ b=lcE3DBPva4g9K59cg+eKniB2pli9JCUeDkQxApL2qyaRjEDnxeTWIrlzTil27CApak9V
+ gUNoHGloW1qni/9eJwvIxeFNo3lLvdFv+x4cqYHyKzpktwZao7+QPb4r3l3eKpM7Liaf
+ eQHb5XAbagfrKHWbQD/3Khsfm1IccniycqzDALVJ2GoUh7NxtG0D0QmBdG2Fn2CT29CY
+ cKsMmDaIebawhqz3Y1sq2RG3NLL6fd88ZvIpIY8YqBS4EIJzmlVcL9CbwLjLIvEtvbcT
+ beUw4f892SoxwYxvXJ/l6CuseA3pcFi/Sp5qUYocCNbntYQt09B9Ire3EeGZ+Qx/1hsm JA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xakur2n6n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 09 Jan 2020 17:18:48 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 989FF10002A;
+        Thu,  9 Jan 2020 17:18:41 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3E1922C6A6E;
+        Thu,  9 Jan 2020 17:18:41 +0100 (CET)
+Received: from SFHDAG3NODE3.st.com (10.75.127.9) by SFHDAG3NODE3.st.com
+ (10.75.127.9) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 9 Jan
+ 2020 17:18:40 +0100
+Received: from SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476]) by
+ SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476%20]) with mapi id
+ 15.00.1347.000; Thu, 9 Jan 2020 17:18:40 +0100
+From:   Benjamin GAIGNARD <benjamin.gaignard@st.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "mripard@kernel.org" <mripard@kernel.org>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "daniel@ffwll.ch" <daniel@ffwll.ch>,
+        "yakui.zhao@intel.com" <yakui.zhao@intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH] drm/modes: tag unused variables to avoid warnings
+Thread-Topic: [PATCH] drm/modes: tag unused variables to avoid warnings
+Thread-Index: AQHVr0QHe45uG+/0wEOCcI9XDhFsl6ffTFuAgANVQQA=
+Date:   Thu, 9 Jan 2020 16:18:40 +0000
+Message-ID: <ab5d769f-60ff-e99d-6802-d93f94fd240d@st.com>
+References: <20191210102437.19377-1-benjamin.gaignard@st.com>
+ <ec3838df-6e8a-b0d9-4b00-2fcd07f97630@suse.de>
+In-Reply-To: <ec3838df-6e8a-b0d9-4b00-2fcd07f97630@suse.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.51]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D968947B67812B498EA79ABC97EB4C37@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200109105443-mutt-send-email-mst@kernel.org>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-09_03:2020-01-09,2020-01-09 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 10:59:50AM -0500, Michael S. Tsirkin wrote:
-> On Thu, Jan 09, 2020 at 09:57:08AM -0500, Peter Xu wrote:
-> > Branch is here: https://github.com/xzpeter/linux/tree/kvm-dirty-ring
-> > (based on kvm/queue)
-> > 
-> > Please refer to either the previous cover letters, or documentation
-> > update in patch 12 for the big picture.
-> 
-> I would rather you pasted it here. There's no way to respond otherwise.
-
-Sure, will do in the next post.
-
-> 
-> For something that's presumably an optimization, isn't there
-> some kind of testing that can be done to show the benefits?
-> What kind of gain was observed?
-
-Since the interface seems to settle soon, maybe it's time to work on
-the QEMU part so I can give some number.  It would be interesting to
-know the curves between dirty logging and dirty ring even for some
-small vms that have some workloads inside.
-
-> 
-> I know it's mostly relevant for huge VMs, but OTOH these
-> probably use huge pages.
-
-Yes huge VMs could benefit more, especially if the dirty rate is not
-that high, I believe.  Though, could you elaborate on why huge pages
-are special here?
-
-Thanks,
-
--- 
-Peter Xu
-
+DQpPbiAxLzcvMjAgMjoyNCBQTSwgVGhvbWFzIFppbW1lcm1hbm4gd3JvdGU6DQo+IEhpDQo+DQo+
+IEFtIDEwLjEyLjE5IHVtIDExOjI0IHNjaHJpZWIgQmVuamFtaW4gR2FpZ25hcmQ6DQo+PiBTb21l
+IHZhcmlhYmxlcyBhcmUgc2V0IGJ1dCBuZXZlciB1c2VkLiBUbyBhdm9pZCB3YXJuaW5nIHdoZW4g
+Y29tcGlsaW5nDQo+PiB3aXRoIFc9MSBhbmQga2VlcCB0aGUgYWxnb3JpdGhtIGxpa2UgaXQgaXMg
+dGFnIHRoZXNlcyB2YXJpYWJsZXMNCj4+IHdpdGggX21heWJlX3VudXNlZCBtYWNyby4NCj4+DQo+
+PiBTaWduZWQtb2ZmLWJ5OiBCZW5qYW1pbiBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAc3Qu
+Y29tPg0KPiBBY2tlZC1ieTogVGhvbWFzIFppbW1lcm1hbm4gPHR6aW1tZXJtYW5uQHN1c2UuZGU+
+DQoNCkFwcGxpZWQgb24gZHJtLW1pc2MtbmV4dC4NCg0KVGhhbmtzLA0KDQpCZW5qYW1pbg0KDQo+
+DQo+PiAtLS0NCj4+IGNoYW5nZXMgaW4gdGhpcyB2ZXJzaW9uOg0KPj4gLSBkbyBub3QgbW9kaWZ5
+IHRoZSBjb2RlIHRvIHJlbW92ZSB0aGUgdW51c2VkIHZhcmlhYmxlcw0KPj4gICAganVzdCBwcmVm
+aXggdGhlbSB3aXRoIF9fbWF5YmVfdW51c2VkIG1hY3JvLg0KPj4gICAgDQo+PiAgIGRyaXZlcnMv
+Z3B1L2RybS9kcm1fbW9kZXMuYyB8IDkgKysrKystLS0tDQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCA1
+IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9kcm1fbW9kZXMuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fbW9kZXMuYw0KPj4g
+aW5kZXggODgyMzI2OThkN2EwLi43MGFlZDRlMjk5MGQgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJz
+L2dwdS9kcm0vZHJtX21vZGVzLmMNCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fbW9kZXMu
+Yw0KPj4gQEAgLTIzMyw3ICsyMzMsNyBAQCBzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqZHJtX2N2
+dF9tb2RlKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIGludCBoZGlzcGxheSwNCj4+ICAgCQkvKiAz
+KSBOb21pbmFsIEhTeW5jIHdpZHRoICglIG9mIGxpbmUgcGVyaW9kKSAtIGRlZmF1bHQgOCAqLw0K
+Pj4gICAjZGVmaW5lIENWVF9IU1lOQ19QRVJDRU5UQUdFCTgNCj4+ICAgCQl1bnNpZ25lZCBpbnQg
+aGJsYW5rX3BlcmNlbnRhZ2U7DQo+PiAtCQlpbnQgdnN5bmNhbmRiYWNrX3BvcmNoLCB2YmFja19w
+b3JjaCwgaGJsYW5rOw0KPj4gKwkJaW50IHZzeW5jYW5kYmFja19wb3JjaCwgX19tYXliZV91bnVz
+ZWQgdmJhY2tfcG9yY2gsIGhibGFuazsNCj4+ICAgDQo+PiAgIAkJLyogZXN0aW1hdGVkIHRoZSBo
+b3Jpem9udGFsIHBlcmlvZCAqLw0KPj4gICAJCXRtcDEgPSBIVl9GQUNUT1IgKiAxMDAwMDAwICAt
+DQo+PiBAQCAtMzg2LDkgKzM4NiwxMCBAQCBkcm1fZ3RmX21vZGVfY29tcGxleChzdHJ1Y3QgZHJt
+X2RldmljZSAqZGV2LCBpbnQgaGRpc3BsYXksIGludCB2ZGlzcGxheSwNCj4+ICAgCWludCB0b3Bf
+bWFyZ2luLCBib3R0b21fbWFyZ2luOw0KPj4gICAJaW50IGludGVybGFjZTsNCj4+ICAgCXVuc2ln
+bmVkIGludCBoZnJlcV9lc3Q7DQo+PiAtCWludCB2c3luY19wbHVzX2JwLCB2YmFja19wb3JjaDsN
+Cj4+IC0JdW5zaWduZWQgaW50IHZ0b3RhbF9saW5lcywgdmZpZWxkcmF0ZV9lc3QsIGhwZXJpb2Q7
+DQo+PiAtCXVuc2lnbmVkIGludCB2ZmllbGRfcmF0ZSwgdmZyYW1lX3JhdGU7DQo+PiArCWludCB2
+c3luY19wbHVzX2JwLCBfX21heWJlX3VudXNlZCB2YmFja19wb3JjaDsNCj4+ICsJdW5zaWduZWQg
+aW50IHZ0b3RhbF9saW5lcywgX19tYXliZV91bnVzZWQgdmZpZWxkcmF0ZV9lc3Q7DQo+PiArCXVu
+c2lnbmVkIGludCBfX21heWJlX3VudXNlZCBocGVyaW9kOw0KPj4gKwl1bnNpZ25lZCBpbnQgdmZp
+ZWxkX3JhdGUsIF9fbWF5YmVfdW51c2VkIHZmcmFtZV9yYXRlOw0KPj4gICAJaW50IGxlZnRfbWFy
+Z2luLCByaWdodF9tYXJnaW47DQo+PiAgIAl1bnNpZ25lZCBpbnQgdG90YWxfYWN0aXZlX3BpeGVs
+cywgaWRlYWxfZHV0eV9jeWNsZTsNCj4+ICAgCXVuc2lnbmVkIGludCBoYmxhbmssIHRvdGFsX3Bp
+eGVscywgcGl4ZWxfZnJlcTsNCj4+
