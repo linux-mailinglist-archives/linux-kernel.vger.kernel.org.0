@@ -2,144 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7BB9135DD4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:11:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D367C135D72
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:04:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387497AbgAIQKR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 11:10:17 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:40186 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387485AbgAIQKQ (ORCPT
+        id S1732847AbgAIQDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 11:03:24 -0500
+Received: from mail-qv1-f65.google.com ([209.85.219.65]:41198 "EHLO
+        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732830AbgAIQDW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 11:10:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578586215;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZnSP0pZ70yH/YNEnLlm1kliMX25WmuqwN7ivPVxI2v0=;
-        b=iPWeoA+WxBrHmuZ/iOBu748x5nQNDWBsbBhnBZNmlk9NcSypiROSZoUQ2/3IIHc7RRmKhG
-        IDYVb9xulHArURe9hSWchqy7G8qpBJnZe4YI7R6rxzi5TbNOCJOxDkhzkT4hiTCbZT070O
-        S6pBR3gfKRLn+7mfpnqst/Ky57VgJw4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-189-H7VIe-VDMLylRbExWbAbtg-1; Thu, 09 Jan 2020 11:10:14 -0500
-X-MC-Unique: H7VIe-VDMLylRbExWbAbtg-1
-Received: by mail-wm1-f71.google.com with SMTP id t16so1104411wmt.4
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:10:14 -0800 (PST)
+        Thu, 9 Jan 2020 11:03:22 -0500
+Received: by mail-qv1-f65.google.com with SMTP id x1so3151764qvr.8
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 08:03:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=E1MKOCVOwb/QWH9ymW870ivoEvWZNM75twwy+HJECjA=;
+        b=0n1pscxioDUMOfwhYFeCu4B4/sz6Dp3ab6Y+ojs3hzylVsi0xi1rlmLZKw6UxOAKiZ
+         rWsqDdB7SGavyeR/Y6Njd6sugUJVQJxUhpZOyL2R8IWiS6Tafuovhh6LwZogSd2NQNmy
+         nX9hGS7Yfnv3c94pfudRiN/Vfx54sy9RnUFC7FJoCmsQRt5l8LuCzdH4EiO6qNh5w9No
+         PZH9sDoycwOjguBIysKCXoGgnULR9lNRtPeRedZX++XSd6JZ6X5Ru9zQGM5j755Bx6f/
+         bmITQKZDwMGUlMC79MVrbN+8ac4Fve95GL3ojBKdnoVfDt4UxSUCr3LRYaN/h7Eb8uEc
+         Z0GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ZnSP0pZ70yH/YNEnLlm1kliMX25WmuqwN7ivPVxI2v0=;
-        b=R74Yz3t8j+zOBnnvAf1ucFvszl121ezPx+V82sOunrFMjUEnwo3xk4PyXCCyqzC+k4
-         HfwQq/dC5/hXO8oIae5Yy3MVT9B88usiZbw06XZDlwbJS+lzupAqPNLPTPPMvKK2kA5t
-         QNf3iKQyacOkvjQPq/1pPsDgFaJ38jhGS5tDBKXPXdLbt4yVmFf92qNyYgikj2f6IYUs
-         qoE+cJlUWQh167KM5zl7J462/93kePPiwHKIr/3ZVt30wT9S9Ux+LPOEkHYf13iKe9oi
-         iydqUU3dE+ArPcE6Ncmvm69Xqtj2ukNWUKGlN7V8yNdR0v4jr/E/x9rfLrr585uNlo8N
-         mv2w==
-X-Gm-Message-State: APjAAAUlqS61ALIQPk1bA9x+Clw3pQj6UAQdYyr3qRrsMkSC/Tq+3y3r
-        idryHf55wB3FG9kWTF9D4fMFNidOjtEzw7Py0rQ9P6qGkJdavW2CW4zrOCpr+5GAyNdqb379q+h
-        ktXU8j4+u2KYZaMgQbM+Z+IJY
-X-Received: by 2002:a05:600c:108a:: with SMTP id e10mr5542129wmd.38.1578586212973;
-        Thu, 09 Jan 2020 08:10:12 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxZtD+rP6Em4mTjnCX/pV4lGl7JJYz5/HOrqpOas0kvGyMcAfBoXa6ico6Rve7JUKRHzsZgbw==
-X-Received: by 2002:a05:600c:108a:: with SMTP id e10mr5542098wmd.38.1578586212717;
-        Thu, 09 Jan 2020 08:10:12 -0800 (PST)
-Received: from redfedo.redhat.com (host81-140-166-164.range81-140.btcentralplus.com. [81.140.166.164])
-        by smtp.gmail.com with ESMTPSA id y17sm2820948wma.36.2020.01.09.08.10.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 08:10:12 -0800 (PST)
-From:   Julien Thierry <jthierry@redhat.com>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     jpoimboe@redhat.com, peterz@infradead.org, raphael.gault@arm.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        Julien Thierry <jthierry@redhat.com>
-Subject: [RFC v5 57/57] arm64: crypto: Remove redundant branch
-Date:   Thu,  9 Jan 2020 16:03:00 +0000
-Message-Id: <20200109160300.26150-58-jthierry@redhat.com>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200109160300.26150-1-jthierry@redhat.com>
-References: <20200109160300.26150-1-jthierry@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=E1MKOCVOwb/QWH9ymW870ivoEvWZNM75twwy+HJECjA=;
+        b=Z6D6SVsqkCCxlkr2RFTnkDWQ7DKG2epZP8biSv5sUOk74Rm+whV5F0WH9SwWqVwdCC
+         cnsXu81f/xBGlAN5ZKwSzzni8BZQVFIkay3NFGq/xLNh8s6q9W0nZeF7TWAX+4Y/IDTt
+         GxE21p2ThboagS47g9wsO7rddwWWu+nhgP6P5y2X8gJmxlXG8nJWhX8Gk91slLKzjLtA
+         mTFS/FNZ79TZ9gymh2jtk8N8YeFwv6FBkctfgVNcxnwbZAMhLgCkt+ctiw/i75nxtNUP
+         WPNNeljqv8zyK9NU4aQWr2B3FVPZ9/2krsB2aq9dcv8CNTC16LPbh5RiG777kegg67Lm
+         En7w==
+X-Gm-Message-State: APjAAAWZMJ1GgF2Hv1WylBzz+OEV+xJl6GPkY0s9ZuvnZ8vvUXP186Rw
+        EXDT7hniNY2ljjlXpxt+6205a2MR1h5Xs2htY7IuJg==
+X-Google-Smtp-Source: APXvYqzbUF6yNFe2ouyO8kGx5FzCuF51PjrvdvTJkwb9N22CfxtROz3Puvxf4LMB7y9X2LTr3+aHnzBVhArM11gviRA=
+X-Received: by 2002:ad4:55e8:: with SMTP id bu8mr9583043qvb.61.1578585801550;
+ Thu, 09 Jan 2020 08:03:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200109125627.24654-1-brgl@bgdev.pl> <CAK7LNASBLXzgy2=fGfyrGbbWq2wL7Y9uaSh-MQQcd7tpvUBbMg@mail.gmail.com>
+In-Reply-To: <CAK7LNASBLXzgy2=fGfyrGbbWq2wL7Y9uaSh-MQQcd7tpvUBbMg@mail.gmail.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Thu, 9 Jan 2020 17:03:09 +0100
+Message-ID: <CAMpxmJX50pBQTDdsy=w1+uNQym+vGnZJiCrWBDmn0ti3igCjvQ@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: fix an "implicit declaration of function" warning
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Having a unconditional branch between the macros do_cond_yield_neon and
-endif_yeild_neon causes the endif_yeild_neon to be unreachable. It so
-happens that endif_yeild_neon expands to a branch and already allows to
-provide the label to jump to after the yeild.
+czw., 9 sty 2020 o 16:59 Masahiro Yamada <masahiroy@kernel.org> napisa=C5=
+=82(a):
+>
+> On Thu, Jan 9, 2020 at 9:56 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> >
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > strncasecmp() & strcasecmp() functions are declared in strings.h, not
+> > string.h. On most environments the former is implicitly included by
+> > the latter but on some setups, building menuconfig results in the
+> > following warning:
+> >
+> >   HOSTCC  scripts/kconfig/mconf.o
+> > scripts/kconfig/mconf.c: In function =E2=80=98search_conf=E2=80=99:
+> > scripts/kconfig/mconf.c:423:6: warning: implicit declaration of functio=
+n =E2=80=98strncasecmp=E2=80=99 [-Wimplicit-function-declaration]
+> >   if (strncasecmp(dialog_input_result, CONFIG_, strlen(CONFIG_)) =3D=3D=
+ 0)
+> >       ^~~~~~~~~~~
+> > scripts/kconfig/mconf.c: In function =E2=80=98main=E2=80=99:
+> > scripts/kconfig/mconf.c:1021:8: warning: implicit declaration of functi=
+on =E2=80=98strcasecmp=E2=80=99 [-Wimplicit-function-declaration]
+> >    if (!strcasecmp(mode, "single_menu"))
+> >         ^~~~~~~~~~
+> >
+> > Fix it by explicitly including strings.h.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Thanks.
+>
+> I see strncasecmp() in
+> scripts/kconfig/nconf.c too.
+>
+> Could you fix both in a single patch?
+>
+> You can try it with "make nconfig".
 
-Get rid of the redundant branch instruction.
+Sure. It seems gconf needs the same change too.
 
-Signed-off-by: Julien Thierry <jthierry@redhat.com>
----
- arch/arm64/crypto/sha1-ce-core.S   | 3 +--
- arch/arm64/crypto/sha2-ce-core.S   | 3 +--
- arch/arm64/crypto/sha3-ce-core.S   | 3 +--
- arch/arm64/crypto/sha512-ce-core.S | 3 +--
- 4 files changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/arch/arm64/crypto/sha1-ce-core.S b/arch/arm64/crypto/sha1-ce-core.S
-index c2ce1f820706..50ca9d11a61f 100644
---- a/arch/arm64/crypto/sha1-ce-core.S
-+++ b/arch/arm64/crypto/sha1-ce-core.S
-@@ -132,8 +132,7 @@ CPU_LE(	rev32		v11.16b, v11.16b	)
- 	st1		{dgav.4s}, [x19]
- 	str		dgb, [x19, #16]
- 	do_cond_yield_neon
--	b		0b
--	endif_yield_neon
-+	endif_yield_neon 0b
- 
- 	b		1b
- 
-diff --git a/arch/arm64/crypto/sha2-ce-core.S b/arch/arm64/crypto/sha2-ce-core.S
-index 6f728a419009..c64716f5de19 100644
---- a/arch/arm64/crypto/sha2-ce-core.S
-+++ b/arch/arm64/crypto/sha2-ce-core.S
-@@ -139,8 +139,7 @@ CPU_LE(	rev32		v19.16b, v19.16b	)
- 	if_will_cond_yield_neon
- 	st1		{dgav.4s, dgbv.4s}, [x19]
- 	do_cond_yield_neon
--	b		0b
--	endif_yield_neon
-+	endif_yield_neon 0b
- 
- 	b		1b
- 
-diff --git a/arch/arm64/crypto/sha3-ce-core.S b/arch/arm64/crypto/sha3-ce-core.S
-index a7d587fa54f6..2448d8dec0de 100644
---- a/arch/arm64/crypto/sha3-ce-core.S
-+++ b/arch/arm64/crypto/sha3-ce-core.S
-@@ -203,8 +203,7 @@ ENTRY(sha3_ce_transform)
- 	st1	{v20.1d-v23.1d}, [x8], #32
- 	st1	{v24.1d}, [x8]
- 	do_cond_yield_neon
--	b		0b
--	endif_yield_neon
-+	endif_yield_neon 0b
- 
- 	b	1b
- 
-diff --git a/arch/arm64/crypto/sha512-ce-core.S b/arch/arm64/crypto/sha512-ce-core.S
-index ce65e3abe4f2..703724703f8f 100644
---- a/arch/arm64/crypto/sha512-ce-core.S
-+++ b/arch/arm64/crypto/sha512-ce-core.S
-@@ -207,8 +207,7 @@ CPU_LE(	rev64		v19.16b, v19.16b	)
- 	if_will_cond_yield_neon
- 	st1		{v8.2d-v11.2d}, [x19]
- 	do_cond_yield_neon
--	b		0b
--	endif_yield_neon
-+	endif_yield_neon 0b
- 
- 	b		1b
- 
--- 
-2.21.0
-
+Bart
