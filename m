@@ -2,57 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88CED1359A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 13:59:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0E1E1359B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 14:05:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730248AbgAIM7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 07:59:46 -0500
-Received: from mga06.intel.com ([134.134.136.31]:45114 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728435AbgAIM7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 07:59:46 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 04:59:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,413,1571727600"; 
-   d="scan'208";a="423246044"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
-  by fmsmga006.fm.intel.com with ESMTP; 09 Jan 2020 04:59:44 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id D19B0301003; Thu,  9 Jan 2020 04:59:44 -0800 (PST)
-Date:   Thu, 9 Jan 2020 04:59:44 -0800
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jann Horn <jannh@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: "perf ftrace" segfault because ->cpus!=NULL but ->all_cpus==NULL
-Message-ID: <20200109125944.GS15478@tassilo.jf.intel.com>
-References: <CAG48ez0eULP6pH26H9ac-YYa88_RSGt6v_hDhsrZ92iZoRdsoQ@mail.gmail.com>
- <20200109122443.GF52936@krava>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200109122443.GF52936@krava>
+        id S1730334AbgAINFt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 08:05:49 -0500
+Received: from mailout2.hostsharing.net ([83.223.78.233]:59857 "EHLO
+        mailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729340AbgAINFt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 08:05:49 -0500
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by mailout2.hostsharing.net (Postfix) with ESMTPS id 6171B103B6726;
+        Thu,  9 Jan 2020 13:56:47 +0100 (CET)
+Received: from localhost (unknown [87.130.102.138])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by h08.hostsharing.net (Postfix) with ESMTPSA id 1487660AD61A;
+        Thu,  9 Jan 2020 13:56:47 +0100 (CET)
+X-Mailbox-Line: From 4d77a67d77a1c699e9a6cc3e73044c31c02d60b5 Mon Sep 17 00:00:00 2001
+Message-Id: <4d77a67d77a1c699e9a6cc3e73044c31c02d60b5.1578574427.git.lukas@wunner.de>
+From:   Lukas Wunner <lukas@wunner.de>
+Date:   Thu, 9 Jan 2020 13:56:26 +0100
+Subject: [PATCH] vt: Delete comment referencing non-existent
+ unbind_con_driver()
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org
+Cc:     Wang YanQing <udknight@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> oops, ftrace is using evlist without event ;-) so all_cpus
-> will not get initialized..
-> 
-> Andi, should we initialize evlist::all_cpus with the first
-> cpus we get, like in the patch below?
+Commit c1f5e38a5d35 ("vt: delete unneeded function unbind_con_driver")
+removed unbind_con_driver() but retained a comment referencing the
+function.  Delete it.
 
-I assume perf stat -A still works for all CPUs? If yes it's ok.
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Cc: Wang YanQing <udknight@gmail.com>
+---
+ drivers/tty/vt/vt.c | 1 -
+ 1 file changed, 1 deletion(-)
 
--andi
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index 34aa39d1aed9..390d96741612 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -3567,7 +3567,6 @@ static int do_bind_con_driver(const struct consw *csw, int first, int last,
+ 
+ 
+ #ifdef CONFIG_VT_HW_CONSOLE_BINDING
+-/* unlocked version of unbind_con_driver() */
+ int do_unbind_con_driver(const struct consw *csw, int first, int last, int deflt)
+ {
+ 	struct module *owner = csw->owner;
+-- 
+2.24.0
+
