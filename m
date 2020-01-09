@@ -2,95 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC70213574B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 11:43:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1818D13574E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 11:43:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730423AbgAIKnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 05:43:06 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52256 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729159AbgAIKnC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 05:43:02 -0500
-Received: by mail-wm1-f67.google.com with SMTP id p9so2351524wmc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 02:43:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tXpo5MYGeWvRjvLGBcgNx4X2h+6aZ6zfLICyaTGuIUI=;
-        b=My8DmB5olwApnKKCvFVwxMr/v2iQP+0A8hHlAm654JXhpMg5Q9TEXV0SJ7C3K1vTOg
-         jSzLPx4QTudKMOBUOYzLJDlEUBvB3yAMOEN8aTA6/RZe4H1/jcjHJ09kzGQwnteziFWa
-         G//ngvcBJbdQU/iq2146XfoKDzZW5jlBDHvc7UV9OFKMr5SEJYULBOXe3ovU9E6CcI0F
-         pX9lXHfLkoCBGtAytjcWkXB9dXAbPTMLpYiClsFQ38eu0YOfnnhQDjBh5HDS26dMesbw
-         qYmni0/Ibam0yQFLnIGRS2i0LxVJX8piLS7ahmQwdgl08cPxozQSVCR1Ma4kW1WLWods
-         neag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=tXpo5MYGeWvRjvLGBcgNx4X2h+6aZ6zfLICyaTGuIUI=;
-        b=RzikjKoeKaG6U6Wsg5CI0qCa9MnXklNzGko6sIJuK4JZgD0T5GJ5ANCuDWUW6avYeg
-         h9cAZ1QB1Y8wq8EqonMGUO2siwoUJSbOBj70uQj3chBwAisVA0ZC0EGXVB+EzzbK4y46
-         +KRXlsgrqcDFL8S1ARfBD70evNIbgT/U1ZN7Uh8/6cLlWNFnvbKCT+N1ccHgiMnuxfY1
-         wPeLAsu3c64FAlaviQRHQAICkW+udQgkT0Hfd6K219aowuwQostTYn5FX2EYGxE2DYE6
-         4H2rsUSjas0Ugf7XB2aG6VqxntFzAFDjGSwSJOjyMdjz5CH1/0hP3Szpkoi2Jwiir7pO
-         KuIQ==
-X-Gm-Message-State: APjAAAXE+ZNNDW9nIG6Vv6T0U/6lidJ+o6RehLVQKjcTSwT24Uffy2qm
-        KVVVMDgqEF1UESVwCKhr3QwFjw==
-X-Google-Smtp-Source: APXvYqxIIYtqFKRMNSIKDcAb5L/+eaHkyC2++l5LvjLq/4NkV3xN9MOMzfCuZK3amBt2RcpYC+BSFA==
-X-Received: by 2002:a7b:c183:: with SMTP id y3mr3944041wmi.45.1578566581595;
-        Thu, 09 Jan 2020 02:43:01 -0800 (PST)
-Received: from glaroque-ThinkPad-T480.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id q68sm2587167wme.14.2020.01.09.02.43.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 02:43:01 -0800 (PST)
-From:   Guillaume La Roque <glaroque@baylibre.com>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org
-Cc:     johan@kernel.org, nsaenzjulienne@suse.de,
-        linux-kernel@vger.kernel.org, khilman@baylibre.com
-Subject: [PATCH v6 2/2] bluetooth: hci_bcm: enable IRQ capability from devicetree
-Date:   Thu,  9 Jan 2020 11:42:57 +0100
-Message-Id: <20200109104257.6942-3-glaroque@baylibre.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200109104257.6942-1-glaroque@baylibre.com>
-References: <20200109104257.6942-1-glaroque@baylibre.com>
+        id S1730442AbgAIKnQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 05:43:16 -0500
+Received: from foss.arm.com ([217.140.110.172]:56796 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729456AbgAIKnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 05:43:15 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 470D331B;
+        Thu,  9 Jan 2020 02:43:14 -0800 (PST)
+Received: from e105550-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4723F3F703;
+        Thu,  9 Jan 2020 02:43:13 -0800 (PST)
+Date:   Thu, 9 Jan 2020 10:43:06 +0000
+From:   Morten Rasmussen <morten.rasmussen@arm.com>
+To:     "Zengtao (B)" <prime.zeng@hisilicon.com>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Linuxarm <linuxarm@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] cpu-topology: warn if NUMA configurations conflicts with
+ lower layer
+Message-ID: <20200109104306.GA10914@e105550-lin.cambridge.arm.com>
+References: <1577088979-8545-1-git-send-email-prime.zeng@hisilicon.com>
+ <20191231164051.GA4864@bogus>
+ <678F3D1BB717D949B966B68EAEB446ED340AE1D3@dggemm526-mbx.china.huawei.com>
+ <20200102112955.GC4864@bogus>
+ <678F3D1BB717D949B966B68EAEB446ED340AEB67@dggemm526-mbx.china.huawei.com>
+ <c43342d0-7e4d-3be0-0fe1-8d802b0d7065@arm.com>
+ <678F3D1BB717D949B966B68EAEB446ED340AFCA0@dggemm526-mbx.china.huawei.com>
+ <20200103114011.GB19390@bogus>
+ <678F3D1BB717D949B966B68EAEB446ED340B31E9@dggemm526-mbx.china.huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <678F3D1BB717D949B966B68EAEB446ED340B31E9@dggemm526-mbx.china.huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for getting IRQ directly from DT instead of relying on
-converting a GPIO to IRQ. This is needed for platforms with GPIO
-controllers that that do not support gpiod_to_irq().
+On Mon, Jan 06, 2020 at 01:37:59AM +0000, Zengtao (B) wrote:
+> > -----Original Message-----
+> > From: Sudeep Holla [mailto:sudeep.holla@arm.com]
+> > Sent: Friday, January 03, 2020 7:40 PM
+> > To: Zengtao (B)
+> > Cc: Valentin Schneider; Linuxarm; Greg Kroah-Hartman; Rafael J. Wysocki;
+> > linux-kernel@vger.kernel.org; Morten Rasmussen; Sudeep Holla
+> > Subject: Re: [PATCH] cpu-topology: warn if NUMA configurations conflicts
+> > with lower layer
+> > 
+> > On Fri, Jan 03, 2020 at 04:24:04AM +0000, Zengtao (B) wrote:
+> > > > -----Original Message-----
+> > > > From: Valentin Schneider [mailto:valentin.schneider@arm.com]
+> > > > Sent: Thursday, January 02, 2020 9:22 PM
+> > > > To: Zengtao (B); Sudeep Holla
+> > > > Cc: Linuxarm; Greg Kroah-Hartman; Rafael J. Wysocki;
+> > > > linux-kernel@vger.kernel.org; Morten Rasmussen
+> > > > Subject: Re: [PATCH] cpu-topology: warn if NUMA configurations
+> > conflicts
+> > > > with lower layer
+> > > >
+> > 
+> > [...]
+> > 
+> > > >
+> > > > Right, and that is checked when you have sched_debug on the cmdline
+> > > > (or write 1 to /sys/kernel/debug/sched_debug & regenerate the sched
+> > > > domains)
+> > > >
+> > >
+> > > No, here I think you don't get my issue, please try to understand my
+> > example
+> > > First:.
+> > >
+> > > *************************************
+> > > NUMA:         0-2,  3-7
+> > > core_siblings:    0-3,  4-7
+> > > *************************************
+> > > When we are building the sched domain, per the current code:
+> > > (1) For core 3
+> > >  MC sched domain fallbacks to 3~7
+> > >  DIE sched domain is 3~7
+> > > (2) For core 4:
+> > >  MC sched domain is 4~7
+> > >  DIE sched domain is 3~7
+> > >
+> > > When we are build sched groups for the MC level:
+> > > (1). core3's sched groups chain is built like as: 3->4->5->6->7->3
+> > > (2). core4's sched groups chain is built like as: 4->5->6->7->4
+> > > so after (2),
+> > > core3's sched groups is overlapped, and it's not a chain any more.
+> > > In the afterwards usecase of core3's sched groups, deadloop happens.
+> > >
+> > > And it's difficult for the scheduler to find out such errors,
+> > > that is why I think a warning is necessary here.
+> > >
+> > 
+> > We can figure out a way to warn if it's absolutely necessary, but I
+> > would like to understand the system topology here. You haven't answered
+> > my query on cache topology. Please give more description on why the
+> > NUMA configuration is like the above example with specific hardware
+> > design details. Is this just a case where user can specify anything
+> > they wish ?
+> >
+> 
+> Sorry for the late response, In fact, it's a VM usecase, you can simply 
+> understand it as a test case. It's a corner case, but it will hang the kernel,
+> that is why I suggest a warning is needed.
+> 
+> I think we need an sanity check or just simply warning, either in the scheduler
+> or arch topology parsing.
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
----
- drivers/bluetooth/hci_bcm.c | 3 +++
- 1 file changed, 3 insertions(+)
+IIUC, the problem is that virt can set up a broken topology in some
+cases where MPIDR doesn't line up correctly with the defined NUMA nodes.
 
-diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-index 769bb4404bd1..b236cb11c0dc 100644
---- a/drivers/bluetooth/hci_bcm.c
-+++ b/drivers/bluetooth/hci_bcm.c
-@@ -13,6 +13,7 @@
- #include <linux/module.h>
- #include <linux/acpi.h>
- #include <linux/of.h>
-+#include <linux/of_irq.h>
- #include <linux/property.h>
- #include <linux/platform_data/x86/apple.h>
- #include <linux/platform_device.h>
-@@ -1151,6 +1152,8 @@ static int bcm_of_probe(struct bcm_device *bdev)
- 	device_property_read_u32(bdev->dev, "max-speed", &bdev->oper_speed);
- 	device_property_read_u8_array(bdev->dev, "brcm,bt-pcm-int-params",
- 				      bdev->pcm_int_params, 5);
-+	bdev->irq = of_irq_get_byname(bdev->dev->of_node, "host-wakeup");
-+
- 	return 0;
- }
- 
--- 
-2.17.1
+We could argue that it is a qemu/virt problem, but it would be nice if
+we could at least detect it. The proposed patch isn't really the right
+solution as it warns on some valid topologies as Sudeep already pointed
+out.
 
+It sounds more like we need a mask subset check in the sched_domain
+building code, if there isn't already one?
+
+Morten
