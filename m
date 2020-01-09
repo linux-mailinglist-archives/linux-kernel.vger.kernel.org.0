@@ -2,154 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76DEF13526D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 06:08:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0B7B135265
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 06:06:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbgAIFIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 00:08:15 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43626 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbgAIFIO (ORCPT
+        id S1726048AbgAIFGr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 00:06:47 -0500
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:54849 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725308AbgAIFGq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 00:08:14 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p27so2042377pli.10
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Jan 2020 21:08:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lcAJ8a5JjzOWUFJCh86RBNGI7a8kNUnL/Mhr975Tw90=;
-        b=RnvZmwwI6pZ9+qidRZsu0vns4iAn1DAJL5MlsGLIdlqfq4TZAVoPlJz/U1+JLRYEZT
-         EYjPlCBSXAM3IAQ+BOQ3xalMH2B4N/y/Di06WGGOQD6/wip/IMUBYL1aOpYDdBS57I9G
-         nQceWEUwEtys99Wtrms/hTUUDG8s1K8OxwItTaAe64xEffhKYBg773HmWD1qL8DqkEmC
-         w8u7Sr6g1cUNPdfxuEUdWwoDxxOsvzO7EOyZVgj71XnE69iWWm+jiScOdoMvJhfJjAVy
-         JzqTj57Dhawu7blgdHEYan07YQDuQVhtZj4WQ3yj3nKP7G7ARiqx4zR81gkGlytyJkDu
-         IHzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lcAJ8a5JjzOWUFJCh86RBNGI7a8kNUnL/Mhr975Tw90=;
-        b=VyVlCLsijKbYjyCOsxBXjQREP4o+xaCF2sqvlDiDhRiXckSYydT+zpksVJUSEc4HP3
-         Wd/CV5F6EWk13T0pT5hqPOnvACSUP+OW2h7MRoQeCf+qY9+SJdFEPWxWIDu85b7SwQVd
-         vB6qpvZfPDwXlYyvfcKWsCF25Tid3nvwqSil7s5byHYr/qCT8YgT5LhzctZ88lFQlt4j
-         0tf+aJmekVG+2RV0V+i/l0XWjiKDEo5Bry7e4Uab5azDOs5qYKeVxAHjpPYQtzm2dQ9s
-         8k+VcHGjK8RMJ/tieKq/YrUsVPwL82QAmXV0oE7hCr4Pc05/mC7YJXzqkaoEiDPuQV0J
-         9cvQ==
-X-Gm-Message-State: APjAAAXZS5j++qQtQSVKLKLgJjxxdkMh2T50kR+6tW1CIQWFa6EO4CDZ
-        N0NPAeUP1US40NRXiVX3VD7kvg==
-X-Google-Smtp-Source: APXvYqyMdP63NJdH9SfWzk07UUKeaz4wI65kF4lFtyIiSizBhZXFfGZ5NaL5lEw5MHT5xrwe0s6MnA==
-X-Received: by 2002:a17:90a:5806:: with SMTP id h6mr2977688pji.120.1578546493628;
-        Wed, 08 Jan 2020 21:08:13 -0800 (PST)
-Received: from leoy-ThinkPad-X240s (li519-153.members.linode.com. [66.175.222.153])
-        by smtp.gmail.com with ESMTPSA id r37sm1049482pjb.7.2020.01.08.21.08.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 Jan 2020 21:08:13 -0800 (PST)
-Date:   Thu, 9 Jan 2020 13:08:06 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Leach <mike.leach@linaro.org>
-Subject: Re: [PATCH v4 1/2] perf parse: Refactor struct perf_evsel_config_term
-Message-ID: <20200109050753.GA24741@leoy-ThinkPad-X240s>
-References: <20200108142010.11269-1-leo.yan@linaro.org>
- <CANLsYkzv2Di-qeU1Q3M4Ro21hQ09eE26FBjeP1A9uSsA_W2Uww@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANLsYkzv2Di-qeU1Q3M4Ro21hQ09eE26FBjeP1A9uSsA_W2Uww@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 9 Jan 2020 00:06:46 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 6018121BF9;
+        Thu,  9 Jan 2020 00:06:45 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Thu, 09 Jan 2020 00:06:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm1; bh=MF8c+sdns7iguGosmLN+yWRChH5HbQH
+        EVoRuFYd3R88=; b=L3c4NMVNgbWCOOtr/APLZBN3ezi4IzeQfH9jOLv3qEDdjgH
+        i2jznUAAc++h/cpuHDptk5D3bM+mnfokTiurIEyFhz0TCzoO0KnoT2D+6RJ9cVK/
+        k8J5Bg1gz3AclF5liUl/z+6+JfauXv15tExiC0ZYdRYhesyheHzwmOUnMEELAsqO
+        bWFComFbdj0vpzJyZ4abMWM0P19Rb+s00cp0j7wzB06FqJ5ZD1pOWPSIENLi3YgF
+        6dsChMBe7vWqyetWyJgV5ZxarS+5vgSgsVSW02PpCBN/iotRWSmaiLl8LmtQn7DD
+        4EHxLK5H08DJHufYDYrCb3mTBfrXTr4YR+RzD7w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=MF8c+s
+        dns7iguGosmLN+yWRChH5HbQHEVoRuFYd3R88=; b=fEwkixlkFKOerFt8LoBhLn
+        aW2pyVTNpNZ6a9E7Y0NVAkFjwG11d9dkCGNDNlG+nVEdXR9Nb3xHLmg1egEI8i0U
+        b1IKI01QCnXta+ZgubHVhYRRkP3WegkrdkNjXDCpI4DEuVxfEGzXTXZVah6VSAPd
+        yrTXvb5up17dDtHYWtrTXbTMGeVkC1VVtLNwoLcz8ZxckT2zw66g/Pm3vX0QKUqt
+        osN4oG363+e2lKlzknwqP09GpCox7cpT4xbvmSeCgJ14GJP5JVzq+MMv/x83pg5h
+        5xdplFNqyNrOqVruJGKfX+vfFEZQF3k2Nh3S6IcV9Le5G8y4jzkQbNRtBYK+6Jsg
+        ==
+X-ME-Sender: <xms:5LQWXtDslOqEN2MlmzehoK1lmubcYDSSkWT1Kc5No_MvnVsqbX3W5g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdehledgjeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
+    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
+    rhfuihiivgeptd
+X-ME-Proxy: <xmx:5LQWXuy8aZIvXShIeiG8FrIyBgCS2ys0DC8mdDP9HTQJ8SvxVmuHdA>
+    <xmx:5LQWXiD8GxHWtmp_m5OtR7PzD33WH7vibT2nyX9Q1jEjRioz_DgDRA>
+    <xmx:5LQWXjaVUAXR9tvXXlEj1gyc5B8x8r9yUlIIYPBFcImJ65cU7uZ_jA>
+    <xmx:5bQWXrdi0ZYe-MuR_Kc2R9t9O1rb1IDJ9CMC2yN25KGFXlGLa3iu1w>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id E6FC6E00A5; Thu,  9 Jan 2020 00:06:43 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-740-g7d9d84e-fmstable-20200109v1
+Mime-Version: 1.0
+Message-Id: <3c44c745-d39a-4724-860d-a66537b2adbb@www.fastmail.com>
+In-Reply-To: <1577993276-2184-7-git-send-email-eajames@linux.ibm.com>
+References: <1577993276-2184-1-git-send-email-eajames@linux.ibm.com>
+ <1577993276-2184-7-git-send-email-eajames@linux.ibm.com>
+Date:   Thu, 09 Jan 2020 15:38:20 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Eddie James" <eajames@linux.ibm.com>,
+        linux-aspeed@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, "Jason Cooper" <jason@lakedaemon.net>,
+        "Marc Zyngier" <maz@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>, tglx@linutronix.de,
+        "Joel Stanley" <joel@jms.id.au>
+Subject: Re: [PATCH v4 06/12] soc: aspeed: Add XDMA Engine Driver
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mathieu,
 
-On Wed, Jan 08, 2020 at 10:58:31AM -0700, Mathieu Poirier wrote:
 
-[...]
+On Fri, 3 Jan 2020, at 05:57, Eddie James wrote:
+> +static int aspeed_xdma_init_scu(struct aspeed_xdma *ctx, struct device *dev)
+> +{
+> +	struct regmap *scu = syscon_regmap_lookup_by_phandle(dev->of_node,
+> +							     "aspeed,scu");
+> +
+> +	if (!IS_ERR(scu)) {
+> +		u32 selection;
+> +		bool pcie_device_bmc = true;
+> +		const u32 bmc = SCU_PCIE_CONF_BMC_EN |
+> +			SCU_PCIE_CONF_BMC_EN_MSI | SCU_PCIE_CONF_BMC_EN_IRQ |
+> +			SCU_PCIE_CONF_BMC_EN_DMA;
+> +		const u32 vga = SCU_PCIE_CONF_VGA_EN |
+> +			SCU_PCIE_CONF_VGA_EN_MSI | SCU_PCIE_CONF_VGA_EN_IRQ |
+> +			SCU_PCIE_CONF_VGA_EN_DMA;
+> +		const char *pcie = NULL;
+> +
+> +		if (!of_property_read_string(dev->of_node, "pcie-device",
+> +					     &pcie)) {
+> +			if (!strcmp(pcie, "vga")) {
+> +				pcie_device_bmc = false;
+> +			} else if (strcmp(pcie, "bmc")) {
+> +				dev_err(dev,
+> +					"Invalid pcie-device property %s.\n",
+> +					pcie);
+> +				return -EINVAL;
+> +			}
+> +		}
+> +
+> +		if (pcie_device_bmc) {
+> +			selection = bmc;
+> +			regmap_write(scu, ctx->chip->scu_bmc_class,
+> +				     SCU_BMC_CLASS_REV_XDMA);
+> +		} else {
+> +			selection = vga;
+> +		}
+> +
+> +		regmap_update_bits(scu, ctx->chip->scu_pcie_conf, bmc | vga,
+> +				   selection);
+> +	} else {
+> +		dev_warn(dev, "Unable to configure PCIe; continuing.\n");
+> +	}
 
-> > diff --git a/tools/perf/util/evsel_config.h b/tools/perf/util/evsel_config.h
-> > index 1f8d2fe0b66e..4e5b3ebf09cf 100644
-> > --- a/tools/perf/util/evsel_config.h
-> > +++ b/tools/perf/util/evsel_config.h
-> > @@ -33,21 +33,8 @@ struct perf_evsel_config_term {
-> >         struct list_head      list;
-> >         enum evsel_term_type  type;
-> >         union {
-> > -               u64           period;
-> > -               u64           freq;
-> > -               bool          time;
-> > -               char          *callgraph;
-> > -               char          *drv_cfg;
-> > -               u64           stack_user;
-> > -               int           max_stack;
-> > -               bool          inherit;
-> > -               bool          overwrite;
-> > -               char          *branch;
-> > -               unsigned long max_events;
-> > -               bool          percore;
-> > -               bool          aux_output;
-> > -               u32           aux_sample_size;
-> > -               u64           cfg_chg;
-> > +               u64           num;
-> > +               char          *str;
-> 
-> That is a lot more than just dealing with the "char *" members.  Given
-> the pervasiveness of the changes I would have been happy to leave
-> other members alone for the time being.
+Not something you need to fix but generally I'd structure this as a early-return:
 
-I think actually you are suggesting like below which add general
-members and also keep the old members.  If so, I prefer to add two
-general members 'num' and 'str'.
+    if (IS_ERR(scu)) {
+        dev_warn(dev, "Unable to configure PCIe; continuing.\n");
+        return 0;
+    }
+    ...
 
-struct perf_evsel_config_term {
-        struct list_head      list;
-        enum evsel_term_type  type;
-        union {
-                u64           period;
-                u64           freq;
-                bool          time;
-                char          *callgraph;
-                char          *drv_cfg;
-                u64           stack_user;
-                int           max_stack;
-                bool          inherit;
-                bool          overwrite;
-                char          *branch;
-                unsigned long max_events;
-                bool          percore;
-                bool          aux_output;
-                u32           aux_sample_size;
-                u64           cfg_chg;
-+               u64           num;
-+               char          *str;
-        } val;
-        bool weak;
-};
-
-> I will let Jiri make the
-> final call but if we are to proceed this way I think we should have a
-> member per type to avoid casting issues.
-
-Yeah, let's see what's Jiri thinking.
-
-Just note, with this change, I don't see any casting warning or errors
-when built perf on arm64/arm32.
-
-Thanks,
-Leo Yan
+Could probably also improve the warning message to say what caused the
+failure, but again, something that can be changed later.
