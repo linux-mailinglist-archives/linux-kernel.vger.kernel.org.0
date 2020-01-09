@@ -2,135 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DC76135528
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:07:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56C77135532
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 10:09:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729214AbgAIJHM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 04:07:12 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39265 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729182AbgAIJHJ (ORCPT
+        id S1728980AbgAIJI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 04:08:58 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39855 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728593AbgAIJI6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 04:07:09 -0500
-Received: by mail-lj1-f193.google.com with SMTP id l2so6372172lja.6;
-        Thu, 09 Jan 2020 01:07:08 -0800 (PST)
+        Thu, 9 Jan 2020 04:08:58 -0500
+Received: by mail-qt1-f196.google.com with SMTP id e5so5278158qtm.6
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 01:08:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=7ijlsxO5qpHVbbD9AH/UiDDCD0d1uP1ULQl/KoHVbKE=;
-        b=mbvN23WkxkzyAeGFGMmksrguPrkbgtLRHlUSGLJ2rjr+Tfv+gTdV7LfXta4iNLkyOz
-         rDHnPfyWQArKbuHLsWLGxOnNh0E/Cu0cHVqO5/AObYI8LiqD4bNTgqGGQKREJ/I3krAq
-         puX04Kgpz6Fh3lyosjFj86UyRUvc04x/IL0EvkLfacRRb9NQZ3Fb/SSlUYwTOqETsIOY
-         o799IFfe9cGY1lynomvjgLdZYkhm/TpUYB46wAgy2kFXcVXxgTEw0Q6/xLyVuQyAlYla
-         Ba9BIJEdBBMOZr+7aLONbfSuv57BbbwQIuiaUi+YD27mlpdC/1aDgd9x4CKWHTJpEVuL
-         VhvA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iWKF4KF9Y1CtiEun++0rxUUQMRPGqGyeC6hWhJkdSUc=;
+        b=QGT9LAJanjfXKoCERl6lGxDO5mX9gXrEuQ7sDttgSjCnzBSKSYfwnG4X9f+Ngw4O1v
+         Jkhrpm+DlIJNPfdLLVhSKTc7QDIodBcyMEhHwaxzV8RY5q+Ffgk+1IFXnbZvNBlyfPV8
+         UQwFDYjv97NNGovIbt5sPou5JjNNOYGlmCfeQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :date:message-id:mime-version;
-        bh=7ijlsxO5qpHVbbD9AH/UiDDCD0d1uP1ULQl/KoHVbKE=;
-        b=M8La2w3CzR0v5Dsl6X7mUA++JS2+lDJBxM0CPYkiYnnCTcRasR3Mtkc4zRYb2jmJ3y
-         SV9M9q7o4avSC/48lIyS6ViXpKzgZ9iwDisGf6oqAJWCDiwwGn8Sz2lS13xolP4XozKK
-         UPY8leyPcsMr6XCWYHfd/HqniaHBX7PaD5PwcWGynLuef1zzfufENOLrtSZZOzBlQX9J
-         OIsxmVfkM6Zq6RSWvRpR7fiXcaboNGikR0ed8mQQhX9IfkogkUKgEiE8cjfRPO+/YiW2
-         LoZRxPSC0fl8c/8esqccuzYW5Pwo1FvsUWqrtCrT/DsM5nLIVpT6pFANr+14wqZXoVe3
-         jqoQ==
-X-Gm-Message-State: APjAAAWsAyrC6uHvu83+2UmW1tJKcI48ysjyIHPDQ3fEbwL1aT0rXakd
-        hovbvkTe9iJ6OewdCfLPwihRPcXcq6I=
-X-Google-Smtp-Source: APXvYqzjxyoI8lpPmUnidfRlJULNwJVBfodIWtKVM612k4LVbYMzVcl7WPlOIz/LFzq71vTKGKgbGw==
-X-Received: by 2002:a2e:9ad8:: with SMTP id p24mr5878891ljj.148.1578560827442;
-        Thu, 09 Jan 2020 01:07:07 -0800 (PST)
-Received: from saruman (88-113-215-33.elisa-laajakaista.fi. [88.113.215.33])
-        by smtp.gmail.com with ESMTPSA id w17sm2691756lfn.22.2020.01.09.01.07.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 01:07:06 -0800 (PST)
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: dwc3: use proper initializers for property entries
-In-Reply-To: <f2f41b28-2ca5-7fad-5b19-2ad51c689e5a@samsung.com>
-References: <20191213174623.GA20267@dtor-ws> <CGME20191215164117eucas1p159471bd0b90b76b6ff64f26f17a6580e@eucas1p1.samsung.com> <2a8a5e6b-9372-978e-03d0-350ab65a2d0a@redhat.com> <f2f41b28-2ca5-7fad-5b19-2ad51c689e5a@samsung.com>
-Date:   Thu, 09 Jan 2020 11:08:00 +0200
-Message-ID: <87tv55ro9b.fsf@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iWKF4KF9Y1CtiEun++0rxUUQMRPGqGyeC6hWhJkdSUc=;
+        b=Bsm4Kgu/A7I0kniu7qzo7UCzsJn150eOUkZ+LPx8JCsnUIcws3L4EIhr5vLR+RvsR0
+         ILB9LhVt/RjhTxHAtkV+u+k70/Pb7f8mzMPpDymGhCCNuzHJVaY+RAs8D8lccQadB9CV
+         Qnqdy1YbhxH9Hi20bmLnYdEQGwNQL5p87zlJwHj4+m/sJxRCI09mbJZ2IkUOZ5jMuz0g
+         2+Y5dwc7GS56fo+CCuQ05PJjRggnlK1Wjp3N05a4QoKfbagniaGwBPAaPuiQoziNIoOX
+         h8WUp3mrz/cF45JM3I1fS/0eWGfiM+FhhcrFiw2XuUYIvXHAvHR97nHOGwy95cjdyw3U
+         41SA==
+X-Gm-Message-State: APjAAAUFCxFX+s00acri+LFb7dut1w3esd6Vnfb1vShPA6IGmAtyRInm
+        6GB0eqfblfGyOs03x6FNkl8IXNsy2J4wgy9ksXrohQ==
+X-Google-Smtp-Source: APXvYqzHUEojTodwcrGuQpgaBY41guNbk/ZtFyS1AoJQRt5Iu+x8Niu+YYkIDEdBurliWcTM+tgf2nUl95GTV1rYpXA=
+X-Received: by 2002:aed:2f45:: with SMTP id l63mr7382614qtd.221.1578560937298;
+ Thu, 09 Jan 2020 01:08:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+References: <20200108052337.65916-1-drinkcat@chromium.org>
+In-Reply-To: <20200108052337.65916-1-drinkcat@chromium.org>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Thu, 9 Jan 2020 17:08:46 +0800
+Message-ID: <CANMq1KCKuOTvyDxhnL1baEeRSxnaPdgMp9Lj2pcHwj-30n2-5g@mail.gmail.com>
+Subject: Re: [PATCH v2 0/7] Add dts for mt8183 GPU (and misc panfrost patches)
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Steven Price <steven.price@arm.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-
-Hi,
-
-Marek Szyprowski <m.szyprowski@samsung.com> writes:
-
-> Hi All,
+On Wed, Jan 8, 2020 at 1:23 PM Nicolas Boichat <drinkcat@chromium.org> wrote:
 >
-> On 15.12.2019 17:41, Hans de Goede wrote:
->> Hi,
->>
->> On 13-12-2019 18:46, Dmitry Torokhov wrote:
->>> We should not be reaching into property entries and initialize them by
->>> hand, but rather use proper initializer macros. This way we can alter
->>> internal representation of property entries with no visible changes to
->>> their users.
->>>
->>> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
->>> ---
->>>
->>> It would be good if this could go through Rafael's tree as it is needed
->>> for the rest of my software_node/property_entry rework patch series
->>> which I would love not to delay till 5.6.
->>
->> Patch looks good to me:
->>
->> Acked-by: Hans de Goede <hdegoede@redhat.com>
+> Hi!
 >
-> This patch is instantly needed as the issue it fixes is again triggered=20
-> in current (20200107) linux-next by commit e6bff4665c59 "software node:=20
-> replace is_array with is_inline".
+> Sorry for the long delay since https://patchwork.kernel.org/patch/11132381/,
+> finally got around to give this a real try.
 >
-> Felipe: could You ack it, so it could be merged via Rafael's tree=20
-> together with related device property changes?
+> The main purpose of this series is to upstream the dts change and the binding
+> document, but I wanted to see how far I could probe the GPU, to check that the
+> binding is indeed correct. The rest of the patches are RFC/work-in-progress, but
+> I think some of them could already be picked up.
+>
+> So this is tested on MT8183 with a chromeos-4.19 kernel, and a ton of
+> backports to get the latest panfrost driver (I should probably try on
+> linux-next at some point but this was the path of least resistance).
+>
+> I tested it as a module as it's more challenging (originally probing would
+> work built-in, on boot, but not as a module, as I didn't have the power
+> domain changes, and all power domains are on by default during boot).
+>
+> Probing logs looks like this, currently:
+> [  221.867726] panfrost 13040000.gpu: clock rate = 511999970
+> [  221.867929] panfrost 13040000.gpu: Linked as a consumer to regulator.14
+> [  221.868600] panfrost 13040000.gpu: Linked as a consumer to regulator.31
+> [  221.870586] panfrost 13040000.gpu: Linked as a consumer to genpd:0:13040000.gpu
+> [  221.871492] panfrost 13040000.gpu: Linked as a consumer to genpd:1:13040000.gpu
+> [  221.871866] panfrost 13040000.gpu: Linked as a consumer to genpd:2:13040000.gpu
+> [  221.872427] panfrost 13040000.gpu: mali-g72 id 0x6221 major 0x0 minor 0x3 status 0x0
+> [  221.872439] panfrost 13040000.gpu: features: 00000000,13de77ff, issues: 00000000,00000400
+> [  221.872445] panfrost 13040000.gpu: Features: L2:0x07120206 Shader:0x00000000 Tiler:0x00000809 Mem:0x1 MMU:0x00002830 AS:0xff JS:0x7
+> [  221.872449] panfrost 13040000.gpu: shader_present=0x7 l2_present=0x1
+> [  221.873526] panfrost 13040000.gpu: error powering up gpu stack
+> [  221.878088] [drm] Initialized panfrost 1.1.0 20180908 for 13040000.gpu on minor 2
+> [  221.940817] panfrost 13040000.gpu: error powering up gpu stack
+> [  222.018233] panfrost 13040000.gpu: error powering up gpu stack
+> (repeated)
+>
+> So the GPU is probed, but there's an issue when powering up the STACK, not
+> quite sure why, I'll try to have a deeper look, at some point.
 
-Here you go:
+Just as a follow-up to that one. stack_present=0x00000007 on my GPU.
 
-Acked-by: Felipe Balbi <balbi@kernel.org>
+However, the ARM-provided driver I use on this platform doesn't have
+CONFIG_MALI_CORESTACK enabled so the "stack" is never turned on.
+https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-4.19/drivers/gpu/arm/midgard/Kconfig#101
+. So possibly this does not need to be done on Bifrost GPUs (and the
+error should be harmless).
 
-cheers
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl4W7XAACgkQzL64meEa
-mQZvdhAAsehbAbHtoUuojeSDyiU+fSa02kFNFXtBkJFnvQED6w3Z9z0aNs4hyUnT
-jQQB9AI84fnR6u8c1XbuMSaQbpfdlzynqfUqEvVTgAizKsyQu4+I10E1/DM6Axhx
-1o79WwM31uQbp96+C4BdJGLeSmgKMZLezYY+Sh63DwbTPH4oUg0VNUgVVA4wSD4r
-nz8XZ3dRDjD/neCMqAJh1ILGh9RDMle+LRBRzgNCeDlRIilkRq0WpyNev1aNvc7Q
-DxvS4AUt1vI0CNsLj4aatjUOaLaMsVRXX1Yszn8sG7EotSxMrqzxBFDQJKAuyYkI
-lsL9uDA+daI173P26eELf0rCrsv0E7FGCefW2qKMNr1SD7rx7Bz/5ZiC34xLKKab
-IHf/2B6al5psi/eqmGa1Sby0noY+kfPMZYLsPOjlahl7HPz1Ecq2L20DHI3uqsfs
-sRBiz6oGKsvbQ5ht2vG7aKG1MIunklhUj/gpVxyA8A2ax7PMC4/ytXFL/qImMeTI
-dRBXgiGWG4G4z1aeuJ0xMe5PMLQ62xwLe5orhsQx+Z/D8vgKyKfFGHV4bK7E5aU/
-If0dW7VWGfo83ZmnzcXzCmfdr8f3vwNO5kuV3ChEJWNMFHXa2Yl/zLKAbMjOR3Gv
-nn5wrZ3Hlsv788ebZgai13E3LwkO98HuFyhtEsNlhdW1axqbx9Y=
-=m1L8
------END PGP SIGNATURE-----
---=-=-=--
+> Thanks!
+>
+> Nicolas
+>
+> v2:
+>  - Use sram instead of mali_sram as SRAM supply name.
+>  - Rename mali@ to gpu@.
+>  - Add dt-bindings changes
+>  - Stacking patches after the device tree change that allow basic
+>    probing (still incomplete and broken).
+>
+> Nicolas Boichat (7):
+>   dt-bindings: gpu: mali-bifrost: Add Mediatek MT8183
+>   arm64: dts: mt8183: Add node for the Mali GPU
+>   drm/panfrost: Improve error reporting in panfrost_gpu_power_on
+>   drm/panfrost: Add support for a second regulator for the GPU
+>   drm/panfrost: Add support for multiple power domain support
+>   RFC: drm/panfrost: Add bifrost compatible string
+>   RFC: drm/panfrost: devfreq: Add support for 2 regulators
+>
+>  .../bindings/gpu/arm,mali-bifrost.yaml        |  20 ++++
+>  arch/arm64/boot/dts/mediatek/mt8183-evb.dts   |   7 ++
+>  arch/arm64/boot/dts/mediatek/mt8183.dtsi      | 104 +++++++++++++++++
+>  drivers/gpu/drm/panfrost/panfrost_devfreq.c   |  18 +++
+>  drivers/gpu/drm/panfrost/panfrost_device.c    | 108 ++++++++++++++++--
+>  drivers/gpu/drm/panfrost/panfrost_device.h    |   7 ++
+>  drivers/gpu/drm/panfrost/panfrost_drv.c       |   1 +
+>  drivers/gpu/drm/panfrost/panfrost_gpu.c       |  15 ++-
+>  8 files changed, 267 insertions(+), 13 deletions(-)
+>
+> --
+> 2.24.1.735.g03f4e72817-goog
+>
