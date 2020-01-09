@@ -2,101 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 491821361EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 21:43:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C5AE1361F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 21:46:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731437AbgAIUnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 15:43:19 -0500
-Received: from mail-qv1-f68.google.com ([209.85.219.68]:38909 "EHLO
-        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731407AbgAIUnT (ORCPT
+        id S1728503AbgAIUqp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 15:46:45 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:46591 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728241AbgAIUqo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 15:43:19 -0500
-Received: by mail-qv1-f68.google.com with SMTP id t6so3581785qvs.5;
-        Thu, 09 Jan 2020 12:43:18 -0800 (PST)
+        Thu, 9 Jan 2020 15:46:44 -0500
+Received: by mail-qt1-f195.google.com with SMTP id g1so7011574qtr.13
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 12:46:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=ef9/tFIDN6mikvhUQb4XMvHbbgBUrjC1EBqGZF+FLsk=;
-        b=sXFXkHka6oKVtQKVKZiBjE9C/sNZvR9m0AACc3oWtVDWSoMaHGL02DqGyopAKIUsxv
-         NCXnuHkaPglMJsl6oWOfQL3ICcECz229wJdXw5bxIfUtxQZNfY8G4AOEVWt9tFHfzcNI
-         2WzPUiExo5v+4FOtJPA1ARVI9eA9kK8j6PlRuSJVxajHDSZddB3J+oIRHtXmnMFJvSuO
-         wH3Jp9vqCGHD06jOJdG/TS/oKvzGsMXGWD0YcxH8BejChxm5UC7Hrd8Q+/WQ1MBuZXGO
-         JMXao3zFB6DIjqCTXt5F1PV2yd0n7pldDn4hMgzzQou4FggV+q7AZw0dRpJpuUTxVAfK
-         M2fw==
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=DWM0j5tZLR3359c+a2rA4wyZv8TrqZcQKkaM1KEojEY=;
+        b=mGmbTjKXlVt1lompbLHwd/o0loS1Ui1RASNS3ZCwAby7hncY8DP4zZqRNWujbFiPVQ
+         1Yre3YqeeOUg/RQ0swG4m3uPf4VRMXn2Egv5Bkn2Tc9MmRzAZBJf8iw/NdKj9DBFRAb0
+         8qFVdaEZaxzDO5k+ssPER1RiYQ2K7p+1U/mtE4SyLk3ZUrpsMtbkhton/QRPRKx/XS6g
+         NiXbAUQTpmU1ctkhjmm2lpp7Ci4nuMX0i6NEJonIASaB/eOhaBAKm9efbNKMvAvUWLJn
+         0hSo2EQ4C8g5Fkz3Wu0LWh7Ri5gmJuxmoTw3Ob7uSiP+CXFjEKJ1mKyTJpwNLd8kVWF2
+         ZMow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=ef9/tFIDN6mikvhUQb4XMvHbbgBUrjC1EBqGZF+FLsk=;
-        b=EdvYvNyS52Hg+kifedt2EUDM2UG8oa01i3nCingWhfM2CHU0gTyD/v54dlQ1B0y/sS
-         Wgw4Pi3yygIRSop0Wb1r1dFZJXUOqvZtL7hku0oSMF+bsPgFBj1caDRehVmoKP9d4RQ8
-         l8SW+y3UxCPVfubzcbNh+4vyUFT3SBnuYbE7PmQTcM7oIKEi66WEFKjxkrMr6xj095OJ
-         PfVLrXmqKYpQIVuF8Bt7opuPLNR0PcUGcPwznGo1a5lh66K0E2wj9HM/utj+nFsLo1rd
-         AS9XxEnxpY5K7O2YiBRWT3RTKUTG2D2TvNTXwS3hsQNBnnRx2gQpM9XHyBDOOxNh0lIp
-         UixQ==
-X-Gm-Message-State: APjAAAXTD7j7pnGmsD4B+RbVmnfAIJHnbFivLT4V9xyIcWHnTj8ezqoY
-        x9Xem50yIqMl2EVKXQMBLEE=
-X-Google-Smtp-Source: APXvYqyy/kx651cOXGkIrrG6zslGb9MsDswmcdV/3oXSGQgr334qQh80B8EWLVv92a39Y/yyg/53Lw==
-X-Received: by 2002:a05:6214:38c:: with SMTP id l12mr10604400qvy.224.1578602597906;
-        Thu, 09 Jan 2020 12:43:17 -0800 (PST)
-Received: from ?IPv6:2804:14d:72b1:8920:a2ce:f815:f14d:bfac? ([2804:14d:72b1:8920:a2ce:f815:f14d:bfac])
-        by smtp.gmail.com with ESMTPSA id u52sm4018315qta.23.2020.01.09.12.43.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jan 2020 12:43:17 -0800 (PST)
-Subject: Re: [PATCH 1/1] media: dvb_dummy_tuner: implement driver skeleton
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     mchehab@kernel.org, sean@mess.org, tglx@linutronix.de,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-References: <20200109152408.919325-1-dwlsalmeida@gmail.com>
- <20200109152408.919325-2-dwlsalmeida@gmail.com>
- <20200109155437.GA568342@kroah.com>
-From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-Message-ID: <c242068a-ad8c-be27-4c95-22cb5ff17216@gmail.com>
-Date:   Thu, 9 Jan 2020 17:43:13 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=DWM0j5tZLR3359c+a2rA4wyZv8TrqZcQKkaM1KEojEY=;
+        b=QxszFA5u6/TGpKsVbE8J815GqksFUmGRvXj+kVerx9+cxOCsL08JDLvsfIepWH8kZD
+         0Ome96lNwo1a+lnGNM8LJYOPZDUCFh7vBFfVUz3BqT6wlge7STmuLzvc3bPa+9UHJr0j
+         LY1K6+nZf1dywTfMVEiNSBc4OsSVMRnzdhsHTY77i+VGwO9L8Iumo6t4lwWOq7xwsR+p
+         3045/4l4Q7/flyT8gAAp3IOzuXjIgnMku2mwVfzVa3zLG1c7e0NgZ4Gq6N/M1+H5sbgQ
+         WI8syLeTyjxv0tHaKfQKD4vpWvUeEJCpbuUBe8hx7VUcVzf5lFaGl/GaReGa+2Uyu6dl
+         oPWw==
+X-Gm-Message-State: APjAAAWzURR+ld/yFumLGF0xyZLaMoxzhy+CNhLje/OH2/gwOklLWUPL
+        r6zLQKe4NY8AE3EHILh6h+6yw4PSG0Y=
+X-Google-Smtp-Source: APXvYqxybzWgUcYhtudbjmkLjeD3PtY/3I527wBsTWBCp1KPrdCi6Bg9T8RpSrIBmxeFmTbGWdc/HQ==
+X-Received: by 2002:ac8:37d3:: with SMTP id e19mr3173027qtc.361.1578602803027;
+        Thu, 09 Jan 2020 12:46:43 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id f26sm3846724qtv.77.2020.01.09.12.46.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jan 2020 12:46:42 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Thu, 9 Jan 2020 15:46:41 -0500
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Zhenzhong Duan <zhenzhong.duan@gmail.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@suse.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH v2] x86/boot/KASLR: Fix unused variable warning
+Message-ID: <20200109204638.GA523773@rani.riverdale.lan>
+References: <20200103033929.4956-1-zhenzhong.duan@gmail.com>
+ <20200109184055.GI5603@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <20200109155437.GA568342@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200109184055.GI5603@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg! Thanks for chiming in.
+On Thu, Jan 09, 2020 at 07:40:55PM +0100, Borislav Petkov wrote:
+> On Fri, Jan 03, 2020 at 11:39:29AM +0800, Zhenzhong Duan wrote:
+> > Local variable 'i' is referenced only when CONFIG_MEMORY_HOTREMOVE and
+> > CONFIG_ACPI are defined, but definition of variable 'i' is out of guard.
+> > If any of the two macros is undefined, below warning triggers during
+> > build, fix it by moving 'i' in the guard.
+> > 
+> > arch/x86/boot/compressed/kaslr.c:698:6: warning: unused variable ‘i’ [-Wunused-variable]
+> 
+> How do you trigger this?
+> 
+> I have:
+> 
+> $  grep -E "(CONFIG_MEMORY_HOTREMOVE|CONFIG_ACPI)" .config
+> # CONFIG_ACPI is not set
+> 
+> but no warning. Neither with gcc 8 nor with gcc 9.
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
 
+The boot/compressed Makefile resets KBUILD_CFLAGS.  Following hack and
+building with W=1 shows it, or just add -Wunused in there.
 
-> As you are a driver, you should never need to call any pr_* calls,
-> instead use dev_*().  For this, you can use dev_dbg(), but really, why
-> is that even needed except for your debugging bringup.  And for that,
-> you can use ftrace, right?  So no need for any printing of anything
-> here.
-> Again, dev_err() would be proper, but there's no need for any error
-> message here.
-
-Let's take these out in v2 then.
-
-
-> Don't you need to register the tuner ops with something in this
-> function?
-> Don't you need to unregister the tuner ops in here?
-
-It is my understanding that bridge drivers are the ones responsible for 
-this. For instance, I don't see this with either xc4000.c, xc5000.c or 
-mt2060.c. I could be wrong, though. Maybe Mauro could clarify this?
-
-What I did miss in this patch was an attach function. Let's also add 
-this in v2.
-
-
-Thanks again,
-
-- Daniel.
-
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index 56aa5fa0a66b..791c0d5a952a 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -35,6 +35,9 @@ KBUILD_CFLAGS += $(cflags-y)
+ KBUILD_CFLAGS += -mno-mmx -mno-sse
+ KBUILD_CFLAGS += $(call cc-option,-ffreestanding)
+ KBUILD_CFLAGS += $(call cc-option,-fno-stack-protector)
++
++include scripts/Makefile.extrawarn
++
+ KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+ KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+ KBUILD_CFLAGS += -Wno-pointer-sign
