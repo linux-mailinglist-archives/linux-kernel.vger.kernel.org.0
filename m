@@ -2,66 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E1AE135E91
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:46:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDE5A135EA3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Jan 2020 17:47:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387812AbgAIQqJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 11:46:09 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:36172 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1731399AbgAIQqI (ORCPT
+        id S2387844AbgAIQrs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 11:47:48 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:60687 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730602AbgAIQrr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 11:46:08 -0500
-Received: (qmail 2234 invoked by uid 2102); 9 Jan 2020 11:46:07 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 9 Jan 2020 11:46:07 -0500
-Date:   Thu, 9 Jan 2020 11:46:07 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     syzbot <syzbot+10e5f68920f13587ab12@syzkaller.appspotmail.com>
-cc:     andreyknvl@google.com, <gregkh@linuxfoundation.org>,
-        <gustavo@embeddedor.com>, <ingrassia@epigenesys.com>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: WARNING in usbhid_raw_request/usb_submit_urb (2)
-In-Reply-To: <0000000000001b53f8059ba5431a@google.com>
-Message-ID: <Pine.LNX.4.44L0.2001091142281.1307-100000@iolanthe.rowland.org>
+        Thu, 9 Jan 2020 11:47:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578588466;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=H7yvRcnHtdyGEcTJgOAUtJzzkjbm96l99F3Bt+eWI8s=;
+        b=eLOkx0/25wcZZXqItnaKFHUKg4gnQ+XN0EhVox4w+7ko7reHjUcVtS/fD8zfKQ3wa3NS/m
+        ys8tGcyi0X23Lxa0jQjGa3xyav8Iqx+7+7+ijBkoJMm0U/BaO8q2hfcs6OPXP0+cpaO4Tz
+        mb5nPxB/NYMzcu0+xBkwCP2r5KvDffc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-178-PPGhbvvvOrSIrVG1C-5OsQ-1; Thu, 09 Jan 2020 11:47:22 -0500
+X-MC-Unique: PPGhbvvvOrSIrVG1C-5OsQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 965E51132C9E;
+        Thu,  9 Jan 2020 16:47:20 +0000 (UTC)
+Received: from w520.home (ovpn-116-128.phx2.redhat.com [10.3.116.128])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C1E1A10013A7;
+        Thu,  9 Jan 2020 16:47:12 +0000 (UTC)
+Date:   Thu, 9 Jan 2020 09:47:11 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Kevin Kevin <kevin.tian@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+Subject: Re: [PATCH v3 00/21] KVM: Dirty ring interface
+Message-ID: <20200109094711.00eb96b1@w520.home>
+In-Reply-To: <20200109145729.32898-1-peterx@redhat.com>
+References: <20200109145729.32898-1-peterx@redhat.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 8 Jan 2020, syzbot wrote:
+On Thu,  9 Jan 2020 09:57:08 -0500
+Peter Xu <peterx@redhat.com> wrote:
 
-> Hello,
+> Branch is here: https://github.com/xzpeter/linux/tree/kvm-dirty-ring
+> (based on kvm/queue)
 > 
-> syzbot has tested the proposed patch and the reproducer did not trigger  
-> crash:
+> Please refer to either the previous cover letters, or documentation
+> update in patch 12 for the big picture.  Previous posts:
 > 
-> Reported-and-tested-by:  
-> syzbot+10e5f68920f13587ab12@syzkaller.appspotmail.com
+> V1: https://lore.kernel.org/kvm/20191129213505.18472-1-peterx@redhat.com
+> V2: https://lore.kernel.org/kvm/20191221014938.58831-1-peterx@redhat.com
 > 
-> Tested on:
-> 
-> commit:         ecdf2214 usb: gadget: add raw-gadget interface
-> git tree:       https://github.com/google/kasan.git
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b06a019075333661
-> dashboard link: https://syzkaller.appspot.com/bug?extid=10e5f68920f13587ab12
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=1583963ee00000
-> 
-> Note: testing is done by a robot and is best-effort only.
+> The major change in V3 is that we dropped the whole waitqueue and the
+> global lock. With that, we have clean per-vcpu ring and no default
+> ring any more.  The two kvmgt refactoring patches were also included
+> to show the dependency of the works.
 
-I'm at a loss for a way to track this down any farther.  The difference 
-between this patch and the previous was very small and almost entirely 
-confined to actions that take place _after_ the bug condition has been 
-detected.
+Hi Peter,
 
-If this is indeed caused by a race, it would be nice to know that the
-two racing threads are doing.  One of them we can see in the log output
-(it's calling usb_control_msg) but the other is a mystery.
+Would you recommend this style of interface for vfio dirty page
+tracking as well?  This mechanism seems very tuned to sparse page
+dirtying, how well does it handle fully dirty, or even significantly
+dirty regions?  We also don't really have "active" dirty page tracking
+in vfio, we simply assume that if a page is pinned or otherwise mapped
+that it's dirty, so I think we'd constantly be trying to re-populate
+the dirty ring with pages that we've seen the user consume, which
+doesn't seem like a good fit versus a bitmap solution.  Thanks,
 
-Alan Stern
+Alex
 
