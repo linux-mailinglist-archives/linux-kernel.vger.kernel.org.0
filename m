@@ -2,96 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AEC8137765
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 20:43:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 705EB13776C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 20:46:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728752AbgAJTnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 14:43:17 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:59586 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727812AbgAJTnR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 14:43:17 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iq0Be-0003nc-R0; Fri, 10 Jan 2020 20:43:14 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 2C984105BDB; Fri, 10 Jan 2020 20:43:14 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Peter Xu <peterx@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Ming Lei <minlei@redhat.com>,
+        id S1728715AbgAJTqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 14:46:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49252 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727812AbgAJTqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 14:46:38 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id E6526AAC2;
+        Fri, 10 Jan 2020 19:46:35 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 10A02DA78B; Fri, 10 Jan 2020 20:46:22 +0100 (CET)
+Date:   Fri, 10 Jan 2020 20:46:22 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     dsterba@suse.cz, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org
-Subject: Re: Kernel-managed IRQ affinity (cont)
-In-Reply-To: <20200110012802.GA4501@ming.t460p>
-References: <20191216195712.GA161272@xz-x1> <20191219082819.GB15731@ming.t460p> <20191219143214.GA50561@xz-x1> <20191219161115.GA18672@ming.t460p> <87eew8l7oz.fsf@nanos.tec.linutronix.de> <20200110012802.GA4501@ming.t460p>
-Date:   Fri, 10 Jan 2020 20:43:14 +0100
-Message-ID: <87v9pjrtbh.fsf@nanos.tec.linutronix.de>
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: Tree for Dec 6 (objtool, lots in btrfs)
+Message-ID: <20200110194622.GS3929@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <cd4091e4-1c04-a880-f239-00bc053f46a2@infradead.org>
+ <20191211134929.GL3929@twin.jikos.cz>
+ <c751bc1a-505c-5050-3c4c-c83be81b4e48@infradead.org>
+ <20191212184725.db3ost7rcopotr5u@treble>
+ <b9b0c81b-0ca8-dfb7-958f-cd58a449b6fb@infradead.org>
+ <ba2a7a9b-933b-d4e4-8970-85b6c1291fca@infradead.org>
+ <20191213235054.6k2lcnwa63r26zwi@treble>
+ <c6a33c21-3e71-ac98-cc95-db008764917c@infradead.org>
+ <20191214054515.ougsr5ykhl3vvy57@treble>
+ <20191217152954.GH3929@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191217152954.GH3929@suse.cz>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ming,
+On Tue, Dec 17, 2019 at 04:29:54PM +0100, David Sterba wrote:
+> Separating the definitions by #ifdef looks ok, I'd rather do separate
+> definitions of ASSERT too, to avoid the ternary operator. I'll send the
+> patch.
 
-Ming Lei <ming.lei@redhat.com> writes:
-> On Thu, Jan 09, 2020 at 09:02:20PM +0100, Thomas Gleixner wrote:
->> Ming Lei <ming.lei@redhat.com> writes:
->>
->> This is duct tape engineering with absolutely no semantics. I can't even
->> figure out the intent of this 'managed_irq' parameter.
->
-> The intent is to isolate the specified CPUs from handling managed
-> interrupt.
+Subject: [PATCH] btrfs: separate definition of assertion failure handlers
 
-That's what I figured, but it still does not provide semantics and works
-just for specific cases.
+There's a report where objtool detects unreachable instructions, eg.:
 
-> We can do that. The big problem is that the RT case can't guarantee that
-> IO won't be submitted from isolated CPU always. blk-mq's queue mapping
-> relies on the setup affinity, so un-known behavior(kernel crash, or io
-> hang, or other) may be caused if we exclude isolated CPUs from interrupt
-> affinity.
->
-> That is why I try to exclude isolated CPUs from interrupt effective affinity,
-> turns out the approach is simple and doable.
+  fs/btrfs/ctree.o: warning: objtool: btrfs_search_slot()+0x2d4: unreachable instruction
 
-Yes, it's doable. But it still is inconsistent behaviour. Assume the
-following configuration:
+This seems to be a false positive due to compiler version. The cause is
+in the ASSERT macro implementation that does the conditional check as
+IS_DEFINED(CONFIG_BTRFS_ASSERT) and not an #ifdef.
 
-  8 CPUs CPU0,1 assigned for housekeeping
+To avoid that, use the ifdefs directly.
 
-With 8 queues the proposed change does nothing because each queue is
-mapped to exactly one CPU.
+CC: Josh Poimboeuf <jpoimboe@redhat.com>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: David Sterba <dsterba@suse.com>
+---
+ fs/btrfs/ctree.h | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-With 4 queues you get the following:
-
- CPU0,1       queue 0
- CPU2,3       queue 1
- CPU4,5       queue 2
- CPU6,7       queue 3
-
-No effect on the isolated CPUs either.
-
-With 2 queues you get the following:
-
- CPU0,1,2,3   queue 0
- CPU4,5,6,7   queue 1
-
-So here the isolated CPUs 2 and 3 get the isolation, but 4-7
-not. That's perhaps intended, but definitely not documented.
-
-So you really need to make your mind up and describe what the intended
-effect of this is and why you think that the result is correct.
-
-Thanks,
-
-       tglx
+diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+index 569931dd0ce5..f90b82050d2d 100644
+--- a/fs/btrfs/ctree.h
++++ b/fs/btrfs/ctree.h
+@@ -3157,17 +3157,21 @@ do {								\
+ 	rcu_read_unlock();					\
+ } while (0)
+ 
+-__cold
+-static inline void assfail(const char *expr, const char *file, int line)
++#ifdef CONFIG_BTRFS_ASSERT
++__cold __noreturn
++static inline void assertfail(const char *expr, const char *file, int line)
+ {
+-	if (IS_ENABLED(CONFIG_BTRFS_ASSERT)) {
+-		pr_err("assertion failed: %s, in %s:%d\n", expr, file, line);
+-		BUG();
+-	}
++	pr_err("assertion failed: %s, in %s:%d\n", expr, file, line);
++	BUG();
+ }
+ 
+-#define ASSERT(expr)	\
+-	(likely(expr) ? (void)0 : assfail(#expr, __FILE__, __LINE__))
++#define ASSERT(expr)						\
++	(likely(expr) ? (void)0 : assertfail(#expr, __FILE__, __LINE__))
++
++#else
++static inline void assertfail(const char *expr, const char* file, int line) { }
++#define ASSERT(expr)	(void)(expr)
++#endif
+ 
+ /*
+  * Use that for functions that are conditionally exported for sanity tests but
+-- 
