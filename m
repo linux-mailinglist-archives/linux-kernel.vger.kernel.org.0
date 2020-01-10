@@ -2,34 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36E261375A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:59:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE1AB1375BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 19:01:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728909AbgAJR72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 12:59:28 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:59290 "EHLO
+        id S1729090AbgAJSAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 13:00:08 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:59260 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728854AbgAJR72 (ORCPT
+        with ESMTP id S1728485AbgAJR7W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 12:59:28 -0500
+        Fri, 10 Jan 2020 12:59:22 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ipyZB-0002Bl-2L; Fri, 10 Jan 2020 18:59:25 +0100
+        id 1ipyZ5-00028s-8x; Fri, 10 Jan 2020 18:59:19 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 8210F1C2D70;
-        Fri, 10 Jan 2020 18:59:21 +0100 (CET)
-Date:   Fri, 10 Jan 2020 17:59:21 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D01FF1C2D6A;
+        Fri, 10 Jan 2020 18:59:18 +0100 (CET)
+Date:   Fri, 10 Jan 2020 17:59:18 -0000
 From:   "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/mm/pat: Update the comments in pat.c and
- pat_interval.c and refresh the code a bit
+Subject: [tip: x86/mm] x86/mm: Tabulate the page table encoding definitions
 Cc:     Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157867916138.30329.7054053731188690598.tip-bot2@tip-bot2>
+Message-ID: <157867915870.30329.18073165130921919060.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -45,302 +44,232 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/mm branch of tip:
 
-Commit-ID:     aee7f91369a80d2cb9bba198331479cc9bfc0ade
-Gitweb:        https://git.kernel.org/tip/aee7f91369a80d2cb9bba198331479cc9bfc0ade
+Commit-ID:     4efb56649132687b5093d90aa62887595e65a09d
+Gitweb:        https://git.kernel.org/tip/4efb56649132687b5093d90aa62887595e65a09d
 Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Tue, 10 Dec 2019 10:05:45 +01:00
+AuthorDate:    Wed, 20 Nov 2019 17:38:39 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Tue, 10 Dec 2019 10:12:55 +01:00
 
-x86/mm/pat: Update the comments in pat.c and pat_interval.c and refresh the code a bit
+x86/mm: Tabulate the page table encoding definitions
 
-Tidy up the code:
+I got lost in trying to figure out which bits were enabled
+in one of the PTE masks, so let's make it pretty
+obvious at the definition site already:
 
- - add comments explaining the PAT code, the role of the functions and the logic
+ #define PAGE_NONE            __pg(   0|   0|   0|___A|   0|   0|   0|___G)
+ #define PAGE_SHARED          __pg(__PP|__RW|_USR|___A|__NX|   0|   0|   0)
+ #define PAGE_SHARED_EXEC     __pg(__PP|__RW|_USR|___A|   0|   0|   0|   0)
+ #define PAGE_COPY_NOEXEC     __pg(__PP|   0|_USR|___A|__NX|   0|   0|   0)
+ #define PAGE_COPY_EXEC       __pg(__PP|   0|_USR|___A|   0|   0|   0|   0)
+ #define PAGE_COPY            __pg(__PP|   0|_USR|___A|__NX|   0|   0|   0)
+ #define PAGE_READONLY        __pg(__PP|   0|_USR|___A|__NX|   0|   0|   0)
+ #define PAGE_READONLY_EXEC   __pg(__PP|   0|_USR|___A|   0|   0|   0|   0)
 
- - fix various typos and grammar while at it
+ #define __PAGE_KERNEL            (__PP|__RW|   0|___A|__NX|___D|   0|___G)
+ #define __PAGE_KERNEL_EXEC       (__PP|__RW|   0|___A|   0|___D|   0|___G)
+ #define _KERNPG_TABLE_NOENC      (__PP|__RW|   0|___A|   0|___D|   0|   0)
+ #define _KERNPG_TABLE            (__PP|__RW|   0|___A|   0|___D|   0|   0| _ENC)
+ #define _PAGE_TABLE_NOENC        (__PP|__RW|_USR|___A|   0|___D|   0|   0)
+ #define _PAGE_TABLE              (__PP|__RW|_USR|___A|   0|___D|   0|   0| _ENC)
+ #define __PAGE_KERNEL_RO         (__PP|   0|   0|___A|__NX|___D|   0|___G)
+ #define __PAGE_KERNEL_RX         (__PP|   0|   0|___A|   0|___D|   0|___G)
+ #define __PAGE_KERNEL_NOCACHE    (__PP|__RW|   0|___A|__NX|___D|   0|___G| __NC)
+ #define __PAGE_KERNEL_VVAR       (__PP|   0|_USR|___A|__NX|___D|   0|___G)
+ #define __PAGE_KERNEL_LARGE      (__PP|__RW|   0|___A|__NX|___D|_PSE|___G)
+ #define __PAGE_KERNEL_LARGE_EXEC (__PP|__RW|   0|___A|   0|___D|_PSE|___G)
+ #define __PAGE_KERNEL_WP         (__PP|__RW|   0|___A|__NX|___D|   0|___G| __WP)
 
- - simplify the file-scope memtype_interval_*() namespace to interval_*()
+Especially security relevant bits like 'NX' or coherence related bits like 'G'
+are now super easy to read based on a single grep.
 
- - simplify stylistic complications such as unnecessary linebreaks
-   or convoluted control flow
-
- - use the simpler '#ifdef CONFIG_*' pattern instead of '#if defined(CONFIG_*)' pattern
-
- - remove the non-idiomatic newline between late_initcall() and its function definition
+We do the underscore gymnastics to not pollute the kernel's symbol namespace,
+and the longest line still fits into 80 columns, so this should be readable
+for everyone.
 
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/mm/pat.c          | 53 +++++++++++++++++++++++++++---------
- arch/x86/mm/pat_interval.c | 54 +++++++++++++++++++++----------------
- 2 files changed, 72 insertions(+), 35 deletions(-)
+ arch/x86/include/asm/pgtable_types.h | 143 +++++++++++++-------------
+ 1 file changed, 74 insertions(+), 69 deletions(-)
 
-diff --git a/arch/x86/mm/pat.c b/arch/x86/mm/pat.c
-index 2d758e1..560ac51 100644
---- a/arch/x86/mm/pat.c
-+++ b/arch/x86/mm/pat.c
-@@ -1,11 +1,34 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Handle caching attributes in page tables (PAT)
-+ * Page Attribute Table (PAT) support: handle memory caching attributes in page tables.
-  *
-  * Authors: Venkatesh Pallipadi <venkatesh.pallipadi@intel.com>
-  *          Suresh B Siddha <suresh.b.siddha@intel.com>
-  *
-  * Loosely based on earlier PAT patchset from Eric Biederman and Andi Kleen.
-+ *
-+ * Basic principles:
-+ *
-+ * PAT is a CPU feature supported by all modern x86 CPUs, to allow the firmware and
-+ * the kernel to set one of a handful of 'caching type' attributes for physical
-+ * memory ranges: uncached, write-combining, write-through, write-protected,
-+ * and the most commonly used and default attribute: write-back caching.
-+ *
-+ * PAT support supercedes and augments MTRR support in a compatible fashion: MTRR is
-+ * a hardware interface to enumerate a limited number of physical memory ranges
-+ * and set their caching attributes explicitly, programmed into the CPU via MSRs.
-+ * Even modern CPUs have MTRRs enabled - but these are typically not touched
-+ * by the kernel or by user-space (such as the X server), we rely on PAT for any
-+ * additional cache attribute logic.
-+ *
-+ * PAT doesn't work via explicit memory ranges, but uses page table entries to add
-+ * cache attribute information to the mapped memory range: there's 3 bits used,
-+ * (_PAGE_PWT, _PAGE_PCD, _PAGE_PAT), with the 8 possible values mapped by the
-+ * CPU to actual cache attributes via an MSR loaded into the CPU (MSR_IA32_CR_PAT).
-+ *
-+ * ( There's a metric ton of finer details, such as compatibility with CPU quirks
-+ *   that only support 4 types of PAT entries, and interaction with MTRRs, see
-+ *   below for details. )
-  */
+diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
+index b5e49e6..ea74007 100644
+--- a/arch/x86/include/asm/pgtable_types.h
++++ b/arch/x86/include/asm/pgtable_types.h
+@@ -110,11 +110,6 @@
  
- #include <linux/seq_file.h>
-@@ -839,7 +862,7 @@ int phys_mem_access_prot_allowed(struct file *file, unsigned long pfn,
- }
+ #define _PAGE_PROTNONE	(_AT(pteval_t, 1) << _PAGE_BIT_PROTNONE)
  
- /*
-- * Change the memory type for the physial address range in kernel identity
-+ * Change the memory type for the physical address range in kernel identity
-  * mapping space if that range is a part of identity map.
-  */
- int kernel_map_sync_memtype(u64 base, unsigned long size,
-@@ -851,15 +874,14 @@ int kernel_map_sync_memtype(u64 base, unsigned long size,
- 		return 0;
- 
- 	/*
--	 * some areas in the middle of the kernel identity range
--	 * are not mapped, like the PCI space.
-+	 * Some areas in the middle of the kernel identity range
-+	 * are not mapped, for example the PCI space.
- 	 */
- 	if (!page_is_ram(base >> PAGE_SHIFT))
- 		return 0;
- 
- 	id_sz = (__pa(high_memory-1) <= base + size) ?
--				__pa(high_memory) - base :
--				size;
-+				__pa(high_memory) - base : size;
- 
- 	if (ioremap_change_attr((unsigned long)__va(base), id_sz, pcm) < 0) {
- 		pr_info("x86/PAT: %s:%d ioremap_change_attr failed %s for [mem %#010Lx-%#010Lx]\n",
-@@ -1099,6 +1121,10 @@ EXPORT_SYMBOL_GPL(pgprot_writethrough);
- 
- #if defined(CONFIG_DEBUG_FS) && defined(CONFIG_X86_PAT)
- 
-+/*
-+ * We are allocating a temporary printout-entry to be passed
-+ * between seq_start()/next() and seq_show():
-+ */
- static struct memtype *memtype_get_idx(loff_t pos)
- {
- 	struct memtype *print_entry;
-@@ -1112,12 +1138,13 @@ static struct memtype *memtype_get_idx(loff_t pos)
- 	ret = memtype_copy_nth_element(print_entry, pos);
- 	spin_unlock(&memtype_lock);
- 
--	if (!ret) {
--		return print_entry;
--	} else {
-+	/* Free it on error: */
-+	if (ret) {
- 		kfree(print_entry);
- 		return NULL;
- 	}
-+
-+	return print_entry;
- }
- 
- static void *memtype_seq_start(struct seq_file *seq, loff_t *pos)
-@@ -1144,8 +1171,11 @@ static int memtype_seq_show(struct seq_file *seq, void *v)
- {
- 	struct memtype *print_entry = (struct memtype *)v;
- 
--	seq_printf(seq, "%s @ 0x%Lx-0x%Lx\n", cattr_name(print_entry->type),
--			print_entry->start, print_entry->end);
-+	seq_printf(seq, "%s @ 0x%Lx-0x%Lx\n",
-+			cattr_name(print_entry->type),
-+			print_entry->start,
-+			print_entry->end);
-+
- 	kfree(print_entry);
- 
- 	return 0;
-@@ -1178,7 +1208,6 @@ static int __init pat_memtype_list_init(void)
- 	}
- 	return 0;
- }
+-#define _PAGE_TABLE_NOENC	(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER |\
+-				 _PAGE_ACCESSED | _PAGE_DIRTY)
+-#define _KERNPG_TABLE_NOENC	(_PAGE_PRESENT | _PAGE_RW |		\
+-				 _PAGE_ACCESSED | _PAGE_DIRTY)
 -
- late_initcall(pat_memtype_list_init);
- 
- #endif /* CONFIG_DEBUG_FS && CONFIG_X86_PAT */
-diff --git a/arch/x86/mm/pat_interval.c b/arch/x86/mm/pat_interval.c
-index 6855362..2abc475 100644
---- a/arch/x86/mm/pat_interval.c
-+++ b/arch/x86/mm/pat_interval.c
-@@ -25,25 +25,27 @@
-  * physical memory areas. Without proper tracking, conflicting memory
-  * types in different mappings can cause CPU cache corruption.
-  *
-- * The tree is an interval tree (augmented rbtree) with tree ordered
-- * on starting address. Tree can contain multiple entries for
-+ * The tree is an interval tree (augmented rbtree) which tree is ordered
-+ * by the starting address. The tree can contain multiple entries for
-  * different regions which overlap. All the aliases have the same
-- * cache attributes of course.
-+ * cache attributes of course, as enforced by the PAT logic.
-  *
-  * memtype_lock protects the rbtree.
+ /*
+  * Set of bits not changed in pte_modify.  The pte's
+  * protection key is treated like _PAGE_RW, for
+@@ -136,80 +131,93 @@
   */
--static inline u64 memtype_interval_start(struct memtype *memtype)
+ #ifndef __ASSEMBLY__
+ enum page_cache_mode {
+-	_PAGE_CACHE_MODE_WB = 0,
+-	_PAGE_CACHE_MODE_WC = 1,
++	_PAGE_CACHE_MODE_WB       = 0,
++	_PAGE_CACHE_MODE_WC       = 1,
+ 	_PAGE_CACHE_MODE_UC_MINUS = 2,
+-	_PAGE_CACHE_MODE_UC = 3,
+-	_PAGE_CACHE_MODE_WT = 4,
+-	_PAGE_CACHE_MODE_WP = 5,
+-	_PAGE_CACHE_MODE_NUM = 8
++	_PAGE_CACHE_MODE_UC       = 3,
++	_PAGE_CACHE_MODE_WT       = 4,
++	_PAGE_CACHE_MODE_WP       = 5,
 +
-+static inline u64 interval_start(struct memtype *memtype)
- {
- 	return memtype->start;
++	_PAGE_CACHE_MODE_NUM      = 8
+ };
+ #endif
+ 
+-#define _PAGE_CACHE_MASK	(_PAGE_PAT | _PAGE_PCD | _PAGE_PWT)
+-#define _PAGE_NOCACHE		(cachemode2protval(_PAGE_CACHE_MODE_UC))
+-#define _PAGE_CACHE_WP		(cachemode2protval(_PAGE_CACHE_MODE_WP))
++#define _PAGE_ENC		(_AT(pteval_t, sme_me_mask))
+ 
+-#define PAGE_NONE	__pgprot(_PAGE_PROTNONE | _PAGE_ACCESSED)
+-#define PAGE_SHARED	__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER | \
+-				 _PAGE_ACCESSED | _PAGE_NX)
+-
+-#define PAGE_SHARED_EXEC	__pgprot(_PAGE_PRESENT | _PAGE_RW |	\
+-					 _PAGE_USER | _PAGE_ACCESSED)
+-#define PAGE_COPY_NOEXEC	__pgprot(_PAGE_PRESENT | _PAGE_USER |	\
+-					 _PAGE_ACCESSED | _PAGE_NX)
+-#define PAGE_COPY_EXEC		__pgprot(_PAGE_PRESENT | _PAGE_USER |	\
+-					 _PAGE_ACCESSED)
+-#define PAGE_COPY		PAGE_COPY_NOEXEC
+-#define PAGE_READONLY		__pgprot(_PAGE_PRESENT | _PAGE_USER |	\
+-					 _PAGE_ACCESSED | _PAGE_NX)
+-#define PAGE_READONLY_EXEC	__pgprot(_PAGE_PRESENT | _PAGE_USER |	\
+-					 _PAGE_ACCESSED)
+-
+-#define __PAGE_KERNEL_EXEC						\
+-	(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_GLOBAL)
+-#define __PAGE_KERNEL		(__PAGE_KERNEL_EXEC | _PAGE_NX)
+-
+-#define __PAGE_KERNEL_RO		(__PAGE_KERNEL & ~_PAGE_RW)
+-#define __PAGE_KERNEL_RX		(__PAGE_KERNEL_EXEC & ~_PAGE_RW)
+-#define __PAGE_KERNEL_NOCACHE		(__PAGE_KERNEL | _PAGE_NOCACHE)
+-#define __PAGE_KERNEL_VVAR		(__PAGE_KERNEL_RO | _PAGE_USER)
+-#define __PAGE_KERNEL_LARGE		(__PAGE_KERNEL | _PAGE_PSE)
+-#define __PAGE_KERNEL_LARGE_EXEC	(__PAGE_KERNEL_EXEC | _PAGE_PSE)
+-#define __PAGE_KERNEL_WP		(__PAGE_KERNEL | _PAGE_CACHE_WP)
+-
+-#define __PAGE_KERNEL_IO		(__PAGE_KERNEL)
+-#define __PAGE_KERNEL_IO_NOCACHE	(__PAGE_KERNEL_NOCACHE)
++#define _PAGE_CACHE_MASK	(_PAGE_PWT | _PAGE_PCD | _PAGE_PAT)
+ 
+-#ifndef __ASSEMBLY__
++#define _PAGE_NOCACHE		(cachemode2protval(_PAGE_CACHE_MODE_UC))
++#define _PAGE_CACHE_WP		(cachemode2protval(_PAGE_CACHE_MODE_WP))
+ 
+-#define _PAGE_ENC	(_AT(pteval_t, sme_me_mask))
++#define __PP _PAGE_PRESENT
++#define __RW _PAGE_RW
++#define _USR _PAGE_USER
++#define ___A _PAGE_ACCESSED
++#define ___D _PAGE_DIRTY
++#define ___G _PAGE_GLOBAL
++#define __NX _PAGE_NX
++
++#define _ENC _PAGE_ENC
++#define __WP _PAGE_CACHE_WP
++#define __NC _PAGE_NOCACHE
++#define _PSE _PAGE_PSE
++
++#define pgprot_val(x)		((x).pgprot)
++#define __pgprot(x)		((pgprot_t) { (x) } )
++#define __pg(x)			__pgprot(x)
++
++#define _PAGE_PAT_LARGE		(_AT(pteval_t, 1) << _PAGE_BIT_PAT_LARGE)
++
++#define PAGE_NONE	     __pg(   0|   0|   0|___A|   0|   0|   0|___G)
++#define PAGE_SHARED	     __pg(__PP|__RW|_USR|___A|__NX|   0|   0|   0)
++#define PAGE_SHARED_EXEC     __pg(__PP|__RW|_USR|___A|   0|   0|   0|   0)
++#define PAGE_COPY_NOEXEC     __pg(__PP|   0|_USR|___A|__NX|   0|   0|   0)
++#define PAGE_COPY_EXEC	     __pg(__PP|   0|_USR|___A|   0|   0|   0|   0)
++#define PAGE_COPY	     __pg(__PP|   0|_USR|___A|__NX|   0|   0|   0)
++#define PAGE_READONLY	     __pg(__PP|   0|_USR|___A|__NX|   0|   0|   0)
++#define PAGE_READONLY_EXEC   __pg(__PP|   0|_USR|___A|   0|   0|   0|   0)
++
++#define __PAGE_KERNEL		 (__PP|__RW|   0|___A|__NX|___D|   0|___G)
++#define __PAGE_KERNEL_EXEC	 (__PP|__RW|   0|___A|   0|___D|   0|___G)
++#define _KERNPG_TABLE_NOENC	 (__PP|__RW|   0|___A|   0|___D|   0|   0)
++#define _KERNPG_TABLE		 (__PP|__RW|   0|___A|   0|___D|   0|   0| _ENC)
++#define _PAGE_TABLE_NOENC	 (__PP|__RW|_USR|___A|   0|___D|   0|   0)
++#define _PAGE_TABLE		 (__PP|__RW|_USR|___A|   0|___D|   0|   0| _ENC)
++#define __PAGE_KERNEL_RO	 (__PP|   0|   0|___A|__NX|___D|   0|___G)
++#define __PAGE_KERNEL_RX	 (__PP|   0|   0|___A|   0|___D|   0|___G)
++#define __PAGE_KERNEL_NOCACHE	 (__PP|__RW|   0|___A|__NX|___D|   0|___G| __NC)
++#define __PAGE_KERNEL_VVAR	 (__PP|   0|_USR|___A|__NX|___D|   0|___G)
++#define __PAGE_KERNEL_LARGE	 (__PP|__RW|   0|___A|__NX|___D|_PSE|___G)
++#define __PAGE_KERNEL_LARGE_EXEC (__PP|__RW|   0|___A|   0|___D|_PSE|___G)
++#define __PAGE_KERNEL_WP	 (__PP|__RW|   0|___A|__NX|___D|   0|___G| __WP)
++
++
++#define __PAGE_KERNEL_IO		__PAGE_KERNEL
++#define __PAGE_KERNEL_IO_NOCACHE	__PAGE_KERNEL_NOCACHE
+ 
+-#define _KERNPG_TABLE	(_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED |	\
+-			 _PAGE_DIRTY | _PAGE_ENC)
+-#define _PAGE_TABLE	(_KERNPG_TABLE | _PAGE_USER)
+ 
+-#define __PAGE_KERNEL_ENC	(__PAGE_KERNEL | _PAGE_ENC)
+-#define __PAGE_KERNEL_ENC_WP	(__PAGE_KERNEL_WP | _PAGE_ENC)
++#ifndef __ASSEMBLY__
+ 
+-#define __PAGE_KERNEL_NOENC	(__PAGE_KERNEL)
+-#define __PAGE_KERNEL_NOENC_WP	(__PAGE_KERNEL_WP)
++#define __PAGE_KERNEL_ENC	(__PAGE_KERNEL    | _ENC)
++#define __PAGE_KERNEL_ENC_WP	(__PAGE_KERNEL_WP | _ENC)
++#define __PAGE_KERNEL_NOENC	(__PAGE_KERNEL    |    0)
++#define __PAGE_KERNEL_NOENC_WP	(__PAGE_KERNEL_WP |    0)
+ 
+-#define default_pgprot(x)	__pgprot((x) & __default_kernel_pte_mask)
++#define __pgprot_mask(x)	__pgprot((x) & __default_kernel_pte_mask)
+ 
+-#define PAGE_KERNEL		default_pgprot(__PAGE_KERNEL | _PAGE_ENC)
+-#define PAGE_KERNEL_NOENC	default_pgprot(__PAGE_KERNEL)
+-#define PAGE_KERNEL_RO		default_pgprot(__PAGE_KERNEL_RO | _PAGE_ENC)
+-#define PAGE_KERNEL_EXEC	default_pgprot(__PAGE_KERNEL_EXEC | _PAGE_ENC)
+-#define PAGE_KERNEL_EXEC_NOENC	default_pgprot(__PAGE_KERNEL_EXEC)
+-#define PAGE_KERNEL_RX		default_pgprot(__PAGE_KERNEL_RX | _PAGE_ENC)
+-#define PAGE_KERNEL_NOCACHE	default_pgprot(__PAGE_KERNEL_NOCACHE | _PAGE_ENC)
+-#define PAGE_KERNEL_LARGE	default_pgprot(__PAGE_KERNEL_LARGE | _PAGE_ENC)
+-#define PAGE_KERNEL_LARGE_EXEC	default_pgprot(__PAGE_KERNEL_LARGE_EXEC | _PAGE_ENC)
+-#define PAGE_KERNEL_VVAR	default_pgprot(__PAGE_KERNEL_VVAR | _PAGE_ENC)
++#define PAGE_KERNEL		__pgprot_mask(__PAGE_KERNEL            | _ENC)
++#define PAGE_KERNEL_NOENC	__pgprot_mask(__PAGE_KERNEL            |    0)
++#define PAGE_KERNEL_RO		__pgprot_mask(__PAGE_KERNEL_RO         | _ENC)
++#define PAGE_KERNEL_EXEC	__pgprot_mask(__PAGE_KERNEL_EXEC       | _ENC)
++#define PAGE_KERNEL_EXEC_NOENC	__pgprot_mask(__PAGE_KERNEL_EXEC       |    0)
++#define PAGE_KERNEL_RX		__pgprot_mask(__PAGE_KERNEL_RX         | _ENC)
++#define PAGE_KERNEL_NOCACHE	__pgprot_mask(__PAGE_KERNEL_NOCACHE    | _ENC)
++#define PAGE_KERNEL_LARGE	__pgprot_mask(__PAGE_KERNEL_LARGE      | _ENC)
++#define PAGE_KERNEL_LARGE_EXEC	__pgprot_mask(__PAGE_KERNEL_LARGE_EXEC | _ENC)
++#define PAGE_KERNEL_VVAR	__pgprot_mask(__PAGE_KERNEL_VVAR       | _ENC)
+ 
+-#define PAGE_KERNEL_IO		default_pgprot(__PAGE_KERNEL_IO)
+-#define PAGE_KERNEL_IO_NOCACHE	default_pgprot(__PAGE_KERNEL_IO_NOCACHE)
++#define PAGE_KERNEL_IO		__pgprot_mask(__PAGE_KERNEL_IO)
++#define PAGE_KERNEL_IO_NOCACHE	__pgprot_mask(__PAGE_KERNEL_IO_NOCACHE)
+ 
+ #endif	/* __ASSEMBLY__ */
+ 
+@@ -449,9 +457,6 @@ static inline pteval_t pte_flags(pte_t pte)
+ 	return native_pte_val(pte) & PTE_FLAGS_MASK;
  }
  
--static inline u64 memtype_interval_end(struct memtype *memtype)
-+static inline u64 interval_end(struct memtype *memtype)
- {
- 	return memtype->end - 1;
- }
-+
- INTERVAL_TREE_DEFINE(struct memtype, rb, u64, subtree_max_end,
--		     memtype_interval_start, memtype_interval_end,
--		     static, memtype_interval)
-+		     interval_start, interval_end,
-+		     static, interval)
- 
- static struct rb_root_cached memtype_rbroot = RB_ROOT_CACHED;
- 
-@@ -56,7 +58,7 @@ static struct memtype *memtype_match(u64 start, u64 end, int match_type)
- {
- 	struct memtype *match;
- 
--	match = memtype_interval_iter_first(&memtype_rbroot, start, end-1);
-+	match = interval_iter_first(&memtype_rbroot, start, end-1);
- 	while (match != NULL && match->start < end) {
- 		if ((match_type == MEMTYPE_EXACT_MATCH) &&
- 		    (match->start == start) && (match->end == end))
-@@ -66,7 +68,7 @@ static struct memtype *memtype_match(u64 start, u64 end, int match_type)
- 		    (match->start < start) && (match->end == end))
- 			return match;
- 
--		match = memtype_interval_iter_next(match, start, end-1);
-+		match = interval_iter_next(match, start, end-1);
- 	}
- 
- 	return NULL; /* Returns NULL if there is no match */
-@@ -79,7 +81,7 @@ static int memtype_check_conflict(u64 start, u64 end,
- 	struct memtype *match;
- 	enum page_cache_mode found_type = reqtype;
- 
--	match = memtype_interval_iter_first(&memtype_rbroot, start, end-1);
-+	match = interval_iter_first(&memtype_rbroot, start, end-1);
- 	if (match == NULL)
- 		goto success;
- 
-@@ -89,12 +91,12 @@ static int memtype_check_conflict(u64 start, u64 end,
- 	dprintk("Overlap at 0x%Lx-0x%Lx\n", match->start, match->end);
- 	found_type = match->type;
- 
--	match = memtype_interval_iter_next(match, start, end-1);
-+	match = interval_iter_next(match, start, end-1);
- 	while (match) {
- 		if (match->type != found_type)
- 			goto failure;
- 
--		match = memtype_interval_iter_next(match, start, end-1);
-+		match = interval_iter_next(match, start, end-1);
- 	}
- success:
- 	if (newtype)
-@@ -106,11 +108,11 @@ failure:
- 	pr_info("x86/PAT: %s:%d conflicting memory types %Lx-%Lx %s<->%s\n",
- 		current->comm, current->pid, start, end,
- 		cattr_name(found_type), cattr_name(match->type));
-+
- 	return -EBUSY;
- }
- 
--int memtype_check_insert(struct memtype *new,
--			 enum page_cache_mode *ret_type)
-+int memtype_check_insert(struct memtype *new, enum page_cache_mode *ret_type)
- {
- 	int err = 0;
- 
-@@ -121,7 +123,7 @@ int memtype_check_insert(struct memtype *new,
- 	if (ret_type)
- 		new->type = *ret_type;
- 
--	memtype_interval_insert(new, &memtype_rbroot);
-+	interval_insert(new, &memtype_rbroot);
- 	return 0;
- }
- 
-@@ -145,12 +147,13 @@ struct memtype *memtype_erase(u64 start, u64 end)
- 
- 	if (data->start == start) {
- 		/* munmap: erase this node */
--		memtype_interval_remove(data, &memtype_rbroot);
-+		interval_remove(data, &memtype_rbroot);
- 	} else {
- 		/* mremap: update the end value of this node */
--		memtype_interval_remove(data, &memtype_rbroot);
-+		interval_remove(data, &memtype_rbroot);
- 		data->end = start;
--		memtype_interval_insert(data, &memtype_rbroot);
-+		interval_insert(data, &memtype_rbroot);
-+
- 		return NULL;
- 	}
- 
-@@ -159,19 +162,24 @@ struct memtype *memtype_erase(u64 start, u64 end)
- 
- struct memtype *memtype_lookup(u64 addr)
- {
--	return memtype_interval_iter_first(&memtype_rbroot, addr,
--					   addr + PAGE_SIZE-1);
-+	return interval_iter_first(&memtype_rbroot, addr, addr + PAGE_SIZE-1);
- }
- 
--#if defined(CONFIG_DEBUG_FS)
-+/*
-+ * Debugging helper, copy the Nth entry of the tree into a
-+ * a copy for printout. This allows us to print out the tree
-+ * via debugfs, without holding the memtype_lock too long:
-+ */
-+#ifdef CONFIG_DEBUG_FS
- int memtype_copy_nth_element(struct memtype *out, loff_t pos)
- {
- 	struct memtype *match;
- 	int i = 1;
- 
--	match = memtype_interval_iter_first(&memtype_rbroot, 0, ULONG_MAX);
-+	match = interval_iter_first(&memtype_rbroot, 0, ULONG_MAX);
-+
- 	while (match && pos != i) {
--		match = memtype_interval_iter_next(match, 0, ULONG_MAX);
-+		match = interval_iter_next(match, 0, ULONG_MAX);
- 		i++;
- 	}
+-#define pgprot_val(x)	((x).pgprot)
+-#define __pgprot(x)	((pgprot_t) { (x) } )
+-
+ extern uint16_t __cachemode2pte_tbl[_PAGE_CACHE_MODE_NUM];
+ extern uint8_t __pte2cachemode_tbl[8];
  
