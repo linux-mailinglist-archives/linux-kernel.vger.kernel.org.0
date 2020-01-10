@@ -2,146 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E36B137180
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 16:40:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BF52137185
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 16:40:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbgAJPjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 10:39:52 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:58629 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728151AbgAJPjw (ORCPT
+        id S1728455AbgAJPkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 10:40:25 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:39661 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728369AbgAJPkZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 10:39:52 -0500
-Received: from [5.158.153.53] (helo=g2noscherz.lab.linutronix.de.)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1ipwO5-0007H0-6B; Fri, 10 Jan 2020 16:39:49 +0100
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dick Hollenbeck <dick@softplc.com>,
-        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-Subject: [PATCH RT 2/2] serial: 8250: fsl/ingenic/mtk: fix atomic console
-Date:   Fri, 10 Jan 2020 16:45:32 +0106
-Message-Id: <20200110153932.14970-3-john.ogness@linutronix.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200110153932.14970-1-john.ogness@linutronix.de>
-References: <20200110153932.14970-1-john.ogness@linutronix.de>
+        Fri, 10 Jan 2020 10:40:25 -0500
+Received: by mail-il1-f195.google.com with SMTP id x5so2078733ila.6;
+        Fri, 10 Jan 2020 07:40:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=zfveKwnRK85mJXCf2w5k6uuMDFTAUqHiB2SRdT1OPtw=;
+        b=Eyf2pDtvCwsChMpc+mpR9mGl+B89HFzVOVjGCDfOKJzIuX/1FUntYjwt/szKs2X2RP
+         oyZsDtCNH9oXEolJwkI4bijMHUmbH5gDCN9bnb1TEsZ89cjwOfEIS2J9qXOpPcL79TkC
+         Jb3nK4NB5HgKGsCGV0DVJoZjflgCFWqifdSJEarXjG5DUdLUIwsZUlBxHtetIJ/SVbwT
+         /IUOavZELqgR8+Me4B2vS5JeYUae0m/LokZu+KbQnGX9lQKnXY1JxtIpMOa+Zi4ApeJ6
+         ndDe1GXurmXskgSPnAcbFjg9dPc3vPv8p1l4pRzbYxD9N3enYdTuE2JSHf7TreI+m/Bb
+         LqZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=zfveKwnRK85mJXCf2w5k6uuMDFTAUqHiB2SRdT1OPtw=;
+        b=nVdRICVi5/6BzjSiBkebzBwwhZQMXYWlvsa78xhm32tjkQ72jBWEWekwKVFOi1mGLV
+         fDaB+t/KOdN7T3I7wHKCEPO+WNLkEMq6/SgakL/ZQzyYZEVNXmQrhJx9lb+mE9LengLf
+         9bbs/IjXBRt5UIz/PmY0yj7Axvl6K1RO433DB66QjT5wJ6WZCNLBKovuB05/smjpdmWR
+         6UOj8eaL+xpGTe6U1oBte/zEyJVdEToWKnVigdSZpqVO67039EVPQT5/mWT9C1WnT8Cs
+         fwV/q35xOPS8qyw3sQqW8hTZ+82D2HE2FzZKoJ4fIev7FtFynL04zBN0PwVk0UxWhGNB
+         ulhA==
+X-Gm-Message-State: APjAAAWqwGcTmi0CLuucPtBHL/Plmv0HyaEdQIO4PWeegOFdx3zkIbdu
+        gg0H9vjVggf6DZcuJBWbTpYbwAjNYHlO/rdlATU=
+X-Google-Smtp-Source: APXvYqwVstS0bfJ7o2vEobkH8jOr99DSJkX7e0rovYTLXZAar3F1T2Nwyk4CYH3OT34MDdWPeSc7+j1+bIEtM/b8RdQ=
+X-Received: by 2002:a92:d5cf:: with SMTP id d15mr3025126ilq.306.1578670824629;
+ Fri, 10 Jan 2020 07:40:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Received: by 2002:a02:5809:0:0:0:0:0 with HTTP; Fri, 10 Jan 2020 07:40:24
+ -0800 (PST)
+In-Reply-To: <20200110142128.13522-1-jbx6244@gmail.com>
+References: <20200110142128.13522-1-jbx6244@gmail.com>
+From:   Johan Jonker <jbx6244@gmail.com>
+Date:   Fri, 10 Jan 2020 16:40:24 +0100
+Message-ID: <CA+z=w3UjX71Nw7W+iiGkQh=UJkPMsEn1phSdp25d--O8QM-ETQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: add reg property to brcmf sub node
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A few 8250 implementations have their own IER access. If the port
-is a console, wrap the accesses with console_atomic_lock.
+Hi,
 
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
----
- drivers/tty/serial/8250/8250_fsl.c     |  9 ++++++++
- drivers/tty/serial/8250/8250_ingenic.c |  7 +++++++
- drivers/tty/serial/8250/8250_mtk.c     | 29 ++++++++++++++++++++++++--
- 3 files changed, 43 insertions(+), 2 deletions(-)
+Question for Heiko or rob+dt.
+Where would should #address-cells and #size-cells go in the dts or to the dtsi.
+In case they become required in a futhure rockchip-dw-mshc.yaml?
+ie. Should we patch all XXX rockchip,rk3288-dw-mshc nodes with them?
 
-diff --git a/drivers/tty/serial/8250/8250_fsl.c b/drivers/tty/serial/8250/8250_fsl.c
-index aa0e216d5ead..8f711afadd4b 100644
---- a/drivers/tty/serial/8250/8250_fsl.c
-+++ b/drivers/tty/serial/8250/8250_fsl.c
-@@ -57,9 +57,18 @@ int fsl8250_handle_irq(struct uart_port *port)
- 
- 	/* Stop processing interrupts on input overrun */
- 	if ((orig_lsr & UART_LSR_OE) && (up->overrun_backoff_time_ms > 0)) {
-+		unsigned int ca_flags;
- 		unsigned long delay;
-+		bool is_console;
- 
-+		is_console = uart_console(port);
-+
-+		if (is_console)
-+			console_atomic_lock(&ca_flags);
- 		up->ier = port->serial_in(port, UART_IER);
-+		if (is_console)
-+			console_atomic_unlock(ca_flags);
-+
- 		if (up->ier & (UART_IER_RLSI | UART_IER_RDI)) {
- 			port->ops->stop_rx(port);
- 		} else {
-diff --git a/drivers/tty/serial/8250/8250_ingenic.c b/drivers/tty/serial/8250/8250_ingenic.c
-index 424c07c5f629..47f1482bd818 100644
---- a/drivers/tty/serial/8250/8250_ingenic.c
-+++ b/drivers/tty/serial/8250/8250_ingenic.c
-@@ -146,6 +146,8 @@ OF_EARLYCON_DECLARE(x1000_uart, "ingenic,x1000-uart",
- 
- static void ingenic_uart_serial_out(struct uart_port *p, int offset, int value)
- {
-+	unsigned int flags;
-+	bool is_console;
- 	int ier;
- 
- 	switch (offset) {
-@@ -167,7 +169,12 @@ static void ingenic_uart_serial_out(struct uart_port *p, int offset, int value)
- 		 * If we have enabled modem status IRQs we should enable
- 		 * modem mode.
- 		 */
-+		is_console = uart_console(p);
-+		if (is_console)
-+			console_atomic_lock(&flags);
- 		ier = p->serial_in(p, UART_IER);
-+		if (is_console)
-+			console_atomic_unlock(flags);
- 
- 		if (ier & UART_IER_MSI)
- 			value |= UART_MCR_MDCE | UART_MCR_FCM;
-diff --git a/drivers/tty/serial/8250/8250_mtk.c b/drivers/tty/serial/8250/8250_mtk.c
-index 4d067f515f74..b509c3de0301 100644
---- a/drivers/tty/serial/8250/8250_mtk.c
-+++ b/drivers/tty/serial/8250/8250_mtk.c
-@@ -212,12 +212,37 @@ static void mtk8250_shutdown(struct uart_port *port)
- 
- static void mtk8250_disable_intrs(struct uart_8250_port *up, int mask)
- {
--	serial_out(up, UART_IER, serial_in(up, UART_IER) & (~mask));
-+	struct uart_port *port = &up->port;
-+	unsigned int flags;
-+	unsigned int ier;
-+	bool is_console;
-+
-+	is_console = uart_console(port);
-+
-+	if (is_console)
-+		console_atomic_lock(&flags);
-+
-+	ier = serial_in(up, UART_IER);
-+	serial_out(up, UART_IER, ier & (~mask));
-+
-+	if (is_console)
-+		console_atomic_unlock(flags);
- }
- 
- static void mtk8250_enable_intrs(struct uart_8250_port *up, int mask)
- {
--	serial_out(up, UART_IER, serial_in(up, UART_IER) | mask);
-+	struct uart_port *port = &up->port;
-+	unsigned int flags;
-+	unsigned int ier;
-+
-+	if (uart_console(port))
-+		console_atomic_lock(&flags);
-+
-+	ier = serial_in(up, UART_IER);
-+	serial_out(up, UART_IER, ier | mask);
-+
-+	if (uart_console(port))
-+		console_atomic_unlock(flags);
- }
- 
- static void mtk8250_set_flow_ctrl(struct uart_8250_port *up, int mode)
--- 
-2.20.1
+Thanks
 
+2020-01-10 15:21 GMT+01:00, Johan Jonker <jbx6244@gmail.com>:
+> An experimental test with the command below gives this error:
+> rk3399-firefly.dt.yaml: dwmmc@fe310000: wifi@1:
+> 'reg' is a required property
+> rk3399-orangepi.dt.yaml: dwmmc@fe310000: wifi@1:
+> 'reg' is a required property
+> rk3399-khadas-edge.dt.yaml: dwmmc@fe310000: wifi@1:
+> 'reg' is a required property
+> rk3399-khadas-edge-captain.dt.yaml: dwmmc@fe310000: wifi@1:
+> 'reg' is a required property
+> rk3399-khadas-edge-v.dt.yaml: dwmmc@fe310000: wifi@1:
+> 'reg' is a required property
+> So fix this by adding a reg property to the brcmf sub node.
+> Also add #address-cells and #size-cells to prevent more warnings.
+>
+> make ARCH=arm64 dtbs_check
+> DT_SCHEMA_FILES=Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+>
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3399-firefly.dts      | 3 +++
+>  arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi | 3 +++
+>  arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts     | 3 +++
+>  3 files changed, 9 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
+> b/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
+> index 92de83dd4..06043179f 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
+> @@ -669,9 +669,12 @@
+>  	vqmmc-supply = &vcc1v8_s3;	/* IO line */
+>  	vmmc-supply = &vcc_sdio;	/* card's power */
+>
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+>  	status = "okay";
+>
+>  	brcmf: wifi@1 {
+> +		reg = <1>;
+>  		compatible = "brcm,bcm4329-fmac";
+>  		interrupt-parent = <&gpio0>;
+>  		interrupts = <RK_PA3 GPIO_ACTIVE_HIGH>;
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
+> b/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
+> index 4944d78a0..e87a04477 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
+> @@ -654,9 +654,12 @@
+>  	sd-uhs-sdr104;
+>  	vqmmc-supply = <&vcc1v8_s3>;
+>  	vmmc-supply = <&vccio_sd>;
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+>  	status = "okay";
+>
+>  	brcmf: wifi@1 {
+> +		reg = <1>;
+>  		compatible = "brcm,bcm4329-fmac";
+>  		interrupt-parent = <&gpio0>;
+>  		interrupts = <RK_PA3 GPIO_ACTIVE_HIGH>;
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+> b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+> index 0541dfce9..9c659f311 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+> @@ -648,9 +648,12 @@
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_clk>;
+>  	sd-uhs-sdr104;
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+>  	status = "okay";
+>
+>  	brcmf: wifi@1 {
+> +		reg = <1>;
+>  		compatible = "brcm,bcm4329-fmac";
+>  		interrupt-parent = <&gpio0>;
+>  		interrupts = <RK_PA3 GPIO_ACTIVE_HIGH>;
+> --
+> 2.11.0
+>
+>
