@@ -2,80 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2374E136527
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 03:00:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6EE313652C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 03:02:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730725AbgAJCAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 21:00:07 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37495 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730359AbgAJCAG (ORCPT
+        id S1730714AbgAJCCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 21:02:44 -0500
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:43352 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730359AbgAJCCo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 21:00:06 -0500
-Received: by mail-pg1-f196.google.com with SMTP id q127so216616pga.4
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 18:00:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TvCF4TaFq4NHuFxKrB7bfyibK4IZqbz7rtt+95xhHqo=;
-        b=UhkNF2i6KaXltxMZXRbU88Ilw8OkJEXI6REMlfxksP+PYmlbEzftvOHIMyN7fYK08w
-         Tqaihhp66NIs8LcSomRTfLax8Nm7UYv5neFP9D2xNLpcTUtO7X3de+NrsxNZIQDFZDEG
-         k9Pr+5/igmkqzgl3qbPWOO52LVuTykmOmSX5w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TvCF4TaFq4NHuFxKrB7bfyibK4IZqbz7rtt+95xhHqo=;
-        b=UDFIRfGygbxNej/3zoko3ykYdlLdbLr+Sr/WX3axnO1DJAqnxdT0Lyp2NdQMHmAFbD
-         INGsSfRWNhnjbD2BEHMSadJTxt/RfkE3luE6t8Y1GRIU/X1XP09MMZdIL0lc/hoPTtTY
-         MXQ+RlDARhE2Pj8em43Wgnu7p1Xlnqyk1aXozZ3H4ALPrGSJ0hvLmK5Up6afbyE+2H2k
-         mibce9t5Ts5IRtFvfmXn61SEiLhpS1+PlG1/qEnbP7BBiGaijWDi5ng5taRFzwObmREg
-         YMUPlgL9RLX6jmgOb/sA3YXRgkZ6X6ws0VJEWa0210hVCZVPoy6IwePK6JL8bVQyhiTD
-         13QQ==
-X-Gm-Message-State: APjAAAWtMjVVRmaUjbR3O/JaRe6m9dwNDa24g7HSDOpacHeE0L4mpJ+m
-        jRGKqS2F5D1nfkfiiM0pP4eiMA==
-X-Google-Smtp-Source: APXvYqy8CIzTVvdPT0/w3B7JHwB2lbAlbMW9Fuh1+JhZtXYS4f9PXX9xu9MMgcycQmesK9L3XRRSPA==
-X-Received: by 2002:a63:4641:: with SMTP id v1mr1171519pgk.389.1578621605868;
-        Thu, 09 Jan 2020 18:00:05 -0800 (PST)
-Received: from ikjn-p920.tpe.corp.google.com ([2401:fa00:1:10:254e:2b40:ef8:ee17])
-        by smtp.gmail.com with ESMTPSA id t30sm233232pgl.75.2020.01.09.18.00.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 18:00:05 -0800 (PST)
-From:   Ikjoon Jang <ikjn@chromium.org>
-To:     linux-pm@vger.kernel.org,
-        "RafaelJ . Wysocki" <rafael.j.wysocki@intel.com>
-Cc:     DanielLezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org, Ikjoon Jang <ikjn@chromium.org>
-Subject: [PATCH] BUG-REPORT: cpuidle: teo: intervals[] array index out
-Date:   Fri, 10 Jan 2020 09:59:17 +0800
-Message-Id: <20200110015917.32825-1-ikjn@chromium.org>
-X-Mailer: git-send-email 2.25.0.rc1.283.g88dfdc4193-goog
+        Thu, 9 Jan 2020 21:02:44 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0TnHSHFe_1578621761;
+Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TnHSHFe_1578621761)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 10 Jan 2020 10:02:42 +0800
+Subject: Re: [PATCH v7 00/10] per lruvec lru_lock for memcg
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+To:     hannes@cmpxchg.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
+        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
+        yang.shi@linux.alibaba.com, willy@infradead.org,
+        shakeelb@google.com
+References: <1577264666-246071-1-git-send-email-alex.shi@linux.alibaba.com>
+ <20191231150514.61c2b8c8354320f09b09f377@linux-foundation.org>
+ <944f0f6a-466a-7ce3-524c-f6db86fd0891@linux.alibaba.com>
+Message-ID: <d2efad94-750b-3298-8859-84bccc6ecf06@linux.alibaba.com>
+Date:   Fri, 10 Jan 2020 10:01:27 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.3.1
 MIME-Version: 1.0
+In-Reply-To: <944f0f6a-466a-7ce3-524c-f6db86fd0891@linux.alibaba.com>
+Content-Type: text/plain; charset=gbk
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This seems to be a simple bug in rotating array index.
----
- drivers/cpuidle/governors/teo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
-index de7e706efd46..6deaaf5f05b5 100644
---- a/drivers/cpuidle/governors/teo.c
-+++ b/drivers/cpuidle/governors/teo.c
-@@ -198,7 +198,7 @@ static void teo_update(struct cpuidle_driver *drv, struct cpuidle_device *dev)
- 	 * pattern detection.
- 	 */
- 	cpu_data->intervals[cpu_data->interval_idx++] = measured_ns;
--	if (cpu_data->interval_idx > INTERVALS)
-+	if (cpu_data->interval_idx >= INTERVALS)
- 		cpu_data->interval_idx = 0;
- }
- 
--- 
-2.24.1.735.g03f4e72817-goog
 
+在 2020/1/2 下午6:21, Alex Shi 写道:
+> 
+> 
+> 在 2020/1/1 上午7:05, Andrew Morton 写道:
+>> On Wed, 25 Dec 2019 17:04:16 +0800 Alex Shi <alex.shi@linux.alibaba.com> wrote:
+>>
+>>> This patchset move lru_lock into lruvec, give a lru_lock for each of
+>>> lruvec, thus bring a lru_lock for each of memcg per node.
+>>
+>> I see that there has been plenty of feedback on previous versions, but
+>> no acked/reviewed tags as yet.
+>>
+>> I think I'll take a pass for now, see what the audience feedback looks
+>> like ;)
+>>
+> 
+
+Hi Johannes,
+
+Any comments of this version? :)
+
+Thanks
+Alex
+
+> 
+> Thanks a lot! Andrew.
+> 
+> Please drop the 10th patch since it's for debug only and cost performance drop.
+> 
+> Best regards & Happy new year! :)
+> Alex
+> 
