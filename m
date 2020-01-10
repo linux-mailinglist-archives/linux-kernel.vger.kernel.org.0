@@ -2,161 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC8BD137024
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 15:54:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B913F137054
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 15:55:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728379AbgAJOyn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 09:54:43 -0500
-Received: from sv2-smtprelay2.synopsys.com ([149.117.73.133]:54926 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728359AbgAJOym (ORCPT
+        id S1728433AbgAJOzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 09:55:08 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37382 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728383AbgAJOyv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 09:54:42 -0500
-Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 0646140600;
-        Fri, 10 Jan 2020 14:54:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1578668081; bh=Df8PkuFAzWMaYAJuSpSUc79b5Fm4t/LEGhAGQyGeXTo=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=D2sz53FvPsKXPIEmjTdcWTl+3JCpk+x+bw9+hMfKgF6SftEH9PnZmhhKdgbMvc7If
-         PLCGxmJMdzb2WEEM7HLRpEcOZLIpMhsv/SEwRgNQ8SAY5+ZKzORdYVeH05qokicFSl
-         VxgNKlVf4SmOux5w3LmHz4o+qOq4ciTFpJ13+88DZVEVewh/Yd//0/GlQsoSxfFV+b
-         Hm80mnxyCTvJiUt6C6isP9zstSTz4K8BAu48rSWolsgs1e4rSF5XO3sGlnLsdLyxFp
-         miE259hv0e6HRd23fk3tkjG3sVW8eE18e8Y8/aXJ5lpr0cmv55hqcdlWPKcWBIPxX9
-         SsNB1MHT0pVFA==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id C9B87A00B2;
-        Fri, 10 Jan 2020 14:54:39 +0000 (UTC)
-Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 10 Jan 2020 06:54:39 -0800
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (10.202.3.67) by
- mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Fri, 10 Jan 2020 06:54:39 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=STI3umO3zb5Mx2D7b/Mqv38DxZfO7zRbTWD1LrABAT6E58uJpuZIgRKHxnTtSpifpyl38kDVA6IdtTuU+rPAHtuW4a6I4yApE2F+7nn9lBYTzTiS1RzofhlXqh8Y8laQVp+mR33wpDE/sf36GVeDfTqgJ33Fhs0evsDNrE9Pm/PKttry0/kdXVFIbmnGkFZ0QP9eI7IXhz46DGqS1BlwZMipnyOkjsvKlwYE2XzFMLcogS/ORZyj3vLbyjzU+jUbcjryLwFxXAWOZNFRT+nksAzdEvJUWq29JvAvX8fcEg+HTiflL0KYpGcAtPAJV+5cI+If7iJ+CkQ8/r0lCU6g5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nOmPZ4X5D74ikfkUPi93zppuuU1mGY7KSybBxS87670=;
- b=XSxMYcqXRF8SqBXqc65V8YWNG9euGttJWL5ab1zUCKqO2R/1J64rvRt1x0oIKBee1nN7wUwiXJUMML8IBsjasW8G68b9UBKpU/+l++zqBMKgic4Py/ZrhsiAYIB5hWyMsGsDBDa504hWOKEDswGtJoV/XFOdptwADDDaOQPKrpxqUImpCBQu8BSHBiCcRij7rWqdLGvQ8+gtjUNblanGzFjr2YxNNp2wN/+ZXhQUUhGrw1ST8X4NQjFBD2EqEvZG4cyF3qqJkvZc2ths4OJC8orxKZ2Il1ExLWdXxMgIcRzoHiWvcB3jaqt8CdyRmZOlt+cT4magJC9Wiq1VXSby6g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
- dkim=pass header.d=synopsys.com; arc=none
+        Fri, 10 Jan 2020 09:54:51 -0500
+Received: by mail-lf1-f65.google.com with SMTP id b15so1688440lfc.4;
+        Fri, 10 Jan 2020 06:54:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nOmPZ4X5D74ikfkUPi93zppuuU1mGY7KSybBxS87670=;
- b=j2oxGcBV9aaJdE8RZeYrtLvk/LP9SoUse13mLpCpzPbv2yTsnjp3qRkGlO68gb8g3QEUhL0CUKSMSKqjzmW76DOMGeuxw+OVxn1Wk9tX5o02ghAQc7Ke9RDv9ONaJSNJazGjbf074odxBCoQsHTG0KX/ZSUzzJpVvMSpnB+jSZI=
-Received: from BY5PR12MB4034.namprd12.prod.outlook.com (52.135.53.73) by
- BY5PR12MB3924.namprd12.prod.outlook.com (10.255.139.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2623.8; Fri, 10 Jan 2020 14:54:38 +0000
-Received: from BY5PR12MB4034.namprd12.prod.outlook.com
- ([fe80::21e8:207a:f5a0:e090]) by BY5PR12MB4034.namprd12.prod.outlook.com
- ([fe80::21e8:207a:f5a0:e090%4]) with mapi id 15.20.2623.013; Fri, 10 Jan 2020
- 14:54:37 +0000
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Alexey Brodkin" <Alexey.Brodkin@synopsys.com>
-Subject: Re: [PATCH 3/5] ARC: handle DSP presence in HW
-Thread-Topic: [PATCH 3/5] ARC: handle DSP presence in HW
-Thread-Index: AQHVvOAPYx4rnqnFdEKpMFBzanlxBKfecrQAgAWYjls=
-Date:   Fri, 10 Jan 2020 14:54:37 +0000
-Message-ID: <BY5PR12MB403418CCC56FE9E2EA3232D2DE380@BY5PR12MB4034.namprd12.prod.outlook.com>
-References: <20191227180347.3579-1-Eugeniy.Paltsev@synopsys.com>
- <20191227180347.3579-4-Eugeniy.Paltsev@synopsys.com>,<6b80df9d-d0f2-d1e1-8e4b-b65531b938d9@synopsys.com>
-In-Reply-To: <6b80df9d-d0f2-d1e1-8e4b-b65531b938d9@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=paltsev@synopsys.com; 
-x-originating-ip: [84.204.78.101]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8458fbcd-7033-4629-937e-08d795dd03aa
-x-ms-traffictypediagnostic: BY5PR12MB3924:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BY5PR12MB39246C0D225A73B639B9BBD9DE380@BY5PR12MB3924.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 02788FF38E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(136003)(39860400002)(346002)(396003)(199004)(189003)(52536014)(5660300002)(76116006)(91956017)(4326008)(66446008)(9686003)(66946007)(66476007)(107886003)(66556008)(55016002)(64756008)(71200400001)(33656002)(6506007)(2906002)(316002)(8936002)(26005)(86362001)(7696005)(8676002)(54906003)(478600001)(110136005)(81166006)(186003)(81156014)(309714004);DIR:OUT;SFP:1102;SCL:1;SRVR:BY5PR12MB3924;H:BY5PR12MB4034.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: synopsys.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Z2CCDJ2Bk7MwbZtDTRQ/BxTjJJQct/yFZN0dVWinJiCpM8cwXenrQ3uF2Sp4TuWBKFtHlhlu4lxf4lgEe60qrx3mwxMN9XVQwAT8E4rucR/xQx3RB3xTDSeI0kDtFvF7jCkM52wRPT+e3OA0ny4/1Bv/IW31lgm/Hkg6lqE0nSj42MY67fWlxwWolHGfCN405CadBmoMpfcMvxnezr52+P5UjhLoNxJadr5fL46BOMLIhmj2pAdXSLYnYfOfALGDl2r8rYKAg2ceXWsrCdk3p4MX/vI3wO+65ZkrZjnTR9J1v5JuYGO46s/CqVX97sBmPdmzonfjGzHnwebysMQ6ki9jDSRAd9CBsscpYP1ZdB+bY5+TakWsoEyWFURDrjoHfrfP/hYQK0H2dvGoWHthlGAURQj6Pfjx2aJ+9Dpyldrr1jt49T16PJxD97wx0xpWbdaEe+Aa3LpbFCELJh+kpCKuggl68vzIPAAH1DtrKV9TNLovmJZb7IjKcWCYt5mT
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0gvZHliErrU7djUiz1bUBUU13O2uF7FKyxCjuMcMz4A=;
+        b=ZwSnLpKaKb6q4r7zGNWe7D5oMy4xJbxw62JlSACoi+64rbdXXBIpYyPqTqP1l2jnoo
+         oFI1qdzwPLQgcpjHA/MkHpdyxcu3wUfYPWc17x1oXRJ8RQGCklBYvNrrxGcrSZCXlUcJ
+         IypPLhtptAxQ1LzaPeFulZ9PO0X1kokI4CU0NkIu6MyRe+5kMLTjRvnGWXsPmV36CxHy
+         lxGRd1Cl1WPtVZoW9YQvs7KRzno2qiQSSW3XLuTVOJGH2rtIy3bF4M4R3pJrHbRLxZ6c
+         hQnLHvNgEPuq56C+mShBGJlIaK1m3hd3z34JoU43ZdW4pR1HnfBOfPXgCtu320IihwQM
+         Wgng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0gvZHliErrU7djUiz1bUBUU13O2uF7FKyxCjuMcMz4A=;
+        b=F7Lv1vRoGJAa5CrWFPaPkSMxoO/iTimjPrDjJf2tW518Urgm/bPqIuyuXwgB4/UEUx
+         pfMqTUaehTavyITwh/imATnXEVOnBdgaQva5XmKGpdla71Aj1oQNxGYzjTbkgdJf2dhq
+         e3rWDPjIw/80HarBWX5Rhb3fXEviyzs+wsoiymKCRneAFFibkhicGyqDQ+tdii9dYpFA
+         /uU0aELSw99SYGTXwfmuUApiBGjsU6NAHu6WY+cgyqy5qstpTKCMBU8SS/1qZM9Hebe1
+         /v2YcUGcTAZe0EG61msLNO5nfB6wUJmFu8qZ2Cz8YFbrgnKM0q3WZ7x0yk4lgRyURTbT
+         KB8A==
+X-Gm-Message-State: APjAAAUt12uO11Yqbo/1u8FMkvg7L8p+jW5+8MxDjOB8CIjY7ge8HtaT
+        EBsUIEWMllxnNHAKzhjunomsvygo
+X-Google-Smtp-Source: APXvYqxePfSFGAZu4SWy5PyGmHGomgkEOZPqNm3XdZH9IjoYpGYtGKRWcHyDO7lwvXnVKadQOSjIEQ==
+X-Received: by 2002:a05:6512:244:: with SMTP id b4mr2579177lfo.85.1578668087958;
+        Fri, 10 Jan 2020 06:54:47 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id y14sm1118286ljk.46.2020.01.10.06.54.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jan 2020 06:54:47 -0800 (PST)
+Subject: Re: [PATCH v7 00/21] Move PMC clocks into Tegra PMC driver
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com,
+        perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com,
+        gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, josephl@nvidia.com,
+        daniel.lezcano@linaro.org, mmaddireddy@nvidia.com,
+        markz@nvidia.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
+ <4e9fab30-14b5-bf1f-dc91-fd57ef614503@gmail.com>
+ <61a78ba8-4cc3-f6a6-513b-36daa9be32f0@nvidia.com>
+ <37a9676b-e0e5-7e80-5ee4-abfca361dcf7@nvidia.com>
+ <62751d2d-2b7d-509b-e236-363d2bb29b02@nvidia.com>
+ <880b2e8a-aa55-40f3-7502-24392b88e53f@nvidia.com>
+ <738f42e2-7135-b111-5863-1cb15aa96c18@nvidia.com>
+ <dbb80785-59a8-6725-f43b-babe27ebbaeb@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <06919c0e-d0a5-5cf6-ba94-758fe9e1cdd6@gmail.com>
+Date:   Fri, 10 Jan 2020 17:54:45 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8458fbcd-7033-4629-937e-08d795dd03aa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2020 14:54:37.6811
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1SalSqSMhdVr0KQ9TH7YV2WBkbN29cY5yXg9vwVwra4x80xDcO8JnE813JMvFjEsZUp+1FclQreQ5MiFHxBfKw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB3924
-X-OriginatorOrg: synopsys.com
+In-Reply-To: <dbb80785-59a8-6725-f43b-babe27ebbaeb@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vineet,=0A=
-=0A=
->From: Vineet Gupta <vgupta@synopsys.com>=0A=
->Sent: Tuesday, January 7, 2020 04:03=0A=
->To: Eugeniy Paltsev; linux-snps-arc@lists.infradead.org=0A=
->Cc: linux-kernel@vger.kernel.org; Alexey Brodkin=0A=
->Subject: Re: [PATCH 3/5] ARC: handle DSP presence in HW=0A=
->[snip]=0A=
->> +static inline bool dsp_exist(void)=0A=
->> +{=0A=
->> +     struct bcr_generic bcr;=0A=
->> +=0A=
->> +     READ_BCR(ARC_AUX_DSP_BUILD, bcr);=0A=
->> +     return !!bcr.ver;=0A=
->=0A=
->open code these use once / one liners in the call site itself.=0A=
->=0A=
->>=0A=
->> @@ -444,6 +445,9 @@ static void arc_chk_core_config(void)=0A=
->>               /* Accumulator Low:High pair (r58:59) present if DSP MPY o=
-r FPU */=0A=
->>               present =3D cpu->extn_mpy.dsp | cpu->extn.fpu_sp | cpu->ex=
-tn.fpu_dp;=0A=
->>               CHK_OPT_STRICT(CONFIG_ARC_HAS_ACCL_REGS, present);=0A=
->> +=0A=
->> +             present =3D dsp_exist();=0A=
->=0A=
->Open code as suggested above.=0A=
->=0A=
->> +             CHK_OPT_STRICT(CONFIG_ARC_DSP_KERNEL, present);=0A=
->>       }=0A=
-=0A=
-My idea here is to encapsulate implementation of everything dsp-related in =
-the=0A=
-file with dsp code. So I'm even thinking about moving the config check itse=
-lf=0A=
-to some function like=0A=
-'arc_chk_dsp_config' which will be located in dsp.x file=0A=
-and call it from arc_chk_core_config in setup.c=0A=
-=0A=
-This requires to move config check helpers to separate file/header from the=
- setup.c=0A=
-However this allows encapsulate all DSP code (and some new subsystems code =
-later on) in its files instead of spread it across the arc code.=0A=
-=0A=
-What do you think about it? If you really dislike this idea I can drop it.=
-=0A=
----=0A=
- Eugeniy Paltsev=0A=
+10.01.2020 07:47, Sowjanya Komatineni пишет:
+> 
+> On 1/9/20 8:43 PM, Sameer Pujar wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 1/10/2020 10:06 AM, Sowjanya Komatineni wrote:
+>>>
+>>> On 1/9/20 7:32 PM, Sowjanya Komatineni wrote:
+>>>>
+>>>> On 1/9/20 7:24 PM, Sowjanya Komatineni wrote:
+>>>>>
+>>>>> On 1/9/20 5:39 PM, Sowjanya Komatineni wrote:
+>>>>>>
+>>>>>> On 1/9/20 11:44 AM, Dmitry Osipenko wrote:
+>>>>>>> External email: Use caution opening links or attachments
+>>>>>>>
+>>>>>>>
+>>>>>>> 08.01.2020 07:24, Sowjanya Komatineni пишет:
+>>>>>>>> This patch series moves Tegra PMC clocks from clock driver to pmc
+>>>>>>>> driver
+>>>>>>>> along with the device trees changes and audio driver which uses
+>>>>>>>> one of
+>>>>>>>> the pmc clock for audio mclk.
+>>>>>>>>
+>>>>>>>> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls
+>>>>>>>> which
+>>>>>>>> are currently registered by Tegra clock driver using
+>>>>>>>> clk_regiser_mux and
+>>>>>>>> clk_register_gate which performs direct Tegra PMC register access.
+>>>>>>>>
+>>>>>>>> When Tegra PMC is in secure mode, any access from non-secure
+>>>>>>>> world will
+>>>>>>>> not go through.
+>>>>>>>>
+>>>>>>>> This patch series adds these Tegra PMC clocks and blink controls
+>>>>>>>> to Tegra
+>>>>>>>> PMC driver with PMC as clock provider and removes them from Tegra
+>>>>>>>> clock
+>>>>>>>> driver.
+>>>>>>>>
+>>>>>>>> PMC clock clk_out_1 is dedicated for audio mclk from Tegra30 thru
+>>>>>>>> Tegra210
+>>>>>>>> and clock driver does inital parent configuration for it and
+>>>>>>>> enables them.
+>>>>>>>> But this clock should be taken care by audio driver as there is
+>>>>>>>> no need
+>>>>>>>> to have this clock pre enabled.
+>>>>>>>>
+>>>>>>>> So, this series also includes patch that updates ASoC driver to
+>>>>>>>> take
+>>>>>>>> care of parent configuration for mclk if device tree don't specify
+>>>>>>>> initial parent configuration using assigned-clock-parents and
+>>>>>>>> controls
+>>>>>>>> audio mclk enable/disable during ASoC machine startup and shutdown.
+>>>>>>>>
+>>>>>>>> DTs are also updated to use clk_out_1 as audio mclk rather than
+>>>>>>>> extern1.
+>>>>>>>>
+>>>>>>>> This series also includes a patch for mclk fallback to extern1 when
+>>>>>>>> retrieving mclk fails to have this backward compatible of new DT
+>>>>>>>> with
+>>>>>>>> old kernels.
+>>>>>>> Suspend-resume doesn't work anymore, reverting this series helps. I
+>>>>>>> don't have any other information yet, please take a look.
+>>>>>> Thanks Dmitry. Will test suspend resume and check..
+>>>>>
+>>>>> I see if we leave audio mclk (cdev1) enabled during
+>>>>> tegra_asoc_utils_init, suspend resume works.
+>>>>>
+>>>>> Without audio mclk enabled during tegra_asoc_utils_init, somehow it
+>>>>> prevents entry to suspend on Tegra30 platform.
+>>>>>
+>>>>> Will look in detail..
+>>>>>
+>>>> audio mclk is only needed for audio and werid that having it not
+>>>> enabled all the time like in current clock driver prevents suspend
+>>>> entry on Tegra30
+>>>>
+>>>> Looks like this issue is masked earlier with having mclk enabled all
+>>>> the time by clock driver.
+>>>>
+>>> On linux-next without this patch series, I just disabled mclk to be
+>>> enabled all the time (removed set_rate from utils_init) and also
+>>> disabled default enable from clock driver.
+>>>
+>>> So somehow disabling mclk is preventing suspend entry.
+>>
+>> This is strange.
+>>
+>>>
+>>> Probably debugging suspend issue on Tegra30 when audio mclk is
+>>> disabled can be done separately and will keep audio mclk enabled in
+>>> asoc_utils_init with comment mentioning this issue and fix as TBD to
+>>> move on with PMC clock fixes.
+>>
+>> Sounds fine with me as the suspend/resume issue is not introduced in the
+>> current series. It can be addressed separately.
+>>
+>>>
+> Thanks Sameer. So, will keep mclk not enabled in clock driver but will
+> do mclk enable in asoc_utils_init and will remove machine startup and
+> shutdown.
+> 
+> mclk dependency with suspend/resume and I2S and audio clocks proper
+> handling in audio driver can be taken care separately out of this series.
+> 
+> Dimitry, I hope you too agree with this.
+
+Yes, should be fine to fix it separately from this series.
+
+I suppose the clocks management isn't done properly by some of the audio
+drivers and machine hangs after trying to access hardware module which
+has the disabled clock. That's a quite typical bug.
