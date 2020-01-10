@@ -2,108 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 308D8137237
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:05:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D1E413723C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:05:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728713AbgAJQEy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 11:04:54 -0500
-Received: from mga05.intel.com ([192.55.52.43]:43158 "EHLO mga05.intel.com"
+        id S1728749AbgAJQFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 11:05:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728480AbgAJQEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 11:04:54 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 08:04:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,417,1571727600"; 
-   d="scan'208";a="218699478"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga008.fm.intel.com with ESMTP; 10 Jan 2020 08:04:53 -0800
-Date:   Fri, 10 Jan 2020 08:04:53 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        David Laight <David.Laight@ACULAB.COM>,
-        Arvind Sankar <nivedita@alum.mit.edu>
-Subject: Re: [PATCH v2 2/2] KVM: x86/mmu: Micro-optimize nEPT's bad
- memptype/XWR checks
-Message-ID: <20200110160453.GA21485@linux.intel.com>
-References: <20200109230640.29927-1-sean.j.christopherson@intel.com>
- <20200109230640.29927-3-sean.j.christopherson@intel.com>
- <878smfr18i.fsf@vitty.brq.redhat.com>
+        id S1728480AbgAJQFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 11:05:02 -0500
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A197921744;
+        Fri, 10 Jan 2020 16:04:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578672301;
+        bh=nJeju4Tk+OsPhG56SdDEOENLWLwKqszJfvAVxMqqJIU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Tm4YirPpLf6vykani18lUfMmshBZVUnvYc1BthQjXk98pFH+9QPxfr2q7RRbphUV5
+         R/vBdFgvoBnbeLaXutdWcVv2ml0ur/8UW9D+PlwX6B5Ojf17cEMTJ/aFzNNTjjRMk5
+         wP+pgtqjTalhN1LdhogCIeHNj8vCy6qh1BSD7EH0=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 08/22] bootconfig: init: Allow admin to use bootconfig for init command line
+Date:   Sat, 11 Jan 2020 01:04:55 +0900
+Message-Id: <157867229521.17873.654222294326542349.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <157867220019.17873.13377985653744804396.stgit@devnote2>
+References: <157867220019.17873.13377985653744804396.stgit@devnote2>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878smfr18i.fsf@vitty.brq.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 12:37:33PM +0100, Vitaly Kuznetsov wrote:
-> Sean Christopherson <sean.j.christopherson@intel.com> writes:
-> > --- a/arch/x86/kvm/mmu/paging_tmpl.h
-> > +++ b/arch/x86/kvm/mmu/paging_tmpl.h
-> > @@ -128,6 +128,21 @@ static inline int FNAME(is_present_gpte)(unsigned long pte)
-> >  #endif
-> >  }
-> >  
-> > +static bool FNAME(is_bad_mt_xwr)(struct rsvd_bits_validate *rsvd_check, u64 gpte)
-> > +{
-> > +#if PTTYPE != PTTYPE_EPT
-> > +	return false;
-> > +#else
-> > +	return __is_bad_mt_xwr(rsvd_check, gpte);
-> > +#endif
-> > +}
-> > +
-> > +static bool FNAME(is_rsvd_bits_set)(struct kvm_mmu *mmu, u64 gpte, int level)
-> > +{
-> > +	return __is_rsvd_bits_set(&mmu->guest_rsvd_check, gpte, level) ||
-> > +	       FNAME(is_bad_mt_xwr)(&mmu->guest_rsvd_check, gpte);
-> > +}
-> > +
-> 
-> Not sure if it would make sense/difference (well, this is famous KVM
-> MMU!) but as FNAME(is_bad_mt_xwr)
-> 
-> has only one call site we could've as well merged it, something like:
-> 
-> static bool FNAME(is_rsvd_bits_set)(struct kvm_mmu *mmu, u64 gpte, int level)
-> {
-> #if PTTYPE == PTTYPE_EPT
-> 	bool res =  __is_bad_mt_xwr(&mmu->guest_rsvd_check, gpte);
-> #else
-> 	bool res = false;
-> #endif
-> 	return __is_rsvd_bits_set(&mmu->guest_rsvd_check, gpte, level) || res;
-> }
-> 
-> but keeping it in-line with __is_rsvd_bits_set()/__is_bad_mt_xwr() in
-> mmu.c likely has greater benefits.
+Since the current kernel command line is too short to describe
+long and many options for init (e.g. systemd command line options),
+this allows admin to use boot config for init command line.
 
-Ya, I don't love the code, but it was the least awful of the options I
-tried, in that it's the most readable without being too obnoxious.
+All init command line under "init." keywords will be passed to
+init.
 
+For example,
 
-Similar to your suggestion, but it avoids evaluating __is_bad_mt_xwr() if
-reserved bits are set, which is admittedly rare.
+init.systemd {
+	unified_cgroup_hierarchy = 1
+	debug_shell
+	default_timeout_start_sec = 60
+}
 
-	return __is_rsvd_bits_set(&mmu->guest_rsvd_check, gpte, level)
-#if PTTYPE == PTTYPE_EPT
-	       || __is_bad_mt_xwr(&mmu->guest_rsvd_check, gpte)
-#endif
-	       ;
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ init/main.c |   31 ++++++++++++++++++++++++++++---
+ 1 file changed, 28 insertions(+), 3 deletions(-)
 
-Or macrofying the call to keep the call site clean, but IMO this obfuscates
-things too much.
+diff --git a/init/main.c b/init/main.c
+index c0017d9d16e7..dd7da62d99a5 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -139,6 +139,8 @@ char *saved_command_line;
+ static char *static_command_line;
+ /* Untouched extra command line */
+ static char *extra_command_line;
++/* Extra init arguments */
++static char *extra_init_args;
+ 
+ static char *execute_command;
+ static char *ramdisk_execute_command;
+@@ -372,6 +374,8 @@ static void __init setup_boot_config(void)
+ 		pr_info("Load boot config: %d bytes\n", size);
+ 		/* keys starting with "kernel." are passed via cmdline */
+ 		extra_command_line = xbc_make_cmdline("kernel");
++		/* Also, "init." keys are init arguments */
++		extra_init_args = xbc_make_cmdline("init");
+ 	}
+ }
+ #else
+@@ -507,16 +511,18 @@ static inline void smp_prepare_cpus(unsigned int maxcpus) { }
+  */
+ static void __init setup_command_line(char *command_line)
+ {
+-	size_t len, xlen = 0;
++	size_t len, xlen = 0, ilen = 0;
+ 
+ 	if (extra_command_line)
+ 		xlen = strlen(extra_command_line);
++	if (extra_init_args)
++		ilen = strlen(extra_init_args) + 4; /* for " -- " */
+ 
+ 	len = xlen + strlen(boot_command_line) + 1;
+ 
+-	saved_command_line = memblock_alloc(len, SMP_CACHE_BYTES);
++	saved_command_line = memblock_alloc(len + ilen, SMP_CACHE_BYTES);
+ 	if (!saved_command_line)
+-		panic("%s: Failed to allocate %zu bytes\n", __func__, len);
++		panic("%s: Failed to allocate %zu bytes\n", __func__, len + ilen);
+ 
+ 	static_command_line = memblock_alloc(len, SMP_CACHE_BYTES);
+ 	if (!static_command_line)
+@@ -533,6 +539,22 @@ static void __init setup_command_line(char *command_line)
+ 	}
+ 	strcpy(saved_command_line + xlen, boot_command_line);
+ 	strcpy(static_command_line + xlen, command_line);
++
++	if (ilen) {
++		/*
++		 * Append supplemental init boot args to saved_command_line
++		 * so that user can check what command line options passed
++		 * to init.
++		 */
++		len = strlen(saved_command_line);
++		if (!strstr(boot_command_line, " -- ")) {
++			strcpy(saved_command_line + len, " -- ");
++			len += 4;
++		} else
++			saved_command_line[len++] = ' ';
++
++		strcpy(saved_command_line + len, extra_init_args);
++	}
+ }
+ 
+ /*
+@@ -759,6 +781,9 @@ asmlinkage __visible void __init start_kernel(void)
+ 	if (!IS_ERR_OR_NULL(after_dashes))
+ 		parse_args("Setting init args", after_dashes, NULL, 0, -1, -1,
+ 			   NULL, set_init_arg);
++	if (extra_init_args)
++		parse_args("Setting extra init args", extra_init_args,
++			   NULL, 0, -1, -1, NULL, set_init_arg);
+ 
+ 	/*
+ 	 * These use large bootmem allocations and must precede
 
-	return __is_rsvd_bits_set(&mmu->guest_rsvd_check, gpte, level) ||
-	       IS_BAD_MT_XWR(&mmu->guest_rsvd_check, gpte);
