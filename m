@@ -2,77 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28564137398
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:28:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DC1313738A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:26:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728769AbgAJQ1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 11:27:52 -0500
-Received: from hermes.aosc.io ([199.195.250.187]:50250 "EHLO hermes.aosc.io"
+        id S1728721AbgAJQ0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 11:26:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727928AbgAJQ1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 11:27:52 -0500
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 7A75D46F4B;
-        Fri, 10 Jan 2020 16:27:45 +0000 (UTC)
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 3/3] Input: goodix - Add support for Goodix GT917S
-Date:   Sat, 11 Jan 2020 00:26:08 +0800
-Message-Id: <20200110162608.1066397-4-icenowy@aosc.io>
-In-Reply-To: <20200110162608.1066397-1-icenowy@aosc.io>
-References: <20200110162608.1066397-1-icenowy@aosc.io>
+        id S1728515AbgAJQ0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 11:26:35 -0500
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A870206ED;
+        Fri, 10 Jan 2020 16:26:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578673594;
+        bh=qUSh+34QaXX+miyORbEBsNLX6p44MlxlbIBf8Z85xtA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z9cjrptgTnj5mcpzreKGcx0DMbca47nUK82CAD5j8L6t3165Txt5hDoLixrOxM6Qb
+         6BIPBo6TWpHvFOVP0ljw+bjKzh7TADxlappQooAIDm0mVs4DTXMRgIEyk1rXQHIt5Y
+         nkTUBhcOYjtLCoAwm69Vvxn+L6DPoyZsfhB+zQtE=
+Date:   Fri, 10 Jan 2020 17:26:31 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Stefan Mavrodiev <stefan@olimex.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
+        <dmaengine@vger.kernel.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:DRM DRIVERS FOR ALLWINNER A10" 
+        <dri-devel@lists.freedesktop.org>, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 2/2] drm: sun4i: hdmi: Add support for sun4i HDMI encoder
+ audio
+Message-ID: <20200110162631.wbufz5h7nqfgd6am@gilmour.lan>
+References: <20200110141140.28527-1-stefan@olimex.com>
+ <20200110141140.28527-3-stefan@olimex.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aosc.io; s=dkim;
-        t=1578673671;
-        h=from:subject:date:message-id:to:cc:mime-version:content-transfer-encoding:in-reply-to:references;
-        bh=fUcO8MBlL3O+0Chjy85nPyBXPKjGbI6Ws5fExVUlrCw=;
-        b=pakWsdvwVQBYzjCmWUDAvQ/tCK8Kj+i1YXk5l3VTiewS+zfEHI6dzqgvZP9p6n4lqcPR3u
-        jBkX0GaDfFrkQurk10SH7uCa7ruDlEFuficiflxUMb6wiOeNll2VyhgnVR0G1iDrDDgDMw
-        Xt3l9y99Fe5x+rCvT0m+/Vpn7RjOsrE=
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="k5znubyhdepgt4o6"
+Content-Disposition: inline
+In-Reply-To: <20200110141140.28527-3-stefan@olimex.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Goodix GT917S is a touchscreen chip from Goodix that is in the GT1x
-family.
 
-Add its support by assigning the gt1x config to it.
+--k5znubyhdepgt4o6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/input/touchscreen/goodix.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Hi,
 
-diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-index bfd067d7145e..43d8e1b8fb7f 100644
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -239,7 +239,8 @@ static const struct goodix_chip_data *goodix_get_chip_data(const char *id)
- {
- 	if (!strcmp(id, "1151") ||
- 	    !strcmp(id, "5663") ||
--	    !strcmp(id, "5688"))
-+	    !strcmp(id, "5688") ||
-+	    !strcmp(id, "917S"))
- 		return &gt1x_chip_data;
- 
- 	if (!strcmp(id, "911") ||
-@@ -1047,6 +1048,7 @@ static const struct of_device_id goodix_of_match[] = {
- 	{ .compatible = "goodix,gt911" },
- 	{ .compatible = "goodix,gt9110" },
- 	{ .compatible = "goodix,gt912" },
-+	{ .compatible = "goodix,gt917s" },
- 	{ .compatible = "goodix,gt927" },
- 	{ .compatible = "goodix,gt9271" },
- 	{ .compatible = "goodix,gt928" },
--- 
-2.23.0
+On Fri, Jan 10, 2020 at 04:11:40PM +0200, Stefan Mavrodiev wrote:
+> Add HDMI audio support for the sun4i-hdmi encoder, used on
+> the older Allwinner chips - A10, A20, A31.
+>
+> Most of the code is based on the BSP implementation. In it
+> dditional formats are supported (S20_3LE and S24_LE), however
+> there where some problems with them and only S16_LE is left.
+>
+> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+> ---
+>  drivers/gpu/drm/sun4i/Kconfig            |   1 +
+>  drivers/gpu/drm/sun4i/Makefile           |   1 +
+>  drivers/gpu/drm/sun4i/sun4i_hdmi.h       |  30 ++
+>  drivers/gpu/drm/sun4i/sun4i_hdmi_audio.c | 375 +++++++++++++++++++++++
+>  drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c   |   4 +
+>  5 files changed, 411 insertions(+)
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi_audio.c
+>
+> diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
+> index 37e90e42943f..192b732b10cd 100644
+> --- a/drivers/gpu/drm/sun4i/Kconfig
+> +++ b/drivers/gpu/drm/sun4i/Kconfig
+> @@ -19,6 +19,7 @@ if DRM_SUN4I
+>  config DRM_SUN4I_HDMI
+>         tristate "Allwinner A10 HDMI Controller Support"
+>         default DRM_SUN4I
+> +       select SND_PCM_ELD
+>         help
+>  	  Choose this option if you have an Allwinner SoC with an HDMI
+>  	  controller.
+> diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
+> index 0d04f2447b01..e2d82b451c36 100644
+> --- a/drivers/gpu/drm/sun4i/Makefile
+> +++ b/drivers/gpu/drm/sun4i/Makefile
+> @@ -5,6 +5,7 @@ sun4i-frontend-y		+= sun4i_frontend.o
+>  sun4i-drm-y			+= sun4i_drv.o
+>  sun4i-drm-y			+= sun4i_framebuffer.o
+>
+> +sun4i-drm-hdmi-y		+= sun4i_hdmi_audio.o
+>  sun4i-drm-hdmi-y		+= sun4i_hdmi_ddc_clk.o
+>  sun4i-drm-hdmi-y		+= sun4i_hdmi_enc.o
+>  sun4i-drm-hdmi-y		+= sun4i_hdmi_i2c.o
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+> index 7ad3f06c127e..456964e681b0 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+> @@ -42,7 +42,32 @@
+>  #define SUN4I_HDMI_VID_TIMING_POL_VSYNC		BIT(1)
+>  #define SUN4I_HDMI_VID_TIMING_POL_HSYNC		BIT(0)
+>
+> +#define SUN4I_HDMI_AUDIO_CTRL_REG	0x040
+> +#define SUN4I_HDMI_AUDIO_CTRL_ENABLE		BIT(31)
+> +#define SUN4I_HDMI_AUDIO_CTRL_RESET		BIT(30)
+> +
+> +#define SUN4I_HDMI_AUDIO_FMT_REG	0x048
+> +#define SUN4I_HDMI_AUDIO_FMT_SRC		BIT(31)
+> +#define SUN4I_HDMI_AUDIO_FMT_LAYOUT		BIT(3)
+> +#define SUN4I_HDMI_AUDIO_FMT_CH_CFG(n)		(n - 1)
 
+There's the issue multiple times in the headers, but you should wrap n
+in parentheses to make sure we have no issue with precedence when
+calling the macro.
+
+> +int sun4i_hdmi_audio_create(struct sun4i_hdmi *hdmi)
+> +{
+> +	struct snd_soc_card *card = &sun4i_hdmi_audio_card;
+> +	struct snd_soc_dai_link_component *comp;
+> +	struct snd_soc_dai_link *link;
+> +	int ret;
+> +
+> +	ret = devm_snd_dmaengine_pcm_register(hdmi->dev,
+> +					      &sun4i_hdmi_audio_pcm_config, 0);
+> +	if (ret) {
+> +		DRM_ERROR("Could not register PCM\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = devm_snd_soc_register_component(hdmi->dev,
+> +					      &sun4i_hdmi_audio_component,
+> +					      &sun4i_hdmi_audio_dai, 1);
+> +	if (ret) {
+> +		DRM_ERROR("Could not register DAI\n");
+> +		return ret;
+> +	}
+> +
+> +	link = devm_kzalloc(hdmi->dev, sizeof(*link), GFP_KERNEL);
+> +	if (!link)
+> +		return -ENOMEM;
+> +
+> +	comp = devm_kzalloc(hdmi->dev, sizeof(*comp) * 3, GFP_KERNEL);
+> +	if (!comp)
+> +		return -ENOMEM;
+> +
+> +	link->cpus = &comp[0];
+> +	link->codecs = &comp[1];
+> +	link->platforms = &comp[2];
+> +
+> +	link->num_cpus = 1;
+> +	link->num_codecs = 1;
+> +	link->num_platforms = 1;
+> +
+> +	link->playback_only = 1;
+> +
+> +	link->name = "SUN4I-HDMI";
+> +	link->stream_name = "SUN4I-HDMI PCM";
+> +
+> +	link->codecs->name = dev_name(hdmi->dev);
+> +	link->codecs->dai_name	= sun4i_hdmi_audio_dai.name;
+> +
+> +	link->cpus->dai_name = dev_name(hdmi->dev);
+> +
+> +	link->platforms->name = dev_name(hdmi->dev);
+> +
+> +	link->dai_fmt = SND_SOC_DAIFMT_I2S;
+> +
+> +	card->dai_link = link;
+> +	card->num_links = 1;
+> +	card->dev = hdmi->dev;
+> +
+> +	snd_soc_card_set_drvdata(card, hdmi);
+> +	return devm_snd_soc_register_card(hdmi->dev, card);
+
+Out of curiosity, did you try to remove the module with that patch
+applied? IIRC, these functions will overwrite the device drvdata, and
+we will try to access them in unbind / remove.
+
+> +}
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> index a7c4654445c7..79ecd89fb705 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> @@ -114,6 +114,9 @@ static void sun4i_hdmi_enable(struct drm_encoder *encoder)
+>  		val |= SUN4I_HDMI_VID_CTRL_HDMI_MODE;
+>
+>  	writel(val, hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
+> +
+> +	if (hdmi->hdmi_audio && sun4i_hdmi_audio_create(hdmi))
+> +		DRM_ERROR("Couldn't create the HDMI audio adapter\n");
+
+So you create the audio card each time the display is enabled? I guess
+this is to deal with the hotplug?
+
+I'm not sure this is the right thing to do. If I remember well, the
+ELD are here precisely to let userspace know that the display is
+plugged (and audio-capable) or not.
+
+Also, you don't remove that card in the disable, which mean that if
+you end up in a situation where you would enable the display, disable
+it and then enable it again, you have two audio cards now.
+
+Thanks!
+Maxime
+
+--k5znubyhdepgt4o6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXhiltwAKCRDj7w1vZxhR
+xUtjAQDUdNxWMzdX5tY/iStjYWj0MXs0bYASvg/UjfYqTY6DUAEA8G7cqydIOqWJ
+6rQl0/jVlUPXdNEudZ8FcGFFOkXJWww=
+=I5iw
+-----END PGP SIGNATURE-----
+
+--k5znubyhdepgt4o6--
