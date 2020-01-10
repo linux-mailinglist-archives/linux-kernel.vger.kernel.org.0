@@ -2,78 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F8F5137A5B
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 00:50:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A74E0137A62
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 00:52:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbgAJXuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 18:50:50 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36651 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727725AbgAJXuu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 18:50:50 -0500
-Received: by mail-lf1-f68.google.com with SMTP id n12so2757660lfe.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 15:50:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Up/bORiVZCe+ht9daj4eKUM5Ea1UCapj6K9HW34R5ns=;
-        b=S8msUfuLnxCHM8bT1qJiytka17qVyY8ZVrWgxMyflSfHUuBij6STEkbxfermPfL//+
-         KtGfqQG87GiX2DcSRsaXoTWWzuXOCzOcviF1bjh+KZNEo2KJEl6UbQRpQlOEAN4aTdOO
-         9uB6zwuq5WETS6YN8IQs41xzn3cXA68pp6ziVrH9amHmxk0w+18NMpJzyZSGRThntIb5
-         nMzW7a7PoyU1hLUViTeMhRFkxjIuhpltULvEbquK97BB0Jb8/asISY0Zy9ZH2Ufpi7hW
-         bAOfeTBm/G60sQxK4vTgBgyzWA1QInLlOptAdelRKnosGPeIDPVm7LALVXA7bBfJzxaf
-         wjDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Up/bORiVZCe+ht9daj4eKUM5Ea1UCapj6K9HW34R5ns=;
-        b=fiKpiB0dqEpm+b9+8Xx0j+BNBOmwp720q3+xrD1k69mMOG2qGNHhKDto/gbc/Z/cuv
-         nSzm75ozaj5Tj1iR+g5iDbEybacH4H9UpRPfZ9soKD+ufhR4+UoJoqAw8vy96PVGtsyc
-         XKRSJUXmD64U8hlj6spUMnlvlgWmMAls0sR6ktoxR0PKSBCOAI7cNJcpzj9FdDVlzvYG
-         Dx3IE241Pok1fVHmGYjn240cqkzSlFDgxdOw2xN1OVfb/6JaLbeisjd3XpBxHoJDtyxA
-         8ct+ZtBIpS5tupjV6pQbSZDPDn/ELBGJNQ6NXCXUh54D1cqjJoADDGgJ6nBU0d/4MIJ/
-         I8/Q==
-X-Gm-Message-State: APjAAAWmrjNjBbzCgN+zArKpKcx841If7sZtDAv3/kNgNGMgFHfy1Edt
-        mAFlPpjS5hrG3YtjJePbWxn8gA==
-X-Google-Smtp-Source: APXvYqws4IPaym9XaoOdclFEODCMjxAzsLLkrqIrxCIiTw1AkyjTotz1ggJalhM7dmrxCBCmHHeYKQ==
-X-Received: by 2002:ac2:5e78:: with SMTP id a24mr3889435lfr.5.1578700248713;
-        Fri, 10 Jan 2020 15:50:48 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id b20sm1642796ljp.20.2020.01.10.15.50.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2020 15:50:48 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 1E47A10144E; Sat, 11 Jan 2020 02:50:49 +0300 (+03)
-Date:   Sat, 11 Jan 2020 02:50:49 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH 1/2] mm/huge_memory.c: use head to check huge zero page
-Message-ID: <20200110235049.kzvcm46t6e2mw4uf@box>
-References: <20200110032610.26499-1-richardw.yang@linux.intel.com>
+        id S1727798AbgAJXwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 18:52:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38132 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727706AbgAJXwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 18:52:16 -0500
+Received: from localhost (unknown [104.132.0.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91F062072A;
+        Fri, 10 Jan 2020 23:52:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578700335;
+        bh=NvOUcUspxFLI01lV4A8uaAMX4Ow8pA4DdoGx2zMfWBU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=K5rsvDPnEAR5f21xmUvg1WTxOoWEYMaz3T4nOp8ln4/PnRUK4/QvBccKSxw5gx6F5
+         KSbS8D2qzcW2V8HhqcHE4E4fU2V4WST4iFRc15NeOJdUxDkmGbzhsYrvkRgYg0zg5s
+         4Pnn73nYDbl8cxLB9pOYFoZPsR8NX3+HrjDDKgns=
+Date:   Fri, 10 Jan 2020 15:52:14 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [RFC PATCH v5] f2fs: support data compression
+Message-ID: <20200110235214.GA25700@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20191216062806.112361-1-yuchao0@huawei.com>
+ <20191218214619.GA20072@jaegeuk-macbookpro.roam.corp.google.com>
+ <c7035795-73b3-d832-948f-deb36213ba07@huawei.com>
+ <20191231004633.GA85441@jaegeuk-macbookpro.roam.corp.google.com>
+ <7a579223-39d4-7e51-c361-4aa592b2500d@huawei.com>
+ <20200102181832.GA1953@jaegeuk-macbookpro.roam.corp.google.com>
+ <20200102190003.GA7597@jaegeuk-macbookpro.roam.corp.google.com>
+ <d51f0325-6879-9aa6-f549-133b96e3eef5@huawei.com>
+ <94786408-219d-c343-70f2-70a2cc68dd38@huawei.com>
+ <20200106181620.GB50058@jaegeuk-macbookpro.roam.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200110032610.26499-1-richardw.yang@linux.intel.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20200106181620.GB50058@jaegeuk-macbookpro.roam.corp.google.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 11:26:09AM +0800, Wei Yang wrote:
-> The page could be a tail page, if this is the case, this BUG_ON will
-> never be triggered.
+On 01/06, Jaegeuk Kim wrote:
+> On 01/06, Chao Yu wrote:
+> > On 2020/1/3 14:50, Chao Yu wrote:
+> > > This works to me. Could you run fsstress tests on compressed root directory?
+> > > It seems still there are some bugs.
+> > 
+> > Jaegeuk,
+> > 
+> > Did you mean running por_fsstress testcase?
+> > 
+> > Now, at least I didn't hit any problem for normal fsstress case.
 > 
-> Fixes: e9b61f19858a ("thp: reintroduce split_huge_page()")
+> Yup. por_fsstress
+
+Please check https://github.com/jaegeuk/f2fs/commits/g-dev-test.
+I've fixed
+- truncation offset
+- i_compressed_blocks and its lock coverage
+- error handling
+- etc
+
+One another fix in f2fs-tools as well.
+https://github.com/jaegeuk/f2fs-tools
+
 > 
-> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
-
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-
--- 
- Kirill A. Shutemov
+> > 
+> > Thanks,
