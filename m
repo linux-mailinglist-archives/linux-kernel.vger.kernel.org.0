@@ -2,136 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F99D136DEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 14:25:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0AA4136DF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 14:26:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbgAJNZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 08:25:26 -0500
-Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:41139 "EHLO
-        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727358AbgAJNZZ (ORCPT
+        id S1728022AbgAJN0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 08:26:09 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:47456 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727553AbgAJN0I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 08:25:25 -0500
-Received: from [IPv6:2001:420:44c1:2577:c967:e1d3:183a:b8ef]
- ([IPv6:2001:420:44c1:2577:c967:e1d3:183a:b8ef])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id puHrin9xDpLtbpuHuiQmSe; Fri, 10 Jan 2020 14:25:23 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1578662723; bh=I0b7s/xDqtbd60FacQFIRFFagV1Bh2XVzbaw6GJ8UFk=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=TTtT0/u+HRhWOQa06QDndrU0bUEOOnpgZ7+dEC97BkRPFIGB6+mexFpX5KgD0Ycg7
-         yhQzvpBQhpk2DygTF4OkK7SbCzkIEdbt1VBG6UrD+kwFD6l10FwZudPsgW7v4eMGeL
-         aYwHyNPBtNy6/lyBAFseDupjlwYKHL69gvkN/Cq4uYQTv02WDFPYe6/H3/nZ+1y+tA
-         BALkMj/5GvNS1nAx0I4g/1Vkw1rgqgcm08uw2jwao9fUsMlB844kKhFq4HAFqE21zy
-         nTRdmkh4N365san1LzaN8h2TVUGaY8Hytm1MaugFO+7c4Ri1RfYmfqNAU0fotrD5oM
-         l7dFQzn+02NNg==
-Subject: Re: [PATCH] staging/vc04_services/bcm2835-camera: distinct numeration
- and names for devices
-To:     Michael Kupfer <michael.kupfer@fau.de>, eric@anholt.net,
-        wahrenst@gmx.net, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, mchehab+samsung@kernel.org,
-        linux-media@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, f.fainelli@gmail.com,
-        rjui@broadcom.com, sbranden@broadcom.com,
-        dave.stevenson@raspberrypi.org, daniela.mormocea@gmail.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-kernel@i4.cs.fau.de, Kay Friedrich <kay.friedrich@fau.de>
-References: <20191206085432.19962-1-michael.kupfer@fau.de>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Message-ID: <3db2350b-0a6d-0693-258c-9d47f71c0627@xs4all.nl>
-Date:   Fri, 10 Jan 2020 14:25:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 10 Jan 2020 08:26:08 -0500
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00AD6eEK019160;
+        Fri, 10 Jan 2020 05:25:46 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=proofpoint;
+ bh=kJKBnH5ilFPBKkf1kjtm5U8yVUmzHj5VuGhVGOYyVVI=;
+ b=jigIi9HggT7zrDTwcjGotkp/cFPVxkqqzIaVj+Lf6ZBHaS481CIuIf/svUaQPBjA97u8
+ nAp3IduOyp3i8+RdyZe2M+kg3SY1ujwG/TlefeR8w0LY0xCQ86WughMsFPZNtv84fYJf
+ WtOi6iXrJ4wj+06ZjFn/kCS5U097Kt4QiSFGjvBlKQj7NOSRij2Zp6kE30/EEGkWBGrc
+ K5x2/fh77ORoExH8tQW3/hcQbIeqPv7jOLCZWDM44asBOCMqFCnukoKq8YyUGEcD4zz+
+ XXbneyxotvHW7OB+pq92cWRY9767mfODbnvTozs95b45pywHl1/iCtGRRmglDydkEos+ Zw== 
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2104.outbound.protection.outlook.com [104.47.58.104])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2xar525f8q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 10 Jan 2020 05:25:45 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CTK75NKhvFmASUYsKKrFeSnwIApQ0kHIndy5IRWP9k5kJB2uVSVewnhSnnmmPzU4fUlkzSt8zyr/7r0QQVcnjPm9OD5U22qDb9vAU2QbfQvMs2y8mJxTn5XoCv7W2Zy9MM9z4ym66TgN00njesaoR8zsX7cCTlzZiP/q5PBwMf3vkoLP0zm//tOC1Ff53shJkldIPlZlZXKxz+MiTvIUb4wTxjgtrLO4T65rg6Kot8eeyhmfj6v8x1wT13tsVp9PPZMoS22h46QqndbidoeYmFNGDgL8ERnd0fGaPFV6BYPegFoKWighXTPtPRqpnbE/MoDzOThHZ5c+gbJi8kfoAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kJKBnH5ilFPBKkf1kjtm5U8yVUmzHj5VuGhVGOYyVVI=;
+ b=V9ItBnddO1UJSOr5G/9FfpyvuxnlXhVE9uRntrgWeqYtOEYGhqBxXI5kxjoLumLo6Bc4pidBc16DXJcYqiGhiU2SM+XZmgQ99ruy2eG+V9khv9FzBXOQmBm5cM132aRsv0VET+b0pC/pg2fK/SzUfnpxndh03gSFL7aKOQ7eZhiABBSC9AEGljJgQfyk0Zjn4IWCsoo6YM0aWFW8uFOfqpiBPr5ON8eBSl1TUb65b9E1FoJuMQdoZGoBlqoALXncyxohWKc+1Sz/Zow6xaPIuuz6xvewWJgmQNLmIC3WOd1je717NEC0/cajZTt8/vyGvkqUyUtdwOutCR+xggpKkQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 158.140.1.28) smtp.rcpttodomain=gmail.com smtp.mailfrom=cadence.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=cadence.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kJKBnH5ilFPBKkf1kjtm5U8yVUmzHj5VuGhVGOYyVVI=;
+ b=3MDfc9wQiYiLD1LydIYx/Ezo+cvj5ZzrBjCRrFfzfhOBqkw0z8QUn9+wLieDOOi7Us8rHz7Ztjepog+yoCasSMg8F7wm9AozfaLkkbMWnbyXh11yj1rXXSJC0qZgJz3jgY4pn6f3N03GZxGq06pdr/Xpno5zqoehzph0qwEtMWU=
+Received: from CY1PR07CA0013.namprd07.prod.outlook.com
+ (2a01:111:e400:c60a::23) by DM6PR07MB6313.namprd07.prod.outlook.com
+ (2603:10b6:5:152::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2623.11; Fri, 10 Jan
+ 2020 13:25:43 +0000
+Received: from MW2NAM12FT067.eop-nam12.prod.protection.outlook.com
+ (2a01:111:f400:fe5a::200) by CY1PR07CA0013.outlook.office365.com
+ (2a01:111:e400:c60a::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2623.9 via Frontend
+ Transport; Fri, 10 Jan 2020 13:25:43 +0000
+Received-SPF: Pass (protection.outlook.com: domain of cadence.com designates
+ 158.140.1.28 as permitted sender) receiver=protection.outlook.com;
+ client-ip=158.140.1.28; helo=sjmaillnx2.cadence.com;
+Received: from sjmaillnx2.cadence.com (158.140.1.28) by
+ MW2NAM12FT067.mail.protection.outlook.com (10.13.181.33) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2644.6 via Frontend Transport; Fri, 10 Jan 2020 13:25:43 +0000
+Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
+        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id 00ADPbKe021781
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Fri, 10 Jan 2020 05:25:39 -0800
+X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
+Received: from maileu3.global.cadence.com (10.160.88.99) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3; Fri, 10 Jan 2020 14:25:37 +0100
+Received: from lvlabc.cadence.com (10.165.128.101) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Fri, 10 Jan 2020 14:25:36 +0100
+Received: from lvlabc.cadence.com (localhost.localdomain [127.0.0.1])
+        by lvlabc.cadence.com (8.14.4/8.14.4) with ESMTP id 00ADPVXY041466;
+        Fri, 10 Jan 2020 13:25:31 GMT
+From:   Milind Parab <mparab@cadence.com>
+To:     <nicolas.ferre@microchip.com>, <jakub.kicinski@netronome.com>,
+        <andrew@lunn.ch>, <antoine.tenart@bootlin.com>,
+        <rmk+kernel@armlinux.org.uk>
+CC:     <Claudiu.Beznea@microchip.com>, <f.fainelli@gmail.com>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <hkallweit1@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <dkangude@cadence.com>, <a.fatoum@pengutronix.de>,
+        <brad.mouring@ni.com>, <pthombar@cadence.com>,
+        Milind Parab <mparab@cadence.com>
+Subject: [PATCH v2 net] net: macb: fix for fixed-link mode
+Date:   Fri, 10 Jan 2020 13:25:27 +0000
+Message-ID: <1578662727-41429-1-git-send-email-mparab@cadence.com>
+X-Mailer: git-send-email 2.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191206085432.19962-1-michael.kupfer@fau.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfBd3XXTXHJXsWfyVxCd2xYnZO0N8s/BDiJigBt9fBzOuvI1qg7Ov9vJHlQwwroeHfDptOn2x6LGe/NF17tiYIHe6IKGtbMu6lyUonjXvZHlMv8StSdIC
- KjYmD4yv2S6PG8353r9KVWVoWKnWpExFpS00SMNPq5IJsX0GyIHHf370xIlWiBo1uFBPJrF+j9ZsO01XP4FQMp1f6UC1jRrs61fg77hJ1wy4Zgliil7O9MiI
- pvMz1R6SFwWlhjOzw9WPqyNWo8SWxUYcyyfl2v53V+CvWgwJ5DZG7hUbdZP/qv+bKOk5xyhfl26PIEeuFIG6UMCgRYfGFOYgyV991fAuAVn2Dl9s1kexO+eh
- tpS7DuSgD76w957xPtmjizhbEK3EmsdZ+k/6hrHyjkRb3KLCufZaCXa92/oMKYXPD3EmQEqcCJAZFxvg1thOoX7sSWbv5i9/KTtAn+VIMvFR58Zn88QVT/xo
- D8/JfnqE8C4zdH9i2TrB90rHJKxmGPFc91KhbCbQaPjrg38xmbFqJcOEL/n/XHiROQtHdEhKeUmzL+4YZJ3WDWuvUhprcNE6aPBSeDmnpTKkpbqgiCwjsfFx
- d4HTR0D5GW2x8wmWayKH432z9lI6vqffHTdck7Vrvb7hTmdesfRvgriuI8o4dt6SQuT9nJC9rt7gedvyKw7nsxUw4ODfbr24oLSb/ZkIO0o5i9yK2ZpiaWaF
- 8xfVbVb8KZVaxBQ4srQRGIc3bE4uizhm3PTr00SnN0xw9EXC01pJoNmd2cDfozvoMO3xwPWME7KAsoFn8WDu/XKTRBI2lN7SShrCVzRTZ7f9CEOO/08TtnON
- N1dWwwey5LGcCnce6F7Dp2Lmnl+Y2/FYR1WiEk3Ad5N+IsvZOD2DORmv4Xwh12IK0kVRpntnSOLvX7ZLyWK1VfnbCoGLBHMQA04SKM8L6IDC+76awJcUkbxl
- L/eY2w==
+Content-Type: text/plain
+X-OrganizationHeadersPreserved: maileu3.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(376002)(346002)(136003)(189003)(199004)(36092001)(6666004)(356004)(8676002)(26826003)(246002)(2616005)(70206006)(186003)(7696005)(7126003)(26005)(5660300002)(478600001)(7636002)(86362001)(70586007)(36756003)(316002)(7416002)(426003)(336012)(2906002)(54906003)(107886003)(4326008)(8936002)(110136005)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR07MB6313;H:sjmaillnx2.cadence.com;FPR:;SPF:Pass;LANG:en;PTR:corp.Cadence.COM;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 718644d1-c45e-47d2-d32a-08d795d097f5
+X-MS-TrafficTypeDiagnostic: DM6PR07MB6313:
+X-Microsoft-Antispam-PRVS: <DM6PR07MB6313E61E9108110C69F64CE7D3380@DM6PR07MB6313.namprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
+X-Forefront-PRVS: 02788FF38E
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: iEaUuZfDZc/kNpyWpDEQDqLADUkZ5ekuwq9bsBw9g/7pjD9bxHD62OYUjNkFNly6k0oFchMb3S5PT+JrykK4ARlcyni8h3WKjkVXxOm05SVQSvQ1drft03OdXSmdjJGbb7U2paz4ENq2u7L6C9+lT6i8+ca/yeztHtW/JqSON/XP5GMfcf6PAP2opF3wBh4GHuIS/6DDh3WB23ym/opQnxFqHfDCv2Phe2Q3d7Zn9sB6NmeJrJHkFy2WkMON7ZepYLYWvMAuRHySRxBDzFIij5aW9fxURJ0zVuRz20xKU+oHJ+xVLFM4jbABffnUwO29lWDB3QJlwfKo8HHraU7ptOJ3YRJ/HtvGXh4iHcGYNdH3Q3tbi/d5RPFSwtxC81ObAFas9Aouz2iNB3ibMadz0rc9Zi4udWlyTopJDqRCQt9O6U6bqeykWZjCSFHZ4OSSxrfMs76og3RncBD6wYfqohjaEC+rCTILJxf6YfRYMkCpA8/yWRiP82BHS0jfDKfDrK6lMkSw7wc0JZUGB6yPIw==
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2020 13:25:43.0820
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 718644d1-c45e-47d2-d32a-08d795d097f5
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx2.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR07MB6313
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-10_01:2020-01-10,2020-01-09 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ lowpriorityscore=0 mlxlogscore=945 priorityscore=1501 impostorscore=0
+ suspectscore=0 malwarescore=0 spamscore=0 bulkscore=0 adultscore=0
+ clxscore=1015 phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-2001100114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael, Kay,
+This patch fix the issue with fixed link. With fixed-link
+device opening fails due to macb_phylink_connect not
+handling fixed-link mode, in which case no MAC-PHY connection
+is needed and phylink_connect return success (0), however
+in current driver attempt is made to search and connect to
+PHY even for fixed-link.
 
-On 12/6/19 9:54 AM, Michael Kupfer wrote:
-> Create a static atomic counter for numerating cameras.
-> Use the Media Subsystem Kernel Internal API to create distinct
-> device-names, so that the camera-number (given by the counter)
-> matches the camera-name.
-> 
-> Co-developed-by: Kay Friedrich <kay.friedrich@fau.de>
-> Signed-off-by: Kay Friedrich <kay.friedrich@fau.de>
-> Signed-off-by: Michael Kupfer <michael.kupfer@fau.de>
-> ---
->  .../vc04_services/bcm2835-camera/bcm2835-camera.c        | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-> index beb6a0063bb8..be5f90a8b49d 100644
-> --- a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-> +++ b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-> @@ -60,6 +60,9 @@ MODULE_PARM_DESC(max_video_width, "Threshold for video mode");
->  module_param(max_video_height, int, 0644);
->  MODULE_PARM_DESC(max_video_height, "Threshold for video mode");
->  
-> +/* camera instance counter */
-> +static atomic_t camera_instance = ATOMIC_INIT(0);
-> +
->  /* global device data array */
->  static struct bm2835_mmal_dev *gdev[MAX_BCM2835_CAMERAS];
->  
-> @@ -1870,7 +1873,6 @@ static int bcm2835_mmal_probe(struct platform_device *pdev)
->  
->  		/* v4l2 core mutex used to protect all fops and v4l2 ioctls. */
->  		mutex_init(&dev->mutex);
-> -		dev->camera_num = camera;
->  		dev->max_width = resolutions[camera][0];
->  		dev->max_height = resolutions[camera][1];
->  
-> @@ -1886,8 +1888,9 @@ static int bcm2835_mmal_probe(struct platform_device *pdev)
->  		dev->capture.fmt = &formats[3]; /* JPEG */
->  
->  		/* v4l device registration */
-> -		snprintf(dev->v4l2_dev.name, sizeof(dev->v4l2_dev.name),
-> -			 "%s", BM2835_MMAL_MODULE_NAME);
-> +		dev->camera_num = v4l2_device_set_name(&dev->v4l2_dev,
-> +						       BM2835_MMAL_MODULE_NAME,
-> +						       &camera_instance);
->  		ret = v4l2_device_register(NULL, &dev->v4l2_dev);
->  		if (ret) {
->  			dev_err(&pdev->dev, "%s: could not register V4L2 device: %d\n",
-> 
+Fixes: 7897b071ac3b ("net: macb: convert to phylink")
+Signed-off-by: Milind Parab <mparab@cadence.com>
+---
+Changes in v2:
+1. Code refactoring to remove extra if condition
+---
+ drivers/net/ethernet/cadence/macb_main.c | 30 ++++++++++++++----------
+ 1 file changed, 17 insertions(+), 13 deletions(-)
 
-Actually, in this specific case I would not use v4l2_device_set_name().
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index c5ee363ca5dc..f8fd45d69e9a 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -611,21 +611,24 @@ static const struct phylink_mac_ops macb_phylink_ops = {
+ 	.mac_link_up = macb_mac_link_up,
+ };
+ 
++static bool macb_phy_handle_exists(struct device_node *dn)
++{
++	dn = of_parse_phandle(dn, "phy-handle", 0);
++	of_node_put(dn);
++	return dn != NULL;
++}
++
+ static int macb_phylink_connect(struct macb *bp)
+ {
+ 	struct net_device *dev = bp->dev;
+ 	struct phy_device *phydev;
++	struct device_node *dn = bp->pdev->dev.of_node;
+ 	int ret;
+ 
+-	if (bp->pdev->dev.of_node &&
+-	    of_parse_phandle(bp->pdev->dev.of_node, "phy-handle", 0)) {
+-		ret = phylink_of_phy_connect(bp->phylink, bp->pdev->dev.of_node,
+-					     0);
+-		if (ret) {
+-			netdev_err(dev, "Could not attach PHY (%d)\n", ret);
+-			return ret;
+-		}
+-	} else {
++	if (dn)
++		ret = phylink_of_phy_connect(bp->phylink, dn, 0);
++
++	if (!dn || (ret && !macb_phy_handle_exists(dn))) {
+ 		phydev = phy_find_first(bp->mii_bus);
+ 		if (!phydev) {
+ 			netdev_err(dev, "no PHY found\n");
+@@ -634,10 +637,11 @@ static int macb_phylink_connect(struct macb *bp)
+ 
+ 		/* attach the mac to the phy */
+ 		ret = phylink_connect_phy(bp->phylink, phydev);
+-		if (ret) {
+-			netdev_err(dev, "Could not attach to PHY (%d)\n", ret);
+-			return ret;
+-		}
++	}
++
++	if (ret) {
++		netdev_err(dev, "Could not attach PHY (%d)\n", ret);
++		return ret;
+ 	}
+ 
+ 	phylink_start(bp->phylink);
+-- 
+2.17.1
 
-Instead just use:
-
-		snprintf(dev->v4l2_dev.name, sizeof(dev->v4l2_dev.name),
-			 "%s-%u", BM2835_MMAL_MODULE_NAME, camera);
-
-It would be even better if there would be just one top-level v4l2_device used
-for all the camera instances. After all, there really is just one platform
-device for all of the cameras, and I would expect to see just a single
-v4l2_device as well.
-
-It doesn't hurt to have multiple v4l2_device structs, but it introduces a
-slight memory overhead since one would have been sufficient.
-
-v4l2_device_set_name() is meant for pci-like devices. And it really
-is a bit overkill to have it as a helper function.
-
-Regards,
-
-	Hans
