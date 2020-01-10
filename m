@@ -2,165 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1FA91368F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 09:28:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D0AC136905
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 09:31:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbgAJI2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 03:28:16 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44946 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726990AbgAJI2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 03:28:16 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 337F7AFA7;
-        Fri, 10 Jan 2020 08:28:12 +0000 (UTC)
-Subject: Re: [PATCH -next] drm/mgag200: Fix typo in parameter description
-To:     Wei Yongjun <weiyongjun1@huawei.com>,
-        Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20200110012523.33053-1-weiyongjun1@huawei.com>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- mQENBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAG0J1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPokBVAQTAQgAPhYh
- BHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsDBQkDwmcABQsJCAcCBhUKCQgLAgQWAgMB
- Ah4BAheAAAoJEGgNwR1TC3ojR80H/jH+vYavwQ+TvO8ksXL9JQWc3IFSiGpuSVXLCdg62AmR
- irxW+qCwNncNQyb9rd30gzdectSkPWL3KSqEResBe24IbA5/jSkPweJasgXtfhuyoeCJ6PXo
- clQQGKIoFIAEv1s8l0ggPZswvCinegl1diyJXUXmdEJRTWYAtxn/atut1o6Giv6D2qmYbXN7
- mneMC5MzlLaJKUtoH7U/IjVw1sx2qtxAZGKVm4RZxPnMCp9E1MAr5t4dP5gJCIiqsdrVqI6i
- KupZstMxstPU//azmz7ZWWxT0JzgJqZSvPYx/SATeexTYBP47YFyri4jnsty2ErS91E6H8os
- Bv6pnSn7eAq5AQ0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRH
- UE9eosYbT6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgT
- RjP+qbU63Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+R
- dhgATnWWGKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zb
- ehDda8lvhFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r
- 12+lqdsAEQEAAYkBPAQYAQgAJhYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsMBQkD
- wmcAAAoJEGgNwR1TC3ojpfcIAInwP5OlcEKokTnHCiDTz4Ony4GnHRP2fXATQZCKxmu4AJY2
- h9ifw9Nf2TjCZ6AMvC3thAN0rFDj55N9l4s1CpaDo4J+0fkrHuyNacnT206CeJV1E7NYntxU
- n+LSiRrOdywn6erjxRi9EYTVLCHcDhBEjKmFZfg4AM4GZMWX1lg0+eHbd5oL1as28WvvI/uI
- aMyV8RbyXot1r/8QLlWldU3NrTF5p7TMU2y3ZH2mf5suSKHAMtbE4jKJ8ZHFOo3GhLgjVrBW
- HE9JXO08xKkgD+w6v83+nomsEuf6C6LYrqY/tsZvyEX6zN8CtirPdPWu/VXNRYAl/lat7lSI
- 3H26qrE=
-Message-ID: <ce1a17c8-2af9-a449-16d5-36ddfd7a976e@suse.de>
-Date:   Fri, 10 Jan 2020 09:28:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1726990AbgAJIbm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 03:31:42 -0500
+Received: from mail-eopbgr80085.outbound.protection.outlook.com ([40.107.8.85]:23969
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726770AbgAJIbl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 03:31:41 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EyFPOqqRRtqrBgI/p5FufTEoSpFThkOIwEaBby6XiZduFR2Z2nnXSKoLLA807XdWQmN8UhljOQiz/82AUCEQHIQZRNsYaVZN+Pg3w4cDJSSValQdEXwK2kIh9AuoBr7YgbsCi7nX2tP2fVP1NtsvjjQmLPYBLM+cQ8FZKaSaaxsBPCph4emhcJQpxn7v+MnEqGX5MaqpaJkhzmMJ/jnX8frS2RJMjSYIBh2FDo7XlV9LPOk8RkAkNBjxhRY6EKIf/7Evy/mvI/eEqqIF20mtGABd9If4OEYvtfvqC+47nE/RcInAMEvDk5+ojSiheCkZD84UxBRTS/GyROVW6qRYKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TLmUF+YroLx0VdAqzpsUB7wvvf3lHp2EubhDQqKskoA=;
+ b=VsT7t8+dnjDqIt7r0dcZwZswuo7cTFZmGFQzsB84T1ykhwU5BRNEDQmBBeJmnzqZqTb6pAKenWsPid8jaCydX2J/M9Z8MCNUxtBCl1cfqymv1ze0uiYfTHCcZaMcg8xRqmxACletjIz5B7/xkMo+epb1fjDoMSjf0hBDZAEDlP/0n0yvu44gKpjgmnjyKfdLl8O195Mh29s/zoRUva+GQlAvjZcDvrfJVtLtQZAB9QXPC7zbYms6HGslKo8ciCiF3oCmozX529t+4T3sQJzmQ2m70Ub+o9o/VNAhIgyMG1n8hkuzGxthSO/howCE+6wmEr5/Fc7k9aUsmW3yRDoYiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TLmUF+YroLx0VdAqzpsUB7wvvf3lHp2EubhDQqKskoA=;
+ b=D518acYF3kWKMJxnw7Weaf7Fga7qu8TwKkBo2+XWrUXMXwQ42iIq4QrCjKvbrwQnWl8ayBslQehViUmwMRt1glyhd+YSy+amMu7/SkuZLVAamoKzMYtqQnYkh6dlfNMPWcFeu6goa9zA2XUfIpBdq9sIU7gQ4+Vbxy89pA/w6v4=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB3487.eurprd04.prod.outlook.com (52.134.8.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2623.13; Fri, 10 Jan 2020 08:31:38 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::85e9:f844:f8b0:27d]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::85e9:f844:f8b0:27d%7]) with mapi id 15.20.2623.011; Fri, 10 Jan 2020
+ 08:31:38 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v2 08/10] crypto: caam - add crypto_engine support for
+ AEAD algorithms
+Thread-Topic: [PATCH v2 08/10] crypto: caam - add crypto_engine support for
+ AEAD algorithms
+Thread-Index: AQHVwdGvJJHe3rGkXUy7JI3MEOJf4A==
+Date:   Fri, 10 Jan 2020 08:31:38 +0000
+Message-ID: <VI1PR0402MB3485A163A639D6434E166EEF98380@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <1578013373-1956-1-git-send-email-iuliana.prodan@nxp.com>
+ <1578013373-1956-9-git-send-email-iuliana.prodan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: fb872179-d1ba-4a94-d6f0-08d795a78327
+x-ms-traffictypediagnostic: VI1PR0402MB3487:|VI1PR0402MB3487:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR0402MB34872DEF8F82D7D43FC7199798380@VI1PR0402MB3487.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4941;
+x-forefront-prvs: 02788FF38E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(39860400002)(376002)(136003)(366004)(189003)(199004)(4326008)(71200400001)(8936002)(6636002)(5660300002)(110136005)(7696005)(4744005)(9686003)(478600001)(186003)(55016002)(86362001)(2906002)(54906003)(26005)(6506007)(53546011)(52536014)(316002)(8676002)(44832011)(66476007)(66556008)(66946007)(64756008)(33656002)(66446008)(81166006)(81156014)(91956017)(76116006);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3487;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: YQcCV76ngMgJj5rPrWHoG1dMiktAU+yDpYaTo+1gaMJRmL2uiLTE99UuBIdPR/koQHyw1QmLzme2JbtSBeDq56NfbHc74nBgrN4n151VO9lm2D6ve+4mPI91aHlA15LeWl0nX9RPWvvaO0WiZtn8F85yPxKzMVbWnPXzf2ewcXI+ufjg3eU9O9NZCrIg7JF1YUHvoN4oBP2NFIRSgmFjoiRKfRGst+dtkJY/d4emIo/CHUlAscYv/TlkmaM3WTVhLurVanFNRaPqif7KEmug4Xrx+IQCtbcJlkMnNWqtRv1U9G8CkXiUOeIdKwZIjkQG4C5d6qv2l7BHWoIsFikD0HlgB76A+CBaIjrlsTcSQPFvAOfVgYWpExmZgWkMtlKHuu6OYRLQxApCIzKsTEOUJnZpl5XW99BElgCrgP/XSDYe+1LN4ID90YkeD+MIkD6g
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20200110012523.33053-1-weiyongjun1@huawei.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="iiEN0Yah1UoVVqZjMQ0y6D7O9EtL3DPmr"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb872179-d1ba-4a94-d6f0-08d795a78327
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2020 08:31:38.7688
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: iJ51284OWmaB6PKIbe1PaQZP7Enn+iL5trkJde3U4zo9eIGzFJh5+Zv/FQaypY6CLP+rWw7LolNgIpqYuPkhUQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3487
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---iiEN0Yah1UoVVqZjMQ0y6D7O9EtL3DPmr
-Content-Type: multipart/mixed; boundary="pTTiHLHFEWOhHClrPak37aP8iw00UOEbU";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Wei Yongjun <weiyongjun1@huawei.com>, Dave Airlie <airlied@redhat.com>,
- David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
- Thomas Gleixner <tglx@linutronix.de>, Gerd Hoffmann <kraxel@redhat.com>,
- Sam Ravnborg <sam@ravnborg.org>, Kate Stewart <kstewart@linuxfoundation.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Message-ID: <ce1a17c8-2af9-a449-16d5-36ddfd7a976e@suse.de>
-Subject: Re: [PATCH -next] drm/mgag200: Fix typo in parameter description
-References: <20200110012523.33053-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200110012523.33053-1-weiyongjun1@huawei.com>
-
---pTTiHLHFEWOhHClrPak37aP8iw00UOEbU
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-Hi
-
-Am 10.01.20 um 02:25 schrieb Wei Yongjun:
-> Fix typo in parameter description.
-
-As Dan said, please mention that it's about a module parameter. The
-current commit message appears to refer to a function's parameter.
-
-With the commit message fixed, you can add
-
-Reviewed-by: Thomas Zimemrmann <tzimmermann@suse.de>
-
-Thanks for fixing this bug.
-
-Best regards
-Thomas
-
->=20
-> Fixes: 3cacb2086e41 ("drm/mgag200: Add module parameter to pin all buff=
-ers at offset 0")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/gpu/drm/mgag200/mgag200_drv.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/mgag200/mgag200_drv.c b/drivers/gpu/drm/mg=
-ag200/mgag200_drv.c
-> index 7a5bad2f57d7..2236f8ef20a4 100644
-> --- a/drivers/gpu/drm/mgag200/mgag200_drv.c
-> +++ b/drivers/gpu/drm/mgag200/mgag200_drv.c
-> @@ -28,7 +28,7 @@ MODULE_PARM_DESC(modeset, "Disable/Enable modesetting=
-");
->  module_param_named(modeset, mgag200_modeset, int, 0400);
-> =20
->  int mgag200_hw_bug_no_startadd =3D -1;
-> -MODULE_PARM_DESC(modeset, "HW does not interpret scanout-buffer start =
-address correctly");
-> +MODULE_PARM_DESC(hw_bug_no_startadd, "HW does not interpret scanout-bu=
-ffer start address correctly");
->  module_param_named(hw_bug_no_startadd, mgag200_hw_bug_no_startadd, int=
-, 0400);
-> =20
->  static struct drm_driver driver;
->=20
->=20
->=20
-
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-(HRB 36809, AG N=C3=BCrnberg)
-Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
-
-
---pTTiHLHFEWOhHClrPak37aP8iw00UOEbU--
-
---iiEN0Yah1UoVVqZjMQ0y6D7O9EtL3DPmr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl4YNZsACgkQaA3BHVML
-eiM+UQf+J92/hICo707Qje0Q7uVRT1riV5XCPhxBuOUCzDNPRDH15zvvJdL9HbJ0
-KG4QGNjuVTGJbndQiglQZXl2pNPOA+zoG7JZAq5x1E7ICGmussuxx3UtLIYY6dak
-kyosKHWwu5rzgT2iCPvxbuk1+RNrTrAhj3w+ZfGzD1AX08dJr8Ks2jVgPf55lGzc
-u7Of3a6qfJ5OGjYRf4CCMKG8yEKTa/oXQGdSCECmZhlBw1KJQppFt9ME0oj5v7r3
-eS3SFcK7TRrD3dAOBizkSZMGpVlmlJscSRmlqy1j3uwfkaPcAEBczStm6ajqSNBO
-XMhUrIhoiDfRiKgtaZufX598XDFXIA==
-=Gnga
------END PGP SIGNATURE-----
-
---iiEN0Yah1UoVVqZjMQ0y6D7O9EtL3DPmr--
+On 1/3/2020 3:04 AM, Iuliana Prodan wrote:=0A=
+> +struct caam_aead_req_ctx {=0A=
+> +	struct aead_edesc *edesc;=0A=
+> +	void (*aead_op_done)(struct device *jrdev, u32 *desc, u32 err,=0A=
+> +			     void *context);=0A=
+Similar with skcipher, aead_op_done is not needed since aead_crypt_done=0A=
+is the only callback used.=0A=
+=0A=
+> +static int aead_enqueue_req(struct device *jrdev, u32 *desc,=0A=
+> +			    void (*cbk)(struct device *jrdev, u32 *desc,=0A=
+> +					u32 err, void *context),=0A=
+> +			    struct aead_request *req, struct aead_edesc *edesc)=0A=
+cbk parameter is not used.=0A=
+=0A=
+> +{=0A=
+> +	struct caam_drv_private_jr *jrpriv =3D dev_get_drvdata(jrdev);=0A=
+> +	int ret;=0A=
+> +=0A=
+> +	if (req->base.flags & CRYPTO_TFM_REQ_MAY_BACKLOG)=0A=
+> +		return crypto_transfer_aead_request_to_engine(jrpriv->engine,=0A=
+> +								  req);=0A=
+Resources leak in case of failure.=0A=
+=0A=
+> +	else=0A=
+> +		ret =3D caam_jr_enqueue(jrdev, desc, aead_crypt_done,=0A=
+> +				      &edesc->jrentry);=0A=
+Need to justify why only some requests are transferred to crypto engine.=0A=
+=0A=
+Horia=0A=
