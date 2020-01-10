@@ -2,70 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45B9E136CE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 13:19:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36381136CFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 13:24:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728135AbgAJMTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 07:19:10 -0500
-Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:23802 "EHLO
-        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726718AbgAJMTK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 07:19:10 -0500
-Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
-  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 10 Jan 2020 17:49:06 +0530
-Received: from c-sanm-linux.qualcomm.com ([10.206.25.31])
-  by ironmsg02-blr.qualcomm.com with ESMTP; 10 Jan 2020 17:49:00 +0530
-Received: by c-sanm-linux.qualcomm.com (Postfix, from userid 2343233)
-        id 72D3A22B4; Fri, 10 Jan 2020 17:48:59 +0530 (IST)
-From:   Sandeep Maheswaram <sanm@codeaurora.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>,
-        Sandeep Maheswaram <sanm@codeaurora.org>
-Subject: [PATCH v3 5/5] arm64: dts: qcom: sc7180: Update QUSB2 V2 Phy tuning params for SC7180
-Date:   Fri, 10 Jan 2020 17:48:19 +0530
-Message-Id: <1578658699-30458-6-git-send-email-sanm@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1578658699-30458-1-git-send-email-sanm@codeaurora.org>
-References: <1578658699-30458-1-git-send-email-sanm@codeaurora.org>
+        id S1728123AbgAJMYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 07:24:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59888 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727912AbgAJMYh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 07:24:37 -0500
+Received: from localhost (83-84-126-242.cable.dynamic.v4.ziggo.nl [83.84.126.242])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F1C52077C;
+        Fri, 10 Jan 2020 12:24:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578659077;
+        bh=HCvJP+UdwCX6Q2crGVwKn7N7yPIf75Fk5SPzBBin100=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kk0BBdWnW5aZ1JZ6Bcv8/vIsAgIMssATKbTDPONtWkM/Cgi7cxGtGWEXBOoieyrvg
+         Zj1aE3c6SqAmUSHHkXwNZOhcnMGRVV0iBdWd/cnqUR4lKSjCL5Ko79R7x32ydPB4U7
+         Ee8QKutkNtOIosejv/SM5hQu39TB3vjjFxTzbWxw=
+Date:   Fri, 10 Jan 2020 13:19:51 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org
+Subject: Re: [PATCH] staging: vc04_service: remove unused header include path
+Message-ID: <20200110121951.GA1047840@kroah.com>
+References: <20200104162829.20400-1-masahiroy@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200104162829.20400-1-masahiroy@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Overriding the QUSB2 V2 Phy tuning parameters for SC7180 SOC.
+On Sun, Jan 05, 2020 at 01:28:29AM +0900, Masahiro Yamada wrote:
+> I can build drivers/staging/vc04_services without this.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> 
+>  drivers/staging/vc04_services/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/vc04_services/Makefile b/drivers/staging/vc04_services/Makefile
+> index afe43fa5a6d7..54d9e2f31916 100644
+> --- a/drivers/staging/vc04_services/Makefile
+> +++ b/drivers/staging/vc04_services/Makefile
+> @@ -13,5 +13,5 @@ vchiq-objs := \
+>  obj-$(CONFIG_SND_BCM2835)	+= bcm2835-audio/
+>  obj-$(CONFIG_VIDEO_BCM2835)	+= bcm2835-camera/
+>  
+> -ccflags-y += -Idrivers/staging/vc04_services -D__VCCOREVER__=0x04000000
+> +ccflags-y += -D__VCCOREVER__=0x04000000
+>  
+> -- 
 
-Signed-off-by: Sandeep Maheswaram <sanm@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sc7180-idp.dts | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+This patch breaks the build for me:
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_shim.c:6:10: fatal error: interface/vchi/vchi.h: No such file or directory
+    6 | #include "interface/vchi/vchi.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-index 388f50a..826cf02 100644
---- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-+++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-@@ -276,9 +276,11 @@
- 	vdda-pll-supply = <&vreg_l11a_1p8>;
- 	vdda-phy-dpdm-supply = <&vreg_l17a_3p0>;
- 	qcom,imp-res-offset-value = <8>;
--	qcom,hstx-trim-value = <QUSB2_V2_HSTX_TRIM_21_6_MA>;
--	qcom,preemphasis-level = <QUSB2_V2_PREEMPHASIS_5_PERCENT>;
-+	qcom,preemphasis-level = <QUSB2_V2_PREEMPHASIS_15_PERCENT>;
- 	qcom,preemphasis-width = <QUSB2_V2_PREEMPHASIS_WIDTH_HALF_BIT>;
-+	qcom,bias-ctrl-value = <0x22>;
-+	qcom,charge-ctrl-value = <3>;
-+	qcom,hsdisc-trim-value = <0>;
- };
- 
- &usb_1_qmpphy {
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+So maybe you did't select all of the modules to build?
 
+Sorry, I can't take this as-is :(
+
+greg k-h
