@@ -2,112 +2,285 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72762136967
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 10:09:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF5AE13696B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 10:10:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbgAJJIt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 04:08:49 -0500
-Received: from mail.loongson.cn ([114.242.206.163]:53784 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727167AbgAJJIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 04:08:48 -0500
-Received: from localhost.localdomain.localdomain (unknown [182.149.160.139])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9DxL2oYPxheAPICAA--.2S4;
-        Fri, 10 Jan 2020 17:08:42 +0800 (CST)
-From:   Xing Li <lixing@loongson.cn>
-To:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] KVM: MIPS: Support kvm modules autoprobed when startup system
-Date:   Fri, 10 Jan 2020 17:08:40 +0800
-Message-Id: <1578647320-14391-3-git-send-email-lixing@loongson.cn>
-X-Mailer: git-send-email 2.1.0
-In-Reply-To: <1578647320-14391-1-git-send-email-lixing@loongson.cn>
-References: <1578647320-14391-1-git-send-email-lixing@loongson.cn>
-X-CM-TRANSID: AQAAf9DxL2oYPxheAPICAA--.2S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cr1xCFy7uF1UKFWkuw4rKrg_yoW8Zr1rpF
-        4DAa93Cr45uryDJFWfZFnFgrW3Ja1DG3yj9ayjgryjv3ZYqFs8Jws2kwnxKr1DXFsIq3WF
-        gas3Xr1jka92vw7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUBYb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
-        8067AKxVWUXwA2048vs2IY020Ec7CjxVAFwI0_JFI_Gr1l8cAvFVAK0II2c7xJM28CjxkF
-        64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcV
-        CY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv
-        6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c
-        02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE
-        4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc2xSY4AK67AK6r4fMxAIw28IcxkI7V
-        AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-        r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6x
-        IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-        w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-        0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8LqXPUUUUU==
-X-CM-SenderInfo: pol0x03j6o00pqjv00gofq/
+        id S1727170AbgAJJK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 04:10:29 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24214 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726722AbgAJJK2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 04:10:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578647426;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=eJs1k2LacNeS8zM8DtlEOg6HB/BJsP9iWF6ZTLA4PqA=;
+        b=aqg/NXXdriZBg3mggHzUMUB4PsdF1MKGMAXSv3ZUBGXfyAGnPwr82LPd2u7fMCsRd5+NU9
+        l/zlQjAGRsqhT+X2h8Eq0L9/MRh/RKyw1SuTSGeJzC1l72m7LYY84kC+QJdxtp4HnE7xGu
+        8/aBnJ5z2EXHTIBQLsErf5wnkEvYUzA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-5-KWwqIKkzOIGkypM0gKGWfA-1; Fri, 10 Jan 2020 04:10:22 -0500
+X-MC-Unique: KWwqIKkzOIGkypM0gKGWfA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4C5C118C8C05;
+        Fri, 10 Jan 2020 09:10:20 +0000 (UTC)
+Received: from [10.36.117.139] (ovpn-117-139.ams2.redhat.com [10.36.117.139])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5ABBE1001938;
+        Fri, 10 Jan 2020 09:10:18 +0000 (UTC)
+Subject: Re: [PATCH] mm/memory_hotplug: Fix remove_memory() lockdep splat
+To:     Dan Williams <dan.j.williams@intel.com>, akpm@linux-foundation.org
+Cc:     stable@vger.kernel.org, Vishal Verma <vishal.l.verma@intel.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <157863061737.2230556.3959730620803366776.stgit@dwillia2-desk3.amr.corp.intel.com>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <e60e64f9-894b-4121-d97b-fb61459cbbe5@redhat.com>
+Date:   Fri, 10 Jan 2020 10:10:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
+MIME-Version: 1.0
+In-Reply-To: <157863061737.2230556.3959730620803366776.stgit@dwillia2-desk3.amr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the module_init of kvm_mips_init cannot force the kvm
-modules insmod when startup system.
+On 10.01.20 05:30, Dan Williams wrote:
+> The daxctl unit test for the dax_kmem driver currently triggers the
+> lockdep splat below. It results from the fact that
+> remove_memory_block_devices() is invoked under the mem_hotplug_lock()
+> causing lockdep entanglements with cpu_hotplug_lock().
+>=20
+> The mem_hotplug_lock() is not needed to synchronize the memory block
+> device sysfs interface vs the page online state, that is already handle=
+d
+> by lock_device_hotplug(). Specifically lock_device_hotplug()
+> is sufficient to allow try_remove_memory() to check the offline
+> state of the memblocks and be assured that subsequent online attempts
+> will be blocked. The device_online() path checks mem->section_count
+> before allowing any state manipulations and mem->section_count is
+> cleared in remove_memory_block_devices().
+>=20
+> The add_memory() path does create memblock devices under the lock, but
+> there is no lockdep report on that path, so it is left alone for now.
+>=20
+> This change is only possible thanks to the recent change that refactore=
+d
+> memory block device removal out of arch_remove_memory() (commit
+> 4c4b7f9ba948 mm/memory_hotplug: remove memory block devices before
+> arch_remove_memory()).
+>=20
+>     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+>     WARNING: possible circular locking dependency detected
+>     5.5.0-rc3+ #230 Tainted: G           OE
+>     ------------------------------------------------------
+>     lt-daxctl/6459 is trying to acquire lock:
+>     ffff99c7f0003510 (kn->count#241){++++}, at: kernfs_remove_by_name_n=
+s+0x41/0x80
+>=20
+>     but task is already holding lock:
+>     ffffffffa76a5450 (mem_hotplug_lock.rw_sem){++++}, at: percpu_down_w=
+rite+0x20/0xe0
+>=20
+>     which lock already depends on the new lock.
+>=20
+>=20
+>     the existing dependency chain (in reverse order) is:
+>=20
+>     -> #2 (mem_hotplug_lock.rw_sem){++++}:
+>            __lock_acquire+0x39c/0x790
+>            lock_acquire+0xa2/0x1b0
+>            get_online_mems+0x3e/0xb0
+>            kmem_cache_create_usercopy+0x2e/0x260
+>            kmem_cache_create+0x12/0x20
+>            ptlock_cache_init+0x20/0x28
+>            start_kernel+0x243/0x547
+>            secondary_startup_64+0xb6/0xc0
+>=20
+>     -> #1 (cpu_hotplug_lock.rw_sem){++++}:
+>            __lock_acquire+0x39c/0x790
+>            lock_acquire+0xa2/0x1b0
+>            cpus_read_lock+0x3e/0xb0
+>            online_pages+0x37/0x300
+>            memory_subsys_online+0x17d/0x1c0
+>            device_online+0x60/0x80
+>            state_store+0x65/0xd0
+>            kernfs_fop_write+0xcf/0x1c0
+>            vfs_write+0xdb/0x1d0
+>            ksys_write+0x65/0xe0
+>            do_syscall_64+0x5c/0xa0
+>            entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>=20
+>     -> #0 (kn->count#241){++++}:
+>            check_prev_add+0x98/0xa40
+>            validate_chain+0x576/0x860
+>            __lock_acquire+0x39c/0x790
+>            lock_acquire+0xa2/0x1b0
+>            __kernfs_remove+0x25f/0x2e0
+>            kernfs_remove_by_name_ns+0x41/0x80
+>            remove_files.isra.0+0x30/0x70
+>            sysfs_remove_group+0x3d/0x80
+>            sysfs_remove_groups+0x29/0x40
+>            device_remove_attrs+0x39/0x70
+>            device_del+0x16a/0x3f0
+>            device_unregister+0x16/0x60
+>            remove_memory_block_devices+0x82/0xb0
+>            try_remove_memory+0xb5/0x130
+>            remove_memory+0x26/0x40
+>            dev_dax_kmem_remove+0x44/0x6a [kmem]
+>            device_release_driver_internal+0xe4/0x1c0
+>            unbind_store+0xef/0x120
+>            kernfs_fop_write+0xcf/0x1c0
+>            vfs_write+0xdb/0x1d0
+>            ksys_write+0x65/0xe0
+>            do_syscall_64+0x5c/0xa0
+>            entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>=20
+>     other info that might help us debug this:
+>=20
+>     Chain exists of:
+>       kn->count#241 --> cpu_hotplug_lock.rw_sem --> mem_hotplug_lock.rw=
+_sem
+>=20
+>      Possible unsafe locking scenario:
+>=20
+>            CPU0                    CPU1
+>            ----                    ----
+>       lock(mem_hotplug_lock.rw_sem);
+>                                    lock(cpu_hotplug_lock.rw_sem);
+>                                    lock(mem_hotplug_lock.rw_sem);
+>       lock(kn->count#241);
+>=20
+>      *** DEADLOCK ***
+>=20
+> No fixes tag as this seems to have been a long standing issue that
+> likely predated the addition of kernfs lockdep annotations.
+>=20
+> Cc: <stable@vger.kernel.org>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  mm/memory_hotplug.c |   12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 55ac23ef11c1..a4e7dadded08 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1763,8 +1763,6 @@ static int __ref try_remove_memory(int nid, u64 s=
+tart, u64 size)
+> =20
+>  	BUG_ON(check_hotplug_memory_range(start, size));
+> =20
+> -	mem_hotplug_begin();
+> -
+>  	/*
+>  	 * All memory blocks must be offlined before removing memory.  Check
+>  	 * whether all memory blocks in question are offline and return error
+> @@ -1777,9 +1775,17 @@ static int __ref try_remove_memory(int nid, u64 =
+start, u64 size)
+>  	/* remove memmap entry */
+>  	firmware_map_remove(start, start + size, "System RAM");
+> =20
+> -	/* remove memory block devices before removing memory */
+> +	/*
+> +	 * Remove memory block devices before removing memory, and do
+> +	 * not hold the mem_hotplug_lock() over kobject removal
+> +	 * operations. lock_device_hotplug() keeps the
+> +	 * check_memblock_offlined_cb result valid until the entire
+> +	 * removal process is complete.
+> +	 */
 
-Add new feature CPU_MIPS_VZ in elf_hwcap to support KVM auto probe
-when hardware virtualization supported.
+Maybe shorten that to
 
-Signed-off-by: Xing Li <lixing@loongson.cn>
----
- arch/mips/include/uapi/asm/hwcap.h | 1 +
- arch/mips/kernel/cpu-probe.c       | 4 +++-
- arch/mips/kvm/mips.c               | 3 ++-
- 3 files changed, 6 insertions(+), 2 deletions(-)
+/*
+ * Remove memory block devices before removing memory. Protected
+ * by the device_hotplug_lock only.
+ */
 
-diff --git a/arch/mips/include/uapi/asm/hwcap.h b/arch/mips/include/uapi/asm/hwcap.h
-index 1ade1da..9e66509 100644
---- a/arch/mips/include/uapi/asm/hwcap.h
-+++ b/arch/mips/include/uapi/asm/hwcap.h
-@@ -17,5 +17,6 @@
- #define HWCAP_LOONGSON_MMI  (1 << 11)
- #define HWCAP_LOONGSON_EXT  (1 << 12)
- #define HWCAP_LOONGSON_EXT2 (1 << 13)
-+#define HWCAP_MIPS_VZ       (1 << 14)
- 
- #endif /* _UAPI_ASM_HWCAP_H */
-diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
-index c543326..b305269 100644
---- a/arch/mips/kernel/cpu-probe.c
-+++ b/arch/mips/kernel/cpu-probe.c
-@@ -2242,8 +2242,10 @@ void cpu_probe(void)
- 	if (cpu_has_loongson_ext2)
- 		elf_hwcap |= HWCAP_LOONGSON_EXT2;
- 
--	if (cpu_has_vz)
-+	if (cpu_has_vz) {
- 		cpu_probe_vz(c);
-+		elf_hwcap |= HWCAP_MIPS_VZ;
-+	}
- 
- 	cpu_probe_vmbits(c);
- 
-diff --git a/arch/mips/kvm/mips.c b/arch/mips/kvm/mips.c
-index 1109924..1da5df3 100644
---- a/arch/mips/kvm/mips.c
-+++ b/arch/mips/kvm/mips.c
-@@ -19,6 +19,7 @@
- #include <linux/sched/signal.h>
- #include <linux/fs.h>
- #include <linux/memblock.h>
-+#include <linux/cpufeature.h>
- 
- #include <asm/fpu.h>
- #include <asm/page.h>
-@@ -1742,7 +1743,7 @@ static void __exit kvm_mips_exit(void)
- 	unregister_die_notifier(&kvm_mips_csr_die_notifier);
- }
- 
--module_init(kvm_mips_init);
-+module_cpu_feature_match(MIPS_VZ, kvm_mips_init);
- module_exit(kvm_mips_exit);
- 
- EXPORT_TRACEPOINT_SYMBOL(kvm_exit);
--- 
-2.1.0
+AFAIK, the device hotplug lock is sufficient here. The memory hotplug
+lock / cpu hotplug lock is only needed when calling into arch code
+(especially for PPC). We hold both locks when onlining/offlining memory.
+
+>  	remove_memory_block_devices(start, size);
+> =20
+> +	mem_hotplug_begin();
+> +
+>  	arch_remove_memory(nid, start, size, NULL);
+>  	memblock_free(start, size);
+>  	memblock_remove(start, size);
+>=20
+
+I'd suggest to do the same in the adding part right away (if easily
+possible) to make it clearer. I properly documented the semantics of
+add_memory_block_devices()/remove_memory_block_devices() already (that
+they need the device hotplug lock).
+
+--=20
+Thanks,
+
+David / dhildenb
 
