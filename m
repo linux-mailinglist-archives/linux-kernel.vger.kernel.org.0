@@ -2,59 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A60A136D15
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 13:31:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9427136D3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 13:41:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbgAJMbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 07:31:33 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41896 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727753AbgAJMbc (ORCPT
+        id S1728222AbgAJMlJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 07:41:09 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38919 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727949AbgAJMlI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 07:31:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=B/rKaa819gyayiC8Xe2hoNfVxDFo4LjZMb+oCIBCt4A=; b=Mj1/cHpyNqAgv/lVJOV/TP+Zj
-        egd1NiWTg95WnXdO8GzEGGiVWXwRU3H+E29g0uVUBnxj9ZG7x0fcYtVBTI//wNlkf+KsAOmx7axTf
-        Gc8pv2zZYaPxRunSGtLY4RuN7jj+dSV2b5+aIhFylnGPxBelgs3smecSXa7E34ZnQngJ7W/2xA+1a
-        NUzhU4twKo0iuaHP3wTcsVoqDE18tS5u72bzSdI5+qJSI+AHD+3TO72VAqUy9Zy0Y5FPdZH5P/N9h
-        2KFuCwQdTla2L7GluHlni2Ux9OYIM+JCNP3jqnY6GtykRDI9mopYWyIA8zDezasfGBpIUQ8Ce3CYo
-        VZkuzcBug==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iptRn-0003UC-1r; Fri, 10 Jan 2020 12:31:27 +0000
-Date:   Fri, 10 Jan 2020 04:31:27 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-nvdimm@lists.01.org, dan.j.williams@intel.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: dax: Get rid of fs_dax_get_by_host() helper
-Message-ID: <20200110123127.GA6558@infradead.org>
-References: <20200106181117.GA16248@redhat.com>
+        Fri, 10 Jan 2020 07:41:08 -0500
+Received: by mail-pl1-f195.google.com with SMTP id g6so823230plp.6
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 04:41:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KdKUDe5VNtZZyWUDsEVdrhShf2Kcu/VrtdXGE+9fTXo=;
+        b=aEXo+Y+Ie5rmicBedqlm+l0xcucSqrT0flZYEl8YMu8DkFlvzVXCDfNNBt0Ss7lIxo
+         Ee6QISm89zpDn37usCnsQkHlOScps8LfSO+fn02Z8bMAO/Om7/QL03ogwBfHRxQ/b90p
+         BD0vwMHX7I1oywX/wtQ4z7CWLumArREiGtSx7sFxv/iZuwHJl8srnYQkAlwAP6CA13C+
+         q4JtK15TFGnjxhw+GpDudO0ScQWna7BEvHzLoM1SLIdMMYuC79rUla8uak+ryyjU52PB
+         KPxrj6LMdZmVwlp0CqjledxBozinckQdFyzr4R/PNh2/7L+AFJgb2gnaaTp/SNhu8tb9
+         R0wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KdKUDe5VNtZZyWUDsEVdrhShf2Kcu/VrtdXGE+9fTXo=;
+        b=NkCVzEFJfnzfd+1Z6rklzRpOdheVcBjRxs1xWisyvjNMTBZJ36V1PUWhBKLRAqrDur
+         4UBQxVU/OhG+UpHXtbzKgw17JBp7D/yGh9ynB0XCKZvT9PWaN0mwxq97WetEMDCcI5d4
+         rNmBk1IEPIQ8695+pmZjBgL7hDeBL4FfAwYHen3Jcd3+4aWFcBZCUPZtRqjpPb9baFWl
+         N7dgYotMoY5Vz51TEPT67R+7WFeKv339f4EJ/PXBYxzAiJiMO3H2aaWEbdz1UW1b9Cvb
+         LrDBcliorgumjhSWrGCY8fIxrdYARMPzyeOsKH0N5bRLMNoeCwbo7GY4shMDiyDuFc2P
+         QYMQ==
+X-Gm-Message-State: APjAAAWHdkF7qwTUSyrXNKrhWMXmCp/r7etRPBvD+YLV3uI4W4vIfDzf
+        pVIm4OJrqPtaGx2SSoYyTes=
+X-Google-Smtp-Source: APXvYqz1hwPwNDFF8rpc5BstYqeYvTPUUxNEteYq7zFknzooAoSivNVQ2BUO0MS/yigWPRMlbviL0A==
+X-Received: by 2002:a17:902:ab8c:: with SMTP id f12mr4195297plr.268.1578660068150;
+        Fri, 10 Jan 2020 04:41:08 -0800 (PST)
+Received: from localhost.localdomain ([103.211.17.220])
+        by smtp.googlemail.com with ESMTPSA id i11sm2890922pjg.0.2020.01.10.04.41.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2020 04:41:07 -0800 (PST)
+From:   Amol Grover <frextrite@gmail.com>
+To:     Santosh Shilimkar <ssantosh@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Amol Grover <frextrite@gmail.com>
+Subject: [PATCH] drivers: soc: ti: knav_qmss_queue: Pass lockdep expression to RCU lists
+Date:   Fri, 10 Jan 2020 18:02:13 +0530
+Message-Id: <20200110123212.26756-1-frextrite@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200106181117.GA16248@redhat.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 01:11:17PM -0500, Vivek Goyal wrote:
-> Looks like nobody is using fs_dax_get_by_host() except fs_dax_get_by_bdev()
-> and it can easily use dax_get_by_host() instead.
-> 
-> IIUC, fs_dax_get_by_host() was only introduced so that one could compile
-> with CONFIG_FS_DAX=n and CONFIG_DAX=m. fs_dax_get_by_bdev() achieves
-> the same purpose and hence it looks like fs_dax_get_by_host() is not
-> needed anymore.
->  
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+inst->handles is traversed using list_for_each_entry_rcu
+outside an RCU read-side critical section but under the protection
+of knav_dev_lock.
 
-Looks good,
+Hence, add corresponding lockdep expression to silence false-positive
+lockdep warnings, and harden RCU lists.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Add macro for the corresponding lockdep expression to make the code
+clean and concise.
+
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+---
+ drivers/soc/ti/knav_qmss_queue.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
+index 1ccc9064e1eb..888dc091c63b 100644
+--- a/drivers/soc/ti/knav_qmss_queue.c
++++ b/drivers/soc/ti/knav_qmss_queue.c
+@@ -25,6 +25,8 @@
+ 
+ static struct knav_device *kdev;
+ static DEFINE_MUTEX(knav_dev_lock);
++#define knav_dev_lock_held() \
++	lockdep_is_held(&knav_dev_lock)
+ 
+ /* Queue manager register indices in DTS */
+ #define KNAV_QUEUE_PEEK_REG_INDEX	0
+@@ -52,8 +54,9 @@ static DEFINE_MUTEX(knav_dev_lock);
+ #define knav_queue_idx_to_inst(kdev, idx)			\
+ 	(kdev->instances + (idx << kdev->inst_shift))
+ 
+-#define for_each_handle_rcu(qh, inst)			\
+-	list_for_each_entry_rcu(qh, &inst->handles, list)
++#define for_each_handle_rcu(qh, inst)				\
++	list_for_each_entry_rcu(qh, &inst->handles, list,	\
++				rcu_read_lock_held() || knav_dev_lock_held())
+ 
+ #define for_each_instance(idx, inst, kdev)		\
+ 	for (idx = 0, inst = kdev->instances;		\
+-- 
+2.24.1
+
