@@ -2,70 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B4B2137753
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 20:36:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5006137758
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 20:40:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbgAJTgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 14:36:13 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36710 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727709AbgAJTgL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 14:36:11 -0500
-Received: by mail-pf1-f194.google.com with SMTP id x184so1611095pfb.3;
-        Fri, 10 Jan 2020 11:36:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:to:cc:cc:cc:subject
-         :references:in-reply-to;
-        bh=fp7F0h/ASNuuSOx0sNaPmrqw5GOZkkxwfSNU2DVyelU=;
-        b=lH9d3dNVTcEzepTDksDFohUecJOqTJ+dAPRcjfLnd3Ks9JsgWgec9eEhBrFV5Ob8pE
-         uAeGg9+ETVnzYd4N3qcJPA1FwSWw3Xu6CdilgOxJ4IbN7yXbKG03ZFqqPofewja6kUUD
-         IP56vlyBI4taDS0CGwA4aEDo7Gl+k7vmocY/0AN+oMQYacfMsGgDb9IfLQvQD8rY2CKX
-         FPJ6QEYXyJ1MC0JwTt+ybl545RWOySLA5Sasl5b2FdUFaTNjfme6cFDBy1GiFPx5lam/
-         ZPVtvABgvPkS4a/1TosTg+y+o4PaeOGox+RBxqdov9pmQOSQBsx4/pxHpMFR6661f73K
-         VMkw==
-X-Gm-Message-State: APjAAAXnK1qlHUJZ9hnlQab65v5G0CrJQmjc2iC984/PW6jir98osmWt
-        VebFn0T+F3DZ2YYDzzuOp+A=
-X-Google-Smtp-Source: APXvYqyOQcN8i5IgYFLjmxs8T+WPRk7+OuLSlMn4JVw9bePGg+UhOPmw86HvgutY4z/91MDlxz/gUw==
-X-Received: by 2002:a63:ec0a:: with SMTP id j10mr6340399pgh.178.1578684970862;
-        Fri, 10 Jan 2020 11:36:10 -0800 (PST)
-Received: from localhost (MIPS-TECHNO.ear1.SanJose1.Level3.net. [4.15.122.74])
-        by smtp.gmail.com with ESMTPSA id e16sm3646028pgk.77.2020.01.10.11.36.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2020 11:36:10 -0800 (PST)
-Message-ID: <5e18d22a.1c69fb81.2a2d9.8625@mx.google.com>
-Date:   Fri, 10 Jan 2020 11:36:09 -0800
-From:   Paul Burton <paulburton@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-CC:     Paul Burton <paulburton@kernel.org>
-CC:     linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-CC:     linux-mips@vger.kernel.org
-Subject: Re: [PATCH] MIPS: BPF: Use sizeof_field() instead of FIELD_SIZEOF()
-References:  <201912180915.9878694B@keescook>
-In-Reply-To:  <201912180915.9878694B@keescook>
+        id S1728646AbgAJTkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 14:40:17 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:60614 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727812AbgAJTkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 14:40:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=WlPNc0IApWTQ9YLSaEpP2QUSavNX3euCIRf3LT4SKP0=; b=KC//4915q4GYTIfKAIExwZBhjw
+        Cx7V18fcoED7O89gIU8p6LM2O0eu9qYXbj7HH2tXFJMJv2uWugn5l9J7ZC0eAS1/ocjg35Cc48tAr
+        Wb1iy5VhhUzkrtVnD4X09648c2XBb5R5gdn9Lbwdzv/vWkbWab3R7aoM2qQsOr7qR+WI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1iq08h-00040I-N4; Fri, 10 Jan 2020 20:40:11 +0100
+Date:   Fri, 10 Jan 2020 20:40:11 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     f.fainelli@gmail.com, hkallweit1@gmail.com, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] TI DP8382x Phy support update
+Message-ID: <20200110194011.GT19739@lunn.ch>
+References: <20200110184702.14330-1-dmurphy@ti.com>
+ <20200110192524.GO19739@lunn.ch>
+ <2e9333e1-1ee7-80ce-fab4-a98a9f4b345f@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2e9333e1-1ee7-80ce-fab4-a98a9f4b345f@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-Kees Cook wrote:
-> The FIELD_SIZEOF() macro was redundant, and is being removed from the
-> kernel. Since commit c593642c8be0 ("treewide: Use sizeof_field() macro")
-> this is one of the last users of the old macro, so replace it.
-
-Applied to mips-next.
-
-> commit cc43928ba401
-> https://git.kernel.org/mips/c/cc43928ba401
+> You mean separate series between fixes and functionality?
 > 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Paul Burton <paulburton@kernel.org>
+> Sure I can separate them but they are dependent on each other.
 
-Thanks,
-    Paul
+Send 1 and 2 first. After about a week, David will merge net into
+net-next, and then you can submit 3 and 4.
 
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paulburton@kernel.org to report it. ]
+	  Andrew
