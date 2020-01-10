@@ -2,68 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A68B81368EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 09:27:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC4D61368F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 09:28:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbgAJI1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 03:27:09 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:49806 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726583AbgAJI1I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 03:27:08 -0500
-Received: from zn.tnic (p200300EC2F0ACA007185EBC54541D9EE.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:ca00:7185:ebc5:4541:d9ee])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5BE811EC0CAD;
-        Fri, 10 Jan 2020 09:27:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1578644827;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=thsT2Ib6pOGGPEREvb10XVWQL+6ZSHA8kOKKSpRzIdI=;
-        b=KuxjUeQznR8vzHnCFnVG3CD/Jql+AIpM3j5xn6KAFZDAYmAOWJdOareO++O69UyILt4Pz8
-        y2pRyPSqlXCwCEImnaPUe35x/aS5NVon/MriwGz0nUS1v1riAeckjgwvKSQ4vopyCrloga
-        N9b1rwAx8BsEfWyeGp3jCxowNdl/WnU=
-Date:   Fri, 10 Jan 2020 09:27:00 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Zhenzhong Duan <zhenzhong.duan@gmail.com>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH v2] x86/boot/KASLR: Fix unused variable warning
-Message-ID: <20200110082700.GA19453@zn.tnic>
-References: <20200103033929.4956-1-zhenzhong.duan@gmail.com>
- <20200109184055.GI5603@zn.tnic>
- <20200109204638.GA523773@rani.riverdale.lan>
- <20200109205041.GJ5603@zn.tnic>
- <CAFH1YnNdmHD9rnriTVx-se-Z5MHsgUZ0jYWMrg6OYVjr4Ap+JQ@mail.gmail.com>
+        id S1727096AbgAJI2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 03:28:30 -0500
+Received: from mo4-p03-ob.smtp.rzone.de ([81.169.146.172]:30152 "EHLO
+        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726735AbgAJI2a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 03:28:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1578644908;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=WeU7GSmu1EkFlO5QCvOiHrGIGIjXm22hmyaIrxBKF4s=;
+        b=jzDF/Nb2WII27MmnSpakkGXAfR0wdYBNLoI2jHKtJM/rI1k5yDSDi5o5SRxH0ejjG2
+        awaivvFrOJbfM37Mx0J3a0YQSwo2HQ7dgdjYjFwa2WXAA+jUuntye+DjSOfgU9f2cyDz
+        i53xKgkEZYwW7zfq6pxYlLNrO6saAOhmgDiEXSKPYl2R739snLNWDKCoc8zOJlzo/Gtv
+        0Y9SVHHofrsnvjKfrx7mW96+2wum9ZWCzYY/Tkbe0wR+C28owVTMGFxEw7bkaH0jqugA
+        Ld32DVadIETPSugRv7bzBqMKqoznZi4BETzvjAXHgEv8wXLvJlCQllh1wAfsPXTC+4an
+        sOJg==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzGHXPZJPScHivh"
+X-RZG-CLASS-ID: mo00
+Received: from tauon.chronox.de
+        by smtp.strato.de (RZmta 46.1.4 DYNA|AUTH)
+        with ESMTPSA id u04585w0A8RL7xf
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Fri, 10 Jan 2020 09:27:21 +0100 (CET)
+From:   Stephan Mueller <smueller@chronox.de>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        zhangjs <zachary@baishancloud.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        Nicolai Stange <nstange@suse.de>,
+        "Peter, Matthias" <matthias.peter@bsi.bund.de>,
+        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
+        Roman Drahtmueller <draht@schaltsekun.de>,
+        Neil Horman <nhorman@redhat.com>,
+        Julia Lawall <julia.lawall@inria.fr>
+Subject: Re: [PATCH v27 10/12] LRNG - add SP800-90B compliant health tests
+Date:   Fri, 10 Jan 2020 09:27:20 +0100
+Message-ID: <1988924.7r6H7Qibty@tauon.chronox.de>
+In-Reply-To: <cd9e893a-ce63-4e9a-fc19-553b1c5f1cff@infradead.org>
+References: <6157374.ptSnyUpaCn@positron.chronox.de> <2325404.ZKTBb4nKji@positron.chronox.de> <cd9e893a-ce63-4e9a-fc19-553b1c5f1cff@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAFH1YnNdmHD9rnriTVx-se-Z5MHsgUZ0jYWMrg6OYVjr4Ap+JQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 10:09:38AM +0800, Zhenzhong Duan wrote:
-> I indeed used additional parameters as below for daily build.
-> # make O=/build/kernel/ -j4 EXTRA_CFLAGS=-Wall binrpm-pkg
+Am Freitag, 10. Januar 2020, 01:20:44 CET schrieb Randy Dunlap:
 
-And in no point in time it did occur to you that you should mention this
-important piece of information in your commit message so that a person
-looking at the patch knows how you triggered it?!?
+Hi Randy,
 
-Geez.
+I have removed the two stars in front of each comment.
 
--- 
-Regards/Gruss,
-    Boris.
+I have also fixed the respective comments in lrng_interfaces.c, 
+lrng_archrandom.c, lrng_chacha20.c, lrng_drng.c, lrng_pool.c, lrng_switch.c, 
+lrng_sw_noise.c. In all other files there were no changes needed.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Thank you.
+
+
+Ciao
+Stephan
+
+
