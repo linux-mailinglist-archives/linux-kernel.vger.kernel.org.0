@@ -2,55 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B2FB136B7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 11:57:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25C07136B97
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 12:00:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbgAJK5k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 05:57:40 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:54330 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727570AbgAJK5k (ORCPT
+        id S1727631AbgAJK76 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 05:59:58 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:52086 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727537AbgAJK76 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 05:57:40 -0500
+        Fri, 10 Jan 2020 05:59:58 -0500
 Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00AAvakJ052718;
-        Fri, 10 Jan 2020 04:57:36 -0600
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00AAxZTe081793;
+        Fri, 10 Jan 2020 04:59:35 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578653856;
-        bh=jcTyAyRtrcD73f6Tyow/ueJfOVG81D6QLodR2fJHMvY=;
+        s=ti-com-17Q1; t=1578653975;
+        bh=9+Ck3PRaRVIdp1krLVpCgf4FURcXnlnWOb8T6coy79M=;
         h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=XOKkedUqoHp+t5964azmwZU2yCe3gILekp4p0iTLAd4a/WJXJIBwDKO7FDexkamil
-         GeiX0BABqH8ae/tlXlmIjamwYYnlSvoWo0gfBQlC38Gm5kwfkqRD9eYT28t5VGhD2R
-         GgSLxInwyMSt1P8DtX9bAmzHqfSBCrkIlCNlZeQ0=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00AAvaCo010013
+        b=nyfrNejkNB1FiPAWgbDHVtQ3iiC2/Jp8H1uiZfT+cRUg1ai0DpE4z38L1wvYHw6Hq
+         8cWFwy/ozYcxI31BVErd34xjIXMOHvvUdkNWpstpTW72gan8oeLU1scsQrmutxpChP
+         jalicy0DTy0H6D+m2wH6BzDJ/S8XBZFmMsJS2to4=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00AAxZhE012420
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 10 Jan 2020 04:57:36 -0600
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 10 Jan 2020 04:59:35 -0600
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 10
- Jan 2020 04:57:36 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ Jan 2020 04:59:34 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 10 Jan 2020 04:57:36 -0600
+ Frontend Transport; Fri, 10 Jan 2020 04:59:35 -0600
 Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00AAvXYQ048117;
-        Fri, 10 Jan 2020 04:57:34 -0600
-Subject: Re: [PATCH v2 1/2] dt-bindings: phy: Add PHY_TYPE_DP definition
-To:     Jyri Sarha <jsarha@ti.com>, <linux-kernel@vger.kernel.org>
-CC:     <tomi.valkeinen@ti.com>, <praneeth@ti.com>, <yamonkar@cadence.com>,
-        <sjakhade@cadence.com>, <robh+dt@kernel.org>, <rogerq@ti.com>
-References: <cover.1578471433.git.jsarha@ti.com>
- <e38387d6bfc38c76e2335b549da409291366e9ac.1578471433.git.jsarha@ti.com>
- <1bccf7b6-3cc0-e39f-f7b9-3ec0b0553804@ti.com>
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00AAxWRT044018;
+        Fri, 10 Jan 2020 04:59:32 -0600
+Subject: Re: [PATCH v2 00/14] Support more HDMI modes on RK3228/RK3328
+To:     Jonas Karlman <jonas@kwiboo.se>, Heiko Stuebner <heiko@sntech.de>,
+        Sandy Huang <hjc@rock-chips.com>
+CC:     Zheng Yang <zhengyang@rock-chips.com>,
+        <linux-rockchip@lists.infradead.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200108210740.28769-1-jonas@kwiboo.se>
 From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <c42d061d-2fd4-5a79-8555-147f53409b32@ti.com>
-Date:   Fri, 10 Jan 2020 16:29:41 +0530
+Message-ID: <b159ee28-213e-35d2-6d09-516abc3358bb@ti.com>
+Date:   Fri, 10 Jan 2020 16:31:40 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <1bccf7b6-3cc0-e39f-f7b9-3ec0b0553804@ti.com>
+In-Reply-To: <20200108210740.28769-1-jonas@kwiboo.se>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -62,42 +64,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 09/01/20 4:57 PM, Jyri Sarha wrote:
-> On 08/01/2020 10:30, Jyri Sarha wrote:
->> Add definition for DisplayPort phy type.
->>
->> Signed-off-by: Jyri Sarha <jsarha@ti.com>
->> Reviewed-by: Roger Quadros <rogerq@ti.com>
->> Reviewed-by: Kishon Vijay Abraham I <kishon@ti.com>
+On 09/01/20 2:37 AM, Jonas Karlman wrote:
+> This series make it possible to use more HDMI modes on RK3328,
+> and presumably also on RK3228. It also prepares for a future YUV420 and
+> 10-bit output series.
 > 
-> Kishon, maybe you could pick only this patch phy-next, so that we avoid
-> nasty cross dependencies if I get to push DisplayPort dts patches to
-> mainline early.
+> Part of this has been reworked from vendor BSP 4.4 kernel commits.
+> 
+> Patch 1-5 fixes issues and shortcomings in the inno hdmi phy driver.
+> 
+> Patch 6 prepares for use of high TMDS bit rates used with HDMI 2.0 and
+> 10-bit output modes.
+> 
+> Patch 7-13 changes rk3228/rk3328 to use mode_valid functions suited for
+> the inno hdmi phy instead of the dw-hdmi phy. These changes allows for
+> more CEA modes to be usable, e.g. some 4K and fractal modes.
+> 
+> Patch 14 adds support for more pixel clock rates in order to support
+> common DMT modes in addition to CEA modes.
 
-Sure. Picked them now.
+Is it possible to split the series targeted for different subsystems or
+is it required for all the patches to be merged together?
 
 Thanks
 Kishon
-
 > 
-> Best regards,
-> Jyri
+> Note: I have only been able to build test RK322x related changes
+> as I do not have any RK322x device to test on.
 > 
->> ---
->>  include/dt-bindings/phy/phy.h | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/include/dt-bindings/phy/phy.h b/include/dt-bindings/phy/phy.h
->> index b6a1eaf1b339..1f3f866fae7b 100644
->> --- a/include/dt-bindings/phy/phy.h
->> +++ b/include/dt-bindings/phy/phy.h
->> @@ -16,5 +16,6 @@
->>  #define PHY_TYPE_USB2		3
->>  #define PHY_TYPE_USB3		4
->>  #define PHY_TYPE_UFS		5
->> +#define PHY_TYPE_DP		6
->>  
->>  #endif /* _DT_BINDINGS_PHY */
->>
+> All modes, including fractal modes, has been tested with modetest on
+> a RK3328 Rock64 device using e.g.
 > 
+>   modetest -M rockchip -s 39:3840x2160-29.97
+> 
+> Changes in v2:
+>   - collect acked-by tag
+>   - drop the limit resolution width to 3840 patch
+> 
+> This series is also available at [1] and the early work on YUV420 and
+> 10-bit output is available at [2].
+> 
+> [1] https://github.com/Kwiboo/linux-rockchip/commits/next-20200108-inno-hdmi-phy
+> [2] https://github.com/Kwiboo/linux-rockchip/commits/next-20200108-bus-format
+> 
+> Regards,
+> Jonas
+> 
+> Algea Cao (1):
+>   phy/rockchip: inno-hdmi: Support more pre-pll configuration
+> 
+> Huicong Xu (1):
+>   phy/rockchip: inno-hdmi: force set_rate on power_on
+> 
+> Jonas Karlman (11):
+>   phy/rockchip: inno-hdmi: use correct vco_div_5 macro on rk3328
+>   phy/rockchip: inno-hdmi: remove unused no_c from rk3328 recalc_rate
+>   phy/rockchip: inno-hdmi: do not power on rk3328 post pll on reg write
+>   drm/rockchip: dw-hdmi: allow high tmds bit rates
+>   drm/rockchip: dw-hdmi: require valid vpll clock rate on rk3228/rk3328
+>   clk: rockchip: set parent rate for DCLK_VOP clock on rk3228
+>   arm64: dts: rockchip: increase vop clock rate on rk3328
+>   arm64: dts: rockchip: add vpll clock to hdmi node on rk3328
+>   ARM: dts: rockchip: add vpll clock to hdmi node on rk3228
+>   drm/rockchip: dw-hdmi: limit tmds to 340mhz on rk3228/rk3328
+>   drm/rockchip: dw-hdmi: remove unused plat_data on rk3228/rk3328
+> 
+> Zheng Yang (1):
+>   phy/rockchip: inno-hdmi: round fractal pixclock in rk3328 recalc_rate
+> 
+>  arch/arm/boot/dts/rk322x.dtsi                 |   4 +-
+>  arch/arm64/boot/dts/rockchip/rk3328.dtsi      |   6 +-
+>  drivers/clk/rockchip/clk-rk3228.c             |   2 +-
+>  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c   |  47 ++++++--
+>  drivers/phy/rockchip/phy-rockchip-inno-hdmi.c | 110 ++++++++++++------
+>  5 files changed, 120 insertions(+), 49 deletions(-)
 > 
