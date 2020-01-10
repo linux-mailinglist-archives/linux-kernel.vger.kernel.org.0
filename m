@@ -2,87 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D77E9136C6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 12:55:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06C97136C83
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 12:56:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728222AbgAJLyv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 06:54:51 -0500
-Received: from foss.arm.com ([217.140.110.172]:43242 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728183AbgAJLyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 06:54:50 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F6861063;
-        Fri, 10 Jan 2020 03:54:50 -0800 (PST)
-Received: from [192.168.1.123] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C60173F534;
-        Fri, 10 Jan 2020 03:54:48 -0800 (PST)
-Subject: Re: [PATCH v1] arch_topology: Adjust initial CPU capacities with
- current freq
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20200109075214.31943-1-jeffy.chen@rock-chips.com>
- <20200110113711.GB39451@bogus>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <9edb57be-97bc-f0bd-3edd-854dfc8c780f@arm.com>
-Date:   Fri, 10 Jan 2020 11:54:48 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1728070AbgAJLzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 06:55:44 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2251 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727858AbgAJLzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 06:55:41 -0500
+Received: from lhreml701-cah.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id AFF0FA5C9FD9699058BD;
+        Fri, 10 Jan 2020 11:55:39 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ lhreml701-cah.china.huawei.com (10.201.108.42) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 10 Jan 2020 11:55:39 +0000
+Received: from [127.0.0.1] (10.202.226.43) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Fri, 10 Jan
+ 2020 11:55:39 +0000
+Subject: Re: [PATCH v2 2/3] spi: Add HiSilicon v3xx SPI NOR flash controller
+ driver
+To:     Mark Brown <broonie@kernel.org>
+CC:     <marek.vasut@gmail.com>, <tudor.ambarus@microchip.com>,
+        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>, <linux-spi@vger.kernel.org>,
+        <xuejiancheng@hisilicon.com>, <fengsheng5@huawei.com>,
+        <chenxiang66@hisilicon.com>
+References: <1575900490-74467-1-git-send-email-john.garry@huawei.com>
+ <1575900490-74467-3-git-send-email-john.garry@huawei.com>
+ <0dc5cb2e-b765-9e13-b05e-9e3c835c5985@huawei.com>
+ <20200109212842.GK3702@sirena.org.uk>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <df67b562-7d82-19f6-7581-680190a7772d@huawei.com>
+Date:   Fri, 10 Jan 2020 11:55:37 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-In-Reply-To: <20200110113711.GB39451@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+In-Reply-To: <20200109212842.GK3702@sirena.org.uk>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.43]
+X-ClientProxiedBy: lhreml729-chm.china.huawei.com (10.201.108.80) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-01-10 11:37 am, Sudeep Holla wrote:
-> On Thu, Jan 09, 2020 at 03:52:14PM +0800, Jeffy Chen wrote:
->> The CPU freqs are not supposed to change before cpufreq policies
->> properly registered, meaning that they should be used to calculate the
->> initial CPU capacities.
->>
->> Doing this helps choosing the best CPU during early boot, especially
->> for the initramfs decompressing.
->>
->> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+On 09/01/2020 21:28, Mark Brown wrote:
+> On Thu, Jan 09, 2020 at 03:54:00PM +0000, John Garry wrote:
 > 
-> [...]
+>>  From checking acpi_spi_add_resource() or anywhere else, I cannot see how
+>> SPI_RX_DUAL or the others are set for spi_device.mode. What am I missing?
+>> Are these just not supported yet for ACPI? Or should the spi-nor code not be
+>> relying on this since we should be able to get this info from the SPI NOR
+>> part?
 > 
->> @@ -146,10 +153,15 @@ bool __init topology_parse_cpu_capacity(struct device_node *cpu_node, int cpu)
->>   				return false;
->>   			}
->>   		}
->> -		capacity_scale = max(cpu_capacity, capacity_scale);
->>   		raw_capacity[cpu] = cpu_capacity;
->>   		pr_debug("cpu_capacity: %pOF cpu_capacity=%u (raw)\n",
->>   			cpu_node, raw_capacity[cpu]);
->> +
->> +		cpu_clk = of_clk_get(cpu_node, 0);
->> +		if (!PTR_ERR_OR_ZERO(cpu_clk))
->> +			per_cpu(max_freq, cpu) = clk_get_rate(cpu_clk) / 1000;
->> +
->> +		clk_put(cpu_clk);
+
+Hi Mark,
+
+> I'm not aware of any work on integrating this sort of stuff into ACPI
+> platforms so I think it's just not yet supported in ACPI.  I'm not
+> really sure what would be idiomatic for ACPI, figuring it out from what
+> the part supports might well be idiomatic there though I don't know how
+> common it is for people not to wire up all the data lines even if both
+> controller and device support wider transfers. 
+
+OK, so I guess that is why we require the width property from the FW and 
+can't blindly rely on SFDP.
+
+  I've got a horrible
+> feeling that the idiomatic thing is a combination of that and a bunch of
+> per-device quirks.  There may be a spec I'm not aware of though I'd be a
+> bit surprised.
 > 
-> I don't like to assume DVFS to be supplied only using 'clk'. So NACK!
-> We have other non-clk mechanism for CPU DVFS and this needs to simply
-> use cpufreq APIs to get frequency value if required.
 
-...but in this case, as soon as cpufreq is ready the problem is gone 
-anyway, because it sees the big cluster's clock rate is way out-of-spec 
-and bumps it up to a sane OPP.
+I'm not sure on that. I don't see anything in the ACPI spec.
 
-It really is unfortunate that so many RK3399 images out there are using 
-the broken firmware combination that manages to miss out the boot-time 
-PLL setup altogether.
+I will note that PRP0001+"jedec,spi-nor" compatible DSD seems to be the 
+defacto method to describe the SPI NOR-compat part for ACPI - that's 
+what I'm using. We could add properties there, but that seems improper.
 
-Robin.
+I'll continue to look....
+
+Thanks,
+John
