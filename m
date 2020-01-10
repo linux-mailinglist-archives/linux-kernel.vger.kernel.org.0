@@ -2,44 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A4E31379B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 23:31:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EC8C1379B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 23:32:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbgAJWb0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 17:31:26 -0500
-Received: from mga06.intel.com ([134.134.136.31]:64454 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727324AbgAJWb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 17:31:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 14:31:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,418,1571727600"; 
-   d="scan'208";a="212400494"
-Received: from ewronsha-mobl1.amr.corp.intel.com (HELO [10.255.66.226]) ([10.255.66.226])
-  by orsmga007.jf.intel.com with ESMTP; 10 Jan 2020 14:31:24 -0800
-Subject: Re: [alsa-devel] [PATCH] soundwire: intel: report slave_ids for each
- link to SOF driver
-To:     alsa-devel@alsa-project.org
-Cc:     tiwai@suse.de, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        vkoul@kernel.org, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com,
-        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>
-References: <20200110220016.30887-1-pierre-louis.bossart@linux.intel.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <a70c54c0-c691-d8eb-4f99-da1bb9306c2f@linux.intel.com>
-Date:   Fri, 10 Jan 2020 16:31:24 -0600
+        id S1727517AbgAJWcq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 17:32:46 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39385 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727324AbgAJWcp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 17:32:45 -0500
+Received: by mail-pg1-f196.google.com with SMTP id b137so1642256pga.6
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 14:32:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vBfZ8F2SBSNbowGcriH5UQ3hf4Zffir9FW0Q23pW4yg=;
+        b=WE14lDoDEbkpXBppfu7UVGESrqK28fZMUuMXaCrwxhio0e/9w52+kgFz74YUQNkg7F
+         pQIrbcirN0kzwTMfD34Otj8AQot546oaawZVTZ/j/3+67GSPVLJLNJYg1Oku8nYSpA/P
+         Yp+ZvNC4HBTVCsyinMbJPjnyTdBUYP5U63SFlYPmJCDJOmYi/3Swkq9K7Z+Oi+62o+cm
+         N47kDs6kwr2uhELSWr5tHNVklIhMC/enRWq0LkG6/Et+Q178ZPoCZES4pHHNIhGGsNGy
+         GY3fZ2FRGT1kW/Nnq1s22sxqs4pS5BOGb+aJX+lRt+XP9VATLeAXGH0RjevHaRBmo9cy
+         agew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vBfZ8F2SBSNbowGcriH5UQ3hf4Zffir9FW0Q23pW4yg=;
+        b=YQ+rnGzbmGQMHBxyrPV0f0hRTeaIH7szM2WIyZZ5GKg89yRFv3urlI+plbE0hzjVK2
+         zIeWa1hqKeLfCklal4kb+aWq7t1RWNsFSOyNzmTC4djHtnrm4zPvWmkS0UzpVxCvRjQv
+         bO8dQahZbvmIs+1QTbScls/GQ4Nf3fpyZ0JaoIVjPfAGnrvhOH4BVGUk4FQ+pONbkqOn
+         AR+qeup+GvS2qNntmEGuovI0PurNtz7MBc1PRc9XBzKNxpTLzMlIf1uyzBA0/bWxS4g2
+         AMQWUJ8hupXHSpVeoBM3ULc4melB2ZGV9F2UUFOmjU+E931frxmU8JV2kOCX2vvCIWdv
+         KySQ==
+X-Gm-Message-State: APjAAAW2NW/bjpHUBo3Ok9LGUn+B5X51YzH97COIHXpPaoTjkkoLFrac
+        ITOGuOzxnBTT3nF5bcWlMMtdqA==
+X-Google-Smtp-Source: APXvYqwXdceLNmTvsF2rC/BLsakHNxefR1IsEkWZp/E0RDbWI+j75fsnAS5Me5q3y3F2XyMIRpfNEQ==
+X-Received: by 2002:a63:62c2:: with SMTP id w185mr7409012pgb.271.1578695564830;
+        Fri, 10 Jan 2020 14:32:44 -0800 (PST)
+Received: from [10.83.36.153] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id k12sm3744129pgm.65.2020.01.10.14.32.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jan 2020 14:32:44 -0800 (PST)
+Subject: Re: [PATCH-next 3/3] serial/sysrq: Add MAGIC_SYSRQ_SERIAL_SEQUENCE
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Vasiliy Khoruzhick <vasilykh@arista.com>,
+        linux-serial@vger.kernel.org
+References: <20200109215444.95995-1-dima@arista.com>
+ <20200109215444.95995-4-dima@arista.com> <20200110164643.GB1822445@kroah.com>
+From:   Dmitry Safonov <dima@arista.com>
+Message-ID: <a6a3ee46-9537-c287-b366-797c787c28b6@arista.com>
+Date:   Fri, 10 Jan 2020 22:32:34 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200110220016.30887-1-pierre-louis.bossart@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200110164643.GB1822445@kroah.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -47,83 +70,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 1/10/20 4:00 PM, Pierre-Louis Bossart wrote:
-> From: Bard Liao <yung-chuan.liao@linux.intel.com>
+On 1/10/20 4:46 PM, Greg Kroah-Hartman wrote:
+[..]
+>> diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+>> index 6ac9dfed3423..f70eba032d0b 100644
+>> --- a/drivers/tty/serial/serial_core.c
+>> +++ b/drivers/tty/serial/serial_core.c
+>> @@ -3081,6 +3081,38 @@ void uart_insert_char(struct uart_port *port, unsigned int status,
+>>  }
+>>  EXPORT_SYMBOL_GPL(uart_insert_char);
+>>  
+>> +const char sysrq_toggle_seq[] = CONFIG_MAGIC_SYSRQ_SERIAL_SEQUENCE;
+>> +
+>> +static void uart_sysrq_on(struct work_struct *w)
+>> +{
+>> +	sysrq_toggle_support(1);
+>> +	pr_info("SysRq is enabled by magic sequience on serial\n");
 > 
-> The existing link_mask flag is no longer sufficient to detect the
-> hardware and identify which topology file and a machine driver to load.
-> 
-> By reporting the slave_ids exposed in ACPI tables, the parent SOF
-> driver will be able to compare against a set of static configurations.
-> 
-> This patch only adds the interface change, the functionality is added
-> in future patches.
+> Do we want to say what serial port it is enabled on?
 
-Vinod, this patch would need to be shared as an immutable tag for Mark, 
-once this is done I can share the SOF parts that make use of the 
-information (cf. https://github.com/thesofproject/linux/pull/1692 for 
-reference)
+Makes sense, will add.
 
-Sorry we missed this in the earlier interface changes, we didn't think 
-we would have so many hardware variations so quickly.
+> And why is this done in a workqueue?
 
-Thanks!
+uart_try_toggle_sysrq() sometimes is called under
+spin_lock_irqsave(&port->lock, flags);
+
+And sysrq_toggle_support() calls input_register_handler() internally
+which can sleep.
+
+>> +}
+>> +static DECLARE_WORK(sysrq_enable_work, uart_sysrq_on);
+>> +
+>> +static int uart_try_toggle_sysrq(struct uart_port *port, unsigned int ch)
+>> +{
+>> +	if (sysrq_toggle_seq[0] == '\0')
+>> +		return 0;
+> 
+> Is constantly checking the data stream like this going to slow things
+> down overall?  Ah, we are just checking this after BREAK, right?  So
+> that hopefully will not be that bad...
+
+Yes, it's after BREAK. In my POV it's fine as originally it would cause
+sysrq handler being called (if sysrq is enabled).
 
 > 
-> Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->   include/linux/soundwire/sdw_intel.h | 11 +++++++++++
->   1 file changed, 11 insertions(+)
+>> +
+>> +	BUILD_BUG_ON(ARRAY_SIZE(sysrq_toggle_seq) >= sizeof(port->sysrq_seq)*U8_MAX);
+>> +	if (sysrq_toggle_seq[port->sysrq_seq] != ch) {
+>> +		port->sysrq_seq = 0;
+>> +		return 0;
+>> +	}
+>> +
+>> +	/* Without the last \0 */
+>> +	if (++port->sysrq_seq < (ARRAY_SIZE(sysrq_toggle_seq) - 1)) {
+>> +		port->sysrq = jiffies + HZ*5;
 > 
-> diff --git a/include/linux/soundwire/sdw_intel.h b/include/linux/soundwire/sdw_intel.h
-> index 93b83bdf8035..979b41b5dcb4 100644
-> --- a/include/linux/soundwire/sdw_intel.h
-> +++ b/include/linux/soundwire/sdw_intel.h
-> @@ -5,6 +5,7 @@
->   #define __SDW_INTEL_H
->   
->   #include <linux/irqreturn.h>
-> +#include <linux/soundwire/sdw.h>
->   
->   /**
->    * struct sdw_intel_stream_params_data: configuration passed during
-> @@ -93,6 +94,11 @@ struct sdw_intel_link_res;
->    */
->   #define SDW_INTEL_CLK_STOP_BUS_RESET		BIT(3)
->   
-> +struct sdw_intel_slave_id {
-> +	int link_id;
-> +	struct sdw_slave_id id;
-> +};
-> +
->   /**
->    * struct sdw_intel_ctx - context allocated by the controller
->    * driver probe
-> @@ -101,9 +107,12 @@ struct sdw_intel_link_res;
->    * hardware capabilities after all power dependencies are settled.
->    * @link_mask: bit-wise mask listing SoundWire links reported by the
->    * Controller
-> + * @num_slaves: total number of devices exposed across all enabled links
->    * @handle: ACPI parent handle
->    * @links: information for each link (controller-specific and kept
->    * opaque here)
-> + * @ids: array of slave_id, representing Slaves exposed across all enabled
-> + * links
->    * @link_list: list to handle interrupts across all links
->    * @shim_lock: mutex to handle concurrent rmw access to shared SHIM registers.
->    */
-> @@ -111,8 +120,10 @@ struct sdw_intel_ctx {
->   	int count;
->   	void __iomem *mmio_base;
->   	u32 link_mask;
-> +	int num_slaves;
->   	acpi_handle handle;
->   	struct sdw_intel_link_res *links;
-> +	struct sdw_intel_slave_id *ids;
->   	struct list_head link_list;
->   	struct mutex shim_lock; /* lock for access to shared SHIM registers */
->   };
+> 5 second delay?  You should document what this value is for somewhere
+> here...
+
+Fair enough, I'll add
+#define SYSRQ_TIMEOUT	(HZ*5)
+
+And use it in uart_handle_break() too.
+
+>> @@ -3090,9 +3122,13 @@ int uart_handle_sysrq_char(struct uart_port *port, unsigned int ch)
+>>  		return 0;
+>>  
+>>  	if (ch && time_before(jiffies, port->sysrq)) {
+>> -		handle_sysrq(ch);
+>> -		port->sysrq = 0;
+>> -		return 1;
+>> +		if (sysrq_get_mask()) {
+>> +			handle_sysrq(ch);
+>> +			port->sysrq = 0;
+>> +			return 1;
+>> +		}
 > 
+> Isn't this change to test for sysrq_get_mask() a different change than
+> checking for the "magic" data stream?
+
+It's for the case when sysrq is already enabled.
+Than sysrq_get_mask() will return something and it makes uart call
+handle_sysrq() instead of checking the toggle sequence.
+
+>> diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+>> index 255e86a474e9..1f4443db5474 100644
+>> --- a/include/linux/serial_core.h
+>> +++ b/include/linux/serial_core.h
+>> @@ -243,10 +243,10 @@ struct uart_port {
+>>  	unsigned long		sysrq;			/* sysrq timeout */
+>>  	unsigned int		sysrq_ch;		/* char for sysrq */
+>>  	unsigned char		has_sysrq;
+>> +	unsigned char		sysrq_seq;		/* index in sysrq_toggle_seq */
+>>  
+>>  	unsigned char		hub6;			/* this should be in the 8250 driver */
+>>  	unsigned char		suspended;
+>> -	unsigned char		unused;
+> 
+> This is an unrelated change, let's leave it for a different patch that
+> cleans up the layout of this structure, ok?
+
+Yes, sure.
+
+Thanks,
+          Dmitry
