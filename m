@@ -2,145 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAB69137126
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 16:26:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E48313712C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 16:28:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728343AbgAJP0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 10:26:13 -0500
-Received: from mail-mw2nam10on2080.outbound.protection.outlook.com ([40.107.94.80]:20245
-        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728141AbgAJP0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 10:26:12 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CxVHubgsWjeOSoIkWP+f5d9AsY/mV59/0bPCoY4BzS/5FKh3wwMxY7oFrXFyq1NQ4G1vboUUksddRqW/CErCOUX6VSXEkB82XZ4b3Z2rG6P6xIbIUBlD/j9JyBCkybf75v8EYNwdMcd6DsMt4tEX/5C30L6uV52WivchxYII50wPAr/y0hWevztclgGMIiE1IlmOM/XIwP4OLtDYf/7//Gu/LzlkrxmzO0uIkP8ScqR37h0vuMK8yeVjjhLerUzcImdqhYpdxIF4kaCqsIHbF1/a086Mr92PJkTQXDtAG5mGaH69f+dnjH2NA+maJQ8TJlaIe8l25mnH5cKPxjNY4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d5ZU/2wNnNvO5tCKBY6bDVys832k2AyReblQh/5hf9o=;
- b=HZ/U2lUig1vvm8yCe/p/lvIyh+GBx1yCrey1bHZ4LZ6TvlM1qFrk9EogmboZxEGLBcv2drUYIH3X2ek6KmQVM+7JDPjA5IOCzegDRXV+4wLFZyEMjtFUFxaHTcuef3PUlKnTqGQw7VPAzCRDiy0swz1T295Of5DKt1Q6VrcuWfKTzj5aC4mbhFjn2hg0BK77+todbu2iEdtyARivJ9o2fe9sHxtdsCwtzEWf7mAne1Q4EBkYhWGDRtbLjbfaolBcrlDVL5bUJhMQctMXCDatU6/uAbB07LAixZIOU9UKjvHmvsIANQxJZeWIZIDRhW0ku/4n2gE4zPfrLfKB90EsLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
- dkim=pass header.d=xilinx.com; arc=none
+        id S1728363AbgAJP2D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 10:28:03 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37436 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728137AbgAJP2C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 10:28:02 -0500
+Received: by mail-wm1-f65.google.com with SMTP id f129so2401646wmf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 07:28:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d5ZU/2wNnNvO5tCKBY6bDVys832k2AyReblQh/5hf9o=;
- b=ffgEfOeHutMlhUOZh6GzAmlhl4g6XFjedoASU0Fc9EplHMS+0z5dsy6zlbLJrtTzw11ylIBkHNNXVU98EtX4atpfsceAZsDyW62xBnItSklq9esiMbb7v4E9KVB7zngg5/W7fW9CQTFjAd05IoXzobYVvmglDxY66sTfpxCaGLg=
-Received: from CH2PR02MB7000.namprd02.prod.outlook.com (20.180.9.216) by
- CH2PR02MB6279.namprd02.prod.outlook.com (52.132.230.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2623.9; Fri, 10 Jan 2020 15:26:10 +0000
-Received: from CH2PR02MB7000.namprd02.prod.outlook.com
- ([fe80::969:436f:b4b8:4899]) by CH2PR02MB7000.namprd02.prod.outlook.com
- ([fe80::969:436f:b4b8:4899%7]) with mapi id 15.20.2623.013; Fri, 10 Jan 2020
- 15:26:10 +0000
-From:   Radhey Shyam Pandey <radheys@xilinx.com>
-To:     Andre Przywara <andre.przywara@arm.com>,
-        "David S . Miller" <davem@davemloft.net>
-CC:     Michal Simek <michals@xilinx.com>,
-        Robert Hancock <hancock@sedsystems.ca>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 04/14] net: axienet: Improve DMA error handling
-Thread-Topic: [PATCH 04/14] net: axienet: Improve DMA error handling
-Thread-Index: AQHVx6y35Khes/KcW0SEYqGJBhT9tafkBDWQ
-Date:   Fri, 10 Jan 2020 15:26:10 +0000
-Message-ID: <CH2PR02MB7000EDAE2A7D85D50A52EE81C7380@CH2PR02MB7000.namprd02.prod.outlook.com>
-References: <20200110115415.75683-1-andre.przywara@arm.com>
- <20200110115415.75683-5-andre.przywara@arm.com>
-In-Reply-To: <20200110115415.75683-5-andre.przywara@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=radheys@xilinx.com; 
-x-originating-ip: [149.199.50.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: c7a45f9a-8fea-4b2d-fa69-08d795e16bc4
-x-ms-traffictypediagnostic: CH2PR02MB6279:|CH2PR02MB6279:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CH2PR02MB6279620A1D61B3CD01C3C1E9C7380@CH2PR02MB6279.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 02788FF38E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(39840400004)(136003)(346002)(396003)(13464003)(199004)(189003)(5660300002)(110136005)(8936002)(54906003)(7696005)(26005)(186003)(33656002)(6506007)(478600001)(66446008)(8676002)(66476007)(64756008)(66556008)(2906002)(76116006)(66946007)(316002)(81156014)(81166006)(86362001)(4326008)(52536014)(55016002)(71200400001)(53546011)(9686003);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB6279;H:CH2PR02MB7000.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: U7O3K3+EKD+Y7OtMrumMHxohZXAf1FUhxmPSKpK6wfinI7k3SS0mivphgUCMiZHcPitAA6CI55VzR7xJgCJpzHsGXj4rb12t2IzMyDIV+KDqaMnkDE2YAQqJ72eFonYfM9+IKwuRhJ3HdKSpngb7Z82rwK+GlRqN7THb9GhQ/FsErn+RM+BwJVWJpWQFAKBbCHJq8MxfVgXfSLQFKtUdrgUZihPcfBOcJjP617+8DaSOBHzTzv0UXZF9ckYAJuo6de/ZzofNJkz7RwBbgEBv8dihvB2rZxIOykAmBtKJZLGuP7jSfbIEwTNWnqQ5TV5VzHLkmbyfbXMusosF7ixjsUplq4yqxacHMqZlbNHVCo6YMUwzflgxfLQCXMKVEl38dOzcKY4jBIprHiEiGXVtkGepo52zK+RsvH67qkXwhLF6D/DK13PXLH5HoRThiacyXLtp4A5qY5MWpcWB0YpB7TNm1BH8AspcmHQrkSzDi18rcuAc/qrMBXyKfYMBkbkF
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aXkYk1wr3xOcC4kmVHKlnMGgZqSHONG6or7V3cMRBfw=;
+        b=F33T91L+0exJkm4W6ymnTYAWlH6C8rI++wYC55+vSK+32TVCw3utrIIHPL9gWWuR4z
+         Ooq0VqOPl3V1PZOQCVH3wmxk0C3bUiD8MhUezkehT3gFsnucpt/tuSILyO27GZyOpdZV
+         xb0Y2RP5w4A8Lh7Rvv8nzlGJNO4J12Pj6NZ+Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aXkYk1wr3xOcC4kmVHKlnMGgZqSHONG6or7V3cMRBfw=;
+        b=XZJiE5xrbKfHk/kBFoZJZqzn+33fJsKlup9Iy63xfx1TgkbF5Z/+iKCyyP9isOeZjx
+         NQTjHGcF5gng7EY6XmkekKRA76c+bkkM3kDkZe5OnVu7JQ1NEaYm7sPbhS0RWuXnSaWS
+         4kBQ+c7zK/9zu3WWkpK+BTRGqVNq7KjTC8tHc+RdmW7XB7ovCtpUIsCBLxc87vwvG5IX
+         oTZ5AXtyy3897p0Hbv9q7oUrJ87dP91Sn5dbTEsUmnJuLP4sKfWTbTRXbatiNCo4W18U
+         4VNs2CwUIUI702SCzFEOCQtDMvw0INxkco/4HTJZI8NRYPISG1I9Xg6SlLGRsbG2adKf
+         VHgg==
+X-Gm-Message-State: APjAAAVeR/N1BOjTbTCfpEGl50iUVUoEs8n7i2/LCLBJtKHRT9yB7CpA
+        agX83ke/Tq6lt1jjjQXqkaEJlQ==
+X-Google-Smtp-Source: APXvYqw0ag02q22hPKuOzI3/vkzH86GFjij0AS1uLwSH4KQPjjBom3rLw/8TFnXp5EIU2M4mQ97Qxw==
+X-Received: by 2002:a1c:541b:: with SMTP id i27mr5205966wmb.137.1578670081018;
+        Fri, 10 Jan 2020 07:28:01 -0800 (PST)
+Received: from google.com ([2a00:79e0:42:204:8a21:ba0c:bb42:75ec])
+        by smtp.gmail.com with ESMTPSA id f1sm2560213wro.85.2020.01.10.07.27.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2020 07:28:00 -0800 (PST)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Fri, 10 Jan 2020 16:27:58 +0100
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     KP Singh <kpsingh@chromium.org>, James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>,
+        Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH bpf-next v1 00/13] MAC and Audit policy using eBPF (KRSI)
+Message-ID: <20200110152758.GA260168@google.com>
+References: <CACYkzJ5nYh7eGuru4vQ=2ZWumGPszBRbgqxmhd4WQRXktAUKkQ@mail.gmail.com>
+ <201912301112.A1A63A4@keescook>
+ <c4e6cdf2-1233-fc82-ca01-ba84d218f5aa@tycho.nsa.gov>
+ <alpine.LRH.2.21.2001090551000.27794@namei.org>
+ <e59607cc-1a84-cbdd-5117-7efec86b11ff@tycho.nsa.gov>
+ <alpine.LRH.2.21.2001100437550.21515@namei.org>
+ <e90e03e3-b92f-6e1a-132f-1b648d9d2139@tycho.nsa.gov>
+ <alpine.LRH.2.21.2001100558550.31925@namei.org>
+ <20200109194302.GA85350@google.com>
+ <8e035f4d-5120-de6a-7ac8-a35841a92b8a@tycho.nsa.gov>
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7a45f9a-8fea-4b2d-fa69-08d795e16bc4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2020 15:26:10.3042
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KNZUMPr9ikTgkfwSVtMr9y1pZ7Y4SqNM1MJA9Idj2gMnKu43Y6uR1oBqRRvKfhRwmsUnDpQHMJcR0XNrSqvDEg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6279
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8e035f4d-5120-de6a-7ac8-a35841a92b8a@tycho.nsa.gov>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Andre Przywara <andre.przywara@arm.com>
-> Sent: Friday, January 10, 2020 5:24 PM
-> To: David S . Miller <davem@davemloft.net>; Radhey Shyam Pandey
-> <radheys@xilinx.com>
-> Cc: Michal Simek <michals@xilinx.com>; Robert Hancock
-> <hancock@sedsystems.ca>; netdev@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH 04/14] net: axienet: Improve DMA error handling
->=20
-> Since 0 is a valid DMA address, we cannot use the physical address to
-> check whether a TX descriptor is valid and is holding a DMA mapping.
->=20
-> Use the "cntrl" member of the descriptor to make this decision, as it
-> contains at least the length of the buffer, so 0 points to an
-> uninitialised buffer.
->=20
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+On 09-Jan 14:47, Stephen Smalley wrote:
+> On 1/9/20 2:43 PM, KP Singh wrote:
+> > On 10-Jan 06:07, James Morris wrote:
+> > > On Thu, 9 Jan 2020, Stephen Smalley wrote:
+> > > 
+> > > > On 1/9/20 1:11 PM, James Morris wrote:
+> > > > > On Wed, 8 Jan 2020, Stephen Smalley wrote:
+> > > > > 
+> > > > > > The cover letter subject line and the Kconfig help text refer to it as a
+> > > > > > BPF-based "MAC and Audit policy".  It has an enforce config option that
+> > > > > > enables the bpf programs to deny access, providing access control. IIRC,
+> > > > > > in
+> > > > > > the earlier discussion threads, the BPF maintainers suggested that Smack
+> > > > > > and
+> > > > > > other LSMs could be entirely re-implemented via it in the future, and that
+> > > > > > such an implementation would be more optimal.
+> > > > > 
+> > > > > In this case, the eBPF code is similar to a kernel module, rather than a
+> > > > > loadable policy file.  It's a loadable mechanism, rather than a policy, in
+> > > > > my view.
+> > > > 
+> > > > I thought you frowned on dynamically loadable LSMs for both security and
+> > > > correctness reasons?
+> > 
+> > Based on the feedback from the lists we've updated the design for v2.
+> > 
+> > In v2, LSM hook callbacks are allocated dynamically using BPF
+> > trampolines, appended to a separate security_hook_heads and run
+> > only after the statically allocated hooks.
+> > 
+> > The security_hook_heads for all the other LSMs (SELinux, AppArmor etc)
+> > still remains __lsm_ro_after_init and cannot be modified. We are still
+> > working on v2 (not ready for review yet) but the general idea can be
+> > seen here:
+> > 
+> >    https://github.com/sinkap/linux-krsi/blob/patch/v1/trampoline_prototype/security/bpf/lsm.c
+> > 
+> > > 
+> > > Evaluating the security impact of this is the next step. My understanding
+> > > is that eBPF via BTF is constrained to read only access to hook
+> > > parameters, and that its behavior would be entirely restrictive.
+> > > 
+> > > I'd like to understand the security impact more fully, though.  Can the
+> > > eBPF code make arbitrary writes to the kernel, or read anything other than
+> > > the correctly bounded LSM hook parameters?
+> > > 
+> > 
+> > As mentioned, the BPF verifier does not allow writes to BTF types.
+> > 
+> > > > And a traditional security module would necessarily fall
+> > > > under GPL; is the eBPF code required to be likewise?  If not, KRSI is a
+> > > > gateway for proprietary LSMs...
+> > > 
+> > > Right, we do not want this to be a GPL bypass.
+> > 
+> > This is not intended to be a GPL bypass and the BPF verifier checks
+> > for license compatibility of the loaded program with GPL.
+> 
+> IIUC, it checks that the program is GPL compatible if it uses a function
+> marked GPL-only.  But what specifically is marked GPL-only that is required
+> for eBPF programs using KRSI?
 
-> ---
->  drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> index 7e90044cf2d9..ec5d01adc1d5 100644
-> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> @@ -570,7 +570,7 @@ static void axienet_start_xmit_done(struct
-> net_device *ndev)
->  				DMA_TO_DEVICE);
->  		if (cur_p->skb)
->  			dev_consume_skb_irq(cur_p->skb);
-> -		/*cur_p->phys =3D 0;*/
-> +		cur_p->cntrl =3D 0;
->  		cur_p->app0 =3D 0;
->  		cur_p->app1 =3D 0;
->  		cur_p->app2 =3D 0;
-> @@ -1557,7 +1557,7 @@ static void axienet_dma_err_handler(unsigned
-> long data)
->=20
->  	for (i =3D 0; i < lp->tx_bd_num; i++) {
->  		cur_p =3D &lp->tx_bd_v[i];
-> -		if (cur_p->phys)
-> +		if (cur_p->cntrl)
->  			dma_unmap_single(ndev->dev.parent, cur_p->phys,
->  					 (cur_p->cntrl &
->=20
-> XAXIDMA_BD_CTRL_LENGTH_MASK),
-> --
-> 2.17.1
+Good point! If no-one objects, I can add it to the BPF_PROG_TYPE_LSM
+specific verification for the v2 of the patch-set which would require
+all BPF-LSM programs to be GPL.
 
+- KP
+
+> 
+> > 
+> > - KP
+> > 
+> > > 
+> > > If these issues can be resolved, this may be a "safe" way to support
+> > > loadable LSM applications.
+> > > 
+> > > Again, I'd be interested in knowing how this is is handled in the
+> > > networking stack (keeping in mind that LSM is a much more invasive API,
+> > > and may not be directly comparable).
+> > > 
+> > > -- 
+> > > James Morris
+> > > <jmorris@namei.org>
+> > > 
+> 
