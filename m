@@ -2,94 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3E57136620
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 05:32:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41A03136630
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 05:34:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731248AbgAJEcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 23:32:10 -0500
-Received: from ozlabs.org ([203.11.71.1]:33061 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731162AbgAJEcK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 23:32:10 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1731336AbgAJEdV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 23:33:21 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:17818 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731289AbgAJEdU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 23:33:20 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1578630799; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=FI/mpR0o5+xTEAnYT2bvYhcVqrPO4KjahbOFDjhFyz0=; b=b4c/+ygvBgRpLYPTT8LSs7u2gugEq+BMk5VZXUQWCg5cmuQ4WtuUhPJh+eHbfo89Hs8rq91s
+ cMinVnmgvm8skEeUJp+oOZlF71KpRnw6GY2FdbWOIEocClyZsuolz3Womm2BTTtsNS4Lw6M9
+ 8rvYNAumzCnIew1M1GWVuQGrjgA=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e17fe8a.7fb8349763b0-smtp-out-n01;
+ Fri, 10 Jan 2020 04:33:14 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 8CF6EC447A2; Fri, 10 Jan 2020 04:33:14 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from davidai-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47v97D0W1Lz9sRK;
-        Fri, 10 Jan 2020 15:32:07 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1578630728;
-        bh=54ImpZanYCPaDZyv+ar+KxMn/nTVY4c2NKp/1pllfrU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=TUJ9ZQPy5NxP/di80CmJBGyXOIwel2TpKKIiqCMu2ZMIHZUZ1JVSOhvX0eDZHLzzD
-         ZzWu7dOakWa3oN0+WJmsyId9RyODDKERzLAD1uNIeFxTaWxfE1Wx9xGV4SacA0cwsz
-         cvAT0CE6kJuR6tXMJWfKFoD5lLWTTfKjy4GZW95CkceHoo+QIPXkmJOhX7iZ0QXOUr
-         UfEeS32m3cCra3ppEXO1WCcDg2EddiJbHG4v34bIL10ddsjtwvdTWLrEFK9padwHRj
-         3cSDiWVpJIHkICfWp6utABSmXXqLFsnxm/goWuZzzS8ekenAd52D9xmsEX8KKe2Yxc
-         /wweWCt0nr6ag==
-Date:   Fri, 10 Jan 2020 15:32:07 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jayshri Pawar <jpawar@cadence.com>,
-        Pawel Laszczak <pawell@cadence.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: linux-next: manual merge of the usb-gadget tree with Linus' tree
-Message-ID: <20200110153207.70c888cd@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/4OzTUSKr0Y6dYgSSo.j0Az8";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        (Authenticated sender: daidavid1)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3C760C433A2;
+        Fri, 10 Jan 2020 04:33:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C760C433A2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=daidavid1@codeaurora.org
+From:   David Dai <daidavid1@codeaurora.org>
+To:     georgi.djakov@linaro.org, bjorn.andersson@linaro.org,
+        robh+dt@kernel.org
+Cc:     David Dai <daidavid1@codeaurora.org>, evgreen@google.com,
+        sboyd@kernel.org, ilina@codeaurora.org, seansw@qti.qualcomm.com,
+        elder@linaro.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v2 0/6] Split SDM845 interconnect nodes and consolidate RPMh support
+Date:   Thu,  9 Jan 2020 20:32:58 -0800
+Message-Id: <1578630784-962-1-git-send-email-daidavid1@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/4OzTUSKr0Y6dYgSSo.j0Az8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+While there are no current consumers of the SDM845 interconnect device in
+devicetree, take this opportunity to redefine the interconnect device nodes
+as the previous definitions of using a single child node under the apps_rsc
+device did not accurately capture the description of the hardware.
+The Network-On-Chip (NoC) interconnect devices should be represented in a
+manner akin to QCS404 platforms[1] where there is a separation of NoC devices
+and its RPM/RPMh counterparts.
 
-Hi all,
+The bcm-voter devices are representing the RPMh devices that the interconnect
+providers need to communicate with and there can be more than one instance of
+the Bus Clock Manager (BCM) which can live under different instances of Resource
+State Coordinators (RSC). There are display use cases where consumers may need
+to target a different bcm-voter (Some display specific RSC) than the default,
+and there needs to be a way to represent this connection in devicetree.
 
-Today's linux-next merge of the usb-gadget tree got a conflict in:
+This patches series extends the discussions[2][3] involving the SDM845
+interconnect bindings by adding accompanying driver implementations
+using the split NoC devices. Some of the code used to support the SDM845
+provider driver are refactored into common modules that can used by other
+RPMh based interconnect providers such as SC7180[4]. This patch series also
+updates existing sdm845 binding documentation to DT schema format using
+json-schema.
 
-  drivers/usb/cdns3/gadget.c
+v2: 
+- Reorganized dt-binding patches
+- Fixed a bug that adds duplicate BCM node to voter (Georgi)
+- Addressed misc. comments (Georgi)
 
-between commit:
+v1: https://lkml.org/lkml/2019/12/16/15
 
-  f616c3bda47e ("usb: cdns3: Fix dequeue implementation.")
+[1]: https://lkml.org/lkml/2019/6/13/143
+[2]: https://lkml.org/lkml/2019/7/19/1063
+[3]: https://lkml.org/lkml/2019/10/16/1793
+[4]: https://lkml.org/lkml/2019/11/26/389
 
-from Linus' tree and commit:
+David Dai (6):
+  dt-bindings: interconnect: Convert qcom,sdm845 to DT schema
+  dt-bindings: interconnect: Add YAML schemas for QCOM bcm-voter
+  dt-bindings: interconnect: Update Qualcomm SDM845 DT bindings
+  interconnect: qcom: Consolidate interconnect RPMh support
+  interconnect: qcom: sdm845: Split qnodes into their respective NoCs
+  arm64: dts: sdm845: Redefine interconnect provider DT nodes
 
-  4f1fa63a6dc2 ("usb: cdns3: Add streams support to cadence USB3 DRD driver=
-")
+ .../bindings/interconnect/qcom,bcm-voter.yaml      |   45 +
+ .../bindings/interconnect/qcom,sdm845.txt          |   24 -
+ .../bindings/interconnect/qcom,sdm845.yaml         |   74 ++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi               |   61 +-
+ drivers/interconnect/qcom/Kconfig                  |    8 +
+ drivers/interconnect/qcom/Makefile                 |    4 +
+ drivers/interconnect/qcom/bcm-voter.c              |  363 +++++++
+ drivers/interconnect/qcom/bcm-voter.h              |   28 +
+ drivers/interconnect/qcom/icc-rpmh.c               |  158 +++
+ drivers/interconnect/qcom/icc-rpmh.h               |  151 +++
+ drivers/interconnect/qcom/sdm845.c                 | 1132 ++++++++------------
+ include/dt-bindings/interconnect/qcom,sdm845.h     |  263 ++---
+ 12 files changed, 1498 insertions(+), 813 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,bcm-voter.yaml
+ delete mode 100644 Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
+ create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,sdm845.yaml
+ create mode 100644 drivers/interconnect/qcom/bcm-voter.c
+ create mode 100644 drivers/interconnect/qcom/bcm-voter.h
+ create mode 100644 drivers/interconnect/qcom/icc-rpmh.c
+ create mode 100644 drivers/interconnect/qcom/icc-rpmh.h
 
-from the usb-gadget tree.
-
-I have no idea how to handle this, so I just dropped the usb-gadget tree
-for today - it clearly needs to be rebased on Linus' tree anyway (it
-has a few shared patches that are different commits and there are
-further changes to this file in Linus' tree as well.  rebasing onto
-(or merging with) v5.5-rc6 may be useful.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/4OzTUSKr0Y6dYgSSo.j0Az8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4X/kcACgkQAVBC80lX
-0Gy8sQf/aL1X09wlK/pnyYK5zpF/jjDju5A4NTnErdB9ca/KyEqD+EFGnuwu4h9Z
-7bYXW79wpwkXi3Fu4WRFIyimEh3YdtkAZQsr6b0MSedxOH0M03zfeWmfxdzgBamJ
-nfzZE4YLy9GjCP1UgZERpOfo2P97fXcPzL0DriRubeb+0lcYrd+xLnGqmQtx4hXB
-N8568aV2rvriJIx7NWb0YJ7MtG7YBV8OZ6jAE4uU3UFjPO4eFZPwSUy+v/KcBLOC
-zItIqsgxUhq8LLTuy78CVAa+AYl4RmroFtCYVn8zNhI8Bj2b7Z+dADZCisjZcQQA
-4yk9VVTkItLXVyfbIeRTTXD/76ajzg==
-=Yl3n
------END PGP SIGNATURE-----
-
---Sig_/4OzTUSKr0Y6dYgSSo.j0Az8--
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
