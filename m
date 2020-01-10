@@ -2,80 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32276137A5A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 00:50:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2AB1137A5C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 00:50:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727718AbgAJXuX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 18:50:23 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34778 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727591AbgAJXuX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 18:50:23 -0500
-Received: by mail-lj1-f196.google.com with SMTP id z22so3886040ljg.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 15:50:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=a/4ylgjmQcCigB0GN3R+FfVLnwKZ03GU29naJ9AmFWY=;
-        b=1ORe7du75y8bIGNFjeY5a8rsfx+pb2eT02NBOiCQ+sQCalsd0kgByjIvpBTPm0Zwdd
-         9NSr24B2MGPrf8Kcj3AFKnMiehNpl5PyO3gSwl3X2jkQLAHOcUgRvwwVzfJHbjCyvVdK
-         /6d8LQhgcFemRoLWckzwU95kdAQQ1NtNILzKOJoZJLCZjlajxxut32SNKnNGWIwQsipf
-         MZm8pF/tQO2nthFpNzEjvZRaEG4jqmwCU+vtHLFZ/3NDi2DE55756f/DFMo5g9Y75U+X
-         GeGFQ4m45H3wzpjzDVbxwvlflSqRehe/a5Sp+3TJWU7YVLiUhITcY6E9elwO3ikeeHBA
-         dLXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=a/4ylgjmQcCigB0GN3R+FfVLnwKZ03GU29naJ9AmFWY=;
-        b=P3mk/AU+2WcglasUIBgeo6nL/Mtu0ECY+NK3IYlH1oTTPnUuhWJZSsptKDQ3goJ8HW
-         cgypscWiwdF8atbdBnpLs49dqQGt1QEnh9k/fcsdMi5jA1uLtWZ+OVI/wQobRGSykau5
-         SIeSnTfFR3XTA4GFKxyJjKQteh3JNMz5CGql0K82HGPBIvPlmLpsbcbEWaMF1VCGtM87
-         moksw4nyi/IZZqAUVomIJ1EagVSLcaDo0R7g23XykCa9LvgtJ4qUEfNUovrFMNX9aEyq
-         CeSkd/MhjlruNLlFlrcZ69WOb9R9PqBsYRX6tPbsYHTkbqx74s/44YCi+MfOcvg2B0ws
-         1Ozw==
-X-Gm-Message-State: APjAAAXfs70BQI70oM9Tv8JtAUUjDzsV+aUpznXfid+p8zsNOicdWia6
-        qzdS6YNfsSOeZqupGSBGqNoUKQ==
-X-Google-Smtp-Source: APXvYqyCpKNXyIkh7rO2vraxEPK4HnOnHP9jjy2oQJp1dVT9gpTGCAIVV4YmgfYQXt0Ui1vndv3adQ==
-X-Received: by 2002:a2e:8512:: with SMTP id j18mr1908588lji.269.1578700220996;
-        Fri, 10 Jan 2020 15:50:20 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id p15sm1718217lfo.88.2020.01.10.15.50.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2020 15:50:20 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 018AD10144E; Sat, 11 Jan 2020 02:50:20 +0300 (+03)
-Date:   Sat, 11 Jan 2020 02:50:20 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH] mm/huge_memory.c: reduce critical section protected by
- split_queue_lock
-Message-ID: <20200110235020.5cfrudvsenzfotmi@box>
-References: <20200110025516.23996-1-richardw.yang@linux.intel.com>
+        id S1727796AbgAJXuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 18:50:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37466 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727728AbgAJXuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 18:50:50 -0500
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEE2720721;
+        Fri, 10 Jan 2020 23:50:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578700249;
+        bh=Psrf5lv/ppB1Eke5z2SmhdxBqDuAwAx/qdkZaUu9VVE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=RyAJxfEhipfX45wJw4VWB4489hI3tx/LI/DKYK81YE5sxB6y4oLTnOj6K2pLaFpWH
+         X/bGxKeJeXoTyygz7VMX6KIEqLvKo8m6hkFVWcHEIGnpoQ9CZ/TS7LLcZv1DW9h+0P
+         h+A02PJ+4Zlsv01fp8PTE4paS/SLmyfJ8T8KwIzE=
+Received: by mail-qv1-f44.google.com with SMTP id x1so1614906qvr.8;
+        Fri, 10 Jan 2020 15:50:49 -0800 (PST)
+X-Gm-Message-State: APjAAAXuFSG2wENR+1m85jfETmuuh8F+Lddm5jBcc3H/KX1d5aW242On
+        b3ZwxLvBp1cp+AjMG6PGLp+04GehOB1sOVrCGg==
+X-Google-Smtp-Source: APXvYqx9u0dSkeb2HRMFumNFpMD+qH1eg54SR01fXYhsCkTKiKQocTuTy1z4bsE+SNdpO7cAVu6ScL5LMUHkrng/LpY=
+X-Received: by 2002:a0c:f68f:: with SMTP id p15mr1149115qvn.79.1578700248840;
+ Fri, 10 Jan 2020 15:50:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200110025516.23996-1-richardw.yang@linux.intel.com>
-User-Agent: NeoMutt/20180716
+References: <20191211232345.24810-1-robh@kernel.org> <5386e959-f9c4-2748-ed08-34ab361aee2c@nvidia.com>
+In-Reply-To: <5386e959-f9c4-2748-ed08-34ab361aee2c@nvidia.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 10 Jan 2020 17:50:37 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLmth0bYcG2VnxU-jk_VoC4TgvWD8_e6r1_8WqVwYGq0g@mail.gmail.com>
+Message-ID: <CAL_JsqLmth0bYcG2VnxU-jk_VoC4TgvWD8_e6r1_8WqVwYGq0g@mail.gmail.com>
+Subject: Re: [PATCH] of: Rework and simplify phandle cache to use a fixed size
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 10:55:16AM +0800, Wei Yang wrote:
-> split_queue_lock protects data in struct deferred_split. We can release
-> the lock after delete the page from deferred_split_queue.
-> 
-> This patch moves the THP accounting out of the lock protection, which is
-> introduced in commit 65c453778aea ("mm, rmap: account shmem thp pages").
-> 
-> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+On Tue, Jan 7, 2020 at 4:22 AM Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+> Hi Rob,
+>
+> On 11/12/2019 23:23, Rob Herring wrote:
+> > The phandle cache was added to speed up of_find_node_by_phandle() by
+> > avoiding walking the whole DT to find a matching phandle. The
+> > implementation has several shortcomings:
+> >
+> >   - The cache is designed to work on a linear set of phandle values.
+> >     This is true for dtc generated DTs, but not for other cases such as
+> >     Power.
+> >   - The cache isn't enabled until of_core_init() and a typical system
+> >     may see hundreds of calls to of_find_node_by_phandle() before that
+> >     point.
+> >   - The cache is freed and re-allocated when the number of phandles
+> >     changes.
+> >   - It takes a raw spinlock around a memory allocation which breaks on
+> >     RT.
+> >
+> > Change the implementation to a fixed size and use hash_32() as the
+> > cache index. This greatly simplifies the implementation. It avoids
+> > the need for any re-alloc of the cache and taking a reference on nodes
+> > in the cache. We only have a single source of removing cache entries
+> > which is of_detach_node().
+> >
+> > Using hash_32() removes any assumption on phandle values improving
+> > the hit rate for non-linear phandle values. The effect on linear values
+> > using hash_32() is about a 10% collision. The chances of thrashing on
+> > colliding values seems to be low.
+> >
+> > To compare performance, I used a RK3399 board which is a pretty typical
+> > system. I found that just measuring boot time as done previously is
+> > noisy and may be impacted by other things. Also bringing up secondary
+> > cores causes some issues with measuring, so I booted with 'nr_cpus=1'.
+> > With no caching, calls to of_find_node_by_phandle() take about 20124 us
+> > for 1248 calls. There's an additional 288 calls before time keeping is
+> > up. Using the average time per hit/miss with the cache, we can calculate
+> > these calls to take 690 us (277 hit / 11 miss) with a 128 entry cache
+> > and 13319 us with no cache or an uninitialized cache.
+> >
+> > Comparing the 3 implementations the time spent in
+> > of_find_node_by_phandle() is:
+> >
+> > no cache:        20124 us (+ 13319 us)
+> > 128 entry cache:  5134 us (+ 690 us)
+> > current cache:     819 us (+ 13319 us)
+> >
+> > We could move the allocation of the cache earlier to improve the
+> > current cache, but that just further complicates the situation as it
+> > needs to be after slab is up, so we can't do it when unflattening (which
+> > uses memblock).
+> >
+> > Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > Cc: Michael Ellerman <mpe@ellerman.id.au>
+> > Cc: Segher Boessenkool <segher@kernel.crashing.org>
+> > Cc: Frank Rowand <frowand.list@gmail.com>
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+>
+> With next-20200106 I have noticed a regression on Tegra210 where it
+> appears that only one of the eMMC devices is being registered. Bisect is
+> pointing to this patch and reverting on top of next fixes the problem.
+> That is as far as I have got so far, so if you have any ideas, please
+> let me know. Unfortunately, there do not appear to be any obvious errors
+> from the bootlog.
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+I guess that's tegra210-p2371-2180.dts because none of the others have
+2 SD hosts enabled. I don't see anything obvious though. Are you doing
+any runtime mods to the DT?
 
--- 
- Kirill A. Shutemov
+Can you try just removing the cache lookup at the beginning? Pretty
+sure that will work as that's pretty much what we had before any
+cache. Next try dumping out the phandle values and node ptr values.
+
+Rob
