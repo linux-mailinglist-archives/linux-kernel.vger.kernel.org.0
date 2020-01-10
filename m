@@ -2,108 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E532913741C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:53:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6DBF137401
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:47:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbgAJQxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 11:53:10 -0500
-Received: from krieglstein.org ([188.68.35.71]:49986 "EHLO krieglstein.org"
+        id S1728939AbgAJQqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 11:46:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728492AbgAJQxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 11:53:10 -0500
-X-Greylist: delayed 389 seconds by postgrey-1.27 at vger.kernel.org; Fri, 10 Jan 2020 11:53:08 EST
-Received: from dabox.localnet (gateway.hbm.com [213.157.30.2])
-        by krieglstein.org (Postfix) with ESMTPSA id E68BD4009B;
-        Fri, 10 Jan 2020 17:46:37 +0100 (CET)
-From:   Tim Sander <tim@krieglstein.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Dinh Nguyen <dinguyen@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: mtd raw nand denali.c broken for Intel/Altera Cyclone V
-Date:   Fri, 10 Jan 2020 17:46:37 +0100
-Message-ID: <2827587.laNcgWlGab@dabox>
-Organization: Sander and Lightning
-In-Reply-To: <CAK7LNASG+b03NDhrenB9yfvgYDVpYSnb2vSCu_-DB8dh70boMg@mail.gmail.com>
-References: <5143724.5TqzkYX0oI@dabox> <23083624.r2bJSIadJk@dabox> <CAK7LNASG+b03NDhrenB9yfvgYDVpYSnb2vSCu_-DB8dh70boMg@mail.gmail.com>
+        id S1728542AbgAJQqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 11:46:46 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2313E206ED;
+        Fri, 10 Jan 2020 16:46:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578674805;
+        bh=Q/Krz5L+BywpaikQwEhNbMRsDEYYow+J/SrLX6ewYgQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=C6qapw4FSUm8G59HZSFHuh7wITftQUYHbB9z1x0GHpLzHlao5WNjcBK3Iz0Vo1+Pq
+         SMKJn8i2w9EUbERHVRA+ByX51UowC2/LKSZZgKh9Ey3KBtm6n5ZN9nO4Vs5V1763FX
+         y3fRHs+j4rKAby/QG6P4yvnp163bsNFbsygjdQ5M=
+Date:   Fri, 10 Jan 2020 17:46:43 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Dmitry Safonov <dima@arista.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Vasiliy Khoruzhick <vasilykh@arista.com>,
+        linux-serial@vger.kernel.org
+Subject: Re: [PATCH-next 3/3] serial/sysrq: Add MAGIC_SYSRQ_SERIAL_SEQUENCE
+Message-ID: <20200110164643.GB1822445@kroah.com>
+References: <20200109215444.95995-1-dima@arista.com>
+ <20200109215444.95995-4-dima@arista.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200109215444.95995-4-dima@arista.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro Yamada
+On Thu, Jan 09, 2020 at 09:54:44PM +0000, Dmitry Safonov wrote:
+> Many embedded boards have a disconnected TTL level serial which can
+> generate some garbage that can lead to spurious false sysrq detects.
+> 
+> Currently, sysrq can be either completely disabled for serial console
+> or always disabled (with CONFIG_MAGIC_SYSRQ_SERIAL), since
+> commit 732dbf3a6104 ("serial: do not accept sysrq characters via serial port")
+> 
+> At Arista, we have such boards that can generate BREAK and random
+> garbage. While disabling sysrq for serial console would solve
+> the problem with spurious false sysrq triggers, it's also desirable
+> to have a way to enable sysrq back.
+> 
+> As a measure of balance between on and off options, add
+> MAGIC_SYSRQ_SERIAL_SEQUENCE which is a string sequence that can enable
+> sysrq if it follows BREAK on a serial line. The longer the string - the
+> less likely it may be in the garbage.
+> 
+> Having the way to enable sysrq was beneficial to debug lockups with
+> a manual investigation in field and on the other side preventing false
+> sysrq detections.
+> 
+> Based-on-patch-by: Vasiliy Khoruzhick <vasilykh@arista.com>
+> Signed-off-by: Dmitry Safonov <dima@arista.com>
+> ---
+>  drivers/tty/serial/serial_core.c | 52 ++++++++++++++++++++++++++++----
+>  include/linux/serial_core.h      |  2 +-
+>  lib/Kconfig.debug                |  8 +++++
+>  3 files changed, 55 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+> index 6ac9dfed3423..f70eba032d0b 100644
+> --- a/drivers/tty/serial/serial_core.c
+> +++ b/drivers/tty/serial/serial_core.c
+> @@ -3081,6 +3081,38 @@ void uart_insert_char(struct uart_port *port, unsigned int status,
+>  }
+>  EXPORT_SYMBOL_GPL(uart_insert_char);
+>  
+> +const char sysrq_toggle_seq[] = CONFIG_MAGIC_SYSRQ_SERIAL_SEQUENCE;
+> +
+> +static void uart_sysrq_on(struct work_struct *w)
+> +{
+> +	sysrq_toggle_support(1);
+> +	pr_info("SysRq is enabled by magic sequience on serial\n");
 
-Sorry for the large delay. I have seen the patches at 
-https://lists.infradead.org/pipermail/linux-mtd/2019-December/092852.html
-Seem to resolve the question about the spare_area_skip_bytes register.
+Do we want to say what serial port it is enabled on?
 
-I have now set the register to 2 which seems to be the right choice on an Intel  
-SocFPGA. But still i am out of luck trying to boot 5.4.5-rt3 or 5.5-rc5. I get the 
-following messages during bootup booting:
-[    1.825590] denali-nand-dt ff900000.nand: timeout while waiting for irq 0x1000
-[    1.832936] denali-nand-dt: probe of ff900000.nand failed with error -5
+And why is this done in a workqueue?
 
-But the commit c19e31d0a32dd 2017-06-13 22:45:38 predates the 4.19 kernel
-release (Mon Oct 22 07:37:37 2018). So it seems there is not an obvious commit
-which is causing the problem. Looking at the changes it might be that the timing
-calculations in the driver changed which might also lead to a similar error.
+> +}
+> +static DECLARE_WORK(sysrq_enable_work, uart_sysrq_on);
+> +
+> +static int uart_try_toggle_sysrq(struct uart_port *port, unsigned int ch)
+> +{
+> +	if (sysrq_toggle_seq[0] == '\0')
+> +		return 0;
 
-I am booting via NFS the bootloader is placed in NOR flash.  The corresponding 
-nand dts entry is updated to the new format and looks like this:
-                nand@ff900000 {
-                        #address-cells = <0x1>;
-                        #size-cells = <0x0>;
-                        compatible = "altr,socfpga-denali-nand";
-                        reg = <0xff900000 0x100000 0xffb80000 0x10000>;
-                        reg-names = "nand_data", "denali_reg";
-                        interrupts = <0x0 0x90 0x4>;
-                        clocks = <0x2d 0x1e 0x2e>;
-                        clock-names = "nand", "nand_x", "ecc";
-                        resets = <0x6 0x24>;
-                        status = "okay";
-                        nand@0 {
-                                reg = <0x0>;
-                                #address-cells = <0x1>;
-                                #size-cells = <0x1>;
-                                partition@0 {
-                                        label = "work";
-                                        reg = <0x0 0x10000000>;
-                                };
-                        };
-                };
+Is constantly checking the data stream like this going to slow things
+down overall?  Ah, we are just checking this after BREAK, right?  So
+that hopefully will not be that bad...
 
-The last kernel i am able to boot is 4.19.10. I have tried booting:
-5.1.21, 5.2.9, 5.3-rc8, 5.4.5-rt3 and 5.5-rc5. They all failed. Unfortunately the 
-range is quite large for bisecting the problem. It also occurred to me that
-all the platforms with Intel Cyclone V in mainline are development boards
-which boot from SD-card not exhibiting this problem on their default boot path.
+> +
+> +	BUILD_BUG_ON(ARRAY_SIZE(sysrq_toggle_seq) >= sizeof(port->sysrq_seq)*U8_MAX);
+> +	if (sysrq_toggle_seq[port->sysrq_seq] != ch) {
+> +		port->sysrq_seq = 0;
+> +		return 0;
+> +	}
+> +
+> +	/* Without the last \0 */
+> +	if (++port->sysrq_seq < (ARRAY_SIZE(sysrq_toggle_seq) - 1)) {
+> +		port->sysrq = jiffies + HZ*5;
 
-Best regards
-Tim
+5 second delay?  You should document what this value is for somewhere
+here...
 
-PS: Here is some snippet from an older mail i didn't sent to the list yet which
-might be superseded by now:
-To get into this matter i started reading the "Intel Cyclone V HPS TRM" 
-Section 13-20 Preserving Bad Block Markers:
-"You can configure the NAND flash controller to skip over a specified number of 
-bytes when it writes the last sector in a page to the spare area. This option 
-write the desired offset to the spare_area_skip_bytes register in the config 
-group. For example, if the device page size is 2 KB, and the device 
-area, set the spare_area_skip_bytes register to 2. When the flash controller 
-writes the last sector of the page that overlaps with the spare area, it 
-spare_area_skip_bytes must be an even number. For example, if the bad block 
-marker is a single byte, set spare_area_skip_bytes to 2."
+> +		return 1;
+> +	}
+> +
+> +	schedule_work(&sysrq_enable_work);
+> +
+> +	port->sysrq = 0;
+> +	return 1;
+> +}
+> +
+>  int uart_handle_sysrq_char(struct uart_port *port, unsigned int ch)
+>  {
+>  	if (!IS_ENABLED(CONFIG_MAGIC_SYSRQ_SERIAL))
+> @@ -3090,9 +3122,13 @@ int uart_handle_sysrq_char(struct uart_port *port, unsigned int ch)
+>  		return 0;
+>  
+>  	if (ch && time_before(jiffies, port->sysrq)) {
+> -		handle_sysrq(ch);
+> -		port->sysrq = 0;
+> -		return 1;
+> +		if (sysrq_get_mask()) {
+> +			handle_sysrq(ch);
+> +			port->sysrq = 0;
+> +			return 1;
+> +		}
 
+Isn't this change to test for sysrq_get_mask() a different change than
+checking for the "magic" data stream?
 
+> +		if (uart_try_toggle_sysrq(port, ch))
+> +			return 1;
+>  	}
+>  	port->sysrq = 0;
+>  
+> @@ -3109,9 +3145,13 @@ int uart_prepare_sysrq_char(struct uart_port *port, unsigned int ch)
+>  		return 0;
+>  
+>  	if (ch && time_before(jiffies, port->sysrq)) {
+> -		port->sysrq_ch = ch;
+> -		port->sysrq = 0;
+> -		return 1;
+> +		if (sysrq_get_mask()) {
+> +			port->sysrq_ch = ch;
+> +			port->sysrq = 0;
+> +			return 1;
+> +		}
+> +		if (uart_try_toggle_sysrq(port, ch))
+> +			return 1;
+>  	}
+>  	port->sysrq = 0;
+>  
+> diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+> index 255e86a474e9..1f4443db5474 100644
+> --- a/include/linux/serial_core.h
+> +++ b/include/linux/serial_core.h
+> @@ -243,10 +243,10 @@ struct uart_port {
+>  	unsigned long		sysrq;			/* sysrq timeout */
+>  	unsigned int		sysrq_ch;		/* char for sysrq */
+>  	unsigned char		has_sysrq;
+> +	unsigned char		sysrq_seq;		/* index in sysrq_toggle_seq */
+>  
+>  	unsigned char		hub6;			/* this should be in the 8250 driver */
+>  	unsigned char		suspended;
+> -	unsigned char		unused;
 
+This is an unrelated change, let's leave it for a different patch that
+cleans up the layout of this structure, ok?
 
+thanks,
 
+greg k-h
