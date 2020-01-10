@@ -2,157 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 018A213662A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 05:33:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D29E5136642
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 05:36:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731415AbgAJEdc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 23:33:32 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:43106 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731393AbgAJEd3 (ORCPT
+        id S1731267AbgAJEgZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 23:36:25 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:10788 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731105AbgAJEgY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 23:33:29 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1578630809; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=WfYVZRY7NUJGi0SdNulsMWXe+awHuELnsj9TepITErQ=; b=gzw2tq960tXVHBBE5/Z5bfBSnwn0oxu7ENzJA0YmVJU4QKFIldoqy9JdJ6NRTM12fZRoeD8u
- 0L6LDc3RpgMUNE849BMNDZtJQS2vSZkFyv7EwWMd7JKoBMGX0yJggewTuZ2gO3vB04CSF8AV
- Gttg39Un2/jcyPElM28okqoipvM=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e17fe97.7fc7ecb89ed8-smtp-out-n01;
- Fri, 10 Jan 2020 04:33:27 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id E8393C447A4; Fri, 10 Jan 2020 04:33:26 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from davidai-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: daidavid1)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2A492C433A2;
-        Fri, 10 Jan 2020 04:33:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2A492C433A2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=daidavid1@codeaurora.org
-From:   David Dai <daidavid1@codeaurora.org>
-To:     georgi.djakov@linaro.org, bjorn.andersson@linaro.org,
-        robh+dt@kernel.org
-Cc:     David Dai <daidavid1@codeaurora.org>, evgreen@google.com,
-        sboyd@kernel.org, ilina@codeaurora.org, seansw@qti.qualcomm.com,
-        elder@linaro.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v2 6/6] arm64: dts: sdm845: Redefine interconnect provider DT nodes
-Date:   Thu,  9 Jan 2020 20:33:04 -0800
-Message-Id: <1578630784-962-7-git-send-email-daidavid1@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1578630784-962-1-git-send-email-daidavid1@codeaurora.org>
-References: <1578630784-962-1-git-send-email-daidavid1@codeaurora.org>
+        Thu, 9 Jan 2020 23:36:24 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e17ff350001>; Thu, 09 Jan 2020 20:36:05 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 09 Jan 2020 20:36:23 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 09 Jan 2020 20:36:23 -0800
+Received: from [10.2.166.245] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 10 Jan
+ 2020 04:36:22 +0000
+Subject: Re: [PATCH v7 00/21] Move PMC clocks into Tegra PMC driver
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <broonie@kernel.org>,
+        <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
+        <mperttunen@nvidia.com>, <gregkh@linuxfoundation.org>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <spujar@nvidia.com>, <josephl@nvidia.com>,
+        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
+        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
+ <4e9fab30-14b5-bf1f-dc91-fd57ef614503@gmail.com>
+ <61a78ba8-4cc3-f6a6-513b-36daa9be32f0@nvidia.com>
+ <37a9676b-e0e5-7e80-5ee4-abfca361dcf7@nvidia.com>
+ <62751d2d-2b7d-509b-e236-363d2bb29b02@nvidia.com>
+Message-ID: <880b2e8a-aa55-40f3-7502-24392b88e53f@nvidia.com>
+Date:   Thu, 9 Jan 2020 20:36:20 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <62751d2d-2b7d-509b-e236-363d2bb29b02@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1578630965; bh=pFDMfq1B5n9eh51DXIzqtsvr/BTUfsiR/lTtj+CyAa4=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=LKiCtw88QrOqfhMrLfhm5+aOR0dwNi4aDcndsHAzJR1VeXsAxjeXbUgb+dpskMcjj
+         GN/wqgszl8e/R6w2vmqP+2ys0KSNaq4PBFeaw5C+5LXRz9iRlh/1RankoPWVmbePQe
+         ghLqooGNfCqzFxFJRZNnGd/s4EekFWrzAFtU3R+ejegZ+Zjk1mCWrklk/FzLABCz+T
+         i4pQkPoY66JgKLKncbNKv8pbUkNvV8wMNIOkoUTkHNczRM2bqoKcr6jq0RKjLQVSju
+         JcM1sdvate2sw3+L5/Y+6xYc0zbicwgVUozaBbO7e1Wqa1KN8KakNGq90q3SZ7Y4gO
+         wfwyFAj3aVrRA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the DT nodes for each of the Network-On-Chip interconnect
-buses found on SDM845 based platform and redefine the rsc_hlos
-child node as a bcm-voter device to better represent the hardware.
 
-Signed-off-by: David Dai <daidavid1@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 61 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 58 insertions(+), 3 deletions(-)
+On 1/9/20 7:32 PM, Sowjanya Komatineni wrote:
+>
+> On 1/9/20 7:24 PM, Sowjanya Komatineni wrote:
+>>
+>> On 1/9/20 5:39 PM, Sowjanya Komatineni wrote:
+>>>
+>>> On 1/9/20 11:44 AM, Dmitry Osipenko wrote:
+>>>> External email: Use caution opening links or attachments
+>>>>
+>>>>
+>>>> 08.01.2020 07:24, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>> This patch series moves Tegra PMC clocks from clock driver to pmc=20
+>>>>> driver
+>>>>> along with the device trees changes and audio driver which uses=20
+>>>>> one of
+>>>>> the pmc clock for audio mclk.
+>>>>>
+>>>>> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls=20
+>>>>> which
+>>>>> are currently registered by Tegra clock driver using=20
+>>>>> clk_regiser_mux and
+>>>>> clk_register_gate which performs direct Tegra PMC register access.
+>>>>>
+>>>>> When Tegra PMC is in secure mode, any access from non-secure world=20
+>>>>> will
+>>>>> not go through.
+>>>>>
+>>>>> This patch series adds these Tegra PMC clocks and blink controls=20
+>>>>> to Tegra
+>>>>> PMC driver with PMC as clock provider and removes them from Tegra=20
+>>>>> clock
+>>>>> driver.
+>>>>>
+>>>>> PMC clock clk_out_1 is dedicated for audio mclk from Tegra30 thru=20
+>>>>> Tegra210
+>>>>> and clock driver does inital parent configuration for it and=20
+>>>>> enables them.
+>>>>> But this clock should be taken care by audio driver as there is no=20
+>>>>> need
+>>>>> to have this clock pre enabled.
+>>>>>
+>>>>> So, this series also includes patch that updates ASoC driver to take
+>>>>> care of parent configuration for mclk if device tree don't specify
+>>>>> initial parent configuration using assigned-clock-parents and=20
+>>>>> controls
+>>>>> audio mclk enable/disable during ASoC machine startup and shutdown.
+>>>>>
+>>>>> DTs are also updated to use clk_out_1 as audio mclk rather than=20
+>>>>> extern1.
+>>>>>
+>>>>> This series also includes a patch for mclk fallback to extern1 when
+>>>>> retrieving mclk fails to have this backward compatible of new DT with
+>>>>> old kernels.
+>>>> Suspend-resume doesn't work anymore, reverting this series helps. I
+>>>> don't have any other information yet, please take a look.
+>>> Thanks Dmitry. Will test suspend resume and check..
+>>
+>> I see if we leave audio mclk (cdev1) enabled during=20
+>> tegra_asoc_utils_init, suspend resume works.
+>>
+>> Without audio mclk enabled during tegra_asoc_utils_init, somehow it=20
+>> prevents entry to suspend on Tegra30 platform.
+>>
+>> Will look in detail..
+>>
+> audio mclk is only needed for audio and werid that having it not=20
+> enabled all the time like in current clock driver prevents suspend=20
+> entry on Tegra30
+>
+> Looks like this issue is masked earlier with having mclk enabled all=20
+> the time by clock driver.
+>
+On linux-next without this patch series, I just disabled mclk to be=20
+enabled all the time (removed set_rate from utils_init) and also=20
+disabled default enable from clock driver.
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index ddb1f23..7c617a9 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1364,6 +1364,55 @@
- 			interrupts = <GIC_SPI 582 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		mem_noc: interconnect@1380000 {
-+			compatible = "qcom,sdm845-mem-noc";
-+			reg = <0 0x01380000 0 0x27200>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		dc_noc: interconnect@14e0000 {
-+			compatible = "qcom,sdm845-dc-noc";
-+			reg = <0 0x014e0000 0 0x400>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		config_noc: interconnect@1500000 {
-+			compatible = "qcom,sdm845-config-noc";
-+			reg = <0 0x01500000 0 0x5080>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		system_noc: interconnect@1620000 {
-+			compatible = "qcom,sdm845-system-noc";
-+			reg = <0 0x01620000 0 0x18080>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		aggre1_noc: interconnect@16e0000 {
-+			compatible = "qcom,sdm845-aggre1-noc";
-+			reg = <0 0x016e0000 0 0xd080>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		aggre2_noc: interconnect@1700000 {
-+			compatible = "qcom,sdm845-aggre2-noc";
-+			reg = <0 0x01700000 0 0x3b100>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		mmss_noc: interconnect@1740000 {
-+			compatible = "qcom,sdm845-mmss-noc";
-+			reg = <0 0x01740000 0 0x1c1000>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
- 		ufs_mem_hc: ufshc@1d84000 {
- 			compatible = "qcom,sdm845-ufshc", "qcom,ufshc",
- 				     "jedec,ufs-2.0";
-@@ -3100,6 +3149,13 @@
- 			#mbox-cells = <1>;
- 		};
- 
-+		gladiator_noc: interconnect@17900000 {
-+			compatible = "qcom,sdm845-gladiator-noc";
-+			reg = <0 0x17900000 0 0xd080>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
- 		apps_rsc: rsc@179c0000 {
- 			label = "apps_rsc";
- 			compatible = "qcom,rpmh-rsc";
-@@ -3174,9 +3230,8 @@
- 				};
- 			};
- 
--			rsc_hlos: interconnect {
--				compatible = "qcom,sdm845-rsc-hlos";
--				#interconnect-cells = <1>;
-+			apps_bcm_voter: bcm-voter {
-+				compatible = "qcom,sdm845-bcm-voter";
- 			};
- 		};
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+So somehow disabling mclk is preventing suspend entry.
+
+Probably debugging suspend issue on Tegra30 when audio mclk is disabled=20
+can be done separately and will keep audio mclk enabled in=20
+asoc_utils_init with comment mentioning this issue and fix as TBD to=20
+move on with PMC clock fixes.
+
+
+
