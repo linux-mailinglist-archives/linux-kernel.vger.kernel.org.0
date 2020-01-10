@@ -2,80 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDFBD13653B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 03:09:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 312BC136541
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 03:17:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730730AbgAJCJw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 21:09:52 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45196 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730601AbgAJCJv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 21:09:51 -0500
-Received: by mail-lj1-f196.google.com with SMTP id j26so416648ljc.12
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 18:09:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R4EGY9E2x/SkAY5ypNNovap4WyyEX7OCvqo4o4ElTiI=;
-        b=CG765F8Wc69HfycniYIukc82Y/Lt+AnIHQ4oupzFv9Ay/kIZEqDWcuncuJ453mu4TG
-         mb9SuTTKH4Nsq7LC18frT+FHu2iQAqpsslZkH06uj/WSEmyDDqwKF1Bzb5akSTP3xrEr
-         KguU9wsqhKxAVv9X4ocQvQJHIC37EzBW6e4+My55/m4nZ65JtdXerh99zQegUTv/9JaB
-         AUJoaRYlZc2E8nyt4fIGtzhlo44b0bVrx3xkegLnfsY1rLlRTRkJyuQtrNDWK+VQrbfb
-         SlqhHnIlP/ZvYPyF/YHxiZrlWonn5EitlNbADiQnMSgdRM8XPi/MozfxpXaIP2d9mb3C
-         L4eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R4EGY9E2x/SkAY5ypNNovap4WyyEX7OCvqo4o4ElTiI=;
-        b=DnaFhZqE19qq6RIpLfz7FbOhOHscyyuLtp3qJ1urkcf6e1jZ94v0vGVhW4GbLX6d7Q
-         lQj6yFSyC0m770qlZYU5fIbafvbGAvsQkJaZ6mOqe0tYqLOhr3UlwYR+q4/zyrJ8CX3x
-         RHuP8ATs8v2uc9M/Vz2aLMadSgOPuYYP6GBDACy3eHwGNuT1TVZZOqRzAwUqWbluhJCd
-         jAP68GHYBG13PErjHiTkW3aUqJgVfWU6uPsQaK66uadRyyCGsUGWcvNRV3G5K8102uRg
-         B2lI+0Pz6nHqIp8IFRX/9/dymeB3aczeZEJUN6tqpo3nmH9wEruliQjNq+qpYIjvOPnz
-         d2Tg==
-X-Gm-Message-State: APjAAAWThgxUtVIgWi8WfeHNWuZeQGyRdwi4/ghXb5mZ56uWJcCc49cI
-        VkKZOvuVhs13UFGJo6kCAQS8xe7GULZHVdCfp3M=
-X-Google-Smtp-Source: APXvYqzaR21ZRmjdArwdj62lKXqcCd/et0SbF+lqBPclZJIYeCEgY4LUONnwnhFOK2TgpOZm/8qVgA9F5xYSC3dby9o=
-X-Received: by 2002:a2e:7518:: with SMTP id q24mr706748ljc.119.1578622189693;
- Thu, 09 Jan 2020 18:09:49 -0800 (PST)
-MIME-Version: 1.0
-References: <20200103033929.4956-1-zhenzhong.duan@gmail.com>
- <20200109184055.GI5603@zn.tnic> <20200109204638.GA523773@rani.riverdale.lan> <20200109205041.GJ5603@zn.tnic>
-In-Reply-To: <20200109205041.GJ5603@zn.tnic>
-From:   Zhenzhong Duan <zhenzhong.duan@gmail.com>
-Date:   Fri, 10 Jan 2020 10:09:38 +0800
-Message-ID: <CAFH1YnNdmHD9rnriTVx-se-Z5MHsgUZ0jYWMrg6OYVjr4Ap+JQ@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/boot/KASLR: Fix unused variable warning
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1730787AbgAJCRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 21:17:12 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:34798 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730668AbgAJCRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 21:17:12 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2B3131A14B2;
+        Fri, 10 Jan 2020 03:17:10 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 184491A0574;
+        Fri, 10 Jan 2020 03:17:03 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 9ADAC40285;
+        Fri, 10 Jan 2020 10:16:54 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
+        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 1/3] dt-bindings: pinctrl: Convert i.MX8MQ to json-schema
+Date:   Fri, 10 Jan 2020 10:13:06 +0800
+Message-Id: <1578622388-23370-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 4:50 AM Borislav Petkov <bp@alien8.de> wrote:
->
-> Drop fanc.fnst@cn.fujitsu.com from Cc because it bounces.
->
-> On Thu, Jan 09, 2020 at 03:46:41PM -0500, Arvind Sankar wrote:
-> > The boot/compressed Makefile resets KBUILD_CFLAGS.  Following hack and
-> > building with W=1 shows it, or just add -Wunused in there.
->
-> I'm interested in how he reproduced it on the stock tree, without
-> additional hacks or changes.
+Convert the i.MX8MQ pinctrl binding to DT schema format using json-schema
 
-I indeed used additional parameters as below for daily build.
-# make O=/build/kernel/ -j4 EXTRA_CFLAGS=-Wall binrpm-pkg
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ .../bindings/pinctrl/fsl,imx8mq-pinctrl.txt        | 36 ------------
+ .../bindings/pinctrl/fsl,imx8mq-pinctrl.yaml       | 67 ++++++++++++++++++++++
+ 2 files changed, 67 insertions(+), 36 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.yaml
 
-Regards
-Zhenzhong
+diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
+deleted file mode 100644
+index 66de750..0000000
+--- a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
++++ /dev/null
+@@ -1,36 +0,0 @@
+-* Freescale IMX8MQ IOMUX Controller
+-
+-Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
+-for common binding part and usage.
+-
+-Required properties:
+-- compatible: "fsl,imx8mq-iomuxc"
+-- reg: should contain the base physical address and size of the iomuxc
+-  registers.
+-
+-Required properties in sub-nodes:
+-- fsl,pins: each entry consists of 6 integers and represents the mux and config
+-  setting for one pin.  The first 5 integers <mux_reg conf_reg input_reg mux_val
+-  input_val> are specified using a PIN_FUNC_ID macro, which can be found in
+-  imx8mq-pinfunc.h under device tree source folder.  The last integer CONFIG is
+-  the pad setting value like pull-up on this pin.  Please refer to i.MX8M Quad
+-  Reference Manual for detailed CONFIG settings.
+-
+-Examples:
+-
+-&uart1 {
+-       pinctrl-names = "default";
+-       pinctrl-0 = <&pinctrl_uart1>;
+-};
+-
+-iomuxc: pinctrl@30330000 {
+-        compatible = "fsl,imx8mq-iomuxc";
+-        reg = <0x0 0x30330000 0x0 0x10000>;
+-
+-        pinctrl_uart1: uart1grp {
+-                fsl,pins = <
+-                        MX8MQ_IOMUXC_UART1_RXD_UART1_DCE_RX             0x49
+-                        MX8MQ_IOMUXC_UART1_TXD_UART1_DCE_TX             0x49
+-                >;
+-        };
+-};
+diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.yaml
+new file mode 100644
+index 0000000..09b6d50
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.yaml
+@@ -0,0 +1,67 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/fsl,imx8mq-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Freescale IMX8MQ IOMUX Controller
++
++maintainers:
++  - Anson Huang <Anson.Huang@nxp.com>
++
++description:
++  Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
++  for common binding part and usage.
++
++properties:
++  compatible:
++    const: fsl,imx8mq-iomuxc
++
++# Client device subnode's properties
++patternProperties:
++  '-grp$':
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++
++    properties:
++      fsl,pins:
++        allOf:
++	  - $ref: /schemas/types.yaml#/definitions/uint32-array
++        maxItems: 6
++        description:
++          each entry consists of 6 integers and represents the mux and config
++          setting for one pin. The first 5 integers <mux_reg conf_reg input_reg
++          mux_val input_val> are specified using a PIN_FUNC_ID macro, which can
++          be found in <arch/arm64/boot/dts/freescale/imx8mq-pinfunc.h>. The last
++          integer CONFIG is the pad setting value like pull-up on this pin. Please
++          refer to i.MX8M Quad Reference Manual for detailed CONFIG settings.
++
++    required:
++      - fsl,pins
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  # Pinmux controller node
++  - |
++    iomuxc: pinctrl@30330000 {
++        compatible = "fsl,imx8mq-iomuxc";
++        reg = <0x30330000 0x10000>;
++
++        pinctrl_uart1: uart1grp {
++            fsl,pins = <
++                0x234 0x49C 0x4F4 0x0 0x0	0x49
++                0x238 0x4A0 0x4F4 0x0 0x0	0x49
++            >;
++        };
++    };
++
++...
+-- 
+2.7.4
+
