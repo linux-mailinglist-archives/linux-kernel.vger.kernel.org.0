@@ -2,86 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9B5A1379D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 23:44:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B4771379E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 23:53:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbgAJWor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 17:44:47 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:59011 "EHLO ozlabs.org"
+        id S1727466AbgAJWxs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 17:53:48 -0500
+Received: from mga17.intel.com ([192.55.52.151]:7143 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727299AbgAJWor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 17:44:47 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47vdMw3sdGz9sP6;
-        Sat, 11 Jan 2020 09:44:44 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1578696285;
-        bh=Apvk3yrpOhiX5OvarieBn2JJQfdeDB4VG1WdLXCTCyw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=B1uWpHd/0spnE56yycJEFVUDcxrDoYwdIHjjQ4hcwSjog1tSFO6uE9SIlcdFEkNKu
-         0ZnEAnAVR6ckP6E643UpXOwk3unadJUlUl/HtdCezMD1HbaLMHbrO/A/sEQQbDmWgl
-         JSA7KZ9agHjy5iAt5ZZ4z3IA7OP17aFjAwBz4wE9OzxQAfMPO3qGY4w/SmhH02Kbtj
-         Ls5mddxqHFzXBt0GhiGjzQ0Bncm271wFml8EbCHoDlJWf56qV3zGAJpcTiXFDd3vuD
-         3Y0MW7Z3lDHmWjStcOIQsFeVGaXEruyUA+Uu8RFJIQTxwDPUHu6N2q/m24I9z8V8Vl
-         GWLZG8ekW1g3w==
-Date:   Sat, 11 Jan 2020 09:44:27 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Carlos Maiolino <cmaiolino@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Message-ID: <20200111094427.4c875a90@canb.auug.org.au>
-In-Reply-To: <20200110110353.klnooeqv4b6ipxid@orion>
-References: <20200110175729.3b5d2338@canb.auug.org.au>
-        <20200110110353.klnooeqv4b6ipxid@orion>
+        id S1726595AbgAJWxs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 17:53:48 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 14:53:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,418,1571727600"; 
+   d="scan'208";a="239045135"
+Received: from guptapadev.jf.intel.com (HELO guptapadev.amr) ([10.7.198.56])
+  by orsmga002.jf.intel.com with ESMTP; 10 Jan 2020 14:53:48 -0800
+Date:   Fri, 10 Jan 2020 14:50:54 -0800
+From:   Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
+Cc:     Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org,
+        Neelima Krishnan <neelima.krishnan@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH] x86/cpu: Update cached HLE state on write to
+ TSX_CTRL_CPUID_CLEAR
+Message-ID: <2529b99546294c893dfa1c89e2b3e46da3369a59.1578685425.git.pawan.kumar.gupta@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Mlis1=vKdeNGCdq4xnpbc.J";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Mlis1=vKdeNGCdq4xnpbc.J
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+/proc/cpuinfo currently reports Hardware Lock Elision (HLE) feature to
+be present on boot cpu even if it was disabled during the bootup. This
+is because cpuinfo_x86->x86_capability HLE bit is not updated after TSX
+state is changed via a new MSR IA32_TSX_CTRL.
 
-Hi Carlos,
+Update the cached HLE bit also since it is expected to change after an
+update to CPUID_CLEAR bit in MSR IA32_TSX_CTRL.
 
-On Fri, 10 Jan 2020 12:03:53 +0100 Carlos Maiolino <cmaiolino@redhat.com> w=
-rote:
->
-> Eitherway, I am not 100% sure this is the right fix for this case, I reme=
-mber
-> some bmap() users who didn't need CONFIG_BLOCK, so we may still need to e=
-xport
-> it without CONFIG_BLOCK.
-> Can you please send me your configuration?
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Tested-by: Neelima Krishnan <neelima.krishnan@intel.com>
+Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+---
+ arch/x86/kernel/cpu/tsx.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-It was a x86_64 allnoconfig build.
+diff --git a/arch/x86/kernel/cpu/tsx.c b/arch/x86/kernel/cpu/tsx.c
+index 3e20d322bc98..032509adf9de 100644
+--- a/arch/x86/kernel/cpu/tsx.c
++++ b/arch/x86/kernel/cpu/tsx.c
+@@ -115,11 +115,12 @@ void __init tsx_init(void)
+ 		tsx_disable();
+ 
+ 		/*
+-		 * tsx_disable() will change the state of the
+-		 * RTM CPUID bit.  Clear it here since it is now
+-		 * expected to be not set.
++		 * tsx_disable() will change the state of the RTM and HLE CPUID
++		 * bits. Clear them here since they are now expected to be not
++		 * set.
+ 		 */
+ 		setup_clear_cpu_cap(X86_FEATURE_RTM);
++		setup_clear_cpu_cap(X86_FEATURE_HLE);
+ 	} else if (tsx_ctrl_state == TSX_CTRL_ENABLE) {
+ 
+ 		/*
+@@ -131,10 +132,10 @@ void __init tsx_init(void)
+ 		tsx_enable();
+ 
+ 		/*
+-		 * tsx_enable() will change the state of the
+-		 * RTM CPUID bit.  Force it here since it is now
+-		 * expected to be set.
++		 * tsx_enable() will change the state of the RTM and HLE CPUID
++		 * bits. Force them here since they are now expected to be set.
+ 		 */
+ 		setup_force_cpu_cap(X86_FEATURE_RTM);
++		setup_force_cpu_cap(X86_FEATURE_HLE);
+ 	}
+ }
+-- 
+2.21.1
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Mlis1=vKdeNGCdq4xnpbc.J
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4Y/ksACgkQAVBC80lX
-0Gz9lgf9Htt8ftvZ4BlviyTTQNomQeDxppmoLs3SYfj9tC2CJuZ1Rj4/pjsibtON
-weNP4H2F1JM0Y+2sLWG7uq2h4WV7v00G5ACYCTQSaQxqMqexZji/xzVrI9/RCBwM
-nwME9Y2EJtHU066dUV8aX3fxohAs6ySrxVYx69bzcOHEGG2ITxKS88Zut4cCaNmE
-+I028yiSZEZDMNBL6Ldl+ZOLYwdpDCHecp4useDAVe6+EJksluWDJ0i7Wn4QZqo/
-kwWehgExt8xTS0V6TTpF/JLlbBkQmF5AEBJy3hksI5KqqupKyHeRhRvkdM1EpmjE
-bg6m5EGN32/mpmElGT/40Nq4j3N6xQ==
-=4tNp
------END PGP SIGNATURE-----
-
---Sig_/Mlis1=vKdeNGCdq4xnpbc.J--
