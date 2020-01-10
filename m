@@ -2,118 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68A9413683E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 08:21:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6896F136848
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 08:27:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726768AbgAJHUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 02:20:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37674 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726558AbgAJHUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 02:20:54 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45FD52080D;
-        Fri, 10 Jan 2020 07:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578640853;
-        bh=w+dk7wSpEQK4o75h7tvK6qJiWTaDhrGxQZa5wmfsJqA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hyiO5Gkk+vOXMenZrdGwNETa59cH/wdH7h2FxA75bkVmgU6DfvH7axbASrMRVKGn8
-         quIHIQ4JqzIUvVrToq2e902iZuyCGo5fymJiEXBQUrwnUgjgSVlyRDowTO2TcokqZm
-         iij2E3JBWDWveMVzUI1Wcm0TRdwH6gfiWCs4i4B4=
-Date:   Fri, 10 Jan 2020 08:20:51 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     rishi gupta <gupt21@gmail.com>
-Cc:     robh+dt@kernel.org, jslaby@suse.com, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] tty/serial: ttvys: add null modem driver
- emulating serial port
-Message-ID: <20200110072051.GA124387@kroah.com>
-References: <cover.1578235515.git.gupt21@gmail.com>
- <9fcb02fafd5fc9b31f3fe358b8e62b8a40ae132a.1578235515.git.gupt21@gmail.com>
- <20200106193500.GC754821@kroah.com>
- <CALUj-gsaecfZ9HN_JVAnvJijYCHK-A5qeztDLbDOSOAjTVfTeg@mail.gmail.com>
+        id S1726299AbgAJH1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 02:27:47 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8691 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725829AbgAJH1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 02:27:47 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id E7DB746A150E3193FEE7;
+        Fri, 10 Jan 2020 15:27:43 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 10 Jan 2020 15:27:36 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <tj@kernel.org>, <lizefan@huawei.com>
+CC:     <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <chenzhou10@huawei.com>
+Subject: [PATCH] cgroup: fix function name in comment
+Date:   Fri, 10 Jan 2020 15:23:20 +0800
+Message-ID: <20200110072320.85605-1-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALUj-gsaecfZ9HN_JVAnvJijYCHK-A5qeztDLbDOSOAjTVfTeg@mail.gmail.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 02:59:59PM +0530, rishi gupta wrote:
-> > > +/* UART frame structure definitions */
-> > > +#define VS_CRTSCTS       0x0001
-> > > +#define VS_XON           0x0002
-> > > +#define VS_NONE          0X0004
-> > > +#define VS_DATA_5        0X0008
-> > > +#define VS_DATA_6        0X0010
-> > > +#define VS_DATA_7        0X0020
-> > > +#define VS_DATA_8        0X0040
-> >
-> > Why the "X"?
-> Sorry I did not understand, do you mean why VS_XON.
+Function name cgroup_rstat_cpu_pop_upated() in comment should be
+cgroup_rstat_cpu_pop_updated().
 
-No, I mean why the "0X0040" instead of "0x0040" like all other hex
-digits in your list of defines.
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+---
+ kernel/cgroup/rstat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > > +static int vs_alloc_reg_one_dev(int oidx, int pidx, int rtsmap,
-> > > +                     int dtrmap, int dtropn)
-> > > +{
-> > > +     int ret;
-> > > +     struct vs_dev *vsdev;
-> > > +     struct device *dev;
-> > > +
-> > > +     /* Allocate and init virtual tty device private data */
-> > > +     vsdev = kcalloc(1, sizeof(struct vs_dev), GFP_KERNEL);
-> > > +     if (!vsdev)
-> > > +             return -ENOMEM;
-> > > +
-> > > +     vsdev->own_tty = NULL;
-> > > +     vsdev->peer_tty = NULL;
-> > > +     vsdev->own_index = oidx;
-> > > +     vsdev->peer_index =  pidx;
-> > > +     vsdev->rts_mappings = rtsmap;
-> > > +     vsdev->dtr_mappings = dtrmap;
-> > > +     vsdev->set_odtr_at_open = dtropn;
-> > > +     vsdev->msr_reg = 0;
-> > > +     vsdev->mcr_reg = 0;
-> > > +     vsdev->waiting_msr_chg = 0;
-> > > +     vsdev->tx_paused = 0;
-> > > +     vsdev->faulty_cable = 0;
-> > > +     mutex_init(&vsdev->lock);
-> > > +
-> > > +     /* Register with tty core with specific minor number */
-> > > +     dev = tty_register_device(ttyvs_driver, oidx, NULL);
-> > > +     if (!dev) {
-> > > +             ret = -ENOMEM;
-> > > +             goto fail;
-> > > +     }
-> > > +
-> > > +     vsdev->device = dev;
-> > > +     dev_set_drvdata(dev, vsdev);
-> > > +
-> > > +     /* Create custom sysfs files for this device for events */
-> > > +     ret = sysfs_create_group(&dev->kobj, &vs_info_attr_grp);
-> >
-> > Please no.  You just raced with userspace and lost (i.e. userspace has
-> > no idea these files are present.)
-> >
-> > Please use the correct apis for this, if you _REALLY_ want special sysfs
-> > files for a tty device.
-> Any specific API would you like to suggest. I am unable to progress on
-> how to address this one.
+diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
+index b48b22d..6f87352 100644
+--- a/kernel/cgroup/rstat.c
++++ b/kernel/cgroup/rstat.c
+@@ -33,7 +33,7 @@ void cgroup_rstat_updated(struct cgroup *cgrp, int cpu)
+ 		return;
+ 
+ 	/*
+-	 * Paired with the one in cgroup_rstat_cpu_pop_upated().  Either we
++	 * Paired with the one in cgroup_rstat_cpu_pop_updated().  Either we
+ 	 * see NULL updated_next or they see our updated stat.
+ 	 */
+ 	smp_mb();
+-- 
+2.7.4
 
-Now that you have moved things to configfs, maybe you do not need the
-sysfs files anymore?
-
-Ah your "control" sysfs files, ok, you need to set the driver's
-dev_groups variable to point to your sysfs attributes, and then the
-driver core will properly set up these files.
-
-hope this helps,
-
-greg k-h
