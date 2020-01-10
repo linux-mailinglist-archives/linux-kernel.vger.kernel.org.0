@@ -2,133 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3B40136A0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 10:36:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45402136A19
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 10:43:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbgAJJgh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 04:36:37 -0500
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:36697 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726900AbgAJJgh (ORCPT
+        id S1727303AbgAJJnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 04:43:22 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37885 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727262AbgAJJnV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 04:36:37 -0500
-Received: from [IPv6:2001:420:44c1:2577:c8b4:9150:fb1b:52f6]
- ([IPv6:2001:420:44c1:2577:c8b4:9150:fb1b:52f6])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id pqiUilZj6pLtbpqiYiPfdz; Fri, 10 Jan 2020 10:36:34 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1578648994; bh=s4atuWRiXh9yWC2skxK0e8ALLvdYO1y0fvYdMvunco4=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=KKOcZ+b0+aVDOd2RWLPqG9fB54yBlpc1zMk38tPVbdOSj/S8wApt273E0JFknbCKF
-         BDaKAq1+mR42wYu/ScUaQEtsMJ5s0HrjOha7qzWna0SY9C2y6ULoDQwW1j6QhQ28zT
-         dfthllDdw3LEGUOuqXvLD6b3nf5ORijYKUR0mjVo3uc9IgRyTIpoP78tti44JiL8/e
-         bFpUj1DRWMSz9YG5LBFURwG/QrFq0c2QTHy/weDcCk9D0nTlWwddc1F2MDgpRoXRAm
-         LFOtxciT+mmRFkGrkYeJSaWl1QA6He8nlUFwmknCPDjoRoAjlcmI+A74IQOYcAJEk1
-         Ye2EXfyLBL8zQ==
-Subject: Re: [RFC][PATCH 03/15] videobuf2: add V4L2_FLAG_MEMORY_NON_CONSISTENT
- flag
-To:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191217032034.54897-1-senozhatsky@chromium.org>
- <20191217032034.54897-4-senozhatsky@chromium.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <750a0c62-0f0f-a5c9-1d7f-f0c5d6b620fa@xs4all.nl>
-Date:   Fri, 10 Jan 2020 10:36:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 10 Jan 2020 04:43:21 -0500
+Received: by mail-pg1-f194.google.com with SMTP id q127so751781pga.4
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 01:43:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=e6dB9t1B6KGxZok9qfK9D1u/+innROCm2ojD9foG3rk=;
+        b=lclbmfp5SUnnaASjcPWXc6B2l1vdPNi/bt6aLBwYDT1XmVbyYt6ZdIBdTbo4yFQh45
+         11DvhcR8QfNUZIxCaWYTD7n93QZI5NnxJbTUiQSxevz2UR/lhs+9B93T+vO7Z8d6GQOE
+         WoV9kJYMpwMf7nwXPwLSbRFukayu/+bSngY1Pkx5Hfm7cLOc3VXk9MRxmpdPUFQh13cj
+         4dlAZ+E4xaCI1tIpG1SMkuknyGdwBvrVnqy9f8yuapXiLjRdPh0MkhEM5i6SctWflc1C
+         3Aaqy7vI9L2cymM+B/6bFqF1e953IQzeiV/RDjfNztpZ9LLdDpwkPyzhyi2nNua6s+Q6
+         DHmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=e6dB9t1B6KGxZok9qfK9D1u/+innROCm2ojD9foG3rk=;
+        b=k45qESL/AweBcUA1+16OLZ8fUiaZAtWPOKcldIFaumd14KGjE3aV0xW3ybzAC+U7JQ
+         gXn06m+kzj2qFuy1h8YeNIfauMKIWDJFOAJ75SpQaI/+/vXqp08zIO2F0YpnBdA6gy6N
+         RgkuPmuRyGNDxwo8Xc4ocBH8Vwd7Gk2L2oS5s5Grmphr1AbUzsyjhEitOCBLNy7jKCPy
+         XELI6c7cQVpT23qclCRpB7bjDsXbInvgFPynhcFCgGPOnxGZpGopMMf2bI4MUrJ0AH1q
+         iV/a9VQJGav6BLgCNF5dxqPtBDCuMKYcwu5uDDvdbiA4y7qQ2C5Cd7Retv8ojMA7DM2E
+         z6cw==
+X-Gm-Message-State: APjAAAXgZAFWPt0kBxsHpE4dL1rn/gJAf/SpX5+Xvs4siNaPj3nEbz7d
+        +8CSoeOxh1mkbFh0ULDcbIm/553r
+X-Google-Smtp-Source: APXvYqwuThmI/Mo5O3aHvl9cjrf01rnYng3ulZHlX+Pqs7NpjPi7mpZUzINUir7kTUcerWPoyb58mA==
+X-Received: by 2002:aa7:9908:: with SMTP id z8mr2927366pff.68.1578649400623;
+        Fri, 10 Jan 2020 01:43:20 -0800 (PST)
+Received: from ZB-PF114XEA.360buyad.local ([103.90.76.242])
+        by smtp.gmail.com with ESMTPSA id i3sm2090773pfg.94.2020.01.10.01.43.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2020 01:43:19 -0800 (PST)
+From:   Zhenzhong Duan <zhenzhong.duan@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, Zhenzhong Duan <zhenzhong.duan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@suse.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH] x86/boot/KASLR: Fix unused variable warning
+Date:   Fri, 10 Jan 2020 17:43:04 +0800
+Message-Id: <20200110094304.446-1-zhenzhong.duan@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20191217032034.54897-4-senozhatsky@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfCRR/1EIqmeph7/1UlWyTG1z9YK6OF5GcLxUApOJ8INmx3TFMP3S3Wyj0d/J61AuoRObAaj+WxgTLKnEb8//dmqfCL3l8CTwx+XlzzJDnffTAl0oyW+U
- OcHw2dWWQjc3a8KIVAR/l1uwk3whyZdrIaa0oVUeaWBr5Je5ss9mvfyNKfU9lwUXcyZQLerNN0M0JFw/8EK24e9TkEKyhWvLyn5uY39vrmUcsv677jAwBFOc
- 05OT8VMpZ0JKcOFFfag0/1kytiKwfTqTXBYu9DL4HfbfpFn38/GZA53LrTFLMZQG7br6481LmultFNoizyEXDK5yHFMVjAaeR4QNDjfLHew+lr6ptCvEIg5G
- DXizYAvQ8DYMZFbNvxTt9OfxhP38xdkHnYV756+Kod3eHjmOxm9qWNQ1bezGbFpb970H5jDJBS7bZ9kYOdCFQwPI0LPoM9IYGEkCh++uq/2GW3KkmHK00ZFB
- 4wgQdf91J61sFe7H7IpVsOKtYz2qP/JF3ePm9nKfoty5kq8Yupm//zr8MOJQlR8bHDPvQ8A3r5nOWcFru/RfkaDBLXPvKart3NOVuZEqFAgmXwQhAWiyfEwg
- ChAyHlRmnrbKv9oRhQzULwVBLMdfx4FoH13OmKMN4TFIdE6Xek5BAL5u3Fs8k+6Njdw=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/19 4:20 AM, Sergey Senozhatsky wrote:
-> By setting or clearing V4L2_FLAG_MEMORY_NON_CONSISTENT flag
-> user-space should be able to set or clear queue's NON_CONSISTENT
-> ->dma_attrs. Queue's ->dma_attrs are passed to the underlying
-> allocator in __vb2_buf_mem_alloc(), so user-space will be able
-> to request consistent or non-consistent memory allocations.
-> 
-> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> ---
->  Documentation/media/uapi/v4l/buffer.rst | 19 +++++++++++++++++++
->  include/uapi/linux/videodev2.h          |  2 ++
->  2 files changed, 21 insertions(+)
-> 
-> diff --git a/Documentation/media/uapi/v4l/buffer.rst b/Documentation/media/uapi/v4l/buffer.rst
-> index 9149b57728e5..b08b5609f5f3 100644
-> --- a/Documentation/media/uapi/v4l/buffer.rst
-> +++ b/Documentation/media/uapi/v4l/buffer.rst
-> @@ -705,6 +705,25 @@ Buffer Flags
->  
->  .. c:type:: v4l2_memory
->  
-> +Memory Consistency Flags
-> +========================
-> +
-> +.. tabularcolumns:: |p{7.0cm}|p{2.2cm}|p{8.3cm}|
-> +
-> +.. cssclass:: longtable
-> +
-> +.. flat-table::
-> +    :header-rows:  0
-> +    :stub-columns: 0
-> +    :widths:       3 1 4
-> +
-> +    * .. _`V4L2_FLAG_MEMORY_NON_CONSISTENT`:
-> +
-> +      - ``V4L2_FLAG_MEMORY_NON_CONSISTENT``
-> +      - 0x00000001
-> +      - Set DMA_ATTR_NON_CONSISTENT queue memory consistency bit,
-> +	so all queue buffers may be allocated in non-consistent memory.
+Local variable 'i' is referenced only when CONFIG_MEMORY_HOTREMOVE and
+CONFIG_ACPI are defined, but definition of variable 'i' is out of guard.
+If any of the two macros is undefined, below warning triggers during
+build with 'make EXTRA_CFLAGS=-Wall binrpm-pkg', fix it by moving 'i'
+in the guard.
 
-This needs much more extensive documentation. This is a userspace API,
-and it shouldn't refer to a kernelspace API. Instead, explain what it
-means from a user perspective. Also, how does this relate to the cache
-buffer flags?
+arch/x86/boot/compressed/kaslr.c:698:6: warning: unused variable ‘i’ [-Wunused-variable]
 
-These things are tricky, so it is worth spending some time on writing
-good documentation.
+Fixes: 690eaa532057 ("x86/boot/KASLR: Limit KASLR to extract the kernel in immovable memory only")
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+---
+v3: remove changes from 0/1 to false/true per Tglx
+    add the command details about triggering build warning per Boris
 
-Regards,
+v2: update description per Boris.
 
-	Hans
+ arch/x86/boot/compressed/kaslr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +
->  enum v4l2_memory
->  ================
->  
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 04481c717fee..d352997f2b62 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -189,6 +189,8 @@ enum v4l2_memory {
->  	V4L2_MEMORY_DMABUF           = 4,
->  };
->  
-> +#define V4L2_FLAG_MEMORY_NON_CONSISTENT		(1 << 0)
-> +
->  /* see also http://vektor.theorem.ca/graphics/ycbcr/ */
->  enum v4l2_colorspace {
->  	/*
-> 
+diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+index d7408af55738..62bc46684581 100644
+--- a/arch/x86/boot/compressed/kaslr.c
++++ b/arch/x86/boot/compressed/kaslr.c
+@@ -695,7 +695,6 @@ static bool process_mem_region(struct mem_vector *region,
+ 			       unsigned long long minimum,
+ 			       unsigned long long image_size)
+ {
+-	int i;
+ 	/*
+ 	 * If no immovable memory found, or MEMORY_HOTREMOVE disabled,
+ 	 * use @region directly.
+@@ -711,6 +710,7 @@ static bool process_mem_region(struct mem_vector *region,
+ 	}
+ 
+ #if defined(CONFIG_MEMORY_HOTREMOVE) && defined(CONFIG_ACPI)
++	int i;
+ 	/*
+ 	 * If immovable memory found, filter the intersection between
+ 	 * immovable memory and @region.
+-- 
+2.17.1
 
