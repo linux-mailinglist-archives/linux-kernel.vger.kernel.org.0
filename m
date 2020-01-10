@@ -2,181 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74072136FF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 15:49:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBA52136FF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 15:50:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728288AbgAJOsw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 09:48:52 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:21117 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728069AbgAJOst (ORCPT
+        id S1728315AbgAJOuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 09:50:09 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:55518 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728295AbgAJOuG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 09:48:49 -0500
+        Fri, 10 Jan 2020 09:50:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578667727;
+        s=mimecast20190719; t=1578667805;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=0754l4wH5GpH8+J8tmqv449PcEO7/r8v1M0+jsB/sr4=;
-        b=AYaJEd1omk4xcDMxC+3pgvyHEND52W3wiHFhN2AI7kf+QeMU9r3+EJjfyoVxnrM6Rrp6+U
-        4yQV2GSy2uUOX1krXnbpH8pXm7j2YT00zY32OKktoOx/AqDzQEzIujqx9E5aG2OYT2RGHo
-        3xIur7HB9qJR44ovak88VOkWO8jhmY0=
+         in-reply-to:in-reply-to:references:references;
+        bh=7mPPMOgg1rdT11VKLhfqGPbIrYZLHOhMvTiS0wn3BR8=;
+        b=bRm1mG7siBP7cKe2Y9s3ZMyvcFOkJpfBw5B5l77k8JV2nknXf1vl+ma4EwHnHEQagu43vU
+        ntWX5X3EfGckQLoxEBUZ2rTcqgKQbpqsJGAfbDSI1FrEIHrg6erbxjhInQktIrbaj+33DY
+        YbbjWj/ezs+0q8vY1vVvjNWfxrHTsFw=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-98-lHHsAGbZNs6Du-T4uK9rMA-1; Fri, 10 Jan 2020 09:48:44 -0500
-X-MC-Unique: lHHsAGbZNs6Du-T4uK9rMA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-210-9Uet1PL0OC2VrKRfkBNolQ-1; Fri, 10 Jan 2020 09:50:01 -0500
+X-MC-Unique: 9Uet1PL0OC2VrKRfkBNolQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BAD26CF989;
-        Fri, 10 Jan 2020 14:48:42 +0000 (UTC)
-Received: from [10.36.118.66] (unknown [10.36.118.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A248F1001938;
-        Fri, 10 Jan 2020 14:48:40 +0000 (UTC)
-Subject: Re: [PATCH] mm/page_alloc: Skip non present sections on zone
- initialization
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
-        "Jin, Zhi" <zhi.jin@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20191230093828.24613-1-kirill.shutemov@linux.intel.com>
- <20200108144044.GB30379@dhcp22.suse.cz>
- <73437651-822f-fcec-3b96-281fb1064cf8@redhat.com>
- <20200110134547.v6ju5dxazknfjdj3@box>
- <de70ec09-492d-292b-0738-db1ce1f05673@redhat.com>
- <20200110144717.xufpf4yjkjlngymy@box>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Red Hat GmbH
-Message-ID: <6cf49e65-ee02-7cbd-596f-ebbc057717c2@redhat.com>
-Date:   Fri, 10 Jan 2020 15:48:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AE0C980557E;
+        Fri, 10 Jan 2020 14:49:57 +0000 (UTC)
+Received: from krava (ovpn-205-164.brq.redhat.com [10.40.205.164])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EAEEF610D7;
+        Fri, 10 Jan 2020 14:49:38 +0000 (UTC)
+Date:   Fri, 10 Jan 2020 15:49:36 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+Subject: Re: [PATCH 0/3] tracing: perf: Rename ring_buffer to perf_buffer and
+ trace_buffer
+Message-ID: <20200110144936.GF82989@krava>
+References: <20200110020308.977313200@goodmis.org>
 MIME-Version: 1.0
-In-Reply-To: <20200110144717.xufpf4yjkjlngymy@box>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200110020308.977313200@goodmis.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10.01.20 15:47, Kirill A. Shutemov wrote:
-> On Fri, Jan 10, 2020 at 03:34:49PM +0100, David Hildenbrand wrote:
->> On 10.01.20 14:45, Kirill A. Shutemov wrote:
->>> On Fri, Jan 10, 2020 at 02:15:26PM +0100, David Hildenbrand wrote:
->>>> On 08.01.20 15:40, Michal Hocko wrote:
->>>>> On Mon 30-12-19 12:38:28, Kirill A. Shutemov wrote:
->>>>>> memmap_init_zone() can be called on the ranges with holes during the
->>>>>> boot. It will skip any non-valid PFNs one-by-one. It works fine as long
->>>>>> as holes are not too big.
->>>>>>
->>>>>> But huge holes in the memory map causes a problem. It takes over 20
->>>>>> seconds to walk 32TiB hole. x86-64 with 5-level paging allows for much
->>>>>> larger holes in the memory map which would practically hang the system.
->>>>>>
->>>>>> Deferred struct page init doesn't help here. It only works on the
->>>>>> present ranges.
->>>>>>
->>>>>> Skipping non-present sections would fix the issue.
->>>>>
->>>>> Makes sense to me.
->>>>>
->>>>>> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->>>>>
->>>>> That pfn inc back and forth is quite ugly TBH but whatever.
->>>>
->>>> Indeed, can we please rewrite the loop to fix that?
->>>
->>> Any suggestions?
->>>
->>> I don't see an obvious way to not break readablity in another place.
->>>
->>
->> I'd probably do it like this (applied some other tweaks, untested)
->>
->> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> index cb766aac6772..a96b1ad1d74b 100644
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -5859,6 +5859,22 @@ overlap_memmap_init(unsigned long zone, unsigned long *pfn)
->>         return false;
->>  }
->>  
->> +static inline __meminit unsigned long next_present_pfn(unsigned long pfn)
->> +{
->> +#ifdef CONFIG_SPARSEMEM
+On Thu, Jan 09, 2020 at 09:03:08PM -0500, Steven Rostedt wrote:
 > 
-> I would rather keep it around function, but it's matter of taste.
+> As we discussed, to remove the generic structure "ring_buffer" from the kernel,
+> and switch it to "perf_buffer" and "trace_buffer", this patch series does
+> just that.
+> 
+> Anyone have any issues of me carrying this in my tree? I'll rebase it to
+> v5.5-rc6 when it comes out, as it depends on some commits in v5.5-rc5.
 
-Yes
+ack ;-) and
+
+Tested-by: Jiri Olsa <jolsa@kernel.org>
+
+thanks,
+jirka
 
 > 
->> +       unsigned long section_nr = pfn_to_section_nr(pfn + 1);
->> +
->> +       /*
->> +        * Note: We don't check the subsection bitmap, so this can produce
->> +        * false positives when only subsections are present/valid. The
->> +        * caller should recheck if the returned pfn is valid.
->> +        */
->> +       if (!present_section_nr(section_nr))
->> +               return section_nr_to_pfn(next_present_section_nr(section_nr));
+> -- Steve
 > 
-> This won't compile. next_present_section_nr() is static to mm/sparse.c.
-
-We should then move that to the header IMHO.
-
--- 
-Thanks,
-
-David / dhildenb
+> Steven Rostedt (VMware) (3):
+>       perf: Make struct ring_buffer less ambiguous
+>       tracing: Rename trace_buffer to array_buffer
+>       tracing: Make struct ring_buffer less ambiguous
+> 
+> ----
+>  drivers/oprofile/cpu_buffer.c        |   2 +-
+>  include/linux/perf_event.h           |   6 +-
+>  include/linux/ring_buffer.h          | 110 ++++++-------
+>  include/linux/trace_events.h         |   8 +-
+>  include/trace/trace_events.h         |   2 +-
+>  kernel/events/core.c                 |  42 ++---
+>  kernel/events/internal.h             |  34 ++--
+>  kernel/events/ring_buffer.c          |  54 +++----
+>  kernel/trace/blktrace.c              |   8 +-
+>  kernel/trace/ftrace.c                |   8 +-
+>  kernel/trace/ring_buffer.c           | 124 +++++++--------
+>  kernel/trace/ring_buffer_benchmark.c |   2 +-
+>  kernel/trace/trace.c                 | 292 +++++++++++++++++------------------
+>  kernel/trace/trace.h                 |  38 ++---
+>  kernel/trace/trace_branch.c          |   6 +-
+>  kernel/trace/trace_events.c          |  20 +--
+>  kernel/trace/trace_events_hist.c     |   4 +-
+>  kernel/trace/trace_functions.c       |   8 +-
+>  kernel/trace/trace_functions_graph.c |  14 +-
+>  kernel/trace/trace_hwlat.c           |   2 +-
+>  kernel/trace/trace_irqsoff.c         |   8 +-
+>  kernel/trace/trace_kdb.c             |   8 +-
+>  kernel/trace/trace_kprobe.c          |   4 +-
+>  kernel/trace/trace_mmiotrace.c       |  12 +-
+>  kernel/trace/trace_output.c          |   2 +-
+>  kernel/trace/trace_sched_wakeup.c    |  20 +--
+>  kernel/trace/trace_selftest.c        |  26 ++--
+>  kernel/trace/trace_syscalls.c        |   8 +-
+>  kernel/trace/trace_uprobe.c          |   2 +-
+>  29 files changed, 437 insertions(+), 437 deletions(-)
+> 
 
