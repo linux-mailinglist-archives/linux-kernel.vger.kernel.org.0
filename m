@@ -2,90 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07F62137912
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 23:06:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D513F13793B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 23:07:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbgAJWGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 17:06:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52382 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728060AbgAJWGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 17:06:02 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A349520866;
-        Fri, 10 Jan 2020 22:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578693961;
-        bh=dBxleWCteLB8i3+5XnkNePFWIdmqegJ4IrwyoOTGAuc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wnbHsYcmcYvHFyG+y/XAE5ODFLamGIqptA78ehwA/Z+Ghj9S+XpqZBSWziybl07cE
-         NAZLhn0tMbnMeDJhfEgR5zQfZQvuJ4UTCdT0UNqR68mt7lm/yjsQJ/nRVHZNw9cpbt
-         u4bbSHBRy55/iBXHLYXqRrVyOPI7k0dg+NSe4HnI=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexandra Winter <wintera@linux.ibm.com>,
-        Julian Wiedmann <jwi@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 05/11] s390/qeth: fix false reporting of VNIC CHAR config failure
-Date:   Fri, 10 Jan 2020 17:05:49 -0500
-Message-Id: <20200110220556.28505-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200110220556.28505-1-sashal@kernel.org>
-References: <20200110220556.28505-1-sashal@kernel.org>
+        id S1727761AbgAJWHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 17:07:17 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44727 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727904AbgAJWF4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 17:05:56 -0500
+Received: by mail-lj1-f193.google.com with SMTP id u71so3637096lje.11;
+        Fri, 10 Jan 2020 14:05:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8pDdBlhWNVam1EjlfmhvY4SQpYPYOi2Ig/s8K41IUaw=;
+        b=Qz1/Pb4pC7P03RqKsGpIAItdR8xSpvEw582sN51S+81oV/Cg0oj3Wbre36Ai2mjRpu
+         rV9CgEg+Oy4cvqaQfakp1zaqFz1he+s2WuQgWrTQo/xLQks+ABogBFcBsT6/5cRPsivB
+         UWDR+rIfTXKqSm22Ycz4I5nVpPb2SBPC7Vr6E+6dRiJuI8Pr2kCPure9YrWJXHToykki
+         v6S1/BG4U34CMKYXuzWqU0epDaK9G5Voe7CQhay/gaO/7FnfvZODb6VsDThPn2s8nDW1
+         Y57yG9U2VAnkOmbbbPpwV00YHkn4cVxzCwA6WWwJoRhose2uVMgBVZ5+cpsLQEYO7zJe
+         iyIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8pDdBlhWNVam1EjlfmhvY4SQpYPYOi2Ig/s8K41IUaw=;
+        b=UwDWQE2N/t3bB14+bgzGUHCHa7qmSCIfWfCsds5QgxlYs9/senIO2+3ohzCxIhjmgs
+         oyN4sOMW6R5BGj9S/YV3x4iXme5c8yGIiKilfR+0Hptwik96ARrKW2D3TeWOR1CdJ93j
+         HpHtZ5nc6zT4tq+Efz0p9PdRrjf8nPVaROAS+G1TBifVQ5piTZQfK7HEwwyipd9yfi1g
+         Re6Tfd4iCUqLzf8SrcE6Ymv+xCf2vLL2rMopQeYtKswWahUI72KcXtiLbNIWTwPsJYGW
+         BczvG9hSHma8f+5mMTqs234Tn/QejiANfv+D2Ni5A2QHCeiVbbOGAkxG3KIVjgwvL53l
+         899A==
+X-Gm-Message-State: APjAAAUrt1+OWmIO0VjsOFYk787KbkOr5dxdK7vXJkw6ujlZak2GQreZ
+        RhDxsZpwqAtmOOGnY32LJLzogpxW
+X-Google-Smtp-Source: APXvYqzPGa94FAtfR4u0tGbPaN4w7oHlnvLScAjWCQIR8bGDXUCVaLsQZU5pIJLQGcAwLpX58QtR0g==
+X-Received: by 2002:a2e:81d0:: with SMTP id s16mr3826511ljg.166.1578693953408;
+        Fri, 10 Jan 2020 14:05:53 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id r2sm1654055lfn.13.2020.01.10.14.05.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jan 2020 14:05:52 -0800 (PST)
+Subject: Re: [PATCH v7 15/21] ASoC: tegra: Add fallback implementation for
+ audio mclk
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com,
+        perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com,
+        gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, josephl@nvidia.com,
+        daniel.lezcano@linaro.org, mmaddireddy@nvidia.com,
+        markz@nvidia.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
+ <1578457515-3477-16-git-send-email-skomatineni@nvidia.com>
+ <f3f550a2-c6e0-7a78-5c83-da3e54dab309@nvidia.com>
+ <d7ac6135-73b0-1087-dafa-4df558a06ef4@nvidia.com>
+ <a3c5293b-9ed4-3266-f792-38b980e54b1e@nvidia.com>
+ <745b8c7b-4fe3-c9ea-284e-b89546e8ad87@nvidia.com>
+ <705edf9b-d1bc-8090-017e-fa4ad445f9fb@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <135f0c0b-86d1-9b1a-af02-c14c4b5308c4@gmail.com>
+Date:   Sat, 11 Jan 2020 01:05:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+In-Reply-To: <705edf9b-d1bc-8090-017e-fa4ad445f9fb@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandra Winter <wintera@linux.ibm.com>
+10.01.2020 20:04, Sowjanya Komatineni пишет:
+> 
+> On 1/9/20 10:52 AM, Sowjanya Komatineni wrote:
+>>
+>>
+>> On 1/7/20 10:28 PM, Sameer Pujar wrote:
+>>>
+>>> On 1/8/2020 11:18 AM, Sowjanya Komatineni wrote:
+>>>>
+>>>> On 1/7/20 9:34 PM, Sameer Pujar wrote:
+>>>>>
+>>>>> On 1/8/2020 9:55 AM, Sowjanya Komatineni wrote:
+>>>>>> mclk is from clk_out_1 which is part of Tegra PMC block and pmc
+>>>>>> clocks
+>>>>>> are moved to Tegra PMC driver with pmc as clock provider and using
+>>>>>> pmc
+>>>>>> clock ids.
+>>>>>>
+>>>>>> New device tree uses clk_out_1 from pmc clock provider.
+>>>>>>
+>>>>>> So, this patch adds implementation for mclk fallback to extern1 when
+>>>>>> retrieving mclk returns -ENOENT to be backward compatible of new
+>>>>>> device
+>>>>>> tree with older kernels.
+>>>>>>
+>>>>>> Tested-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>> ---
+>>>>>>   sound/soc/tegra/tegra_asoc_utils.c | 11 ++++++++++-
+>>>>>>   1 file changed, 10 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/sound/soc/tegra/tegra_asoc_utils.c
+>>>>>> b/sound/soc/tegra/tegra_asoc_utils.c
+>>>>>> index 9cfebef74870..9a5f81039491 100644
+>>>>>> --- a/sound/soc/tegra/tegra_asoc_utils.c
+>>>>>> +++ b/sound/soc/tegra/tegra_asoc_utils.c
+>>>>>> @@ -183,7 +183,16 @@ int tegra_asoc_utils_init(struct
+>>>>>> tegra_asoc_utils_data *data,
+>>>>>>       data->clk_cdev1 = devm_clk_get(dev, "mclk");
+>>>>>>       if (IS_ERR(data->clk_cdev1)) {
+>>>>>>           dev_err(data->dev, "Can't retrieve clk cdev1\n");
+>>>>>
+>>>>> This error print can be moved inside below if, when this actually
+>>>>> meant to be an error condition.
+>>>>>
+>>>> Want to show error even if mclk retrieval returns ENOENT to clearly
+>>>> indicate mclk does not exist along with message of falling back to
+>>>> extern1.
+>>>
+>>> Yes, but falling back essentially means 'mclk' is not available and
+>>> fallback print is not an error.
+>>> Not a major issue though, you can consider updating. Otherwise LGTM.
+>>>
+>> Will update
+>>>>>> -        return PTR_ERR(data->clk_cdev1);
+>>>>>> +        if (PTR_ERR(data->clk_cdev1) != -ENOENT)
+>>>>>> +            return PTR_ERR(data->clk_cdev1);
+>>>>>> +        /* Fall back to extern1 */
+>>>>>> +        data->clk_cdev1 = devm_clk_get(dev, "extern1");
+>>>>>> +        if (IS_ERR(data->clk_cdev1)) {
+>>>>>> +            dev_err(data->dev, "Can't retrieve clk extern1\n");
+>>>>>> +            return PTR_ERR(data->clk_cdev1);
+>>>>>> +        }
+>>>>>> +
+>>>>>> +        dev_err(data->dev, "Falling back to extern1\n");
+>>>>>
+>>>>> This can be a info print?
+>>>>
+>> Will use dev_info
+>>>>>>       }
+>>>>>>         /*
+>>
+>> Dmitry/Rob, there was discussion in v3 regarding backporting mclk
+>> fallback.
+>>
+>> Dmitry wanted Rob to confirm on this
+>>
+>> I think openSUSE Leap could be one of those distros that use LTS kernel
+>> with newer device-trees, but that's not 100%. Maybe Rob could help
+>> clarifying that.
+>>
+>> Dmitry/Rob, Can you please confirm if mclk fallback patch need
+>> backport to have new device tree work with old kernels?
+>>
+> Dmitry,
+> 
+> Can you please confirm if we need to backport this mclk fallback patch?
+> 
 
-[ Upstream commit 68c57bfd52836e31bff33e5e1fc64029749d2c35 ]
+Seems only T210 was making use of the CaR's TEGRA*_CLK_CLK_OUT_*, thus
+the backporting isn't needed.
 
-Symptom: Error message "Configuring the VNIC characteristics failed"
-in dmesg whenever an OSA interface on z15 is set online.
-
-The VNIC characteristics get re-programmed when setting a L2 device
-online. This follows the selected 'wanted' characteristics - with the
-exception that the INVISIBLE characteristic unconditionally gets
-switched off.
-
-For devices that don't support INVISIBLE (ie. OSA), the resulting
-IO failure raises a noisy error message
-("Configuring the VNIC characteristics failed").
-For IQD, INVISIBLE is off by default anyways.
-
-So don't unnecessarily special-case the INVISIBLE characteristic, and
-thereby suppress the misleading error message on OSA devices.
-
-Fixes: caa1f0b10d18 ("s390/qeth: add VNICC enable/disable support")
-Signed-off-by: Alexandra Winter <wintera@linux.ibm.com>
-Reviewed-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/s390/net/qeth_l2_main.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/s390/net/qeth_l2_main.c b/drivers/s390/net/qeth_l2_main.c
-index 95669d47c389..66bc6f1ffd34 100644
---- a/drivers/s390/net/qeth_l2_main.c
-+++ b/drivers/s390/net/qeth_l2_main.c
-@@ -2367,7 +2367,6 @@ static void qeth_l2_vnicc_init(struct qeth_card *card)
- 	error = qeth_l2_vnicc_recover_timeout(card, QETH_VNICC_LEARNING,
- 					      timeout);
- 	chars_tmp = card->options.vnicc.wanted_chars ^ QETH_VNICC_DEFAULT;
--	chars_tmp |= QETH_VNICC_BRIDGE_INVISIBLE;
- 	chars_len = sizeof(card->options.vnicc.wanted_chars) * BITS_PER_BYTE;
- 	for_each_set_bit(i, &chars_tmp, chars_len) {
- 		vnicc = BIT(i);
--- 
-2.20.1
-
+Also, please use 'git rebase --exec make ...' to make sure that all
+patches are compiling without problems. The removal of the legacy clock
+IDs should be done after the device-trees changes, otherwise it looks
+like DTBs compilation will fail. It's possible that the order of the
+patches could be changed if Thierry will chose to split this series into
+several pull requests, nevertheless all patches should compile and work
+in the original order.
