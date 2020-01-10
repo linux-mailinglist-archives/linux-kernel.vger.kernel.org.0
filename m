@@ -2,155 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE23F137468
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:07:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B4BC13745D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:06:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727927AbgAJRG7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 12:06:59 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37202 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbgAJRG6 (ORCPT
+        id S1727181AbgAJRGn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 12:06:43 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:42467 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbgAJRGm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 12:06:58 -0500
-Received: by mail-pg1-f195.google.com with SMTP id q127so1280325pga.4;
-        Fri, 10 Jan 2020 09:06:58 -0800 (PST)
+        Fri, 10 Jan 2020 12:06:42 -0500
+Received: by mail-oi1-f194.google.com with SMTP id 18so2436516oin.9
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 09:06:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=kIXyMxyHb52Dqb3xzKBUlHwhFwf+AsnzOx4pqWqWlWY=;
-        b=Qq/eSddVaNrHi4aFsdIW47GKoMp5/AouAcANV8I9EI/aUy0FYixHPk3LViqJkSvjq3
-         MfYGuA+R3Nl7y4cxOBJ/grgL+QF0Otmarxdzx2nDg0/J6Az3VA3Vvwiq1jaJpXGaROLC
-         nxMK6xmFicvJ/4LYtB0+WZ7kd1EeNxydqiQoHB9fIwBMPWpzD1gQbgDQF2twLFHxiokD
-         wno1xRcPl8aeQQ9a7/OWDqfTw+jWp3AqGLIhWZnQzuh2pkgCQVuCUjjnWGzT39X9sc6m
-         G2VGSavSYYCXhNuW0gc1g4HGhlDCDmpnRvQ7BrHJzpC4/g8vCIUdNcgl830i3mr6Gjc/
-         SArg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NvMAZULjd+t6Z1IO7z3EeS0cYq8ZxzqfzhGty4Nz4qY=;
+        b=FLgSitm39FYTcLuYRbsNts/aWHg4GhaKLHHRjdAR3hIJ0fpmEXM0Fi4fexFJOoxA2J
+         q2WQ4hWQF6dKtx3BO8Y7AI+Jtfq7MrcV/yPV85pBLruRheP4hQjKvEOaoN1GdK1WmfKq
+         BEZOjFehnKvUcDmI0W3Q/mIM132ofPkXXU7ZSj3eQbQwHJuDvwEfa9WTsn0ViS+AcuYf
+         ZUFLD/xe63G7PvgoJwkNgzjuv9E20OGDGHHXpLe320K8yA371dMrbt8nNX41a+4DrdX6
+         D2vD3NiCfmZrOHScFrHjpR9twekkziWZlmLFMLyZehlmk1hk7MX5q3+c8oI8zCw0vfS2
+         fz5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=kIXyMxyHb52Dqb3xzKBUlHwhFwf+AsnzOx4pqWqWlWY=;
-        b=uMaDF7o7vSzrFVPL3bVNMhWDb6kVRJ3s72dPiFi10+m5qUNxgOtAqMuzgvbNeJQ9oW
-         aqUVxI+svsKbxeIVZ+Rdxcm8xUrzA60jFft3qm6IFRbZy+TNbzL8QD+aoXS2vXKTeUxM
-         21WPmXEBvLB3ZO0BZmsrNWFs6k2Kcl8Pc1/CxXoJ+RcVgLU5VEVU4drOCfrnwt8JvnWE
-         3QON7PQgZt+h9ECTqBfgooDJfoUAl6gGW/NpvDvHv5jWcFwZwaaiCClV1YKnaSUO+PKO
-         YwUt/IvWDZ5V87rLRPps19NFd2Kd6+ExoMTEWCZS6rb8sNeMlO0nJ0m8pdDW293kRu+Q
-         u9fQ==
-X-Gm-Message-State: APjAAAVCkCSIRmXXVNVrmNOS6O+hSNO1zwUahbbRp86bo2XPtPqqnY3v
-        V2YL8B2DxXZWC+tEvuwwubg=
-X-Google-Smtp-Source: APXvYqx1bOJJ1EYx+JdDvHs8uo8AXTRyG4cSwLpVeu4x3iHlpshx7fU4qmCEoHVe+Y77WlnkQkEjOg==
-X-Received: by 2002:a65:52ca:: with SMTP id z10mr5668585pgp.47.1578676017609;
-        Fri, 10 Jan 2020 09:06:57 -0800 (PST)
-Received: from localhost.localdomain ([103.211.17.220])
-        by smtp.googlemail.com with ESMTPSA id x4sm3613268pff.143.2020.01.10.09.06.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2020 09:06:57 -0800 (PST)
-From:   Amol Grover <frextrite@gmail.com>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Amol Grover <frextrite@gmail.com>
-Subject: [PATCH v2 3/3] drivers: target: tcm_fc: tfc_sess: Pass lockdep expression to RCU lists
-Date:   Fri, 10 Jan 2020 22:35:59 +0530
-Message-Id: <20200110170558.23466-3-frextrite@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200110170558.23466-1-frextrite@gmail.com>
-References: <20200110170558.23466-1-frextrite@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NvMAZULjd+t6Z1IO7z3EeS0cYq8ZxzqfzhGty4Nz4qY=;
+        b=L4KqJYKUxSRRJPHXbGKYI1hUWqzddkQ/KKZOwGgK4rmZIBH4PpGNO2TTT6yG709wYq
+         4SnvP2mvDdX6Y0090P7xWOItpM5/vhbX4jbOxB4sVF5td8qrU1LamC0SbSY+HYehf6mn
+         O9BqpI25BqabEmIwUKrQ+8p3wtiq1Zoql7+UF3HIKxQ6cd2bPCBW44YdQSspaW8FiBVi
+         ibfrKDlA7iLgGvzrXh36km4RifIF3oi0VSoGN/TGUfumdbz7G3NSPeEoD4XoJ+bvbBhp
+         rGuVTO+qJgWOTysCRmdqyKHQqDKTlZRYiPoPY0afJU0qK1DCzHwgn9wX3crEk10jkSX0
+         vjfw==
+X-Gm-Message-State: APjAAAVT2vVzvvu9iBUuUQelaauzGdglinnff9j6eGENqmA+tb4NGxIr
+        FVEdMyKQ+4t1yKwu4vqDmjecXaJzPPy6IlSIwOePSg==
+X-Google-Smtp-Source: APXvYqyg7WZSXB3wuilNJnIu0C1IW78TPsLDLu18fcxaEb8Xn+gwyErSQsJTAKiUpgwEXjnUDONAJqMuf2ylZ6GlMDE=
+X-Received: by 2002:aca:ea43:: with SMTP id i64mr3103294oih.30.1578676001225;
+ Fri, 10 Jan 2020 09:06:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200110030112.188845-1-saravanak@google.com> <CAKv+Gu-4jvME3cuPBDtTVFn+-ZzttneFuBkor+N3G0JpeO4BzA@mail.gmail.com>
+In-Reply-To: <CAKv+Gu-4jvME3cuPBDtTVFn+-ZzttneFuBkor+N3G0JpeO4BzA@mail.gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Fri, 10 Jan 2020 09:06:05 -0800
+Message-ID: <CAGETcx9b03SBKMcN7AokSOFRfVnr9G=vzSA4p5BXnmGPQ8JjHw@mail.gmail.com>
+Subject: Re: [PATCH v3] efi: arm: defer probe of PCIe backed efifb on DT systems
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Ard Biesheuvel <ardb@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-head is traversed with hlist_for_each_entry_rcu
-outside an RCU read-side critical section but under the
-protection of ft_lport_lock.
+On Thu, Jan 9, 2020 at 10:41 PM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+>
+> On Fri, 10 Jan 2020 at 04:01, Saravana Kannan <saravanak@google.com> wrote:
+> >
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > The new of_devlink support breaks PCIe probing on ARM platforms booting
+> > via UEFI if the firmware exposes a EFI framebuffer that is backed by a
+> > PCI device. The reason is that the probing order gets reversed,
+> > resulting in a resource conflict on the framebuffer memory window when
+> > the PCIe probes last, causing it to give up entirely.
+> >
+> > Given that we rely on PCI quirks to deal with EFI framebuffers that get
+> > moved around in memory, we cannot simply drop the memory reservation, so
+> > instead, let's use the device link infrastructure to register this
+> > dependency, and force the probing to occur in the expected order.
+> >
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > Co-developed-by: Saravana Kannan <saravanak@google.com>
+> > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> > Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+> > ---
+> >
+> > v1 -> v2:
+> > - Rewrote the device linking part to not depend on initcall ordering
+> > v2 -> v3:
+> > - Added const and check for CONFIG_PCI
+> >
+>
+> Thanks. I've queued this version in efi/next for v5.6
 
-Hence, add the corresponding lockdep expression to the list traversal
-primitive to silence false-positive lockdep warnings, and
-harden RCU lists.
+Awesome, thanks!
 
-Add macro for the corresponding lockdep expression to make the code
-clean and concise.
-
-Signed-off-by: Amol Grover <frextrite@gmail.com>
----
- drivers/target/tcm_fc/tfc_sess.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/target/tcm_fc/tfc_sess.c b/drivers/target/tcm_fc/tfc_sess.c
-index 4fd6a1de947c..8e9598010fb9 100644
---- a/drivers/target/tcm_fc/tfc_sess.c
-+++ b/drivers/target/tcm_fc/tfc_sess.c
-@@ -32,6 +32,9 @@
- 		 (lport)->host->host_no,	   \
- 		 (lport)->port_id, ##args )
- 
-+#define ft_lport_lock_held() \
-+	lockdep_is_held(&ft_lport_lock)
-+
- static void ft_sess_delete_all(struct ft_tport *);
- 
- /*
-@@ -45,7 +48,7 @@ static struct ft_tport *ft_tport_get(struct fc_lport *lport)
- 	int i;
- 
- 	tport = rcu_dereference_protected(lport->prov[FC_TYPE_FCP],
--					  lockdep_is_held(&ft_lport_lock));
-+							ft_lport_lock_held());
- 	if (tport && tport->tpg)
- 		return tport;
- 
-@@ -170,7 +173,7 @@ static struct ft_sess *ft_sess_get(struct fc_lport *lport, u32 port_id)
- 	}
- 
- 	head = &tport->hash[ft_sess_hash(port_id)];
--	hlist_for_each_entry_rcu(sess, head, hash) {
-+	hlist_for_each_entry_rcu(sess, head, hash, ft_lport_lock_held()) {
- 		if (sess->port_id == port_id) {
- 			kref_get(&sess->kref);
- 			rcu_read_unlock();
-@@ -215,7 +218,7 @@ static struct ft_sess *ft_sess_create(struct ft_tport *tport, u32 port_id,
- 	ft_format_wwn(&initiatorname[0], TRANSPORT_IQN_LEN, rdata->ids.port_name);
- 
- 	head = &tport->hash[ft_sess_hash(port_id)];
--	hlist_for_each_entry_rcu(sess, head, hash)
-+	hlist_for_each_entry_rcu(sess, head, hash, ft_lport_lock_held())
- 		if (sess->port_id == port_id)
- 			return sess;
- 
-@@ -264,7 +267,7 @@ static struct ft_sess *ft_sess_delete(struct ft_tport *tport, u32 port_id)
- 	struct ft_sess *sess;
- 
- 	head = &tport->hash[ft_sess_hash(port_id)];
--	hlist_for_each_entry_rcu(sess, head, hash) {
-+	hlist_for_each_entry_rcu(sess, head, hash, ft_lport_lock_held()) {
- 		if (sess->port_id == port_id) {
- 			ft_sess_unhash(sess);
- 			return sess;
-@@ -291,7 +294,7 @@ static void ft_sess_delete_all(struct ft_tport *tport)
- 
- 	for (head = tport->hash;
- 	     head < &tport->hash[FT_SESS_HASH_SIZE]; head++) {
--		hlist_for_each_entry_rcu(sess, head, hash) {
-+		hlist_for_each_entry_rcu(sess, head, hash, ft_lport_lock_held()) {
- 			ft_sess_unhash(sess);
- 			ft_close_sess(sess);	/* release from table */
- 		}
-@@ -454,7 +457,7 @@ static void ft_prlo(struct fc_rport_priv *rdata)
- 
- 	mutex_lock(&ft_lport_lock);
- 	tport = rcu_dereference_protected(rdata->local_port->prov[FC_TYPE_FCP],
--					  lockdep_is_held(&ft_lport_lock));
-+							ft_lport_lock_held());
- 
- 	if (!tport) {
- 		mutex_unlock(&ft_lport_lock);
--- 
-2.24.1
-
+-Saravana
