@@ -2,215 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6AC913670C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 07:03:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EC85136737
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 07:14:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbgAJGD5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 01:03:57 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56667 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbgAJGD5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 01:03:57 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1ipnOZ-00064L-E6; Fri, 10 Jan 2020 07:03:43 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B24901C2D4F;
-        Fri, 10 Jan 2020 07:03:42 +0100 (CET)
-Date:   Fri, 10 Jan 2020 06:03:42 -0000
-From:   "tip-bot2 for Masami Hiramatsu" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/kprobes] kprobes: Fix
- optimize_kprobe()/unoptimize_kprobe() cancellation logic
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, bristot@redhat.com,
-        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <157840814418.7181.13478003006386303481.stgit@devnote2>
-References: <157840814418.7181.13478003006386303481.stgit@devnote2>
+        id S1731552AbgAJGN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 01:13:28 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50116 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725797AbgAJGN1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 01:13:27 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 34F0C62BC9EAFBDC0CCB;
+        Fri, 10 Jan 2020 14:13:25 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 10 Jan 2020 14:13:19 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Alex Maftei <amaftei@solarflare.com>,
+        Edward Cree <ecree@solarflare.com>,
+        Martin Habets <mhabets@solarflare.com>
+CC:     YueHaibing <yuehaibing@huawei.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH net-next] sfc: remove set but not used variable 'nic_data'
+Date:   Fri, 10 Jan 2020 06:09:08 +0000
+Message-ID: <20200110060908.124241-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Message-ID: <157863622256.30329.5004888454070050302.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the core/kprobes branch of tip:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Commit-ID:     e4add247789e4ba5e08ad8256183ce2e211877d4
-Gitweb:        https://git.kernel.org/tip/e4add247789e4ba5e08ad8256183ce2e211877d4
-Author:        Masami Hiramatsu <mhiramat@kernel.org>
-AuthorDate:    Tue, 07 Jan 2020 23:42:24 +09:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 09 Jan 2020 12:40:13 +01:00
+drivers/net/ethernet/sfc/mcdi_functions.c: In function 'efx_mcdi_ev_init':
+drivers/net/ethernet/sfc/mcdi_functions.c:79:28: warning:
+ variable 'nic_data' set but not used [-Wunused-but-set-variable]
 
-kprobes: Fix optimize_kprobe()/unoptimize_kprobe() cancellation logic
+commit 4438b587fe4b ("sfc: move MCDI event queue management code")
+introduces this unused variable.
 
-optimize_kprobe() and unoptimize_kprobe() cancels if a given kprobe
-is on the optimizing_list or unoptimizing_list already. However, since
-the following commit:
-
-  f66c0447cca1 ("kprobes: Set unoptimized flag after unoptimizing code")
-
-modified the update timing of the KPROBE_FLAG_OPTIMIZED, it doesn't
-work as expected anymore.
-
-The optimized_kprobe could be in the following states:
-
-- [optimizing]: Before inserting jump instruction
-  op.kp->flags has KPROBE_FLAG_OPTIMIZED and
-  op->list is not empty.
-
-- [optimized]: jump inserted
-  op.kp->flags has KPROBE_FLAG_OPTIMIZED and
-  op->list is empty.
-
-- [unoptimizing]: Before removing jump instruction (including unused
-  optprobe)
-  op.kp->flags has KPROBE_FLAG_OPTIMIZED and
-  op->list is not empty.
-
-- [unoptimized]: jump removed
-  op.kp->flags doesn't have KPROBE_FLAG_OPTIMIZED and
-  op->list is empty.
-
-Current code mis-expects [unoptimizing] state doesn't have
-KPROBE_FLAG_OPTIMIZED, and that can cause incorrect results.
-
-To fix this, introduce optprobe_queued_unopt() to distinguish [optimizing]
-and [unoptimizing] states and fixes the logic in optimize_kprobe() and
-unoptimize_kprobe().
-
-[ mingo: Cleaned up the changelog and the code a bit. ]
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bristot@redhat.com
-Fixes: f66c0447cca1 ("kprobes: Set unoptimized flag after unoptimizing code")
-Link: https://lkml.kernel.org/r/157840814418.7181.13478003006386303481.stgit@devnote2
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- kernel/kprobes.c | 67 ++++++++++++++++++++++++++++++-----------------
- 1 file changed, 43 insertions(+), 24 deletions(-)
+ drivers/net/ethernet/sfc/mcdi_functions.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 34e28b2..2625c24 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -612,6 +612,18 @@ void wait_for_kprobe_optimizer(void)
- 	mutex_unlock(&kprobe_mutex);
- }
+diff --git a/drivers/net/ethernet/sfc/mcdi_functions.c b/drivers/net/ethernet/sfc/mcdi_functions.c
+index f022e2b9e975..8cd9e0d76e85 100644
+--- a/drivers/net/ethernet/sfc/mcdi_functions.c
++++ b/drivers/net/ethernet/sfc/mcdi_functions.c
+@@ -76,13 +76,10 @@ int efx_mcdi_ev_init(struct efx_channel *channel, bool v1_cut_thru, bool v2)
+ 	MCDI_DECLARE_BUF(outbuf, MC_CMD_INIT_EVQ_V2_OUT_LEN);
+ 	size_t entries = channel->eventq.buf.len / EFX_BUF_SIZE;
+ 	struct efx_nic *efx = channel->efx;
+-	struct efx_ef10_nic_data *nic_data;
+ 	size_t inlen, outlen;
+ 	dma_addr_t dma_addr;
+ 	int rc, i;
  
-+static bool optprobe_queued_unopt(struct optimized_kprobe *op)
-+{
-+	struct optimized_kprobe *_op;
-+
-+	list_for_each_entry(_op, &unoptimizing_list, list) {
-+		if (op == _op)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- /* Optimize kprobe if p is ready to be optimized */
- static void optimize_kprobe(struct kprobe *p)
- {
-@@ -633,17 +645,21 @@ static void optimize_kprobe(struct kprobe *p)
- 		return;
- 
- 	/* Check if it is already optimized. */
--	if (op->kp.flags & KPROBE_FLAG_OPTIMIZED)
-+	if (op->kp.flags & KPROBE_FLAG_OPTIMIZED) {
-+		if (optprobe_queued_unopt(op)) {
-+			/* This is under unoptimizing. Just dequeue the probe */
-+			list_del_init(&op->list);
-+		}
- 		return;
-+	}
- 	op->kp.flags |= KPROBE_FLAG_OPTIMIZED;
- 
--	if (!list_empty(&op->list))
--		/* This is under unoptimizing. Just dequeue the probe */
--		list_del_init(&op->list);
--	else {
--		list_add(&op->list, &optimizing_list);
--		kick_kprobe_optimizer();
--	}
-+	/* On unoptimizing/optimizing_list, op must have OPTIMIZED flag */
-+	if (WARN_ON_ONCE(!list_empty(&op->list)))
-+		return;
-+
-+	list_add(&op->list, &optimizing_list);
-+	kick_kprobe_optimizer();
- }
- 
- /* Short cut to direct unoptimizing */
-@@ -665,30 +681,33 @@ static void unoptimize_kprobe(struct kprobe *p, bool force)
- 		return; /* This is not an optprobe nor optimized */
- 
- 	op = container_of(p, struct optimized_kprobe, kp);
--	if (!kprobe_optimized(p)) {
--		/* Unoptimized or unoptimizing case */
--		if (force && !list_empty(&op->list)) {
--			/*
--			 * Only if this is unoptimizing kprobe and forced,
--			 * forcibly unoptimize it. (No need to unoptimize
--			 * unoptimized kprobe again :)
--			 */
--			list_del_init(&op->list);
--			force_unoptimize_kprobe(op);
--		}
-+	if (!kprobe_optimized(p))
- 		return;
--	}
- 
- 	if (!list_empty(&op->list)) {
--		/* Dequeue from the optimization queue */
--		list_del_init(&op->list);
-+		if (optprobe_queued_unopt(op)) {
-+			/* Queued in unoptimizing queue */
-+			if (force) {
-+				/*
-+				 * Forcibly unoptimize the kprobe here, and queue it
-+				 * in the freeing list for release afterwards.
-+				 */
-+				force_unoptimize_kprobe(op);
-+				list_move(&op->list, &freeing_list);
-+			}
-+		} else {
-+			/* Dequeue from the optimizing queue */
-+			list_del_init(&op->list);
-+			op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
-+		}
- 		return;
- 	}
-+
- 	/* Optimized kprobe case */
--	if (force)
-+	if (force) {
- 		/* Forcibly update the code: this is a special case */
- 		force_unoptimize_kprobe(op);
--	else {
-+	} else {
- 		list_add(&op->list, &unoptimizing_list);
- 		kick_kprobe_optimizer();
- 	}
+-	nic_data = efx->nic_data;
+-
+ 	/* Fill event queue with all ones (i.e. empty events) */
+ 	memset(channel->eventq.buf.addr, 0xff, channel->eventq.buf.len);
+
+
+
