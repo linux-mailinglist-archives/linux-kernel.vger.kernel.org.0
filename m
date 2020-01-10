@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 110331378BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 22:57:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 937511378C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 22:57:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbgAJV5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 16:57:46 -0500
+        id S1727434AbgAJV5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 16:57:48 -0500
 Received: from mga17.intel.com ([192.55.52.151]:3026 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727280AbgAJV5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 16:57:43 -0500
+        id S1727340AbgAJV5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 16:57:45 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 13:57:43 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 13:57:44 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,418,1571727600"; 
-   d="scan'208";a="218782795"
+   d="scan'208";a="218782801"
 Received: from unknown (HELO pbossart-mobl3.amr.corp.intel.com) ([10.254.183.94])
-  by fmsmga008.fm.intel.com with ESMTP; 10 Jan 2020 13:57:42 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 10 Jan 2020 13:57:43 -0800
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -28,12 +28,11 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Bard liao <yung-chuan.liao@linux.intel.com>,
         Rander Wang <rander.wang@linux.intel.com>,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Rander Wang <rander.wang@intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH 4/6] soundwire: cadence_master: remove config update for interrupt setting
-Date:   Fri, 10 Jan 2020 15:57:29 -0600
-Message-Id: <20200110215731.30747-5-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH 5/6] soundwire: cadence_master: handle multiple status reports per Slave
+Date:   Fri, 10 Jan 2020 15:57:30 -0600
+Message-Id: <20200110215731.30747-6-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200110215731.30747-1-pierre-louis.bossart@linux.intel.com>
 References: <20200110215731.30747-1-pierre-louis.bossart@linux.intel.com>
@@ -44,44 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rander Wang <rander.wang@intel.com>
+When a Slave reports multiple status in the sticky bits, find the
+latest configuration from the mirror of the PING frame status and
+update the status directly.
 
-Config only needs to be updated when setting MCP_Config, MCP_Control
-and MCP_CmdCtrl to make these register setting effective. When updating
-config in master, master will communicate with slave to update status.
-Communication will be failed when masters and slaves are in clock stop
-state, and this unnecessary config update makes interrupt setting failed.
-
-Tested on Comet Lake with soundwire enabled
-
-Signed-off-by: Rander Wang <rander.wang@intel.com>
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/cadence_master.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/soundwire/cadence_master.c | 35 +++++++++++++++++++++++++-----
+ 1 file changed, 29 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-index 6ef2f759310d..19b4862e8cce 100644
+index 19b4862e8cce..b0de7d752bdb 100644
 --- a/drivers/soundwire/cadence_master.c
 +++ b/drivers/soundwire/cadence_master.c
-@@ -820,7 +820,7 @@ int sdw_cdns_exit_reset(struct sdw_cdns *cdns)
- EXPORT_SYMBOL(sdw_cdns_exit_reset);
+@@ -676,13 +676,36 @@ static int cdns_update_slave_status(struct sdw_cdns *cdns,
  
- /**
-- * sdw_cdns_enable_interrupt() - Enable SDW interrupts and update config
-+ * sdw_cdns_enable_interrupt() - Enable SDW interrupts
-  * @cdns: Cadence instance
-  */
- int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns, bool state)
-@@ -871,8 +871,7 @@ int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns, bool state)
- 	cdns_writel(cdns, CDNS_MCP_SLAVE_INTMASK1, slave_intmask1);
- 	cdns_writel(cdns, CDNS_MCP_INTMASK, mask);
- 
--	/* commit changes */
--	return cdns_update_config(cdns);
-+	return 0;
- }
- EXPORT_SYMBOL(sdw_cdns_enable_interrupt);
+ 		/* first check if Slave reported multiple status */
+ 		if (set_status > 1) {
++			u32 val;
++
+ 			dev_warn_ratelimited(cdns->dev,
+-					     "Slave reported multiple Status: %d\n",
+-					     mask);
+-			/*
+-			 * TODO: we need to reread the status here by
+-			 * issuing a PING cmd
+-			 */
++					     "Slave %d reported multiple Status: %d\n",
++					     i, mask);
++
++			/* check latest status extracted from PING commands */
++			val = cdns_readl(cdns, CDNS_MCP_SLAVE_STAT);
++			val >>= (i * 2);
++
++			switch (val & 0x3) {
++			case 0:
++				status[i] = SDW_SLAVE_UNATTACHED;
++				break;
++			case 1:
++				status[i] = SDW_SLAVE_ATTACHED;
++				break;
++			case 2:
++				status[i] = SDW_SLAVE_ALERT;
++				break;
++			case 3:
++			default:
++				status[i] = SDW_SLAVE_RESERVED;
++				break;
++			}
++
++			dev_warn_ratelimited(cdns->dev,
++					     "Slave %d status updated to %d\n",
++					     i, status[i]);
++
+ 		}
+ 	}
  
 -- 
 2.20.1
