@@ -2,85 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3DD31377A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 21:07:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB00C1377B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 21:07:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728798AbgAJUHA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 15:07:00 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:58702 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727812AbgAJUG6 (ORCPT
+        id S1728887AbgAJUHi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 15:07:38 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:34207 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728852AbgAJUHh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 15:06:58 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00AK6sSB128949;
-        Fri, 10 Jan 2020 14:06:54 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578686814;
-        bh=PIF2JGaqRnB1v2+yrLzg4ZEhayCQbvSjK4TRTvSQASw=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=vhBKJSyu7hMVjA0FhGfJy+uCJ708DVMFHRfJmxOG0BDEMRiQBubpVfeq3cPsWT1Lg
-         CKOzYjBgV38OtDDmJSBltBQGEzi/sE6DXXaKJR5yUWKBaM95rbMEKGPaxqmTOHN6/y
-         +UXRTFJGIHIZ0axjENTSS5Qj5kve0QP2WeBA08Ns=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00AK6sJw029455;
-        Fri, 10 Jan 2020 14:06:54 -0600
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 10
- Jan 2020 14:06:54 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 10 Jan 2020 14:06:54 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00AK6sJt100535;
-        Fri, 10 Jan 2020 14:06:54 -0600
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <andrew@lunn.ch>, <f.fainelli@gmail.com>, <hkallweit1@gmail.com>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH netdev v2 2/2] net: phy: DP83822: Update Kconfig with DP83825I support
-Date:   Fri, 10 Jan 2020 14:03:57 -0600
-Message-ID: <20200110200357.26232-3-dmurphy@ti.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200110200357.26232-1-dmurphy@ti.com>
-References: <20200110200357.26232-1-dmurphy@ti.com>
+        Fri, 10 Jan 2020 15:07:37 -0500
+Received: by mail-qt1-f196.google.com with SMTP id 5so3075390qtz.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 12:07:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=P2/Om2qZfYL+AQ0B1qeGuS3Iw1iLFVj0uHrTSe7VhZA=;
+        b=CW8sv44US1EjtHLPk64//Gg14m3HZBqs8Cb/tlrcojr+YHhaSeYPVzBZ0xUS73/nlx
+         vmxJaMgA5yHPoprR87cQSRAF21FWTbIzPN5hCwdMqxJtCdi+YvzW391bM009K4e2XyZX
+         Win9aDQEgUO2A7SDnAYAhDFiBuNKjbNhOzahPDh3j40oxcrXjL+1enWWMKXEMlkHHaAX
+         Gy2ms/CYZ4AsPnph3y5r09LbCI908mlLPwYTwN9mWjiinXZzummfdrj8Mq7cblio4j/P
+         EW8Nb3vCN06ifFn5trh4vpBGM8vtW5DZOzB+vDlFRHYsKzql6fTw+0X9WDygB2qGSF0y
+         pxuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=P2/Om2qZfYL+AQ0B1qeGuS3Iw1iLFVj0uHrTSe7VhZA=;
+        b=MTxzFmT9EDzMfehaYfUZwt744lGOTqMR7USFN6yjg5S8A5m5uHEiUr5BsV6pBkRZh2
+         ZkYSM1rPGDIa/IEYu9l6f4/jZU40Mpe9Ifk7FWLtH+a/d990PGyZNoWXL+R6hlSzC6G7
+         dZd5vcD9H9a1g12wFg2wvzln4CYmzduPmcBWrcR0zDFGsRQliE99RI2zEb6I1bJncolI
+         39Z4o6bU1TOB+k2Mipi0pNlU55e82H7TozRF89scsF6oB39tqdKPxQ7cxVgbYFGTzt/D
+         3Fr3iEY0mAyAwYuMmUknBoZvtVl8wbKuFCVeHSg4EJ0pAse1yhLLULLF4NnkVkKa1rCQ
+         rOIQ==
+X-Gm-Message-State: APjAAAXQipnHLcxx/TNFNoYluBR/+Ge7v9RKuiqpqXqLWBJvgTtBSVzu
+        WWGyVy8OHHoiSPBLllvnl6rVyDmUwc6kLzdO6Kg=
+X-Google-Smtp-Source: APXvYqxeixn4RtMjlsBy1ZVzJZXUDJtTY7vz2lPwZ1damuAf6oXr1/iIS0JW9RbKYY0/s2AfVFDibF9XsqdD4FS2klY=
+X-Received: by 2002:ac8:4515:: with SMTP id q21mr4058027qtn.376.1578686857039;
+ Fri, 10 Jan 2020 12:07:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Received: by 2002:ad4:4381:0:0:0:0:0 with HTTP; Fri, 10 Jan 2020 12:07:36
+ -0800 (PST)
+Reply-To: kylieelizabethwatson2019@gmail.com
+From:   "Sgt,Kylie Elizabeth Watson" <bilazagre2@gmail.com>
+Date:   Sat, 11 Jan 2020 00:37:36 +0430
+Message-ID: <CAGk+ahYOk5hjWh_cO3rpPs6n+kXaydAKaR365is77SidXD+CyA@mail.gmail.com>
+Subject: Assist Request From You
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the Kconfig description to indicate support for the DP83825I
-device as well.
-
-Fixes: 32b12dc8fde1  ("net: phy: Add DP83825I to the DP83822 driver")
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- drivers/net/phy/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-index ed606194dbd0..8dc461f7574b 100644
---- a/drivers/net/phy/Kconfig
-+++ b/drivers/net/phy/Kconfig
-@@ -340,9 +340,9 @@ config DAVICOM_PHY
- 	  Currently supports dm9161e and dm9131
- 
- config DP83822_PHY
--	tristate "Texas Instruments DP83822 PHY"
-+	tristate "Texas Instruments DP83822/825 PHYs"
- 	---help---
--	  Supports the DP83822 PHY.
-+	  Supports the DP83822 and DP83825I PHYs.
- 
- config DP83TC811_PHY
- 	tristate "Texas Instruments DP83TC811 PHY"
 -- 
-2.23.0
+Accept my greetings to you
 
+Assist Request From You
+
+I am 29 years old single an orphan my parents died when I am five
+years old nobody to help me,I send you my business proposal with tears
+and sorrow,Please let this not be a surprised message to you because I
+decided to contact you on this magnitude and lucrative transaction for
+our present and future survival in life. Moreover, I have laid all the
+solemn trust in you before i decided to disclose this successful and
+confidential transaction to you.
+
+I am  Kylie Elizabeth Watson ,I hope all is well with you? I am female
+soldier working as United Nations peace keeping troop in Afghanistan
+on war against terrorism. I have in my possession the sum of
+$3.5million USD Which I made here in Afghanistan 2014,I deposited this
+money with a Red Cross agent. I want you to stand as my beneficiary
+and receive the fund And keep it safe so that as soon as am through
+with my mission here in Afghanistan.
+
+You will assist me to invest it in a good profitable Venture or you
+keep it for me until I arrive your country, I will give You 40% of the
+total money for your assistance after you have receive The money.
+Please reply back to me if you are willing to work with me so that I
+can send you the information where the money is been deposited, your
+urgent reply is needed in my email address below
+(kylieelizabethwatson2019@gmail.com) so i can send you more details.
+
+Thank Yours
+Sgt,Kylie Elizabeth Watson
