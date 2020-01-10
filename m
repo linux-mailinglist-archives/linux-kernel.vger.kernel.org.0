@@ -2,140 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 476C5137890
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 22:35:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30BF5137897
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 22:39:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbgAJVew (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 16:34:52 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36232 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727280AbgAJVeq (ORCPT
+        id S1727176AbgAJVjN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 16:39:13 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:41953 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726945AbgAJVjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 16:34:46 -0500
-Received: by mail-pl1-f194.google.com with SMTP id a6so1331470plm.3;
-        Fri, 10 Jan 2020 13:34:45 -0800 (PST)
+        Fri, 10 Jan 2020 16:39:12 -0500
+Received: by mail-io1-f67.google.com with SMTP id c16so3637718ioo.8
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 13:39:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=//Vec5skQW+H9IPGRTNbLtqR3goYkBV9ehrKBDaBk60=;
-        b=rURmhW8wIF5KaQsftvbrXK/WNqEug54J5oUNqc7D2y8i0VNxKhfqtIIWkeKS+rI+rf
-         ukFURwW9nBJzL2fIW5hQ/oFXNOgNWzwsvTw/Zoa4OQKmQ2U9pcNQZVzs+vMEOjHz8agB
-         Yl76iCX6lKPXezdEACjEkV+oZgyKT5n5CoJNlvEbBDcVwI+u0Ol5QPl2AcmNyY7dzZIa
-         8CC3O7wtMjWAPrJtm5srhBkqvguebPYp7vKuCR98SQeUQEutaxAfumTwgQe72TDSFy8d
-         /0cIAWs2gl26s6vbbkPuKVU9i8VipkyIFZ9F7IE+gBRXE4s3I1JAEm0H7GnfYE2U969x
-         VhUQ==
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=r4PmeZ/898aGumdPWOcSK9D1hCv5M+BfhsqeoQLug0k=;
+        b=ML7g1aGMVB7Qp8hywr4osLv4e9aIFPmirYd1vE8lV2zZG0jw6MHA7xk2G5/1QBpB9A
+         lsFCYoibZbW4Yg+U+lVU8nWRGcQlf5nbru+soLWJxXYIFsF/Qg+8PBBOXz4j+XtgtDS/
+         zIeEaBxxVesBv1PbkWOCVFJp5lJnAbmVRRK1s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=//Vec5skQW+H9IPGRTNbLtqR3goYkBV9ehrKBDaBk60=;
-        b=EDEU0XNUPoX/x5xZ/MNsY38AudWWGl3+KcbOkqcNRe/I9c3FRE8GukZc+rwYWD9B9Y
-         Y7JI1KOhByRRwFLrIAxIkwaZK4yl0TkbfeJeDje8MmFQciN8Pc5M8wYd0s9Mn3MtiJd6
-         mioBUM+y9fpLjhCn/t8yEtC9DBR4YM2WsPrg8gEIF8h2VHXOGvvh7UIXpZJY3wZp2F66
-         zbNYl98Tu00+t2ufmfFohhX87v6x+1P7/jyWcghrDCl/7Ugz3vHKsWNJFV5FPYafV9s2
-         slZYd9FEmtwzQY8r4ubpA/bvj15Fy+x7SVpR8hOtnor3vWgb91vb+PGZCpv9AWr7XfVw
-         C1TQ==
-X-Gm-Message-State: APjAAAXCWdwzqgrpqgKXvUwZZaUmSdtRVI+8HKbwQBWCnyN0Qenn/1nG
-        g3Uj14yVr9Kr5PrgI35pjwg=
-X-Google-Smtp-Source: APXvYqyiUD9sT7EtnveIa/vRKGHAVVn2/b7SMr8wdqziUFzg/6Noadwwq9c50Cg1S/0Q+GiUW7raUg==
-X-Received: by 2002:a17:902:b104:: with SMTP id q4mr731201plr.132.1578692085293;
-        Fri, 10 Jan 2020 13:34:45 -0800 (PST)
-Received: from bbox-1.mtv.corp.google.com ([2620:15c:211:1:3e01:2939:5992:52da])
-        by smtp.gmail.com with ESMTPSA id t137sm3692307pgb.40.2020.01.10.13.34.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2020 13:34:43 -0800 (PST)
-From:   Minchan Kim <minchan@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        linux-api@vger.kernel.org, oleksandr@redhat.com,
-        Suren Baghdasaryan <surenb@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        John Dias <joaodias@google.com>,
-        Minchan Kim <minchan@kernel.org>
-Subject: [PATCH 4/4] mm/madvise: allow KSM hints for remote API
-Date:   Fri, 10 Jan 2020 13:34:33 -0800
-Message-Id: <20200110213433.94739-5-minchan@kernel.org>
-X-Mailer: git-send-email 2.25.0.rc1.283.g88dfdc4193-goog
-In-Reply-To: <20200110213433.94739-1-minchan@kernel.org>
-References: <20200110213433.94739-1-minchan@kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=r4PmeZ/898aGumdPWOcSK9D1hCv5M+BfhsqeoQLug0k=;
+        b=FzC7fLb69TRwoPd8tPxJH0gKmWJ9GEL0Wv5NM75fHwiycWpUK3NwGy3S1bgbNx8b7U
+         JTfKwgFDkIkmkW6BlAON+KlXZR/9VEMb5iOccAy6jATvseMRKBjhx5mTGFMcuuvP77L/
+         i0PaiuztyXh47+rOhGDL5mjeAu62s4gkkysi6RbU/TlRS7kxDTfq/U+/xLUHMd1hDj3N
+         ibopiJEX772wAdOs/jyWLKKwcvfK69JabY3oNPv8mEwtWpBtcXckETmYQtDyw+CuiQNJ
+         FHNVHb0uLocRN4m4FXzs75ZJwyEnBRdfFzS4DbKurGrAsb60hgNxB3+Cfx/RGGSq0fbl
+         tTvw==
+X-Gm-Message-State: APjAAAW1+ubMuaXNQL5TQOFm7uMaZBVilUMXaK8s2Ub5TB8FRj896Xdy
+        H4Oxc9QSLczf6IKFcikZjbH77A==
+X-Google-Smtp-Source: APXvYqzSdoMLMiGIeDogdzlJjB5mKTqBKEmCoffAq0etf1KN36GTMK3ghL0iHprY4NA340RAOTssng==
+X-Received: by 2002:a5e:9907:: with SMTP id t7mr4335773ioj.72.1578692352205;
+        Fri, 10 Jan 2020 13:39:12 -0800 (PST)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id v10sm825497iot.12.2020.01.10.13.39.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jan 2020 13:39:11 -0800 (PST)
+Subject: Re: [PATCH kunit] kunit: building kunit as a module breaks
+ allmodconfig
+To:     Alan Maguire <alan.maguire@oracle.com>, brendanhiggins@google.com,
+        gregkh@linuxfoundation.org
+Cc:     rafael@kernel.org, jmorris@namei.org, serge@hallyn.com,
+        knut.omang@oracle.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kunit-dev@googlegroups.com,
+        linux-kselftest@vger.kernel.org, sfr@canb.auug.org.au,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <1578656965-2993-1-git-send-email-alan.maguire@oracle.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <bb27a03b-1c3d-567b-caf3-7b0e4a039f6d@linuxfoundation.org>
+Date:   Fri, 10 Jan 2020 14:39:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1578656965-2993-1-git-send-email-alan.maguire@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Natalenko <oleksandr@redhat.com>
+Hi Alan,
 
-It all began with the fact that KSM works only on memory that is marked
-by madvise(). And the only way to get around that is to either:
+On 1/10/20 4:49 AM, Alan Maguire wrote:
+> kunit tests that do not support module build should depend
+> on KUNIT=y rather than just KUNIT in Kconfig, otherwise
+> they will trigger compilation errors for "make allmodconfig"
+> builds.
+> 
+> Fixes: 9fe124bf1b77 ("kunit: allow kunit to be loaded as a module")
+> Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-  * use LD_PRELOAD; or
-  * patch the kernel with something like UKSM or PKSM.
+Thanks for fixing this quickly. For future reference, Signed-off-by
+should be last. I fixed it and applied the patch.
 
-(i skip ptrace can of worms here intentionally)
-
-To overcome this restriction, lets employ a new remote madvise API. This
-can be used by some small userspace helper daemon that will do auto-KSM
-job for us.
-
-I think of two major consumers of remote KSM hints:
-
-  * hosts, that run containers, especially similar ones and especially in
-    a trusted environment, sharing the same runtime like Node.js;
-
-  * heavy applications, that can be run in multiple instances, not
-    limited to opensource ones like Firefox, but also those that cannot be
-    modified since they are binary-only and, maybe, statically linked.
-
-Speaking of statistics, more numbers can be found in the very first
-submission, that is related to this one [1]. For my current setup with
-two Firefox instances I get 100 to 200 MiB saved for the second instance
-depending on the amount of tabs.
-
-1 FF instance with 15 tabs:
-
-   $ echo "$(cat /sys/kernel/mm/ksm/pages_sharing) * 4 / 1024" | bc
-   410
-
-2 FF instances, second one has 12 tabs (all the tabs are different):
-
-   $ echo "$(cat /sys/kernel/mm/ksm/pages_sharing) * 4 / 1024" | bc
-   592
-
-At the very moment I do not have specific numbers for containerised
-workload, but those should be comparable in case the containers share
-similar/same runtime.
-
-[1] https://lore.kernel.org/patchwork/patch/1012142/
-
-Signed-off-by: Oleksandr Natalenko <oleksandr@redhat.com>
-Signed-off-by: Minchan Kim <minchan@kernel.org>
----
- mm/madvise.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/mm/madvise.c b/mm/madvise.c
-index eb42b2b7f49b..3aa9aec6bfd9 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -1000,6 +1000,8 @@ process_madvise_behavior_valid(int behavior)
- 	switch (behavior) {
- 	case MADV_COLD:
- 	case MADV_PAGEOUT:
-+	case MADV_MERGEABLE:
-+	case MADV_UNMERGEABLE:
- 		return true;
- 	default:
- 		return false;
--- 
-2.25.0.rc1.283.g88dfdc4193-goog
-
+thanks,
+-- Shuah
