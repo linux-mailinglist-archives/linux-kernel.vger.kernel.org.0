@@ -2,174 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B2D513653F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 03:17:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE69F136552
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 03:28:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730737AbgAJCRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 21:17:10 -0500
-Received: from mail-eopbgr60083.outbound.protection.outlook.com ([40.107.6.83]:38911
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730668AbgAJCRK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 21:17:10 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WlSB9gw+LzMU7Z+ec1B31MrhbVgIBApLx1xgWxiV1J4AM7A0tyRGlu6NhpmTxMzNbg0mm19y9iO5tF6hH12lMvXLz3wP0svoRdyJlIGixlQ2GxH70vKlyxn/051SnE0oxjEL7eNk+psyN6BSGXNlWNZejNCsDSmzyhrQXy88rWU/EMXayTiwsi4vvkRRMU+mBTGPVtXgXCDwC143tufiK41z6jjUBuqF/WuxDtZHNfQSDlW+7rSr7HQmUc0zRGgxv7ECx4H7q3W6ggt43FF9PZr/gCGTUkeaVG1VUWC+J5dupsEn176vhuU7NC/El3jRmdls1WTuCjY4BVos5Jlt+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jr16rIJTCC1eefDNek4Lk468Le3w0iFIOgf5ynpTcwQ=;
- b=dKILr5/Qm6EGc4xorPr4I/ZHzpdi2Vf9cShnJYQ69lg5y4Fk7dQ+9ZCHMb/GZDtwYPpzC9Xykdfh2VxfUtQilQHZxgcSvgOhvRyGEOUbo157BSS29f2kZx/Y5uF28NiAPgAYlZt6iwIyAj7eL8mnCuaLIteqbe51UtmOqkyA64n30sxrmm67S4S1u3LMmR/lWKsrmFcTVvWLPSK+TDam/WCltK8WTxd0DXxMGULgr4AaC5ao/MqAGDTkLNMtN1sa8witwF2+AAJWWjnKtQ8HkPXu6kNU8uiJPtSk9qx5UNaVjLUfjYPUToq1iwgAS/X8cVW9zLiVBTrZZU6fsDRaew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
- dkim=pass header.d=mellanox.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jr16rIJTCC1eefDNek4Lk468Le3w0iFIOgf5ynpTcwQ=;
- b=CsncPSl2rdnxLM3ml/+C/v7w1pblq6FZ5vJLmWHnlnZXrcEfJ99RLAivj73mmRJwVT9CgnpFkWTr8psBsp46qhxFDU1cKyMPWQtBl1swF4BJUGoTDeyNnIeVH5nV3lzcrO7JhtWzvH1lj6e61F3f0kqCvJa6hbF+o5BAwP1xQOI=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (52.133.14.15) by
- VI1PR05MB3437.eurprd05.prod.outlook.com (10.170.239.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2602.12; Fri, 10 Jan 2020 02:16:27 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::1c00:7925:d5c6:d60d]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::1c00:7925:d5c6:d60d%7]) with mapi id 15.20.2623.011; Fri, 10 Jan 2020
- 02:16:27 +0000
-Received: from mlx.ziepe.ca (142.68.57.212) by MN2PR06CA0026.namprd06.prod.outlook.com (2603:10b6:208:23d::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2623.9 via Frontend Transport; Fri, 10 Jan 2020 02:16:26 +0000
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)     (envelope-from <jgg@mellanox.com>)      id 1ipjqZ-0001bH-Fo; Thu, 09 Jan 2020 22:16:23 -0400
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Doug Ledford <dledford@redhat.com>
-CC:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] Please pull RDMA subsystem changes
-Thread-Topic: [GIT PULL] Please pull RDMA subsystem changes
-Thread-Index: AQHVx1v2bZiuTuTbz0W/q1nZ7yjcuQ==
-Date:   Fri, 10 Jan 2020 02:16:26 +0000
-Message-ID: <20200110021623.GA6057@ziepe.ca>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MN2PR06CA0026.namprd06.prod.outlook.com
- (2603:10b6:208:23d::31) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:44::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [142.68.57.212]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: f77d8665-46de-4b21-2084-08d7957318d5
-x-ms-traffictypediagnostic: VI1PR05MB3437:
-x-microsoft-antispam-prvs: <VI1PR05MB34378AEADEA3ED8E50D08C11CF380@VI1PR05MB3437.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:211;
-x-forefront-prvs: 02788FF38E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(396003)(346002)(136003)(39860400002)(189003)(199004)(9746002)(66556008)(110136005)(64756008)(54906003)(33656002)(5660300002)(66476007)(36756003)(66946007)(52116002)(186003)(1076003)(86362001)(2906002)(316002)(4001150100001)(81166006)(81156014)(66446008)(26005)(71200400001)(66616009)(9786002)(8936002)(8676002)(9686003)(4326008)(478600001)(24400500001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB3437;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Vkn/0KwN4RsL+X2AXDeibdIBLIQUAuE7vCQbXY6w0GmWSDbTjv3zyMhGgVv0weBv2q97hd/q8VPz4Qwty8PICX3CbyUG31/Kyf+ZKO7+tss6SFTFL6GjOK4p8piqttfZksNcMuSpn3yLDPR9few0IbPJDB+hvyqhjV7buifN7QaHz0XgZmDY/MmulMkQ5LXdX34snKsPbQgqcqTaJUKYU9udSEOj0Eb8Tq5R7N0GYfMG6dHRrf3Gsk9TXYMJTOgVL+Xl7Bl73+14BTj+BNKllmQvatpa/FKxMiI56MY3vvq6yNu7lp9+7jAdDZ9Or5qSgKJgvSVF2dxR3uPwlrPmVEt508xD+xebKv/FW/k3hS3Su9vmV3yGB+ZnM21e6p1fn/eAaSoM0bvbKf4GeXk7XfefnDZKadNWru3BmRDtEd07KQZXwq9v9yTHiov//KTLnViMGTVDmgtHuVRgKE+zoQhygaTcjWs7yvsXZm4voJuP7+BepeEdRZoC98BvHjPM
-x-ms-exchange-transport-forked: True
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
+        id S1730836AbgAJC1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 21:27:15 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36072 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730806AbgAJC1P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 21:27:15 -0500
+Received: by mail-lj1-f193.google.com with SMTP id r19so492192ljg.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 18:27:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=IVAveBZjpIfJ4omwAA+IQvTDlq09Uc7HsY0eJNGnBoQ=;
+        b=Z9jkHudzgmru0+/sPDhBxRg2Dki429DfS/4CZPZ3UyWbscbfW8IKDcbzT1ZkLyq9cV
+         L7P7vZ50A7yU9cx7YdDueY39MpskcnaFKFUHvc4S6UFVVOA8MMhmkPnCNXSVppwmxF9P
+         AQJiaMW7+PwGzUYlX2AojdkQ6zgv2gUQ9j6BinFapxoEkmQYB+ruJZtUlOLitvzCbUPa
+         LU03L2WPsZUPZvTGym2GtvsEOZzC2ee7oDcoQKLwogTNbLTpDmdDTxzB29F28hW3dFMq
+         dhHWmopGuXs51FvFZ+z4iZjYG0/ccQInM7RGIpyF6lviRG+5Bn4v+C6LZ2ss2FGxoNhE
+         ZAIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=IVAveBZjpIfJ4omwAA+IQvTDlq09Uc7HsY0eJNGnBoQ=;
+        b=siOEXqFNtV/fy+/HwRwdOKzD4iWvyY1ve27/aMBLCd/YUeNdk0blLKGDCXeF9VHpM+
+         8y/MBxInUY2vkACFlEcpYIKc7OTkyyCxFlPJKRwcRiQoJ8QnEnWZDrj4Rsnl6C82mxm4
+         FEvhWloeLLDBKALq75xE3O5HwnjPqbWGa3s7+IU07oqGF9Jc8fxJUXC05CpeA3JNkf/1
+         8rozdkbs0mDnObzGTopn5d/z8zkJOz5PjsIpov3Flxdt/H55+XTd4kDl+QwPm6u9fv5L
+         34KZfOzp0Oxe+33icUSlYo2Yw6dm3y5hAsDFXqOouRyF+YcjqdO66OP2ldDffAKzXsBn
+         u8CQ==
+X-Gm-Message-State: APjAAAVVkNnX4+s7tNPPrbI84ffzYfFKy2glBqVnCz9HLK95oDvGsvqV
+        hAer8ZjIRKmlYvslZ88BVkpe5DCi5uYjNgWLDPw=
+X-Google-Smtp-Source: APXvYqxqb4MffpgRoz4mqIfIwmosGfyuI4PgkVLo/LE14JBIHt4uHHTRi02T/AlYkC/9ZfEQSRHYxvJPFaB7pkwC5+8=
+X-Received: by 2002:a2e:9883:: with SMTP id b3mr787847ljj.80.1578623233860;
+ Thu, 09 Jan 2020 18:27:13 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f77d8665-46de-4b21-2084-08d7957318d5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2020 02:16:26.8851
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: dGFyel1oehy7HexD/v7bTUteHdY62/hBAWOQ+doC2XZylsOxFJ8BRJ3sQt3vQ5HQ8yw1hcFgu02vZPBp23hvCQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB3437
+References: <20200103033929.4956-1-zhenzhong.duan@gmail.com>
+ <20200109184055.GI5603@zn.tnic> <20200109204638.GA523773@rani.riverdale.lan>
+In-Reply-To: <20200109204638.GA523773@rani.riverdale.lan>
+From:   Zhenzhong Duan <zhenzhong.duan@gmail.com>
+Date:   Fri, 10 Jan 2020 10:27:02 +0800
+Message-ID: <CAFH1YnNA9qfM4tPzKKDaQD6DPxnE=tJsB7AUZQBohDTW3zm=Xg@mail.gmail.com>
+Subject: Re: [PATCH v2] x86/boot/KASLR: Fix unused variable warning
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@suse.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---J2SCkAp4GZ/dPZZf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jan 10, 2020 at 4:46 AM Arvind Sankar <nivedita@alum.mit.edu> wrote=
+:
+>
+> On Thu, Jan 09, 2020 at 07:40:55PM +0100, Borislav Petkov wrote:
+> > On Fri, Jan 03, 2020 at 11:39:29AM +0800, Zhenzhong Duan wrote:
+> > > Local variable 'i' is referenced only when CONFIG_MEMORY_HOTREMOVE an=
+d
+> > > CONFIG_ACPI are defined, but definition of variable 'i' is out of gua=
+rd.
+> > > If any of the two macros is undefined, below warning triggers during
+> > > build, fix it by moving 'i' in the guard.
+> > >
+> > > arch/x86/boot/compressed/kaslr.c:698:6: warning: unused variable =E2=
+=80=98i=E2=80=99 [-Wunused-variable]
+> >
+> > How do you trigger this?
+> >
+> > I have:
+> >
+> > $  grep -E "(CONFIG_MEMORY_HOTREMOVE|CONFIG_ACPI)" .config
+> > # CONFIG_ACPI is not set
+> >
+> > but no warning. Neither with gcc 8 nor with gcc 9.
+> >
+> > --
+> > Regards/Gruss,
+> >     Boris.
+> >
+> > https://people.kernel.org/tglx/notes-about-netiquette
+>
+> The boot/compressed Makefile resets KBUILD_CFLAGS.  Following hack and
+> building with W=3D1 shows it, or just add -Wunused in there.
+>
+> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed=
+/Makefile
+> index 56aa5fa0a66b..791c0d5a952a 100644
+> --- a/arch/x86/boot/compressed/Makefile
+> +++ b/arch/x86/boot/compressed/Makefile
+> @@ -35,6 +35,9 @@ KBUILD_CFLAGS +=3D $(cflags-y)
+>  KBUILD_CFLAGS +=3D -mno-mmx -mno-sse
+>  KBUILD_CFLAGS +=3D $(call cc-option,-ffreestanding)
+>  KBUILD_CFLAGS +=3D $(call cc-option,-fno-stack-protector)
+> +
+> +include scripts/Makefile.extrawarn
+> +
+>  KBUILD_CFLAGS +=3D $(call cc-disable-warning, address-of-packed-member)
+>  KBUILD_CFLAGS +=3D $(call cc-disable-warning, gnu)
+>  KBUILD_CFLAGS +=3D -Wno-pointer-sign
 
-Hi Linus,
+Yes. Will you send this formally? Not clear if there is other reason making
+KBUILD_CFLAGS for arch/x86/boot/compressed different from other part.
 
-First rc pull request
-
-A very small set of fixes, most people seem to still be recovering
-=66rom December!
-
-Thanks,
-Jason
-
-The following changes since commit fd6988496e79a6a4bdb514a4655d2920209eb85d:
-
-  Linux 5.5-rc4 (2019-12-29 15:29:16 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
-
-for you to fetch changes up to 9554de394b7eee01606e64c3806cd43893f3037e:
-
-  i40iw: Remove setting of VMA private data and use rdma_user_mmap_io (2020=
--01-07 15:07:37 -0400)
-
-----------------------------------------------------------------
-First RDMA subsystem updates for 5.5-rc
-
-Five small driver fixes:
-
-- Fix error flow with MR allocation in bnxt_re
-
-- An errata work around for bnxt_re
-
-- Misuse of the workqueue API in hfi1
-
-- Protocol error in hfi1
-
-- Regression in 5.5 related to the mmap rework with i40iw
-
-----------------------------------------------------------------
-Kaike Wan (2):
-      IB/hfi1: Don't cancel unused work item
-      IB/hfi1: Adjust flow PSN with the correct resync_psn
-
-Selvin Xavier (2):
-      RDMA/bnxt_re: Avoid freeing MR resources if dereg fails
-      RDMA/bnxt_re: Fix Send Work Entry state check while polling completio=
-ns
-
-Shiraz Saleem (1):
-      i40iw: Remove setting of VMA private data and use rdma_user_mmap_io
-
- drivers/infiniband/hw/bnxt_re/ib_verbs.c  |  4 +++-
- drivers/infiniband/hw/bnxt_re/qplib_fp.c  | 12 ++++++------
- drivers/infiniband/hw/hfi1/iowait.c       |  4 +++-
- drivers/infiniband/hw/hfi1/tid_rdma.c     |  9 +++++++++
- drivers/infiniband/hw/i40iw/i40iw_verbs.c | 14 ++++++--------
- 5 files changed, 27 insertions(+), 16 deletions(-)
-
---J2SCkAp4GZ/dPZZf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEfB7FMLh+8QxL+6i3OG33FX4gmxoFAl4X3nUACgkQOG33FX4g
-mxptxw/9FYWDEChxYBddnesiRpJANSciNFu50rVHChLrAvkhUp/ThuZcj2p8eZGr
-kin6y6ntQuNw7r161KCuIVVqGcUezJXALJTg5/LM78RbNIhGPPA3OiY2+0Bh4BRH
-pLhIhjs6G9giMjYuqkxL1y+FcjgTfJ4fjaHK3F2m3RI+DREe7EsjxgRCpMNHZyQH
-8bSbPhnG7XLN2TKoxcZZfrXZOyzryTUUxr3TO/xPsd8g1NONO4grTYL2J0dgLQop
-zVgrIfw/hw7f/o8eYfQUzWHgfP4T7SE5gOVOTgXT4D5lEKCchgMYAxc0yVlCtMxU
-cDlEqd552i/EaFlM8DvRr3z7y1KQ2OzKh8YO8y9j7SIVt7HOIX66yzlI2XKEe+vx
-8QyJpjZh1AN/qc63iw3oPprR9qjfnwuXCe2k2eOD5CRfs73BWuBuzlKybvN1qETj
-lZ4jjZe0fBi+xlUM8CWHguYYOi3fbRG1NSymVl+y4nGSCuTBgUscZy/lFldYi1z4
-m+eWBH8aL4KygVjclPoLsvNc3hPoOx5h9qd6MzsL05bdyBJZmrxdYZL5Ubio+Ky/
-Ga1YdDOJ2XSIGMea6G2HknZ+3IaxJ78ktFXi4qp3oA7eSa1cyyexXXEsimOGi2Mm
-cpSbL/foqf4YeTzTWnySMs1TQkteomTSVg493q/5Ydvx0Ln7kQg=
-=FsV4
------END PGP SIGNATURE-----
-
---J2SCkAp4GZ/dPZZf--
+Regards
+Zhenzhong
