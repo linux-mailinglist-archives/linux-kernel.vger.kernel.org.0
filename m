@@ -2,35 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22F171375B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 19:01:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ADD81375BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 19:01:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728752AbgAJR7Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 12:59:24 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:59272 "EHLO
+        id S1729077AbgAJSAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 13:00:04 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:59265 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728636AbgAJR7W (ORCPT
+        with ESMTP id S1728569AbgAJR7X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 12:59:22 -0500
+        Fri, 10 Jan 2020 12:59:23 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ipyZ4-00028p-VK; Fri, 10 Jan 2020 18:59:19 +0100
+        id 1ipyZ5-00029M-MA; Fri, 10 Jan 2020 18:59:19 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9B6CF1C2D6C;
-        Fri, 10 Jan 2020 18:59:18 +0100 (CET)
-Date:   Fri, 10 Jan 2020 17:59:18 -0000
-From:   "tip-bot2 for kbuild test robot" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5170B1C2D6C;
+        Fri, 10 Jan 2020 18:59:19 +0100 (CET)
+Date:   Fri, 10 Jan 2020 17:59:19 -0000
+From:   "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/mm/pat: Mark __cpa_flush_tlb() as static
-Cc:     kbuild test robot <lkp@intel.com>, Ingo Molnar <mingo@kernel.org>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191123153023.bj6m66scjeubhbjg@4978f4969bb8>
-References: <20191123153023.bj6m66scjeubhbjg@4978f4969bb8>
+Subject: [tip: x86/mm] x86/mm/pat: Clean up <asm/memtype.h> externs
+Cc:     Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157867915850.30329.8747100647906961007.tip-bot2@tip-bot2>
+Message-ID: <157867915916.30329.12379827930607399319.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -46,32 +44,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/mm branch of tip:
 
-Commit-ID:     da9144c5ad8943f9003ec4a6a0200637b4ba9ebd
-Gitweb:        https://git.kernel.org/tip/da9144c5ad8943f9003ec4a6a0200637b4ba9ebd
-Author:        kbuild test robot <lkp@intel.com>
-AuthorDate:    Sat, 23 Nov 2019 23:30:23 +08:00
+Commit-ID:     533d49b37a2b532354d3841a142173b8321818df
+Gitweb:        https://git.kernel.org/tip/533d49b37a2b532354d3841a142173b8321818df
+Author:        Ingo Molnar <mingo@kernel.org>
+AuthorDate:    Wed, 20 Nov 2019 15:45:32 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Tue, 10 Dec 2019 10:12:55 +01:00
 
-x86/mm/pat: Mark __cpa_flush_tlb() as static
+x86/mm/pat: Clean up <asm/memtype.h> externs
 
-Signed-off-by: kbuild test robot <lkp@intel.com>
-Link: https://lkml.kernel.org/r/20191123153023.bj6m66scjeubhbjg@4978f4969bb8
+Half of the declarations have an 'extern', half of them not,
+use 'extern' consistently.
+
+This makes grepping for APIs easier, such as:
+
+  dagon:~/tip> git grep -E '\<memtype_.*\(' arch/x86/ | grep extern
+  arch/x86/include/asm/memtype.h:extern int memtype_reserve(u64 start, u64 end,
+  arch/x86/include/asm/memtype.h:extern int memtype_free(u64 start, u64 end);
+  arch/x86/include/asm/memtype.h:extern int memtype_kernel_map_sync(u64 base, unsigned long size,
+  arch/x86/include/asm/memtype.h:extern int memtype_reserve_io(resource_size_t start, resource_size_t end,
+  arch/x86/include/asm/memtype.h:extern void memtype_free_io(resource_size_t start, resource_size_t end);
+  arch/x86/mm/pat/memtype.h:extern int memtype_check_insert(struct memtype *entry_new,
+  arch/x86/mm/pat/memtype.h:extern struct memtype *memtype_erase(u64 start, u64 end);
+  arch/x86/mm/pat/memtype.h:extern struct memtype *memtype_lookup(u64 addr);
+  arch/x86/mm/pat/memtype.h:extern int memtype_copy_nth_element(struct memtype *entry_out, loff_t pos);
+
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/mm/pat/set_memory.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/memtype.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-index d4ab493..2082339 100644
---- a/arch/x86/mm/pat/set_memory.c
-+++ b/arch/x86/mm/pat/set_memory.c
-@@ -331,7 +331,7 @@ static void cpa_flush_all(unsigned long cache)
- 	on_each_cpu(__cpa_flush_all, (void *) cache, 1);
- }
+diff --git a/arch/x86/include/asm/memtype.h b/arch/x86/include/asm/memtype.h
+index ec18e38..9c2447b 100644
+--- a/arch/x86/include/asm/memtype.h
++++ b/arch/x86/include/asm/memtype.h
+@@ -5,8 +5,8 @@
+ #include <linux/types.h>
+ #include <asm/pgtable_types.h>
  
--void __cpa_flush_tlb(void *data)
-+static void __cpa_flush_tlb(void *data)
- {
- 	struct cpa_data *cpa = data;
- 	unsigned int i;
+-bool pat_enabled(void);
+-void pat_disable(const char *reason);
++extern bool pat_enabled(void);
++extern void pat_disable(const char *reason);
+ extern void pat_init(void);
+ extern void init_cache_modes(void);
+ 
+@@ -17,11 +17,11 @@ extern int memtype_free(u64 start, u64 end);
+ extern int memtype_kernel_map_sync(u64 base, unsigned long size,
+ 		enum page_cache_mode pcm);
+ 
+-int memtype_reserve_io(resource_size_t start, resource_size_t end,
++extern int memtype_reserve_io(resource_size_t start, resource_size_t end,
+ 			enum page_cache_mode *pcm);
+ 
+-void memtype_free_io(resource_size_t start, resource_size_t end);
++extern void memtype_free_io(resource_size_t start, resource_size_t end);
+ 
+-bool pat_pfn_immune_to_uc_mtrr(unsigned long pfn);
++extern bool pat_pfn_immune_to_uc_mtrr(unsigned long pfn);
+ 
+ #endif /* _ASM_X86_MEMTYPE_H */
