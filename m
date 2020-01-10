@@ -2,146 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BF29137535
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:50:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD9A813750C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:42:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728576AbgAJRuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 12:50:02 -0500
-Received: from mx07-00252a01.pphosted.com ([62.209.51.214]:8468 "EHLO
-        mx07-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728486AbgAJRuB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 12:50:01 -0500
-X-Greylist: delayed 806 seconds by postgrey-1.27 at vger.kernel.org; Fri, 10 Jan 2020 12:49:59 EST
-Received: from pps.filterd (m0102628.ppops.net [127.0.0.1])
-        by mx07-00252a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00AHYixs006123
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 17:36:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=raspberrypi.org; h=subject : to :
- cc : references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=pp;
- bh=VmrJ62al7CSJqDnZbgM4IQGS6w64QwkkFSJjUF2T67A=;
- b=bnG0n5CNWRLpdwoBy0ZppXxnMv+lNIZF0QOpWYqODOU2OrFw+gMiIYtQnEXo2UMQMinC
- UlGooeJTWUGbtYbhG/Oy5gD6ZvEp8tXD09mYXqTub4S79hg6ILj5zruS8D2bvyJ2JU4O
- j4Cd3pbfdrI/xPCq1+1v8ItnaLad7WR2TDCvw4pJ/BxdaDcUBf5OEziwDqrII62morBh
- aDu91ZXp8bHzwcnIC9bDehykeSGSoV+r2gbvT45OFZ7hi1iRQjJLkRORPFN3AU4XGkel
- LyP+rMx2XgULCsGqJPYY1dGFnVD6NiHcMZ7GW0Phdo0v4QY73tYq/CrxXfFVV+DhgN9h fQ== 
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
-        by mx07-00252a01.pphosted.com with ESMTP id 2xah08u1a8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 17:36:32 +0000
-Received: by mail-wm1-f70.google.com with SMTP id p2so1120479wma.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 09:36:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VmrJ62al7CSJqDnZbgM4IQGS6w64QwkkFSJjUF2T67A=;
-        b=a3TmIFfNvj4nYPFfMcdti6+6y11Xg4eEdOHhKxwUmJ8oYyMjA6U9KxONMotcplKM8C
-         CZ/hcWsj0dvzLWXnc7WSG+MHyxNY9g/qcmZvauM6yq+7RDn4CMMYZMnEuccMdZKCgn5O
-         gkDGb20Yg3UeemE1aB5DuJRncTCp2vopjmP4xDc8Of/k9QRKkXuFBP3BcqxpnksQdNY6
-         n9jYSTeC2OXIFLlauIQTzrHY+3fKFAeFI4k19oCqaGc/AeLvFXX55SO218Fsph8eC5OF
-         wHVhdxXufcBfIgRYa1jPpaTPu1pHEfIzwpUx1oYk8CEoQgJshFiTQSp62u7fXW1vm+Jw
-         Pe/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VmrJ62al7CSJqDnZbgM4IQGS6w64QwkkFSJjUF2T67A=;
-        b=P7ALkOkepkYgJLgSsnh8rkY0Z0vzeRpiAvlzO3anxbXSFg1c4uFyYdHVF84JFp189u
-         U7GYoUrprwFSGaySx2l7/vjZ+JBgb9qsPqm3rRXQI7PHJJMRMQpuPW1C54t8oaUGCWVU
-         nmDJimF3CIePRrMK4JF3PkGR0EeAR4OV5OsLD6pVsotbYWOMRfgZTylOITGQ/FAQR0YS
-         jsy3EHymnUKA7RbEPG+AL0+lVvpHvXOM2CS0K1LDT2jD+8ehV3WGWmnEcTQRlS13t+D0
-         6f2pgfo14fGtv/pUEesdulCzltK/hm1WlnqQka4aDn6kcyTC9LwOaxSkO2n30zkH5LJ0
-         HqaA==
-X-Gm-Message-State: APjAAAXgFA56hWGDHC3zpddP0C1oUqW2IrS/4zGsvQjYAmYgjaPT136P
-        Muz+zhMG8UImN3eFb2gtiEQtnDStE3fKqWLRhRImwVFsEJUIsDjmcX9JE625IiVcPuUVKZ4YPK6
-        aBYm7+dTjxZIJvQ2hIA6xygVU
-X-Received: by 2002:a1c:730d:: with SMTP id d13mr5439679wmb.126.1578677791645;
-        Fri, 10 Jan 2020 09:36:31 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyDvHda/vVFwEomWaXK6Z8R2pnK1KjJdIV8/DNRF6e/NKDIeh18hgbtQkhbdIVwlI8HYnf1gg==
-X-Received: by 2002:a1c:730d:: with SMTP id d13mr5439668wmb.126.1578677791447;
-        Fri, 10 Jan 2020 09:36:31 -0800 (PST)
-Received: from ?IPv6:2a00:1098:3142:14:910a:522a:cf5c:edd0? ([2a00:1098:3142:14:910a:522a:cf5c:edd0])
-        by smtp.gmail.com with ESMTPSA id f1sm3134788wmc.45.2020.01.10.09.36.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Jan 2020 09:36:30 -0800 (PST)
-Subject: Re: [PATCH] dma-contiguous: CMA: give precedence to cmdline
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-References: <20200110171933.15014-1-nsaenzjulienne@suse.de>
-From:   Phil Elwell <phil@raspberrypi.org>
-Message-ID: <7ae5bad5-eee6-407f-bfa1-aff34f1a0550@raspberrypi.org>
-Date:   Fri, 10 Jan 2020 17:36:30 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1728152AbgAJRl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 12:41:58 -0500
+Received: from mail.softplc.com ([206.126.248.66]:39303 "EHLO mail.softplc.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727315AbgAJRl6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 12:41:58 -0500
+X-Greylist: delayed 305 seconds by postgrey-1.27 at vger.kernel.org; Fri, 10 Jan 2020 12:41:58 EST
+Received: from [192.100.100.3] ([::ffff:107.174.231.239])
+  (AUTH: PLAIN dick@softplc.com, TLS: TLSv1/SSLv3,128bits,AES128-SHA)
+  by mail.softplc.com with ESMTPSA; Fri, 10 Jan 2020 12:36:51 -0500
+  id 00000000001E0003.000000005E18B633.0000514F
+Subject: Re: [PATCH RT 0/2] serial: 8250: atomic console fixups
+To:     John Ogness <john.ogness@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+References: <20200110153932.14970-1-john.ogness@linutronix.de>
+From:   Dick Hollenbeck <dick@softplc.com>
+Message-ID: <ddecdfb7-907e-7198-1c82-efb044c080de@softplc.com>
+Date:   Fri, 10 Jan 2020 11:36:50 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20200110171933.15014-1-nsaenzjulienne@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200110153932.14970-1-john.ogness@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-10_01:2020-01-10,2020-01-09 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nicolas,
+On 1/10/20 9:39 AM, John Ogness wrote:
+> Dick Hollenbeck pointed out[0] that serial usage for non-consoles
+> was dramatically affected due to the atomic console
+> implementation. Indeed, the implementation was taking the global
+> console_atomic_lock for _all_ 8250 ports, regardless if they were
+> consoles or not.
+>
+> This series fixes that by only using the cpu-lock if the port is
+> a console. While making those changes, I realized that the clear
+> counter/ier-cache is not needed, so that is also removed.
+>
+> Dick also pointed out that the IER accessor functions were using
+> non-typical names. These are updated and moved to inline macros.
+>
+> Finally, I noticed that the fsl, ingenic, and mtk variants were
+> directly accessing IER. These are now also appropriately wrapped.
+>
+> In his suggestion, Dick did optimizations regarding IER caching.
+> However, these are _not_ included because they may have some
+> unwanted side-effects. For example, 
 
-On 10/01/2020 17:19, Nicolas Saenz Julienne wrote:
-> Although the device tree might contain a reserved-memory DT node
-> dedicated as the default CMA pool, users might want to change CMA's
-> parameters using the kernel command line for debugging purposes and
-> whatnot. Honor this by bypassing the reserved memory CMA setup, which
-> will ultimately end up freeing the memblock and allow the command line
-> CMA configuration routine to run.
-> 
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> ---
-> 
-> NOTE: Tested this on arm and arm64 with the Raspberry Pi 4.
-> 
->   kernel/dma/contiguous.c | 9 ++++++++-
->   1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
-> index daa4e6eefdde..8bc6f2d670f9 100644
-> --- a/kernel/dma/contiguous.c
-> +++ b/kernel/dma/contiguous.c
-> @@ -302,9 +302,16 @@ static int __init rmem_cma_setup(struct reserved_mem *rmem)
->   	phys_addr_t align = PAGE_SIZE << max(MAX_ORDER - 1, pageblock_order);
->   	phys_addr_t mask = align - 1;
->   	unsigned long node = rmem->fdt_node;
-> +	bool default_cma = of_get_flat_dt_prop(node, "linux,cma-default", NULL);
->   	struct cma *cma;
->   	int err;
->   
-> +	if (size_cmdline != -1 && default_cma) {
-> +		pr_info("Reserved memory: bypass %s node, using cmdline CMA params instead\n",
-> +			rmem->name);
-> +		return -EBUSY;
-> +	}
-> +
->   	if (!of_get_flat_dt_prop(node, "reusable", NULL) ||
->   	    of_get_flat_dt_prop(node, "no-map", NULL))
->   		return -EINVAL;
-> @@ -322,7 +329,7 @@ static int __init rmem_cma_setup(struct reserved_mem *rmem)
->   	/* Architecture specific contiguous memory fixup. */
->   	dma_contiguous_early_fixup(rmem->base, rmem->size);
->   
-> -	if (of_get_flat_dt_prop(node, "linux,cma-default", NULL))
-> +	if (default_cma)
->   		dma_contiguous_set_default(cma);
->   
->   	rmem->ops = &rmem_cma_ops;
-> 
 
-For what it's worth,
 
-Reviewed-by: Phil Elwell <phil@raspberrypi.org>
 
-Phil
+> I noticed a few places in
+> 8250 code where the value of uart_8250_port->ier is expected to
+> be different than the hardware register.
+
+Sure, its not a trivial change, but I still think it would be superior to try and get it
+right.  But I certainly have no more influence than the prior sentence.
+
+I see this as unfortunate, and a propagation of a weak original design which stems from a
+time when inline C functions were not even available.
+
+  If serial8250_set_IER() function returned the prior value, it could be saved on the stack and still be an indication of difference from the current hardware for the temporary situation at hand.
+
+Then, the compiler would have had a better chance of optimizing out the return value when it is not needed, because it would be a mere reading of the prior value from the struct.
+
+I know I expressed some concern about using *3* functions, set, clear, and restore before, when 2 might suffice.  However we've seen other situations where a clear and restore are used, such as interrupt flags.
+( "set" is a mere lower level common gateway to the hardware in our context.)  So down the road, a clear() and restore() may give you the option to do some locking and unlocking, which I know you don't currently think you need.  Pardon me for un-weighting my concern for 3 functions.
+
+It is certainly a major improvement.  To be honest, I will probably simply comment out the console support in the inline function when and if I ever upgrade my code. I like that its inline, and that its in a single function.
+
+Dick
+
+
+
+
+
+
+
