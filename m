@@ -2,190 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6DBF137401
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:47:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E27D813740F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:49:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728939AbgAJQqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 11:46:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46950 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728542AbgAJQqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 11:46:46 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2313E206ED;
-        Fri, 10 Jan 2020 16:46:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578674805;
-        bh=Q/Krz5L+BywpaikQwEhNbMRsDEYYow+J/SrLX6ewYgQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=C6qapw4FSUm8G59HZSFHuh7wITftQUYHbB9z1x0GHpLzHlao5WNjcBK3Iz0Vo1+Pq
-         SMKJn8i2w9EUbERHVRA+ByX51UowC2/LKSZZgKh9Ey3KBtm6n5ZN9nO4Vs5V1763FX
-         y3fRHs+j4rKAby/QG6P4yvnp163bsNFbsygjdQ5M=
-Date:   Fri, 10 Jan 2020 17:46:43 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Vasiliy Khoruzhick <vasilykh@arista.com>,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH-next 3/3] serial/sysrq: Add MAGIC_SYSRQ_SERIAL_SEQUENCE
-Message-ID: <20200110164643.GB1822445@kroah.com>
-References: <20200109215444.95995-1-dima@arista.com>
- <20200109215444.95995-4-dima@arista.com>
+        id S1728916AbgAJQtV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 11:49:21 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34896 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728107AbgAJQtV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 11:49:21 -0500
+Received: by mail-pg1-f195.google.com with SMTP id l24so1262578pgk.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 08:49:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=brXuec6fVOc4dwf+FV3n+KOcRsO8MbgAaQ9yCNJ4rtQ=;
+        b=n0jzEtSPIAyJr1b96PF8pKh1BWTiiObRYsejvJ/bLaoeNTrNPvcx8ERAFofXmXOLbx
+         8j7k0EYBOesfQ/yyyg6PmulFcLdldU307A6tY9c6Z2QQIoIOenJnBmwc3CCEbSZHdA8v
+         Nmmw3IsTeBCM7943yJN7PQOMKhPy1NmgsO2eKBuVFfxK90Je52sHonk9D0Qm1s6AuFHU
+         n2gRNf06PQXXMIqnpSgTfdI15yr/MQZMC/wBcPpJz4JuMT2vCi5r/3weVEmx3VtQZmxS
+         mhPXfKLEjQLZLi3zQWOKlcFmghSSUlqsviW4j/LaPdY/cRdmUMYUNc2izqC8gYjxfJKG
+         cMoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=brXuec6fVOc4dwf+FV3n+KOcRsO8MbgAaQ9yCNJ4rtQ=;
+        b=NEBFUVGcpcDS0XrUYIhGy6gSLOTkP4O5gjivnSnM5F541T9giA+iXxSz6o6e25Slm7
+         Nh77RtJvKm15gC+Ym01Bt0uk/6Vne1n/8Lr1JhEHvYpOJ3qF4PlBLA6p58YE966WF0y8
+         dAdjciWxNpjtaWCvurDipv2vRYh8TBh4/e5WSSSNBXNBFsvBGtxfRP4QqczLMyCe9WeO
+         gHCxVAee41JL7Vh5uLERAfypUgWwlCquPtE5xFkagLx2Vr+RrhBDvyY/UBDVb/VjC8mu
+         L801q7DUVMWIfdfWGfrE2eRmH/jZzZ/e5X4OIfp1fH2zPyZB+jyHRSCENwIDS5uddfc+
+         kZcA==
+X-Gm-Message-State: APjAAAWlO/QwCWw8Ohfdkn9A8tqAxAUk+QQicVkrVua5h82FaM6cB12W
+        /sQ61L7xoa4pFAZndo9p+bE=
+X-Google-Smtp-Source: APXvYqwg1KhDgRTKcRKE4yl6HbIV3yB4bwewoheoY502mloPzg1d/sVq71GxLax/oMU9ZDd6AJNTwA==
+X-Received: by 2002:a62:c541:: with SMTP id j62mr5172910pfg.237.1578674960543;
+        Fri, 10 Jan 2020 08:49:20 -0800 (PST)
+Received: from localhost.localdomain ([103.211.17.220])
+        by smtp.googlemail.com with ESMTPSA id h7sm3947538pfq.36.2020.01.10.08.49.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2020 08:49:20 -0800 (PST)
+From:   Amol Grover <frextrite@gmail.com>
+To:     Corey Minyard <minyard@acm.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Amol Grover <frextrite@gmail.com>
+Subject: [PATCH v2] drivers: char: ipmi: ipmi_msghandler: Pass lockdep expression to RCU lists
+Date:   Fri, 10 Jan 2020 22:17:10 +0530
+Message-Id: <20200110164709.26741-1-frextrite@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200109215444.95995-4-dima@arista.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 09:54:44PM +0000, Dmitry Safonov wrote:
-> Many embedded boards have a disconnected TTL level serial which can
-> generate some garbage that can lead to spurious false sysrq detects.
-> 
-> Currently, sysrq can be either completely disabled for serial console
-> or always disabled (with CONFIG_MAGIC_SYSRQ_SERIAL), since
-> commit 732dbf3a6104 ("serial: do not accept sysrq characters via serial port")
-> 
-> At Arista, we have such boards that can generate BREAK and random
-> garbage. While disabling sysrq for serial console would solve
-> the problem with spurious false sysrq triggers, it's also desirable
-> to have a way to enable sysrq back.
-> 
-> As a measure of balance between on and off options, add
-> MAGIC_SYSRQ_SERIAL_SEQUENCE which is a string sequence that can enable
-> sysrq if it follows BREAK on a serial line. The longer the string - the
-> less likely it may be in the garbage.
-> 
-> Having the way to enable sysrq was beneficial to debug lockups with
-> a manual investigation in field and on the other side preventing false
-> sysrq detections.
-> 
-> Based-on-patch-by: Vasiliy Khoruzhick <vasilykh@arista.com>
-> Signed-off-by: Dmitry Safonov <dima@arista.com>
-> ---
->  drivers/tty/serial/serial_core.c | 52 ++++++++++++++++++++++++++++----
->  include/linux/serial_core.h      |  2 +-
->  lib/Kconfig.debug                |  8 +++++
->  3 files changed, 55 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-> index 6ac9dfed3423..f70eba032d0b 100644
-> --- a/drivers/tty/serial/serial_core.c
-> +++ b/drivers/tty/serial/serial_core.c
-> @@ -3081,6 +3081,38 @@ void uart_insert_char(struct uart_port *port, unsigned int status,
->  }
->  EXPORT_SYMBOL_GPL(uart_insert_char);
->  
-> +const char sysrq_toggle_seq[] = CONFIG_MAGIC_SYSRQ_SERIAL_SEQUENCE;
-> +
-> +static void uart_sysrq_on(struct work_struct *w)
-> +{
-> +	sysrq_toggle_support(1);
-> +	pr_info("SysRq is enabled by magic sequience on serial\n");
+intf->cmd_rcvrs is traversed with list_for_each_entry_rcu
+outside an RCU read-side critical section but under the
+protection of intf->cmd_rcvrs_mutex.
 
-Do we want to say what serial port it is enabled on?
+ipmi_interfaces is traversed using list_for_each_entry_rcu
+outside an RCU read-side critical section but under the protection
+of ipmi_interfaces_mutex.
 
-And why is this done in a workqueue?
+Hence, add the corresponding lockdep expression to the list traversal
+primitive to silence false-positive lockdep warnings, and
+harden RCU lists.
 
-> +}
-> +static DECLARE_WORK(sysrq_enable_work, uart_sysrq_on);
-> +
-> +static int uart_try_toggle_sysrq(struct uart_port *port, unsigned int ch)
-> +{
-> +	if (sysrq_toggle_seq[0] == '\0')
-> +		return 0;
+Add macro for the corresponding lockdep expression to make the code
+clean and concise.
 
-Is constantly checking the data stream like this going to slow things
-down overall?  Ah, we are just checking this after BREAK, right?  So
-that hopefully will not be that bad...
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+---
+v2:
+- Fix sparse error
+  CHECK: Alignment should match open parenthesis
 
-> +
-> +	BUILD_BUG_ON(ARRAY_SIZE(sysrq_toggle_seq) >= sizeof(port->sysrq_seq)*U8_MAX);
-> +	if (sysrq_toggle_seq[port->sysrq_seq] != ch) {
-> +		port->sysrq_seq = 0;
-> +		return 0;
-> +	}
-> +
-> +	/* Without the last \0 */
-> +	if (++port->sysrq_seq < (ARRAY_SIZE(sysrq_toggle_seq) - 1)) {
-> +		port->sysrq = jiffies + HZ*5;
+ drivers/char/ipmi/ipmi_msghandler.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-5 second delay?  You should document what this value is for somewhere
-here...
+diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+index cad9563f8f48..1cbeacb1e8b9 100644
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -35,6 +35,8 @@
+ #include <linux/nospec.h>
+ 
+ #define IPMI_DRIVER_VERSION "39.2"
++#define cmd_rcvrs_mutex_held() \
++	lockdep_is_held(&intf->cmd_rcvrs_mutex)
+ 
+ static struct ipmi_recv_msg *ipmi_alloc_recv_msg(void);
+ static int ipmi_init_msghandler(void);
+@@ -618,6 +620,8 @@ static DEFINE_MUTEX(ipmidriver_mutex);
+ 
+ static LIST_HEAD(ipmi_interfaces);
+ static DEFINE_MUTEX(ipmi_interfaces_mutex);
++#define ipmi_interfaces_mutex_held() \
++	lockdep_is_held(&ipmi_interfaces_mutex)
+ static struct srcu_struct ipmi_interfaces_srcu;
+ 
+ /*
+@@ -1321,7 +1325,8 @@ static void _ipmi_destroy_user(struct ipmi_user *user)
+ 	 * synchronize_srcu()) then free everything in that list.
+ 	 */
+ 	mutex_lock(&intf->cmd_rcvrs_mutex);
+-	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link) {
++	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
++				cmd_rcvrs_mutex_held()) {
+ 		if (rcvr->user == user) {
+ 			list_del_rcu(&rcvr->link);
+ 			rcvr->next = rcvrs;
+@@ -1599,7 +1604,8 @@ static struct cmd_rcvr *find_cmd_rcvr(struct ipmi_smi *intf,
+ {
+ 	struct cmd_rcvr *rcvr;
+ 
+-	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link) {
++	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
++				rcu_read_lock_held() || cmd_rcvrs_mutex_held()) {
+ 		if ((rcvr->netfn == netfn) && (rcvr->cmd == cmd)
+ 					&& (rcvr->chans & (1 << chan)))
+ 			return rcvr;
+@@ -1614,7 +1620,8 @@ static int is_cmd_rcvr_exclusive(struct ipmi_smi *intf,
+ {
+ 	struct cmd_rcvr *rcvr;
+ 
+-	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link) {
++	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
++				cmd_rcvrs_mutex_held()) {
+ 		if ((rcvr->netfn == netfn) && (rcvr->cmd == cmd)
+ 					&& (rcvr->chans & chans))
+ 			return 0;
+@@ -3450,7 +3457,8 @@ int ipmi_add_smi(struct module         *owner,
+ 	/* Look for a hole in the numbers. */
+ 	i = 0;
+ 	link = &ipmi_interfaces;
+-	list_for_each_entry_rcu(tintf, &ipmi_interfaces, link) {
++	list_for_each_entry_rcu(tintf, &ipmi_interfaces, link,
++				ipmi_interfaces_mutex_held()) {
+ 		if (tintf->intf_num != i) {
+ 			link = &tintf->link;
+ 			break;
+-- 
+2.24.1
 
-> +		return 1;
-> +	}
-> +
-> +	schedule_work(&sysrq_enable_work);
-> +
-> +	port->sysrq = 0;
-> +	return 1;
-> +}
-> +
->  int uart_handle_sysrq_char(struct uart_port *port, unsigned int ch)
->  {
->  	if (!IS_ENABLED(CONFIG_MAGIC_SYSRQ_SERIAL))
-> @@ -3090,9 +3122,13 @@ int uart_handle_sysrq_char(struct uart_port *port, unsigned int ch)
->  		return 0;
->  
->  	if (ch && time_before(jiffies, port->sysrq)) {
-> -		handle_sysrq(ch);
-> -		port->sysrq = 0;
-> -		return 1;
-> +		if (sysrq_get_mask()) {
-> +			handle_sysrq(ch);
-> +			port->sysrq = 0;
-> +			return 1;
-> +		}
-
-Isn't this change to test for sysrq_get_mask() a different change than
-checking for the "magic" data stream?
-
-> +		if (uart_try_toggle_sysrq(port, ch))
-> +			return 1;
->  	}
->  	port->sysrq = 0;
->  
-> @@ -3109,9 +3145,13 @@ int uart_prepare_sysrq_char(struct uart_port *port, unsigned int ch)
->  		return 0;
->  
->  	if (ch && time_before(jiffies, port->sysrq)) {
-> -		port->sysrq_ch = ch;
-> -		port->sysrq = 0;
-> -		return 1;
-> +		if (sysrq_get_mask()) {
-> +			port->sysrq_ch = ch;
-> +			port->sysrq = 0;
-> +			return 1;
-> +		}
-> +		if (uart_try_toggle_sysrq(port, ch))
-> +			return 1;
->  	}
->  	port->sysrq = 0;
->  
-> diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
-> index 255e86a474e9..1f4443db5474 100644
-> --- a/include/linux/serial_core.h
-> +++ b/include/linux/serial_core.h
-> @@ -243,10 +243,10 @@ struct uart_port {
->  	unsigned long		sysrq;			/* sysrq timeout */
->  	unsigned int		sysrq_ch;		/* char for sysrq */
->  	unsigned char		has_sysrq;
-> +	unsigned char		sysrq_seq;		/* index in sysrq_toggle_seq */
->  
->  	unsigned char		hub6;			/* this should be in the 8250 driver */
->  	unsigned char		suspended;
-> -	unsigned char		unused;
-
-This is an unrelated change, let's leave it for a different patch that
-cleans up the layout of this structure, ok?
-
-thanks,
-
-greg k-h
