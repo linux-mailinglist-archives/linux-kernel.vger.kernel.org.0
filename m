@@ -2,97 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49618136A97
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 11:08:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A109E136A9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 11:08:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727488AbgAJKIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 05:08:09 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:32919 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727315AbgAJKII (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 05:08:08 -0500
-Received: by mail-lj1-f194.google.com with SMTP id y6so1564041lji.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 02:08:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=iMR/A6pyW5FEM1U8xEMbCP0uXb0dwX5dOOik560rwKg=;
-        b=hIDNU0U5lNHwU1VDijBYChUpgM+utV22QeKOhOGZlZeQninmHqQbOBm+QOCs7y85yg
-         fm0Z4CycybadAXd9JKahHumJg40haf2AiRGggtMXujeT01ZmJzelg+FyALuIPEQDwe7y
-         k4dLTBjCInVvXtl3cWxqGFb9IvtbfLT1PRIlSbRUUC+dDKLCjVpvFqzRPqUimhkZqSnZ
-         AYmp9Na7BWbDfv7o2FxyA8t1trfbj2D0i7jkpPzq3NxV3jIyztuesc7jOpr8l9lECa6k
-         5uVJqGZFqLdcrhEtb3DJJDVKQOc5SKBUGNT8AK+u3maDSPymGj0RZi8A/LqiKrmkrybF
-         Yj/Q==
-X-Gm-Message-State: APjAAAWnRAtuQ6/7ezymZeEUIqnnzDhWgicXpjbS5+aJqVSuSrVq/Lea
-        4Fx4uJQXcxmX8rtmzommK20=
-X-Google-Smtp-Source: APXvYqy000juSVZcoTyphGtn73Qy4cYgLf6XMRyhINGK1akoIC3h68aujIzLffVRiBxEdJeNikHUpA==
-X-Received: by 2002:a2e:86c8:: with SMTP id n8mr2005170ljj.205.1578650886991;
-        Fri, 10 Jan 2020 02:08:06 -0800 (PST)
-Received: from xi.terra (c-14b8e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.184.20])
-        by smtp.gmail.com with ESMTPSA id l21sm741503lfh.74.2020.01.10.02.08.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2020 02:08:06 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.92.3)
-        (envelope-from <johan@kernel.org>)
-        id 1iprDF-0001Ao-AP; Fri, 10 Jan 2020 11:08:17 +0100
-Date:   Fri, 10 Jan 2020 11:08:17 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tty: always relink the port
-Message-ID: <20200110100817.GA4273@localhost>
-References: <20191227174434.12057-1-sudipm.mukherjee@gmail.com>
+        id S1727549AbgAJKIW convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 10 Jan 2020 05:08:22 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2249 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727540AbgAJKIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 05:08:22 -0500
+Received: from lhreml701-cah.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 0506D60485352686A595;
+        Fri, 10 Jan 2020 10:08:21 +0000 (GMT)
+Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
+ lhreml701-cah.china.huawei.com (10.201.108.42) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 10 Jan 2020 10:08:20 +0000
+Received: from localhost (10.202.226.57) by lhreml710-chm.china.huawei.com
+ (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Fri, 10 Jan
+ 2020 10:08:20 +0000
+Date:   Fri, 10 Jan 2020 10:08:18 +0000
+From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To:     zhangfei <zhangfei.gao@linaro.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        <grant.likely@arm.com>, jean-philippe <jean-philippe@linaro.org>,
+        "Jerome Glisse" <jglisse@redhat.com>,
+        <ilias.apalodimas@linaro.org>, <francois.ozog@linaro.org>,
+        <kenneth-lee-2012@foxmail.com>, Wangzhou <wangzhou1@hisilicon.com>,
+        "haojian . zhuang" <haojian.zhuang@linaro.org>,
+        <guodong.xu@linaro.org>, <linux-accelerators@lists.ozlabs.org>,
+        <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <iommu@lists.linux-foundation.org>,
+        Dave Jiang <dave.jiang@intel.com>
+Subject: Re: [PATCH v10 0/4] Add uacce module for Accelerator
+Message-ID: <20200110100818.0000151a@Huawei.com>
+In-Reply-To: <9b87edca-dd4e-3fe2-5acd-11f7381593ed@linaro.org>
+References: <1576465697-27946-1-git-send-email-zhangfei.gao@linaro.org>
+        <20200109174952.000051e1@Huawei.com>
+        <9b87edca-dd4e-3fe2-5acd-11f7381593ed@linaro.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191227174434.12057-1-sudipm.mukherjee@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [10.202.226.57]
+X-ClientProxiedBy: lhreml725-chm.china.huawei.com (10.201.108.76) To
+ lhreml710-chm.china.huawei.com (10.201.108.61)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 27, 2019 at 05:44:34PM +0000, Sudip Mukherjee wrote:
-> If the serial device is disconnected and reconnected, it re-enumerates
-> properly but does not link it. fwiw, linking means just saving the port
-> index, so allow it always as there is no harm in saving the same value
-> again even if it tries to relink with the same port.
+On Fri, 10 Jan 2020 15:03:25 +0800
+zhangfei <zhangfei.gao@linaro.org> wrote:
 
-This is a pretty vague description. Commit fb2b90014d78 ("tty: link tty
-and port before configuring it as console") completely broke usb-serial
-(and anything else hotpluggable) which obviously depends on being able
-to reuse a minor number when a new device is later plugged in after a
-disconnect.
+> On 2020/1/10 上午1:49, Jonathan Cameron wrote:
+> > On Mon, 16 Dec 2019 11:08:13 +0800
+> > Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
+> >  
+> >> Uacce (Unified/User-space-access-intended Accelerator Framework) targets to
+> >> provide Shared Virtual Addressing (SVA) between accelerators and processes.
+> >> So accelerator can access any data structure of the main cpu.
+> >> This differs from the data sharing between cpu and io device, which share
+> >> data content rather than address.
+> >> Because of unified address, hardware and user space of process can share
+> >> the same virtual address in the communication.
+> >>
+> >> Uacce is intended to be used with Jean Philippe Brucker's SVA
+> >> patchset[1], which enables IO side page fault and PASID support.
+> >> We have keep verifying with Jean's sva patchset [2]
+> >> We also keep verifying with Eric's SMMUv3 Nested Stage patches [3]  
+> > Hi Zhangfei Gao,
+> >
+> > Just to check my understanding...
+> >
+> > This patch set is not dependent on either 2 or 3?
+> >
+> > To use it on our hardware, we need 2, but the interfaces used are already
+> > upstream, so this could move forwards in parallel.
+> >
+> >  
+> Yes,
+> patch 1, 2 is for uacce.
+> patch 3, 4 is an example using uacce, which happen to be crypto.
+Sorry, I wasn't clear enough.
 
-Things are crashing left and right due to that stale port-pointer, and I
-just had to debug this only to find that this one is sitting in the
-tty-linus branch. I know, I know, Christmas and all, but would be nice
-to get it into -rc6. :)
+Question is whether we need Jean's sva patch set [2] to merge this?
 
-> Fixes: fb2b90014d78 ("tty: link tty and port before configuring it as console")
-
-Also note that the offending commit had a stable tag unlike this one.
-
-> Reported-by: Kenneth R. Crudup <kenny@panix.com>
-> Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-> ---
->  drivers/tty/tty_port.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/drivers/tty/tty_port.c b/drivers/tty/tty_port.c
-> index 5023c85ebc6e..044c3cbdcfa4 100644
-> --- a/drivers/tty/tty_port.c
-> +++ b/drivers/tty/tty_port.c
-> @@ -89,8 +89,7 @@ void tty_port_link_device(struct tty_port *port,
->  {
->  	if (WARN_ON(index >= driver->num))
->  		return;
-> -	if (!driver->ports[index])
-> -		driver->ports[index] = port;
-> +	driver->ports[index] = port;
->  }
->  EXPORT_SYMBOL_GPL(tty_port_link_device);
+> Thanks
 
-Johan
+
