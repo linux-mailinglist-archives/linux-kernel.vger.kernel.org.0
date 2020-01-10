@@ -2,111 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 393EE1367CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 08:03:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BF221367D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 08:04:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbgAJHDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 02:03:40 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39820 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726486AbgAJHDj (ORCPT
+        id S1727318AbgAJHEf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 02:04:35 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:32701 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726598AbgAJHEf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 02:03:39 -0500
-Received: by mail-pf1-f195.google.com with SMTP id q10so671370pfs.6
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 23:03:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=524ZzQ+ni88Rws2LlNdcnlFyEqdyrbvKeKi49yA8YY4=;
-        b=NGSmQqRU5+ICclxQRqDent1NDnfEm2OIeeFdX0tw/ZmF5Ynj0sVDkrXYgo859Seh0M
-         J0l0h0MbScEDs2sJRmYMl/Q2HJ9vAiX6odyo6YxZy9mw/XioiCJwEKZ+I1Zo30NGV+ia
-         ziky5DZJR/qtVDQrwkd8pjID8fi+W+813nC/nUw8w3rYyGArUeP/iw1vslz/rh0whBTv
-         9YIXRZhMWidQzylg7ngeozNKcbUj3M0hEuYMICamx+mNMsw8N5QhTqrpS4gEVk8nz+xx
-         PfRK9qHUjXd+VzpCcn5R5QxZgBsCKm7vqH7aWgLY8rvlvHSfalm+nWpsY1TfA2IKaUXg
-         yYRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=524ZzQ+ni88Rws2LlNdcnlFyEqdyrbvKeKi49yA8YY4=;
-        b=KTpp03K+ZwZuK2+9+jvJd9IDIbQmfash30gkV2CaD4RMKu1JzMfzoyaqjWdGoCwG1N
-         odMil3V45Ei0ewCCSAvS/sM3Xfq2HZoBWEbrInQNtZZze0ZmBbVru777isQn8b9/JqZi
-         WKfZQr5MpjQCLiSqd5Gs4nPa71gbrs8QmcJWFVP0spNDsls9a5y3W69YyBjnnfV+gjfH
-         eAp/MerE8lr2+ft3K5He1XzF9jEjAfJTLbWjFRS4LVXgnFHUgumOZog1j8AKM+lQAN6g
-         dwefxK0yGDLYa116MNrxAwmboluznaTewjIVZJy87hwnxVaKnBysUY0ytZMTOIK6w3Ej
-         k1XQ==
-X-Gm-Message-State: APjAAAUO9NWWzRTnvuWrOP2sTmkRhnr1RIrgoPW/8RYvjjT36zKCG/Wz
-        ZS/FT80SG3LT0tYYN43/9XXcZA==
-X-Google-Smtp-Source: APXvYqxRXSHQMAAqNEXryi+da46roEIsUSSy9JeYNiaSYgUd7HGxHp5FztsZ6Vvs+qp/1RXmy6fNQg==
-X-Received: by 2002:a62:53c3:: with SMTP id h186mr2378854pfb.118.1578639818515;
-        Thu, 09 Jan 2020 23:03:38 -0800 (PST)
-Received: from [10.151.2.174] ([45.135.186.75])
-        by smtp.gmail.com with ESMTPSA id a26sm1382558pfo.27.2020.01.09.23.03.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Jan 2020 23:03:37 -0800 (PST)
-Subject: Re: [PATCH v10 0/4] Add uacce module for Accelerator
-To:     Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>, grant.likely@arm.com,
-        jean-philippe <jean-philippe@linaro.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        ilias.apalodimas@linaro.org, francois.ozog@linaro.org,
-        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>,
-        "haojian . zhuang" <haojian.zhuang@linaro.org>,
-        guodong.xu@linaro.org, linux-accelerators@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        iommu@lists.linux-foundation.org, Dave Jiang <dave.jiang@intel.com>
-References: <1576465697-27946-1-git-send-email-zhangfei.gao@linaro.org>
- <20200109174952.000051e1@Huawei.com>
-From:   zhangfei <zhangfei.gao@linaro.org>
-Message-ID: <9b87edca-dd4e-3fe2-5acd-11f7381593ed@linaro.org>
-Date:   Fri, 10 Jan 2020 15:03:25 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 10 Jan 2020 02:04:35 -0500
+X-UUID: 1d66aa46506b476ca302409391d1c1e9-20200110
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=P3n5D3Gnhy1NP5hvBdfMtlX5qxR8Gfe2dv5Rnak/iM4=;
+        b=NKCRyL+IQH4InU6kj0lC7MK1MX+8njEDuQyH1yChSocxJYcsPMfGDXXRHWNaN3fXlURrsBPuPe340RSrTKvqNvsaplaYSPAl7IkJ9F152yhbauweGnAhcYCMoOdVSKnehFJHer0VR/3ekkBc4AR05GKpK6KFHW1zcq1jCzIWJmU=;
+X-UUID: 1d66aa46506b476ca302409391d1c1e9-20200110
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <jiaxin.yu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 896783736; Fri, 10 Jan 2020 15:04:28 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 10 Jan 2020 15:03:55 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 10 Jan 2020 15:03:55 +0800
+From:   Jiaxin Yu <jiaxin.yu@mediatek.com>
+To:     <yong.liang@mediatek.com>, <wim@linux-watchdog.org>,
+        <linux@roeck-us.net>, <p.zabel@pengutronix.de>,
+        <matthias.bgg@gmail.com>, <linux-watchdog@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <chang-an.chen@mediatek.com>, <freddy.hsin@mediatek.com>
+CC:     <yingjoe.chen@mediatek.com>, <sboyd@kernel.org>,
+        Jiaxin Yu <jiaxin.yu@mediatek.com>
+Subject: [PATCH v11 0/3] ASoC: mt8183: fix audio playback slowly after playback
+Date:   Fri, 10 Jan 2020 15:04:19 +0800
+Message-ID: <1578639862-14480-1-git-send-email-jiaxin.yu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-In-Reply-To: <20200109174952.000051e1@Huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+VGhpcyBzZXJpZXMgcGF0Y2hlcyBhZGQgcmVzZXQgY29udHJvbGxlciBmb3IgTVQ4MTgzIGFuZCBN
+VDI3MTIsIGFuZCBhdWRpbyB3aWxsIHVzZSBpdCBpbiANCm1hY2hpbmUgZHJpdmVyIGR1cmluZyBi
+b290dXAsIHRoZXkgZGVwZW5kIG9uIHRoZSBmb3ItbmV4dC4NCg0KdjExIGNoYW5nZXM6DQoJMS4g
+Q3JlYXRlIGEgbmV3IHBhdGNoIGZvciBNVDI3MTIuDQoNCnYxMCBjaGFuZ2VzOg0KCTEuIE1vZGlm
+eSBtdGstd2R0LnR4dCBkdC1iaW5kaW5ncy4NCg0KdjkgY2hhbmdlczoNCgkxLiBSZW1vdmUgQ2hh
+bmdlLUlkLg0KDQp2OCBjaGFuZ2VzOg0KCTEuIERlbGV0ZSBjYXN0OiAoc3RydWN0IG10a193ZHRf
+ZGF0YSAqKQ0KDQp2NyBjaGFuZ2VzOg0KCTEuIERlbGV0ZSBubyB1c2UgY29kZS4NCg0KdjYgY2hh
+bmdlczoNCgkxLiBTaW1wbGlmeSB0b3BydWdfcmVzZXRfYXNzZXJ0KCkgJiB0b3BydWdfcmVzZXRf
+ZGVhc3NlcnQoKS4NCgkyLiBBZGQgbWVtYmVycyBmb3IgbXQyNzEyX2RhdGEgJiBtdDgxODNfZGF0
+YS4NCg0KdjUgY2hhbmdlczoNCgkxLiBBZGQgU2lnbmVkLW9mZi1ieSB0YWcgYW5kIFJldmlld2Vk
+LWJ5IHRhZy4NCg0KdjQgY2hhbmdlczoNCgkxLiBGaXhlZCB3cm9uZyBzaWduZWQtb2ZmIGFzIGNv
+cnJlY3QgbWFpbCBzdWZmaXguDQoJMi4gRml4ZWQgcGF0Y2ggc3ViamVjdCB0aGF0IGFkZCBwYXRj
+aCB2ZXJzaW9uLg0KDQp2MyBjaGFuZ2VzOg0KCTEuIGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5v
+cmcvcGF0Y2gvMTExNjQyODMvIGFuZCANCgkgICBodHRwczovL3BhdGNod29yay5rZXJuZWwub3Jn
+L3BhdGNoLzExMTY0MzA1LyBoYXMgYmVlbiBtZXJnZWQuDQoJMi4gQ2hhbmdlIHRoZSBuYW1lIG9m
+IG10a193ZHRfY29tcGF0aWJsZSB0byBtdGtfd2R0X2RhdGEuDQoJMy4gUmVtb3ZlIHRvcHJndV9y
+ZXNldCBzdHJ1Y3QgYW5kIHVzZSBtdGtfd2R0X2RldiBpbnN0ZWFkLg0KCTQuIEdldCB0aGUgdmFs
+dWUgb2Ygc3dfcnN0X251bSBmcm9tIC5oIGZpbGUuDQoJNS4gQWRkZGQgbXQyNzEyLXJlc2V0cy5o
+IGZvciBtdDI3MTIuDQoJNi4gSW1wcm92ZSBjb21taXQgbWVzc2FnZS4NCg0KdjIgY2hhbmdlczoN
+CgkxLiByZW1vdmUgIldJUCIgdGhhdCBpbiB0aGUgdGl0bGUgb2YgcGF0Y2hlcw0KCTIuIGFkZCBo
+eXBlciBsaW5rIGZvciB0aGUgcGF0Y2ggdGhhdCBkZXBlbmRzIG9uDQoJMy4gcGF0Y2h3b3JrIGxp
+c3Q6DQoJCWh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvY292ZXIvMTExNjQyODUvDQoJCWh0
+dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTExNjQyOTUvDQoJCWh0dHBzOi8vcGF0
+Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTExNjQyOTkvDQoJCWh0dHBzOi8vcGF0Y2h3b3JrLmtl
+cm5lbC5vcmcvcGF0Y2gvMTExNjQyODMvDQoJCWh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcv
+cGF0Y2gvMTExNjQzMDUvDQoNCnYxIGNoYW5nZXM6DQoJMS4gcGF0Y2h3b3JrIGxpc3Q6DQoJCWh0
+dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvY292ZXIvMTExNjQxNzMvDQoJCWh0dHBzOi8vcGF0
+Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTExNjQxODEvDQoJCWh0dHBzOi8vcGF0Y2h3b3JrLmtl
+cm5lbC5vcmcvcGF0Y2gvMTExNjQxODUvDQoJCWh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcv
+cGF0Y2gvMTExNjQxODcvDQoJCWh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTEx
+NjQxNzUvDQoNCkppYXhpbiBZdSAoMyk6DQogIGR0LWJpbmRpbmdzOiBtZWRpYXRlazogbXQ4MTgz
+OiBBZGQgI3Jlc2V0LWNlbGxzDQogIHdhdGNoZG9nOiBtdGtfd2R0OiBtdDgxODM6IEFkZCByZXNl
+dCBjb250cm9sbGVyDQogIHdhdGNoZG9nOiBtdGtfd2R0OiBtdDI3MTI6IEFkZCByZXNldCBjb250
+cm9sbGVyDQoNCiAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy93YXRjaGRvZy9tdGstd2R0LnR4dCAg
+fCAgMTAgKy0NCiBkcml2ZXJzL3dhdGNoZG9nL210a193ZHQuYyAgICAgICAgICAgICAgICAgICAg
+fCAxMDUgKysrKysrKysrKysrKysrKystDQogLi4uL3Jlc2V0LWNvbnRyb2xsZXIvbXQyNzEyLXJl
+c2V0cy5oICAgICAgICAgIHwgIDIyICsrKysNCiAuLi4vcmVzZXQtY29udHJvbGxlci9tdDgxODMt
+cmVzZXRzLmggICAgICAgICAgfCAgMTcgKysrDQogNCBmaWxlcyBjaGFuZ2VkLCAxNTAgaW5zZXJ0
+aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCiBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9kdC1i
+aW5kaW5ncy9yZXNldC1jb250cm9sbGVyL210MjcxMi1yZXNldHMuaA0KDQotLSANCjIuMTguMA0K
 
-
-On 2020/1/10 上午1:49, Jonathan Cameron wrote:
-> On Mon, 16 Dec 2019 11:08:13 +0800
-> Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
->
->> Uacce (Unified/User-space-access-intended Accelerator Framework) targets to
->> provide Shared Virtual Addressing (SVA) between accelerators and processes.
->> So accelerator can access any data structure of the main cpu.
->> This differs from the data sharing between cpu and io device, which share
->> data content rather than address.
->> Because of unified address, hardware and user space of process can share
->> the same virtual address in the communication.
->>
->> Uacce is intended to be used with Jean Philippe Brucker's SVA
->> patchset[1], which enables IO side page fault and PASID support.
->> We have keep verifying with Jean's sva patchset [2]
->> We also keep verifying with Eric's SMMUv3 Nested Stage patches [3]
-> Hi Zhangfei Gao,
->
-> Just to check my understanding...
->
-> This patch set is not dependent on either 2 or 3?
->
-> To use it on our hardware, we need 2, but the interfaces used are already
-> upstream, so this could move forwards in parallel.
->
->
-Yes,
-patch 1, 2 is for uacce.
-patch 3, 4 is an example using uacce, which happen to be crypto.
-
-Thanks
