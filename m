@@ -2,75 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EC85136737
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 07:14:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7EE7136714
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 07:09:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731552AbgAJGN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 01:13:28 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:50116 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725797AbgAJGN1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 01:13:27 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 34F0C62BC9EAFBDC0CCB;
-        Fri, 10 Jan 2020 14:13:25 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 10 Jan 2020 14:13:19 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Alex Maftei <amaftei@solarflare.com>,
-        Edward Cree <ecree@solarflare.com>,
-        Martin Habets <mhabets@solarflare.com>
-CC:     YueHaibing <yuehaibing@huawei.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH net-next] sfc: remove set but not used variable 'nic_data'
-Date:   Fri, 10 Jan 2020 06:09:08 +0000
-Message-ID: <20200110060908.124241-1-yuehaibing@huawei.com>
+        id S1731446AbgAJGJg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 01:09:36 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:39189 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731433AbgAJGJg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 01:09:36 -0500
+Received: by mail-pj1-f66.google.com with SMTP id m1so531142pjv.4;
+        Thu, 09 Jan 2020 22:09:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gLzSHRuu9bmmW6Gtn/WpTcD4ks8Vg2pMw5/HU8yOyFA=;
+        b=dpvRy0EaOx0Wj//mdrs3zUeJG20C7RUCcNmcOSQ8RH4s5a2zt61FLTq/diBZaSX0oK
+         oFUq0rNhagLL1ojZLZ7RuQ+ZRa6Ia/15gMgtSnrtLcTkN+9yPYFHyXxxbHWsh8gjq5Oa
+         bLrgHKhUFo4c3u0dHCZHjcASazQ2526Sz6rx5WHMUSYWN2Okckuh8JjsE5FRlxvUPYuk
+         0psdRSG6jP/2RnuBhq7LaDBuSUkOqayc7HcOKzvZosBM3qqc3XDKmAnFUuGUrh/otWqm
+         G97ZjTf9WCeXF1lpNUh35bCbrvRaCtkLuYJZC8nZDnAUG6h0vl9vfjGMWG4QCy2tA5Bz
+         sMIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gLzSHRuu9bmmW6Gtn/WpTcD4ks8Vg2pMw5/HU8yOyFA=;
+        b=ny4MP7lS1yrR4itrWSvS3pXKKWNEi6R9fPQVqwAJt112pXfgi63ZWu1Rr8zcIpod4Q
+         p7N6PuTTPje+1OjtrEZS1RNXR3zBPeRp39bEM07/6ezIlW/g+4RsOezRCV4dNtqLPthR
+         qtsxerDLrJNq715DjypkYcj9LkRiWlJxEOdSStCZGWz7psKdXcZ4XGJd+sMuO24AYF7c
+         SppwwU0Zc3eqFpo/kg9zNrJs3H7yqK0IMpo3urlHkYsCmwXq+m6A6VWCLQMam9ing/AM
+         j7+4xKllIVbt/fVuLBEw3+NKBnrVzOxfxPhp1RJk3XVbRlvrtG7+WH8VB28DGPMhoYT+
+         bXRA==
+X-Gm-Message-State: APjAAAWMIdUkjiyglchigDJeDtWID4c2hs6YPcs4okDwVirLvmljenJI
+        tcLMv91WiCT5eLPCxcHBdzQ=
+X-Google-Smtp-Source: APXvYqxFOMKdNQ0zymMXopUo4n85T21suc8IbSRZVAGMx/cg4tGxSzrJ3OxDqWxSdYCZDqzmvsErgA==
+X-Received: by 2002:a17:902:8547:: with SMTP id d7mr2408741plo.44.1578636575081;
+        Thu, 09 Jan 2020 22:09:35 -0800 (PST)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id y76sm1195814pfc.87.2020.01.09.22.09.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jan 2020 22:09:34 -0800 (PST)
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: [PATCH v3 0/7] Add clocks for Unisoc's SC9863A
+Date:   Fri, 10 Jan 2020 14:09:11 +0800
+Message-Id: <20200110060918.18416-1-zhang.lyra@gmail.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-drivers/net/ethernet/sfc/mcdi_functions.c: In function 'efx_mcdi_ev_init':
-drivers/net/ethernet/sfc/mcdi_functions.c:79:28: warning:
- variable 'nic_data' set but not used [-Wunused-but-set-variable]
+Add SC9863A specific clock driver and devicetree bindings for it.
 
-commit 4438b587fe4b ("sfc: move MCDI event queue management code")
-introduces this unused variable.
+Also this patchset added support gate clock for pll which need to
+wait a certain time for stable after being switched on.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/ethernet/sfc/mcdi_functions.c | 3 ---
- 1 file changed, 3 deletions(-)
+Changes from v2:
+* Addressed comments from Stephen:
+- Remove ununsed header file from sc9863a-clk.c;
+- Added comments for clocks which were marked with CLK_IGNORE_UNUSED,
+  and removed some unnecessary CLK_IGNORE_UNUSED;
+- Added error checking for sprd_clk_regmap_init().
 
-diff --git a/drivers/net/ethernet/sfc/mcdi_functions.c b/drivers/net/ethernet/sfc/mcdi_functions.c
-index f022e2b9e975..8cd9e0d76e85 100644
---- a/drivers/net/ethernet/sfc/mcdi_functions.c
-+++ b/drivers/net/ethernet/sfc/mcdi_functions.c
-@@ -76,13 +76,10 @@ int efx_mcdi_ev_init(struct efx_channel *channel, bool v1_cut_thru, bool v2)
- 	MCDI_DECLARE_BUF(outbuf, MC_CMD_INIT_EVQ_V2_OUT_LEN);
- 	size_t entries = channel->eventq.buf.len / EFX_BUF_SIZE;
- 	struct efx_nic *efx = channel->efx;
--	struct efx_ef10_nic_data *nic_data;
- 	size_t inlen, outlen;
- 	dma_addr_t dma_addr;
- 	int rc, i;
- 
--	nic_data = efx->nic_data;
--
- 	/* Fill event queue with all ones (i.e. empty events) */
- 	memset(channel->eventq.buf.addr, 0xff, channel->eventq.buf.len);
+* Addressed comments from Rob:
+- Put some clocks under syscon nodes, since these clocks have the same
+  physical address base with the syscon;
+- Added clocks maxItems and listed out clock-names.
 
+* Added Rob's reviewed-by on patch 4.
 
+Changes from v1:
+* Addressed comments:
+- Removed redefine things;
+- Switched DT bindings to yaml schema;
+- Added macros for the new way of specifying clk parents; 
+- Switched to use the new way of specifying clk parents;
+- Clean CLK_IGNORE_UNUSED flags for some SC9863A clocks;
+- Dropped the module alias;
+- Use device_get_match_data() instead of of_match_node();
+
+* Added Rob's Acked-by on patch 2.
+
+Chunyan Zhang (6):
+  dt-bindings: clk: sprd: rename the common file name sprd.txt to SoC
+    specific
+  dt-bindings: clk: sprd: add bindings for sc9863a clock controller
+  clk: sprd: Add dt-bindings include file for SC9863A
+  clk: sprd: Add macros for referencing parents without strings
+  clk: sprd: support to get regmap from parent node
+  clk: sprd: add clocks support for SC9863A
+
+Xiaolong Zhang (1):
+  clk: sprd: add gate for pll clocks
+
+ .../clock/{sprd.txt => sprd,sc9860-clk.txt}   |    2 +-
+ .../bindings/clock/sprd,sc9863a-clk.yaml      |  103 +
+ drivers/clk/sprd/Kconfig                      |    8 +
+ drivers/clk/sprd/Makefile                     |    1 +
+ drivers/clk/sprd/common.c                     |   10 +-
+ drivers/clk/sprd/composite.h                  |   39 +-
+ drivers/clk/sprd/div.h                        |   20 +-
+ drivers/clk/sprd/gate.c                       |   17 +
+ drivers/clk/sprd/gate.h                       |  120 +-
+ drivers/clk/sprd/mux.h                        |   28 +-
+ drivers/clk/sprd/pll.h                        |   55 +-
+ drivers/clk/sprd/sc9863a-clk.c                | 1772 +++++++++++++++++
+ include/dt-bindings/clock/sprd,sc9863a-clk.h  |  334 ++++
+ 13 files changed, 2455 insertions(+), 54 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{sprd.txt => sprd,sc9860-clk.txt} (98%)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
+ create mode 100644 drivers/clk/sprd/sc9863a-clk.c
+ create mode 100644 include/dt-bindings/clock/sprd,sc9863a-clk.h
+
+-- 
+2.20.1
 
