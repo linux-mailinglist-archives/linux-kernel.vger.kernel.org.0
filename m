@@ -2,94 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D618C1368E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 09:22:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 851421368E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 09:24:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbgAJIV5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 03:21:57 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:50198 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726508AbgAJIV4 (ORCPT
+        id S1726777AbgAJIYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 03:24:46 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55981 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726561AbgAJIYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 03:21:56 -0500
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 1F0FF293977;
-        Fri, 10 Jan 2020 08:21:55 +0000 (GMT)
-Date:   Fri, 10 Jan 2020 09:21:52 +0100
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Chuanhong Guo <gch981213@gmail.com>, linux-mtd@lists.infradead.org,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] mtd: nand: spi: rework detect procedure for
- different read id op
-Message-ID: <20200110092152.64d05705@collabora.com>
-In-Reply-To: <20200110091024.56918193@xps13>
-References: <20200110025218.1257809-1-gch981213@gmail.com>
-        <20200110075859.3edfae3a@collabora.com>
-        <CAJsYDVK4RtX92O3M+EOsZa5qS4TxE0OVaEq=KOnAuP6DEHvw2Q@mail.gmail.com>
-        <20200110090422.75988c49@collabora.com>
-        <20200110091024.56918193@xps13>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 10 Jan 2020 03:24:46 -0500
+Received: by mail-wm1-f66.google.com with SMTP id q9so980123wmj.5
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 00:24:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5r95wsWSJ0+Wj2lVXa2ctKKmZohPNzWuPlbe6SCwck8=;
+        b=0fcbQT53VcbrdX8BNoj8Eety7F2Sa7j9T6cRJ+rDqlC4mCKtH38DRfSYlCdmI/rAoo
+         zqvkECEklnoCVZ+fHOY/GOD9TEI0HXtGZqQj7h1AYc/SPWX1bRIg4PwZbEGws10HGvBn
+         8nigUmb1XIWj9PMrYjjL+iIbklhQWXWY+3pvte+vO8S0eLx4FsH8dKI/m/aM/dOAtssc
+         pimkN2rtnpy27iUAewntS0XZStSLjw/Xjr92F0gcKpXM3EtdHXNXanvr4LRsYlvY+SLz
+         kyxO5xkYHA4qX7nMuVZio5XKLjPV+iMOQZwdeerjtRiKjfbXIlcAf9PlT+1fWh8QI6Cw
+         jy0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5r95wsWSJ0+Wj2lVXa2ctKKmZohPNzWuPlbe6SCwck8=;
+        b=l7G1NFjYrZLMjF/JXTiTNp0dtueaoQUQTT46teg3q3IJfo2tEtNliiF8RKDKYfv9qQ
+         kWgtQQAQudOhnXs5iE5EJhRAvPkqWig43E/zaq/GEJQQ00WwJlcbATaktPApYTeP1zMG
+         Wam+Ynaf5tBohhEyFL1ebeXcTKtaCSiD2Xdmbs3Shz2P4B/8N6id6vVo9TbnVanrJdX1
+         DditSxWjnEwuAy+OH3XHhLnJfQDwFXLUrZYpWScFUR0lUH0RLXi7MCexaOjUlWPMPmXL
+         pJIstCSA0kIbHeV4wmQtLid+MOWratEIt0jgCrvj4vilRNyfA3tOU4WFhIJlxybrd8h1
+         5daA==
+X-Gm-Message-State: APjAAAWYa2ha00SM3NeBJD0eiwWXEY++irFyWXBJROzTwiY7uYIBKHCS
+        32VVEd+6IQ9KZXBLaQWQvgbYtw==
+X-Google-Smtp-Source: APXvYqxEPVuwV382kwEpXH8hv/UpL9dPzZM4qs1s2przY5cPhDpcysJwlwIIw6LHPdnEpv1f7CRfkQ==
+X-Received: by 2002:a1c:6406:: with SMTP id y6mr2724113wmb.144.1578644683946;
+        Fri, 10 Jan 2020 00:24:43 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id x7sm1313416wrq.41.2020.01.10.00.24.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2020 00:24:43 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Khouloud Touil <ktouil@baylibre.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        kbuild test robot <lkp@intel.com>
+Subject: [PATCH -next] nvmem: fix a 'makes pointer from integer without a cast' build warning
+Date:   Fri, 10 Jan 2020 09:24:41 +0100
+Message-Id: <20200110082441.8300-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 10 Jan 2020 09:10:24 +0100
-Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-> Hi Boris,
-> 
-> Boris Brezillon <boris.brezillon@collabora.com> wrote on Fri, 10 Jan
-> 2020 09:04:22 +0100:
-> 
-> > On Fri, 10 Jan 2020 15:34:28 +0800
-> > Chuanhong Guo <gch981213@gmail.com> wrote:
-> >   
-> > > Hi!
-> > > 
-> > > On Fri, Jan 10, 2020 at 2:59 PM Boris Brezillon
-> > > <boris.brezillon@collabora.com> wrote:    
-> > > > [...]      
-> > > > > +     ret = spinand_read_id_op(spinand, 1, 0, id);
-> > > > > +     if (ret)
-> > > > > +             return ret;
-> > > > > +     ret = spinand_manufacturer_match(spinand,
-> > > > > +                                      SPINAND_READID_METHOD_OPCODE_ADDR);
-> > > > > +     if (!ret)
-> > > > > +             return 0;
-> > > > > +
-> > > > > +     ret = spinand_read_id_op(spinand, 0, 1, id);      
-> > > >
-> > > > Hm, we should probably do only one of each read_id and iterate over all
-> > > > manufacturers/chips each time instead of doing 3 read_ids per
-> > > > manufacturer.      
-> > > 
-> > > This actually do the former instead of the latter. Maybe the function
-> > > names are a bit
-> > > misleading. spinand_manufacturer_match iterates over all manufacturers
-> > > in one call,
-> > > and spinand_manufacturer_detect is called once in spinand_detect.
-> > > Do you have suggestions on function naming?    
-> > 
-> > Maybe you can just inline the content of this function in
-> > spinand_detect().  
-> 
-> Actually I found that part clear enough, I would keep it as is, out of
-> the spinand_detect() function as long as there is no actual reason to
-> merge them?
+nvmem_register() returns a pointer, not a long int. Use ERR_CAST() to
+cast the struct gpio_desc pointer to struct nvmem_device.
 
-Hm, I kind of disagree. The current name makes it sound like the
-function detects the manufacturer or does a per-manufacturer id
-detection, which is not the case. How about spinand_id_based_detect() or
-spinand_readid_detect()?
+Reported-by: kbuild test robot <lkp@intel.com>
+Fixes: 2a127da461a9 ("nvmem: add support for the write-protect pin")
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/nvmem/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index 3e1c94c4eee8..408ce702347e 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -351,7 +351,7 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+ 		nvmem->wp_gpio = gpiod_get_optional(config->dev, "wp",
+ 						    GPIOD_OUT_HIGH);
+ 	if (IS_ERR(nvmem->wp_gpio))
+-		return PTR_ERR(nvmem->wp_gpio);
++		return ERR_CAST(nvmem->wp_gpio);
+ 
+ 
+ 	kref_init(&nvmem->refcnt);
+-- 
+2.23.0
+
