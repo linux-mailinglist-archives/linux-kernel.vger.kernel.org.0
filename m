@@ -2,83 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED80E1375DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 19:10:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C10FF1375E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 19:12:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728650AbgAJSKy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 13:10:54 -0500
-Received: from mga02.intel.com ([134.134.136.20]:2311 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726346AbgAJSKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 13:10:54 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 10:10:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,417,1571727600"; 
-   d="scan'208";a="423676880"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga006.fm.intel.com with ESMTP; 10 Jan 2020 10:10:52 -0800
-Date:   Fri, 10 Jan 2020 10:10:53 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Yang Weijiang <weijiang.yang@intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, jmattson@google.com,
-        yu.c.zhang@linux.intel.com, alazar@bitdefender.com,
-        edwin.zhai@intel.com
-Subject: Re: [RESEND PATCH v10 05/10] x86: spp: Introduce user-space SPP
- IOCTLs
-Message-ID: <20200110181053.GH21485@linux.intel.com>
-References: <20200102061319.10077-1-weijiang.yang@intel.com>
- <20200102061319.10077-6-weijiang.yang@intel.com>
+        id S1728853AbgAJSM0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 13:12:26 -0500
+Received: from asavdk4.altibox.net ([109.247.116.15]:59292 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726789AbgAJSM0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 13:12:26 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id 78C0C803D4;
+        Fri, 10 Jan 2020 19:12:22 +0100 (CET)
+Date:   Fri, 10 Jan 2020 19:12:21 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 5/5] arm64: dts: allwinner: a64: add support for PineTab
+Message-ID: <20200110181220.GA27540@ravnborg.org>
+References: <20200110155225.1051749-1-icenowy@aosc.io>
+ <20200110155225.1051749-6-icenowy@aosc.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200102061319.10077-6-weijiang.yang@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20200110155225.1051749-6-icenowy@aosc.io>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10
+        a=8xDXtNipsti8RRz39MQA:9 a=CjuIK1q_8ugA:10 a=pHzHmUro8NiASowvMSCR:22
+        a=6VlIyEUom7LUIeUMNQJH:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 02, 2020 at 02:13:14PM +0800, Yang Weijiang wrote:
-> User application, e.g., QEMU or VMI, must initialize SPP
-> before gets/sets SPP subpages, the dynamic initialization is to
-> reduce the extra storage cost if the SPP feature is not not used.
+Hi Icenowy.
+
+checkpatch noticed a small inconsistency in the i2c1 node.
+
 > 
-> Co-developed-by: He Chen <he.chen@linux.intel.com>
-> Signed-off-by: He Chen <he.chen@linux.intel.com>
-> Co-developed-by: Zhang Yi <yi.z.zhang@linux.intel.com>
-> Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> ---
->  arch/x86/include/asm/kvm_host.h |  4 ++
->  arch/x86/kvm/mmu/spp.c          | 44 +++++++++++++++
->  arch/x86/kvm/mmu/spp.h          |  9 ++++
->  arch/x86/kvm/vmx/vmx.c          | 15 ++++++
->  arch/x86/kvm/x86.c              | 95 ++++++++++++++++++++++++++++++++-
->  include/uapi/linux/kvm.h        |  3 ++
->  6 files changed, 169 insertions(+), 1 deletion(-)
+> Misc:
+> - Debug UART is muxed with the headphone jack, with the switch next to
+> the microSD slot.
+> - A bosch BMA223 accelerometer is connected to the I2C bus of A64 SoC.
+> - Wi-Fi and Bluetooth are available via a RTL8723CS chip, similar to the
+> one in Pinebook.
 > 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index f5145b86d620..c7a9f03f39a7 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1238,6 +1238,10 @@ struct kvm_x86_ops {
->  
->  	bool (*apic_init_signal_blocked)(struct kvm_vcpu *vcpu);
->  	int (*enable_direct_tlbflush)(struct kvm_vcpu *vcpu);
 > +
-> +	int (*init_spp)(struct kvm *kvm);
-> +	int (*flush_subpages)(struct kvm *kvm, u64 gfn, u32 npages);
-> +	int (*get_inst_len)(struct kvm_vcpu *vcpu);
+> +&i2c1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&i2c1_pins>;
+> +	status = "okay";
+> +
+> +	bma223@18 {
+> +		compatible = "bosch,bma223", "bosch,bma222e";
+These compatible have no binding file?!?
 
-If this is necessary, which hopefully it isn't, then get_insn_len() to be
-consistent with other KVM nomenclature.
 
-A comment for the series overall, it needs a lot of work to properly order
-code between patches.  E.g. this patch introduces get_inst_len() without
-any justification in the changelog and without a user.  At best it's
-confusing, at worst this series will be impossible to bisect.
+> +		reg = <0x18>;
+> +		interrupt-parent = <&pio>;
+> +		interrupts = <7 5 IRQ_TYPE_LEVEL_HIGH>; /* PH5 */
+> +		mount-matrix = "0", "-1", "0",
+> +			       "-1", "0", "0",
+> +			       "0", "0", "-1";
+> +	};
+> +};
+
+bosch,bma222e is referenced by a driver, whereas this is the
+first reference of bosch,bma223.
+
+	Sam
