@@ -2,77 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C60B1374B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:24:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FEE91374D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:30:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728209AbgAJRYL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 12:24:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39180 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726114AbgAJRYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 12:24:10 -0500
-Received: from localhost.localdomain (unknown [83.218.167.187])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7E1B2080D;
-        Fri, 10 Jan 2020 17:24:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578677050;
-        bh=PEEWZOXtjp+MV+ENjzNepmXB7JALrO/U96bkKTRD2HU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Srn9kJKd0sPJ1cmBok1bROl1+1DyLwvY/44RiAi/t5xT5CX8qBGsdO2oBMxCSooMj
-         Wl98Fw/vUFs5sUBqmgY4uF4EuAE1fl9d9sh5LYRMkuGFYyeLDk//ELUT9jHjmKN9Hn
-         tmOvTxgATRgKfR2LuGJ5KJwIC4iOgp6evkBOyojc=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL 3/3] ARM: samsung: Pull for v5.6
-Date:   Fri, 10 Jan 2020 18:23:32 +0100
-Message-Id: <20200110172334.4767-4-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200110172334.4767-1-krzk@kernel.org>
-References: <20200110172334.4767-1-krzk@kernel.org>
+        id S1728168AbgAJR3w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 12:29:52 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:35843 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbgAJR3v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 12:29:51 -0500
+Received: by mail-pj1-f66.google.com with SMTP id n59so1278092pjb.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 09:29:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=if4RAkhreXdypvivvkzUzoNLQmdHtvLSynu8xvJL9L0=;
+        b=P0P6lIkO0vEXevJyCi0Ve6nTaWGmPr9DQ9iU9vm86zyegmAuPFirXAbtYuTbzz3vkX
+         IwYPqghnfSK4u10G0ECYGMKyJNdS7dH7F0qOWU1LKQiE9fdExxHqQ76dxjgxGrkSGBWD
+         b5/sRrmV9CfAIEL7nUH2bj2hPGDnrM9VcBEwjPOyYzL6h49AmjZeWsuVinNCId28pAio
+         sOAq8PD1HwwIvlTtUJG8cdfc3LQmrxFQKqn1t2TVKKnbqRrS+I8Zy5+rld+yTe4ACTcA
+         kNaaR7Ar2b7FVQ2UoIyG4ivhwcahOq5BR0mV4fY0Em64olkCNL6Wh3hEVEV/FlxbNYla
+         gUOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=if4RAkhreXdypvivvkzUzoNLQmdHtvLSynu8xvJL9L0=;
+        b=gGtecnFyU/TJYgU0dWCUEfLupkK9bSJZ5ho4gUZBKgqhOx87tk05VlGuY1olJMzy0f
+         wv2i3P8iqDxOKzelH2B15bUgzZVaVjlI8fXTl71ILYaF1kAUbUJTXVn4XAc2f3iuboxo
+         Be7oX1gRQaomLmb98XZJqXKV+tMvME/rfELwFjbHFk2qIHsfRykh4TteiH+HmmLwgJIa
+         cbNqIhq7gLLtDib7+iJSCOozYe0dlh/vvPv8Y/vj3LYnmDZvQv13isdyQNZjg4k0WnRm
+         aHKGnCiLwb+rEKvjF24NHOBzU/IrdOklz0P7CGe/mjPKl8adGGGAUtlVzsOr5ZDOi8IS
+         f6jw==
+X-Gm-Message-State: APjAAAVMFnMosbHJWy+efhs02hFogwS5pRWqXuov0WebrGh3SVgkt5A3
+        ns5ePMj0E+4Dsug45po6IqM=
+X-Google-Smtp-Source: APXvYqyRCM49T218y2zPfZg/Q1kMxItt+bAymfNhW/HR5muuMaPgLbxwUDSNLZMQCHjcIKtBirsL/A==
+X-Received: by 2002:a17:90a:ead3:: with SMTP id ev19mr6168728pjb.80.1578677390808;
+        Fri, 10 Jan 2020 09:29:50 -0800 (PST)
+Received: from localhost.localdomain ([103.211.17.220])
+        by smtp.googlemail.com with ESMTPSA id p28sm3513553pgb.93.2020.01.10.09.29.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2020 09:29:50 -0800 (PST)
+From:   Amol Grover <frextrite@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Amol Grover <frextrite@gmail.com>
+Subject: [PATCH v2] drivers: nvme: target: core: Pass lockdep expression to RCU lists
+Date:   Fri, 10 Jan 2020 22:53:46 +0530
+Message-Id: <20200110172343.17796-1-frextrite@gmail.com>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+ctrl->subsys->namespaces and subsys->namespaces are traversed with
+hlist_for_each_entry_rcu outside an RCU read-side critical section
+but under the protection of subsys->lock.
 
-  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+Hence, add the corresponding lockdep expression to the list traversal
+primitive to silence false-positive lockdep warnings, and
+harden RCU lists.
 
-are available in the Git repository at:
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+---
+v2:
+- Fix sparse error
+  CHECK: Alignment should match open parenthesis
+- Remove global macro and use local lockdep expressions
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-5.6
-`
-for you to fetch changes up to 45984f0c70ccc03e09f97ee5d0749396547b6594:
+ drivers/nvme/target/core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-  ARM: samsung: Rename Samsung and Exynos to lowercase (2020-01-07 20:44:22 +0100)
+diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
+index 28438b833c1b..c2d6c2dd53fa 100644
+--- a/drivers/nvme/target/core.c
++++ b/drivers/nvme/target/core.c
+@@ -555,7 +555,8 @@ int nvmet_ns_enable(struct nvmet_ns *ns)
+ 	} else {
+ 		struct nvmet_ns *old;
+ 
+-		list_for_each_entry_rcu(old, &subsys->namespaces, dev_link) {
++		list_for_each_entry_rcu(old, &subsys->namespaces, dev_link,
++					lockdep_is_held(&subsys->lock)) {
+ 			BUG_ON(ns->nsid == old->nsid);
+ 			if (ns->nsid < old->nsid)
+ 				break;
+@@ -1172,7 +1173,8 @@ static void nvmet_setup_p2p_ns_map(struct nvmet_ctrl *ctrl,
+ 
+ 	ctrl->p2p_client = get_device(req->p2p_client);
+ 
+-	list_for_each_entry_rcu(ns, &ctrl->subsys->namespaces, dev_link)
++	list_for_each_entry_rcu(ns, &ctrl->subsys->namespaces, dev_link,
++				lockdep_is_held(&subsys->lock))
+ 		nvmet_p2pmem_ns_add_p2p(ctrl, ns);
+ }
+ 
+-- 
+2.24.1
 
-----------------------------------------------------------------
-Samsung mach/soc changes for v5.6
-
-Cleanups (Samsung and Exynos names, Kconfig help text correction).
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (2):
-      ARM: exynos: Correct the help text for platform Kconfig option
-      ARM: samsung: Rename Samsung and Exynos to lowercase
-
- arch/arm/mach-exynos/Kconfig                      | 36 +++++++++++------------
- arch/arm/mach-exynos/common.h                     |  2 +-
- arch/arm/mach-exynos/exynos.c                     |  4 +--
- arch/arm/mach-exynos/include/mach/map.h           |  2 +-
- arch/arm/mach-exynos/pm.c                         |  2 +-
- arch/arm/mach-exynos/smc.h                        |  2 +-
- arch/arm/mach-exynos/suspend.c                    |  2 +-
- arch/arm/mach-s3c24xx/Kconfig                     | 16 +++++-----
- arch/arm/plat-samsung/adc.c                       |  2 +-
- arch/arm/plat-samsung/devs.c                      |  2 +-
- arch/arm/plat-samsung/gpio-samsung.c              |  2 +-
- arch/arm/plat-samsung/include/plat/samsung-time.h |  2 +-
- 12 files changed, 37 insertions(+), 37 deletions(-)
