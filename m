@@ -2,137 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65B571374D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:29:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1D371374D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:31:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbgAJR3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 12:29:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57040 "EHLO mx2.suse.de"
+        id S1727355AbgAJRbI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 12:31:08 -0500
+Received: from mga05.intel.com ([192.55.52.43]:49934 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726636AbgAJR3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 12:29:48 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id DEAABB25C;
-        Fri, 10 Jan 2020 17:29:46 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Stefan Wahren <wahrenst@gmx.net>
-Cc:     phil@raspberrypi.org, devicetree@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: bcm283x: Unify CMA configuration
-Date:   Fri, 10 Jan 2020 18:29:35 +0100
-Message-Id: <20200110172935.19709-1-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.24.1
+        id S1726647AbgAJRbI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 12:31:08 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 09:31:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,417,1571727600"; 
+   d="scan'208";a="224255940"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
+  by orsmga003.jf.intel.com with ESMTP; 10 Jan 2020 09:31:07 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id B07C5300DE4; Fri, 10 Jan 2020 09:31:07 -0800 (PST)
+Date:   Fri, 10 Jan 2020 09:31:07 -0800
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>
+Subject: Re: [PATCH] perf tools: Setup initial evlist::all_cpus value
+Message-ID: <20200110173107.GU15478@tassilo.jf.intel.com>
+References: <20200110151537.153012-1-jolsa@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200110151537.153012-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the introduction of the Raspberry Pi 4 we were forced to explicitly
-configure CMA's location, since arm64 defaults it into the ZONE_DMA32
-memory area, which is not good enough to perform DMA operations on that
-device. To bypass this limitation a dedicated CMA DT node was created,
-explicitly indicating the acceptable memory range and size.
+On Fri, Jan 10, 2020 at 04:15:37PM +0100, Jiri Olsa wrote:
+> Jann Horn reported crash in perf ftrace because evlist::all_cpus
+> isn't initialized if there's evlist without events, which is the
+> case for perf ftrace.
+> 
+> Adding initial initialization of evlist::all_cpus from given cpus,
+> regardless of events in the evlist.
 
-That said, compatibility between boards is a must on the Raspberry Pi
-ecosystem so this creates a common CMA DT node so as for DT overlays to
-be able to update CMA's properties regardless of the board being used.
+Acked-by: Andi Kleen <ak@linux.intel.com>
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
-
-If this doesn't make it into v5.5 I'd be tempted to add:
-Fixes: d98a8dbdaec6 ("ARM: dts: bcm2711: force CMA into first GB of memory")
-
- arch/arm/boot/dts/bcm2711.dtsi | 33 +++++++++++++--------------------
- arch/arm/boot/dts/bcm283x.dtsi | 13 +++++++++++++
- 2 files changed, 26 insertions(+), 20 deletions(-)
-
-diff --git a/arch/arm/boot/dts/bcm2711.dtsi b/arch/arm/boot/dts/bcm2711.dtsi
-index 8687534d4528..c8e4041308e0 100644
---- a/arch/arm/boot/dts/bcm2711.dtsi
-+++ b/arch/arm/boot/dts/bcm2711.dtsi
-@@ -12,26 +12,6 @@ / {
- 
- 	interrupt-parent = <&gicv2>;
- 
--	reserved-memory {
--		#address-cells = <2>;
--		#size-cells = <1>;
--		ranges;
--
--		/*
--		 * arm64 reserves the CMA by default somewhere in ZONE_DMA32,
--		 * that's not good enough for the BCM2711 as some devices can
--		 * only address the lower 1G of memory (ZONE_DMA).
--		 */
--		linux,cma {
--			compatible = "shared-dma-pool";
--			size = <0x2000000>; /* 32MB */
--			alloc-ranges = <0x0 0x00000000 0x40000000>;
--			reusable;
--			linux,cma-default;
--		};
--	};
--
--
- 	soc {
- 		/*
- 		 * Defined ranges:
-@@ -869,6 +849,19 @@ pin-rts {
- 	};
- };
- 
-+&rmem {
-+	#address-cells = <2>;
-+};
-+
-+&cma {
-+	/*
-+	 * arm64 reserves the CMA by default somewhere in ZONE_DMA32,
-+	 * that's not good enough for the BCM2711 as some devices can
-+	 * only address the lower 1G of memory (ZONE_DMA).
-+	 */
-+	alloc-ranges = <0x0 0x00000000 0x40000000>;
-+};
-+
- &i2c0 {
- 	compatible = "brcm,bcm2711-i2c", "brcm,bcm2835-i2c";
- 	interrupts = <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
-index 839491628e87..6128baed83c2 100644
---- a/arch/arm/boot/dts/bcm283x.dtsi
-+++ b/arch/arm/boot/dts/bcm283x.dtsi
-@@ -30,6 +30,19 @@ chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	rmem: reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		cma: linux,cma {
-+			compatible = "shared-dma-pool";
-+			size = <0x4000000>; /* 64MB */
-+			reusable;
-+			linux,cma-default;
-+		};
-+	};
-+
- 	thermal-zones {
- 		cpu_thermal: cpu-thermal {
- 			polling-delay-passive = <0>;
--- 
-2.24.1
-
+> 
+> Reported-by: Jann Horn <jannh@google.com>
+> Link: https://lkml.kernel.org/n/tip-kzioebqr5c3u4t7tafju8pbx@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/lib/perf/evlist.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/tools/lib/perf/evlist.c b/tools/lib/perf/evlist.c
+> index ae9e65aa2491..5b9f2ca50591 100644
+> --- a/tools/lib/perf/evlist.c
+> +++ b/tools/lib/perf/evlist.c
+> @@ -164,6 +164,9 @@ void perf_evlist__set_maps(struct perf_evlist *evlist,
+>  		evlist->threads = perf_thread_map__get(threads);
+>  	}
+>  
+> +	if (!evlist->all_cpus && cpus)
+> +		evlist->all_cpus = perf_cpu_map__get(cpus);
+> +
+>  	perf_evlist__propagate_maps(evlist);
+>  }
+>  
+> -- 
+> 2.24.1
+> 
