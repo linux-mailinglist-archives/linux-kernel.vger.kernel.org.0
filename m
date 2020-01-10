@@ -2,106 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39008136E7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 14:48:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A9FD136E9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 14:50:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727892AbgAJNsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 08:48:31 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:36819 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727458AbgAJNsb (ORCPT
+        id S1727909AbgAJNtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 08:49:12 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:24878 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727458AbgAJNtJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 08:48:31 -0500
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id 00ADmDGK010546
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 22:48:14 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 00ADmDGK010546
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1578664094;
-        bh=YW6gHC2/TBjxwotOxX5lv+0ESK1IMSnDrePMsS8Y854=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=v8CCJuH8FvCsIv3IH6Axc4E20isn2xwbyKkmVAwDnVUUP7XTnqD3pjWapoBDw1lDK
-         50Kzuo/MtEXB6Hdwr/DwS4PqEiEcxxek9hC0xXLPGBXvk23RQcvKWJOdPrXh+dbFTm
-         hpmWbFoqq3663QSC/2QzPboUMx6ebwb3aacYQkNQCrA5Y+ZDRM5od9ZbSll/jAcAHt
-         tP1tLunrgFSOOGMTJQQt5oqhrSUz3D+a5yFCzM/uA1ViWLaKv4o+xwleENqDjAhw/d
-         k1iD3mjIpplBsfHoDvGo0Ec7ARWXd5VV2aA0C0JsGj//ZOe644CI/9zUvVUrt5f+JH
-         5+wStLmWTZdTg==
-X-Nifty-SrcIP: [209.85.217.47]
-Received: by mail-vs1-f47.google.com with SMTP id s16so1248587vsc.10
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 05:48:14 -0800 (PST)
-X-Gm-Message-State: APjAAAVXAqS9AinZ/RVjPPakjdkpoqrF7xcJ4d9EWsBbZTOVWNHFHP4u
-        FPjIX5UOKi/bse+XUQaXX1zbkcVVK+23cVVjckg=
-X-Google-Smtp-Source: APXvYqyTXk/T86I7dlwE/veGRIdMLqTqb+cooe/0yqEITlDnMG/B+hHLqdaNi4yTMsk16cN+BBr421ehKsnP9BOOcVw=
-X-Received: by 2002:a67:f8ca:: with SMTP id c10mr1743990vsp.54.1578664092752;
- Fri, 10 Jan 2020 05:48:12 -0800 (PST)
+        Fri, 10 Jan 2020 08:49:09 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00ADlvUT031939;
+        Fri, 10 Jan 2020 14:48:57 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=zLvBdV8AvZgbP8WkIebIBG/cvEHM5DSXs1Wl2vg4MqU=;
+ b=y/QdE59gExw45tdziCH74wFRu+2KDn4J9MOVkfswTMKwWYC+YpiqaGkeel7xrc9ShTbg
+ SqbJq3oqD69ZhyxLnLJ1lKuYwddUYPJxnebal/jJPcTr4TlmS9ifrJPRO00VSrJppAUg
+ VjXompE+cid1rUC/dJgwL5iCB+UfvbK57zWt4QzjvLiaH0Nb+skscxPkVWLOgJObtEES
+ HJd+alHc8uekj4MBtlzLCKMtaXUnA8PJ/B1CEZuFsSfhYoUTcbF7znleMrQ4teZ0vVBb
+ MOW0HQ8InFYFL2MRNDge1GPV6nvRGpYkUT7TEHRhXY2mK2M5o/dbtXB2VMcvwjTPnbOq BQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xakur7dt7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 10 Jan 2020 14:48:57 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D7DE2100034;
+        Fri, 10 Jan 2020 14:48:56 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C46BC2BC7C9;
+        Fri, 10 Jan 2020 14:48:56 +0100 (CET)
+Received: from localhost (10.75.127.45) by SFHDAG6NODE1.st.com (10.75.127.16)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 10 Jan 2020 14:48:56
+ +0100
+From:   Ludovic Barre <ludovic.barre@st.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: [PATCH 0/9] mmc: mmci: sdmmc: add sdr104 support
+Date:   Fri, 10 Jan 2020 14:48:14 +0100
+Message-ID: <20200110134823.14882-1-ludovic.barre@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20200104162829.20400-1-masahiroy@kernel.org> <20200110121951.GA1047840@kroah.com>
-In-Reply-To: <20200110121951.GA1047840@kroah.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Fri, 10 Jan 2020 22:47:37 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATGZwPE9m=4L6n-OFPSmenQvoRvNR=c4Go65x1opjkpOQ@mail.gmail.com>
-Message-ID: <CAK7LNATGZwPE9m=4L6n-OFPSmenQvoRvNR=c4Go65x1opjkpOQ@mail.gmail.com>
-Subject: Re: [PATCH] staging: vc04_service: remove unused header include path
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Broadcom Kernel Feedback List 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-10_01:2020-01-10,2020-01-09 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 9:24 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Sun, Jan 05, 2020 at 01:28:29AM +0900, Masahiro Yamada wrote:
-> > I can build drivers/staging/vc04_services without this.
-> >
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > ---
-> >
-> >  drivers/staging/vc04_services/Makefile | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/staging/vc04_services/Makefile b/drivers/staging/vc04_services/Makefile
-> > index afe43fa5a6d7..54d9e2f31916 100644
-> > --- a/drivers/staging/vc04_services/Makefile
-> > +++ b/drivers/staging/vc04_services/Makefile
-> > @@ -13,5 +13,5 @@ vchiq-objs := \
-> >  obj-$(CONFIG_SND_BCM2835)    += bcm2835-audio/
-> >  obj-$(CONFIG_VIDEO_BCM2835)  += bcm2835-camera/
-> >
-> > -ccflags-y += -Idrivers/staging/vc04_services -D__VCCOREVER__=0x04000000
-> > +ccflags-y += -D__VCCOREVER__=0x04000000
-> >
-> > --
->
-> This patch breaks the build for me:
-> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_shim.c:6:10: fatal error: interface/vchi/vchi.h: No such file or directory
->     6 | #include "interface/vchi/vchi.h"
->       |          ^~~~~~~~~~~~~~~~~~~~~~~
-> compilation terminated.
->
-> So maybe you did't select all of the modules to build?
->
-> Sorry, I can't take this as-is :(
->
-> greg k-h
+To support the sdr104 mode, sdmmc variant needs:
+-Hardware delay block support for sdmmc variant
+ with tuning procedure
+-Voltage switch callbacks
+-sdmmc revision 2.0
 
+Ludovic Barre (9):
+  mmc: mmci: sdmmc: replace sg_dma_xxx macros
+  mmc: mmci: sdmmc: rename sdmmc_priv struct to sdmmc_idma
+  mmc: mmci: add a reference at mmc_host_ops in mmci struct
+  mmc: mmci: add private pointer for variant
+  dt-bindings: mmc: mmci: add delay block base register for sdmmc
+  mmc: mmci: sdmmc: add execute tuning with delay block
+  mmc: mmci: add volt_switch callbacks
+  mmc: mmci: sdmmc: add voltage switch functions
+  mmc: mmci: add sdmmc variant revision 2.0
 
-Sorry, I compile-tested it with O= option.
-
-I should have tested it with/without O=
-for this kind of patch.
-
-
-I will fix up some relative paths.
-
+ .../devicetree/bindings/mmc/mmci.txt          |   2 +
+ drivers/mmc/host/mmci.c                       |  39 ++++
+ drivers/mmc/host/mmci.h                       |   8 +
+ drivers/mmc/host/mmci_stm32_sdmmc.c           | 199 +++++++++++++++++-
+ 4 files changed, 241 insertions(+), 7 deletions(-)
 
 -- 
-Best Regards
-Masahiro Yamada
+2.17.1
+
