@@ -2,156 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F99713712A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 16:27:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D5B2137140
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 16:30:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728328AbgAJP1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 10:27:22 -0500
-Received: from mga18.intel.com ([134.134.136.126]:15565 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727866AbgAJP1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 10:27:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 07:27:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,417,1571727600"; 
-   d="scan'208";a="304201494"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by orsmga001.jf.intel.com with ESMTP; 10 Jan 2020 07:27:19 -0800
-Subject: Re: [PATCH 2/3] xhci: Wait until link state trainsits to U0 after
- setting USB_SS_PORT_LS_U0
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        mathias.nyman@intel.com, gregkh@linuxfoundation.org,
-        stern@rowland.harvard.edu
-Cc:     acelan.kao@canonical.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200103084008.3579-1-kai.heng.feng@canonical.com>
- <20200103084008.3579-2-kai.heng.feng@canonical.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <17701887-a249-eade-eecb-541df6c2c704@linux.intel.com>
-Date:   Fri, 10 Jan 2020 17:29:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728345AbgAJPaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 10:30:05 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:29658 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728284AbgAJPaE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 10:30:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578670203;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sJNh1uxufS6tY4jbZR6tw4iBKLWQowKRssWFLqff6nw=;
+        b=iWH/LU+uviv5/Vi3kOpd3lEK1prQINFuBIOIA4ifqCJHJ9UiiUAXMZFkX0ep+wwTN7eyHa
+        CJnqlbryINORHXGYNaXF83Nta+rh6mVSGOzh8UsRjF+warwRFuQTgBwGvoisik9X+f/FpG
+        0f/CsBO4pjNhGp5s1HILrFmpF8QdvAw=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-257-UNQ6AYbvMZilViTs4UH8QA-1; Fri, 10 Jan 2020 10:30:02 -0500
+X-MC-Unique: UNQ6AYbvMZilViTs4UH8QA-1
+Received: by mail-qt1-f199.google.com with SMTP id o24so1478168qtr.17
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 07:30:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=sJNh1uxufS6tY4jbZR6tw4iBKLWQowKRssWFLqff6nw=;
+        b=s6sVgKCXlpb4H8/bLuqnoZ27KXy5xsqeasj6MhNB3XxY57mNMNErVe8doBXoC4SDIo
+         HpjK5hiHqwW76hyjZmAAaLgyHprp+ih9ZzHhUc6I5pYCBu6fh/IEQN51cS6f/mdbgkO2
+         Za831+xWIx+MZ3AM2wfBY4yk7O2ykEtJ2uuRwuE+yuD1c7evSseSIZzcBeQzi4CDvMOG
+         ofx6vx10Gk8GlXuKSydyHM3nBGhPqQ+HvyEfz7jclYK/A31FwpGHTUmV2Gip0iMdukwU
+         oaZbVjwPTX+kiHwpcV4WOba3D+5PqGeXyvtfw5zWpp8yDQ1qEeyaj5gKW/FcGfF8tVyc
+         EyJA==
+X-Gm-Message-State: APjAAAUwPx7muVfnBjmyFi1D5WFJJo3d/fuu/kJ8o9hF5PxC4OuN6AWe
+        7owMr40k5VUozd9xvq1QZFqab4oOdoDXZzl9b1oY+adxxFmS3cnDX5NM0RbkRa/97Cb+tdKS+OP
+        0Bn2+jTX00P+6kvLou3ATWUVn
+X-Received: by 2002:ad4:42d1:: with SMTP id f17mr3295947qvr.30.1578670201761;
+        Fri, 10 Jan 2020 07:30:01 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwsahFonjsn/5z2F5PRDVZsqweHmMmz01elwFM2HzO6ZKViN40cOIybfOcq66RGqf/heP1lxQ==
+X-Received: by 2002:ad4:42d1:: with SMTP id f17mr3295923qvr.30.1578670201389;
+        Fri, 10 Jan 2020 07:30:01 -0800 (PST)
+Received: from xz-x1 ([104.156.64.74])
+        by smtp.gmail.com with ESMTPSA id z3sm1164257qtm.5.2020.01.10.07.30.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2020 07:30:00 -0800 (PST)
+Date:   Fri, 10 Jan 2020 10:29:59 -0500
+From:   Peter Xu <peterx@redhat.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Kevin Kevin <kevin.tian@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Lei Cao <lei.cao@stratus.com>
+Subject: Re: [PATCH v3 12/21] KVM: X86: Implement ring-based dirty memory
+ tracking
+Message-ID: <20200110152959.GC53397@xz-x1>
+References: <20200109145729.32898-1-peterx@redhat.com>
+ <20200109145729.32898-13-peterx@redhat.com>
+ <20200109110110-mutt-send-email-mst@kernel.org>
+ <20200109191514.GD36997@xz-x1>
+ <20200109141634-mutt-send-email-mst@kernel.org>
+ <20200109201916.GH36997@xz-x1>
+ <20200109171154-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20200103084008.3579-2-kai.heng.feng@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200109171154-mutt-send-email-mst@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3.1.2020 10.40, Kai-Heng Feng wrote:
-> Like U3 case, xHCI spec doesn't specify the upper bound of U0 transition
-> time. The 20ms is not enough for some devices.
+On Thu, Jan 09, 2020 at 05:18:24PM -0500, Michael S. Tsirkin wrote:
+> On Thu, Jan 09, 2020 at 03:19:16PM -0500, Peter Xu wrote:
+> > > > while for virtio, both sides (hypervisor,
+> > > > and the guest driver) are trusted.
+> > > 
+> > > What gave you the impression guest is trusted in virtio?
+> > 
+> > Hmm... maybe when I know virtio can bypass vIOMMU as long as it
+> > doesn't provide IOMMU_PLATFORM flag? :)
 > 
-> Intead of polling PLS or PLC, we can facilitate the port change event to
-> know that the link transits to U0 is completed.
+> If guest driver does not provide IOMMU_PLATFORM, and device does,
+> then negotiation fails.
+
+I mean it's still possible to specify "!IOMMU_PLATFORM" for the virtio
+device even if vIOMMU is enabled in the guest (rather than the
+negociation procedures).  Again I think it's fair, just the same
+reason as why we tend to even make "iommu=pt" by default for all the
+kernel drivers, because we should trust all the drivers as kernel
+itself.  The only thing we want to protect using vIOMMU is the
+userspace driver because we do have a line between the userspace and
+the kernel, and IMHO it's the same thing here for the new kvm
+interface.
+
 > 
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
->   drivers/usb/host/xhci-hub.c  | 8 +++++++-
->   drivers/usb/host/xhci-mem.c  | 1 +
->   drivers/usb/host/xhci-ring.c | 1 +
->   drivers/usb/host/xhci.h      | 1 +
->   4 files changed, 10 insertions(+), 1 deletion(-)
+> > I think it's logical to trust a virtio guest kernel driver, could you
+> > guide me on what I've missed?
 > 
-> diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
-> index 2b2e9d004dbf..07886a1bce62 100644
-> --- a/drivers/usb/host/xhci-hub.c
-> +++ b/drivers/usb/host/xhci-hub.c
-> @@ -1310,11 +1310,17 @@ int xhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
->   					spin_lock_irqsave(&xhci->lock, flags);
->   				}
->   			}
-> +			if (link_state == USB_SS_PORT_LS_U0)
-> +				reinit_completion(&ports[wIndex]->link_state_changed);
+> 
+> guest driver is assumed to be part of guest kernel. It can't
+> do anything kernel can't do anyway.
 
-All the other suspend and resume related port flags/completions are
-in struct xhci_bus_state. See for example rexit_done[].
-Not sure that is a better place but at least it would be consistent.
+Right, I think all things belongs to the kernel will have the same
+level of trust.  However again, userspace should be differently
+treated, and that's why I tend to prefer the index solution that we
+expose less to userspace to write (read is far safer comparing to
+writes from userspace).
 
-Could actually make sense to move more of them to the xhci_port structure,
-but perhaps in some later suspend/resume rework patch.
->   
->   			xhci_set_link_state(xhci, ports[wIndex], link_state);
->   
->   			spin_unlock_irqrestore(&xhci->lock, flags);
-> -			msleep(20); /* wait device to enter */
-> +			if (link_state == USB_SS_PORT_LS_U0) {
-> +				if (!wait_for_completion_timeout(&ports[wIndex]->link_state_changed, msecs_to_jiffies(100)))
-> +					xhci_dbg(xhci, "missing U0 port change event for port %d-%d\n", hcd->self.busnum, wIndex + 1);
+> 
+> > > 
+> > > 
+> > > >  Above means we need to do these to
+> > > > change to the new design:
+> > > > 
+> > > >   - Allow the GFN array to be mapped as writable by userspace (so that
+> > > >     userspace can publish bit 2),
+> > > > 
+> > > >   - The userspace must be trusted to follow the design (just imagine
+> > > >     what if the userspace overwrites a GFN when it publishes bit 2
+> > > >     over a valid dirty gfn entry?  KVM could wrongly unprotect a page
+> > > >     for the guest...).
+> > > 
+> > > You mean protect, right?  So what?
+> > 
+> > Yes, I mean with that, more things are uncertain from userspace.  It
+> > seems easier to me that we restrict the userspace with one index.
+> 
+> Donnu how to treat vague statements like this.  You need to be specific
+> with threat models. Otherwise there's no way to tell whether code is
+> secure.
+> 
+> > > 
+> > > > While if we use the indices, we restrict the userspace to only be able
+> > > > to write to one index only (which is the reset_index).  That's all it
+> > > > can do to mess things up (and it could never as long as we properly
+> > > > validate the reset_index when read, which only happens during
+> > > > KVM_RESET_DIRTY_RINGS and is very rare).  From that pov, it seems the
+> > > > indices solution still has its benefits.
+> > > 
+> > > So if you mess up index how is this different?
+> > 
+> > We can't mess up much with that.  We simply check fetch_index (sorry I
+> > meant this when I said reset_index, anyway it's the only index that we
+> > expose to userspace) to make sure:
+> > 
+> >   reset_index <= fetch_index <= dirty_index
+> > 
+> > Otherwise we fail the ioctl.  With that, we're 100% safe.
+> 
+> safe from what? userspace can mess up guest memory trivially.
+> for example skip sending some memory or send junk.
 
-We might be waiting for completion here in unnecessary.
-No completion is called if port is already in U0, either set by
-xhci_bus_resume(), or we race with a device initiated resume.
+Yes, QEMU can mess the guest up, but it should never mess the host up,
+am I right?  Regarding to QEMU as an userspace, KVM should see it as
+untrusted as well from host-wise.  However guest security is another
+thing, imho.
 
-Maybe read the current port link state first, and don't do anything if it's
-already in U0, or fail if it's in a state where we can't resume to U0.
+> 
+> > > 
+> > > I agree RO page kind of feels safer generally though.
+> > > 
+> > > I will have to re-read how does the ring works though,
+> > > my comments were based on the old assumption of mmaped
+> > > page with indices.
+> > 
+> > Yes, sorry again for a bad cover letter.
+> > 
+> > It's basically the same as before, just that we only have per-vcpu
+> > ring now, and the indices are exposed from kvm_run so we don't need
+> > the extra page, but we still expose that via mmap.
+> 
+> So that's why changelogs are useful.
+> Can you please write a changelog for this version so I don't
+> need to re-read all of it? Thanks!
 
-> +			} else
-> +				msleep(20); /* wait device to enter */
->   			spin_lock_irqsave(&xhci->lock, flags);
+Sure, actually I've got a changelog in the cover letter for this
+version [1]... it's:
 
-Code might also be cleaner if we have separate if() statements for U0 and U3 link
-states, and skip the generic xhci_set_link_state()
+V3 changelog:
 
-USB 3.2 specs only support PORT_LINK_STATE request feature selectors for
-U0, U1, U2, U3, SS.Disabled, Rx.Detect and Compliance mode.
-Out of these xhci driver already handles the SS.Disabled, Rx.detect and Compliance in
-separate if statements, and xHC hardware can't force a U1 or U2 state by writing
-the PLS field of the PORTSC register, so the xhci_set_link_state() here
-is only useful for U0 and U3.
+- fail userspace writable maps on dirty ring ranges [Jason]
+- commit message fixups [Paolo]
+- change __x86_set_memory_region to return hva [Paolo]
+- cacheline align for indices [Paolo, Jason]
+- drop waitqueue, global lock, etc., include kvmgt rework patchset
+- take lock for __x86_set_memory_region() (otherwise it triggers a
+  lockdep in latest kvm/queue) [Paolo]
+- check KVM_DIRTY_LOG_PAGE_OFFSET in kvm_vm_ioctl_enable_dirty_log_ring
+- one more patch to drop x86_set_memory_region [Paolo]
+- one more patch to remove extra srcu usage in init_rmode_identity_map()
+- add some r-bs for Paolo
 
-So maybe something like this:
+I didn't have detailed changelog for v2 because it could be a long
+list with trivial details which can hide the major things, but I've
+got a small write-up in the cover letter trying to mention the major
+changes [2].
 
-if (link_state == U0)
-   if (active_link_state == U0)
-     break
-   else if (active_link_state != a proper link state)
-     return error	
-   xhci_set_link_state(U0)
-   wait_for_completion_timeout()
-   break;
+Again, I'm very sorry for either missing a complete changelog in v2,
+or the high-level overview of v3 in the cover letter.  I'll make it
+better in v4.
 
-if (link_state == U3)
-   xhci_stop_device(slot_id)
-   xhci_set_link_state(U3)
-   for (max 10 tries) {
-     msleep_range(~10ms)
-     if (readl(PORTSC(PLS) == U3)
-       break
-   }
-   break
->   
->   			if (link_state == USB_SS_PORT_LS_U3) {
-> diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-> index 3b1388fa2f36..c760a28e3556 100644
-> --- a/drivers/usb/host/xhci-mem.c
-> +++ b/drivers/usb/host/xhci-mem.c
-> @@ -2268,6 +2268,7 @@ static int xhci_setup_port_arrays(struct xhci_hcd *xhci, gfp_t flags)
->   		xhci->hw_ports[i].addr = &xhci->op_regs->port_status_base +
->   			NUM_PORT_REGS * i;
->   		xhci->hw_ports[i].hw_portnum = i;
-> +		init_completion(&xhci->hw_ports[i].link_state_changed);
->   	}
->   
->   	xhci->rh_bw = kcalloc_node(num_ports, sizeof(*xhci->rh_bw), flags,
-> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-> index d23f7408c81f..44d91a53bf07 100644
-> --- a/drivers/usb/host/xhci-ring.c
-> +++ b/drivers/usb/host/xhci-ring.c
-> @@ -1677,6 +1677,7 @@ static void handle_port_status(struct xhci_hcd *xhci,
->   	     (portsc & PORT_PLS_MASK) == XDEV_U1 ||
->   	     (portsc & PORT_PLS_MASK) == XDEV_U2)) {
->   		xhci_dbg(xhci, "resume SS port %d finished\n", port_id);
-> +		complete(&port->link_state_changed);
+Thanks,
 
-Completion will only be called if there was a port link change (PLC bit set)
-and link is in U0/U1/U2. Completion will also be called for device
-initiated resume even when no one is waiting for it. (probably harmless)
+[1] https://lore.kernel.org/kvm/20200109145729.32898-1-peterx@redhat.com/
+[2] https://lore.kernel.org/kvm/20191220211634.51231-1-peterx@redhat.com/
 
--Mathias
+-- 
+Peter Xu
+
