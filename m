@@ -2,132 +2,286 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A1F0136B03
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 11:24:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D0C3136B3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 11:46:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbgAJKYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 05:24:32 -0500
-Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:49467 "EHLO
-        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727168AbgAJKYc (ORCPT
+        id S1727563AbgAJKp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 05:45:58 -0500
+Received: from mail-m975.mail.163.com ([123.126.97.5]:39766 "EHLO
+        mail-m975.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727345AbgAJKp6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 05:24:32 -0500
-Received: from [IPv6:2001:420:44c1:2577:c967:e1d3:183a:b8ef]
- ([IPv6:2001:420:44c1:2577:c967:e1d3:183a:b8ef])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id prSsilw4kpLtbprSviPwG2; Fri, 10 Jan 2020 11:24:30 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1578651870; bh=oJOruGOI/Y+hFDMsJUJEz5BVUPQc/eBntsATfXiA7PE=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=VZhVtot9C3ctHD3oxwDihsjcC5QhQ/xbXvsqgatFT4cCUe6Z6Mh834QE3pSz0ZyVP
-         3r80VIXXOOhuVUgcS3DUyqedx+MrUHXdH/bqKSeRaha+xjoeUhxkt/rRpX/ElfqtiY
-         r6PhKgvIXA/L5NFTxayLlYvLjBAs8d4xlaO10nS2wECzWo4EiUDpK3EMFgjBFeut0p
-         UjMtuZiVykKinlknbITrDX4kZSwFWR12et/hyJHwJEDGq/hhrKRaquZoMVlNx57rCF
-         WcMgDMaqV118cV8drmlQcwZnyqNUADkSSyCzwkeAiWmN6E38gIB2UhmFrjULIvxrzC
-         eOD/ieKx2r2AA==
-Subject: Re: [RFC][PATCH 02/15] videobuf2: handle V4L2 buffer cache flags
-To:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191217032034.54897-1-senozhatsky@chromium.org>
- <20191217032034.54897-3-senozhatsky@chromium.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <ada2381c-2c1c-17c3-c190-48439ae1657a@xs4all.nl>
-Date:   Fri, 10 Jan 2020 11:24:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 10 Jan 2020 05:45:58 -0500
+X-Greylist: delayed 933 seconds by postgrey-1.27 at vger.kernel.org; Fri, 10 Jan 2020 05:45:50 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=g2tbO
+        +qzlpA2w5Cd7SBiifcvdUZuxRzhuQ247WytjJ4=; b=bREENsEDpS/bG1RHE+i7N
+        Hn7cEFqrreokTkfTFoS6clEiQwS18uhJ7iGiXxCoISmha84Bqq0TehL6mxkq/Jdg
+        u+n0JBaZdCh3x9bG50fHzx+4z6O1Kd/Z9EmGShVlzwSHMoQ4NSAJ0rzO+biT2KIG
+        yWj58sXe7wRHwFRtE1ctJ4=
+Received: from xilei-TM1604.mioffice.cn (unknown [114.247.175.196])
+        by smtp5 (Coremail) with SMTP id HdxpCgCHCsjgURheqcdzDA--.474S4;
+        Fri, 10 Jan 2020 18:29:26 +0800 (CST)
+From:   Niu Xilei <niu_xilei@163.com>
+To:     davem@davemloft.net
+Cc:     tglx@linutronix.de, fw@strlen.de, peterz@infradead.org,
+        pabeni@redhat.com, anshuman.khandual@arm.com,
+        linyunsheng@huawei.com, bigeasy@linutronix.de,
+        jonathan.lemon@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Niu Xilei <niu_xilei@163.com>
+Subject: [PATCH]     pktgen: create packet use  IPv6 source address between src6_min and src6_max.
+Date:   Fri, 10 Jan 2020 18:28:42 +0800
+Message-Id: <20200110102842.13585-1-niu_xilei@163.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20191217032034.54897-3-senozhatsky@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfJ0SRNrWZnnf7QXyvMOEx3ymNUl2gdlEC5cFu0Qh9z7JR2EsnbXtT4MJnmLPsM93U135VuGtYRqy04ueiqADgivPuL5CH1GqcOObxBhnN5RcVSm4YQEB
- LnO5iXLq4lrLjOJUubyxLJBaYlSeLc5YJ/3PVVsK41Owz2qkj6jlfka0ocCaL8btdzMZ4TigWRDdnKal2EW8hfGJybgME8bm09fycf2txJNxTgdz7DURVS+4
- /0rmXQXmLm1NSRSjINM9PwX3btxpE5V9D46s0mlRpTbzVtvrXOglspB4VeHyGwb90RF0Kmc5c7Kyuh90Rpa0n3dd9BtO17vYqgfGtfq8tU08gTggyhK4xDCj
- jKoucD4jsLYAs01uISET79ouSsJ0K0m1sDSR/xsUOXajld09NJf2O5X07WBIUrkFvqA7iBMBdC5uGIiiRKJigKS88ciPbRozp6pJhNDSgN20LhtDEL6JXQo9
- eTSrVqkBZYGPLxm/3nNOFvFE1IM0GFXD7T1QDTWiVqQR7wPxMZi9Bw6XpJ+nfxlTKXFaSF9Xtk7H0wPOPCBeLVkg3tWn18ClCxyDdKbRICij/zrW7Np5jHZE
- hh9gfNGBlpgiwDIrVeFqiO+rM48ZWb1GgCG2V+pw4AtpNdhcCcmB/WImtMSBp6JQnfM=
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: HdxpCgCHCsjgURheqcdzDA--.474S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW3AFyUZF4kGF4Uuw4UuryUJrb_yoWxWF1fpF
+        W5JF98Jry7CF13Jw43JF9Iyw4a9ryvya47WayrZ34FkFs8XrW0vrn7KFy3tF4jqr1fA39x
+        tw4UKa1jgan0vr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jNOz3UUUUU=
+X-Originating-IP: [114.247.175.196]
+X-CM-SenderInfo: pqlxs5plohxqqrwthudrp/1tbiTRmmgFc7O6dgPgAAsc
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/19 4:20 AM, Sergey Senozhatsky wrote:
-> Set video buffer cache management flags corresponding to V4L2 cache
-> flags.
-> 
-> Both ->prepare() and ->finish() cache management hints should be
-> passed during this stage (buffer preparation), because there is no
-> other way for user-space to skip ->finish() cache flush.
-> 
-> There are two possible alternative approaches:
-> - The first one is to move cache sync from ->finish() to dqbuf().
->   But this breaks some drivers, that need to fix-up buffers before
->   dequeueing them.
-> 
-> - The second one is to move ->finish() call from ->done() to dqbuf.
+    Pktgen can use only one IPv6 source address from output device, or src6 command
+    setting. When in pressure test need create lots of session more than 65536.
+    If IPSRC_RND flag is use random  address between src6_min and src6_max.
 
-Please combine this patch with patch 13/15!
+    The GCC  generates code that calls functions in the libgcc library to implement
+    the / and % operations with 128-bit operands on 64-bit CPUs. So kernel need
+    implement the function  to do / and % operation.
 
-> 
-> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> ---
->  .../media/common/videobuf2/videobuf2-v4l2.c   | 22 +++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> index e652f4318284..2fccfe2a57f8 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> @@ -337,6 +337,27 @@ static int vb2_fill_vb2_v4l2_buffer(struct vb2_buffer *vb, struct v4l2_buffer *b
->  	return 0;
->  }
->  
-> +static void set_buffer_cache_hints(struct vb2_queue *q,
-> +				   struct vb2_buffer *vb,
-> +				   struct v4l2_buffer *b)
-> +{
-> +	vb->need_cache_sync_on_prepare = 1;
-> +
-> +	if (q->dma_dir != DMA_TO_DEVICE)
+    Signed-off-by: Niu Xilei <niu_xilei@163.com>
+---
+ net/core/pktgen.c | 183 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 183 insertions(+)
 
-What should be done when dma_dir == DMA_BIDIRECTIONAL?
+diff --git a/net/core/pktgen.c b/net/core/pktgen.c
+index 294bfcf0ce0e..b07ab5984fa8 100644
+--- a/net/core/pktgen.c
++++ b/net/core/pktgen.c
+@@ -254,6 +254,111 @@ struct flow_state {
+ /* flow flag bits */
+ #define F_INIT   (1<<0)		/* flow has been initialized */
+ 
++#ifdef CONFIG_ARCH_SUPPORTS_INT128
++
++__extension__ typedef  unsigned __int128 u128;
++
++/* Kernel not implement __int128's divide and modulo operator. Implement these
++ * operation use shift-subtract division algorithm  adpater from
++ * https://chromium.googlesource.com/chromium/src/third_party/+/master/abseil-cpp/absl/numeric/int128.cc */
++
++/* find first bit set of u128 */
++static inline int fls128(u128 n)
++{
++	u64 hi = n >> 64;
++
++	if (hi)
++		return fls64(hi) + 64;
++
++	return fls64((__u64)n);
++}
++
++/**
++ * div128_u128 - unsigned 128bit int divide with unsigned 128bit int divisor
++ * @dividend:   128bit dividend
++ * @divisor:    128bit divisor
++ * @remainder:  128bit  remainder
++ * @return:     128bit quotient
++ */
++u128 div128_u128(u128 dividend, u128 divisor, u128 *remainder)
++{
++	int i;
++	int shift;
++	u128 quotient = 0;
++	u128 denominator = divisor;
++
++	if (divisor > dividend) {
++		*remainder = dividend;
++		return 0;
++	}
++	if (divisor == dividend) {
++		*remainder = 0;
++		return 1;
++	}
++
++	/* Left aligns the MSB of the dividend and the dividend. */
++	shift = fls128(dividend) - fls128(denominator);
++	denominator <<= shift;
++	/* Uses shift-subtract algorithm to divide dividend by denominator. The
++	 * remainder will be left in dividend. */
++	for (i = 0; i <= shift; ++i) {
++		quotient <<= 1;
++		if (dividend >= denominator) {
++			dividend -= denominator;
++			quotient |= 1;
++		}
++		denominator >>= 1;
++	}
++	*remainder = dividend;
++	return quotient;
++}
++
++#ifdef __LITTLE_ENDIAN
++
++static inline u128 be128_to_cpu(u128 net128)
++{
++#if defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)
++	u64 *pnet = (u64 *)&net128;
++
++	return (((__force u128)swab64(pnet[0]) << 64) |
++		(__force u128)swab64(pnet[1]));
++#else
++
++	u32 *pnet = (u32 *)&net128;
++
++	return (((__force u128)swap32(pnet[0])) << 96 |
++		((__force u128)swap32(pnet[1])) << 64 |
++		((__force u128)swap32(pnet[2])) << 32 |
++		(__force u128)swap32(pnet[3]));
++
++#endif
++}
++
++static inline u128 cpu_to_be128(u128 host128)
++{
++#if defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)
++	u64 *phost = (u64 *)&host128;
++
++	return  (((__force u128)swab64(phost[0])) << 64 |
++		(__force u128)swab64(phost[1]));
++#else
++	u32 *phost = (u32 *)&host128;
++
++	return (((__force u128)swap32(phost[0])) << 96 |
++		((__force u128)swap32(phost[1])) << 64 |
++		((__force u128)swap32(phost[2])) << 32 |
++		(__force u128)swap32(phost[3]));
++#endif
++}
++
++#else /* !__LITTLE_ENDIAN  */
++
++#define be128_to_cpu(x) (x)
++#define cpu_to_be128(x) (x)
++
++#endif /* __LITTLE_ENDIAN */
++#endif /* CONFIG_ARCH_SUPPORTS_INT128 */
++
+ struct pktgen_dev {
+ 	/*
+ 	 * Try to keep frequent/infrequent used vars. separated.
+@@ -1355,6 +1460,49 @@ static ssize_t pktgen_if_write(struct file *file,
+ 		sprintf(pg_result, "OK: dst6_max=%s", buf);
+ 		return count;
+ 	}
++	if (!strcmp(name, "src6_min")) {
++		len = strn_len(&user_buffer[i], sizeof(buf) - 1);
++		if (len < 0)
++			return len;
++
++		pkt_dev->flags |= F_IPV6;
++
++		if (copy_from_user(buf, &user_buffer[i], len))
++			return -EFAULT;
++		buf[len] = 0;
++
++		in6_pton(buf, -1, pkt_dev->min_in6_saddr.s6_addr, -1, NULL);
++		snprintf(buf, sizeof(buf), "%pI6c", &pkt_dev->min_in6_saddr);
++
++		pkt_dev->cur_in6_saddr = pkt_dev->min_in6_saddr;
++		if (debug)
++			pr_debug("src6_min set to: %s\n", buf);
++
++		i += len;
++		sprintf(pg_result, "OK: src6_min=%s", buf);
++		return count;
++	}
++	if (!strcmp(name, "src6_max")) {
++		len = strn_len(&user_buffer[i], sizeof(buf) - 1);
++		if (len < 0)
++			return len;
++
++		pkt_dev->flags |= F_IPV6;
++
++		if (copy_from_user(buf, &user_buffer[i], len))
++			return -EFAULT;
++		buf[len] = 0;
++
++		in6_pton(buf, -1, pkt_dev->max_in6_saddr.s6_addr, -1, NULL);
++		snprintf(buf, sizeof(buf), "%pI6c", &pkt_dev->max_in6_saddr);
++
++		if (debug)
++			pr_debug("dst6_max set to: %s\n", buf);
++
++		i += len;
++		sprintf(pg_result, "OK: dst6_max=%s", buf);
++		return count;
++	}
+ 	if (!strcmp(name, "src6")) {
+ 		len = strn_len(&user_buffer[i], sizeof(buf) - 1);
+ 		if (len < 0)
+@@ -2286,6 +2434,38 @@ static void set_cur_queue_map(struct pktgen_dev *pkt_dev)
+ 	pkt_dev->cur_queue_map  = pkt_dev->cur_queue_map % pkt_dev->odev->real_num_tx_queues;
+ }
+ 
++/* create ipv6 source addr, random generator or iterator between the range  */
++static inline void set_src_in6_addr(struct pktgen_dev *pkt_dev)
++{
++	u128 t;
++	u128 imn6, imx6;
++
++	if (!ipv6_addr_any(&pkt_dev->min_in6_saddr)) {
++#ifdef CONFIG_ARCH_SUPPORTS_INT128
++		imn6 = be128_to_cpu(*(u128 *)pkt_dev->min_in6_saddr.s6_addr);
++		imx6 = be128_to_cpu(*(u128 *)pkt_dev->max_in6_saddr.s6_addr);
++		if (imn6 < imx6) {
++			if (pkt_dev->flags & F_IPSRC_RND) {
++				do {
++					prandom_bytes(&t, sizeof(t));
++					/*t = t % range */
++					div128_u128(t, imx6 - imn6, &t);
++					t = imn6 + t;
++				} while (ipv6_addr_loopback((struct in6_addr *)&t) ||
++					 ipv6_addr_v4mapped((struct in6_addr *)&t) ||
++					 ipv6_addr_is_multicast((struct in6_addr *)(&t)));
++			} else {
++				t = be128_to_cpu(*(u128 *)pkt_dev->cur_in6_saddr.s6_addr);
++				t++;
++				if (t > imx6)
++					t = imn6;
++			}
++			t = cpu_to_be128(t);
++			pkt_dev->cur_in6_saddr = *(struct in6_addr *)&t;
++		}
++#endif
++	}
++}
+ /* Increment/randomize headers according to flags and current values
+  * for IP src/dest, UDP src/dst port, MAC-Addr src/dst
+  */
+@@ -2293,6 +2473,7 @@ static void mod_cur_headers(struct pktgen_dev *pkt_dev)
+ {
+ 	__u32 imn;
+ 	__u32 imx;
++
+ 	int flow = 0;
+ 
+ 	if (pkt_dev->cflows)
+@@ -2454,6 +2635,8 @@ static void mod_cur_headers(struct pktgen_dev *pkt_dev)
+ 		}
+ 	} else {		/* IPV6 * */
+ 
++		set_src_in6_addr(pkt_dev);
++
+ 		if (!ipv6_addr_any(&pkt_dev->min_in6_daddr)) {
+ 			int i;
+ 
+-- 
+2.20.1
 
-> +		vb->need_cache_sync_on_finish = 1;
-> +	else
-> +		vb->need_cache_sync_on_finish = 0;
-> +
-> +	if (!q->allow_cache_hints)
-> +		return;
-> +
-> +	if (b->flags & V4L2_BUF_FLAG_NO_CACHE_INVALIDATE)
-> +		vb->need_cache_sync_on_finish = 0;
-> +
-> +	if (b->flags & V4L2_BUF_FLAG_NO_CACHE_CLEAN)
-> +		vb->need_cache_sync_on_prepare = 0;
-> +}
-> +
->  static int vb2_queue_or_prepare_buf(struct vb2_queue *q, struct media_device *mdev,
->  				    struct v4l2_buffer *b, bool is_prepare,
->  				    struct media_request **p_req)
-> @@ -381,6 +402,7 @@ static int vb2_queue_or_prepare_buf(struct vb2_queue *q, struct media_device *md
->  	}
->  
->  	if (!vb->prepared) {
-> +		set_buffer_cache_hints(q, vb, b);
->  		/* Copy relevant information provided by the userspace */
->  		memset(vbuf->planes, 0,
->  		       sizeof(vbuf->planes[0]) * vb->num_planes);
-> 
-
-Regards,
-
-	Hans
