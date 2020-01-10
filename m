@@ -2,245 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A7A91373E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:43:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC98D1373E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:44:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728589AbgAJQnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 11:43:11 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:36209 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728500AbgAJQnK (ORCPT
+        id S1728826AbgAJQnx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 11:43:53 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:31048 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728500AbgAJQnw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 11:43:10 -0500
-Received: by mail-oi1-f193.google.com with SMTP id c16so2398633oic.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 08:43:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pR2iX18tjXNnoBPSNqNK9ys64+Jcpo7fZQg0i/s/+nw=;
-        b=ZfnlIqumLx11xnTlrzHHA/io9dAA9rY70kuYDBhctQ7IN74tUElswBp7CxnhQVSYx6
-         c7AliLu0EobfDfzf6WWjjjToJ/R+jDi4SkJGbj8HyR0wBR7pnweuEqQcLz7DEr3Jl+9h
-         3+O7+at2eVX3wuSxLv44jSrpksEKmtyO18ZuvCWs8CeZq2Jq+f/Z06CX1GskGiwhlrLT
-         qRxkFHFl9dvBJ98dRItwbnJ3XL2jDUasJ7Tp38uE7XOptpHR8CMay4k/RnSnvKgf81Wi
-         aQLYeBZh90Gp3X+tCJgVu5qbQgslw4VFrYDfHLzNgseHrm6sLsHCq3oKthnEN1Czpu/0
-         v7Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pR2iX18tjXNnoBPSNqNK9ys64+Jcpo7fZQg0i/s/+nw=;
-        b=sSsPUPu4T4fO9xTk8gU5GJYFOd6VfByqQRnf4+WoWQiqK4k55rZfSoaAReCGp5TUE+
-         Mx5BH7X0O05tdudfKZ/rFGnedejzT7VBIO8fFr1cpB1jCTYT7lyYkAW1wwOwNpGTR1ga
-         fSJKqaWx2/uM1OxKrh6kUVHqWesRtfBx+A5wi3QpMzb0kT5+C4vIfXrpQ4DS3uYvTkHQ
-         YmenpWkpZGMrVjv45JqCWCZ+uOvfvBz5TK8mhwqpGocm6+XKEBPv9GtiKVX0jokqDAKA
-         W8tDels2nay4uRGIHoZc8fuISLDgWeoE1d8rsJDHP5e8c/ArLGvNNJO8g09+ShtPwoFS
-         iLJg==
-X-Gm-Message-State: APjAAAWxRMCaql9U4sIX64umP+XFnqsmQBG4/KJxrYhjZEuyTDA1lQva
-        KXeue+TdkIL2LxskzkH9fpkOUQHVTRvWuUo4eEhYhQ==
-X-Google-Smtp-Source: APXvYqxK4i/HNBAk3rtkotV9R/sF7UURwsT3pfV5Edd4gerSvJPZ67eM19soRbqvumd2706szUR3iDfBazdnV/orM4s=
-X-Received: by 2002:aca:3f54:: with SMTP id m81mr2723806oia.73.1578674589422;
- Fri, 10 Jan 2020 08:43:09 -0800 (PST)
+        Fri, 10 Jan 2020 11:43:52 -0500
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 00AGcMCC006241;
+        Fri, 10 Jan 2020 08:43:37 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=o1xYxfd0dG0e83Rgq36t0TKv8/MPPtFj6WE0qHORQgY=;
+ b=cIcbuRIDLNrDWeIdDwr+6Hi7pEy5A/T4g7y6eCE9wsIqCa/9oqRTqGa3WfXBJT8vcAtj
+ pkxyMsd8V2GHjuh8fmxBRXd9Mp8lbmBxNA/dsLWQB/knr7oc/VgxJ8jZpdqovmA5WqP5
+ iTCa2Qv9p+pYfTi7GP/gDBuyS5y5nPfLdkU= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by m0001303.ppops.net with ESMTP id 2xenyt28bb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Fri, 10 Jan 2020 08:43:36 -0800
+Received: from NAM04-BN3-obe.outbound.protection.outlook.com (100.104.98.9) by
+ o365-in.thefacebook.com (100.104.94.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Fri, 10 Jan 2020 08:43:35 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TcVxZVLNN5DF5q4bujOaMu4JvC9veqb5tuxHAKRwytJAAbSvfXWCvx3OAfl7t9asulWfNq82DfVZhViYrCfuxJKXm0XTGBKGYyO/81VqXiM/kFjHgazh0RrVL3D1nFU3o/kzP8wqDPcDu9Ad0RuR83/nOGzN2G8nSwni64D9XaBFKvpKiRdOrDJ6hItbYiKDJ87sVxWieUkh40WnbIpsRYnX6gVkY0XVZ2pv/4pFsdrzhNhos45CzaMY3/J0A3LDs0jm1rUm8hLhQfhssJ62oquFngEvWPfhHdvooluuQzLDqIInppUpkre7PeiCnZtir6kWKNp5Fbnsp1aZ0ayNKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=o1xYxfd0dG0e83Rgq36t0TKv8/MPPtFj6WE0qHORQgY=;
+ b=nxXx7XidlcSmJD9nOTKb+iSe6/2Nxa86b6f5eV8122dc3J+ZJOZj5V08/mR1NAbeDArZQSd5aGFcRAnlk23s3BjdA49J3rCHb98wRl/oAeuMls5g1PkLzOE9fWcK+Uz3u2fi4vfol261NH3eH4d9jd0D0f3dPO4/Zy0Jow3pLB0bIs09coJP+icAUj1kc3gIrCjp+n1UIMvot2oI8A1EC32D6lxBF0UqYPy9cLl1BijtvxFUju+dtX8ngtvaWDi3d84VjGBE4QuKCIMpnIst9s89YgrAA7pPfc5n7J52anB7rq7M9nbR7ivHEKoREfwCS4ugN43Hv0nlf6Vr3ZmawA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=o1xYxfd0dG0e83Rgq36t0TKv8/MPPtFj6WE0qHORQgY=;
+ b=aLKMI/g3jzXE25vSQJJ1cJssxVyiQqs6dag91tUhOHr1qpUktImM7jqbFJ6WcRyBaOZixrnkXKHXf/MfNAXBzxRZzxJPfwEJPM8oVVNcIDiyBMbhhhE/xK6ELDvIKEeL6v9BO5dq80jlveqzvS60V8drr4dU+m/ASJRhsLpcy9E=
+Received: from MN2PR15MB3213.namprd15.prod.outlook.com (20.179.21.76) by
+ MN2PR15MB2525.namprd15.prod.outlook.com (20.179.146.88) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2623.9; Fri, 10 Jan 2020 16:43:34 +0000
+Received: from MN2PR15MB3213.namprd15.prod.outlook.com
+ ([fe80::6d1e:f2f7:d36:a42f]) by MN2PR15MB3213.namprd15.prod.outlook.com
+ ([fe80::6d1e:f2f7:d36:a42f%4]) with mapi id 15.20.2623.011; Fri, 10 Jan 2020
+ 16:43:34 +0000
+Received: from kafai-mbp.dhcp.thefacebook.com (2620:10d:c090:200::3:1c91) by CO2PR04CA0002.namprd04.prod.outlook.com (2603:10b6:102:1::12) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2623.9 via Frontend Transport; Fri, 10 Jan 2020 16:43:31 +0000
+From:   Martin Lau <kafai@fb.com>
+To:     Lorenz Bauer <lmb@cloudflare.com>
+CC:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Joe Stringer <joe@isovalent.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-team@cloudflare.com" <kernel-team@cloudflare.com>
+Subject: Re: [PATCH bpf v2] net: bpf: don't leak time wait and request sockets
+Thread-Topic: [PATCH bpf v2] net: bpf: don't leak time wait and request
+ sockets
+Thread-Index: AQHVx7l9Y1n5XH7dBkG8DtIR/ncd4KfkGrgA
+Date:   Fri, 10 Jan 2020 16:43:32 +0000
+Message-ID: <20200110164328.aosamgjk5hfw7r7d@kafai-mbp.dhcp.thefacebook.com>
+References: <20200109115749.12283-1-lmb@cloudflare.com>
+ <20200110132336.26099-1-lmb@cloudflare.com>
+In-Reply-To: <20200110132336.26099-1-lmb@cloudflare.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CO2PR04CA0002.namprd04.prod.outlook.com
+ (2603:10b6:102:1::12) To MN2PR15MB3213.namprd15.prod.outlook.com
+ (2603:10b6:208:3d::12)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::3:1c91]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8e6952c5-1bf8-4f0e-7a11-08d795ec3a97
+x-ms-traffictypediagnostic: MN2PR15MB2525:
+x-microsoft-antispam-prvs: <MN2PR15MB2525D8E553A2DD517D061830D5380@MN2PR15MB2525.namprd15.prod.outlook.com>
+x-fb-source: Internal
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 02788FF38E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(366004)(39860400002)(346002)(376002)(199004)(189003)(186003)(86362001)(52116002)(16526019)(4744005)(2906002)(7696005)(5660300002)(8936002)(316002)(55016002)(1076003)(478600001)(66946007)(8676002)(66476007)(66446008)(54906003)(71200400001)(9686003)(4326008)(6916009)(81166006)(6506007)(66556008)(81156014)(64756008);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR15MB2525;H:MN2PR15MB3213.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: XqHvqAZpsr6LcgmehUmu6sFRIrLwAw7lJNHtT7jRBshQaRe/rOwtNTxIFPEl1gaVDISxtY0sEyMIFYqT3YPGB7df0TqlqwBvxLJoo8VtdXVA8yHa17jhR2S6cpB/taROUIXLJhx5GqsDanZ3iTzgvyl1jmPsrXtpm/CbAOjGuT4vadqxU/MS2IKChW7Gd5V3nAulI0I/wG2UxfPsLf7FMnkytXoL7lWArOZ4hTLygsCLAsDPkNw4vX/vURsQFcnfw2wVFARf9srBkVFbslmTgmNWdbrqxTqRS8tCxMIUjONR7k3PMuHiug7ecYMpyJtETEZ5hQR6PTvZcBfWdCrICNFSDFjM+F3+p1xp15h+Yrhm/gOLcU4anALnVcEui5lrGog/acpJ7uTc/RUMprTtC1kdjCDNHup10vnnXcfeUD2plPlvQJOZmKagV/EZk/PF
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <14142DC13E473641B35938A3DD763512@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <157863061737.2230556.3959730620803366776.stgit@dwillia2-desk3.amr.corp.intel.com>
- <e60e64f9-894b-4121-d97b-fb61459cbbe5@redhat.com>
-In-Reply-To: <e60e64f9-894b-4121-d97b-fb61459cbbe5@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 10 Jan 2020 08:42:58 -0800
-Message-ID: <CAPcyv4jm=fmP=-5vbo2jxzMe2qXqZP=zDYF8G_rs3X6_Om0wPg@mail.gmail.com>
-Subject: Re: [PATCH] mm/memory_hotplug: Fix remove_memory() lockdep splat
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e6952c5-1bf8-4f0e-7a11-08d795ec3a97
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2020 16:43:32.6029
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: CBeNMzfr0YFSaGt8AleV5q4/i8K86wv/aNf2IIn1u0DECH567GnfbuuqSK4LaGqh
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR15MB2525
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-10_01:2020-01-10,2020-01-09 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 malwarescore=0
+ lowpriorityscore=0 mlxscore=0 adultscore=0 clxscore=1015 bulkscore=0
+ impostorscore=0 priorityscore=1501 mlxlogscore=480 spamscore=0
+ phishscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-2001100138
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 1:10 AM David Hildenbrand <david@redhat.com> wrote:
->
-> On 10.01.20 05:30, Dan Williams wrote:
-> > The daxctl unit test for the dax_kmem driver currently triggers the
-> > lockdep splat below. It results from the fact that
-> > remove_memory_block_devices() is invoked under the mem_hotplug_lock()
-> > causing lockdep entanglements with cpu_hotplug_lock().
-> >
-> > The mem_hotplug_lock() is not needed to synchronize the memory block
-> > device sysfs interface vs the page online state, that is already handled
-> > by lock_device_hotplug(). Specifically lock_device_hotplug()
-> > is sufficient to allow try_remove_memory() to check the offline
-> > state of the memblocks and be assured that subsequent online attempts
-> > will be blocked. The device_online() path checks mem->section_count
-> > before allowing any state manipulations and mem->section_count is
-> > cleared in remove_memory_block_devices().
-> >
-> > The add_memory() path does create memblock devices under the lock, but
-> > there is no lockdep report on that path, so it is left alone for now.
-> >
-> > This change is only possible thanks to the recent change that refactored
-> > memory block device removal out of arch_remove_memory() (commit
-> > 4c4b7f9ba948 mm/memory_hotplug: remove memory block devices before
-> > arch_remove_memory()).
-> >
-> >     ======================================================
-> >     WARNING: possible circular locking dependency detected
-> >     5.5.0-rc3+ #230 Tainted: G           OE
-> >     ------------------------------------------------------
-> >     lt-daxctl/6459 is trying to acquire lock:
-> >     ffff99c7f0003510 (kn->count#241){++++}, at: kernfs_remove_by_name_ns+0x41/0x80
-> >
-> >     but task is already holding lock:
-> >     ffffffffa76a5450 (mem_hotplug_lock.rw_sem){++++}, at: percpu_down_write+0x20/0xe0
-> >
-> >     which lock already depends on the new lock.
-> >
-> >
-> >     the existing dependency chain (in reverse order) is:
-> >
-> >     -> #2 (mem_hotplug_lock.rw_sem){++++}:
-> >            __lock_acquire+0x39c/0x790
-> >            lock_acquire+0xa2/0x1b0
-> >            get_online_mems+0x3e/0xb0
-> >            kmem_cache_create_usercopy+0x2e/0x260
-> >            kmem_cache_create+0x12/0x20
-> >            ptlock_cache_init+0x20/0x28
-> >            start_kernel+0x243/0x547
-> >            secondary_startup_64+0xb6/0xc0
-> >
-> >     -> #1 (cpu_hotplug_lock.rw_sem){++++}:
-> >            __lock_acquire+0x39c/0x790
-> >            lock_acquire+0xa2/0x1b0
-> >            cpus_read_lock+0x3e/0xb0
-> >            online_pages+0x37/0x300
-> >            memory_subsys_online+0x17d/0x1c0
-> >            device_online+0x60/0x80
-> >            state_store+0x65/0xd0
-> >            kernfs_fop_write+0xcf/0x1c0
-> >            vfs_write+0xdb/0x1d0
-> >            ksys_write+0x65/0xe0
-> >            do_syscall_64+0x5c/0xa0
-> >            entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >
-> >     -> #0 (kn->count#241){++++}:
-> >            check_prev_add+0x98/0xa40
-> >            validate_chain+0x576/0x860
-> >            __lock_acquire+0x39c/0x790
-> >            lock_acquire+0xa2/0x1b0
-> >            __kernfs_remove+0x25f/0x2e0
-> >            kernfs_remove_by_name_ns+0x41/0x80
-> >            remove_files.isra.0+0x30/0x70
-> >            sysfs_remove_group+0x3d/0x80
-> >            sysfs_remove_groups+0x29/0x40
-> >            device_remove_attrs+0x39/0x70
-> >            device_del+0x16a/0x3f0
-> >            device_unregister+0x16/0x60
-> >            remove_memory_block_devices+0x82/0xb0
-> >            try_remove_memory+0xb5/0x130
-> >            remove_memory+0x26/0x40
-> >            dev_dax_kmem_remove+0x44/0x6a [kmem]
-> >            device_release_driver_internal+0xe4/0x1c0
-> >            unbind_store+0xef/0x120
-> >            kernfs_fop_write+0xcf/0x1c0
-> >            vfs_write+0xdb/0x1d0
-> >            ksys_write+0x65/0xe0
-> >            do_syscall_64+0x5c/0xa0
-> >            entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >
-> >     other info that might help us debug this:
-> >
-> >     Chain exists of:
-> >       kn->count#241 --> cpu_hotplug_lock.rw_sem --> mem_hotplug_lock.rw_sem
-> >
-> >      Possible unsafe locking scenario:
-> >
-> >            CPU0                    CPU1
-> >            ----                    ----
-> >       lock(mem_hotplug_lock.rw_sem);
-> >                                    lock(cpu_hotplug_lock.rw_sem);
-> >                                    lock(mem_hotplug_lock.rw_sem);
-> >       lock(kn->count#241);
-> >
-> >      *** DEADLOCK ***
-> >
-> > No fixes tag as this seems to have been a long standing issue that
-> > likely predated the addition of kernfs lockdep annotations.
-> >
-> > Cc: <stable@vger.kernel.org>
-> > Cc: Vishal Verma <vishal.l.verma@intel.com>
-> > Cc: David Hildenbrand <david@redhat.com>
-> > Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-> > Cc: Michal Hocko <mhocko@suse.com>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> > ---
-> >  mm/memory_hotplug.c |   12 +++++++++---
-> >  1 file changed, 9 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> > index 55ac23ef11c1..a4e7dadded08 100644
-> > --- a/mm/memory_hotplug.c
-> > +++ b/mm/memory_hotplug.c
-> > @@ -1763,8 +1763,6 @@ static int __ref try_remove_memory(int nid, u64 start, u64 size)
-> >
-> >       BUG_ON(check_hotplug_memory_range(start, size));
-> >
-> > -     mem_hotplug_begin();
-> > -
-> >       /*
-> >        * All memory blocks must be offlined before removing memory.  Check
-> >        * whether all memory blocks in question are offline and return error
-> > @@ -1777,9 +1775,17 @@ static int __ref try_remove_memory(int nid, u64 start, u64 size)
-> >       /* remove memmap entry */
-> >       firmware_map_remove(start, start + size, "System RAM");
-> >
-> > -     /* remove memory block devices before removing memory */
-> > +     /*
-> > +      * Remove memory block devices before removing memory, and do
-> > +      * not hold the mem_hotplug_lock() over kobject removal
-> > +      * operations. lock_device_hotplug() keeps the
-> > +      * check_memblock_offlined_cb result valid until the entire
-> > +      * removal process is complete.
-> > +      */
->
-> Maybe shorten that to
->
-> /*
->  * Remove memory block devices before removing memory. Protected
->  * by the device_hotplug_lock only.
->  */
-
-Why make someone dig for the reasons this lock is sufficient?
-
->
-> AFAIK, the device hotplug lock is sufficient here. The memory hotplug
-> lock / cpu hotplug lock is only needed when calling into arch code
-> (especially for PPC). We hold both locks when onlining/offlining memory.
->
-> >       remove_memory_block_devices(start, size);
-> >
-> > +     mem_hotplug_begin();
-> > +
-> >       arch_remove_memory(nid, start, size, NULL);
-> >       memblock_free(start, size);
-> >       memblock_remove(start, size);
-> >
->
-> I'd suggest to do the same in the adding part right away (if easily
-> possible) to make it clearer.
-
-Let's let this fix percolate upstream for a bit to make sure there was
-no protection the mem_hotplug_begin() was inadvertently providing.
-
-> I properly documented the semantics of
-> add_memory_block_devices()/remove_memory_block_devices() already (that
-> they need the device hotplug lock).
-
-I see that, but I prefer lockdep_assert_held() in the code rather than
-comments. I'll send a patch to fix that up.
+On Fri, Jan 10, 2020 at 01:23:36PM +0000, Lorenz Bauer wrote:
+> It's possible to leak time wait and request sockets via the following
+> BPF pseudo code:
+> =A0
+>   sk =3D bpf_skc_lookup_tcp(...)
+>   if (sk)
+>     bpf_sk_release(sk)
+>=20
+> If sk->sk_state is TCP_NEW_SYN_RECV or TCP_TIME_WAIT the refcount taken
+> by bpf_skc_lookup_tcp is not undone by bpf_sk_release. This is because
+> sk_flags is re-used for other data in both kinds of sockets. The check
+>=20
+>   !sock_flag(sk, SOCK_RCU_FREE)
+>=20
+> therefore returns a bogus result. Check that sk_flags is valid by calling
+> sk_fullsock. Skip checking SOCK_RCU_FREE if we already know that sk is
+> not a full socket.
+Acked-by: Martin KaFai Lau <kafai@fb.com>
