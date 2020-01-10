@@ -2,140 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 650EF13785B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 22:14:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7809E137862
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 22:18:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbgAJVOm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 16:14:42 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42062 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbgAJVOk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 16:14:40 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p9so1301295plk.9
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 13:14:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=t8bMlx3yVEv9zU0xDUT4JoQBf57pH4Aos3r9DWeX5bE=;
-        b=YuCDXCY3hwa94AhsKBLyqdk6tp3fytvqMdvAlpRsi6RJMkk9dNCg58HHy+dJ6+1gj6
-         4unrTP+4SPLWeLQJ6GdkHa/gKUHvXn/P4Exn0feaUcF/g9+e+6f02O2eKAdX00yj769x
-         Y1kL5H08/Pk3mIqz+u3XLv5z4jIaIOFTqJKEM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=t8bMlx3yVEv9zU0xDUT4JoQBf57pH4Aos3r9DWeX5bE=;
-        b=VaJbplVCmMHFk6kyKZSPCFlS7XrVbH/lz5HrY575wNodSCLPrEX/GaH/dBVet0C7ni
-         bLtDHUGYVZRsygdJpfvVr9xtRk9yFgnnqIfETgSjMn0cI2l2Pa02PWC74pI+1mKPofFU
-         Ixggv/N7sD/UcF7QWssRfjtTw6d23gsIybZh2MtAXBWZWihccNMxW/w61sdg1R8VZSVT
-         +/tzgjLAXnoZ/h4yOfLIDkcOFGbscmF30E2vV6otQAlNcPGjrxwzJr9CT52OHu6twG3R
-         g/FgR326Brj+ifRIAgAYIwTlDiFLs+LVeeUAXsnxxD893hi9rpNw5T6o2ZFZXsYw9KoO
-         0SVA==
-X-Gm-Message-State: APjAAAV+yFEW3s9zXB762x4rSSiyYlzQ2d1QCZDZKXOvkha2HuXMpjs4
-        ESd1y6P5Rn5rlLwv5vpeknZMng==
-X-Google-Smtp-Source: APXvYqz/a2Sdedi3w+S100lUd7qvHi2cJ+hY7ny0vJsjzaBggSk70mhFVXKNpf47Zcovay05fqnB0Q==
-X-Received: by 2002:a17:902:8484:: with SMTP id c4mr529932plo.339.1578690879634;
-        Fri, 10 Jan 2020 13:14:39 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id r7sm4278287pfg.34.2020.01.10.13.14.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2020 13:14:39 -0800 (PST)
-Date:   Fri, 10 Jan 2020 16:14:38 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Anders Roxell <anders.roxell@linaro.org>, paulmck@kernel.org,
-        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        David Miller <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH -tip V2 0/2] kprobes: Fix RCU warning and cleanup
-Message-ID: <20200110211438.GE128013@google.com>
-References: <157535316659.16485.11817291759382261088.stgit@devnote2>
- <20191221035541.69fc05613351b8dabd6e1a44@kernel.org>
- <20200107211535.233e7ff396f867ee1348178b@kernel.org>
+        id S1727119AbgAJVSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 16:18:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59202 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726788AbgAJVSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 16:18:02 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB29F20842;
+        Fri, 10 Jan 2020 21:18:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578691081;
+        bh=FNVSCUnW06HgAkUyxcEdLPUSR02Pqf5qLuXtJBW+LhI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=2GLzSYzkBF4XieyHnlzoZDMwTSqFiKNKW7gYwAZ3jirBd4KeUKvyazYs0F0A/Th/Z
+         kAS4+pBpvTl6wL3YHlEG7HZ2ZH24JaW2IfQYBhc6HZbQFQKXcf2F7avpames4v54Ri
+         g2XrEOe9DgVT5/PW3zkScJbxoILEJb94UgMwqd7k=
+Date:   Fri, 10 Jan 2020 22:17:58 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: [GIT PULL] USB fixes for 5.5-rc6
+Message-ID: <20200110211758.GA1872534@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200107211535.233e7ff396f867ee1348178b@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 09:15:35PM +0900, Masami Hiramatsu wrote:
-> Hello,
-> 
-> Anyone have any comment on this series?
-> Without this series, I still see the suspicious RCU warning for kprobe on -tip tree.
+The following changes since commit 46cf053efec6a3a5f343fead837777efe8252a46:
 
-+Paul since RCU.
+  Linux 5.5-rc3 (2019-12-22 17:02:23 -0800)
 
-Hi Masami,
+are available in the Git repository at:
 
-I believe I had commented before that I don't agree with this patch:
-https://lore.kernel.org/lkml/157535318870.16485.6366477974356032624.stgit@devnote2/
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-5.5-rc6
 
-The rationale you used is to replace RCU-api with non-RCU api just to avoid
-warnings. I think a better approach is to use RCU api and pass the optional
-expression to silence the false-positive warnings by informing the RCU API
-about the fact that locks are held (similar to what we do for
-rcu_dereference_protected()). The RCU API will do additional checking
-(such as making sure preemption is disabled for safe RCU usage etc) as well.
+for you to fetch changes up to 1530f6f5f5806b2abbf2a9276c0db313ae9a0e09:
 
-Could you repost the latest versions?
+  usb: missing parentheses in USE_NEW_SCHEME (2020-01-08 17:44:11 +0100)
 
-thanks,
+----------------------------------------------------------------
+USB/PHY fixes for 5.5-rc6
 
- - Joel
+Here are a number of USB and PHY driver fixes for 5.5-rc6
 
+Nothing all that unusual, just the a bunch of small fixes for a lot of
+different reported issues.  The PHY driver fixes are in here as they
+interacted with the usb drivers.
 
-> 
-> Thank you,
-> 
-> On Sat, 21 Dec 2019 03:55:41 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > Hi Ingo,
-> > 
-> > Could you pick this series to fix the false-positive RCU-list warnings?
-> > 
-> > Thank you,
-> > 
-> > On Tue,  3 Dec 2019 15:06:06 +0900
-> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > 
-> > > Hi,
-> > > 
-> > > Here is a couple of patches which fix suspicious RCU
-> > > usage warnings in kprobes.
-> > > 
-> > > Anders reported the first warning in kprobe smoke test
-> > > with CONFIG_PROVE_RCU_LIST=y. While fixing this issue,
-> > > I found similar issues and cleanups in kprobes.
-> > > 
-> > > Thank you,
-> > > 
-> > > ---
-> > > 
-> > > Masami Hiramatsu (2):
-> > >       kprobes: Suppress the suspicious RCU warning on kprobes
-> > >       kprobes: Use non RCU traversal APIs on kprobe_tables if possible
-> > > 
-> > > 
-> > >  kernel/kprobes.c |   32 ++++++++++++++++++++++----------
-> > >  1 file changed, 22 insertions(+), 10 deletions(-)
-> > > 
-> > > --
-> > > Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
-> > 
-> > 
-> > -- 
-> > Masami Hiramatsu <mhiramat@kernel.org>
-> 
-> 
-> -- 
-> Masami Hiramatsu <mhiramat@kernel.org>
+Full details of the patches are in the shortlog, and all of these have
+been in linux-next with no reported issues.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Alan Stern (1):
+      USB: Fix: Don't skip endpoint descriptors with maxpacket=0
+
+Arnd Bergmann (1):
+      usb: udc: tegra: select USB_ROLE_SWITCH
+
+Bjorn Andersson (1):
+      phy: qcom-qmp: Increase PHY ready timeout
+
+Colin Ian King (1):
+      usb: ohci-da8xx: ensure error return on variable error is set
+
+Daniele Palmas (2):
+      USB: serial: option: add Telit ME910G1 0x110a composition
+      USB: serial: option: add ZLP support for 0x1bc7/0x9010
+
+Douglas Gilbert (1):
+      USB-PD tcpm: bad warning+size, PPS adapters
+
+Greg Kroah-Hartman (2):
+      Merge tag 'phy-for-5.5-rc' of git://git.kernel.org/.../kishon/linux-phy into usb-linus
+      Merge tag 'usb-serial-5.5-rc5' of https://git.kernel.org/.../johan/usb-serial into usb-linus
+
+Guenter Roeck (1):
+      usb: chipidea: host: Disable port power only if previously enabled
+
+Heikki Krogerus (1):
+      usb: typec: ucsi: Fix the notification bit offsets
+
+Johan Hovold (1):
+      USB: core: fix check for duplicate endpoints
+
+Jonas Karlman (1):
+      phy/rockchip: inno-hdmi: round clock rate down to closest 1000 Hz
+
+Paul Cercueil (3):
+      usb: musb: jz4740: Silence error if code is -EPROBE_DEFER
+      usb: musb: dma: Correct parameter passed to IRQ handler
+      usb: musb: Disable pullup at init
+
+Peter Chen (1):
+      usb: cdns3: should not use the same dev_id for shared interrupt handler
+
+Qi Zhou (1):
+      usb: missing parentheses in USE_NEW_SCHEME
+
+Thinh Nguyen (1):
+      usb: dwc3: gadget: Fix request complete check
+
+Tony Lindgren (7):
+      phy: cpcap-usb: Fix error path when no host driver is loaded
+      phy: cpcap-usb: Fix flakey host idling and enumerating of devices
+      phy: mapphone-mdm6600: Fix uninitialized status value regression
+      phy: cpcap-usb: Prevent USB line glitches from waking up modem
+      phy: cpcap-usb: Improve host vs docked mode detection
+      phy: cpcap-usb: Drop extra write to usb2 register
+      usb: musb: fix idling for suspend after disconnect interrupt
+
+ drivers/phy/motorola/phy-cpcap-usb.c          | 128 ++++++++++++++++++--------
+ drivers/phy/motorola/phy-mapphone-mdm6600.c   |  11 +--
+ drivers/phy/qualcomm/phy-qcom-qmp.c           |   2 +-
+ drivers/phy/rockchip/phy-rockchip-inno-hdmi.c |   4 +
+ drivers/usb/cdns3/gadget.c                    |  14 +--
+ drivers/usb/chipidea/host.c                   |   4 +-
+ drivers/usb/core/config.c                     |  82 +++++++++++++----
+ drivers/usb/core/hub.c                        |   2 +-
+ drivers/usb/dwc3/gadget.c                     |   7 ++
+ drivers/usb/gadget/udc/Kconfig                |   1 +
+ drivers/usb/host/ohci-da8xx.c                 |   8 +-
+ drivers/usb/musb/jz4740.c                     |   7 +-
+ drivers/usb/musb/musb_core.c                  |  11 +++
+ drivers/usb/musb/musbhsdma.c                  |   2 +-
+ drivers/usb/serial/option.c                   |  10 ++
+ drivers/usb/serial/usb-wwan.h                 |   1 +
+ drivers/usb/serial/usb_wwan.c                 |   4 +
+ drivers/usb/typec/tcpm/tcpci.c                |  20 +++-
+ drivers/usb/typec/ucsi/ucsi.h                 |  18 ++--
+ 19 files changed, 243 insertions(+), 93 deletions(-)
