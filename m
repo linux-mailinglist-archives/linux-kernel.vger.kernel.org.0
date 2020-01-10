@@ -2,111 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D55901371DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 16:54:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8958C1371E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 16:55:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728490AbgAJPyM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 10:54:12 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39452 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728391AbgAJPyL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 10:54:11 -0500
-Received: by mail-pf1-f196.google.com with SMTP id q10so1328606pfs.6
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 07:54:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SK9SfM0s44elgGzLaJeFK5jMx7NIcHCDZF3x9nv0Lxs=;
-        b=aBV1vy75sNaosplHJ4H3qazVSebNElcAVlUb+HrjOZPq1vvWoFf9dEImAwbKzRGAey
-         WXFZW3qa2v84cafmXiduuTXYX7tiAt38D7DQCWgB/pNRtn4obYWkC9IU5eWvee8iLkNT
-         whWf5etBpitExpwXzzboEVpBB0lB6AIMlr6bM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SK9SfM0s44elgGzLaJeFK5jMx7NIcHCDZF3x9nv0Lxs=;
-        b=pq5ZPSfbzpypuFFWisGOTTPNRJDEMtUThzMrjZLzMlNHazbFBmr2+a4nT9vH3ITuop
-         UN5ZQIQi14mo1Q0y5iTxz7rBq2J3CYwnIJytbPoj4d0AlQ9aNRkztrX6taXHRXrogs6y
-         zhicela/qtp6T1ovXMJCTgydJfxdSiCJrhRTA4zyR2aDiuy9tIYWVFGP4XdzO0OEOlAC
-         RuqQOJcG/2OueY0Mg1f8uAODCtZPNy5ZBbDakXthkEP9RE0B8Pg1B7qVOLmcZdKH/VFD
-         brAiApuZ/wjSrFeSejwRaftz/CinPIt8kIYxONULsvlDa1aKhoPJK7yXr4g2vH7nXj/L
-         hPmg==
-X-Gm-Message-State: APjAAAVoMSAnMOxWR50LcnvXRIuIma1wPOqcfiXZraDhynnNKjCQla46
-        lFZDjFTHsi9vcSBlx3nl2JOv4A==
-X-Google-Smtp-Source: APXvYqycGLOZaBaQu3Hqaeuta4YY/jPKmGOsSO3iqRpNJkIQ54WkKeTGxoc6scloX9pTQNenda0JAg==
-X-Received: by 2002:a63:541e:: with SMTP id i30mr5002051pgb.183.1578671649500;
-        Fri, 10 Jan 2020 07:54:09 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id w6sm3769223pfq.99.2020.01.10.07.54.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2020 07:54:08 -0800 (PST)
-Date:   Fri, 10 Jan 2020 10:54:07 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     madhuparnabhowmik04@gmail.com
-Cc:     jgg@ziepe.ca, dennis.dalessandro@intel.com,
-        mike.marciniszyn@intel.com, dledford@redhat.com,
-        paulmck@kernel.org, rcu@vger.kernel.org, frextrite@gmail.com,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] infiniband: hw: hfi1: verbs.c: Use built-in RCU list
- checking
-Message-ID: <20200110155407.GB128013@google.com>
-References: <20200107192912.22691-1-madhuparnabhowmik04@gmail.com>
- <20200107203354.GD26174@ziepe.ca>
+        id S1728428AbgAJPzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 10:55:24 -0500
+Received: from foss.arm.com ([217.140.110.172]:47340 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728183AbgAJPzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 10:55:24 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9CFD330E;
+        Fri, 10 Jan 2020 07:55:23 -0800 (PST)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E4183F6C4;
+        Fri, 10 Jan 2020 07:55:22 -0800 (PST)
+Date:   Fri, 10 Jan 2020 15:55:20 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Marcel Ziswiler <marcel@ziswiler.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pci@vger.kernel.org,
+        Manikanta Maddireddy <mmaddireddy@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2] PCI: tegra: Fix afi_pex2_ctrl reg offset for Tegra30
+Message-ID: <20200110155519.GB29372@e121166-lin.cambridge.arm.com>
+References: <20200107081402.213149-1-marcel@ziswiler.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200107203354.GD26174@ziepe.ca>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200107081402.213149-1-marcel@ziswiler.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 08, 2020 at 01:35:07PM +0530, madhuparnabhowmik04@gmail.com wrote:
-> From: Jason Gunthorpe <jgg@ziepe.ca>
+On Tue, Jan 07, 2020 at 09:14:02AM +0100, Marcel Ziswiler wrote:
+> Fix AFI_PEX2_CTRL reg offset for Tegra30 by moving it from the Tegra20
+> SoC struct where it erroneously got added. This fixes the AFI_PEX2_CTRL
+> reg offset being uninitialised subsequently failing to bring up the
+> third PCIe port.
 > 
-> On Wed, Jan 08, 2020 at 12:59:12AM +0530, madhuparnabhowmik04@gmail.com wrote:
-> > From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
-> > 
-> > list_for_each_entry_rcu has built-in RCU and lock checking.
-> > Pass cond argument to list_for_each_entry_rcu.
-> > 
-> > Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
-> >  drivers/infiniband/hw/hfi1/verbs.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/infiniband/hw/hfi1/verbs.c b/drivers/infiniband/hw/hfi1/verbs.c
-> > index 089e201d7550..e6abdbcb4ffb 100644
-> > +++ b/drivers/infiniband/hw/hfi1/verbs.c
-> > @@ -515,7 +515,8 @@ static inline void hfi1_handle_packet(struct hfi1_packet *packet,
-> >  				       opa_get_lid(packet->dlid, 9B));
-> >  		if (!mcast)
-> >  			goto drop;
-> > -		list_for_each_entry_rcu(p, &mcast->qp_list, list) {
-> > +		list_for_each_entry_rcu(p, &mcast->qp_list, list,
-> > +					lock_is_held(&(ibp->rvp.lock).dep_map)) {
+> Fixes: adb2653b3d2e ("PCI: tegra: Add AFI_PEX2_CTRL reg offset as part of SoC struct")
 > 
-> Why .dep_map? Does this compile?
-
-Yeah, have you really compiled this? Don't send patches without at least
-compile testing !!
-
-> Alternatively, it can be lockdep_is_held(ibp->rvp.lock).
-> Please refer to the macro(link below) and let me know if the usage of lock_is_held()
-> in the patch is correct.
+> Signed-off-by: Marcel Ziswiler <marcel@ziswiler.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
 > 
-> https://elixir.bootlin.com/linux/v5.5-rc2/source/include/linux/lockdep.h#L364
-
-Please use lockdep_is_held(). Thanks.
-
-thanks,
-
- - Joel
-
+> ---
 > 
-> Thanks,
-> Madhuparna
-> Jason
+> Changes in v2:
+> - Fix recipient list concerning CC: and To: lines as suggested by
+>   Thierry.
+> - Fix subject line and commit message to adhere to standard formatting
+>   rules as suggested by Thierry.
+> - Add Thierry's Acked-by tag.
+> - Add standard Fixes tag as suggested by Andrew.
+> 
+>  drivers/pci/controller/pci-tegra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Applied to pci/tegra, thanks.
+
+Lorenzo
+
+> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+> index 090b632965e2..ac93f5a0398e 100644
+> --- a/drivers/pci/controller/pci-tegra.c
+> +++ b/drivers/pci/controller/pci-tegra.c
+> @@ -2499,7 +2499,6 @@ static const struct tegra_pcie_soc tegra20_pcie = {
+>  	.num_ports = 2,
+>  	.ports = tegra20_pcie_ports,
+>  	.msi_base_shift = 0,
+> -	.afi_pex2_ctrl = 0x128,
+>  	.pads_pll_ctl = PADS_PLL_CTL_TEGRA20,
+>  	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_DIV10,
+>  	.pads_refclk_cfg0 = 0xfa5cfa5c,
+> @@ -2528,6 +2527,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
+>  	.num_ports = 3,
+>  	.ports = tegra30_pcie_ports,
+>  	.msi_base_shift = 8,
+> +	.afi_pex2_ctrl = 0x128,
+>  	.pads_pll_ctl = PADS_PLL_CTL_TEGRA30,
+>  	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_BUF_EN,
+>  	.pads_refclk_cfg0 = 0xfa5cfa5c,
+> -- 
+> 2.24.1
+> 
