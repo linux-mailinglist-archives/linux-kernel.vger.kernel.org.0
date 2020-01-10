@@ -2,295 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEF2D136B48
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 11:49:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21383136B85
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 11:58:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbgAJKtZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 05:49:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54608 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727435AbgAJKtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 05:49:24 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 73A3DAC22;
-        Fri, 10 Jan 2020 10:49:20 +0000 (UTC)
-Subject: Re: Warnings in DRM code when removing/unbinding a driver
-To:     John Garry <john.garry@huawei.com>,
-        "kongxinwei (A)" <kong.kongxinwei@hisilicon.com>,
-        "Chenfeng (puck)" <puck.chen@hisilicon.com>,
-        "airlied@linux.ie" <airlied@linux.ie>, daniel@ffwll.ch
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-References: <07899bd5-e9a5-cff0-395f-b4fb3f0f7f6c@huawei.com>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- mQENBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAG0J1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPokBVAQTAQgAPhYh
- BHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsDBQkDwmcABQsJCAcCBhUKCQgLAgQWAgMB
- Ah4BAheAAAoJEGgNwR1TC3ojR80H/jH+vYavwQ+TvO8ksXL9JQWc3IFSiGpuSVXLCdg62AmR
- irxW+qCwNncNQyb9rd30gzdectSkPWL3KSqEResBe24IbA5/jSkPweJasgXtfhuyoeCJ6PXo
- clQQGKIoFIAEv1s8l0ggPZswvCinegl1diyJXUXmdEJRTWYAtxn/atut1o6Giv6D2qmYbXN7
- mneMC5MzlLaJKUtoH7U/IjVw1sx2qtxAZGKVm4RZxPnMCp9E1MAr5t4dP5gJCIiqsdrVqI6i
- KupZstMxstPU//azmz7ZWWxT0JzgJqZSvPYx/SATeexTYBP47YFyri4jnsty2ErS91E6H8os
- Bv6pnSn7eAq5AQ0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRH
- UE9eosYbT6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgT
- RjP+qbU63Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+R
- dhgATnWWGKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zb
- ehDda8lvhFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r
- 12+lqdsAEQEAAYkBPAQYAQgAJhYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsMBQkD
- wmcAAAoJEGgNwR1TC3ojpfcIAInwP5OlcEKokTnHCiDTz4Ony4GnHRP2fXATQZCKxmu4AJY2
- h9ifw9Nf2TjCZ6AMvC3thAN0rFDj55N9l4s1CpaDo4J+0fkrHuyNacnT206CeJV1E7NYntxU
- n+LSiRrOdywn6erjxRi9EYTVLCHcDhBEjKmFZfg4AM4GZMWX1lg0+eHbd5oL1as28WvvI/uI
- aMyV8RbyXot1r/8QLlWldU3NrTF5p7TMU2y3ZH2mf5suSKHAMtbE4jKJ8ZHFOo3GhLgjVrBW
- HE9JXO08xKkgD+w6v83+nomsEuf6C6LYrqY/tsZvyEX6zN8CtirPdPWu/VXNRYAl/lat7lSI
- 3H26qrE=
-Message-ID: <381e28c2-f3e4-6f75-c632-96dd8a980c87@suse.de>
-Date:   Fri, 10 Jan 2020 11:49:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1727793AbgAJK6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 05:58:06 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:52228 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727540AbgAJK55 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 05:57:57 -0500
+Received: from 79.184.255.90.ipv4.supernova.orange.pl (79.184.255.90) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id 1afd37b8bd6ed074; Fri, 10 Jan 2020 11:57:55 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Zhang Rui <rui.zhang@intel.com>
+Subject: [PATCH 5/8] intel_idle: Move and clean up intel_idle_cpuidle_devices_uninit()
+Date:   Fri, 10 Jan 2020 11:49:58 +0100
+Message-ID: <5879575.B8f60l20lB@kreacher>
+In-Reply-To: <14127826.m9lEolTOYu@kreacher>
+References: <14127826.m9lEolTOYu@kreacher>
 MIME-Version: 1.0
-In-Reply-To: <07899bd5-e9a5-cff0-395f-b4fb3f0f7f6c@huawei.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="0cmZucVDvA0b0gJtWa2VOgpbnRRWbfcpC"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---0cmZucVDvA0b0gJtWa2VOgpbnRRWbfcpC
-Content-Type: multipart/mixed; boundary="7XItkI25bju4lWJknfEffTATczuyetOii";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: John Garry <john.garry@huawei.com>,
- "kongxinwei (A)" <kong.kongxinwei@hisilicon.com>,
- "Chenfeng (puck)" <puck.chen@hisilicon.com>,
- "airlied@linux.ie" <airlied@linux.ie>, daniel@ffwll.ch
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Message-ID: <381e28c2-f3e4-6f75-c632-96dd8a980c87@suse.de>
-Subject: Re: Warnings in DRM code when removing/unbinding a driver
-References: <07899bd5-e9a5-cff0-395f-b4fb3f0f7f6c@huawei.com>
-In-Reply-To: <07899bd5-e9a5-cff0-395f-b4fb3f0f7f6c@huawei.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
---7XItkI25bju4lWJknfEffTATczuyetOii
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Move intel_idle_cpuidle_devices_uninit() closer to its caller,
+intel_idle_init(), add the __init modifier to its header, drop a
+redundant local variable from it and fix up its kerneldoc comment.
 
-Hi John
+No intentional functional impact.
 
-Am 16.12.19 um 18:23 schrieb John Garry:
-> Hi all,
->=20
-> Enabling CONFIG_DEBUG_TEST_DRIVER_REMOVE causes many warns on a system
-> with the HIBMC hw:
->=20
-> [=C2=A0=C2=A0 27.788806] WARNING: CPU: 24 PID: 1 at
-> drivers/gpu/drm/drm_gem_vram_helper.c:564 bo_driver_move_notify+0x8c/0x=
-98
-> [=C2=A0=C2=A0 27.798969] Modules linked in:
-> [=C2=A0=C2=A0 27.802018] CPU: 24 PID: 1 Comm: swapper/0 Tainted: G=C2=A0=
-=C2=A0=C2=A0 B
-> =C2=A05.5.0-rc1-dirty #565
-> [=C2=A0=C2=A0 27.810358] Hardware name: Huawei D06 /D06, BIOS Hisilicon=
- D06 UEFI
-> RC0 - V1.16.01 03/15/2019
-> [=C2=A0=C2=A0 27.818872] pstate: 20c00009 (nzCv daif +PAN +UAO)
-> [=C2=A0=C2=A0 27.823654] pc : bo_driver_move_notify+0x8c/0x98
-> [=C2=A0=C2=A0 27.828262] lr : bo_driver_move_notify+0x40/0x98
-> [=C2=A0=C2=A0 27.832868] sp : ffff00236f0677e0
-> [=C2=A0=C2=A0 27.836173] x29: ffff00236f0677e0 x28: ffffa0001454e5e0
-> [=C2=A0=C2=A0 27.841476] x27: ffff002366e52128 x26: ffffa000149e67b0
-> [=C2=A0=C2=A0 27.846779] x25: ffff002366e523e0 x24: ffff002336936120
-> [=C2=A0=C2=A0 27.852082] x23: ffff0023346f4010 x22: ffff002336936128
-> [=C2=A0=C2=A0 27.857385] x21: ffffa000149c15c0 x20: ffff0023369361f8
-> [=C2=A0=C2=A0 27.862687] x19: ffff002336936000 x18: 0000000000001258
-> [=C2=A0=C2=A0 27.867989] x17: 0000000000001190 x16: 00000000000011d0
-> [=C2=A0=C2=A0 27.873292] x15: 0000000000001348 x14: ffffa00012d68190
-> [=C2=A0=C2=A0 27.878595] x13: 0000000000000006 x12: 1ffff40003241f91
-> [=C2=A0=C2=A0 27.883897] x11: ffff940003241f91 x10: dfffa00000000000
-> [=C2=A0=C2=A0 27.889200] x9 : ffff940003241f92 x8 : 0000000000000001
-> [=C2=A0=C2=A0 27.894502] x7 : ffffa0001920fc88 x6 : ffff940003241f92
-> [=C2=A0=C2=A0 27.899804] x5 : ffff940003241f92 x4 : ffff0023369363a0
-> [=C2=A0=C2=A0 27.905107] x3 : ffffa00010c104b8 x2 : dfffa00000000000
-> [=C2=A0=C2=A0 27.910409] x1 : 0000000000000003 x0 : 0000000000000001
-> [=C2=A0=C2=A0 27.915712] Call trace:
-> [=C2=A0=C2=A0 27.918151]=C2=A0 bo_driver_move_notify+0x8c/0x98
-> [=C2=A0=C2=A0 27.922412]=C2=A0 ttm_bo_cleanup_memtype_use+0x54/0x100
-> [=C2=A0=C2=A0 27.927194]=C2=A0 ttm_bo_put+0x3a0/0x5d0
-> [=C2=A0=C2=A0 27.930673]=C2=A0 drm_gem_vram_object_free+0xc/0x18
-> [=C2=A0=C2=A0 27.935109]=C2=A0 drm_gem_object_free+0x34/0xd0
-> [=C2=A0=C2=A0 27.939196]=C2=A0 drm_gem_object_put_unlocked+0xc8/0xf0
-> [=C2=A0=C2=A0 27.943978]=C2=A0 hibmc_user_framebuffer_destroy+0x20/0x40=
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/idle/intel_idle.c |   26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
 
-> [=C2=A0=C2=A0 27.949020]=C2=A0 drm_framebuffer_free+0x48/0x58
-> [=C2=A0=C2=A0 27.953194]=C2=A0 drm_mode_object_put.part.1+0x90/0xe8
-> [=C2=A0=C2=A0 27.957889]=C2=A0 drm_mode_object_put+0x28/0x38
-> [=C2=A0=C2=A0 27.961976]=C2=A0 hibmc_fbdev_fini+0x54/0x78
-
-drm-tip now contains
-
-commit a88248506a2bcfeaef6837a53cde19fe11970e6c
-Author: Thomas Zimmermann <tzimmermann@suse.de>
-Date:   Tue Dec 3 09:38:15 2019 +0100
-
-    drm/hisilicon/hibmc: Switch to generic fbdev emulation
-
-which removes this entire code and switches hibmc to generic fbdev
-emulation. Does that fix the problem?
-
-Best regards
-Thomas
-
-> [=C2=A0=C2=A0 27.965802]=C2=A0 hibmc_unload+0x2c/0xd0
-> [=C2=A0=C2=A0 27.969281]=C2=A0 hibmc_pci_remove+0x2c/0x40
-> [=C2=A0=C2=A0 27.973109]=C2=A0 pci_device_remove+0x6c/0x140
-> [=C2=A0=C2=A0 27.977110]=C2=A0 really_probe+0x174/0x548
-> [=C2=A0=C2=A0 27.980763]=C2=A0 driver_probe_device+0x7c/0x148
-> [=C2=A0=C2=A0 27.984936]=C2=A0 device_driver_attach+0x94/0xa0
-> [=C2=A0=C2=A0 27.989109]=C2=A0 __driver_attach+0xa8/0x110
-> [=C2=A0=C2=A0 27.992935]=C2=A0 bus_for_each_dev+0xe8/0x158
-> [=C2=A0=C2=A0 27.996849]=C2=A0 driver_attach+0x30/0x40
-> [=C2=A0=C2=A0 28.000415]=C2=A0 bus_add_driver+0x234/0x2f0
-> [=C2=A0=C2=A0 28.004241]=C2=A0 driver_register+0xbc/0x1d0
-> [=C2=A0=C2=A0 28.008067]=C2=A0 __pci_register_driver+0xbc/0xd0
-> [=C2=A0=C2=A0 28.012329]=C2=A0 hibmc_pci_driver_init+0x20/0x28
-> [=C2=A0=C2=A0 28.016590]=C2=A0 do_one_initcall+0xb4/0x254
-> [=C2=A0=C2=A0 28.020417]=C2=A0 kernel_init_freeable+0x27c/0x328
-> [=C2=A0=C2=A0 28.024765]=C2=A0 kernel_init+0x10/0x118
-> [=C2=A0=C2=A0 28.028245]=C2=A0 ret_from_fork+0x10/0x18
-> [=C2=A0=C2=A0 28.031813] ---[ end trace 35a83b71b657878d ]---
-> [=C2=A0=C2=A0 28.036503] ------------[ cut here ]------------
-> [=C2=A0=C2=A0 28.041115] WARNING: CPU: 24 PID: 1 at
-> drivers/gpu/drm/drm_gem_vram_helper.c:40
-> ttm_buffer_object_destroy+0x4c/0x80
-> [=C2=A0=C2=A0 28.051537] Modules linked in:
-> [=C2=A0=C2=A0 28.054585] CPU: 24 PID: 1 Comm: swapper/0 Tainted: G=C2=A0=
-=C2=A0=C2=A0 B=C2=A0=C2=A0 W
-> =C2=A05.5.0-rc1-dirty #565
-> [=C2=A0=C2=A0 28.062924] Hardware name: Huawei D06 /D06, BIOS Hisilicon=
- D06 UEFI
-> RC0 - V1.16.01 03/15/2019
->=20
-> [snip]
->=20
-> Indeed, simply unbinding the device from the driver causes the same sor=
-t
-> of issue:
->=20
-> root@(none)$ cd ./bus/pci/drivers/hibmc-drm/
-> root@(none)$ ls
-> 0000:05:00.0=C2=A0 bind=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 new_id=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 remove_id=C2=A0=C2=
-=A0=C2=A0=C2=A0 uevent=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
-> unbind
-> root@(none)$ echo 0000\:05\:00.0 > unbind
-> [=C2=A0 116.074352] ------------[ cut here ]------------
-> [=C2=A0 116.078978] WARNING: CPU: 17 PID: 1178 at
-> drivers/gpu/drm/drm_gem_vram_helper.c:40
-> ttm_buffer_object_destroy+0x4c/0x80
-> [=C2=A0 116.089661] Modules linked in:
-> [=C2=A0 116.092711] CPU: 17 PID: 1178 Comm: sh Tainted: G=C2=A0=C2=A0=C2=
-=A0 B=C2=A0=C2=A0 W
-> 5.5.0-rc1-dirty #565
-> [=C2=A0 116.100704] Hardware name: Huawei D06 /D06, BIOS Hisilicon D06 =
-UEFI
-> RC0 - V1.16.01 03/15/2019
-> [=C2=A0 116.109218] pstate: 20400009 (nzCv daif +PAN -UAO)
-> [=C2=A0 116.114001] pc : ttm_buffer_object_destroy+0x4c/0x80
-> [=C2=A0 116.118956] lr : ttm_buffer_object_destroy+0x18/0x80
-> [=C2=A0 116.123910] sp : ffff0022e6cef8e0
-> [=C2=A0 116.127215] x29: ffff0022e6cef8e0 x28: ffff00231b1fb000
-> [=C2=A0 116.132519] x27: 0000000000000000 x26: ffff00231b1fb000
-> [=C2=A0 116.137821] x25: ffff0022e6cefdc0 x24: 0000000000002480
-> [=C2=A0 116.143124] x23: ffff0023682b6ab0 x22: ffff0023682b6800
-> [=C2=A0 116.148427] x21: ffff0023682b6800 x20: 0000000000000000
-> [=C2=A0 116.153730] x19: ffff0023682b6800 x18: 0000000000000000
-> [=C2=A0 116.159032] x17: 000000000000000000000000001
-> [=C2=A0 116.185545] x7 : ffff0023682b6b07 x6 : ffff80046d056d61
-> [=C2=A0 116.190848] x5 : ffff80046d056d61 x4 : ffff0023682b6ba0
-> [=C2=A0 116.196151] x3 : ffffa00010197338 x2 : dfffa00000000000
-> [=C2=A0 116.201453] x1 : 0000000000000003 x0 : 0000000000000001
-> [=C2=A0 116.206756] Call trace:
-> [=C2=A0 116.209195]=C2=A0 ttm_buffer_object_destroy+0x4c/0x80
-> [=C2=A0 116.213803]=C2=A0 ttm_bo_release_list+0x184/0x220
-> [=C2=A0 116.218064]=C2=A0 ttm_bo_put+0x410/0x5d0
-> [=C2=A0 116.221544]=C2=A0 drm_gem_vram_object_free+0xc/0x18
-> [=C2=A0 116.225979]=C2=A0 drm_gem_object_free+0x34/0xd0
-> [=C2=A0 116.230066]=C2=A0 drm_gem_object_put_unlocked+0xc8/0xf0
-> [=C2=A0 116.234848]=C2=A0 hibmc_user_framebuffer_destroy+0x20/0x40
-> [=C2=A0 116.239890]=C2=A0 drm_framebuffer_free+0x48/0x58
-> [=C2=A0 116.244064]=C2=A0 drm_mode_object_put.part.1+0x90/0xe8
-> [=C2=A0 116.248759]=C2=A0 drm_mode_object_put+0x28/0x38
-> [=C2=A0 116.252846]=C2=A0 hibmc_fbdev_fini+0x54/0x78
-> [=C2=A0 116.256672]=C2=A0 hibmc_unload+0x2c/0xd0
-> [=C2=A0 116.260151]=C2=A0 hibmc_pci_remove+0x2c/0x40
-> [=C2=A0 116.263979]=C2=A0 pci_device_remove+0x6c/0x140
-> [=C2=A0 116.267980]=C2=A0 device_release_driver_internal+0x134/0x250
-> [=C2=A0 116.273196]=C2=A0 device_driver_detach+0x28/0x38
-> [=C2=A0 116.277369]=C2=A0 unbind_store+0xfc/0x150
-> [=C2=A0 116.280934]=C2=A0 drv_attr_store+0x48/0x60
-> [=C2=A0 116.284589]=C2=A0 sysfs_kf_write+0x80/0xb0
-> [=C2=A0 116.288241]=C2=A0 kernfs_fop_write+0x1d4/0x320
-> [=C2=A0 116.292243]=C2=A0 __vfs_write+0x54/0x98
-> [=C2=A0 116.295635]=C2=A0 vfs_write+0xe8/0x270
-> [=C2=A0 116.298940]=C2=A0 ksys_write+0xc8/0x180
-> [=C2=A0 116.302333]=C2=A0 __arm64_sys_write+0x40/0x50
-> [=C2=A0 116.306248]=C2=A0 el0_svc_common.constprop.0+0xa4/0x1f8
-> [=C2=A0 116.311029]=C2=A0 el0_svc_handler+0x34/0xb0
-> [=C2=A0 116.314770]=C2=A0 el0_sync_handler+0x10c/0x1c8
-> [=C2=A0 116.318769]=C2=A0 el0_sync+0x140/0x180
-> [=C2=A0 116.322074] ---[ end trace e60e43d0e316b5c8 ]---
-> [=C2=A0 116.326868] ------------[ cut here ]------------
->=20
->=20
-> dmesg and .config is here:
-> https://pastebin.com/4P5yaZBS
->=20
-> I'm not sure if this is a HIBMC driver issue or issue with the framewor=
-k.
->=20
-> john
->=20
->=20
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-(HRB 36809, AG N=C3=BCrnberg)
-Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+Index: linux-pm/drivers/idle/intel_idle.c
+===================================================================
+--- linux-pm.orig/drivers/idle/intel_idle.c
++++ linux-pm/drivers/idle/intel_idle.c
+@@ -1297,21 +1297,6 @@ static inline bool intel_idle_off_by_def
+ #endif /* !CONFIG_ACPI_PROCESSOR_CSTATE */
+ 
+ /*
+- * intel_idle_cpuidle_devices_uninit()
+- * Unregisters the cpuidle devices.
+- */
+-static void intel_idle_cpuidle_devices_uninit(void)
+-{
+-	int i;
+-	struct cpuidle_device *dev;
+-
+-	for_each_online_cpu(i) {
+-		dev = per_cpu_ptr(intel_idle_cpuidle_devices, i);
+-		cpuidle_unregister_device(dev);
+-	}
+-}
+-
+-/*
+  * ivt_idle_state_table_update(void)
+  *
+  * Tune IVT multi-socket targets
+@@ -1565,6 +1550,17 @@ static int intel_idle_cpu_online(unsigne
+ 	return 0;
+ }
+ 
++/**
++ * intel_idle_cpuidle_devices_uninit - Unregister all cpuidle devices.
++ */
++static void __init intel_idle_cpuidle_devices_uninit(void)
++{
++	int i;
++
++	for_each_online_cpu(i)
++		cpuidle_unregister_device(per_cpu_ptr(intel_idle_cpuidle_devices, i));
++}
++
+ static int __init intel_idle_init(void)
+ {
+ 	const struct x86_cpu_id *id;
 
 
---7XItkI25bju4lWJknfEffTATczuyetOii--
 
---0cmZucVDvA0b0gJtWa2VOgpbnRRWbfcpC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl4YVqUACgkQaA3BHVML
-eiNM/Af/ULhfTuRC4Tis/U3PbfmysR1NpCe6NJbkA2vVQAwNMA+72DfdIlBG59bA
-DwJNC24KpW3kjS8ea27wru5rCbmTfYULa5Ek2vUV1DiKNeti7B5ECLYYtmBGC9r8
-b/p3G2KwWPz8ShhH+tZGFVifrTvRjy+kK1OzbLPH1MIYO3VIBoyZmKZR24t0y6g6
-9GXjI2sAGVzM5bs2EEe7n7X8lj+cgrqvasqBrjEenkFia/p3PNS2BMZF/VC3BOgY
-4vDo9k7M9WloLyrGdd/7BpwOXDmXsJbg37RkIzNPn6iWOch5IYIfRLr6g2vZ3Wi9
-vzCinR/QqgI6B7LIJNliMxx6k4XC2A==
-=FDOW
------END PGP SIGNATURE-----
-
---0cmZucVDvA0b0gJtWa2VOgpbnRRWbfcpC--
