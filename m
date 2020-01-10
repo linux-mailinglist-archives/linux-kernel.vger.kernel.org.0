@@ -2,159 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A631F1376A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 20:06:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56CCE1376AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 20:10:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728994AbgAJTGE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 14:06:04 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:39524 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728937AbgAJTGC (ORCPT
+        id S1728184AbgAJTJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 14:09:28 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42288 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727448AbgAJTJ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 14:06:02 -0500
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id 00AJ5vr9014089
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Jan 2020 04:05:58 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 00AJ5vr9014089
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1578683158;
-        bh=8NtpfIX/PcWnAxwvFtqqnnW2AvNcQkGiwZlxmXOTlpw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tJzgrlOEdQm5k/LWHCdLyeBjVZQJreQGUPYzeBoixD9g6kfkLv28xDSs3eOmSjf4+
-         6HrnispRQLALZRZNoBFMTFbJjQzjBWjL7hXY/Kbyc3zeIUCYPW04YAEcPJN3c0nOO7
-         Q82z3TkoQsORiu6t4sA1t0OeRLIE6iNidpea711SVvj9hZLVa4ACS8/Uc4CYUWPaL7
-         UlDFTiBS8ghaDNmYcECkQ7IC5+Z6L4SfNWgVwT9eWTDgfhsGMJekT9e/r0pKX3ISeQ
-         VfS31rujKLDznpFGCYIc2aM8s8NO9jdLPcUh5jwI0Hc7Mjqc8xPUU+ZiZabjM1ThA0
-         7bBdxy66hW3tQ==
-X-Nifty-SrcIP: [209.85.217.45]
-Received: by mail-vs1-f45.google.com with SMTP id t12so1895344vso.13
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 11:05:58 -0800 (PST)
-X-Gm-Message-State: APjAAAUtFE1twAJeIRLdbtUcC4r/oipTeBQylhnkhNc//WeGt6G0wdkO
-        55ZGnk9Iix5TcZadfMrjU0nnXXbRyEhYLUKSUC0=
-X-Google-Smtp-Source: APXvYqzptZS2PQDC/5TdBee35LOqdXSOPz6nCKyGAVj9C1cZQt4B1OAp6Jj3GTtegq7n6pGmndJjSRqfxenL+7ZJKoc=
-X-Received: by 2002:a05:6102:3102:: with SMTP id e2mr60506vsh.179.1578683157058;
- Fri, 10 Jan 2020 11:05:57 -0800 (PST)
+        Fri, 10 Jan 2020 14:09:28 -0500
+Received: by mail-oi1-f195.google.com with SMTP id 18so2781974oin.9;
+        Fri, 10 Jan 2020 11:09:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Kcu1M9u0fKXhYde93cLWMfS1bu+/Sqpq3Xxjg8yPfgE=;
+        b=uTvla9/RwAC4Gb1XeGvMf1m8nX3xtJMrNX2pzSpoHpiPGrTkPvyiO0DlRqI8OoeiU3
+         e/yyUpsRaz/3i9KGgA4vqZyc/YeB0spWAiXa8n6BluiGRkHkjo9oWkNGz+OgC512X7nU
+         sEVcsS6tyctLAY4EgetnFy4VzY0vMot7qSPD17Mv5G4f11XIiEthXlEizIErEomXL8BA
+         lctYm9S+SwMptnfiD9BK9QP8wjSO+nKTeG4afHLpc1//TA9SmdC804IGalwd2l5Q2MC4
+         IXmPqMrxoi04u/w3E7UObSi8clvspX/u+tyw84nhbVIBFQXCfzBFjSuQIX9mYMyGzZBE
+         BZPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Kcu1M9u0fKXhYde93cLWMfS1bu+/Sqpq3Xxjg8yPfgE=;
+        b=nD9XM/dYjjsiWoHvnWx4krqxuKBoqDLcniFdPdTq6a4ynpFktWKPcqeCjvhvdBmkcG
+         7UYQQO0l38QkwM+VIMlRKMX0A9I9NtqoCR8DE9aSzKkhmxJHxMo4EG4ya+1OMfeYYyDD
+         v+Yya1HFeCrWgQSrA/E8edODPOgtHNWvPDeCMmbG3odPxaGq/d0PPtDTMOCZ4DUQdNAF
+         LgiUE2zlE+N24UgLOfZdt/+CUip82iDqwNDwpysBHE4AfJBgP7IneHqmjWsZ+mssFKzO
+         jA0Umw5t6f0ICgBHltcRZeKsh9U4xYUwFvCnLgV+ATa9hSFCJAcl4uY/j0eXFAG3YWaB
+         pGig==
+X-Gm-Message-State: APjAAAUsLOLXixmIH2lLMAA2tJ/hlJi2qe3p1wr4qrH9PM3A1Zzb4pWn
+        AtPiCdhpNf5KLQEq6OUJPM/VnKlYvkT+GG78jaA=
+X-Google-Smtp-Source: APXvYqxi8sngqdAXFRdFWKg2sxSXcJ6veTc5AVMdcmdmeaQ4N96FkwDtjYoHoLdMhLBDZCprUD4l012VFOREU/wXIkU=
+X-Received: by 2002:aca:1011:: with SMTP id 17mr3502147oiq.72.1578683367302;
+ Fri, 10 Jan 2020 11:09:27 -0800 (PST)
 MIME-Version: 1.0
-References: <5143724.5TqzkYX0oI@dabox> <23083624.r2bJSIadJk@dabox>
- <CAK7LNASG+b03NDhrenB9yfvgYDVpYSnb2vSCu_-DB8dh70boMg@mail.gmail.com> <2827587.laNcgWlGab@dabox>
-In-Reply-To: <2827587.laNcgWlGab@dabox>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Sat, 11 Jan 2020 04:05:20 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQOCoJC0RzOhTEofHdR+zU5sQTxV-t4nERBExW1ddW5hw@mail.gmail.com>
-Message-ID: <CAK7LNAQOCoJC0RzOhTEofHdR+zU5sQTxV-t4nERBExW1ddW5hw@mail.gmail.com>
-Subject: Re: mtd raw nand denali.c broken for Intel/Altera Cyclone V
-To:     Tim Sander <tim@krieglstein.org>
-Cc:     Vignesh Raghavendra <vigneshr@ti.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
+References: <000000000000f744e0059bcd8216@google.com>
+In-Reply-To: <000000000000f744e0059bcd8216@google.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Fri, 10 Jan 2020 11:09:16 -0800
+Message-ID: <CAM_iQpWz+ivP2vS50rY94DiR6qSh1W0WKjqgBNKYpUH_VFPgGw@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in bitmap_port_ext_cleanup
+To:     syzbot <syzbot+4c3cc6dbe7259dbf9054@syzkaller.appspotmail.com>
+Cc:     Arvid Brodin <arvid.brodin@alten.se>, coreteam@netfilter.org,
+        David Miller <davem@davemloft.net>, florent.fourcot@wifirst.fr,
+        Florian Westphal <fw@strlen.de>, jeremy@azazel.net,
+        Johannes Berg <johannes.berg@intel.com>, kadlec@netfilter.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 11, 2020 at 1:47 AM Tim Sander <tim@krieglstein.org> wrote:
+On Fri, Jan 10, 2020 at 10:44 AM syzbot
+<syzbot+4c3cc6dbe7259dbf9054@syzkaller.appspotmail.com> wrote:
 >
-> Hi Masahiro Yamada
+> Hello,
 >
-> Sorry for the large delay. I have seen the patches at
-> https://lists.infradead.org/pipermail/linux-mtd/2019-December/092852.html
-> Seem to resolve the question about the spare_area_skip_bytes register.
+> syzbot found the following crash on:
 >
-> I have now set the register to 2 which seems to be the right choice on an Intel
-> SocFPGA. But still i am out of luck trying to boot 5.4.5-rt3 or 5.5-rc5. I get the
-> following messages during bootup booting:
-> [    1.825590] denali-nand-dt ff900000.nand: timeout while waiting for irq 0x1000
-> [    1.832936] denali-nand-dt: probe of ff900000.nand failed with error -5
+> HEAD commit:    b07f636f Merge tag 'tpmdd-next-20200108' of git://git.infr..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16c03259e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=18698c0c240ba616
+> dashboard link: https://syzkaller.appspot.com/bug?extid=4c3cc6dbe7259dbf9054
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> userspace arch: i386
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10c365c6e00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117df9e1e00000
 >
-> But the commit c19e31d0a32dd 2017-06-13 22:45:38 predates the 4.19 kernel
-> release (Mon Oct 22 07:37:37 2018). So it seems there is not an obvious commit
-> which is causing the problem. Looking at the changes it might be that the timing
-> calculations in the driver changed which might also lead to a similar error.
+> The bug was bisected to:
 >
-> I am booting via NFS the bootloader is placed in NOR flash.  The corresponding
-> nand dts entry is updated to the new format and looks like this:
->                 nand@ff900000 {
->                         #address-cells = <0x1>;
->                         #size-cells = <0x0>;
->                         compatible = "altr,socfpga-denali-nand";
->                         reg = <0xff900000 0x100000 0xffb80000 0x10000>;
->                         reg-names = "nand_data", "denali_reg";
->                         interrupts = <0x0 0x90 0x4>;
->                         clocks = <0x2d 0x1e 0x2e>;
->                         clock-names = "nand", "nand_x", "ecc";
->                         resets = <0x6 0x24>;
->                         status = "okay";
->                         nand@0 {
->                                 reg = <0x0>;
->                                 #address-cells = <0x1>;
->                                 #size-cells = <0x1>;
->                                 partition@0 {
->                                         label = "work";
->                                         reg = <0x0 0x10000000>;
->                                 };
->                         };
->                 };
+> commit b9a1e627405d68d475a3c1f35e685ccfb5bbe668
+> Author: Cong Wang <xiyou.wangcong@gmail.com>
+> Date:   Thu Jul 4 00:21:13 2019 +0000
 >
-> The last kernel i am able to boot is 4.19.10. I have tried booting:
-> 5.1.21, 5.2.9, 5.3-rc8, 5.4.5-rt3 and 5.5-rc5. They all failed. Unfortunately the
-> range is quite large for bisecting the problem. It also occurred to me that
-> all the platforms with Intel Cyclone V in mainline are development boards
-> which boot from SD-card not exhibiting this problem on their default boot path.
+>      hsr: implement dellink to clean up resources
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=118759e1e00000
+> final crash:    https://syzkaller.appspot.com/x/report.txt?x=138759e1e00000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=158759e1e00000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+4c3cc6dbe7259dbf9054@syzkaller.appspotmail.com
+> Fixes: b9a1e627405d ("hsr: implement dellink to clean up resources")
+>
+> ==================================================================
+> BUG: KASAN: use-after-free in test_bit
+> include/asm-generic/bitops/instrumented-non-atomic.h:110 [inline]
+> BUG: KASAN: use-after-free in bitmap_port_ext_cleanup+0xe6/0x2a0
+> net/netfilter/ipset/ip_set_bitmap_gen.h:51
+> Read of size 8 at addr ffff8880a87a47c0 by task syz-executor559/9563
+>
+> CPU: 0 PID: 9563 Comm: syz-executor559 Not tainted 5.5.0-rc5-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x197/0x210 lib/dump_stack.c:118
+>   print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+>   __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
+>   kasan_report+0x12/0x20 mm/kasan/common.c:639
+>   check_memory_region_inline mm/kasan/generic.c:185 [inline]
+>   check_memory_region+0x134/0x1a0 mm/kasan/generic.c:192
+>   __kasan_check_read+0x11/0x20 mm/kasan/common.c:95
+>   test_bit include/asm-generic/bitops/instrumented-non-atomic.h:110 [inline]
+>   bitmap_port_ext_cleanup+0xe6/0x2a0
 
+map->members is freed by ip_set_free() right before using it in
+mtype_ext_cleanup() again. So I think probably we just have to
+move it down:
 
-What will happen if you apply all of these:
+diff --git a/net/netfilter/ipset/ip_set_bitmap_gen.h
+b/net/netfilter/ipset/ip_set_bitmap_gen.h
+index 1abd6f0dc227..077a2cb65fcb 100644
+--- a/net/netfilter/ipset/ip_set_bitmap_gen.h
++++ b/net/netfilter/ipset/ip_set_bitmap_gen.h
+@@ -60,9 +60,9 @@ mtype_destroy(struct ip_set *set)
+        if (SET_WITH_TIMEOUT(set))
+                del_timer_sync(&map->gc);
 
-http://patchwork.ozlabs.org/project/linux-mtd/list/?series=149821
+-       ip_set_free(map->members);
+        if (set->dsize && set->extensions & IPSET_EXT_DESTROY)
+                mtype_ext_cleanup(set);
++       ip_set_free(map->members);
+        ip_set_free(map);
 
-on top of the mainline kernel,
-and then, hack denali->clk_rate and denali->clk_x_rate as follows?
+        set->data = NULL;
 
-
--       denali->clk_rate = clk_get_rate(dt->clk);
--       denali->clk_x_rate = clk_get_rate(dt->clk_x);
-+       denali->clk_rate = 50000000;
-+       denali->clk_x_rate = 200000000;
-
-
-
-
-
-If it still fails, what about this?
-
-       denali->clk_rate = 0;
-       denali->clk_x_rate = 0;
-
-
-
-> PS: Here is some snippet from an older mail i didn't sent to the list yet which
-> might be superseded by now:
-> To get into this matter i started reading the "Intel Cyclone V HPS TRM"
-> Section 13-20 Preserving Bad Block Markers:
-> "You can configure the NAND flash controller to skip over a specified number of
-> bytes when it writes the last sector in a page to the spare area. This option
-> write the desired offset to the spare_area_skip_bytes register in the config
-> group. For example, if the device page size is 2 KB, and the device
-> area, set the spare_area_skip_bytes register to 2. When the flash controller
-> writes the last sector of the page that overlaps with the spare area, it
-> spare_area_skip_bytes must be an even number. For example, if the bad block
-> marker is a single byte, set spare_area_skip_bytes to 2."
-
-I did not know this documentation.
-
-It says "For example" (twice),
-it sounds uncertain to me, though.
-
-Anyway, an intel engineer checked the boot ROM code.
-SPARE_AREA_SKIP_BYTES=2 is correct, he said.
-
-
--- 
-Best Regards
-Masahiro Yamada
+Thanks.
