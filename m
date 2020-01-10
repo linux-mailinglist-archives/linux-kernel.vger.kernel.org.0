@@ -2,116 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A36A136D7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 14:12:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D4ED136D7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 14:13:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbgAJNMj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 08:12:39 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:6114 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727456AbgAJNMj (ORCPT
+        id S1727509AbgAJNNJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 08:13:09 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45955 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727390AbgAJNNJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 08:12:39 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00AD86U6008915;
-        Fri, 10 Jan 2020 14:11:39 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
- date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=haY87gSwex8rCh0FoiCdqRy2whnAZkCD7EIrYWg4L6k=;
- b=qOyO055nx9VMMiP9IRWmPO2wbA8r4CSqjeVvgO1nCDHWhpUOdIiIr5lyjShgcOg7d5CM
- XjlEQW9y8KOfw30+NLIQ8i60i+FVd69tstJoQWGgY+UhEjFHcLz2OlJtNQ3fP6Jq/slt
- ZRgL+aFD0hzX+tLeyoa4nKXHttqbdSDldPTBb8C4KHKWSOOQXNY+LYk6ZY6rn5UMZiqM
- LIiNKfkjzhFJlhh/fTV1zjNoMx2DxLppFSIYiAw3f3oBoJ3ZuOaaC1LWe8X6K6/9NPGp
- MfL7EI3Ri++yw69vbWT0VZB1vvfaWDQTTHnU/5rHL3wfh7e/otFK8yOfW2CLTDcoto8B kw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2xakkb7rur-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Jan 2020 14:11:39 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7CE4A100034;
-        Fri, 10 Jan 2020 14:11:33 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 913662B7742;
-        Fri, 10 Jan 2020 14:11:33 +0100 (CET)
-Received: from localhost (10.75.127.47) by SFHDAG6NODE2.st.com (10.75.127.17)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 10 Jan 2020 14:11:33
- +0100
-From:   Olivier Moysan <olivier.moysan@st.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <alsa-devel@alsa-project.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <olivier.moysan@st.com>
-Subject: [PATCH] ASoC: stm32: dfsdm: fix 16 bits record
-Date:   Fri, 10 Jan 2020 14:11:31 +0100
-Message-ID: <20200110131131.3191-1-olivier.moysan@st.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 10 Jan 2020 08:13:09 -0500
+Received: by mail-lf1-f66.google.com with SMTP id 203so1411955lfa.12
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 05:13:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=3UqRrXR93FQdctcONgP71/bIILS55BPNGX70vasGTx4=;
+        b=QGoRD/Cim99MOXBfGknjcKXWBz9ER9ZmR/heXDezefXk3YQ8Dn76b0wDAjP1KU1sfx
+         TQHwUbfU4kEVoG1okrkm4fyEImUBL9iMMb8BSjTsCVX6Qn3gGRPCDZUyiyZ1a7xH78Im
+         5Eh/6etLEBwr7EqTSu2L/yyOZwSl/oBjcQvJCpHwnxN+GzWlxA5pAQ97cbQe7IHRnlPL
+         gGr7F786q9OGZVlLStlE17MeyoWrYWDaMNNyLRKcM1bbYhPtYdjXCsa82p4EL04OD4kg
+         dguub240nkaRGfcP6N/Ab5Ip7/q64Ok8id9BiQTJSJQfiMyHQSthF7LG7QZ8d12rZ4KH
+         HKnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=3UqRrXR93FQdctcONgP71/bIILS55BPNGX70vasGTx4=;
+        b=GPnZHpk4IOsLelX7xZ32SE1E6GCxHRMTGc/9CH5u/pxZ2a0j7HecWQo9KVY23j4lsY
+         BwZW2jLOqsP2DMrMF2xy8NwUwjicXT2VOATa2AejxqjdMJf/VWBmkRcVINtpIMLmweBk
+         RmgQGLt/Q79T1FPVaU1T5hDho8dIXDDiywmSon68wW9GYpwB9PIjwvOYzHMd4fWao0OD
+         rEuegNWeufYHs2odvGiC8gFKepgtdCA9+sjjg/bA377ycOhQk9GlLuqN2AMtQuPZO6lP
+         pqE7aa5AXYlMhnckw8VOTpQ1EZsyR6CnTgv/Jwvym7vGgZ4DoyJyPY3SKFauzd+KpBB0
+         kvVg==
+X-Gm-Message-State: APjAAAW/j27O+ecwTjAJDkLWgtxzQW4Ktv3R9/IyHOEfA3A2aUBzAFk8
+        37RYkG89ICHNvml6lGwuf2pc0B55JJoZdxijCV4=
+X-Google-Smtp-Source: APXvYqzDbs0ohUpa68/3Fv2OWDx/5fUO5JkGqrrvZnTRDgNF4ub+Um5H1KKNSUHaktM0Wkf/5+vYrGTyACJE7jdF4NQ=
+X-Received: by 2002:ac2:5549:: with SMTP id l9mr2318404lfk.53.1578661987404;
+ Fri, 10 Jan 2020 05:13:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG6NODE2.st.com
- (10.75.127.17)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-10_01:2020-01-10,2020-01-09 signatures=0
+Received: by 2002:a2e:8eca:0:0:0:0:0 with HTTP; Fri, 10 Jan 2020 05:13:06
+ -0800 (PST)
+Reply-To: atmdepartment1940@gmail.com
+From:   "Mr.kavian amiri" <agenthenry.williams01@gmail.com>
+Date:   Fri, 10 Jan 2020 05:13:06 -0800
+Message-ID: <CAN1G01=5i2=rC8Xjc8U_5BARKT=sPaGgJNygN2FutsGih7vqmA@mail.gmail.com>
+Subject: Dear Beneficiary
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In stm32_afsdm_pcm_cb function, the transfer size is provided in bytes.
-However, samples are copied as 16 bits words from iio buffer.
-Divide by two the transfer size, to copy the right number of samples.
+Dear Beneficiary,
 
-Fixes: 1e7f6e1c69f0 ("ASoC: stm32: dfsdm: add 16 bits audio record support")
+Your Over-due ATM Card Payment Compensation fund from United Nations
+Compensation Commission valued US$17,750.000.00 has been deposited
+here in the Bank on your behalf. Therefore, re-confirm your
+information such as,full Name, Address and Telephone Numbers. Also
+state categorically your age, occupations and marital status.
 
-Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
----
- sound/soc/stm/stm32_adfsdm.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Immediately contact the Coordinator Compensation Unite Mr.kavian
+amiri,, who is in position to release your ATM Card to you.
 
-diff --git a/sound/soc/stm/stm32_adfsdm.c b/sound/soc/stm/stm32_adfsdm.c
-index 807fee1eac66..51407a21c440 100644
---- a/sound/soc/stm/stm32_adfsdm.c
-+++ b/sound/soc/stm/stm32_adfsdm.c
-@@ -153,13 +153,13 @@ static const struct snd_soc_component_driver stm32_adfsdm_dai_component = {
- 	.name = "stm32_dfsdm_audio",
- };
- 
--static void memcpy_32to16(void *dest, const void *src, size_t n)
-+static void stm32_memcpy_32to16(void *dest, const void *src, size_t n)
- {
- 	unsigned int i = 0;
- 	u16 *d = (u16 *)dest, *s = (u16 *)src;
- 
- 	s++;
--	for (i = n; i > 0; i--) {
-+	for (i = n >> 1; i > 0; i--) {
- 		*d++ = *s++;
- 		s++;
- 	}
-@@ -186,8 +186,8 @@ static int stm32_afsdm_pcm_cb(const void *data, size_t size, void *private)
- 
- 	if ((priv->pos + src_size) > buff_size) {
- 		if (format == SNDRV_PCM_FORMAT_S16_LE)
--			memcpy_32to16(&pcm_buff[priv->pos], src_buff,
--				      buff_size - priv->pos);
-+			stm32_memcpy_32to16(&pcm_buff[priv->pos], src_buff,
-+					    buff_size - priv->pos);
- 		else
- 			memcpy(&pcm_buff[priv->pos], src_buff,
- 			       buff_size - priv->pos);
-@@ -196,8 +196,8 @@ static int stm32_afsdm_pcm_cb(const void *data, size_t size, void *private)
- 	}
- 
- 	if (format == SNDRV_PCM_FORMAT_S16_LE)
--		memcpy_32to16(&pcm_buff[priv->pos],
--			      &src_buff[src_size - cur_size], cur_size);
-+		stm32_memcpy_32to16(&pcm_buff[priv->pos],
-+				    &src_buff[src_size - cur_size], cur_size);
- 	else
- 		memcpy(&pcm_buff[priv->pos], &src_buff[src_size - cur_size],
- 		       cur_size);
--- 
-2.17.1
+Mr.Kavian.Amir,
+Coordinator
+(atmdepartment1940@gmail.com)
+(United Nations Compensation Commission, MAKING THE WORLD A BETTER PLACE).
 
+yours sincerely,
+Mr.Kavian.Amir,
