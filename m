@@ -2,90 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F260136731
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 07:14:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B42313672B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 07:11:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731483AbgAJGMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 01:12:31 -0500
-Received: from mga11.intel.com ([192.55.52.93]:32832 "EHLO mga11.intel.com"
+        id S1731463AbgAJGLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 01:11:12 -0500
+Received: from foss.arm.com ([217.140.110.172]:39954 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726949AbgAJGMa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 01:12:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 22:12:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,415,1571727600"; 
-   d="scan'208";a="236883144"
-Received: from allen-box.sh.intel.com ([10.239.159.136])
-  by orsmga002.jf.intel.com with ESMTP; 09 Jan 2020 22:12:28 -0800
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     ashok.raj@intel.com, jacob.jun.pan@intel.com, kevin.tian@intel.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH 2/2] iommu/vt-d: Unnecessary to handle default identity domain
-Date:   Fri, 10 Jan 2020 14:10:58 +0800
-Message-Id: <20200110061058.26958-2-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200110061058.26958-1-baolu.lu@linux.intel.com>
-References: <20200110061058.26958-1-baolu.lu@linux.intel.com>
+        id S1726949AbgAJGLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 01:11:12 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C25B3328;
+        Thu,  9 Jan 2020 22:11:11 -0800 (PST)
+Received: from [10.162.42.128] (p8cg001049571a15.blr.arm.com [10.162.42.128])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 736CA3F6C4;
+        Thu,  9 Jan 2020 22:14:38 -0800 (PST)
+Subject: Re: [PATCH] efi: Fix comment for efi_mem_type() wrt absent physical
+ addresses
+To:     linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+References: <1573449229-13918-1-git-send-email-anshuman.khandual@arm.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <238c9810-dcec-7f4b-7bcb-a339f1f8aaad@arm.com>
+Date:   Fri, 10 Jan 2020 11:42:24 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1573449229-13918-1-git-send-email-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The iommu default domain framework has been designed to take
-care of setting identity default domain type. It's unnecessary
-to handle this again in the VT-d driver. Hence, remove it.
 
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel-iommu.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 6aeaad2cf8a9..e7942bc05e4e 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -387,7 +387,6 @@ static int intel_iommu_superpage = 1;
- static int iommu_identity_mapping;
- static int intel_no_bounce;
- 
--#define IDENTMAP_ALL		1
- #define IDENTMAP_GFX		2
- #define IDENTMAP_AZALIA		4
- 
-@@ -3079,8 +3078,7 @@ static int device_def_domain_type(struct device *dev)
- 			return IOMMU_DOMAIN_DMA;
- 	}
- 
--	return (iommu_identity_mapping & IDENTMAP_ALL) ?
--			IOMMU_DOMAIN_IDENTITY : 0;
-+	return 0;
- }
- 
- static void intel_iommu_init_qi(struct intel_iommu *iommu)
-@@ -3424,9 +3422,6 @@ static int __init init_dmars(void)
- 		iommu->flush.flush_iotlb(iommu, 0, 0, 0, DMA_TLB_GLOBAL_FLUSH);
- 	}
- 
--	if (iommu_default_passthrough())
--		iommu_identity_mapping |= IDENTMAP_ALL;
--
- #ifdef CONFIG_INTEL_IOMMU_BROKEN_GFX_WA
- 	dmar_map_gfx = 0;
- #endif
-@@ -5017,7 +5012,7 @@ static int __init platform_optin_force_iommu(void)
- 	 * map for all devices except those marked as being untrusted.
- 	 */
- 	if (dmar_disabled)
--		iommu_identity_mapping |= IDENTMAP_ALL;
-+		iommu_set_default_passthrough(false);
- 
- 	dmar_disabled = 0;
- 	no_iommu = 0;
--- 
-2.17.1
+On 11/11/2019 10:43 AM, Anshuman Khandual wrote:
+> A previous commit f99afd08a45f ("efi: Update efi_mem_type() to return an
+> error rather than 0") changed the return type from EFI_RESERVED_TYPE to
+> -EINVAL when the searched physical address is not present in any memory
+> descriptor. But the comment preceding the function never changed. Lets
+> change the comment now to reflect the new return type -EINVAL.
+> 
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: linux-efi@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
+Hello Ard,
+
+Just wondering if this patch is getting pulled. Dont see it either
+on linux-next or the following EFI tree.
+
+git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi (efi-next)
+
+- Anshuman
+
+> ---
+> Changes in V2:
+> 
+> - Changed comment for efi_mem_type() instead of the return type per Ard
+> 
+> V1: (https://lore.kernel.org/patchwork/patch/1149002/)
+> 
+>  drivers/firmware/efi/efi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+> index 77ca52d86e30..47b0bf7a2b7f 100644
+> --- a/drivers/firmware/efi/efi.c
+> +++ b/drivers/firmware/efi/efi.c
+> @@ -899,7 +899,7 @@ u64 efi_mem_attributes(unsigned long phys_addr)
+>   *
+>   * Search in the EFI memory map for the region covering @phys_addr.
+>   * Returns the EFI memory type if the region was found in the memory
+> - * map, EFI_RESERVED_TYPE (zero) otherwise.
+> + * map, -EINVAL otherwise.
+>   */
+>  int efi_mem_type(unsigned long phys_addr)
+>  {
+> 
