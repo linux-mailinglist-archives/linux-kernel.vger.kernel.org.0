@@ -2,105 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2949B137906
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 23:06:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EEFA137904
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 23:06:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbgAJWGD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 17:06:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52334 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728036AbgAJWGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 17:06:00 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728000AbgAJWF5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 17:05:57 -0500
+Received: from asavdk3.altibox.net ([109.247.116.14]:48828 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727867AbgAJWFy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 17:05:54 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E8CC20838;
-        Fri, 10 Jan 2020 22:05:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578693960;
-        bh=ok15enOupA5W/wMO7U7KSrXVmeBc2HMpZ4pSkfou/bw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eWHliHLv3aiGkx43/6SDnEY4UstoanJ4twy/Mg+qtlN5OQfxRNggQrnswgP+Ut+1w
-         d7Yxz0czpKG4HMiP6Tk3Mkk4hUOokFDL7cojKNwh5rOS+kIWffF//bz4FqP/NSPYLs
-         poluyx3k4SPl5uycli6g+zK+iGL9srvPHHipEFnM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 04/11] dmaengine: k3dma: Avoid null pointer traversal
-Date:   Fri, 10 Jan 2020 17:05:48 -0500
-Message-Id: <20200110220556.28505-3-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200110220556.28505-1-sashal@kernel.org>
-References: <20200110220556.28505-1-sashal@kernel.org>
+        by asavdk3.altibox.net (Postfix) with ESMTPS id 833F62005F;
+        Fri, 10 Jan 2020 23:05:49 +0100 (CET)
+Date:   Fri, 10 Jan 2020 23:05:48 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Subject: Re: [PATCH 0/6] dt-bindings: display: Update few panel bindings with
+ YAML
+Message-ID: <20200110220548.GB29600@ravnborg.org>
+References: <20200101112444.16250-1-jagan@amarulasolutions.com>
+ <20200104151702.GC17768@ravnborg.org>
+ <CAMty3ZDbDf6YovrEdG0pACQAwMQidjKr6BJvx-FPXqyT11G05w@mail.gmail.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZDbDf6YovrEdG0pACQAwMQidjKr6BJvx-FPXqyT11G05w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=eMA9ckh1 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8
+        a=d2ZgxUcwpuBiIAahjgQA:9 a=CjuIK1q_8ugA:10 a=E9Po1WZjFZOl8hwRPBS3:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Stultz <john.stultz@linaro.org>
+Hi Jagan.
 
-[ Upstream commit 2f42e05b942fe2fbfb9bbc6e34e1dd8c3ce4f3a4 ]
+On Mon, Jan 06, 2020 at 03:41:40PM +0530, Jagan Teki wrote:
+> Hi Sam,
+> 
+> On Sat, Jan 4, 2020 at 8:47 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+> >
+> > Hi Jagan.
+> > On Wed, Jan 01, 2020 at 04:54:38PM +0530, Jagan Teki wrote:
+> > > These panel bindings are owned by me, so updated all of them into
+> > > YAML DT schema.
+> > >
+> > > Any inputs?
+> > Thanks for doing the conversion.
+> >
+> > dt_binding_check was not happy:
+> > Documentation/devicetree/bindings/display/panel/rocktech,rk070er9427.example.dt.yaml: panel: 'backlight', 'port' do not match any of the regexes: 'pinctrl-[0-9]+'
+> >   DTC     Documentation/devicetree/bindings/display/panel/friendlyarm,hd702e.example.dt.yaml
+> >   CHECK   Documentation/devicetree/bindings/display/panel/friendlyarm,hd702e.example.dt.yaml
+> > Documentation/devicetree/bindings/display/panel/friendlyarm,hd702e.example.dt.yaml: panel: 'backlight', 'port' do not match any of the regexes: 'pinctrl-[0-9]+'
+> > Documentation/devicetree/bindings/display/panel/friendlyarm,hd702e.example.dt.yaml: panel: compatible: Additional items are not allowed ('simple-panel' was unexpected)
+> > Documentation/devicetree/bindings/display/panel/friendlyarm,hd702e.example.dt.yaml: panel: compatible: ['friendlyarm,hd702e', 'simple-panel'] is too long
+> >   DTC     Documentation/devicetree/bindings/display/panel/sitronix,st7701.example.dt.yaml
+> > Error: Documentation/devicetree/bindings/display/panel/sitronix,st7701.example.dts:22.42-43 syntax error
+> > FATAL ERROR: Unable to parse input tree
+> >
+> > Please fix and check the bindings using dt_binding_check before
+> > resubmit.
+> >
+> > I had to install libyaml-dev (as least I recall this was the name)
+> > before dt_binding_check worked OK for me.
+> 
+> I did check dt_binfing_check with this series. Here is the complete
+> build log and you can see the panels related to this series are
+> checked fine. Let me know if I miss anything here?
 
-In some cases we seem to submit two transactions in a row, which
-causes us to lose track of the first. If we then cancel the
-request, we may still get an interrupt, which traverses a null
-ds_run value.
+Due to other errors you never reached the poart that checks the example.
+I use the following to focus on a single binding:
 
-So try to avoid starting a new transaction if the ds_run value
-is set.
+(from my script, but you get the idea)
 
-While this patch avoids the null pointer crash, I've had some
-reports of the k3dma driver still getting confused, which
-suggests the ds_run/ds_done value handling still isn't quite
-right. However, I've not run into an issue recently with it
-so I think this patch is worth pushing upstream to avoid the
-crash.
+domake ${arch} ${config} dt_binding_check DT_SCHEMA_FILES=${bindings}/display/panel/feixin,k101-im2ba02.yaml
 
-Signed-off-by: John Stultz <john.stultz@linaro.org>
-[add ss tag]
-Link: https://lore.kernel.org/r/20191218190906.6641-1-john.stultz@linaro.org
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/dma/k3dma.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+In this way I can ignore all the bindings that otherwise fails.
 
-diff --git a/drivers/dma/k3dma.c b/drivers/dma/k3dma.c
-index 6bfa217ed6d0..ba3c3791f9dc 100644
---- a/drivers/dma/k3dma.c
-+++ b/drivers/dma/k3dma.c
-@@ -222,9 +222,11 @@ static irqreturn_t k3_dma_int_handler(int irq, void *dev_id)
- 			c = p->vchan;
- 			if (c && (tc1 & BIT(i))) {
- 				spin_lock_irqsave(&c->vc.lock, flags);
--				vchan_cookie_complete(&p->ds_run->vd);
--				p->ds_done = p->ds_run;
--				p->ds_run = NULL;
-+				if (p->ds_run != NULL) {
-+					vchan_cookie_complete(&p->ds_run->vd);
-+					p->ds_done = p->ds_run;
-+					p->ds_run = NULL;
-+				}
- 				spin_unlock_irqrestore(&c->vc.lock, flags);
- 			}
- 			if (c && (tc2 & BIT(i))) {
-@@ -264,6 +266,10 @@ static int k3_dma_start_txd(struct k3_dma_chan *c)
- 	if (BIT(c->phy->idx) & k3_dma_get_chan_stat(d))
- 		return -EAGAIN;
- 
-+	/* Avoid losing track of  ds_run if a transaction is in flight */
-+	if (c->phy->ds_run)
-+		return -EAGAIN;
-+
- 	if (vd) {
- 		struct k3_dma_desc_sw *ds =
- 			container_of(vd, struct k3_dma_desc_sw, vd);
--- 
-2.20.1
+Note: I sometimes have to clean my ouput directory to force that the
+examples are tested.
 
+It is also a good idea to introduce errors on purpose in the example, in
+this way you can check that they are tested.
+
+	Sam
