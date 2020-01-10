@@ -2,119 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A81081368B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 09:02:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82ACD1368C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 09:10:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726817AbgAJICH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 03:02:07 -0500
-Received: from relay.felk.cvut.cz ([147.32.80.7]:56367 "EHLO
-        relay.felk.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbgAJICH (ORCPT
+        id S1726719AbgAJIKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 03:10:06 -0500
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:36311 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726401AbgAJIKF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 03:02:07 -0500
-X-Greylist: delayed 1845 seconds by postgrey-1.27 at vger.kernel.org; Fri, 10 Jan 2020 03:02:03 EST
-Received: from cmp.felk.cvut.cz (haar.felk.cvut.cz [147.32.84.19])
-        by relay.felk.cvut.cz (8.15.2/8.15.2) with ESMTP id 00A7TWwh036195;
-        Fri, 10 Jan 2020 08:29:32 +0100 (CET)
-        (envelope-from pisa@cmp.felk.cvut.cz)
-Received: from haar.felk.cvut.cz (localhost [127.0.0.1])
-        by cmp.felk.cvut.cz (8.14.0/8.12.3/SuSE Linux 0.6) with ESMTP id 00A7TWdf028346;
-        Fri, 10 Jan 2020 08:29:32 +0100
-Received: (from pisa@localhost)
-        by haar.felk.cvut.cz (8.14.0/8.13.7/Submit) id 00A7TVpw028343;
-        Fri, 10 Jan 2020 08:29:31 +0100
-X-Authentication-Warning: haar.felk.cvut.cz: pisa set sender to pisa@cmp.felk.cvut.cz using -f
-From:   Pavel Pisa <pisa@cmp.felk.cvut.cz>
-To:     Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 2/6] dt-bindings: net: can: binding for CTU CAN FD open-source IP core.
-Date:   Fri, 10 Jan 2020 08:29:31 +0100
-User-Agent: KMail/1.9.10
-Cc:     devicetree@vger.kernel.org, mkl@pengutronix.de,
-        linux-can@vger.kernel.org, socketcan@hartkopp.net,
-        wg@grandegger.com, davem@davemloft.net, mark.rutland@arm.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        martin.jerabek01@gmail.com, ondrej.ille@gmail.com,
-        jnovak@fel.cvut.cz, jara.beran@gmail.com, porazil@pikron.com
-References: <cover.1576922226.git.pisa@cmp.felk.cvut.cz> <61533d59378822f8c808abf193b40070810d3d35.1576922226.git.pisa@cmp.felk.cvut.cz> <20200103235359.GA23875@bogus>
-In-Reply-To: <20200103235359.GA23875@bogus>
-X-KMail-QuotePrefix: > 
-MIME-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-Message-Id: <202001100829.31344.pisa@cmp.felk.cvut.cz>
-X-FELK-MailScanner-Information: 
-X-MailScanner-ID: 00A7TWwh036195
-X-FELK-MailScanner: Found to be clean
-X-FELK-MailScanner-SpamCheck: not spam, SpamAssassin (not cached,
-        score=-0.223, required 6, BAYES_00 -0.50, KHOP_HELO_FCRDNS 0.28,
-        SPF_HELO_NONE 0.00, SPF_NONE 0.00)
-X-FELK-MailScanner-From: pisa@cmp.felk.cvut.cz
-X-FELK-MailScanner-Watermark: 1579246176.70847@vVg9umV9GG6Cdpbc0Ybbpg
-X-Spam-Status: No
+        Fri, 10 Jan 2020 03:10:05 -0500
+Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
+        by 156.147.23.53 with ESMTP; 10 Jan 2020 16:40:03 +0900
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: taejoon.song@lge.com
+Received: from unknown (HELO ubuntu0.156.147.1.1) (10.177.220.34)
+        by 156.147.1.121 with ESMTP; 10 Jan 2020 16:40:03 +0900
+X-Original-SENDERIP: 10.177.220.34
+X-Original-MAILFROM: taejoon.song@lge.com
+From:   Taejoon Song <taejoon.song@lge.com>
+To:     minchan@kernel.org, ngupta@vflare.org,
+        sergey.senozhatsky.work@gmail.com, axboe@kernel.dk
+Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        yjay.kim@lge.com, Taejoon Song <taejoon.song@lge.com>
+Subject: [PATCH] zram: try to avoid worst-case scenario on same element pages
+Date:   Fri, 10 Jan 2020 16:40:01 +0900
+Message-Id: <1578642001-11765-1-git-send-email-taejoon.song@lge.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Rob,
+The worst-case scenario on finding same element pages is that almost
+all elements are same at the first glance but only last few elements
+are different.
 
-thanks much for review.
+Since the same element tends to be grouped from the beginning of the
+pages, if we check the first element with the last element before
+looping through all elements, we might have some chances to quickly
+detect non-same element pages.
 
-On Saturday 04 of January 2020 00:53:59 Rob Herring wrote:
-> On Sat, Dec 21, 2019 at 03:07:31PM +0100, pisa@cmp.felk.cvut.cz wrote:
-> > From: Pavel Pisa <pisa@cmp.felk.cvut.cz>
-> >  .../devicetree/bindings/net/can/ctu,ctucanfd.txt   | 61
->
-> Bindings are moving DT schema format now. Not something I'd require on a
-> respin I've already reviewed, but OTOH it's been 10 months to respin
-> from v2. So:
+1. Test is done under LG webOS TV (64-bit arch)
+2. Dump the swap-out pages (~819200 pages)
+3. Analyze the pages with simple test script which counts the iteration
+   number and measures the speed at off-line
 
-Please, can you send me pointer to some CAN or other bindings
-doc which is well formed according to future direction?
-I have not dig deeper but I have not found relevant discussion
-about introduction of DT schema format.
+Under 64-bit arch, the worst iteration count is PAGE_SIZE / 8 bytes = 512.
+The speed is based on the time to consume page_same_filled() function only.
+The result, on average, is listed as below:
 
-> If you have a v4, then please convert to a schema.
+                                   Num of Iter    Speed(MB/s)
+Looping-Forward (Orig)                 38            99265
+Looping-Backward                       36           102725
+Last-element-check (This Patch)        33           125072
 
-I expect that we need at least one more iteration.
-When recheck, I have found that I have forgot to update
-paths in RST documentation when moved from standalone
-automatic CI build into kernel tree
+The result shows that the average iteration count decreases by 13% and
+the speed increases by 25% with this patch. This patch does not increase
+the overall time complexity, though.
 
-[PATCH v3 6/6] docs: ctucanfd: CTU CAN FD open-source IP core documentation.
-https://lkml.org/lkml/2019/12/21/96
+I also ran simpler version which uses backward loop. Just looping backward
+also makes some improvement, but less than this patch.
 
-And the most important is review of the driver core to allow
-the project (http://canbus.pages.fel.cvut.cz/) to move forward.
+Signed-off-by: Taejoon Song <taejoon.song@lge.com>
+---
+ drivers/block/zram/zram_drv.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-[PATCH v3 3/6] can: ctucanfd: add support for CTU CAN FD open-source IP core - 
-bus independent part.
-https://lkml.org/lkml/2019/12/21/95
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index 4285e75..71d5946 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -207,14 +207,17 @@ static inline void zram_fill_page(void *ptr, unsigned long len,
+ 
+ static bool page_same_filled(void *ptr, unsigned long *element)
+ {
+-	unsigned int pos;
+ 	unsigned long *page;
+ 	unsigned long val;
++	unsigned int pos, last_pos = PAGE_SIZE / sizeof(*page) - 1;
+ 
+ 	page = (unsigned long *)ptr;
+ 	val = page[0];
+ 
+-	for (pos = 1; pos < PAGE_SIZE / sizeof(*page); pos++) {
++	if (val != page[last_pos])
++		return false;
++
++	for (pos = 1; pos < last_pos; pos++) {
+ 		if (val != page[pos])
+ 			return false;
+ 	}
+-- 
+2.7.4
 
-The code has no errors and a few questionable warnings reported by
-4.19 patchcheck (we have run many iterations of it to cleanup code)
-but 5.4 kernel patchcheck is more strict as I noticed
-after submission and reports a few more warnings and some of them
-could be easily resolved.
-
-What makes me to feel good is that CTU CAN FD IP core development
-stabilized, there are only changes to better cover the core by test
-framework and more than one month there is no commit disturbing CI build
-process of IP core integration for Xilinx Zynq. CI builds complete
-driver and FPGA design and then deploys and runs tests between multiple
-CTU CAN FD cores and against OpenCores SJA1000 cores with FD tolerance
-
-https://gitlab.fel.cvut.cz/canbus/zynq/zynq-can-sja1000-top/pipelines
-
-https://gitlab.fel.cvut.cz/canbus/zynq/zynq-can-sja1000-top/-/jobs/51334
-
-The second link points to one of many logs of test running on MZ_APO
-(Xilinx Zynq) education kits designed for Department of Control Engineering 
-https://dce.fel.cvut.cz/en at PiKRON.com. MZ_APO kist are used in Computer 
-Architectures and Real-time Systems Programming courses.
-
-Thanks for help,
-
-Pavel
