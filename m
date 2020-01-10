@@ -2,140 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F39EF137575
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:56:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51AB913757E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:56:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728982AbgAJRyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 12:54:07 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:59201 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728771AbgAJRxb (ORCPT
+        id S1729042AbgAJRyd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 12:54:33 -0500
+Received: from smtprelay0023.hostedemail.com ([216.40.44.23]:54847 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728232AbgAJRyc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 12:53:31 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1ipyTL-0001mo-4Q; Fri, 10 Jan 2020 18:53:23 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5AC9D1C2D5A;
-        Fri, 10 Jan 2020 18:53:18 +0100 (CET)
-Date:   Fri, 10 Jan 2020 17:53:18 -0000
-From:   "tip-bot2 for Alexey Budankov" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf mmap: Declare type for cpu mask of arbitrary length
-Cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
+        Fri, 10 Jan 2020 12:54:32 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 32B71180008AC;
+        Fri, 10 Jan 2020 17:54:31 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2553:2560:2563:2682:2685:2693:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4384:5007:6119:6120:7901:7903:9025:10004:10400:11232:11658:11914:12043:12297:12555:12698:12737:12740:12760:12895:13069:13255:13311:13357:13439:14096:14097:14181:14659:14721:14880:21080:21627:21740:21987:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: food82_7e88326182d0f
+X-Filterd-Recvd-Size: 2379
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 10 Jan 2020 17:54:29 +0000 (UTC)
+Message-ID: <8fe4f81699517758b44afbe0e1a53bc080f64a62.camel@perches.com>
+Subject: Re: [RFC PATCH 1/8] compiler/gcc: Emit build-time warning for GCC
+ prior to version 4.8
+From:   Joe Perches <joe@perches.com>
+To:     Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <0fd2454f-477f-d15a-f4ee-79bcbd2585ff@linux.intel.com>
-References: <0fd2454f-477f-d15a-f4ee-79bcbd2585ff@linux.intel.com>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Date:   Fri, 10 Jan 2020 09:53:36 -0800
+In-Reply-To: <CAK8P3a3ueJ_rQc-1JTg=3N0JSuY9BduJ6FrrPFG1K2FWVzJdfA@mail.gmail.com>
+References: <20200110165636.28035-1-will@kernel.org>
+         <20200110165636.28035-2-will@kernel.org>
+         <CAK8P3a3ueJ_rQc-1JTg=3N0JSuY9BduJ6FrrPFG1K2FWVzJdfA@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Message-ID: <157867879823.30329.8276302610164757060.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/core branch of tip:
+On Fri, 2020-01-10 at 18:35 +0100, Arnd Bergmann wrote:
+> On Fri, Jan 10, 2020 at 5:56 PM Will Deacon <will@kernel.org> wrote:
+> > Prior to version 4.8, GCC may miscompile READ_ONCE() by erroneously
+> > discarding the 'volatile' qualifier:
+> > 
+> > https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58145
+> > 
+> > We've been working around this using some nasty hacks which make
+> > READ_ONCE() both horribly complicated and also prevent us from enforcing
+> > that it is only used on scalar types. Since GCC 4.8 is pretty old for
+> > kernel builds now, emit a warning if we detect it during the build.
+> 
+> No objection to recommending gcc-4.8, but I think this should either
+> just warn once during the kernel build instead of for every file, or
+> it should become a hard requirement.
 
-Commit-ID:     9c080c0279a80057cad3dfc05d09fb283ddf72f4
-Gitweb:        https://git.kernel.org/tip/9c080c0279a80057cad3dfc05d09fb283ddf72f4
-Author:        Alexey Budankov <alexey.budankov@linux.intel.com>
-AuthorDate:    Tue, 03 Dec 2019 14:44:18 +03:00
-Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Mon, 06 Jan 2020 11:46:09 -03:00
+It might as well be a hard requirement as
+gcc 4.8.0 is already nearly 7 years old.
 
-perf mmap: Declare type for cpu mask of arbitrary length
+gcc 4.6.0 released 2011-03-25
+gcc 4.8.0 released 2013-03-22
 
-Declare a dedicated struct map_cpu_mask type for cpu masks of arbitrary
-length.
+Perhaps there are exceedingly few to zero new
+instances using gcc compiler versions < 4.8
 
-The mask is available thru bits pointer and the mask length is kept in
-nbits field. MMAP_CPU_MASK_BYTES() macro returns mask storage size in
-bytes.
 
-The mmap_cpu_mask__scnprintf() function can be used to log text
-representation of the mask.
-
-Committer notes:
-
-To print the 'nbits' struct member we must use %zd, since it is a
-size_t, this fixes the build in some toolchains/arches.
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/0fd2454f-477f-d15a-f4ee-79bcbd2585ff@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/mmap.c | 12 ++++++++++++
- tools/perf/util/mmap.h | 11 +++++++++++
- 2 files changed, 23 insertions(+)
-
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 063d1b9..2ee4faa 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -23,6 +23,18 @@
- #include "mmap.h"
- #include "../perf.h"
- #include <internal/lib.h> /* page_size */
-+#include <linux/bitmap.h>
-+
-+#define MASK_SIZE 1023
-+void mmap_cpu_mask__scnprintf(struct mmap_cpu_mask *mask, const char *tag)
-+{
-+	char buf[MASK_SIZE + 1];
-+	size_t len;
-+
-+	len = bitmap_scnprintf(mask->bits, mask->nbits, buf, MASK_SIZE);
-+	buf[len] = '\0';
-+	pr_debug("%p: %s mask[%zd]: %s\n", mask, tag, mask->nbits, buf);
-+}
- 
- size_t mmap__mmap_len(struct mmap *map)
- {
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index bee4e83..ef51667 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -15,6 +15,15 @@
- #include "event.h"
- 
- struct aiocb;
-+
-+struct mmap_cpu_mask {
-+	unsigned long *bits;
-+	size_t nbits;
-+};
-+
-+#define MMAP_CPU_MASK_BYTES(m) \
-+	(BITS_TO_LONGS(((struct mmap_cpu_mask *)m)->nbits) * sizeof(unsigned long))
-+
- /**
-  * struct mmap - perf's ring buffer mmap details
-  *
-@@ -52,4 +61,6 @@ int perf_mmap__push(struct mmap *md, void *to,
- 
- size_t mmap__mmap_len(struct mmap *map);
- 
-+void mmap_cpu_mask__scnprintf(struct mmap_cpu_mask *mask, const char *tag);
-+
- #endif /*__PERF_MMAP_H */
