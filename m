@@ -2,66 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 241CB13740D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:48:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C4F0137417
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:51:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728900AbgAJQsP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 11:48:15 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:60168 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728508AbgAJQsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 11:48:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=Vy2KD8u+BGYIDw6PxzqkmDZBzhBcbSdW6vHaku/QLXo=; b=tWvXfsZN4O/tRDQojzB7SxLRGm
-        8JNn9xER9FyEqAU9aPyHgoaicpty03M2kCX2DvuDWf1l7p6xHn3uiucytfotEg8xzjU7rbGaJcNgF
-        ikFk5W6F8zOay5rIyUa+4zl+T4PsDrwZ+ktSHvyIBQLjElPU6svVDM0W3LaLqkxZYt2M=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1ipxSB-0001YL-E5; Fri, 10 Jan 2020 17:48:07 +0100
-Date:   Fri, 10 Jan 2020 17:48:07 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     Horatiu Vultur <horatiu.vultur@microchip.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        bridge@lists.linux-foundation.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        anirudh.venkataramanan@intel.com, David Ahern <dsahern@gmail.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
-Subject: Re: [RFC net-next Patch 0/3] net: bridge: mrp: Add support for Media
- Redundancy Protocol(MRP)
-Message-ID: <20200110164807.GA1849@lunn.ch>
-References: <20200109150640.532-1-horatiu.vultur@microchip.com>
- <6f1936e9-97e5-9502-f062-f2925c9652c9@cumulusnetworks.com>
- <20200110160456.enzomhfsce7bptu3@soft-dev3.microsemi.net>
- <CA+h21hrq7U4EdqSgpYQRjK8rkcJdvD5jXCSOH_peA-R4xCocTg@mail.gmail.com>
+        id S1728924AbgAJQu7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 11:50:59 -0500
+Received: from smtprelay0078.hostedemail.com ([216.40.44.78]:54765 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728543AbgAJQu7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 11:50:59 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 9F9C34DA5;
+        Fri, 10 Jan 2020 16:50:57 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:960:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:2828:2896:3138:3139:3140:3141:3142:3354:3622:3865:3866:3867:3870:3873:3874:4250:4321:5007:6119:8957:10004:10400:10848:11026:11232:11473:11658:11914:12043:12114:12296:12297:12438:12555:12740:12760:12895:12986:13439:14096:14097:14181:14659:14721:21080:21627:21740:21939:21990:30029:30046:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: doll74_8316ba625761
+X-Filterd-Recvd-Size: 3602
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 10 Jan 2020 16:50:56 +0000 (UTC)
+Message-ID: <5293a7cb1ccb16275ddb36c7f26fb9e83f4fac9b.camel@perches.com>
+Subject: Re: [PATCH-next 3/3] serial/sysrq: Add MAGIC_SYSRQ_SERIAL_SEQUENCE
+From:   Joe Perches <joe@perches.com>
+To:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Vasiliy Khoruzhick <vasilykh@arista.com>,
+        linux-serial@vger.kernel.org
+Date:   Fri, 10 Jan 2020 08:50:03 -0800
+In-Reply-To: <20200109215444.95995-4-dima@arista.com>
+References: <20200109215444.95995-1-dima@arista.com>
+         <20200109215444.95995-4-dima@arista.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+h21hrq7U4EdqSgpYQRjK8rkcJdvD5jXCSOH_peA-R4xCocTg@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I think it would help your case if you explained a bit more about
-> the hw offload primitives you have implemented internally.
+On Thu, 2020-01-09 at 21:54 +0000, Dmitry Safonov wrote:
+> Many embedded boards have a disconnected TTL level serial which can
+> generate some garbage that can lead to spurious false sysrq detects.
 
-Agreed.
+trivia:
 
-Horatiu, could you also give some references to the frames that need
-to be sent. I've no idea what information they need to contain, if the
-contents is dynamic, or static, etc.
+> diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+[]
+> @@ -3081,6 +3081,38 @@ void uart_insert_char(struct uart_port *port, unsigned int status,
+[]
+> +const char sysrq_toggle_seq[] = CONFIG_MAGIC_SYSRQ_SERIAL_SEQUENCE;
 
-	 Andrew
+static const?
+
+> +static int uart_try_toggle_sysrq(struct uart_port *port, unsigned int ch)
+
+This function return might read better as bool not int
+
+> +{
+> +	if (sysrq_toggle_seq[0] == '\0')
+> +		return 0;
+> +
+> +	BUILD_BUG_ON(ARRAY_SIZE(sysrq_toggle_seq) >= sizeof(port->sysrq_seq)*U8_MAX);
+> +	if (sysrq_toggle_seq[port->sysrq_seq] != ch) {
+> +		port->sysrq_seq = 0;
+> +		return 0;
+> +	}
+> +
+> +	/* Without the last \0 */
+> +	if (++port->sysrq_seq < (ARRAY_SIZE(sysrq_toggle_seq) - 1)) {
+> +		port->sysrq = jiffies + HZ*5;
+> +		return 1;
+> +	}
+> +
+> +	schedule_work(&sysrq_enable_work);
+> +
+> +	port->sysrq = 0;
+> +	return 1;
+> +}
+[]
+> diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+> index 255e86a474e9..1f4443db5474 100644
+> --- a/include/linux/serial_core.h
+> +++ b/include/linux/serial_core.h
+> @@ -243,10 +243,10 @@ struct uart_port {
+>  	unsigned long		sysrq;			/* sysrq timeout */
+>  	unsigned int		sysrq_ch;		/* char for sysrq */
+>  	unsigned char		has_sysrq;
+> +	unsigned char		sysrq_seq;		/* index in sysrq_toggle_seq */
+
+unsigned int?
+
+Or maybe set a maximum length of MAGIC_SYSRQ_SERIAL_SEQUENCE.
+
+
+>  
+>  	unsigned char		hub6;			/* this should be in the 8250 driver */
+>  	unsigned char		suspended;
+> -	unsigned char		unused;
+>  	const char		*name;			/* port name */
+>  	struct attribute_group	*attr_group;		/* port specific attributes */
+>  	const struct attribute_group **tty_groups;	/* all attributes (serial core use only) */
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 330909c600b1..f6f3e82fee25 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -431,6 +431,14 @@ config MAGIC_SYSRQ_SERIAL
+>  	  This option allows you to decide whether you want to enable the
+>  	  magic SysRq key.
+>  
+> +config MAGIC_SYSRQ_SERIAL_SEQUENCE
+> +	string "Char sequence that enables magic SysRq over serial"
+> +	depends on MAGIC_SYSRQ_SERIAL
+> +	default ""
+> +	help
+> +	  Specifies a sequence of characters that can follow BREAK to enable
+> +	  SysRq on a serial console.
+> +
+>  config DEBUG_FS
+>  	bool "Debug Filesystem"
+>  	help
+
