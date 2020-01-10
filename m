@@ -2,128 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C4F0137417
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:51:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2D11137413
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:50:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728924AbgAJQu7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 11:50:59 -0500
-Received: from smtprelay0078.hostedemail.com ([216.40.44.78]:54765 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728543AbgAJQu7 (ORCPT
+        id S1728726AbgAJQuf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 11:50:35 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39665 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728500AbgAJQue (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 11:50:59 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 9F9C34DA5;
-        Fri, 10 Jan 2020 16:50:57 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:960:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:2828:2896:3138:3139:3140:3141:3142:3354:3622:3865:3866:3867:3870:3873:3874:4250:4321:5007:6119:8957:10004:10400:10848:11026:11232:11473:11658:11914:12043:12114:12296:12297:12438:12555:12740:12760:12895:12986:13439:14096:14097:14181:14659:14721:21080:21627:21740:21939:21990:30029:30046:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: doll74_8316ba625761
-X-Filterd-Recvd-Size: 3602
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf05.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 10 Jan 2020 16:50:56 +0000 (UTC)
-Message-ID: <5293a7cb1ccb16275ddb36c7f26fb9e83f4fac9b.camel@perches.com>
-Subject: Re: [PATCH-next 3/3] serial/sysrq: Add MAGIC_SYSRQ_SERIAL_SEQUENCE
-From:   Joe Perches <joe@perches.com>
-To:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Vasiliy Khoruzhick <vasilykh@arista.com>,
-        linux-serial@vger.kernel.org
-Date:   Fri, 10 Jan 2020 08:50:03 -0800
-In-Reply-To: <20200109215444.95995-4-dima@arista.com>
-References: <20200109215444.95995-1-dima@arista.com>
-         <20200109215444.95995-4-dima@arista.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Fri, 10 Jan 2020 11:50:34 -0500
+Received: by mail-lj1-f193.google.com with SMTP id l2so2808138lja.6
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 08:50:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3vSiXmE4hm+vY407xZeDV00oZSz7P7Tb6Wxmt50cGzo=;
+        b=qHL+7rDPAtspkZeTYhcfP5LoXq67SOKKWsQSUhE/9KZkhRscH/4+cy9tHxCw98hexJ
+         KUDzz5DRsUDx6nHt72wgmEmyqxMhcBcJoQKzoV/LtB57t0eVZdBK8FxX7ZpGa+B95FAU
+         IN3AiIFwMlm/s7QAh03vjgtcgPMb/tcOlA66kCH9ESNrqIhKPzyG6uUrPaaDOTVtkn5J
+         YiLoKcBituDgLH7WqtJGBX5GhfjaYerfqaRX21UTu1bnJS83vLFVJcYqYZb28ZVdcp0d
+         KH/d7sMxvnJzUbITb0kmRGHuj80q7Qm+8DF6zwo83ev2bICMJ9k8w3ko7UKQa3jjeEOV
+         ssNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3vSiXmE4hm+vY407xZeDV00oZSz7P7Tb6Wxmt50cGzo=;
+        b=knp0acccGvRCg1yAy9e89ROXECVwaiSWexyyxrGuhcvWSYnUSzAUXf408c/TJLs+pN
+         Sony4C7DJyV1lxiOZEXI/RDusx/T6CInnFbelwhQDKCA70jEnRjVdlEgN3mBh/YCCqhZ
+         5N52pvuTjNWruTuMq8mDDp+jhb2vxyn2V0Wp+QOHtO3Jv50uxR3wtsCZEjTNgz9lpBec
+         4TkPugVuEsBH0g+HO9P2KwENuxz2Tp4ZEGWPgS0YUMOclLuYYViuxRyO8WD7yW1FGWET
+         hspBf3nSCWJYCVCWMu42aPWxfWVHyXAkm69vcGImkKm/PusmjXRYhk3jGknWdNQI+oXa
+         StCQ==
+X-Gm-Message-State: APjAAAUFlV2g3/X/ZLpKxEmEVMkdRJn1LSjhLrdV21U9TIH8Wf+tn6Hd
+        AJ7CEZMc+P/hijnTunsy8GQe4Mjf6ejloM7MP7O+
+X-Google-Smtp-Source: APXvYqyAow6uZx4yK/nJw6QxaEppyphJRbmhCS4VKJRHdMK34mml0Z79SHsmLh9ts8uHbUdaVBz7t4sgms9axT1NQCw=
+X-Received: by 2002:a2e:3a12:: with SMTP id h18mr3321630lja.81.1578675032313;
+ Fri, 10 Jan 2020 08:50:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20200110095856.76612-1-yehs2007@zoho.com> <e71932ce-0687-02e5-5f34-980c0cad4ae9@tycho.nsa.gov>
+In-Reply-To: <e71932ce-0687-02e5-5f34-980c0cad4ae9@tycho.nsa.gov>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 10 Jan 2020 11:50:20 -0500
+Message-ID: <CAHC9VhT-8R4iT-V-A+6NvZgG=bh4Knieif2fuKwybnDuXvC6ug@mail.gmail.com>
+Subject: Re: [PATCH] selinux: remove redundant msg_msg_alloc_security
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Huaisheng Ye <yehs2007@zoho.com>,
+        Eric Paris <eparis@parisplace.org>,
+        James Morris <jmorris@namei.org>,
+        Serge Hallyn <serge@hallyn.com>, tyu1@lenovo.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Huaisheng Ye <yehs1@lenovo.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-01-09 at 21:54 +0000, Dmitry Safonov wrote:
-> Many embedded boards have a disconnected TTL level serial which can
-> generate some garbage that can lead to spurious false sysrq detects.
+On Fri, Jan 10, 2020 at 10:13 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On 1/10/20 4:58 AM, Huaisheng Ye wrote:
+> > From: Huaisheng Ye <yehs1@lenovo.com>
+> >
+> > selinux_msg_msg_alloc_security only calls msg_msg_alloc_security but
+> > do nothing else. And also msg_msg_alloc_security is just used by the
+> > former.
+> >
+> > Remove the redundant function to simplify the code.
+>
+> This seems to also be true of other _alloc_security functions, probably
+> due to historical reasons.  Further, at least some of these functions no
+> longer perform any allocation; they are just initialization functions
+> now that allocation has been taken to the LSM framework, so possibly
+> could be renamed and made to return void at some point.
 
-trivia:
+I've noticed the same thing on a few occasions, I've just never
+bothered to put the fixes into a patch.  We might as well do that now,
+at least for the redundant code bits; I'll leave the return code issue
+for another time as that would cross LSM boundaries and that really
+isn't appropriate in the -rc5 timeframe IMHO.
 
-> diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-[]
-> @@ -3081,6 +3081,38 @@ void uart_insert_char(struct uart_port *port, unsigned int status,
-[]
-> +const char sysrq_toggle_seq[] = CONFIG_MAGIC_SYSRQ_SERIAL_SEQUENCE;
+I'll put something together once I finish up the patch/review backlog
+from the past few days.  Looking quickly with a regex, it would appear
+that inode_alloc_security(), file_alloc_security(), and
+superblock_alloc_security() are all candidates.  While not an
+allocator, we can probably get rid of inode_doinit() as well.
 
-static const?
-
-> +static int uart_try_toggle_sysrq(struct uart_port *port, unsigned int ch)
-
-This function return might read better as bool not int
-
-> +{
-> +	if (sysrq_toggle_seq[0] == '\0')
-> +		return 0;
-> +
-> +	BUILD_BUG_ON(ARRAY_SIZE(sysrq_toggle_seq) >= sizeof(port->sysrq_seq)*U8_MAX);
-> +	if (sysrq_toggle_seq[port->sysrq_seq] != ch) {
-> +		port->sysrq_seq = 0;
-> +		return 0;
-> +	}
-> +
-> +	/* Without the last \0 */
-> +	if (++port->sysrq_seq < (ARRAY_SIZE(sysrq_toggle_seq) - 1)) {
-> +		port->sysrq = jiffies + HZ*5;
-> +		return 1;
-> +	}
-> +
-> +	schedule_work(&sysrq_enable_work);
-> +
-> +	port->sysrq = 0;
-> +	return 1;
-> +}
-[]
-> diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
-> index 255e86a474e9..1f4443db5474 100644
-> --- a/include/linux/serial_core.h
-> +++ b/include/linux/serial_core.h
-> @@ -243,10 +243,10 @@ struct uart_port {
->  	unsigned long		sysrq;			/* sysrq timeout */
->  	unsigned int		sysrq_ch;		/* char for sysrq */
->  	unsigned char		has_sysrq;
-> +	unsigned char		sysrq_seq;		/* index in sysrq_toggle_seq */
-
-unsigned int?
-
-Or maybe set a maximum length of MAGIC_SYSRQ_SERIAL_SEQUENCE.
-
-
->  
->  	unsigned char		hub6;			/* this should be in the 8250 driver */
->  	unsigned char		suspended;
-> -	unsigned char		unused;
->  	const char		*name;			/* port name */
->  	struct attribute_group	*attr_group;		/* port specific attributes */
->  	const struct attribute_group **tty_groups;	/* all attributes (serial core use only) */
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index 330909c600b1..f6f3e82fee25 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -431,6 +431,14 @@ config MAGIC_SYSRQ_SERIAL
->  	  This option allows you to decide whether you want to enable the
->  	  magic SysRq key.
->  
-> +config MAGIC_SYSRQ_SERIAL_SEQUENCE
-> +	string "Char sequence that enables magic SysRq over serial"
-> +	depends on MAGIC_SYSRQ_SERIAL
-> +	default ""
-> +	help
-> +	  Specifies a sequence of characters that can follow BREAK to enable
-> +	  SysRq on a serial console.
-> +
->  config DEBUG_FS
->  	bool "Debug Filesystem"
->  	help
-
+-- 
+paul moore
+www.paul-moore.com
