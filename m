@@ -2,236 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A6A8136CD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 13:13:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A3F9136CDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 13:18:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbgAJMNA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 07:13:00 -0500
-Received: from foss.arm.com ([217.140.110.172]:43648 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727841AbgAJMNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 07:13:00 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35F751063;
-        Fri, 10 Jan 2020 04:12:59 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 834023F534;
-        Fri, 10 Jan 2020 04:12:58 -0800 (PST)
-Date:   Fri, 10 Jan 2020 12:12:57 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     kvm@vger.kernel.org, Catalin Marinas <Catalin.Marinas@arm.com>,
-        linux-kernel@vger.kernel.org, Sudeep Holla <Sudeep.Holla@arm.com>,
-        will@kernel.org, kvmarm <kvmarm@lists.cs.columbia.edu>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 09/18] arm64: KVM: enable conditional save/restore
- full SPE profiling buffer controls
-Message-ID: <20200110121256.GF42593@e119886-lin.cambridge.arm.com>
-References: <20191220143025.33853-1-andrew.murray@arm.com>
- <20191220143025.33853-10-andrew.murray@arm.com>
- <20191221141325.5a177343@why>
- <20200110105435.GC42593@e119886-lin.cambridge.arm.com>
- <20200110110420.GD42593@e119886-lin.cambridge.arm.com>
- <ee0fd7bcdbbbcc942117468eb676b18f@kernel.org>
+        id S1728070AbgAJMSo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 07:18:44 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35156 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727720AbgAJMSn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 07:18:43 -0500
+Received: by mail-pl1-f194.google.com with SMTP id g6so809792plt.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 04:18:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=34rCBCNBrLFlE6OZuubd6Z6OlOWhV0HGucVsYoePbqA=;
+        b=AyJDmw1nfTmU38bLxh+Zgeu6ZVenlE9iZh5wgKN+xTCCcVbRXd9o/heLIU/pN6gucy
+         +x5Tsci0dO8ZhS0dQsBFg5t6DZIgfpU5hJ3dQgkh4Hr0FvQ3c1MCVSdIux67XzFt1JAN
+         swqPk6+jTakkB2XfeIbBenGxQxjLc+3Vu0tDUnHnT0MFTrjWU9bMvxEumVbT2V0IH2k3
+         NKMn8E3yiX+w12LiWcL2SWzxnYU4T0LCidiwLYIKi9lxQzBvfqDxICtapnipP+9jxEuS
+         TohB1N+FcisEX8rLBfH9FIqKIemfV8QvJoxW17SQIC8NKLfxpFYpoySyD9/uqs5nLHRv
+         HPEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=34rCBCNBrLFlE6OZuubd6Z6OlOWhV0HGucVsYoePbqA=;
+        b=BKxksYhafmuwAt+6GT/rmpEJx04lLTeC5faIBmblfZMX4RDbQwLJcs+4EtgnElSJ3Y
+         4aX3y2nkj6rtkqaeVLHOnKn2Ouhq1/xLAqH2twIFfjBr48ZI6Wl30vNSTDdNshUVr2PY
+         idFO6deBjUQNDJvEoIywwTAVOldtNykdBQl7raR28M9SNgAkUJZWThPcROJIzhp8fDnk
+         lMsV8xttLTHCzZUpNo7U7GkHmt/4FyYgc6ZYB+aabm0L6uxSEZWjUqHKTtKwoMYwV73H
+         2mkD2K8Mqw72fCt4fmaGsKl3jTLaithVN45esKjct3xLxYbRzurNXa1ri6amM12bJoC9
+         VbDQ==
+X-Gm-Message-State: APjAAAXKuXjE0t++QjOjjwIotzjK89t/mTqAcORRAI/FXEtt0LhH2+UH
+        QFxRSulqsTPpg7QN7vQXGuc=
+X-Google-Smtp-Source: APXvYqwC+PRY9JeuUX6ytka2wfVtRm/TMSWCLgftycjUZOj9TUHFQKY/Dli2kVHoe5tJT3gd4K9HVw==
+X-Received: by 2002:a17:90a:10c8:: with SMTP id b8mr4336581pje.92.1578658722987;
+        Fri, 10 Jan 2020 04:18:42 -0800 (PST)
+Received: from localhost.localdomain ([103.211.17.220])
+        by smtp.googlemail.com with ESMTPSA id m128sm2774523pfm.183.2020.01.10.04.18.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2020 04:18:42 -0800 (PST)
+From:   Amol Grover <frextrite@gmail.com>
+To:     Corey Minyard <minyard@acm.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Amol Grover <frextrite@gmail.com>
+Subject: [PATCH] drivers: char: ipmi: ipmi_msghandler: Pass lockdep expression to RCU lists
+Date:   Fri, 10 Jan 2020 17:43:42 +0530
+Message-Id: <20200110121341.31522-1-frextrite@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ee0fd7bcdbbbcc942117468eb676b18f@kernel.org>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 11:51:39AM +0000, Marc Zyngier wrote:
-> On 2020-01-10 11:04, Andrew Murray wrote:
-> > On Fri, Jan 10, 2020 at 10:54:36AM +0000, Andrew Murray wrote:
-> > > On Sat, Dec 21, 2019 at 02:13:25PM +0000, Marc Zyngier wrote:
-> > > > On Fri, 20 Dec 2019 14:30:16 +0000
-> > > > Andrew Murray <andrew.murray@arm.com> wrote:
-> > > >
-> > > > [somehow managed not to do a reply all, re-sending]
-> > > >
-> > > > > From: Sudeep Holla <sudeep.holla@arm.com>
-> > > > >
-> > > > > Now that we can save/restore the full SPE controls, we can enable it
-> > > > > if SPE is setup and ready to use in KVM. It's supported in KVM only if
-> > > > > all the CPUs in the system supports SPE.
-> > > > >
-> > > > > However to support heterogenous systems, we need to move the check if
-> > > > > host supports SPE and do a partial save/restore.
-> > > >
-> > > > No. Let's just not go down that path. For now, KVM on heterogeneous
-> > > > systems do not get SPE. If SPE has been enabled on a guest and a CPU
-> > > > comes up without SPE, this CPU should fail to boot (same as exposing a
-> > > > feature to userspace).
-> > > >
-> > > > >
-> > > > > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> > > > > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-> > > > > ---
-> > > > >  arch/arm64/kvm/hyp/debug-sr.c | 33 ++++++++++++++++-----------------
-> > > > >  include/kvm/arm_spe.h         |  6 ++++++
-> > > > >  2 files changed, 22 insertions(+), 17 deletions(-)
-> > > > >
-> > > > > diff --git a/arch/arm64/kvm/hyp/debug-sr.c b/arch/arm64/kvm/hyp/debug-sr.c
-> > > > > index 12429b212a3a..d8d857067e6d 100644
-> > > > > --- a/arch/arm64/kvm/hyp/debug-sr.c
-> > > > > +++ b/arch/arm64/kvm/hyp/debug-sr.c
-> > > > > @@ -86,18 +86,13 @@
-> > > > >  	}
-> > > > >
-> > > > >  static void __hyp_text
-> > > > > -__debug_save_spe_nvhe(struct kvm_cpu_context *ctxt, bool full_ctxt)
-> > > > > +__debug_save_spe_context(struct kvm_cpu_context *ctxt, bool full_ctxt)
-> > > > >  {
-> > > > >  	u64 reg;
-> > > > >
-> > > > >  	/* Clear pmscr in case of early return */
-> > > > >  	ctxt->sys_regs[PMSCR_EL1] = 0;
-> > > > >
-> > > > > -	/* SPE present on this CPU? */
-> > > > > -	if (!cpuid_feature_extract_unsigned_field(read_sysreg(id_aa64dfr0_el1),
-> > > > > -						  ID_AA64DFR0_PMSVER_SHIFT))
-> > > > > -		return;
-> > > > > -
-> > > > >  	/* Yes; is it owned by higher EL? */
-> > > > >  	reg = read_sysreg_s(SYS_PMBIDR_EL1);
-> > > > >  	if (reg & BIT(SYS_PMBIDR_EL1_P_SHIFT))
-> > > > > @@ -142,7 +137,7 @@ __debug_save_spe_nvhe(struct kvm_cpu_context *ctxt, bool full_ctxt)
-> > > > >  }
-> > > > >
-> > > > >  static void __hyp_text
-> > > > > -__debug_restore_spe_nvhe(struct kvm_cpu_context *ctxt, bool full_ctxt)
-> > > > > +__debug_restore_spe_context(struct kvm_cpu_context *ctxt, bool full_ctxt)
-> > > > >  {
-> > > > >  	if (!ctxt->sys_regs[PMSCR_EL1])
-> > > > >  		return;
-> > > > > @@ -210,11 +205,14 @@ void __hyp_text __debug_restore_guest_context(struct kvm_vcpu *vcpu)
-> > > > >  	struct kvm_guest_debug_arch *host_dbg;
-> > > > >  	struct kvm_guest_debug_arch *guest_dbg;
-> > > > >
-> > > > > +	host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
-> > > > > +	guest_ctxt = &vcpu->arch.ctxt;
-> > > > > +
-> > > > > +	__debug_restore_spe_context(guest_ctxt, kvm_arm_spe_v1_ready(vcpu));
-> > > > > +
-> > > > >  	if (!(vcpu->arch.flags & KVM_ARM64_DEBUG_DIRTY))
-> > > > >  		return;
-> > > > >
-> > > > > -	host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
-> > > > > -	guest_ctxt = &vcpu->arch.ctxt;
-> > > > >  	host_dbg = &vcpu->arch.host_debug_state.regs;
-> > > > >  	guest_dbg = kern_hyp_va(vcpu->arch.debug_ptr);
-> > > > >
-> > > > > @@ -232,8 +230,7 @@ void __hyp_text __debug_restore_host_context(struct kvm_vcpu *vcpu)
-> > > > >  	host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
-> > > > >  	guest_ctxt = &vcpu->arch.ctxt;
-> > > > >
-> > > > > -	if (!has_vhe())
-> > > > > -		__debug_restore_spe_nvhe(host_ctxt, false);
-> > > > > +	__debug_restore_spe_context(host_ctxt, kvm_arm_spe_v1_ready(vcpu));
-> > > >
-> > > > So you now do an unconditional save/restore on the exit path for VHE as
-> > > > well? Even if the host isn't using the SPE HW? That's not acceptable
-> > > > as, in most cases, only the host /or/ the guest will use SPE. Here, you
-> > > > put a measurable overhead on each exit.
-> > > >
-> > > > If the host is not using SPE, then the restore/save should happen in
-> > > > vcpu_load/vcpu_put. Only if the host is using SPE should you do
-> > > > something in the run loop. Of course, this only applies to VHE and
-> > > > non-VHE must switch eagerly.
-> > > >
-> > > 
-> > > On VHE where SPE is used in the guest only - we save/restore in
-> > > vcpu_load/put.
-> > > 
-> > > On VHE where SPE is used in the host only - we save/restore in the
-> > > run loop.
-> > > 
-> > > On VHE where SPE is used in guest and host - we save/restore in the
-> > > run loop.
-> > > 
-> > > As the guest can't trace EL2 it doesn't matter if we restore guest
-> > > SPE early
-> > > in the vcpu_load/put functions. (I assume it doesn't matter that we
-> > > restore
-> > > an EL0/EL1 profiling buffer address at this point and enable tracing
-> > > given
-> > > that there is nothing to trace until entering the guest).
-> > > 
-> > > However the reason for moving save/restore to vcpu_load/put when the
-> > > host is
-> > > using SPE is to minimise the host EL2 black-out window.
-> > > 
-> > > 
-> > > On nVHE we always save/restore in the run loop. For the SPE
-> > > guest-use-only
-> > > use-case we can't save/restore in vcpu_load/put - because the guest
-> > > runs at
-> > > the same ELx level as the host - and thus doing so would result in
-> > > the guest
-> > > tracing part of the host.
-> > > 
-> > > Though if we determine that (for nVHE systems) the guest SPE is
-> > > profiling only
-> > > EL0 - then we could also save/restore in vcpu_load/put where SPE is
-> > > only being
-> > > used in the guest.
-> > > 
-> > > Does that make sense, are my reasons correct?
-> > 
-> > Also I'm making the following assumptions:
-> > 
-> >  - We determine if the host or guest are using SPE by seeing if
-> > profiling
-> >    (e.g. PMSCR_EL1) is enabled. That should determine *when* we restore
-> > as per
-> >    my previous email.
-> 
-> Yes.
-> 
-> >  - I'm less sure on this: We should determine *what* we restore based on
-> > the
-> >    availability of the SPE feature and not if it is being used - so for
-> > guest
-> >    this is if the guest has the feature on the vcpu. For host this is
-> > based on
-> >    the CPU feature registers.
-> 
-> As long as the guest's feature is conditionned on the HW being present *and*
-> that you're running on a CPU that has the HW.
+intf->cmd_rcvrs is traversed with list_for_each_entry_rcu
+outside an RCU read-side critical section but under the
+protection of intf->cmd_rcvrs_mutex.
 
-Yes that makes sense.
+ipmi_interfaces is traversed using list_for_each_entry_rcu
+outside an RCU read-side critical section but under the protection
+of ipmi_interfaces_mutex.
 
+Hence, add the corresponding lockdep expression to the list traversal
+primitive to silence false-positive lockdep warnings, and
+harden RCU lists.
 
-> 
-> >    The downshot of this is that if you have SPE support present on guest
-> > and
-> >    host and they aren't being used, then you still save/restore upon
-> > entering/
-> >    leaving a guest. The reason I feel this is needed is to prevent the
-> > issue
-> >    where the host starts programming the SPE registers, but is preempted
-> > by
-> >    KVM entering a guest, before it could enable host SPE. Thus when we
-> > enter the
-> >    guest we don't save all the registers, we return to the host and the
-> > host
-> >    SPE carries on from where it left of and enables it - yet because we
-> > didn't
-> >    restore all the programmed registers it doesn't work.
-> 
-> Saving the host registers is never optional if they are shared with the
-> guest.
+Add macro for the corresponding lockdep expression to make the code
+clean and concise.
 
-That make me feel better :)
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+---
+ drivers/char/ipmi/ipmi_msghandler.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-Thanks,
+diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+index cad9563f8f48..7eff0335bc82 100644
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -35,6 +35,8 @@
+ #include <linux/nospec.h>
+ 
+ #define IPMI_DRIVER_VERSION "39.2"
++#define cmd_rcvrs_mutex_held() \
++	lockdep_is_held(&intf->cmd_rcvrs_mutex)
+ 
+ static struct ipmi_recv_msg *ipmi_alloc_recv_msg(void);
+ static int ipmi_init_msghandler(void);
+@@ -618,6 +620,8 @@ static DEFINE_MUTEX(ipmidriver_mutex);
+ 
+ static LIST_HEAD(ipmi_interfaces);
+ static DEFINE_MUTEX(ipmi_interfaces_mutex);
++#define ipmi_interfaces_mutex_held() \
++	lockdep_is_held(&ipmi_interfaces_mutex)
+ static struct srcu_struct ipmi_interfaces_srcu;
+ 
+ /*
+@@ -1321,7 +1325,8 @@ static void _ipmi_destroy_user(struct ipmi_user *user)
+ 	 * synchronize_srcu()) then free everything in that list.
+ 	 */
+ 	mutex_lock(&intf->cmd_rcvrs_mutex);
+-	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link) {
++	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
++					cmd_rcvrs_mutex_held()) {
+ 		if (rcvr->user == user) {
+ 			list_del_rcu(&rcvr->link);
+ 			rcvr->next = rcvrs;
+@@ -1599,7 +1604,8 @@ static struct cmd_rcvr *find_cmd_rcvr(struct ipmi_smi *intf,
+ {
+ 	struct cmd_rcvr *rcvr;
+ 
+-	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link) {
++	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
++			rcu_read_lock_held() || cmd_rcvrs_mutex_held()) {
+ 		if ((rcvr->netfn == netfn) && (rcvr->cmd == cmd)
+ 					&& (rcvr->chans & (1 << chan)))
+ 			return rcvr;
+@@ -1614,7 +1620,8 @@ static int is_cmd_rcvr_exclusive(struct ipmi_smi *intf,
+ {
+ 	struct cmd_rcvr *rcvr;
+ 
+-	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link) {
++	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
++					cmd_rcvrs_mutex_held()) {
+ 		if ((rcvr->netfn == netfn) && (rcvr->cmd == cmd)
+ 					&& (rcvr->chans & chans))
+ 			return 0;
+@@ -3450,7 +3457,8 @@ int ipmi_add_smi(struct module         *owner,
+ 	/* Look for a hole in the numbers. */
+ 	i = 0;
+ 	link = &ipmi_interfaces;
+-	list_for_each_entry_rcu(tintf, &ipmi_interfaces, link) {
++	list_for_each_entry_rcu(tintf, &ipmi_interfaces, link,
++					ipmi_interfaces_mutex_held()) {
+ 		if (tintf->intf_num != i) {
+ 			link = &tintf->link;
+ 			break;
+-- 
+2.24.1
 
-Andrew Murray
-
-> 
->         M.
-> -- 
-> Jazz is not dead. It just smells funny...
