@@ -2,116 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F06BC136B91
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 11:58:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B2FB136B7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 11:57:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbgAJK66 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 05:58:58 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:32948 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727455AbgAJK65 (ORCPT
+        id S1727567AbgAJK5k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 05:57:40 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:54330 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727570AbgAJK5k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 05:58:57 -0500
-Received: by mail-io1-f65.google.com with SMTP id z8so1649191ioh.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 02:58:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VlbcVSb51HWE+FwIuewJKkQb6b2R8//lfQVmKPB42ok=;
-        b=Y5IFnsFNoBtiaTR6MocCoq2qDLtJB0jJ27O8o/ULMJAcB5A0utQj7sXN6hZBT8UR5O
-         WUoIQonPcKqqrnu+cnl5ZeDKii+KFH+JdiwnUdgOdQMZRtHTsH7X2pBVdFJQ4NrQXCqK
-         cdIAJESzBHXDFtq0/5nsNVI/4u5BTeKdv/9Bc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VlbcVSb51HWE+FwIuewJKkQb6b2R8//lfQVmKPB42ok=;
-        b=hgD9QOuPdTDSbiIfmFIskWrIhUbBay/4lNgJL8ispuJ45mZkzILMM3zOhjqMUriALx
-         ddmkh26N1QWptpRtJiJMs62JeCaLivI5t6bUXtFjBn3SUFn1aQJEyafBo1yIDVId41gy
-         zdEBypVqf3NqI+SF5JxXF0iZovRVTUslgdxSRdXHHUIh169A6AI1YT90o/TWDj5moN9a
-         kbKOwWqJ5IEAQ06YiFiLamWkzrkiC1Gvdnez8dUvxFFwOdBm7/je+15eoAfCUXzSEGLz
-         IsD1NB1EupQ/q/TgvZ9CYwTAU5j/HmDuciGDut+gB0qUl3x/mLyOiEMR2naQFpRQpH59
-         shww==
-X-Gm-Message-State: APjAAAW4pLTTD4++52sQ3IKcHtu6lTD+/zbj3nQ3w1JlMmdSf8scAmf6
-        iGEqLXG1ZTAtMsgJlqP9eJ/ce6X7mFKqICKnvgjc8Q==
-X-Google-Smtp-Source: APXvYqx6QHga1qqeC4hzfZbeyr6cH5rPqsgP2hU5N29tuj3lh3dg4B1XImkZKeptOiz8qLJCHjX60MQgkSIUNHNOsCM=
-X-Received: by 2002:a5d:9c10:: with SMTP id 16mr1864331ioe.150.1578653937032;
- Fri, 10 Jan 2020 02:58:57 -0800 (PST)
+        Fri, 10 Jan 2020 05:57:40 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00AAvakJ052718;
+        Fri, 10 Jan 2020 04:57:36 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578653856;
+        bh=jcTyAyRtrcD73f6Tyow/ueJfOVG81D6QLodR2fJHMvY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=XOKkedUqoHp+t5964azmwZU2yCe3gILekp4p0iTLAd4a/WJXJIBwDKO7FDexkamil
+         GeiX0BABqH8ae/tlXlmIjamwYYnlSvoWo0gfBQlC38Gm5kwfkqRD9eYT28t5VGhD2R
+         GgSLxInwyMSt1P8DtX9bAmzHqfSBCrkIlCNlZeQ0=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00AAvaCo010013
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 10 Jan 2020 04:57:36 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 10
+ Jan 2020 04:57:36 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 10 Jan 2020 04:57:36 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00AAvXYQ048117;
+        Fri, 10 Jan 2020 04:57:34 -0600
+Subject: Re: [PATCH v2 1/2] dt-bindings: phy: Add PHY_TYPE_DP definition
+To:     Jyri Sarha <jsarha@ti.com>, <linux-kernel@vger.kernel.org>
+CC:     <tomi.valkeinen@ti.com>, <praneeth@ti.com>, <yamonkar@cadence.com>,
+        <sjakhade@cadence.com>, <robh+dt@kernel.org>, <rogerq@ti.com>
+References: <cover.1578471433.git.jsarha@ti.com>
+ <e38387d6bfc38c76e2335b549da409291366e9ac.1578471433.git.jsarha@ti.com>
+ <1bccf7b6-3cc0-e39f-f7b9-3ec0b0553804@ti.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <c42d061d-2fd4-5a79-8555-147f53409b32@ti.com>
+Date:   Fri, 10 Jan 2020 16:29:41 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <20191009232655.48583-1-hsinyi@chromium.org> <87blrcbd3n.fsf@nanos.tec.linutronix.de>
-In-Reply-To: <87blrcbd3n.fsf@nanos.tec.linutronix.de>
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-Date:   Fri, 10 Jan 2020 18:58:30 +0800
-Message-ID: <CAJMQK-ijrdcG-WKcNmgWu4ng5_TxrdYPr0TV0uAqS8UcFuL1ug@mail.gmail.com>
-Subject: Re: [PATCH RFC v2] reboot: hotplug cpus in migrate_to_reboot_cpu()
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Pavankumar Kondeti <pkondeti@codeaurora.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Aaro Koskinen <aaro.koskinen@nokia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1bccf7b6-3cc0-e39f-f7b9-3ec0b0553804@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 4:15 AM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> Hsin-Yi Wang <hsinyi@chromium.org> writes:
->
-> > @@ -220,8 +221,6 @@ void migrate_to_reboot_cpu(void)
-> >       /* The boot cpu is always logical cpu 0 */
-> >       int cpu = reboot_cpu;
-> >
-> > -     cpu_hotplug_disable();
-> > -
-> >       /* Make certain the cpu I'm about to reboot on is online */
-> >       if (!cpu_online(cpu))
-> >               cpu = cpumask_first(cpu_online_mask);
-> > @@ -231,6 +230,11 @@ void migrate_to_reboot_cpu(void)
-> >
-> >       /* Make certain I only run on the appropriate processor */
-> >       set_cpus_allowed_ptr(current, cpumask_of(cpu));
-> > +
-> > +     /* Hotplug other cpus if possible */
-> > +#ifdef CONFIG_HOTPLUG_CPU
-> > +     offline_secondary_cpus(cpu);
-> > +#endif
->
-> In general I like the idea, but shouldn't this remove the architecture
-> code as a follow up?
->
-> Also this needs to be explicitely enabled per architecture (opt-in) and
-> not as an unconditional operation for all architectures which support
-> CPU hotplug.
->
-> Thanks,
->
->         tglx
 
-Thanks for your comment.
 
-I'll make this another config and depends on HOTPLUG_CPU.
+On 09/01/20 4:57 PM, Jyri Sarha wrote:
+> On 08/01/2020 10:30, Jyri Sarha wrote:
+>> Add definition for DisplayPort phy type.
+>>
+>> Signed-off-by: Jyri Sarha <jsarha@ti.com>
+>> Reviewed-by: Roger Quadros <rogerq@ti.com>
+>> Reviewed-by: Kishon Vijay Abraham I <kishon@ti.com>
+> 
+> Kishon, maybe you could pick only this patch phy-next, so that we avoid
+> nasty cross dependencies if I get to push DisplayPort dts patches to
+> mainline early.
 
-I did some check on how architectures implement smp_send_stop. Most
-architecture would loop through all other cpus in cpu_online_mask and
-call ipi stop to each. If they enable this config, the loop would be
-empty loop. In case they don't enable this config, they still need
-original smp_send_stop (or as a fallback if some cpus fails to
-offline).
-Currently there are 2 architectures (csky, alpha) that call ipi on
-possible cpus (instead of online cpus). Besides this, I'm not sure if
-there's other architecture code that should be cleaned up.
+Sure. Picked them now.
 
-Thanks,
+Thanks
+Kishon
 
-Hsin-Yi
+> 
+> Best regards,
+> Jyri
+> 
+>> ---
+>>  include/dt-bindings/phy/phy.h | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/include/dt-bindings/phy/phy.h b/include/dt-bindings/phy/phy.h
+>> index b6a1eaf1b339..1f3f866fae7b 100644
+>> --- a/include/dt-bindings/phy/phy.h
+>> +++ b/include/dt-bindings/phy/phy.h
+>> @@ -16,5 +16,6 @@
+>>  #define PHY_TYPE_USB2		3
+>>  #define PHY_TYPE_USB3		4
+>>  #define PHY_TYPE_UFS		5
+>> +#define PHY_TYPE_DP		6
+>>  
+>>  #endif /* _DT_BINDINGS_PHY */
+>>
+> 
+> 
