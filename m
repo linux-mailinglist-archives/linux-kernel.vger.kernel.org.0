@@ -2,185 +2,238 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2675B136F92
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 15:36:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3755F136F9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 15:40:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbgAJOfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 09:35:51 -0500
-Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:35812 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727581AbgAJOfu (ORCPT
+        id S1728079AbgAJOk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 09:40:56 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37614 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727889AbgAJOk4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 09:35:50 -0500
-Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 947DDC0519;
-        Fri, 10 Jan 2020 14:35:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1578666949; bh=aKnriC17g38j33vCDUZ4tT0fICNWx7V/vrTCQYMgyM4=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=lPM1RkFu68mGRntRtoawN7FqwbH5riaq+noEHzP+PAx9Wi0G51LrrOrk9R9KzVvD5
-         G3QCTD8Iqy9RFutfhF0Fh33COsB2SLja2e/Ia52bSuH2X1+URVjifcMsx4InbAVz0M
-         E76x8QDYrTqhea4y/AAHcri8uL7bkhJefuUOatFYASuEtJC5YNRo6lTdj9yYvTAU87
-         TDmNnExWeLQBTC0Az3g7K/xwswb99ysORcV+TQZL70w6+0JGarPuwvdhSGkhKLe2br
-         rJxusySLKoY0WCOPF9tqc1YCdDsQD4qtvDl8rA58IydTSDvyvs1Lo1Bm3VV8lUg3L/
-         uxqBpK1f1PfqA==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 7422AA0083;
-        Fri, 10 Jan 2020 14:35:43 +0000 (UTC)
-Received: from us01hybrid1.internal.synopsys.com (10.200.27.51) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 10 Jan 2020 06:35:43 -0800
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (10.202.3.67) by
- mrs.synopsys.com (10.200.27.51) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Fri, 10 Jan 2020 06:35:42 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LCcXD0BgZfuKE+0Qk5splpmrMmUpv9NoO/Gp+eXlmESf2wdxfV3R+5D17Vbg8daYIcbG1w+09a6blEQL5zlhzTbAuI4FaUDjHJdzZWoLWHkabb338T7JfhApHhKO/McDfI3CUZDA5u1Ge1BvSx4EoQ5a/orLhaJHrpdhj5jzBi5HWmhhJEU8CystF/6d7yV5ha1N8Akj8u0l9zwFKoUTBB8b3RcCzBDy4LpjzSJn183Qvyv9ETBOJuaG+dKpJE5nMKesrBOtfYlb3LiHmZlhzimRc8hddH4/pU6AO8JCFgFds5sfPN+ug1jDpbgAAuOW/NxSTvIw2iO1bflvG/Q+JA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aKnriC17g38j33vCDUZ4tT0fICNWx7V/vrTCQYMgyM4=;
- b=Bxqd2/EtkatprrIJLsIAEfqL6rYTbQi0x9OLThcuexIgggB1xViZ1G5OB67l2RY8A4cAexG5X47rj9gErmdTlne3dXjb3ROu2Je+ARBSBi+VS0MQjyLw0yKwb8bUAVPGKM1TcLlwy4OMKBbusUysw2Q8YVXpxYpp8pgehYf131ffOo/Hr4ThdpPX33UMS09Nafab9+iDIcsjtSBjYtJ1U1bN4PMy64NadoK1KnjpOrwJsqHUu/cj1hhu/rMNzOz+QcP+fUB60RHY1tO04KP1RfIyvd7lkQLoKt6uemVO7YMzVGB1/O+3feXno4eltTz6V3oPftkhooko6ITncvgdqQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
- dkim=pass header.d=synopsys.com; arc=none
+        Fri, 10 Jan 2020 09:40:56 -0500
+Received: by mail-pg1-f196.google.com with SMTP id q127so1111625pga.4;
+        Fri, 10 Jan 2020 06:40:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aKnriC17g38j33vCDUZ4tT0fICNWx7V/vrTCQYMgyM4=;
- b=kbIrSoubv9G4t7f4lh2U8TpYMAZ3+zXGw4cOV2Pv9VkIBFHw5RQM34HC98uxhTqQe0wN864++9Qz02joXuebEhDeVGJWKO/Vb4IM2fsd6/nfSu3BFSOB8TYjK5VJywSA5LDONh5/Mo4jhuOLeLcgaiVmIE9/8ibKXq9/oRwvujY=
-Received: from BN8PR12MB3266.namprd12.prod.outlook.com (20.179.67.145) by
- BN8PR12MB3508.namprd12.prod.outlook.com (20.179.66.211) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2602.12; Fri, 10 Jan 2020 14:35:41 +0000
-Received: from BN8PR12MB3266.namprd12.prod.outlook.com
- ([fe80::c62:b247:6963:9da2]) by BN8PR12MB3266.namprd12.prod.outlook.com
- ([fe80::c62:b247:6963:9da2%6]) with mapi id 15.20.2623.010; Fri, 10 Jan 2020
- 14:35:41 +0000
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     Andre Guedes <andre.guedes@linux.intel.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Vinicius Costa Gomes <vinicius.gomes@intel.com>
-CC:     Po Liu <po.liu@nxp.com>,
-        "alexandru.ardelean@analog.com" <alexandru.ardelean@analog.com>,
-        "allison@lohutok.net" <allison@lohutok.net>,
-        "andrew@lunn.ch" <andrew@lunn.ch>,
-        "ayal@mellanox.com" <ayal@mellanox.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "hauke.mehrtens@intel.com" <hauke.mehrtens@intel.com>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "jiri@mellanox.com" <jiri@mellanox.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "pablo@netfilter.org" <pablo@netfilter.org>,
-        "saeedm@mellanox.com" <saeedm@mellanox.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        "simon.horman@netronome.com" <simon.horman@netronome.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Alexandru Marginean <alexandru.marginean@nxp.com>,
-        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
-        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>
-Subject: RE: [EXT] Re: [v1,net-next, 1/2] ethtool: add setting frame
- preemption of traffic classes
-Thread-Topic: [EXT] Re: [v1,net-next, 1/2] ethtool: add setting frame
- preemption of traffic classes
-Thread-Index: AQHVpQlV0arssjH64ECVUQFpoidQiae0UhKAgAfLu0CAAUwKgIADVrkAgAAT1YCAEke6AIAOrCuAgACCOSCAAJoCgIABV0sw
-Date:   Fri, 10 Jan 2020 14:35:41 +0000
-Message-ID: <BN8PR12MB3266E532328C6FD4D9473144D3380@BN8PR12MB3266.namprd12.prod.outlook.com>
-References: <20191127094517.6255-1-Po.Liu@nxp.com>
- <157603276975.18462.4638422874481955289@pipeline>
- <VE1PR04MB6496CEA449E9B844094E580492510@VE1PR04MB6496.eurprd04.prod.outlook.com>
- <87eex43pzm.fsf@linux.intel.com> <20191219004322.GA20146@khorivan>
- <87lfr9axm8.fsf@linux.intel.com>
- <b7e1cb8b-b6b1-c0fa-3864-4036750f3164@ti.com>
- <157853205713.36295.17877768211004089754@aguedesl-mac01.jf.intel.com>
- <BN8PR12MB32663AE71CBF7CF0258C86D7D3390@BN8PR12MB3266.namprd12.prod.outlook.com>
- <157859309589.47157.8012794523971663624@aguedesl-mac01.local>
-In-Reply-To: <157859309589.47157.8012794523971663624@aguedesl-mac01.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=joabreu@synopsys.com; 
-x-originating-ip: [83.174.63.141]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 96c40df0-2f5f-43c2-9f75-08d795da5e98
-x-ms-traffictypediagnostic: BN8PR12MB3508:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BN8PR12MB350811AB795CAA5C04296AE1D3380@BN8PR12MB3508.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 02788FF38E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(346002)(376002)(396003)(136003)(199004)(189003)(55016002)(7696005)(8936002)(81156014)(81166006)(8676002)(9686003)(6506007)(26005)(5660300002)(4326008)(54906003)(52536014)(478600001)(107886003)(110136005)(316002)(86362001)(186003)(33656002)(7416002)(2906002)(66556008)(66946007)(64756008)(66446008)(66476007)(71200400001)(76116006);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR12MB3508;H:BN8PR12MB3266.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: synopsys.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: tV57uQVC2hAAR2Xk7nQoTyJ5xLQy/sqqG8XW3nqjnYGZWN64X/IdOdkg6HNW3aDpgsbn+dzvuVnNskAhdtAlceN6hQuWnrUSuP5d0J9mlqR6CeikHBcaH4LNLHrMmE3amZcMMjED10LbVPqqBTzk35HCUKO6zYYIcZwqMqN8U14lx1+xRMviO32gJ+JR7UJoFIk0cQ70LWcd/qgytBKlko88yJLF6ku1uQYXOiAAbBef1mc76kBFI5Lyp545hkS9hbw6TVcpTQZQMPzQqgoocz7jHiqUtKYr4X3Xtk++k0mxOJmiDnN0SwXF3s0dOg56NpOK5RorTQcPMFwkfLrt0CCz3SauzqVtYnAUWRKwERLbKWlTlRn5I12VEHkxWp13owZfM0Ih6KHlG+fQwQz3n1ubOrKeizNJREOCp5KMC8dP8HQxMuePIq0SAu0tk1Po
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mfCdRYRp3q3nIoud/12fCjAKErW4oOqCffnEFy6DRdU=;
+        b=nMqklvina+BQq2RBH4692rirxWN2Nghab1bi9A+PiNDpBBftfcgdr0WZ2k24UoZQzV
+         5iU39xO+RPoiUuvCSDwonMH0bkgcLCm5EI9negIfd3WDhPo1mW03d8Hc8KLfQcBbmjMm
+         5ydLC0Bb7hMIGi7B+eUENZWxePgZ4yERoVInMZTGvxg1852+ygU4sXt/7iN+17vV9LPA
+         8ElcEP0IExu60J08bjAIG28Oof5vjCyR0eVamOUpkHUiojXu1Qlu2eaCuwzJeWb2o+qQ
+         x3I/s0cnF4t5lcj5v2XQe6mbjE5MUZjvKpjV3Q/agmtrWiclqrNn6LTYvZLqdFbVT6Z7
+         UOeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=mfCdRYRp3q3nIoud/12fCjAKErW4oOqCffnEFy6DRdU=;
+        b=s511WMGc8je/tZkNF1xQT2jy7WhdowY/tQaromvjjmzHS4SDCP9MMe/XkN+3ta5qSk
+         HZJ4IvKPwGkblEURZxqpF8oNtkcTjbyIM8Xj+RzRj7XxoqycaYblXAgHNldp1lG9BlU+
+         hEInTqOVHR2Fo7NW+BlhIeA0WGUFsiRwbZiHI6AdM1LrfK4eR8LXyMgHIrCqv0K5Eo47
+         QnTXQNDYSCz+uNZqIvds/f4rPNtXP+FpmzgDVjKWzysdB51DuR1SJvl5u3li4CI6HMEq
+         jL9KEYJU+RZd+QLfIdJ3cARTeW/T1FNQve7XHHcSNgekhFBxSraQpbt065LG7yAeIqCE
+         G/dw==
+X-Gm-Message-State: APjAAAVLb83o2vtIuu9LaHhr+ZU5HMYrYvgko8Javmp8KEPPTV4V9Ayh
+        YN9Z9t1Dz7IT02RgxZ9Jz1E=
+X-Google-Smtp-Source: APXvYqziixVN8QX0axYxRCbTdomhvQuuFyo3x8NNHvUisxjpqtk0xuN9JMrq1hhEmNB+d/dp+yQRqg==
+X-Received: by 2002:a63:ce4b:: with SMTP id r11mr4848255pgi.419.1578667255122;
+        Fri, 10 Jan 2020 06:40:55 -0800 (PST)
+Received: from ziggy.stardust ([95.169.227.92])
+        by smtp.gmail.com with ESMTPSA id 3sm3133559pjg.27.2020.01.10.06.40.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jan 2020 06:40:54 -0800 (PST)
+Subject: Re: [PATCH v3,2/8] arm64: dts: mt8183: add/update dynamic power
+ coefficients
+To:     Michael Kao <michael.kao@mediatek.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, hsinyi@chromium.org,
+        linux-pm@vger.kernel.org, srv_heupstream@mediatek.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <20200103064407.19861-1-michael.kao@mediatek.com>
+ <20200103064407.19861-3-michael.kao@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <963f6a16-152f-f3b0-56fc-4edb3f1023f3@gmail.com>
+Date:   Fri, 10 Jan 2020 15:40:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96c40df0-2f5f-43c2-9f75-08d795da5e98
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2020 14:35:41.7355
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: TjE7Sr2+UoIE45As9utcBEHDLYkTx4qk/lFka8jozlKU+N+o9dd4kwU+7HZkDQ0V/sr7RnUL2EBOEuPrkDcYgQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3508
-X-OriginatorOrg: synopsys.com
+In-Reply-To: <20200103064407.19861-3-michael.kao@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogQW5kcmUgR3VlZGVzIDxhbmRyZS5ndWVkZXNAbGludXguaW50ZWwuY29tPg0KRGF0ZTog
-SmFuLzA5LzIwMjAsIDE4OjA0OjU1IChVVEMrMDA6MDApDQoNCj4gUXVvdGluZyBKb3NlIEFicmV1
-ICgyMDIwLTAxLTA5IDAwOjU5OjI0KQ0KPiA+IEZyb206IEFuZHJlIEd1ZWRlcyA8YW5kcmUuZ3Vl
-ZGVzQGxpbnV4LmludGVsLmNvbT4NCj4gPiBEYXRlOiBKYW4vMDkvMjAyMCwgMDE6MDc6MzcgKFVU
-QyswMDowMCkNCj4gPiANCj4gPiA+IEFmdGVyIHJlYWRpbmcgYWxsIHRoaXMgZ3JlYXQgZGlzY3Vz
-c2lvbiBhbmQgcmV2aXNpdGluZyB0aGUgODAyLjFRIGFuZCA4MDIuM2JyDQo+ID4gPiBzcGVjcywg
-SSdtIG5vdyBsZWFuaW5nIHRvd2FyZHMgdG8gbm90IGNvdXBsaW5nIEZyYW1lIFByZWVtcHRpb24g
-c3VwcG9ydCB1bmRlcg0KPiA+ID4gdGFwcmlvIHFkaXNjLiBCZXNpZGVzIHdoYXQgaGF2ZSBiZWVu
-IGRpc2N1c3NlZCwgQW5uZXggUy4yIGZyb20gODAyLjFRLTIwMTgNCj4gPiA+IGZvcmVzZWVzIEZQ
-IHdpdGhvdXQgRVNUIHNvIGl0IG1ha2VzIG1lIGZlZWwgbGlrZSB3ZSBzaG91bGQga2VlcCB0aGVt
-IHNlcGFyYXRlLg0KPiA+IA0KPiA+IEkgYWdyZWUgdGhhdCBFU1QgYW5kIEZQIGNhbiBiZSB1c2Vk
-IGluZGl2aWR1YWxseS4gQnV0IGhvdyBjYW4geW91IA0KPiA+IHNwZWNpZnkgdGhlIGhvbGQgYW5k
-IHJlbGVhc2UgY29tbWFuZHMgZm9yIGdhdGVzIHdpdGhvdXQgY2hhbmdpbmcgdGFwcmlvIHFkaXNj
-IHVzZXIgc3BhY2UgQVBJID8NCj4gDQo+IFRoZSAnaG9sZCcgYW5kICdyZWxlYXNlJyBhcmUgb3Bl
-cmF0aW9ucyBmcm9tIHRoZSBHQ0wsIHdoaWNoIGlzIHBhcnQgb2YgRVNULiBTbw0KPiB0aGV5IHNo
-b3VsZCBzdGlsbCBiZSBzcGVjaWZpZWQgdmlhIHRhcHJpby4gTm8gY2hhbmdpbmcgaW4gdGhlIHVz
-ZXIgc3BhY2UgQVBJIGlzDQo+IHJlcXVpcmVkIHNpbmNlIHRoZXNlIG9wZXJhdGlvbnMgYXJlIGFs
-cmVhZHkgc3VwcG9ydGVkIGluIHRhcHJpbyBBUEkuIFdoYXQgaXMNCj4gbWlzc2luZyB0b2RheSBp
-cyBqdXN0IHRoZSAndGMnIHNpZGUgb2YgaXQsIHdoaWNoIHlvdSBhbHJlYWR5IGhhdmUgYSBwYXRj
-aCBmb3INCj4gaXQuDQoNCk9LLiBTaG91bGQgd2UgYXNrIHRvIG1lcmdlIGl0IGFzLWlzIHRoZW4g
-Pw0KDQo+ID4gPiBSZWdhcmRpbmcgdGhlIEZQIGNvbmZpZ3VyYXRpb24ga25vYnMsIHRoZSBmb2xs
-b3dpbmcgc2VlbXMgcmVhc29uYWJsZSB0byBtZToNCj4gPiA+ICAgICAqIEVuYWJsZS9kaXNhYmxl
-IEZQIGZlYXR1cmUNCj4gPiA+ICAgICAqIFByZWVtcHRhYmxlIHF1ZXVlIG1hcHBpbmcNCj4gPiA+
-ICAgICAqIEZyYWdtZW50IHNpemUgbXVsdGlwbGllcg0KPiA+ID4gDQo+ID4gPiBJJ20gbm90IHN1
-cmUgYWJvdXQgdGhlIGtub2IgJ3RpbWVycyAoaG9sZC9yZWxlYXNlKScgZGVzY3JpYmVkIGluIHRo
-ZSBxdW90ZXMNCj4gPiA+IGFib3ZlLiBJIGNvdWxkbid0IGZpbmQgYSBtYXRjaCBpbiB0aGUgc3Bl
-Y3MuIElmIGl0IHJlZmVycyB0byAnaG9sZEFkdmFuY2UnIGFuZA0KPiA+ID4gJ3JlbGVhc2VBZHZh
-bmNlJyBwYXJhbWV0ZXJzIGRlc2NyaWJlZCBpbiA4MDIuMVEtMjAxOCwgSSBiZWxpZXZlIHRoZXkg
-YXJlIG5vdA0KPiA+ID4gY29uZmlndXJhYmxlLiBEbyB3ZSBrbm93IGFueSBoYXJkd2FyZSB3aGVy
-ZSB0aGV5IGFyZSBjb25maWd1cmFibGU/DQo+ID4gDQo+ID4gU3lub3BzeXMnIEhXIHN1cHBvcnRz
-IHJlY29uZmlndXJpbmcgdGhlc2UgcGFyYW1ldGVycy4gVGhleSBhcmUsIGhvd2V2ZXIsIA0KPiA+
-IGZpeGVkIGluZGVwZW5kZW50bHkgb2YgUXVldWVzLiBpLmUuIGFsbCBxdWV1ZXMgd2lsbCBoYXZl
-IHNhbWUgaG9sZEFkdmFuY2UgLyByZWxlYXNlQWR2YW5jZS4NCj4gDQo+IEdvb2QgdG8ga25vdy4g
-SXMgdGhlIGRhdGFzaGVldCBwdWJsaWNseSBhdmFpbGFibGU/IElmIHNvLCBjb3VsZCB5b3UgcGxl
-YXNlDQo+IHBvaW50IG1lIHRvIGl0PyAgSSdkIGxpa2UgdG8gbGVhcm4gbW9yZSBhYm91dCB0aGUg
-RlAga25vYnMgcHJvdmlkZWQgYnkNCj4gZGlmZmVyZW50IEhXLg0KDQpJJ20gYWZyYWlkIGl0cyBu
-b3QgYXZhaWxhYmxlIHVubGVzcyB5b3UgYXJlIGEgU3lub3BzeXMgY3VzdG9tZXIuIFlvdSANCnNo
-b3VsZCBob3dldmVyIGJlIGFibGUgdG8gZmlndXJlIG91dCB0aGUgYmVoYXZpb3IgYnkgcmVhZGlu
-ZyBteSBwYXRjaCANCnRoYXQgYWRkcyBzdXBwb3J0IGZvciBGUEUgaW4gWEdNQUMgYW5kIFFvUyBj
-b3Jlcy4gSSBjYW4gY2xhcmlmeSBhbnkgDQpkb3VidHMuDQoNCi0tLQ0KVGhhbmtzLA0KSm9zZSBN
-aWd1ZWwgQWJyZXUNCg==
+
+
+On 03/01/2020 07:44, Michael Kao wrote:
+> From: "michael.kao" <michael.kao@mediatek.com>
+> 
+> Add dynamic power coefficients for all cores and update those of
+> CPU0 and CPU4.
+
+No update in this patch. I suppose it need rewording.
+
+Regards,
+Matthias
+
+> 
+> Signed-off-by: Michael Kao <michael.kao@mediatek.com>
+> ---
+>  arch/arm64/boot/dts/mediatek/mt8183.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+> index a2793cf3d994..cfb74af260e0 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+> @@ -73,6 +73,7 @@
+>  			reg = <0x000>;
+>  			enable-method = "psci";
+>  			capacity-dmips-mhz = <741>;
+> +			dynamic-power-coefficient = <84>;
+>  		};
+>  
+>  		cpu1: cpu@1 {
+> @@ -81,6 +82,7 @@
+>  			reg = <0x001>;
+>  			enable-method = "psci";
+>  			capacity-dmips-mhz = <741>;
+> +			dynamic-power-coefficient = <84>;
+>  		};
+>  
+>  		cpu2: cpu@2 {
+> @@ -89,6 +91,7 @@
+>  			reg = <0x002>;
+>  			enable-method = "psci";
+>  			capacity-dmips-mhz = <741>;
+> +			dynamic-power-coefficient = <84>;
+>  		};
+>  
+>  		cpu3: cpu@3 {
+> @@ -97,6 +100,7 @@
+>  			reg = <0x003>;
+>  			enable-method = "psci";
+>  			capacity-dmips-mhz = <741>;
+> +			dynamic-power-coefficient = <84>;
+>  		};
+>  
+>  		cpu4: cpu@100 {
+> @@ -105,6 +109,7 @@
+>  			reg = <0x100>;
+>  			enable-method = "psci";
+>  			capacity-dmips-mhz = <1024>;
+> +			dynamic-power-coefficient = <211>;
+>  		};
+>  
+>  		cpu5: cpu@101 {
+> @@ -113,6 +118,7 @@
+>  			reg = <0x101>;
+>  			enable-method = "psci";
+>  			capacity-dmips-mhz = <1024>;
+> +			dynamic-power-coefficient = <211>;
+>  		};
+>  
+>  		cpu6: cpu@102 {
+> @@ -121,6 +127,7 @@
+>  			reg = <0x102>;
+>  			enable-method = "psci";
+>  			capacity-dmips-mhz = <1024>;
+> +			dynamic-power-coefficient = <211>;
+>  		};
+>  
+>  		cpu7: cpu@103 {
+> @@ -129,6 +136,7 @@
+>  			reg = <0x103>;
+>  			enable-method = "psci";
+>  			capacity-dmips-mhz = <1024>;
+> +			dynamic-power-coefficient = <211>;
+>  		};
+>  	};
+>  
+> 
