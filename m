@@ -2,119 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E121D1367C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 08:01:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 955FD1367CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 08:03:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbgAJHBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 02:01:46 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:52814 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbgAJHBp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 02:01:45 -0500
-Received: by mail-pj1-f65.google.com with SMTP id a6so571551pjh.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 23:01:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3lXSs26I3wGImS7PjlRCzszP97Zcz7qic/VgP0ssNd4=;
-        b=ugPkvx1rLtZXxhEYXIWg2OwEtYgmXZkT7SoavpBZ5DNn9Cej1ydJjHZEHicrV4MfVZ
-         NeK3xhRNUAb4nVseqqQG38o5elE5JgigX+wQovkXoGX/nHbknVACCA255Ye1joc9LqJb
-         MMU6Z/tulGuel8VTKi/LrIQikdtqSsweXHSbxco4jvjHAW+63JF5spFg1vJwb5YWg8lG
-         pljb8AMfvEIlPr0+vev7MXLlVIY/lB6LGHaq7AWJCAb65o8PY8weHrMKrFzfzCoeHrd0
-         aSHogVLh7bmTFZ/B/VVK9U+KI4a2z0EKpVFK6Sf4LdhFn0JxkbbgQkFokBnqMXSigx0n
-         WGxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3lXSs26I3wGImS7PjlRCzszP97Zcz7qic/VgP0ssNd4=;
-        b=nU4PnPJlawwI58uxF8sumIeowqmstMntC5aLZNJu8wOJ6xffHHEnvW08Io9wqRjL4o
-         suhuMD4PRMzm28ukLYlThPXSFMVdO0wgDOGrsosvMikEO8qYARlAKsYaf/sR1c8Aszl1
-         SvjQ7vC0HGUyDqGkM9os3Q/nmCsG19PG0Yiz/lVrOHIvGe+m/qpHX1Hauy8QEecL9g/A
-         8KPTV/zpqhteO41V1MzlqE+RrUy81EL/DMdXqZ1j3lF4yoiQTWdgNPSBEq0CKW0/qE1J
-         c7TJLBQ3/V6y+6F5usxDo/6KZgC87wcctlJWrk9IE3pCHJpedk3N4W1k2bJQSGPYSbe7
-         d4BQ==
-X-Gm-Message-State: APjAAAUleKqxgEfS0bKsTLKng8fmROXJ+YQlsm346b+aZqW15nHav1YV
-        YC1ai/74brd6n4BUFSEdijviFw==
-X-Google-Smtp-Source: APXvYqwcHxSntks6ca+zn8Ku5M5DI1ACFUm8wuF7NB9Nt7J0Q9XlY9PQzsc/RT9UFe0UTbOaG4QUUg==
-X-Received: by 2002:a17:902:8f97:: with SMTP id z23mr2542710plo.170.1578639705002;
-        Thu, 09 Jan 2020 23:01:45 -0800 (PST)
-Received: from localhost ([122.172.140.51])
-        by smtp.gmail.com with ESMTPSA id 200sm1414725pfz.121.2020.01.09.23.01.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Jan 2020 23:01:44 -0800 (PST)
-Date:   Fri, 10 Jan 2020 12:31:42 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
-        David Dai <daidavid1@codeaurora.org>, adharmap@codeaurora.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 3/3] OPP: Add helper function for bandwidth OPP tables
-Message-ID: <20200110070142.gn3fnpytxhu3dqti@vireshk-i7>
-References: <20191207002424.201796-1-saravanak@google.com>
- <20191207002424.201796-4-saravanak@google.com>
- <20200108111947.q5aafrlz26tnk3nq@vireshk-i7>
- <CAGETcx_T7VONkSd-r9CY-5OpZBZ2iD0tFoCf0+d8CY2b5zgr9g@mail.gmail.com>
- <20200109044051.62ocfpt44q25q6qi@vireshk-i7>
- <CAGETcx-UWFSaZ8q1iiFVFUEPLN8t1uFb-u6v4VJiMarS21RLRQ@mail.gmail.com>
+        id S1727088AbgAJHDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 02:03:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57064 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726295AbgAJHDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 02:03:39 -0500
+Received: from localhost (unknown [223.226.110.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7C1B2080D;
+        Fri, 10 Jan 2020 07:03:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578639818;
+        bh=ZnMDBNhMvFkTRDhEtOEWNUKzKsBrxPyLSgZcAstK7P4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UtQke1VRM29qVQhxQo8REzyXvGu+GTluOSWfZzT6k+VFPNrFMg3X2bzUHZuQL+X2k
+         BjsSJUg8qKqc5qHRh/w9VwVJaMpyPMRHtywDHfsH7NhD4/Kf4lSPJxdNp1Fho/7t+D
+         SL74Mz+fmESqn7mF2LFvoOLY42ehtLOHPB3qjw34=
+Date:   Fri, 10 Jan 2020 12:33:21 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jank@cadence.com, srinivas.kandagatla@linaro.org,
+        slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Rander Wang <rander.wang@intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+Subject: Re: [PATCH 6/6] soundwire: stream: don't program ports for a stream
+ that has not been prepared
+Message-ID: <20200110070321.GA2818@vkoul-mobl>
+References: <20200108175438.13121-1-pierre-louis.bossart@linux.intel.com>
+ <20200108175438.13121-7-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGETcx-UWFSaZ8q1iiFVFUEPLN8t1uFb-u6v4VJiMarS21RLRQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20200108175438.13121-7-pierre-louis.bossart@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09-01-20, 10:44, Saravana Kannan wrote:
-> Agree, the OPP framework itself shouldn't be responsible. And I'm not
-> doing anything here? Just giving those devices a way to look up what
-> their suspend bandwidth is? So they can vote for it when they suspend?
+On 08-01-20, 11:54, Pierre-Louis Bossart wrote:
+> From: Rander Wang <rander.wang@intel.com>
+> 
+> In the Intel QA multi-pipelines test case, there are two pipelines for
+> playback and capture on the same bus. The test fails with an error
+> when setting port params:
+> 
+> [  599.224812] rt711 sdw:0:25d:711:0: invalid dpn_prop direction 1 port_num 0
+> [  599.224815] sdw_program_slave_port_params failed -22
+> [  599.224819] intel-sdw sdw-master-0: Program transport params failed: -22
+> [  599.224822] intel-sdw sdw-master-0: Program params failed: -22
 
-I think this will originate by itself from the device in case of
-interconnects as well and you don't need to separately have that for
-interconnects.
+side note, one of these above err logs should be removed :)
 
-For example, the device (lets say GPU) will have one of its OPP (and
-frequency, maybe the lowest one) marked as suspend-OPP. Then the
-driver which is doing the co-relation normally between GPU/DDR/Cache
-OPPs should be able to do this conversion as well without any extra
-help from the interconnect table.
+> [  599.224828] sdw_enable_stream: SDW0 Pin2-Playback: done
+> 
+> This problem is root-caused to the programming of the capture stream
+> ports while it is not yet prepared, the calling sequence is:
+> 
+> (1) hw_params for playback. The playback stream provide the port
+>     information to Bus.
+> (2) stream_prepare for playback, Transport and port parameters
+>     are computed for playback.
+> (3) hw_params for capture. The capture stream provide the port
+>     information to Bus, but it has not been prepared so is not
+>     accounted for in the bandwidth allocation.
+> (4) stream_enable for playback. Program transport and port parameters
+>     for all masters and slaves. Since the transport and port parameters
+>     are not computed for capture stream, sdw_program_slave_port_params
+>     will generate a error when setting port params for capture.
+> 
+> in step (4), we should only program the ports for the stream that have
+> been prepared. A stream that is only in CONFIGURED state should be
+> ignored, its ports will be programmed when it becomes PREPARED.
+> 
+> Tested on Comet Lake.
+> 
+> GitHub issue: https://github.com/thesofproject/linux/issues/1637
 
-If the minimum freq of the device correspond to the minimum freq of
-the DDR/Cache during normal operation, that should still work during
-suspend times, isn't it ?
+This is not relevant for kernel, pls remove
 
-> Ok, but you want this done only for "exact" or for all the other
-> helpers too?
+> Signed-off-by: Rander Wang <rander.wang@intel.com>
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> ---
+>  drivers/soundwire/stream.c | 21 ++++++++++++++++-----
+>  1 file changed, 16 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
+> index da10f38298c0..198372977187 100644
+> --- a/drivers/soundwire/stream.c
+> +++ b/drivers/soundwire/stream.c
+> @@ -604,12 +604,23 @@ static int sdw_notify_config(struct sdw_master_runtime *m_rt)
+>   *
+>   * @bus: SDW bus instance
+>   */
+> -static int sdw_program_params(struct sdw_bus *bus)
+> +static int sdw_program_params(struct sdw_bus *bus, bool prepare)
+>  {
+>  	struct sdw_master_runtime *m_rt;
+>  	int ret = 0;
+>  
+>  	list_for_each_entry(m_rt, &bus->m_rt_list, bus_node) {
+> +
+> +		/*
+> +		 * this loop walks through all master runtimes for a
+> +		 * bus, but the ports can only be configured while
+> +		 * explicitly preparing a stream or handling an
+> +		 * already-prepared stream otherwise.
 
-All helpers that you need for PM domains and interconnects.
+we can go upto 80 chars, make sure you align the above comment block as
+such
 
-> Also, this means that I'll have to implement a
-> _opp_compare_key2() or whatever because the generic one that
-> automatically picks the key is still needed for the generic code. Is
-> that fine by you?
+> +		 */
+> +		if (!prepare &&
+> +		    m_rt->stream->state == SDW_STREAM_CONFIGURED)
+> +			continue;
+> +
+>  		ret = sdw_program_port_params(m_rt);
+>  		if (ret < 0) {
+>  			dev_err(bus->dev,
+> @@ -1502,7 +1513,7 @@ static int _sdw_prepare_stream(struct sdw_stream_runtime *stream,
+>  
+>  program_params:
+>  		/* Program params */
+> -		ret = sdw_program_params(bus);
+> +		ret = sdw_program_params(bus, true);
+>  		if (ret < 0) {
+>  			dev_err(bus->dev, "Program params failed: %d\n", ret);
+>  			goto restore_params;
+> @@ -1602,7 +1613,7 @@ static int _sdw_enable_stream(struct sdw_stream_runtime *stream)
+>  		bus = m_rt->bus;
+>  
+>  		/* Program params */
+> -		ret = sdw_program_params(bus);
+> +		ret = sdw_program_params(bus, false);
+>  		if (ret < 0) {
+>  			dev_err(bus->dev, "Program params failed: %d\n", ret);
+>  			return ret;
+> @@ -1687,7 +1698,7 @@ static int _sdw_disable_stream(struct sdw_stream_runtime *stream)
+>  		struct sdw_bus *bus = m_rt->bus;
+>  
+>  		/* Program params */
+> -		ret = sdw_program_params(bus);
+> +		ret = sdw_program_params(bus, false);
 
-I am not concerned about the number of helpers but their optimization.
-I will leave it for you to do that and review it when I see how you
-have done it :)
+Can you do a converse test as well, when the streams are running and
+concurrently two stream are stopped, it would be good to get it confirmed...
+
+>  		if (ret < 0) {
+>  			dev_err(bus->dev, "Program params failed: %d\n", ret);
+>  			return ret;
+> @@ -1769,7 +1780,7 @@ static int _sdw_deprepare_stream(struct sdw_stream_runtime *stream)
+>  			m_rt->ch_count * m_rt->stream->params.bps;
+>  
+>  		/* Program params */
+> -		ret = sdw_program_params(bus);
+> +		ret = sdw_program_params(bus, false);
+>  		if (ret < 0) {
+>  			dev_err(bus->dev, "Program params failed: %d\n", ret);
+>  			return ret;
+> -- 
+> 2.20.1
 
 -- 
-viresh
+~Vinod
