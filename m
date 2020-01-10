@@ -2,150 +2,295 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20C88137239
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:05:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC068137244
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:06:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728732AbgAJQE6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 11:04:58 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:15024 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728480AbgAJQE6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 11:04:58 -0500
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Horatiu.Vultur@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Horatiu.Vultur@microchip.com";
-  x-sender="Horatiu.Vultur@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Horatiu.Vultur@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Horatiu.Vultur@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: /B5vpOr4VmrQ5c6NrR9K6byPUAx1VdG+MT3+qUKbO/Q8ItJw6ez83kRfEeaL2kB0tWH8Y+c8dm
- 5eB2+ZDtK1E7dheYGRR66X6rZMWora3pb1ojD3o8jJF2oYCabUomMUXzNGc+pRNL8N41NxPM8w
- LQ+jpfeGXYlsn9Isy4YlfwFryAgtSoFvYoHU9ROV496ak+1DsiEK6sLTz9e9HTbY1fxSXkhSaL
- F2OWoEbiaep/RUVwP4a8FX0x6nXy0FO0WwUzvkh385abd8fdHJMWFvC4Ysz81KUKveb89cqz/d
- aLc=
-X-IronPort-AV: E=Sophos;i="5.69,417,1571727600"; 
-   d="scan'208";a="62887775"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 10 Jan 2020 09:04:57 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 10 Jan 2020 09:04:55 -0700
-Received: from localhost (10.10.85.251) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
- Transport; Fri, 10 Jan 2020 09:04:55 -0700
-Date:   Fri, 10 Jan 2020 17:04:56 +0100
-From:   Horatiu Vultur <horatiu.vultur@microchip.com>
-To:     Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <bridge@lists.linux-foundation.org>, <davem@davemloft.net>,
-        <roopa@cumulusnetworks.com>, <jakub.kicinski@netronome.com>,
-        <vivien.didelot@gmail.com>, <andrew@lunn.ch>,
-        <jeffrey.t.kirsher@intel.com>, <olteanv@gmail.com>,
-        <anirudh.venkataramanan@intel.com>, <dsahern@gmail.com>,
-        <jiri@mellanox.com>, <UNGLinuxDriver@microchip.com>
-Subject: Re: [RFC net-next Patch 0/3] net: bridge: mrp: Add support for Media
- Redundancy Protocol(MRP)
-Message-ID: <20200110160456.enzomhfsce7bptu3@soft-dev3.microsemi.net>
-References: <20200109150640.532-1-horatiu.vultur@microchip.com>
- <6f1936e9-97e5-9502-f062-f2925c9652c9@cumulusnetworks.com>
+        id S1728767AbgAJQFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 11:05:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53550 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728472AbgAJQFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 11:05:15 -0500
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18A6C2082E;
+        Fri, 10 Jan 2020 16:05:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578672313;
+        bh=J+uoasMQemisCi7nP/ysBiaXbQ81LYUTO5rAuHhMtGg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=xtPOHaZoa3p/gRvkDFpkokGcbRfRFmHEHXD13X6r7rPpWDQKcCyEC5V/MNrkzBBwr
+         by3qNR3s64FJmNx0M8a0dbRRxkkbvXtfCupdA9ecYVozESVVAlbgT6m3ewwUyVUUO2
+         XfMS60VO117Qo79XWyyEiRKxpCTYby5yZA8WcH8E=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 09/22] Documentation: bootconfig: Add a doc for extended boot config
+Date:   Sat, 11 Jan 2020 01:05:06 +0900
+Message-Id: <157867230658.17873.9309879174829924324.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <157867220019.17873.13377985653744804396.stgit@devnote2>
+References: <157867220019.17873.13377985653744804396.stgit@devnote2>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <6f1936e9-97e5-9502-f062-f2925c9652c9@cumulusnetworks.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nik,
+Add a documentation for extended boot config under
+admin-guide, since it is including the syntax of boot config.
 
-> I agree with Stephen here, IMO you have to take note of how STP has progressed
-> and that bringing it in the kernel was a mistake, these days mstpd has an active
-> community and much better support which is being extended. This looks best implemented
-> in user-space in my opinion with minimal kernel changes to support it. You could simply
-> open a packet socket with a filter and work through that, you don't need new netlink
-> sockets. I'm not familiar with the protocol so can't really be the judge of that, if
-> you present a good argument for needing a new netlink socket for these packets - then
-> sure, ok.
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ Changes in v6:
+  - Add a note about comment after value.
+ Changes in v5:
+  - Fix to insert bootconfig to TOC list alphabetically.
+  - Add notes about avaliable characters in values.
+  - Fix to use correct quotes (``) for .rst.
+ Changes in v4:
+  - Rename suppremental kernel command line to boot config.
+  - Update document according to the recent changes.
+  - Add How to load it on boot.
+  - Style bugfix.
+---
+ Documentation/admin-guide/bootconfig.rst |  184 ++++++++++++++++++++++++++++++
+ Documentation/admin-guide/index.rst      |    1 
+ MAINTAINERS                              |    1 
+ 3 files changed, 186 insertions(+)
+ create mode 100644 Documentation/admin-guide/bootconfig.rst
 
-We are aware of the STP story, and in case of STP I do agree, it is much
-better to have this in user-space. But while MRP has much in common with
-STP, it also differs in some important areas.
+diff --git a/Documentation/admin-guide/bootconfig.rst b/Documentation/admin-guide/bootconfig.rst
+new file mode 100644
+index 000000000000..f7475df2a718
+--- /dev/null
++++ b/Documentation/admin-guide/bootconfig.rst
+@@ -0,0 +1,184 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++==================
++Boot Configuration
++==================
++
++:Author: Masami Hiramatsu <mhiramat@kernel.org>
++
++Overview
++========
++
++The boot configuration is expanding current kernel cmdline to support
++additional key-value data when boot the kernel in an efficient way.
++This allows adoministrators to pass a structured-Key config file.
++
++Config File Syntax
++==================
++
++The boot config syntax is a simple structured key-value. Each key consists
++of dot-connected-words, and key and value are connected by "=". The value
++has to be terminated by semi-colon (``;``) or newline (``\n``).
++For array value, array entries are separated by comma (``,``). ::
++
++KEY[.WORD[...]] = VALUE[, VALUE2[...]][;]
++
++Each key word must contain only alphabets, numbers, dash (``-``) or underscore
++(``_``). And each value only contains printable characters or spaces except
++for delimiters such as semi-colon (``;``), new-line (``\n``), comma (``,``),
++hash (``#``) and closing brace (``}``).
++
++If you want to use those delimiters in a value, you can use either double-
++quotes (``"VALUE"``) or single-quotes (``'VALUE'``) to quote it. Note that
++you can not escape these quotes.
++
++There can be a key which doesn't have value or has an empty value. Those keys
++are used for checking the key exists or not (like a boolean).
++
++Key-Value Syntax
++----------------
++
++The boot config file syntax allows user to merge partially same word keys
++by brace. For example::
++
++ foo.bar.baz = value1
++ foo.bar.qux.quux = value2
++
++These can be written also in::
++
++ foo.bar {
++    baz = value1
++    qux.quux = value2
++ }
++
++Or more shorter, written as following::
++
++ foo.bar { baz = value1; qux.quux = value2 }
++
++In both styles, same key words are automatically merged when parsing it
++at boot time. So you can append similar trees or key-values.
++
++Comments
++--------
++
++The config syntax accepts shell-script style comments. The comments start
++with hash ("#") until newline ("\n") will be ignored.
++
++::
++
++ # comment line
++ foo = value # value is set to foo.
++ bar = 1, # 1st element
++       2, # 2nd element
++       3  # 3rd element
++
++This is parsed as below::
++
++ foo = value
++ bar = 1, 2, 3
++
++Note that you can not put a comment between value and delimiter(``,`` or
++``;``). This means following config has a syntax error ::
++
++ key = 1 # comment
++       ,2
++
++
++/proc/bootconfig
++================
++
++/proc/bootconfig is a user-space interface of the boot config.
++Unlike /proc/cmdline, this file shows the key-value style list.
++Each key-value pair is shown in each line with following style::
++
++ KEY[.WORDS...] = "[VALUE]"[,"VALUE2"...]
++
++
++Boot Kernel With a Boot Config
++==============================
++
++Since the boot configuration file is loaded with initrd, it will be added
++to the end of the initrd (initramfs) image file. The Linux kernel decodes
++the last part of the initrd image in memory to get the boot configuration
++data.
++Because of this "piggyback" method, there is no need to change or
++update the boot loader and the kernel image itself.
++
++To do this operation, Linux kernel provides "bootconfig" command under
++tools/bootconfig, which allows admin to apply or delete the config file
++to/from initrd image. You can build it by follwoing command::
++
++ # make -C tools/bootconfig
++
++To add your boot config file to initrd image, run bootconfig as below
++(Old data is removed automatically if exists)::
++
++ # tools/bootconfig/bootconfig -a your-config /boot/initrd.img-X.Y.Z
++
++To remove the config from the image, you can use -d option as below::
++
++ # tools/bootconfig/bootconfig -d /boot/initrd.img-X.Y.Z
++
++
++C onfig File Limitation
++======================
++
++Currently the maximum config size size is 32KB and the total key-words (not
++key-value entries) must be under 1024 nodes.
++Note: this is not the number of entries but nodes, an entry must consume
++more than 2 nodes (a key-word and a value). So theoretically, it will be
++up to 512 key-value pairs. If keys contains 3 words in average, it can
++contain 256 key-value pairs. In most cases, the number of config items
++will be under 100 entries and smaller than 8KB, so it would be enough.
++If the node number exceeds 1024, parser returns an error even if the file
++size is smaller than 32KB.
++Anyway, since bootconfig command verifies it when appending a boot config
++to initrd image, user can notice it before boot.
++
++
++Bootconfig APIs
++===============
++
++User can query or loop on key-value pairs, also it is possible to find
++a root (prefix) key node and find key-values under that node.
++
++If you have a key string, you can query the value directly with the key
++using xbc_find_value(). If you want to know what keys exist in the SKC
++tree, you can use xbc_for_each_key_value() to iterate key-value pairs.
++Note that you need to use xbc_array_for_each_value() for accessing
++each arraies value, e.g.::
++
++ vnode = NULL;
++ xbc_find_value("key.word", &vnode);
++ if (vnode && xbc_node_is_array(vnode))
++    xbc_array_for_each_value(vnode, value) {
++      printk("%s ", value);
++    }
++
++If you want to focus on keys which has a prefix string, you can use
++xbc_find_node() to find a node which prefix key words, and iterate
++keys under the prefix node with xbc_node_for_each_key_value().
++
++But the most typical usage is to get the named value under prefix
++or get the named array under prefix as below::
++
++ root = xbc_find_node("key.prefix");
++ value = xbc_node_find_value(root, "option", &vnode);
++ ...
++ xbc_node_for_each_array_value(root, "array-option", value, anode) {
++    ...
++ }
++
++This accesses a value of "key.prefix.option" and an array of
++"key.prefix.array-option".
++
++Locking is not needed, since after initialized, the config becomes readonly.
++All data and keys must be copied if you need to modify it.
++
++
++Functions and structures
++========================
++
++.. kernel-doc:: include/linux/bootconfig.h
++.. kernel-doc:: lib/bootconfig.c
++
+diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+index 4405b7485312..9e0f1e3fd152 100644
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -64,6 +64,7 @@ configure specific aspects of kernel behavior to your liking.
+    binderfs
+    binfmt-misc
+    blockdev/index
++   bootconfig
+    braille-console
+    btmrvl
+    cgroup-v1/index
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d0da06bdf3d8..c14a956343b9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15780,6 +15780,7 @@ F:	lib/bootconfig.c
+ F:	fs/proc/bootconfig.c
+ F:	include/linux/bootconfig.h
+ F:	tools/bootconfig/*
++F:	Documentation/admin-guide/bootconfig.rst
+ 
+ SUN3/3X
+ M:	Sam Creasey <sammy@sammy.net>
 
-Most importantly, MRP requires sending and receiving thousands of frames
-per second. To achieve the 10ms recovery time, the tx period per
-interface is 500us, on two interfaces, adding up to 4000 frames per
-second to RX and 4000 to TX(if the ring is closed). And this is per
-ring...
-
-The CPU systems in the kind of switches we are working on can not handle
-this load, and it was not meant to handle this. Instead the switch core
-can do the periodic injection of frames and automatic terminate them.
-
-In patch posted, we have not added this HW offload (we have this in our
-internal repos, where we also have implemented the remaining part of the
-protocol). The reason for this is that we wanted to do a proper SW
-implementation and then HW offload it.
-
-Looking back, I can see that what we have presented here could be done
-equally good in user-space (roughly), but that is because the HW offload
-is not part of this patch.
-
-The problem in putting it in user-space is that we do not have a nice a
-clean API where it is just putting a port in forwarding/blocking state
-(like we have with STP). To do an abstraction that actually allow us to
-utilize the HW to offload a protocol like MRP will very easy become too
-specific for our SoC and rejected with that argument.
-
-> 
-> If you do decide to continue with the kernel version (which I would again discourage)
-> a few general points (from a quick scan):
->  - the single 1.6+k line patch is just hard to review, please break it into more digestable
->    and logical pieces
-We will work in this.
-
->  - the locking is wrong, also there're a few use-after-free bugs
-Oops, that is not good - happy that you caught it. A hint on where,
-would be great.
-
->  - please re-work the bridge integration code, it can be simplified and tests can be eliminated
-We will have a second look at that.
-
->  - your netlink helpers usage is generally wrong and needs more work
-Ok - some hints on what we did wrong would be great.
-
->  - use the already existing port states instead of adding new ones and you can avoid some tests in fast-path
-I assume you want us to re-use the STP concept of forwarding/blocking
-and relay on the checks it already has.
-
->  - perhaps look into using br_afspec() for configuration/retrieval initially ? I don't think you need the new rtm messages yet.
-Is that a good example on how to do the netlink interface, and you want
-us to use that as a reference?
-
->  - I'm sure I can go on, but I really think all of this should be put in user-space -
->    in-kernel STP is a great example of how _not_ to do it. :) As a bonus you'll avoid 90% of the
->    problems above just by making your own abstractions and using them for it.
-Please continue.
-
-We do not see any good paths for getting user-space based solutions
-which actually does use the HW offloading accepted upstream. If this
-path exists then we would like to understand it and evaluate it
-properly.
-
--- 
-/Horatiu
