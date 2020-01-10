@@ -2,60 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C40DA136FFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 15:51:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7B2C137002
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 15:51:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728284AbgAJOvA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 09:51:00 -0500
-Received: from foss.arm.com ([217.140.110.172]:45688 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727627AbgAJOu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 09:50:59 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F0FB30E;
-        Fri, 10 Jan 2020 06:50:59 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.197.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C3BF3F6C4;
-        Fri, 10 Jan 2020 06:50:58 -0800 (PST)
-Date:   Fri, 10 Jan 2020 14:50:56 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        will@kernel.org, maz@kernel.org, mark.rutland@arm.com,
-        dave.martin@arm.com, ard.biesheuvel@linaro.org,
-        christoffer.dall@arm.com
-Subject: Re: [PATCH v2 3/7] arm64: cpufeature: Fix the type of no FP/SIMD
- capability
-Message-ID: <20200110145055.GE8786@arrakis.emea.arm.com>
-References: <20191217183402.2259904-1-suzuki.poulose@arm.com>
- <20191217183402.2259904-4-suzuki.poulose@arm.com>
+        id S1728341AbgAJOvU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 09:51:20 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:38215 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728048AbgAJOvT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 09:51:19 -0500
+Received: by mail-qt1-f195.google.com with SMTP id n15so2108899qtp.5
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 06:51:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dP+yKJgC1PvcZ6U9Dq2dx4CeTIqnBT2BpMb+Wm9xBlI=;
+        b=XvXJIL509aqMK2SYSrcuBHs3ubP49aSVcCcSnaLIVODThTeP9V7pW0nppWBOxcYAFa
+         bjB4oOI3tAwc/h00HrwKTxD9G0UO1Lph0w6EKUqapEElolCyhF4Hf6oZ9FjVSetVEUdm
+         O3JiR6QqZ8scDs44UW6b1b7U9cb13OfMwy/gFmwtV9CEegOsqB6RKUc0a72mfBUhejf4
+         UigXKGLEtJigBM89KHaZovH43iToYo0COVkWVSQ9RFLznGLPm90tlcoKptpf0ur0fUlL
+         DkJf8j4lx18+xVYkPyPNcnU2D3iwCSIoMQdS8fnzDRxhmmNsOI967yfdLiXyWadXNgUa
+         KCGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dP+yKJgC1PvcZ6U9Dq2dx4CeTIqnBT2BpMb+Wm9xBlI=;
+        b=hCCabo4V+qykNFMzXaxKZaGjIyITWmHi4L5yqEaAPk9OWv7f46FHY2ShniWlbUDRCJ
+         SBqR741oME+qPvrkDSiEeUpgaQ7UzgenakCNwYuznwdziKbQYacKj0Op3TxvQpSFPZaG
+         rQ8PVpv2z5/hfwB6GWFFm3YoFpMkF+Ju0dRdmRh/dUuR68TotGl15VvrNaY2krHG4lXD
+         UrlnGYXBMnvvp6byxRxTtPKdoOCcLSKx4wXWB1D5binfuUbGgXVJygyYvkQBReoCSsIc
+         ln5QsvleAXpA9YgUhj8w1Ud55M55sH/BdNQHFJRebnsMlVqgOQDGJSvI04nafiInv7Wt
+         bXZg==
+X-Gm-Message-State: APjAAAX3ehPqy1/4GeBSBlxwu0mTDuzZyUoOZhA7AtymmWWpkgl31Wnz
+        M6fVzEXdtQgjmk294paYwrVZew==
+X-Google-Smtp-Source: APXvYqx9tJ3xrVEVF5uE1eywbilOUQ3Qf7BtHeKw64SIwazRSBjH4hEsmA1DxrDcg6Xwsp77x30DnQ==
+X-Received: by 2002:aed:3ee5:: with SMTP id o34mr2772503qtf.164.1578667877943;
+        Fri, 10 Jan 2020 06:51:17 -0800 (PST)
+Received: from ovpn-123-250.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id z4sm1093288qta.73.2020.01.10.06.51.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 10 Jan 2020 06:51:17 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     steven.price@arm.com, catalin.marinas@arm.com, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH -next] arm64/mm/dump: fix a compilation error
+Date:   Fri, 10 Jan 2020 09:51:12 -0500
+Message-Id: <20200110145112.7959-1-cai@lca.pw>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122.2)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191217183402.2259904-4-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 06:33:58PM +0000, Suzuki K Poulose wrote:
-> The NO_FPSIMD capability is defined with scope SYSTEM, which implies
-> that the "absence" of FP/SIMD on at least one CPU is detected only
-> after all the SMP CPUs are brought up. However, we use the status
-> of this capability for every context switch. So, let us change
-> the scope to LOCAL_CPU to allow the detection of this capability
-> as and when the first CPU without FP is brought up.
-> 
-> Also, the current type allows hotplugged CPU to be brought up without
-> FP/SIMD when all the current CPUs have FP/SIMD and we have the userspace
-> up. Fix both of these issues by changing the capability to
-> BOOT_RESTRICTED_LOCAL_CPU_FEATURE.
-> 
-> Fixes: 82e0191a1aa11abf ("arm64: Support systems without FP/ASIMD")
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+The linux-next commit "x86: mm: avoid allocating struct mm_struct on the
+stack" [1] introduced a compilation error with "arm64: mm: convert
+mm/dump.c to use walk_page_range()" [2]. Fixed it by using the new API.
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+arch/arm64/mm/dump.c:326:38: error: too few arguments to function call,
+expected 3, have 2
+        ptdump_walk_pgd(&st.ptdump, info->mm);
+        ~~~~~~~~~~~~~~~                     ^
+./include/linux/ptdump.h:20:1: note: 'ptdump_walk_pgd' declared here
+void ptdump_walk_pgd(struct ptdump_state *st, struct mm_struct *mm,
+pgd_t *pgd);
+^
+arch/arm64/mm/dump.c:364:38: error: too few arguments to function call,
+expected 3, have 2
+        ptdump_walk_pgd(&st.ptdump, &init_mm);
+        ~~~~~~~~~~~~~~~                     ^
+./include/linux/ptdump.h:20:1: note: 'ptdump_walk_pgd' declared here
+void ptdump_walk_pgd(struct ptdump_state *st, struct mm_struct *mm,
+pgd_t *pgd);
+^
+2 errors generated.
+
+[1] http://lkml.kernel.org/r/20200108145710.34314-1-steven.price@arm.com
+[2] http://lkml.kernel.org/r/20191218162402.45610-22-steven.price@arm.com
+
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ arch/arm64/mm/dump.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/mm/dump.c b/arch/arm64/mm/dump.c
+index ef4b3ca1e058..860c00ec8bd3 100644
+--- a/arch/arm64/mm/dump.c
++++ b/arch/arm64/mm/dump.c
+@@ -323,7 +323,7 @@ void ptdump_walk(struct seq_file *s, struct ptdump_info *info)
+ 		}
+ 	};
+ 
+-	ptdump_walk_pgd(&st.ptdump, info->mm);
++	ptdump_walk_pgd(&st.ptdump, info->mm, NULL);
+ }
+ 
+ static void ptdump_initialize(void)
+@@ -361,7 +361,7 @@ void ptdump_check_wx(void)
+ 		}
+ 	};
+ 
+-	ptdump_walk_pgd(&st.ptdump, &init_mm);
++	ptdump_walk_pgd(&st.ptdump, &init_mm, NULL);
+ 
+ 	if (st.wx_pages || st.uxn_pages)
+ 		pr_warn("Checked W+X mappings: FAILED, %lu W+X pages found, %lu non-UXN pages found\n",
+-- 
+2.21.0 (Apple Git-122.2)
+
