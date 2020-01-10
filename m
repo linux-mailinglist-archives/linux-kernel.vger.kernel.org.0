@@ -2,307 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A8A01367EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 08:07:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AC9A1367E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 08:05:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727135AbgAJHHe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 02:07:34 -0500
-Received: from mga01.intel.com ([192.55.52.88]:27348 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726281AbgAJHHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 02:07:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 23:07:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,415,1571727600"; 
-   d="scan'208";a="371524736"
-Received: from chenyu-office.sh.intel.com ([10.239.158.173])
-  by orsmga004.jf.intel.com with ESMTP; 09 Jan 2020 23:07:29 -0800
-From:   Chen Yu <yu.c.chen@intel.com>
-To:     x86@kernel.org
-Cc:     Bhupesh Sharma <bhsharma@redhat.com>,
-        Dave Young <dyoung@redhat.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Chris Down <chris@chrisdown.name>,
-        Michal Hocko <mhocko@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][v6] x86/resctrl: Add task resctrl information display
-Date:   Fri, 10 Jan 2020 15:06:08 +0800
-Message-Id: <20200110070608.18902-1-yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726797AbgAJHFw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 02:05:52 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:51656 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbgAJHFw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 02:05:52 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00A75cER115272;
+        Fri, 10 Jan 2020 01:05:38 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578639938;
+        bh=kpORGyTnFiUB2kyV4rh9SVQZSJpHZQmOr0++G25k5Oc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=WqqWhJ008QHlSIDVi34sOqZuXoEJmGIeNFnfPWDFSCvpu1SlX7OMiEoPbYuK//T6Y
+         oqiaD5ciDKWocqn9lJ8EJJEXDxHNCjhtc2JbLBbb7Y17fZ86Ek8WJceVPSc5pA5Zwp
+         WIg1PC5VkRDWBFdqEJrl0uOG71YPeSNcjwcHhNjo=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00A75cYD031065;
+        Fri, 10 Jan 2020 01:05:38 -0600
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 10
+ Jan 2020 01:05:38 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 10 Jan 2020 01:05:38 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00A75ZF7099102;
+        Fri, 10 Jan 2020 01:05:36 -0600
+Subject: Re: [PATCH] media: xilinx: Use dma_request_chan() instead
+ dma_request_slave_channel()
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC:     <mchehab@kernel.org>, <hyun.kwon@xilinx.com>, <vkoul@kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <michal.simek@xilinx.com>, <linux-arm-kernel@lists.infradead.org>
+References: <20191217104235.23771-1-peter.ujfalusi@ti.com>
+ <20200109164847.GF31792@pendragon.ideasonboard.com>
+ <20200109165348.GG31792@pendragon.ideasonboard.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <1a58e0e2-b1c2-1b97-22a8-8c0f366882d3@ti.com>
+Date:   Fri, 10 Jan 2020 09:06:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20200109165348.GG31792@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Monitoring tools that want to find out which resctrl control
-and monitor groups a task belongs to must currently read
-the "tasks" file in every group until they locate the process
-ID.
 
-Add an additional file /proc/{pid}/cpu_resctrl to provide this
-information.
 
-The output is as followed, for example:
+On 09/01/2020 18.53, Laurent Pinchart wrote:
+> Hello again,
+> 
+> On Thu, Jan 09, 2020 at 06:48:47PM +0200, Laurent Pinchart wrote:
+>> On Tue, Dec 17, 2019 at 12:42:35PM +0200, Peter Ujfalusi wrote:
+>>> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+>>> eating up the error code.
+>>>
+>>> By using dma_request_chan() directly the driver can support deferred
+>>> probing against DMA.
+>>>
+>>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+>>
+>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>>
+>> Vinod, could you please pick this up ?
+> 
+> I spoke too fast.
+> 
+>>> ---
+>>>  drivers/media/platform/xilinx/xilinx-dma.c | 6 +++---
+>>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media/platform/xilinx/xilinx-dma.c
+>>> index b211380a11f2..9ce515ff9c0a 100644
+>>> --- a/drivers/media/platform/xilinx/xilinx-dma.c
+>>> +++ b/drivers/media/platform/xilinx/xilinx-dma.c
+>>> @@ -725,10 +725,10 @@ int xvip_dma_init(struct xvip_composite_device *xdev, struct xvip_dma *dma,
+>>>  
+>>>  	/* ... and the DMA channel. */
+>>>  	snprintf(name, sizeof(name), "port%u", port);
+>>> -	dma->dma = dma_request_slave_channel(dma->xdev->dev, name);
+>>> -	if (dma->dma == NULL) {
+>>> +	dma->dma = dma_request_chan(dma->xdev->dev, name);
+>>> +	if (IS_ERR(dma->dma)) {
+>>>  		dev_err(dma->xdev->dev, "no VDMA channel found\n");
 
- 1)   ""
-      Resctrl is not available.
+and print this only in case of !EPROBE_DEFER
 
- 2)   "/"
-      Task is part of the root group, task is not associated to
-      any monitor group.
+>>> -		ret = -ENODEV;
+>>> +		ret = PTR_ERR(dma->dma);
+>>>  		goto error;
+> 
+> At the error label, we have
+> 
+> error:
+> 	xvip_dma_cleanup(dma);
+> 	return ret;
+> 
+> and xvip_dma_cleanup() contains
+> 
+> 	if (dma->dma)
+> 		dma_release_channel(dma->dma);
+> 
+> You need to turn this into
+> 
+> 	if (!IS_ERR_OR_NULL(dma->dma))
 
- 3)   "/mon_groups/mon0"
-      Task is part of the root group and monitor group mon0.
+I generally try to avoid IS_ERR_OR_NULL()
 
- 4)   "/group0"
-      Task is part of resctrl control group group0, task is not
-      associated to any monitor group.
+> 
+> or add a
+> 
+> 		dma->dma = NULL;
 
- 5)   "/group0/mon_groups/mon1"
-      Task is part of resctrl control group group0 and monitor
-      group mon1.
+But in this case I think it looks better that way.
 
-Tested-by: Jinshi Chen <jinshi.chen@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Chris Down <chris@chrisdown.name>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
----
-v1: Initial version reviewed by Reinette Chatre,
-    Fenghua Yu and Tony Luck.
+> 
+> in the error case in xvip_dma_init().
+> 
+>>>  	}
+>>>  
+> 
 
-v2: According to Boris's suggestion,
-    reduce indentation level in proc_resctrl_show().
-    Create the include/linux/resctrl.h header and
-    declare proc_resctrl_show() in this file, so
-    that other architectures would probably use it
-    in the future. Different architectures should
-    implement architectural specific proc_resctrl_show()
-    accordingly.
+- Péter
 
-v3: According to Boris's suggestion,
-    Return empty string if the resctrl filesystem has
-    not been mounted.
-    Rename the config from CPU_RESCTRL to PROC_CPU_RESCTRL
-    to better represent its usage. Move PROC_CPU_RESCTRL
-    from arch/Kconfig to fs/proc/Kconfig.
-    And let PROC_CPU_RESCTRL to be depended on PROC_FS.
-
-v4: According to Thomas's suggestion, changed the output
-    from multiple lines to one single line.
-
-v5: According to Alexey's feedback, removed the header file
-    proc_fs.h in resctrl.h, and changed seq_puts() to
-    seq_putc() for simplicity.
-
-v6: According to Chris Down's suggestion,
-    1. rename:
-    /proc/{pid}/resctrl to /proc/{pid}/cpu_resctrl
-    to better reflect its meaning.
-    2. change the description in comments:
-    "control group" to "resctrl control group"
-    as the former is confusing for cgroup users.
----
- arch/x86/Kconfig                       |  1 +
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 79 ++++++++++++++++++++++++++
- fs/proc/Kconfig                        |  4 ++
- fs/proc/base.c                         |  7 +++
- include/linux/resctrl.h                | 14 +++++
- 5 files changed, 105 insertions(+)
- create mode 100644 include/linux/resctrl.h
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 5e8949953660..6e17a68c7d77 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -456,6 +456,7 @@ config X86_CPU_RESCTRL
- 	bool "x86 CPU resource control support"
- 	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
- 	select KERNFS
-+	select PROC_CPU_RESCTRL		if PROC_FS
- 	help
- 	  Enable x86 CPU resource control support.
- 
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 2e3b06d6bbc6..dcbf62d6b689 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -725,6 +725,85 @@ static int rdtgroup_tasks_show(struct kernfs_open_file *of,
- 	return ret;
- }
- 
-+#ifdef CONFIG_PROC_CPU_RESCTRL
-+
-+/*
-+ * A task can only be part of one resctrl
-+ * control group and of one monitor
-+ * group which is associated to that resctrl
-+ * control group.
-+ * So one line is simple and clear enough:
-+ *
-+ * 1)   ""
-+ *    resctrl is not available.
-+ *
-+ * 2)   "/"
-+ *    Task is part of the root group, and it is
-+ *    not associated to any monitor group.
-+ *
-+ * 3)   "/mon_groups/mon0"
-+ *    Task is part of the root group and monitor
-+ *    group mon0.
-+ *
-+ * 4)   "/group0"
-+ *    Task is part of resctrl control group group0,
-+ *    and it is not associated to any monitor group.
-+ *
-+ * 5)   "/group0/mon_groups/mon1"
-+ *    Task is part of resctrl control group group0 and monitor
-+ *    group mon1.
-+ */
-+int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
-+		      struct pid *pid, struct task_struct *tsk)
-+{
-+	struct rdtgroup *rdtg;
-+	int ret = 0;
-+
-+	mutex_lock(&rdtgroup_mutex);
-+
-+	/* Return empty if resctrl has not been mounted. */
-+	if (!static_branch_unlikely(&rdt_enable_key))
-+		goto unlock;
-+
-+	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
-+		struct rdtgroup *crg;
-+
-+		/*
-+		 * Task information is only relevant for shareable
-+		 * and exclusive groups.
-+		 */
-+		if (rdtg->mode != RDT_MODE_SHAREABLE &&
-+		    rdtg->mode != RDT_MODE_EXCLUSIVE)
-+			continue;
-+
-+		if (rdtg->closid != tsk->closid)
-+			continue;
-+
-+		seq_printf(s, "/%s", rdtg->kn->name);
-+		list_for_each_entry(crg, &rdtg->mon.crdtgrp_list,
-+				    mon.crdtgrp_list) {
-+			if (tsk->rmid != crg->mon.rmid)
-+				continue;
-+			seq_printf(s, "%smon_groups/%s",
-+				   rdtg == &rdtgroup_default ? "" : "/",
-+				   crg->kn->name);
-+			break;
-+		}
-+		seq_putc(s, '\n');
-+		goto unlock;
-+	}
-+	/*
-+	 * The above search should succeed. Otherwise return
-+	 * with an error.
-+	 */
-+	ret = -ENOENT;
-+unlock:
-+	mutex_unlock(&rdtgroup_mutex);
-+
-+	return ret;
-+}
-+#endif
-+
- static int rdt_last_cmd_status_show(struct kernfs_open_file *of,
- 				    struct seq_file *seq, void *v)
- {
-diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
-index 733881a6387b..27ef84d99f59 100644
---- a/fs/proc/Kconfig
-+++ b/fs/proc/Kconfig
-@@ -103,3 +103,7 @@ config PROC_CHILDREN
- config PROC_PID_ARCH_STATUS
- 	def_bool n
- 	depends on PROC_FS
-+
-+config PROC_CPU_RESCTRL
-+	def_bool n
-+	depends on PROC_FS
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index ebea9501afb8..32c9ff154667 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -94,6 +94,7 @@
- #include <linux/sched/debug.h>
- #include <linux/sched/stat.h>
- #include <linux/posix-timers.h>
-+#include <linux/resctrl.h>
- #include <trace/events/oom.h>
- #include "internal.h"
- #include "fd.h"
-@@ -3060,6 +3061,9 @@ static const struct pid_entry tgid_base_stuff[] = {
- #endif
- #ifdef CONFIG_CGROUPS
- 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
-+#endif
-+#ifdef CONFIG_PROC_CPU_RESCTRL
-+	ONE("cpu_resctrl", S_IRUGO, proc_resctrl_show),
- #endif
- 	ONE("oom_score",  S_IRUGO, proc_oom_score),
- 	REG("oom_adj",    S_IRUGO|S_IWUSR, proc_oom_adj_operations),
-@@ -3460,6 +3464,9 @@ static const struct pid_entry tid_base_stuff[] = {
- #endif
- #ifdef CONFIG_CGROUPS
- 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
-+#endif
-+#ifdef CONFIG_PROC_CPU_RESCTRL
-+	ONE("cpu_resctrl", S_IRUGO, proc_resctrl_show),
- #endif
- 	ONE("oom_score", S_IRUGO, proc_oom_score),
- 	REG("oom_adj",   S_IRUGO|S_IWUSR, proc_oom_adj_operations),
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-new file mode 100644
-index 000000000000..daf5cf64c6a6
---- /dev/null
-+++ b/include/linux/resctrl.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _RESCTRL_H
-+#define _RESCTRL_H
-+
-+#ifdef CONFIG_PROC_CPU_RESCTRL
-+
-+int proc_resctrl_show(struct seq_file *m,
-+		      struct pid_namespace *ns,
-+		      struct pid *pid,
-+		      struct task_struct *tsk);
-+
-+#endif
-+
-+#endif /* _RESCTRL_H */
--- 
-2.17.1
-
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
