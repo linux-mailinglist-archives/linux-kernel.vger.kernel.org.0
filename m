@@ -2,62 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E877136B8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 11:58:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DADC136B3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 11:46:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbgAJK6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 05:58:12 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:55627 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727703AbgAJK56 (ORCPT
+        id S1727587AbgAJKqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 05:46:13 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:51748 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727345AbgAJKqN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 05:57:58 -0500
-Received: from 79.184.255.90.ipv4.supernova.orange.pl (79.184.255.90) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
- id 7f429f08fdd1f17e; Fri, 10 Jan 2020 11:57:56 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
+        Fri, 10 Jan 2020 05:46:13 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 18972293A50
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: Re: [PATCH] platform/chrome: wilco_ec: Fix keyboard backlight probing
+To:     Daniel Campello <campello@chromium.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Zhang Rui <rui.zhang@intel.com>
-Subject: [PATCH 3/8] intel_idle: Clean up NULL pointer check in intel_idle_init()
-Date:   Fri, 10 Jan 2020 11:45:49 +0100
-Message-ID: <3687000.7TDbEkBDjF@kreacher>
-In-Reply-To: <14127826.m9lEolTOYu@kreacher>
-References: <14127826.m9lEolTOYu@kreacher>
+        Nick Crews <ncrews@chromium.org>,
+        Benson Leung <bleung@chromium.org>
+References: <20200107112400.1.Iedcdbae5a7ed79291b557882130e967f72168a9f@changeid>
+ <ab377eeb-f1bc-13c2-8bbc-ccc53ecb7c4d@collabora.com>
+ <20200108155948.GA47901@chromium.org>
+Message-ID: <b6cfdfee-7e1f-117d-cb42-2d067ebd3807@collabora.com>
+Date:   Fri, 10 Jan 2020 11:46:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20200108155948.GA47901@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi Daniel,
+On 8/1/20 16:59, Daniel Campello wrote:
+> Hi Enric,
+> 
+> On Wed, Jan 08, 2020 at 11:38:58AM +0100, Enric Balletbo i Serra wrote:
+>> Hi Daniel,
+>>
+>> Many thanks for sending the patch upstream.
+>>
+>> On 7/1/20 19:24, Daniel Campello wrote:
+>>> The EC on the Wilco platform responds with 0xFF to commands related to
+>>> the keyboard backlight on the absence of a keyboard backlight module.
+>>> This change allows the EC driver to continue loading even if the
+>>> backlight module is not present.
+>>>
+>>
+>> Could you explain a bit more which is the problem you're trying to solve? I am
+>> not sure I understand it, isn't the kbbl_exist call for that purpose? (in
+>> absence of the keyboard backligh module just don't init the device?)
+> 
+> kbbl_exists is intended to return a bool based on response.status !=
+> 0xFF. Without this patch kbbl_exists will fail and return an -EIO
+> error on any value of response.status
+> 
 
-Instead of comparing intel_idle_cpuidle_devices with NULL apply
-the "!" (not) operator to it when checking it against NULL.
+Thanks for the explanation I understand now what is happening. I added the Fixed
+tag and queued as a fix for chrome-platform-5.5
 
-No intentional functional impact.
+Thanks,
+ Enric
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/idle/intel_idle.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Index: linux-pm/drivers/idle/intel_idle.c
-===================================================================
---- linux-pm.orig/drivers/idle/intel_idle.c
-+++ linux-pm/drivers/idle/intel_idle.c
-@@ -1630,7 +1630,7 @@ static int __init intel_idle_init(void)
- 		 boot_cpu_data.x86_model);
- 
- 	intel_idle_cpuidle_devices = alloc_percpu(struct cpuidle_device);
--	if (intel_idle_cpuidle_devices == NULL)
-+	if (!intel_idle_cpuidle_devices)
- 		return -ENOMEM;
- 
- 	intel_idle_cpuidle_driver_init();
-
-
-
+>>
+>> Thanks,
+>>  Enric
+>>
