@@ -2,286 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D0C3136B3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 11:46:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04DDD136B13
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 11:30:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727563AbgAJKp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 05:45:58 -0500
-Received: from mail-m975.mail.163.com ([123.126.97.5]:39766 "EHLO
-        mail-m975.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727345AbgAJKp6 (ORCPT
+        id S1727476AbgAJKas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 05:30:48 -0500
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:32847 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727240AbgAJKar (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 05:45:58 -0500
-X-Greylist: delayed 933 seconds by postgrey-1.27 at vger.kernel.org; Fri, 10 Jan 2020 05:45:50 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=g2tbO
-        +qzlpA2w5Cd7SBiifcvdUZuxRzhuQ247WytjJ4=; b=bREENsEDpS/bG1RHE+i7N
-        Hn7cEFqrreokTkfTFoS6clEiQwS18uhJ7iGiXxCoISmha84Bqq0TehL6mxkq/Jdg
-        u+n0JBaZdCh3x9bG50fHzx+4z6O1Kd/Z9EmGShVlzwSHMoQ4NSAJ0rzO+biT2KIG
-        yWj58sXe7wRHwFRtE1ctJ4=
-Received: from xilei-TM1604.mioffice.cn (unknown [114.247.175.196])
-        by smtp5 (Coremail) with SMTP id HdxpCgCHCsjgURheqcdzDA--.474S4;
-        Fri, 10 Jan 2020 18:29:26 +0800 (CST)
-From:   Niu Xilei <niu_xilei@163.com>
-To:     davem@davemloft.net
-Cc:     tglx@linutronix.de, fw@strlen.de, peterz@infradead.org,
-        pabeni@redhat.com, anshuman.khandual@arm.com,
-        linyunsheng@huawei.com, bigeasy@linutronix.de,
-        jonathan.lemon@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Niu Xilei <niu_xilei@163.com>
-Subject: [PATCH]     pktgen: create packet use  IPv6 source address between src6_min and src6_max.
-Date:   Fri, 10 Jan 2020 18:28:42 +0800
-Message-Id: <20200110102842.13585-1-niu_xilei@163.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 10 Jan 2020 05:30:47 -0500
+Received: from [IPv6:2001:420:44c1:2577:c967:e1d3:183a:b8ef]
+ ([IPv6:2001:420:44c1:2577:c967:e1d3:183a:b8ef])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id prYvilyy5pLtbprYyiPyae; Fri, 10 Jan 2020 11:30:45 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1578652245; bh=UmnHjuhv0L/RUYEp6Ru2m4/tm4kdj/elcPFBqWEVHsA=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=aXgdqHQeSDOkA8v8+aqyxhzgnhEWgGpaTTPNzRXLfv8H88letSqlwvP7m4tsKm6ZP
+         eD7da6VPOvuXE24n42eskJ1eHYZ/+SYA+qq8km7HV2bRGcBTsI41RxNrFnaYdU548K
+         NNKUTQh9Rkb1B6kjpLpLjxdigWTkU7tsM6LKYs5Sf/0ZQEby0orBet8EGSLhyGYTLp
+         JvbdzZIwTmZXXaSYzVwY/rnq+EUSfP6v3kIS9h6fiG+BjTEyKlYP9XsIe5NXN46uW8
+         1qB79ogDL21N9RRO3SSp/D0+qi8y1KiYwDm75yRgq1Fb7DC4GmBYFWg7AM4Eo4VC/6
+         iP1C8XbYLUpTg==
+Subject: Re: [RFC][PATCH 13/15] videobuf2: do not sync buffers for DMABUF
+ queues
+To:     Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191217032034.54897-1-senozhatsky@chromium.org>
+ <20191217032034.54897-14-senozhatsky@chromium.org>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <2d0e1a9b-6c5e-ff70-9862-32c8b8aaf65f@xs4all.nl>
+Date:   Fri, 10 Jan 2020 11:30:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: HdxpCgCHCsjgURheqcdzDA--.474S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW3AFyUZF4kGF4Uuw4UuryUJrb_yoWxWF1fpF
-        W5JF98Jry7CF13Jw43JF9Iyw4a9ryvya47WayrZ34FkFs8XrW0vrn7KFy3tF4jqr1fA39x
-        tw4UKa1jgan0vr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jNOz3UUUUU=
-X-Originating-IP: [114.247.175.196]
-X-CM-SenderInfo: pqlxs5plohxqqrwthudrp/1tbiTRmmgFc7O6dgPgAAsc
+In-Reply-To: <20191217032034.54897-14-senozhatsky@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfGn33jl5Ex11r9ndRakEZYzhkqPPU69dIYYYWJ1U1bzJZwhBMtR/fILC9rwwGvREyzCX7w1lFqaGdZsGk9Z0x2jeCOrN0qQhBCdmkix6mx/UbIuanza5
+ fvNDNOni7JbE+fK0zqGwln+v07+XaWCjIBYdrBC8oxhiP/KyAzSPZREEGTTsWib2J2LbAN//W1QO2kIsHfROPfwq/jnUXdDNcyWacew3cMFhh8FW7CT0SpmX
+ tHuiWSRbJ4XDHCNn30cUMluYhbN9xLp2XMh5cGfnEscGAras6lPiNz16fZzKiRiPgdPe3NtnV9HlybXYHq8zTQT2t/h3GkxIhtiotro1Ox4mGGrlM89Ee7Sv
+ 9Ws1D5OENNOkyy8xJYnu564EsEApvyxRFsK3nGNGHNqTYI9oAQ/et6CCffhZE+6NAFwZXk9xD5K0H1gC5Qp6hzocoDWMbRbf4CMi+Y+kZ4x40aQgl6sby5cY
+ jwPmU05COAssVkRI41aDK25Ky1wDcMXzv84gvN50NBr93iqJ0pMlLUUAk4D0tG9kOLJkyzla9/uyqPMD1iXX1+NP0pWLIXm7vkIqZsoCZZVNaX+Yz9Wo+9sl
+ UeF2iOP4OS6R+KdmN4EyLVqkO2SdfkmHiRiD5uwuY+9YFm86J2rtZFHMeYltEU23pt0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-    Pktgen can use only one IPv6 source address from output device, or src6 command
-    setting. When in pressure test need create lots of session more than 65536.
-    If IPSRC_RND flag is use random  address between src6_min and src6_max.
+On 12/17/19 4:20 AM, Sergey Senozhatsky wrote:
+> DMA-exporter is supposed to handle cache syncs, so we can
+> avoid ->prepare()/->finish() syncs from videobuf2 core for
+> DMABUF buffers.
+> 
+> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> ---
+>  drivers/media/common/videobuf2/videobuf2-v4l2.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> index 1762849288ae..2b9d3318e6fb 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> @@ -341,8 +341,22 @@ static void set_buffer_cache_hints(struct vb2_queue *q,
+>  				   struct vb2_buffer *vb,
+>  				   struct v4l2_buffer *b)
+>  {
+> -	vb->need_cache_sync_on_prepare = 1;
+> +	/*
+> +	 * DMA exporter should take care of cache syncs, so we can avoid
+> +	 * explicit ->prepare()/->finish() syncs.
+> +	 */
+> +	if (q->memory == VB2_MEMORY_DMABUF) {
+> +		vb->need_cache_sync_on_finish = 0;
+> +		vb->need_cache_sync_on_prepare = 0;
+> +		return;
+> +	}
+>  
+> +	/*
+> +	 * For other ->memory types we always need ->prepare() cache
+> +	 * sync. ->finish() cache sync, however, can be avoided when queue
+> +	 * direction is TO_DEVICE.
+> +	 */
+> +	vb->need_cache_sync_on_prepare = 1;
 
-    The GCC  generates code that calls functions in the libgcc library to implement
-    the / and % operations with 128-bit operands on 64-bit CPUs. So kernel need
-    implement the function  to do / and % operation.
+I'm trying to remember: what needs to be done in prepare()
+for a capture buffer? I thought that for capture you only
+needed to invalidate the cache in finish(), but nothing needs
+to be done in the prepare().
 
-    Signed-off-by: Niu Xilei <niu_xilei@163.com>
----
- net/core/pktgen.c | 183 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 183 insertions(+)
+Regards,
 
-diff --git a/net/core/pktgen.c b/net/core/pktgen.c
-index 294bfcf0ce0e..b07ab5984fa8 100644
---- a/net/core/pktgen.c
-+++ b/net/core/pktgen.c
-@@ -254,6 +254,111 @@ struct flow_state {
- /* flow flag bits */
- #define F_INIT   (1<<0)		/* flow has been initialized */
- 
-+#ifdef CONFIG_ARCH_SUPPORTS_INT128
-+
-+__extension__ typedef  unsigned __int128 u128;
-+
-+/* Kernel not implement __int128's divide and modulo operator. Implement these
-+ * operation use shift-subtract division algorithm  adpater from
-+ * https://chromium.googlesource.com/chromium/src/third_party/+/master/abseil-cpp/absl/numeric/int128.cc */
-+
-+/* find first bit set of u128 */
-+static inline int fls128(u128 n)
-+{
-+	u64 hi = n >> 64;
-+
-+	if (hi)
-+		return fls64(hi) + 64;
-+
-+	return fls64((__u64)n);
-+}
-+
-+/**
-+ * div128_u128 - unsigned 128bit int divide with unsigned 128bit int divisor
-+ * @dividend:   128bit dividend
-+ * @divisor:    128bit divisor
-+ * @remainder:  128bit  remainder
-+ * @return:     128bit quotient
-+ */
-+u128 div128_u128(u128 dividend, u128 divisor, u128 *remainder)
-+{
-+	int i;
-+	int shift;
-+	u128 quotient = 0;
-+	u128 denominator = divisor;
-+
-+	if (divisor > dividend) {
-+		*remainder = dividend;
-+		return 0;
-+	}
-+	if (divisor == dividend) {
-+		*remainder = 0;
-+		return 1;
-+	}
-+
-+	/* Left aligns the MSB of the dividend and the dividend. */
-+	shift = fls128(dividend) - fls128(denominator);
-+	denominator <<= shift;
-+	/* Uses shift-subtract algorithm to divide dividend by denominator. The
-+	 * remainder will be left in dividend. */
-+	for (i = 0; i <= shift; ++i) {
-+		quotient <<= 1;
-+		if (dividend >= denominator) {
-+			dividend -= denominator;
-+			quotient |= 1;
-+		}
-+		denominator >>= 1;
-+	}
-+	*remainder = dividend;
-+	return quotient;
-+}
-+
-+#ifdef __LITTLE_ENDIAN
-+
-+static inline u128 be128_to_cpu(u128 net128)
-+{
-+#if defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)
-+	u64 *pnet = (u64 *)&net128;
-+
-+	return (((__force u128)swab64(pnet[0]) << 64) |
-+		(__force u128)swab64(pnet[1]));
-+#else
-+
-+	u32 *pnet = (u32 *)&net128;
-+
-+	return (((__force u128)swap32(pnet[0])) << 96 |
-+		((__force u128)swap32(pnet[1])) << 64 |
-+		((__force u128)swap32(pnet[2])) << 32 |
-+		(__force u128)swap32(pnet[3]));
-+
-+#endif
-+}
-+
-+static inline u128 cpu_to_be128(u128 host128)
-+{
-+#if defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)
-+	u64 *phost = (u64 *)&host128;
-+
-+	return  (((__force u128)swab64(phost[0])) << 64 |
-+		(__force u128)swab64(phost[1]));
-+#else
-+	u32 *phost = (u32 *)&host128;
-+
-+	return (((__force u128)swap32(phost[0])) << 96 |
-+		((__force u128)swap32(phost[1])) << 64 |
-+		((__force u128)swap32(phost[2])) << 32 |
-+		(__force u128)swap32(phost[3]));
-+#endif
-+}
-+
-+#else /* !__LITTLE_ENDIAN  */
-+
-+#define be128_to_cpu(x) (x)
-+#define cpu_to_be128(x) (x)
-+
-+#endif /* __LITTLE_ENDIAN */
-+#endif /* CONFIG_ARCH_SUPPORTS_INT128 */
-+
- struct pktgen_dev {
- 	/*
- 	 * Try to keep frequent/infrequent used vars. separated.
-@@ -1355,6 +1460,49 @@ static ssize_t pktgen_if_write(struct file *file,
- 		sprintf(pg_result, "OK: dst6_max=%s", buf);
- 		return count;
- 	}
-+	if (!strcmp(name, "src6_min")) {
-+		len = strn_len(&user_buffer[i], sizeof(buf) - 1);
-+		if (len < 0)
-+			return len;
-+
-+		pkt_dev->flags |= F_IPV6;
-+
-+		if (copy_from_user(buf, &user_buffer[i], len))
-+			return -EFAULT;
-+		buf[len] = 0;
-+
-+		in6_pton(buf, -1, pkt_dev->min_in6_saddr.s6_addr, -1, NULL);
-+		snprintf(buf, sizeof(buf), "%pI6c", &pkt_dev->min_in6_saddr);
-+
-+		pkt_dev->cur_in6_saddr = pkt_dev->min_in6_saddr;
-+		if (debug)
-+			pr_debug("src6_min set to: %s\n", buf);
-+
-+		i += len;
-+		sprintf(pg_result, "OK: src6_min=%s", buf);
-+		return count;
-+	}
-+	if (!strcmp(name, "src6_max")) {
-+		len = strn_len(&user_buffer[i], sizeof(buf) - 1);
-+		if (len < 0)
-+			return len;
-+
-+		pkt_dev->flags |= F_IPV6;
-+
-+		if (copy_from_user(buf, &user_buffer[i], len))
-+			return -EFAULT;
-+		buf[len] = 0;
-+
-+		in6_pton(buf, -1, pkt_dev->max_in6_saddr.s6_addr, -1, NULL);
-+		snprintf(buf, sizeof(buf), "%pI6c", &pkt_dev->max_in6_saddr);
-+
-+		if (debug)
-+			pr_debug("dst6_max set to: %s\n", buf);
-+
-+		i += len;
-+		sprintf(pg_result, "OK: dst6_max=%s", buf);
-+		return count;
-+	}
- 	if (!strcmp(name, "src6")) {
- 		len = strn_len(&user_buffer[i], sizeof(buf) - 1);
- 		if (len < 0)
-@@ -2286,6 +2434,38 @@ static void set_cur_queue_map(struct pktgen_dev *pkt_dev)
- 	pkt_dev->cur_queue_map  = pkt_dev->cur_queue_map % pkt_dev->odev->real_num_tx_queues;
- }
- 
-+/* create ipv6 source addr, random generator or iterator between the range  */
-+static inline void set_src_in6_addr(struct pktgen_dev *pkt_dev)
-+{
-+	u128 t;
-+	u128 imn6, imx6;
-+
-+	if (!ipv6_addr_any(&pkt_dev->min_in6_saddr)) {
-+#ifdef CONFIG_ARCH_SUPPORTS_INT128
-+		imn6 = be128_to_cpu(*(u128 *)pkt_dev->min_in6_saddr.s6_addr);
-+		imx6 = be128_to_cpu(*(u128 *)pkt_dev->max_in6_saddr.s6_addr);
-+		if (imn6 < imx6) {
-+			if (pkt_dev->flags & F_IPSRC_RND) {
-+				do {
-+					prandom_bytes(&t, sizeof(t));
-+					/*t = t % range */
-+					div128_u128(t, imx6 - imn6, &t);
-+					t = imn6 + t;
-+				} while (ipv6_addr_loopback((struct in6_addr *)&t) ||
-+					 ipv6_addr_v4mapped((struct in6_addr *)&t) ||
-+					 ipv6_addr_is_multicast((struct in6_addr *)(&t)));
-+			} else {
-+				t = be128_to_cpu(*(u128 *)pkt_dev->cur_in6_saddr.s6_addr);
-+				t++;
-+				if (t > imx6)
-+					t = imn6;
-+			}
-+			t = cpu_to_be128(t);
-+			pkt_dev->cur_in6_saddr = *(struct in6_addr *)&t;
-+		}
-+#endif
-+	}
-+}
- /* Increment/randomize headers according to flags and current values
-  * for IP src/dest, UDP src/dst port, MAC-Addr src/dst
-  */
-@@ -2293,6 +2473,7 @@ static void mod_cur_headers(struct pktgen_dev *pkt_dev)
- {
- 	__u32 imn;
- 	__u32 imx;
-+
- 	int flow = 0;
- 
- 	if (pkt_dev->cflows)
-@@ -2454,6 +2635,8 @@ static void mod_cur_headers(struct pktgen_dev *pkt_dev)
- 		}
- 	} else {		/* IPV6 * */
- 
-+		set_src_in6_addr(pkt_dev);
-+
- 		if (!ipv6_addr_any(&pkt_dev->min_in6_daddr)) {
- 			int i;
- 
--- 
-2.20.1
+	Hans
+
+>  	if (q->dma_dir != DMA_TO_DEVICE)
+>  		vb->need_cache_sync_on_finish = 1;
+>  	else
+> 
 
