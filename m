@@ -2,89 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2785136D2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 13:36:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7FAD136D40
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 13:45:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728190AbgAJMgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 07:36:36 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49312 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728010AbgAJMgg (ORCPT
+        id S1728167AbgAJMpB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 07:45:01 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36301 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727753AbgAJMpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 07:36:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=f/42qAPbVsW+72MUlq6/DiKhzWxy8T8Hdkwap/qT96A=; b=fEApSJolHaXmpdLYBb+Kkv8Df
-        BGQz3JHJbvpYxwghgcQ6w2GqDx37gBdlNAcBRR2IhHq7bLXUI0kKJMEKsa0vIsqtORSOf/CH4cE5T
-        Xwsj1uGAQtxR/yLpUOSiwVEBEYdzPgHAUs1ofiX1hdTQu1EHvg1Xy/6nf0/BV6/6Z1co1P+6cHxk4
-        Xnqyp0cPEwm83h6/DTRS+riPEzRcEw3vnnEH/NSQGzCNmLwpBofZFEikltSBx+l2HJgHLATqQTKvr
-        Z23nhy3IejVYasyMnB5v/3udsJnqEdFD3lfUFeQnEoms+RUyXa2IO2K0GKHmbFdvlPMuh4SZezxpr
-        LkSZT0k7A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iptWh-0006RF-VG; Fri, 10 Jan 2020 12:36:31 +0000
-Date:   Fri, 10 Jan 2020 04:36:31 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-Message-ID: <20200110123631.GA16268@infradead.org>
-References: <20200107125159.GA15745@infradead.org>
- <CAPcyv4jZE35sbDo6J4ihioEUFTuekJ3_h0=2Ra4PY+xn2xn1cQ@mail.gmail.com>
- <20200107170731.GA472641@magnolia>
- <CAPcyv4ggH7-QhYg+YOOWn_m25uds+-0L46=N09ap-LALeGuU_A@mail.gmail.com>
- <20200107180101.GC15920@redhat.com>
- <CAPcyv4gmdoqpwwwy4dS3D2eZFjmJ_Zi39k=1a4wn-_ksm-UV4A@mail.gmail.com>
- <20200107183307.GD15920@redhat.com>
- <CAPcyv4ggoS4dWjq-1KbcuaDtroHKEi5Vu19ggJ-qgycs6w1eCA@mail.gmail.com>
- <20200109112447.GG27035@quack2.suse.cz>
- <CAPcyv4j5Mra8qeLO3=+BYZMeXNAxFXv7Ex7tL9gra1TbhOgiqg@mail.gmail.com>
+        Fri, 10 Jan 2020 07:45:00 -0500
+Received: by mail-pf1-f195.google.com with SMTP id x184so1107860pfb.3;
+        Fri, 10 Jan 2020 04:45:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zHdRnTZJjcN2zvUamZ1G4RdksTFXX4xdkIF3BaNA6s0=;
+        b=vYN1KwODkuLwoJBLCz+Dts31AwF9BgZlEnoJjsl4ZuH5wuSA4lytftMrkJQ9Y1LVVn
+         kOOZmOnYt8I+8te7xUnJ6aJkUj0LK0clSL5yTYOaJzSPqm6Urt8wWTx9OxOtSsFiE1D6
+         BpDp6ET4ApCD8FiK2JKLsWx0iZVNJ9zfIvn2C+JUhrp4Lc48lp+C2+s5lybjjn2F4Zv5
+         XigX4O22jYy9aAhFQQHCWMA9AicRg9qEBwbjuStCu51rPAv9jTo3qziLul6HCftfRSDL
+         vJ34xmC1Kre5k8uefnmDLn+Mz/jYhLmzT3TpP2GgeQrDtht5YOS7d/6T5w2x8yPzq72A
+         n6Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zHdRnTZJjcN2zvUamZ1G4RdksTFXX4xdkIF3BaNA6s0=;
+        b=DVuvO2fXLASH93TsghiYAc+EQRJURCgknDA2hsKw2X8Ri3Obg9xDyrBzHOuLKfG8+i
+         i0i5ydrCewofNcDfQ/wx5CXMYQ83R4GInWmL51WPqQLVURKliseS7N1/lUxUsp7+Z+zW
+         Oghpm+jCd59W+xZX5HHJheAmhuX/cxxSnWMGlstwNOQbwXjBOhfOm+8TywvImsKu3m8M
+         jau0fZScNMMKMRgGr+RfT/REnz1OAaf5HHAcxdJK5AXr1a1oC9183VP8VL7y1x8EAZ7P
+         wGV0V0VWvBSh9N2MlvKn7Jf//OPvdT5Nr8bfXdT99ZUzURa2IBBlWgOUsLPKtoIV6r+d
+         zIbA==
+X-Gm-Message-State: APjAAAUMLz64uu++MZkfK7i59mzLt3drHs4zpciNcgh7/NMjjWyf2Lax
+        g1AqyE/so3Zmv+5unAIPTYE=
+X-Google-Smtp-Source: APXvYqwsz2ALkDAVbByjWYV7EWu7XtAQh5kTGDka+88oUueTAZ6ddpkiHOT3dPiym7rxZysPhqqMuA==
+X-Received: by 2002:aa7:824d:: with SMTP id e13mr3848868pfn.247.1578660299863;
+        Fri, 10 Jan 2020 04:44:59 -0800 (PST)
+Received: from localhost.localdomain ([103.211.17.220])
+        by smtp.googlemail.com with ESMTPSA id d3sm2764724pfn.113.2020.01.10.04.44.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2020 04:44:59 -0800 (PST)
+From:   Amol Grover <frextrite@gmail.com>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Amol Grover <frextrite@gmail.com>
+Subject: [PATCH 1/3] drivers: target: target_core_device: Pass lockdep expression to RCU lists
+Date:   Fri, 10 Jan 2020 18:14:03 +0530
+Message-Id: <20200110124403.27882-1-frextrite@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4j5Mra8qeLO3=+BYZMeXNAxFXv7Ex7tL9gra1TbhOgiqg@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 12:03:01PM -0800, Dan Williams wrote:
-> > So I'd find two options reasonably consistent:
-> > 1) Keep status quo where partitions are created and support DAX.
-> > 2) Stop partition creation altogether, if anyones wants to split pmem
-> > device further, he can use dm-linear for that (i.e., kpartx).
-> >
-> > But I'm not sure if the ship hasn't already sailed for option 2) to be
-> > feasible without angry users and Linus reverting the change.
-> 
-> Christoph? I feel myself leaning more and more to the "keep pmem
-> partitions" camp.
-> 
-> I don't see "drop partition support" effort ending well given the long
-> standing "ext4 fails to mount when dax is not available" precedent.
+nacl->lun_entry_hlist is traversed with hlist_for_each_entry_rcu
+outside an RCU read-side critical section but under the
+protection of nacl->lun_entry_mutex.
 
-Do we have any evidence of existing setups with DAX and partitions?
-Can we just throw in a patch to reject that case for now before actually
-removing the code and see if anyone screams.  And fix ext4 up while
-we are at it.
+Hence, add the corresponding lockdep expression to the list traversal
+primitive to silence false-positive lockdep warnings, and
+harden RCU lists.
 
-> I think the next least bad option is to have a dax_get_by_host()
-> variant that passes an offset and length pair rather than requiring a
-> later bdev_dax_pgoff() to recall the offset. This also prevents
-> needing to add another dax-device object representation.
+Add macro for the corresponding lockdep expression to make the code
+clean and concise.
 
-IFF we have to keep partition support, yes.  But keeping it just seems
-like a really bad idea.
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+---
+ drivers/target/target_core_device.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/target/target_core_device.c b/drivers/target/target_core_device.c
+index 2d19f0e332b0..2d1277a83916 100644
+--- a/drivers/target/target_core_device.c
++++ b/drivers/target/target_core_device.c
+@@ -36,6 +36,9 @@
+ #include "target_core_pr.h"
+ #include "target_core_ua.h"
+ 
++#define lun_entry_mutex_held() \
++	lockdep_is_held(&nacl->lun_entry_mutex)
++
+ static DEFINE_MUTEX(device_mutex);
+ static LIST_HEAD(device_list);
+ static DEFINE_IDR(devices_idr);
+@@ -247,9 +250,10 @@ void core_free_device_list_for_node(
+ 	struct se_dev_entry *deve;
+ 
+ 	mutex_lock(&nacl->lun_entry_mutex);
+-	hlist_for_each_entry_rcu(deve, &nacl->lun_entry_hlist, link) {
++	hlist_for_each_entry_rcu(deve, &nacl->lun_entry_hlist, link,
++							lun_entry_mutex_held()) {
+ 		struct se_lun *lun = rcu_dereference_check(deve->se_lun,
+-					lockdep_is_held(&nacl->lun_entry_mutex));
++							lun_entry_mutex_held());
+ 		core_disable_device_list_for_node(lun, deve, nacl, tpg);
+ 	}
+ 	mutex_unlock(&nacl->lun_entry_mutex);
+@@ -276,7 +280,8 @@ struct se_dev_entry *target_nacl_find_deve(struct se_node_acl *nacl, u64 mapped_
+ {
+ 	struct se_dev_entry *deve;
+ 
+-	hlist_for_each_entry_rcu(deve, &nacl->lun_entry_hlist, link)
++	hlist_for_each_entry_rcu(deve, &nacl->lun_entry_hlist, link,
++				rcu_read_lock_held() || lun_entry_mutex_held())
+ 		if (deve->mapped_lun == mapped_lun)
+ 			return deve;
+ 
+@@ -339,7 +344,7 @@ int core_enable_device_list_for_node(
+ 	orig = target_nacl_find_deve(nacl, mapped_lun);
+ 	if (orig && orig->se_lun) {
+ 		struct se_lun *orig_lun = rcu_dereference_check(orig->se_lun,
+-					lockdep_is_held(&nacl->lun_entry_mutex));
++							lun_entry_mutex_held());
+ 
+ 		if (orig_lun != lun) {
+ 			pr_err("Existing orig->se_lun doesn't match new lun"
+@@ -460,9 +465,10 @@ void core_clear_lun_from_tpg(struct se_lun *lun, struct se_portal_group *tpg)
+ 	list_for_each_entry(nacl, &tpg->acl_node_list, acl_list) {
+ 
+ 		mutex_lock(&nacl->lun_entry_mutex);
+-		hlist_for_each_entry_rcu(deve, &nacl->lun_entry_hlist, link) {
++		hlist_for_each_entry_rcu(deve, &nacl->lun_entry_hlist, link,
++							lun_entry_mutex_held()) {
+ 			struct se_lun *tmp_lun = rcu_dereference_check(deve->se_lun,
+-					lockdep_is_held(&nacl->lun_entry_mutex));
++							lun_entry_mutex_held());
+ 
+ 			if (lun != tmp_lun)
+ 				continue;
+-- 
+2.24.1
+
