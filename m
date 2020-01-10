@@ -2,104 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E295D13741B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:52:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FFCF137420
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:54:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728639AbgAJQww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 11:52:52 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40771 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728107AbgAJQwv (ORCPT
+        id S1728868AbgAJQyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 11:54:13 -0500
+Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:34133 "EHLO
+        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728543AbgAJQyN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 11:52:51 -0500
-Received: by mail-pl1-f194.google.com with SMTP id s21so1065336plr.7
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 08:52:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:subject:to:from:user-agent:date;
-        bh=SC0UnYuTvxE5OcA375X4sqDX8RR6HMTTrFTXJph6jSE=;
-        b=lR9Qv/Rh2eYbSmBp73Q6BrJGiZOTHErsCfUcGyDbgXcFuMwI36N47x623pr35oqewC
-         DhPd2mZievnpOgj2/IiBIrrrgWgM/jIO2/qryR72NyThU0yuyTlTTrr0uzsWTYuLb8c5
-         JXTo8xNNKwipDeHFgPXASuqAGBA2+0k71Vr1A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:subject:to:from
-         :user-agent:date;
-        bh=SC0UnYuTvxE5OcA375X4sqDX8RR6HMTTrFTXJph6jSE=;
-        b=TBbOJMYlr9rlLVB/I3bljPwp+ngOt/O6CvehXDjd755Y2zzTqy/Bbic1QkKXvjTYFV
-         Zid0q1v3ZzfDjvqLWuE/ToVMtn5eZ/xASOl6bkrxDiBOPzAyLQX/taryqRwMxn3o7Y0H
-         ZQudh8sd1NOZj9kQZ22T8UMU06yBMZsKKqGNfVzRA5XTSZIuw1SzDLUzDIJLVXuxQzYU
-         R76/FAI3C+eU+HuNzZ/E8ybXbHEuJUF63ZhfWAugMK+waOlXqTtIRDPv3V2K3Buo/rQ6
-         aqZJfIAGzN/MRniqSFxlpHrorlCOABVCdixPnJjlt9rY9bHlnvY/mOYwLJbcOqLbtNtE
-         nNww==
-X-Gm-Message-State: APjAAAXDnnT9yWry6DYjLp12vIgyaSE3FMDiNhZxS6q53OpG/Hf+t+Rj
-        UcPLWaol+zQ4FE3/zup1f9R51w==
-X-Google-Smtp-Source: APXvYqxW1qdIS3otqhlBBCjtCjlgjYpsGMdUHQ/sCZODIjnY3CWYaEx8TR2oCPqj2x/eeIHOuztY2Q==
-X-Received: by 2002:a17:902:8541:: with SMTP id d1mr5509047plo.57.1578675171031;
-        Fri, 10 Jan 2020 08:52:51 -0800 (PST)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id s26sm3533556pfe.166.2020.01.10.08.52.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2020 08:52:50 -0800 (PST)
-Message-ID: <5e18abe2.1c69fb81.1ab3c.84f9@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        Fri, 10 Jan 2020 11:54:13 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id C90E67C6;
+        Fri, 10 Jan 2020 11:54:11 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Fri, 10 Jan 2020 11:54:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=W9nzw/ak+edqRjjbpLyEa2XPoHR
+        h/BnHaFu9YMjV5hw=; b=PoLpodryUFMte9qwWE/CFN2JX3KYh9HQgzQtai+rbZu
+        iI+IArz4lbiV2uGay/Vx8zi9Cd1iRRkE9u/v75bQOK2takZlzFL7gfu7wV201Z34
+        NRWo3K2DVq4DSEDKTWIywFwqWALs3Rq1huX/2CIt4LPB76QLvzyp8BKq7t4miMTm
+        +6uRd5msXdA7r0aZwTr5gtP2Fbf9R9oHz3u3l3YNiVtKcHbkj8HXKPBPo6z+UYP8
+        Xe3d5zmNUxx3kY4ZMo1d9SSTBpVFHiVhD/idSLvjlxBDuBZ9b0ugsAfZpzXBlWli
+        XIbpYqOEUJF6y1N3jdlyz+bj6j/CB/l5nZB5akxdqyg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=W9nzw/
+        ak+edqRjjbpLyEa2XPoHRh/BnHaFu9YMjV5hw=; b=KBbxS7pWMNDqHu/OICxpIE
+        GTGtc/1LyPlaptCR514wRDj8z9g8YrHHubhztUDW7sFOWi9YFMFnneQ+/+VPBIfg
+        oxAgp+PhJRGRguWWGedk5AW4OoMNYU1wJrZ00ewYoWlyrwZePEKIJdab/XEe3+TD
+        WqM1A/J50Iv0BYKrr0xQUM1//ifhPqGBvw8ZlXO0SK3X+MAA6cEtMtHIMnd/sPrc
+        XlP9dPgTJ0TfQGMORl4SPJsGj+1TnxTyy5HpZPQ/smN3K/Lrv8Dh2/a31XQgZ22k
+        qG/n9B26OOWS8b84+ULFGbp5WRNjbH5ntFr90/VQyimrReW4kme4US7uS9Lxv2+w
+        ==
+X-ME-Sender: <xms:MqwYXhFjGERM79w0i9b3cSZQqJa2Gtnrv6saiI3B6ylbWUFJMkvGlw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdeifedgledtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
+    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutd
+    ejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucev
+    lhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:M6wYXqa3w1FhJh0yaW12lRwWKubATg2Gilh1ygg11ImMjGxzjFBmwQ>
+    <xmx:M6wYXkQ7pV6-tZL6cER1rV4QP28pwsM-DsAkrDE5Kpx9JcK2bJF8cQ>
+    <xmx:M6wYXgeyMXsQT_dYUy0T-gDNvzia8Yx4Rg9TcQsEK5WzOUn4JONLdg>
+    <xmx:M6wYXrzdLVfHNQ9p7LF8ZfOhOpWOn0DdUXqYbznKBGBNoRO4dm5Vug>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id ADC5E30600A8;
+        Fri, 10 Jan 2020 11:54:10 -0500 (EST)
+Date:   Fri, 10 Jan 2020 17:54:04 +0100
+From:   Greg KH <greg@kroah.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Garrett <mjg59@google.com>, bugzilla@colorremedies.com
+Subject: Re: [PATCH 3/3] tracing: Do not create directories if lockdown is in
+ affect
+Message-ID: <20200110165404.GA1837739@kroah.com>
+References: <20191205020459.023316620@goodmis.org>
+ <20191205020548.446051018@goodmis.org>
+ <20200110163105.GA17434@home.goodmis.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1578486581-7540-3-git-send-email-sanm@codeaurora.org>
-References: <1578486581-7540-1-git-send-email-sanm@codeaurora.org> <1578486581-7540-3-git-send-email-sanm@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>,
-        Sandeep Maheswaram <sanm@codeaurora.org>
-Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: sc7180: Remove global phy reset in QMP phy
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sandeep Maheswaram <sanm@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Fri, 10 Jan 2020 08:52:49 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200110163105.GA17434@home.goodmis.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Sandeep Maheswaram (2020-01-08 04:29:40)
-> Remove global phy reset and do only usb phy reset in QMP phy.
+On Fri, Jan 10, 2020 at 11:31:05AM -0500, Steven Rostedt wrote:
+> I should have marked this for stable. The commit it fixes (see Fixes tag) is
+> in 5.4, and it appears this has yet to make it to 5.4 yet.
+> 
+> -- Steve
+> 
+> 
+> On Wed, Dec 04, 2019 at 09:05:02PM -0500, Steven Rostedt wrote:
+> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> > 
+> > If lockdown is disabling tracing on boot up, it prevents the tracing files
+> > from even bering created. But when that happens, there's several places that
+> > will give a warning that the files were not created as that is usually a
+> > sign of a bug.
+> > 
+> > Add in strategic locations where a check is made to see if tracing is
+> > disabled by lockdown, and if it is, do not go further, and fail silently
+> > (but print that tracing is disabled by lockdown, without doing a WARN_ON()).
+> > 
+> > Cc: Matthew Garrett <mjg59@google.com>
+> > Fixes: 17911ff38aa5 ("tracing: Add locked_down checks to the open calls of files created for tracefs")
+> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-Yes that's what this patch does, but you left out the important part:
-Why?
+Relying only on the Fixes: tag to get things picked up by stable is a
+sure way to get it on the "slow, and maybe eventually, hopefully, it
+might make it into stable" path :)
 
->=20
-> Signed-off-by: Sandeep Maheswaram <sanm@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/sc7180.dtsi | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->=20
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/q=
-com/sc7180.dtsi
-> index c00c3d4..448ab88 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> @@ -1072,9 +1072,8 @@
->                                  <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>;
->                         clock-names =3D "aux", "cfg_ahb", "ref", "com_aux=
-";
-> =20
-> -                       resets =3D <&gcc GCC_USB3_DP_PHY_PRIM_BCR>,
-> -                                <&gcc GCC_USB3_PHY_PRIM_BCR>;
-> -                       reset-names =3D "phy", "common";
-> +                       resets =3D <&gcc GCC_USB3_PHY_PRIM_BCR>;
-> +                       reset-names =3D "phy";
-> =20
+I have over 1000 patches right now in that "bucket" that need to be
+checked to see if they are relevant for stable backporting, just since
+5.4 was released.  I have automated a lot of it, but still, they require
+manual review.
 
-We shouldn't need to modify the DT node for this. The reset still goes
-to this hardware block, so DT should reflect that. Instead, the driver
-shouldn't drive this reset on this SoC.
+I'll go queue this up now, as it's simplest just to ask us to take it
+after it hits Linus's tree :)
 
->                         usb_1_ssphy: phy@88e9200 {
->                                 reg =3D <0 0x088e9200 0 0x128>,
+thanks,
+
+greg k-h
