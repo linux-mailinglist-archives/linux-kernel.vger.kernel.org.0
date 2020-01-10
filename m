@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B9BF137621
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 19:36:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48F8C137626
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 19:37:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728679AbgAJSgn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 13:36:43 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34440 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728496AbgAJSgl (ORCPT
+        id S1728760AbgAJSgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 13:36:50 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44561 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728400AbgAJSgn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 13:36:41 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t2so2777865wrr.1;
-        Fri, 10 Jan 2020 10:36:40 -0800 (PST)
+        Fri, 10 Jan 2020 13:36:43 -0500
+Received: by mail-wr1-f66.google.com with SMTP id q10so2737286wrm.11;
+        Fri, 10 Jan 2020 10:36:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pdOwgb77hw5W7/fMrT3rXjdCdL0Strxze8eiojAXtTg=;
-        b=fhEaXCE9ZImAaW0znUttr7EmxkKXyMJ8aAa6ctKxbgzIrBIi+Y/o8N8+RbXam6/HXZ
-         Cw0KxpCHBgvU49O8HPlteulKyy6AXoibYu+wXLtuJEIncQmX7622CLdZtAw0UCl/3iHS
-         9nilkbMvefeUlkb7ZhZLIgIKBhzhDnG+7SqFYrEMxDbtg5csU7XuV2mofg2JHyT+0cFI
-         X/d4kDaExpQEst2ZdmG0kxpEYJ/x7AS5ZLGxnsoE1uK4jNIlEDqZBAVh443uZCisRIEG
-         TLqw0M07L5rQ6T6XGO4JRpjJ8ZwTwtIBEVm6ag8ENdg2A7HaY7nO/h16JLSjmaLyESjw
-         ffHw==
+        bh=RXhuYHUQf7uxSiQZxx/MA7iyUWDN3SLdWOsQTulC9S4=;
+        b=R78av0PmtrxwhPQn2freZodrqi4x65lDTTlih37Z0jcQ8hPvAioH1eZ/r99mnr6wLV
+         4r9njGiWAZwDJA7zcALfNLY+BsHrmDSnYnzbo08/yyD+v04hIUCSPzMfH0Ow9Jlz65/8
+         yrv74QVM8b0n1ilQH/VtWc7j9ct2SKfqd61KIerozpse/2WwBFbeuVHv7LI7DE0B4tQj
+         ImDwcx2GQ+CAGsfR6fimdhwLSe9Yc8P/+oc5pPO9S8Nw1Xwjy9v/YK0TyAeu1MZgL8Bu
+         OgxHEpYr9gFkcouKjJWuiUTAedWrpVEsb3rvpCOLxrk9ANF4KGpiT52rAMuJqB0vcE7v
+         CR/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=pdOwgb77hw5W7/fMrT3rXjdCdL0Strxze8eiojAXtTg=;
-        b=bNaKr+T74I5fYzaXIDS7GuyGkUqM3CVHA1I1C/Gd9GtlLVUrAX4gV2yolvwiAREEkp
-         cuvm5PUxSHFNVGR7j1+55c1nIMCAl1fHuEny4yxYprkkS//K19zdl88duePR7vOhD94q
-         +Kmu+i4TVbcW6me0rwjY2U5m6iZ+M+9sJK6R+g8xgE3wt3b9URUjzM2Cq8pTZ4YnEqhM
-         BIoNj3KuMe/lZMniTmiVxZnWJpjxv92hkJle/ckaK9U0rIyobKXuc0FaTWb5Z5/fmbDz
-         Gu2ecsGgU/vEc08BOkpzt7eZSBu8ggPqXcA6LN9wMikVajmgnjfVawx/Q97W+HifoSLb
-         TVOw==
-X-Gm-Message-State: APjAAAUJlXgfHFvlwZiSpo8j+fa9F/SiurNA2O5SQ5mhodZ3kacD6s3V
-        b6WlgIEzTeWaR34mckwMcIY=
-X-Google-Smtp-Source: APXvYqxWzBzeoDTdUcPLmULJgQcWtmntniN4ym0sK8nVJke7SzAcOlGgtPAr86X0MnLklB4d4Bu7fA==
-X-Received: by 2002:a5d:494f:: with SMTP id r15mr5038525wrs.143.1578681399816;
-        Fri, 10 Jan 2020 10:36:39 -0800 (PST)
+        bh=RXhuYHUQf7uxSiQZxx/MA7iyUWDN3SLdWOsQTulC9S4=;
+        b=fxsnCvezMYBtVRfoCyXEOFnIC+uWWbs5Rk/lxnII1mCdYINEuoGmvvqI0pMuFvKudo
+         7/2S/Mm4Qn2a0TFtW9NcqW5v52onlAVwyTzEjEaZCl4beoxEr332Vp6iqDn5gkJVTB/7
+         66STTd5AVNJHdjNgjt6Fe/uPyhPM+uWxQOjmlfjyV3aDRfo9UDDs0S0GeDxnFkAb+pRz
+         Gcs1XaJhw/U9negHKqB4UoEKlk/7JyHrvZHbb/avbza7G9gVVTWWwA1YcW2oyqLVT6Ac
+         dP3DRF1m9HQftlI3gv/dudQwRwBlWqxjLNMPDxsLV1lKZs8mz3I/etJc2OE0hd6tYvSR
+         ihxA==
+X-Gm-Message-State: APjAAAX1SHbmnjL82f55Uk9bIx13uq0Ug1X9pkaqJDRLrPM4C+nTktt/
+        J2AHTCB8j2GB8m2SdZGi6u8=
+X-Google-Smtp-Source: APXvYqwnRdakZ3Ds7QRSOw6vSGqYAEtvFqIl3B0Cw8nSvJz2+DGYXlM6Yy8VuKMxPEGJEdS2Gncakw==
+X-Received: by 2002:adf:fd43:: with SMTP id h3mr4747926wrs.169.1578681401414;
+        Fri, 10 Jan 2020 10:36:41 -0800 (PST)
 Received: from localhost.localdomain (ip5f5bee3c.dynamic.kabel-deutschland.de. [95.91.238.60])
-        by smtp.gmail.com with ESMTPSA id x11sm3182825wre.68.2020.01.10.10.36.38
+        by smtp.gmail.com with ESMTPSA id x11sm3182825wre.68.2020.01.10.10.36.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2020 10:36:39 -0800 (PST)
+        Fri, 10 Jan 2020 10:36:40 -0800 (PST)
 From:   Bean Huo <huobean@gmail.com>
 To:     alim.akhtar@samsung.com, avri.altman@wdc.com,
         pedrom.sousa@synopsys.com, jejb@linux.ibm.com,
@@ -51,9 +51,9 @@ To:     alim.akhtar@samsung.com, avri.altman@wdc.com,
         beanhuo@micron.com, bvanassche@acm.org, tomas.winkler@intel.com,
         cang@codeaurora.org
 Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] scsi: ufs: add max_lu_supported in struct ufs_dev_info
-Date:   Fri, 10 Jan 2020 19:36:04 +0100
-Message-Id: <20200110183606.10102-2-huobean@gmail.com>
+Subject: [PATCH 2/3] scsi: ufs: initialize max_lu_supported while booting
+Date:   Fri, 10 Jan 2020 19:36:05 +0100
+Message-Id: <20200110183606.10102-3-huobean@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200110183606.10102-1-huobean@gmail.com>
 References: <20200110183606.10102-1-huobean@gmail.com>
@@ -64,28 +64,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bean Huo <beanhuo@micron.com>
 
-Add one new parameter max_lu_supported in struct ufs_dev_info,
-which will be used to express exactly how many general LUs being
-supported by UFS device.
+This patch is to add a new function ufshcd_init_device_param() for
+initialization of  UFS device related parameters which are used by
+driver. In this version patch, there is only dev_info.max_lu_supported
+being initialized.
 
 Signed-off-by: Bean Huo <beanhuo@micron.com>
 ---
- drivers/scsi/ufs/ufs.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/ufs/ufshcd.c | 47 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 46 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-index c89f21698629..5ca7ea4f223e 100644
---- a/drivers/scsi/ufs/ufs.h
-+++ b/drivers/scsi/ufs/ufs.h
-@@ -530,6 +530,8 @@ struct ufs_dev_info {
- 	bool f_power_on_wp_en;
- 	/* Keeps information if any of the LU is power on write protected */
- 	bool is_lu_power_on_wp;
-+	/* Maximum number of general LU supported by the UFS device */
-+	u8 max_lu_supported;
- };
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 1b97f2dc0b63..a297fe55e36a 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -3158,6 +3158,11 @@ static int ufshcd_read_device_desc(struct ufs_hba *hba, u8 *buf, u32 size)
+ 	return ufshcd_read_desc(hba, QUERY_DESC_IDN_DEVICE, 0, buf, size);
+ }
  
- #define MAX_MODEL_LEN 16
++static int ufshcd_read_geometry_desc(struct ufs_hba *hba, u8 *buf, u32 size)
++{
++	return ufshcd_read_desc(hba, QUERY_DESC_IDN_GEOMETRY, 0, buf, size);
++}
++
+ /**
+  * struct uc_string_id - unicode string
+  *
+@@ -6827,6 +6832,37 @@ static void ufshcd_clear_dbg_ufs_stats(struct ufs_hba *hba)
+ 	hba->req_abort_count = 0;
+ }
+ 
++static int ufshcd_init_device_param(struct ufs_hba *hba)
++{
++	int err;
++	size_t buff_len;
++	u8 *desc_buf;
++
++	buff_len = QUERY_DESC_MAX_SIZE;
++	desc_buf = kmalloc(buff_len, GFP_KERNEL);
++	if (!desc_buf) {
++		err = -ENOMEM;
++		goto out;
++	}
++
++	err = ufshcd_read_geometry_desc(hba, desc_buf,
++			hba->desc_size.geom_desc);
++	if (err) {
++		dev_err(hba->dev, "%s: Failed reading Geometry Desc. err = %d\n",
++			__func__, err);
++		goto out;
++	}
++
++	if (desc_buf[GEOMETRY_DESC_PARAM_MAX_NUM_LUN] == 1)
++		hba->dev_info.max_lu_supported = 32;
++	else if (desc_buf[GEOMETRY_DESC_PARAM_MAX_NUM_LUN] == 0)
++		hba->dev_info.max_lu_supported = 8;
++
++out:
++	kfree(desc_buf);
++	return err;
++}
++
+ static void ufshcd_init_desc_sizes(struct ufs_hba *hba)
+ {
+ 	int err;
+@@ -7016,13 +7052,22 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+ 
+ 	/*
+ 	 * If we are in error handling context or in power management callbacks
+-	 * context, no need to scan the host
++	 * context, no need to scan the host and to reinitialize the parameters
+ 	 */
+ 	if (!ufshcd_eh_in_progress(hba) && !hba->pm_op_in_progress) {
+ 		bool flag;
+ 
+ 		/* clear any previous UFS device information */
+ 		memset(&hba->dev_info, 0, sizeof(hba->dev_info));
++		/* Init parameters according to UFS relevant descriptors */
++		ret = ufshcd_init_device_param(hba);
++		if (ret) {
++			dev_err(hba->dev,
++				"%s: Init of device param failed. err = %d\n",
++				__func__, ret);
++			goto out;
++		}
++
+ 		if (!ufshcd_query_flag_retry(hba, UPIU_QUERY_OPCODE_READ_FLAG,
+ 				QUERY_FLAG_IDN_PWR_ON_WPE, &flag))
+ 			hba->dev_info.f_power_on_wp_en = flag;
 -- 
 2.17.1
 
