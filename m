@@ -2,59 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 738F713683C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 08:21:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDC9513681B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 08:16:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbgAJHUm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 02:20:42 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35736 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726558AbgAJHUm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 02:20:42 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 6AD5B737C754AE18F20D;
-        Fri, 10 Jan 2020 15:20:40 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 10 Jan 2020 15:20:32 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <alexander.deucher@amd.com>, <sunpeng.li@amd.com>
-CC:     <amd-gfx@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <chenzhou10@huawei.com>
-Subject: [PATCH] drm/amd/display: remove unnecessary conversion to bool
-Date:   Fri, 10 Jan 2020 15:16:16 +0800
-Message-ID: <20200110071616.84891-1-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726497AbgAJHQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 02:16:27 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:34774 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726142AbgAJHQ0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 02:16:26 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00A7GJU9065583;
+        Fri, 10 Jan 2020 01:16:19 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578640580;
+        bh=UWIUrIeOJUT2Q2yeIt+pWgbb4LHnPensbV2MqiTfZMM=;
+        h=From:To:CC:Subject:Date;
+        b=bQlZmhQrmViX1z/HFnsdkM7/zZcRGYkXRK4dkI5OmO0/buvnyELkrVZeY56xAr/cB
+         XeJHWR3iaZu08h6lDbCaAtNdupAO4mj6VchnKXlxwxdCtLlU2/l1HDX0RWDjTCcwMF
+         hQMzBpHqxXjRG5Z8ZeuYJqM6JNyX3g/RxtA6iFxo=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00A7GJsq048158;
+        Fri, 10 Jan 2020 01:16:19 -0600
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 10
+ Jan 2020 01:16:18 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 10 Jan 2020 01:16:18 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00A7GG4A041868;
+        Fri, 10 Jan 2020 01:16:16 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <mchehab@kernel.org>, <hyun.kwon@xilinx.com>,
+        <laurent.pinchart@ideasonboard.com>
+CC:     <vkoul@kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <michal.simek@xilinx.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v2] media: xilinx: Use dma_request_chan() instead dma_request_slave_channel()
+Date:   Fri, 10 Jan 2020 09:16:48 +0200
+Message-ID: <20200110071648.15690-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The conversion to bool is not needed, remove it.
+dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+eating up the error code.
 
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+By using dma_request_chan() directly the driver can support deferred
+probing against DMA.
+
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi,
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-index 504055f..a004e8e 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-@@ -2792,7 +2792,7 @@ static bool retrieve_link_cap(struct dc_link *link)
- 			dpcd_data[DP_TRAINING_AUX_RD_INTERVAL];
+Changes since v1:
+- Fix cleanup path when DMA request failed as suggested by Laurent
+- Print error only in case when the error is not EPROBE_DEFER
+
+Regards,
+Peter
+
+ drivers/media/platform/xilinx/xilinx-dma.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media/platform/xilinx/xilinx-dma.c
+index b211380a11f2..3bb54a4db6a4 100644
+--- a/drivers/media/platform/xilinx/xilinx-dma.c
++++ b/drivers/media/platform/xilinx/xilinx-dma.c
+@@ -725,10 +725,11 @@ int xvip_dma_init(struct xvip_composite_device *xdev, struct xvip_dma *dma,
  
- 		link->dpcd_caps.ext_receiver_cap_field_present =
--				aux_rd_interval.bits.EXT_RECEIVER_CAP_FIELD_PRESENT == 1 ? true:false;
-+				aux_rd_interval.bits.EXT_RECEIVER_CAP_FIELD_PRESENT == 1;
+ 	/* ... and the DMA channel. */
+ 	snprintf(name, sizeof(name), "port%u", port);
+-	dma->dma = dma_request_slave_channel(dma->xdev->dev, name);
+-	if (dma->dma == NULL) {
+-		dev_err(dma->xdev->dev, "no VDMA channel found\n");
+-		ret = -ENODEV;
++	dma->dma = dma_request_chan(dma->xdev->dev, name);
++	if (IS_ERR(dma->dma)) {
++		ret = PTR_ERR(dma->dma);
++		if (ret != -EPROBE_DEFER)
++			dev_err(dma->xdev->dev, "no VDMA channel found\n");
+ 		goto error;
+ 	}
  
- 		if (aux_rd_interval.bits.EXT_RECEIVER_CAP_FIELD_PRESENT == 1) {
- 			uint8_t ext_cap_data[16];
+@@ -752,7 +753,7 @@ void xvip_dma_cleanup(struct xvip_dma *dma)
+ 	if (video_is_registered(&dma->video))
+ 		video_unregister_device(&dma->video);
+ 
+-	if (dma->dma)
++	if (!IS_ERR_OR_NULL(dma->dma))
+ 		dma_release_channel(dma->dma);
+ 
+ 	media_entity_cleanup(&dma->video.entity);
 -- 
-2.7.4
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
