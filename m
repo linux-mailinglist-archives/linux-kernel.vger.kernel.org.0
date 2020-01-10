@@ -2,545 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BB71136F0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 15:12:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D58F4136F04
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 15:12:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbgAJOMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 09:12:14 -0500
-Received: from olimex.com ([184.105.72.32]:51161 "EHLO olimex.com"
+        id S1727781AbgAJOL7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 09:11:59 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40478 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727991AbgAJOMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 09:12:13 -0500
-Received: from localhost.localdomain ([94.155.250.134])
-        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-GCM-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AESGCM(128):Mac=AEAD) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 06:12:04 -0800
-From:   Stefan Mavrodiev <stefan@olimex.com>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list),
-        dmaengine@vger.kernel.org (open list:DMA GENERIC OFFLOAD ENGINE
-        SUBSYSTEM),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
-        sunXi SoC support),
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR ALLWINNER
-        A10)
-Cc:     linux-sunxi@googlegroups.com, Stefan Mavrodiev <stefan@olimex.com>
-Subject: [PATCH 2/2] drm: sun4i: hdmi: Add support for sun4i HDMI encoder audio
-Date:   Fri, 10 Jan 2020 16:11:40 +0200
-Message-Id: <20200110141140.28527-3-stefan@olimex.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200110141140.28527-1-stefan@olimex.com>
-References: <20200110141140.28527-1-stefan@olimex.com>
+        id S1727181AbgAJOL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 09:11:59 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 20DDEB066;
+        Fri, 10 Jan 2020 14:11:55 +0000 (UTC)
+Subject: Re: [FIX] slub: Remove kmalloc under list_lock from
+ list_slab_objects() V2
+To:     Yu Zhao <yuzhao@google.com>, Christopher Lameter <cl@linux.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20191108193958.205102-1-yuzhao@google.com>
+ <20191108193958.205102-2-yuzhao@google.com>
+ <alpine.DEB.2.21.1911092024560.9034@www.lameter.com>
+ <20191109230147.GA75074@google.com>
+ <alpine.DEB.2.21.1911092313460.32415@www.lameter.com>
+ <20191110184721.GA171640@google.com>
+ <alpine.DEB.2.21.1911111543420.10669@www.lameter.com>
+ <alpine.DEB.2.21.1911111553020.15366@www.lameter.com>
+ <20191130150908.06b2646edfa7bdc12a943c25@linux-foundation.org>
+ <alpine.DEB.2.21.1912021511250.15780@www.lameter.com>
+ <20191207220320.GA67512@google.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <e9f26cbd-593b-116e-2e4a-f8e0e16c23fc@suse.cz>
+Date:   Fri, 10 Jan 2020 15:11:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
+MIME-Version: 1.0
+In-Reply-To: <20191207220320.GA67512@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add HDMI audio support for the sun4i-hdmi encoder, used on
-the older Allwinner chips - A10, A20, A31.
+On 12/7/19 11:03 PM, Yu Zhao wrote:
+> On Mon, Dec 02, 2019 at 03:12:20PM +0000, Christopher Lameter wrote:
+>> On Sat, 30 Nov 2019, Andrew Morton wrote:
+>>
+>>>> Perform the allocation in free_partial() before the list_lock is taken.
+>>>
+>>> No response here?  It looks a lot simpler than the originally proposed
+>>> patch?
+>>
+>> Yup. I prefer this one but its my own patch so I cannot Ack this.
+> 
+> Hi, there is a pending question from Tetsuo-san. I'd be happy to ack
+> once it's address.
 
-Most of the code is based on the BSP implementation. In it
-dditional formats are supported (S20_3LE and S24_LE), however
-there where some problems with them and only S16_LE is left.
-
-Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
----
- drivers/gpu/drm/sun4i/Kconfig            |   1 +
- drivers/gpu/drm/sun4i/Makefile           |   1 +
- drivers/gpu/drm/sun4i/sun4i_hdmi.h       |  30 ++
- drivers/gpu/drm/sun4i/sun4i_hdmi_audio.c | 375 +++++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c   |   4 +
- 5 files changed, 411 insertions(+)
- create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi_audio.c
-
-diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
-index 37e90e42943f..192b732b10cd 100644
---- a/drivers/gpu/drm/sun4i/Kconfig
-+++ b/drivers/gpu/drm/sun4i/Kconfig
-@@ -19,6 +19,7 @@ if DRM_SUN4I
- config DRM_SUN4I_HDMI
-        tristate "Allwinner A10 HDMI Controller Support"
-        default DRM_SUN4I
-+       select SND_PCM_ELD
-        help
- 	  Choose this option if you have an Allwinner SoC with an HDMI
- 	  controller.
-diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
-index 0d04f2447b01..e2d82b451c36 100644
---- a/drivers/gpu/drm/sun4i/Makefile
-+++ b/drivers/gpu/drm/sun4i/Makefile
-@@ -5,6 +5,7 @@ sun4i-frontend-y		+= sun4i_frontend.o
- sun4i-drm-y			+= sun4i_drv.o
- sun4i-drm-y			+= sun4i_framebuffer.o
- 
-+sun4i-drm-hdmi-y		+= sun4i_hdmi_audio.o
- sun4i-drm-hdmi-y		+= sun4i_hdmi_ddc_clk.o
- sun4i-drm-hdmi-y		+= sun4i_hdmi_enc.o
- sun4i-drm-hdmi-y		+= sun4i_hdmi_i2c.o
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-index 7ad3f06c127e..456964e681b0 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-@@ -42,7 +42,32 @@
- #define SUN4I_HDMI_VID_TIMING_POL_VSYNC		BIT(1)
- #define SUN4I_HDMI_VID_TIMING_POL_HSYNC		BIT(0)
- 
-+#define SUN4I_HDMI_AUDIO_CTRL_REG	0x040
-+#define SUN4I_HDMI_AUDIO_CTRL_ENABLE		BIT(31)
-+#define SUN4I_HDMI_AUDIO_CTRL_RESET		BIT(30)
-+
-+#define SUN4I_HDMI_AUDIO_FMT_REG	0x048
-+#define SUN4I_HDMI_AUDIO_FMT_SRC		BIT(31)
-+#define SUN4I_HDMI_AUDIO_FMT_LAYOUT		BIT(3)
-+#define SUN4I_HDMI_AUDIO_FMT_CH_CFG(n)		(n - 1)
-+#define SUN4I_HDMI_AUDIO_FMT_CH_CFG_MASK	GENMASK(2, 0)
-+
-+#define SUN4I_HDMI_AUDIO_PCM_REG	0x4c
-+#define SUN4I_HDMI_AUDIO_PCM_CH_MAP(n, m)	((m - 1) << (n * 4))
-+#define SUN4I_HDMI_AUDIO_PCM_CH_MAP_MASK(n)	(GENMASK(2, 0) << (n * 4))
-+
-+#define SUN4I_HDMI_AUDIO_CTS_REG	0x050
-+#define SUN4I_HDMI_AUDIO_CTS(n)			(n & GENMASK(19, 0))
-+
-+#define SUN4I_HDMI_AUDIO_N_REG		0x054
-+#define SUN4I_HDMI_AUDIO_N(n)			(n & GENMASK(19, 0))
-+
-+#define SUN4I_HDMI_AUDIO_STAT0_REG	0x58
-+#define SUN4I_HDMI_AUDIO_STAT0_FREQ(n)		(n << 24)
-+#define SUN4I_HDMI_AUDIO_STAT0_FREQ_MASK	GENMASK(27, 24)
-+
- #define SUN4I_HDMI_AVI_INFOFRAME_REG(n)	(0x080 + (n))
-+#define SUN4I_HDMI_AUDIO_INFOFRAME_REG(n)	(0x0a0 + (n))
- 
- #define SUN4I_HDMI_PAD_CTRL0_REG	0x200
- #define SUN4I_HDMI_PAD_CTRL0_BIASEN		BIT(31)
-@@ -283,9 +308,13 @@ struct sun4i_hdmi {
- 	struct regmap_field	*field_ddc_sda_en;
- 	struct regmap_field	*field_ddc_sck_en;
- 
-+	u8			hdmi_audio_channels;
-+
- 	struct sun4i_drv	*drv;
- 
- 	bool			hdmi_monitor;
-+	bool			hdmi_audio;
-+
- 	struct cec_adapter	*cec_adap;
- 
- 	const struct sun4i_hdmi_variant	*variant;
-@@ -294,5 +323,6 @@ struct sun4i_hdmi {
- int sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *clk);
- int sun4i_tmds_create(struct sun4i_hdmi *hdmi);
- int sun4i_hdmi_i2c_create(struct device *dev, struct sun4i_hdmi *hdmi);
-+int sun4i_hdmi_audio_create(struct sun4i_hdmi *hdmi);
- 
- #endif /* _SUN4I_HDMI_H_ */
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_audio.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_audio.c
-new file mode 100644
-index 000000000000..b6d4199d15ce
---- /dev/null
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_audio.c
-@@ -0,0 +1,375 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (C) 2020 Olimex Ltd.
-+ *   Author: Stefan Mavrodiev <stefan@olimex.com>
-+ */
-+#include <linux/dma-mapping.h>
-+#include <linux/dmaengine.h>
-+#include <linux/module.h>
-+#include <linux/of_dma.h>
-+#include <linux/regmap.h>
-+
-+#include <drm/drm_print.h>
-+
-+#include <sound/dmaengine_pcm.h>
-+#include <sound/pcm_drm_eld.h>
-+#include <sound/pcm_params.h>
-+#include <sound/soc.h>
-+
-+#include "sun4i_hdmi.h"
-+
-+static const struct snd_soc_dapm_widget sun4i_hdmi_audio_widgets[] = {
-+	SND_SOC_DAPM_OUTPUT("TX"),
-+};
-+
-+static const struct snd_soc_dapm_route sun4i_hdmi_audio_routes[] = {
-+	{ "TX", NULL, "Playback" },
-+};
-+
-+static const struct snd_soc_component_driver sun4i_hdmi_audio_component = {
-+	.dapm_widgets		= sun4i_hdmi_audio_widgets,
-+	.num_dapm_widgets	= ARRAY_SIZE(sun4i_hdmi_audio_widgets),
-+	.dapm_routes		= sun4i_hdmi_audio_routes,
-+	.num_dapm_routes	= ARRAY_SIZE(sun4i_hdmi_audio_routes),
-+};
-+
-+static int sun4i_hdmi_audio_startup(struct snd_pcm_substream *substream,
-+				    struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_card *card = snd_soc_dai_get_drvdata(dai);
-+	struct sun4i_hdmi *hdmi = snd_soc_card_get_drvdata(card);
-+	u32 reg;
-+	int ret;
-+
-+	regmap_write(hdmi->regmap, SUN4I_HDMI_AUDIO_CTRL_REG, 0);
-+	regmap_write(hdmi->regmap,
-+		     SUN4I_HDMI_AUDIO_CTRL_REG,
-+		     SUN4I_HDMI_AUDIO_CTRL_RESET);
-+	ret = regmap_read_poll_timeout(hdmi->regmap,
-+				       SUN4I_HDMI_AUDIO_CTRL_REG,
-+				       reg, !reg, 100, 50000);
-+	if (ret < 0) {
-+		DRM_ERROR("Failed to reset HDMI Audio\n");
-+		return ret;
-+	}
-+
-+	regmap_write(hdmi->regmap,
-+		     SUN4I_HDMI_AUDIO_CTRL_REG,
-+		     SUN4I_HDMI_AUDIO_CTRL_ENABLE);
-+
-+	return snd_pcm_hw_constraint_eld(substream->runtime,
-+					 hdmi->connector.eld);
-+}
-+
-+static void sun4i_hdmi_audio_shutdown(struct snd_pcm_substream *substream,
-+				      struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_card *card = snd_soc_dai_get_drvdata(dai);
-+	struct sun4i_hdmi *hdmi = snd_soc_card_get_drvdata(card);
-+
-+	regmap_write(hdmi->regmap, SUN4I_HDMI_AUDIO_CTRL_REG, 0);
-+}
-+
-+static int sun4i_hdmi_setup_audio_infoframes(struct sun4i_hdmi *hdmi)
-+{
-+	union hdmi_infoframe frame;
-+	u8 buffer[14];
-+	int i, ret;
-+
-+	ret = hdmi_audio_infoframe_init(&frame.audio);
-+	if (ret < 0) {
-+		DRM_ERROR("Failed to init HDMI audio infoframe\n");
-+		return ret;
-+	}
-+
-+	frame.audio.coding_type = HDMI_AUDIO_CODING_TYPE_STREAM;
-+	frame.audio.sample_frequency = HDMI_AUDIO_SAMPLE_FREQUENCY_STREAM;
-+	frame.audio.sample_size = HDMI_AUDIO_SAMPLE_SIZE_STREAM;
-+	frame.audio.channels = hdmi->hdmi_audio_channels;
-+
-+	ret = hdmi_infoframe_pack(&frame, buffer, sizeof(buffer));
-+	if (ret < 0) {
-+		DRM_ERROR("Failed to pack HDMI audio infoframe\n");
-+		return ret;
-+	}
-+
-+	for (i = 0; i < sizeof(buffer); i++)
-+		writeb(buffer[i],
-+		       hdmi->base + SUN4I_HDMI_AUDIO_INFOFRAME_REG(i));
-+
-+	return 0;
-+}
-+
-+static void sun4i_hdmi_audio_set_cts_n(struct sun4i_hdmi *hdmi,
-+				       struct snd_pcm_hw_params *params)
-+{
-+	struct drm_encoder *encoder = &hdmi->encoder;
-+	struct drm_crtc *crtc = encoder->crtc;
-+	const struct drm_display_mode *mode = &crtc->state->adjusted_mode;
-+	u32 rate = params_rate(params);
-+	u32 n, cts;
-+	u64 tmp;
-+
-+	/**
-+	 * Calculate Cycle Time Stamp (CTS) and Numerator (N):
-+	 *
-+	 * N = 128 * Samplerate / 1000
-+	 * CTS = (Ftdms * N) / (128 * Samplerate)
-+	 */
-+
-+	n = 128 * rate / 1000;
-+	tmp = (u64)(mode->clock * 1000) * n;
-+	do_div(tmp, 128 * rate);
-+	cts = tmp;
-+
-+	regmap_write(hdmi->regmap,
-+		     SUN4I_HDMI_AUDIO_CTS_REG,
-+		     SUN4I_HDMI_AUDIO_CTS(cts));
-+
-+	regmap_write(hdmi->regmap,
-+		     SUN4I_HDMI_AUDIO_N_REG,
-+		     SUN4I_HDMI_AUDIO_N(n));
-+}
-+
-+static int sun4i_hdmi_audio_set_hw_rate(struct sun4i_hdmi *hdmi,
-+					struct snd_pcm_hw_params *params)
-+{
-+	u32 rate = params_rate(params);
-+	u32 val;
-+
-+	switch (rate) {
-+	case 44100:
-+		val = 0x0;
-+		break;
-+	case 48000:
-+		val = 0x2;
-+		break;
-+	case 32000:
-+		val = 0x3;
-+		break;
-+	case 88200:
-+		val = 0x8;
-+		break;
-+	case 96000:
-+		val = 0x9;
-+		break;
-+	case 176400:
-+		val = 0xc;
-+		break;
-+	case 192000:
-+		val = 0xe;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	regmap_update_bits(hdmi->regmap,
-+			   SUN4I_HDMI_AUDIO_STAT0_REG,
-+			   SUN4I_HDMI_AUDIO_STAT0_FREQ_MASK,
-+			   SUN4I_HDMI_AUDIO_STAT0_FREQ(val));
-+
-+	return 0;
-+}
-+
-+static int sun4i_hdmi_audio_set_hw_channels(struct sun4i_hdmi *hdmi,
-+					    struct snd_pcm_hw_params *params)
-+{
-+	u32 channels = params_channels(params);
-+
-+	if (channels > 8)
-+		return -EINVAL;
-+
-+	hdmi->hdmi_audio_channels = channels;
-+
-+	regmap_update_bits(hdmi->regmap,
-+			   SUN4I_HDMI_AUDIO_FMT_REG,
-+			   SUN4I_HDMI_AUDIO_FMT_LAYOUT,
-+			   (channels > 2) ? SUN4I_HDMI_AUDIO_FMT_LAYOUT : 0);
-+
-+	regmap_update_bits(hdmi->regmap,
-+			   SUN4I_HDMI_AUDIO_FMT_REG,
-+			   SUN4I_HDMI_AUDIO_FMT_CH_CFG_MASK,
-+			   SUN4I_HDMI_AUDIO_FMT_CH_CFG(channels));
-+
-+	regmap_write(hdmi->regmap, SUN4I_HDMI_AUDIO_PCM_REG, 0x76543210);
-+
-+	/**
-+	 * If only one channel is required, send the same sample
-+	 * to the sink device as a left and right channel.
-+	 */
-+	if (channels == 1)
-+		regmap_update_bits(hdmi->regmap,
-+				   SUN4I_HDMI_AUDIO_PCM_REG,
-+				   SUN4I_HDMI_AUDIO_PCM_CH_MAP_MASK(1),
-+				   SUN4I_HDMI_AUDIO_PCM_CH_MAP(1, 1));
-+
-+	return 0;
-+}
-+
-+static int sun4i_hdmi_audio_hw_params(struct snd_pcm_substream *substream,
-+				      struct snd_pcm_hw_params *params,
-+				      struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_card *card = snd_soc_dai_get_drvdata(dai);
-+	struct sun4i_hdmi *hdmi = snd_soc_card_get_drvdata(card);
-+	int ret;
-+
-+	ret = sun4i_hdmi_audio_set_hw_rate(hdmi, params);
-+	if (ret)
-+		return ret;
-+
-+	ret = sun4i_hdmi_audio_set_hw_channels(hdmi, params);
-+	if (ret)
-+		return ret;
-+
-+	sun4i_hdmi_audio_set_cts_n(hdmi, params);
-+
-+	return 0;
-+}
-+
-+static int sun4i_hdmi_audio_trigger(struct snd_pcm_substream *substream,
-+				    int cmd,
-+				    struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_card *card = snd_soc_dai_get_drvdata(dai);
-+	struct sun4i_hdmi *hdmi = snd_soc_card_get_drvdata(card);
-+	int ret = 0;
-+
-+	switch (cmd) {
-+	case SNDRV_PCM_TRIGGER_START:
-+		ret = sun4i_hdmi_setup_audio_infoframes(hdmi);
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct snd_soc_dai_ops sun4i_hdmi_audio_dai_ops = {
-+	.startup = sun4i_hdmi_audio_startup,
-+	.shutdown = sun4i_hdmi_audio_shutdown,
-+	.hw_params = sun4i_hdmi_audio_hw_params,
-+	.trigger = sun4i_hdmi_audio_trigger,
-+};
-+
-+static int sun4i_hdmi_audio_dai_probe(struct snd_soc_dai *dai)
-+{
-+	struct snd_dmaengine_dai_dma_data *dma_data;
-+
-+	dma_data = devm_kzalloc(dai->dev, sizeof(*dma_data), GFP_KERNEL);
-+	if (!dma_data)
-+		return -ENOMEM;
-+
-+	dma_data->addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+	dma_data->maxburst = 8;
-+
-+	snd_soc_dai_init_dma_data(dai, dma_data, NULL);
-+
-+	return 0;
-+}
-+
-+static struct snd_soc_dai_driver sun4i_hdmi_audio_dai = {
-+	.name = "HDMI",
-+	.ops = &sun4i_hdmi_audio_dai_ops,
-+	.probe = sun4i_hdmi_audio_dai_probe,
-+	.playback = {
-+		.stream_name	= "Playback",
-+		.channels_min	= 1,
-+		.channels_max	= 8,
-+		.formats	= SNDRV_PCM_FMTBIT_S16_LE,
-+		.rates		= SNDRV_PCM_RATE_8000_192000,
-+	},
-+};
-+
-+static const struct snd_pcm_hardware sun4i_hdmi_audio_pcm_hardware = {
-+	.info			= SNDRV_PCM_INFO_INTERLEAVED |
-+				  SNDRV_PCM_INFO_BLOCK_TRANSFER |
-+				  SNDRV_PCM_INFO_MMAP |
-+				  SNDRV_PCM_INFO_MMAP_VALID |
-+				  SNDRV_PCM_INFO_PAUSE |
-+				  SNDRV_PCM_INFO_RESUME,
-+	.formats		= SNDRV_PCM_FMTBIT_S16_LE,
-+	.rates                  = SNDRV_PCM_RATE_8000_192000,
-+	.rate_min               = 8000,
-+	.rate_max               = 192000,
-+	.channels_min           = 1,
-+	.channels_max           = 8,
-+	.buffer_bytes_max	= 128 * 1024,
-+	.period_bytes_min	= 4 * 1024,
-+	.period_bytes_max	= 32 * 1024,
-+	.periods_min		= 2,
-+	.periods_max		= 8,
-+	.fifo_size		= 128,
-+};
-+
-+static const struct snd_dmaengine_pcm_config sun4i_hdmi_audio_pcm_config = {
-+	.chan_names[SNDRV_PCM_STREAM_PLAYBACK] = "audio-tx",
-+	.pcm_hardware = &sun4i_hdmi_audio_pcm_hardware,
-+	.prealloc_buffer_size = 128 * 1024,
-+	.prepare_slave_config = snd_dmaengine_pcm_prepare_slave_config,
-+};
-+
-+struct snd_soc_card sun4i_hdmi_audio_card = {
-+	.name = "sun4i-hdmi",
-+};
-+
-+int sun4i_hdmi_audio_create(struct sun4i_hdmi *hdmi)
-+{
-+	struct snd_soc_card *card = &sun4i_hdmi_audio_card;
-+	struct snd_soc_dai_link_component *comp;
-+	struct snd_soc_dai_link *link;
-+	int ret;
-+
-+	ret = devm_snd_dmaengine_pcm_register(hdmi->dev,
-+					      &sun4i_hdmi_audio_pcm_config, 0);
-+	if (ret) {
-+		DRM_ERROR("Could not register PCM\n");
-+		return ret;
-+	}
-+
-+	ret = devm_snd_soc_register_component(hdmi->dev,
-+					      &sun4i_hdmi_audio_component,
-+					      &sun4i_hdmi_audio_dai, 1);
-+	if (ret) {
-+		DRM_ERROR("Could not register DAI\n");
-+		return ret;
-+	}
-+
-+	link = devm_kzalloc(hdmi->dev, sizeof(*link), GFP_KERNEL);
-+	if (!link)
-+		return -ENOMEM;
-+
-+	comp = devm_kzalloc(hdmi->dev, sizeof(*comp) * 3, GFP_KERNEL);
-+	if (!comp)
-+		return -ENOMEM;
-+
-+	link->cpus = &comp[0];
-+	link->codecs = &comp[1];
-+	link->platforms = &comp[2];
-+
-+	link->num_cpus = 1;
-+	link->num_codecs = 1;
-+	link->num_platforms = 1;
-+
-+	link->playback_only = 1;
-+
-+	link->name = "SUN4I-HDMI";
-+	link->stream_name = "SUN4I-HDMI PCM";
-+
-+	link->codecs->name = dev_name(hdmi->dev);
-+	link->codecs->dai_name	= sun4i_hdmi_audio_dai.name;
-+
-+	link->cpus->dai_name = dev_name(hdmi->dev);
-+
-+	link->platforms->name = dev_name(hdmi->dev);
-+
-+	link->dai_fmt = SND_SOC_DAIFMT_I2S;
-+
-+	card->dai_link = link;
-+	card->num_links = 1;
-+	card->dev = hdmi->dev;
-+
-+	snd_soc_card_set_drvdata(card, hdmi);
-+	return devm_snd_soc_register_card(hdmi->dev, card);
-+}
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-index a7c4654445c7..79ecd89fb705 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-@@ -114,6 +114,9 @@ static void sun4i_hdmi_enable(struct drm_encoder *encoder)
- 		val |= SUN4I_HDMI_VID_CTRL_HDMI_MODE;
- 
- 	writel(val, hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
-+
-+	if (hdmi->hdmi_audio && sun4i_hdmi_audio_create(hdmi))
-+		DRM_ERROR("Couldn't create the HDMI audio adapter\n");
- }
- 
- static void sun4i_hdmi_mode_set(struct drm_encoder *encoder,
-@@ -218,6 +221,7 @@ static int sun4i_hdmi_get_modes(struct drm_connector *connector)
- 	if (!edid)
- 		return 0;
- 
-+	hdmi->hdmi_audio = drm_detect_monitor_audio(edid);
- 	hdmi->hdmi_monitor = drm_detect_hdmi_monitor(edid);
- 	DRM_DEBUG_DRIVER("Monitor is %s monitor\n",
- 			 hdmi->hdmi_monitor ? "an HDMI" : "a DVI");
--- 
-2.17.1
-
+Tetsuo's mails don't reach linux-mm for a while and he has given up
+trying to do something about it. It's hard to discuss anything outside
+the direct CC group then. I don't know what's the pending question, for
+example.
