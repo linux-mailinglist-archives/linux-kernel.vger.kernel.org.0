@@ -2,222 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ED86137531
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:49:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71DE613753C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:50:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728428AbgAJRta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 12:49:30 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37749 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728077AbgAJRt1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 12:49:27 -0500
-Received: by mail-pg1-f194.google.com with SMTP id q127so1331946pga.4
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 09:49:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5G0JpOASU+8dPsw9dyToFF25u9NctuOa5AaKBeNFrAY=;
-        b=czka4vUoD1xWX1/aGwkqdC76JzOAtN32sVjXs6ELnC11Vep4p5Ae47bSXJUK+y18YP
-         bG0uY3Dh9CriOpwtgcn5L6NNzQj1EsmEN6c9//vn+Jelc80dd3CZ1RChbybS+6eUt1qX
-         BYRGpWIafdWaZ5xoUf9aW6XohXCc7c1KXrdzQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5G0JpOASU+8dPsw9dyToFF25u9NctuOa5AaKBeNFrAY=;
-        b=CFGNH1k7uX/+6IfpruW5663qdM+UGtHhUw9CVMs8D3nvyd9IwcA93TuXinSs90kVX1
-         WGB1CTZD6M7iAL+2ZjyIcWc9GsEunc5TyD3ZciIQRSF4DvO5N5w28WW940ozB9AZCXeJ
-         CfmHKAkb6oAr2lFY+DBY7zG+P/s44MuyavIkOPRIlzU+m2gpuSnpS+nDAgnisiYRhnlF
-         gB/mqDi45zcw4I4fDlzeIAy270RouBtVFLVwidmlxUABlTYZTDZLU6TEvAopDZCPRVFS
-         9fPbWyuds+Oop6oaehWE2isfLzwaQoI6p+S46r8ajctj5BZ4IcSYkYx7l2Rppham7CQb
-         3E3g==
-X-Gm-Message-State: APjAAAXzDWPmjVX239NCbKF/ATjSf9AUtnQERfCICW6ohXWaTTx/tn2Z
-        wZlCtJbaJzgQIoCPc+7HD74osw==
-X-Google-Smtp-Source: APXvYqxQf/b4p2w/6EVZpvlmPOXsCK5KnE33nu8UunvaeRIukRmlLKB3Lq8IbNv0+zddIinr4awbLA==
-X-Received: by 2002:a62:b418:: with SMTP id h24mr5673684pfn.192.1578678566514;
-        Fri, 10 Jan 2020 09:49:26 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id a6sm3369154pgg.25.2020.01.10.09.49.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Jan 2020 09:49:26 -0800 (PST)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>
-Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 2/2] PM / devfreq: Use exclusively PM QoS to determine frequency limits
-Date:   Fri, 10 Jan 2020 09:49:19 -0800
-Message-Id: <20200110094913.2.Ie8eacf976ce7a13e421592f5c1ab8dbdc537da5c@changeid>
-X-Mailer: git-send-email 2.25.0.rc1.283.g88dfdc4193-goog
-In-Reply-To: <20200110094913.1.I146403d05b9ec82f48b807efd416a57f545b447a@changeid>
-References: <20200110094913.1.I146403d05b9ec82f48b807efd416a57f545b447a@changeid>
+        id S1728543AbgAJRur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 12:50:47 -0500
+Received: from ms.lwn.net ([45.79.88.28]:52164 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727729AbgAJRuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 12:50:46 -0500
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 129C72C0;
+        Fri, 10 Jan 2020 17:50:46 +0000 (UTC)
+Date:   Fri, 10 Jan 2020 10:50:44 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+Cc:     mchehab+samsung@kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH v3 1/8] Documentation: nfsroot.txt: convert to ReST
+Message-ID: <20200110105044.0877ad21@lwn.net>
+In-Reply-To: <91ab26d120888f4f0a5fb535a42bf47ae5729238.1577917076.git.dwlsalmeida@gmail.com>
+References: <cover.1577917076.git.dwlsalmeida@gmail.com>
+        <91ab26d120888f4f0a5fb535a42bf47ae5729238.1577917076.git.dwlsalmeida@gmail.com>
+Organization: LWN.net
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Traditionally devfreq cooling devices dynamically disabled OPPs
-that shouldn't be used because of thermal pressure. Devfreq cooling
-devices now use PM QoS to set frequency limits, hence the devfreq
-code dealing that deals with disabled OPPs can be removed.
+On Wed,  1 Jan 2020 19:26:08 -0300
+"Daniel W. S. Almeida" <dwlsalmeida@gmail.com> wrote:
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
+> From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+> 
+> Convert nfsroot.txt to RST and move it to admin-guide. Content remains
+> mostly the same.
+> 
+> Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
 
- drivers/devfreq/devfreq.c | 75 +++++----------------------------------
- include/linux/devfreq.h   |  4 ---
- 2 files changed, 8 insertions(+), 71 deletions(-)
+*sigh*
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 57f6944d65a6..ec66e2c27cc4 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -73,34 +73,6 @@ static struct devfreq *find_device_devfreq(struct device *dev)
- 	return ERR_PTR(-ENODEV);
- }
- 
--static unsigned long find_available_min_freq(struct devfreq *devfreq)
--{
--	struct dev_pm_opp *opp;
--	unsigned long min_freq = 0;
--
--	opp = dev_pm_opp_find_freq_ceil(devfreq->dev.parent, &min_freq);
--	if (IS_ERR(opp))
--		min_freq = 0;
--	else
--		dev_pm_opp_put(opp);
--
--	return min_freq;
--}
--
--static unsigned long find_available_max_freq(struct devfreq *devfreq)
--{
--	struct dev_pm_opp *opp;
--	unsigned long max_freq = ULONG_MAX;
--
--	opp = dev_pm_opp_find_freq_floor(devfreq->dev.parent, &max_freq);
--	if (IS_ERR(opp))
--		max_freq = 0;
--	else
--		dev_pm_opp_put(opp);
--
--	return max_freq;
--}
--
- /**
-  * get_freq_range() - Get the current freq range
-  * @devfreq:	the devfreq instance
-@@ -141,10 +113,6 @@ static void get_freq_range(struct devfreq *devfreq,
- 		*max_freq = min(*max_freq,
- 				(unsigned long)HZ_PER_KHZ * qos_max_freq);
- 
--	/* Apply constraints from OPP interface */
--	*min_freq = max(*min_freq, devfreq->scaling_min_freq);
--	*max_freq = min(*max_freq, devfreq->scaling_max_freq);
--
- 	if (*min_freq > *max_freq)
- 		*min_freq = *max_freq;
- }
-@@ -610,23 +578,10 @@ static int devfreq_notifier_call(struct notifier_block *nb, unsigned long type,
- 				 void *devp)
- {
- 	struct devfreq *devfreq = container_of(nb, struct devfreq, nb);
--	int err = -EINVAL;
-+	int err;
- 
- 	mutex_lock(&devfreq->lock);
--
--	devfreq->scaling_min_freq = find_available_min_freq(devfreq);
--	if (!devfreq->scaling_min_freq)
--		goto out;
--
--	devfreq->scaling_max_freq = find_available_max_freq(devfreq);
--	if (!devfreq->scaling_max_freq) {
--		devfreq->scaling_max_freq = ULONG_MAX;
--		goto out;
--	}
--
- 	err = update_devfreq(devfreq);
--
--out:
- 	mutex_unlock(&devfreq->lock);
- 	if (err)
- 		dev_err(devfreq->dev.parent,
-@@ -781,19 +736,15 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 		mutex_lock(&devfreq->lock);
- 	}
- 
--	devfreq->scaling_min_freq = find_available_min_freq(devfreq);
--	if (!devfreq->scaling_min_freq) {
--		mutex_unlock(&devfreq->lock);
--		err = -EINVAL;
-+	err = dev_pm_qos_add_request(dev, &devfreq->user_min_freq_req,
-+				     DEV_PM_QOS_MIN_FREQUENCY, 0);
-+	if (err < 0)
- 		goto err_dev;
--	}
--
--	devfreq->scaling_max_freq = find_available_max_freq(devfreq);
--	if (!devfreq->scaling_max_freq) {
--		mutex_unlock(&devfreq->lock);
--		err = -EINVAL;
-+	err = dev_pm_qos_add_request(dev, &devfreq->user_max_freq_req,
-+				     DEV_PM_QOS_MAX_FREQUENCY,
-+				     PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE);
-+	if (err < 0)
- 		goto err_dev;
--	}
- 
- 	devfreq->suspend_freq = dev_pm_opp_get_suspend_opp_freq(dev);
- 	atomic_set(&devfreq->suspend_count, 0);
-@@ -834,16 +785,6 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 
- 	mutex_unlock(&devfreq->lock);
- 
--	err = dev_pm_qos_add_request(dev, &devfreq->user_min_freq_req,
--				     DEV_PM_QOS_MIN_FREQUENCY, 0);
--	if (err < 0)
--		goto err_devfreq;
--	err = dev_pm_qos_add_request(dev, &devfreq->user_max_freq_req,
--				     DEV_PM_QOS_MAX_FREQUENCY,
--				     PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE);
--	if (err < 0)
--		goto err_devfreq;
--
- 	devfreq->nb_min.notifier_call = qos_min_notifier_call;
- 	err = dev_pm_qos_add_notifier(devfreq->dev.parent, &devfreq->nb_min,
- 				      DEV_PM_QOS_MIN_FREQUENCY);
-diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
-index fb376b5b7281..cb75f23ad2f4 100644
---- a/include/linux/devfreq.h
-+++ b/include/linux/devfreq.h
-@@ -126,8 +126,6 @@ struct devfreq_dev_profile {
-  *		touch this.
-  * @user_min_freq_req:	PM QoS minimum frequency request from user (via sysfs)
-  * @user_max_freq_req:	PM QoS maximum frequency request from user (via sysfs)
-- * @scaling_min_freq:	Limit minimum frequency requested by OPP interface
-- * @scaling_max_freq:	Limit maximum frequency requested by OPP interface
-  * @stop_polling:	 devfreq polling status of a device.
-  * @suspend_freq:	 frequency of a device set during suspend phase.
-  * @resume_freq:	 frequency of a device set in resume phase.
-@@ -166,8 +164,6 @@ struct devfreq {
- 
- 	struct dev_pm_qos_request user_min_freq_req;
- 	struct dev_pm_qos_request user_max_freq_req;
--	unsigned long scaling_min_freq;
--	unsigned long scaling_max_freq;
- 	bool stop_polling;
- 
- 	unsigned long suspend_freq;
--- 
-2.25.0.rc1.283.g88dfdc4193-goog
+So, I was ready to apply this whole set, finally, but couldn't do it.  To
+see why...
 
+>  Documentation/admin-guide/nfs/index.rst       |   1 +
+>  .../nfs/nfsroot.rst}                          | 140 +++++++++---------
+>  2 files changed, 75 insertions(+), 66 deletions(-)
+>  rename Documentation/{filesystems/nfs/nfsroot.txt => admin-guide/nfs/nfsroot.rst} (83%)
+> 
+> diff --git a/Documentation/admin-guide/nfs/index.rst b/Documentation/admin-guide/nfs/index.rst
+> index f5c0180f4e5e..c2b87e9f0fed 100644
+> --- a/Documentation/admin-guide/nfs/index.rst
+> +++ b/Documentation/admin-guide/nfs/index.rst
+> @@ -6,4 +6,5 @@ NFS
+>      :maxdepth: 1
+>  
+>      nfs-client
+> +    nfsroot
+
+Documentation/admin-guide/nfs doesn't exist in any tree I can see, and
+neither does the nfs-client file referenced here.  Which tree was this
+generated against?
+
+Can you make me a version that applies to docs-next, and we'll get it into
+5.6?
+
+Thanks,
+
+jon
