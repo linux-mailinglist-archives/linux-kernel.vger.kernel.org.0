@@ -2,179 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2234A13649A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 02:10:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A22DD1364A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 02:17:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730428AbgAJBKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 20:10:15 -0500
-Received: from mga07.intel.com ([134.134.136.100]:46439 "EHLO mga07.intel.com"
+        id S1730506AbgAJBRF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 20:17:05 -0500
+Received: from mga17.intel.com ([192.55.52.151]:32154 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730363AbgAJBKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 20:10:15 -0500
+        id S1730484AbgAJBRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 20:17:05 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 17:10:13 -0800
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 17:17:04 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,414,1571727600"; 
-   d="scan'208";a="371465194"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga004.jf.intel.com with ESMTP; 09 Jan 2020 17:10:13 -0800
-Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
-        by linux.intel.com (Postfix) with ESMTP id BF065580342;
-        Thu,  9 Jan 2020 17:10:13 -0800 (PST)
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: Re: [PATCH v11 1/8] PCI/ERR: Update error status after reset_link()
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, keith.busch@intel.com
-References: <20200109232639.GA42480@google.com>
-From:   Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Organization: Intel
-Message-ID: <f6f0dc14-7cb0-bb51-b075-404cf3981368@linux.intel.com>
-Date:   Thu, 9 Jan 2020 17:08:15 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+   d="scan'208";a="246846711"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga004.fm.intel.com with ESMTP; 09 Jan 2020 17:17:02 -0800
+Cc:     baolu.lu@linux.intel.com, iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Yi L <yi.l.liu@linux.intel.com>
+Subject: Re: [PATCH v8 02/10] iommu/vt-d: Add nested translation helper
+ function
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
+References: <1576524252-79116-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1576524252-79116-3-git-send-email-jacob.jun.pan@linux.intel.com>
+ <6192b57c-12ab-ec6c-ab95-d9b9bff3efad@linux.intel.com>
+ <20200109103908.4c306b06@jacob-builder>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <89cc7a91-f645-e331-8f02-62c281c0ea3d@linux.intel.com>
+Date:   Fri, 10 Jan 2020 09:15:45 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20200109232639.GA42480@google.com>
+In-Reply-To: <20200109103908.4c306b06@jacob-builder>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jacob,
 
-On 1/9/20 3:26 PM, Bjorn Helgaas wrote:
-> On Wed, Jan 08, 2020 at 04:14:09PM -0800, Kuppuswamy Sathyanarayanan wrote:
->> On 1/3/20 6:54 PM, Bjorn Helgaas wrote:
->>> On Fri, Jan 03, 2020 at 05:03:03PM -0800, Kuppuswamy Sathyanarayanan wrote:
->>>> On 1/3/20 4:34 PM, Bjorn Helgaas wrote:
->>>>> On Thu, Dec 26, 2019 at 04:39:07PM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
->>>>>> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->>>>>>
->>>>>> Commit bdb5ac85777d ("PCI/ERR: Handle fatal error recovery") uses
->>>>>> reset_link() to recover from fatal errors. But, if the reset is
->>>>>> successful there is no need to continue the rest of the error recovery
->>>>>> checks. Also, during fatal error recovery, if the initial value of error
->>>>>> status is PCI_ERS_RESULT_DISCONNECT or PCI_ERS_RESULT_NO_AER_DRIVER then
->>>>>> even after successful recovery (using reset_link()) pcie_do_recovery()
->>>>>> will report the recovery result as failure. So update the status of
->>>>>> error after reset_link().
->>>>> I like the part about updating "status" with the result of
->>>>> reset_link(), and I split that into its own patch because it
->>>>> seems like a fix that *can* be separated.
->>>>>
->>>>> But I'm not convinced that we should skip the ->slot_reset()
->>>>> callbacks if the reset_link() was successful.
->>>> If reset_link() call is successful then the result value will be
->>>> "PCI_ERS_RESULT_RECOVERED". So even if you proceed with
->>>> rest of the code, slot_reset() will never get called right ?
->>> The current code:
->>>
->>>           if (state == pci_channel_io_frozen &&
->>>               reset_link(dev, service) != PCI_ERS_RESULT_RECOVERED)
->>>                   goto failed;
->>>           ...
->>>           if (status == PCI_ERS_RESULT_NEED_RESET) {
->>>                   status = PCI_ERS_RESULT_RECOVERED;
->>>                   pci_walk_bus(bus, report_slot_reset, &status);
->>>
->>> doesn't save the result of reset_link(), so if status was
->>> PCI_ERS_RESULT_NEED_RESET and the reset succeeds, we will call
->>> ->slot_reset().
->>>
->>> After your patch, if "state == pci_channel_io_frozen", we *never* call
->>> ->slot_reset().
->>>
->>> Do you think that matches pci-error-recovery.rst?  It doesn't seem
->>> like it to me, but perhaps I haven't read it closely enough.
->> Documentation does not have clear details on what to do with return
->> value of reset_link() (step 3). But IMO, if step 3 recovers the device and
->> returns PCI_ERS_RESULT_RECOVERED then there is no need to proceed
->> to slot reset (step 4). May be we should update the Documentation?
-> Are you suggesting we don't need to call a driver callback after
-> resetting the device?  Note that the ->slot_reset() doesn't *perform*
-> a reset; it is called *after* completion of a reset.
->
-> The doc says:
->
->    ... Upon completion of slot reset, the platform will call the device
->    slot_reset() callback.
->    ...
->    This call gives drivers the chance to re-initialize the hardware
->    (re-download firmware, etc.).  At this point, the driver may assume
->    that the card is in a fresh state and is fully functional. The slot
->    is unfrozen and the driver has full access to PCI config space,
->    memory mapped I/O space and DMA. Interrupts (Legacy, MSI, or MSI-X)
->    will also be available.
-Got it. Let me fix it in next version.
-But, will this sequence apply for fatal error recovery (triggered from 
-DPC code path) ? I think the device is removed and re-added in hotplug 
-path (DLLSC transition).
->
-> After we reset a device, the driver certainly needs a chance to
-> reinitialize it.
->
->>>>> According to
->>>>> Documentation/PCI/pci-error-recovery.rst, we should call
->>>>> ->slot_reset() after completion of the reset.
->>>>>
->>>>> For example, rsxx_err_handler implements ->slot_reset(), but
->>>>> not ->resume().  If we reset the device, we'll claim success and
->>>>> return, but we won't call rsxx_slot_reset(), which does a bunch
->>>>> of important-looking recovery stuff.
->>>>>
->>>>> If pci-error-recovery.rst is wrong, we should fix that (after
->>>>> auditing all the drivers to make sure they match).
->>>>>
->>>>>> Fixes: bdb5ac85777d ("PCI/ERR: Handle fatal error recovery")
->>>>>> Cc: Ashok Raj <ashok.raj@intel.com>
->>>>>> Cc: Keith Busch <keith.busch@intel.com>
->>>>>> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->>>>>> Acked-by: Keith Busch <keith.busch@intel.com>
->>>>>> ---
->>>>>>     drivers/pci/pcie/err.c | 10 +++++++---
->>>>>>     1 file changed, 7 insertions(+), 3 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
->>>>>> index b0e6048a9208..53cd9200ec2c 100644
->>>>>> --- a/drivers/pci/pcie/err.c
->>>>>> +++ b/drivers/pci/pcie/err.c
->>>>>> @@ -204,9 +204,12 @@ void pcie_do_recovery(struct pci_dev *dev, enum pci_channel_state state,
->>>>>>     	else
->>>>>>     		pci_walk_bus(bus, report_normal_detected, &status);
->>>>>> -	if (state == pci_channel_io_frozen &&
->>>>>> -	    reset_link(dev, service) != PCI_ERS_RESULT_RECOVERED)
->>>>>> -		goto failed;
->>>>>> +	if (state == pci_channel_io_frozen) {
->>>>>> +		status = reset_link(dev, service);
->>>>>> +		if (status != PCI_ERS_RESULT_RECOVERED)
->>>>>> +			goto failed;
->>>>>> +		goto done;
->>>>>> +	}
->>>>>>     	if (status == PCI_ERS_RESULT_CAN_RECOVER) {
->>>>>>     		status = PCI_ERS_RESULT_RECOVERED;
->>>>>> @@ -228,6 +231,7 @@ void pcie_do_recovery(struct pci_dev *dev, enum pci_channel_state state,
->>>>>>     	if (status != PCI_ERS_RESULT_RECOVERED)
->>>>>>     		goto failed;
->>>>>> +done:
->>>>>>     	pci_dbg(dev, "broadcast resume message\n");
->>>>>>     	pci_walk_bus(bus, report_resume, &status);
->>>>>> -- 
->>>>>> 2.21.0
->>>>>>
->>>> -- 
->>>> Sathyanarayanan Kuppuswamy
->>>> Linux kernel developer
->>>>
->> -- 
->> Sathyanarayanan Kuppuswamy
->> Linux kernel developer
+On 1/10/20 2:39 AM, Jacob Pan wrote:
+> On Wed, 18 Dec 2019 10:41:53 +0800
+> Lu Baolu <baolu.lu@linux.intel.com> wrote:
+> 
+>> Hi again,
 >>
--- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
+>> On 12/17/19 3:24 AM, Jacob Pan wrote:
+>>> +/**
+>>> + * intel_pasid_setup_nested() - Set up PASID entry for nested
+>>> translation
+>>> + * which is used for vSVA. The first level page tables are used for
+>>> + * GVA-GPA or GIOVA-GPA translation in the guest, second level
+>>> page tables
+>>> + *  are used for GPA-HPA translation.
+>>> + *
+>>> + * @iommu:      Iommu which the device belong to
+>>> + * @dev:        Device to be set up for translation
+>>> + * @gpgd:       FLPTPTR: First Level Page translation pointer in
+>>> GPA
+>>> + * @pasid:      PASID to be programmed in the device PASID table
+>>> + * @pasid_data: Additional PASID info from the guest bind request
+>>> + * @domain:     Domain info for setting up second level page tables
+>>> + * @addr_width: Address width of the first level (guest)
+>>> + */
+>>> +int intel_pasid_setup_nested(struct intel_iommu *iommu,
+>>> +			struct device *dev, pgd_t *gpgd,
+>>> +			int pasid, struct
+>>> iommu_gpasid_bind_data_vtd *pasid_data,
+>>> +			struct dmar_domain *domain,
+>>> +			int addr_width)
+>>> +{
+>>> +	struct pasid_entry *pte;
+>>> +	struct dma_pte *pgd;
+>>> +	u64 pgd_val;
+>>> +	int agaw;
+>>> +	u16 did;
+>>> +
+>>> +	if (!ecap_nest(iommu->ecap)) {
+>>> +		pr_err("IOMMU: %s: No nested translation
+>>> support\n",
+>>> +		       iommu->name);
+>>> +		return -EINVAL;
+>>> +	}
+>>> +
+>>> +	pte = intel_pasid_get_entry(dev, pasid);
+>>> +	if (WARN_ON(!pte))
+>>> +		return -EINVAL;
+>>> +
+>>> +	pasid_clear_entry(pte);
+>>
+>> In some cases, e.g. nested mode for GIOVA-HPA, the PASID entry might
+>> have already been setup for second level translation. (This could be
+>> checked with the Present bit.) Hence, it's safe to flush caches here.
+>>
+>> Or, maybe intel_pasid_tear_down_entry() is more suitable?
+>>
+> We don't allow binding the same device-PASID twice, so if the PASID
+> entry was used for GIOVA/RID2PASID, it should unbind first, and
+> teardown flush included, right?
+> 
 
+Fair enough. Can you please add this as a comment to this function? So
+that the caller of this interface can know this. Or add a check in this
+function which returns error if the pasid entry has already been bond.
+
+Best regards,
+baolu
