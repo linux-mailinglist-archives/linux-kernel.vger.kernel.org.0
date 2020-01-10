@@ -2,104 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE7A3136AC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 11:16:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12D90136AD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 11:17:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbgAJKQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 05:16:09 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53715 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727240AbgAJKQJ (ORCPT
+        id S1727594AbgAJKQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 05:16:38 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:32734 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727455AbgAJKQg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 05:16:09 -0500
-Received: by mail-wm1-f66.google.com with SMTP id m24so1363964wmc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 02:16:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kJcJ3Z4R5O84gZeCwxxOsOYiPBXfsGpmbGOuOvGKfLU=;
-        b=WC57lZpeU1EKop2f9LUfJAg0AHr9oR5rtcFEMs3p0v2qn/5EYxPqx46Y2rmsyge8EY
-         /rcwSWq073bel2NfqTfXjxzzbkR/mvUm36x9W8+SfDWjHLY3cm6gSEQjta0UjFF2myEp
-         RqQVOiaUDfKp9gZmYyCQzLI41aAFLrUQ17BRjDnEMgQviCmNIuI0PwQHBGk3oTOAqLQx
-         6kHgpA8DseNx7Oys8jjSxt64aekC7OJal53HqlKDeHAJXk+AhpPQdT93oPJDWCU3vjkY
-         v7B1fTEw9p2jAH7/YtEE+W9qXAZfsxuKN3rAfQOC/qgTlG89D8hvYdTKyxVRd61qcN8i
-         bbXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kJcJ3Z4R5O84gZeCwxxOsOYiPBXfsGpmbGOuOvGKfLU=;
-        b=oxONomUCeSMq3O/5FhY/RqqNFCsESrGHw1eqy8FZUahb+JRO8sNEiXI7pmRuSxX0//
-         quAs5ST6CAHOOvkkRb+VTwR+lGP2aJ8YsgG5wTZJrz3UsTDU/oMtI0oBE53Rvrk8rtWG
-         bXv56++HyQarZFqfybjF1+h66E30HgU4UTq/tWWavTUbcKzxofONL07rQpbRWlNibjs2
-         IQnb1y8SoT7yq0STl72TSPnsyvGOnqrs7o8xuu2KTS8kvfKXHIMQT69/kLWB9UQQqD5i
-         TurTCkxUOF/gbfMxkOkpQA2mj4W3GA4qpijXL7CZRFwhPr9kLFz9bH0lOq5FMfJEMk09
-         hd6w==
-X-Gm-Message-State: APjAAAUVVA1dCT9eg+WQmv7OmHZLC2ZwoU+nDvfCjOESYPjSX+ohFFsh
-        0UBoPKS8eECSf56Gj24EmjbhiOVZbmg=
-X-Google-Smtp-Source: APXvYqypT+B79XnHkYFVVKZAVMkW/X9U+ndnBnu0W9qxAqVphbZJrWbtDaid8Q4GoLU5jkkm2pUFqQ==
-X-Received: by 2002:a7b:c084:: with SMTP id r4mr3157095wmh.99.1578651366594;
-        Fri, 10 Jan 2020 02:16:06 -0800 (PST)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id q68sm1772493wme.14.2020.01.10.02.16.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Jan 2020 02:16:04 -0800 (PST)
-Subject: Re: [PATCH -next] nvmem: fix a 'makes pointer from integer without a
- cast' build warning
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Khouloud Touil <ktouil@baylibre.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        kbuild test robot <lkp@intel.com>
-References: <20200110082441.8300-1-brgl@bgdev.pl>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <ea048751-2a4a-31c9-0b46-849d77356a71@linaro.org>
-Date:   Fri, 10 Jan 2020 10:16:03 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 10 Jan 2020 05:16:36 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00AADuo6001631;
+        Fri, 10 Jan 2020 11:16:17 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : in-reply-to : references : mime-version :
+ content-type; s=STMicroelectronics;
+ bh=VNdKiXHTsnLlZQDsSxPKZhiScesYyaZdTCaN+plx4oE=;
+ b=JFEJPOQopDcHcSjc9etUtzI/ToH9CnFieXDHR+CN92+cxP+BLIpsRF99UdhLRyg18qjB
+ hw9e+cHiFU3pFFGmRAi9gbCPuoxwq36K2GGiYGvloBOj8mesYiDRkCuZS43B+DBGyMRo
+ J5Tck6FLMeUOHmh5J4mmegQL8fHFqNJ6Pj1eWEByaeHPoJFh4UTRV1ZoIUqfFApAN3s3
+ qfjIzaVyDlkY0ftOhukRN/oPp0s7zSZbN5lKhMzL0FJBn+Q0ccdR7OwAvfOdet35AyPO
+ 3i+Scd6RVIdmP95pub0lFiD661FfgPQC2GhQT6yBkqP3t0vNazQCF8YYtUJhl+3pKkAF Xw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xakur6mnt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 10 Jan 2020 11:16:17 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 11382100034;
+        Fri, 10 Jan 2020 11:16:12 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 014962A7906;
+        Fri, 10 Jan 2020 11:16:12 +0100 (CET)
+Received: from localhost (10.75.127.46) by SFHDAG6NODE2.st.com (10.75.127.17)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 10 Jan 2020 11:16:11
+ +0100
+From:   Pascal Paillet <p.paillet@st.com>
+To:     <rui.zhang@intel.com>, <edubezval@gmail.com>,
+        <daniel.lezcano@linaro.org>, <amit.kucheria@verdurent.com>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <p.paillet@st.com>, <david.hernandezsanchez@st.com>,
+        <horms+renesas@verge.net.au>, <wsa+renesas@sang-engineering.com>,
+        <linux-pm@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH_V3 5/6] thermal: stm32: improve temperature computing
+Date:   Fri, 10 Jan 2020 11:16:04 +0100
+Message-ID: <20200110101605.24984-6-p.paillet@st.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200110101605.24984-1-p.paillet@st.com>
+References: <20200110101605.24984-1-p.paillet@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20200110082441.8300-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG8NODE2.st.com (10.75.127.23) To SFHDAG6NODE2.st.com
+ (10.75.127.17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-10_01:2020-01-10,2020-01-09 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the patch.
+Change the way of computing to avoid rounds by 1 or 2 degrees.
+Also simplify the sampling time management that is hard-coded
+to maximum value during probe.
 
-On 10/01/2020 08:24, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> nvmem_register() returns a pointer, not a long int. Use ERR_CAST() to
-> cast the struct gpio_desc pointer to struct nvmem_device.
-> 
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Fixes: 2a127da461a9 ("nvmem: add support for the write-protect pin")
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
+Signed-off-by: Pascal Paillet <p.paillet@st.com>
+---
+ drivers/thermal/st/stm_thermal.c | 58 ++++++++------------------------
+ 1 file changed, 14 insertions(+), 44 deletions(-)
 
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+diff --git a/drivers/thermal/st/stm_thermal.c b/drivers/thermal/st/stm_thermal.c
+index 29e7ee89adf6..aaf25ca2f118 100644
+--- a/drivers/thermal/st/stm_thermal.c
++++ b/drivers/thermal/st/stm_thermal.c
+@@ -59,7 +59,6 @@
+ 
+ /* Less significant bit position definitions */
+ #define TS1_T0_POS		16
+-#define TS1_SMP_TIME_POS	16
+ #define TS1_HITTHD_POS		16
+ #define TS1_LITTHD_POS		0
+ #define HSREF_CLK_DIV_POS	24
+@@ -83,15 +82,10 @@
+ #define ONE_MHZ			1000000
+ #define POLL_TIMEOUT		5000
+ #define STARTUP_TIME		40
+-#define TS1_T0_VAL0		30
+-#define TS1_T0_VAL1		130
++#define TS1_T0_VAL0		30000  /* 30 celsius */
++#define TS1_T0_VAL1		130000 /* 130 celsius */
+ #define NO_HW_TRIG		0
+-
+-/* The Thermal Framework expects millidegrees */
+-#define mcelsius(temp)		((temp) * 1000)
+-
+-/* The Sensor expects oC degrees */
+-#define celsius(temp)		((temp) / 1000)
++#define SAMPLING_TIME		15
+ 
+ struct stm_thermal_sensor {
+ 	struct device *dev;
+@@ -280,27 +274,17 @@ static int stm_thermal_calculate_threshold(struct stm_thermal_sensor *sensor,
+ 					   int temp, u32 *th)
+ {
+ 	int freqM;
+-	u32 sampling_time;
+-
+-	/* Retrieve the number of periods to sample */
+-	sampling_time = (readl_relaxed(sensor->base + DTS_CFGR1_OFFSET) &
+-			TS1_SMP_TIME_MASK) >> TS1_SMP_TIME_POS;
+ 
+ 	/* Figure out the CLK_PTAT frequency for a given temperature */
+-	freqM = ((temp - sensor->t0) * sensor->ramp_coeff)
+-		 + sensor->fmt0;
+-
+-	dev_dbg(sensor->dev, "%s: freqM for threshold = %d Hz",
+-		__func__, freqM);
++	freqM = ((temp - sensor->t0) * sensor->ramp_coeff) / 1000 +
++		sensor->fmt0;
+ 
+ 	/* Figure out the threshold sample number */
+-	*th = clk_get_rate(sensor->clk);
++	*th = clk_get_rate(sensor->clk) * SAMPLING_TIME / freqM;
+ 	if (!*th)
+ 		return -EINVAL;
+ 
+-	*th = *th / freqM;
+-
+-	*th *= sampling_time;
++	dev_dbg(sensor->dev, "freqM=%d Hz, threshold=0x%x", freqM, *th);
+ 
+ 	return 0;
+ }
+@@ -368,40 +352,26 @@ static int stm_thermal_set_trips(void *data, int low, int high)
+ static int stm_thermal_get_temp(void *data, int *temp)
+ {
+ 	struct stm_thermal_sensor *sensor = data;
+-	u32 sampling_time;
++	u32 periods;
+ 	int freqM, ret;
+ 
+ 	if (sensor->mode != THERMAL_DEVICE_ENABLED)
+ 		return -EAGAIN;
+ 
+-	/* Retrieve the number of samples */
+-	ret = readl_poll_timeout(sensor->base + DTS_DR_OFFSET, freqM,
+-				 (freqM & TS1_MFREQ_MASK), STARTUP_TIME,
+-				 POLL_TIMEOUT);
+-
++	/* Retrieve the number of periods sampled */
++	ret = readl_relaxed_poll_timeout(sensor->base + DTS_DR_OFFSET, periods,
++					 (periods & TS1_MFREQ_MASK),
++					 STARTUP_TIME, POLL_TIMEOUT);
+ 	if (ret)
+ 		return ret;
+ 
+-	if (!freqM)
+-		return -ENODATA;
+-
+-	/* Retrieve the number of periods sampled */
+-	sampling_time = (readl_relaxed(sensor->base + DTS_CFGR1_OFFSET) &
+-			TS1_SMP_TIME_MASK) >> TS1_SMP_TIME_POS;
+-
+-	/* Figure out the number of samples per period */
+-	freqM /= sampling_time;
+-
+ 	/* Figure out the CLK_PTAT frequency */
+-	freqM = clk_get_rate(sensor->clk) / freqM;
++	freqM = (clk_get_rate(sensor->clk) * SAMPLING_TIME) / periods;
+ 	if (!freqM)
+ 		return -EINVAL;
+ 
+-	dev_dbg(sensor->dev, "%s: freqM=%d\n", __func__, freqM);
+-
+ 	/* Figure out the temperature in mili celsius */
+-	*temp = mcelsius(sensor->t0 + ((freqM - sensor->fmt0) /
+-			 sensor->ramp_coeff));
++	*temp = (freqM - sensor->fmt0) * 1000 / sensor->ramp_coeff + sensor->t0;
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
 
->   drivers/nvmem/core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-> index 3e1c94c4eee8..408ce702347e 100644
-> --- a/drivers/nvmem/core.c
-> +++ b/drivers/nvmem/core.c
-> @@ -351,7 +351,7 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
->   		nvmem->wp_gpio = gpiod_get_optional(config->dev, "wp",
->   						    GPIOD_OUT_HIGH);
->   	if (IS_ERR(nvmem->wp_gpio))
-> -		return PTR_ERR(nvmem->wp_gpio);
-> +		return ERR_CAST(nvmem->wp_gpio);
->   
->   
->   	kref_init(&nvmem->refcnt);
-> 
