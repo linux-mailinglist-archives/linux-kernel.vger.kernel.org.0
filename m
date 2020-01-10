@@ -2,62 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC7621364E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 02:39:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B04A61364E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 02:36:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730696AbgAJBjh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 Jan 2020 20:39:37 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9146 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730596AbgAJBjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 Jan 2020 20:39:37 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id E8A7C6512FD905BCFAA9;
-        Fri, 10 Jan 2020 09:39:34 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 10 Jan 2020 09:39:28 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-CC:     YueHaibing <yuehaibing@huawei.com>, <netdev@vger.kernel.org>,
-        <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH net-next] sfc: remove duplicated include from ef10.c
-Date:   Fri, 10 Jan 2020 01:35:17 +0000
-Message-ID: <20200110013517.37685-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+        id S1730643AbgAJBgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 Jan 2020 20:36:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40224 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730594AbgAJBgx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 Jan 2020 20:36:53 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C83820673;
+        Fri, 10 Jan 2020 01:36:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578620212;
+        bh=aH/Cb27AjGqGNq6jKzO83mg4/3u60GJatR1APEkeNY8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=zfgXAf7sSX6vasaDNLU9IBzgPUHuci0DCVo0eDaruqyLs0ZLCw6MZ9/dZMSd0P6i6
+         ohAQ06ZOnyRc7y3fVAj4J3aQgXqbcw463FHkdplqDU5tFSF5treeADcQb9ZMsj1Y+p
+         1ED3/D0NKSyRiARPFyrV59aQUb9QdDlBmeCYyceI=
+Date:   Fri, 10 Jan 2020 10:36:47 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdl?= =?ISO-2022-JP?B?bnNlbg==?= 
+        <thoiland@redhat.com>, Jean-Tsung Hsiao <jhsiao@redhat.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] list corruption while enabling multi call uprobes via
+ perf
+Message-Id: <20200110103647.f2182be4584886b9a62d6161@kernel.org>
+In-Reply-To: <20200109133846.GA2158@kernel.org>
+References: <20200108171611.GA8472@kernel.org>
+        <20200109111056.484a181fc6acc20196344f9a@kernel.org>
+        <20200109183356.5a81ad2bfed6804f9934faee@kernel.org>
+        <20200109133846.GA2158@kernel.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicated include.
+On Thu, 9 Jan 2020 10:38:46 -0300
+Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/ethernet/sfc/ef10.c | 1 -
- 1 file changed, 1 deletion(-)
+> Em Thu, Jan 09, 2020 at 06:33:56PM +0900, Masami Hiramatsu escreveu:
+> > Hi,
+> > 
+> > On Thu, 9 Jan 2020 11:10:56 +0900
+> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > 
+> > > Hmm, this seems that the event->hw.tp_list is not initialized when removing
+> > > from the list in uprobe_perf_close().
+> > 
+> > Oops, that's wrong. Of course my patch can ease (avoid kernel panic) the
+> > issue, but not fixing the root cause.
+> > The root cause is that the uprobe event tries to open multiple probes with
+> > one perf_event. So the perf_event is reused on different probes.
+> > 
+> > In the reported case, if we remove the multiple probe event before perf-stat,
+> > no problem happens.
+> > 
+> > I'll try to fix it.
+> 
+> Ok!
+> 
+> For reference, I rebooted it with a fedora kernel, 5.3ish and it seems
+> to work:
 
-diff --git a/drivers/net/ethernet/sfc/ef10.c b/drivers/net/ethernet/sfc/ef10.c
-index dc037dd927f8..fa460831af7d 100644
---- a/drivers/net/ethernet/sfc/ef10.c
-+++ b/drivers/net/ethernet/sfc/ef10.c
-@@ -16,7 +16,6 @@
- #include "workarounds.h"
- #include "selftest.h"
- #include "ef10_sriov.h"
--#include "rx_common.h"
- #include <linux/in.h>
- #include <linux/jhash.h>
- #include <linux/wait.h>
+Yes, since it was my commit 60d53e2c3b75 ("tracing/probe: Split trace_event
+related data from trace_probe") broke list operation...
+I'll send a fix soon.
 
+Thank you,
 
-
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
