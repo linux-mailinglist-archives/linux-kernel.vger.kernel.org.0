@@ -2,560 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C2E51376E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 20:24:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEDF91376EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 20:25:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728336AbgAJTYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 14:24:12 -0500
-Received: from mga11.intel.com ([192.55.52.93]:46523 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728019AbgAJTYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 14:24:11 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:24:10 -0800
-X-IronPort-AV: E=Sophos;i="5.69,418,1571727600"; 
-   d="scan'208";a="423695015"
-Received: from agluck-desk2.amr.corp.intel.com ([10.3.52.68])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:24:08 -0800
-Date:   Fri, 10 Jan 2020 11:24:09 -0800
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: [PATCH v11] x86/split_lock: Enable split lock detection by kernel
-Message-ID: <20200110192409.GA23315@agluck-desk2.amr.corp.intel.com>
-References: <1574297603-198156-7-git-send-email-fenghua.yu@intel.com>
- <20191121060444.GA55272@gmail.com>
- <20191121130153.GS4097@hirez.programming.kicks-ass.net>
- <20191121171214.GD12042@gmail.com>
- <20191121173444.GA5581@agluck-desk2.amr.corp.intel.com>
- <20191122105141.GY4114@hirez.programming.kicks-ass.net>
- <20191122152715.GA1909@hirez.programming.kicks-ass.net>
- <20191123003056.GA28761@agluck-desk2.amr.corp.intel.com>
- <20191125161348.GA12178@linux.intel.com>
- <20191212085948.GS2827@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191212085948.GS2827@hirez.programming.kicks-ass.net>
+        id S1728660AbgAJTZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 14:25:09 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45643 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728191AbgAJTZI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 14:25:08 -0500
+Received: by mail-pl1-f193.google.com with SMTP id b22so1193282pls.12;
+        Fri, 10 Jan 2020 11:25:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:from:to:cc:cc:cc:subject
+         :references:in-reply-to;
+        bh=rVjFJSZgYfwxd0ySOgaQC60qQaj+Ws9nxhRykM3F1Ag=;
+        b=CCJV2pmFHDJ1SToYG+HxexvYfdL2OFuF1mT2WjnepvsKA2G/hktpR6Nm+DskVeiF4l
+         bW0ilTai+tnwrU+Z/8dREkJgy1iagtGqtqDTu9aHQqTH3eTzy0biiObvCvs0AcqQBtfX
+         GvQzGhtijQYIYGr4Bt+T0wmowRR8zjy9SGc8bQsGSIHPvHqwobjXrI2GTyrWmNYH8AUF
+         p2zIpKtJK9uuw6tdhD/Q6UePCdpUWj3z7E8hMTBa8/au1Tzq8hirQhDtDVq5wvvZSd+A
+         /lFWMcRohbdWtHhcNOFnjQ9x8Sq5SHXxk4mKtRGaBtZmP0jlfxfpQmiIrnqkdTOqmuzl
+         0FkA==
+X-Gm-Message-State: APjAAAVrNYhQosjRBSzR1pdqx4NqN8i/OZ9Z3izG0yhqnP/4AiJ7yFF8
+        4eTG69/ra7L9uH915CGrdkA=
+X-Google-Smtp-Source: APXvYqwDhPleO43/H97xRN8wtcII2V3+c4x5AL6mOOFE0V3NrpWQ4LVohdn2juS6VtXW6TOJgjqXgg==
+X-Received: by 2002:a17:90a:330f:: with SMTP id m15mr6651319pjb.24.1578684307426;
+        Fri, 10 Jan 2020 11:25:07 -0800 (PST)
+Received: from localhost (MIPS-TECHNO.ear1.SanJose1.Level3.net. [4.15.122.74])
+        by smtp.gmail.com with ESMTPSA id p18sm9543200pjo.3.2020.01.10.11.25.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2020 11:25:06 -0800 (PST)
+Message-ID: <5e18cf92.1c69fb81.8a8f4.d024@mx.google.com>
+Date:   Fri, 10 Jan 2020 11:25:06 -0800
+From:   Paul Burton <paulburton@kernel.org>
+To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
+CC:     Paul Burton <paulburton@kernel.org>
+CC:     Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org
+CC:     linux-mips@vger.kernel.org
+Subject: Re: [PATCH v12 0/3] Use MFD framework for SGI IOC3 drivers
+References:  <20200109103430.12057-1-tbogendoerfer@suse.de>
+In-Reply-To:  <20200109103430.12057-1-tbogendoerfer@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+Hello,
 
-A split-lock occurs when an atomic instruction operates on data
-that spans two cache lines. In order to maintain atomicity the
-core takes a global bus lock.
+Thomas Bogendoerfer wrote:
+> SGI IOC3 ASIC includes support for ethernet, PS2 keyboard/mouse,
+> NIC (number in a can), GPIO and a byte  bus. By attaching a
+> SuperIO chip to it, it also supports serial lines and a parallel
+> port. The chip is used on a variety of SGI systems with different
+> configurations. This patchset moves code out of the network driver,
+> which doesn't belong there, into its new place a MFD driver and
+> specific platform drivers for the different subfunctions.
+> 
+> Changes in v12:
+>  - added support for mapping all PCI interrupts as ioc3 uses INTB,
+>    if both ethernet and superio is used
+> 
+> Changes in v11:
+>  - dropped accepted patches out of the series
+>  - moved byte swapping patch first in series
+>  - added ip30 system board support
+> 
+> Changes in v10:
+>  - generation of fake subdevice ID had vendor and device ID swapped
+> 
+> Changes in v9:
+>  - remove generated MFD devices, when driver is removed or in case
+>    of a mfd device setup error
+>  - remove irq domain, if setup of mfd devices failed
+>  - pci_iounmap on exit/error cases
+>  - added irq domain unmap function
+> 
+> Changes in v8:
+>  - Re-worked comments in drivers/mfd/ioc3.c
+>  - Added select CRC16 to ioc3-eth.c
+>  - Patches 1 and 2 are already taken to mips-next, but
+>    for completeness of the series they are still included.
+>    What's missing to get the remaining 3 patches via the MIPS
+>    tree is an ack from a network maintainer
+> 
+> Changes in v7:
+>  - added patch to enable ethernet phy for Origin 200 systems
+>  - depend on 64bit for ioc3 mfd driver
+> 
+> Changes in v6:
+>  - dropped patches accepted for v5.4-rc1
+>  - moved serio patch to ip30 patch series
+>  - adapted nvmem patch
+> 
+> Changes in v5:
+>  - requested by Jakub I've splited ioc3 ethernet driver changes into
+>    more steps to make the transition more visible; on the way there 
+>    I've "checkpatched" the driver and reduced code reorderings
+>  - dropped all uint16_t and uint32_t
+>  - added nvmem API extension to the documenation file
+>  - changed to use request_irq/free_irq in serio driver
+>  - removed wrong kfree() in serio error path
+> 
+> Changes in v4:
+>  - added w1 drivers to the series after merge in 5.3 failed because
+>    of no response from maintainer and other parts of this series
+>    won't work without that drivers
+>  - moved ip30 systemboard support to the ip30 series, which will
+>    deal with rtc oddity Lee found
+>  - converted to use devm_platform_ioremap_resource
+>  - use PLATFORM_DEVID_AUTO for serial, ethernet and serio in mfd driver
+>  - fixed reverse christmas order in ioc3-eth.c
+>  - formating issue found by Lee
+>  - re-worked irq request/free in serio driver to avoid crashes during
+>    probe/remove
+> 
+> Changes in v3:
+>  - use 1-wire subsystem for handling proms
+>  - pci-xtalk driver uses prom information to create PCI subsystem
+>    ids for use in MFD driver
+>  - changed MFD driver to only use static declared mfd_cells
+>  - added IP30 system board setup to MFD driver
+>  - mac address is now read from ioc3-eth driver with nvmem framework
+> 
+> Changes in v2:
+>  - fixed issue in ioc3kbd.c reported by Dmitry Torokhov
+>  - merged IP27 RTC removal and 8250 serial driver addition into
+>    main MFD patch to keep patches bisectable
+> 
+> Thomas Bogendoerfer (3):
+>   MIPS: PCI: Support mapping of INTB/C/D for pci-xtalk-bridge
+>   MIPS: SGI-IP27: fix readb/writeb addressing
+>   mfd: ioc3: Add driver for SGI IOC3 chip
+> 
+>  arch/mips/include/asm/mach-ip27/mangle-port.h |   4 +-
+>  arch/mips/include/asm/pci/bridge.h            |   3 +-
+>  arch/mips/include/asm/sn/ioc3.h               |  38 +-
+>  arch/mips/pci/pci-xtalk-bridge.c              |  28 +-
+>  arch/mips/sgi-ip27/ip27-timer.c               |  20 -
+>  drivers/mfd/Kconfig                           |  13 +
+>  drivers/mfd/Makefile                          |   1 +
+>  drivers/mfd/ioc3.c                            | 669 ++++++++++++++++++
+>  drivers/net/ethernet/sgi/Kconfig              |   5 +-
 
-This is typically >1000 cycles slower than an atomic operation
-within a cache line. It also disrupts performance on other cores
-(which must wait for the bus lock to be released before their
-memory operations can complete. For real-time systems this may
-mean missing deadlines. For other systems it may just be very
-annoying.
+Series applied to mips-next.
 
-Some CPUs have the capability to raise an #AC trap when a
-split lock is attempted.
+> MIPS: PCI: Support mapping of INTB/C/D for pci-xtalk-bridge
+>   commit 2634e5a651e7
+>   https://git.kernel.org/mips/c/2634e5a651e7
+>   
+>   Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+>   Signed-off-by: Paul Burton <paulburton@kernel.org>
+> 
+> MIPS: SGI-IP27: fix readb/writeb addressing
+>   commit 10cf8300ecad
+>   https://git.kernel.org/mips/c/10cf8300ecad
+>   
+>   Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+>   Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+>   Signed-off-by: Paul Burton <paulburton@kernel.org>
+> 
+> mfd: ioc3: Add driver for SGI IOC3 chip
+>   commit 0ce5ebd24d25
+>   https://git.kernel.org/mips/c/0ce5ebd24d25
+>   
+>   Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+>   Signed-off-by: Paul Burton <paulburton@kernel.org>
 
-Provide a command line option to give the user choices on how
-to handle this. split_lock_detect=
-	off	- not enabled (no traps for split locks)
-	warn	- warn once when an application does a
-		  split lock, bust allow it to continue
-		  running.
-	fatal	- Send SIGBUS to applications that cause split lock
+Thanks,
+    Paul
 
-Default is "warn". Note that if the kernel hits a split lock
-in any mode other than "off" it will OOPs.
-
-One implementation wrinkle is that the MSR to control the
-split lock detection is per-core, not per thread. This might
-result in some short lived races on HT systems in "warn" mode
-if Linux tries to enable on one thread while disabling on
-the other. Race analysis by Sean Christopherson:
-
-  - Toggling of split-lock is only done in "warn" mode.  Worst case
-    scenario of a race is that a misbehaving task will generate multiple
-    #AC exceptions on the same instruction.  And this race will only occur
-    if both siblings are running tasks that generate split-lock #ACs, e.g.
-    a race where sibling threads are writing different values will only
-    occur if CPUx is disabling split-lock after an #AC and CPUy is
-    re-enabling split-lock after *its* previous task generated an #AC.
-  - Transitioning between modes at runtime isn't supported and disabling
-    is tracked per task, so hardware will always reach a steady state that
-    matches the configured mode.  I.e. split-lock is guaranteed to be
-    enabled in hardware once all _TIF_SLD threads have been scheduled out.
-
-Co-developed-by: Fenghua Yu <fenghua.yu@intel.com>
-Co-developed-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
-
-I think all the known places where split locks occur in the kernel
-have already been patched, or the patches are queued for the upcoming
-merge window.  If we missed some, well this patch will help find them
-(for people with Icelake or Icelake Xeon systems). PeterZ didn't see
-any application level use of split locks in a few hours of runtime
-on his desktop. So likely little fallout there (default is just to
-warn for applications, so just console noise rather than failure).
-
- .../admin-guide/kernel-parameters.txt         |  18 ++
- arch/x86/include/asm/cpu.h                    |  17 ++
- arch/x86/include/asm/cpufeatures.h            |   2 +
- arch/x86/include/asm/msr-index.h              |   8 +
- arch/x86/include/asm/thread_info.h            |   6 +-
- arch/x86/include/asm/traps.h                  |   1 +
- arch/x86/kernel/cpu/common.c                  |   2 +
- arch/x86/kernel/cpu/intel.c                   | 170 ++++++++++++++++++
- arch/x86/kernel/process.c                     |   3 +
- arch/x86/kernel/traps.c                       |  29 ++-
- 10 files changed, 252 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index ade4e6ec23e0..173c1acff5f0 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3181,6 +3181,24 @@
- 
- 	nosoftlockup	[KNL] Disable the soft-lockup detector.
- 
-+	split_lock_detect=
-+			[X86] Enable split lock detection
-+
-+			When enabled (and if hardware support is present), atomic
-+			instructions that access data across cache line
-+			boundaries will result in an alignment check exception.
-+
-+			off	- not enabled
-+
-+			warn	- the kernel will pr_alert about applications
-+				  triggering the #AC exception
-+
-+			fatal	- the kernel will SIGBUS applications that
-+				  trigger the #AC exception.
-+
-+			For any more other than 'off' the kernel will die if
-+			it (or firmware) will trigger #AC.
-+
- 	nosync		[HW,M68K] Disables sync negotiation for all devices.
- 
- 	nowatchdog	[KNL] Disable both lockup detectors, i.e.
-diff --git a/arch/x86/include/asm/cpu.h b/arch/x86/include/asm/cpu.h
-index adc6cc86b062..5223504c7e7c 100644
---- a/arch/x86/include/asm/cpu.h
-+++ b/arch/x86/include/asm/cpu.h
-@@ -40,4 +40,21 @@ int mwait_usable(const struct cpuinfo_x86 *);
- unsigned int x86_family(unsigned int sig);
- unsigned int x86_model(unsigned int sig);
- unsigned int x86_stepping(unsigned int sig);
-+#ifdef CONFIG_CPU_SUP_INTEL
-+extern void __init cpu_set_core_cap_bits(struct cpuinfo_x86 *c);
-+extern bool handle_split_lock(void);
-+extern bool handle_user_split_lock(struct pt_regs *regs, long error_code);
-+extern void switch_sld(struct task_struct *);
-+#else
-+static inline void __init cpu_set_core_cap_bits(struct cpuinfo_x86 *c) {}
-+static inline bool handle_split_lock(void)
-+{
-+	return false;
-+}
-+static inline bool handle_user_split_lock(struct pt_regs *regs, long error_code)
-+{
-+	return false;
-+}
-+static inline void switch_sld(struct task_struct *prev) {}
-+#endif
- #endif /* _ASM_X86_CPU_H */
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index e9b62498fe75..c3edd2bba184 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -220,6 +220,7 @@
- #define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
- #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
- #define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
-+#define X86_FEATURE_SPLIT_LOCK_DETECT	( 7*32+31) /* #AC for split lock */
- 
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
-@@ -365,6 +366,7 @@
- #define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
- #define X86_FEATURE_FLUSH_L1D		(18*32+28) /* Flush L1D cache */
- #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
-+#define X86_FEATURE_CORE_CAPABILITIES	(18*32+30) /* "" IA32_CORE_CAPABILITIES MSR */
- #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
- 
- /*
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 084e98da04a7..8bb2e08ce4a3 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -41,6 +41,10 @@
- 
- /* Intel MSRs. Some also available on other CPUs */
- 
-+#define MSR_TEST_CTRL				0x00000033
-+#define MSR_TEST_CTRL_SPLIT_LOCK_DETECT_BIT	29
-+#define MSR_TEST_CTRL_SPLIT_LOCK_DETECT		BIT(MSR_TEST_CTRL_SPLIT_LOCK_DETECT_BIT)
-+
- #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
- #define SPEC_CTRL_IBRS			BIT(0)	   /* Indirect Branch Restricted Speculation */
- #define SPEC_CTRL_STIBP_SHIFT		1	   /* Single Thread Indirect Branch Predictor (STIBP) bit */
-@@ -70,6 +74,10 @@
-  */
- #define MSR_IA32_UMWAIT_CONTROL_TIME_MASK	(~0x03U)
- 
-+#define MSR_IA32_CORE_CAPABILITIES			  0x000000cf
-+#define MSR_IA32_CORE_CAPABILITIES_SPLIT_LOCK_DETECT_BIT  5
-+#define MSR_IA32_CORE_CAPABILITIES_SPLIT_LOCK_DETECT	  BIT(MSR_IA32_CORE_CAPABILITIES_SPLIT_LOCK_DETECT_BIT)
-+
- #define MSR_PKG_CST_CONFIG_CONTROL	0x000000e2
- #define NHM_C3_AUTO_DEMOTE		(1UL << 25)
- #define NHM_C1_AUTO_DEMOTE		(1UL << 26)
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index d779366ce3f8..d23638a0525e 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -92,6 +92,7 @@ struct thread_info {
- #define TIF_NOCPUID		15	/* CPUID is not accessible in userland */
- #define TIF_NOTSC		16	/* TSC is not accessible in userland */
- #define TIF_IA32		17	/* IA32 compatibility process */
-+#define TIF_SLD			18	/* split_lock_detect */
- #define TIF_NOHZ		19	/* in adaptive nohz mode */
- #define TIF_MEMDIE		20	/* is terminating due to OOM killer */
- #define TIF_POLLING_NRFLAG	21	/* idle is polling for TIF_NEED_RESCHED */
-@@ -122,6 +123,7 @@ struct thread_info {
- #define _TIF_NOCPUID		(1 << TIF_NOCPUID)
- #define _TIF_NOTSC		(1 << TIF_NOTSC)
- #define _TIF_IA32		(1 << TIF_IA32)
-+#define _TIF_SLD		(1 << TIF_SLD)
- #define _TIF_NOHZ		(1 << TIF_NOHZ)
- #define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
- #define _TIF_IO_BITMAP		(1 << TIF_IO_BITMAP)
-@@ -158,9 +160,9 @@ struct thread_info {
- 
- #ifdef CONFIG_X86_IOPL_IOPERM
- # define _TIF_WORK_CTXSW_PREV	(_TIF_WORK_CTXSW| _TIF_USER_RETURN_NOTIFY | \
--				 _TIF_IO_BITMAP)
-+				 _TIF_IO_BITMAP | _TIF_SLD)
- #else
--# define _TIF_WORK_CTXSW_PREV	(_TIF_WORK_CTXSW| _TIF_USER_RETURN_NOTIFY)
-+# define _TIF_WORK_CTXSW_PREV	(_TIF_WORK_CTXSW| _TIF_USER_RETURN_NOTIFY | _TIF_SLD)
- #endif
- 
- #define _TIF_WORK_CTXSW_NEXT	(_TIF_WORK_CTXSW)
-diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-index ffa0dc8a535e..6ceab60370f0 100644
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -175,4 +175,5 @@ enum x86_pf_error_code {
- 	X86_PF_INSTR	=		1 << 4,
- 	X86_PF_PK	=		1 << 5,
- };
-+
- #endif /* _ASM_X86_TRAPS_H */
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 2e4d90294fe6..39245f61fad0 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1234,6 +1234,8 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
- 
- 	cpu_set_bug_bits(c);
- 
-+	cpu_set_core_cap_bits(c);
-+
- 	fpu__init_system(c);
- 
- #ifdef CONFIG_X86_32
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index 4a900804a023..43cc7a8f077e 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -19,6 +19,8 @@
- #include <asm/microcode_intel.h>
- #include <asm/hwcap2.h>
- #include <asm/elf.h>
-+#include <asm/cpu_device_id.h>
-+#include <asm/cmdline.h>
- 
- #ifdef CONFIG_X86_64
- #include <linux/topology.h>
-@@ -31,6 +33,14 @@
- #include <asm/apic.h>
- #endif
- 
-+enum split_lock_detect_state {
-+	sld_off = 0,
-+	sld_warn,
-+	sld_fatal,
-+};
-+
-+static enum split_lock_detect_state sld_state = sld_warn;
-+
- /*
-  * Just in case our CPU detection goes bad, or you have a weird system,
-  * allow a way to override the automatic disabling of MPX.
-@@ -652,6 +662,8 @@ static void init_intel_misc_features(struct cpuinfo_x86 *c)
- 	wrmsrl(MSR_MISC_FEATURES_ENABLES, msr);
- }
- 
-+static void split_lock_init(void);
-+
- static void init_intel(struct cpuinfo_x86 *c)
- {
- 	early_init_intel(c);
-@@ -767,6 +779,8 @@ static void init_intel(struct cpuinfo_x86 *c)
- 		tsx_enable();
- 	if (tsx_ctrl_state == TSX_CTRL_DISABLE)
- 		tsx_disable();
-+
-+	split_lock_init();
- }
- 
- #ifdef CONFIG_X86_32
-@@ -1028,3 +1042,159 @@ static const struct cpu_dev intel_cpu_dev = {
- };
- 
- cpu_dev_register(intel_cpu_dev);
-+
-+#undef pr_fmt
-+#define pr_fmt(fmt) "x86/split lock detection: " fmt
-+
-+static const struct {
-+	const char			*option;
-+	enum split_lock_detect_state	state;
-+} sld_options[] __initconst = {
-+	{ "off",	sld_off   },
-+	{ "warn",	sld_warn  },
-+	{ "fatal",	sld_fatal },
-+};
-+
-+static inline bool match_option(const char *arg, int arglen, const char *opt)
-+{
-+	int len = strlen(opt);
-+
-+	return len == arglen && !strncmp(arg, opt, len);
-+}
-+
-+static void __init split_lock_setup(void)
-+{
-+	enum split_lock_detect_state sld = sld_state;
-+	char arg[20];
-+	int i, ret;
-+
-+	setup_force_cpu_cap(X86_FEATURE_SPLIT_LOCK_DETECT);
-+
-+	ret = cmdline_find_option(boot_command_line, "split_lock_detect",
-+				  arg, sizeof(arg));
-+	if (ret < 0)
-+		goto print;
-+
-+	for (i = 0; i < ARRAY_SIZE(sld_options); i++) {
-+		if (match_option(arg, ret, sld_options[i].option)) {
-+			sld = sld_options[i].state;
-+			break;
-+		}
-+	}
-+
-+	if (sld != sld_state)
-+		sld_state = sld;
-+
-+print:
-+	switch(sld) {
-+	case sld_off:
-+		pr_info("disabled\n");
-+		break;
-+
-+	case sld_warn:
-+		pr_info("warning about user-space split_locks\n");
-+		break;
-+
-+	case sld_fatal:
-+		pr_info("sending SIGBUS on user-space split_locks\n");
-+		break;
-+	}
-+}
-+
-+/*
-+ * The TEST_CTRL MSR is per core. So multiple threads can
-+ * read/write the MSR in parallel. But it's possible to
-+ * simplify the read/write without locking and without
-+ * worry about overwriting the MSR because only bit 29
-+ * is implemented in the MSR and the bit is set as 1 by all
-+ * threads. Locking may be needed in the future if situation
-+ * is changed e.g. other bits are implemented.
-+ */
-+
-+static bool __sld_msr_set(bool on)
-+{
-+	u64 test_ctrl_val;
-+
-+	if (rdmsrl_safe(MSR_TEST_CTRL, &test_ctrl_val))
-+		return false;
-+
-+	if (on)
-+		test_ctrl_val |= MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
-+	else
-+		test_ctrl_val &= ~MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
-+
-+	if (wrmsrl_safe(MSR_TEST_CTRL, test_ctrl_val))
-+		return false;
-+
-+	return true;
-+}
-+
-+static void split_lock_init(void)
-+{
-+	if (sld_state == sld_off)
-+		return;
-+
-+	if (__sld_msr_set(true))
-+		return;
-+
-+	/*
-+	 * If this is anything other than the boot-cpu, you've done
-+	 * funny things and you get to keep whatever pieces.
-+	 */
-+	pr_warn("MSR fail -- disabled\n");
-+	__sld_msr_set(sld_off);
-+}
-+
-+bool handle_split_lock(void)
-+{
-+	return sld_state != sld_off;
-+}
-+
-+bool handle_user_split_lock(struct pt_regs *regs, long error_code)
-+{
-+	if ((regs->flags & X86_EFLAGS_AC) || sld_state == sld_fatal)
-+		return false;
-+
-+	pr_alert("#AC: %s/%d took a split_lock trap at address: 0x%lx\n",
-+		 current->comm, current->pid, regs->ip);
-+
-+	__sld_msr_set(false);
-+	set_tsk_thread_flag(current, TIF_SLD);
-+	return true;
-+}
-+
-+void switch_sld(struct task_struct *prev)
-+{
-+	__sld_msr_set(true);
-+	clear_tsk_thread_flag(prev, TIF_SLD);
-+}
-+
-+#define SPLIT_LOCK_CPU(model) {X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY}
-+
-+/*
-+ * The following processors have split lock detection feature. But since they
-+ * don't have MSR IA32_CORE_CAPABILITIES, the feature cannot be enumerated by
-+ * the MSR. So enumerate the feature by family and model on these processors.
-+ */
-+static const struct x86_cpu_id split_lock_cpu_ids[] __initconst = {
-+	SPLIT_LOCK_CPU(INTEL_FAM6_ICELAKE_X),
-+	SPLIT_LOCK_CPU(INTEL_FAM6_ICELAKE_L),
-+	{}
-+};
-+
-+void __init cpu_set_core_cap_bits(struct cpuinfo_x86 *c)
-+{
-+	u64 ia32_core_caps = 0;
-+
-+	if (cpu_has(c, X86_FEATURE_CORE_CAPABILITIES)) {
-+		/* Enumerate features reported in IA32_CORE_CAPABILITIES MSR. */
-+		rdmsrl(MSR_IA32_CORE_CAPABILITIES, ia32_core_caps);
-+	} else if (!boot_cpu_has(X86_FEATURE_HYPERVISOR)) {
-+		/* Enumerate split lock detection by family and model. */
-+		if (x86_match_cpu(split_lock_cpu_ids))
-+			ia32_core_caps |= MSR_IA32_CORE_CAPABILITIES_SPLIT_LOCK_DETECT;
-+	}
-+
-+	if (ia32_core_caps & MSR_IA32_CORE_CAPABILITIES_SPLIT_LOCK_DETECT)
-+		split_lock_setup();
-+}
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 61e93a318983..55d205820f35 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -654,6 +654,9 @@ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p)
- 		/* Enforce MSR update to ensure consistent state */
- 		__speculation_ctrl_update(~tifn, tifn);
- 	}
-+
-+	if (tifp & _TIF_SLD)
-+		switch_sld(prev_p);
- }
- 
- /*
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 05da6b5b167b..a933a01f6e40 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -46,6 +46,7 @@
- #include <asm/traps.h>
- #include <asm/desc.h>
- #include <asm/fpu/internal.h>
-+#include <asm/cpu.h>
- #include <asm/cpu_entry_area.h>
- #include <asm/mce.h>
- #include <asm/fixmap.h>
-@@ -242,7 +243,6 @@ do_trap(int trapnr, int signr, char *str, struct pt_regs *regs,
- {
- 	struct task_struct *tsk = current;
- 
--
- 	if (!do_trap_no_signal(tsk, trapnr, str, regs, error_code))
- 		return;
- 
-@@ -288,9 +288,34 @@ DO_ERROR(X86_TRAP_OLD_MF, SIGFPE,           0, NULL, "coprocessor segment overru
- DO_ERROR(X86_TRAP_TS,     SIGSEGV,          0, NULL, "invalid TSS",         invalid_TSS)
- DO_ERROR(X86_TRAP_NP,     SIGBUS,           0, NULL, "segment not present", segment_not_present)
- DO_ERROR(X86_TRAP_SS,     SIGBUS,           0, NULL, "stack segment",       stack_segment)
--DO_ERROR(X86_TRAP_AC,     SIGBUS,  BUS_ADRALN, NULL, "alignment check",     alignment_check)
- #undef IP
- 
-+dotraplinkage void do_alignment_check(struct pt_regs *regs, long error_code)
-+{
-+	unsigned int trapnr = X86_TRAP_AC;
-+	char str[] = "alignment check";
-+	int signr = SIGBUS;
-+
-+	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
-+
-+	if (notify_die(DIE_TRAP, str, regs, error_code, trapnr, signr) == NOTIFY_STOP)
-+		return;
-+
-+	if (!handle_split_lock())
-+		return;
-+
-+	if (!user_mode(regs))
-+		die("Split lock detected\n", regs, error_code);
-+
-+	cond_local_irq_enable(regs);
-+
-+	if (handle_user_split_lock(regs, error_code))
-+		return;
-+
-+	do_trap(X86_TRAP_AC, SIGBUS, "alignment check", regs,
-+		error_code, BUS_ADRALN, NULL);
-+}
-+
- #ifdef CONFIG_VMAP_STACK
- __visible void __noreturn handle_stack_overflow(const char *message,
- 						struct pt_regs *regs,
--- 
-2.21.0
-
+[ This message was auto-generated; if you believe anything is incorrect
+  then please email paulburton@kernel.org to report it. ]
