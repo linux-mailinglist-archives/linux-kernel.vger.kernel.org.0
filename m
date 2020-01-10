@@ -2,136 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4F6B136D88
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 14:15:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EAB9136D9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 14:17:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbgAJNPf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 08:15:35 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:20288 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727428AbgAJNPe (ORCPT
+        id S1727848AbgAJNQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 08:16:27 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:51131 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727398AbgAJNQ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 08:15:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578662133;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=g4fPaSDj/1bNL9UHRvFNzyVlWaMB2zznB/rsNHVZDvM=;
-        b=CQSVId1kbMd3fY0p1urK4ZN8gJVSeNg2LXMrVFyQGOx5AHAabg2i2flGel/uQ7JMu22AVS
-        Biag8sL5ARqz1oEwR9D9p6giYwkDnRmfnI9lYPgpntrHhhh8NOLpOV8nH/0pWz+hGkn58A
-        JgZMK+EX08EBoQICp48uEuIiexHWFrk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-102-f2l8RfQYMoqaVwwA1FIDHA-1; Fri, 10 Jan 2020 08:15:31 -0500
-X-MC-Unique: f2l8RfQYMoqaVwwA1FIDHA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 10 Jan 2020 08:16:26 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1578662185; h=Content-Type: MIME-Version: Message-ID:
+ In-Reply-To: Date: References: Subject: Cc: From: Sender;
+ bh=i+FSacw/oKHPosASdYmNACUkHU9zjbv90HutOF8oZS0=; b=CiTatVn+nwJ3IpFyd/mbdSAYYTe5IyAv5zAOs2LFg0n6IuQc/ms7WAO/QTKvxcPX+LxM7jaU
+ BPgqCHUDPAps1Ot+VwmD+yYWd/PEyhCaLanPf57GpgmjPlH1UHqjrrW3Dupk2Pvg0xmbgLtw
+ EACm9PbahxBUTslCzmVwuxW6hRA=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e187928.7f556634fa08-smtp-out-n03;
+ Fri, 10 Jan 2020 13:16:24 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 49E1EC447A5; Fri, 10 Jan 2020 13:16:24 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=0.2 required=2.0 tests=ALL_TRUSTED,MISSING_HEADERS,
+        SPF_NONE autolearn=no autolearn_force=no version=3.4.0
+Received: from x230.qca.qualcomm.com (unknown [83.145.195.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C7F5D107ACC5;
-        Fri, 10 Jan 2020 13:15:29 +0000 (UTC)
-Received: from [10.36.118.66] (unknown [10.36.118.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 565F860BE3;
-        Fri, 10 Jan 2020 13:15:27 +0000 (UTC)
-Subject: Re: [PATCH] mm/page_alloc: Skip non present sections on zone
- initialization
-To:     Michal Hocko <mhocko@kernel.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
-        "Jin, Zhi" <zhi.jin@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20191230093828.24613-1-kirill.shutemov@linux.intel.com>
- <20200108144044.GB30379@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Red Hat GmbH
-Message-ID: <73437651-822f-fcec-3b96-281fb1064cf8@redhat.com>
-Date:   Fri, 10 Jan 2020 14:15:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8EFE4C447A4;
+        Fri, 10 Jan 2020 13:16:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8EFE4C447A4
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        linux-next@vger.kernel.org, sfr@canb.auug.org.au,
+        Stanislaw Gruszka <stf_xl@wp.pl>,
+        linux-wireless@vger.kernel.org
+Subject: Re: [PATCH] iwlwifi: fix build warnings with format string
+References: <20200106171452.201c3b4c@canb.auug.org.au>
+        <1578322389-13716-1-git-send-email-akinobu.mita@gmail.com>
+nTo:    Akinobu Mita <akinobu.mita@gmail.com>
+Date:   Fri, 10 Jan 2020 15:16:18 +0200
+In-Reply-To: <1578322389-13716-1-git-send-email-akinobu.mita@gmail.com>
+        (Akinobu Mita's message of "Mon, 6 Jan 2020 23:53:09 +0900")
+Message-ID: <87muavsb8d.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20200108144044.GB30379@dhcp22.suse.cz>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.01.20 15:40, Michal Hocko wrote:
-> On Mon 30-12-19 12:38:28, Kirill A. Shutemov wrote:
->> memmap_init_zone() can be called on the ranges with holes during the
->> boot. It will skip any non-valid PFNs one-by-one. It works fine as long
->> as holes are not too big.
->>
->> But huge holes in the memory map causes a problem. It takes over 20
->> seconds to walk 32TiB hole. x86-64 with 5-level paging allows for much
->> larger holes in the memory map which would practically hang the system.
->>
->> Deferred struct page init doesn't help here. It only works on the
->> present ranges.
->>
->> Skipping non-present sections would fix the issue.
-> 
-> Makes sense to me.
-> 
->> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> 
-> That pfn inc back and forth is quite ugly TBH but whatever.
+(please cc linux-wireless on all wireless patches)
 
-Indeed, can we please rewrite the loop to fix that?
+Akinobu Mita <akinobu.mita@gmail.com> writes:
 
+> This fixes build warnings introduced by commit "iwlegacy: use
+> <linux/units.h> helpers" (iwlegacy-use-linux-unitsh-helpers.patch in -mm)
+>
+> The format '%d' has to be changed to '%ld' because the return type of
+> kelvin_to_celsius() is 'long'.
+>
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Link: https://lore.kernel.org/r/20200106171452.201c3b4c@canb.auug.org.au
+> Cc: Kalle Valo <kvalo@codeaurora.org>
+> Cc: Stanislaw Gruszka <stf_xl@wp.pl>
+> Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+
+I don't know what's Andrew's workflow, but shouldn't the original patch
+be fixed instead?
 
 -- 
-Thanks,
-
-David / dhildenb
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
