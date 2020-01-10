@@ -2,131 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1406137706
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 20:30:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A823913773C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 20:31:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728819AbgAJT36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 14:29:58 -0500
-Received: from mga03.intel.com ([134.134.136.65]:21738 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727709AbgAJT34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 14:29:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:29:55 -0800
-X-IronPort-AV: E=Sophos;i="5.69,418,1571727600"; 
-   d="scan'208";a="247130740"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:29:55 -0800
-From:   ira.weiny@intel.com
-To:     linux-kernel@vger.kernel.org
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH V2 00/12] Enable per-file/directory DAX operations V2
-Date:   Fri, 10 Jan 2020 11:29:30 -0800
-Message-Id: <20200110192942.25021-1-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.21.0
+        id S1729166AbgAJTbH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 14:31:07 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:60862 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729147AbgAJTbD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 14:31:03 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00AJUwJn094609;
+        Fri, 10 Jan 2020 13:30:58 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578684658;
+        bh=FmFre3D1v2uvSgCmb16gwmygh7BGUpqD8FGcahDNICk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=MROnmtSqB4RRTP9M+GBGNbauhj0DJAbOv94nr7ZAyy7R+HJlpelRMEGCq1ZzAgt/1
+         uhgIU2tES5yv2ZPKRPbTk/pQzlTh8XJ68j69paH+DkmPKb7QCYG/gFnw/dw1JYa25E
+         zjgAtgb9k+T6kePR2ShgTrSR/iYOW3jP7ska3BwE=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00AJUvVS120153
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 10 Jan 2020 13:30:58 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 10
+ Jan 2020 13:30:57 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 10 Jan 2020 13:30:57 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00AJUvSo065048;
+        Fri, 10 Jan 2020 13:30:57 -0600
+Subject: Re: [PATCH 0/4] TI DP8382x Phy support update
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     <f.fainelli@gmail.com>, <hkallweit1@gmail.com>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200110184702.14330-1-dmurphy@ti.com>
+ <20200110192524.GO19739@lunn.ch>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <2e9333e1-1ee7-80ce-fab4-a98a9f4b345f@ti.com>
+Date:   Fri, 10 Jan 2020 13:28:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200110192524.GO19739@lunn.ch>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+Andrew
 
-At LSF/MM'19 [1] [2] we discussed applications that overestimate memory
-consumption due to their inability to detect whether the kernel will
-instantiate page cache for a file, and cases where a global dax enable via a
-mount option is too coarse.
+On 1/10/20 1:25 PM, Andrew Lunn wrote:
+> On Fri, Jan 10, 2020 at 12:46:58PM -0600, Dan Murphy wrote:
+>> Hello
+>>
+>> These patches update and fix some issue found in the TI ethernet PHY drivers.
+> Hi Dan
+>
+> Please could you separate fixes from new functionality. Have the fixes
+> based on net, and new functionality on net-next.
 
-The following patch series enables selecting the use of DAX on individual files
-and/or directories on xfs, and lays some groundwork to do so in ext4.  In this
-scheme the dax mount option can be omitted to allow the per-file property to
-take effect.
+You mean separate series between fixes and functionality?
 
-The insight at LSF/MM was to separate the per-mount or per-file "physical"
-capability switch from an "effective" attribute for the file.
+Sure I can separate them but they are dependent on each other.
 
-At LSF/MM we discussed the difficulties of switching the mode of a file with
-active mappings / page cache.  It was thought the races could be avoided by
-limiting mode flips to 0-length files.
+3 and 4 will not apply cleanly if patch 1 and 2 are not merged first.
 
-However, this turns out to not be true.[3] This is because address space
-operations (a_ops) may be in use at any time the inode is referenced and users
-have expressed a desire to be able to change the mode on a file with data in
-it.  For those reasons this patch set allows changing the mode flag on a file
-as long as it is not current mapped.
+Did you want patch 1 and patch 2 sent separately or together as part of 
+their own series?
 
-Furthermore, DAX is a property of the inode and as such, many operations other
-than address space operations need to be protected during a mode change.
+Dan
 
-Therefore callbacks are placed within the inode operations and used to lock the
-inode as appropriate.
-
-As in V1, Users are able to query the effective and physical flags separately
-at any time.  Specifically the addition of the statx attribute bit allows them
-to ensure the file is operating in the mode they intend.  This 'effective flag'
-and physical flags could differ when the filesystem is mounted with the dax
-flag for example.
-
-It should be noted that the physical DAX flag inheritance is not shown in this
-patch set as it was maintained from previous work on XFS.  The physical DAX flag
-and it's inheritance will need to be added to other file systems for user
-control. 
-
-Finally, extensive testing was performed which resulted in a couple of bug fix
-and clean up patches.  Specifically:
-
-	fs: remove unneeded IS_DAX() check
-	fs/xfs: Fix truncate up
-
-'Fix truncate up' deserves specific attention because I'm not 100% sure it is
-the correct fix.  Without that patch fsx testing failed within a few minutes
-with this error.
-
-	Mapped Write: non-zero data past EOF (0x3b0da) page offset 0xdb is 0x3711
-
-With 'Fix truncate up' running fsx while changing modes can run for hours but I
-have seen 2 other errors in the same genre after many hours of continuous
-testing.
-
-They are:
-
-	READ BAD DATA: offset = 0x22dc, size = 0xcc7e, fname = /mnt/pmem/dax-file
-
-	Mapped Read: non-zero data past EOF (0x3309e) page offset 0x9f is 0x6ab4
-
-After seeing the patches to fix stale data exposure problems[4] I'm more
-confident now that all 3 of these errors are a latent bug rather than a bug in
-this series itself.
-
-However, because of these failures I'm only submitting this set RFC.
-
-
-[1] https://lwn.net/Articles/787973/
-[2] https://lwn.net/Articles/787233/
-[3] https://lkml.org/lkml/2019/10/20/96
-[4] https://patchwork.kernel.org/patch/11310511/
-
-
-To: linux-kernel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org
-Cc: linux-xfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
 
