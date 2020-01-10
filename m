@@ -2,665 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7213136A1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 10:43:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A237E136A28
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 10:46:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbgAJJnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 04:43:39 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38231 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727327AbgAJJni (ORCPT
+        id S1727362AbgAJJq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 04:46:28 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:23578 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727310AbgAJJq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 04:43:38 -0500
-Received: by mail-pg1-f196.google.com with SMTP id a33so747008pgm.5
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 01:43:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nAt7S5lGyZAP9IhuBPaHi8w1OWdC2aV1/6Xo2a1gtF8=;
-        b=HWLvHEd3hicKdoNTSnSygd+9PppbJM7wxoWuUavLkhB51ZRRaFMTvdX5mLATbQ1gpK
-         aYfX4VUllTIV04T+Tx2TYEPqbg4sCz+wnpT4h0vCfHtmRO2REV0N52ULaIgKnRAIEA+4
-         fqilxO5ENtN9EDtTJlxMXOuZhwyha3CppocRbZsu6ISlFulQ8/QoHlFLlVwDxNBukiWc
-         zm2AE9X/5JDyo2F8sPwAQ2c26lwMELb+kfVJpkH10adINQ1+NQNsyo0QHK2ZM3rjKVp/
-         9fcyfOYLgSfL0E6xOBN++sCX1sq+Emv7MP8BFbQgmAL4tdLYT2P7rAqzPPgu52EevlZ/
-         bESg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nAt7S5lGyZAP9IhuBPaHi8w1OWdC2aV1/6Xo2a1gtF8=;
-        b=J2/7ddqUhpVOlb5lU/nk1ntuMgOyqeEIIYXIOUhlR/C5NbPTa5/kTmVeF29IkSW8nK
-         qDn5VgwDfiZohmSeKaKUzI99VINQi+tVrZFIeBTQaEPGW3tSaTbAHAfnRzX7iixwbiLp
-         WB163hATmQ7CmsmuSK2h9oYBcmFSixRF7ZDfoPYFjz+mMRLuoDvM6P1or8IikkkDksxL
-         ZQsM9Ydof8AJtGlkhC8XI8yjqx/agdYW04MQDrAtoOtUujPvSK9XVs/EJH1vLktTesUb
-         9P7UtkyiYl4NiiT7i4k+cZqFWUoeibdQuXMjHQGMoSdgVV1H6D6Ro5HC/MrbC+LacxBK
-         RPwg==
-X-Gm-Message-State: APjAAAXwdqUgwyj/JOp+hqBeOslerwIEwLvh/79Pn5YU5esQzDT/ppeK
-        URHSYIQY7SGxaWRL83JCyrG4DQ==
-X-Google-Smtp-Source: APXvYqyIzcJcpVCEuA25XnxEJvnVp15BM3YzpDlt6PIHZctgs3QCmGwjkrQL9XXamhBZafzxzuGlMg==
-X-Received: by 2002:a63:4d1b:: with SMTP id a27mr3197324pgb.352.1578649417087;
-        Fri, 10 Jan 2020 01:43:37 -0800 (PST)
-Received: from localhost ([122.172.140.51])
-        by smtp.gmail.com with ESMTPSA id n26sm2117969pgd.46.2020.01.10.01.43.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Jan 2020 01:43:36 -0800 (PST)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     arnd@arndb.de, Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, jassisinghbrar@gmail.com,
-        cristian.marussi@arm.com, peng.fan@nxp.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH V2] firmware: arm_scmi: Make scmi core independent of transport type
-Date:   Fri, 10 Jan 2020 15:13:31 +0530
-Message-Id: <3f5567ec928e20963d729350e6d674c4acb0c7a0.1578648530.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.21.0.rc0.269.g1a574e7a288b
+        Fri, 10 Jan 2020 04:46:27 -0500
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00A9h26a003745;
+        Fri, 10 Jan 2020 01:45:57 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=date : from : to :
+ cc : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=proofpoint;
+ bh=dnhh0blQRHTvfNCUjaAoV2H6e3IlXLK1HA+6hxMEDEE=;
+ b=WLKbq/8n1Czt6qu2vp8ZILJdL5fUiLYId3J1mQnag6v1VXSOwNidiLmYnVXs69cU2H3R
+ MaQpDGQJ8qj/1xI6XYgStSh/dPwevS1YAvVpwr7JyRFRfyKFxPsus+pdy1yK+Qlya0IL
+ hOK1IsvW1o2srWdEmtVV66nqhn3WNOyhOeNYAAH79mT6SPZRRJUXX27zKKLeIgq/oNuw
+ PM7nGd2AoVph3nKnvfiejWorSU1IYHk6VJfjUMuj3fartUyqKmqwWXBayRE8MLUQXIib
+ Sxz7LtF+PcDbKmE52IktUKC3Sg3bMk0Kl3fypppDAs9d4JdgHiMpoI5Sr9SF7cGG/UTI IA== 
+Received: from nam04-bn3-obe.outbound.protection.outlook.com (mail-bn3nam04lp2052.outbound.protection.outlook.com [104.47.46.52])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2xar524vvk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 10 Jan 2020 01:45:56 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JeH7SGbhI9YJ2Uvb/UtPjvMfnPVbOM5Dj4VRyrnH33uVMB4lJmew548B0W8MI53c1OCUG9EV4VilYllIDtYRMMdVp2pkDNyY3/kYDoCS7YvuVctfQ81t5mPkZazdmH9UfPzrEoOuwkwuNR53eb3S7hu5gc+oaDnRNDDAGtfa2zSuLY7DY2JTc4D0lR5XWCpkUx2Kem8DaP0d5zvv45H+t5rL5geuMBY9z/at1mWyFJOCkJgVV0/RUEzV1ix2A+g9rVv3cK3EPSH3iquNmKyHixmd+ZjsoSjPNFZ/bKhOT5UTfya4cKJzKG8iFIoBCS/wUF70ePegKbqstdOtwE9WdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dnhh0blQRHTvfNCUjaAoV2H6e3IlXLK1HA+6hxMEDEE=;
+ b=XGnVKv+5ecfu6E96v1nfpZ26AQELDKitJnxPaDp6AguFyxO3v00VvNFc67y+lIYbLBpDxM0Xl0ubgKMgiLg6kYTt2isOmfNu2vF+P5/buH/BkkEz2Ab6iE4v4A3/SHS8jyw69s9Ur5l6p6qQRI2UiIPtDv96xthsMQItsjzkplcnmT8MSj2eqX56WcJSH2TCa3MoQw4UVHSYhn9daG9m6Ya+CeozywaWDlH4FtQi0JT90UnQXaFQoUtKfd8EAeGSeGT7roIQWhEbzckra1G+N/UMEd9TqyGwaVTMCg3qgF9tOGo1oWlLH30+bESjahH/EaBVkj/4/MFGIz+dHKqAtA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 64.207.220.243) smtp.rcpttodomain=infradead.org smtp.mailfrom=cadence.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=cadence.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dnhh0blQRHTvfNCUjaAoV2H6e3IlXLK1HA+6hxMEDEE=;
+ b=AxEtURScr8BGxQL/YV00U9jIeZea6fQirafQJu9O9PE827PTM8OmCEiRkUo9McHo/AXxmT5sBa+LBGjJ8LhoXDu//PM4shrdDiuv4yrzLwEJOFEqh+jFwl1tl7p7/TOyFLRgv2pzi7GiPQxxbSW5cC+vqvVhv1gLpRJBsSbB+9Y=
+Received: from CH2PR07CA0014.namprd07.prod.outlook.com (2603:10b6:610:20::27)
+ by BL0PR07MB4947.namprd07.prod.outlook.com (2603:10b6:208:43::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2623.8; Fri, 10 Jan
+ 2020 09:45:53 +0000
+Received: from DM6NAM12FT003.eop-nam12.prod.protection.outlook.com
+ (2a01:111:f400:fe59::203) by CH2PR07CA0014.outlook.office365.com
+ (2603:10b6:610:20::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2623.10 via Frontend
+ Transport; Fri, 10 Jan 2020 09:45:53 +0000
+Received-SPF: Pass (protection.outlook.com: domain of cadence.com designates
+ 64.207.220.243 as permitted sender) receiver=protection.outlook.com;
+ client-ip=64.207.220.243; helo=wcmailrelayl01.cadence.com;
+Received: from wcmailrelayl01.cadence.com (64.207.220.243) by
+ DM6NAM12FT003.mail.protection.outlook.com (10.13.179.84) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2644.6 via Frontend Transport; Fri, 10 Jan 2020 09:45:53 +0000
+Received: from mailsj6.global.cadence.com (mailsj6.cadence.com [158.140.32.112])
+        by wcmailrelayl01.cadence.com (8.14.7/8.14.4) with ESMTP id 00A9jnMG167399
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=OK);
+        Fri, 10 Jan 2020 01:45:50 -0800
+X-CrossPremisesHeadersFilteredBySendConnector: mailsj6.global.cadence.com
+Received: from global.cadence.com (158.140.32.37) by
+ mailsj6.global.cadence.com (158.140.32.112) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 10 Jan 2020 01:45:48 -0800
+Date:   Fri, 10 Jan 2020 10:45:20 +0100
+From:   Piotr Sroka <piotrs@cadence.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+CC:     Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -next] mtd: rawnand: cadence: Change types of function
+ parameters keeping DMA address
+Message-ID: <20200110094519.GA23024@global.cadence.com>
+References: <1575546963-436-1-git-send-email-piotrs@cadence.com>
+ <20200109202003.44ec5102@xps13>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200109202003.44ec5102@xps13>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Originating-IP: [158.140.32.37]
+X-ClientProxiedBy: mailsj7.global.cadence.com (158.140.32.114) To
+ mailsj6.global.cadence.com (158.140.32.112)
+X-OrganizationHeadersPreserved: mailsj6.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:64.207.220.243;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(376002)(39860400002)(346002)(199004)(36092001)(189003)(8676002)(5660300002)(6916009)(81166006)(81156014)(316002)(86362001)(356004)(8936002)(4326008)(33656002)(4744005)(55016002)(16526019)(6666004)(70206006)(2906002)(54906003)(478600001)(1076003)(36906005)(336012)(426003)(70586007)(26005)(6286002)(186003)(956004)(7696005);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR07MB4947;H:wcmailrelayl01.cadence.com;FPR:;SPF:Pass;LANG:en;PTR:unused.mynethost.com;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8f5bd7ad-ea6b-4e4a-8ed7-08d795b1e231
+X-MS-TrafficTypeDiagnostic: BL0PR07MB4947:
+X-Microsoft-Antispam-PRVS: <BL0PR07MB4947A456901D7D2210B1CFE2DD380@BL0PR07MB4947.namprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-Forefront-PRVS: 02788FF38E
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: GAdGWnjQeURudW4uQ/3KxokMwbSJL4wIezNkJQGQlVlVd6uiXmyJkw0dYvt8tUJ0oh/GdOIqvJFp4URySimdTdeXQ185wOODmRTU4xX59lMnOi4g7By2nSP5Y8GmFimx4QybvhhEIKqcKYAJor5TTEBug0Cv1NVql7JsQrRA7vgv34fHrUsHnRp6WY6BZXNvwpE7lUbQVPQh06+G++lvVBwL7Y4fyW/Yxu9yM0FW2vbxHwFgHqovumYRoD0XMxPDKn+y0wllvMm1MkNRUqGJqJZ2WLuFm/Nf28dt3cWe6uuT6DNeYMHQPiVZlpQz+9rWuJcPIBHfWRQGG4elT+EKsZPAG3/MrQpQnlMCh4Kdn+DiDsQImlf2yTubGMwUcW+tP+u8FCOyKrbDMPnOVgiOa69kaO+Mc6k+D5tlRn/gjQwODxkQYRxRzAjnRLUYEEvGPziolhr2zq20DC79SrJ44leblCU7LL7A7/0FUTeFt3+Drve/bsMIc0RSoG+bNkPm
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2020 09:45:53.1768
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f5bd7ad-ea6b-4e4a-8ed7-08d795b1e231
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[64.207.220.243];Helo=[wcmailrelayl01.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR07MB4947
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-10_01:2020-01-10,2020-01-09 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
+ suspectscore=0 malwarescore=0 spamscore=0 bulkscore=0 adultscore=0
+ clxscore=1015 phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-2001100083
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SCMI specification is fairly independent of the transport protocol,
-which can be a simple mailbox (already implemented) or anything else.
-The current Linux implementation however is very much dependent of the
-mailbox transport layer.
+The 01/09/2020 20:20, Miquel Raynal wrote:
 
-This patch makes the SCMI core code (driver.c) independent of the
-mailbox transport layer and moves all mailbox related code to a new
-file: mailbox.c.
+Hi Miquel
 
-We can now implement more transport protocols to transport SCMI
-messages, some of the transport protocols getting discussed currently
-are SMC/HVC, SPCI (built on top of SMC/HVC), OPTEE based mailbox
-(similar to SPCI), and vitio based transport as alternative to mailbox.
+>
+>Hi Piotr,
+>
+>Piotr Sroka <piotrs@cadence.com> wrote on Thu, 5 Dec 2019 12:55:58
+>+0100:
+>
+>> It was changed to avoid compilation warnings during type casting.
+>>
+>> Signed-off-by: Piotr Sroka <piotrs@cadence.com>
+>> Reported-by: kbuild test robot <lkp@intel.com>
+>> ---
+>
+>I just realized that I received three patches for the same issue about
+>a month ago, yours was totally valid but I choose to apply the one from
+>someone not contributing a lot to encourage him, hope you don't mind :)
+>
+>Cheers,
+>Miquèl
+>
 
-The transport protocols just need to provide struct scmi_desc, which
-also implements the struct scmi_transport_ops.
+I don't mind :), most importantly it's fixed.
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-V2:
-- Dropped __iomem from payload data.
-- Moved transport ops to scmi_desc, and that has a per transport
-  instance now which is differentiated using the compatible string.
-- Converted IS_ERR_OR_NULL to IS_ERR.
+Thanks
+Piotr
 
- drivers/firmware/arm_scmi/Makefile  |   3 +-
- drivers/firmware/arm_scmi/common.h  |  55 ++++++++++
- drivers/firmware/arm_scmi/driver.c  | 151 ++++++----------------------
- drivers/firmware/arm_scmi/mailbox.c | 144 ++++++++++++++++++++++++++
- 4 files changed, 233 insertions(+), 120 deletions(-)
- create mode 100644 drivers/firmware/arm_scmi/mailbox.c
-
-diff --git a/drivers/firmware/arm_scmi/Makefile b/drivers/firmware/arm_scmi/Makefile
-index 5f298f00a82e..df2c05a545d8 100644
---- a/drivers/firmware/arm_scmi/Makefile
-+++ b/drivers/firmware/arm_scmi/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
--obj-y	= scmi-bus.o scmi-driver.o scmi-protocols.o
-+obj-y	= scmi-bus.o scmi-driver.o scmi-protocols.o scmi-transport.o
- scmi-bus-y = bus.o
- scmi-driver-y = driver.o
-+scmi-transport-y = mailbox.o
- scmi-protocols-y = base.o clock.o perf.o power.o reset.o sensors.o
- obj-$(CONFIG_ARM_SCMI_POWER_DOMAIN) += scmi_pm_domain.o
-diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
-index 5237c2ff79fe..365368f8e6d1 100644
---- a/drivers/firmware/arm_scmi/common.h
-+++ b/drivers/firmware/arm_scmi/common.h
-@@ -111,3 +111,58 @@ void scmi_setup_protocol_implemented(const struct scmi_handle *handle,
- 				     u8 *prot_imp);
- 
- int scmi_base_protocol_init(struct scmi_handle *h);
-+
-+/* SCMI Transport */
-+
-+/**
-+ * struct scmi_chan_info - Structure representing a SCMI channel information
-+ *
-+ * @payload: Transmit/Receive payload area
-+ * @dev: Reference to device in the SCMI hierarchy corresponding to this
-+ *	 channel
-+ * @handle: Pointer to SCMI entity handle
-+ * @transport_info: Transport layer related information
-+ */
-+struct scmi_chan_info {
-+	void *payload;
-+	struct device *dev;
-+	struct scmi_handle *handle;
-+	void *transport_info;
-+};
-+
-+/**
-+ * struct scmi_transport_ops - Structure representing a SCMI transport ops
-+ *
-+ * @send_message: Callback to send a message
-+ * @mark_txdone: Callback to mark tx as done
-+ * @chan_setup: Callback to allocate and setup a channel
-+ * @chan_free: Callback to free a channel
-+ */
-+struct scmi_transport_ops {
-+	bool (*chan_available)(struct device *dev, int idx);
-+	int (*chan_setup)(struct scmi_chan_info *cinfo, bool tx);
-+	int (*chan_free)(int id, void *p, void *data);
-+	int (*send_message)(struct scmi_chan_info *cinfo, struct scmi_xfer *xfer);
-+	void (*mark_txdone)(struct scmi_chan_info *cinfo, int ret);
-+};
-+
-+/**
-+ * struct scmi_desc - Description of SoC integration
-+ *
-+ * @max_rx_timeout_ms: Timeout for communication with SoC (in Milliseconds)
-+ * @max_msg: Maximum number of messages that can be pending
-+ *	simultaneously in the system
-+ * @max_msg_size: Maximum size of data per message that can be handled.
-+ */
-+struct scmi_desc {
-+	struct scmi_transport_ops *ops;
-+	int max_rx_timeout_ms;
-+	int max_msg;
-+	int max_msg_size;
-+};
-+
-+extern const struct scmi_desc scmi_mailbox_desc;
-+
-+void scmi_tx_prepare(struct scmi_chan_info *cinfo, struct scmi_xfer *t);
-+void scmi_rx_callback(struct scmi_chan_info *cinfo, struct scmi_xfer *t);
-+void scmi_free_channel(struct scmi_chan_info *cinfo, struct idr *idr, int id);
-diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index 3eb0382491ce..e67fcbe27472 100644
---- a/drivers/firmware/arm_scmi/driver.c
-+++ b/drivers/firmware/arm_scmi/driver.c
-@@ -19,7 +19,6 @@
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/ktime.h>
--#include <linux/mailbox_client.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-@@ -77,38 +76,6 @@ struct scmi_xfers_info {
- 	spinlock_t xfer_lock;
- };
- 
--/**
-- * struct scmi_desc - Description of SoC integration
-- *
-- * @max_rx_timeout_ms: Timeout for communication with SoC (in Milliseconds)
-- * @max_msg: Maximum number of messages that can be pending
-- *	simultaneously in the system
-- * @max_msg_size: Maximum size of data per message that can be handled.
-- */
--struct scmi_desc {
--	int max_rx_timeout_ms;
--	int max_msg;
--	int max_msg_size;
--};
--
--/**
-- * struct scmi_chan_info - Structure representing a SCMI channel information
-- *
-- * @cl: Mailbox Client
-- * @chan: Transmit/Receive mailbox channel
-- * @payload: Transmit/Receive mailbox channel payload area
-- * @dev: Reference to device in the SCMI hierarchy corresponding to this
-- *	 channel
-- * @handle: Pointer to SCMI entity handle
-- */
--struct scmi_chan_info {
--	struct mbox_client cl;
--	struct mbox_chan *chan;
--	void __iomem *payload;
--	struct device *dev;
--	struct scmi_handle *handle;
--};
--
- /**
-  * struct scmi_info - Structure representing a SCMI instance
-  *
-@@ -138,7 +105,6 @@ struct scmi_info {
- 	int users;
- };
- 
--#define client_to_scmi_chan_info(c) container_of(c, struct scmi_chan_info, cl)
- #define handle_to_scmi_info(h)	container_of(h, struct scmi_info, handle)
- 
- /*
-@@ -195,7 +161,7 @@ static inline void scmi_dump_header_dbg(struct device *dev,
- }
- 
- static void scmi_fetch_response(struct scmi_xfer *xfer,
--				struct scmi_shared_mem __iomem *mem)
-+				struct scmi_shared_mem *mem)
- {
- 	xfer->hdr.status = ioread32(mem->msg_payload);
- 	/* Skip the length of header and status in payload area i.e 8 bytes */
-@@ -233,19 +199,17 @@ static inline void unpack_scmi_header(u32 msg_hdr, struct scmi_msg_hdr *hdr)
- }
- 
- /**
-- * scmi_tx_prepare() - mailbox client callback to prepare for the transfer
-+ * scmi_tx_prepare() - callback to prepare for the transfer
-  *
-- * @cl: client pointer
-- * @m: mailbox message
-+ * @cinfo: SCMI channel info
-+ * @t: transfer message
-  *
-  * This function prepares the shared memory which contains the header and the
-  * payload.
-  */
--static void scmi_tx_prepare(struct mbox_client *cl, void *m)
-+void scmi_tx_prepare(struct scmi_chan_info *cinfo, struct scmi_xfer *t)
- {
--	struct scmi_xfer *t = m;
--	struct scmi_chan_info *cinfo = client_to_scmi_chan_info(cl);
--	struct scmi_shared_mem __iomem *mem = cinfo->payload;
-+	struct scmi_shared_mem *mem = cinfo->payload;
- 
- 	/*
- 	 * Ideally channel must be free by now unless OS timeout last
-@@ -332,10 +296,10 @@ __scmi_xfer_put(struct scmi_xfers_info *minfo, struct scmi_xfer *xfer)
- }
- 
- /**
-- * scmi_rx_callback() - mailbox client callback for receive messages
-+ * scmi_rx_callback() - callback for receive messages
-  *
-- * @cl: client pointer
-- * @m: mailbox message
-+ * @cinfo: SCMI channel info
-+ * @t: transfer message
-  *
-  * Processes one received message to appropriate transfer information and
-  * signals completion of the transfer.
-@@ -343,17 +307,16 @@ __scmi_xfer_put(struct scmi_xfers_info *minfo, struct scmi_xfer *xfer)
-  * NOTE: This function will be invoked in IRQ context, hence should be
-  * as optimal as possible.
-  */
--static void scmi_rx_callback(struct mbox_client *cl, void *m)
-+void scmi_rx_callback(struct scmi_chan_info *cinfo, struct scmi_xfer *t)
- {
- 	u8 msg_type;
- 	u32 msg_hdr;
- 	u16 xfer_id;
- 	struct scmi_xfer *xfer;
--	struct scmi_chan_info *cinfo = client_to_scmi_chan_info(cl);
- 	struct device *dev = cinfo->dev;
- 	struct scmi_info *info = handle_to_scmi_info(cinfo->handle);
- 	struct scmi_xfers_info *minfo = &info->tx_minfo;
--	struct scmi_shared_mem __iomem *mem = cinfo->payload;
-+	struct scmi_shared_mem *mem = cinfo->payload;
- 
- 	msg_hdr = ioread32(&mem->msg_header);
- 	msg_type = MSG_XTRACT_TYPE(msg_hdr);
-@@ -396,7 +359,7 @@ void scmi_xfer_put(const struct scmi_handle *handle, struct scmi_xfer *xfer)
- static bool
- scmi_xfer_poll_done(const struct scmi_chan_info *cinfo, struct scmi_xfer *xfer)
- {
--	struct scmi_shared_mem __iomem *mem = cinfo->payload;
-+	struct scmi_shared_mem *mem = cinfo->payload;
- 	u16 xfer_id = MSG_XTRACT_TOKEN(ioread32(&mem->msg_header));
- 
- 	if (xfer->hdr.seq != xfer_id)
-@@ -439,15 +402,12 @@ int scmi_do_xfer(const struct scmi_handle *handle, struct scmi_xfer *xfer)
- 	if (unlikely(!cinfo))
- 		return -EINVAL;
- 
--	ret = mbox_send_message(cinfo->chan, xfer);
-+	ret = info->desc->ops->send_message(cinfo, xfer);
- 	if (ret < 0) {
--		dev_dbg(dev, "mbox send fail %d\n", ret);
-+		dev_dbg(dev, "Failed to send message %d\n", ret);
- 		return ret;
- 	}
- 
--	/* mbox_send_message returns non-negative value on success, so reset */
--	ret = 0;
--
- 	if (xfer->hdr.poll_completion) {
- 		ktime_t stop = ktime_add_ns(ktime_get(), SCMI_MAX_POLL_TO_NS);
- 
-@@ -461,7 +421,7 @@ int scmi_do_xfer(const struct scmi_handle *handle, struct scmi_xfer *xfer)
- 		/* And we wait for the response. */
- 		timeout = msecs_to_jiffies(info->desc->max_rx_timeout_ms);
- 		if (!wait_for_completion_timeout(&xfer->done, timeout)) {
--			dev_err(dev, "mbox timed out in resp(caller: %pS)\n",
-+			dev_err(dev, "timed out in resp(caller: %pS)\n",
- 				(void *)_RET_IP_);
- 			ret = -ETIMEDOUT;
- 		}
-@@ -470,13 +430,7 @@ int scmi_do_xfer(const struct scmi_handle *handle, struct scmi_xfer *xfer)
- 	if (!ret && xfer->hdr.status)
- 		ret = scmi_to_linux_errno(xfer->hdr.status);
- 
--	/*
--	 * NOTE: we might prefer not to need the mailbox ticker to manage the
--	 * transfer queueing since the protocol layer queues things by itself.
--	 * Unfortunately, we have to kick the mailbox framework after we have
--	 * received our message.
--	 */
--	mbox_client_txdone(cinfo->chan, ret);
-+	info->desc->ops->mark_txdone(cinfo, ret);
- 
- 	return ret;
- }
-@@ -713,21 +667,14 @@ static int scmi_xfer_info_init(struct scmi_info *sinfo)
- 	return 0;
- }
- 
--static int scmi_mailbox_check(struct device_node *np, int idx)
--{
--	return of_parse_phandle_with_args(np, "mboxes", "#mbox-cells",
--					  idx, NULL);
--}
--
--static int scmi_mbox_chan_setup(struct scmi_info *info, struct device *dev,
--				int prot_id, bool tx)
-+static int scmi_chan_setup(struct scmi_info *info, struct device *dev,
-+			   int prot_id, bool tx)
- {
- 	int ret, idx;
- 	struct resource res;
- 	resource_size_t size;
--	struct device_node *shmem, *np = dev->of_node;
-+	struct device_node *shmem;
- 	struct scmi_chan_info *cinfo;
--	struct mbox_client *cl;
- 	struct idr *idr;
- 	const char *desc = tx ? "Tx" : "Rx";
- 
-@@ -735,7 +682,7 @@ static int scmi_mbox_chan_setup(struct scmi_info *info, struct device *dev,
- 	idx = tx ? 0 : 1;
- 	idr = tx ? &info->tx_idr : &info->rx_idr;
- 
--	if (scmi_mailbox_check(np, idx)) {
-+	if (!info->desc->ops->chan_available(dev, idx)) {
- 		cinfo = idr_find(idr, SCMI_PROTOCOL_BASE);
- 		if (unlikely(!cinfo)) /* Possible only if platform has no Rx */
- 			return -EINVAL;
-@@ -748,14 +695,7 @@ static int scmi_mbox_chan_setup(struct scmi_info *info, struct device *dev,
- 
- 	cinfo->dev = dev;
- 
--	cl = &cinfo->cl;
--	cl->dev = dev;
--	cl->rx_callback = scmi_rx_callback;
--	cl->tx_prepare = tx ? scmi_tx_prepare : NULL;
--	cl->tx_block = false;
--	cl->knows_txdone = tx;
--
--	shmem = of_parse_phandle(np, "shmem", idx);
-+	shmem = of_parse_phandle(dev->of_node, "shmem", idx);
- 	ret = of_address_to_resource(shmem, 0, &res);
- 	of_node_put(shmem);
- 	if (ret) {
-@@ -770,14 +710,9 @@ static int scmi_mbox_chan_setup(struct scmi_info *info, struct device *dev,
- 		return -EADDRNOTAVAIL;
- 	}
- 
--	cinfo->chan = mbox_request_channel(cl, idx);
--	if (IS_ERR(cinfo->chan)) {
--		ret = PTR_ERR(cinfo->chan);
--		if (ret != -EPROBE_DEFER)
--			dev_err(dev, "failed to request SCMI %s mailbox\n",
--				desc);
-+	ret = info->desc->ops->chan_setup(cinfo, tx);
-+	if (ret)
- 		return ret;
--	}
- 
- idr_alloc:
- 	ret = idr_alloc(idr, cinfo, prot_id, prot_id + 1, GFP_KERNEL);
-@@ -791,12 +726,12 @@ static int scmi_mbox_chan_setup(struct scmi_info *info, struct device *dev,
- }
- 
- static inline int
--scmi_mbox_txrx_setup(struct scmi_info *info, struct device *dev, int prot_id)
-+scmi_txrx_setup(struct scmi_info *info, struct device *dev, int prot_id)
- {
--	int ret = scmi_mbox_chan_setup(info, dev, prot_id, true);
-+	int ret = scmi_chan_setup(info, dev, prot_id, true);
- 
- 	if (!ret) /* Rx is optional, hence no error check */
--		scmi_mbox_chan_setup(info, dev, prot_id, false);
-+		scmi_chan_setup(info, dev, prot_id, false);
- 
- 	return ret;
- }
-@@ -814,7 +749,7 @@ scmi_create_protocol_device(struct device_node *np, struct scmi_info *info,
- 		return;
- 	}
- 
--	if (scmi_mbox_txrx_setup(info, &sdev->dev, prot_id)) {
-+	if (scmi_txrx_setup(info, &sdev->dev, prot_id)) {
- 		dev_err(&sdev->dev, "failed to setup transport\n");
- 		scmi_device_destroy(sdev);
- 		return;
-@@ -833,12 +768,6 @@ static int scmi_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct device_node *child, *np = dev->of_node;
- 
--	/* Only mailbox method supported, check for the presence of one */
--	if (scmi_mailbox_check(np, 0)) {
--		dev_err(dev, "no mailbox found in %pOF\n", np);
--		return -EINVAL;
--	}
--
- 	desc = of_device_get_match_data(dev);
- 	if (!desc)
- 		return -EINVAL;
-@@ -863,7 +792,7 @@ static int scmi_probe(struct platform_device *pdev)
- 	handle->dev = info->dev;
- 	handle->version = &info->version;
- 
--	ret = scmi_mbox_txrx_setup(info, dev, SCMI_PROTOCOL_BASE);
-+	ret = scmi_txrx_setup(info, dev, SCMI_PROTOCOL_BASE);
- 	if (ret)
- 		return ret;
- 
-@@ -898,19 +827,9 @@ static int scmi_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int scmi_mbox_free_channel(int id, void *p, void *data)
-+void scmi_free_channel(struct scmi_chan_info *cinfo, struct idr *idr, int id)
- {
--	struct scmi_chan_info *cinfo = p;
--	struct idr *idr = data;
--
--	if (!IS_ERR_OR_NULL(cinfo->chan)) {
--		mbox_free_channel(cinfo->chan);
--		cinfo->chan = NULL;
--	}
--
- 	idr_remove(idr, id);
--
--	return 0;
- }
- 
- static int scmi_remove(struct platform_device *pdev)
-@@ -930,25 +849,19 @@ static int scmi_remove(struct platform_device *pdev)
- 		return ret;
- 
- 	/* Safe to free channels since no more users */
--	ret = idr_for_each(idr, scmi_mbox_free_channel, idr);
-+	ret = idr_for_each(idr, info->desc->ops->chan_free, idr);
- 	idr_destroy(&info->tx_idr);
- 
- 	idr = &info->rx_idr;
--	ret = idr_for_each(idr, scmi_mbox_free_channel, idr);
-+	ret = idr_for_each(idr, info->desc->ops->chan_free, idr);
- 	idr_destroy(&info->rx_idr);
- 
- 	return ret;
- }
- 
--static const struct scmi_desc scmi_generic_desc = {
--	.max_rx_timeout_ms = 30,	/* We may increase this if required */
--	.max_msg = 20,		/* Limited by MBOX_TX_QUEUE_LEN */
--	.max_msg_size = 128,
--};
--
- /* Each compatible listed below must have descriptor associated with it */
- static const struct of_device_id scmi_of_match[] = {
--	{ .compatible = "arm,scmi", .data = &scmi_generic_desc },
-+	{ .compatible = "arm,scmi", .data = &scmi_mailbox_desc },
- 	{ /* Sentinel */ },
- };
- 
-diff --git a/drivers/firmware/arm_scmi/mailbox.c b/drivers/firmware/arm_scmi/mailbox.c
-new file mode 100644
-index 000000000000..2d1f7c8be293
---- /dev/null
-+++ b/drivers/firmware/arm_scmi/mailbox.c
-@@ -0,0 +1,144 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * System Control and Management Interface (SCMI) Message Mailbox Transport driver
-+ *
-+ * Copyright (C) 2019 ARM Ltd.
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/device.h>
-+#include <linux/mailbox_client.h>
-+#include <linux/of.h>
-+#include <linux/slab.h>
-+
-+#include "common.h"
-+
-+/**
-+ * struct scmi_mailbox - Structure representing a SCMI mailbox transport
-+ *
-+ * @cl: Mailbox Client
-+ * @chan: Transmit/Receive mailbox channel
-+ * @cinfo: SCMI channel info
-+ */
-+struct scmi_mailbox {
-+	struct mbox_client cl;
-+	struct mbox_chan *chan;
-+	struct scmi_chan_info *cinfo;
-+};
-+
-+#define client_to_scmi_mailbox(c) container_of(c, struct scmi_mailbox, cl)
-+
-+static bool mailbox_chan_available(struct device *dev, int idx)
-+{
-+	return !of_parse_phandle_with_args(dev->of_node, "mboxes",
-+					   "#mbox-cells", idx, NULL);
-+}
-+
-+static void mailbox_tx_prepare(struct mbox_client *cl, void *m)
-+{
-+	struct scmi_mailbox *smbox = client_to_scmi_mailbox(cl);
-+	struct scmi_chan_info *cinfo = smbox->cinfo;
-+
-+	scmi_tx_prepare(cinfo, m);
-+}
-+
-+static void mailbox_rx_callback(struct mbox_client *cl, void *m)
-+{
-+	struct scmi_mailbox *smbox = client_to_scmi_mailbox(cl);
-+	struct scmi_chan_info *cinfo = smbox->cinfo;
-+
-+	scmi_rx_callback(cinfo, m);
-+}
-+
-+static int mailbox_chan_setup(struct scmi_chan_info *cinfo, bool tx)
-+{
-+	struct device *dev = cinfo->dev;
-+	struct scmi_mailbox *smbox;
-+	struct mbox_client *cl;
-+	int ret;
-+
-+	smbox = devm_kzalloc(dev, sizeof(*smbox), GFP_KERNEL);
-+	if (!smbox)
-+		return -ENOMEM;
-+
-+	cl = &smbox->cl;
-+	cl->dev = dev;
-+	cl->tx_prepare = tx ? mailbox_tx_prepare : NULL;
-+	cl->rx_callback = mailbox_rx_callback;
-+	cl->tx_block = false;
-+	cl->knows_txdone = tx;
-+
-+	smbox->chan = mbox_request_channel(cl, tx ? 0 : 1);
-+	if (IS_ERR(smbox->chan)) {
-+		ret = PTR_ERR(smbox->chan);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "failed to request SCMI %s mailbox\n",
-+				tx ? "Tx" : "Rx");
-+		return ret;
-+	}
-+
-+	cinfo->transport_info = smbox;
-+	smbox->cinfo = cinfo;
-+
-+	return 0;
-+}
-+
-+static int mailbox_chan_free(int id, void *p, void *data)
-+{
-+	struct scmi_chan_info *cinfo = p;
-+	struct scmi_mailbox *smbox = cinfo->transport_info;
-+
-+	if (!IS_ERR(smbox->chan)) {
-+		mbox_free_channel(smbox->chan);
-+		cinfo->transport_info = NULL;
-+		smbox->chan = NULL;
-+		smbox->cinfo = NULL;
-+	}
-+
-+	scmi_free_channel(cinfo, data, id);
-+
-+	return 0;
-+}
-+
-+static int mailbox_send_message(struct scmi_chan_info *cinfo,
-+			struct scmi_xfer *xfer)
-+{
-+	struct scmi_mailbox *smbox = cinfo->transport_info;
-+	int ret;
-+
-+	ret = mbox_send_message(smbox->chan, xfer);
-+
-+	/* mbox_send_message returns non-negative value on success, so reset */
-+	if (ret > 0)
-+		ret = 0;
-+
-+	return ret;
-+}
-+
-+static void mailbox_mark_txdone(struct scmi_chan_info *cinfo, int ret)
-+{
-+	struct scmi_mailbox *smbox = cinfo->transport_info;
-+
-+	/*
-+	 * NOTE: we might prefer not to need the mailbox ticker to manage the
-+	 * transfer queueing since the protocol layer queues things by itself.
-+	 * Unfortunately, we have to kick the mailbox framework after we have
-+	 * received our message.
-+	 */
-+	mbox_client_txdone(smbox->chan, ret);
-+}
-+
-+static struct scmi_transport_ops scmi_mailbox_ops = {
-+	.chan_available = mailbox_chan_available,
-+	.chan_setup = mailbox_chan_setup,
-+	.chan_free = mailbox_chan_free,
-+	.send_message = mailbox_send_message,
-+	.mark_txdone = mailbox_mark_txdone,
-+};
-+
-+const struct scmi_desc scmi_mailbox_desc = {
-+	.ops = &scmi_mailbox_ops,
-+	.max_rx_timeout_ms = 30, /* We may increase this if required */
-+	.max_msg = 20, /* Limited by MBOX_TX_QUEUE_LEN */
-+	.max_msg_size = 128,
-+};
--- 
-2.21.0.rc0.269.g1a574e7a288b
 
