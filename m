@@ -2,102 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F11C71367EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 08:07:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAFB91367F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 08:08:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbgAJHHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 02:07:22 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:50968 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbgAJHHV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 02:07:21 -0500
-Received: by mail-pj1-f68.google.com with SMTP id r67so582502pjb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 23:07:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=M/y3Ml3cM/VSoJud1Dw7FXrO1acMY+sKEerO9outbBk=;
-        b=AmGIEKHX7/ltZPW8KBppPh4dfNgAw9BawReONfu20SdOsEMncM7QmHQ/DgfwDnmv8T
-         21IGIPGILhSA7JnW3FoEIgT4DYGLgTZWZ1IgT0UNnkSecFHfuf+XkuOKLuTKXUIZpMSW
-         oZ/qPcKd9Hnl6huv7035dakRp5WDhXPAbrr8JERWj/eZFYO7UQslkIXRFmZpVlEJcFyg
-         lekKzu3LWCNQl4rxLeOawb8CmQTU0MELvaG1Nz7V9uX9L7UXTTXz/37cCAfTZ/CdjQV3
-         SoubjbvyPfUl5rmF5IblznHxKkK3UgeseKeDecNWC44R+Qu6A//67AV1VnVdSbZI1CrM
-         woAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=M/y3Ml3cM/VSoJud1Dw7FXrO1acMY+sKEerO9outbBk=;
-        b=UoivV9NT3ZaYK89ZTme7X3I9aO84Zx9JcePc0eBxBpJ2+JuEetHj1ea1yTC2SEfImJ
-         ih0sA/uWdKemUOHmYsTTAP2KT6wNUDtH7qMnLg/81nkoXl5oU2BXjiuyGl8VIQnjRsq7
-         TCQpVpaY4tYLmp8eAszt1NKYUpbWTLW+4ycX4hsE/fMX4X16ozC5vgC8fv7OeRlFmr07
-         kuxf0XrAqSXgqhqfFh0YGqTDZxNJxATd/CJX6rKVjGc5NicGlAKm37KueDDchKOVrRjm
-         udhnb+gN37BEkRn7rGf44rmYxyEUyXmwED6swDFpSBIdTAY8atx0K+UgU2ShY3Jh4L7t
-         nNfA==
-X-Gm-Message-State: APjAAAXaXf31ln33WZV/ArMgcFbPsqpREAu5AKvDI5rB0sDi1iCO9aY5
-        g+NzP9hBot44wVI7BnteCc//tg==
-X-Google-Smtp-Source: APXvYqyQSw6X8cyO2gBQIiXxpRCvLX2QZNn/mPymYICp5ZQha+ZzrZ0O7cBocngIOaOdKKOTZmMvxw==
-X-Received: by 2002:a17:902:8601:: with SMTP id f1mr2473221plo.289.1578640040800;
-        Thu, 09 Jan 2020 23:07:20 -0800 (PST)
-Received: from [10.151.2.174] ([45.135.186.75])
-        by smtp.gmail.com with ESMTPSA id l14sm1147746pgt.42.2020.01.09.23.07.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Jan 2020 23:07:20 -0800 (PST)
-Subject: Re: [PATCH v10 4/4] crypto: hisilicon - register zip engine to uacce
-To:     Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>, grant.likely@arm.com,
-        jean-philippe <jean-philippe@linaro.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        ilias.apalodimas@linaro.org, francois.ozog@linaro.org,
-        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>,
-        "haojian . zhuang" <haojian.zhuang@linaro.org>,
-        guodong.xu@linaro.org, linux-accelerators@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        iommu@lists.linux-foundation.org
-References: <1576465697-27946-1-git-send-email-zhangfei.gao@linaro.org>
- <1576465697-27946-5-git-send-email-zhangfei.gao@linaro.org>
- <20200109174859.00004b7b@Huawei.com>
-From:   zhangfei <zhangfei.gao@linaro.org>
-Message-ID: <8d35168e-ff68-1bb9-20e1-6bbac5afde00@linaro.org>
-Date:   Fri, 10 Jan 2020 15:07:08 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727154AbgAJHIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 02:08:39 -0500
+Received: from mail.andi.de1.cc ([85.214.55.253]:45218 "EHLO mail.andi.de1.cc"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726186AbgAJHIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 02:08:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:To:From:Date:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=449GfKH7sH7qx3uVz7I+DZvudTQJS9ufr7oEB5vY7Bc=; b=n72BZQ67zmmXppM/xkdr0487Kv
+        veCzIUlqMEvfTPlQiEU+MY2d7q6mdgXHkJh42V45xkQ1in2Lg/wZMkoG5SEFnA4GA/VyhufBrk4cW
+        DK3rVmmk87TlII2wB9F/360lSMWaegs2aBeQKC6gzLzmZFywL4JzudH+wEEccF709Zt4=;
+Received: from [2a02:790:ff:1019:7ee9:d3ff:fe1f:a246] (helo=localhost)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1ipoPD-0003jT-04; Fri, 10 Jan 2020 08:08:27 +0100
+Received: from localhost.lan ([::1] helo=localhost)
+        by localhost with esmtp (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1ipoPA-0001VA-Rz; Fri, 10 Jan 2020 08:08:24 +0100
+Date:   Fri, 10 Jan 2020 08:08:24 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rtc@vger.kernel.org, stefan@agner.ch, b.galvani@gmail.com,
+        phh@phh.me, letux-kernel@openphoenux.org
+Subject: Re: [PATCH v5 0/5] Add rtc support for rn5t618 mfd
+Message-ID: <20200110080824.727a612d@kemnade.info>
+In-Reply-To: <20191220122416.31881-1-andreas@kemnade.info>
+References: <20191220122416.31881-1-andreas@kemnade.info>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20200109174859.00004b7b@Huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+I hope everyone went well into new year, are there any open
+issues left here preveting applying these patches?
 
-On 2020/1/10 上午1:48, Jonathan Cameron wrote:
-> On Mon, 16 Dec 2019 11:08:17 +0800
-> Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
->
->> Register qm to uacce framework for user crypto driver
->>
->> Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
->> Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
-> Very nice to see how minimal the changes are.
->
-> Whilst uacce in general isn't crypto specific, as we are looking
-> at changes in a crypto driver, this will need a crypto Ack.
->
-> Herbert, this is about as non invasive as things can get and
-> provide a user space shared virtual addressing based interface.
-> What do you think?
->
->  From my side, for what it's worth...
->
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+On Fri, 20 Dec 2019 13:24:11 +0100
+Andreas Kemnade <andreas@kemnade.info> wrote:
 
-Thanks Jonathan
+> In the variant RC5T619 the mfd has an RTC. This patchset adds
+> support for it. To do so it adds the missing register defines in 
+> rn5t618.h and general irq handling for that.
+> It seems that the irq definitions are the same except missing RTC
+missing words ... for the rn5t618 ...
+
+> but due to missing ability to test that I do not add them here.
+> 
+> The rtc driver itself is based on 
+> https://github.com/kobolabs/Kobo-Reader/blob/master/hw/imx6sll-clara/kernel.tar.bz2
+> but heavily reworked.
+> 
+> It was tested on the Kobo Clara HD.
+> 
+> For cleaning up there is a separate off-topic patch:
+> mfd: rn5t618: cleanup i2c_device_id
+> 
+> Changes in v5:
+> - static rn5t618_irq_init
+> - PLATFORM_DEVID_NONE
+> - added some Acked-Bys
+> 
+> Changes in v4:
+> - use macros for IRQ definitions
+> - merge rn5t618-core.c and rn5t618-irq.c
+> 
+> Changes in v3:
+> - alignment cleanup
+> - output cleanup, remove useless toggling of alarm flag in rtc probe
+> - updated bindings description, so patch 1/5 becomes 2/6 and so on
+> 
+> Changes in v2:
+> - no dead code in irq code
+> - various improvements and cleanups in rtc driver itself
+> 
+> Andreas Kemnade (5):
+>   dt-bindings: mfd: rn5t618: Document optional property interrupts
+>   mfd: rn5t618: add IRQ support
+>   mfd: rn5t618: add RTC related registers
+>   mfd: rn5t618: add more subdevices
+>   rtc: rc5t619: add ricoh rc5t619 RTC driver
+> 
+>  Documentation/devicetree/bindings/mfd/rn5t618.txt |   4 +
+>  drivers/mfd/Kconfig                               |   1 +
+>  drivers/mfd/rn5t618.c                             | 109 +++++-
+>  drivers/rtc/Kconfig                               |  10 +
+>  drivers/rtc/Makefile                              |   1 +
+>  drivers/rtc/rtc-rc5t619.c                         | 444 ++++++++++++++++++++++
+>  include/linux/mfd/rn5t618.h                       |  26 ++
+>  7 files changed, 593 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/rtc/rtc-rc5t619.c
+> 
+> -- 
+> 2.11.0
+> 
+> 
