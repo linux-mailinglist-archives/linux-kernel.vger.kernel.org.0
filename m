@@ -2,54 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DF2313704A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 15:55:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 223ED137061
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 15:56:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728402AbgAJOy6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 09:54:58 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33087 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728401AbgAJOy4 (ORCPT
+        id S1728355AbgAJO40 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 09:56:26 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:31130 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728140AbgAJO40 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 09:54:56 -0500
-Received: by mail-lj1-f194.google.com with SMTP id y6so2462790lji.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 06:54:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SIr8YjUlHXwroCw7JSyezNjS+8rrWXmTvnkdQl1GRZY=;
-        b=H02JMG8k/CsF40jcBWeJH8di2gQR3VJUngbt04jtkSXT33aLg7YIwhtE7GSR1girlo
-         7jj2BlN3aM2B/M7rnWO8SMEBsfpb5int6DVFpWyaagSh09+dpLLuhfXWg+BHZZaj+fDi
-         GTPL84VPhu4Pc1M8XCpW7L+6hnCGKiQZzzeS2Ry3F+tr2Te5ppFT8jTJcPu+yksk46mT
-         mIXtL5L29NINfDBevNH8uUXC2sE8MzUBTrLCGy/132gDocs/d/EVdKVcELDpGNQvycip
-         z9hKV5W6J1DDffrFHv336ZPyc6Kc9bLqYfIwHTVDjZITPoTqzXAeP0zCAp01fKMXquf0
-         b+Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SIr8YjUlHXwroCw7JSyezNjS+8rrWXmTvnkdQl1GRZY=;
-        b=GdOsMyMNyQ+RIzYwoHgLsqMD4VKZbNBwb2vhAl+dFfzbs9ckcV3/glSy9JBnn5GAio
-         48wkdfqv19mmo7gF2V4O1gM5Oo8Z5RHo4otWrWC4E5Pr20OhSmV/JZa9Z2skJOAIM0wM
-         6iRvRV8a6h9XpsgW/AsQJ+cD4cfBzWtVK1SVyFW/ibTm/bkAI30h+es4DrGbzxs4oSve
-         /boi3l7rJDMI9ItU6iIVVMGr1lYEGFWaA3cOVib9BblbJXN8N6gJrP8VnLefUuwLEv44
-         opzHfndd1v5EQDm5vz5tbCRRgVtcxk2a0pWlKtzGCtHPX1qxDZx9WgtIlHQ8xWWebefa
-         IwVQ==
-X-Gm-Message-State: APjAAAWtj4+4+wDd+KRXdTFwRAQIKdlfVZGeQSx50+et0D6+tSqfXtMz
-        hRIGJYDQxK7mPsHwq05T90Cc7A==
-X-Google-Smtp-Source: APXvYqwFUfr/JO3laFVMUUcUEgIU7jfdmhle2+BHKv9pbpNkcc1QHW/uK0hL4xi6f6FfjnhxM9NtpQ==
-X-Received: by 2002:a2e:914d:: with SMTP id q13mr3034950ljg.198.1578668094480;
-        Fri, 10 Jan 2020 06:54:54 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id b17sm1098592ljd.5.2020.01.10.06.54.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2020 06:54:53 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 4D4B9100C65; Fri, 10 Jan 2020 17:54:54 +0300 (+03)
-Date:   Fri, 10 Jan 2020 17:54:54 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     David Hildenbrand <david@redhat.com>
+        Fri, 10 Jan 2020 09:56:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578668185;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=r7xRVO/dkzWZ+qQvWriWYlYYwhrM0vDojkZTP7B08GE=;
+        b=ODhFeylJOg7vBqd3gsfgiaFpcgtD3CxJHsSFDDUaO2V5NVxreqaa/fx87eHyBJkqvt3R0q
+        snb4QRG1pyAlN9xm1N5KF6fKREqHlbRNdlxwflvbcMW9EPN7Y7wkZcGbFiilinmtz2EsYz
+        bO/IL6cpQZMPmZaf8icafuffIZ43WrE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-260-SInLilzDNde91KRZrOF9gQ-1; Fri, 10 Jan 2020 09:56:21 -0500
+X-MC-Unique: SInLilzDNde91KRZrOF9gQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B820A8CA9D9;
+        Fri, 10 Jan 2020 14:56:17 +0000 (UTC)
+Received: from [10.36.118.66] (unknown [10.36.118.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A1CAA7C3E2;
+        Fri, 10 Jan 2020 14:56:15 +0000 (UTC)
+Subject: Re: [PATCH] mm/page_alloc: Skip non present sections on zone
+ initialization
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
 Cc:     Michal Hocko <mhocko@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Dan Williams <dan.j.williams@intel.com>,
@@ -57,9 +44,6 @@ Cc:     Michal Hocko <mhocko@kernel.org>,
         "Jin, Zhi" <zhi.jin@intel.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH] mm/page_alloc: Skip non present sections on zone
- initialization
-Message-ID: <20200110145454.mmgmtcy2zsrr63vh@box>
 References: <20191230093828.24613-1-kirill.shutemov@linux.intel.com>
  <20200108144044.GB30379@dhcp22.suse.cz>
  <73437651-822f-fcec-3b96-281fb1064cf8@redhat.com>
@@ -67,25 +51,84 @@ References: <20191230093828.24613-1-kirill.shutemov@linux.intel.com>
  <de70ec09-492d-292b-0738-db1ce1f05673@redhat.com>
  <20200110144717.xufpf4yjkjlngymy@box>
  <6cf49e65-ee02-7cbd-596f-ebbc057717c2@redhat.com>
+ <20200110145454.mmgmtcy2zsrr63vh@box>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <2f075639-c378-4bba-abe1-60d3c2420800@redhat.com>
+Date:   Fri, 10 Jan 2020 15:56:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6cf49e65-ee02-7cbd-596f-ebbc057717c2@redhat.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20200110145454.mmgmtcy2zsrr63vh@box>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 03:48:39PM +0100, David Hildenbrand wrote:
-> >> +       if (!present_section_nr(section_nr))
-> >> +               return section_nr_to_pfn(next_present_section_nr(section_nr));
-> > 
-> > This won't compile. next_present_section_nr() is static to mm/sparse.c.
+On 10.01.20 15:54, Kirill A. Shutemov wrote:
+> On Fri, Jan 10, 2020 at 03:48:39PM +0100, David Hildenbrand wrote:
+>>>> +       if (!present_section_nr(section_nr))
+>>>> +               return section_nr_to_pfn(next_present_section_nr(section_nr));
+>>>
+>>> This won't compile. next_present_section_nr() is static to mm/sparse.c.
+>>
+>> We should then move that to the header IMHO.
 > 
-> We should then move that to the header IMHO.
+> It looks like too much for a trivial cleanup.
+> 
 
-It looks like too much for a trivial cleanup.
+Cleanup? This is a performance improvement ("fix the issue."). We should
+avoid duplicating code where it can be avoided.
 
 -- 
- Kirill A. Shutemov
+Thanks,
+
+David / dhildenb
+
