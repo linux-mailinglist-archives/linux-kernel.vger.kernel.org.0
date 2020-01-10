@@ -2,91 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02CDF1375D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 19:09:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF1731375E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 19:11:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728681AbgAJSJ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 13:09:26 -0500
-Received: from ms.lwn.net ([45.79.88.28]:52276 "EHLO ms.lwn.net"
+        id S1728799AbgAJSLi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 13:11:38 -0500
+Received: from mga09.intel.com ([134.134.136.24]:13850 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726767AbgAJSJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 13:09:26 -0500
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 1C4A577D;
-        Fri, 10 Jan 2020 18:09:25 +0000 (UTC)
-Date:   Fri, 10 Jan 2020 11:09:23 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-Cc:     miklos@szeredi.hu, markus.heiser@darmarit.de,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH v4] Documentation: filesystems: convert fuse to RST
-Message-ID: <20200110110923.31fc56e5@lwn.net>
-In-Reply-To: <20191231185110.809467-1-dwlsalmeida@gmail.com>
-References: <20191231185110.809467-1-dwlsalmeida@gmail.com>
-Organization: LWN.net
+        id S1727742AbgAJSLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 13:11:37 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 10:11:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,417,1571727600"; 
+   d="scan'208";a="231653977"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 10 Jan 2020 10:11:35 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1ipykw-0008vF-K4; Sat, 11 Jan 2020 02:11:34 +0800
+Date:   Sat, 11 Jan 2020 02:10:50 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     weiqi <weiqi4@huawei.com>
+Cc:     kbuild-all@lists.01.org, alexander.h.duyck@linux.intel.com,
+        alex.williamson@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com, x86@kernel.org,
+        wei qi <weiqi4@huawei.com>
+Subject: Re: [PATCH 1/2] vfio: add mmap/munmap API for page hinting
+Message-ID: <202001110208.6GCxeDRv%lkp@intel.com>
+References: <1578408399-20092-2-git-send-email-weiqi4@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1578408399-20092-2-git-send-email-weiqi4@huawei.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 31 Dec 2019 15:51:10 -0300
-"Daniel W. S. Almeida" <dwlsalmeida@gmail.com> wrote:
+Hi weiqi,
 
-> From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-> 
-> Converts fuse.txt to reStructuredText format, improving the presentation
-> without changing much of the underlying content.
-> 
-> Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
+Thank you for the patch! Perhaps something to improve:
 
-So I note that the last non-typo-fix change to this document happened in
-2006, which leads me to suspect that it might be just a wee bit out of
-date.  Miklos, what's the story here?  Should we put a warning at the top?
+[auto build test WARNING on kvm/linux-next]
+[also build test WARNING on vfio/next vhost/linux-next v5.5-rc5 next-20200109]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
 
-Otherwise I really only have one other comment on the conversion...
+url:    https://github.com/0day-ci/linux/commits/weiqi/page-hinting-add-passthrough-support/20200108-152941
+base:   https://git.kernel.org/pub/scm/virt/kvm/kvm.git linux-next
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-129-g341daf20-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
 
 
->  .../filesystems/{fuse.txt => fuse.rst}        | 174 ++++++++----------
->  Documentation/filesystems/index.rst           |   1 +
->  MAINTAINERS                                   |   2 +-
->  3 files changed, 80 insertions(+), 97 deletions(-)
->  rename Documentation/filesystems/{fuse.txt => fuse.rst} (79%)
-> 
-> diff --git a/Documentation/filesystems/fuse.txt b/Documentation/filesystems/fuse.rst
-> similarity index 79%
-> rename from Documentation/filesystems/fuse.txt
-> rename to Documentation/filesystems/fuse.rst
-> index 13af4a49e7db..aa7d6f506b8d 100644
-> --- a/Documentation/filesystems/fuse.txt
-> +++ b/Documentation/filesystems/fuse.rst
-> @@ -1,41 +1,39 @@
-> -Definitions
-> -~~~~~~~~~~~
-> +==============
-> +FUSE
-> +==============
->  
-> -Userspace filesystem:
-> +Definitions
-> +===========
->  
-> +``Userspace filesystem:``
->    A filesystem in which data and metadata are provided by an ordinary
->    userspace process.  The filesystem can be accessed normally through
->    the kernel interface.
+sparse warnings: (new ones prefixed by >>)
 
-I think that ``literal text`` should really only be used for literal text -
-something that the user types, function names, etc.  Here you're defining a
-term, which is different.  You could use **emphasis** as you have in other
-places, but I also honestly think it doesn't need special markup at all.
+>> drivers/vfio/vfio_iommu_type1.c:1275:5: sparse: sparse: symbol 'vfio_iommu_iova_to_phys' was not declared. Should it be static?
 
-Thanks,
+Please review and possibly fold the followup patch.
 
-jon
+---
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
