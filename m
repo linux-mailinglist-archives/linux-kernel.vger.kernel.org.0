@@ -2,126 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01638137668
+	by mail.lfdr.de (Postfix) with ESMTP id 74891137669
 	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 19:51:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728824AbgAJSuI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 13:50:08 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:44550 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728676AbgAJSuF (ORCPT
+        id S1728970AbgAJSuV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 13:50:21 -0500
+Received: from mail-wr1-f74.google.com ([209.85.221.74]:37576 "EHLO
+        mail-wr1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728959AbgAJSuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 13:50:05 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00AInwX6001024;
-        Fri, 10 Jan 2020 12:49:58 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578682198;
-        bh=YkLYeJEKlGhb+RCMV1xyuQRGPxl9AzfqwGb7FDoC+S4=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=QCWbK9/gbeqyLVKP1HoXCElowCSsSvhECLXWbVY7Kxamw3howfLITiLc+ufvqUVLa
-         XlOZ5wUW9DUFkTNoXEE4066H1H433NPBvRqA85bQviemrlJQnp8veZGlSqNij+seqZ
-         7r6R8PBU0rgLKnrii82YKylpQemCpJugciLc4smU=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00AInwh6059088
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 10 Jan 2020 12:49:58 -0600
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 10
- Jan 2020 12:49:57 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 10 Jan 2020 12:49:57 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00AInvsN088630;
-        Fri, 10 Jan 2020 12:49:57 -0600
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <andrew@lunn.ch>, <f.fainelli@gmail.com>, <hkallweit1@gmail.com>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 4/4] net: phy: DP83822: Add support for additional DP83825 devices
-Date:   Fri, 10 Jan 2020 12:47:02 -0600
-Message-ID: <20200110184702.14330-5-dmurphy@ti.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200110184702.14330-1-dmurphy@ti.com>
-References: <20200110184702.14330-1-dmurphy@ti.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 10 Jan 2020 13:50:20 -0500
+Received: by mail-wr1-f74.google.com with SMTP id z14so1335497wrs.4
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 10:50:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=FKzriefzB+sFj+yanYF71dYfNewJn715ajVrF6hXaPc=;
+        b=VACd/K5Nu5cG+wiPgp8G70D3txgJ6as16XJETV4f1dp1Hy5yjg0kQ9ngLhhHIUwhoM
+         pzh8p508zag5fBT411FlwlZaRTYsuf/SeVRAE+2TViEpyFLBEuBtNu5JKzZoLR6vi3MB
+         LMpa/o7hRjUSZeVBcirPG90njevurjfBQ3s3FzGIp+70nW2/H4h09CSRqMjN1UDM7QGT
+         XZNzuZn3chMruJozrEMKIZPOBMHW1gttI8uRlN2Z34AIx06SDyzZwwZU5D5nMtDiWBV+
+         aQwoPVv2jcQxiVSIf2VkM9tuF0D5u1rwusHwmEqmMVD1Cjdf+aVfQSm2OQP2iMAVNh/X
+         dMKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=FKzriefzB+sFj+yanYF71dYfNewJn715ajVrF6hXaPc=;
+        b=PRzOgFH4Rlejhc+/mtX6+IENhKMvpKg270ZoC8EMCBtegOpSnQZWIi4xq0qw6vwzeW
+         tJUXYdnQc30pmL2kWCOonPVHQlK3xsQO1XfBjANHWRU4luLamlwcGpVh5KB/yt0V52PJ
+         QIg6pUHrQWn8DOVsI4scGzuL539rImPPGQ1ta1KZ0nPg59qIZKd+PEFUOWhnPd8D1i0N
+         CVAq0TGSxToC/AQaEGmc/IUXa2cUrEIAKByNg1t79TKbUYUnQ3CK7PZtIJMX/laGA3lC
+         MeSl0gIhI7Yjs1JCChZzkQGp52JGy/cdcE10AdKlgPKDBuDu0Ovw3qFd/avKx+8hOIl2
+         2xsg==
+X-Gm-Message-State: APjAAAUbXpJ1/EiZo2E8lYk1HE6VQ4HgF7Kg42npkTZMCWBLHZ/sM40H
+        TlZZh3U2gabmagYh57k2zq3Mc0WLwA==
+X-Google-Smtp-Source: APXvYqwz4O4dhhOP5mop94mtiXO0Vg+27x4HvHv3Tqj5pjl29jIbA+lNW0/EVfbmZi1p/ZOzim78Xpc1UA==
+X-Received: by 2002:a5d:534b:: with SMTP id t11mr5061885wrv.120.1578682218808;
+ Fri, 10 Jan 2020 10:50:18 -0800 (PST)
+Date:   Fri, 10 Jan 2020 19:48:32 +0100
+Message-Id: <20200110184834.192636-1-elver@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.rc1.283.g88dfdc4193-goog
+Subject: [PATCH -rcu v2 0/2] kcsan: Improvements to reporting
+From:   Marco Elver <elver@google.com>
+To:     elver@google.com
+Cc:     paulmck@kernel.org, andreyknvl@google.com, glider@google.com,
+        dvyukov@google.com, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add PHY IDs for the DP83825CS, DP83825CM and the DP83825S devices to the
-DP83822 driver.
+Improvements to KCSAN data race reporting:
+1. Show if access is marked (*_ONCE, atomic, etc.).
+2. Rate limit reporting to avoid spamming console.
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- drivers/net/phy/Kconfig   |  3 ++-
- drivers/net/phy/dp83822.c | 12 ++++++++++--
- 2 files changed, 12 insertions(+), 3 deletions(-)
+v2:
+* Paul E. McKenney: commit message reword.
+* Use jiffies instead of ktime -- we want to avoid calling into any
+  further complex libraries, since KCSAN may also detect data races in
+  them, and as a result potentially leading to observing corrupt state
+  (e.g. here, observing corrupt ktime_t value).
 
-diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-index 90c9297280d2..60700a62d74f 100644
---- a/drivers/net/phy/Kconfig
-+++ b/drivers/net/phy/Kconfig
-@@ -342,7 +342,8 @@ config DAVICOM_PHY
- config DP83822_PHY
- 	tristate "Texas Instruments DP83822/825/826 PHYs"
- 	---help---
--	  Supports the DP83822, DP83825I, DP83826C and DP83826NC PHYs.
-+	  Supports the DP83822, DP83825I, DP83825CM, DP83825CS, DP83825S,
-+	  DP83826C and DP83826NC PHYs.
- 
- config DP83TC811_PHY
- 	tristate "Texas Instruments DP83TC811 PHY"
-diff --git a/drivers/net/phy/dp83822.c b/drivers/net/phy/dp83822.c
-index 5159b28baa0f..fe9aa3ad52a7 100644
---- a/drivers/net/phy/dp83822.c
-+++ b/drivers/net/phy/dp83822.c
-@@ -1,6 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
--/*
-- * Driver for the Texas Instruments DP83822 PHY
-+/* Driver for the Texas Instruments DP83822, DP83825 and DP83826 PHYs.
-  *
-  * Copyright (C) 2017 Texas Instruments Inc.
-  */
-@@ -15,7 +14,10 @@
- #include <linux/netdevice.h>
- 
- #define DP83822_PHY_ID	        0x2000a240
-+#define DP83825S_PHY_ID		0x2000a140
- #define DP83825I_PHY_ID		0x2000a150
-+#define DP83825CM_PHY_ID	0x2000a160
-+#define DP83825CS_PHY_ID	0x2000a170
- #define DP83826C_PHY_ID		0x2000a130
- #define DP83826NC_PHY_ID	0x2000a110
- 
-@@ -323,6 +325,9 @@ static struct phy_driver dp83822_driver[] = {
- 	DP83822_PHY_DRIVER(DP83825I_PHY_ID, "TI DP83825I"),
- 	DP83822_PHY_DRIVER(DP83826C_PHY_ID, "TI DP83826C"),
- 	DP83822_PHY_DRIVER(DP83826NC_PHY_ID, "TI DP83826NC"),
-+	DP83822_PHY_DRIVER(DP83825S_PHY_ID, "TI DP83825S"),
-+	DP83822_PHY_DRIVER(DP83825CM_PHY_ID, "TI DP83825M"),
-+	DP83822_PHY_DRIVER(DP83825CS_PHY_ID, "TI DP83825CS"),
- };
- module_phy_driver(dp83822_driver);
- 
-@@ -331,6 +336,9 @@ static struct mdio_device_id __maybe_unused dp83822_tbl[] = {
- 	{ DP83825I_PHY_ID, 0xfffffff0 },
- 	{ DP83826C_PHY_ID, 0xfffffff0 },
- 	{ DP83826NC_PHY_ID, 0xfffffff0 },
-+	{ DP83825S_PHY_ID, 0xfffffff0 },
-+	{ DP83825CM_PHY_ID, 0xfffffff0 },
-+	{ DP83825CS_PHY_ID, 0xfffffff0 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(mdio, dp83822_tbl);
+
+Marco Elver (2):
+  kcsan: Show full access type in report
+  kcsan: Rate-limit reporting per data races
+
+ kernel/kcsan/core.c   |  15 +++--
+ kernel/kcsan/kcsan.h  |   2 +-
+ kernel/kcsan/report.c | 151 +++++++++++++++++++++++++++++++++++-------
+ lib/Kconfig.kcsan     |  10 +++
+ 4 files changed, 146 insertions(+), 32 deletions(-)
+
 -- 
-2.23.0
+2.25.0.rc1.283.g88dfdc4193-goog
 
