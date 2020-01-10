@@ -2,549 +2,312 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0F711377FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 21:36:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B65A7137825
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 21:54:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727439AbgAJUfu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 15:35:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58724 "EHLO mail.kernel.org"
+        id S1727152AbgAJUyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 15:54:16 -0500
+Received: from mga01.intel.com ([192.55.52.88]:27867 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727361AbgAJUfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 15:35:43 -0500
-Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78DC124125;
-        Fri, 10 Jan 2020 20:35:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578688542;
-        bh=loElwpRIkzmxhCypl2r7nv5SV9Ki/Qj7Kub47ovlmLM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=N1T1Zrnr5n19YvVZQbE4hGUW/TQIEHrx1OonvTh3zFqcpKPjdu9qVMvkuypDa6BaT
-         SBQQalInXuXtBlQjqDXvikxXofLzq8UstIZjee1g5GZnWlcY3TiYiooVbPk5nd8a4T
-         Nu7b7jZS/diIljw89DoYsND1GJUKFRQehlGzJRpY=
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     rostedt@goodmis.org
-Cc:     artem.bityutskiy@linux.intel.com, mhiramat@kernel.org,
-        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-Subject: [PATCH v2 12/12] tracing: Documentation for in-kernel synthetic event API
-Date:   Fri, 10 Jan 2020 14:35:18 -0600
-Message-Id: <91ee64186d5894724e276c4e7fad70446d7a02a7.1578688120.git.zanussi@kernel.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1578688120.git.zanussi@kernel.org>
-References: <cover.1578688120.git.zanussi@kernel.org>
-In-Reply-To: <cover.1578688120.git.zanussi@kernel.org>
-References: <cover.1578688120.git.zanussi@kernel.org>
+        id S1726808AbgAJUyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 15:54:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 12:54:15 -0800
+X-IronPort-AV: E=Sophos;i="5.69,418,1571727600"; 
+   d="scan'208";a="396551697"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 12:54:15 -0800
+Subject: [PATCH v2] mm/memory_hotplug: Fix remove_memory() lockdep splat
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     akpm@linux-foundation.org
+Cc:     stable@vger.kernel.org, Vishal Verma <vishal.l.verma@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 10 Jan 2020 12:38:12 -0800
+Message-ID: <157868867304.2306270.4899678179641333013.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-3-g996c
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Documentation for creating and generating synthetic events from
-modules.
+The daxctl unit test for the dax_kmem driver currently triggers the
+lockdep splat below. It results from the fact that
+remove_memory_block_devices() is invoked under the mem_hotplug_lock()
+causing lockdep entanglements with cpu_hotplug_lock().
 
-Signed-off-by: Tom Zanussi <zanussi@kernel.org>
+The mem_hotplug_lock() is not needed to synchronize the memory block
+device sysfs interface vs the page online state, that is already handled
+by lock_device_hotplug(). Specifically lock_device_hotplug()
+is sufficient to allow try_remove_memory() to check the offline
+state of the memblocks and be assured that subsequent online attempts
+will be blocked. The device_online() path checks mem->section_count
+before allowing any state manipulations and mem->section_count is
+cleared in remove_memory_block_devices().
+
+The add_memory() path does create memblock devices under the lock, but
+there is no lockdep report on that path, and it wants to unwind the
+hot-add (via arch_remove_memory()) if the memblock device creation
+fails, so it is left alone for now.
+
+This change is only possible thanks to the recent change that refactored
+memory block device removal out of arch_remove_memory() (commit
+4c4b7f9ba948 mm/memory_hotplug: remove memory block devices before
+arch_remove_memory()).
+
+    ======================================================
+    WARNING: possible circular locking dependency detected
+    5.5.0-rc3+ #230 Tainted: G           OE
+    ------------------------------------------------------
+    lt-daxctl/6459 is trying to acquire lock:
+    ffff99c7f0003510 (kn->count#241){++++}, at: kernfs_remove_by_name_ns+0x41/0x80
+
+    but task is already holding lock:
+    ffffffffa76a5450 (mem_hotplug_lock.rw_sem){++++}, at: percpu_down_write+0x20/0xe0
+
+    which lock already depends on the new lock.
+
+
+    the existing dependency chain (in reverse order) is:
+
+    -> #2 (mem_hotplug_lock.rw_sem){++++}:
+           __lock_acquire+0x39c/0x790
+           lock_acquire+0xa2/0x1b0
+           get_online_mems+0x3e/0xb0
+           kmem_cache_create_usercopy+0x2e/0x260
+           kmem_cache_create+0x12/0x20
+           ptlock_cache_init+0x20/0x28
+           start_kernel+0x243/0x547
+           secondary_startup_64+0xb6/0xc0
+
+    -> #1 (cpu_hotplug_lock.rw_sem){++++}:
+           __lock_acquire+0x39c/0x790
+           lock_acquire+0xa2/0x1b0
+           cpus_read_lock+0x3e/0xb0
+           online_pages+0x37/0x300
+           memory_subsys_online+0x17d/0x1c0
+           device_online+0x60/0x80
+           state_store+0x65/0xd0
+           kernfs_fop_write+0xcf/0x1c0
+           vfs_write+0xdb/0x1d0
+           ksys_write+0x65/0xe0
+           do_syscall_64+0x5c/0xa0
+           entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+    -> #0 (kn->count#241){++++}:
+           check_prev_add+0x98/0xa40
+           validate_chain+0x576/0x860
+           __lock_acquire+0x39c/0x790
+           lock_acquire+0xa2/0x1b0
+           __kernfs_remove+0x25f/0x2e0
+           kernfs_remove_by_name_ns+0x41/0x80
+           remove_files.isra.0+0x30/0x70
+           sysfs_remove_group+0x3d/0x80
+           sysfs_remove_groups+0x29/0x40
+           device_remove_attrs+0x39/0x70
+           device_del+0x16a/0x3f0
+           device_unregister+0x16/0x60
+           remove_memory_block_devices+0x82/0xb0
+           try_remove_memory+0xb5/0x130
+           remove_memory+0x26/0x40
+           dev_dax_kmem_remove+0x44/0x6a [kmem]
+           device_release_driver_internal+0xe4/0x1c0
+           unbind_store+0xef/0x120
+           kernfs_fop_write+0xcf/0x1c0
+           vfs_write+0xdb/0x1d0
+           ksys_write+0x65/0xe0
+           do_syscall_64+0x5c/0xa0
+           entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+    other info that might help us debug this:
+
+    Chain exists of:
+      kn->count#241 --> cpu_hotplug_lock.rw_sem --> mem_hotplug_lock.rw_sem
+
+     Possible unsafe locking scenario:
+
+           CPU0                    CPU1
+           ----                    ----
+      lock(mem_hotplug_lock.rw_sem);
+                                   lock(cpu_hotplug_lock.rw_sem);
+                                   lock(mem_hotplug_lock.rw_sem);
+      lock(kn->count#241);
+
+     *** DEADLOCK ***
+
+No fixes tag as this seems to have been a long standing issue that
+likely predated the addition of kernfs lockdep annotations.
+
+Cc: <stable@vger.kernel.org>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- Documentation/trace/events.rst | 488 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 488 insertions(+)
+Changes since v1 [1]:
+- David prompted me to move the details of why
+  remove_memory_block_devices() is performed outside mem_hotplug_lock to
+  Documentation/core-api/memory-hotplug.rst.
 
-diff --git a/Documentation/trace/events.rst b/Documentation/trace/events.rst
-index f7e1fcc0953c..20f9fc6690db 100644
---- a/Documentation/trace/events.rst
-+++ b/Documentation/trace/events.rst
-@@ -525,3 +525,491 @@ The following commands are supported:
-   event counts (hitcount).
+- While updating Documentation/core-api/memory-hotplug.rst I noticed
+  that only memory_subsys_offline() was checking for memory-block-device
+  invalidation (via mem->section_count). Added a similar check to
+  memory_subsys_online().
+
+- Also, while trying to document why create_memory_block_devices() is
+  still performed under mem_hotplug_lock(), I noticed that
+  add_memory_resources() wants to perform arch_remove_memory() after a
+  failed create_memory_block_devices() and that should remain an atomic
+  event.
+
+- Introduce assert_held_device_hotplug() for
+  remove_memory_block_devices() to runtime validate its locking
+  assumptions.
+
+[1]: https://lore.kernel.org/r/157863061737.2230556.3959730620803366776.stgit@dwillia2-desk3.amr.corp.intel.com/
+
+ Documentation/core-api/memory-hotplug.rst |   15 +++++++++++----
+ drivers/base/core.c                       |    5 +++++
+ drivers/base/memory.c                     |    8 ++++++--
+ include/linux/device.h                    |    1 +
+ mm/memory_hotplug.c                       |   10 +++++++---
+ 5 files changed, 30 insertions(+), 9 deletions(-)
+
+diff --git a/Documentation/core-api/memory-hotplug.rst b/Documentation/core-api/memory-hotplug.rst
+index de7467e48067..637b467378b7 100644
+--- a/Documentation/core-api/memory-hotplug.rst
++++ b/Documentation/core-api/memory-hotplug.rst
+@@ -90,12 +90,13 @@ Locking Internals
+ =================
  
-   See Documentation/trace/histogram.rst for details and examples.
-+
-+6.3 In-kernel trace event API
-+-----------------------------
-+
-+In most cases, the command-line interface to trace events is more than
-+sufficient.  Sometimes, however, applications might find the need for
-+more complex relationships than can be expressed through a simple
-+series of linked command-line expressions, or putting together sets of
-+commands may be simply too cumbersome.  An example might be an
-+application that needs to 'listen' to the trace stream in order to
-+maintain an in-kernel state machine detecting, for instance, when an
-+illegal kernel state occurs in the scheduler.
-+
-+The trace event subsystem provides an in-kernel API allowing modules
-+or other kernel code to generate user-defined 'synthetic' events at
-+will, which can be used to either augment the existing trace stream
-+and/or signal that a particular important state has occurred.
-+
-+A similar in-kernel API is also available for creating kprobe and
-+kretprobe events.
-+
-+Both the synthetic event and k/ret/probe event APIs are built on top
-+of a lower-level "dynevent_cmd" event command API, which is also
-+available for more specialized applications, or as the basis of other
-+higher-level trace event APIs.
-+
-+The API provided for these purposes is describe below and allows the
-+following:
-+
-+  - dynamically creating synthetic event definitions
-+  - dynamically creating kprobe and kretprobe event definitions
-+  - tracing synthetic events from in-kernel code
-+  - the low-level "dynevent_cmd" API
-+
-+6.3.1 Dyamically creating synthetic event definitions
-+-----------------------------------------------------
-+
-+There are a couple ways to create a new synthetic event from a kernel
-+module or other kernel code.
-+
-+The first creates the event in one step, using create_synth_event().
-+In this method, the name of the event to create and an array defining
-+the fields is supplied to create_synth_event().  If successful, a
-+synthetic event with that name and fields will exist following that
-+call.  For example, to create a new "schedtest" synthetic event:
-+
-+  ret = create_synth_event("schedtest", sched_fields,
-+                           ARRAY_SIZE(sched_fields), THIS_MODULE);
-+
-+The sched_fields param in this example points to an array of struct
-+synth_field_desc, each of which describes an event field by type and
-+name:
-+
-+  static struct synth_field_desc sched_fields[] = {
-+        { .type = "pid_t",              .name = "next_pid_field" },
-+        { .type = "char[16]",           .name = "next_comm_field" },
-+        { .type = "u64",                .name = "ts_ns" },
-+        { .type = "u64",                .name = "ts_ms" },
-+        { .type = "unsigned int",       .name = "cpu" },
-+        { .type = "char[64]",           .name = "my_string_field" },
-+        { .type = "int",                .name = "my_int_field" },
-+  };
-+
-+See synth_field_size() for available types. If field_name contains [n]
-+the field is considered to be an array.
-+
-+If the event is created from within a module, a pointer to the module
-+must be passed to create_synth_event().  This will ensure that the
-+trace buffer won't contain unreadable events when the module is
-+removed.
-+
-+At this point, the event object is ready to be used for generating new
-+events.
-+
-+In the second method, the event is created in several steps.  This
-+allows events to be created dynamically and without the need to create
-+and populate an array of fields beforehand.
-+
-+To use this method, an empty or partially empty synthetic event should
-+first be created using gen_synth_cmd().  The name of the event along
-+with one or more pairs of args each pair representing a 'type
-+field_name;' field specification should be supplied to this function.
-+Before calling gen_synth_cmd(), the user should create and initialize
-+a dynevent_cmd object using synth_dynevent_cmd_init().
-+
-+For example, to create a new "schedtest" synthetic event with two
-+fields:
-+
-+  struct dynevent_cmd cmd;
-+  char *buf;
-+
-+  /* Create a buffer to hold the generated command */
-+  buf = kzalloc(MAX_DYNEVENT_CMD_LEN, GFP_KERNEL);
-+
-+  /* Before generating the command, initialize the cmd object */
-+  synth_dynevent_cmd_init(&cmd, buf, MAX_DYNEVENT_CMD_LEN);
-+
-+  ret = gen_synth_cmd(&cmd, "schedtest", THIS_MODULE,
-+                     "pid_t", "next_pid_field",
-+                     "u64", "ts_ns");
-+
-+Once the synthetic event object has been created, it can then be
-+populated with more fields.  Fields are added one by one using
-+add_synth_field(), supplying the dynevent_cmd object, a field type,
-+and a field name.  For example, to add a new int field named
-+"intfield", the following call should be made:
-+
-+  ret = add_synth_field(&cmd, "int", "intfield");
-+
-+See synth_field_size() for available types. If field_name contains [n]
-+the field is considered to be an array.
-+
-+A group of fields can also be added all at once using an array of
-+synth_field_desc with add_synth_fields().  For example, this would add
-+just the first four sched_fields:
-+
-+  ret = add_synth_fields(&cmd, sched_fields, 4);
-+
-+Once all the fields have been added, the event should be finalized and
-+registered by calling the create_dynevent() function:
-+
-+  ret = create_dynevent(&cmd);
-+
-+At this point, the event object is ready to be used for tracing new
-+events.
-+
-+6.3.3 Tracing synthetic events from in-kernel code
-+--------------------------------------------------
-+
-+To trace a synthetic event, there are several options.  The first
-+option is to trace the event in one call, using trace_synth_event()
-+with a variable number of values, or trace_synth_event_array() with an
-+array of values to be set.  A second option can be used to avoid the
-+need for a pre-formed array of values or list of arguments, via
-+trace_synth_event_start() and trace_synth_event_end() along with
-+add_next_synth_val() or add_synth_val() to add the values piecewise.
-+
-+6.3.3.1 Tracing a synthetic event all at once
-+---------------------------------------------
-+
-+To trace a synthetic event all at once, the trace_synth_event() or
-+trace_synth_event_array() functions can be used.
-+
-+The trace_synth_event() function is passed the trace_event_file
-+representing the synthetic event (which can be retrieved using
-+get_event_file() using the synthetic event name, "synthetic" as the
-+system name, and the trace instance name (NULL if using the global
-+trace array)), along with an variable number of u64 args, one for each
-+synthetic event field, and the number of values being passed.
-+
-+So, to generate an event corresponding to the synthetic event
-+definition above, code like the following could be used:
-+
-+  ret = trace_synth_event(create_synth_test, 7, /* number of values */
-+                          444,             /* next_pid_field */
-+                          (u64)"clackers", /* next_comm_field */
-+                          1000000,         /* ts_ns */
-+                          1000,            /* ts_ms */
-+                          smp_processor_id(),/* cpu */
-+                          (u64)"Thneed",   /* my_string_field */
-+                          999);            /* my_int_field */
-+
-+All vals should be cast to u64, and string vals are just pointers to
-+strings, cast to u64.  Strings will be copied into space reserved in
-+the event for the string, using these pointers.
-+
-+Alternatively, the trace_synth_event_array() function can be used to
-+accomplish the same thing.  It is passed the trace_event_file
-+representing the synthetic event (which can be retrieved using
-+get_event_file() using the synthetic event name, "synthetic" as the
-+system name, and the trace instance name (NULL if using the global
-+trace array)), along with an array of u64, one for each synthetic
-+event field.
-+
-+Tto generate an event corresponding to the synthetic event definition
-+above, code like the following could be used:
-+
-+  u64 vals[7];
-+
-+  vals[0] = 777;                  /* next_pid_field */
-+  vals[1] = (u64)"tiddlywinks";   /* next_comm_field */
-+  vals[2] = 1000000;              /* ts_ns */
-+  vals[3] = 1000;                 /* ts_ms */
-+  vals[4] = smp_processor_id();   /* cpu */
-+  vals[5] = (u64)"thneed";        /* my_string_field */
-+  vals[6] = 398;                  /* my_int_field */
-+
-+The 'vals' array is just an array of u64, the number of which must
-+match the number of field in the synthetic event, and which must be in
-+the same order as the synthetic event fields.
-+
-+All vals should be cast to u64, and string vals are just pointers to
-+strings, cast to u64.  Strings will be copied into space reserved in
-+the event for the string, using these pointers.
-+
-+In order to generate a synthetic event, a pointer to the trace event
-+file is needed.  The get_event_file() function can be used to get it -
-+it will find the file in the given trace instance (in this case NULL
-+since the top trace array is being used) while at the same time
-+preventing the instance containing it from going away:
-+
-+       schedtest_event_file = get_event_file(NULL, "synthetic",
-+                                             "schedtest");
-+
-+Before generating the event, it should be enabled in some way,
-+otherwise the synthetic event won't actually show up in the trace
-+buffer.
-+
-+To enable a synthetic event from the kernel, trace_array_set_clr_event()
-+can be used (which is not specific to synthetic events, so does need
-+the "synthetic" system name to be specified explicitly).
-+
-+To enable the event, pass 'true' to it:
-+
-+       trace_array_set_clr_event(schedtest_event_file->tr,
-+                                 "synthetic", "schedtest", true);
-+
-+To disable it pass false:
-+
-+       trace_array_set_clr_event(schedtest_event_file->tr,
-+                                 "synthetic", "schedtest", false);
-+
-+Finally, trace_synth_event_array() can be used to actually trace the
-+event, which should be visible in the trace buffer afterwards:
-+
-+       ret = trace_synth_event_array(schedtest_event_file, vals,
-+                                     ARRAY_SIZE(vals));
-+
-+To remove the synthetic event, the event should be disabled, and the
-+trace instance should be 'put' back using put_event_file():
-+
-+       trace_array_set_clr_event(schedtest_event_file->tr,
-+                                 "synthetic", "schedtest", false);
-+       put_event_file(schedtest_event_file);
-+
-+If those have been successful, delete_synth_event() can be called to
-+remove the event:
-+
-+       ret = delete_synth_event("schedtest");
-+
-+6.3.3.1 Tracing a synthetic event piecewise
-+-------------------------------------------
-+
-+To trace a synthetic using the piecewise method described above, the
-+trace_synth_event_start() function is used to 'open' the synthetic
-+event trace:
-+
-+       struct synth_gen_state gen_state;
-+
-+       ret = trace_synth_event_start(schedtest_event_file, &gen_state);
-+
-+It's passed the trace_event_file representing the synthetic event
-+using the same methods as described above, along with a pointer to a
-+struct synth_gen_state object, which will be zeroed before use and
-+used to maintain state between this and following calls.
-+
-+Once the event has been opened, which means space for it has been
-+reserved in the trace buffer, the individual fields can be set.  There
-+are two ways to do that, either one after another for each field in
-+the event, which requires no lookups, or by name, which does.  The
-+tradeoff is flexibility in doing the assignments vs the cost of a
-+lookup per field.
-+
-+To assign the values one after the other without lookups,
-+add_next_synth_val() should be used.  Each call is passed the same
-+synth_gen_state object used in the trace_synth_event_start(), along
-+with the value to set the next field in the event.  After each field
-+is set, the 'cursor' points to the next field, which will be set by
-+the subsequent call, continuing until all the fields have been set in
-+order.  The same sequence of calls as in the above examples using this
-+method would be (without error-handling code):
-+
-+       /* next_pid_field */
-+       ret = add_next_synth_val(777, &gen_state);
-+
-+       /* next_comm_field */
-+       ret = add_next_synth_val((u64)"slinky", &gen_state);
-+
-+       /* ts_ns */
-+       ret = add_next_synth_val(1000000, &gen_state);
-+
-+       /* ts_ms */
-+       ret = add_next_synth_val(1000, &gen_state);
-+
-+       /* cpu */
-+       ret = add_next_synth_val(smp_processor_id(), &gen_state);
-+
-+       /* my_string_field */
-+       ret = add_next_synth_val((u64)"thneed_2.01", &gen_state);
-+
-+       /* my_int_field */
-+       ret = add_next_synth_val(395, &gen_state);
-+
-+To assign the values in any order, add_synth_val() should be used.
-+Each call is passed the same synth_gen_state object used in the
-+generate_synth_event_start(), along with the field name of the field
-+to set and the value to set it to.  The same sequence of calls as in
-+the above examples using this method would be (without error-handling
-+code):
-+
-+       ret = add_synth_val("next_pid_field", 777, &gen_state);
-+       ret = add_synth_val("next_comm_field", (u64)"silly putty", &gen_state);
-+       ret = add_synth_val("ts_ns", 1000000, &gen_state);
-+       ret = add_synth_val("ts_ms", 1000, &gen_state);
-+       ret = add_synth_val("cpu", smp_processor_id(), &gen_state);
-+       ret = add_synth_val("my_string_field", (u64)"thneed_9", &gen_state);
-+       ret = add_synth_val("my_int_field", 3999, &gen_state);
-+
-+Note that add_next_synth_val() and add_synth_val() are incompatible if
-+used within the same generation of an event - either one can be used
-+but not both at the same time.
-+
-+Finally, the event won't be actually traced until it's 'closed',
-+which is done using trace_synth_event_end(), which takes only the
-+struct synth_gen_state object used in the previous calls:
-+
-+       ret = trace_synth_event_end(&gen_state);
-+
-+Note that trace_synth_event_end() must be called at the end regardless
-+of whether any of the add calls failed (say due to a bad field name
-+being passed in).
-+
-+6.3.4 Dyamically creating kprobe and kretprobe event definitions
-+----------------------------------------------------------------
-+
-+To create a kprobe or kretprobe trace event from kernel code, the
-+gen_kprobe_cmd() or gen_kretprobe() functions can be used.
-+
-+To create a kprobe event, an empty or partially empty kprobe event
-+should first be created using gen_kprobe_cmd().  The name of the event
-+and the probe location should be specfied along with one or args each
-+representing a probe field should be supplied to this function.
-+Before calling gen_kprobe_cmd(), the user should create and initialize
-+a dynevent_cmd object using kprobe_dynevent_cmd_init().
-+
-+For example, to create a new "schedtest" synthetic event with two
-+fields:
-+
-+  struct dynevent_cmd cmd;
-+  char *buf;
-+
-+  /* Create a buffer to hold the generated command */
-+  buf = kzalloc(MAX_DYNEVENT_CMD_LEN, GFP_KERNEL);
-+
-+  /* Before generating the command, initialize the cmd object */
-+  kpobe_dynevent_cmd_init(&cmd, buf, MAX_DYNEVENT_CMD_LEN);
-+
-+  /*
-+   * Define the gen_kprobe_test event with the first 2 kprobe
-+   * fields.
-+   */
-+  ret = gen_kprobe_cmd(&cmd, "gen_kprobe_test", "do_sys_open",
-+                       "dfd=%ax", "filename=%dx");
-+
-+Once the kprobe event object has been created, it can then be
-+populated with more fields.  Fields can be added using
-+add_probe_fields(), supplying the dynevent_cmd object along with a
-+variable arg list of probe fields.  For example, to add a couple
-+additional fields, the following call could be made:
-+
-+  ret = add_probe_fields(&cmd, "flags=%cx", "mode=+4($stack)");
-+
-+Once all the fields have been added, the event should be finalized and
-+registered by calling the create_dynevent() function:
-+
-+  ret = create_dynevent(&cmd);
-+
-+At this point, the event object is ready to be used for tracing new
-+events.
-+
-+Similarly, a kretprobe event can be created using gen_kretprobe_cmd()
-+with a probe name and location and additional params such as $retval:
-+
-+  ret = gen_kretprobe_cmd(&cmd, "gen_kretprobe_test", "do_sys_open",
-+                          "$retval");
-+
-+Similar to the synthetic event case, code like the following can be
-+used to enable the newly created kprobe event:
-+
-+  gen_kprobe_test = get_event_file(NULL, "kprobes", "gen_kprobe_test");
-+
-+  ret = trace_array_set_clr_event(gen_kprobe_test->tr,
-+                                  "kprobes", "gen_kprobe_test", true);
-+
-+Finally, also similar to synthetic events, the following code can be
-+used to give the kprobe event file back and delete the event:
-+
-+  put_event_file(gen_kprobe_test);
-+
-+ret = delete_kprobe_event("gen_kprobe_test");
-+
-+6.3.4 The "dynevent_cmd" low-level API
-+--------------------------------------
-+
-+Both the in-kernel synthetic event and kprobe interfaces are built on
-+top of a lower-level "dynevent_cmd" interface.  This interface can
-+also be used on its own by modules and other kernel code, but it's
-+generally meant to be used as the basis for higher-level interfaces
-+such as the synthetic and kprobe interfaces, which can be used as
-+examples.
-+
-+The basic idea is simple - it's meant to be used to generate trace
-+event commands that can then be passed to the command-parsing and
-+event creation code that already exists to create the corresponding
-+trace events.
-+
-+In a nutshell, the way it works is that the user creates a struct
-+dynevent_cmd object, then uses a couple functions, add_dynevent_arg()
-+and add_dynevent_arg_pair() to build up a command string, then finally
-+causes the command to be executed using the create_dynevent()
-+function.  The details of the interface are described below.
-+
-+The first step in building a new command string is to create and
-+initialize an instance of a dynevent_cmd.  Here, for instance, we
-+create a dynevent_cmd on the stack and initialize it:
-+
-+  struct dynevent_cmd cmd;
-+  char *buf;
-+  int ret;
-+
-+  buf = kzalloc(MAX_DYNEVENT_CMD_LEN, GFP_KERNEL);
-+
-+  dynevent_cmd_init(cmd, buf, maxlen, DYNEVENT_TYPE_FOO,
-+                    foo_event_run_command);
-+
-+The dynevent_cmd initialization needs to be given a user-specified
-+buffer and the length of the buffer (MAX_DYNEVENT_CMD_LEN can be used
-+for this purpose - at 2k it's generally too big to be comfortably put
-+on the stack, so is dynamically allocated), a dynevent type id, which
-+is meant to be used to check that further API calls are for the
-+correct command type, and a pointer to an event-specific run_command()
-+callback that will be called to actually execute the event-specific
-+command function.
-+
-+Once that's done, the command string can by built up by successive
-+calls to argument-adding functions.
-+
-+To add a single argument, define and initialize a struct dynevent_arg
-+or struct dynevent_arg_pair object.  Here's an example of the simplest
-+possible arg addition, which is simply to append the given string as
-+a whitespace-separated argument to the command:
-+
-+  struct dynevent_arg arg;
-+
-+  dynevent_arg_init(&arg, NULL, 0);
-+
-+  arg.str = name;
-+
-+  ret = add_dynevent_arg(cmd, &arg);
-+
-+The arg object is first initialized using dynevent_arg_init() and in
-+this case the parameters are NULL or 0, which means there's no
-+optional sanity-checking function or separator appended to the end of
-+the arg.
-+
-+Here's another more complicated example using an 'arg pair', which is
-+used to create an argument that consists of a couple components added
-+together as a unit, for example, a 'type field_name;' arg or a simple
-+expression arg e.g. 'flags=%cx':
-+
-+  struct dynevent_arg_pair arg_pair;
-+
-+  dynevent_arg_pair_init(&arg_pair, dynevent_foo_check_arg_fn, 0, ';');
-+
-+  arg_pair.lhs = type;
-+  arg_pair.rhs = name;
-+
-+  ret = add_dynevent_arg_pair(cmd, &arg_pair);
-+
-+Again, the arg_pair is first initialized, in this case with a callback
-+function used to check the sanity of the args (for example, that
-+neither part of the pair is NULL), along with a character to be used
-+to add an operator between the pair (here none) and a separator to be
-+appended onto the end of the arg pair (here ';').
-+
-+Any number of dynevent_add_* calls can be made to build up the string
-+(until its length surpasses cmd->maxlen).  When all the arguments have
-+been added and the command string is complete, the only thing left to
-+do is run the command, which happens by simply calling
-+create_dynevent():
-+
-+  ret = create_dynevent(&cmd);
-+
-+At that point, if the return value is 0, the dynamic event has been
-+created and is ready to use.
-+
-+See the dynevent_cmd function definitions themselves for the details
-+of the API.
--- 
-2.14.1
+ When adding/removing memory that uses memory block devices (i.e. ordinary RAM),
+-the device_hotplug_lock should be held to:
++the device_hotplug_lock is held to:
+ 
+ - synchronize against online/offline requests (e.g. via sysfs). This way, memory
+   block devices can only be accessed (.online/.state attributes) by user
+-  space once memory has been fully added. And when removing memory, we
+-  know nobody is in critical sections.
++  space once memory has been fully added. And when removing memory, the
++  memory block device is invalidated (mem->section count set to 0) under the
++  lock to abort any in-flight online requests.
+ - synchronize against CPU hotplug and similar (e.g. relevant for ACPI and PPC)
+ 
+ Especially, there is a possible lock inversion that is avoided using
+@@ -112,7 +113,13 @@ can result in a lock inversion.
+ 
+ onlining/offlining of memory should be done via device_online()/
+ device_offline() - to make sure it is properly synchronized to actions
+-via sysfs. Holding device_hotplug_lock is advised (to e.g. protect online_type)
++via sysfs. Holding device_hotplug_lock is required to prevent online racing
++removal. The device_hotplug_lock and memblock invalidation allows
++remove_memory_block_devices() to run outside of mem_hotplug_lock to avoid lock
++dependency conflicts with memblock-sysfs teardown. The add_memory() path
++performs create_memory_block_devices() under mem_hotplug_lock so that if it
++fails it can perform an arch_remove_memory() cleanup. There are no known lock
++dependency problems with memblock-sysfs setup.
+ 
+ When adding/removing/onlining/offlining memory or adding/removing
+ heterogeneous/device memory, we should always hold the mem_hotplug_lock in
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 42a672456432..5d5036370c92 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -1146,6 +1146,11 @@ void unlock_device_hotplug(void)
+ 	mutex_unlock(&device_hotplug_lock);
+ }
+ 
++void assert_held_device_hotplug(void)
++{
++	lockdep_assert_held(&device_hotplug_lock);
++}
++
+ int lock_device_hotplug_sysfs(void)
+ {
+ 	if (mutex_trylock(&device_hotplug_lock))
+diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+index 799b43191dea..91c6fbd2383e 100644
+--- a/drivers/base/memory.c
++++ b/drivers/base/memory.c
+@@ -280,6 +280,10 @@ static int memory_subsys_online(struct device *dev)
+ 	if (mem->state == MEM_ONLINE)
+ 		return 0;
+ 
++	/* online lost the race with hot-unplug, abort */
++	if (!mem->section_count)
++		return -ENXIO;
++
+ 	/*
+ 	 * If we are called from state_store(), online_type will be
+ 	 * set >= 0 Otherwise we were called from the device online
+@@ -736,8 +740,6 @@ int create_memory_block_devices(unsigned long start, unsigned long size)
+  * Remove memory block devices for the given memory area. Start and size
+  * have to be aligned to memory block granularity. Memory block devices
+  * have to be offline.
+- *
+- * Called under device_hotplug_lock.
+  */
+ void remove_memory_block_devices(unsigned long start, unsigned long size)
+ {
+@@ -746,6 +748,8 @@ void remove_memory_block_devices(unsigned long start, unsigned long size)
+ 	struct memory_block *mem;
+ 	unsigned long block_id;
+ 
++	assert_held_device_hotplug();
++
+ 	if (WARN_ON_ONCE(!IS_ALIGNED(start, memory_block_size_bytes()) ||
+ 			 !IS_ALIGNED(size, memory_block_size_bytes())))
+ 		return;
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 96ff76731e93..e042da3b1953 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -1553,6 +1553,7 @@ static inline bool device_supports_offline(struct device *dev)
+ extern void lock_device_hotplug(void);
+ extern void unlock_device_hotplug(void);
+ extern int lock_device_hotplug_sysfs(void);
++extern void assert_held_device_hotlpug(void);
+ extern int device_offline(struct device *dev);
+ extern int device_online(struct device *dev);
+ extern void set_primary_fwnode(struct device *dev, struct fwnode_handle *fwnode);
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 55ac23ef11c1..0158cd4cca48 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1763,8 +1763,6 @@ static int __ref try_remove_memory(int nid, u64 start, u64 size)
+ 
+ 	BUG_ON(check_hotplug_memory_range(start, size));
+ 
+-	mem_hotplug_begin();
+-
+ 	/*
+ 	 * All memory blocks must be offlined before removing memory.  Check
+ 	 * whether all memory blocks in question are offline and return error
+@@ -1777,9 +1775,15 @@ static int __ref try_remove_memory(int nid, u64 start, u64 size)
+ 	/* remove memmap entry */
+ 	firmware_map_remove(start, start + size, "System RAM");
+ 
+-	/* remove memory block devices before removing memory */
++	/*
++	 * Remove memory block devices before removing memory and before
++	 * mem_hotplug_begin() (see Documentation/core-api/memory-hotplug.rst
++	 * "Locking Internals").
++	 */
+ 	remove_memory_block_devices(start, size);
+ 
++	mem_hotplug_begin();
++
+ 	arch_remove_memory(nid, start, size, NULL);
+ 	memblock_free(start, size);
+ 	memblock_remove(start, size);
 
