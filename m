@@ -2,102 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C7C4136735
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 07:14:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4F24136756
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 07:20:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731513AbgAJGNG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 01:13:06 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:55599 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725797AbgAJGNG (ORCPT
+        id S1731455AbgAJGT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 01:19:58 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:11573 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725797AbgAJGT6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 01:13:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578636784;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=JUb7J5k9pHQGDMgWElpRTaa3UN/XQp4RFy7vMyL+c3E=;
-        b=NV/7Z6SciDP2eNTJnrhrOhLhjklYARNnUBet0WMjkQJSqbQFl7fgqxC1nKhfGc2VaLGfR0
-        K5VkWZhYK+6UPEKqfzkfuNQVfaqLxHfss/1adziwIZrLa7tB+mwdVOsmXn72ly9jF2Fmj2
-        X3X8ZI6LKYWe0d9t4HB+/rGTTsJ2uV4=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-260-HbCBka4HOW2Hn3xXtZi34Q-1; Fri, 10 Jan 2020 01:13:03 -0500
-X-MC-Unique: HbCBka4HOW2Hn3xXtZi34Q-1
-Received: by mail-qk1-f198.google.com with SMTP id u30so577252qke.13
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Jan 2020 22:13:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=JUb7J5k9pHQGDMgWElpRTaa3UN/XQp4RFy7vMyL+c3E=;
-        b=T9b+/mX5eQub5nSyhjoL+fNvDuifFslOV/wDOAhpmVoNXscacT4uENEJtI0NFLvVk9
-         JtNXXm/pSPDG4TL4mlgIHkjk5gZJbSoMtme4Vtag0CdXGnL1JxjkJO591hK3c72tyzYH
-         dmO7a4lFvOynu7IR7XzE/Rc1LmuaUQIpP1/iWo7Djeb5pqLmnuBMKl5Kj1R/vjHVF+5t
-         iSOI6MOT7JZq3ja2Tdir6eRAZq3im1immPnlhqj2UgFTnjLqaUQaTdmuZ1uiPo4uYX5V
-         0rP85M5/3oHjEGzlHsaMdti18F8ANPiZWFUls841yx9hs+qWI6xHP8E2A3H87iIQ4G+C
-         3PmQ==
-X-Gm-Message-State: APjAAAXo0/sD4ejNMO7ew53/9Mb3XeWkRhxn7HZFGEjykGce41ql2nDa
-        D1IoTdc+n+lf65MOKmm2+ZSxma025we+HxJXourEJX4gQnyWtLV3RKAwSAIyV/A5LM+tSmWg/JL
-        SrshgiOUDOQhXHbAgUi4Ufrie
-X-Received: by 2002:ac8:6697:: with SMTP id d23mr1080348qtp.350.1578636783316;
-        Thu, 09 Jan 2020 22:13:03 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyEBnt7IxTIASPQRiXS/2qwYjQd4GY3gTOeHUpypwIPSrQCqrkSOQtY6sfsyfysgAniCEZu/A==
-X-Received: by 2002:ac8:6697:: with SMTP id d23mr1080336qtp.350.1578636783113;
-        Thu, 09 Jan 2020 22:13:03 -0800 (PST)
-Received: from redhat.com (bzq-79-183-34-164.red.bezeqint.net. [79.183.34.164])
-        by smtp.gmail.com with ESMTPSA id z3sm546702qtm.5.2020.01.09.22.12.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 22:13:01 -0800 (PST)
-Date:   Fri, 10 Jan 2020 01:12:56 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, adelva@google.com,
-        willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2] virtio_net: CTRL_GUEST_OFFLOADS depends on CTRL_VQ
-Message-ID: <20200110011236-mutt-send-email-mst@kernel.org>
-References: <20200105132120.92370-1-mst@redhat.com>
- <20200109.183339.173768060466817001.davem@davemloft.net>
+        Fri, 10 Jan 2020 01:19:58 -0500
+X-UUID: 8ca12080878f42b4a5f4715cd583c413-20200110
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=2hX33a9oKQvAaZtJ3NQ0cW54cICk0Docx++JIfjlN54=;
+        b=C1L+sKksrUCaSk1L4aeeOVIVRwEj1HUrt9aleg63TRWpo7VBpUS81ERuh3PNSUunD9Xu1wprIqEyvlTGUgv9u46+P+pc5ZtS6J/CrC9/cU+QCMQc5rn+h0O25Y2pUfHBO53nYFXa68rXi9isephJKUdMzm32vi13QPLKNVRvKQI=;
+X-UUID: 8ca12080878f42b4a5f4715cd583c413-20200110
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 294544061; Fri, 10 Jan 2020 14:19:53 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 10 Jan 2020 14:18:47 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 10 Jan 2020 14:20:24 +0800
+Message-ID: <1578637185.29400.3.camel@mtksdaap41>
+Subject: Re: [PATCH] drm/mediatek: check for comp->funcs
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Hsin-Yi Wang <hsinyi@chromium.org>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Date:   Fri, 10 Jan 2020 14:19:45 +0800
+In-Reply-To: <20200109072900.17988-1-hsinyi@chromium.org>
+References: <20200109072900.17988-1-hsinyi@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200109.183339.173768060466817001.davem@davemloft.net>
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 06:33:39PM -0800, David Miller wrote:
-> From: "Michael S. Tsirkin" <mst@redhat.com>
-> Date: Sun, 5 Jan 2020 08:22:07 -0500
-> 
-> > The only way for guest to control offloads (as enabled by
-> > VIRTIO_NET_F_CTRL_GUEST_OFFLOADS) is by sending commands
-> > through CTRL_VQ. So it does not make sense to
-> > acknowledge VIRTIO_NET_F_CTRL_GUEST_OFFLOADS without
-> > VIRTIO_NET_F_CTRL_VQ.
-> > 
-> > The spec does not outlaw devices with such a configuration, so we have
-> > to support it. Simply clear VIRTIO_NET_F_CTRL_GUEST_OFFLOADS.
-> > Note that Linux is still crashing if it tries to
-> > change the offloads when there's no control vq.
-> > That needs to be fixed by another patch.
-> > 
-> > Reported-by: Alistair Delva <adelva@google.com>
-> > Reported-by: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-> > Fixes: 3f93522ffab2 ("virtio-net: switch off offloads on demand if possible on XDP set")
-> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> > ---
-> > 
-> > Same patch as v1 but update documentation so it's clear it's not
-> > enough to fix the crash.
-> 
-> Where are we with this patch?  There seems to still be some unresolved
-> discussion about how we should actually handle this case.
-> 
-> Thanks.
-
-Once discussion is resolved I'll post v3 with updated commit log.
+SGksIEhzaW4teWk6DQoNCk9uIFRodSwgMjAyMC0wMS0wOSBhdCAxNToyOSArMDgwMCwgSHNpbi1Z
+aSBXYW5nIHdyb3RlOg0KPiBUaGVyZSBtaWdodCBiZSBzb21lIGNvbXAgdGhhdCBkb2Vzbid0IGhh
+dmUgZnVuY3MsIGVnLiBoZG1pLWNvbm5lY3Rvci4NCj4gQ2hlY2sgZm9yIGNvbXAtPmZ1bmNzIG90
+aGVyd2lzZSB0aGVyZSB3aWxsIGJlIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZQ0KPiBjcmFzaC4N
+Cj4gDQo+IEZpeGVzOiBiZDNkZThjZDc4MmIgKCJkcm0vbWVkaWF0ZWs6IEFkZCBnYW1tYSBwcm9w
+ZXJ0eSBhY2NvcmRpbmcgdG8gaGFyZHdhcmUgY2FwYWJpbGl0eSIpDQo+IEZpeGVzOiA3Mzk1ZWFi
+MDc3ZjkgKCJkcm0vbWVkaWF0ZWs6IEFkZCBjdG0gcHJvcGVydHkgc3VwcG9ydCIpDQoNCkJlY2F1
+c2UgdGhlIGZpeGVkIHBhdGNoZXMgYXJlIHN0aWxsIGluIG15IHRyZWUsIHNvIEkgbWVyZ2UgdGhp
+cyBwYXRjaA0Kd2l0aCB0aGUgZml4ZWQgcGF0Y2hlcyBpbiBtZWRpYXRlay1kcm0tbmV4dC01LjYg
+WzFdLg0KDQpbMV0NCmh0dHBzOi8vZ2l0aHViLmNvbS9ja2h1LW1lZGlhdGVrL2xpbnV4LmdpdC10
+YWdzL2NvbW1pdHMvbWVkaWF0ZWstZHJtLW5leHQtNS42DQoNClJlZ2FyZHMsDQpDSw0KDQo+IFNp
+Z25lZC1vZmYtYnk6IEhzaW4tWWkgV2FuZyA8aHNpbnlpQGNocm9taXVtLm9yZz4NCj4gLS0tDQo+
+IFRoaXMgcGF0Y2ggaXMgYmFzZWQgb24gbWVkaWF0ZWsncyBkcm0gYnJhbmNoOg0KPiBodHRwczov
+L2dpdGh1Yi5jb20vY2todS1tZWRpYXRlay9saW51eC5naXQtdGFncy9jb21taXRzL21lZGlhdGVr
+LWRybS1uZXh0LTUuNg0KPiANCj4gQWZ0ZXINCj4gaHR0cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0
+b3Aub3JnL3BhdGNoLzM0NDQ3Ny8/c2VyaWVzPTYzMzI4JnJldj01OSwNCj4gdGhlcmUgd2lsbCBh
+bHNvIGJlIGZ1bmNzIGZvciBoZG1pLWNvbm5lY3Rvci4NCj4gLS0tDQo+ICBkcml2ZXJzL2dwdS9k
+cm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMgfCAxMCArKysrKystLS0tDQo+ICAxIGZpbGUgY2hh
+bmdlZCwgNiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYw0KPiBpbmRleCBmYjE0MmZjZmMzNTMuLjdiMzkyZDZj
+NzFjYyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0
+Yy5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYw0KPiBA
+QCAtODA4LDExICs4MDgsMTMgQEAgaW50IG10a19kcm1fY3J0Y19jcmVhdGUoc3RydWN0IGRybV9k
+ZXZpY2UgKmRybV9kZXYsDQo+ICANCj4gIAkJbXRrX2NydGMtPmRkcF9jb21wW2ldID0gY29tcDsN
+Cj4gIA0KPiAtCQlpZiAoY29tcC0+ZnVuY3MtPmN0bV9zZXQpDQo+IC0JCQloYXNfY3RtID0gdHJ1
+ZTsNCj4gKwkJaWYgKGNvbXAtPmZ1bmNzKSB7DQo+ICsJCQlpZiAoY29tcC0+ZnVuY3MtPmN0bV9z
+ZXQpDQo+ICsJCQkJaGFzX2N0bSA9IHRydWU7DQo+ICANCj4gLQkJaWYgKGNvbXAtPmZ1bmNzLT5n
+YW1tYV9zZXQpDQo+IC0JCQlnYW1tYV9sdXRfc2l6ZSA9IE1US19MVVRfU0laRTsNCj4gKwkJCWlm
+IChjb21wLT5mdW5jcy0+Z2FtbWFfc2V0KQ0KPiArCQkJCWdhbW1hX2x1dF9zaXplID0gTVRLX0xV
+VF9TSVpFOw0KPiArCQl9DQo+ICAJfQ0KPiAgDQo+ICAJZm9yIChpID0gMDsgaSA8IG10a19jcnRj
+LT5kZHBfY29tcF9ucjsgaSsrKQ0KDQo=
 
