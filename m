@@ -2,77 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EDB413776A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 20:45:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFC3D137763
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 20:42:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728719AbgAJTpB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 14:45:01 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:56152 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727812AbgAJTpB (ORCPT
+        id S1728620AbgAJTm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 14:42:56 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:33551 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727812AbgAJTm4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 14:45:01 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00AJiu1X120699;
-        Fri, 10 Jan 2020 13:44:56 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578685496;
-        bh=ItNnnZAM/+Sva9AL51uIL1NROcOms3i8jcra1pSdNkA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=uX2M8G04XNe8eGTXh514QVte952OuEmEty4cXZ99l815FLWYhnq/l4/iCAZlE+bg8
-         vEY3pCrb/LR/3bR4LNZTtrrehG41oI2FllOifSK1Q4iVRbxXNPlwG5IzG9ToGPWwbd
-         Ad6ri8umwx6XuS5CoGVtqJ0vG/7gGcQkqkHYyc1Q=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00AJiuE5128687;
-        Fri, 10 Jan 2020 13:44:56 -0600
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 10
- Jan 2020 13:44:56 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 10 Jan 2020 13:44:56 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00AJiti6059704;
-        Fri, 10 Jan 2020 13:44:55 -0600
-Subject: Re: [PATCH 0/4] TI DP8382x Phy support update
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     <f.fainelli@gmail.com>, <hkallweit1@gmail.com>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200110184702.14330-1-dmurphy@ti.com>
- <20200110192524.GO19739@lunn.ch>
- <2e9333e1-1ee7-80ce-fab4-a98a9f4b345f@ti.com>
- <20200110194011.GT19739@lunn.ch>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <f4cbc8c1-ba4b-fc57-b60c-e10ff8286bd3@ti.com>
-Date:   Fri, 10 Jan 2020 13:42:03 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Fri, 10 Jan 2020 14:42:56 -0500
+Received: from mail-qk1-f171.google.com ([209.85.222.171]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MeTsQ-1jQALS1vNM-00aSXi; Fri, 10 Jan 2020 20:42:54 +0100
+Received: by mail-qk1-f171.google.com with SMTP id x1so2953658qkl.12;
+        Fri, 10 Jan 2020 11:42:54 -0800 (PST)
+X-Gm-Message-State: APjAAAWBPVyLB6T267DIP/hhUxRxW7Dmm9SfiOzbkPclq7f6UEjKMm/V
+        9ST6lVkCQCtzcTcKEgGCk2iygKMPc4mIu6lJsdI=
+X-Google-Smtp-Source: APXvYqzbBDJetuIP2AxIVMlt1l/ueQP3AP+6umNRi4uyQzmIdxL8PsdmNyjbRyqK4rz4kxClVWV5FCQyR2/lEd0yr9w=
+X-Received: by 2002:a37:84a:: with SMTP id 71mr4703601qki.138.1578685373260;
+ Fri, 10 Jan 2020 11:42:53 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200110194011.GT19739@lunn.ch>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20200110165636.28035-1-will@kernel.org> <20200110165636.28035-8-will@kernel.org>
+In-Reply-To: <20200110165636.28035-8-will@kernel.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 10 Jan 2020 20:42:37 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2dBFiu37_YAvpoug-+RkKqq3i+8-Tkv5HPBag3JAEJrA@mail.gmail.com>
+Message-ID: <CAK8P3a2dBFiu37_YAvpoug-+RkKqq3i+8-Tkv5HPBag3JAEJrA@mail.gmail.com>
+Subject: Re: [RFC PATCH 7/8] locking/barriers: Use '__unqual_scalar_typeof'
+ for load-acquire macros
+To:     Will Deacon <will@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:VtWkG5t3b7jmFW/oIX7NXwWSMIe4cv+Pf3BWC5gZdss1cK3y7PL
+ t+w2jK+ARiorrug1YBOJDdS0zvN5DDTU7CtKw8tuwthIs4Oy2sUXb9CAbgRmJ6oGvg0kkel
+ zYyTPLXRIdCc92frIQxghb8D93/jtkSrgLZa4jc7jm+C+Iv86B9QxY7U5QUUrpsIr4v71Bo
+ 1sdb+1INLzdmx5XghWILA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:LIABXQUOcVw=:sLjGtRim3imdLEVtoiHBSh
+ 6VTo2BkYZk8Bprjd6xKuzadcf6lEFzxFAEbpzM2M8h1dsd8u5JTmggx/al78xhY6r+bbaLB58
+ QmQqZrZFAHtRD/appkPfkjZX/RTMUgFpvs9J4moQJuR8/egv6ekQIzSW/0ZqMnicsmoT0uYNw
+ 8aj+B3od+OCP3e52ew4PzKNVWKOX+LGhZDCJYRWC+tbU/lNmUwZ+MbCGxglmp7/Ketr5wzETc
+ AvU7U3Bbwiv/0IV6Pq2Bir2IQ5Y4Qf7r/pV6ElYWbNVwCuVBoBeln+R3wEryehmtxOf9JOA9A
+ RlimA2oxfqDvRj9dalsm8cMUW+Oo1Am8Y1r8wAX1Ktcc0mSMYbGdul/le6nH8nRPIwO+FZ7Ac
+ BBGbm9jHepMWbZxTOKD6MH0b3HWvXbqbaDYz5wDGIBxKsI+4SarUNRUQBUXgldjxFxdA1Hbjx
+ sy/3iMugeCsfBH7qkL5JK++W8U5oo8JfQmEe/DFpygQDftntM3tl9Im+Aw3K90RjvHXPXn+O3
+ bSh1npA9f7L7XE9xC9QRD1Tib3gOLuMSWcUdD3jRRxdMJmPXr9igF4xL2OLm0okbjBV5h9V6k
+ W8WiejfzqKI6btGhCJd3wh3jBhEnVoKBsGTr/Z3S5vmDPWRr+yI0ojH/bSpJYjn9tWeLy+2sZ
+ 0ULCtJJY9MMWolxSfa4ACZTs65LJBNIdrZcFSBst8Jh2aYk7rYJNo260h4kHzWvxnCBn3rerG
+ v6BiQMX9QyUWBRDMuC+w6fxLGdt+9RUZRE/E32hZgwQrOOWu2PwcydyVaJI78SSCdoFGNjo6J
+ l0e8GF5Qcky4CT11IwI1r+jUoiB+5x8O3ZDo5PtOAi16aWiPmfntVwAxDFfIQ2WcA589wQatO
+ gXw4uTC0FhsZQ22uyTog==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew
+On Fri, Jan 10, 2020 at 5:57 PM Will Deacon <will@kernel.org> wrote:
 
-On 1/10/20 1:40 PM, Andrew Lunn wrote:
->> You mean separate series between fixes and functionality?
->>
->> Sure I can separate them but they are dependent on each other.
-> Send 1 and 2 first. After about a week, David will merge net into
-> net-next, and then you can submit 3 and 4.
+> @@ -128,10 +128,10 @@ do {                                                                      \
+>  #ifndef __smp_load_acquire
+>  #define __smp_load_acquire(p)                                          \
+>  ({                                                                     \
+> -       typeof(*p) ___p1 = READ_ONCE(*p);                               \
+> +       __unqual_scalar_typeof(*p) ___p1 = READ_ONCE(*p);               \
+>         compiletime_assert_atomic_type(*p);                             \
+>         __smp_mb();                                                     \
+> -       ___p1;                                                          \
+> +       (typeof(*p))___p1;                                              \
+>  })
 
-Thanks.  Got it
+Doesn't that last  (typeof(*p))___p1 mean you put the potential
+'volatile' back on the assignment after you went through the
+effort of taking it out?
 
-Dan
-
-
-> 	  Andrew
+       Arnd
