@@ -2,79 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEE101378DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 23:03:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64F0E1378DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 23:03:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbgAJWDQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 17:03:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48810 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727317AbgAJWDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 17:03:14 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55F082082E;
-        Fri, 10 Jan 2020 22:03:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578693794;
-        bh=7SrXtY3zhTAIs5OpgjwMMDDZzdGmV1xifK4ax0OnMDI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IFuhvM3nsvNvlFkyPMZ+qUldb/kJ6X8nWN5xH+yUASL7cnXpVd8Fn4dCd8zQX35c0
-         /plHbuhsWhm/V5SBGCYMoM+zqN8a0hEzBbN5rge2G+fWs6HAEZfk65wlSWSugMq2et
-         t19sRRuu/zsrcdzzXzYmT7tRJE6S53sq7Jxrb7jA=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jouni Hogander <jouni.hogander@unikie.com>,
-        Paul Burton <paulburton@kernel.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        linux-mips@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 04/26] MIPS: Prevent link failure with kcov instrumentation
-Date:   Fri, 10 Jan 2020 17:02:46 -0500
-Message-Id: <20200110220308.27784-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200110220308.27784-1-sashal@kernel.org>
-References: <20200110220308.27784-1-sashal@kernel.org>
+        id S1727485AbgAJWDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 17:03:20 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44332 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727319AbgAJWDP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 17:03:15 -0500
+Received: by mail-pg1-f195.google.com with SMTP id x7so1600718pgl.11
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 14:03:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0Abg147KGItynyBfHEl7b67Xp6iR3DdAKc0n7Z2WsdA=;
+        b=Fq+MP69WGga+3DgUs/c3imZJTB2FGSls1TCtzh3aqFMF4g096k27iXsNFnGQxP4LY8
+         zUkrWlxicfOaC7OJI79DLRwDtMdTp+TSp/XUyyltmSu+ixbOgFZnr6FURS4nZaQCoQom
+         gIiDHMM04gRcYN3d/q5z8mp5CVrwgZZXp/+k85e1KSx09ESoDbrl0UBPttJ3usB4PrPk
+         eYhgvPwDLS0qHBq4/hayxxXlVFJu/RVfNlFsab5OvwHq6w05gq4/1vfuU1oNyJjeFd01
+         Ue4Wi+4gsTD6XEjKU3REt9mjEjm5eddJBcfqqlNx2P70cIva0oP2Ey7/su81gHU/BVY8
+         rSYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0Abg147KGItynyBfHEl7b67Xp6iR3DdAKc0n7Z2WsdA=;
+        b=jWLVZgxWxg5BYQfGeqF8eYbmZ7nv8VY+vegy63QuGl3mlzLeB6ltbI+ml3o8TGziKx
+         7YFcdFWAl8LDv6TyHfdL7+8trfqYuYbfauufF0+gZ5U62MJSVoCaEXdiGYVoNW/6LzFv
+         ziQG6kyJ3kHkN+NK5c3lfoOFsVVpFnKE/Gw514N5nNRGxzKphI/oAaHA5a0XbPqS8x12
+         miHOM1SKsxbj/8IdMxnPY23rKpfIxYrk5YL1YXV9ZAa4jdPIFs2A1ierVLFBX3Sx8ztQ
+         7VIyFYjXX1SQ5lOgOUHu3bP82uETHv5feOfDbYGHs3HPLHr+YveybSU/uWSyx29M06Lj
+         LMng==
+X-Gm-Message-State: APjAAAXutdtvp6i6vGyOy3zPUd+jyBNk0BFPmMIZ2aUb7Zh9EinKZTV9
+        J7fgnFfgnjJjAuWpyGfm3VeN5g==
+X-Google-Smtp-Source: APXvYqzLcGmK3wvhN4M2dOlmvl0d8H+nrBoejtJBxn2csJnNOxvNjLW+wP9F+IdwdH/QfNSa86sMjA==
+X-Received: by 2002:a63:cf55:: with SMTP id b21mr6880362pgj.69.1578693794465;
+        Fri, 10 Jan 2020 14:03:14 -0800 (PST)
+Received: from [10.83.36.153] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id m3sm4058655pfh.116.2020.01.10.14.03.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jan 2020 14:03:13 -0800 (PST)
+Subject: Re: [PATCH-next 3/3] serial/sysrq: Add MAGIC_SYSRQ_SERIAL_SEQUENCE
+To:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Vasiliy Khoruzhick <vasilykh@arista.com>,
+        linux-serial@vger.kernel.org
+References: <20200109215444.95995-1-dima@arista.com>
+ <20200109215444.95995-4-dima@arista.com>
+ <9e622d11-0eb7-274e-8f0a-132d296420fe@infradead.org>
+From:   Dmitry Safonov <dima@arista.com>
+Message-ID: <30427484-7e1d-7112-1714-7947f4145db1@arista.com>
+Date:   Fri, 10 Jan 2020 22:02:55 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <9e622d11-0eb7-274e-8f0a-132d296420fe@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jouni Hogander <jouni.hogander@unikie.com>
+Hi Randy,
 
-[ Upstream commit a4a3893114a41e365274d5fab5d9ff5acc235ff0 ]
+On 1/9/20 11:53 PM, Randy Dunlap wrote:
+> Hi,
+> 
+> On 1/9/20 1:54 PM, Dmitry Safonov wrote:
+>>
+>> Based-on-patch-by: Vasiliy Khoruzhick <vasilykh@arista.com>
+>> Signed-off-by: Dmitry Safonov <dima@arista.com>
+>> ---
+>>  drivers/tty/serial/serial_core.c | 52 ++++++++++++++++++++++++++++----
+>>  include/linux/serial_core.h      |  2 +-
+>>  lib/Kconfig.debug                |  8 +++++
+>>  3 files changed, 55 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+>> index 6ac9dfed3423..f70eba032d0b 100644
+>> --- a/drivers/tty/serial/serial_core.c
+>> +++ b/drivers/tty/serial/serial_core.c
+>> @@ -3081,6 +3081,38 @@ void uart_insert_char(struct uart_port *port, unsigned int status,
+>>  }
+>>  EXPORT_SYMBOL_GPL(uart_insert_char);
+>>  
+>> +const char sysrq_toggle_seq[] = CONFIG_MAGIC_SYSRQ_SERIAL_SEQUENCE;
+>> +
+>> +static void uart_sysrq_on(struct work_struct *w)
+>> +{
+>> +	sysrq_toggle_support(1);
+>> +	pr_info("SysRq is enabled by magic sequience on serial\n");
+> 
+> typo:	                                   sequence
 
-__sanitizer_cov_trace_pc() is not linked in and causing link
-failure if KCOV_INSTRUMENT is enabled. Fix this by disabling
-instrumentation for compressed image.
-
-Signed-off-by: Jouni Hogander <jouni.hogander@unikie.com>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: linux-mips@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/mips/boot/compressed/Makefile | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/mips/boot/compressed/Makefile b/arch/mips/boot/compressed/Makefile
-index 172801ed35b8..d859f079b771 100644
---- a/arch/mips/boot/compressed/Makefile
-+++ b/arch/mips/boot/compressed/Makefile
-@@ -29,6 +29,9 @@ KBUILD_AFLAGS := $(KBUILD_AFLAGS) -D__ASSEMBLY__ \
- 	-DBOOT_HEAP_SIZE=$(BOOT_HEAP_SIZE) \
- 	-DKERNEL_ENTRY=$(VMLINUX_ENTRY_ADDRESS)
- 
-+# Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
-+KCOV_INSTRUMENT		:= n
-+
- # decompressor objects (linked with vmlinuz)
- vmlinuzobjs-y := $(obj)/head.o $(obj)/decompress.o $(obj)/string.o
- 
--- 
-2.20.1
-
+Thanks on catching this,
+          Dmitry
