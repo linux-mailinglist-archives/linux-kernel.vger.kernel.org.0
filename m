@@ -2,142 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0DD4137701
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 20:29:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1406137706
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 20:30:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728792AbgAJT3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 14:29:22 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:47077 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728202AbgAJT3V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 14:29:21 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1578684561; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=EHK7ZOIjToT9khxX7iSgvPJgRfkrf/0cdN7Y+Xvfzcw=; b=OGSVvCgevWNKsm5ez8hd5WkLZ9yhaUWrEkYQ3bXfbt6lE3LotgB6PzcUp230wNnGdOokJNjx
- v2xTK6Duor+bRR7mDmr0eSBIe8M/0A+ri7CmkOJ+iLnIjcUSlUKrs4hGMzQZZMtFth2p6BKj
- 5Yje41uo7XA/KzkU6xnkt9WxanE=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e18d090.7f1488644dc0-smtp-out-n03;
- Fri, 10 Jan 2020 19:29:20 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 1C700C4479F; Fri, 10 Jan 2020 19:29:20 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from eberman-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: eberman)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 12C10C43383;
-        Fri, 10 Jan 2020 19:29:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 12C10C43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=eberman@codeaurora.org
-From:   Elliot Berman <eberman@codeaurora.org>
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Elliot Berman <eberman@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        tsoni@codeaurora.org, psodagud@codeaurora.org,
-        linux-arm-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC] drivers: firmware: psci: Add function to support SYSTEM_RESET2
-Date:   Fri, 10 Jan 2020 11:29:12 -0800
-Message-Id: <1578684552-15953-2-git-send-email-eberman@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1578684552-15953-1-git-send-email-eberman@codeaurora.org>
-References: <1578684552-15953-1-git-send-email-eberman@codeaurora.org>
+        id S1728819AbgAJT36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 14:29:58 -0500
+Received: from mga03.intel.com ([134.134.136.65]:21738 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727709AbgAJT34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 14:29:56 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:29:55 -0800
+X-IronPort-AV: E=Sophos;i="5.69,418,1571727600"; 
+   d="scan'208";a="247130740"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:29:55 -0800
+From:   ira.weiny@intel.com
+To:     linux-kernel@vger.kernel.org
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH V2 00/12] Enable per-file/directory DAX operations V2
+Date:   Fri, 10 Jan 2020 11:29:30 -0800
+Message-Id: <20200110192942.25021-1-ira.weiny@intel.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make SYSTEM_RESET2 command part of its own function which client drivers
-may also invoke to support vendor-specific reset types.
+From: Ira Weiny <ira.weiny@intel.com>
 
-Signed-off-by: Elliot Berman <eberman@codeaurora.org>
----
- drivers/firmware/psci/psci.c | 16 +++++++++++++++-
- include/linux/psci.h         |  3 +++
- include/uapi/linux/psci.h    |  8 ++++++++
- 3 files changed, 26 insertions(+), 1 deletion(-)
+At LSF/MM'19 [1] [2] we discussed applications that overestimate memory
+consumption due to their inability to detect whether the kernel will
+instantiate page cache for a file, and cases where a global dax enable via a
+mount option is too coarse.
 
-diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-index b3b6c15..338e4be 100644
---- a/drivers/firmware/psci/psci.c
-+++ b/drivers/firmware/psci/psci.c
-@@ -220,6 +220,15 @@ static unsigned long psci_migrate_info_up_cpu(void)
- 			      0, 0, 0);
- }
- 
-+int psci_system_reset2(const u32 reset_type, const unsigned long cookie)
-+{
-+	if (!psci_system_reset2_supported)
-+		return -EOPNOTSUPP;
-+	return invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2), reset_type,
-+			      cookie, 0);
-+}
-+EXPORT_SYMBOL_GPL(psci_system_reset2);
-+
- static void set_conduit(enum arm_smccc_conduit conduit)
- {
- 	switch (conduit) {
-@@ -267,7 +276,12 @@ static void psci_sys_reset(enum reboot_mode reboot_mode, const char *cmd)
- 		 * reset_type[30:0] = 0 (SYSTEM_WARM_RESET)
- 		 * cookie = 0 (ignored by the implementation)
- 		 */
--		invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2), 0, 0, 0);
-+		psci_system_reset2(
-+			PSCI_1_1_SYSTEM_RESET2_SYSTEM_WARM_RESET |
-+			(PSCI_1_1_SYSTEM_RESET2_TYPE_ARCHITECTURE <<
-+			PSCI_1_1_SYSTEM_RESET2_SHIFT),
-+			0
-+		);
- 	} else {
- 		invoke_psci_fn(PSCI_0_2_FN_SYSTEM_RESET, 0, 0, 0);
- 	}
-diff --git a/include/linux/psci.h b/include/linux/psci.h
-index ebe0a88..9479952 100644
---- a/include/linux/psci.h
-+++ b/include/linux/psci.h
-@@ -41,8 +41,11 @@ extern struct psci_operations psci_ops;
- 
- #if defined(CONFIG_ARM_PSCI_FW)
- int __init psci_dt_init(void);
-+int psci_system_reset2(const u32 reset_type, const unsigned long cookie);
- #else
- static inline int psci_dt_init(void) { return 0; }
-+static inline int psci_system_reset2(const u32 reset_type,
-+	const unsigned long cookie) { return -ENODEV; }
- #endif
- 
- #if defined(CONFIG_ARM_PSCI_FW) && defined(CONFIG_ACPI)
-diff --git a/include/uapi/linux/psci.h b/include/uapi/linux/psci.h
-index 2fcad1d..42edbd7 100644
---- a/include/uapi/linux/psci.h
-+++ b/include/uapi/linux/psci.h
-@@ -72,6 +72,14 @@
- #define PSCI_1_0_EXT_POWER_STATE_TYPE_MASK	\
- 				(0x1 << PSCI_1_0_EXT_POWER_STATE_TYPE_SHIFT)
- 
-+/* PSCI SYSTEM_RESET2 reset_type argument */
-+#define PSCI_1_1_SYSTEM_RESET2_SYSTEM_WARM_RESET	0x0
-+#define PSCI_1_1_SYSTEM_RESET2_TYPE_VENDOR		1
-+#define PSCI_1_1_SYSTEM_RESET2_TYPE_ARCHITECTURE	0
-+#define PSCI_1_1_SYSTEM_RESET2_TYPE_SHIFT		30
-+#define PSCI_1_1_SYSTEM_RESET2_TYPE_MASK		\
-+				(0x1 << PSCI_1_1_SYSTEM_RESET2_TYPE_SHIFT)
-+
- /* PSCI v0.2 affinity level state returned by AFFINITY_INFO */
- #define PSCI_0_2_AFFINITY_LEVEL_ON		0
- #define PSCI_0_2_AFFINITY_LEVEL_OFF		1
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The following patch series enables selecting the use of DAX on individual files
+and/or directories on xfs, and lays some groundwork to do so in ext4.  In this
+scheme the dax mount option can be omitted to allow the per-file property to
+take effect.
+
+The insight at LSF/MM was to separate the per-mount or per-file "physical"
+capability switch from an "effective" attribute for the file.
+
+At LSF/MM we discussed the difficulties of switching the mode of a file with
+active mappings / page cache.  It was thought the races could be avoided by
+limiting mode flips to 0-length files.
+
+However, this turns out to not be true.[3] This is because address space
+operations (a_ops) may be in use at any time the inode is referenced and users
+have expressed a desire to be able to change the mode on a file with data in
+it.  For those reasons this patch set allows changing the mode flag on a file
+as long as it is not current mapped.
+
+Furthermore, DAX is a property of the inode and as such, many operations other
+than address space operations need to be protected during a mode change.
+
+Therefore callbacks are placed within the inode operations and used to lock the
+inode as appropriate.
+
+As in V1, Users are able to query the effective and physical flags separately
+at any time.  Specifically the addition of the statx attribute bit allows them
+to ensure the file is operating in the mode they intend.  This 'effective flag'
+and physical flags could differ when the filesystem is mounted with the dax
+flag for example.
+
+It should be noted that the physical DAX flag inheritance is not shown in this
+patch set as it was maintained from previous work on XFS.  The physical DAX flag
+and it's inheritance will need to be added to other file systems for user
+control. 
+
+Finally, extensive testing was performed which resulted in a couple of bug fix
+and clean up patches.  Specifically:
+
+	fs: remove unneeded IS_DAX() check
+	fs/xfs: Fix truncate up
+
+'Fix truncate up' deserves specific attention because I'm not 100% sure it is
+the correct fix.  Without that patch fsx testing failed within a few minutes
+with this error.
+
+	Mapped Write: non-zero data past EOF (0x3b0da) page offset 0xdb is 0x3711
+
+With 'Fix truncate up' running fsx while changing modes can run for hours but I
+have seen 2 other errors in the same genre after many hours of continuous
+testing.
+
+They are:
+
+	READ BAD DATA: offset = 0x22dc, size = 0xcc7e, fname = /mnt/pmem/dax-file
+
+	Mapped Read: non-zero data past EOF (0x3309e) page offset 0x9f is 0x6ab4
+
+After seeing the patches to fix stale data exposure problems[4] I'm more
+confident now that all 3 of these errors are a latent bug rather than a bug in
+this series itself.
+
+However, because of these failures I'm only submitting this set RFC.
+
+
+[1] https://lwn.net/Articles/787973/
+[2] https://lwn.net/Articles/787233/
+[3] https://lkml.org/lkml/2019/10/20/96
+[4] https://patchwork.kernel.org/patch/11310511/
+
+
+To: linux-kernel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+
