@@ -2,63 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 394EE137416
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:50:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E295D13741B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 17:52:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728881AbgAJQuj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 11:50:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52020 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728510AbgAJQuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 11:50:39 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B797206ED;
-        Fri, 10 Jan 2020 16:50:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578675038;
-        bh=8HHZgme5mM4iuHU5vOOC3RIkB5rsLaet9CtTH598wQE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mbsT9hmFHzlBovI5kb62PtrpWVcdIB1Hf77VF81OjwBQHu52ay699sufJgYJEhSSB
-         1a5p5vaE1VzhF86djjFkzHLG+ji257Vu7yAUjE/cRBOTX56IUoqsU/2r024FPLncBJ
-         PxbdfaB2TOOgyFCovo4JsGD3RjMikeUoaugvOnW4=
-Date:   Fri, 10 Jan 2020 17:50:36 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Vasiliy Khoruzhick <vasilykh@arista.com>,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH-next 1/3] serial_core: Move sysrq functions from header
- file
-Message-ID: <20200110165036.GA1837425@kroah.com>
-References: <20200109215444.95995-1-dima@arista.com>
- <20200109215444.95995-2-dima@arista.com>
+        id S1728639AbgAJQww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 11:52:52 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40771 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728107AbgAJQwv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 11:52:51 -0500
+Received: by mail-pl1-f194.google.com with SMTP id s21so1065336plr.7
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 08:52:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:cc:subject:to:from:user-agent:date;
+        bh=SC0UnYuTvxE5OcA375X4sqDX8RR6HMTTrFTXJph6jSE=;
+        b=lR9Qv/Rh2eYbSmBp73Q6BrJGiZOTHErsCfUcGyDbgXcFuMwI36N47x623pr35oqewC
+         DhPd2mZievnpOgj2/IiBIrrrgWgM/jIO2/qryR72NyThU0yuyTlTTrr0uzsWTYuLb8c5
+         JXTo8xNNKwipDeHFgPXASuqAGBA2+0k71Vr1A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:cc:subject:to:from
+         :user-agent:date;
+        bh=SC0UnYuTvxE5OcA375X4sqDX8RR6HMTTrFTXJph6jSE=;
+        b=TBbOJMYlr9rlLVB/I3bljPwp+ngOt/O6CvehXDjd755Y2zzTqy/Bbic1QkKXvjTYFV
+         Zid0q1v3ZzfDjvqLWuE/ToVMtn5eZ/xASOl6bkrxDiBOPzAyLQX/taryqRwMxn3o7Y0H
+         ZQudh8sd1NOZj9kQZ22T8UMU06yBMZsKKqGNfVzRA5XTSZIuw1SzDLUzDIJLVXuxQzYU
+         R76/FAI3C+eU+HuNzZ/E8ybXbHEuJUF63ZhfWAugMK+waOlXqTtIRDPv3V2K3Buo/rQ6
+         aqZJfIAGzN/MRniqSFxlpHrorlCOABVCdixPnJjlt9rY9bHlnvY/mOYwLJbcOqLbtNtE
+         nNww==
+X-Gm-Message-State: APjAAAXDnnT9yWry6DYjLp12vIgyaSE3FMDiNhZxS6q53OpG/Hf+t+Rj
+        UcPLWaol+zQ4FE3/zup1f9R51w==
+X-Google-Smtp-Source: APXvYqxW1qdIS3otqhlBBCjtCjlgjYpsGMdUHQ/sCZODIjnY3CWYaEx8TR2oCPqj2x/eeIHOuztY2Q==
+X-Received: by 2002:a17:902:8541:: with SMTP id d1mr5509047plo.57.1578675171031;
+        Fri, 10 Jan 2020 08:52:51 -0800 (PST)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id s26sm3533556pfe.166.2020.01.10.08.52.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2020 08:52:50 -0800 (PST)
+Message-ID: <5e18abe2.1c69fb81.1ab3c.84f9@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200109215444.95995-2-dima@arista.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1578486581-7540-3-git-send-email-sanm@codeaurora.org>
+References: <1578486581-7540-1-git-send-email-sanm@codeaurora.org> <1578486581-7540-3-git-send-email-sanm@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>,
+        Sandeep Maheswaram <sanm@codeaurora.org>
+Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: sc7180: Remove global phy reset in QMP phy
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sandeep Maheswaram <sanm@codeaurora.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.8.1
+Date:   Fri, 10 Jan 2020 08:52:49 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 09:54:42PM +0000, Dmitry Safonov wrote:
-> It's not worth to have them in every serial driver and I'm about to add
-> another helper function.
-> 
-> Signed-off-by: Dmitry Safonov <dima@arista.com>
+Quoting Sandeep Maheswaram (2020-01-08 04:29:40)
+> Remove global phy reset and do only usb phy reset in QMP phy.
+
+Yes that's what this patch does, but you left out the important part:
+Why?
+
+>=20
+> Signed-off-by: Sandeep Maheswaram <sanm@codeaurora.org>
 > ---
->  drivers/tty/serial/serial_core.c | 83 +++++++++++++++++++++++++++++++
->  include/linux/serial_core.h      | 84 ++------------------------------
->  2 files changed, 88 insertions(+), 79 deletions(-)
+>  arch/arm64/boot/dts/qcom/sc7180.dtsi | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/q=
+com/sc7180.dtsi
+> index c00c3d4..448ab88 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> @@ -1072,9 +1072,8 @@
+>                                  <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>;
+>                         clock-names =3D "aux", "cfg_ahb", "ref", "com_aux=
+";
+> =20
+> -                       resets =3D <&gcc GCC_USB3_DP_PHY_PRIM_BCR>,
+> -                                <&gcc GCC_USB3_PHY_PRIM_BCR>;
+> -                       reset-names =3D "phy", "common";
+> +                       resets =3D <&gcc GCC_USB3_PHY_PRIM_BCR>;
+> +                       reset-names =3D "phy";
+> =20
 
-This is a nice cleanup, so I took this patch now, but the last two
-patches still need a bit of rework.  Please do that and rebase, no need
-to send this patch again.
+We shouldn't need to modify the DT node for this. The reset still goes
+to this hardware block, so DT should reflect that. Instead, the driver
+shouldn't drive this reset on this SoC.
 
-thanks,
-
-greg k-h
+>                         usb_1_ssphy: phy@88e9200 {
+>                                 reg =3D <0 0x088e9200 0 0x128>,
