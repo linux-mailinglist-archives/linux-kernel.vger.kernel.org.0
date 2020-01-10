@@ -2,60 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9427136D3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 13:41:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60CA5136D1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 13:33:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728222AbgAJMlJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 07:41:09 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38919 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727949AbgAJMlI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 07:41:08 -0500
-Received: by mail-pl1-f195.google.com with SMTP id g6so823230plp.6
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 04:41:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KdKUDe5VNtZZyWUDsEVdrhShf2Kcu/VrtdXGE+9fTXo=;
-        b=aEXo+Y+Ie5rmicBedqlm+l0xcucSqrT0flZYEl8YMu8DkFlvzVXCDfNNBt0Ss7lIxo
-         Ee6QISm89zpDn37usCnsQkHlOScps8LfSO+fn02Z8bMAO/Om7/QL03ogwBfHRxQ/b90p
-         BD0vwMHX7I1oywX/wtQ4z7CWLumArREiGtSx7sFxv/iZuwHJl8srnYQkAlwAP6CA13C+
-         q4JtK15TFGnjxhw+GpDudO0ScQWna7BEvHzLoM1SLIdMMYuC79rUla8uak+ryyjU52PB
-         KPxrj6LMdZmVwlp0CqjledxBozinckQdFyzr4R/PNh2/7L+AFJgb2gnaaTp/SNhu8tb9
-         R0wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KdKUDe5VNtZZyWUDsEVdrhShf2Kcu/VrtdXGE+9fTXo=;
-        b=NkCVzEFJfnzfd+1Z6rklzRpOdheVcBjRxs1xWisyvjNMTBZJ36V1PUWhBKLRAqrDur
-         4UBQxVU/OhG+UpHXtbzKgw17JBp7D/yGh9ynB0XCKZvT9PWaN0mwxq97WetEMDCcI5d4
-         rNmBk1IEPIQ8695+pmZjBgL7hDeBL4FfAwYHen3Jcd3+4aWFcBZCUPZtRqjpPb9baFWl
-         N7dgYotMoY5Vz51TEPT67R+7WFeKv339f4EJ/PXBYxzAiJiMO3H2aaWEbdz1UW1b9Cvb
-         LrDBcliorgumjhSWrGCY8fIxrdYARMPzyeOsKH0N5bRLMNoeCwbo7GY4shMDiyDuFc2P
-         QYMQ==
-X-Gm-Message-State: APjAAAWHdkF7qwTUSyrXNKrhWMXmCp/r7etRPBvD+YLV3uI4W4vIfDzf
-        pVIm4OJrqPtaGx2SSoYyTes=
-X-Google-Smtp-Source: APXvYqz1hwPwNDFF8rpc5BstYqeYvTPUUxNEteYq7zFknzooAoSivNVQ2BUO0MS/yigWPRMlbviL0A==
-X-Received: by 2002:a17:902:ab8c:: with SMTP id f12mr4195297plr.268.1578660068150;
-        Fri, 10 Jan 2020 04:41:08 -0800 (PST)
-Received: from localhost.localdomain ([103.211.17.220])
-        by smtp.googlemail.com with ESMTPSA id i11sm2890922pjg.0.2020.01.10.04.41.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2020 04:41:07 -0800 (PST)
-From:   Amol Grover <frextrite@gmail.com>
-To:     Santosh Shilimkar <ssantosh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Amol Grover <frextrite@gmail.com>
-Subject: [PATCH] drivers: soc: ti: knav_qmss_queue: Pass lockdep expression to RCU lists
-Date:   Fri, 10 Jan 2020 18:02:13 +0530
-Message-Id: <20200110123212.26756-1-frextrite@gmail.com>
+        id S1728135AbgAJMdA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 07:33:00 -0500
+Received: from foss.arm.com ([217.140.110.172]:44016 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727753AbgAJMc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 07:32:59 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B08B1063;
+        Fri, 10 Jan 2020 04:32:59 -0800 (PST)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BBF583F534;
+        Fri, 10 Jan 2020 04:32:58 -0800 (PST)
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     linux@armlinux.org.uk
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        vincenzo.frascino@arm.com
+Subject: [PATCH] arm: Disable kmemleak on XIP kernels
+Date:   Fri, 10 Jan 2020 12:32:40 +0000
+Message-Id: <20200110123240.51722-1-vincenzo.frascino@arm.com>
 X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -64,46 +32,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-inst->handles is traversed using list_for_each_entry_rcu
-outside an RCU read-side critical section but under the protection
-of knav_dev_lock.
+Kmemleak relies on specific symbols to register the read only data
+during init (e.g. __start_ro_after_init).
+Trying to build an XIP kernel on arm results in the linking error
+reported below because when this option is selected read only data
+after init are not allowed since .data is read only (.rodata).
 
-Hence, add corresponding lockdep expression to silence false-positive
-lockdep warnings, and harden RCU lists.
+  arm-linux-gnueabihf-ld: mm/kmemleak.o: in function `kmemleak_init':
+  kmemleak.c:(.init.text+0x148): undefined reference to `__end_ro_after_init'
+  arm-linux-gnueabihf-ld: kmemleak.c:(.init.text+0x14c):
+     undefined reference to `__end_ro_after_init'
+  arm-linux-gnueabihf-ld: kmemleak.c:(.init.text+0x150):
+     undefined reference to `__start_ro_after_init'
+  arm-linux-gnueabihf-ld: kmemleak.c:(.init.text+0x156):
+     undefined reference to `__start_ro_after_init'
+  arm-linux-gnueabihf-ld: kmemleak.c:(.init.text+0x162):
+     undefined reference to `__start_ro_after_init'
+  arm-linux-gnueabihf-ld: kmemleak.c:(.init.text+0x16a):
+     undefined reference to `__start_ro_after_init'
+  linux/Makefile:1078: recipe for target 'vmlinux' failed
 
-Add macro for the corresponding lockdep expression to make the code
-clean and concise.
+Fix the issue enabling kmemleak only on non XIP kernels.
 
-Signed-off-by: Amol Grover <frextrite@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 ---
- drivers/soc/ti/knav_qmss_queue.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/arm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-index 1ccc9064e1eb..888dc091c63b 100644
---- a/drivers/soc/ti/knav_qmss_queue.c
-+++ b/drivers/soc/ti/knav_qmss_queue.c
-@@ -25,6 +25,8 @@
- 
- static struct knav_device *kdev;
- static DEFINE_MUTEX(knav_dev_lock);
-+#define knav_dev_lock_held() \
-+	lockdep_is_held(&knav_dev_lock)
- 
- /* Queue manager register indices in DTS */
- #define KNAV_QUEUE_PEEK_REG_INDEX	0
-@@ -52,8 +54,9 @@ static DEFINE_MUTEX(knav_dev_lock);
- #define knav_queue_idx_to_inst(kdev, idx)			\
- 	(kdev->instances + (idx << kdev->inst_shift))
- 
--#define for_each_handle_rcu(qh, inst)			\
--	list_for_each_entry_rcu(qh, &inst->handles, list)
-+#define for_each_handle_rcu(qh, inst)				\
-+	list_for_each_entry_rcu(qh, &inst->handles, list,	\
-+				rcu_read_lock_held() || knav_dev_lock_held())
- 
- #define for_each_instance(idx, inst, kdev)		\
- 	for (idx = 0, inst = kdev->instances;		\
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index bc99582bdc85..99a3e14e62bd 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -73,7 +73,7 @@ config ARM
+ 	select HAVE_EBPF_JIT if !CPU_ENDIAN_BE32
+ 	select HAVE_CONTEXT_TRACKING
+ 	select HAVE_C_RECORDMCOUNT
+-	select HAVE_DEBUG_KMEMLEAK
++	select HAVE_DEBUG_KMEMLEAK if !XIP_KERNEL
+ 	select HAVE_DMA_CONTIGUOUS if MMU
+ 	select HAVE_DYNAMIC_FTRACE if !XIP_KERNEL && !CPU_ENDIAN_BE32 && MMU
+ 	select HAVE_DYNAMIC_FTRACE_WITH_REGS if HAVE_DYNAMIC_FTRACE
 -- 
 2.24.1
 
