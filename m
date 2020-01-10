@@ -2,150 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F1811374EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:36:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BF29137535
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:50:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbgAJRge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 12:36:34 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:28508 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727197AbgAJRge (ORCPT
+        id S1728576AbgAJRuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 12:50:02 -0500
+Received: from mx07-00252a01.pphosted.com ([62.209.51.214]:8468 "EHLO
+        mx07-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728486AbgAJRuB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 12:36:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578677792;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=0NlyiZfwoZAjsy88P9J/wm+VghLvXVY6pErT0BkkWPM=;
-        b=E0XIh1g0P019zndbyD/5URe2lmSnXUnyezgffCIQI+blkpQeQV1Tw4Hzf92KlLtfzmRsG/
-        HFakphaiu44pW1HiX+wbILlfUeLqvgsw/BLJk67m0jJLOkSVv8in6YNrpkAax2v94ebgZo
-        y1gbglm1zMzj0JsXIsjLzlpnIsIvh4w=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-220-eVBaqti5Pd2PRq5LFM3sFw-1; Fri, 10 Jan 2020 12:36:29 -0500
-X-MC-Unique: eVBaqti5Pd2PRq5LFM3sFw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5A9B3593A2;
-        Fri, 10 Jan 2020 17:36:27 +0000 (UTC)
-Received: from [10.36.118.66] (unknown [10.36.118.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7E1365C28F;
-        Fri, 10 Jan 2020 17:36:25 +0000 (UTC)
-Subject: Re: [PATCH] mm/memory_hotplug: Fix remove_memory() lockdep splat
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <157863061737.2230556.3959730620803366776.stgit@dwillia2-desk3.amr.corp.intel.com>
- <e60e64f9-894b-4121-d97b-fb61459cbbe5@redhat.com>
- <CAPcyv4jm=fmP=-5vbo2jxzMe2qXqZP=zDYF8G_rs3X6_Om0wPg@mail.gmail.com>
- <4d0334e2-c4e7-6d3f-99ba-2ca0495e1549@redhat.com>
- <CAPcyv4jixmv8fJ5FiYE=97Jud3Mc+6QzRX1txceSYU+WY_0rQA@mail.gmail.com>
- <fc0cfb97-5a60-7e73-4f85-d8e6947c5e28@redhat.com>
- <CAPcyv4jVpN26RGQLRn4BewYtzHDoQfvh37DEdEBq1dd4-BP0kw@mail.gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Red Hat GmbH
-Message-ID: <64902066-51dd-9693-53fc-4a5975c58409@redhat.com>
-Date:   Fri, 10 Jan 2020 18:36:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+        Fri, 10 Jan 2020 12:50:01 -0500
+X-Greylist: delayed 806 seconds by postgrey-1.27 at vger.kernel.org; Fri, 10 Jan 2020 12:49:59 EST
+Received: from pps.filterd (m0102628.ppops.net [127.0.0.1])
+        by mx07-00252a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00AHYixs006123
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 17:36:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=raspberrypi.org; h=subject : to :
+ cc : references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp;
+ bh=VmrJ62al7CSJqDnZbgM4IQGS6w64QwkkFSJjUF2T67A=;
+ b=bnG0n5CNWRLpdwoBy0ZppXxnMv+lNIZF0QOpWYqODOU2OrFw+gMiIYtQnEXo2UMQMinC
+ UlGooeJTWUGbtYbhG/Oy5gD6ZvEp8tXD09mYXqTub4S79hg6ILj5zruS8D2bvyJ2JU4O
+ j4Cd3pbfdrI/xPCq1+1v8ItnaLad7WR2TDCvw4pJ/BxdaDcUBf5OEziwDqrII62morBh
+ aDu91ZXp8bHzwcnIC9bDehykeSGSoV+r2gbvT45OFZ7hi1iRQjJLkRORPFN3AU4XGkel
+ LyP+rMx2XgULCsGqJPYY1dGFnVD6NiHcMZ7GW0Phdo0v4QY73tYq/CrxXfFVV+DhgN9h fQ== 
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
+        by mx07-00252a01.pphosted.com with ESMTP id 2xah08u1a8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 17:36:32 +0000
+Received: by mail-wm1-f70.google.com with SMTP id p2so1120479wma.3
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 09:36:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=VmrJ62al7CSJqDnZbgM4IQGS6w64QwkkFSJjUF2T67A=;
+        b=a3TmIFfNvj4nYPFfMcdti6+6y11Xg4eEdOHhKxwUmJ8oYyMjA6U9KxONMotcplKM8C
+         CZ/hcWsj0dvzLWXnc7WSG+MHyxNY9g/qcmZvauM6yq+7RDn4CMMYZMnEuccMdZKCgn5O
+         gkDGb20Yg3UeemE1aB5DuJRncTCp2vopjmP4xDc8Of/k9QRKkXuFBP3BcqxpnksQdNY6
+         n9jYSTeC2OXIFLlauIQTzrHY+3fKFAeFI4k19oCqaGc/AeLvFXX55SO218Fsph8eC5OF
+         wHVhdxXufcBfIgRYa1jPpaTPu1pHEfIzwpUx1oYk8CEoQgJshFiTQSp62u7fXW1vm+Jw
+         Pe/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VmrJ62al7CSJqDnZbgM4IQGS6w64QwkkFSJjUF2T67A=;
+        b=P7ALkOkepkYgJLgSsnh8rkY0Z0vzeRpiAvlzO3anxbXSFg1c4uFyYdHVF84JFp189u
+         U7GYoUrprwFSGaySx2l7/vjZ+JBgb9qsPqm3rRXQI7PHJJMRMQpuPW1C54t8oaUGCWVU
+         nmDJimF3CIePRrMK4JF3PkGR0EeAR4OV5OsLD6pVsotbYWOMRfgZTylOITGQ/FAQR0YS
+         jsy3EHymnUKA7RbEPG+AL0+lVvpHvXOM2CS0K1LDT2jD+8ehV3WGWmnEcTQRlS13t+D0
+         6f2pgfo14fGtv/pUEesdulCzltK/hm1WlnqQka4aDn6kcyTC9LwOaxSkO2n30zkH5LJ0
+         HqaA==
+X-Gm-Message-State: APjAAAXgFA56hWGDHC3zpddP0C1oUqW2IrS/4zGsvQjYAmYgjaPT136P
+        Muz+zhMG8UImN3eFb2gtiEQtnDStE3fKqWLRhRImwVFsEJUIsDjmcX9JE625IiVcPuUVKZ4YPK6
+        aBYm7+dTjxZIJvQ2hIA6xygVU
+X-Received: by 2002:a1c:730d:: with SMTP id d13mr5439679wmb.126.1578677791645;
+        Fri, 10 Jan 2020 09:36:31 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyDvHda/vVFwEomWaXK6Z8R2pnK1KjJdIV8/DNRF6e/NKDIeh18hgbtQkhbdIVwlI8HYnf1gg==
+X-Received: by 2002:a1c:730d:: with SMTP id d13mr5439668wmb.126.1578677791447;
+        Fri, 10 Jan 2020 09:36:31 -0800 (PST)
+Received: from ?IPv6:2a00:1098:3142:14:910a:522a:cf5c:edd0? ([2a00:1098:3142:14:910a:522a:cf5c:edd0])
+        by smtp.gmail.com with ESMTPSA id f1sm3134788wmc.45.2020.01.10.09.36.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jan 2020 09:36:30 -0800 (PST)
+Subject: Re: [PATCH] dma-contiguous: CMA: give precedence to cmdline
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+References: <20200110171933.15014-1-nsaenzjulienne@suse.de>
+From:   Phil Elwell <phil@raspberrypi.org>
+Message-ID: <7ae5bad5-eee6-407f-bfa1-aff34f1a0550@raspberrypi.org>
+Date:   Fri, 10 Jan 2020 17:36:30 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.1
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4jVpN26RGQLRn4BewYtzHDoQfvh37DEdEBq1dd4-BP0kw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20200110171933.15014-1-nsaenzjulienne@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-10_01:2020-01-10,2020-01-09 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10.01.20 18:33, Dan Williams wrote:
-> On Fri, Jan 10, 2020 at 9:29 AM David Hildenbrand <david@redhat.com> wrote:
-> [..]
->>> So then the comment is actively misleading for that case. I would
->>> expect an explicit _unlocked path for that case with a comment about
->>> why it's special. Is there already a comment to that effect somewhere?
->>>
->>
->> __add_memory() - the locked variant - is called from the same ACPI location
->> either locked or unlocked. I added a comment back then after a longe
->> discussion with Michal:
->>
->> drivers/acpi/scan.c:
->>         /*
->>          * Although we call __add_memory() that is documented to require the
->>          * device_hotplug_lock, it is not necessary here because this is an
->>          * early code when userspace or any other code path cannot trigger
->>          * hotplug/hotunplug operations.
->>          */
->>
->>
->> It really is a special case, though.
+Hi Nicolas,
+
+On 10/01/2020 17:19, Nicolas Saenz Julienne wrote:
+> Although the device tree might contain a reserved-memory DT node
+> dedicated as the default CMA pool, users might want to change CMA's
+> parameters using the kernel command line for debugging purposes and
+> whatnot. Honor this by bypassing the reserved memory CMA setup, which
+> will ultimately end up freeing the memblock and allow the command line
+> CMA configuration routine to run.
 > 
-> That's a large comment block when we could have just taken the lock.
-> There's probably many other code paths in the kernel where some locks
-> are not necessary before userspace is up, but the code takes the lock
-> anyway to minimize the code maintenance burden. Is there really a
-> compelling reason to be clever here?
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> ---
+> 
+> NOTE: Tested this on arm and arm64 with the Raspberry Pi 4.
+> 
+>   kernel/dma/contiguous.c | 9 ++++++++-
+>   1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+> index daa4e6eefdde..8bc6f2d670f9 100644
+> --- a/kernel/dma/contiguous.c
+> +++ b/kernel/dma/contiguous.c
+> @@ -302,9 +302,16 @@ static int __init rmem_cma_setup(struct reserved_mem *rmem)
+>   	phys_addr_t align = PAGE_SIZE << max(MAX_ORDER - 1, pageblock_order);
+>   	phys_addr_t mask = align - 1;
+>   	unsigned long node = rmem->fdt_node;
+> +	bool default_cma = of_get_flat_dt_prop(node, "linux,cma-default", NULL);
+>   	struct cma *cma;
+>   	int err;
+>   
+> +	if (size_cmdline != -1 && default_cma) {
+> +		pr_info("Reserved memory: bypass %s node, using cmdline CMA params instead\n",
+> +			rmem->name);
+> +		return -EBUSY;
+> +	}
+> +
+>   	if (!of_get_flat_dt_prop(node, "reusable", NULL) ||
+>   	    of_get_flat_dt_prop(node, "no-map", NULL))
+>   		return -EINVAL;
+> @@ -322,7 +329,7 @@ static int __init rmem_cma_setup(struct reserved_mem *rmem)
+>   	/* Architecture specific contiguous memory fixup. */
+>   	dma_contiguous_early_fixup(rmem->base, rmem->size);
+>   
+> -	if (of_get_flat_dt_prop(node, "linux,cma-default", NULL))
+> +	if (default_cma)
+>   		dma_contiguous_set_default(cma);
+>   
+>   	rmem->ops = &rmem_cma_ops;
+> 
 
-It was a lengthy discussion back then and I was sharing your opinion. I
-even had a patch ready to enforce that we are holding the lock (that's
-how I identified that specific case in the first place).
+For what it's worth,
 
--- 
-Thanks,
+Reviewed-by: Phil Elwell <phil@raspberrypi.org>
 
-David / dhildenb
-
+Phil
