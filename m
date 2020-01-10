@@ -2,85 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A823913773C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 20:31:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D54C137740
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 20:31:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729166AbgAJTbH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 14:31:07 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:60862 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729147AbgAJTbD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 14:31:03 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00AJUwJn094609;
-        Fri, 10 Jan 2020 13:30:58 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578684658;
-        bh=FmFre3D1v2uvSgCmb16gwmygh7BGUpqD8FGcahDNICk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=MROnmtSqB4RRTP9M+GBGNbauhj0DJAbOv94nr7ZAyy7R+HJlpelRMEGCq1ZzAgt/1
-         uhgIU2tES5yv2ZPKRPbTk/pQzlTh8XJ68j69paH+DkmPKb7QCYG/gFnw/dw1JYa25E
-         zjgAtgb9k+T6kePR2ShgTrSR/iYOW3jP7ska3BwE=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00AJUvVS120153
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 10 Jan 2020 13:30:58 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 10
- Jan 2020 13:30:57 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 10 Jan 2020 13:30:57 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00AJUvSo065048;
-        Fri, 10 Jan 2020 13:30:57 -0600
-Subject: Re: [PATCH 0/4] TI DP8382x Phy support update
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     <f.fainelli@gmail.com>, <hkallweit1@gmail.com>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200110184702.14330-1-dmurphy@ti.com>
- <20200110192524.GO19739@lunn.ch>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <2e9333e1-1ee7-80ce-fab4-a98a9f4b345f@ti.com>
-Date:   Fri, 10 Jan 2020 13:28:04 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1729179AbgAJTbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 14:31:18 -0500
+Received: from mga14.intel.com ([192.55.52.115]:10924 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728566AbgAJT35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 14:29:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:29:56 -0800
+X-IronPort-AV: E=Sophos;i="5.69,418,1571727600"; 
+   d="scan'208";a="272503818"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:29:56 -0800
+From:   ira.weiny@intel.com
+To:     linux-kernel@vger.kernel.org
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH V2 01/12] fs/stat: Define DAX statx attribute
+Date:   Fri, 10 Jan 2020 11:29:31 -0800
+Message-Id: <20200110192942.25021-2-ira.weiny@intel.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20200110192942.25021-1-ira.weiny@intel.com>
+References: <20200110192942.25021-1-ira.weiny@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20200110192524.GO19739@lunn.ch>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew
+From: Ira Weiny <ira.weiny@intel.com>
 
-On 1/10/20 1:25 PM, Andrew Lunn wrote:
-> On Fri, Jan 10, 2020 at 12:46:58PM -0600, Dan Murphy wrote:
->> Hello
->>
->> These patches update and fix some issue found in the TI ethernet PHY drivers.
-> Hi Dan
->
-> Please could you separate fixes from new functionality. Have the fixes
-> based on net, and new functionality on net-next.
+In order for users to determine if a file is currently operating in DAX
+mode (effective DAX).  Define a statx attribute value and set that
+attribute if the effective DAX flag is set.
 
-You mean separate series between fixes and functionality?
+To go along with this we propose the following addition to the statx man
+page:
 
-Sure I can separate them but they are dependent on each other.
+STATX_ATTR_DAX
 
-3 and 4 will not apply cleanly if patch 1 and 2 are not merged first.
+	DAX (cpu direct access) is a file mode that attempts to minimize
+	software cache effects for both I/O and memory mappings of this
+	file.  It requires a capable device, a compatible filesystem
+	block size, and filesystem opt-in. It generally assumes all
+	accesses are via cpu load / store instructions which can
+	minimize overhead for small accesses, but adversely affect cpu
+	utilization for large transfers. File I/O is done directly
+	to/from user-space buffers. While the DAX property tends to
+	result in data being transferred synchronously it does not give
+	the guarantees of synchronous I/O that data and necessary
+	metadata are transferred. Memory mapped I/O may be performed
+	with direct mappings that bypass system memory buffering. Again
+	while memory-mapped I/O tends to result in data being
+	transferred synchronously it does not guarantee synchronous
+	metadata updates. A dax file may optionally support being mapped
+	with the MAP_SYNC flag which does allow cpu store operations to
+	be considered synchronous modulo cpu cache effects.
 
-Did you want patch 1 and patch 2 sent separately or together as part of 
-their own series?
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+---
+ fs/stat.c                 | 3 +++
+ include/uapi/linux/stat.h | 1 +
+ 2 files changed, 4 insertions(+)
 
-Dan
-
+diff --git a/fs/stat.c b/fs/stat.c
+index 030008796479..894699c74dde 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -79,6 +79,9 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
+ 	if (IS_AUTOMOUNT(inode))
+ 		stat->attributes |= STATX_ATTR_AUTOMOUNT;
+ 
++	if (IS_DAX(inode))
++		stat->attributes |= STATX_ATTR_DAX;
++
+ 	if (inode->i_op->getattr)
+ 		return inode->i_op->getattr(path, stat, request_mask,
+ 					    query_flags);
+diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+index ad80a5c885d5..e5f9d5517f6b 100644
+--- a/include/uapi/linux/stat.h
++++ b/include/uapi/linux/stat.h
+@@ -169,6 +169,7 @@ struct statx {
+ #define STATX_ATTR_ENCRYPTED		0x00000800 /* [I] File requires key to decrypt in fs */
+ #define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount trigger */
+ #define STATX_ATTR_VERITY		0x00100000 /* [I] Verity protected file */
++#define STATX_ATTR_DAX			0x00002000 /* [I] File is DAX */
+ 
+ 
+ #endif /* _UAPI_LINUX_STAT_H */
+-- 
+2.21.0
 
