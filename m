@@ -2,139 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73225136BC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 12:16:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86DF9136BCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 12:16:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbgAJLQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 06:16:16 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:60181 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727685AbgAJLQP (ORCPT
+        id S1727833AbgAJLQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 06:16:28 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46242 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727753AbgAJLQ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 06:16:15 -0500
-Received: from mail-qt1-f171.google.com ([209.85.160.171]) by
- mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MNssA-1j0mLV3kue-00OCkk for <linux-kernel@vger.kernel.org>; Fri, 10 Jan
- 2020 12:16:14 +0100
-Received: by mail-qt1-f171.google.com with SMTP id e5so1560378qtm.6
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 03:16:13 -0800 (PST)
-X-Gm-Message-State: APjAAAWNrdBXXKIkcLEui8EUfJTgZcs6mla5UhPAkvNI6zoabrppFJbM
-        rtoXARcXTIuFWIlu8pYNChWvP7pl6pUeBpnPeYc=
-X-Google-Smtp-Source: APXvYqzPSbZnYflLqoz2lIHl1CaiiXPaPPS2fouoKNm2ggHKUo+eBphF/usWgjsuuKRSk7/g/+RZJMdHGQs0hp2ZmSI=
-X-Received: by 2002:ac8:6153:: with SMTP id d19mr1898412qtm.18.1578654972819;
- Fri, 10 Jan 2020 03:16:12 -0800 (PST)
+        Fri, 10 Jan 2020 06:16:26 -0500
+Received: by mail-io1-f65.google.com with SMTP id t26so1640570ioi.13
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 03:16:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=E0kTgke7i7no5YSGmsSsdd4ls6keOfUqGJvkD2ZqyfQ=;
+        b=NnePBo6iCOPCCl8M3uUdxEi3EwgCfLxTravxBpRnXZlApT5tkOTYTwa5YdVOdf7Hqr
+         InO7lLE8tbhmVGA1ABlD/sztCr/eIMOczIR1fivwLrjTlnuDqqwhfKKtW8tvpugFxWmg
+         GNWAbWWujCvRjDbYEgDo7yrXAnrF7U7Hadn/or4/SYCnqQufiOsdeyAjytF9tveiYn+f
+         oWbAHJ3uG61eS+jpIPo+RDY2SZBE1Gyzfup2d5vmYkV6IHtdsM+h0vWbki//QJRuoPKr
+         t4U9hrqfIvz7+5UwF01sXX3QDVTz5ySaxHMVN8NN3icKAsX7aGNIo9vnQSu1nuFU4vQr
+         P0KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=E0kTgke7i7no5YSGmsSsdd4ls6keOfUqGJvkD2ZqyfQ=;
+        b=IVqZsz/yCkX5Bj/PJJaAC2YGXCu6/ZibqMNGptw5AIj8jRCfUsPOtH2LFk8JsAucPz
+         xmHPtX3s2Rw9wi0IFb+uza3E4SrLQ6LjW/mmOFQWMSaAN7fDbgt19+jrdd/l0DM6Zww+
+         Evv3HUryKA8RTmU2VLasK6vVF0BkcOqqEp7NrzllrzzGgiZO35hFVvTn2HR0VgyqaN2O
+         gz+0YDrP7FbzIQKEloe4d/uZNsVLzKgDi7pDz2QDLmZ5Xo2ZH+1cHEoisrOh/szFwk+C
+         QMNOdBnikpqr1OfaZxEHXphBcnZvtTk49h+GZxEWt7YlrLTLqCkyUJUBfmgH5FBIgs39
+         fGqw==
+X-Gm-Message-State: APjAAAXX8RBAZ7gYLEJQ68PZkvKVOM6j954nsPdglt7Hu8jeQPexRjyX
+        6pTMH0wPleAOWtl3wzd/FZrxGcaJMSsFG8XEqvpzyQ==
+X-Google-Smtp-Source: APXvYqwPTjV6sa9yurHRzaTSTH6oKZ7TDKuE4ojDTaVsHmqgvbewwCwQ+R1EOsG5qONsmgHQ1T36FBP4nbNDi2uHV78=
+X-Received: by 2002:a5d:8952:: with SMTP id b18mr2031946iot.40.1578654985955;
+ Fri, 10 Jan 2020 03:16:25 -0800 (PST)
 MIME-Version: 1.0
-References: <3f5567ec928e20963d729350e6d674c4acb0c7a0.1578648530.git.viresh.kumar@linaro.org>
-In-Reply-To: <3f5567ec928e20963d729350e6d674c4acb0c7a0.1578648530.git.viresh.kumar@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 10 Jan 2020 12:15:56 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a1MLyP4ooyEDiBF1fE0BJGocgDmO1f5Qrvn_W5eqahz8g@mail.gmail.com>
-Message-ID: <CAK8P3a1MLyP4ooyEDiBF1fE0BJGocgDmO1f5Qrvn_W5eqahz8g@mail.gmail.com>
-Subject: Re: [PATCH V2] firmware: arm_scmi: Make scmi core independent of
- transport type
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        cristian.marussi@arm.com, peng.fan@nxp.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20200109154529.19484-1-sakari.ailus@linux.intel.com> <20200109154529.19484-6-sakari.ailus@linux.intel.com>
+In-Reply-To: <20200109154529.19484-6-sakari.ailus@linux.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 10 Jan 2020 12:16:14 +0100
+Message-ID: <CAMRc=MfqRqtW=nMuKFcpLrBHYg7wwPboUEvYpj2sBXM8yWEM_w@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] at24: Support probing while off
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     linux-i2c <linux-i2c@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-acpi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rajmohan Mani <rajmohan.mani@intel.com>,
+        Tomasz Figa <tfiga@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:PmR+b4Bi+uTphgYWA18HfF+ZwQj/77XPpNFudD77F+PzYvK8dA2
- wK9EAKiVpRi0KEIMvCV63yraHbK63mlaS+3ZKx7hVDEvk39Cf3ggQl+LFhFyfe7J2P7mSSE
- ZJymy3oq+69l2XEgL9qcCdIHipqncj14jWYe48sIWgZxFyWuskfeE818eNy3mWGDnFcW/48
- 1jrEwwKr5fAt79vuNvIVg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:xR4nJEY9MhU=:JEU8XzkHyqkVTKxJMve+RH
- puRaQuq5Yo+0CkjXQ51R7u5g+8PMRrFkpMNXMPC37SJ8zmuBZO651QoZ1Y8ZQa7Du/8cLrrF5
- 9ZtQ3iLvfvqVQzZMRBep3OZhoFwVcQlYUjiCCeqz7pzgQOM7v+YDJS0RKsjCfkbQbTahPEEKa
- KQopPKJ6RQ0nja5M9f0c0TKee4ScGk2AFPopzDVOx1U63N4w1sOsAEz9L7nVNi31hvX2DC8/B
- BMnl8i8RLxN42ifUb52yvGp/UBNP/LDASAQ6URh8CV3jsrj1XASnxIl1lVwAp1wXjJ9h+RoUy
- lmV1Bi4dSLSsdd1QZ/IQgEj+sXIUXHzvaaVO9EnDTKao0kDASJ19qiopGoY45g5gpv2ryJSq+
- qSW7RVDZS+EMluiWaNub0bp+FHFb6HeVLLV+sO0bO668PdlSPKTm7NnvJWXVSK2FrJeDTaUVC
- k39KC07QUG+8NcCyZ/umQ5m9Ayu5N1xMa9n9QWDoERj3XpL5YYKv2ib8UpnqNWy8sgTAcoq/z
- 22XR4pR92jh6oP0s9dcDBPd+m8cMj3s7uOQyckYhtw8XZoyrr+3iS0gB23xeu3iYrHhxeoKsw
- 2glpmpzMO7E1f+XCi37rqxL7BFG0ajm/GxsBx18Pk3pQ+FFaxoHit+tSwLxJETqz5AwKNmoyc
- MPneNgLHnl/Nj8/WehGZtMn2vrNvJ5fmx/zFF01diVBnAYI9+oU8tIGZ1x1FfTDGfuxeKvh61
- dlikiZiz62kGlHOeZLqqzek8AkS+AqDCfu/I0Y6s4lgZ8VvDEfQRUvjXTpXs+RBcrlfJFw+k/
- sL5V/FBnI/91hTAqGkoD2TY9IMFpRrhfN7Xo3vxvJU/eUqYPDrAVBc7YKSCJVnrfo/sDmIbA2
- UdWuPL7IzWLfvGveTifQ==
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 10:43 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+czw., 9 sty 2020 o 16:44 Sakari Ailus <sakari.ailus@linux.intel.com> napisa=
+=C5=82(a):
 >
-> The SCMI specification is fairly independent of the transport protocol,
-> which can be a simple mailbox (already implemented) or anything else.
-> The current Linux implementation however is very much dependent of the
-> mailbox transport layer.
+> In certain use cases (where the chip is part of a camera module, and the
+> camera module is wired together with a camera privacy LED), powering on
+> the device during probe is undesirable. Add support for the at24 to
+> execute probe while being powered off. For this to happen, a hint in form
+> of a device property is required from the firmware.
 >
-> This patch makes the SCMI core code (driver.c) independent of the
-> mailbox transport layer and moves all mailbox related code to a new
-> file: mailbox.c.
->
-> We can now implement more transport protocols to transport SCMI
-> messages, some of the transport protocols getting discussed currently
-> are SMC/HVC, SPCI (built on top of SMC/HVC), OPTEE based mailbox
-> (similar to SPCI), and vitio based transport as alternative to mailbox.
->
-> The transport protocols just need to provide struct scmi_desc, which
-> also implements the struct scmi_transport_ops.
->
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
-> V2:
-> - Dropped __iomem from payload data.
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Simply dropping the __iomem isn't much better, now you get other
-type mismatches.
+Why am I not Cc'ed on this patch?
 
-> - Moved transport ops to scmi_desc, and that has a per transport
->   instance now which is differentiated using the compatible string.
-> - Converted IS_ERR_OR_NULL to IS_ERR.
-
-These look good to me.
-
-> + * @payload: Transmit/Receive payload area
-> + * @dev: Reference to device in the SCMI hierarchy corresponding to this
-> + *      channel
-> + * @handle: Pointer to SCMI entity handle
-> + * @transport_info: Transport layer related information
-> + */
-> +struct scmi_chan_info {
-> +       void *payload;
-> +       struct device *dev;
-> +       struct scmi_handle *handle;
-> +       void *transport_info;
-> +};
-
-Maybe you can wrap the scmi_chan_info inside of another
-structure that contains  the payload pointer, and use container_of
-to convert between them?
-
-It's not obvious which parts of the structure should be shared and
-which are transport specific.
-
-> -static void scmi_rx_callback(struct mbox_client *cl, void *m)
-> +void scmi_rx_callback(struct scmi_chan_info *cinfo, struct scmi_xfer *t)
->  {
->         u8 msg_type;
->         u32 msg_hdr;
->         u16 xfer_id;
->         struct scmi_xfer *xfer;
-> -       struct scmi_chan_info *cinfo = client_to_scmi_chan_info(cl);
->         struct device *dev = cinfo->dev;
->         struct scmi_info *info = handle_to_scmi_info(cinfo->handle);
->         struct scmi_xfers_info *minfo = &info->tx_minfo;
-> -       struct scmi_shared_mem __iomem *mem = cinfo->payload;
-> +       struct scmi_shared_mem *mem = cinfo->payload;
->
->         msg_hdr = ioread32(&mem->msg_header);
-
-This is where it goes wrong: you cannot pass a kernel pointer
-without __iomem into ioread32(). Building the driver with sparse
-(using "make C=1") should show you this and possibly other
-related conversion bugs.
-
-       Arnd
+Bart
