@@ -2,152 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A3F9136CDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 13:18:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DE38136CE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 13:19:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728070AbgAJMSo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 07:18:44 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35156 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727720AbgAJMSn (ORCPT
+        id S1728175AbgAJMTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 07:19:14 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:23802 "EHLO
+        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728116AbgAJMTM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 07:18:43 -0500
-Received: by mail-pl1-f194.google.com with SMTP id g6so809792plt.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 04:18:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=34rCBCNBrLFlE6OZuubd6Z6OlOWhV0HGucVsYoePbqA=;
-        b=AyJDmw1nfTmU38bLxh+Zgeu6ZVenlE9iZh5wgKN+xTCCcVbRXd9o/heLIU/pN6gucy
-         +x5Tsci0dO8ZhS0dQsBFg5t6DZIgfpU5hJ3dQgkh4Hr0FvQ3c1MCVSdIux67XzFt1JAN
-         swqPk6+jTakkB2XfeIbBenGxQxjLc+3Vu0tDUnHnT0MFTrjWU9bMvxEumVbT2V0IH2k3
-         NKMn8E3yiX+w12LiWcL2SWzxnYU4T0LCidiwLYIKi9lxQzBvfqDxICtapnipP+9jxEuS
-         TohB1N+FcisEX8rLBfH9FIqKIemfV8QvJoxW17SQIC8NKLfxpFYpoySyD9/uqs5nLHRv
-         HPEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=34rCBCNBrLFlE6OZuubd6Z6OlOWhV0HGucVsYoePbqA=;
-        b=BKxksYhafmuwAt+6GT/rmpEJx04lLTeC5faIBmblfZMX4RDbQwLJcs+4EtgnElSJ3Y
-         4aX3y2nkj6rtkqaeVLHOnKn2Ouhq1/xLAqH2twIFfjBr48ZI6Wl30vNSTDdNshUVr2PY
-         idFO6deBjUQNDJvEoIywwTAVOldtNykdBQl7raR28M9SNgAkUJZWThPcROJIzhp8fDnk
-         lMsV8xttLTHCzZUpNo7U7GkHmt/4FyYgc6ZYB+aabm0L6uxSEZWjUqHKTtKwoMYwV73H
-         2mkD2K8Mqw72fCt4fmaGsKl3jTLaithVN45esKjct3xLxYbRzurNXa1ri6amM12bJoC9
-         VbDQ==
-X-Gm-Message-State: APjAAAXKuXjE0t++QjOjjwIotzjK89t/mTqAcORRAI/FXEtt0LhH2+UH
-        QFxRSulqsTPpg7QN7vQXGuc=
-X-Google-Smtp-Source: APXvYqwC+PRY9JeuUX6ytka2wfVtRm/TMSWCLgftycjUZOj9TUHFQKY/Dli2kVHoe5tJT3gd4K9HVw==
-X-Received: by 2002:a17:90a:10c8:: with SMTP id b8mr4336581pje.92.1578658722987;
-        Fri, 10 Jan 2020 04:18:42 -0800 (PST)
-Received: from localhost.localdomain ([103.211.17.220])
-        by smtp.googlemail.com with ESMTPSA id m128sm2774523pfm.183.2020.01.10.04.18.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2020 04:18:42 -0800 (PST)
-From:   Amol Grover <frextrite@gmail.com>
-To:     Corey Minyard <minyard@acm.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Amol Grover <frextrite@gmail.com>
-Subject: [PATCH] drivers: char: ipmi: ipmi_msghandler: Pass lockdep expression to RCU lists
-Date:   Fri, 10 Jan 2020 17:43:42 +0530
-Message-Id: <20200110121341.31522-1-frextrite@gmail.com>
-X-Mailer: git-send-email 2.24.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 10 Jan 2020 07:19:12 -0500
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 10 Jan 2020 17:49:07 +0530
+Received: from c-sanm-linux.qualcomm.com ([10.206.25.31])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 10 Jan 2020 17:48:45 +0530
+Received: by c-sanm-linux.qualcomm.com (Postfix, from userid 2343233)
+        id 0355522B4; Fri, 10 Jan 2020 17:48:44 +0530 (IST)
+From:   Sandeep Maheswaram <sanm@codeaurora.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Doug Anderson <dianders@chromium.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>,
+        Sandeep Maheswaram <sanm@codeaurora.org>
+Subject: [PATCH v3 0/5] Add QUSB2 PHY support for SC7180
+Date:   Fri, 10 Jan 2020 17:48:14 +0530
+Message-Id: <1578658699-30458-1-git-send-email-sanm@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-intf->cmd_rcvrs is traversed with list_for_each_entry_rcu
-outside an RCU read-side critical section but under the
-protection of intf->cmd_rcvrs_mutex.
+Added QUSB2 PHY support for SC7180.
+Converting dt binding to yaml.
+Adding compatible for SC7180 in dt bindings.
 
-ipmi_interfaces is traversed using list_for_each_entry_rcu
-outside an RCU read-side critical section but under the protection
-of ipmi_interfaces_mutex.
+Changes in v3:
+*Using the generic phy cfg table for QUSB2 V2 phy.
+*Added support for overriding tuning parameters in QUSB2 V2 PHY
+from device tree.
 
-Hence, add the corresponding lockdep expression to the list traversal
-primitive to silence false-positive lockdep warnings, and
-harden RCU lists.
+Changes in v2:
+Sorted the compatible in driver.
+Converted dt binding to yaml.
+Added compatible in yaml.
 
-Add macro for the corresponding lockdep expression to make the code
-clean and concise.
+Sandeep Maheswaram (5):
+  phy: qcom-qusb2: Add QUSB2 PHY support for SC7180
+  dt-bindings: phy: qcom,qusb2: Convert QUSB2 phy bindings to yaml
+  dt-bindings: phy: qcom-qusb2: Add support for overriding Phy tuning
+    parameters
+  phy: qcom-qusb2: Add support for overriding tuning parameters in QUSB2
+    V2 PHY
+  arm64: dts: qcom: sc7180: Update QUSB2 V2 Phy tuning params for SC7180
 
-Signed-off-by: Amol Grover <frextrite@gmail.com>
----
- drivers/char/ipmi/ipmi_msghandler.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/phy/qcom,qusb2-phy.yaml    | 185 +++++++++++++++++++++
+ .../devicetree/bindings/phy/qcom-qusb2-phy.txt     |  68 --------
+ arch/arm64/boot/dts/qcom/sc7180-idp.dts            |   6 +-
+ drivers/phy/qualcomm/phy-qcom-qusb2.c              |  73 +++++++-
+ 4 files changed, 254 insertions(+), 78 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
+ delete mode 100644 Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
 
-diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index cad9563f8f48..7eff0335bc82 100644
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -35,6 +35,8 @@
- #include <linux/nospec.h>
- 
- #define IPMI_DRIVER_VERSION "39.2"
-+#define cmd_rcvrs_mutex_held() \
-+	lockdep_is_held(&intf->cmd_rcvrs_mutex)
- 
- static struct ipmi_recv_msg *ipmi_alloc_recv_msg(void);
- static int ipmi_init_msghandler(void);
-@@ -618,6 +620,8 @@ static DEFINE_MUTEX(ipmidriver_mutex);
- 
- static LIST_HEAD(ipmi_interfaces);
- static DEFINE_MUTEX(ipmi_interfaces_mutex);
-+#define ipmi_interfaces_mutex_held() \
-+	lockdep_is_held(&ipmi_interfaces_mutex)
- static struct srcu_struct ipmi_interfaces_srcu;
- 
- /*
-@@ -1321,7 +1325,8 @@ static void _ipmi_destroy_user(struct ipmi_user *user)
- 	 * synchronize_srcu()) then free everything in that list.
- 	 */
- 	mutex_lock(&intf->cmd_rcvrs_mutex);
--	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link) {
-+	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
-+					cmd_rcvrs_mutex_held()) {
- 		if (rcvr->user == user) {
- 			list_del_rcu(&rcvr->link);
- 			rcvr->next = rcvrs;
-@@ -1599,7 +1604,8 @@ static struct cmd_rcvr *find_cmd_rcvr(struct ipmi_smi *intf,
- {
- 	struct cmd_rcvr *rcvr;
- 
--	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link) {
-+	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
-+			rcu_read_lock_held() || cmd_rcvrs_mutex_held()) {
- 		if ((rcvr->netfn == netfn) && (rcvr->cmd == cmd)
- 					&& (rcvr->chans & (1 << chan)))
- 			return rcvr;
-@@ -1614,7 +1620,8 @@ static int is_cmd_rcvr_exclusive(struct ipmi_smi *intf,
- {
- 	struct cmd_rcvr *rcvr;
- 
--	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link) {
-+	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
-+					cmd_rcvrs_mutex_held()) {
- 		if ((rcvr->netfn == netfn) && (rcvr->cmd == cmd)
- 					&& (rcvr->chans & chans))
- 			return 0;
-@@ -3450,7 +3457,8 @@ int ipmi_add_smi(struct module         *owner,
- 	/* Look for a hole in the numbers. */
- 	i = 0;
- 	link = &ipmi_interfaces;
--	list_for_each_entry_rcu(tintf, &ipmi_interfaces, link) {
-+	list_for_each_entry_rcu(tintf, &ipmi_interfaces, link,
-+					ipmi_interfaces_mutex_held()) {
- 		if (tintf->intf_num != i) {
- 			link = &tintf->link;
- 			break;
 -- 
-2.24.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
 
