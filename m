@@ -2,84 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4929D136A36
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 10:49:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ADA9136A48
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 10:53:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbgAJJtt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 04:49:49 -0500
-Received: from foss.arm.com ([217.140.110.172]:41510 "EHLO foss.arm.com"
+        id S1727419AbgAJJws (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 04:52:48 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:33866 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727219AbgAJJtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 04:49:49 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 66F851396;
-        Fri, 10 Jan 2020 01:49:48 -0800 (PST)
-Received: from [192.168.1.18] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B57803F703;
-        Fri, 10 Jan 2020 01:49:41 -0800 (PST)
-Subject: Re: [PATCHv8 00/34] kernel: Introduce Time Namespace
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     Dmitry Safonov <dima@arista.com>, Andrei Vagin <avagin@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jann Horn <jannh@google.com>,
-        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        crml <criu@openvz.org>, Linux API <linux-api@vger.kernel.org>,
-        X86 ML <x86@kernel.org>
-References: <20191112012724.250792-1-dima@arista.com>
- <20191121180555.GA440967@gmail.com>
- <CAJwJo6ahGVHHgwFsPyjbY1PgmHs+D+A2Cma03ogvQGr+mPqYAw@mail.gmail.com>
- <87y2ug9w1h.fsf@nanos.tec.linutronix.de>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <1f81e2ef-93fb-926e-9953-c529675e6f4b@arm.com>
-Date:   Fri, 10 Jan 2020 09:52:37 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727169AbgAJJwr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 04:52:47 -0500
+Received: from zn.tnic (p200300EC2F0ACA0024F85FB92EE88C9E.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:ca00:24f8:5fb9:2ee8:8c9e])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 53CDB1EC0CAD;
+        Fri, 10 Jan 2020 10:52:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1578649966;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=5epvbT5Q+4YBNi/Ruaz9zmEaYwVUahV3ncN16fuSWvw=;
+        b=iZW6arOxsEahhXS7L0+rc1bHejr5o7mneglg4DIhJUw0XHb+j+g6lJ+5mIfqzY0YQFdWJQ
+        lFaXS2LMFTfqJg6dvxIgDlJOonwWTOZF6wubQ7nkabAZ7sJfN6JjIaTCm5wLJYGZ186yI3
+        j7L5VU3qdJYEzCSTc0xocL+LX+jmI+U=
+Date:   Fri, 10 Jan 2020 10:52:43 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Zhenzhong Duan <zhenzhong.duan@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH] x86/boot/KASLR: Fix unused variable warning
+Message-ID: <20200110095243.GE19453@zn.tnic>
+References: <20200110094304.446-1-zhenzhong.duan@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <87y2ug9w1h.fsf@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20200110094304.446-1-zhenzhong.duan@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On Fri, Jan 10, 2020 at 05:43:04PM +0800, Zhenzhong Duan wrote:
+> Local variable 'i' is referenced only when CONFIG_MEMORY_HOTREMOVE and
+> CONFIG_ACPI are defined, but definition of variable 'i' is out of guard.
+> If any of the two macros is undefined, below warning triggers during
+> build with 'make EXTRA_CFLAGS=-Wall binrpm-pkg', fix it by moving 'i'
+> in the guard.
 
-On 1/9/20 9:09 PM, Thomas Gleixner wrote:
-> Dmitry Safonov <0x7f454c46@gmail.com> writes:
-> 
->> Gentle ping, in case you have time to look at this.
-> 
-> I'm looking at it and so far I'm quite happy.
-> 
-> Andy, Vincenco any opinions?
-> 
-
-I started looking at them after the holidays, in general I am happy with what I
-have seen till now.
-
-I would like to complete some testing especially on the platforms that are not
-touched by this patchset to make sure that there are no side effects on the
-unified vDSOs and then I think I am ok with the series.
-
-> Thanks,
-> 
->         tglx
-> 
+Maybe I wasn't clear: save this patch for when it triggers in the normal
+build, without additional build flags.
 
 -- 
-Regards,
-Vincenzo
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
