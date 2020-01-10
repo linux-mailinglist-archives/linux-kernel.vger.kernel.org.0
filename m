@@ -2,34 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9DCB1375A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:59:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2D161375A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 18:59:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbgAJR73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 12:59:29 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:59280 "EHLO
+        id S1728952AbgAJR7b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 12:59:31 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:59284 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728698AbgAJR7Z (ORCPT
+        with ESMTP id S1728794AbgAJR70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 12:59:25 -0500
+        Fri, 10 Jan 2020 12:59:26 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ipyZ8-0002BL-Hm; Fri, 10 Jan 2020 18:59:22 +0100
+        id 1ipyZA-0002BZ-CC; Fri, 10 Jan 2020 18:59:24 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1CDFF1C2D6A;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4F3CD1C2D6F;
         Fri, 10 Jan 2020 18:59:21 +0100 (CET)
-Date:   Fri, 10 Jan 2020 17:59:20 -0000
+Date:   Fri, 10 Jan 2020 17:59:21 -0000
 From:   "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/mm/pat: Create fixed width output in
- /sys/kernel/debug/x86/pat_memtype_list, similar to the E820 debug printouts
+Subject: [tip: x86/mm] x86/mm/pat: Disambiguate PAT-disabled boot messages
 Cc:     Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157867916094.30329.2512076581126082469.tip-bot2@tip-bot2>
+Message-ID: <157867916118.30329.2988948694507302150.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -45,89 +44,132 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/mm branch of tip:
 
-Commit-ID:     ef35b0fcee23d7636daa4bed62bceeaba4eed918
-Gitweb:        https://git.kernel.org/tip/ef35b0fcee23d7636daa4bed62bceeaba4eed918
+Commit-ID:     5557e831f68878ef202c0e5296235442cff9b41e
+Gitweb:        https://git.kernel.org/tip/5557e831f68878ef202c0e5296235442cff9b41e
 Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Tue, 19 Nov 2019 09:38:26 +01:00
+AuthorDate:    Tue, 19 Nov 2019 09:50:19 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Tue, 10 Dec 2019 10:12:55 +01:00
 
-x86/mm/pat: Create fixed width output in /sys/kernel/debug/x86/pat_memtype_list, similar to the E820 debug printouts
+x86/mm/pat: Disambiguate PAT-disabled boot messages
 
-Before:
+Right now we have these four types of PAT-disabled boot messages:
 
-  write-back @ 0xbdfa9000-0xbdfaa000
-  write-back @ 0xbdfaa000-0xbdfab000
-  write-back @ 0xbdfab000-0xbdfac000
-  uncached-minus @ 0xc0000000-0xd0000000
-  uncached-minus @ 0xd0900000-0xd0920000
-  uncached-minus @ 0xd0920000-0xd0940000
-  uncached-minus @ 0xd0940000-0xd0960000
-  uncached-minus @ 0xd0960000-0xd0980000
-  uncached-minus @ 0xd0980000-0xd0981000
-  uncached-minus @ 0xd0990000-0xd0991000
-  uncached-minus @ 0xd09a0000-0xd09a1000
-  uncached-minus @ 0xd09b0000-0xd09b1000
-  uncached-minus @ 0xd0d00000-0xd0d01000
-  uncached-minus @ 0xd0d10000-0xd0d11000
-  uncached-minus @ 0xd0d20000-0xd0d21000
-  uncached-minus @ 0xd0d40000-0xd0d41000
-  uncached-minus @ 0xfed00000-0xfed01000
-  uncached-minus @ 0xfed1f000-0xfed20000
-  uncached-minus @ 0xfed40000-0xfed41000
+  x86/PAT: PAT support disabled.
+  x86/PAT: PAT MSR is 0, disabled.
+  x86/PAT: MTRRs disabled, skipping PAT initialization too.
+  x86/PAT: PAT not supported by CPU.
 
-After:
+The first message is ambiguous in that it doesn't signal that PAT is off
+due to a boot option.
 
-  PAT: [mem 0x00000000bdf8e000-0x00000000bdfa8000] write-back
-  PAT: [mem 0x00000000bdfa9000-0x00000000bdfaa000] write-back
-  PAT: [mem 0x00000000bdfaa000-0x00000000bdfab000] write-back
-  PAT: [mem 0x00000000bdfab000-0x00000000bdfac000] write-back
-  PAT: [mem 0x00000000c0000000-0x00000000d0000000] uncached-minus
-  PAT: [mem 0x00000000d0900000-0x00000000d0920000] uncached-minus
-  PAT: [mem 0x00000000d0920000-0x00000000d0940000] uncached-minus
-  PAT: [mem 0x00000000d0940000-0x00000000d0960000] uncached-minus
-  PAT: [mem 0x00000000d0960000-0x00000000d0980000] uncached-minus
-  PAT: [mem 0x00000000d0980000-0x00000000d0981000] uncached-minus
-  PAT: [mem 0x00000000d0990000-0x00000000d0991000] uncached-minus
-  PAT: [mem 0x00000000d09a0000-0x00000000d09a1000] uncached-minus
-  PAT: [mem 0x00000000d09b0000-0x00000000d09b1000] uncached-minus
-  PAT: [mem 0x00000000fed1f000-0x00000000fed20000] uncached-minus
-  PAT: [mem 0x00000000fed40000-0x00000000fed41000] uncached-minus
+The second message doesn't really make it clear that this is the MSR value
+during early bootup and it's the firmware environment that disabled PAT
+support.
 
-The advantage is that it's easier to parse at a glance - and the tree is ordered
-by start address, which is now reflected in putting the start address in the first
-column.
+The fourth message doesn't really make it clear that we disable PAT support
+because CONFIG_MTRR is off in the kernel.
 
-This is also now similar to how we print e820 entries:
+Clarify, harmonize and fix the spelling in these user-visible messages:
 
-  BIOS-e820: [mem 0x00000000bafda000-0x00000000bb3d3fff] usable
-  BIOS-e820: [mem 0x00000000bb3d4000-0x00000000bdd2efff] reserved
-  BIOS-e820: [mem 0x00000000bdd2f000-0x00000000bddccfff] ACPI NVS
-  BIOS-e820: [mem 0x00000000bddcd000-0x00000000bdea0fff] ACPI data
-  BIOS-e820: [mem 0x00000000bdea1000-0x00000000bdf2efff] ACPI NVS
+  x86/PAT: PAT support disabled via boot option.
+  x86/PAT: PAT support disabled by the firmware.
+  x86/PAT: PAT support disabled because CONFIG_MTRR is disabled in the kernel.
+  x86/PAT: PAT not supported by the CPU.
 
-Since this is a debugfs file not used by tools there's no known ABI dependencies.
+Also add a fifth message, in case PAT support is disabled at build time:
+
+  x86/PAT: PAT support disabled because CONFIG_X86_PAT is disabled in the kernel.
+
+Previously we'd just silently return from pat_init() without giving any indication
+that PAT support is off.
+
+Finally, clarify/extend some of the comments related to PAT initialization.
 
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/mm/pat.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/mtrr.h |  2 +-
+ arch/x86/mm/pat.c           | 20 ++++++++++++++------
+ 2 files changed, 15 insertions(+), 7 deletions(-)
 
+diff --git a/arch/x86/include/asm/mtrr.h b/arch/x86/include/asm/mtrr.h
+index dbff145..3337d22 100644
+--- a/arch/x86/include/asm/mtrr.h
++++ b/arch/x86/include/asm/mtrr.h
+@@ -86,7 +86,7 @@ static inline void mtrr_centaur_report_mcr(int mcr, u32 lo, u32 hi)
+ }
+ static inline void mtrr_bp_init(void)
+ {
+-	pat_disable("MTRRs disabled, skipping PAT initialization too.");
++	pat_disable("PAT support disabled because CONFIG_MTRR is disabled in the kernel.");
+ }
+ 
+ #define mtrr_ap_init() do {} while (0)
 diff --git a/arch/x86/mm/pat.c b/arch/x86/mm/pat.c
-index e26b81c..ea7da7e 100644
+index 560ac51..e26b81c 100644
 --- a/arch/x86/mm/pat.c
 +++ b/arch/x86/mm/pat.c
-@@ -1179,10 +1179,10 @@ static int memtype_seq_show(struct seq_file *seq, void *v)
+@@ -66,7 +66,11 @@ static bool __read_mostly pat_disabled = !IS_ENABLED(CONFIG_X86_PAT);
+ static bool __read_mostly pat_initialized;
+ static bool __read_mostly init_cm_done;
+ 
+-void pat_disable(const char *reason)
++/*
++ * PAT support is enabled by default, but can be disabled for
++ * various user-requested or hardware-forced reasons:
++ */
++void pat_disable(const char *msg_reason)
  {
- 	struct memtype *print_entry = (struct memtype *)v;
+ 	if (pat_disabled)
+ 		return;
+@@ -77,12 +81,12 @@ void pat_disable(const char *reason)
+ 	}
  
--	seq_printf(seq, "%s @ 0x%Lx-0x%Lx\n",
--			cattr_name(print_entry->type),
-+	seq_printf(seq, "PAT: [mem 0x%016Lx-0x%016Lx] %s\n",
- 			print_entry->start,
--			print_entry->end);
-+			print_entry->end,
-+			cattr_name(print_entry->type));
+ 	pat_disabled = true;
+-	pr_info("x86/PAT: %s\n", reason);
++	pr_info("x86/PAT: %s\n", msg_reason);
+ }
  
- 	kfree(print_entry);
+ static int __init nopat(char *str)
+ {
+-	pat_disable("PAT support disabled.");
++	pat_disable("PAT support disabled via boot option.");
+ 	return 0;
+ }
+ early_param("nopat", nopat);
+@@ -238,13 +242,13 @@ static void pat_bsp_init(u64 pat)
+ 	u64 tmp_pat;
+ 
+ 	if (!boot_cpu_has(X86_FEATURE_PAT)) {
+-		pat_disable("PAT not supported by CPU.");
++		pat_disable("PAT not supported by the CPU.");
+ 		return;
+ 	}
+ 
+ 	rdmsrl(MSR_IA32_CR_PAT, tmp_pat);
+ 	if (!tmp_pat) {
+-		pat_disable("PAT MSR is 0, disabled.");
++		pat_disable("PAT support disabled by the firmware.");
+ 		return;
+ 	}
+ 
+@@ -314,7 +318,7 @@ void init_cache_modes(void)
+ }
+ 
+ /**
+- * pat_init - Initialize PAT MSR and PAT table
++ * pat_init - Initialize the PAT MSR and PAT table on the current CPU
+  *
+  * This function initializes PAT MSR and PAT table with an OS-defined value
+  * to enable additional cache attributes, WC, WT and WP.
+@@ -328,6 +332,10 @@ void pat_init(void)
+ 	u64 pat;
+ 	struct cpuinfo_x86 *c = &boot_cpu_data;
+ 
++#ifndef CONFIG_X86_PAT
++	pr_info_once("x86/PAT: PAT support disabled because CONFIG_X86_PAT is disabled in the kernel.\n");
++#endif
++
+ 	if (pat_disabled)
+ 		return;
  
