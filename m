@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37AF0136E33
+	by mail.lfdr.de (Postfix) with ESMTP id AA6A5136E34
 	for <lists+linux-kernel@lfdr.de>; Fri, 10 Jan 2020 14:38:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbgAJNiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 Jan 2020 08:38:15 -0500
-Received: from foss.arm.com ([217.140.110.172]:44574 "EHLO foss.arm.com"
+        id S1728208AbgAJNiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 Jan 2020 08:38:17 -0500
+Received: from foss.arm.com ([217.140.110.172]:44594 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727928AbgAJNiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 Jan 2020 08:38:14 -0500
+        id S1727928AbgAJNiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 Jan 2020 08:38:16 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D054DA7;
-        Fri, 10 Jan 2020 05:38:14 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F6FF1063;
+        Fri, 10 Jan 2020 05:38:16 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BBADB3F534;
-        Fri, 10 Jan 2020 05:38:13 -0800 (PST)
-Date:   Fri, 10 Jan 2020 13:38:12 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 07EC93F73B;
+        Fri, 10 Jan 2020 05:38:15 -0800 (PST)
+Date:   Fri, 10 Jan 2020 13:38:14 +0000
 From:   Mark Brown <broonie@kernel.org>
-To:     Saravanan Sekar <sravanhome@gmail.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, sfr@canb.auug.org.au,
-        sravanhome@gmail.com
-Subject: Applied "regulator: mpq7920: Fix Woverflow warning on conversion" to the regulator tree
-In-Reply-To: <20200110102220.7163-1-sravanhome@gmail.com>
-Message-Id: <applied-20200110102220.7163-1-sravanhome@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     kernel-janitors@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Markus Reichl <m.reichl@fivetechno.de>
+Subject: Applied "regulator: mp8859: tidy up white space in probe" to the regulator tree
+In-Reply-To: <20200110055252.rvelu4ysvoxsbmlg@kili.mountain>
+Message-Id: <applied-20200110055252.rvelu4ysvoxsbmlg@kili.mountain>
 X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -35,7 +35,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: mpq7920: Fix Woverflow warning on conversion
+   regulator: mp8859: tidy up white space in probe
 
 has been applied to the regulator tree at
 
@@ -60,48 +60,35 @@ to this mail.
 Thanks,
 Mark
 
-From 686f63616f4aede1356c1bc9fa4e9a92a123bcd6 Mon Sep 17 00:00:00 2001
-From: Saravanan Sekar <sravanhome@gmail.com>
-Date: Fri, 10 Jan 2020 11:22:20 +0100
-Subject: [PATCH] regulator: mpq7920: Fix Woverflow warning on conversion
+From b83380512e955f538366c33dd79d660cdac2875c Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 10 Jan 2020 08:52:52 +0300
+Subject: [PATCH] regulator: mp8859: tidy up white space in probe
 
-Fix warning Woverflow on type conversion reported on x86.
+These two lines are indented an extra tab.
 
-Fixes: 6501c1f54a17 (regulator: mpq7920: add mpq7920 regulator driver)
-Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
-Link: https://lore.kernel.org/r/20200110102220.7163-1-sravanhome@gmail.com
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Link: https://lore.kernel.org/r/20200110055252.rvelu4ysvoxsbmlg@kili.mountain
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/mpq7920.c | 2 +-
- drivers/regulator/mpq7920.h | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/regulator/mp8859.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/mpq7920.c b/drivers/regulator/mpq7920.c
-index c603d60fb87b..ab1b847c57e5 100644
---- a/drivers/regulator/mpq7920.c
-+++ b/drivers/regulator/mpq7920.c
-@@ -221,7 +221,7 @@ static int mpq7920_parse_cb(struct device_node *np,
- 	if (of_property_read_bool(np, "mps,buck-ovp-disable")) {
- 		regmap_update_bits(config->regmap,
- 				MPQ7920_BUCK1_REG_B + (rdesc->id * 4),
--				BIT(6), ~BIT(6));
-+				MPQ7920_MASK_OVP, MPQ7920_OVP_DISABLE);
- 	}
+diff --git a/drivers/regulator/mp8859.c b/drivers/regulator/mp8859.c
+index e804a5267301..1d26b506ee5b 100644
+--- a/drivers/regulator/mp8859.c
++++ b/drivers/regulator/mp8859.c
+@@ -123,8 +123,8 @@ static int mp8859_i2c_probe(struct i2c_client *i2c)
+ 		ret = PTR_ERR(rdev);
+ 		dev_err(&i2c->dev, "failed to register %s: %d\n",
+ 			mp8859_regulators[0].name, ret);
+-			return ret;
+-		}
++		return ret;
++	}
+ 	return 0;
+ }
  
- 	ret = of_property_read_u8(np, "mps,buck-phase-delay", &val);
-diff --git a/drivers/regulator/mpq7920.h b/drivers/regulator/mpq7920.h
-index 6a93bfbc750c..1498a1e3f4f5 100644
---- a/drivers/regulator/mpq7920.h
-+++ b/drivers/regulator/mpq7920.h
-@@ -55,6 +55,8 @@
- #define MPQ7920_MASK_SWITCH_FREQ	0x30
- #define MPQ7920_MASK_BUCK_PHASE_DEALY	0x30
- #define MPQ7920_MASK_DVS_SLEWRATE	0xc0
-+#define MPQ7920_MASK_OVP		0x40
-+#define MPQ7920_OVP_DISABLE		~(0x40)
- #define MPQ7920_DISCHARGE_ON		0x1
- 
- #define MPQ7920_REGULATOR_EN_OFFSET	7
 -- 
 2.20.1
 
