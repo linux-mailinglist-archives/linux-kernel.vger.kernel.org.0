@@ -2,106 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53F921385BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 10:59:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64C241385D0
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 11:22:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732541AbgALJ7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 04:59:44 -0500
-Received: from 8bytes.org ([81.169.241.247]:59692 "EHLO theia.8bytes.org"
+        id S1732587AbgALKWW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 05:22:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732395AbgALJ7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 04:59:44 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 0116D3AA; Sun, 12 Jan 2020 10:59:42 +0100 (CET)
-Date:   Sun, 12 Jan 2020 10:59:41 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: [git pull] IOMMU Fixes for Linux v5.5-rc5
-Message-ID: <20200112095936.GA17108@8bytes.org>
+        id S1732565AbgALKWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 Jan 2020 05:22:22 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1180A21569;
+        Sun, 12 Jan 2020 10:22:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578824541;
+        bh=y+j0iLiyp9dU8Y8qKZGhD5a92WJXc5kAisSjAyPF09U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ajwgpSleWNAJ6gKcZhLtXqPUW0YZRwYLvnwEgoOxWVrzPxsUfUhRJISj2v1kWMNEQ
+         5VMfy3DDB91PpB46Q70EpDhFZStNcXd2rcYCIAjfW2+3JthkgE0u/f/XQICLpUvHFi
+         wLdwSq+4gwOSyDE889O/NnLb/f/2LQ0hk1duaj0I=
+Date:   Sat, 11 Jan 2020 21:41:13 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.19 00/84] 4.19.95-stable review
+Message-ID: <20200111204113.GA460087@kroah.com>
+References: <20200111094845.328046411@linuxfoundation.org>
+ <23c3a0d1-1655-8cc2-7c96-743a47953795@roeck-us.net>
+ <20200111174715.GB394778@kroah.com>
+ <565353ce-9383-9af6-3150-529e9ef73398@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <565353ce-9383-9af6-3150-529e9ef73398@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Jan 11, 2020 at 12:10:11PM -0800, Guenter Roeck wrote:
+> On 1/11/20 9:47 AM, Greg Kroah-Hartman wrote:
+> > On Sat, Jan 11, 2020 at 08:02:40AM -0800, Guenter Roeck wrote:
+> > > On 1/11/20 1:49 AM, Greg Kroah-Hartman wrote:
+> > > > This is the start of the stable review cycle for the 4.19.95 release.
+> > > > There are 84 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > > 
+> > > > Responses should be made by Mon, 13 Jan 2020 09:46:17 +0000.
+> > > > Anything received after that time might be too late.
+> > > > 
+> > > Build results:
+> > > 	total: 156 pass: 154 fail: 2
+> > > Failed builds:
+> > > 	arm64:defconfig
+> > > 	arm64:allmodconfig
+> > > Qemu test results:
+> > > 	total: 382 pass: 339 fail: 43
+> > > Failed tests:
+> > > 	<all arm64>
+> > > 
+> > > arch/arm64/kvm/hyp/switch.c: In function 'handle_tx2_tvm':
+> > > arch/arm64/kvm/hyp/switch.c:438:2: error: implicit declaration of function '__kvm_skip_instr'; did you mean 'kvm_skip_instr'?
+> > 
+> > Thanks for this, I'll go push out a -rc2 with the offending patch
+> > removed.
+> > 
+> 
+> For v4.19.94-84-g4f77fc728c70:
+> 
+> Build results:
+> 	total: 156 pass: 156 fail: 0
+> Qemu test results:
+> 	total: 382 pass: 382 fail: 0
 
---IJpNTDwzlM2Ie8A6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Wonderful, thanks for testing all of these and letting me know.
 
-Hi Linus,
-
-The following changes since commit c79f46a282390e0f5b306007bf7b11a46d529538:
-
-  Linux 5.5-rc5 (2020-01-05 14:23:27 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git iommu-fixes-v5.5-rc5
-
-for you to fetch changes up to 55817b340a31951d23d1692db45522560b1d20f9:
-
-  iommu/dma: fix variable 'cookie' set but not used (2020-01-07 17:08:58 +0100)
-
-----------------------------------------------------------------
-IOMMU Fixes for Linux v5.5-rc5
-
-Including:
-
-	- Two fixes for VT-d and generic IOMMU code to fix teardown on
-	  error handling code paths.
-
-	- Patch for the Intel VT-d driver to fix handling of non-PCI
-	  devices
-
-	- Fix W=1 compile warning in dma-iommu code
-
-----------------------------------------------------------------
-Jon Derrick (2):
-      iommu: Remove device link to group on failure
-      iommu/vt-d: Unlink device if failed to add to group
-
-Patrick Steinhardt (1):
-      iommu/vt-d: Fix adding non-PCI devices to Intel IOMMU
-
-Qian Cai (1):
-      iommu/dma: fix variable 'cookie' set but not used
-
- drivers/iommu/dma-iommu.c   |  3 ---
- drivers/iommu/intel-iommu.c | 22 ++++++++++++++++++----
- drivers/iommu/iommu.c       |  1 +
- 3 files changed, 19 insertions(+), 7 deletions(-)
-
-Please pull.
-
-Thanks,
-
-	Joerg
-
---IJpNTDwzlM2Ie8A6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEr9jSbILcajRFYWYyK/BELZcBGuMFAl4a7ggACgkQK/BELZcB
-GuO5JA/+Je/0TqClzmUhSe6RXC4s+fHx9kvT+ZDcQH6LPbh8zgUfSwIs2WnrqpJZ
-gIsdrLNehRv8PYin8AJg14ZxzQ/SOuJC7vf0NybVRGq5fsDPbEPh9T6k6bf7czzF
-Z0lMrby3qt1NHHsjRJHKmnPStgYuchwFvJy8JK/dZ0gmQsU79m5kVKdqtAVntIDg
-DDdaXBQCUa+jlZi9ndgkQklm2zaxdBVCkSEEfFjBHOOSMJJAce3wjDTEfQBSurZs
-NU7Nw0dR7Nq2YZJGTIAMj5RKWH6N3Cn9NUnL6stsKXOo5ivJPLaUEVBncXQLLjuL
-Yp4USo1hPhKCPCJzemGljcU7PN1ALlvNW6KFzy6eFEAlZ7k9vHWKejbGDj3hkBu8
-eM4Ia9h4rAyLellqI06+KOWZK9liikCo7n9bzI8+jvzsWUo/GuIJ9cWm4IEtlDpW
-DS+dyqldqW9K3ykK2q9w3CY6u3dQTLb0cIhNlePBQ+Y6u/cHpmfn2DMccPRXnLy2
-+uiUsk+et9IXbGRhqc9n0XLoBO7KXWdkDlNXBwmYFwHx9+vASwgmyUI7TjUHS5M3
-5+SEra0BmsE9M3DoZgXWGyr1qZypb+LveXooDF5aeE4DJ00XS7dkELe9p1hNL/fk
-S7dcK7IJJDlX5kmoq/iXYdxBYhK7ncvsiQvUvNV4QM07l2FN2Oc=
-=2L+s
------END PGP SIGNATURE-----
-
---IJpNTDwzlM2Ie8A6--
+greg k-h
