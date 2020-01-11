@@ -2,93 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 266A8137FE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:24:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B03C41380E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:38:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730882AbgAKKYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:24:07 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37169 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730797AbgAKKXG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:23:06 -0500
-Received: by mail-io1-f66.google.com with SMTP id k24so4761420ioc.4
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Jan 2020 02:23:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vU2+i2GO3WHRg+jV5YDCjUlPGe/9rhbunzFmSeBXEWs=;
-        b=apGZuJagwClqbxqX07aG9onUwlXW+H6wqSje8JaxzprMtEUYR5NB1bvF15EYuwiCMe
-         J/6L1a0tS80/ibAhAGjIApfioD9g98McJp6RDN+tDdZWxUZ7ePfYbizd/kcOtS18BrLb
-         8yBicbElljp0ywh37I6WLhmWlzMukCi2WNOrZQ1HPb4CyOqN+VhSN0NeCqTNrh0YsctB
-         5q8UlfGE+WDxXcKItttXVsB5ZKS2u49Y5b+jjIsvM7z/LBqyns97E7vt2c8S6WEPES5Z
-         ZXFdudV/uob5aIHPpn56BS8LcdHKJOtRsVDXgJFWX4s73n9/2fASW2Z8uFAK64DDxD6S
-         tc3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vU2+i2GO3WHRg+jV5YDCjUlPGe/9rhbunzFmSeBXEWs=;
-        b=ZsOlHyH2Dj4eSkFHggiwvzdMUXiXfqIPCFswSs6U9SIvkGbvzpLqIn8usc0jJpcFQy
-         qIxmJgRqseZ//3aHd6PKta1xg2kOt3I0KtG7plFkjsnC0t+cZ7j5/YR5JB7W3wvdVhc4
-         KRR53Z0vAximHc36DEpIVIiGxTQI7oNJCUDplZYXwcsBSs7ZNos/hbnXzwRV49g//X3U
-         eRu+xodMSK4rpfNYpb1N0G7wSfTGlcTt5101xpY/T5FkRorYDZduh+j4H3YoxCqePBKD
-         kZ0Att+vCj2ALY9DTvcCOTf5XG/euKH7bAn2jWqny5lRoWz/644dh54D3ijN92Pvb/SP
-         scKA==
-X-Gm-Message-State: APjAAAWTCLSGBHG/W8ShGTy/xAxOfUAYUXOuEMTWkp9/M4+pZL6vsB7y
-        M5VKYUa9cJ4NOI5BbnS49W17RpaDu/zNfnIrxp6mWg==
-X-Google-Smtp-Source: APXvYqzpvyDTaxYdZtZGArwDIzWwAKCU3pngPn20GQcVt5O6FZInAzvQo0UuAlIgrGMYv/s2x55pDLoDBJmaLmIxHFg=
-X-Received: by 2002:a05:6602:2352:: with SMTP id r18mr5779111iot.220.1578738185997;
- Sat, 11 Jan 2020 02:23:05 -0800 (PST)
+        id S1731276AbgAKKiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:38:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56560 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728999AbgAKKiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:38:13 -0500
+Received: from localhost (unknown [62.119.166.9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81C6020848;
+        Sat, 11 Jan 2020 10:38:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578739092;
+        bh=z5+SqbdqGinhWk8sMlCTepknVOWj8EdUUdgwxhiX/D0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=XGrTR62J9sIY2Nz39Owpc5ev1lKMzHaq3yG9j/0v7gG/AkLhXgDaQfNcPBZu/Xcqb
+         heEGaOwXftOoxlAA0xxk4T6cJTv8IrT2zJ8eZJb2xqcWF1gA8QSVWXhhOpubvBbN+f
+         yBOgN9WeOIJUGZSH48vcuqT4hIhu8uvSCP/TDynU=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        "Chan Shu Tak, Alex" <alexchan@task.com.hk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 48/59] llc2: Fix return statement of llc_stat_ev_rx_null_dsap_xid_c (and _test_c)
+Date:   Sat, 11 Jan 2020 10:49:57 +0100
+Message-Id: <20200111094849.096755166@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200111094835.417654274@linuxfoundation.org>
+References: <20200111094835.417654274@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-References: <20191210100753.11090-1-brgl@bgdev.pl> <20200110182841.GT8314@dtor-ws>
-In-Reply-To: <20200110182841.GT8314@dtor-ws>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Sat, 11 Jan 2020 11:22:55 +0100
-Message-ID: <CAMRc=Mcu-oNC009JLkNSDrKjg_ygb63ZTnrmu+8NwNZrOVsEZQ@mail.gmail.com>
-Subject: Re: [PATCH] input: max77650-onkey: add of_match table
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt., 10 sty 2020 o 19:28 Dmitry Torokhov <dmitry.torokhov@gmail.com> napisa=
-=C5=82(a):
->
-> On Tue, Dec 10, 2019 at 11:07:53AM +0100, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > We need the of_match table if we want to use the compatible string in
-> > the pmic's child node and get the onkey driver loaded automatically.
->
-> Do we really need of_match table or adding
->
+From: Chan Shu Tak, Alex <alexchan@task.com.hk>
 
-Not really. Technically not anyway but we merged bindings that define
-it (at the time I didn't know any better) and seems we're stuck with
-it. Please see the discussion below a similar patch for regulator
-subsystem[1].
+[ Upstream commit af1c0e4e00f3cc76cb136ebf2e2c04e8b6446285 ]
 
-> MODULE_ALIAS("platform:max77650-onkey");
->
+When a frame with NULL DSAP is received, llc_station_rcv is called.
+In turn, llc_stat_ev_rx_null_dsap_xid_c is called to check if it is a NULL
+XID frame. The return statement of llc_stat_ev_rx_null_dsap_xid_c returns 1
+when the incoming frame is not a NULL XID frame and 0 otherwise. Hence, a
+NULL XID response is returned unexpectedly, e.g. when the incoming frame is
+a NULL TEST command.
 
-This is already in there, but if someone defines the compatible in the
-device tree as per bindings, the module won't be loaded despite the
-MODULE_ALIAS() definition.
+To fix the error, simply remove the conditional operator.
 
-> will work as well?
->
-> In general, do we ever instantiate onkey portion from device tree? Or
-> is it always an MFD cell that is instantiated unconditionally?
->
+A similar error in llc_stat_ev_rx_null_dsap_test_c is also fixed.
 
-Bart
+Signed-off-by: Chan Shu Tak, Alex <alexchan@task.com.hk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/llc/llc_station.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[1] https://lkml.org/lkml/2019/12/10/271
+--- a/net/llc/llc_station.c
++++ b/net/llc/llc_station.c
+@@ -32,7 +32,7 @@ static int llc_stat_ev_rx_null_dsap_xid_
+ 	return LLC_PDU_IS_CMD(pdu) &&			/* command PDU */
+ 	       LLC_PDU_TYPE_IS_U(pdu) &&		/* U type PDU */
+ 	       LLC_U_PDU_CMD(pdu) == LLC_1_PDU_CMD_XID &&
+-	       !pdu->dsap ? 0 : 1;			/* NULL DSAP value */
++	       !pdu->dsap;				/* NULL DSAP value */
+ }
+ 
+ static int llc_stat_ev_rx_null_dsap_test_c(struct sk_buff *skb)
+@@ -42,7 +42,7 @@ static int llc_stat_ev_rx_null_dsap_test
+ 	return LLC_PDU_IS_CMD(pdu) &&			/* command PDU */
+ 	       LLC_PDU_TYPE_IS_U(pdu) &&		/* U type PDU */
+ 	       LLC_U_PDU_CMD(pdu) == LLC_1_PDU_CMD_TEST &&
+-	       !pdu->dsap ? 0 : 1;			/* NULL DSAP */
++	       !pdu->dsap;				/* NULL DSAP */
+ }
+ 
+ static int llc_station_ac_send_xid_r(struct sk_buff *skb)
+
+
