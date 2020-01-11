@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 085B5137ED6
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:14:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0ED2138039
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:27:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729999AbgAKKOR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:14:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53874 "EHLO mail.kernel.org"
+        id S1731168AbgAKK1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:27:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730149AbgAKKOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:14:14 -0500
+        id S1729122AbgAKK1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:27:06 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE86720673;
-        Sat, 11 Jan 2020 10:14:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DBD320842;
+        Sat, 11 Jan 2020 10:27:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737653;
-        bh=fohQj2/as9dqSua8w1ktK1w4smDl+xuPyoiq0d5bKiM=;
+        s=default; t=1578738425;
+        bh=mm4956ygG+jablg48bigObr7P6aCT2lVITov/2olgyg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JT3ThTQJzo90hqEH6o+Vmm9B7CtppOuwL6+PFlSKQR8qLUhWAViNFj+qhrfH7ql9k
-         0brO+EynVW1HGjUvv94JpqgAEAjbO/Xsd6qx15XOU/auUCMoZfFJTMb0X+QrypfjJu
-         r/DjChiWLdJlIXUHwzkyI2yU47pra4LtpXxzrTMA=
+        b=fpMaJPZfXOj1rsT+Gy1uSB4jKyiscnrdTo3TBsyjvGDq5Er2t21BKJS0AbGb0qBLU
+         tl9k3Q2RKWfcZrqND6pdfVAT4fQvwyr8UUqAq8PvJDMbcRFMQZc8F1CLeRcDdKOeP6
+         HS2Iabk5/i/eJcduMaMv7AJiKhI8XdKU04C9x88s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 16/84] ARM: vexpress: Set-up shared OPP table instead of individual for each CPU
+Subject: [PATCH 5.4 074/165] Btrfs: fix cloning range with a hole when using the NO_HOLES feature
 Date:   Sat, 11 Jan 2020 10:49:53 +0100
-Message-Id: <20200111094851.026831013@linuxfoundation.org>
+Message-Id: <20200111094927.367746025@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
-References: <20200111094845.328046411@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,67 +44,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sudeep Holla <sudeep.holla@arm.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-[ Upstream commit 2a76352ad2cc6b78e58f737714879cc860903802 ]
+[ Upstream commit fcb970581dd900675c4371c2b688a57924a8368c ]
 
-Currently we add individual copy of same OPP table for each CPU within
-the cluster. This is redundant and doesn't reflect the reality.
+When using the NO_HOLES feature if we clone a range that contains a hole
+and a temporary ENOSPC happens while dropping extents from the target
+inode's range, we can end up failing and aborting the transaction with
+-EEXIST or with a corrupt file extent item, that has a length greater
+than it should and overlaps with other extents. For example when cloning
+the following range from inode A to inode B:
 
-We can't use core cpumask to set policy->cpus in ve_spc_cpufreq_init()
-anymore as it gets called via cpuhp_cpufreq_online()->cpufreq_online()
-->cpufreq_driver->init() and the cpumask gets updated upon CPU hotplug
-operations. It also may cause issues when the vexpress_spc_cpufreq
-driver is built as a module.
+  Inode A:
 
-Since ve_spc_clk_init is built-in device initcall, we should be able to
-use the same topology_core_cpumask to set the opp sharing cpumask via
-dev_pm_opp_set_sharing_cpus and use the same later in the driver via
-dev_pm_opp_get_sharing_cpus.
+    extent A1                                          extent A2
+  [ ----------- ]  [ hole, implicit, 4MB length ]  [ ------------- ]
+  0            1MB                                 5MB            6MB
 
-Cc: Liviu Dudau <liviu.dudau@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+  Range to clone: [1MB, 6MB)
+
+  Inode B:
+
+    extent B1       extent B2        extent B3         extent B4
+  [ ---------- ]  [ --------- ]    [ ---------- ]    [ ---------- ]
+  0           1MB 1MB        2MB   2MB        5MB    5MB         6MB
+
+  Target range: [1MB, 6MB) (same as source, to make it easier to explain)
+
+The following can happen:
+
+1) btrfs_punch_hole_range() gets -ENOSPC from __btrfs_drop_extents();
+
+2) At that point, 'cur_offset' is set to 1MB and __btrfs_drop_extents()
+   set 'drop_end' to 2MB, meaning it was able to drop only extent B2;
+
+3) We then compute 'clone_len' as 'drop_end' - 'cur_offset' = 2MB - 1MB =
+   1MB;
+
+4) We then attempt to insert a file extent item at inode B with a file
+   offset of 5MB, which is the value of clone_info->file_offset. This
+   fails with error -EEXIST because there's already an extent at that
+   offset (extent B4);
+
+5) We abort the current transaction with -EEXIST and return that error
+   to user space as well.
+
+Another example, for extent corruption:
+
+  Inode A:
+
+    extent A1                                           extent A2
+  [ ----------- ]   [ hole, implicit, 10MB length ]  [ ------------- ]
+  0            1MB                                  11MB            12MB
+
+  Inode B:
+
+    extent B1         extent B2
+  [ ----------- ]   [ --------- ]    [ ----------------------------- ]
+  0            1MB 1MB         5MB  5MB                             12MB
+
+  Target range: [1MB, 12MB) (same as source, to make it easier to explain)
+
+1) btrfs_punch_hole_range() gets -ENOSPC from __btrfs_drop_extents();
+
+2) At that point, 'cur_offset' is set to 1MB and __btrfs_drop_extents()
+   set 'drop_end' to 5MB, meaning it was able to drop only extent B2;
+
+3) We then compute 'clone_len' as 'drop_end' - 'cur_offset' = 5MB - 1MB =
+   4MB;
+
+4) We then insert a file extent item at inode B with a file offset of 11MB
+   which is the value of clone_info->file_offset, and a length of 4MB (the
+   value of 'clone_len'). So we get 2 extents items with ranges that
+   overlap and an extent length of 4MB, larger then the extent A2 from
+   inode A (1MB length);
+
+5) After that we end the transaction, balance the btree dirty pages and
+   then start another or join the previous transaction. It might happen
+   that the transaction which inserted the incorrect extent was committed
+   by another task so we end up with extent corruption if a power failure
+   happens.
+
+So fix this by making sure we attempt to insert the extent to clone at
+the destination inode only if we are past dropping the sub-range that
+corresponds to a hole.
+
+Fixes: 690a5dbfc51315 ("Btrfs: fix ENOSPC errors, leading to transaction aborts, when cloning extents")
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-vexpress/spc.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ fs/btrfs/file.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-vexpress/spc.c b/arch/arm/mach-vexpress/spc.c
-index 0f5381d13494..55bbbc3b328f 100644
---- a/arch/arm/mach-vexpress/spc.c
-+++ b/arch/arm/mach-vexpress/spc.c
-@@ -551,8 +551,9 @@ static struct clk *ve_spc_clk_register(struct device *cpu_dev)
- 
- static int __init ve_spc_clk_init(void)
- {
--	int cpu;
-+	int cpu, cluster;
- 	struct clk *clk;
-+	bool init_opp_table[MAX_CLUSTERS] = { false };
- 
- 	if (!info)
- 		return 0; /* Continue only if SPC is initialised */
-@@ -578,8 +579,17 @@ static int __init ve_spc_clk_init(void)
- 			continue;
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index c332968f9056..eaafd00f93d4 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -2601,8 +2601,8 @@ int btrfs_punch_hole_range(struct inode *inode, struct btrfs_path *path,
+ 			}
  		}
  
-+		cluster = topology_physical_package_id(cpu_dev->id);
-+		if (init_opp_table[cluster])
-+			continue;
-+
- 		if (ve_init_opp_table(cpu_dev))
- 			pr_warn("failed to initialise cpu%d opp table\n", cpu);
-+		else if (dev_pm_opp_set_sharing_cpus(cpu_dev,
-+			 topology_core_cpumask(cpu_dev->id)))
-+			pr_warn("failed to mark OPPs shared for cpu%d\n", cpu);
-+		else
-+			init_opp_table[cluster] = true;
- 	}
+-		if (clone_info) {
+-			u64 clone_len = drop_end - cur_offset;
++		if (clone_info && drop_end > clone_info->file_offset) {
++			u64 clone_len = drop_end - clone_info->file_offset;
  
- 	platform_device_register_simple("vexpress-spc-cpufreq", -1, NULL, 0);
+ 			ret = btrfs_insert_clone_extent(trans, inode, path,
+ 							clone_info, clone_len);
 -- 
 2.20.1
 
