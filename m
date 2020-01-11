@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAAD7137FBF
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:22:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19935137DE4
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:02:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730138AbgAKKWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:22:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48454 "EHLO mail.kernel.org"
+        id S1729113AbgAKKCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:02:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730845AbgAKKWo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:22:44 -0500
+        id S1728819AbgAKKCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:02:34 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63CAC2082E;
-        Sat, 11 Jan 2020 10:22:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86CEA20848;
+        Sat, 11 Jan 2020 10:02:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738164;
-        bh=xYHCqeSqTyw7YMuYYvLayPiWngIzGhgLfcAOH/sluAY=;
+        s=default; t=1578736953;
+        bh=0t7sFC/dghiBRKtxczAFkc+MQIDlbu6/0fLf7MkGFtU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aaybgBR5CWYMEQisCXkQMTZam/ut5NVlp+4ddE21jj30A4N2PXGbFdABeU0IsI0Om
-         mI43Q4+yeUwBtapx089ttHyjiTZvjO+JbsQyrFS5SA+SDBtfRIk1icJuBwyTfBJr7R
-         tsUl5Xc8Hujww7kumLbPXRHXcbBHnGwzwojFBnq0=
+        b=2v2E2Di5AwU+i1LgdWHFDzrhaXYUUQgma23YcTo8/P1ypmbN7l/cs29pm4BVXAxMU
+         kj7QNsAwH3dZuG/QGSfYZvBkaR8uUmX95XAnRiVk408PjN+LcQEhUXJyfiNWOcqQYM
+         C/rL1YmmmKP5dTIsE6UHVKLIGzI6wguiAIfrnHK8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 041/165] ARM: exynos_defconfig: Restore debugfs support
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 27/91] ata: ahci_brcm: Allow optional reset controller to be used
 Date:   Sat, 11 Jan 2020 10:49:20 +0100
-Message-Id: <20200111094924.405951844@linuxfoundation.org>
+Message-Id: <20200111094854.595033052@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-References: <20200111094921.347491861@linuxfoundation.org>
+In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
+References: <20200111094844.748507863@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit a2315d3aea5976acd919d3d3fcf82f752562c25b ]
+commit 2b2c47d9e1fe90311b725125d6252a859ee87a79 upstream.
 
-Commit 9f532d26c75c ("ARM: exynos_defconfig: Trim and reorganize with
-savedefconfig") removed explicit enable line for CONFIG_DEBUG_FS, because
-that feature has been selected by other enabled options: CONFIG_TRACING,
-which in turn had been selected by CONFIG_PERF_EVENTS and
-CONFIG_PROVE_LOCKING.
+On BCM63138, we need to reset the AHCI core prior to start utilizing it,
+grab the reset controller device cookie and do that.
 
-In meantime, commit 0e4a459f56c3 ("tracing: Remove unnecessary DEBUG_FS
-dependency") removed the dependency between CONFIG_DEBUG_FS and
-CONFIG_TRACING, so CONFIG_DEBUG_FS is no longer enabled in default builds.
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Enable it again explicitly, as debugfs support is essential for various
-automated testing tools.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/configs/exynos_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/ata/ahci_brcm.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 08db1c83eb2d..736ed7a7bcf8 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -348,6 +348,7 @@ CONFIG_PRINTK_TIME=y
- CONFIG_DYNAMIC_DEBUG=y
- CONFIG_DEBUG_INFO=y
- CONFIG_MAGIC_SYSRQ=y
-+CONFIG_DEBUG_FS=y
- CONFIG_DEBUG_KERNEL=y
- CONFIG_SOFTLOCKUP_DETECTOR=y
- # CONFIG_DETECT_HUNG_TASK is not set
--- 
-2.20.1
-
+--- a/drivers/ata/ahci_brcm.c
++++ b/drivers/ata/ahci_brcm.c
+@@ -25,6 +25,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/reset.h>
+ #include <linux/string.h>
+ 
+ #include "ahci.h"
+@@ -88,6 +89,7 @@ struct brcm_ahci_priv {
+ 	u32 port_mask;
+ 	u32 quirks;
+ 	enum brcm_ahci_version version;
++	struct reset_control *rcdev;
+ };
+ 
+ static const struct ata_port_info ahci_brcm_port_info = {
+@@ -332,6 +334,11 @@ static int brcm_ahci_probe(struct platfo
+ 	if (IS_ERR(priv->top_ctrl))
+ 		return PTR_ERR(priv->top_ctrl);
+ 
++	/* Reset is optional depending on platform */
++	priv->rcdev = devm_reset_control_get(&pdev->dev, "ahci");
++	if (!IS_ERR_OR_NULL(priv->rcdev))
++		reset_control_deassert(priv->rcdev);
++
+ 	if ((priv->version == BRCM_SATA_BCM7425) ||
+ 		(priv->version == BRCM_SATA_NSP)) {
+ 		priv->quirks |= BRCM_AHCI_QUIRK_NO_NCQ;
 
 
