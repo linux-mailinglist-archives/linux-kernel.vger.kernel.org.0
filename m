@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FD59137E10
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:06:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58E30137FF1
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:25:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729532AbgAKKEd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:04:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36874 "EHLO mail.kernel.org"
+        id S1730984AbgAKKYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:24:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728986AbgAKKEb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:04:31 -0500
+        id S1730977AbgAKKYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:24:16 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 057242082E;
-        Sat, 11 Jan 2020 10:04:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB422205F4;
+        Sat, 11 Jan 2020 10:24:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737070;
-        bh=TL7wiWT41V2lDfq0DQGYxm5qEkBIpbBGApRyJOlvkjY=;
+        s=default; t=1578738255;
+        bh=OcNdbwEliGVpOYbXVJ9ALqYcB+eJC/IuXzLGPdaSWkA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bNo43ZaRfWkdW5dztlkZWQQayP0n4t1AiaXwCFroeblwhGR4Q0Sne5lTwu+BSOeSE
-         COZY9mvw3/Ftklh4ssGowt+JbnKk3x8yOxrpOuFQEiaql87DgFSxD34zzii8Wpq3rR
-         4Cnge7pcVTc+3j/jXf0je5/MjkfLxX4NoVQ1ABK8=
+        b=zdGZxuC2OjcxcnS4bBFlpWyCu9KEvbtWGT9B9fpm0sCwpDxups6LPWgLr1HJkOqW7
+         mTChacN9DvfvoVx59vdIeL0S8rBYW275ek+S2l7DLIRSMvs4giNkLM5CB6dawbSoCx
+         6fkq/GtqKriwAShZwgX+XrWwPWuoZSJqkMwMoSfA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Axtens <dja@axtens.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, SeongJae Park <sjpark@amazon.de>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 46/91] powerpc/pseries/hvconsole: Fix stack overread via udbg
+Subject: [PATCH 5.4 060/165] kselftest/runner: Print new line in print of timeout log
 Date:   Sat, 11 Jan 2020 10:49:39 +0100
-Message-Id: <20200111094902.539942964@linuxfoundation.org>
+Message-Id: <20200111094926.204891138@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
-References: <20200111094844.748507863@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,114 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Axtens <dja@axtens.net>
+From: SeongJae Park <sjpark@amazon.de>
 
-[ Upstream commit 934bda59f286d0221f1a3ebab7f5156a996cc37d ]
+[ Upstream commit d187801d1a46519d2a322f879f7c8f85c685372e ]
 
-While developing KASAN for 64-bit book3s, I hit the following stack
-over-read.
+If a timeout failure occurs, kselftest kills the test process and prints
+the timeout log.  If the test process has killed while printing a log
+that ends with new line, the timeout log can be printed in middle of the
+test process output so that it can be seems like a comment, as below:
 
-It occurs because the hypercall to put characters onto the terminal
-takes 2 longs (128 bits/16 bytes) of characters at a time, and so
-hvc_put_chars() would unconditionally copy 16 bytes from the argument
-buffer, regardless of supplied length. However, udbg_hvc_putc() can
-call hvc_put_chars() with a single-byte buffer, leading to the error.
+    # test_process_log	not ok 3 selftests: timers: nsleep-lat # TIMEOUT
 
-  ==================================================================
-  BUG: KASAN: stack-out-of-bounds in hvc_put_chars+0xdc/0x110
-  Read of size 8 at addr c0000000023e7a90 by task swapper/0
+This commit avoids such problem by printing one more line before the
+TIMEOUT failure log.
 
-  CPU: 0 PID: 0 Comm: swapper Not tainted 5.2.0-rc2-next-20190528-02824-g048a6ab4835b #113
-  Call Trace:
-    dump_stack+0x104/0x154 (unreliable)
-    print_address_description+0xa0/0x30c
-    __kasan_report+0x20c/0x224
-    kasan_report+0x18/0x30
-    __asan_report_load8_noabort+0x24/0x40
-    hvc_put_chars+0xdc/0x110
-    hvterm_raw_put_chars+0x9c/0x110
-    udbg_hvc_putc+0x154/0x200
-    udbg_write+0xf0/0x240
-    console_unlock+0x868/0xd30
-    register_console+0x970/0xe90
-    register_early_udbg_console+0xf8/0x114
-    setup_arch+0x108/0x790
-    start_kernel+0x104/0x784
-    start_here_common+0x1c/0x534
-
-  Memory state around the buggy address:
-   c0000000023e7980: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-   c0000000023e7a00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1
-  >c0000000023e7a80: f1 f1 01 f2 f2 f2 00 00 00 00 00 00 00 00 00 00
-                           ^
-   c0000000023e7b00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-   c0000000023e7b80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ==================================================================
-
-Document that a 16-byte buffer is requred, and provide it in udbg.
-
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: SeongJae Park <sjpark@amazon.de>
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/platforms/pseries/hvconsole.c |  2 +-
- drivers/tty/hvc/hvc_vio.c                  | 16 +++++++++++++++-
- 2 files changed, 16 insertions(+), 2 deletions(-)
+ tools/testing/selftests/kselftest/runner.sh | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/powerpc/platforms/pseries/hvconsole.c b/arch/powerpc/platforms/pseries/hvconsole.c
-index 74da18de853a..73ec15cd2708 100644
---- a/arch/powerpc/platforms/pseries/hvconsole.c
-+++ b/arch/powerpc/platforms/pseries/hvconsole.c
-@@ -62,7 +62,7 @@ EXPORT_SYMBOL(hvc_get_chars);
-  * @vtermno: The vtermno or unit_address of the adapter from which the data
-  *	originated.
-  * @buf: The character buffer that contains the character data to send to
-- *	firmware.
-+ *	firmware. Must be at least 16 bytes, even if count is less than 16.
-  * @count: Send this number of characters.
-  */
- int hvc_put_chars(uint32_t vtermno, const char *buf, int count)
-diff --git a/drivers/tty/hvc/hvc_vio.c b/drivers/tty/hvc/hvc_vio.c
-index b05dc5086627..8bab8b00d47d 100644
---- a/drivers/tty/hvc/hvc_vio.c
-+++ b/drivers/tty/hvc/hvc_vio.c
-@@ -120,6 +120,14 @@ static int hvterm_raw_get_chars(uint32_t vtermno, char *buf, int count)
- 	return got;
- }
- 
-+/**
-+ * hvterm_raw_put_chars: send characters to firmware for given vterm adapter
-+ * @vtermno: The virtual terminal number.
-+ * @buf: The characters to send. Because of the underlying hypercall in
-+ *       hvc_put_chars(), this buffer must be at least 16 bytes long, even if
-+ *       you are sending fewer chars.
-+ * @count: number of chars to send.
-+ */
- static int hvterm_raw_put_chars(uint32_t vtermno, const char *buf, int count)
- {
- 	struct hvterm_priv *pv = hvterm_privs[vtermno];
-@@ -232,6 +240,7 @@ static const struct hv_ops hvterm_hvsi_ops = {
- static void udbg_hvc_putc(char c)
- {
- 	int count = -1;
-+	unsigned char bounce_buffer[16];
- 
- 	if (!hvterm_privs[0])
- 		return;
-@@ -242,7 +251,12 @@ static void udbg_hvc_putc(char c)
- 	do {
- 		switch(hvterm_privs[0]->proto) {
- 		case HV_PROTOCOL_RAW:
--			count = hvterm_raw_put_chars(0, &c, 1);
-+			/*
-+			 * hvterm_raw_put_chars requires at least a 16-byte
-+			 * buffer, so go via the bounce buffer
-+			 */
-+			bounce_buffer[0] = c;
-+			count = hvterm_raw_put_chars(0, bounce_buffer, 1);
- 			break;
- 		case HV_PROTOCOL_HVSI:
- 			count = hvterm_hvsi_put_chars(0, &c, 1);
+diff --git a/tools/testing/selftests/kselftest/runner.sh b/tools/testing/selftests/kselftest/runner.sh
+index 84de7bc74f2c..a8d20cbb711c 100644
+--- a/tools/testing/selftests/kselftest/runner.sh
++++ b/tools/testing/selftests/kselftest/runner.sh
+@@ -79,6 +79,7 @@ run_one()
+ 		if [ $rc -eq $skip_rc ]; then	\
+ 			echo "not ok $test_num $TEST_HDR_MSG # SKIP"
+ 		elif [ $rc -eq $timeout_rc ]; then \
++			echo "#"
+ 			echo "not ok $test_num $TEST_HDR_MSG # TIMEOUT"
+ 		else
+ 			echo "not ok $test_num $TEST_HDR_MSG # exit=$rc"
 -- 
 2.20.1
 
