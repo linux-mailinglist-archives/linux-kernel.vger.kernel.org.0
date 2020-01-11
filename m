@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B82ED137FBB
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:22:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30AA7137DA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:00:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730741AbgAKKWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:22:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47904 "EHLO mail.kernel.org"
+        id S1728801AbgAKJ7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 04:59:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730631AbgAKKWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:22:32 -0500
+        id S1728844AbgAKJ7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 04:59:50 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89EC5214D8;
-        Sat, 11 Jan 2020 10:22:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C85C2084D;
+        Sat, 11 Jan 2020 09:59:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738151;
-        bh=kcmHPfgfUkUIZ9s19Gak9QvxgsL0fT1Ndp20b1yWJ/w=;
+        s=default; t=1578736790;
+        bh=AbrQFtx9N34mKmVEcJbnyQLMvOXnHZk2LJ4igkh5RJY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HTXtKwRmKN4x1HL5sdCtfhpy6tTyur6fzzO+dQtsuCnJNxWgdraGg7iWnxZ/0E3vX
-         kLcEx2ztmE33jVHg4UL538cniEZfu+/GuWPpwANXn6TzV5Bc9x4h3P+DbAVfzr/FGv
-         tE31JJ7t4HAYsNNp9gN6qLuQSKYi2EkZ5TbtBm6c=
+        b=LaN9Py3UMazPD+vy+BBNU2aYc5zfviNe+MKhxr1NOfBtO6c8yMqh567fkEIdwSjbb
+         xofQm5udTYuJU8Yahn47ONAQ77camRfjH3b4/55UNYVNkZZIDRvgF6shvz6A44mrrf
+         av87HIJgA8RtoUHgOKZXcFZ48bDs8lOgJo+2VvrM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 038/165] selftests: safesetid: Move link library to LDLIBS
-Date:   Sat, 11 Jan 2020 10:49:17 +0100
-Message-Id: <20200111094924.245126205@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 25/91] compat_ioctl: block: handle Persistent Reservations
+Date:   Sat, 11 Jan 2020 10:49:18 +0100
+Message-Id: <20200111094853.623611249@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-References: <20200111094921.347491861@linuxfoundation.org>
+In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
+References: <20200111094844.748507863@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit be12252212fa3dfed6e75112865095c484c0ce87 ]
+commit b2c0fcd28772f99236d261509bcd242135677965 upstream.
 
-Move -lcap to LDLIBS from CFLAGS because it is a library
-to be linked.
+These were added to blkdev_ioctl() in linux-5.5 but not
+blkdev_compat_ioctl, so add them now.
 
-Without this, safesetid failed to build with link error
-as below.
+Cc: <stable@vger.kernel.org> # v4.4+
+Fixes: bbd3e064362e ("block: add an API for Persistent Reservations")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-----
-/usr/bin/ld: /tmp/ccL8rZHT.o: in function `drop_caps':
-safesetid-test.c:(.text+0xe7): undefined reference to `cap_get_proc'
-/usr/bin/ld: safesetid-test.c:(.text+0x107): undefined reference to `cap_set_flag'
-/usr/bin/ld: safesetid-test.c:(.text+0x10f): undefined reference to `cap_set_proc'
-/usr/bin/ld: safesetid-test.c:(.text+0x117): undefined reference to `cap_free'
-/usr/bin/ld: safesetid-test.c:(.text+0x136): undefined reference to `cap_clear'
-collect2: error: ld returned 1 exit status
-----
+Fold in followup patch from Arnd with missing pr.h header include.
 
-Fixes: c67e8ec03f3f ("LSM: SafeSetID: add selftest")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
 ---
- tools/testing/selftests/safesetid/Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ block/compat_ioctl.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/tools/testing/selftests/safesetid/Makefile b/tools/testing/selftests/safesetid/Makefile
-index 98da7a504737..cac42cd36a1b 100644
---- a/tools/testing/selftests/safesetid/Makefile
-+++ b/tools/testing/selftests/safesetid/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- # Makefile for mount selftests.
--CFLAGS = -Wall -lcap -O2
-+CFLAGS = -Wall -O2
-+LDLIBS = -lcap
- 
- TEST_PROGS := run_tests.sh
- TEST_GEN_FILES := safesetid-test
--- 
-2.20.1
-
+--- a/block/compat_ioctl.c
++++ b/block/compat_ioctl.c
+@@ -5,6 +5,7 @@
+ #include <linux/compat.h>
+ #include <linux/elevator.h>
+ #include <linux/hdreg.h>
++#include <linux/pr.h>
+ #include <linux/slab.h>
+ #include <linux/syscalls.h>
+ #include <linux/types.h>
+@@ -406,6 +407,14 @@ long compat_blkdev_ioctl(struct file *fi
+ 	case BLKTRACETEARDOWN: /* compatible */
+ 		ret = blk_trace_ioctl(bdev, cmd, compat_ptr(arg));
+ 		return ret;
++	case IOC_PR_REGISTER:
++	case IOC_PR_RESERVE:
++	case IOC_PR_RELEASE:
++	case IOC_PR_PREEMPT:
++	case IOC_PR_PREEMPT_ABORT:
++	case IOC_PR_CLEAR:
++		return blkdev_ioctl(bdev, mode, cmd,
++				(unsigned long)compat_ptr(arg));
+ 	default:
+ 		if (disk->fops->compat_ioctl)
+ 			ret = disk->fops->compat_ioctl(bdev, mode, cmd, arg);
 
 
