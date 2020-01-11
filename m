@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15FB7137DE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:02:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F121137FF3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:25:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729299AbgAKKCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:02:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33166 "EHLO mail.kernel.org"
+        id S1730991AbgAKKYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:24:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728819AbgAKKCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:02:39 -0500
+        id S1730986AbgAKKYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:24:20 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D98852077C;
-        Sat, 11 Jan 2020 10:02:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D454205F4;
+        Sat, 11 Jan 2020 10:24:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578736959;
-        bh=iu9/s3BMOP1/KtOrOmZzB/tj8XuAQWeyw5t7+Au6Zhs=;
+        s=default; t=1578738260;
+        bh=tNIxl4x5EyhwWirr1G7H/6k1XgznDwSrGldniwcZWT8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zo4kskDOLFLqnyGhaQHr0zgbUZ+gHoTThQHmbCqI1B46WARetFEYXBJITVnck29Vx
-         I2v68g+STfQXQ5ghe0qKKdc+hCNywOvMjHqcc1EEG1gHMyFIJKEEEB/AisrjMbS6ev
-         Uf5iJ/CAPLNiYK5u2I13Hcy12yCo5zINXDu48LgI=
+        b=sBkKDlAu5NJutx3Bk9T99Y+MwXx8NrOCumBv5Mb0uni6alFBxMVTSskiuRJkF+OM+
+         2mgGkmu4zYSEnnLfaHf+ZOky+1UD5tAQ1GzyouoYy7PpqQ786SEEGp78mh9N4MGBYE
+         nPEbfIBDzq8Jj6cny4/EWmcxCyn78lwKmazWobcw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        stable@vger.kernel.org, SeongJae Park <sjpark@amazon.de>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 47/91] coresight: tmc-etf: Do not call smp_processor_id from preemptible
+Subject: [PATCH 5.4 061/165] kselftest: Support old perl versions
 Date:   Sat, 11 Jan 2020 10:49:40 +0100
-Message-Id: <20200111094902.887009248@linuxfoundation.org>
+Message-Id: <20200111094926.272746866@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
-References: <20200111094844.748507863@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,66 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: SeongJae Park <sjpark@amazon.de>
 
-[ Upstream commit 024c1fd9dbcc1d8a847f1311f999d35783921b7f ]
+[ Upstream commit 4eac734486fd431e0756cc5e929f140911a36a53 ]
 
-During a perf session we try to allocate buffers on the "node" associated
-with the CPU the event is bound to. If it is not bound to a CPU, we
-use the current CPU node, using smp_processor_id(). However this is unsafe
-in a pre-emptible context and could generate the splats as below :
+On an old perl such as v5.10.1, `kselftest/prefix.pl` gives below error
+message:
 
- BUG: using smp_processor_id() in preemptible [00000000] code: perf/2544
- caller is tmc_alloc_etf_buffer+0x5c/0x60
- CPU: 2 PID: 2544 Comm: perf Not tainted 5.1.0-rc6-147786-g116841e #344
- Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno Development Platform, BIOS EDK II Feb  1 2019
- Call trace:
-  dump_backtrace+0x0/0x150
-  show_stack+0x14/0x20
-  dump_stack+0x9c/0xc4
-  debug_smp_processor_id+0x10c/0x110
-  tmc_alloc_etf_buffer+0x5c/0x60
-  etm_setup_aux+0x1c4/0x230
-  rb_alloc_aux+0x1b8/0x2b8
-  perf_mmap+0x35c/0x478
-  mmap_region+0x34c/0x4f0
-  do_mmap+0x2d8/0x418
-  vm_mmap_pgoff+0xd0/0xf8
-  ksys_mmap_pgoff+0x88/0xf8
-  __arm64_sys_mmap+0x28/0x38
-  el0_svc_handler+0xd8/0x138
-  el0_svc+0x8/0xc
+    Can't locate object method "autoflush" via package "IO::Handle" at kselftest/prefix.pl line 10.
 
-Use NUMA_NO_NODE hint instead of using the current node for events
-not bound to CPUs.
+This commit fixes the error by explicitly specifying the use of the
+`IO::Handle` package.
 
-Fixes: 2e499bbc1a929ac ("coresight: tmc: implementing TMC-ETF AUX space API")
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: stable <stable@vger.kernel.org> # 4.7+
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Link: https://lore.kernel.org/r/20190620221237.3536-4-mathieu.poirier@linaro.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: SeongJae Park <sjpark@amazon.de>
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwtracing/coresight/coresight-tmc-etf.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ tools/testing/selftests/kselftest/prefix.pl | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-index 14df4e34c21c..faf68412eb92 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-@@ -292,9 +292,7 @@ static void *tmc_alloc_etf_buffer(struct coresight_device *csdev, int cpu,
- 	int node;
- 	struct cs_buffers *buf;
+diff --git a/tools/testing/selftests/kselftest/prefix.pl b/tools/testing/selftests/kselftest/prefix.pl
+index ec7e48118183..31f7c2a0a8bd 100755
+--- a/tools/testing/selftests/kselftest/prefix.pl
++++ b/tools/testing/selftests/kselftest/prefix.pl
+@@ -3,6 +3,7 @@
+ # Prefix all lines with "# ", unbuffered. Command being piped in may need
+ # to have unbuffering forced with "stdbuf -i0 -o0 -e0 $cmd".
+ use strict;
++use IO::Handle;
  
--	if (cpu == -1)
--		cpu = smp_processor_id();
--	node = cpu_to_node(cpu);
-+	node = (event->cpu == -1) ? NUMA_NO_NODE : cpu_to_node(event->cpu);
- 
- 	/* Allocate memory structure for interaction with Perf */
- 	buf = kzalloc_node(sizeof(struct cs_buffers), GFP_KERNEL, node);
+ binmode STDIN;
+ binmode STDOUT;
 -- 
 2.20.1
 
