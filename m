@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 725DC137E7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:10:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32227137E12
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:06:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729832AbgAKKKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:10:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46914 "EHLO mail.kernel.org"
+        id S1729541AbgAKKEh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:04:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729346AbgAKKKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:10:23 -0500
+        id S1729140AbgAKKEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:04:36 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C4522064C;
-        Sat, 11 Jan 2020 10:10:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92AA420848;
+        Sat, 11 Jan 2020 10:04:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737422;
-        bh=6JimFqxy5aH8U83M64b4lV/Il/uPj2PHJLfndhZJCZU=;
+        s=default; t=1578737075;
+        bh=Xw8zjt2sT0vXa8UdImVNyoZlzgzedmmBGyzOUTYEu3I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XuzjogU+g+bjI/whb+5hNjpzj1m4Jw1YMnrhezv+KAFCM7/EDgImHivPTZI8IIyn4
-         GOONNp+LFg9T37zoaFK4eoCIbGd0pjCD4QTHVxR6lYJ1tK0heL8TI6NobmUnnD/GWl
-         1SPryV4jDuLY73h9x0sAYCvv6TTc6luv7Ft0opaA=
+        b=2CeMdZBdOWF8aj2Mq4cEp0Wh0By+55KBHZ6CDR/pdNkswlc4rhKJJ0O7oromPnO0r
+         IWeGFKQio77B3qtx0D7N41+gJU0YlZgbM/WVWItifySMBL8k7M+Plv8tVvonhvMjL5
+         KC52cx9cgX4PnN8F481OO356aYbMaSCYcs8FJFB4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, "Daniel T. Lee" <danieltimlee@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 17/62] ARM: dts: bcm283x: Fix critical trip point
+Subject: [PATCH 4.9 66/91] samples: bpf: Replace symbol compare of trace_event
 Date:   Sat, 11 Jan 2020 10:49:59 +0100
-Message-Id: <20200111094843.479212698@linuxfoundation.org>
+Message-Id: <20200111094909.563374695@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
-References: <20200111094837.425430968@linuxfoundation.org>
+In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
+References: <20200111094844.748507863@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <wahrenst@gmx.net>
+From: Daniel T. Lee <danieltimlee@gmail.com>
 
-[ Upstream commit 30e647a764d446723a7e0fb08d209e0104f16173 ]
+[ Upstream commit bba1b2a890253528c45aa66cf856f289a215bfbc ]
 
-During definition of the CPU thermal zone of BCM283x SoC family there
-was a misunderstanding of the meaning "criticial trip point" and the
-thermal throttling range of the VideoCore firmware. The latter one takes
-effect when the core temperature is at least 85 degree celsius or higher
+Previously, when this sample is added, commit 1c47910ef8013
+("samples/bpf: add perf_event+bpf example"), a symbol 'sys_read' and
+'sys_write' has been used without no prefixes. But currently there are
+no exact symbols with these under kallsyms and this leads to failure.
 
-So the current critical trip point doesn't make sense, because the
-thermal shutdown appears before the firmware has a chance to throttle
-the ARM core(s).
+This commit changes exact compare to substring compare to keep compatible
+with exact symbol or prefixed symbol.
 
-Fix these unwanted shutdowns by increasing the critical trip point
-to a value which shouldn't be reached with working thermal throttling.
-
-Fixes: 0fe4d2181cc4 ("ARM: dts: bcm283x: Add CPU thermal zone with 1 trip point")
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Fixes: 1c47910ef8013 ("samples/bpf: add perf_event+bpf example")
+Signed-off-by: Daniel T. Lee <danieltimlee@gmail.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Link: https://lore.kernel.org/bpf/20191205080114.19766-2-danieltimlee@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/bcm283x.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ samples/bpf/trace_event_user.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
-index 4745e3c7806b..fdb018e1278f 100644
---- a/arch/arm/boot/dts/bcm283x.dtsi
-+++ b/arch/arm/boot/dts/bcm283x.dtsi
-@@ -38,7 +38,7 @@
+diff --git a/samples/bpf/trace_event_user.c b/samples/bpf/trace_event_user.c
+index 9a130d31ecf2..6fbb5eb9daf3 100644
+--- a/samples/bpf/trace_event_user.c
++++ b/samples/bpf/trace_event_user.c
+@@ -33,9 +33,9 @@ static void print_ksym(__u64 addr)
+ 		return;
+ 	sym = ksym_search(addr);
+ 	printf("%s;", sym->name);
+-	if (!strcmp(sym->name, "sys_read"))
++	if (!strstr(sym->name, "sys_read"))
+ 		sys_read_seen = true;
+-	else if (!strcmp(sym->name, "sys_write"))
++	else if (!strstr(sym->name, "sys_write"))
+ 		sys_write_seen = true;
+ }
  
- 			trips {
- 				cpu-crit {
--					temperature	= <80000>;
-+					temperature	= <90000>;
- 					hysteresis	= <0>;
- 					type		= "critical";
- 				};
 -- 
 2.20.1
 
