@@ -2,50 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08BB313836E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 21:02:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F9B8138363
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 21:00:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731179AbgAKUCN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 15:02:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56100 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730994AbgAKUCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 15:02:11 -0500
-Received: from localhost (unknown [62.119.166.9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79CF42087F;
-        Sat, 11 Jan 2020 20:02:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578772931;
-        bh=ZBIqsTYG9Bnf5Rz+zTX6stlReOCRBtZYSfd8G4JzGR0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZLlfuaS4izGTa0NGSQmCR6k3iG2+OMtZ9Ho5Bx+7tPGgjFt4W0pTdONhvpRRTss+V
-         7ah3m4GNSOZSpwKFa8RHsxVrWYuqP2mMTqhP7ynrmwWAmI6GXWIxNdfuqKT9ojBPa8
-         JOqLDdb4YrlxmQNjBWDl4woaz6Vwat7v+x89uhWw=
-Date:   Sat, 11 Jan 2020 20:47:58 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     zhengbin <zhengbin13@huawei.com>
-Cc:     jslaby@suse.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] tty: use true,false for bool variable
-Message-ID: <20200111194758.GB438314@kroah.com>
-References: <1577180285-24904-1-git-send-email-zhengbin13@huawei.com>
+        id S1731030AbgAKUAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 15:00:19 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:34038 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731016AbgAKUAT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 15:00:19 -0500
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iqMvZ-0008H2-H7; Sat, 11 Jan 2020 21:00:09 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 4D705100C52; Sat, 11 Jan 2020 20:59:58 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>, arnd@arndb.de,
+        vincenzo.frascino@arm.com, luto@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [PATCH] lib: vdso: mark __cvdso_clock_getres() as static
+In-Reply-To: <e7becc50bee355e3872b84d91cc68ae8d7776bb9.1578764712.git.christophe.leroy@c-s.fr>
+References: <e7becc50bee355e3872b84d91cc68ae8d7776bb9.1578764712.git.christophe.leroy@c-s.fr>
+Date:   Sat, 11 Jan 2020 20:59:58 +0100
+Message-ID: <875zhhsr0h.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1577180285-24904-1-git-send-email-zhengbin13@huawei.com>
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 24, 2019 at 05:38:01PM +0800, zhengbin wrote:
-> zhengbin (4):
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> When __cvdso_clock_getres() became __cvdso_clock_getres_common()
+> and a new __cvdso_clock_getres() was added, static qualifier was
+> forgotten.
+>
+> Fixes: 502a590a170b ("lib/vdso: Move fallback invocation to the callers")
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-I need a "real" name here, one that you use to sign documents.
+I've already queued:
 
-Can you fix that up for all 4 of these patches and resend the series?
+     https://lore.kernel.org/r/20191128111719.8282-1-vincenzo.frascino@arm.com
 
-thanks,
+but thanks for caring!
 
-greg k-h
+Thanks,
+
+        tglx
