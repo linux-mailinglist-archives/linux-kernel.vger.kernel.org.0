@@ -2,118 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 175D1137C32
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 08:39:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE407137C3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 08:46:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728553AbgAKHj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 02:39:56 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39652 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728507AbgAKHjz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 02:39:55 -0500
-Received: by mail-pl1-f195.google.com with SMTP id g6so1750015plp.6
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Jan 2020 23:39:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sj2E8hbf+1n1JQewsDgj2Fs29eg9VqanuSP3luTlahg=;
-        b=BRq3uXnfOC/WIjl9+DbaxslikTOCbxvw6S5ZzMoh4VEfmtZlzzVlFRaHOrgci0WAyE
-         DVwlYZ/G1nx8+Y+ZCNlj/3oY8GUL2ALOuiYPxwJEykRMfQAmi3LDX1vsEy4rYKWeMEP9
-         9wXW7dXUK3CkxPh6L70MMH9ULPtXUIo6H6bJRU49x77fPNzY6G/H/HaQ7mpnd4yMgRWx
-         Ujqwg0XQgfw02W2MFxuW8EePWRt5AhXTOIegnlKtxPP+w7QIupOKFWBngtU7XMb3cFRh
-         uvPRzR9VOsY/PxEC8sZagAbNn4J2tlzh2kMr4GEPgrF8uMOjGqDoHStkZlIyY9XRsUmP
-         uLRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sj2E8hbf+1n1JQewsDgj2Fs29eg9VqanuSP3luTlahg=;
-        b=q+buk/TiXUgHRU6suX7PpGr1ZmiPAeRwOdmHQktdM+v+VrEvxe8csdxPAoYGVWs5mX
-         y4+ZKGKZcyfjv94vyOMOWGfESIACm1FR2UYXgL9/tE9f8XxI8XjSnzx1HiQxht9G9Ha2
-         exvRwSKR9UB1y+1he6ZpAThOzYLnPtpcJbDt7yICgTvrd3GNFuPcFqXpfb+wiOm6cj/L
-         Jzp6ounSDzQ5yXk9oYvNTSpQdJ1X18kaFSYSS71Jf/HSYYB768KvNx442oBSE5/sfM/g
-         JeSUXG6My1QLTRx2Oy+4XYgQETmk6AWWlXB2OFfy7DkGuSKHn6wgoKg99cIdxUfrR/oO
-         W38A==
-X-Gm-Message-State: APjAAAV+7LR32kx2tj9sQujbf3ECJdRGezv6oaiuLSsmCyBF1QjRPJPd
-        PEQnq+nWgY8C1RRfIvzykmk=
-X-Google-Smtp-Source: APXvYqzQun+14sGBUPw6UTkEDD50gGQAL0YWb8/xCo0l7Y8qM6mXd12JR0SEd2bwgk3cOVE3zuf3UQ==
-X-Received: by 2002:a17:902:61:: with SMTP id 88mr3257670pla.17.1578728394863;
-        Fri, 10 Jan 2020 23:39:54 -0800 (PST)
-Received: from localhost.localdomain ([146.196.37.13])
-        by smtp.googlemail.com with ESMTPSA id z4sm5437450pfn.42.2020.01.10.23.39.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2020 23:39:54 -0800 (PST)
-From:   Amol Grover <frextrite@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Amol Grover <frextrite@gmail.com>,
-        kbuild test robot <lkp@intel.com>
-Subject: [PATCH v3] drivers: nvme: target: core: Pass lockdep expression to RCU lists
-Date:   Sat, 11 Jan 2020 13:08:16 +0530
-Message-Id: <20200111073815.7659-1-frextrite@gmail.com>
-X-Mailer: git-send-email 2.24.1
+        id S1728553AbgAKHq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 02:46:28 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9153 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728507AbgAKHq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 02:46:28 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 58AB45A5CF57F5601BCD;
+        Sat, 11 Jan 2020 15:46:26 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.439.0; Sat, 11 Jan 2020 15:46:20 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>,
+        "Daniel Vetter" <daniel@ffwll.ch>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Thomas Zimmermann" <tzimmermann@suse.de>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        "Sam Ravnborg" <sam@ravnborg.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "Dan Carpenter" <dan.carpenter@oracle.com>
+CC:     Wei Yongjun <weiyongjun1@huawei.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next v2] drm/mgag200: Fix typo in module parameter description
+Date:   Sat, 11 Jan 2020 07:42:06 +0000
+Message-ID: <20200111074206.68290-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200110012523.33053-1-weiyongjun1@huawei.com>
+References: <20200110012523.33053-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ctrl->subsys->namespaces and subsys->namespaces are traversed with
-list_for_each_entry_rcu outside an RCU read-side critical section
-but under the protection of ctrl->subsys->lock and subsys->lock
-respectively.
+There was a typo in the MODULE_PARM_DESC(). It said that the
+module parameter was "modeset" but it's actually the description
+for "hw_bug_no_startadd".
 
-Hence, add the corresponding lockdep expression to the list traversal
-primitive to silence false-positive lockdep warnings, and
-harden RCU lists.
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Signed-off-by: Amol Grover <frextrite@gmail.com>
+Fixes: 3cacb2086e41 ("drm/mgag200: Add module parameter to pin all buffers at offset 0")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
-v3:
-- Fix error reported by kbuild test robot
+v1 -> v2: Fix the description
+---
+ drivers/gpu/drm/mgag200/mgag200_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2:
-- Fix sparse error
-  CHECK: Alignment should match open parenthesis
-- Remove global macro and use local lockdep expressions
+diff --git a/drivers/gpu/drm/mgag200/mgag200_drv.c b/drivers/gpu/drm/mgag200/mgag200_drv.c
+index 7a5bad2f57d7..2236f8ef20a4 100644
+--- a/drivers/gpu/drm/mgag200/mgag200_drv.c
++++ b/drivers/gpu/drm/mgag200/mgag200_drv.c
+@@ -28,7 +28,7 @@ MODULE_PARM_DESC(modeset, "Disable/Enable modesetting");
+ module_param_named(modeset, mgag200_modeset, int, 0400);
+ 
+ int mgag200_hw_bug_no_startadd = -1;
+-MODULE_PARM_DESC(modeset, "HW does not interpret scanout-buffer start address correctly");
++MODULE_PARM_DESC(hw_bug_no_startadd, "HW does not interpret scanout-buffer start address correctly");
+ module_param_named(hw_bug_no_startadd, mgag200_hw_bug_no_startadd, int, 0400);
+ 
+ static struct drm_driver driver;
 
- drivers/nvme/target/core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
-index 28438b833c1b..35810a0a8d21 100644
---- a/drivers/nvme/target/core.c
-+++ b/drivers/nvme/target/core.c
-@@ -555,7 +555,8 @@ int nvmet_ns_enable(struct nvmet_ns *ns)
- 	} else {
- 		struct nvmet_ns *old;
- 
--		list_for_each_entry_rcu(old, &subsys->namespaces, dev_link) {
-+		list_for_each_entry_rcu(old, &subsys->namespaces, dev_link,
-+					lockdep_is_held(&subsys->lock)) {
- 			BUG_ON(ns->nsid == old->nsid);
- 			if (ns->nsid < old->nsid)
- 				break;
-@@ -1172,7 +1173,8 @@ static void nvmet_setup_p2p_ns_map(struct nvmet_ctrl *ctrl,
- 
- 	ctrl->p2p_client = get_device(req->p2p_client);
- 
--	list_for_each_entry_rcu(ns, &ctrl->subsys->namespaces, dev_link)
-+	list_for_each_entry_rcu(ns, &ctrl->subsys->namespaces, dev_link,
-+				lockdep_is_held(&ctrl->subsys->lock))
- 		nvmet_p2pmem_ns_add_p2p(ctrl, ns);
- }
- 
--- 
-2.24.1
 
