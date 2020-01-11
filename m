@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AB0B137EE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:14:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64A51137E7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:10:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730177AbgAKKOs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:14:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55126 "EHLO mail.kernel.org"
+        id S1729858AbgAKKK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:10:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729423AbgAKKOo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:14:44 -0500
+        id S1729346AbgAKKK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:10:27 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3347120673;
-        Sat, 11 Jan 2020 10:14:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37DF02084D;
+        Sat, 11 Jan 2020 10:10:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737684;
-        bh=jnChr6xfx1BLBTep35l10JmYx7icGyU5b8Qk13BPgbU=;
+        s=default; t=1578737427;
+        bh=++ratIWmAhE5tE4tsd1sFbpNc6dWgtnuWykcqSCiRKg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=scIoXYBVbS4WEvwnzDVur67SJ70M1xl5JDYMiHlhPB7f0Y0EdoKxBsuy53mOTmJ+W
-         iY559mpFHa0hr1bNjzLhw3fmFNr3Sb1iFXQqwUi6vave1Ai+mozTvowBZm1X6Jw4pU
-         /uPtAjGUTLdrEupMD6QzQwxkM6aO3OJ3g29ox+fM=
+        b=XK7LkKImW3iZuNg3lDKec/mblWQ+xg7cA0A6AxqlnlpStBYEXeufXKlwWircmGcB8
+         xYoXjsLnGLfXNT5dSkWClYsY1H992Pw0JRW3hOGxJHT9j5pbKQ9kqVQF9Rd8VySSBT
+         gSnARJrBKPnytlIMY4BkgsFrJbOj0LnF5QkVhuWY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
+        stable@vger.kernel.org, Mahshid Khezri <khezri.mahshid@gmail.com>,
+        Paul Chaignon <paul.chaignon@orange.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 22/84] selftests/ftrace: Fix multiple kprobe testcase
-Date:   Sat, 11 Jan 2020 10:49:59 +0100
-Message-Id: <20200111094853.877097419@linuxfoundation.org>
+Subject: [PATCH 4.14 18/62] bpf, mips: Limit to 33 tail calls
+Date:   Sat, 11 Jan 2020 10:50:00 +0100
+Message-Id: <20200111094843.640761734@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
-References: <20200111094845.328046411@linuxfoundation.org>
+In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
+References: <20200111094837.425430968@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +46,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Paul Chaignon <paul.chaignon@orange.com>
 
-[ Upstream commit 5cc6c8d4a99d0ee4d5466498e258e593df1d3eb6 ]
+[ Upstream commit e49e6f6db04e915dccb494ae10fa14888fea6f89 ]
 
-Fix multiple kprobe event testcase to work it correctly.
-There are 2 bugfixes.
- - Since `wc -l FILE` returns not only line number but also
-   FILE filename, following "if" statement always failed.
-   Fix this bug by replacing it with 'cat FILE | wc -l'
- - Since "while do-done loop" block with pipeline becomes a
-   subshell, $N local variable is not update outside of
-   the loop.
-   Fix this bug by using actual target number (256) instead
-   of $N.
+All BPF JIT compilers except RISC-V's and MIPS' enforce a 33-tail calls
+limit at runtime.  In addition, a test was recently added, in tailcalls2,
+to check this limit.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+This patch updates the tail call limit in MIPS' JIT compiler to allow
+33 tail calls.
+
+Fixes: b6bd53f9c4e8 ("MIPS: Add missing file for eBPF JIT.")
+Reported-by: Mahshid Khezri <khezri.mahshid@gmail.com>
+Signed-off-by: Paul Chaignon <paul.chaignon@orange.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Martin KaFai Lau <kafai@fb.com>
+Link: https://lore.kernel.org/bpf/b8eb2caac1c25453c539248e56ca22f74b5316af.1575916815.git.paul.chaignon@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../selftests/ftrace/test.d/kprobe/multiple_kprobes.tc      | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/mips/net/ebpf_jit.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/multiple_kprobes.tc b/tools/testing/selftests/ftrace/test.d/kprobe/multiple_kprobes.tc
-index ce361b9d62cf..da298f191086 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/multiple_kprobes.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/multiple_kprobes.tc
-@@ -25,9 +25,9 @@ while read i; do
-   test $N -eq 256 && break
- done
+diff --git a/arch/mips/net/ebpf_jit.c b/arch/mips/net/ebpf_jit.c
+index 42faa95ce664..57a7a9d68475 100644
+--- a/arch/mips/net/ebpf_jit.c
++++ b/arch/mips/net/ebpf_jit.c
+@@ -612,6 +612,7 @@ static void emit_const_to_reg(struct jit_ctx *ctx, int dst, u64 value)
+ static int emit_bpf_tail_call(struct jit_ctx *ctx, int this_idx)
+ {
+ 	int off, b_off;
++	int tcc_reg;
  
--L=`wc -l kprobe_events`
--if [ $L -ne $N ]; then
--  echo "The number of kprobes events ($L) is not $N"
-+L=`cat kprobe_events | wc -l`
-+if [ $L -ne 256 ]; then
-+  echo "The number of kprobes events ($L) is not 256"
-   exit_fail
- fi
- 
+ 	ctx->flags |= EBPF_SEEN_TC;
+ 	/*
+@@ -624,14 +625,14 @@ static int emit_bpf_tail_call(struct jit_ctx *ctx, int this_idx)
+ 	b_off = b_imm(this_idx + 1, ctx);
+ 	emit_instr(ctx, bne, MIPS_R_AT, MIPS_R_ZERO, b_off);
+ 	/*
+-	 * if (--TCC < 0)
++	 * if (TCC-- < 0)
+ 	 *     goto out;
+ 	 */
+ 	/* Delay slot */
+-	emit_instr(ctx, daddiu, MIPS_R_T5,
+-		   (ctx->flags & EBPF_TCC_IN_V1) ? MIPS_R_V1 : MIPS_R_S4, -1);
++	tcc_reg = (ctx->flags & EBPF_TCC_IN_V1) ? MIPS_R_V1 : MIPS_R_S4;
++	emit_instr(ctx, daddiu, MIPS_R_T5, tcc_reg, -1);
+ 	b_off = b_imm(this_idx + 1, ctx);
+-	emit_instr(ctx, bltz, MIPS_R_T5, b_off);
++	emit_instr(ctx, bltz, tcc_reg, b_off);
+ 	/*
+ 	 * prog = array->ptrs[index];
+ 	 * if (prog == NULL)
 -- 
 2.20.1
 
