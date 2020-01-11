@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52F7C138070
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:29:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E213F137F3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:17:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731371AbgAKK3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:29:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38990 "EHLO mail.kernel.org"
+        id S1730297AbgAKKRk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:17:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731272AbgAKK3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:29:38 -0500
+        id S1728946AbgAKKRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:17:39 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FD7520880;
-        Sat, 11 Jan 2020 10:29:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5163B205F4;
+        Sat, 11 Jan 2020 10:17:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738577;
-        bh=eey/jIOQdDv4cfBwSo8CUBqPBv1XGXv1qTVhHdX9euA=;
+        s=default; t=1578737858;
+        bh=8HqPpUK4lbbYZ29XPFjNX0qGSsN6mCtBaDarIVX60QU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1oXReLlWjuJvGIyJEXQeG4cdBvHw/IfUY1vwGhIYw8pgVRn9cgPmIxwluwV4CuS/T
-         UK4+cugxz8gBQL5ffWhPV+4x0+gqlyHCdYmlDEU3Q/um2YU8qjp48icywxPqun77na
-         MKkwMkAg8PoZU5rtoIbgruhjkOQeFZizYA9/d5SI=
+        b=nq2tadundeYr3j3ojroYgpNy99VMFaxEMwLR+y3jSAV/nWKv4lW9RWUsdOjF23/z/
+         y1xcHf0EaWyH+nD6r4w965ZB//7yRQBt9HrPRelxlNT/JmXDyj174RV1DyRPJkSaZ/
+         as6Bt5egAJCFsWa3A33JvI+qlCeHsrL1zDfmfOGw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maxim Mikityanskiy <maximmi@mellanox.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 120/165] net/mlx5e: Fix concurrency issues between config flow and XSK
+        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        =?UTF-8?q?S=C3=A9bastien=20Szymanski?= 
+        <sebastien.szymanski@armadeus.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+Subject: [PATCH 4.19 62/84] cpufreq: imx6q: read OCOTP through nvmem for imx6ul/imx6ull
 Date:   Sat, 11 Jan 2020 10:50:39 +0100
-Message-Id: <20200111094933.573141698@linuxfoundation.org>
+Message-Id: <20200111094909.497698930@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-References: <20200111094921.347491861@linuxfoundation.org>
+In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
+References: <20200111094845.328046411@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,177 +47,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxim Mikityanskiy <maximmi@mellanox.com>
+From: Anson Huang <Anson.Huang@nxp.com>
 
-[ Upstream commit 9cf88808ad6a0f1e958e00abd9a081295fe6da0c ]
+commit 2733fb0d0699246711cf622e0e2faf02a05b69dc upstream.
 
-After disabling resources necessary for XSK (the XDP program, channels,
-XSK queues), use synchronize_rcu to wait until the XSK wakeup function
-finishes, before freeing the resources.
+On i.MX6UL/i.MX6ULL, accessing OCOTP directly is wrong because
+the ocotp clock needs to be enabled first. Add support for reading
+OCOTP through the nvmem API, and keep the old method there to
+support old dtb.
 
-Suspend XSK wakeups during switching channels. If the XDP program is
-being removed, synchronize_rcu before closing the old channels to allow
-XSK wakeup to complete.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Maxim Mikityanskiy <maximmi@mellanox.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Link: https://lore.kernel.org/bpf/20191217162023.16011-3-maximmi@mellanox.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en.h  |  2 +-
- .../net/ethernet/mellanox/mlx5/core/en/xdp.h  | 22 ++++++++-----------
- .../mellanox/mlx5/core/en/xsk/setup.c         |  1 +
- .../ethernet/mellanox/mlx5/core/en/xsk/tx.c   |  2 +-
- .../net/ethernet/mellanox/mlx5/core/en_main.c | 19 +---------------
- 5 files changed, 13 insertions(+), 33 deletions(-)
+ drivers/cpufreq/imx6q-cpufreq.c |   52 ++++++++++++++++++++++++++--------------
+ 1 file changed, 35 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en.h b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-index 2c16add0b642..9c8427698238 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-@@ -760,7 +760,7 @@ enum {
- 	MLX5E_STATE_OPENED,
- 	MLX5E_STATE_DESTROYING,
- 	MLX5E_STATE_XDP_TX_ENABLED,
--	MLX5E_STATE_XDP_OPEN,
-+	MLX5E_STATE_XDP_ACTIVE,
- };
+--- a/drivers/cpufreq/imx6q-cpufreq.c
++++ b/drivers/cpufreq/imx6q-cpufreq.c
+@@ -12,6 +12,7 @@
+ #include <linux/cpu_cooling.h>
+ #include <linux/err.h>
+ #include <linux/module.h>
++#include <linux/nvmem-consumer.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/pm_opp.h>
+@@ -295,20 +296,32 @@ put_node:
+ #define OCOTP_CFG3_6ULL_SPEED_792MHZ	0x2
+ #define OCOTP_CFG3_6ULL_SPEED_900MHZ	0x3
  
- struct mlx5e_rqt {
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.h b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.h
-index 36ac1e3816b9..d7587f40ecae 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.h
-@@ -75,12 +75,18 @@ int mlx5e_xdp_xmit(struct net_device *dev, int n, struct xdp_frame **frames,
- static inline void mlx5e_xdp_tx_enable(struct mlx5e_priv *priv)
+-static void imx6ul_opp_check_speed_grading(struct device *dev)
++static int imx6ul_opp_check_speed_grading(struct device *dev)
  {
- 	set_bit(MLX5E_STATE_XDP_TX_ENABLED, &priv->state);
+-	struct device_node *np;
+-	void __iomem *base;
+ 	u32 val;
++	int ret = 0;
+ 
+-	np = of_find_compatible_node(NULL, NULL, "fsl,imx6ul-ocotp");
+-	if (!np)
+-		return;
++	if (of_find_property(dev->of_node, "nvmem-cells", NULL)) {
++		ret = nvmem_cell_read_u32(dev, "speed_grade", &val);
++		if (ret)
++			return ret;
++	} else {
++		struct device_node *np;
++		void __iomem *base;
+ 
+-	base = of_iomap(np, 0);
+-	if (!base) {
+-		dev_err(dev, "failed to map ocotp\n");
+-		goto put_node;
++		np = of_find_compatible_node(NULL, NULL, "fsl,imx6ul-ocotp");
++		if (!np)
++			return -ENOENT;
 +
-+	if (priv->channels.params.xdp_prog)
-+		set_bit(MLX5E_STATE_XDP_ACTIVE, &priv->state);
- }
- 
- static inline void mlx5e_xdp_tx_disable(struct mlx5e_priv *priv)
- {
-+	if (priv->channels.params.xdp_prog)
-+		clear_bit(MLX5E_STATE_XDP_ACTIVE, &priv->state);
++		base = of_iomap(np, 0);
++		of_node_put(np);
++		if (!base) {
++			dev_err(dev, "failed to map ocotp\n");
++			return -EFAULT;
++		}
 +
- 	clear_bit(MLX5E_STATE_XDP_TX_ENABLED, &priv->state);
--	/* let other device's napi(s) see our new state */
-+	/* Let other device's napi(s) and XSK wakeups see our new state. */
- 	synchronize_rcu();
++		val = readl_relaxed(base + OCOTP_CFG3);
++		iounmap(base);
+ 	}
+ 
+ 	/*
+@@ -319,7 +332,6 @@ static void imx6ul_opp_check_speed_gradi
+ 	 * 2b'11: 900000000Hz on i.MX6ULL only;
+ 	 * We need to set the max speed of ARM according to fuse map.
+ 	 */
+-	val = readl_relaxed(base + OCOTP_CFG3);
+ 	val >>= OCOTP_CFG3_SPEED_SHIFT;
+ 	val &= 0x3;
+ 
+@@ -339,9 +351,7 @@ static void imx6ul_opp_check_speed_gradi
+ 				dev_warn(dev, "failed to disable 900MHz OPP\n");
+ 	}
+ 
+-	iounmap(base);
+-put_node:
+-	of_node_put(np);
++	return ret;
  }
  
-@@ -89,19 +95,9 @@ static inline bool mlx5e_xdp_tx_is_enabled(struct mlx5e_priv *priv)
- 	return test_bit(MLX5E_STATE_XDP_TX_ENABLED, &priv->state);
- }
+ static int imx6q_cpufreq_probe(struct platform_device *pdev)
+@@ -399,10 +409,18 @@ static int imx6q_cpufreq_probe(struct pl
+ 	}
  
--static inline void mlx5e_xdp_set_open(struct mlx5e_priv *priv)
--{
--	set_bit(MLX5E_STATE_XDP_OPEN, &priv->state);
--}
--
--static inline void mlx5e_xdp_set_closed(struct mlx5e_priv *priv)
--{
--	clear_bit(MLX5E_STATE_XDP_OPEN, &priv->state);
--}
--
--static inline bool mlx5e_xdp_is_open(struct mlx5e_priv *priv)
-+static inline bool mlx5e_xdp_is_active(struct mlx5e_priv *priv)
- {
--	return test_bit(MLX5E_STATE_XDP_OPEN, &priv->state);
-+	return test_bit(MLX5E_STATE_XDP_ACTIVE, &priv->state);
- }
- 
- static inline void mlx5e_xmit_xdp_doorbell(struct mlx5e_xdpsq *sq)
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/setup.c b/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/setup.c
-index 631af8dee517..c28cbae42331 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/setup.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/setup.c
-@@ -144,6 +144,7 @@ void mlx5e_close_xsk(struct mlx5e_channel *c)
- {
- 	clear_bit(MLX5E_CHANNEL_STATE_XSK, c->state);
- 	napi_synchronize(&c->napi);
-+	synchronize_rcu(); /* Sync with the XSK wakeup. */
- 
- 	mlx5e_close_rq(&c->xskrq);
- 	mlx5e_close_cq(&c->xskrq.cq);
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/tx.c b/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/tx.c
-index 87827477d38c..fe2d596cb361 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/tx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/tx.c
-@@ -14,7 +14,7 @@ int mlx5e_xsk_wakeup(struct net_device *dev, u32 qid, u32 flags)
- 	struct mlx5e_channel *c;
- 	u16 ix;
- 
--	if (unlikely(!mlx5e_xdp_is_open(priv)))
-+	if (unlikely(!mlx5e_xdp_is_active(priv)))
- 		return -ENETDOWN;
- 
- 	if (unlikely(!mlx5e_qid_get_ch_if_in_group(params, qid, MLX5E_RQ_GROUP_XSK, &ix)))
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-index 6abd4ed5b69b..29a5a8c894e3 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -3002,12 +3002,9 @@ void mlx5e_timestamp_init(struct mlx5e_priv *priv)
- int mlx5e_open_locked(struct net_device *netdev)
- {
- 	struct mlx5e_priv *priv = netdev_priv(netdev);
--	bool is_xdp = priv->channels.params.xdp_prog;
- 	int err;
- 
- 	set_bit(MLX5E_STATE_OPENED, &priv->state);
--	if (is_xdp)
--		mlx5e_xdp_set_open(priv);
- 
- 	err = mlx5e_open_channels(priv, &priv->channels);
- 	if (err)
-@@ -3022,8 +3019,6 @@ int mlx5e_open_locked(struct net_device *netdev)
- 	return 0;
- 
- err_clear_state_opened_flag:
--	if (is_xdp)
--		mlx5e_xdp_set_closed(priv);
- 	clear_bit(MLX5E_STATE_OPENED, &priv->state);
- 	return err;
- }
-@@ -3055,8 +3050,6 @@ int mlx5e_close_locked(struct net_device *netdev)
- 	if (!test_bit(MLX5E_STATE_OPENED, &priv->state))
- 		return 0;
- 
--	if (priv->channels.params.xdp_prog)
--		mlx5e_xdp_set_closed(priv);
- 	clear_bit(MLX5E_STATE_OPENED, &priv->state);
- 
- 	netif_carrier_off(priv->netdev);
-@@ -4373,16 +4366,6 @@ static int mlx5e_xdp_allowed(struct mlx5e_priv *priv, struct bpf_prog *prog)
- 	return 0;
- }
- 
--static int mlx5e_xdp_update_state(struct mlx5e_priv *priv)
--{
--	if (priv->channels.params.xdp_prog)
--		mlx5e_xdp_set_open(priv);
+ 	if (of_machine_is_compatible("fsl,imx6ul") ||
+-	    of_machine_is_compatible("fsl,imx6ull"))
+-		imx6ul_opp_check_speed_grading(cpu_dev);
 -	else
--		mlx5e_xdp_set_closed(priv);
--
--	return 0;
--}
--
- static int mlx5e_xdp_set(struct net_device *netdev, struct bpf_prog *prog)
- {
- 	struct mlx5e_priv *priv = netdev_priv(netdev);
-@@ -4422,7 +4405,7 @@ static int mlx5e_xdp_set(struct net_device *netdev, struct bpf_prog *prog)
- 		mlx5e_set_rq_type(priv->mdev, &new_channels.params);
- 		old_prog = priv->channels.params.xdp_prog;
++	    of_machine_is_compatible("fsl,imx6ull")) {
++		ret = imx6ul_opp_check_speed_grading(cpu_dev);
++		if (ret == -EPROBE_DEFER)
++			return ret;
++		if (ret) {
++			dev_err(cpu_dev, "failed to read ocotp: %d\n",
++				ret);
++			return ret;
++		}
++	} else {
+ 		imx6q_opp_check_speed_grading(cpu_dev);
++	}
  
--		err = mlx5e_safe_switch_channels(priv, &new_channels, mlx5e_xdp_update_state);
-+		err = mlx5e_safe_switch_channels(priv, &new_channels, NULL);
- 		if (err)
- 			goto unlock;
- 	} else {
--- 
-2.20.1
-
+ 	/* Because we have added the OPPs here, we must free them */
+ 	free_opp = true;
 
 
