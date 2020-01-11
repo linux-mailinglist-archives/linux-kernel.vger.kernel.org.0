@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A18CD137FB8
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:22:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4856C137DB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:00:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730838AbgAKKW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:22:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47708 "EHLO mail.kernel.org"
+        id S1729372AbgAKKA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:00:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730486AbgAKKW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:22:27 -0500
+        id S1729185AbgAKKA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:00:26 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D1C42087F;
-        Sat, 11 Jan 2020 10:22:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C58662082E;
+        Sat, 11 Jan 2020 10:00:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738147;
-        bh=ROlknTGA/2BYqN4mekQwMRs65sDEbN41Qs3dZ6Eh23w=;
+        s=default; t=1578736825;
+        bh=ymVgdOoEAFWU4jK0LXVfQteJ4Fzw/vFX8zfX+147bdE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IrgIgBFrs2pD460VeGTMjCFLod3pnC2BYgYzWwVeQ6E0A4iOwcWoIt5AxRJbO5GAN
-         r6S61vdNoYOqylaoRZ+aVgSw15+/lYF8/aIKpGVDQzhUb4ZehSWsptaL3JAq3BJSoK
-         HmkMOGUtsA6dRszMVmK6LoBM5wSW/iRkHrqr1UD0=
+        b=FANfavlqjckXgxNpukAy2A0NiAXaE38M6uNG8EQC+Rl269HicBV9p9sWVVvhl43My
+         2xuTfLBrbXVth1pI13MUTlYcWRL/WJmaOI2oiP3UTGAHQZVjHE1RQ6XZWqrEDkaWfm
+         fDKwjAfJAVDS3OcmqRQ/BcE9sHVUVTv3S+ilI3pE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org,
+        syzbot+c732f8644185de340492@syzkaller.appspotmail.com,
+        Brian Foster <bfoster@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 029/165] netfilter: nf_tables: validate NFT_SET_ELEM_INTERVAL_END
+Subject: [PATCH 4.9 15/91] xfs: fix mount failure crash on invalid iclog memory access
 Date:   Sat, 11 Jan 2020 10:49:08 +0100
-Message-Id: <20200111094923.157271850@linuxfoundation.org>
+Message-Id: <20200111094848.660860249@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-References: <20200111094921.347491861@linuxfoundation.org>
+In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
+References: <20200111094844.748507863@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,48 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pablo Neira Ayuso <pablo@netfilter.org>
+From: Brian Foster <bfoster@redhat.com>
 
-[ Upstream commit bffc124b6fe37d0ae9b428d104efb426403bb5c9 ]
+[ Upstream commit 798a9cada4694ca8d970259f216cec47e675bfd5 ]
 
-Only NFTA_SET_ELEM_KEY and NFTA_SET_ELEM_FLAGS make sense for elements
-whose NFT_SET_ELEM_INTERVAL_END flag is set on.
+syzbot (via KASAN) reports a use-after-free in the error path of
+xlog_alloc_log(). Specifically, the iclog freeing loop doesn't
+handle the case of a fully initialized ->l_iclog linked list.
+Instead, it assumes that the list is partially constructed and NULL
+terminated.
 
-Fixes: 96518518cc41 ("netfilter: add nftables")
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+This bug manifested because there was no possible error scenario
+after iclog list setup when the original code was added.  Subsequent
+code and associated error conditions were added some time later,
+while the original error handling code was never updated. Fix up the
+error loop to terminate either on a NULL iclog or reaching the end
+of the list.
+
+Reported-by: syzbot+c732f8644185de340492@syzkaller.appspotmail.com
+Signed-off-by: Brian Foster <bfoster@redhat.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_tables_api.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ fs/xfs/xfs_log.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index 712a428509ad..7120eba71ac5 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -4489,14 +4489,20 @@ static int nft_add_set_elem(struct nft_ctx *ctx, struct nft_set *set,
- 		if (nla[NFTA_SET_ELEM_DATA] == NULL &&
- 		    !(flags & NFT_SET_ELEM_INTERVAL_END))
- 			return -EINVAL;
--		if (nla[NFTA_SET_ELEM_DATA] != NULL &&
--		    flags & NFT_SET_ELEM_INTERVAL_END)
--			return -EINVAL;
- 	} else {
- 		if (nla[NFTA_SET_ELEM_DATA] != NULL)
- 			return -EINVAL;
+diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
+index 33c9a3aae948..7bfcd09d446b 100644
+--- a/fs/xfs/xfs_log.c
++++ b/fs/xfs/xfs_log.c
+@@ -1540,6 +1540,8 @@ xlog_alloc_log(
+ 		if (iclog->ic_bp)
+ 			xfs_buf_free(iclog->ic_bp);
+ 		kmem_free(iclog);
++		if (prev_iclog == log->l_iclog)
++			break;
  	}
- 
-+	if ((flags & NFT_SET_ELEM_INTERVAL_END) &&
-+	     (nla[NFTA_SET_ELEM_DATA] ||
-+	      nla[NFTA_SET_ELEM_OBJREF] ||
-+	      nla[NFTA_SET_ELEM_TIMEOUT] ||
-+	      nla[NFTA_SET_ELEM_EXPIRATION] ||
-+	      nla[NFTA_SET_ELEM_USERDATA] ||
-+	      nla[NFTA_SET_ELEM_EXPR]))
-+		return -EINVAL;
-+
- 	timeout = 0;
- 	if (nla[NFTA_SET_ELEM_TIMEOUT] != NULL) {
- 		if (!(set->flags & NFT_SET_TIMEOUT))
+ 	spinlock_destroy(&log->l_icloglock);
+ 	xfs_buf_free(log->l_xbuf);
 -- 
 2.20.1
 
