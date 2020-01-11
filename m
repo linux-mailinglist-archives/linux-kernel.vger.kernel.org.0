@@ -2,74 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE407137C3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 08:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A7AE137C36
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 08:43:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728553AbgAKHq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 02:46:28 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9153 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728507AbgAKHq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 02:46:28 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 58AB45A5CF57F5601BCD;
-        Sat, 11 Jan 2020 15:46:26 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Sat, 11 Jan 2020 15:46:20 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>,
-        "Daniel Vetter" <daniel@ffwll.ch>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Thomas Zimmermann" <tzimmermann@suse.de>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        "Sam Ravnborg" <sam@ravnborg.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>
-CC:     Wei Yongjun <weiyongjun1@huawei.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next v2] drm/mgag200: Fix typo in module parameter description
-Date:   Sat, 11 Jan 2020 07:42:06 +0000
-Message-ID: <20200111074206.68290-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200110012523.33053-1-weiyongjun1@huawei.com>
-References: <20200110012523.33053-1-weiyongjun1@huawei.com>
-MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+        id S1728548AbgAKHnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 02:43:09 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33720 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728507AbgAKHnI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 02:43:08 -0500
+Received: by mail-wr1-f65.google.com with SMTP id b6so3888581wrq.0;
+        Fri, 10 Jan 2020 23:43:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to;
+        bh=7phXSgAkhV7ekY+XxbbLPgZzgDKYvBOEXbRLHHpKIRM=;
+        b=RiwLzAiADjNU/CdyggCMb4mC3tAkhOf/tdXXpjZGd0923CM74Nwwwg4xxLJQrX7c69
+         DtVyroORkLm4kZI6fWasSzTvLxPTjryytOT7sOfsmMMANDvIHs06tPEd8km9VCIUumuw
+         88L4s8w7oj5wqKMX7X0dUzmwpgJWfbKc1V8+sdFGKJUfX0lTaLoV8cH809OCNznwxPSm
+         z6f6eBeVAwMG9FJNoSa4N2jNY9TfpM04GTn7jsetbGzdD89Z9SPOljf3wFWN5yh3xlqp
+         P+kbJB/o2kU/OHaSzhPWwAfixETFkGRfgkOyzZ61zC6LhoDAq5jwo6dSMyjkTuhNd1nX
+         hU4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to;
+        bh=7phXSgAkhV7ekY+XxbbLPgZzgDKYvBOEXbRLHHpKIRM=;
+        b=GjI3q/qsJWgUUlyUN+x9jp/iGjShMlSygMGeT5W//oNW5S3u+Dvg7wmTFRXqSRFSV+
+         OqL52+OHuOnsPg9Rt5vZEDHkzbwsly0pYTNvAtY2pFZb+BlQrT4CL0hBpH7enf0mhcbP
+         twdPRlpy0uGy3lNBJ2DLEw1dUwHmbwuqs0A5MIngy2pb7p7XyqNOEsJ3EjACLcuR0KnE
+         5kRQjW8DM0d30rmeHFbXakCaJfM+2a0Vp82id0WpJs/NphzNkPSby0ATFfSKAcCD7RCJ
+         ijHro7pbTEQpMBOWZXeP4SrGnkPPdi6DVCO1ETQNFNF8oKb5XMupEAyoEhfH4gBtrqQd
+         8MUg==
+X-Gm-Message-State: APjAAAXps345GZ3X6d7LLyyAQA9CfIcCnhHSXZZ9GDqIq32US6B+Zxma
+        HG2Lz9yEoJQln1zG7SeGR99kte3+
+X-Google-Smtp-Source: APXvYqyRmODzfldBA8D/NN893xpmrLQXVhwM3VmayHW+WSWW0/eolokZQbHHru134cl6zX8cgpAI7w==
+X-Received: by 2002:adf:e641:: with SMTP id b1mr7581841wrn.34.1578728587074;
+        Fri, 10 Jan 2020 23:43:07 -0800 (PST)
+Received: from localhost.localdomain ([2a02:2450:10d2:194d:d1f3:c74b:f29c:a970])
+        by smtp.gmail.com with ESMTPSA id r68sm5236515wmr.43.2020.01.10.23.43.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2020 23:43:06 -0800 (PST)
+From:   SeongJae Park <sj38.park@gmail.com>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, linux-api@vger.kernel.org,
+        oleksandr@redhat.com, Suren Baghdasaryan <surenb@google.com>,
+        Tim Murray <timmurray@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        John Dias <joaodias@google.com>
+Subject: Re: [PATCH 4/4] mm/madvise: allow KSM hints for remote API
+Date:   Sat, 11 Jan 2020 08:42:59 +0100
+Message-Id: <20200111074259.25577-1-sj38.park@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200110213433.94739-5-minchan@kernel.org> (raw)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There was a typo in the MODULE_PARM_DESC(). It said that the
-module parameter was "modeset" but it's actually the description
-for "hw_bug_no_startadd".
+On Fri, 10 Jan 2020 13:34:33 -0800 Minchan Kim <minchan@kernel.org> wrote:
 
-Fixes: 3cacb2086e41 ("drm/mgag200: Add module parameter to pin all buffers at offset 0")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
-v1 -> v2: Fix the description
----
- drivers/gpu/drm/mgag200/mgag200_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> From: Oleksandr Natalenko <oleksandr@redhat.com>
+> 
+> It all began with the fact that KSM works only on memory that is marked
+> by madvise(). And the only way to get around that is to either:
+> 
+>   * use LD_PRELOAD; or
+>   * patch the kernel with something like UKSM or PKSM.
+> 
+> (i skip ptrace can of worms here intentionally)
+> 
+> To overcome this restriction, lets employ a new remote madvise API. This
+> can be used by some small userspace helper daemon that will do auto-KSM
+> job for us.
+> 
+> I think of two major consumers of remote KSM hints:
+> 
+>   * hosts, that run containers, especially similar ones and especially in
+>     a trusted environment, sharing the same runtime like Node.js;
+> 
+>   * heavy applications, that can be run in multiple instances, not
+>     limited to opensource ones like Firefox, but also those that cannot be
+>     modified since they are binary-only and, maybe, statically linked.
+> 
+> Speaking of statistics, more numbers can be found in the very first
+> submission, that is related to this one [1]. For my current setup with
+> two Firefox instances I get 100 to 200 MiB saved for the second instance
+> depending on the amount of tabs.
+> 
+> 1 FF instance with 15 tabs:
+> 
+>    $ echo "$(cat /sys/kernel/mm/ksm/pages_sharing) * 4 / 1024" | bc
+>    410
+> 
+> 2 FF instances, second one has 12 tabs (all the tabs are different):
+> 
+>    $ echo "$(cat /sys/kernel/mm/ksm/pages_sharing) * 4 / 1024" | bc
+>    592
+> 
+> At the very moment I do not have specific numbers for containerised
+> workload, but those should be comparable in case the containers share
+> similar/same runtime.
+> 
+> [1] https://lore.kernel.org/patchwork/patch/1012142/
+> 
+> Signed-off-by: Oleksandr Natalenko <oleksandr@redhat.com>
+> Signed-off-by: Minchan Kim <minchan@kernel.org>
 
-diff --git a/drivers/gpu/drm/mgag200/mgag200_drv.c b/drivers/gpu/drm/mgag200/mgag200_drv.c
-index 7a5bad2f57d7..2236f8ef20a4 100644
---- a/drivers/gpu/drm/mgag200/mgag200_drv.c
-+++ b/drivers/gpu/drm/mgag200/mgag200_drv.c
-@@ -28,7 +28,7 @@ MODULE_PARM_DESC(modeset, "Disable/Enable modesetting");
- module_param_named(modeset, mgag200_modeset, int, 0400);
- 
- int mgag200_hw_bug_no_startadd = -1;
--MODULE_PARM_DESC(modeset, "HW does not interpret scanout-buffer start address correctly");
-+MODULE_PARM_DESC(hw_bug_no_startadd, "HW does not interpret scanout-buffer start address correctly");
- module_param_named(hw_bug_no_startadd, mgag200_hw_bug_no_startadd, int, 0400);
- 
- static struct drm_driver driver;
+Reviewed-by: SeongJae Park <sjpark@amazon.de>
 
-
-
+> ---
+>  mm/madvise.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index eb42b2b7f49b..3aa9aec6bfd9 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -1000,6 +1000,8 @@ process_madvise_behavior_valid(int behavior)
+>  	switch (behavior) {
+>  	case MADV_COLD:
+>  	case MADV_PAGEOUT:
+> +	case MADV_MERGEABLE:
+> +	case MADV_UNMERGEABLE:
+>  		return true;
+>  	default:
+>  		return false;
+> -- 
+> 2.25.0.rc1.283.g88dfdc4193-goog
