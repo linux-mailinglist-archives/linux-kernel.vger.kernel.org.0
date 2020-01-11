@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F756137E84
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:11:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDCD3137ED8
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:14:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729925AbgAKKKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:10:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47620 "EHLO mail.kernel.org"
+        id S1730155AbgAKKOY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:14:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729229AbgAKKKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:10:48 -0500
+        id S1729762AbgAKKOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:14:23 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8B5920673;
-        Sat, 11 Jan 2020 10:10:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6489720673;
+        Sat, 11 Jan 2020 10:14:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737448;
+        s=default; t=1578737662;
         bh=J0cPKhFxQCuZu+uLL9G/eNDy4tjEa8vlQ6PtGjaXh5k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SjRgztevO2APNaH4Gzf/zopg2VOMVvrJ9R5KpZMJO+WMHj6YlQVNyJaNrJN/n5F2A
-         6tE6c6Ve6tsDddqFJfb7RhGyKC8Cia/vhnQnxjNaK5AlwNmMonA2Icghk0UAkGG1fW
-         6q38WUxf+F2fIVCSEdAASXPAchX5QansVjFDK2l8=
+        b=c8xlP5CcUnJ9xltQuQ9keOQzmn3DMTF3GZKoO0rjYRy7tgPiER8uVyNs9bTXRfYN8
+         cjPA7RqUCEAAZAC9n4bkHc0Rd0BWzAiObsDr46K6OjKnC5CRsmwv4DIVBuP3TahtoU
+         BhKlXviZIUew4D4Su7zTR4pkuYtQBesrZZyi+znI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Phil Sutter <phil@nwl.cc>,
         Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 12/62] netfilter: uapi: Avoid undefined left-shift in xt_sctp.h
+Subject: [PATCH 4.19 17/84] netfilter: uapi: Avoid undefined left-shift in xt_sctp.h
 Date:   Sat, 11 Jan 2020 10:49:54 +0100
-Message-Id: <20200111094842.530267605@linuxfoundation.org>
+Message-Id: <20200111094851.570126625@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
-References: <20200111094837.425430968@linuxfoundation.org>
+In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
+References: <20200111094845.328046411@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
