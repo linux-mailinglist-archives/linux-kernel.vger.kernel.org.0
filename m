@@ -2,147 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7276138299
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 18:20:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B9AF1382B7
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 18:49:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730588AbgAKRUv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 12:20:51 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:47029 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730519AbgAKRUv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 12:20:51 -0500
-Received: by mail-qt1-f196.google.com with SMTP id g1so5082300qtr.13
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Jan 2020 09:20:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TAr5OK9nYYr6KPzytVTTj/GP8wLPVsT/jCkjRteOAkU=;
-        b=O8W2kT8SOx19v+19A/C+AcDBh/FhX6z5VriorQFDMEZcnoi5Tet7IdI2bw5BMOR9EF
-         ZCoV5kyUP4L9W9OAYEsfW7b6OnTHCQ1nDRYbX22msxD6cljwazHyAPNgwu4NUYAm7KG/
-         6nheoLEb+QockYF74HAQjxFezhfLkiRFaPYW99vnD+b22ODx5F3xqlYiKhX7RMHFLY2t
-         BqaTKn1cL3gsH+g9mEwtZtTXrnBHoL8eqpv0yZ5dAenQqXlNYdWKO8uPUgM06bkIee62
-         q/V5tKltz+gAQFSMqLSGF29JMYv1ei/Ww2SQGGPZx0SBQu8/Vhm1Rp4yTRRpxW5aGQIh
-         xq+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TAr5OK9nYYr6KPzytVTTj/GP8wLPVsT/jCkjRteOAkU=;
-        b=tsw7fvBON+1dlWYTHVO7Icba4bNNGbntB3BqjKunBHglgrjymYIpdoQA3fpHNWWnU3
-         CfIymy5CWBxK1rQk/DzNPY4+07dCuCuf5JqSFqKtv6a8c64Sh1y80QJBY5PFse0L1hOY
-         LxWnZrNgXxQDe2jWG1gvoL5ggSIZFWaQayqAiZxM6ilK8fKCDz8u0rrz1xHOGGBLp0OA
-         GSUchG0nJTXo3rJ51Ktul67+g9Tc4XMobDd0gJHSeJ3pM8rjmypqGfsU54HJBJWkkdvy
-         SYopSS7F1B0tTpSEE8dzpVEB3nXdewdZf1NaW2R70QroELgRmPvY9WP9+b+pmoUc2J3t
-         tNhw==
-X-Gm-Message-State: APjAAAUjK4WLZ6rE6ZJRC1+7um1YagwWrXDLLmDqgRXLS8eODqevUN6p
-        esJBXecbz8yBI8FjTf2kbe8=
-X-Google-Smtp-Source: APXvYqz8ylDO2U6dDvIUNFaNKDnjjA8WiIyQkYSfmJM9vJQfD3R856oyQ2fHMJSJKdR4OYjIYUWcOw==
-X-Received: by 2002:ac8:2bcd:: with SMTP id n13mr3779069qtn.21.1578763250270;
-        Sat, 11 Jan 2020 09:20:50 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id 65sm2866876qtf.95.2020.01.11.09.20.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Jan 2020 09:20:49 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Sat, 11 Jan 2020 12:20:48 -0500
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>
-Subject: Re: [PATCH] x86/tools/relocs: Add _etext and __end_of_kernel_reserve
- to S_REL
-Message-ID: <20200111172047.GA2688392@rani.riverdale.lan>
-References: <20200110202349.1881840-1-nivedita@alum.mit.edu>
- <20200110203828.GK19453@zn.tnic>
- <20200110205028.GA2012059@rani.riverdale.lan>
- <20200111130243.GA23583@zn.tnic>
+        id S1730749AbgAKRtt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 12:49:49 -0500
+Received: from bues.ch ([80.190.117.144]:45422 "EHLO bues.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730641AbgAKRtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 12:49:49 -0500
+X-Greylist: delayed 2015 seconds by postgrey-1.27 at vger.kernel.org; Sat, 11 Jan 2020 12:49:48 EST
+Received: by bues.ch with esmtpsa (Exim 4.92)
+        (envelope-from <m@bues.ch>)
+        id 1iqKMY-0002Bp-7l; Sat, 11 Jan 2020 18:15:50 +0100
+Date:   Sat, 11 Jan 2020 18:15:57 +0100
+From:   Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     kvalo@codeaurora.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, allison@lohutok.net,
+        saurav.girepunje@gmail.com, tglx@linutronix.de, will@kernel.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        b43-dev@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] b43: Fix possible a data race in b43_op_tx()
+Message-ID: <20200111181557.11b6b174@wiggum>
+In-Reply-To: <20200111161455.26587-1-baijiaju1990@gmail.com>
+References: <20200111161455.26587-1-baijiaju1990@gmail.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200111130243.GA23583@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; boundary="Sig_/edhf2Fx3kHYL6/4KBjkb=AD";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 11, 2020 at 02:02:43PM +0100, Borislav Petkov wrote:
-> On Fri, Jan 10, 2020 at 03:50:29PM -0500, Arvind Sankar wrote:
-> > On Fri, Jan 10, 2020 at 09:38:28PM +0100, Borislav Petkov wrote:
-> > > On Fri, Jan 10, 2020 at 03:23:49PM -0500, Arvind Sankar wrote:
-> > > > Pre-2.23 binutils makes symbols defined outside sections absolute, so
-> > > > these two symbols break the build on old linkers.
-> > > 
-> > > -ENOTENOUGHINFO
-> > > 
-> > > Which old linkers, how exactly do they break the build, etc etc?
-> > > 
-> > > Please give exact reproduction steps.
-> > > 
-> > > Thx.
-> > > 
-> > 
-> > binutils-2.21 and -2.22. An x86-64 defconfig will fail with
-> > 	Invalid absolute R_X86_64_32S relocation: _etext
-> > and after fixing that one, with
-> > 	Invalid absolute R_X86_64_32S relocation: __end_of_kernel_reserve
-> 
-> I'm still not clear as to why this happens. I tried reproducing on
-> openSUSE 12.1 which has
-> 
-> Repository: openSUSE-12.1-Oss
-> Name: binutils
-> Version: 2.21.1-12.1.4
-> 
-> and the build there fails with:
-> 
-> objdump: arch/x86/lib/clear_page_64.o: File format not recognized
-> objdump: arch/x86/lib/cmdline.o: File format not recognized
-> objdump: arch/x86/lib/cmpxchg16b_emu.o: File format not recognized
-> objdump: arch/x86/lib/copy_page_64.o: File format not recognized
-> objdump: arch/x86/lib/copy_user_64.o: File format not recognized
-> objdump: arch/x86/lib/cpu.o: File format not recognized
-> ...
-> 
-> and objdump is part of binutils.
-> 
-> Now, this looks like another symptom of what you're reporting but what
-> we're missing is the rootcause about *why* this happens.
-> 
-> Because if the issue is hard to fix or similar, then we probably should
-> raise the minimum supported binutils version from 2.21 to something
-> newer and not do this fix.
-> 
-> But before we do that, we need a proper analysis as to why it happens.
-> 
-> Also, what distro are you using to reproduce it on?
-> 
-> Thx.
-> 
+--Sig_/edhf2Fx3kHYL6/4KBjkb=AD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'm not sure if that's the same issue. The root cause for the one I
-reported is described in more detail in [1], and the change that makes
-these symbols no longer absolute is commit d2667025dd30 in binutils-gdb
-(sourceware.org seems to be taking too long to respond from here so I
-don't have the web link).
+On Sun, 12 Jan 2020 00:14:55 +0800
+Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
 
-I'm running gentoo, but building the kernel using binutils-2.21.1
-compiled from the GNU source tarball, and gcc-4.6.4 again compiled from
-source. (It's not something I normally need but I was investigating
-something else to see what exactly happens with older toolchains.)
+> The functions b43_op_tx() and b43_tx_work() may be concurrently executed.
+>=20
+> In b43_tx_work(), the variable wl->tx_queue_stopped[queue_num] is
+> accessed with holding a mutex lock wl->mutex. But in b43_op_tx(), the
+> identical variable wl->tx_queue_stopped[skb->queue_mapping] is accessed
+> without holding this mutex lock. Thus, a possible data race may occur.
+>=20
+> To fix this data race, in b43_op_tx(), the variable=20
+> wl->tx_queue_stopped[skb->queue_mapping] is accessed with holding the=20
+> mutex lock wl->mutex.
+>=20
+> This data race is found by the runtime testing of our tool DILP-2.
+>=20
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  drivers/net/wireless/broadcom/b43/main.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wirel=
+ess/broadcom/b43/main.c
+> index 39da1a4c30ac..adedb38f50f2 100644
+> --- a/drivers/net/wireless/broadcom/b43/main.c
+> +++ b/drivers/net/wireless/broadcom/b43/main.c
+> @@ -3625,6 +3625,11 @@ static void b43_op_tx(struct ieee80211_hw *hw,
+>  		      struct sk_buff *skb)
+>  {
+>  	struct b43_wl *wl =3D hw_to_b43_wl(hw);
+> +	bool stopped;
+> +
+> +	mutex_lock(&wl->mutex);
+> +	stopped =3D wl->tx_queue_stopped[skb->queue_mapping];
+> +	mutex_unlock(&wl->mutex);
+> =20
+>  	if (unlikely(skb->len < 2 + 2 + 6)) {
+>  		/* Too short, this can't be a valid frame. */
+> @@ -3634,7 +3639,7 @@ static void b43_op_tx(struct ieee80211_hw *hw,
+>  	B43_WARN_ON(skb_shinfo(skb)->nr_frags);
+> =20
+>  	skb_queue_tail(&wl->tx_queue[skb->queue_mapping], skb);
+> -	if (!wl->tx_queue_stopped[skb->queue_mapping]) {
+> +	if (!stopped) {
+>  		ieee80211_queue_work(wl->hw, &wl->tx_work);
+>  	} else {
+>  		ieee80211_stop_queue(wl->hw, skb->queue_mapping);
 
-I used the below to compile the kernel (I added in
-readelf/objdump/objcopy just now, and it does build until the relocs
-error). The config is x86-64 defconfig with CONFIG_RETPOLINE overridden
-to n (since gcc 4.6.4 doesn't support retpoline).
+Hi,
 
-make O=~/kernel64 -j LD=~/old/bin/ld AS=~/old/bin/as READELF=~/old/bin/readelf \
-	OBJDUMP=~/old/bin/objdump OBJCOPY=~/old/bin/objcopy GCC=~/old/bin/gcc
+thanks for your patch.
 
-[1] https://lore.kernel.org/lkml/20200110215005.2164353-1-nivedita@alum.mit.edu/
+Unfortunately it is not possible to acquire a sleeping mutex in the tx
+op:
+
+/**
+ * struct ieee80211_ops - callbacks from mac80211 to the driver
+ *
+ * @tx: Handler that 802.11 module calls for each transmitted frame.
+ *      skb contains the buffer starting from the IEEE 802.11 header.
+ *      The low-level driver should send the frame out based on
+ *      configuration in the TX control data. This handler should,
+ *      preferably, never fail and stop queues appropriately.
+ *      Must be atomic.
+        ^^^^^^^^^^^^^^
+
+I also don't think that the change really fixes any race.
+The variable tx_queue_stopped is a boolean. Reading that under mutex
+and then doing the actual action based on a copy does not really change
+anything. The other end may just set it to false after mutex_unlock,
+but before the queue_work. Thus this change does probably even increase
+the race window size.
+
+The other thing to consider is:
+What can actually go wrong, if the race happens?
+I currently don't see any fatal behavior.
+A packet might still make it into the queue, although it has already
+been stopped. But that's not fatal.
+
+--=20
+Michael
+
+--Sig_/edhf2Fx3kHYL6/4KBjkb=AD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAl4aAs0ACgkQ9TK+HZCN
+iw6TPQ//d1QZTRW32tb9pJeehH2Z3IOrjYuu8UXzz47+ykPNCAg84T9kfhPdVV1n
+y9FMecAuYqgPTWByYotMoeaVLj10pAJ5fqe+qtMbl3OvOuTmuzSRdOKzChJr1BJj
+5FxM+j8e0bbUW+5Xovvkecs1aH4XN6onL0XGoI6rNefN+9iHD4OnC/3tVTh5cvXx
+iY4dlFXWs21OcEamszU7RjZIulaI55GN9RTzctsjBsx/cGtxkeIhEG0AMwvAcH2g
+PfoxTwpEiUIZhvfb4qyA9sonm1GANvwNUo1wlO4dHWl709ei1oK+gWSl4UMyxlaO
+Jf7+c9LiB0R6gXAdpjIWDrdFoNhoZnJMrJ6yXwr7bxxvs8cbzOxloJ3rtllQdmf9
+XNcmAakeSj19sDobTMDqup+ZFatXTs3zrgluzn9y7SJoysaV5+uU2HQAjjb5E5mn
+fb51kot6LMO5aW06jxEsgEvZ66udxDR1hfjyxF5fmuHMEsgZLM8yoNpsB5YS/Mo7
+YfR2bO2kgRXhXRxPBdL6RudtMOtv7ut3FoFg1kXZTzqMqAjFBpp9dp7LkVt9rRQM
+Fg4/9/SuP/L8te7u2I3m5FnCCAgqKz5W+8FPtkgNrF3nHptqrPQqmzt6wOW76h/H
+5hofJcfy2Its6lu34C6/pfSqTRbv+u4Nb34CphZCqwkuNiReVXI=
+=DukR
+-----END PGP SIGNATURE-----
+
+--Sig_/edhf2Fx3kHYL6/4KBjkb=AD--
