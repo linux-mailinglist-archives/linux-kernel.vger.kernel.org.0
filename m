@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32CEE137E36
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:07:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4288E137E9F
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:12:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729643AbgAKKGQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:06:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40058 "EHLO mail.kernel.org"
+        id S1730016AbgAKKMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:12:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729007AbgAKKGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:06:15 -0500
+        id S1729420AbgAKKMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:12:00 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DFBC20848;
-        Sat, 11 Jan 2020 10:06:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB0FB2082E;
+        Sat, 11 Jan 2020 10:11:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737174;
-        bh=RriJfyQO+dMF4xwB9ajO0E4R54j6o4aGYeu+fFPkl9A=;
+        s=default; t=1578737519;
+        bh=15uCv88DqOg4sbjIuVZMtUhC1JnMrYLSD4Kpcggr87k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xyXr8I1+haDEJebGC0c/U3SQ3XFa0z2WqePZSsE7vXbNcZtjqjw9SXsLKwZBuJno7
-         V16S35Xp4zCbw5lMWQl+dIrzgjZf/qlDMrfkDtQyv+3BrNxl5zUWnStfZEAeTU7kK7
-         6pq8XeVw+h1s/acbKAACWlpvYfm52ssDBXYTfkAI=
+        b=2sVJxtvO3fNHyQJNeZ00rOGqGrPwN5ThsVrJQiLcT+2jTWEGw7RY2oI4W51ehETnH
+         fTgog4CfVNuO2QpDMcV/HXH5U1OXKEKKnpjBtPwIoyHQQWo8CQBfTlY9qQ4rA+n1ub
+         81ip6lPUCc/E0ICUCbxDWnxMUHRLHDywnj1bXX2s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot+dc9071cc5a85950bdfce@syzkaller.appspotmail.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Westphal <fw@strlen.de>
-Subject: [PATCH 4.9 83/91] pkt_sched: fq: do not accept silly TCA_FQ_QUANTUM
+        stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
+        =?UTF-8?q?Jan=20H=C3=B6ppner?= <hoeppner@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 34/62] s390/dasd/cio: Interpret ccw_device_get_mdc return value correctly
 Date:   Sat, 11 Jan 2020 10:50:16 +0100
-Message-Id: <20200111094912.594229733@linuxfoundation.org>
+Message-Id: <20200111094846.216907576@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
-References: <20200111094844.748507863@linuxfoundation.org>
+In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
+References: <20200111094837.425430968@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +46,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Jan Höppner <hoeppner@linux.ibm.com>
 
-[ Upstream commit d9e15a2733067c9328fb56d98fe8e574fa19ec31 ]
+[ Upstream commit dd4b3c83b9efac10d48a94c61372119fc555a077 ]
 
-As diagnosed by Florian :
+The max data count (mdc) is an unsigned 16-bit integer value as per AR
+documentation and is received via ccw_device_get_mdc() for a specific
+path mask from the CIO layer. The function itself also always returns a
+positive mdc value or 0 in case mdc isn't supported or couldn't be
+determined.
 
-If TCA_FQ_QUANTUM is set to 0x80000000, fq_deueue()
-can loop forever in :
+Though, the comment for this function describes a negative return value
+to indicate failures.
 
-if (f->credit <= 0) {
-  f->credit += q->quantum;
-  goto begin;
-}
+As a result, the DASD device driver interprets the return value of
+ccw_device_get_mdc() incorrectly. The error case is essentially a dead
+code path.
 
-... because f->credit is either 0 or -2147483648.
+To fix this behaviour, check explicitly for a return value of 0 and
+change the comment for ccw_device_get_mdc() accordingly.
 
-Let's limit TCA_FQ_QUANTUM to no more than 1 << 20 :
-This max value should limit risks of breaking user setups
-while fixing this bug.
+This fix merely enables the error code path in the DASD functions
+get_fcx_max_data() and verify_fcx_max_data(). The actual functionality
+stays the same and is still correct.
 
-Fixes: afe4fd062416 ("pkt_sched: fq: Fair Queue packet scheduler")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Diagnosed-by: Florian Westphal <fw@strlen.de>
-Reported-by: syzbot+dc9071cc5a85950bdfce@syzkaller.appspotmail.com
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Jan Höppner <hoeppner@linux.ibm.com>
+Acked-by: Peter Oberparleiter <oberpar@linux.ibm.com>
+Reviewed-by: Stefan Haberland <sth@linux.ibm.com>
+Signed-off-by: Stefan Haberland <sth@linux.ibm.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sched/sch_fq.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/s390/block/dasd_eckd.c | 9 +++++----
+ drivers/s390/cio/device_ops.c  | 2 +-
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
---- a/net/sched/sch_fq.c
-+++ b/net/sched/sch_fq.c
-@@ -736,7 +736,7 @@ static int fq_change(struct Qdisc *sch,
- 	if (tb[TCA_FQ_QUANTUM]) {
- 		u32 quantum = nla_get_u32(tb[TCA_FQ_QUANTUM]);
+diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
+index 0d5e2d92e05b..81359312a987 100644
+--- a/drivers/s390/block/dasd_eckd.c
++++ b/drivers/s390/block/dasd_eckd.c
+@@ -1133,7 +1133,8 @@ static u32 get_fcx_max_data(struct dasd_device *device)
+ {
+ 	struct dasd_eckd_private *private = device->private;
+ 	int fcx_in_css, fcx_in_gneq, fcx_in_features;
+-	int tpm, mdc;
++	unsigned int mdc;
++	int tpm;
  
--		if (quantum > 0)
-+		if (quantum > 0 && quantum <= (1 << 20))
- 			q->quantum = quantum;
- 		else
- 			err = -EINVAL;
+ 	if (dasd_nofcx)
+ 		return 0;
+@@ -1147,7 +1148,7 @@ static u32 get_fcx_max_data(struct dasd_device *device)
+ 		return 0;
+ 
+ 	mdc = ccw_device_get_mdc(device->cdev, 0);
+-	if (mdc < 0) {
++	if (mdc == 0) {
+ 		dev_warn(&device->cdev->dev, "Detecting the maximum supported data size for zHPF requests failed\n");
+ 		return 0;
+ 	} else {
+@@ -1158,12 +1159,12 @@ static u32 get_fcx_max_data(struct dasd_device *device)
+ static int verify_fcx_max_data(struct dasd_device *device, __u8 lpm)
+ {
+ 	struct dasd_eckd_private *private = device->private;
+-	int mdc;
++	unsigned int mdc;
+ 	u32 fcx_max_data;
+ 
+ 	if (private->fcx_max_data) {
+ 		mdc = ccw_device_get_mdc(device->cdev, lpm);
+-		if ((mdc < 0)) {
++		if (mdc == 0) {
+ 			dev_warn(&device->cdev->dev,
+ 				 "Detecting the maximum data size for zHPF "
+ 				 "requests failed (rc=%d) for a new path %x\n",
+diff --git a/drivers/s390/cio/device_ops.c b/drivers/s390/cio/device_ops.c
+index b22922ec32d1..474afec9ab87 100644
+--- a/drivers/s390/cio/device_ops.c
++++ b/drivers/s390/cio/device_ops.c
+@@ -595,7 +595,7 @@ EXPORT_SYMBOL(ccw_device_tm_start_timeout);
+  * @mask: mask of paths to use
+  *
+  * Return the number of 64K-bytes blocks all paths at least support
+- * for a transport command. Return values <= 0 indicate failures.
++ * for a transport command. Return value 0 indicates failure.
+  */
+ int ccw_device_get_mdc(struct ccw_device *cdev, u8 mask)
+ {
+-- 
+2.20.1
+
 
 
