@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FB6A137E8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:11:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56D70138051
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:28:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729141AbgAKKLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:11:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47994 "EHLO mail.kernel.org"
+        id S1731255AbgAKK2R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:28:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729229AbgAKKLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:11:01 -0500
+        id S1731015AbgAKK2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:28:14 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 272262077C;
-        Sat, 11 Jan 2020 10:10:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 887752087F;
+        Sat, 11 Jan 2020 10:28:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737461;
-        bh=NDD+sy+WmV6QP2NJs2qYXbzi51oxEoc29qhKVAybGp8=;
+        s=default; t=1578738493;
+        bh=6RF8CgifYq6GlZQcRrfg/748cIyvvvT7HpOr7gPbsg4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BUvh1WsqqkYd1xDKflCacTrbPNDHDkqdC+WxdxKjYbKAj2MMKKgST6LsQRd7SzqOr
-         eS7URvrtEBjiHQ66ZNnp/hVFjmAZSwpkIzIA+vq/Y/TZPg4uGbKpY4/Kxh4X7V4zpL
-         seOQfa5f0eIBHTXtfa5xon/XlSTy482tuMNgxpTk=
+        b=woqgwqgTe6Yqhfo2uINc2CdgvrXzwHp3bpM+/cjP1KwTUsqZxL7e080rFaEfSuuqG
+         zd74ApxdgK718HviCvuaRnD1etBMPsnnBrTvHrdLaF+tVe4S8VJt3zoHLXc4Auo2kw
+         Fue6q8yYx+F/LANghXaV+Ke6NBF7y4O9pkskdzA8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Meyer <dmeyer@gigaio.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Kelvin Cao <Kelvin.Cao@microchip.com>
-Subject: [PATCH 4.14 42/62] PCI/switchtec: Read all 64 bits of part_event_bitmap
+        stable@vger.kernel.org, Eric Sandeen <sandeen@redhat.com>,
+        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 105/165] fs: call fsnotify_sb_delete after evict_inodes
 Date:   Sat, 11 Jan 2020 10:50:24 +0100
-Message-Id: <20200111094849.188173951@linuxfoundation.org>
+Message-Id: <20200111094930.916003137@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
-References: <20200111094837.425430968@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +44,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Logan Gunthorpe <logang@deltatee.com>
+From: Eric Sandeen <sandeen@redhat.com>
 
-commit 6acdf7e19b37cb3a9258603d0eab315079c19c5e upstream.
+[ Upstream commit 1edc8eb2e93130e36ac74ac9c80913815a57d413 ]
 
-The part_event_bitmap register is 64 bits wide, so read it with ioread64()
-instead of the 32-bit ioread32().
+When a filesystem is unmounted, we currently call fsnotify_sb_delete()
+before evict_inodes(), which means that fsnotify_unmount_inodes()
+must iterate over all inodes on the superblock looking for any inodes
+with watches.  This is inefficient and can lead to livelocks as it
+iterates over many unwatched inodes.
 
-Fixes: 52eabba5bcdb ("switchtec: Add IOCTLs to the Switchtec driver")
-Link: https://lore.kernel.org/r/20190910195833.3891-1-logang@deltatee.com
-Reported-by: Doug Meyer <dmeyer@gigaio.com>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org	# v4.12+
-Cc: Kelvin Cao <Kelvin.Cao@microchip.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+At this point, SB_ACTIVE is gone and dropping refcount to zero kicks
+the inode out out immediately, so anything processed by
+fsnotify_sb_delete / fsnotify_unmount_inodes gets evicted in that loop.
 
+After that, the call to evict_inodes will evict everything else with a
+zero refcount.
+
+This should speed things up overall, and avoid livelocks in
+fsnotify_unmount_inodes().
+
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/switch/switchtec.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/notify/fsnotify.c | 3 +++
+ fs/super.c           | 4 +++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/pci/switch/switchtec.c
-+++ b/drivers/pci/switch/switchtec.c
-@@ -23,7 +23,7 @@
- #include <linux/pci.h>
- #include <linux/cdev.h>
- #include <linux/wait.h>
--
-+#include <linux/io-64-nonatomic-lo-hi.h>
- #include <linux/nospec.h>
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index ac9eb273e28c..f44e39c68328 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -57,6 +57,9 @@ static void fsnotify_unmount_inodes(struct super_block *sb)
+ 		 * doing an __iget/iput with SB_ACTIVE clear would actually
+ 		 * evict all inodes with zero i_count from icache which is
+ 		 * unnecessarily violent and may in fact be illegal to do.
++		 * However, we should have been called /after/ evict_inodes
++		 * removed all zero refcount inodes, in any case.  Test to
++		 * be sure.
+ 		 */
+ 		if (!atomic_read(&inode->i_count)) {
+ 			spin_unlock(&inode->i_lock);
+diff --git a/fs/super.c b/fs/super.c
+index cfadab2cbf35..cd352530eca9 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -448,10 +448,12 @@ void generic_shutdown_super(struct super_block *sb)
+ 		sync_filesystem(sb);
+ 		sb->s_flags &= ~SB_ACTIVE;
  
- MODULE_DESCRIPTION("Microsemi Switchtec(tm) PCIe Management Driver");
-@@ -898,7 +898,7 @@ static int ioctl_event_summary(struct sw
- 	u32 reg;
+-		fsnotify_sb_delete(sb);
+ 		cgroup_writeback_umount();
  
- 	s.global = ioread32(&stdev->mmio_sw_event->global_summary);
--	s.part_bitmap = ioread32(&stdev->mmio_sw_event->part_event_bitmap);
-+	s.part_bitmap = readq(&stdev->mmio_sw_event->part_event_bitmap);
- 	s.local_part = ioread32(&stdev->mmio_part_cfg->part_event_summary);
++		/* evict all inodes with zero refcount */
+ 		evict_inodes(sb);
++		/* only nonzero refcount inodes can have marks */
++		fsnotify_sb_delete(sb);
  
- 	for (i = 0; i < stdev->partition_count; i++) {
+ 		if (sb->s_dio_done_wq) {
+ 			destroy_workqueue(sb->s_dio_done_wq);
+-- 
+2.20.1
+
 
 
