@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78615137F1C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:16:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DCE5138058
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:28:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730396AbgAKKQr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:16:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60232 "EHLO mail.kernel.org"
+        id S1731278AbgAKK2c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:28:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729229AbgAKKQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:16:45 -0500
+        id S1730398AbgAKK23 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:28:29 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7F442084D;
-        Sat, 11 Jan 2020 10:16:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C80B2082E;
+        Sat, 11 Jan 2020 10:28:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737804;
-        bh=pIeuKxBRNWzEaQmzxMydhump/5ZTA/GnZiBi09gGPqY=;
+        s=default; t=1578738509;
+        bh=GQiAvbWLjMvJk09cCba+syEJkkqYycnVG/FlajrljWk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1ng/yEpDyMS9GE5v8iQ7cb9Btm+V6PqsV6rGMqHZXxe9QGdNmonQ33BLeWZKPnRct
-         uNTzjdYQxHeKZz7OlcwVWsaK3wckg4eGlEBEOiP7Xn64zScrIsrMPXRrroY/nM9fnw
-         lSd/Xcx57c5ZlY/6jnESEzWmfE5+9emDZQWfJGLw=
+        b=f+vbQ9pNKNG86xsBq+8HI7jii921gfMZGRkoC06WgqdPAF1FH3YgMGkJ90nl/zpCq
+         Q4JdpfhlOHmvXDlHW+IVyyFIpOodbeOn7W6GhHrMdMUi2dlfwRAbDcFBALKl08rncO
+         JfNPidXzPMBhX7KZCKMcYjw8oUpwlkKQe5p+hL0Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Daniel T. Lee" <danieltimlee@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 31/84] samples: bpf: Replace symbol compare of trace_event
-Date:   Sat, 11 Jan 2020 10:50:08 +0100
-Message-Id: <20200111094857.969838944@linuxfoundation.org>
+Subject: [PATCH 5.4 090/165] ASoC: wm8962: fix lambda value
+Date:   Sat, 11 Jan 2020 10:50:09 +0100
+Message-Id: <20200111094928.703357933@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
-References: <20200111094845.328046411@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel T. Lee <danieltimlee@gmail.com>
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
 
-[ Upstream commit bba1b2a890253528c45aa66cf856f289a215bfbc ]
+[ Upstream commit 556672d75ff486e0b6786056da624131679e0576 ]
 
-Previously, when this sample is added, commit 1c47910ef8013
-("samples/bpf: add perf_event+bpf example"), a symbol 'sys_read' and
-'sys_write' has been used without no prefixes. But currently there are
-no exact symbols with these under kallsyms and this leads to failure.
+According to user manual, it is required that FLL_LAMBDA > 0
+in all cases (Integer and Franctional modes).
 
-This commit changes exact compare to substring compare to keep compatible
-with exact symbol or prefixed symbol.
-
-Fixes: 1c47910ef8013 ("samples/bpf: add perf_event+bpf example")
-Signed-off-by: Daniel T. Lee <danieltimlee@gmail.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Link: https://lore.kernel.org/bpf/20191205080114.19766-2-danieltimlee@gmail.com
+Fixes: 9a76f1ff6e29 ("ASoC: Add initial WM8962 CODEC driver")
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Link: https://lore.kernel.org/r/1576065442-19763-1-git-send-email-shengjiu.wang@nxp.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- samples/bpf/trace_event_user.c | 4 ++--
+ sound/soc/codecs/wm8962.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/samples/bpf/trace_event_user.c b/samples/bpf/trace_event_user.c
-index d08046ab81f0..d33022447d6b 100644
---- a/samples/bpf/trace_event_user.c
-+++ b/samples/bpf/trace_event_user.c
-@@ -35,9 +35,9 @@ static void print_ksym(__u64 addr)
- 		return;
- 	sym = ksym_search(addr);
- 	printf("%s;", sym->name);
--	if (!strcmp(sym->name, "sys_read"))
-+	if (!strstr(sym->name, "sys_read"))
- 		sys_read_seen = true;
--	else if (!strcmp(sym->name, "sys_write"))
-+	else if (!strstr(sym->name, "sys_write"))
- 		sys_write_seen = true;
- }
+diff --git a/sound/soc/codecs/wm8962.c b/sound/soc/codecs/wm8962.c
+index 3e5c69fbc33a..d9d59f45833f 100644
+--- a/sound/soc/codecs/wm8962.c
++++ b/sound/soc/codecs/wm8962.c
+@@ -2788,7 +2788,7 @@ static int fll_factors(struct _fll_div *fll_div, unsigned int Fref,
  
+ 	if (target % Fref == 0) {
+ 		fll_div->theta = 0;
+-		fll_div->lambda = 0;
++		fll_div->lambda = 1;
+ 	} else {
+ 		gcd_fll = gcd(target, fratio * Fref);
+ 
+@@ -2858,7 +2858,7 @@ static int wm8962_set_fll(struct snd_soc_component *component, int fll_id, int s
+ 		return -EINVAL;
+ 	}
+ 
+-	if (fll_div.theta || fll_div.lambda)
++	if (fll_div.theta)
+ 		fll1 |= WM8962_FLL_FRAC;
+ 
+ 	/* Stop the FLL while we reconfigure */
 -- 
 2.20.1
 
