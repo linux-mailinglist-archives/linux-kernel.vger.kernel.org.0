@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4D58137E42
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:07:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6968313804D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:28:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729538AbgAKKGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:06:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41190 "EHLO mail.kernel.org"
+        id S1730607AbgAKK2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:28:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728893AbgAKKGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:06:49 -0500
+        id S1731015AbgAKK2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:28:04 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8731F206DA;
-        Sat, 11 Jan 2020 10:06:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 665D824649;
+        Sat, 11 Jan 2020 10:28:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737209;
-        bh=kZGM1WKiRixqfuBi3lyzYU5wQdVEpt56nuy0jTJIuqk=;
+        s=default; t=1578738484;
+        bh=vzw/zTQ3T+frq0XShFckbtvL19mBCHgNPnD0vRv4qCc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kp6oYrX1IwiHDZjKvlaayDKjxkGPPM00EGj69ZsaHD8c8WO5xdX3hz4VMMhgcCqiH
-         SGhAqaCo6z4xKA/VMpkw8wc+H00l6ppt0yxmzc+KKRo3PV7/684Emy/jZHfLBvABk3
-         0DTTVOVoZIlwlG+9KL3kKAJbJ4OMXCqNkVPvWQQM=
+        b=XBw9RgT3tiPQgCQcKGntkgL32+b+Hg5jRrtPem5WG9vRejq0tyS2b4ZZAl2bGuTZQ
+         evlZwshIKPu0TticO9aApqt26MHZzHtuLuh00Msjft/Q6as4iV033H3aIIvWIKDw6B
+         KT63fIzLhXqGnl7IPCysShSuid4TSTd6icMEDN1o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 89/91] vlan: fix memory leak in vlan_dev_set_egress_priority
+        stable@vger.kernel.org, Roman Penyaev <rpenyaev@suse.de>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 103/165] block: end bio with BLK_STS_AGAIN in case of non-mq devs and REQ_NOWAIT
 Date:   Sat, 11 Jan 2020 10:50:22 +0100
-Message-Id: <20200111094913.319527830@linuxfoundation.org>
+Message-Id: <20200111094930.377706110@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
-References: <20200111094844.748507863@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,100 +43,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Roman Penyaev <rpenyaev@suse.de>
 
-[ Upstream commit 9bbd917e0bec9aebdbd0c8dbc966caec15eb33e9 ]
+[ Upstream commit c58c1f83436b501d45d4050fd1296d71a9760bcb ]
 
-There are few cases where the ndo_uninit() handler might be not
-called if an error happens while device is initialized.
+Non-mq devs do not honor REQ_NOWAIT so give a chance to the caller to repeat
+request gracefully on -EAGAIN error.
 
-Since vlan_newlink() calls vlan_changelink() before
-trying to register the netdevice, we need to make sure
-vlan_dev_uninit() has been called at least once,
-or we might leak allocated memory.
+The problem is well reproduced using io_uring:
 
-BUG: memory leak
-unreferenced object 0xffff888122a206c0 (size 32):
-  comm "syz-executor511", pid 7124, jiffies 4294950399 (age 32.240s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 61 73 00 00 00 00 00 00 00 00  ......as........
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<000000000eb3bb85>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
-    [<000000000eb3bb85>] slab_post_alloc_hook mm/slab.h:586 [inline]
-    [<000000000eb3bb85>] slab_alloc mm/slab.c:3320 [inline]
-    [<000000000eb3bb85>] kmem_cache_alloc_trace+0x145/0x2c0 mm/slab.c:3549
-    [<000000007b99f620>] kmalloc include/linux/slab.h:556 [inline]
-    [<000000007b99f620>] vlan_dev_set_egress_priority+0xcc/0x150 net/8021q/vlan_dev.c:194
-    [<000000007b0cb745>] vlan_changelink+0xd6/0x140 net/8021q/vlan_netlink.c:126
-    [<0000000065aba83a>] vlan_newlink+0x135/0x200 net/8021q/vlan_netlink.c:181
-    [<00000000fb5dd7a2>] __rtnl_newlink+0x89a/0xb80 net/core/rtnetlink.c:3305
-    [<00000000ae4273a1>] rtnl_newlink+0x4e/0x80 net/core/rtnetlink.c:3363
-    [<00000000decab39f>] rtnetlink_rcv_msg+0x178/0x4b0 net/core/rtnetlink.c:5424
-    [<00000000accba4ee>] netlink_rcv_skb+0x61/0x170 net/netlink/af_netlink.c:2477
-    [<00000000319fe20f>] rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5442
-    [<00000000d51938dc>] netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
-    [<00000000d51938dc>] netlink_unicast+0x223/0x310 net/netlink/af_netlink.c:1328
-    [<00000000e539ac79>] netlink_sendmsg+0x2c0/0x570 net/netlink/af_netlink.c:1917
-    [<000000006250c27e>] sock_sendmsg_nosec net/socket.c:639 [inline]
-    [<000000006250c27e>] sock_sendmsg+0x54/0x70 net/socket.c:659
-    [<00000000e2a156d1>] ____sys_sendmsg+0x2d0/0x300 net/socket.c:2330
-    [<000000008c87466e>] ___sys_sendmsg+0x8a/0xd0 net/socket.c:2384
-    [<00000000110e3054>] __sys_sendmsg+0x80/0xf0 net/socket.c:2417
-    [<00000000d71077c8>] __do_sys_sendmsg net/socket.c:2426 [inline]
-    [<00000000d71077c8>] __se_sys_sendmsg net/socket.c:2424 [inline]
-    [<00000000d71077c8>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2424
+   mkfs.ext4 /dev/ram0
+   mount /dev/ram0 /mnt
 
-Fixe: 07b5b17e157b ("[VLAN]: Use rtnl_link API")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+   # Preallocate a file
+   dd if=/dev/zero of=/mnt/file bs=1M count=1
+
+   # Start fio with io_uring and get -EIO
+   fio --rw=write --ioengine=io_uring --size=1M --direct=1 --name=job --filename=/mnt/file
+
+Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/8021q/vlan.h         |    1 +
- net/8021q/vlan_dev.c     |    3 ++-
- net/8021q/vlan_netlink.c |    9 +++++----
- 3 files changed, 8 insertions(+), 5 deletions(-)
+ block/blk-core.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/net/8021q/vlan.h
-+++ b/net/8021q/vlan.h
-@@ -109,6 +109,7 @@ int vlan_check_real_dev(struct net_devic
- void vlan_setup(struct net_device *dev);
- int register_vlan_dev(struct net_device *dev);
- void unregister_vlan_dev(struct net_device *dev, struct list_head *head);
-+void vlan_dev_uninit(struct net_device *dev);
- bool vlan_dev_inherit_address(struct net_device *dev,
- 			      struct net_device *real_dev);
+diff --git a/block/blk-core.c b/block/blk-core.c
+index d5e668ec751b..1075aaff606d 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -886,11 +886,14 @@ generic_make_request_checks(struct bio *bio)
+ 	}
  
---- a/net/8021q/vlan_dev.c
-+++ b/net/8021q/vlan_dev.c
-@@ -610,7 +610,8 @@ static int vlan_dev_init(struct net_devi
- 	return 0;
- }
+ 	/*
+-	 * For a REQ_NOWAIT based request, return -EOPNOTSUPP
+-	 * if queue is not a request based queue.
++	 * Non-mq queues do not honor REQ_NOWAIT, so complete a bio
++	 * with BLK_STS_AGAIN status in order to catch -EAGAIN and
++	 * to give a chance to the caller to repeat request gracefully.
+ 	 */
+-	if ((bio->bi_opf & REQ_NOWAIT) && !queue_is_mq(q))
+-		goto not_supported;
++	if ((bio->bi_opf & REQ_NOWAIT) && !queue_is_mq(q)) {
++		status = BLK_STS_AGAIN;
++		goto end_io;
++	}
  
--static void vlan_dev_uninit(struct net_device *dev)
-+/* Note: this function might be called multiple times for the same device. */
-+void vlan_dev_uninit(struct net_device *dev)
- {
- 	struct vlan_priority_tci_mapping *pm;
- 	struct vlan_dev_priv *vlan = vlan_dev_priv(dev);
---- a/net/8021q/vlan_netlink.c
-+++ b/net/8021q/vlan_netlink.c
-@@ -157,10 +157,11 @@ static int vlan_newlink(struct net *src_
- 		return -EINVAL;
- 
- 	err = vlan_changelink(dev, tb, data);
--	if (err < 0)
--		return err;
--
--	return register_vlan_dev(dev);
-+	if (!err)
-+		err = register_vlan_dev(dev);
-+	if (err)
-+		vlan_dev_uninit(dev);
-+	return err;
- }
- 
- static inline size_t vlan_qos_map_size(unsigned int n)
+ 	if (should_fail_bio(bio))
+ 		goto end_io;
+-- 
+2.20.1
+
 
 
