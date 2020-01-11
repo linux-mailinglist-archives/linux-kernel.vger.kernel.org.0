@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C5F3137E96
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:11:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E652137F2E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:17:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729813AbgAKKLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:11:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49082 "EHLO mail.kernel.org"
+        id S1730457AbgAKKRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:17:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728949AbgAKKLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:11:42 -0500
+        id S1729229AbgAKKRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:17:07 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DF8120673;
-        Sat, 11 Jan 2020 10:11:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD6F2205F4;
+        Sat, 11 Jan 2020 10:17:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737501;
-        bh=kYqk2K6nYY8mkvM5dqaiSdhQb2blKG4W9xp5zpLsvUU=;
+        s=default; t=1578737825;
+        bh=voZJ6+sHQ+7u32dzQueGKsDn3hu12ZM7e5NFUxeERmQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bbfiQlVCYBfwIGNJKpdsYns8Xvlw2UfurH7vZbSqQbfgNYb48X5X9vhbO7MJsh9+d
-         Na0F4dOcnkyA5HhCL11bunfHKO5wuZ73WaQxnsXcm5pGU71TFDZi8iMpugXKBXj+I7
-         VozyDB00pl5yp2sOirym5ITbKyByCS2W041hg57A=
+        b=LhYtDV4+XSkxySWpa50WEUVjirYE4zlDp4TwbEx+jHF0+1FP1gZ9/bXuKxvp5Rt4Q
+         Ke9WGp555bTXTYCWbu7CFw9lnu9GtMYoGda5D0nhzDStH7JxNqc4oCbZoIxBlB0k6A
+         Qq8u4KQmRmqZLPkl342VQSt7OPNbY0ye53MTZTwE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Taehee Yoo <ap420073@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 48/62] gtp: fix bad unlock balance in gtp_encap_enable_socket
-Date:   Sat, 11 Jan 2020 10:50:30 +0100
-Message-Id: <20200111094852.090050610@linuxfoundation.org>
+        stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
+        =?UTF-8?q?Jan=20H=C3=B6ppner?= <hoeppner@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 54/84] s390/dasd/cio: Interpret ccw_device_get_mdc return value correctly
+Date:   Sat, 11 Jan 2020 10:50:31 +0100
+Message-Id: <20200111094906.768841990@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
-References: <20200111094837.425430968@linuxfoundation.org>
+In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
+References: <20200111094845.328046411@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,97 +46,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Jan Höppner <hoeppner@linux.ibm.com>
 
-[ Upstream commit 90d72256addff9e5f8ad645e8f632750dd1f8935 ]
+[ Upstream commit dd4b3c83b9efac10d48a94c61372119fc555a077 ]
 
-WARNING: bad unlock balance detected!
-5.5.0-rc5-syzkaller #0 Not tainted
--------------------------------------
-syz-executor921/9688 is trying to release lock (sk_lock-AF_INET6) at:
-[<ffffffff84bf8506>] gtp_encap_enable_socket+0x146/0x400 drivers/net/gtp.c:830
-but there are no more locks to release!
+The max data count (mdc) is an unsigned 16-bit integer value as per AR
+documentation and is received via ccw_device_get_mdc() for a specific
+path mask from the CIO layer. The function itself also always returns a
+positive mdc value or 0 in case mdc isn't supported or couldn't be
+determined.
 
-other info that might help us debug this:
-2 locks held by syz-executor921/9688:
- #0: ffffffff8a4d8840 (rtnl_mutex){+.+.}, at: rtnl_lock net/core/rtnetlink.c:72 [inline]
- #0: ffffffff8a4d8840 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x405/0xaf0 net/core/rtnetlink.c:5421
- #1: ffff88809304b560 (slock-AF_INET6){+...}, at: spin_lock_bh include/linux/spinlock.h:343 [inline]
- #1: ffff88809304b560 (slock-AF_INET6){+...}, at: release_sock+0x20/0x1c0 net/core/sock.c:2951
+Though, the comment for this function describes a negative return value
+to indicate failures.
 
-stack backtrace:
-CPU: 0 PID: 9688 Comm: syz-executor921 Not tainted 5.5.0-rc5-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_unlock_imbalance_bug kernel/locking/lockdep.c:4008 [inline]
- print_unlock_imbalance_bug.cold+0x114/0x123 kernel/locking/lockdep.c:3984
- __lock_release kernel/locking/lockdep.c:4242 [inline]
- lock_release+0x5f2/0x960 kernel/locking/lockdep.c:4503
- sock_release_ownership include/net/sock.h:1496 [inline]
- release_sock+0x17c/0x1c0 net/core/sock.c:2961
- gtp_encap_enable_socket+0x146/0x400 drivers/net/gtp.c:830
- gtp_encap_enable drivers/net/gtp.c:852 [inline]
- gtp_newlink+0x9fc/0xc60 drivers/net/gtp.c:666
- __rtnl_newlink+0x109e/0x1790 net/core/rtnetlink.c:3305
- rtnl_newlink+0x69/0xa0 net/core/rtnetlink.c:3363
- rtnetlink_rcv_msg+0x45e/0xaf0 net/core/rtnetlink.c:5424
- netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
- rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5442
- netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
- netlink_unicast+0x58c/0x7d0 net/netlink/af_netlink.c:1328
- netlink_sendmsg+0x91c/0xea0 net/netlink/af_netlink.c:1917
- sock_sendmsg_nosec net/socket.c:639 [inline]
- sock_sendmsg+0xd7/0x130 net/socket.c:659
- ____sys_sendmsg+0x753/0x880 net/socket.c:2330
- ___sys_sendmsg+0x100/0x170 net/socket.c:2384
- __sys_sendmsg+0x105/0x1d0 net/socket.c:2417
- __do_sys_sendmsg net/socket.c:2426 [inline]
- __se_sys_sendmsg net/socket.c:2424 [inline]
- __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2424
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x445d49
-Code: e8 bc b7 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 2b 12 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f8019074db8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000006dac38 RCX: 0000000000445d49
-RDX: 0000000000000000 RSI: 0000000020000180 RDI: 0000000000000003
-RBP: 00000000006dac30 R08: 0000000000000004 R09: 0000000000000000
-R10: 0000000000000008 R11: 0000000000000246 R12: 00000000006dac3c
-R13: 00007ffea687f6bf R14: 00007f80190759c0 R15: 20c49ba5e353f7cf
+As a result, the DASD device driver interprets the return value of
+ccw_device_get_mdc() incorrectly. The error case is essentially a dead
+code path.
 
-Fixes: e198987e7dd7 ("gtp: fix suspicious RCU usage")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To fix this behaviour, check explicitly for a return value of 0 and
+change the comment for ccw_device_get_mdc() accordingly.
+
+This fix merely enables the error code path in the DASD functions
+get_fcx_max_data() and verify_fcx_max_data(). The actual functionality
+stays the same and is still correct.
+
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Jan Höppner <hoeppner@linux.ibm.com>
+Acked-by: Peter Oberparleiter <oberpar@linux.ibm.com>
+Reviewed-by: Stefan Haberland <sth@linux.ibm.com>
+Signed-off-by: Stefan Haberland <sth@linux.ibm.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/gtp.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/s390/block/dasd_eckd.c | 9 +++++----
+ drivers/s390/cio/device_ops.c  | 2 +-
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/net/gtp.c
-+++ b/drivers/net/gtp.c
-@@ -816,7 +816,7 @@ static struct sock *gtp_encap_enable_soc
- 	lock_sock(sock->sk);
- 	if (sock->sk->sk_user_data) {
- 		sk = ERR_PTR(-EBUSY);
--		goto out_sock;
-+		goto out_rel_sock;
- 	}
+diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
+index f89f9d02e788..108fb1c77e1d 100644
+--- a/drivers/s390/block/dasd_eckd.c
++++ b/drivers/s390/block/dasd_eckd.c
+@@ -1135,7 +1135,8 @@ static u32 get_fcx_max_data(struct dasd_device *device)
+ {
+ 	struct dasd_eckd_private *private = device->private;
+ 	int fcx_in_css, fcx_in_gneq, fcx_in_features;
+-	int tpm, mdc;
++	unsigned int mdc;
++	int tpm;
  
- 	sk = sock->sk;
-@@ -829,8 +829,9 @@ static struct sock *gtp_encap_enable_soc
+ 	if (dasd_nofcx)
+ 		return 0;
+@@ -1149,7 +1150,7 @@ static u32 get_fcx_max_data(struct dasd_device *device)
+ 		return 0;
  
- 	setup_udp_tunnel_sock(sock_net(sock->sk), sock, &tuncfg);
+ 	mdc = ccw_device_get_mdc(device->cdev, 0);
+-	if (mdc < 0) {
++	if (mdc == 0) {
+ 		dev_warn(&device->cdev->dev, "Detecting the maximum supported data size for zHPF requests failed\n");
+ 		return 0;
+ 	} else {
+@@ -1160,12 +1161,12 @@ static u32 get_fcx_max_data(struct dasd_device *device)
+ static int verify_fcx_max_data(struct dasd_device *device, __u8 lpm)
+ {
+ 	struct dasd_eckd_private *private = device->private;
+-	int mdc;
++	unsigned int mdc;
+ 	u32 fcx_max_data;
  
--out_sock:
-+out_rel_sock:
- 	release_sock(sock->sk);
-+out_sock:
- 	sockfd_put(sock);
- 	return sk;
- }
+ 	if (private->fcx_max_data) {
+ 		mdc = ccw_device_get_mdc(device->cdev, lpm);
+-		if ((mdc < 0)) {
++		if (mdc == 0) {
+ 			dev_warn(&device->cdev->dev,
+ 				 "Detecting the maximum data size for zHPF "
+ 				 "requests failed (rc=%d) for a new path %x\n",
+diff --git a/drivers/s390/cio/device_ops.c b/drivers/s390/cio/device_ops.c
+index 4435ae0b3027..f0cae1973f78 100644
+--- a/drivers/s390/cio/device_ops.c
++++ b/drivers/s390/cio/device_ops.c
+@@ -624,7 +624,7 @@ EXPORT_SYMBOL(ccw_device_tm_start_timeout);
+  * @mask: mask of paths to use
+  *
+  * Return the number of 64K-bytes blocks all paths at least support
+- * for a transport command. Return values <= 0 indicate failures.
++ * for a transport command. Return value 0 indicates failure.
+  */
+ int ccw_device_get_mdc(struct ccw_device *cdev, u8 mask)
+ {
+-- 
+2.20.1
+
 
 
