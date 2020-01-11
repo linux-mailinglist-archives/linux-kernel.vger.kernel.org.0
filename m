@@ -2,188 +2,570 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 206D8137D1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 10:54:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26966137D2E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 10:54:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbgAKJxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 04:53:54 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:26916 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728917AbgAKJxx (ORCPT
+        id S1729091AbgAKJyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 04:54:25 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33254 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728747AbgAKJyX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 04:53:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578736432;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=rRx0oxYUmYgrX33kOC4ocpdLEvnNwi616mBkkVOTRWU=;
-        b=b3WbOO1Nw7RpJQWLu7l7qSoTHNctWhOMM2WjiCW2/S26GiYIP56jYPXF9cOQZ9X6OkPRif
-        0CVy/fBjSUkJ7rg8rX1o//kLyUr8ZJ1NRZxckpB1mYCjXO0QptVf/AY8AcEWBrwuUbY4fV
-        ktooM2UCRrbRJl3jbCEsYAexTJFch/Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-203-3HZU6Wq0Mmifg7xM_EVMDg-1; Sat, 11 Jan 2020 04:53:45 -0500
-X-MC-Unique: 3HZU6Wq0Mmifg7xM_EVMDg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7183C801E78;
-        Sat, 11 Jan 2020 09:53:42 +0000 (UTC)
-Received: from intel-purley-fpgabmp-02.ml3.eng.bos.redhat.com (intel-purley-fpgabmp-02.ml3.eng.bos.redhat.com [10.19.176.206])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D5A7F272A3;
-        Sat, 11 Jan 2020 09:53:41 +0000 (UTC)
-From:   Scott Wood <swood@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Scott Wood <swood@redhat.com>
-Subject: [PATCH v2 2/2] timers/nohz: Update nohz load in remote tick
-Date:   Sat, 11 Jan 2020 04:53:39 -0500
-Message-Id: <1578736419-14628-3-git-send-email-swood@redhat.com>
-In-Reply-To: <1578736419-14628-1-git-send-email-swood@redhat.com>
-References: <1578736419-14628-1-git-send-email-swood@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+        Sat, 11 Jan 2020 04:54:23 -0500
+Received: by mail-lj1-f194.google.com with SMTP id y6so4742369lji.0;
+        Sat, 11 Jan 2020 01:54:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4bqoXBsefLkDbRazNZNIZAegcgyuN5XoFg/aLIm0wKA=;
+        b=X+A+3eaea5QTVQu6czx9P9GYgjblRthn9tpvsbsIKj7EoYfEQFzGVgUh+EbpsmggNe
+         O0cO9jWAspFTEm3dsng/bUub7SWWg7NcbXrK8KFAfAQxIvBoZ8jUmFEbSDxrmw3+b9nz
+         F1qXuGfRi2Irzv6zou1sJOzu9JvhqsanDCzeL1fQhSRLUoNw2yTyiduC8DJiHuR+9xGF
+         5utBussG5Qugnbf39mVzCAiYZ7qPnq2ZPUlFjJACfIec948UB84JAFdxYiBmjNNb6/vK
+         rGwb8hS8LhGRlYnDhSodu7PZEchAZPEkvHuMHUdhtlxUKgPiHa+Db13vv4HhdQ8nvDg9
+         nQGA==
+X-Gm-Message-State: APjAAAVNb+yfeIjWFHJVd3Ioqsc+yXr8pQLHTb/X5v3blU95Orh2ncMa
+        e6w0nbfBMQn/4pWox0OSNtA=
+X-Google-Smtp-Source: APXvYqyD/8AfR+W0G6NurQ8igEWbjpWVCP51Iu1/uAFIzDjHyJ03l1SMWvUPInwQ6gW2rBDLkonlIg==
+X-Received: by 2002:a2e:b0f5:: with SMTP id h21mr5569131ljl.9.1578736459379;
+        Sat, 11 Jan 2020 01:54:19 -0800 (PST)
+Received: from localhost.localdomain (dc7t7ryyyyyyyyyyyyybt-3.rev.dnainternet.fi. [2001:14ba:16e1:b700::3])
+        by smtp.gmail.com with ESMTPSA id i1sm2312759lji.71.2020.01.11.01.54.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Jan 2020 01:54:18 -0800 (PST)
+Date:   Sat, 11 Jan 2020 11:54:10 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: [PATCH v9 08/12] regulator: bd718x7: Split driver to common and
+ bd718x7 specific parts
+Message-ID: <79f0683b8ef6497bbe40d73efd6a44748bbc7ff2.1578644144.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1578644144.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1578644144.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Few ROHM PMICs allow setting the voltage states for different system states
+like RUN, IDLE, SUSPEND and LPSR. States are then changed via SoC specific
+mechanisms. bd718x7 driver implemented device-tree parsing functions for
+these state specific voltages. The parsing functions can be re-used by
+other ROHM chip drivers like bd71828. Split the generic functions from
+bd718x7-regulator.c to rohm-regulator.c and export them for other modules
+to use.
 
-The way loadavg is tracked during nohz only pays attention to the load
-upon entering nohz.  This can be particularly noticeable if full nohz is
-entered while non-idle, and then the cpu goes idle and stays that way for
-a long time.
-
-Use the remote tick to ensure that full nohz cpus report their deltas
-within a reasonable time.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-[swood: added changelog and removed recheck of stopped tick]
-Signed-off-by: Scott Wood <swood@redhat.com>
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Acked-by: Mark Brown <broonie@kernel.org>
 ---
- include/linux/sched/nohz.h |  2 ++
- kernel/sched/core.c        |  4 +++-
- kernel/sched/loadavg.c     | 33 +++++++++++++++++++++++----------
- 3 files changed, 28 insertions(+), 11 deletions(-)
+Changes since v8:
+ - add kerneldoc to dvs config struct
+ - cleaned comment
 
-diff --git a/include/linux/sched/nohz.h b/include/linux/sched/nohz.h
-index 1abe91ff6e4a..6d67e9a5af6b 100644
---- a/include/linux/sched/nohz.h
-+++ b/include/linux/sched/nohz.h
-@@ -15,9 +15,11 @@ static inline void nohz_balance_enter_idle(int cpu) { }
+ drivers/regulator/Kconfig             |   4 +
+ drivers/regulator/Makefile            |   1 +
+ drivers/regulator/bd718x7-regulator.c | 183 ++++++++------------------
+ drivers/regulator/rohm-regulator.c    |  95 +++++++++++++
+ include/linux/mfd/rohm-generic.h      |  66 ++++++++++
+ 5 files changed, 221 insertions(+), 128 deletions(-)
+ create mode 100644 drivers/regulator/rohm-regulator.c
+
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 74eb5af7295f..a4897ae52f14 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -197,6 +197,7 @@ config REGULATOR_BD70528
+ config REGULATOR_BD718XX
+ 	tristate "ROHM BD71837 Power Regulator"
+ 	depends on MFD_ROHM_BD718XX
++	select REGULATOR_ROHM
+ 	help
+ 	  This driver supports voltage regulators on ROHM BD71837 PMIC.
+ 	  This will enable support for the software controllable buck
+@@ -790,6 +791,9 @@ config REGULATOR_RN5T618
+ 	  Say y here to support the regulators found on Ricoh RN5T567,
+ 	  RN5T618 or RC5T619 PMIC.
  
- #ifdef CONFIG_NO_HZ_COMMON
- void calc_load_nohz_start(void);
-+void calc_load_nohz_remote(struct rq *rq);
- void calc_load_nohz_stop(void);
- #else
- static inline void calc_load_nohz_start(void) { }
-+static inline void calc_load_nohz_remote(struct rq *rq) { }
- static inline void calc_load_nohz_stop(void) { }
- #endif /* CONFIG_NO_HZ_COMMON */
++config REGULATOR_ROHM
++	tristate
++
+ config REGULATOR_RT5033
+ 	tristate "Richtek RT5033 Regulators"
+ 	depends on MFD_RT5033
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index 2210ba56f9bd..6bcab72c1fc7 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -99,6 +99,7 @@ obj-$(CONFIG_REGULATOR_PCF50633) += pcf50633-regulator.o
+ obj-$(CONFIG_REGULATOR_RC5T583)  += rc5t583-regulator.o
+ obj-$(CONFIG_REGULATOR_RK808)   += rk808-regulator.o
+ obj-$(CONFIG_REGULATOR_RN5T618) += rn5t618-regulator.o
++obj-$(CONFIG_REGULATOR_ROHM)	+= rohm-regulator.o
+ obj-$(CONFIG_REGULATOR_RT5033)	+= rt5033-regulator.o
+ obj-$(CONFIG_REGULATOR_S2MPA01) += s2mpa01.o
+ obj-$(CONFIG_REGULATOR_S2MPS11) += s2mps11.o
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index 6beaf867d9cb..55decb58c777 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -318,6 +318,7 @@ struct reg_init {
+ };
+ struct bd718xx_regulator_data {
+ 	struct regulator_desc desc;
++	const struct rohm_dvs_config dvs;
+ 	const struct reg_init init;
+ 	const struct reg_init *additional_inits;
+ 	int additional_init_amnt;
+@@ -349,133 +350,15 @@ static const struct reg_init bd71837_ldo6_inits[] = {
+ 	},
+ };
  
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index dfb8ea801700..2e4a505e48af 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3676,6 +3676,7 @@ static void sched_tick_remote(struct work_struct *work)
- 	if (cpu_is_offline(cpu))
- 		goto out_unlock;
- 
-+	curr = rq->curr;
- 	update_rq_clock(rq);
- 
- 	if (!is_idle_task(curr)) {
-@@ -3688,10 +3689,11 @@ static void sched_tick_remote(struct work_struct *work)
- 	}
- 	curr->sched_class->task_tick(rq, curr, 0);
- 
-+	calc_load_nohz_remote(rq);
- out_unlock:
- 	rq_unlock_irq(rq, &rf);
+-#define NUM_DVS_BUCKS 4
 -
- out_requeue:
-+
- 	/*
- 	 * Run the remote tick once per second (1Hz). This arbitrary
- 	 * frequency is large enough to avoid overload but short enough
-diff --git a/kernel/sched/loadavg.c b/kernel/sched/loadavg.c
-index 28a516575c18..de22da666ac7 100644
---- a/kernel/sched/loadavg.c
-+++ b/kernel/sched/loadavg.c
-@@ -231,16 +231,11 @@ static inline int calc_load_read_idx(void)
- 	return calc_load_idx & 1;
- }
- 
--void calc_load_nohz_start(void)
-+static void calc_load_nohz_fold(struct rq *rq)
+-struct of_dvs_setting {
+-	const char *prop;
+-	unsigned int reg;
+-};
+-
+-static int set_dvs_levels(const struct of_dvs_setting *dvs,
+-			  struct device_node *np,
+-			  const struct regulator_desc *desc,
+-			  struct regmap *regmap)
+-{
+-	int ret, i;
+-	unsigned int uv;
+-
+-	ret = of_property_read_u32(np, dvs->prop, &uv);
+-	if (ret) {
+-		if (ret != -EINVAL)
+-			return ret;
+-		return 0;
+-	}
+-
+-	for (i = 0; i < desc->n_voltages; i++) {
+-		ret = regulator_desc_list_voltage_linear_range(desc, i);
+-		if (ret < 0)
+-			continue;
+-		if (ret == uv) {
+-			i <<= ffs(desc->vsel_mask) - 1;
+-			ret = regmap_update_bits(regmap, dvs->reg,
+-						 DVS_BUCK_RUN_MASK, i);
+-			break;
+-		}
+-	}
+-	return ret;
+-}
+-
+-static int buck4_set_hw_dvs_levels(struct device_node *np,
++static int buck_set_hw_dvs_levels(struct device_node *np,
+ 			    const struct regulator_desc *desc,
+ 			    struct regulator_config *cfg)
  {
--	struct rq *this_rq = this_rq();
- 	long delta;
+-	int ret, i;
+-	const struct of_dvs_setting dvs[] = {
+-		{
+-			.prop = "rohm,dvs-run-voltage",
+-			.reg = BD71837_REG_BUCK4_VOLT_RUN,
+-		},
+-	};
++	struct bd718xx_regulator_data *data;
  
--	/*
--	 * We're going into NO_HZ mode, if there's any pending delta, fold it
--	 * into the pending NO_HZ delta.
--	 */
--	delta = calc_load_fold_active(this_rq, 0);
-+	delta = calc_load_fold_active(rq, 0);
- 	if (delta) {
- 		int idx = calc_load_write_idx();
+-	for (i = 0; i < ARRAY_SIZE(dvs); i++) {
+-		ret = set_dvs_levels(&dvs[i], np, desc, cfg->regmap);
+-		if (ret)
+-			break;
+-	}
+-	return ret;
+-}
+-static int buck3_set_hw_dvs_levels(struct device_node *np,
+-			    const struct regulator_desc *desc,
+-			    struct regulator_config *cfg)
+-{
+-	int ret, i;
+-	const struct of_dvs_setting dvs[] = {
+-		{
+-			.prop = "rohm,dvs-run-voltage",
+-			.reg = BD71837_REG_BUCK3_VOLT_RUN,
+-		},
+-	};
++	data = container_of(desc, struct bd718xx_regulator_data, desc);
  
-@@ -248,6 +243,24 @@ void calc_load_nohz_start(void)
- 	}
+-	for (i = 0; i < ARRAY_SIZE(dvs); i++) {
+-		ret = set_dvs_levels(&dvs[i], np, desc, cfg->regmap);
+-		if (ret)
+-			break;
+-	}
+-	return ret;
+-}
+-
+-static int buck2_set_hw_dvs_levels(struct device_node *np,
+-			    const struct regulator_desc *desc,
+-			    struct regulator_config *cfg)
+-{
+-	int ret, i;
+-	const struct of_dvs_setting dvs[] = {
+-		{
+-			.prop = "rohm,dvs-run-voltage",
+-			.reg = BD718XX_REG_BUCK2_VOLT_RUN,
+-		},
+-		{
+-			.prop = "rohm,dvs-idle-voltage",
+-			.reg = BD718XX_REG_BUCK2_VOLT_IDLE,
+-		},
+-	};
+-
+-
+-
+-	for (i = 0; i < ARRAY_SIZE(dvs); i++) {
+-		ret = set_dvs_levels(&dvs[i], np, desc, cfg->regmap);
+-		if (ret)
+-			break;
+-	}
+-	return ret;
+-}
+-
+-static int buck1_set_hw_dvs_levels(struct device_node *np,
+-			    const struct regulator_desc *desc,
+-			    struct regulator_config *cfg)
+-{
+-	int ret, i;
+-	const struct of_dvs_setting dvs[] = {
+-		{
+-			.prop = "rohm,dvs-run-voltage",
+-			.reg = BD718XX_REG_BUCK1_VOLT_RUN,
+-		},
+-		{
+-			.prop = "rohm,dvs-idle-voltage",
+-			.reg = BD718XX_REG_BUCK1_VOLT_IDLE,
+-		},
+-		{
+-			.prop = "rohm,dvs-suspend-voltage",
+-			.reg = BD718XX_REG_BUCK1_VOLT_SUSP,
+-		},
+-	};
+-
+-	for (i = 0; i < ARRAY_SIZE(dvs); i++) {
+-		ret = set_dvs_levels(&dvs[i], np, desc, cfg->regmap);
+-		if (ret)
+-			break;
+-	}
+-	return ret;
++	return rohm_regulator_set_dvs_levels(&data->dvs, np, desc, cfg->regmap);
  }
  
-+void calc_load_nohz_start(void)
+ static const struct bd718xx_regulator_data bd71847_regulators[] = {
+@@ -496,7 +379,17 @@ static const struct bd718xx_regulator_data bd71847_regulators[] = {
+ 			.enable_reg = BD718XX_REG_BUCK1_CTRL,
+ 			.enable_mask = BD718XX_BUCK_EN,
+ 			.owner = THIS_MODULE,
+-			.of_parse_cb = buck1_set_hw_dvs_levels,
++			.of_parse_cb = buck_set_hw_dvs_levels,
++		},
++		.dvs = {
++			.level_map = ROHM_DVS_LEVEL_RUN | ROHM_DVS_LEVEL_IDLE |
++				     ROHM_DVS_LEVEL_SUSPEND,
++			.run_reg = BD718XX_REG_BUCK1_VOLT_RUN,
++			.run_mask = DVS_BUCK_RUN_MASK,
++			.idle_reg = BD718XX_REG_BUCK1_VOLT_IDLE,
++			.idle_mask = DVS_BUCK_RUN_MASK,
++			.suspend_reg = BD718XX_REG_BUCK1_VOLT_SUSP,
++			.suspend_mask = DVS_BUCK_RUN_MASK,
+ 		},
+ 		.init = {
+ 			.reg = BD718XX_REG_BUCK1_CTRL,
+@@ -520,7 +413,14 @@ static const struct bd718xx_regulator_data bd71847_regulators[] = {
+ 			.enable_reg = BD718XX_REG_BUCK2_CTRL,
+ 			.enable_mask = BD718XX_BUCK_EN,
+ 			.owner = THIS_MODULE,
+-			.of_parse_cb = buck2_set_hw_dvs_levels,
++			.of_parse_cb = buck_set_hw_dvs_levels,
++		},
++		.dvs = {
++			.level_map = ROHM_DVS_LEVEL_RUN | ROHM_DVS_LEVEL_IDLE,
++			.run_reg = BD718XX_REG_BUCK2_VOLT_RUN,
++			.run_mask = DVS_BUCK_RUN_MASK,
++			.idle_reg = BD718XX_REG_BUCK2_VOLT_IDLE,
++			.idle_mask = DVS_BUCK_RUN_MASK,
+ 		},
+ 		.init = {
+ 			.reg = BD718XX_REG_BUCK2_CTRL,
+@@ -792,7 +692,17 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
+ 			.enable_reg = BD718XX_REG_BUCK1_CTRL,
+ 			.enable_mask = BD718XX_BUCK_EN,
+ 			.owner = THIS_MODULE,
+-			.of_parse_cb = buck1_set_hw_dvs_levels,
++			.of_parse_cb = buck_set_hw_dvs_levels,
++		},
++		.dvs = {
++			.level_map = ROHM_DVS_LEVEL_RUN | ROHM_DVS_LEVEL_IDLE |
++				     ROHM_DVS_LEVEL_SUSPEND,
++			.run_reg = BD718XX_REG_BUCK1_VOLT_RUN,
++			.run_mask = DVS_BUCK_RUN_MASK,
++			.idle_reg = BD718XX_REG_BUCK1_VOLT_IDLE,
++			.idle_mask = DVS_BUCK_RUN_MASK,
++			.suspend_reg = BD718XX_REG_BUCK1_VOLT_SUSP,
++			.suspend_mask = DVS_BUCK_RUN_MASK,
+ 		},
+ 		.init = {
+ 			.reg = BD718XX_REG_BUCK1_CTRL,
+@@ -816,7 +726,14 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
+ 			.enable_reg = BD718XX_REG_BUCK2_CTRL,
+ 			.enable_mask = BD718XX_BUCK_EN,
+ 			.owner = THIS_MODULE,
+-			.of_parse_cb = buck2_set_hw_dvs_levels,
++			.of_parse_cb = buck_set_hw_dvs_levels,
++		},
++		.dvs = {
++			.level_map = ROHM_DVS_LEVEL_RUN | ROHM_DVS_LEVEL_IDLE,
++			.run_reg = BD718XX_REG_BUCK2_VOLT_RUN,
++			.run_mask = DVS_BUCK_RUN_MASK,
++			.idle_reg = BD718XX_REG_BUCK2_VOLT_IDLE,
++			.idle_mask = DVS_BUCK_RUN_MASK,
+ 		},
+ 		.init = {
+ 			.reg = BD718XX_REG_BUCK2_CTRL,
+@@ -840,7 +757,12 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
+ 			.enable_reg = BD71837_REG_BUCK3_CTRL,
+ 			.enable_mask = BD718XX_BUCK_EN,
+ 			.owner = THIS_MODULE,
+-			.of_parse_cb = buck3_set_hw_dvs_levels,
++			.of_parse_cb = buck_set_hw_dvs_levels,
++		},
++		.dvs = {
++			.level_map = ROHM_DVS_LEVEL_RUN,
++			.run_reg = BD71837_REG_BUCK3_VOLT_RUN,
++			.run_mask = DVS_BUCK_RUN_MASK,
+ 		},
+ 		.init = {
+ 			.reg = BD71837_REG_BUCK3_CTRL,
+@@ -864,7 +786,12 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
+ 			.enable_reg = BD71837_REG_BUCK4_CTRL,
+ 			.enable_mask = BD718XX_BUCK_EN,
+ 			.owner = THIS_MODULE,
+-			.of_parse_cb = buck4_set_hw_dvs_levels,
++			.of_parse_cb = buck_set_hw_dvs_levels,
++		},
++		.dvs = {
++			.level_map = ROHM_DVS_LEVEL_RUN,
++			.run_reg = BD71837_REG_BUCK4_VOLT_RUN,
++			.run_mask = DVS_BUCK_RUN_MASK,
+ 		},
+ 		.init = {
+ 			.reg = BD71837_REG_BUCK4_CTRL,
+diff --git a/drivers/regulator/rohm-regulator.c b/drivers/regulator/rohm-regulator.c
+new file mode 100644
+index 000000000000..399002383b28
+--- /dev/null
++++ b/drivers/regulator/rohm-regulator.c
+@@ -0,0 +1,95 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2020 ROHM Semiconductors
++
++#include <linux/errno.h>
++#include <linux/mfd/rohm-generic.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
++#include <linux/regulator/driver.h>
++
++static int set_dvs_level(const struct regulator_desc *desc,
++			 struct device_node *np, struct regmap *regmap,
++			 char *prop, unsigned int reg, unsigned int mask,
++			 unsigned int omask, unsigned int oreg)
 +{
-+	/*
-+	 * We're going into NO_HZ mode, if there's any pending delta, fold it
-+	 * into the pending NO_HZ delta.
-+	 */
-+	calc_load_nohz_fold(this_rq());
++	int ret, i;
++	uint32_t uv;
++
++	ret = of_property_read_u32(np, prop, &uv);
++	if (ret) {
++		if (ret != -EINVAL)
++			return ret;
++		return 0;
++	}
++
++	if (uv == 0) {
++		if (omask)
++			return regmap_update_bits(regmap, oreg, omask, 0);
++	}
++	for (i = 0; i < desc->n_voltages; i++) {
++		ret = regulator_desc_list_voltage_linear_range(desc, i);
++		if (ret < 0)
++			continue;
++		if (ret == uv) {
++			i <<= ffs(desc->vsel_mask) - 1;
++			ret = regmap_update_bits(regmap, reg, mask, i);
++			if (omask && !ret)
++				ret = regmap_update_bits(regmap, oreg, omask,
++							 omask);
++			break;
++		}
++	}
++	return ret;
 +}
 +
-+/*
-+ * Keep track of the load for NOHZ_FULL, must be called between
-+ * calc_load_nohz_{start,stop}().
++int rohm_regulator_set_dvs_levels(const struct rohm_dvs_config *dvs,
++			  struct device_node *np,
++			  const struct regulator_desc *desc,
++			  struct regmap *regmap)
++{
++	int i, ret = 0;
++	char *prop;
++	unsigned int reg, mask, omask, oreg = desc->enable_reg;
++
++	for (i = 0; i < ROHM_DVS_LEVEL_MAX && !ret; i++) {
++		if (dvs->level_map & (1 << i)) {
++			switch (i + 1) {
++			case ROHM_DVS_LEVEL_RUN:
++				prop = "rohm,dvs-run-voltage";
++				reg = dvs->run_reg;
++				mask = dvs->run_mask;
++				omask = dvs->run_on_mask;
++				break;
++			case ROHM_DVS_LEVEL_IDLE:
++				prop = "rohm,dvs-idle-voltage";
++				reg = dvs->idle_reg;
++				mask = dvs->idle_mask;
++				omask = dvs->idle_on_mask;
++				break;
++			case ROHM_DVS_LEVEL_SUSPEND:
++				prop = "rohm,dvs-suspend-voltage";
++				reg = dvs->suspend_reg;
++				mask = dvs->suspend_mask;
++				omask = dvs->suspend_on_mask;
++				break;
++			case ROHM_DVS_LEVEL_LPSR:
++				prop = "rohm,dvs-lpsr-voltage";
++				reg = dvs->lpsr_reg;
++				mask = dvs->lpsr_mask;
++				omask = dvs->lpsr_on_mask;
++				break;
++			default:
++				return -EINVAL;
++			}
++			ret = set_dvs_level(desc, np, regmap, prop, reg, mask,
++					    omask, oreg);
++		}
++	}
++	return ret;
++}
++EXPORT_SYMBOL(rohm_regulator_set_dvs_levels);
++
++MODULE_LICENSE("GPL v2");
++MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
++MODULE_DESCRIPTION("Generic helpers for ROHM PMIC regulator drivers");
+diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-generic.h
+index ff3dd7578fd3..6cc5a0819959 100644
+--- a/include/linux/mfd/rohm-generic.h
++++ b/include/linux/mfd/rohm-generic.h
+@@ -4,6 +4,9 @@
+ #ifndef __LINUX_MFD_ROHM_H__
+ #define __LINUX_MFD_ROHM_H__
+ 
++#include <linux/regmap.h>
++#include <linux/regulator/driver.h>
++
+ enum rohm_chip_type {
+ 	ROHM_CHIP_TYPE_BD71837 = 0,
+ 	ROHM_CHIP_TYPE_BD71847,
+@@ -17,4 +20,67 @@ struct rohm_regmap_dev {
+ 	struct regmap *regmap;
+ };
+ 
++enum {
++	ROHM_DVS_LEVEL_UNKNOWN,
++	ROHM_DVS_LEVEL_RUN,
++	ROHM_DVS_LEVEL_IDLE,
++	ROHM_DVS_LEVEL_SUSPEND,
++	ROHM_DVS_LEVEL_LPSR,
++#define ROHM_DVS_LEVEL_MAX ROHM_DVS_LEVEL_LPSR
++};
++
++/**
++ * struct rohm_dvs_config - dynamic voltage scaling register descriptions
++ *
++ * @level_map:		bitmap representing supported run-levels for this
++ *			regulator
++ * @run_reg:		register address for regulator config at 'run' state
++ * @run_mask:		value mask for regulator voltages at 'run' state
++ * @run_on_mask:	enable mask for regulator at 'run' state
++ * @idle_reg:		register address for regulator config at 'idle' state
++ * @idle_mask:		value mask for regulator voltages at 'idle' state
++ * @idle_on_mask:	enable mask for regulator at 'idle' state
++ * @suspend_reg:	register address for regulator config at 'suspend' state
++ * @suspend_mask:	value mask for regulator voltages at 'suspend' state
++ * @suspend_on_mask:	enable mask for regulator at 'suspend' state
++ * @lpsr_reg:		register address for regulator config at 'lpsr' state
++ * @lpsr_mask:		value mask for regulator voltages at 'lpsr' state
++ * @lpsr_on_mask:	enable mask for regulator at 'lpsr' state
++ *
++ * Description of ROHM PMICs voltage configuration registers for different
++ * system states. This is used to correctly configure the PMIC at startup
++ * based on values read from DT.
 + */
-+void calc_load_nohz_remote(struct rq *rq)
-+{
-+	calc_load_nohz_fold(rq);
-+}
++struct rohm_dvs_config {
++	uint64_t level_map;
++	unsigned int run_reg;
++	unsigned int run_mask;
++	unsigned int run_on_mask;
++	unsigned int idle_reg;
++	unsigned int idle_mask;
++	unsigned int idle_on_mask;
++	unsigned int suspend_reg;
++	unsigned int suspend_mask;
++	unsigned int suspend_on_mask;
++	unsigned int lpsr_reg;
++	unsigned int lpsr_mask;
++	unsigned int lpsr_on_mask;
++};
 +
- void calc_load_nohz_stop(void)
- {
- 	struct rq *this_rq = this_rq();
-@@ -268,7 +281,7 @@ void calc_load_nohz_stop(void)
- 		this_rq->calc_load_update += LOAD_FREQ;
- }
- 
--static long calc_load_nohz_fold(void)
-+static long calc_load_nohz_read(void)
- {
- 	int idx = calc_load_read_idx();
- 	long delta = 0;
-@@ -323,7 +336,7 @@ static void calc_global_nohz(void)
- }
- #else /* !CONFIG_NO_HZ_COMMON */
- 
--static inline long calc_load_nohz_fold(void) { return 0; }
-+static inline long calc_load_nohz_read(void) { return 0; }
- static inline void calc_global_nohz(void) { }
- 
- #endif /* CONFIG_NO_HZ_COMMON */
-@@ -346,7 +359,7 @@ void calc_global_load(unsigned long ticks)
- 	/*
- 	 * Fold the 'old' NO_HZ-delta to include all NO_HZ CPUs.
- 	 */
--	delta = calc_load_nohz_fold();
-+	delta = calc_load_nohz_read();
- 	if (delta)
- 		atomic_long_add(delta, &calc_load_tasks);
- 
++#if IS_ENABLED(CONFIG_REGULATOR_ROHM)
++int rohm_regulator_set_dvs_levels(const struct rohm_dvs_config *dvs,
++				  struct device_node *np,
++				  const struct regulator_desc *desc,
++				  struct regmap *regmap);
++
++#else
++static inline int rohm_regulator_set_dvs_levels(const struct rohm_dvs_config *dvs,
++						struct device_node *np,
++						const struct regulator_desc *desc,
++						struct regmap *regmap)
++{
++	return 0;
++}
++#endif
++
+ #endif
 -- 
-1.8.3.1
+2.21.0
 
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
