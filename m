@@ -2,145 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B9AF1382B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 18:49:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B88D1382A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 18:32:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730749AbgAKRtt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 12:49:49 -0500
-Received: from bues.ch ([80.190.117.144]:45422 "EHLO bues.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730641AbgAKRtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 12:49:49 -0500
-X-Greylist: delayed 2015 seconds by postgrey-1.27 at vger.kernel.org; Sat, 11 Jan 2020 12:49:48 EST
-Received: by bues.ch with esmtpsa (Exim 4.92)
-        (envelope-from <m@bues.ch>)
-        id 1iqKMY-0002Bp-7l; Sat, 11 Jan 2020 18:15:50 +0100
-Date:   Sat, 11 Jan 2020 18:15:57 +0100
-From:   Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     kvalo@codeaurora.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, allison@lohutok.net,
-        saurav.girepunje@gmail.com, tglx@linutronix.de, will@kernel.org,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-        b43-dev@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] b43: Fix possible a data race in b43_op_tx()
-Message-ID: <20200111181557.11b6b174@wiggum>
-In-Reply-To: <20200111161455.26587-1-baijiaju1990@gmail.com>
-References: <20200111161455.26587-1-baijiaju1990@gmail.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1730612AbgAKRcR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 12:32:17 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:46205 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730587AbgAKRcQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 12:32:16 -0500
+Received: by mail-qk1-f193.google.com with SMTP id r14so4893559qke.13
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Jan 2020 09:32:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NvxagxtUHEEM2utnj9FcN3UQ43b4PRjpBK1OBEnu02A=;
+        b=fl3mSN7HRRbsg0j4B1wDe5VybpDyvzQXn9jyJ0wFiaJ6XdxY+qNaB6dONSCBC+jIMR
+         jtkU6dYmhmRPgH0NfiQ40v/dRJlqkNW03bVa2vIAuN32WcZOUL8nn9i0ACPGjfNMIFaB
+         YsWmAEY1Eit6n2IToAEVeAjfibw0DAnTzr9OzZ3meR3auhqbkdUQq/K/UJPowulB+27Y
+         Dw6M2M0mFRpVXDt07W73orNVhCrbN6lovsE7jkzRocxAyqFedz3O8hvnq12USP2vnVBt
+         XBn/GNLjGaWHD3v15XdVCz9KOqnMcZ59LSd+yeYvqd6XhgEBOG/JVkonomO53MrBrNhO
+         /laA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NvxagxtUHEEM2utnj9FcN3UQ43b4PRjpBK1OBEnu02A=;
+        b=LK9Yc/Qkv0FejU74qv/dC6tYsviu5xPUwgimsebBHgfeMiZaJ5EKX1qLkbxldK1gb3
+         zbxxSYfrlAEjFzsQC2aG14y3oCYkJbgSKE8tkia4AfcU0vqTxF8gVzhbHJTLl5VmJgxN
+         zKQKAaFDBhHcEhg7C1Pi0crTJ7k89TaSG+qMWGtxE3tVM2q4u+dGzRL5RCEuLn8qRwbl
+         Nh9Rn9PPy4Hlied0FDRPAYYjk5vzSUKxBS2Pb+qDtmt1HI6J/jvWxD+4Jt/oSDkMIReP
+         QwJU+iezVOUJJ+4LmSoj0y16hRu1nBmxW6ZcsRkj/c8kXJpY/gKRAPz/nwOOIBkC61JX
+         Kcrw==
+X-Gm-Message-State: APjAAAXiL3lkmGXCG3hG+B0t3pS7Rt+dFU4i/tYw/6rrVDzsCUp/5r7k
+        v1Za1neiR2NtO47CuwCrDQk=
+X-Google-Smtp-Source: APXvYqyBDmK/b/NWdNLESxbwVJ3CSTVXB7r8Oyv7cYFvS1ucM2Rg4Os5vSuiT9vpsUsxnAwjgC4HQQ==
+X-Received: by 2002:a37:658f:: with SMTP id z137mr9133361qkb.234.1578763936090;
+        Sat, 11 Jan 2020 09:32:16 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id s33sm2986750qtb.52.2020.01.11.09.32.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Jan 2020 09:32:16 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Sat, 11 Jan 2020 12:32:14 -0500
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>
+Subject: Re: [PATCH] x86/tools/relocs: Add _etext and __end_of_kernel_reserve
+ to S_REL
+Message-ID: <20200111173214.GB2688392@rani.riverdale.lan>
+References: <20200110202349.1881840-1-nivedita@alum.mit.edu>
+ <20200110203828.GK19453@zn.tnic>
+ <20200110205028.GA2012059@rani.riverdale.lan>
+ <20200111130243.GA23583@zn.tnic>
+ <20200111172047.GA2688392@rani.riverdale.lan>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/edhf2Fx3kHYL6/4KBjkb=AD";
- protocol="application/pgp-signature"; micalg=pgp-sha512
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200111172047.GA2688392@rani.riverdale.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/edhf2Fx3kHYL6/4KBjkb=AD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, Jan 11, 2020 at 12:20:48PM -0500, Arvind Sankar wrote:
+> I'm running gentoo, but building the kernel using binutils-2.21.1
+> compiled from the GNU source tarball, and gcc-4.6.4 again compiled from
+> source. (It's not something I normally need but I was investigating
+> something else to see what exactly happens with older toolchains.)
+> 
+> I used the below to compile the kernel (I added in
+> readelf/objdump/objcopy just now, and it does build until the relocs
+> error). The config is x86-64 defconfig with CONFIG_RETPOLINE overridden
+> to n (since gcc 4.6.4 doesn't support retpoline).
+> 
+> make O=~/kernel64 -j LD=~/old/bin/ld AS=~/old/bin/as READELF=~/old/bin/readelf \
+> 	OBJDUMP=~/old/bin/objdump OBJCOPY=~/old/bin/objcopy GCC=~/old/bin/gcc
+							    ^^ that should be CC
+> 
 
-On Sun, 12 Jan 2020 00:14:55 +0800
-Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
-
-> The functions b43_op_tx() and b43_tx_work() may be concurrently executed.
->=20
-> In b43_tx_work(), the variable wl->tx_queue_stopped[queue_num] is
-> accessed with holding a mutex lock wl->mutex. But in b43_op_tx(), the
-> identical variable wl->tx_queue_stopped[skb->queue_mapping] is accessed
-> without holding this mutex lock. Thus, a possible data race may occur.
->=20
-> To fix this data race, in b43_op_tx(), the variable=20
-> wl->tx_queue_stopped[skb->queue_mapping] is accessed with holding the=20
-> mutex lock wl->mutex.
->=20
-> This data race is found by the runtime testing of our tool DILP-2.
->=20
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
->  drivers/net/wireless/broadcom/b43/main.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wirel=
-ess/broadcom/b43/main.c
-> index 39da1a4c30ac..adedb38f50f2 100644
-> --- a/drivers/net/wireless/broadcom/b43/main.c
-> +++ b/drivers/net/wireless/broadcom/b43/main.c
-> @@ -3625,6 +3625,11 @@ static void b43_op_tx(struct ieee80211_hw *hw,
->  		      struct sk_buff *skb)
->  {
->  	struct b43_wl *wl =3D hw_to_b43_wl(hw);
-> +	bool stopped;
-> +
-> +	mutex_lock(&wl->mutex);
-> +	stopped =3D wl->tx_queue_stopped[skb->queue_mapping];
-> +	mutex_unlock(&wl->mutex);
-> =20
->  	if (unlikely(skb->len < 2 + 2 + 6)) {
->  		/* Too short, this can't be a valid frame. */
-> @@ -3634,7 +3639,7 @@ static void b43_op_tx(struct ieee80211_hw *hw,
->  	B43_WARN_ON(skb_shinfo(skb)->nr_frags);
-> =20
->  	skb_queue_tail(&wl->tx_queue[skb->queue_mapping], skb);
-> -	if (!wl->tx_queue_stopped[skb->queue_mapping]) {
-> +	if (!stopped) {
->  		ieee80211_queue_work(wl->hw, &wl->tx_work);
->  	} else {
->  		ieee80211_stop_queue(wl->hw, skb->queue_mapping);
-
-Hi,
-
-thanks for your patch.
-
-Unfortunately it is not possible to acquire a sleeping mutex in the tx
-op:
-
-/**
- * struct ieee80211_ops - callbacks from mac80211 to the driver
- *
- * @tx: Handler that 802.11 module calls for each transmitted frame.
- *      skb contains the buffer starting from the IEEE 802.11 header.
- *      The low-level driver should send the frame out based on
- *      configuration in the TX control data. This handler should,
- *      preferably, never fail and stop queues appropriately.
- *      Must be atomic.
-        ^^^^^^^^^^^^^^
-
-I also don't think that the change really fixes any race.
-The variable tx_queue_stopped is a boolean. Reading that under mutex
-and then doing the actual action based on a copy does not really change
-anything. The other end may just set it to false after mutex_unlock,
-but before the queue_work. Thus this change does probably even increase
-the race window size.
-
-The other thing to consider is:
-What can actually go wrong, if the race happens?
-I currently don't see any fatal behavior.
-A packet might still make it into the queue, although it has already
-been stopped. But that's not fatal.
-
---=20
-Michael
-
---Sig_/edhf2Fx3kHYL6/4KBjkb=AD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAl4aAs0ACgkQ9TK+HZCN
-iw6TPQ//d1QZTRW32tb9pJeehH2Z3IOrjYuu8UXzz47+ykPNCAg84T9kfhPdVV1n
-y9FMecAuYqgPTWByYotMoeaVLj10pAJ5fqe+qtMbl3OvOuTmuzSRdOKzChJr1BJj
-5FxM+j8e0bbUW+5Xovvkecs1aH4XN6onL0XGoI6rNefN+9iHD4OnC/3tVTh5cvXx
-iY4dlFXWs21OcEamszU7RjZIulaI55GN9RTzctsjBsx/cGtxkeIhEG0AMwvAcH2g
-PfoxTwpEiUIZhvfb4qyA9sonm1GANvwNUo1wlO4dHWl709ei1oK+gWSl4UMyxlaO
-Jf7+c9LiB0R6gXAdpjIWDrdFoNhoZnJMrJ6yXwr7bxxvs8cbzOxloJ3rtllQdmf9
-XNcmAakeSj19sDobTMDqup+ZFatXTs3zrgluzn9y7SJoysaV5+uU2HQAjjb5E5mn
-fb51kot6LMO5aW06jxEsgEvZ66udxDR1hfjyxF5fmuHMEsgZLM8yoNpsB5YS/Mo7
-YfR2bO2kgRXhXRxPBdL6RudtMOtv7ut3FoFg1kXZTzqMqAjFBpp9dp7LkVt9rRQM
-Fg4/9/SuP/L8te7u2I3m5FnCCAgqKz5W+8FPtkgNrF3nHptqrPQqmzt6wOW76h/H
-5hofJcfy2Its6lu34C6/pfSqTRbv+u4Nb34CphZCqwkuNiReVXI=
-=DukR
------END PGP SIGNATURE-----
-
---Sig_/edhf2Fx3kHYL6/4KBjkb=AD--
+The built kernel (with this patch) does boot till userspace on qemu, so
+these old versions aren't producing a completely broken kernel.
