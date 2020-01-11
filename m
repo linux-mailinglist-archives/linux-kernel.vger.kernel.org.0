@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AD2E137F0E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:16:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2754D137EA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:12:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730234AbgAKKQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:16:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58856 "EHLO mail.kernel.org"
+        id S1729875AbgAKKMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:12:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730299AbgAKKQL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:16:11 -0500
+        id S1729606AbgAKKMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:12:17 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3399A205F4;
-        Sat, 11 Jan 2020 10:16:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DBE12082E;
+        Sat, 11 Jan 2020 10:12:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737771;
-        bh=S7renQ6JMhoqB5VfJ2q31j4ceVXaE9rW61AyX8FoOGE=;
+        s=default; t=1578737536;
+        bh=sy2Calgp9CwR7ibuyNniX63iyl5RxqkfSkdj2DtD6cM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RvaLH6w43ZQVPnX8StZ9lOjASeyz7ieN+R3adIAgI8PmIjjDows6B8Ib4rsIdqu47
-         Vy4r3LoPR5+LfLxyXaGVEfmJmCFTrG+uL1Pc6wdMRbgbL1ag3ZDygRDwr/qHNNl0OF
-         Sjs/GGGNE2ZCA3iaNbilon5R6S3ZDE+srUTe5Xc4=
+        b=MV5jkeJwS8sfxU7RCEryNkAnOJEldZI6apkXx5VoVrZ9q4zfpdH8bAbqTLGLlQYsV
+         5OHxy8MuuEq6ihY56UFBNJ+IZbmbm0i7Mz1Jo1s+IOPAhd4WKSz9PSNi89PQmi2YoZ
+         VOJ3ld/8EJJ8+bFUcvLa5I/xNW+qxMqFsg3pvwR8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 42/84] ASoC: wm8962: fix lambda value
+Subject: [PATCH 4.14 37/62] parisc: Fix compiler warnings in debug_core.c
 Date:   Sat, 11 Jan 2020 10:50:19 +0100
-Message-Id: <20200111094902.227377246@linuxfoundation.org>
+Message-Id: <20200111094847.139609489@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
-References: <20200111094845.328046411@linuxfoundation.org>
+In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
+References: <20200111094837.425430968@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
+From: Helge Deller <deller@gmx.de>
 
-[ Upstream commit 556672d75ff486e0b6786056da624131679e0576 ]
+[ Upstream commit 75cf9797006a3a9f29a3a25c1febd6842a4a9eb2 ]
 
-According to user manual, it is required that FLL_LAMBDA > 0
-in all cases (Integer and Franctional modes).
+Fix this compiler warning:
+kernel/debug/debug_core.c: In function ‘kgdb_cpu_enter’:
+arch/parisc/include/asm/cmpxchg.h:48:3: warning: value computed is not used [-Wunused-value]
+   48 |  ((__typeof__(*(ptr)))__xchg((unsigned long)(x), (ptr), sizeof(*(ptr))))
+arch/parisc/include/asm/atomic.h:78:30: note: in expansion of macro ‘xchg’
+   78 | #define atomic_xchg(v, new) (xchg(&((v)->counter), new))
+      |                              ^~~~
+kernel/debug/debug_core.c:596:4: note: in expansion of macro ‘atomic_xchg’
+  596 |    atomic_xchg(&kgdb_active, cpu);
+      |    ^~~~~~~~~~~
 
-Fixes: 9a76f1ff6e29 ("ASoC: Add initial WM8962 CODEC driver")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Link: https://lore.kernel.org/r/1576065442-19763-1-git-send-email-shengjiu.wang@nxp.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/wm8962.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/parisc/include/asm/cmpxchg.h | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/wm8962.c b/sound/soc/codecs/wm8962.c
-index efd8910b1ff7..dde015fd70a4 100644
---- a/sound/soc/codecs/wm8962.c
-+++ b/sound/soc/codecs/wm8962.c
-@@ -2792,7 +2792,7 @@ static int fll_factors(struct _fll_div *fll_div, unsigned int Fref,
+diff --git a/arch/parisc/include/asm/cmpxchg.h b/arch/parisc/include/asm/cmpxchg.h
+index f627c37dad9c..ab5c215cf46c 100644
+--- a/arch/parisc/include/asm/cmpxchg.h
++++ b/arch/parisc/include/asm/cmpxchg.h
+@@ -44,8 +44,14 @@ __xchg(unsigned long x, __volatile__ void *ptr, int size)
+ **		if (((unsigned long)p & 0xf) == 0)
+ **			return __ldcw(p);
+ */
+-#define xchg(ptr, x) \
+-	((__typeof__(*(ptr)))__xchg((unsigned long)(x), (ptr), sizeof(*(ptr))))
++#define xchg(ptr, x)							\
++({									\
++	__typeof__(*(ptr)) __ret;					\
++	__typeof__(*(ptr)) _x_ = (x);					\
++	__ret = (__typeof__(*(ptr)))					\
++		__xchg((unsigned long)_x_, (ptr), sizeof(*(ptr)));	\
++	__ret;								\
++})
  
- 	if (target % Fref == 0) {
- 		fll_div->theta = 0;
--		fll_div->lambda = 0;
-+		fll_div->lambda = 1;
- 	} else {
- 		gcd_fll = gcd(target, fratio * Fref);
- 
-@@ -2862,7 +2862,7 @@ static int wm8962_set_fll(struct snd_soc_component *component, int fll_id, int s
- 		return -EINVAL;
- 	}
- 
--	if (fll_div.theta || fll_div.lambda)
-+	if (fll_div.theta)
- 		fll1 |= WM8962_FLL_FRAC;
- 
- 	/* Stop the FLL while we reconfigure */
+ /* bug catcher for when unsupported size is used - won't link */
+ extern void __cmpxchg_called_with_bad_pointer(void);
 -- 
 2.20.1
 
