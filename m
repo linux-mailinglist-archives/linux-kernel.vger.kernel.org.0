@@ -2,57 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D7FC137C01
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 08:16:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 627E7137C08
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 08:17:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728538AbgAKHP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 02:15:57 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:44224 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728501AbgAKHP5 (ORCPT
+        id S1728533AbgAKHRe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 02:17:34 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:15016 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728441AbgAKHRd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 02:15:57 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::f0c])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 02D191599DBB0;
-        Fri, 10 Jan 2020 23:15:55 -0800 (PST)
-Date:   Fri, 10 Jan 2020 23:15:55 -0800 (PST)
-Message-Id: <20200110.231555.1390807442365734004.davem@davemloft.net>
-To:     yuehaibing@huawei.com
-Cc:     amaftei@solarflare.com, ecree@solarflare.com,
-        mhabets@solarflare.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        hulkci@huawei.com
-Subject: Re: [PATCH net-next] sfc: remove set but not used variable
- 'nic_data'
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200110060908.124241-1-yuehaibing@huawei.com>
-References: <20200110060908.124241-1-yuehaibing@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.3
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 10 Jan 2020 23:15:56 -0800 (PST)
+        Sat, 11 Jan 2020 02:17:33 -0500
+X-UUID: c5f96851d910426bafc55b24aedba67c-20200111
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=k/r+E+rZ5TVzR0eoZZhVyF7N7msarS1XBPeVmbXXWk4=;
+        b=ZVBa5wrB4rvX+2AEe5YsQqcasDmFRy0Cmbk0jkZdfRkeAdUBlAj+Z3U2n1wNiNX3s5SLP3+Ngb5FXXMulIqDqm3SNm+9RTu8R1GLB7BNvc7UkN4dWadBhnLJTRHNR8NgjeZr+XXVu7laUKuPOFFaz/+cQuJow+Fso+diSDgm++o=;
+X-UUID: c5f96851d910426bafc55b24aedba67c-20200111
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1077272840; Sat, 11 Jan 2020 15:17:24 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Sat, 11 Jan 2020 15:16:29 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Sat, 11 Jan 2020 15:18:03 +0800
+Message-ID: <1578727042.17435.8.camel@mtkswgap22>
+Subject: Re: [PATCH v1 0/3] scsi: ufs: fix error history and complete device
+ reset history
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     <linux-scsi@vger.kernel.org>
+CC:     <martin.petersen@oracle.com>, <avri.altman@wdc.com>,
+        <alim.akhtar@samsung.com>, <jejb@linux.ibm.com>,
+        <beanhuo@micron.com>, <asutoshd@codeaurora.org>,
+        <cang@codeaurora.org>, <matthias.bgg@gmail.com>,
+        <bvanassche@acm.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
+        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
+        <andy.teng@mediatek.com>
+Date:   Sat, 11 Jan 2020 15:17:22 +0800
+In-Reply-To: <1578147968-30938-1-git-send-email-stanley.chu@mediatek.com>
+References: <1578147968-30938-1-git-send-email-stanley.chu@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+MIME-Version: 1.0
+X-TM-SNTS-SMTP: BE6CDD5CE9F68F62515C03A4103563C2B33C58080B14D1E2DA17F98058B84D642000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 10 Jan 2020 06:09:08 +0000
+SGksDQoNCkdlbnRsZSBwaW5nIGZvciB0aGlzIHNldC4NCg0KT24gU2F0LCAyMDIwLTAxLTA0IGF0
+IDIyOjI2ICswODAwLCBTdGFubGV5IENodSB3cm90ZToNCj4gSGksDQo+IA0KPiBUaGlzIHNlcmll
+cyB0YXJnZXRzIG9uIFVGUyBlcnJvciBoaXN0b3J5IGZpeGVzIGFuZCBmZWF0dXJlIGFkZC1vbiwN
+Cj4gDQo+IDEuIEZpeCBlbXB0eSBjaGVjayBsb2dpYyB3aGlsZSBvdXRwdXRpbmcgZXJyb3IgaGlz
+dG9yeS4NCj4gMi4gQWRkIGRldmljZSByZXNldCBoaXN0b3J5IGV2ZW50cyBmb3IgdmVuZG9yJ3Mg
+aW1wbGVtZW50YXRpb25zLg0KPiAzLiBSZW1vdmUgZHVtbXkgd29yZCBpbiBvdXRwdXQgZm9ybWF0
+Lg0KPiANCj4gU3RhbmxleSBDaHUgKDMpOg0KPiAgIHNjc2k6IHVmczogZml4IGVtcHR5IGNoZWNr
+IG9mIGVycm9yIGhpc3RvcnkNCj4gICBzY3NpOiB1ZnM6IGFkZCBkZXZpY2UgcmVzZXQgaGlzdG9y
+eSBmb3IgdmVuZG9yIGltcGxlbWVudGF0aW9ucw0KPiAgIHNjc2k6IHVmczogcmVtb3ZlICJlcnJv
+cnMiIHdvcmQgaW4gdWZzaGNkX3ByaW50X2Vycl9oaXN0KCkNCj4gDQo+ICBkcml2ZXJzL3Njc2kv
+dWZzL3Vmc2hjZC5jIHwgOSArKysrKy0tLS0NCj4gIGRyaXZlcnMvc2NzaS91ZnMvdWZzaGNkLmgg
+fCA2ICsrKysrLQ0KPiAgMiBmaWxlcyBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCA1IGRlbGV0
+aW9ucygtKQ0KPiANCg0K
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/ethernet/sfc/mcdi_functions.c: In function 'efx_mcdi_ev_init':
-> drivers/net/ethernet/sfc/mcdi_functions.c:79:28: warning:
->  variable 'nic_data' set but not used [-Wunused-but-set-variable]
-> 
-> commit 4438b587fe4b ("sfc: move MCDI event queue management code")
-> introduces this unused variable.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-
-Applied.
