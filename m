@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DCE5138058
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:28:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A23BE137F27
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:17:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731278AbgAKK2c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:28:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36106 "EHLO mail.kernel.org"
+        id S1730353AbgAKKQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:16:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730398AbgAKK23 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:28:29 -0500
+        id S1730398AbgAKKQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:16:49 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C80B2082E;
-        Sat, 11 Jan 2020 10:28:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA22220880;
+        Sat, 11 Jan 2020 10:16:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738509;
-        bh=GQiAvbWLjMvJk09cCba+syEJkkqYycnVG/FlajrljWk=;
+        s=default; t=1578737808;
+        bh=VVAXxor+iPN+v/i1b9zhPl8bSbTs/m3d8lkUIp2osCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f+vbQ9pNKNG86xsBq+8HI7jii921gfMZGRkoC06WgqdPAF1FH3YgMGkJ90nl/zpCq
-         Q4JdpfhlOHmvXDlHW+IVyyFIpOodbeOn7W6GhHrMdMUi2dlfwRAbDcFBALKl08rncO
-         JfNPidXzPMBhX7KZCKMcYjw8oUpwlkKQe5p+hL0Q=
+        b=RzlB/Dc5Eds9VClp0Kgz4EEd0bE35Nv0Rn32Kc7uWb6bwh5QjgSoC3a00jCtTtO4k
+         67bGEnJ1sJZ+t6c0SZXvmRamKbs/GNHFTurl+7XywKHwRkKn+A2dPktMZbxXfb41SC
+         q8mZdbQe752nME3Nmh8MdZbLS56Vk8jh5BUEEQ+I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, "Daniel T. Lee" <danieltimlee@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 090/165] ASoC: wm8962: fix lambda value
+Subject: [PATCH 4.19 32/84] samples: bpf: fix syscall_tp due to unused syscall
 Date:   Sat, 11 Jan 2020 10:50:09 +0100
-Message-Id: <20200111094928.703357933@linuxfoundation.org>
+Message-Id: <20200111094858.413545470@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-References: <20200111094921.347491861@linuxfoundation.org>
+In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
+References: <20200111094845.328046411@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
+From: Daniel T. Lee <danieltimlee@gmail.com>
 
-[ Upstream commit 556672d75ff486e0b6786056da624131679e0576 ]
+[ Upstream commit fe3300897cbfd76c6cb825776e5ac0ca50a91ca4 ]
 
-According to user manual, it is required that FLL_LAMBDA > 0
-in all cases (Integer and Franctional modes).
+Currently, open() is called from the user program and it calls the syscall
+'sys_openat', not the 'sys_open'. This leads to an error of the program
+of user side, due to the fact that the counter maps are zero since no
+function such 'sys_open' is called.
 
-Fixes: 9a76f1ff6e29 ("ASoC: Add initial WM8962 CODEC driver")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Link: https://lore.kernel.org/r/1576065442-19763-1-git-send-email-shengjiu.wang@nxp.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+This commit adds the kernel bpf program which are attached to the
+tracepoint 'sys_enter_openat' and 'sys_enter_openat'.
+
+Fixes: 1da236b6be963 ("bpf: add a test case for syscalls/sys_{enter|exit}_* tracepoints")
+Signed-off-by: Daniel T. Lee <danieltimlee@gmail.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/wm8962.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ samples/bpf/syscall_tp_kern.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/wm8962.c b/sound/soc/codecs/wm8962.c
-index 3e5c69fbc33a..d9d59f45833f 100644
---- a/sound/soc/codecs/wm8962.c
-+++ b/sound/soc/codecs/wm8962.c
-@@ -2788,7 +2788,7 @@ static int fll_factors(struct _fll_div *fll_div, unsigned int Fref,
+diff --git a/samples/bpf/syscall_tp_kern.c b/samples/bpf/syscall_tp_kern.c
+index 9149c524d279..8833aacb9c8c 100644
+--- a/samples/bpf/syscall_tp_kern.c
++++ b/samples/bpf/syscall_tp_kern.c
+@@ -50,13 +50,27 @@ static __always_inline void count(void *map)
+ SEC("tracepoint/syscalls/sys_enter_open")
+ int trace_enter_open(struct syscalls_enter_open_args *ctx)
+ {
+-	count((void *)&enter_open_map);
++	count(&enter_open_map);
++	return 0;
++}
++
++SEC("tracepoint/syscalls/sys_enter_openat")
++int trace_enter_open_at(struct syscalls_enter_open_args *ctx)
++{
++	count(&enter_open_map);
+ 	return 0;
+ }
  
- 	if (target % Fref == 0) {
- 		fll_div->theta = 0;
--		fll_div->lambda = 0;
-+		fll_div->lambda = 1;
- 	} else {
- 		gcd_fll = gcd(target, fratio * Fref);
- 
-@@ -2858,7 +2858,7 @@ static int wm8962_set_fll(struct snd_soc_component *component, int fll_id, int s
- 		return -EINVAL;
- 	}
- 
--	if (fll_div.theta || fll_div.lambda)
-+	if (fll_div.theta)
- 		fll1 |= WM8962_FLL_FRAC;
- 
- 	/* Stop the FLL while we reconfigure */
+ SEC("tracepoint/syscalls/sys_exit_open")
+ int trace_enter_exit(struct syscalls_exit_open_args *ctx)
+ {
+-	count((void *)&exit_open_map);
++	count(&exit_open_map);
++	return 0;
++}
++
++SEC("tracepoint/syscalls/sys_exit_openat")
++int trace_enter_exit_at(struct syscalls_exit_open_args *ctx)
++{
++	count(&exit_open_map);
+ 	return 0;
+ }
 -- 
 2.20.1
 
