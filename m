@@ -2,47 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83F30137BF2
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 08:11:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5237137BF9
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 08:12:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728526AbgAKHLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 02:11:36 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:44208 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728471AbgAKHLf (ORCPT
+        id S1728580AbgAKHMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 02:12:07 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:11762 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728447AbgAKHMF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 02:11:35 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::f0c])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6EBBF14FA41BF;
-        Fri, 10 Jan 2020 23:11:34 -0800 (PST)
-Date:   Fri, 10 Jan 2020 23:11:33 -0800 (PST)
-Message-Id: <20200110.231133.366069857384555250.davem@davemloft.net>
-To:     yuehaibing@huawei.com
-Cc:     ast@kernel.org, daniel@iogearbox.net, jakub.kicinski@netronome.com,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] sfc: remove duplicated include from ef10.c
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200110013517.37685-1-yuehaibing@huawei.com>
-References: <20200110013517.37685-1-yuehaibing@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.3
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 10 Jan 2020 23:11:34 -0800 (PST)
+        Sat, 11 Jan 2020 02:12:05 -0500
+X-UUID: 2359de1797fd4004852ee6399b0fe6dc-20200111
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=9mo99xIvkfScUshABg5R+2UHB6H3sxJILIKNOtsoiKk=;
+        b=A4tXQFid6+6alC3FPA7e+ahoHXHoVpynmgTpuqCgwqnxGxISFxEWFm54ES3r3D68vgfztmPCFWc1a+uVRXjhfoC2EIX5tGbXds0UXHegfbZAAe5J/4gfJ0AzCxkPf/gs+mLDXOclNqjPncFKf2NEhyz4CfbsyGtGUtxcqFfkmrg=;
+X-UUID: 2359de1797fd4004852ee6399b0fe6dc-20200111
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1432143684; Sat, 11 Jan 2020 15:11:59 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Sat, 11 Jan 2020 15:11:03 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Sat, 11 Jan 2020 15:12:37 +0800
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
+        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
+        <jejb@linux.ibm.com>
+CC:     <beanhuo@micron.com>, <asutoshd@codeaurora.org>,
+        <cang@codeaurora.org>, <matthias.bgg@gmail.com>,
+        <bvanassche@acm.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
+        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
+        <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
+Subject: [PATCH v3 0/2] scsi: ufs: pass device information to apply_dev_quirks
+Date:   Sat, 11 Jan 2020 15:11:45 +0800
+Message-ID: <1578726707-6596-1-git-send-email-stanley.chu@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-SNTS-SMTP: F766C1091C1913520CE1D9691BC16BBDA3D7AF20A07BA51859A15704091991D62000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 10 Jan 2020 01:35:17 +0000
+Q3VycmVudGx5IFVGUyBkcml2ZXIgaGFzICJnbG9iYWwiIGRldmljZSBxdWlyayBzY2hlbWUgdG8g
+YWxsb3cgZHJpdmVyIGFwcGx5aW5nDQpzcGVjaWFsIGhhbmRsaW5nIGZvciBjZXJ0YWluIFVGUyBk
+ZXZpdmUgbW9kZWxzLg0KDQpIb3dldmVyIHNvbWUgc3BlY2lhbCBkZXZpY2UgaGFuZGxpbmdzIGFy
+ZSByZXF1aXJlZCBmb3Igc3BlY2lmaWMgVUZTIGhvc3RzIG9ubHkNCnNvIGl0IGlzIGJldHRlciB0
+byBtYWtlIGl0IGhhcHBlbiBpbiB2ZW5kb3IncyBjYWxsYmFja3Mgb25seSB0byBub3QgInBvbGx1
+dGUiDQpjb21tb24gZHJpdmVyIGFuZCBjb21tb24gZGV2aWNlIHF1aXJrcy4NCg0KV2UgYWxyZWFk
+eSBoYXZlIGFwcGx5X2Rldl9xdWlya3MgdmFyaWFudCBjYWxsYmFjayBmb3IgdmVuZG9ycyBidXQg
+bGFjayBvZiBkZXZpY2UNCmluZm9ybWF0aW9uIGZvciBoYW5kbGluZyBzcGVjaWZpYyBVRlMgZGV2
+aWNlIG1vZGVscy4gVGhpcyBzZXJpZXMgcHJvdmlkZXMgc3VjaA0KaW5mb3JtYXRpb24gdG8gYXBw
+bHlfZGV2X3F1aXJrcyBjYWxsYmFja3MsIGFuZCBhcHBsaWVzIHJlbGF0ZWQgbW9kaWZpY2F0aW9u
+cy4NCg0KSW4gcGF0Y2ggMSwgc2luY2UgUUNPTSB2ZW5kb3IgZHJpdmVyIHdpbGwgYmUgYnVpbHQg
+YnkgZGVmYXVsdCBhcyBhIG1vZHVsZSwgVUZTDQpjb3JlIGRyaXZlciBhbmQgdmVuZG9yIGRyaXZl
+ciBjYW4gbm90IGJlIHNwbGl0IHRvIGRpZmZlcmVudCBwYXRjaGVzLCBvdGhlcndpc2UNCnNlcGFy
+YXRlZCBwYXRjaGVzIHdpbGwgbm90IGJlIGJ1aWx0IHNpbmdseS4NCg0KdjIgLT4gdjMNCiAgICAt
+IEZpeCB1ZnNoY2RfdHVuZV91bmlwcm9fcGFyYW1zKCkncyB1c2VycyB0byBoYXZlIGNvcnJlY3Qg
+cGFyYW1ldGVycyBmb3IgaW52b2tpbmcuDQogICAgLSBSZWJhc2UgdG8gTWFydGluJ3MgbGF0ZXN0
+IHF1ZXVlIGJyYW5jaC4NCg0KdjEgLT4gdjINCiAgICAtIFNxdWFzaCBwYXRjaCAxICJzY3NpOiB1
+ZnM6IHBhc3MgZGV2aWNlIGluZm9ybWF0aW9uIHRvIGFwcGx5X2Rldl9xdWlya3MiIGFuZCBwYXRj
+aCAyICJzY3NpOiB1ZnMtcWNvbTogbW9kaWZ5IGFwcGx5X2Rldl9xdWlya3MgaW50ZXJmYWNlIiB0
+byByZXNvbHZlIGJ1aWxkIGlzc3VlLg0KDQpTdGFubGV5IENodSAoMik6DQogIHNjc2k6IHVmczog
+cGFzcyBkZXZpY2UgaW5mb3JtYXRpb24gdG8gYXBwbHlfZGV2X3F1aXJrcw0KICBzY3NpOiB1ZnMt
+bWVkaWF0ZWs6IGFkZCBhcHBseV9kZXZfcXVpcmtzIHZhcmlhbnQgb3BlcmF0aW9uDQoNCiBkcml2
+ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5jIHwgMTEgKysrKysrKysrKysNCiBkcml2ZXJzL3Nj
+c2kvdWZzL3Vmcy1xY29tLmMgICAgIHwgIDMgKystDQogZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2Qu
+YyAgICAgICB8ICA4ICsrKystLS0tDQogZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2QuaCAgICAgICB8
+ICA3ICsrKystLS0NCiA0IGZpbGVzIGNoYW5nZWQsIDIxIGluc2VydGlvbnMoKyksIDggZGVsZXRp
+b25zKC0pDQoNCi0tIA0KMi4xOC4wDQo=
 
-> Remove duplicated include.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-
-Applied, thanks.
