@@ -2,44 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B19F6137F41
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:17:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E149137E32
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:07:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730507AbgAKKRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:17:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34828 "EHLO mail.kernel.org"
+        id S1729638AbgAKKGG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:06:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728946AbgAKKRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:17:43 -0500
+        id S1729277AbgAKKGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:06:06 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 452352077C;
-        Sat, 11 Jan 2020 10:17:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB3CC2064C;
+        Sat, 11 Jan 2020 10:06:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737862;
-        bh=9qcvowxmEQncxH6EJpnreHVGbP7op9XJu/sacMFNzTc=;
+        s=default; t=1578737165;
+        bh=yxO19RkpbpT6xRpMIbMXZhoy5cZeZcVraSfibN4vxIA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qtleNEkQqPwAevwiwFZkiLseoebyCqKQsY13aicSb6WwClwvE5uEb/lfiMOo+3nET
-         GLReXdJwsDhR1jU2bgxqTmKBG3dNP1WqgsEubTVw/MZdAeVhTiCzD89++IKjqWaMws
-         +jugm9BU7ZTGrZRy6/WC2DxpmB8ocIIL4rYXRKEw=
+        b=sCYsazcrP4WvUP/cwYsy2R1s71wJTdw/+BEp4QKT6fQWeLMBGv6hMisWbtn33TUFs
+         aSJcOX53Z4CGVFRcqdAxcKOVyeuV0iGqmc3VQOvj7mixKjsL194h7LjUyP8YQMxNfL
+         3fbwTjZNFQYgnoig02OxrKilc/a0UHgDLnIQ7vw0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vitaly Slobodskoy <vitaly.slobodskoy@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 46/84] perf/x86/intel: Fix PT PMI handling
-Date:   Sat, 11 Jan 2020 10:50:23 +0100
-Message-Id: <20200111094903.790241100@linuxfoundation.org>
+        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 91/91] USB: serial: option: add Telit ME910G1 0x110a composition
+Date:   Sat, 11 Jan 2020 10:50:24 +0100
+Message-Id: <20200111094913.604410860@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
-References: <20200111094845.328046411@linuxfoundation.org>
+In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
+References: <20200111094844.748507863@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,76 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Daniele Palmas <dnlplm@gmail.com>
 
-[ Upstream commit 92ca7da4bdc24d63bb0bcd241c11441ddb63b80a ]
+commit 0d3010fa442429f8780976758719af05592ff19f upstream.
 
-Commit:
+This patch adds the following Telit ME910G1 composition:
 
-  ccbebba4c6bf ("perf/x86/intel/pt: Bypass PT vs. LBR exclusivity if the core supports it")
+0x110a: tty, tty, tty, rmnet
 
-skips the PT/LBR exclusivity check on CPUs where PT and LBRs coexist, but
-also inadvertently skips the active_events bump for PT in that case, which
-is a bug. If there aren't any hardware events at the same time as PT, the
-PMI handler will ignore PT PMIs, as active_events reads zero in that case,
-resulting in the "Uhhuh" spurious NMI warning and PT data loss.
+Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fix this by always increasing active_events for PT events.
-
-Fixes: ccbebba4c6bf ("perf/x86/intel/pt: Bypass PT vs. LBR exclusivity if the core supports it")
-Reported-by: Vitaly Slobodskoy <vitaly.slobodskoy@intel.com>
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Link: https://lkml.kernel.org/r/20191210105101.77210-1-alexander.shishkin@linux.intel.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/core.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/usb/serial/option.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index c9625bff4328..429389489eed 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -375,7 +375,7 @@ int x86_add_exclusive(unsigned int what)
- 	 * LBR and BTS are still mutually exclusive.
- 	 */
- 	if (x86_pmu.lbr_pt_coexist && what == x86_lbr_exclusive_pt)
--		return 0;
-+		goto out;
- 
- 	if (!atomic_inc_not_zero(&x86_pmu.lbr_exclusive[what])) {
- 		mutex_lock(&pmc_reserve_mutex);
-@@ -387,6 +387,7 @@ int x86_add_exclusive(unsigned int what)
- 		mutex_unlock(&pmc_reserve_mutex);
- 	}
- 
-+out:
- 	atomic_inc(&active_events);
- 	return 0;
- 
-@@ -397,11 +398,15 @@ int x86_add_exclusive(unsigned int what)
- 
- void x86_del_exclusive(unsigned int what)
- {
-+	atomic_dec(&active_events);
-+
-+	/*
-+	 * See the comment in x86_add_exclusive().
-+	 */
- 	if (x86_pmu.lbr_pt_coexist && what == x86_lbr_exclusive_pt)
- 		return;
- 
- 	atomic_dec(&x86_pmu.lbr_exclusive[what]);
--	atomic_dec(&active_events);
- }
- 
- int x86_setup_perfctr(struct perf_event *event)
--- 
-2.20.1
-
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1167,6 +1167,8 @@ static const struct usb_device_id option
+ 	  .driver_info = NCTRL(0) | RSVD(3) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x1102, 0xff),	/* Telit ME910 (ECM) */
+ 	  .driver_info = NCTRL(0) },
++	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x110a, 0xff),	/* Telit ME910G1 */
++	  .driver_info = NCTRL(0) | RSVD(3) },
+ 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910),
+ 	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(2) },
+ 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910_USBCFG4),
 
 
