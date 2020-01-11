@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9AD4137E22
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:06:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31A9E138028
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:26:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729577AbgAKKFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:05:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38306 "EHLO mail.kernel.org"
+        id S1731077AbgAKK0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:26:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728850AbgAKKFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:05:17 -0500
+        id S1730871AbgAKK0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:26:32 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AF472082E;
-        Sat, 11 Jan 2020 10:05:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FF992082E;
+        Sat, 11 Jan 2020 10:26:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737116;
-        bh=iQGXxCHV1+CJ7ks380hPcc4n61ekmCUk3qyBkkXbrt4=;
+        s=default; t=1578738392;
+        bh=VILDewDdZZ57MJtd8nZfpQtoINtvKmzSvR8cAHZgqHE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LyP5A6veTNv9AikElGqA9+HxS12a+ULMmV73CUdkTCAwr9U3gUvyxW+ez5oTw2c1O
-         eO0eoa/k/VXH4VNuFgQkIML10nokSlYMF6WC11/maVj+mW5H2o8vn0ZiWJECbmwWYm
-         yPo3ZZDR/EArPvdQBuE0G0+xVAWWoRKjMPVzmvUg=
+        b=mQWM6eWj63pG4HbpN+zqvPJ6r0o3U0FDFVQzdC5VAz6BNStz8ABbEwP6G1qdYmbPZ
+         AHXVYxG/WGliXh8GoxaiDGzXUlnalijzC9+Pm8/l6FmHQTarviHGKcYSR6k1jWq1xU
+         YLsEMWbkz4Y/h9SJxNfckQW6rvUxlvHDiYG9OlpQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Cristian Birsan <cristian.birsan@microchip.com>,
+        stable@vger.kernel.org, Herat Ramani <herat@chelsio.com>,
+        Vishal Kulkarni <vishal@chelsio.com>,
         Jakub Kicinski <jakub.kicinski@netronome.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 70/91] net: usb: lan78xx: Fix error message format specifier
-Date:   Sat, 11 Jan 2020 10:50:03 +0100
-Message-Id: <20200111094910.623117502@linuxfoundation.org>
+Subject: [PATCH 5.4 085/165] cxgb4: Fix kernel panic while accessing sge_info
+Date:   Sat, 11 Jan 2020 10:50:04 +0100
+Message-Id: <20200111094928.271154438@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
-References: <20200111094844.748507863@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,33 +45,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cristian Birsan <cristian.birsan@microchip.com>
+From: Vishal Kulkarni <vishal@chelsio.com>
 
-[ Upstream commit 858ce8ca62ea1530f2779d0e3f934b0176e663c3 ]
+[ Upstream commit 479a0d1376f6d97c60871442911f1394d4446a25 ]
 
-Display the return code as decimal integer.
+The sge_info debugfs collects offload queue info even when offload
+capability is disabled and leads to panic.
 
-Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
-Signed-off-by: Cristian Birsan <cristian.birsan@microchip.com>
+[  144.139871] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  144.139874] CR2: 0000000000000000 CR3: 000000082d456005 CR4: 00000000001606e0
+[  144.139876] Call Trace:
+[  144.139887]  sge_queue_start+0x12/0x30 [cxgb4]
+[  144.139897]  seq_read+0x1d4/0x3d0
+[  144.139906]  full_proxy_read+0x50/0x70
+[  144.139913]  vfs_read+0x89/0x140
+[  144.139916]  ksys_read+0x55/0xd0
+[  144.139924]  do_syscall_64+0x5b/0x1d0
+[  144.139933]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  144.139936] RIP: 0033:0x7f4b01493990
+
+Fix this crash by skipping the offload queue access in sge_qinfo when
+offload capability is disabled
+
+Signed-off-by: Herat Ramani <herat@chelsio.com>
+Signed-off-by: Vishal Kulkarni <vishal@chelsio.com>
 Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/lan78xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 96258e6a1920..207660fd4b74 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -442,7 +442,7 @@ static int lan78xx_read_stats(struct lan78xx_net *dev,
- 		}
- 	} else {
- 		netdev_warn(dev->net,
--			    "Failed to read stat ret = 0x%x", ret);
-+			    "Failed to read stat ret = %d", ret);
- 	}
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+index ae6a47dd7dc9..fb8ade9a05a9 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+@@ -2996,6 +2996,9 @@ static int sge_queue_entries(const struct adapter *adap)
+ 	int tot_uld_entries = 0;
+ 	int i;
  
- 	kfree(stats);
++	if (!is_uld(adap))
++		goto lld_only;
++
+ 	mutex_lock(&uld_mutex);
+ 	for (i = 0; i < CXGB4_TX_MAX; i++)
+ 		tot_uld_entries += sge_qinfo_uld_txq_entries(adap, i);
+@@ -3006,6 +3009,7 @@ static int sge_queue_entries(const struct adapter *adap)
+ 	}
+ 	mutex_unlock(&uld_mutex);
+ 
++lld_only:
+ 	return DIV_ROUND_UP(adap->sge.ethqsets, 4) +
+ 	       tot_uld_entries +
+ 	       DIV_ROUND_UP(MAX_CTRL_QUEUES, 4) + 1;
 -- 
 2.20.1
 
