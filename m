@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3483B137EE0
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:14:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F9AD13801C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:26:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730170AbgAKKOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:14:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54910 "EHLO mail.kernel.org"
+        id S1731098AbgAKK0A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:26:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57806 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729423AbgAKKOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:14:40 -0500
+        id S1729374AbgAKKZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:25:58 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECE5320673;
-        Sat, 11 Jan 2020 10:14:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AE18205F4;
+        Sat, 11 Jan 2020 10:25:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737679;
-        bh=8ly01OGIEPnk2p8j5+xPUt2405IE4J4LAvf+++GTJN8=;
+        s=default; t=1578738357;
+        bh=kZlyWVfDQ/Il/ZTXyaCcECiQi49gcTd2X7UKT7IULYw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2SKnDQNmsBgHyXMqwsX/Xv5mPfmqZZql8aUPyYU7fCIwqX/7OvX8Qg9fGjdozMstB
-         7KCjLIfYJUODuPSs7ADdSCK1ql0LNNWJA0GCXJjt0hr8TiG3UezpgNpTvUHaCOfiGF
-         Fs9lAL5SuiLoVNp/oAIbYTVcCWVC4STd/JXv8mb4=
+        b=r/GUp/+diySdSVnMgupYgwAkcBzC3kE/r6VQqy227D/Ujo4zjMOvYEZVxe7Tr2qo2
+         tKm1CvvclBe+xDyzbsIhMgB6eTH0ci8dKUWDFLhoSdPQJmO/s7DY9B980D9EMfWt3Q
+         Teo+GWCpi8k8llE35GH03ST8rRvEFp12ssUHRtgA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Simon Horman <simon.horman@netronome.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Greg Kurz <groug@kaod.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 21/84] ARM: dts: BCM5301X: Fix MDIO node address/size cells
+Subject: [PATCH 5.4 079/165] ocxl: Fix potential memory leak on context creation
 Date:   Sat, 11 Jan 2020 10:49:58 +0100
-Message-Id: <20200111094853.429814088@linuxfoundation.org>
+Message-Id: <20200111094927.798722801@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
-References: <20200111094845.328046411@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Frederic Barrat <fbarrat@linux.ibm.com>
 
-[ Upstream commit 093c3f94e922d83a734fc4da08cc5814990f32c6 ]
+[ Upstream commit 913e73c77d48aeeb50c16450a653dca9c71ae2e2 ]
 
-The MDIO node on BCM5301X had an reversed #address-cells and
- #size-cells properties, correct those, silencing checker warnings:
+If we couldn't fully init a context, we were leaking memory.
 
-.../linux/arch/arm/boot/dts/bcm4708-asus-rt-ac56u.dt.yaml: mdio@18003000: #address-cells:0:0: 1 was expected
-
-Reported-by: Simon Horman <simon.horman@netronome.com>
-Fixes: 23f1eca6d59b ("ARM: dts: BCM5301X: Specify MDIO bus in the DT")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Fixes: b9721d275cc2 ("ocxl: Allow external drivers to use OpenCAPI contexts")
+Signed-off-by: Frederic Barrat <fbarrat@linux.ibm.com>
+Acked-by: Andrew Donnellan <ajd@linux.ibm.com>
+Reviewed-by: Greg Kurz <groug@kaod.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20191209105513.8566-1-fbarrat@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/bcm5301x.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/misc/ocxl/context.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/bcm5301x.dtsi b/arch/arm/boot/dts/bcm5301x.dtsi
-index bc607d11eef8..a678fb7c9e3b 100644
---- a/arch/arm/boot/dts/bcm5301x.dtsi
-+++ b/arch/arm/boot/dts/bcm5301x.dtsi
-@@ -350,8 +350,8 @@
- 	mdio: mdio@18003000 {
- 		compatible = "brcm,iproc-mdio";
- 		reg = <0x18003000 0x8>;
--		#size-cells = <1>;
--		#address-cells = <0>;
-+		#size-cells = <0>;
-+		#address-cells = <1>;
- 	};
+diff --git a/drivers/misc/ocxl/context.c b/drivers/misc/ocxl/context.c
+index 994563a078eb..de8a66b9d76b 100644
+--- a/drivers/misc/ocxl/context.c
++++ b/drivers/misc/ocxl/context.c
+@@ -10,18 +10,17 @@ int ocxl_context_alloc(struct ocxl_context **context, struct ocxl_afu *afu,
+ 	int pasid;
+ 	struct ocxl_context *ctx;
  
- 	mdio-bus-mux {
+-	*context = kzalloc(sizeof(struct ocxl_context), GFP_KERNEL);
+-	if (!*context)
++	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
+ 		return -ENOMEM;
+ 
+-	ctx = *context;
+-
+ 	ctx->afu = afu;
+ 	mutex_lock(&afu->contexts_lock);
+ 	pasid = idr_alloc(&afu->contexts_idr, ctx, afu->pasid_base,
+ 			afu->pasid_base + afu->pasid_max, GFP_KERNEL);
+ 	if (pasid < 0) {
+ 		mutex_unlock(&afu->contexts_lock);
++		kfree(ctx);
+ 		return pasid;
+ 	}
+ 	afu->pasid_count++;
+@@ -43,6 +42,7 @@ int ocxl_context_alloc(struct ocxl_context **context, struct ocxl_afu *afu,
+ 	 * duration of the life of the context
+ 	 */
+ 	ocxl_afu_get(afu);
++	*context = ctx;
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(ocxl_context_alloc);
 -- 
 2.20.1
 
