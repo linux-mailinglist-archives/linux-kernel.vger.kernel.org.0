@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5274137F94
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:21:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B14FA137D8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:00:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729336AbgAKKVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:21:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44018 "EHLO mail.kernel.org"
+        id S1729273AbgAKJ6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 04:58:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729041AbgAKKVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:21:10 -0500
+        id S1728900AbgAKJ6x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 04:58:53 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62E1D20880;
-        Sat, 11 Jan 2020 10:21:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2337220848;
+        Sat, 11 Jan 2020 09:58:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738069;
-        bh=uLLu5oc63WwBf7g8R0jV29KoDqKSvLMACvTHHtGtZvk=;
+        s=default; t=1578736732;
+        bh=IUY4U44esFWbfleDsjrVa7BP0ZvlKMaCIMck05qsgsw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jWKE7y5jVQ3Y3lUCdNsISPJNhbMTBocoIbEMhPQc7tS0gVHePQwDnzSTKodj6Zxp4
-         hZA8eQ04IyW0PXwawrjS4COQQscKn5rwBadrxoVm7tOplFYJ7hXt2Yi4wtG3jU8dlb
-         WzrdS+p+fU3TsDMl0XMIReo01eSyT7og7nGLoRPU=
+        b=wJN1vOPAcPqxmL3eZqVtkvk4PQyk4I6nd4klMU0dV2+mW1+LyM/TfNRHeJrataIk/
+         A7eY09X2qNQFR5C7rAJgaOPqnSMBOUwsRVqd9+YpLMHRfxuu0XnIt7oNlsP2oxsUvZ
+         lxoLTt6G4hzvxoLdjTaIYCw1eAjdhg1pB3jkPkus=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 019/165] ASoC: Intel: bytcr_rt5640: Update quirk for Teclast X89
+Subject: [PATCH 4.9 05/91] scsi: iscsi: qla4xxx: fix double free in probe
 Date:   Sat, 11 Jan 2020 10:48:58 +0100
-Message-Id: <20200111094922.525159357@linuxfoundation.org>
+Message-Id: <20200111094845.672920775@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-References: <20200111094921.347491861@linuxfoundation.org>
+In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
+References: <20200111094844.748507863@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,50 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 7eccc05c7101f34cc36afe9405d15de6d4099fb4 ]
+[ Upstream commit fee92f25777789d73e1936b91472e9c4644457c8 ]
 
-When the Teclast X89 quirk was added we did not have jack-detection
-support yet.
+On this error path we call qla4xxx_mem_free() and then the caller also
+calls qla4xxx_free_adapter() which calls qla4xxx_mem_free().  It leads to a
+couple double frees:
 
-Note the over-current detection limit is set to 2mA instead of the usual
-1.5mA because this tablet tends to give false-positive button-presses
-when it is set to 1.5mA.
+drivers/scsi/qla4xxx/ql4_os.c:8856 qla4xxx_probe_adapter() warn: 'ha->chap_dma_pool' double freed
+drivers/scsi/qla4xxx/ql4_os.c:8856 qla4xxx_probe_adapter() warn: 'ha->fw_ddb_dma_pool' double freed
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Link: https://lore.kernel.org/r/20191203221442.2657-1-hdegoede@redhat.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: afaf5a2d341d ("[SCSI] Initial Commit of qla4xxx")
+Link: https://lore.kernel.org/r/20191203094421.hw7ex7qr3j2rbsmx@kili.mountain
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/intel/boards/bytcr_rt5640.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/scsi/qla4xxx/ql4_os.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/intel/boards/bytcr_rt5640.c b/sound/soc/intel/boards/bytcr_rt5640.c
-index dd2b5ad08659..243f683bc02a 100644
---- a/sound/soc/intel/boards/bytcr_rt5640.c
-+++ b/sound/soc/intel/boards/bytcr_rt5640.c
-@@ -707,13 +707,17 @@ static const struct dmi_system_id byt_rt5640_quirk_table[] = {
- 					BYT_RT5640_MCLK_EN),
- 	},
- 	{
-+		/* Teclast X89 */
- 		.matches = {
- 			DMI_MATCH(DMI_BOARD_VENDOR, "TECLAST"),
- 			DMI_MATCH(DMI_BOARD_NAME, "tPAD"),
- 		},
- 		.driver_data = (void *)(BYT_RT5640_IN3_MAP |
--					BYT_RT5640_MCLK_EN |
--					BYT_RT5640_SSP0_AIF1),
-+					BYT_RT5640_JD_SRC_JD1_IN4P |
-+					BYT_RT5640_OVCD_TH_2000UA |
-+					BYT_RT5640_OVCD_SF_1P0 |
-+					BYT_RT5640_SSP0_AIF1 |
-+					BYT_RT5640_MCLK_EN),
- 	},
- 	{	/* Toshiba Satellite Click Mini L9W-B */
- 		.matches = {
+diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
+index d220b4f691c7..f714d5f917d1 100644
+--- a/drivers/scsi/qla4xxx/ql4_os.c
++++ b/drivers/scsi/qla4xxx/ql4_os.c
+@@ -4285,7 +4285,6 @@ static int qla4xxx_mem_alloc(struct scsi_qla_host *ha)
+ 	return QLA_SUCCESS;
+ 
+ mem_alloc_error_exit:
+-	qla4xxx_mem_free(ha);
+ 	return QLA_ERROR;
+ }
+ 
 -- 
 2.20.1
 
