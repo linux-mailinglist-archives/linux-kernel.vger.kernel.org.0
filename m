@@ -2,44 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28479137FA2
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:21:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00198137DAD
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730753AbgAKKVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:21:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45016 "EHLO mail.kernel.org"
+        id S1729369AbgAKKAG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:00:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730742AbgAKKVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:21:32 -0500
+        id S1729133AbgAKKAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:00:03 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68E8420880;
-        Sat, 11 Jan 2020 10:21:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CB972082E;
+        Sat, 11 Jan 2020 10:00:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738091;
-        bh=pi/P+3pN5Ai8bK46UNHG6DF35AfdvUZ2ZeSdUUks3Pg=;
+        s=default; t=1578736803;
+        bh=b9feuh1X62L8XNcbF6YOz/POC/CpMDvqh3CP6FF44Bo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nfb7fx7WU4x4BMlE50bFpPe4eAB4XDM/hOjWcIIcjstmLVdweALzZPAUAC6+BEvSC
-         U4niTQAtwOJUjZzVGTZNDa65JLBE7EuhZUkXtPs/zsBfPMuytUKaChADm3JUlIToPO
-         Ki9Y89kU4wTmbLWIsdR3mep5pAxK580Pgg9MEohs=
+        b=a2IurvZzG2VG0oqg6ZttlKKszmibchZODIiMNpMigCCAmu8TvKv/pzyCXkJPlxXB+
+         IMaepXqWJqDw53ryFNRruYH9G572dsx3GTD6pZW4CznN0T1V2UzY3Xrg+WEkzIb2Re
+         AfQidJaD5wnugpeqgI/gRB6RrQC9rhpl5zSlWLxU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
+        Maor Gottlieb <maorg@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 024/165] efi/earlycon: Remap entire framebuffer after page initialization
-Date:   Sat, 11 Jan 2020 10:49:03 +0100
-Message-Id: <20200111094922.830797628@linuxfoundation.org>
+Subject: [PATCH 4.9 11/91] IB/mlx4: Follow mirror sequence of device add during device removal
+Date:   Sat, 11 Jan 2020 10:49:04 +0100
+Message-Id: <20200111094847.033591288@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-References: <20200111094921.347491861@linuxfoundation.org>
+In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
+References: <20200111094844.748507863@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,112 +46,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Parav Pandit <parav@mellanox.com>
 
-[ Upstream commit b418d660bb9798d2249ac6a46c844389ef50b6a5 ]
+[ Upstream commit 89f988d93c62384758b19323c886db917a80c371 ]
 
-When commit:
+Current code device add sequence is:
 
-  69c1f396f25b ("efi/x86: Convert x86 EFI earlyprintk into generic earlycon implementation")
+ib_register_device()
+ib_mad_init()
+init_sriov_init()
+register_netdev_notifier()
 
-moved the x86 specific EFI earlyprintk implementation to a shared location,
-it also tweaked the behaviour. In particular, it dropped a trick with full
-framebuffer remapping after page initialization, leading to two regressions:
+Therefore, the remove sequence should be,
 
-  1) very slow scrolling after page initialization,
-  2) kernel hang when the 'keep_bootcon' command line argument is passed.
+unregister_netdev_notifier()
+close_sriov()
+mad_cleanup()
+ib_unregister_device()
 
-Putting the tweak back fixes #2 and mitigates #1, i.e., it limits the slow
-behavior to the early boot stages, presumably due to eliminating heavy
-map()/unmap() operations per each pixel line on the screen.
+However it is not above.
+Hence, make do above remove sequence.
 
- [ ardb: ensure efifb is unmapped again unless keep_bootcon is in effect. ]
- [ mingo: speling fixes. ]
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Cc: Arvind Sankar <nivedita@alum.mit.edu>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Cc: linux-efi@vger.kernel.org
-Fixes: 69c1f396f25b ("efi/x86: Convert x86 EFI earlyprintk into generic earlycon implementation")
-Link: https://lkml.kernel.org/r/20191206165542.31469-7-ardb@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: fa417f7b520ee ("IB/mlx4: Add support for IBoE")
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Reviewed-by: Maor Gottlieb <maorg@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Link: https://lore.kernel.org/r/20191212091214.315005-3-leon@kernel.org
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/efi/earlycon.c | 40 +++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ drivers/infiniband/hw/mlx4/main.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/firmware/efi/earlycon.c b/drivers/firmware/efi/earlycon.c
-index c9a0efca17b0..d4077db6dc97 100644
---- a/drivers/firmware/efi/earlycon.c
-+++ b/drivers/firmware/efi/earlycon.c
-@@ -13,18 +13,57 @@
+diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
+index 7ccf7225f75a..adc46b809ef2 100644
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -3031,16 +3031,17 @@ static void mlx4_ib_remove(struct mlx4_dev *dev, void *ibdev_ptr)
+ 	ibdev->ib_active = false;
+ 	flush_workqueue(wq);
  
- #include <asm/early_ioremap.h>
+-	mlx4_ib_close_sriov(ibdev);
+-	mlx4_ib_mad_cleanup(ibdev);
+-	ib_unregister_device(&ibdev->ib_dev);
+-	mlx4_ib_diag_cleanup(ibdev);
+ 	if (ibdev->iboe.nb.notifier_call) {
+ 		if (unregister_netdevice_notifier(&ibdev->iboe.nb))
+ 			pr_warn("failure unregistering notifier\n");
+ 		ibdev->iboe.nb.notifier_call = NULL;
+ 	}
  
-+static const struct console *earlycon_console __initdata;
- static const struct font_desc *font;
- static u32 efi_x, efi_y;
- static u64 fb_base;
- static pgprot_t fb_prot;
-+static void *efi_fb;
++	mlx4_ib_close_sriov(ibdev);
++	mlx4_ib_mad_cleanup(ibdev);
++	ib_unregister_device(&ibdev->ib_dev);
++	mlx4_ib_diag_cleanup(ibdev);
 +
-+/*
-+ * EFI earlycon needs to use early_memremap() to map the framebuffer.
-+ * But early_memremap() is not usable for 'earlycon=efifb keep_bootcon',
-+ * memremap() should be used instead. memremap() will be available after
-+ * paging_init() which is earlier than initcall callbacks. Thus adding this
-+ * early initcall function early_efi_map_fb() to map the whole EFI framebuffer.
-+ */
-+static int __init efi_earlycon_remap_fb(void)
-+{
-+	/* bail if there is no bootconsole or it has been disabled already */
-+	if (!earlycon_console || !(earlycon_console->flags & CON_ENABLED))
-+		return 0;
-+
-+	if (pgprot_val(fb_prot) == pgprot_val(PAGE_KERNEL))
-+		efi_fb = memremap(fb_base, screen_info.lfb_size, MEMREMAP_WB);
-+	else
-+		efi_fb = memremap(fb_base, screen_info.lfb_size, MEMREMAP_WC);
-+
-+	return efi_fb ? 0 : -ENOMEM;
-+}
-+early_initcall(efi_earlycon_remap_fb);
-+
-+static int __init efi_earlycon_unmap_fb(void)
-+{
-+	/* unmap the bootconsole fb unless keep_bootcon has left it enabled */
-+	if (efi_fb && !(earlycon_console->flags & CON_ENABLED))
-+		memunmap(efi_fb);
-+	return 0;
-+}
-+late_initcall(efi_earlycon_unmap_fb);
- 
- static __ref void *efi_earlycon_map(unsigned long start, unsigned long len)
- {
-+	if (efi_fb)
-+		return efi_fb + start;
-+
- 	return early_memremap_prot(fb_base + start, len, pgprot_val(fb_prot));
- }
- 
- static __ref void efi_earlycon_unmap(void *addr, unsigned long len)
- {
-+	if (efi_fb)
-+		return;
-+
- 	early_memunmap(addr, len);
- }
- 
-@@ -201,6 +240,7 @@ static int __init efi_earlycon_setup(struct earlycon_device *device,
- 		efi_earlycon_scroll_up();
- 
- 	device->con->write = efi_earlycon_write;
-+	earlycon_console = device->con;
- 	return 0;
- }
- EARLYCON_DECLARE(efifb, efi_earlycon_setup);
+ 	mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
+ 			      ibdev->steer_qpn_count);
+ 	kfree(ibdev->ib_uc_qpns_bitmap);
 -- 
 2.20.1
 
