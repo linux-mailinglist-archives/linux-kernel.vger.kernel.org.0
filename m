@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E14F137E71
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:10:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F77813805A
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:28:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729648AbgAKKJ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:09:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46112 "EHLO mail.kernel.org"
+        id S1731286AbgAKK2f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:28:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729420AbgAKKJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:09:54 -0500
+        id S1730398AbgAKK2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:28:33 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3640F206DA;
-        Sat, 11 Jan 2020 10:09:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8319820842;
+        Sat, 11 Jan 2020 10:28:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737394;
-        bh=4YON9OFRZy1HzvpVfNd2cG2zRP0S16fccsztPMSe2kg=;
+        s=default; t=1578738513;
+        bh=R4ozdsrQ0HSBUUROVEtkeFqYCqeDHvvYepahRtJnCIc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YKJACQizYG1rOFV9TjY/QmNvPjNglFZMJ4jfh7Ulswz0LnhkbJ9E6yxDWMpFjlM2q
-         L6Y4yJiu50ejkTuhnft4s+Mkbo+gDRCpAeUBZU7wR1bqjls6qRxxn1TgPqrkobdh3z
-         UUtO6boCuGEZBXxXnSzy+EmXOxdI5xwt02JZYuZk=
+        b=CHQJNEO/6ylSYr4iI/S3HrbIMXgJyqDrKdsA0Py3veo+XBFQMVRKBszgGoZWHkUEI
+         PLPfBskTojZLubX88+gvR+DQ8H15GAcUUfrSxqZHwkNrs2amoLMbv8AHs4BF8namD3
+         AvS98RSMX9Ll50jVjCasR8TkNu2HElLf+rrGm/IA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 28/62] regulator: rn5t618: fix module aliases
+Subject: [PATCH 5.4 091/165] regulator: rn5t618: fix module aliases
 Date:   Sat, 11 Jan 2020 10:50:10 +0100
-Message-Id: <20200111094845.196707660@linuxfoundation.org>
+Message-Id: <20200111094928.800560441@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
-References: <20200111094837.425430968@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -61,10 +61,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/regulator/rn5t618-regulator.c b/drivers/regulator/rn5t618-regulator.c
-index 790a4a73ea2c..40b74648bd31 100644
+index eb807a059479..aa6e7c5341ce 100644
 --- a/drivers/regulator/rn5t618-regulator.c
 +++ b/drivers/regulator/rn5t618-regulator.c
-@@ -154,6 +154,7 @@ static struct platform_driver rn5t618_regulator_driver = {
+@@ -148,6 +148,7 @@ static struct platform_driver rn5t618_regulator_driver = {
  
  module_platform_driver(rn5t618_regulator_driver);
  
