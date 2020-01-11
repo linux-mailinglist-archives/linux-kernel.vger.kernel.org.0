@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51ACD137FEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:25:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB2BA137EC8
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:13:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730974AbgAKKYP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:24:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52702 "EHLO mail.kernel.org"
+        id S1730119AbgAKKNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:13:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730643AbgAKKYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:24:11 -0500
+        id S1729883AbgAKKNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:13:44 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0356205F4;
-        Sat, 11 Jan 2020 10:24:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB92720673;
+        Sat, 11 Jan 2020 10:13:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738250;
-        bh=3tyyKQREqMsKu1Ee8ah4w/mCEkqxToX7uq09Ncf4VDM=;
+        s=default; t=1578737623;
+        bh=qHNS3wiMREKy3bHjmbXF8V0PjdPphGpMiufMHiVl+6g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eb79hHitGm2Yjmzz8vWHrYnM5umQjac/6e0dXalJjED00DeodiNhAa2UhElcqvy31
-         zHvSed9CiKr3x4weVB9bB+LKvqjKw9QUMyrupa4wGsNOUpav0k4XAnK9F1eWmVtTtW
-         TtymYtAzh5sn2r/SONMWAJjjCBJZ9UiTL0VkHwOY=
+        b=cC6d4QMCMK7MKk/iQQK/bC29obYrF3S2AsGpcZgXOXeq8elT+bmyXfykerCltn81B
+         rV8w5U3tFJe3rQcEv0oncEpNyE98+HlXnLkK3Sv5AY5KIdxrZ4BCqUebv7cTctAetY
+         HJhI7GV4IIuwSRTScmu02jppTv3vaUTlMsE5oI3M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 059/165] ARM: dts: am437x-gp/epos-evm: fix panel compatible
-Date:   Sat, 11 Jan 2020 10:49:38 +0100
-Message-Id: <20200111094926.137770389@linuxfoundation.org>
+        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH 4.19 02/84] USB: dummy-hcd: increase max number of devices to 32
+Date:   Sat, 11 Jan 2020 10:49:39 +0100
+Message-Id: <20200111094845.750421143@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-References: <20200111094921.347491861@linuxfoundation.org>
+In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
+References: <20200111094845.328046411@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,54 +42,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: Andrey Konovalov <andreyknvl@google.com>
 
-[ Upstream commit c6b16761c6908d3dc167a0a566578b4b0b972905 ]
+commit 8442b02bf3c6770e0d7e7ea17be36c30e95987b6 upstream.
 
-The LCD panel on AM4 GP EVMs and ePOS boards seems to be
-osd070t1718-19ts. The current dts files say osd057T0559-34ts. Possibly
-the panel has changed since the early EVMs, or there has been a mistake
-with the panel type.
+When fuzzing the USB subsystem with syzkaller, we currently use 8 testing
+processes within one VM. To isolate testing processes from one another it
+is desirable to assign a dedicated USB bus to each of those, which means
+we need at least 8 Dummy UDC/HCD devices.
 
-Update the DT files accordingly.
+This patch increases the maximum number of Dummy UDC/HCD devices to 32
+(more than 8 in case we need more of them in the future).
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+Link: https://lore.kernel.org/r/665578f904484069bb6100fb20283b22a046ad9b.1571667489.git.andreyknvl@google.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/boot/dts/am437x-gp-evm.dts  | 2 +-
- arch/arm/boot/dts/am43x-epos-evm.dts | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/udc/dummy_hcd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/am437x-gp-evm.dts b/arch/arm/boot/dts/am437x-gp-evm.dts
-index cae4500194fe..811c8cae315b 100644
---- a/arch/arm/boot/dts/am437x-gp-evm.dts
-+++ b/arch/arm/boot/dts/am437x-gp-evm.dts
-@@ -86,7 +86,7 @@
- 		};
+--- a/drivers/usb/gadget/udc/dummy_hcd.c
++++ b/drivers/usb/gadget/udc/dummy_hcd.c
+@@ -2739,7 +2739,7 @@ static struct platform_driver dummy_hcd_
+ };
  
- 	lcd0: display {
--		compatible = "osddisplays,osd057T0559-34ts", "panel-dpi";
-+		compatible = "osddisplays,osd070t1718-19ts", "panel-dpi";
- 		label = "lcd";
+ /*-------------------------------------------------------------------------*/
+-#define MAX_NUM_UDC	2
++#define MAX_NUM_UDC	32
+ static struct platform_device *the_udc_pdev[MAX_NUM_UDC];
+ static struct platform_device *the_hcd_pdev[MAX_NUM_UDC];
  
- 		backlight = <&lcd_bl>;
-diff --git a/arch/arm/boot/dts/am43x-epos-evm.dts b/arch/arm/boot/dts/am43x-epos-evm.dts
-index 95314121d111..078cb473fa7d 100644
---- a/arch/arm/boot/dts/am43x-epos-evm.dts
-+++ b/arch/arm/boot/dts/am43x-epos-evm.dts
-@@ -42,7 +42,7 @@
- 	};
- 
- 	lcd0: display {
--		compatible = "osddisplays,osd057T0559-34ts", "panel-dpi";
-+		compatible = "osddisplays,osd070t1718-19ts", "panel-dpi";
- 		label = "lcd";
- 
- 		backlight = <&lcd_bl>;
--- 
-2.20.1
-
 
 
