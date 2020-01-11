@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63F1C137F6C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:19:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00632137EB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:13:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730572AbgAKKTq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:19:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39744 "EHLO mail.kernel.org"
+        id S1730063AbgAKKMv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:12:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730558AbgAKKTn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:19:43 -0500
+        id S1729782AbgAKKMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:12:50 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2656920848;
-        Sat, 11 Jan 2020 10:19:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 126C62077C;
+        Sat, 11 Jan 2020 10:12:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737982;
-        bh=kgklFIXr5YCgi1ccJCz/mgx9tfBvzSz/JflF8EIZIY8=;
+        s=default; t=1578737569;
+        bh=UUJlu6B7eFg7yVnaioHjiRE6TTDgjT14RPTA8E2U0QU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1ssAHiaYlpQm8h2T0c4x5BZmbqijhQkECXTgHc7HBgidCWEOSQ3xFchEfazvjdd1v
-         MdOZqV6+HxggikO6f0pE/QZcDouSFZADo/lUK+YeW3bAcmiTfxI4wkcshK2kHn/QUY
-         AJGl5SIPT5QnIDZPd/rkPn8g1a5XsTKjn2j3Ji/0=
+        b=KkAbAjtdmf8lbNULeqCUc7RsZhGywxyX6T32Y0tlmsvcp4Ru1rs5I1axdTEno2OJ+
+         ap7bltjNh6HjGYqqMXy6JdF21JcTdbUvoGfNh+RRit4Zg5fpWPh4kJqOC7+JcqJVZJ
+         0tMZD49tEya1atoy/h+qqeUHPJBa4L+kIdySO6Jg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         syzbot <syzkaller@googlegroups.com>,
-        Taehee Yoo <ap420073@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 66/84] gtp: fix bad unlock balance in gtp_encap_enable_socket
-Date:   Sat, 11 Jan 2020 10:50:43 +0100
-Message-Id: <20200111094910.533184272@linuxfoundation.org>
+Subject: [PATCH 4.14 62/62] vlan: fix memory leak in vlan_dev_set_egress_priority
+Date:   Sat, 11 Jan 2020 10:50:44 +0100
+Message-Id: <20200111094858.289778955@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
-References: <20200111094845.328046411@linuxfoundation.org>
+In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
+References: <20200111094837.425430968@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,95 +46,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 90d72256addff9e5f8ad645e8f632750dd1f8935 ]
+[ Upstream commit 9bbd917e0bec9aebdbd0c8dbc966caec15eb33e9 ]
 
-WARNING: bad unlock balance detected!
-5.5.0-rc5-syzkaller #0 Not tainted
--------------------------------------
-syz-executor921/9688 is trying to release lock (sk_lock-AF_INET6) at:
-[<ffffffff84bf8506>] gtp_encap_enable_socket+0x146/0x400 drivers/net/gtp.c:830
-but there are no more locks to release!
+There are few cases where the ndo_uninit() handler might be not
+called if an error happens while device is initialized.
 
-other info that might help us debug this:
-2 locks held by syz-executor921/9688:
- #0: ffffffff8a4d8840 (rtnl_mutex){+.+.}, at: rtnl_lock net/core/rtnetlink.c:72 [inline]
- #0: ffffffff8a4d8840 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x405/0xaf0 net/core/rtnetlink.c:5421
- #1: ffff88809304b560 (slock-AF_INET6){+...}, at: spin_lock_bh include/linux/spinlock.h:343 [inline]
- #1: ffff88809304b560 (slock-AF_INET6){+...}, at: release_sock+0x20/0x1c0 net/core/sock.c:2951
+Since vlan_newlink() calls vlan_changelink() before
+trying to register the netdevice, we need to make sure
+vlan_dev_uninit() has been called at least once,
+or we might leak allocated memory.
 
-stack backtrace:
-CPU: 0 PID: 9688 Comm: syz-executor921 Not tainted 5.5.0-rc5-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_unlock_imbalance_bug kernel/locking/lockdep.c:4008 [inline]
- print_unlock_imbalance_bug.cold+0x114/0x123 kernel/locking/lockdep.c:3984
- __lock_release kernel/locking/lockdep.c:4242 [inline]
- lock_release+0x5f2/0x960 kernel/locking/lockdep.c:4503
- sock_release_ownership include/net/sock.h:1496 [inline]
- release_sock+0x17c/0x1c0 net/core/sock.c:2961
- gtp_encap_enable_socket+0x146/0x400 drivers/net/gtp.c:830
- gtp_encap_enable drivers/net/gtp.c:852 [inline]
- gtp_newlink+0x9fc/0xc60 drivers/net/gtp.c:666
- __rtnl_newlink+0x109e/0x1790 net/core/rtnetlink.c:3305
- rtnl_newlink+0x69/0xa0 net/core/rtnetlink.c:3363
- rtnetlink_rcv_msg+0x45e/0xaf0 net/core/rtnetlink.c:5424
- netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
- rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5442
- netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
- netlink_unicast+0x58c/0x7d0 net/netlink/af_netlink.c:1328
- netlink_sendmsg+0x91c/0xea0 net/netlink/af_netlink.c:1917
- sock_sendmsg_nosec net/socket.c:639 [inline]
- sock_sendmsg+0xd7/0x130 net/socket.c:659
- ____sys_sendmsg+0x753/0x880 net/socket.c:2330
- ___sys_sendmsg+0x100/0x170 net/socket.c:2384
- __sys_sendmsg+0x105/0x1d0 net/socket.c:2417
- __do_sys_sendmsg net/socket.c:2426 [inline]
- __se_sys_sendmsg net/socket.c:2424 [inline]
- __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2424
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x445d49
-Code: e8 bc b7 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 2b 12 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f8019074db8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000006dac38 RCX: 0000000000445d49
-RDX: 0000000000000000 RSI: 0000000020000180 RDI: 0000000000000003
-RBP: 00000000006dac30 R08: 0000000000000004 R09: 0000000000000000
-R10: 0000000000000008 R11: 0000000000000246 R12: 00000000006dac3c
-R13: 00007ffea687f6bf R14: 00007f80190759c0 R15: 20c49ba5e353f7cf
+BUG: memory leak
+unreferenced object 0xffff888122a206c0 (size 32):
+  comm "syz-executor511", pid 7124, jiffies 4294950399 (age 32.240s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 61 73 00 00 00 00 00 00 00 00  ......as........
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<000000000eb3bb85>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
+    [<000000000eb3bb85>] slab_post_alloc_hook mm/slab.h:586 [inline]
+    [<000000000eb3bb85>] slab_alloc mm/slab.c:3320 [inline]
+    [<000000000eb3bb85>] kmem_cache_alloc_trace+0x145/0x2c0 mm/slab.c:3549
+    [<000000007b99f620>] kmalloc include/linux/slab.h:556 [inline]
+    [<000000007b99f620>] vlan_dev_set_egress_priority+0xcc/0x150 net/8021q/vlan_dev.c:194
+    [<000000007b0cb745>] vlan_changelink+0xd6/0x140 net/8021q/vlan_netlink.c:126
+    [<0000000065aba83a>] vlan_newlink+0x135/0x200 net/8021q/vlan_netlink.c:181
+    [<00000000fb5dd7a2>] __rtnl_newlink+0x89a/0xb80 net/core/rtnetlink.c:3305
+    [<00000000ae4273a1>] rtnl_newlink+0x4e/0x80 net/core/rtnetlink.c:3363
+    [<00000000decab39f>] rtnetlink_rcv_msg+0x178/0x4b0 net/core/rtnetlink.c:5424
+    [<00000000accba4ee>] netlink_rcv_skb+0x61/0x170 net/netlink/af_netlink.c:2477
+    [<00000000319fe20f>] rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5442
+    [<00000000d51938dc>] netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
+    [<00000000d51938dc>] netlink_unicast+0x223/0x310 net/netlink/af_netlink.c:1328
+    [<00000000e539ac79>] netlink_sendmsg+0x2c0/0x570 net/netlink/af_netlink.c:1917
+    [<000000006250c27e>] sock_sendmsg_nosec net/socket.c:639 [inline]
+    [<000000006250c27e>] sock_sendmsg+0x54/0x70 net/socket.c:659
+    [<00000000e2a156d1>] ____sys_sendmsg+0x2d0/0x300 net/socket.c:2330
+    [<000000008c87466e>] ___sys_sendmsg+0x8a/0xd0 net/socket.c:2384
+    [<00000000110e3054>] __sys_sendmsg+0x80/0xf0 net/socket.c:2417
+    [<00000000d71077c8>] __do_sys_sendmsg net/socket.c:2426 [inline]
+    [<00000000d71077c8>] __se_sys_sendmsg net/socket.c:2424 [inline]
+    [<00000000d71077c8>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2424
 
-Fixes: e198987e7dd7 ("gtp: fix suspicious RCU usage")
+Fixe: 07b5b17e157b ("[VLAN]: Use rtnl_link API")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Taehee Yoo <ap420073@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/gtp.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/8021q/vlan.h         |    1 +
+ net/8021q/vlan_dev.c     |    3 ++-
+ net/8021q/vlan_netlink.c |    9 +++++----
+ 3 files changed, 8 insertions(+), 5 deletions(-)
 
---- a/drivers/net/gtp.c
-+++ b/drivers/net/gtp.c
-@@ -818,7 +818,7 @@ static struct sock *gtp_encap_enable_soc
- 	lock_sock(sock->sk);
- 	if (sock->sk->sk_user_data) {
- 		sk = ERR_PTR(-EBUSY);
--		goto out_sock;
-+		goto out_rel_sock;
- 	}
+--- a/net/8021q/vlan.h
++++ b/net/8021q/vlan.h
+@@ -110,6 +110,7 @@ int vlan_check_real_dev(struct net_devic
+ void vlan_setup(struct net_device *dev);
+ int register_vlan_dev(struct net_device *dev);
+ void unregister_vlan_dev(struct net_device *dev, struct list_head *head);
++void vlan_dev_uninit(struct net_device *dev);
+ bool vlan_dev_inherit_address(struct net_device *dev,
+ 			      struct net_device *real_dev);
  
- 	sk = sock->sk;
-@@ -831,8 +831,9 @@ static struct sock *gtp_encap_enable_soc
- 
- 	setup_udp_tunnel_sock(sock_net(sock->sk), sock, &tuncfg);
- 
--out_sock:
-+out_rel_sock:
- 	release_sock(sock->sk);
-+out_sock:
- 	sockfd_put(sock);
- 	return sk;
+--- a/net/8021q/vlan_dev.c
++++ b/net/8021q/vlan_dev.c
+@@ -610,7 +610,8 @@ static int vlan_dev_init(struct net_devi
+ 	return 0;
  }
+ 
+-static void vlan_dev_uninit(struct net_device *dev)
++/* Note: this function might be called multiple times for the same device. */
++void vlan_dev_uninit(struct net_device *dev)
+ {
+ 	struct vlan_priority_tci_mapping *pm;
+ 	struct vlan_dev_priv *vlan = vlan_dev_priv(dev);
+--- a/net/8021q/vlan_netlink.c
++++ b/net/8021q/vlan_netlink.c
+@@ -161,10 +161,11 @@ static int vlan_newlink(struct net *src_
+ 		return -EINVAL;
+ 
+ 	err = vlan_changelink(dev, tb, data, extack);
+-	if (err < 0)
+-		return err;
+-
+-	return register_vlan_dev(dev);
++	if (!err)
++		err = register_vlan_dev(dev);
++	if (err)
++		vlan_dev_uninit(dev);
++	return err;
+ }
+ 
+ static inline size_t vlan_qos_map_size(unsigned int n)
 
 
