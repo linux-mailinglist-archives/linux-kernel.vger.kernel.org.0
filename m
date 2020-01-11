@@ -2,61 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A421D137F79
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:20:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 266A8137FE6
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:24:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730518AbgAKKUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:20:13 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:38842 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729207AbgAKKUK (ORCPT
+        id S1730882AbgAKKYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:24:07 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37169 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730797AbgAKKXG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:20:10 -0500
-Received: by mail-il1-f196.google.com with SMTP id f5so3896948ilq.5
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Jan 2020 02:20:09 -0800 (PST)
+        Sat, 11 Jan 2020 05:23:06 -0500
+Received: by mail-io1-f66.google.com with SMTP id k24so4761420ioc.4
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Jan 2020 02:23:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=pOSVA5uhmk+VM6N/EM2MNyLEc6cHeflZPvPBN7eAFd8=;
-        b=pw5/utmeH7AJPk+rdLyGJXCipp5gbd77aEW91QiO9nVl1bIYk06x9dOeM6DkcadL58
-         3thq1tEd7eV8Nk2Di5aj+lj3IqdBd0HlBKMDbHIe8LSE2THZsFPOc7IEKhJNKs1iQB4N
-         fyMgl2nAWPPIS0iFJi4ZHtj0pbys3V90Rn3BAuWXdf8cNzpORabQQGVJfp7Mc7j+tAah
-         zr0fG3AtvyOqUulcuzL8K6asfjfI3WdmIJ5cc58q+3TnUAFRkOQDijfaYNqKQPiAZ0Ku
-         g9qLawUQMHBrppemekkJ7SH4Fc84ZEvwhuWQYTZIS0GOxqBZZ8ZSXyUgGvu1EyiB7ttE
-         fOfA==
+        bh=vU2+i2GO3WHRg+jV5YDCjUlPGe/9rhbunzFmSeBXEWs=;
+        b=apGZuJagwClqbxqX07aG9onUwlXW+H6wqSje8JaxzprMtEUYR5NB1bvF15EYuwiCMe
+         J/6L1a0tS80/ibAhAGjIApfioD9g98McJp6RDN+tDdZWxUZ7ePfYbizd/kcOtS18BrLb
+         8yBicbElljp0ywh37I6WLhmWlzMukCi2WNOrZQ1HPb4CyOqN+VhSN0NeCqTNrh0YsctB
+         5q8UlfGE+WDxXcKItttXVsB5ZKS2u49Y5b+jjIsvM7z/LBqyns97E7vt2c8S6WEPES5Z
+         ZXFdudV/uob5aIHPpn56BS8LcdHKJOtRsVDXgJFWX4s73n9/2fASW2Z8uFAK64DDxD6S
+         tc3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pOSVA5uhmk+VM6N/EM2MNyLEc6cHeflZPvPBN7eAFd8=;
-        b=bSGubFYm5YNPHCJWIejz02PetV2gRs0PP7Tj3WVF807IprgKULFiW0uw2xIzxti46l
-         n9cGxMC2czMXAnCnMx03H9jYdYT7l8QB8bhfk6NJTVEvsIlesFVteX6l5zEEkrlxG1DT
-         Sh5Jf6BVP6UaLcM+1Z11V8PczKN/yXUOd9mIQbOzMqfqcJsfWypx8R/gRV1UJf5G857S
-         9tz9YJrDf8hFh6Pn+o6C+SCRk8Kod0d3dgyA1li4cwm/R1U1F3PG5I5GNpbrnOjpdBqA
-         UNpJtWmTjNVQmjjN/tt8/rrd9yPkiLG2SBj2rFOWePsRovlC+9UGqseGrXp94LTAXSil
-         CUlA==
-X-Gm-Message-State: APjAAAXNmDyps7G+ubSaaCzTt401hOmelrmOTTlLRURAD55kUDm5FKt5
-        p5Zd5Rw+ngk/0PtervMnGtnL7fmWTEOloiaZlib1wg==
-X-Google-Smtp-Source: APXvYqysd4ztguN5R8BjDyEl38Q6mSx+PX/LFjJaUO4FAbZ+5rNBxo3P9IYXANJafr9f+JqMLd1b2jjfjMxinkK3Aco=
-X-Received: by 2002:a92:8712:: with SMTP id m18mr6703847ild.40.1578738009666;
- Sat, 11 Jan 2020 02:20:09 -0800 (PST)
+        bh=vU2+i2GO3WHRg+jV5YDCjUlPGe/9rhbunzFmSeBXEWs=;
+        b=ZsOlHyH2Dj4eSkFHggiwvzdMUXiXfqIPCFswSs6U9SIvkGbvzpLqIn8usc0jJpcFQy
+         qIxmJgRqseZ//3aHd6PKta1xg2kOt3I0KtG7plFkjsnC0t+cZ7j5/YR5JB7W3wvdVhc4
+         KRR53Z0vAximHc36DEpIVIiGxTQI7oNJCUDplZYXwcsBSs7ZNos/hbnXzwRV49g//X3U
+         eRu+xodMSK4rpfNYpb1N0G7wSfTGlcTt5101xpY/T5FkRorYDZduh+j4H3YoxCqePBKD
+         kZ0Att+vCj2ALY9DTvcCOTf5XG/euKH7bAn2jWqny5lRoWz/644dh54D3ijN92Pvb/SP
+         scKA==
+X-Gm-Message-State: APjAAAWTCLSGBHG/W8ShGTy/xAxOfUAYUXOuEMTWkp9/M4+pZL6vsB7y
+        M5VKYUa9cJ4NOI5BbnS49W17RpaDu/zNfnIrxp6mWg==
+X-Google-Smtp-Source: APXvYqzpvyDTaxYdZtZGArwDIzWwAKCU3pngPn20GQcVt5O6FZInAzvQo0UuAlIgrGMYv/s2x55pDLoDBJmaLmIxHFg=
+X-Received: by 2002:a05:6602:2352:: with SMTP id r18mr5779111iot.220.1578738185997;
+ Sat, 11 Jan 2020 02:23:05 -0800 (PST)
 MIME-Version: 1.0
-References: <20200110171643.18578-1-brgl@bgdev.pl> <20200110171643.18578-2-brgl@bgdev.pl>
- <7be95251-7e26-6090-4770-6e4dbebfadd2@linaro.org>
-In-Reply-To: <7be95251-7e26-6090-4770-6e4dbebfadd2@linaro.org>
+References: <20191210100753.11090-1-brgl@bgdev.pl> <20200110182841.GT8314@dtor-ws>
+In-Reply-To: <20200110182841.GT8314@dtor-ws>
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Sat, 11 Jan 2020 11:19:58 +0100
-Message-ID: <CAMRc=McesmYcJv7iqE3rLHFyeTJtnW4Gq1TjMjHGSkpcHNPahw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] clocksource: davinci: only enable clockevents once
- tim34 is initialized
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Sekhar Nori <nsekhar@ti.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        David Lechner <david@lechnology.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Date:   Sat, 11 Jan 2020 11:22:55 +0100
+Message-ID: <CAMRc=Mcu-oNC009JLkNSDrKjg_ygb63ZTnrmu+8NwNZrOVsEZQ@mail.gmail.com>
+Subject: Re: [PATCH] input: max77650-onkey: add of_match table
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Input <linux-input@vger.kernel.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -65,32 +59,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt., 10 sty 2020 o 18:56 Daniel Lezcano <daniel.lezcano@linaro.org> napisa=
+pt., 10 sty 2020 o 19:28 Dmitry Torokhov <dmitry.torokhov@gmail.com> napisa=
 =C5=82(a):
 >
-> On 10/01/2020 18:16, Bartosz Golaszewski wrote:
+> On Tue, Dec 10, 2019 at 11:07:53AM +0100, Bartosz Golaszewski wrote:
 > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > >
-> > The DM365 platform has a strange quirk (only present when using ancient
-> > u-boot - mainline u-boot v2013.01 and later works fine) where if we
-> > enable the second half of the timer in periodic mode before we do its
-> > initialization - the time won't start flowing and we can't boot.
-> >
-> > When using more recent u-boot, we can enable the timer, then reinitiali=
-ze
-> > it and all works fine.
-> >
-> > To work around this issue only enable clockevents once tim34 is
-> > initialized i.e. move clockevents_config_and_register() below tim34
-> > initialization.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > We need the of_match table if we want to use the compatible string in
+> > the pmic's child node and get the onkey driver loaded automatically.
 >
-> Shall I take it through my tree?
+> Do we really need of_match table or adding
 >
 
-Not sure, I'd say Sekhar should take it through arm-soc together with
-the latter two patches if he's ok with this. Let's wait for him to
-respond.
+Not really. Technically not anyway but we merged bindings that define
+it (at the time I didn't know any better) and seems we're stuck with
+it. Please see the discussion below a similar patch for regulator
+subsystem[1].
+
+> MODULE_ALIAS("platform:max77650-onkey");
+>
+
+This is already in there, but if someone defines the compatible in the
+device tree as per bindings, the module won't be loaded despite the
+MODULE_ALIAS() definition.
+
+> will work as well?
+>
+> In general, do we ever instantiate onkey portion from device tree? Or
+> is it always an MFD cell that is instantiated unconditionally?
+>
 
 Bart
+
+[1] https://lkml.org/lkml/2019/12/10/271
