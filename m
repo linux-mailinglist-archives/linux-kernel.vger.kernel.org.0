@@ -2,154 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93C71138230
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 16:59:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6246138240
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 17:02:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730375AbgAKP7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 10:59:21 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:46286 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730290AbgAKP7T (ORCPT
+        id S1730215AbgAKQCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 11:02:44 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43550 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730178AbgAKQCo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 10:59:19 -0500
-Received: by mail-qk1-f195.google.com with SMTP id r14so4753017qke.13
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Jan 2020 07:59:19 -0800 (PST)
+        Sat, 11 Jan 2020 11:02:44 -0500
+Received: by mail-pf1-f195.google.com with SMTP id x6so2651366pfo.10;
+        Sat, 11 Jan 2020 08:02:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yfen/AoSu53olPP9ksuFCbFgbf4x6IRveD5uzGZKIms=;
-        b=bhytG7Z4CwxXRSJ9vrxvQYrzDIdOk+2i5GNnEXLk6aMfWdM3QxOL6mpX/adL6X3iHv
-         wFRR6oNYVyJlpTjUDhjKM7ru98VDP5n9iuwFmT2qsjTlq8kUL5MHtrrlgBQqDAPaVNnA
-         lV3Hioi7wKvgJHY9hLRM0dazA75aXcYcspPrA14KCAX2G3KrIJ37dxGVb+Z5ntENdklL
-         N+uB+KYKUVSJNClhdcGN7ZxiqUorV7YDpWZ8O6RpALH6ZQVuqbze6O5gukSySh3Hs4HH
-         XF6vKhXSrbYyGS3ISjVKkyW/k54VVDMOZWJIskKPgnmg4N+AUq8XCNhzdAo3slKYAX3Y
-         txDQ==
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8c+ewCIT71LKxJWBH8PK3kOCTkKpL7iAy1a7HDZYQsk=;
+        b=HeyUmnQcv4c6wzzGb2sCjbUD8ROOcxrWOFNpcDk05zueWc5VTdZkrLS2VeSBMyE56X
+         6YPvIyHOiJGTp/pDxxdUYWjSkRUxzTZnJxu1NQS6tLo8jPg5Jlqt8WHzN7pTmUNjEsmX
+         VirNweX3ZQ+gs+RfutlNDiOyd9hiTnJXwISqDHXvyKvIzJHGwgOSpNsV8bKpbY6qFjzT
+         UlYmugGL0JJ2cK/t+S6QiwCwZRUegzL52vmPZ/OkfL84to6k25il5sWwqRCrkeEpGe4z
+         0lWjVp3ZIb/Zuv/WdsgjSKi3foqteahNRSdntVtPSAi0DWQDrYR05N/Jc7IHM8CoDb0g
+         gshQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yfen/AoSu53olPP9ksuFCbFgbf4x6IRveD5uzGZKIms=;
-        b=J3KsiSbbH3wbWmTg9+vNHCV9em1AC2o8CyKlNBBlTCBoBZFBmPHSZWQpmFrg45ITQp
-         Z0oPP9y+lsQnm6vTUUCUcQ41Yonn7CQLVsVnBBd7bqVRbmKt9/LTtKaJgRNcZY8Tnjp4
-         vXimCjBDPf0cmfF37PksPNcYbfaQ7ekNLlMnvLUlV4DhPYFPBZVSmSYH22p79AaUlWOl
-         GEXDTbRMoA0mv1icn31Gd0raoJjK1b7pxcVtqMQ1uCRnlwPD4ThrVfTt6jPLu3Tmq6ND
-         tdlo520S+1S32m/h0Y8cjeV+2vLqrarxCdxRxuvTbfuYX7anVaTavECYWpLa8GptqqYT
-         S9ag==
-X-Gm-Message-State: APjAAAXCZBHUYerZ7aJvIRxZ0K/POUQTjETO3ACMp3OIA5k7+mF5nCy/
-        ggm57vs7ngzESX9sOB3utGTVCg==
-X-Google-Smtp-Source: APXvYqyr6/mFCC5XO/oAf9E+u6Pt3TnW6DVbad8g9zP7nErDK14xQY6RY7Yu12PxB9xS8lvdtPTPwQ==
-X-Received: by 2002:a05:620a:910:: with SMTP id v16mr8621170qkv.194.1578758358708;
-        Sat, 11 Jan 2020 07:59:18 -0800 (PST)
-Received: from Thara-Work-Ubuntu.fios-router.home (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
-        by smtp.googlemail.com with ESMTPSA id l49sm2843478qtk.7.2020.01.11.07.59.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 11 Jan 2020 07:59:18 -0800 (PST)
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-To:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rui.zhang@intel.com, qperret@google.com, daniel.lezcano@linaro.org,
-        viresh.kumar@linaro.org
-Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, amit.kucheria@verdurent.com
-Subject: [Patch v7 7/7] sched/fair: Enable tuning of decay period
-Date:   Sat, 11 Jan 2020 10:59:06 -0500
-Message-Id: <1578758346-507-8-git-send-email-thara.gopinath@linaro.org>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1578758346-507-1-git-send-email-thara.gopinath@linaro.org>
-References: <1578758346-507-1-git-send-email-thara.gopinath@linaro.org>
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8c+ewCIT71LKxJWBH8PK3kOCTkKpL7iAy1a7HDZYQsk=;
+        b=EoZTvKBNOKSXBbXUyVXU+11SMLh7j2pexXwy/Zub2MS/09S6pmttscGlotT3R6xW55
+         KnUsIYP8uP8F+ceZXaUARUXocszTU1I1AL6GmAMFlOiRV8jw3SnJ+CKlooYYvmDZGWn3
+         gE6JANGP/b4b07USu4/DPghDtJ4O1DvXoIjyNlSCx847CSAphMBab0Q3LOThd8psKO0G
+         tqOjD7VHJKKKw7w7PpGiJJw/Loo631Z4IHB3+TDtgZZEzNaQ7SVHnZw+VZHy7izbz/j7
+         IXjMwScXGXZEGkSXkawPe4aDO4+/nC0ALXptyN1abuIHiIT2DKeW+OJimmaTAijE8J3a
+         fwzw==
+X-Gm-Message-State: APjAAAWSKAgWt6dM/PltkwKyAydKqQHXwY57abiW1C2WYCfGWuuwsrsT
+        5ncKZvttcDICmBm8K1sGYSNQ7pkB
+X-Google-Smtp-Source: APXvYqyg2nRzCZrXd9bb0ykg1EtmkwWcC5bBf7URZdeX1BnT/Sxo1ciJ1Dfjxv3nDNS77K8zV1Wu+g==
+X-Received: by 2002:a63:d543:: with SMTP id v3mr11398550pgi.285.1578758563037;
+        Sat, 11 Jan 2020 08:02:43 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id z16sm7653799pff.125.2020.01.11.08.02.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 11 Jan 2020 08:02:42 -0800 (PST)
+Subject: Re: [PATCH 4.19 00/84] 4.19.95-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20200111094845.328046411@linuxfoundation.org>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <23c3a0d1-1655-8cc2-7c96-743a47953795@roeck-us.net>
+Date:   Sat, 11 Jan 2020 08:02:40 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thermal pressure follows pelt signals which means the decay period for
-thermal pressure is the default pelt decay period. Depending on soc
-characteristics and thermal activity, it might be beneficial to decay
-thermal pressure slower, but still in-tune with the pelt signals.  One way
-to achieve this is to provide a command line parameter to set a decay
-shift parameter to an integer between 0 and 10.
+On 1/11/20 1:49 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.95 release.
+> There are 84 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Mon, 13 Jan 2020 09:46:17 +0000.
+> Anything received after that time might be too late.
+> 
+Build results:
+	total: 156 pass: 154 fail: 2
+Failed builds:
+	arm64:defconfig
+	arm64:allmodconfig
+Qemu test results:
+	total: 382 pass: 339 fail: 43
+Failed tests:
+	<all arm64>
 
-Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
----
- Documentation/admin-guide/kernel-parameters.txt |  5 ++++
- kernel/sched/fair.c                             | 34 +++++++++++++++++++++++--
- 2 files changed, 37 insertions(+), 2 deletions(-)
+arch/arm64/kvm/hyp/switch.c: In function 'handle_tx2_tvm':
+arch/arm64/kvm/hyp/switch.c:438:2: error: implicit declaration of function '__kvm_skip_instr'; did you mean 'kvm_skip_instr'?
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index dd3df3d..34848e4 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4370,6 +4370,11 @@
- 			incurs a small amount of overhead in the scheduler
- 			but is useful for debugging and performance tuning.
- 
-+	sched_thermal_decay_shift=
-+			[KNL, SMP] Set decay shift for thermal pressure signal.
-+			Format: integer between 0 and 10
-+			Default is 0.
-+
- 	skew_tick=	[KNL] Offset the periodic timer tick per cpu to mitigate
- 			xtime_lock contention on larger systems, and/or RCU lock
- 			contention on all systems with CONFIG_MAXSMP set.
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 2b1fec3..8b2ee5a 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -86,6 +86,36 @@ static unsigned int normalized_sysctl_sched_wakeup_granularity	= 1000000UL;
- 
- const_debug unsigned int sysctl_sched_migration_cost	= 500000UL;
- 
-+/**
-+ * By default the decay is the default pelt decay period.
-+ * The decay shift can change the decay period in
-+ * multiples of 32.
-+ *  Decay shift		Decay period(ms)
-+ *	0			32
-+ *	1			64
-+ *	2			128
-+ *	3			256
-+ *	4			512
-+ */
-+static int sched_thermal_decay_shift;
-+
-+static inline u64 rq_clock_thermal(struct rq *rq)
-+{
-+	return rq_clock_task(rq) >> sched_thermal_decay_shift;
-+}
-+
-+static int __init setup_sched_thermal_decay_shift(char *str)
-+{
-+	int _shift;
-+
-+	if (kstrtoint(str, 0, &_shift))
-+		pr_warn("Unable to set scheduler thermal pressure decay shift parameter\n");
-+
-+	sched_thermal_decay_shift = clamp(_shift, 0, 10);
-+	return 1;
-+}
-+__setup("sched_thermal_decay_shift=", setup_sched_thermal_decay_shift);
-+
- #ifdef CONFIG_SMP
- /*
-  * For asym packing, by default the lower numbered CPU has higher priority.
-@@ -7509,7 +7539,7 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
- 
- 	decayed = update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
- 		  update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
--		  update_thermal_load_avg(rq_clock_task(rq), rq,
-+		  update_thermal_load_avg(rq_clock_thermal(rq), rq,
- 					  thermal_pressure) 			|
- 		  update_irq_load_avg(rq, 0);
- 
-@@ -10300,7 +10330,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
- 
- 	update_misfit_status(curr, rq);
- 	update_overutilized_status(task_rq(curr));
--	update_thermal_load_avg(rq_clock_task(rq), rq, thermal_pressure);
-+	update_thermal_load_avg(rq_clock_thermal(rq), rq, thermal_pressure);
- }
- 
- /*
--- 
-2.1.4
-
+Guenter
