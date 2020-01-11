@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74763137E2C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:06:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2343513801E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:26:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729623AbgAKKFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:05:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39168 "EHLO mail.kernel.org"
+        id S1730814AbgAKK0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:26:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729337AbgAKKFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:05:46 -0500
+        id S1729047AbgAKK0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:26:09 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D11920848;
-        Sat, 11 Jan 2020 10:05:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61A9C205F4;
+        Sat, 11 Jan 2020 10:26:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737146;
-        bh=ToLPPtJfE+wN/2xv6SeS8tOQ77wFmdJQl3445EtNQdc=;
+        s=default; t=1578738369;
+        bh=ibcFiim1TCQTWYVsSeYM5j4nlS5Hx8fc/vR50CMOZMw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eIGdm2tpn7iosXMUYgFZ55oRdpz0CO0zGRMst/kb2bdEVTD3m4LpJ+OBx9nvZb6nC
-         GSy9eFhZxbWTWobia4AGYZcWNIGJqxxpmnd3yE2YAaDAl6X47ZDCCA42hBpiVc+BIL
-         vICU0VdSQu+rpEe0lcYW9nZESLej7scT976ZS/KE=
+        b=yEKZUQDVgGHmHbAvNifkEY3eHTIxejL6jiIJO8SVDj9mlMrtO82LfTj47aNmPTZ1Z
+         Lye3AbjTDsLtZ5pFr7ne9nE42lgeTbd6nRLRn9ORjNlciAY7wSDIYx7HiyIQYxk3+J
+         jrbrNvjZ0F89clX3sNvIr+CYC2KHUjKllkno3ds0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Lorenz Bauer <lmb@cloudflare.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 65/91] ARM: dts: am437x-gp/epos-evm: fix panel compatible
-Date:   Sat, 11 Jan 2020 10:49:58 +0100
-Message-Id: <20200111094909.153116596@linuxfoundation.org>
+Subject: [PATCH 5.4 080/165] bpf: Clear skb->tstamp in bpf_redirect when necessary
+Date:   Sat, 11 Jan 2020 10:49:59 +0100
+Message-Id: <20200111094927.877121253@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
-References: <20200111094844.748507863@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,52 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: Lorenz Bauer <lmb@cloudflare.com>
 
-[ Upstream commit c6b16761c6908d3dc167a0a566578b4b0b972905 ]
+[ Upstream commit 5133498f4ad1123a5ffd4c08df6431dab882cc32 ]
 
-The LCD panel on AM4 GP EVMs and ePOS boards seems to be
-osd070t1718-19ts. The current dts files say osd057T0559-34ts. Possibly
-the panel has changed since the early EVMs, or there has been a mistake
-with the panel type.
+Redirecting a packet from ingress to egress by using bpf_redirect
+breaks if the egress interface has an fq qdisc installed. This is the same
+problem as fixed in 'commit 8203e2d844d3 ("net: clear skb->tstamp in forwarding paths")
 
-Update the DT files accordingly.
+Clear skb->tstamp when redirecting into the egress path.
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: 80b14dee2bea ("net: Add a new socket option for a future transmit time.")
+Fixes: fb420d5d91c1 ("tcp/fq: move back to CLOCK_MONOTONIC")
+Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Link: https://lore.kernel.org/bpf/20191213180817.2510-1-lmb@cloudflare.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/am437x-gp-evm.dts  | 2 +-
- arch/arm/boot/dts/am43x-epos-evm.dts | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ net/core/filter.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/am437x-gp-evm.dts b/arch/arm/boot/dts/am437x-gp-evm.dts
-index 957840cc7b78..b55c094893c6 100644
---- a/arch/arm/boot/dts/am437x-gp-evm.dts
-+++ b/arch/arm/boot/dts/am437x-gp-evm.dts
-@@ -79,7 +79,7 @@
- 		};
+diff --git a/net/core/filter.c b/net/core/filter.c
+index 6d0111bfdb4a..2f76461c120d 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -2055,6 +2055,7 @@ static inline int __bpf_tx_skb(struct net_device *dev, struct sk_buff *skb)
+ 	}
  
- 	lcd0: display {
--		compatible = "osddisplays,osd057T0559-34ts", "panel-dpi";
-+		compatible = "osddisplays,osd070t1718-19ts", "panel-dpi";
- 		label = "lcd";
+ 	skb->dev = dev;
++	skb->tstamp = 0;
  
- 		panel-timing {
-diff --git a/arch/arm/boot/dts/am43x-epos-evm.dts b/arch/arm/boot/dts/am43x-epos-evm.dts
-index 9d35c3f07cad..21918807c9f6 100644
---- a/arch/arm/boot/dts/am43x-epos-evm.dts
-+++ b/arch/arm/boot/dts/am43x-epos-evm.dts
-@@ -41,7 +41,7 @@
- 	};
- 
- 	lcd0: display {
--		compatible = "osddisplays,osd057T0559-34ts", "panel-dpi";
-+		compatible = "osddisplays,osd070t1718-19ts", "panel-dpi";
- 		label = "lcd";
- 
- 		panel-timing {
+ 	dev_xmit_recursion_inc();
+ 	ret = dev_queue_xmit(skb);
 -- 
 2.20.1
 
