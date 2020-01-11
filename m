@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B2EE137F08
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:16:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76F53137E08
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:06:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730211AbgAKKPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:15:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55826 "EHLO mail.kernel.org"
+        id S1729447AbgAKKEO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:04:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729782AbgAKKPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:15:02 -0500
+        id S1729496AbgAKKEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:04:11 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A0682082E;
-        Sat, 11 Jan 2020 10:15:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CD2C20848;
+        Sat, 11 Jan 2020 10:04:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737701;
-        bh=onSEEpP7BW8fkuP5VBJXjlJWYi+LHwQqtVjEOCKfnuY=;
+        s=default; t=1578737049;
+        bh=WajvriY1LWZI3w6i8mYlpvO1ooPjRXIM6u0Jq68TKuc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1wFK02WWB5Saxt4RynOSW/NqEQxY5S8/3YNJtOKOR42sF8OIGvfg8Si386YONz+h1
-         ZtzspNCrkkKEtbNxbyfka1t9muKQSWUQbFYv0xwQbJoJ3JQ51fUsh5b+1vEQWjOL8m
-         VdyLn9b0/FJQ9X4n9wJD+J3AAof1pKEI4pg1GTf4=
+        b=EwDB6imYaEhCyxWQLoW5oHUPyw1A09DKfD5ZOZTi+Wfr3fzLgOE+/vfEAJB7ZNa6P
+         bkBDUOL1fWUh72tfguX5TDx17fD+9t3w96U+pWYibEk2oPmTsdiuREztKopS49H/XN
+         rPlaaI3NyD+OmgflA3NSc6sAMq7Abz61J/eOdUsI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, qize wang <wangqize888888888@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 08/84] mwifiex: Fix heap overflow in mmwifiex_process_tdls_action_frame()
+Subject: [PATCH 4.9 52/91] net: add annotations on hh->hh_len lockless accesses
 Date:   Sat, 11 Jan 2020 10:49:45 +0100
-Message-Id: <20200111094847.289332898@linuxfoundation.org>
+Message-Id: <20200111094904.596381903@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
-References: <20200111094845.328046411@linuxfoundation.org>
+In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
+References: <20200111094844.748507863@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,160 +45,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: qize wang <wangqize888888888@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 1e58252e334dc3f3756f424a157d1b7484464c40 ]
+[ Upstream commit c305c6ae79e2ce20c22660ceda94f0d86d639a82 ]
 
-mwifiex_process_tdls_action_frame() without checking
-the incoming tdls infomation element's vality before use it,
-this may cause multi heap buffer overflows.
+KCSAN reported a data-race [1]
 
-Fix them by putting vality check before use it.
+While we can use READ_ONCE() on the read sides,
+we need to make sure hh->hh_len is written last.
 
-IE is TLV struct, but ht_cap and  ht_oper aren’t TLV struct.
-the origin marvell driver code is wrong:
+[1]
 
-memcpy(&sta_ptr->tdls_cap.ht_oper, pos,....
-memcpy((u8 *)&sta_ptr->tdls_cap.ht_capb, pos,...
+BUG: KCSAN: data-race in eth_header_cache / neigh_resolve_output
 
-Fix the bug by changing pos(the address of IE) to
-pos+2 ( the address of IE value ).
+write to 0xffff8880b9dedcb8 of 4 bytes by task 29760 on cpu 0:
+ eth_header_cache+0xa9/0xd0 net/ethernet/eth.c:247
+ neigh_hh_init net/core/neighbour.c:1463 [inline]
+ neigh_resolve_output net/core/neighbour.c:1480 [inline]
+ neigh_resolve_output+0x415/0x470 net/core/neighbour.c:1470
+ neigh_output include/net/neighbour.h:511 [inline]
+ ip6_finish_output2+0x7a2/0xec0 net/ipv6/ip6_output.c:116
+ __ip6_finish_output net/ipv6/ip6_output.c:142 [inline]
+ __ip6_finish_output+0x2d7/0x330 net/ipv6/ip6_output.c:127
+ ip6_finish_output+0x41/0x160 net/ipv6/ip6_output.c:152
+ NF_HOOK_COND include/linux/netfilter.h:294 [inline]
+ ip6_output+0xf2/0x280 net/ipv6/ip6_output.c:175
+ dst_output include/net/dst.h:436 [inline]
+ NF_HOOK include/linux/netfilter.h:305 [inline]
+ ndisc_send_skb+0x459/0x5f0 net/ipv6/ndisc.c:505
+ ndisc_send_ns+0x207/0x430 net/ipv6/ndisc.c:647
+ rt6_probe_deferred+0x98/0xf0 net/ipv6/route.c:615
+ process_one_work+0x3d4/0x890 kernel/workqueue.c:2269
+ worker_thread+0xa0/0x800 kernel/workqueue.c:2415
+ kthread+0x1d4/0x200 drivers/block/aoe/aoecmd.c:1253
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:352
 
-Signed-off-by: qize wang <wangqize888888888@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+read to 0xffff8880b9dedcb8 of 4 bytes by task 29572 on cpu 1:
+ neigh_resolve_output net/core/neighbour.c:1479 [inline]
+ neigh_resolve_output+0x113/0x470 net/core/neighbour.c:1470
+ neigh_output include/net/neighbour.h:511 [inline]
+ ip6_finish_output2+0x7a2/0xec0 net/ipv6/ip6_output.c:116
+ __ip6_finish_output net/ipv6/ip6_output.c:142 [inline]
+ __ip6_finish_output+0x2d7/0x330 net/ipv6/ip6_output.c:127
+ ip6_finish_output+0x41/0x160 net/ipv6/ip6_output.c:152
+ NF_HOOK_COND include/linux/netfilter.h:294 [inline]
+ ip6_output+0xf2/0x280 net/ipv6/ip6_output.c:175
+ dst_output include/net/dst.h:436 [inline]
+ NF_HOOK include/linux/netfilter.h:305 [inline]
+ ndisc_send_skb+0x459/0x5f0 net/ipv6/ndisc.c:505
+ ndisc_send_ns+0x207/0x430 net/ipv6/ndisc.c:647
+ rt6_probe_deferred+0x98/0xf0 net/ipv6/route.c:615
+ process_one_work+0x3d4/0x890 kernel/workqueue.c:2269
+ worker_thread+0xa0/0x800 kernel/workqueue.c:2415
+ kthread+0x1d4/0x200 drivers/block/aoe/aoecmd.c:1253
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:352
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 PID: 29572 Comm: kworker/1:4 Not tainted 5.4.0-rc6+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events rt6_probe_deferred
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/marvell/mwifiex/tdls.c | 70 +++++++++++++++++++--
- 1 file changed, 64 insertions(+), 6 deletions(-)
+ drivers/firewire/net.c  | 6 +++++-
+ include/net/neighbour.h | 2 +-
+ net/core/neighbour.c    | 4 ++--
+ net/ethernet/eth.c      | 7 ++++++-
+ 4 files changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/tdls.c b/drivers/net/wireless/marvell/mwifiex/tdls.c
-index 27779d7317fd..6058c48d56dc 100644
---- a/drivers/net/wireless/marvell/mwifiex/tdls.c
-+++ b/drivers/net/wireless/marvell/mwifiex/tdls.c
-@@ -956,59 +956,117 @@ void mwifiex_process_tdls_action_frame(struct mwifiex_private *priv,
+diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
+index 15475892af0c..bc19ac0e662e 100644
+--- a/drivers/firewire/net.c
++++ b/drivers/firewire/net.c
+@@ -249,7 +249,11 @@ static int fwnet_header_cache(const struct neighbour *neigh,
+ 	h = (struct fwnet_header *)((u8 *)hh->hh_data + HH_DATA_OFF(sizeof(*h)));
+ 	h->h_proto = type;
+ 	memcpy(h->h_dest, neigh->ha, net->addr_len);
+-	hh->hh_len = FWNET_HLEN;
++
++	/* Pairs with the READ_ONCE() in neigh_resolve_output(),
++	 * neigh_hh_output() and neigh_update_hhs().
++	 */
++	smp_store_release(&hh->hh_len, FWNET_HLEN);
  
- 		switch (*pos) {
- 		case WLAN_EID_SUPP_RATES:
-+			if (pos[1] > 32)
-+				return;
- 			sta_ptr->tdls_cap.rates_len = pos[1];
- 			for (i = 0; i < pos[1]; i++)
- 				sta_ptr->tdls_cap.rates[i] = pos[i + 2];
- 			break;
+ 	return 0;
+ }
+diff --git a/include/net/neighbour.h b/include/net/neighbour.h
+index 1c0d07376125..a68a460fa4f3 100644
+--- a/include/net/neighbour.h
++++ b/include/net/neighbour.h
+@@ -454,7 +454,7 @@ static inline int neigh_hh_output(const struct hh_cache *hh, struct sk_buff *skb
  
- 		case WLAN_EID_EXT_SUPP_RATES:
-+			if (pos[1] > 32)
-+				return;
- 			basic = sta_ptr->tdls_cap.rates_len;
-+			if (pos[1] > 32 - basic)
-+				return;
- 			for (i = 0; i < pos[1]; i++)
- 				sta_ptr->tdls_cap.rates[basic + i] = pos[i + 2];
- 			sta_ptr->tdls_cap.rates_len += pos[1];
- 			break;
- 		case WLAN_EID_HT_CAPABILITY:
--			memcpy((u8 *)&sta_ptr->tdls_cap.ht_capb, pos,
-+			if (pos > end - sizeof(struct ieee80211_ht_cap) - 2)
-+				return;
-+			if (pos[1] != sizeof(struct ieee80211_ht_cap))
-+				return;
-+			/* copy the ie's value into ht_capb*/
-+			memcpy((u8 *)&sta_ptr->tdls_cap.ht_capb, pos + 2,
- 			       sizeof(struct ieee80211_ht_cap));
- 			sta_ptr->is_11n_enabled = 1;
- 			break;
- 		case WLAN_EID_HT_OPERATION:
--			memcpy(&sta_ptr->tdls_cap.ht_oper, pos,
-+			if (pos > end -
-+			    sizeof(struct ieee80211_ht_operation) - 2)
-+				return;
-+			if (pos[1] != sizeof(struct ieee80211_ht_operation))
-+				return;
-+			/* copy the ie's value into ht_oper*/
-+			memcpy(&sta_ptr->tdls_cap.ht_oper, pos + 2,
- 			       sizeof(struct ieee80211_ht_operation));
- 			break;
- 		case WLAN_EID_BSS_COEX_2040:
-+			if (pos > end - 3)
-+				return;
-+			if (pos[1] != 1)
-+				return;
- 			sta_ptr->tdls_cap.coex_2040 = pos[2];
- 			break;
- 		case WLAN_EID_EXT_CAPABILITY:
-+			if (pos > end - sizeof(struct ieee_types_header))
-+				return;
-+			if (pos[1] < sizeof(struct ieee_types_header))
-+				return;
-+			if (pos[1] > 8)
-+				return;
- 			memcpy((u8 *)&sta_ptr->tdls_cap.extcap, pos,
- 			       sizeof(struct ieee_types_header) +
- 			       min_t(u8, pos[1], 8));
- 			break;
- 		case WLAN_EID_RSN:
-+			if (pos > end - sizeof(struct ieee_types_header))
-+				return;
-+			if (pos[1] < sizeof(struct ieee_types_header))
-+				return;
-+			if (pos[1] > IEEE_MAX_IE_SIZE -
-+			    sizeof(struct ieee_types_header))
-+				return;
- 			memcpy((u8 *)&sta_ptr->tdls_cap.rsn_ie, pos,
- 			       sizeof(struct ieee_types_header) +
- 			       min_t(u8, pos[1], IEEE_MAX_IE_SIZE -
- 				     sizeof(struct ieee_types_header)));
- 			break;
- 		case WLAN_EID_QOS_CAPA:
-+			if (pos > end - 3)
-+				return;
-+			if (pos[1] != 1)
-+				return;
- 			sta_ptr->tdls_cap.qos_info = pos[2];
- 			break;
- 		case WLAN_EID_VHT_OPERATION:
--			if (priv->adapter->is_hw_11ac_capable)
--				memcpy(&sta_ptr->tdls_cap.vhtoper, pos,
-+			if (priv->adapter->is_hw_11ac_capable) {
-+				if (pos > end -
-+				    sizeof(struct ieee80211_vht_operation) - 2)
-+					return;
-+				if (pos[1] !=
-+				    sizeof(struct ieee80211_vht_operation))
-+					return;
-+				/* copy the ie's value into vhtoper*/
-+				memcpy(&sta_ptr->tdls_cap.vhtoper, pos + 2,
- 				       sizeof(struct ieee80211_vht_operation));
-+			}
- 			break;
- 		case WLAN_EID_VHT_CAPABILITY:
- 			if (priv->adapter->is_hw_11ac_capable) {
--				memcpy((u8 *)&sta_ptr->tdls_cap.vhtcap, pos,
-+				if (pos > end -
-+				    sizeof(struct ieee80211_vht_cap) - 2)
-+					return;
-+				if (pos[1] != sizeof(struct ieee80211_vht_cap))
-+					return;
-+				/* copy the ie's value into vhtcap*/
-+				memcpy((u8 *)&sta_ptr->tdls_cap.vhtcap, pos + 2,
- 				       sizeof(struct ieee80211_vht_cap));
- 				sta_ptr->is_11ac_enabled = 1;
- 			}
- 			break;
- 		case WLAN_EID_AID:
--			if (priv->adapter->is_hw_11ac_capable)
-+			if (priv->adapter->is_hw_11ac_capable) {
-+				if (pos > end - 4)
-+					return;
-+				if (pos[1] != 2)
-+					return;
- 				sta_ptr->tdls_cap.aid =
- 					get_unaligned_le16((pos + 2));
-+			}
-+			break;
- 		default:
- 			break;
- 		}
+ 	do {
+ 		seq = read_seqbegin(&hh->hh_lock);
+-		hh_len = hh->hh_len;
++		hh_len = READ_ONCE(hh->hh_len);
+ 		if (likely(hh_len <= HH_DATA_MOD)) {
+ 			hh_alen = HH_DATA_MOD;
+ 
+diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+index 44a29be7bfff..cd85cee14bd0 100644
+--- a/net/core/neighbour.c
++++ b/net/core/neighbour.c
+@@ -1058,7 +1058,7 @@ static void neigh_update_hhs(struct neighbour *neigh)
+ 
+ 	if (update) {
+ 		hh = &neigh->hh;
+-		if (hh->hh_len) {
++		if (READ_ONCE(hh->hh_len)) {
+ 			write_seqlock_bh(&hh->hh_lock);
+ 			update(hh, neigh->dev, neigh->ha);
+ 			write_sequnlock_bh(&hh->hh_lock);
+@@ -1319,7 +1319,7 @@ int neigh_resolve_output(struct neighbour *neigh, struct sk_buff *skb)
+ 		struct net_device *dev = neigh->dev;
+ 		unsigned int seq;
+ 
+-		if (dev->header_ops->cache && !neigh->hh.hh_len)
++		if (dev->header_ops->cache && !READ_ONCE(neigh->hh.hh_len))
+ 			neigh_hh_init(neigh);
+ 
+ 		do {
+diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
+index 24d7aff8db1a..204aa0131fbe 100644
+--- a/net/ethernet/eth.c
++++ b/net/ethernet/eth.c
+@@ -238,7 +238,12 @@ int eth_header_cache(const struct neighbour *neigh, struct hh_cache *hh, __be16
+ 	eth->h_proto = type;
+ 	memcpy(eth->h_source, dev->dev_addr, ETH_ALEN);
+ 	memcpy(eth->h_dest, neigh->ha, ETH_ALEN);
+-	hh->hh_len = ETH_HLEN;
++
++	/* Pairs with READ_ONCE() in neigh_resolve_output(),
++	 * neigh_hh_output() and neigh_update_hhs().
++	 */
++	smp_store_release(&hh->hh_len, ETH_HLEN);
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL(eth_header_cache);
 -- 
 2.20.1
 
