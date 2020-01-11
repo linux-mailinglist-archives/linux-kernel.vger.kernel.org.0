@@ -2,93 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6246138240
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 17:02:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BED0138257
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 17:17:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730215AbgAKQCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 11:02:44 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43550 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730178AbgAKQCo (ORCPT
+        id S1730385AbgAKQRf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 11:17:35 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:35719 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730132AbgAKQRf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 11:02:44 -0500
-Received: by mail-pf1-f195.google.com with SMTP id x6so2651366pfo.10;
-        Sat, 11 Jan 2020 08:02:43 -0800 (PST)
+        Sat, 11 Jan 2020 11:17:35 -0500
+Received: by mail-pj1-f68.google.com with SMTP id s7so2342863pjc.0;
+        Sat, 11 Jan 2020 08:17:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8c+ewCIT71LKxJWBH8PK3kOCTkKpL7iAy1a7HDZYQsk=;
-        b=HeyUmnQcv4c6wzzGb2sCjbUD8ROOcxrWOFNpcDk05zueWc5VTdZkrLS2VeSBMyE56X
-         6YPvIyHOiJGTp/pDxxdUYWjSkRUxzTZnJxu1NQS6tLo8jPg5Jlqt8WHzN7pTmUNjEsmX
-         VirNweX3ZQ+gs+RfutlNDiOyd9hiTnJXwISqDHXvyKvIzJHGwgOSpNsV8bKpbY6qFjzT
-         UlYmugGL0JJ2cK/t+S6QiwCwZRUegzL52vmPZ/OkfL84to6k25il5sWwqRCrkeEpGe4z
-         0lWjVp3ZIb/Zuv/WdsgjSKi3foqteahNRSdntVtPSAi0DWQDrYR05N/Jc7IHM8CoDb0g
-         gshQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=3qsxOxyzUIJo5Og0LE2wha3b+zrq9Ey3zvbNrPmhSgU=;
+        b=kmHxnnMIsPzGPPrne740ibD3VVsHeNhrALbjeolSo2zcwa/Ul3KR7/D5cW/SLljLpk
+         /r6w0vcEzhuq8v6JNtUVz5cIYgP1RsjwYT22fhyHFCFu3Mnzh6BZWqdQ0+elnbNknqNr
+         0pS/PY35vk8rcSKhREsTHIg/AKBIgkVetzc6Ug9xxlHwn0ciwotjRFwPSyto7yGhCnXk
+         fvB/0F845AhJWlQI+RlspdJ5rd+lgqK76xxt364imICRgIV5dIcPpm/higFhiDwL613J
+         05GQNbLbOwzIMfm4VIY9K+l6DtWFtUggBaNhOu9MJA6D37yZxwQYQI17TVygkbIs6MBH
+         JK3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8c+ewCIT71LKxJWBH8PK3kOCTkKpL7iAy1a7HDZYQsk=;
-        b=EoZTvKBNOKSXBbXUyVXU+11SMLh7j2pexXwy/Zub2MS/09S6pmttscGlotT3R6xW55
-         KnUsIYP8uP8F+ceZXaUARUXocszTU1I1AL6GmAMFlOiRV8jw3SnJ+CKlooYYvmDZGWn3
-         gE6JANGP/b4b07USu4/DPghDtJ4O1DvXoIjyNlSCx847CSAphMBab0Q3LOThd8psKO0G
-         tqOjD7VHJKKKw7w7PpGiJJw/Loo631Z4IHB3+TDtgZZEzNaQ7SVHnZw+VZHy7izbz/j7
-         IXjMwScXGXZEGkSXkawPe4aDO4+/nC0ALXptyN1abuIHiIT2DKeW+OJimmaTAijE8J3a
-         fwzw==
-X-Gm-Message-State: APjAAAWSKAgWt6dM/PltkwKyAydKqQHXwY57abiW1C2WYCfGWuuwsrsT
-        5ncKZvttcDICmBm8K1sGYSNQ7pkB
-X-Google-Smtp-Source: APXvYqyg2nRzCZrXd9bb0ykg1EtmkwWcC5bBf7URZdeX1BnT/Sxo1ciJ1Dfjxv3nDNS77K8zV1Wu+g==
-X-Received: by 2002:a63:d543:: with SMTP id v3mr11398550pgi.285.1578758563037;
-        Sat, 11 Jan 2020 08:02:43 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id z16sm7653799pff.125.2020.01.11.08.02.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Jan 2020 08:02:42 -0800 (PST)
-Subject: Re: [PATCH 4.19 00/84] 4.19.95-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20200111094845.328046411@linuxfoundation.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <23c3a0d1-1655-8cc2-7c96-743a47953795@roeck-us.net>
-Date:   Sat, 11 Jan 2020 08:02:40 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3qsxOxyzUIJo5Og0LE2wha3b+zrq9Ey3zvbNrPmhSgU=;
+        b=Hm/Ebtykf1LsY9Phzjffeox+wZdFUDNTl3VbcXe5wclF4JYwX8OohGGRlKSZ7poHq6
+         BRl3UdM70iC7DYC8pWeRJ7fQtky4tZ/3aRDk+imudfomvK5H5EywEGjdL2uOp5Es4LxC
+         UwJmkmMfJLgHLprTrFOWDPFwtmOQ4zKEgxjMsTXTYdtVTyPFe5HYiR7O5+MLHakoii1+
+         Cx3j+4Apzd+D18rQcDPV3RNo5u3QrbKR4V4QFw/GB+t147qwL+4Dz2LTl4mlwFjVyOnB
+         /MAOm8QHPv46w7Ed2RpM7ArSl0zAfRksZX5gOsWLl7Tju2kgwKfiG/ooI//czcARhmdt
+         9WbQ==
+X-Gm-Message-State: APjAAAWx+4HXFBeuaUqDy6EgmpQHocsiUdeWZIoVpOIZivxFaLzrD2Nl
+        7Mgu7b7JS9q9gyDyDudb6fU=
+X-Google-Smtp-Source: APXvYqyhd7ku4jAYhfVHIzjTZ5bnm6nlWCK35xbkdmXy/0bTa0aKjf/6lg7Vcsn5OusKiXIvxznxyQ==
+X-Received: by 2002:a17:902:b944:: with SMTP id h4mr11261502pls.92.1578759454360;
+        Sat, 11 Jan 2020 08:17:34 -0800 (PST)
+Received: from oslab.tsinghua.edu.cn ([166.111.139.172])
+        by smtp.gmail.com with ESMTPSA id j17sm7346835pfa.28.2020.01.11.08.17.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Jan 2020 08:17:33 -0800 (PST)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     kvalo@codeaurora.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, allison@lohutok.net,
+        saurav.girepunje@gmail.com, tglx@linutronix.de, will@kernel.org
+Cc:     linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] b43: Fix possible a data race in b43_op_tx()
+Date:   Sun, 12 Jan 2020 00:14:55 +0800
+Message-Id: <20200111161455.26587-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/11/20 1:49 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.95 release.
-> There are 84 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Mon, 13 Jan 2020 09:46:17 +0000.
-> Anything received after that time might be too late.
-> 
-Build results:
-	total: 156 pass: 154 fail: 2
-Failed builds:
-	arm64:defconfig
-	arm64:allmodconfig
-Qemu test results:
-	total: 382 pass: 339 fail: 43
-Failed tests:
-	<all arm64>
+The functions b43_op_tx() and b43_tx_work() may be concurrently executed.
 
-arch/arm64/kvm/hyp/switch.c: In function 'handle_tx2_tvm':
-arch/arm64/kvm/hyp/switch.c:438:2: error: implicit declaration of function '__kvm_skip_instr'; did you mean 'kvm_skip_instr'?
+In b43_tx_work(), the variable wl->tx_queue_stopped[queue_num] is
+accessed with holding a mutex lock wl->mutex. But in b43_op_tx(), the
+identical variable wl->tx_queue_stopped[skb->queue_mapping] is accessed
+without holding this mutex lock. Thus, a possible data race may occur.
 
-Guenter
+To fix this data race, in b43_op_tx(), the variable 
+wl->tx_queue_stopped[skb->queue_mapping] is accessed with holding the 
+mutex lock wl->mutex.
+
+This data race is found by the runtime testing of our tool DILP-2.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/net/wireless/broadcom/b43/main.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
+index 39da1a4c30ac..adedb38f50f2 100644
+--- a/drivers/net/wireless/broadcom/b43/main.c
++++ b/drivers/net/wireless/broadcom/b43/main.c
+@@ -3625,6 +3625,11 @@ static void b43_op_tx(struct ieee80211_hw *hw,
+ 		      struct sk_buff *skb)
+ {
+ 	struct b43_wl *wl = hw_to_b43_wl(hw);
++	bool stopped;
++
++	mutex_lock(&wl->mutex);
++	stopped = wl->tx_queue_stopped[skb->queue_mapping];
++	mutex_unlock(&wl->mutex);
+ 
+ 	if (unlikely(skb->len < 2 + 2 + 6)) {
+ 		/* Too short, this can't be a valid frame. */
+@@ -3634,7 +3639,7 @@ static void b43_op_tx(struct ieee80211_hw *hw,
+ 	B43_WARN_ON(skb_shinfo(skb)->nr_frags);
+ 
+ 	skb_queue_tail(&wl->tx_queue[skb->queue_mapping], skb);
+-	if (!wl->tx_queue_stopped[skb->queue_mapping]) {
++	if (!stopped) {
+ 		ieee80211_queue_work(wl->hw, &wl->tx_work);
+ 	} else {
+ 		ieee80211_stop_queue(wl->hw, skb->queue_mapping);
+-- 
+2.17.1
+
