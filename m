@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D79A137FC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:23:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22935137DA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:00:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730660AbgAKKWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:22:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48082 "EHLO mail.kernel.org"
+        id S1729352AbgAKJ76 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 04:59:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730700AbgAKKWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:22:36 -0500
+        id S1729346AbgAKJ7y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 04:59:54 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A645120848;
-        Sat, 11 Jan 2020 10:22:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 552F02084D;
+        Sat, 11 Jan 2020 09:59:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738155;
-        bh=eH1Bug+ns69eCl4OYezFufgJ/9UJKJoBq0c4gH/24ys=;
+        s=default; t=1578736794;
+        bh=vcovTOHbKP78JFWf13jdL/gXq0Zxg4qPHG5JDYfThhw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UlVxlwa66Iv0vER4Cql27a4hAxVQPXbbDplC5kWdl4ddcMxPeuND06tjRYJwto+02
-         ZtEwcpJxBWp0NhGPe2wXNIbLewtEcwdb04uxRSTkztFP2Nru6dMLrZpSjYvN5LghnW
-         E9+BqlJys+gxs6bQLyiWP6W2Tl0CVHJ+GCygC41U=
+        b=KPO2q8o7xGalFZ541xM+/pXctutTD+USTQLrKEkhlSRzGmvSOu5vaYNXUpA/dCd4o
+         xdlRxOl2mnS09AsvjZltvUM9fHkk/Vur8e/i4JIttm4Mu+igNzY3lZF31Cvj58K+VC
+         kRRZnF7qhXLUoED07VovvY3R+5LhcYg0hdaHPZ/8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 039/165] selftests: safesetid: Check the return value of setuid/setgid
-Date:   Sat, 11 Jan 2020 10:49:18 +0100
-Message-Id: <20200111094924.299300756@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 26/91] ata: libahci_platform: Export again ahci_platform_<en/dis>able_phys()
+Date:   Sat, 11 Jan 2020 10:49:19 +0100
+Message-Id: <20200111094854.129854519@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-References: <20200111094921.347491861@linuxfoundation.org>
+In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
+References: <20200111094844.748507863@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,81 +44,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 295c4e21cf27ac9af542140e3e797df9e0cf7b5f ]
+commit 84b032dbfdf1c139cd2b864e43959510646975f8 upstream.
 
-Check the return value of setuid() and setgid().
-This fixes the following warnings and improves test result.
+This reverts commit 6bb86fefa086faba7b60bb452300b76a47cde1a5
+("libahci_platform: Staticize ahci_platform_<en/dis>able_phys()") we are
+going to need ahci_platform_{enable,disable}_phys() in a subsequent
+commit for ahci_brcm.c in order to properly control the PHY
+initialization order.
 
-safesetid-test.c: In function ‘main’:
-safesetid-test.c:294:2: warning: ignoring return value of ‘setuid’, declared with attribute warn_unused_result [-Wunused-result]
-  setuid(NO_POLICY_USER);
-  ^~~~~~~~~~~~~~~~~~~~~~
-safesetid-test.c:295:2: warning: ignoring return value of ‘setgid’, declared with attribute warn_unused_result [-Wunused-result]
-  setgid(NO_POLICY_USER);
-  ^~~~~~~~~~~~~~~~~~~~~~
-safesetid-test.c:309:2: warning: ignoring return value of ‘setuid’, declared with attribute warn_unused_result [-Wunused-result]
-  setuid(RESTRICTED_PARENT);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~
-safesetid-test.c:310:2: warning: ignoring return value of ‘setgid’, declared with attribute warn_unused_result [-Wunused-result]
-  setgid(RESTRICTED_PARENT);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~
-safesetid-test.c: In function ‘test_setuid’:
-safesetid-test.c:216:3: warning: ignoring return value of ‘setuid’, declared with attribute warn_unused_result [-Wunused-result]
-   setuid(child_uid);
-   ^~~~~~~~~~~~~~~~~
+Also make sure the function prototypes are declared in
+include/linux/ahci_platform.h as a result.
 
-Fixes: c67e8ec03f3f ("LSM: SafeSetID: add selftest")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- .../testing/selftests/safesetid/safesetid-test.c  | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/ata/libahci_platform.c |    6 ++++--
+ include/linux/ahci_platform.h  |    2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/safesetid/safesetid-test.c b/tools/testing/selftests/safesetid/safesetid-test.c
-index 8f40c6ecdad1..0c4d50644c13 100644
---- a/tools/testing/selftests/safesetid/safesetid-test.c
-+++ b/tools/testing/selftests/safesetid/safesetid-test.c
-@@ -213,7 +213,8 @@ static void test_setuid(uid_t child_uid, bool expect_success)
+--- a/drivers/ata/libahci_platform.c
++++ b/drivers/ata/libahci_platform.c
+@@ -46,7 +46,7 @@ EXPORT_SYMBOL_GPL(ahci_platform_ops);
+  * RETURNS:
+  * 0 on success otherwise a negative error code
+  */
+-static int ahci_platform_enable_phys(struct ahci_host_priv *hpriv)
++int ahci_platform_enable_phys(struct ahci_host_priv *hpriv)
+ {
+ 	int rc, i;
+ 
+@@ -71,6 +71,7 @@ disable_phys:
  	}
+ 	return rc;
+ }
++EXPORT_SYMBOL_GPL(ahci_platform_enable_phys);
  
- 	if (cpid == 0) {	    /* Code executed by child */
--		setuid(child_uid);
-+		if (setuid(child_uid) < 0)
-+			exit(EXIT_FAILURE);
- 		if (getuid() == child_uid)
- 			exit(EXIT_SUCCESS);
- 		else
-@@ -291,8 +292,10 @@ int main(int argc, char **argv)
+ /**
+  * ahci_platform_disable_phys - Disable PHYs
+@@ -78,7 +79,7 @@ disable_phys:
+  *
+  * This function disables all PHYs found in hpriv->phys.
+  */
+-static void ahci_platform_disable_phys(struct ahci_host_priv *hpriv)
++void ahci_platform_disable_phys(struct ahci_host_priv *hpriv)
+ {
+ 	int i;
  
- 	// First test to make sure we can write userns mappings from a user
- 	// that doesn't have any restrictions (as long as it has CAP_SETUID);
--	setuid(NO_POLICY_USER);
--	setgid(NO_POLICY_USER);
-+	if (setuid(NO_POLICY_USER) < 0)
-+		die("Error with set uid(%d)\n", NO_POLICY_USER);
-+	if (setgid(NO_POLICY_USER) < 0)
-+		die("Error with set gid(%d)\n", NO_POLICY_USER);
- 
- 	// Take away all but setid caps
- 	drop_caps(true);
-@@ -306,8 +309,10 @@ int main(int argc, char **argv)
- 		die("test_userns failed when it should work\n");
+@@ -87,6 +88,7 @@ static void ahci_platform_disable_phys(s
+ 		phy_exit(hpriv->phys[i]);
  	}
+ }
++EXPORT_SYMBOL_GPL(ahci_platform_disable_phys);
  
--	setuid(RESTRICTED_PARENT);
--	setgid(RESTRICTED_PARENT);
-+	if (setuid(RESTRICTED_PARENT) < 0)
-+		die("Error with set uid(%d)\n", RESTRICTED_PARENT);
-+	if (setgid(RESTRICTED_PARENT) < 0)
-+		die("Error with set gid(%d)\n", RESTRICTED_PARENT);
+ /**
+  * ahci_platform_enable_clks - Enable platform clocks
+--- a/include/linux/ahci_platform.h
++++ b/include/linux/ahci_platform.h
+@@ -23,6 +23,8 @@ struct ahci_host_priv;
+ struct platform_device;
+ struct scsi_host_template;
  
- 	test_setuid(ROOT_USER, false);
- 	test_setuid(ALLOWED_CHILD1, true);
--- 
-2.20.1
-
++int ahci_platform_enable_phys(struct ahci_host_priv *hpriv);
++void ahci_platform_disable_phys(struct ahci_host_priv *hpriv);
+ int ahci_platform_enable_clks(struct ahci_host_priv *hpriv);
+ void ahci_platform_disable_clks(struct ahci_host_priv *hpriv);
+ int ahci_platform_enable_regulators(struct ahci_host_priv *hpriv);
 
 
