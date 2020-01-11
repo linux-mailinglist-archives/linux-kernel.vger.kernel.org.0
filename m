@@ -2,209 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0763137BE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 07:51:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F2C4137BE9
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 07:57:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbgAKGvy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 01:51:54 -0500
-Received: from szxga08-in.huawei.com ([45.249.212.255]:33814 "EHLO huawei.com"
+        id S1728435AbgAKG5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 01:57:43 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8693 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728404AbgAKGvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 01:51:54 -0500
-Received: from DGGEMM405-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id 32DE7412A666736B8ACF;
-        Sat, 11 Jan 2020 14:51:50 +0800 (CST)
-Received: from dggeme755-chm.china.huawei.com (10.3.19.101) by
- DGGEMM405-HUB.china.huawei.com (10.3.20.213) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Sat, 11 Jan 2020 14:51:49 +0800
-Received: from [127.0.0.1] (10.173.221.248) by dggeme755-chm.china.huawei.com
- (10.3.19.101) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Sat, 11
- Jan 2020 14:51:49 +0800
-Subject: Re: [PATCH v2 1/6] KVM: arm64: Document PV-lock interface
-To:     Steven Price <steven.price@arm.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <kvm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>,
-        <virtualization@lists.linux-foundation.org>
-CC:     <maz@kernel.org>, <james.morse@arm.com>, <linux@armlinux.org.uk>,
-        <suzuki.poulose@arm.com>, <julien.thierry.kdev@gmail.com>,
-        <catalin.marinas@arm.com>, <mark.rutland@arm.com>,
-        <will@kernel.org>, <daniel.lezcano@linaro.org>,
-        <wanghaibin.wang@huawei.com>
-References: <20191226135833.1052-1-yezengruan@huawei.com>
- <20191226135833.1052-2-yezengruan@huawei.com>
- <c26ebc8d-6a10-6bc4-0af8-cd4883addbf0@arm.com>
-From:   yezengruan <yezengruan@huawei.com>
-Message-ID: <e30649e0-c09f-8d16-a8a2-55e57420ad8d@huawei.com>
-Date:   Sat, 11 Jan 2020 14:51:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1728413AbgAKG5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 01:57:43 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 202AF6B31E8B1024BCDB;
+        Sat, 11 Jan 2020 14:57:39 +0800 (CST)
+Received: from localhost.localdomain (10.67.165.24) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.439.0; Sat, 11 Jan 2020 14:57:29 +0800
+From:   Zeng Tao <prime.zeng@hisilicon.com>
+To:     <sudeep.holla@arm.com>
+CC:     <linuxarm@huawei.com>, Zeng Tao <prime.zeng@hisilicon.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] cpu-topology: Skip the exist but not possible cpu nodes
+Date:   Sat, 11 Jan 2020 14:53:40 +0800
+Message-ID: <1578725620-39677-1-git-send-email-prime.zeng@hisilicon.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-In-Reply-To: <c26ebc8d-6a10-6bc4-0af8-cd4883addbf0@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.173.221.248]
-X-ClientProxiedBy: dggeme711-chm.china.huawei.com (10.1.199.107) To
- dggeme755-chm.china.huawei.com (10.3.19.101)
+Content-Type: text/plain
+X-Originating-IP: [10.67.165.24]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+When CONFIG_NR_CPUS is smaller than the cpu nodes defined in the device
+tree, all the cpu nodes parsing will fail.
+And this is not reasonable for a legal device tree configs.
+In this patch, skip such cpu nodes rather than return an error.
+With CONFIG_NR_CPUS = 128 and cpus nodes num in device tree is 130,
+The following warning messages will be print during boot:
+CPU node for /cpus/cpu@128 exist but the possible cpu range is :0-127
+CPU node for /cpus/cpu@129 exist but the possible cpu range is :0-127
+CPU node for /cpus/cpu@130 exist but the possible cpu range is :0-127
 
-On 2020/1/9 22:53, Steven Price wrote:
-> On 26/12/2019 13:58, Zengruan Ye wrote:
->> Introduce a paravirtualization interface for KVM/arm64 to obtain the VCPU
->> is currently running or not.
->>
->> The PV lock structure of the guest is allocated by user space.
->>
->> A hypercall interface is provided for the guest to interrogate the
->> hypervisor's support for this interface and the location of the shared
->> memory structures.
->>
->> Signed-off-by: Zengruan Ye <yezengruan@huawei.com>
->> ---
->>   Documentation/virt/kvm/arm/pvlock.rst   | 63 +++++++++++++++++++++++++
->>   Documentation/virt/kvm/devices/vcpu.txt | 14 ++++++
->>   2 files changed, 77 insertions(+)
->>   create mode 100644 Documentation/virt/kvm/arm/pvlock.rst
->>
->> diff --git a/Documentation/virt/kvm/arm/pvlock.rst b/Documentation/virt/kvm/arm/pvlock.rst
->> new file mode 100644
->> index 000000000000..58b3b8ee7537
->> --- /dev/null
->> +++ b/Documentation/virt/kvm/arm/pvlock.rst
->> @@ -0,0 +1,63 @@
->> +.. SPDX-License-Identifier: GPL-2.0
->> +
->> +Paravirtualized lock support for arm64
->> +======================================
->> +
->> +KVM/arm64 provides some hypervisor service calls to support a paravirtualized
->> +guest obtaining the VCPU is currently running or not.
-> NIT:              ^ whether
+Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
+---
+Changelog:
+v1->v2:
+ -Remove redundant -ENODEV assignment in get_cpu_for_node
+ -Add comment to describe the get_cpu_for_node return values
+ -Add skip process for cpu threads
+ -Update the commit log with more detail
+---
+ drivers/base/arch_topology.c | 37 +++++++++++++++++++++++++++++--------
+ 1 file changed, 29 insertions(+), 8 deletions(-)
 
-Thanks for posting this.
-
-> 
->> +
->> +Two new SMCCC compatible hypercalls are defined:
->> +
->> +* PV_LOCK_FEATURES:   0xC6000020
->> +* PV_LOCK_PREEMPTED:  0xC6000021
->> +
->> +The existence of the PV_LOCK hypercall should be probed using the SMCCC 1.1
->> +ARCH_FEATURES mechanism before calling it.
-> 
-> Since these are within the "vendor specific" SMCCC region ideally you should also check that you are talking to KVM. (Other hypervisors could allocate SMCCC IDs differently within this block). Will has a patch on a branch which gives an example of how this could work [1]
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/commit/?h=kvm/hvc&id=464f5a1741e5959c3e4d2be1966ae0093b4dce06
-
-OK, I will add "vendor specific" check next version.
-
-> 
->> +
->> +PV_LOCK_FEATURES
->> +    ============= ========    ==========
->> +    Function ID:  (uint32)    0xC6000020
->> +    PV_call_id:   (uint32)    The function to query for support.
->> +    Return value: (int64)     NOT_SUPPORTED (-1) or SUCCESS (0) if the relevant
->> +                              PV-lock feature is supported by the hypervisor.
->> +    ============= ========    ==========
->> +
->> +PV_LOCK_PREEMPTED
->> +    ============= ========    ==========
->> +    Function ID:  (uint32)    0xC6000021
->> +    Return value: (int64)     NOT_SUPPORTED (-1) or SUCCESS (0) if the IPA of
->> +                              this VCPU's pv data structure is configured by
->> +                              the hypervisor.
->> +    ============= ========    ==========
-> 
-> PV_LOCK_PREEMPTED also needs to return the address of this data structure. Either by returning this in another register, or by e.g. treating a positive return as an address and a negative value as an error.
-
-This is somewhat embarrassing. The code does what you say, but the doc doesn't. Thanks for pointing it out to me! I'll update the doc to match.
-
-> 
->> +
->> +The IPA returned by PV_LOCK_PREEMPTED should be mapped by the guest as normal
->> +memory with inner and outer write back caching attributes, in the inner
->> +shareable domain.
->> +
->> +PV_LOCK_PREEMPTED returns the structure for the calling VCPU.
->> +
->> +PV lock state
->> +-------------
->> +
->> +The structure pointed to by the PV_LOCK_PREEMPTED hypercall is as follows:
->> +
->> ++-----------+-------------+-------------+---------------------------------+
->> +| Field     | Byte Length | Byte Offset | Description                     |
->> ++===========+=============+=============+=================================+
->> +| preempted |      8      |      0      | Indicate the VCPU who owns this |
-> 
-> NIT: s/Indicate/Indicates that/. Also more common English would be "the VCPU *that* owns"
-
-Will update.
-
-> 
->> +|           |             |             | struct is running or not.       |
->> +|           |             |             | Non-zero values mean the VCPU   |
->> +|           |             |             | has been preempted. Zero means  |
->> +|           |             |             | the VCPU is not preempted.      |
->> ++-----------+-------------+-------------+---------------------------------+
->> +
->> +The preempted field will be updated to 1 by the hypervisor prior to scheduling
->> +a VCPU. When the VCPU is scheduled out, the preempted field will be updated
->> +to 0 by the hypervisor.
->> +
->> +The structure will be present within a reserved region of the normal memory
->> +given to the guest. The guest should not attempt to write into this memory.
->> +There is a structure per VCPU of the guest.
-> 
-> I think it would be worth mentioning in this document that the structure is guaranteed to be 64-byte aligned.
-
-Good point, I'll update the doc.
-
-> 
-> Steve
-> 
->> +
->> +For the user space interface see Documentation/virt/kvm/devices/vcpu.txt
->> +section "4. GROUP: KVM_ARM_VCPU_PVLOCK_CTRL".
->> diff --git a/Documentation/virt/kvm/devices/vcpu.txt b/Documentation/virt/kvm/devices/vcpu.txt
->> index 6f3bd64a05b0..c10a5945075b 100644
->> --- a/Documentation/virt/kvm/devices/vcpu.txt
->> +++ b/Documentation/virt/kvm/devices/vcpu.txt
->> @@ -74,3 +74,17 @@ Specifies the base address of the stolen time structure for this VCPU. The
->>   base address must be 64 byte aligned and exist within a valid guest memory
->>   region. See Documentation/virt/kvm/arm/pvtime.txt for more information
->>   including the layout of the stolen time structure.
->> +
->> +4. GROUP: KVM_ARM_VCPU_PVLOCK_CTRL
->> +Architectures: ARM64
->> +
->> +4.1 ATTRIBUTE: KVM_ARM_VCPU_PVLOCK_IPA
->> +Parameters: 64-bit base address
->> +Returns: -ENXIO:  PV lock not implemented
->> +         -EEXIST: Base address already set for this VCPU
->> +         -EINVAL: Base address not 64 byte aligned
->> +
->> +Specifies the base address of the PV lock structure for this VCPU. The
->> +base address must be 64 byte aligned and exist within a valid guest memory
->> +region. See Documentation/virt/kvm/arm/pvlock.rst for more information
->> +including the layout of the pv lock structure.
->>
-> 
-> 
-> .
-
-Thanks,
-
-Zengruan
+diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+index 5fe44b3..01f0e21 100644
+--- a/drivers/base/arch_topology.c
++++ b/drivers/base/arch_topology.c
+@@ -248,22 +248,44 @@ core_initcall(free_raw_capacity);
+ #endif
+ 
+ #if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
++/*
++ * This function returns the logic cpu number of the node.
++ * There are totally three kinds of return values:
++ * (1) logic cpu number which is > 0.
++ * (2) -ENDEV when the node is valid one which can be found in the device tree
++ * but there is no possible cpu nodes to match, when the CONFIG_NR_CPUS is
++ * smaller than cpus node numbers in device tree, this will happen. It's
++ * suggested to just ignore this case.
++ * (3) -EINVAL when other errors occur.
++ */
+ static int __init get_cpu_for_node(struct device_node *node)
+ {
+-	struct device_node *cpu_node;
++	struct device_node *cpu_node, *t;
+ 	int cpu;
++	bool found = false;
+ 
+ 	cpu_node = of_parse_phandle(node, "cpu", 0);
+ 	if (!cpu_node)
+-		return -1;
++		return -EINVAL;
++
++	for_each_of_cpu_node(t)
++		if (t == cpu_node) {
++			found = true;
++			break;
++		}
++
++	if (!found) {
++		pr_crit("Unable to find CPU node for %pOF\n", cpu_node);
++		return -EINVAL;
++	}
+ 
+ 	cpu = of_cpu_node_to_id(cpu_node);
+ 	if (cpu >= 0)
+ 		topology_parse_cpu_capacity(cpu_node, cpu);
+ 	else
+-		pr_crit("Unable to find CPU node for %pOF\n", cpu_node);
++		pr_warn("CPU node for %pOF exist but the possible cpu range is :%*pbl\n",
++			cpu_node, cpumask_pr_args(cpu_possible_mask));
+ 
+-	of_node_put(cpu_node);
+ 	return cpu;
+ }
+ 
+@@ -286,9 +308,8 @@ static int __init parse_core(struct device_node *core, int package_id,
+ 				cpu_topology[cpu].package_id = package_id;
+ 				cpu_topology[cpu].core_id = core_id;
+ 				cpu_topology[cpu].thread_id = i;
+-			} else {
+-				pr_err("%pOF: Can't get CPU for thread\n",
+-				       t);
++			} else if (cpu != -ENODEV) {
++				pr_err("%pOF: Can't get CPU for thread\n", t);
+ 				of_node_put(t);
+ 				return -EINVAL;
+ 			}
+@@ -307,7 +328,7 @@ static int __init parse_core(struct device_node *core, int package_id,
+ 
+ 		cpu_topology[cpu].package_id = package_id;
+ 		cpu_topology[cpu].core_id = core_id;
+-	} else if (leaf) {
++	} else if (leaf && cpu != -ENODEV) {
+ 		pr_err("%pOF: Can't get CPU for leaf core\n", core);
+ 		return -EINVAL;
+ 	}
+-- 
+2.8.1
 
