@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32868137EB9
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:13:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EEC813806C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:29:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730082AbgAKKNF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:13:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51516 "EHLO mail.kernel.org"
+        id S1731259AbgAKK31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:29:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729008AbgAKKNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:13:04 -0500
+        id S1729171AbgAKK31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:29:27 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1956E206DA;
-        Sat, 11 Jan 2020 10:13:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 713F820842;
+        Sat, 11 Jan 2020 10:29:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737583;
-        bh=Szw6ys8LnCVnsTt06jMBo0T+8Yvamx5Z4vLGAz8NCt4=;
+        s=default; t=1578738566;
+        bh=w+TK/z6q5eNOhYC/9sUbz1Bb8kYTxNA9IKc3SIJiSLE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BVp+JJbLl80Pgi9xw16ESnt/L00wyRxcrh6HzGnMa9LgvBVVhkMrfFuWcip8t11Ne
-         EeJxycIZlbZ6kwoUHcs5hLfasyRuLB85ufJCPlOWrl7JrOJ1/E579yQt7dH2DnSLn8
-         jM1EEoXXAu4koH4UJG/YfiP47qxgWErwovnnh600=
+        b=k802gherOn40Syrg6Au90Nte7VpxJb5sNCkUg+ER37h48Lmks1e952hriAuMCp2lL
+         acPKcROh/5AYeT6FdnhF+Fo8Ci4Aj4j3/b3LyzKLO768KVt8DXu9etUMfWKaMAubO+
+         +n52YY/8ISwTAu2zeK4KD8Sc1ROeS9vnQHLWQELs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.14 55/62] USB: core: fix check for duplicate endpoints
+        stable@vger.kernel.org,
+        Thirupathaiah Annapureddy <thiruan@microsoft.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 118/165] tpm/tpm_ftpm_tee: add shutdown call back
 Date:   Sat, 11 Jan 2020 10:50:37 +0100
-Message-Id: <20200111094855.154007922@linuxfoundation.org>
+Message-Id: <20200111094933.053228465@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
-References: <20200111094837.425430968@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,128 +46,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Pavel Tatashin <pasha.tatashin@soleen.com>
 
-commit 3e4f8e21c4f27bcf30a48486b9dcc269512b79ff upstream.
+[ Upstream commit 1760eb689ed68c6746744aff2092bff57c78d907 ]
 
-Amend the endpoint-descriptor sanity checks to detect all duplicate
-endpoint addresses in a configuration.
+Add shutdown call back to close existing session with fTPM TA
+to support kexec scenario.
 
-Commit 0a8fd1346254 ("USB: fix problems with duplicate endpoint
-addresses") added a check for duplicate endpoint addresses within a
-single alternate setting, but did not look for duplicate addresses in
-other interfaces.
+Add parentheses to function names in comments as specified in kdoc.
 
-The current check would also not detect all duplicate addresses when one
-endpoint is as a (bi-directional) control endpoint.
-
-This specifically avoids overwriting the endpoint entries in struct
-usb_device when enabling a duplicate endpoint, something which could
-potentially lead to crashes or leaks, for example, when endpoints are
-later disabled.
-
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Link: https://lore.kernel.org/r/20191219161016.6695-1-johan@kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Thirupathaiah Annapureddy <thiruan@microsoft.com>
+Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/core/config.c |   70 ++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 58 insertions(+), 12 deletions(-)
+ drivers/char/tpm/tpm_ftpm_tee.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/core/config.c
-+++ b/drivers/usb/core/config.c
-@@ -203,9 +203,58 @@ static const unsigned short super_speed_
- 	[USB_ENDPOINT_XFER_INT] = 1024,
+diff --git a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftpm_tee.c
+index 6640a14dbe48..22bf553ccf9d 100644
+--- a/drivers/char/tpm/tpm_ftpm_tee.c
++++ b/drivers/char/tpm/tpm_ftpm_tee.c
+@@ -32,7 +32,7 @@ static const uuid_t ftpm_ta_uuid =
+ 		  0x82, 0xCB, 0x34, 0x3F, 0xB7, 0xF3, 0x78, 0x96);
+ 
+ /**
+- * ftpm_tee_tpm_op_recv - retrieve fTPM response.
++ * ftpm_tee_tpm_op_recv() - retrieve fTPM response.
+  * @chip:	the tpm_chip description as specified in driver/char/tpm/tpm.h.
+  * @buf:	the buffer to store data.
+  * @count:	the number of bytes to read.
+@@ -61,7 +61,7 @@ static int ftpm_tee_tpm_op_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ }
+ 
+ /**
+- * ftpm_tee_tpm_op_send - send TPM commands through the TEE shared memory.
++ * ftpm_tee_tpm_op_send() - send TPM commands through the TEE shared memory.
+  * @chip:	the tpm_chip description as specified in driver/char/tpm/tpm.h
+  * @buf:	the buffer to send.
+  * @len:	the number of bytes to send.
+@@ -208,7 +208,7 @@ static int ftpm_tee_match(struct tee_ioctl_version_data *ver, const void *data)
+ }
+ 
+ /**
+- * ftpm_tee_probe - initialize the fTPM
++ * ftpm_tee_probe() - initialize the fTPM
+  * @pdev: the platform_device description.
+  *
+  * Return:
+@@ -298,7 +298,7 @@ static int ftpm_tee_probe(struct platform_device *pdev)
+ }
+ 
+ /**
+- * ftpm_tee_remove - remove the TPM device
++ * ftpm_tee_remove() - remove the TPM device
+  * @pdev: the platform_device description.
+  *
+  * Return:
+@@ -328,6 +328,19 @@ static int ftpm_tee_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++/**
++ * ftpm_tee_shutdown() - shutdown the TPM device
++ * @pdev: the platform_device description.
++ */
++static void ftpm_tee_shutdown(struct platform_device *pdev)
++{
++	struct ftpm_tee_private *pvt_data = dev_get_drvdata(&pdev->dev);
++
++	tee_shm_free(pvt_data->shm);
++	tee_client_close_session(pvt_data->ctx, pvt_data->session);
++	tee_client_close_context(pvt_data->ctx);
++}
++
+ static const struct of_device_id of_ftpm_tee_ids[] = {
+ 	{ .compatible = "microsoft,ftpm" },
+ 	{ }
+@@ -341,6 +354,7 @@ static struct platform_driver ftpm_tee_driver = {
+ 	},
+ 	.probe = ftpm_tee_probe,
+ 	.remove = ftpm_tee_remove,
++	.shutdown = ftpm_tee_shutdown,
  };
  
--static int usb_parse_endpoint(struct device *ddev, int cfgno, int inum,
--    int asnum, struct usb_host_interface *ifp, int num_ep,
--    unsigned char *buffer, int size)
-+static bool endpoint_is_duplicate(struct usb_endpoint_descriptor *e1,
-+		struct usb_endpoint_descriptor *e2)
-+{
-+	if (e1->bEndpointAddress == e2->bEndpointAddress)
-+		return true;
-+
-+	if (usb_endpoint_xfer_control(e1) || usb_endpoint_xfer_control(e2)) {
-+		if (usb_endpoint_num(e1) == usb_endpoint_num(e2))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+/*
-+ * Check for duplicate endpoint addresses in other interfaces and in the
-+ * altsetting currently being parsed.
-+ */
-+static bool config_endpoint_is_duplicate(struct usb_host_config *config,
-+		int inum, int asnum, struct usb_endpoint_descriptor *d)
-+{
-+	struct usb_endpoint_descriptor *epd;
-+	struct usb_interface_cache *intfc;
-+	struct usb_host_interface *alt;
-+	int i, j, k;
-+
-+	for (i = 0; i < config->desc.bNumInterfaces; ++i) {
-+		intfc = config->intf_cache[i];
-+
-+		for (j = 0; j < intfc->num_altsetting; ++j) {
-+			alt = &intfc->altsetting[j];
-+
-+			if (alt->desc.bInterfaceNumber == inum &&
-+					alt->desc.bAlternateSetting != asnum)
-+				continue;
-+
-+			for (k = 0; k < alt->desc.bNumEndpoints; ++k) {
-+				epd = &alt->endpoint[k].desc;
-+
-+				if (endpoint_is_duplicate(epd, d))
-+					return true;
-+			}
-+		}
-+	}
-+
-+	return false;
-+}
-+
-+static int usb_parse_endpoint(struct device *ddev, int cfgno,
-+		struct usb_host_config *config, int inum, int asnum,
-+		struct usb_host_interface *ifp, int num_ep,
-+		unsigned char *buffer, int size)
- {
- 	unsigned char *buffer0 = buffer;
- 	struct usb_endpoint_descriptor *d;
-@@ -242,13 +291,10 @@ static int usb_parse_endpoint(struct dev
- 		goto skip_to_next_endpoint_or_interface_descriptor;
- 
- 	/* Check for duplicate endpoint addresses */
--	for (i = 0; i < ifp->desc.bNumEndpoints; ++i) {
--		if (ifp->endpoint[i].desc.bEndpointAddress ==
--		    d->bEndpointAddress) {
--			dev_warn(ddev, "config %d interface %d altsetting %d has a duplicate endpoint with address 0x%X, skipping\n",
--			    cfgno, inum, asnum, d->bEndpointAddress);
--			goto skip_to_next_endpoint_or_interface_descriptor;
--		}
-+	if (config_endpoint_is_duplicate(config, inum, asnum, d)) {
-+		dev_warn(ddev, "config %d interface %d altsetting %d has a duplicate endpoint with address 0x%X, skipping\n",
-+				cfgno, inum, asnum, d->bEndpointAddress);
-+		goto skip_to_next_endpoint_or_interface_descriptor;
- 	}
- 
- 	endpoint = &ifp->endpoint[ifp->desc.bNumEndpoints];
-@@ -522,8 +568,8 @@ static int usb_parse_interface(struct de
- 		if (((struct usb_descriptor_header *) buffer)->bDescriptorType
- 		     == USB_DT_INTERFACE)
- 			break;
--		retval = usb_parse_endpoint(ddev, cfgno, inum, asnum, alt,
--		    num_ep, buffer, size);
-+		retval = usb_parse_endpoint(ddev, cfgno, config, inum, asnum,
-+				alt, num_ep, buffer, size);
- 		if (retval < 0)
- 			return retval;
- 		++n;
+ module_platform_driver(ftpm_tee_driver);
+-- 
+2.20.1
+
 
 
