@@ -2,126 +2,320 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F550137D0C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 10:54:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03E44137CC4
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 10:49:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729005AbgAKJxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 04:53:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39296 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728752AbgAKJxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 04:53:00 -0500
-Received: from localhost (unknown [62.119.166.9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 992DE2077C;
-        Sat, 11 Jan 2020 09:52:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578736379;
-        bh=3uU3R90uC4A507UzUFMjyCffy1vzoVECycbLWSvf2ww=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RSPQT90pJ5W4o7MfFAO95uH+W0CiVVTcDIrY7bdeTq7v+IvxFubaQz/av14BGkDCI
-         +iIIUKZ+4tgOCxVxRcp2gHsRIvLqdXTw68HCGikxc0BWLTbunI3zHsrtRvBAdIIbT9
-         PVo61gpjWMPHzDXUYB0hTJVXjq1taT+j2aPYcLsg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Dave Airlie <airlied@redhat.com>,
-        Imre Deak <imre.deak@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 26/59] drm/mst: Fix MST sideband up-reply failure handling
-Date:   Sat, 11 Jan 2020 10:49:35 +0100
-Message-Id: <20200111094843.880640242@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094835.417654274@linuxfoundation.org>
-References: <20200111094835.417654274@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1728813AbgAKJtq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 04:49:46 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46561 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728747AbgAKJtq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 04:49:46 -0500
+Received: by mail-lj1-f196.google.com with SMTP id m26so4665125ljc.13;
+        Sat, 11 Jan 2020 01:49:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=try2mkSwD9JsKvQCY96uRlJiII0dSrRIeEJ/8uLNfho=;
+        b=X9evu/cSI1vwiZwqVMW/lQ5ijqerY7Nha7A43P267N5OS0npQG01Kj1f4T+q3KGjuT
+         iDL//RPNX98E/eCtJ0VIaaFwiPejmgey8tk9S3Z+/6FjXQLH0xGIXRBIVaZPuEZYX0X8
+         qlYBDbr8BVcAaZTRH6cI7DKiR5+wrx/dPa1DdLq6ogMqYFKDeWk6x3WotZTBxKG0HHjN
+         gNNYFQx+tFWIRt6vSpGLsNxYNSAQTTFcgz9VHchBhTkVNBbxRqK/6QTMplM8xTJAy6qJ
+         mkauTUKj1F/d5mAO+6BA/IW4vDi8MmDxb1txJOOTRzclbOUva1nTgrw6tur/InVUcziK
+         1r+Q==
+X-Gm-Message-State: APjAAAXIaH7vqwjhh5otK3AycDWS98IRIKklcnZD9qOeIimf8DHvZG0v
+        FPoGkBUNqtkv1e9ZgYyo8v0=
+X-Google-Smtp-Source: APXvYqyzskM35N+Z4NotPpD5OPjEk8rUMUnxLGpS3M9cyYBXpwuLQ5WOvlaL3UcapCcExPFfskGlSA==
+X-Received: by 2002:a2e:8595:: with SMTP id b21mr5050194lji.219.1578736183380;
+        Sat, 11 Jan 2020 01:49:43 -0800 (PST)
+Received: from localhost.localdomain (dc7t7ryyyyyyyyyyyyybt-3.rev.dnainternet.fi. [2001:14ba:16e1:b700::3])
+        by smtp.gmail.com with ESMTPSA id m11sm2420182lfj.89.2020.01.11.01.49.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Jan 2020 01:49:42 -0800 (PST)
+Date:   Sat, 11 Jan 2020 11:49:36 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: [PATCH v9 03/12] mfd: rohm PMICs - use platform_device_id to match
+ MFD sub-devices
+Message-ID: <360cf16c87395f0a645048bea2bf37a8d256c0de.1578644144.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1578644144.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1578644144.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Imre Deak <imre.deak@intel.com>
+Thanks to Stephen Boyd I today learned we can use platform_device_id
+to do device and module matching for MFD sub-devices!
 
-[ Upstream commit d8fd3722207f154b53c80eee2cf4977c3fc25a92 ]
+Do device matching using the platform_device_id instead of using
+explicit module_aliases to load modules and custom parent-data field
+to do module loading and sub-device matching.
 
-Fix the breakage resulting in the stacktrace below, due to tx queue
-being full when trying to send an up-reply. txmsg->seqno is -1 in this
-case leading to a corruption of the mstb object by
-
-	txmsg->dst->tx_slots[txmsg->seqno] = NULL;
-
-in process_single_up_tx_qlock().
-
-[  +0,005162] [drm:process_single_tx_qlock [drm_kms_helper]] set_hdr_from_dst_qlock: failed to find slot
-[  +0,000015] [drm:drm_dp_send_up_ack_reply.constprop.19 [drm_kms_helper]] failed to send msg in q -11
-[  +0,000939] BUG: kernel NULL pointer dereference, address: 00000000000005a0
-[  +0,006982] #PF: supervisor write access in kernel mode
-[  +0,005223] #PF: error_code(0x0002) - not-present page
-[  +0,005135] PGD 0 P4D 0
-[  +0,002581] Oops: 0002 [#1] PREEMPT SMP NOPTI
-[  +0,004359] CPU: 1 PID: 1200 Comm: kworker/u16:3 Tainted: G     U            5.2.0-rc1+ #410
-[  +0,008433] Hardware name: Intel Corporation Ice Lake Client Platform/IceLake U DDR4 SODIMM PD RVP, BIOS ICLSFWR1.R00.3175.A00.1904261428 04/26/2019
-[  +0,013323] Workqueue: i915-dp i915_digport_work_func [i915]
-[  +0,005676] RIP: 0010:queue_work_on+0x19/0x70
-[  +0,004372] Code: ff ff ff 0f 1f 40 00 66 2e 0f 1f 84 00 00 00 00 00 41 56 49 89 f6 41 55 41 89 fd 41 54 55 53 48 89 d3 9c 5d fa e8 e7 81 0c 00 <f0> 48 0f ba 2b 00 73 31 45 31 e4 f7 c5 00 02 00 00 74 13 e8 cf 7f
-[  +0,018750] RSP: 0018:ffffc900007dfc50 EFLAGS: 00010006
-[  +0,005222] RAX: 0000000000000046 RBX: 00000000000005a0 RCX: 0000000000000001
-[  +0,007133] RDX: 000000000001b608 RSI: 0000000000000000 RDI: ffffffff82121972
-[  +0,007129] RBP: 0000000000000202 R08: 0000000000000000 R09: 0000000000000001
-[  +0,007129] R10: 0000000000000000 R11: 0000000000000000 R12: ffff88847bfa5096
-[  +0,007131] R13: 0000000000000010 R14: ffff88849c08f3f8 R15: 0000000000000000
-[  +0,007128] FS:  0000000000000000(0000) GS:ffff88849dc80000(0000) knlGS:0000000000000000
-[  +0,008083] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  +0,005749] CR2: 00000000000005a0 CR3: 0000000005210006 CR4: 0000000000760ee0
-[  +0,007128] PKRU: 55555554
-[  +0,002722] Call Trace:
-[  +0,002458]  drm_dp_mst_handle_up_req+0x517/0x540 [drm_kms_helper]
-[  +0,006197]  ? drm_dp_mst_hpd_irq+0x5b/0x9c0 [drm_kms_helper]
-[  +0,005764]  drm_dp_mst_hpd_irq+0x5b/0x9c0 [drm_kms_helper]
-[  +0,005623]  ? intel_dp_hpd_pulse+0x205/0x370 [i915]
-[  +0,005018]  intel_dp_hpd_pulse+0x205/0x370 [i915]
-[  +0,004836]  i915_digport_work_func+0xbb/0x140 [i915]
-[  +0,005108]  process_one_work+0x245/0x610
-[  +0,004027]  worker_thread+0x37/0x380
-[  +0,003684]  ? process_one_work+0x610/0x610
-[  +0,004184]  kthread+0x119/0x130
-[  +0,003240]  ? kthread_park+0x80/0x80
-[  +0,003668]  ret_from_fork+0x24/0x50
-
-Cc: Lyude Paul <lyude@redhat.com>
-Cc: Dave Airlie <airlied@redhat.com>
-Signed-off-by: Imre Deak <imre.deak@intel.com>
-Reviewed-by: Lyude Paul <lyude@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190523212433.9058-1-imre.deak@intel.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+No changes since v8
 
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index ff12d926eb65..cd707b401b10 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -1538,7 +1538,11 @@ static void process_single_up_tx_qlock(struct drm_dp_mst_topology_mgr *mgr,
- 	if (ret != 1)
- 		DRM_DEBUG_KMS("failed to send msg in q %d\n", ret);
+ drivers/clk/clk-bd718x7.c             | 12 ++++++++-
+ drivers/mfd/rohm-bd70528.c            |  3 +--
+ drivers/mfd/rohm-bd718x7.c            | 39 ++++++++++++++++++++++-----
+ drivers/regulator/bd718x7-regulator.c | 17 +++++++++---
+ include/linux/mfd/rohm-generic.h      |  3 +--
+ 5 files changed, 58 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+index 00926c587390..33699ee1bdf3 100644
+--- a/drivers/clk/clk-bd718x7.c
++++ b/drivers/clk/clk-bd718x7.c
+@@ -74,6 +74,7 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 		.name = "bd718xx-32k-out",
+ 		.ops = &bd71837_clk_ops,
+ 	};
++	enum rohm_chip_type chip = platform_get_device_id(pdev)->driver_data;
  
--	txmsg->dst->tx_slots[txmsg->seqno] = NULL;
-+	if (txmsg->seqno != -1) {
-+		WARN_ON((unsigned int)txmsg->seqno >
-+			ARRAY_SIZE(txmsg->dst->tx_slots));
-+		txmsg->dst->tx_slots[txmsg->seqno] = NULL;
-+	}
+ 	c = devm_kzalloc(&pdev->dev, sizeof(*c), GFP_KERNEL);
+ 	if (!c)
+@@ -87,7 +88,7 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "No parent clk found\n");
+ 		return -EINVAL;
+ 	}
+-	switch (mfd->chip_type) {
++	switch (chip) {
+ 	case ROHM_CHIP_TYPE_BD71837:
+ 	case ROHM_CHIP_TYPE_BD71847:
+ 		c->reg = BD718XX_REG_OUT32K;
+@@ -121,11 +122,20 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 	return rval;
  }
  
- static void drm_dp_queue_down_tx(struct drm_dp_mst_topology_mgr *mgr,
++static const struct platform_device_id bd718x7_clk_id[] = {
++	{ "bd71837-clk", ROHM_CHIP_TYPE_BD71837 },
++	{ "bd71847-clk", ROHM_CHIP_TYPE_BD71847 },
++	{ "bd70528-clk", ROHM_CHIP_TYPE_BD70528 },
++	{ },
++};
++MODULE_DEVICE_TABLE(platform, bd718x7_clk_id);
++
+ static struct platform_driver bd71837_clk = {
+ 	.driver = {
+ 		.name = "bd718xx-clk",
+ 	},
+ 	.probe = bd71837_clk_probe,
++	.id_table = bd718x7_clk_id,
+ };
+ 
+ module_platform_driver(bd71837_clk);
+diff --git a/drivers/mfd/rohm-bd70528.c b/drivers/mfd/rohm-bd70528.c
+index ef6786fd3b00..5c44d3b77b3e 100644
+--- a/drivers/mfd/rohm-bd70528.c
++++ b/drivers/mfd/rohm-bd70528.c
+@@ -48,7 +48,7 @@ static struct mfd_cell bd70528_mfd_cells[] = {
+ 	 * We use BD71837 driver to drive the clock block. Only differences to
+ 	 * BD70528 clock gate are the register address and mask.
+ 	 */
+-	{ .name = "bd718xx-clk", },
++	{ .name = "bd70528-clk", },
+ 	{ .name = "bd70528-wdt", },
+ 	{
+ 		.name = "bd70528-power",
+@@ -236,7 +236,6 @@ static int bd70528_i2c_probe(struct i2c_client *i2c,
+ 
+ 	dev_set_drvdata(&i2c->dev, &bd70528->chip);
+ 
+-	bd70528->chip.chip_type = ROHM_CHIP_TYPE_BD70528;
+ 	bd70528->chip.regmap = devm_regmap_init_i2c(i2c, &bd70528_regmap);
+ 	if (IS_ERR(bd70528->chip.regmap)) {
+ 		dev_err(&i2c->dev, "Failed to initialize Regmap\n");
+diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
+index 85e7f5133365..bb86ec829079 100644
+--- a/drivers/mfd/rohm-bd718x7.c
++++ b/drivers/mfd/rohm-bd718x7.c
+@@ -30,14 +30,24 @@ static struct gpio_keys_platform_data bd718xx_powerkey_data = {
+ 	.name = "bd718xx-pwrkey",
+ };
+ 
+-static struct mfd_cell bd718xx_mfd_cells[] = {
++static struct mfd_cell bd71837_mfd_cells[] = {
+ 	{
+ 		.name = "gpio-keys",
+ 		.platform_data = &bd718xx_powerkey_data,
+ 		.pdata_size = sizeof(bd718xx_powerkey_data),
+ 	},
+-	{ .name = "bd718xx-clk", },
+-	{ .name = "bd718xx-pmic", },
++	{ .name = "bd71837-clk", },
++	{ .name = "bd71837-pmic", },
++};
++
++static struct mfd_cell bd71847_mfd_cells[] = {
++	{
++		.name = "gpio-keys",
++		.platform_data = &bd718xx_powerkey_data,
++		.pdata_size = sizeof(bd718xx_powerkey_data),
++	},
++	{ .name = "bd71847-clk", },
++	{ .name = "bd71847-pmic", },
+ };
+ 
+ static const struct regmap_irq bd718xx_irqs[] = {
+@@ -124,6 +134,9 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ {
+ 	struct bd718xx *bd718xx;
+ 	int ret;
++	unsigned int chip_type;
++	struct mfd_cell *mfd;
++	int cells;
+ 
+ 	if (!i2c->irq) {
+ 		dev_err(&i2c->dev, "No IRQ configured\n");
+@@ -136,8 +149,21 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ 		return -ENOMEM;
+ 
+ 	bd718xx->chip_irq = i2c->irq;
+-	bd718xx->chip.chip_type = (unsigned int)(uintptr_t)
+-				of_device_get_match_data(&i2c->dev);
++	chip_type = (unsigned int)(uintptr_t)
++		    of_device_get_match_data(&i2c->dev);
++	switch (chip_type) {
++	case ROHM_CHIP_TYPE_BD71837:
++		mfd = bd71837_mfd_cells;
++		cells = ARRAY_SIZE(bd71837_mfd_cells);
++		break;
++	case ROHM_CHIP_TYPE_BD71847:
++		mfd = bd71847_mfd_cells;
++		cells = ARRAY_SIZE(bd71847_mfd_cells);
++		break;
++	default:
++		dev_err(&i2c->dev, "Unknown device type");
++		return -EINVAL;
++	}
+ 	bd718xx->chip.dev = &i2c->dev;
+ 	dev_set_drvdata(&i2c->dev, bd718xx);
+ 
+@@ -170,8 +196,7 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ 	button.irq = ret;
+ 
+ 	ret = devm_mfd_add_devices(bd718xx->chip.dev, PLATFORM_DEVID_AUTO,
+-				   bd718xx_mfd_cells,
+-				   ARRAY_SIZE(bd718xx_mfd_cells), NULL, 0,
++				   mfd, cells, NULL, 0,
+ 				   regmap_irq_get_domain(bd718xx->irq_data));
+ 	if (ret)
+ 		dev_err(&i2c->dev, "Failed to create subdevices\n");
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index 13a43eee2e46..6beaf867d9cb 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -1164,6 +1164,7 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 
+ 	int i, j, err;
+ 	bool use_snvs;
++	enum rohm_chip_type chip = platform_get_device_id(pdev)->driver_data;
+ 
+ 	mfd = dev_get_drvdata(pdev->dev.parent);
+ 	if (!mfd) {
+@@ -1172,8 +1173,8 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
+-	if (mfd->chip.chip_type >= ROHM_CHIP_TYPE_AMOUNT ||
+-	    !pmic_regulators[mfd->chip.chip_type].r_datas) {
++	if (chip >= ROHM_CHIP_TYPE_AMOUNT || chip < 0 ||
++	    !pmic_regulators[chip].r_datas) {
+ 		dev_err(&pdev->dev, "Unsupported chip type\n");
+ 		err = -EINVAL;
+ 		goto err;
+@@ -1215,13 +1216,13 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	for (i = 0; i < pmic_regulators[mfd->chip.chip_type].r_amount; i++) {
++	for (i = 0; i < pmic_regulators[chip].r_amount; i++) {
+ 
+ 		const struct regulator_desc *desc;
+ 		struct regulator_dev *rdev;
+ 		const struct bd718xx_regulator_data *r;
+ 
+-		r = &pmic_regulators[mfd->chip.chip_type].r_datas[i];
++		r = &pmic_regulators[chip].r_datas[i];
+ 		desc = &r->desc;
+ 
+ 		config.dev = pdev->dev.parent;
+@@ -1281,11 +1282,19 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
++static const struct platform_device_id bd718x7_pmic_id[] = {
++	{ "bd71837-pmic", ROHM_CHIP_TYPE_BD71837 },
++	{ "bd71847-pmic", ROHM_CHIP_TYPE_BD71847 },
++	{ },
++};
++MODULE_DEVICE_TABLE(platform, bd718x7_pmic_id);
++
+ static struct platform_driver bd718xx_regulator = {
+ 	.driver = {
+ 		.name = "bd718xx-pmic",
+ 	},
+ 	.probe = bd718xx_probe,
++	.id_table = bd718x7_pmic_id,
+ };
+ 
+ module_platform_driver(bd718xx_regulator);
+diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-generic.h
+index bff15ac26f2c..922f88008232 100644
+--- a/include/linux/mfd/rohm-generic.h
++++ b/include/linux/mfd/rohm-generic.h
+@@ -4,7 +4,7 @@
+ #ifndef __LINUX_MFD_ROHM_H__
+ #define __LINUX_MFD_ROHM_H__
+ 
+-enum {
++enum rohm_chip_type {
+ 	ROHM_CHIP_TYPE_BD71837 = 0,
+ 	ROHM_CHIP_TYPE_BD71847,
+ 	ROHM_CHIP_TYPE_BD70528,
+@@ -12,7 +12,6 @@ enum {
+ };
+ 
+ struct rohm_regmap_dev {
+-	unsigned int chip_type;
+ 	struct device *dev;
+ 	struct regmap *regmap;
+ };
 -- 
-2.20.1
+2.21.0
 
 
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
 
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
