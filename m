@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D494138010
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:26:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67F43137DD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:01:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731035AbgAKKZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:25:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56178 "EHLO mail.kernel.org"
+        id S1729316AbgAKKBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:01:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730662AbgAKKZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:25:25 -0500
+        id S1728828AbgAKKBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:01:40 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D93AA20848;
-        Sat, 11 Jan 2020 10:25:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CAB02077C;
+        Sat, 11 Jan 2020 10:01:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738324;
-        bh=jV0Fn+92D1zShlnjiLkLneWO8c8R5+UdB7LDaQECXz8=;
+        s=default; t=1578736899;
+        bh=qKWuJhiIFt1cwzfYqWXteVeVO7+gTjjLjT3zqAHymas=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ADkuKq29ojjbrfn7VQEVde6E8+nsPm/lnJ9+K5m3zK1HARelSnnwQ9vrROOm4Se0n
-         kG8VeugDzQZICiTjhX0DoR6U0HepeHLVpTyIQikKqfUUEqQOV1t/Fwcj7tD/rzuEg/
-         2x9zzTG9/O+ggSf3alBT3W+bfw9R+wxz3rNay1Wg=
+        b=ACuKPkxGLHXWiekMwRIP1qqo5c71ZK+QD5AFMRzszCT6XHbaTUaY4QsWe+lqB4z17
+         JLTjJSY0e3x3aVeo3aV/jLqXkj//WcCJcKJMncVJ3+VW1hNdjFIiOE2gKDJvIFve4l
+         zLixzbDn+0aEaEXsveaCThovgzI5IzIY0/WNU7o8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Petlan <mpetlan@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 057/165] perf header: Fix false warning when there are no duplicate cache entries
-Date:   Sat, 11 Jan 2020 10:49:36 +0100
-Message-Id: <20200111094926.006892306@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.9 44/91] fix compat handling of FICLONERANGE, FIDEDUPERANGE and FS_IOC_FIEMAP
+Date:   Sat, 11 Jan 2020 10:49:37 +0100
+Message-Id: <20200111094901.841255643@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-References: <20200111094921.347491861@linuxfoundation.org>
+In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
+References: <20200111094844.748507863@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,109 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Petlan <mpetlan@redhat.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit 28707826877f84bce0977845ea529cbdd08e4e8d ]
+commit 6b2daec19094a90435abe67d16fb43b1a5527254 upstream.
 
-Before this patch, perf expected that there might be NPROC*4 unique
-cache entries at max, however, it also expected that some of them would
-be shared and/or of the same size, thus the final number of entries
-would be reduced to be lower than NPROC*4. In case the number of entries
-hadn't been reduced (was NPROC*4), the warning was printed.
+Unlike FICLONE, all of those take a pointer argument; they do need
+compat_ptr() applied to arg.
 
-However, some systems might have unusual cache topology, such as the
-following two-processor KVM guest:
+Fixes: d79bdd52d8be ("vfs: wire up compat ioctl for CLONE/CLONE_RANGE")
+Fixes: 54dbc1517237 ("vfs: hoist the btrfs deduplication ioctl to the vfs")
+Fixes: ceac204e1da9 ("fs: make fiemap work from compat_ioctl")
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-	cpu  level  shared_cpu_list  size
-	  0     1         0           32K
-	  0     1         0           64K
-	  0     2         0           512K
-	  0     3         0           8192K
-	  1     1         1           32K
-	  1     1         1           64K
-	  1     2         1           512K
-	  1     3         1           8192K
-
-This KVM guest has 8 (NPROC*4) unique cache entries, which used to make
-perf printing the message, although there actually aren't "way too many
-cpu caches".
-
-v2: Removing unused argument.
-
-v3: Unifying the way we obtain number of cpus.
-
-v4: Removed '& UINT_MAX' construct which is redundant.
-
-Signed-off-by: Michael Petlan <mpetlan@redhat.com>
-Acked-by: Jiri Olsa <jolsa@redhat.com>
-LPU-Reference: 20191208162056.20772-1-mpetlan@redhat.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/header.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+ fs/compat_ioctl.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index becc2d109423..d3412f2c0d18 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -1089,21 +1089,18 @@ static void cpu_cache_level__fprintf(FILE *out, struct cpu_cache_level *c)
- 	fprintf(out, "L%d %-15s %8s [%s]\n", c->level, c->type, c->size, c->map);
- }
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -1585,9 +1585,10 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned i
+ #endif
  
--static int build_caches(struct cpu_cache_level caches[], u32 size, u32 *cntp)
-+#define MAX_CACHE_LVL 4
-+
-+static int build_caches(struct cpu_cache_level caches[], u32 *cntp)
- {
- 	u32 i, cnt = 0;
--	long ncpus;
- 	u32 nr, cpu;
- 	u16 level;
+ 	case FICLONE:
++		goto do_ioctl;
+ 	case FICLONERANGE:
+ 	case FIDEDUPERANGE:
+-		goto do_ioctl;
++		goto found_handler;
  
--	ncpus = sysconf(_SC_NPROCESSORS_CONF);
--	if (ncpus < 0)
--		return -1;
--
--	nr = (u32)(ncpus & UINT_MAX);
-+	nr = cpu__max_cpu();
- 
- 	for (cpu = 0; cpu < nr; cpu++) {
--		for (level = 0; level < 10; level++) {
-+		for (level = 0; level < MAX_CACHE_LVL; level++) {
- 			struct cpu_cache_level c;
- 			int err;
- 
-@@ -1123,18 +1120,12 @@ static int build_caches(struct cpu_cache_level caches[], u32 size, u32 *cntp)
- 				caches[cnt++] = c;
- 			else
- 				cpu_cache_level__free(&c);
--
--			if (WARN_ONCE(cnt == size, "way too many cpu caches.."))
--				goto out;
- 		}
- 	}
-- out:
- 	*cntp = cnt;
- 	return 0;
- }
- 
--#define MAX_CACHE_LVL 4
--
- static int write_cache(struct feat_fd *ff,
- 		       struct evlist *evlist __maybe_unused)
- {
-@@ -1143,7 +1134,7 @@ static int write_cache(struct feat_fd *ff,
- 	u32 cnt = 0, i, version = 1;
- 	int ret;
- 
--	ret = build_caches(caches, max_caches, &cnt);
-+	ret = build_caches(caches, &cnt);
- 	if (ret)
- 		goto out;
- 
--- 
-2.20.1
-
+ 	case FIBMAP:
+ 	case FIGETBSZ:
 
 
