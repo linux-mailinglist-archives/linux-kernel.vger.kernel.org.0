@@ -2,40 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5E57138029
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:26:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DAF7137E0E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:06:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730774AbgAKK0i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:26:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59462 "EHLO mail.kernel.org"
+        id S1728966AbgAKKE2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:04:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731043AbgAKK0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:26:37 -0500
+        id S1729517AbgAKKEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:04:25 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C499B20842;
-        Sat, 11 Jan 2020 10:26:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF58920848;
+        Sat, 11 Jan 2020 10:04:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738396;
-        bh=2fWph/ItbPzO4DF1XjbTfqheJe3a3uYNXv0N8SZl55w=;
+        s=default; t=1578737064;
+        bh=zzWo/VpO3F0hQ1irh1MATqWf6Naq9PBHIWWuISSMs5A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0wzyHeABeC9JJpW4mcvtYFkjazY2MLc9MNgJDaIJM/y7MT++er88WRqqTeTdY+oLH
-         7IeALHUgJzfHrW4fiyXY2q4cOJTgbeUFfVFqD/yw5SP1NIiX8JMH7+XhafHILCIscp
-         0z0GITKan75QPqPMcPg4TC23eb+rpvsaqIRXrKoE=
+        b=D5uJAc+6T+DnPxwl4gBPtBhVUNGV9TQF//t0QY2L/uSGtmsDHKjVAYekklKwu6KbP
+         sbjikCmfioKmbmYak1lXJDGFvnRy8Mzf4mY6Qm/w/G2MdKXyRxAQS/M9T9I1dH2VJB
+         T87CckR43csRhZzaV6ST0KB5rEuJKrpVQ8eIDYc0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian Hu <jian.hu@amlogic.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 068/165] clk: walk orphan list on clock provider registration
-Date:   Sat, 11 Jan 2020 10:49:47 +0100
-Message-Id: <20200111094926.831944277@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.9 55/91] locking/x86: Remove the unused atomic_inc_short() methd
+Date:   Sat, 11 Jan 2020 10:49:48 +0100
+Message-Id: <20200111094905.611021015@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-References: <20200111094921.347491861@linuxfoundation.org>
+In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
+References: <20200111094844.748507863@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,142 +51,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+From: Dmitry Vyukov <dvyukov@google.com>
 
-[ Upstream commit 66d9506440bb05289eb4867059e7b8c6ed209717 ]
+commit 31b35f6b4d5285a311e10753f4eb17304326b211 upstream.
 
-So far, we walked the orphan list every time a new clock was registered
-in CCF. This was fine since the clocks were only referenced by name.
+It is completely unused and implemented only on x86.
+Remove it.
 
-Now that the clock can be referenced through DT, it is not enough:
-* Controller A register first a reference clocks from controller B
-  through DT.
-* Controller B register all its clocks then register the provider.
+Suggested-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20170526172900.91058-1-dvyukov@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Each time controller B registers a new clock, the orphan list is walked
-but it can't match since the provider is registered yet. When the
-provider is finally registered, the orphan list is not walked unless
-another clock is registered afterward.
-
-This can lead to situation where some clocks remain orphaned even if
-the parent is available.
-
-Walking the orphan list on provider registration solves the problem.
-
-Reported-by: Jian Hu <jian.hu@amlogic.com>
-Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Link: https://lkml.kernel.org/r/20191203080805.104628-1-jbrunet@baylibre.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk.c | 62 ++++++++++++++++++++++++++++++-----------------
- 1 file changed, 40 insertions(+), 22 deletions(-)
+ arch/tile/lib/atomic_asm_32.S |    3 +--
+ arch/x86/include/asm/atomic.h |   13 -------------
+ 2 files changed, 1 insertion(+), 15 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 1c677d7f7f53..9c570bfc40d6 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3231,6 +3231,41 @@ static inline void clk_debug_unregister(struct clk_core *core)
+--- a/arch/tile/lib/atomic_asm_32.S
++++ b/arch/tile/lib/atomic_asm_32.S
+@@ -24,8 +24,7 @@
+  * has an opportunity to return -EFAULT to the user if needed.
+  * The 64-bit routines just return a "long long" with the value,
+  * since they are only used from kernel space and don't expect to fault.
+- * Support for 16-bit ops is included in the framework but we don't provide
+- * any (x86_64 has an atomic_inc_short(), so we might want to some day).
++ * Support for 16-bit ops is included in the framework but we don't provide any.
+  *
+  * Note that the caller is advised to issue a suitable L1 or L2
+  * prefetch on the address being manipulated to avoid extra stalls.
+--- a/arch/x86/include/asm/atomic.h
++++ b/arch/x86/include/asm/atomic.h
+@@ -249,19 +249,6 @@ static __always_inline int __atomic_add_
+ 	return c;
  }
- #endif
  
-+static void clk_core_reparent_orphans_nolock(void)
-+{
-+	struct clk_core *orphan;
-+	struct hlist_node *tmp2;
-+
-+	/*
-+	 * walk the list of orphan clocks and reparent any that newly finds a
-+	 * parent.
-+	 */
-+	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
-+		struct clk_core *parent = __clk_init_parent(orphan);
-+
-+		/*
-+		 * We need to use __clk_set_parent_before() and _after() to
-+		 * to properly migrate any prepare/enable count of the orphan
-+		 * clock. This is important for CLK_IS_CRITICAL clocks, which
-+		 * are enabled during init but might not have a parent yet.
-+		 */
-+		if (parent) {
-+			/* update the clk tree topology */
-+			__clk_set_parent_before(orphan, parent);
-+			__clk_set_parent_after(orphan, parent, NULL);
-+			__clk_recalc_accuracies(orphan);
-+			__clk_recalc_rates(orphan, 0);
-+		}
-+	}
-+}
-+
-+static void clk_core_reparent_orphans(void)
-+{
-+	clk_prepare_lock();
-+	clk_core_reparent_orphans_nolock();
-+	clk_prepare_unlock();
-+}
-+
- /**
-  * __clk_core_init - initialize the data structures in a struct clk_core
-  * @core:	clk_core being initialized
-@@ -3241,8 +3276,6 @@ static inline void clk_debug_unregister(struct clk_core *core)
- static int __clk_core_init(struct clk_core *core)
- {
- 	int ret;
--	struct clk_core *orphan;
--	struct hlist_node *tmp2;
- 	unsigned long rate;
- 
- 	if (!core)
-@@ -3389,27 +3422,8 @@ static int __clk_core_init(struct clk_core *core)
- 		clk_enable_unlock(flags);
- 	}
- 
--	/*
--	 * walk the list of orphan clocks and reparent any that newly finds a
--	 * parent.
--	 */
--	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
--		struct clk_core *parent = __clk_init_parent(orphan);
-+	clk_core_reparent_orphans_nolock();
- 
--		/*
--		 * We need to use __clk_set_parent_before() and _after() to
--		 * to properly migrate any prepare/enable count of the orphan
--		 * clock. This is important for CLK_IS_CRITICAL clocks, which
--		 * are enabled during init but might not have a parent yet.
--		 */
--		if (parent) {
--			/* update the clk tree topology */
--			__clk_set_parent_before(orphan, parent);
--			__clk_set_parent_after(orphan, parent, NULL);
--			__clk_recalc_accuracies(orphan);
--			__clk_recalc_rates(orphan, 0);
--		}
--	}
- 
- 	kref_init(&core->ref);
- out:
-@@ -4255,6 +4269,8 @@ int of_clk_add_provider(struct device_node *np,
- 	mutex_unlock(&of_clk_mutex);
- 	pr_debug("Added clock from %pOF\n", np);
- 
-+	clk_core_reparent_orphans();
-+
- 	ret = of_clk_set_defaults(np, true);
- 	if (ret < 0)
- 		of_clk_del_provider(np);
-@@ -4290,6 +4306,8 @@ int of_clk_add_hw_provider(struct device_node *np,
- 	mutex_unlock(&of_clk_mutex);
- 	pr_debug("Added clk_hw provider from %pOF\n", np);
- 
-+	clk_core_reparent_orphans();
-+
- 	ret = of_clk_set_defaults(np, true);
- 	if (ret < 0)
- 		of_clk_del_provider(np);
--- 
-2.20.1
-
+-/**
+- * atomic_inc_short - increment of a short integer
+- * @v: pointer to type int
+- *
+- * Atomically adds 1 to @v
+- * Returns the new value of @u
+- */
+-static __always_inline short int atomic_inc_short(short int *v)
+-{
+-	asm(LOCK_PREFIX "addw $1, %0" : "+m" (*v));
+-	return *v;
+-}
+-
+ #ifdef CONFIG_X86_32
+ # include <asm/atomic64_32.h>
+ #else
 
 
