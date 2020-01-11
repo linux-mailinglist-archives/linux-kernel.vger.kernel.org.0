@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13C4D138041
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:27:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7410A137E9C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:11:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731074AbgAKK1d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:27:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33488 "EHLO mail.kernel.org"
+        id S1730009AbgAKKL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:11:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730369AbgAKK1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:27:31 -0500
+        id S1729420AbgAKKLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:11:55 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1F8C2082E;
-        Sat, 11 Jan 2020 10:27:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EE992082E;
+        Sat, 11 Jan 2020 10:11:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738450;
-        bh=WVrp7kpSwaN3E2DQOEWjNnna9bWepczGG6U1C3xO4DQ=;
+        s=default; t=1578737515;
+        bh=gIyIU93aBqwRp4LrB8fM2LEhhTHoiTkDl6m3HJi/KcE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x/VHK50Z1ik44l80iugrXHNVVaYAEE56x0Wj6qJ5DXoMWgmYSxmzo+nMuQy3B1Jdw
-         xx/nTLYv+bHnOeit6WIdaPDWNohaq0aSNrWaFOJGnrofQy5X1SC3DVPWE3vLly2niZ
-         l5vVKLA8WsTTxphv0rPt/9obeD8oPn5rihvj0NRY=
+        b=HoQ1zZlUDOe6stMOLatPOAai+zgGpc4pY3f7RtZzgl7BEgbkyKbH1Dtxzwev1eoUy
+         2ASOelZ0YyyM8g/MEOI2Jz9prz5OVZvhHsgIvhRHhW1iFZrbH58CoeyeWk62cKISQ0
+         B0xu/HU6TM9O43mxgKIvb47oH44hotoC1BifL0mI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Hebb <tommyhebb@gmail.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
+        stable@vger.kernel.org, Jose Abreu <Jose.Abreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 096/165] kconfig: dont crash on NULL expressions in expr_eq()
+Subject: [PATCH 4.14 33/62] net: stmmac: RX buffer size must be 16 byte aligned
 Date:   Sat, 11 Jan 2020 10:50:15 +0100
-Message-Id: <20200111094929.687953100@linuxfoundation.org>
+Message-Id: <20200111094846.043011725@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-References: <20200111094921.347491861@linuxfoundation.org>
+In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
+References: <20200111094837.425430968@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Hebb <tommyhebb@gmail.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
 
-[ Upstream commit 272a72103012862e3a24ea06635253ead0b6e808 ]
+[ Upstream commit 8d558f0294fe92e04af192e221d0d0f6a180ee7b ]
 
-NULL expressions are taken to always be true, as implemented by the
-expr_is_yes() macro and by several other functions in expr.c. As such,
-they ought to be valid inputs to expr_eq(), which compares two
-expressions.
+We need to align the RX buffer size to at least 16 byte so that IP
+doesn't mis-behave. This is required by HW.
 
-Signed-off-by: Thomas Hebb <tommyhebb@gmail.com>
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Changes from v2:
+- Align UP and not DOWN (David)
+
+Fixes: 7ac6653a085b ("stmmac: Move the STMicroelectronics driver")
+Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/kconfig/expr.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/kconfig/expr.c b/scripts/kconfig/expr.c
-index 77ffff3a053c..9f1de58e9f0c 100644
---- a/scripts/kconfig/expr.c
-+++ b/scripts/kconfig/expr.c
-@@ -254,6 +254,13 @@ static int expr_eq(struct expr *e1, struct expr *e2)
- {
- 	int res, old_count;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 4ef923f1094a..e89466bd432d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -51,7 +51,7 @@
+ #include <linux/of_mdio.h>
+ #include "dwmac1000.h"
  
-+	/*
-+	 * A NULL expr is taken to be yes, but there's also a different way to
-+	 * represent yes. expr_is_yes() checks for either representation.
-+	 */
-+	if (!e1 || !e2)
-+		return expr_is_yes(e1) && expr_is_yes(e2);
-+
- 	if (e1->type != e2->type)
- 		return 0;
- 	switch (e1->type) {
+-#define	STMMAC_ALIGN(x)		__ALIGN_KERNEL(x, SMP_CACHE_BYTES)
++#define	STMMAC_ALIGN(x)		ALIGN(ALIGN(x, SMP_CACHE_BYTES), 16)
+ #define	TSO_MAX_BUFF_SIZE	(SZ_16K - 1)
+ 
+ /* Module parameters */
 -- 
 2.20.1
 
