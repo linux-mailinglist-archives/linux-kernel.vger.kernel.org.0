@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8280137EE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:14:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1B55137E1C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:06:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730185AbgAKKOw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:14:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55276 "EHLO mail.kernel.org"
+        id S1729567AbgAKKFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:05:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730052AbgAKKOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:14:48 -0500
+        id S1728907AbgAKKFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:05:04 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6499820842;
-        Sat, 11 Jan 2020 10:14:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C34212082E;
+        Sat, 11 Jan 2020 10:05:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737688;
-        bh=Ph4eGXzhNUrMfMJ+w7vrBMob23ualE7r8SGPNrE8qdU=;
+        s=default; t=1578737103;
+        bh=Oj/wpG56JUdbBfZSiT1X2Q2DY5oUoW8Uja7dfo5KvCA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UUgvl6XtmkhuEuPRkj47h+1DpIfA0jI/bfF4c8Fkbz8w8rW+baSOv5oMuGhQhSQpE
-         1IN2U6xPqO8tM/KdS8x8GoqEOa4s8oT0aWEhPV36Elixcc3e8pIPjpvfr/FcUg4Mpa
-         fjJ8ey4obA7UHbpYZpLZjOrFgOQdQIeAv+bMeWXc=
+        b=e0yoYE0nYXSMdJ4zR0Qax85HZUpSCGHhtQmJ4tKy8AEnHf2zrqC0KN7l1b+rpM1mh
+         idBweMU5TkmYJ3muuDZQF5LQWcYC2tHSoRBnSv8dwbIKJPgOjBsonKBDeFKm0q2Sbl
+         1cBq1L61/HIDAOBElFCrqg0yOb6Fv2tl850b56FQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Simon Horman <simon.horman@netronome.com>,
-        Ray Jui <ray.jui@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org,
+        Christian Zigotzky <chzigotzky@xenosoft.de>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 23/84] ARM: dts: Cygnus: Fix MDIO node address/size cells
+Subject: [PATCH 4.9 67/91] powerpc: Ensure that swiotlb buffer is allocated from low memory
 Date:   Sat, 11 Jan 2020 10:50:00 +0100
-Message-Id: <20200111094854.303674565@linuxfoundation.org>
+Message-Id: <20200111094909.943116577@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
-References: <20200111094845.328046411@linuxfoundation.org>
+In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
+References: <20200111094844.748507863@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +47,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Mike Rapoport <rppt@linux.ibm.com>
 
-[ Upstream commit fac2c2da3596d77c343988bb0d41a8c533b2e73c ]
+[ Upstream commit 8fabc623238e68b3ac63c0dd1657bf86c1fa33af ]
 
-The MDIO node on Cygnus had an reversed #address-cells and
- #size-cells properties, correct those.
+Some powerpc platforms (e.g. 85xx) limit DMA-able memory way below 4G.
+If a system has more physical memory than this limit, the swiotlb
+buffer is not addressable because it is allocated from memblock using
+top-down mode.
 
-Fixes: 40c26d3af60a ("ARM: dts: Cygnus: Add the ethernet switch and ethernet PHY")
-Reported-by: Simon Horman <simon.horman@netronome.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Force memblock to bottom-up mode before calling swiotlb_init() to
+ensure that the swiotlb buffer is DMA-able.
+
+Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20191204123524.22919-1-rppt@kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/bcm-cygnus.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/mm/mem.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/bcm-cygnus.dtsi b/arch/arm/boot/dts/bcm-cygnus.dtsi
-index 253df7170a4e..887a60c317e9 100644
---- a/arch/arm/boot/dts/bcm-cygnus.dtsi
-+++ b/arch/arm/boot/dts/bcm-cygnus.dtsi
-@@ -169,8 +169,8 @@
- 		mdio: mdio@18002000 {
- 			compatible = "brcm,iproc-mdio";
- 			reg = <0x18002000 0x8>;
--			#size-cells = <1>;
--			#address-cells = <0>;
-+			#size-cells = <0>;
-+			#address-cells = <1>;
- 			status = "disabled";
+diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+index 1e93dbc88e80..34f70d36b16d 100644
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -345,6 +345,14 @@ void __init mem_init(void)
+ 	BUILD_BUG_ON(MMU_PAGE_COUNT > 16);
  
- 			gphy0: ethernet-phy@0 {
+ #ifdef CONFIG_SWIOTLB
++	/*
++	 * Some platforms (e.g. 85xx) limit DMA-able memory way below
++	 * 4G. We force memblock to bottom-up mode to ensure that the
++	 * memory allocated in swiotlb_init() is DMA-able.
++	 * As it's the last memblock allocation, no need to reset it
++	 * back to to-down.
++	 */
++	memblock_set_bottom_up(true);
+ 	swiotlb_init(0);
+ #endif
+ 
 -- 
 2.20.1
 
