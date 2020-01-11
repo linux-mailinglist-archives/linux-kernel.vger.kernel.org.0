@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 284A1137E01
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:04:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71381137FF9
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:25:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728965AbgAKKD6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:03:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35726 "EHLO mail.kernel.org"
+        id S1730673AbgAKKYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:24:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728850AbgAKKD5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:03:57 -0500
+        id S1730986AbgAKKYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:24:33 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 148A320848;
-        Sat, 11 Jan 2020 10:03:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5018620848;
+        Sat, 11 Jan 2020 10:24:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737037;
-        bh=fGuciEcsdfsX09LD7VTdPj3qRBcgigr8Fz+R5DKgs6A=;
+        s=default; t=1578738273;
+        bh=HbygnXdb9+pNdvN77EkwyXpwBKKeuf9al5hOlxjXzp0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qay2B+h5hTkXj1Q83lN2d7T0QZ+BzqLb6eyJNLsJgogFqJtjSysP4ua0zlDbJybU+
-         Wp95xHktwg+VlPHMTX/DJIXrXx8fEfKLliZnKfSLaoPHO/Wu42dSG83j42ZuoulKds
-         gRshfJO6Wl5YhBbp0vVjeWnxNzWl/254woAMWN58=
+        b=g8wFL2J4VHLMIJycHytcWyhVTH36Kzwb50DS65hhuLLx7+8DpUZL3AcPBCsPgSxlW
+         I9pABoHqbwX7uGGNP0tXjT+scnDQHX2pefC9ESOShk44bNJ82VdVBywi+CFTcRKAX+
+         MLJPRHBy9rinPGS4i+5nt4qWjSyzsv0n8JiCiSzw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masashi Honma <masashi.honma@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Michael Walle <michael@walle.cc>,
+        Li Yang <leoyang.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 50/91] ath9k_htc: Modify byte order for an error message
+Subject: [PATCH 5.4 064/165] arm64: dts: ls1028a: fix reboot node
 Date:   Sat, 11 Jan 2020 10:49:43 +0100
-Message-Id: <20200111094903.848661114@linuxfoundation.org>
+Message-Id: <20200111094926.483420867@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
-References: <20200111094844.748507863@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masashi Honma <masashi.honma@gmail.com>
+From: Michael Walle <michael@walle.cc>
 
-[ Upstream commit e01fddc19d215f6ad397894ec2a851d99bf154e2 ]
+[ Upstream commit 3f0fb37b22b460e3dec62bee284932881574acb9 ]
 
-rs_datalen is be16 so we need to convert it before printing.
+The reboot register isn't located inside the DCFG controller, but in its
+own RST controller. Fix it.
 
-Signed-off-by: Masashi Honma <masashi.honma@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 8897f3255c9c ("arm64: dts: Add support for NXP LS1028A SoC")
+Signed-off-by: Michael Walle <michael@walle.cc>
+Acked-by: Li Yang <leoyang.li@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath9k/htc_drv_txrx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/htc_drv_txrx.c b/drivers/net/wireless/ath/ath9k/htc_drv_txrx.c
-index f333ef1e3e7b..92156e519168 100644
---- a/drivers/net/wireless/ath/ath9k/htc_drv_txrx.c
-+++ b/drivers/net/wireless/ath/ath9k/htc_drv_txrx.c
-@@ -985,7 +985,7 @@ static bool ath9k_rx_prepare(struct ath9k_htc_priv *priv,
- 	    (skb->len - HTC_RX_FRAME_HEADER_SIZE) != 0) {
- 		ath_err(common,
- 			"Corrupted RX data len, dropping (dlen: %d, skblen: %d)\n",
--			rxstatus->rs_datalen, skb->len);
-+			be16_to_cpu(rxstatus->rs_datalen), skb->len);
- 		goto rx_next;
- 	}
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index c7dae9ec17da..bb960fe2bb64 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -102,7 +102,7 @@
  
+ 	reboot {
+ 		compatible ="syscon-reboot";
+-		regmap = <&dcfg>;
++		regmap = <&rst>;
+ 		offset = <0xb0>;
+ 		mask = <0x02>;
+ 	};
+@@ -161,6 +161,12 @@
+ 			big-endian;
+ 		};
+ 
++		rst: syscon@1e60000 {
++			compatible = "syscon";
++			reg = <0x0 0x1e60000 0x0 0x10000>;
++			little-endian;
++		};
++
+ 		scfg: syscon@1fc0000 {
+ 			compatible = "fsl,ls1028a-scfg", "syscon";
+ 			reg = <0x0 0x1fc0000 0x0 0x10000>;
 -- 
 2.20.1
 
