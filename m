@@ -2,46 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DAF7137E0E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:06:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DD9213802D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:26:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728966AbgAKKE2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:04:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36626 "EHLO mail.kernel.org"
+        id S1731109AbgAKK0m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:26:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729517AbgAKKEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:04:25 -0500
+        id S1731043AbgAKK0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:26:41 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF58920848;
-        Sat, 11 Jan 2020 10:04:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6A8320842;
+        Sat, 11 Jan 2020 10:26:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737064;
-        bh=zzWo/VpO3F0hQ1irh1MATqWf6Naq9PBHIWWuISSMs5A=;
+        s=default; t=1578738400;
+        bh=2m/b3YaV30WQP7EmUHqtvR2SDpsnEF7V/wpRmsP9GRw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D5uJAc+6T+DnPxwl4gBPtBhVUNGV9TQF//t0QY2L/uSGtmsDHKjVAYekklKwu6KbP
-         sbjikCmfioKmbmYak1lXJDGFvnRy8Mzf4mY6Qm/w/G2MdKXyRxAQS/M9T9I1dH2VJB
-         T87CckR43csRhZzaV6ST0KB5rEuJKrpVQ8eIDYc0=
+        b=Bp3wLSwT02m3i2ibJBlkxmpTb7Q10W8wIF4UkySQbZ6CO+JVEEaqGJosVoaA9FRDy
+         mRbH7777dmlkqaomAqKor1AhRp2D3ywa7fZRENYIwWpENUvhqk+6losm7cFvVbI+le
+         4wbYepS883laCByNWqtpumAsLA13Pikm9WVfeDBM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.9 55/91] locking/x86: Remove the unused atomic_inc_short() methd
+        stable@vger.kernel.org,
+        Fredrik Olofsson <fredrik.olofsson@anyfinetworks.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 069/165] mac80211: fix TID field in monitor mode transmit
 Date:   Sat, 11 Jan 2020 10:49:48 +0100
-Message-Id: <20200111094905.611021015@linuxfoundation.org>
+Message-Id: <20200111094926.915883486@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
-References: <20200111094844.748507863@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,65 +45,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Vyukov <dvyukov@google.com>
+From: Fredrik Olofsson <fredrik.olofsson@anyfinetworks.com>
 
-commit 31b35f6b4d5285a311e10753f4eb17304326b211 upstream.
+[ Upstream commit 753ffad3d6243303994227854d951ff5c70fa9e0 ]
 
-It is completely unused and implemented only on x86.
-Remove it.
+Fix overwriting of the qos_ctrl.tid field for encrypted frames injected on
+a monitor interface. While qos_ctrl.tid is not encrypted, it's used as an
+input into the encryption algorithm so it's protected, and thus cannot be
+modified after encryption. For injected frames, the encryption may already
+have been done in userspace, so we cannot change any fields.
 
-Suggested-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20170526172900.91058-1-dvyukov@google.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Before passing the frame to the driver, the qos_ctrl.tid field is updated
+from skb->priority. Prior to dbd50a851c50 skb->priority was updated in
+ieee80211_select_queue_80211(), but this function is no longer always
+called.
 
+Update skb->priority in ieee80211_monitor_start_xmit() so that the value
+is stored, and when later code 'modifies' the TID it really sets it to
+the same value as before, preserving the encryption.
+
+Fixes: dbd50a851c50 ("mac80211: only allocate one queue when using iTXQs")
+Signed-off-by: Fredrik Olofsson <fredrik.olofsson@anyfinetworks.com>
+Link: https://lore.kernel.org/r/20191119133451.14711-1-fredrik.olofsson@anyfinetworks.com
+[rewrite commit message based on our discussion]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/tile/lib/atomic_asm_32.S |    3 +--
- arch/x86/include/asm/atomic.h |   13 -------------
- 2 files changed, 1 insertion(+), 15 deletions(-)
+ net/mac80211/tx.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/arch/tile/lib/atomic_asm_32.S
-+++ b/arch/tile/lib/atomic_asm_32.S
-@@ -24,8 +24,7 @@
-  * has an opportunity to return -EFAULT to the user if needed.
-  * The 64-bit routines just return a "long long" with the value,
-  * since they are only used from kernel space and don't expect to fault.
-- * Support for 16-bit ops is included in the framework but we don't provide
-- * any (x86_64 has an atomic_inc_short(), so we might want to some day).
-+ * Support for 16-bit ops is included in the framework but we don't provide any.
-  *
-  * Note that the caller is advised to issue a suitable L1 or L2
-  * prefetch on the address being manipulated to avoid extra stalls.
---- a/arch/x86/include/asm/atomic.h
-+++ b/arch/x86/include/asm/atomic.h
-@@ -249,19 +249,6 @@ static __always_inline int __atomic_add_
- 	return c;
- }
+diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
+index 1fa422782905..cbd273c0b275 100644
+--- a/net/mac80211/tx.c
++++ b/net/mac80211/tx.c
+@@ -2263,6 +2263,15 @@ netdev_tx_t ieee80211_monitor_start_xmit(struct sk_buff *skb,
+ 						    payload[7]);
+ 	}
  
--/**
-- * atomic_inc_short - increment of a short integer
-- * @v: pointer to type int
-- *
-- * Atomically adds 1 to @v
-- * Returns the new value of @u
-- */
--static __always_inline short int atomic_inc_short(short int *v)
--{
--	asm(LOCK_PREFIX "addw $1, %0" : "+m" (*v));
--	return *v;
--}
--
- #ifdef CONFIG_X86_32
- # include <asm/atomic64_32.h>
- #else
++	/*
++	 * Initialize skb->priority for QoS frames. This is put in the TID field
++	 * of the frame before passing it to the driver.
++	 */
++	if (ieee80211_is_data_qos(hdr->frame_control)) {
++		u8 *p = ieee80211_get_qos_ctl(hdr);
++		skb->priority = *p & IEEE80211_QOS_CTL_TAG1D_MASK;
++	}
++
+ 	memset(info, 0, sizeof(*info));
+ 
+ 	info->flags = IEEE80211_TX_CTL_REQ_TX_STATUS |
+-- 
+2.20.1
+
 
 
