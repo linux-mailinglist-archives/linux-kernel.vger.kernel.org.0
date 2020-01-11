@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09794137E18
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:06:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E14F137E71
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:10:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729559AbgAKKEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:04:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37562 "EHLO mail.kernel.org"
+        id S1729648AbgAKKJ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:09:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729014AbgAKKEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:04:50 -0500
+        id S1729420AbgAKKJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:09:54 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5B0B2082E;
-        Sat, 11 Jan 2020 10:04:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3640F206DA;
+        Sat, 11 Jan 2020 10:09:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737089;
-        bh=YQpnEO+zftTcEksKOgn/okVCs3guuDl7CCpC4AedMHE=;
+        s=default; t=1578737394;
+        bh=4YON9OFRZy1HzvpVfNd2cG2zRP0S16fccsztPMSe2kg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XB2gIP6m5r+VB35xoxUPaiEk5pKdiR2a+ry4yx0Hz3ZQ2P620s45xSpxDZyL9e6cl
-         VQP1dssD8xB8TFcgECfhkGEKF9CX8wVM2j5YsmLb6qV8FzScwkxTJn1sr78o1BIhZy
-         GMiI7eldFm1ipq+ujpMlZWploTN168YeJaVrSmDk=
+        b=YKJACQizYG1rOFV9TjY/QmNvPjNglFZMJ4jfh7Ulswz0LnhkbJ9E6yxDWMpFjlM2q
+         L6Y4yJiu50ejkTuhnft4s+Mkbo+gDRCpAeUBZU7wR1bqjls6qRxxn1TgPqrkobdh3z
+         UUtO6boCuGEZBXxXnSzy+EmXOxdI5xwt02JZYuZk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bob Liu <bob.liu@oracle.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 77/91] block: fix memleak when __blk_rq_map_user_iov() is failed
+        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 28/62] regulator: rn5t618: fix module aliases
 Date:   Sat, 11 Jan 2020 10:50:10 +0100
-Message-Id: <20200111094911.864379186@linuxfoundation.org>
+Message-Id: <20200111094845.196707660@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
-References: <20200111094844.748507863@linuxfoundation.org>
+In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
+References: <20200111094837.425430968@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,60 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yang Yingliang <yangyingliang@huawei.com>
+From: Andreas Kemnade <andreas@kemnade.info>
 
-[ Upstream commit 3b7995a98ad76da5597b488fa84aa5a56d43b608 ]
+[ Upstream commit 62a1923cc8fe095912e6213ed5de27abbf1de77e ]
 
-When I doing fuzzy test, get the memleak report:
+platform device aliases were missing, preventing
+autoloading of module.
 
-BUG: memory leak
-unreferenced object 0xffff88837af80000 (size 4096):
-  comm "memleak", pid 3557, jiffies 4294817681 (age 112.499s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    20 00 00 00 10 01 00 00 00 00 00 00 01 00 00 00   ...............
-  backtrace:
-    [<000000001c894df8>] bio_alloc_bioset+0x393/0x590
-    [<000000008b139a3c>] bio_copy_user_iov+0x300/0xcd0
-    [<00000000a998bd8c>] blk_rq_map_user_iov+0x2f1/0x5f0
-    [<000000005ceb7f05>] blk_rq_map_user+0xf2/0x160
-    [<000000006454da92>] sg_common_write.isra.21+0x1094/0x1870
-    [<00000000064bb208>] sg_write.part.25+0x5d9/0x950
-    [<000000004fc670f6>] sg_write+0x5f/0x8c
-    [<00000000b0d05c7b>] __vfs_write+0x7c/0x100
-    [<000000008e177714>] vfs_write+0x1c3/0x500
-    [<0000000087d23f34>] ksys_write+0xf9/0x200
-    [<000000002c8dbc9d>] do_syscall_64+0x9f/0x4f0
-    [<00000000678d8e9a>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-If __blk_rq_map_user_iov() is failed in blk_rq_map_user_iov(),
-the bio(s) which is allocated before this failing will leak. The
-refcount of the bio(s) is init to 1 and increased to 2 by calling
-bio_get(), but __blk_rq_unmap_user() only decrease it to 1, so
-the bio cannot be freed. Fix it by calling blk_rq_unmap_user().
-
-Reviewed-by: Bob Liu <bob.liu@oracle.com>
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 811b700630ff ("regulator: rn5t618: add driver for Ricoh RN5T618 regulators")
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Link: https://lore.kernel.org/r/20191211221600.29438-1-andreas@kemnade.info
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-map.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/rn5t618-regulator.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/block/blk-map.c b/block/blk-map.c
-index a8b4f526d8bb..52edbe6b9380 100644
---- a/block/blk-map.c
-+++ b/block/blk-map.c
-@@ -142,7 +142,7 @@ int blk_rq_map_user_iov(struct request_queue *q, struct request *rq,
- 	return 0;
+diff --git a/drivers/regulator/rn5t618-regulator.c b/drivers/regulator/rn5t618-regulator.c
+index 790a4a73ea2c..40b74648bd31 100644
+--- a/drivers/regulator/rn5t618-regulator.c
++++ b/drivers/regulator/rn5t618-regulator.c
+@@ -154,6 +154,7 @@ static struct platform_driver rn5t618_regulator_driver = {
  
- unmap_rq:
--	__blk_rq_unmap_user(bio);
-+	blk_rq_unmap_user(bio);
- fail:
- 	rq->bio = NULL;
- 	return ret;
+ module_platform_driver(rn5t618_regulator_driver);
+ 
++MODULE_ALIAS("platform:rn5t618-regulator");
+ MODULE_AUTHOR("Beniamino Galvani <b.galvani@gmail.com>");
+ MODULE_DESCRIPTION("RN5T618 regulator driver");
+ MODULE_LICENSE("GPL v2");
 -- 
 2.20.1
 
