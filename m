@@ -2,81 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 291E9137F7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:20:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FD85137DB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:00:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730468AbgAKKUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:20:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41486 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729211AbgAKKUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:20:17 -0500
-Received: from localhost (unknown [62.119.166.9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4105A20848;
-        Sat, 11 Jan 2020 10:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738017;
-        bh=jmJB1y3x5UX3kTWCdOAhvNiSyyyMa/BYn7obqSdk+PY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sdgWSD4ONJqLuxw8B7Hzso4cM0C8fRzmQZIQ645dX3PrOsjXjSkdKqSGkpwOM0ApE
-         5LyMWJTbd7++o3ux2FGH6qCtS9UhQdPWRGa/VX1OVxhMwxQstw1k53H9lizTtxHTtr
-         zBof8N2VYQ/8Rad8rDXX+BsTwnbCTCvgHRbhHrU8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Qi Zhou <atmgnd@outlook.com>
-Subject: [PATCH 4.19 84/84] usb: missing parentheses in USE_NEW_SCHEME
-Date:   Sat, 11 Jan 2020 10:51:01 +0100
-Message-Id: <20200111094913.052164288@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
-References: <20200111094845.328046411@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1729427AbgAKKAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:00:14 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:46368 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729262AbgAKKAC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:00:02 -0500
+Received: by mail-io1-f72.google.com with SMTP id p206so3099315iod.13
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Jan 2020 02:00:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=DrXkIWbrBX7Fd3/gNLvsOw44mmxpzBLe8lrnfiRlxxU=;
+        b=C2ypjF/xy5mwflnRBv6/B2GyHBNZjQeg1IDXAIj4nQmezylCVv75JnUOgzhYYBmQae
+         ZOM49+jNNzTtb+ncc7boc9H8VqeOcFlvoSIddFHfyc3D5Q9ZqWIR25tScpKqhzaXKRP+
+         yhLOmC9KtUvkYVIVrfUlB4z3Z3gFeicXGri8i1WzDFsVsjRtNzKMTSMf+hO39qDub9pm
+         VzjQlB/tsPxXGPIw6zn/kY+K63hqoZ+iFg8/bILtOnfhGIqlCOsh1SGnAWiZGLZRvNXU
+         qVKARyCkaD4EEeO1PDUU9e7Gr8KPNaTQDMvGdnl4j/bOEt/IBW+0D/mzaIrwO4UCgM7p
+         cQEA==
+X-Gm-Message-State: APjAAAWuZG17eNbRohK1rSyn8xDpEah/Jk8AJ9ehTQedGgKexF4MUbRB
+        KWA/1IltonZdKefRet1qDQ5TRBuYke1God7oeVO8QqQ0PpHh
+X-Google-Smtp-Source: APXvYqyyzAXe87hNpCj8KaNkoKxDWd8rM9/pHrdZJgUyZW+0chTRAqzVJVUlQ1uS+a/5JliEf7yngQJ01ZzullfmzWMeqcTDBvPj
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:5c3:: with SMTP id l3mr6947066ils.260.1578736801574;
+ Sat, 11 Jan 2020 02:00:01 -0800 (PST)
+Date:   Sat, 11 Jan 2020 02:00:01 -0800
+In-Reply-To: <0000000000007a5aad057e7748c9@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004078ac059bda4ef9@google.com>
+Subject: Re: KASAN: use-after-free Read in lock_sock_nested
+From:   syzbot <syzbot+500c69d1e21d970e461b@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, jhogan@kernel.org, linux-hams@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        netdev@vger.kernel.org, paul.burton@mips.com,
+        paulburton@kernel.org, ralf@linux-mips.org,
+        syzkaller-bugs@googlegroups.com, tbogendoerfer@suse.de
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qi Zhou <atmgnd@outlook.com>
+syzbot suspects this bug was fixed by commit:
 
-commit 1530f6f5f5806b2abbf2a9276c0db313ae9a0e09 upstream.
+commit a07e3324538a989b7cdbf2c679be6a7f9df2544f
+Author: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Date:   Mon May 13 11:47:25 2019 +0000
 
-According to bd0e6c9614b9 ("usb: hub: try old enumeration scheme first
-for high speed devices") the kernel will try the old enumeration scheme
-first for high speed devices.  This can happen when a high speed device
-is plugged in.
+     MIPS: kernel: only use i8253 clocksource with periodic clockevent
 
-But due to missing parentheses in the USE_NEW_SCHEME define, this logic
-can get messed up and the incorrect result happens.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11dd033ee00000
+start commit:   3ea54d9b Merge tag 'docs-5.3-1' of git://git.lwn.net/linux
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=195ab3ca46c2e324
+dashboard link: https://syzkaller.appspot.com/bug?extid=500c69d1e21d970e461b
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=145318b4600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ac7b78600000
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Qi Zhou <atmgnd@outlook.com>
-Link: https://lore.kernel.org/r/ht4mtag8ZP-HKEhD0KkJhcFnVlOFV8N8eNjJVRD9pDkkLUNhmEo8_cL_sl7xy9mdajdH-T8J3TFQsjvoYQT61NFjQXy469Ed_BbBw_x4S1E=@protonmail.com
-[ fixup changelog text - gregkh]
-Cc: stable <stable@vger.kernel.org>
-Fixes: bd0e6c9614b9 ("usb: hub: try old enumeration scheme first for high speed devices")
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+If the result looks correct, please mark the bug fixed by replying with:
 
----
- drivers/usb/core/hub.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+#syz fix: MIPS: kernel: only use i8253 clocksource with periodic clockevent
 
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -2657,7 +2657,7 @@ static unsigned hub_is_wusb(struct usb_h
- #define SET_ADDRESS_TRIES	2
- #define GET_DESCRIPTOR_TRIES	2
- #define SET_CONFIG_TRIES	(2 * (use_both_schemes + 1))
--#define USE_NEW_SCHEME(i, scheme)	((i) / 2 == (int)scheme)
-+#define USE_NEW_SCHEME(i, scheme)	((i) / 2 == (int)(scheme))
- 
- #define HUB_ROOT_RESET_TIME	60	/* times are in msec */
- #define HUB_SHORT_RESET_TIME	10
-
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
