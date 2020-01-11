@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A848137EA5
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:12:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB0C3138045
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:27:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729798AbgAKKMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:12:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49922 "EHLO mail.kernel.org"
+        id S1731198AbgAKK1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:27:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729723AbgAKKML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:12:11 -0500
+        id S1729453AbgAKK1o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:27:44 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CF8A2077C;
-        Sat, 11 Jan 2020 10:12:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 340F620842;
+        Sat, 11 Jan 2020 10:27:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737530;
-        bh=EP0SVqUmoXOJjI5gUdiDY42SwakQbyZ3BQJ4zWKpusA=;
+        s=default; t=1578738464;
+        bh=mPnIziU1WI+Cdnd2zDTDHWhEYD0fDDA3WPrsrAkV9S0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D+sI6Fg/gHHCQfIMte1WTzFxz8aQ8OVyZC/ExJrczJ9ARuzqYKtSvRgEgDWnEnEEp
-         13dmHLUtwcf906AgErf0gKUDXiNy4pv1Ei1o/3vvF0OyjPuRBOZzgQu+EUoC7UnSBL
-         pEaste/caao/3re1MRRDs08eTRxU5ZE4cmLCyeN8=
+        b=ZX2Tml3LFHE6/w8sdsv3jjiuTknUHHViElhbBiECA79C/7S4lD0X0c3EFP3bGXBNR
+         zJbh1BtuizoUpic7VdvErcx5wKevD/8xFmCY5lxKb4fPmwn7f2sNWwWN5zhAZdLbFX
+         P3fY4A+YwIQVMDOH3sMaobFnGSCas+Aapzww3Y3E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bob Liu <bob.liu@oracle.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 36/62] block: fix memleak when __blk_rq_map_user_iov() is failed
+        stable@vger.kernel.org,
+        Vitaly Slobodskoy <vitaly.slobodskoy@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 099/165] perf/x86/intel: Fix PT PMI handling
 Date:   Sat, 11 Jan 2020 10:50:18 +0100
-Message-Id: <20200111094846.643194077@linuxfoundation.org>
+Message-Id: <20200111094929.966208470@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
-References: <20200111094837.425430968@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,60 +49,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yang Yingliang <yangyingliang@huawei.com>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-[ Upstream commit 3b7995a98ad76da5597b488fa84aa5a56d43b608 ]
+[ Upstream commit 92ca7da4bdc24d63bb0bcd241c11441ddb63b80a ]
 
-When I doing fuzzy test, get the memleak report:
+Commit:
 
-BUG: memory leak
-unreferenced object 0xffff88837af80000 (size 4096):
-  comm "memleak", pid 3557, jiffies 4294817681 (age 112.499s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    20 00 00 00 10 01 00 00 00 00 00 00 01 00 00 00   ...............
-  backtrace:
-    [<000000001c894df8>] bio_alloc_bioset+0x393/0x590
-    [<000000008b139a3c>] bio_copy_user_iov+0x300/0xcd0
-    [<00000000a998bd8c>] blk_rq_map_user_iov+0x2f1/0x5f0
-    [<000000005ceb7f05>] blk_rq_map_user+0xf2/0x160
-    [<000000006454da92>] sg_common_write.isra.21+0x1094/0x1870
-    [<00000000064bb208>] sg_write.part.25+0x5d9/0x950
-    [<000000004fc670f6>] sg_write+0x5f/0x8c
-    [<00000000b0d05c7b>] __vfs_write+0x7c/0x100
-    [<000000008e177714>] vfs_write+0x1c3/0x500
-    [<0000000087d23f34>] ksys_write+0xf9/0x200
-    [<000000002c8dbc9d>] do_syscall_64+0x9f/0x4f0
-    [<00000000678d8e9a>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  ccbebba4c6bf ("perf/x86/intel/pt: Bypass PT vs. LBR exclusivity if the core supports it")
 
-If __blk_rq_map_user_iov() is failed in blk_rq_map_user_iov(),
-the bio(s) which is allocated before this failing will leak. The
-refcount of the bio(s) is init to 1 and increased to 2 by calling
-bio_get(), but __blk_rq_unmap_user() only decrease it to 1, so
-the bio cannot be freed. Fix it by calling blk_rq_unmap_user().
+skips the PT/LBR exclusivity check on CPUs where PT and LBRs coexist, but
+also inadvertently skips the active_events bump for PT in that case, which
+is a bug. If there aren't any hardware events at the same time as PT, the
+PMI handler will ignore PT PMIs, as active_events reads zero in that case,
+resulting in the "Uhhuh" spurious NMI warning and PT data loss.
 
-Reviewed-by: Bob Liu <bob.liu@oracle.com>
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fix this by always increasing active_events for PT events.
+
+Fixes: ccbebba4c6bf ("perf/x86/intel/pt: Bypass PT vs. LBR exclusivity if the core supports it")
+Reported-by: Vitaly Slobodskoy <vitaly.slobodskoy@intel.com>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Link: https://lkml.kernel.org/r/20191210105101.77210-1-alexander.shishkin@linux.intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-map.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/events/core.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/block/blk-map.c b/block/blk-map.c
-index e31be14da8ea..f72a3af689b6 100644
---- a/block/blk-map.c
-+++ b/block/blk-map.c
-@@ -152,7 +152,7 @@ int blk_rq_map_user_iov(struct request_queue *q, struct request *rq,
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index b9673396b571..e622158f5659 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -375,7 +375,7 @@ int x86_add_exclusive(unsigned int what)
+ 	 * LBR and BTS are still mutually exclusive.
+ 	 */
+ 	if (x86_pmu.lbr_pt_coexist && what == x86_lbr_exclusive_pt)
+-		return 0;
++		goto out;
+ 
+ 	if (!atomic_inc_not_zero(&x86_pmu.lbr_exclusive[what])) {
+ 		mutex_lock(&pmc_reserve_mutex);
+@@ -387,6 +387,7 @@ int x86_add_exclusive(unsigned int what)
+ 		mutex_unlock(&pmc_reserve_mutex);
+ 	}
+ 
++out:
+ 	atomic_inc(&active_events);
  	return 0;
  
- unmap_rq:
--	__blk_rq_unmap_user(bio);
-+	blk_rq_unmap_user(bio);
- fail:
- 	rq->bio = NULL;
- 	return ret;
+@@ -397,11 +398,15 @@ int x86_add_exclusive(unsigned int what)
+ 
+ void x86_del_exclusive(unsigned int what)
+ {
++	atomic_dec(&active_events);
++
++	/*
++	 * See the comment in x86_add_exclusive().
++	 */
+ 	if (x86_pmu.lbr_pt_coexist && what == x86_lbr_exclusive_pt)
+ 		return;
+ 
+ 	atomic_dec(&x86_pmu.lbr_exclusive[what]);
+-	atomic_dec(&active_events);
+ }
+ 
+ int x86_setup_perfctr(struct perf_event *event)
 -- 
 2.20.1
 
