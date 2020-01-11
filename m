@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6529213804F
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:28:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AB76137E30
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:07:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730328AbgAKK2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:28:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35172 "EHLO mail.kernel.org"
+        id S1729626AbgAKKGC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:06:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731015AbgAKK2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:28:09 -0500
+        id S1729277AbgAKKGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:06:01 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1184E205F4;
-        Sat, 11 Jan 2020 10:28:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32E232064C;
+        Sat, 11 Jan 2020 10:05:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738489;
-        bh=8LQ57KpO9LCtfp2kIPRmeXoksDw3hbOG6V5DoikAhgU=;
+        s=default; t=1578737160;
+        bh=4QdQTm/Dkx3w4kDSPsXzEvYSoyZn+BOOipbeN+G3DwM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kGX/a44JDyIDKE7zDmrgNruGvNiZNqttDN8XzdfNnKNbPdFHSeUm+lJi1XrKECInc
-         84+Cja5pmyihy+CPOHX8Aes4DPrdc4lSPqMuQgKQmKe5dsyr/yIEwY+GfKm1jCQffA
-         fvD51RPogoYeq6jk9DGcj4u6llUbCDMbP1/I4yAg=
+        b=zljjoApYNi8cfpGKrIg7N9pLKB6mQcUuysMFXUYLDBrnKcv2ilIJ7cXMGsQK9SgK1
+         79yzbePA7KeljPOhJ4BCHgKjuRat+JD2nwV5N2iPk1VCxFlE35AKx6L2rMm0IdNwh5
+         zVEA6UbwYqxz6yHcwJExrLD8Z6HrM8JZxXp9mSM0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Sandeen <sandeen@redhat.com>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 104/165] fs: avoid softlockups in s_inodes iterators
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.9 90/91] USB: core: fix check for duplicate endpoints
 Date:   Sat, 11 Jan 2020 10:50:23 +0100
-Message-Id: <20200111094930.545018929@linuxfoundation.org>
+Message-Id: <20200111094913.478733512@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-References: <20200111094921.347491861@linuxfoundation.org>
+In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
+References: <20200111094844.748507863@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,104 +43,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Sandeen <sandeen@redhat.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 04646aebd30b99f2cfa0182435a2ec252fcb16d0 ]
+commit 3e4f8e21c4f27bcf30a48486b9dcc269512b79ff upstream.
 
-Anything that walks all inodes on sb->s_inodes list without rescheduling
-risks softlockups.
+Amend the endpoint-descriptor sanity checks to detect all duplicate
+endpoint addresses in a configuration.
 
-Previous efforts were made in 2 functions, see:
+Commit 0a8fd1346254 ("USB: fix problems with duplicate endpoint
+addresses") added a check for duplicate endpoint addresses within a
+single alternate setting, but did not look for duplicate addresses in
+other interfaces.
 
-c27d82f fs/drop_caches.c: avoid softlockups in drop_pagecache_sb()
-ac05fbb inode: don't softlockup when evicting inodes
+The current check would also not detect all duplicate addresses when one
+endpoint is as a (bi-directional) control endpoint.
 
-but there hasn't been an audit of all walkers, so do that now.  This
-also consistently moves the cond_resched() calls to the bottom of each
-loop in cases where it already exists.
+This specifically avoids overwriting the endpoint entries in struct
+usb_device when enabling a duplicate endpoint, something which could
+potentially lead to crashes or leaks, for example, when endpoints are
+later disabled.
 
-One loop remains: remove_dquot_ref(), because I'm not quite sure how
-to deal with that one w/o taking the i_lock.
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Link: https://lore.kernel.org/r/20191219161016.6695-1-johan@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/drop_caches.c     | 2 +-
- fs/inode.c           | 7 +++++++
- fs/notify/fsnotify.c | 1 +
- fs/quota/dquot.c     | 1 +
- 4 files changed, 10 insertions(+), 1 deletion(-)
+ drivers/usb/core/config.c |   70 ++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 58 insertions(+), 12 deletions(-)
 
-diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-index d31b6c72b476..dc1a1d5d825b 100644
---- a/fs/drop_caches.c
-+++ b/fs/drop_caches.c
-@@ -35,11 +35,11 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
- 		spin_unlock(&inode->i_lock);
- 		spin_unlock(&sb->s_inode_list_lock);
+--- a/drivers/usb/core/config.c
++++ b/drivers/usb/core/config.c
+@@ -198,9 +198,58 @@ static const unsigned short super_speed_
+ 	[USB_ENDPOINT_XFER_INT] = 1024,
+ };
  
--		cond_resched();
- 		invalidate_mapping_pages(inode->i_mapping, 0, -1);
- 		iput(toput_inode);
- 		toput_inode = inode;
- 
-+		cond_resched();
- 		spin_lock(&sb->s_inode_list_lock);
- 	}
- 	spin_unlock(&sb->s_inode_list_lock);
-diff --git a/fs/inode.c b/fs/inode.c
-index fef457a42882..96d62d97694e 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -676,6 +676,7 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
- 	struct inode *inode, *next;
- 	LIST_HEAD(dispose);
- 
-+again:
- 	spin_lock(&sb->s_inode_list_lock);
- 	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
- 		spin_lock(&inode->i_lock);
-@@ -698,6 +699,12 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
- 		inode_lru_list_del(inode);
- 		spin_unlock(&inode->i_lock);
- 		list_add(&inode->i_lru, &dispose);
-+		if (need_resched()) {
-+			spin_unlock(&sb->s_inode_list_lock);
-+			cond_resched();
-+			dispose_list(&dispose);
-+			goto again;
+-static int usb_parse_endpoint(struct device *ddev, int cfgno, int inum,
+-    int asnum, struct usb_host_interface *ifp, int num_ep,
+-    unsigned char *buffer, int size)
++static bool endpoint_is_duplicate(struct usb_endpoint_descriptor *e1,
++		struct usb_endpoint_descriptor *e2)
++{
++	if (e1->bEndpointAddress == e2->bEndpointAddress)
++		return true;
++
++	if (usb_endpoint_xfer_control(e1) || usb_endpoint_xfer_control(e2)) {
++		if (usb_endpoint_num(e1) == usb_endpoint_num(e2))
++			return true;
++	}
++
++	return false;
++}
++
++/*
++ * Check for duplicate endpoint addresses in other interfaces and in the
++ * altsetting currently being parsed.
++ */
++static bool config_endpoint_is_duplicate(struct usb_host_config *config,
++		int inum, int asnum, struct usb_endpoint_descriptor *d)
++{
++	struct usb_endpoint_descriptor *epd;
++	struct usb_interface_cache *intfc;
++	struct usb_host_interface *alt;
++	int i, j, k;
++
++	for (i = 0; i < config->desc.bNumInterfaces; ++i) {
++		intfc = config->intf_cache[i];
++
++		for (j = 0; j < intfc->num_altsetting; ++j) {
++			alt = &intfc->altsetting[j];
++
++			if (alt->desc.bInterfaceNumber == inum &&
++					alt->desc.bAlternateSetting != asnum)
++				continue;
++
++			for (k = 0; k < alt->desc.bNumEndpoints; ++k) {
++				epd = &alt->endpoint[k].desc;
++
++				if (endpoint_is_duplicate(epd, d))
++					return true;
++			}
 +		}
- 	}
- 	spin_unlock(&sb->s_inode_list_lock);
++	}
++
++	return false;
++}
++
++static int usb_parse_endpoint(struct device *ddev, int cfgno,
++		struct usb_host_config *config, int inum, int asnum,
++		struct usb_host_interface *ifp, int num_ep,
++		unsigned char *buffer, int size)
+ {
+ 	unsigned char *buffer0 = buffer;
+ 	struct usb_endpoint_descriptor *d;
+@@ -237,13 +286,10 @@ static int usb_parse_endpoint(struct dev
+ 		goto skip_to_next_endpoint_or_interface_descriptor;
  
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 2ecef6155fc0..ac9eb273e28c 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -77,6 +77,7 @@ static void fsnotify_unmount_inodes(struct super_block *sb)
- 
- 		iput_inode = inode;
- 
-+		cond_resched();
- 		spin_lock(&sb->s_inode_list_lock);
+ 	/* Check for duplicate endpoint addresses */
+-	for (i = 0; i < ifp->desc.bNumEndpoints; ++i) {
+-		if (ifp->endpoint[i].desc.bEndpointAddress ==
+-		    d->bEndpointAddress) {
+-			dev_warn(ddev, "config %d interface %d altsetting %d has a duplicate endpoint with address 0x%X, skipping\n",
+-			    cfgno, inum, asnum, d->bEndpointAddress);
+-			goto skip_to_next_endpoint_or_interface_descriptor;
+-		}
++	if (config_endpoint_is_duplicate(config, inum, asnum, d)) {
++		dev_warn(ddev, "config %d interface %d altsetting %d has a duplicate endpoint with address 0x%X, skipping\n",
++				cfgno, inum, asnum, d->bEndpointAddress);
++		goto skip_to_next_endpoint_or_interface_descriptor;
  	}
- 	spin_unlock(&sb->s_inode_list_lock);
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index 9b96243de081..7abc3230c21a 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -986,6 +986,7 @@ static int add_dquot_ref(struct super_block *sb, int type)
- 		 * later.
- 		 */
- 		old_inode = inode;
-+		cond_resched();
- 		spin_lock(&sb->s_inode_list_lock);
- 	}
- 	spin_unlock(&sb->s_inode_list_lock);
--- 
-2.20.1
-
+ 
+ 	endpoint = &ifp->endpoint[ifp->desc.bNumEndpoints];
+@@ -517,8 +563,8 @@ static int usb_parse_interface(struct de
+ 		if (((struct usb_descriptor_header *) buffer)->bDescriptorType
+ 		     == USB_DT_INTERFACE)
+ 			break;
+-		retval = usb_parse_endpoint(ddev, cfgno, inum, asnum, alt,
+-		    num_ep, buffer, size);
++		retval = usb_parse_endpoint(ddev, cfgno, config, inum, asnum,
++				alt, num_ep, buffer, size);
+ 		if (retval < 0)
+ 			return retval;
+ 		++n;
 
 
