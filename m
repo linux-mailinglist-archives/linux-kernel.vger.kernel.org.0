@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17607137E3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:07:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A848137EA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:12:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729657AbgAKKG0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:06:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40416 "EHLO mail.kernel.org"
+        id S1729798AbgAKKMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:12:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728978AbgAKKGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:06:25 -0500
+        id S1729723AbgAKKML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:12:11 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C89F020848;
-        Sat, 11 Jan 2020 10:06:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CF8A2077C;
+        Sat, 11 Jan 2020 10:12:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737184;
-        bh=ho01mEuU6dIoDhvyrj06jtKiuTZ+VxeJY4a9GyouQ0Q=;
+        s=default; t=1578737530;
+        bh=EP0SVqUmoXOJjI5gUdiDY42SwakQbyZ3BQJ4zWKpusA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DiT47FhxAMSr4lKzTKTSYDo2vtFOTu7OA6EF1uzrtPakubSZo/7r/C/niu7vWVHxz
-         4A29CWmOtSaDO1SrBqTGZGyd7fjAgugi1m9xscRdBLbQaaT0WxXmcpVz9akuJFUHuA
-         rHdY5yAb1CByTyAhnq3KKoE1befcNs3tOv1Y4/4M=
+        b=D+sI6Fg/gHHCQfIMte1WTzFxz8aQ8OVyZC/ExJrczJ9ARuzqYKtSvRgEgDWnEnEEp
+         13dmHLUtwcf906AgErf0gKUDXiNy4pv1Ei1o/3vvF0OyjPuRBOZzgQu+EUoC7UnSBL
+         pEaste/caao/3re1MRRDs08eTRxU5ZE4cmLCyeN8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pengcheng Yang <yangpc@wangsu.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 85/91] tcp: fix "old stuff" D-SACK causing SACK to be treated as D-SACK
+        stable@vger.kernel.org, Bob Liu <bob.liu@oracle.com>,
+        Hulk Robot <hulkci@huawei.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 36/62] block: fix memleak when __blk_rq_map_user_iov() is failed
 Date:   Sat, 11 Jan 2020 10:50:18 +0100
-Message-Id: <20200111094912.821724459@linuxfoundation.org>
+Message-Id: <20200111094846.643194077@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
-References: <20200111094844.748507863@linuxfoundation.org>
+In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
+References: <20200111094837.425430968@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pengcheng Yang <yangpc@wangsu.com>
+From: Yang Yingliang <yangyingliang@huawei.com>
 
-[ Upstream commit c9655008e7845bcfdaac10a1ed8554ec167aea88 ]
+[ Upstream commit 3b7995a98ad76da5597b488fa84aa5a56d43b608 ]
 
-When we receive a D-SACK, where the sequence number satisfies:
-	undo_marker <= start_seq < end_seq <= prior_snd_una
-we consider this is a valid D-SACK and tcp_is_sackblock_valid()
-returns true, then this D-SACK is discarded as "old stuff",
-but the variable first_sack_index is not marked as negative
-in tcp_sacktag_write_queue().
+When I doing fuzzy test, get the memleak report:
 
-If this D-SACK also carries a SACK that needs to be processed
-(for example, the previous SACK segment was lost), this SACK
-will be treated as a D-SACK in the following processing of
-tcp_sacktag_write_queue(), which will eventually lead to
-incorrect updates of undo_retrans and reordering.
+BUG: memory leak
+unreferenced object 0xffff88837af80000 (size 4096):
+  comm "memleak", pid 3557, jiffies 4294817681 (age 112.499s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    20 00 00 00 10 01 00 00 00 00 00 00 01 00 00 00   ...............
+  backtrace:
+    [<000000001c894df8>] bio_alloc_bioset+0x393/0x590
+    [<000000008b139a3c>] bio_copy_user_iov+0x300/0xcd0
+    [<00000000a998bd8c>] blk_rq_map_user_iov+0x2f1/0x5f0
+    [<000000005ceb7f05>] blk_rq_map_user+0xf2/0x160
+    [<000000006454da92>] sg_common_write.isra.21+0x1094/0x1870
+    [<00000000064bb208>] sg_write.part.25+0x5d9/0x950
+    [<000000004fc670f6>] sg_write+0x5f/0x8c
+    [<00000000b0d05c7b>] __vfs_write+0x7c/0x100
+    [<000000008e177714>] vfs_write+0x1c3/0x500
+    [<0000000087d23f34>] ksys_write+0xf9/0x200
+    [<000000002c8dbc9d>] do_syscall_64+0x9f/0x4f0
+    [<00000000678d8e9a>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Fixes: fd6dad616d4f ("[TCP]: Earlier SACK block verification & simplify access to them")
-Signed-off-by: Pengcheng Yang <yangpc@wangsu.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+If __blk_rq_map_user_iov() is failed in blk_rq_map_user_iov(),
+the bio(s) which is allocated before this failing will leak. The
+refcount of the bio(s) is init to 1 and increased to 2 by calling
+bio_get(), but __blk_rq_unmap_user() only decrease it to 1, so
+the bio cannot be freed. Fix it by calling blk_rq_unmap_user().
+
+Reviewed-by: Bob Liu <bob.liu@oracle.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/tcp_input.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ block/blk-map.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -1741,8 +1741,11 @@ tcp_sacktag_write_queue(struct sock *sk,
- 		}
+diff --git a/block/blk-map.c b/block/blk-map.c
+index e31be14da8ea..f72a3af689b6 100644
+--- a/block/blk-map.c
++++ b/block/blk-map.c
+@@ -152,7 +152,7 @@ int blk_rq_map_user_iov(struct request_queue *q, struct request *rq,
+ 	return 0;
  
- 		/* Ignore very old stuff early */
--		if (!after(sp[used_sacks].end_seq, prior_snd_una))
-+		if (!after(sp[used_sacks].end_seq, prior_snd_una)) {
-+			if (i == 0)
-+				first_sack_index = -1;
- 			continue;
-+		}
- 
- 		used_sacks++;
- 	}
+ unmap_rq:
+-	__blk_rq_unmap_user(bio);
++	blk_rq_unmap_user(bio);
+ fail:
+ 	rq->bio = NULL;
+ 	return ret;
+-- 
+2.20.1
+
 
 
