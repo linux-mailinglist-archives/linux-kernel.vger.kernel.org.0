@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8B4F13805C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:29:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFC45137E1A
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:06:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731295AbgAKK2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:28:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36456 "EHLO mail.kernel.org"
+        id S1729563AbgAKKE4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:04:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730755AbgAKK2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:28:37 -0500
+        id S1729014AbgAKKEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:04:55 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0AED20842;
-        Sat, 11 Jan 2020 10:28:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC80E20848;
+        Sat, 11 Jan 2020 10:04:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738517;
-        bh=w1xY86k7o2X3acrxEgJ49Coa7QPmcFApXCnQ410bYkU=;
+        s=default; t=1578737094;
+        bh=Czplure2xZKgEkKI4XC5UMk7izwZoY4ItYjVWnKukSo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aZvsHYKLkpAbWRsPX6+2cgilzf6KdD1rVLyL4ANisxEfBJrAxcrPWxP+aI8GPCiVu
-         wJRkESSf4j0Ohz9A6xrp+wTV5PMVgY3RxSeuBJoyUE5sTpMQJ6otXuBb6HKS9MALJJ
-         JKJai7Q3gxCooRLN/68gh6gkiuwV4+q+gqsshiEM=
+        b=CS8Rhi1ZpXvaC1bV99SD0ZceWfoHUg5tMRV4V8Wk0FOKL/2rK9CHdZMsQvxEZbwaa
+         Zxup85V2ytPPwUSVhhWFE+5FF+2prFmK0ofBMKw1+szAEbVwjGiOGgGXjTxi9TEpSF
+         3uCWwXTcvTkk6x7xvmHt/d8nGAgXmq03NwZbgFnc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Walle <michael@walle.cc>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 092/165] spi: nxp-fspi: Ensure width is respected in spi-mem operations
+Subject: [PATCH 4.9 78/91] parisc: Fix compiler warnings in debug_core.c
 Date:   Sat, 11 Jan 2020 10:50:11 +0100
-Message-Id: <20200111094928.896721945@linuxfoundation.org>
+Message-Id: <20200111094911.999048821@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-References: <20200111094921.347491861@linuxfoundation.org>
+In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
+References: <20200111094844.748507863@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Walle <michael@walle.cc>
+From: Helge Deller <deller@gmx.de>
 
-[ Upstream commit 007773e16a6f3f49d1439554078c3ba8af131998 ]
+[ Upstream commit 75cf9797006a3a9f29a3a25c1febd6842a4a9eb2 ]
 
-Make use of a core helper to ensure the desired width is respected
-when calling spi-mem operators.
+Fix this compiler warning:
+kernel/debug/debug_core.c: In function ‘kgdb_cpu_enter’:
+arch/parisc/include/asm/cmpxchg.h:48:3: warning: value computed is not used [-Wunused-value]
+   48 |  ((__typeof__(*(ptr)))__xchg((unsigned long)(x), (ptr), sizeof(*(ptr))))
+arch/parisc/include/asm/atomic.h:78:30: note: in expansion of macro ‘xchg’
+   78 | #define atomic_xchg(v, new) (xchg(&((v)->counter), new))
+      |                              ^~~~
+kernel/debug/debug_core.c:596:4: note: in expansion of macro ‘atomic_xchg’
+  596 |    atomic_xchg(&kgdb_active, cpu);
+      |    ^~~~~~~~~~~
 
-Otherwise only the SPI controller will be matched with the flash chip,
-which might lead to wrong widths. Also consider the width specified by
-the user in the device tree.
-
-Fixes: a5356aef6a90 ("spi: spi-mem: Add driver for NXP FlexSPI controller")
-Signed-off-by: Michael Walle <michael@walle.cc>
-Link: https://lore.kernel.org/r/20191211195730.26794-1-michael@walle.cc
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-nxp-fspi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/parisc/include/asm/cmpxchg.h | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
-index 501b923f2c27..28ae5229f889 100644
---- a/drivers/spi/spi-nxp-fspi.c
-+++ b/drivers/spi/spi-nxp-fspi.c
-@@ -439,7 +439,7 @@ static bool nxp_fspi_supports_op(struct spi_mem *mem,
- 	    op->data.nbytes > f->devtype_data->txfifo)
- 		return false;
+diff --git a/arch/parisc/include/asm/cmpxchg.h b/arch/parisc/include/asm/cmpxchg.h
+index 7ada30900807..90253bdc2ee5 100644
+--- a/arch/parisc/include/asm/cmpxchg.h
++++ b/arch/parisc/include/asm/cmpxchg.h
+@@ -43,8 +43,14 @@ __xchg(unsigned long x, __volatile__ void *ptr, int size)
+ **		if (((unsigned long)p & 0xf) == 0)
+ **			return __ldcw(p);
+ */
+-#define xchg(ptr, x) \
+-	((__typeof__(*(ptr)))__xchg((unsigned long)(x), (ptr), sizeof(*(ptr))))
++#define xchg(ptr, x)							\
++({									\
++	__typeof__(*(ptr)) __ret;					\
++	__typeof__(*(ptr)) _x_ = (x);					\
++	__ret = (__typeof__(*(ptr)))					\
++		__xchg((unsigned long)_x_, (ptr), sizeof(*(ptr)));	\
++	__ret;								\
++})
  
--	return true;
-+	return spi_mem_default_supports_op(mem, op);
- }
- 
- /* Instead of busy looping invoke readl_poll_timeout functionality. */
+ /* bug catcher for when unsupported size is used - won't link */
+ extern void __cmpxchg_called_with_bad_pointer(void);
 -- 
 2.20.1
 
