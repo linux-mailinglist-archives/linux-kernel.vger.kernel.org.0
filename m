@@ -2,41 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50DD6137E9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:12:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA917137EAD
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:12:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729819AbgAKKKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:10:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46364 "EHLO mail.kernel.org"
+        id S1729945AbgAKKMj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:12:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728812AbgAKKKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:10:03 -0500
+        id S1729177AbgAKKMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:12:36 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1D26206DA;
-        Sat, 11 Jan 2020 10:10:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5BD22077C;
+        Sat, 11 Jan 2020 10:12:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737402;
-        bh=KMIQ/vRNYcRb/g7omTSlt/igyCZg5W16R8w+aDwPuGI=;
+        s=default; t=1578737555;
+        bh=pjmTLGnhyx5bliZSVMGAoP6zXNOjVzdIsTJRJp2cfUA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OAiewFfaamfQYoWc8wKIBfHpXJT0WoEqPhlkGjuuJVpLTqmBVk8G9+n6DKILMvVAN
-         JxkX8Q18BbE3tJw4Ywj5fuwXfBvu+AN1PqtUU07Vl7m/eSXdCHjhcGijTCbQ/xoHeY
-         3Qf6qomYQ1os2S4W/5QkRnoVTcw6AiJu6NyTF9uM=
+        b=YPEsNZr9JrRdEJCcat39yzFQHxSwhFyKPlmXtYSA+GVXRsJMB7rbvdt2lsLmzXPo9
+         VBkRejzQuNmNLXlCrqNgFK9/9WfJjXeAOd9WgsaKnZL2JCe1/lSSX+S2WAsgsZ+PXs
+         CfyNqp5QEMnaJI+AbbtWB0caAndHPTq6QjqV2Re8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vitaly Slobodskoy <vitaly.slobodskoy@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Eric Sandeen <sandeen@redhat.com>,
+        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 30/62] perf/x86/intel: Fix PT PMI handling
-Date:   Sat, 11 Jan 2020 10:50:12 +0100
-Message-Id: <20200111094845.524926873@linuxfoundation.org>
+Subject: [PATCH 4.14 31/62] fs: avoid softlockups in s_inodes iterators
+Date:   Sat, 11 Jan 2020 10:50:13 +0100
+Message-Id: <20200111094845.707008130@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
 References: <20200111094837.425430968@linuxfoundation.org>
@@ -49,74 +44,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Eric Sandeen <sandeen@redhat.com>
 
-[ Upstream commit 92ca7da4bdc24d63bb0bcd241c11441ddb63b80a ]
+[ Upstream commit 04646aebd30b99f2cfa0182435a2ec252fcb16d0 ]
 
-Commit:
+Anything that walks all inodes on sb->s_inodes list without rescheduling
+risks softlockups.
 
-  ccbebba4c6bf ("perf/x86/intel/pt: Bypass PT vs. LBR exclusivity if the core supports it")
+Previous efforts were made in 2 functions, see:
 
-skips the PT/LBR exclusivity check on CPUs where PT and LBRs coexist, but
-also inadvertently skips the active_events bump for PT in that case, which
-is a bug. If there aren't any hardware events at the same time as PT, the
-PMI handler will ignore PT PMIs, as active_events reads zero in that case,
-resulting in the "Uhhuh" spurious NMI warning and PT data loss.
+c27d82f fs/drop_caches.c: avoid softlockups in drop_pagecache_sb()
+ac05fbb inode: don't softlockup when evicting inodes
 
-Fix this by always increasing active_events for PT events.
+but there hasn't been an audit of all walkers, so do that now.  This
+also consistently moves the cond_resched() calls to the bottom of each
+loop in cases where it already exists.
 
-Fixes: ccbebba4c6bf ("perf/x86/intel/pt: Bypass PT vs. LBR exclusivity if the core supports it")
-Reported-by: Vitaly Slobodskoy <vitaly.slobodskoy@intel.com>
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Link: https://lkml.kernel.org/r/20191210105101.77210-1-alexander.shishkin@linux.intel.com
+One loop remains: remove_dquot_ref(), because I'm not quite sure how
+to deal with that one w/o taking the i_lock.
+
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/core.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ fs/drop_caches.c     | 2 +-
+ fs/inode.c           | 7 +++++++
+ fs/notify/fsnotify.c | 1 +
+ fs/quota/dquot.c     | 1 +
+ 4 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 6ed99de2ddf5..c1f7b3cb84a9 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -375,7 +375,7 @@ int x86_add_exclusive(unsigned int what)
- 	 * LBR and BTS are still mutually exclusive.
- 	 */
- 	if (x86_pmu.lbr_pt_coexist && what == x86_lbr_exclusive_pt)
--		return 0;
-+		goto out;
+diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+index d31b6c72b476..dc1a1d5d825b 100644
+--- a/fs/drop_caches.c
++++ b/fs/drop_caches.c
+@@ -35,11 +35,11 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+ 		spin_unlock(&inode->i_lock);
+ 		spin_unlock(&sb->s_inode_list_lock);
  
- 	if (!atomic_inc_not_zero(&x86_pmu.lbr_exclusive[what])) {
- 		mutex_lock(&pmc_reserve_mutex);
-@@ -387,6 +387,7 @@ int x86_add_exclusive(unsigned int what)
- 		mutex_unlock(&pmc_reserve_mutex);
+-		cond_resched();
+ 		invalidate_mapping_pages(inode->i_mapping, 0, -1);
+ 		iput(toput_inode);
+ 		toput_inode = inode;
+ 
++		cond_resched();
+ 		spin_lock(&sb->s_inode_list_lock);
  	}
+ 	spin_unlock(&sb->s_inode_list_lock);
+diff --git a/fs/inode.c b/fs/inode.c
+index 76f7535fe754..d2a700c5efce 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -656,6 +656,7 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
+ 	struct inode *inode, *next;
+ 	LIST_HEAD(dispose);
  
-+out:
- 	atomic_inc(&active_events);
- 	return 0;
++again:
+ 	spin_lock(&sb->s_inode_list_lock);
+ 	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
+ 		spin_lock(&inode->i_lock);
+@@ -678,6 +679,12 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
+ 		inode_lru_list_del(inode);
+ 		spin_unlock(&inode->i_lock);
+ 		list_add(&inode->i_lru, &dispose);
++		if (need_resched()) {
++			spin_unlock(&sb->s_inode_list_lock);
++			cond_resched();
++			dispose_list(&dispose);
++			goto again;
++		}
+ 	}
+ 	spin_unlock(&sb->s_inode_list_lock);
  
-@@ -397,11 +398,15 @@ int x86_add_exclusive(unsigned int what)
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index 506da82ff3f1..a308f7a7e577 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -90,6 +90,7 @@ void fsnotify_unmount_inodes(struct super_block *sb)
  
- void x86_del_exclusive(unsigned int what)
- {
-+	atomic_dec(&active_events);
-+
-+	/*
-+	 * See the comment in x86_add_exclusive().
-+	 */
- 	if (x86_pmu.lbr_pt_coexist && what == x86_lbr_exclusive_pt)
- 		return;
+ 		iput_inode = inode;
  
- 	atomic_dec(&x86_pmu.lbr_exclusive[what]);
--	atomic_dec(&active_events);
- }
- 
- int x86_setup_perfctr(struct perf_event *event)
++		cond_resched();
+ 		spin_lock(&sb->s_inode_list_lock);
+ 	}
+ 	spin_unlock(&sb->s_inode_list_lock);
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index 3fdbdd29702b..30f5da8f4aff 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -976,6 +976,7 @@ static int add_dquot_ref(struct super_block *sb, int type)
+ 		 * later.
+ 		 */
+ 		old_inode = inode;
++		cond_resched();
+ 		spin_lock(&sb->s_inode_list_lock);
+ 	}
+ 	spin_unlock(&sb->s_inode_list_lock);
 -- 
 2.20.1
 
