@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48C7E137FFF
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:25:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75AF8137DC2
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:01:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731022AbgAKKYu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:24:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54420 "EHLO mail.kernel.org"
+        id S1729433AbgAKKA6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:00:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731011AbgAKKYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:24:48 -0500
+        id S1729064AbgAKKA4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:00:56 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C06C2082E;
-        Sat, 11 Jan 2020 10:24:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C905D2082E;
+        Sat, 11 Jan 2020 10:00:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738288;
-        bh=CuHDXm6CnEmH/l+I+Z4tOhOiGH9ZvYgGUysk2Z+MD98=;
+        s=default; t=1578736855;
+        bh=Lo5Smt3oSA4bNODey7pLbvX9J2tYch+fFpPESUk3xPY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KK8jFVH1I9pSoZ7xXaWKU3KvYNh1z7d2ZP5dTFe4m7kuB7mvNLRtdaIqYDUEtJq6L
-         BUkVoSjMCCkhH2z9V3LmTHx6eOOo+PSacikN1uAfhx7ar+gRrUhynCS20EYA6tfLUA
-         hNgNM+UwFOEtbXKM+lTxRhxHwndfn6tI5JLg9wCg=
+        b=XcSPHlNuxNMhlaJbvkHVTv4HA8r96hTLROr7m51swRf7LlzZbkjwlX6g3bI0cqYO2
+         iZPJjf8DCU9U7Kj7E7ggp4aG+JtqRqVJS75Md24uTu1E+8EqI5HUVKuzzdifvH2ig0
+         Uz2LpqA0nkKEUGdzbdScuxS4rVDCdMGt/RpsSQLw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 051/165] ARM: dts: bcm283x: Fix critical trip point
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.9 37/91] Bluetooth: btusb: fix PM leak in error case of setup
 Date:   Sat, 11 Jan 2020 10:49:30 +0100
-Message-Id: <20200111094925.656174796@linuxfoundation.org>
+Message-Id: <20200111094858.986634438@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-References: <20200111094921.347491861@linuxfoundation.org>
+In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
+References: <20200111094844.748507863@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <wahrenst@gmx.net>
+From: Oliver Neukum <oneukum@suse.com>
 
-[ Upstream commit 30e647a764d446723a7e0fb08d209e0104f16173 ]
+commit 3d44a6fd0775e6215e836423e27f8eedf8c871ea upstream.
 
-During definition of the CPU thermal zone of BCM283x SoC family there
-was a misunderstanding of the meaning "criticial trip point" and the
-thermal throttling range of the VideoCore firmware. The latter one takes
-effect when the core temperature is at least 85 degree celsius or higher
+If setup() fails a reference for runtime PM has already
+been taken. Proper use of the error handling in btusb_open()is needed.
+You cannot just return.
 
-So the current critical trip point doesn't make sense, because the
-thermal shutdown appears before the firmware has a chance to throttle
-the ARM core(s).
+Fixes: ace31982585a3 ("Bluetooth: btusb: Add setup callback for chip init on USB")
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fix these unwanted shutdowns by increasing the critical trip point
-to a value which shouldn't be reached with working thermal throttling.
-
-Fixes: 0fe4d2181cc4 ("ARM: dts: bcm283x: Add CPU thermal zone with 1 trip point")
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/bcm283x.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/bluetooth/btusb.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
-index 2d191fcbc2cc..90125ce19a1b 100644
---- a/arch/arm/boot/dts/bcm283x.dtsi
-+++ b/arch/arm/boot/dts/bcm283x.dtsi
-@@ -40,7 +40,7 @@
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -1069,7 +1069,7 @@ static int btusb_open(struct hci_dev *hd
+ 	if (data->setup_on_usb) {
+ 		err = data->setup_on_usb(hdev);
+ 		if (err < 0)
+-			return err;
++			goto setup_fail;
+ 	}
  
- 			trips {
- 				cpu-crit {
--					temperature	= <80000>;
-+					temperature	= <90000>;
- 					hysteresis	= <0>;
- 					type		= "critical";
- 				};
--- 
-2.20.1
-
+ 	data->intf->needs_remote_wakeup = 1;
+@@ -1101,6 +1101,7 @@ done:
+ 
+ failed:
+ 	clear_bit(BTUSB_INTR_RUNNING, &data->flags);
++setup_fail:
+ 	usb_autopm_put_interface(data->intf);
+ 	return err;
+ }
 
 
