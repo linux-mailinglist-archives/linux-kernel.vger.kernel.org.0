@@ -2,43 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C4AF137DF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:03:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2AB713803B
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:27:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729449AbgAKKDO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:03:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34496 "EHLO mail.kernel.org"
+        id S1730624AbgAKK1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:27:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728902AbgAKKDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:03:14 -0500
+        id S1730715AbgAKK1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:27:11 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCB3A20866;
-        Sat, 11 Jan 2020 10:03:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07C6B2082E;
+        Sat, 11 Jan 2020 10:27:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578736992;
-        bh=Dpq8wuZ0aaFZMU+WnK22+ipxpSbe3i1U4BrVYFSNTiM=;
+        s=default; t=1578738429;
+        bh=mwqyoTpvLEDwEPow5Q3vEsE2nvTb/nf7aFQzJfPSppc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rWivVSxIgh+4JCw7vDl3r3w8S8SZ6oxcTbHZyv/zu96MIudHtb0FpHLb9rFyP4uN8
-         67TWGRswZ81116Ya8pC/BGIm9iH10K39vs7DkjsrsiHg7zALs3ZLtDVQP7mOyfv6Lq
-         lgFeIb7iq4eCmO5nIOxrX11dtQkeERVCR/ayTHP4=
+        b=czVo5TgzlROMoOjxi9pjT8kkw1p1wKi2u7NeNmnUWdXqmhPih/6xzeZyvFTI1Gg1X
+         eaD+Cp74LLX8YE5p50ldhcFWt7WjFAR5R+cWiqur8SIDSd4dHerDF4uMUZ0FcAVCJC
+         REqHNe0OsxsqCqd6iuVLe9FXTNU/pE9QWkwFeGfA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arvind Sankar <nivedita@alum.mit.edu>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 61/91] efi/gop: Fix memory leak in __gop_query32/64()
+        stable@vger.kernel.org, Parth Shah <parth@linux.ibm.com>,
+        Ihor Pasichnyk <Ihor.Pasichnyk@ibm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Phil Auld <pauld@redhat.com>,
+        Vaidyanathan Srinivasan <svaidy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.4 075/165] powerpc/vcpu: Assume dedicated processors as non-preempt
 Date:   Sat, 11 Jan 2020 10:49:54 +0100
-Message-Id: <20200111094907.683095742@linuxfoundation.org>
+Message-Id: <20200111094927.461950065@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
-References: <20200111094844.748507863@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,150 +50,160 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arvind Sankar <nivedita@alum.mit.edu>
+From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 
-[ Upstream commit ff397be685e410a59c34b21ce0c55d4daa466bb7 ]
+commit 14c73bd344da60abaf7da3ea2e7733ddda35bbac upstream.
 
-efi_graphics_output_protocol::query_mode() returns info in
-callee-allocated memory which must be freed by the caller, which
-we aren't doing.
+With commit 247f2f6f3c70 ("sched/core: Don't schedule threads on
+pre-empted vCPUs"), the scheduler avoids preempted vCPUs to schedule
+tasks on wakeup. This leads to wrong choice of CPU, which in-turn
+leads to larger wakeup latencies. Eventually, it leads to performance
+regression in latency sensitive benchmarks like soltp, schbench etc.
 
-We don't actually need to call query_mode() in order to obtain the
-info for the current graphics mode, which is already there in
-gop->mode->info, so just access it directly in the setup_gop32/64()
-functions.
+On Powerpc, vcpu_is_preempted() only looks at yield_count. If the
+yield_count is odd, the vCPU is assumed to be preempted. However
+yield_count is increased whenever the LPAR enters CEDE state (idle).
+So any CPU that has entered CEDE state is assumed to be preempted.
 
-Also nothing uses the size of the info structure, so don't update the
-passed-in size (which is the size of the gop_handle table in bytes)
-unnecessarily.
+Even if vCPU of dedicated LPAR is preempted/donated, it should have
+right of first-use since they are supposed to own the vCPU.
 
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Cc: linux-efi@vger.kernel.org
-Link: https://lkml.kernel.org/r/20191206165542.31469-5-ardb@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+On a Power9 System with 32 cores:
+  # lscpu
+  Architecture:        ppc64le
+  Byte Order:          Little Endian
+  CPU(s):              128
+  On-line CPU(s) list: 0-127
+  Thread(s) per core:  8
+  Core(s) per socket:  1
+  Socket(s):           16
+  NUMA node(s):        2
+  Model:               2.2 (pvr 004e 0202)
+  Model name:          POWER9 (architected), altivec supported
+  Hypervisor vendor:   pHyp
+  Virtualization type: para
+  L1d cache:           32K
+  L1i cache:           32K
+  L2 cache:            512K
+  L3 cache:            10240K
+  NUMA node0 CPU(s):   0-63
+  NUMA node1 CPU(s):   64-127
+
+  # perf stat -a -r 5 ./schbench
+  v5.4                               v5.4 + patch
+  Latency percentiles (usec)         Latency percentiles (usec)
+        50.0000th: 45                      50.0th: 45
+        75.0000th: 62                      75.0th: 63
+        90.0000th: 71                      90.0th: 74
+        95.0000th: 77                      95.0th: 78
+        *99.0000th: 91                     *99.0th: 82
+        99.5000th: 707                     99.5th: 83
+        99.9000th: 6920                    99.9th: 86
+        min=0, max=10048                   min=0, max=96
+  Latency percentiles (usec)         Latency percentiles (usec)
+        50.0000th: 45                      50.0th: 46
+        75.0000th: 61                      75.0th: 64
+        90.0000th: 72                      90.0th: 75
+        95.0000th: 79                      95.0th: 79
+        *99.0000th: 691                    *99.0th: 83
+        99.5000th: 3972                    99.5th: 85
+        99.9000th: 8368                    99.9th: 91
+        min=0, max=16606                   min=0, max=117
+  Latency percentiles (usec)         Latency percentiles (usec)
+        50.0000th: 45                      50.0th: 46
+        75.0000th: 61                      75.0th: 64
+        90.0000th: 71                      90.0th: 75
+        95.0000th: 77                      95.0th: 79
+        *99.0000th: 106                    *99.0th: 83
+        99.5000th: 2364                    99.5th: 84
+        99.9000th: 7480                    99.9th: 90
+        min=0, max=10001                   min=0, max=95
+  Latency percentiles (usec)         Latency percentiles (usec)
+        50.0000th: 45                      50.0th: 47
+        75.0000th: 62                      75.0th: 65
+        90.0000th: 72                      90.0th: 75
+        95.0000th: 78                      95.0th: 79
+        *99.0000th: 93                     *99.0th: 84
+        99.5000th: 108                     99.5th: 85
+        99.9000th: 6792                    99.9th: 90
+        min=0, max=17681                   min=0, max=117
+  Latency percentiles (usec)         Latency percentiles (usec)
+        50.0000th: 46                      50.0th: 45
+        75.0000th: 62                      75.0th: 64
+        90.0000th: 73                      90.0th: 75
+        95.0000th: 79                      95.0th: 79
+        *99.0000th: 113                    *99.0th: 82
+        99.5000th: 2724                    99.5th: 83
+        99.9000th: 6184                    99.9th: 93
+        min=0, max=9887                    min=0, max=111
+
+   Performance counter stats for 'system wide' (5 runs):
+
+  context-switches    43,373  ( +-  0.40% )   44,597 ( +-  0.55% )
+  cpu-migrations       1,211  ( +-  5.04% )      220 ( +-  6.23% )
+  page-faults         15,983  ( +-  5.21% )   15,360 ( +-  3.38% )
+
+Waiman Long suggested using static_keys.
+
+Fixes: 247f2f6f3c70 ("sched/core: Don't schedule threads on pre-empted vCPUs")
+Cc: stable@vger.kernel.org # v4.18+
+Reported-by: Parth Shah <parth@linux.ibm.com>
+Reported-by: Ihor Pasichnyk <Ihor.Pasichnyk@ibm.com>
+Tested-by: Juri Lelli <juri.lelli@redhat.com>
+Acked-by: Waiman Long <longman@redhat.com>
+Reviewed-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Acked-by: Phil Auld <pauld@redhat.com>
+Reviewed-by: Vaidyanathan Srinivasan <svaidy@linux.ibm.com>
+Tested-by: Parth Shah <parth@linux.ibm.com>
+[mpe: Move the key and setting of the key to pseries/setup.c]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20191213035036.6913-1-mpe@ellerman.id.au
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/firmware/efi/libstub/gop.c | 66 ++++++------------------------
- 1 file changed, 12 insertions(+), 54 deletions(-)
+ arch/powerpc/include/asm/spinlock.h    |    4 +++-
+ arch/powerpc/platforms/pseries/setup.c |    7 +++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/efi/libstub/gop.c b/drivers/firmware/efi/libstub/gop.c
-index 81ffda5d1e48..fd8053f9556e 100644
---- a/drivers/firmware/efi/libstub/gop.c
-+++ b/drivers/firmware/efi/libstub/gop.c
-@@ -85,30 +85,6 @@ setup_pixel_info(struct screen_info *si, u32 pixels_per_scan_line,
- 	}
- }
+--- a/arch/powerpc/include/asm/spinlock.h
++++ b/arch/powerpc/include/asm/spinlock.h
+@@ -36,10 +36,12 @@
+ #endif
  
--static efi_status_t
--__gop_query32(efi_system_table_t *sys_table_arg,
--	      struct efi_graphics_output_protocol_32 *gop32,
--	      struct efi_graphics_output_mode_info **info,
--	      unsigned long *size, u64 *fb_base)
--{
--	struct efi_graphics_output_protocol_mode_32 *mode;
--	efi_graphics_output_protocol_query_mode query_mode;
--	efi_status_t status;
--	unsigned long m;
--
--	m = gop32->mode;
--	mode = (struct efi_graphics_output_protocol_mode_32 *)m;
--	query_mode = (void *)(unsigned long)gop32->query_mode;
--
--	status = __efi_call_early(query_mode, (void *)gop32, mode->mode, size,
--				  info);
--	if (status != EFI_SUCCESS)
--		return status;
--
--	*fb_base = mode->frame_buffer_base;
--	return status;
--}
--
- static efi_status_t
- setup_gop32(efi_system_table_t *sys_table_arg, struct screen_info *si,
-             efi_guid_t *proto, unsigned long size, void **gop_handle)
-@@ -130,6 +106,7 @@ setup_gop32(efi_system_table_t *sys_table_arg, struct screen_info *si,
- 
- 	nr_gops = size / sizeof(u32);
- 	for (i = 0; i < nr_gops; i++) {
-+		struct efi_graphics_output_protocol_mode_32 *mode;
- 		struct efi_graphics_output_mode_info *info = NULL;
- 		efi_guid_t conout_proto = EFI_CONSOLE_OUT_DEVICE_GUID;
- 		bool conout_found = false;
-@@ -147,9 +124,11 @@ setup_gop32(efi_system_table_t *sys_table_arg, struct screen_info *si,
- 		if (status == EFI_SUCCESS)
- 			conout_found = true;
- 
--		status = __gop_query32(sys_table_arg, gop32, &info, &size,
--				       &current_fb_base);
--		if (status == EFI_SUCCESS && (!first_gop || conout_found) &&
-+		mode = (void *)(unsigned long)gop32->mode;
-+		info = (void *)(unsigned long)mode->info;
-+		current_fb_base = mode->frame_buffer_base;
+ #ifdef CONFIG_PPC_PSERIES
++DECLARE_STATIC_KEY_FALSE(shared_processor);
 +
-+		if ((!first_gop || conout_found) &&
- 		    info->pixel_format != PIXEL_BLT_ONLY) {
- 			/*
- 			 * Systems that use the UEFI Console Splitter may
-@@ -203,30 +182,6 @@ setup_gop32(efi_system_table_t *sys_table_arg, struct screen_info *si,
- 	return EFI_SUCCESS;
+ #define vcpu_is_preempted vcpu_is_preempted
+ static inline bool vcpu_is_preempted(int cpu)
+ {
+-	if (!firmware_has_feature(FW_FEATURE_SPLPAR))
++	if (!static_branch_unlikely(&shared_processor))
+ 		return false;
+ 	return !!(be32_to_cpu(lppaca_of(cpu).yield_count) & 1);
  }
+--- a/arch/powerpc/platforms/pseries/setup.c
++++ b/arch/powerpc/platforms/pseries/setup.c
+@@ -74,6 +74,9 @@
+ #include "pseries.h"
+ #include "../../../../drivers/pci/pci.h"
  
--static efi_status_t
--__gop_query64(efi_system_table_t *sys_table_arg,
--	      struct efi_graphics_output_protocol_64 *gop64,
--	      struct efi_graphics_output_mode_info **info,
--	      unsigned long *size, u64 *fb_base)
--{
--	struct efi_graphics_output_protocol_mode_64 *mode;
--	efi_graphics_output_protocol_query_mode query_mode;
--	efi_status_t status;
--	unsigned long m;
--
--	m = gop64->mode;
--	mode = (struct efi_graphics_output_protocol_mode_64 *)m;
--	query_mode = (void *)(unsigned long)gop64->query_mode;
--
--	status = __efi_call_early(query_mode, (void *)gop64, mode->mode, size,
--				  info);
--	if (status != EFI_SUCCESS)
--		return status;
--
--	*fb_base = mode->frame_buffer_base;
--	return status;
--}
--
- static efi_status_t
- setup_gop64(efi_system_table_t *sys_table_arg, struct screen_info *si,
- 	    efi_guid_t *proto, unsigned long size, void **gop_handle)
-@@ -248,6 +203,7 @@ setup_gop64(efi_system_table_t *sys_table_arg, struct screen_info *si,
- 
- 	nr_gops = size / sizeof(u64);
- 	for (i = 0; i < nr_gops; i++) {
-+		struct efi_graphics_output_protocol_mode_64 *mode;
- 		struct efi_graphics_output_mode_info *info = NULL;
- 		efi_guid_t conout_proto = EFI_CONSOLE_OUT_DEVICE_GUID;
- 		bool conout_found = false;
-@@ -265,9 +221,11 @@ setup_gop64(efi_system_table_t *sys_table_arg, struct screen_info *si,
- 		if (status == EFI_SUCCESS)
- 			conout_found = true;
- 
--		status = __gop_query64(sys_table_arg, gop64, &info, &size,
--				       &current_fb_base);
--		if (status == EFI_SUCCESS && (!first_gop || conout_found) &&
-+		mode = (void *)(unsigned long)gop64->mode;
-+		info = (void *)(unsigned long)mode->info;
-+		current_fb_base = mode->frame_buffer_base;
++DEFINE_STATIC_KEY_FALSE(shared_processor);
++EXPORT_SYMBOL_GPL(shared_processor);
 +
-+		if ((!first_gop || conout_found) &&
- 		    info->pixel_format != PIXEL_BLT_ONLY) {
- 			/*
- 			 * Systems that use the UEFI Console Splitter may
--- 
-2.20.1
-
+ int CMO_PrPSP = -1;
+ int CMO_SecPSP = -1;
+ unsigned long CMO_PageSize = (ASM_CONST(1) << IOMMU_PAGE_SHIFT_4K);
+@@ -758,6 +761,10 @@ static void __init pSeries_setup_arch(vo
+ 
+ 	if (firmware_has_feature(FW_FEATURE_LPAR)) {
+ 		vpa_init(boot_cpuid);
++
++		if (lppaca_shared_proc(get_lppaca()))
++			static_branch_enable(&shared_processor);
++
+ 		ppc_md.power_save = pseries_lpar_idle;
+ 		ppc_md.enable_pmcs = pseries_lpar_enable_pmcs;
+ #ifdef CONFIG_PCI_IOV
 
 
