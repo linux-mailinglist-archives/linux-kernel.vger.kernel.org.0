@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE4A6137F09
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:16:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3487B137EA1
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:12:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729801AbgAKKQF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:16:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58530 "EHLO mail.kernel.org"
+        id S1730025AbgAKKMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:12:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729748AbgAKKQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:16:03 -0500
+        id S1729420AbgAKKME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:12:04 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA53E205F4;
-        Sat, 11 Jan 2020 10:16:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44D9620848;
+        Sat, 11 Jan 2020 10:12:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737762;
-        bh=h4EI1R3/8ZqYDlUaddUK89wFS87jVB3ZVX4EeXuri7Y=;
+        s=default; t=1578737524;
+        bh=520u/bTYtujL/2/hNBt3ud192gd9V95qNeRCkgJ5klA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dWOWgZhRCx2TE51Y0vHx8Bgl4Gyis36zXVD32Tx/01OALwAWKxMeaixsWgH+QDV4N
-         PWiBFlrEyPUpjt619jSmjhfNJP0h4YpPEglMPl82EHjdmNjAFowl9VAhIkXW0XbHQN
-         2oU9XliFKXBomeCPblM7KmhwU1AfD3D1/b67sMcQ=
+        b=bhs8aNcd/bGEsekOszLk+rSsC8VRfSx7LcIhtWY9jj8HHfmM6ULcwgrOrB9jr944W
+         06qqwuc4vvWPCJJ3MiF0gk8jTwEcUCDmCOVWvtawytJyrQSL27QS1kPkUpoRd4j4ou
+         pRe+5LpEwPW7T2wPqUN0s92TcsxBwFE99vPlR5FU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Schnelle <svens@stackframe.org>,
-        Helge Deller <deller@gmx.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 40/84] parisc: add missing __init annotation
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 35/62] s390/dasd: fix memleak in path handling error case
 Date:   Sat, 11 Jan 2020 10:50:17 +0100
-Message-Id: <20200111094901.521679707@linuxfoundation.org>
+Message-Id: <20200111094846.373087715@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
-References: <20200111094845.328046411@linuxfoundation.org>
+In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
+References: <20200111094837.425430968@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +45,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Schnelle <svens@stackframe.org>
+From: Stefan Haberland <sth@linux.ibm.com>
 
-[ Upstream commit aeea5eae4fd54e94d820ed17ea3b238160be723e ]
+[ Upstream commit 00b39f698a4f1ee897227cace2e3937fc4412270 ]
 
-compilation failed with:
+If for whatever reason the dasd_eckd_check_characteristics() function
+exits after at least some paths have their configuration data
+allocated those data is never freed again. In the error case the
+device->private pointer is set to NULL and dasd_eckd_uncheck_device()
+will exit without freeing the path data because of this NULL pointer.
 
-MODPOST vmlinux.o
-WARNING: vmlinux.o(.text.unlikely+0xa0c): Section mismatch in reference from the function walk_lower_bus() to the function .init.text:walk_native_bus()
-The function walk_lower_bus() references
-the function __init walk_native_bus().
-This is often because walk_lower_bus lacks a __init
-annotation or the annotation of walk_native_bus is wrong.
+Fix by calling dasd_eckd_clear_conf_data() for error cases.
 
-FATAL: modpost: Section mismatches detected.
-Set CONFIG_SECTION_MISMATCH_WARN_ONLY=y to allow them.
-make[2]: *** [/home/svens/linux/parisc-linux/src/scripts/Makefile.modpost:64: __modpost] Error 1
-make[1]: *** [/home/svens/linux/parisc-linux/src/Makefile:1077: vmlinux] Error 2
-make[1]: Leaving directory '/home/svens/linux/parisc-linux/build'
-make: *** [Makefile:179: sub-make] Error 2
+Also use dasd_eckd_clear_conf_data() in dasd_eckd_uncheck_device()
+to avoid code duplication.
 
-Signed-off-by: Sven Schnelle <svens@stackframe.org>
-Signed-off-by: Helge Deller <deller@gmx.de>
+Reported-by: Qian Cai <cai@lca.pw>
+Reviewed-by: Jan Hoeppner <hoeppner@linux.ibm.com>
+Signed-off-by: Stefan Haberland <sth@linux.ibm.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/parisc/kernel/drivers.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/s390/block/dasd_eckd.c | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
 
-diff --git a/arch/parisc/kernel/drivers.c b/arch/parisc/kernel/drivers.c
-index 5eb979d04b90..a1a5e4c59e6b 100644
---- a/arch/parisc/kernel/drivers.c
-+++ b/arch/parisc/kernel/drivers.c
-@@ -789,7 +789,7 @@ EXPORT_SYMBOL(device_to_hwpath);
- static void walk_native_bus(unsigned long io_io_low, unsigned long io_io_high,
-                             struct device *parent);
- 
--static void walk_lower_bus(struct parisc_device *dev)
-+static void __init walk_lower_bus(struct parisc_device *dev)
+diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
+index 81359312a987..aa651403546f 100644
+--- a/drivers/s390/block/dasd_eckd.c
++++ b/drivers/s390/block/dasd_eckd.c
+@@ -1768,7 +1768,7 @@ dasd_eckd_check_characteristics(struct dasd_device *device)
+ 	dasd_free_block(device->block);
+ 	device->block = NULL;
+ out_err1:
+-	kfree(private->conf_data);
++	dasd_eckd_clear_conf_data(device);
+ 	kfree(device->private);
+ 	device->private = NULL;
+ 	return rc;
+@@ -1777,7 +1777,6 @@ dasd_eckd_check_characteristics(struct dasd_device *device)
+ static void dasd_eckd_uncheck_device(struct dasd_device *device)
  {
- 	unsigned long io_io_low, io_io_high;
+ 	struct dasd_eckd_private *private = device->private;
+-	int i;
  
+ 	if (!private)
+ 		return;
+@@ -1787,21 +1786,7 @@ static void dasd_eckd_uncheck_device(struct dasd_device *device)
+ 	private->sneq = NULL;
+ 	private->vdsneq = NULL;
+ 	private->gneq = NULL;
+-	private->conf_len = 0;
+-	for (i = 0; i < 8; i++) {
+-		kfree(device->path[i].conf_data);
+-		if ((__u8 *)device->path[i].conf_data ==
+-		    private->conf_data) {
+-			private->conf_data = NULL;
+-			private->conf_len = 0;
+-		}
+-		device->path[i].conf_data = NULL;
+-		device->path[i].cssid = 0;
+-		device->path[i].ssid = 0;
+-		device->path[i].chpid = 0;
+-	}
+-	kfree(private->conf_data);
+-	private->conf_data = NULL;
++	dasd_eckd_clear_conf_data(device);
+ }
+ 
+ static struct dasd_ccw_req *
 -- 
 2.20.1
 
