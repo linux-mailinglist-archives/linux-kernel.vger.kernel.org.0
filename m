@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4288E137E9F
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:12:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE4A6137F09
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:16:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730016AbgAKKMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:12:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49604 "EHLO mail.kernel.org"
+        id S1729801AbgAKKQF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:16:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729420AbgAKKMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:12:00 -0500
+        id S1729748AbgAKKQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:16:03 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB0FB2082E;
-        Sat, 11 Jan 2020 10:11:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA53E205F4;
+        Sat, 11 Jan 2020 10:16:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737519;
-        bh=15uCv88DqOg4sbjIuVZMtUhC1JnMrYLSD4Kpcggr87k=;
+        s=default; t=1578737762;
+        bh=h4EI1R3/8ZqYDlUaddUK89wFS87jVB3ZVX4EeXuri7Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2sVJxtvO3fNHyQJNeZ00rOGqGrPwN5ThsVrJQiLcT+2jTWEGw7RY2oI4W51ehETnH
-         fTgog4CfVNuO2QpDMcV/HXH5U1OXKEKKnpjBtPwIoyHQQWo8CQBfTlY9qQ4rA+n1ub
-         81ip6lPUCc/E0ICUCbxDWnxMUHRLHDywnj1bXX2s=
+        b=dWOWgZhRCx2TE51Y0vHx8Bgl4Gyis36zXVD32Tx/01OALwAWKxMeaixsWgH+QDV4N
+         PWiBFlrEyPUpjt619jSmjhfNJP0h4YpPEglMPl82EHjdmNjAFowl9VAhIkXW0XbHQN
+         2oU9XliFKXBomeCPblM7KmhwU1AfD3D1/b67sMcQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
-        =?UTF-8?q?Jan=20H=C3=B6ppner?= <hoeppner@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 34/62] s390/dasd/cio: Interpret ccw_device_get_mdc return value correctly
-Date:   Sat, 11 Jan 2020 10:50:16 +0100
-Message-Id: <20200111094846.216907576@linuxfoundation.org>
+        stable@vger.kernel.org, Sven Schnelle <svens@stackframe.org>,
+        Helge Deller <deller@gmx.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 40/84] parisc: add missing __init annotation
+Date:   Sat, 11 Jan 2020 10:50:17 +0100
+Message-Id: <20200111094901.521679707@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
-References: <20200111094837.425430968@linuxfoundation.org>
+In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
+References: <20200111094845.328046411@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,93 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Höppner <hoeppner@linux.ibm.com>
+From: Sven Schnelle <svens@stackframe.org>
 
-[ Upstream commit dd4b3c83b9efac10d48a94c61372119fc555a077 ]
+[ Upstream commit aeea5eae4fd54e94d820ed17ea3b238160be723e ]
 
-The max data count (mdc) is an unsigned 16-bit integer value as per AR
-documentation and is received via ccw_device_get_mdc() for a specific
-path mask from the CIO layer. The function itself also always returns a
-positive mdc value or 0 in case mdc isn't supported or couldn't be
-determined.
+compilation failed with:
 
-Though, the comment for this function describes a negative return value
-to indicate failures.
+MODPOST vmlinux.o
+WARNING: vmlinux.o(.text.unlikely+0xa0c): Section mismatch in reference from the function walk_lower_bus() to the function .init.text:walk_native_bus()
+The function walk_lower_bus() references
+the function __init walk_native_bus().
+This is often because walk_lower_bus lacks a __init
+annotation or the annotation of walk_native_bus is wrong.
 
-As a result, the DASD device driver interprets the return value of
-ccw_device_get_mdc() incorrectly. The error case is essentially a dead
-code path.
+FATAL: modpost: Section mismatches detected.
+Set CONFIG_SECTION_MISMATCH_WARN_ONLY=y to allow them.
+make[2]: *** [/home/svens/linux/parisc-linux/src/scripts/Makefile.modpost:64: __modpost] Error 1
+make[1]: *** [/home/svens/linux/parisc-linux/src/Makefile:1077: vmlinux] Error 2
+make[1]: Leaving directory '/home/svens/linux/parisc-linux/build'
+make: *** [Makefile:179: sub-make] Error 2
 
-To fix this behaviour, check explicitly for a return value of 0 and
-change the comment for ccw_device_get_mdc() accordingly.
-
-This fix merely enables the error code path in the DASD functions
-get_fcx_max_data() and verify_fcx_max_data(). The actual functionality
-stays the same and is still correct.
-
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Jan Höppner <hoeppner@linux.ibm.com>
-Acked-by: Peter Oberparleiter <oberpar@linux.ibm.com>
-Reviewed-by: Stefan Haberland <sth@linux.ibm.com>
-Signed-off-by: Stefan Haberland <sth@linux.ibm.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sven Schnelle <svens@stackframe.org>
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/block/dasd_eckd.c | 9 +++++----
- drivers/s390/cio/device_ops.c  | 2 +-
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ arch/parisc/kernel/drivers.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
-index 0d5e2d92e05b..81359312a987 100644
---- a/drivers/s390/block/dasd_eckd.c
-+++ b/drivers/s390/block/dasd_eckd.c
-@@ -1133,7 +1133,8 @@ static u32 get_fcx_max_data(struct dasd_device *device)
- {
- 	struct dasd_eckd_private *private = device->private;
- 	int fcx_in_css, fcx_in_gneq, fcx_in_features;
--	int tpm, mdc;
-+	unsigned int mdc;
-+	int tpm;
+diff --git a/arch/parisc/kernel/drivers.c b/arch/parisc/kernel/drivers.c
+index 5eb979d04b90..a1a5e4c59e6b 100644
+--- a/arch/parisc/kernel/drivers.c
++++ b/arch/parisc/kernel/drivers.c
+@@ -789,7 +789,7 @@ EXPORT_SYMBOL(device_to_hwpath);
+ static void walk_native_bus(unsigned long io_io_low, unsigned long io_io_high,
+                             struct device *parent);
  
- 	if (dasd_nofcx)
- 		return 0;
-@@ -1147,7 +1148,7 @@ static u32 get_fcx_max_data(struct dasd_device *device)
- 		return 0;
- 
- 	mdc = ccw_device_get_mdc(device->cdev, 0);
--	if (mdc < 0) {
-+	if (mdc == 0) {
- 		dev_warn(&device->cdev->dev, "Detecting the maximum supported data size for zHPF requests failed\n");
- 		return 0;
- 	} else {
-@@ -1158,12 +1159,12 @@ static u32 get_fcx_max_data(struct dasd_device *device)
- static int verify_fcx_max_data(struct dasd_device *device, __u8 lpm)
+-static void walk_lower_bus(struct parisc_device *dev)
++static void __init walk_lower_bus(struct parisc_device *dev)
  {
- 	struct dasd_eckd_private *private = device->private;
--	int mdc;
-+	unsigned int mdc;
- 	u32 fcx_max_data;
+ 	unsigned long io_io_low, io_io_high;
  
- 	if (private->fcx_max_data) {
- 		mdc = ccw_device_get_mdc(device->cdev, lpm);
--		if ((mdc < 0)) {
-+		if (mdc == 0) {
- 			dev_warn(&device->cdev->dev,
- 				 "Detecting the maximum data size for zHPF "
- 				 "requests failed (rc=%d) for a new path %x\n",
-diff --git a/drivers/s390/cio/device_ops.c b/drivers/s390/cio/device_ops.c
-index b22922ec32d1..474afec9ab87 100644
---- a/drivers/s390/cio/device_ops.c
-+++ b/drivers/s390/cio/device_ops.c
-@@ -595,7 +595,7 @@ EXPORT_SYMBOL(ccw_device_tm_start_timeout);
-  * @mask: mask of paths to use
-  *
-  * Return the number of 64K-bytes blocks all paths at least support
-- * for a transport command. Return values <= 0 indicate failures.
-+ * for a transport command. Return value 0 indicates failure.
-  */
- int ccw_device_get_mdc(struct ccw_device *cdev, u8 mask)
- {
 -- 
 2.20.1
 
