@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4856C137DB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:00:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3E87137FD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:24:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729372AbgAKKA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:00:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56590 "EHLO mail.kernel.org"
+        id S1730902AbgAKKXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:23:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729185AbgAKKA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:00:26 -0500
+        id S1730898AbgAKKXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:23:17 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C58662082E;
-        Sat, 11 Jan 2020 10:00:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18397205F4;
+        Sat, 11 Jan 2020 10:23:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578736825;
-        bh=ymVgdOoEAFWU4jK0LXVfQteJ4Fzw/vFX8zfX+147bdE=;
+        s=default; t=1578738195;
+        bh=gFZNpGJApJIvKCCoZj4wHFDnvyaGOvkhUJkx1IjrRt4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FANfavlqjckXgxNpukAy2A0NiAXaE38M6uNG8EQC+Rl269HicBV9p9sWVVvhl43My
-         2xuTfLBrbXVth1pI13MUTlYcWRL/WJmaOI2oiP3UTGAHQZVjHE1RQ6XZWqrEDkaWfm
-         fDKwjAfJAVDS3OcmqRQ/BcE9sHVUVTv3S+ilI3pE=
+        b=GC6vJ4JEPynUm9iZNBOw49ZamN8TN5p3QLxS/rS7TcqvZ4hzxJCyH6x991WGE9yDd
+         3lNl6IMtCidx5g7ld1xLY2JgD3X5M2M0dgSP+FoQ94omk27HFQgnC8Tv6ZhhNShgYb
+         Rs9unTD7Y9q8ktg5IZhQq5BV6LB87rQ//wF/3wRI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+c732f8644185de340492@syzkaller.appspotmail.com,
-        Brian Foster <bfoster@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 15/91] xfs: fix mount failure crash on invalid iclog memory access
-Date:   Sat, 11 Jan 2020 10:49:08 +0100
-Message-Id: <20200111094848.660860249@linuxfoundation.org>
+Subject: [PATCH 5.4 030/165] netfilter: nf_tables: validate NFT_DATA_VALUE after nft_data_init()
+Date:   Sat, 11 Jan 2020 10:49:09 +0100
+Message-Id: <20200111094923.222578226@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094844.748507863@linuxfoundation.org>
-References: <20200111094844.748507863@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,45 +43,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Foster <bfoster@redhat.com>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-[ Upstream commit 798a9cada4694ca8d970259f216cec47e675bfd5 ]
+[ Upstream commit 0d2c96af797ba149e559c5875c0151384ab6dd14 ]
 
-syzbot (via KASAN) reports a use-after-free in the error path of
-xlog_alloc_log(). Specifically, the iclog freeing loop doesn't
-handle the case of a fully initialized ->l_iclog linked list.
-Instead, it assumes that the list is partially constructed and NULL
-terminated.
+Userspace might bogusly sent NFT_DATA_VERDICT in several netlink
+attributes that assume NFT_DATA_VALUE. Moreover, make sure that error
+path invokes nft_data_release() to decrement the reference count on the
+chain object.
 
-This bug manifested because there was no possible error scenario
-after iclog list setup when the original code was added.  Subsequent
-code and associated error conditions were added some time later,
-while the original error handling code was never updated. Fix up the
-error loop to terminate either on a NULL iclog or reaching the end
-of the list.
-
-Reported-by: syzbot+c732f8644185de340492@syzkaller.appspotmail.com
-Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Fixes: 96518518cc41 ("netfilter: add nftables")
+Fixes: 0f3cd9b36977 ("netfilter: nf_tables: add range expression")
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/xfs/xfs_log.c | 2 ++
- 1 file changed, 2 insertions(+)
+ net/netfilter/nf_tables_api.c |  4 +++-
+ net/netfilter/nft_bitwise.c   |  4 ++--
+ net/netfilter/nft_cmp.c       |  6 ++++++
+ net/netfilter/nft_range.c     | 10 ++++++++++
+ 4 files changed, 21 insertions(+), 3 deletions(-)
 
-diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-index 33c9a3aae948..7bfcd09d446b 100644
---- a/fs/xfs/xfs_log.c
-+++ b/fs/xfs/xfs_log.c
-@@ -1540,6 +1540,8 @@ xlog_alloc_log(
- 		if (iclog->ic_bp)
- 			xfs_buf_free(iclog->ic_bp);
- 		kmem_free(iclog);
-+		if (prev_iclog == log->l_iclog)
-+			break;
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 7120eba71ac5..4c03c14e46bc 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -4252,8 +4252,10 @@ static int nft_get_set_elem(struct nft_ctx *ctx, struct nft_set *set,
+ 		return err;
+ 
+ 	err = -EINVAL;
+-	if (desc.type != NFT_DATA_VALUE || desc.len != set->klen)
++	if (desc.type != NFT_DATA_VALUE || desc.len != set->klen) {
++		nft_data_release(&elem.key.val, desc.type);
+ 		return err;
++	}
+ 
+ 	priv = set->ops->get(ctx->net, set, &elem, flags);
+ 	if (IS_ERR(priv))
+diff --git a/net/netfilter/nft_bitwise.c b/net/netfilter/nft_bitwise.c
+index 02afa752dd2e..10e9d50e4e19 100644
+--- a/net/netfilter/nft_bitwise.c
++++ b/net/netfilter/nft_bitwise.c
+@@ -80,7 +80,7 @@ static int nft_bitwise_init(const struct nft_ctx *ctx,
+ 			    tb[NFTA_BITWISE_MASK]);
+ 	if (err < 0)
+ 		return err;
+-	if (d1.len != priv->len) {
++	if (d1.type != NFT_DATA_VALUE || d1.len != priv->len) {
+ 		err = -EINVAL;
+ 		goto err1;
  	}
- 	spinlock_destroy(&log->l_icloglock);
- 	xfs_buf_free(log->l_xbuf);
+@@ -89,7 +89,7 @@ static int nft_bitwise_init(const struct nft_ctx *ctx,
+ 			    tb[NFTA_BITWISE_XOR]);
+ 	if (err < 0)
+ 		goto err1;
+-	if (d2.len != priv->len) {
++	if (d2.type != NFT_DATA_VALUE || d2.len != priv->len) {
+ 		err = -EINVAL;
+ 		goto err2;
+ 	}
+diff --git a/net/netfilter/nft_cmp.c b/net/netfilter/nft_cmp.c
+index 0744b2bb46da..ae730dba60c8 100644
+--- a/net/netfilter/nft_cmp.c
++++ b/net/netfilter/nft_cmp.c
+@@ -80,6 +80,12 @@ static int nft_cmp_init(const struct nft_ctx *ctx, const struct nft_expr *expr,
+ 	if (err < 0)
+ 		return err;
+ 
++	if (desc.type != NFT_DATA_VALUE) {
++		err = -EINVAL;
++		nft_data_release(&priv->data, desc.type);
++		return err;
++	}
++
+ 	priv->sreg = nft_parse_register(tb[NFTA_CMP_SREG]);
+ 	err = nft_validate_register_load(priv->sreg, desc.len);
+ 	if (err < 0)
+diff --git a/net/netfilter/nft_range.c b/net/netfilter/nft_range.c
+index 4701fa8a45e7..89efcc5a533d 100644
+--- a/net/netfilter/nft_range.c
++++ b/net/netfilter/nft_range.c
+@@ -66,11 +66,21 @@ static int nft_range_init(const struct nft_ctx *ctx, const struct nft_expr *expr
+ 	if (err < 0)
+ 		return err;
+ 
++	if (desc_from.type != NFT_DATA_VALUE) {
++		err = -EINVAL;
++		goto err1;
++	}
++
+ 	err = nft_data_init(NULL, &priv->data_to, sizeof(priv->data_to),
+ 			    &desc_to, tb[NFTA_RANGE_TO_DATA]);
+ 	if (err < 0)
+ 		goto err1;
+ 
++	if (desc_to.type != NFT_DATA_VALUE) {
++		err = -EINVAL;
++		goto err2;
++	}
++
+ 	if (desc_from.len != desc_to.len) {
+ 		err = -EINVAL;
+ 		goto err2;
 -- 
 2.20.1
 
