@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4862F137EF8
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:15:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6577F137FF5
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:25:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730258AbgAKKPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:15:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56970 "EHLO mail.kernel.org"
+        id S1730992AbgAKKY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:24:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730123AbgAKKP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:15:26 -0500
+        id S1730986AbgAKKYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:24:25 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E2F320673;
-        Sat, 11 Jan 2020 10:15:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70BD6205F4;
+        Sat, 11 Jan 2020 10:24:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737726;
-        bh=FnZPoNBagxvxWxZ/U8zTvEliUMOg4jheX72GYnmXcUg=;
+        s=default; t=1578738264;
+        bh=5tjeyfhC2XIQRJSYlk7gvZso8UMNw9iZep7LLOu9dP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xJtPs7xYIQqs80kwdWq7xi4VziYb7kw5WpnvFeo6LjYdNJJEs8IPy59AHXqGQNEMD
-         mfpOsDIBMdiYCtlHD8ixQ6eeNuSbrv9k50/94GseVrpU3erNa2U7pExdnRhrO49ufd
-         V0EZNeP/9veobUI1QPkscVT67RPzkEWFPiV82FBY=
+        b=bKL0W3SgvYYIc9Dos+P6AfL9wLqc2L+ycPtI1PhWmfwr+1H6T2UZ5asz5h2qr/RDt
+         flJDxcyurC5c7+H7Udg5dMIUzw9gyexCpmcNOWHFQ5eJ0gv/69Opy5pxWGvztAFLKr
+         NA3gR7/LNJ7QmycnW1ifTsF3kGgxSTeWUb2JNxrA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wenyang@linux.alibaba.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, "Daniel T. Lee" <danieltimlee@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 04/84] regulator: fix use after free issue
+Subject: [PATCH 5.4 062/165] samples: bpf: Replace symbol compare of trace_event
 Date:   Sat, 11 Jan 2020 10:49:41 +0100
-Message-Id: <20200111094846.083565992@linuxfoundation.org>
+Message-Id: <20200111094926.341769629@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
-References: <20200111094845.328046411@linuxfoundation.org>
+In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
+References: <20200111094921.347491861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,55 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wenyang@linux.alibaba.com>
+From: Daniel T. Lee <danieltimlee@gmail.com>
 
-[ Upstream commit 4affd79a125ac91e6a53be843ea3960a8fc00cbb ]
+[ Upstream commit bba1b2a890253528c45aa66cf856f289a215bfbc ]
 
-This is caused by dereferencing 'rdev' after put_device() in
-the _regulator_get()/_regulator_put() functions.
-This patch just moves the put_device() down a bit to avoid the
-issue.
+Previously, when this sample is added, commit 1c47910ef8013
+("samples/bpf: add perf_event+bpf example"), a symbol 'sys_read' and
+'sys_write' has been used without no prefixes. But currently there are
+no exact symbols with these under kallsyms and this leads to failure.
 
-Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Link: https://lore.kernel.org/r/20191124145835.25999-1-wenyang@linux.alibaba.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+This commit changes exact compare to substring compare to keep compatible
+with exact symbol or prefixed symbol.
+
+Fixes: 1c47910ef8013 ("samples/bpf: add perf_event+bpf example")
+Signed-off-by: Daniel T. Lee <danieltimlee@gmail.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Link: https://lore.kernel.org/bpf/20191205080114.19766-2-danieltimlee@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/core.c | 4 ++--
+ samples/bpf/trace_event_user.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index f312764660e6..4bab758d14b1 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -1724,8 +1724,8 @@ struct regulator *_regulator_get(struct device *dev, const char *id,
- 	regulator = create_regulator(rdev, dev, id);
- 	if (regulator == NULL) {
- 		regulator = ERR_PTR(-ENOMEM);
--		put_device(&rdev->dev);
- 		module_put(rdev->owner);
-+		put_device(&rdev->dev);
- 		return regulator;
+diff --git a/samples/bpf/trace_event_user.c b/samples/bpf/trace_event_user.c
+index 16a16eadd509..749a50f2f9f3 100644
+--- a/samples/bpf/trace_event_user.c
++++ b/samples/bpf/trace_event_user.c
+@@ -37,9 +37,9 @@ static void print_ksym(__u64 addr)
  	}
  
-@@ -1851,13 +1851,13 @@ static void _regulator_put(struct regulator *regulator)
- 
- 	rdev->open_count--;
- 	rdev->exclusive = 0;
--	put_device(&rdev->dev);
- 	regulator_unlock(rdev);
- 
- 	kfree_const(regulator->supply_name);
- 	kfree(regulator);
- 
- 	module_put(rdev->owner);
-+	put_device(&rdev->dev);
+ 	printf("%s;", sym->name);
+-	if (!strcmp(sym->name, "sys_read"))
++	if (!strstr(sym->name, "sys_read"))
+ 		sys_read_seen = true;
+-	else if (!strcmp(sym->name, "sys_write"))
++	else if (!strstr(sym->name, "sys_write"))
+ 		sys_write_seen = true;
  }
  
- /**
 -- 
 2.20.1
 
