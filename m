@@ -2,58 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F9B8138363
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 21:00:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FD5413836F
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 21:02:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731030AbgAKUAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 15:00:19 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:34038 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731016AbgAKUAT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 15:00:19 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iqMvZ-0008H2-H7; Sat, 11 Jan 2020 21:00:09 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 4D705100C52; Sat, 11 Jan 2020 20:59:58 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>, arnd@arndb.de,
-        vincenzo.frascino@arm.com, luto@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        x86@kernel.org
-Subject: Re: [PATCH] lib: vdso: mark __cvdso_clock_getres() as static
-In-Reply-To: <e7becc50bee355e3872b84d91cc68ae8d7776bb9.1578764712.git.christophe.leroy@c-s.fr>
-References: <e7becc50bee355e3872b84d91cc68ae8d7776bb9.1578764712.git.christophe.leroy@c-s.fr>
-Date:   Sat, 11 Jan 2020 20:59:58 +0100
-Message-ID: <875zhhsr0h.fsf@nanos.tec.linutronix.de>
+        id S1731216AbgAKUCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 15:02:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56194 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731181AbgAKUCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 15:02:17 -0500
+Received: from localhost (unknown [62.119.166.9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D42F20866;
+        Sat, 11 Jan 2020 20:02:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578772936;
+        bh=rZ14m4/Xf8VG4iosR3a8Y22bJ5hwOmuW1l+ZW+ePd1M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UrMJyuogI5VRAPX0mxzxAMSLAxpgCDFCAlr/CeXQZN+uFrTkORsB4v9uuH8Hokoc+
+         RrQvapZDxRiebeTh+sTP/iyr7fjBBItBfF/YOlz+47HVBaQfWHVtKUZFuJuFCPlPH7
+         9jMcJg6jgIQ0IvgG/90pn1N2eU4/KjQn9G84udJM=
+Date:   Sat, 11 Jan 2020 21:01:36 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers/misc: ti-st: remove redundant assignment to
+ variable i
+Message-ID: <20200111200136.GC438314@kroah.com>
+References: <20191202151352.55139-1-colin.king@canonical.com>
+ <20191203072824.GA1765@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191203072824.GA1765@kadam>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
-> When __cvdso_clock_getres() became __cvdso_clock_getres_common()
-> and a new __cvdso_clock_getres() was added, static qualifier was
-> forgotten.
->
-> Fixes: 502a590a170b ("lib/vdso: Move fallback invocation to the callers")
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+On Tue, Dec 03, 2019 at 10:28:24AM +0300, Dan Carpenter wrote:
+> On Mon, Dec 02, 2019 at 03:13:52PM +0000, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > The variable i is being initialized with a value that is never
+> > read and it is being updated later with a new value in a for-loop.
+> > The initialization is redundant and can be removed.
+> > 
+> > Addresses-Coverity: ("Unused value")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  drivers/misc/ti-st/st_core.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/misc/ti-st/st_core.c b/drivers/misc/ti-st/st_core.c
+> > index 2ae9948a91e1..6255d9b88122 100644
+> > --- a/drivers/misc/ti-st/st_core.c
+> > +++ b/drivers/misc/ti-st/st_core.c
+> > @@ -736,7 +736,7 @@ static int st_tty_open(struct tty_struct *tty)
+> >  
+> >  static void st_tty_close(struct tty_struct *tty)
+> >  {
+> > -	unsigned char i = ST_MAX_CHANNELS;
+> > +	unsigned char i;
+> >  	unsigned long flags = 0;
+> 
+> I'm surprised that flags doesn't generate a warning as well.
 
-I've already queued:
+Yes, flags should be not initialized as well.
 
-     https://lore.kernel.org/r/20191128111719.8282-1-vincenzo.frascino@arm.com
+Colin, can you resend a v2 with that added?
 
-but thanks for caring!
+thanks,
 
-Thanks,
-
-        tglx
+greg k-h
