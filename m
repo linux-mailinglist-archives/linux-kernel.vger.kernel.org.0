@@ -2,74 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FDB7137D80
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:00:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E959D137CCB
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 10:50:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729232AbgAKJ62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 04:58:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729051AbgAKJ62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 04:58:28 -0500
-Received: from localhost (unknown [62.119.166.9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D29AC2077C;
-        Sat, 11 Jan 2020 09:58:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578736707;
-        bh=yxO19RkpbpT6xRpMIbMXZhoy5cZeZcVraSfibN4vxIA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sg2dfAlM/ZoVcFHTHdnLUQQs7rrt354aMc1KFnAkIudVmhKSrLSnFXeT5CwPe1sF8
-         qeL9Y981TkzR0iWkXL4diwRGvtknzOqhdVjUWD18kGp57OU+hOsijUlt22FyNy67S7
-         15v5Y/A+hFtBwqzW48PdvRz9vxDWoYPSn3p2HQZg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 59/59] USB: serial: option: add Telit ME910G1 0x110a composition
-Date:   Sat, 11 Jan 2020 10:50:08 +0100
-Message-Id: <20200111094854.319738883@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094835.417654274@linuxfoundation.org>
-References: <20200111094835.417654274@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1728826AbgAKJuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 04:50:17 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:2985 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728759AbgAKJuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 04:50:16 -0500
+Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.56])
+        by Forcepoint Email with ESMTP id B6A7D6195E8CA0ACD33A;
+        Sat, 11 Jan 2020 17:50:13 +0800 (CST)
+Received: from dggeme764-chm.china.huawei.com (10.3.19.110) by
+ DGGEMM403-HUB.china.huawei.com (10.3.20.211) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Sat, 11 Jan 2020 17:50:13 +0800
+Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
+ dggeme764-chm.china.huawei.com (10.3.19.110) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Sat, 11 Jan 2020 17:50:13 +0800
+Received: from dggeme763-chm.china.huawei.com ([10.6.66.36]) by
+ dggeme763-chm.china.huawei.com ([10.6.66.36]) with mapi id 15.01.1713.004;
+ Sat, 11 Jan 2020 17:50:13 +0800
+From:   linmiaohe <linmiaohe@huawei.com>
+To:     Colin King <colin.king@canonical.com>
+CC:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        John Crispin <john@phrozen.org>,
+        Shashidhar Lakkavalli <slakkavalli@datto.com>,
+        "ath11k@lists.infradead.org" <ath11k@lists.infradead.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] ath11k: avoid null pointer dereference when pointer
+ band is null
+Thread-Topic: [PATCH][next] ath11k: avoid null pointer dereference when
+ pointer band is null
+Thread-Index: AdXIZDUYESk9sMb86Em1GlFaBBmLPA==
+Date:   Sat, 11 Jan 2020 09:50:12 +0000
+Message-ID: <05d5d54e035e4d69ad4ffb4a835a495a@huawei.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.173.221.158]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniele Palmas <dnlplm@gmail.com>
-
-commit 0d3010fa442429f8780976758719af05592ff19f upstream.
-
-This patch adds the following Telit ME910G1 composition:
-
-0x110a: tty, tty, tty, rmnet
-
-Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/usb/serial/option.c |    2 ++
- 1 file changed, 2 insertions(+)
-
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -1167,6 +1167,8 @@ static const struct usb_device_id option
- 	  .driver_info = NCTRL(0) | RSVD(3) },
- 	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x1102, 0xff),	/* Telit ME910 (ECM) */
- 	  .driver_info = NCTRL(0) },
-+	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x110a, 0xff),	/* Telit ME910G1 */
-+	  .driver_info = NCTRL(0) | RSVD(3) },
- 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910),
- 	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(2) },
- 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910_USBCFG4),
-
-
+DQpDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPiB3cm90Ze+8mg0KPkZy
+b206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+DQo+SW4gdGhl
+IHVubGlrZWx5IGV2ZW50IHRoYXQgY2FwLT5zdXBwb3J0ZWRfYmFuZHMgaGFzIG5laXRoZXIgV01J
+X0hPU1RfV0xBTl8yR19DQVAgc2V0IG9yIFdNSV9IT1NUX1dMQU5fNUdfQ0FQIHNldCB0aGVuIHBv
+aW50ZXIgYmFuZCBpcyBudWxsIGFuZCBhIG51bGwgZGVyZWZlcmVuY2Ugb2NjdXJzIHdoZW4gYXNz
+aWduaW5nDQo+YmFuZC0+bl9pZnR5cGVfZGF0YS4gIE1vdmUgdGhlIGFzc2lnbm1lbnQgdG8gdGhl
+IGlmIGJsb2NrcyB0bw0KPmF2b2lkIHRoaXMuICBDbGVhbnMgdXAgc3RhdGljIGFuYWx5c2lzIHdh
+cm5pbmdzLg0KPg0KPkFkZHJlc3Nlcy1Db3Zlcml0eTogKCJFeHBsaWNpdCBudWxsIGRlcmVmZXJl
+bmNlIikNCj5GaXhlczogOWYwNTZlZDhlZTAxICgiYXRoMTFrOiBhZGQgSEUgc3VwcG9ydCIpDQo+
+U2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4N
+Cj4tLS0NCj4gZHJpdmVycy9uZXQvd2lyZWxlc3MvYXRoL2F0aDExay9tYWMuYyB8IDggKysrKy0t
+LS0NCj4gMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCg0K
+SXQgbG9va3MgZmluZSBmb3IgbWUuIFRoYW5rcy4NClJldmlld2VkLWJ5OiBNaWFvaGUgTGluIDxs
+aW5taWFvaGVAaHVhd2VpLmNvbT4NCg==
