@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BAB6138056
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:28:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22379137E6D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:10:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731270AbgAKK21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:28:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35826 "EHLO mail.kernel.org"
+        id S1729785AbgAKKJn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:09:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731047AbgAKK2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:28:24 -0500
+        id S1729420AbgAKKJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:09:42 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5440205F4;
-        Sat, 11 Jan 2020 10:28:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 937B0206DA;
+        Sat, 11 Jan 2020 10:09:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578738503;
-        bh=h5NfLAMahDeyBWLnNDHOkNGkRzHip58O6rBMQh4p7X4=;
+        s=default; t=1578737382;
+        bh=+4RUYkb29mQg7jC/y7nMusA3eqz48RFdI5+7svWW1QA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=paq/kgpU0wUFFQeek+xRBxBiP/rB22SgxPY8wWEbFOHYsDo9bmpmeeB7wLgvf6Reo
-         Kzuj4JckBT0kMbRX7T37wJUbcXPUGHapC6HI5WEdbd0mSXgOkOsdvYznHe/DV/8DLB
-         QIu4Oc6Jtox3ZUmYW7/Uk0VVwz3eE7G+JjrJItnw=
+        b=W1mAsyL/uBMR2Gw63qBBvO87grhY7WRysoNtBPT9jlnWilscWWja0ki1TJwvcPbbW
+         j1RNWEOehAg0BXaI6JEd5IGA+aTzdEfEa52gGQquwYbW38drdMGjRgPFAMDG4VAAW4
+         ksi7bi5mJE/SAK49ot5CSVfJ9W25q3dpsc60zkCA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 089/165] rfkill: Fix incorrect check to avoid NULL pointer dereference
+Subject: [PATCH 4.14 26/62] rfkill: Fix incorrect check to avoid NULL pointer dereference
 Date:   Sat, 11 Jan 2020 10:50:08 +0100
-Message-Id: <20200111094928.612233905@linuxfoundation.org>
+Message-Id: <20200111094844.846222212@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-References: <20200111094921.347491861@linuxfoundation.org>
+In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
+References: <20200111094837.425430968@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -61,10 +61,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/net/rfkill/core.c b/net/rfkill/core.c
-index 0bf9bf1ceb8f..6c089320ae4f 100644
+index 99a2e55b01cf..e31b4288f32c 100644
 --- a/net/rfkill/core.c
 +++ b/net/rfkill/core.c
-@@ -1002,10 +1002,13 @@ static void rfkill_sync_work(struct work_struct *work)
+@@ -998,10 +998,13 @@ static void rfkill_sync_work(struct work_struct *work)
  int __must_check rfkill_register(struct rfkill *rfkill)
  {
  	static unsigned long rfkill_no;
