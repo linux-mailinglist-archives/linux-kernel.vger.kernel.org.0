@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C703137F53
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:18:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0BB6137EC3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Jan 2020 11:13:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730546AbgAKKSb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 05:18:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36760 "EHLO mail.kernel.org"
+        id S1729847AbgAKKNe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 05:13:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729838AbgAKKSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 05:18:30 -0500
+        id S1729794AbgAKKNb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 05:13:31 -0500
 Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 444DB20848;
-        Sat, 11 Jan 2020 10:18:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BE6A206DA;
+        Sat, 11 Jan 2020 10:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578737910;
-        bh=UR8VY5Eq6SHU64Zk5WIvzj+mQbgDQ6n8UbCfCScRUec=;
+        s=default; t=1578737610;
+        bh=T39gpd+rLfX8rZmsdvoqRfz2AhhG+TRtteGvr0j7RuM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ASc5Hdf4p5zHbs3meal3P6IFS+AhIxtPUo1CqHOKHdWLheQGo2kpMOrBlMHHSk1Tw
-         xhNXeUDJaLFwP1V5n6wU+20EfDeuiFjab+tPMpc64XouiN/3BhYT9v2pJM+GulFVgr
-         cs46QHU4puF8i6hGeVBJ/Dz0TqHJdvS/1F4hSpgc=
+        b=qWyN74eNTu36c08qyYxsCaa0nR9vtaL+3cL7OQom6XDE8xAwyI9/EhdS5U5NtLSmH
+         x9HmMgFngmqcARpCkGGjXyLLhBpUE+Z8e6RQLZ2tgZAduC01QsiRj22QYNxvPjfIuO
+         yvT0pD2RNP3HYT1vtVRdR0AiAvBGLuI94v5q8F2c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Meyer <dmeyer@gigaio.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Kelvin Cao <Kelvin.Cao@microchip.com>
-Subject: [PATCH 4.19 64/84] PCI/switchtec: Read all 64 bits of part_event_bitmap
-Date:   Sat, 11 Jan 2020 10:50:41 +0100
-Message-Id: <20200111094910.117802780@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 60/62] vlan: vlan_changelink() should propagate errors
+Date:   Sat, 11 Jan 2020 10:50:42 +0100
+Message-Id: <20200111094857.284709841@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200111094845.328046411@linuxfoundation.org>
-References: <20200111094845.328046411@linuxfoundation.org>
+In-Reply-To: <20200111094837.425430968@linuxfoundation.org>
+References: <20200111094837.425430968@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Logan Gunthorpe <logang@deltatee.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 6acdf7e19b37cb3a9258603d0eab315079c19c5e upstream.
+[ Upstream commit eb8ef2a3c50092bb018077c047b8dba1ce0e78e3 ]
 
-The part_event_bitmap register is 64 bits wide, so read it with ioread64()
-instead of the 32-bit ioread32().
+Both vlan_dev_change_flags() and vlan_dev_set_egress_priority()
+can return an error. vlan_changelink() should not ignore them.
 
-Fixes: 52eabba5bcdb ("switchtec: Add IOCTLs to the Switchtec driver")
-Link: https://lore.kernel.org/r/20190910195833.3891-1-logang@deltatee.com
-Reported-by: Doug Meyer <dmeyer@gigaio.com>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org	# v4.12+
-Cc: Kelvin Cao <Kelvin.Cao@microchip.com>
+Fixes: 07b5b17e157b ("[VLAN]: Use rtnl_link API")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/pci/switch/switchtec.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/8021q/vlan_netlink.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/pci/switch/switchtec.c
-+++ b/drivers/pci/switch/switchtec.c
-@@ -13,7 +13,7 @@
- #include <linux/uaccess.h>
- #include <linux/poll.h>
- #include <linux/wait.h>
--
-+#include <linux/io-64-nonatomic-lo-hi.h>
- #include <linux/nospec.h>
+--- a/net/8021q/vlan_netlink.c
++++ b/net/8021q/vlan_netlink.c
+@@ -95,11 +95,13 @@ static int vlan_changelink(struct net_de
+ 	struct ifla_vlan_flags *flags;
+ 	struct ifla_vlan_qos_mapping *m;
+ 	struct nlattr *attr;
+-	int rem;
++	int rem, err;
  
- MODULE_DESCRIPTION("Microsemi Switchtec(tm) PCIe Management Driver");
-@@ -633,7 +633,7 @@ static int ioctl_event_summary(struct sw
- 	u32 reg;
- 
- 	s.global = ioread32(&stdev->mmio_sw_event->global_summary);
--	s.part_bitmap = ioread32(&stdev->mmio_sw_event->part_event_bitmap);
-+	s.part_bitmap = readq(&stdev->mmio_sw_event->part_event_bitmap);
- 	s.local_part = ioread32(&stdev->mmio_part_cfg->part_event_summary);
- 
- 	for (i = 0; i < stdev->partition_count; i++) {
+ 	if (data[IFLA_VLAN_FLAGS]) {
+ 		flags = nla_data(data[IFLA_VLAN_FLAGS]);
+-		vlan_dev_change_flags(dev, flags->flags, flags->mask);
++		err = vlan_dev_change_flags(dev, flags->flags, flags->mask);
++		if (err)
++			return err;
+ 	}
+ 	if (data[IFLA_VLAN_INGRESS_QOS]) {
+ 		nla_for_each_nested(attr, data[IFLA_VLAN_INGRESS_QOS], rem) {
+@@ -110,7 +112,9 @@ static int vlan_changelink(struct net_de
+ 	if (data[IFLA_VLAN_EGRESS_QOS]) {
+ 		nla_for_each_nested(attr, data[IFLA_VLAN_EGRESS_QOS], rem) {
+ 			m = nla_data(attr);
+-			vlan_dev_set_egress_priority(dev, m->from, m->to);
++			err = vlan_dev_set_egress_priority(dev, m->from, m->to);
++			if (err)
++				return err;
+ 		}
+ 	}
+ 	return 0;
 
 
