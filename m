@@ -2,133 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FA3913849C
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 03:41:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAB1D1384B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 05:12:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732012AbgALClA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 21:41:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46742 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731986AbgALCk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 21:40:59 -0500
-Received: from T480 (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5380C2084D;
-        Sun, 12 Jan 2020 02:40:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578796858;
-        bh=/IIGU/qgpqqRTXW8bMohqvTwPewVuB6W2G42p3yc9HE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ImEJwUTEMXWvenNIqnbvhqnBQZTjX3B2m84HwCyMPCThfYeDfZcKPhf5Ad1ba/AGu
-         3jUgo70nCH90gVas+ybFyBfGoQ6IH50MOlI9oC3FUlmnda/OMf6m0Tn/YnQ/tMYwSq
-         2U2c4xFwQS/G9z1C/+zgJZGiNu5kQQ126qwJYp+0=
-Date:   Sun, 12 Jan 2020 10:40:48 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anson Huang <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Subject: Re: [PATCH 3/3] clk: imx: imx8m: use imx_clk_hw_pll14xx_flags for
- dram pll
-Message-ID: <20200112024046.GZ4456@T480>
-References: <1577696903-27870-1-git-send-email-peng.fan@nxp.com>
- <1577696903-27870-4-git-send-email-peng.fan@nxp.com>
+        id S1732126AbgALEMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 23:12:37 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:42464 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732109AbgALEMh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 Jan 2020 23:12:37 -0500
+Received: by mail-il1-f196.google.com with SMTP id t2so5096213ilq.9
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Jan 2020 20:12:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=yxgPUohtorinQ1iURi+e5EElb21+q/PQOXu1qlRuYC8=;
+        b=RZvJabc1sSwdcHWFEmKwIT5sw0XBxGKgY6USTbJyIK6OjvqK6Sh/bX3varbI648pOU
+         Ra++BPRyfVdyv6krnSQ2Mt/gy1N5EEPbw2yGPUb6WwOuPX8dTfdy96aDLDPjPwTyC649
+         IJX8xMmT6YLyQTgJSGOX8It2oPFXDBFducLRnj8NR63BWbyFuMzUdIJMCFLSn142tNKb
+         2A14SVhyB/hHBFJgu36Bfd2x7Rd9kCnJgyXKt4TTWwbmbexhJwfQRxroyei1grfUDL8m
+         bULFSH4Sj02vfGqErtcd2v1kiRv2nNSNnLXz/zjI5WYfnhkrBSPHMayWJaTJSMpcsvYZ
+         xXuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=yxgPUohtorinQ1iURi+e5EElb21+q/PQOXu1qlRuYC8=;
+        b=hcZ39jZusCH+lzbiwV1ohnFhrYgtg3C2QVz9a5OFzq890+x2WliIhSUNTQ+42PkZMV
+         mS6/hz61+kflavqDN4C0CF1Aed2pQQfDszv92MCE5VChGytKKLccLRSmuTJYtPqIK+hF
+         SZHhxtfK6OQ6tfqBPIzhUWbpV4OdIcpNXHHnmUNkpyWnwX9Hf7H0q9/ZOaBuWNEltamL
+         t1/0ZDGW8+ZKZ5YNuGdHTQsSxds+PgrGs164qhmznqAFHOyPKZMcFEGOTeznGVWcyKke
+         rum1NmAjHTWnki2mSyBmgjTzYdU25A9f7sBUZnxXG31gEbtUCTe60eEhfrXt8rvf9jeg
+         qL6w==
+X-Gm-Message-State: APjAAAXiAjdxxxaXC5T7XbS5rfxONrt2HZjN9BGkYD7H6Cm7JwdUQJqw
+        CfGp66ZpaqgujilCizdHMPfvuDfm0PRXVgSz2d0=
+X-Google-Smtp-Source: APXvYqzQQxoFG1RFdgHTTUD6xLds87YDswhfoyzdEae+1EZf8cZBFZhzRYxiwK5FVOwpES/E64RPJiLQuIlHwfutSt4=
+X-Received: by 2002:a92:d151:: with SMTP id t17mr9778343ilg.175.1578802356459;
+ Sat, 11 Jan 2020 20:12:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1577696903-27870-4-git-send-email-peng.fan@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a92:9cdd:0:0:0:0:0 with HTTP; Sat, 11 Jan 2020 20:12:35
+ -0800 (PST)
+Reply-To: usmanabu61@gmail.com
+From:   Mr USMAN ABU <abuu1419@gmail.com>
+Date:   Sun, 12 Jan 2020 05:12:35 +0100
+Message-ID: <CAKN13049biGbYqdHmuY7wxwhF7hdV7ibWtxmBKw=oXvz4g9CPA@mail.gmail.com>
+Subject: FROM Mr USMAN ABU
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 30, 2019 at 09:13:10AM +0000, Peng Fan wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> Use imx_clk_hw_pll14xx_flags for dram pll.
-> Modify imx_1443x_dram_pll to imx_1443x_dram_readonly, because dram pll
-> is not expected to be modified from Linux.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx8mm.c  | 2 +-
->  drivers/clk/imx/clk-imx8mn.c  | 2 +-
->  drivers/clk/imx/clk-pll14xx.c | 3 +--
->  drivers/clk/imx/clk.h         | 2 +-
->  4 files changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-> index 2ed93fc25087..55862652b19f 100644
-> --- a/drivers/clk/imx/clk-imx8mm.c
-> +++ b/drivers/clk/imx/clk-imx8mm.c
-> @@ -337,7 +337,7 @@ static int imx8mm_clocks_probe(struct platform_device *pdev)
->  	hws[IMX8MM_AUDIO_PLL1] = imx_clk_hw_pll14xx("audio_pll1", "audio_pll1_ref_sel", base, &imx_1443x_pll);
->  	hws[IMX8MM_AUDIO_PLL2] = imx_clk_hw_pll14xx("audio_pll2", "audio_pll2_ref_sel", base + 0x14, &imx_1443x_pll);
->  	hws[IMX8MM_VIDEO_PLL1] = imx_clk_hw_pll14xx("video_pll1", "video_pll1_ref_sel", base + 0x28, &imx_1443x_pll);
-> -	hws[IMX8MM_DRAM_PLL] = imx_clk_hw_pll14xx("dram_pll", "dram_pll_ref_sel", base + 0x50, &imx_1443x_dram_pll);
-> +	hws[IMX8MM_DRAM_PLL] = imx_clk_hw_pll14xx_flags("dram_pll", "dram_pll_ref_sel", base + 0x50, &imx_1443x_pll_readonly, CLK_GET_RATE_NOCACHE);
->  	hws[IMX8MM_GPU_PLL] = imx_clk_hw_pll14xx("gpu_pll", "gpu_pll_ref_sel", base + 0x64, &imx_1416x_pll);
->  	hws[IMX8MM_VPU_PLL] = imx_clk_hw_pll14xx("vpu_pll", "vpu_pll_ref_sel", base + 0x74, &imx_1416x_pll);
->  	hws[IMX8MM_ARM_PLL] = imx_clk_hw_pll14xx("arm_pll", "arm_pll_ref_sel", base + 0x84, &imx_1416x_pll);
-> diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-> index c5e7316b4c66..e4710d3cf3e0 100644
-> --- a/drivers/clk/imx/clk-imx8mn.c
-> +++ b/drivers/clk/imx/clk-imx8mn.c
-> @@ -334,7 +334,7 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
->  	hws[IMX8MN_AUDIO_PLL1] = imx_clk_hw_pll14xx("audio_pll1", "audio_pll1_ref_sel", base, &imx_1443x_pll);
->  	hws[IMX8MN_AUDIO_PLL2] = imx_clk_hw_pll14xx("audio_pll2", "audio_pll2_ref_sel", base + 0x14, &imx_1443x_pll);
->  	hws[IMX8MN_VIDEO_PLL1] = imx_clk_hw_pll14xx("video_pll1", "video_pll1_ref_sel", base + 0x28, &imx_1443x_pll);
-> -	hws[IMX8MN_DRAM_PLL] = imx_clk_hw_pll14xx("dram_pll", "dram_pll_ref_sel", base + 0x50, &imx_1443x_dram_pll);
-> +	hws[IMX8MN_DRAM_PLL] = imx_clk_hw_pll14xx_flags("dram_pll", "dram_pll_ref_sel", base + 0x50, &imx_1443x_pll_readonly, CLK_GET_RATE_NOCACHE);
->  	hws[IMX8MN_GPU_PLL] = imx_clk_hw_pll14xx("gpu_pll", "gpu_pll_ref_sel", base + 0x64, &imx_1416x_pll);
->  	hws[IMX8MN_VPU_PLL] = imx_clk_hw_pll14xx("vpu_pll", "vpu_pll_ref_sel", base + 0x74, &imx_1416x_pll);
->  	hws[IMX8MN_ARM_PLL] = imx_clk_hw_pll14xx("arm_pll", "arm_pll_ref_sel", base + 0x84, &imx_1416x_pll);
-> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-> index 030159dc4884..33236d8580a6 100644
-> --- a/drivers/clk/imx/clk-pll14xx.c
-> +++ b/drivers/clk/imx/clk-pll14xx.c
-> @@ -67,9 +67,8 @@ struct imx_pll14xx_clk imx_1443x_pll = {
->  	.rate_count = ARRAY_SIZE(imx_pll1443x_tbl),
->  };
->  
-> -struct imx_pll14xx_clk imx_1443x_dram_pll = {
-> +struct imx_pll14xx_clk imx_1443x_pll_readonly = {
->  	.type = PLL_1443X,
-> -	.flags = CLK_GET_RATE_NOCACHE,
+FROM Mr USMAN  ABU
+BILLS AND EXCHANGE MANAGER,
+In BANK OF AFRICA (B.O.A)
+Ouagadougou Burkina Faso, IN WEST AFRCA
 
-Not really sure what we gain from creating a new function and moving the
-flag from here to there.  I'm personally not fond of it.
 
-Shawn
+Please i want you to read this later very carefully and please do not
+joke with this message. I am Mr USMAN  ABU, the bill and exchange
+manager in the boa bank of Africa Ouagadougou Burkina Faso.
 
->  };
->  
->  struct imx_pll14xx_clk imx_1416x_pll = {
-> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-> index 35a9d294b6df..ea84d2993b57 100644
-> --- a/drivers/clk/imx/clk.h
-> +++ b/drivers/clk/imx/clk.h
-> @@ -53,7 +53,7 @@ struct imx_pll14xx_clk {
->  
->  extern struct imx_pll14xx_clk imx_1416x_pll;
->  extern struct imx_pll14xx_clk imx_1443x_pll;
-> -extern struct imx_pll14xx_clk imx_1443x_dram_pll;
-> +extern struct imx_pll14xx_clk imx_1443x_pll_readonly;
->  
->  #define imx_clk_cpu(name, parent_name, div, mux, pll, step) \
->  	to_clk(imx_clk_hw_cpu(name, parent_name, div, mux, pll, step))
-> -- 
-> 2.16.4
-> 
+In my department, I found the deposited fund amounted ($18.5 million)
+one of my bank clients who died Along with his entire family in air
+crash, On July 31 2000 please go through the
+website.http://news.bbc.co.uk/2/hi/europe/859479.stm
+
+Can you be able and capable to assist me provide your bank account
+where this $18.5 million will transfer into? Because I don=E2=80=99t want t=
+he
+money to go into our bank treasury account as an unclaimed fund, so
+this is the reason why I contacted you so that our bank will release
+this money to you as the nest of kin to the deceased customer. Please
+I would like you to keep this proposal as top secret.
+
+I shall give you 40% of the total fund as soon as this $18.5 million
+transferred into your bank account and I shall visit you in your
+country for the sharing of the funds.
+From banking experience it will take up to ( 7 ) working days to
+conclude this transfer. I want you to also know that this transaction
+will involve a little expense which will be shared among both of us.
+
+Your Urgent response is needed immediately to enable me to send to you
+application later which you have to fill and apply to the bank for the
+transfer of the $18.5 million USA dollars. Before I send to you the
+application later, you have to Fill this form bellow and resend it
+back to me immediately for more trust.
+Your Name....
+Your home addresses ....
+Your country ....
+Your city ....
+Your home telephone ....
+Your private telephone ....
+Your age ....
+Your occupation ....
+Your religion=E2=80=A6
+Your international passport or ID card ....
+
+Thanks and my regards to your family.
+Mr USMAN  ABU
