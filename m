@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CBCB138721
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 17:56:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53EAA138724
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 17:56:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733151AbgALQ4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1733137AbgALQ4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sun, 12 Jan 2020 11:56:18 -0500
-Received: from andre.telenet-ops.be ([195.130.132.53]:41812 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733115AbgALQ4R (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:41944 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733102AbgALQ4R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 12 Jan 2020 11:56:17 -0500
 Received: from ramsan ([84.195.182.253])
-        by andre.telenet-ops.be with bizsmtp
-        id pUwG2100B5USYZQ01UwGBU; Sun, 12 Jan 2020 17:56:16 +0100
+        by laurent.telenet-ops.be with bizsmtp
+        id pUwG2100B5USYZQ01UwGad; Sun, 12 Jan 2020 17:56:16 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iqgXA-00082t-5S; Sun, 12 Jan 2020 17:56:16 +0100
+        id 1iqgXA-00082w-6V; Sun, 12 Jan 2020 17:56:16 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iqgXA-0005Ss-4I; Sun, 12 Jan 2020 17:56:16 +0100
+        id 1iqgXA-0005Su-5P; Sun, 12 Jan 2020 17:56:16 +0100
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Philip Blundell <philb@gnu.org>
 Cc:     linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 1/3] dio: Make dio_match_device() static
-Date:   Sun, 12 Jan 2020 17:56:11 +0100
-Message-Id: <20200112165613.20960-2-geert@linux-m68k.org>
+Subject: [PATCH 2/3] dio: Fix dio_bus_match() kerneldoc
+Date:   Sun, 12 Jan 2020 17:56:12 +0100
+Message-Id: <20200112165613.20960-3-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200112165613.20960-1-geert@linux-m68k.org>
 References: <20200112165613.20960-1-geert@linux-m68k.org>
@@ -37,48 +37,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unlike its PCI counterpart, dio_match_device() was never used outside
-the DIO bus code.
+The kerneldoc for dio_bus_match() was obviously copied from
+dio_match_device(), but wasnt't updated for the different calling
+context and semantics.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- drivers/dio/dio-driver.c | 3 +--
- include/linux/dio.h      | 1 -
- 2 files changed, 1 insertion(+), 3 deletions(-)
+ drivers/dio/dio-driver.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/dio/dio-driver.c b/drivers/dio/dio-driver.c
-index a7b174ef4c85f9c4..daf87e214a7794c2 100644
+index daf87e214a7794c2..69c46935ffc78cef 100644
 --- a/drivers/dio/dio-driver.c
 +++ b/drivers/dio/dio-driver.c
-@@ -25,7 +25,7 @@
-  *  dio_device_id structure or %NULL if there is no match.
+@@ -105,9 +105,9 @@ void dio_unregister_driver(struct dio_driver *drv)
+  *  @dev: the DIO device structure to match against
+  *  @drv: the &device_driver that points to the array of DIO device id structures to search
+  *
+- *  Used by a driver to check whether a DIO device present in the
+- *  system is in its list of supported devices. Returns the matching
+- *  dio_device_id structure or %NULL if there is no match.
++ *  Used by the driver core to check whether a DIO device present in the
++ *  system is in a driver's list of supported devices. Returns 1 if supported,
++ *  and 0 if there is no match.
   */
  
--const struct dio_device_id *
-+static const struct dio_device_id *
- dio_match_device(const struct dio_device_id *ids,
- 		   const struct dio_dev *d)
- {
-@@ -137,7 +137,6 @@ static int __init dio_driver_init(void)
- 
- postcore_initcall(dio_driver_init);
- 
--EXPORT_SYMBOL(dio_match_device);
- EXPORT_SYMBOL(dio_register_driver);
- EXPORT_SYMBOL(dio_unregister_driver);
- EXPORT_SYMBOL(dio_bus_type);
-diff --git a/include/linux/dio.h b/include/linux/dio.h
-index 1470d1d943b477ab..ca07243690edf6eb 100644
---- a/include/linux/dio.h
-+++ b/include/linux/dio.h
-@@ -247,7 +247,6 @@ extern int dio_create_sysfs_dev_files(struct dio_dev *);
- /* New-style probing */
- extern int dio_register_driver(struct dio_driver *);
- extern void dio_unregister_driver(struct dio_driver *);
--extern const struct dio_device_id *dio_match_device(const struct dio_device_id *ids, const struct dio_dev *z);
- static inline struct dio_driver *dio_dev_driver(const struct dio_dev *d)
- {
-     return d->driver;
+ static int dio_bus_match(struct device *dev, struct device_driver *drv)
 -- 
 2.17.1
 
