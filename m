@@ -2,85 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB871138715
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 17:50:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F1A213871A
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 17:51:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733106AbgALQtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 11:49:53 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:42906 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730190AbgALQtw (ORCPT
+        id S1733126AbgALQvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 11:51:13 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:55570 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730190AbgALQvN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 11:49:52 -0500
+        Sun, 12 Jan 2020 11:51:13 -0500
 Received: from ramsan ([84.195.182.253])
-        by albert.telenet-ops.be with bizsmtp
-        id pUpr210065USYZQ06UprGA; Sun, 12 Jan 2020 17:49:51 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id pUrC210045USYZQ01UrCgJ; Sun, 12 Jan 2020 17:51:12 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iqgQx-0007yN-05; Sun, 12 Jan 2020 17:49:51 +0100
+        id 1iqgSG-0007zB-0w; Sun, 12 Jan 2020 17:51:12 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iqgQw-0005Gs-VF; Sun, 12 Jan 2020 17:49:50 +0100
+        id 1iqgSF-0005KJ-VP; Sun, 12 Jan 2020 17:51:11 +0100
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     linux-m68k@lists.linux-m68k.org
-Cc:     linux-kernel@vger.kernel.org,
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 5/5] zorro: Move zorro_bus_type to bus-private header file
-Date:   Sun, 12 Jan 2020 17:49:49 +0100
-Message-Id: <20200112164949.20196-6-geert@linux-m68k.org>
+Subject: [PATCH] MIPS: ip22-gio: Make gio_match_device() static
+Date:   Sun, 12 Jan 2020 17:51:10 +0100
+Message-Id: <20200112165110.20427-1-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200112164949.20196-1-geert@linux-m68k.org>
-References: <20200112164949.20196-1-geert@linux-m68k.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-zorro_bus_type was never used outside the Zorro bus code.  Hence move it
-from the public to the bus-private header file.
+Unlike its PCI counterpart, gio_match_device() was never used outside
+the GIO bus code.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- drivers/zorro/zorro.h | 7 +++++++
- include/linux/zorro.h | 7 -------
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ arch/mips/include/asm/gio_device.h | 2 --
+ arch/mips/sgi-ip22/ip22-gio.c      | 6 +++---
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/zorro/zorro.h b/drivers/zorro/zorro.h
-index ac0bab3412d90ddb..f84df9fb4c200ec3 100644
---- a/drivers/zorro/zorro.h
-+++ b/drivers/zorro/zorro.h
-@@ -1,5 +1,12 @@
- /* SPDX-License-Identifier: GPL-2.0 */
+diff --git a/arch/mips/include/asm/gio_device.h b/arch/mips/include/asm/gio_device.h
+index c52948f9ca9598af..159087f5386e9efd 100644
+--- a/arch/mips/include/asm/gio_device.h
++++ b/arch/mips/include/asm/gio_device.h
+@@ -32,8 +32,6 @@ struct gio_driver {
+ };
+ #define to_gio_driver(drv) container_of(drv, struct gio_driver, driver)
  
-+    /*
-+     *  Zorro bus
-+     */
-+
-+extern struct bus_type zorro_bus_type;
-+
-+
- #ifdef CONFIG_ZORRO_NAMES
- extern void zorro_name_device(struct zorro_dev *z);
- #else
-diff --git a/include/linux/zorro.h b/include/linux/zorro.h
-index 22f3f80fbcb5afe6..e2e4de188d84a6d9 100644
---- a/include/linux/zorro.h
-+++ b/include/linux/zorro.h
-@@ -40,13 +40,6 @@ struct zorro_dev {
- #define	to_zorro_dev(n)	container_of(n, struct zorro_dev, dev)
+-extern const struct gio_device_id *gio_match_device(const struct gio_device_id *,
+-						    const struct gio_device *);
+ extern struct gio_device *gio_dev_get(struct gio_device *);
+ extern void gio_dev_put(struct gio_device *);
  
+diff --git a/arch/mips/sgi-ip22/ip22-gio.c b/arch/mips/sgi-ip22/ip22-gio.c
+index 282b47c2dc2707b5..de0768a49ee87833 100644
+--- a/arch/mips/sgi-ip22/ip22-gio.c
++++ b/arch/mips/sgi-ip22/ip22-gio.c
+@@ -47,8 +47,9 @@ static struct device gio_bus = {
+  * Used by a driver to check whether an of_device present in the
+  * system is in its list of supported devices.
+  */
+-const struct gio_device_id *gio_match_device(const struct gio_device_id *match,
+-		     const struct gio_device *dev)
++static const struct gio_device_id *
++gio_match_device(const struct gio_device_id *match,
++		 const struct gio_device *dev)
+ {
+ 	const struct gio_device_id *ids;
  
--    /*
--     *  Zorro bus
--     */
--
--extern struct bus_type zorro_bus_type;
--
--
-     /*
-      *  Zorro device drivers
-      */
+@@ -58,7 +59,6 @@ const struct gio_device_id *gio_match_device(const struct gio_device_id *match,
+ 
+ 	return NULL;
+ }
+-EXPORT_SYMBOL_GPL(gio_match_device);
+ 
+ struct gio_device *gio_dev_get(struct gio_device *dev)
+ {
 -- 
 2.17.1
 
