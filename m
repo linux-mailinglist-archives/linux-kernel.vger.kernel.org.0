@@ -2,135 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20E9C1387A8
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 19:12:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCDC91387A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 19:09:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733226AbgALSMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 13:12:01 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40882 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733163AbgALSMA (ORCPT
+        id S1733173AbgALSJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 13:09:28 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40130 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728211AbgALSJ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 13:12:00 -0500
-Received: by mail-lj1-f194.google.com with SMTP id u1so7513366ljk.7;
-        Sun, 12 Jan 2020 10:11:59 -0800 (PST)
+        Sun, 12 Jan 2020 13:09:28 -0500
+Received: by mail-pg1-f195.google.com with SMTP id k25so3581204pgt.7;
+        Sun, 12 Jan 2020 10:09:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YJVXU10oDfgvRexuSvPa3vqWcQwamQAihJMaOV5Iic0=;
-        b=ivY56i+gykXt6XSjr3FikFQwY77Fr9C+OXP1AARna4DuN6bBI+m95XWKyi9oLu7BM6
-         6zFwEHYQDWBHO+WZH8Lv4bUNuObyRWo1XVtzaU9wREABN0QYDm1l4L/hvlXp8GNaqULL
-         8BcVb/3cdcA3k/Rkv5DOnU+RjIw9HBAlab8naD1tlYhDu/SJhcoURMzd9lStruEeuNaQ
-         m+BFYeBH2xj5X/e2DQyQbEOmVd6AeFQZldyg7LSUFNEm3qjv+E6ZgpKwPc8E+n0JDYPl
-         3LTAzMiu5nDZI86qFNF0sEMtoR8w5e8fVirrsg6R2FMhQ6HgODnXuyZ9+1jRNdh9jNMQ
-         E9Sg==
+        h=from:to:cc:subject:date:message-id;
+        bh=YFlf1XFp+d/uDi+uNrIPUk2Y6SDrznnoWTCo2qHOO1c=;
+        b=Ga9pgm5C0iLfeWe33cE/koxxKjwfcNFvrEKZf0Ky9E+MhCXRIhF55ivsqpgOWXHnO2
+         svJHmJcAZKyc3wiybnfIPa9oksPPTYNxafloj1RYVq9WvoPiEl4LBvk0MKcHiUREiI2X
+         5pAtar9oUyns+ELlqUCO6hfI+J6sltPPex4G1qOIIP2vCX7Lk+fvxuphQ+IZIDeWKcsQ
+         TNEx44J6zuxPNdvd16G7obkCswt/HQosXzudv8rCo8d9mKp5hhHUZ0em9rsFHoJgEqq8
+         iHuSHaTW/09OqWfW/VZ82DTfg8ZKYOgHTQ413qc1ohs3ZZwOoO/BM7hDZ6hRjY5tXulJ
+         ee9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YJVXU10oDfgvRexuSvPa3vqWcQwamQAihJMaOV5Iic0=;
-        b=QdoPS280pBfhd5PPzIO2VvBonzVmpQOlfLDQrjnDwwqva6YA4bYxw4CItBHuR2xBgY
-         xTpnmeIHvphT+1NTrp9kNzgTGpG9MSK5A26a3YdbHOuifSPMrY1zMwiFZTQWEsjTKGng
-         QuujJh1xa3vvrwL3FGz/K/tci6mql8V61bJuVPiIxAV0vYOZoBzYOC2YkL2JcMREKZ1V
-         8WWJ4by8wJlTHTETX2PA73ejuwR1h1cM8UkFEJoMeW8qv+hzCFEaidDuibLVegKmOyNr
-         i46yKZQw3XrEpVFJWDpkNB3CSd8Jm8QymB8wZ5iQBHiQpP6DS47upthQ8G7GveZifQzw
-         6Ydg==
-X-Gm-Message-State: APjAAAWV/5ffqM4A9Ek8+WBmjlX3AJjGVSNYld4ju+tYWbmB/RxeNLCl
-        o7om439qiOHpiN/1rMtDeAIGJDE+
-X-Google-Smtp-Source: APXvYqzxbmtigao8IDfOesGjBcx8TQpyFsw3ke+jRYHd2RJd/0K0yJjUZzSsz/w18OB7mcByIgak4w==
-X-Received: by 2002:a2e:b4e7:: with SMTP id s7mr8382268ljm.58.1578852718367;
-        Sun, 12 Jan 2020 10:11:58 -0800 (PST)
-Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id 195sm4542784ljj.55.2020.01.12.10.11.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jan 2020 10:11:57 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] tty: serial: tegra: Optimize DMA buffer synchronization
-Date:   Sun, 12 Jan 2020 21:09:19 +0300
-Message-Id: <20200112180919.5194-3-digetx@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200112180919.5194-1-digetx@gmail.com>
-References: <20200112180919.5194-1-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YFlf1XFp+d/uDi+uNrIPUk2Y6SDrznnoWTCo2qHOO1c=;
+        b=jmifh1cu/KP8/qPzFz87CtalBryjG5Ih/k2wxA06g2Ba8VE/SNj3wjG8e7NYgzM1bo
+         sEgRflJtizVFbtiUpehJdZ/l7sy2LPLqFiHa8Ofxek+A1BLuynDcfJnnNmCKM2+DozpB
+         sufb/KF5r5ZQdFiPPhs17kaNSB2m7+BjKBpb6BtRmVFZNSg/Ag6sRa0jLGChrO9vw/Qe
+         9hRkyuAzEWALX0i8UWpISZkv9nQVH0USDVFk2wKNifT/Vz+p3sA3K5bqxCsBEOkfR2Yg
+         fItSIIpQDYsWuiKc5vtRYKaaSXlglFQuUByWo5YG0eJPR6OQftOePlDj35n9aSNpuiCF
+         uFKg==
+X-Gm-Message-State: APjAAAV7fKwuJDYbdnztrjX/SxNi7uK45MZYFrz8qk8jtk79z7Dac45S
+        19vpS3RWkJyO0A648+XbrhQ=
+X-Google-Smtp-Source: APXvYqxEgc9wZ0mKVVT83Rm+ImBq7gb/sKaV6A45p6k4lTER/9OBierK3/qh/wcJSzfWagVHGso/og==
+X-Received: by 2002:a63:234f:: with SMTP id u15mr16705116pgm.88.1578852567496;
+        Sun, 12 Jan 2020 10:09:27 -0800 (PST)
+Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
+        by smtp.gmail.com with ESMTPSA id d22sm10183754pgg.52.2020.01.12.10.09.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 12 Jan 2020 10:09:26 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     anarsoul@gmail.com, rui.zhang@intel.com, daniel.lezcano@linaro.org,
+        amit.kucheria@verdurent.com, mripard@kernel.org, wens@csie.org
+Cc:     linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] thermal: sun8i: remove unused variable and unneeded macros
+Date:   Sun, 12 Jan 2020 18:09:25 +0000
+Message-Id: <20200112180925.23705-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Synchronize only the dirty part of DMA buffer in order to avoid
-unnecessary overhead of syncing of the clean part, which is the case
-of every serial DMA transfer in practice.
+The cp_ft_flag variable is not used after initialization, so delete
+it. After that, THS_EFUSE_CP_FT_MASK, THS_EFUSE_CP_FT_BIT and
+THS_CALIBRATION_IN_FT are not needed, so delete them.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/tty/serial/serial-tegra.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/thermal/sun8i_thermal.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index 3b495e7c9534..33034b852a51 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -534,11 +534,12 @@ static int tegra_uart_start_tx_dma(struct tegra_uart_port *tup,
- 	struct circ_buf *xmit = &tup->uport.state->xmit;
- 	dma_addr_t tx_phys_addr;
+diff --git a/drivers/thermal/sun8i_thermal.c b/drivers/thermal/sun8i_thermal.c
+index 4bcde9491edb..bd7549f9ecba 100644
+--- a/drivers/thermal/sun8i_thermal.c
++++ b/drivers/thermal/sun8i_thermal.c
+@@ -54,9 +54,6 @@
+ #define SUN50I_H6_THS_DATA_IRQ_STS(x)		BIT(x)
  
--	dma_sync_single_for_device(tup->uport.dev, tup->tx_dma_buf_phys,
--				UART_XMIT_SIZE, DMA_TO_DEVICE);
--
- 	tup->tx_bytes = count & ~(0xF);
- 	tx_phys_addr = tup->tx_dma_buf_phys + xmit->tail;
-+
-+	dma_sync_single_for_device(tup->uport.dev, tx_phys_addr,
-+				   tup->tx_bytes, DMA_TO_DEVICE);
-+
- 	tup->tx_dma_desc = dmaengine_prep_slave_single(tup->tx_dma_chan,
- 				tx_phys_addr, tup->tx_bytes, DMA_MEM_TO_DEV,
- 				DMA_PREP_INTERRUPT);
-@@ -680,7 +681,7 @@ static void tegra_uart_copy_rx_to_tty(struct tegra_uart_port *tup,
- 		return;
+ /* millidegree celsius */
+-#define THS_EFUSE_CP_FT_MASK			0x3000
+-#define THS_EFUSE_CP_FT_BIT			12
+-#define THS_CALIBRATION_IN_FT			1
  
- 	dma_sync_single_for_cpu(tup->uport.dev, tup->rx_dma_buf_phys,
--				TEGRA_UART_RX_DMA_BUFFER_SIZE, DMA_FROM_DEVICE);
-+				count, DMA_FROM_DEVICE);
- 	copied = tty_insert_flip_string(tty,
- 			((unsigned char *)(tup->rx_dma_buf_virt)), count);
- 	if (copied != count) {
-@@ -688,7 +689,7 @@ static void tegra_uart_copy_rx_to_tty(struct tegra_uart_port *tup,
- 		dev_err(tup->uport.dev, "RxData copy to tty layer failed\n");
- 	}
- 	dma_sync_single_for_device(tup->uport.dev, tup->rx_dma_buf_phys,
--				TEGRA_UART_RX_DMA_BUFFER_SIZE, DMA_TO_DEVICE);
-+				   count, DMA_TO_DEVICE);
- }
+ struct tsensor {
+ 	struct ths_device		*tmdev;
+@@ -88,7 +85,6 @@ struct ths_device {
+ 	struct clk				*bus_clk;
+ 	struct clk                              *mod_clk;
+ 	struct tsensor				sensor[MAX_SENSOR_NUM];
+-	u32					cp_ft_flag;
+ };
  
- static void tegra_uart_rx_buffer_push(struct tegra_uart_port *tup,
-@@ -788,8 +789,6 @@ static int tegra_uart_start_rx_dma(struct tegra_uart_port *tup)
- 	tup->rx_dma_active = true;
- 	tup->rx_dma_desc->callback = tegra_uart_rx_dma_complete;
- 	tup->rx_dma_desc->callback_param = tup;
--	dma_sync_single_for_device(tup->uport.dev, tup->rx_dma_buf_phys,
--				count, DMA_TO_DEVICE);
- 	tup->rx_bytes_requested = count;
- 	tup->rx_cookie = dmaengine_submit(tup->rx_dma_desc);
- 	dma_async_issue_pending(tup->rx_dma_chan);
-@@ -1154,6 +1153,9 @@ static int tegra_uart_dma_channel_allocate(struct tegra_uart_port *tup,
- 			dma_release_channel(dma_chan);
- 			return -ENOMEM;
- 		}
-+		dma_sync_single_for_device(tup->uport.dev, dma_phys,
-+					   TEGRA_UART_RX_DMA_BUFFER_SIZE,
-+					   DMA_TO_DEVICE);
- 		dma_sconfig.src_addr = tup->uport.mapbase;
- 		dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
- 		dma_sconfig.src_maxburst = tup->cdata->max_dma_burst_bytes;
+ /* Temp Unit: millidegree Celsius */
+@@ -244,8 +240,6 @@ static int sun50i_h6_ths_calibrate(struct ths_device *tmdev,
+ 	 * register values and this will become a calibration offset.
+ 	 */
+ 	ft_temp = (caldata[0] & FT_TEMP_MASK) * 100;
+-	tmdev->cp_ft_flag = (caldata[0] & THS_EFUSE_CP_FT_MASK)
+-		>> THS_EFUSE_CP_FT_BIT;
+ 
+ 	for (i = 0; i < tmdev->chip->sensor_num; i++) {
+ 		int sensor_reg = caldata[i + 1];
 -- 
-2.24.0
+2.17.1
 
