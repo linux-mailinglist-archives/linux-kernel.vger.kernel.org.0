@@ -2,87 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0A1613879B
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 19:00:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1ED91387A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 19:12:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733246AbgALR75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 12:59:57 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37616 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733203AbgALR7x (ORCPT
+        id S1733192AbgALSL7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 13:11:59 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37473 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728211AbgALSL6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 12:59:53 -0500
-Received: by mail-wr1-f68.google.com with SMTP id w15so6401250wru.4;
-        Sun, 12 Jan 2020 09:59:51 -0800 (PST)
+        Sun, 12 Jan 2020 13:11:58 -0500
+Received: by mail-lj1-f194.google.com with SMTP id o13so7519950ljg.4;
+        Sun, 12 Jan 2020 10:11:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=2z5jKKd1kP0MGK92fjPfQhagxUNB4WYrYfTGQCeaJaI=;
-        b=rXMVpie4I6835JSVbDI3sQTxOTKQBd4BFGhjhKZrbphGEySSZzqRSr0qnd2eIKPPo8
-         vdvgA7v/itexM++eH+lQ1NpYal+yPaIg3u7nvqBVXSwIAHraetE+pj0VG571Gd1ofU4T
-         lQ4OnuIdr0s0UjvdY2QwqFNLFQM/L/nOGg+0OUu2+NwqxbNNT0Lj0VRa/y682ZwvHLXW
-         ul72ef0RkEjARu+VTWER4uOHcsqDgoZaCpf3htgZhd/Y86waa6n4Wh18RjCLljM4BiFB
-         CYcVOizz3KjADECUewAdUh8eJgBkdoTnr1ZgD1pFsD2K9jdWnmuQNL4QXal/E9o9apje
-         7Kww==
+        bh=Wk7Ak6kU1DxFZaH2IkQYiSLzwBzI4ulZa0ve89UBNdM=;
+        b=rYRQ9gfR4DVB6VsvePCbuhGkkPMI2P/I5Xij0VxNDpQj7homrUvjumwwUDY4UW2pRY
+         iku2G1cbkVkfifWz7lOMaL2Ji5P/TixrcNH3fx0N0ZNuuVihxk6mEqJqSRBL04ilJfKo
+         ySAZFlUSkqh90dxQ81sIFLv1MFK3a5DTVIbHvVv9ABXH5iQs2dQ7JbAlps0VuTGvJIZA
+         C/jmXy+4xwOoLXkV7yuIimyc/Rzy9k6zJGGQxQKynSmkOOWAN9iTNVqrYYZtukDRBeU8
+         dRMsbXc9eHmPXwiILeJXdSRZQEtcC1MFU02jj8gRuuooc/+apNXSqYbj2u1ihlek7g0I
+         /4zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2z5jKKd1kP0MGK92fjPfQhagxUNB4WYrYfTGQCeaJaI=;
-        b=hL8POZuczpWDDAddz/SKEF8H75kj+zqRHmZUvo24JDyMrNwCuvKWSoVBb+K7KKZ/8g
-         CS8sJjj1nPrCP3B8RuyVSk6X87PDw8lpw62OPhX6xXGPHBCKfgUeceZfayQsmteG2TjM
-         2dhi8ayMeM4qX7wcuddLSL2vphhOS2r2ssl463h8VO5yh4Vrzagzst3QyESnAU6AWJJM
-         Omx4mnhNIdxgQ33EkPdbDHrTEhQLKOj0yQ5M5a7GUCLLeXyl9QA3dn99kTELe3ykiqnK
-         4csGqNhwZcL8Ywpk66VDhn2cJhXX9NZNFZmIGVjmm2EvDY4ehTrUmZtdC87k1umMHyKL
-         XnCw==
-X-Gm-Message-State: APjAAAWChXJnTT7KLn81ioe1dwYZK5MtBwxw3cP5tj4P8R5x5HSjID2v
-        CtzBlq1NsCNE1lfv9DVDa6xWZ+C8
-X-Google-Smtp-Source: APXvYqzgINU2cjDfDKUuG7UoPCMbyduVF4vZdkmSesEde07NJ1C2f9Pfn0IOeksN6sakxsL/wGRVyA==
-X-Received: by 2002:adf:f5cf:: with SMTP id k15mr14775327wrp.182.1578851991201;
-        Sun, 12 Jan 2020 09:59:51 -0800 (PST)
-Received: from Pali-Latitude.lan (ip-89-103-160-142.net.upcbroadband.cz. [89.103.160.142])
-        by smtp.gmail.com with ESMTPSA id t25sm11076522wmj.19.2020.01.12.09.59.50
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wk7Ak6kU1DxFZaH2IkQYiSLzwBzI4ulZa0ve89UBNdM=;
+        b=DIiHGh+0tlpp8fRdnWISVh3Kjp1hk30NOzrAuUq+vHVbIoDpenNwOKJhAwGrXa8fMT
+         U5UIUHUYKoy3pHFjt9pIdUgDHYkFXorroneciNS7GyEJPJysd+A3m+vvt5zRF1yFwY2j
+         wKZnz8nTopEuhxHF78wfdAVc4EyWI9Wqlo7tvsxeK+OzIrWyM4bZ+SQimCfkKWQ9OdWC
+         cMu3jepS3zGc2abOOtB+w71utc+J1qD1Bk508pMCiLP+P0SS8Rt80B6D0R0+qXWOTQcV
+         /STgw5L5ElSlit7QoIMQg3jz1xlXLd861oKn5ugSa8r5O0w9tVre5IWVprbmmrlQOgFu
+         oAAg==
+X-Gm-Message-State: APjAAAWHPurvrSQT8gwteYgWKVvhGuNRWIx8HJQAJvflAjgcPWpdm5hb
+        LuUWZSOAmKDxwy9/1kRG9WM=
+X-Google-Smtp-Source: APXvYqwnRt9hIqF5ldWMJYF8oM9wgKv3fTLzx8EXRVWW24Thkgi0BlCjYpwBMrxZr/e//Tghy8kO5g==
+X-Received: by 2002:a2e:b0f5:: with SMTP id h21mr8781711ljl.9.1578852716636;
+        Sun, 12 Jan 2020 10:11:56 -0800 (PST)
+Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.gmail.com with ESMTPSA id 195sm4542784ljj.55.2020.01.12.10.11.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jan 2020 09:59:50 -0800 (PST)
-From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>
-Subject: [WIP PATCH 4/4] udf: Allow to read UDF 2.60 discs
-Date:   Sun, 12 Jan 2020 18:59:33 +0100
-Message-Id: <20200112175933.5259-5-pali.rohar@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200112175933.5259-1-pali.rohar@gmail.com>
-References: <20200112175933.5259-1-pali.rohar@gmail.com>
+        Sun, 12 Jan 2020 10:11:55 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] NVIDIA Tegra serial driver improvements
+Date:   Sun, 12 Jan 2020 21:09:17 +0300
+Message-Id: <20200112180919.5194-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current udf implementation now should be able to properly mount and read
-images with UDF 2.60 revision in R/O mode without any problem.
+Hello,
 
-Signed-off-by: Pali Rohár <pali.rohar@gmail.com>
----
- fs/udf/udf_sb.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series is a complement to [1], which changed APB DMA driver's runtime
+PM to make DMA clock enabled only during of actual transfer activity.
+Unfortunately turned out that it wasn't enough because serial driver keeps
+RX DMA active all the time in practice and that's what the first patch of
+this series addresses. Secondly, I noticed that DMA synchronization could
+be improved, it is also addressed now. Please review and apply, thanks in
+advance!
 
-diff --git a/fs/udf/udf_sb.h b/fs/udf/udf_sb.h
-index baac0357b..be8cb9f3b 100644
---- a/fs/udf/udf_sb.h
-+++ b/fs/udf/udf_sb.h
-@@ -6,7 +6,7 @@
- #include <linux/bitops.h>
- #include <linux/magic.h>
- 
--#define UDF_MAX_READ_VERSION		0x0250
-+#define UDF_MAX_READ_VERSION		0x0260
- #define UDF_MAX_WRITE_VERSION		0x0201
- 
- #define UDF_FLAG_USE_EXTENDED_FE	0
+Dmitry Osipenko (2):
+  tty: serial: tegra: Activate RX DMA transfer by request
+  tty: serial: tegra: Optimize DMA buffer synchronization
+
+ drivers/tty/serial/serial-tegra.c | 94 ++++++++++++++++++-------------
+ 1 file changed, 55 insertions(+), 39 deletions(-)
+
 -- 
-2.20.1
+2.24.0
 
