@@ -2,107 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 726D3138534
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 06:51:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6005913853D
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 07:09:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732231AbgALFtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 00:49:50 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:56235 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732217AbgALFtu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 00:49:50 -0500
-Received: by mail-pj1-f66.google.com with SMTP id d5so2739517pjz.5
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Jan 2020 21:49:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yuiiLxis7UmO7qtPOBKseQeFyLzKkWcOkkI4cfgxzbE=;
-        b=Hnjy/C9/lwj/YKklYxYqjyFlS0dhjQpRJdoiGfZpQuJFrG1CepD+olnANXmyvYt9HK
-         IRL19y5/rQazLK5XRskk+rP51oky7FAFgyiPFNrOsrJfnEt9WhV6HMAFaQ1pEJEI6f3a
-         686+XrmUmriSvDu2DbPi29ukU6EcAR2Wqs16w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yuiiLxis7UmO7qtPOBKseQeFyLzKkWcOkkI4cfgxzbE=;
-        b=ryW4BSVSB7ECMBlwQzDGtZHcfKy1UIejuM9jPhFF3IzDk/lElbYlfpjOJnYtrtVa70
-         vWTara8GTHr/LG+G/jyNqyBHaezQxzzbOOXg8yije7LezNYt7XsSJf38bU8P4ZyZjsnp
-         qG0TB7V5dH/UElQLTKhElRa7Ez/3YTs3kE7UX7ajRrjgM3xxH3PRoLob56rfEIpQ4vkd
-         obKXBNsOJxlxkCHkz74zLCEbFk056pu7yTviwo2zAoCzya5Xw/r7fZGKLR1PcBInF9jy
-         5TAr+O8oKVfQC6TVAqbf69lkgZESYqZCiZBIVkJ/Ykc2Wo9AsMOkUZ9Xtk5WKzLwLcy4
-         rBwA==
-X-Gm-Message-State: APjAAAUJIC/DOGZEpJ/Hkj52mtbAceXbjZmS41IEAK/2efjBFY9OiMQn
-        ArzGWGsJt6LJ0f1sMqVeU3sC1gAMK+c=
-X-Google-Smtp-Source: APXvYqw8H+bveIPPoAnKYh5V1Z9dF/usIOThJroMZwLFSgEzbsKYs+qEUkX4u5ynq1X/6egf2QW76Q==
-X-Received: by 2002:a17:90a:3244:: with SMTP id k62mr16102028pjb.43.1578808189512;
-        Sat, 11 Jan 2020 21:49:49 -0800 (PST)
-Received: from localhost ([2401:fa00:1:10:845f:e35d:e30c:4b47])
-        by smtp.gmail.com with ESMTPSA id i127sm9575396pfe.54.2020.01.11.21.49.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Jan 2020 21:49:48 -0800 (PST)
-From:   Yu-Hsuan Hsu <yuhsuan@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Cheng-Yi Chiang <cychiang@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Benson Leung <bleung@chromium.org>,
-        alsa-devel@alsa-project.org, Tzung-Bi Shih <tzungbi@chromium.org>,
-        Yu-Hsuan Hsu <yuhsuan@chromium.org>,
-        Akshu Agrawal <akshu.agrawal@amd.com>
-Subject: [PATCH] ASoC: cros_ec_codec: Make the device acpi compatible
-Date:   Sun, 12 Jan 2020 13:49:00 +0800
-Message-Id: <20200112054900.236576-1-yuhsuan@chromium.org>
-X-Mailer: git-send-email 2.25.0.rc1.283.g88dfdc4193-goog
+        id S1732267AbgALGJP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 01:09:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45198 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732256AbgALGJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 Jan 2020 01:09:14 -0500
+Received: from T480 (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E69D72084D;
+        Sun, 12 Jan 2020 06:09:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578809354;
+        bh=Heu80LHCoPJcbS3RqgvNvmIR7Uh41kQ9EeMPtb6yrP0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JcubbLrL47hwtFgDulYq855+Bm5soO0vJ1tGx8/eBpAN5zNtpMbB0xuwVlFsCGSjw
+         rnoj1JK4nZTheXAJ+O95le9bNr3zkuGNHvBL5C8fo5MBaJ0Hgsp8FiuG0BdB/1PJfl
+         bTWeV151u59oNBiRdXhy2ke3SSdwRSTm+SWBest4=
+Date:   Sun, 12 Jan 2020 14:09:00 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
+        will@kernel.org, bjorn.andersson@linaro.org, olof@lixom.net,
+        maxime@cerno.tech, leonard.crestez@nxp.com, dinguyen@kernel.org,
+        marcin.juszkiewicz@linaro.org, ping.bai@nxp.com, abel.vesa@nxp.com,
+        nsekhar@ti.com, t-kristo@ti.com, peng.fan@nxp.com,
+        yuehaibing@huawei.com, aisheng.dong@nxp.com, sfr@canb.auug.org.au,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH V3 1/4] clk: imx: gate4: Switch imx_clk_gate4_flags() to
+ clk_hw based API
+Message-ID: <20200112060859.GA27570@T480>
+References: <1578448417-17760-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1578448417-17760-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add ACPI entry for cros_ec_codec.
+On Wed, Jan 08, 2020 at 09:53:34AM +0800, Anson Huang wrote:
+> Switch the imx_clk_gate4_flags() function to clk_hw based API, rename
+> accordingly and add a macro for clk based legacy. This allows us to
+> move closer to a clear split between consumer and provider clk APIs.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Signed-off-by: Yu-Hsuan Hsu <yuhsuan@chromium.org>
----
- sound/soc/codecs/cros_ec_codec.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/sound/soc/codecs/cros_ec_codec.c b/sound/soc/codecs/cros_ec_codec.c
-index c81bbef2367a0f..6a24f570c5e86f 100644
---- a/sound/soc/codecs/cros_ec_codec.c
-+++ b/sound/soc/codecs/cros_ec_codec.c
-@@ -10,6 +10,7 @@
- 
- #include <crypto/hash.h>
- #include <crypto/sha.h>
-+#include <linux/acpi.h>
- #include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/io.h>
-@@ -1047,10 +1048,17 @@ static const struct of_device_id cros_ec_codec_of_match[] = {
- MODULE_DEVICE_TABLE(of, cros_ec_codec_of_match);
- #endif
- 
-+static const struct acpi_device_id cros_ec_codec_acpi_id[] = {
-+	{ "GOOG0013", 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, cros_ec_codec_acpi_id);
-+
- static struct platform_driver cros_ec_codec_platform_driver = {
- 	.driver = {
- 		.name = "cros-ec-codec",
- 		.of_match_table = of_match_ptr(cros_ec_codec_of_match),
-+		.acpi_match_table = ACPI_PTR(cros_ec_codec_acpi_id),
- 	},
- 	.probe = cros_ec_codec_platform_probe,
- };
--- 
-2.25.0.rc1.283.g88dfdc4193-goog
-
+Applied all, thanks.
