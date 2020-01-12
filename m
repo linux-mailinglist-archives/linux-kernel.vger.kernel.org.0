@@ -2,68 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F53F1385D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 11:22:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65A281385CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 11:21:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732598AbgALKW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 05:22:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41664 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732565AbgALKWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 05:22:25 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 371DA2253D;
-        Sun, 12 Jan 2020 10:22:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578824544;
-        bh=UZzvA2p7iJMamh9HphZLb6mHUktjDOcp5TageZeULDo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EfAAX7gRziMju5IWVmOZLdUBYLT3N7nVMmg3yzS3QwAGryO0davXbMQOi2cI2C63V
-         LN1bMVB1KIF9Icnt2kI+ASWAJsMngnzCo2o6icdq9ix0/RO4o4V7BBGjbwd6VoCBKQ
-         0/cgu1P4FT9kYrIiCH3EokfjBulQ/+pWVvy9P6L0=
-Date:   Sun, 12 Jan 2020 09:14:52 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        lkft-triage@lists.linaro.org, patches@kernelci.org,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH 4.19 00/84] 4.19.95-stable review
-Message-ID: <20200112081452.GA464465@kroah.com>
-References: <20200111094845.328046411@linuxfoundation.org>
- <23c3a0d1-1655-8cc2-7c96-743a47953795@roeck-us.net>
- <20200111174715.GB394778@kroah.com>
- <CA+G9fYtPeGWPGmd-R55VWwfx6QXSH=NmofVR3vPVtMZomov7qg@mail.gmail.com>
+        id S1732579AbgALKVQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 05:21:16 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.168]:11364 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732559AbgALKVP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 Jan 2020 05:21:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1578824470;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=spDiSF2kVe66KeNhBEUZtkVMiNeZ0VQUQ1+8pDQUBF0=;
+        b=PAtKzfwMGJgAKz1akesGIDjKheUMH9ElOBDykgcOdY1ntnYZobk5o1XAOpZcuxGD/l
+        r4DdQ4D+8llM7kzKowjqEor6czaMBn6u5+O/+MRcGJTl4AgYQwQ1+dec0Z5M5k09iLnU
+        Gt17Kfd/uQg8+7viRgHh55mijK2KpqtUlk9uO51ZeQbuakHAaUO1X4c5cNsdAU9CYIDO
+        H/MKxrIZ+PAJg5cN33EP0kbOKOop1FpNbrT/5fxMbNbWF8cHD8RtrWiB+AzMIHtOtobi
+        MtExUzRvFI5Mx3IB5xOuIhAqIBlH/cHBv8mOFVtjhtJrsE1htAcE5NB0uuEd++152xNz
+        VvfA==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9zXABM8C3w2hSri9QCQ=="
+X-RZG-CLASS-ID: mo00
+Received: from positron.chronox.de
+        by smtp.strato.de (RZmta 46.1.4 DYNA|AUTH)
+        with ESMTPSA id u04585w0CAJlFOm
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Sun, 12 Jan 2020 11:19:47 +0100 (CET)
+From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@lists.01.org, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        zhangjs <zachary@baishancloud.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        Nicolai Stange <nstange@suse.de>,
+        "Peter, Matthias" <matthias.peter@bsi.bund.de>,
+        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
+        Roman Drahtmueller <draht@schaltsekun.de>,
+        Neil Horman <nhorman@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Julia Lawall <julia.lawall@inria.fr>
+Subject: Re: [PATCH v27 04/12] LRNG - add switchable DRNG support
+Date:   Sun, 12 Jan 2020 11:12:49 +0100
+Message-ID: <6344127.aaDc98gsnP@positron.chronox.de>
+In-Reply-To: <202001111540.5y2emdGQ%lkp@intel.com>
+References: <5087131.2PHHu6SUIE@positron.chronox.de> <202001111540.5y2emdGQ%lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+G9fYtPeGWPGmd-R55VWwfx6QXSH=NmofVR3vPVtMZomov7qg@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 12, 2020 at 10:27:16AM +0530, Naresh Kamboju wrote:
-> On Sat, 11 Jan 2020 at 23:17, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > > arch/arm64/kvm/hyp/switch.c: In function 'handle_tx2_tvm':
-> > > arch/arm64/kvm/hyp/switch.c:438:2: error: implicit declaration of function '__kvm_skip_instr'; did you mean 'kvm_skip_instr'?
-> >
-> > Thanks for this, I'll go push out a -rc2 with the offending patch
-> > removed.
-> 
-> 
-> Results from Linaro’s test farm.
-> No regressions on arm64, arm, x86_64, and i386.
+Am Samstag, 11. Januar 2020, 08:09:50 CET schrieb kbuild test robot:
 
-Wonderful, thanks for testing all of these and letting me know.
+Hi,
 
-greg k-h
+> Hi "Stephan,
+>=20
+> Thank you for the patch! Perhaps something to improve:
+>=20
+> [auto build test WARNING on char-misc/char-misc-testing]
+> [also build test WARNING on cryptodev/master crypto/master v5.5-rc5
+> next-20200110] [if your patch is applied to the wrong git tree, please dr=
+op
+> us a note to help improve the system. BTW, we also suggest to use '--base'
+> option to specify the base tree in git format-patch, please see
+> https://stackoverflow.com/a/37406982]
+>=20
+> url:  =20
+> https://github.com/0day-ci/linux/commits/Stephan-M-ller/dev-random-a-new-=
+ap
+> proach-with-full-SP800-90B/20200110-084934 base: =20
+> https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
+> 68faa679b8be1a74e6663c21c3a9d25d32f1c079 reproduce:
+>         # apt-get install sparse
+>         # sparse version: v0.6.1-129-g341daf20-dirty
+>         make ARCH=3Dx86_64 allmodconfig
+>         make C=3D1 CF=3D'-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+>=20
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+>=20
+>=20
+> sparse warnings: (new ones prefixed by >>)
+>=20
+> >> drivers/char/lrng/lrng_internal.h:239:39: sparse: sparse: context
+> >> imbalance in 'lrng_drng_switch' - unexpected unlock
+> vim +/lrng_drng_switch +239 drivers/char/lrng/lrng_internal.h
+>=20
+> 58c283819a1e87 Stephan M=FCller 2020-01-09  233
+> 58c283819a1e87 Stephan M=FCller 2020-01-09  234  /* Unlock the DRNG */
+> 58c283819a1e87 Stephan M=FCller 2020-01-09  235  static __always_inline v=
+oid
+> lrng_drng_unlock(struct lrng_drng *drng, 58c283819a1e87 Stephan M=FCller
+> 2020-01-09  236  					     unsigned long *flags)=20
+58c283819a1e87 Stephan
+> M=FCller 2020-01-09  237  {
+> 58c283819a1e87 Stephan M=FCller 2020-01-09  238  	if
+> (lrng_drng_is_atomic(drng)) 58c283819a1e87 Stephan M=FCller 2020-01-09 @2=
+39=20
+> 		spin_unlock_irqrestore(&drng->spin_lock, *flags); 58c283819a1e87=20
+Stephan
+> M=FCller 2020-01-09  240  	else
+> 58c283819a1e87 Stephan M=FCller 2020-01-09  241  		mutex_unlock(&drng-
+>lock);
+> 58c283819a1e87 Stephan M=FCller 2020-01-09  242  }
+> 58c283819a1e87 Stephan M=FCller 2020-01-09  243
+>=20
+> :::::: The code at line 239 was first introduced by commit
+> :::::: 58c283819a1e879bc2e30d05720285f9709f7f6d Linux Random Number
+> :::::: Generator
+> ::::::=20
+> :::::: TO: Stephan M=FCller <smueller@chronox.de>
+> :::::: CC: 0day robot <lkp@intel.com>
+>=20
+> ---
+> 0-DAY kernel test infrastructure                 Open Source Technology
+> Center https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel
+> Corporation
+
+After analyzing the issue a bit more, it seems that I have to remove=20
+"unlikely" from lrng_drng_lock which seems to cause additional grief
+with sparse. Note, sparse will still report a lock context imbalance as it
+used to since we indeed have two lock context as documented in
+lrng_drng_switch.
+
+Ciao
+Stephan
+
+
