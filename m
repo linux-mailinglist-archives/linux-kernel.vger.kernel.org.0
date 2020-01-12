@@ -2,71 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 684FD13871C
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 17:52:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87109138722
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 17:56:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733118AbgALQwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 11:52:32 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:36680 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730145AbgALQwc (ORCPT
+        id S1733161AbgALQ4W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 11:56:22 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:57814 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733111AbgALQ4S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 11:52:32 -0500
+        Sun, 12 Jan 2020 11:56:18 -0500
 Received: from ramsan ([84.195.182.253])
-        by laurent.telenet-ops.be with bizsmtp
-        id pUsW2100Z5USYZQ01UsW5n; Sun, 12 Jan 2020 17:52:30 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id pUwG210045USYZQ01UwG3F; Sun, 12 Jan 2020 17:56:16 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iqgTW-00082F-Bh; Sun, 12 Jan 2020 17:52:30 +0100
+        id 1iqgXA-00082s-5Q; Sun, 12 Jan 2020 17:56:16 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iqgTW-0005MS-9U; Sun, 12 Jan 2020 17:52:30 +0100
+        id 1iqgXA-0005Sq-36; Sun, 12 Jan 2020 17:56:16 +0100
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     "Maciej W . Rozycki" <macro@linux-mips.org>,
-        Ralf Baechle <ralf@linux-mips.org>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Philip Blundell <philb@gnu.org>
+Cc:     linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] tc: Make tc_match_device() static
-Date:   Sun, 12 Jan 2020 17:52:29 +0100
-Message-Id: <20200112165229.20567-1-geert@linux-m68k.org>
+Subject: [PATCH 0/3] dio: Miscellaneous cleanups
+Date:   Sun, 12 Jan 2020 17:56:10 +0100
+Message-Id: <20200112165613.20960-1-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unlike its PCI counterpart, tc_match_device() was never used outside
-the TURBOchannel bus code.
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
- drivers/tc/tc-driver.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+This patch series contains miscellaneous cleanups for the Zorro bus
+code.
 
-diff --git a/drivers/tc/tc-driver.c b/drivers/tc/tc-driver.c
-index 16b5bae63c749019..d45f2c1ff34145b0 100644
---- a/drivers/tc/tc-driver.c
-+++ b/drivers/tc/tc-driver.c
-@@ -56,8 +56,8 @@ EXPORT_SYMBOL(tc_unregister_driver);
-  * system is in its list of supported devices.  Returns the matching
-  * tc_device_id structure or %NULL if there is no match.
-  */
--const struct tc_device_id *tc_match_device(struct tc_driver *tdrv,
--					   struct tc_dev *tdev)
-+static const struct tc_device_id *tc_match_device(struct tc_driver *tdrv,
-+						  struct tc_dev *tdev)
- {
- 	const struct tc_device_id *id = tdrv->id_table;
- 
-@@ -71,7 +71,6 @@ const struct tc_device_id *tc_match_device(struct tc_driver *tdrv,
- 	}
- 	return NULL;
- }
--EXPORT_SYMBOL(tc_match_device);
- 
- /**
-  * tc_bus_match - Tell if a device structure has a matching
+Geert Uytterhoeven (3):
+  dio: Make dio_match_device() static
+  dio: Fix dio_bus_match() kerneldoc
+  dio: Remove unused dio_dev_driver()
+
+ drivers/dio/dio-driver.c | 9 ++++-----
+ include/linux/dio.h      | 5 -----
+ 2 files changed, 4 insertions(+), 10 deletions(-)
+
 -- 
 2.17.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
