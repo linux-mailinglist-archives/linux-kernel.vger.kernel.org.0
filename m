@@ -2,54 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAB1D1384B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 05:12:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8C141384BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 05:55:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732126AbgALEMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 Jan 2020 23:12:37 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:42464 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732109AbgALEMh (ORCPT
+        id S1732190AbgALEzV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 Jan 2020 23:55:21 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35403 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732179AbgALEzV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 Jan 2020 23:12:37 -0500
-Received: by mail-il1-f196.google.com with SMTP id t2so5096213ilq.9
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Jan 2020 20:12:37 -0800 (PST)
+        Sat, 11 Jan 2020 23:55:21 -0500
+Received: by mail-lj1-f195.google.com with SMTP id j1so6386460lja.2
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Jan 2020 20:55:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=yxgPUohtorinQ1iURi+e5EElb21+q/PQOXu1qlRuYC8=;
-        b=RZvJabc1sSwdcHWFEmKwIT5sw0XBxGKgY6USTbJyIK6OjvqK6Sh/bX3varbI648pOU
-         Ra++BPRyfVdyv6krnSQ2Mt/gy1N5EEPbw2yGPUb6WwOuPX8dTfdy96aDLDPjPwTyC649
-         IJX8xMmT6YLyQTgJSGOX8It2oPFXDBFducLRnj8NR63BWbyFuMzUdIJMCFLSn142tNKb
-         2A14SVhyB/hHBFJgu36Bfd2x7Rd9kCnJgyXKt4TTWwbmbexhJwfQRxroyei1grfUDL8m
-         bULFSH4Sj02vfGqErtcd2v1kiRv2nNSNnLXz/zjI5WYfnhkrBSPHMayWJaTJSMpcsvYZ
-         xXuQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=e3re4IXkyyw/6+2ZpdvvKRwtPpdPNGOyATLsdF0oXqM=;
+        b=hAmHcKkru7Ws+bYPtWoibuV5UJ72IuF6dgWGL5tJuMeheEKvkn+UBiWpIq8J4qR0mW
+         uCJjZnwGvlY+QCH/RxCwWGPK5SFHCcFUq5GvYcMjwrQcxaHDsh7bDcwhvgeHrGZseHlN
+         gACfjpW7OPENtY9heTGfHC5M/UCpS8SqRHwlfEGTMCqCRb5YLrhTr3NnJauFntM4LhRG
+         LJRjxaN/8Op3CUFo/93QTWC8tSBTjx7Dx/fvUe1VEQCJxDUK5LuSFEh6lROpm3cpRbM6
+         WXYkoM4Q02P/7ZWw+dNGXv1lG0t1QwYJVufPr4j4sdekbmMV6xYT7hr0C2wekAh2miNh
+         Jlug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=yxgPUohtorinQ1iURi+e5EElb21+q/PQOXu1qlRuYC8=;
-        b=hcZ39jZusCH+lzbiwV1ohnFhrYgtg3C2QVz9a5OFzq890+x2WliIhSUNTQ+42PkZMV
-         mS6/hz61+kflavqDN4C0CF1Aed2pQQfDszv92MCE5VChGytKKLccLRSmuTJYtPqIK+hF
-         SZHhxtfK6OQ6tfqBPIzhUWbpV4OdIcpNXHHnmUNkpyWnwX9Hf7H0q9/ZOaBuWNEltamL
-         t1/0ZDGW8+ZKZ5YNuGdHTQsSxds+PgrGs164qhmznqAFHOyPKZMcFEGOTeznGVWcyKke
-         rum1NmAjHTWnki2mSyBmgjTzYdU25A9f7sBUZnxXG31gEbtUCTe60eEhfrXt8rvf9jeg
-         qL6w==
-X-Gm-Message-State: APjAAAXiAjdxxxaXC5T7XbS5rfxONrt2HZjN9BGkYD7H6Cm7JwdUQJqw
-        CfGp66ZpaqgujilCizdHMPfvuDfm0PRXVgSz2d0=
-X-Google-Smtp-Source: APXvYqzQQxoFG1RFdgHTTUD6xLds87YDswhfoyzdEae+1EZf8cZBFZhzRYxiwK5FVOwpES/E64RPJiLQuIlHwfutSt4=
-X-Received: by 2002:a92:d151:: with SMTP id t17mr9778343ilg.175.1578802356459;
- Sat, 11 Jan 2020 20:12:36 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=e3re4IXkyyw/6+2ZpdvvKRwtPpdPNGOyATLsdF0oXqM=;
+        b=NC33+/oQu3imtvmy1HTLRsTztWU+vvv5PByd/7SEq+34Q5snHG+Dt4yMLaEsekU0pD
+         nScgxKWs39M9kswM7/PFMxt0+zzK+2Qk+C2i5+OePHA/GPnasQHstcIZS4ooSGi69Fgx
+         UEScBC0YXJaNHUcMw9gsOetb/shspL1bxECsy4Vq1oqiA63zhQ8rlJhRtkGpar0bVyos
+         4ILl2EApJ6VQ7h30p3XCMJRK5zEVF5kZkhqPSjFbESSJ0qXU/M9zSAgvWpIilMIhhvAg
+         rVpb0BM/XyuKUndj2RPjy0+1sPiCPFN+vFUbmII4LjZaFLVVqn795iCtPpLM2srVOsZR
+         MgIw==
+X-Gm-Message-State: APjAAAWE3UuQd1i3v1AngtZFwapT0zJ9L0pQRZklUPYuUbw+Pl4flj3n
+        pBLLgTNl9vIm8F+AwYBEM0MoEKOnW4wIeD/iX5EqGg==
+X-Google-Smtp-Source: APXvYqyWXRnqElnMRXdT/2ppNEwfNstxcJF5mmLRZ6EnkTVr4weuScXNYSC42S6L4+iVxmFc4PHQVgRO4GteHdVJHmk=
+X-Received: by 2002:a2e:b017:: with SMTP id y23mr7516131ljk.229.1578804918969;
+ Sat, 11 Jan 2020 20:55:18 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a92:9cdd:0:0:0:0:0 with HTTP; Sat, 11 Jan 2020 20:12:35
- -0800 (PST)
-Reply-To: usmanabu61@gmail.com
-From:   Mr USMAN ABU <abuu1419@gmail.com>
-Date:   Sun, 12 Jan 2020 05:12:35 +0100
-Message-ID: <CAKN13049biGbYqdHmuY7wxwhF7hdV7ibWtxmBKw=oXvz4g9CPA@mail.gmail.com>
-Subject: FROM Mr USMAN ABU
-To:     undisclosed-recipients:;
+References: <20200111094844.748507863@linuxfoundation.org> <0668a7b6-502b-719b-a2eb-59519de7bf3e@roeck-us.net>
+ <20200111175114.GA403776@kroah.com>
+In-Reply-To: <20200111175114.GA403776@kroah.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Sun, 12 Jan 2020 10:25:07 +0530
+Message-ID: <CA+G9fYuwQW1qqTSdYTCc6es5R6AJ6zHScmw1952raHHJ7x+uNw@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/91] 4.9.209-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,51 +65,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FROM Mr USMAN  ABU
-BILLS AND EXCHANGE MANAGER,
-In BANK OF AFRICA (B.O.A)
-Ouagadougou Burkina Faso, IN WEST AFRCA
+On Sat, 11 Jan 2020 at 23:21, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> Ugh, I thought I dropped those earlier, but they came back through
+> Sasha's autosel.  There's another build error with another coresight
+> patch in there too, looks rare enough that your scripts didn't catch it
+> :)
+>
+> I'll go push out a -rc2 now with the offending patches dropped.
 
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Please i want you to read this later very carefully and please do not
-joke with this message. I am Mr USMAN  ABU, the bill and exchange
-manager in the boa bank of Africa Ouagadougou Burkina Faso.
+Summary
+------------------------------------------------------------------------
 
-In my department, I found the deposited fund amounted ($18.5 million)
-one of my bank clients who died Along with his entire family in air
-crash, On July 31 2000 please go through the
-website.http://news.bbc.co.uk/2/hi/europe/859479.stm
+kernel: 4.9.209-rc2
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: 0dd28c11952d3a45280706afe87a14db95f8cf21
+git describe: v4.9.208-90-g0dd28c11952d
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.208-90-g0dd28c11952d
 
-Can you be able and capable to assist me provide your bank account
-where this $18.5 million will transfer into? Because I don=E2=80=99t want t=
-he
-money to go into our bank treasury account as an unclaimed fund, so
-this is the reason why I contacted you so that our bank will release
-this money to you as the nest of kin to the deceased customer. Please
-I would like you to keep this proposal as top secret.
+No regressions (compared to build v4.9.208)
 
-I shall give you 40% of the total fund as soon as this $18.5 million
-transferred into your bank account and I shall visit you in your
-country for the sharing of the funds.
-From banking experience it will take up to ( 7 ) working days to
-conclude this transfer. I want you to also know that this transaction
-will involve a little expense which will be shared among both of us.
+No fixes (compared to build v4.9.208)
 
-Your Urgent response is needed immediately to enable me to send to you
-application later which you have to fill and apply to the bank for the
-transfer of the $18.5 million USA dollars. Before I send to you the
-application later, you have to Fill this form bellow and resend it
-back to me immediately for more trust.
-Your Name....
-Your home addresses ....
-Your country ....
-Your city ....
-Your home telephone ....
-Your private telephone ....
-Your age ....
-Your occupation ....
-Your religion=E2=80=A6
-Your international passport or ID card ....
+Ran 21877 total tests in the following environments and test suites.
 
-Thanks and my regards to your family.
-Mr USMAN  ABU
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* linux-log-parser
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* network-basic-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* ltp-open-posix-tests
+* kvm-unit-tests
+* kselftest-vsyscall-mode-none
+* ssuite
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
