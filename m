@@ -2,198 +2,260 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 310B6138884
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 23:46:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55C55138876
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Jan 2020 23:45:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387524AbgALWqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 17:46:13 -0500
-Received: from mga18.intel.com ([134.134.136.126]:34749 "EHLO mga18.intel.com"
+        id S2387477AbgALWpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 17:45:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732914AbgALWqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 17:46:08 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jan 2020 14:46:06 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,426,1571727600"; 
-   d="scan'208";a="396989496"
-Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
-  by orsmga005.jf.intel.com with ESMTP; 12 Jan 2020 14:46:06 -0800
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     bhelgaas@google.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, sathyanarayanan.kuppuswamy@linux.intel.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Huong Nguyen <huong.nguyen@dell.com>,
-        Austin Bolen <Austin.Bolen@dell.com>
-Subject: [PATCH v12 8/8] PCI/ACPI: Enable EDR support
-Date:   Sun, 12 Jan 2020 14:44:02 -0800
-Message-Id: <a15c5467ab8d52ede096b598e14c1beae1ce8e48.1578682741.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1578682741.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <cover.1578682741.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+        id S2387463AbgALWpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 Jan 2020 17:45:23 -0500
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A7E024649
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Jan 2020 22:45:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578869122;
+        bh=0GZEGpPzCGuL/Yh1V/9xQ1rCTWIFkQVZGOa+pizi/yA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=IH0moXNZ+raWKby2wZZTkL5pj7cQmLbIaAVRLpQJQwurm4qeKGd07BI/6xEmlMDEG
+         6l2rCusL8SAywbGKb3tL8x6diUBkeYZ5u59cnPZL+zSj+aX7GzjmnRuPThPLhz8CsM
+         2mf6rxIpZyuwCg41YG9IGeyc3+kwJSO5Nx/M1ebw=
+Received: by mail-wr1-f41.google.com with SMTP id d16so6758317wre.10
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Jan 2020 14:45:22 -0800 (PST)
+X-Gm-Message-State: APjAAAXtQZydQXX6Ru9bpWq16ARznnUrAi+lc6ij+vEpWEygK0OWVf/U
+        s555C5VI5Q5sU/kyrEQu1EMbzaExz7/bxd6wtPnxLw==
+X-Google-Smtp-Source: APXvYqyT6CDS6nQCsUI7FRMpOYPBG+ma/dLH32SCCjPVnRJcoY4JWdZf3QaLnUqHBLjSmocrDg7HXZRTfc9FdqTyIzk=
+X-Received: by 2002:a5d:4acb:: with SMTP id y11mr3933522wrs.106.1578869120894;
+ Sun, 12 Jan 2020 14:45:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200111145703.533809-1-hdegoede@redhat.com> <20200111145703.533809-3-hdegoede@redhat.com>
+In-Reply-To: <20200111145703.533809-3-hdegoede@redhat.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sun, 12 Jan 2020 14:45:09 -0800
+X-Gmail-Original-Message-ID: <CALCETrUz4gdVOH=5X+MkB56ST=DNcHKicRST1j1ff0kU1yXWzw@mail.gmail.com>
+Message-ID: <CALCETrUz4gdVOH=5X+MkB56ST=DNcHKicRST1j1ff0kU1yXWzw@mail.gmail.com>
+Subject: Re: [PATCH v11 02/10] efi: Add embedded peripheral firmware support
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Ard Biesheuvel <ardb@kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Peter Jones <pjones@redhat.com>,
+        Dave Olsthoorn <dave@bewaar.me>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+On Sat, Jan 11, 2020 at 6:57 AM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Just like with PCI options ROMs, which we save in the setup_efi_pci*
+> functions from arch/x86/boot/compressed/eboot.c, the EFI code / ROM itself
+> sometimes may contain data which is useful/necessary for peripheral drivers
+> to have access to.
+>
+> Specifically the EFI code may contain an embedded copy of firmware which
+> needs to be (re)loaded into the peripheral. Normally such firmware would be
+> part of linux-firmware, but in some cases this is not feasible, for 2
+> reasons:
+>
+> 1) The firmware is customized for a specific use-case of the chipset / use
+> with a specific hardware model, so we cannot have a single firmware file
+> for the chipset. E.g. touchscreen controller firmwares are compiled
+> specifically for the hardware model they are used with, as they are
+> calibrated for a specific model digitizer.
+>
+> 2) Despite repeated attempts we have failed to get permission to
+> redistribute the firmware. This is especially a problem with customized
+> firmwares, these get created by the chip vendor for a specific ODM and the
+> copyright may partially belong with the ODM, so the chip vendor cannot
+> give a blanket permission to distribute these.
+>
+> This commit adds support for finding peripheral firmware embedded in the
+> EFI code and makes the found firmware available through the new
+> efi_get_embedded_fw() function.
+>
+> Support for loading these firmwares through the standard firmware loading
+> mechanism is added in a follow-up commit in this patch-series.
+>
+> Note we check the EFI_BOOT_SERVICES_CODE for embedded firmware near the end
+> of start_kernel(), just before calling rest_init(), this is on purpose
+> because the typical EFI_BOOT_SERVICES_CODE memory-segment is too large for
+> early_memremap(), so the check must be done after mm_init(). This relies
+> on EFI_BOOT_SERVICES_CODE not being free-ed until efi_free_boot_services()
+> is called, which means that this will only work on x86 for now.
+>
 
-As per PCI firmware specification r3.2 Downstream Port Containment
-Related Enhancements ECN, sec 4.5.1, OS must implement following steps
-to enable/use EDR feature.
+A couple general comments:
 
-1. OS can use bit 7 of _OSC Control Field to negotiate control over
-Downstream Port Containment (DPC) configuration of PCIe port. After _OSC
-negotiation, firmware will Set this bit to grant OS control over PCIe
-DPC configuration and Clear it if this feature was requested and denied,
-or was not requested.
+How does this interact with modules?  It looks like you're referencing
+the dmi table from otherwise modular or potentially modular code in
+early EFI code, which seems like it will either prevent modular builds
+or will actually fail at compile time depending on config.  Perhaps
+you should have a single collection of EFI firmware references in a
+separate place in the kernel tree and reference *that* from the EFI
+code.
 
-2. Also, if OS supports EDR, it should expose its support to BIOS by
-setting bit 7 of _OSC Support Field. And if OS sets bit 7 of _OSC
-Control Field it must also expose support for EDR by setting bit 7 of
-_OSC Support Field.
+In the event you have many DMI matches (e.g. if anyone ends up using
+this in a case where the DMI match has to match very broad things),
+you'll iterate over the EFI code and data multiple times and
+performance will suck.  It would be much better to iterate once and
+search for everything.
 
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Len Brown <lenb@kernel.org>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Acked-by: Keith Busch <keith.busch@intel.com>
-Tested-by: Huong Nguyen <huong.nguyen@dell.com>
-Tested-by: Austin Bolen <Austin.Bolen@dell.com>
----
- drivers/acpi/pci_root.c         | 9 +++++++++
- drivers/pci/pcie/portdrv_core.c | 7 +++++--
- drivers/pci/probe.c             | 1 +
- include/linux/acpi.h            | 6 ++++--
- include/linux/pci.h             | 3 ++-
- 5 files changed, 21 insertions(+), 5 deletions(-)
+I suspect that a rolling hash would be better than the prefix you're
+using, but this could be changed later, assuming someone can actually
+find all the firmware needed.
 
-diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
-index d1e666ef3fcc..134e20474dfd 100644
---- a/drivers/acpi/pci_root.c
-+++ b/drivers/acpi/pci_root.c
-@@ -131,6 +131,7 @@ static struct pci_osc_bit_struct pci_osc_support_bit[] = {
- 	{ OSC_PCI_CLOCK_PM_SUPPORT, "ClockPM" },
- 	{ OSC_PCI_SEGMENT_GROUPS_SUPPORT, "Segments" },
- 	{ OSC_PCI_MSI_SUPPORT, "MSI" },
-+	{ OSC_PCI_EDR_SUPPORT, "EDR" },
- 	{ OSC_PCI_HPX_TYPE_3_SUPPORT, "HPX-Type3" },
- };
- 
-@@ -141,6 +142,7 @@ static struct pci_osc_bit_struct pci_osc_control_bit[] = {
- 	{ OSC_PCI_EXPRESS_AER_CONTROL, "AER" },
- 	{ OSC_PCI_EXPRESS_CAPABILITY_CONTROL, "PCIeCapability" },
- 	{ OSC_PCI_EXPRESS_LTR_CONTROL, "LTR" },
-+	{ OSC_PCI_EXPRESS_DPC_CONTROL, "DPC" },
- };
- 
- static void decode_osc_bits(struct acpi_pci_root *root, char *msg, u32 word,
-@@ -440,6 +442,8 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
- 		support |= OSC_PCI_ASPM_SUPPORT | OSC_PCI_CLOCK_PM_SUPPORT;
- 	if (pci_msi_enabled())
- 		support |= OSC_PCI_MSI_SUPPORT;
-+	if (IS_ENABLED(CONFIG_PCIE_EDR))
-+		support |= OSC_PCI_EDR_SUPPORT;
- 
- 	decode_osc_support(root, "OS supports", support);
- 	status = acpi_pci_osc_support(root, support);
-@@ -487,6 +491,9 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
- 			control |= OSC_PCI_EXPRESS_AER_CONTROL;
- 	}
- 
-+	if (IS_ENABLED(CONFIG_PCIE_DPC))
-+		control |= OSC_PCI_EXPRESS_DPC_CONTROL;
-+
- 	requested = control;
- 	status = acpi_pci_osc_control_set(handle, &control,
- 					  OSC_PCI_EXPRESS_CAPABILITY_CONTROL);
-@@ -916,6 +923,8 @@ struct pci_bus *acpi_pci_root_create(struct acpi_pci_root *root,
- 		host_bridge->native_pme = 0;
- 	if (!(root->osc_control_set & OSC_PCI_EXPRESS_LTR_CONTROL))
- 		host_bridge->native_ltr = 0;
-+	if (!(root->osc_control_set & OSC_PCI_EXPRESS_DPC_CONTROL))
-+		host_bridge->native_dpc = 0;
- 
- 	/*
- 	 * Evaluate the "PCI Boot Configuration" _DSM Function.  If it
-diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-index 5075cb9e850c..009742c865d6 100644
---- a/drivers/pci/pcie/portdrv_core.c
-+++ b/drivers/pci/pcie/portdrv_core.c
-@@ -253,10 +253,13 @@ static int get_port_device_capability(struct pci_dev *dev)
- 	/*
- 	 * With dpc-native, allow Linux to use DPC even if it doesn't have
- 	 * permission to use AER.
-+	 * If EDR support is enabled in OS, then even if AER is not handled in
-+	 * OS, DPC service can be enabled.
- 	 */
- 	if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_DPC) &&
--	    pci_aer_available() &&
--	    (pcie_ports_dpc_native || (services & PCIE_PORT_SERVICE_AER)))
-+	    ((IS_ENABLED(CONFIG_PCIE_EDR) && !host->native_dpc) ||
-+	    (pci_aer_available() &&
-+	    (pcie_ports_dpc_native || (services & PCIE_PORT_SERVICE_AER)))))
- 		services |= PCIE_PORT_SERVICE_DPC;
- 
- 	if (pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM ||
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 512cb4312ddd..c9a9c5b42e72 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -598,6 +598,7 @@ static void pci_init_host_bridge(struct pci_host_bridge *bridge)
- 	bridge->native_shpc_hotplug = 1;
- 	bridge->native_pme = 1;
- 	bridge->native_ltr = 1;
-+	bridge->native_dpc = 1;
- }
- 
- struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 0f37a7d5fa77..0a7aaa452a98 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -515,8 +515,9 @@ extern bool osc_pc_lpi_support_confirmed;
- #define OSC_PCI_CLOCK_PM_SUPPORT		0x00000004
- #define OSC_PCI_SEGMENT_GROUPS_SUPPORT		0x00000008
- #define OSC_PCI_MSI_SUPPORT			0x00000010
-+#define OSC_PCI_EDR_SUPPORT			0x00000080
- #define OSC_PCI_HPX_TYPE_3_SUPPORT		0x00000100
--#define OSC_PCI_SUPPORT_MASKS			0x0000011f
-+#define OSC_PCI_SUPPORT_MASKS			0x0000019f
- 
- /* PCI Host Bridge _OSC: Capabilities DWORD 3: Control Field */
- #define OSC_PCI_EXPRESS_NATIVE_HP_CONTROL	0x00000001
-@@ -525,7 +526,8 @@ extern bool osc_pc_lpi_support_confirmed;
- #define OSC_PCI_EXPRESS_AER_CONTROL		0x00000008
- #define OSC_PCI_EXPRESS_CAPABILITY_CONTROL	0x00000010
- #define OSC_PCI_EXPRESS_LTR_CONTROL		0x00000020
--#define OSC_PCI_CONTROL_MASKS			0x0000003f
-+#define OSC_PCI_EXPRESS_DPC_CONTROL		0x00000080
-+#define OSC_PCI_CONTROL_MASKS			0x000000bf
- 
- #define ACPI_GSB_ACCESS_ATTRIB_QUICK		0x00000002
- #define ACPI_GSB_ACCESS_ATTRIB_SEND_RCV         0x00000004
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index c393dff2d66f..0b7c63c7888d 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -510,8 +510,9 @@ struct pci_host_bridge {
- 	unsigned int	native_shpc_hotplug:1;	/* OS may use SHPC hotplug */
- 	unsigned int	native_pme:1;		/* OS may use PCIe PME */
- 	unsigned int	native_ltr:1;		/* OS may use PCIe LTR */
--	unsigned int	preserve_config:1;	/* Preserve FW resource setup */
-+	unsigned int	native_dpc:1;		/* OS may use PCIe DPC */
- 
-+	unsigned int	preserve_config:1;	/* Preserve FW resource setup */
- 	/* Resource alignment requirements */
- 	resource_size_t (*align_resource)(struct pci_dev *dev,
- 			const struct resource *res,
--- 
-2.21.0
+> +static int __init efi_check_md_for_embedded_firmware(
+> +       efi_memory_desc_t *md, const struct efi_embedded_fw_desc *desc)
+> +{
+> +       const u64 prefix = *((u64 *)desc->prefix);
+> +       struct sha256_state sctx;
+> +       struct efi_embedded_fw *fw;
+> +       u8 sha256[32];
+> +       u64 i, size;
+> +       void *map;
+> +
+> +       size = md->num_pages << EFI_PAGE_SHIFT;
+> +       map = memremap(md->phys_addr, size, MEMREMAP_WB);
+> +       if (!map) {
+> +               pr_err("Error mapping EFI mem at %#llx\n", md->phys_addr);
+> +               return -ENOMEM;
+> +       }
+> +
+> +       for (i = 0; (i + desc->length) <= size; i += 8) {
+> +               u64 *mem = map + i;
+> +
+> +               if (*mem != prefix)
+> +                       continue;
 
+This is very ugly.  You're casting a pointer to a bunch of bytes to
+u64* and then dereferencing it like it's an integer.  This has major
+endian issues with are offset by the similar endianness issues when
+you type-pun prefix to u64.  You should instead just memcmp the
+pointer with the data.  This will get rid of all the type punning in
+this function.  You will also fail to detect firmware that isn't
+8-byte-aligned.
+
+So perhaps just use memmem() to replace this whole mess?
+
+> +
+> +               sha256_init(&sctx);
+> +               sha256_update(&sctx, map + i, desc->length);
+> +               sha256_final(&sctx, sha256);
+> +               if (memcmp(sha256, desc->sha256, 32) == 0)
+> +                       break;
+> +       }
+> +       if ((i + desc->length) > size) {
+> +               memunmap(map);
+> +               return -ENOENT;
+> +       }
+> +
+> +       pr_info("Found EFI embedded fw '%s'\n", desc->name);
+> +
+
+It might be nice to also log which EFI section it was in?
+
+> +       fw = kmalloc(sizeof(*fw), GFP_KERNEL);
+> +       if (!fw) {
+> +               memunmap(map);
+> +               return -ENOMEM;
+> +       }
+> +
+> +       fw->data = kmemdup(map + i, desc->length, GFP_KERNEL);
+> +       memunmap(map);
+> +       if (!fw->data) {
+> +               kfree(fw);
+> +               return -ENOMEM;
+> +       }
+> +
+> +       fw->name = desc->name;
+> +       fw->length = desc->length;
+> +       list_add(&fw->list, &efi_embedded_fw_list);
+> +
+
+If you actually copy the firmware name instead of just a pointer to
+it, then you could potentially free the list of EFI firmwares.
+
+Why are you copying the firmware into linear (kmemdup) memory here
+just to copy it to vmalloc space down below...
+
+> +       return 0;
+> +}
+> +
+> +void __init efi_check_for_embedded_firmwares(void)
+> +{
+> +       const struct efi_embedded_fw_desc *fw_desc;
+> +       const struct dmi_system_id *dmi_id;
+> +       efi_memory_desc_t *md;
+> +       int i, r;
+> +
+> +       for (i = 0; embedded_fw_table[i]; i++) {
+> +               dmi_id = dmi_first_match(embedded_fw_table[i]);
+> +               if (!dmi_id)
+> +                       continue;
+> +
+> +               fw_desc = dmi_id->driver_data;
+> +
+> +               /*
+> +                * In some drivers the struct driver_data contains may contain
+> +                * other driver specific data after the fw_desc struct; and
+> +                * the fw_desc struct itself may be empty, skip these.
+> +                */
+> +               if (!fw_desc->name)
+> +                       continue;
+> +
+> +               for_each_efi_memory_desc(md) {
+> +                       if (md->type != EFI_BOOT_SERVICES_CODE)
+> +                               continue;
+> +
+> +                       r = efi_check_md_for_embedded_firmware(md, fw_desc);
+> +                       if (r == 0)
+> +                               break;
+> +               }
+> +       }
+> +
+> +       checked_for_fw = true;
+> +}
+
+Have you measured how long this takes on a typical system per matching DMI id?
+
+> +
+> +int efi_get_embedded_fw(const char *name, void **data, size_t *size)
+> +{
+> +       struct efi_embedded_fw *iter, *fw = NULL;
+> +       void *buf = *data;
+> +
+> +       if (!checked_for_fw) {
+
+WARN_ON_ONCE?  A stack dump would be quite nice here.
+
+> +       buf = vmalloc(fw->length);
+> +       if (!buf)
+> +               return -ENOMEM;
+> +
+> +       memcpy(buf, fw->data, fw->length);
+> +       *size = fw->length;
+> +       *data = buf;
+
+See above.  What's vmalloc() for?  Where's the vfree()?
+
+BTW, it would be very nice to have a straightforward way
+(/sys/kernel/debug/efi_firmware/[name]?) to dump all found firmwares.
