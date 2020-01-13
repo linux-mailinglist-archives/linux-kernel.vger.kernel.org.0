@@ -2,91 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F668138CB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 09:17:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96337138CC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 09:23:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728813AbgAMIRN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 03:17:13 -0500
-Received: from mga14.intel.com ([192.55.52.115]:33732 "EHLO mga14.intel.com"
+        id S1728804AbgAMIXS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 03:23:18 -0500
+Received: from mga06.intel.com ([134.134.136.31]:18442 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728695AbgAMIRN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 03:17:13 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1728738AbgAMIXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 03:23:18 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jan 2020 00:17:13 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jan 2020 00:23:17 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,428,1571727600"; 
-   d="scan'208";a="272968134"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by FMSMGA003.fm.intel.com with ESMTP; 13 Jan 2020 00:17:11 -0800
-Date:   Mon, 13 Jan 2020 16:21:32 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        jmattson@google.com, yu.c.zhang@linux.intel.com,
-        alazar@bitdefender.com, edwin.zhai@intel.com
-Subject: Re: [RESEND PATCH v10 05/10] x86: spp: Introduce user-space SPP
- IOCTLs
-Message-ID: <20200113082132.GG12253@local-michael-cet-test.sh.intel.com>
-References: <20200102061319.10077-1-weijiang.yang@intel.com>
- <20200102061319.10077-6-weijiang.yang@intel.com>
- <20200110181053.GH21485@linux.intel.com>
+   d="scan'208";a="422737910"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by fmsmga005.fm.intel.com with ESMTP; 13 Jan 2020 00:23:15 -0800
+Date:   Mon, 13 Jan 2020 16:23:08 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>, hannes@cmpxchg.org,
+        mhocko@kernel.org, vdavydov.dev@gmail.com,
+        akpm@linux-foundation.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kirill.shutemov@linux.intel.com, yang.shi@linux.alibaba.com,
+        alexander.duyck@gmail.com, rientjes@google.com
+Subject: Re: [Patch v2] mm: thp: grab the lock before manipulation defer list
+Message-ID: <20200113082308.GB27972@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20200109143054.13203-1-richardw.yang@linux.intel.com>
+ <20200111000352.efy6krudecpshezh@box>
+ <20200112022858.GA17733@richard>
+ <20200112225718.5vqzezfclacujyx3@box>
+ <20200113004457.GA27762@richard>
+ <20200113073614.jo2txcmazwlesl7b@box.shutemov.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200110181053.GH21485@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20200113073614.jo2txcmazwlesl7b@box.shutemov.name>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 10:10:53AM -0800, Sean Christopherson wrote:
-> On Thu, Jan 02, 2020 at 02:13:14PM +0800, Yang Weijiang wrote:
-> > User application, e.g., QEMU or VMI, must initialize SPP
-> > before gets/sets SPP subpages, the dynamic initialization is to
-> > reduce the extra storage cost if the SPP feature is not not used.
-> > 
-> > Co-developed-by: He Chen <he.chen@linux.intel.com>
-> > Signed-off-by: He Chen <he.chen@linux.intel.com>
-> > Co-developed-by: Zhang Yi <yi.z.zhang@linux.intel.com>
-> > Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
-> > Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> > ---
-> >  arch/x86/include/asm/kvm_host.h |  4 ++
-> >  arch/x86/kvm/mmu/spp.c          | 44 +++++++++++++++
-> >  arch/x86/kvm/mmu/spp.h          |  9 ++++
-> >  arch/x86/kvm/vmx/vmx.c          | 15 ++++++
-> >  arch/x86/kvm/x86.c              | 95 ++++++++++++++++++++++++++++++++-
-> >  include/uapi/linux/kvm.h        |  3 ++
-> >  6 files changed, 169 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> > index f5145b86d620..c7a9f03f39a7 100644
-> > --- a/arch/x86/include/asm/kvm_host.h
-> > +++ b/arch/x86/include/asm/kvm_host.h
-> > @@ -1238,6 +1238,10 @@ struct kvm_x86_ops {
-> >  
-> >  	bool (*apic_init_signal_blocked)(struct kvm_vcpu *vcpu);
-> >  	int (*enable_direct_tlbflush)(struct kvm_vcpu *vcpu);
-> > +
-> > +	int (*init_spp)(struct kvm *kvm);
-> > +	int (*flush_subpages)(struct kvm *kvm, u64 gfn, u32 npages);
-> > +	int (*get_inst_len)(struct kvm_vcpu *vcpu);
-> 
-> If this is necessary, which hopefully it isn't, then get_insn_len() to be
-> consistent with other KVM nomenclature.
+On Mon, Jan 13, 2020 at 10:36:14AM +0300, Kirill A. Shutemov wrote:
+>On Mon, Jan 13, 2020 at 08:44:57AM +0800, Wei Yang wrote:
+>> >> It is possible two page in the same pgdate or memcg grab page lock
+>> >> respectively and then access the same defer queue concurrently.
+>> 
+>> If my understanding is correct, you agree with my statement?
 >
-Yep, will change it.
+>Which one? If the one above then no. list_empty only accesses list_head
+>for the struct page, not the queue.
+>
 
-> A comment for the series overall, it needs a lot of work to properly order
-> code between patches.  E.g. this patch introduces get_inst_len() without
-> any justification in the changelog and without a user.  At best it's
-> confusing, at worst this series will be impossible to bisect.
+Ah, I get your point.
 
-I'll double check the patch and add more comments on some confusing
-points. Meanwhile, will re-order some code to make the serial testable,
-thanks a lot for your careful review!
+>-- 
+> Kirill A. Shutemov
 
+-- 
+Wei Yang
+Help you, Help me
