@@ -2,57 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB5031388FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 01:07:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0A77138905
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 01:07:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387499AbgAMAGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 19:06:25 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:42237 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727323AbgAMAGZ (ORCPT
+        id S2387537AbgAMAHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 19:07:18 -0500
+Received: from mail-ua1-f52.google.com ([209.85.222.52]:44012 "EHLO
+        mail-ua1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727323AbgAMAHR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 19:06:25 -0500
-Received: by mail-vk1-f193.google.com with SMTP id s142so2077612vkd.9
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Jan 2020 16:06:25 -0800 (PST)
+        Sun, 12 Jan 2020 19:07:17 -0500
+Received: by mail-ua1-f52.google.com with SMTP id o42so2683684uad.10
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Jan 2020 16:07:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=2HL17RsQhpvHGVShSuMEnDCDjyjoYw8RfuvSsolxtKc=;
-        b=BJ46d3g1EqtVBj1REWG1osVEA0ioMzxPhH28Voa7Awf1EbCYKRi/or0ikFnFF0Xtj5
-         e0JfYLf1HxqHlmkqdsJ7sRitHZuL6W1USF1SxIJv60yhpJTNYkDvM4MUVLdt1kUs3sAa
-         hn901YxwMn96I/6B6WDo8r63EhWYRW72DyhKp85pfztWr116M8l96gtMgjJ5uoYjgn7i
-         qLzV40TO01xhlnShJitRxTqNCZgZL76N2mQr3gFOHb79/NGtJkPvH0DsV1MhgHPflAgN
-         Ib0YwyNqtbrWiCbmZVKzEEZUB1P09dM4gNkaqm0cZuppRHBWUK5tW1cUyP8RJaSKvcAT
-         JfuA==
+        bh=Ni1dsk4zQuirgan391D3nIBqR+fxZP8zwkgVrPSLMyE=;
+        b=MkTqD2zddrvNJVuacif3IaKo9o4ZcuvBHo8hi3lg+TBK+H8BFbjbTvHR9+EAMNdTYJ
+         WjjqL6Unue/SF4hnaz93AJmi4hcLnjoCGXEurbCntUrHtgbd6KLRahlKz5NFS58Vx/C4
+         ce//VG0uUvtrEkO34VPYlQWRgbBE0t2+1WG4GIcsVLkBeA0fVKZdTIikIsfBolWw2teo
+         wcmcU8IejtRZvDXLBoUPh6gl7TnxuBnA8H45mrv0GnHhmwWHAefhmGpTWi7xCex+SkXi
+         1JGGZfD1KoXo3SioS0hKePFE56IK4C+MZAvibGIWdAR0Jibvsj68q1K+NVTt600PlGWe
+         IIBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2HL17RsQhpvHGVShSuMEnDCDjyjoYw8RfuvSsolxtKc=;
-        b=mLZe6cfjXCGA692AP4d719uXoNIRRkPSg47tpd8pYDCiRkB1jh5Mqp5X7/t/+1u2Gi
-         U9L2ckyat9siTc7mBKj1kVXC+8cX61/f5lFJ3rMXIWc7v7MB6uEusBvzhHXvXFuV8mip
-         Kh/gBcJ68VzC8CoR0rbqK380NQelJVnb5uA77QDcxPJiuDfhk12XH1GwPfd6BJ08BM2e
-         SBqjx11FQ8CfK8OvwI+fJ06JCZtFywBK7W8Y5ma5a9/tA3is+c6B8bbfM8Opcrswhv+T
-         sHnPgms/jXOd5yRUrk2iopbEvSKTvkL6++yFYDSbmAXIhyaG6Da2R35ch6YGF+xm/ah8
-         UdWw==
-X-Gm-Message-State: APjAAAWhuXcmBXxvfUI6SPJ62iQFzRjWl2lwfNgghFnRM6rOGQM/KIdY
-        5IpsEUrO1dHfDoT5J7veHJej+A7qBkLZlMiBqXU=
-X-Google-Smtp-Source: APXvYqzGUmlmfiMEzFg+1Y2A/xrmXNSvnyyQzuYUdfcc1RWK1JrFT8cW87AN1eibIhZjvgcBqYpoB/Fmq6QSxuCaLFI=
-X-Received: by 2002:a1f:1144:: with SMTP id 65mr5884087vkr.77.1578873984539;
- Sun, 12 Jan 2020 16:06:24 -0800 (PST)
+        bh=Ni1dsk4zQuirgan391D3nIBqR+fxZP8zwkgVrPSLMyE=;
+        b=c2bDz7PFJcWZDnDkpvJYdSPSV3wYm1zeTxuP9E67EW0gKjRq4zX0d5uJFMfYoSqpZz
+         8DrFN3cKuBGdac1jeQyUjtoKX2y4Bo11gl/wmaTtb0e8VqyvZJGWVzsf4b8zAorgHwIf
+         02AZJ9K/fIwQSDn2MkHWa+z2MCmcA/aivHKy7dgZE3HJh+WoIIjiuUwXvdpYDT+yTJOw
+         bo8ySn2PtFemeRWxVY3zdoxG5T9kTq9QlDhDDNAzMuejlv24P78djXClItyDG2rTo1FG
+         QsaUgdsjw2WNN89p4FeLRyrzHY4n/ED6CHZ0dwrDHBzUBIeTVeo0oLBj7Fd7V7AdHV87
+         jmNQ==
+X-Gm-Message-State: APjAAAWIRAvx1Z3MK5lFyOaQaHJMB0psEOkHOytc8g66ehww1X/vxY4b
+        Hzk9CT+/7bUVqUfWTlg1wsldgyX3rSNKKGxZTdg=
+X-Google-Smtp-Source: APXvYqyFFBC8dpNMD69+EuEZSci28AmYlHt/twpN4MrbjgbZwGM7Il8XTOOj7wxDtZqsqieKQqHbTh47ZNWd7OBTNy0=
+X-Received: by 2002:ab0:14ea:: with SMTP id f39mr5758331uae.40.1578874036638;
+ Sun, 12 Jan 2020 16:07:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20200110063201.47560-1-yuehaibing@huawei.com>
-In-Reply-To: <20200110063201.47560-1-yuehaibing@huawei.com>
+References: <20200110072837.48060-1-yuehaibing@huawei.com>
+In-Reply-To: <20200110072837.48060-1-yuehaibing@huawei.com>
 From:   Ben Skeggs <skeggsb@gmail.com>
-Date:   Mon, 13 Jan 2020 10:06:13 +1000
-Message-ID: <CACAvsv6EG0wvF4XCs=jisEjMDkfVUgMorgURko4uubqc3DOgOQ@mail.gmail.com>
-Subject: Re: [Nouveau] [PATCH] drm/nouveau: Fix copy-paste error in nouveau_fence_wait_uevent_handler
+Date:   Mon, 13 Jan 2020 10:07:05 +1000
+Message-ID: <CACAvsv4LQAs_GAavgywod1ksxvKe5JE6FNGMnULbnJACJ280KQ@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH -next] drm/ttm: Remove set but not used variable 'mem'
 To:     YueHaibing <yuehaibing@huawei.com>
 Cc:     Ben Skeggs <bskeggs@redhat.com>, Dave Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@canonical.com>,
-        sumit.semwal@linaro.org,
         ML nouveau <nouveau@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>,
         ML dri-devel <dri-devel@lists.freedesktop.org>
@@ -62,32 +60,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 10 Jan 2020 at 16:51, YueHaibing <yuehaibing@huawei.com> wrote:
+On Fri, 10 Jan 2020 at 17:32, YueHaibing <yuehaibing@huawei.com> wrote:
 >
-> Like other cases, it should use rcu protected 'chan' rather
-> than 'fence->channel' in nouveau_fence_wait_uevent_handler.
+> drivers/gpu/drm/nouveau/nouveau_ttm.c: In function nouveau_vram_manager_new:
+> drivers/gpu/drm/nouveau/nouveau_ttm.c:66:22: warning: variable mem set but not used [-Wunused-but-set-variable]
+> drivers/gpu/drm/nouveau/nouveau_ttm.c: In function nouveau_gart_manager_new:
+> drivers/gpu/drm/nouveau/nouveau_ttm.c:106:22: warning: variable mem set but not used [-Wunused-but-set-variable]
 >
-> Fixes: 0ec5f02f0e2c ("drm/nouveau: prevent stale fence->channel pointers, and protect with rcu")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Got it, thanks!
+> They are not used any more, so remove it.
+Thanks!
 
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
->  drivers/gpu/drm/nouveau/nouveau_fence.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/gpu/drm/nouveau/nouveau_ttm.c | 4 ----
+>  1 file changed, 4 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/nouveau/nouveau_fence.c
-> index 9118df0..70bb6bb 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_fence.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
-> @@ -156,7 +156,7 @@ nouveau_fence_wait_uevent_handler(struct nvif_notify *notify)
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_ttm.c b/drivers/gpu/drm/nouveau/nouveau_ttm.c
+> index 77a0c6a..7ca0a24 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_ttm.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_ttm.c
+> @@ -63,14 +63,12 @@ nouveau_vram_manager_new(struct ttm_mem_type_manager *man,
+>  {
+>         struct nouveau_bo *nvbo = nouveau_bo(bo);
+>         struct nouveau_drm *drm = nouveau_bdev(bo->bdev);
+> -       struct nouveau_mem *mem;
+>         int ret;
 >
->                 fence = list_entry(fctx->pending.next, typeof(*fence), head);
->                 chan = rcu_dereference_protected(fence->channel, lockdep_is_held(&fctx->lock));
-> -               if (nouveau_fence_update(fence->channel, fctx))
-> +               if (nouveau_fence_update(chan, fctx))
->                         ret = NVIF_NOTIFY_DROP;
->         }
->         spin_unlock_irqrestore(&fctx->lock, flags);
+>         if (drm->client.device.info.ram_size == 0)
+>                 return -ENOMEM;
+>
+>         ret = nouveau_mem_new(&drm->master, nvbo->kind, nvbo->comp, reg);
+> -       mem = nouveau_mem(reg);
+>         if (ret)
+>                 return ret;
+>
+> @@ -103,11 +101,9 @@ nouveau_gart_manager_new(struct ttm_mem_type_manager *man,
+>  {
+>         struct nouveau_bo *nvbo = nouveau_bo(bo);
+>         struct nouveau_drm *drm = nouveau_bdev(bo->bdev);
+> -       struct nouveau_mem *mem;
+>         int ret;
+>
+>         ret = nouveau_mem_new(&drm->master, nvbo->kind, nvbo->comp, reg);
+> -       mem = nouveau_mem(reg);
+>         if (ret)
+>                 return ret;
+>
 > --
 > 2.7.4
 >
