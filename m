@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EF3C139641
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 17:29:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88D01139643
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 17:29:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729151AbgAMQ2z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 11:28:55 -0500
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:38006 "EHLO
+        id S1729195AbgAMQ27 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 11:28:59 -0500
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:38013 "EHLO
         mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729125AbgAMQ2x (ORCPT
+        with ESMTP id S1729137AbgAMQ2y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 11:28:53 -0500
+        Mon, 13 Jan 2020 11:28:54 -0500
 Received: from Internal Mail-Server by MTLPINE1 (envelope-from vadimp@mellanox.com)
-        with ESMTPS (AES256-SHA encrypted); 13 Jan 2020 18:28:49 +0200
+        with ESMTPS (AES256-SHA encrypted); 13 Jan 2020 18:28:50 +0200
 Received: from r-build-lowlevel.mtr.labs.mlnx. (r-build-lowlevel.mtr.labs.mlnx [10.209.0.190])
-        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id 00DGSeff032667;
-        Mon, 13 Jan 2020 18:28:49 +0200
+        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id 00DGSefg032667;
+        Mon, 13 Jan 2020 18:28:50 +0200
 From:   Vadim Pasternak <vadimp@mellanox.com>
 To:     andy@infradead.org, dvhart@infradead.org
 Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
         Vadim Pasternak <vadimp@mellanox.com>
-Subject: [PATCH platform-next v3 10/11] platform/mellanox: mlxreg-hotplug: Add support for new capability register
-Date:   Mon, 13 Jan 2020 16:28:38 +0000
-Message-Id: <20200113162839.18103-11-vadimp@mellanox.com>
+Subject: [PATCH platform-next v3 11/11] platform/x86: mlx-platform: Add support for next generation systems
+Date:   Mon, 13 Jan 2020 16:28:39 +0000
+Message-Id: <20200113162839.18103-12-vadimp@mellanox.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20200113162839.18103-1-vadimp@mellanox.com>
 References: <20200113162839.18103-1-vadimp@mellanox.com>
@@ -32,66 +32,255 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for capability register, which is used for detection of the
-actual number of interrupt capable components within the particular
-group, supported by the specific system.
-Such components could be for example the number of power units and
-interrupts related to these units.
-The motivation is to avoid adding a new code in the future in order to
-distinct between the systems type supported different number of the
-components like power supplies, FANs, ASICs, line cards.
+Add support for new Mellanox system types of basic class VMOD0010,
+containing new Mellanox systems equipped with new switch device
+Spectrum 3 (32x400GbE/64x200G/128x100G Ethernet switch).
+These are the Top of the Rack 1U/2U/4U systems, equipped with
+Mellanox Comex card and with the switch board with Mellanox Spectrum-3
+device.
+This class of devices can be equipped with two PS units for 1U/2U or
+with four PS units for 4U systems.
 
 Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
 ---
- drivers/platform/mellanox/mlxreg-hotplug.c | 14 ++++++++++++++
- include/linux/platform_data/mlxreg.h       |  2 ++
- 2 files changed, 16 insertions(+)
+ drivers/platform/x86/mlx-platform.c | 180 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 180 insertions(+)
 
-diff --git a/drivers/platform/mellanox/mlxreg-hotplug.c b/drivers/platform/mellanox/mlxreg-hotplug.c
-index 706207d192ae..77be37a1fbcf 100644
---- a/drivers/platform/mellanox/mlxreg-hotplug.c
-+++ b/drivers/platform/mellanox/mlxreg-hotplug.c
-@@ -504,6 +504,20 @@ static int mlxreg_hotplug_set_irq(struct mlxreg_hotplug_priv_data *priv)
- 	item = pdata->items;
+diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
+index ac789f98c8b8..c27548fd386a 100644
+--- a/drivers/platform/x86/mlx-platform.c
++++ b/drivers/platform/x86/mlx-platform.c
+@@ -163,6 +163,7 @@
+ #define MLXPLAT_CPLD_NR_NONE			-1
+ #define MLXPLAT_CPLD_PSU_DEFAULT_NR		10
+ #define MLXPLAT_CPLD_PSU_MSNXXXX_NR		4
++#define MLXPLAT_CPLD_PSU_MSNXXXX_NR2		3
+ #define MLXPLAT_CPLD_FAN1_DEFAULT_NR		11
+ #define MLXPLAT_CPLD_FAN2_DEFAULT_NR		12
+ #define MLXPLAT_CPLD_FAN3_DEFAULT_NR		13
+@@ -212,8 +213,24 @@ static const struct resource mlxplat_lpc_resources[] = {
+ 			       IORESOURCE_IO),
+ };
  
- 	for (i = 0; i < pdata->counter; i++, item++) {
-+		if (item->capability) {
-+			/*
-+			 * Read group capability register to get actual number
-+			 * of interrupt capable components and set group mask
-+			 * accordingly.
-+			 */
-+			ret = regmap_read(priv->regmap, item->capability,
-+					  &regval);
-+			if (ret)
-+				goto out;
++/* Platform i2c next generation systems data */
++static struct mlxreg_core_data mlxplat_mlxcpld_i2c_ng_items_data[] = {
++	{
++		.reg = MLXPLAT_CPLD_LPC_REG_PSU_I2C_CAP_OFFSET,
++		.mask = MLXPLAT_CPLD_I2C_CAP_MASK,
++		.bit = MLXPLAT_CPLD_I2C_CAP_BIT,
++	},
++};
 +
-+			item->mask = GENMASK((regval & item->mask) - 1, 0);
-+		}
++static struct mlxreg_core_item mlxplat_mlxcpld_i2c_ng_items[] = {
++	{
++		.data = mlxplat_mlxcpld_i2c_ng_items_data,
++	},
++};
 +
- 		/* Clear group presense event. */
- 		ret = regmap_write(priv->regmap, item->reg +
- 				   MLXREG_HOTPLUG_EVENT_OFF, 0);
-diff --git a/include/linux/platform_data/mlxreg.h b/include/linux/platform_data/mlxreg.h
-index 6d54fe3bcac9..b8da8aef2446 100644
---- a/include/linux/platform_data/mlxreg.h
-+++ b/include/linux/platform_data/mlxreg.h
-@@ -101,6 +101,7 @@ struct mlxreg_core_data {
-  * @aggr_mask: group aggregation mask;
-  * @reg: group interrupt status register;
-  * @mask: group interrupt mask;
-+ * @capability: group capability register;
-  * @cache: last status value for elements fro the same group;
-  * @count: number of available elements in the group;
-  * @ind: element's index inside the group;
-@@ -112,6 +113,7 @@ struct mlxreg_core_item {
- 	u32 aggr_mask;
- 	u32 reg;
- 	u32 mask;
-+	u32 capability;
- 	u32 cache;
- 	u8 count;
- 	u8 ind;
+ /* Platform next generation systems i2c data */
+ static struct mlxreg_core_hotplug_platform_data mlxplat_mlxcpld_i2c_ng_data = {
++	.items = mlxplat_mlxcpld_i2c_ng_items,
+ 	.cell = MLXPLAT_CPLD_LPC_REG_AGGR_OFFSET,
+ 	.mask = MLXPLAT_CPLD_AGGR_MASK_COMEX,
+ 	.cell_low = MLXPLAT_CPLD_LPC_REG_AGGRCO_OFFSET,
+@@ -847,6 +864,116 @@ struct mlxreg_core_hotplug_platform_data mlxplat_mlxcpld_default_ng_data = {
+ 	.mask_low = MLXPLAT_CPLD_LOW_AGGR_MASK_LOW,
+ };
+ 
++/* Platform hotplug extended system family data */
++static struct mlxreg_core_data mlxplat_mlxcpld_ext_psu_items_data[] = {
++	{
++		.label = "psu1",
++		.reg = MLXPLAT_CPLD_LPC_REG_PSU_OFFSET,
++		.mask = BIT(0),
++		.hpdev.nr = MLXPLAT_CPLD_NR_NONE,
++	},
++	{
++		.label = "psu2",
++		.reg = MLXPLAT_CPLD_LPC_REG_PSU_OFFSET,
++		.mask = BIT(1),
++		.hpdev.nr = MLXPLAT_CPLD_NR_NONE,
++	},
++	{
++		.label = "psu3",
++		.reg = MLXPLAT_CPLD_LPC_REG_PSU_OFFSET,
++		.mask = BIT(2),
++		.hpdev.nr = MLXPLAT_CPLD_NR_NONE,
++	},
++	{
++		.label = "psu4",
++		.reg = MLXPLAT_CPLD_LPC_REG_PSU_OFFSET,
++		.mask = BIT(3),
++		.hpdev.nr = MLXPLAT_CPLD_NR_NONE,
++	},
++};
++
++static struct mlxreg_core_data mlxplat_mlxcpld_ext_pwr_items_data[] = {
++	{
++		.label = "pwr1",
++		.reg = MLXPLAT_CPLD_LPC_REG_PWR_OFFSET,
++		.mask = BIT(0),
++		.hpdev.brdinfo = &mlxplat_mlxcpld_pwr[0],
++		.hpdev.nr = MLXPLAT_CPLD_PSU_MSNXXXX_NR,
++	},
++	{
++		.label = "pwr2",
++		.reg = MLXPLAT_CPLD_LPC_REG_PWR_OFFSET,
++		.mask = BIT(1),
++		.hpdev.brdinfo = &mlxplat_mlxcpld_pwr[1],
++		.hpdev.nr = MLXPLAT_CPLD_PSU_MSNXXXX_NR,
++	},
++	{
++		.label = "pwr3",
++		.reg = MLXPLAT_CPLD_LPC_REG_PWR_OFFSET,
++		.mask = BIT(2),
++		.hpdev.brdinfo = &mlxplat_mlxcpld_pwr[0],
++		.hpdev.nr = MLXPLAT_CPLD_PSU_MSNXXXX_NR2,
++	},
++	{
++		.label = "pwr4",
++		.reg = MLXPLAT_CPLD_LPC_REG_PWR_OFFSET,
++		.mask = BIT(3),
++		.hpdev.brdinfo = &mlxplat_mlxcpld_pwr[1],
++		.hpdev.nr = MLXPLAT_CPLD_PSU_MSNXXXX_NR2,
++	},
++};
++
++static struct mlxreg_core_item mlxplat_mlxcpld_ext_items[] = {
++	{
++		.data = mlxplat_mlxcpld_ext_psu_items_data,
++		.aggr_mask = MLXPLAT_CPLD_AGGR_MASK_NG_DEF,
++		.reg = MLXPLAT_CPLD_LPC_REG_PSU_OFFSET,
++		.mask = MLXPLAT_CPLD_PSU_EXT_MASK,
++		.capability = MLXPLAT_CPLD_LPC_REG_PSU_I2C_CAP_OFFSET,
++		.count = ARRAY_SIZE(mlxplat_mlxcpld_ext_psu_items_data),
++		.inversed = 1,
++		.health = false,
++	},
++	{
++		.data = mlxplat_mlxcpld_ext_pwr_items_data,
++		.aggr_mask = MLXPLAT_CPLD_AGGR_MASK_NG_DEF,
++		.reg = MLXPLAT_CPLD_LPC_REG_PWR_OFFSET,
++		.mask = MLXPLAT_CPLD_PWR_EXT_MASK,
++		.capability = MLXPLAT_CPLD_LPC_REG_PSU_I2C_CAP_OFFSET,
++		.count = ARRAY_SIZE(mlxplat_mlxcpld_ext_pwr_items_data),
++		.inversed = 0,
++		.health = false,
++	},
++	{
++		.data = mlxplat_mlxcpld_default_ng_fan_items_data,
++		.aggr_mask = MLXPLAT_CPLD_AGGR_MASK_NG_DEF,
++		.reg = MLXPLAT_CPLD_LPC_REG_FAN_OFFSET,
++		.mask = MLXPLAT_CPLD_FAN_NG_MASK,
++		.count = ARRAY_SIZE(mlxplat_mlxcpld_default_ng_fan_items_data),
++		.inversed = 1,
++		.health = false,
++	},
++	{
++		.data = mlxplat_mlxcpld_default_asic_items_data,
++		.aggr_mask = MLXPLAT_CPLD_AGGR_MASK_NG_DEF,
++		.reg = MLXPLAT_CPLD_LPC_REG_ASIC_HEALTH_OFFSET,
++		.mask = MLXPLAT_CPLD_ASIC_MASK,
++		.count = ARRAY_SIZE(mlxplat_mlxcpld_default_asic_items_data),
++		.inversed = 0,
++		.health = true,
++	},
++};
++
++static
++struct mlxreg_core_hotplug_platform_data mlxplat_mlxcpld_ext_data = {
++	.items = mlxplat_mlxcpld_ext_items,
++	.counter = ARRAY_SIZE(mlxplat_mlxcpld_ext_items),
++	.cell = MLXPLAT_CPLD_LPC_REG_AGGR_OFFSET,
++	.mask = MLXPLAT_CPLD_AGGR_MASK_NG_DEF | MLXPLAT_CPLD_AGGR_MASK_COMEX,
++	.cell_low = MLXPLAT_CPLD_LPC_REG_AGGRLO_OFFSET,
++	.mask_low = MLXPLAT_CPLD_LOW_AGGR_MASK_LOW,
++};
++
+ /* Platform led default data */
+ static struct mlxreg_core_data mlxplat_mlxcpld_default_led_data[] = {
+ 	{
+@@ -2040,6 +2167,13 @@ static const struct reg_default mlxplat_mlxcpld_regmap_comex_default[] = {
+ 	{ MLXPLAT_CPLD_LPC_REG_PWM_CONTROL_OFFSET, 0x00 },
+ };
+ 
++static const struct reg_default mlxplat_mlxcpld_regmap_ng400[] = {
++	{ MLXPLAT_CPLD_LPC_REG_PWM_CONTROL_OFFSET, 0x00 },
++	{ MLXPLAT_CPLD_LPC_REG_WD1_ACT_OFFSET, 0x00 },
++	{ MLXPLAT_CPLD_LPC_REG_WD2_ACT_OFFSET, 0x00 },
++	{ MLXPLAT_CPLD_LPC_REG_WD3_ACT_OFFSET, 0x00 },
++};
++
+ struct mlxplat_mlxcpld_regmap_context {
+ 	void __iomem *base;
+ };
+@@ -2106,6 +2240,20 @@ static const struct regmap_config mlxplat_mlxcpld_regmap_config_comex = {
+ 	.reg_write = mlxplat_mlxcpld_reg_write,
+ };
+ 
++static const struct regmap_config mlxplat_mlxcpld_regmap_config_ng400 = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = 255,
++	.cache_type = REGCACHE_FLAT,
++	.writeable_reg = mlxplat_mlxcpld_writeable_reg,
++	.readable_reg = mlxplat_mlxcpld_readable_reg,
++	.volatile_reg = mlxplat_mlxcpld_volatile_reg,
++	.reg_defaults = mlxplat_mlxcpld_regmap_ng400,
++	.num_reg_defaults = ARRAY_SIZE(mlxplat_mlxcpld_regmap_ng400),
++	.reg_read = mlxplat_mlxcpld_reg_read,
++	.reg_write = mlxplat_mlxcpld_reg_write,
++};
++
+ static struct resource mlxplat_mlxcpld_resources[] = {
+ 	[0] = DEFINE_RES_IRQ_NAMED(17, "mlxreg-hotplug"),
+ };
+@@ -2258,6 +2406,32 @@ static int __init mlxplat_dmi_comex_matched(const struct dmi_system_id *dmi)
+ 	return 1;
+ }
+ 
++static int __init mlxplat_dmi_ng400_matched(const struct dmi_system_id *dmi)
++{
++	int i;
++
++	mlxplat_max_adap_num = MLXPLAT_CPLD_MAX_PHYS_ADAPTER_NUM;
++	mlxplat_mux_num = ARRAY_SIZE(mlxplat_default_mux_data);
++	mlxplat_mux_data = mlxplat_default_mux_data;
++	for (i = 0; i < mlxplat_mux_num; i++) {
++		mlxplat_mux_data[i].values = mlxplat_msn21xx_channels;
++		mlxplat_mux_data[i].n_values =
++				ARRAY_SIZE(mlxplat_msn21xx_channels);
++	}
++	mlxplat_hotplug = &mlxplat_mlxcpld_ext_data;
++	mlxplat_hotplug->deferred_nr =
++		mlxplat_msn21xx_channels[MLXPLAT_CPLD_GRP_CHNL_NUM - 1];
++	mlxplat_led = &mlxplat_default_ng_led_data;
++	mlxplat_regs_io = &mlxplat_default_ng_regs_io_data;
++	mlxplat_fan = &mlxplat_default_fan_data;
++	for (i = 0; i < ARRAY_SIZE(mlxplat_mlxcpld_wd_set_type2); i++)
++		mlxplat_wd_data[i] = &mlxplat_mlxcpld_wd_set_type2[i];
++	mlxplat_i2c = &mlxplat_mlxcpld_i2c_ng_data;
++	mlxplat_regmap_config = &mlxplat_mlxcpld_regmap_config_ng400;
++
++	return 1;
++}
++
+ static const struct dmi_system_id mlxplat_dmi_table[] __initconst = {
+ 	{
+ 		.callback = mlxplat_dmi_default_matched,
+@@ -2302,6 +2476,12 @@ static const struct dmi_system_id mlxplat_dmi_table[] __initconst = {
+ 		},
+ 	},
+ 	{
++		.callback = mlxplat_dmi_ng400_matched,
++		.matches = {
++			DMI_MATCH(DMI_BOARD_NAME, "VMOD0010"),
++		},
++	},
++	{
+ 		.callback = mlxplat_dmi_msn274x_matched,
+ 		.matches = {
+ 			DMI_MATCH(DMI_BOARD_VENDOR, "Mellanox Technologies"),
 -- 
 2.11.0
 
