@@ -2,139 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A48F138A94
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 06:18:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BB46138A96
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 06:19:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbgAMFSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 00:18:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52450 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725815AbgAMFSH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 00:18:07 -0500
-Received: from localhost (unknown [106.200.247.255])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A14E9214D8;
-        Mon, 13 Jan 2020 05:18:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578892686;
-        bh=3JKBMvq4OBBdAcG1hCHnQX+4annnKW7d3wE9F87ZrQU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=j3jz0N5Aoe9CXGAepvpGpVO8BvntXLyGAFDvV2r7gStAYSdri3pOEjAVGuvqE90DX
-         IU625KzcsjrajuGt3ZYEMNwOnVbQoMuroxzAJ0S22qj4gYUwgeuLYppsABVWD+IGYC
-         NEXfnlIRxHM3j/ghpm4vg8BvyL1CtREVllqfgrtI=
-Date:   Mon, 13 Jan 2020 10:48:00 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        broonie@kernel.org, srinivas.kandagatla@linaro.org,
-        jank@cadence.com, slawomir.blauciak@intel.com,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>
-Subject: Re: [alsa-devel] [PATCH v5 09/17] soundwire: intel: remove platform
- devices and use 'Master Devices' instead
-Message-ID: <20200113051800.GP2818@vkoul-mobl>
-References: <20191217210314.20410-1-pierre-louis.bossart@linux.intel.com>
- <20191217210314.20410-10-pierre-louis.bossart@linux.intel.com>
- <20191227090826.GM3006@vkoul-mobl>
- <5be4d9df-0f46-d36f-471c-aae9e1f55cc0@linux.intel.com>
- <20200106054221.GN2818@vkoul-mobl>
- <32ae46a7-59ee-4815-270a-a519ff462345@linux.intel.com>
- <20200110064303.GX2818@vkoul-mobl>
- <39000dd7-3f77-bc33-0ad3-aa47ba2360f7@linux.intel.com>
+        id S1727000AbgAMFS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 00:18:59 -0500
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:57177 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726109AbgAMFS6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 00:18:58 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 5203E5E53;
+        Mon, 13 Jan 2020 00:18:57 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 13 Jan 2020 00:18:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm1; bh=6RlrtGe1q52aL1FVbHTu04Aqfx
+        pcbL40rnxbamSASaQ=; b=YQsB2aith4yB1iR4q7Qv83xSwXmzwCJPLCqu22y4D4
+        WOvCJ5nJCXPYv1NwGctRu2pNiXX7Eb/bK97QCbnmxTSerI3r2BCJ1oc21tS42wH5
+        /XeOpgBxGZcqjazPw9djtJ/3UjGfWju3G0/dYWSAMSbBKjtGS8y3+fIawbTmrut2
+        +8ake2cs7vPMk+kP0/8L2DP3wFgdF2r1YZiqxOJ5Oa19agjPB4WgpRZOnkVz34wi
+        y0WLg5ah5owKJqTV8/xqjlLGF/o6TVy9Sc/hCcDk9jNGdtUJQq5Wxts33p1uK+Ly
+        B9/MN+TMltbC7doz0lgLzMMncYdWj1X+20lkC5caFe9Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=6RlrtGe1q52aL1FVb
+        HTu04AqfxpcbL40rnxbamSASaQ=; b=puh6hTBxLgcHepAg9hBIwKzIbBlH+8SA9
+        v8MZxJqQZFZnU3AIyGRg9IRPQJIamqanw6kh4nLB3sSP6pE66V2ibV+ZN+2Owgea
+        nbCLTzLX4C8DOn3ERRs/XdMQX5ru2g4QT1woctQVoUXuq9rP3IANNl3iypMy2ox/
+        7rCb1stKNDmu2Z+ILQX59ZaEzogQUUMv0O8rSnLN7GcTxh0S6rISA058P24zcix7
+        BKXYw7TlMsU9gYSRKbiMJyck2kgePy0rBHCL8a4d8l5Oo6TyCeDL6FF61HO931I4
+        WIqJyFe3quteXs2A3EFyqde27f4Xi0jgQDNoQqa1QFOr2raFPQ0dA==
+X-ME-Sender: <xms:vf0bXo56cXW2l6Y1on66Ze8BLTfeYodBIAvglnEqjcAdHVbuAinP7A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdeiledgkeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgvlhcu
+    jfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucffohhmrg
+    hinhepkhgvrhhnvghlrdhorhhgnecukfhppeejtddrudefhedrudegkedrudehudenucfr
+    rghrrghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhlrghnugdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:vf0bXn0LLzwxeJtfTtss5-A73Z59R1ByuHmCkmT5Eo5c0GHajikHfA>
+    <xmx:vf0bXvCvXMuf0aqxoNHxw8jHwGLHy7K5KqTmHNLEazGZNwnHFqfHBw>
+    <xmx:vf0bXp10YMv7sB_lSQiegZl2J5GZvuD4JIs0lsQ-mqCx1i14pm-jHg>
+    <xmx:wf0bXnydl4R1ASwqR8oeqLGwNj4wXOu9KC6-DgomT9xP51_EI6hBNg>
+Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 75AE630607B4;
+        Mon, 13 Jan 2020 00:18:52 -0500 (EST)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Ondrej Jirman <megous@megous.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Samuel Holland <samuel@sholland.org>
+Subject: [PATCH v6 0/6] Allwinner sun6i message box support
+Date:   Sun, 12 Jan 2020 23:18:46 -0600
+Message-Id: <20200113051852.15996-1-samuel@sholland.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <39000dd7-3f77-bc33-0ad3-aa47ba2360f7@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10-01-20, 10:08, Pierre-Louis Bossart wrote:
-> 
-> > > > The "big" difference is that probe is called by core (asoc) and not by
-> > > > driver onto themselves.. IMO that needs to go away.
-> > > 
-> > > What I did is not different from what existed already with platform devices.
-> > > They were manually created, weren't they?
-> > 
-> > Manual creation of device based on a requirement is different, did I ask
-> > you why you are creating device :)
-> > 
-> > I am simple asking you not to call probe in the driver. If you need
-> > that, move it to core! We do not want these kind of things in the
-> > drivers...
-> 
-> What core are you talking about?
+This series adds support for the "hardware message box" in sun8i, sun9i,
+and sun50i SoCs, used for communication with the ARISC management
+processor (the platform's equivalent of the ARM SCP). The end goal is to
+use the arm_scpi driver as a client, communicating with firmware running
+on the ARISC CPU.
 
-soundwire core ofcourse! IMO All that which goes into soundwire-bus-objs is
-considered as soundwire core part and rest are drivers intel, qc, so on!
-> 
-> The SOF intel driver needs to create a device, which will then be bound with
-> a SoundWire master driver.
-> 
-> What I am doing is no different from what your team did with
-> platform_register_device, I am really lost on what you are asking.
+I have tested this driver with various firmware programs and mailbox
+clients on the A64, H5, and H6 SoCs (including specifically the arm_scpi
+driver), and Ondrej Jirman has tested the driver on the A83T (using a
+similar patch to arm_scpi).
 
-Again repeating myself, you call an API to do that is absolutely fine,
-but we don't do that in drivers or open code these things
+The clock changes are dropped in favor of:
+https://lore.kernel.org/linux-clk/20191230193127.8803-1-samuel@sholland.org/
 
-> > > > > FWIW, the implementation here follows what was suggested for Greybus 'Host
-> > > > > Devices' [1] [2], so it's not like I am creating any sort of dangerous
-> > > > > precedent.
-> > > > > 
-> > > > > [1]
-> > > > > https://elixir.bootlin.com/linux/latest/source/drivers/greybus/es2.c#L1275
-> > > > > [2] https://elixir.bootlin.com/linux/latest/source/drivers/greybus/hd.c#L124
-> > > > 
-> > > > And if you look closely all this work is done by core not by drivers!
-> > > > Drivers _should_ never do all this, it is the job of core to do that for
-> > > > you.
-> > > 
-> > > Please look at the code again, you have a USB probe that will manually call
-> > > the GreyBus device creation.
-> > > 
-> > > static int ap_probe(struct usb_interface *interface,
-> > > 		    const struct usb_device_id *id)
-> > > {
-> > > 	hd = gb_hd_create(&es2_driver, &udev->dev, 	
-> > > 
-> > > 
-> > > static struct usb_driver es2_ap_driver = {
-> > > 	.name =		"es2_ap_driver",
-> > > 	.probe =	ap_probe, <<< code above
-> > > 	.disconnect =	ap_disconnect,
-> > > 	.id_table =	id_table,
-> > > 	.soft_unbind =	1,
-> > > };
-> > 
-> > Look closely the driver es2 calls into greybus core hd.c and gets the
-> > work done, subtle but a big differances in the approaches..
-> 
-> I am sorry, I have absolutely no idea what you are referring to.
-> 
-> The code I copy/pasted here makes no call to the greybus core, it's ap_probe
-> -> gb_hd_create. No core involved. If I am mistaken, please show me what I
-> got wrong.
+Hopefully I've learned my lesson that adding more tangentially-related
+patches doesn't increase the likelihood of getting things merged. This
+patch just includes the driver and the device tree changes.
 
-1. es2_ap_driver is host controller driver
+Thanks,
+Samuel
 
-2. gb_hd_create() is an API provided by greybus core!
+Changes from v5:
+  - Rebased on tag sunxi-dt-for-5.5-2
+  - Dropped unnecessary/unrelated patches
+  - Addressed Maxime's dt-binding comments
+  - Used devm_reset_control_get_exclusive
 
-es2 driver doesn't open code creation like you are doing in intel driver,
-it doesn't call probe on its own, greybus does that
+Changes from v4:
+  - Rebased on sunxi-next
+  - Dropped AR100 clock patch, as it was controversial and unnecessary
+  - Renamed sunxi-msgbox to sun6i-msgbox and sun6i-a31-msgbox
+  - Added comments about not asserting the reset line
+  - Dropped A80 DTS changes as they were untested
+  - Added Ondrej's Tested-by for A83T
+  - Dropped the demo; replaced with a real arm_scpi fix
 
-This is very common pattern in linux kernel subsytems, drivers dont do
-these things, the respective subsystem core does that... see about es2
-driver and implementation of gb_hd_create(). See callers of
-platform_register_device() and its implementation.
+Changes from v3:
+  - Rebased on sunxi-next
+  - Added Rob's Reviewed-by for patch 3
+  - Fixed a crash when receiving a message on a disabled channel
+  - Cleaned up some comments/formatting in the driver
+  - Fixed #mbox-cells in sunxi-h3-h5.dtsi (patch 7)
+  - Removed the irqchip example (no longer relevant to the fw design)
+  - Added a demo/example client that uses the driver and a toy firmware
 
-I don't know how else I can explain this to you, is something wrong in
-how I conveyed this info or you... or something else, I dont know!!!
+Changes from v2:
+  - Merge patches 1-3
+  - Add a comment in the code explaining the CLK_IS_CRITICAL usage
+  - Add a patch to mark the AR100 clocks as critical
+  - Use YAML for the device tree binding
+  - Include a not-for-merge example usage of the mailbox
+
+Changes from v1:
+  - Marked message box clocks as critical instead of hacks in the driver
+  - 8 unidirectional channels instead of 4 bidirectional pairs
+  - Use per-SoC compatible strings and an A31 fallback compatible
+  - Dropped the mailbox framework patch
+  - Include DT patches for SoCs that document the message box
+
+Samuel Holland (6):
+  dt-bindings: mailbox: Add a sun6i message box binding
+  mailbox: sun6i-msgbox: Add a new mailbox driver
+  ARM: dts: sunxi: a83t: Add msgbox node
+  ARM: dts: sunxi: h3/h5: Add msgbox node
+  arm64: dts: allwinner: a64: Add msgbox node
+  arm64: dts: allwinner: h6: Add msgbox node
+
+ .../mailbox/allwinner,sun6i-a31-msgbox.yaml   |  80 +++++
+ arch/arm/boot/dts/sun8i-a83t.dtsi             |  10 +
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi            |  10 +
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  10 +
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |  10 +
+ drivers/mailbox/Kconfig                       |   9 +
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/sun6i-msgbox.c                | 332 ++++++++++++++++++
+ 8 files changed, 463 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml
+ create mode 100644 drivers/mailbox/sun6i-msgbox.c
 
 -- 
-~Vinod
+2.23.0
+
