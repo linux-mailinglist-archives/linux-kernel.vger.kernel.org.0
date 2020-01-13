@@ -2,61 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 155D9138D7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:16:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B9E4138D7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:16:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbgAMJQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 04:16:02 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:53052 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725878AbgAMJQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 04:16:02 -0500
-Received: from wf0253.dip.tu-dresden.de ([141.76.180.253] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1iqvpF-0001xO-Fh; Mon, 13 Jan 2020 10:15:57 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: fix dwmmc clock name for px30 and rk3308
-Date:   Mon, 13 Jan 2020 10:15:56 +0100
-Message-ID: <3203839.F8si9oFvou@phil>
-In-Reply-To: <20200110161200.22755-1-jbx6244@gmail.com>
-References: <20200110161200.22755-1-jbx6244@gmail.com>
+        id S1727494AbgAMJQL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 04:16:11 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53155 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725978AbgAMJQK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 04:16:10 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1iqvpJ-0000eB-1E; Mon, 13 Jan 2020 10:16:01 +0100
+Message-ID: <a4ff0a8571895c65ed5c20abd0c332b0d92defab.camel@pengutronix.de>
+Subject: Re: [PATCH v6 2/6] mailbox: sun6i-msgbox: Add a new mailbox driver
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Samuel Holland <samuel@sholland.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ondrej Jirman <megous@megous.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Date:   Mon, 13 Jan 2020 10:15:58 +0100
+In-Reply-To: <20200113051852.15996-3-samuel@sholland.org>
+References: <20200113051852.15996-1-samuel@sholland.org>
+         <20200113051852.15996-3-samuel@sholland.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Johan,
-
-Am Freitag, 10. Januar 2020, 17:12:00 CET schrieb Johan Jonker:
-> An experimental test with the command below gives this error:
-> px30-evb.dt.yaml: dwmmc@ff390000: clock-names:2:
-> 'ciu-drive' was expected
-> rk3308-evb.dt.yaml: dwmmc@ff480000: clock-names:2:
-> 'ciu-drive' was expected
+On Sun, 2020-01-12 at 23:18 -0600, Samuel Holland wrote:
+> Allwinner sun6i, sun8i, sun9i, and sun50i SoCs contain a hardware
+> message box used for communication between the ARM CPUs and the ARISC
+> management coprocessor. This mailbox contains 8 unidirectional
+> 4-message FIFOs.
 > 
-> 'ciu-drv' is not a valid dwmmc clock name,
-> so fix this by changing it to 'ciu-drive'.
+> Add a driver for it, so it can be used for SCPI or other communication
+> protocols.
 > 
-> make ARCH=arm64 dtbs_check
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> ---
+>  drivers/mailbox/Kconfig        |   9 +
+>  drivers/mailbox/Makefile       |   2 +
+>  drivers/mailbox/sun6i-msgbox.c | 332 +++++++++++++++++++++++++++++++++
+>  3 files changed, 343 insertions(+)
+>  create mode 100644 drivers/mailbox/sun6i-msgbox.c
 > 
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+[...]
+> diff --git a/drivers/mailbox/sun6i-msgbox.c b/drivers/mailbox/sun6i-msgbox.c
+> new file mode 100644
+> index 000000000000..15d6fd522dc5
+> --- /dev/null
+> +++ b/drivers/mailbox/sun6i-msgbox.c
+> @@ -0,0 +1,332 @@
+[...]
+> +	reset = devm_reset_control_get_exclusive(dev, NULL);
+> +	if (IS_ERR(reset)) {
+> +		ret = PTR_ERR(reset);
+> +		dev_err(dev, "Failed to get reset control: %d\n", ret);
+> +		goto err_disable_unprepare;
+> +	}
+> +
+> +	/*
+> +	 * NOTE: We rely on platform firmware to preconfigure the channel
+> +	 * directions, and we share this hardware block with other firmware
+> +	 * that runs concurrently with Linux (e.g. a trusted monitor).
+> +	 *
+> +	 * Therefore, we do *not* assert the reset line if probing fails or
+> +	 * when removing the device.
+> +	 */
+> +	ret = reset_control_deassert(reset);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to deassert reset: %d\n", ret);
+> +		goto err_disable_unprepare;
+> +	}
 
-thanks for this fix, I've split it into two patches (px30 and rk3308) and
-applied for 5.6
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Thanks
-Heiko
-
-
+regards
+Philipp
 
