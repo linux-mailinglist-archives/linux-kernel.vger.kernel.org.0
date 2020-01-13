@@ -2,82 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8538F1392AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:58:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7CF91392C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:58:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729107AbgAMN5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 08:57:17 -0500
-Received: from mga05.intel.com ([192.55.52.43]:12818 "EHLO mga05.intel.com"
+        id S1729009AbgAMN6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 08:58:05 -0500
+Received: from verein.lst.de ([213.95.11.211]:41413 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728953AbgAMN5Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 08:57:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jan 2020 05:57:15 -0800
-X-IronPort-AV: E=Sophos;i="5.69,429,1571727600"; 
-   d="scan'208";a="217411967"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jan 2020 05:57:13 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Chen Zhou <chenzhou10@huawei.com>, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        chenzhou10@huawei.com, intel-gfx@lists.freedesktop.org
-Subject: Re: [PATCH next] drm/i915: fix build error without ACPI
-In-Reply-To: <20200113132724.143687-1-chenzhou10@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20200113132724.143687-1-chenzhou10@huawei.com>
-Date:   Mon, 13 Jan 2020 15:57:10 +0200
-Message-ID: <874kwzmpc9.fsf@intel.com>
+        id S1728679AbgAMN6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 08:58:03 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 58A1068B20; Mon, 13 Jan 2020 14:58:00 +0100 (CET)
+Date:   Mon, 13 Jan 2020 14:58:00 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] xfs: Fix xfs_dir2_sf_entry_t size check
+Message-ID: <20200113135800.GA8635@lst.de>
+References: <20200109141459.21808-1-vincenzo.frascino@arm.com> <c43539f2-aa9b-4afa-985c-c438099732ff@sandeen.net> <1a540ee4-6597-c79e-1bce-6592cb2f3eae@arm.com> <20200109165048.GB8247@magnolia> <435bcb71-9126-b1f1-3803-4977754b36ff@arm.com> <CAK8P3a0eY6Vm5PNdzR8Min9MrwAqH8vnMZ3C+pxTQhiFVNPyWA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a0eY6Vm5PNdzR8Min9MrwAqH8vnMZ3C+pxTQhiFVNPyWA@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 13 Jan 2020, Chen Zhou <chenzhou10@huawei.com> wrote:
-> If CONFIG_ACPI=n and CONFIG_BACKLIGHT_CLASS_DEVICE=m, compilation complains
-> with undefined references:
->
-> drivers/gpu/drm/i915/display/intel_panel.o: In function `intel_backlight_device_register':
-> intel_panel.c:(.text+0x4dd9): undefined reference to `backlight_device_register'
-> drivers/gpu/drm/i915/display/intel_panel.o: In function `intel_backlight_device_unregister':
-> intel_panel.c:(.text+0x4e96): undefined reference to `backlight_device_unregister'
->
-> This patch select BACKLIGHT_CLASS_DEVICE directly.
+On Mon, Jan 13, 2020 at 02:55:15PM +0100, Arnd Bergmann wrote:
+> With ARM OABI (which you get when EABI is disabled), structures are padded
+> to multiples of 32 bits. See commits 8353a649f577 ("xfs: kill
+> xfs_dir2_sf_off_t")
+> and aa2dd0ad4d6d ("xfs: remove __arch_pack"). Those could be partially
+> reverted to fix it again, but it doesn't seem worth it as there is
+> probably nobody
+> running XFS on OABI machines (actually with the build failure we can
+> be fairly sure there isn't ;-).
 
-i915 does not unconditionally require backlight.
-
-See e.g. [1] for the details.
-
-BR,
-Jani.
-
-
-[1] http://lore.kernel.org/r/87o8veotf9.fsf@intel.com
-
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
-> ---
->  drivers/gpu/drm/i915/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-> index ba95959..6b69dab 100644
-> --- a/drivers/gpu/drm/i915/Kconfig
-> +++ b/drivers/gpu/drm/i915/Kconfig
-> @@ -16,7 +16,7 @@ config DRM_I915
->  	select IRQ_WORK
->  	# i915 depends on ACPI_VIDEO when ACPI is enabled
->  	# but for select to work, need to select ACPI_VIDEO's dependencies, ick
-> -	select BACKLIGHT_CLASS_DEVICE if ACPI
-> +	select BACKLIGHT_CLASS_DEVICE
->  	select INPUT if ACPI
->  	select ACPI_VIDEO if ACPI
->  	select ACPI_BUTTON if ACPI
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+Or just try adding a __packed to the xfs_dir2_sf_entry definition?
