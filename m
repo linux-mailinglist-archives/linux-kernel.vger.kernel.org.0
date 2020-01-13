@@ -2,111 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAE25139411
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:58:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CCC1139413
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:58:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbgAMO6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 09:58:06 -0500
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:59795 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbgAMO6F (ORCPT
+        id S1728928AbgAMO6O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 09:58:14 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34182 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728843AbgAMO6N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 09:58:05 -0500
-X-Originating-IP: 90.76.211.102
-Received: from localhost (lfbn-tou-1-1151-102.w90-76.abo.wanadoo.fr [90.76.211.102])
-        (Authenticated sender: antoine.tenart@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id BFC4640007;
-        Mon, 13 Jan 2020 14:57:58 +0000 (UTC)
-Date:   Mon, 13 Jan 2020 15:57:58 +0100
-From:   Antoine Tenart <antoine.tenart@bootlin.com>
-To:     Jiri Pirko <jiri@resnulli.us>
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
-        sd@queasysnail.net, andrew@lunn.ch, f.fainelli@gmail.com,
-        hkallweit1@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        alexandre.belloni@bootlin.com, allan.nielsen@microchip.com,
-        camelia.groza@nxp.com, Simon.Edelhaus@aquantia.com,
-        Igor.Russkikh@aquantia.com, jakub.kicinski@netronome.com
-Subject: Re: [PATCH net-next v5 05/15] net: macsec: hardware offloading
- infrastructure
-Message-ID: <20200113145758.GB3078@kwain>
-References: <20200110162010.338611-1-antoine.tenart@bootlin.com>
- <20200110162010.338611-6-antoine.tenart@bootlin.com>
- <20200113143452.GA2131@nanopsycho>
+        Mon, 13 Jan 2020 09:58:13 -0500
+Received: by mail-pg1-f193.google.com with SMTP id r11so4833548pgf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 06:58:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ABwgmPKfDy+N+TGKbofrmdsL1lafnTHl6Ci0Ho1XYT8=;
+        b=bOsdsARnyhmEOKyiyqxc6hjzJPnadrq4BiEyPdBgmJkzhUQxndVn+RuaCK6zspxAjj
+         XA2VmeP7hQZyiIsbEotZCC70+fJp6p7gcsWI8jXeM+UsU3BhkqLV8zP5C9A6dse3f1cG
+         WvSW0D1I8dMSS5vmwNqpoNSGkH6TrLBhQwxpDAT8Xtn0wEKhrP3P1KkD76vCyq482ypm
+         ratxTPWzQsmX+LuvXctaw0zLo4nZA7NfaUOQ+lMmNYcVcvtgnMrnRODI9/5DtL38jTni
+         Q6vwdGCAmjRyyhf3IKKnTFcqZReTUxykBqI2mgoYDmvfKF0q/GHj/xGegJvjOLGl/L7O
+         7i3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ABwgmPKfDy+N+TGKbofrmdsL1lafnTHl6Ci0Ho1XYT8=;
+        b=l7uEMQu/6BAN1R60Tq+oednM4wMy6Bpybv+XllV8FiFtQ1Guf2iEFa/Qh1WVCC5YU3
+         BWn8KN8tyAOlRBHnFy7HwHCfx4hvWxOM7yt+fs2XVMCNfzsxhRvDpH4PPJSVj35Pvuyj
+         3xnPcnc7a3j476+OqKeANYTdeo2hNz4E0c12eNQXDpEK7Kl25Jl/ArHHPvm2xbD11wRS
+         S0kr84Q+pqusfin9k+YYGcMCiEvzYIm5elI2BQKy7pfVMzffYAkqh0fVGaKtzAUMRjxI
+         sqZ69WC+xl6YGp90iKn/fqtzrUTPbZDD6eR1jRCzX2u6DsbLMKu5uMrveAFaTGaLvhPH
+         Waew==
+X-Gm-Message-State: APjAAAUlYPVgb2+ZEJH7sozJGArW02rzr4Q6JQJKB3aTnqU2M5mGisO/
+        Ff9fVbL7+T6bFiPV20w4YgQj5A==
+X-Google-Smtp-Source: APXvYqzBF9RnJzzjN8d3ypYT+NVQzN+8f/shFljnUu2NyTcyE8qPeGaNq2hQb3H1101ndSj85JVYHg==
+X-Received: by 2002:a62:e30d:: with SMTP id g13mr20089294pfh.92.1578927492811;
+        Mon, 13 Jan 2020 06:58:12 -0800 (PST)
+Received: from leoy-ThinkPad-X240s (li519-153.members.linode.com. [66.175.222.153])
+        by smtp.gmail.com with ESMTPSA id i127sm15559616pfe.54.2020.01.13.06.58.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 13 Jan 2020 06:58:12 -0800 (PST)
+Date:   Mon, 13 Jan 2020 22:58:03 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Suzuki Kuruppassery Poulose <suzuki.poulose@arm.com>
+Cc:     James Clark <james.clark@arm.com>,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nd@arm.com, Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Igor Lubashev <ilubashe@akamai.com>
+Subject: Re: [PATCH] perf tools: Fix bug when recording SPE and non SPE events
+Message-ID: <20200113145803.GB10620@leoy-ThinkPad-X240s>
+References: <20191220110525.30131-1-james.clark@arm.com>
+ <20191223034852.GB3981@leoy-ThinkPad-X240s>
+ <fd4f4278-fa43-86dc-1f2f-3439f19fea9e@arm.com>
+ <20200113141751.GA10620@leoy-ThinkPad-X240s>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200113143452.GA2131@nanopsycho>
+In-Reply-To: <20200113141751.GA10620@leoy-ThinkPad-X240s>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Jiri,
+On Mon, Jan 13, 2020 at 10:17:51PM +0800, Leo Yan wrote:
 
-On Mon, Jan 13, 2020 at 03:34:52PM +0100, Jiri Pirko wrote:
-> Fri, Jan 10, 2020 at 05:20:00PM CET, antoine.tenart@bootlin.com wrote:
-> 
-> Couple nitpicks I randomly spotted:
-> 
-> [...]
-> 
-> 
-> >+static bool macsec_is_offloaded(struct macsec_dev *macsec)
-> >+{
-> >+	if (macsec->offload == MACSEC_OFFLOAD_PHY)
-> >+		return true;
-> >+
-> >+	return false;
-> 
-> Just:
-> 	return macsec->offload == MACSEC_OFFLOAD_PHY;
+[...]
 
-This construction is because I split the phy offloading support from the
-MAC one, and this check becomes more complex when the MAC offloading
-support is applied. I could check it's not MACSEC_OFFLOAD_OFF, but I
-think it's nice having the default set to false when reading the code.
-
-> >+/* Checks if underlying layers implement MACsec offloading functions. */
-> >+static bool macsec_check_offload(enum macsec_offload offload,
-> >+				 struct macsec_dev *macsec)
-> >+{
-> >+	if (!macsec || !macsec->real_dev)
-> >+		return false;
-> >+
-> >+	if (offload == MACSEC_OFFLOAD_PHY)
+> > > On Fri, Dec 20, 2019 at 11:05:25AM +0000, James Clark wrote:
+> > > > This patch fixes an issue when non Arm SPE events are specified after an
+> > > > Arm SPE event. In that case, perf will exit with an error code and not
+> > > > produce a record file. This is because a loop index is used to store the
+> > > > location of the relevant Arm SPE PMU, but if non SPE PMUs follow, that
+> > > > index will be overwritten. Fix this issue by saving the PMU into a
+> > > > variable instead of using the index, and also add an error message.
+> > > > 
+> > > > Before the fix:
+> > > >      ./perf record -e arm_spe/ts_enable=1/ -e branch-misses ls; echo $?
+> > > >      237
+> > > > 
+> > > > After the fix:
+> > > >      ./perf record -e arm_spe/ts_enable=1/ -e branch-misses ls; echo $?
+> > > >      ...
+> > > >      0
+> > > 
+> > > Just bring up a question related with PMU event registration.  Let's
+> > > see the DT binding in arch/arm64/boot/dts/arm/fvp-base-revc.dts:
+> > > 
+> > >           spe-pmu {
+> > >                   compatible = "arm,statistical-profiling-extension-v1";
+> > >                   interrupts = <GIC_PPI 5 IRQ_TYPE_LEVEL_HIGH>;
+> > >           };
+> > > 
+> > > 
+> > > Now SPE registers PMU event for every CPU; seem to me, though SPE is an
+> > 
+> > Do you mean "SPE PMU" here ? SPE is different from ETM, where the trace
+> > data is micro-architecture dependent. And thus you cannot mix the trace
+> > on different CPUs with different micro-archs.
 > 
-> You have a helper for this already - macsec_is_offloaded(). No need for
-> "offload" arg then.
+> Understood that SPE is micro-architecture dependent.
 
-Same here, except the _PHY case is different from the _MAC one. So the
-check needs to be specific to _PHY.
+Maybe SPE is more general than we think :)
 
-> >+		return macsec->real_dev->phydev &&
-> >+		       macsec->real_dev->phydev->macsec_ops;
-> >+
-> >+	return false;
-> >+}
-> >+
-> >+static const struct macsec_ops *__macsec_get_ops(enum macsec_offload offload,
-> >+						 struct macsec_dev *macsec,
-> >+						 struct macsec_context *ctx)
-> >+{
-> >+	if (ctx) {
-> >+		memset(ctx, 0, sizeof(*ctx));
-> >+		ctx->offload = offload;
-> >+
-> >+		if (offload == MACSEC_OFFLOAD_PHY)
-> 
-> Same here.
-
-Same here.
+Since SPE is defined in ARMv8 architecture reference manual (ARM DDI
+0487D.a); should SPE trace data format is unified and defined in Chapter
+D9 "Statistical Profiling Extension Sample Record Specification"?
 
 Thanks,
-Antoine
-
--- 
-Antoine Ténart, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Leo
