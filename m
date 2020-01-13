@@ -2,99 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5710138E21
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:47:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D28DF138E19
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:46:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728688AbgAMJrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 04:47:25 -0500
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:35470 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725992AbgAMJrX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 04:47:23 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R661e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0TncLfyC_1578908838;
-Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TncLfyC_1578908838)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 13 Jan 2020 17:47:19 +0800
-Subject: Re: [PATCH v7 02/10] mm/memcg: fold lru_lock in lock_page_lru
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
-        daniel.m.jordan@oracle.com, yang.shi@linux.alibaba.com,
-        willy@infradead.org, shakeelb@google.com, hannes@cmpxchg.org
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-References: <1577264666-246071-1-git-send-email-alex.shi@linux.alibaba.com>
- <1577264666-246071-3-git-send-email-alex.shi@linux.alibaba.com>
- <36d7e390-a3d1-908c-d181-4a9e9c8d3d98@yandex-team.ru>
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-Message-ID: <952d02c2-8aa5-40bb-88bb-c43dee65c8bc@linux.alibaba.com>
-Date:   Mon, 13 Jan 2020 17:45:51 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.3.1
+        id S1726985AbgAMJqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 04:46:31 -0500
+Received: from fd.dlink.ru ([178.170.168.18]:54344 "EHLO fd.dlink.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725992AbgAMJqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 04:46:31 -0500
+Received: by fd.dlink.ru (Postfix, from userid 5000)
+        id 5A4A41B2130C; Mon, 13 Jan 2020 12:46:28 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 5A4A41B2130C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dlink.ru; s=mail;
+        t=1578908788; bh=mHvumthM4kqA6nZVMBkNipV495noJBzqsUxcFANvR+c=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=bRqKzJCwoYMAV12rYK3E7eu7St01aA1F7/0z3636veVJnbqnefcePy7g0zkw4mPMk
+         ybo9ivig7DazPIlAJslLHu4GABVqm+9IpUB1fq22T6nfPjFNIpXLGGkz3trsHejYJT
+         wQHirYb2NWM2tt/p0FT+FjQNPnwQe7lle63GxDE4=
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dlink.ru
+X-Spam-Level: 
+X-Spam-Status: No, score=-99.2 required=7.5 tests=BAYES_50,URIBL_BLOCKED,
+        USER_IN_WHITELIST autolearn=disabled version=3.4.2
+Received: from mail.rzn.dlink.ru (mail.rzn.dlink.ru [178.170.168.13])
+        by fd.dlink.ru (Postfix) with ESMTP id 466E51B201E9;
+        Mon, 13 Jan 2020 12:46:14 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 466E51B201E9
+Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
+        by mail.rzn.dlink.ru (Postfix) with ESMTP id D30BE1B20320;
+        Mon, 13 Jan 2020 12:46:13 +0300 (MSK)
+Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
+        by mail.rzn.dlink.ru (Postfix) with ESMTPA;
+        Mon, 13 Jan 2020 12:46:13 +0300 (MSK)
 MIME-Version: 1.0
-In-Reply-To: <36d7e390-a3d1-908c-d181-4a9e9c8d3d98@yandex-team.ru>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+Date:   Mon, 13 Jan 2020 12:46:13 +0300
+From:   Alexander Lobakin <alobakin@dlink.ru>
+To:     Vladimir Oltean <olteanv@gmail.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Edward Cree <ecree@solarflare.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Taehee Yoo <ap420073@gmail.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>,
+        Matteo Croce <mcroce@redhat.com>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Paul Blakey <paulb@mellanox.com>,
+        Yoshiki Komachi <komachi.yoshiki@gmail.com>,
+        netdev <netdev@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH RFC net-next 05/19] net: dsa: tag_ar9331: add GRO
+ callbacks
+In-Reply-To: <CA+h21hoSoZT+ieaOu8N=MCSqkzey0L6HeoXSyLtHjZztT0S9ug@mail.gmail.com>
+References: <20191230143028.27313-1-alobakin@dlink.ru>
+ <20191230143028.27313-6-alobakin@dlink.ru>
+ <ee6f83fd-edf4-5a98-9868-4cbe9e226b9b@gmail.com>
+ <ed0ad0246c95a9ee87352d8ddbf0d4a1@dlink.ru>
+ <CA+h21hoSoZT+ieaOu8N=MCSqkzey0L6HeoXSyLtHjZztT0S9ug@mail.gmail.com>
+User-Agent: Roundcube Webmail/1.4.0
+Message-ID: <0002a7388dfd5fb70db4b43a6c521c52@dlink.ru>
+X-Sender: alobakin@dlink.ru
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-在 2020/1/10 下午4:49, Konstantin Khlebnikov 写道:
-> On 25/12/2019 12.04, Alex Shi wrote:
->>  From the commit_charge's explanations and mem_cgroup_commit_charge
->> comments, as well as call path when lrucare is ture, The lru_lock is
->> just to guard the task migration(which would be lead to move_account)
->> So it isn't needed when !PageLRU, and better be fold into PageLRU to
->> reduce lock contentions.
->>
->> Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
->> Cc: Johannes Weiner <hannes@cmpxchg.org>
->> Cc: Michal Hocko <mhocko@kernel.org>
->> Cc: Matthew Wilcox <willy@infradead.org>
->> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: cgroups@vger.kernel.org
->> Cc: linux-mm@kvack.org
->> Cc: linux-kernel@vger.kernel.org
->> ---
->>   mm/memcontrol.c | 9 ++++-----
->>   1 file changed, 4 insertions(+), 5 deletions(-)
->>
->> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->> index c5b5f74cfd4d..0ad10caabc3d 100644
->> --- a/mm/memcontrol.c
->> +++ b/mm/memcontrol.c
->> @@ -2572,12 +2572,11 @@ static void cancel_charge(struct mem_cgroup *memcg, unsigned int nr_pages)
->>     static void lock_page_lru(struct page *page, int *isolated)
->>   {
->> -    pg_data_t *pgdat = page_pgdat(page);
->> -
->> -    spin_lock_irq(&pgdat->lru_lock);
->>       if (PageLRU(page)) {
->> +        pg_data_t *pgdat = page_pgdat(page);
->>           struct lruvec *lruvec;
->>   +        spin_lock_irq(&pgdat->lru_lock);
+Vladimir Oltean wrote 13.01.2020 12:42:
+> Hi Alexander,
 > 
-> That's wrong. Here PageLRU must be checked again under lru_lock.
-Hi, Konstantin,
-
-For logical remain, we can get the lock and then release for !PageLRU. 
-but I still can figure out the problem scenario. Would like to give more hints?
-
-
+> On Mon, 13 Jan 2020 at 11:22, Alexander Lobakin <alobakin@dlink.ru> 
+> wrote:
+>> 
+>> CPU ports can't be bridged anyway
+>> 
+>> Regards,
+>> ᚷ ᛖ ᚢ ᚦ ᚠ ᚱ
 > 
-> 
-> Also I don't like these functions:
-> - called lock/unlock but actually also isolates
-> - used just once
-> - pgdat evaluated twice
+> The fact that CPU ports can't be bridged is already not ideal.
+> One can have a DSA switch with cascaded switches on each port, so it
+> acts like N DSA masters (not as DSA links, since the taggers are
+> incompatible), with each switch forming its own tree. It is desirable
+> that the ports of the DSA switch on top are bridged, so that
+> forwarding between cascaded switches does not pass through the CPU.
 
-That's right. I will fold these functions into commit_charge.
+Oh, I see. But currently DSA infra forbids the adding DSA masters to
+bridges IIRC. Can't name it good or bad decision, but was introduced
+to prevent accidental packet flow breaking on DSA setups.
 
-Thanks
-Alex
+> -Vladimir
+
+Regards,
+ᚷ ᛖ ᚢ ᚦ ᚠ ᚱ
