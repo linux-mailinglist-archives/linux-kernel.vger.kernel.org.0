@@ -2,91 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA07713917F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:00:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D60EB13918C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:00:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728712AbgAMM75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 07:59:57 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:8374 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728643AbgAMM74 (ORCPT
+        id S1726277AbgAMNAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 08:00:55 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34446 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727494AbgAMNAy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 07:59:56 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00DCvuIC181350
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 07:59:55 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2xfvjxbskj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 07:59:55 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <kamalesh@linux.vnet.ibm.com>;
-        Mon, 13 Jan 2020 12:59:49 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 13 Jan 2020 12:59:46 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00DCxja240894502
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 Jan 2020 12:59:45 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4D9DC4204C;
-        Mon, 13 Jan 2020 12:59:45 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1E6994203F;
-        Mon, 13 Jan 2020 12:59:43 +0000 (GMT)
-Received: from JAVRIS.in.ibm.com (unknown [9.199.42.111])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 13 Jan 2020 12:59:42 +0000 (GMT)
-Subject: Re: [PATCH 1/2] selftests/livepatch: Replace set_dynamic_debug() with
- setup_config() in README
-To:     Miroslav Benes <mbenes@suse.cz>, jpoimboe@redhat.com,
-        jikos@kernel.org, pmladek@suse.com, joe.lawrence@redhat.com,
-        shuah@kernel.org
-Cc:     live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200113124907.11086-1-mbenes@suse.cz>
- <20200113124907.11086-2-mbenes@suse.cz>
-From:   Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Date:   Mon, 13 Jan 2020 18:29:41 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        Mon, 13 Jan 2020 08:00:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578920453;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ev18epwrOyGsovY9mZaXn1IwdIuRdMV0wrxhb9Bjf6Q=;
+        b=YwvF8/QVtcQuNcWItsCbT/agcEVEPdKn0BNND0j4cLrSK3JXFLMFCxnceX0U1G3GH/gHAr
+        EbsVW4GAYw4moLUb1KkDWXZF+CdLLWqcpgu1BXTHU3WpPyMvlNfgLyoB6ZcVnoogUcIenz
+        zwo3adDZSN6ErMWJNauuvyZXSbQExCk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-141-plZront1Oxu0z16vwwqTZw-1; Mon, 13 Jan 2020 08:00:52 -0500
+X-MC-Unique: plZront1Oxu0z16vwwqTZw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D573485EE6D;
+        Mon, 13 Jan 2020 13:00:50 +0000 (UTC)
+Received: from rules.brq.redhat.com (unknown [10.43.2.123])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E9A095DA70;
+        Mon, 13 Jan 2020 13:00:12 +0000 (UTC)
+From:   Vladis Dronov <vdronov@redhat.com>
+To:     Antti Laakso <antti.laakso@intel.com>, netdev@vger.kernel.org
+Cc:     Richard Cochran <richardcochran@gmail.com>, vdronov@redhat.com,
+        sjohnsto@redhat.com, vlovejoy@redhat.com,
+        linux-kernel@vger.kernel.org, davem@davemloft.net,
+        artem.bityutskiy@intel.com
+Subject: [PATCH] ptp: free ptp device pin descriptors properly
+Date:   Mon, 13 Jan 2020 14:00:09 +0100
+Message-Id: <20200113130009.2938-1-vdronov@redhat.com>
+In-Reply-To: <3d2bd09735dbdaf003585ca376b7c1e5b69a19bd.camel@intel.com>
+References: <3d2bd09735dbdaf003585ca376b7c1e5b69a19bd.camel@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20200113124907.11086-2-mbenes@suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20011312-0028-0000-0000-000003D0A7A5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20011312-0029-0000-0000-00002494C58B
-Message-Id: <e0ca1fee-1770-7d8a-8a7a-9539aabda1d5@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-13_03:2020-01-13,2020-01-13 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=906
- lowpriorityscore=0 bulkscore=0 suspectscore=0 adultscore=0 phishscore=0
- priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
- clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001130108
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/13/20 6:19 PM, Miroslav Benes wrote:
-> Commit 35c9e74cff4c ("selftests/livepatch: Make dynamic debug setup and
-> restore generic") introduced setup_config() to set up the environment
-> for each test. It superseded set_dynamic_debug().  README still mentions
-> set_dynamic_debug(), so update it to setup_config() which should be used
-> now in every test.
-> 
-> Signed-off-by: Miroslav Benes <mbenes@suse.cz>
+There is a bug in ptp_clock_unregister(), where ptp_cleanup_pin_groups()
+first frees ptp->pin_{,dev_}attr, but then posix_clock_unregister() needs
+them to destroy a related sysfs device.
 
-Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+These functions can not be just swapped, as posix_clock_unregister() free=
+s
+ptp which is needed in the ptp_cleanup_pin_groups(). Fix this by calling
+ptp_cleanup_pin_groups() in ptp_clock_release(), right before ptp is free=
+d.
 
+This makes this patch fix an UAF bug in a patch which fixes an UAF bug.
 
--- 
-Kamalesh
+Reported-by: Antti Laakso <antti.laakso@intel.com>
+Fixes: a33121e5487b ("ptp: fix the race between the release of ptp_clock =
+and cdev")
+Link: https://lore.kernel.org/netdev/3d2bd09735dbdaf003585ca376b7c1e5b69a=
+19bd.camel@intel.com/
+Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+---
+ drivers/ptp/ptp_clock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
+index 61fafe0374ce..b84f16bbd6f2 100644
+--- a/drivers/ptp/ptp_clock.c
++++ b/drivers/ptp/ptp_clock.c
+@@ -170,6 +170,7 @@ static void ptp_clock_release(struct device *dev)
+ {
+ 	struct ptp_clock *ptp =3D container_of(dev, struct ptp_clock, dev);
+=20
++	ptp_cleanup_pin_groups(ptp);
+ 	mutex_destroy(&ptp->tsevq_mux);
+ 	mutex_destroy(&ptp->pincfg_mux);
+ 	ida_simple_remove(&ptp_clocks_map, ptp->index);
+@@ -302,9 +303,8 @@ int ptp_clock_unregister(struct ptp_clock *ptp)
+ 	if (ptp->pps_source)
+ 		pps_unregister_source(ptp->pps_source);
+=20
+-	ptp_cleanup_pin_groups(ptp);
+-
+ 	posix_clock_unregister(&ptp->clock);
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL(ptp_clock_unregister);
+--=20
+2.20.1
 
