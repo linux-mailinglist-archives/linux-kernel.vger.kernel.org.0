@@ -2,74 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08A36139471
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 16:12:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACC31139474
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 16:12:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729035AbgAMPML (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 10:12:11 -0500
-Received: from forward104o.mail.yandex.net ([37.140.190.179]:60203 "EHLO
-        forward104o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726567AbgAMPMK (ORCPT
+        id S1729098AbgAMPMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 10:12:40 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43357 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726567AbgAMPMg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 10:12:10 -0500
-Received: from forward103q.mail.yandex.net (forward103q.mail.yandex.net [IPv6:2a02:6b8:c0e:50:0:640:b21c:d009])
-        by forward104o.mail.yandex.net (Yandex) with ESMTP id EC4849401CC;
-        Mon, 13 Jan 2020 18:12:07 +0300 (MSK)
-Received: from mxback4q.mail.yandex.net (mxback4q.mail.yandex.net [IPv6:2a02:6b8:c0e:6d:0:640:ed15:d2bd])
-        by forward103q.mail.yandex.net (Yandex) with ESMTP id E77A761E0015;
-        Mon, 13 Jan 2020 18:12:07 +0300 (MSK)
-Received: from vla3-5ed9a7202853.qloud-c.yandex.net (vla3-5ed9a7202853.qloud-c.yandex.net [2a02:6b8:c15:341d:0:640:5ed9:a720])
-        by mxback4q.mail.yandex.net (mxback/Yandex) with ESMTP id VNeawOptGF-C7ZuA2Nw;
-        Mon, 13 Jan 2020 18:12:07 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1578928327;
-        bh=eK+vHUde1swh7a+9Npfs+wq4KjeBPOnj4HpBzxp+mp0=;
-        h=From:To:Subject:CC:References:Date:In-Reply-To:Message-ID;
-        b=pbL2F3DrctmDSiA5gS4HEncBKYcEFL5MVO1q0lbnNEfvKIbgKK4RrFGdYrdawL9zr
-         VJleDsn5fjn8Qo0lJXXisrYb6d0yO8W7xEdokj6sWDLDBcLTIWT+ouLI8ktXU84md/
-         8B2+THCs9cZmYk7m+s2FQpE80LUlD6FeP5U30YMU=
-Authentication-Results: mxback4q.mail.yandex.net; dkim=pass header.i=@flygoat.com
-Received: by vla3-5ed9a7202853.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id 5sam768AAa-C5V8HnwZ;
-        Mon, 13 Jan 2020 18:12:05 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Date:   Mon, 13 Jan 2020 23:11:58 +0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20200113145820.GA9817@lst.de>
-References: <20200113140705.74605-1-jiaxun.yang@flygoat.com> <20200113145820.GA9817@lst.de>
+        Mon, 13 Jan 2020 10:12:36 -0500
+Received: by mail-io1-f68.google.com with SMTP id n21so10119200ioo.10
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 07:12:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2SUlfi3/GqfXao1oO/G6psqHGfJrcihbQOVmO4DOC/g=;
+        b=gYw0raqMhmBOlRGv/rmFVRsYYW2DhYVb3tV8Cv8TSaZMSueSL8UFYYeYqXUEhaGLax
+         oaZ5FwnvAGaUvR9MHuqU7/TSwaIG/Vi5D/3I/N9YlRFGphV5xaB0VUQIUXf+JiY+QaIy
+         54BlHNEwBSuInbPeSeS142k1Q9r7CA2JSWRQs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2SUlfi3/GqfXao1oO/G6psqHGfJrcihbQOVmO4DOC/g=;
+        b=ixD/mHKWerfNIq5Hjprmd37ZRHCf88RkWl/KUsXLUyH2CJUOUzm0/UaBJLh+PefAih
+         8Fpo40uKV3h/TWSZc9f6lX7IfbF6K0eC6eohWa3lR6pVUWwTNWaaOq+JHwcA6EXCq8Ed
+         ohseeu9isHVghpcYYOk2iwc8zyDOL6EOwDuyHTgww9NeQJqa8Xo5erJxSFC8u2XOch1o
+         14ZPluhveIZnmOyEGQCOzvbcvt+Myr8PjNn0FF2ww0ynYSNfnlI58Xo2PA7LKKz31bbM
+         ys/HAcIku56eYgVTATENG2EfjxqhQDWwZHn6g7M9CnxnBGXW5qN47VtMELYXJLT+GEWN
+         WMIg==
+X-Gm-Message-State: APjAAAUV+p+Z6Gds2WHkvTFNwMiiRLSO26jMSWiL2klD82DHntIbWTvP
+        ZlY4pV3jgyqv/VvRxhciuckEmctiWOvLAmfKYsC6Og==
+X-Google-Smtp-Source: APXvYqzFJOiKRHYMf0ckRaIKnY2QZ2S3371VLktefyf0rROyHqbhr3XyFFGDSdtF4JKWrEQX7WoPWn2K7HNlPFTYZb4=
+X-Received: by 2002:a6b:3845:: with SMTP id f66mr13666899ioa.102.1578928355244;
+ Mon, 13 Jan 2020 07:12:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/2] MIPS: Define pgprot_dmacoherent according to coherentio status
-To:     Christoph Hellwig <hch@lst.de>
-CC:     linux-mips@vger.kernel.org, chenhc@lemote.com,
-        paul.burton@mips.com, linux-kernel@vger.kernel.org, hch@lst.de
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-Message-ID: <6A037EB9-B5FE-462F-A6EA-8FD874432E75@flygoat.com>
+References: <20200113120157.85798-1-hsinyi@chromium.org> <20200113120157.85798-2-hsinyi@chromium.org>
+ <87r203plr7.fsf@vitty.brq.redhat.com>
+In-Reply-To: <87r203plr7.fsf@vitty.brq.redhat.com>
+From:   Hsin-Yi Wang <hsinyi@chromium.org>
+Date:   Mon, 13 Jan 2020 23:12:09 +0800
+Message-ID: <CAJMQK-gXbs+B8HCdKHvgDf3NpP_YfkheMXzzWHMcoTzZuP-9hw@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 1/3] reboot: support hotplug CPUs before reboot
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Pavankumar Kondeti <pkondeti@codeaurora.org>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        Aaro Koskinen <aaro.koskinen@nokia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jan 13, 2020 at 8:46 PM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
 
+Thanks for your comments.
 
-=E4=BA=8E 2020=E5=B9=B41=E6=9C=8813=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=881=
-0:58:20, Christoph Hellwig <hch@lst=2Ede> =E5=86=99=E5=88=B0:
->On Mon, Jan 13, 2020 at 10:07:04PM +0800, Jiaxun Yang wrote:
->> For MIPS chips that support coherentio DMA, it's always safe
->> to make DMA requests cached=2E
+> > +config REBOOT_HOTPLUG_CPU
+> > +     bool "Support for hotplug CPUs before reboot"
+> > +     depends on HOTPLUG_CPU
+> > +     help
+> > +       Say Y to do a full hotplug on secondary CPUs before reboot.
 >
->For DMA coherent devices pgprot_dmacoherent isn't even used, so this
->doesn't make sense=2E
-
-Hi,
-
-I'm supposed to use it later in drm/ttm
- ttm_bo_util to overwrite pgprot for TTM_PL_SYSTEM=2E
-And I wish this pgropt can always represent dmacoherent pgropt=2E
-Would it be fine?
-
-Thanks
-
---=20
-Jiaxun Yang
+> I'm not sure this should be a configurable option, e.g. in case this is
+> a good approach in general, why not just use CONFIG_HOTPLUG_CPU in the
+> code?
+>
+In v2 it uses CONFIG_HOTPLUG_CPU, but I think adding another config is
+more flexible. Maybe there are some architecture that supports
+HOTPLUG_CPU but doesn't want to do full cpu hotplug before reboot.
+(Eg. doing cpu hotplug would make reboot process slower.)
+> > +
+> >  config HAVE_OPROFILE
+> >       bool
+> >
+> > diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+> > index 1ca2baf817ed..3bf5ab289954 100644
+> > --- a/include/linux/cpu.h
+> > +++ b/include/linux/cpu.h
+> > @@ -118,6 +118,9 @@ extern void cpu_hotplug_disable(void);
+> >  extern void cpu_hotplug_enable(void);
+> >  void clear_tasks_mm_cpumask(int cpu);
+> >  int cpu_down(unsigned int cpu);
+> > +#if IS_ENABLED(CONFIG_REBOOT_HOTPLUG_CPU)
+> > +extern void offline_secondary_cpus(int primary);
+> > +#endif
+> >
+> >  #else /* CONFIG_HOTPLUG_CPU */
+> >
+> > diff --git a/kernel/cpu.c b/kernel/cpu.c
+> > index 9c706af713fb..52afc47dd56a 100644
+> > --- a/kernel/cpu.c
+> > +++ b/kernel/cpu.c
+> > @@ -1057,6 +1057,25 @@ int cpu_down(unsigned int cpu)
+> >  }
+> >  EXPORT_SYMBOL(cpu_down);
+> >
+> > +#if IS_ENABLED(CONFIG_REBOOT_HOTPLUG_CPU)
+> > +void offline_secondary_cpus(int primary)
+> > +{
+> > +     int i, err;
+> > +
+> > +     cpu_maps_update_begin();
+> > +
+> > +     for_each_online_cpu(i) {
+> > +             if (i == primary)
+> > +                     continue;
+> > +             err = _cpu_down(i, 0, CPUHP_OFFLINE);
+> > +             if (err)
+> > +                     pr_warn("Failed to offline cpu %d\n", i);
+> > +     }
+> > +     cpu_hotplug_disabled++;
+> > +
+> > +     cpu_maps_update_done();
+> > +}
+> > +#endif
+>
+> This looks like a simplified version of freeze_secondary_cpus(), can
+> they be merged?
+>
+Comparing to freeze_secondary_cpus(),  I think it's not necessary to
+check pm_wakeup_pending() before _cpu_down() here. Thus it doesn't
+need to depend on CONFIG_PM_SLEEP_SMP.
+Also I think it could continue to offline other CPUs even one fails,
+while freeze_secondary_cpus() would stop once it fails on offlining
+one CPU.
+Based on these differences, I didn't use freeze_secondary_cpus() here.
+As for merging the common part, it might need additional flags to
+handle the difference, which might lower the readability.
+>
