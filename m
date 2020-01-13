@@ -2,82 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBB5F139421
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:59:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E5D4139429
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 16:00:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729040AbgAMO70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 09:59:26 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:43766 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728646AbgAMO7Y (ORCPT
+        id S1729091AbgAMO74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 09:59:56 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:38907 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728843AbgAMO7y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 09:59:24 -0500
-Received: by mail-oi1-f194.google.com with SMTP id p125so8456754oif.10;
-        Mon, 13 Jan 2020 06:59:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OCwfIC03FW7tvdPBad/HEE7Kup/8TTUBtywUXJH0P+E=;
-        b=M9kmTwmfD3ZqcD2tbmm2KWW5uiVUdcRfVyU6S0ia639Uj0Jhg8dEKYc+Tn4JSa/uJl
-         VaSUivGUEBLl6xNYkF1GtBHRKNZv1dn+tgubbRpfGmvRcvXWnR6M1gxUZL4pHuu+V2uS
-         jpYPnQtJIzINUBMD8SRnhh5HCU7dRYXeGX/jMhNur6V+bw/y/FjqKyLoXXeEsyVc+xhA
-         A9KOi/DuisoF3drvErDMkHmHdGm2KTNnqlQI0KxbMoaifVgp2BDHklHloqTTIIFtmI95
-         DOulXXKq/Hjdk/KERB02pEphfNAVUPg060drb2XU/Fya1UIpLR4quDr26WlvyjFoadk6
-         jiQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OCwfIC03FW7tvdPBad/HEE7Kup/8TTUBtywUXJH0P+E=;
-        b=DGOCRXsynNOyiPv+9zlIDDRcUVQXJ9BEVFx04ifwbTuuCS3/aXhfwJomxx/nO2Duu/
-         RTCP6aYlFulAxcoenQiI5TbxARmHaXsBHlp+LQB6t/DkE9vILWTYIwwKP0b44ONKhqnF
-         fIefyQl2Kbgcy0xS7CdBuydVNyq9KCVy9tIdzT4rSEfMHFYMuFpUlTRwru/KA/dv24v9
-         jSovj41/dU3A/Psh3FKs5QMwCBb5wrhHU2ISbCeznTMgMJexlvMCVbsOA4FWv19gqT+G
-         TOkkkqOf/Sjx9PGh+vDvyPUWwmRrDaP3GhK9v+V9jQ62sdRHn9hec6blqjlEeJMax6eg
-         NQqg==
-X-Gm-Message-State: APjAAAWQg4AgSfLhE4CLpG1+I5ehWf3erwaHgOcR+wym11+FjPuYSw1E
-        gLi2BZ/b3ELRv1/1pQnFFpsJZpV24zdc0WYKNE0=
-X-Google-Smtp-Source: APXvYqyLULHbiI9YKkrGDcoo+kD0Us4o55DpWU7+8pPazA+bbB+0NEDp2zJQCvYcQLiEXr6ZwZaBl+5MnqBjRkz+upw=
-X-Received: by 2002:a05:6808:6c5:: with SMTP id m5mr12275955oih.106.1578927563829;
- Mon, 13 Jan 2020 06:59:23 -0800 (PST)
+        Mon, 13 Jan 2020 09:59:54 -0500
+Received: from mail-qt1-f169.google.com ([209.85.160.169]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1Mv3M8-1jhkGu2QxU-00qyh5; Mon, 13 Jan 2020 15:59:52 +0100
+Received: by mail-qt1-f169.google.com with SMTP id 5so9339754qtz.1;
+        Mon, 13 Jan 2020 06:59:52 -0800 (PST)
+X-Gm-Message-State: APjAAAUkWUZHjTkzsf5F1mDo85SPeANxN5MtDe6cNFWG6JZjqfgNvNgt
+        bYS925y3u3ErEsKuPlzTrMe5O5dKnaPo4XKI1R8=
+X-Google-Smtp-Source: APXvYqxiLj2wevglx5PMrcSeH3ieonohCOIBtZJiPN4aZqmn8jtgw7RUzenpGKQGwDOInwqXHgXQNFN0lGfRPS4hcg8=
+X-Received: by 2002:ac8:768d:: with SMTP id g13mr10516984qtr.7.1578927591343;
+ Mon, 13 Jan 2020 06:59:51 -0800 (PST)
 MIME-Version: 1.0
-References: <CAGi-RUJvqJoCXWN2YugRn=WYEk9yzt7m3OPfX_o++PmJWQ3woQ@mail.gmail.com>
-In-Reply-To: <CAGi-RUJvqJoCXWN2YugRn=WYEk9yzt7m3OPfX_o++PmJWQ3woQ@mail.gmail.com>
-From:   Ramon Fried <rfried.dev@gmail.com>
-Date:   Mon, 13 Jan 2020 16:59:12 +0200
-Message-ID: <CAGi-RU+GPLJ0b2K5u45KEwT=jZw565K_bxXh2OTaFR2xUmQs3Q@mail.gmail.com>
-Subject: Re: MSI irqchip configured as IRQCHIP_ONESHOT_SAFE causes spurious IRQs
-To:     hkallweit1@gmail.com, Bjorn Helgaas <bhelgaas@google.com>,
-        tglx@linutronix.de, lorenzo.pieralisi@arm.com, maz@kernel.org
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200107175927.4558-1-sargun@sargun.me> <20200107175927.4558-4-sargun@sargun.me>
+In-Reply-To: <20200107175927.4558-4-sargun@sargun.me>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 13 Jan 2020 15:59:35 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0NO2d5oD1dMhunyrHmoa_+CeD-JsM-Yffbp+vgJwu8fA@mail.gmail.com>
+Message-ID: <CAK8P3a0NO2d5oD1dMhunyrHmoa_+CeD-JsM-Yffbp+vgJwu8fA@mail.gmail.com>
+Subject: Re: [PATCH v9 3/4] arch: wire up pidfd_getfd syscall
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Gian-Carlo Pascutto <gpascutto@mozilla.com>,
+        =?UTF-8?Q?Emilio_Cobos_=C3=81lvarez?= <ealvarez@mozilla.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Jed Davis <jld@mozilla.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:2AACtcI4qkurdtORyUyh4PXYxvV94KBzn9Ud9I489qlGWCMakAL
+ 0Qtg97WXjtBsns67iAaS8UiACPmURGdHm35slfCae15WEGX+8Du8ZDK63mPI/itcWFvlByt
+ 6/fOAv9agSTK1ufYVLULfcOQFHil/338kndMoRmYkYzV7H9JfAETjixFSRGiR4h3kHswxBG
+ TPv4ocfyyJMtrhyTFYZvA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/XoSKrJOcRc=:6RmmOTiWEj5AmHd7ljY4NI
+ AuBj1ifmljtEWVta9rVL18WFBEx7NZGrRIh/9qkvJ2q+J07Fo6vmZXrG/0Y3FMMPrgLMCKVZE
+ JxICpCMdBVhP5/zmqD84oGoGVb6/o9Ia4x8ng6Fwq0vX0VrxKXsRaJfeps05660cDYsgYIM/O
+ K8OqQ1N2n4MO7ddDB0XWfdaUpy53ob6KwwVX13SjMPxsPKC+DUAVOeluawtUfJ3dvON5OYgky
+ mCjT/1PkB08fcKc8RHAh+fPKes0UTdDI3vkLcL1G+isXfzve5cjIZghSwXXpvuHgmIuQOotUf
+ mGE8e73i+TBzo0exhUxzP0/J2v5krNKOykm1/Z+QmZKlgsFV1sdTHGUSg8h0SRqmyaRhh8r+g
+ 0Ob+Up1L5wOMO65oFS+FEj4Y9Apas72aC6V+CZ8RCpEVkZBzShtuEkd+D4jwEY1zWN4VQHWe6
+ q13HZ6Td5RNzzbUcqa56JTn5R7CbO/8JJ9ZINZpQKcg8WsebU6/GYWVT8+kwCnfOZHz/2DNug
+ F3UMuGaK7TfIRZ9LaSmprqVlVtSnqKYm3Ifym35aV8eXACoos8lgHqD51k9U4rMPU+fTRfSoy
+ xdhmzqinDe+rMcltPZLyqyLZGcwmjZdAvzs3TtFiZJXi+2KSa1P5av5Xwt2cqXWO9+Y0MdnA6
+ c4sMgSi0SkNQmcEQvsH/SSY5AxSxaLiSX/hTkBU3Pw0BGLTPcIQ7n/KdXOqYzYbb0wpbjgsmc
+ V7t1jex2fulLFhstVgIWUc+AG55r+r2A0M3a6lwbIlYV6yPwHqDmEIxVm/QllJgsOCuba6cNE
+ 0hyULfPDKXLzTVMal4pFP93YZtTHLNvRXzmT4aGupH78hgjRuMuthZ+PMqzW1v7NpqptO4VjR
+ 25DIRpw2mqZ/4NNiypSA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Resending with correct e-mail address of maz.
+On Tue, Jan 7, 2020 at 6:59 PM Sargun Dhillon <sargun@sargun.me> wrote:
+>
+> This wires up the pidfd_getfd syscall for all architectures.
+>
+> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-On Mon, Dec 9, 2019 at 12:27 PM Ramon Fried <rfried.dev@gmail.com> wrote:
->
-> Hi,
-> While debugging the root cause of spurious IRQ's on my PCIe MSI line it appears
-> that because of the line:
->     info->chip->flags |= IRQCHIP_ONESHOT_SAFE;
-> in pci_msi_create_irq_domain()
-> The IRQF_ONESHOT is ignored, especially when requesting IRQ through
-> pci_request_threaded_irq() where handler is NULL.
->
-> The problem is that the MSI masking now only surrounds the HW handler,
-> and all additional MSI that occur before the threaded handler is
-> complete are considered by the note_interrupt() as spurious.
->
-> Besides the side effect of that, I don't really understand the logic
-> of not masking the MSI until the threaded handler is complete,
-> especially when there's no HW handler and only threaded handler.
->
-> Your thoughts?
->
-> Thank,
-> Ramon.
+This all looks correct,
+
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
