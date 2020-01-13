@@ -2,127 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 402D0138E28
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:49:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A914A138E3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:51:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728699AbgAMJtB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 04:49:01 -0500
-Received: from foss.arm.com ([217.140.110.172]:36528 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725992AbgAMJtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 04:49:00 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CAE42106F;
-        Mon, 13 Jan 2020 01:48:59 -0800 (PST)
-Received: from [10.162.43.142] (p8cg001049571a15.blr.arm.com [10.162.43.142])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 81C9D3F534;
-        Mon, 13 Jan 2020 01:48:52 -0800 (PST)
-Subject: Re: [PATCH V11 1/5] mm/hotplug: Introduce arch callback validating
- the hot remove range
-To:     David Hildenbrand <dhildenb@redhat.com>
-Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        akpm@linux-foundation.org, catalin.marinas@arm.com,
-        will@kernel.org, mark.rutland@arm.com, cai@lca.pw,
-        logang@deltatee.com, cpandya@codeaurora.org, arunks@codeaurora.org,
-        dan.j.williams@intel.com, mgorman@techsingularity.net,
-        osalvador@suse.de, ard.biesheuvel@arm.com, steve.capper@arm.com,
-        broonie@kernel.org, valentin.schneider@arm.com,
-        robin.murphy@arm.com, steven.price@arm.com, suzuki.poulose@arm.com,
-        ira.weiny@intel.com
-References: <6f0efddc-f124-58ca-28b6-4632469cf992@arm.com>
- <3C3BE5FA-0CFC-4C90-8657-63EF5B680B0B@redhat.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <6b8fb779-31e8-1b63-85a8-9f6c93a04494@arm.com>
-Date:   Mon, 13 Jan 2020 15:20:09 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726804AbgAMJvr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 04:51:47 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:6082 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725992AbgAMJvr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 04:51:47 -0500
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00D9oOUU161827
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 04:51:46 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xfavxk8n6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 04:51:45 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <psampat@linux.ibm.com>;
+        Mon, 13 Jan 2020 09:51:42 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 13 Jan 2020 09:51:41 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00D9pdVw52232414
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 Jan 2020 09:51:39 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B013A42041;
+        Mon, 13 Jan 2020 09:51:39 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6492542045;
+        Mon, 13 Jan 2020 09:51:38 +0000 (GMT)
+Received: from [9.124.31.88] (unknown [9.124.31.88])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 13 Jan 2020 09:51:38 +0000 (GMT)
+Subject: Re: [RESEND PATCH v2 2/3] powerpc/powernv: Introduce Self save
+ support
+To:     Ram Pai <linuxram@us.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org,
+        mpe@ellerman.id.au, svaidy@linux.ibm.com, ego@linux.vnet.ibm.com,
+        pratik.sampat@in.ibm.com, pratik.r.sampat@gmail.com
+References: <cover.1578886602.git.psampat@linux.ibm.com>
+ <9cade84b37a910c96ec3d0a6b39b00e5082d59ab.1578886602.git.psampat@linux.ibm.com>
+ <20200113075133.GD5419@oc0525413822.ibm.com>
+From:   Pratik Sampat <psampat@linux.ibm.com>
+Date:   Mon, 13 Jan 2020 15:21:37 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-In-Reply-To: <3C3BE5FA-0CFC-4C90-8657-63EF5B680B0B@redhat.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200113075133.GD5419@oc0525413822.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20011309-0020-0000-0000-000003A02F4A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20011309-0021-0000-0000-000021F79DA4
+Message-Id: <dc58e7b4-e07d-523a-f6f5-3e8c62eb48db@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-13_02:2020-01-13,2020-01-13 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ suspectscore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
+ malwarescore=0 phishscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001130083
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I made a mistake while arranging the patches in the series. I'll re-arrange it
+correctly now. Sorry about that.
 
+On 13/01/20 1:21 pm, Ram Pai wrote:
+> On Mon, Jan 13, 2020 at 09:15:08AM +0530, Pratik Rajesh Sampat wrote:
+>> This commit introduces and leverages the Self save API which OPAL now
+>> supports.
+>>
+>> Add the new Self Save OPAL API call in the list of OPAL calls.
+>> Implement the self saving of the SPRs based on the support populated
+>> while respecting it's preferences.
+>>
+>> This implementation allows mixing of support for the SPRs, which
+>> means that a SPR can be self restored while another SPR be self saved if
+>> they support and prefer it to be so.
+>>
+>> Signed-off-by: Pratik Rajesh Sampat <psampat@linux.ibm.com>
+>> ---
+>>   arch/powerpc/include/asm/opal-api.h        | 3 ++-
+>>   arch/powerpc/include/asm/opal.h            | 1 +
+>>   arch/powerpc/platforms/powernv/idle.c      | 2 ++
+>>   arch/powerpc/platforms/powernv/opal-call.c | 1 +
+>>   4 files changed, 6 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/powerpc/include/asm/opal-api.h b/arch/powerpc/include/asm/opal-api.h
+>> index c1f25a760eb1..1b6e1a68d431 100644
+>> --- a/arch/powerpc/include/asm/opal-api.h
+>> +++ b/arch/powerpc/include/asm/opal-api.h
+>> @@ -214,7 +214,8 @@
+>>   #define OPAL_SECVAR_GET				176
+>>   #define OPAL_SECVAR_GET_NEXT			177
+>>   #define OPAL_SECVAR_ENQUEUE_UPDATE		178
+>> -#define OPAL_LAST				178
+>> +#define OPAL_SLW_SELF_SAVE_REG			181
+>> +#define OPAL_LAST				181
+>>
+>>   #define QUIESCE_HOLD			1 /* Spin all calls at entry */
+>>   #define QUIESCE_REJECT			2 /* Fail all calls with OPAL_BUSY */
+>> diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opal.h
+>> index 9986ac34b8e2..389a85b63805 100644
+>> --- a/arch/powerpc/include/asm/opal.h
+>> +++ b/arch/powerpc/include/asm/opal.h
+>> @@ -203,6 +203,7 @@ int64_t opal_handle_hmi(void);
+>>   int64_t opal_handle_hmi2(__be64 *out_flags);
+>>   int64_t opal_register_dump_region(uint32_t id, uint64_t start, uint64_t end);
+>>   int64_t opal_unregister_dump_region(uint32_t id);
+>> +int64_t opal_slw_self_save_reg(uint64_t cpu_pir, uint64_t sprn);
+>>   int64_t opal_slw_set_reg(uint64_t cpu_pir, uint64_t sprn, uint64_t val);
+>>   int64_t opal_config_cpu_idle_state(uint64_t state, uint64_t flag);
+>>   int64_t opal_pci_set_phb_cxl_mode(uint64_t phb_id, uint64_t mode, uint64_t pe_number);
+>> diff --git a/arch/powerpc/platforms/powernv/idle.c b/arch/powerpc/platforms/powernv/idle.c
+>> index 2f328403b0dc..d67d4d0b169b 100644
+>> --- a/arch/powerpc/platforms/powernv/idle.c
+>> +++ b/arch/powerpc/platforms/powernv/idle.c
+>> @@ -1172,6 +1172,8 @@ void pnv_program_cpu_hotplug_lpcr(unsigned int cpu, u64 lpcr_val)
+>>   		if (!is_lpcr_self_save)
+>>   			opal_slw_set_reg(pir, SPRN_LPCR,
+>>   					 lpcr_val);
+>> +		else
+>> +			opal_slw_self_save_reg(pir, SPRN_LPCR);
+> opal_slw_self_save_reg() was used in the prior patch too. How did it
+> compile, if the definition is in this patch?
+>
+>
+> Reviewed-by: Ram Pai <linuxram@us.ibm.com>
+>
+> RP
 
-On 01/13/2020 02:44 PM, David Hildenbrand wrote:
-> 
-> 
->> Am 13.01.2020 um 10:10 schrieb Anshuman Khandual <anshuman.khandual@arm.com>:
->>
->> ﻿
->>
->>> On 01/10/2020 02:12 PM, David Hildenbrand wrote:
->>>> On 10.01.20 04:09, Anshuman Khandual wrote:
->>>> Currently there are two interfaces to initiate memory range hot removal i.e
->>>> remove_memory() and __remove_memory() which then calls try_remove_memory().
->>>> Platform gets called with arch_remove_memory() to tear down required kernel
->>>> page tables and other arch specific procedures. But there are platforms
->>>> like arm64 which might want to prevent removal of certain specific memory
->>>> ranges irrespective of their present usage or movability properties.
->>>
->>> Why? Is this only relevant for boot memory? I hope so, otherwise the
->>> arch code needs fixing IMHO.
->>
->> Right, it is relevant only for the boot memory on arm64 platform. But this
->> new arch callback makes it flexible to reject any given memory range.
->>
->>>
->>> If it's only boot memory, we should disallow offlining instead via a
->>> memory notifier - much cleaner.
->>
->> Dont have much detail understanding of MMU notifier mechanism but from some
->> initial reading, it seems like we need to have a mm_struct for a notifier
->> to monitor various events on the page table. Just wondering how a physical
->> memory range like boot memory can be monitored because it can be used both
->> for for kernel (init_mm) or user space process at same time. Is there some
->> mechanism we could do this ?
->>
->>>
->>>>
->>>> Current arch call back arch_remove_memory() is too late in the process to
->>>> abort memory hot removal as memory block devices and firmware memory map
->>>> entries would have already been removed. Platforms should be able to abort
->>>> the process before taking the mem_hotplug_lock with mem_hotplug_begin().
->>>> This essentially requires a new arch callback for memory range validation.
->>>
->>> I somewhat dislike this very much. Memory removal should never fail if
->>> used sanely. See e.g., __remove_memory(), it will BUG() whenever
->>> something like that would strike.
->>>
->>>>
->>>> This differentiates memory range validation between memory hot add and hot
->>>> remove paths before carving out a new helper check_hotremove_memory_range()
->>>> which incorporates a new arch callback. This call back provides platforms
->>>> an opportunity to refuse memory removal at the very onset. In future the
->>>> same principle can be extended for memory hot add path if required.
->>>>
->>>> Platforms can choose to override this callback in order to reject specific
->>>> memory ranges from removal or can just fallback to a default implementation
->>>> which allows removal of all memory ranges.
->>>
->>> I suspect we want really want to disallow offlining instead. E.g., I
->>
->> If boot memory pages can be prevented from being offlined for sure, then it
->> would indirectly definitely prevent hot remove process as well.
->>
->>> remember s390x does that with certain areas needed for dumping/kexec.
->>
->> Could not find any references to mmu_notifier in arch/s390 or any other arch
->> for that matter apart from KVM (which has an user space component), could you
->> please give some pointers ?
-> 
-> Memory (hotplug) notifier, not MMU notifier :)
-
-They are so similarly named :)
-
-> 
-> Not on my notebook right now, grep for MEM_GOING_OFFLINE, that should be it.
-> 
-
-Got it, thanks ! But we will still need boot memory enumeration via MEMBLOCK_BOOT
-to reject affected offline requests in the callback.
