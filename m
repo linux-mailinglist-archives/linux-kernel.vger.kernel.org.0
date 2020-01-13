@@ -2,134 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E37CD139977
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 19:59:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43EC813998F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 20:05:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728682AbgAMS7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 13:59:16 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:22597 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726435AbgAMS7P (ORCPT
+        id S1728760AbgAMTFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 14:05:36 -0500
+Received: from mx01.bbu.dsd.mx.bitdefender.com ([91.199.104.161]:35650 "EHLO
+        mx01.bbu.dsd.mx.bitdefender.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726435AbgAMTFg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 13:59:15 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1578941955; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=rEVhNoA+SMCklIOXL2qRZ8K89XUanuaNJQR/wOG0Dcw=;
- b=BNqNTWFZ3tEm1N2sQz2lFqVgStl7gzLUWXLjqAwyxBfPgWZYvMfXvgLu85NVPvN1m9QEQH4l
- bGiGOnNxwOw9oSd78RAiajAeAYovSAX0HmMjRIjqylHxphohldvbPclIECCUTIv/xkkG7xvq
- ErNyU94mVl1hj6SdEWgQmBTw0OA=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e1cbdf9.7f3cda1446c0-smtp-out-n02;
- Mon, 13 Jan 2020 18:59:05 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id BE30AC447A1; Mon, 13 Jan 2020 18:59:04 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: asutoshd)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 758BBC433CB;
-        Mon, 13 Jan 2020 18:59:03 +0000 (UTC)
+        Mon, 13 Jan 2020 14:05:36 -0500
+X-Greylist: delayed 614 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 Jan 2020 14:05:34 EST
+Received: from smtp.bitdefender.com (smtp02.buh.bitdefender.net [10.17.80.76])
+        by mx01.bbu.dsd.mx.bitdefender.com (Postfix) with ESMTPS id 9B93A30747C7;
+        Mon, 13 Jan 2020 20:55:19 +0200 (EET)
+Received: from localhost (unknown [195.210.5.22])
+        by smtp.bitdefender.com (Postfix) with ESMTPSA id 8A256301B92B;
+        Mon, 13 Jan 2020 20:55:19 +0200 (EET)
+From:   Adalbert =?iso-8859-2?b?TGF643I=?= <alazar@bitdefender.com>
+Subject: Re: [RESEND PATCH v10 06/10] vmx: spp: Set up SPP paging table at
+ vmentry/vmexit
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Yang Weijiang <weijiang.yang@intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, jmattson@google.com,
+        yu.c.zhang@linux.intel.com, edwin.zhai@intel.com,
+        tamas@tklengyel.com, mathieu.tarral@protonmail.com
+In-Reply-To: <20200113173358.GC1175@linux.intel.com>
+References: <20200102061319.10077-1-weijiang.yang@intel.com>
+        <20200102061319.10077-7-weijiang.yang@intel.com>
+        <20200110180458.GG21485@linux.intel.com>
+        <20200113081050.GF12253@local-michael-cet-test.sh.intel.com>
+        <20200113173358.GC1175@linux.intel.com>
+Date:   Mon, 13 Jan 2020 20:55:46 +0200
+Message-ID: <15789417460.A97E650.22893@host>
+User-agent: void
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 13 Jan 2020 10:59:03 -0800
-From:   asutoshd@codeaurora.org
-To:     Stanley Chu <stanley.chu@mediatek.com>
-Cc:     linux-scsi@vger.kernel.org, martin.petersen@oracle.com,
-        avri.altman@wdc.com, alim.akhtar@samsung.com, jejb@linux.ibm.com,
-        beanhuo@micron.com, cang@codeaurora.org, matthias.bgg@gmail.com,
-        bvanassche@acm.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kuohong.wang@mediatek.com, peter.wang@mediatek.com,
-        chun-hung.wu@mediatek.com, andy.teng@mediatek.com
-Subject: Re: [PATCH v1 2/3] scsi: ufs: add device reset history for vendor
- implementations
-In-Reply-To: <1578147968-30938-3-git-send-email-stanley.chu@mediatek.com>
-References: <1578147968-30938-1-git-send-email-stanley.chu@mediatek.com>
- <1578147968-30938-3-git-send-email-stanley.chu@mediatek.com>
-Message-ID: <20ed97a2333ff27d5901c373579f710a@codeaurora.org>
-X-Sender: asutoshd@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-01-04 06:26, Stanley Chu wrote:
-> Device reset history shall be also added for vendor's device
-> reset variant operation implementation.
+On Mon, 13 Jan 2020 09:33:58 -0800, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+> On Mon, Jan 13, 2020 at 04:10:50PM +0800, Yang Weijiang wrote:
+> > On Fri, Jan 10, 2020 at 10:04:59AM -0800, Sean Christopherson wrote:
+> > > On Thu, Jan 02, 2020 at 02:13:15PM +0800, Yang Weijiang wrote:
+> > > > @@ -3585,7 +3602,30 @@ static bool fast_page_fault(struct kvm_vcpu *vcpu, gva_t gva, int level,
+> > > >  		if ((error_code & PFERR_WRITE_MASK) &&
+> > > >  		    spte_can_locklessly_be_made_writable(spte))
+> > > >  		{
+> > > > -			new_spte |= PT_WRITABLE_MASK;
+> > > > +			/*
+> > > > +			 * Record write protect fault caused by
+> > > > +			 * Sub-page Protection, let VMI decide
+> > > > +			 * the next step.
+> > > > +			 */
+> > > > +			if (spte & PT_SPP_MASK) {
+> > > > +				int len = kvm_x86_ops->get_inst_len(vcpu);
+> > > 
+> > > There's got to be a better way to handle SPP exits than adding a helper
+> > > to retrieve the instruction length.
+> > >
+> > The fault instruction was skipped by kvm_skip_emulated_instruction()
+> > before, but Paolo suggested leave the re-do or skip option to user-space
+> > to make it flexible for write protection or write tracking, so return
+> > length to user-space.
 > 
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: Asutosh Das <asutoshd@codeaurora.org>
-> Cc: Avri Altman <avri.altman@wdc.com>
-> Cc: Bart Van Assche <bvanassche@acm.org>
-> Cc: Bean Huo <beanhuo@micron.com>
-> Cc: Can Guo <cang@codeaurora.org>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
-> ---
->  drivers/scsi/ufs/ufshcd.c | 5 +++--
->  drivers/scsi/ufs/ufshcd.h | 6 +++++-
->  2 files changed, 8 insertions(+), 3 deletions(-)
+> Sorry, my comment was unclear.  I have no objection to punting the fault
+> to userspace, it's the mechanics of how it's done that I dislike.
 > 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index bae43da00bb6..29e3d50aabfb 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -4346,13 +4346,14 @@ static inline int
-> ufshcd_disable_device_tx_lcc(struct ufs_hba *hba)
->  	return ufshcd_disable_tx_lcc(hba, true);
->  }
+> Specifically, (a) using run->exit_reason to propagate the SPP exit up the
+> stack, e.g. instead of modifying affected call stacks to play nice with
+> any exit to userspace, (b) assuming ->get_insn_len() will always be
+> accurate, e.g. see the various caveats in skip_emulated_instruction() for
+> both VMX and SVM, and (c) duplicating the state capture code in every
+> location that can encounter a SPP fault.
 > 
-> -static void ufshcd_update_reg_hist(struct ufs_err_reg_hist *reg_hist,
-> -				   u32 reg)
-> +void ufshcd_update_reg_hist(struct ufs_err_reg_hist *reg_hist,
-> +			    u32 reg)
->  {
->  	reg_hist->reg[reg_hist->pos] = reg;
->  	reg_hist->tstamp[reg_hist->pos] = ktime_get();
->  	reg_hist->pos = (reg_hist->pos + 1) % UFS_ERR_REG_HIST_LENGTH;
->  }
-> +EXPORT_SYMBOL_GPL(ufshcd_update_reg_hist);
+> What I'm hoping is that it's possible to modify the call stacks to
+> explicitly propagate an exit to userspace and/or SPP fault, and shove all
+> the state capture into a common location, e.g. handle_ept_violation().
 > 
->  /**
->   * ufshcd_link_startup - Initialize unipro link startup
-> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-> index e05cafddc87b..de1be6a862b0 100644
-> --- a/drivers/scsi/ufs/ufshcd.h
-> +++ b/drivers/scsi/ufs/ufshcd.h
-> @@ -805,6 +805,8 @@ int ufshcd_wait_for_register(struct ufs_hba *hba,
-> u32 reg, u32 mask,
->  				u32 val, unsigned long interval_us,
->  				unsigned long timeout_ms, bool can_sleep);
->  void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba, struct clk 
-> *refclk);
-> +void ufshcd_update_reg_hist(struct ufs_err_reg_hist *reg_hist,
-> +			    u32 reg);
-> 
->  static inline void check_upiu_size(void)
->  {
-> @@ -1083,8 +1085,10 @@ static inline void
-> ufshcd_vops_dbg_register_dump(struct ufs_hba *hba)
-> 
->  static inline void ufshcd_vops_device_reset(struct ufs_hba *hba)
->  {
-> -	if (hba->vops && hba->vops->device_reset)
-> +	if (hba->vops && hba->vops->device_reset) {
->  		hba->vops->device_reset(hba);
-> +		ufshcd_update_reg_hist(&hba->ufs_stats.dev_reset, 0);
-> +	}
->  }
-> 
->  extern struct ufs_pm_lvl_states ufs_pm_lvl_states[];
+> Side topic, assuming the userspace VMI is going to be instrospecting the
+> faulting instruction, won't it decode the instruction?  I.e. calculate
+> the instruction length anyways?
 
-Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
+Indeed, we decode the instruction from userspace. I don't know if the
+instruction length helps other projects. Added Tamas and Mathieu.
+
+In our last VMI API proposal, the breakpoint event had the instruction
+length sent to userspace, but I can't remember why.
+
+https://lore.kernel.org/kvm/20190809160047.8319-62-alazar@bitdefender.com/
