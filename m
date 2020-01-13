@@ -2,149 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FD67138DA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:22:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5810138DB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:24:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726505AbgAMJWh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 04:22:37 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:32057 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725992AbgAMJWh (ORCPT
+        id S1727465AbgAMJYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 04:24:08 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:41416 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725978AbgAMJYG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 04:22:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578907355;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=vDjgYq7ZyN6ANmr5w8dkEbzgzAr+C/qYxfFwrZDrR80=;
-        b=YL1zGWcNZiSehlNRqZqRXZxNVZ8I3N5hhk5wFGDRB7HSfL9SUnR+T/I1d/AOhMVdwhtC1W
-        QD1Bn6fIlwFYXUFxbvEvDJX3ll8cPQFtJ611YuGpgEgt5HNADBwhxgFeEiUiDXpC9NboDd
-        EVJQvaCt4Be6ej091JZc/hnZjbBnML4=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-110-X4clIU2uPca0kufNyl8HTA-1; Mon, 13 Jan 2020 04:22:21 -0500
-X-MC-Unique: X4clIU2uPca0kufNyl8HTA-1
-Received: by mail-wr1-f70.google.com with SMTP id i9so4734278wru.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 01:22:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vDjgYq7ZyN6ANmr5w8dkEbzgzAr+C/qYxfFwrZDrR80=;
-        b=YSpyfO9Okss8Ek/v3OkwxsoKAq6Pjn2rv7qPqKk4MG6h38/cnFmCDi+UdbZtahPXDb
-         sfppUAcKyChBc5DBu+jZ5VY2uSXXeTeST2TTf71arPtxmcjqogxPVlnNhE/iI7StPjoC
-         7ULZh0z85S4YRTEPJVPPg3qZkZaBraLJG8tOKEihLlgPuYby3C7u7jrSOyBUAfsdkHjH
-         yZO3Ul1mEWHxIVfV2TudsW6uhtHUCjWmlgCZdwC+xWH8RPG4KAfWMYkxY31/6tNM09mH
-         yMiRJYahUEI96Q8RjSxTrWiA0k3MKycGm148QF7f19bz/u1oly/kZa1PSBTZ8FMKgx1j
-         +dLg==
-X-Gm-Message-State: APjAAAV5misCKXGuFd0gVw0nIdpvC61uf5rPofgXhyM7J9V+i/tdp+Il
-        751mKnHe+M/0u+YR9lvltz6JrnHUYGRVtXIQUeodTtlDPH0FAYBZXiRW3HQCS+D936XW3HJZDNf
-        lYgJ1pypqVJtCesj81ZChLuwT
-X-Received: by 2002:a5d:6901:: with SMTP id t1mr16295619wru.94.1578907340044;
-        Mon, 13 Jan 2020 01:22:20 -0800 (PST)
-X-Google-Smtp-Source: APXvYqywO43FDSzRFVJXhpE0bMQK15xlBUilu3eCq1gBFqg2KfJ8N1IebpL4B3GFI3sZeXORGEfoWw==
-X-Received: by 2002:a5d:6901:: with SMTP id t1mr16295592wru.94.1578907339673;
-        Mon, 13 Jan 2020 01:22:19 -0800 (PST)
-Received: from localhost.localdomain ([151.29.30.195])
-        by smtp.gmail.com with ESMTPSA id a1sm14250274wrr.80.2020.01.13.01.22.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 Jan 2020 01:22:18 -0800 (PST)
-Date:   Mon, 13 Jan 2020 10:22:16 +0100
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Philipp Stanner <stanner@posteo.de>
-Cc:     linux-kernel@vger.kernel.org, Hagen Pfeifer <hagen@jauu.net>,
-        mingo@redhat.com, peterz@infradead.org, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de
-Subject: Re: SCHED_DEADLINE with CPU affinity
-Message-ID: <20200113092216.GA14325@localhost.localdomain>
-References: <1574202052.1931.17.camel@posteo.de>
- <20191120085024.GB23227@localhost.localdomain>
- <1a322df842e0dc5646ef1198ea0bbe668d94646e.camel@posteo.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1a322df842e0dc5646ef1198ea0bbe668d94646e.camel@posteo.de>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        Mon, 13 Jan 2020 04:24:06 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1578907445; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=E2fgNtG+WIKahbblJ85apQtJqKTonOXKBjBUc4D+Mb8=; b=TKbAZYjlRIrdZ/JY7pB86x8kV3A8RrOWQ57xHHp//ct8y5KCNzgXsl9sAaeC4sJQ9XnQo/Fp
+ c25G+MjgX+3olNtqMMX2wcaw788yndBEOt9qg02QHsR5cczLDdZrhFPovq8ud9q07ksTTmxL
+ ODzmy2r/zmFWmrHFaZPytKY7OWk=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e1c3732.7fd053feb998-smtp-out-n02;
+ Mon, 13 Jan 2020 09:24:02 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 0D95EC447A2; Mon, 13 Jan 2020 09:24:02 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from sthella-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sthella)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E1811C433CB;
+        Mon, 13 Jan 2020 09:23:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E1811C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sthella@codeaurora.org
+From:   Shyam Kumar Thella <sthella@codeaurora.org>
+To:     agross@kernel.org, srinivas.kandagatla@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     Shyam Kumar Thella <sthella@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4] dt-bindings: nvmem: add binding for QTI SPMI SDAM
+Date:   Mon, 13 Jan 2020 14:53:50 +0530
+Message-Id: <1578907430-2941-1-git-send-email-sthella@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+QTI SDAM allows PMIC peripherals to access the shared memory that is
+available on QTI PMICs. Add documentation for it.
 
-Sorry for the delay in repling (Xmas + catching-up w/ emails).
+Signed-off-by: Shyam Kumar Thella <sthella@codeaurora.org>
+---
+ .../devicetree/bindings/nvmem/qcom,spmi-sdam.yaml  | 83 ++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/nvmem/qcom,spmi-sdam.yaml
 
-On 24/12/19 11:03, Philipp Stanner wrote:
-> On Wed, 20.11.2019, 09:50 +0100 Juri Lelli wrote:
-> > Hi Philipp,
-> 
-> Hey Juri,
-> 
-> thanks so far; we indeed could make it work with exclusive CPU-sets.
-
-Good. :-)
-
-> On 19/11/19 23:20, Philipp Stanner wrote:
-> > 
-> > > from implementing our intended architecture.
-> > > 
-> > > Now, the questions we're having are:
-> > > 
-> > >    1. Why does the kernel do this, what is the problem with
-> > > scheduling with
-> > >       SCHED_DEADLINE on a certain core? In contrast, how is it
-> > > handled when
-> > >       you have single core systems etc.? Why this artificial
-> > > limitation?
-> > 
-> > Please have also a look (you only mentioned manpage so, in case you
-> > missed it) at
-> > 
-> > https://elixir.bootlin.com/linux/latest/source/Documentation/scheduler/sched-deadline.rst#L667
-> > 
-> > and the document in general should hopefully give you the answer
-> > about
-> > why we need admission control and current limitations regarding
-> > affinities.
-> > 
-> > >    2. How can we possibly implement this? We don't want to use
-> > > SCHED_FIFO,
-> > >       because out-of-control tasks would freeze the entire
-> > > container.
-> > 
-> > I experimented myself a bit with this kind of setup in the past and I
-> > think I made it work by pre-configuring exclusive cpusets (similarly
-> > as
-> > what detailed in the doc above) and then starting containers inside
-> > such
-> > exclusive sets with podman run --cgroup-parent option.
-> > 
-> > I don't have proper instructions yet for how to do this (plan to put
-> > them together soon-ish), but please see if you can make it work with
-> > this hint.
-> 
-> I fear I have not understood quite well yet why this
-> "workaround" leads to (presumably) the same results as set_affinity
-> would. From what I have read, I understand it as follows: For
-> sched_dead, admission control tries to guarantee that the requested
-> policy can be executed. To do so, it analyzes the current workload
-> situation, taking especially the number of cores into account.
-> 
-> Now, with a pre-configured set, the kernel knows which tasks will run
-> on which core, therefore it's able to judge wether a process can be
-> deadline scheduled or not. But when using the default way, you could
-> start your processes as SCHED_OTHER, set SCHED_DEADLINE as policy and
-> later many of them could suddenly call set_affinity, desiring to run on
-> the same core, therefore provoking collisions.
-
-But setting affinity would still have to pass admission control, and
-should fail in the case you are describing (IIUC).
-
-https://elixir.bootlin.com/linux/latest/source/kernel/sched/core.c#L5433
-
-Best,
-
-Juri
-
+diff --git a/Documentation/devicetree/bindings/nvmem/qcom,spmi-sdam.yaml b/Documentation/devicetree/bindings/nvmem/qcom,spmi-sdam.yaml
+new file mode 100644
+index 0000000..4526fbf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/nvmem/qcom,spmi-sdam.yaml
+@@ -0,0 +1,83 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/nvmem/qcom,spmi-sdam.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Technologies, Inc. SPMI SDAM DT bindings
++
++maintainers:
++  - Shyam Kumar Thella <sthella@codeaurora.org>
++
++description: |
++  The SDAM provides scratch register space for the PMIC clients. This
++  memory can be used by software to store information or communicate
++  to/from the PBUS.
++
++allOf:
++  - $ref: "nvmem.yaml#"
++
++properties:
++  compatible:
++    enum:
++      - qcom,spmi-sdam
++
++  reg:
++    maxItems: 1
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 1
++
++  ranges: true
++
++required:
++  - compatible
++  - reg
++  - ranges
++
++patternProperties:
++  "^.*@[0-9a-f]+$":
++    type: object
++
++    properties:
++      reg:
++        maxItems: 1
++        description:
++          Offset and size in bytes within the storage device.
++
++      bits:
++        $ref: /schemas/types.yaml#/definitions/uint32-array
++        maxItems: 1
++        items:
++          items:
++            - minimum: 0
++              description:
++                Offset in bit within the address range specified by reg.
++            - minimum: 1
++              description:
++                Size in bit within the address range specified by reg.
++
++    required:
++      - reg
++
++    additionalProperties: false
++
++examples:
++  - |
++      sdam_1: nvram@b000 {
++         #address-cells = <1>;
++         #size-cells = <1>;
++         compatible = "qcom,spmi-sdam";
++          reg = <0xb000 0x100>;
++          ranges = <0 0xb000 0x100>;
++
++          /* Data cells */
++          restart_reason: restart@50 {
++              reg = <0x50 0x1>;
++              bits = <6 2>;
++          };
++      };
++...
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+ a Linux Foundation Collaborative Project
