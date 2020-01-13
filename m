@@ -2,55 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1F9C138947
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 02:34:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F5CB13894B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 02:36:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732865AbgAMBek (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 20:34:40 -0500
-Received: from gentwo.org ([3.19.106.255]:55568 "EHLO gentwo.org"
+        id S1733074AbgAMBgH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 20:36:07 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:48051 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730100AbgAMBej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 20:34:39 -0500
-Received: by gentwo.org (Postfix, from userid 1002)
-        id EEB3C3ED6B; Mon, 13 Jan 2020 01:34:38 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by gentwo.org (Postfix) with ESMTP id ED43E3ED4F;
-        Mon, 13 Jan 2020 01:34:38 +0000 (UTC)
-Date:   Mon, 13 Jan 2020 01:34:38 +0000 (UTC)
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@www.lameter.com
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-cc:     Vlastimil Babka <vbabka@suse.cz>, Yu Zhao <yuzhao@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [FIX] slub: Remove kmalloc under list_lock from list_slab_objects()
- V2
-In-Reply-To: <e0ed44ae-8dae-e8db-9d14-2b09b239af8e@i-love.sakura.ne.jp>
-Message-ID: <alpine.DEB.2.21.2001130132580.1578@www.lameter.com>
-References: <20191108193958.205102-1-yuzhao@google.com> <20191108193958.205102-2-yuzhao@google.com> <alpine.DEB.2.21.1911092024560.9034@www.lameter.com> <20191109230147.GA75074@google.com> <alpine.DEB.2.21.1911092313460.32415@www.lameter.com>
- <20191110184721.GA171640@google.com> <alpine.DEB.2.21.1911111543420.10669@www.lameter.com> <alpine.DEB.2.21.1911111553020.15366@www.lameter.com> <20191130150908.06b2646edfa7bdc12a943c25@linux-foundation.org> <alpine.DEB.2.21.1912021511250.15780@www.lameter.com>
- <20191207220320.GA67512@google.com> <e9f26cbd-593b-116e-2e4a-f8e0e16c23fc@suse.cz> <e0ed44ae-8dae-e8db-9d14-2b09b239af8e@i-love.sakura.ne.jp>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1730100AbgAMBgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 Jan 2020 20:36:07 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47wx4h6tf0z9sP3;
+        Mon, 13 Jan 2020 12:36:04 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1578879365;
+        bh=2EcIJoyOz9tK0xOmQQ7WAxOvnQE7s026EZeSflLOAEk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=BrCqiY97gvIaH5Kk29l5Y52tIzivjiWEfW9wqq+Ahya6mGr3a41iKLxiOxp7KmSAU
+         +lNnk0eX61mE4R4ZUO3TPXc1WZblh2VZlKykcY+hH7QzVIVIEM5siAYZ8hGoPk6GmT
+         rttjXuvnaa9MoRlKO3Mm8qcj70izKYJaOs5g5otc6cfmxwvilht1RRNc/ZfhT0OyI3
+         4l9MBkOp6csYNSkbCyoXCU79p1ea3C9YjxPVBRWJ2QvWb2tDq/I/5spPG75zKhpEkn
+         r2iTrRNDgx79U3MKql11PE4W3WEtoH+dp2yhibPSgzIaBHVB8qzYu9osQNyeYe1Vki
+         UZBGRm1rlCfuw==
+Date:   Mon, 13 Jan 2020 12:36:03 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Howells <dhowells@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kars de Jong <jongk@linux-m68k.org>
+Subject: linux-next: manual merge of the keys tree with the m86k tree
+Message-ID: <20200113123603.33c957e1@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; boundary="Sig_/259KabfiEtsM5joRfPsaXt3";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 12 Jan 2020, Tetsuo Handa wrote:
+--Sig_/259KabfiEtsM5joRfPsaXt3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On 2020/01/10 23:11, Vlastimil Babka wrote:
-> Hmm, this one? Even non-ML destinations are sometimes rejected (e.g.
->   554 5.7.1 Service unavailable; Client host [202.181.97.72] blocked using b.barracudacentral.org; http://www.barracudanetworks.com/reputation/?pr=1&ip=202.181.97.72
-> ). Anyway, I just worried whether it is really safe to do memory allocation
-> which might involve memory reclaim. You MM guys know better...
+Hi all,
 
-We are talking about a call to destroy the kmem_cache. This is not done
-under any lock. The lock was taken inside that function before the call to
-list_slab_objects. That can be avoided.
+Today's linux-next merge of the keys tree got a conflict in:
+
+  arch/m68k/kernel/syscalls/syscall.tbl
+
+between commit:
+
+  e8bb2a2a1d51 ("m68k: Wire up clone3() syscall")
+
+from the m86k tree and commit:
+
+  519c484a997a ("Add a general, global device notification watch list")
+
+from the keys tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/259KabfiEtsM5joRfPsaXt3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4byYMACgkQAVBC80lX
+0GyswQf+IyWDYqngcu1V5qKkljBR81wDWBv48b8GtXCeZ74gr10TiFKhW0++d05K
+b6wiLqkrBVKTMwo1R+oqxW6jO2Wz0t9+x97wNTfnjbY6L2yvQCKEgULiV92tEWBE
+5rsY1lzGj+b8Kup4DOouCokVrrOF0zuFuhH/KnYb39GTKUTNTnlk+lInCwTYcnA+
+xUdl+kMqXFFM3erzBhXKGBTb6y1YTq3zZx9ZbKmPjCN6HOUG9R53fru7S5Bg2b5e
+NMxxCpyTp7rCLdHUsLKC/Zo6vIatIhGu4P08SF59C1jHjMYxVaORaTUiUmqdIPuk
+NAxSfO6Q+9uvAQJ9e4RymplE1PDVbg==
+=u0aq
+-----END PGP SIGNATURE-----
+
+--Sig_/259KabfiEtsM5joRfPsaXt3--
