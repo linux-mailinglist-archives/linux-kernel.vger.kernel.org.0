@@ -2,107 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD5F2139216
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:22:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F84B139211
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:22:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbgAMNWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 08:22:20 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41799 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728760AbgAMNWH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 08:22:07 -0500
-Received: by mail-wr1-f67.google.com with SMTP id c9so8532474wrw.8
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 05:22:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8OvYQMaM+qpSXl2Z3EMu15jl+wVMWjq32vRPQAxhLSk=;
-        b=ZkykLhU+OsnUN1GehXkbcpCYyeCOdnKd6x/WUPP3MD7JgzvICS+iQxO5b8v3hai3el
-         6csFmPQpBEG5gLRECVAbPYdSQWgHWJV4mx3muHf2Di63wKiTAtxdTkpaSK8oaS91gqgL
-         xVjlm/ZHg1TCJn2v5LcMNBB5Fy3uhp03mZkWQX9FAslcngPp5JdivcZWcMbMnhJH4iQn
-         4ro3iEPaHKYI6XUuzEezt4ZvlcsU2I632TQcFZte2y6dk9i4XmRSwL+CCKqynPSQprmQ
-         av7iDcqh4ZD8Gv6Lq3yZQwaKREtwAUy5NDSi/iYXGgntSp/t32wlkcj2cgy96neiOxas
-         yBDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8OvYQMaM+qpSXl2Z3EMu15jl+wVMWjq32vRPQAxhLSk=;
-        b=FeWgFLAyol2QHBZmDQHReQMrTGi43YI94h6wxdwsdHz2JFp56mSt82gcNvzhIS0Pb3
-         o2bXi3p+enipDYmSr8CNJ3YuHuuLVZuTfYVPmlSvpvncqhqWY7hljqhRTbDg9X4UIr+U
-         B4T4WfEy7wFXA2GWH43QxegJZw54WqZnOImhPqzzeCy+ExHXx7T8jQa+VTzJExIAZ+Pb
-         a3QWXct1S0SayLhF+DZ+qn6SKjGVANLSo7UX8eSLC1cpbJqlpJWxj+jDjRLVpSFPVnpD
-         muqnM7SS1BbadavK08Wk/ksI7oZZejdiQzOwbZatl3KBe6w3KM4sG8L0Iy6GJ1TIBCMc
-         X9sg==
-X-Gm-Message-State: APjAAAVjS2069GnmDpUPCx7DVAXQ/xGlpBSx0xkCFYfRwFo6D38t1Wj3
-        BgaK96xDmLho4gkD5bxNdlmaow==
-X-Google-Smtp-Source: APXvYqxdcQ2PDL0YCpFyVPDf3ql9zwKH6H5+6A68p38o4+HfpXHoYJM/8izNu9mByQSMjK7151oWMQ==
-X-Received: by 2002:adf:ebc1:: with SMTP id v1mr18140793wrn.351.1578921725612;
-        Mon, 13 Jan 2020 05:22:05 -0800 (PST)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id u18sm14692987wrt.26.2020.01.13.05.22.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 05:22:04 -0800 (PST)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     vkoul@kernel.org
-Cc:     robh@kernel.org, bgoswami@codeaurora.org, broonie@kernel.org,
-        pierre-louis.bossart@linux.intel.com, lgirdwood@gmail.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        spapothi@codeaurora.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v6 0/2] soundwire: Add support to Qualcomm SoundWire master
-Date:   Mon, 13 Jan 2020 13:21:51 +0000
-Message-Id: <20200113132153.27239-1-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
+        id S1728753AbgAMNWE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 08:22:04 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:34446 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726074AbgAMNWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 08:22:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=rROUgpk70UyhCg1/3QrNJgxC2bST7qcuShWBQfIfwek=; b=xkelwf47AvI1dTnksyNnIApRx/
+        YeGrbD1Hd3eLSZL/v0OOKNI+UDtRdHpHhVPGgoLxBFl+lmS1taMYY2mR1HJ6AFTXA6P2T68w1BSxo
+        khiIbd3b8GyhTI9+Gs7pU+JOx2laVivbd3HmYrecApZ47gw4FW0xlycWESQzYkTNoE+s=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1iqzfE-0003mp-M7; Mon, 13 Jan 2020 14:21:52 +0100
+Date:   Mon, 13 Jan 2020 14:21:52 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     netdev@vger.kernel.org, cphealy@gmail.com,
+        rmk+kernel@armlinux.org.uk, kuba@kernel.org,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] net: phy: Maintain MDIO device and bus
+ statistics
+Message-ID: <20200113132152.GB11788@lunn.ch>
+References: <20200113045325.13470-1-f.fainelli@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200113045325.13470-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for reviewing the v5 patchset.
-Here is new patchset addressing all the comments from v5
+On Sun, Jan 12, 2020 at 08:53:19PM -0800, Florian Fainelli wrote:
+> Maintain per MDIO device and MDIO bus statistics comprised of the number
+> of transfers/operations, reads and writes and errors. This is useful for
+> tracking the per-device and global MDIO bus bandwidth and doing
+> optimizations as necessary.
 
-This patchset adds support for Qualcomm SoundWire Master Controller
-found in most of Qualcomm SoCs and WCD audio codecs.
+Hi Florian
 
-This driver along with WCD934x codec and WSA881x Class-D Smart Speaker
-Amplifier drivers is tested on on DragonBoard DB845c based of SDM845
-SoC and Lenovo YOGA C630 Laptop based on SDM850.
+One point for discussion is, is sysfs the right way to do this?
+Should we be using ethtool and exporting the statistics like other
+statistics?
 
-SoundWire controller on SDM845 is integrated in WCD934x audio codec via
-SlimBus interface.
+The argument against it, is we have devices which are not related to a
+network interfaces on MDIO busses. For a PHY we could plumb the per
+PHY mdio device statistics into the exiting PHY statistics. But we
+also have Ethernet switches on MDIO devices, which don't have an
+association to a netdev interface. Broadcom also have some generic PHY
+device on MDIO busses, for USB, SATA, etc. And whole bus statistics
+don't fit the netdev model at all.
 
-Currently this driver is very minimal and only supports PDM.
+So sysfs does make sense. But i would also suggest we do plumb per PHY
+MDIO device statistics into the exiting ethtool call.
 
-Most of the code in this driver is rework of Qualcomm downstream drivers
-used in Andriod. Credits to Banajit Goswami and Patrick Lai's Team.
+> 
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  Documentation/ABI/testing/sysfs-bus-mdio |  34 +++++++
+>  drivers/net/phy/mdio_bus.c               | 116 +++++++++++++++++++++++
+>  drivers/net/phy/mdio_device.c            |   1 +
+>  include/linux/mdio.h                     |  10 ++
+>  include/linux/phy.h                      |   2 +
+>  5 files changed, 163 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-bus-mdio
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-mdio b/Documentation/ABI/testing/sysfs-bus-mdio
+> new file mode 100644
+> index 000000000000..a552d92890f1
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-mdio
+> @@ -0,0 +1,34 @@
+> +What:          /sys/bus/mdio_bus/devices/.../statistics/
+> +Date:          January 2020
+> +KernelVersion: 5.6
+> +Contact:       netdev@vger.kernel.org
+> +Description:
+> +		This folder contains statistics about MDIO bus transactions.
+> +
+> +What:          /sys/bus/mdio_bus/devices/.../statistics/transfers
+> +Date:          January 2020
+> +KernelVersion: 5.6
+> +Contact:       netdev@vger.kernel.org
+> +Description:
+> +		Total number of transfers for this MDIO bus.
+> +
+> +What:          /sys/bus/mdio_bus/devices/.../statistics/errors
+> +Date:          January 2020
+> +KernelVersion: 5.6
+> +Contact:       netdev@vger.kernel.org
+> +Description:
+> +		Total number of transfer errors for this MDIO bus.
+> +
+> +What:          /sys/bus/mdio_bus/devices/.../statistics/writes
+> +Date:          January 2020
+> +KernelVersion: 5.6
+> +Contact:       netdev@vger.kernel.org
+> +Description:
+> +		Total number of write transactions for this MDIO bus.
+> +
+> +What:          /sys/bus/mdio_bus/devices/.../statistics/reads
+> +Date:          January 2020
+> +KernelVersion: 5.6
+> +Contact:       netdev@vger.kernel.org
+> +Description:
+> +		Total number of read transactions for this MDIO bus.
 
-TODO:
-	Test and add PCM support.
+Looking at this description, it is not clear we have whole bus and per
+device statistics. 
 
-Thanks,
-srini
+>  int __mdiobus_read(struct mii_bus *bus, int addr, u32 regnum)
+>  {
+> +	struct mdio_device *mdiodev = bus->mdio_map[addr];
+>  	int retval;
+>  
+>  	WARN_ON_ONCE(!mutex_is_locked(&bus->mdio_lock));
+> @@ -555,6 +645,9 @@ int __mdiobus_read(struct mii_bus *bus, int addr, u32 regnum)
+>  	retval = bus->read(bus, addr, regnum);
+>  
+>  	trace_mdio_access(bus, 1, addr, regnum, retval, retval);
+> +	mdiobus_stats_acct(&bus->stats, true, retval);
+> +	if (mdiodev)
+> +		mdiobus_stats_acct(&mdiodev->stats, true, retval);
+>  
+>  	return retval;
 
-Changes since v5:
-	-No code changes.
-	-Add extra comment in interrupt handler as suggested by Pierre
+I think for most Ethernet switches, these per device counters are
+going to be misleading. The switch often takes up multiple addresses
+on the bus, but the switch is represented as a single mdiodev with one
+address. So the counters will reflect the transfers on that one
+address, not the whole switch. The device tree binding does not have
+enough information for us to associated one mdiodev to multiple
+addresses. And for some of the Marvell switches, it is a sparse address
+map, and i have seen PHY devices in the holes. So in the sysfs
+documentation, we should probably add a warning that when used with an
+Ethernet switch, the counters are unlikely to be accurate, and should
+be interpreted with care.
 
-Srinivas Kandagatla (2):
-  dt-bindings: soundwire: add bindings for Qcom controller
-  soundwire: qcom: add support for SoundWire controller
-
- .../bindings/soundwire/qcom,sdw.txt           | 167 ++++
- drivers/soundwire/Kconfig                     |   9 +
- drivers/soundwire/Makefile                    |   4 +
- drivers/soundwire/qcom.c                      | 861 ++++++++++++++++++
- 4 files changed, 1041 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soundwire/qcom,sdw.txt
- create mode 100644 drivers/soundwire/qcom.c
-
--- 
-2.21.0
-
+   Andrew
