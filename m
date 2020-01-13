@@ -2,68 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55A2013991E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 19:43:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8245139922
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 19:43:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728714AbgAMSnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 13:43:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47230 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726435AbgAMSnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 13:43:21 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728824AbgAMSns (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 13:43:48 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:45032 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727726AbgAMSnp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 13:43:45 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1578941024; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=n++fX84s76rSeZguThu1VU/fYy13LRbB/w5RZWTUErQ=;
+ b=dRQxNzgovuVLrk9Fa6O9mMLlVvE8/Mv3yAIFXUlZSrb47xVTryOCIsxValgMnoftlKbo2qEy
+ igyEZ+OwRoxmYthSqcZH1eZhkOFA9DB8e8/HikEflBk8tX5A/3kOKAA1l5PW+V0b7ZnIob1k
+ jPbdZpfTjp/x19Jk9iVaXzJdISw=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e1cba5d.7f6eb1a466c0-smtp-out-n01;
+ Mon, 13 Jan 2020 18:43:41 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id EB415C447A6; Mon, 13 Jan 2020 18:43:40 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8704020CC7;
-        Mon, 13 Jan 2020 18:43:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578941001;
-        bh=2Pma3/cx78GLTAW61r1F5Jwdm6NzhJEJcPWrFF9uls8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IEeJ0bbGhTdr5RPtnE4bMgC1gdBDUCHLpuTR3u08lPJ2TLhJcuKN0+X5S8ktNGBSH
-         GU8UIy+xN+9GwQNdpewuD4ZlaGboTBZ+vxzjedoPqkYuHZTm3FK7AYhLSHwj3Lzgty
-         Ua9Jd3LYKp8MhT6a9j3vQe/sn90R4L0q1L0w4nz8=
-Date:   Mon, 13 Jan 2020 19:43:18 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-Cc:     mchehab@kernel.org, sean@mess.org, tglx@linutronix.de,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH v2] media: dvb_dummy_tuner: implement driver skeleton
-Message-ID: <20200113184318.GB431441@kroah.com>
-References: <20200109233757.734008-1-dwlsalmeida@gmail.com>
- <20200110073024.GA156006@kroah.com>
- <d6d119cf-7447-31ce-37db-25503cf2f9bc@gmail.com>
+        (Authenticated sender: asutoshd)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1868EC43383;
+        Mon, 13 Jan 2020 18:43:40 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d6d119cf-7447-31ce-37db-25503cf2f9bc@gmail.com>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 13 Jan 2020 10:43:40 -0800
+From:   asutoshd@codeaurora.org
+To:     Bean Huo <huobean@gmail.com>
+Cc:     alim.akhtar@samsung.com, avri.altman@wdc.com,
+        pedrom.sousa@synopsys.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, stanley.chu@mediatek.com,
+        beanhuo@micron.com, bvanassche@acm.org, tomas.winkler@intel.com,
+        cang@codeaurora.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-scsi-owner@vger.kernel.org
+Subject: Re: [PATCH 1/3] scsi: ufs: add max_lu_supported in struct
+ ufs_dev_info
+In-Reply-To: <20200110183606.10102-2-huobean@gmail.com>
+References: <20200110183606.10102-1-huobean@gmail.com>
+ <20200110183606.10102-2-huobean@gmail.com>
+Message-ID: <268bea279e84715f2a3d39ab1edb406d@codeaurora.org>
+X-Sender: asutoshd@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 03:23:02PM -0300, Daniel W. S. Almeida wrote:
-> Hi Greg,
+On 2020-01-10 10:36, Bean Huo wrote:
+> From: Bean Huo <beanhuo@micron.com>
 > 
-> I am working on v3. Would you mind clarifying this?
+> Add one new parameter max_lu_supported in struct ufs_dev_info,
+> which will be used to express exactly how many general LUs being
+> supported by UFS device.
 > 
+> Signed-off-by: Bean Huo <beanhuo@micron.com>
+> ---
+>  drivers/scsi/ufs/ufs.h | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> > > + *
-> > > + * The virtual DVB test driver serves as a reference DVB driver and helps
-> > > + * validate the existing APIs in the media subsystem. It can also aid developers
-> > > + * working on userspace applications.
-> > > + *
-> > > + * This dummy tuner should support common TV standards such as DVB-T/T2/S/S2,
-> > > + * ISDB-T and ATSC when completed.
-> > > + *
-> > > + * Copyright (c) 2020 Daniel W. S. Almeida <dwlsalmeida@gmail.com>
-> > Normally this is the first comment line above in this block.
-> > 
+> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+> index c89f21698629..5ca7ea4f223e 100644
+> --- a/drivers/scsi/ufs/ufs.h
+> +++ b/drivers/scsi/ufs/ufs.h
+> @@ -530,6 +530,8 @@ struct ufs_dev_info {
+>  	bool f_power_on_wp_en;
+>  	/* Keeps information if any of the LU is power on write protected */
+>  	bool is_lu_power_on_wp;
+> +	/* Maximum number of general LU supported by the UFS device */
+> +	u8 max_lu_supported;
+>  };
 > 
-> Just so we're clear, do you mean this? e.g.:
-> 
-> + * Copyright (c) 2020 Daniel W. S. Almeida <dwlsalmeida@gmail.com>
+>  #define MAX_MODEL_LEN 16
 
-Yes.
+Looks good to me.
+Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
