@@ -2,129 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1E3D1391E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:15:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 314BF139208
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:20:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728650AbgAMNPS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 08:15:18 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:50817 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbgAMNPR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 08:15:17 -0500
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 6FFDF22F2E;
-        Mon, 13 Jan 2020 14:15:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1578921315;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IgGLE1F1nPsMuk+W9Nc7eMSChF5dQJRdLDQSJEpek40=;
-        b=f9cR2Urhc6pN9yLq9i1YK4okEws6isQzUNskW0JJNqKEX8OcOJvfQWfVanVseMkHcTPp/5
-        NBFwh3YrvcBKF8/CiNYDGU2sbHjLnAGH8L9fXeUeuOxIxWCk14heVPRV9GRZX5m327236b
-        dTI0c1fgjU37Sy3bXLPacnNzPliE0wg=
+        id S1728804AbgAMNT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 08:19:56 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:52904 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726074AbgAMNT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 08:19:56 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7B511A564A5BD302656B;
+        Mon, 13 Jan 2020 21:19:53 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 13 Jan 2020 21:19:43 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <thomas.lendacky@amd.com>, <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <chenzhou10@huawei.com>
+Subject: [PATCH] amd-xgbe: remove unnecessary conversion to bool
+Date:   Mon, 13 Jan 2020 21:15:16 +0800
+Message-ID: <20200113131516.142221-1-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 13 Jan 2020 14:15:15 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Tudor.Ambarus@microchip.com
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        richard@nod.at, vigneshr@ti.com, miquel.raynal@bootlin.com
-Subject: Re: [PATCH] mtd: spi-nor: Add support for w25qNNjwim
-In-Reply-To: <2dffc658f21da502dff8c5721ec1b0a7@walle.cc>
-References: <20200103223423.14025-1-michael@walle.cc>
- <12341010.b9DRC5f9X7@192.168.0.113>
- <9d39be0f45f4c8e087b269f0c802ed6b@walle.cc>
- <4050087.dyKUiXJtgz@localhost.localdomain>
- <2dffc658f21da502dff8c5721ec1b0a7@walle.cc>
-Message-ID: <8ce5f803c9a59a1ebd55ae287fa2e6a9@walle.cc>
-X-Sender: michael@walle.cc
-User-Agent: Roundcube Webmail/1.3.8
-X-Spamd-Bar: /
-X-Spam-Status: No, score=-0.10
-X-Rspamd-Server: web
-X-Spam-Score: -0.10
-X-Rspamd-Queue-Id: 6FFDF22F2E
-X-Spamd-Result: default: False [-0.10 / 15.00];
-         ARC_NA(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         TO_DN_NONE(0.00)[];
-         RCPT_COUNT_FIVE(0.00)[6];
-         DKIM_SIGNED(0.00)[];
-         NEURAL_HAM(-0.00)[-0.780];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         MID_RHS_MATCH_FROM(0.00)[]
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tudor,
+The conversion to bool is not needed, remove it.
 
-Am 2020-01-13 11:07, schrieb Michael Walle:
->>> 
->>> Btw. is renaming the flashes also considered a backwards incomaptible
->>> change?
->> 
->> No, we can fix the names.
->> 
->>> And can there be two flashes with the same name? Because IMHO it 
->>> would
->>> be
->> 
->> I would prefer that we don't. Why would you have two different 
->> jedec-ids with
->> the same name?
-> 
-> Because as pointed out in the Winbond example you cannot distiguish 
-> between
-> W25Q32DW and W25Q32JWIQ; and in the Macronix example between MX25L8005 
-> and
-> MX25L8006E. Thus my reasoning was to show only the common part, ie 
-> W25Q32
-> or MX25L80 which should be the same for this particular ID. Like I 
-> said, I'd
-> prefer showing an ambiguous name instead of a wrong one. But then you 
-> may
-> have different IDs with the same ambiguous name.
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+---
+ drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c b/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c
+index 128cd64..46c3c1c 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c
+@@ -1227,7 +1227,7 @@ static bool xgbe_phy_sfp_verify_eeprom(u8 cc_in, u8 *buf, unsigned int len)
+ 	for (cc = 0; len; buf++, len--)
+ 		cc += *buf;
+ 
+-	return (cc == cc_in) ? true : false;
++	return cc == cc_in;
+ }
+ 
+ static int xgbe_phy_sfp_read_eeprom(struct xgbe_prv_data *pdata)
+-- 
+2.7.4
 
-Another solution would be to have the device tree provide a hint for the
-actual flash chip. There would be multiple entries in the spi_nor_ids 
-with the
-same flash id. By default the first one is used (keeping the current
-behaviour). If there is for example
-
-   compatible = "jedec,spi-nor", "w25q32jwq";
-
-the flash_info for the w25q32jwq will be chosen.
-
-I know this will conflict with the new rule that there should only be
-
-   compatible = "jedec,spi-nor";
-
-without the actual flash chip. But it seems that it is not always 
-possible
-to just use the jedec id to match the correct chip.
-
-Also see for example mx25l25635_post_bfpt_fixups() which tries to figure
-out different behaviour by looking at "some" SFDP data. In this case we
-might have been lucky, but I fear that this won't work in all cases and
-for older flashes it won't work at all.
-
-BTW I do not suggest to add the strings to the the spi_nor_dev_ids[].
-
-I guess that would be a less invasive way to fix different flashes with
-same jedec ids.
-
--michael
