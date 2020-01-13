@@ -2,147 +2,243 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A073C139347
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:14:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C968613939E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:24:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728929AbgAMOOz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 09:14:55 -0500
-Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:18614 "EHLO
-        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726505AbgAMOOx (ORCPT
+        id S1728803AbgAMOYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 09:24:17 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:54077 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbgAMOYQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 09:14:53 -0500
-Received: from pps.filterd (m0167090.ppops.net [127.0.0.1])
-        by mx0b-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00DEADAL022811;
-        Mon, 13 Jan 2020 09:14:35 -0500
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2046.outbound.protection.outlook.com [104.47.66.46])
-        by mx0b-00128a01.pphosted.com with ESMTP id 2xfbvb4cuw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 13 Jan 2020 09:14:34 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=J4Nb3HSiNQabqXNB5yPDVTrOKQizDEkZ3QgwD8vQPAcsb8kK15wOBIAYdvqN8T/3c0jaoULbu1PIwsS34NUmXVFVjEgwaeQjwQ+n8u5VCKJughCGy2Eui7R+T5vSUaTHSrGPzzYH0H7gQ+/cw+jdU0g8NJKriw8y0KKASI/M7IF8qnYBf3sNYRR8/ww8Esh0mM28J0SwIrIRi3cd/unMv24T5Fy05zW9pdZz4t2SIDQw/l/gFuMrYxCVhLSsKU1YU7eRhoJmjseYPdv+J2krI6j29d61HdiAs2RSMNjTqyWo8UEPMeQfmS34fMNT/hYzPmbOFpP9IlVhEdQ843n8nw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eL/jo2PNXj/RQlPLGvGkCqfhOMGgRw8D/AqnzZW5MGU=;
- b=bedbumN4GnyoovHuO4WqeGbTchiEd0CDqi+UunyWpn0RH4BY8xMHOpOWy0Z8GRd8wqR2aAsD2i3mYMtgEUvC/eSwQ5GU4q0/DeAszwuTZMwoRVHD1luo2ydMP5CGOH/bbMB3OvSQtOWdzmQQquPHyL/rEvfVMnIB6JOsvikkpfd199HfbB+Qrug7889hbky07nhEn0WmcQwsWXWKCeLgjgMakDOD8CthenM0eTgZATO0Uz/K5qSJgAY8Qy7dE9x6qDhBtLW1qMP8GySgzdQ6LopTkH7fpYOTtiUIVORjt4q4TEyUPkblXIsNjjKK72zGfVpT9yfb/ziat9xTPS2viA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 137.71.25.57) smtp.rcpttodomain=kernel.org smtp.mailfrom=analog.com;
- dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eL/jo2PNXj/RQlPLGvGkCqfhOMGgRw8D/AqnzZW5MGU=;
- b=Cm7ER3KV4gPK+iDnbMhETq3jIvv8Xobh8V/WnRLoLDhAGSjx3PNH5ruiq5xsuh+nVjEFVolye4a90dc47l94JitZyMovkmtCj2oAifmwznB3p3pVoKM5jmye2kB/K1206ddpoRaG7NRggAs5wCoJWIO7J3tdE0YzKnEIM2EAetE=
-Received: from DM6PR03CA0072.namprd03.prod.outlook.com (2603:10b6:5:100::49)
- by BN6PR03MB2993.namprd03.prod.outlook.com (2603:10b6:404:115::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2623.9; Mon, 13 Jan
- 2020 14:14:32 +0000
-Received: from CY1NAM02FT026.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::206) by DM6PR03CA0072.outlook.office365.com
- (2603:10b6:5:100::49) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2623.13 via Frontend
- Transport; Mon, 13 Jan 2020 14:14:32 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
-Received: from nwd2mta2.analog.com (137.71.25.57) by
- CY1NAM02FT026.mail.protection.outlook.com (10.152.75.157) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2623.9
- via Frontend Transport; Mon, 13 Jan 2020 14:14:31 +0000
-Received: from SCSQMBX10.ad.analog.com (scsqmbx10.ad.analog.com [10.77.17.5])
-        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id 00DEEU0l031504
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Mon, 13 Jan 2020 06:14:31 -0800
-Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
- SCSQMBX10.ad.analog.com (10.77.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Mon, 13 Jan 2020 06:14:29 -0800
-Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
- (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Mon, 13 Jan 2020 06:14:28 -0800
-Received: from ben-Latitude-E6540.ad.analog.com ([10.48.65.231])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 00DEECCW005491;
-        Mon, 13 Jan 2020 09:14:24 -0500
-From:   Beniamin Bia <beniamin.bia@analog.com>
-To:     <jic23@kernel.org>
-CC:     <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <biabeniamin@outlook.com>,
-        <knaack.h@gmx.de>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>,
-        Beniamin Bia <beniamin.bia@analog.com>
-Subject: [PATCH 3/3] MAINTAINERS: add entry for hmc425a driver.
-Date:   Mon, 13 Jan 2020 16:15:55 +0200
-Message-ID: <20200113141555.16117-3-beniamin.bia@analog.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200113141555.16117-1-beniamin.bia@analog.com>
-References: <20200113141555.16117-1-beniamin.bia@analog.com>
+        Mon, 13 Jan 2020 09:24:16 -0500
+Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MOz8O-1j0oI70tdE-00PLLy; Mon, 13 Jan 2020 15:24:07 +0100
+Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
+        by mail.cetitecgmbh.com (Postfix) with ESMTP id A830964F01C;
+        Mon, 13 Jan 2020 14:24:06 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at cetitec.com
+Received: from mail.cetitecgmbh.com ([127.0.0.1])
+        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id vzUCvqcV14CS; Mon, 13 Jan 2020 15:24:06 +0100 (CET)
+Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
+        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 3F6DB64B6A6;
+        Mon, 13 Jan 2020 15:24:06 +0100 (CET)
+Received: from pflmari.corp.cetitec.com (10.10.2.141) by
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
+ id 15.0.1320.4; Mon, 13 Jan 2020 15:24:06 +0100
+Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
+        id 71DFA804E9; Mon, 13 Jan 2020 15:15:56 +0100 (CET)
+Date:   Mon, 13 Jan 2020 15:15:56 +0100
+From:   Alex Riesen <alexander.riesen@cetitec.com>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+CC:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>
+Subject: [PATCH 8/8] arm64: dts: renesas: salvator: add a connection from
+ adv748x codec (HDMI input) to the R-Car SoC
+Message-ID: <20200113141556.GI3606@pflmari>
+Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devel@driverdev.osuosl.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <cover.1578924232.git.alexander.riesen@cetitec.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(136003)(346002)(396003)(376002)(189003)(199004)(70586007)(4744005)(70206006)(1076003)(2616005)(316002)(44832011)(2906002)(8936002)(966005)(36756003)(356004)(6666004)(5660300002)(7636002)(6916009)(7416002)(426003)(336012)(7696005)(26005)(107886003)(8676002)(54906003)(4326008)(246002)(86362001)(186003)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR03MB2993;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6c0a0699-0665-4f16-8d11-08d79832e8f0
-X-MS-TrafficTypeDiagnostic: BN6PR03MB2993:
-X-Microsoft-Antispam-PRVS: <BN6PR03MB299340404947EC39D2919B62F0350@BN6PR03MB2993.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1303;
-X-Forefront-PRVS: 028166BF91
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: BPYSWhwh5Dzr63saNbp3736hu8QKjrxlixMoc1LrfnI+l5wTXz5WxzGb1Zt++wgDwMnfiqco98/boGFua5G7VKK7wHtkykufydxyV6NfdeWVn6cO+v1CGEISrDx5b8gCzbZGXGxO7FKSGYOJDXNdV2RoRPyKwr0Ga5/3rfcz7pgivBZ6G5ua5kznzqjgrdBH8Mcuw8mjUn3t3dPEr0vFPk7o1YUjytyBClEMmxeyymJ7kSM4zD7NqGCXUW5JFtkbhcqr2Fby+y2A44ZaVOI/phWHYgTwPEwIPHLmTCfm1hIMIO3pbMnL4SBJnxjHjuVSSEtB2/6UmCbKF5+c7/FUUyQsMQgIONdMEJmlf4j9y0KCzIe2Gc76P6oMeZsIpjQJ9UgREhgJUdjTj3pDTBCsxDe0Nm7hEUWh0+Mt3owPVnECD263FfB1Boxwx3HvlvUHxbmBSeuwxGhEMuUFZP5KlCVBc39RFEbRS6uqlVviSuk=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jan 2020 14:14:31.8648
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c0a0699-0665-4f16-8d11-08d79832e8f0
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR03MB2993
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-13_04:2020-01-13,2020-01-13 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- adultscore=0 spamscore=0 phishscore=0 suspectscore=1 bulkscore=0
- lowpriorityscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
- mlxlogscore=967 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001130117
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <cover.1578924232.git.alexander.riesen@cetitec.com>
+X-Originating-IP: [10.10.2.141]
+X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A29536F936F657D64
+X-Provags-ID: V03:K1:+hCkZs0BPCyfiB2bMm4kgwOFfr0Pn/LcYtMDEgrdwAIG/OzDd23
+ oOCm/6P+XlgO6YQTH5qzua0FJxYe32JWgf7X5TOJ93twnB8cVlr3Sl6FvFAajJD3f8C/wgI
+ 5udXBeqL9AIR0LftaokR37i8UGuK76PXOnuBYqQm7VFxkiMYx8v+lvZYOeCj6sB4u4uiH5v
+ 53GMSZ3XU7Fbntc7OAiAw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Vh3IC8hl0gg=:nplkzAnaXlqyOnSk1nGUAt
+ FP68QTFH4TbG4+VpZPD4hvmTKsqjfIbt3u/g9MFCd/h+BhB0PH3BmEPZzi5zSnmiv3pYKVcIi
+ ouWhFZcBxDXnVZlR4vfd5AMttLVhuMEwB7/SboCpq6DrItO7kcJgb597UmW4UUL7LzbY0QoBC
+ o9TWFCZIaQIeQhXZd8U3z5bwtNoMwA1+PKFevxbcq6B8fAEKqxVueSDAhKPNcEEvEhi2S9Rl3
+ 0JJrneXWKKl3M/vsFHNkxwQfa4yZiJqctXSrBLMNXRot0bHYd0niomLbbsWdD0gilqDROPS3G
+ mRriZz4g6iHshqZSR/8u9fFbEIPdY0hlV2OE1Urt+5KG8O+yn8cmQJniaY51S7aQ0cPRV+L6F
+ xWU/CC5prHD3dvBZNsS88y1kAmtHy8xk2lngl0gWf4Qjv01fxnaQFi5LGDOzun7aoW9Ev6B6x
+ UjWeH8LCpMmfvBfObQ/9//dfOp6WrW+s4X+15xQxGWfsEu41yeOWKuSlAlKpvnLO4yVL+WOvN
+ E7PvdMlrMP2EYFM7FNzAA20wgC/mic0up2UXCRNvQFxBofImuC/Xu3mc/BWF98tFeD6/qV96n
+ LlndOn4JBJKKsyvwoZRzYK8ThI75XrgIqUZLDa3c6V3Z/kDCj+1PyKhKZo7qKYEkXIeMDmrgf
+ NaTViF/cmINafcVdu+2uc09W2dnKFu0Dbb0i5aUXjaFiTHVViNXxoah5KE6WniLE8eQGE1SM5
+ ir+vHWdTFunm0UlZXEGWqC7IUlyLzyRfCKDav6nqwg1dvUIGAeG3RXJRz+rbzCW2jB9aJY8nJ
+ JIt0MqUbnss6KKckFyTRk8RPI8hCA+Dp9pTE59zG05sHoAG9k4YfoSP2bQgrxdK5zyaScQsyO
+ In+EQGnbcVID7Lncr563g8Sbdoflkr3CScfAfp3D4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Beniamin Bia and Michael Hennerich as maintainers for HMC425A
-attenuator.
+Not sure if all variants of the Salvator board have the HDMI decoder
+chip (the ADV7482) connected to the SSI4 on R-Car SoC, as it is on
+Salvator-X ES1, so the the ADV7482 endpoint and connection definitions
+are placed in the board file.
 
-Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
+I do assume though that all Salvator variants have the CLK_C clock line
+hard-wired to the ADV7482 HDMI decoder, and remove it from the list of
+clocks provided by the R-Car sound system.
+
+The I2C wiring is also likely to persist across the variants (similar
+to ak4613, connected to the same interface), so that is in the common
+file.
+
+Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
 ---
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ .../dts/renesas/r8a7795-es1-salvator-x.dts    | 24 ++++++++++++-
+ .../boot/dts/renesas/salvator-common.dtsi     | 35 ++++++++++++++++---
+ 2 files changed, 53 insertions(+), 6 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ec05a06d7ddb..9ae436d67edf 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1057,6 +1057,15 @@ F:	drivers/iio/adc/ltc249*
- X:	drivers/iio/*/adjd*
- F:	drivers/staging/iio/*/ad*
- 
-+ANALOG DEVICES INC HMC425A DRIVER
-+M:	Beniamin Bia <beniamin.bia@analog.com>
-+M:	Michael Hennerich <michael.hennerich@analog.com>
-+L:	linux-iio@vger.kernel.org
-+W:	http://ez.analog.com/community/linux-device-drivers
-+S:	Supported
-+F:	drivers/iio/amplifiers/hmc425a.c
-+F:	Documentation/devicetree/bindings/iio/amplifiers/adi,hmc425a.yaml
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+index c72968623e94..10f74f7a0efe 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+@@ -136,9 +136,29 @@
+ 				playback = <&ssi3>;
+ 			};
+ 		};
++		rsnd_port3: port@3 {
++			reg = <3>;
++			rsnd_endpoint3: endpoint {
++				remote-endpoint = <&adv7482_i2s>;
 +
- ANALOGBITS PLL LIBRARIES
- M:	Paul Walmsley <paul.walmsley@sifive.com>
- S:	Supported
++				dai-tdm-slot-num = <8>;
++				dai-tdm-slot-width = <32>;
++				dai-format = "left_j";
++				mclk-fs = <256>;
++				bitclock-master = <&adv7482_i2s>;
++				frame-master = <&adv7482_i2s>;
++				system-clock-direction-out;
++
++				capture = <&ssi4>;
++			};
++		};
+ 	};
+ };
+ 
++&adv7482_i2s {
++	remote-endpoint = <&rsnd_endpoint3>;
++};
++
+ &sata {
+ 	status = "okay";
+ };
+@@ -146,9 +166,11 @@
+ &sound_card {
+ 	dais = <&rsnd_port0	/* ak4613 */
+ 		&rsnd_port1	/* HDMI0  */
+-		&rsnd_port2>;	/* HDMI1  */
++		&rsnd_port2	/* HDMI1  */
++		&rsnd_port3>;	/* adv7482 hdmi-in  */
+ };
+ 
++
+ &usb2_phy2 {
+ 	pinctrl-0 = <&usb2_pins>;
+ 	pinctrl-names = "default";
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 21e01056e759..e887805b16fc 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -322,6 +322,10 @@
+ 	clock-frequency = <22579200>;
+ };
+ 
++&audio_clk_c {
++	clock-frequency = <12288000>;
++};
++
+ &avb {
+ 	pinctrl-0 = <&avb_pins>;
+ 	pinctrl-names = "default";
+@@ -471,12 +475,14 @@
+ 
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		#sound-dai-cells = <0>;
+ 
+ 		interrupt-parent = <&gpio6>;
+ 		interrupt-names = "intrq1", "intrq2";
+ 		interrupts = <30 IRQ_TYPE_LEVEL_LOW>,
+ 			     <31 IRQ_TYPE_LEVEL_LOW>;
+-
++		clocks = <&rcar_sound 3>, <&audio_clk_c>;
++		clock-names = "clk-hdmi-video", "clk-hdmi-i2s-mclk";
+ 		port@7 {
+ 			reg = <7>;
+ 
+@@ -512,6 +518,14 @@
+ 				remote-endpoint = <&csi20_in>;
+ 			};
+ 		};
++
++		port@c {
++			reg = <12>;
++
++			adv7482_i2s: endpoint {
++				/* remote-endpoint defined in the board file */
++			};
++		};
+ 	};
+ 
+ 	csa_vdd: adc@7c {
+@@ -686,7 +700,8 @@
+ 	};
+ 
+ 	sound_pins: sound {
+-		groups = "ssi01239_ctrl", "ssi0_data", "ssi1_data_a";
++		groups = "ssi01239_ctrl", "ssi0_data", "ssi1_data_a",
++			 "ssi4_data";
+ 		function = "ssi";
+ 	};
+ 
+@@ -735,8 +750,8 @@
+ 	pinctrl-0 = <&sound_pins &sound_clk_pins>;
+ 	pinctrl-names = "default";
+ 
+-	/* Single DAI */
+-	#sound-dai-cells = <0>;
++	/* multi DAI */
++	#sound-dai-cells = <1>;
+ 
+ 	/* audio_clkout0/1/2/3 */
+ 	#clock-cells = <1>;
+@@ -760,8 +775,18 @@
+ 		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+ 		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
+ 		 <&audio_clk_a>, <&cs2000>,
+-		 <&audio_clk_c>,
+ 		 <&cpg CPG_CORE CPG_AUDIO_CLK_I>;
++	clock-names = "ssi-all",
++		      "ssi.9", "ssi.8", "ssi.7", "ssi.6",
++		      "ssi.5", "ssi.4", "ssi.3", "ssi.2",
++		      "ssi.1", "ssi.0",
++		      "src.9", "src.8", "src.7", "src.6",
++		      "src.5", "src.4", "src.3", "src.2",
++		      "src.1", "src.0",
++		      "mix.1", "mix.0",
++		      "ctu.1", "ctu.0",
++		      "dvc.0", "dvc.1",
++		      "clk_a", "clk_b", "clk_i";
+ 
+ 	ports {
+ 		#address-cells = <1>;
 -- 
-2.17.1
-
+2.24.1.508.g91d2dafee0
