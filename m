@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67EDF1399F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 20:11:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13FAD1399E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 20:11:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729142AbgAMTLt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 14:11:49 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:39892 "EHLO
+        id S1729347AbgAMTLU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 14:11:20 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:39949 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728869AbgAMTJi (ORCPT
+        with ESMTP id S1728964AbgAMTJr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 14:09:38 -0500
+        Mon, 13 Jan 2020 14:09:47 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ir55i-00012F-IF; Mon, 13 Jan 2020 20:09:34 +0100
+        id 1ir55p-00013T-DT; Mon, 13 Jan 2020 20:09:44 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E1D1B1C18E5;
-        Mon, 13 Jan 2020 20:09:28 +0100 (CET)
-Date:   Mon, 13 Jan 2020 19:09:28 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 63A641C18E7;
+        Mon, 13 Jan 2020 20:09:29 +0100 (CET)
+Date:   Mon, 13 Jan 2020 19:09:29 -0000
 From:   "tip-bot2 for Andrei Vagin" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] posix-timers: Make timer_settime() time namespace aware
-Cc:     Andrei Vagin <avagin@openvz.org>, Dmitry Safonov <dima@arista.com>,
+Subject: [tip: timers/core] time: Add do_timens_ktime_to_host() helper
+Cc:     Andrei Vagin <avagin@gmail.com>, Dmitry Safonov <dima@arista.com>,
         Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191112012724.250792-15-dima@arista.com>
-References: <20191112012724.250792-15-dima@arista.com>
+In-Reply-To: <20191112012724.250792-13-dima@arista.com>
+References: <20191112012724.250792-13-dima@arista.com>
 MIME-Version: 1.0
-Message-ID: <157894256874.19145.1461750936143633317.tip-bot2@tip-bot2>
+Message-ID: <157894256926.19145.902754876248951106.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,48 +47,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     d1ba7dda1bc0129bc8f85bff530748aef1e99e70
-Gitweb:        https://git.kernel.org/tip/d1ba7dda1bc0129bc8f85bff530748aef1e99e70
+Commit-ID:     6c9c1492c9fd0732dfa85c9cb55f71f2571c3825
+Gitweb:        https://git.kernel.org/tip/6c9c1492c9fd0732dfa85c9cb55f71f2571c3825
 Author:        Andrei Vagin <avagin@gmail.com>
-AuthorDate:    Tue, 12 Nov 2019 01:27:03 
+AuthorDate:    Tue, 12 Nov 2019 01:27:01 
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 13 Jan 2020 08:10:52 +01:00
+CommitterDate: Mon, 13 Jan 2020 08:10:51 +01:00
 
-posix-timers: Make timer_settime() time namespace aware
+time: Add do_timens_ktime_to_host() helper
 
-Wire timer_settime() syscall into time namespace virtualization.
-
-sys_timer_settime() calls the ktime->timer_set() callback. Right now,
-common_timer_set() is the only implementation for the callback.
-
-The user-supplied expiry value is converted from timespec64 to ktime and
-then timens_ktime_to_host() can be used to convert namespace's time to the
-host time.
-
-Inside a time namespace kernel's time differs by a fixed offset from a
-user-supplied time, but only absolute values (TIMER_ABSTIME) must be
-converted.
+The helper subtracts namespace's clock offset from the given time
+and ensures that the result is within [0, KTIME_MAX].
 
 Co-developed-by: Dmitry Safonov <dima@arista.com>
-Signed-off-by: Andrei Vagin <avagin@openvz.org>
+Signed-off-by: Andrei Vagin <avagin@gmail.com>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20191112012724.250792-15-dima@arista.com
+Link: https://lore.kernel.org/r/20191112012724.250792-13-dima@arista.com
 
 ---
- kernel/time/posix-timers.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/time_namespace.h | 17 ++++++++++++++++-
+ kernel/time/namespace.c        | 36 +++++++++++++++++++++++++++++++++-
+ 2 files changed, 53 insertions(+)
 
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index d26b915..473082b 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -885,6 +885,8 @@ int common_timer_set(struct k_itimer *timr, int flags,
+diff --git a/include/linux/time_namespace.h b/include/linux/time_namespace.h
+index d7e3b49..34ee110 100644
+--- a/include/linux/time_namespace.h
++++ b/include/linux/time_namespace.h
+@@ -59,6 +59,19 @@ static inline void timens_add_boottime(struct timespec64 *ts)
+ 	*ts = timespec64_add(*ts, ns_offsets->boottime);
+ }
  
- 	timr->it_interval = timespec64_to_ktime(new_setting->it_interval);
- 	expires = timespec64_to_ktime(new_setting->it_value);
-+	if (flags & TIMER_ABSTIME)
-+		expires = timens_ktime_to_host(timr->it_clock, expires);
- 	sigev_none = timr->it_sigev_notify == SIGEV_NONE;
++ktime_t do_timens_ktime_to_host(clockid_t clockid, ktime_t tim,
++				struct timens_offsets *offsets);
++
++static inline ktime_t timens_ktime_to_host(clockid_t clockid, ktime_t tim)
++{
++	struct time_namespace *ns = current->nsproxy->time_ns;
++
++	if (likely(ns == &init_time_ns))
++		return tim;
++
++	return do_timens_ktime_to_host(clockid, tim, &ns->offsets);
++}
++
+ #else
+ static inline struct time_namespace *get_time_ns(struct time_namespace *ns)
+ {
+@@ -88,6 +101,10 @@ static inline int timens_on_fork(struct nsproxy *nsproxy,
  
- 	kc->timer_arm(timr, expires, flags & TIMER_ABSTIME, sigev_none);
+ static inline void timens_add_monotonic(struct timespec64 *ts) { }
+ static inline void timens_add_boottime(struct timespec64 *ts) { }
++static inline ktime_t timens_ktime_to_host(clockid_t clockid, ktime_t tim)
++{
++	return tim;
++}
+ #endif
+ 
+ #endif /* _LINUX_TIMENS_H */
+diff --git a/kernel/time/namespace.c b/kernel/time/namespace.c
+index c2a58e4..1a0fbaa 100644
+--- a/kernel/time/namespace.c
++++ b/kernel/time/namespace.c
+@@ -16,6 +16,42 @@
+ #include <linux/err.h>
+ #include <linux/mm.h>
+ 
++ktime_t do_timens_ktime_to_host(clockid_t clockid, ktime_t tim,
++				struct timens_offsets *ns_offsets)
++{
++	ktime_t offset;
++
++	switch (clockid) {
++	case CLOCK_MONOTONIC:
++		offset = timespec64_to_ktime(ns_offsets->monotonic);
++		break;
++	case CLOCK_BOOTTIME:
++	case CLOCK_BOOTTIME_ALARM:
++		offset = timespec64_to_ktime(ns_offsets->boottime);
++		break;
++	default:
++		return tim;
++	}
++
++	/*
++	 * Check that @tim value is in [offset, KTIME_MAX + offset]
++	 * and subtract offset.
++	 */
++	if (tim < offset) {
++		/*
++		 * User can specify @tim *absolute* value - if it's lesser than
++		 * the time namespace's offset - it's already expired.
++		 */
++		tim = 0;
++	} else {
++		tim = ktime_sub(tim, offset);
++		if (unlikely(tim > KTIME_MAX))
++			tim = KTIME_MAX;
++	}
++
++	return tim;
++}
++
+ static struct ucounts *inc_time_namespaces(struct user_namespace *ns)
+ {
+ 	return inc_ucount(ns, current_euid(), UCOUNT_TIME_NAMESPACES);
