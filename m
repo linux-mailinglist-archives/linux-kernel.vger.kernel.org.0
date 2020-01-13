@@ -2,128 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D48A6138DF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:41:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BFE4138DFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:42:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbgAMJlv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 04:41:51 -0500
-Received: from mail-eopbgr50083.outbound.protection.outlook.com ([40.107.5.83]:41550
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725978AbgAMJlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 04:41:51 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=G2BavV0W0+wV3fQdR3tvMN9mLvKVqscJ+kHnnrFNJVQNLkUsJEYSkqPVfBgnyhCIeObXJhvfg7+S2xLrn9mauD0J3WlpXTrfolixDufKLtjjgbgxRgOHZzVhNdgyhz80DVa3oTlemj23szj61BB6fpSc5hOXT2KnwaVWWnkQqtx63d3O3AYPyfWbLcUexZTw6Y/iFMQvEi7Ia9I4/9y4ChD6BiraiytRM71pm85rMHEBT3bhlbkNUrHJuF6MJRybFVWmekG+AVt8suu/Un8wMO/+2OdX+T2Wqg5p4wfD7vw4J/oYCChQWDH0VX6nLnUf/nfyglGB/iwjGJX+ScDY4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y3r+jATN8vMlxq+TdVqp/qk6QFOmIjNHIT0zH94l59c=;
- b=iPu4FB5RjDNr1daqalm3NJAXZxjr/89L6mmlHQjzNyxq163MjtEDISddM2uR2MOPcFVLAG3vYAMzQBCuVBt3QG9pee2i8uvZg+PgzEBfIeXT5yspOH7kfWUI05sSLY1g0jvu2IyaCOQoT+7OCsJ7MwuaPg8NBu1m4BppyTVtkmP0JCEG6eiRUL5Hw+oNYsB85exCVj1mRIkYsEWkeF0Lf0Oe5wc3dIpi2AqaOs9Ys6cmhNJzpUg5Mar0yqVd704Ykln8s+AXltBNORFenRwsabh57D0ZGGKRnsJLx+y9pU7HLWIP0HsnAIEuuQsbYMUelFdjzsWjoL2kHAzRJepN4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y3r+jATN8vMlxq+TdVqp/qk6QFOmIjNHIT0zH94l59c=;
- b=OicGA1dL3CNxzJUlGLgQ+Z7OGL/Ggz/x3I0XRipvUcVYe12Gm3QF7edVsvVG0GvAmKgDHTsaJVh+0hJ8OU5xo/8wgLWa+OHjnt3f6fIeqLBT6B2h+ga+yL9E4Js4/iW1SnGNcEo/H0GILH0T2SZzT0+0dv2gDswJTE0DsgCMLWI=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3342.eurprd04.prod.outlook.com (52.134.8.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2623.13; Mon, 13 Jan 2020 09:41:47 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::85e9:f844:f8b0:27d]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::85e9:f844:f8b0:27d%7]) with mapi id 15.20.2623.015; Mon, 13 Jan 2020
- 09:41:47 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
-CC:     Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v6 2/7] crypto: caam - drop global context pointer and
- init_done
-Thread-Topic: [PATCH v6 2/7] crypto: caam - drop global context pointer and
- init_done
-Thread-Index: AQHVxjorybhrSXCVfEWf2tbJo513AA==
-Date:   Mon, 13 Jan 2020 09:41:47 +0000
-Message-ID: <VI1PR0402MB3485A38A9A71500E632191AD98350@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <20200108154047.12526-1-andrew.smirnov@gmail.com>
- <20200108154047.12526-3-andrew.smirnov@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [212.146.100.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 0dd421a7-c854-411f-21fa-08d7980ccf2c
-x-ms-traffictypediagnostic: VI1PR0402MB3342:|VI1PR0402MB3342:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR0402MB334210E3925704AB297781F098350@VI1PR0402MB3342.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 028166BF91
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(346002)(136003)(396003)(39860400002)(189003)(199004)(8676002)(2906002)(81156014)(66476007)(91956017)(76116006)(54906003)(4326008)(110136005)(44832011)(478600001)(66556008)(81166006)(316002)(8936002)(66946007)(66446008)(64756008)(7696005)(5660300002)(86362001)(26005)(33656002)(71200400001)(6506007)(53546011)(52536014)(9686003)(55016002)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3342;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: nN560O4rVYojNGA4pL04kWfgQBtBffJpfnTT+supTgUCpYuBqIg/FtqSbTu6k7h/l2M7eKusNdNNjcOgA3UA/+elZJEqshbIKzECJf/ejRp1f4a01tNNrVsjD1hSSFsIlWIYZKXt+ul69H9VXnXsSS49PoRFRPczLcmDBp/bmTJbTvux9mzVaP/uI2g8dKAz0K462kiQQZeudUFXciWAjtPPYB+10Uub8pesVD1l7aFfB+snvc2cxhnD8J4SSx0rUlrT8nWLqfHL7hfXG3/3J14fIu3ZuFZ+QNlmbgpgJB8CzzpWp0WTNQ+DU++8A2KpKWO+evOcxMPAvs5OzLASPyiX/K2hTceB9QB9TAc0oK0h46xA1pU3JfLCUO1AB7mmBatGdsaDUpPgQJVyzHkITZVjbX7NPhTENDBfKxv9SLdQjKidp9+5QCzf7vobwQuN
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1728738AbgAMJmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 04:42:16 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35609 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728643AbgAMJmP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 04:42:15 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f8so7869165edv.2;
+        Mon, 13 Jan 2020 01:42:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=U7KeLP59PevGGC5Z3wB8REEwHPKJRQN3w5hiDB2hOxQ=;
+        b=gkdIVs2lFneKxILRe08ZFuatX83Y1qz9EEbVaioH/dqogaaCCdsTaKHQ+JHTS3srR0
+         F2mHpMbTne+ScQQODsLLcDSztAY3RlD3ghO5cSKu6JhHjDUP0evfCBmHnx+sHdPYehLT
+         fhE8+ad2EaaexkZhkPJenTbckLlM9La2xTJvRtcbhratmc6w7+iKbpp5cQuHiILJ2BG5
+         rcNMTHI46v9qSBc77zu1QQX+Gxhm6sq8Pmv4X4Ky6xew543BRMrEDsZ1e+ns3w58ZE+Z
+         G0fSFsa9y6c3vxWrWSK9c3OlJ+Y/2MGU0BafdEHzo839WVJuRNU+wFRCJGIReeY89RKc
+         eLYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=U7KeLP59PevGGC5Z3wB8REEwHPKJRQN3w5hiDB2hOxQ=;
+        b=RX+HQAfi2pILhtulibdshzl05QkSUguafoMhpwil1DHis+AkFz3EfmZfrJ4AYv/swY
+         b06N3V/KI2VIEpXAG5yJBFZU4Mua6xpRgQzXaem8DImdc6Yxsr+YVRCB0rdlLOvVVX68
+         h6lVxZHvuaeLradE3YiVYepeP/jaiCRqO+cE9qIXTgb3+i9sEytH5p3zRHFS0NSqGrfQ
+         U89jkVIzb0SclOKUvKIqTx3Zyk0vZw9/WVcn+f1iRhNrDxCmmy4tupRnD8jYY3T/c4PF
+         EiLq4ppLrJ1UHn9h/HBRQ00dzaByH10J9bmsBl/AJiCuTUI+xLqQE9Wlbvrp2feANYvo
+         88KQ==
+X-Gm-Message-State: APjAAAVstuOrDfUGt5Fyos7RXNFBP+BQ93LvRzfyXyhZ1+z/hWHDBtbS
+        kaUK1AyGzz2Ot1bOPOEj7jDxN6D83fKfQhRjtc8=
+X-Google-Smtp-Source: APXvYqy8SM8Y+cR4BrF+oboBLfO9xNOTU4QgWP76WoRWA5nmy26BCRXzTEgIWDK02oI7osEZsjrKqq2/XWN0/Rs4LNQ=
+X-Received: by 2002:a05:6402:1742:: with SMTP id v2mr16594732edx.171.1578908534048;
+ Mon, 13 Jan 2020 01:42:14 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0dd421a7-c854-411f-21fa-08d7980ccf2c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jan 2020 09:41:47.8260
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5C5eUl1subrNY7kEieizAykIRN3eTSSfUXnye6GZQxBM+SNAK2LVeAEZdsSLswmYDkvNCPOIbs7sNibeM99Y+Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3342
+References: <20191230143028.27313-1-alobakin@dlink.ru> <20191230143028.27313-6-alobakin@dlink.ru>
+ <ee6f83fd-edf4-5a98-9868-4cbe9e226b9b@gmail.com> <ed0ad0246c95a9ee87352d8ddbf0d4a1@dlink.ru>
+In-Reply-To: <ed0ad0246c95a9ee87352d8ddbf0d4a1@dlink.ru>
+From:   Vladimir Oltean <olteanv@gmail.com>
+Date:   Mon, 13 Jan 2020 11:42:03 +0200
+Message-ID: <CA+h21hoSoZT+ieaOu8N=MCSqkzey0L6HeoXSyLtHjZztT0S9ug@mail.gmail.com>
+Subject: Re: [PATCH RFC net-next 05/19] net: dsa: tag_ar9331: add GRO callbacks
+To:     Alexander Lobakin <alobakin@dlink.ru>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Edward Cree <ecree@solarflare.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Taehee Yoo <ap420073@gmail.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>,
+        Matteo Croce <mcroce@redhat.com>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Paul Blakey <paulb@mellanox.com>,
+        Yoshiki Komachi <komachi.yoshiki@gmail.com>,
+        netdev <netdev@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/8/2020 5:42 PM, Andrey Smirnov wrote:=0A=
-> @@ -342,18 +324,16 @@ int caam_rng_init(struct device *ctrldev)=0A=
->  	if (!rng_inst)=0A=
->  		return 0;=0A=
->  =0A=
-> -	rng_ctx =3D kmalloc(sizeof(*rng_ctx), GFP_DMA | GFP_KERNEL);=0A=
-> -	if (!rng_ctx)=0A=
-> +	ctx =3D devm_kzalloc(ctrldev, sizeof(*ctx), GFP_DMA | GFP_KERNEL);=0A=
-> +	if (!ctx)=0A=
->  		return -ENOMEM;=0A=
->  =0A=
-> -	dev_info(ctrldev, "registering rng-caam\n");=0A=
-> +	ctx->rng.name    =3D "rng-caam";=0A=
-> +	ctx->rng.init    =3D caam_init;=0A=
-> +	ctx->rng.cleanup =3D caam_cleanup;=0A=
-> +	ctx->rng.read    =3D caam_read;=0A=
->  =0A=
-> -	err =3D hwrng_register(&caam_rng);=0A=
-> -	if (!err) {=0A=
-> -		init_done =3D true;=0A=
-> -		return err;=0A=
-> -	}=0A=
-> +	dev_info(ctrldev, "registering rng-caam\n");=0A=
->  =0A=
-> -	kfree(rng_ctx);=0A=
-> -	return err;=0A=
-> +	return devm_hwrng_register(ctrldev, &ctx->rng);=0A=
-This means hwrng_unregister() is called only when ctrldev is removed.=0A=
-=0A=
-OTOH caam_rng_init() could be called multiple times, e.g. if there's only o=
-ne=0A=
-jrdev left in the system and it's removed then added back.=0A=
-This will lead to caam_rng_init() -> hwrng_register() called twice=0A=
-with the same "rng-caam" name, without a hwrng_unregister() called in-betwe=
-en.=0A=
-=0A=
-Horia=0A=
+Hi Alexander,
+
+On Mon, 13 Jan 2020 at 11:22, Alexander Lobakin <alobakin@dlink.ru> wrote:
+>
+> CPU ports can't be bridged anyway
+>
+> Regards,
+> =E1=9A=B7 =E1=9B=96 =E1=9A=A2 =E1=9A=A6 =E1=9A=A0 =E1=9A=B1
+
+The fact that CPU ports can't be bridged is already not ideal.
+One can have a DSA switch with cascaded switches on each port, so it
+acts like N DSA masters (not as DSA links, since the taggers are
+incompatible), with each switch forming its own tree. It is desirable
+that the ports of the DSA switch on top are bridged, so that
+forwarding between cascaded switches does not pass through the CPU.
+
+-Vladimir
