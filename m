@@ -2,47 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7CF91392C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:58:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB74B1392EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:59:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729009AbgAMN6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 08:58:05 -0500
-Received: from verein.lst.de ([213.95.11.211]:41413 "EHLO verein.lst.de"
+        id S1728934AbgAMN7i convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 13 Jan 2020 08:59:38 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:55032 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728679AbgAMN6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 08:58:03 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 58A1068B20; Mon, 13 Jan 2020 14:58:00 +0100 (CET)
-Date:   Mon, 13 Jan 2020 14:58:00 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] xfs: Fix xfs_dir2_sf_entry_t size check
-Message-ID: <20200113135800.GA8635@lst.de>
-References: <20200109141459.21808-1-vincenzo.frascino@arm.com> <c43539f2-aa9b-4afa-985c-c438099732ff@sandeen.net> <1a540ee4-6597-c79e-1bce-6592cb2f3eae@arm.com> <20200109165048.GB8247@magnolia> <435bcb71-9126-b1f1-3803-4977754b36ff@arm.com> <CAK8P3a0eY6Vm5PNdzR8Min9MrwAqH8vnMZ3C+pxTQhiFVNPyWA@mail.gmail.com>
+        id S1726074AbgAMN7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 08:59:37 -0500
+Received: from wf0253.dip.tu-dresden.de ([141.76.180.253] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1ir0Fd-0003DP-Se; Mon, 13 Jan 2020 14:59:29 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Sandy Huang <hjc@rock-chips.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Joerg Roedel <joro@8bytes.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        iommu@lists.linux-foundation.org
+Subject: Re: [PATCH] drm/rockchip: Add missing vmalloc header
+Date:   Mon, 13 Jan 2020 14:59:29 +0100
+Message-ID: <1782062.vAMIso9ooe@phil>
+In-Reply-To: <1577779956-7612-1-git-send-email-krzk@kernel.org>
+References: <1577779956-7612-1-git-send-email-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a0eY6Vm5PNdzR8Min9MrwAqH8vnMZ3C+pxTQhiFVNPyWA@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 02:55:15PM +0100, Arnd Bergmann wrote:
-> With ARM OABI (which you get when EABI is disabled), structures are padded
-> to multiples of 32 bits. See commits 8353a649f577 ("xfs: kill
-> xfs_dir2_sf_off_t")
-> and aa2dd0ad4d6d ("xfs: remove __arch_pack"). Those could be partially
-> reverted to fix it again, but it doesn't seem worth it as there is
-> probably nobody
-> running XFS on OABI machines (actually with the build failure we can
-> be fairly sure there isn't ;-).
+Am Dienstag, 31. Dezember 2019, 09:12:36 CET schrieb Krzysztof Kozlowski:
+> The Rockship DRM GEM code uses vmap()/vunmap() so vmalloc header must be
+> included to avoid warnings like (on IA64, compile tested):
+> 
+>     drivers/gpu/drm/rockchip/rockchip_drm_gem.c: In function ‘rockchip_gem_alloc_iommu’:
+>     drivers/gpu/drm/rockchip/rockchip_drm_gem.c:134:20: error:
+>         implicit declaration of function ‘vmap’ [-Werror=implicit-function-declaration]
+> 
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Or just try adding a __packed to the xfs_dir2_sf_entry definition?
+applied to drm-misc-next
+
+Thanks
+Heiko
+
+
