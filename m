@@ -2,144 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E7BE139077
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 12:57:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75B0E13907C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 12:58:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727331AbgAML5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 06:57:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33864 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726127AbgAML5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 06:57:21 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82A11207FF;
-        Mon, 13 Jan 2020 11:57:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578916640;
-        bh=31ZC9hOEd1GVT60jOXVaks6wlFMfup6HMBgm19H4nA8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wLH+4axl9PTu7p9XYgup//bPK+FN/vyS361YfojRzLdLOv1TvF0a+OL9GXXVUuzoJ
-         +YQpyE7B4sdcdImWltV7WU9/0ymlojNqoViQCxnqMwA1zX69utc7qSPKuXeIklb6D9
-         ZIznY+WdadHnYCqcOosiCL3EsJUBfFevK610dhsQ=
-Date:   Mon, 13 Jan 2020 11:57:16 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        maz@kernel.org
-Subject: Re: [PATCH v2] locking/osq: Use optimized spinning loop for arm64
-Message-ID: <20200113115715.GA3260@willie-the-truck>
-References: <20200112235854.32089-1-longman@redhat.com>
+        id S1728765AbgAML6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 06:58:22 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42159 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726127AbgAML6V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 06:58:21 -0500
+Received: by mail-wr1-f66.google.com with SMTP id q6so8225407wro.9
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 03:58:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jmeZS4anFcQaXMcpaNE6Oqncxq6vLa6b4erMWpqoNlI=;
+        b=v1MdmCCZShwVf8XkQd0I62htZin/oncbFvqYcgjWV8EHT17Nv0rL1Pjdut3iChBaar
+         wlIBT2aZ+wqW0iXKSa7H7Om5GQGsYbGtE+je3T7k5nKxWLACaREjg/BAEvOuyVPDCgZm
+         QogHvWEMuV0BtxgMaR6Sv1tqZUuM97gwfrhb3Em7MFDdpCk5bdYMH8+A8eJGaqXZ5Kkh
+         DwzoE2JGcPA93Chvo1ou8ximYqYcev4dFAnQtE4LIJxQpz2rWlSAIKGuXVx3cGkikogA
+         2HXRkqCbJkukfo//GzqrOSqrjb/wk5opPbhNFB8nvzvPZVJYlT3ZdPm7SDHVgW7yd9UZ
+         uUjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=jmeZS4anFcQaXMcpaNE6Oqncxq6vLa6b4erMWpqoNlI=;
+        b=XFvbvQ0pmdDf+oot/7E1O7/R1/Mhu62M/yin1Q9zevY6gzsudr8SrJi4zQGDODsHSq
+         jYXo5Bb2SXdvIUQ+O/ITEDCOZkcUF8ZXhokopeA6J/DPHF20rJ7qtPpLQZn78LXvk+Sg
+         NZOrDh1wRNkJ010L8zYiGEQqR/Tn6gViaG1d/b2fYBwfRqR30ETxUlZAXkZ+MW3ukhA+
+         AsyVgL3wQUTzElXuFmrmvRkVtyWTjDC8A7g2G+PctYI1sykJHLwsmM5qbCeb4+zASWul
+         qE7lWAmLiUMiW2/Do6xqNyY04AwAd3/1euDDrwOSOHy6wKZ7Tc7irA/sYC9bzFAluc1R
+         Rbeg==
+X-Gm-Message-State: APjAAAWJ3l4XqgnLD5/96oweR90U/DG4uMxIwp5WkdrSHsDnZllAfiO0
+        yceo/4FSkUwgYvQjoLZT/Z/IGA==
+X-Google-Smtp-Source: APXvYqwTXmN/wzfsZzI5pdRXvNVjyM/rpo1JnbdBrPEIiYXjfTKCgLaCpQAQgHV2lYTiCu7P/1IB4Q==
+X-Received: by 2002:adf:e5cb:: with SMTP id a11mr17300798wrn.28.1578916699533;
+        Mon, 13 Jan 2020 03:58:19 -0800 (PST)
+Received: from ?IPv6:2a01:e34:ed2f:f020:257b:a7b6:7749:8057? ([2a01:e34:ed2f:f020:257b:a7b6:7749:8057])
+        by smtp.googlemail.com with ESMTPSA id y139sm14557785wmd.24.2020.01.13.03.58.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jan 2020 03:58:19 -0800 (PST)
+Subject: Re: [PATCH] cpuidle: arm: Enable compile testing for some of drivers
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20191229180912.17100-1-krzk@kernel.org>
+ <20191229180912.17100-2-krzk@kernel.org> <112783298.KOQPr5xTch@kreacher>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <a4fa3f89-e792-aeee-b9ea-9af244ace04a@linaro.org>
+Date:   Mon, 13 Jan 2020 12:58:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200112235854.32089-1-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <112783298.KOQPr5xTch@kreacher>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+Marc]
+On 13/01/2020 12:51, Rafael J. Wysocki wrote:
+> On Sunday, December 29, 2019 7:09:12 PM CET Krzysztof Kozlowski wrote:
+>> Some of cpuidle drivers for ARMv7 can be compile tested on this
+>> architecture because they do not depend on mach-specific bits.  Enable
+>> compile testing for big.LITTLE, Kirkwood, Zynq, AT91, Exynos and mvebu
+>> cpuidle drivers.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> ---
+>>  drivers/cpuidle/Kconfig.arm | 12 ++++++------
+>>  1 file changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.arm
+>> index a224d33dda7f..62272ecfa771 100644
+>> --- a/drivers/cpuidle/Kconfig.arm
+>> +++ b/drivers/cpuidle/Kconfig.arm
+>> @@ -25,7 +25,7 @@ config ARM_PSCI_CPUIDLE
+>>  
+>>  config ARM_BIG_LITTLE_CPUIDLE
+>>  	bool "Support for ARM big.LITTLE processors"
+>> -	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS
+>> +	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS || COMPILE_TEST
+>>  	depends on MCPM && !ARM64
+>>  	select ARM_CPU_SUSPEND
+>>  	select CPU_IDLE_MULTIPLE_DRIVERS
+>> @@ -51,13 +51,13 @@ config ARM_HIGHBANK_CPUIDLE
+>>  
+>>  config ARM_KIRKWOOD_CPUIDLE
+>>  	bool "CPU Idle Driver for Marvell Kirkwood SoCs"
+>> -	depends on MACH_KIRKWOOD && !ARM64
+>> +	depends on (MACH_KIRKWOOD || COMPILE_TEST) && !ARM64
+>>  	help
+>>  	  This adds the CPU Idle driver for Marvell Kirkwood SoCs.
+>>  
+>>  config ARM_ZYNQ_CPUIDLE
+>>  	bool "CPU Idle Driver for Xilinx Zynq processors"
+>> -	depends on ARCH_ZYNQ && !ARM64
+>> +	depends on (ARCH_ZYNQ || COMPILE_TEST) && !ARM64
+>>  	help
+>>  	  Select this to enable cpuidle on Xilinx Zynq processors.
+>>  
+>> @@ -70,19 +70,19 @@ config ARM_U8500_CPUIDLE
+>>  config ARM_AT91_CPUIDLE
+>>  	bool "Cpu Idle Driver for the AT91 processors"
+>>  	default y
+>> -	depends on ARCH_AT91 && !ARM64
+>> +	depends on (ARCH_AT91 || COMPILE_TEST) && !ARM64
+>>  	help
+>>  	  Select this to enable cpuidle for AT91 processors.
+>>  
+>>  config ARM_EXYNOS_CPUIDLE
+>>  	bool "Cpu Idle Driver for the Exynos processors"
+>> -	depends on ARCH_EXYNOS && !ARM64
+>> +	depends on (ARCH_EXYNOS || COMPILE_TEST) && !ARM64
+>>  	select ARCH_NEEDS_CPU_IDLE_COUPLED if SMP
+>>  	help
+>>  	  Select this to enable cpuidle for Exynos processors.
+>>  
+>>  config ARM_MVEBU_V7_CPUIDLE
+>>  	bool "CPU Idle Driver for mvebu v7 family processors"
+>> -	depends on ARCH_MVEBU && !ARM64
+>> +	depends on (ARCH_MVEBU || COMPILE_TEST) && !ARM64
+>>  	help
+>>  	  Select this to enable cpuidle on Armada 370, 38x and XP processors.
+>>
+> 
+> Daniel, any concerns regarding this one?
 
-On Sun, Jan 12, 2020 at 06:58:54PM -0500, Waiman Long wrote:
-> Arm64 has a more optimized spinning loop (atomic_cond_read_acquire)
-> for spinlock that can boost performance of sibling threads by putting
-> the current cpu to a shallow sleep state that is woken up only when
-> the monitored variable changes or an external event happens.
-> 
-> OSQ has a more complicated spinning loop. Besides the lock value, it
-> also checks for need_resched() and vcpu_is_preempted(). The check for
-> need_resched() is not a problem as it is only set by the tick interrupt
-> handler. That will be detected by the spinning cpu right after iret.
-> 
-> The vcpu_is_preempted() check, however, is a problem as changes to the
-> preempt state of of previous node will not affect the sleep state. For
-> ARM64, vcpu_is_preempted is not defined and so is a no-op. To guard
-> against future addition of vcpu_is_preempted() to arm64, code is added
-> to cause build error when vcpu_is_preempted becomes defined in arm64
-> without the corresponding changes in the OSQ spinning code.
-> 
-> On a 2-socket 56-core 224-thread ARM64 system, a kernel mutex locking
-> microbenchmark was run for 10s with and without the patch. The
-> performance numbers before patch were:
-> 
-> Running locktest with mutex [runtime = 10s, load = 1]
-> Threads = 224, Min/Mean/Max = 316/123,143/2,121,269
-> Threads = 224, Total Rate = 2,757 kop/s; Percpu Rate = 12 kop/s
-> 
-> After patch, the numbers were:
-> 
-> Running locktest with mutex [runtime = 10s, load = 1]
-> Threads = 224, Min/Mean/Max = 334/147,836/1,304,787
-> Threads = 224, Total Rate = 3,311 kop/s; Percpu Rate = 15 kop/s
-> 
-> So there was about 20% performance improvement.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  arch/arm64/include/asm/barrier.h | 10 ++++++++++
->  kernel/locking/osq_lock.c        | 25 ++++++++++++-------------
->  2 files changed, 22 insertions(+), 13 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/barrier.h b/arch/arm64/include/asm/barrier.h
-> index 7d9cc5ec4971..8eb5f1239885 100644
-> --- a/arch/arm64/include/asm/barrier.h
-> +++ b/arch/arm64/include/asm/barrier.h
-> @@ -152,6 +152,16 @@ do {									\
->  	VAL;								\
->  })
->  
-> +/*
-> + * In osq_lock(), smp_cond_load_relaxed() is called with a condition
-> + * that includes vcpu_is_preempted(). For arm64, vcpu_is_preempted is not
-> + * currently defined. So it is a no-op. If vcpu_is_preempted is defined in
-> + * the future, smp_cond_load_relaxed() will not response to changes in the
-> + * preempt state in a timely manner. So code changes will have to be made
-> + * to address this deficiency.
-> + */
-> +#define vcpu_is_preempted_not_used
-> +
->  #define smp_cond_load_acquire(ptr, cond_expr)				\
->  ({									\
->  	typeof(ptr) __PTR = (ptr);					\
-> diff --git a/kernel/locking/osq_lock.c b/kernel/locking/osq_lock.c
-> index 6ef600aa0f47..69ec5161c3cc 100644
-> --- a/kernel/locking/osq_lock.c
-> +++ b/kernel/locking/osq_lock.c
-> @@ -13,6 +13,14 @@
->   */
->  static DEFINE_PER_CPU_SHARED_ALIGNED(struct optimistic_spin_node, osq_node);
->  
-> +/*
-> + * The optimized smp_cond_load_relaxed() spin loop should not be used with
-> + * vcpu_is_preempted defined.
-> + */
-> +#if defined(vcpu_is_preempted) && defined(vcpu_is_preempted_not_used)
-> +#error "vcpu_is_preempted() inside smp_cond_load_relaxed() may not work!"
-> +#endif
-
-Although I appreciate you going the extra mile for arm64 (thanks!), I think
-this is probably a bit overkill given that I don't plan to merge the series
-from Zengruan any time soon. Instead, how about just defining
-vcpu_is_preempted in arch/arm64/include/asm/spinlock.h with a comment:
+Yes, I have a doubt about this patch. I'll double check before commenting.
 
 
-	/*
-	 * Changing this will break osq_lock() thanks to the call inside
-	 * smp_cond_load_relaxed().
-	 *
-	 * See:
-	 * https://lore.kernel.org/lkml/20200110100612.GC2827@hirez.programming.kicks-ass.net
-	 */
-	#define vcpu_is_preempted(cpu)	false
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-So we'll notice that when somebody tries to change it.
-
-Will
