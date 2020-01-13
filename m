@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C89C1399E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 20:11:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E67961399B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 20:10:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729099AbgAMTLT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 14:11:19 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:39948 "EHLO
+        id S1729160AbgAMTKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 14:10:04 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:40025 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728965AbgAMTJr (ORCPT
+        with ESMTP id S1729076AbgAMTJ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 14:09:47 -0500
+        Mon, 13 Jan 2020 14:09:57 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ir55f-0000yX-2s; Mon, 13 Jan 2020 20:09:31 +0100
+        id 1ir55l-0000z6-8i; Mon, 13 Jan 2020 20:09:37 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5B68F1C18DA;
-        Mon, 13 Jan 2020 20:09:27 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 096E11C18DE;
+        Mon, 13 Jan 2020 20:09:28 +0100 (CET)
 Date:   Mon, 13 Jan 2020 19:09:27 -0000
 From:   "tip-bot2 for Dmitry Safonov" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] x86/vdso: Provide vdso_data offset on vvar_page
+Subject: [tip: timers/core] fs/proc: Respect boottime inside time namespace
+ for /proc/uptime
 Cc:     Andrei Vagin <avagin@openvz.org>, Dmitry Safonov <dima@arista.com>,
         Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191112012724.250792-22-dima@arista.com>
-References: <20191112012724.250792-22-dima@arista.com>
+In-Reply-To: <20191112012724.250792-19-dima@arista.com>
+References: <20191112012724.250792-19-dima@arista.com>
 MIME-Version: 1.0
-Message-ID: <157894256719.19145.16909720920023468772.tip-bot2@tip-bot2>
+Message-ID: <157894256788.19145.7796596840368056908.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,121 +48,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     9bec781deb4d5f23ee6346873805058bd0f6c88b
-Gitweb:        https://git.kernel.org/tip/9bec781deb4d5f23ee6346873805058bd0f6c88b
+Commit-ID:     8a49cd5ef7796a589e68cc975e30cac98edbd757
+Gitweb:        https://git.kernel.org/tip/8a49cd5ef7796a589e68cc975e30cac98edbd757
 Author:        Dmitry Safonov <dima@arista.com>
-AuthorDate:    Tue, 12 Nov 2019 01:27:10 
+AuthorDate:    Tue, 12 Nov 2019 01:27:07 
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 13 Jan 2020 08:10:55 +01:00
+CommitterDate: Mon, 13 Jan 2020 08:10:53 +01:00
 
-x86/vdso: Provide vdso_data offset on vvar_page
+fs/proc: Respect boottime inside time namespace for /proc/uptime
 
-VDSO support for time namespaces needs to set up a page with the same
-layout as VVAR. That timens page will be placed on position of VVAR page
-inside namespace. That page has vdso_data->seq set to 1 to enforce
-the slow path and vdso_data->clock_mode set to VCLOCK_TIMENS to enforce
-the time namespace handling path.
-
-To prepare the time namespace page the kernel needs to know the vdso_data
-offset.  Provide arch_get_vdso_data() helper for locating vdso_data on VVAR
-page.
+Make sure that /proc/uptime is adjusted to the tasks time namespace.
 
 Co-developed-by: Andrei Vagin <avagin@openvz.org>
 Signed-off-by: Andrei Vagin <avagin@openvz.org>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20191112012724.250792-22-dima@arista.com
+Link: https://lore.kernel.org/r/20191112012724.250792-19-dima@arista.com
 
 ---
- arch/x86/entry/vdso/vdso-layout.lds.S |  2 --
- arch/x86/entry/vdso/vma.c             | 11 +++++++++++
- arch/x86/include/asm/vvar.h           |  8 ++++----
- arch/x86/kernel/vmlinux.lds.S         |  4 +---
- include/linux/time_namespace.h        |  1 +
- 5 files changed, 17 insertions(+), 9 deletions(-)
+ fs/proc/uptime.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/x86/entry/vdso/vdso-layout.lds.S b/arch/x86/entry/vdso/vdso-layout.lds.S
-index 93c6dc7..2330daa 100644
---- a/arch/x86/entry/vdso/vdso-layout.lds.S
-+++ b/arch/x86/entry/vdso/vdso-layout.lds.S
-@@ -21,9 +21,7 @@ SECTIONS
+diff --git a/fs/proc/uptime.c b/fs/proc/uptime.c
+index a4c2791..5a1b228 100644
+--- a/fs/proc/uptime.c
++++ b/fs/proc/uptime.c
+@@ -5,6 +5,7 @@
+ #include <linux/sched.h>
+ #include <linux/seq_file.h>
+ #include <linux/time.h>
++#include <linux/time_namespace.h>
+ #include <linux/kernel_stat.h>
  
- 	/* Place all vvars at the offsets in asm/vvar.h. */
- #define EMIT_VVAR(name, offset) vvar_ ## name = vvar_page + offset;
--#define __VVAR_KERNEL_LDS
- #include <asm/vvar.h>
--#undef __VVAR_KERNEL_LDS
- #undef EMIT_VVAR
+ static int uptime_proc_show(struct seq_file *m, void *v)
+@@ -20,6 +21,8 @@ static int uptime_proc_show(struct seq_file *m, void *v)
+ 		nsec += (__force u64) kcpustat_cpu(i).cpustat[CPUTIME_IDLE];
  
- 	pvclock_page = vvar_start + PAGE_SIZE;
-diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index 76cbe54..04e3498 100644
---- a/arch/x86/entry/vdso/vma.c
-+++ b/arch/x86/entry/vdso/vma.c
-@@ -24,6 +24,17 @@
- #include <asm/cpufeature.h>
- #include <clocksource/hyperv_timer.h>
- 
-+#undef _ASM_X86_VVAR_H
-+#define EMIT_VVAR(name, offset)	\
-+	const size_t name ## _offset = offset;
-+#include <asm/vvar.h>
+ 	ktime_get_boottime_ts64(&uptime);
++	timens_add_boottime(&uptime);
 +
-+struct vdso_data *arch_get_vdso_data(void *vvar_page)
-+{
-+	return (struct vdso_data *)(vvar_page + _vdso_data_offset);
-+}
-+#undef EMIT_VVAR
-+
- #if defined(CONFIG_X86_64)
- unsigned int __read_mostly vdso64_enabled = 1;
- #endif
-diff --git a/arch/x86/include/asm/vvar.h b/arch/x86/include/asm/vvar.h
-index 32f5d9a..ff2de30 100644
---- a/arch/x86/include/asm/vvar.h
-+++ b/arch/x86/include/asm/vvar.h
-@@ -19,10 +19,10 @@
- #ifndef _ASM_X86_VVAR_H
- #define _ASM_X86_VVAR_H
- 
--#if defined(__VVAR_KERNEL_LDS)
--
--/* The kernel linker script defines its own magic to put vvars in the
-- * right place.
-+#ifdef EMIT_VVAR
-+/*
-+ * EMIT_VVAR() is used by the kernel linker script to put vvars in the
-+ * right place. Also, it's used by kernel code to import offsets values.
-  */
- #define DECLARE_VVAR(offset, type, name) \
- 	EMIT_VVAR(name, offset)
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 3a1a819..e3296aa 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -193,12 +193,10 @@ SECTIONS
- 		__vvar_beginning_hack = .;
- 
- 		/* Place all vvars at the offsets in asm/vvar.h. */
--#define EMIT_VVAR(name, offset) 			\
-+#define EMIT_VVAR(name, offset)				\
- 		. = __vvar_beginning_hack + offset;	\
- 		*(.vvar_ ## name)
--#define __VVAR_KERNEL_LDS
- #include <asm/vvar.h>
--#undef __VVAR_KERNEL_LDS
- #undef EMIT_VVAR
- 
- 		/*
-diff --git a/include/linux/time_namespace.h b/include/linux/time_namespace.h
-index 34ee110..063a343 100644
---- a/include/linux/time_namespace.h
-+++ b/include/linux/time_namespace.h
-@@ -39,6 +39,7 @@ struct time_namespace *copy_time_ns(unsigned long flags,
- 				    struct time_namespace *old_ns);
- void free_time_ns(struct kref *kref);
- int timens_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk);
-+struct vdso_data *arch_get_vdso_data(void *vvar_page);
- 
- static inline void put_time_ns(struct time_namespace *ns)
- {
+ 	idle.tv_sec = div_u64_rem(nsec, NSEC_PER_SEC, &rem);
+ 	idle.tv_nsec = rem;
+ 	seq_printf(m, "%lu.%02lu %lu.%02lu\n",
