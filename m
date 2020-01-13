@@ -2,112 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4975139365
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:16:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB04C139357
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:15:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729139AbgAMOP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 09:15:57 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:53131 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729064AbgAMOPs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 09:15:48 -0500
-Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1N9dbx-1jlOmx0isn-015e1N; Mon, 13 Jan 2020 15:15:34 +0100
-Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
-        by mail.cetitecgmbh.com (Postfix) with ESMTP id EAD7A64F293;
-        Mon, 13 Jan 2020 14:15:33 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at cetitec.com
-Received: from mail.cetitecgmbh.com ([127.0.0.1])
-        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id zSUt-Fw9X00y; Mon, 13 Jan 2020 15:15:33 +0100 (CET)
-Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
-        by mail.cetitecgmbh.com (Postfix) with ESMTPS id A747864E2AB;
-        Mon, 13 Jan 2020 15:15:33 +0100 (CET)
-Received: from pflmari.corp.cetitec.com (10.10.2.141) by
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
- id 15.0.1320.4; Mon, 13 Jan 2020 15:15:33 +0100
-Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
-        id 5D6DB804E9; Mon, 13 Jan 2020 15:15:33 +0100 (CET)
-Date:   Mon, 13 Jan 2020 15:15:33 +0100
-From:   Alex Riesen <alexander.riesen@cetitec.com>
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-CC:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH 4/8] media: adv748x: reserve space for the audio (I2S) port
- in the driver structures
-Message-ID: <20200113141533.GE3606@pflmari>
-Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devel@driverdev.osuosl.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <cover.1578924232.git.alexander.riesen@cetitec.com>
+        id S1729010AbgAMOPh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 09:15:37 -0500
+Received: from mga04.intel.com ([192.55.52.120]:37977 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728774AbgAMOPh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 09:15:37 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jan 2020 06:15:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,429,1571727600"; 
+   d="scan'208";a="244336798"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 13 Jan 2020 06:15:34 -0800
+Received: by lahna (sSMTP sendmail emulation); Mon, 13 Jan 2020 16:15:33 +0200
+Date:   Mon, 13 Jan 2020 16:15:33 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Logan Gunthorpe <logang@deltatee.com>
+Subject: Re: [PATCH v1 2/3] PCI: Change
+ pci_bus_distribute_available_resources() args to struct resource
+Message-ID: <20200113141533.GJ2838@lahna.fi.intel.com>
+References: <PSXP216MB0438587C47CBEDF365B1EA27803C0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1578924232.git.alexander.riesen@cetitec.com>
-X-Originating-IP: [10.10.2.141]
-X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A29536F936F657D64
-X-Provags-ID: V03:K1:GCk2luEwK7oQKq+TVDmnLvDi4cpAoKdN6TRH/nlXVMKt3Z5GHwu
- H3avNrMuWgo13wQ7Ze/a2VAvbetXqrN6m+l72/5aFqtdk2UyXNuWQJHDhFrsY38zJsq3Uws
- +Nh74MidEuL3prr2ArVSCHN9M4ykTAlnbyxPCdDMKRSR6pLqKYtXwfv5NU2/yCF19ZsVknR
- qE1k9GTehtJ1US1u68Fzg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:IdhXLHCtac8=:FwiUzFjjrZsbLy8MBOXV/l
- jrlUrLFzvSSLWKSSNT18aCS4sNiVsHlAa49p0eYIwYKUNaXsePcAxPb+hya2JFD24Qvkunifd
- AVBx7hjI8giCZN7rko0ogwSQLQBLIrVz0M3d3tQ93++1vCsmuxI/owy8Dgc5rJQ5I9Hgi2kKw
- YTzc8Cb6bf8uFoJJ9UR/yb/eS1VjpiLmBhFOA4N4ceRuyROuNBAK4HBlcp9mAoz8WnYYQB1ZK
- F5YkTo2/TVPj1Fv9GG4yB1nFidCk37j4Sp0qXaLtG5C8sD/I3SRftWhnnF10vBORFvGZ6Vg9v
- T/tnEx3scvamELA6QmP4b0UNayGaDyakyfY8V/1pyURCQYrzJ5rzNsaBhgR57R87fIcGv35hu
- 3YZUHo/z8X0flMtuCQYId1YXy24c/GGQzETlISKRGTCo/jtoy8gvBk+sEFBMmu3HC5OSp461h
- +OSHNKliS/6rrFnZceiq12RZAgZWpw+7dG4h/BrVhUXBquBny3oQ47yrcSGKadysIsG5T/wTY
- U+nUtk771wmCq7Dh1yF9ahwNr7yv52VuG0JHKHhc4KGm51OojhqufJLKfcyX36Le4v+lTQyGu
- IfBd7WgIvGXUYbR2ewj7CEiEpP0otKV9BTTyz6OCjV6M6nEmbIVwWjTbRVafQ1D+O/uTLWg1T
- zsMu28Cep9PWUnhmeBSldJXX/Rj78IbkYeXv3xG5ry6L/f0bhkp3gAnFsnqKaP4jkDqaWspre
- aIF/nf2OfFgAtKB9JMSLL965QHHMAPb3A3jOVo3lQF12Q93bvQcSKjN+akSAb0aFhma50hcHg
- 0X1EF7OZ3dL1umwjmDCjRRAdnqE0DiZ86GBO6L75vd6F0h3CexOctlUHpFOy/ODP4zu2M6aoN
- 3lWmghCN1TRokcwhUJrpaDA7VeuxwGcICVQ/D3ynM=
+In-Reply-To: <PSXP216MB0438587C47CBEDF365B1EA27803C0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This allows use of the port in the device tree files.
+On Mon, Jan 06, 2020 at 03:45:52PM +0000, Nicholas Johnson wrote:
+> Change pci_bus_distribute_available_resources() arguments from
+> resource_size_t to struct resource to add more information required to
+> get the alignment correct for bridge windows with alignment >1M.
+> 
+> We require (size, alignment), instead of just (size) which is what is
+> currently available. The change from resource_size_t to struct resource
+> does just that.
+> 
+> Note that the struct resource arguments are passed by value and not by
+> reference. We do not want to pass by reference and change the resource
+> size of the parent bridge window. We only want the size information.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
 
-Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
----
- drivers/media/i2c/adv748x/adv748x.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index fdda6982e437..5db06410f102 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -61,7 +61,8 @@ enum adv748x_ports {
- 	ADV748X_PORT_TTL = 9,
- 	ADV748X_PORT_TXA = 10,
- 	ADV748X_PORT_TXB = 11,
--	ADV748X_PORT_MAX = 12,
-+	ADV748X_PORT_I2S = 12,
-+	ADV748X_PORT_MAX = 13,
- };
- 
- enum adv748x_csi2_pads {
--- 
-2.24.1.508.g91d2dafee0
-
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
