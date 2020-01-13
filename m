@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 019541399ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 20:11:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CC471399E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 20:11:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729165AbgAMTLi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 14:11:38 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:39910 "EHLO
+        id S1729145AbgAMTLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 14:11:32 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:39917 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728885AbgAMTJk (ORCPT
+        with ESMTP id S1728900AbgAMTJl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 14:09:40 -0500
+        Mon, 13 Jan 2020 14:09:41 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ir55l-00015E-Im; Mon, 13 Jan 2020 20:09:37 +0100
+        id 1ir55m-00016D-Ip; Mon, 13 Jan 2020 20:09:38 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DA7881C18DF;
-        Mon, 13 Jan 2020 20:09:29 +0100 (CET)
-Date:   Mon, 13 Jan 2020 19:09:29 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6EEC11C18E9;
+        Mon, 13 Jan 2020 20:09:30 +0100 (CET)
+Date:   Mon, 13 Jan 2020 19:09:30 -0000
 From:   "tip-bot2 for Andrei Vagin" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] posix-timers: Use clock_get_ktime() in common_timer_get()
+Subject: [tip: timers/core] alarmtimer: Provide get_timespec() callback
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Andrei Vagin <avagin@gmail.com>,
         Dmitry Safonov <dima@arista.com>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191112012724.250792-11-dima@arista.com>
-References: <20191112012724.250792-11-dima@arista.com>
+In-Reply-To: <20191112012724.250792-9-dima@arista.com>
+References: <20191112012724.250792-9-dima@arista.com>
 MIME-Version: 1.0
-Message-ID: <157894256975.19145.6262285925712082005.tip-bot2@tip-bot2>
+Message-ID: <157894257026.19145.5596406959536995134.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,52 +48,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     fe45ad37b4ae70db3923263d0b67313b7e1d746a
-Gitweb:        https://git.kernel.org/tip/fe45ad37b4ae70db3923263d0b67313b7e1d746a
+Commit-ID:     c8ff8b6c6f12d13dcdf2c948b197eb3d362600e0
+Gitweb:        https://git.kernel.org/tip/c8ff8b6c6f12d13dcdf2c948b197eb3d362600e0
 Author:        Andrei Vagin <avagin@gmail.com>
-AuthorDate:    Tue, 12 Nov 2019 01:26:59 
+AuthorDate:    Tue, 12 Nov 2019 01:26:57 
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 13 Jan 2020 08:10:50 +01:00
+CommitterDate: Mon, 13 Jan 2020 08:10:49 +01:00
 
-posix-timers: Use clock_get_ktime() in common_timer_get()
+alarmtimer: Provide get_timespec() callback
 
-Now, when the clock_get_ktime() callback exists, the suboptimal
-timespec64-based conversion can be removed from common_timer_get().
+The upcoming support for time namespaces requires to have access to:
+
+  - The time in a task's time namespace for sys_clock_gettime()
+  - The time in the root name space for common_timer_get()
+
+Wire up alarm bases with get_timespec().
 
 Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Co-developed-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Andrei Vagin <avagin@gmail.com>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20191112012724.250792-11-dima@arista.com
+Link: https://lore.kernel.org/r/20191112012724.250792-9-dima@arista.com
 
 ---
- kernel/time/posix-timers.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ kernel/time/alarmtimer.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index a1f6b96..fe1de4f 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -665,7 +665,6 @@ void common_timer_get(struct k_itimer *timr, struct itimerspec64 *cur_setting)
- {
- 	const struct k_clock *kc = timr->kclock;
- 	ktime_t now, remaining, iv;
--	struct timespec64 ts64;
- 	bool sig_none;
+diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
+index 22b6f9b..357be1f 100644
+--- a/kernel/time/alarmtimer.c
++++ b/kernel/time/alarmtimer.c
+@@ -37,12 +37,14 @@
+  * @lock:		Lock for syncrhonized access to the base
+  * @timerqueue:		Timerqueue head managing the list of events
+  * @get_ktime:		Function to read the time correlating to the base
++ * @get_timespec:	Function to read the namespace time correlating to the base
+  * @base_clockid:	clockid for the base
+  */
+ static struct alarm_base {
+ 	spinlock_t		lock;
+ 	struct timerqueue_head	timerqueue;
+ 	ktime_t			(*get_ktime)(void);
++	void			(*get_timespec)(struct timespec64 *tp);
+ 	clockid_t		base_clockid;
+ } alarm_bases[ALARM_NUMTYPE];
  
- 	sig_none = timr->it_sigev_notify == SIGEV_NONE;
-@@ -683,12 +682,7 @@ void common_timer_get(struct k_itimer *timr, struct itimerspec64 *cur_setting)
- 			return;
- 	}
+@@ -670,7 +672,8 @@ static int alarm_clock_get_timespec(clockid_t which_clock, struct timespec64 *tp
+ 	if (!alarmtimer_get_rtcdev())
+ 		return -EINVAL;
  
--	/*
--	 * The timespec64 based conversion is suboptimal, but it's not
--	 * worth to implement yet another callback.
--	 */
--	kc->clock_get_timespec(timr->it_clock, &ts64);
--	now = timespec64_to_ktime(ts64);
-+	now = kc->clock_get_ktime(timr->it_clock);
+-	*tp = ktime_to_timespec64(base->get_ktime());
++	base->get_timespec(tp);
++
+ 	return 0;
+ }
  
- 	/*
- 	 * When a requeue is pending or this is a SIGEV_NONE timer move the
+@@ -883,8 +886,10 @@ static int __init alarmtimer_init(void)
+ 	/* Initialize alarm bases */
+ 	alarm_bases[ALARM_REALTIME].base_clockid = CLOCK_REALTIME;
+ 	alarm_bases[ALARM_REALTIME].get_ktime = &ktime_get_real;
++	alarm_bases[ALARM_REALTIME].get_timespec = ktime_get_real_ts64,
+ 	alarm_bases[ALARM_BOOTTIME].base_clockid = CLOCK_BOOTTIME;
+ 	alarm_bases[ALARM_BOOTTIME].get_ktime = &ktime_get_boottime;
++	alarm_bases[ALARM_BOOTTIME].get_timespec = ktime_get_boottime_ts64;
+ 	for (i = 0; i < ALARM_NUMTYPE; i++) {
+ 		timerqueue_init_head(&alarm_bases[i].timerqueue);
+ 		spin_lock_init(&alarm_bases[i].lock);
