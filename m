@@ -2,80 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5033139695
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 17:43:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D83E13969D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 17:44:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728795AbgAMQnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 11:43:19 -0500
-Received: from foss.arm.com ([217.140.110.172]:41650 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726567AbgAMQnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 11:43:17 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 518E11424;
-        Mon, 13 Jan 2020 08:43:17 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.197.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5D56F3F534;
-        Mon, 13 Jan 2020 08:43:14 -0800 (PST)
-Date:   Mon, 13 Jan 2020 16:43:12 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Will Deacon <will@kernel.org>, Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, Dave Martin <Dave.Martin@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v4 08/12] arm64: unify native/compat instruction skipping
-Message-ID: <20200113164311.GC1876@arrakis.emea.arm.com>
-References: <20191211154206.46260-1-broonie@kernel.org>
- <20191211154206.46260-9-broonie@kernel.org>
+        id S1728864AbgAMQoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 11:44:14 -0500
+Received: from out28-219.mail.aliyun.com ([115.124.28.219]:53013 "EHLO
+        out28-219.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726567AbgAMQoN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 11:44:13 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.4313357|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.0731647-0.0137542-0.913081;DS=CONTINUE|ham_system_inform|0.0739593-0.215261-0.71078;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07394;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=25;RT=25;SR=0;TI=SMTPD_---.GbRhA7M_1578933839;
+Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GbRhA7M_1578933839)
+          by smtp.aliyun-inc.com(10.147.40.233);
+          Tue, 14 Jan 2020 00:44:06 +0800
+From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
+        <zhouyanjie@wanyeetech.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, paul.burton@mips.com, paulburton@kernel.org,
+        jhogan@kernel.org, miquel.raynal@bootlin.com, mark.rutland@arm.com,
+        syq@debian.org, ralf@linux-mips.org, tglx@linutronix.de,
+        jason@lakedaemon.net, maz@kernel.org, jiaxun.yang@flygoat.com,
+        chenhc@lemote.com, daniel.lezcano@linaro.org,
+        ebiederm@xmission.com, keescook@chromium.org, ak@linux.intel.com,
+        krzk@kernel.org, paul@crapouillou.net, prasannatsmkumar@gmail.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
+Subject: 
+Date:   Tue, 14 Jan 2020 00:43:26 +0800
+Message-Id: <1578933813-80122-1-git-send-email-zhouyanjie@wanyeetech.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <Introduce SMP support for CI20 (based on JZ4780).>
+References: <Introduce SMP support for CI20 (based on JZ4780).>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211154206.46260-9-broonie@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 03:42:02PM +0000, Mark Brown wrote:
-> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-> index 84c7a88dd617..de01e5041d4d 100644
-> --- a/arch/arm64/kernel/traps.c
-> +++ b/arch/arm64/kernel/traps.c
-> @@ -269,6 +269,8 @@ void arm64_notify_die(const char *str, struct pt_regs *regs,
->  	}
->  }
->  
-> +static void advance_itstate(struct pt_regs *regs);
-> +
->  void arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size)
->  {
->  	regs->pc += size;
-> @@ -279,6 +281,9 @@ void arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size)
->  	 */
->  	if (user_mode(regs))
->  		user_fastforward_single_step(current);
-> +
-> +	if (regs->pstate & PSR_MODE32_BIT)
-> +		advance_itstate(regs);
+Introduce SMP support for MIPS Creator CI20, which is
+based on Ingenic JZ4780 SoC.
 
-Nitpick: we have a compat_user_mode(regs) you can use here.
-
--- 
-Catalin
