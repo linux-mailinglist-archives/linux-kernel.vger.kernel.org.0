@@ -2,75 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0196B139CEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 23:51:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1339139CF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 23:53:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729075AbgAMWvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 17:51:33 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:33016 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728904AbgAMWvc (ORCPT
+        id S1729147AbgAMWxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 17:53:16 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44224 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728994AbgAMWxQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 17:51:32 -0500
-Received: by mail-ot1-f67.google.com with SMTP id b18so10687882otp.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 14:51:32 -0800 (PST)
+        Mon, 13 Jan 2020 17:53:16 -0500
+Received: by mail-lf1-f68.google.com with SMTP id v201so8189140lfa.11;
+        Mon, 13 Jan 2020 14:53:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KHnvnN3lDGWBZcYdcw5+iDp4bDu9HTX8MqfJ39n2Djc=;
+        b=E/RnX/WwjoDdRucl6paIhf7V9plcSdleOLDtSCkrLO/sG+CWbZ2rRcd8NuNHB89Gl2
+         8BNfTk0sg1Z7EjdSGM1bIozklLZ1+275JkAuY23pweKGUDEP/mmQnYMtZLa33WuJ8l5W
+         LwjXkhl7bYwuPBfKE/zara6FU1ywyhWNca3MsnfbRnSyXJ1JeMwbFV2CVXyd15i/UM9u
+         8nyMLhpIijjdQKw2I3TMLeUrqph7jMOnKsnw8IBB04A4ww1ADFt2U0+2ZA6s6XP3vieq
+         swmWUH9kKogMqMb14mKpRy+LQMlCxgZCxN6i58PcCYxoJHYFIwr29mevkUB+0N27O3CO
+         FAbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kHrOCgkkdDXDANIjbqsuSi8zgIrP7fM6uexZoRu9ItQ=;
-        b=lRdynINsUGevfqEJ71gwd2/ZQCunfQh0i1YhZTu8FhSVcYkhFEXsHG2YLjBNvFSkzK
-         azMR6CIozj6M/3g3Soo+pBaHpdRDDAgtehNLB7Nat/XEnpJTybRoGA0nRimBjK3qw8lX
-         kbGQXkmSNkKR2+1TdiCLcBZ3/OghKRJ/sPofirs7fnfx3Jh66A5BWZK3Lwm1EiswZOaJ
-         yhO+5uTiX1cykK1tI2tSbwOpVAzoKo81ov5FWHax/IXR0Bx71u3GMuXCAw6uL9SMVl/D
-         gd959XxnOvKMGj+Hc5dTkoSOVrZB4jtt15h9PBGT1jXObAqZJH8B2bDtFuI6TgYbCFUH
-         OifA==
-X-Gm-Message-State: APjAAAVivYpREonl6qrwbptPcsmkzOPY6e0MBORlbSRvWmaU17fpEAEk
-        tAt+3rRoFsIDrfKPvDiBhER9fL4=
-X-Google-Smtp-Source: APXvYqywDyVSGDzYD7bmdDxa5/6T7LVnfnjyjzLPqQbyEu55lmaV2vjyd4Dv0buk4ml/6HCKTpHg1w==
-X-Received: by 2002:a05:6830:151a:: with SMTP id k26mr15607183otp.74.1578955891828;
-        Mon, 13 Jan 2020 14:51:31 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v25sm4612772otk.51.2020.01.13.14.51.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 14:51:30 -0800 (PST)
-Received: from rob (uid 1000)
-        (envelope-from rob@rob-hp-laptop)
-        id 2219cf
-        by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Mon, 13 Jan 2020 16:51:29 -0600
-Date:   Mon, 13 Jan 2020 16:51:29 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     robh+dt@kernel.org, georgi.djakov@linaro.org, evgreen@chromium.org,
-        bjorn.andersson@linaro.org, agross@kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, mark.rutland@arm.com,
-        daidavid1@codeaurora.org, saravanak@google.com,
-        viresh.kumar@linaro.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: Re: [PATCH v4 3/4] dt-bindings: interconnect: Add OSM L3 DT binding
- on SC7180
-Message-ID: <20200113225129.GA16336@bogus>
-References: <20200109211215.18930-1-sibis@codeaurora.org>
- <20200109211215.18930-4-sibis@codeaurora.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KHnvnN3lDGWBZcYdcw5+iDp4bDu9HTX8MqfJ39n2Djc=;
+        b=rbJW0yQ5p++cEHiwRzStwW4zhSKtyYSw49rX0wYm1JBPui3iilAvMM69EqSl2XuFk/
+         Jz8fa7cn7M854lkiDKmSyZyXO2KTQ08yrG2fGk2yu1kAcPSMJThmX9E3UPGVK4W4IvPB
+         Rxams2mYNyYqZc+m4+HK0yhwq7CO2t63rC3traGbfpLVl+Rbc6Ppl0CV5J8OxfjTo14/
+         y/6MZJ8G7LWydLhAeXXt1DRlUMMfGgT8O7Yxe2PtFiHZOebXYlEE/uUXY806jnlkAf0c
+         6j7iqfeuPJ+kOOtoRfjATHzECazU8Qm6bv0yY5xl/LvNzYRsAUgTMYwyPvWw3hl7MVk/
+         Q9fQ==
+X-Gm-Message-State: APjAAAWcvA7ojMkXFaaZX8iIfj3UmdJDQsR/m/dWKavML7KeRKiECJO9
+        RsyRvSKeBWrVerEv8o2wX7uDitO9
+X-Google-Smtp-Source: APXvYqy4Do5VeXsler/DZNP25OPRLnqyCIEysnUx0sbRh/uorSV5SSKA83a/95ykKdoNelYIBLUkOw==
+X-Received: by 2002:ac2:5605:: with SMTP id v5mr10926099lfd.136.1578955993516;
+        Mon, 13 Jan 2020 14:53:13 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id q186sm6602481ljq.14.2020.01.13.14.53.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jan 2020 14:53:12 -0800 (PST)
+Subject: Re: [PATCH v4 4/8] i2c: tegra: Support atomic transfers
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200112171430.27219-1-digetx@gmail.com>
+ <20200112171430.27219-5-digetx@gmail.com> <20200113220315.GB2689@ninjato>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <86f71bfe-7d17-0bf4-edda-13c84301a598@gmail.com>
+Date:   Tue, 14 Jan 2020 01:52:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200109211215.18930-4-sibis@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200113220315.GB2689@ninjato>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 10 Jan 2020 02:42:14 +0530, Sibi Sankar wrote:
-> Add OSM L3 interconnect provider binding on SC7180 SoCs.
+14.01.2020 01:03, Wolfram Sang пишет:
+> On Sun, Jan 12, 2020 at 08:14:26PM +0300, Dmitry Osipenko wrote:
+>> System shutdown may happen with interrupts being disabled and in this case
+>> I2C core rejects transfers if atomic transfer isn't supported by driver.
 > 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+> Well, not quite. The core complains about it nowadays, but does not
+> reject messages. It will try the same behaviour as before. It will just
+> inform the user that somethings is tried which may not work. I probably
+> should update the error message printed saying that the transfer is
+> still tried.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Indeed, now I'm recalling noticing that the transfer actually should
+happen despite of the error message, but then completely forgot to
+update the commit's message. I can update the message and send out v5,
+if you're thinking that it's worthwhile to do.
+
+>> There were several occurrences where I found my Nexus 7 completely
+>> discharged despite of being turned off and then one day I spotted this in
+>> the log:
+> 
+> Given my reasoning above, that should have happened before the warning
+> was printed as well? Because same behaviour. I'd be surprised if there
+> was a change...
+
+Pretty sure that it was happening before, but I wasn't paying much
+attention back then.
