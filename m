@@ -2,134 +2,457 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55050138ED9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 11:17:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C347E138ED4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 11:16:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728769AbgAMKQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 05:16:59 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51688 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbgAMKQ7 (ORCPT
+        id S1728748AbgAMKQd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 05:16:33 -0500
+Received: from forward104p.mail.yandex.net ([77.88.28.107]:46237 "EHLO
+        forward104p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725992AbgAMKQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 05:16:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=TC8ktWymGRn+4RZ97AzmjSGIJ8ZQa/9bHdinVyx7ycg=; b=m9fa8+qyDpqOPF1lzJst9rx9Z
-        tLwFtzUYhZGUGuR8ylDqhtV0deAG3/4U4pZ4AgRJFA6lwRXtlybu3cu/hdvzKNW/ASZqVK5bjR9d2
-        dB7XKvGOnyW9pv/Y67GknqAc/nAWs4VILGEjXA7jXTMncEPOiTq6TypYHXj0QgKaIqi5fgFex9yJZ
-        IvASIqOaazC2uF2dvArIiRK7ES6Kl+7TVLWEUsK0tXjYges7EwbOU342OUtpqfS9A/c/m7rVWvxz4
-        eRT8VrqFpVq1r16TFS5UDVLUq8CAImRAiIt3vS+XPW6sqx8WuRLBIaIAqn0xz+Gg717mt5YWuj7XU
-        NlJYa7ilg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iqwlY-0002xH-Vd; Mon, 13 Jan 2020 10:16:13 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0C901304121;
-        Mon, 13 Jan 2020 11:14:34 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4D3C02B616422; Mon, 13 Jan 2020 11:16:09 +0100 (CET)
-Date:   Mon, 13 Jan 2020 11:16:09 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Eduardo Valentin <eduval@amazon.com>
-Cc:     Anchal Agarwal <anchalag@amazon.com>, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        linux-pm@vger.kernel.org, linux-mm@kvack.org, kamatam@amazon.com,
-        sstabellini@kernel.org, konrad.wilk@oracle.co,
-        roger.pau@citrix.com, axboe@kernel.dk, davem@davemloft.net,
-        rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz,
-        sblbir@amazon.com, xen-devel@lists.xenproject.org,
-        vkuznets@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Woodhouse@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com,
-        dwmw@amazon.co.uk, fllinden@amaozn.com
-Subject: Re: [RFC PATCH V2 11/11] x86: tsc: avoid system instability in
- hibernation
-Message-ID: <20200113101609.GT2844@hirez.programming.kicks-ass.net>
-References: <20200107234526.GA19034@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
- <20200108105011.GY2827@hirez.programming.kicks-ass.net>
- <20200110153520.GC8214@u40b0340c692b58f6553c.ant.amazon.com>
+        Mon, 13 Jan 2020 05:16:33 -0500
+Received: from mxback28g.mail.yandex.net (mxback28g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:328])
+        by forward104p.mail.yandex.net (Yandex) with ESMTP id AFE7D4B017C7;
+        Mon, 13 Jan 2020 13:16:30 +0300 (MSK)
+Received: from myt2-ea6a2e0cbf34.qloud-c.yandex.net (myt2-ea6a2e0cbf34.qloud-c.yandex.net [2a02:6b8:c00:2e8e:0:640:ea6a:2e0c])
+        by mxback28g.mail.yandex.net (mxback/Yandex) with ESMTP id Kjzm8TnQeW-GUX0kSjA;
+        Mon, 13 Jan 2020 13:16:30 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1578910590;
+        bh=AdO3hNoa5w14TPU24AoXFQxot8A7u9uaaeXiwtje1kc=;
+        h=Subject:To:From:Cc:Date:Message-Id;
+        b=vbe6q/Fs4/BYkKXPXLWaLZpBZVUqcWf1n7+DyYKVAudgMA1mEaiDUvcSCf/JutAXA
+         WIiQ71BPd8hoLzPBemHusU+N2J40Qnzs5iljFds2vH1DvcSvcrIBhvuriVqeW/3LZ9
+         VNxbQGhHMsn+KYerttK6dt6SVfe6lKPG06GFIg+I=
+Authentication-Results: mxback28g.mail.yandex.net; dkim=pass header.i=@flygoat.com
+Received: by myt2-ea6a2e0cbf34.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id u1kiDDYFMW-GNV4DMiP;
+        Mon, 13 Jan 2020 13:16:28 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+To:     linux-mips@vger.kernel.org
+Cc:     chenhc@lemote.com, paul.burton@mips.com,
+        linux-kernel@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH 1/2] MIPS: Add MAC2008 Support
+Date:   Mon, 13 Jan 2020 18:16:11 +0800
+Message-Id: <20200113101612.38335-1-jiaxun.yang@flygoat.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200110153520.GC8214@u40b0340c692b58f6553c.ant.amazon.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 07:35:20AM -0800, Eduardo Valentin wrote:
-> Hey Peter,
-> 
-> On Wed, Jan 08, 2020 at 11:50:11AM +0100, Peter Zijlstra wrote:
-> > On Tue, Jan 07, 2020 at 11:45:26PM +0000, Anchal Agarwal wrote:
-> > > From: Eduardo Valentin <eduval@amazon.com>
-> > > 
-> > > System instability are seen during resume from hibernation when system
-> > > is under heavy CPU load. This is due to the lack of update of sched
-> > > clock data, and the scheduler would then think that heavy CPU hog
-> > > tasks need more time in CPU, causing the system to freeze
-> > > during the unfreezing of tasks. For example, threaded irqs,
-> > > and kernel processes servicing network interface may be delayed
-> > > for several tens of seconds, causing the system to be unreachable.
-> > 
-> > > The fix for this situation is to mark the sched clock as unstable
-> > > as early as possible in the resume path, leaving it unstable
-> > > for the duration of the resume process. This will force the
-> > > scheduler to attempt to align the sched clock across CPUs using
-> > > the delta with time of day, updating sched clock data. In a post
-> > > hibernation event, we can then mark the sched clock as stable
-> > > again, avoiding unnecessary syncs with time of day on systems
-> > > in which TSC is reliable.
-> > 
-> > This makes no frigging sense what so bloody ever. If the clock is
-> > stable, we don't care about sched_clock_data. When it is stable you get
-> > a linear function of the TSC without complicated bits on.
-> > 
-> > When it is unstable, only then do we care about the sched_clock_data.
-> > 
-> 
-> Yeah, maybe what is not clear here is that we covering for situation
-> where clock stability changes over time, e.g. at regular boot clock is
-> stable, hibernation happens, then restore happens in a non-stable clock.
+MAC2008 means the processor implemented IEEE754 style Fused MADD
+instruction. It was introduced in Release3 but removed in Release5.
 
-Still confused, who marks the thing unstable? The patch seems to suggest
-you do yourself, but it is not at all clear why.
+The toolchain support of MAC2008 have never landed except for Loongson
+processors.
 
-If TSC really is unstable, then it needs to remain unstable. If the TSC
-really is stable then there is no point in marking is unstable.
+This patch aimed to disabled the MAC2008 if it's optional. For
+MAC2008 only processors, we corrected math-emu behavior to align
+with actual hardware behavior.
 
-Either way something is off, and you're not telling me what.
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+ arch/mips/include/asm/cpu-features.h |  4 +++
+ arch/mips/include/asm/cpu.h          |  1 +
+ arch/mips/include/asm/mipsregs.h     |  3 ++
+ arch/mips/kernel/cpu-probe.c         | 16 ++++++++-
+ arch/mips/math-emu/cp1emu.c          | 38 ++++++++++++++++----
+ arch/mips/math-emu/dp_maddf.c        | 53 ++++++++++++++++++----------
+ arch/mips/math-emu/ieee754.h         | 16 +++++++++
+ arch/mips/math-emu/ieee754int.h      |  1 +
+ arch/mips/math-emu/sp_maddf.c        | 53 ++++++++++++++++++----------
+ 9 files changed, 141 insertions(+), 44 deletions(-)
 
-> > > Reviewed-by: Erik Quanstrom <quanstro@amazon.com>
-> > > Reviewed-by: Frank van der Linden <fllinden@amazon.com>
-> > > Reviewed-by: Balbir Singh <sblbir@amazon.com>
-> > > Reviewed-by: Munehisa Kamata <kamatam@amazon.com>
-> > > Tested-by: Anchal Agarwal <anchalag@amazon.com>
-> > > Signed-off-by: Eduardo Valentin <eduval@amazon.com>
-> > > ---
-> > 
-> > NAK, the code very much relies on never getting marked stable again
-> > after it gets set to unstable.
-> > 
-> 
-> Well actually, at the PM_POST_HIBERNATION, we do the check and set stable if
-> known to be stable.
-> 
-> The issue only really happens during the restoration path under scheduling pressure,
-> which takes forever to finish, as described in the commit.
-> 
-> Do you see a better solution for this issue?
+diff --git a/arch/mips/include/asm/cpu-features.h b/arch/mips/include/asm/cpu-features.h
+index 983a6a7f43a1..de44c92b1c1f 100644
+--- a/arch/mips/include/asm/cpu-features.h
++++ b/arch/mips/include/asm/cpu-features.h
+@@ -555,6 +555,10 @@
+ # define cpu_has_perf		__opt(MIPS_CPU_PERF)
+ #endif
+ 
++#ifndef cpu_has_mac2008_only
++# define cpu_has_mac2008_only	__opt(MIPS_CPU_MAC_2008_ONLY)
++#endif
++
+ #ifdef CONFIG_SMP
+ /*
+  * Some systems share FTLB RAMs between threads within a core (siblings in
+diff --git a/arch/mips/include/asm/cpu.h b/arch/mips/include/asm/cpu.h
+index 0e10ffcf0c1b..216a22916740 100644
+--- a/arch/mips/include/asm/cpu.h
++++ b/arch/mips/include/asm/cpu.h
+@@ -416,6 +416,7 @@ enum cpu_type_enum {
+ #define MIPS_CPU_MT_PER_TC_PERF_COUNTERS \
+ 				BIT_ULL(56)	/* CPU has perf counters implemented per TC (MIPSMT ASE) */
+ #define MIPS_CPU_MMID		BIT_ULL(57)	/* CPU supports MemoryMapIDs */
++#define MIPS_CPU_MAC_2008_ONLY	BIT_ULL(58)	/* CPU Only support MAC2008 Fused multiply-add instruction */
+ 
+ /*
+  * CPU ASE encodings
+diff --git a/arch/mips/include/asm/mipsregs.h b/arch/mips/include/asm/mipsregs.h
+index 0d5a30988697..796fe47cfd17 100644
+--- a/arch/mips/include/asm/mipsregs.h
++++ b/arch/mips/include/asm/mipsregs.h
+@@ -1101,9 +1101,12 @@
+ /*
+  * Bits 22:20 of the FPU Status Register will be read as 0,
+  * and should be written as zero.
++ * MAC2008 was removed in Release 5 so we still treat it as
++ * reserved.
+  */
+ #define FPU_CSR_RSVD	(_ULCAST_(7) << 20)
+ 
++#define FPU_CSR_MAC2008	(_ULCAST_(1) << 20)
+ #define FPU_CSR_ABS2008	(_ULCAST_(1) << 19)
+ #define FPU_CSR_NAN2008	(_ULCAST_(1) << 18)
+ 
+diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
+index c06365404a8e..21171df1363e 100644
+--- a/arch/mips/kernel/cpu-probe.c
++++ b/arch/mips/kernel/cpu-probe.c
+@@ -102,7 +102,12 @@ static void cpu_set_fpu_2008(struct cpuinfo_mips *c)
+ 		if (fir & MIPS_FPIR_HAS2008) {
+ 			fcsr = read_32bit_cp1_register(CP1_STATUS);
+ 
+-			fcsr0 = fcsr & ~(FPU_CSR_ABS2008 | FPU_CSR_NAN2008);
++			/*
++			 * MAC2008 toolchain never landed in real world, so we're only
++			 * testing wether it can be disabled and don't try to enabled
++			 * it.
++			 */
++			fcsr0 = fcsr & ~(FPU_CSR_ABS2008 | FPU_CSR_NAN2008 | FPU_CSR_MAC2008);
+ 			write_32bit_cp1_register(CP1_STATUS, fcsr0);
+ 			fcsr0 = read_32bit_cp1_register(CP1_STATUS);
+ 
+@@ -112,6 +117,15 @@ static void cpu_set_fpu_2008(struct cpuinfo_mips *c)
+ 
+ 			write_32bit_cp1_register(CP1_STATUS, fcsr);
+ 
++			if (MIPS_CPU_ISA_M32R2 | MIPS_CPU_ISA_M64R2) {
++				/*
++				 * The bit for MAC2008 might be reused by R6 in future,
++				 * so we only test for R2-R5.
++				 */
++				if (fcsr0 & FPU_CSR_MAC2008)
++					c->options |= MIPS_CPU_MAC_2008_ONLY;
++			}
++
+ 			if (!(fcsr0 & FPU_CSR_NAN2008))
+ 				c->options |= MIPS_CPU_NAN_LEGACY;
+ 			if (fcsr1 & FPU_CSR_NAN2008)
+diff --git a/arch/mips/math-emu/cp1emu.c b/arch/mips/math-emu/cp1emu.c
+index 710e1f804a54..9701c89e7e14 100644
+--- a/arch/mips/math-emu/cp1emu.c
++++ b/arch/mips/math-emu/cp1emu.c
+@@ -1514,16 +1514,28 @@ static int fpux_emu(struct pt_regs *xcp, struct mips_fpu_struct *ctx,
+ 			break;
+ 
+ 		case madd_s_op:
+-			handler = fpemu_sp_madd;
++			if (cpu_has_mac2008_only)
++				handler = ieee754sp_madd;
++			else
++				handler = fpemu_sp_madd;
+ 			goto scoptop;
+ 		case msub_s_op:
+-			handler = fpemu_sp_msub;
++			if (cpu_has_mac2008_only)
++				handler = ieee754sp_msub;
++			else
++				handler = fpemu_sp_msub;
+ 			goto scoptop;
+ 		case nmadd_s_op:
+-			handler = fpemu_sp_nmadd;
++			if (cpu_has_mac2008_only)
++				handler = ieee754sp_nmadd;
++			else
++				handler = fpemu_sp_nmadd;
+ 			goto scoptop;
+ 		case nmsub_s_op:
+-			handler = fpemu_sp_nmsub;
++			if (cpu_has_mac2008_only)
++				handler = ieee754sp_nmsub;
++			else
++				handler = fpemu_sp_nmsub;
+ 			goto scoptop;
+ 
+ 		      scoptop:
+@@ -1610,15 +1622,27 @@ static int fpux_emu(struct pt_regs *xcp, struct mips_fpu_struct *ctx,
+ 			break;
+ 
+ 		case madd_d_op:
+-			handler = fpemu_dp_madd;
++			if (cpu_has_mac2008_only)
++				handler = ieee754dp_madd;
++			else
++				handler = fpemu_dp_madd;
+ 			goto dcoptop;
+ 		case msub_d_op:
+-			handler = fpemu_dp_msub;
++			if (cpu_has_mac2008_only)
++				handler = ieee754dp_msub;
++			else
++				handler = fpemu_dp_msub;
+ 			goto dcoptop;
+ 		case nmadd_d_op:
+-			handler = fpemu_dp_nmadd;
++			if (cpu_has_mac2008_only)
++				handler = ieee754dp_nmadd;
++			else
++				handler = fpemu_dp_nmadd;
+ 			goto dcoptop;
+ 		case nmsub_d_op:
++			if (cpu_has_mac2008_only)
++				handler = ieee754dp_nmsub;
++			else
+ 			handler = fpemu_dp_nmsub;
+ 			goto dcoptop;
+ 
+diff --git a/arch/mips/math-emu/dp_maddf.c b/arch/mips/math-emu/dp_maddf.c
+index 3da0ce44cdef..e24ef374d828 100644
+--- a/arch/mips/math-emu/dp_maddf.c
++++ b/arch/mips/math-emu/dp_maddf.c
+@@ -68,6 +68,12 @@ static union ieee754dp _dp_maddf(union ieee754dp z, union ieee754dp x,
+ 
+ 	ieee754_clearcx();
+ 
++	rs = xs ^ ys;
++	if (flags & MADDF_NEGATE_PRODUCT)
++		rs ^= 1;
++	if (flags & MADDF_NEGATE_ADDITION)
++		zs ^= 1;
++
+ 	/*
+ 	 * Handle the cases when at least one of x, y or z is a NaN.
+ 	 * Order of precedence is sNaN, qNaN and z, x, y.
+@@ -104,9 +110,7 @@ static union ieee754dp _dp_maddf(union ieee754dp z, union ieee754dp x,
+ 	case CLPAIR(IEEE754_CLASS_INF, IEEE754_CLASS_NORM):
+ 	case CLPAIR(IEEE754_CLASS_INF, IEEE754_CLASS_DNORM):
+ 	case CLPAIR(IEEE754_CLASS_INF, IEEE754_CLASS_INF):
+-		if ((zc == IEEE754_CLASS_INF) &&
+-		    ((!(flags & MADDF_NEGATE_PRODUCT) && (zs != (xs ^ ys))) ||
+-		     ((flags & MADDF_NEGATE_PRODUCT) && (zs == (xs ^ ys))))) {
++		if ((zc == IEEE754_CLASS_INF) && (zs != rs)) {
+ 			/*
+ 			 * Cases of addition of infinities with opposite signs
+ 			 * or subtraction of infinities with same signs.
+@@ -116,15 +120,10 @@ static union ieee754dp _dp_maddf(union ieee754dp z, union ieee754dp x,
+ 		}
+ 		/*
+ 		 * z is here either not an infinity, or an infinity having the
+-		 * same sign as product (x*y) (in case of MADDF.D instruction)
+-		 * or product -(x*y) (in MSUBF.D case). The result must be an
+-		 * infinity, and its sign is determined only by the value of
+-		 * (flags & MADDF_NEGATE_PRODUCT) and the signs of x and y.
++		 * same sign as product (x*y). The result must be an infinity,
++		 * and its sign is determined only by the sign of product (x*y).
+ 		 */
+-		if (flags & MADDF_NEGATE_PRODUCT)
+-			return ieee754dp_inf(1 ^ (xs ^ ys));
+-		else
+-			return ieee754dp_inf(xs ^ ys);
++		return ieee754dp_inf(rs);
+ 
+ 	case CLPAIR(IEEE754_CLASS_ZERO, IEEE754_CLASS_ZERO):
+ 	case CLPAIR(IEEE754_CLASS_ZERO, IEEE754_CLASS_NORM):
+@@ -135,10 +134,7 @@ static union ieee754dp _dp_maddf(union ieee754dp z, union ieee754dp x,
+ 			return ieee754dp_inf(zs);
+ 		if (zc == IEEE754_CLASS_ZERO) {
+ 			/* Handle cases +0 + (-0) and similar ones. */
+-			if ((!(flags & MADDF_NEGATE_PRODUCT)
+-					&& (zs == (xs ^ ys))) ||
+-			    ((flags & MADDF_NEGATE_PRODUCT)
+-					&& (zs != (xs ^ ys))))
++			if (zs == rs)
+ 				/*
+ 				 * Cases of addition of zeros of equal signs
+ 				 * or subtraction of zeroes of opposite signs.
+@@ -187,9 +183,6 @@ static union ieee754dp _dp_maddf(union ieee754dp z, union ieee754dp x,
+ 	assert(ym & DP_HIDDEN_BIT);
+ 
+ 	re = xe + ye;
+-	rs = xs ^ ys;
+-	if (flags & MADDF_NEGATE_PRODUCT)
+-		rs ^= 1;
+ 
+ 	/* shunt to top of word */
+ 	xm <<= 64 - (DP_FBITS + 1);
+@@ -340,3 +333,27 @@ union ieee754dp ieee754dp_msubf(union ieee754dp z, union ieee754dp x,
+ {
+ 	return _dp_maddf(z, x, y, MADDF_NEGATE_PRODUCT);
+ }
++
++union ieee754dp ieee754dp_madd(union ieee754dp z, union ieee754dp x,
++				union ieee754dp y)
++{
++	return _dp_maddf(z, x, y, 0);
++}
++
++union ieee754dp ieee754dp_msub(union ieee754dp z, union ieee754dp x,
++				union ieee754dp y)
++{
++	return _dp_maddf(z, x, y, MADDF_NEGATE_ADDITION);
++}
++
++union ieee754dp ieee754dp_nmadd(union ieee754dp z, union ieee754dp x,
++				union ieee754dp y)
++{
++	return _dp_maddf(z, x, y, MADDF_NEGATE_PRODUCT|MADDF_NEGATE_ADDITION);
++}
++
++union ieee754dp ieee754dp_nmsub(union ieee754dp z, union ieee754dp x,
++				union ieee754dp y)
++{
++	return _dp_maddf(z, x, y, MADDF_NEGATE_PRODUCT);
++}
+diff --git a/arch/mips/math-emu/ieee754.h b/arch/mips/math-emu/ieee754.h
+index b9167bd4eb60..090caa740b1e 100644
+--- a/arch/mips/math-emu/ieee754.h
++++ b/arch/mips/math-emu/ieee754.h
+@@ -68,6 +68,14 @@ union ieee754sp ieee754sp_maddf(union ieee754sp z, union ieee754sp x,
+ 				union ieee754sp y);
+ union ieee754sp ieee754sp_msubf(union ieee754sp z, union ieee754sp x,
+ 				union ieee754sp y);
++union ieee754sp ieee754sp_madd(union ieee754sp z, union ieee754sp x,
++				union ieee754sp y);
++union ieee754sp ieee754sp_msub(union ieee754sp z, union ieee754sp x,
++				union ieee754sp y);
++union ieee754sp ieee754sp_nmadd(union ieee754sp z, union ieee754sp x,
++				union ieee754sp y);
++union ieee754sp ieee754sp_nmsub(union ieee754sp z, union ieee754sp x,
++				union ieee754sp y);
+ int ieee754sp_2008class(union ieee754sp x);
+ union ieee754sp ieee754sp_fmin(union ieee754sp x, union ieee754sp y);
+ union ieee754sp ieee754sp_fmina(union ieee754sp x, union ieee754sp y);
+@@ -103,6 +111,14 @@ union ieee754dp ieee754dp_maddf(union ieee754dp z, union ieee754dp x,
+ 				union ieee754dp y);
+ union ieee754dp ieee754dp_msubf(union ieee754dp z, union ieee754dp x,
+ 				union ieee754dp y);
++union ieee754dp ieee754dp_madd(union ieee754dp z, union ieee754dp x,
++				union ieee754dp y);
++union ieee754dp ieee754dp_msub(union ieee754dp z, union ieee754dp x,
++				union ieee754dp y);
++union ieee754dp ieee754dp_nmadd(union ieee754dp z, union ieee754dp x,
++				union ieee754dp y);
++union ieee754dp ieee754dp_nmsub(union ieee754dp z, union ieee754dp x,
++				union ieee754dp y);
+ int ieee754dp_2008class(union ieee754dp x);
+ union ieee754dp ieee754dp_fmin(union ieee754dp x, union ieee754dp y);
+ union ieee754dp ieee754dp_fmina(union ieee754dp x, union ieee754dp y);
+diff --git a/arch/mips/math-emu/ieee754int.h b/arch/mips/math-emu/ieee754int.h
+index 52b20119e315..2c3b13546ac8 100644
+--- a/arch/mips/math-emu/ieee754int.h
++++ b/arch/mips/math-emu/ieee754int.h
+@@ -16,6 +16,7 @@
+ 
+ enum maddf_flags {
+ 	MADDF_NEGATE_PRODUCT	= 1 << 0,
++	MADDF_NEGATE_ADDITION	= 1 << 1,
+ };
+ 
+ static inline void ieee754_clearcx(void)
+diff --git a/arch/mips/math-emu/sp_maddf.c b/arch/mips/math-emu/sp_maddf.c
+index d638354add6d..1b85b1a527ac 100644
+--- a/arch/mips/math-emu/sp_maddf.c
++++ b/arch/mips/math-emu/sp_maddf.c
+@@ -36,6 +36,12 @@ static union ieee754sp _sp_maddf(union ieee754sp z, union ieee754sp x,
+ 
+ 	ieee754_clearcx();
+ 
++	rs = xs ^ ys;
++	if (flags & MADDF_NEGATE_PRODUCT)
++		rs ^= 1;
++	if (flags & MADDF_NEGATE_ADDITION)
++		zs ^= 1;
++
+ 	/*
+ 	 * Handle the cases when at least one of x, y or z is a NaN.
+ 	 * Order of precedence is sNaN, qNaN and z, x, y.
+@@ -73,9 +79,7 @@ static union ieee754sp _sp_maddf(union ieee754sp z, union ieee754sp x,
+ 	case CLPAIR(IEEE754_CLASS_INF, IEEE754_CLASS_NORM):
+ 	case CLPAIR(IEEE754_CLASS_INF, IEEE754_CLASS_DNORM):
+ 	case CLPAIR(IEEE754_CLASS_INF, IEEE754_CLASS_INF):
+-		if ((zc == IEEE754_CLASS_INF) &&
+-		    ((!(flags & MADDF_NEGATE_PRODUCT) && (zs != (xs ^ ys))) ||
+-		     ((flags & MADDF_NEGATE_PRODUCT) && (zs == (xs ^ ys))))) {
++		if ((zc == IEEE754_CLASS_INF) && (zs != rs)) {
+ 			/*
+ 			 * Cases of addition of infinities with opposite signs
+ 			 * or subtraction of infinities with same signs.
+@@ -85,15 +89,10 @@ static union ieee754sp _sp_maddf(union ieee754sp z, union ieee754sp x,
+ 		}
+ 		/*
+ 		 * z is here either not an infinity, or an infinity having the
+-		 * same sign as product (x*y) (in case of MADDF.D instruction)
+-		 * or product -(x*y) (in MSUBF.D case). The result must be an
+-		 * infinity, and its sign is determined only by the value of
+-		 * (flags & MADDF_NEGATE_PRODUCT) and the signs of x and y.
++		 * same sign as product (x*y). The result must be an infinity,
++		 * and its sign is determined only by the sign of product (x*y).
+ 		 */
+-		if (flags & MADDF_NEGATE_PRODUCT)
+-			return ieee754sp_inf(1 ^ (xs ^ ys));
+-		else
+-			return ieee754sp_inf(xs ^ ys);
++		return ieee754sp_inf(rs);
+ 
+ 	case CLPAIR(IEEE754_CLASS_ZERO, IEEE754_CLASS_ZERO):
+ 	case CLPAIR(IEEE754_CLASS_ZERO, IEEE754_CLASS_NORM):
+@@ -104,10 +103,7 @@ static union ieee754sp _sp_maddf(union ieee754sp z, union ieee754sp x,
+ 			return ieee754sp_inf(zs);
+ 		if (zc == IEEE754_CLASS_ZERO) {
+ 			/* Handle cases +0 + (-0) and similar ones. */
+-			if ((!(flags & MADDF_NEGATE_PRODUCT)
+-					&& (zs == (xs ^ ys))) ||
+-			    ((flags & MADDF_NEGATE_PRODUCT)
+-					&& (zs != (xs ^ ys))))
++			if (zs == rs)
+ 				/*
+ 				 * Cases of addition of zeros of equal signs
+ 				 * or subtraction of zeroes of opposite signs.
+@@ -158,9 +154,6 @@ static union ieee754sp _sp_maddf(union ieee754sp z, union ieee754sp x,
+ 	assert(ym & SP_HIDDEN_BIT);
+ 
+ 	re = xe + ye;
+-	rs = xs ^ ys;
+-	if (flags & MADDF_NEGATE_PRODUCT)
+-		rs ^= 1;
+ 
+ 	/* Multiple 24 bit xm and ym to give 48 bit results */
+ 	rm64 = (uint64_t)xm * ym;
+@@ -260,3 +253,27 @@ union ieee754sp ieee754sp_msubf(union ieee754sp z, union ieee754sp x,
+ {
+ 	return _sp_maddf(z, x, y, MADDF_NEGATE_PRODUCT);
+ }
++
++union ieee754sp ieee754sp_madd(union ieee754sp z, union ieee754sp x,
++				union ieee754sp y)
++{
++	return _sp_maddf(z, x, y, 0);
++}
++
++union ieee754sp ieee754sp_msub(union ieee754sp z, union ieee754sp x,
++				union ieee754sp y)
++{
++	return _sp_maddf(z, x, y, MADDF_NEGATE_ADDITION);
++}
++
++union ieee754sp ieee754sp_nmadd(union ieee754sp z, union ieee754sp x,
++				union ieee754sp y)
++{
++	return _sp_maddf(z, x, y, MADDF_NEGATE_PRODUCT|MADDF_NEGATE_ADDITION);
++}
++
++union ieee754sp ieee754sp_nmsub(union ieee754sp z, union ieee754sp x,
++				union ieee754sp y)
++{
++	return _sp_maddf(z, x, y, MADDF_NEGATE_PRODUCT);
++}
+-- 
+2.24.1
 
-I still have no clue what your actual problem is. You say scheduling
-goes wobbly because sched_clock_data is stale, but when stable that
-doesn't matter.
-
-So what is the actual problem?
