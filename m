@@ -2,183 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C73B138F98
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 11:51:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D49C8138F9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 11:52:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbgAMKvF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 05:51:05 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34980 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbgAMKvE (ORCPT
+        id S1728699AbgAMKwH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 05:52:07 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33317 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbgAMKwG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 05:51:04 -0500
-Received: by mail-wr1-f68.google.com with SMTP id g17so8038110wro.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 02:51:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rX6hYkQTcPkxFSQTp22iI/GTbRzDTSn2mT2N78MPltg=;
-        b=oKkpYKtvG22DswPrnQPe4mDphOZzPeWS9Fm/gBtPFXIi/eh1IzHY8X22AlrD5VKaYE
-         s+qOTZJe21UPh7e2M2/VVXjI1lW86ypWRIgklVRlnZXV2m3TNbBYjdeCk1bOikndC3V+
-         aTL2Zqv9kyPeC8epB3SLemTlwjlE2X2XmGN7A=
+        Mon, 13 Jan 2020 05:52:06 -0500
+Received: by mail-oi1-f195.google.com with SMTP id v140so7827422oie.0;
+        Mon, 13 Jan 2020 02:52:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rX6hYkQTcPkxFSQTp22iI/GTbRzDTSn2mT2N78MPltg=;
-        b=lNocnEXp6Q3E9QAsmhk+MF5EuzZGOvP5MhyUXwSJrrQ5vnY6Mm0BlRfWz47puiKnpu
-         tTYizR3z0UGU+BNaqrxNdyosfL9b1wy92P2ECKM+KZpihnyG0mG5yr6I5NrIQrQoXMP3
-         iEKNg61y3PUS6UjkkRepqC7U8C+FpDx6RlNLS31NGBGXpUGMPl9HLKKwku4ODXf1k4KH
-         h8HHt99AdjLI9UN5HA0cpiEH03RZ7BG0IuNwXH/DNjdRrV9EeqL/8FJZLlachLO+tAS3
-         4JGtKlWAc0CfbqNkv/UyhrTzUCLMjdd6uM3/FaJjHMIez91Gjma8s6rIe4iBpDJO5TEK
-         XeRg==
-X-Gm-Message-State: APjAAAWJIS9IeAMU0Vu5ELiKaCwl7AP/QIY9K+J+2u1mE2LLmLLlRuuG
-        pKzcoxQqwjjVOjISpjC0ab8yyQ==
-X-Google-Smtp-Source: APXvYqzk/HkmF6+cavSIKEIJ+Fq8mnrnSFzOKUU4OvMZdAPLWjQsZPS2kwS1LaOaiSPQQo0ar0Br5A==
-X-Received: by 2002:adf:ef8b:: with SMTP id d11mr12548851wro.45.1578912662627;
-        Mon, 13 Jan 2020 02:51:02 -0800 (PST)
-Received: from google.com ([2a00:79e0:42:204:8a21:ba0c:bb42:75ec])
-        by smtp.gmail.com with ESMTPSA id s3sm13791867wmh.25.2020.01.13.02.51.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 02:51:02 -0800 (PST)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Mon, 13 Jan 2020 11:51:00 +0100
-To:     Florent Revest <revest@chromium.org>
-Cc:     linux-integrity@vger.kernel.org, kpsingh@chromium.org,
-        mjg59@google.com, zohar@linux.ibm.com, nramas@linux.microsoft.com,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Florent Revest <revest@google.com>
-Subject: Re: [PATCH v3] ima: add the ability to query the cached hash of a
- given file
-Message-ID: <20200113105100.GA31000@google.com>
-References: <20200113094244.26678-1-revest@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jtPM0qNpCXM1Rp0ETmaEt0V+zDCKJAyqKnvcFDnN5TI=;
+        b=WA4RR2py+X17VEccHsq0Sdywm2W6ngeIRGqz90eIxFxnLoNNH2GhBqHz0n9S118gJc
+         zskt81YTcUo+d9Fj2CTm1kffpU2UPoJYCXCyE201l58tLyLZDA9t45UdwDazYqbtXJIb
+         sVrU7nBIHEMf7NpTfzR7XympmiEA4cwYdQucqsWCqzv2XVzc22hDeYUx1LlmuMwGVbhn
+         0OBuGyTOFN+Du9SJaKcdfC881dPjwoA7wOpuzgKRwoG+YPKhq4Av0bf/Kezco38fT43W
+         Oh1p34UU5m67PG1MjLvgRpZ4IjJa6U5LsMHtvH5AgNlN3Rcaq6kUzTxxH1M+bQpaM9pH
+         4IwA==
+X-Gm-Message-State: APjAAAX1zJaAvdkl4srzVC7XPnEh1fsq0UoNOxpgGfTGhwg7R+UHv0fN
+        3jaIVuxVpQmh3cLF4ckbwkajK45/rR9usETeSD4=
+X-Google-Smtp-Source: APXvYqwbPBJ7mO31GdY19gP+AB/5p+E2X/W43tAwX6BnwDbHMCtzOVfiGXE9nXaiCBE06uLBIrvcFyfeOTJNQ6C/roU=
+X-Received: by 2002:aca:d6c8:: with SMTP id n191mr12916572oig.103.1578912725769;
+ Mon, 13 Jan 2020 02:52:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200113094244.26678-1-revest@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1578503858-27853-1-git-send-email-bupadhaya@marvell.com> <20200109095026.GA5603@zn.tnic>
+In-Reply-To: <20200109095026.GA5603@zn.tnic>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 13 Jan 2020 11:51:54 +0100
+Message-ID: <CAJZ5v0gohOwnGqMk86Zyqxn11fxukXifSe=T08n7vrvv5Q4QNw@mail.gmail.com>
+Subject: Re: [PATCH V2] apei/ghes: fix ghes_poll_func by registering in
+ non-deferrable mode
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Bhaskar Upadhaya <bupadhaya@marvell.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "open list:EDAC-CORE" <linux-edac@vger.kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, gkulkarni@marvell.com,
+        Robert Richter <rrichter@marvell.com>,
+        bhaskar.upadhaya.linux@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-Jan 10:42, Florent Revest wrote:
-> From: Florent Revest <revest@google.com>
-> 
-> This allows other parts of the kernel (perhaps a stacked LSM allowing
-> system monitoring, eg. the proposed KRSI LSM [1]) to retrieve the hash
-> of a given file from IMA if it's present in the iint cache.
-> 
-> It's true that the existence of the hash means that it's also in the
-> audit logs or in /sys/kernel/security/ima/ascii_runtime_measurements,
-> but it can be difficult to pull that information out for every
-> subsequent exec. This is especially true if a given host has been up
-> for a long time and the file was first measured a long time ago.
-> 
-> It should be kept in mind that this function gives access to cached
-> entries which can be removed, for instance on security_inode_free().
-> 
-> This is based on Peter Moody's patch:
->  https://sourceforge.net/p/linux-ima/mailman/message/33036180/
-> 
-> [1] https://lkml.org/lkml/2019/9/10/393
-> 
-> Signed-off-by: Florent Revest <revest@google.com>
+On Thu, Jan 9, 2020 at 10:50 AM Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Wed, Jan 08, 2020 at 09:17:38AM -0800, Bhaskar Upadhaya wrote:
+> > Currently Linux register ghes_poll_func with TIMER_DEFERRABLE flag,
+> > because of which it is serviced when the CPU eventually wakes up with a
+> > subsequent non-deferrable timer and not at the configured polling interval.
+> >
+> > For polling mode, the polling interval configured by firmware should not
+> > be exceeded as per ACPI_6_3 spec[refer Table 18-394], So Timer need to
+> > be configured in non-deferrable mode by removing TIMER_DEFERRABLE flag.
+> > With NO_HZ enabled and timer callback being configured in non-deferrable
+> > mode, timer callback will get called exactly after polling interval.
+> >
+> > Definition of poll interval as per spec (referred ACPI 6.3):
+> > "Indicates the poll interval in milliseconds OSPM should use to
+> > periodically check the error source for the presence of an error
+> > condition"
+> >
+> > We are observing an issue in our ThunderX2 platforms wherein
+> > ghes_poll_func is not called within poll interval when timer is
+> > configured with TIMER_DEFERRABLE flag(For NO_HZ kernel) and hence
+> > we are losing the error records.
+> >
+> > Impact of removing TIMER_DEFFERABLE flag
+> > - With NO_HZ enabled, additional timer ticks and unnecessary wakeups of
+> >  the cpu happens exactly after polling interval.
+> >
+> > - If polling interval is too small than polling function will be called
+> >  too frequently which may stall the cpu.
+>
+> If that becomes a problem, the polling interval setting should be fixed
+> to filter too small values.
+>
+> Anyway, I went and streamlined your commit message:
+>
+>     apei/ghes: Do not delay GHES polling
+>
+>     Currently, the ghes_poll_func() timer callback is registered with the
+>     TIMER_DEFERRABLE flag. Thus, it is run when the CPU eventually wakes
+>     up together with a subsequent non-deferrable timer and not at the precisely
+>     configured polling interval.
+>
+>     For polling mode, the polling interval configured by firmware should not
+>     be exceeded according to the ACPI spec 6.3, Table 18-394. The definition
+>     of the polling interval is:
+>
+>     "Indicates the poll interval in milliseconds OSPM should use to
+>     periodically check the error source for the presence of an error
+>     condition."
+>
+>     If this interval is extended due to the timer callback deferring, error
+>     records can get lost. Which we are observing on our ThunderX2 platforms.
+>
+>     Therefore, remove the TIMER_DEFERRABLE flag so that the timer callback
+>     executes at the precise interval.
+>
+> and made it more readable, hopefully.
+>
+> Rafael, pls fixup when applying.
 
-Reviewed-by: KP Singh <kpsingh@chromium.org>
+Done.
 
-> ---
->  include/linux/ima.h               |  6 ++++
->  security/integrity/ima/ima_main.c | 49 +++++++++++++++++++++++++++++++
->  2 files changed, 55 insertions(+)
-> 
-> diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index f4644c54f648..1659217e9b60 100644
-> --- a/include/linux/ima.h
-> +++ b/include/linux/ima.h
-> @@ -23,6 +23,7 @@ extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
->  extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
->  			      enum kernel_read_file_id id);
->  extern void ima_post_path_mknod(struct dentry *dentry);
-> +extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
->  extern void ima_kexec_cmdline(const void *buf, int size);
->  
->  #ifdef CONFIG_IMA_KEXEC
-> @@ -91,6 +92,11 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
->  	return;
->  }
->  
-> +static inline int ima_file_hash(struct file *file, char *buf, size_t buf_size)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
->  static inline void ima_kexec_cmdline(const void *buf, int size) {}
->  #endif /* CONFIG_IMA */
->  
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 2272c3255c7d..9fe949c6a530 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -445,6 +445,55 @@ int ima_file_check(struct file *file, int mask)
->  }
->  EXPORT_SYMBOL_GPL(ima_file_check);
->  
-> +/**
-> + * ima_file_hash - return the stored measurement if a file has been hashed and
-> + * is in the iint cache.
-> + * @file: pointer to the file
-> + * @buf: buffer in which to store the hash
-> + * @buf_size: length of the buffer
-> + *
-> + * On success, return the hash algorithm (as defined in the enum hash_algo).
-> + * If buf is not NULL, this function also outputs the hash into buf.
-> + * If the hash is larger than buf_size, then only buf_size bytes will be copied.
-> + * It generally just makes sense to pass a buffer capable of holding the largest
-> + * possible hash: IMA_MAX_DIGEST_SIZE.
-> + * The file hash returned is based on the entire file, including the appended
-> + * signature.
-> + *
-> + * If IMA is disabled or if no measurement is available, return -EOPNOTSUPP.
-> + * If the parameters are incorrect, return -EINVAL.
-> + */
-> +int ima_file_hash(struct file *file, char *buf, size_t buf_size)
-> +{
-> +	struct inode *inode;
-> +	struct integrity_iint_cache *iint;
-> +	int hash_algo;
-> +
-> +	if (!file)
-> +		return -EINVAL;
-> +
-> +	if (!ima_policy_flag)
-> +		return -EOPNOTSUPP;
-> +
-> +	inode = file_inode(file);
-> +	iint = integrity_iint_find(inode);
-> +	if (!iint)
-> +		return -EOPNOTSUPP;
-> +
-> +	mutex_lock(&iint->mutex);
-> +	if (buf) {
-> +		size_t copied_size;
-> +
-> +		copied_size = min_t(size_t, iint->ima_hash->length, buf_size);
-> +		memcpy(buf, iint->ima_hash->digest, copied_size);
-> +	}
-> +	hash_algo = iint->ima_hash->algo;
-> +	mutex_unlock(&iint->mutex);
-> +
-> +	return hash_algo;
-> +}
-> +EXPORT_SYMBOL_GPL(ima_file_hash);
-> +
->  /**
->   * ima_post_create_tmpfile - mark newly created tmpfile as new
->   * @file : newly created tmpfile
-> -- 
-> 2.25.0.rc1.283.g88dfdc4193-goog
-> 
+> With that:
+>
+> Acked-by: Borislav Petkov <bp@suse.de>
+
+Thanks!
