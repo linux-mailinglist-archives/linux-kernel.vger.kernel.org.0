@@ -2,121 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BB93138F5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 11:41:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78DA2138F67
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 11:41:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbgAMKlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 05:41:23 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55967 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbgAMKlX (ORCPT
+        id S1728773AbgAMKlz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 05:41:55 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:50378 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728512AbgAMKlz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 05:41:23 -0500
-Received: by mail-wm1-f68.google.com with SMTP id q9so9054083wmj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 02:41:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=6jcup08EYfdIWJkOanS1mKfEl62Vehirifel7nrZFi8=;
-        b=Twb97kuznKKWouAzZb6gfEs94jiWvVsrpQlqIlnqGPt1ci4uSIoG4CHcBwtASDnsQE
-         zZyISJxTEMvvvG7LA0UcN9H44LxfCB273dB+3PaIkVQO3lEicu0eGVE5OF7kuatWEF9w
-         WIPChvLGCkSxTIEeNln8JWyIbxU918XHophnLmzWhy7xjbW/YWCoisbzOZo+nU8y9KzP
-         eRUDH5p8LTe2iYLOtn7+3vBKRWx5O6YDsxdBPmVWhOaAFzvvw8kz5K3p6YJhPAXVAQfh
-         kmZc7uLTxQSGNKIkWwa/P05WLQ/BEqZTJIlvCmRc1jEsgKmgHjdvbs6v6atk109YCV3b
-         GiYg==
+        Mon, 13 Jan 2020 05:41:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578912112;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GJEbtVcYCYsYzHFQQH8H+wrqKP98/+Ixpvz8Qz58wLw=;
+        b=Duu+bGkVNcPVz2Y4skNbrZWAGrdnCmj7P4rXMhBRqlzBjlO5z6rPKnutfrzUz0K3VFHbkc
+        KYGwYLbKrnvH80yrTzJup55VLnMC3C2jBxPbtsthYBnGqyZOSFNQxsgtkOgPKc9yO0Xv24
+        XlNiOwXJ8VUKAGRz7iZtZ8lbIZeuLhI=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-410-UmV_porwNY6DNXWvZKlrow-1; Mon, 13 Jan 2020 05:41:51 -0500
+X-MC-Unique: UmV_porwNY6DNXWvZKlrow-1
+Received: by mail-wr1-f71.google.com with SMTP id k18so4835715wrw.9
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 02:41:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=6jcup08EYfdIWJkOanS1mKfEl62Vehirifel7nrZFi8=;
-        b=ccaBMIIPEFV76O0Y94NrYg6O/YDJGNs6GOdqABAbZEAiI4cE0Y8Yvw/utwEB9lBeG8
-         87gjaLin/rPBJrIjuuzL1jzG87UROfXc6XQux7xODSrC1r+5bPQ7s4y16m73wXBC54V6
-         lABiN23LKdnDEWf/JFdwG8kTFtyo1NTwvmuzRjKP4x0rNMbW+JOfjWAkGlNtl63m7wOv
-         pPjMnkRtLv+3GRoDrQlwiaAqpZoi/2pptXZcrgjdvZajmshMA876Aymm7rpVgBejQq4S
-         tokUNZB7UlAy2rcVUkcHbbtejzC85XeSbxUNrd7h3N47ZH2EcS1NQonnQ5e9z86S6+98
-         YVpg==
-X-Gm-Message-State: APjAAAWCCGZHSPQea/HTslJUhu53yQyDKEM8TSAg96KgeQRAK6e338GS
-        4hmovz6DFx+XnOM3qONcopyclA==
-X-Google-Smtp-Source: APXvYqx9YbeI8hRBLildMn6KQTJSQm3o5n+ERet7Ix0GsFULrr+vh/Vn1VdcOQ0Wkyg632JhNTohwg==
-X-Received: by 2002:a05:600c:2283:: with SMTP id 3mr19680976wmf.100.1578912081445;
-        Mon, 13 Jan 2020 02:41:21 -0800 (PST)
-Received: from dell ([95.147.198.95])
-        by smtp.gmail.com with ESMTPSA id f1sm14642899wmc.45.2020.01.13.02.41.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 02:41:20 -0800 (PST)
-Date:   Mon, 13 Jan 2020 10:41:41 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 1/2] mfd: madera: Allow more time for hardware reset
-Message-ID: <20200113104141.GC5414@dell>
-References: <20200106102834.31301-1-ckeepax@opensource.cirrus.com>
- <20200107142742.GN14821@dell>
- <20200108084640.GI10451@ediswmail.ad.cirrus.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GJEbtVcYCYsYzHFQQH8H+wrqKP98/+Ixpvz8Qz58wLw=;
+        b=Xmw5RoUQo6Cno6b+IPVW5xGnVb33vmlfpF5op2UVChSjl02PGCn6gstTd42bQOUa0/
+         4il571oNvKLhoQqyr27K0zPu0+hfufRLtWZtQkaZ7Q2YubZHVxwy2J5qh0qFnRhwmziT
+         fQ98I1R8pU/BvTaVZeC0K1d3zfWEFJbS/6UQqr+YIONZBBU5V1h6lmwzdtmGyd+V8Djp
+         bdZ5WblX1gBZ10t8wggtI1Q4NWoq7ku36v1J3HlYfOlBEk+olX/8TjHSsfDxuBdG6tsA
+         RPJW5Whdy/5jC812hG+SoRw+goVEN1bf5FJZxQ7ToOTc0Fe35SJ1DPIh49re7hpvNodn
+         KRMQ==
+X-Gm-Message-State: APjAAAWBEGHz5v5sIVRyI3l41nXuhCR2g5LG2fONu1RsQjKSYE1YzVdn
+        aMP8xQ8SpbT1uo6lphTVo9mwvcFwZRxEeot74CBhYdt8DB664iLpYePjmP1yjWY7yUyuo3pzzAn
+        +Hw5ZNRzuOHxyObHiP39xiau9
+X-Received: by 2002:adf:f5cf:: with SMTP id k15mr18185425wrp.182.1578912110688;
+        Mon, 13 Jan 2020 02:41:50 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwTaRrUorrV25kUMcn86Ibeg1yxvRIfWO4wbNVDFWXR6W47GP/TaN/2ZA8nilR0VNOisMdSgA==
+X-Received: by 2002:adf:f5cf:: with SMTP id k15mr18185402wrp.182.1578912110433;
+        Mon, 13 Jan 2020 02:41:50 -0800 (PST)
+Received: from shalem.localdomain (2001-1c00-0c0c-fe00-7e79-4dac-39d0-9c14.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:7e79:4dac:39d0:9c14])
+        by smtp.gmail.com with ESMTPSA id t5sm14405988wrr.35.2020.01.13.02.41.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jan 2020 02:41:49 -0800 (PST)
+Subject: Re: [PATCH 1/3] Input: axp20x-pek - Remove unique wakeup event
+ handling
+To:     Samuel Holland <samuel@sholland.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+References: <20200113032032.38709-1-samuel@sholland.org>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <6c876812-6ec1-cf28-8ce4-7732c5cf67da@redhat.com>
+Date:   Mon, 13 Jan 2020 11:41:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200108084640.GI10451@ediswmail.ad.cirrus.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200113032032.38709-1-samuel@sholland.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 08 Jan 2020, Charles Keepax wrote:
+Hi,
 
-> On Tue, Jan 07, 2020 at 02:27:42PM +0000, Lee Jones wrote:
-> > On Mon, 06 Jan 2020, Charles Keepax wrote:
-> > 
-> > > Both manual and power on resets have a brief period where the chip will
-> > > not be accessible immediately afterwards. Extend the time allowed for
-> > > this from a minimum of 1mS to 2mS based on newer evaluation of the
-> > > hardware and ensure this reset happens in all reset conditions. Whilst
-> > > making the change also remove the redundant NULL checks in the reset
-> > > functions as the GPIO functions already check for this.
-> > > 
-> > > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> > > ---
-> > >  drivers/mfd/madera-core.c | 18 ++++++++++--------
-> > >  1 file changed, 10 insertions(+), 8 deletions(-)
-> > > 
-> > > diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
-> > > index a8cfadc1fc01e..f41ce408259fb 100644
-> > > --- a/drivers/mfd/madera-core.c
-> > > +++ b/drivers/mfd/madera-core.c
-> > > @@ -238,6 +238,11 @@ static int madera_wait_for_boot(struct madera *madera)
-> > >  	return ret;
-> > >  }
-> > >  
-> > > +static inline void madera_reset_delay(void)
-> > > +{
-> > > +	usleep_range(2000, 3000);
-> > > +}
-> > 
-> > Hmm ... We usually shy away from abstraction for the sake of
-> > abstraction.  What's preventing you from using the preferred method of
-> > simply calling the abstracted function from each of the call-sites?
-> > 
-> > I could understand (a little) if you needed to frequently change these
-> > values, since changing them in once place is obviously simpler than
-> > changing them in 3, but even then it's marginal.
-> > 
+On 13-01-2020 04:20, Samuel Holland wrote:
+> This driver attempts to avoid reporting wakeup events to userspace by
+> clearing a possible pending IRQ before IRQs are enabled during resume.
+> The assumption seems to be that userspace cannot cope with a KEY_POWER
+> press during resume. However, no other input driver does this, so it
+> would be a bug that such events are missing with this driver.
 > 
-> I don't mind manually inline it, we don't plan on changing the
-> values very often certainly. It really was just to avoid future
-> bugs if someone adds a new place that needs the delay or does
-> indeed change the delay. Would you mind if I used a define for
-> the time instead, if I am manually inlining? That keeps the same
-> single place to update, but without the extra function.
+> Furthermore, for PMICs connected via I2C or RSB, it is not possible to
+> update the regmap during the noirq resume phase, because the bus
+> controller drivers require IRQs to perform bus transactions. And the
+> resume hook cannot move to a later phase, because then it would race
+> with the power key IRQ handler.
+> 
+> So the best solution seems to be simply removing the hook.
 
-That would be my preference, yes.
+Hmm, I'm not sure this is a good idea, let me give you some background
+info on this:
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+This hook was handled because on X86 systems/laptops when waking
+them up typically the power-button does not send a KEY_POWER press event
+when the system was woken up through the power-button.
+
+So normal (e.g. Debian, Fedora) userspace does not expect this event
+and will directly go to sleep again because that is the default behavior
+on a KEY_POWER event.
+
+On x86 axp20x-pek is only used for the power-button on Bay Trail devices
+with a AXP288 PMIC. On Cherry Trail devices with an AXP288 PMIC the
+power-button is also connected directly to a GPIO on the SoC and that
+is used (also see the axp20x_pek_should_register_input function).
+
+So after writing this patch, when doing hw-enablement for the power-button
+on the Cherry Trail devices I learned that the gpio_keys driver does
+send userspace a KEY_POWER event when woken up with the power-button.
+
+I wrote a patch for gpio-keys to not do this, as that is what normal
+Linux userspace expects, but that was nacked, because under e.g.
+Android the KEY_POWER event is actually desirable / necessary to avoid
+Android immediately re-suspending the system again. Since my "fix" to
+the gpio-keys devices was nacked I have instead wroked around this in
+userspace, but *only* for the GNOME3 desktop environment, by teaching
+GNOME3 to ignore KEY_POWER events for the first couple of seconds after
+a resume.
+
+So your suggested change, which will cause KEY_POWER to be send on
+Bay Trail devices after a wake-up by the power button, should be
+fine for recent GNOME3 versions, but for other desktop environments
+this may cause a regression where they respond to the new KEY_POWER
+event by immediately going back to sleep again.
+
+As for this not working with the i2c bus, it does on X86 because
+the PMIC is also directly accessed by the power-management HW of
+the SoC and to make this work the i2c-controller is never suspended
+and its irq is marked IRQF_NO_SUSPEND. But this is X86 special
+sauce.
+
+Summarizing:
+
+I'm personally fine with remove the magic I added to suppress
+the KEY_POWER press reporting as in hindsight given the gpio-keys
+story I should have never added it. But I'm worried about this
+causing regressions for some Bay Trail users. OTOH making this
+change would be good for Android X86 users.
+
+Another IMHO better fix would be to drop the __maybe_unused and
+instead wrap both the axp20x_pek_resume_noirq function and the
+init of the  .resume_noirq struct member with:
+
+#if defined X86 && defined CONFIG_PM_SLEEP
+
+This keeps the current behavior on Bay Trail machines, while
+I assume it should also fix the issues this was causing for
+your setup.
+
+Regards,
+
+Hans
+
+
+
+
+
+
+
+
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> ---
+>   drivers/input/misc/axp20x-pek.c | 25 -------------------------
+>   1 file changed, 25 deletions(-)
+> 
+> diff --git a/drivers/input/misc/axp20x-pek.c b/drivers/input/misc/axp20x-pek.c
+> index 17c1cca74498..7d0ee5bececb 100644
+> --- a/drivers/input/misc/axp20x-pek.c
+> +++ b/drivers/input/misc/axp20x-pek.c
+> @@ -352,30 +352,6 @@ static int axp20x_pek_probe(struct platform_device *pdev)
+>   	return 0;
+>   }
+>   
+> -static int __maybe_unused axp20x_pek_resume_noirq(struct device *dev)
+> -{
+> -	struct axp20x_pek *axp20x_pek = dev_get_drvdata(dev);
+> -
+> -	if (axp20x_pek->axp20x->variant != AXP288_ID)
+> -		return 0;
+> -
+> -	/*
+> -	 * Clear interrupts from button presses during suspend, to avoid
+> -	 * a wakeup power-button press getting reported to userspace.
+> -	 */
+> -	regmap_write(axp20x_pek->axp20x->regmap,
+> -		     AXP20X_IRQ1_STATE + AXP288_IRQ_POKN / 8,
+> -		     BIT(AXP288_IRQ_POKN % 8));
+> -
+> -	return 0;
+> -}
+> -
+> -static const struct dev_pm_ops axp20x_pek_pm_ops = {
+> -#ifdef CONFIG_PM_SLEEP
+> -	.resume_noirq = axp20x_pek_resume_noirq,
+> -#endif
+> -};
+> -
+>   static const struct platform_device_id axp_pek_id_match[] = {
+>   	{
+>   		.name = "axp20x-pek",
+> @@ -394,7 +370,6 @@ static struct platform_driver axp20x_pek_driver = {
+>   	.id_table	= axp_pek_id_match,
+>   	.driver		= {
+>   		.name		= "axp20x-pek",
+> -		.pm		= &axp20x_pek_pm_ops,
+>   		.dev_groups	= axp20x_groups,
+>   	},
+>   };
+> 
+
