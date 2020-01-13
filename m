@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FF6C1399FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 20:12:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8017C13999C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 20:09:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729427AbgAMTMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 14:12:01 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:39862 "EHLO
+        id S1728850AbgAMTJe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 14:09:34 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:39845 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728809AbgAMTJd (ORCPT
+        with ESMTP id S1728748AbgAMTJa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 14:09:33 -0500
+        Mon, 13 Jan 2020 14:09:30 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ir55Z-0000un-2G; Mon, 13 Jan 2020 20:09:25 +0100
+        id 1ir55Y-0000uk-PZ; Mon, 13 Jan 2020 20:09:24 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 89EBB1C18DC;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 52C941C18DB;
         Mon, 13 Jan 2020 20:09:24 +0100 (CET)
 Date:   Mon, 13 Jan 2020 19:09:24 -0000
 From:   "tip-bot2 for Andrei Vagin" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] selftests/timens: Add timer offsets test
+Subject: [tip: timers/core] selftests/timens: Add a simple perf test for
+ clock_gettime()
 Cc:     Andrei Vagin <avagin@gmail.com>, Dmitry Safonov <dima@arista.com>,
         Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191112012724.250792-33-dima@arista.com>
-References: <20191112012724.250792-33-dima@arista.com>
+In-Reply-To: <20191112012724.250792-34-dima@arista.com>
+References: <20191112012724.250792-34-dima@arista.com>
 MIME-Version: 1.0
-Message-ID: <157894256442.19145.16325226194340738038.tip-bot2@tip-bot2>
+Message-ID: <157894256412.19145.5394032962214026465.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,190 +48,170 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     c116c543837f743e0202750be5e27fcbe8c69bc8
-Gitweb:        https://git.kernel.org/tip/c116c543837f743e0202750be5e27fcbe8c69bc8
-Author:        Andrei Vagin <avagin@openvz.org>
-AuthorDate:    Tue, 12 Nov 2019 01:27:21 
+Commit-ID:     bc98f39530891e14e9bf5119bd38a3a6af3a67d9
+Gitweb:        https://git.kernel.org/tip/bc98f39530891e14e9bf5119bd38a3a6af3a67d9
+Author:        Andrei Vagin <avagin@gmail.com>
+AuthorDate:    Tue, 12 Nov 2019 01:27:22 
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 13 Jan 2020 08:10:59 +01:00
+CommitterDate: Mon, 13 Jan 2020 08:11:00 +01:00
 
-selftests/timens: Add timer offsets test
-
-Check that timer_create() takes into account clock offsets.
+selftests/timens: Add a simple perf test for clock_gettime()
 
 Output on success:
- 1..3
- ok 1 clockid=7
- ok 2 clockid=1
- ok 3 clockid=9
- # Pass 3 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..4
+ ok 1 host:	clock:  monotonic	cycles:	 148323947
+ ok 2 host:	clock:   boottime	cycles:	 148577503
+ ok 3 ns:	clock:  monotonic	cycles:	 137659217
+ ok 4 ns:	clock:   boottime	cycles:	 137959154
+ # Pass 4 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
 
 Output with lack of permissions:
- 1..3
- not ok 1 # SKIP need to run as root
+ 1..4
+ ok 1 host:	clock:  monotonic	cycles:	 145671139
+ ok 2 host:	clock:   boottime	cycles:	 146958357
+ not ok 3 # SKIP need to run as root
 
 Output without support of time namespaces:
- 1..3
- not ok 1 # SKIP Time namespaces are not supported
+ 1..4
+ ok 1 host:	clock:  monotonic	cycles:	 145671139
+ ok 2 host:	clock:   boottime	cycles:	 146958357
+ not ok 3 # SKIP Time namespaces are not supported
 
 Co-developed-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Andrei Vagin <avagin@gmail.com>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20191112012724.250792-33-dima@arista.com
+Link: https://lore.kernel.org/r/20191112012724.250792-34-dima@arista.com
 
 ---
- tools/testing/selftests/timens/.gitignore |   1 +-
- tools/testing/selftests/timens/Makefile   |   2 +-
- tools/testing/selftests/timens/timer.c    | 122 +++++++++++++++++++++-
- 3 files changed, 124 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/timens/timer.c
+ tools/testing/selftests/timens/.gitignore     |  2 +-
+ tools/testing/selftests/timens/Makefile       |  3 +-
+ tools/testing/selftests/timens/gettime_perf.c | 95 ++++++++++++++++++-
+ 3 files changed, 99 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/timens/gettime_perf.c
 
 diff --git a/tools/testing/selftests/timens/.gitignore b/tools/testing/selftests/timens/.gitignore
-index 94ffdd9..3b7eda8 100644
+index 3b7eda8..16292e4 100644
 --- a/tools/testing/selftests/timens/.gitignore
 +++ b/tools/testing/selftests/timens/.gitignore
-@@ -1,4 +1,5 @@
+@@ -1,4 +1,6 @@
  clock_nanosleep
++gettime_perf
++gettime_perf_cold
  procfs
  timens
-+timer
- timerfd
+ timer
 diff --git a/tools/testing/selftests/timens/Makefile b/tools/testing/selftests/timens/Makefile
-index 8a33df7..0816454 100644
+index 0816454..6aefcac 100644
 --- a/tools/testing/selftests/timens/Makefile
 +++ b/tools/testing/selftests/timens/Makefile
-@@ -1,4 +1,4 @@
--TEST_GEN_PROGS := timens timerfd clock_nanosleep procfs
-+TEST_GEN_PROGS := timens timerfd timer clock_nanosleep procfs
+@@ -1,6 +1,7 @@
+ TEST_GEN_PROGS := timens timerfd timer clock_nanosleep procfs
++TEST_GEN_PROGS_EXTENDED := gettime_perf
  
  CFLAGS := -Wall -Werror -pthread
- LDFLAGS := -lrt
-diff --git a/tools/testing/selftests/timens/timer.c b/tools/testing/selftests/timens/timer.c
+-LDFLAGS := -lrt
++LDFLAGS := -lrt -ldl
+ 
+ include ../lib.mk
+diff --git a/tools/testing/selftests/timens/gettime_perf.c b/tools/testing/selftests/timens/gettime_perf.c
 new file mode 100644
-index 0000000..0cca7aa
+index 0000000..7bf841a
 --- /dev/null
-+++ b/tools/testing/selftests/timens/timer.c
-@@ -0,0 +1,122 @@
++++ b/tools/testing/selftests/timens/gettime_perf.c
+@@ -0,0 +1,95 @@
 +// SPDX-License-Identifier: GPL-2.0
 +#define _GNU_SOURCE
-+#include <sched.h>
-+
-+#include <sys/syscall.h>
 +#include <sys/types.h>
-+#include <sys/wait.h>
++#include <sys/stat.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <sched.h>
 +#include <time.h>
-+#include <unistd.h>
-+#include <stdlib.h>
 +#include <stdio.h>
-+#include <stdint.h>
-+#include <signal.h>
-+#include <time.h>
++#include <unistd.h>
++#include <sys/syscall.h>
++#include <dlfcn.h>
 +
 +#include "log.h"
 +#include "timens.h"
 +
-+int run_test(int clockid, struct timespec now)
++typedef int (*vgettime_t)(clockid_t, struct timespec *);
++
++vgettime_t vdso_clock_gettime;
++
++static void fill_function_pointers(void)
 +{
-+	struct itimerspec new_value;
-+	long long elapsed;
-+	timer_t fd;
-+	int i;
-+
-+	for (i = 0; i < 2; i++) {
-+		struct sigevent sevp = {.sigev_notify = SIGEV_NONE};
-+		int flags = 0;
-+
-+		new_value.it_value.tv_sec = 3600;
-+		new_value.it_value.tv_nsec = 0;
-+		new_value.it_interval.tv_sec = 1;
-+		new_value.it_interval.tv_nsec = 0;
-+
-+		if (i == 1) {
-+			new_value.it_value.tv_sec += now.tv_sec;
-+			new_value.it_value.tv_nsec += now.tv_nsec;
-+		}
-+
-+		if (timer_create(clockid, &sevp, &fd) == -1) {
-+			if (errno == ENOSYS) {
-+				ksft_test_result_skip("Posix Clocks & timers are supported\n");
-+				return 0;
-+			}
-+			return pr_perror("timerfd_create");
-+		}
-+
-+		if (i == 1)
-+			flags |= TIMER_ABSTIME;
-+		if (timer_settime(fd, flags, &new_value, NULL) == -1)
-+			return pr_perror("timerfd_settime");
-+
-+		if (timer_gettime(fd, &new_value) == -1)
-+			return pr_perror("timerfd_gettime");
-+
-+		elapsed = new_value.it_value.tv_sec;
-+		if (abs(elapsed - 3600) > 60) {
-+			ksft_test_result_fail("clockid: %d elapsed: %lld\n",
-+					      clockid, elapsed);
-+			return 1;
-+		}
++	void *vdso = dlopen("linux-vdso.so.1",
++			    RTLD_LAZY | RTLD_LOCAL | RTLD_NOLOAD);
++	if (!vdso)
++		vdso = dlopen("linux-gate.so.1",
++			      RTLD_LAZY | RTLD_LOCAL | RTLD_NOLOAD);
++	if (!vdso) {
++		pr_err("[WARN]\tfailed to find vDSO\n");
++		return;
 +	}
 +
-+	ksft_test_result_pass("clockid=%d\n", clockid);
++	vdso_clock_gettime = (vgettime_t)dlsym(vdso, "__vdso_clock_gettime");
++	if (!vdso_clock_gettime)
++		pr_err("Warning: failed to find clock_gettime in vDSO\n");
 +
-+	return 0;
++}
++
++static void test(clock_t clockid, char *clockstr, bool in_ns)
++{
++	struct timespec tp, start;
++	long i = 0;
++	const int timeout = 3;
++
++	vdso_clock_gettime(clockid, &start);
++	tp = start;
++	for (tp = start; start.tv_sec + timeout > tp.tv_sec ||
++			 (start.tv_sec + timeout == tp.tv_sec &&
++			  start.tv_nsec > tp.tv_nsec); i++) {
++		vdso_clock_gettime(clockid, &tp);
++	}
++
++	ksft_test_result_pass("%s:\tclock: %10s\tcycles:\t%10ld\n",
++			      in_ns ? "ns" : "host", clockstr, i);
 +}
 +
 +int main(int argc, char *argv[])
 +{
-+	int ret, status, len, fd;
-+	char buf[4096];
-+	pid_t pid;
-+	struct timespec btime_now, mtime_now;
++	time_t offset = 10;
++	int nsfd;
++
++	ksft_set_plan(8);
++
++	fill_function_pointers();
++
++	test(CLOCK_MONOTONIC, "monotonic", false);
++	test(CLOCK_MONOTONIC_COARSE, "monotonic-coarse", false);
++	test(CLOCK_MONOTONIC_RAW, "monotonic-raw", false);
++	test(CLOCK_BOOTTIME, "boottime", false);
 +
 +	nscheck();
-+
-+	ksft_set_plan(3);
-+
-+	clock_gettime(CLOCK_MONOTONIC, &mtime_now);
-+	clock_gettime(CLOCK_BOOTTIME, &btime_now);
 +
 +	if (unshare_timens())
 +		return 1;
 +
-+	len = snprintf(buf, sizeof(buf), "%d %d 0\n%d %d 0",
-+			CLOCK_MONOTONIC, 70 * 24 * 3600,
-+			CLOCK_BOOTTIME, 9 * 24 * 3600);
-+	fd = open("/proc/self/timens_offsets", O_WRONLY);
-+	if (fd < 0)
-+		return pr_perror("/proc/self/timens_offsets");
++	nsfd = open("/proc/self/ns/time_for_children", O_RDONLY);
++	if (nsfd < 0)
++		return pr_perror("Can't open a time namespace");
 +
-+	if (write(fd, buf, len) != len)
-+		return pr_perror("/proc/self/timens_offsets");
++	if (_settime(CLOCK_MONOTONIC, offset))
++		return 1;
++	if (_settime(CLOCK_BOOTTIME, offset))
++		return 1;
 +
-+	close(fd);
-+	mtime_now.tv_sec += 70 * 24 * 3600;
-+	btime_now.tv_sec += 9 * 24 * 3600;
++	if (setns(nsfd, CLONE_NEWTIME))
++		return pr_perror("setns");
 +
-+	pid = fork();
-+	if (pid < 0)
-+		return pr_perror("Unable to fork");
-+	if (pid == 0) {
-+		ret = 0;
-+		ret |= run_test(CLOCK_BOOTTIME, btime_now);
-+		ret |= run_test(CLOCK_MONOTONIC, mtime_now);
-+		ret |= run_test(CLOCK_BOOTTIME_ALARM, btime_now);
++	test(CLOCK_MONOTONIC, "monotonic", true);
++	test(CLOCK_MONOTONIC_COARSE, "monotonic-coarse", true);
++	test(CLOCK_MONOTONIC_RAW, "monotonic-raw", true);
++	test(CLOCK_BOOTTIME, "boottime", true);
 +
-+		if (ret)
-+			ksft_exit_fail();
-+		ksft_exit_pass();
-+		return ret;
-+	}
-+
-+	if (waitpid(pid, &status, 0) != pid)
-+		return pr_perror("Unable to wait the child process");
-+
-+	if (WIFEXITED(status))
-+		return WEXITSTATUS(status);
-+
-+	return 1;
++	ksft_exit_pass();
++	return 0;
 +}
