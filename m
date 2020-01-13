@@ -2,69 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2FC9138ED7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 11:16:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4744B138EDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 11:17:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728682AbgAMKQn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 05:16:43 -0500
-Received: from forward101p.mail.yandex.net ([77.88.28.101]:56700 "EHLO
-        forward101p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725978AbgAMKQn (ORCPT
+        id S1728795AbgAMKRS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 05:17:18 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:36615 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbgAMKRS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 05:16:43 -0500
-Received: from mxback4g.mail.yandex.net (mxback4g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:165])
-        by forward101p.mail.yandex.net (Yandex) with ESMTP id D0E003281803;
-        Mon, 13 Jan 2020 13:16:40 +0300 (MSK)
-Received: from myt2-ea6a2e0cbf34.qloud-c.yandex.net (myt2-ea6a2e0cbf34.qloud-c.yandex.net [2a02:6b8:c00:2e8e:0:640:ea6a:2e0c])
-        by mxback4g.mail.yandex.net (mxback/Yandex) with ESMTP id 94SFeUVJlu-Gea40tpZ;
-        Mon, 13 Jan 2020 13:16:40 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1578910600;
-        bh=TtPY94kS/Jzho/m65vWlpQBxzkqIZAkf5noHgvGvswQ=;
-        h=In-Reply-To:Subject:To:From:Cc:References:Date:Message-Id;
-        b=mx/nQW3Q8UTSzOK7maLX4bWqx3bVN2Fglw5ALSbOj0Tl3NgGgu6bx1pBLamjKjhzv
-         CmlWU+GmTgKFhcxbCdaM3h3A0wjSMHVW+UwIrUA7+nt3sV19E/CLQOqnbfWANLulv7
-         Aftey9+PBv5KIN9vwASdNcoH4Z5BTIxqnKQx7GJU=
-Authentication-Results: mxback4g.mail.yandex.net; dkim=pass header.i=@flygoat.com
-Received: by myt2-ea6a2e0cbf34.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id u1kiDDYFMW-GVV4YIvR;
-        Mon, 13 Jan 2020 13:16:39 +0300
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (Client certificate not present)
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-To:     linux-mips@vger.kernel.org
-Cc:     chenhc@lemote.com, paul.burton@mips.com,
-        linux-kernel@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: [PATCH 2/2] MIPS: Loongson64: Select mac2008 only feature
-Date:   Mon, 13 Jan 2020 18:16:12 +0800
-Message-Id: <20200113101612.38335-2-jiaxun.yang@flygoat.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200113101612.38335-1-jiaxun.yang@flygoat.com>
-References: <20200113101612.38335-1-jiaxun.yang@flygoat.com>
+        Mon, 13 Jan 2020 05:17:18 -0500
+Received: from ip5f5bd663.dynamic.kabel-deutschland.de ([95.91.214.99] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iqwmZ-0006e1-T4; Mon, 13 Jan 2020 10:17:16 +0000
+Date:   Mon, 13 Jan 2020 11:17:15 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Kars de Jong <jongk@linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux/m68k <linux-m68k@vger.kernel.org>,
+        Amanieu d'Antras <amanieu@gmail.com>
+Subject: Re: [PATCH] m68k: Wire up clone3() syscall
+Message-ID: <20200113101714.75v5gmg3rb5tlhze@wittgenstein>
+References: <20191124195225.31230-1-jongk@linux-m68k.org>
+ <CAMuHMdXQAbw_Skj99q_PWXKn77bzVbJf60n38Etmq-zhOoHsHQ@mail.gmail.com>
+ <CAMuHMdU9hu+EAAnBD5dH3+LS5pNi9fOjFNesv3eFSCoqbW3CCA@mail.gmail.com>
+ <20200113091813.zkye72cubpfhemww@wittgenstein>
+ <CAMuHMdXTqjPQN4UbH5a1BGjFTNLRrwDu97B=JxDii2VCoRjorA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXTqjPQN4UbH5a1BGjFTNLRrwDu97B=JxDii2VCoRjorA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some Loongson-64 processor didn't set MAC2008 bit in fcsr,
-but actually all Loongson64 processors are MAC2008 only.
+On Mon, Jan 13, 2020 at 10:34:35AM +0100, Geert Uytterhoeven wrote:
+> Hi Christian,
+> 
+> On Mon, Jan 13, 2020 at 10:18 AM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> > On Mon, Jan 13, 2020 at 10:10:26AM +0100, Geert Uytterhoeven wrote:
+> > > On Sun, Jan 12, 2020 at 5:06 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > > On Sun, Nov 24, 2019 at 8:52 PM Kars de Jong <jongk@linux-m68k.org> wrote:
+> > > > > Wire up the clone3() syscall for m68k. The special entry point is done in
+> > > > > assembler as was done for clone() as well. This is needed because all
+> > > > > registers need to be saved. The C wrapper then calls the generic
+> > > > > sys_clone3() with the correct arguments.
+> > > > >
+> > > > > Tested on A1200 using the simple test program from:
+> > > > >
+> > > > >   https://lore.kernel.org/lkml/20190716130631.tohj4ub54md25dys@brauner.io/
+> > > > >
+> > > > > Cc: linux-m68k@vger.kernel.org
+> > > > > Signed-off-by: Kars de Jong <jongk@linux-m68k.org>
+> > > >
+> > > > Thanks, applied and queued for v5.6.
+> > >
+> > > Which is now broken because of commit dd499f7a7e342702 ("clone3: ensure
+> > > copy_thread_tls is implemented") in v5.5-rc6 :-(
+> >
+> > Sorry, just for clarification what and how is it broken by
+> > dd499f7a7e342702 ("clone3: ensure > copy_thread_tls is implemented")
+> > ?
+> 
+> Because m68k does not implement copy_thread_tls() yet, and doesn't
+> select HAVE_COPY_THREAD_TLS yet.
 
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
- arch/mips/include/asm/mach-loongson64/cpu-feature-overrides.h | 1 +
- 1 file changed, 1 insertion(+)
+Oh right, sorry. I forgot that m68k has a patchset to enable clone3() up
+for merging. I should've remembered that and warned you that we will
+have to require copy_thread_tls() going forward. I hope the merge is
+explanatory enough why we're doing it this way.
 
-diff --git a/arch/mips/include/asm/mach-loongson64/cpu-feature-overrides.h b/arch/mips/include/asm/mach-loongson64/cpu-feature-overrides.h
-index 23aa8ed7cb9e..6e4ff2063971 100644
---- a/arch/mips/include/asm/mach-loongson64/cpu-feature-overrides.h
-+++ b/arch/mips/include/asm/mach-loongson64/cpu-feature-overrides.h
-@@ -47,5 +47,6 @@
- #define cpu_has_ic_fills_f_dc	1
- #define cpu_hwrena_impl_bits	0xc0000000
- #define cpu_has_mips_r2_exec_hazard 0
-+#define cpu_has_mac2008_only	1
- 
- #endif /* __ASM_MACH_LOONGSON64_CPU_FEATURE_OVERRIDES_H */
--- 
-2.24.1
+> 
+> Looking into fixing that...
 
+Thank you! Much appreciated!
+Christian
