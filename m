@@ -2,295 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E6EB13928B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:55:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAC48139290
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:55:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728808AbgAMNy6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 08:54:58 -0500
-Received: from mga03.intel.com ([134.134.136.65]:23348 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726074AbgAMNy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 08:54:57 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jan 2020 05:54:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,429,1571727600"; 
-   d="scan'208";a="218670957"
-Received: from nntpdsd52-183.inn.intel.com ([10.125.52.183])
-  by fmsmga007.fm.intel.com with ESMTP; 13 Jan 2020 05:54:53 -0800
-From:   roman.sudarikov@linux.intel.com
-To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, eranian@google.com,
-        bgregg@netflix.com, ak@linux.intel.com, kan.liang@linux.intel.com,
-        gregkh@linuxfoundation.org
-Cc:     alexander.antonov@intel.com, roman.sudarikov@linux.intel.com
-Subject: [PATCH v3 2/2] =?UTF-8?q?perf=20x86:=20Exposing=20an=20Uncore=20u?= =?UTF-8?q?nit=20to=20PMON=20for=20Intel=20Xeon=C2=AE=20server=20platform?=
-Date:   Mon, 13 Jan 2020 16:54:44 +0300
-Message-Id: <20200113135444.12027-3-roman.sudarikov@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20200113135444.12027-1-roman.sudarikov@linux.intel.com>
-References: <20200113135444.12027-1-roman.sudarikov@linux.intel.com>
+        id S1728871AbgAMNze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 08:55:34 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:60239 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbgAMNzd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 08:55:33 -0500
+Received: from mail-qk1-f173.google.com ([209.85.222.173]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MILnm-1iuFJg0qpA-00ELhD; Mon, 13 Jan 2020 14:55:32 +0100
+Received: by mail-qk1-f173.google.com with SMTP id x1so8443156qkl.12;
+        Mon, 13 Jan 2020 05:55:31 -0800 (PST)
+X-Gm-Message-State: APjAAAUoMeyZ4851b0bykETfwKLaoIzyy6SM0hdtkFvYJOuLM5VtjeM9
+        Z9G3LYyYUr0bF8rll+dwXq31DFKHay2Vrrc1pyU=
+X-Google-Smtp-Source: APXvYqzpZZVph0MjS+DlAaNeNouGEph6LrCzFGzHPEREhJcSiguG2Kb7QdWG7PA/XqIeqnlNXrQCWCx4VeBRIPwRa9c=
+X-Received: by 2002:a37:2f02:: with SMTP id v2mr15882483qkh.3.1578923731021;
+ Mon, 13 Jan 2020 05:55:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20200109141459.21808-1-vincenzo.frascino@arm.com>
+ <c43539f2-aa9b-4afa-985c-c438099732ff@sandeen.net> <1a540ee4-6597-c79e-1bce-6592cb2f3eae@arm.com>
+ <20200109165048.GB8247@magnolia> <435bcb71-9126-b1f1-3803-4977754b36ff@arm.com>
+In-Reply-To: <435bcb71-9126-b1f1-3803-4977754b36ff@arm.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 13 Jan 2020 14:55:15 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0eY6Vm5PNdzR8Min9MrwAqH8vnMZ3C+pxTQhiFVNPyWA@mail.gmail.com>
+Message-ID: <CAK8P3a0eY6Vm5PNdzR8Min9MrwAqH8vnMZ3C+pxTQhiFVNPyWA@mail.gmail.com>
+Subject: Re: [PATCH] xfs: Fix xfs_dir2_sf_entry_t size check
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:vvFFm/UvIgiFyFiiE52HR/hez2RRMgZKYxLJN87Nv1zqozfLmW7
+ Qz/5bISlCaBpSGGJh4Fe6ChfER/cS1ffNk+JFmFQLTRwOCIMgb3yNSrdnAQ4Z4ymtNBwSqG
+ X7rISgiNgrE/JTc6pgaLnIxTtgaGGfdX3c0PVQtNdm9NmCKGJO8Y5E2K1Xbmei0/oi9A8+E
+ 2uVNhuRNsV2x/W5KzV/rQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/Mx5sHqj+xM=:dvR//8icbbKtjoXiS1bzCm
+ zl2h3P69PLOjYZfiCUN/Fkeh5R1BZaebon5dKZZVSoFpNNHZVhSAP9sDts9zeywRMJHZBHtMk
+ XkZwOH+Lb1/EQu5DR92jP6pTlaLXEfOl7kzPDaCAnt8wy7/OlxMKvLtLzOg1bv6sFQ5duI0OR
+ Ksb7QZIpFaE9GUYzgQ+VJJv9ZOaKVHasKakYYEm0dB5i7v/oRzZuts/rjO1VMXwrs09m4IGpn
+ p2bw/2bpGKXV6P2X+adfGbNo/AkIzghfMOmKSCnXzR8VeSbDFca3d2MNVYRogjU3yPD0ML08Y
+ BOe1cpdZd9JjwZ9kOU5O4JXd9RhCw8fnLlD0P9uafGDefoJn0yYTsCaZlHihDGCIzZpbDvX4n
+ WQrAILlgUFTeeYWZ52MLrMy1+W0qYDGyDAgdAYRHLZTv7B4tlQ2hAXkM6A5RXb7Gc1w0BP4Wh
+ HcwBtIrqMZGSNaq+3tc+hqIEURgi/UvZmds7j1bFpGXseKdEEe5nwF82PcJsHoD3+angPW1K2
+ G+XwhZbhfGtJUrQL9xv1UhfTRXAiDPfhZuJ/OHG7O+vKv0F3MscYycoxk+wS5H9xp6U2gJ74Q
+ D6WeTt16CMXXE9mdhnGYsE1ITjJTDKpDTNGuvPyb3tZiUTynwYwM3VaAdmNAXBq+cZ/AZlAta
+ 6zIJ+7kK+vLCIiAv5gX2NVpSq6pjyrpfIi9kCGNTD84kJlzezddpgUWPLxXqccWClT7Zh7/8R
+ A5oEcYuzOj6wG7dLj+trdedibEk1CVfv1X7uoKzA5v6HAHA8GhEBhj2mzB+6hV2KzPb9MjvBa
+ dxek3wzbHCLVZxmDsDS2WbgKz9mxkGXnGEwdP90UcyObN66wushQQpHfAlUo9vep8iYu4WRhF
+ lD6KtAHrNfmKOGh6QR/w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Sudarikov <roman.sudarikov@linux.intel.com>
+On Thu, Jan 9, 2020 at 10:01 PM Vincenzo Frascino
+<vincenzo.frascino@arm.com> wrote:
+>
+> Hi Darrick,
+>
+> On 09/01/2020 16:50, Darrick J. Wong wrote:
+> > This sounds like gcc getting confused by the zero length array.  Though
+> > it's odd that randconfig breaks, but defconfig doesn't?  This sounds
+> > like one of the kernel gcc options causing problems.
+> >
+>
+> This is what I started suspecting as well.
 
-Current version supports a server line starting Intel® Xeon® Processor
-Scalable Family and introduces mapping for IIO Uncore units only.
-Other units can be added on demand.
+The important bit into the configuration is
 
-IIO stack to PMON mapping is exposed through:
-    /sys/devices/uncore_iio_<pmu_idx>/platform_mapping
-    in the following format: domain:bus
+# CONFIG_AEABI is not set
 
-For example, on a 4-die Intel Xeon® server platform:
-    $ cat /sys/devices/uncore_iio_0/platform_mapping
-    0000:00,0000:40,0000:80,0000:c0
+With ARM OABI (which you get when EABI is disabled), structures are padded
+to multiples of 32 bits. See commits 8353a649f577 ("xfs: kill
+xfs_dir2_sf_off_t")
+and aa2dd0ad4d6d ("xfs: remove __arch_pack"). Those could be partially
+reverted to fix it again, but it doesn't seem worth it as there is
+probably nobody
+running XFS on OABI machines (actually with the build failure we can
+be fairly sure there isn't ;-).
 
-Which means:
-IIO PMON block 0 on die 0 belongs to IIO stack on bus 0x00, domain 0x0000
-IIO PMON block 0 on die 1 belongs to IIO stack on bus 0x40, domain 0x0000
-IIO PMON block 0 on die 2 belongs to IIO stack on bus 0x80, domain 0x0000
-IIO PMON block 0 on die 3 belongs to IIO stack on bus 0xc0, domain 0x0000
+I am testing randconfig builds with OABI and a few other things like ARCH_RPC
+disabled because of random issues like this.
 
-Co-developed-by: Alexander Antonov <alexander.antonov@intel.com>
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Alexander Antonov <alexander.antonov@intel.com>
-Signed-off-by: Roman Sudarikov <roman.sudarikov@linux.intel.com>
----
- arch/x86/events/intel/uncore.c       |   2 +-
- arch/x86/events/intel/uncore.h       |   1 +
- arch/x86/events/intel/uncore_snbep.c | 162 +++++++++++++++++++++++++++
- 3 files changed, 164 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index 2c53ad44b51f..c0d86bc8e786 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -16,7 +16,7 @@ struct pci_driver *uncore_pci_driver;
- DEFINE_RAW_SPINLOCK(pci2phy_map_lock);
- struct list_head pci2phy_map_head = LIST_HEAD_INIT(pci2phy_map_head);
- struct pci_extra_dev *uncore_extra_pci_dev;
--static int max_dies;
-+int max_dies;
- 
- /* mask of cpus that collect uncore events */
- static cpumask_t uncore_cpu_mask;
-diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
-index f52dd3f112a7..94eacca6f485 100644
---- a/arch/x86/events/intel/uncore.h
-+++ b/arch/x86/events/intel/uncore.h
-@@ -523,6 +523,7 @@ extern raw_spinlock_t pci2phy_map_lock;
- extern struct list_head pci2phy_map_head;
- extern struct pci_extra_dev *uncore_extra_pci_dev;
- extern struct event_constraint uncore_constraint_empty;
-+extern int max_dies;
- 
- /* uncore_snb.c */
- int snb_uncore_pci_init(void);
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index b10a5ec79e48..2562fde2e5b8 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -273,6 +273,30 @@
- #define SKX_CPUNODEID			0xc0
- #define SKX_GIDNIDMAP			0xd4
- 
-+/*
-+ * The CPU_BUS_NUMBER MSR returns the values of the respective CPUBUSNO CSR
-+ * that BIOS programmed. MSR has package scope.
-+ * |  Bit  |  Default  |  Description
-+ * | [63]  |    00h    | VALID - When set, indicates the CPU bus
-+ *                       numbers have been initialized. (RO)
-+ * |[62:48]|    ---    | Reserved
-+ * |[47:40]|    00h    | BUS_NUM_5 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(5). (RO)
-+ * |[39:32]|    00h    | BUS_NUM_4 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(4). (RO)
-+ * |[31:24]|    00h    | BUS_NUM_3 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(3). (RO)
-+ * |[23:16]|    00h    | BUS_NUM_2 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(2). (RO)
-+ * |[15:8] |    00h    | BUS_NUM_1 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(1). (RO)
-+ * | [7:0] |    00h    | BUS_NUM_0 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(0). (RO)
-+ */
-+#define SKX_MSR_CPU_BUS_NUMBER		0x300
-+#define SKX_MSR_CPU_BUS_VALID_BIT	(1ULL << 63)
-+#define BUS_NUM_STRIDE			8
-+
- /* SKX CHA */
- #define SKX_CHA_MSR_PMON_BOX_FILTER_TID		(0x1ffULL << 0)
- #define SKX_CHA_MSR_PMON_BOX_FILTER_LINK	(0xfULL << 9)
-@@ -3580,6 +3604,9 @@ static struct intel_uncore_ops skx_uncore_iio_ops = {
- 	.read_counter		= uncore_msr_read_counter,
- };
- 
-+static int skx_iio_get_topology(struct intel_uncore_type *type);
-+static int skx_iio_set_mapping(struct intel_uncore_type *type);
-+
- static struct intel_uncore_type skx_uncore_iio = {
- 	.name			= "iio",
- 	.num_counters		= 4,
-@@ -3594,6 +3621,8 @@ static struct intel_uncore_type skx_uncore_iio = {
- 	.constraints		= skx_uncore_iio_constraints,
- 	.ops			= &skx_uncore_iio_ops,
- 	.format_group		= &skx_uncore_iio_format_group,
-+	.get_topology		= skx_iio_get_topology,
-+	.set_mapping		= skx_iio_set_mapping,
- };
- 
- enum perf_uncore_iio_freerunning_type_id {
-@@ -3780,6 +3809,139 @@ static int skx_count_chabox(void)
- 	return hweight32(val);
- }
- 
-+static inline int skx_msr_cpu_bus_read(int cpu, u64 *topology)
-+{
-+	u64 msr_value;
-+
-+	if (rdmsrl_on_cpu(cpu, SKX_MSR_CPU_BUS_NUMBER, &msr_value) ||
-+			!(msr_value & SKX_MSR_CPU_BUS_VALID_BIT))
-+		return -1;
-+
-+	*topology = msr_value;
-+
-+	return 0;
-+}
-+
-+static int skx_iio_get_topology(struct intel_uncore_type *type)
-+{
-+	int ret, cpu, die, current_die;
-+	struct pci_bus *bus = NULL;
-+
-+	/*
-+	 * Verified single-segment environments only; disabled for multiple
-+	 * segment topologies for now.
-+	 */
-+	while ((bus = pci_find_next_bus(bus)) && !pci_domain_nr(bus))
-+		;
-+	if (bus) {
-+		pr_info("I/O stack mapping is not supported for multi-seg\n");
-+		return -1;
-+	}
-+
-+	type->topology = kzalloc(max_dies * sizeof(u64), GFP_KERNEL);
-+	if (!type->topology)
-+		return -ENOMEM;
-+
-+	/*
-+	 * Using cpus_read_lock() to ensure cpu is not going down between
-+	 * looking at cpu_online_mask.
-+	 */
-+	cpus_read_lock();
-+	/* Invalid value to start loop.*/
-+	current_die = -1;
-+	for_each_online_cpu(cpu) {
-+		die = topology_logical_die_id(cpu);
-+		if (current_die == die)
-+			continue;
-+		ret = skx_msr_cpu_bus_read(cpu, &type->topology[die]);
-+		if (ret) {
-+			kfree(type->topology);
-+			break;
-+		}
-+		current_die = die;
-+	}
-+	cpus_read_unlock();
-+
-+	return ret;
-+}
-+
-+static inline u8 skx_iio_stack_bus(struct intel_uncore_pmu *pmu, int die)
-+{
-+	return pmu->type->topology[die] >> (pmu->pmu_idx * BUS_NUM_STRIDE);
-+}
-+
-+static int skx_iio_set_box_mapping(struct intel_uncore_pmu *pmu)
-+{
-+	char *buf;
-+	int die = 0;
-+	/* Length of template "%04x:%02x," without null character. */
-+	const int template_len = 8;
-+
-+	/*
-+	 * Root bus 0x00 is valid only for die 0 AND pmu_idx = 0.
-+	 * Set "0" platform mapping for PMUs which have zero stack bus and
-+	 * non-zero index.
-+	 */
-+	if (!skx_iio_stack_bus(pmu, die) && pmu->pmu_idx) {
-+		pmu->mapping = kzalloc(2, GFP_KERNEL);
-+		if (!pmu->mapping)
-+			return -ENOMEM;
-+		sprintf(pmu->mapping, "0");
-+		return 0;
-+	}
-+
-+	pmu->mapping = kzalloc(max_dies * template_len + 1, GFP_KERNEL);
-+	if (!pmu->mapping)
-+		return -ENOMEM;
-+
-+	buf = pmu->mapping;
-+	for (; die < max_dies; die++) {
-+		buf += snprintf(buf, template_len + 1, "%04x:%02x,", 0,
-+				skx_iio_stack_bus(pmu, die));
-+	}
-+
-+	*(--buf) = '\0';
-+
-+	return 0;
-+}
-+
-+static int skx_iio_set_mapping(struct intel_uncore_type *type)
-+{
-+	/*
-+	 * Each IIO stack (PCIe root port) has its own IIO PMON block, so each
-+	 * platform_mapping holds bus number(s) of PCIe root port(s), which can
-+	 * be monitored by that IIO PMON block.
-+	 *
-+	 * For example, on 4-die Xeon platform with up to 6 IIO stacks per die
-+	 * and, therefore, 6 IIO PMON blocks per die, the platform_mapping
-+	 * of IIO PMON block 0 holds "0000:00,0000:40,0000:80,0000:c0":
-+	 *
-+	 * $ cat /sys/devices/uncore_iio_0/platform_mapping
-+	 * 0000:00,0000:40,0000:80,0000:c0
-+	 *
-+	 * Which means:
-+	 * IIO PMON 0 on die 0 belongs to PCIe RP on bus 0x00, domain 0x0000
-+	 * IIO PMON 0 on die 1 belongs to PCIe RP on bus 0x40, domain 0x0000
-+	 * IIO PMON 0 on die 2 belongs to PCIe RP on bus 0x80, domain 0x0000
-+	 * IIO PMON 0 on die 3 belongs to PCIe RP on bus 0xc0, domain 0x0000
-+	 */
-+
-+	int ret;
-+	struct intel_uncore_pmu *pmu = type->pmus;
-+
-+	for (; pmu - type->pmus < type->num_boxes; pmu++) {
-+		ret = skx_iio_set_box_mapping(pmu);
-+		if (ret) {
-+			for (; pmu->pmu_idx > 0; --pmu)
-+				kfree(pmu->mapping);
-+			break;
-+		}
-+	}
-+
-+	kfree(type->topology);
-+	return ret;
-+}
-+
- void skx_uncore_cpu_init(void)
- {
- 	skx_uncore_chabox.num_boxes = skx_count_chabox();
--- 
-2.19.1
-
+      Arnd
