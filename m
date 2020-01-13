@@ -2,221 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A5A4138E84
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 11:04:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21A59138E89
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 11:05:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728755AbgAMKEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 05:04:42 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:51878 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728731AbgAMKEl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 05:04:41 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1578909880; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=2VLlvvePkhwbNWgY08l12MGTLHGCfKM0Z8oHlUQZfGY=; b=N+Di7oJCEzh55s6MoTvIHvmiV58DOHq9NAaVWiMsZUvTNm0FIq4QFLceWZw8nmtFMuNWahg4
- xb3RKZZ2si3HGjbog+Kj6dhLdj76DJaF/V+vG9/VPcedcm9xZDKmhduQ1dSn3N1E//dI2rML
- Pu4cYTPy0hHwjTTkr2q+bKgGv3k=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e1c40b4.7fec150055a8-smtp-out-n01;
- Mon, 13 Jan 2020 10:04:36 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 247E0C447A2; Mon, 13 Jan 2020 10:04:35 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [10.206.28.9] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 992C6C433CB;
-        Mon, 13 Jan 2020 10:04:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 992C6C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v2 3/3] clk: qcom: Add modem clock controller driver for
- SC7180
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org,
-        linux-arm-msm-owner@vger.kernel.org
-References: <1577421760-1174-1-git-send-email-tdas@codeaurora.org>
- <1577421760-1174-4-git-send-email-tdas@codeaurora.org>
- <7e63d3a91264e7c237c4cb10508182bf@codeaurora.org>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <af34688b-656c-d6df-982a-ec7708c4d228@codeaurora.org>
-Date:   Mon, 13 Jan 2020 15:34:28 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
-MIME-Version: 1.0
-In-Reply-To: <7e63d3a91264e7c237c4cb10508182bf@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1728646AbgAMKFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 05:05:44 -0500
+Received: from mail-bn7nam10on2076.outbound.protection.outlook.com ([40.107.92.76]:6153
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725978AbgAMKFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 05:05:44 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Zxd7HXxP7nSlakC/UDzkBuHn2cCvM0WHzbd54/FMobu048xPsqw6INDGBF5XKUJ+F2mfX9mnxCJe9Pf2YGFkLCvT5gpxrdc8YjQr7tE/ubduGyL3HRT+LmMnl+oHVP0RTglvXPz+a9JNy4t003MYvft9sctQNYsS4LNp9Lch/nzdfFSBuktOPKTnnoXgdZxSBu52Wt9W671v+jlm9CssONv3pB01pWc+jjbCvlMfldhabRfVIK+eV2aidW1RIVlTRTlFBnEkVrSUkO0gK+fgvh0gIqlN5ec15D0wrWNzU6iXToJrNNuvgwTqtCSXeBmVJbB5xxQibkXhIVP0v4mnDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y1Ebke6eveyxao7m6TM2J+k5u29xj8tTIql2r8ll4bY=;
+ b=WTmfrLy16QlG3eWEryMR4RVvqhsW+PSZ3oTZBpPG1k0L0JhFLSiPVwrmkE+jfS6LESPsdNi/c/agjeSeLimXOPAldOywzLzORsfFqgkXTvocndglk4D/sgVc6P3KNcNB1c6GqGk83M+1CmofwloRpm12rVddFouBIXNVNBcUbJIv5c9tbEx7qimx3bGBl3IivgMy/gGBSnY3vNkT0+bca0mQFTYj1LfXKmatBO5ebjZS96qjIMyulWproBJpMXwguIdaensXJDJCaIe+lvGeYLPENTIXC+LQEjqZlehE2J4nFzSd6XrN+SDeyXsmq6wIyTnHLmKebnxsSPXmPA30gw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
+ dkim=pass header.d=micron.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y1Ebke6eveyxao7m6TM2J+k5u29xj8tTIql2r8ll4bY=;
+ b=QNy8tJQU9UmXqIMlca4hV9kgbgY1zkL51cnZDiuMPL2/QW8GLG5sqT/XQmvnBqbQ95XxHQFLZRQxyrlqVyc9ul2mgLZA3syl913Lp3sTUpDhSy8G1KBcNBzGAiEWRo7qkSb0f5Ed8fkFe099zXM/ACnpCzulqieCjrbq1aDINWo=
+Received: from BN7PR08MB5684.namprd08.prod.outlook.com (20.176.179.87) by
+ BN7PR08MB3987.namprd08.prod.outlook.com (52.132.219.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2623.9; Mon, 13 Jan 2020 10:05:42 +0000
+Received: from BN7PR08MB5684.namprd08.prod.outlook.com
+ ([fe80::981f:90d7:d45f:fd11]) by BN7PR08MB5684.namprd08.prod.outlook.com
+ ([fe80::981f:90d7:d45f:fd11%7]) with mapi id 15.20.2623.015; Mon, 13 Jan 2020
+ 10:05:42 +0000
+From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
+To:     Stanley Chu <stanley.chu@mediatek.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "avri.altman@wdc.com" <avri.altman@wdc.com>,
+        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>
+CC:     "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
+        "cang@codeaurora.org" <cang@codeaurora.org>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kuohong.wang@mediatek.com" <kuohong.wang@mediatek.com>,
+        "peter.wang@mediatek.com" <peter.wang@mediatek.com>,
+        "chun-hung.wu@mediatek.com" <chun-hung.wu@mediatek.com>,
+        "andy.teng@mediatek.com" <andy.teng@mediatek.com>
+Subject: RE: [EXT] [PATCH v1 3/3] scsi: ufs: remove "errors" word in
+ ufshcd_print_err_hist()
+Thread-Topic: [EXT] [PATCH v1 3/3] scsi: ufs: remove "errors" word in
+ ufshcd_print_err_hist()
+Thread-Index: AQHVwwrtV1OULJKwiEi+1cpvXR6BU6foa4ZQ
+Date:   Mon, 13 Jan 2020 10:05:42 +0000
+Message-ID: <BN7PR08MB5684F59B198544C9A470A96DDB350@BN7PR08MB5684.namprd08.prod.outlook.com>
+References: <1578147968-30938-1-git-send-email-stanley.chu@mediatek.com>
+ <1578147968-30938-4-git-send-email-stanley.chu@mediatek.com>
+In-Reply-To: <1578147968-30938-4-git-send-email-stanley.chu@mediatek.com>
+Accept-Language: en-150, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYmVhbmh1b1xhcHBkYXRhXHJvYW1pbmdcMDlkODQ5YjYtMzJkMy00YTQwLTg1ZWUtNmI4NGJhMjllMzViXG1zZ3NcbXNnLTNmNWQ3MDU5LTM1ZWMtMTFlYS04Yjg4LWRjNzE5NjFmOWRkM1xhbWUtdGVzdFwzZjVkNzA1Yi0zNWVjLTExZWEtOGI4OC1kYzcxOTYxZjlkZDNib2R5LnR4dCIgc3o9IjIxNCIgdD0iMTMyMjMzODM1MzkwMDIwNTUwIiBoPSJQSGkrc2lPMWJOQWIyQkhyZlNwVUhWc0Q2QnM9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
+x-dg-rorf: true
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=beanhuo@micron.com; 
+x-originating-ip: [195.89.176.137]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 533dce1e-65aa-433a-18b8-08d798102650
+x-ms-traffictypediagnostic: BN7PR08MB3987:|BN7PR08MB3987:|BN7PR08MB3987:
+x-microsoft-antispam-prvs: <BN7PR08MB3987F31F81FE0A46075A5335DB350@BN7PR08MB3987.namprd08.prod.outlook.com>
+x-ms-exchange-transport-forked: True
+x-ms-oob-tlc-oobclassifiers: OLM:400;
+x-forefront-prvs: 028166BF91
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(346002)(366004)(376002)(136003)(189003)(199004)(81166006)(8676002)(54906003)(316002)(66446008)(64756008)(66556008)(66476007)(9686003)(81156014)(86362001)(2906002)(66946007)(478600001)(110136005)(8936002)(55016002)(76116006)(33656002)(26005)(186003)(5660300002)(7696005)(7416002)(6506007)(52536014)(4326008)(558084003)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR08MB3987;H:BN7PR08MB5684.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: micron.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: jESaNOGIXWyRXRT1VnG//c/2lG4fE9kKVhXNjHPmtVUaSQIETTA4sVs3AgZkBDzv3/Mt2/wLza0OaDfksek40mVEbUy1Gc0lulQfzruEf/iGd7cn0oztGarniHlDzi9JYmJ0kLUJQVt0bvAsJVXqWbZAv0+nSoJf0T60yZVFl6rve4eAfoRggEuglOYa1QJkQA1MtfrIPxDMdYOnhUMXsdjC5L/thkm7OAHYyifiPXolICvnGyyLXh+hVymR/yC2ZPEpifWf1L71DjIu44Su1aFEuUAdKYxTyTk/YlfFTT8ICs4ZbCUlmVQm5putc2WW+UHV9CDmc7ZgzDNrU34u7mZZXw1vLMlT8ugfZASCtfUgh8nwcvvashItp8qeHTYIB79VQIOidsz9Gh6Wg0h/Jb+w9zKelJ9JxNrSjXsp+crKbth+L3xGVT5M3wnBRd6d
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: micron.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 533dce1e-65aa-433a-18b8-08d798102650
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jan 2020 10:05:42.4354
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 85YbZ5ks6XsxvyHABZcaJilnOrhncsfmYYog76WgLeAm3GfWdHK21uqhTqHNFIA0jsh4PSKh+6GZciCjVuta1Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB3987
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sibi,
-
-Thanks for your review.
-
-On 12/27/2019 12:50 PM, Sibi Sankar wrote:
-> Hey Taniya,
-> 
-
->>  static const struct qcom_reset_map gcc_sc7180_resets[] = {
->> diff --git a/drivers/clk/qcom/mss-sc7180.c 
->> b/drivers/clk/qcom/mss-sc7180.c
->> new file mode 100644
->> index 0000000..24c38dc
->> --- /dev/null
->> +++ b/drivers/clk/qcom/mss-sc7180.c
->> @@ -0,0 +1,94 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/module.h>
->> +#include <linux/of_address.h>
->> +#include <linux/regmap.h>
->> +
->> +#include <dt-bindings/clock/qcom,mss-sc7180.h>
->> +
->> +#include "clk-regmap.h"
->> +#include "clk-branch.h"
->> +#include "common.h"
->> +
->> +static struct clk_branch mss_axi_nav_clk = {
->> +    .halt_reg = 0xbc,
-> 
-> if we use the entire mpss_perph
-> reg space it should be 0x20bc
-> instead.
-> 
->> +    .halt_check = BRANCH_HALT,
->> +    .clkr = {
->> +        .enable_reg = 0xbc,
-> 
-> 0x20bc
-> 
-
-yes, will take care in the next patch.
-
->> +        .enable_mask = BIT(0),
->> +        .hw.init = &(struct clk_init_data){
->> +            .name = "mss_axi_nav_clk",
->> +            .ops = &clk_branch2_ops,
->> +        },
->> +    },
->> +};
->> +
->> +static struct clk_branch mss_axi_crypto_clk = {
->> +    .halt_reg = 0xcc,
-> 
-> if we use the entire mpss_perph
-> reg space it should be 0x20cc
-> instead.
-> 
->> +    .halt_check = BRANCH_HALT,
->> +    .clkr = {
->> +        .enable_reg = 0xcc,
-> 
-> 0x20cc
-> 
-
-same as above.
-
->> +        .enable_mask = BIT(0),
->> +        .hw.init = &(struct clk_init_data){
->> +            .name = "mss_axi_crypto_clk",
->> +            .ops = &clk_branch2_ops,
->> +        },
->> +    },
->> +};
->> +
->> +static struct regmap_config mss_regmap_config = {
->> +    .reg_bits    = 32,
->> +    .reg_stride    = 4,
->> +    .val_bits    = 32,
->> +    .fast_io    = true,
->> +};
->> +
->> +static struct clk_regmap *mss_sc7180_clocks[] = {
->> +    [MSS_AXI_CRYPTO_CLK] = &mss_axi_crypto_clk.clkr,
->> +    [MSS_AXI_NAV_CLK] = &mss_axi_nav_clk.clkr,
->> +};
->> +
->> +static const struct qcom_cc_desc mss_sc7180_desc = {
->> +    .config = &mss_regmap_config,
->> +    .clks = mss_sc7180_clocks,
->> +    .num_clks = ARRAY_SIZE(mss_sc7180_clocks),
->> +};
->> +
->> +static int mss_sc7180_probe(struct platform_device *pdev)
->> +{
->> +    return qcom_cc_probe(pdev, &mss_sc7180_desc);
-> 
-> Similar to turingcc-qcs404 and q6sstop-qcs404
-> shouldn't we model the iface clk dependency
-> here since  both the above clocks cant be turned
-> on/off without it.
-> 
-
-Could we skip and proceed with the above for now?
-
->> +}
->> +
->> +static const struct of_device_id mss_sc7180_match_table[] = {
->> +    { .compatible = "qcom,sc7180-mss" },
->> +    { }
->> +};
->> +MODULE_DEVICE_TABLE(of, mss_sc7180_match_table);
->> +
->> +static struct platform_driver mss_sc7180_driver = {
->> +    .probe        = mss_sc7180_probe,
->> +    .driver        = {
->> +        .name        = "sc7180-mss",
->> +        .of_match_table = mss_sc7180_match_table,
->> +    },
->> +};
->> +
->> +static int __init mss_sc7180_init(void)
->> +{
->> +    return platform_driver_register(&mss_sc7180_driver);
->> +}
->> +subsys_initcall(mss_sc7180_init);
->> +
->> +static void __exit mss_sc7180_exit(void)
->> +{
->> +    platform_driver_unregister(&mss_sc7180_driver);
->> +}
->> +module_exit(mss_sc7180_exit);
->> +
->> +MODULE_DESCRIPTION("QTI MSS SC7180 Driver");
->> +MODULE_LICENSE("GPL v2");
->> -- 
->> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
->> of the Code Aurora Forum, hosted by the  Linux Foundation.
-> 
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+> Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+Reviewed-by: Bean Huo <beanhuo@micron.com>
