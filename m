@@ -2,62 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CABF9138DAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:24:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9681138DB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:25:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbgAMJYG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 04:24:06 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:53146 "EHLO gloria.sntech.de"
+        id S1727286AbgAMJZg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 04:25:36 -0500
+Received: from fd.dlink.ru ([178.170.168.18]:51294 "EHLO fd.dlink.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726193AbgAMJYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 04:24:05 -0500
-Received: from wf0253.dip.tu-dresden.de ([141.76.180.253] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1iqvx3-0001zw-Vv; Mon, 13 Jan 2020 10:24:02 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: add reg property to brcmf sub node
-Date:   Mon, 13 Jan 2020 10:24:01 +0100
-Message-ID: <1821445.7jhtsCTu8y@phil>
-In-Reply-To: <20200110142128.13522-1-jbx6244@gmail.com>
-References: <20200110142128.13522-1-jbx6244@gmail.com>
+        id S1725832AbgAMJZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 04:25:35 -0500
+Received: by fd.dlink.ru (Postfix, from userid 5000)
+        id 78C221B20EA4; Mon, 13 Jan 2020 12:25:33 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 78C221B20EA4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dlink.ru; s=mail;
+        t=1578907533; bh=2f/Y/GZU1BlOm+comjchqo4T/ukgrbsudCbLlFnoBlg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=ZAZKwYzGdwf5pLnqjfjSeZ4YvIe565n63YwJVIAem4xbd2z8u2oj1vxtaNhKkihkr
+         Bxr4cOtZihdLMngmmTI1naX6NwU0RCHReWyMadzjPvxy45lByAxTOc70NudjGsijdx
+         svrKCxNgWM+cSkIxkFyYCMUalioJ3HfhMLTtZmPs=
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dlink.ru
+X-Spam-Level: 
+X-Spam-Status: No, score=-99.2 required=7.5 tests=BAYES_50,USER_IN_WHITELIST
+        autolearn=disabled version=3.4.2
+Received: from mail.rzn.dlink.ru (mail.rzn.dlink.ru [178.170.168.13])
+        by fd.dlink.ru (Postfix) with ESMTP id B5EDE1B201FA;
+        Mon, 13 Jan 2020 12:25:20 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru B5EDE1B201FA
+Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
+        by mail.rzn.dlink.ru (Postfix) with ESMTP id 5075A1B20320;
+        Mon, 13 Jan 2020 12:25:20 +0300 (MSK)
+Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
+        by mail.rzn.dlink.ru (Postfix) with ESMTPA;
+        Mon, 13 Jan 2020 12:25:20 +0300 (MSK)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Mon, 13 Jan 2020 12:25:20 +0300
+From:   Alexander Lobakin <alobakin@dlink.ru>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Edward Cree <ecree@solarflare.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Taehee Yoo <ap420073@gmail.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>,
+        Matteo Croce <mcroce@redhat.com>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Paul Blakey <paulb@mellanox.com>,
+        Yoshiki Komachi <komachi.yoshiki@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH RFC net-next 00/20] net: dsa: add GRO support
+In-Reply-To: <20191230171216.GC13569@lunn.ch>
+References: <20191230143028.27313-1-alobakin@dlink.ru>
+ <20191230171216.GC13569@lunn.ch>
+User-Agent: Roundcube Webmail/1.4.0
+Message-ID: <e98ab4764c8a0a90c18bfd49305310fe@dlink.ru>
+X-Sender: alobakin@dlink.ru
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 10. Januar 2020, 15:21:28 CET schrieb Johan Jonker:
-> An experimental test with the command below gives this error:
-> rk3399-firefly.dt.yaml: dwmmc@fe310000: wifi@1:
-> 'reg' is a required property
-> rk3399-orangepi.dt.yaml: dwmmc@fe310000: wifi@1:
-> 'reg' is a required property
-> rk3399-khadas-edge.dt.yaml: dwmmc@fe310000: wifi@1:
-> 'reg' is a required property
-> rk3399-khadas-edge-captain.dt.yaml: dwmmc@fe310000: wifi@1:
-> 'reg' is a required property
-> rk3399-khadas-edge-v.dt.yaml: dwmmc@fe310000: wifi@1:
-> 'reg' is a required property
-> So fix this by adding a reg property to the brcmf sub node.
-> Also add #address-cells and #size-cells to prevent more warnings.
+Andrew Lunn wrote 30.12.2019 20:12:
+>> I mark this as RFC, and there are the key questions for maintainers,
+>> developers, users etc.:
+>> - Do we need GRO support for DSA at all?
 > 
-> make ARCH=arm64 dtbs_check
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+>> - Does this series bring any performance improvements on the
+>>   affected systems?
 > 
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> Hi Alexander
 
-applied for 5.6
+Hi,
 
-Thanks
-Heiko
+> I think these are the two most important questions. Did you do any
+> performance testing for the hardware you have?
 
+Exactly, this are the top questions. I performed lots of tests on
+hardware with which I'm working on and had a pretty good boosts
+(I didn't mainlined my drivers yet unfortunately).
+But this does not mean that GRO would be that nice for all kind of
+devices *at all*. That's why I would like to see more test results
+on different systems.
 
+> I personally don't have any of the switches you have made
+> modifications to, so i cannot test these patches. I might be able to
+> add GRO to DSA and EDSA, where i can do some performance testing.
+> 
+>     Andrew
+
+Regards,
+ᚷ ᛖ ᚢ ᚦ ᚠ ᚱ
