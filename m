@@ -2,107 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47AD7138E0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:44:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6619138E15
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:45:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728641AbgAMJoB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 04:44:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725978AbgAMJoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 04:44:01 -0500
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10BF82075B;
-        Mon, 13 Jan 2020 09:43:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578908640;
-        bh=UtHfmZbsNcplNP3k+bEt4c2k9o181tnaCpLdxVZFFQI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Chqov/hf8tR7oy+LK2yRjMCtLFz+wPmkrkH0qv6ptZ93DU/La0cx0HYm1cohXJsSc
-         kgcX/e9UlSQAUk6fWS5TSErd/fDzcDnG+oT58Jx636C92DgH56LFKSjJWk5s7Djmkd
-         hSW/oqvXZ/oAFkr6VUIml5NMHscjdN8PYHy7QV1U=
-Date:   Mon, 13 Jan 2020 10:43:58 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 3/9] dt-bindings: irq: Add a compatible for the H3 R_INTC
-Message-ID: <20200113094358.7jefihp4i4rt4orm@gilmour.lan>
-References: <20200113044936.26038-1-samuel@sholland.org>
- <20200113044936.26038-4-samuel@sholland.org>
+        id S1727286AbgAMJov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 04:44:51 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54946 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726109AbgAMJou (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 04:44:50 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00D9bfoP115448
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 04:44:49 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2xfvjx5w58-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 04:44:49 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Mon, 13 Jan 2020 09:44:47 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 13 Jan 2020 09:44:43 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00D9ig7015663186
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 Jan 2020 09:44:42 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B51C442047;
+        Mon, 13 Jan 2020 09:44:42 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D22AC42041;
+        Mon, 13 Jan 2020 09:44:40 +0000 (GMT)
+Received: from [9.124.31.171] (unknown [9.124.31.171])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 13 Jan 2020 09:44:40 +0000 (GMT)
+Subject: Re: [GIT PULL 0/6] perf/urgent fixes
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20191205193224.24629-1-acme@kernel.org>
+ <6489b96f-5117-f133-1c2d-63c0c1691f4b@linux.ibm.com>
+ <20200113092539.GD35080@krava>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Mon, 13 Jan 2020 15:14:40 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="smzsasjwaytwgncj"
-Content-Disposition: inline
-In-Reply-To: <20200113044936.26038-4-samuel@sholland.org>
+In-Reply-To: <20200113092539.GD35080@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20011309-0008-0000-0000-00000348E217
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20011309-0009-0000-0000-00004A693098
+Message-Id: <d3e490aa-994f-3bec-cddf-cd5659e5859d@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-13_02:2020-01-13,2020-01-13 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=927
+ lowpriorityscore=0 bulkscore=0 suspectscore=0 adultscore=0 phishscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
+ clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001130082
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---smzsasjwaytwgncj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Sun, Jan 12, 2020 at 10:49:30PM -0600, Samuel Holland wrote:
-> The Allwinner H3 SoC contains an R_INTC that is, as far as we know,
-> compatible with the R_INTC present in other sun8i/sun50i SoCs starting
-> with the A31. Since the R_INTC hardware is undocumented, introduce a new
-> compatible for the R_INTC variant in this SoC, in case there turns out
-> to be some difference.
->
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
-> ---
->  .../interrupt-controller/allwinner,sun7i-a20-sc-nmi.yaml       | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/allwinner,sun7i-a20-sc-nmi.yaml b/Documentation/devicetree/bindings/interrupt-controller/allwinner,sun7i-a20-sc-nmi.yaml
-> index 0eccf5551786..fffffcd0eea3 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/allwinner,sun7i-a20-sc-nmi.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/allwinner,sun7i-a20-sc-nmi.yaml
-> @@ -29,6 +29,9 @@ properties:
->        - items:
->          - const: allwinner,sun8i-a83t-r-intc
->          - const: allwinner,sun6i-a31-r-intc
-> +      - items:
-> +        - const: allwinner,sun8i-h3-r-intc
-> +        - const: allwinner,sun6i-a31-r-intc
+On 1/13/20 2:55 PM, Jiri Olsa wrote:
+> On Mon, Jan 13, 2020 at 01:58:59PM +0530, Ravi Bangoria wrote:
+> 
+> SNIP
+> 
+>>          | ^~~~
+>>    In file included from /usr/include/glib-2.0/gobject/gobject.h:24,
+>>                     from /usr/include/glib-2.0/gobject/gbinding.h:29,
+>>                     from /usr/include/glib-2.0/glib-object.h:23,
+>>                     from /usr/include/glib-2.0/gio/gioenums.h:28,
+>>                     from /usr/include/glib-2.0/gio/giotypes.h:28,
+>>                     from /usr/include/glib-2.0/gio/gio.h:26,
+>>                     from /usr/include/gtk-2.0/gdk/gdkapplaunchcontext.h:30,
+>>                     from /usr/include/gtk-2.0/gdk/gdk.h:32,
+>>                     from /usr/include/gtk-2.0/gtk/gtk.h:32,
+>>                     from test-gtk2.c:3:
+>>    /usr/include/glib-2.0/gobject/gtype.h:679:1: note: declared here
+>>      679 | {
+>>          | ^
+>>    In file included from /usr/include/gtk-2.0/gtk/gtktoolitem.h:31,
+>>                     from /usr/include/gtk-2.0/gtk/gtktoolbutton.h:30,
+>>                     from /usr/include/gtk-2.0/gtk/gtkmenutoolbutton.h:30,
+>>                     from /usr/include/gtk-2.0/gtk/gtk.h:126,
+>>                     from test-gtk2.c:3:
+>>    /usr/include/gtk-2.0/gtk/gtktooltips.h:73:3: error: ‘GTimeVal’ is deprecated: Use 'GDateTime' instead [-Werror=deprecated-declarations]
+>>       73 |   GTimeVal last_popdown;
+>>          |   ^~~~~~~~
+>>    In file included from /usr/include/glib-2.0/glib/galloca.h:32,
+>>                     from /usr/include/glib-2.0/glib.h:30,
+>>                     from /usr/include/glib-2.0/gobject/gbinding.h:28,
+>>                     from /usr/include/glib-2.0/glib-object.h:23,
+>>                     from /usr/include/glib-2.0/gio/gioenums.h:28,
+>>                     from /usr/include/glib-2.0/gio/giotypes.h:28,
+>>                     from /usr/include/glib-2.0/gio/gio.h:26,
+>>                     from /usr/include/gtk-2.0/gdk/gdkapplaunchcontext.h:30,
+>>                     from /usr/include/gtk-2.0/gdk/gdk.h:32,
+>>                     from /usr/include/gtk-2.0/gtk/gtk.h:32,
+>>                     from test-gtk2.c:3:
+>>    /usr/include/glib-2.0/glib/gtypes.h:551:8: note: declared here
+>>      551 | struct _GTimeVal
+>>          |        ^~~~~~~~~
+>>    cc1: all warnings being treated as errors
+>>
+> 
+> patch below fixes that for me.. please let me know
+> if it works for you and I'll post full patch
+> 
+> jirka
+> 
 
-If we are to add more compatibles, I guess we could switch to
-something like:
+LGTM. You can add:
 
-items:
-  - enum:
-    - allwinner,sun8i-a83t-r-intc
-    - allwinner,sun8i-h3-r-intc
-  - const: allwinner,sun6i-a31-r-intc
+Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 
-It's going to be easier to maintain in the long run.
-
-Thanks!
-Maxime
-
---smzsasjwaytwgncj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXhw73gAKCRDj7w1vZxhR
-xfhpAQDaJubC92ncM6GPUUqzW3nc++GjfRAhdInV8usAwqdmxwD+P5/2e/W5eeaW
-kJxLxEHrY7QaX68C60fWL9XuCd6QbAc=
-=lixO
------END PGP SIGNATURE-----
-
---smzsasjwaytwgncj--
