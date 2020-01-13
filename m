@@ -2,99 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7164F139BE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 22:53:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32752139BBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 22:39:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728863AbgAMVxa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 16:53:30 -0500
-Received: from www381.your-server.de ([78.46.137.84]:55298 "EHLO
-        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728813AbgAMVxa (ORCPT
+        id S1728828AbgAMVi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 16:38:59 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42494 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726778AbgAMVi7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 16:53:30 -0500
-X-Greylist: delayed 1799 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 Jan 2020 16:53:29 EST
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-        by www381.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <lars@metafoo.de>)
-        id 1ir6mD-0002hu-Mv; Mon, 13 Jan 2020 21:57:33 +0100
-Received: from [93.104.104.184] (helo=[192.168.178.20])
-        by sslproxy03.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-CHACHA20-POLY1305:256)
-        (Exim 4.92)
-        (envelope-from <lars@metafoo.de>)
-        id 1ir6mD-000VBg-Bg; Mon, 13 Jan 2020 21:57:33 +0100
-Subject: Re: [PATCH 1/3] iio: amplifiers: hmc425a: Add support for HMC425A
- step attenuator with gpio interface
-To:     Beniamin Bia <beniamin.bia@analog.com>, jic23@kernel.org
-Cc:     Michael.Hennerich@analog.com, pmeerw@pmeerw.net,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        biabeniamin@outlook.com, knaack.h@gmx.de, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-References: <20200113141555.16117-1-beniamin.bia@analog.com>
-From:   Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <5ae63616-5749-da51-b0b2-85cdcaa948f3@metafoo.de>
-Date:   Mon, 13 Jan 2020 21:57:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 13 Jan 2020 16:38:59 -0500
+Received: by mail-pl1-f193.google.com with SMTP id p9so4329791plk.9;
+        Mon, 13 Jan 2020 13:38:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PNCK//uPfDCqysTs22q4VYtyuju/MqjD28uUh4zcIbE=;
+        b=mVyvFOsLFaJ19vdKZqZvc8NcQlbNpM6sJESgAYciCSefTKQyE9eGYgyAPXr6tD8RQ5
+         tuv2Z6u4Y7+5yWculISPTejy+vLL1os75RJnc18A1MXANaMahOnW/6K1axy925ysX7T1
+         w6jWUGUcH/tOhOGZuaXbHANZCCaBT0Cnp/zziJBkVm3b5nlFhwkR0y4Glx27t32aDjg0
+         sZ9CyX4qLR4G+oPEKCB2AYTrcVsveBxoF0+UB8d18k1rcgj6wd1twD7O3K1D/ZnIfV5Z
+         jwrBTSOM7GbgNAgJT+1qKF00WoRRUBDPgu9XmuqPxUWf3P2WU93r+UNBzg7zSBWQ81TH
+         wYvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PNCK//uPfDCqysTs22q4VYtyuju/MqjD28uUh4zcIbE=;
+        b=YXY96w15yfXL1y5g8W0R/OexiOyHp3EnFAxpdSnXBhqj3HR9+zZ6vvUCdR62/fKefC
+         pVEgZF1q9c6We0x+PL3jxxHDAYc/eORHX4zAQReSXF0Vcnrnib9h7EifKeCls5j0MQLL
+         qL7COIDZkSSARSIbV8i3ljqCgmVzflvGoQq3RxOJut8UOA6BoLUuU43lSiNcftUhSJAm
+         Hu4s6K4/bPzv6Sb7znhhLZ5sNQk9UqCjz/jC2EsULqE536ZxlkiAE3G4XtTdgP74aXDD
+         Ti+NArWvEpjxWMg0jUNHZztpBvPNfSPesmGJKbT8f1ewzXdJpPx6xuNfq43eG1VH03EX
+         CgOA==
+X-Gm-Message-State: APjAAAUEz0H+mxAv+kjTJg9nI+BJocz81kxMtkPZahWqe2CRLe7C+tqJ
+        NmkfTM5sNqCj8Ti4ztfGuCY=
+X-Google-Smtp-Source: APXvYqxc3g8yOEfefbauBlQM3MSFeixa+bS/nqKS9+h5QFHVkGJBHxwZCS+UtBDL7iak8ru/DYy20g==
+X-Received: by 2002:a17:902:9889:: with SMTP id s9mr8898358plp.252.1578951538343;
+        Mon, 13 Jan 2020 13:38:58 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id r8sm13903696pjo.22.2020.01.13.13.38.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jan 2020 13:38:57 -0800 (PST)
+Date:   Mon, 13 Jan 2020 13:38:55 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 2/3] Input: axp20x-pek - Respect userspace wakeup
+ configuration
+Message-ID: <20200113213855.GB47797@dtor-ws>
+References: <20200113032032.38709-1-samuel@sholland.org>
+ <20200113032032.38709-2-samuel@sholland.org>
+ <84e9f44e-81e1-ab3d-3dd0-08388951b074@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200113141555.16117-1-beniamin.bia@analog.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: lars@metafoo.de
-X-Virus-Scanned: Clear (ClamAV 0.101.4/25694/Mon Jan 13 14:35:35 2020)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <84e9f44e-81e1-ab3d-3dd0-08388951b074@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/13/20 3:15 PM, Beniamin Bia wrote:
-[...]
-> +static int hmc425a_write(struct iio_dev *indio_dev, u32 value)
-> +{
-> +	struct hmc425a_state *st = iio_priv(indio_dev);
-> +	int i, *values;
-> +
-> +	values = kmalloc_array(st->chip_info->num_gpios, sizeof(int),
-> +			       GFP_KERNEL);
-> +	if (!values)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < st->chip_info->num_gpios; i++)
-> +		values[i] = (value >> i) & 1;
-> +
-> +	gpiod_set_array_value_cansleep(st->gpios->ndescs, st->gpios->desc,
-> +				       values);
+On Mon, Jan 13, 2020 at 11:48:35AM +0100, Hans de Goede wrote:
+> Hi,
+> 
+> On 13-01-2020 04:20, Samuel Holland wrote:
+> > Unlike most other power button drivers, this driver unconditionally
+> > enables its wakeup IRQ. It should be using device_may_wakeup() to
+> > respect the userspace configuration of wakeup sources.
+> > 
+> > Because the AXP20x MFD device uses regmap-irq, the AXP20x PEK IRQs are
+> > nested off of regmap-irq's threaded interrupt handler. The device core
+> > ignores such interrupts, so to actually disable wakeup, we must
+> > explicitly disable all non-wakeup interrupts during suspend.
+> > 
+> > Signed-off-by: Samuel Holland <samuel@sholland.org>
+> > ---
+> >   drivers/input/misc/axp20x-pek.c | 42 ++++++++++++++++++++++++++++++++-
+> >   1 file changed, 41 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/input/misc/axp20x-pek.c b/drivers/input/misc/axp20x-pek.c
+> > index 7d0ee5bececb..38cd4a4aeb65 100644
+> > --- a/drivers/input/misc/axp20x-pek.c
+> > +++ b/drivers/input/misc/axp20x-pek.c
+> > @@ -280,7 +280,7 @@ static int axp20x_pek_probe_input_device(struct axp20x_pek *axp20x_pek,
+> >   	}
+> >   	if (axp20x_pek->axp20x->variant == AXP288_ID)
+> > -		enable_irq_wake(axp20x_pek->irq_dbr);
+> > +		device_init_wakeup(&pdev->dev, true);
+> >   	return 0;
+> >   }
+> > @@ -352,6 +352,45 @@ static int axp20x_pek_probe(struct platform_device *pdev)
+> >   	return 0;
+> >   }
+> > +#if CONFIG_PM_SLEEP
+> 
+> As the kbuild test robot pointed out, you need to use #ifdef here.
 
-This API got changed a while ago in upstream, see
-https://github.com/analogdevicesinc/linux/commit/b9762bebc6332b40c33e03dea03e30fa12d9e3ed
+I prefer __maybe_unused as this gives more compile coverage.
 
-> +	kfree(values);
-> +	return 0;
-> +}
-[...]
-> +static int hmc425a_probe(struct platform_device *pdev)
-> +{
-[...]
-> +
-> +	platform_set_drvdata(pdev, indio_dev);
+Thanks.
 
-drvdata is never accessed, no need to set it.
-
-> +	mutex_init(&st->lock);
-> +
-> +	indio_dev->dev.parent = &pdev->dev;
-> +	indio_dev->name = np->name;
-
-I know ADI likes to do this in its non upstream drivers, but the above
-is not IIO ABI compliant. The name is supposed to identify the type of
-the device, which means for this driver should be static "hmc425a".
-Maybe consider adding a field to the hmc425a_chip_info for this.
-
-> +	indio_dev->info = &hmc425a_info;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +
-> +	return devm_iio_device_register(&pdev->dev, indio_dev);
-> +}
-
+-- 
+Dmitry
