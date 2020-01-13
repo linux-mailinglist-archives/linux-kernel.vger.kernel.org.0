@@ -2,115 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D8851394E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 16:36:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4880E1394E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 16:36:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728674AbgAMPgS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 10:36:18 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:37266 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbgAMPgR (ORCPT
+        id S1728753AbgAMPgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 10:36:50 -0500
+Received: from mail-yw1-f99.google.com ([209.85.161.99]:40397 "EHLO
+        mail-yw1-f99.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728688AbgAMPgt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 10:36:17 -0500
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id 00DFaChC004910;
-        Tue, 14 Jan 2020 00:36:13 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 00DFaChC004910
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1578929773;
-        bh=WvM/gJrWjdVgUnU+HkAKdEIOMw3oFE5evrhjYDUHO8Y=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=AjXElao0UYggxb1dkHr7ah6ygIJcmjkZePTnf6OsVB3Lgu5XNgfXf2FY9+giU267w
-         kY73r1h5UIzJ8M02jk5Xe+ukHDIA7ZdcpwkbHGY3SlBEm6IKHctwhK++HLkDZJy8bW
-         X6XudRapkHOsXyiOLFjdalyK+kjBktvH/fjcwjEoWrqEpvZQtpvnqBG95EQw9ZcyfS
-         vJ39FrMmstmZLRow9aXXVv3Yf62v1qqhCKqxuMpUXklb93bABavyVym2qhbzSg1wgA
-         XZqnC10iPqgmNrBjYEnJKWSpJSQSO2qCYo70crJmNlIUHHVy+9u5Wq9TmdRZMEG2SB
-         d6p0YsC9RTXmQ==
-X-Nifty-SrcIP: [209.85.222.51]
-Received: by mail-ua1-f51.google.com with SMTP id a12so3502781uan.0;
-        Mon, 13 Jan 2020 07:36:12 -0800 (PST)
-X-Gm-Message-State: APjAAAVnuYDfPDfKgmaQ/oUR9h0ehVjm0+jb5e4wfC/xd2sZMKgwdD4f
-        InF9vO2gqFtMa5119IHA8RvQgEfUN1ME/qcSQeU=
-X-Google-Smtp-Source: APXvYqwYBiIIg3r8QgGcoIZIOVEtg69qxQQCglH/6roVxQ/uPHUuHQeSZFiMEV6rUasevilDljUUnofe9cNzeIXKF4k=
-X-Received: by 2002:ab0:14ea:: with SMTP id f39mr7599928uae.40.1578929771582;
- Mon, 13 Jan 2020 07:36:11 -0800 (PST)
+        Mon, 13 Jan 2020 10:36:49 -0500
+Received: by mail-yw1-f99.google.com with SMTP id i126so6325661ywe.7
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 07:36:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brkho-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XJFdDikfbN+KalEJTdnTdl6gsZ3fW2Tc7ZjkvYTvyD0=;
+        b=Ra1HwBngnQsFsdibS3erX1ro72SPNFOPBuna6fAXIQWG17KVuwQqD9gMrdmCX7ki+B
+         EfZnaFMA5gKVT3d2qJucInxK1XRuJFIQjhpLG292NZcU6B2kEOsnvEAtLvx58jiTXMJk
+         R3JhbyxnKu264DFtvTI48xgHQS4fvpOzUpteR3OrVr78AnbU2zIkVDSvrN5ZD8cvjeee
+         JFM3IRmFzWideOV8V9KEow0sfm4l9HLJVDVYnrOiZTg2y3gnmUrcDev8aU5KY5uD5KlR
+         ZI8urhn7LhvdDYHsVAv38s1cdzYy0VpHd73CuBsHJdDdJIh3/5QdZn3CfaseC0z8UOlv
+         K8pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XJFdDikfbN+KalEJTdnTdl6gsZ3fW2Tc7ZjkvYTvyD0=;
+        b=EgvnxI5ZfMtG2P+jzdEfJWULz2fBui3Gb5JJP2ZAFCr/EpEOam40Aj70/sOUu0TdIE
+         EDjJu/Kgen0O/M/CyfKWnhhutNvZ84c5esRn3Yjf8GfpqCEA/O7FOoPo1/sygACrQH7K
+         7Nobtx+p/PLiuO42D3x6O938kmk4R8H7Dhety+exhsSmADsVFKnHE8Fd9I6pL4gaQIE7
+         HwbCbs7v4nPv2I2EyyvT0P4jKFxHbZ8HUelIG+Pu8F5DYhejISEdOzbyhqh9kS6hnFqI
+         5iKEtrMRb6aoO63DQeQEo8fo3rGslNW7qulq225E2g2x1xwvD/Jc+bvc2TR8Zd67jaJW
+         679Q==
+X-Gm-Message-State: APjAAAXtkfial8m6FzD2M5Dd/NH+FDSNILFvWDqZai7G/nRDrg/sIExU
+        2NJ+cMjdV4B7+Xw1Aa7LBYvagIoDctObeB1hxKVQ4kV/wBN/HQ==
+X-Google-Smtp-Source: APXvYqze74w6U50gaTJnAzutIy9P9BFgvcZsIGa2e6zF7CwAW4jN8VuBPit1CodjbUXUBdLxFIXm1nt6Mg+C
+X-Received: by 2002:a25:2c9:: with SMTP id 192mr12441529ybc.48.1578929808492;
+        Mon, 13 Jan 2020 07:36:48 -0800 (PST)
+Received: from hob1.nyc.corp.google.com ([100.118.32.120])
+        by smtp-relay.gmail.com with ESMTPS id m193sm1672393ywd.0.2020.01.13.07.36.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jan 2020 07:36:48 -0800 (PST)
+X-Relaying-Domain: brkho.com
+From:   Brian Ho <brian@brkho.com>
+To:     freedreno@lists.freedesktop.org
+Cc:     hoegsberg@chromium.org, robdclark@chromium.org,
+        Brian Ho <brian@brkho.com>,
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
+        GPU),
+        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER FOR MSM ADRENO GPU),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 0/2] drm/msm: Add the MSM_WAIT_IOVA ioctl
+Date:   Mon, 13 Jan 2020 10:36:03 -0500
+Message-Id: <20200113153605.52350-1-brian@brkho.com>
+X-Mailer: git-send-email 2.25.0.rc1.283.g88dfdc4193-goog
 MIME-Version: 1.0
-References: <20200110165636.28035-1-will@kernel.org> <20200110165636.28035-2-will@kernel.org>
- <CAK8P3a3ueJ_rQc-1JTg=3N0JSuY9BduJ6FrrPFG1K2FWVzJdfA@mail.gmail.com>
- <8fe4f81699517758b44afbe0e1a53bc080f64a62.camel@perches.com> <CAK8P3a1t9757M5CRKNX_X+T9VuLX+5=z5_845rLJGTG50RogXA@mail.gmail.com>
-In-Reply-To: <CAK8P3a1t9757M5CRKNX_X+T9VuLX+5=z5_845rLJGTG50RogXA@mail.gmail.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Tue, 14 Jan 2020 00:35:35 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARugZUWNF_1e70ZCyK5t_e4MFXnnw1PkmaRWQioQSPkEA@mail.gmail.com>
-Message-ID: <CAK7LNARugZUWNF_1e70ZCyK5t_e4MFXnnw1PkmaRWQioQSPkEA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/8] compiler/gcc: Emit build-time warning for GCC
- prior to version 4.8
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Joe Perches <joe@perches.com>, Will Deacon <will@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 11:40 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Fri, Jan 10, 2020 at 6:54 PM Joe Perches <joe@perches.com> wrote:
-> >
-> > On Fri, 2020-01-10 at 18:35 +0100, Arnd Bergmann wrote:
-> > > On Fri, Jan 10, 2020 at 5:56 PM Will Deacon <will@kernel.org> wrote:
-> > > > Prior to version 4.8, GCC may miscompile READ_ONCE() by erroneously
-> > > > discarding the 'volatile' qualifier:
-> > > >
-> > > > https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58145
-> > > >
-> > > > We've been working around this using some nasty hacks which make
-> > > > READ_ONCE() both horribly complicated and also prevent us from enforcing
-> > > > that it is only used on scalar types. Since GCC 4.8 is pretty old for
-> > > > kernel builds now, emit a warning if we detect it during the build.
-> > >
-> > > No objection to recommending gcc-4.8, but I think this should either
-> > > just warn once during the kernel build instead of for every file, or
-> > > it should become a hard requirement.
-> >
-> > It might as well be a hard requirement as
-> > gcc 4.8.0 is already nearly 7 years old.
-> >
-> > gcc 4.6.0 released 2011-03-25
-> > gcc 4.8.0 released 2013-03-22
-> >
-> > Perhaps there are exceedingly few to zero new
-> > instances using gcc compiler versions < 4.8
->
-> The last time we had this discussion, the result was that gcc-4.8 is
-> probably ok as a minimum version, but moving to 5.1+ (from 2015)
-> was not an obvious choice:
->
-> https://www.spinics.net/lists/linux-kbuild/msg23648.html
->
-> If nobody complains about the move to 4.8, we can try moving to
-> gcc-5.1 and GNU99/GNU11 next year  ;-)
->
->        Arnd
+This patch set implements the MSM_WAIT_IOVA ioctl which lets
+userspace sleep until the value at a given iova reaches a certain
+condition. This is needed in turnip to implement the
+VK_QUERY_RESULT_WAIT_BIT flag for vkGetQueryPoolResults.
 
+First, we add a GPU-wide wait queue that is signaled on all IRQs.
+We can then wait on this wait queue inside MSM_WAIT_IOVA until the
+condition is met.
 
-I agree.
+The corresponding merge request in mesa can be found at:
+https://gitlab.freedesktop.org/mesa/mesa/merge_requests/3279
 
-"Your compiler is old and may miscompile the kernel due to
-https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58145 - please upgrade it."
-sounds like an error rather than a warning.
+Brian Ho (2):
+  drm/msm: Add a GPU-wide wait queue
+  drm/msm: Add MSM_WAIT_IOVA ioctl
 
-
+ drivers/gpu/drm/msm/msm_drv.c | 63 +++++++++++++++++++++++++++++++++--
+ drivers/gpu/drm/msm/msm_gpu.c |  4 +++
+ drivers/gpu/drm/msm/msm_gpu.h |  3 ++
+ include/uapi/drm/msm_drm.h    | 13 ++++++++
+ 4 files changed, 81 insertions(+), 2 deletions(-)
 
 -- 
-Best Regards
-Masahiro Yamada
+2.25.0.rc1.283.g88dfdc4193-goog
+
