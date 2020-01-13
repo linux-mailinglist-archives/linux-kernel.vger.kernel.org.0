@@ -2,624 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83FB5138FD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 12:10:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24DF2138FD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 12:11:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbgAMLKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 06:10:37 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41480 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbgAMLKg (ORCPT
+        id S1728741AbgAMLLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 06:11:36 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:44458 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbgAMLLg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 06:10:36 -0500
-Received: by mail-wr1-f67.google.com with SMTP id c9so8094442wrw.8
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 03:10:33 -0800 (PST)
+        Mon, 13 Jan 2020 06:11:36 -0500
+Received: by mail-qt1-f196.google.com with SMTP id t3so8703441qtr.11
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 03:11:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=EwOMo9RWTvjYspMQqt6dm8ILGLsYUwrg2cS9QS90yqM=;
-        b=hFs7/wmyTfbC7PWGh95ZKuoSvVelOoO/NOxBSt4H2zGyD11no2dGvtZ26PiEmlHUfu
-         4JEu9ow2GQAn+JNaQFQKk4Od/fX1UsLavzR1+i8ATdPQS1SfEHeNGucFFBG/DWZvubVM
-         OEHcyUjDXFc+34qu6O9HA8KO52dfzbCZbmhfGlxJgGJUEj4GfFIcLCSjbMJ5rq1zfPS8
-         scGKcBz69u0/DMJmDxiTDGC0o/919tN/70fZmvgqIe3sfntcXUE3zBRlSTdqM/qBuARb
-         m1qVXctjNJz3dPkPkjlvUeQLd49pEUTMMv/VgeVu+ST8yIcv3JPxai246wvBTF+Gm6qj
-         xqMA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pwo6CXoEExY4P7FhgrfOA4x+oRv3QDj7HzIdYTSbXyQ=;
+        b=GUJkBVdzgnMf0uZMhvQz3acAlzbV4FMyCI7t0kYp7G0i+Sezxl6ysPMtzU9CleaPK7
+         zzh8GYSESpFS4ifdi5j4tEHfKKTulXLoGcUk4plZuV427yJNjbLcluLDNjwj9YY1IEVR
+         nXb/DRj9QH44Xc4QntHxM6ZCC7GEA2O1xYUDTvnC7GmsxDthlnAr9r+OKFVROOMbbXSk
+         gI4XGR2Ah05yNxJFZwONuA6MlPHQfodqMoLlxZPQRr75St9qUTfOt9jPyaxGELAipg6C
+         N0R3z2PqY9wO10Xk2x2y0rarFJMVTbyBpGw7T/f2UlQiDQlxNDJzy7LwUrMkVB/Lkk9q
+         Ye/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=EwOMo9RWTvjYspMQqt6dm8ILGLsYUwrg2cS9QS90yqM=;
-        b=VlIYfPSF/TloxV9kEGc7KLACg7Xa71HznSdSxR/31MVrLXAc4YebPqY4eh5w7J4tdB
-         smB67vsxCv8ynrX1qGIG9X1lwmJljzGw6WB/Fjtj4EhMZG2NFdPGEny5StHyz0apW1rV
-         8Dq6R5lpoGYrTjRpsQhwr6clC+YjLiRc17kN62fHYobJDXoV48IcqEbntNNIq4n/nrt0
-         uCTkIjiMZalSGBU9QKYaRLrh9wyYiN89eC7mzVeKCzfdk8ClGRu2AKWnHEn8sQngmESV
-         R/YbEKVhpabnI1WslvRgnDRDynNt5StHzueeckMe3Lc9QKgIXuzkW5X4PrDrR4XLBIQC
-         cGjA==
-X-Gm-Message-State: APjAAAWslW5Z/XhIzoDoeG+w2dKqpJdvLQXGfvG24WfjLQH3ATmS/yxy
-        b4I5KO51n+4DLiNcM5ZwLn8=
-X-Google-Smtp-Source: APXvYqzLO1asWyUUWyzPK9XCsDnmHI1+4ggdX7Nq4vXAxBcJ1kPkqEtlIRkpA6l9TYatk/ui8c6JRw==
-X-Received: by 2002:adf:e58d:: with SMTP id l13mr17236521wrm.135.1578913832384;
-        Mon, 13 Jan 2020 03:10:32 -0800 (PST)
-Received: from wambui.zuku.co.ke ([197.237.61.225])
-        by smtp.googlemail.com with ESMTPSA id k11sm13390955wmc.20.2020.01.13.03.10.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 03:10:31 -0800 (PST)
-From:   Wambui Karuga <wambui.karugax@gmail.com>
-To:     jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch
-Cc:     sean@poorly.run, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/i915: convert to new logging macros based on struct intel_engine_cs.
-Date:   Mon, 13 Jan 2020 14:10:25 +0300
-Message-Id: <20200113111025.2048-1-wambui.karugax@gmail.com>
-X-Mailer: git-send-email 2.24.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pwo6CXoEExY4P7FhgrfOA4x+oRv3QDj7HzIdYTSbXyQ=;
+        b=pvSWYd4ZdNErvqS/eFZGD7Wuxe9yYESOvNI2m+gI7brvficVWHOpHjjHLKbO6MzbtY
+         Tq1xg71DXQXToUQ61loKLpBU7RkmVEys9XlKDDRPH5pQqGRiYYnWufkc5BcnlKCXefz6
+         nrt+/RgtQRezPnrFIQATT2gg/ura+xB2MWkXwMlHaEleVcsyrBcVYUdejWcEMi5qVRk1
+         t6T+6KFp87SaIzQzR7SoqzotpHSPBKSK8v8KQyf2a717YmhZDG/VO7phI+mMATN4uvH5
+         Kl0lzJBlNkaCHW58hxXUEf+1XfwAJwyI+1tHBmtFlIFbgT7DZXY7svkwvsvSC8IA7y4S
+         u+hQ==
+X-Gm-Message-State: APjAAAW4iF5rymqm09OiISa6EtaYAU13WccCcgbdoOUrS7nzEDcXAndb
+        rszi92+cjUZFOxttKMgGQ1/411FHVws0HjZUldQTLg==
+X-Google-Smtp-Source: APXvYqySTFt6N89yO1Yw19BS0G8z0FzW/aa7I0c2pvH1BRmQrAh93p2lsaSrgQi0i5kQDcsiPwJI34W6NH4r7TefH5k=
+X-Received: by 2002:ac8:71d7:: with SMTP id i23mr13691627qtp.50.1578913894652;
+ Mon, 13 Jan 2020 03:11:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <0000000000007523a60576e80a47@google.com> <CACT4Y+b3AmVQMjPNsPHOXRZS4tNYb6Z9h5-c=1ZwZk0VR-5J5Q@mail.gmail.com>
+ <20180928070042.GF3439@hirez.programming.kicks-ass.net> <CACT4Y+YFmSmXjs5EMNRPvsR-mLYeAYKypBppYq_M_boTi8a9uQ@mail.gmail.com>
+ <CACT4Y+ZBYYUiJejNbPcZWS+aHehvkgKkTKm0gvuviXGGcirJ5g@mail.gmail.com>
+In-Reply-To: <CACT4Y+ZBYYUiJejNbPcZWS+aHehvkgKkTKm0gvuviXGGcirJ5g@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 13 Jan 2020 12:11:23 +0100
+Message-ID: <CACT4Y+bTGp1J9Wn=93LUObdTcWPo2JrChYKF-1v6aXmtvoQgPQ@mail.gmail.com>
+Subject: Re: BUG: MAX_LOCKDEP_CHAINS too low!
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Cong Wang <xiyou.wangcong@gmail.com>, ap420073@gmail.com
+Cc:     syzbot <syzbot+aaa6fa4949cc5d9b7b25@syzkaller.appspotmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch extracts the struct drm_i915_private device from struct
-intel_engine_cs and converts the printk based logging macros to the
-struct drm_based logging macros using the extracted struct.
-This transformation was achieved using the following coccinelle script:
-@rule1@
-identifier fn, T, E;
-@@
+On Thu, Jan 9, 2020 at 11:59 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> On Fri, Sep 28, 2018 at 9:56 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+> > >> > Hello,
+> > >> >
+> > >> > syzbot found the following crash on:
+> > >> >
+> > >> > HEAD commit:    c307aaf3eb47 Merge tag 'iommu-fixes-v4.19-rc5' of git://gi..
+> > >> > git tree:       upstream
+> > >> > console output: https://syzkaller.appspot.com/x/log.txt?x=13810df1400000
+> > >> > kernel config:  https://syzkaller.appspot.com/x/.config?x=dfb440e26f0a6f6f
+> > >> > dashboard link: https://syzkaller.appspot.com/bug?extid=aaa6fa4949cc5d9b7b25
+> > >> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > >> >
+> > >> > Unfortunately, I don't have any reproducer for this crash yet.
+> > >> >
+> > >> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > >> > Reported-by: syzbot+aaa6fa4949cc5d9b7b25@syzkaller.appspotmail.com
+> > >>
+> > >> +LOCKDEP maintainers,
+> > >>
+> > >> What does this BUG mean? And how should it be fixed?
+> > >>
+> > >> Thanks
+> > >>
+> > >> > BUG: MAX_LOCKDEP_CHAINS too low!
+> > >
+> > > Is the his result of endlessly loading and unloading modules?
+> > >
+> > > In which case, the fix is: don't do that then.
+> >
+> > No modules involved, we don't have any modules in the image. Must be
+> > something else.
+> > Perhaps syzkaller just produced a workload so diverse that nobody ever produced.
+>
+> Peter, Ingo,
+>
+> This really plagues syzbot testing for more than a year now. These four:
+>
+> BUG: MAX_LOCKDEP_KEYS too low!
+> https://syzkaller.appspot.com/bug?id=8a18efe79140782a88dcd098808d6ab20ed740cc
+>
+> BUG: MAX_LOCKDEP_ENTRIES too low!
+> https://syzkaller.appspot.com/bug?id=3d97ba93fb3566000c1c59691ea427370d33ea1b
+>
+> BUG: MAX_LOCKDEP_CHAINS too low!
+> https://syzkaller.appspot.com/bug?id=bf037f4725d40a8d350b2b1b3b3e0947c6efae85
+>
+> BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
+> https://syzkaller.appspot.com/bug?id=381cb436fe60dc03d7fd2a092b46d7f09542a72a
+>
+>
+> Now running testing I only see a stream of different lockdep bugs mostly:
+>
+> 2020/01/09 11:41:51 vm-13: crash: BUG: MAX_LOCKDEP_ENTRIES too low!
+> 2020/01/09 11:43:09 vm-9: crash: INFO: task hung in register_netdevice_notifier
+> 2020/01/09 11:44:00 vm-26: crash: no output from test machine
+> 2020/01/09 11:44:11 vm-8: crash: BUG: MAX_LOCKDEP_ENTRIES too low!
+> 2020/01/09 11:44:28 vm-19: crash: BUG: MAX_LOCKDEP_ENTRIES too low!
+> 2020/01/09 11:46:20 vm-27: crash: BUG: MAX_LOCKDEP_ENTRIES too low!
+> 2020/01/09 11:46:41 vm-15: crash: BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
+> 2020/01/09 11:46:45 vm-28: crash: BUG: MAX_LOCKDEP_ENTRIES too low!
+> 2020/01/09 11:46:47 vm-29: crash: BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
+> 2020/01/09 11:46:49 vm-22: crash: BUG: MAX_LOCKDEP_ENTRIES too low!
+> 2020/01/09 11:46:50 vm-10: crash: no output from test machine
+> 2020/01/09 11:46:52 vm-18: crash: BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
+> 2020/01/09 11:46:53 vm-23: crash: BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
+> 2020/01/09 11:47:17 vm-20: crash: lost connection to test machine
+> 2020/01/09 11:47:48 vm-5: crash: BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
+> 2020/01/09 11:47:56 vm-14: crash: WARNING in restore_regulatory_settings
+> 2020/01/09 11:48:19 vm-2: crash: BUG: MAX_LOCKDEP_ENTRIES too low!
+> 2020/01/09 11:48:21 vm-7: crash: BUG: MAX_LOCKDEP_ENTRIES too low!
+> 2020/01/09 11:48:22 vm-3: crash: BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
+> 2020/01/09 11:48:40 vm-25: crash: BUG: MAX_LOCKDEP_CHAINS too low!
+>
+> Should we just bump the limits there?
+>
+> Or are there some ID leaks in lockdep? syzbot has a bunch of very
+> simple reproducers for these bugs, so not really a maximally diverse
+> load. And I think I saw these bugs massively when testing just a
+> single subsystem too, e.g. netfilter.
 
-fn(struct intel_engine_cs *T,...) {
-struct drm_i915_private *E = ...;
-<+...
-(
--DRM_INFO(
-+drm_info(&E->drm,
-...)
-|
--DRM_ERROR(
-+drm_err(&E->drm,
-...)
-|
--DRM_WARN(
-+drm_warn(&E->drm,
-...)
-|
--DRM_DEBUG(
-+drm_dbg(&E->drm,
-...)
-|
--DRM_DEBUG_KMS(
-+drm_dbg_kms(&E->drm,
-...)
-|
--DRM_DEBUG_DRIVER(
-+drm_dbg(&E->drm,
-...)
-)
-...+>
-}
++Taehee, Cong,
 
-@rule2@
-identifier fn, E;
-@@
-
-fn(...) {
-...
-struct intel_engine_cs *E = ...;
-+struct drm_i915_private *dev_priv = E->i915;
-<+...
-(
--DRM_INFO(
-+drm_info(&dev_priv->drm,
-...)
-|
--DRM_ERROR(
-+drm_err(&dev_priv->drm,
-...)
-|
--DRM_WARN(
-+drm_warn(&dev_priv->drm,
-...)
-|
--DRM_DEBUG(
-+drm_dbg(&dev_priv->drm,
-...)
-|
--DRM_DEBUG_KMS(
-+drm_dbg_kms(&dev_priv->drm,
-...)
-|
--DRM_DEBUG_DRIVER(
-+drm_dbg(&E->drm,
-...)
-)
-...+>
-}
-
-@rule3@
-identifier fn, E;
-@@
-
-fn(struct intel_engine_cs *E,...) {
-+struct drm_i915_private *dev_priv = E->i915;
-<+...
-(
--DRM_INFO(
-+drm_info(&dev_priv->drm,
-...)
-|
--DRM_ERROR(
-+drm_err(&dev_priv->drm,
-...)
-|
--DRM_WARN(
-+drm_warn(&dev_priv->drm,
-...)
-|
--DRM_DEBUG(
-+drm_dbg(&dev_priv->drm,
-...)
-|
--DRM_DEBUG_KMS(
-+drm_dbg_kms(&dev_priv->drm,
-...)
-|
--DRM_DEBUG_DRIVER(
-+drm_dbg(&dev_priv->drm,
-...)
-)
-...+>
-}
-
-Checkpatch warnings were addressed manually.
-
-Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
----
- drivers/gpu/drm/i915/gt/intel_engine_cs.c     |  3 +-
- drivers/gpu/drm/i915/gt/intel_lrc.c           | 12 ++-
- drivers/gpu/drm/i915/gt/intel_reset.c         | 19 ++--
- .../gpu/drm/i915/gt/intel_ring_submission.c   | 33 +++----
- drivers/gpu/drm/i915/i915_cmd_parser.c        | 88 +++++++++++--------
- 5 files changed, 94 insertions(+), 61 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/gt/intel_engine_cs.c b/drivers/gpu/drm/i915/gt/intel_engine_cs.c
-index f451ef376548..10b4ed74b416 100644
---- a/drivers/gpu/drm/i915/gt/intel_engine_cs.c
-+++ b/drivers/gpu/drm/i915/gt/intel_engine_cs.c
-@@ -532,6 +532,7 @@ static int pin_ggtt_status_page(struct intel_engine_cs *engine,
- 
- static int init_status_page(struct intel_engine_cs *engine)
- {
-+	struct drm_i915_private *dev_priv = engine->i915;
- 	struct drm_i915_gem_object *obj;
- 	struct i915_vma *vma;
- 	void *vaddr;
-@@ -546,7 +547,7 @@ static int init_status_page(struct intel_engine_cs *engine)
- 	 */
- 	obj = i915_gem_object_create_internal(engine->i915, PAGE_SIZE);
- 	if (IS_ERR(obj)) {
--		DRM_ERROR("Failed to allocate status page\n");
-+		drm_err(&dev_priv->drm, "Failed to allocate status page\n");
- 		return PTR_ERR(obj);
- 	}
- 
-diff --git a/drivers/gpu/drm/i915/gt/intel_lrc.c b/drivers/gpu/drm/i915/gt/intel_lrc.c
-index 9af1b2b493f4..f2a260efb75f 100644
---- a/drivers/gpu/drm/i915/gt/intel_lrc.c
-+++ b/drivers/gpu/drm/i915/gt/intel_lrc.c
-@@ -2943,6 +2943,7 @@ typedef u32 *(*wa_bb_func_t)(struct intel_engine_cs *engine, u32 *batch);
- 
- static int intel_init_workaround_bb(struct intel_engine_cs *engine)
- {
-+	struct drm_i915_private *dev_priv = engine->i915;
- 	struct i915_ctx_workarounds *wa_ctx = &engine->wa_ctx;
- 	struct i915_wa_ctx_bb *wa_bb[2] = { &wa_ctx->indirect_ctx,
- 					    &wa_ctx->per_ctx };
-@@ -2978,7 +2979,8 @@ static int intel_init_workaround_bb(struct intel_engine_cs *engine)
- 
- 	ret = lrc_setup_wa_ctx(engine);
- 	if (ret) {
--		DRM_DEBUG_DRIVER("Failed to setup context WA page: %d\n", ret);
-+		drm_dbg(&dev_priv->drm,
-+			"Failed to setup context WA page: %d\n", ret);
- 		return ret;
- 	}
- 
-@@ -3037,10 +3039,12 @@ static void enable_execlists(struct intel_engine_cs *engine)
- 
- static bool unexpected_starting_state(struct intel_engine_cs *engine)
- {
-+	struct drm_i915_private *dev_priv = engine->i915;
- 	bool unexpected = false;
- 
- 	if (ENGINE_READ_FW(engine, RING_MI_MODE) & STOP_RING) {
--		DRM_DEBUG_DRIVER("STOP_RING still set in RING_MI_MODE\n");
-+		drm_dbg(&dev_priv->drm,
-+			"STOP_RING still set in RING_MI_MODE\n");
- 		unexpected = true;
- 	}
- 
-@@ -3976,6 +3980,7 @@ static void rcs_submission_override(struct intel_engine_cs *engine)
- 
- int intel_execlists_submission_setup(struct intel_engine_cs *engine)
- {
-+	struct drm_i915_private *dev_priv = engine->i915;
- 	struct intel_engine_execlists * const execlists = &engine->execlists;
- 	struct drm_i915_private *i915 = engine->i915;
- 	struct intel_uncore *uncore = engine->uncore;
-@@ -3998,7 +4003,8 @@ int intel_execlists_submission_setup(struct intel_engine_cs *engine)
- 		 * because we only expect rare glitches but nothing
- 		 * critical to prevent us from using GPU
- 		 */
--		DRM_ERROR("WA batch buffer initialization failed\n");
-+		drm_err(&dev_priv->drm,
-+			"WA batch buffer initialization failed\n");
- 
- 	if (HAS_LOGICAL_RING_ELSQ(i915)) {
- 		execlists->submit_reg = uncore->regs +
-diff --git a/drivers/gpu/drm/i915/gt/intel_reset.c b/drivers/gpu/drm/i915/gt/intel_reset.c
-index beee0cf89bce..4a9c787ce677 100644
---- a/drivers/gpu/drm/i915/gt/intel_reset.c
-+++ b/drivers/gpu/drm/i915/gt/intel_reset.c
-@@ -337,6 +337,7 @@ static int gen6_reset_engines(struct intel_gt *gt,
- 
- static int gen11_lock_sfc(struct intel_engine_cs *engine, u32 *hw_mask)
- {
-+	struct drm_i915_private *dev_priv = engine->i915;
- 	struct intel_uncore *uncore = engine->uncore;
- 	u8 vdbox_sfc_access = RUNTIME_INFO(engine->i915)->vdbox_sfc_access;
- 	i915_reg_t sfc_forced_lock, sfc_forced_lock_ack;
-@@ -401,7 +402,8 @@ static int gen11_lock_sfc(struct intel_engine_cs *engine, u32 *hw_mask)
- 		return 0;
- 
- 	if (ret) {
--		DRM_DEBUG_DRIVER("Wait for SFC forced lock ack failed\n");
-+		drm_dbg(&dev_priv->drm,
-+			"Wait for SFC forced lock ack failed\n");
- 		return ret;
- 	}
- 
-@@ -487,6 +489,7 @@ static int gen11_reset_engines(struct intel_gt *gt,
- 
- static int gen8_engine_reset_prepare(struct intel_engine_cs *engine)
- {
-+	struct drm_i915_private *dev_priv = engine->i915;
- 	struct intel_uncore *uncore = engine->uncore;
- 	const i915_reg_t reg = RING_RESET_CTL(engine->mmio_base);
- 	u32 request, mask, ack;
-@@ -515,9 +518,10 @@ static int gen8_engine_reset_prepare(struct intel_engine_cs *engine)
- 	ret = __intel_wait_for_register_fw(uncore, reg, mask, ack,
- 					   700, 0, NULL);
- 	if (ret)
--		DRM_ERROR("%s reset request timed out: {request: %08x, RESET_CTL: %08x}\n",
--			  engine->name, request,
--			  intel_uncore_read_fw(uncore, reg));
-+		drm_err(&dev_priv->drm,
-+			"%s reset request timed out: {request: %08x, RESET_CTL: %08x}\n",
-+			engine->name, request,
-+			intel_uncore_read_fw(uncore, reg));
- 
- 	return ret;
- }
-@@ -1103,6 +1107,7 @@ static inline int intel_gt_reset_engine(struct intel_engine_cs *engine)
-  */
- int intel_engine_reset(struct intel_engine_cs *engine, const char *msg)
- {
-+	struct drm_i915_private *dev_priv = engine->i915;
- 	struct intel_gt *gt = engine->gt;
- 	bool uses_guc = intel_engine_in_guc_submission_mode(engine);
- 	int ret;
-@@ -1126,9 +1131,9 @@ int intel_engine_reset(struct intel_engine_cs *engine, const char *msg)
- 		ret = intel_guc_reset_engine(&engine->gt->uc.guc, engine);
- 	if (ret) {
- 		/* If we fail here, we expect to fallback to a global reset */
--		DRM_DEBUG_DRIVER("%sFailed to reset %s, ret=%d\n",
--				 uses_guc ? "GuC " : "",
--				 engine->name, ret);
-+		drm_dbg(&dev_priv->drm, "%sFailed to reset %s, ret=%d\n",
-+			uses_guc ? "GuC " : "",
-+			engine->name, ret);
- 		goto out;
- 	}
- 
-diff --git a/drivers/gpu/drm/i915/gt/intel_ring_submission.c b/drivers/gpu/drm/i915/gt/intel_ring_submission.c
-index bc44fe8e5ffa..bf6ab719d8a0 100644
---- a/drivers/gpu/drm/i915/gt/intel_ring_submission.c
-+++ b/drivers/gpu/drm/i915/gt/intel_ring_submission.c
-@@ -577,8 +577,9 @@ static void flush_cs_tlb(struct intel_engine_cs *engine)
- 				    RING_INSTPM(engine->mmio_base),
- 				    INSTPM_SYNC_FLUSH, 0,
- 				    1000))
--		DRM_ERROR("%s: wait for SyncFlush to complete for TLB invalidation timed out\n",
--			  engine->name);
-+		drm_err(&dev_priv->drm,
-+			"%s: wait for SyncFlush to complete for TLB invalidation timed out\n",
-+			engine->name);
- }
- 
- static void ring_setup_status_page(struct intel_engine_cs *engine)
-@@ -601,8 +602,9 @@ static bool stop_ring(struct intel_engine_cs *engine)
- 					    MODE_IDLE,
- 					    MODE_IDLE,
- 					    1000)) {
--			DRM_ERROR("%s : timed out trying to stop ring\n",
--				  engine->name);
-+			drm_err(&dev_priv->drm,
-+				"%s : timed out trying to stop ring\n",
-+				engine->name);
- 
- 			/*
- 			 * Sometimes we observe that the idle flag is not
-@@ -640,22 +642,23 @@ static int xcs_resume(struct intel_engine_cs *engine)
- 	/* WaClearRingBufHeadRegAtInit:ctg,elk */
- 	if (!stop_ring(engine)) {
- 		/* G45 ring initialization often fails to reset head to zero */
--		DRM_DEBUG_DRIVER("%s head not reset to zero "
-+		drm_dbg(&dev_priv->drm, "%s head not reset to zero "
-+			"ctl %08x head %08x tail %08x start %08x\n",
-+			engine->name,
-+			ENGINE_READ(engine, RING_CTL),
-+			ENGINE_READ(engine, RING_HEAD),
-+			ENGINE_READ(engine, RING_TAIL),
-+			ENGINE_READ(engine, RING_START));
-+
-+		if (!stop_ring(engine)) {
-+			drm_err(&dev_priv->drm,
-+				"failed to set %s head to zero "
- 				"ctl %08x head %08x tail %08x start %08x\n",
- 				engine->name,
- 				ENGINE_READ(engine, RING_CTL),
- 				ENGINE_READ(engine, RING_HEAD),
- 				ENGINE_READ(engine, RING_TAIL),
- 				ENGINE_READ(engine, RING_START));
--
--		if (!stop_ring(engine)) {
--			DRM_ERROR("failed to set %s head to zero "
--				  "ctl %08x head %08x tail %08x start %08x\n",
--				  engine->name,
--				  ENGINE_READ(engine, RING_CTL),
--				  ENGINE_READ(engine, RING_HEAD),
--				  ENGINE_READ(engine, RING_TAIL),
--				  ENGINE_READ(engine, RING_START));
- 			ret = -EIO;
- 			goto out;
- 		}
-@@ -696,7 +699,7 @@ static int xcs_resume(struct intel_engine_cs *engine)
- 				    RING_CTL(engine->mmio_base),
- 				    RING_VALID, RING_VALID,
- 				    50)) {
--		DRM_ERROR("%s initialization failed "
-+		drm_err(&dev_priv->drm, "%s initialization failed "
- 			  "ctl %08x (valid? %d) head %08x [%08x] tail %08x [%08x] start %08x [expected %08x]\n",
- 			  engine->name,
- 			  ENGINE_READ(engine, RING_CTL),
-diff --git a/drivers/gpu/drm/i915/i915_cmd_parser.c b/drivers/gpu/drm/i915/i915_cmd_parser.c
-index a0e437aa65b7..b66c5e3bdd2a 100644
---- a/drivers/gpu/drm/i915/i915_cmd_parser.c
-+++ b/drivers/gpu/drm/i915/i915_cmd_parser.c
-@@ -786,6 +786,7 @@ static bool validate_cmds_sorted(const struct intel_engine_cs *engine,
- 				 const struct drm_i915_cmd_table *cmd_tables,
- 				 int cmd_table_count)
- {
-+	struct drm_i915_private *dev_priv = engine->i915;
- 	int i;
- 	bool ret = true;
- 
-@@ -803,10 +804,11 @@ static bool validate_cmds_sorted(const struct intel_engine_cs *engine,
- 			u32 curr = desc->cmd.value & desc->cmd.mask;
- 
- 			if (curr < previous) {
--				DRM_ERROR("CMD: %s [%d] command table not sorted: "
--					  "table=%d entry=%d cmd=0x%08X prev=0x%08X\n",
--					  engine->name, engine->id,
--					  i, j, curr, previous);
-+				drm_err(&dev_priv->drm,
-+					"CMD: %s [%d] command table not sorted: "
-+					"table=%d entry=%d cmd=0x%08X prev=0x%08X\n",
-+					engine->name, engine->id,
-+					i, j, curr, previous);
- 				ret = false;
- 			}
- 
-@@ -821,6 +823,7 @@ static bool check_sorted(const struct intel_engine_cs *engine,
- 			 const struct drm_i915_reg_descriptor *reg_table,
- 			 int reg_count)
- {
-+	struct drm_i915_private *dev_priv = engine->i915;
- 	int i;
- 	u32 previous = 0;
- 	bool ret = true;
-@@ -829,10 +832,11 @@ static bool check_sorted(const struct intel_engine_cs *engine,
- 		u32 curr = i915_mmio_reg_offset(reg_table[i].addr);
- 
- 		if (curr < previous) {
--			DRM_ERROR("CMD: %s [%d] register table not sorted: "
--				  "entry=%d reg=0x%08X prev=0x%08X\n",
--				  engine->name, engine->id,
--				  i, curr, previous);
-+			drm_err(&dev_priv->drm,
-+				"CMD: %s [%d] register table not sorted: "
-+				"entry=%d reg=0x%08X prev=0x%08X\n",
-+				engine->name, engine->id,
-+				i, curr, previous);
- 			ret = false;
- 		}
- 
-@@ -935,6 +939,7 @@ static void fini_hash_table(struct intel_engine_cs *engine)
-  */
- void intel_engine_init_cmd_parser(struct intel_engine_cs *engine)
- {
-+	struct drm_i915_private *dev_priv = engine->i915;
- 	const struct drm_i915_cmd_table *cmd_tables;
- 	int cmd_table_count;
- 	int ret;
-@@ -1010,18 +1015,21 @@ void intel_engine_init_cmd_parser(struct intel_engine_cs *engine)
- 	}
- 
- 	if (!validate_cmds_sorted(engine, cmd_tables, cmd_table_count)) {
--		DRM_ERROR("%s: command descriptions are not sorted\n",
--			  engine->name);
-+		drm_err(&dev_priv->drm,
-+			"%s: command descriptions are not sorted\n",
-+			engine->name);
- 		return;
- 	}
- 	if (!validate_regs_sorted(engine)) {
--		DRM_ERROR("%s: registers are not sorted\n", engine->name);
-+		drm_err(&dev_priv->drm, "%s: registers are not sorted\n",
-+			engine->name);
- 		return;
- 	}
- 
- 	ret = init_hash_table(engine, cmd_tables, cmd_table_count);
- 	if (ret) {
--		DRM_ERROR("%s: initialised failed!\n", engine->name);
-+		drm_err(&dev_priv->drm, "%s: initialised failed!\n",
-+			engine->name);
- 		fini_hash_table(engine);
- 		return;
- 	}
-@@ -1199,11 +1207,13 @@ static bool check_cmd(const struct intel_engine_cs *engine,
- 		      const struct drm_i915_cmd_descriptor *desc,
- 		      const u32 *cmd, u32 length)
- {
-+	struct drm_i915_private *dev_priv = engine->i915;
- 	if (desc->flags & CMD_DESC_SKIP)
- 		return true;
- 
- 	if (desc->flags & CMD_DESC_REJECT) {
--		DRM_DEBUG("CMD: Rejected command: 0x%08X\n", *cmd);
-+		drm_dbg(&dev_priv->drm, "CMD: Rejected command: 0x%08X\n",
-+			*cmd);
- 		return false;
- 	}
- 
-@@ -1223,8 +1233,9 @@ static bool check_cmd(const struct intel_engine_cs *engine,
- 				find_reg(engine, reg_addr);
- 
- 			if (!reg) {
--				DRM_DEBUG("CMD: Rejected register 0x%08X in command: 0x%08X (%s)\n",
--					  reg_addr, *cmd, engine->name);
-+				drm_dbg(&dev_priv->drm,
-+					"CMD: Rejected register 0x%08X in command: 0x%08X (%s)\n",
-+					reg_addr, *cmd, engine->name);
- 				return false;
- 			}
- 
-@@ -1234,22 +1245,25 @@ static bool check_cmd(const struct intel_engine_cs *engine,
- 			 */
- 			if (reg->mask) {
- 				if (desc->cmd.value == MI_LOAD_REGISTER_MEM) {
--					DRM_DEBUG("CMD: Rejected LRM to masked register 0x%08X\n",
--						  reg_addr);
-+					drm_dbg(&dev_priv->drm,
-+						"CMD: Rejected LRM to masked register 0x%08X\n",
-+						reg_addr);
- 					return false;
- 				}
- 
- 				if (desc->cmd.value == MI_LOAD_REGISTER_REG) {
--					DRM_DEBUG("CMD: Rejected LRR to masked register 0x%08X\n",
--						  reg_addr);
-+					drm_dbg(&dev_priv->drm,
-+						"CMD: Rejected LRR to masked register 0x%08X\n",
-+						reg_addr);
- 					return false;
- 				}
- 
- 				if (desc->cmd.value == MI_LOAD_REGISTER_IMM(1) &&
- 				    (offset + 2 > length ||
- 				     (cmd[offset + 1] & reg->mask) != reg->value)) {
--					DRM_DEBUG("CMD: Rejected LRI to masked register 0x%08X\n",
--						  reg_addr);
-+					drm_dbg(&dev_priv->drm,
-+						"CMD: Rejected LRI to masked register 0x%08X\n",
-+						reg_addr);
- 					return false;
- 				}
- 			}
-@@ -1276,8 +1290,9 @@ static bool check_cmd(const struct intel_engine_cs *engine,
- 			}
- 
- 			if (desc->bits[i].offset >= length) {
--				DRM_DEBUG("CMD: Rejected command 0x%08X, too short to check bitmask (%s)\n",
--					  *cmd, engine->name);
-+				drm_dbg(&dev_priv->drm,
-+					"CMD: Rejected command 0x%08X, too short to check bitmask (%s)\n",
-+					*cmd, engine->name);
- 				return false;
- 			}
- 
-@@ -1285,11 +1300,12 @@ static bool check_cmd(const struct intel_engine_cs *engine,
- 				desc->bits[i].mask;
- 
- 			if (dword != desc->bits[i].expected) {
--				DRM_DEBUG("CMD: Rejected command 0x%08X for bitmask 0x%08X (exp=0x%08X act=0x%08X) (%s)\n",
--					  *cmd,
--					  desc->bits[i].mask,
--					  desc->bits[i].expected,
--					  dword, engine->name);
-+				drm_dbg(&dev_priv->drm,
-+					"CMD: Rejected command 0x%08X for bitmask 0x%08X (exp=0x%08X act=0x%08X) (%s)\n",
-+					*cmd,
-+					desc->bits[i].mask,
-+					desc->bits[i].expected,
-+					dword, engine->name);
- 				return false;
- 			}
- 		}
-@@ -1404,6 +1420,7 @@ int intel_engine_cmd_parser(struct intel_engine_cs *engine,
- 			    struct i915_vma *shadow,
- 			    bool trampoline)
- {
-+	struct drm_i915_private *dev_priv = engine->i915;
- 	u32 *cmd, *batch_end, offset = 0;
- 	struct drm_i915_cmd_descriptor default_desc = noop_desc;
- 	const struct drm_i915_cmd_descriptor *desc = &default_desc;
-@@ -1419,7 +1436,7 @@ int intel_engine_cmd_parser(struct intel_engine_cs *engine,
- 
- 	cmd = copy_batch(shadow->obj, batch->obj, batch_offset, batch_length);
- 	if (IS_ERR(cmd)) {
--		DRM_DEBUG("CMD: Failed to copy batch\n");
-+		drm_dbg(&dev_priv->drm, "CMD: Failed to copy batch\n");
- 		return PTR_ERR(cmd);
- 	}
- 
-@@ -1445,7 +1462,8 @@ int intel_engine_cmd_parser(struct intel_engine_cs *engine,
- 
- 		desc = find_cmd(engine, *cmd, desc, &default_desc);
- 		if (!desc) {
--			DRM_DEBUG("CMD: Unrecognized command: 0x%08X\n", *cmd);
-+			drm_dbg(&dev_priv->drm,
-+				"CMD: Unrecognized command: 0x%08X\n", *cmd);
- 			ret = -EINVAL;
- 			break;
- 		}
-@@ -1456,10 +1474,9 @@ int intel_engine_cmd_parser(struct intel_engine_cs *engine,
- 			length = (*cmd & desc->length.mask) + LENGTH_BIAS;
- 
- 		if ((batch_end - cmd) < length) {
--			DRM_DEBUG("CMD: Command length exceeds batch length: 0x%08X length=%u batchlen=%td\n",
--				  *cmd,
--				  length,
--				  batch_end - cmd);
-+			drm_dbg(&dev_priv->drm,
-+				"CMD: Command length exceeds batch length: 0x%08X length=%u batchlen=%td\n",
-+				*cmd, length, batch_end - cmd);
- 			ret = -EINVAL;
- 			break;
- 		}
-@@ -1482,7 +1499,8 @@ int intel_engine_cmd_parser(struct intel_engine_cs *engine,
- 		cmd += length;
- 		offset += length;
- 		if  (cmd >= batch_end) {
--			DRM_DEBUG("CMD: Got to the end of the buffer w/o a BBE cmd!\n");
-+			drm_dbg(&dev_priv->drm,
-+				"CMD: Got to the end of the buffer w/o a BBE cmd!\n");
- 			ret = -EINVAL;
- 			break;
- 		}
--- 
-2.24.1
-
+In the other thread Taehee mentioned the creation of dynamic keys for
+net devices that was added recently and that they are subject to some
+limits.
+syzkaller creates lots of net devices for isolation (several dozens
+per test process, but then these can be created and destroyed
+periodically). I wonder if it's the root cause of the lockdep limits
+problems?
