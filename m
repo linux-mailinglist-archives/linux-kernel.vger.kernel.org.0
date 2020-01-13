@@ -2,121 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07234139019
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 12:29:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC83F139039
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 12:37:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbgAML3h convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 13 Jan 2020 06:29:37 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:56307 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbgAML3h (ORCPT
+        id S1728689AbgAMLhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 06:37:35 -0500
+Received: from mail-m971.mail.163.com ([123.126.97.1]:41730 "EHLO
+        mail-m971.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbgAMLhf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 06:29:37 -0500
-Received: from 79.184.255.90.ipv4.supernova.orange.pl (79.184.255.90) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
- id 9ab51728271c6d21; Mon, 13 Jan 2020 12:29:34 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PM-runtime: add tracepoints for usage_count changes
-Date:   Mon, 13 Jan 2020 12:29:33 +0100
-Message-ID: <12840272.KYWuQ3LjJR@kreacher>
-In-Reply-To: <20200106100004.GA10946@qmqm.qmqm.pl>
-References: <cb199a03895f8a11d9039209e6ac1cd92b1d1fb9.1578155207.git.mirq-linux@rere.qmqm.pl> <20200104182123.GA1485543@kroah.com> <20200106100004.GA10946@qmqm.qmqm.pl>
+        Mon, 13 Jan 2020 06:37:35 -0500
+X-Greylist: delayed 936 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 Jan 2020 06:37:33 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=ebuOu
+        i0AX5Ee0xOZV1fWjPDv5XEGQ0+O2EC0o8syPO0=; b=FD6+qbMQNkhULhMdfo+Oc
+        x3DiomSPA4esnDPYm9q9RdcrV+9HTrcRowzaZozeuEmoMI8Pd5LC919i+LO7lqhH
+        AI9jvDdcVrVlWlCButHxgwC82kqOyurF+IA8FUozLUeIF8qs34Kp05uox/l1NCkZ
+        BkXV4w7I/z+T66ly/yX69s=
+Received: from xilei-TM1604.mioffice.cn (unknown [114.247.175.223])
+        by smtp1 (Coremail) with SMTP id GdxpCgBXROKhUhxeZ+sQBA--.1392S4;
+        Mon, 13 Jan 2020 19:21:05 +0800 (CST)
+From:   Niu Xilei <niu_xilei@163.com>
+To:     davem@davemloft.net
+Cc:     tglx@linutronix.de, fw@strlen.de, peterz@infradead.org,
+        steffen.klassert@secunet.com, bigeasy@linutronix.de,
+        jonathan.lemon@gmail.com, pabeni@redhat.com,
+        anshuman.khandual@arm.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Niu Xilei <niu_xilei@163.com>
+Subject: [PATCH v2] pktgen: create packet use IPv6 source address between src6_min and src6_max.
+Date:   Mon, 13 Jan 2020 19:21:02 +0800
+Message-Id: <20200113112103.6766-1-niu_xilei@163.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GdxpCgBXROKhUhxeZ+sQBA--.1392S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxur47Zr1DJF1xWw4xAF1UZFb_yoWrJw1kpa
+        y3GF9xJryxZr43twsxJF9rtr1S9w4v9345XayfA3sY9FyDWryrA397Ga43tFyjqr9ak398
+        Jr42gFWqga1qqrUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jhb18UUUUU=
+X-Originating-IP: [114.247.175.223]
+X-CM-SenderInfo: pqlxs5plohxqqrwthudrp/1tbiTRepgFc7O8RRGwAAsq
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, January 6, 2020 11:00:04 AM CET Michał Mirosław wrote:
-> On Sat, Jan 04, 2020 at 07:21:23PM +0100, Greg Kroah-Hartman wrote:
-> > On Sat, Jan 04, 2020 at 05:27:57PM +0100, Michał Mirosław wrote:
-> > > Add tracepoints to remaining places where device's power.usage_count
-> > > is changed. This helps debugging where and why autosuspend is prevented.
-> > > 
-> > > Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-> > > ---
-> > >  drivers/base/power/runtime.c | 13 +++++++++++--
-> > >  include/trace/events/rpm.h   |  6 ++++++
-> > >  2 files changed, 17 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> > > index 48616f358854..16134a69bf6f 100644
-> > > --- a/drivers/base/power/runtime.c
-> > > +++ b/drivers/base/power/runtime.c
-> > > @@ -1006,8 +1006,10 @@ int __pm_runtime_idle(struct device *dev, int rpmflags)
-> > >  	int retval;
-> > >  
-> > >  	if (rpmflags & RPM_GET_PUT) {
-> > > -		if (!atomic_dec_and_test(&dev->power.usage_count))
-> > > +		if (!atomic_dec_and_test(&dev->power.usage_count)) {
-> > > +			trace_rpm_usage_rcuidle(dev, rpmflags);
-> > 
-> > Who and what is really going to use these tracepoints?
-> > 
-> > And putting them in these if statements seems odd, are you sure that's
-> > the correct place?  What do these show to userspace?
-> > 
-> > >  			return 0;
-> > > +		}
-> > >  	}
-> > >  
-> > >  	might_sleep_if(!(rpmflags & RPM_ASYNC) && !dev->power.irq_safe);
-> > > @@ -1038,8 +1040,10 @@ int __pm_runtime_suspend(struct device *dev, int rpmflags)
-> > >  	int retval;
-> > >  
-> > >  	if (rpmflags & RPM_GET_PUT) {
-> > > -		if (!atomic_dec_and_test(&dev->power.usage_count))
-> > > +		if (!atomic_dec_and_test(&dev->power.usage_count)) {
-> > > +			trace_rpm_usage_rcuidle(dev, rpmflags);
-> > >  			return 0;
-> > > +		}
-> > >  	}
-> > >  
-> > >  	might_sleep_if(!(rpmflags & RPM_ASYNC) && !dev->power.irq_safe);
-> > > @@ -1101,6 +1105,7 @@ int pm_runtime_get_if_in_use(struct device *dev)
-> > >  	retval = dev->power.disable_depth > 0 ? -EINVAL :
-> > >  		dev->power.runtime_status == RPM_ACTIVE
-> > >  			&& atomic_inc_not_zero(&dev->power.usage_count);
-> > > +	trace_rpm_usage_rcuidle(dev, 0);
-> > 
-> > Why this one?
-> > 
-> > 
-> > >  	spin_unlock_irqrestore(&dev->power.lock, flags);
-> > >  	return retval;
-> > >  }
-> > > @@ -1434,6 +1439,8 @@ void pm_runtime_allow(struct device *dev)
-> > >  	dev->power.runtime_auto = true;
-> > >  	if (atomic_dec_and_test(&dev->power.usage_count))
-> > >  		rpm_idle(dev, RPM_AUTO | RPM_ASYNC);
-> > > +	else
-> > > +		trace_rpm_usage_rcuidle(dev, RPM_AUTO | RPM_ASYNC);
-> > 
-> > Are you sure this is correct?
-> > 
-> > These feel odd...
-> 
-> This covers all places where power.usage_count might have changed.
-> If atomic_dec_and_test() decrements usage_count but not to zero,
-> the new value will be traced in rpm_idle(). But if the value drops to
-> zero, then we need to trace it explicitly to be able to have all changes
-> accounted for in the trace.
-> 
-> I actually used this patch to track down why USB storage device was
-> not autosuspending correctly.
+Pktgen can use only one IPv6 source address from output device, or src6 command
+setting. In pressure test we need create lots of session more than 65536.If
+IPSRC_RND flag is set, generate random source address between src6_min and src6_max.
 
-Fair enough, and the patch makes sense to me, so I'm queuing it up as 5.6
-material.
+Signed-off-by: Niu Xilei <niu_xilei@163.com>
 
-Thanks!
+Changes since v1:
+ - only create IPv6 source address over least significant 64 bit range
+---
+ net/core/pktgen.c | 90 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
 
-
+diff --git a/net/core/pktgen.c b/net/core/pktgen.c
+index 294bfcf0ce0e..33435ae0ba68 100644
+--- a/net/core/pktgen.c
++++ b/net/core/pktgen.c
+@@ -1355,6 +1355,49 @@ static ssize_t pktgen_if_write(struct file *file,
+ 		sprintf(pg_result, "OK: dst6_max=%s", buf);
+ 		return count;
+ 	}
++	if (!strcmp(name, "src6_min")) {
++		len = strn_len(&user_buffer[i], sizeof(buf) - 1);
++		if (len < 0)
++			return len;
++
++		pkt_dev->flags |= F_IPV6;
++
++		if (copy_from_user(buf, &user_buffer[i], len))
++			return -EFAULT;
++		buf[len] = 0;
++
++		in6_pton(buf, -1, pkt_dev->min_in6_saddr.s6_addr, -1, NULL);
++		snprintf(buf, sizeof(buf), "%pI6c", &pkt_dev->min_in6_saddr);
++
++		pkt_dev->cur_in6_saddr = pkt_dev->min_in6_saddr;
++		if (debug)
++			pr_debug("src6_min set to: %s\n", buf);
++
++		i += len;
++		sprintf(pg_result, "OK: src6_min=%s", buf);
++		return count;
++	}
++	if (!strcmp(name, "src6_max")) {
++		len = strn_len(&user_buffer[i], sizeof(buf) - 1);
++		if (len < 0)
++			return len;
++
++		pkt_dev->flags |= F_IPV6;
++
++		if (copy_from_user(buf, &user_buffer[i], len))
++			return -EFAULT;
++		buf[len] = 0;
++
++		in6_pton(buf, -1, pkt_dev->max_in6_saddr.s6_addr, -1, NULL);
++		snprintf(buf, sizeof(buf), "%pI6c", &pkt_dev->max_in6_saddr);
++
++		if (debug)
++			pr_debug("dst6_max set to: %s\n", buf);
++
++		i += len;
++		sprintf(pg_result, "OK: dst6_max=%s", buf);
++		return count;
++	}
+ 	if (!strcmp(name, "src6")) {
+ 		len = strn_len(&user_buffer[i], sizeof(buf) - 1);
+ 		if (len < 0)
+@@ -2286,6 +2329,51 @@ static void set_cur_queue_map(struct pktgen_dev *pkt_dev)
+ 	pkt_dev->cur_queue_map  = pkt_dev->cur_queue_map % pkt_dev->odev->real_num_tx_queues;
+ }
+ 
++/* generate ipv6 source addr */
++static inline void set_src_in6_addr(struct pktgen_dev *pkt_dev)
++{
++	__be64 min6_h, min6_l, max6_h, max6_l, addr_l, *t;
++	u64 min6, max6, rand, i;
++	struct in6_addr addr6;
++
++	memcpy(&min6_h, pkt_dev->min_in6_saddr.s6_addr, 8);
++	memcpy(&min6_l, pkt_dev->min_in6_saddr.s6_addr + 8, 8);
++	memcpy(&max6_h, pkt_dev->max_in6_saddr.s6_addr, 8);
++	memcpy(&max6_l, pkt_dev->max_in6_saddr.s6_addr + 8, 8);
++
++	/* only generate source address in least significant 64 bits range
++	 * most significant 64 bits must be equal
++	 */
++	if (max6_h != min6_h)
++		return;
++
++	addr6 = pkt_dev->min_in6_saddr;
++	t = (__be64 *)addr6.s6_addr + 1;
++	min6 = be64_to_cpu(min6_l);
++	max6 = be64_to_cpu(max6_l);
++
++	if (min6 < max6) {
++		if (pkt_dev->flags & F_IPSRC_RND) {
++			do {
++				prandom_bytes(&rand, sizeof(rand));
++				rand = rand % (max6 - min6) + min6;
++				addr_l = cpu_to_be64(rand);
++				memcpy(t, &addr_l, 8);
++			} while (ipv6_addr_loopback(&addr6) ||
++				 ipv6_addr_v4mapped(&addr6) ||
++				 ipv6_addr_is_multicast(&addr6));
++		} else {
++			addr6 = pkt_dev->cur_in6_saddr;
++			i = be64_to_cpu(*t);
++			if (++i > max6)
++				i = min6;
++			addr_l = cpu_to_be64(i);
++			memcpy(t, &addr_l, 8);
++		}
++	}
++	pkt_dev->cur_in6_saddr = addr6;
++}
++
+ /* Increment/randomize headers according to flags and current values
+  * for IP src/dest, UDP src/dst port, MAC-Addr src/dst
+  */
+@@ -2454,6 +2542,8 @@ static void mod_cur_headers(struct pktgen_dev *pkt_dev)
+ 		}
+ 	} else {		/* IPV6 * */
+ 
++		set_src_in6_addr(pkt_dev);
++
+ 		if (!ipv6_addr_any(&pkt_dev->min_in6_daddr)) {
+ 			int i;
+ 
+-- 
+2.20.1
 
