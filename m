@@ -2,108 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D6A41391E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:15:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1E3D1391E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:15:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbgAMNPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 08:15:03 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:38503 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbgAMNPC (ORCPT
+        id S1728650AbgAMNPS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 08:15:18 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:50817 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbgAMNPR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 08:15:02 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iqzYT-0000SU-1u; Mon, 13 Jan 2020 14:14:53 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A42C51C18BC;
-        Mon, 13 Jan 2020 14:14:52 +0100 (CET)
-Date:   Mon, 13 Jan 2020 13:14:52 -0000
-From:   "tip-bot2 for Xiaochen Shen" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cache] x86/resctrl: Do not reconfigure exiting tasks
-Cc:     Xiaochen Shen <xiaochen.shen@intel.com>,
-        Borislav Petkov <bp@suse.de>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <1578500026-21152-1-git-send-email-xiaochen.shen@intel.com>
-References: <1578500026-21152-1-git-send-email-xiaochen.shen@intel.com>
+        Mon, 13 Jan 2020 08:15:17 -0500
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 6FFDF22F2E;
+        Mon, 13 Jan 2020 14:15:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1578921315;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IgGLE1F1nPsMuk+W9Nc7eMSChF5dQJRdLDQSJEpek40=;
+        b=f9cR2Urhc6pN9yLq9i1YK4okEws6isQzUNskW0JJNqKEX8OcOJvfQWfVanVseMkHcTPp/5
+        NBFwh3YrvcBKF8/CiNYDGU2sbHjLnAGH8L9fXeUeuOxIxWCk14heVPRV9GRZX5m327236b
+        dTI0c1fgjU37Sy3bXLPacnNzPliE0wg=
 MIME-Version: 1.0
-Message-ID: <157892129247.19145.17833326698641017024.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Date:   Mon, 13 Jan 2020 14:15:15 +0100
+From:   Michael Walle <michael@walle.cc>
+To:     Tudor.Ambarus@microchip.com
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        richard@nod.at, vigneshr@ti.com, miquel.raynal@bootlin.com
+Subject: Re: [PATCH] mtd: spi-nor: Add support for w25qNNjwim
+In-Reply-To: <2dffc658f21da502dff8c5721ec1b0a7@walle.cc>
+References: <20200103223423.14025-1-michael@walle.cc>
+ <12341010.b9DRC5f9X7@192.168.0.113>
+ <9d39be0f45f4c8e087b269f0c802ed6b@walle.cc>
+ <4050087.dyKUiXJtgz@localhost.localdomain>
+ <2dffc658f21da502dff8c5721ec1b0a7@walle.cc>
+Message-ID: <8ce5f803c9a59a1ebd55ae287fa2e6a9@walle.cc>
+X-Sender: michael@walle.cc
+User-Agent: Roundcube Webmail/1.3.8
+X-Spamd-Bar: /
+X-Spam-Status: No, score=-0.10
+X-Rspamd-Server: web
+X-Spam-Score: -0.10
+X-Rspamd-Queue-Id: 6FFDF22F2E
+X-Spamd-Result: default: False [-0.10 / 15.00];
+         ARC_NA(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         TO_DN_NONE(0.00)[];
+         RCPT_COUNT_FIVE(0.00)[6];
+         DKIM_SIGNED(0.00)[];
+         NEURAL_HAM(-0.00)[-0.780];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         MID_RHS_MATCH_FROM(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/cache branch of tip:
+Hi Tudor,
 
-Commit-ID:     dc433797c6f639e46824585bbf943578f13d54bf
-Gitweb:        https://git.kernel.org/tip/dc433797c6f639e46824585bbf943578f13d54bf
-Author:        Xiaochen Shen <xiaochen.shen@intel.com>
-AuthorDate:    Thu, 09 Jan 2020 00:13:46 +08:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Mon, 13 Jan 2020 14:10:21 +01:00
+Am 2020-01-13 11:07, schrieb Michael Walle:
+>>> 
+>>> Btw. is renaming the flashes also considered a backwards incomaptible
+>>> change?
+>> 
+>> No, we can fix the names.
+>> 
+>>> And can there be two flashes with the same name? Because IMHO it 
+>>> would
+>>> be
+>> 
+>> I would prefer that we don't. Why would you have two different 
+>> jedec-ids with
+>> the same name?
+> 
+> Because as pointed out in the Winbond example you cannot distiguish 
+> between
+> W25Q32DW and W25Q32JWIQ; and in the Macronix example between MX25L8005 
+> and
+> MX25L8006E. Thus my reasoning was to show only the common part, ie 
+> W25Q32
+> or MX25L80 which should be the same for this particular ID. Like I 
+> said, I'd
+> prefer showing an ambiguous name instead of a wrong one. But then you 
+> may
+> have different IDs with the same ambiguous name.
 
-x86/resctrl: Do not reconfigure exiting tasks
 
-When writing a pid to file "tasks", a callback function move_myself() is
-queued to this task to be called when the task returns from kernel mode
-or exits. The purpose of move_myself() is to activate the newly assigned
-closid and/or rmid associated with this task. This activation is done by
-calling resctrl_sched_in() from move_myself(), the same function that is
-called when switching to this task.
+Another solution would be to have the device tree provide a hint for the
+actual flash chip. There would be multiple entries in the spi_nor_ids 
+with the
+same flash id. By default the first one is used (keeping the current
+behaviour). If there is for example
 
-If this work is successfully queued but then the task enters PF_EXITING
-status (e.g., receiving signal SIGKILL, SIGTERM) prior to the
-execution of the callback move_myself(), move_myself() still calls
-resctrl_sched_in() since the task status is not currently considered.
+   compatible = "jedec,spi-nor", "w25q32jwq";
 
-When a task is exiting, the data structure of the task itself will
-be freed soon. Calling resctrl_sched_in() to write the register that
-controls the task's resources is unnecessary and it implies extra
-performance overhead.
+the flash_info for the w25q32jwq will be chosen.
 
-Add check on task status in move_myself() and return immediately if the
-task is PF_EXITING.
+I know this will conflict with the new rule that there should only be
 
- [ bp: Massage. ]
+   compatible = "jedec,spi-nor";
 
-Signed-off-by: Xiaochen Shen <xiaochen.shen@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-Link: https://lkml.kernel.org/r/1578500026-21152-1-git-send-email-xiaochen.shen@intel.com
----
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 4 ++++
- 1 file changed, 4 insertions(+)
+without the actual flash chip. But it seems that it is not always 
+possible
+to just use the jedec id to match the correct chip.
 
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 2e3b06d..205925d 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -532,11 +532,15 @@ static void move_myself(struct callback_head *head)
- 		kfree(rdtgrp);
- 	}
- 
-+	if (unlikely(current->flags & PF_EXITING))
-+		goto out;
-+
- 	preempt_disable();
- 	/* update PQR_ASSOC MSR to make resource group go into effect */
- 	resctrl_sched_in();
- 	preempt_enable();
- 
-+out:
- 	kfree(callback);
- }
- 
+Also see for example mx25l25635_post_bfpt_fixups() which tries to figure
+out different behaviour by looking at "some" SFDP data. In this case we
+might have been lucky, but I fear that this won't work in all cases and
+for older flashes it won't work at all.
+
+BTW I do not suggest to add the strings to the the spi_nor_dev_ids[].
+
+I guess that would be a less invasive way to fix different flashes with
+same jedec ids.
+
+-michael
