@@ -2,110 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0517138A99
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 06:19:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFA91138AAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 06:22:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726505AbgAMFS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 00:18:58 -0500
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:42777 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725815AbgAMFS6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 00:18:58 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 4F2825DBD;
-        Mon, 13 Jan 2020 00:18:57 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 13 Jan 2020 00:18:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=MFjG2zqyZNPA/
-        ontFOTVLnbZ3yC/TQY/D7CEVP8rFPs=; b=YX/Zp8UksbWaQP5t7jZas6m5cJjmA
-        9QiMsTcSD42o2BY3GoM96HU1/idbkRNj7cwMKmW1tJsVnlh7g0uAN4RAPOVkqtOC
-        w0+ZuAF0+cCjiBzSHWwnGOulePHyUOp29TY04SNhVqpfX4elU71fCnw0rKMBp/eT
-        tXfM951zPty9faZuSKQMKk2vxdjFUChT+XOYSTeMpVo2s+zC0KzIu3fekaqS8zc5
-        24yH43FszshuqEZVlFVOfFDUKM7ZhdnlCI4L7gBfSZJXHKaYIzRDjyGv4Jzb1k88
-        DvcZKk4HBY4A8BjiadpqWOdaiyLSD3jQmwfIKdhHFVrv1FlZ1JltRj10Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=MFjG2zqyZNPA/ontFOTVLnbZ3yC/TQY/D7CEVP8rFPs=; b=jQm0Xuo6
-        P8iDb35VesAMHng8mPKoYBCXIRy4fnbKDvWU8oehy6KkyMOcKCSabqrclJLeRgPF
-        0YBN/qL4EMB4b+fCsl+qKmXmAyCYUnQ1ne/mDMyC3gibdqzia/uL5F6McRcN1PaB
-        93Q9YqjEVWCWsPRuOPTaoojHohsZLIzjIxsnDAipRFfER2pBZ2ErVRqYf2LqWXCs
-        EIpBQkm0WSbdz7edArfCo9uy8fh6QsnJQAltG2UkTjQpZMz5vCEYUsR6CAy1OC0N
-        2IPCCOwrV7csk3YEH8aQf8o0MLdkb1W7yfSVP4GDJf16uUJ5WU5pJTz8XpjFY2Sk
-        LKWVq2u6tszBKw==
-X-ME-Sender: <xms:wP0bXuUt8SInIMKdtBQs3zr_HKD3tcx8XBzSSXsgHvP1QUTrUMStfQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdeiledgkeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
-    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucfkph
-    epjedtrddufeehrddugeekrdduhedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghm
-    uhgvlhesshhhohhllhgrnhgurdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:wP0bXgnom00mvM2sqKvoVQgCZTcFRm0vksW6AlTibHc3ZuikR2EpfA>
-    <xmx:wP0bXgDYbggA8LwcAoW9m_hvR01TE7ejo5naA8uXupO28p0Zrcgdug>
-    <xmx:wP0bXgdBHHUAb8rBoqvPbjH5y8kUNMI1pfXdjhQ0yEjNAdLOcYPx2A>
-    <xmx:wf0bXoZzyvSjwzBkF4jHgpUwYbfVIzG54Z9lnNM7vjIr_6D8hTsfMA>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 8BC773060783;
-        Mon, 13 Jan 2020 00:18:55 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Ondrej Jirman <megous@megous.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v6 6/6] arm64: dts: allwinner: h6: Add msgbox node
-Date:   Sun, 12 Jan 2020 23:18:52 -0600
-Message-Id: <20200113051852.15996-7-samuel@sholland.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200113051852.15996-1-samuel@sholland.org>
-References: <20200113051852.15996-1-samuel@sholland.org>
+        id S1726115AbgAMFW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 00:22:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56504 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725268AbgAMFW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 00:22:29 -0500
+Received: from localhost (unknown [106.200.247.255])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A93121556;
+        Mon, 13 Jan 2020 05:22:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578892948;
+        bh=pQmyxSK2rYvZKhrIwLap9VHfSzCEWZiVvINtuLhYf+8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sXsnWQlS74pdFu0UVzYxpNsBcF1pjQrjT5BtFxF/taQ3HDzM842jYOvVocHdIWHG9
+         J+i7dHx1rmbqKaLZExA0iZN52nxNbefaz3lsNVHM25Wj2b8b0dwwoSCDmehmjB0IRc
+         dXZyIv9yOCMRN0Vz0016AX+lCzyP+cCrTUAuhMIM=
+Date:   Mon, 13 Jan 2020 10:52:24 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, Jonathan Corbet <corbet@lwn.net>,
+        tiwai@suse.de, gregkh@linuxfoundation.org,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        broonie@kernel.org, srinivas.kandagatla@linaro.org,
+        jank@cadence.com, slawomir.blauciak@intel.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>
+Subject: Re: [alsa-devel] [PATCH 2/6] soundwire: stream: update state machine
+ and add state checks
+Message-ID: <20200113052224.GQ2818@vkoul-mobl>
+References: <20200108175438.13121-1-pierre-louis.bossart@linux.intel.com>
+ <20200108175438.13121-3-pierre-louis.bossart@linux.intel.com>
+ <20200110064838.GY2818@vkoul-mobl>
+ <a18c668f-4628-0fb9-ffa0-b24cdad1cc8b@linux.intel.com>
+ <69ad48b0-fa3c-904a-4106-5cd9bd18de5c@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <69ad48b0-fa3c-904a-4106-5cd9bd18de5c@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The H6 SoC contains a message box that can be used to send messages and
-interrupts back and forth between the ARM application CPUs and the ARISC
-coprocessor. Add a device tree node for it.
+On 11-01-20, 05:30, Pierre-Louis Bossart wrote:
+> 
+> 
+> On 1/10/20 10:30 AM, Pierre-Louis Bossart wrote:
+> > 
+> > > > -  int sdw_prepare_stream(struct sdw_stream_runtime * stream);
+> > > > +  int sdw_prepare_stream(struct sdw_stream_runtime * stream,
+> > > > bool resume);
+> > > 
+> > > so what does the additional argument of resume do..?
+> > > 
+> > > > diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
+> > > > index 178ae92b8cc1..6aa0b5d370c0 100644
+> > > > --- a/drivers/soundwire/stream.c
+> > > > +++ b/drivers/soundwire/stream.c
+> > > > @@ -1553,8 +1553,18 @@ int sdw_prepare_stream(struct
+> > > > sdw_stream_runtime *stream)
+> > > 
+> > > and it is not modified here, so is the doc correct or this..?
+> > 
+> > the doc is correct and the code is updated in
+> > 
+> > [PATCH 4/6] soundwire: stream: do not update parameters during
+> > DISABLED-PREPARED transition
+> 
+> Sorry, wrong answer, my bad. The code block in the documentation is
+> incorrect.
+> 
+> The Patch 4/6 implements the transition mentioned in the documentation, but
+> the extra parameter is a left-over from an earlier version. This case is now
+> handled internally. We did revert to the initial prototype after finding out
+> that dealing with transitions in the caller is error-prone.
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Glad that you agree with me on something!
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index 29824081b43b..8dc6ba71a901 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -230,6 +230,16 @@
- 			#dma-cells = <1>;
- 		};
- 
-+		msgbox: mailbox@3003000 {
-+			compatible = "allwinner,sun50i-h6-msgbox",
-+				     "allwinner,sun6i-a31-msgbox";
-+			reg = <0x03003000 0x1000>;
-+			clocks = <&ccu CLK_BUS_MSGBOX>;
-+			resets = <&ccu RST_BUS_MSGBOX>;
-+			interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-+			#mbox-cells = <1>;
-+		};
-+
- 		sid: efuse@3006000 {
- 			compatible = "allwinner,sun50i-h6-sid";
- 			reg = <0x03006000 0x400>;
 -- 
-2.23.0
-
+~Vinod
