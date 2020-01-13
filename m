@@ -2,122 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CCC1139413
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:58:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7074C139419
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:58:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728928AbgAMO6O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 09:58:14 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34182 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728843AbgAMO6N (ORCPT
+        id S1728998AbgAMO62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 09:58:28 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:42209 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728843AbgAMO60 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 09:58:13 -0500
-Received: by mail-pg1-f193.google.com with SMTP id r11so4833548pgf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 06:58:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ABwgmPKfDy+N+TGKbofrmdsL1lafnTHl6Ci0Ho1XYT8=;
-        b=bOsdsARnyhmEOKyiyqxc6hjzJPnadrq4BiEyPdBgmJkzhUQxndVn+RuaCK6zspxAjj
-         XA2VmeP7hQZyiIsbEotZCC70+fJp6p7gcsWI8jXeM+UsU3BhkqLV8zP5C9A6dse3f1cG
-         WvSW0D1I8dMSS5vmwNqpoNSGkH6TrLBhQwxpDAT8Xtn0wEKhrP3P1KkD76vCyq482ypm
-         ratxTPWzQsmX+LuvXctaw0zLo4nZA7NfaUOQ+lMmNYcVcvtgnMrnRODI9/5DtL38jTni
-         Q6vwdGCAmjRyyhf3IKKnTFcqZReTUxykBqI2mgoYDmvfKF0q/GHj/xGegJvjOLGl/L7O
-         7i3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ABwgmPKfDy+N+TGKbofrmdsL1lafnTHl6Ci0Ho1XYT8=;
-        b=l7uEMQu/6BAN1R60Tq+oednM4wMy6Bpybv+XllV8FiFtQ1Guf2iEFa/Qh1WVCC5YU3
-         BWn8KN8tyAOlRBHnFy7HwHCfx4hvWxOM7yt+fs2XVMCNfzsxhRvDpH4PPJSVj35Pvuyj
-         3xnPcnc7a3j476+OqKeANYTdeo2hNz4E0c12eNQXDpEK7Kl25Jl/ArHHPvm2xbD11wRS
-         S0kr84Q+pqusfin9k+YYGcMCiEvzYIm5elI2BQKy7pfVMzffYAkqh0fVGaKtzAUMRjxI
-         sqZ69WC+xl6YGp90iKn/fqtzrUTPbZDD6eR1jRCzX2u6DsbLMKu5uMrveAFaTGaLvhPH
-         Waew==
-X-Gm-Message-State: APjAAAUlYPVgb2+ZEJH7sozJGArW02rzr4Q6JQJKB3aTnqU2M5mGisO/
-        Ff9fVbL7+T6bFiPV20w4YgQj5A==
-X-Google-Smtp-Source: APXvYqzBF9RnJzzjN8d3ypYT+NVQzN+8f/shFljnUu2NyTcyE8qPeGaNq2hQb3H1101ndSj85JVYHg==
-X-Received: by 2002:a62:e30d:: with SMTP id g13mr20089294pfh.92.1578927492811;
-        Mon, 13 Jan 2020 06:58:12 -0800 (PST)
-Received: from leoy-ThinkPad-X240s (li519-153.members.linode.com. [66.175.222.153])
-        by smtp.gmail.com with ESMTPSA id i127sm15559616pfe.54.2020.01.13.06.58.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 Jan 2020 06:58:12 -0800 (PST)
-Date:   Mon, 13 Jan 2020 22:58:03 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Suzuki Kuruppassery Poulose <suzuki.poulose@arm.com>
-Cc:     James Clark <james.clark@arm.com>,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nd@arm.com, Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Igor Lubashev <ilubashe@akamai.com>
-Subject: Re: [PATCH] perf tools: Fix bug when recording SPE and non SPE events
-Message-ID: <20200113145803.GB10620@leoy-ThinkPad-X240s>
-References: <20191220110525.30131-1-james.clark@arm.com>
- <20191223034852.GB3981@leoy-ThinkPad-X240s>
- <fd4f4278-fa43-86dc-1f2f-3439f19fea9e@arm.com>
- <20200113141751.GA10620@leoy-ThinkPad-X240s>
+        Mon, 13 Jan 2020 09:58:26 -0500
+Received: from mail-qk1-f176.google.com ([209.85.222.176]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1M7sYM-1inBgI1Gmw-004yL9; Mon, 13 Jan 2020 15:58:24 +0100
+Received: by mail-qk1-f176.google.com with SMTP id 21so8725826qky.4;
+        Mon, 13 Jan 2020 06:58:23 -0800 (PST)
+X-Gm-Message-State: APjAAAUbNqze/5WHU/VQKdKP7l15iFx7vqZkQBbUtwrg2rEFOih2nvok
+        8xoTEJSzGEhx8CD9OsYPc0PdMQtCxiZsT8xk8bk=
+X-Google-Smtp-Source: APXvYqzX7zxX9pH9pukwYKAE1ykcYEuCeLn0zthJITtwFy7WB/faO8CKwqctjvI/3df/TsYu7rTH9XkGLixY8gA4z0M=
+X-Received: by 2002:a37:2f02:: with SMTP id v2mr16183662qkh.3.1578927503022;
+ Mon, 13 Jan 2020 06:58:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200113141751.GA10620@leoy-ThinkPad-X240s>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200107175927.4558-1-sargun@sargun.me> <20200107175927.4558-3-sargun@sargun.me>
+In-Reply-To: <20200107175927.4558-3-sargun@sargun.me>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 13 Jan 2020 15:58:07 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a10iVg6dyvGGLjjdvyUcBQhzC5zmwBzS_Bfpk0FQE4k5Q@mail.gmail.com>
+Message-ID: <CAK8P3a10iVg6dyvGGLjjdvyUcBQhzC5zmwBzS_Bfpk0FQE4k5Q@mail.gmail.com>
+Subject: Re: [PATCH v9 2/4] pid: Implement pidfd_getfd syscall
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Gian-Carlo Pascutto <gpascutto@mozilla.com>,
+        =?UTF-8?Q?Emilio_Cobos_=C3=81lvarez?= <ealvarez@mozilla.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Jed Davis <jld@mozilla.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:RBYwWIZw/kZBa5CmRIX3QhyHidRUSWlKxEfoRbEe6X188nb13TI
+ ySzGcm53kIpaOZUKB9bDdys+roSq7c8k7YVLfYmFP5FFVLW+EhPZ2sIwCbKYmBw0hWYgkJa
+ 3MfjvuWDcQxCZ7+l50dZmyrGjEiuFbToSvMWHCYVz40cFdUOlzQMQPG9OhO1rx6o3rV+1Dv
+ t9qRX/13OM4N20iNpwlBQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:oUvEwSvEgOU=:tr6uYQhYPG+ktVz1ywqzbD
+ z7XFXvdLpjTpL+IW5Hgs6hOid8xEcNFxveuNsa4U5LCV5pkln6s4LadDOTwXyaTe4o9ugTKdr
+ Ew7djvNdUej9U8y22H7NyTbYruA+KbDK44ZiHa+1ki9Ad8kx2aLvdyzaWiC2qEPxV55hm7m5V
+ tW4IdAVLr70EjVxvG53zRFc/bQH5SA+vhX3mS6fZ7X5Wcd3RqycnRjnYj7uqV5v48s1nttWT9
+ A62T248O7QV+2aq+2ldP62zLbnWsZsc5dwuLPhHPn+wbYxSV2OZbDLjsZQNZdi1s/gplNlrik
+ 5HJSwBqSdaabOzHz+awAxCpKxt5vsFFJfBQH6IRhEf4hxaY4pHUV6pMjPTeo0Mj0LriXJNV1H
+ RNopgKp8ZdPqTcV6dwKKp2K7PYTRCP9uA/A+BycVeecvqqL/o8PcuQGRfmZBUM831ceG5ZRnD
+ X9xPHx8OrwsNq/T/tY2wCQzcrOpK/olx8z7K+rKLIaeOw+Nqaimc4e/Ld54YWYMnBIrO+i0Kp
+ ZP2G8OGrbEFY/w8tw8FUPdSwgtgazxMiyb8PVJ+5l8dmNySuR8rDJeRB+FKNmMmNwHMlzaedl
+ qntm6/+a+HZuWgnwKxOGjy5ySBdD5C/tcztQp1X6Q5gP5FBWMzY53xG+pAMitXBjelRLpGw8v
+ pupqfzkNXpmV0JtnCzV6TAwmG60htuZS0bSQ5LvCdbfrQ7QAReyauxjbU+91mjy8mi9/splvO
+ VplgKmKbw3WqpXvPoyr3RvqB+R68Nfp8ew9hKYUY4LMCggtZYiAZu5NwcVYA8uRiOAE6RlTax
+ RxCEkhDNye7XQtX+86wAx4WYsHE1OaEsDQwHQFHPExNAPM0BjK8U3485il7SS+pBNZy3VL0dV
+ 3zHsrnI0UrjHkA2fCSHw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 10:17:51PM +0800, Leo Yan wrote:
+On Tue, Jan 7, 2020 at 6:59 PM Sargun Dhillon <sargun@sargun.me> wrote:
+> +/**
+> + * sys_pidfd_getfd() - Get a file descriptor from another process
+> + *
+> + * @pidfd:     the pidfd file descriptor of the process
+> + * @fd:                the file descriptor number to get
+> + * @flags:     flags on how to get the fd (reserved)
+> + *
+> + * This syscall gets a copy of a file descriptor from another process
+> + * based on the pidfd, and file descriptor number. It requires that
+> + * the calling process has the ability to ptrace the process represented
+> + * by the pidfd. The process which is having its file descriptor copied
+> + * is otherwise unaffected.
+> + *
+> + * Return: On success, a cloexec file descriptor is returned.
+> + *         On error, a negative errno number will be returned.
+> + */
+> +SYSCALL_DEFINE3(pidfd_getfd, int, pidfd, int, fd,
+> +               unsigned int, flags)
 
-[...]
+This is the most sensible definition I can see. I can not tell
+whether we should or want to have it, but if everyone thinks
+this is a good idea, then this ABI makes sense.
 
-> > > On Fri, Dec 20, 2019 at 11:05:25AM +0000, James Clark wrote:
-> > > > This patch fixes an issue when non Arm SPE events are specified after an
-> > > > Arm SPE event. In that case, perf will exit with an error code and not
-> > > > produce a record file. This is because a loop index is used to store the
-> > > > location of the relevant Arm SPE PMU, but if non SPE PMUs follow, that
-> > > > index will be overwritten. Fix this issue by saving the PMU into a
-> > > > variable instead of using the index, and also add an error message.
-> > > > 
-> > > > Before the fix:
-> > > >      ./perf record -e arm_spe/ts_enable=1/ -e branch-misses ls; echo $?
-> > > >      237
-> > > > 
-> > > > After the fix:
-> > > >      ./perf record -e arm_spe/ts_enable=1/ -e branch-misses ls; echo $?
-> > > >      ...
-> > > >      0
-> > > 
-> > > Just bring up a question related with PMU event registration.  Let's
-> > > see the DT binding in arch/arm64/boot/dts/arm/fvp-base-revc.dts:
-> > > 
-> > >           spe-pmu {
-> > >                   compatible = "arm,statistical-profiling-extension-v1";
-> > >                   interrupts = <GIC_PPI 5 IRQ_TYPE_LEVEL_HIGH>;
-> > >           };
-> > > 
-> > > 
-> > > Now SPE registers PMU event for every CPU; seem to me, though SPE is an
-> > 
-> > Do you mean "SPE PMU" here ? SPE is different from ETM, where the trace
-> > data is micro-architecture dependent. And thus you cannot mix the trace
-> > on different CPUs with different micro-archs.
-> 
-> Understood that SPE is micro-architecture dependent.
-
-Maybe SPE is more general than we think :)
-
-Since SPE is defined in ARMv8 architecture reference manual (ARM DDI
-0487D.a); should SPE trace data format is unified and defined in Chapter
-D9 "Statistical Profiling Extension Sample Record Specification"?
-
-Thanks,
-Leo
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
