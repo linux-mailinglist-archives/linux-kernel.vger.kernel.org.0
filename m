@@ -2,62 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 531FB138981
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 03:43:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AFAC138984
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 03:46:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733077AbgAMCn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 21:43:29 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46683 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732487AbgAMCn3 (ORCPT
+        id S1733162AbgAMCqp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 21:46:45 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38145 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733072AbgAMCqm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 21:43:29 -0500
-Received: by mail-lj1-f196.google.com with SMTP id m26so8263111ljc.13
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Jan 2020 18:43:27 -0800 (PST)
+        Sun, 12 Jan 2020 21:46:42 -0500
+Received: by mail-lj1-f193.google.com with SMTP id w1so8301916ljh.5
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Jan 2020 18:46:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=24/I1qlMqBFXawGKcZCUrgzix2NHvFXwEaDn4ik+j2U=;
-        b=esi7Itj4DmpSDioUwVhXYRkKxTZ0cZfRIRPkUwYLO6thkX04T7cQnJprHW+yehrMPI
-         wEdujDl/DavLJPfpBbCV4OmeO1qNENQVjk3gnTub6I+dlUOdQJ5R+oZAzgXpb8IkQKhV
-         oPliJ8aBmRFWcPN9bIoV/OG4OUihmzuSBUX7WI9bq0KkuNyXR3QUrlB80N+hHrNpIBfb
-         9JrawK4EVmXXtRqOLaVQG5gB4m0byjm575jEt58Yt70femg2S37y3tCUqTSlbnQjAsL5
-         rKqNDq/7croKGCQgyVEaQozc5gaGSO+y7NUNq4JsimHFNk0vQ7WcPLYsqKPFrjgykumn
-         ipdg==
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=3/HLCQdvOct5vYdGl7M0YVN4HPhLYYUEFvzbqlTIGO8=;
+        b=m6A4R1wGiE22Q2lQRoL/AM5zPcDrsMepYzhBXgT+Z8C63cbozuGGP5sfAVk1JKuNQc
+         R9Xf7AjFZcJwbKfs1vEwmy4atpYixBUEcGweDKzHPW0w4IH3WDWPiQgsziKC5FbswLMH
+         veHpz0XuGT04fL1AstAudTzst5/s3QJ8plvFvpl/7uXWp/XHWD1ryk8mCLYNWQEKvDGA
+         PFQLllVjJShlauw58tGRTAIUPgJrtm/Bz0dXtWOPaYscUXMHdlNSpLiaLBwLLEj2yClw
+         lXNPpAGDX/Q9iYMzUHiZIaNb4JDWqxpdUCCgtEKLvwY9VHmryEhyZTZaJMc1ScbeCElw
+         D0wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=24/I1qlMqBFXawGKcZCUrgzix2NHvFXwEaDn4ik+j2U=;
-        b=rW/R/qEogdbBPbyRfrFFxEpUozEH7YCJRY9JgCK0G6N4D9Kegje5Kdes6WawPusY1k
-         OPnPjoW3XIeVa+TaPuzDpLO/J1hsfERJBwa0DnqHNgxnlDugUZbGoAYIJNXGyt2JskDD
-         8aSdRd5Ok9JKse/ziTCZ/L+PDdj8GpiNUYM55rL7VHxa31Q7qiyZUViPe5CBt16v93Jn
-         SGPNLrln2RHTuBPq6o+dsVL2svdf0XQnpP8/Mz2OWv3xnRIeBs2rs8AYZyzL68AdA3Io
-         Wwpx/6BmAK1ILqBUhgzqZaYwmgd3roOlfRuWSMrL5XAbnr6PFDFzg3Rr8Xx+Du8CVQKD
-         rIFw==
-X-Gm-Message-State: APjAAAVvOufzkFIHleCl52T3y/evBRpnWSTaRlS54Y5YhnmtU/tWiQho
-        ZTgKLjfp7PdZPeu/CsjSUi3eg0Zu4MRodj2oAnI=
-X-Google-Smtp-Source: APXvYqwXwacTiGL5FRpSFPYXYEHd2JzH7vmXzdU55onIT3/3yV9zHmg0Isx13uMvMznby+Jefub+1OThEiblDPLXpVs=
-X-Received: by 2002:a2e:9a01:: with SMTP id o1mr9309832lji.247.1578883406468;
- Sun, 12 Jan 2020 18:43:26 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=3/HLCQdvOct5vYdGl7M0YVN4HPhLYYUEFvzbqlTIGO8=;
+        b=fHDbFUpFPkIiF7HMTpPzpjYRSeNo2ENfywMNXcEtxvUV6v1+h8jnCUTNT6NqpJIQ+p
+         wlEhI6ksPQYezDOSaBsPGCrvwTk3usD5smtAMMaTygWxuvnSsrGlXl+0tsN8ek2ChF1E
+         66nRqkcL0mWdlh5LQIUa73rr+fBP1+Cl9ZplvwMRuVCZu+21iQlWfuRDvJlltMQIb3FH
+         8Adwj/DRB6+Ft1Sn1fVZ7f+aVWXvq1bgbLMmBlKVdCztHeBcyDB1SoOBCp/xdTKfMSVl
+         qmF+E7sPwRIf2ttFEgf+sUjSCTuPphOZQX01fjbosg5ZENHFhV5Or/zwBOg+S3HmdVmz
+         TAPw==
+X-Gm-Message-State: APjAAAUs2EYAqXHoSBfiPEOt3NVIQyWSvMAkwHfgSrCyeBPdP/QBxZJZ
+        mSEe85AceX2YglWZaWbI2XcWrKNlIw/LUJApZ0k=
+X-Google-Smtp-Source: APXvYqwGh/Wqeivq29He4b+fpiTPXwRhmeAWaaWiWl81vcaSoKoMu6uvjmXVEdbcdFr4vIBxQuZBN5MRF+wVcGU6y4s=
+X-Received: by 2002:a05:651c:30a:: with SMTP id a10mr9075871ljp.101.1578883600369;
+ Sun, 12 Jan 2020 18:46:40 -0800 (PST)
 MIME-Version: 1.0
-References: <20200103033929.4956-1-zhenzhong.duan@gmail.com>
- <20200109184055.GI5603@zn.tnic> <20200109204638.GA523773@rani.riverdale.lan>
- <CAFH1YnNA9qfM4tPzKKDaQD6DPxnE=tJsB7AUZQBohDTW3zm=Xg@mail.gmail.com> <20200110090032.GB19453@zn.tnic>
-In-Reply-To: <20200110090032.GB19453@zn.tnic>
-From:   Zhenzhong Duan <zhenzhong.duan@gmail.com>
-Date:   Mon, 13 Jan 2020 10:43:14 +0800
-Message-ID: <CAFH1YnN8v+8UH3RvaeT7TJEdtEyxhoBA-ZEMk-mRFWNad8e9Jw@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/boot/KASLR: Fix unused variable warning
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Reply-To: salifnaba85@gmail.com
+Received: by 2002:a19:983:0:0:0:0:0 with HTTP; Sun, 12 Jan 2020 18:46:39 -0800 (PST)
+From:   "Mr.Salif Naba" <mrsalifnaba5@gmail.com>
+Date:   Mon, 13 Jan 2020 03:46:39 +0100
+X-Google-Sender-Auth: 0Mm609r7rIXOm2vuXXTveOHene4
+Message-ID: <CADhJwMMz6oHx=hEBxdq_evSs2e=5_-WHd0qvqW3PQ6tR_uSRww@mail.gmail.com>
+Subject: TREAT WITH CONFIDENCE PLEASE.
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,125 +57,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 5:00 PM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Fri, Jan 10, 2020 at 10:27:02AM +0800, Zhenzhong Duan wrote:
-> > Yes. Will you send this formally?
->
-> And then a flood of fix-this-trivial-warning patches ensues?
->
-> You should know that they have the lowest prio when it comes to looking
-> at them.
-I see.
-Just tried Arvind's patch, result is not that bad. Below are all
-warnings during build:
-In fact, only gop.c and kaslr.c have compile warning.
+Dear Friend,
 
-/root/kernel/drivers/firmware/efi/libstub/gop.c: In function =E2=80=98efi_s=
-etup_gop=E2=80=99:
-/root/kernel/drivers/firmware/efi/libstub/gop.c:174:18: warning:
-=E2=80=98pixel_format=E2=80=99 may be used uninitialized in this function
-[-Wmaybe-uninitialized]
-  setup_pixel_info(si, pixels_per_scan_line, pixel_info, pixel_format);
-                  ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:97:6: note:
-=E2=80=98pixel_format=E2=80=99 was declared here
-  int pixel_format;
-      ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:166:45: warning:
-=E2=80=98fb_base=E2=80=99 may be used uninitialized in this function
-[-Wmaybe-uninitialized]
-  ext_lfb_base =3D (u64)(unsigned long)fb_base >> 32;
-                                             ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:95:6: note: =E2=80=98fb_bas=
-e=E2=80=99
-was declared here
-  u64 fb_base;
-      ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:174:18: warning:
-=E2=80=98pixels_per_scan_line=E2=80=99 may be used uninitialized in this fu=
-nction
-[-Wmaybe-uninitialized]
-  setup_pixel_info(si, pixels_per_scan_line, pixel_info, pixel_format);
-                  ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:93:6: note:
-=E2=80=98pixels_per_scan_line=E2=80=99 was declared here
-  u32 pixels_per_scan_line;
-      ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:163:17: warning:
-=E2=80=98height=E2=80=99 may be used uninitialized in this function
-[-Wmaybe-uninitialized]
-  si->lfb_height =3D height;
-                 ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:92:13: note: =E2=80=98heigh=
-t=E2=80=99
-was declared here
-  u16 width, height;
-             ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:162:16: warning:
-=E2=80=98width=E2=80=99 may be used uninitialized in this function
-[-Wmaybe-uninitialized]
-  si->lfb_width =3D width;
-                ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:92:6: note: =E2=80=98width=
-=E2=80=99
-was declared here
-  u16 width, height;
-      ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:271:18: warning:
-=E2=80=98pixel_format=E2=80=99 may be used uninitialized in this function
-[-Wmaybe-uninitialized]
-  setup_pixel_info(si, pixels_per_scan_line, pixel_info, pixel_format);
-                  ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:194:6: note:
-=E2=80=98pixel_format=E2=80=99 was declared here
-  int pixel_format;
-      ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:263:45: warning:
-=E2=80=98fb_base=E2=80=99 may be used uninitialized in this function
-[-Wmaybe-uninitialized]
-  ext_lfb_base =3D (u64)(unsigned long)fb_base >> 32;
-                                             ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:192:6: note: =E2=80=98fb_ba=
-se=E2=80=99
-was declared here
-  u64 fb_base;
-      ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:271:18: warning:
-=E2=80=98pixels_per_scan_line=E2=80=99 may be used uninitialized in this fu=
-nction
-[-Wmaybe-uninitialized]
-  setup_pixel_info(si, pixels_per_scan_line, pixel_info, pixel_format);
-                  ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:190:6: note:
-=E2=80=98pixels_per_scan_line=E2=80=99 was declared here
-  u32 pixels_per_scan_line;
-      ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:260:17: warning:
-=E2=80=98height=E2=80=99 may be used uninitialized in this function
-[-Wmaybe-uninitialized]
-  si->lfb_height =3D height;
-                 ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:189:13: note: =E2=80=98heig=
-ht=E2=80=99
-was declared here
-  u16 width, height;
-             ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:259:16: warning:
-=E2=80=98width=E2=80=99 may be used uninitialized in this function
-[-Wmaybe-uninitialized]
-  si->lfb_width =3D width;
-                ^
-/root/kernel/drivers/firmware/efi/libstub/gop.c:189:6: note: =E2=80=98width=
-=E2=80=99
-was declared here
-  u16 width, height;
+My name is  Mr.Salif Naba and I am a banker. It is true
+that we have not met each other in person, but I strongly believe that
+on trust, no friendship in every business. I have a deceased
+customer=E2=80=99s abandoned fund, which I am his personal financial advise=
+r
+before his accidental death, that being the main reason why I alone
+working in the bank here, know much about the existence of this fund
+and the secrets surrounding this money.
 
-/root/kernel/arch/x86/boot/compressed/kaslr.c: In function =E2=80=98process=
-_mem_region=E2=80=99:
-/root/kernel/arch/x86/boot/compressed/kaslr.c:698:6: warning: unused
-variable =E2=80=98i=E2=80=99 [-Wunused-variable]
-  int i;
+I got your email information through the Burkina's Chamber of Commerce
+and industry on foreign business relations here in Ouagadougou Burkina
+Faso I hoped that you will not expose or betray this trust and
+confident that I am about to establish with you for the mutual benefit
+of you and I. I need your urgent assistance in transferring the sum of
+$15.5) millions dollars into your account within 14 working banking
+days.
+
+This money has been dormant for years in our bank without claim due to
+the owner of this fund died along with his entire family and supposed
+next of kin in an air crash. But before I disclose the full details to
+you, I will like to know your interest and willingness to assist me by
+reverting back to me with your:
+
+1. Full Name: .........
+2. Telephone Numbers: ...........
+3. Your Age: ........
+4. Your Sex: ...........
+5. Your Occupation: ............
+6. Your Country: ............
+7. City: ...........
+8. Your Home Address: ................
+9. Marital Status: ................
+
+Please note that if you must get in touch with me then you must reply
+me back through my private box  (salifnaba85@gmail.com)and please
+if you are not interested do not waste your time to reply kindly
+delete my message from your box ok.
 
 Regards
-Zhenzhong
+Mr.Salif Naba
