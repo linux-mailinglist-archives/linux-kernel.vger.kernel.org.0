@@ -2,159 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE7AE139026
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 12:32:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89600139030
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 12:34:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728688AbgAMLcB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 06:32:01 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:55436 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbgAMLcA (ORCPT
+        id S1728803AbgAMLeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 06:34:09 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40752 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728769AbgAMLeG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 06:32:00 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200113113158euoutp02b88d085d3ed1c1949ee11af4a9fabffc~pbu9nhQzj0505605056euoutp02f
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 11:31:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200113113158euoutp02b88d085d3ed1c1949ee11af4a9fabffc~pbu9nhQzj0505605056euoutp02f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1578915118;
-        bh=exgPqVTwXgFdwKUjR2Can4eR2gu2HfhSQsazOhSA6R4=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=hq/oCqkaE8LDSQnoXKTVEnvRJMqlmJR8BnPxXMHcVd9dMUIf5I0eE8SJ4LMwgZJuw
-         2ya4VkU/m7pCxcoKL8YJVzh3l2YDWxZrqBzvUDgv8Fy5mZJ4EBdUNGEJr3Zs5qPxRB
-         QBDfwcrR67znKdFoWuDRwkkqEF4e+UIdK1gTZ7+A=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200113113158eucas1p1818c5a9befeb0f2ab1436902635a7540~pbu9Z3YIR2462524625eucas1p13;
-        Mon, 13 Jan 2020 11:31:58 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 4B.94.60679.E255C1E5; Mon, 13
-        Jan 2020 11:31:58 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200113113158eucas1p137efd45f6aa77d8509e2389c23e0a8e7~pbu9Es8A50246402464eucas1p1n;
-        Mon, 13 Jan 2020 11:31:58 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200113113158eusmtrp1ce5186092b2a23d2a4542ed1ef04ee90~pbu9EFbmh2049020490eusmtrp1G;
-        Mon, 13 Jan 2020 11:31:58 +0000 (GMT)
-X-AuditID: cbfec7f4-0cbff7000001ed07-a5-5e1c552e7aad
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id A0.5D.07950.E255C1E5; Mon, 13
-        Jan 2020 11:31:58 +0000 (GMT)
-Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200113113157eusmtip29dcc79ff0aa535ed43386cae0054529d~pbu8RIhNj1745017450eusmtip2W;
-        Mon, 13 Jan 2020 11:31:57 +0000 (GMT)
-Subject: Re: [PATCH] ata: pata_arasam_cf: Use dma_request_chan() instead
- dma_request_slave_channel()
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, vireshk@kernel.org,
-        axboe@kernel.dk, vkoul@kernel.org, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <b171c3c0-d924-e2e6-0c4d-196c7e6c2325@samsung.com>
-Date:   Mon, 13 Jan 2020 12:31:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
+        Mon, 13 Jan 2020 06:34:06 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00DBXqKN134190
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 06:34:05 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2xfve898mu-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 06:34:05 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <psampat@linux.ibm.com>;
+        Mon, 13 Jan 2020 11:33:27 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 13 Jan 2020 11:33:24 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00DBXNHF50855982
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 Jan 2020 11:33:23 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0B2A45204F;
+        Mon, 13 Jan 2020 11:33:23 +0000 (GMT)
+Received: from pratiks-thinkpad.in.ibm.com (unknown [9.124.31.88])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 72F355204E;
+        Mon, 13 Jan 2020 11:33:21 +0000 (GMT)
+From:   Pratik Rajesh Sampat <psampat@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org,
+        mpe@ellerman.id.au, svaidy@linux.ibm.com, ego@linux.vnet.ibm.com,
+        linuxram@us.ibm.com, psampat@linux.ibm.com,
+        pratik.sampat@in.ibm.com, pratik.r.sampat@gmail.com
+Subject: [PATCH v3 0/3] Introduce Self-Save API for deep stop states
+Date:   Mon, 13 Jan 2020 17:03:17 +0530
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <20191217111950.vzuww3ov4ub45ros@vireshk-i7>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTcRTG+e/e3d3NNq7T8KBmMGqg5LQUmq8lWIygiCywyNnK6wu6TTbn
-        1ChEw9TMVn4oh8wI0pykNkXnKrAtpmVpoYjawiUWJRiZZi+m5naV/PZ7zgvPeeCQmNDMDiRz
-        VAW0RqXIExE8vNv5eyhccipYHtn+TSxtfX+DkDqt0yzpiK2BkBrnf7Glj37IpJ1uJyHtdQ1g
-        Bzmykdc6mcVcRchcY08IWf94D0u2YAk5zj7Di8+g83IKaU1E4jlednmZC8+vFxQ1tvSxStFb
-        n2rEJYGKBnvDGrsa8Ugh9QDBS8erDbGIwOWaxhixgKDsw1dic2XZZEJMoxnB1BU3wYg5BH3D
-        Y5hnyo/KBPcgw/5UGEyOTXg3MMqEoLZy1tsgqFi4edWMPMynEmHG7fZa4NRucAx3eXk7lQrf
-        3Q42M+MLL+pncA9zqRhYqVjmeBijAmByppHF8E7omWvAmFMtHFjuDmE4Ge70vkEM+8FsfxeH
-        4WAYrKvBPccB1YZgpfIzxogeBM11qxuh48A19GedyXWHUGi3RTDlJHh3v5ztKQMlgPE5X+YG
-        Adzqvo0xZT5UVgiZaTF0NHUQm7bVvS2YAYmMW5IZt6Qxbklj/O97F+FmFEDrtMosWrtPResl
-        WoVSq1NlSS6olRa0/kGDq/2LVmT7e96OKBKJtvH7SoLkQraiUFustCMgMZE/3zIUKBfyMxTF
-        JbRGna7R5dFaOwoicVEAP+relzQhlaUooHNpOp/WbHZZJDewFInvCg9ltD5LlhnicB+HjzM0
-        6ScdfQ2LtNrcz/cc23+4MyF1eHL+aP0OddHTk8HptVKDzTGqFti5SvGoQE+cTtDzlw60jeUS
-        a/HzS/pww9m6iY+77J9S5LFHMvll6VPWtDZJ3sWalEvBJ1ZjqvAoMuR6rGiyyVSYVPyQejxw
-        WYRrsxV7wzCNVvEP+9LwmD0DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFIsWRmVeSWpSXmKPExsVy+t/xe7p6oTJxBjde81usvtvPZnFsxyMm
-        i8u75rBZzPr4g9Vi41cPi80PjrFZ7LxzgtmB3ePy2VKPTas62TzuXNvD5nH8xnYmj8+b5AJY
-        o/RsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQympvu
-        sBTM5KuYv/IAUwPjRe4uRk4OCQETid/z5jF2MXJxCAksZZTo27mKqYuRAyghI3F8fRlEjbDE
-        n2tdbCC2kMBrRomzM4VBbGGBNIkHp68xg9giAloSt67dZASxmQXmMUq8+aEEMXMvo8T6h6/B
-        itgErCQmtq8CK+IVsJN48uAB2FAWAVWJw+e3gNmiAhESh3fMgqoRlDg58wkLiM0pYCnxt+03
-        O8QCdYk/8y4xQ9jiEreezGeCsOUltr+dwzyBUWgWkvZZSFpmIWmZhaRlASPLKkaR1NLi3PTc
-        YiO94sTc4tK8dL3k/NxNjMB423bs55YdjF3vgg8xCnAwKvHwHqiSjhNiTSwrrsw9xCjBwawk
-        wrvpnFScEG9KYmVValF+fFFpTmrxIUZToOcmMkuJJucDU0FeSbyhqaG5haWhubG5sZmFkjhv
-        h8DBGCGB9MSS1OzU1ILUIpg+Jg5OqQbG85OYeOs1uPNPs/TI75/67nCb+CKPR9f+ik7pnntJ
-        9oO8jcmRhb4V63kt2FRKv3uuyQn7FC24SGRxxtIQk+8vHr7uTriuWdtx3L3i4ZLJDDeuxvzi
-        Kd3su/rQ0rTYTVKn59pumH769sGgKH0rTbkDnVlvphcELM3bss1l1zOx1pBz75v9epcHKbEU
-        ZyQaajEXFScCAPw6lZLNAgAA
-X-CMS-MailID: 20200113113158eucas1p137efd45f6aa77d8509e2389c23e0a8e7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191217111956epcas5p36d2e10fa2ba3c2e8dd0cc661c8de7dd0
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191217111956epcas5p36d2e10fa2ba3c2e8dd0cc661c8de7dd0
-References: <20191217105048.25327-1-peter.ujfalusi@ti.com>
-        <CGME20191217111956epcas5p36d2e10fa2ba3c2e8dd0cc661c8de7dd0@epcas5p3.samsung.com>
-        <20191217111950.vzuww3ov4ub45ros@vireshk-i7>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20011311-0028-0000-0000-000003D0A08C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20011311-0029-0000-0000-00002494BE3A
+Message-Id: <cover.1578914462.git.psampat@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-13_03:2020-01-13,2020-01-13 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 adultscore=0 phishscore=0 impostorscore=0
+ malwarescore=0 spamscore=0 bulkscore=0 suspectscore=0 mlxscore=0
+ mlxlogscore=792 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-2001130097
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Skiboot patches: https://patchwork.ozlabs.org/patch/1221011/
+v2 patches: https://lkml.org/lkml/2020/1/12/253
+Changelog
+Patch v2 --> v3
+1. Addressed minor comments from Ram Pai
 
-On 12/17/19 12:19 PM, Viresh Kumar wrote:
-> On 17-12-19, 12:50, Peter Ujfalusi wrote:
->> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
->> eating up the error code.
->>
->> By using dma_request_chan() directly the driver can support deferred
->> probing against DMA.
+Currently the stop-API supports a mechanism called as self-restore
+which allows us to restore the values of certain SPRs on wakeup from a
+deep-stop state to a desired value. To use this, the Kernel makes an
+OPAL call passing the PIR of the CPU, the SPR number and the value to
+which the SPR should be restored when that CPU wakes up from a deep
+stop state.
 
-It doesn't seem to be the case as DMA channel is requested at the start
-of the data transfer (which happens after the driver has been successfully
-probed).
+Recently, a new feature, named self-save has been enabled in the
+stop-api, which is an alternative mechanism to do the same, except
+that self-save will save the current content of the SPR before
+entering a deep stop state and also restore the content back on
+waking up from a deep stop state.
 
-PS there is a typo in the patch summary (it should "pata_arasan_cf").
+This patch series aims at introducing and leveraging the self-save feature in
+the kernel.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Now, as the kernel has a choice to prefer one mode over the other and
+there can be registers in both the save/restore SPR list which are sent
+from the device tree, a new interface has been defined for the seamless
+handing of the modes for each SPR.
 
->> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
->> ---
->>  drivers/ata/pata_arasan_cf.c | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/ata/pata_arasan_cf.c b/drivers/ata/pata_arasan_cf.c
->> index 135173c8d138..69b555d83f68 100644
->> --- a/drivers/ata/pata_arasan_cf.c
->> +++ b/drivers/ata/pata_arasan_cf.c
->> @@ -526,9 +526,10 @@ static void data_xfer(struct work_struct *work)
->>  
->>  	/* request dma channels */
->>  	/* dma_request_channel may sleep, so calling from process context */
->> -	acdev->dma_chan = dma_request_slave_channel(acdev->host->dev, "data");
->> -	if (!acdev->dma_chan) {
->> +	acdev->dma_chan = dma_request_chan(acdev->host->dev, "data");
->> +	if (IS_ERR(acdev->dma_chan)) {
->>  		dev_err(acdev->host->dev, "Unable to get dma_chan\n");
->> +		acdev->dma_chan = NULL;
->>  		goto chan_request_fail;
->>  	}
->>  
->> @@ -539,6 +540,7 @@ static void data_xfer(struct work_struct *work)
->>  	}
->>  
->>  	dma_release_channel(acdev->dma_chan);
->> +	acdev->dma_chan = NULL;
->>  
->>  	/* data xferred successfully */
->>  	if (!ret) {
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
+A list of preferred SPRs are maintained in the kernel which contains two
+properties:
+1. supported_mode: Helps in identifying if it strictly supports self
+                   save or restore or both.
+                   Initialized using the information from device tree.
+2. preferred_mode: Calls out what mode is preferred for each SPR. It
+                   could be strictly self save or restore, or it can also
+                   determine the preference of  mode over the other if both
+                   are present by encapsulating the other in bitmask from
+                   LSB to MSB.
+                   Initialized statically.
+
+Below is a table to show the Scenario::Consequence when the self save and
+self restore modes are available or disabled in different combinations as
+perceived from the device tree thus giving complete backwards compatibly
+regardless of an older firmware running a newer kernel or vise-versa.
+Support for self save or self-restore is embedded in the device tree,
+along with the set of registers it supports.
+
+SR = Self restore; SS = Self save
+
+.-----------------------------------.----------------------------------------.
+|             Scenario              |                Consequence             |
+:-----------------------------------+----------------------------------------:
+| Legacy Firmware. No SS or SR node | Self restore is called for all         |
+|                                   | supported SPRs                         |
+:-----------------------------------+----------------------------------------:
+| SR: !active SS: !active           | Deep stop states disabled              |
+:-----------------------------------+----------------------------------------:
+| SR: active SS: !active            | Self restore is called for all         |
+|                                   | supported SPRs                         |
+:-----------------------------------+----------------------------------------:
+| SR: active SS: active             | Goes through the preferences for each  |
+|                                   | SPR and executes of the modes          |
+|                                   | accordingly. Currently, Self restore is|
+|                                   | called for all the SPRs except PSSCR   |
+|                                   | which is self saved                    |
+:-----------------------------------+----------------------------------------:
+| SR: active(only HID0) SS: active  | Self save called for all supported     |
+|                                   | registers expect HID0 (as HID0 cannot  |
+|                                   | be self saved currently)               |
+:-----------------------------------+----------------------------------------:
+| SR: !active SS: active            | currently will disable deep states as  |
+|                                   | HID0 is needed to be self restored and |
+|                                   | cannot be self saved                   |
+'-----------------------------------'----------------------------------------'
+
+Pratik Rajesh Sampat (3):
+  powerpc/powernv: Interface to define support and preference for a SPR
+  powerpc/powernv: Introduce Self save support
+  powerpc/powernv: Parse device tree, population of SPR support
+
+ arch/powerpc/include/asm/opal-api.h        |   3 +-
+ arch/powerpc/include/asm/opal.h            |   1 +
+ arch/powerpc/platforms/powernv/idle.c      | 442 ++++++++++++++++++---
+ arch/powerpc/platforms/powernv/opal-call.c |   1 +
+ 4 files changed, 389 insertions(+), 58 deletions(-)
+
+-- 
+2.24.1
 
