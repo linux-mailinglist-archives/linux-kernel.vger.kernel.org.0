@@ -2,84 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 035E613931D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:07:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0EC3139327
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:08:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728871AbgAMOHJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 09:07:09 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:35129 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726399AbgAMOHJ (ORCPT
+        id S1728884AbgAMOHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 09:07:52 -0500
+Received: from forward102j.mail.yandex.net ([5.45.198.243]:58861 "EHLO
+        forward102j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728801AbgAMOHw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 09:07:09 -0500
-Received: from mail-qk1-f179.google.com ([209.85.222.179]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1N0X4e-1jcMEZ463Y-00wWND; Mon, 13 Jan 2020 15:07:08 +0100
-Received: by mail-qk1-f179.google.com with SMTP id k6so8532932qki.5;
-        Mon, 13 Jan 2020 06:07:07 -0800 (PST)
-X-Gm-Message-State: APjAAAVrp3DPzmx5zotCL57FzjiGgwLVKfosWMbGTu+Fq01mxp6keCTm
-        n67IGLrF0P2SoDXICI3fzx3FNez/SLiMo73BD6s=
-X-Google-Smtp-Source: APXvYqy4pDVP1tTP4+KiIyv9AaHZPjEdv86Ykem+8ug+bu8k+5zBm8SYa1YYYY2i0Ku4ZH0NQ653JbuPCdT85EHvOpM=
-X-Received: by 2002:a05:620a:a5b:: with SMTP id j27mr16336077qka.286.1578924426747;
- Mon, 13 Jan 2020 06:07:06 -0800 (PST)
+        Mon, 13 Jan 2020 09:07:52 -0500
+Received: from mxback13j.mail.yandex.net (mxback13j.mail.yandex.net [IPv6:2a02:6b8:0:1619::88])
+        by forward102j.mail.yandex.net (Yandex) with ESMTP id 54AD9F21435;
+        Mon, 13 Jan 2020 17:07:49 +0300 (MSK)
+Received: from myt2-ea6a2e0cbf34.qloud-c.yandex.net (myt2-ea6a2e0cbf34.qloud-c.yandex.net [2a02:6b8:c00:2e8e:0:640:ea6a:2e0c])
+        by mxback13j.mail.yandex.net (mxback/Yandex) with ESMTP id 7umar6yfM8-7n6888lG;
+        Mon, 13 Jan 2020 17:07:49 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1578924469;
+        bh=RmsVJbxfmJIPyEANphpuUuv7UaSpvPm9q6Y+Misk4d8=;
+        h=Subject:To:From:Cc:Date:Message-Id;
+        b=qZF6AX80hM491dl4ZurWUU4lIMkEHWZ2xq6wH4E+iLY5NJlzHN7IPzV5B65nwm7W3
+         QZ1ChF6oqNs/jIs+8zVyiGAhK6lKva7bSvYf5NWYpzdQsZ/49rItwIoBvBmDq2tIP4
+         7I+umMjtruhdpvIoUBWt+AOooerJVq3NyBDMuj+Q=
+Authentication-Results: mxback13j.mail.yandex.net; dkim=pass header.i=@flygoat.com
+Received: by myt2-ea6a2e0cbf34.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id pGFN2nLtP9-7aV4FhvH;
+        Mon, 13 Jan 2020 17:07:45 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+To:     linux-mips@vger.kernel.org
+Cc:     chenhc@lemote.com, paul.burton@mips.com,
+        linux-kernel@vger.kernel.org, hch@lst.de,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH 1/2] MIPS: Define pgprot_dmacoherent according to coherentio status
+Date:   Mon, 13 Jan 2020 22:07:04 +0800
+Message-Id: <20200113140705.74605-1-jiaxun.yang@flygoat.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-References: <20200109141459.21808-1-vincenzo.frascino@arm.com>
- <c43539f2-aa9b-4afa-985c-c438099732ff@sandeen.net> <1a540ee4-6597-c79e-1bce-6592cb2f3eae@arm.com>
- <20200109165048.GB8247@magnolia> <435bcb71-9126-b1f1-3803-4977754b36ff@arm.com>
- <CAK8P3a0eY6Vm5PNdzR8Min9MrwAqH8vnMZ3C+pxTQhiFVNPyWA@mail.gmail.com> <20200113135800.GA8635@lst.de>
-In-Reply-To: <20200113135800.GA8635@lst.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 13 Jan 2020 15:06:50 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a0MZdDhY1DmdxjCSMXFqyu0G1ijsQdo7fmN9Ebxgr9cNw@mail.gmail.com>
-Message-ID: <CAK8P3a0MZdDhY1DmdxjCSMXFqyu0G1ijsQdo7fmN9Ebxgr9cNw@mail.gmail.com>
-Subject: Re: [PATCH] xfs: Fix xfs_dir2_sf_entry_t size check
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:MDZdv87PspSiRCBd2OKASowIhCrd3dbWlOcvIGcE4pC5YSIymsm
- MO01UcVXmYr8ss0o1h/WxxRng+weIrxLMTAJJdDQFRwySLSD1VgGoP7TaZSpnqxeG8puca9
- 9+wvyBDqop/oJq+I3W5KrP6HJxGjVJafHl/18hYekvaNq8RdqFGqLLqd3RKll2PMK9RHpmV
- Az8owFv9K5utX8C7+EFJQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:qwqY+JrhnYA=:hjm96v+cRRK4dY23FrlCUn
- dwM83iaWQRnryuKoZhozWKOQoGDbWIJUljZkVFBW1g4bieNr6OWMcKWfcIw17mqNH6xSLlKE5
- wD9DLp82qu4x3KAwEIGVUX0xvz9jOs2gd2UU4ji8yVqnnwCslNYzOzTtWhsarLOaEnw6I/viz
- zIPNlw631HW4VvqjjfnwoH4lKJsWLKUCSRmZdbzkkFXA4YZs+7g331c1ESlRls2sZqb/3FtUc
- wd1GT5TbNqCcKreDQ3IRMidefZsxQLkc7H7KMa2W4YzIYmt1V9vYpiRXfHW+BTijgYKQJ8bs/
- Gy0/DH9iO3SryT1C6SO92Upi7PsFT+VDhy/vSE1xR2SIkA0FzvrnSFETdH2jKIJcydUyCin/s
- sSrTR5JEZUqHK7SZbAj2BISB8rL0X0mAhdpGhv0ZF2+AHYvGjCVRqPrHEA/WBNKFa5RommC9L
- n4Cex7qRFSIc9Us7my6aJJ97kYFgfWqZyTqwTJYlYdUtE4rlYi/ftVHcSBtGqpn4E7I+fhy9H
- 0pyymeYgeHCA70Wvpe7ptl5hExfOVyMR+fLLeCC599ATOSxP5QkmnMA6x9hq9KQmv2HXu+Z8S
- PR0G0o7jIG/tq9C59gaEraYhHwerrRp0vIo6M3F3/qVQzeLzapjAZVG2+O4+4rtIOgmqn5VHP
- lJfoAi5Sk4wBn+jA/gGDBnnzlTR8fMHc7hS+lgBYEJfwwYeb/h+kxgk7vHMjLxygdhXf32t/8
- wcJ2iXc6sgqow6Nkcr++5q1/u67sY628zxyOW9ypbU5oz0e6wpisH+xcqOu5pIbRzgYv3zO9b
- WT9Uz5aGz5sOFyewSuP+CnaunQZMm6E6eMmEx3ka94J23Py/ZLYG23gAd1HaDlU4c7luxcRJb
- 2ZlpZMLWejRj/LrHVv8A==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 2:58 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> On Mon, Jan 13, 2020 at 02:55:15PM +0100, Arnd Bergmann wrote:
-> > With ARM OABI (which you get when EABI is disabled), structures are padded
-> > to multiples of 32 bits. See commits 8353a649f577 ("xfs: kill
-> > xfs_dir2_sf_off_t")
-> > and aa2dd0ad4d6d ("xfs: remove __arch_pack"). Those could be partially
-> > reverted to fix it again, but it doesn't seem worth it as there is
-> > probably nobody
-> > running XFS on OABI machines (actually with the build failure we can
-> > be fairly sure there isn't ;-).
->
-> Or just try adding a __packed to the xfs_dir2_sf_entry definition?
+For MIPS chips that support coherentio DMA, it's always safe
+to make DMA requests cached.
 
-Yes, that should be correct on all architectures, and I just noticed
-that this is what we already have on xfs_dir2_sf_hdr_t directly
-above it for the same reason.
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+ arch/mips/include/asm/dma-coherence.h | 14 ++++++++++++++
+ arch/mips/kernel/setup.c              |  1 +
+ 2 files changed, 15 insertions(+)
 
-       Arnd
+diff --git a/arch/mips/include/asm/dma-coherence.h b/arch/mips/include/asm/dma-coherence.h
+index 5eaa1fcc878a..bc0df7684cae 100644
+--- a/arch/mips/include/asm/dma-coherence.h
++++ b/arch/mips/include/asm/dma-coherence.h
+@@ -9,6 +9,8 @@
+ #ifndef __ASM_DMA_COHERENCE_H
+ #define __ASM_DMA_COHERENCE_H
+ 
++#include <asm/pgtable.h>
++
+ enum coherent_io_user_state {
+ 	IO_COHERENCE_DEFAULT,
+ 	IO_COHERENCE_ENABLED,
+@@ -35,4 +37,16 @@ static inline bool dev_is_dma_coherent(struct device *dev)
+ #define hw_coherentio	0
+ #endif /* CONFIG_DMA_MAYBE_COHERENT */
+ 
++#if !defined(CONFIG_DMA_PERDEV_COHERENT)
++#define pgprot_dmacoherent pgprot_dmacoherent
++static inline pgprot_t pgprot_dmacoherent(pgprot_t prot)
++{
++	if (coherentio == IO_COHERENCE_ENABLED ||
++		(coherentio == IO_COHERENCE_DEFAULT && hw_coherentio))
++		return prot;
++
++	return pgprot_noncached(prot);
++}
++#endif
++
+ #endif
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index 701f4bc3046f..01f725819df7 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -831,6 +831,7 @@ arch_initcall(debugfs_mips);
+ enum coherent_io_user_state coherentio = IO_COHERENCE_DEFAULT;
+ EXPORT_SYMBOL_GPL(coherentio);
+ int hw_coherentio = 0;	/* Actual hardware supported DMA coherency setting. */
++EXPORT_SYMBOL_GPL(hw_coherentio);
+ 
+ static int __init setcoherentio(char *str)
+ {
+-- 
+2.24.1
+
