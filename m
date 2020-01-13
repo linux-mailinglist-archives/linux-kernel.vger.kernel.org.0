@@ -2,166 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 434AF138A05
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 04:54:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D3A71389FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 04:53:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387599AbgAMDxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 22:53:21 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:39317 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387573AbgAMDxQ (ORCPT
+        id S2387648AbgAMDxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 22:53:31 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:29859 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387628AbgAMDx3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 22:53:16 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id E534B21C1B;
-        Sun, 12 Jan 2020 22:53:14 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sun, 12 Jan 2020 22:53:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=q6eO4lewzUTif
-        9a/MG8leDfdHzrNguqpktR6OOxUJMU=; b=Kv7wO/vLYeGT56nfGEqESD2jaaS3C
-        MuSRF+h/jxLKO3TslIObmxAj8i/GK6wlZPpsIYtVpFbcYAhpg16Tmf4lsciPVnNU
-        0oMguwaiDczOU+DfAEuV0Vgj0N+pyv/pF998QWWt2JIiPpaf3xD/xAV4evNCCr1L
-        L4FcntkrbgOti+mEK4Y6VT/0ma2nvHbh5tSqWHBp2Nz5CnAf/V9A7DGO+ZAB5Di1
-        PpTZ4UiYHvsvlcEUE2E7nQ0fmCEnUYjfXLN+znh4hwVgqwuI+UEpDluEEi512EKO
-        ghUacUGCsN4G27ZvSPL6AGv8YzqCWL9biZfhG2qsBf9XdQ575pnURmH6Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=q6eO4lewzUTif9a/MG8leDfdHzrNguqpktR6OOxUJMU=; b=IMyl7FqM
-        9ZJqh8b0QsQ6UwCNF8zEU9/BkucOdgZnF1B6rGDZlp5wOnzkW4SU5If0Aw31rv3A
-        5xGbQtycWtcd87WI/+i25hGosGXfu4cuNa2TJ+QYWElOanQsjXOS6WPcPfhz/iAa
-        f43NIsCetFp2XHWwLh1g8WOGOnueE/fpcGRVlco/FJ39aZYOXGtpMMgFsm+erpho
-        Sy45uhMjxqRQN7Hs/WW1v1Lx5MlCTTp71FCsQhxqqTEXmdhhRd4wy92gvnpmAunL
-        ga2T+2YKMVQa94hXfHNZg8kOXIrjjFi2NxIJMQ05Z84RYadXINrS0pwUoYHHBr/r
-        fIyXQh0fK4uH+A==
-X-ME-Sender: <xms:qukbXmUFAJaJnv3j5eVASnuAiJWE5W-d49rxF4CzfuqH9F6M7FdIMQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdeiledgieeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
-    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucfkph
-    epjedtrddufeehrddugeekrdduhedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghm
-    uhgvlhesshhhohhllhgrnhgurdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:qukbXpZvFxY884Xf-Pc_SmQtofYki9cGu1gAMzlg7izo4xRPHbGWJA>
-    <xmx:qukbXjXdEEZzmccMDvod29QrF-0YZZ--xevpzYJZ6CX7hYwq0bVatA>
-    <xmx:qukbXgKZyfYV8nwGecDpPOWbpEqaIWNEwXWFlZv7hKP8f-syem54-Q>
-    <xmx:qukbXv8SQ47FyJk0cFP4N-GG8evdUqKBNN04EQxqS-DERbqmexOo6A>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 6D2448005B;
-        Sun, 12 Jan 2020 22:53:14 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Chen-Yu Tsai <wens@csie.org>, Sebastian Reichel <sre@kernel.org>,
-        Oskari Lemmela <oskari@lemmela.net>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v3 8/8] power: supply: axp20x_usb_power: Only poll while offline
-Date:   Sun, 12 Jan 2020 21:53:10 -0600
-Message-Id: <20200113035310.18950-9-samuel@sholland.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200113035310.18950-1-samuel@sholland.org>
-References: <20200113035310.18950-1-samuel@sholland.org>
+        Sun, 12 Jan 2020 22:53:29 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1578887608; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=VSzXNP0mOqbuXQogoLiOrPiphvjyJt/TBINrP2AAFnY=;
+ b=JHNssTmmK5jWxe3PtzOCbqDoSrv0uobSCxkuIyW+sXm7zsK5J8fbXBFdH6pl4ippsGvHkzFU
+ acAg8NSP1m+3DQPi5u66AdvuoFwiVojNx6ZeMiQwPXir1N23XaKyEawNz09tQJP9kywUCTx1
+ NvLk3+aa4oeA4gcx03ktEe39uZM=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e1be9b7.7f1f07a41378-smtp-out-n01;
+ Mon, 13 Jan 2020 03:53:27 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 2EBD9C4479F; Mon, 13 Jan 2020 03:53:26 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: rjliao)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 220E4C447A1;
+        Mon, 13 Jan 2020 03:53:25 +0000 (UTC)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+Date:   Mon, 13 Jan 2020 11:53:25 +0800
+From:   Rocky Liao <rjliao@codeaurora.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v4] Bluetooth: hci_qca: Add qca_power_on() API to support
+ both wcn399x and Rome power up
+In-Reply-To: <20200111003120.GG89495@google.com>
+References: <20200107052601.32216-1-rjliao@codeaurora.org>
+ <20200110033214.16327-1-rjliao@codeaurora.org>
+ <20200111003120.GG89495@google.com>
+Message-ID: <834cda46ced2a504b9d277a0c7d75245@codeaurora.org>
+X-Sender: rjliao@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Investigation on the AXP803 shows that VBUS_PLUGIN/VBUS_REMOVAL IRQs are
-triggered on the rising/falling edge of AXP20X_PWR_STATUS_VBUS_USED. The
-reason IRQs do not arrive while N_VBUSEN/DRIVEVBUS is high is because
-AXP20X_PWR_STATUS_VBUS_USED also never goes high.
+在 2020-01-11 08:31，Matthias Kaehlcke 写道：
+> Hi Rocky,
+> 
+> On Fri, Jan 10, 2020 at 11:32:14AM +0800, Rocky Liao wrote:
+>> This patch adds a unified API qca_power_on() to support both wcn399x 
+>> and
+>> Rome power on. For wcn399x it calls the qca_wcn3990_init() to init the
+>> regulators, and for Rome it pulls up the bt_en GPIO to power up the 
+>> btsoc.
+>> It also moves all the power up operation from hdev->open() to
+>> hdev->setup().
+>> 
+>> Signed-off-by: Rocky Liao <rjliao@codeaurora.org>
+>> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+>> ---
+>> 
+>> Changes in v2: None
+>> Changes in v3:
+>>   -moved all the power up operation from open() to setup()
+>>   -updated the commit message
+>> Changes in v4:
+>>   -made a single call to qca_power_on() in setup()
+>> 
+>> 
+>>  drivers/bluetooth/hci_qca.c | 48 
+>> +++++++++++++++++++++++--------------
+>>  1 file changed, 30 insertions(+), 18 deletions(-)
+>> 
+>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> index 82e4cd4b6663..6a67e5489b16 100644
+>> --- a/drivers/bluetooth/hci_qca.c
+>> +++ b/drivers/bluetooth/hci_qca.c
+>> @@ -541,7 +541,6 @@ static int qca_open(struct hci_uart *hu)
+>>  {
+>>  	struct qca_serdev *qcadev;
+>>  	struct qca_data *qca;
+>> -	int ret;
+>> 
+>>  	BT_DBG("hu %p qca_open", hu);
+>> 
+>> @@ -582,23 +581,10 @@ static int qca_open(struct hci_uart *hu)
+>>  	hu->priv = qca;
+>> 
+>>  	if (hu->serdev) {
+>> -
+>>  		qcadev = serdev_device_get_drvdata(hu->serdev);
+>> -		if (!qca_is_wcn399x(qcadev->btsoc_type)) {
+>> -			gpiod_set_value_cansleep(qcadev->bt_en, 1);
+>> -			/* Controller needs time to bootup. */
+>> -			msleep(150);
+>> -		} else {
+>> +		if (qca_is_wcn399x(qcadev->btsoc_type)) {
+>>  			hu->init_speed = qcadev->init_speed;
+>>  			hu->oper_speed = qcadev->oper_speed;
+>> -			ret = qca_regulator_enable(qcadev);
+>> -			if (ret) {
+>> -				destroy_workqueue(qca->workqueue);
+>> -				kfree_skb(qca->rx_skb);
+>> -				hu->priv = NULL;
+>> -				kfree(qca);
+>> -				return ret;
+>> -			}
+>>  		}
+>>  	}
+>> 
+>> @@ -1531,6 +1517,31 @@ static int qca_wcn3990_init(struct hci_uart 
+>> *hu)
+>>  	return 0;
+>>  }
+>> 
+>> +static int qca_power_on(struct hci_dev *hdev)
+>> +{
+>> +	struct hci_uart *hu = hci_get_drvdata(hdev);
+>> +	enum qca_btsoc_type soc_type = qca_soc_type(hu);
+>> +	struct qca_serdev *qcadev;
+>> +	int ret = 0;
+>> +
+>> +	/* Non-serdev device usually is powered by external power
+>> +	 * and don't need additional action in driver for power on
+>> +	 */
+>> +	if (!hu->serdev)
+>> +		return 0;
+>> +
+>> +	if (qca_is_wcn399x(soc_type)) {
+>> +		ret = qca_wcn3990_init(hu);
+>> +	} else {
+>> +		qcadev = serdev_device_get_drvdata(hu->serdev);
+>> +		gpiod_set_value_cansleep(qcadev->bt_en, 1);
+>> +		/* Controller needs time to bootup. */
+>> +		msleep(150);
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>  static int qca_setup(struct hci_uart *hu)
+>>  {
+>>  	struct hci_dev *hdev = hu->hdev;
+>> @@ -1553,6 +1564,10 @@ static int qca_setup(struct hci_uart *hu)
+>>  	 */
+>>  	set_bit(HCI_QUIRK_SIMULTANEOUS_DISCOVERY, &hdev->quirks);
+>> 
+>> +	ret = qca_power_on(hdev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+> 
+> Now if qca_power_on() fails there is no log entry indicating that 
+> Bluetooth
+> setup was running. That's why I suggested to put this log entry before
+> the call, and remove the corresponding entries from the if/else 
+> branches:
+> 
+> 	bt_dev_info(hdev, "setting up %s",
+> 		qca_is_wcn399x(soc_type)? "wcn399x" : "ROME");
+> 
+Sorry I missed that and will update the patch soon.
 
-This also means that if VBUS is online, a VBUS_REMOVAL IRQ is received
-immediately on setting N_VBUSEN/DRIVEVBUS high (and VBUS_PLUGIN shortly
-after it is set back low). This was also verified to be the case when
-manually offlining VBUS through AXP20X_VBUS_PATH_SELECT.
-
-As long as VBUS is online, a present->absent transition necessarily
-implies an online->offline transition. Since will cause an IRQ, there is
-no need to poll while VBUS is online.
-
-To ensure the driver's view of VBUS online status remains accurate,
-unconditionally poll once when receiving an IRQ and when resuming. If
-VBUS is still online at that time, polling will cease until the next
-VBUS_REMOVAL IRQ.
-
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
- drivers/power/supply/axp20x_usb_power.c | 30 +++++++++++++++++--------
- 1 file changed, 21 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/power/supply/axp20x_usb_power.c b/drivers/power/supply/axp20x_usb_power.c
-index 4292b86d0429..fbb66e97787d 100644
---- a/drivers/power/supply/axp20x_usb_power.c
-+++ b/drivers/power/supply/axp20x_usb_power.c
-@@ -66,16 +66,32 @@ struct axp20x_usb_power {
- 	struct iio_channel *vbus_i;
- 	struct delayed_work vbus_detect;
- 	unsigned int old_status;
-+	unsigned int online;
- 	unsigned int num_irqs;
- 	unsigned int irqs[];
- };
- 
-+static bool axp20x_usb_vbus_needs_polling(struct axp20x_usb_power *power)
-+{
-+	/*
-+	 * Polling is only necessary while VBUS is offline. While online, a
-+	 * present->absent transition implies an online->offline transition
-+	 * and will triger the VBUS_REMOVAL IRQ.
-+	 */
-+	if (power->axp20x_id >= AXP221_ID && !power->online)
-+		return true;
-+
-+	return false;
-+}
-+
- static irqreturn_t axp20x_usb_power_irq(int irq, void *devid)
- {
- 	struct axp20x_usb_power *power = devid;
- 
- 	power_supply_changed(power->supply);
- 
-+	mod_delayed_work(system_wq, &power->vbus_detect, DEBOUNCE_TIME);
-+
- 	return IRQ_HANDLED;
- }
- 
-@@ -95,17 +111,11 @@ static void axp20x_usb_power_poll_vbus(struct work_struct *work)
- 		power_supply_changed(power->supply);
- 
- 	power->old_status = val;
-+	power->online = val & AXP20X_PWR_STATUS_VBUS_USED;
- 
- out:
--	mod_delayed_work(system_wq, &power->vbus_detect, DEBOUNCE_TIME);
--}
--
--static bool axp20x_usb_vbus_needs_polling(struct axp20x_usb_power *power)
--{
--	if (power->axp20x_id >= AXP221_ID)
--		return true;
--
--	return false;
-+	if (axp20x_usb_vbus_needs_polling(power))
-+		mod_delayed_work(system_wq, &power->vbus_detect, DEBOUNCE_TIME);
- }
- 
- static int axp20x_get_current_max(struct axp20x_usb_power *power, int *val)
-@@ -513,6 +523,8 @@ static int axp20x_usb_power_resume(struct device *dev)
- 	while (i < power->num_irqs)
- 		enable_irq(power->irqs[i++]);
- 
-+	mod_delayed_work(system_wq, &power->vbus_detect, DEBOUNCE_TIME);
-+
- 	return 0;
- }
- #endif
--- 
-2.23.0
-
+>>  	if (qca_is_wcn399x(soc_type)) {
+>>  		bt_dev_info(hdev, "setting up wcn3990");
+>> 
+>> @@ -1562,9 +1577,6 @@ static int qca_setup(struct hci_uart *hu)
+>>  		set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
+>>  		set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
+>>  		hu->hdev->shutdown = qca_power_off;
+>> -		ret = qca_wcn3990_init(hu);
+>> -		if (ret)
+>> -			return ret;
+>> 
+>>  		ret = qca_read_soc_version(hdev, &soc_ver, soc_type);
+>>  		if (ret)
+>> --
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+>> Forum, a Linux Foundation Collaborative Project
