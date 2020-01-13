@@ -2,78 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0E51139424
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:59:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F256413942B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 16:00:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729066AbgAMO7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 09:59:51 -0500
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:58355 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728843AbgAMO7u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 09:59:50 -0500
-X-Originating-IP: 90.76.211.102
-Received: from localhost (lfbn-tou-1-1151-102.w90-76.abo.wanadoo.fr [90.76.211.102])
-        (Authenticated sender: antoine.tenart@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 2075F1BF216;
-        Mon, 13 Jan 2020 14:59:47 +0000 (UTC)
-Date:   Mon, 13 Jan 2020 15:59:47 +0100
-From:   Antoine Tenart <antoine.tenart@bootlin.com>
-To:     Jiri Pirko <jiri@resnulli.us>
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
-        sd@queasysnail.net, andrew@lunn.ch, f.fainelli@gmail.com,
-        hkallweit1@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        alexandre.belloni@bootlin.com, allan.nielsen@microchip.com,
-        camelia.groza@nxp.com, Simon.Edelhaus@aquantia.com,
-        Igor.Russkikh@aquantia.com, jakub.kicinski@netronome.com
-Subject: Re: [PATCH net-next v5 05/15] net: macsec: hardware offloading
- infrastructure
-Message-ID: <20200113145947.GC3078@kwain>
-References: <20200110162010.338611-1-antoine.tenart@bootlin.com>
- <20200110162010.338611-6-antoine.tenart@bootlin.com>
- <20200113143452.GA2131@nanopsycho>
- <20200113145758.GB3078@kwain>
+        id S1728865AbgAMPAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 10:00:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59178 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728843AbgAMPAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 10:00:00 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE9D6207FF;
+        Mon, 13 Jan 2020 14:59:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578927599;
+        bh=aa9EO2uekBujHfVtcvhLTBuPFLejzJ8R98SroFJlRlQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=w+RfN76orFFirc2tM4axk9pWZCEaqU4hy00VCYWN+oAs799sNABs+VESEs1g/ToMM
+         fESl4+A/K/hkPREmlcWrobsTIMmVBBSNfUUpARLK6wwitllEcSBIbwOsARsS3ujke5
+         UtpTmgNbX2M2cjeOzC6Gg/BLqtMGpCm3T14KGats=
+Date:   Mon, 13 Jan 2020 14:59:54 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RFC PATCH 6/8] READ_ONCE: Drop pointer qualifiers when reading
+ from scalar types
+Message-ID: <20200113145954.GB4458@willie-the-truck>
+References: <20200110165636.28035-1-will@kernel.org>
+ <20200110165636.28035-7-will@kernel.org>
+ <CAHk-=wia5ppBsfHLMx648utCjO01JAZiME0K0eSHmhWuRyL+6w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200113145758.GB3078@kwain>
+In-Reply-To: <CAHk-=wia5ppBsfHLMx648utCjO01JAZiME0K0eSHmhWuRyL+6w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 03:57:58PM +0100, Antoine Tenart wrote:
-> On Mon, Jan 13, 2020 at 03:34:52PM +0100, Jiri Pirko wrote:
-> > Fri, Jan 10, 2020 at 05:20:00PM CET, antoine.tenart@bootlin.com wrote:
+On Fri, Jan 10, 2020 at 10:54:27AM -0800, Linus Torvalds wrote:
+> On Fri, Jan 10, 2020 at 8:56 AM Will Deacon <will@kernel.org> wrote:
+> >
+> > +/* Declare an unqualified scalar type. Leaves non-scalar types unchanged. */
+> > +#define __unqual_scalar_typeof(x) typeof(                                      \
 > 
-> > >+/* Checks if underlying layers implement MACsec offloading functions. */
-> > >+static bool macsec_check_offload(enum macsec_offload offload,
-> > >+				 struct macsec_dev *macsec)
-> > >+{
-> > >+	if (!macsec || !macsec->real_dev)
-> > >+		return false;
-> > >+
-> > >+	if (offload == MACSEC_OFFLOAD_PHY)
-> > 
-> > You have a helper for this already - macsec_is_offloaded(). No need for
-> > "offload" arg then.
+> Ugh. My eyes. That's horrendous.
 > 
-> Same here, except the _PHY case is different from the _MAC one. So the
-> check needs to be specific to _PHY.
+> I can't see any better alternatives, but it does make me go "Eww".
 
-Also 'offload' here can be different from the one stored in the macsec
-structure.
+I can't disagree with that, but the only option we've come up with so far
+that solves this in the READ_ONCE() macro itself is the thing from PeterZ:
 
+// Insert big fat comment here
+#define unqual_typeof(x)    typeof(({_Atomic typeof(x) ___x __maybe_unused; ___x; }))
+
+That apparently *requires* GCC 4.8, but I think the question is more about
+whether it's easier to stomach the funny use of _Atomic or the nested
+__builtin_choose_expr() I have here. I'm also worried about how reliable
+the _Atomic thing is, or whether it's just an artifact of how GCC happens
+to work today.
+
+> Well, I do see one possible alternative: just re-write the bitop
+> implementations in terms of "atomic_long_t", and just avoid the issue
+> entirely.
 > 
-> > >+		return macsec->real_dev->phydev &&
-> > >+		       macsec->real_dev->phydev->macsec_ops;
-> > >+
-> > >+	return false;
-> > >+}
+> IOW, do something like the attached (but fleshed out and tested - this
+> patch has not seen a compiler, much less any thought at all).
 
--- 
-Antoine Ténart, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+The big downside of this approach in preference to the proposal here is that
+as long as we've got volatile-qualified pointer arguments describing shared
+memory, I fear that we'll be playing a constant game of whack-a-mole adding
+non-volatile casts as you do below. The same problem manifests for the
+acquire/release accessors, which is why having something like
+__unqual_typeof() would be beneficial and at least the awfulness is
+contained in one place.
+
+So I suppose my question is: how ill does this code really make you feel?
+The disassembly is really nice!
+
+Will
+
+>  include/asm-generic/bitops/lock.h | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/asm-generic/bitops/lock.h b/include/asm-generic/bitops/lock.h
+> index 3ae021368f48..071d8bfd86e5 100644
+> --- a/include/asm-generic/bitops/lock.h
+> +++ b/include/asm-generic/bitops/lock.h
+> @@ -6,6 +6,12 @@
+>  #include <linux/compiler.h>
+>  #include <asm/barrier.h>
+>  
+> +/* Drop the volatile, we will be doing READ_ONCE by hand */
+> +static inline atomic_long_t *atomic_long_bit_word(unsigned int nr, volatile unsigned long *p)
+> +{
+> +	return BIT_WORD(nr) + (atomic_long_t *)p;
+> +}
+> +
+>  /**
+>   * test_and_set_bit_lock - Set a bit and return its old value, for lock
+>   * @nr: Bit to set
+> @@ -20,12 +26,12 @@ static inline int test_and_set_bit_lock(unsigned int nr,
+>  {
+>  	long old;
+>  	unsigned long mask = BIT_MASK(nr);
+> +	atomic_long_t *loc = atomic_long_bit_word(nr, p);
+>  
+> -	p += BIT_WORD(nr);
+> -	if (READ_ONCE(*p) & mask)
+> +	if (atomic_read(loc) & mask)
+>  		return 1;
+>  
+> -	old = atomic_long_fetch_or_acquire(mask, (atomic_long_t *)p);
+> +	old = atomic_long_fetch_or_acquire(mask, loc);
+>  	return !!(old & mask);
+>  }
+>  
+
