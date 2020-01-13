@@ -2,102 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64410139192
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:01:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D22BE1391A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:03:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728791AbgAMNBJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 08:01:09 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2261 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727289AbgAMNBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 08:01:09 -0500
-Received: from lhreml704-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 18EF8C44A31786DBE467;
-        Mon, 13 Jan 2020 13:01:08 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- lhreml704-cah.china.huawei.com (10.201.108.45) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 13 Jan 2020 13:01:07 +0000
-Received: from [127.0.0.1] (10.202.226.43) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 13 Jan
- 2020 13:01:07 +0000
-Subject: Re: [PATCH v2 2/3] spi: Add HiSilicon v3xx SPI NOR flash controller
- driver
-To:     Mark Brown <broonie@kernel.org>
-CC:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        <tudor.ambarus@microchip.com>, <linux-kernel@vger.kernel.org>,
-        <chenxiang66@hisilicon.com>, <linuxarm@huawei.com>,
-        <linux-spi@vger.kernel.org>, <marek.vasut@gmail.com>,
-        <linux-mtd@lists.infradead.org>, <xuejiancheng@hisilicon.com>,
-        <fengsheng5@huawei.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        wanghuiqiang <wanghuiqiang@huawei.com>, <liusimin4@huawei.com>
-References: <1575900490-74467-1-git-send-email-john.garry@huawei.com>
- <1575900490-74467-3-git-send-email-john.garry@huawei.com>
- <0dc5cb2e-b765-9e13-b05e-9e3c835c5985@huawei.com>
- <20200109212842.GK3702@sirena.org.uk>
- <df67b562-7d82-19f6-7581-680190a7772d@huawei.com>
- <20200110140726.GB5889@sirena.org.uk>
- <6db83881-927c-d11c-9c77-23a45892ddab@huawei.com>
- <20200110193119.GI32742@smile.fi.intel.com>
- <612a3c5d-69a4-af6b-5c79-c3fb853193ab@huawei.com>
- <20200113114256.GH3897@sirena.org.uk>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <6dd45da9-9ccf-45f7-ed12-8f1406a0a56b@huawei.com>
-Date:   Mon, 13 Jan 2020 13:01:06 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
-MIME-Version: 1.0
-In-Reply-To: <20200113114256.GH3897@sirena.org.uk>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-ClientProxiedBy: lhreml729-chm.china.huawei.com (10.201.108.80) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+        id S1728838AbgAMNCy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 08:02:54 -0500
+Received: from us03-smtprelay2.synopsys.com ([149.117.87.133]:56840 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727465AbgAMNCx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 08:02:53 -0500
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 903F5C05C3;
+        Mon, 13 Jan 2020 13:02:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1578920572; bh=zKs/zoX9SDuQlYKJwNzslfhtAuZSfAwnQ4w1YbbcszA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=O3I2EJKxhODJf3stOIYZ85/9R21fxpB1RDXAK3J35wiDwCF3xD31Jr/JN5G3f4rfM
+         oNiieVLJr7KfC4e0E3PfLnRxds2DQvQjlrJmf8sxZw5XVT1ABJjHmGArm/D2whRyUE
+         Ng+z0ei1RXRRBq7fODTtFXwchxCp5QW/K3afmDcm9L51n6WM6owwgMQjGqhfjjvMhd
+         hMkMcq7JzWRDShcydMof2AFfn3zML6dpWOq3+q9cr9WI4wC+MQHUClq4d1FrR+TcBK
+         mrRulZpSo6Ctoj9OmzqbxmVz8RTR8npaiF8fzZ/DY0uyT4HYWMKL5jldFz9J4rhWKk
+         /BXTW4jI1Risw==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 67301A005B;
+        Mon, 13 Jan 2020 13:02:44 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2 0/8] net: stmmac: ETF support
+Date:   Mon, 13 Jan 2020 14:02:35 +0100
+Message-Id: <cover.1578920366.git.Jose.Abreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/01/2020 11:42, Mark Brown wrote:
-> On Mon, Jan 13, 2020 at 10:09:27AM +0000, John Garry wrote:
->> On 10/01/2020 19:31, Andy Shevchenko wrote:
-> 
->>> PRP method is only for vendors to *test* the hardware in ACPI environment.
->>> The proper method is to allocate correct ACPI ID.
-> 
->> Yes, that would seem the proper thing to do. So the SPI NOR driver is based
->> on micron m25p80 and compatible string is "jedec,spi-nor", so I don't know
->> who should or would do this registration.
-> 
+This series adds the support for ETF scheduler in stmmac.
 
-Hi Mark,
+1) Starts adding the support by implementing Enhanced Descriptors in stmmac
+main core. This is needed for ETF feature in XGMAC and QoS cores.
 
-> The idiomatic approach appears to be for individual board vendors
-> to allocate IDs, you do end up with multiple IDs from multiple
-> vendors for the same thing.
+2) Integrates the ETF logic into stmmac TC core.
 
-So we see sort of approach a lot when vendors integrate 3rd party IP 
-into a SoC and then assign some vendor specific ID for that.
+3) and 4) adds the HW specific support for ETF in XGMAC and QoS cores. The
+IP feature is called TBS (Time Based Scheduling).
 
-But I am not sure how appropriate that same approach would be for some 
-3rd party memory part which we're simply wiring up on our board. Maybe 
-it is.
+5) Enables ETF in GMAC5 IPK PCI entry for all Queues except Queue 0.
 
-> 
->> BTW, Do any of these sensors you mention have any ACPI standardization?
-> 
-> In general there's not really much standardizaiton for devices,
-> the bindings that do exist aren't really centrally documented and
-> the Windows standard is just to have the basic device
-> registration in the firmware and do all properties based on
-> quirking based on DMI information.
-> 
+6) Adds the new TBS feature and even more information into the debugFS
+HW features file.
 
-OK, so there is always DMI. I hoped to avoid this sort of thing in the 
-linux driver :)
+7) Switches the selftests mechanism to use dev_direct_xmit() so that we can
+send packets on specific Queues.
 
-Cheers,
-John
+8) Adds a new test for TBS feature.
+
+---
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+
+Jose Abreu (8):
+  net: stmmac: Initial support for TBS
+  net: stmmac: tc: Add support for ETF Scheduler using TBS
+  net: stmmac: xgmac: Add TBS support
+  net: stmmac: gmac4+: Add TBS support
+  net: stmmac: pci: Enable TBS on GMAC5 IPK PCI entry
+  net: stmmac: Add missing information in DebugFS capabilities file
+  net: stmmac: selftests: Switch to dev_direct_xmit()
+  net: stmmac: selftests: Add a test for TBS feature
+
+ drivers/net/ethernet/stmicro/stmmac/common.h       |   1 +
+ drivers/net/ethernet/stmicro/stmmac/descs.h        |   9 ++
+ drivers/net/ethernet/stmicro/stmmac/dwmac4.h       |   1 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c |  10 ++
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.h |   7 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c   |  21 +++
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.h   |   7 +
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     |  13 ++
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_descs.c   |   9 ++
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |  24 ++++
+ drivers/net/ethernet/stmicro/stmmac/hwif.h         |  12 ++
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       |   3 +
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 149 ++++++++++++++++-----
+ drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c   |   2 +
+ .../net/ethernet/stmicro/stmmac/stmmac_selftests.c |  98 +++++++++++---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c    |  18 +++
+ include/linux/stmmac.h                             |   1 +
+ 17 files changed, 334 insertions(+), 51 deletions(-)
+
+-- 
+2.7.4
+
