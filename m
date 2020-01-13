@@ -2,92 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74615138CB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 09:15:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB1F8138CB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 09:17:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728792AbgAMIPU convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 13 Jan 2020 03:15:20 -0500
-Received: from relay11.mail.gandi.net ([217.70.178.231]:35671 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728695AbgAMIPT (ORCPT
+        id S1728833AbgAMIR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 03:17:27 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48894 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728789AbgAMIR1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 03:15:19 -0500
-Received: from xps13 (lfbn-tou-1-1151-102.w90-76.abo.wanadoo.fr [90.76.211.102])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 1ED34100013;
-        Mon, 13 Jan 2020 08:15:16 +0000 (UTC)
-Date:   Mon, 13 Jan 2020 09:15:15 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 3/3] mtd: onenand: Enable compile testing of OMAP and
- Samsung drivers
-Message-ID: <20200113091515.4404dbb6@xps13>
-In-Reply-To: <20200113074632.GA1187@pi3>
-References: <20191229183612.22133-3-krzk@kernel.org>
-        <201912310904.9iM6MaFr%lkp@intel.com>
-        <20191231073339.GA6747@pi3>
-        <20200109161826.7fda02a4@xps13>
-        <20200113074632.GA1187@pi3>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 13 Jan 2020 03:17:27 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00D8ENoO003461;
+        Mon, 13 Jan 2020 09:17:11 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=BNM4YoMzz8mNUvF1txkbtT7/0heb6WHqiZtZ1ldOKhw=;
+ b=qPoyNKH8jTIWXU82omvks7gDUV71lAKVshmwiphNM1ReCj6JiZZ6bPp3/pgnAekSihDC
+ RUUhnOVJZirq6ZdKAGWeK0u23lxjzSMd452NLEb9EM7UXaZHjMuTLgfE7736DbUlBozb
+ KhPWBtL9oh3yzDeLfTqrQYYxvTxwARKDMF90tv/HaOZ1FmVGN5Oh+MiZ+tqIhGD5WCGs
+ /9q0HeU+/bOI6bhou9rrmZlNSTHHoIw/8SRr0Y4eccYqZgsBF4Zn5+p89Gda5sDFC6Gl
+ Xa9fmHlvLuLrLEENXSjKC0e68J9Fm4MT5tTIMk2bFE5utK+fkJCzF43b66PSCj9ZRzys bw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xf7jp6whm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 13 Jan 2020 09:17:11 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CFEC210003A;
+        Mon, 13 Jan 2020 09:17:09 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B4A912A4D88;
+        Mon, 13 Jan 2020 09:17:09 +0100 (CET)
+Received: from lmecxl0912.lme.st.com (10.75.127.49) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 13 Jan
+ 2020 09:17:09 +0100
+Subject: Re: linux-next: Signed-off-by missing for commit in the arm-soc tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Olof Johansson <olof@lixom.net>
+CC:     Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        Yann Gautier <yann.gautier@st.com>
+References: <20200113065808.25f28c40@canb.auug.org.au>
+ <CAOesGMifHn6DbNgYm6YUbdKjSL5rNgdWrq+HX9dEusrOr9xX2A@mail.gmail.com>
+ <20200113113837.130c3936@canb.auug.org.au>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <caeb1af8-4aa2-71dc-0a70-127c0b474f93@st.com>
+Date:   Mon, 13 Jan 2020 09:17:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20200113113837.130c3936@canb.auug.org.au>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG5NODE2.st.com (10.75.127.14) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-13_02:2020-01-13,2020-01-13 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
+Hi guys
 
-Krzysztof Kozlowski <krzk@kernel.org> wrote on Mon, 13 Jan 2020
-08:46:32 +0100:
-
-> On Thu, Jan 09, 2020 at 04:18:26PM +0100, Miquel Raynal wrote:
-> > Hi Krzysztof,
-> > 
-> > Krzysztof Kozlowski <krzk@kernel.org> wrote on Tue, 31 Dec 2019
-> > 08:33:39 +0100:
-> >   
-> > > On Tue, Dec 31, 2019 at 10:00:48AM +0800, kbuild test robot wrote:  
-> > > > Hi Krzysztof,
-> > > > 
-> > > > I love your patch! Perhaps something to improve:
-> > > > 
-> > > > [auto build test WARNING on linus/master]
-> > > > [also build test WARNING on v5.5-rc4 next-20191220]
-> > > > [if your patch is applied to the wrong git tree, please drop us a note to help
-> > > > improve the system. BTW, we also suggest to use '--base' option to specify the
-> > > > base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-> > > > 
-> > > > url:    https://github.com/0day-ci/linux/commits/Krzysztof-Kozlowski/mtd-onenand-samsung-Fix-pointer-cast-Wpointer-to-int-cast-warnings-on-64-bit/20191230-030838
-> > > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git bf8d1cd4386535004c4afe7f03d37f9864c9940e
-> > > > reproduce:
-> > > >         # apt-get install sparse
-> > > >         # sparse version: v0.6.1-129-g341daf20-dirty
-> > > >         make ARCH=x86_64 allmodconfig
-> > > >         make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
-> > > > 
-> > > > If you fix the issue, kindly add following tag
-> > > > Reported-by: kbuild test robot <lkp@intel.com>
-> > > >     
-> > > 
-> > > It is not related to my patch. I'll fix it up soon.  
-> > 
-> > I would like this to be fixed before enabling compile testing, is your
-> > fix read?  
+On 1/13/20 1:38 AM, Stephen Rothwell wrote:
+> Hi Olof,
 > 
-> Yes, you picked up the fix here:
-> https://lore.kernel.org/lkml/20200103164158.4265-1-krzk@kernel.org/
+> On Sun, 12 Jan 2020 11:59:58 -0800 Olof Johansson <olof@lixom.net> wrote:
+>>
+>> Thanks for the report. Time to automate this at our end, we've had a
+>> few too many of these slip through all the way to you lately.
+>>
+>> Where do you keep your scripts that you catch these things with? Do
+>> you have a writeup of the checks you do? I should add it to my
+>> automation once and for all.
+> 
+> I should export my linux-next scripts as a git repo, but I haven't (yet) :-(
+> 
+> Attached pleas find check_commits which I run after fetching each tree
+> and pass the changed commit range.  This, in turn, runs check_fixes
+> (also attached).
+> 
 
-Perfect, I did not even linked these issues together.
 
-Thanks,
-Miquèl
+Sorry for this oversight. DO I have something to do ? (except to not 
+forget to check my signed-off next time).
+
+Regards
+Alex
