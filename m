@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5489D138A63
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 05:50:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53373138A65
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 05:50:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387666AbgAMEtw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 23:49:52 -0500
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:45527 "EHLO
+        id S1733185AbgAMEt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 23:49:58 -0500
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:42137 "EHLO
         new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387613AbgAMEtn (ORCPT
+        by vger.kernel.org with ESMTP id S2387615AbgAMEtn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 12 Jan 2020 23:49:43 -0500
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id F2FE96591;
-        Sun, 12 Jan 2020 23:49:41 -0500 (EST)
+        by mailnew.nyi.internal (Postfix) with ESMTP id 94A7C59EA;
+        Sun, 12 Jan 2020 23:49:42 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sun, 12 Jan 2020 23:49:41 -0500
+  by compute5.internal (MEProxy); Sun, 12 Jan 2020 23:49:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=SrzKOkLSwyAw5
-        L9dj6C7jHF7WcI4gH8AwCRGv5SLZvU=; b=hru3Yt7atFl9GBt+GCtCPdBmDUR9R
-        JFsrya4klAomB+LvN5NPEpMSccZh8GRZk8f3xh20zGGhbzVPqqHZKVBfayYNk4y3
-        SW8EUBPQps+TQJnwtmAJJJA36EM1n/9tJItjX96FlaQVdPDujRWhiPp4gY58e4vN
-        W/QXV6/NCu0NWthbHDzRS5eezxwYtOMrtDTOZMUhkE9LqyaYg83o06o3wUilMqK2
-        3U3lAlqO3Mtvjg0deA3y/0mOX6XbNtagd4HaYaAoi3lPcLvFrIl+D8yhjvTHqETH
-        JgZVXM+UOONjbtxSoYMVv/v4mu/SHG5y2Y0af1OUwHPPtlA0/FE7o12Rg==
+        :mime-version:content-transfer-encoding; s=fm1; bh=8AqTt0s+nWzUs
+        USBLaiZYq4YnGomy2QjysCCyqzWOoU=; b=A7ihwOn9nV/1HcNKs5AXZcdfksKfK
+        8cNegpmGsc7s1ytMfij5BbDOXHokrAXY7dtMeFgXsgioo2HjL+wIsP9aR/xirvhT
+        zxYSvSr4YdDUAyKi3ntTfWMSgtifOnIK4SqtH+ouimDRtSWXYz1s03/izvu4Vdek
+        OVseO0BucXuNf0Q+Yf9F1junaZyYdgJbcTvdip5LRzI4u4IR1TzY1ieD+qf6V7DE
+        9lAbQpx2iK5WXET8CqkA2zx0rFS10Kl1303jETJHh0QBzm7eRbyqmC+207rnKf3l
+        X/DhcwxEAydY5CHNA3BDK4BNw5DpPg6iH9gxPT21kGQP91vG/sRCDuGSA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=SrzKOkLSwyAw5L9dj6C7jHF7WcI4gH8AwCRGv5SLZvU=; b=mGyPVWuH
-        DroLBHr2/I3FUZxIhEsoxeLkyfSZOj5sNrZTA2IzaJjWWyN1JuOAkAx0lkLxAOh0
-        RNykru32xUuhC5DT9504IHKi38fZGJx9w4C2Atlgh+bn30A2ywhqgwADcmQv4Mvl
-        iC0noBfdQdq34LY5skGnmqH40K+YGfKYaPQCQqpb/ridLzj/CaVQuuGkJ2PvQovf
-        Zatll07XFvDdfwwy2QBhZzWh9hKhl56fNKOCYwaGjQ9oEyudF/dxu6uJVCzGFe8+
-        vw6mTSa3hH4lBl0I+6pJ5ZYIg4WizFfI3j9h299I7jULWCjj+f6YCjZphN/BT2Sk
-        Qo28wD5gnkJAAg==
-X-ME-Sender: <xms:5fYbXgQZ54lwgcfP0Mx3-fpGdpmdMxcN4ITSf6zfletW79dRO_DzoA>
+        fm1; bh=8AqTt0s+nWzUsUSBLaiZYq4YnGomy2QjysCCyqzWOoU=; b=ZvrKjUhF
+        jSurR8QJXFZ7emsATjBCQo5bnC9WBtehJZZTeOaZA9CkEeaMz8OeHexANiMfmhdP
+        PFxywPQyKPE68MJvhSXTsd3vUed41NMzDpuTRQO2/GKsDJ30ZqP7qBGJ46zoyWYi
+        daOmdwZK4iFaCGtHVSS/kx0n0ESLgYZPl700gjTzKOFhmldsLZF8LsF1S4nx1/1J
+        l1h0tmYd6/vsbi+s9GjOz2SD9mQHVgibueB53at3v9kFhYfi7zvfxnd708JvBBWt
+        rvZN1PkynwzPDm6Y3txcJe8OMFxdVkNzQt4J5Bbjr7MBD/Nu0ZbXhxmtZo8HPaGS
+        fN0vaZ28x90kQw==
+X-ME-Sender: <xms:5vYbXgEDER3oAtHt8XN25EXAR1LagBRKMVltmkFVJGNdQ6C8d5FQKg>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdeiledgjeekucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
     lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucfkph
     epjedtrddufeehrddugeekrdduhedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghm
-    uhgvlhesshhhohhllhgrnhgurdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:5fYbXp6JbeoyAnyP_VcuG55H5Vy0CLYw7dfhC9eanTV04jnCLX7_3Q>
-    <xmx:5fYbXnGoRNmMJJ5gb0b9JlYRRRMu99skSrVS4L3JzeyhAr3Gc5TC_Q>
-    <xmx:5fYbXjGjoMuvqs6u2w2fm7hZ1PM9fZCvY_KpaMG1oOrBuKVgkLwqCQ>
-    <xmx:5fYbXp3DnwSLWT5Wok4N1iZc8VswLvYOaJPsy6e1AEXEZlM_CNfXmw>
+    uhgvlhesshhhohhllhgrnhgurdhorhhgnecuvehluhhsthgvrhfuihiivgepje
+X-ME-Proxy: <xmx:5vYbXuXKApK6dqjPYwajXXvt-Jxt8F0l754nXTS3cqoH4XsZJFpwzQ>
+    <xmx:5vYbXrDoAmp6hM9uFvdZ0gY1PUc2oxq3_RtBH7uZq6znLXv_HIxAlw>
+    <xmx:5vYbXn12Sbd9feTBA5nOoGfG2cwVi6vM_YEeCHzOr3aFYh-qblAbrg>
+    <xmx:5vYbXmXf7iWZHIGbx89TR9UvAdnOHKyYAifbueppuIzRYYARFYC8sA>
 Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 3EDDE30607B4;
+        by mail.messagingengine.com (Postfix) with ESMTPA id D468830602DB;
         Sun, 12 Jan 2020 23:49:41 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
@@ -66,9 +66,9 @@ To:     Thomas Gleixner <tglx@linutronix.de>,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 7/9] arm64: dts: allwinner: a64: Move wakeup-capable IRQs to r_intc
-Date:   Sun, 12 Jan 2020 22:49:34 -0600
-Message-Id: <20200113044936.26038-8-samuel@sholland.org>
+Subject: [PATCH 8/9] arm64: dts: allwinner: h6: Fix indentation of IR node
+Date:   Sun, 12 Jan 2020 22:49:35 -0600
+Message-Id: <20200113044936.26038-9-samuel@sholland.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20200113044936.26038-1-samuel@sholland.org>
 References: <20200113044936.26038-1-samuel@sholland.org>
@@ -79,52 +79,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All IRQs that can be used to wake up the system must be routed through
-r_intc, so they are visible to firmware while the system is suspended.
-
-r_intc IRQ numbers are offset by 32 from the GIC IRQ numbers.
+This node was indented by two tabs when added instead of one.
+Remove the extra tab.
 
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 22 ++++++++++----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 70f4cce6be43..7b2cacc0aecc 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -1044,8 +1044,9 @@
- 			compatible = "allwinner,sun50i-a64-rtc",
- 				     "allwinner,sun8i-h3-rtc";
- 			reg = <0x01f00000 0x400>;
--			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-parent = <&r_intc>;
-+			interrupts = <8 IRQ_TYPE_LEVEL_HIGH>,
-+				     <9 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-output-names = "osc32k", "osc32k-out", "iosc";
- 			clocks = <&osc32k>;
- 			#clock-cells = <1>;
-@@ -1094,7 +1095,8 @@
- 			clocks = <&r_ccu CLK_APB0_IR>, <&r_ccu CLK_IR>;
- 			clock-names = "apb", "ir";
- 			resets = <&r_ccu RST_APB0_IR>;
--			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-parent = <&r_intc>;
-+			interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&r_ir_rx_pin>;
- 			status = "disabled";
-@@ -1114,7 +1116,8 @@
- 		r_pio: pinctrl@1f02c00 {
- 			compatible = "allwinner,sun50i-a64-r-pinctrl";
- 			reg = <0x01f02c00 0x400>;
--			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-parent = <&r_intc>;
-+			interrupts = <13 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&r_ccu CLK_APB0_PIO>, <&osc24M>, <&osc32k>;
- 			clock-names = "apb", "hosc", "losc";
- 			gpio-controller;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index 0d5ea19336a1..f597f3fe06c1 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -766,17 +766,17 @@
+ 		};
+ 
+ 		r_ir: ir@7040000 {
+-				compatible = "allwinner,sun50i-h6-ir",
+-					     "allwinner,sun6i-a31-ir";
+-				reg = <0x07040000 0x400>;
+-				interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&r_ccu CLK_R_APB1_IR>,
+-					 <&r_ccu CLK_IR>;
+-				clock-names = "apb", "ir";
+-				resets = <&r_ccu RST_R_APB1_IR>;
+-				pinctrl-names = "default";
+-				pinctrl-0 = <&r_ir_rx_pin>;
+-				status = "disabled";
++			compatible = "allwinner,sun50i-h6-ir",
++				     "allwinner,sun6i-a31-ir";
++			reg = <0x07040000 0x400>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&r_ccu CLK_R_APB1_IR>,
++				 <&r_ccu CLK_IR>;
++			clock-names = "apb", "ir";
++			resets = <&r_ccu RST_R_APB1_IR>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&r_ir_rx_pin>;
++			status = "disabled";
+ 		};
+ 
+ 		r_i2c: i2c@7081400 {
 -- 
 2.23.0
 
