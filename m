@@ -2,236 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CAB5138F49
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 11:38:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A65D4138F58
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 11:39:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728641AbgAMKiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 05:38:02 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:40777 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726946AbgAMKiB (ORCPT
+        id S1728709AbgAMKjj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 05:39:39 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:37057 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbgAMKjj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 05:38:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578911880;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=G2h6Lb5fPhYtedfSQGlHd/cyPn0SviTyjivOO/bVcUY=;
-        b=Ls1QTxAb06RDJxfYWE5I0IGJSGkuut4vjT72ZcrPIsX5P04CgqXp2RdqavqN4Wbv9ccpT7
-        Cou8ArB53sFNyPWv1y4vd808tTm2PXPYQz2xyr+ShYt5i0rE0uVoD7looa3vRjwpazxqec
-        sgNXjWMkf/54mmgTsHRw6lDZ0tbXiE8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-373-Ehp-WPu7NuGSBsuo0pmOrg-1; Mon, 13 Jan 2020 05:37:57 -0500
-X-MC-Unique: Ehp-WPu7NuGSBsuo0pmOrg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BEE6C8D7E43;
-        Mon, 13 Jan 2020 10:37:53 +0000 (UTC)
-Received: from [10.36.117.201] (ovpn-117-201.ams2.redhat.com [10.36.117.201])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 02C9D7BA50;
-        Mon, 13 Jan 2020 10:37:48 +0000 (UTC)
-Subject: Re: [PATCH V11 1/5] mm/hotplug: Introduce arch callback validating
- the hot remove range
-To:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Hildenbrand <dhildenb@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
-        catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com,
-        cai@lca.pw, logang@deltatee.com, cpandya@codeaurora.org,
-        arunks@codeaurora.org, dan.j.williams@intel.com,
-        mgorman@techsingularity.net, osalvador@suse.de,
-        ard.biesheuvel@arm.com, steve.capper@arm.com, broonie@kernel.org,
-        valentin.schneider@arm.com, robin.murphy@arm.com,
-        steven.price@arm.com, suzuki.poulose@arm.com, ira.weiny@intel.com
-References: <6f0efddc-f124-58ca-28b6-4632469cf992@arm.com>
- <3C3BE5FA-0CFC-4C90-8657-63EF5B680B0B@redhat.com>
- <6b8fb779-31e8-1b63-85a8-9f6c93a04494@arm.com>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Red Hat GmbH
-Message-ID: <19194427-1295-3596-2c2c-463c4adf4f35@redhat.com>
-Date:   Mon, 13 Jan 2020 11:37:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        Mon, 13 Jan 2020 05:39:39 -0500
+Received: from ip5f5bd663.dynamic.kabel-deutschland.de ([95.91.214.99] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iqx6U-0001L5-7A; Mon, 13 Jan 2020 10:37:50 +0000
+Date:   Mon, 13 Jan 2020 11:37:49 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Greg Ungerer <gerg@linux-m68k.org>,
+        Amanieu d'Antras <amanieu@gmail.com>,
+        Christian Brauner <christian@brauner.io>,
+        Kars de Jong <jongk@linux-m68k.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org
+Subject: Re: [PATCH] m68k: Implement copy_thread_tls()
+Message-ID: <20200113103748.cmuqknofpdis7kqy@wittgenstein>
+References: <20200113103040.23661-1-geert@linux-m68k.org>
 MIME-Version: 1.0
-In-Reply-To: <6b8fb779-31e8-1b63-85a8-9f6c93a04494@arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20200113103040.23661-1-geert@linux-m68k.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13.01.20 10:50, Anshuman Khandual wrote:
->=20
->=20
-> On 01/13/2020 02:44 PM, David Hildenbrand wrote:
->>
->>
->>> Am 13.01.2020 um 10:10 schrieb Anshuman Khandual <anshuman.khandual@a=
-rm.com>:
->>>
->>> =EF=BB=BF
->>>
->>>> On 01/10/2020 02:12 PM, David Hildenbrand wrote:
->>>>> On 10.01.20 04:09, Anshuman Khandual wrote:
->>>>> Currently there are two interfaces to initiate memory range hot rem=
-oval i.e
->>>>> remove_memory() and __remove_memory() which then calls try_remove_m=
-emory().
->>>>> Platform gets called with arch_remove_memory() to tear down require=
-d kernel
->>>>> page tables and other arch specific procedures. But there are platf=
-orms
->>>>> like arm64 which might want to prevent removal of certain specific =
-memory
->>>>> ranges irrespective of their present usage or movability properties=
-.
->>>>
->>>> Why? Is this only relevant for boot memory? I hope so, otherwise the
->>>> arch code needs fixing IMHO.
->>>
->>> Right, it is relevant only for the boot memory on arm64 platform. But=
- this
->>> new arch callback makes it flexible to reject any given memory range.
->>>
->>>>
->>>> If it's only boot memory, we should disallow offlining instead via a
->>>> memory notifier - much cleaner.
->>>
->>> Dont have much detail understanding of MMU notifier mechanism but fro=
-m some
->>> initial reading, it seems like we need to have a mm_struct for a noti=
-fier
->>> to monitor various events on the page table. Just wondering how a phy=
-sical
->>> memory range like boot memory can be monitored because it can be used=
- both
->>> for for kernel (init_mm) or user space process at same time. Is there=
- some
->>> mechanism we could do this ?
->>>
->>>>
->>>>>
->>>>> Current arch call back arch_remove_memory() is too late in the proc=
-ess to
->>>>> abort memory hot removal as memory block devices and firmware memor=
-y map
->>>>> entries would have already been removed. Platforms should be able t=
-o abort
->>>>> the process before taking the mem_hotplug_lock with mem_hotplug_beg=
-in().
->>>>> This essentially requires a new arch callback for memory range vali=
-dation.
->>>>
->>>> I somewhat dislike this very much. Memory removal should never fail =
-if
->>>> used sanely. See e.g., __remove_memory(), it will BUG() whenever
->>>> something like that would strike.
->>>>
->>>>>
->>>>> This differentiates memory range validation between memory hot add =
-and hot
->>>>> remove paths before carving out a new helper check_hotremove_memory=
-_range()
->>>>> which incorporates a new arch callback. This call back provides pla=
-tforms
->>>>> an opportunity to refuse memory removal at the very onset. In futur=
-e the
->>>>> same principle can be extended for memory hot add path if required.
->>>>>
->>>>> Platforms can choose to override this callback in order to reject s=
-pecific
->>>>> memory ranges from removal or can just fallback to a default implem=
-entation
->>>>> which allows removal of all memory ranges.
->>>>
->>>> I suspect we want really want to disallow offlining instead. E.g., I
->>>
->>> If boot memory pages can be prevented from being offlined for sure, t=
-hen it
->>> would indirectly definitely prevent hot remove process as well.
->>>
->>>> remember s390x does that with certain areas needed for dumping/kexec=
-.
->>>
->>> Could not find any references to mmu_notifier in arch/s390 or any oth=
-er arch
->>> for that matter apart from KVM (which has an user space component), c=
-ould you
->>> please give some pointers ?
->>
->> Memory (hotplug) notifier, not MMU notifier :)
->=20
-> They are so similarly named :)
->=20
->>
->> Not on my notebook right now, grep for MEM_GOING_OFFLINE, that should =
-be it.
->>
->=20
-> Got it, thanks ! But we will still need boot memory enumeration via MEM=
-BLOCK_BOOT
-> to reject affected offline requests in the callback.
+On Mon, Jan 13, 2020 at 11:30:40AM +0100, Geert Uytterhoeven wrote:
+> This is required for clone3(), which passes the TLS value through a
+> struct rather than a register.
+> 
+> As do_fork() is only available if CONFIG_HAVE_COPY_THREAD_TLS is set,
+> m68k_clone() must be changed to call _do_fork() directly.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Do you really need that?
-
-We have SECTION_IS_EARLY. You could iterate all involved sections (for
-which you are getting notified) and check if any one of these is marked
-SECTION_IS_EARLY. then, it was added during boot and not via add_memory()=
-.
-
-
---=20
-Thanks,
-
-David / dhildenb
-
+Thanks!
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
