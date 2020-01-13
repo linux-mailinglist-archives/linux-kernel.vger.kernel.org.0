@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EECA61399F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 20:11:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 928D31399E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 20:11:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729414AbgAMTLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 14:11:50 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:39889 "EHLO
+        id S1729387AbgAMTLV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 14:11:21 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:39940 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728865AbgAMTJh (ORCPT
+        with ESMTP id S1728959AbgAMTJq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 14:09:37 -0500
+        Mon, 13 Jan 2020 14:09:46 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ir55h-00011J-QW; Mon, 13 Jan 2020 20:09:33 +0100
+        id 1ir55o-00012c-0t; Mon, 13 Jan 2020 20:09:40 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A71A41C18E4;
-        Mon, 13 Jan 2020 20:09:28 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2FE2E1C18E6;
+        Mon, 13 Jan 2020 20:09:29 +0100 (CET)
 Date:   Mon, 13 Jan 2020 19:09:28 -0000
 From:   "tip-bot2 for Andrei Vagin" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] alarmtimer: Make nanosleep() time namespace aware
-Cc:     Andrei Vagin <avagin@openvz.org>, Dmitry Safonov <dima@arista.com>,
+Subject: [tip: timers/core] timerfd: Make timerfd_settime() time namespace aware
+Cc:     Andrei Vagin <avagin@gmail.com>, Dmitry Safonov <dima@arista.com>,
         Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191112012724.250792-16-dima@arista.com>
-References: <20191112012724.250792-16-dima@arista.com>
+In-Reply-To: <20191112012724.250792-14-dima@arista.com>
+References: <20191112012724.250792-14-dima@arista.com>
 MIME-Version: 1.0
-Message-ID: <157894256854.19145.5832898443280847905.tip-bot2@tip-bot2>
+Message-ID: <157894256899.19145.2301029072690271166.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,39 +47,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     a27f00cd18d392fadcaca463506303ab668a6891
-Gitweb:        https://git.kernel.org/tip/a27f00cd18d392fadcaca463506303ab668a6891
+Commit-ID:     20a40308f2ce12392e2cfa662494b5079ea67bdf
+Gitweb:        https://git.kernel.org/tip/20a40308f2ce12392e2cfa662494b5079ea67bdf
 Author:        Andrei Vagin <avagin@gmail.com>
-AuthorDate:    Tue, 12 Nov 2019 01:27:04 
+AuthorDate:    Tue, 12 Nov 2019 01:27:02 
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 13 Jan 2020 08:10:52 +01:00
+CommitterDate: Mon, 13 Jan 2020 08:10:51 +01:00
 
-alarmtimer: Make nanosleep() time namespace aware
+timerfd: Make timerfd_settime() time namespace aware
 
-clock_nanosleep() accepts absolute values of expiration time when the
-TIMER_ABSTIME flag is set. This absolute value is inside the task's
-time namespace and has to be converted to the host's time.
+timerfd_settime() accepts an absolute value of the expiration time if
+TFD_TIMER_ABSTIME is specified. This value is in the task's time namespace
+and has to be converted to the host's time namespace.
 
 Co-developed-by: Dmitry Safonov <dima@arista.com>
-Signed-off-by: Andrei Vagin <avagin@openvz.org>
+Signed-off-by: Andrei Vagin <avagin@gmail.com>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20191112012724.250792-16-dima@arista.com
+Link: https://lore.kernel.org/r/20191112012724.250792-14-dima@arista.com
 
 ---
- kernel/time/alarmtimer.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/timerfd.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
-index 9a8e81b..b51b36e 100644
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -839,6 +839,8 @@ static int alarm_timer_nsleep(const clockid_t which_clock, int flags,
- 		ktime_t now = alarm_bases[type].get_ktime();
+diff --git a/fs/timerfd.c b/fs/timerfd.c
+index ac7f59a..c5509d2 100644
+--- a/fs/timerfd.c
++++ b/fs/timerfd.c
+@@ -26,6 +26,7 @@
+ #include <linux/syscalls.h>
+ #include <linux/compat.h>
+ #include <linux/rcupdate.h>
++#include <linux/time_namespace.h>
  
- 		exp = ktime_add_safe(now, exp);
-+	} else {
-+		exp = timens_ktime_to_host(which_clock, exp);
+ struct timerfd_ctx {
+ 	union {
+@@ -196,6 +197,8 @@ static int timerfd_setup(struct timerfd_ctx *ctx, int flags,
  	}
  
- 	ret = alarmtimer_do_nsleep(&alarm, exp, type);
+ 	if (texp != 0) {
++		if (flags & TFD_TIMER_ABSTIME)
++			texp = timens_ktime_to_host(clockid, texp);
+ 		if (isalarm(ctx)) {
+ 			if (flags & TFD_TIMER_ABSTIME)
+ 				alarm_start(&ctx->t.alarm, texp);
