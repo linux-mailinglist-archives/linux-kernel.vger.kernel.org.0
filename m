@@ -2,70 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DF511389F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 04:52:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E1521389F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 04:53:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387489AbgAMDw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 22:52:29 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:23713 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387415AbgAMDw2 (ORCPT
+        id S2387566AbgAMDxO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 22:53:14 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:51067 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387415AbgAMDxN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 22:52:28 -0500
-X-UUID: 755dcea4cc3b43c48f8b3cab63487c60-20200113
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=GEn5TTMvrgKaWqCbybjZ0pxAsz0JFNP9RC57YNtlclc=;
-        b=errFA5cA0MqrasLeU2c7EgGO/8aV41Ke1aMqrEVxSbItW5deywTZf6OhH7Aj6Vpbf4oyN0XR1MwIXCiq4eCtIrzRWcMAWL/5QChr8p24FK2uV+ENWfkVi8pPoEMTf2+Zfw5rrq5ughg55vaIJ5TzKdmP2teiU2RokAsHpboH7Yk=;
-X-UUID: 755dcea4cc3b43c48f8b3cab63487c60-20200113
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <maoguang.meng@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1495602143; Mon, 13 Jan 2020 11:52:21 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 13 Jan 2020 11:51:06 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 13 Jan 2020 11:52:35 +0800
-From:   <maoguang.meng@mediatek.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Tiffany Lin <tiffany.lin@mediatek.com>
-CC:     Yong Wu <yong.wu@mediatek.com>, Xia Jiang <xia.jiang@mediatek.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Maoguang Meng <maoguang.meng@mediatek.com>
-Subject: [PATCH 1/1] media: platform: VIDEO_MEDIATEK_JPEG can also depend on MTK_IOMMU
-Date:   Mon, 13 Jan 2020 11:52:02 +0800
-Message-ID: <20200113035202.7797-1-maoguang.meng@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+        Sun, 12 Jan 2020 22:53:13 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 2F74C21C1B;
+        Sun, 12 Jan 2020 22:53:12 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sun, 12 Jan 2020 22:53:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm1; bh=vCm43OVqh1tdf1g+1ymIQ+gacG
+        hvIUXgumdmJE6p1gg=; b=Q8EoaAJx/buSkJA12CwUm6dqAm86cDJK632cl3DuuB
+        THZMgGlFS+05Djk7Y0O+UQXBLX+CVdSzhfiwQ9qEF2ynmVc8YCAtbqdBUzO9nURb
+        PItLMLayCvUwvdfL2wBPHUyYKrOjj1Pa79WtJt4aEv55cIL0lG8hAVkZ6muM9QuV
+        o3JzExcqAxy9fpEA5A24XQ19Sg5y1RGiTwzc+Jf26Axb1Zf7EUcwvDGa39fEeqUT
+        t5CmD1lJvKWuqJep9d5e6qKwZTJi+ZQAM8XNHmcSzYTaIWD+9bgTTeCTSscFGNW4
+        eEvGu72hJTAeKlQ+P2PjNNgs3OJSPpkufP2LVy6esd4w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=vCm43OVqh1tdf1g+1
+        ymIQ+gacGhvIUXgumdmJE6p1gg=; b=cSEIE+rt3kDCiy3VkOFlDc3v2WI0WmA2j
+        ZcLSzw248FK9dnaXqZ6owZ/L60SfMJiWcAWSfzPTebndhgkvQ9SxszbRtkXpnUJD
+        1IOlFysvlWVW1xNP6DxUxTofrNDhk6549/5dTyeRog/Q3bH3nBqCd77sJW043Zl3
+        9TzBGhuPEIvkawBSE1u3yzYLmIcwHldUGshS/Rn99G1MMmhAkermbbjshAspO1Aq
+        DX46cQpvVoxa7sARq53u/hPCkAWfSq6JgSy/1OQfjnzJOWtLseaPkekQ+kCGP6+C
+        NuZSUm1BKSv05cOiJhO9Jj5Q2ozD5zCTNc2k28kQSRujVPKJ92DFQ==
+X-ME-Sender: <xms:p-kbXnqt20zVQ-jZidwpNrfPFM9A56TyueatdfMlJFpzyx3vX7YP0A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdeiledgieeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgvlhcu
+    jfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucfkphepje
+    dtrddufeehrddugeekrdduhedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghmuhgv
+    lhesshhhohhllhgrnhgurdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:p-kbXvIorP9uOhhwxE-FS2-Rmli_6Dwxg1owlXvtX0IX64Ux9m06fQ>
+    <xmx:p-kbXgTxoy6sIm87M0Zt_9Fnd6ANrC_qeS--boT7FpU3pZQpu8pzmw>
+    <xmx:p-kbXoIeeGyILxtC5yeJXqbrwipS9GI6Q5DnIFi4zG527c0Qv42igg>
+    <xmx:qOkbXmclPClu0UfSeo5TuY174vVbKkw8_Gskg1DEihtZ2nBoRjCBJQ>
+Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 403248005C;
+        Sun, 12 Jan 2020 22:53:11 -0500 (EST)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Chen-Yu Tsai <wens@csie.org>, Sebastian Reichel <sre@kernel.org>,
+        Oskari Lemmela <oskari@lemmela.net>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
+Subject: [PATCH v3 0/8] X-Powers Power Supply Improvements
+Date:   Sun, 12 Jan 2020 21:53:02 -0600
+Message-Id: <20200113035310.18950-1-samuel@sholland.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 6669261D4D362FA0B90A9D2C43FB1733D5513E1AEFCDD470B21449EB489B41AA2000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogTWFvZ3VhbmcgTWVuZyA8bWFvZ3VhbmcubWVuZ0BtZWRpYXRlay5jb20+DQoNCm1lZGlh
-dGVrIGpwZWcgY29kZWMgZHJpdmVyIGNhbiBkZXBlbmQgb24gTVRLX0lPTU1VIG9yIE1US19JT01N
-VV9WMQ0KDQpDaGFuZ2UtSWQ6IEk3ODk3OWFmOTI0ZDRmZDUyYTM2NDFlZmYxNDYzYTEwZDZlMWQ0
-NjVmDQpTaWduZWQtb2ZmLWJ5OiBNYW9ndWFuZyBNZW5nIDxtYW9ndWFuZy5tZW5nQG1lZGlhdGVr
-LmNvbT4NCi0tLQ0KIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vS2NvbmZpZyB8IDIgKy0NCiAxIGZp
-bGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCg0KZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vS2NvbmZpZyBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0v
-S2NvbmZpZw0KaW5kZXggZTg0ZjM1ZDNhNjhlLi44NTM3N2M4OGU5MWEgMTAwNjQ0DQotLS0gYS9k
-cml2ZXJzL21lZGlhL3BsYXRmb3JtL0tjb25maWcNCisrKyBiL2RyaXZlcnMvbWVkaWEvcGxhdGZv
-cm0vS2NvbmZpZw0KQEAgLTIwMCw3ICsyMDAsNyBAQCBjb25maWcgVklERU9fSU1YX1BYUA0KIA0K
-IGNvbmZpZyBWSURFT19NRURJQVRFS19KUEVHDQogCXRyaXN0YXRlICJNZWRpYXRlayBKUEVHIENv
-ZGVjIGRyaXZlciINCi0JZGVwZW5kcyBvbiBNVEtfSU9NTVVfVjEgfHwgQ09NUElMRV9URVNUDQor
-CWRlcGVuZHMgb24gTVRLX0lPTU1VX1YxIHx8IE1US19JT01NVSB8fCBDT01QSUxFX1RFU1QNCiAJ
-ZGVwZW5kcyBvbiBWSURFT19ERVYgJiYgVklERU9fVjRMMg0KIAlkZXBlbmRzIG9uIEFSQ0hfTUVE
-SUFURUsgfHwgQ09NUElMRV9URVNUDQogCXNlbGVjdCBWSURFT0JVRjJfRE1BX0NPTlRJRw0KLS0g
-DQoyLjE4LjANCg==
+This series adds some improvements to the axp20x* power supply drivers
+to better support suspend/resume and use on mobile devices.
+
+The first two patches fix bugs I found while testing the ONLINE control
+added in later patches.
+
+Patches 3 and 7 allow userspace to take the power supplies offline.
+Patches 4 and 8 allow userspace to control the wakeup behavior.
+
+Patch 9 avoids polling USB VBUS presence when possible. While working on
+the RSB driver, I was seeing ~50 transfers per second, while idle and
+tracked it down to this VBUS polling (20 reads/second). The polling
+often caused the CPU to clock up and back down, which triggered the
+remaining transfers (changes to the CPU voltage).
+
+Unfortunately, I don't see a way to avoid the polling when running on
+battery (where it matters most), other than to move the polling back to
+the USB PHY driver.
+
+Changes since v2:
+ - Patch 1 was merged
+ - Only check ACIN_PATH_SEL when necessary (1)
+ - Update commit message (5)
+ - Avoided reordering lines until/unless necessary (5, 7)
+ - Update comment and add ID check in axp20x_usb_power_set_property
+   (it seemed more correct than adding another comment) (6)
+ - Add Reviewed-by where there were no comments (2-4, 7-8)
+
+Changes since v1:
+ - Add patches 1-2
+ - Shift value properly in calls to regmap_update_bits (3, 7)
+ - Use #ifdef instead of #if to avoid -Wundef warnings (4, 8)
+ - Poll once after an IRQ, instead of setting power->online in the IRQ (9)
+ - Poll once on resume, in case the state changed during suspend (9)
+
+Samuel Holland (8):
+  power: supply: axp20x_ac_power: Fix reporting online status
+  power: supply: axp20x_ac_power: Allow offlining
+  power: supply: axp20x_ac_power: Add wakeup control
+  power: supply: axp20x_usb_power: Remove unused device_node
+  power: supply: axp20x_usb_power: Use a match structure
+  power: supply: axp20x_usb_power: Allow offlining
+  power: supply: axp20x_usb_power: Add wakeup control
+  power: supply: axp20x_usb_power: Only poll while offline
+
+ drivers/power/supply/axp20x_ac_power.c  | 131 +++++++++++---
+ drivers/power/supply/axp20x_usb_power.c | 219 ++++++++++++++++++------
+ 2 files changed, 276 insertions(+), 74 deletions(-)
+
+-- 
+2.23.0
 
