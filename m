@@ -2,132 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9811A1389C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 04:35:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 937ED1389C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 04:33:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387420AbgAMDfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 22:35:22 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33039 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732961AbgAMDfV (ORCPT
+        id S1733283AbgAMDcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 22:32:55 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46212 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732961AbgAMDcz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 22:35:21 -0500
-Received: by mail-pg1-f196.google.com with SMTP id 6so4040311pgk.0
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Jan 2020 19:35:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=xFqcxE7gzA9H12FKOdbMb//B/oYmfZK/RzAcHl+CnTs=;
-        b=k+FPJXn+qDrc8Rv9GkbgTYmLV+c06ODhfg3UhsWFDxASC2rDKBsa5hPArKfSnHOiHf
-         SiqlCOxOzq9cRabPerK7MdccjmcZQQqUHr2ENSp13QJ2VYuqA+dCtQri/vOUCtYve+4N
-         AdsmmYGs2PctIv6buQ3S2tTWv/krI5/wFhyhKQd/xrBZSxjlsdI+/ZM9XoGe9y/wdc45
-         WdtqH8HGpuq7/0MpnZxHh1QWEUyQ9CK5sCVbvZvGRdDEy1YF8XxySFRhTKPlbKh4FMzg
-         qTb2Q7X//1CY+5EHEEXdNPyHCSpbf6OEWnK25vSgDkemlto12Le5Ftx4cxIgFJpTfKJo
-         +qrg==
+        Sun, 12 Jan 2020 22:32:55 -0500
+Received: by mail-io1-f65.google.com with SMTP id t26so8298489ioi.13;
+        Sun, 12 Jan 2020 19:32:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=xFqcxE7gzA9H12FKOdbMb//B/oYmfZK/RzAcHl+CnTs=;
-        b=AjzMwvOfCOPn3knSFvXi8E2Ca9fT2qqay1IkYnpPiEJp5y7tQzBT8v+yggm+oqztzN
-         7KoCyeQ42rCN+sxSb4ayza7+f09+aT/4D7ZHbaFPIPQV+E513WUqVtkihAmwxTrlDG2H
-         AILabsPjcVKf7xSzyClt9uErdFOJn36utfOBg1ABZXRe5px+0GybmTLsZUEcYJr73ADX
-         Xx9emJxPFnyAGBm1Xh7JMm3CY+h95KrHRV+Y5fb3G9xJRxfy+QXcJbew+fsIQ12SeWbw
-         gGdFIqKXsacf/TJrLcN5QzWlhnmqcbKIuaj1vZdYCauQdxjOfA3Hng4NtyKZJT4QJ94b
-         ZgWg==
-X-Gm-Message-State: APjAAAXbsbqFjYV1VVVfnXngQerxp/NwyNThxX3dod4rHt/FP7jwP4UK
-        bkDFnMtgNhtffjiBVNflD4gfCw==
-X-Google-Smtp-Source: APXvYqyqrcJ6o1XIvrpDQ5dkfiQ1M/tSGBDgRllqQQCfDUJXDziAz94M3vBA0n9IcAGZZQJU78RI2A==
-X-Received: by 2002:aa7:982d:: with SMTP id q13mr17816648pfl.152.1578886521046;
-        Sun, 12 Jan 2020 19:35:21 -0800 (PST)
-Received: from ?IPv6:240e:362:498:8200:f030:f64d:8b7a:5e5a? ([240e:362:498:8200:f030:f64d:8b7a:5e5a])
-        by smtp.gmail.com with ESMTPSA id i23sm11662197pfo.11.2020.01.12.19.35.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 12 Jan 2020 19:35:20 -0800 (PST)
-Subject: Re: [PATCH v11 2/4] uacce: add uacce driver
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        jonathan.cameron@huawei.com, dave.jiang@intel.com,
-        grant.likely@arm.com, jean-philippe <jean-philippe@linaro.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        ilias.apalodimas@linaro.org, francois.ozog@linaro.org,
-        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>,
-        "haojian . zhuang" <haojian.zhuang@linaro.org>,
-        guodong.xu@linaro.org, linux-accelerators@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        Zaibo Xu <xuzaibo@huawei.com>
-References: <1578710919-12141-1-git-send-email-zhangfei.gao@linaro.org>
- <1578710919-12141-3-git-send-email-zhangfei.gao@linaro.org>
- <20200111194006.GD435222@kroah.com>
-From:   zhangfei <zhangfei.gao@linaro.org>
-Message-ID: <053ccd05-4f11-5be6-47c2-eee5c2f1fdc4@linaro.org>
-Date:   Mon, 13 Jan 2020 11:34:55 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jtJ5n8bvLyOE+deBSBgZkyAEPr+Moq3BE/Wzkoo8Gwc=;
+        b=DecjkbC4A5B80De2Y//7TaLVOnf4MRht3jJCHdfa8Iy171xkOqRDBMhQZeLI2UNzsG
+         jXz+4FkfbyfzFMJAggS/GtNNtipRvfKWr5B/V7L6IDJ3U4zGDEeAzrTPO7fkUalALRAx
+         tsH88r/IwmoCv3lokb6YuG6DvQl0JUp7sjpzkwTgbKDk/4yIDzqPFmVJEZAO6irdBp5J
+         Hi9hkA7mhpZR2vo4S6zpr2ntHrk2FP3S5AAppj8kIBMUplBP7tXFBQTG6d/2DR/z1w0B
+         bRIxqVSje4RYQTjLYA4572cWf4DysoyYkLde7DidW1U1vyJ79ZKCMKmuJv1CHIXkZMSW
+         FjqQ==
+X-Gm-Message-State: APjAAAV5tX4wIddUdtuIlqqGLB1KbrE/EUQVmxwZAefu3qpdLmRIztUr
+        /5xxTrLHgHO7X4pSO3hSUqd3EhgTPVKEe05IWc4=
+X-Google-Smtp-Source: APXvYqza8aMS/tYZ+uop2NYOv26ngRJNYJPtaRsA2dDhrQBDYih57vE/XL5eneMMy8BoheZ2FasTsR2fVAXey3NLiOc=
+X-Received: by 2002:a6b:4e0b:: with SMTP id c11mr9716656iob.143.1578886374641;
+ Sun, 12 Jan 2020 19:32:54 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200111194006.GD435222@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20190827085302.5197-1-jiaxun.yang@flygoat.com> <20200112081416.722218-1-jiaxun.yang@flygoat.com>
+In-Reply-To: <20200112081416.722218-1-jiaxun.yang@flygoat.com>
+From:   Huacai Chen <chenhc@lemote.com>
+Date:   Mon, 13 Jan 2020 11:38:04 +0800
+Message-ID: <CAAhV-H4Q0z6R6RrUwDdNYj++YkqrAWRpC=RfhGY6-5_Kj1O-jA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] Modernize Loongson64 Machine
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc:     "open list:MIPS" <linux-mips@vger.kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.co>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Greg
+Hi, Jiaxun,
 
-Thanks for the review.
+On Sun, Jan 12, 2020 at 4:21 PM Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
+>
+> Loongson have a long history of contributing their code to mainline kernel.
+> However, it seems like recent years, they are focusing on maintain a kernel by themselves
+> rather than contribute there code to the community.
+>
+> Kernel is progress rapidly too. Their code slept in mainline for a long peroid without proper
+> maintainance and became outdated.
+>
+> This patchset brings modern DeviceTree and irqchip support to the Loongson64 machine, and leaves
+> Loongson 2e/f alone since they are too legacy to touch.
+I think you can provide a irqchip hierarchy for Loongson3 here. i.e.,
+the flowchart of cpuintc, iointc, htpic, i8259, and so on.
 
-On 2020/1/12 上午3:40, Greg Kroah-Hartman wrote:
-> On Sat, Jan 11, 2020 at 10:48:37AM +0800, Zhangfei Gao wrote:
->> +static int uacce_fops_open(struct inode *inode, struct file *filep)
->> +{
->> +	struct uacce_mm *uacce_mm = NULL;
->> +	struct uacce_device *uacce;
->> +	struct uacce_queue *q;
->> +	int ret = 0;
->> +
->> +	uacce = xa_load(&uacce_xa, iminor(inode));
->> +	if (!uacce)
->> +		return -ENODEV;
->> +
->> +	if (!try_module_get(uacce->parent->driver->owner))
->> +		return -ENODEV;
-> Why are you trying to grab the module reference of the parent device?
-> Why is that needed and what is that going to help with here?
->
-> This shouldn't be needed as the module reference of the owner of the
-> fileops for this module is incremented, and the "parent" module depends
-> on this module, so how could it be unloaded without this code being
-> unloaded?
->
-> Yes, if you build this code into the kernel and the "parent" driver is a
-> module, then you will not have a reference, but when you remove that
-> parent driver the device will be removed as it has to be unregistered
-> before that parent driver can be removed from the system, right?
->
-> Or what am I missing here?
-The refcount here is preventing rmmod "parent" module after fd is opened,
-since user driver has mmap kernel memory to user space, like mmio, which 
-may still in-use.
+Huacai
 
-With the refcount protection, rmmod "parent" module will fail until 
-application free the fd.
-log like: rmmod: ERROR: Module hisi_zip is in use
 >
->> +static void uacce_release(struct device *dev)
->> +{
->> +	struct uacce_device *uacce = to_uacce_device(dev);
->> +
->> +	kfree(uacce);
->> +	uacce = NULL;
-> That line didn't do anything :)
-Yes, this is a mistake.
-It is up to caller to set to NULL to prevent release multi times.
-
-Thanks
+> PCI and some legacy I/O device will be converted later, together with LS7A PCH support.
+>
+> v1:
+> - dt-bindings fixup according to Rob's comments
+> - irqchip fixup according to Marc's comments
+> - ls3-iointc: Make Core&IP map per-IRQ
+> - Regenerate kconfigs
+> - Typo & style improvements
+>
+> v2:
+> - dt-bindings: Fix IOINTC, collect Rob's review tag
+> - dtbs: Drop CPU Node, merge different ways according to Huacai and Paul's comments
+>
+> v3:
+> - Split code have been merged
+> - Fix IOINTC binding to allow map any child IRQ to and parent
+> - Convert "HTINTC" into "HTPIC", which mixed HT vectors processing and i8259
+> - Naming style fix according to Huacai's suggestions
+>
+> Jiaxun Yang (10):
+>   dt-bindings: Document loongson vendor-prefix
+>   irqchip: Add driver for Loongson I/O interrupt controller
+>   dt-bindings: interrupt-controller: Add Loongson IOINTC
+>   irqchip: Add driver for Loongson-3 HyperTransport PIC controller
+>   dt-bindings: interrupt-controller: Add Loongson-3 HTPIC
+>   irqchip: mips-cpu: Convert to simple domain
+>   MIPS: Loongson64: Drop legacy IRQ code
+>   dt-bindings: mips: Add loongson boards
+>   MIPS: Loongson64: Add generic dts
+>   MIPS: Loongson64: Load built-in dtbs
+>
+>  .../interrupt-controller/loongson,htpic.yaml  |  59 +++
+>  .../interrupt-controller/loongson,iointc.yaml |  92 +++++
+>  .../bindings/mips/loongson/devices.yaml       |  29 ++
+>  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+>  arch/mips/Kconfig                             |   6 +-
+>  arch/mips/boot/dts/Makefile                   |   1 +
+>  arch/mips/boot/dts/loongson/Makefile          |   5 +
+>  .../boot/dts/loongson/loongson3-package.dtsi  |  62 ++++
+>  .../dts/loongson/loongson3_4core_rs780e.dts   |  25 ++
+>  .../dts/loongson/loongson3_8core_rs780e.dts   |  25 ++
+>  arch/mips/boot/dts/loongson/rs780e-pch.dtsi   |  26 ++
+>  arch/mips/include/asm/i8259.h                 |   1 +
+>  .../include/asm/mach-loongson64/boot_param.h  |   2 +
+>  .../asm/mach-loongson64/builtin_dtbs.h        |  13 +
+>  arch/mips/include/asm/mach-loongson64/irq.h   |  32 +-
+>  .../include/asm/mach-loongson64/loongson.h    |   1 +
+>  arch/mips/loongson64/Makefile                 |   2 +-
+>  arch/mips/loongson64/env.c                    |  23 ++
+>  arch/mips/loongson64/init.c                   |   6 +
+>  arch/mips/loongson64/irq.c                    | 162 ---------
+>  arch/mips/loongson64/setup.c                  |  16 +
+>  arch/mips/loongson64/smp.c                    |  28 +-
+>  drivers/irqchip/Kconfig                       |  18 +
+>  drivers/irqchip/Makefile                      |   2 +
+>  drivers/irqchip/irq-i8259.c                   |   6 +-
+>  drivers/irqchip/irq-loongson-htpic.c          | 147 ++++++++
+>  drivers/irqchip/irq-loongson-iointc.c         | 338 ++++++++++++++++++
+>  drivers/irqchip/irq-mips-cpu.c                |   2 +-
+>  28 files changed, 915 insertions(+), 216 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/loongson,htpic.yaml
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/loongson,iointc.yaml
+>  create mode 100644 Documentation/devicetree/bindings/mips/loongson/devices.yaml
+>  create mode 100644 arch/mips/boot/dts/loongson/Makefile
+>  create mode 100644 arch/mips/boot/dts/loongson/loongson3-package.dtsi
+>  create mode 100644 arch/mips/boot/dts/loongson/loongson3_4core_rs780e.dts
+>  create mode 100644 arch/mips/boot/dts/loongson/loongson3_8core_rs780e.dts
+>  create mode 100644 arch/mips/boot/dts/loongson/rs780e-pch.dtsi
+>  create mode 100644 arch/mips/include/asm/mach-loongson64/builtin_dtbs.h
+>  delete mode 100644 arch/mips/loongson64/irq.c
+>  create mode 100644 drivers/irqchip/irq-loongson-htpic.c
+>  create mode 100644 drivers/irqchip/irq-loongson-iointc.c
+>
+> --
+> 2.24.1
+>
