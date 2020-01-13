@@ -2,209 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFE02139270
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:46:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9B88139283
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:53:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbgAMNqE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 08:46:04 -0500
-Received: from USAT19PA22.eemsg.mail.mil ([214.24.22.196]:11828 "EHLO
-        USAT19PA22.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbgAMNqD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 08:46:03 -0500
-X-EEMSG-check-017: 68680305|USAT19PA22_ESA_OUT03.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.69,429,1571702400"; 
-   d="scan'208";a="68680305"
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by USAT19PA22.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 13 Jan 2020 13:46:02 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1578923162; x=1610459162;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=VB1Gg0QpB3xQjqLIw9BZCseVcnO03GV8AR2FwXWgoSY=;
-  b=obvoQL36c6FglQ7b5ycxjAQrbt+v64O2BH6AB3CuItwgZMqvEQrFAyGz
-   TgvhyuNhDZAHt93nf+5hrFzA1GnNk9AoRDyKWT3z3bGG2ayPrbX1OrLG2
-   wstVTerCPqhEWImOFUo27bFqX/8UhRRmG4kTtmO8wu6aOWRNUMJHjImdo
-   2HRMng/baSIdTAqS6oIve7F0CWbCO45KQpB2EGLSYJRoJ+E6vpIkOoqIv
-   kipeB+iWK04+LluPkxWDStD4ZTWm5YnG/K7yrRsDmaKHiHKV28eWR0Lch
-   s0LuPbFMWxUbI5xIUHK3YqrUrsGnCXDiewf7Op+FlEl1iCz57Cgz5WfEB
-   w==;
-X-IronPort-AV: E=Sophos;i="5.69,429,1571702400"; 
-   d="scan'208";a="37677237"
-IronPort-PHdr: =?us-ascii?q?9a23=3AwpjDYRZELjrGaYtlT4EAoY7/LSx+4OfEezUN45?=
- =?us-ascii?q?9isYplN5qZps+9Yx7h7PlgxGXEQZ/co6odzbaP6Oa6BjRLvMzJmUtBWaQEbw?=
- =?us-ascii?q?UCh8QSkl5oK+++Imq/EsTXaTcnFt9JTl5v8iLzG0FUHMHjew+a+SXqvnYdFR?=
- =?us-ascii?q?rlKAV6OPn+FJLMgMSrzeCy/IDYbxlViDanbr5+MRu7oR/PusQUnYduJaY8xg?=
- =?us-ascii?q?XUqXZUZupawn9lK0iOlBjm/Mew+5Bj8yVUu/0/8sNLTLv3caclQ7FGFToqK2?=
- =?us-ascii?q?866tHluhnFVguP+2ATUn4KnRpSAgjK9w/1U5HsuSbnrOV92S2aPcrrTbAoXD?=
- =?us-ascii?q?mp8qlmRAP0hCoBKjU2/nvXishth6xFphyvqQF0z4rNbIybMPdye6XQds4YS2?=
- =?us-ascii?q?VcRMZcTzFPDJ2yb4UPDOQPM+hXoIb/qFQSohWzHhWsCeH1xzNUmnP706833u?=
- =?us-ascii?q?I8Gg/GxgwgGNcOvWzJotXpKqgSSeC1w7fOzT7ecv1W3C3y6IzMch8/ofCHQL?=
- =?us-ascii?q?V9cdHMxkk0DA7FklWRppDlPzOSzOgNtXOb4PB6WeKgjG4ntRh8rz6yzckvko?=
- =?us-ascii?q?nEnp8Zx1/L+CljwIs5OMe0RFB0bNK6CpdcqieXPJZsTMw4WWFnoiM6x6UDuZ?=
- =?us-ascii?q?68YScF1owqxwXaa/yba4iI5Q/jVPqJLTd4mn1lfLW/ig6u8Ue60O38V9S00E?=
- =?us-ascii?q?1QoipElNnMuHcN1wfN5cebUPd94keg1iqP1wDU8O1EJ1w7lbHHJJI7x74wl5?=
- =?us-ascii?q?4TvVzCHi/whkr2kLebelgr9+Wn8ejqYqjqqoWCO4J7lA3yKLkiltS6AesiMw?=
- =?us-ascii?q?gOW2ab+f671L3m5UD5W6hFjuYtn6nFsJHVOcQbpqmjDw9TyYYs8QyzDzih0N?=
- =?us-ascii?q?QGhXUHNk5KeAqbj4j1PFHDOPD5Aum/g1S3jjtn2+zKM7/6D5TMKXjDkLDhca?=
- =?us-ascii?q?xh5E5bzQo51cpf6I5MCrEdPPLzXVf8tMTCAR8kNwy52P7nB89g1oMaQG6PB6?=
- =?us-ascii?q?iZMKTIsVCW/O4gP+6MZIoNsjbnN/cl/+LujWM+mVIFY6apxYEYaGq5HvR9OE?=
- =?us-ascii?q?iZeWDjgs0AEWcRpgo+SPblh0GcXjJJYHayRa087CkhCI26FYfDWpytgLuZ0S?=
- =?us-ascii?q?e5G51WYXpGCkqNEXfzbIiEXe0DaCeMLc9giDAEUqKhS4A53xG0qAD606ZnLv?=
- =?us-ascii?q?bT+iAArpLsysJ15+LNmhwp9Tx7FcCd02WNTmFyhG8HWzg23KVnq0xn1liDyb?=
- =?us-ascii?q?R4g+BfFdFL+/NIUho6OYPHwux+Fd/yXAXBfsmOSFq8XtqmBjQxRMorw9ASe0?=
- =?us-ascii?q?Z9B8mijhfb0iquAr8VkaGLBZMt/qLHwXf+O9t9y2zH1Kk9j1gqW85PNWq7ia?=
- =?us-ascii?q?5i8wjcGZXEk1uWl6m0b6QQxi3N+3mZzWqIok5YVBR8UaLfXXAQfkHWt8j25l?=
- =?us-ascii?q?veT7+yDrQqKhBBxtCGKqtLbN3pkFpHSez9ONTRfW2xgX28BRWWybOWaorlZW?=
- =?us-ascii?q?Ed0D/aCEgenAAZ5WyGOhQmBie9v2LeCyRjFVbuY0Pq7Ol/p2q3TkwqwAGQaU?=
- =?us-ascii?q?1uyb619wULhfyTVfwTxKgIuCQ/pDVuGlaywdbWB8CHpwp7c6VWeck970tf1W?=
- =?us-ascii?q?LFqwx9OYStLqB8iV4eaAR7oljj1xFpBYVGlsgqsnQqwBBuJqKf1VMSPw+fiL?=
- =?us-ascii?q?DtM7zMKmT081ieZuaCy1zey4zOovgn+vM4rBPouwT/UgI6+mhj+8Fczn/Z45?=
- =?us-ascii?q?LNFgdUWpX0Fg467xFgpqryeiAn5pjM0XRnPO+zqDCGk9AsA/E/yw2Ied5aPa?=
- =?us-ascii?q?LCExX9V4UBCtKhJcQqklytfxRCN+dXp4AuOMbzTOeLwK6mOq5bmTuiiWlWqN?=
- =?us-ascii?q?Rm3lmk6zt3SumO2Y0Mhf6fwF3UBH/HkF69v5Wvysh/bjYIEz/6knnp?=
-X-IPAS-Result: =?us-ascii?q?A2BuAABqcxxe/wHyM5BlGgEBAQEBAQEBAQMBAQEBEQEBA?=
- =?us-ascii?q?QICAQEBAYF7gX2BbAEgEiqEDIkDhmsGgTeJbookhyQJAQEBAQEBAQEBNwEBh?=
- =?us-ascii?q?EACghw4EwIQAQEBBAEBAQEBBQMBAWyFQ4I7KYJ6AQEBAQMjBBFBEAsVAwICJ?=
- =?us-ascii?q?gICVwYBDAYCAQGCYz+CVyWoF3V/M4VJg0+BPYEOKIwzeYEHgTgPgl0+h1mCX?=
- =?us-ascii?q?gSNVIhwYUaXUYJBgkiTXwYbmmwtji6dByKBWCsIAhgIIQ+DJ1AYDYgNF45BI?=
- =?us-ascii?q?wMwjR4BAQ?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 13 Jan 2020 13:46:01 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 00DDjLDp229665;
-        Mon, 13 Jan 2020 08:45:22 -0500
-Subject: Re: [PATCH] selinux: remove redundant selinux_nlmsg_perm
-To:     Huaisheng Ye <yehs2007@zoho.com>, paul@paul-moore.com,
-        eparis@parisplace.org, jmorris@namei.org, serge@hallyn.com
-Cc:     tyu1@lenovo.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Huaisheng Ye <yehs1@lenovo.com>
-References: <20200112154216.46992-1-yehs2007@zoho.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <e7ec908e-01c1-b76d-f797-545b70a49075@tycho.nsa.gov>
-Date:   Mon, 13 Jan 2020 08:47:00 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1728738AbgAMNx2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 08:53:28 -0500
+Received: from mx3.wp.pl ([212.77.101.9]:18422 "EHLO mx3.wp.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726943AbgAMNx1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 08:53:27 -0500
+Received: (wp-smtpd smtp.wp.pl 26100 invoked from network); 13 Jan 2020 14:53:24 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=1024a;
+          t=1578923604; bh=D+Hgq/s6Ot0ztZc9fTkrNulqhubSjDPAvP1YplGYveA=;
+          h=From:To:Cc:Subject;
+          b=q8c51IZPr/MmEP6BcVjKGA5iyCHHrdYufwYEb6jLpK2kXp5/Q7u9N3jUufHcICDlN
+           roorAwhdu4R3SfmNMEo/rAXcBEZH8VNPip28d7mWJ9id9flVq/apW6hG4XALhMNJhk
+           5TiSn1ljpbDiOZRTkErWFDV0P7yl8fDrh3n/K6Sk=
+Received: from c-73-93-4-247.hsd1.ca.comcast.net (HELO cakuba) (kubakici@wp.pl@[73.93.4.247])
+          (envelope-sender <kubakici@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <ms@dev.tdt.de>; 13 Jan 2020 14:53:24 +0100
+Date:   Mon, 13 Jan 2020 05:53:16 -0800
+From:   Jakub Kicinski <kubakici@wp.pl>
+To:     Martin Schiller <ms@dev.tdt.de>
+Cc:     khc@pm.waw.pl, davem@davemloft.net, linux-x25@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] wan/hdlc_x25: make lapb params configurable
+Message-ID: <20200113055316.4e811276@cakuba>
+In-Reply-To: <20200113124551.2570-1-ms@dev.tdt.de>
+References: <20200113124551.2570-1-ms@dev.tdt.de>
 MIME-Version: 1.0
-In-Reply-To: <20200112154216.46992-1-yehs2007@zoho.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-WP-MailID: ac9b6b2acbd10ea4613bdbefdb62daf2
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 000000A [UfOk]                               
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/12/20 10:42 AM, Huaisheng Ye wrote:
-> From: Huaisheng Ye <yehs1@lenovo.com>
+On Mon, 13 Jan 2020 13:45:50 +0100, Martin Schiller wrote:
+> This enables you to configure mode (DTE/DCE), Modulo, Window, T1, T2, N2 via
+> sethdlc (which needs to be patched as well).
 > 
-> selinux_nlmsg_perm is used for only by selinux_netlink_send. Remove
-> the redundant function to simplify the code.
-> 
-> Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
 
-The patch itself seems fine but it looks like someone accidentally put 
-pig= in the log message when they meant pid=; that can be fixed via a 
-separate patch.
-
-Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
-
-> ---
->   security/selinux/hooks.c | 73 ++++++++++++++++++++++--------------------------
->   1 file changed, 34 insertions(+), 39 deletions(-)
-> 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index fb1b9da..9f3f966 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -5507,44 +5507,6 @@ static int selinux_tun_dev_open(void *security)
->   	return 0;
->   }
->   
-> -static int selinux_nlmsg_perm(struct sock *sk, struct sk_buff *skb)
-> -{
-> -	int err = 0;
-> -	u32 perm;
-> -	struct nlmsghdr *nlh;
-> -	struct sk_security_struct *sksec = sk->sk_security;
-> -
-> -	if (skb->len < NLMSG_HDRLEN) {
-> -		err = -EINVAL;
-> -		goto out;
-> -	}
-> -	nlh = nlmsg_hdr(skb);
-> -
-> -	err = selinux_nlmsg_lookup(sksec->sclass, nlh->nlmsg_type, &perm);
-> -	if (err) {
-> -		if (err == -EINVAL) {
-> -			pr_warn_ratelimited("SELinux: unrecognized netlink"
-> -			       " message: protocol=%hu nlmsg_type=%hu sclass=%s"
-> -			       " pig=%d comm=%s\n",
-> -			       sk->sk_protocol, nlh->nlmsg_type,
-> -			       secclass_map[sksec->sclass - 1].name,
-> -			       task_pid_nr(current), current->comm);
-> -			if (!enforcing_enabled(&selinux_state) ||
-> -			    security_get_allow_unknown(&selinux_state))
-> -				err = 0;
-> -		}
-> -
-> -		/* Ignore */
-> -		if (err == -ENOENT)
-> -			err = 0;
-> -		goto out;
-> -	}
-> -
-> -	err = sock_has_perm(sk, perm);
-> -out:
-> -	return err;
-> -}
-> -
->   #ifdef CONFIG_NETFILTER
->   
->   static unsigned int selinux_ip_forward(struct sk_buff *skb,
-> @@ -5873,7 +5835,40 @@ static unsigned int selinux_ipv6_postroute(void *priv,
->   
->   static int selinux_netlink_send(struct sock *sk, struct sk_buff *skb)
->   {
-> -	return selinux_nlmsg_perm(sk, skb);
-> +	int err = 0;
-> +	u32 perm;
-> +	struct nlmsghdr *nlh;
-> +	struct sk_security_struct *sksec = sk->sk_security;
+> diff --git a/drivers/net/wan/hdlc_x25.c b/drivers/net/wan/hdlc_x25.c
+> index 5643675ff724..b28051eba736 100644
+> --- a/drivers/net/wan/hdlc_x25.c
+> +++ b/drivers/net/wan/hdlc_x25.c
+> @@ -21,8 +21,17 @@
+>  #include <linux/skbuff.h>
+>  #include <net/x25device.h>
+>  
+> +struct x25_state {
+> +	x25_hdlc_proto settings;
+> +};
 > +
-> +	if (skb->len < NLMSG_HDRLEN) {
-> +		err = -EINVAL;
-> +		goto out;
-> +	}
-> +	nlh = nlmsg_hdr(skb);
+>  static int x25_ioctl(struct net_device *dev, struct ifreq *ifr);
+>  
+> +static inline struct x25_state* state(hdlc_device *hdlc)
+
+Please no more static inlines in source files. Compiler will know what
+to do.
+
+> +{
+> +	return (struct x25_state *)hdlc->state;
+> +}
 > +
-> +	err = selinux_nlmsg_lookup(sksec->sclass, nlh->nlmsg_type, &perm);
-> +	if (err) {
-> +		if (err == -EINVAL) {
-> +			pr_warn_ratelimited("SELinux: unrecognized netlink"
-> +			       " message: protocol=%hu nlmsg_type=%hu sclass=%s"
-> +			       " pig=%d comm=%s\n",
-> +			       sk->sk_protocol, nlh->nlmsg_type,
-> +			       secclass_map[sksec->sclass - 1].name,
-> +			       task_pid_nr(current), current->comm);
-> +			if (!enforcing_enabled(&selinux_state) ||
-> +			    security_get_allow_unknown(&selinux_state))
-> +				err = 0;
+>  /* These functions are callbacks called by LAPB layer */
+>  
+>  static void x25_connect_disconnect(struct net_device *dev, int reason, int code)
+
+> @@ -186,6 +217,9 @@ static struct hdlc_proto proto = {
+>  
+>  static int x25_ioctl(struct net_device *dev, struct ifreq *ifr)
+>  {
+> +	x25_hdlc_proto __user *x25_s = ifr->ifr_settings.ifs_ifsu.x25;
+> +	const size_t size = sizeof(x25_hdlc_proto);
+> +	x25_hdlc_proto new_settings;
+>  	hdlc_device *hdlc = dev_to_hdlc(dev);
+>  	int result;
+>  
+> @@ -194,7 +228,13 @@ static int x25_ioctl(struct net_device *dev, struct ifreq *ifr)
+>  		if (dev_to_hdlc(dev)->proto != &proto)
+>  			return -EINVAL;
+>  		ifr->ifr_settings.type = IF_PROTO_X25;
+> -		return 0; /* return protocol only, no settable parameters */
+> +		if (ifr->ifr_settings.size < size) {
+> +			ifr->ifr_settings.size = size; /* data size wanted */
+> +			return -ENOBUFS;
 > +		}
+> +		if (copy_to_user(x25_s, &state(hdlc)->settings, size))
+> +			return -EFAULT;
+> +		return 0;
+>  
+>  	case IF_PROTO_X25:
+>  		if (!capable(CAP_NET_ADMIN))
+> @@ -203,12 +243,35 @@ static int x25_ioctl(struct net_device *dev, struct ifreq *ifr)
+>  		if (dev->flags & IFF_UP)
+>  			return -EBUSY;
+>  
+> +		if (copy_from_user(&new_settings, x25_s, size))
+> +			return -EFAULT;
 > +
-> +		/* Ignore */
-> +		if (err == -ENOENT)
-> +			err = 0;
-> +		goto out;
-> +	}
+> +		if ((new_settings.dce != 0 &&
+> +		     new_settings.dce != 1) ||
+> +		    (new_settings.modulo != 8 &&
+> +		     new_settings.modulo != 128) ||
+> +		    new_settings.window < 1 ||
+> +		    (new_settings.modulo == 8 &&
+> +		     new_settings.window > 7) ||
+> +		    (new_settings.modulo == 128 &&
+> +		     new_settings.window > 127) ||
+> +		    new_settings.t1 < 1 ||
+> +		    new_settings.t1 > 255 ||
+> +		    new_settings.t2 < 1 ||
+> +		    new_settings.t2 > 255 ||
+> +		    new_settings.n2 < 1 ||
+> +		    new_settings.n2 > 255)
+> +			return -EINVAL;
 > +
-> +	err = sock_has_perm(sk, perm);
-> +out:
-> +	return err;
->   }
->   
->   static void ipc_init_security(struct ipc_security_struct *isec, u16 sclass)
-> 
+>  		result=hdlc->attach(dev, ENCODING_NRZ,PARITY_CRC16_PR1_CCITT);
+>  		if (result)
+>  			return result;
+>  
+> -		if ((result = attach_hdlc_protocol(dev, &proto, 0)))
+> +		if ((result = attach_hdlc_protocol(dev, &proto,
+> +						   sizeof(struct x25_state))))
+>  			return result;
+> +
+> +		memcpy(&state(hdlc)->settings, &new_settings, size);
+>  		dev->type = ARPHRD_X25;
+>  		call_netdevice_notifiers(NETDEV_POST_TYPE_CHANGE, dev);
+>  		netif_dormant_off(dev);
+> diff --git a/include/uapi/linux/hdlc/ioctl.h b/include/uapi/linux/hdlc/ioctl.h
+> index 0fe4238e8246..3656ce8b8af0 100644
+> --- a/include/uapi/linux/hdlc/ioctl.h
+> +++ b/include/uapi/linux/hdlc/ioctl.h
+> @@ -3,7 +3,7 @@
+>  #define __HDLC_IOCTL_H__
+>  
+>  
+> -#define GENERIC_HDLC_VERSION 4	/* For synchronization with sethdlc utility */
+> +#define GENERIC_HDLC_VERSION 5	/* For synchronization with sethdlc utility */
 
+What's the backward compatibility story in this code?
+
+The IOCTL handling at least looks like it may start returning errors
+to existing user space which could have expected the parameters to
+IF_PROTO_X25 (other than just ifr_settings.type) to be ignored.
+
+>  #define CLOCK_DEFAULT   0	/* Default setting */
+>  #define CLOCK_EXT	1	/* External TX and RX clock - DTE */
