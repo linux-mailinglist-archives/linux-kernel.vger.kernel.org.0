@@ -2,102 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2EBD139036
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 12:36:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6B02139047
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 12:43:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727331AbgAMLgh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 06:36:37 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:52849 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbgAMLgh (ORCPT
+        id S1728346AbgAMLnU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 06:43:20 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49584 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726180AbgAMLnU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 06:36:37 -0500
-Received: from mail-qt1-f179.google.com ([209.85.160.179]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1Mw9Dg-1jgjEF2pOu-00s7De for <linux-kernel@vger.kernel.org>; Mon, 13 Jan
- 2020 12:36:35 +0100
-Received: by mail-qt1-f179.google.com with SMTP id k40so8754287qtk.8
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 03:36:35 -0800 (PST)
-X-Gm-Message-State: APjAAAUrWY4/wV9ALI1uGKEO7lxyZqON3rmMTmBAfW9JU6eBaBYglyhj
-        2GhZa9mgTZOsIG9PDVAqZz7ZsCJOjFhiucLqbFI=
-X-Google-Smtp-Source: APXvYqy4d5Y865StavZXLM6RVQnqg1jOobhsOc+SKK7Ta7Xbx6KIewCh7Nm3l9DGq6gktI9KWSqh+RU8fwyhDyVDD2g=
-X-Received: by 2002:ac8:47d3:: with SMTP id d19mr13346118qtr.142.1578915394643;
- Mon, 13 Jan 2020 03:36:34 -0800 (PST)
+        Mon, 13 Jan 2020 06:43:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=g2n49SGBTNUtqISjbMsN587xlnonpg3/x81aMuFYk+w=; b=GTD5rauEfghSV4/oUex1iEqWr
+        bX8wCRdUTchQ9oIAMcrz4sIGn3JnxNCtq+wW60KqPFqZSICTwL3tIrQ7F6KujZQnv/KIr+dTFxgEx
+        2RnydC2JGjuxtyhPcvTjXyDaBRFVz9nAE/nUW1P3drRG5QBr2MLXfRghZC11aZPsOJUs8=;
+Received: from fw-tnat-cam7.arm.com ([217.140.106.55] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1iqy7V-0001fp-Lj; Mon, 13 Jan 2020 11:42:57 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id EF79BD00AD6; Mon, 13 Jan 2020 11:42:56 +0000 (GMT)
+Date:   Mon, 13 Jan 2020 11:42:56 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     John Garry <john.garry@huawei.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        tudor.ambarus@microchip.com, linux-kernel@vger.kernel.org,
+        chenxiang66@hisilicon.com, linuxarm@huawei.com,
+        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
+        linux-mtd@lists.infradead.org, xuejiancheng@hisilicon.com,
+        fengsheng5@huawei.com,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        wanghuiqiang <wanghuiqiang@huawei.com>, liusimin4@huawei.com
+Subject: Re: [PATCH v2 2/3] spi: Add HiSilicon v3xx SPI NOR flash controller
+ driver
+Message-ID: <20200113114256.GH3897@sirena.org.uk>
+References: <1575900490-74467-1-git-send-email-john.garry@huawei.com>
+ <1575900490-74467-3-git-send-email-john.garry@huawei.com>
+ <0dc5cb2e-b765-9e13-b05e-9e3c835c5985@huawei.com>
+ <20200109212842.GK3702@sirena.org.uk>
+ <df67b562-7d82-19f6-7581-680190a7772d@huawei.com>
+ <20200110140726.GB5889@sirena.org.uk>
+ <6db83881-927c-d11c-9c77-23a45892ddab@huawei.com>
+ <20200110193119.GI32742@smile.fi.intel.com>
+ <612a3c5d-69a4-af6b-5c79-c3fb853193ab@huawei.com>
 MIME-Version: 1.0
-References: <3f5567ec928e20963d729350e6d674c4acb0c7a0.1578648530.git.viresh.kumar@linaro.org>
- <CAK8P3a1MLyP4ooyEDiBF1fE0BJGocgDmO1f5Qrvn_W5eqahz8g@mail.gmail.com> <20200113064156.lt3xxpzygattz3he@vireshk-i7>
-In-Reply-To: <20200113064156.lt3xxpzygattz3he@vireshk-i7>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 13 Jan 2020 12:36:18 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2u6s4MAM_9bOqSt5NwVc4XrXs9W36tp-7rWWTXx0+pRg@mail.gmail.com>
-Message-ID: <CAK8P3a2u6s4MAM_9bOqSt5NwVc4XrXs9W36tp-7rWWTXx0+pRg@mail.gmail.com>
-Subject: Re: [PATCH V2] firmware: arm_scmi: Make scmi core independent of
- transport type
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        cristian.marussi@arm.com, peng.fan@nxp.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:54glluQQTkTOIsQx4a7n9JsFZHg6zm9do6lRDjJ+aNvqLmyCHTM
- LXgAVAwmRFI26WQ9Kc7CgPf3HoSV4YvZo8KBSfY34AMopGj7Ihd9hYCE1rxmYcRF/RNR9T8
- LLC0wcLAdUj6QqQugIkLj+7FeXZp1/Diiob6taOeNvr09EgBqeQ/XZ8XhWDjDTjE80FXqqf
- r7+RGSY4vv3vW/L33ErVA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Ggsgkg2KW70=:VgdU6afpn/WyxUF6a65ePA
- AnooQS6jIoyNIz6pVnNkTKiKyW90koF/6/2tbYMotbpoWuu12tU11WZgYTKVRAs/7u86IwNlK
- 3d3C3o1nT9yv1MgoxdTvBXjrb6GjktbQy0nHpO6H5yy8jHsak/Ld7pCMKw6bNiBu9dL0WwQnY
- vDUtuFapBJM855TkzKUsw08u7egYM+87Iyg6eWhFO4D7UUTXq6LlI9CH5ClaQOrKSHfauw7XI
- 9rg2nbGJQHLfx0QuE4uyzb8KkWBEikX+Kk2ZGB6NlBSw0HGRp5T8bYtTty9Xl7cI0LaUhdH7y
- 3KF40dilZgZjnQLlAbi24JV9Bv2rH9u0b6s3S0S6SBcqxQI3IPTbmpxUooLJk1q7RnUa4d/XJ
- pPuFn/qtov6xZXUfErhKG2GdfI8ASdbPzDhMLG197WNzpBl+2mCFXxq8LQj5yJq2DLgENWpBg
- hbBcUzfiHSb7xDDLYbXf+xNUH0/nVQFGasKXZlxq4TYXkX3DoSt58A9jw23r5/15lXuBFHEll
- dSXjPgiUwzE+yy0d1icbJHj2u34D6TYsw+UW6eLrHTHMnw7OW+oQO83NrdGZgcw1nR+rZQSOq
- 1tfBUenae40phnMyoO6a90a3Gr92QxeJ0IM3NBJfe858I883KfQwi9t2MRe9ApKFRJ/B7TCzw
- gjZFwyVy51NRZyZA96Q1hBA+m8Mbto5Lv+9XXs/v8QPKPAOtLNyrWHbYf36rO2A88bwUfu9Ym
- lKnHYVl75S1tsbNeFgIQoqDhnCAkhhKI8r3bE/OBjnKSoq0WYTzAaWuTYb+pwXGcWJGYev71M
- 4/Z/Y74TuyNLIN1+1Uq23NN/WBFxtuXith2nBtO04NtDYLvLTEr0Q/L0h/HEWN+SsxAh8WD1S
- hVXxcSJSvj4f3mkfhY0w==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="X+8siUETKMkW99st"
+Content-Disposition: inline
+In-Reply-To: <612a3c5d-69a4-af6b-5c79-c3fb853193ab@huawei.com>
+X-Cookie: Programming is an unnatural act.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 7:42 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On 10-01-20, 12:15, Arnd Bergmann wrote:
-> > On Fri, Jan 10, 2020 at 10:43 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > Simply dropping the __iomem isn't much better, now you get other
-> > type mismatches.
->
-> Right. So what exactly do you suggest I should do now? Drop __iomem
-> from the structure's payload field but keep all local variables and
-> function arguments with __iomem ?
 
-> > > +struct scmi_chan_info {
-> > > +       void *payload;
-> > > +       struct device *dev;
-> > > +       struct scmi_handle *handle;
-> > > +       void *transport_info;
-> > > +};
-> >
-> > Maybe you can wrap the scmi_chan_info inside of another
-> > structure that contains  the payload pointer, and use container_of
-> > to convert between them?
->
-> We don't need to convert between the two of them, isn't it ? Are you
-> referring some other field here ?
+--X+8siUETKMkW99st
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> > It's not obvious which parts of the structure should be shared and
-> > which are transport specific.
->
-> All transport specific information is kept in the transport specific
-> structure which is saved here in the transport_info field. Is there
-> something else that isn't clear ?
+On Mon, Jan 13, 2020 at 10:09:27AM +0000, John Garry wrote:
+> On 10/01/2020 19:31, Andy Shevchenko wrote:
 
-To answer all three, what I meant is that the payload pointer appears
-to be transport specific and should not be part of the common
-structure if there is generic way to access it.
+> > PRP method is only for vendors to *test* the hardware in ACPI environment.
+> > The proper method is to allocate correct ACPI ID.
 
-      Arnd
+> Yes, that would seem the proper thing to do. So the SPI NOR driver is based
+> on micron m25p80 and compatible string is "jedec,spi-nor", so I don't know
+> who should or would do this registration.
+
+The idiomatic approach appears to be for individual board vendors
+to allocate IDs, you do end up with multiple IDs from multiple
+vendors for the same thing.
+
+> BTW, Do any of these sensors you mention have any ACPI standardization?
+
+In general there's not really much standardizaiton for devices,
+the bindings that do exist aren't really centrally documented and
+the Windows standard is just to have the basic device
+registration in the firmware and do all properties based on
+quirking based on DMI information.
+
+--X+8siUETKMkW99st
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4cV8AACgkQJNaLcl1U
+h9C/cAf/f3KqQoM3kgbWl0MgRMi2T0mY02dvLgcINSfWU08s8WPRzo3zWZ+2Bnwy
+EtoOy7yu9z4hC9RVNYaA3/FibeE10MJHizzwRnxzzxmu3MjPDixmON8GO+hsKPd6
+DYhpptH+23ceLUX3O7l8v34vvslFYKaUeSJkTlCR0OxxEkTCxwnWnWo/wKBYTRer
+T58Cj6e/WnAl2qZ4Yl4qJF2TpNTC7T5tHki/I72eEZfiaNylIKxERV27zddbrgHE
+dyOKFqftALoJvu2cf/ddKpXKNt1ceMDNGhu3bIBJuoSdYAedtvWRs9TPRigY5bvZ
+IiypAujroXyiqSqmQq+3FBBNH9tTXw==
+=w5W/
+-----END PGP SIGNATURE-----
+
+--X+8siUETKMkW99st--
