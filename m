@@ -2,89 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2507213978E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 18:24:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77CA41397A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 18:28:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbgAMRX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 12:23:57 -0500
-Received: from foss.arm.com ([217.140.110.172]:42310 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729009AbgAMRXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 12:23:55 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B7DFA11B3;
-        Mon, 13 Jan 2020 09:23:54 -0800 (PST)
-Received: from [10.37.12.172] (unknown [10.37.12.172])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D94313F534;
-        Mon, 13 Jan 2020 09:23:51 -0800 (PST)
-Subject: Re: [PATCH] xfs: Fix xfs_dir2_sf_entry_t size check
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Christoph Hellwig <hch@lst.de>, Eric Sandeen <sandeen@sandeen.net>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20200109141459.21808-1-vincenzo.frascino@arm.com>
- <c43539f2-aa9b-4afa-985c-c438099732ff@sandeen.net>
- <1a540ee4-6597-c79e-1bce-6592cb2f3eae@arm.com>
- <20200109165048.GB8247@magnolia>
- <435bcb71-9126-b1f1-3803-4977754b36ff@arm.com>
- <CAK8P3a0eY6Vm5PNdzR8Min9MrwAqH8vnMZ3C+pxTQhiFVNPyWA@mail.gmail.com>
- <20200113135800.GA8635@lst.de>
- <CAK8P3a0MZdDhY1DmdxjCSMXFqyu0G1ijsQdo7fmN9Ebxgr9cNw@mail.gmail.com>
- <20200113170105.GF8247@magnolia>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <8e2d0812-c76d-b0fd-3f4f-129c46ae60c5@arm.com>
-Date:   Mon, 13 Jan 2020 17:26:49 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728734AbgAMR2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 12:28:37 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:25983 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727726AbgAMR2g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 12:28:36 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1578936515; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=ZkDkwamCH7sXxqcGCpxSETq5EQUN29cHRpXs6HQiclE=; b=Ibn3osoV3iQO9FkLETT+lDsuQR6EvtiCUOKS4z1s4sDkpYIoXJfl1PwRKCeeEuHNVDgez79P
+ /TtBCxzXBdbWKZDyzDiLSNIljcqpXGMOxEJtb803Nq4lMYSMffGcUiQJF/lGpQz28Maii82T
+ d7cBBA/JsZW9PqawQlD56SmjpHA=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e1ca8c2.7f25f9061dc0-smtp-out-n01;
+ Mon, 13 Jan 2020 17:28:34 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id CB11CC447A6; Mon, 13 Jan 2020 17:28:32 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id AAEE1C43383;
+        Mon, 13 Jan 2020 17:28:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AAEE1C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date:   Mon, 13 Jan 2020 10:28:24 -0700
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org,
+        Sharat Masetty <smasetty@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Clark <robdclark@chromium.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Brian Masney <masneyb@onstation.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] drm/msm: support firmware-name for zap fw (v2)
+Message-ID: <20200113172824.GA26711@jcrouse1-lnx.qualcomm.com>
+Mail-Followup-To: Rob Clark <robdclark@gmail.com>,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org,
+        Sharat Masetty <smasetty@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Clark <robdclark@chromium.org>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Brian Masney <masneyb@onstation.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20200112195405.1132288-1-robdclark@gmail.com>
+ <20200112195405.1132288-2-robdclark@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200113170105.GF8247@magnolia>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200112195405.1132288-2-robdclark@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Darrick,
+On Sun, Jan 12, 2020 at 11:53:57AM -0800, Rob Clark wrote:
+> From: Rob Clark <robdclark@chromium.org>
+> 
+> Since zap firmware can be device specific, allow for a firmware-name
+> property in the zap node to specify which firmware to load, similarly to
+> the scheme used for dsp/wifi/etc.
+> 
+> v2: only need a single error msg when we can't load from firmware-name
+>     specified path, and fix comment [Bjorn A.]
 
-On 1/13/20 5:01 PM, Darrick J. Wong wrote:
-> On Mon, Jan 13, 2020 at 03:06:50PM +0100, Arnd Bergmann wrote:
->> On Mon, Jan 13, 2020 at 2:58 PM Christoph Hellwig <hch@lst.de> wrote:
->>>
->>> On Mon, Jan 13, 2020 at 02:55:15PM +0100, Arnd Bergmann wrote:
->>>> With ARM OABI (which you get when EABI is disabled), structures are padded
->>>> to multiples of 32 bits. See commits 8353a649f577 ("xfs: kill
->>>> xfs_dir2_sf_off_t")
->>>> and aa2dd0ad4d6d ("xfs: remove __arch_pack"). Those could be partially
->>>> reverted to fix it again, but it doesn't seem worth it as there is
->>>> probably nobody
->>>> running XFS on OABI machines (actually with the build failure we can
->>>> be fairly sure there isn't ;-).
->>>
->>> Or just try adding a __packed to the xfs_dir2_sf_entry definition?
->>
->> Yes, that should be correct on all architectures, and I just noticed
->> that this is what we already have on xfs_dir2_sf_hdr_t directly
->> above it for the same reason.
-> 
-> Yeah, that sounds like a reasonable way forward, short of cleaning out
-> all the array[0] cr^Hode... ;)
-> 
-> To the original submitter: can you add __packed to the structure
-> definition and (assuming it passes oabi compilation) send that to the
-> list, please?
-> 
+Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
 
-I will test it tomorrow morning as first thing and will send a patch out.
-Thank you all for your help!
-
-> --D
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> ---
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 30 ++++++++++++++++++++++---
+>  1 file changed, 27 insertions(+), 3 deletions(-)
 > 
->>
->>        Arnd
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> index 112e8b8a261e..456bb5af1717 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> @@ -26,6 +26,7 @@ static int zap_shader_load_mdt(struct msm_gpu *gpu, const char *fwname,
+>  {
+>  	struct device *dev = &gpu->pdev->dev;
+>  	const struct firmware *fw;
+> +	const char *signed_fwname = NULL;
+>  	struct device_node *np, *mem_np;
+>  	struct resource r;
+>  	phys_addr_t mem_phys;
+> @@ -58,8 +59,31 @@ static int zap_shader_load_mdt(struct msm_gpu *gpu, const char *fwname,
+>  
+>  	mem_phys = r.start;
+>  
+> -	/* Request the MDT file for the firmware */
+> -	fw = adreno_request_fw(to_adreno_gpu(gpu), fwname);
+> +	/*
+> +	 * Check for a firmware-name property.  This is the new scheme
+> +	 * to handle firmware that may be signed with device specific
+> +	 * keys, allowing us to have a different zap fw path for different
+> +	 * devices.
+> +	 *
+> +	 * If the firmware-name property is found, we bypass the
+> +	 * adreno_request_fw() mechanism, because we don't need to handle
+> +	 * the /lib/firmware/qcom/* vs /lib/firmware/* case.
+> +	 *
+> +	 * If the firmware-name property is not found, for backwards
+> +	 * compatibility we fall back to the fwname from the gpulist
+> +	 * table.
+> +	 */
+> +	of_property_read_string_index(np, "firmware-name", 0, &signed_fwname);
+> +	if (signed_fwname) {
+> +		fwname = signed_fwname;
+> +		ret = request_firmware_direct(&fw, fwname, gpu->dev->dev);
+> +		if (ret)
+> +			fw = ERR_PTR(ret);
+> +	} else {
+> +		/* Request the MDT file from the default location: */
+> +		fw = adreno_request_fw(to_adreno_gpu(gpu), fwname);
+> +	}
+> +
+>  	if (IS_ERR(fw)) {
+>  		DRM_DEV_ERROR(dev, "Unable to load %s\n", fwname);
+>  		return PTR_ERR(fw);
+> @@ -95,7 +119,7 @@ static int zap_shader_load_mdt(struct msm_gpu *gpu, const char *fwname,
+>  	 * not.  But since we've already gotten through adreno_request_fw()
+>  	 * we know which of the two cases it is:
+>  	 */
+> -	if (to_adreno_gpu(gpu)->fwloc == FW_LOCATION_LEGACY) {
+> +	if (signed_fwname || (to_adreno_gpu(gpu)->fwloc == FW_LOCATION_LEGACY)) {
+>  		ret = qcom_mdt_load(dev, fw, fwname, pasid,
+>  				mem_region, mem_phys, mem_size, NULL);
+>  	} else {
+> -- 
+> 2.24.1
+> 
 
 -- 
-Regards,
-Vincenzo
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
