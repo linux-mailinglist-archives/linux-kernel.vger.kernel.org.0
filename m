@@ -2,200 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAF4E138B7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 06:56:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A838138B9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 07:06:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732306AbgAMF4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 00:56:16 -0500
-Received: from mga06.intel.com ([134.134.136.31]:9250 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726105AbgAMF4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 00:56:15 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jan 2020 21:56:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,427,1571727600"; 
-   d="scan'208";a="397060238"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by orsmga005.jf.intel.com with ESMTP; 12 Jan 2020 21:56:13 -0800
-Date:   Mon, 13 Jan 2020 14:00:33 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        jmattson@google.com, yu.c.zhang@linux.intel.com,
-        alazar@bitdefender.com, edwin.zhai@intel.com
-Subject: Re: [RESEND PATCH v10 03/10] mmu: spp: Add SPP Table setup functions
-Message-ID: <20200113060033.GB12253@local-michael-cet-test.sh.intel.com>
-References: <20200102061319.10077-1-weijiang.yang@intel.com>
- <20200102061319.10077-4-weijiang.yang@intel.com>
- <20200110172611.GC21485@linux.intel.com>
+        id S1733180AbgAMGF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 01:05:59 -0500
+Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:52561 "EHLO
+        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725909AbgAMGF6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 01:05:58 -0500
+X-Greylist: delayed 320 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 Jan 2020 01:05:58 EST
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.west.internal (Postfix) with ESMTP id 7D7396A6;
+        Mon, 13 Jan 2020 01:00:37 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Mon, 13 Jan 2020 01:00:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        P8DhK8ltRJH7uYyzmEkUgfSyp/2vnpQjSfGyqb1nic0=; b=ZZUKSO/eTQMdBTbp
+        HwxYMmt5tQQXo9lQ68s/ozcY3kw2lmk0BK8HuO8G28NY5us6DWQrzZrdKrrYSKEZ
+        raViLEKQ+wuKAHbVdEA7pe8mSeQricDisxvaq0vr4ZdY4vBgAQuvxus7Xj2v1icm
+        qmZ1Gfu5HPGU0/ZEAvB1wN8tQe4tDHms6lZrWSz9LlPOYgI76UhtHt1faOQ7JOLu
+        nZYieX/RBOpmrAo7w7jJd9UBZTRpORyMXmuR32Buo1RhOuRJjqhjTv8l1BeKQtEX
+        JtHpRz+h13YCmoFaKivCVk2xVN2w9Gl23M4wxIEy8AurSOCsI4QF8IFhTUGRQQPl
+        bT28CQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=P8DhK8ltRJH7uYyzmEkUgfSyp/2vnpQjSfGyqb1ni
+        c0=; b=PKtgL8O965o7BZB7yToXfSyN/QrXVnmtMhuDAckJbnw2QLJ1781zumeoS
+        Kg19K4ra6jcO3vYE71aH+AMsGiOizSK29/sAOX5eVugJLDf+JgHESEmayhVovMKK
+        oTocikkRAaEuEo5Kp9KyPaBppHBBsiJ3zI/baro9dFWr/CI7Ze60zESzYs61djLI
+        R4qeND0+/h0TP87tYSSU2LF3EA33xMr0j8GSADl+NLgYxDXNU7Lyxp0R5Y1XOXPx
+        pdMMERFQ9vD81VIbvmXAkshoPQpXAViz8hiStMVZO45OPjMHYnqk7DMLAbfW4ELs
+        RLWwC7HXldqNyfo7k1e2jRINGJPxQ==
+X-ME-Sender: <xms:hAccXtQe9N0U2D21iCeMFUPr552x_0IruXA1oAo-qyMjpWTzn28xOQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdeiledgleduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucffohhmrghinhepghhith
+    hhuhgsrdgtohhmnecukfhppeduudekrddvtdelrddujeehrddvheenucfrrghrrghmpehm
+    rghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvghtnecuvehluhhsthgvrhfuih
+    iivgeptd
+X-ME-Proxy: <xmx:hAccXvDikIat0APaVAnruEZ5hJJ4LeAt_mTc1PmEW6-K7XJJpcE4Rg>
+    <xmx:hAccXouQscriB9WR8k4h8-wYSx7VDpMV5kgaM8GMcWwqpiI1n_8X9A>
+    <xmx:hAccXmuJ9Rq8dqE8EEt9jcXP2bApKhO1FL_S3JqK8HS6RIoQOn_j4A>
+    <xmx:hQccXlBL9iw23cs5OVqLct57YHOCh1SqXFT1kFEthWob7JJcH05RLmMyQY0>
+Received: from mickey.themaw.net (unknown [118.209.175.25])
+        by mail.messagingengine.com (Postfix) with ESMTPA id AC6AA8005A;
+        Mon, 13 Jan 2020 01:00:31 -0500 (EST)
+Message-ID: <41c535d689530f3715f21cd25074eb61e825a5f6.camel@themaw.net>
+Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
+ symlinks
+From:   Ian Kent <raven@themaw.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 13 Jan 2020 14:00:28 +0800
+In-Reply-To: <20200113035407.GQ8904@ZenIV.linux.org.uk>
+References: <20191230072959.62kcojxpthhdwmfa@yavin.dot.cyphar.com>
+         <20200101004324.GA11269@ZenIV.linux.org.uk>
+         <20200101005446.GH4203@ZenIV.linux.org.uk>
+         <20200101030815.GA17593@ZenIV.linux.org.uk>
+         <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
+         <20200101234009.GB8904@ZenIV.linux.org.uk>
+         <20200102035920.dsycgxnb6ba2jhz2@yavin.dot.cyphar.com>
+         <20200103014901.GC8904@ZenIV.linux.org.uk>
+         <20200110231945.GL8904@ZenIV.linux.org.uk>
+         <aea0bc800b6a1e547ca1944738ff9db4379098ba.camel@themaw.net>
+         <20200113035407.GQ8904@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200110172611.GC21485@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 09:26:11AM -0800, Sean Christopherson wrote:
-> On Thu, Jan 02, 2020 at 02:13:12PM +0800, Yang Weijiang wrote:
-> > SPPT is a 4-level paging structure similar to EPT, when SPP is
+On Mon, 2020-01-13 at 03:54 +0000, Al Viro wrote:
+> On Mon, Jan 13, 2020 at 09:48:23AM +0800, Ian Kent wrote:
 > 
-> How does SPP interact with 5-level EPT?
->
-It should work, will add the test later.
-
-> > armed for target physical page, bit 61 of the corresponding
-> > EPT entry is flaged, then SPPT is traversed with the gfn,
-> > the leaf entry of SPPT contains the access bitmap of subpages
-> > inside the target 4KB physical page, one bit per 128-byte subpage.
+> > I did try this patch and I was trying to work out why it didn't
+> > work. But thought I'd let you know what I saw.
 > > 
-> > Co-developed-by: He Chen <he.chen@linux.intel.com>
-> > Signed-off-by: He Chen <he.chen@linux.intel.com>
-> > Co-developed-by: Zhang Yi <yi.z.zhang@linux.intel.com>
-> > Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
-> > Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> > ---
-> 
-> ...
-> 
-> > +static u64 format_spp_spte(u32 spp_wp_bitmap)
-> > +{
-> > +	u64 new_spte = 0;
-> > +	int i = 0;
-> > +
-> > +	/*
-> > +	 * One 4K page contains 32 sub-pages, in SPP table L4E, old bits
-> 
-> Is this
-> 
-> 	One 4k page constains 32 sub-pages in SPP table L4E.  Old bits are...
-> 
-> or
-> 	One 4k page contains 32 sub-pages.  In SPP table L4E, old bits are...
-> 
-> or
-> 	???
->
-The second case, there's a typo, old should be odd. will modify it,
-thank you!
-
-> > +	 * are reserved, so we need to transfer u32 subpage write
-> 
-> Wrap comments at 80 columns to save lines.
-> 
-> > +	 * protect bitmap to u64 SPP L4E format.
-> 
-> What is a "page" in "one 4k page"?  What old bits?  Why not just track a
-> 64-bit value?  I understand *what* the code below does, but I have no clue
-> why or whether it's correct.
-old should be "odd", according to SDM, the write-permission is tracked
-via even bits(2i), then 32*128 = 4KB. odd bits are reserved now.
-> 
-> > +	 */
-> > +	while (i < 32) {
-> > +		if (spp_wp_bitmap & (1ULL << i))
-> > +			new_spte |= 1ULL << (i * 2);
-> > +		i++;
-> > +	}
-> 
-> 	for (i = 0; i < 32; i++)
-> 		new_spte |= (spp_wp_bitmap & BIT_ULL(i)) << i;
-> 
-> At the very least, use a for loop.
-Sure, will change it, thank you!
-
-> 
-> > +
-> > +	return new_spte;
-> > +}
-> > +
-> > +static void spp_spte_set(u64 *sptep, u64 new_spte)
-> > +{
-> > +	__set_spte(sptep, new_spte);
-> > +}
-> > +
-> > +bool is_spp_spte(struct kvm_mmu_page *sp)
-> > +{
-> > +	return sp->role.spp;
-> > +}
-> > +
-> > +#define SPPT_ENTRY_PHA_MASK (0xFFFFFFFFFF << 12)
-> > +
-> > +int kvm_spp_setup_structure(struct kvm_vcpu *vcpu,
-> > +			    u32 access_map, gfn_t gfn)
-> > +{
-> > +	struct kvm_shadow_walk_iterator iter;
-> > +	struct kvm_mmu_page *sp;
-> > +	gfn_t pseudo_gfn;
-> > +	u64 old_spte, spp_spte;
-> > +	int ret = -EFAULT;
-> > +
-> > +	/* direct_map spp start */
-> > +	if (!VALID_PAGE(vcpu->kvm->arch.sppt_root))
-> > +		return -EFAULT;
-> > +
-> > +	for_each_shadow_spp_entry(vcpu, (u64)gfn << PAGE_SHIFT, iter) {
-> > +		if (iter.level == PT_PAGE_TABLE_LEVEL) {
-> > +			spp_spte = format_spp_spte(access_map);
-> > +			old_spte = mmu_spte_get_lockless(iter.sptep);
-> > +			if (old_spte != spp_spte)
-> > +				spp_spte_set(iter.sptep, spp_spte);
-> > +			ret = 0;
-> > +			break;
-> > +		}
-> > +
-> > +		if (!is_shadow_present_pte(*iter.sptep)) {
-> > +			u64 base_addr = iter.addr;
-> > +
-> > +			base_addr &= PT64_LVL_ADDR_MASK(iter.level);
-> > +			pseudo_gfn = base_addr >> PAGE_SHIFT;
-> > +			spp_spte = *iter.sptep;
-> > +			sp = kvm_spp_get_page(vcpu, pseudo_gfn,
-> > +					      iter.level - 1);
-> > +			link_spp_shadow_page(vcpu, iter.sptep, sp);
-> > +		} else if (iter.level == PT_DIRECTORY_LEVEL  &&
-> > +			   !(spp_spte & PT_PRESENT_MASK) &&
-> > +			   (spp_spte & SPPT_ENTRY_PHA_MASK)) {
-> > +			spp_spte = *iter.sptep;
-> > +			spp_spte |= PT_PRESENT_MASK;
-> > +			spp_spte_set(iter.sptep, spp_spte);
-> > +		}
-> > +	}
-> > +
-> > +	kvm_flush_remote_tlbs(vcpu->kvm);
-> > +	return ret;
-> > +}
-> > +EXPORT_SYMBOL_GPL(kvm_spp_setup_structure);
-> > +
-> > +inline u64 construct_spptp(unsigned long root_hpa)
-> > +{
-> > +	return root_hpa & PAGE_MASK;
-> > +}
-> > +EXPORT_SYMBOL_GPL(construct_spptp);
-> > +
-> > diff --git a/arch/x86/kvm/mmu/spp.h b/arch/x86/kvm/mmu/spp.h
-> > new file mode 100644
-> > index 000000000000..8ef94b7a2057
-> > --- /dev/null
-> > +++ b/arch/x86/kvm/mmu/spp.h
-> > @@ -0,0 +1,10 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#ifndef __KVM_X86_VMX_SPP_H
-> > +#define __KVM_X86_VMX_SPP_H
-> > +
-> > +bool is_spp_spte(struct kvm_mmu_page *sp);
-> > +u64 construct_spptp(unsigned long root_hpa);
-> > +int kvm_spp_setup_structure(struct kvm_vcpu *vcpu,
-> > +			    u32 access_map, gfn_t gfn);
-> > +
-> > +#endif /* __KVM_X86_VMX_SPP_H */
-> > -- 
-> > 2.17.2
+> > Applying it to current Linus tree systemd stops at switch root.
 > > 
+> > Not sure what causes that, I couldn't see any reason for it.
+> 
+> Wait a minute...  So you are seeing problems early in the boot,
+> before any autofs ioctls might come into play?
+
+I did, then I checked it booted without the patch, then tried
+building from scratch with the patch twice and same thing
+happened each time.
+
+Looked like this, such as it is:
+[ OK ] Reached target Switch Root.
+[ OK ] Started Plymouth switch root service.
+       Starting Switch Root...
+
+I don't have any evidence but thought it might be this:
+https://github.com/karelzak/util-linux/blob/master/sys-utils/switch_root.c
+
+Mind you, that's not the actual systemd repo. either I probably
+need to look a lot deeper (and at the actual systemd repo) to
+work out what's actually being called.
+
+> 
+> Sigh...  Guess I'll have to dig that Fedora KVM image out and
+> try to see what it's about... ;-/  Here comes a couple of hours
+> of build...
+
