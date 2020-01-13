@@ -2,107 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 988E013906E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 12:52:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EA8E139079
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 12:57:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728646AbgAMLw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 06:52:26 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59054 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726277AbgAMLwZ (ORCPT
+        id S1728721AbgAML5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 06:57:54 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:33138 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726127AbgAML5y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 06:52:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578916344;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fAtNK55yDbPKiBZA6iN0qoeGlR4L/c8UwxpFGcssRLE=;
-        b=aipeRjryfBMmGleaYvMbHJvX6rDx9O9kS3uaof9h7WUSBxk2Sug4DG1MCa+apXY+0HoKTN
-        ggQhUylnEckjzmrAs45rB1edEcocRd4zwe64W10Ja0sZKbJ5xJESr61YNFuV8evG9uMDXc
-        0pjcZx9hncH848iXqXH057ehEbfYfSU=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-119-f4ukGw7qPliXvxk4auhKVg-1; Mon, 13 Jan 2020 06:52:21 -0500
-X-MC-Unique: f4ukGw7qPliXvxk4auhKVg-1
-Received: by mail-wr1-f72.google.com with SMTP id v17so4860169wrm.17
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 03:52:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fAtNK55yDbPKiBZA6iN0qoeGlR4L/c8UwxpFGcssRLE=;
-        b=l6M+mI2L2yfOHfsY/u9oEZznR3RwwFg7R7lAqwjupb1V+iIcW+ZM45VfiOjwjyyUUo
-         38ti/GmeOGlzsxv/MstNobnC4ICSO2MtTws7KOX6dN1k6vhilPAwS+HRCW4TCciBssZN
-         8ZFSzj8fFql0K9aIEeOjvC9hV/Cr5x1n1stHnG/+wH9DSSBV9yahcG4dluai0bIr+Z/B
-         wG3pjk1tf9RyMBp0a6PjMsVpEacVR6cySiaOIXqCytq7nvAWC3DUIsUZdiDYzY8OgUTM
-         MuMRnKSYIohAF8C5sZpM5v7yMVK0xc0hFuTMFO3JffvgJptL6G2Li7XTHRL0uU3r90kf
-         Eh9g==
-X-Gm-Message-State: APjAAAVe3dXZl4CkLWm6h8fV3xCKLqX0MCmJfEFskD/PC+U9wwNtT0+e
-        nsKFHCalbY6QuwCQJBFZTVn5ACe1rbSezBZF8LCBD7u51ca9dUwE6HnFqAqHrG7g12gfMyEiR07
-        R5K59nnI6IzmyMXU2pgFA3n6R
-X-Received: by 2002:a1c:7f4f:: with SMTP id a76mr20060479wmd.77.1578916340370;
-        Mon, 13 Jan 2020 03:52:20 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxZg2dccxP0IdOTlGnnmh5SXAppWHgMgGLJe1d7ybkkLljLcXiIb4/SCMEl9TwTbWQUxFL5bA==
-X-Received: by 2002:a1c:7f4f:: with SMTP id a76mr20060454wmd.77.1578916340124;
-        Mon, 13 Jan 2020 03:52:20 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:1475:5c37:e2e2:68ea? ([2001:b07:6468:f312:1475:5c37:e2e2:68ea])
-        by smtp.gmail.com with ESMTPSA id u24sm14250566wml.10.2020.01.13.03.52.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jan 2020 03:52:19 -0800 (PST)
-Subject: Re: [PATCH RFC] sched/fair: Penalty the cfs task which executes
- mwait/hlt
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Wanpeng Li <kernellwp@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        KarimAllah <karahmed@amazon.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Ankur Arora <ankur.a.arora@oracle.com>,
-        christopher.s.hall@intel.com, hubert.chrzaniuk@intel.com,
-        len.brown@intel.com, thomas.lendacky@amd.com, rjw@rjwysocki.net
-References: <1578448201-28218-1-git-send-email-wanpengli@tencent.com>
- <20200108155040.GB2827@hirez.programming.kicks-ass.net>
- <00d884a7-d463-74b4-82cf-9deb0aa70971@redhat.com>
- <CANRm+Cx0LMK1b2mJiU7edCDoRfPfGLzY1Zqr5paBEPcWFFALhQ@mail.gmail.com>
- <20200113104314.GU2844@hirez.programming.kicks-ass.net>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <ee2b6da2-be8c-2540-29e9-ffbb9fdfd3fc@redhat.com>
-Date:   Mon, 13 Jan 2020 12:52:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Mon, 13 Jan 2020 06:57:54 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00DBuknD091396;
+        Mon, 13 Jan 2020 05:56:46 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578916606;
+        bh=9n718e+eW2JIWIXzt3IYQ2kWyec/YziAStfyqoDrUzE=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=siWYpvKyiSQIfqjGzS0WEV/lPdV1/JWIqcXlTspERLmvuoirkRmAsIGRqOljYMpda
+         HuuZI8ZdS3/VCiQPQNeZ+35gBgjpipAEZXs67tt95BpR8su2hJeWyMDXYM14FcJHMF
+         wEGshRhaA+gEc3Ryioh7I3U+ZCEOAMDp23Il6stg=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00DBuk1M070641
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 13 Jan 2020 05:56:46 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 13
+ Jan 2020 05:56:45 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 13 Jan 2020 05:56:45 -0600
+Received: from [172.24.145.246] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00DBugXg122482;
+        Mon, 13 Jan 2020 05:56:43 -0600
+Subject: Re: [PATCH v3 1/3] clocksource: davinci: only enable clockevents once
+ tim34 is initialized
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC:     Thomas Gleixner <tglx@linutronix.de>,
+        David Lechner <david@lechnology.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20200110171643.18578-1-brgl@bgdev.pl>
+ <20200110171643.18578-2-brgl@bgdev.pl>
+ <7be95251-7e26-6090-4770-6e4dbebfadd2@linaro.org>
+ <CAMRc=McesmYcJv7iqE3rLHFyeTJtnW4Gq1TjMjHGSkpcHNPahw@mail.gmail.com>
+ <CAKnoXLygqQ5eSfp+bwixtGVKEFnzw0h7XSPV4qXaGjUg_KtJYQ@mail.gmail.com>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <d0897001-5290-b81d-d480-1c2d92db486c@ti.com>
+Date:   Mon, 13 Jan 2020 17:26:42 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200113104314.GU2844@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAKnoXLygqQ5eSfp+bwixtGVKEFnzw0h7XSPV4qXaGjUg_KtJYQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/01/20 11:43, Peter Zijlstra wrote:
-> So the very first thing we need to get sorted is that MPERF/TSC ratio
-> thing. TurboStat does it, but has 'funny' hacks on like:
-> 
->   b2b34dfe4d9a ("tools/power turbostat: KNL workaround for %Busy and Avg_MHz")
-> 
-> and I imagine that there's going to be more exceptions there. You're
-> basically going to have to get both Intel and AMD to commit to this.
-> 
-> IFF we can get concensus on MPERF/TSC, then yes, that is a reasonable
-> way to detect a VCPU being idle I suppose. I've added a bunch of people
-> who seem to know about this.
-> 
-> Anyone, what will it take to get MPERF/TSC 'working' ?
+Hi Daniel, Bart,
 
-Do we really need MPERF/TSC for this use case, or can we just track
-APERF as well and do MPERF/APERF to compute the "non-idle" time?
+On 11/01/20 3:59 PM, Daniel Lezcano wrote:
+> 
+> 
+> On Sat, 11 Jan 2020 at 11:20, Bartosz Golaszewski <brgl@bgdev.pl
+> <mailto:brgl@bgdev.pl>> wrote:
+> 
+>     pt., 10 sty 2020 o 18:56 Daniel Lezcano <daniel.lezcano@linaro.org
+>     <mailto:daniel.lezcano@linaro.org>> napisał(a):
+>     >
+>     > On 10/01/2020 18:16, Bartosz Golaszewski wrote:
+>     > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com
+>     <mailto:bgolaszewski@baylibre.com>>
+>     > >
+>     > > The DM365 platform has a strange quirk (only present when using
+>     ancient
+>     > > u-boot - mainline u-boot v2013.01 and later works fine) where if we
+>     > > enable the second half of the timer in periodic mode before we
+>     do its
+>     > > initialization - the time won't start flowing and we can't boot.
+>     > >
+>     > > When using more recent u-boot, we can enable the timer, then
+>     reinitialize
+>     > > it and all works fine.
+>     > >
+>     > > To work around this issue only enable clockevents once tim34 is
+>     > > initialized i.e. move clockevents_config_and_register() below tim34
+>     > > initialization.
+>     > >
+>     > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com
+>     <mailto:bgolaszewski@baylibre.com>>
+>     >
+>     > Shall I take it through my tree?
+>     >
+> 
+>     Not sure, I'd say Sekhar should take it through arm-soc together with
+>     the latter two patches if he's ok with this. Let's wait for him to
+>     respond.
+> 
+> 
+> Just in case:
+> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org
+> <mailto:daniel.lezcano@linaro.org>>
 
-Paolo
+I was able to test the series on all 6 DaVinci SoCs. I will send this
+upstream with Daniel's ack.
 
+Thanks,
+Sekhar
