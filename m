@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF62313947A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 16:13:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 775A413947B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 16:13:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729179AbgAMPN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 10:13:29 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35890 "EHLO
+        id S1729145AbgAMPN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 10:13:26 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35788 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729152AbgAMPN2 (ORCPT
+        with ESMTP id S1728984AbgAMPNZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 10:13:28 -0500
+        Mon, 13 Jan 2020 10:13:25 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=ITN2vt8XAi3o9UOjbymfr98Ys08P5EeJ9lhxyFe5Ij0=; b=xpsPGaf6XKXy
-        XqhbPs/VhVdm1190PMDBuqkHtRDuU6kHmxZKzr/fq28PTdkkTlHl/wRMpvSv0fBF4KpdFMju8cj0z
-        8XuwDuRbKjynye1lqPOx2oICEh5f6ZIfhe2YwKt0447UB70dge/aV0XiS+sc0xh6dmYDQ8a4KFX1P
-        LVGVc=;
+        List-Archive; bh=tlixcOKneo9O/YYLNit+XgxZ/59MVwRcpvHUMhzFhK8=; b=canBesDYGQvh
+        mP0iOfQh3HizOaT7JsXiEu4MjGeZ4GlBOlyG1Dlu2oHj8EdM9vnDL5RnHGJ6WhL0wKkAo2IVRj74n
+        Y267WhG3i83kDdhqhNFOjS+kdaYHVM8nNpDyzExzpc43enaIG/hiObItsdsEoLlMjSEWTnS42LDB7
+        1qsy8=;
 Received: from fw-tnat-cam7.arm.com ([217.140.106.55] helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1ir1P8-0003NY-TC; Mon, 13 Jan 2020 15:13:22 +0000
+        id 1ir1P8-0003NS-IZ; Mon, 13 Jan 2020 15:13:22 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 98CBCD01965; Mon, 13 Jan 2020 15:13:22 +0000 (GMT)
+        id 4ACE7D01965; Mon, 13 Jan 2020 15:13:22 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Icenowy Zheng <icenowy@aosc.io>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Support Opensource <support.opensource@diasemi.com>
-Subject: Applied "regulator: Convert i2c drivers to use .probe_new" to the regulator tree
-In-Reply-To: <20200109155808.22003-1-axel.lin@ingics.com>
-Message-Id: <applied-20200109155808.22003-1-axel.lin@ingics.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: Applied "regulator: bd718x7: Simplify the code by removing struct bd718xx_pmic_inits" to the regulator tree
+In-Reply-To: <20200108014256.11282-1-axel.lin@ingics.com>
+Message-Id: <applied-20200108014256.11282-1-axel.lin@ingics.com>
 X-Patchwork-Hint: ignore
 Date:   Mon, 13 Jan 2020 15:13:22 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -48,7 +46,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: Convert i2c drivers to use .probe_new
+   regulator: bd718x7: Simplify the code by removing struct bd718xx_pmic_inits
 
 has been applied to the regulator tree at
 
@@ -73,309 +71,95 @@ to this mail.
 Thanks,
 Mark
 
-From 77e29598ca3fc20314f1acec35ada9706b3ea16b Mon Sep 17 00:00:00 2001
+From b389ceae4a8fa4c91dd3543516cdfd49ece7e4ba Mon Sep 17 00:00:00 2001
 From: Axel Lin <axel.lin@ingics.com>
-Date: Thu, 9 Jan 2020 23:58:08 +0800
-Subject: [PATCH] regulator: Convert i2c drivers to use .probe_new
+Date: Wed, 8 Jan 2020 09:42:55 +0800
+Subject: [PATCH] regulator: bd718x7: Simplify the code by removing struct
+ bd718xx_pmic_inits
 
-Use the new .probe_new for i2c drivers.
-These drivers do not use const struct i2c_device_id * argument, so convert
-them to utilise the simplified i2c driver registration.
+Nowdays ROHM_CHIP_TYPE_AMOUNT includes not only BD71837/BD71847 but also
+BD70528/BD71828 which are not supported by this driver. So it seems not
+necessay to have pmic_regulators[ROHM_CHIP_TYPE_AMOUNT] as mapping table.
+Simplify the code by removing struct bd718xx_pmic_inits and
+pmic_regulators[ROHM_CHIP_TYPE_AMOUNT].
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Link: https://lore.kernel.org/r/20200109155808.22003-1-axel.lin@ingics.com
+Link: https://lore.kernel.org/r/20200108014256.11282-1-axel.lin@ingics.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/da9210-regulator.c   | 5 ++---
- drivers/regulator/da9211-regulator.c   | 5 ++---
- drivers/regulator/isl9305.c            | 5 ++---
- drivers/regulator/lp3971.c             | 5 ++---
- drivers/regulator/ltc3676.c            | 5 ++---
- drivers/regulator/mt6311-regulator.c   | 5 ++---
- drivers/regulator/pv88060-regulator.c  | 5 ++---
- drivers/regulator/pv88090-regulator.c  | 5 ++---
- drivers/regulator/slg51000-regulator.c | 5 ++---
- drivers/regulator/sy8106a-regulator.c  | 5 ++---
- drivers/regulator/sy8824x.c            | 5 ++---
- drivers/regulator/tps65132-regulator.c | 5 ++---
- 12 files changed, 24 insertions(+), 36 deletions(-)
+ drivers/regulator/bd718x7-regulator.c | 34 +++++++++++----------------
+ 1 file changed, 14 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/regulator/da9210-regulator.c b/drivers/regulator/da9210-regulator.c
-index f9448ed50e05..0cdeb6186529 100644
---- a/drivers/regulator/da9210-regulator.c
-+++ b/drivers/regulator/da9210-regulator.c
-@@ -131,8 +131,7 @@ static const struct of_device_id da9210_dt_ids[] = {
- };
- MODULE_DEVICE_TABLE(of, da9210_dt_ids);
- 
--static int da9210_i2c_probe(struct i2c_client *i2c,
--			    const struct i2c_device_id *id)
-+static int da9210_i2c_probe(struct i2c_client *i2c)
- {
- 	struct da9210 *chip;
- 	struct device *dev = &i2c->dev;
-@@ -228,7 +227,7 @@ static struct i2c_driver da9210_regulator_driver = {
- 		.name = "da9210",
- 		.of_match_table = of_match_ptr(da9210_dt_ids),
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index 13a43eee2e46..8f9b2d8eaf10 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -1142,28 +1142,14 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
  	},
--	.probe = da9210_i2c_probe,
-+	.probe_new = da9210_i2c_probe,
- 	.id_table = da9210_i2c_id,
  };
  
-diff --git a/drivers/regulator/da9211-regulator.c b/drivers/regulator/da9211-regulator.c
-index 523dc1b95826..2ea4362ffa5c 100644
---- a/drivers/regulator/da9211-regulator.c
-+++ b/drivers/regulator/da9211-regulator.c
-@@ -416,8 +416,7 @@ static int da9211_regulator_init(struct da9211 *chip)
- /*
-  * I2C driver interface functions
-  */
--static int da9211_i2c_probe(struct i2c_client *i2c,
--		const struct i2c_device_id *id)
-+static int da9211_i2c_probe(struct i2c_client *i2c)
+-struct bd718xx_pmic_inits {
+-	const struct bd718xx_regulator_data *r_datas;
+-	unsigned int r_amount;
+-};
+-
+ static int bd718xx_probe(struct platform_device *pdev)
  {
- 	struct da9211 *chip;
- 	int error, ret;
-@@ -526,7 +525,7 @@ static struct i2c_driver da9211_regulator_driver = {
- 		.name = "da9211",
- 		.of_match_table = of_match_ptr(da9211_dt_ids),
- 	},
--	.probe = da9211_i2c_probe,
-+	.probe_new = da9211_i2c_probe,
- 	.id_table = da9211_i2c_id,
- };
+ 	struct bd718xx *mfd;
+ 	struct regulator_config config = { 0 };
+-	struct bd718xx_pmic_inits pmic_regulators[ROHM_CHIP_TYPE_AMOUNT] = {
+-		[ROHM_CHIP_TYPE_BD71837] = {
+-			.r_datas = bd71837_regulators,
+-			.r_amount = ARRAY_SIZE(bd71837_regulators),
+-		},
+-		[ROHM_CHIP_TYPE_BD71847] = {
+-			.r_datas = bd71847_regulators,
+-			.r_amount = ARRAY_SIZE(bd71847_regulators),
+-		},
+-	};
+-
+ 	int i, j, err;
+ 	bool use_snvs;
++	const struct bd718xx_regulator_data *reg_data;
++	unsigned int num_reg_data;
  
-diff --git a/drivers/regulator/isl9305.c b/drivers/regulator/isl9305.c
-index 978f5e903cae..cfb765986d0d 100644
---- a/drivers/regulator/isl9305.c
-+++ b/drivers/regulator/isl9305.c
-@@ -137,8 +137,7 @@ static const struct regmap_config isl9305_regmap = {
- 	.cache_type = REGCACHE_RBTREE,
- };
+ 	mfd = dev_get_drvdata(pdev->dev.parent);
+ 	if (!mfd) {
+@@ -1172,8 +1158,16 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
  
--static int isl9305_i2c_probe(struct i2c_client *i2c,
--			     const struct i2c_device_id *id)
-+static int isl9305_i2c_probe(struct i2c_client *i2c)
- {
- 	struct regulator_config config = { };
- 	struct isl9305_pdata *pdata = i2c->dev.platform_data;
-@@ -198,7 +197,7 @@ static struct i2c_driver isl9305_regulator_driver = {
- 		.name = "isl9305",
- 		.of_match_table	= of_match_ptr(isl9305_dt_ids),
- 	},
--	.probe = isl9305_i2c_probe,
-+	.probe_new = isl9305_i2c_probe,
- 	.id_table = isl9305_i2c_id,
- };
+-	if (mfd->chip.chip_type >= ROHM_CHIP_TYPE_AMOUNT ||
+-	    !pmic_regulators[mfd->chip.chip_type].r_datas) {
++	switch (mfd->chip.chip_type) {
++	case ROHM_CHIP_TYPE_BD71837:
++		reg_data = bd71837_regulators;
++		num_reg_data = ARRAY_SIZE(bd71837_regulators);
++		break;
++	case ROHM_CHIP_TYPE_BD71847:
++		reg_data = bd71847_regulators;
++		num_reg_data = ARRAY_SIZE(bd71847_regulators);
++		break;
++	default:
+ 		dev_err(&pdev->dev, "Unsupported chip type\n");
+ 		err = -EINVAL;
+ 		goto err;
+@@ -1215,13 +1209,13 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		}
+ 	}
  
-diff --git a/drivers/regulator/lp3971.c b/drivers/regulator/lp3971.c
-index bc96e65ef7c0..8be252f81b09 100644
---- a/drivers/regulator/lp3971.c
-+++ b/drivers/regulator/lp3971.c
-@@ -400,8 +400,7 @@ static int setup_regulators(struct lp3971 *lp3971,
- 	return 0;
- }
+-	for (i = 0; i < pmic_regulators[mfd->chip.chip_type].r_amount; i++) {
++	for (i = 0; i < num_reg_data; i++) {
  
--static int lp3971_i2c_probe(struct i2c_client *i2c,
--			    const struct i2c_device_id *id)
-+static int lp3971_i2c_probe(struct i2c_client *i2c)
- {
- 	struct lp3971 *lp3971;
- 	struct lp3971_platform_data *pdata = dev_get_platdata(&i2c->dev);
-@@ -449,7 +448,7 @@ static struct i2c_driver lp3971_i2c_driver = {
- 	.driver = {
- 		.name = "LP3971",
- 	},
--	.probe    = lp3971_i2c_probe,
-+	.probe_new = lp3971_i2c_probe,
- 	.id_table = lp3971_i2c_id,
- };
+ 		const struct regulator_desc *desc;
+ 		struct regulator_dev *rdev;
+ 		const struct bd718xx_regulator_data *r;
  
-diff --git a/drivers/regulator/ltc3676.c b/drivers/regulator/ltc3676.c
-index d934540eb8c4..e12e52c69e52 100644
---- a/drivers/regulator/ltc3676.c
-+++ b/drivers/regulator/ltc3676.c
-@@ -301,8 +301,7 @@ static irqreturn_t ltc3676_isr(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
+-		r = &pmic_regulators[mfd->chip.chip_type].r_datas[i];
++		r = &reg_data[i];
+ 		desc = &r->desc;
  
--static int ltc3676_regulator_probe(struct i2c_client *client,
--				    const struct i2c_device_id *id)
-+static int ltc3676_regulator_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
- 	struct regulator_init_data *init_data = dev_get_platdata(dev);
-@@ -380,7 +379,7 @@ static struct i2c_driver ltc3676_driver = {
- 		.name = DRIVER_NAME,
- 		.of_match_table = of_match_ptr(ltc3676_of_match),
- 	},
--	.probe = ltc3676_regulator_probe,
-+	.probe_new = ltc3676_regulator_probe,
- 	.id_table = ltc3676_i2c_id,
- };
- module_i2c_driver(ltc3676_driver);
-diff --git a/drivers/regulator/mt6311-regulator.c b/drivers/regulator/mt6311-regulator.c
-index af95449d3590..69e6af3cd505 100644
---- a/drivers/regulator/mt6311-regulator.c
-+++ b/drivers/regulator/mt6311-regulator.c
-@@ -85,8 +85,7 @@ static const struct regulator_desc mt6311_regulators[] = {
- /*
-  * I2C driver interface functions
-  */
--static int mt6311_i2c_probe(struct i2c_client *i2c,
--		const struct i2c_device_id *id)
-+static int mt6311_i2c_probe(struct i2c_client *i2c)
- {
- 	struct regulator_config config = { };
- 	struct regulator_dev *rdev;
-@@ -154,7 +153,7 @@ static struct i2c_driver mt6311_regulator_driver = {
- 		.name = "mt6311",
- 		.of_match_table = of_match_ptr(mt6311_dt_ids),
- 	},
--	.probe = mt6311_i2c_probe,
-+	.probe_new = mt6311_i2c_probe,
- 	.id_table = mt6311_i2c_id,
- };
- 
-diff --git a/drivers/regulator/pv88060-regulator.c b/drivers/regulator/pv88060-regulator.c
-index 3d3415839ba2..787ced918372 100644
---- a/drivers/regulator/pv88060-regulator.c
-+++ b/drivers/regulator/pv88060-regulator.c
-@@ -279,8 +279,7 @@ static irqreturn_t pv88060_irq_handler(int irq, void *data)
- /*
-  * I2C driver interface functions
-  */
--static int pv88060_i2c_probe(struct i2c_client *i2c,
--		const struct i2c_device_id *id)
-+static int pv88060_i2c_probe(struct i2c_client *i2c)
- {
- 	struct regulator_init_data *init_data = dev_get_platdata(&i2c->dev);
- 	struct pv88060 *chip;
-@@ -385,7 +384,7 @@ static struct i2c_driver pv88060_regulator_driver = {
- 		.name = "pv88060",
- 		.of_match_table = of_match_ptr(pv88060_dt_ids),
- 	},
--	.probe = pv88060_i2c_probe,
-+	.probe_new = pv88060_i2c_probe,
- 	.id_table = pv88060_i2c_id,
- };
- 
-diff --git a/drivers/regulator/pv88090-regulator.c b/drivers/regulator/pv88090-regulator.c
-index b1d0d97ae935..784729ec2182 100644
---- a/drivers/regulator/pv88090-regulator.c
-+++ b/drivers/regulator/pv88090-regulator.c
-@@ -272,8 +272,7 @@ static irqreturn_t pv88090_irq_handler(int irq, void *data)
- /*
-  * I2C driver interface functions
-  */
--static int pv88090_i2c_probe(struct i2c_client *i2c,
--		const struct i2c_device_id *id)
-+static int pv88090_i2c_probe(struct i2c_client *i2c)
- {
- 	struct regulator_init_data *init_data = dev_get_platdata(&i2c->dev);
- 	struct pv88090 *chip;
-@@ -406,7 +405,7 @@ static struct i2c_driver pv88090_regulator_driver = {
- 		.name = "pv88090",
- 		.of_match_table = of_match_ptr(pv88090_dt_ids),
- 	},
--	.probe = pv88090_i2c_probe,
-+	.probe_new = pv88090_i2c_probe,
- 	.id_table = pv88090_i2c_id,
- };
- 
-diff --git a/drivers/regulator/slg51000-regulator.c b/drivers/regulator/slg51000-regulator.c
-index bf1a3508ebc4..44e4cecbf6de 100644
---- a/drivers/regulator/slg51000-regulator.c
-+++ b/drivers/regulator/slg51000-regulator.c
-@@ -439,8 +439,7 @@ static void slg51000_clear_fault_log(struct slg51000 *chip)
- 		dev_dbg(chip->dev, "Fault log: FLT_POR\n");
- }
- 
--static int slg51000_i2c_probe(struct i2c_client *client,
--			      const struct i2c_device_id *id)
-+static int slg51000_i2c_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
- 	struct slg51000 *chip;
-@@ -509,7 +508,7 @@ static struct i2c_driver slg51000_regulator_driver = {
- 	.driver = {
- 		.name = "slg51000-regulator",
- 	},
--	.probe = slg51000_i2c_probe,
-+	.probe_new = slg51000_i2c_probe,
- 	.id_table = slg51000_i2c_id,
- };
- 
-diff --git a/drivers/regulator/sy8106a-regulator.c b/drivers/regulator/sy8106a-regulator.c
-index 42e03b2c10a0..2222e739e62b 100644
---- a/drivers/regulator/sy8106a-regulator.c
-+++ b/drivers/regulator/sy8106a-regulator.c
-@@ -61,8 +61,7 @@ static const struct regulator_desc sy8106a_reg = {
- /*
-  * I2C driver interface functions
-  */
--static int sy8106a_i2c_probe(struct i2c_client *i2c,
--			    const struct i2c_device_id *id)
-+static int sy8106a_i2c_probe(struct i2c_client *i2c)
- {
- 	struct device *dev = &i2c->dev;
- 	struct regulator_dev *rdev;
-@@ -141,7 +140,7 @@ static struct i2c_driver sy8106a_regulator_driver = {
- 		.name = "sy8106a",
- 		.of_match_table	= of_match_ptr(sy8106a_i2c_of_match),
- 	},
--	.probe = sy8106a_i2c_probe,
-+	.probe_new = sy8106a_i2c_probe,
- 	.id_table = sy8106a_i2c_id,
- };
- 
-diff --git a/drivers/regulator/sy8824x.c b/drivers/regulator/sy8824x.c
-index 92adb4f3ee19..62d243f3b904 100644
---- a/drivers/regulator/sy8824x.c
-+++ b/drivers/regulator/sy8824x.c
-@@ -112,8 +112,7 @@ static const struct regmap_config sy8824_regmap_config = {
- 	.val_bits = 8,
- };
- 
--static int sy8824_i2c_probe(struct i2c_client *client,
--			    const struct i2c_device_id *id)
-+static int sy8824_i2c_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
- 	struct device_node *np = dev->of_node;
-@@ -222,7 +221,7 @@ static struct i2c_driver sy8824_regulator_driver = {
- 		.name = "sy8824-regulator",
- 		.of_match_table = of_match_ptr(sy8824_dt_ids),
- 	},
--	.probe = sy8824_i2c_probe,
-+	.probe_new = sy8824_i2c_probe,
- 	.id_table = sy8824_id,
- };
- module_i2c_driver(sy8824_regulator_driver);
-diff --git a/drivers/regulator/tps65132-regulator.c b/drivers/regulator/tps65132-regulator.c
-index 7b0e38f8d627..0edc83089ba2 100644
---- a/drivers/regulator/tps65132-regulator.c
-+++ b/drivers/regulator/tps65132-regulator.c
-@@ -220,8 +220,7 @@ static const struct regmap_config tps65132_regmap_config = {
- 	.wr_table	= &tps65132_no_reg_table,
- };
- 
--static int tps65132_probe(struct i2c_client *client,
--			  const struct i2c_device_id *client_id)
-+static int tps65132_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
- 	struct tps65132_regulator *tps;
-@@ -272,7 +271,7 @@ static struct i2c_driver tps65132_i2c_driver = {
- 	.driver = {
- 		.name = "tps65132",
- 	},
--	.probe = tps65132_probe,
-+	.probe_new = tps65132_probe,
- 	.id_table = tps65132_id,
- };
- 
+ 		config.dev = pdev->dev.parent;
 -- 
 2.20.1
 
