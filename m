@@ -2,267 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 195B1138C3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 08:18:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2194138C4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 08:25:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728780AbgAMHSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 02:18:09 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:49836 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728646AbgAMHSJ (ORCPT
+        id S1728799AbgAMHZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 02:25:49 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:37920 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727555AbgAMHZs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 02:18:09 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200113071805epoutp01d93d5cb9ad5ab5f2798d416490f7581b~pYRS0XaDK0084000840epoutp01I
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 07:18:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200113071805epoutp01d93d5cb9ad5ab5f2798d416490f7581b~pYRS0XaDK0084000840epoutp01I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1578899885;
-        bh=OyPXwD//gNxYGJwrwgpCEXEZipA1ItAsHI0I6WwlA/M=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=b344l4LLqP/kDei7OPJzpZYULTtccgYb8+Pl427+bqy5X1GQmDke+I4nC4tcr3EGN
-         vDphEakTXbcybOyFymRzbRG+aCkSAm4lxs9sLPzeMUNM1lYtOAan3WSEu7cVEaXIVE
-         ig4AFjsGqVUJuGMk8zaWwRqUCDteJFVksCA8DESQ=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20200113071804epcas1p43eb9a65dd0de9c8deedf823fb2fdf8c2~pYRRjHviC2466724667epcas1p4N;
-        Mon, 13 Jan 2020 07:18:04 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.152]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 47x4gG22xbzMqYkV; Mon, 13 Jan
-        2020 07:18:02 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7F.A0.48019.AA91C1E5; Mon, 13 Jan 2020 16:18:02 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200113071801epcas1p3d1cbe0cebee63c3457512a94850d4784~pYROv4MOL2902829028epcas1p3T;
-        Mon, 13 Jan 2020 07:18:01 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200113071801epsmtrp12603314cdc809345ebaace8e4cef546f~pYROuvc0i1720517205epsmtrp1U;
-        Mon, 13 Jan 2020 07:18:01 +0000 (GMT)
-X-AuditID: b6c32a38-257ff7000001bb93-e7-5e1c19aa9c7a
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9B.5A.10238.9A91C1E5; Mon, 13 Jan 2020 16:18:01 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200113071801epsmtip109f2a3ceff7afc3b3ae4423d958fad0b~pYROdnFmN1946319463epsmtip1t;
-        Mon, 13 Jan 2020 07:18:01 +0000 (GMT)
-Subject: Re: [PATCH 1/2] thermal: devfreq_cooling: Use PM QoS to set
- frequency limits
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>
-Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <bae154ef-cbe6-de24-26c7-a7d4338bd55e@samsung.com>
-Date:   Mon, 13 Jan 2020 16:25:17 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Mon, 13 Jan 2020 02:25:48 -0500
+Received: by mail-ot1-f67.google.com with SMTP id z9so5943959oth.5;
+        Sun, 12 Jan 2020 23:25:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eyihv1VUwTMBsf8Vdp+9W+NVjjmwvawqQpBne2QlYnM=;
+        b=Kqp/4dpxAjj2w91RsWLg1cJuuC6W9XVQcsy7bUjFQqIK5Ja8h8gurovv/KCibSsb1W
+         YperoAf/UJO9EGb8SyxUwUDa2Sjh6tXUaEXTOMgZpQ6oK0/h05oMrdkHeMnLyyEVJPMO
+         MprsgdvcUyKLQFd/gOWNG5H4mMsUPABx5aM+uDyW7tFrtWtJZM4TcABRUxAMufEYD7d2
+         yJd+WTXbeNBaJ4lMtp+qFqXNIYV0Y4DaW3POEO34pCQlm5As+UMvjyJJDDpBHcxhjQF7
+         kxU1svIxtTwqvylg/PG+XH1Mg4rXNV0+ghTRvIgTOAHj6fXZ71j9hvh24jhr2LW4RcJf
+         dvLA==
+X-Gm-Message-State: APjAAAVOhZHBOzBzE+kiqaxmdoPM8npA+X/pRzdrwb0TIvnA5kMi2JpI
+        /PDX9lUqpohBfjdFfX8/0CUycsYHAcMn0deNraM=
+X-Google-Smtp-Source: APXvYqxVzBCz2z5lqzdxpNmw8G28OvwDLnSjW/jq4i9r6CTFqX3Rh2cIc7OoM7I6Ne/jzVD78lZQVrIa5iSUffAmF6U=
+X-Received: by 2002:a9d:7984:: with SMTP id h4mr12522971otm.297.1578900348041;
+ Sun, 12 Jan 2020 23:25:48 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200110094913.1.I146403d05b9ec82f48b807efd416a57f545b447a@changeid>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUyMcRz3u+d67sk6/VzS13nLg6Gt3FMdD66bEbut/mhsbDblWT27y726
-        5zInJq+9yGGYuSRmtooNKZIs6yL9IU4IvZCaFdLUSt7d3ZPpv8/v+/l8Xz7f35ciFJWkksq0
-        OHi7hTPR5ETpTc+imOjyaTNSVbdzMfu1+ZuEPTc0k32075OMLe34EsS21Jwl2aEjDYgdutaN
-        2La9pSTb0+UiVwbrinK8Ut3F2j6Jrv1FLam7/rlaonNVliNdXqNTN1QxK0W2yagx8FwGb4/k
-        LenWjEyLPoFOWp+2Ok29RMVEM8vYpXSkhTPzCXRickr02kyTbzA6cjtnyvKFUjhBoBdrNXZr
-        loOPNFgFRwLN2zJMtmW2GIEzC1kWfUy61bycUali1T7hFqOhauSWxOaau2Ow+heRg/5ML0AU
-        BTgePo5oC9BESoGrEfQPvyELULDvMYggt5UQiREEl991Sf4lNJYvEDV3ETTsSxY1Awj2luQT
-        fiIMbwSXp1vqJ6bgnwgODvwOEATWwwPPd5kfkzgK6npfBrqF4jnwfLQb+bEca2HwcmEAS/F8
-        uHd/f0ATjjdA080DY5rJ0HSmR+ofKBivgyvelWL5CHjdUyIR8Wy41X82YADwYRlcazwVqAM4
-        Ee48fBwk4jD40FgpE7ES+o4eGsPZUNbUQIrJeQgq656MJcRB3aUTgU0QeBFcrVkshufA7R/F
-        SGw8CT4PFwaJy5JD3iGFKJkLLW87JCKeBhdz88ljiHaPc+MeZ8E9zoL7f7PzSFqOpvI2wazn
-        BcYWP/6rK1DgYqPYalTbnFyPMIXoEDnsnp6qCOK2C05zPQKKoKfIK5qVqQp5BufcydutafYs
-        Ey/UI7Vv2ccJZXi61Xf/Fkcao46Ni4tj45klaoahI+TUqHezAus5B2/keRtv/5cnoYKVOWi2
-        c33q/nuKA0kP79o7tbHGYnKdxtPOJM0rzF8R7+3SPN76u7vI1fttoTG9TfbSWpYUSpYY96g9
-        pa/zd2kivDdqXpWdDDkV5nCiVsWGxCrDhM5i969tLbOEC52bbbpViVVr5oeHbuv42vpee/pZ
-        zLDqcHZY0wvjTPT0w6ZRE+8laKlg4Jgowi5wfwEuQuVhxwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsWy7bCSnO5KSZk4g5uvxC2+n/vJZDHvs6zF
-        2aY37BYr7n5ktbi8aw6bxefeI4wWnzc8ZrS43biCzeLJwz42B06P2Q0XWTwW73nJ5HHn2h42
-        j43vdjB59G1ZxejRcbzS4/MmuQD2KC6blNSczLLUIn27BK6Mrd+2MxX0KVd82vGXuYHxv3QX
-        IweHhICJxPFV6l2MXBxCArsZJfp6HzN1MXICxSUlpl08ygxRIyxx+HAxRM1bRomtJ94wg9QI
-        C4RLTLy4nw0kISLwj1Gi+eYWNpAEs0C6xPN1B8GKhASWMkrMvGsNYrMJaEnsf3EDrIZfQFHi
-        6o/HjCA2r4CdxKfVPWA2i4CqxIGjzWA1ogJhEjuXQBzEKyAocXLmExaQgzgFgiTWXHSAWKUu
-        8WfeJWYIW1zi1pP5TBC2vMT2t3OYJzAKz0LSPQtJyywkLbOQtCxgZFnFKJlaUJybnltsWGCY
-        l1quV5yYW1yal66XnJ+7iREcb1qaOxgvL4k/xCjAwajEwytRKx0nxJpYVlyZe4hRgoNZSYR3
-        0zmpOCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8T/OORQoJpCeWpGanphakFsFkmTg4pRoY8/4s
-        SPp25MPxuRxVanq7Gn68CKu8JFwn9uO759sS7h1t6cfOTJ7hLVnx1HXxNHPGc643f5RYnL3i
-        wnPIwv8KR+M1CYPmHia/+uBp3Ua+TLs2Zrh+1ZiV9a3GJOLIxGLVmpe2KWlKv8QuT+0pmNBy
-        4fAH/33X1Y4wz1vlFZBZdD3qf5B2xCkjJZbijERDLeai4kQALv4pgLMCAAA=
-X-CMS-MailID: 20200113071801epcas1p3d1cbe0cebee63c3457512a94850d4784
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200110174931epcas1p49c79567945e125829188174293d99850
-References: <CGME20200110174931epcas1p49c79567945e125829188174293d99850@epcas1p4.samsung.com>
-        <20200110094913.1.I146403d05b9ec82f48b807efd416a57f545b447a@changeid>
+References: <20200112171349.22268-1-geert@linux-m68k.org> <9286d81a883f4795176182fdb9e69bc19a8232c7.camel@perches.com>
+In-Reply-To: <9286d81a883f4795176182fdb9e69bc19a8232c7.camel@perches.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 13 Jan 2020 08:25:36 +0100
+Message-ID: <CAMuHMdXRpKJNm6tFjccO67dQr=_Hc4rD1NmJzzrHPDEyja0R5w@mail.gmail.com>
+Subject: Re: [PATCH] rtc: i2c/spi: Avoid inclusion of REGMAP support when not needed
+To:     Joe Perches <joe@perches.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        linux-rtc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Joe,
 
-On 1/11/20 2:49 AM, Matthias Kaehlcke wrote:
-> Now that devfreq supports limiting the frequency range of a device
-> through PM QoS make use of it instead of disabling OPPs that should
-> not be used.
-> 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> 
->  drivers/thermal/devfreq_cooling.c | 66 ++++++++++---------------------
->  1 file changed, 20 insertions(+), 46 deletions(-)
-> 
-> diff --git a/drivers/thermal/devfreq_cooling.c b/drivers/thermal/devfreq_cooling.c
-> index ef59256887ff..3a63603afcf2 100644
-> --- a/drivers/thermal/devfreq_cooling.c
-> +++ b/drivers/thermal/devfreq_cooling.c
-> @@ -24,11 +24,13 @@
->  #include <linux/idr.h>
->  #include <linux/slab.h>
->  #include <linux/pm_opp.h>
-> +#include <linux/pm_qos.h>
->  #include <linux/thermal.h>
->  
->  #include <trace/events/thermal.h>
->  
-> -#define SCALE_ERROR_MITIGATION 100
-> +#define HZ_PER_KHZ		1000
-> +#define SCALE_ERROR_MITIGATION	100
->  
->  static DEFINE_IDA(devfreq_ida);
->  
-> @@ -65,49 +67,9 @@ struct devfreq_cooling_device {
->  	struct devfreq_cooling_power *power_ops;
->  	u32 res_util;
->  	int capped_state;
-> +	struct dev_pm_qos_request req_max_freq;
+On Mon, Jan 13, 2020 at 7:36 AM Joe Perches <joe@perches.com> wrote:
+> On Sun, 2020-01-12 at 18:13 +0100, Geert Uytterhoeven wrote:
+> > Merely enabling I2C and RTC selects REGMAP_I2C and REGMAP_SPI, even when
+> > no driver needs it.  While the former can be moduler, the latter cannot,
+> > and thus becomes built-in.
+> >
+> > Fix this by moving the select statements for REGMAP_I2C and REGMAP_SPI
+> > from the RTC_I2C_AND_SPI helper to the individual drivers that depend on
+> > it.
+> >
+> > Note that the comment for RTC_I2C_AND_SPI refers to SND_SOC_I2C_AND_SPI
+> > for more information, but the latter does not select REGMAP_{I2C,SPI}
+> > itself, and defers that to the individual drivers, too.
+> >
+> > Fixes: 080481f54ef62121 ("rtc: merge ds3232 and ds3234")
+> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > ---
+> > Joe: When merging addresses, scripts/get_maintainer.pl replaces
+> >      Alexandre's authoritative email address from MAINTAINERS by the
+> >      obsolete address in the SoB-line of the commit referred to by the
+> >      Fixes-line.
+>
+> Hi Geert
+>
+> What are you doing to get this changed output?
 
-Need to add the description of 'req_max_freq'.
+scripts/get_maintainer.pl
+0001-rtc-i2c-spi-Avoid-inclusion-of-REGMAP-support-when-n.patch
 
->  };
->  
-> -/**
-> - * partition_enable_opps() - disable all opps above a given state
-> - * @dfc:	Pointer to devfreq we are operating on
-> - * @cdev_state:	cooling device state we're setting
-> - *
-> - * Go through the OPPs of the device, enabling all OPPs until
-> - * @cdev_state and disabling those frequencies above it.
-> - */
-> -static int partition_enable_opps(struct devfreq_cooling_device *dfc,
-> -				 unsigned long cdev_state)
-> -{
-> -	int i;
-> -	struct device *dev = dfc->devfreq->dev.parent;
-> -
-> -	for (i = 0; i < dfc->freq_table_size; i++) {
-> -		struct dev_pm_opp *opp;
-> -		int ret = 0;
-> -		unsigned int freq = dfc->freq_table[i];
-> -		bool want_enable = i >= cdev_state ? true : false;
-> -
-> -		opp = dev_pm_opp_find_freq_exact(dev, freq, !want_enable);
-> -
-> -		if (PTR_ERR(opp) == -ERANGE)
-> -			continue;
-> -		else if (IS_ERR(opp))
-> -			return PTR_ERR(opp);
-> -
-> -		dev_pm_opp_put(opp);
-> -
-> -		if (want_enable)
-> -			ret = dev_pm_opp_enable(dev, freq);
-> -		else
-> -			ret = dev_pm_opp_disable(dev, freq);
-> -
-> -		if (ret)
-> -			return ret;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
->  static int devfreq_cooling_get_max_state(struct thermal_cooling_device *cdev,
->  					 unsigned long *state)
->  {
-> @@ -134,7 +96,7 @@ static int devfreq_cooling_set_cur_state(struct thermal_cooling_device *cdev,
->  	struct devfreq_cooling_device *dfc = cdev->devdata;
->  	struct devfreq *df = dfc->devfreq;
->  	struct device *dev = df->dev.parent;
-> -	int ret;
-> +	unsigned long freq;
->  
->  	if (state == dfc->cooling_state)
->  		return 0;
-> @@ -144,9 +106,10 @@ static int devfreq_cooling_set_cur_state(struct thermal_cooling_device *cdev,
->  	if (state >= dfc->freq_table_size)
->  		return -EINVAL;
->  
-> -	ret = partition_enable_opps(dfc, state);
-> -	if (ret)
-> -		return ret;
-> +	freq = dfc->freq_table[state];
-> +
-> +	dev_pm_qos_update_request(&dfc->req_max_freq,
-> +				  DIV_ROUND_UP(freq, HZ_PER_KHZ));
->  
->  	dfc->cooling_state = state;
->  
-> @@ -529,6 +492,12 @@ of_devfreq_cooling_register_power(struct device_node *np, struct devfreq *df,
->  	if (err)
->  		goto free_dfc;
->  
-> +	err = dev_pm_qos_add_request(df->dev.parent, &dfc->req_max_freq,
-> +				     DEV_PM_QOS_MAX_FREQUENCY,
-> +				     PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE);
-> +	if (err < 0)
-> +		goto remove_qos_req;
+> I get the same get_maintainer address output either way
+> with only with the 'blamed_fixes:' content added.
 
-Jump 'free_table' instead of 'remove_qos_req'.
+Thanks, I can confirm it's fixed in next-20200110.
+With v5.5-rc6, it still gives the old addresss.
 
-> +
->  	err = ida_simple_get(&devfreq_ida, 0, 0, GFP_KERNEL);
->  	if (err < 0)
->  		goto free_tables;
+Gr{oetje,eeting}s,
 
-Jump remove_qos_req.
-
-> @@ -552,6 +521,10 @@ of_devfreq_cooling_register_power(struct device_node *np, struct devfreq *df,
->  
->  release_ida:
->  	ida_simple_remove(&devfreq_ida, dfc->id);
-> +
-> +remove_qos_req:
-> +	dev_pm_qos_remove_request(&dfc->req_max_freq);
-> +
->  free_tables:
->  	kfree(dfc->power_table);
->  	kfree(dfc->freq_table);
-> @@ -600,6 +573,7 @@ void devfreq_cooling_unregister(struct thermal_cooling_device *cdev)
->  
->  	thermal_cooling_device_unregister(dfc->cdev);
->  	ida_simple_remove(&devfreq_ida, dfc->id);
-> +	dev_pm_qos_remove_request(&dfc->req_max_freq);
->  	kfree(dfc->power_table);
->  	kfree(dfc->freq_table);
->  
-> 
-
+                        Geert
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
