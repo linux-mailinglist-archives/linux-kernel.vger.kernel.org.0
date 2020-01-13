@@ -2,220 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70DE41391F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:16:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FE601391FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:17:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728799AbgAMNQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 08:16:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56674 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728665AbgAMNQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 08:16:04 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A52002084D;
-        Mon, 13 Jan 2020 13:16:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578921363;
-        bh=oX5RNVQOBetV4NJMyewr/mdJ/5Gu/c4OIVB/RmVIVd0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=tGljm+3nrP9sYsoFbMpeT74unxT9hZmy4oTmZrEqUnSLEekT30DtQENpeta57mtDR
-         VMxfOFLY8ohQXp3SgLPTxPxhTbNOpQ6rWno5SZyHEFXnI4mf+V6rVQkolvMEE0md56
-         BcIDn9SH2ci61Mi7boCZboT1m4CJUrRzMMfx0e4g=
-Date:   Mon, 13 Jan 2020 22:15:59 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     rostedt@goodmis.org, artem.bityutskiy@linux.intel.com,
-        mhiramat@kernel.org, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v2 02/12] tracing: Add get/put_event_file()
-Message-Id: <20200113221559.3e101e6bbec5c2f6ae6046ba@kernel.org>
-In-Reply-To: <579e368b01dccadb0dff24f985535f0fcea0a7c2.1578688120.git.zanussi@kernel.org>
-References: <cover.1578688120.git.zanussi@kernel.org>
-        <579e368b01dccadb0dff24f985535f0fcea0a7c2.1578688120.git.zanussi@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728795AbgAMNRr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 08:17:47 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39013 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728646AbgAMNRr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 08:17:47 -0500
+Received: by mail-wr1-f68.google.com with SMTP id y11so8527295wrt.6
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 05:17:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=tLJdz8uHGTwFRe/HfbeIyswyOes5Ps1w2SyZzjK0TNI=;
+        b=oJ30OfnCy02mfkWDYfM6xJM6U4Ab0kvMs5beVhw0Sqr61CvOixDWeh8PqjtINQwt0d
+         A867CVEQp98L5jJ1b2/31cz6mXrjuWnk5GF4jIfjSqYN1cQBkWuRe2RltVQrUwNvdqPB
+         XGf1fUv+QJXpdfnxcNt29RsAgRM3QVOVij+9WBaIxSHOOh+uPGvZxG0Ef9ftujiYJqMW
+         14sGUu3FksxgHoT0X9xHSxhOGYp/yPH0v4ouRv0yK6hMh2yiysnDuHibM4s94DSDTj+j
+         +v3cGQ5D3qRo3o5NCtX0FDeN15dRuGewPgYuAZB5DvuHtLuN17Nr4fjC/2aDFfMO2W9j
+         wWsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=tLJdz8uHGTwFRe/HfbeIyswyOes5Ps1w2SyZzjK0TNI=;
+        b=LfStC01TL1hcUNX71DSYjAg7Q1N4XXuUL66yBy7cnrBQTddaJ98N/22zzcBbkrcQE/
+         KsM4kWtrC4Kd8gkwGsteUs2GUcdfCQfNKpVhk4eda9U0Zm/dyZd+qbtKLN0K7Ao2zerj
+         IJAUyH3m+Tf0qPBnFOv8IrnvKCFhvk7jIWpE2H/c+PfaUXYtuhkLlAq9CiPpQjgyuDzh
+         SgkDXCxZlWUicMbVuxO4lZKpfc0Chg5GTCatsET2lWUMl46R7dQgfE9p2glznerJph55
+         RSc9M3Hm+x1v9U5cKIoXtQLBXygOs4uMhi09IIzAL5khtJmSLnRZJxXpt7flvw7/Qvgt
+         uJCA==
+X-Gm-Message-State: APjAAAUDNjryFvQxJgi3PXw6PsWTJbXZBzq6p0lnbTf0VimLV5uqvY5Z
+        bf4XvfdcrAcKnlANXEq7kHY=
+X-Google-Smtp-Source: APXvYqypgXFDN3UkdfYGIXJRIf4nrTfjdzE2wUiuGM7IrbMrIloOZZE987luKGr5Shnf5Cgg4xzGCw==
+X-Received: by 2002:adf:e74a:: with SMTP id c10mr18004142wrn.386.1578921465172;
+        Mon, 13 Jan 2020 05:17:45 -0800 (PST)
+Received: from wambui.local ([197.237.61.225])
+        by smtp.googlemail.com with ESMTPSA id b18sm15054407wru.50.2020.01.13.05.17.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jan 2020 05:17:44 -0800 (PST)
+From:   Wambui Karuga <wambui.karugax@gmail.com>
+X-Google-Original-From: Wambui Karuga <wambui@wambui>
+Date:   Mon, 13 Jan 2020 16:17:11 +0300 (EAT)
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+cc:     Chris Wilson <chris@chris-wilson.co.uk>,
+        Wambui Karuga <wambui.karugax@gmail.com>, airlied@linux.ie,
+        daniel@ffwll.ch, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, sean@poorly.run,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/i915: convert to new logging macros based on struct
+ intel_engine_cs.
+In-Reply-To: <87lfqbmudl.fsf@intel.com>
+Message-ID: <alpine.LNX.2.21.99999.375.2001131616050.10470@wambui>
+References: <20200113111025.2048-1-wambui.karugax@gmail.com> <157891427231.27314.12398974277241668021@skylake-alporthouse-com> <87lfqbmudl.fsf@intel.com>
+User-Agent: Alpine 2.21.99999 (LNX 375 2019-10-29)
+MIME-Version: 1.0
+Content-Type: text/plain; format=flowed; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tom,
 
-On Fri, 10 Jan 2020 14:35:08 -0600
-Tom Zanussi <zanussi@kernel.org> wrote:
 
-> Add a function to get an event file and prevent it from going away on
-> module or instance removal.
-> 
-> get_event_file() will find an event file in a given instance (if
-> instance is NULL, it assumes the top trace array) and return it,
-> pinning the instance's trace array as well as the event's module, if
-> applicable, so they won't go away while in use.
-> 
-> put_event_file() does the matching release.
-> 
-> Signed-off-by: Tom Zanussi <zanussi@kernel.org>
-> ---
->  include/linux/trace_events.h |  5 +++
->  kernel/trace/trace_events.c  | 87 ++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 92 insertions(+)
-> 
-> diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-> index 4c6e15605766..bc634f4e0158 100644
-> --- a/include/linux/trace_events.h
-> +++ b/include/linux/trace_events.h
-> @@ -348,6 +348,11 @@ enum {
->  	EVENT_FILE_FL_WAS_ENABLED_BIT,
->  };
->  
-> +extern struct trace_event_file *get_event_file(const char *instance,
-> +					       const char *system,
-> +					       const char *event);
-> +extern void put_event_file(struct trace_event_file *file);
-> +
->  /*
->   * Event file flags:
->   *  ENABLED	  - The event is enabled
-> diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-> index c6de3cebc127..184e10d3772d 100644
-> --- a/kernel/trace/trace_events.c
-> +++ b/kernel/trace/trace_events.c
-> @@ -2535,6 +2535,93 @@ find_event_file(struct trace_array *tr, const char *system, const char *event)
->  	return file;
->  }
->  
-> +/**
-> + * get_event_file - Find and return a trace event file
-> + * @instance: The name of the trace instance containing the event
-> + * @system: The name of the system containing the event
-> + * @event: The name of the event
-> + *
-> + * Return a trace event file given the trace instance name, trace
-> + * system, and trace event name.  If the instance name is NULL, it
-> + * refers to the top-level trace array.
-> + *
-> + * This function will look it up and return it if found, after calling
-> + * trace_array_get() to prevent the instance from going away, and
-> + * increment the event's module refcount to prevent it from being
-> + * removed.
-> + *
-> + * To release the file, call put_event_file(), which will call
-> + * trace_array_put() and decrement the event's module refcount.
-> + *
-> + * Return: The trace event on success, ERR_PTR otherwise.
-> + */
-> +struct trace_event_file *get_event_file(const char *instance,
-> +					const char *system,
-> +					const char *event)
-> +{
-> +	struct trace_array *tr = top_trace_array();
-> +	struct trace_event_file *file = NULL;
-> +	int ret = -EINVAL;
-> +
-> +	if (instance) {
-> +		mutex_lock(&trace_types_lock);
-> +		tr = trace_array_find(instance);
-> +		mutex_unlock(&trace_types_lock);
-> +		if (!tr)
-> +			return ERR_PTR(ret);
-> +	}
-> +
-> +	ret = trace_array_get(tr);
-> +	if (ret)
-> +		return ERR_PTR(ret);
+On Mon, 13 Jan 2020, Jani Nikula wrote:
 
-This seems a bit odd. I think we should introduce 
-trace_array_find_get(instance) so that we don't take care of
-loosing tr there. It should be something like
+> On Mon, 13 Jan 2020, Chris Wilson <chris@chris-wilson.co.uk> wrote:
+>> Quoting Wambui Karuga (2020-01-13 11:10:25)
+>>> fn(...) {
+>>> ...
+>>> struct intel_engine_cs *E = ...;
+>>> +struct drm_i915_private *dev_priv = E->i915;
+>>
+>> No new dev_priv.
+>
+> Wambui, we're gradually converting all dev_priv variable and parameter
+> names to i915.
+>
+Okay, I can change to that - dev_priv seemed more used in the files I 
+changed.
 
-trace_array_find_get(instance) {
-	mutex_lock(&trace_types_lock);
-	tr = trace_array_find(instance);
-	if (tr)
-		tr->ref++;
-	mutex_unlock(&trace_types_lock);
-	return tr;
-}
-
-Then we can write it as below;
-
-	struct trace_array *tr = top_trace_array();
-
-	if (instance) {
-		tr = trace_array_find_get(instance);
-		if (!tr)
-			return -ENOENT;
-	} else
-		trace_array_get(tr);/* We never loose top trace_array */
-	...
-
-This will fail only if there is no instance.
-
-BTW, I think the function name should be get_trace_event_file()
-because "event_file" sounds a bit generic. (or trace_get_event_file()
-will give us a good namespace)
-
-Thank you,
-
-> +
-> +	mutex_lock(&event_mutex);
-> +
-> +	file = find_event_file(tr, system, event);
-> +	if (!file) {
-> +		trace_array_put(tr);
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	/* Don't let event modules unload while in use */
-> +	ret = try_module_get(file->event_call->mod);
-> +	if (!ret) {
-> +		trace_array_put(tr);
-> +		ret = -EBUSY;
-> +		goto out;
-> +	}
-> +
-> +	ret = 0;
-> + out:
-> +	mutex_unlock(&event_mutex);
-> +
-> +	if (ret)
-> +		file = ERR_PTR(ret);
-> +
-> +	return file;
-> +}
-> +EXPORT_SYMBOL_GPL(get_event_file);
-> +
-> +/**
-> + * put_event_file - Release a file from get_event_file()
-> + * @file: The trace event file
-> + *
-> + * If a file was retrieved using get_event_file(), this should be
-> + * called when it's no longer needed.  It will cancel the previous
-> + * trace_array_get() called by that function, and decrement the
-> + * event's module refcount.
-> + */
-> +void put_event_file(struct trace_event_file *file)
-> +{
-> +	trace_array_put(file->tr);
-> +
-> +	mutex_lock(&event_mutex);
-> +	module_put(file->event_call->mod);
-> +	mutex_unlock(&event_mutex);
-> +}
-> +EXPORT_SYMBOL_GPL(put_event_file);
-> +
->  #ifdef CONFIG_DYNAMIC_FTRACE
->  
->  /* Avoid typos */
+Thanks,
+wambui
+>> There should be no reason for drm_dbg here, as the rest of the debug is
+>> behind ENGINE_TRACE and so the vestigial debug should be moved over, or
+>> deleted as not being useful.
+>>
+>> The error messages look unhelpful.
+>
+> I don't think you can expect any meaninful improvements on the debug
+> message contents from Wambui without detailed help at this point.
+>
+>>
+>>>                 if ((batch_end - cmd) < length) {
+>>> -                       DRM_DEBUG("CMD: Command length exceeds batch length: 0x%08X length=%u batchlen=%td\n",
+>>> -                                 *cmd,
+>>> -                                 length,
+>>> -                                 batch_end - cmd);
+>>> +                       drm_dbg(&dev_priv->drm,
+>>> +                               "CMD: Command length exceeds batch length: 0x%08X length=%u batchlen=%td\n",
+>>
+>> No. This is not driver debug. If anything this should be pr_debug, or
+>> some over user centric channel.
+>
+> I'm sorry, I still don't understand your reasoning here.
+>
+> BR,
+> Jani.
+>
 > -- 
-> 2.14.1
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+> Jani Nikula, Intel Open Source Graphics Center
+>
