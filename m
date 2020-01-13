@@ -2,173 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C3DE138E06
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:43:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA9FD138E0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:44:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727325AbgAMJnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 04:43:21 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51760 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726127AbgAMJnV (ORCPT
+        id S1728682AbgAMJoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 04:44:05 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:31248 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726109AbgAMJoF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 04:43:21 -0500
-Received: by mail-wm1-f68.google.com with SMTP id d73so8844304wmd.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 01:43:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PHx6WmDbUjJ36Jl+g3c5bGGBL+IPquArbpNqxaiK16s=;
-        b=EfnB1nq4V68FEsTjQCUQnWpZE9rQyBa/cUPWKvQou1+R2njQCVYQzJbBt1ZPRu1rAe
-         wY+lQNDa01pAkV0/0BAX3kRz187MIvZdfkqw3tk8tZzczQwXgbjSa0GpVYhJmh5zp6cG
-         2XIrvqlhqgnReKjnEqvDRvXR7EsmpHi/NFzwE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PHx6WmDbUjJ36Jl+g3c5bGGBL+IPquArbpNqxaiK16s=;
-        b=BdwVG+oluDHGfJvE1KuD1WlKEP04dg+clac1J8bodlVL9ptD/DhFzrKK+iBwxdn83D
-         A1b6Y3YXFeXiwImj5dhWLglli339IFfFlSny7PMPLtBJiwD4B99C6TMktw0FhOzCVo6l
-         JpPmoT4aDyt0HiKGKQyNgDkccc8JwySuLGreDTkP5wgEZrLyWdVoiKA0JaIzGcazSEgY
-         ocF89YHLOTvTRk3R1jdX+zeRHVaqNGz0vTelcy4ts1GW9+350UnG5t51Nivo/1E/f/Gk
-         DPqYHtGQuVmiO2Fp4ENld7mbOjl+rohZX60XuVwh1qe+bZ6bTiC2arzSu4s5v4jTyRJr
-         CyPA==
-X-Gm-Message-State: APjAAAUcPlUUx7mz3hxs+6vDpNpVNc7/SdpYl8uhiTHhB9gUZJf104FT
-        vmrvhLS+gI7zH30j4O+E7Me84g==
-X-Google-Smtp-Source: APXvYqyDB1HygQVzeq7b71coPvKzhzZ5OHSFXJXnQ+tWJRnTwXMu3t3bcqlFiLsONGC54SCkJyIWnQ==
-X-Received: by 2002:a1c:f30e:: with SMTP id q14mr18991444wmq.65.1578908599336;
-        Mon, 13 Jan 2020 01:43:19 -0800 (PST)
-Received: from revest.zrh.corp.google.com ([2a00:79e0:42:204:51d1:d96e:f72e:c8c0])
-        by smtp.gmail.com with ESMTPSA id m126sm13919276wmf.7.2020.01.13.01.43.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 01:43:18 -0800 (PST)
-From:   Florent Revest <revest@chromium.org>
-To:     linux-integrity@vger.kernel.org
-Cc:     kpsingh@chromium.org, mjg59@google.com, zohar@linux.ibm.com,
-        nramas@linux.microsoft.com, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Florent Revest <revest@google.com>
-Subject: [PATCH v3] ima: add the ability to query the cached hash of a given file
-Date:   Mon, 13 Jan 2020 10:42:44 +0100
-Message-Id: <20200113094244.26678-1-revest@chromium.org>
-X-Mailer: git-send-email 2.25.0.rc1.283.g88dfdc4193-goog
+        Mon, 13 Jan 2020 04:44:05 -0500
+X-UUID: a7a924d8f3c94e06905adf654f92c162-20200113
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=noXFWD818Dq+jF4a9F98f3vlDXsWrqXwFtIlauFJG+o=;
+        b=O5mblPXUPPoqu1XDQ1PgPL2XFjBMI9Cbdy6qQVITdxVNm8AD51kTdM0QjIfSvT9WAuH+v2LcD5mWtvQNSKruE+sT9V7PoojnQxGn20INbspilCcn/sSLSvx5vDSSfNUK+ej2wlNUpY49v0htzOLio5qfQddncLPXL/4x+cPUIDI=;
+X-UUID: a7a924d8f3c94e06905adf654f92c162-20200113
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 11348014; Mon, 13 Jan 2020 17:43:49 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 13 Jan 2020 17:42:52 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 13 Jan 2020 17:44:25 +0800
+Message-ID: <1578908621.17435.18.camel@mtkswgap22>
+Subject: RE: [EXT] [PATCH v1 1/3] scsi: ufs: fix empty check of error history
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     "Bean Huo (beanhuo)" <beanhuo@micron.com>
+CC:     "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "avri.altman@wdc.com" <avri.altman@wdc.com>,
+        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
+        "cang@codeaurora.org" <cang@codeaurora.org>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kuohong.wang@mediatek.com" <kuohong.wang@mediatek.com>,
+        "peter.wang@mediatek.com" <peter.wang@mediatek.com>,
+        "chun-hung.wu@mediatek.com" <chun-hung.wu@mediatek.com>,
+        "andy.teng@mediatek.com" <andy.teng@mediatek.com>
+Date:   Mon, 13 Jan 2020 17:43:41 +0800
+In-Reply-To: <BN7PR08MB56841F049CEF89CD8F40B4E3DB350@BN7PR08MB5684.namprd08.prod.outlook.com>
+References: <1578147968-30938-1-git-send-email-stanley.chu@mediatek.com>
+         <1578147968-30938-2-git-send-email-stanley.chu@mediatek.com>
+         <BN7PR08MB56841F049CEF89CD8F40B4E3DB350@BN7PR08MB5684.namprd08.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TM-SNTS-SMTP: 0B6A6572D0047A1634FF6C19BE1983D218D296312C76252440D25A87F28CA4082000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florent Revest <revest@google.com>
-
-This allows other parts of the kernel (perhaps a stacked LSM allowing
-system monitoring, eg. the proposed KRSI LSM [1]) to retrieve the hash
-of a given file from IMA if it's present in the iint cache.
-
-It's true that the existence of the hash means that it's also in the
-audit logs or in /sys/kernel/security/ima/ascii_runtime_measurements,
-but it can be difficult to pull that information out for every
-subsequent exec. This is especially true if a given host has been up
-for a long time and the file was first measured a long time ago.
-
-It should be kept in mind that this function gives access to cached
-entries which can be removed, for instance on security_inode_free().
-
-This is based on Peter Moody's patch:
- https://sourceforge.net/p/linux-ima/mailman/message/33036180/
-
-[1] https://lkml.org/lkml/2019/9/10/393
-
-Signed-off-by: Florent Revest <revest@google.com>
----
- include/linux/ima.h               |  6 ++++
- security/integrity/ima/ima_main.c | 49 +++++++++++++++++++++++++++++++
- 2 files changed, 55 insertions(+)
-
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index f4644c54f648..1659217e9b60 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -23,6 +23,7 @@ extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
- extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 			      enum kernel_read_file_id id);
- extern void ima_post_path_mknod(struct dentry *dentry);
-+extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
- extern void ima_kexec_cmdline(const void *buf, int size);
- 
- #ifdef CONFIG_IMA_KEXEC
-@@ -91,6 +92,11 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
- 	return;
- }
- 
-+static inline int ima_file_hash(struct file *file, char *buf, size_t buf_size)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- static inline void ima_kexec_cmdline(const void *buf, int size) {}
- #endif /* CONFIG_IMA */
- 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 2272c3255c7d..9fe949c6a530 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -445,6 +445,55 @@ int ima_file_check(struct file *file, int mask)
- }
- EXPORT_SYMBOL_GPL(ima_file_check);
- 
-+/**
-+ * ima_file_hash - return the stored measurement if a file has been hashed and
-+ * is in the iint cache.
-+ * @file: pointer to the file
-+ * @buf: buffer in which to store the hash
-+ * @buf_size: length of the buffer
-+ *
-+ * On success, return the hash algorithm (as defined in the enum hash_algo).
-+ * If buf is not NULL, this function also outputs the hash into buf.
-+ * If the hash is larger than buf_size, then only buf_size bytes will be copied.
-+ * It generally just makes sense to pass a buffer capable of holding the largest
-+ * possible hash: IMA_MAX_DIGEST_SIZE.
-+ * The file hash returned is based on the entire file, including the appended
-+ * signature.
-+ *
-+ * If IMA is disabled or if no measurement is available, return -EOPNOTSUPP.
-+ * If the parameters are incorrect, return -EINVAL.
-+ */
-+int ima_file_hash(struct file *file, char *buf, size_t buf_size)
-+{
-+	struct inode *inode;
-+	struct integrity_iint_cache *iint;
-+	int hash_algo;
-+
-+	if (!file)
-+		return -EINVAL;
-+
-+	if (!ima_policy_flag)
-+		return -EOPNOTSUPP;
-+
-+	inode = file_inode(file);
-+	iint = integrity_iint_find(inode);
-+	if (!iint)
-+		return -EOPNOTSUPP;
-+
-+	mutex_lock(&iint->mutex);
-+	if (buf) {
-+		size_t copied_size;
-+
-+		copied_size = min_t(size_t, iint->ima_hash->length, buf_size);
-+		memcpy(buf, iint->ima_hash->digest, copied_size);
-+	}
-+	hash_algo = iint->ima_hash->algo;
-+	mutex_unlock(&iint->mutex);
-+
-+	return hash_algo;
-+}
-+EXPORT_SYMBOL_GPL(ima_file_hash);
-+
- /**
-  * ima_post_create_tmpfile - mark newly created tmpfile as new
-  * @file : newly created tmpfile
--- 
-2.25.0.rc1.283.g88dfdc4193-goog
+SGkgQmVhbiwNCg0KT24gTW9uLCAyMDIwLTAxLTEzIGF0IDA5OjI4ICswMDAwLCBCZWFuIEh1byAo
+YmVhbmh1bykgd3JvdGU6DQo+IEhpLCBTdGFubGV5DQo+IA0KPiA+IA0KPiA+IEN1cnJlbnRseSBj
+aGVja2luZyBpZiBhbiBlcnJvciBoaXN0b3J5IGVsZW1lbnQgaXMgZW1wdHkgb3Igbm90IGlzIGJ5
+IGl0cyAidmFsdWUiLiBJbg0KPiA+IG1vc3QgY2FzZXMsIHZhbHVlIGlzIGVycm9yIGNvZGUuDQo+
+ID4gDQo+ID4gSG93ZXZlciB0aGlzIGNoZWNraW5nIGlzIG5vdCBjb3JyZWN0IGJlY2F1c2Ugc29t
+ZSBlcnJvcnMgb3IgZXZlbnRzIGRvIG5vdA0KPiA+IHNwZWNpZnkgYW55IHZhbHVlcyBpbiBlcnJv
+ciBoaXN0b3J5IHNvIHZhbHVlcyByZW1haW4gYXMgMCwgYW5kIHRoaXMgd2lsbCBsZWFkIHRvDQo+
+ID4gaW5jb3JyZWN0IGVtcHR5IGNoZWNraW5nLg0KPiA+IA0KPiBEbyB5b3UgdGhpbmsgdGhpcyBp
+cyBhIGJ1ZyBvZiBVRlMgaG9zdCBjb250cm9sbGVyPyBBY2NvcmRpbmcgdG8gdGhlIFVGUyBob3N0
+IFNwZWMsIA0KPiBJZiB0aGVyZSBoYWQgZXJyb3IgZGV0ZWN0ZWQgaW4gZWFjaCBsYXllciwgYXQg
+bGVhc3QgYml0MzEgaW4gaXRzIGVycm9yIGNvZGUgcmVnaXN0ZXINCj4gU2hvdWxkIGJlIHNldCB0
+byAxLg0KPiANCj4gV2h5IHRoZXJlIHdhcyBhbiBlcnJvciBoYXBwZW5pbmcsIGJ1dCBob3N0IGRp
+ZG4ndCBzZXQgdGhpcyBiaXQzMT8NCj4gDQoNClRoYW5rcyBzbyBtdWNoIGZvciByZXZpZXcuDQoN
+ClllcywgdGhlIGNhc2UgYml0WzMxXSBzZXQgaXMgdHJ1ZSBmb3IgVUlDIGVycm9ycy4NCg0KSG93
+ZXZlciB0aGUgdXNlcnMgb2YgVUZTIGVycm9yIGhpc3RvcnksIGkuZS4sIHVzZXJzIG9mDQp1ZnNo
+Y2RfdXBkYXRlX3JlZ19obGlzdCgpLCBhcmUgbm90IG9ubHkgVUlDIGVycm9ycy4gU29tZSBvdGhl
+ciBlc3NlbnRpYWwNCmV2ZW50cyB3aWxsIHVwZGF0ZSBoaXN0b3J5IHRvbywgZm9yIGV4YW1wbGUs
+IGRldmljZSByZXNldCBldmVudHMgYW5kDQphYm9ydCBldmVudHMuDQoNClRha2UgImRldmljZSBy
+ZXNldCBldmVudHMiIGFzIGV4YW1wbGU6IHBhcmFtZXRlciAidmFsIiBtYXkgYmUgMCB3aGlsZQ0K
+aW52b2tpbmcgdWZzaGNkX3VwZGF0ZV9yZWdfaGxpc3QoKS4gSWYgdGhpcyBoYXBwZW5zLCB0aGUg
+ZGV2aWNlIHJlc2V0DQpldmVudCB3aWxsIG5vdCBiZSBwcmludGVkIG91dCBiZWNhdXNlIGl0cyBl
+cnJfaGlzdC0+cmVnW3BdIGlzIDANCmFjY29yZGluZyB0byB0aGUgb3JpZ2luYWwgbG9naWMgaW4g
+dWZzaGNkX3ByaW50X2Vycl9oaXN0KCkuDQoNCkZlZWwgZnJlZSB0byBjb3JyZWN0IGFib3ZlIGRl
+c2NyaXB0aW9uIGlmIGl0IGlzIHdyb25nLg0KDQpUaGFua3MsDQpTdGFubGV5DQo=
 
