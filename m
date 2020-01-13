@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 775A413947B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 16:13:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8303139486
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 16:14:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729145AbgAMPN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 10:13:26 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35788 "EHLO
+        id S1729259AbgAMPNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 10:13:48 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35832 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728984AbgAMPNZ (ORCPT
+        with ESMTP id S1726567AbgAMPNZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 13 Jan 2020 10:13:25 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,25 +18,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=tlixcOKneo9O/YYLNit+XgxZ/59MVwRcpvHUMhzFhK8=; b=canBesDYGQvh
-        mP0iOfQh3HizOaT7JsXiEu4MjGeZ4GlBOlyG1Dlu2oHj8EdM9vnDL5RnHGJ6WhL0wKkAo2IVRj74n
-        Y267WhG3i83kDdhqhNFOjS+kdaYHVM8nNpDyzExzpc43enaIG/hiObItsdsEoLlMjSEWTnS42LDB7
-        1qsy8=;
+        List-Archive; bh=uFrGaqBqMIFQTWoUTLd2AHJDxVD5++0b99e80k3M46A=; b=X5fJP4DySo80
+        Ov4suuYvmlevk2n4zlKDRNZHfd4egno6ebxVPkdZUFKkTIFybM75JX6tUZOQcQ5CYRJtNlQLZuSQ/
+        +h7iJ2MZY75Vjxtb10BLIt67bLg8Hxsvq27NpRhSc44R5c9g1De1Svyx4+EdNAiM/4JlAarbikC32
+        a+7UU=;
 Received: from fw-tnat-cam7.arm.com ([217.140.106.55] helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1ir1P8-0003NS-IZ; Mon, 13 Jan 2020 15:13:22 +0000
+        id 1ir1P9-0003Nc-0v; Mon, 13 Jan 2020 15:13:23 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 4ACE7D01965; Mon, 13 Jan 2020 15:13:22 +0000 (GMT)
+        id B7236D01ECC; Mon, 13 Jan 2020 15:13:22 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: Applied "regulator: bd718x7: Simplify the code by removing struct bd718xx_pmic_inits" to the regulator tree
-In-Reply-To: <20200108014256.11282-1-axel.lin@ingics.com>
-Message-Id: <applied-20200108014256.11282-1-axel.lin@ingics.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     kernel-janitors@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Saravanan Sekar <sravanhome@gmail.com>
+Subject: Applied "regulator: mpq7920: Check the correct variable in mpq7920_regulator_register()" to the regulator tree
+In-Reply-To: <20200113125805.xri6jqoxy2ldzqyg@kili.mountain>
+Message-Id: <applied-20200113125805.xri6jqoxy2ldzqyg@kili.mountain>
 X-Patchwork-Hint: ignore
 Date:   Mon, 13 Jan 2020 15:13:22 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,7 +47,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: bd718x7: Simplify the code by removing struct bd718xx_pmic_inits
+   regulator: mpq7920: Check the correct variable in mpq7920_regulator_register()
 
 has been applied to the regulator tree at
 
@@ -71,95 +72,38 @@ to this mail.
 Thanks,
 Mark
 
-From b389ceae4a8fa4c91dd3543516cdfd49ece7e4ba Mon Sep 17 00:00:00 2001
-From: Axel Lin <axel.lin@ingics.com>
-Date: Wed, 8 Jan 2020 09:42:55 +0800
-Subject: [PATCH] regulator: bd718x7: Simplify the code by removing struct
- bd718xx_pmic_inits
+From 7eec67869893bc34bd3a3126e5124a4ef017e0cd Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 Jan 2020 15:59:33 +0300
+Subject: [PATCH] regulator: mpq7920: Check the correct variable in
+ mpq7920_regulator_register()
 
-Nowdays ROHM_CHIP_TYPE_AMOUNT includes not only BD71837/BD71847 but also
-BD70528/BD71828 which are not supported by this driver. So it seems not
-necessay to have pmic_regulators[ROHM_CHIP_TYPE_AMOUNT] as mapping table.
-Simplify the code by removing struct bd718xx_pmic_inits and
-pmic_regulators[ROHM_CHIP_TYPE_AMOUNT].
+There is a typo in the error checking.  We should be checking
+"->rdev[i]" instead of just "->rdev".
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Link: https://lore.kernel.org/r/20200108014256.11282-1-axel.lin@ingics.com
+Fixes: 6501c1f54a17 ("regulator: mpq7920: add mpq7920 regulator driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Link: https://lore.kernel.org/r/20200113125805.xri6jqoxy2ldzqyg@kili.mountain
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/bd718x7-regulator.c | 34 +++++++++++----------------
- 1 file changed, 14 insertions(+), 20 deletions(-)
+ drivers/regulator/mpq7920.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
-index 13a43eee2e46..8f9b2d8eaf10 100644
---- a/drivers/regulator/bd718x7-regulator.c
-+++ b/drivers/regulator/bd718x7-regulator.c
-@@ -1142,28 +1142,14 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
- 	},
- };
+diff --git a/drivers/regulator/mpq7920.c b/drivers/regulator/mpq7920.c
+index ab1b847c57e5..80f3131f0d1b 100644
+--- a/drivers/regulator/mpq7920.c
++++ b/drivers/regulator/mpq7920.c
+@@ -274,8 +274,8 @@ static inline int mpq7920_regulator_register(
  
--struct bd718xx_pmic_inits {
--	const struct bd718xx_regulator_data *r_datas;
--	unsigned int r_amount;
--};
--
- static int bd718xx_probe(struct platform_device *pdev)
- {
- 	struct bd718xx *mfd;
- 	struct regulator_config config = { 0 };
--	struct bd718xx_pmic_inits pmic_regulators[ROHM_CHIP_TYPE_AMOUNT] = {
--		[ROHM_CHIP_TYPE_BD71837] = {
--			.r_datas = bd71837_regulators,
--			.r_amount = ARRAY_SIZE(bd71837_regulators),
--		},
--		[ROHM_CHIP_TYPE_BD71847] = {
--			.r_datas = bd71847_regulators,
--			.r_amount = ARRAY_SIZE(bd71847_regulators),
--		},
--	};
--
- 	int i, j, err;
- 	bool use_snvs;
-+	const struct bd718xx_regulator_data *reg_data;
-+	unsigned int num_reg_data;
- 
- 	mfd = dev_get_drvdata(pdev->dev.parent);
- 	if (!mfd) {
-@@ -1172,8 +1158,16 @@ static int bd718xx_probe(struct platform_device *pdev)
- 		goto err;
+ 		info->rdev[i] = devm_regulator_register(info->dev, rdesc,
+ 					 config);
+-		if (IS_ERR(info->rdev))
+-			return PTR_ERR(info->rdev);
++		if (IS_ERR(info->rdev[i]))
++			return PTR_ERR(info->rdev[i]);
  	}
  
--	if (mfd->chip.chip_type >= ROHM_CHIP_TYPE_AMOUNT ||
--	    !pmic_regulators[mfd->chip.chip_type].r_datas) {
-+	switch (mfd->chip.chip_type) {
-+	case ROHM_CHIP_TYPE_BD71837:
-+		reg_data = bd71837_regulators;
-+		num_reg_data = ARRAY_SIZE(bd71837_regulators);
-+		break;
-+	case ROHM_CHIP_TYPE_BD71847:
-+		reg_data = bd71847_regulators;
-+		num_reg_data = ARRAY_SIZE(bd71847_regulators);
-+		break;
-+	default:
- 		dev_err(&pdev->dev, "Unsupported chip type\n");
- 		err = -EINVAL;
- 		goto err;
-@@ -1215,13 +1209,13 @@ static int bd718xx_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	for (i = 0; i < pmic_regulators[mfd->chip.chip_type].r_amount; i++) {
-+	for (i = 0; i < num_reg_data; i++) {
- 
- 		const struct regulator_desc *desc;
- 		struct regulator_dev *rdev;
- 		const struct bd718xx_regulator_data *r;
- 
--		r = &pmic_regulators[mfd->chip.chip_type].r_datas[i];
-+		r = &reg_data[i];
- 		desc = &r->desc;
- 
- 		config.dev = pdev->dev.parent;
+ 	return 0;
 -- 
 2.20.1
 
