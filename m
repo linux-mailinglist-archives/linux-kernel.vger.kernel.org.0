@@ -2,70 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7284E139174
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 13:57:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4082B13917A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 13:59:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbgAMM5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 07:57:33 -0500
-Received: from mga02.intel.com ([134.134.136.20]:24747 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726074AbgAMM5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 07:57:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jan 2020 04:57:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,429,1571727600"; 
-   d="scan'208";a="273021691"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 13 Jan 2020 04:57:30 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id EEE1A1AD; Mon, 13 Jan 2020 14:57:29 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] mfd: intel-lpss: Add Intel Comet Lake PCH-V PCI IDs
-Date:   Mon, 13 Jan 2020 14:57:29 +0200
-Message-Id: <20200113125729.8576-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.24.1
+        id S1728621AbgAMM7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 07:59:48 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:49198 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726399AbgAMM7s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 07:59:48 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00DCwcl9062900;
+        Mon, 13 Jan 2020 12:59:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=ZfQ1LgEbn14jkZf0Ql+4WtMf3jaMLStq+biPvvi5LeY=;
+ b=aHSFk8cCApgGWGP9EVWzSjLQdiG2Bpi9zxuSrvIVNMKnFz4ekCONCWcx4xcSeZLOX55D
+ aM8DohhHK0kwdp9UeShe1Bx8n91QLMOChpyAMw1HJLU8YQdgqaDp9SuVcnCiZwSARTFy
+ MhNWao7CBnUQvOI5wqv6upPCvtMFRbTQNL3sPNhzatrYm6IzcKOeFPm6AjcHO5VGptlM
+ XxRvgeBe+d1CSpoCiQH9T568qZcwQ/UOuYu94b1V8YDe2JzrX9GWgq7Hz4pImRRXAU8y
+ y4jmXd4yrVt8pFCycTcddauB+lLWyX+qZUOM5rJ66Uw1I77eDhXx6O2BpZuf77TCRnFL Gg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2xf73tesk9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 Jan 2020 12:59:44 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00DCwaqv020336;
+        Mon, 13 Jan 2020 12:59:44 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2xfrh61xqa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 Jan 2020 12:59:44 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00DCxg8o012055;
+        Mon, 13 Jan 2020 12:59:42 GMT
+Received: from kili.mountain (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 13 Jan 2020 04:59:42 -0800
+Date:   Mon, 13 Jan 2020 15:59:33 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Saravanan Sekar <sravanhome@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] regulator: mpq7920: Check the correct variable in
+ mpq7920_regulator_register()
+Message-ID: <20200113125805.xri6jqoxy2ldzqyg@kili.mountain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9498 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001130108
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9498 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001130108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Intel Comet Lake PCH-V has the same LPSS than Intel Kaby Lake.
-Add the new IDs to the list of supported devices.
+There is a typo in the error checking.  We should be checking
+"->rdev[i]" instead of just "->rdev".
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Fixes: 6501c1f54a17 ("regulator: mpq7920: add mpq7920 regulator driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/mfd/intel-lpss-pci.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/regulator/mpq7920.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/intel-lpss-pci.c b/drivers/mfd/intel-lpss-pci.c
-index c40a6c7d0cf8..378024a3ba28 100644
---- a/drivers/mfd/intel-lpss-pci.c
-+++ b/drivers/mfd/intel-lpss-pci.c
-@@ -347,6 +347,16 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	{ PCI_VDEVICE(INTEL, 0xa36a), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa36b), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa37b), (kernel_ulong_t)&spt_info },
-+	/* CML-V */
-+	{ PCI_VDEVICE(INTEL, 0xa3a7), (kernel_ulong_t)&spt_uart_info },
-+	{ PCI_VDEVICE(INTEL, 0xa3a8), (kernel_ulong_t)&spt_uart_info },
-+	{ PCI_VDEVICE(INTEL, 0xa3a9), (kernel_ulong_t)&spt_info },
-+	{ PCI_VDEVICE(INTEL, 0xa3aa), (kernel_ulong_t)&spt_info },
-+	{ PCI_VDEVICE(INTEL, 0xa3e0), (kernel_ulong_t)&spt_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0xa3e1), (kernel_ulong_t)&spt_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0xa3e2), (kernel_ulong_t)&spt_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0xa3e3), (kernel_ulong_t)&spt_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0xa3e6), (kernel_ulong_t)&spt_uart_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(pci, intel_lpss_pci_ids);
+diff --git a/drivers/regulator/mpq7920.c b/drivers/regulator/mpq7920.c
+index ab1b847c57e5..80f3131f0d1b 100644
+--- a/drivers/regulator/mpq7920.c
++++ b/drivers/regulator/mpq7920.c
+@@ -274,8 +274,8 @@ static inline int mpq7920_regulator_register(
+ 
+ 		info->rdev[i] = devm_regulator_register(info->dev, rdesc,
+ 					 config);
+-		if (IS_ERR(info->rdev))
+-			return PTR_ERR(info->rdev);
++		if (IS_ERR(info->rdev[i]))
++			return PTR_ERR(info->rdev[i]);
+ 	}
+ 
+ 	return 0;
 -- 
-2.24.1
+2.11.0
 
