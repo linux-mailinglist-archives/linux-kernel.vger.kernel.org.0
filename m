@@ -2,98 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C7D91389AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 04:20:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 522671389B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 04:23:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733215AbgAMDUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 22:20:37 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:37877 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1733089AbgAMDUf (ORCPT
+        id S1733189AbgAMDXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 22:23:19 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:36822 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733020AbgAMDXT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 22:20:35 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 5AC3121C48;
-        Sun, 12 Jan 2020 22:20:34 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sun, 12 Jan 2020 22:20:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=SZrI8XmySgH/2
-        cg6dfX8zMCfK+fd6PWSafQgr7UxYF4=; b=lEvrfsmccR9xG7VC+ZopdH2eTncS+
-        FnvD7EjVXY/4RsqJbhw2/TDvfUB58iU9qC6gAHXU6dqI7uzK+9dUrV2H97nC4hg5
-        AhIkgNoHaUMDwdiqK6QNZAxJH0dkOcYym9epY/42mQNJt40NTIpygPVTXK9BiUMM
-        nw6ve29aS2qUGgnB0YOV4IOaOpEtQD4PFzCeJhZ22gritIku4oou0Eaj1HPfnN+p
-        b/tCNXxo279VybPVA0KMkq0lxR45q+5x6k6/iZ0W8NwN6X0GWBUYfwjYILt5nEoW
-        B03KiPZpoVfPrcBfjJPg0PYctTlYaOLJLYD2pWT3KzCBLz390vD08xP1g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=SZrI8XmySgH/2cg6dfX8zMCfK+fd6PWSafQgr7UxYF4=; b=MVfJ1J1G
-        K14gbivui6u5RTe3xk0YRtVhlM1HMdZl6vFalW7apkjiHPSvlo1w4rrhZSqGtVcq
-        pkfzflCuErbOz2F1NXExgkyRaDTUbBUxHDSA+loZl61XW3aW0I/93EL54Nxrc+Qn
-        fXRXlErv/YpkDVQrgKwjY00vihlBhScbnJ2S4WpROgwlom5Vhziy6yEvvQjMDF76
-        A1IczD/yL2GUTS6Cyoo0ETyUuvHI14jmqqVes4RPTj7ne5t8Pa2D/lj2V7sqZOHf
-        IzOS50GO69hG2cuakdMNgJRV46kGWx9thrfV+f36WD6vgscpQKPkCuwwWQ7cMP6q
-        zcnR8xwH5x7EZQ==
-X-ME-Sender: <xms:AuIbXtdpRg9QbRibOj37Vdlfoh9QK9xVmxOVraOUK8Ys3kBWYCFj-g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdeiledgheelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
-    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucfkph
-    epjedtrddufeehrddugeekrdduhedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghm
-    uhgvlhesshhhohhllhgrnhgurdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:AuIbXsK4fgS9BoJ83jp8QPxiZS890tjz1IB8CcQViCrfbBsJvelRiQ>
-    <xmx:AuIbXm38dzGtOXTtFdUagadGPp1E3ljO77jYkTz7XLL7rMtU_wOWKg>
-    <xmx:AuIbXlYy3sTj1CTG8cCyn4QCzmgIfasu5QbW4VH_P5X0YnCPBWPjVw>
-    <xmx:AuIbXqosCmOMUp6RIinclIdGpzIC2E9Sway64M3NHK6E41jRaHHTLQ>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id D926680063;
-        Sun, 12 Jan 2020 22:20:33 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 3/3] Input: axp20x-pek - Enable wakeup for all AXP variants
-Date:   Sun, 12 Jan 2020 21:20:32 -0600
-Message-Id: <20200113032032.38709-3-samuel@sholland.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200113032032.38709-1-samuel@sholland.org>
-References: <20200113032032.38709-1-samuel@sholland.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 12 Jan 2020 22:23:19 -0500
+Received: by mail-pj1-f66.google.com with SMTP id n59so3650540pjb.1
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Jan 2020 19:23:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=tuL/sUzlzZyNW35DUcDDiOxQ2sElchyKRZIw9ifc/VM=;
+        b=C9QgZEWvcMn2jqlpJ+FWjpvALoeVJL2WLA7ZhF22RqsitJeARvwXpUNPpqx9Utbo2F
+         +PLqRD+rxDA1j815sPkf+cG7P0QCpjx0Qiy1SCBfiRK+7wlo/1ULx3foHquOLXUgEnC9
+         67yxkR7lNRtKUAJa6ELpGTR1vI04Ba/Kdcwt9QTP2B3V/fN7hgiMy6v+S+Tts7vmwXih
+         GShCaADo+QLDcyyiHo4M8++zKlO/6MlpAVWWzYJN43Mg8Q4tB4YJT1i3tUliQ3pUyZnE
+         jz/jRa9PN7wPy23RtDPrBauxe3uUp8FxmTwVUm5St1KhqolJLsquh98yBO3Gkaaibl9H
+         8zlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=tuL/sUzlzZyNW35DUcDDiOxQ2sElchyKRZIw9ifc/VM=;
+        b=lnMVKzTNS0eEbcZD94/bZrS4lwyb2R0Wm1gb0H4/g8kqmcfVeJp9vFQYkK6y3fTuXQ
+         Yo4WliQnGfYUvV7sLvxiEMeeqAJ0tNpPHXJNJuVEpLrwASYDZEa8TT/prPkB3kgFXcJm
+         67Fwlyb5UGca18ngA/WxXTszsct677cGUHv1Sxski53mQ90rti/6zuOez1HRcIiABJrU
+         KW4q0gl9k0favIA2qSeS7B+FH514zRsnc1PKQZIp1A3KX+gZ8dG1bELkgp16XlWOiY0k
+         Eh80frQXYcpmysmNscHOdlgQFt1iClYQaVhy1XI+RjZaXzlvv5l+7ec6SEsPMXhq7TPW
+         fdRA==
+X-Gm-Message-State: APjAAAVm+fiQwL6RDto6DL7voobOD1vAcb8R25gS+lQxn3LIZdU6T3C5
+        U7eFrw85Bve9zOYPc2hx6JVus1kx788=
+X-Google-Smtp-Source: APXvYqxNwAQaG6At2rkySC52oLtC5VBQCeBbKacI3QcfkT37afSx+1J+ZsJbnaepWABFXrTfvZogvw==
+X-Received: by 2002:a17:902:26a:: with SMTP id 97mr11701262plc.74.1578885798230;
+        Sun, 12 Jan 2020 19:23:18 -0800 (PST)
+Received: from localhost ([43.224.245.179])
+        by smtp.gmail.com with ESMTPSA id s131sm12638203pfs.135.2020.01.12.19.23.17
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Sun, 12 Jan 2020 19:23:17 -0800 (PST)
+From:   qiwuchen55@gmail.com
+To:     christian.brauner@ubuntu.com, peterz@infradead.org,
+        mingo@kernel.org, tglx@linutronix.de, oleg@redhat.com,
+        elena.reshetova@intel.com, jgg@ziepe.ca, christian@kellner.me,
+        aarcange@redhat.com, viro@zeniv.linux.org.uk, cyphar@cyphar.com,
+        ldv@altlinux.org
+Cc:     linux-kernel@vger.kernel.org, chenqiwu <chenqiwu@xiaomi.com>
+Subject: [PATCH] kernel/fork: put some fork variables into read-mostly section
+Date:   Mon, 13 Jan 2020 11:23:13 +0800
+Message-Id: <1578885793-24095-1-git-send-email-qiwuchen55@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are many devices, including several mobile battery-powered
-devices, using other AXP variants as their PMIC. Enable them to use
-the power key as a wakeup source.
+From: chenqiwu <chenqiwu@xiaomi.com>
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
+Since total_forks/nr_threads/max_threads global variables are
+frequently used for process fork, putting these variables into
+read_mostly section can avoid unnecessary cache line bouncing.
+
+Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
 ---
- drivers/input/misc/axp20x-pek.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ kernel/fork.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/input/misc/axp20x-pek.c b/drivers/input/misc/axp20x-pek.c
-index 38cd4a4aeb65..b910c1798e4e 100644
---- a/drivers/input/misc/axp20x-pek.c
-+++ b/drivers/input/misc/axp20x-pek.c
-@@ -279,8 +279,7 @@ static int axp20x_pek_probe_input_device(struct axp20x_pek *axp20x_pek,
- 		return error;
- 	}
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 0808095..163e152 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -120,10 +120,10 @@
+ /*
+  * Protected counters by write_lock_irq(&tasklist_lock)
+  */
+-unsigned long total_forks;	/* Handle normal Linux uptimes. */
+-int nr_threads;			/* The idle threads do not count.. */
++unsigned long total_forks __read_mostly; /* Handle normal Linux uptimes. */
++int nr_threads __read_mostly;  /* The idle threads do not count.. */
  
--	if (axp20x_pek->axp20x->variant == AXP288_ID)
--		device_init_wakeup(&pdev->dev, true);
-+	device_init_wakeup(&pdev->dev, true);
+-static int max_threads;		/* tunable limit on nr_threads */
++static int max_threads __read_mostly; /* tunable limit on nr_threads */
  
- 	return 0;
- }
+ #define NAMED_ARRAY_INDEX(x)	[x] = __stringify(x)
+ 
 -- 
-2.23.0
+1.9.1
 
