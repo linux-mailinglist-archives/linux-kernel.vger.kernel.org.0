@@ -2,120 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7119C138CBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 09:20:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38D60138CC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 09:21:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbgAMIUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 03:20:37 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:47019 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728682AbgAMIUg (ORCPT
+        id S1728819AbgAMIVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 03:21:06 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:50458 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728682AbgAMIVG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 03:20:36 -0500
-Received: by mail-pl1-f195.google.com with SMTP id y8so3522755pll.13
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 00:20:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=bMqucdvwW4DxJLa5hqSQSlZ+HKdfxlLmr5IwDINyABs=;
-        b=fpUiy3Xg2sDv9bf5OvF1hAah/1QRfWGgnppILok/K04EQDtG9R8vzvFWp4cJJKwGLz
-         NAKUewD9PkneM7K0lq/XVUrVVe2YZj3FXxwyi2gJMFc/Tu1EctP5uhoFSWDxgoxt/awA
-         mtI01TvYQOh3VqyTmS7ku9hk1TVXft8kUl1Fg48XO4QTe5wThfSIPsKwX17AlW9qmKSC
-         e4FKuRVBJFjWZKAvtU/pe3rGvgIarYB8fz0A/Z+k8gy9XjZO+lg0VM56D2D21k+fiq7+
-         kpeBO8Hg2XKDGFX82AXVVoq58alG+dpAO45W2ZKvWvKM8jWCDWB5ujkDx1ThFoiiQjdW
-         hYOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=bMqucdvwW4DxJLa5hqSQSlZ+HKdfxlLmr5IwDINyABs=;
-        b=gtPaoftDvcGapUwBEtC6MJinLAJC5qRyGr0KxMW+UcKbdrG5zFZUlU11V4MMvd6W8u
-         +9lQi8/ng0kj8uA9eraZJZoEgtI9j7st6NhUyPdI7WyabMyOIuzJjQYDPpqB7kQqP5fI
-         IYHosOdb9ExArwAeITzJHwDpmp4dbBMUZ0dfmdJ8FqeOSbhwdIj3vdp1R9txSmqmD319
-         EscFopNCCapID6Cfm1p43lBEJ3Pwn515QI1zSAoWLe9hYG246KJg1/mx+HPlzycze4X/
-         5ztN8lRJr77w/lLK4hB0jMLelOyRAiRF0/nbo1atrrKIRJEvChvZzEZXyD2ZKSD8tTjN
-         2L7A==
-X-Gm-Message-State: APjAAAV9V1zHYQn3sMIROs7DMex4IqWOxeVSpOjAqUGzLkBLMvXBauVF
-        aS0JtQvdCT+FzfjfmrVzhs/extEe
-X-Google-Smtp-Source: APXvYqzq8v/enDDBDTkt0OxdeBhm2NzezTQsHz2JVtReupHvyt0kSjM1nkMx9CUwKaZZe9bfqalBTQ==
-X-Received: by 2002:a17:902:694c:: with SMTP id k12mr12673527plt.329.1578903635888;
-        Mon, 13 Jan 2020 00:20:35 -0800 (PST)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.139.115? ([2402:f000:1:1501:200:5efe:a66f:8b73])
-        by smtp.gmail.com with ESMTPSA id c22sm12668511pfo.50.2020.01.13.00.20.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jan 2020 00:20:35 -0800 (PST)
-Subject: Re: [PATCH] ALSA: cmipci: Fix possible a data race in
- snd_cmipci_interrupt()
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     perex@perex.cz, tiwai@suse.com, rfontana@redhat.com,
-        tglx@linutronix.de, allison@lohutok.net,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20200111163027.27135-1-baijiaju1990@gmail.com>
- <s5h5zhhkrwe.wl-tiwai@suse.de>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <de859611-4bd0-647f-61e9-7138425ed736@gmail.com>
-Date:   Mon, 13 Jan 2020 16:20:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Mon, 13 Jan 2020 03:21:06 -0500
+Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 00D8L3x4061832;
+        Mon, 13 Jan 2020 17:21:03 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav401.sakura.ne.jp);
+ Mon, 13 Jan 2020 17:21:03 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav401.sakura.ne.jp)
+Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 00D8KvJP061816
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 13 Jan 2020 17:21:03 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] sched/core: fix illegal RCU from offline CPUs
+To:     Qian Cai <cai@lca.pw>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        bsegall@google.com, mgorman@suse.de, paulmck@kernel.org,
+        tglx@linutronix.de, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20200112161752.10492-1-cai@lca.pw>
+ <3ffaaf32-88b6-fdf1-c7c7-ab56292c047f@I-love.SAKURA.ne.jp>
+ <7168A4A4-E735-4809-B80A-389990603EB8@lca.pw>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <66e33eb5-e958-6dc8-2327-4168afdd9e1e@i-love.sakura.ne.jp>
+Date:   Mon, 13 Jan 2020 17:20:57 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.1
 MIME-Version: 1.0
-In-Reply-To: <s5h5zhhkrwe.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <7168A4A4-E735-4809-B80A-389990603EB8@lca.pw>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2020/1/12 16:20, Takashi Iwai wrote:
-> On Sat, 11 Jan 2020 17:30:27 +0100,
-> Jia-Ju Bai wrote:
->> The functions snd_cmipci_interrupt() and snd_cmipci_capture_trigger()
->> may be concurrently executed.
+On 2020/01/13 15:30, Qian Cai wrote:
+>>> -	mmdrop(mm);
+>>> +	smp_call_function_single(cpumask_first(cpu_online_mask),
+>>> +				(void (*)(void *))mmdrop, mm, 0);
 >>
->> The function snd_cmipci_capture_trigger() calls
->> snd_cmipci_pcm_trigger(). In snd_cmipci_pcm_trigger(), the variable
->> rec->running is written with holding a spinlock cm->reg_lock. But in
->> snd_cmipci_interrupt(), the identical variable cm->channel[0].running
->> or cm->channel[1].running is read without holding this spinlock. Thus,
->> a possible data race may occur.
->>
->> To fix this data race, in snd_cmipci_interrupt(), the variables
->> cm->channel[0].running and cm->channel[1].running are read with holding
->> the spinlock cm->reg_lock.
->>
->> This data race is found by the runtime testing of our tool DILP-2.
->>
->> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> Thanks for the patch.
->
-> That's indeed a kind of race, but this change won't fix anything in
-> practice, though.  The inconsistent running flag between those places,
-> there are two cases:
->
-> - running became 0 to 1; this cannot happen, as the irq isn't issued
->    before the stream gets started
->
-> - running became 1 to 0; this means that the stream gets stopped
->    between two points, and it's not better to call
->    snd_pcm_period_elapsed() for an already stopped stream.
+>> mmdrop() might sleep, but
+> 
+> If that is the case, and then the commit e78a7614f387 (“idle: Prevent
+> late-arriving interrupts from disrupting offline”) is incorrect because it
+> will disable local irq before calling mmdrop() which will trigger
+> the might_sleep() warning. Can you prove it?
 
-Thanks for the reply :)
-
-I am not sure to understand your words.
-
-Do you mean that this code should be also protected by the spinlock?
-     if (cm->pcm) {
-         if ((status & CM_CHINT0) && cm->channel[0].running)
-             snd_pcm_period_elapsed(cm->channel[0].substream);
-         if ((status & CM_CHINT1) && cm->channel[1].running)
-             snd_pcm_period_elapsed(cm->channel[1].substream);
-     }
-
-
-Best wishes,
-Jia-Ju Bai
+Is commit 7283094ec3db318e ("kernel, oom: fix potential pgd_lock deadlock from
+__mmdrop") about only softirq? Is it guaranteed that smp_call_function_single()
+does not hit such race? Then just my overcareful...
