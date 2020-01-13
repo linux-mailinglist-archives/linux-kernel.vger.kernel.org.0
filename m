@@ -2,83 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4E28139C6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 23:28:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED066139CAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 23:35:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbgAMW2m convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 13 Jan 2020 17:28:42 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:40483 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728819AbgAMW2l (ORCPT
+        id S1729058AbgAMWfP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 17:35:15 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:39293 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728959AbgAMWfP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 17:28:41 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1ir8CG-0004Yk-9j; Mon, 13 Jan 2020 23:28:32 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 40F6F105BE6; Mon, 13 Jan 2020 23:28:31 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     catalin.marinas@arm.com, will@kernel.org, paul.burton@mips.com,
-        salyzyn@android.com, 0x7f454c46@gmail.com, luto@kernel.org
-Subject: Re: [PATCH v2 2/8] lib: vdso: Build 32 bit specific functions in the right context
-In-Reply-To: <20190830135902.20861-3-vincenzo.frascino@arm.com>
-References: <20190830135902.20861-1-vincenzo.frascino@arm.com> <20190830135902.20861-3-vincenzo.frascino@arm.com>
-Date:   Mon, 13 Jan 2020 23:28:31 +0100
-Message-ID: <87tv4zq9dc.fsf@nanos.tec.linutronix.de>
+        Mon, 13 Jan 2020 17:35:15 -0500
+Received: by mail-oi1-f193.google.com with SMTP id a67so9950656oib.6
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 14:35:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2aqbv7Gs5aPw45r0A4Glmj6TozevE0VvRNxou586VsA=;
+        b=LbnQDcoO2aAH/ZlMFHVsePsx0c7manGlzDhU9W890FNUGcI5ENy75gyChqWBLEdhIX
+         rNRweFbiCxrLQXEGNdaRdXVCZvY+Wfsh4l490X0/Ew53LbtSpI2DaMTHewBqhFKaBrgd
+         WDnHeYtG7X7Pnse0BBXqMnpCnNiPNRXyJjLWtafoV+P6Y1Sp8XBqayRcDxhyLD2m+0sP
+         QmYVVubXBi3eqMxOARj8X1tjGN6DHxUhDneqQM8VBG/WWfpCKgZFdwyg+ZdVYJ+kI/9s
+         LRVwxqX5c/sNJL1Y07uYNDPbBGz90i0NP5Fw5omUV2LLxb+WZ3fHDUHUeMYbirr1ybig
+         TOOQ==
+X-Gm-Message-State: APjAAAXGS1202Pwpt6Z9ZKy+FmZAAnZSaQX3ycHBFjTEhp6KELlIY1sp
+        NW5Zda1v9aN2IkZo/jzth4PKtVo=
+X-Google-Smtp-Source: APXvYqyh3yO8jU4yHHvI3ypSP+THsOskUzWt/yuPdzV1uSgRrqdFZlQobxhsCYvuMz8yFHv6j1bg5A==
+X-Received: by 2002:aca:4306:: with SMTP id q6mr14859103oia.54.1578954913997;
+        Mon, 13 Jan 2020 14:35:13 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id j26sm4685590otq.18.2020.01.13.14.35.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jan 2020 14:35:13 -0800 (PST)
+Received: from rob (uid 1000)
+        (envelope-from rob@rob-hp-laptop)
+        id 220b00
+        by rob-hp-laptop (DragonFly Mail Agent v0.11);
+        Mon, 13 Jan 2020 16:30:11 -0600
+Date:   Mon, 13 Jan 2020 16:30:11 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     skomatineni@nvidia.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com,
+        perex@perex.cz, tiwai@suse.com, digetx@gmail.com,
+        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
+        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
+        josephl@nvidia.com, daniel.lezcano@linaro.org,
+        mmaddireddy@nvidia.com, markz@nvidia.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 06/21] dt-bindings: tegra: Convert Tegra PMC bindings
+ to YAML
+Message-ID: <20200113223011.GA18406@bogus>
+References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
+ <1578457515-3477-7-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1578457515-3477-7-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vincenzo Frascino <vincenzo.frascino@arm.com> writes:
+On Tue, 7 Jan 2020 20:25:00 -0800, Sowjanya Komatineni wrote:
+> This patch converts text based Tegra PMC bindings document to YAML
+> schema for performing dt validation.
+> 
+> Tested-by: Dmitry Osipenko <digetx@gmail.com>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 300 ------------------
+>  .../bindings/arm/tegra/nvidia,tegra20-pmc.yaml     | 340 +++++++++++++++++++++
+>  2 files changed, 340 insertions(+), 300 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+> 
 
-> clock_gettime32 and clock_getres_time32 should be compiled only with a
-> 32 bit vdso library.
->
-> Exclude these symbols when BUILD_VDSO32 is not defined.
-
-This breaks the ARM build with:
-
-arch/arm/vdso/vgettimeofday.c: In function ‘__vdso_clock_gettime’:
-arch/arm/vdso/vgettimeofday.c:15:9: error: implicit declaration of function ‘__cvdso_clock_gettime32’; did you mean ‘__cvdso_clock_gettime’? [-Werror=implicit-function-declaration]
-  return __cvdso_clock_gettime32(clock, ts);
-         ^~~~~~~~~~~~~~~~~~~~~~~
-         __cvdso_clock_gettime
-arch/arm/vdso/vgettimeofday.c: In function ‘__vdso_clock_getres’:
-arch/arm/vdso/vgettimeofday.c:33:9: error: implicit declaration of function ‘__cvdso_clock_getres_time32’; did you mean ‘__cvdso_clock_getres_common’? [-Werror=implicit-function-declaration]
-  return __cvdso_clock_getres_time32(clock_id, res);
-         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-         __cvdso_clock_getres_common
-cc1: some warnings being treated as errors
-
-The patch below 'fixes' at least the build. Can someone please confirm
-the correctness?
-
-Thanks,
-
-        tglx
-
-8<----------------
---- a/arch/arm/vdso/Makefile
-+++ b/arch/arm/vdso/Makefile
-@@ -14,7 +14,7 @@ targets := $(obj-vdso) vdso.so vdso.so.d
- obj-vdso := $(addprefix $(obj)/, $(obj-vdso))
- 
- ccflags-y := -fPIC -fno-common -fno-builtin -fno-stack-protector
--ccflags-y += -DDISABLE_BRANCH_PROFILING
-+ccflags-y += -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO32
- 
- ldflags-$(CONFIG_CPU_ENDIAN_BE8) := --be8
- ldflags-y := -Bsymbolic --no-undefined -soname=linux-vdso.so.1 \
+Reviewed-by: Rob Herring <robh@kernel.org>
