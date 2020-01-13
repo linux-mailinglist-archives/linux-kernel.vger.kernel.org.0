@@ -2,87 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5676139301
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:02:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F4821392FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:02:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728952AbgAMOCn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 09:02:43 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:46417 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728831AbgAMOCm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 09:02:42 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1ir0Ig-000461-CS; Mon, 13 Jan 2020 15:02:38 +0100
-Message-ID: <02f6d17a410114ea9b3bea6e9c43d3aa4bc2dffe.camel@pengutronix.de>
-Subject: Re: [PATCH] mdio_bus: Simplify reset handling and extend to non-DT
- systems
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 13 Jan 2020 15:02:36 +0100
-In-Reply-To: <20200113130529.15372-1-geert+renesas@glider.be>
-References: <20200113130529.15372-1-geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        id S1728834AbgAMOCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 09:02:24 -0500
+Received: from foss.arm.com ([217.140.110.172]:39940 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726399AbgAMOCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 09:02:24 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6C3B1045;
+        Mon, 13 Jan 2020 06:02:23 -0800 (PST)
+Received: from [10.37.12.172] (unknown [10.37.12.172])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ACAD13F68E;
+        Mon, 13 Jan 2020 06:02:22 -0800 (PST)
+Subject: Re: [PATCH] xfs: Fix xfs_dir2_sf_entry_t size check
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+References: <20200109141459.21808-1-vincenzo.frascino@arm.com>
+ <c43539f2-aa9b-4afa-985c-c438099732ff@sandeen.net>
+ <1a540ee4-6597-c79e-1bce-6592cb2f3eae@arm.com>
+ <20200109165048.GB8247@magnolia>
+ <435bcb71-9126-b1f1-3803-4977754b36ff@arm.com>
+ <CAK8P3a0eY6Vm5PNdzR8Min9MrwAqH8vnMZ3C+pxTQhiFVNPyWA@mail.gmail.com>
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+Message-ID: <ae266015-7521-e1fa-e72d-f3f97e623ad2@arm.com>
+Date:   Mon, 13 Jan 2020 14:05:21 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <CAK8P3a0eY6Vm5PNdzR8Min9MrwAqH8vnMZ3C+pxTQhiFVNPyWA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-01-13 at 14:05 +0100, Geert Uytterhoeven wrote:
-> Convert mdiobus_register_reset() from open-coded DT-only optional reset
-> handling to reset_control_get_optional_exclusive().  This not only
-> simplifies the code, but also adds support for lookup-based resets on
-> non-DT systems.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Only tested on systems without PHY resets, with and without
-> CONFIG_RESET_CONTROLLER=y.
-> 
->  drivers/net/phy/mdio_bus.c | 16 +++++-----------
->  1 file changed, 5 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
-> index 229e480179ff1de4..8d753bb07227e561 100644
-> --- a/drivers/net/phy/mdio_bus.c
-> +++ b/drivers/net/phy/mdio_bus.c
-> @@ -59,17 +59,11 @@ static int mdiobus_register_gpiod(struct mdio_device *mdiodev)
->  
->  static int mdiobus_register_reset(struct mdio_device *mdiodev)
->  {
-> -	struct reset_control *reset = NULL;
-> -
-> -	if (mdiodev->dev.of_node)
-> -		reset = of_reset_control_get_exclusive(mdiodev->dev.of_node,
-> -						       "phy");
-> -	if (IS_ERR(reset)) {
-> -		if (PTR_ERR(reset) == -ENOENT || PTR_ERR(reset) == -ENOTSUPP)
-> -			reset = NULL;
-> -		else
-> -			return PTR_ERR(reset);
-> -	}
-> +	struct reset_control *reset;
-> +
-> +	reset = reset_control_get_optional_exclusive(&mdiodev->dev, "phy");
-> +	if (IS_ERR(reset))
-> +		return PTR_ERR(reset);
+Hi Arnd,
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+On 1/13/20 1:55 PM, Arnd Bergmann wrote:
+> On Thu, Jan 9, 2020 at 10:01 PM Vincenzo Frascino
+> <vincenzo.frascino@arm.com> wrote:
+>>
+>> Hi Darrick,
+>>
+>> On 09/01/2020 16:50, Darrick J. Wong wrote:
+>>> This sounds like gcc getting confused by the zero length array.  Though
+>>> it's odd that randconfig breaks, but defconfig doesn't?  This sounds
+>>> like one of the kernel gcc options causing problems.
+>>>
+>>
+>> This is what I started suspecting as well.
+> 
+> The important bit into the configuration is
+> 
+> # CONFIG_AEABI is not set
+> 
+> With ARM OABI (which you get when EABI is disabled), structures are padded
+> to multiples of 32 bits. See commits 8353a649f577 ("xfs: kill
+> xfs_dir2_sf_off_t")
+> and aa2dd0ad4d6d ("xfs: remove __arch_pack"). Those could be partially
+> reverted to fix it again, but it doesn't seem worth it as there is
+> probably nobody
+> running XFS on OABI machines (actually with the build failure we can
+> be fairly sure there isn't ;-).
+> 
 
-regards
-Philipp
+Thanks for this, for some reasons I was convinced that CONFIG_AEABI was set in
+this configuration file as I reported as well in my previous email.
+Since it is OABI makes sense disabling xfs for randconfig purposes.
 
+-- 
+Regards,
+Vincenzo
