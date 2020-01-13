@@ -2,103 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7611D139BE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 22:51:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C81C2139BEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 22:53:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbgAMVvj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 16:51:39 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:38616 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728880AbgAMVvi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 16:51:38 -0500
-Received: by mail-il1-f194.google.com with SMTP id f5so9544659ilq.5
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 13:51:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=t0TLC5mt6zw20J38nO6UV1Kz+5E95WBtIXeRkoxQ4a0=;
-        b=mfQK9tcrOuITO8P+zBr5iRKzq1q+zwCvRFsctoXVcaHCGQ1d+7YP2eYhwyahdL+PMB
-         Bb8ntgiCZ7+ZSHqr8BNK94zQi50xqqtCDu/x89TWJKkK0kE9YZFoigm1D/PYWQpZQAlK
-         0nD3sfi8HUqSsyyAGTzYKyVDFzQhLIZtghlo68fM346ErVNhcOPbyrIrNIjAzxg1rbTH
-         lAtK7/ISboRytCJGTLmxIsK+YZXd0GHZ0H+Pw0wcUr3aO8Fof0WHYbdTE6wmCsddFBU5
-         /Pi3XusgXoTJH1G0GqS5XgujioO/rva3TWvYtV3V3c+VWvWQTGoZ1JQMHwgC4whZ0tVQ
-         KHyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=t0TLC5mt6zw20J38nO6UV1Kz+5E95WBtIXeRkoxQ4a0=;
-        b=LH5WgPW6Se38c9EUHiOnnoRbFSxHHyh80OIQxOJdpH9kX0Y7uozU6SwYncOgaX8EmH
-         ru71iAoB5SaFrlERE/2KkpFa37OGU6GE7lV0WvwJCKQxPe4PLZdeyPeZkJWc8EMlRIDJ
-         ZOpa11ucEwKVCEGgq73727FlCh08zIMIGxKrGnfPJ1n0TAEflXw1rZykeU/BKgHLxjsi
-         49BC6iU01Fp6KDo7t1Zj8qFTChV4meW95RaAM2E077lq+3rauWEs3xaXM4m43Wg1cb4c
-         epkLflYkbtxAGRGfyB507p6nw61Sg0nmc+jqnDS9n/AJ06Xlqtrxcx3J6V2xycK+xkXz
-         q1YA==
-X-Gm-Message-State: APjAAAUhZB1VWOMSWB3wQqiTuk2Y4Fl0H+G56mOl3RfF23a6UCXKkpI8
-        4HbOEBZeMISwxhH/K1dREyKKGdlBMJJ1qiC9ywg=
-X-Google-Smtp-Source: APXvYqwxYp+s+L/ux/rjCyJxc+lJEfgvR9wfy72edNB86O7Rbykd43wHLE2xEzlpg5RKQvA8w9FVX5f/ociCFDxbpmo=
-X-Received: by 2002:a92:9f4e:: with SMTP id u75mr517363ili.116.1578952297997;
- Mon, 13 Jan 2020 13:51:37 -0800 (PST)
+        id S1728909AbgAMVxo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 16:53:44 -0500
+Received: from sauhun.de ([88.99.104.3]:42866 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728802AbgAMVxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 16:53:43 -0500
+Received: from localhost (p54B332D5.dip0.t-ipconnect.de [84.179.50.213])
+        by pokefinder.org (Postfix) with ESMTPSA id B54BC2C06DA;
+        Mon, 13 Jan 2020 22:53:41 +0100 (CET)
+Date:   Mon, 13 Jan 2020 22:53:41 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/8] NVIDIA Tegra I2C driver fixes and improvements
+Message-ID: <20200113215341.GA2689@ninjato>
+References: <20200112171430.27219-1-digetx@gmail.com>
 MIME-Version: 1.0
-Reply-To: mrsanna.h.bruun119@gmail.com
-Received: by 2002:a6b:90c:0:0:0:0:0 with HTTP; Mon, 13 Jan 2020 13:51:37 -0800 (PST)
-From:   "Mrs. Anna H. Bruun" <mrsanna.h.bruun119@gmail.com>
-Date:   Mon, 13 Jan 2020 13:51:37 -0800
-X-Google-Sender-Auth: _5-EDsBBDLLewZE3mU_fNa0lJFU
-Message-ID: <CALAYr5tC=QFwQ47KwyEpUEOd-x4PUPw6t5KPdXhvDvRe=gjWBA@mail.gmail.com>
-Subject: My Greetings
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
+Content-Disposition: inline
+In-Reply-To: <20200112171430.27219-1-digetx@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My Dear
 
-My Name is Mrs. Anna H. Bruun, from Norway. I know that this message
-will be a surprise to you. Firstly, I am married to Mr. Patrick Bruun,
-A gold merchant who owns a small gold Mine in Burkina Faso; He died of
-Cardiovascular Disease in mid-March 2011. During his life time he
-deposited the sum of =E2=82=AC 8.5 Million Euro) Eight million, Five hundre=
-d
-thousand Euros in a bank in Ouagadougou the capital city of Burkina
-Faso. The deposited money was from the sale of the shares, death
-benefits payment and entitlements of my deceased husband by his
-company.
+--wRRV7LY7NUeQGEoC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I am sending this message to you praying that it will reach you in
-good health, since I am not in good health condition in which I sleep
-every night without knowing if I may be alive to see the next day. I
-am suffering from long time cancer and presently i am partially
-suffering from a stroke illness which has become almost impossible for
-me to move around. I am married to my late husband for over 4 years
-before he died and is unfortunately that we don't have a child, my
-doctor confided in me that i have less chance to live. Having known my
-health condition, I decided to contact you to claim the fund since I
-don't have any relation I grew up from the orphanage home,
+On Sun, Jan 12, 2020 at 08:14:22PM +0300, Dmitry Osipenko wrote:
+> Hello,
+>=20
+> This patchset adds support for atomic transfers which are required for
+> shutting down machine properly. Secondly, a (not)suspending I2C and some
+> other things are fixed/improved by this small series as well. Please revi=
+ew
+> and apply, thanks in advance!
+>=20
+> Changelog:
+>=20
+> v4: Removed the "clk: tegra: Fix double-free in tegra_clk_init()" patch
+>     from this series, which was added by accident in v3.
+>=20
+>     Added Thierry's tested-by to the patches.
 
-I have decided to donate what I have to you for the support of helping
-Motherless babies/Less privileged/Widows' because I am dying and
-diagnosed of cancer for about 2 years ago. I have been touched by God
-Almighty to donate from what I have inherited from my late husband to
-you for good work of God Almighty. I have asked Almighty God to
-forgive me and believe he has, because He is a Merciful God I will be
-going in for an operation surgery soon
+Looks good to me. I think all these patches should go to v5.6, let me
+know if patches 1 and/or 2 should go to v5.5?
 
-This is the reason i need your services to stand as my next of kin or
-an executor to claim the funds for charity purposes. If this money
-remains unclaimed after my death, the bank executives or the
-government will take the money as unclaimed fund and maybe use it for
-selfish and worthless ventures, I need a very honest person who can
-claim this money and use it for Charity works, for orphanages, widows
-and also build schools for less privilege that will be named after my
-late husband and my name; I need your urgent answer to know if you
-will be able to execute this project, and I will give you more
-Information on how the fund will be transferred to your bank account.
 
-Thanks
-Mrs. Anna H.
+--wRRV7LY7NUeQGEoC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl4c5uEACgkQFA3kzBSg
+KbaNOg/8Djo9bVYyGrlZcv32vzUo/Ey82Z5EzFt9OvJt3HJZjk9P0968XqubSUDM
+avR6DhJR9xaVLfgqJRmQvxA3nnNm4N1k4ezckknwoDeiWdUNqt4MWWFxJuc7ropM
+ehzoaGRgp+Q8ERRHdo/dJtJcrvl/IkanWZWik9VbhrtsTexKXwpGV0hx8KvkqOhP
+HU3bO/WJR1s7bfrxPHvMmp0GYcqEsqiZ1R910oYka0QDo4cAc3HjLllN5IpnfKo7
+azK1cd70TjVzYoFXHX+wrU0n+8XqoRLRjZxVEoLAMt+UpS+LBXNI+29xB0jkx2+m
+/EFg2yaS65zltyvhnR/eMiFj2qrVZ+Rx8oz8ZJOYVlw5pZkWN1SbbBZg+s7G/NCq
+TDFzkCtyprj9KDDdH9Vu+ahChiEm9X2+LkG0jKAo/c/GGXgyRjv6DqIJshPD+T7z
+h1+IuakJCUd2HAVcL5hjKLfg4QpbKGn2DJhV3AnjbLTIhTrVujv/8KWtgNj+c7JQ
+UoEPA1g5j6CXe5jxWNV7eO9hlkaZSekZ17kQ3y5/3hf0ZbqVU95ffiWHAv/KFMC+
+zlLSXD6iZznJUX44mBoLaRltNJn6KFAhL1kU7q8lePCbRbSIcdaVkofJ16Kbr/tv
+ExY+wXPXhu39HstjFveuKcC0L9zm5bTBBu3zw12zE9uxfXUHRjI=
+=qKVs
+-----END PGP SIGNATURE-----
+
+--wRRV7LY7NUeQGEoC--
