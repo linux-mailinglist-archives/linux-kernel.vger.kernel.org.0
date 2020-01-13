@@ -2,70 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90550138992
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 04:10:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90E501389A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 04:16:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733205AbgAMDKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 22:10:24 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:33200 "EHLO inva020.nxp.com"
+        id S1733138AbgAMDQp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 22:16:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733064AbgAMDKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 22:10:24 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8FB561A01AE;
-        Mon, 13 Jan 2020 04:10:22 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 133471A12E7;
-        Mon, 13 Jan 2020 04:10:14 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 45976402BB;
-        Mon, 13 Jan 2020 11:10:03 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
-        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
-        catalin.marinas@arm.com, will@kernel.org,
-        bjorn.andersson@linaro.org, maxime@cerno.tech, olof@lixom.net,
-        dinguyen@kernel.org, leonard.crestez@nxp.com,
-        marcin.juszkiewicz@linaro.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V8 3/3] arm64: defconfig: Select CONFIG_PINCTRL_IMX8MP by default
-Date:   Mon, 13 Jan 2020 11:06:05 +0800
-Message-Id: <1578884765-29907-3-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1578884765-29907-1-git-send-email-Anson.Huang@nxp.com>
-References: <1578884765-29907-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1732961AbgAMDQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 Jan 2020 22:16:45 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B025721556;
+        Mon, 13 Jan 2020 03:16:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578885404;
+        bh=3zYO/LV7CNbRZmQEB1qLQGLItuEsGDzoXBLkzEVNe2c=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=RCdMxJUOUJEUP6ZUIV4gkd0trBnyqFBTGpbWavtcwtLwkOB8MXaEFeJ3rAwHW6SAh
+         BVmV/1FnfE9vhJDJtPEo1A9BwKoH+PYD0Ob2nYi3IxYH3Er8nN1pKfhOde6flu8GYe
+         dY1HHkqDJzlAqqI0qXTA6vhjyBUAPpyuDy0P0A/Q=
+Date:   Mon, 13 Jan 2020 12:16:40 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Anders Roxell <anders.roxell@linaro.org>, paulmck@kernel.org,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        David Miller <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -tip V2 0/2] kprobes: Fix RCU warning and cleanup
+Message-Id: <20200113121640.bfab48c105dae9b1918c2d82@kernel.org>
+In-Reply-To: <20200112020537.GJ128013@google.com>
+References: <157535316659.16485.11817291759382261088.stgit@devnote2>
+        <20191221035541.69fc05613351b8dabd6e1a44@kernel.org>
+        <20200107211535.233e7ff396f867ee1348178b@kernel.org>
+        <20200110211438.GE128013@google.com>
+        <20200111083507.c32b85b1d47aa69928de530b@kernel.org>
+        <20200112020537.GJ128013@google.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable CONFIG_PINCTRL_IMX8MP by default to support i.MX8MP
-pinctrl driver.
+On Sat, 11 Jan 2020 21:05:37 -0500
+Joel Fernandes <joel@joelfernandes.org> wrote:
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
----
-No changes.
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> On Sat, Jan 11, 2020 at 08:35:07AM +0900, Masami Hiramatsu wrote:
+> > Hi Joel and Paul,
+> > 
+> > On Fri, 10 Jan 2020 16:14:38 -0500
+> > Joel Fernandes <joel@joelfernandes.org> wrote:
+> > 
+> > > On Tue, Jan 07, 2020 at 09:15:35PM +0900, Masami Hiramatsu wrote:
+> > > > Hello,
+> > > > 
+> > > > Anyone have any comment on this series?
+> > > > Without this series, I still see the suspicious RCU warning for kprobe on -tip tree.
+> > > 
+> > > +Paul since RCU.
+> > > 
+> > > Hi Masami,
+> > > 
+> > > I believe I had commented before that I don't agree with this patch:
+> > > https://lore.kernel.org/lkml/157535318870.16485.6366477974356032624.stgit@devnote2/
+> > > 
+> > > The rationale you used is to replace RCU-api with non-RCU api just to avoid
+> > > warnings. I think a better approach is to use RCU api and pass the optional
+> > > expression to silence the false-positive warnings by informing the RCU API
+> > > about the fact that locks are held (similar to what we do for
+> > > rcu_dereference_protected()). The RCU API will do additional checking
+> > > (such as making sure preemption is disabled for safe RCU usage etc) as well.
+> > 
+> > Yes, that is what I did in [1/2] for get_kprobe().
+> > Let me clarify the RCU list usage in [2/2].
+> > 
+> > With the careful check, other list traversals never be done in non-sleepable
+> > context, those are always runs with kprobe_mutex held.
+> > If I correctly understand the Documentation/RCU/listRCU.rst, we should/can use
+> > non-RCU api for those cases, or do I miss something?
+> 
+> Yes, that is fine. However personally I prefer not to mix usage of
+> list_for_each_entry_rcu() and list_for_each_entry() on the same pointer
+> (kprobe_table). I think it is more confusing and error prone. Just use
+> list_for_each_entry_rcu() everywhere and pass the appropriate lockdep
+> expression, instead of calling lockdep_assert_held() independently. Is this
+> not doable?
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index fdbc2cd..635de88 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -402,6 +402,7 @@ CONFIG_PINCTRL_SINGLE=y
- CONFIG_PINCTRL_MAX77620=y
- CONFIG_PINCTRL_IMX8MM=y
- CONFIG_PINCTRL_IMX8MN=y
-+CONFIG_PINCTRL_IMX8MP=y
- CONFIG_PINCTRL_IMX8MQ=y
- CONFIG_PINCTRL_IMX8QXP=y
- CONFIG_PINCTRL_IPQ8074=y
+Hmm, but isn't it more confusing that user just take a mutex but
+no rcu_read_lock() with list_for_each_entry_rcu()? In that case,
+sometimes it might sleep inside list_for_each_entry_rcu(), I thought
+that might be more confusing mind model for users...
+
+Anyway, if so, please update Documentation/RCU/listRCU.rst too.
+
+Thank you,
+
 -- 
-2.7.4
-
+Masami Hiramatsu <mhiramat@kernel.org>
