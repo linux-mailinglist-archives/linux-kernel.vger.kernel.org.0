@@ -2,103 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36D4D139BDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 22:51:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7611D139BE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 22:51:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728873AbgAMVvM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 16:51:12 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34788 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726488AbgAMVvL (ORCPT
+        id S1728897AbgAMVvj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 16:51:39 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:38616 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728880AbgAMVvi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 16:51:11 -0500
-Received: by mail-ot1-f65.google.com with SMTP id a15so10514615otf.1;
-        Mon, 13 Jan 2020 13:51:11 -0800 (PST)
+        Mon, 13 Jan 2020 16:51:38 -0500
+Received: by mail-il1-f194.google.com with SMTP id f5so9544659ilq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 13:51:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=t0TLC5mt6zw20J38nO6UV1Kz+5E95WBtIXeRkoxQ4a0=;
+        b=mfQK9tcrOuITO8P+zBr5iRKzq1q+zwCvRFsctoXVcaHCGQ1d+7YP2eYhwyahdL+PMB
+         Bb8ntgiCZ7+ZSHqr8BNK94zQi50xqqtCDu/x89TWJKkK0kE9YZFoigm1D/PYWQpZQAlK
+         0nD3sfi8HUqSsyyAGTzYKyVDFzQhLIZtghlo68fM346ErVNhcOPbyrIrNIjAzxg1rbTH
+         lAtK7/ISboRytCJGTLmxIsK+YZXd0GHZ0H+Pw0wcUr3aO8Fof0WHYbdTE6wmCsddFBU5
+         /Pi3XusgXoTJH1G0GqS5XgujioO/rva3TWvYtV3V3c+VWvWQTGoZ1JQMHwgC4whZ0tVQ
+         KHyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ffKiZp7TgACphMkCDUm1FD5yMgsxVZ6Ff6N1urk4jWc=;
-        b=deFlpVMUp8KPg/GoPHcDInQsdO2DE3pW1dltR5BS+dQWI6Zfumqd6IaxGvnF/jQNK1
-         JxwTl6yG5pKob2Kpni0NmwZhZMt+1baYy+a2n4sUXoO4h0ODYrNiynQ+AFJJh8y7jFGD
-         8rWlRFPMy0k3zS+LbblyK/w2r6Pk7XF7O0QgccnBy/WoJw6fII4AJehYAy3BC1TiR860
-         PWn9GpSkBlMQNVDGiS9c+DaGrC35F4w1Ya1GeThKk/NhzvwRpkcGzS/YUhkVfXNkhMTC
-         DW7UFg/YXGBuirigcFU1mOPa3KhkHpvT5hOsfmPF+Zj7CYeIpiZTImxe9I5JTzM670Hn
-         okKQ==
-X-Gm-Message-State: APjAAAWTuT559MLu0l1TK5pr1WjoB5TzR77tzOlIm3Oi+VkeOTL9o1dy
-        PFWppNRUgL7xnF6VPL7FSPmBtfG7/gn5HoRrePo=
-X-Google-Smtp-Source: APXvYqzboRxdkjdj+vWtBhL4TgciiCHxHfLR6hQIa9NC97Z5QPZwbV5+qGJCzmxQC2fQg0RpLiUiJ5XFNlHcaKaz1Xg=
-X-Received: by 2002:a05:6830:4b9:: with SMTP id l25mr15083303otd.266.1578952270976;
- Mon, 13 Jan 2020 13:51:10 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=t0TLC5mt6zw20J38nO6UV1Kz+5E95WBtIXeRkoxQ4a0=;
+        b=LH5WgPW6Se38c9EUHiOnnoRbFSxHHyh80OIQxOJdpH9kX0Y7uozU6SwYncOgaX8EmH
+         ru71iAoB5SaFrlERE/2KkpFa37OGU6GE7lV0WvwJCKQxPe4PLZdeyPeZkJWc8EMlRIDJ
+         ZOpa11ucEwKVCEGgq73727FlCh08zIMIGxKrGnfPJ1n0TAEflXw1rZykeU/BKgHLxjsi
+         49BC6iU01Fp6KDo7t1Zj8qFTChV4meW95RaAM2E077lq+3rauWEs3xaXM4m43Wg1cb4c
+         epkLflYkbtxAGRGfyB507p6nw61Sg0nmc+jqnDS9n/AJ06Xlqtrxcx3J6V2xycK+xkXz
+         q1YA==
+X-Gm-Message-State: APjAAAUhZB1VWOMSWB3wQqiTuk2Y4Fl0H+G56mOl3RfF23a6UCXKkpI8
+        4HbOEBZeMISwxhH/K1dREyKKGdlBMJJ1qiC9ywg=
+X-Google-Smtp-Source: APXvYqwxYp+s+L/ux/rjCyJxc+lJEfgvR9wfy72edNB86O7Rbykd43wHLE2xEzlpg5RKQvA8w9FVX5f/ociCFDxbpmo=
+X-Received: by 2002:a92:9f4e:: with SMTP id u75mr517363ili.116.1578952297997;
+ Mon, 13 Jan 2020 13:51:37 -0800 (PST)
 MIME-Version: 1.0
-References: <20200107234526.GA19034@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
- <20200108105011.GY2827@hirez.programming.kicks-ass.net> <20200110153520.GC8214@u40b0340c692b58f6553c.ant.amazon.com>
- <20200113101609.GT2844@hirez.programming.kicks-ass.net> <857b42b2e86b2ae09a23f488daada3b1b2836116.camel@amazon.com>
- <20200113124247.GG2827@hirez.programming.kicks-ass.net>
-In-Reply-To: <20200113124247.GG2827@hirez.programming.kicks-ass.net>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 13 Jan 2020 22:50:59 +0100
-Message-ID: <CAJZ5v0jv+5aLY3N4wFSitu61o9S8tJWEWGGn1Xyw-P82_TwFdQ@mail.gmail.com>
-Subject: Re: [RFC PATCH V2 11/11] x86: tsc: avoid system instability in hibernation
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Singh, Balbir" <sblbir@amazon.com>,
-        "Valentin, Eduardo" <eduval@amazon.com>,
-        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Agarwal, Anchal" <anchalag@amazon.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "sstabellini@kernel.org" <sstabellini@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "Woodhouse@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com" 
-        <Woodhouse@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "jgross@suse.com" <jgross@suse.com>, "pavel@ucw.cz" <pavel@ucw.cz>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "roger.pau@citrix.com" <roger.pau@citrix.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "Kamata, Munehisa" <kamatam@amazon.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "konrad.wilk@oracle.co" <konrad.wilk@oracle.co>,
-        "len.brown@intel.com" <len.brown@intel.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "fllinden@amaozn.com" <fllinden@amaozn.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+Reply-To: mrsanna.h.bruun119@gmail.com
+Received: by 2002:a6b:90c:0:0:0:0:0 with HTTP; Mon, 13 Jan 2020 13:51:37 -0800 (PST)
+From:   "Mrs. Anna H. Bruun" <mrsanna.h.bruun119@gmail.com>
+Date:   Mon, 13 Jan 2020 13:51:37 -0800
+X-Google-Sender-Auth: _5-EDsBBDLLewZE3mU_fNa0lJFU
+Message-ID: <CALAYr5tC=QFwQ47KwyEpUEOd-x4PUPw6t5KPdXhvDvRe=gjWBA@mail.gmail.com>
+Subject: My Greetings
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 1:43 PM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Mon, Jan 13, 2020 at 11:43:18AM +0000, Singh, Balbir wrote:
-> > For your original comment, just wanted to clarify the following:
-> >
-> > 1. After hibernation, the machine can be resumed on a different but compatible
-> > host (these are VM images hibernated)
-> > 2. This means the clock between host1 and host2 can/will be different
-> >
-> > In your comments are you making the assumption that the host(s) is/are the
-> > same? Just checking the assumptions being made and being on the same page with
-> > them.
->
-> I would expect this to be the same problem we have as regular suspend,
-> after power off the TSC will have been reset, so resume will have to
-> somehow bridge that gap. I've no idea if/how it does that.
+My Dear
 
-In general, this is done by timekeeping_resume() and the only special
-thing done for the TSC appears to be the tsc_verify_tsc_adjust(true)
-call in tsc_resume().
+My Name is Mrs. Anna H. Bruun, from Norway. I know that this message
+will be a surprise to you. Firstly, I am married to Mr. Patrick Bruun,
+A gold merchant who owns a small gold Mine in Burkina Faso; He died of
+Cardiovascular Disease in mid-March 2011. During his life time he
+deposited the sum of =E2=82=AC 8.5 Million Euro) Eight million, Five hundre=
+d
+thousand Euros in a bank in Ouagadougou the capital city of Burkina
+Faso. The deposited money was from the sale of the shares, death
+benefits payment and entitlements of my deceased husband by his
+company.
 
-> I remember some BIOSes had crazy TSC ideas for suspend2ram, and we grew
-> tsc_restore_sched_clock_state() for it.
->
-> Playing crazy games like what you're doing just isn't it though.
+I am sending this message to you praying that it will reach you in
+good health, since I am not in good health condition in which I sleep
+every night without knowing if I may be alive to see the next day. I
+am suffering from long time cancer and presently i am partially
+suffering from a stroke illness which has become almost impossible for
+me to move around. I am married to my late husband for over 4 years
+before he died and is unfortunately that we don't have a child, my
+doctor confided in me that i have less chance to live. Having known my
+health condition, I decided to contact you to claim the fund since I
+don't have any relation I grew up from the orphanage home,
 
-Right.
+I have decided to donate what I have to you for the support of helping
+Motherless babies/Less privileged/Widows' because I am dying and
+diagnosed of cancer for about 2 years ago. I have been touched by God
+Almighty to donate from what I have inherited from my late husband to
+you for good work of God Almighty. I have asked Almighty God to
+forgive me and believe he has, because He is a Merciful God I will be
+going in for an operation surgery soon
+
+This is the reason i need your services to stand as my next of kin or
+an executor to claim the funds for charity purposes. If this money
+remains unclaimed after my death, the bank executives or the
+government will take the money as unclaimed fund and maybe use it for
+selfish and worthless ventures, I need a very honest person who can
+claim this money and use it for Charity works, for orphanages, widows
+and also build schools for less privilege that will be named after my
+late husband and my name; I need your urgent answer to know if you
+will be able to execute this project, and I will give you more
+Information on how the fund will be transferred to your bank account.
+
+Thanks
+Mrs. Anna H.
