@@ -2,90 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17BA013949E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 16:18:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4305F139430
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 16:01:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729147AbgAMPSp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 10:18:45 -0500
-Received: from bout01.mta.xmission.com ([166.70.11.15]:34966 "EHLO
-        bout01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729159AbgAMPSo (ORCPT
+        id S1728803AbgAMPBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 10:01:53 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:30933 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728512AbgAMPBw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 10:18:44 -0500
-X-Greylist: delayed 1224 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 Jan 2020 10:18:44 EST
-Received: from mx01.mta.xmission.com ([166.70.13.211])
-        by bout01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.86_2)
-        (envelope-from <sbauer@plzdonthack.me>)
-        id 1ir1AZ-0002H6-B6; Mon, 13 Jan 2020 07:58:19 -0700
-Received: from plesk14-shared.xmission.com ([166.70.198.161] helo=plesk14.xmission.com)
-        by mx01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <sbauer@plzdonthack.me>)
-        id 1ir1AY-0003LR-Ud; Mon, 13 Jan 2020 07:58:19 -0700
-Received: from hacktheplanet (c-68-50-34-150.hsd1.in.comcast.net [68.50.34.150])
-        by plesk14.xmission.com (Postfix) with ESMTPSA id 46CFF21B2BC;
-        Mon, 13 Jan 2020 14:58:18 +0000 (UTC)
-Date:   Mon, 13 Jan 2020 09:57:55 -0500
-From:   Scott Bauer <sbauer@plzdonthack.me>
-To:     Jon Derrick <jonathan.derrick@intel.com>
-Cc:     Jens Axboe <axboe@fb.com>, linux-kernel@vger.kernel.org,
-        Revanth Rajashekar <revanth.rajashekar@intel.com>
-Message-ID: <20200113145755.GA3846@hacktheplanet>
-References: <20200110215646.15930-1-jonathan.derrick@intel.com>
+        Mon, 13 Jan 2020 10:01:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578927710;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=yQoUlondQiZq3BZzOlo6E5KTwf7HW/EgW0L7fp0nNGk=;
+        b=F+NqA2PyYvdQCwO3Rs7YLQa61fsoRkDYt1ARGS/sX8lYWFC7yyfed6mW5srirB7fCMkmY3
+        bijBk0IkB4bG7Kn8Mdmptklrc/Fzhnb06AyCT0+hFatQknmbs0Q3MqIjNKTuTaK58SJ1GN
+        FzzI0QJtZsbi/KRyReha+9NL/ufkGi4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-200-LzYW_N73NBSHwqBLXmuZcA-1; Mon, 13 Jan 2020 10:01:49 -0500
+X-MC-Unique: LzYW_N73NBSHwqBLXmuZcA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DAE57801E7B;
+        Mon, 13 Jan 2020 15:01:46 +0000 (UTC)
+Received: from [10.36.117.201] (ovpn-117-201.ams2.redhat.com [10.36.117.201])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 711095DA70;
+        Mon, 13 Jan 2020 15:01:43 +0000 (UTC)
+Subject: Re: [EXTERNAL] Re: [RFC PATCH V2 2/10] mm: expose
+ is_mem_section_removable() symbol
+To:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        "lantianyu1986@gmail.com" <lantianyu1986@gmail.com>
+Cc:     KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        vkuznets <vkuznets@redhat.com>,
+        "eric.devolder@oracle.com" <eric.devolder@oracle.com>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "osalvador@suse.de" <osalvador@suse.de>,
+        Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
+        "rppt@linux.ibm.com" <rppt@linux.ibm.com>
+References: <20200107130950.2983-1-Tianyu.Lan@microsoft.com>
+ <20200107130950.2983-3-Tianyu.Lan@microsoft.com>
+ <20200107133623.GJ32178@dhcp22.suse.cz>
+ <99a6db0c-6d73-d982-58b3-7a0172748ae4@redhat.com>
+ <SG2P153MB0349F85FB0C1C02F55391F6D92350@SG2P153MB0349.APCP153.PROD.OUTLOOK.COM>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <b2eb0e25-453c-451f-5e66-6cc6553753b6@redhat.com>
+Date:   Mon, 13 Jan 2020 16:01:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200110215646.15930-1-jonathan.derrick@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-XM-SPF: eid=1ir1AY-0003LR-Ud;;;mid=<20200113145755.GA3846@hacktheplanet>;;;hst=mx01.mta.xmission.com;;;ip=166.70.198.161;;;frm=sbauer@plzdonthack.me;;;spf=none
-X-SA-Exim-Connect-IP: 166.70.198.161
-X-SA-Exim-Mail-From: sbauer@plzdonthack.me
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.2 required=8.0 tests=ALL_TRUSTED,BAYES_40,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong,XM_UncommonTLD01
-        autolearn=disabled version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        * -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
-        *      [score: 0.3233]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.5 XM_UncommonTLD01 Less-common TLD
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Jon Derrick <jonathan.derrick@intel.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 241 ms - load_scoreonly_sql: 0.02 (0.0%),
-        signal_user_changed: 2.6 (1.1%), b_tie_ro: 1.81 (0.8%), parse: 0.96
-        (0.4%), extract_message_metadata: 16 (6.4%), get_uri_detail_list: 0.98
-        (0.4%), tests_pri_-1000: 16 (6.8%), tests_pri_-950: 1.06 (0.4%),
-        tests_pri_-900: 0.81 (0.3%), tests_pri_-90: 16 (6.7%), check_bayes: 15
-        (6.2%), b_tokenize: 3.4 (1.4%), b_tok_get_all: 4.7 (1.9%),
-        b_comp_prob: 1.36 (0.6%), b_tok_touch_all: 2.5 (1.0%), b_finish: 0.62
-        (0.3%), tests_pri_0: 160 (66.3%), check_dkim_signature: 0.34 (0.1%),
-        check_dkim_adsp: 4.0 (1.7%), poll_dns_idle: 16 (6.8%), tests_pri_10:
-        2.6 (1.1%), tests_pri_500: 23 (9.5%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] MAINTAINERS: Add Revanth Rajashekar as a SED-Opal
- maintainer
-X-SA-Exim-Version: 4.2.1 (built Mon, 03 Jun 2019 09:49:16 -0600)
-X-SA-Exim-Scanned: Yes (on mx01.mta.xmission.com)
+In-Reply-To: <SG2P153MB0349F85FB0C1C02F55391F6D92350@SG2P153MB0349.APCP153.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 02:56:46PM -0700, Jon Derrick wrote:
-> Scott hasn't worked for Intel for some time and has already given us his
-> blessing.
-> 
-> CC: Scott Bauer <sbauer@plzdonthack.me>
-> Signed-off-by: Revanth Rajashekar <revanth.rajashekar@intel.com>
-> Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
+On 13.01.20 15:49, Tianyu Lan wrote:
+>> From: David Hildenbrand <david@redhat.com>
+>> Sent: Friday, January 10, 2020 9:42 PM
+>> To: Michal Hocko <mhocko@kernel.org>; lantianyu1986@gmail.com
+>> Cc: KY Srinivasan <kys@microsoft.com>; Haiyang Zhang
+>> <haiyangz@microsoft.com>; Stephen Hemminger <sthemmin@microsoft.com>;
+>> sashal@kernel.org; akpm@linux-foundation.org; Michael Kelley
+>> <mikelley@microsoft.com>; Tianyu Lan <Tianyu.Lan@microsoft.com>; linux=
+-
+>> hyperv@vger.kernel.org; linux-kernel@vger.kernel.org; linux-mm@kvack.o=
+rg;
+>> vkuznets <vkuznets@redhat.com>; eric.devolder@oracle.com; vbabka@suse.=
+cz;
+>> osalvador@suse.de; Pasha Tatashin <Pavel.Tatashin@microsoft.com>;
+>> rppt@linux.ibm.com
+>> Subject: [EXTERNAL] Re: [RFC PATCH V2 2/10] mm: expose
+>> is_mem_section_removable() symbol
+>>
+>> On 07.01.20 14:36, Michal Hocko wrote:
+>>> On Tue 07-01-20 21:09:42, lantianyu1986@gmail.com wrote:
+>>>> From: Tianyu Lan <Tianyu.Lan@microsoft.com>
+>>>>
+>>>> Hyper-V balloon driver will use is_mem_section_removable() to check
+>>>> whether memory block is removable or not when receive memory hot
+>>>> remove msg. Expose it.
+>>>
+>>> I do not think this is a good idea. The check is inherently racy. Why
+>>> cannot the balloon driver simply hotremove the region when asked?
+>>>
+>>
+>> It's not only racy, it also gives no guarantees. False postives and fa=
+lse negatives
+>> are possible.
+>>
+>> If you want to avoid having to loop forever trying to offline when cal=
+ling
+>> offline_and_remove_memory(), you could try to
+>> alloc_contig_range() the memory first and then play the PG_offline+not=
+ifier
+>> game like virtio-mem.
+>>
+>> I don't remember clearly, but I think pinned pages can make offlining =
+loop for a
+>> long time. And I remember there were other scenarios as well (includin=
+g out of
+>> memory conditions and similar).
+>>
+>> I sent an RFC [1] for powerpc/memtrace that does the same (just error
+>> handling is more complicated as it wants to offline and remove multipl=
+e
+>> consecutive memory blocks) - if you want to try to go down that path.
+>>
+> Hi David & Michal:
+> 	Thanks for your review. Some memory blocks are not suitable for hot-pl=
+ug.
+> If not check memory block's removable, offline_pages() will report some=
+ failure error
+> e.g, "failed due to memory holes" and  "failure to isolate range". I th=
+ink the check maybe
+> added into offline_and_remove_memory()? This may help to not create/exp=
+ose a new
+> interface to do such check in module.
 
-This is fine.  Jens can you take this into your tree this week please?
+So it's all about the logging output. Duplicating these checks feels
+very wrong. And you will still get plenty of page dumps (read below), so
+that won't help.
 
-As always I'll be around to look at patches but will become more and
-more useless as the spec evolves.
+We have pr_debug() for these "failure ..." message. that should
+therefore not be an issue on production systems, right?
+
+However, you will see dump_page()s quite often, which logs via pr_warn().
+
+Of course, we could add a mechanism to temporarily disable logging
+output for these call paths, but it might actually be helpful for
+debugging. We might just want to convert everything that is not actually
+a warning to pr_debug() - especially in dump_page().
+
+--=20
+Thanks,
+
+David / dhildenb
+
