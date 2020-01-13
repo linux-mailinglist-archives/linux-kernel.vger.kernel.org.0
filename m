@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AFAC138984
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 03:46:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAC1C138983
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 03:46:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733162AbgAMCqp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 21:46:45 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38145 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733072AbgAMCqm (ORCPT
+        id S1733125AbgAMCqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 21:46:42 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:37859 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732487AbgAMCqm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 12 Jan 2020 21:46:42 -0500
-Received: by mail-lj1-f193.google.com with SMTP id w1so8301916ljh.5
+Received: by mail-lj1-f195.google.com with SMTP id o13so8295588ljg.4
         for <linux-kernel@vger.kernel.org>; Sun, 12 Jan 2020 18:46:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:reply-to:sender:from:date:message-id:subject:to
          :content-transfer-encoding;
         bh=3/HLCQdvOct5vYdGl7M0YVN4HPhLYYUEFvzbqlTIGO8=;
-        b=m6A4R1wGiE22Q2lQRoL/AM5zPcDrsMepYzhBXgT+Z8C63cbozuGGP5sfAVk1JKuNQc
-         R9Xf7AjFZcJwbKfs1vEwmy4atpYixBUEcGweDKzHPW0w4IH3WDWPiQgsziKC5FbswLMH
-         veHpz0XuGT04fL1AstAudTzst5/s3QJ8plvFvpl/7uXWp/XHWD1ryk8mCLYNWQEKvDGA
-         PFQLllVjJShlauw58tGRTAIUPgJrtm/Bz0dXtWOPaYscUXMHdlNSpLiaLBwLLEj2yClw
-         lXNPpAGDX/Q9iYMzUHiZIaNb4JDWqxpdUCCgtEKLvwY9VHmryEhyZTZaJMc1ScbeCElw
-         D0wQ==
+        b=j20YFKNRFH9IUg4c7QCqszuNElEhuTwfaZMAQRgrFIT1J2RJwJmzuy46LL68n4+7Nk
+         VWpqHRxkXwsQnJjbkSOGHWOv2m9NjFdTEsp47LHPi1RMFYf0Lh3WENl2k9f/8Z7ZH0FX
+         +7fiBHEm5vrmYYuOmLhJg+WONzFm9jHL3f/VdvgZpGsMkOuPbofKC2lApSBsQi2TiTi+
+         RuYjY83VlChv9nfS6kglLCP5QDYy8ZgkJc0FNWIOe4JdP1W2IHHzPNPvBtmLtQnUx8R/
+         NG5iVcEDO3qbotXJvZkKQnFLCOGmH+R0+XaEkBQ/RPbRYhobU7dPwCySzZHEedczb9xa
+         YGJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:reply-to:sender:from:date
          :message-id:subject:to:content-transfer-encoding;
         bh=3/HLCQdvOct5vYdGl7M0YVN4HPhLYYUEFvzbqlTIGO8=;
-        b=fHDbFUpFPkIiF7HMTpPzpjYRSeNo2ENfywMNXcEtxvUV6v1+h8jnCUTNT6NqpJIQ+p
-         wlEhI6ksPQYezDOSaBsPGCrvwTk3usD5smtAMMaTygWxuvnSsrGlXl+0tsN8ek2ChF1E
-         66nRqkcL0mWdlh5LQIUa73rr+fBP1+Cl9ZplvwMRuVCZu+21iQlWfuRDvJlltMQIb3FH
-         8Adwj/DRB6+Ft1Sn1fVZ7f+aVWXvq1bgbLMmBlKVdCztHeBcyDB1SoOBCp/xdTKfMSVl
-         qmF+E7sPwRIf2ttFEgf+sUjSCTuPphOZQX01fjbosg5ZENHFhV5Or/zwBOg+S3HmdVmz
-         TAPw==
-X-Gm-Message-State: APjAAAUs2EYAqXHoSBfiPEOt3NVIQyWSvMAkwHfgSrCyeBPdP/QBxZJZ
-        mSEe85AceX2YglWZaWbI2XcWrKNlIw/LUJApZ0k=
-X-Google-Smtp-Source: APXvYqwGh/Wqeivq29He4b+fpiTPXwRhmeAWaaWiWl81vcaSoKoMu6uvjmXVEdbcdFr4vIBxQuZBN5MRF+wVcGU6y4s=
-X-Received: by 2002:a05:651c:30a:: with SMTP id a10mr9075871ljp.101.1578883600369;
+        b=CsLBZcgfzWJe28brvissL+S+HTB2BRIQc69ewCwL5q+5tOa2lbcZDZrSEMA92sEkVi
+         hW5643HZJM9titgSvQMlpQ3wqMmxWOjGhCUl2wgLrzjco2pgLfJGyjYCtLVBwzQ3g6hy
+         utDAxEJud+pnnWovdFy0bqyxC2fpM+Kic6gjPSF0sZFcQcQ4o7Tiqu51+6lMHFDTydCQ
+         /+R28BiGrsmw3QshK1l2rFgBCKorvSG50KdXZn52q/tp7FNsrFCLEeM2ri+e+Idf8/0x
+         5RdwbW5pI1JzFtTruMNBtwL50/TEHI3pmoriWy1tk7WCrdrLfakK77x/NvuF9kY0t1Rf
+         +V1w==
+X-Gm-Message-State: APjAAAXYPqlQE+muDTSDSFtsbog6btyhE37TY+utyNEv/we1DD82dE2c
+        /KRjJRiEX2NmunyqdqjpVLGrlirnWkeGywHidr0=
+X-Google-Smtp-Source: APXvYqwS2UaO5GvTxz5UDBfPbC0Z/9NJ5m8+bYny5TWXYd0hHr6Ie+Sw1GgHrger+kJLjZY91tjvmLLhGYeFVfDOpNc=
+X-Received: by 2002:a05:651c:232:: with SMTP id z18mr9014667ljn.85.1578883600390;
  Sun, 12 Jan 2020 18:46:40 -0800 (PST)
 MIME-Version: 1.0
 Reply-To: salifnaba85@gmail.com
 Received: by 2002:a19:983:0:0:0:0:0 with HTTP; Sun, 12 Jan 2020 18:46:39 -0800 (PST)
 From:   "Mr.Salif Naba" <mrsalifnaba5@gmail.com>
 Date:   Mon, 13 Jan 2020 03:46:39 +0100
-X-Google-Sender-Auth: 0Mm609r7rIXOm2vuXXTveOHene4
-Message-ID: <CADhJwMMz6oHx=hEBxdq_evSs2e=5_-WHd0qvqW3PQ6tR_uSRww@mail.gmail.com>
+X-Google-Sender-Auth: dYqGSSfTWXLWQLfJrHjAgMup3Zk
+Message-ID: <CADhJwMP+4_RMHgoFdqHmcOukBYi9zU1yEWT87=UX-7p6ptPuMg@mail.gmail.com>
 Subject: TREAT WITH CONFIDENCE PLEASE.
 To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
