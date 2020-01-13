@@ -2,79 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6619138E15
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:45:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5710138E21
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 10:47:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbgAMJov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 04:44:51 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54946 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726109AbgAMJou (ORCPT
+        id S1728688AbgAMJrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 04:47:25 -0500
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:35470 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725992AbgAMJrX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 04:44:50 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00D9bfoP115448
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 04:44:49 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2xfvjx5w58-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 04:44:49 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Mon, 13 Jan 2020 09:44:47 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 13 Jan 2020 09:44:43 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00D9ig7015663186
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 Jan 2020 09:44:42 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B51C442047;
-        Mon, 13 Jan 2020 09:44:42 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D22AC42041;
-        Mon, 13 Jan 2020 09:44:40 +0000 (GMT)
-Received: from [9.124.31.171] (unknown [9.124.31.171])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 13 Jan 2020 09:44:40 +0000 (GMT)
-Subject: Re: [GIT PULL 0/6] perf/urgent fixes
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20191205193224.24629-1-acme@kernel.org>
- <6489b96f-5117-f133-1c2d-63c0c1691f4b@linux.ibm.com>
- <20200113092539.GD35080@krava>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Mon, 13 Jan 2020 15:14:40 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        Mon, 13 Jan 2020 04:47:23 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R661e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0TncLfyC_1578908838;
+Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TncLfyC_1578908838)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 13 Jan 2020 17:47:19 +0800
+Subject: Re: [PATCH v7 02/10] mm/memcg: fold lru_lock in lock_page_lru
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
+        daniel.m.jordan@oracle.com, yang.shi@linux.alibaba.com,
+        willy@infradead.org, shakeelb@google.com, hannes@cmpxchg.org
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+References: <1577264666-246071-1-git-send-email-alex.shi@linux.alibaba.com>
+ <1577264666-246071-3-git-send-email-alex.shi@linux.alibaba.com>
+ <36d7e390-a3d1-908c-d181-4a9e9c8d3d98@yandex-team.ru>
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Message-ID: <952d02c2-8aa5-40bb-88bb-c43dee65c8bc@linux.alibaba.com>
+Date:   Mon, 13 Jan 2020 17:45:51 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.3.1
 MIME-Version: 1.0
-In-Reply-To: <20200113092539.GD35080@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <36d7e390-a3d1-908c-d181-4a9e9c8d3d98@yandex-team.ru>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20011309-0008-0000-0000-00000348E217
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20011309-0009-0000-0000-00004A693098
-Message-Id: <d3e490aa-994f-3bec-cddf-cd5659e5859d@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-13_02:2020-01-13,2020-01-13 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=927
- lowpriorityscore=0 bulkscore=0 suspectscore=0 adultscore=0 phishscore=0
- priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
- clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001130082
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -82,57 +44,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 1/13/20 2:55 PM, Jiri Olsa wrote:
-> On Mon, Jan 13, 2020 at 01:58:59PM +0530, Ravi Bangoria wrote:
-> 
-> SNIP
-> 
->>          | ^~~~
->>    In file included from /usr/include/glib-2.0/gobject/gobject.h:24,
->>                     from /usr/include/glib-2.0/gobject/gbinding.h:29,
->>                     from /usr/include/glib-2.0/glib-object.h:23,
->>                     from /usr/include/glib-2.0/gio/gioenums.h:28,
->>                     from /usr/include/glib-2.0/gio/giotypes.h:28,
->>                     from /usr/include/glib-2.0/gio/gio.h:26,
->>                     from /usr/include/gtk-2.0/gdk/gdkapplaunchcontext.h:30,
->>                     from /usr/include/gtk-2.0/gdk/gdk.h:32,
->>                     from /usr/include/gtk-2.0/gtk/gtk.h:32,
->>                     from test-gtk2.c:3:
->>    /usr/include/glib-2.0/gobject/gtype.h:679:1: note: declared here
->>      679 | {
->>          | ^
->>    In file included from /usr/include/gtk-2.0/gtk/gtktoolitem.h:31,
->>                     from /usr/include/gtk-2.0/gtk/gtktoolbutton.h:30,
->>                     from /usr/include/gtk-2.0/gtk/gtkmenutoolbutton.h:30,
->>                     from /usr/include/gtk-2.0/gtk/gtk.h:126,
->>                     from test-gtk2.c:3:
->>    /usr/include/gtk-2.0/gtk/gtktooltips.h:73:3: error: ‘GTimeVal’ is deprecated: Use 'GDateTime' instead [-Werror=deprecated-declarations]
->>       73 |   GTimeVal last_popdown;
->>          |   ^~~~~~~~
->>    In file included from /usr/include/glib-2.0/glib/galloca.h:32,
->>                     from /usr/include/glib-2.0/glib.h:30,
->>                     from /usr/include/glib-2.0/gobject/gbinding.h:28,
->>                     from /usr/include/glib-2.0/glib-object.h:23,
->>                     from /usr/include/glib-2.0/gio/gioenums.h:28,
->>                     from /usr/include/glib-2.0/gio/giotypes.h:28,
->>                     from /usr/include/glib-2.0/gio/gio.h:26,
->>                     from /usr/include/gtk-2.0/gdk/gdkapplaunchcontext.h:30,
->>                     from /usr/include/gtk-2.0/gdk/gdk.h:32,
->>                     from /usr/include/gtk-2.0/gtk/gtk.h:32,
->>                     from test-gtk2.c:3:
->>    /usr/include/glib-2.0/glib/gtypes.h:551:8: note: declared here
->>      551 | struct _GTimeVal
->>          |        ^~~~~~~~~
->>    cc1: all warnings being treated as errors
+在 2020/1/10 下午4:49, Konstantin Khlebnikov 写道:
+> On 25/12/2019 12.04, Alex Shi wrote:
+>>  From the commit_charge's explanations and mem_cgroup_commit_charge
+>> comments, as well as call path when lrucare is ture, The lru_lock is
+>> just to guard the task migration(which would be lead to move_account)
+>> So it isn't needed when !PageLRU, and better be fold into PageLRU to
+>> reduce lock contentions.
 >>
+>> Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+>> Cc: Johannes Weiner <hannes@cmpxchg.org>
+>> Cc: Michal Hocko <mhocko@kernel.org>
+>> Cc: Matthew Wilcox <willy@infradead.org>
+>> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: cgroups@vger.kernel.org
+>> Cc: linux-mm@kvack.org
+>> Cc: linux-kernel@vger.kernel.org
+>> ---
+>>   mm/memcontrol.c | 9 ++++-----
+>>   1 file changed, 4 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>> index c5b5f74cfd4d..0ad10caabc3d 100644
+>> --- a/mm/memcontrol.c
+>> +++ b/mm/memcontrol.c
+>> @@ -2572,12 +2572,11 @@ static void cancel_charge(struct mem_cgroup *memcg, unsigned int nr_pages)
+>>     static void lock_page_lru(struct page *page, int *isolated)
+>>   {
+>> -    pg_data_t *pgdat = page_pgdat(page);
+>> -
+>> -    spin_lock_irq(&pgdat->lru_lock);
+>>       if (PageLRU(page)) {
+>> +        pg_data_t *pgdat = page_pgdat(page);
+>>           struct lruvec *lruvec;
+>>   +        spin_lock_irq(&pgdat->lru_lock);
 > 
-> patch below fixes that for me.. please let me know
-> if it works for you and I'll post full patch
+> That's wrong. Here PageLRU must be checked again under lru_lock.
+Hi, Konstantin,
+
+For logical remain, we can get the lock and then release for !PageLRU. 
+but I still can figure out the problem scenario. Would like to give more hints?
+
+
 > 
-> jirka
 > 
+> Also I don't like these functions:
+> - called lock/unlock but actually also isolates
+> - used just once
+> - pgdat evaluated twice
 
-LGTM. You can add:
+That's right. I will fold these functions into commit_charge.
 
-Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-
+Thanks
+Alex
