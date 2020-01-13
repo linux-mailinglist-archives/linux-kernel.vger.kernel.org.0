@@ -2,65 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9174138B8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 07:00:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27F06138BA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 07:08:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733103AbgAMGAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 01:00:36 -0500
-Received: from mga07.intel.com ([134.134.136.100]:36257 "EHLO mga07.intel.com"
+        id S1733208AbgAMGIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 01:08:40 -0500
+Received: from mga05.intel.com ([192.55.52.43]:47086 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726475AbgAMGAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 01:00:36 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1725909AbgAMGIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 01:08:40 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jan 2020 22:00:35 -0800
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jan 2020 22:08:39 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,427,1571727600"; 
-   d="scan'208";a="255770257"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by fmsmga002.fm.intel.com with ESMTP; 12 Jan 2020 22:00:34 -0800
-Date:   Mon, 13 Jan 2020 14:04:55 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        jmattson@google.com, yu.c.zhang@linux.intel.com,
-        alazar@bitdefender.com, edwin.zhai@intel.com
-Subject: Re: [RESEND PATCH v10 03/10] mmu: spp: Add SPP Table setup functions
-Message-ID: <20200113060455.GC12253@local-michael-cet-test.sh.intel.com>
-References: <20200102061319.10077-1-weijiang.yang@intel.com>
- <20200102061319.10077-4-weijiang.yang@intel.com>
- <20200110174026.GE21485@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200110174026.GE21485@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+   d="scan'208";a="304750793"
+Received: from chenyu-office.sh.intel.com ([10.239.158.173])
+  by orsmga001.jf.intel.com with ESMTP; 12 Jan 2020 22:08:38 -0800
+From:   Chen Yu <yu.c.chen@intel.com>
+To:     linux-pci@vger.kernel.org
+Cc:     Chen Yu <yu.c.chen@intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI/PM: Print the pci config space of devices before suspend
+Date:   Mon, 13 Jan 2020 14:07:24 +0800
+Message-Id: <20200113060724.19571-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 09:40:27AM -0800, Sean Christopherson wrote:
-> On Thu, Jan 02, 2020 at 02:13:12PM +0800, Yang Weijiang wrote:
-> > SPPT is a 4-level paging structure similar to EPT, when SPP is
-> > armed for target physical page, bit 61 of the corresponding
-> > EPT entry is flaged, then SPPT is traversed with the gfn,
-> > the leaf entry of SPPT contains the access bitmap of subpages
-> > inside the target 4KB physical page, one bit per 128-byte subpage.
-> > 
-> > Co-developed-by: He Chen <he.chen@linux.intel.com>
-> > Signed-off-by: He Chen <he.chen@linux.intel.com>
-> > Co-developed-by: Zhang Yi <yi.z.zhang@linux.intel.com>
-> > Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
-> > Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> > ---
-> >  arch/x86/include/asm/kvm_host.h |   5 +-
-> >  arch/x86/kvm/mmu/spp.c          | 228 ++++++++++++++++++++++++++++++++
-> >  arch/x86/kvm/mmu/spp.h          |  10 ++
-> 
-> This patch is completely untesteable.  It adds spp.c but doesn't compile
-> it.  Actually, everything up until patch 06 is untestable.
-OK, will re-order the patches in a reasonable sequence. thank you!
+The pci config space was found to be insane during resume
+from hibernation(S4, or suspend to disk) on a VM:
+
+ serial 0000:00:16.3: restoring config space at offset 0x14
+ (was 0x9104e000, writing 0xffffffff)
+
+Either the snapshot on the disk has been scribbled or the pci
+config space becomes invalid before suspend. To narrow down
+and benefit future debugging, print the pci config space
+being saved before suspend, which is symmetric to the log
+in pci_restore_config_dword().
+
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <lenb@kernel.org>
+Cc: linux-pci@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+ drivers/pci/pci.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index e87196cc1a7f..34cde70440c3 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -1372,8 +1372,11 @@ int pci_save_state(struct pci_dev *dev)
+ {
+ 	int i;
+ 	/* XXX: 100% dword access ok here? */
+-	for (i = 0; i < 16; i++)
++	for (i = 0; i < 16; i++) {
+ 		pci_read_config_dword(dev, i * 4, &dev->saved_config_space[i]);
++		pci_dbg(dev, "saving config space at offset %#x (reading %#x)\n",
++			i * 4, dev->saved_config_space[i]);
++	}
+ 	dev->state_saved = true;
+ 
+ 	i = pci_save_pcie_state(dev);
+-- 
+2.17.1
+
