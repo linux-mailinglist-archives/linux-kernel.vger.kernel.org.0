@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E29391399B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 20:10:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63C011399C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 20:10:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729174AbgAMTKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 14:10:14 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:40041 "EHLO
+        id S1729028AbgAMTJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 14:09:53 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:39958 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728759AbgAMTKK (ORCPT
+        with ESMTP id S1728978AbgAMTJs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 14:10:10 -0500
+        Mon, 13 Jan 2020 14:09:48 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ir55y-00019v-UA; Mon, 13 Jan 2020 20:09:51 +0100
+        id 1ir55t-00018t-0u; Mon, 13 Jan 2020 20:09:45 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1F9D31C18EE;
-        Mon, 13 Jan 2020 20:09:32 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D8B541C18DD;
+        Mon, 13 Jan 2020 20:09:31 +0100 (CET)
 Date:   Mon, 13 Jan 2020 19:09:31 -0000
 From:   "tip-bot2 for Andrei Vagin" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] lib/vdso: Add unlikely() hint into vdso_read_begin()
+Subject: [tip: timers/core] lib/vdso: Mark do_hres() and do_coarse() as
+ __always_inline
 Cc:     Andrei Vagin <avagin@gmail.com>, Dmitry Safonov <dima@arista.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191112012724.250792-2-dima@arista.com>
-References: <20191112012724.250792-2-dima@arista.com>
+        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191112012724.250792-3-dima@arista.com>
+References: <20191112012724.250792-3-dima@arista.com>
 MIME-Version: 1.0
-Message-ID: <157894257195.19145.2837202197610619244.tip-bot2@tip-bot2>
+Message-ID: <157894257170.19145.3085263448023270279.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,55 +48,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     79472606d6fba66c20299f4121a657ce73efc302
-Gitweb:        https://git.kernel.org/tip/79472606d6fba66c20299f4121a657ce73efc302
+Commit-ID:     9d66475e9b680afb70a49a531287513f1307e623
+Gitweb:        https://git.kernel.org/tip/9d66475e9b680afb70a49a531287513f1307e623
 Author:        Andrei Vagin <avagin@gmail.com>
-AuthorDate:    Tue, 12 Nov 2019 01:26:50 
+AuthorDate:    Tue, 12 Nov 2019 01:26:51 
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 13 Jan 2020 08:10:46 +01:00
+CommitterDate: Mon, 13 Jan 2020 08:10:47 +01:00
 
-lib/vdso: Add unlikely() hint into vdso_read_begin()
-
-Place the branch with no concurrent write before the contended case.
+lib/vdso: Mark do_hres() and do_coarse() as __always_inline
 
 Performance numbers for Intel(R) Core(TM) i5-6300U CPU @ 2.40GHz
 (more clock_gettime() cycles - the better):
-        | before    | after
------------------------------------
-        | 150252214 | 153242367
-        | 150301112 | 153324800
-        | 150392773 | 153125401
-        | 150373957 | 153399355
-        | 150303157 | 153489417
-        | 150365237 | 153494270
------------------------------------
-avg     | 150331408 | 153345935
-diff %  | 2	    | 0
------------------------------------
-stdev % | 0.3	    | 0.1
 
-Co-developed-by: Dmitry Safonov <dima@arista.com>
+clock            | before     | after      | diff
+----------------------------------------------------------
+monotonic        |  153222105 |  166775025 | 8.8%
+monotonic-coarse |  671557054 |  691513017 | 3.0%
+monotonic-raw    |  147116067 |  161057395 | 9.5%
+boottime         |  153446224 |  166962668 | 9.1%
+
+The improvement for arm64 for monotonic and boottime is around 3.5%.
+
+clock            | before     | after      | diff
+==================================================
+monotonic          17326692     17951770     3.6%
+monotonic-coarse   43624027     44215292     1.3%
+monotonic-raw      17541809     17554932     0.1%
+boottime           17334982     17954361     3.5%
+
+[ tglx: Avoid the goto ]
+
 Signed-off-by: Andrei Vagin <avagin@gmail.com>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Link: https://lore.kernel.org/r/20191112012724.250792-2-dima@arista.com
+Link: https://lore.kernel.org/r/20191112012724.250792-3-dima@arista.com
 
 ---
- include/vdso/helpers.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/vdso/gettimeofday.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/include/vdso/helpers.h b/include/vdso/helpers.h
-index 01641db..9a2af9f 100644
---- a/include/vdso/helpers.h
-+++ b/include/vdso/helpers.h
-@@ -10,7 +10,7 @@ static __always_inline u32 vdso_read_begin(const struct vdso_data *vd)
+diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
+index fac9e86..b453d24 100644
+--- a/lib/vdso/gettimeofday.c
++++ b/lib/vdso/gettimeofday.c
+@@ -38,7 +38,7 @@ u64 vdso_calc_delta(u64 cycles, u64 last, u64 mask, u32 mult)
+ }
+ #endif
+ 
+-static int do_hres(const struct vdso_data *vd, clockid_t clk,
++static __always_inline int do_hres(const struct vdso_data *vd, clockid_t clk,
+ 		   struct __kernel_timespec *ts)
  {
+ 	const struct vdso_timestamp *vdso_ts = &vd->basetime[clk];
+@@ -68,8 +68,8 @@ static int do_hres(const struct vdso_data *vd, clockid_t clk,
+ 	return 0;
+ }
+ 
+-static int do_coarse(const struct vdso_data *vd, clockid_t clk,
+-		      struct __kernel_timespec *ts)
++static __always_inline int do_coarse(const struct vdso_data *vd, clockid_t clk,
++				     struct __kernel_timespec *ts)
+ {
+ 	const struct vdso_timestamp *vdso_ts = &vd->basetime[clk];
  	u32 seq;
+@@ -99,13 +99,15 @@ __cvdso_clock_gettime_common(clockid_t clock, struct __kernel_timespec *ts)
+ 	 */
+ 	msk = 1U << clock;
+ 	if (likely(msk & VDSO_HRES))
+-		return do_hres(&vd[CS_HRES_COARSE], clock, ts);
++		vd = &vd[CS_HRES_COARSE];
+ 	else if (msk & VDSO_COARSE)
+ 		return do_coarse(&vd[CS_HRES_COARSE], clock, ts);
+ 	else if (msk & VDSO_RAW)
+-		return do_hres(&vd[CS_RAW], clock, ts);
++		vd = &vd[CS_RAW];
++	else
++		return -1;
  
--	while ((seq = READ_ONCE(vd->seq)) & 1)
-+	while (unlikely((seq = READ_ONCE(vd->seq)) & 1))
- 		cpu_relax();
+-	return -1;
++	return do_hres(vd, clock, ts);
+ }
  
- 	smp_rmb();
+ static __maybe_unused int
