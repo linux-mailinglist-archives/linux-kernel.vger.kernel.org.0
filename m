@@ -2,64 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FF5113922A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:29:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDBA113923E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:32:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728646AbgAMN27 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 08:28:59 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:34464 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726277AbgAMN27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 08:28:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=FpkFxp1qPW3+9QSftzRJBfOZwYtUKjyOro9/uICM4TU=; b=xR4qc2NafemcdaBW43Lk3uKOJX
-        NYHT2l9SoSz77eDcruXc1TKSgKMFLgPXvi4br3v8B4oZOoxuuzgDuFIBc/7dD4BLOOo1+Ln13+3J/
-        PdY/nYb1cRZ1S908oN8pU6M0FQCEm5ZjPiItq51vHU7GNKh6BivSSYTbYa+iN0AJQGsI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1iqzlz-0003sw-QO; Mon, 13 Jan 2020 14:28:51 +0100
-Date:   Mon, 13 Jan 2020 14:28:51 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        David Bauer <mail@david-bauer.net>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Philipp Zabel <p.zabel@pengutronix.de>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mdio_bus: Simplify reset handling and extend to non-DT
- systems
-Message-ID: <20200113132851.GC11788@lunn.ch>
-References: <20200113130529.15372-1-geert+renesas@glider.be>
+        id S1728731AbgAMNcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 08:32:02 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9164 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726074AbgAMNcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 08:32:01 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C9B0F35E7DAC81E21025;
+        Mon, 13 Jan 2020 21:31:58 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 13 Jan 2020 21:31:51 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <jani.nikula@linux.intel.com>, <airlied@linux.ie>,
+        <daniel@ffwll.ch>
+CC:     <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <chenzhou10@huawei.com>
+Subject: [PATCH next] drm/i915: fix build error without ACPI
+Date:   Mon, 13 Jan 2020 21:27:24 +0800
+Message-ID: <20200113132724.143687-1-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200113130529.15372-1-geert+renesas@glider.be>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 02:05:29PM +0100, Geert Uytterhoeven wrote:
-> Convert mdiobus_register_reset() from open-coded DT-only optional reset
-> handling to reset_control_get_optional_exclusive().  This not only
-> simplifies the code, but also adds support for lookup-based resets on
-> non-DT systems.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Only tested on systems without PHY resets, with and without
-> CONFIG_RESET_CONTROLLER=y.
+If CONFIG_ACPI=n and CONFIG_BACKLIGHT_CLASS_DEVICE=m, compilation complains
+with undefined references:
 
-David, please could you test this.
+drivers/gpu/drm/i915/display/intel_panel.o: In function `intel_backlight_device_register':
+intel_panel.c:(.text+0x4dd9): undefined reference to `backlight_device_register'
+drivers/gpu/drm/i915/display/intel_panel.o: In function `intel_backlight_device_unregister':
+intel_panel.c:(.text+0x4e96): undefined reference to `backlight_device_unregister'
 
-But it Looks O.K. to me.
+This patch select BACKLIGHT_CLASS_DEVICE directly.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+---
+ drivers/gpu/drm/i915/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    Andrew
+diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
+index ba95959..6b69dab 100644
+--- a/drivers/gpu/drm/i915/Kconfig
++++ b/drivers/gpu/drm/i915/Kconfig
+@@ -16,7 +16,7 @@ config DRM_I915
+ 	select IRQ_WORK
+ 	# i915 depends on ACPI_VIDEO when ACPI is enabled
+ 	# but for select to work, need to select ACPI_VIDEO's dependencies, ick
+-	select BACKLIGHT_CLASS_DEVICE if ACPI
++	select BACKLIGHT_CLASS_DEVICE
+ 	select INPUT if ACPI
+ 	select ACPI_VIDEO if ACPI
+ 	select ACPI_BUTTON if ACPI
+-- 
+2.7.4
+
