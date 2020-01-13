@@ -2,83 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F4821392FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:02:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EE5E139314
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:05:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728834AbgAMOCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 09:02:24 -0500
-Received: from foss.arm.com ([217.140.110.172]:39940 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726399AbgAMOCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 09:02:24 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6C3B1045;
-        Mon, 13 Jan 2020 06:02:23 -0800 (PST)
-Received: from [10.37.12.172] (unknown [10.37.12.172])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ACAD13F68E;
-        Mon, 13 Jan 2020 06:02:22 -0800 (PST)
-Subject: Re: [PATCH] xfs: Fix xfs_dir2_sf_entry_t size check
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-References: <20200109141459.21808-1-vincenzo.frascino@arm.com>
- <c43539f2-aa9b-4afa-985c-c438099732ff@sandeen.net>
- <1a540ee4-6597-c79e-1bce-6592cb2f3eae@arm.com>
- <20200109165048.GB8247@magnolia>
- <435bcb71-9126-b1f1-3803-4977754b36ff@arm.com>
- <CAK8P3a0eY6Vm5PNdzR8Min9MrwAqH8vnMZ3C+pxTQhiFVNPyWA@mail.gmail.com>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <ae266015-7521-e1fa-e72d-f3f97e623ad2@arm.com>
-Date:   Mon, 13 Jan 2020 14:05:21 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728828AbgAMOFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 09:05:40 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:41577 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728558AbgAMOFj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 09:05:39 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1ir0LW-0004fy-Oz; Mon, 13 Jan 2020 14:05:34 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/gma500: clean up two indentation issues
+Date:   Mon, 13 Jan 2020 14:05:34 +0000
+Message-Id: <20200113140534.209440-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0eY6Vm5PNdzR8Min9MrwAqH8vnMZ3C+pxTQhiFVNPyWA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 1/13/20 1:55 PM, Arnd Bergmann wrote:
-> On Thu, Jan 9, 2020 at 10:01 PM Vincenzo Frascino
-> <vincenzo.frascino@arm.com> wrote:
->>
->> Hi Darrick,
->>
->> On 09/01/2020 16:50, Darrick J. Wong wrote:
->>> This sounds like gcc getting confused by the zero length array.  Though
->>> it's odd that randconfig breaks, but defconfig doesn't?  This sounds
->>> like one of the kernel gcc options causing problems.
->>>
->>
->> This is what I started suspecting as well.
-> 
-> The important bit into the configuration is
-> 
-> # CONFIG_AEABI is not set
-> 
-> With ARM OABI (which you get when EABI is disabled), structures are padded
-> to multiples of 32 bits. See commits 8353a649f577 ("xfs: kill
-> xfs_dir2_sf_off_t")
-> and aa2dd0ad4d6d ("xfs: remove __arch_pack"). Those could be partially
-> reverted to fix it again, but it doesn't seem worth it as there is
-> probably nobody
-> running XFS on OABI machines (actually with the build failure we can
-> be fairly sure there isn't ;-).
-> 
+There are a couple of statements that are indented too deeply,
+clean these up by removing the extraneous tabs. Also remove an
+empty line.
 
-Thanks for this, for some reasons I was convinced that CONFIG_AEABI was set in
-this configuration file as I reported as well in my previous email.
-Since it is OABI makes sense disabling xfs for randconfig purposes.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/gma500/cdv_intel_dp.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/gpu/drm/gma500/cdv_intel_dp.c b/drivers/gpu/drm/gma500/cdv_intel_dp.c
+index 5772b2dce0d6..b5360bd405c5 100644
+--- a/drivers/gpu/drm/gma500/cdv_intel_dp.c
++++ b/drivers/gpu/drm/gma500/cdv_intel_dp.c
+@@ -1529,8 +1529,7 @@ cdv_intel_dp_start_link_train(struct gma_encoder *encoder)
+ 	clock_recovery = false;
+ 
+ 	DRM_DEBUG_KMS("Start train\n");
+-		reg = DP | DP_LINK_TRAIN_PAT_1;
+-
++	reg = DP | DP_LINK_TRAIN_PAT_1;
+ 
+ 	for (;;) {
+ 		/* Use intel_dp->train_set[0] to set the voltage and pre emphasis values */
+@@ -1603,7 +1602,7 @@ cdv_intel_dp_complete_link_train(struct gma_encoder *encoder)
+ 	cr_tries = 0;
+ 
+ 	DRM_DEBUG_KMS("\n");
+-		reg = DP | DP_LINK_TRAIN_PAT_2;
++	reg = DP | DP_LINK_TRAIN_PAT_2;
+ 
+ 	for (;;) {
+ 
 -- 
-Regards,
-Vincenzo
+2.24.0
+
