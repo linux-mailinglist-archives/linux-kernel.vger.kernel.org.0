@@ -2,101 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D310139D82
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 00:40:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A994E139DAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 00:53:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729206AbgAMXkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 18:40:53 -0500
-Received: from ozlabs.org ([203.11.71.1]:48263 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728820AbgAMXkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 18:40:52 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47xVTF6nGWz9sNx;
-        Tue, 14 Jan 2020 10:40:49 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1578958850;
-        bh=A848NZEiEcaXz060s2a1b3NhnA3pCu9FGX7S09l4sQ8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=qJvILkfYlBGvHI4BPNiRy0MTc+GdRHUnn5aPKW7QRixCbHT36vJxHwli81Wzp3tTg
-         JMX42zi5+Si5Ra0qc/Fdqf0xzBEec2ACYVbtGXyChUrwrN1ISC4WFl0X+BcQ52V7x8
-         t7pNd9b4my7XOYfVZGVIK1snPSEjvDw4amfTop7WMvfPs4DRRYC3+dxVop5+bz3AtW
-         eqxXnF23uVxU4CWOoqdOPb8eSOjaYkBrCAdhULu5FrnWVLVvhvY5uGV0phCYr5qnKO
-         Jzj4sJ80+HXzw0WiiCbbgJx0sRdRWMKCrBQiK92K3LmRzCNSCtfDY95dwa7BtxXzTW
-         7e3dfhOdwcnzA==
-Date:   Tue, 14 Jan 2020 10:40:49 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        linux-kselftest@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Alan Maguire <alan.maguire@oracle.com>
-Subject: Re: linux-next: Tree for Jan 13
- (drivers/base/test/property-entry-test.o)
-Message-ID: <20200114104049.5244f612@canb.auug.org.au>
-In-Reply-To: <eddaa93c-3bde-a9ed-5ee7-766f3cd51a43@infradead.org>
-References: <20200113181457.209ab4a5@canb.auug.org.au>
-        <eddaa93c-3bde-a9ed-5ee7-766f3cd51a43@infradead.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/o_gDCpRQjvTiTFnAR6E4otA";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1729212AbgAMXxg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 18:53:36 -0500
+Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:13327 "EHLO
+        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728802AbgAMXxg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 18:53:36 -0500
+Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 13 Jan 2020 15:53:35 -0800
+Received: from gurus-linux.qualcomm.com ([10.46.162.81])
+  by ironmsg05-sd.qualcomm.com with ESMTP; 13 Jan 2020 15:53:35 -0800
+Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
+        id 4E9EE49AD; Mon, 13 Jan 2020 15:53:35 -0800 (PST)
+From:   Guru Das Srinagesh <gurus@codeaurora.org>
+To:     linux-pwm@vger.kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        Guru Das Srinagesh <gurus@codeaurora.org>
+Subject: [PATCH v4 0/1] Convert period and duty cycle to u64
+Date:   Mon, 13 Jan 2020 15:53:30 -0800
+Message-Id: <cover.1578959442.git.gurus@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/o_gDCpRQjvTiTFnAR6E4otA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Reworked the change pushed upstream earlier [1] so as to not add an extension
+to an obsolete API. With this change, pwm_ops->apply() can be used to set
+pwm_state parameters as usual.
 
-Hi Randy,
+[1] https://lore.kernel.org/lkml/20190916140048.GB7488@ulmo/
 
-On Mon, 13 Jan 2020 14:59:54 -0800 Randy Dunlap <rdunlap@infradead.org> wro=
-te:
->
-> on i386:
->=20
-> WARNING: modpost: missing MODULE_LICENSE() in drivers/base/test/property-=
-entry-test.o
-> see include/linux/module.h for more information
+Changes from v1:
+  - Fixed compilation errors seen when compiling for different archs.
 
-Sorry, I missed that yesterday.
+Changes from v2:
+  - Fixed %u -> %llu in a dev_dbg in pwm-stm32-lp.c, thanks to kbuild test robot
+  - Added a couple of fixes to pwm-imx-tpm.c and pwm-sifive.c
 
-Caused by commit
+Changes from v3:
+  - Rebased to current tip of for-next.
 
-  c032ace71c29 ("software node: add basic tests for property entries")
+Guru Das Srinagesh (1):
+  pwm: Convert period and duty cycle to u64
 
-from the pm tree interacting with commit
+ drivers/clk/clk-pwm.c                      |  2 +-
+ drivers/gpu/drm/i915/display/intel_panel.c |  2 +-
+ drivers/hwmon/pwm-fan.c                    |  2 +-
+ drivers/media/rc/ir-rx51.c                 |  3 ++-
+ drivers/pwm/core.c                         |  4 ++--
+ drivers/pwm/pwm-clps711x.c                 |  2 +-
+ drivers/pwm/pwm-imx-tpm.c                  |  2 +-
+ drivers/pwm/pwm-imx27.c                    |  5 ++---
+ drivers/pwm/pwm-sifive.c                   |  2 +-
+ drivers/pwm/pwm-sti.c                      |  4 ++--
+ drivers/pwm/pwm-stm32-lp.c                 |  2 +-
+ drivers/pwm/pwm-sun4i.c                    |  2 +-
+ drivers/pwm/sysfs.c                        | 10 +++++-----
+ drivers/video/backlight/pwm_bl.c           |  3 ++-
+ include/linux/pwm.h                        | 16 ++++++++--------
+ 15 files changed, 31 insertions(+), 30 deletions(-)
 
-  9fe124bf1b77 ("kunit: allow kunit to be loaded as a module")
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-from the kunit-next tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/o_gDCpRQjvTiTFnAR6E4otA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4dAAEACgkQAVBC80lX
-0GyOCQf/XF1HpPDPAJkgZkwD5+/qpEus4WuG8BcwMiVelJBZVjXUSyau3hKu3PIN
-+mgQM6hVoAfV0BllZpIFyNFMRwpJe8hEVfiFR1BkNO9NutXPhBwZk5+poK9zScMD
-CypNpPfA9LuKuhlAviZUtReISVYsAYF9Jl7T+sj6XTmUNdZC6PRlfMyk8TAGXRw6
-oJeMfnXYv4xnXsRymo3TMCpT2yDQ6XzH2T2TGXNe/rQKcUkJRbGQGGoCcf7oH/Mx
-BhSgNlNiRoqKRsHJU054Is2RtQhHMpNNtxs38H+mezQJdkN7n7k/5tjgvmay0wra
-wkIE8gG9LRQVnrQk4xD2bilcJGPypw==
-=nphE
------END PGP SIGNATURE-----
-
---Sig_/o_gDCpRQjvTiTFnAR6E4otA--
