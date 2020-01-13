@@ -2,85 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A22C1399AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 20:10:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30D1C1399CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 20:11:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729126AbgAMTJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 14:09:59 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:40011 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729048AbgAMTJ4 (ORCPT
+        id S1729345AbgAMTK4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 14:10:56 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:50693 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729300AbgAMTKy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 14:09:56 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1ir55z-0001Dh-JN; Mon, 13 Jan 2020 20:09:51 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 351E01C18F4;
-        Mon, 13 Jan 2020 20:09:34 +0100 (CET)
-Date:   Mon, 13 Jan 2020 19:09:34 -0000
-From:   "tip-bot2 for Vincenzo Frascino" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] arm64: compat: vdso: Expose BUILD_VDSO32
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20190830135902.20861-2-vincenzo.frascino@arm.com>
-References: <20190830135902.20861-2-vincenzo.frascino@arm.com>
+        Mon, 13 Jan 2020 14:10:54 -0500
+Received: from ip5f5bd663.dynamic.kabel-deutschland.de ([95.91.214.99] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1ir56u-0004P1-FF; Mon, 13 Jan 2020 19:10:48 +0000
+Date:   Mon, 13 Jan 2020 20:10:47 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, linux-api@vger.kernel.org,
+        oleksandr@redhat.com, Suren Baghdasaryan <surenb@google.com>,
+        Tim Murray <timmurray@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        John Dias <joaodias@google.com>
+Subject: Re: [PATCH 2/4] mm: introduce external memory hinting API
+Message-ID: <20200113191046.2tidyvc544zvchek@wittgenstein>
+References: <20200110213433.94739-1-minchan@kernel.org>
+ <20200110213433.94739-3-minchan@kernel.org>
+ <56ea0927-ad2e-3fbd-3366-3813330f6cec@virtuozzo.com>
+ <20200113104256.5ujbplyec2sk4onn@wittgenstein>
+ <20200113184408.GD110363@google.com>
 MIME-Version: 1.0
-Message-ID: <157894257404.19145.1701846128821842403.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200113184408.GD110363@google.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the timers/core branch of tip:
+On Mon, Jan 13, 2020 at 10:44:08AM -0800, Minchan Kim wrote:
+> On Mon, Jan 13, 2020 at 11:42:57AM +0100, Christian Brauner wrote:
+> > On Mon, Jan 13, 2020 at 11:47:11AM +0300, Kirill Tkhai wrote:
+> 
+> < snip >
+> 
+> > > > +SYSCALL_DEFINE5(process_madvise, int, pidfd, unsigned long, start,
+> > > > +		size_t, len_in, int, behavior, unsigned long, flags)
+> > > 
+> > > I don't like the interface. The fact we have pidfd does not mean,
+> > > we have to use it for new syscalls always. A user may want to set
+> > > madvise for specific pid from console and pass pid as argument.
+> > > pidfd would be an overkill in this case.
+> > > We usually call "kill -9 pid" from console. Why shouldn't process_madvise()
+> > > allow this?
+> > > 
+> > > I suggent to extend first argument to work with both pid and pidfd.
+> > > Look at what we have for waitid(idtype, id_t id, ...) for example:
+> > > 
+> > >        idtype == P_PID
+> > >               Wait for the child whose process ID matches id.
+> > > 
+> > >        idtype == P_PIDFD (since Linux 5.4)
+> > >               Wait for the child referred to by the PID file descriptor specified in id.  (See pidfd_open(2) for  further  information  on
+> > >               PID file descriptors.)
+> > > 
+> > > We may use @flags argument for this.
+> > 
+> > Sorry for chiming in just a comment. Overall, I don't particularly care
+> > how or if you integrate pidfd here. One thing I would like to point out
+> > is that we're working on a patch to place new features under pidfd
+> > specific flags. This e.g. means a pidfd would be only be able to be used
+> > for madvise operations (or getfd operations) if it was created with that
+> > specific flag set making it easier to share them with other processes.
+> > So if you integrate them here I would be quite thankful if you target
+> > the patchset for the v5.7 merge window, not for v5.6.
+> 
+> Hi Christian,
+> Sorry but I couldn't understand your point.
+> Could you clarify what you meant?
 
-Commit-ID:     4845c25326cf1db48e010a0fb162da4dfb07665a
-Gitweb:        https://git.kernel.org/tip/4845c25326cf1db48e010a0fb162da4dfb07665a
-Author:        Vincenzo Frascino <vincenzo.frascino@arm.com>
-AuthorDate:    Fri, 30 Aug 2019 14:58:55 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 10 Jan 2020 21:14:04 +01:00
+Hi Minchan,
 
-arm64: compat: vdso: Expose BUILD_VDSO32
+Sure. When you create a pidfd, e.g. with clone3() and you'd wanted to
+use it for madvise you'd need to set a flag like pidfd_cap_madvise or
+pidfd_feature_madvise when you create the pidfd. Only if the pidfd was
+created with that flag set could you use it with madvise (This does not
+affect the permission checking you're performing here.). This has come
+up a couple of times and becomes more relevant now that people keep
+adding new features on top of pidfd and is similar to what we are now
+doing with openat2().
 
-clock_gettime32 and clock_getres_time32 should be compiled only with the
-32 bit vdso library.
-
-Expose BUILD_VDSO32 when arm64 compat is compiled, to provide an
-indication to the generic library to include these symbols.
-
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Link: https://lore.kernel.org/r/20190830135902.20861-2-vincenzo.frascino@arm.com
-
----
- arch/arm64/include/asm/vdso/compat_gettimeofday.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/include/asm/vdso/compat_gettimeofday.h b/arch/arm64/include/asm/vdso/compat_gettimeofday.h
-index c50ee1b..fe7afe0 100644
---- a/arch/arm64/include/asm/vdso/compat_gettimeofday.h
-+++ b/arch/arm64/include/asm/vdso/compat_gettimeofday.h
-@@ -17,6 +17,7 @@
- #define VDSO_HAS_CLOCK_GETRES		1
- 
- #define VDSO_HAS_32BIT_FALLBACK		1
-+#define BUILD_VDSO32			1
- 
- static __always_inline
- int gettimeofday_fallback(struct __kernel_old_timeval *_tv,
+Christian
