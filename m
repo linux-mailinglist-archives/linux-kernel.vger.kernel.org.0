@@ -2,97 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1339139CF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 23:53:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FF33139CF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 23:52:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729147AbgAMWxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 17:53:16 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44224 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728994AbgAMWxQ (ORCPT
+        id S1729125AbgAMWwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 17:52:53 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:38142 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729015AbgAMWwx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 17:53:16 -0500
-Received: by mail-lf1-f68.google.com with SMTP id v201so8189140lfa.11;
-        Mon, 13 Jan 2020 14:53:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KHnvnN3lDGWBZcYdcw5+iDp4bDu9HTX8MqfJ39n2Djc=;
-        b=E/RnX/WwjoDdRucl6paIhf7V9plcSdleOLDtSCkrLO/sG+CWbZ2rRcd8NuNHB89Gl2
-         8BNfTk0sg1Z7EjdSGM1bIozklLZ1+275JkAuY23pweKGUDEP/mmQnYMtZLa33WuJ8l5W
-         LwjXkhl7bYwuPBfKE/zara6FU1ywyhWNca3MsnfbRnSyXJ1JeMwbFV2CVXyd15i/UM9u
-         8nyMLhpIijjdQKw2I3TMLeUrqph7jMOnKsnw8IBB04A4ww1ADFt2U0+2ZA6s6XP3vieq
-         swmWUH9kKogMqMb14mKpRy+LQMlCxgZCxN6i58PcCYxoJHYFIwr29mevkUB+0N27O3CO
-         FAbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KHnvnN3lDGWBZcYdcw5+iDp4bDu9HTX8MqfJ39n2Djc=;
-        b=rbJW0yQ5p++cEHiwRzStwW4zhSKtyYSw49rX0wYm1JBPui3iilAvMM69EqSl2XuFk/
-         Jz8fa7cn7M854lkiDKmSyZyXO2KTQ08yrG2fGk2yu1kAcPSMJThmX9E3UPGVK4W4IvPB
-         Rxams2mYNyYqZc+m4+HK0yhwq7CO2t63rC3traGbfpLVl+Rbc6Ppl0CV5J8OxfjTo14/
-         y/6MZJ8G7LWydLhAeXXt1DRlUMMfGgT8O7Yxe2PtFiHZOebXYlEE/uUXY806jnlkAf0c
-         6j7iqfeuPJ+kOOtoRfjATHzECazU8Qm6bv0yY5xl/LvNzYRsAUgTMYwyPvWw3hl7MVk/
-         Q9fQ==
-X-Gm-Message-State: APjAAAWcvA7ojMkXFaaZX8iIfj3UmdJDQsR/m/dWKavML7KeRKiECJO9
-        RsyRvSKeBWrVerEv8o2wX7uDitO9
-X-Google-Smtp-Source: APXvYqy4Do5VeXsler/DZNP25OPRLnqyCIEysnUx0sbRh/uorSV5SSKA83a/95ykKdoNelYIBLUkOw==
-X-Received: by 2002:ac2:5605:: with SMTP id v5mr10926099lfd.136.1578955993516;
-        Mon, 13 Jan 2020 14:53:13 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id q186sm6602481ljq.14.2020.01.13.14.53.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jan 2020 14:53:12 -0800 (PST)
-Subject: Re: [PATCH v4 4/8] i2c: tegra: Support atomic transfers
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>, linux-i2c@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200112171430.27219-1-digetx@gmail.com>
- <20200112171430.27219-5-digetx@gmail.com> <20200113220315.GB2689@ninjato>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <86f71bfe-7d17-0bf4-edda-13c84301a598@gmail.com>
-Date:   Tue, 14 Jan 2020 01:52:12 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Mon, 13 Jan 2020 17:52:53 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00DMmDv3020106;
+        Mon, 13 Jan 2020 22:52:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2019-08-05; bh=yvB3s31LE8gCjb6DwYDy/tH4bEukxhOtXvizX8X9rTQ=;
+ b=U3tK/btaClL7YMesFwtEFnM4ZXNyPCv+lWwEpa1w48fljaumueznaXy1vRpxW8J1xpdX
+ 8co9tKgiz4qSKiK1AILiKR1D2p7GCV5s26Xll7ivzZETiVeqaq/BuBsYNXd9ERlZ5xYm
+ tgiMkMLtC2NZ4GtBpYPcXuVdKJfWMmf4BGbB8Bxe7snVUmnQn8KYACugy10UEPp+1PvQ
+ de11EdHUkBa49xbm1IW50i0aFE7CmUNTeUyMWEc7IfqSzKaNUirTaWZg3CPyFNxO8SQI
+ bgGW0+7eKRj3V4ECQtM3xpkFDOMHgRMTmqVvAXdH9lKpYPw/HAYlRAgwkuJSify/ap5D GA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2xf74s23r3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 Jan 2020 22:52:49 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00DMmvQ5176859;
+        Mon, 13 Jan 2020 22:52:48 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2xfrh6u0ge-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 Jan 2020 22:52:48 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00DMqlFh025571;
+        Mon, 13 Jan 2020 22:52:47 GMT
+Received: from localhost.localdomain (/98.229.125.203)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 13 Jan 2020 14:52:47 -0800
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] workqueue: add worker function to workqueue_execute_end tracepoint
+Date:   Mon, 13 Jan 2020 17:52:39 -0500
+Message-Id: <20200113225240.116671-1-daniel.m.jordan@oracle.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <20200113220315.GB2689@ninjato>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9499 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001130185
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9499 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001130185
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-14.01.2020 01:03, Wolfram Sang пишет:
-> On Sun, Jan 12, 2020 at 08:14:26PM +0300, Dmitry Osipenko wrote:
->> System shutdown may happen with interrupts being disabled and in this case
->> I2C core rejects transfers if atomic transfer isn't supported by driver.
-> 
-> Well, not quite. The core complains about it nowadays, but does not
-> reject messages. It will try the same behaviour as before. It will just
-> inform the user that somethings is tried which may not work. I probably
-> should update the error message printed saying that the transfer is
-> still tried.
+It's surprising that workqueue_execute_end includes only the work when
+its counterpart workqueue_execute_start has both the work and the worker
+function.
 
-Indeed, now I'm recalling noticing that the transfer actually should
-happen despite of the error message, but then completely forgot to
-update the commit's message. I can update the message and send out v5,
-if you're thinking that it's worthwhile to do.
+You can't set a tracing filter or trigger based on the function, and
+postprocessing scripts interested in specific functions are harder to
+write since they have to remember the work from _start and match it up
+with the same field in _end.
 
->> There were several occurrences where I found my Nexus 7 completely
->> discharged despite of being turned off and then one day I spotted this in
->> the log:
-> 
-> Given my reasoning above, that should have happened before the warning
-> was printed as well? Because same behaviour. I'd be surprised if there
-> was a change...
+Add the function name, taking care to use the copy stashed in the
+worker since the work is no longer safe to touch.
 
-Pretty sure that it was happening before, but I wasn't paying much
-attention back then.
+Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+---
+ include/trace/events/workqueue.h | 19 ++++++++++++++++---
+ kernel/workqueue.c               |  2 +-
+ 2 files changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/include/trace/events/workqueue.h b/include/trace/events/workqueue.h
+index e172549283be..bdfc53e7f82f 100644
+--- a/include/trace/events/workqueue.h
++++ b/include/trace/events/workqueue.h
+@@ -108,14 +108,27 @@ TRACE_EVENT(workqueue_execute_start,
+ /**
+  * workqueue_execute_end - called immediately after the workqueue callback
+  * @work:	pointer to struct work_struct
++ * @function:   pointer to worker function
+  *
+  * Allows to track workqueue execution.
+  */
+-DEFINE_EVENT(workqueue_work, workqueue_execute_end,
++TRACE_EVENT(workqueue_execute_end,
+ 
+-	TP_PROTO(struct work_struct *work),
++	TP_PROTO(struct work_struct *work, work_func_t function),
+ 
+-	TP_ARGS(work)
++	TP_ARGS(work, function),
++
++	TP_STRUCT__entry(
++		__field( void *,	work	)
++		__field( void *,	function)
++	),
++
++	TP_fast_assign(
++		__entry->work		= work;
++		__entry->function	= function;
++	),
++
++	TP_printk("work struct %p: function %ps", __entry->work, __entry->function)
+ );
+ 
+ #endif /*  _TRACE_WORKQUEUE_H */
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index cfc923558e04..4bdfa270a37b 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -2266,7 +2266,7 @@ __acquires(&pool->lock)
+ 	 * While we must be careful to not use "work" after this, the trace
+ 	 * point will only record its address.
+ 	 */
+-	trace_workqueue_execute_end(work);
++	trace_workqueue_execute_end(work, worker->current_func);
+ 	lock_map_release(&lockdep_map);
+ 	lock_map_release(&pwq->wq->lockdep_map);
+ 
+-- 
+2.24.1
+
