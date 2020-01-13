@@ -2,69 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38D60138CC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 09:21:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F668138CB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 09:17:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728819AbgAMIVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 03:21:06 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:50458 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728682AbgAMIVG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 03:21:06 -0500
-Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 00D8L3x4061832;
-        Mon, 13 Jan 2020 17:21:03 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav401.sakura.ne.jp);
- Mon, 13 Jan 2020 17:21:03 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav401.sakura.ne.jp)
-Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 00D8KvJP061816
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 13 Jan 2020 17:21:03 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] sched/core: fix illegal RCU from offline CPUs
-To:     Qian Cai <cai@lca.pw>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        bsegall@google.com, mgorman@suse.de, paulmck@kernel.org,
-        tglx@linutronix.de, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20200112161752.10492-1-cai@lca.pw>
- <3ffaaf32-88b6-fdf1-c7c7-ab56292c047f@I-love.SAKURA.ne.jp>
- <7168A4A4-E735-4809-B80A-389990603EB8@lca.pw>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <66e33eb5-e958-6dc8-2327-4168afdd9e1e@i-love.sakura.ne.jp>
-Date:   Mon, 13 Jan 2020 17:20:57 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1728813AbgAMIRN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 03:17:13 -0500
+Received: from mga14.intel.com ([192.55.52.115]:33732 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728695AbgAMIRN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 03:17:13 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jan 2020 00:17:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,428,1571727600"; 
+   d="scan'208";a="272968134"
+Received: from unknown (HELO localhost) ([10.239.159.128])
+  by FMSMGA003.fm.intel.com with ESMTP; 13 Jan 2020 00:17:11 -0800
+Date:   Mon, 13 Jan 2020 16:21:32 +0800
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
+        jmattson@google.com, yu.c.zhang@linux.intel.com,
+        alazar@bitdefender.com, edwin.zhai@intel.com
+Subject: Re: [RESEND PATCH v10 05/10] x86: spp: Introduce user-space SPP
+ IOCTLs
+Message-ID: <20200113082132.GG12253@local-michael-cet-test.sh.intel.com>
+References: <20200102061319.10077-1-weijiang.yang@intel.com>
+ <20200102061319.10077-6-weijiang.yang@intel.com>
+ <20200110181053.GH21485@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <7168A4A4-E735-4809-B80A-389990603EB8@lca.pw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200110181053.GH21485@linux.intel.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/01/13 15:30, Qian Cai wrote:
->>> -	mmdrop(mm);
->>> +	smp_call_function_single(cpumask_first(cpu_online_mask),
->>> +				(void (*)(void *))mmdrop, mm, 0);
->>
->> mmdrop() might sleep, but
+On Fri, Jan 10, 2020 at 10:10:53AM -0800, Sean Christopherson wrote:
+> On Thu, Jan 02, 2020 at 02:13:14PM +0800, Yang Weijiang wrote:
+> > User application, e.g., QEMU or VMI, must initialize SPP
+> > before gets/sets SPP subpages, the dynamic initialization is to
+> > reduce the extra storage cost if the SPP feature is not not used.
+> > 
+> > Co-developed-by: He Chen <he.chen@linux.intel.com>
+> > Signed-off-by: He Chen <he.chen@linux.intel.com>
+> > Co-developed-by: Zhang Yi <yi.z.zhang@linux.intel.com>
+> > Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
+> > Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> > ---
+> >  arch/x86/include/asm/kvm_host.h |  4 ++
+> >  arch/x86/kvm/mmu/spp.c          | 44 +++++++++++++++
+> >  arch/x86/kvm/mmu/spp.h          |  9 ++++
+> >  arch/x86/kvm/vmx/vmx.c          | 15 ++++++
+> >  arch/x86/kvm/x86.c              | 95 ++++++++++++++++++++++++++++++++-
+> >  include/uapi/linux/kvm.h        |  3 ++
+> >  6 files changed, 169 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> > index f5145b86d620..c7a9f03f39a7 100644
+> > --- a/arch/x86/include/asm/kvm_host.h
+> > +++ b/arch/x86/include/asm/kvm_host.h
+> > @@ -1238,6 +1238,10 @@ struct kvm_x86_ops {
+> >  
+> >  	bool (*apic_init_signal_blocked)(struct kvm_vcpu *vcpu);
+> >  	int (*enable_direct_tlbflush)(struct kvm_vcpu *vcpu);
+> > +
+> > +	int (*init_spp)(struct kvm *kvm);
+> > +	int (*flush_subpages)(struct kvm *kvm, u64 gfn, u32 npages);
+> > +	int (*get_inst_len)(struct kvm_vcpu *vcpu);
 > 
-> If that is the case, and then the commit e78a7614f387 (“idle: Prevent
-> late-arriving interrupts from disrupting offline”) is incorrect because it
-> will disable local irq before calling mmdrop() which will trigger
-> the might_sleep() warning. Can you prove it?
+> If this is necessary, which hopefully it isn't, then get_insn_len() to be
+> consistent with other KVM nomenclature.
+>
+Yep, will change it.
 
-Is commit 7283094ec3db318e ("kernel, oom: fix potential pgd_lock deadlock from
-__mmdrop") about only softirq? Is it guaranteed that smp_call_function_single()
-does not hit such race? Then just my overcareful...
+> A comment for the series overall, it needs a lot of work to properly order
+> code between patches.  E.g. this patch introduces get_inst_len() without
+> any justification in the changelog and without a user.  At best it's
+> confusing, at worst this series will be impossible to bisect.
+
+I'll double check the patch and add more comments on some confusing
+points. Meanwhile, will re-order some code to make the serial testable,
+thanks a lot for your careful review!
+
