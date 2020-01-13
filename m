@@ -2,130 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87FC0138C0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 07:51:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87D22138C17
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 07:56:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728796AbgAMGvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 01:51:21 -0500
-Received: from szxga02-in.huawei.com ([45.249.212.188]:2986 "EHLO huawei.com"
+        id S1728558AbgAMG4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 01:56:07 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8703 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725954AbgAMGvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 01:51:21 -0500
-Received: from DGGEMM405-HUB.china.huawei.com (unknown [172.30.72.54])
-        by Forcepoint Email with ESMTP id 03C7E55F30D6426FC107;
-        Mon, 13 Jan 2020 14:51:18 +0800 (CST)
-Received: from DGGEMM506-MBX.china.huawei.com ([169.254.3.174]) by
- DGGEMM405-HUB.china.huawei.com ([10.3.20.213]) with mapi id 14.03.0439.000;
- Mon, 13 Jan 2020 14:51:11 +0800
-From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
-To:     Valentin Schneider <valentin.schneider@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>
-CC:     Sudeep Holla <sudeep.holla@arm.com>,
-        Linuxarm <linuxarm@huawei.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] cpu-topology: warn if NUMA configurations conflicts
- with lower layer
-Thread-Topic: [PATCH] cpu-topology: warn if NUMA configurations conflicts
- with lower layer
-Thread-Index: AQHVuWnsK0zwK8RxTkqe/SNAoYeaUKfT+S+AgALBI6CAAAyngIAAlqWw//+IwoCAAXt3QP//+lWAgASRonCABMxoAIAAodIAgAMuNwCAArymoA==
-Date:   Mon, 13 Jan 2020 06:51:10 +0000
-Message-ID: <678F3D1BB717D949B966B68EAEB446ED340E2592@DGGEMM506-MBX.china.huawei.com>
-References: <1577088979-8545-1-git-send-email-prime.zeng@hisilicon.com>
- <20191231164051.GA4864@bogus>
- <678F3D1BB717D949B966B68EAEB446ED340AE1D3@dggemm526-mbx.china.huawei.com>
- <20200102112955.GC4864@bogus>
- <678F3D1BB717D949B966B68EAEB446ED340AEB67@dggemm526-mbx.china.huawei.com>
- <c43342d0-7e4d-3be0-0fe1-8d802b0d7065@arm.com>
- <678F3D1BB717D949B966B68EAEB446ED340AFCA0@dggemm526-mbx.china.huawei.com>
- <20200103114011.GB19390@bogus>
- <678F3D1BB717D949B966B68EAEB446ED340B31E9@dggemm526-mbx.china.huawei.com>
- <20200109104306.GA10914@e105550-lin.cambridge.arm.com>
- <678F3D1BB717D949B966B68EAEB446ED340BEDD6@dggemm526-mbx.china.huawei.com>
- <1a8f7963-97e9-62cc-12d2-39f816dfaf67@arm.com>
-In-Reply-To: <1a8f7963-97e9-62cc-12d2-39f816dfaf67@arm.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.74.221.187]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1725954AbgAMG4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 01:56:06 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D7879CAE519F964D4FCA;
+        Mon, 13 Jan 2020 14:56:04 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 13 Jan 2020 14:55:55 +0800
+From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
+To:     <bhelgaas@google.com>, <lukas@wunner.de>
+CC:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <guohanjun@huawei.com>, <huawei.libin@huawei.com>,
+        <lvying6@huawei.com>, <wangxiongfeng2@huawei.com>
+Subject: [PATCH] PCI: get 'pci_ops' from the host bridge when we alloc new bus
+Date:   Mon, 13 Jan 2020 14:51:11 +0800
+Message-ID: <1578898271-46060-1-git-send-email-wangxiongfeng2@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBWYWxlbnRpbiBTY2huZWlkZXIg
-W21haWx0bzp2YWxlbnRpbi5zY2huZWlkZXJAYXJtLmNvbV0NCj4gU2VudDogU3VuZGF5LCBKYW51
-YXJ5IDEyLCAyMDIwIDQ6NTYgQU0NCj4gVG86IFplbmd0YW8gKEIpOyBNb3J0ZW4gUmFzbXVzc2Vu
-DQo+IENjOiBTdWRlZXAgSG9sbGE7IExpbnV4YXJtOyBHcmVnIEtyb2FoLUhhcnRtYW47IFJhZmFl
-bCBKLiBXeXNvY2tpOw0KPiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6
-IFJlOiBbUEFUQ0hdIGNwdS10b3BvbG9neTogd2FybiBpZiBOVU1BIGNvbmZpZ3VyYXRpb25zIGNv
-bmZsaWN0cw0KPiB3aXRoIGxvd2VyIGxheWVyDQo+IA0KPiBPbiAwOS8wMS8yMDIwIDEyOjU4LCBa
-ZW5ndGFvIChCKSB3cm90ZToNCj4gPj4gSUlVQywgdGhlIHByb2JsZW0gaXMgdGhhdCB2aXJ0IGNh
-biBzZXQgdXAgYSBicm9rZW4gdG9wb2xvZ3kgaW4gc29tZQ0KPiA+PiBjYXNlcyB3aGVyZSBNUElE
-UiBkb2Vzbid0IGxpbmUgdXAgY29ycmVjdGx5IHdpdGggdGhlIGRlZmluZWQgTlVNQQ0KPiA+PiBu
-b2Rlcy4NCj4gPj4NCj4gPj4gV2UgY291bGQgYXJndWUgdGhhdCBpdCBpcyBhIHFlbXUvdmlydCBw
-cm9ibGVtLCBidXQgaXQgd291bGQgYmUgbmljZSBpZg0KPiA+PiB3ZSBjb3VsZCBhdCBsZWFzdCBk
-ZXRlY3QgaXQuIFRoZSBwcm9wb3NlZCBwYXRjaCBpc24ndCByZWFsbHkgdGhlIHJpZ2h0DQo+ID4+
-IHNvbHV0aW9uIGFzIGl0IHdhcm5zIG9uIHNvbWUgdmFsaWQgdG9wb2xvZ2llcyBhcyBTdWRlZXAg
-YWxyZWFkeSBwb2ludGVkDQo+ID4+IG91dC4NCj4gPj4NCj4gPj4gSXQgc291bmRzIG1vcmUgbGlr
-ZSB3ZSBuZWVkIGEgbWFzayBzdWJzZXQgY2hlY2sgaW4gdGhlIHNjaGVkX2RvbWFpbg0KPiA+PiBi
-dWlsZGluZyBjb2RlLCBpZiB0aGVyZSBpc24ndCBhbHJlYWR5IG9uZT8NCj4gPg0KPiA+IEN1cnJl
-bnRseSBubywgaXQncyBhIGJpdCBjb21wbGV4IHRvIGRvIHRoZSBjaGVjayBpbiB0aGUgc2NoZWRf
-ZG9tYWluDQo+IGJ1aWxkaW5nIGNvZGUsDQo+ID4gSSBuZWVkIHRvIHRha2UgYSB0aGluayBvZiB0
-aGF0Lg0KPiA+IFN1Z2dlc3Rpb24gd2VsY29tZWQuDQo+ID4NCj4gDQo+IERvaW5nIGEgc2VhcmNo
-IG9uIHRoZSBzY2hlZF9kb21haW4gc3BhbnMgdGhlbXNlbHZlcyBzaG91bGQgbG9vaw0KPiBzb21l
-dGhpbmcgbGlrZQ0KPiB0aGUgY29tcGxldGVseSB1bnRlc3RlZDoNCj4gDQo+IC0tLTg8LS0tDQo+
-IGRpZmYgLS1naXQgYS9rZXJuZWwvc2NoZWQvdG9wb2xvZ3kuYyBiL2tlcm5lbC9zY2hlZC90b3Bv
-bG9neS5jDQo+IGluZGV4IDZlYzFlNTk1YjFkNC4uOTYxMjhkMTJlYzIzIDEwMDY0NA0KPiAtLS0g
-YS9rZXJuZWwvc2NoZWQvdG9wb2xvZ3kuYw0KPiArKysgYi9rZXJuZWwvc2NoZWQvdG9wb2xvZ3ku
-Yw0KPiBAQCAtMTg3OSw2ICsxODc5LDQzIEBAIHN0YXRpYyBzdHJ1Y3Qgc2NoZWRfZG9tYWluDQo+
-ICpidWlsZF9zY2hlZF9kb21haW4oc3RydWN0IHNjaGVkX2RvbWFpbl90b3BvbG9neV9sZXZlDQo+
-ICAJcmV0dXJuIHNkOw0KPiAgfQ0KPiANCj4gKy8qIEVuc3VyZSB0b3BvbG9neSBtYXNrcyBhcmUg
-c2FuZTsgbm9uLU5VTUEgc3BhbnMgc2hvdWxkbid0IG92ZXJsYXAgKi8NCj4gK3N0YXRpYyBpbnQg
-dmFsaWRhdGVfdG9wb2xvZ3lfc3BhbnMoY29uc3Qgc3RydWN0IGNwdW1hc2sgKmNwdV9tYXApDQo+
-ICt7DQo+ICsJc3RydWN0IHNjaGVkX2RvbWFpbl90b3BvbG9neV9sZXZlbCAqdGw7DQo+ICsJaW50
-IGksIGo7DQo+ICsNCj4gKwlmb3JfZWFjaF9zZF90b3BvbG9neSh0bCkgew0KPiArCQkvKiBOVU1B
-IGxldmVscyBhcmUgYWxsb3dlZCB0byBvdmVybGFwICovDQo+ICsJCWlmICh0bC0+ZmxhZ3MgJiBT
-RFRMX09WRVJMQVApDQo+ICsJCQlicmVhazsNCj4gKw0KPiArCQkvKg0KPiArCQkgKiBOb24tTlVN
-QSBsZXZlbHMgY2Fubm90IHBhcnRpYWxseSBvdmVybGFwIC0gdGhleSBtdXN0IGJlDQo+ICsJCSAq
-IGVpdGhlciBlcXVhbCBvciB3aG9sbHkgZGlzam9pbnQuIE90aGVyd2lzZSB3ZSBjYW4gZW5kIHVw
-DQo+ICsJCSAqIGJyZWFraW5nIHRoZSBzY2hlZF9ncm91cCBsaXN0cyAtIGkuZS4gYSBsYXRlciBn
-ZXRfZ3JvdXAoKQ0KPiArCQkgKiBwYXNzIGJyZWFrcyB0aGUgbGlua2luZyBkb25lIGZvciBhbiBl
-YXJsaWVyIHNwYW4uDQo+ICsJCSAqLw0KPiArCQlmb3JfZWFjaF9jcHUoaSwgY3B1X21hcCkgew0K
-PiArCQkJZm9yX2VhY2hfY3B1KGosIGNwdV9tYXApIHsNCj4gKwkJCQlpZiAoaSA9PSBqKQ0KPiAr
-CQkJCQljb250aW51ZTsNCj4gKwkJCQkvKg0KPiArCQkJCSAqIFdlIHNob3VsZCAnYW5kJyBhbGwg
-dGhvc2UgbWFza3Mgd2l0aCAnY3B1X21hcCcNCj4gKwkJCQkgKiB0byBleGFjdGx5IG1hdGNoIHRo
-ZSB0b3BvbG9neSB3ZSdyZSBhYm91dCB0bw0KPiArCQkJCSAqIGJ1aWxkLCBidXQgdGhhdCBjYW4g
-b25seSByZW1vdmUgQ1BVcywgd2hpY2gNCj4gKwkJCQkgKiBvbmx5IGxlc3NlbnMgb3VyIGFiaWxp
-dHkgdG8gZGV0ZWN0IG92ZXJsYXBzDQo+ICsJCQkJICovDQo+ICsJCQkJaWYgKCFjcHVtYXNrX2Vx
-dWFsKHRsLT5tYXNrKGkpLCB0bC0+bWFzayhqKSkgJiYNCj4gKwkJCQkgICAgY3B1bWFza19pbnRl
-cnNlY3RzKHRsLT5tYXNrKGkpLCB0bC0+bWFzayhqKSkpDQo+ICsJCQkJCXJldHVybiAtMTsNCj4g
-KwkJCX0NCj4gKwkJfQ0KPiArCX0NCj4gKw0KPiArCXJldHVybiAwOw0KPiArfQ0KPiArDQo+ICAv
-Kg0KPiAgICogRmluZCB0aGUgc2NoZWRfZG9tYWluX3RvcG9sb2d5X2xldmVsIHdoZXJlIGFsbCBD
-UFUgY2FwYWNpdGllcyBhcmUNCj4gdmlzaWJsZQ0KPiAgICogZm9yIGFsbCBDUFVzLg0KPiBAQCAt
-MTk1Myw3ICsxOTkwLDggQEAgYnVpbGRfc2NoZWRfZG9tYWlucyhjb25zdCBzdHJ1Y3QgY3B1bWFz
-aw0KPiAqY3B1X21hcCwgc3RydWN0IHNjaGVkX2RvbWFpbl9hdHRyICphdHQNCj4gIAlzdHJ1Y3Qg
-c2NoZWRfZG9tYWluX3RvcG9sb2d5X2xldmVsICp0bF9hc3ltOw0KPiAgCWJvb2wgaGFzX2FzeW0g
-PSBmYWxzZTsNCj4gDQo+IC0JaWYgKFdBUk5fT04oY3B1bWFza19lbXB0eShjcHVfbWFwKSkpDQo+
-ICsJaWYgKFdBUk5fT04oY3B1bWFza19lbXB0eShjcHVfbWFwKSkgfHwNCj4gKwkgICAgV0FSTl9P
-Tih2YWxpZGF0ZV90b3BvbG9neV9zcGFucyhjcHVfbWFwKSkpDQo+ICAJCWdvdG8gZXJyb3I7DQo+
-IA0KPiAgCWFsbG9jX3N0YXRlID0gX192aXNpdF9kb21haW5fYWxsb2NhdGlvbl9oZWxsKCZkLCBj
-cHVfbWFwKTsNCj4gLS0tPjgtLS0NCj4gDQo+IEFsdGVybmF0aXZlbHkgdGhlIGFzc2VydGlvbiBv
-biB0aGUgc2NoZWRfZ3JvdXAgbGlua2luZyBJIHN1Z2dlc3RlZCBlYXJsaWVyDQo+IGluIHRoZSB0
-aHJlYWQgc2hvdWxkIHN1ZmZpY2UsIHNpbmNlIHRoaXMgc2hvdWxkIHRyaWdnZXIgd2hlbmV2ZXIg
-d2UgaGF2ZQ0KPiBvdmVybGFwcGluZyBub24tTlVNQSBzY2hlZCBkb21haW5zLg0KPiANCj4gU2lu
-Y2UgeW91IGhhdmUgYSBzZXR1cCB3aGVyZSB5b3UgY2FuIHJlcHJvZHVjZSB0aGUgaXNzdWUsIGNv
-dWxkIHBsZWFzZQ0KPiBnaXZlDQo+IGVpdGhlciAoaWRlYWxseSBib3RoISkgYSB0cnk/IFRoYW5r
-cy4NCg0KDQpJIGhhdmUgdHJpZWQgYm90aCwgdGhpcyBwcmV2aW91cyBvbmUgZG9uJ3Qgd29yay4g
-QnV0IHRoaXMgb25lIHNlZW1zIHdvcmsNCmNvcnJlY3RseSB3aXRoIHRoZSB3YXJuaW5nIG1lc3Nh
-Z2UgcHJpbnRvdXQgYXMgZXhwZWN0ZWQuDQoNClRoaXMgcGF0Y2ggaXMgYmFzZWQgb24gdGhlIGZh
-Y3QgIiBub24tTlVNQSBzcGFucyBzaG91bGRuJ3Qgb3ZlcmxhcCAiLCBJIGFtDQpub3QgcXVpdGUg
-c3VyZSBpZiB0aGlzIGlzIGFsd2F5cyB0cnVlPyANCg0KQW55d2F5LCBDb3VsZCB5b3UgaGVscCB0
-byByYWlzZSB0aGUgbmV3IHBhdGNoPw0KDQpUaGFua3MNClplbmd0YW8NCg0KPiANCj4gPiBUaGFu
-a3MNCj4gPiBaZW5ndGFvDQo+ID4NCj4gPj4NCj4gPj4gTW9ydGVuDQo=
+When I test 'aer-inject' with the following procedures:
+1. inject a fatal error into a upstream PCI bridge
+2. remove the upstream bridge by sysfs
+3. rescan the PCI tree by 'echo 1 > /sys/bus/pci/rescan'
+4. execute command 'rmmod aer-inject'
+5. remove the upstream bridge by sysfs again
+
+I came across the following Oops.
+
+[  799.713238] Internal error: Oops: 96000007 [#1] SMP
+[  799.718099] Process bash (pid: 10683, stack limit = 0x00000000125a3b1b)
+[  799.724686] CPU: 108 PID: 10683 Comm: bash Kdump: loaded Not tainted 4.19.36 #2
+[  799.731962] Hardware name: Huawei TaiShan 2280 V2/BC82AMDD, BIOS 1.05 09/18/2019
+[  799.739325] pstate: 40400009 (nZcv daif +PAN -UAO)
+[  799.744104] pc : pci_remove_bus+0xc0/0x1c0
+[  799.748182] lr : pci_remove_bus+0x94/0x1c0
+[  799.752260] sp : ffffa02e335df940
+[  799.755560] x29: ffffa02e335df940 x28: ffff2000088216a8
+[  799.760849] x27: 1ffff405c66bbfbc x26: ffff20000a9518c0
+[  799.766139] x25: ffffa02dea6ec418 x24: 1ffff405bd4dd883
+[  799.771427] x23: ffffa02e72576628 x22: 1ffff405ce4aecc0
+[  799.776715] x21: ffffa02e72576608 x20: ffff200002e75080
+[  799.782003] x19: ffffa02e72576600 x18: 0000000000000000
+[  799.787291] x17: 0000000000000000 x16: 0000000000000000
+[  799.792578] x15: 0000000000000001 x14: dfff200000000000
+[  799.797866] x13: ffff20000a6dfaf0 x12: 0000000000000000
+[  799.803154] x11: 1fffe4000159b217 x10: ffff04000159b217
+[  799.808442] x9 : dfff200000000000 x8 : ffff20000acd90bf
+[  799.813730] x7 : 0000000000000000 x6 : 0000000000000000
+[  799.819017] x5 : 0000000000000001 x4 : 0000000000000000
+[  799.824306] x3 : 1ffff405dbe62603 x2 : 1fffe400005cea11
+[  799.829593] x1 : dfff200000000000 x0 : ffff200002e75088
+[  799.834882] Call trace:
+[  799.837323]  pci_remove_bus+0xc0/0x1c0
+[  799.841056]  pci_remove_bus_device+0xd0/0x2f0
+[  799.845392]  pci_stop_and_remove_bus_device_locked+0x2c/0x40
+[  799.851028]  remove_store+0x1b8/0x1d0
+[  799.854679]  dev_attr_store+0x60/0x80
+[  799.858330]  sysfs_kf_write+0x104/0x170
+[  799.862149]  kernfs_fop_write+0x23c/0x430
+[  799.866143]  __vfs_write+0xec/0x4e0
+[  799.869615]  vfs_write+0x12c/0x3d0
+[  799.873001]  ksys_write+0xd0/0x190
+[  799.876389]  __arm64_sys_write+0x70/0xa0
+[  799.880298]  el0_svc_common+0xfc/0x278
+[  799.884030]  el0_svc_handler+0x50/0xc0
+[  799.887764]  el0_svc+0x8/0xc
+[  799.890634] Code: d2c40001 f2fbffe1 91002280 d343fc02 (38e16841)
+[  799.896700] kernel fault(0x1) notification starting on CPU 108
+
+It is because when we alloc a new bus in rescanning process, the
+'pci_ops' of the newly allocced 'pci_bus' is inherited from its parent
+pci bus. Whereas, the 'pci_ops' of the parent bus may be changed to
+'aer_inj_pci_ops' in 'aer_inject()'. When we unload the module
+'aer_inject', we only restore the 'pci_ops' for the pci bus of the
+error-injected device and the root port in 'aer_inject_exit'. After we
+have unloaded the module, the 'pci_ops' of the newly allocced pci bus is
+still 'aer_inj_pci_ops'. When we access it, an Oops happened.
+
+This patch modify the code to get the 'pci_ops' from the host bridge
+rather than the parent pci bus when we alloc a new pci bus.
+
+Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+---
+ drivers/pci/probe.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 512cb43..b0021f9 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -985,7 +985,8 @@ static bool pci_bridge_child_ext_cfg_accessible(struct pci_dev *bridge)
+ static struct pci_bus *pci_alloc_child_bus(struct pci_bus *parent,
+ 					   struct pci_dev *bridge, int busnr)
+ {
+-	struct pci_bus *child;
++	struct pci_bus *child, *root_bus;
++	struct pci_host_bridge *host_bridge;
+ 	int i;
+ 	int ret;
+ 
+@@ -994,8 +995,17 @@ static struct pci_bus *pci_alloc_child_bus(struct pci_bus *parent,
+ 	if (!child)
+ 		return NULL;
+ 
++	/*
++	 * get 'pci_ops' from the host bridge, because 'parent->ops' may be
++	 * modified in 'aer_inject'.
++	 */
++	root_bus = parent;
++	while (root_bus->parent)
++		root_bus = root_bus->parent;
++	host_bridge = to_pci_host_bridge(root_bus->bridge);
++	child->ops = host_bridge->ops;
++
+ 	child->parent = parent;
+-	child->ops = parent->ops;
+ 	child->msi = parent->msi;
+ 	child->sysdata = parent->sysdata;
+ 	child->bus_flags = parent->bus_flags;
+-- 
+1.7.12.4
+
