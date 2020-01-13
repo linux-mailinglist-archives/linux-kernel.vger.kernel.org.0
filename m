@@ -2,84 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2395139D61
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 00:35:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E019F139D4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 00:30:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbgAMXfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 18:35:05 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46895 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbgAMXfF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 18:35:05 -0500
-Received: by mail-ot1-f68.google.com with SMTP id r9so10732802otp.13
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 15:35:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1hWr5fTf0UvM/FdokqnbY78OahK5vgKtckbIjPFsKcM=;
-        b=ZLSZiP+bHQ540gz6rC1y9KRpemAw7furEnO8vd96Sa6XXIa0lQaflGaPYv6rUUPEAe
-         F2oa43pqSqfyjlNwjUswNIFsFiRwBgoViOM7FQaNlh+jrxlbKiPxiBktUsVggIcRkur1
-         eh/ogtQ8/ks3mdWGjXZ9NwDptWpATHDm0PDTeIkUzznMUzX3zSZcIpHa/oWX+nwF4JUK
-         o+hB/JjdmmK6BgqqHhc2Lz1y0mxi8OgeOJajjz/6lXPtNokfn4iaycQiDL/yNcQ5giKT
-         I0DiQ/IlbNESMwTwzcEn58J3QQ6PXXKTBzpLGUtFW6pB5PIHxklzsZ36KOR2hru6huby
-         OF3g==
-X-Gm-Message-State: APjAAAV4D0V2ASRrupjSVDcm5CGQiM2Un8AzsApKCpg1wUcd/4KdP8fo
-        hSdVFpf7mRgzjGARK+VhJAYKlYQ=
-X-Google-Smtp-Source: APXvYqy0w/Tg/YS9cTLAv3UVL4gQPYqHANwcZxreEKO74KTWyCKv75NDAPdhiPe2S64MgKahAf+9SA==
-X-Received: by 2002:a9d:5f13:: with SMTP id f19mr15366960oti.180.1578958504297;
-        Mon, 13 Jan 2020 15:35:04 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s83sm4021238oif.33.2020.01.13.15.35.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 15:35:04 -0800 (PST)
-Received: from rob (uid 1000)
-        (envelope-from rob@rob-hp-laptop)
-        id 223f23
-        by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Mon, 13 Jan 2020 17:25:51 -0600
-Date:   Mon, 13 Jan 2020 17:25:51 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        ludovic.desroches@microchip.com, vkoul@kernel.org,
-        eugen.hristev@microchip.com, jic23@kernel.org, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, mchehab@kernel.org,
-        lee.jones@linaro.org, radu_nicolae.pirea@upb.ro,
-        richard.genoud@gmail.com, tudor.ambarus@microchip.com,
-        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-        wg@grandegger.com, mkl@pengutronix.de, a.zummo@towertech.it,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-can@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: Re: [PATCH v2 05/17] dt-bindings: atmel-isi: add
- microchip,sam9x60-isi
-Message-ID: <20200113232550.GA2344@bogus>
-References: <1578673089-3484-1-git-send-email-claudiu.beznea@microchip.com>
- <1578673089-3484-6-git-send-email-claudiu.beznea@microchip.com>
+        id S1729324AbgAMXau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 18:30:50 -0500
+Received: from foss.arm.com ([217.140.110.172]:45614 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727282AbgAMXat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 18:30:49 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D562711B3;
+        Mon, 13 Jan 2020 15:30:48 -0800 (PST)
+Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BA11C3F68E;
+        Mon, 13 Jan 2020 15:30:47 -0800 (PST)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, will@kernel.org, maz@kernel.org,
+        catalin.marinas@arm.com, ard.biesheuvel@linaro.org,
+        mark.rutland@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v3 0/7] arm64: Fix support for no FP/SIMD
+Date:   Mon, 13 Jan 2020 23:30:16 +0000
+Message-Id: <20200113233023.928028-1-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1578673089-3484-6-git-send-email-claudiu.beznea@microchip.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 10 Jan 2020 18:17:57 +0200, Claudiu Beznea wrote:
-> Add microchip,sam9x60-isi to DT bindings documentation.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  Documentation/devicetree/bindings/media/atmel-isi.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+This series fixes the support for systems without FP/SIMD unit.
 
-Acked-by: Rob Herring <robh@kernel.org>
+We detect the absence of FP/SIMD after the SMP cpus are brought
+online (i.e, SYSTEM scope). This means, we allow a hotplugged
+CPU to boot successfully even if it doesn't have the FP/SIMD
+when we have decided otherwise at boot and have now advertised
+the ELF HWCAP for the userspace. Fix this by turning this to a
+BOOT_RESTRICTED_CPU_LOCAL feature to allow the detection of the
+feature the very moment a CPU turns up without FP/SIMD and also
+prevent a conflict after SMP boot.
+
+The COMPAT ELF_HWCAPs were statically set to indicate the
+availability of VFP. Make it dynamic to set the appropriate
+bits.
+
+Also, some of the early kernel threads (including init) could run
+with their TIF_FOREIGN_FPSTATE flag set which might be inherited
+by applications forked by them (e.g, modprobe from initramfs).
+Now, if we detect the absence of FP/SIMD we stop clearing the
+TIF flag in fpsimd_restore_current_state(). This could cause
+the applications stuck in do_notify_resume() looping forever
+to clear the flag. Fix this by clearing the TIF flag in
+fpsimd_restore_current_state() for the tasks that may
+have it set.
+
+This series also categorises the functions dealing with fpsimd
+into two :
+
+ - Call permitted with missing FP/SIMD support. But we bail
+   out early in the function. This is for functions exposed
+   to the generic kernel code.
+
+ - Calls not permitted with missing FP/SIMD support. These
+   are functions which deal with the CPU/Task FP/SIMD registers
+   and/or meta-data. The callers must check for the support
+   before invoking them.
+
+See the last patch in the series for details. 
+
+Also make sure that the SVE is initialised where supported,
+before the FP/SIMD is used by the kernel.
+
+Tested with debian armel initramfs and rootfs. The arm64 doesn't
+have a soft-float ABI, thus haven't tested it with 64bit userspace.
+
+Applies on linux-aarch64 for-next/core
+
+Changes since v2:
+ - Rebase on to for-next/core, resolved conflict with the E0PD
+   handling changes
+ - Address comments from Catalin
+     - Remove warnings from static functions
+     - Add WARN_ON in may_use_simd() if called before initializing
+       capabilities.
+ - Add "active" hook for FP regset
+ - Remove dangerous WARN_ON from KVM, replaced with an additional
+   check to make sure that the FP/SIMD is always trapped.
+ - Added tags from Catalin, Marc
+
+Suzuki K Poulose (7):
+  arm64: Introduce system_capabilities_finalized() marker
+  arm64: fpsimd: Make sure SVE setup is complete before SIMD is used
+  arm64: cpufeature: Fix the type of no FP/SIMD capability
+  arm64: cpufeature: Set the FP/SIMD compat HWCAP bits properly
+  arm64: ptrace: nofpsimd: Fail FP/SIMD regset operations
+  arm64: signal: nofpsimd: Handle fp/simd context for signal frames
+  arm64: nofpsmid: Handle TIF_FOREIGN_FPSTATE flag cleanly
+
+ arch/arm64/include/asm/cpufeature.h |  5 +++
+ arch/arm64/include/asm/kvm_host.h   |  2 +-
+ arch/arm64/include/asm/simd.h       |  8 +++-
+ arch/arm64/kernel/cpufeature.c      | 67 +++++++++++++++++++----------
+ arch/arm64/kernel/fpsimd.c          | 30 +++++++++++--
+ arch/arm64/kernel/process.c         |  2 +-
+ arch/arm64/kernel/ptrace.c          | 21 +++++++++
+ arch/arm64/kernel/signal.c          |  6 ++-
+ arch/arm64/kernel/signal32.c        |  4 +-
+ arch/arm64/kvm/hyp/switch.c         | 10 ++++-
+ 10 files changed, 121 insertions(+), 34 deletions(-)
+
+-- 
+2.24.1
+
