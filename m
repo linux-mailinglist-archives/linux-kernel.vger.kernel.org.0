@@ -2,133 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82DB7138B1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 06:40:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1D3B138B25
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 06:47:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbgAMFkU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 00:40:20 -0500
-Received: from mga02.intel.com ([134.134.136.20]:2721 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726017AbgAMFkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 00:40:19 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jan 2020 21:40:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,427,1571727600"; 
-   d="scan'208";a="243089700"
-Received: from local-michael-cet-test.sh.intel.com (HELO localhost) ([10.239.159.128])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Jan 2020 21:40:17 -0800
-Date:   Mon, 13 Jan 2020 13:44:38 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        jmattson@google.com, yu.c.zhang@linux.intel.com,
-        alazar@bitdefender.com, edwin.zhai@intel.com
-Subject: Re: [RESEND PATCH v10 02/10] vmx: spp: Add control flags for
- Sub-Page Protection(SPP)
-Message-ID: <20200113054438.GA12253@local-michael-cet-test.sh.intel.com>
-References: <20200102061319.10077-1-weijiang.yang@intel.com>
- <20200102061319.10077-3-weijiang.yang@intel.com>
- <20200110165859.GB21485@linux.intel.com>
+        id S1727021AbgAMFrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 00:47:09 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:17259 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726055AbgAMFrJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 00:47:09 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1578894428; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=XoJh0IwkIfbUz6r+FYTpWq3eCJJHoLDTCx+9uGqjfVQ=;
+ b=ocj8AxvzAup+GRX0A9Knr9+HItah4SUQDiwrqlb8x99yNF1i5WZ7T2Q0HQEzb6TCTDytlpUp
+ 8nmuBfYmAyik5NiQJyz7R5sp6fqQXjaUNfLsIPqSf6UNebm2lmqqYuz7xW+8bzUtf2HmnO6q
+ PdZUgZZfOpH/6pMpGTDeapMNAsQ=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e1c045b.7f84b7316308-smtp-out-n02;
+ Mon, 13 Jan 2020 05:47:07 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 74260C4479C; Mon, 13 Jan 2020 05:47:06 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D2397C43383;
+        Mon, 13 Jan 2020 05:47:05 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200110165859.GB21485@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 13 Jan 2020 11:17:05 +0530
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        Stephen Boyd <swboyd@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: watchdog: Add compatible for QCS404,
+ SC7180, SDM845, SM8150
+In-Reply-To: <20191219232842.GB22811@bogus>
+References: <cover.1576211720.git.saiprakash.ranjan@codeaurora.org>
+ <3f871ae3818b46423430074689e33bc34b28aa1c.1576211720.git.saiprakash.ranjan@codeaurora.org>
+ <20191219232842.GB22811@bogus>
+Message-ID: <e06b96fdaa79c7c02b76c788c04fcf7d@codeaurora.org>
+X-Sender: saiprakash.ranjan@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 08:58:59AM -0800, Sean Christopherson wrote:
-> On Thu, Jan 02, 2020 at 02:13:11PM +0800, Yang Weijiang wrote:
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index e3394c839dea..5713e8a6224c 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -60,6 +60,7 @@
-> >  #include "vmcs12.h"
-> >  #include "vmx.h"
-> >  #include "x86.h"
-> > +#include "../mmu/spp.h"
-> 
-> The ".." should be unnecessary, e.g. x86.h is obviously a level up.
->
-Sean, thanks a lot for the feedback! Will change this.
-> >  MODULE_AUTHOR("Qumranet");
-> >  MODULE_LICENSE("GPL");
-> > @@ -111,6 +112,7 @@ module_param_named(pml, enable_pml, bool, S_IRUGO);
-> >  
-> >  static bool __read_mostly dump_invalid_vmcs = 0;
-> >  module_param(dump_invalid_vmcs, bool, 0644);
-> > +static bool __read_mostly spp_supported = 0;
-> 
-> s/spp_supported/enable_spp to be consistent with all the other booleans.
-> 
-> Is there a reason this isn't exposed as a module param?
-> 
-Yes, in original versions, SPP is enbled by a module param, so called
-"static enable", considering the SPP bitmap pre-allocated is a bit
-large, the from v3, it's changed to "dynamic enable", i.e., user
-application need to enable SPP via init_spp IOCTL(later changed to via
-ENABLE_CAP) to remove the pre-allocation, so the flag now is used to
-cross-check SPP status between functions. Will change the name.
+Hi Rob,
 
-> And if this is to be on by default, then the flag itself should be
-> initialized to '1' so that it's clear to readers that the feature is
-> enabled by default (if it's supported).  Looking at only this code, I would
-> think that SPP is forced off and can't be enabled.
+On 2019-12-20 04:58, Rob Herring wrote:
+> On Fri, Dec 13, 2019 at 10:23:19AM +0530, Sai Prakash Ranjan wrote:
+>> Add missing compatible for watchdog timer on QCS404,
+>> SC7180, SDM845 and SM8150 SoCs.
+>> 
+>> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+>> ---
+>>  .../devicetree/bindings/watchdog/qcom-wdt.yaml       | 12 
+>> ++++++++++++
+>>  1 file changed, 12 insertions(+)
+>> 
+>> diff --git a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml 
+>> b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
+>> index 4a42f4261322..ec25ce1c9e2e 100644
+>> --- a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
+>> +++ b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
+>> @@ -12,6 +12,18 @@ maintainers:
+>>  properties:
+>>    compatible:
+>>      oneOf:
+>> +      - items:
+>> +          - const: qcom,apss-wdt-sc7180
+>> +          - const: qcom,kpss-wdt
+>> +      - items:
+>> +          - const: qcom,apss-wdt-sdm845
+>> +          - const: qcom,kpss-wdt
+>> +      - items:
+>> +          - const: qcom,apss-wdt-sm8150
+>> +          - const: qcom,kpss-wdt
+>> +      - items:
+>> +          - const: qcom,apss-wdt-qcs404
+>> +          - const: qcom,kpss-wdt
 > 
-> That being said, turning on the enable_spp control flag should be the last
-> patch in the series, i.e. it shouldn't be turned on until all the
-> underlying support code is in place.  So, I would keep this as is, but
-> invert the code in hardware_setup() below.  That way the flag exists and
-> is checked, but can't be turned on without modifying the code.  Then when
-> all is said and done, you can add a patch to introduce the module param
-> and turn on the flag by default (if that's indeed what we want).
+> This can be one entry:
 > 
-You're right, I'll re-order the patch to enable SPP bit in the last
-patch, thanks!
+> - items:
+>     - enum:
+>         - ...
+>     - const: qcom,kpss-wdt
+> 
 
-> >  #define MSR_BITMAP_MODE_X2APIC		1
-> >  #define MSR_BITMAP_MODE_X2APIC_APICV	2
-> > @@ -2391,6 +2393,7 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf,
-> >  			SECONDARY_EXEC_RDSEED_EXITING |
-> >  			SECONDARY_EXEC_RDRAND_EXITING |
-> >  			SECONDARY_EXEC_ENABLE_PML |
-> > +			SECONDARY_EXEC_ENABLE_SPP |
-> >  			SECONDARY_EXEC_TSC_SCALING |
-> >  			SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE |
-> >  			SECONDARY_EXEC_PT_USE_GPA |
-> > @@ -4039,6 +4042,9 @@ static void vmx_compute_secondary_exec_control(struct vcpu_vmx *vmx)
-> >  	if (!enable_pml)
-> >  		exec_control &= ~SECONDARY_EXEC_ENABLE_PML;
-> >  
-> > +	if (!spp_supported)
-> > +		exec_control &= ~SECONDARY_EXEC_ENABLE_SPP;
-> > +
-> >  	if (vmx_xsaves_supported()) {
-> >  		/* Exposing XSAVES only when XSAVE is exposed */
-> >  		bool xsaves_enabled =
-> > @@ -7630,6 +7636,9 @@ static __init int hardware_setup(void)
-> >  	if (!cpu_has_vmx_flexpriority())
-> >  		flexpriority_enabled = 0;
-> >  
-> > +	if (cpu_has_vmx_ept_spp() && enable_ept)
-> > +		spp_supported = 1;
-> 
-> As above, invert this to disable spp when it's not supported, or when EPT
-> is disabled (or not supported).
->
-Sure,thank you!
-> > +
-> >  	if (!cpu_has_virtual_nmis())
-> >  		enable_vnmi = 0;
-> >  
-> > -- 
-> > 2.17.2
-> > 
+Will change in next version.
+
+Thanks,
+Sai
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
+member
+of Code Aurora Forum, hosted by The Linux Foundation
