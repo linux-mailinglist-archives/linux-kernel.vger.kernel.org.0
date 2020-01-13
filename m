@@ -2,68 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9043139D05
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 23:59:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A724A139D10
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 00:03:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729154AbgAMW76 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 17:59:58 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:54642 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728829AbgAMW75 (ORCPT
+        id S1729174AbgAMXC7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 18:02:59 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40572 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728924AbgAMXC6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 17:59:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Kl3mdOW+pV2EuXxURXn+DjKaj36+OFkFkk0SeKe0dM4=; b=s7H8oVHottBxnfbBuG5OfoJDW
-        pX/4ljDMNctXAZERjuNa8riN5rjrt4zS64xrbg3EiQinHHzDrLNsdWahsLYHpgR0yC5LhiM2dj6n1
-        fSkTYWl8uoIQv4VEc19Nyvx2DJkjxaLnmFm3cA0ptUinfKncxpHYz9LW/9linETrDDQwKKmwVxZgt
-        f/KiVWwzAEHBbwdMxUCRITQu1PFP1c7o+SjZ54uyXABhx9jOlnDh29tCRkbVjbtiDtmMQV00GfVtT
-        vcqH4T1lgSTEzs0chuyaUk/VgB/rtD2z9otLSz9VPkkvxaDKPfAJaAu0C5uq4M/vIW44Vt8zzPtQ5
-        dFV/SiRjQ==;
-Received: from [2601:1c0:6280:3f0::ed68]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ir8ge-0002DL-Du; Mon, 13 Jan 2020 22:59:56 +0000
-Subject: Re: linux-next: Tree for Jan 13
- (drivers/base/test/property-entry-test.o)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        linux-kselftest@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <20200113181457.209ab4a5@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <eddaa93c-3bde-a9ed-5ee7-766f3cd51a43@infradead.org>
-Date:   Mon, 13 Jan 2020 14:59:54 -0800
+        Mon, 13 Jan 2020 18:02:58 -0500
+Received: by mail-lj1-f193.google.com with SMTP id u1so12053665ljk.7;
+        Mon, 13 Jan 2020 15:02:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=p4M64cKVK4meL/7+gbzzavKi5vXxmm/qBtCEuLMydu0=;
+        b=J70mHToXWBwgRVc6BJiIVuYwg7Uwv/4tPuNA92gIT1WBKvtF+5jMcAbEIeXX6xhRv3
+         dcEC30sIGK6RZ7sWUDRuVdXvCEdv4h4jzWu756cBvyXR0V1lacpis88sNCO1jNqBgLIf
+         Q+vin3gpEFtiOPeVJgjOqaodkktQeXgTxIm9c4uZ38Ks/EY18DiJsdrWs8yaChTVswms
+         ohnrzrveRKr7S9AlClA4i8GzTbECK5elJgOElKvzLehKfqM1868TahgDK8JxWU6/+u6k
+         MfkoGZPEzw/5rPDrSHNGJa3x1lWaGi8V1Iy5PiB2R4wglN9wnNHo1E6V8iwe2GuJY08l
+         L1IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=p4M64cKVK4meL/7+gbzzavKi5vXxmm/qBtCEuLMydu0=;
+        b=KPBTu1wh4TPzkv9bKmpqKeZN0Me0C3PhZKwp/HJPU4cgNvTkDNKeABVdUen8kXyp59
+         kM3yYila//qPfoJVZ1KLWCPolDSVndcc8R4H8CQ9w3Xwc3QZbuExVqo7zFvgZ2q+W/GT
+         X+d/HKsFmsU/FaopbWwABtZ/AdSoH/As64QPFUIfjx4STrd2Jtuq3Eiq9xQ1yFItZhTP
+         ioEX+8DzWBiYnnvvOZydMHerLDS/AEYwPvvYKzKCKz7ihhNgz32kGKxr6WUeQZHY6He8
+         2kkrd8eJoYNi+J+LOlZ92iE9/oSEHpIhMsRzZi5tlzd05+zL5JcCy+oaU3buBbVZ5Odd
+         ByvA==
+X-Gm-Message-State: APjAAAWU/pfFYL3xo+pOIcv4dgEeJJmnG6s98BB3UQe3EL1jM2ttbkOV
+        USSmADnbRfa1ktmSDGAVTAxaGyv6
+X-Google-Smtp-Source: APXvYqyySrulaNXe0BNmEybz+MMb2HeiY++Aw/c4iZK99f7wYJQbsWvsqrH+UeYvhgDYlEQoC6PS2Q==
+X-Received: by 2002:a2e:b4f6:: with SMTP id s22mr12177957ljm.218.1578956576903;
+        Mon, 13 Jan 2020 15:02:56 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id w16sm6373834lfc.1.2020.01.13.15.02.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jan 2020 15:02:56 -0800 (PST)
+Subject: Re: [PATCH v4 0/8] NVIDIA Tegra I2C driver fixes and improvements
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200112171430.27219-1-digetx@gmail.com>
+ <20200113215341.GA2689@ninjato>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <15860a85-39ee-3bb9-168c-c5a981ff3720@gmail.com>
+Date:   Tue, 14 Jan 2020 02:01:56 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200113181457.209ab4a5@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20200113215341.GA2689@ninjato>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/12/20 11:14 PM, Stephen Rothwell wrote:
-> Hi all,
+14.01.2020 00:53, Wolfram Sang пишет:
+> On Sun, Jan 12, 2020 at 08:14:22PM +0300, Dmitry Osipenko wrote:
+>> Hello,
+>>
+>> This patchset adds support for atomic transfers which are required for
+>> shutting down machine properly. Secondly, a (not)suspending I2C and some
+>> other things are fixed/improved by this small series as well. Please review
+>> and apply, thanks in advance!
+>>
+>> Changelog:
+>>
+>> v4: Removed the "clk: tegra: Fix double-free in tegra_clk_init()" patch
+>>     from this series, which was added by accident in v3.
+>>
+>>     Added Thierry's tested-by to the patches.
 > 
-> Changes since 20200110:
-> 
-> The kunit-next tree lost its failures.
+> Looks good to me. I think all these patches should go to v5.6, let me
+> know if patches 1 and/or 2 should go to v5.5?
 > 
 
-on i386:
-
-WARNING: modpost: missing MODULE_LICENSE() in drivers/base/test/property-entry-test.o
-see include/linux/module.h for more information
-
--- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Patches 1 and 2 should go into v5.5, thanks.
