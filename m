@@ -2,121 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2E7C1393CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:40:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF6D11393D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 15:40:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbgAMOkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 09:40:01 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38888 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbgAMOkA (ORCPT
+        id S1728905AbgAMOkp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 09:40:45 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:21386 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728643AbgAMOko (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 09:40:00 -0500
-Received: by mail-wr1-f66.google.com with SMTP id y17so8843679wrh.5
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 06:39:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Y1L1lZjbFBN4CXswUQ+h7dh7/TRqWSLx3YSeYJ+MJZg=;
-        b=xbCeYNeYVF4J3flLSfo0iblGnbGQoStjm2tacm8nZiSkPXJsCinCqMpYCo/sqpAsr8
-         gpNRTU1UqVRZk0Gl2RkW8myV18RsNDY+YeMUuBan2pYd8V5HvSBBhiIlCcXej2LOMNUS
-         vmothpRpGbH0f9KStvWbBmW9p+BRl7mjWwr9ir0PWSUQHsd4QWnFKzQRiKyrESc321UB
-         B6d8edUa0cBkmIKdi1UOgPNkDQ14iJCEWuK+hzbUzIvHxRoExPJH23hy1DeSqCrmyUEu
-         /UeAeRm4I0D58ffPAUeM7qyl+BIhtdovSSsT1kB2z5UIrm72I/s7bqKEriLhnZotGDPJ
-         NFRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Y1L1lZjbFBN4CXswUQ+h7dh7/TRqWSLx3YSeYJ+MJZg=;
-        b=L2NBvpH7aVMm+pGAlrtUSRryLIbOX0x6a4Xe5Pv1OmjwjvIUpKv044i+fxPxk8W6bY
-         RZIH5E5aD5PM5fuuOrv9+m/Q1oEEvOZqJ82peGZxn37Sv3SllXa+gyY/cPUP9eHOilUC
-         CnFxhoCTQs87AHvzpSpkQsL0A5mt6VLD5yCFr0uf9mqvajvi910732Ija5R+QGgieSo+
-         8aOVcS4ioSgpaQdW640SciknwBIF2AFczFjbwXBIpARlHhtjR2JkDhyrYcXQNv4z1NW4
-         qUs9zDf4HV5tdZM71M5pCFxXchW2+eRc8bLebHBuodr9OUQfXUlwSX2RJfYeGKL/ESKD
-         TE7g==
-X-Gm-Message-State: APjAAAUnDhD0JevvdIIIVz58ufW6+OqSQffh5Ue9zFGW/8oCIcLRIWK1
-        wHsqza9VSV7OEgKf8XiKBWAX4Q==
-X-Google-Smtp-Source: APXvYqwmeDehO+UYAhxmj707LmVry5pgexW1xkdCcqcV4cnA2dzWSO+e9m4Kfgr4L/nJpY4L0CwEJA==
-X-Received: by 2002:a5d:4e90:: with SMTP id e16mr19561911wru.318.1578926398566;
-        Mon, 13 Jan 2020 06:39:58 -0800 (PST)
-Received: from localhost (ip-78-102-249-43.net.upcbroadband.cz. [78.102.249.43])
-        by smtp.gmail.com with ESMTPSA id k8sm15224959wrl.3.2020.01.13.06.39.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 06:39:58 -0800 (PST)
-Date:   Mon, 13 Jan 2020 15:39:56 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Antoine Tenart <antoine.tenart@bootlin.com>
-Cc:     davem@davemloft.net, sd@queasysnail.net, andrew@lunn.ch,
-        f.fainelli@gmail.com, hkallweit1@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        alexandre.belloni@bootlin.com, allan.nielsen@microchip.com,
-        camelia.groza@nxp.com, Simon.Edelhaus@aquantia.com,
-        Igor.Russkikh@aquantia.com, jakub.kicinski@netronome.com
-Subject: Re: [PATCH net-next v5 02/15] net: macsec: introduce the
- macsec_context structure
-Message-ID: <20200113143956.GB2131@nanopsycho>
-References: <20200110162010.338611-1-antoine.tenart@bootlin.com>
- <20200110162010.338611-3-antoine.tenart@bootlin.com>
+        Mon, 13 Jan 2020 09:40:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578926444;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=VWP7TBPDC/WWtI6AhL9UEcGZAEvWSrBUOBnztnDpDig=;
+        b=XfcH2QGewCGHgIvzzWOezXVIrTtLCRaTnxuhm+GCxJoht/2uK03rqYDZobZz4W1TnoCobg
+        dzix4OLlS6ZNGtSbjFcjugYqqtfnAq/OV14K/7HOfP6dckkndP/ubJJffWgAmdkGqbvtny
+        W7VHtyhnYBuneJsJNt8Uxz7qKjz6B04=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-354-hlxp6qwtO6mee55SJFtWCw-1; Mon, 13 Jan 2020 09:40:42 -0500
+X-MC-Unique: hlxp6qwtO6mee55SJFtWCw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BB9F41800D48;
+        Mon, 13 Jan 2020 14:40:40 +0000 (UTC)
+Received: from t480s.redhat.com (ovpn-117-201.ams2.redhat.com [10.36.117.201])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B277638C;
+        Mon, 13 Jan 2020 14:40:36 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Michal Hocko <mhocko@kernel.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>
+Subject: [PATCH v1 0/2] mm/page_alloc: memmap_init_zone() cleanups
+Date:   Mon, 13 Jan 2020 15:40:33 +0100
+Message-Id: <20200113144035.10848-1-david@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200110162010.338611-3-antoine.tenart@bootlin.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fri, Jan 10, 2020 at 05:19:57PM CET, antoine.tenart@bootlin.com wrote:
+Two cleanups for "[PATCH] mm/page_alloc: Skip non present sections on zon=
+e
+initialization" [1], whereby one cleanup seems to also be a fix for a
+(theoretial?) kernelcore=3Dmirror case - unless I am messing something up=
+ :)
 
-[...]
+[1] https://lkml.kernel.org/r/20191230093828.24613-1-kirill.shutemov@linu=
+x.intel.com
 
+David Hildenbrand (2):
+  mm/page_alloc: fix and rework pfn handling in memmap_init_zone()
+  mm: factor out next_present_section_nr()
 
->diff --git a/include/uapi/linux/if_link.h b/include/uapi/linux/if_link.h
->index 1d69f637c5d6..024af2d1d0af 100644
->--- a/include/uapi/linux/if_link.h
->+++ b/include/uapi/linux/if_link.h
->@@ -486,6 +486,13 @@ enum macsec_validation_type {
-> 	MACSEC_VALIDATE_MAX = __MACSEC_VALIDATE_END - 1,
-> };
-> 
->+enum macsec_offload {
->+	MACSEC_OFFLOAD_OFF = 0,
->+	MACSEC_OFFLOAD_PHY = 1,
+ include/linux/mmzone.h | 10 ++++++++++
+ mm/page_alloc.c        | 20 ++++++++------------
+ mm/sparse.c            | 10 ----------
+ 3 files changed, 18 insertions(+), 22 deletions(-)
 
-No need to assign 0, 1 here. That is given.
+--=20
+2.24.1
 
-
->+	__MACSEC_OFFLOAD_END,
->+	MACSEC_OFFLOAD_MAX = __MACSEC_OFFLOAD_END - 1,
->+};
->+
-> /* IPVLAN section */
-> enum {
-> 	IFLA_IPVLAN_UNSPEC,
->diff --git a/tools/include/uapi/linux/if_link.h b/tools/include/uapi/linux/if_link.h
->index 8aec8769d944..42efdb84d189 100644
->--- a/tools/include/uapi/linux/if_link.h
->+++ b/tools/include/uapi/linux/if_link.h
-
-Why you are adding to this header?
-
-
->@@ -485,6 +485,13 @@ enum macsec_validation_type {
-> 	MACSEC_VALIDATE_MAX = __MACSEC_VALIDATE_END - 1,
-> };
-> 
->+enum macsec_offload {
->+	MACSEC_OFFLOAD_OFF = 0,
->+	MACSEC_OFFLOAD_PHY = 1,
->+	__MACSEC_OFFLOAD_END,
->+	MACSEC_OFFLOAD_MAX = __MACSEC_OFFLOAD_END - 1,
->+};
->+
-> /* IPVLAN section */
-> enum {
-> 	IFLA_IPVLAN_UNSPEC,
->-- 
->2.24.1
->
