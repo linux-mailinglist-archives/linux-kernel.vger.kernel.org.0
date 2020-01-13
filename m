@@ -2,275 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D2E3139810
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 18:52:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB3A1139818
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 18:52:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728800AbgAMRv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 12:51:58 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:52459 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728641AbgAMRv5 (ORCPT
+        id S1728836AbgAMRw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 12:52:27 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:37276 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726985AbgAMRw0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 12:51:57 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1578937916; h=In-Reply-To: Content-Type: MIME-Version:
- References: Message-ID: Subject: Cc: To: From: Date: Sender;
- bh=ombH+SYwC37lMpgEuedoKs2/ILJEt2p/GnXt9vDnvJA=; b=UhHb59JJcKnloXP0un9oeVSB/xnlaPA2OuQRttmZvF3/PINBKZpf1fNO1RdWcqHFvwTIYQn+
- q+1undZK9A4VtpGJQaQKbUpka2DFbtbedg0pWQi96oreaJrsLKVUXb2/ilkhsVfEqbgyiYOb
- qK2G2Jd/OzDJyanOtg7JdbTHOFg=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e1cae39.7f4196409378-smtp-out-n02;
- Mon, 13 Jan 2020 17:51:53 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id CD064C433A2; Mon, 13 Jan 2020 17:51:52 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E3E8AC433CB;
-        Mon, 13 Jan 2020 17:51:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E3E8AC433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-Date:   Mon, 13 Jan 2020 10:51:49 -0700
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     Brian Ho <brian@brkho.com>
-Cc:     freedreno@lists.freedesktop.org, robdclark@chromium.org,
-        David Airlie <airlied@linux.ie>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <linux-arm-msm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <dri-devel@lists.freedesktop.org>, Rob Clark <robdclark@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, hoegsberg@chromium.org,
-        Sean Paul <sean@poorly.run>
-Subject: Re: [Freedreno] [PATCH 2/2] drm/msm: Add MSM_WAIT_IOVA ioctl
-Message-ID: <20200113175148.GC26711@jcrouse1-lnx.qualcomm.com>
-Mail-Followup-To: Brian Ho <brian@brkho.com>,
-        freedreno@lists.freedesktop.org, robdclark@chromium.org,
-        David Airlie <airlied@linux.ie>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" <linux-arm-msm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" <dri-devel@lists.freedesktop.org>,
-        Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        hoegsberg@chromium.org, Sean Paul <sean@poorly.run>
-References: <20200113153605.52350-1-brian@brkho.com>
- <20200113153605.52350-3-brian@brkho.com>
+        Mon, 13 Jan 2020 12:52:26 -0500
+Received: by mail-il1-f196.google.com with SMTP id t8so8937004iln.4
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 09:52:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tR/PVmec9Acg9lLoWkjAACYeH6TaFlhfszmRPXAXo1I=;
+        b=MfRDokUBQY6p/kpal7XLw/g38Gh/IYdjm7i351TEXrATsDe15BahgFzUxUw2OmWv3l
+         PYV4Mv2Il9WIz8LTiICJ1SBtYdi5VjGf38h8gB80wwGQAUlIlbhv7UhJhatiNCgeoZqk
+         JM+eizhJUClZ7yCT3TMjSjHSi++Sn0aZWVSBOv53ifvZlTrnUsu+yNtpcbvb46ywW/TC
+         Sb536csF4MpO14QhxwoKAlHNmxLu++s2/9SMwgGmd+4wnm1E+JUuxkJZSlGgL9zxpGzD
+         3Zelh6J1MpWq1zuisaeDHXlCuztNvunhxSLppqDpUE8fmnD09ZPY7oFLG0MX/nyceWlV
+         3umg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tR/PVmec9Acg9lLoWkjAACYeH6TaFlhfszmRPXAXo1I=;
+        b=Els7Rrp2docqYP7PIf3z3ZBUHx/hSd4kUPnzeWWU2wjWueO5cSzWH1QRgIphtcmG6v
+         8XL8u8IY78ndi4qbRY7sSpl3CzqfOxysMflJ0vU0flPgh92zZGoEgSzt5E8DqGVR8X2D
+         Q75yacQvkJiItcIhAs2p1Guv0PC/06Uvs6+d2p4RD7ia89h/eUgl6OZnY8IhTWd4aSZz
+         uOdNErwe66q6nF7rrLzrIkEsORhGIk5m2+iiLbwq11dI4YKbx+jtftYso7tWRjgmfNCc
+         LYMOoF/8OWfJwbLFGNTN7Ewoii5BvbTaZyry32nct0NsNa9LeA+oQlZD/KTfF5s3NdbW
+         xWVA==
+X-Gm-Message-State: APjAAAWK0VF8Ax97CWtceKpqIq71GBIgoB0i8zrKpDWuqgqU7YWhV1zP
+        CDRntloFVXRA8u8Lfsck1YslfmXYkGM8lFQJx46YvA==
+X-Google-Smtp-Source: APXvYqwmifsPMIM7NR3deurhYvdhd2YslDh3Tb150YC7L/n4Un9cMt8a1ojcsrjY1X3Jknn0LNc6fVsXk09C2r1UTTE=
+X-Received: by 2002:a92:db49:: with SMTP id w9mr14818680ilq.277.1578937945418;
+ Mon, 13 Jan 2020 09:52:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200113153605.52350-3-brian@brkho.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20200113065808.25f28c40@canb.auug.org.au> <CAOesGMifHn6DbNgYm6YUbdKjSL5rNgdWrq+HX9dEusrOr9xX2A@mail.gmail.com>
+ <20200113113837.130c3936@canb.auug.org.au> <caeb1af8-4aa2-71dc-0a70-127c0b474f93@st.com>
+ <20200113224620.5d33fa63@canb.auug.org.au>
+In-Reply-To: <20200113224620.5d33fa63@canb.auug.org.au>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Mon, 13 Jan 2020 09:52:13 -0800
+Message-ID: <CAOesGMh0yfq_0RPzASjNPUgff4P+PMdo2fEB3BFO++Y6zz1n0g@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the arm-soc tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Alexandre Torgue <alexandre.torgue@st.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        Yann Gautier <yann.gautier@st.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 10:36:05AM -0500, Brian Ho wrote:
-> Implements an ioctl to wait until a value at a given iova is greater
-> than or equal to a supplied value.
-> 
-> This will initially be used by turnip (open-source Vulkan driver for
-> QC in mesa) for occlusion queries where the userspace driver can
-> block on a query becoming available before continuing via
-> vkGetQueryPoolResults.
-> 
-> Signed-off-by: Brian Ho <brian@brkho.com>
-> ---
->  drivers/gpu/drm/msm/msm_drv.c | 63 +++++++++++++++++++++++++++++++++--
->  include/uapi/drm/msm_drm.h    | 13 ++++++++
->  2 files changed, 74 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-> index c84f0a8b3f2c..dcc46874a5a2 100644
-> --- a/drivers/gpu/drm/msm/msm_drv.c
-> +++ b/drivers/gpu/drm/msm/msm_drv.c
-> @@ -36,10 +36,11 @@
->   *           MSM_GEM_INFO ioctl.
->   * - 1.4.0 - softpin, MSM_RELOC_BO_DUMP, and GEM_INFO support to set/get
->   *           GEM object's debug name
-> - * - 1.5.0 - Add SUBMITQUERY_QUERY ioctl
-> + * - 1.5.0 - Add SUBMITQUEUE_QUERY ioctl
-> + * - 1.6.0 - Add WAIT_IOVA ioctl
->   */
->  #define MSM_VERSION_MAJOR	1
-> -#define MSM_VERSION_MINOR	5
-> +#define MSM_VERSION_MINOR	6
->  #define MSM_VERSION_PATCHLEVEL	0
->  
->  static const struct drm_mode_config_funcs mode_config_funcs = {
-> @@ -952,6 +953,63 @@ static int msm_ioctl_submitqueue_close(struct drm_device *dev, void *data,
->  	return msm_submitqueue_remove(file->driver_priv, id);
->  }
->  
-> +static int msm_ioctl_wait_iova(struct drm_device *dev, void *data,
-> +		struct drm_file *file)
-> +{
-> +	struct msm_drm_private *priv = dev->dev_private;
-> +	struct drm_gem_object *obj;
-> +	struct drm_msm_wait_iova *args = data;
-> +	ktime_t timeout = to_ktime(args->timeout);
-> +	unsigned long remaining_jiffies = timeout_to_jiffies(&timeout);
-> +	struct msm_gpu *gpu = priv->gpu;
-> +	void *base_vaddr;
-> +	uint64_t *vaddr;
-> +	int ret;
-> +
-> +	if (args->pad)
-> +		return -EINVAL;
-> +
-> +	if (!gpu)
-> +		return 0;
+On Mon, Jan 13, 2020 at 3:46 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Alexandre,
+>
+> On Mon, 13 Jan 2020 09:17:08 +0100 Alexandre Torgue <alexandre.torgue@st.com> wrote:
+> >
+> > Sorry for this oversight. DO I have something to do ? (except to not
+> > forget to check my signed-off next time).
+>
+> That is up to the arm-soc tree maintainers.
 
-If the GPU isn't up, it should be an error since this macro is specifically
-designed for just the GPU (though, I suppose the display *COULD* use it to watch
-a memory mapped register or something).
+Nothing needed at this time.
 
-> +
-> +	obj = drm_gem_object_lookup(file, args->handle);
-> +	if (!obj)
-> +		return -ENOENT;
-> +
-> +	base_vaddr = msm_gem_get_vaddr(obj);
-> +	if (IS_ERR(base_vaddr)) {
-> +		ret = PTR_ERR(base_vaddr);
-> +		goto err_put_gem_object;
-> +	}
-> +	if (args->offset + sizeof(*vaddr) > obj->size) {
-
-There is a chance to trigger a u64 overflow here resulting in an arbitrary (ish)
-vaddr two lines below.
+The point of making sure maintainers sign off on patches is to track
+their path into the tree. In this case we still know it comes in via
+you. But make sure you're diligent on this for future patches.
 
 
-> +		ret = -EINVAL;
-> +		goto err_put_vaddr;
-> +	}
+Thanks!
 
-You can check this before getting the vaddr which would save you a clean up
-step.
-
-> +
-> +	vaddr = base_vaddr + args->offset;
-> +
-> +	/* Assumes WC mapping */
-> +	ret = wait_event_interruptible_timeout(
-> +			gpu->event, *vaddr >= args->value, remaining_jiffies);
-
-I feel like a barrier might be needed before checking *vaddr just in case you
-get the interrupt and wake up the queue before the write posts from the
-hardware.
-
-> +
-
-> +	if (ret == 0) {
-> +		ret = -ETIMEDOUT;
-> +		goto err_put_vaddr;
-> +	} else if (ret == -ERESTARTSYS) {
-> +		goto err_put_vaddr;
-> +	}
-
-You don't need either goto here because both paths execute the following cleanup
-steps. I'm also not sure you need to worry about explicitly checking the
-ERESTARTSYS value, I think that this would be sufficient:
-
- if (ret == 0)
-     ret = -ETIMEDOUT;
- else if (ret > 0)
-     ret = 0;
-
-> +
-
-Put your err_put_vaddr: label here, but looking up, if you move the bounds check
-before the msm_gem_get_vaddr, I don't think you need a label.
-
-> +	msm_gem_put_vaddr(obj);
-
-Put the err_put_gem_object: label here.
-
-> +	drm_gem_object_put_unlocked(obj);
-> +	return 0;
-
-return ret;
-
-> +
-> +err_put_vaddr:
-> +	msm_gem_put_vaddr(obj);
-> +err_put_gem_object:
-> +	drm_gem_object_put_unlocked(obj);
-> +	return ret;
-> +}
-
-And then these guys aren't needed.
-
-> +
->  static const struct drm_ioctl_desc msm_ioctls[] = {
->  	DRM_IOCTL_DEF_DRV(MSM_GET_PARAM,    msm_ioctl_get_param,    DRM_RENDER_ALLOW),
->  	DRM_IOCTL_DEF_DRV(MSM_GEM_NEW,      msm_ioctl_gem_new,      DRM_RENDER_ALLOW),
-> @@ -964,6 +1022,7 @@ static const struct drm_ioctl_desc msm_ioctls[] = {
->  	DRM_IOCTL_DEF_DRV(MSM_SUBMITQUEUE_NEW,   msm_ioctl_submitqueue_new,   DRM_RENDER_ALLOW),
->  	DRM_IOCTL_DEF_DRV(MSM_SUBMITQUEUE_CLOSE, msm_ioctl_submitqueue_close, DRM_RENDER_ALLOW),
->  	DRM_IOCTL_DEF_DRV(MSM_SUBMITQUEUE_QUERY, msm_ioctl_submitqueue_query, DRM_RENDER_ALLOW),
-> +	DRM_IOCTL_DEF_DRV(MSM_WAIT_IOVA, msm_ioctl_wait_iova, DRM_RENDER_ALLOW),
->  };
->  
->  static const struct vm_operations_struct vm_ops = {
-> diff --git a/include/uapi/drm/msm_drm.h b/include/uapi/drm/msm_drm.h
-> index 0b85ed6a3710..8477f28a4ee1 100644
-> --- a/include/uapi/drm/msm_drm.h
-> +++ b/include/uapi/drm/msm_drm.h
-> @@ -298,6 +298,17 @@ struct drm_msm_submitqueue_query {
->  	__u32 pad;
->  };
->  
-> +/* This ioctl blocks until the u64 value at bo + offset is greater than or
-> + * equal to the reference value.
-> + */
-> +struct drm_msm_wait_iova {
-> +	__u32 handle;          /* in, GEM handle */
-> +	__u32 pad;
-> +	struct drm_msm_timespec timeout;   /* in */
-> +	__u64 offset;          /* offset into bo */
-> +	__u64 value;           /* reference value */
-
-Any specific reason why we wouldn't just put the offset and value first and save
-ourselves the padding?
-
-> +};
-> +
->  #define DRM_MSM_GET_PARAM              0x00
->  /* placeholder:
->  #define DRM_MSM_SET_PARAM              0x01
-> @@ -315,6 +326,7 @@ struct drm_msm_submitqueue_query {
->  #define DRM_MSM_SUBMITQUEUE_NEW        0x0A
->  #define DRM_MSM_SUBMITQUEUE_CLOSE      0x0B
->  #define DRM_MSM_SUBMITQUEUE_QUERY      0x0C
-> +#define DRM_MSM_WAIT_IOVA      0x0D
->  
->  #define DRM_IOCTL_MSM_GET_PARAM        DRM_IOWR(DRM_COMMAND_BASE + DRM_MSM_GET_PARAM, struct drm_msm_param)
->  #define DRM_IOCTL_MSM_GEM_NEW          DRM_IOWR(DRM_COMMAND_BASE + DRM_MSM_GEM_NEW, struct drm_msm_gem_new)
-> @@ -327,6 +339,7 @@ struct drm_msm_submitqueue_query {
->  #define DRM_IOCTL_MSM_SUBMITQUEUE_NEW    DRM_IOWR(DRM_COMMAND_BASE + DRM_MSM_SUBMITQUEUE_NEW, struct drm_msm_submitqueue)
->  #define DRM_IOCTL_MSM_SUBMITQUEUE_CLOSE  DRM_IOW (DRM_COMMAND_BASE + DRM_MSM_SUBMITQUEUE_CLOSE, __u32)
->  #define DRM_IOCTL_MSM_SUBMITQUEUE_QUERY  DRM_IOW (DRM_COMMAND_BASE + DRM_MSM_SUBMITQUEUE_QUERY, struct drm_msm_submitqueue_query)
-> +#define DRM_IOCTL_MSM_WAIT_IOVA        DRM_IOW (DRM_COMMAND_BASE + DRM_MSM_WAIT_IOVA, struct drm_msm_wait_iova)
->  
->  #if defined(__cplusplus)
->  }
-> -- 
-> 2.25.0.rc1.283.g88dfdc4193-goog
-> 
-> _______________________________________________
-> Freedreno mailing list
-> Freedreno@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/freedreno
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+-Olof
