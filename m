@@ -2,133 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52C51139483
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 16:14:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C87813948C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 16:15:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729225AbgAMPNg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 10:13:36 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36044 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729152AbgAMPNd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 10:13:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=ppr818tdebi0ZdaBDntiSTiKbFXycDBN/XtB4wtugXc=; b=J+dA8yLoo1OR
-        APdJcYcXtV+ZGhRWZaVqyfUnbCJ/4OBfmB/tpwbUV+m165Kjt5Wmi915Ns7a0HwGA0x2S5M/TD2Vi
-        283NKv98K3nX2J26nrQva3lwaNCSh8pY4OcekFDrMBQx2R7FOTcoIzZEdDbMa/9WwPs2iJ0SpQIEe
-        fWw84=;
-Received: from fw-tnat-cam7.arm.com ([217.140.106.55] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ir1PE-0003O7-75; Mon, 13 Jan 2020 15:13:28 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id E595DD01965; Mon, 13 Jan 2020 15:13:27 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Girish Mahadevan <girishm@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: Applied "spi: spi-qcom-qspi: Use device managed memory for clk_bulk_data" to the spi tree
-In-Reply-To: <20200108133948.1.I35ceb4db3ad8cfab78f7cd51494aeff4891339f5@changeid>
-Message-Id: <applied-20200108133948.1.I35ceb4db3ad8cfab78f7cd51494aeff4891339f5@changeid>
-X-Patchwork-Hint: ignore
-Date:   Mon, 13 Jan 2020 15:13:27 +0000 (GMT)
+        id S1728883AbgAMPPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 10:15:32 -0500
+Received: from foss.arm.com ([217.140.110.172]:40676 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726943AbgAMPPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 10:15:32 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 281F011B3;
+        Mon, 13 Jan 2020 07:15:31 -0800 (PST)
+Received: from [10.1.194.46] (e113632-lin.cambridge.arm.com [10.1.194.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 23E713F68E;
+        Mon, 13 Jan 2020 07:15:30 -0800 (PST)
+Subject: Re: [PATCH] cpu-topology: warn if NUMA configurations conflicts with
+ lower layer
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        "Zengtao (B)" <prime.zeng@hisilicon.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Linuxarm <linuxarm@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1577088979-8545-1-git-send-email-prime.zeng@hisilicon.com>
+ <20191231164051.GA4864@bogus>
+ <678F3D1BB717D949B966B68EAEB446ED340AE1D3@dggemm526-mbx.china.huawei.com>
+ <20200102112955.GC4864@bogus>
+ <678F3D1BB717D949B966B68EAEB446ED340AEB67@dggemm526-mbx.china.huawei.com>
+ <c43342d0-7e4d-3be0-0fe1-8d802b0d7065@arm.com>
+ <678F3D1BB717D949B966B68EAEB446ED340AFCA0@dggemm526-mbx.china.huawei.com>
+ <20200103114011.GB19390@bogus>
+ <678F3D1BB717D949B966B68EAEB446ED340B31E9@dggemm526-mbx.china.huawei.com>
+ <20200109104306.GA10914@e105550-lin.cambridge.arm.com>
+ <678F3D1BB717D949B966B68EAEB446ED340BEDD6@dggemm526-mbx.china.huawei.com>
+ <1a8f7963-97e9-62cc-12d2-39f816dfaf67@arm.com>
+ <1fbe4475-363d-e800-8295-a1591d5e52d9@arm.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <3b389423-4bc7-0706-660f-dbddf8445abd@arm.com>
+Date:   Mon, 13 Jan 2020 15:15:28 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <1fbe4475-363d-e800-8295-a1591d5e52d9@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 13/01/2020 14:49, Dietmar Eggemann wrote:
+> LGTM. This code detects the issue in cpu_coregroup_mask(), which is the
+> the cpumask function of the sched domain MC level struct
+> sched_domain_topology_level of ARM64's (and other archs)
+> default_topology[].
+> I wonder how x86 copes with such a config error?
+> Maybe they do it inside their cpu_coregroup_mask()?
+> 
+> 
+> We could move validate_topology_spans() into the existing
+> 
+> for_each_cpu(i, cpu_map)
+>     for_each_sd_topology(tl)
+> 
+> loop in build_sched_domains() saving some code?
+> 
 
-   spi: spi-qcom-qspi: Use device managed memory for clk_bulk_data
+[...]
 
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.6
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From b8d40d7712f10475effc4552eda96b9d44822cfb Mon Sep 17 00:00:00 2001
-From: Matthias Kaehlcke <mka@chromium.org>
-Date: Wed, 8 Jan 2020 13:40:32 -0800
-Subject: [PATCH] spi: spi-qcom-qspi: Use device managed memory for
- clk_bulk_data
-
-Currrently the memory for the clk_bulk_data of the QSPI controller
-is allocated with spi_alloc_master(). The bulk data pointer is passed
-to devm_clk_bulk_get() which saves it in clk_bulk_devres->clks. When
-the device is removed later devm_clk_bulk_release() is called and
-uses the bulk data referenced by the pointer to release the clocks.
-For this driver this results in accessing memory that has already
-been freed, since the memory allocated with spi_alloc_master() is
-released by spi_controller_release(), which is called before the
-managed resources are released.
-
-Use device managed memory for the clock bulk data to fix the issue
-described above.
-
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Link: https://lore.kernel.org/r/20200108133948.1.I35ceb4db3ad8cfab78f7cd51494aeff4891339f5@changeid
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-qcom-qspi.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-qcom-qspi.c b/drivers/spi/spi-qcom-qspi.c
-index 250fd60e1678..3c4f83bf7084 100644
---- a/drivers/spi/spi-qcom-qspi.c
-+++ b/drivers/spi/spi-qcom-qspi.c
-@@ -137,7 +137,7 @@ enum qspi_clocks {
- struct qcom_qspi {
- 	void __iomem *base;
- 	struct device *dev;
--	struct clk_bulk_data clks[QSPI_NUM_CLKS];
-+	struct clk_bulk_data *clks;
- 	struct qspi_xfer xfer;
- 	/* Lock to protect xfer and IRQ accessed registers */
- 	spinlock_t lock;
-@@ -445,6 +445,13 @@ static int qcom_qspi_probe(struct platform_device *pdev)
- 		goto exit_probe_master_put;
- 	}
- 
-+	ctrl->clks = devm_kcalloc(dev, QSPI_NUM_CLKS,
-+				  sizeof(*ctrl->clks), GFP_KERNEL);
-+	if (!ctrl->clks) {
-+		ret = -ENOMEM;
-+		goto exit_probe_master_put;
-+	}
-+
- 	ctrl->clks[QSPI_CLK_CORE].id = "core";
- 	ctrl->clks[QSPI_CLK_IFACE].id = "iface";
- 	ret = devm_clk_bulk_get(dev, QSPI_NUM_CLKS, ctrl->clks);
--- 
-2.20.1
-
+Yeah that should work. Folks might want to gate it under SCHED_DEBUG, but
+that's another discussion.
