@@ -2,104 +2,319 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48C171396C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 17:50:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA1E91396DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 17:57:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728775AbgAMQue (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 11:50:34 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:45354 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbgAMQud (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 11:50:33 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00DGoSjN038467;
-        Mon, 13 Jan 2020 10:50:28 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578934228;
-        bh=XK6+NRwFhrVriY+slNkZ6meisOxrLFFEaA/1jaSkTlU=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=a8Qpy0NXBTmG5OseZxRsDIfrLlcAdLoh4eTBP2GKa31gW5oXPoAJ4G/CYHdPX0Bpi
-         5Fwi2xOpqOaoNuaQXLkkLLnQ75HH5iOo+wsuPdyUUY4Y2kYyOILEpnM9oPpD5np5wB
-         gXmAQQXomVXp+aXU1qHua1gPTJVl2Kg14pH9H1oo=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00DGoSa9123735
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 13 Jan 2020 10:50:28 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 13
- Jan 2020 10:50:28 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 13 Jan 2020 10:50:28 -0600
-Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with SMTP id 00DGoS1g130674;
-        Mon, 13 Jan 2020 10:50:28 -0600
-Date:   Mon, 13 Jan 2020 10:54:14 -0600
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Tony Lindgren <tony@atomide.com>
-CC:     Tero Kristo <t-kristo@ti.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [Patch v3 0/3] ARM: dts: am43x-vpfe/ov2659.patch
-Message-ID: <20200113165413.i6nbi2i7xyue4fti@ti.com>
-References: <20191211140720.10539-1-bparrot@ti.com>
- <20191212174123.GF35479@atomide.com>
- <c4ae58dc-3c81-f493-a665-6926baa0f04c@ti.com>
- <20191213152938.GK35479@atomide.com>
+        id S1728682AbgAMQ5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 11:57:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48068 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726943AbgAMQ5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 11:57:09 -0500
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9894321569;
+        Mon, 13 Jan 2020 16:57:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578934627;
+        bh=20et0LeLmZcC7OKy7vKwN9+K/OlCrNBAUQXGF/uI4Ag=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=veBU+eKOUE5VGAUmt7sNuZhR1+9WkXvOzHOGSXdXg+/YtqYHJY2VT7k5klhydzHaq
+         iuhX+Yv4NPz7Hy+qIjnmvpnUB0koPQuneDpJN7zSWUxFuU79fLv4bFuLQseP5WQcl9
+         pd6t5FPqVo55UIfkdkarWRzLGHz0fGH7gtt8/tAc=
+Received: by mail-qk1-f180.google.com with SMTP id c17so9116093qkg.7;
+        Mon, 13 Jan 2020 08:57:07 -0800 (PST)
+X-Gm-Message-State: APjAAAXYxIhihUyX1s1LmRZxO5rVMLwYEyMQMJG42pqiw6G3yRRDAY4u
+        dSKzDDrAdv+veAsCNx5cpC3eOHm7TSsscPGn8w==
+X-Google-Smtp-Source: APXvYqx0AU9Rs93kGIbdKP4WuIqx2HQeMHqGE1y+wqUojZ5zlZijSOTRfZHRaa0C2MdvTpIMqNAVwVf3+uFigUY3viw=
+X-Received: by 2002:a05:620a:1eb:: with SMTP id x11mr17722883qkn.254.1578934626652;
+ Mon, 13 Jan 2020 08:57:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191213152938.GK35479@atomide.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20200109112548.23914-1-sravanhome@gmail.com> <20200109112548.23914-3-sravanhome@gmail.com>
+In-Reply-To: <20200109112548.23914-3-sravanhome@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 13 Jan 2020 10:56:55 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ4vTzyfAG2UWzzkhVkBSLDRPjdyDUFZJ9LrDmsFsQ1gA@mail.gmail.com>
+Message-ID: <CAL_JsqJ4vTzyfAG2UWzzkhVkBSLDRPjdyDUFZJ9LrDmsFsQ1gA@mail.gmail.com>
+Subject: Re: [PATCH v6 2/4] dt-bindings: regulator: add document bindings for mpq7920
+To:     Saravanan Sekar <sravanhome@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        David Miller <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tony Lindgren <tony@atomide.com> wrote on Fri [2019-Dec-13 07:29:38 -0800]:
-> * Tero Kristo <t-kristo@ti.com> [191213 07:43]:
-> > On 12/12/2019 19:41, Tony Lindgren wrote:
-> > > * Benoit Parrot <bparrot@ti.com> [191211 06:04]:
-> > > > This patch series adds the missing camera endpoint (ov2659) as well as
-> > > > the required source clocks nodes for the sensor.
-> > > > 
-> > > > On the am437x-sk-evm the camera sensor is sourced from clkout1 but that
-> > > > clock nodes/tree was removed as it was unsed at the time, we are
-> > > > re-adding the needed clock nodes here.
-> > > 
-> > > Tero, it seems I can already pick this series?
-> > 
-> > I believe it is ready if you approve the clkout1 clock patch.
-> 
-> OK yeah looks fine.
-> 
-> > > Or ou want to queue the changes to am43xx-clocks.dtsi along with all
-> > > your other clock patches?
-> > 
-> > Well, I have actually never queued any omap2+ dts patches myself, and I
-> > don't think there would be too many of those coming for next merge either.
-> 
-> OK will queue this series then. For the other ones from Benoit
-> looks like we need an immutable clock branch before I can apply
-> anything.
+On Thu, Jan 9, 2020 at 5:26 AM Saravanan Sekar <sravanhome@gmail.com> wrote:
+>
+> Add device tree binding information for mpq7920 regulator driver.
+> Example bindings for mpq7920 are added.
 
-Tony, Tero,
+Mark, Please revert this. Not even close to valid schema and my
+questions on v4 are unanswered.
 
-Are these merged anyware now?
-I still don't see any of these on linux-next?
+>
+> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+> ---
+>  .../bindings/regulator/mps,mpq7920.yaml       | 202 ++++++++++++++++++
+>  1 file changed, 202 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml b/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml
+> new file mode 100644
+> index 000000000000..598f3ea070c9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml
+> @@ -0,0 +1,202 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/regulator/mps,mpq7920.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Monolithic Power System MPQ7920 PMIC
+> +
+> +maintainers:
+> +  - Saravanan Sekar <sravanhome@gmail.com>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "pmic@[0-9a-f]{1,2}"
+> +  compatible:
+> +    enum:
+> +      - mps,mpq7920
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  regulators:
+> +    type: object
+> +    description: |
+> +      list of regulators provided by this controller, must be named
+> +      after their hardware counterparts BUCK[1-4], one LDORTC, and LDO[2-5]
+> +
+> +      mps,switch-freq:
 
-And by "these" I mean this one and both
- ARM: dts: dra7: add vpe nodes
- ARM: dts: dra7: add cal nodes
+This needs to be under 'properties'. Otherwise, everything below here
+is just part of 'description'.
 
-Regards,
-Benoit
+As I asked on v4, shouldn't this be a common property? Switching
+frequency is a common property for switching regulators, right?
 
-> 
-> Regards,
-> 
-> Tony
+> +        description: |
+> +          switching frequency must be one of following corresponding value
+> +          1.1MHz, 1.65MHz, 2.2MHz, 2.75MHz
+> +        $ref: "/schemas/types.yaml#/definitions/uint8"
+> +        enum: [ 0, 1, 2, 3 ]
+> +        default: 2
+> +
+> +      buck1:
+
+This should be under 'patternProperties' as '^buck[1-4]$'. Then you
+aren't duplicating a bunch of property schemas.
+
+> +        type: object
+> +        $ref: "regulator.yaml#"
+
+Should be:
+
+allOf:
+  - $ref: regulator.yaml#
+
+> +        description: |
+> +          4.5A DC-DC step down converter
+> +
+> +        mps,buck-softstart:
+
+Needs to be under 'properties'
+
+> +           $ref: "/schemas/types.yaml#/definitions/uint8"
+> +           enum: [ 0, 1, 2, 3 ]
+> +           default: 1
+> +           description: |
+> +             defines the soft start time of this buck, must be one of the following
+> +             corresponding values 150us, 300us, 610us, 920us
+> +
+> +         mps,buck-phase-delay:
+> +           $ref: "/schemas/types.yaml#/definitions/uint8"
+> +           enum: [ 0, 1, 2, 3 ]
+> +           default: 0
+> +           description: |
+> +             defines the phase delay of this buck, must be one of the following
+> +             corresponding values 0deg, 90deg, 180deg, 270deg
+> +
+> +         mps,buck-ovp-disable:
+> +           type: boolean
+> +           description: |
+> +             disables over voltage protection of this buck
+
+Seems like configurable over voltage protection would be a common
+regulator property?
+
+> +
+> +      buck2:
+> +        type: object
+> +        $ref: "regulator.yaml#"
+> +        description: |
+> +          2.5A DC-DC step down converter
+> +
+> +        mps,buck-softstart:
+> +          description: |
+> +            defines the soft start time of this buck, must be one of the following
+> +            corresponding values 150us, 300us, 610us, 920us
+> +          $ref: "/schemas/types.yaml#/definitions/uint8"
+> +          enum: [ 0, 1, 2, 3 ]
+> +          default: 1
+> +
+> +        mps,buck-phase-delay:
+> +          description: |
+> +            defines the phase delay of this buck, must be one of the following
+> +            corresponding values 0deg, 90deg, 180deg, 270deg
+> +          $ref: "/schemas/types.yaml#/definitions/uint8"
+> +          enum: [ 0, 1, 2, 3 ]
+> +          default: 0
+> +
+> +        mps,buck-ovp-disable:
+> +          description: |
+> +            disables over voltage protection of this buck
+> +          type: boolean
+> +
+> +      buck3:
+> +        type: object
+> +        $ref: "regulator.yaml#"
+> +        description: |
+> +          4.5A DC-DC step down converter
+> +
+> +        mps,buck-softstart:
+> +           description: |
+> +             defines the soft start time of this buck, must be one of the following
+> +             corresponding values 150us, 300us, 610us, 920us
+> +           $ref: "/schemas/types.yaml#/definitions/uint8"
+> +           enum: [ 0, 1, 2, 3 ]
+> +           default: 1
+> +
+> +         mps,buck-phase-delay:
+> +           description: |
+> +             defines the phase delay of this buck, must be one of the following
+> +             corresponding values 0deg, 90deg, 180deg, 270deg
+> +           $ref: "/schemas/types.yaml#/definitions/uint8"
+> +           enum: [ 0, 1, 2, 3 ]
+> +           default: 1
+> +
+> +         mps,buck-ovp-disable:
+> +           description: |
+> +             disables over voltage protection of this buck
+> +           type: boolean
+> +
+> +      buck4:
+> +        type: object
+> +        $ref: "regulator.yaml#"
+> +        description: |
+> +          2.5A DC-DC step down converter
+> +
+> +        mps,buck-softstart:
+> +          description: |
+> +            defines the soft start time of this buck, must be one of the following
+> +            corresponding values 150us, 300us, 610us, 920us
+> +          $ref: "/schemas/types.yaml#/definitions/uint8"
+> +          enum: [ 0, 1, 2, 3 ]
+> +          default: 1
+> +
+> +        mps,buck-phase-delay:
+> +          description: |
+> +            defines the phase delay of this buck, must be one of the following
+> +            corresponding values 0deg, 90deg, 180deg, 270deg
+> +          $ref: "/schemas/types.yaml#/definitions/uint8"
+> +          enum: [ 0, 1, 2, 3 ]
+> +          default: 1
+> +
+> +        mps,buck-ovp-disable:
+> +          description: |
+> +            disables over voltage protection of this buck
+> +          type: boolean
+> +
+> +      ldortc:
+
+Again, make this a pattern.
+
+> +        $ref: "regulator.yaml#"
+> +        description: |
+> +          regulator with 0.65V-3.5875V for RTC, always enabled
+> +
+> +      ldo2:
+> +        $ref: "regulator.yaml#"
+> +        description: |
+> +          regulator with 0.65V-3.5875V
+> +
+> +      ldo3:
+> +        $ref: "regulator.yaml#"
+> +        description: |
+> +          regulator with 0.65V-3.5875V
+> +
+> +      ldo4:
+> +        $ref: "regulator.yaml#"
+> +        description: |
+> +          regulator with 0.65V-3.5875V
+> +
+> +      ldo5:
+> +        $ref: "regulator.yaml#"
+> +        description: |
+> +          regulator with 0.65V-3.5875V
+
+You need 'required' here listing compatible, reg, and regulators.
+
+And then 'additionalProperties: false'
+
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        pmic@69 {
+> +          compatible = "mps,mpq7920";
+> +          reg = <0x69>;
+> +
+> +          regulators {
+> +            mps,switch-freq = <1>;
+> +
+> +            buck1 {
+> +             regulator-name = "buck1";
+> +             regulator-min-microvolt = <400000>;
+> +             regulator-max-microvolt = <3587500>;
+> +             regulator-min-microamp  = <460000>;
+> +             regulator-max-microamp  = <7600000>;
+> +             regulator-boot-on;
+> +             mps,buck-ovp-disable;
+> +             mps,buck-phase-delay = <2>;
+> +             mps,buck-softstart = <1>;
+> +            };
+> +
+> +            ldo2 {
+> +             regulator-name = "ldo2";
+> +             regulator-min-microvolt = <650000>;
+> +             regulator-max-microvolt = <3587500>;
+> +            };
+> +         };
+> +       };
+> +     };
+> +...
+> --
+> 2.17.1
+>
