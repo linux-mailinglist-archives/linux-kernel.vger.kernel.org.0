@@ -2,114 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 376D9139176
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 13:58:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF6BA139170
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 13:55:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbgAMM62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 07:58:28 -0500
-Received: from mx3.wp.pl ([212.77.101.10]:52785 "EHLO mx3.wp.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726074AbgAMM62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 07:58:28 -0500
-X-Greylist: delayed 398 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 Jan 2020 07:58:27 EST
-Received: (wp-smtpd smtp.wp.pl 17450 invoked from network); 13 Jan 2020 13:51:46 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=1024a;
-          t=1578919906; bh=Mxm7b8zM02QFZaaphROEcKcn/YEx9WXTuE/NQeKUMUs=;
-          h=From:To:Cc:Subject;
-          b=rUht59dHg4E9WOMTiWla3X+3rKCaD7tAd0PX3Ue1TBpJntMZkghkbgqQgvWXcoV3i
-           Y3oZ3nPg2I1dfYthFTDcGv0gGLDOqhs7ZG3yrNS8xidHYGyWTd9xVUU2ndHKNQkDv9
-           cZ39RH3qFpGHmV0OcbokFoBLxDh2D5cypZWD04MY=
-Received: from c-73-93-4-247.hsd1.ca.comcast.net (HELO cakuba) (kubakici@wp.pl@[73.93.4.247])
-          (envelope-sender <kubakici@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <niu_xilei@163.com>; 13 Jan 2020 13:51:46 +0100
-Date:   Mon, 13 Jan 2020 04:51:36 -0800
-From:   Jakub Kicinski <kubakici@wp.pl>
-To:     Niu Xilei <niu_xilei@163.com>
-Cc:     davem@davemloft.net, tglx@linutronix.de, fw@strlen.de,
-        peterz@infradead.org, steffen.klassert@secunet.com,
-        bigeasy@linutronix.de, jonathan.lemon@gmail.com, pabeni@redhat.com,
-        anshuman.khandual@arm.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] pktgen: create packet use IPv6 source address
- between src6_min and src6_max.
-Message-ID: <20200113045136.4d59dded@cakuba>
-In-Reply-To: <20200113112103.6766-1-niu_xilei@163.com>
-References: <20200113112103.6766-1-niu_xilei@163.com>
+        id S1727286AbgAMMzc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 07:55:32 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8710 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726375AbgAMMzc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 07:55:32 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id DF64D5A19E236C3B78D8;
+        Mon, 13 Jan 2020 20:55:29 +0800 (CST)
+Received: from [127.0.0.1] (10.173.220.183) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Mon, 13 Jan 2020
+ 20:55:19 +0800
+Subject: Re: [PATCH] brd: check parameter validation before register_blkdev
+ func
+To:     Ming Lei <ming.lei@redhat.com>
+CC:     Jens Axboe <axboe@kernel.dk>, <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <npiggin@suse.de>, Mingfangsen <mingfangsen@huawei.com>,
+        Guiyao <guiyao@huawei.com>, zhangsaisai <zhangsaisai@huawei.com>,
+        "wubo (T)" <wubo40@huawei.com>
+References: <342ee238-0e7c-c213-eecc-7062f24985cc@huawei.com>
+ <20200113110003.GA13011@ming.t460p>
+From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Message-ID: <a1036173-7e6d-8ad6-774c-df4b912146c8@huawei.com>
+Date:   Mon, 13 Jan 2020 20:55:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200113110003.GA13011@ming.t460p>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-WP-MailID: b6ed76e7110333e816cd291da4871436
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000000 [oWMU]                               
+X-Originating-IP: [10.173.220.183]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The subject line could use some rewording, I think.
 
-On Mon, 13 Jan 2020 19:21:02 +0800, Niu Xilei wrote:
-> Pktgen can use only one IPv6 source address from output device, or src6 command
-> setting. In pressure test we need create lots of session more than 65536.If
-> IPSRC_RND flag is set, generate random source address between src6_min and src6_max.
+
+On 2020/1/13 19:04, Ming Lei wrote:
+> On Fri, Jan 10, 2020 at 01:10:20PM +0800, Zhiqiang Liu wrote:
+>>
+>> In brd_init func, rd_nr num of brd_device are firstly allocated
+>> and add in brd_devices, then brd_devices are traversed to add each
+>> brd_device by calling add_disk func. When allocating brd_device,
+>> the disk->first_minor is set to i * max_part, if rd_nr * max_part
+>> is larger than MINORMASK, two different brd_device may have the same
+>> devt, then only one of them can be successfully added.
+>> when rmmod brd.ko, it will cause oops when calling brd_exit.
+>>
+>> Follow those steps:
+>>   # modprobe brd rd_nr=3 rd_size=102400 max_part=1048576
+>>   # rmmod brd
+>> then, the oops will appear.
+>>
+>> Oops log:
+>> [  726.613722] Call trace:
+>> [  726.614175]  kernfs_find_ns+0x24/0x130
+>> [  726.614852]  kernfs_find_and_get_ns+0x44/0x68
+>> [  726.615749]  sysfs_remove_group+0x38/0xb0
+>> [  726.616520]  blk_trace_remove_sysfs+0x1c/0x28
+>> [  726.617320]  blk_unregister_queue+0x98/0x100
+>> [  726.618105]  del_gendisk+0x144/0x2b8
+>> [  726.618759]  brd_exit+0x68/0x560 [brd]
+>> [  726.619501]  __arm64_sys_delete_module+0x19c/0x2a0
+>> [  726.620384]  el0_svc_common+0x78/0x130
+>> [  726.621057]  el0_svc_handler+0x38/0x78
+>> [  726.621738]  el0_svc+0x8/0xc
+>> [  726.622259] Code: aa0203f6 aa0103f7 aa1e03e0 d503201f (7940e260)
+>>
+>> Here, we add brd_check_par_valid func to check parameter
+>> validation before register_blkdev func.
+>>
+>> Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+>> ---
+>>  drivers/block/brd.c | 33 ++++++++++++++++++++++++++-------
+>> +static inline int brd_check_par_valid(void)
+>> +{
+>> +	if (unlikely(!rd_nr))
+>> +		rd_nr = 1;
+>> +
+>> +	if (unlikely(!max_part))
+>> +		max_part = 1;
+>> +
+>> +	if (rd_nr * max_part > MINORMASK)
+>> +		return -EINVAL;
+>> +
+>> +	return 0;
+>> +
+>> +}
+>> +
+>>  static int __init brd_init(void)
+>>  {
+>>  	struct brd_device *brd, *next;
+>> -	int i;
+>> +	int i, ret;
+>>
+>>  	/*
+>>  	 * brd module now has a feature to instantiate underlying device
+>> @@ -488,11 +503,15 @@ static int __init brd_init(void)
+>>  	 *	dynamically.
+>>  	 */
+>>
+>> +	ret = brd_check_par_valid();
+>> +	if (ret) {
+>> +		pr_info("brd: invalid parameter setting!!!\n");
+>> +		return ret;
+>> +	}
+>> +
 > 
-> Signed-off-by: Niu Xilei <niu_xilei@163.com>
+> The max supported partition number is 256, see __alloc_disk_node().
+> So even though one bigger number is passed to alloc_disk(), at most
+> 256 partitions are allowed on that disk. Maybe you can apply the
+> following way to avoid the issue:
 > 
-> Changes since v1:
->  - only create IPv6 source address over least significant 64 bit range
+> 	disk->first_minor       = i * disk->minors;
+> 
+> However, looks 'rd_nr' still needs to be validated(rd_nr < 2 ^ 23).
+> 
 
-> +/* generate ipv6 source addr */
-> +static inline void set_src_in6_addr(struct pktgen_dev *pkt_dev)
+Thanks for your reply.
+As you said, minors is limited to DISK_MAX_PARTS in __alloc_disk_node when
+calling alloc_disk in brd_alloc func. We can set: disk->first_minor = i * disk->minors
+as your suggestion.
+As for 'rd_nr', I think we should make sure that 'disk->first_minor' should be not
+larger than MINORMASK.
 
-Please just use "static" instead of "static inline". The compiler will
-be clever enough to decide the inlining.
+->add_disk
+  ->device_add_disk
+    ->__device_add_disk
+      ->blk_alloc_devt
+	->MKDEV
 
-> +{
-> +	__be64 min6_h, min6_l, max6_h, max6_l, addr_l, *t;
-> +	u64 min6, max6, rand, i;
-> +	struct in6_addr addr6;
-> +
-> +	memcpy(&min6_h, pkt_dev->min_in6_saddr.s6_addr, 8);
-> +	memcpy(&min6_l, pkt_dev->min_in6_saddr.s6_addr + 8, 8);
-> +	memcpy(&max6_h, pkt_dev->max_in6_saddr.s6_addr, 8);
-> +	memcpy(&max6_l, pkt_dev->max_in6_saddr.s6_addr + 8, 8);
-> +
-> +	/* only generate source address in least significant 64 bits range
-> +	 * most significant 64 bits must be equal
-> +	 */
-> +	if (max6_h != min6_h)
-> +		return;
-> +
-> +	addr6 = pkt_dev->min_in6_saddr;
-> +	t = (__be64 *)addr6.s6_addr + 1;
-> +	min6 = be64_to_cpu(min6_l);
-> +	max6 = be64_to_cpu(max6_l);
-> +
-> +	if (min6 < max6) {
+If rd_nr > MINORMASK / min(max_part, DISK_MAX_PARTS), two different brd_device may have the same devt
+by calling MKDEV in blk_alloc_devt func. For example, MKDEV(1, 0) is equal to MKDEV(1, MINORMASK + 1).
+So we should check both rd_nr and max_part as follows,
 
-Since this code is executed on every packet, would it be possible to
-pre-compute the decision if the IPv6 address is to be generated or not?
-We have 4 memcpy()s and 2 byte swaps, and the conditions never change,
-so it could be computed at setup time, right?
+    static inline int brd_check_par_valid(void)
+    {
+            if (unlikely(!rd_nr))
+                    rd_nr = 1;
 
-> +		if (pkt_dev->flags & F_IPSRC_RND) {
-> +			do {
-> +				prandom_bytes(&rand, sizeof(rand));
-> +				rand = rand % (max6 - min6) + min6;
-> +				addr_l = cpu_to_be64(rand);
-> +				memcpy(t, &addr_l, 8);
-> +			} while (ipv6_addr_loopback(&addr6) ||
-> +				 ipv6_addr_v4mapped(&addr6) ||
-> +				 ipv6_addr_is_multicast(&addr6));
-> +		} else {
-> +			addr6 = pkt_dev->cur_in6_saddr;
-> +			i = be64_to_cpu(*t);
-> +			if (++i > max6)
-> +				i = min6;
-> +			addr_l = cpu_to_be64(i);
-> +			memcpy(t, &addr_l, 8);
-> +		}
-> +	}
-> +	pkt_dev->cur_in6_saddr = addr6;
-> +}
+            if (unlikely(!max_part))
+                    max_part = 1;
+
+            if (max_part > DISK_MAX_PARTS)
+                    max_part = DISK_MAX_PARTS;
+
+            if (rd_nr > MINORMASK / max_part)
+                    return -EINVAL;
+
+            return 0;
+    }
+
+I will send the v2 patch.
+
+
+
+
