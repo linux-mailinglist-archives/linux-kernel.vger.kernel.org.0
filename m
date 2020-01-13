@@ -2,202 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50BC613902C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 12:33:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A36E13902E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 12:34:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728709AbgAMLdi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 06:33:38 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:1066 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725992AbgAMLdf (ORCPT
+        id S1728789AbgAMLeG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 06:34:06 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:20391 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728766AbgAMLeG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 06:33:35 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00DBWOpg112596
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 06:33:35 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xfvsy8ygj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 06:33:34 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <psampat@linux.ibm.com>;
-        Mon, 13 Jan 2020 11:33:32 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 13 Jan 2020 11:33:30 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00DBWexf45613332
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 Jan 2020 11:32:40 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6FE4952050;
-        Mon, 13 Jan 2020 11:33:28 +0000 (GMT)
-Received: from pratiks-thinkpad.in.ibm.com (unknown [9.124.31.88])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id D89695204E;
-        Mon, 13 Jan 2020 11:33:26 +0000 (GMT)
-From:   Pratik Rajesh Sampat <psampat@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org,
-        mpe@ellerman.id.au, svaidy@linux.ibm.com, ego@linux.vnet.ibm.com,
-        linuxram@us.ibm.com, psampat@linux.ibm.com,
-        pratik.sampat@in.ibm.com, pratik.r.sampat@gmail.com
-Subject: [PATCH v3 3/3] powerpc/powernv: Parse device tree, population of SPR support
-Date:   Mon, 13 Jan 2020 17:03:20 +0530
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <cover.1578914462.git.psampat@linux.ibm.com>
-References: <cover.1578914462.git.psampat@linux.ibm.com>
+        Mon, 13 Jan 2020 06:34:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578915245;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=F9UfA1kCjxLqXDTyh3i8q9zpKCBTPBJEr4a8UqF/50E=;
+        b=gQgZaYw2wjrQvFqlwT53nF9RCzElzAXdexfoEq69x8Mxjrt0QtxDQynYCM+WReIpf1yz4B
+        x+JJZrejNP8E7R20EvKJhRmzOrK4nXo+f3P4O8w/MiJkjDHxKrq81uc7IuQTPgGov98qq8
+        LLw7DV+OlFYF5TBQaXINtJcKIlvlXWg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-58-beBc6JIaNjmF-kkSAtGMbg-1; Mon, 13 Jan 2020 06:34:02 -0500
+X-MC-Unique: beBc6JIaNjmF-kkSAtGMbg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1F30E10054E3;
+        Mon, 13 Jan 2020 11:34:00 +0000 (UTC)
+Received: from t480s.redhat.com (ovpn-117-201.ams2.redhat.com [10.36.117.201])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 60EA87C468;
+        Mon, 13 Jan 2020 11:33:55 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: [PATCH v1 0/2] mm/memory_hotplug: pass in nid to online_pages()
+Date:   Mon, 13 Jan 2020 12:33:52 +0100
+Message-Id: <20200113113354.6341-1-david@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20011311-0008-0000-0000-00000348EB1E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20011311-0009-0000-0000-00004A6939EC
-Message-Id: <f1801cbc1d1372359a39a9333608d0cd30689a8b.1578914462.git.psampat@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-13_03:2020-01-13,2020-01-13 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- priorityscore=1501 lowpriorityscore=0 adultscore=0 malwarescore=0
- mlxlogscore=999 suspectscore=0 bulkscore=0 phishscore=0 mlxscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001130097
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Parse the device tree for nodes self-save, self-restore and populate
-support for the preferred SPRs based what was advertised by the device
-tree.
+Simplify onlining code and get rid of find_memory_block(). Pass in the
+nid from the memory block we are trying to online directly, instead of
+manually looking it up.
 
-Signed-off-by: Pratik Rajesh Sampat <psampat@linux.ibm.com>
-Reviewed-by: Ram Pai <linuxram@us.ibm.com>
----
- arch/powerpc/platforms/powernv/idle.c | 104 ++++++++++++++++++++++++++
- 1 file changed, 104 insertions(+)
+David Hildenbrand (2):
+  mm/memory_hotplug: pass in nid to online_pages()
+  drivers/base/memory.c: get rid of find_memory_block()
 
-diff --git a/arch/powerpc/platforms/powernv/idle.c b/arch/powerpc/platforms/powernv/idle.c
-index 97aeb45e897b..384980c743eb 100644
---- a/arch/powerpc/platforms/powernv/idle.c
-+++ b/arch/powerpc/platforms/powernv/idle.c
-@@ -1436,6 +1436,107 @@ static void __init pnv_probe_idle_states(void)
- 		supported_cpuidle_states |= pnv_idle_states[i].flags;
- }
- 
-+/*
-+ * Extracts and populates the self save or restore capabilities
-+ * passed from the device tree node
-+ */
-+static int extract_save_restore_state_dt(struct device_node *np, int type)
-+{
-+	int nr_sprns = 0, i, bitmask_index;
-+	int rc = 0;
-+	u64 *temp_u64;
-+	const char *state_prop;
-+	u64 bit_pos;
-+
-+	state_prop = of_get_property(np, "status", NULL);
-+	if (!state_prop) {
-+		pr_warn("opal: failed to find the active value for self save/restore node");
-+		return -EINVAL;
-+	}
-+	if (strncmp(state_prop, "disabled", 8) == 0) {
-+		/*
-+		 * if the feature is not active, strip the preferred_sprs from
-+		 * that capability.
-+		 */
-+		if (type == SELF_RESTORE_TYPE) {
-+			for (i = 0; i < nr_preferred_sprs; i++) {
-+				preferred_sprs[i].supported_mode &=
-+					~SELF_RESTORE_STRICT;
-+			}
-+		} else {
-+			for (i = 0; i < nr_preferred_sprs; i++) {
-+				preferred_sprs[i].supported_mode &=
-+					~SELF_SAVE_STRICT;
-+			}
-+		}
-+		return 0;
-+	}
-+	nr_sprns = of_property_count_u64_elems(np, "sprn-bitmask");
-+	if (nr_sprns <= 0)
-+		return rc;
-+	temp_u64 = kcalloc(nr_sprns, sizeof(u64), GFP_KERNEL);
-+	if (of_property_read_u64_array(np, "sprn-bitmask",
-+				       temp_u64, nr_sprns)) {
-+		pr_warn("cpuidle-powernv: failed to find registers in DT\n");
-+		kfree(temp_u64);
-+		return -EINVAL;
-+	}
-+	/*
-+	 * Populate acknowledgment of support for the sprs in the global vector
-+	 * gotten by the registers supplied by the firmware.
-+	 * The registers are in a bitmask, bit index within
-+	 * that specifies the SPR
-+	 */
-+	for (i = 0; i < nr_preferred_sprs; i++) {
-+		bitmask_index = preferred_sprs[i].spr / 64;
-+		bit_pos = preferred_sprs[i].spr % 64;
-+		if ((temp_u64[bitmask_index] & (1UL << bit_pos)) == 0) {
-+			if (type == SELF_RESTORE_TYPE)
-+				preferred_sprs[i].supported_mode &=
-+					~SELF_RESTORE_STRICT;
-+			else
-+				preferred_sprs[i].supported_mode &=
-+					~SELF_SAVE_STRICT;
-+			continue;
-+		}
-+		if (type == SELF_RESTORE_TYPE) {
-+			preferred_sprs[i].supported_mode |=
-+				SELF_RESTORE_STRICT;
-+		} else {
-+			preferred_sprs[i].supported_mode |=
-+				SELF_SAVE_STRICT;
-+		}
-+	}
-+
-+	kfree(temp_u64);
-+	return rc;
-+}
-+
-+static int pnv_parse_deepstate_dt(void)
-+{
-+	struct device_node *sr_np, *ss_np;
-+	int rc = 0;
-+
-+	/* Self restore register population */
-+	sr_np = of_find_node_by_path("/ibm,opal/power-mgt/self-restore");
-+	if (!sr_np) {
-+		pr_warn("opal: self restore Node not found");
-+	} else {
-+		rc = extract_save_restore_state_dt(sr_np, SELF_RESTORE_TYPE);
-+		if (rc != 0)
-+			return rc;
-+	}
-+	/* Self save register population */
-+	ss_np = of_find_node_by_path("/ibm,opal/power-mgt/self-save");
-+	if (!ss_np) {
-+		pr_warn("opal: self save Node not found");
-+		pr_warn("Legacy firmware. Assuming default self-restore support");
-+	} else {
-+		rc = extract_save_restore_state_dt(ss_np, SELF_SAVE_TYPE);
-+	}
-+	return rc;
-+}
-+
- /*
-  * This function parses device-tree and populates all the information
-  * into pnv_idle_states structure. It also sets up nr_pnv_idle_states
-@@ -1584,6 +1685,9 @@ static int __init pnv_init_idle_states(void)
- 		return rc;
- 	pnv_probe_idle_states();
- 
-+	rc = pnv_parse_deepstate_dt();
-+	if (rc)
-+		return rc;
- 	if (!cpu_has_feature(CPU_FTR_ARCH_300)) {
- 		if (!(supported_cpuidle_states & OPAL_PM_SLEEP_ENABLED_ER1)) {
- 			power7_fastsleep_workaround_entry = false;
--- 
+ drivers/base/memory.c          | 15 ++++-----------
+ include/linux/memory.h         |  1 -
+ include/linux/memory_hotplug.h |  3 ++-
+ mm/memory_hotplug.c            | 13 ++-----------
+ 4 files changed, 8 insertions(+), 24 deletions(-)
+
+--=20
 2.24.1
 
