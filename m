@@ -2,62 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD7B1138949
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 02:36:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0C8213893F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 02:32:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732911AbgAMBgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 20:36:03 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:48664 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730100AbgAMBgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 20:36:02 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 3F588A88822FBF7FA1F0;
-        Mon, 13 Jan 2020 09:35:59 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 13 Jan 2020 09:35:48 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Shuming Fan <shumingf@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-CC:     YueHaibing <yuehaibing@huawei.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] ASoC: rt711: remove unused including <linux/version.h>
-Date:   Mon, 13 Jan 2020 01:31:23 +0000
-Message-ID: <20200113013123.47561-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1732847AbgAMBcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 20:32:18 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43839 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727222AbgAMBcS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 Jan 2020 20:32:18 -0500
+Received: by mail-oi1-f195.google.com with SMTP id p125so6821638oif.10;
+        Sun, 12 Jan 2020 17:32:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MMBytJUvPgAu+zMfgqDgk/AfX9Yfe5/T6E8UlbQLhRg=;
+        b=bavqG7BbIXENsNo9UOozQb1Br1Q21nNEU7hk7Iyb1e5fPuCq659TKTxQcBnyLyK8iN
+         VnFlSKggY1A4gcBuyqEQf1AsRpw9Z6DefQnra9k9TSquQQLmdnFuz3SYnA5sqq7kiJC9
+         rIfAZQXUmG3LNRog65z5m1zZyAjNyuD3ccecWyRVh7XWsCyeU0S0gH6c5CFkrn3citxc
+         VjfBCYx2f1Bb9sSqaUQwSnmCEg+9dhle+WZAiHosYYH/E7g7wvT8BvwDURbEAEcusB4u
+         E/SXBAGwI+00vIHETPisSrbgOqpxvmIUiUo2pL1R4A8lykgG64v0wXEPiR0yCdrBQTmZ
+         JXnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MMBytJUvPgAu+zMfgqDgk/AfX9Yfe5/T6E8UlbQLhRg=;
+        b=T3vYBf4dqyhd7l8zEfKqY9RFEYjuWfQFSDKu3XjqPSQBDa5bg6c8Ziq/+WFqEdgZLg
+         bmlYJeS90Vc/kPFFCQeGRhfxU705NuOg0H/6jWjzPxLNeiLl7Kjif3T2mOZcdvLlm+pi
+         kLttqLQ6u2TLzApuHKydJJEdkUWXg9BrJe7qp8ocjGXRX930dTfqdHe2fVbOfwyo2oQg
+         rA2N7JCYv8SrQR7sWVGQZ/8hx9WeNfbJVLR4CE2UvqmG0PQ4BiOHLXZiaw6FXHjpjeoW
+         pUSJqXuJBIQq9Ik/l2h9U2qj45fSrCNegyHCGL6/eKZdRsgMt4cRUFg5SLwGOEaD20R+
+         z2Xg==
+X-Gm-Message-State: APjAAAW2KmImYKQFI7Pn/y5WjZvD6gUUKMKVA49hfWirt50q32iaJSYd
+        X/cp+F+NOn/iLNCpEgMf//JKvsuxS9Bd7hqCI6k=
+X-Google-Smtp-Source: APXvYqwCPuqbYAG95luf4ZYYWjcaCVybJvsz8csO3YSbyw59b9EkPjN9oGmKDDBpKx1Q1quoOXGu4QhIj6WTgo+7q7g=
+X-Received: by 2002:aca:8d5:: with SMTP id 204mr10286701oii.141.1578879137785;
+ Sun, 12 Jan 2020 17:32:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+References: <CANRm+Cw1eTNgB1r79J7U__ynio7pMSR4Xa35XuQuj-JKAQGxmg@mail.gmail.com>
+ <87a76v8knv.fsf@nanos.tec.linutronix.de>
+In-Reply-To: <87a76v8knv.fsf@nanos.tec.linutronix.de>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Mon, 13 Jan 2020 09:32:06 +0800
+Message-ID: <CANRm+CyGWvY767ER14EqWAZakZu3S0KL=X5PT7Pyu=ezVZZoag@mail.gmail.com>
+Subject: Re: [PATCH v2] sched/nohz: Optimize get_nohz_timer_target()
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, kvm <kvm@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove including <linux/version.h> that don't need it.
+On Fri, 10 Jan 2020 at 22:12, Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> Wanpeng,
+>
+> Wanpeng Li <kernellwp@gmail.com> writes:
+>
+> > Hi Thomas,
+> > On Wed, 23 Oct 2019 at 16:29, Thomas Gleixner <tglx@linutronix.de> wrote:
+> >>
+> >> On Wed, 23 Oct 2019, Wanpeng Li wrote:
+> >> > I didn't see your refactor to get_nohz_timer_target() which you
+> >> > mentioned in IRC after four months, I can observe cyclictest drop from
+> >> > 4~5us to 8us in kvm guest(we offload the lapic timer emulation to
+> >> > housekeeping cpu to avoid timer fire external interrupt on the pCPU
+> >> > which vCPU resident incur a vCPU vmexit) w/o this patch in the case of
+> >> > there is no busy housekeeping cpu. The score can be recovered after I
+> >> > give stress to create a busy housekeeping cpu.
+> >> >
+> >> > Could you consider applying this patch for temporary since I'm not
+> >> > sure when the refactor can be ready.
+> >>
+> >> Yeah. It's delayed (again).... Will pick that up.
+> >
+> > I didn't find WIP tag for this work after ~half year since v4 was
+> > posted https://lkml.org/lkml/2019/6/28/231 Could you apply this patch
+> > for temporary because the completion time of refactor is not
+> > deterministic.
+>
+> Could you please repost it?
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- sound/soc/codecs/rt711.c | 1 -
- 1 file changed, 1 deletion(-)
+Just repost, thanks Thomas.
 
-diff --git a/sound/soc/codecs/rt711.c b/sound/soc/codecs/rt711.c
-index 3bebba7a63be..2daed7692a3b 100644
---- a/sound/soc/codecs/rt711.c
-+++ b/sound/soc/codecs/rt711.c
-@@ -8,7 +8,6 @@
- 
- #include <linux/module.h>
- #include <linux/moduleparam.h>
--#include <linux/version.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/delay.h>
-
-
-
+    Wanpeng
