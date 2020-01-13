@@ -2,235 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16850138C9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 09:06:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD1B4138CA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 09:11:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728808AbgAMIGd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 03:06:33 -0500
-Received: from mga17.intel.com ([192.55.52.151]:63779 "EHLO mga17.intel.com"
+        id S1728789AbgAMILX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 03:11:23 -0500
+Received: from relay.sw.ru ([185.231.240.75]:36326 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728682AbgAMIGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 03:06:32 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jan 2020 00:06:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,428,1571727600"; 
-   d="scan'208";a="224905087"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by orsmga006.jf.intel.com with ESMTP; 13 Jan 2020 00:06:29 -0800
-Date:   Mon, 13 Jan 2020 16:10:50 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        jmattson@google.com, yu.c.zhang@linux.intel.com,
-        alazar@bitdefender.com, edwin.zhai@intel.com
-Subject: Re: [RESEND PATCH v10 06/10] vmx: spp: Set up SPP paging table at
- vmentry/vmexit
-Message-ID: <20200113081050.GF12253@local-michael-cet-test.sh.intel.com>
-References: <20200102061319.10077-1-weijiang.yang@intel.com>
- <20200102061319.10077-7-weijiang.yang@intel.com>
- <20200110180458.GG21485@linux.intel.com>
+        id S1728739AbgAMILW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 03:11:22 -0500
+Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1iquoY-00005J-0F; Mon, 13 Jan 2020 11:11:10 +0300
+Subject: Re: [PATCH RESEND] mm: fix tick_sched timer blocked by
+ pgdat_resize_lock
+To:     Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20200110082510.172517-2-shile.zhang@linux.alibaba.com>
+ <20200110093053.34777-1-shile.zhang@linux.alibaba.com>
+ <1ee6088c-9e72-8824-3a9a-fc099d196faf@virtuozzo.com>
+ <c7ac0338-78a6-2ae3-465c-2d6371d96a72@linux.alibaba.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <9420eab3-5e5e-150f-53c9-6cd40bacf859@virtuozzo.com>
+Date:   Mon, 13 Jan 2020 11:11:09 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200110180458.GG21485@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <c7ac0338-78a6-2ae3-465c-2d6371d96a72@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 10:04:59AM -0800, Sean Christopherson wrote:
-> On Thu, Jan 02, 2020 at 02:13:15PM +0800, Yang Weijiang wrote:
-> > @@ -3585,7 +3602,30 @@ static bool fast_page_fault(struct kvm_vcpu *vcpu, gva_t gva, int level,
-> >  		if ((error_code & PFERR_WRITE_MASK) &&
-> >  		    spte_can_locklessly_be_made_writable(spte))
-> >  		{
-> > -			new_spte |= PT_WRITABLE_MASK;
-> > +			/*
-> > +			 * Record write protect fault caused by
-> > +			 * Sub-page Protection, let VMI decide
-> > +			 * the next step.
-> > +			 */
-> > +			if (spte & PT_SPP_MASK) {
-> > +				int len = kvm_x86_ops->get_inst_len(vcpu);
+On 13.01.2020 03:54, Shile Zhang wrote:
 > 
-> There's got to be a better way to handle SPP exits than adding a helper
-> to retrieve the instruction length.
->
-The fault instruction was skipped by kvm_skip_emulated_instruction()
-before, but Paolo suggested leave the re-do or skip option to user-space
-to make it flexible for write protection or write tracking, so return
-length to user-space.
+> 
+> On 2020/1/10 19:42, Kirill Tkhai wrote:
+>> On 10.01.2020 12:30, Shile Zhang wrote:
+>>> When 'CONFIG_DEFERRED_STRUCT_PAGE_INIT' is set, 'pgdat_resize_lock'
+>>> will be called inside 'pgdatinit' kthread to initialise the deferred
+>>> pages with local interrupts disabled. Which is introduced by
+>>> commit 3a2d7fa8a3d5 ("mm: disable interrupts while initializing deferred
+>>> pages").
+>>>
+>>> But 'pgdatinit' kthread is possible be pined on the boot CPU (CPU#0 by
+>>> default), especially in small system with NRCPUS <= 2. In this case, the
+>>> interrupts are disabled on boot CPU during memory initialising, which
+>>> caused the tick_sched timer be blocked, leading to wall clock stuck.
+>>>
+>>> Fixes: commit 3a2d7fa8a3d5 ("mm: disable interrupts while initializing
+>>> deferred pages")
+>>>
+>>> Signed-off-by: Shile Zhang <shile.zhang@linux.alibaba.com>
+>>> ---
+>>>   include/linux/memory_hotplug.h | 16 ++++++++++++++--
+>>>   1 file changed, 14 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+>>> index ba0dca6aac6e..be69a6dc4fee 100644
+>>> --- a/include/linux/memory_hotplug.h
+>>> +++ b/include/linux/memory_hotplug.h
+>>> @@ -6,6 +6,8 @@
+>>>   #include <linux/spinlock.h>
+>>>   #include <linux/notifier.h>
+>>>   #include <linux/bug.h>
+>>> +#include <linux/sched.h>
+>>> +#include <linux/smp.h>
+>>>     struct page;
+>>>   struct zone;
+>>> @@ -282,12 +284,22 @@ static inline bool movable_node_is_enabled(void)
+>>>   static inline
+>>>   void pgdat_resize_lock(struct pglist_data *pgdat, unsigned long *flags)
+>>>   {
+>>> -    spin_lock_irqsave(&pgdat->node_size_lock, *flags);
+>>> +    /*
+>>> +     * Disable local interrupts on boot CPU will stop the tick_sched
+>>> +     * timer, which will block jiffies(wall clock) update.
+>>> +     */
+>>> +    if (current->cpu != get_boot_cpu_id())
+>>> +        spin_lock_irqsave(&pgdat->node_size_lock, *flags);
+>>> +    else
+>>> +        spin_lock(&pgdat->node_size_lock);
+>>>   }
+>>>   static inline
+>>>   void pgdat_resize_unlock(struct pglist_data *pgdat, unsigned long *flags)
+>>>   {
+>>> -    spin_unlock_irqrestore(&pgdat->node_size_lock, *flags);
+>>> +    if (current->cpu != get_boot_cpu_id())
+>>> +        spin_unlock_irqrestore(&pgdat->node_size_lock, *flags);
+>>> +    else
+>>> +        spin_unlock(&pgdat->node_size_lock);
+>>>   }
+>>>   static inline
+>>>   void pgdat_resize_init(struct pglist_data *pgdat)
+>> 1)Linux kernel is *preemptible*. Kernel with CONFIG_PREEMPT_RT option even may preempt
+>> *kernel* code in the middle of function. When you are executing a code containing
+>> pgdat_resize_lock() and pgdat_resize_unlock(), the process may migrate to another cpu
+>> between them.
+>>
+>> bool cpu               another cpu
+>> ----------------------------------
+>> pgdat_resize_lock()
+>>    spin_lock()
+>>    --> migrate to another cpu
+>>                        pgdat_resize_unlock()
+>>                        spin_unlock_irqrestore(<uninitialized flags>)
+>>
+>> (Yes, in case of CONFIG_PREEMPT_RT, process is preemptible even after spin_lock() call).
+>>
+>> This looks like a bad helpers, and we should not introduce such the design.
+> 
+> Hi Kirill,
+> 
+> Thanks for your comments!
+> Sorry for I'm not very clear about this lock/unlock, but I encountered this issue
+> with "CONFIG_PREEMPT is not set".
 
-> > +
-> > +				fault_handled = true;
-> > +				vcpu->run->exit_reason = KVM_EXIT_SPP;
-> > +				vcpu->run->spp.addr = gva;
-> > +				vcpu->run->spp.ins_len = len;
-> 
-> s/ins_len/insn_len to be consistent with other KVM nomenclature.
-> 
-OK.
+The thing is we simply shouldn't introduce such the primitives since the thread
+may migrate to another cpu, while you own the lock. This looks like a buggy design.
 
-> > +				trace_kvm_spp_induced_page_fault(vcpu,
-> > +								 gva,
-> > +								 len);
-> > +				break;
-> > +			}
-> > +
-> > +			if (was_spp_armed(new_spte)) {
-> > +				restore_spp_bit(&new_spte);
-> > +				spp_protected = true;
-> > +			} else {
-> > +				new_spte |= PT_WRITABLE_MASK;
-> > +			}
-> >  
-> >  			/*
-> >  			 * Do not fix write-permission on the large spte.  Since
+>> 2)I think there is no the problem this patch solves. Do we really this statistics?
+>> Can't we simple remove print message from deferred_init_memmap() and solve this?
 > 
-> ...
-> 
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index 24e4e1c47f42..97d862c79124 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -200,7 +200,6 @@ static const struct {
-> >  	[VMENTER_L1D_FLUSH_EPT_DISABLED] = {"EPT disabled", false},
-> >  	[VMENTER_L1D_FLUSH_NOT_REQUIRED] = {"not required", false},
-> >  };
-> > -
-> 
-> Spurious whitepsace.
->
-OK.
+> Sorry for I've not put this issue very clearly. It's *not* just one statistics log
+> with wrong time calculate, but the wall clock is stuck.
+> So the 'systemd-analyze' command also give a wrong time as I mentioned in the cover
+> letter. I don't think is OK just remove the log, it cannot solve the wall clock latency.
 
-> >  #define L1D_CACHE_ORDER 4
-> >  static void *vmx_l1d_flush_pages;
-> >  
-> > @@ -2999,6 +2998,7 @@ void vmx_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
-> >  	bool update_guest_cr3 = true;
-> >  	unsigned long guest_cr3;
-> >  	u64 eptp;
-> > +	u64 spptp;
-> >  
-> >  	guest_cr3 = cr3;
-> >  	if (enable_ept) {
-> > @@ -3027,6 +3027,12 @@ void vmx_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
-> >  
-> >  	if (update_guest_cr3)
-> >  		vmcs_writel(GUEST_CR3, guest_cr3);
-> > +
-> > +	if (kvm->arch.spp_active && VALID_PAGE(vcpu->kvm->arch.sppt_root)) {
-> > +		spptp = construct_spptp(vcpu->kvm->arch.sppt_root);
-> > +		vmcs_write64(SPPT_POINTER, spptp);
-> > +		vmx_flush_tlb(vcpu, true);
-> 
-> Why is SPP so special that it gets to force TLB flushes?
-I double checked the code, there's a call to vmx_flush_tlb() in
-mmu_load(), so it's unnecessary here, thank you!
+Have you tried temporary enabling interrupts in the middle of cycle after a huge enough
+memory block is initialized? Something like:
 
-> > +	}
-> >  }
-> >  
-> >  int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
-> > @@ -5361,6 +5367,74 @@ static int handle_monitor_trap(struct kvm_vcpu *vcpu)
-> >  	return 1;
-> >  }
-> >  
-> > +int handle_spp(struct kvm_vcpu *vcpu)
-> 
-> Can be static.
->
-Thanks!
+deferred_init_memmap()
+{
+	while (spfn < epfn) {
+		nr_pages += deferred_init_maxorder(&i, zone, &spfn, &epfn);
+		local_irq_enable();
+		local_irq_disable();
+	}
+}
 
-> > +{
-> > +	unsigned long exit_qualification;
-> > +	struct kvm_memory_slot *slot;
-> > +	gpa_t gpa;
-> > +	gfn_t gfn;
-> > +
-> > +	exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
-> > +
-> > +	/*
-> > +	 * SPP VM exit happened while executing iret from NMI,
-> > +	 * "blocked by NMI" bit has to be set before next VM entry.
-> > +	 * There are errata that may cause this bit to not be set:
-> > +	 * AAK134, BY25.
-> > +	 */
-> > +	if (!(to_vmx(vcpu)->idt_vectoring_info & VECTORING_INFO_VALID_MASK) &&
-> > +	    (exit_qualification & SPPT_INTR_INFO_UNBLOCK_NMI))
-> > +		vmcs_set_bits(GUEST_INTERRUPTIBILITY_INFO,
-> > +			      GUEST_INTR_STATE_NMI);
-> > +
-> > +	vcpu->arch.exit_qualification = exit_qualification;
-> 
-> 	if (WARN_ON(!(exit_qualification & SPPT_INDUCED_EXIT_TYPE)))
-> 		goto out_err;
-> 
-> 	<handle spp exit>
-> 
-> 	return 1;
-> 
-> out_err:
-> 	vcpu->run->exit_reason = KVM_EXIT_UNKNOWN;
-> 	vcpu->run->hw.hardware_exit_reason = EXIT_REASON_SPP;
-> 	return 0;
->
-Sure, will change it.
+Or, maybe, enable/disable interrupts somewhere inside deferred_init_maxorder().
 
-> > +	if (exit_qualification & SPPT_INDUCED_EXIT_TYPE) {
-> > +		int page_num = KVM_PAGES_PER_HPAGE(PT_DIRECTORY_LEVEL);
-> 
-> The compiler is probably clever enough to make these constants, but if
-> this logic is a fundamental property of SPP then it should be defined as
-> a macro somewhere.
->
-OK, will change it.
-
-> > +		u32 *access;
-> > +		gfn_t gfn_max;
-> > +
-> > +		/*
-> > +		 * SPPT missing
-> > +		 * We don't set SPP write access for the corresponding
-> > +		 * GPA, if we haven't setup, we need to construct
-> > +		 * SPP table here.
-> > +		 */
-> > +		gpa = vmcs_read64(GUEST_PHYSICAL_ADDRESS);
-> > +		gfn = gpa >> PAGE_SHIFT;
-> 
-> gpa_to_gfn()
->
-OK.
-
-> > +		trace_kvm_spp_induced_exit(vcpu, gpa, exit_qualification);
-> > +		/*
-> > +		 * In level 1 of SPPT, there's no PRESENT bit, all data is
-> > +		 * regarded as permission vector, so need to check from
-> > +		 * level 2 to set up the vector if target page is protected.
-> > +		 */
-> > +		spin_lock(&vcpu->kvm->mmu_lock);
-> > +		gfn &= ~(page_num - 1);
-> 
-> 
-> 
-> > +		gfn_max = gfn + page_num - 1;
-> 
-> s/gfn_max/gfn_end
-OK.
-
-> 
-> > +		for (; gfn <= gfn_max; gfn++) {
-> 
-> My preference would be to do:
-> 		gfn_end = gfn + page_num;
-> 
-> 		for ( ; gfn < gfn_end; gfn++)
->
-Thank you!
-> > +			slot = gfn_to_memslot(vcpu->kvm, gfn);
-
+>> Also, you may try to check that sched_clock() gives better results with interrupts
+>> disabled (on x86 it uses rdtsc, when it's possible. But it also may fallback to
+>> jiffies-based clock in some hardware cases, and they also won't go with interrupts
+>> disabled).
