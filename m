@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5602B1392B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:58:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AE891392C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 14:58:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729163AbgAMN53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 08:57:29 -0500
-Received: from mga07.intel.com ([134.134.136.100]:48397 "EHLO mga07.intel.com"
+        id S1729238AbgAMN5z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 08:57:55 -0500
+Received: from mga11.intel.com ([192.55.52.93]:54643 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728943AbgAMN4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 08:56:39 -0500
+        id S1728924AbgAMN4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 08:56:38 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jan 2020 05:56:38 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jan 2020 05:56:37 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,429,1571727600"; 
-   d="scan'208";a="224903912"
+   d="scan'208";a="422812847"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 13 Jan 2020 05:56:34 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 13 Jan 2020 05:56:33 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id F31B17A7; Mon, 13 Jan 2020 15:56:24 +0200 (EET)
+        id 04F341E0; Mon, 13 Jan 2020 15:56:25 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Darren Hart <dvhart@infradead.org>,
@@ -37,9 +37,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 22/36] platform/x86: intel_pmc_ipc: Drop ipc_data_readb()
-Date:   Mon, 13 Jan 2020 16:56:09 +0300
-Message-Id: <20200113135623.56286-23-mika.westerberg@linux.intel.com>
+Subject: [PATCH v3 23/36] platform/x86: intel_pmc_ipc: Get rid of unnecessary includes
+Date:   Mon, 13 Jan 2020 16:56:10 +0300
+Message-Id: <20200113135623.56286-24-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200113135623.56286-1-mika.westerberg@linux.intel.com>
 References: <20200113135623.56286-1-mika.westerberg@linux.intel.com>
@@ -50,30 +50,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This function is not used anywhere so drop it completely.
+There is no point including headers that are not needed in the driver so
+drop them.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/platform/x86/intel_pmc_ipc.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/platform/x86/intel_pmc_ipc.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
 diff --git a/drivers/platform/x86/intel_pmc_ipc.c b/drivers/platform/x86/intel_pmc_ipc.c
-index 677ed470e14e..83b106f66fa6 100644
+index 83b106f66fa6..8527327d88c7 100644
 --- a/drivers/platform/x86/intel_pmc_ipc.c
 +++ b/drivers/platform/x86/intel_pmc_ipc.c
-@@ -184,11 +184,6 @@ static inline void ipc_data_writel(u32 data, u32 offset)
- 	writel(data, ipcdev.ipc_base + IPC_WRITE_BUFFER + offset);
- }
+@@ -12,23 +12,13 @@
+  */
  
--static inline u8 __maybe_unused ipc_data_readb(u32 offset)
--{
--	return readb(ipcdev.ipc_base + IPC_READ_BUFFER + offset);
--}
--
- static inline u32 ipc_data_readl(u32 offset)
- {
- 	return readl(ipcdev.ipc_base + IPC_READ_BUFFER + offset);
+ #include <linux/acpi.h>
+-#include <linux/atomic.h>
+-#include <linux/bitops.h>
+ #include <linux/delay.h>
+-#include <linux/device.h>
+ #include <linux/errno.h>
+ #include <linux/interrupt.h>
+ #include <linux/io-64-nonatomic-lo-hi.h>
+-#include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/notifier.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
+-#include <linux/pm.h>
+-#include <linux/pm_qos.h>
+-#include <linux/sched.h>
+-#include <linux/spinlock.h>
+-#include <linux/suspend.h>
+ 
+ #include <asm/intel_pmc_ipc.h>
+ 
 -- 
 2.24.1
 
