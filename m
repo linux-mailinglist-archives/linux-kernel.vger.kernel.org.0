@@ -2,125 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15ACE1389DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 04:43:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 318BB1389CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Jan 2020 04:39:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387459AbgAMDnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 Jan 2020 22:43:43 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:47890 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387415AbgAMDnn (ORCPT
+        id S2387428AbgAMDjC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 Jan 2020 22:39:02 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37813 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732961AbgAMDjB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 Jan 2020 22:43:43 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 23264891A9;
-        Mon, 13 Jan 2020 16:43:40 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1578887020;
-        bh=X/M2+RzoFycgvyO5lRFPYkxDZJIZQYY3IChNbm5C1GA=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=mFXgxB+ugBRNsghk17G/IJJ6SH7Iy7hQ4mPES031jovVAn7TFNlFxjvCI96x4O7Nm
-         9ryrnxUiXQPQuwgRfy+6rdBH/px0mJYuRCjjxnQyLDxTWVye/p6D+0BA/tb9KDVuNh
-         8QhCQlgVHTyPYEUUn1r/L/pKAskXRQBB3YVJB0yWw6kZer0/ahh+JlXpETkWV6G4DC
-         G4M50IvtmPy8Y26bSbJj9EKnzIAOAH8tTCtHMc5nlOPO/PMv0IqxCiM/xToU3j48Qr
-         yciHsbCXyNqZJNfKruNhvW+kZsSqDrI1ZZglZzPCJcXo+Hk6sM11jfoAnck+1OZhc8
-         mbZlwhXle0Tew==
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5e1be76a0001>; Mon, 13 Jan 2020 16:43:38 +1300
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
- (TLS) id 15.0.1473.3; Mon, 13 Jan 2020 16:43:40 +1300
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1473.005; Mon, 13 Jan 2020 16:43:40 +1300
-From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To:     "robh@kernel.org" <robh@kernel.org>
-CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "anthony.derosa@syscall7.com" <anthony.derosa@syscall7.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: spi: Add spi-mux-gpio
-Thread-Topic: [PATCH 1/3] dt-bindings: spi: Add spi-mux-gpio
-Thread-Index: AQHU8OzvVDg4ZBlx30mrcO3i41SCvqZS/IYAgZXO+oA=
-Date:   Mon, 13 Jan 2020 03:43:39 +0000
-Message-ID: <58e3dcf5cf69fa5fda6f887dc442fec4d9901ffd.camel@alliedtelesis.co.nz>
-References: <20190412050213.17698-1-chris.packham@alliedtelesis.co.nz>
-         <20190412050213.17698-2-chris.packham@alliedtelesis.co.nz>
-         <20190429213740.GA29098@bogus>
-In-Reply-To: <20190429213740.GA29098@bogus>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [2001:df5:b000:22:d1a1:ea74:6baa:5aa3]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C8595220A5D21948B7B8DF3BEB85C8AB@atlnz.lc>
-Content-Transfer-Encoding: base64
+        Sun, 12 Jan 2020 22:39:01 -0500
+Received: by mail-io1-f66.google.com with SMTP id k24so8323961ioc.4;
+        Sun, 12 Jan 2020 19:39:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7i2vyPCdrHQxfSLezSv1jStCCXCabgABKufsVmDHp90=;
+        b=qC1kdCIbGYhvHYaY8B4OM5vZ+equln+CCrlrEmQtaG6segiNo69Ate8Gi1qg9oyPMU
+         xE6wISmVZYjdvg6cgCywzjagjkPWEOCAyc/8n4rHVGhrCQDGTrSngDGYUViU6rGNvaRt
+         WhIUGqE4aHLeINmHDlrAHcuFCRB5vvTCpk77+aa4o5yLO1u9hq5SJarcWhK07fpxjmou
+         CbpPYLeBBDjiHKaWeP0DYcnsKPQR6uspwMW2RgcLZH05PQbMdXAZ4VjznF5IuXbE2ClJ
+         SBSzrypkZRXOlU3G9VVAT9OD4e77NfrtRUNAj9k0eOiBd01fvYyDsdIxrEIgz6BgEQpm
+         9fcg==
+X-Gm-Message-State: APjAAAVHMeTw7kQ11O35XEPXQT8V7g+bM4GTHtHSaguL4GD1rE3W82UJ
+        16eNMUsv5SwYby8R+etZr6cGlbpXIgkhp3wBVxY=
+X-Google-Smtp-Source: APXvYqykWpiExX1/HiH4dv1cQLTb37se3MfLCA21Lpm5wZFEXbq5L+29pBnPFiRx5swx7/6t2kzr16tpj5JyYCOc19s=
+X-Received: by 2002:a5d:9d4a:: with SMTP id k10mr11534807iok.134.1578886741140;
+ Sun, 12 Jan 2020 19:39:01 -0800 (PST)
 MIME-Version: 1.0
+References: <20200112081416.722218-1-jiaxun.yang@flygoat.com> <20200112081416.722218-4-jiaxun.yang@flygoat.com>
+In-Reply-To: <20200112081416.722218-4-jiaxun.yang@flygoat.com>
+From:   Huacai Chen <chenhc@lemote.com>
+Date:   Mon, 13 Jan 2020 11:44:10 +0800
+Message-ID: <CAAhV-H5QpJcC-iwjmY0Xgdeugsf8FK+ZxgpU=TkcJttW30=mew@mail.gmail.com>
+Subject: Re: [PATCH v3 03/10] dt-bindings: interrupt-controller: Add Loongson IOINTC
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc:     "open list:MIPS" <linux-mips@vger.kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.co>, devicetree@vger.kernel.org,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgUm9iLA0KDQpPbiBNb24sIDIwMTktMDQtMjkgYXQgMTY6MzcgLTA1MDAsIFJvYiBIZXJyaW5n
-IHdyb3RlOg0KPiBPbiBGcmksIEFwciAxMiwgMjAxOSBhdCAwNTowMjoxMVBNICsxMjAwLCBDaHJp
-cyBQYWNraGFtIHdyb3RlOg0KPiA+IEFkZCBiaW5kaW5nIGRvY3VtZW50YXRpb24gZm9yIHNwaS1t
-dXgtZ3BpbyB3aGljaCBpcyBhIHNsaWdodGx5IG1vcmUNCj4gPiBjb21wbGljYXRlZCBoYXJkd2Fy
-ZSBpbXBsZW1lbnRhdGlvbiBvZiB1c2luZyBncGlvcyB0byBzdGVlciBTUEkgY2hpcA0KPiA+IHNl
-bGVjdHMuDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogQ2hyaXMgUGFja2hhbSA8Y2hyaXMucGFj
-a2hhbUBhbGxpZWR0ZWxlc2lzLmNvLm56Pg0KPiA+IC0tLQ0KPiA+ICAuLi4vZGV2aWNldHJlZS9i
-aW5kaW5ncy9zcGkvc3BpLW11eC1ncGlvLnR4dCAgfCA0NSArKysrKysrKysrKysrKysrKysrDQo+
-ID4gIDEgZmlsZSBjaGFuZ2VkLCA0NSBpbnNlcnRpb25zKCspDQo+ID4gIGNyZWF0ZSBtb2RlIDEw
-MDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvc3BpL3NwaS1tdXgtZ3Bpby50
-eHQNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
-bmdzL3NwaS9zcGktbXV4LWdwaW8udHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
-bmdzL3NwaS9zcGktbXV4LWdwaW8udHh0DQo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gPiBp
-bmRleCAwMDAwMDAwMDAwMDAuLmEzMmYyNTMyMWQzNw0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiAr
-KysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvc3BpL3NwaS1tdXgtZ3Bpby50
-eHQNCj4gPiBAQCAtMCwwICsxLDQ1IEBADQo+ID4gK1NQSSBidXMgZ3BpbyBtdWx0aXBsZXhlcg0K
-PiA+ICsNCj4gPiArVGhlIFNQSSBidXMgZ3BpbyBtdWx0aXBsZXhlciBjYW4gYmUgdXNlZCB0byBp
-bXBsZW1lbnQgbW9yZSBjb21wbGljYXRlZCBhY2Nlc3MNCj4gPiArbG9naWMgdGhhbiBjYW4gYmUg
-c3VwcG9ydGVkIHdpdGggdGhlIGNzLWdwaW9zIHByb3BlcnR5IG9mIGEgU1BJIGJ1cy4NCj4gPiAr
-DQo+ID4gK0luIHRoZSBleGFtcGxlIGJlbG93IHdlIGhhdmUgYSBTb0Mgd2l0aCBhIHNpbmdsZSBT
-UEkgQ1MgdGhhdCBpcyBnYXRlZCBieSB0aGUNCj4gPiArc3RhdGUgb2YgYSBncGlvIHRvIHNlbGVj
-dCB0aGUgZGVzaXJlZCBTUEkgZGV2aWNlLg0KPiA+ICsNCj4gPiArICAgICArLS0tLS0tLS0tLSsg
-IENTICAgICstLS0tLSsgQ1MwICArLS0tLSsNCj4gPiArICAgICB8ICAgICAgICAgIHwtLS0tLS0t
-LXwgICAgIHwtLS0tLS18ICAgIHwNCj4gPiArICAgICB8ICAgICAgICAgIHwgICAgICAgIHwgXCAv
-IHwgICAgICArLS0tLSsNCj4gPiArICAgICB8ICAgU29DICAgIHwgICAgICAgIHwgICsgIHwNCj4g
-PiArICAgICB8ICAgICAgICAgIHwgIEdQSU8gIHwgLyBcIHwgQ1MxICArLS0tLSsNCj4gPiArICAg
-ICB8ICAgICAgICAgIHwtLS0tLS0tLXwgICAgIHwtLS0tLS18ICAgIHwNCj4gPiArICAgICArLS0t
-LS0tLS0tLSsgICAgICAgICstLS0tLSsgICAgICArLS0tLSsNCj4gPiArDQo+ID4gK1JlcXVpcmVk
-IHByb3BlcnRpZXM6DQo+ID4gKy0gY29tcGF0aWJsZQktIG11c3QgYmUgInNwaS1tdXgtZ3BpbyIN
-Cj4gPiArLSBncGlvcwkJLSBncGlvcyB1c2VkIHRvIGltcGxlbWVudCB0aGUgbXVsdGlwbGV4aW5n
-IGxvZ2ljDQo+ID4gKy0gc3BpLXBhcmVudC1idXMgLSBwYXJlbnQgc3BpIGJ1cyB0byB1c2UNCj4g
-PiArDQo+ID4gK09wdGlvbmFsIHByb3BlcnRpZXM6DQo+ID4gKy0gc3BpLXBhcmVudC1jcyAtIGNo
-aXAgc2VsZWN0IG9uIHBhcmVudCBidXMgdG8gdXNlLiBEZWZhdWx0cyB0byAwIGlmIG5vdA0KPiA+
-ICsgICAgICAgICAgICAgICAgICBzcGVjaWZpZWQuDQo+ID4gKw0KPiA+ICtFeGFtcGxlIGZvciBh
-IG11bHRpcGxleGVyIHdpdGggYSBzaW5nbGUgZ3BpbzoNCj4gPiArDQo+ID4gKwlzcGktbXV4IHsN
-Cj4gPiArCQljb21wYXRpYmxlID0gInNwaS1tdXgtZ3BpbyI7DQo+ID4gKwkJI2FkZHJlc3MtY2Vs
-bHMgPSA8MT47DQo+ID4gKwkJI3NpemUtY2VsbHMgPSA8MD47DQo+ID4gKwkJZ3Bpb3MgPSA8Jmdw
-aW8wIDEgMD47DQo+ID4gKwkJc3BpLXBhcmVudC1idXMgPSA8JnNwaTA+Ow0KPiA+ICsJCXNwaS1w
-YXJlbnQtY3MgPSA8MD47DQo+IA0KPiBXaHkgaXMgdGhpcyBvdXQgb2YgYmFuZD8gV2UgY2FuIGRv
-IHNvbWV0aGluZyBzaW1pbGFyIHRvIEkyQyBhbmQgdXNlIHRoZSANCj4gbXV4LWNvbnRyb2wgYmlu
-ZGluZzoNCj4gDQo+IHNwaSB7DQo+IAltdXhAMCB7DQo+IAkJY29tcGF0aWJsZSA9ICJzcGktbXV4
-IjsNCj4gCQlyZWcgIjAiOyANCj4gCQltdXgtY29udHJvbHMgPSAuLi47DQo+IA0KPiAJCXNwaS1k
-ZXZAMCB7fTsNCj4gCQlzcGktZGV2QDEge307DQo+IAl9Ow0KPiANCj4gCXNwaS1kZXZAMSB7fTsN
-Cj4gDQo+IH07DQoNCkkndmUgYmVlbiByZS12aXNpdGluZyB0aGlzIHRocmVhZCBhbmQgYW4gb2xk
-ZXIgb25lWzFdIHdpdGggYW4gZXllIG9uDQppbXBsZW1lbnRpbmcgYSBzb2x1dGlvbiB3aXRoIG11
-eC1jb250cm9scy4NCg0KT25lIHRoaW5nIEknbSBjb25mdXNlZCBhYm91dCBpcyB5b3VyIGNvbW1l
-bnQgdGhhdCB0aGUgbXV4IHNob3VsZCBiZSBpbi0NCmJhbmQgbGlrZSBpMmMuIExvb2tpbmcgYXQg
-dGhlIG9uZSB1c2VyIG9mIGkyYy1tdXggKGF0OTEtbmF0dGUuZHRzaSkgaXQNCmFsc28gYXBwZWFy
-cyBvdXQgb2YgYmFuZCBhbmQgZGV0ZXJtaW5lIHRoZSBwYXJlbnQgYnVzIHdpdGggYSBpMmMtcGFy
-ZW50IA0KcHJvcGVydHkgKHNpbWlsYXIgdG8gaG93IEkgZGlkIGl0IGluIG15IG9yaWdpbmFsIHN1
-Ym1pc3Npb24pLiBJIGFsc28NCmNhbid0IHNlZSBob3cgdGhlIG11eCB3b3VsZCB3b3JrIGluLWJh
-bmQgc2luY2UgaXQgbGFja3MgdGhlIGNvcnJlY3QNCiNhZGRyZXNzLWNlbGxzIGV0YyBmb3IgYSBz
-cGkgZGV2aWNlLg0KDQpJJ20gd29uZGVyaW5nIGlmIEkndmUgbWlzc2VkIHNvbWV0aGluZyBvYnZp
-b3VzLg0KDQotLQ0KWzFdIC0gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8yNzA2
-MTUxLw0K
+Hi, Jiaxun,
+
+On Sun, Jan 12, 2020 at 4:21 PM Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
+>
+> Document Loongson I/O Interrupt controller.
+>
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../interrupt-controller/loongson,iointc.yaml | 92 +++++++++++++++++++
+>  1 file changed, 92 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/loongson,iointc.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/loongson,iointc.yaml b/Documentation/devicetree/bindings/interrupt-controller/loongson,iointc.yaml
+> new file mode 100644
+> index 000000000000..b0fe6c551362
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/loongson,iointc.yaml
+> @@ -0,0 +1,92 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/interrupt-controller/loongson,iointc.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Loongson I/O Interrupt Controller
+> +
+> +maintainers:
+> +  - Jiaxun Yang <jiaxun.yang@flygoat.com>
+> +
+> +description: |
+> +  This interrupt controller is found in the Loongson-3 family of chips as the primary
+> +  package interrupt source which can route interrupt to interrupt line of cores.
+> +
+> +allOf:
+> +  - $ref: /schemas/interrupt-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: loongson,iointc-1.0
+> +      - const: loongson,iointc-1.0a
+As our early discussion, we should use liointc for the legacy Loongson
+irq-controller ans use eiointc for the new irq-controller in
+Loongson-3A4000. Moreover, could you please describe the difference
+between 1.0 and 1.0a?
+
+Huacai
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupt-controller: true
+> +
+> +  interrupts:
+> +    description:
+> +      Interrupt source of the CPU interrupts.
+> +    minItems: 1
+> +    maxItems: 4
+> +
+> +  interrupt-names:
+> +    description: List of names for the parent interrupts.
+> +    oneOf:
+> +      - items:
+> +          - const: int0
+> +          - const: int1
+> +          - const: int2
+> +          - const: int3
+> +    minItems: 1
+> +    maxItems: 4
+> +
+> +  '#interrupt-cells':
+> +    const: 2
+> +
+> +  'loongson,parent_int_map':
+> +    description: |
+> +      This property points the accept range of children interrupts
+> +      that parents will recieve. Each cell refers to a parent interrupt line
+> +      and each bit in the cell refers to a children interrupt. If a parent
+> +      did not connected, than keep it's cell with zero.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32-array
+> +      - items:
+> +          minItems: 4
+> +          maxItems: 4
+> +
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-controller
+> +  - '#interrupt-cells'
+> +  - 'loongson,parent_int_map'
+> +
+> +
+> +examples:
+> +  - |
+> +    iointc: interrupt-controller@3ff01400 {
+> +      compatible = "loongson,iointc-1.0";
+> +      reg = <0 0x3ff01400 0x64>;
+> +
+> +      interrupt-controller;
+> +      #interrupt-cells = <2>;
+> +
+> +      interrupt-parent = <&cpuintc>;
+> +      interrupts = <2>, <3>;
+> +      interrupt-names = "int0", "int1";
+> +
+> +      loongson,parent_int_map = <0xf0ffffff>, /* int0 */
+> +                                <0x0f000000>, /* int1 */
+> +                                <0x00000000>, /* int2 */
+> +                                <0x00000000>; /* int3 */
+> +
+> +    };
+> +
+> +...
+> --
+> 2.24.1
+>
